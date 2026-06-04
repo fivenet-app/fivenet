@@ -113,12 +113,14 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 			tLawBooks.ID,
 			tLawBooks.CreatedAt,
 			tLawBooks.UpdatedAt,
+			tLawBooks.SortOrder,
 			tLawBooks.Name,
 			tLawBooks.Description,
 			tLaws.ID,
 			tLaws.LawbookID,
 			tLaws.CreatedAt,
 			tLaws.UpdatedAt,
+			tLaws.SortOrder,
 			tLaws.Name,
 			tLaws.Description,
 			tLaws.Hint,
@@ -132,7 +134,9 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 			),
 		).
 		ORDER_BY(
+			tLawBooks.SortOrder.ASC(),
 			tLawBooks.SortKey.ASC(),
+			tLaws.SortOrder.ASC(),
 			tLaws.SortKey.ASC(),
 		).
 		WHERE(mysql.AND(
@@ -180,7 +184,7 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 	return nil
 }
 
-// GetLawBooks returns all cached law books, sorted by name using natural order.
+// GetLawBooks returns all cached law books, sorted by their configured sort order.
 func (c *Laws) GetLawBooks() []*laws.LawBook {
 	lawBooks := []*laws.LawBook{}
 	for _, value := range c.lawBooks.All() {
@@ -188,6 +192,10 @@ func (c *Laws) GetLawBooks() []*laws.LawBook {
 	}
 
 	sort.Slice(lawBooks, func(i, j int) bool {
+		if lawBooks[i].GetSortOrder() != lawBooks[j].GetSortOrder() {
+			return lawBooks[i].GetSortOrder() < lawBooks[j].GetSortOrder()
+		}
+
 		return natural.Less(lawBooks[i].GetName(), lawBooks[j].GetName())
 	})
 

@@ -18,10 +18,7 @@ message Unit {
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 15 [(buf.validate.field).string.max_len = 50];
-  int32 sort_order = 17 [
-    (buf.validate.field).int32.gte = 0,
-    (tagger.tags) = "alias:\"sort_order\""
-  ];
+  int32 sort_order = 17 [(buf.validate.field).int32.gte = 0];
   string name = 5 [
     (buf.validate.field).string = {
       min_len: 3

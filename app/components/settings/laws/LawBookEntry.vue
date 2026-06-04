@@ -3,16 +3,28 @@ import { UButton, UTooltip } from '#components';
 import type { FormSubmitEvent, TableColumn } from '@nuxt/ui';
 import type { ExpandedState, Row, TableMeta } from '@tanstack/vue-table';
 import { z } from 'zod';
+import { useDraggable } from 'vue-draggable-plus';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import DraggableHandle from '~/components/partials/DraggableHandle.vue';
+import ReorderButtons from '~/components/partials/ReorderButtons.vue';
 import LawEntry from '~/components/settings/laws/LawEntry.vue';
 import { getSettingsLawsClient } from '~~/gen/ts/clients';
 import type { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
-const props = defineProps<{
-    startInEdit?: boolean;
-}>();
+const props = withDefaults(
+    defineProps<{
+        idx: number;
+        lawBooks: LawBook[];
+        moveBookUp: (index: number) => void;
+        moveBookDown: (index: number) => void;
+        startInEdit?: boolean;
+    }>(),
+    {
+        startInEdit: false,
+    },
+);
 
 const emit = defineEmits<{
     (e: 'deleted', data: { id: number; deletedAt?: Timestamp }): void;
@@ -34,6 +46,28 @@ const numberFormatter = useDisplayNumberFormat();
 
 const settingsLawsClient = await getSettingsLawsClient();
 
+const orderChanged = ref(false);
+const tableRef = useTemplateRef('tableRef');
+const tableBodyRef = computed<HTMLElement | null>(() => {
+    const rootEl = tableRef.value?.$el as HTMLElement | undefined;
+    return rootEl?.querySelector('tbody.law-book-laws-table') ?? null;
+});
+
+const { moveUp, moveDown } = useListReorder(laws, {
+    onMove: () => {
+        orderChanged.value = true;
+    },
+});
+
+useDraggable(tableBodyRef, laws, {
+    animation: 150,
+    handle: '.law-row-handle',
+    draggable: 'tr',
+    onUpdate: () => {
+        orderChanged.value = true;
+    },
+});
+
 const schema = z.object({
     name: z.string().min(3).max(128),
     description: z.union([z.string().min(3).max(255), z.string().length(0).optional()]),
@@ -45,6 +79,16 @@ const state = reactive<Schema>({
     name: '',
     description: '',
 });
+
+const canSaveOrder = computed(
+    () =>
+        orderChanged.value &&
+        lawBook.value !== undefined &&
+        lawBook.value.id > 0 &&
+        lawBook.value.deletedAt === undefined &&
+        laws.value.every((law) => law.deletedAt !== undefined || law.id > 0) &&
+        laws.value.some((law) => law.deletedAt === undefined),
+);
 
 async function deleteLawBook(id: number): Promise<void> {
     if (id < 0) {
@@ -67,12 +111,14 @@ async function deleteLawBook(id: number): Promise<void> {
 
 async function saveLawBook(id: number, values: Schema): Promise<LawBook> {
     try {
+        const previousId = id;
         const call = settingsLawsClient.createOrUpdateLawBook({
             lawBook: {
                 id: id < 0 ? 0 : id,
                 name: values.name,
                 description: values.description,
                 laws: [],
+                sortOrder: 0,
             },
         });
         const { response } = await call;
@@ -80,6 +126,13 @@ async function saveLawBook(id: number, values: Schema): Promise<LawBook> {
         editing.value = false;
 
         lawBook.value = response.lawBook;
+        if (response.lawBook && previousId < 0) {
+            laws.value.forEach((law) => {
+                if (law.lawbookId === previousId) {
+                    law.lawbookId = response.lawBook!.id;
+                }
+            });
+        }
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -88,6 +141,31 @@ async function saveLawBook(id: number, values: Schema): Promise<LawBook> {
         });
 
         return response.lawBook!;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+async function reorderLaws(): Promise<void> {
+    if (!lawBook.value || !canSaveOrder.value) return;
+
+    const activeLawIds = laws.value.filter((law) => law.deletedAt === undefined).map((law) => law.id);
+
+    try {
+        const call = settingsLawsClient.reorderLaws({
+            lawBookId: lawBook.value.id,
+            lawIds: activeLawIds,
+        });
+        await call;
+
+        orderChanged.value = false;
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -125,6 +203,7 @@ function addLaw(): void {
         lawbookId: lawBook.value.id,
         id: lastNewId.value,
         name: '',
+        sortOrder: 0,
         fine: 0,
         detentionTime: 0,
         stvoPoints: 0,
@@ -200,6 +279,28 @@ const meta = computed(
 const columns = computed(
     () =>
         [
+            {
+                id: 'order',
+                cell: ({ row }) =>
+                    row.original.deletedAt || row.original.id < 0
+                        ? h('span', { class: 'inline-flex w-14 items-center justify-center' })
+                        : h('div', { class: 'inline-flex items-center gap-1' }, [
+                              h(DraggableHandle, {
+                                  handleClass: 'law-row-handle',
+                                  orientation: 'vertical',
+                              }),
+                              h(ReorderButtons, {
+                                  idx: row.index,
+                                  moveUp,
+                                  moveDown,
+                              }),
+                          ]),
+                meta: {
+                    class: {
+                        td: 'w-0 whitespace-nowrap',
+                    },
+                },
+            },
             {
                 id: 'expand',
                 cell: ({ row }) =>
@@ -293,6 +394,19 @@ const confirmModal = overlay.create(ConfirmModal);
         <template #header>
             <div v-if="!editing" class="inline-flex w-full items-center gap-x-2">
                 <UFieldGroup class="inline-flex">
+                    <DraggableHandle
+                        v-if="lawBook.id > 0 && lawBook.deletedAt === undefined"
+                        handle-class="law-book-handle"
+                        orientation="vertical"
+                    />
+
+                    <ReorderButtons
+                        v-if="lawBook.id > 0 && lawBook.deletedAt === undefined"
+                        :idx="props.idx"
+                        :move-up="props.moveBookUp"
+                        :move-down="props.moveBookDown"
+                    />
+
                     <UTooltip :text="$t('common.edit')">
                         <UButton variant="link" icon="i-mdi-pencil" @click="editing = true" />
                     </UTooltip>
@@ -317,15 +431,27 @@ const confirmModal = overlay.create(ConfirmModal);
                     <p v-if="lawBook.description">{{ $t('common.description') }}: {{ lawBook.description }}</p>
                 </div>
 
-                <UTooltip class="shrink-0" :text="$t('pages.settings.laws.add_new_law')">
-                    <UButton
-                        color="neutral"
-                        variant="outline"
-                        trailing-icon="i-mdi-plus"
-                        :label="$t('pages.settings.laws.add_new_law')"
-                        @click="addLaw"
-                    />
-                </UTooltip>
+                <div class="inline-flex shrink-0 items-center gap-2">
+                    <UTooltip v-if="orderChanged" :text="$t('common.save', 1)">
+                        <UButton
+                            color="primary"
+                            variant="outline"
+                            icon="i-mdi-content-save"
+                            :disabled="!canSaveOrder"
+                            @click="() => reorderLaws()"
+                        />
+                    </UTooltip>
+
+                    <UTooltip class="shrink-0" :text="$t('pages.settings.laws.add_new_law')">
+                        <UButton
+                            color="neutral"
+                            variant="outline"
+                            trailing-icon="i-mdi-plus"
+                            :label="$t('pages.settings.laws.add_new_law')"
+                            @click="addLaw"
+                        />
+                    </UTooltip>
+                </div>
             </div>
             <UForm
                 v-else
@@ -366,6 +492,7 @@ const confirmModal = overlay.create(ConfirmModal);
         </template>
 
         <UTable
+            ref="tableRef"
             v-model:expanded="expanded"
             :columns="columns"
             :meta="meta"
@@ -374,11 +501,16 @@ const confirmModal = overlay.create(ConfirmModal);
             :pagination-options="{ manualPagination: true }"
             :sorting-options="{ manualSorting: true }"
             :empty="$t('common.not_found', [$t('common.law', 2)])"
-            :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
             sticky
+            :ui="{ tr: 'data-[expanded=true]:bg-elevated/50', tbody: 'law-book-laws-table' }"
         >
             <template #expanded="{ row }">
-                <LawEntry :law="row.original" @update:law="$emit('update:law', $event)" @close="row.toggleExpanded()" />
+                <LawEntry
+                    :law="row.original"
+                    :law-books="props.lawBooks"
+                    @update:law="$emit('update:law', $event)"
+                    @close="row.toggleExpanded()"
+                />
             </template>
         </UTable>
     </UCard>

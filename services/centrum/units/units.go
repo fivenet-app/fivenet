@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"math"
 	"slices"
 	"time"
 
@@ -37,6 +38,10 @@ const (
 	PingTTL  = 8 * time.Second  // OFFLINE
 	EmptyTTL = 30 * time.Second // No crew -> delete
 )
+
+type sortOrderResult struct {
+	SortOrder int32 `alias:"sort_order"`
+}
 
 type UnitDB struct {
 	logger *zap.Logger
@@ -361,6 +366,31 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 	}
 
 	return nil
+}
+
+func (s *UnitDB) nextSortOrder(ctx context.Context, q qrm.Queryable, job string) (int32, error) {
+	tUnits := table.FivenetCentrumUnits.AS("unit")
+
+	stmt := tUnits.
+		SELECT(
+			mysql.COALESCE(mysql.MAX(tUnits.SortOrder), mysql.Int32(-1)).AS("sort_order"),
+		).
+		FROM(tUnits).
+		WHERE(mysql.AND(
+			tUnits.Job.EQ(mysql.String(job)),
+			tUnits.DeletedAt.IS_NULL(),
+		))
+
+	var dest sortOrderResult
+	if err := stmt.QueryContext(ctx, q, &dest); err != nil {
+		return 0, err
+	}
+
+	if dest.SortOrder >= math.MaxInt32 {
+		return 0, errors.New("unit sort order overflow")
+	}
+
+	return dest.SortOrder + 1, nil
 }
 
 func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (int64, error) {
@@ -761,9 +791,17 @@ func (s *UnitDB) CreateUnit(
 	defer tx.Rollback()
 
 	tUnits := table.FivenetCentrumUnits
+
+	sortOrder, err := s.nextSortOrder(ctx, tx, creatorJob)
+	if err != nil {
+		return nil, err
+	}
+	unit.SortOrder = sortOrder
+
 	stmt := tUnits.
 		INSERT(
 			tUnits.Job,
+			tUnits.SortOrder,
 			tUnits.Name,
 			tUnits.Initials,
 			tUnits.Color,
@@ -774,6 +812,7 @@ func (s *UnitDB) CreateUnit(
 		).
 		VALUES(
 			creatorJob,
+			mysql.Int32(sortOrder),
 			unit.GetName(),
 			unit.GetInitials(),
 			unit.GetColor(),

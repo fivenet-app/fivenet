@@ -31,7 +31,7 @@ type LawBook struct {
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty" alias:"sort_order"`
+	SortOrder     int32                  `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	Name          string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
 	Description   *string                `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Laws          []*Law                 `protobuf:"bytes,7,rep,name=laws,proto3" json:"laws,omitempty"`
@@ -231,7 +231,7 @@ type Law struct {
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	LawbookId     int64                  `protobuf:"varint,5,opt,name=lawbook_id,json=lawbookId,proto3" json:"lawbook_id,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,12,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty" alias:"sort_order"`
+	SortOrder     int32                  `protobuf:"varint,12,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	Name          string                 `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
 	Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Hint          *string                `protobuf:"bytes,8,opt,name=hint,proto3,oneof" json:"hint,omitempty"`
@@ -527,7 +527,7 @@ var File_resources_laws_laws_proto protoreflect.FileDescriptor
 
 const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/laws/laws.proto\x12\x0eresources.laws\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xf1\x03\n" +
+	"\x19resources/laws/laws.proto\x12\x0eresources.laws\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xd8\x03\n" +
 	"\aLawBook\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -535,16 +535,16 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x126\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\b \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"sort_order\"R\tsortOrder\x12\x1a\n" +
+	"sort_order\x18\b \x01(\x05R\tsortOrder\x12\x1a\n" +
 	"\x04name\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x04name\x12-\n" +
 	"\vdescription\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x03R\vdescription\x88\x01\x01\x12'\n" +
 	"\x04laws\x18\a \x03(\v2\x13.resources.laws.LawR\x04lawsB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
-	"\f_description\"\xa8\x05\n" +
+	"\f_description\"\x8f\x05\n" +
 	"\x03Law\x125\n" +
 	"\x02id\x18\x01 \x01(\x03B%\x9a\x84\x9e\x03 sql:\"primary_key\" alias:\"law.id\"R\x02id\x12B\n" +
 	"\n" +
@@ -554,9 +554,9 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"lawbook_id\x18\x05 \x01(\x03R\tlawbookId\x126\n" +
+	"lawbook_id\x18\x05 \x01(\x03R\tlawbookId\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\f \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"sort_order\"R\tsortOrder\x12\x1a\n" +
+	"sort_order\x18\f \x01(\x05R\tsortOrder\x12\x1a\n" +
 	"\x04name\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x04name\x12-\n" +
 	"\vdescription\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x03R\vdescription\x88\x01\x01\x12\x1f\n" +
 	"\x04hint\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x04R\x04hint\x88\x01\x01\x12\x17\n" +

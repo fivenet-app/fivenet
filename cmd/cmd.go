@@ -1,3 +1,4 @@
+//nolint:forbidigo // Version command prints progress to stdout.
 package cmd
 
 import (

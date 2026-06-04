@@ -2,11 +2,12 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getSettingsLawsClient } from '~~/gen/ts/clients';
-import type { Law } from '~~/gen/ts/resources/laws/laws';
+import type { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     law: Law;
+    lawBooks: LawBook[];
 }>();
 
 const emit = defineEmits<{
@@ -21,6 +22,7 @@ const notifications = useNotificationsStore();
 const settingsLawsClient = await getSettingsLawsClient();
 
 const schema = z.object({
+    lawbookId: z.coerce.number().int().positive(),
     name: z.string().min(3).max(128),
     description: z.union([z.string().min(3).max(1024), z.string().length(0).optional()]),
     hint: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
@@ -32,6 +34,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
+    lawbookId: props.law.lawbookId,
     name: props.law.name,
     description: props.law.description,
     hint: props.law.hint,
@@ -40,13 +43,34 @@ const state = reactive<Schema>({
     stvoPoints: props.law.stvoPoints ?? 0,
 });
 
-async function saveLaw(lawBookId: number, id: number, values: Schema): Promise<void> {
+const availableLawBooks = computed(() => props.lawBooks.filter((book) => book.deletedAt === undefined && book.id > 0));
+const currentLawBook = computed(() => props.lawBooks.find((book) => book.id === state.lawbookId));
+
+function resetForm(): void {
+    state.lawbookId = props.law.lawbookId;
+    state.name = props.law.name;
+    state.description = props.law.description;
+    state.hint = props.law.hint;
+    state.fine = props.law.fine ?? 0;
+    state.detentionTime = props.law.detentionTime ?? 0;
+    state.stvoPoints = props.law.stvoPoints ?? 0;
+}
+
+onBeforeMount(() => resetForm());
+watch(
+    () => props.law,
+    () => resetForm(),
+    { deep: true },
+);
+
+async function saveLaw(id: number, values: Schema): Promise<void> {
     try {
         const call = settingsLawsClient.createOrUpdateLaw({
             law: {
                 id: id < 0 ? 0 : id,
-                lawbookId: lawBookId,
+                lawbookId: values.lawbookId,
                 name: values.name,
+                sortOrder: 0,
                 description: values.description,
                 hint: values.hint,
                 fine: values.fine,
@@ -55,6 +79,10 @@ async function saveLaw(lawBookId: number, id: number, values: Schema): Promise<v
             },
         });
         const { response } = await call;
+
+        if (response.law) {
+            state.lawbookId = response.law.lawbookId;
+        }
 
         emit('update:law', { id: id, law: response.law! });
 
@@ -69,12 +97,14 @@ async function saveLaw(lawBookId: number, id: number, values: Schema): Promise<v
     }
 }
 
+const canSaveLaw = computed(() => state.lawbookId > 0 && availableLawBooks.value.some((book) => book.id === state.lawbookId));
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    if (!canSaveLaw.value) return;
+
     canSubmit.value = false;
-    await saveLaw(props.law.lawbookId, props.law.id, event.data).finally(() =>
-        useTimeoutFn(() => (canSubmit.value = true), 400),
-    );
+    await saveLaw(props.law.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
@@ -84,7 +114,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <UFormField class="text-sm font-medium">
                 <UFieldGroup class="inline-flex w-full" orientation="vertical">
                     <UTooltip :text="$t('common.save')">
-                        <UButton type="submit" variant="link" icon="i-mdi-content-save" />
+                        <UButton type="submit" variant="link" icon="i-mdi-content-save" :disabled="!canSaveLaw || !canSubmit" />
                     </UTooltip>
 
                     <UTooltip :text="$t('common.cancel')">
@@ -97,6 +127,28 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.law')" />
             </UFormField>
         </div>
+
+        <UFormField class="flex-1 text-sm font-medium" :label="$t('common.law_book')" name="lawbookId">
+            <ClientOnly>
+                <USelectMenu
+                    v-model="state.lawbookId"
+                    class="w-full"
+                    :items="availableLawBooks"
+                    label-key="name"
+                    value-key="id"
+                    :search-input="{ placeholder: $t('common.search_field') }"
+                    :disabled="availableLawBooks.length === 0"
+                >
+                    <template #default>
+                        {{ currentLawBook?.name ?? $t('common.none_selected', [$t('common.law_book')]) }}
+                    </template>
+
+                    <template #item-label="{ item }">
+                        {{ item.name }}
+                    </template>
+                </USelectMenu>
+            </ClientOnly>
+        </UFormField>
 
         <div class="flex flex-1 justify-between gap-2">
             <UFormField :label="$t('common.fine')" name="fine">
