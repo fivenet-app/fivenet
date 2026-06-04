@@ -17,6 +17,7 @@ type FivenetLawbooks struct {
 	UpdatedAt   *time.Time `json:"updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at"`
 	Name        string     `json:"name"`
+	SortOrder   int32      `json:"sort_order"`
 	SortKey     *string    `json:"sort_key"`
 	Description *string    `json:"description"`
 }

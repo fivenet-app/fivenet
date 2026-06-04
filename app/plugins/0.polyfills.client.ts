@@ -23,7 +23,7 @@ export default defineNuxtPlugin({
         console.info('Loading Polyfills for CEF');
         /* FiveM NUI uses Chromium Embedded Framework version 103.x - As of now requires following polyfills:
          *
-         * - toSorted and toReversed polyfills
+         * - `toSorted` and `toReversed` polyfills
          * - CSS Blank Pseudo-element
          * - CSS Has Pseudo-class
          */

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { statusOrder, type GroupedUnits } from '~/components/dispatch/helpers';
+import { compareUnitsBySortOrder, statusOrder, type GroupedUnits } from '~/components/dispatch/helpers';
 import UnitListEntry from '~/components/dispatch/units/UnitListEntry.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
@@ -36,7 +36,7 @@ const grouped = computedAsync(async () => {
                     return aHasUsers ? -1 : 1;
                 }
 
-                return a.sortOrder - b.sortOrder || a.name.localeCompare(b.name);
+                return compareUnitsBySortOrder(a, b);
             }),
         );
 

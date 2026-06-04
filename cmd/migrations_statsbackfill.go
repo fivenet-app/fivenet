@@ -12,12 +12,15 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/cmd/envs"
 	"github.com/fivenet-app/fivenet/v2026/cmd/fxopts"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	docstats "github.com/fivenet-app/fivenet/v2026/pkg/stats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/timeutils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -87,12 +90,15 @@ func (c *MigrationsStatsBackfillCmd) run(ctx context.Context) error {
 	endDay := timeutils.StartOfDay(time.Now().UTC())
 
 	if c.DryRun {
-		var count int64
-		if err := c.db.QueryRowContext(
-			ctx,
-			`SELECT COUNT(*) FROM fivenet_documents WHERE created_at >= ?`,
-			start.UTC(),
-		).Scan(&count); err != nil {
+		tDocuments := table.FivenetDocuments
+		stmt := tDocuments.
+			SELECT(
+				mysql.COUNT(mysql.STAR).AS("data_count.total"),
+			).
+			WHERE(tDocuments.CreatedAt.GT_EQ(mysql.TimestampT(start.UTC())))
+
+		var count database.DataCount
+		if err := stmt.QueryContext(ctx, c.db, &count); err != nil {
 			return fmt.Errorf("failed to estimate stats backfill document count. %w", err)
 		}
 
@@ -172,98 +178,74 @@ func (c *MigrationsStatsBackfillCmd) rebuildDocumentMetricsBatch(
 ) (nextLastID int64, batchCount int, err error) {
 	nextLastID = lastID
 
-	rows, err := c.db.QueryContext(
-		ctx,
-		`SELECT id, creator_job, created_at, deleted_at, draft, data
-FROM fivenet_documents
-WHERE created_at >= ?
-  AND id > ?
-  AND data IS NOT NULL
-ORDER BY id ASC
-LIMIT ?`,
-		start.UTC(),
-		lastID,
-		c.BatchSize,
-	)
-	if err != nil {
+	tDocuments := table.FivenetDocuments
+
+	stmt := tDocuments.
+		SELECT(
+			tDocuments.ID.AS("id"),
+			tDocuments.CreatorJob.AS("creator_job"),
+			tDocuments.CreatedAt.AS("created_at"),
+			tDocuments.DeletedAt.AS("deleted_at"),
+			tDocuments.Draft.AS("draft"),
+			tDocuments.Data.AS("data"),
+		).
+		FROM(tDocuments).
+		WHERE(mysql.AND(
+			tDocuments.CreatedAt.GT_EQ(mysql.TimestampT(start.UTC())),
+			tDocuments.ID.GT(mysql.Int64(lastID)),
+			tDocuments.Data.IS_NOT_NULL(),
+		)).
+		ORDER_BY(tDocuments.ID.ASC()).
+		LIMIT(int64(c.BatchSize))
+
+	var rows []struct {
+		DocID      int64          `alias:"id"`
+		CreatorJob string         `alias:"creator_job"`
+		CreatedAt  time.Time      `alias:"created_at"`
+		DeletedAt  sql.NullTime   `alias:"deleted_at"`
+		Draft      bool           `alias:"draft"`
+		DataRaw    sql.NullString `alias:"data"`
+	}
+	if err := stmt.QueryContext(ctx, c.db, &rows); err != nil {
 		return nextLastID, 0, fmt.Errorf("failed querying documents for stats backfill. %w", err)
 	}
-	defer func() {
-		if closeErr := rows.Close(); closeErr != nil {
-			closeErr = fmt.Errorf("failed to close rows during stats backfill. %w", closeErr)
-			if err != nil {
-				err = errors.Join(err, closeErr)
-				return
-			}
-			err = closeErr
-		}
-	}()
 
-	for rows.Next() {
-		var (
-			id         int64
-			creatorJob string
-			createdAt  time.Time
-			deletedAt  sql.NullTime
-			draft      bool
-			dataRaw    sql.NullString
-		)
-		if err := rows.Scan(
-			&id,
-			&creatorJob,
-			&createdAt,
-			&deletedAt,
-			&draft,
-			&dataRaw,
-		); err != nil {
-			return nextLastID, batchCount, fmt.Errorf(
-				"failed scanning document row for stats backfill. %w",
-				err,
-			)
-		}
-
+	for _, row := range rows {
 		var data *documentsdata.DocumentData
-		if dataRaw.Valid && strings.TrimSpace(dataRaw.String) != "" {
+		if row.DataRaw.Valid && strings.TrimSpace(row.DataRaw.String) != "" {
 			data = &documentsdata.DocumentData{}
-			if err := protojson.Unmarshal([]byte(dataRaw.String), data); err != nil {
+			if err := protojson.Unmarshal([]byte(row.DataRaw.String), data); err != nil {
 				return nextLastID, batchCount, fmt.Errorf(
 					"failed to decode document.data for document %d. %w",
-					id,
+					row.DocID,
 					err,
 				)
 			}
 		}
 
 		doc := &documents.Document{
-			Id:         id,
-			CreatorJob: creatorJob,
-			CreatedAt:  timestamp.New(createdAt),
+			Id:         row.DocID,
+			CreatorJob: row.CreatorJob,
+			CreatedAt:  timestamp.New(row.CreatedAt),
 			Meta: &documents.DocumentMeta{
-				Draft: draft,
+				Draft: row.Draft,
 			},
 			Data: data,
 		}
-		if deletedAt.Valid {
-			doc.DeletedAt = timestamp.New(deletedAt.Time)
+		if row.DeletedAt.Valid {
+			doc.DeletedAt = timestamp.New(row.DeletedAt.Time)
 		}
 
 		if err := c.stats.RebuildDocumentMetrics(ctx, doc); err != nil {
 			return nextLastID, batchCount, fmt.Errorf(
 				"failed to rebuild metrics for document %d. %w",
-				id,
+				row.DocID,
 				err,
 			)
 		}
 
-		nextLastID = id
+		nextLastID = row.DocID
 		batchCount++
-	}
-
-	if err := rows.Err(); err != nil {
-		return nextLastID, batchCount, fmt.Errorf(
-			"row iteration error during stats backfill. %w",
-			err,
-		)
 	}
 
 	return nextLastID, batchCount, nil

@@ -1,6 +1,6 @@
 import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
-import { statusOrder } from '~/components/dispatch/helpers';
+import { compareUnitsBySortOrder } from '~/components/dispatch/helpers';
 import type { NotificationActionI18n } from '~/types/notifications';
 import { getCentrumCentrumClient, getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers/dispatchers';
@@ -129,14 +129,9 @@ export const useCentrumStore = defineStore(
         const getSortedUnits = computed<Unit[]>(() => {
             const { activeChar } = useAuth();
 
-            const array: Unit[] = [];
-            units.value.forEach((u) => u.job === activeChar.value?.job && array.push(u));
-            return array.sort(
-                (a, b) =>
-                    a.name.localeCompare(b.name) -
-                    statusOrder.indexOf(a.status?.status ?? 0) -
-                    statusOrder.indexOf(b.status?.status ?? 0),
-            );
+            return Array.from(units.value.values())
+                .filter((u) => u.job === activeChar.value?.job)
+                .sort(compareUnitsBySortOrder);
         });
 
         /**

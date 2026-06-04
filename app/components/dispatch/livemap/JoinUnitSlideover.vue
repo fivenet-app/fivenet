@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import { compareUnitsBySortOrder } from '~/components/dispatch/helpers';
 import { useCentrumStore } from '~/stores/centrum';
 import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units/access/access';
@@ -53,7 +54,7 @@ const filteredUnits = computed(() => ({
                     u.initials.toLowerCase().includes(queryUnit.value.toLowerCase())) &&
                 checkUnitAccess(u.access, UnitAccessLevel.JOIN),
         )
-        .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name)),
+        .sort(compareUnitsBySortOrder),
     unavailable: getSortedUnits.value
         .filter(
             (u) =>
@@ -61,7 +62,7 @@ const filteredUnits = computed(() => ({
                     u.initials.toLowerCase().includes(queryUnit.value.toLowerCase())) &&
                 !checkUnitAccess(u.access, UnitAccessLevel.JOIN),
         )
-        .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name)),
+        .sort(compareUnitsBySortOrder),
 }));
 </script>
 

@@ -10,6 +10,23 @@ export const defaultUnitIcon = 'MapMarkerIcon';
 
 export type GroupedUnits = { status: StatusUnit; key: string; units: Unit[] }[];
 
+export function compareUnitsBySortOrder(a: Unit, b: Unit): number {
+    if (a.sortOrder !== b.sortOrder) {
+        return a.sortOrder < b.sortOrder ? -1 : 1;
+    }
+
+    const nameCompare = a.name.localeCompare(b.name);
+    if (nameCompare !== 0) {
+        return nameCompare;
+    }
+
+    if (a.id === b.id) {
+        return 0;
+    }
+
+    return a.id < b.id ? -1 : 1;
+}
+
 export function dispatchStatusToFillColor(status: StatusDispatch | undefined): string {
     switch (status) {
         case StatusDispatch.UNSPECIFIED:

@@ -138,7 +138,7 @@ type Unit struct {
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,15,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,17,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty" alias:"sort_order"`
+	SortOrder     int32                  `protobuf:"varint,17,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	Name          string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
 	Initials      string                 `protobuf:"bytes,6,opt,name=initials,proto3" json:"initials,omitempty"`
 	Color         string                 `protobuf:"bytes,7,opt,name=color,proto3" json:"color,omitempty"`
@@ -1124,7 +1124,7 @@ var File_resources_centrum_units_units_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_units_units_proto_rawDesc = "" +
 	"\n" +
-	"#resources/centrum/units/units.proto\x12\x17resources.centrum.units\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a+resources/centrum/units/access/access.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x87\a\n" +
+	"#resources/centrum/units/units.proto\x12\x17resources.centrum.units\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a+resources/centrum/units/access/access.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xee\x06\n" +
 	"\x04Unit\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1132,9 +1132,9 @@ const file_resources_centrum_units_units_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x10\n" +
 	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x0f \x01(\tH\x02R\bjobLabel\x88\x01\x01\x126\n" +
+	"\tjob_label\x18\x0f \x01(\tH\x02R\bjobLabel\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\x11 \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"sort_order\"R\tsortOrder\x12\x1a\n" +
+	"sort_order\x18\x11 \x01(\x05R\tsortOrder\x12\x1a\n" +
 	"\x04name\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x04name\x12\"\n" +
 	"\binitials\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\binitials\x12\x1e\n" +
 	"\x05color\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12!\n" +

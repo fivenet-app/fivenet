@@ -142,11 +142,11 @@ func TestBuildTargetURL(t *testing.T) {
 
 			gotURL, err := buildTargetURL(tc.apiURL, tc.path, tc.query)
 			if tc.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 				assert.Empty(t, gotURL)
 				if tc.wantStatus != 0 {
 					var statusErr httperrors.HTTPStatusError
-					assert.ErrorAs(t, err, &statusErr)
+					require.ErrorAs(t, err, &statusErr)
 					assert.Equal(t, tc.wantStatus, statusErr.StatusCode())
 				}
 				return

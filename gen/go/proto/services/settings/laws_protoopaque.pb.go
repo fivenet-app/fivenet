@@ -649,6 +649,220 @@ func (b0 DeleteLawResponse_builder) Build() *DeleteLawResponse {
 	return m0
 }
 
+type ReorderLawsRequest struct {
+	state                protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_LawBookId int64                  `protobuf:"varint,1,opt,name=law_book_id,json=lawBookId,proto3"`
+	xxx_hidden_LawIds    []int64                `protobuf:"varint,2,rep,packed,name=law_ids,json=lawIds,proto3"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *ReorderLawsRequest) Reset() {
+	*x = ReorderLawsRequest{}
+	mi := &file_services_settings_laws_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReorderLawsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReorderLawsRequest) ProtoMessage() {}
+
+func (x *ReorderLawsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_laws_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ReorderLawsRequest) GetLawBookId() int64 {
+	if x != nil {
+		return x.xxx_hidden_LawBookId
+	}
+	return 0
+}
+
+func (x *ReorderLawsRequest) GetLawIds() []int64 {
+	if x != nil {
+		return x.xxx_hidden_LawIds
+	}
+	return nil
+}
+
+func (x *ReorderLawsRequest) SetLawBookId(v int64) {
+	x.xxx_hidden_LawBookId = v
+}
+
+func (x *ReorderLawsRequest) SetLawIds(v []int64) {
+	x.xxx_hidden_LawIds = v
+}
+
+type ReorderLawsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	LawBookId int64
+	LawIds    []int64
+}
+
+func (b0 ReorderLawsRequest_builder) Build() *ReorderLawsRequest {
+	m0 := &ReorderLawsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_LawBookId = b.LawBookId
+	x.xxx_hidden_LawIds = b.LawIds
+	return m0
+}
+
+type ReorderLawsResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReorderLawsResponse) Reset() {
+	*x = ReorderLawsResponse{}
+	mi := &file_services_settings_laws_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReorderLawsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReorderLawsResponse) ProtoMessage() {}
+
+func (x *ReorderLawsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_laws_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type ReorderLawsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ReorderLawsResponse_builder) Build() *ReorderLawsResponse {
+	m0 := &ReorderLawsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
+type ReorderLawBooksRequest struct {
+	state                 protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_LawBookIds []int64                `protobuf:"varint,1,rep,packed,name=law_book_ids,json=lawBookIds,proto3"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *ReorderLawBooksRequest) Reset() {
+	*x = ReorderLawBooksRequest{}
+	mi := &file_services_settings_laws_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReorderLawBooksRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReorderLawBooksRequest) ProtoMessage() {}
+
+func (x *ReorderLawBooksRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_laws_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ReorderLawBooksRequest) GetLawBookIds() []int64 {
+	if x != nil {
+		return x.xxx_hidden_LawBookIds
+	}
+	return nil
+}
+
+func (x *ReorderLawBooksRequest) SetLawBookIds(v []int64) {
+	x.xxx_hidden_LawBookIds = v
+}
+
+type ReorderLawBooksRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	LawBookIds []int64
+}
+
+func (b0 ReorderLawBooksRequest_builder) Build() *ReorderLawBooksRequest {
+	m0 := &ReorderLawBooksRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_LawBookIds = b.LawBookIds
+	return m0
+}
+
+type ReorderLawBooksResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReorderLawBooksResponse) Reset() {
+	*x = ReorderLawBooksResponse{}
+	mi := &file_services_settings_laws_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReorderLawBooksResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReorderLawBooksResponse) ProtoMessage() {}
+
+func (x *ReorderLawBooksResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_laws_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type ReorderLawBooksResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ReorderLawBooksResponse_builder) Build() *ReorderLawBooksResponse {
+	m0 := &ReorderLawBooksResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 var File_services_settings_laws_proto protoreflect.FileDescriptor
 
 const file_services_settings_laws_proto_rawDesc = "" +
@@ -676,15 +890,25 @@ const file_services_settings_laws_proto_rawDesc = "" +
 	"\x11DeleteLawResponse\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01B\r\n" +
-	"\v_deleted_at2\x9a\x05\n" +
+	"\v_deleted_at\"M\n" +
+	"\x12ReorderLawsRequest\x12\x1e\n" +
+	"\vlaw_book_id\x18\x01 \x01(\x03R\tlawBookId\x12\x17\n" +
+	"\alaw_ids\x18\x02 \x03(\x03R\x06lawIds\"\x15\n" +
+	"\x13ReorderLawsResponse\":\n" +
+	"\x16ReorderLawBooksRequest\x12 \n" +
+	"\flaw_book_ids\x18\x01 \x03(\x03R\n" +
+	"lawBookIds\"\x19\n" +
+	"\x17ReorderLawBooksResponse2\xa1\a\n" +
 	"\vLawsService\x12~\n" +
 	"\fListLawBooks\x12&.services.settings.ListLawBooksRequest\x1a'.services.settings.ListLawBooksResponse\"\x1d\xd2\xf3\x18\x19\b\x01\"\x15CreateOrUpdateLawBook\x12\x82\x01\n" +
 	"\x15CreateOrUpdateLawBook\x12/.services.settings.CreateOrUpdateLawBookRequest\x1a0.services.settings.CreateOrUpdateLawBookResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12j\n" +
-	"\rDeleteLawBook\x12'.services.settings.DeleteLawBookRequest\x1a(.services.settings.DeleteLawBookResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8d\x01\n" +
+	"\rDeleteLawBook\x12'.services.settings.DeleteLawBookRequest\x1a(.services.settings.DeleteLawBookResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x87\x01\n" +
+	"\x0fReorderLawBooks\x12).services.settings.ReorderLawBooksRequest\x1a*.services.settings.ReorderLawBooksResponse\"\x1d\xd2\xf3\x18\x19\b\x01\"\x15CreateOrUpdateLawBook\x12\x8d\x01\n" +
 	"\x11CreateOrUpdateLaw\x12+.services.settings.CreateOrUpdateLawRequest\x1a,.services.settings.CreateOrUpdateLawResponse\"\x1d\xd2\xf3\x18\x19\b\x01\"\x15CreateOrUpdateLawBook\x12m\n" +
-	"\tDeleteLaw\x12#.services.settings.DeleteLawRequest\x1a$.services.settings.DeleteLawResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rDeleteLawBook\x1a\x1b\xea\xf3\x18\x17\bz\x12\x13i-mdi-scale-balanceBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\tDeleteLaw\x12#.services.settings.DeleteLawRequest\x1a$.services.settings.DeleteLawResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rDeleteLawBook\x12{\n" +
+	"\vReorderLaws\x12%.services.settings.ReorderLawsRequest\x1a&.services.settings.ReorderLawsResponse\"\x1d\xd2\xf3\x18\x19\b\x01\"\x15CreateOrUpdateLawBook\x1a\x1b\xea\xf3\x18\x17\bz\x12\x13i-mdi-scale-balanceBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
-var file_services_settings_laws_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_services_settings_laws_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_settings_laws_proto_goTypes = []any{
 	(*ListLawBooksRequest)(nil),           // 0: services.settings.ListLawBooksRequest
 	(*ListLawBooksResponse)(nil),          // 1: services.settings.ListLawBooksResponse
@@ -696,30 +920,38 @@ var file_services_settings_laws_proto_goTypes = []any{
 	(*CreateOrUpdateLawResponse)(nil),     // 7: services.settings.CreateOrUpdateLawResponse
 	(*DeleteLawRequest)(nil),              // 8: services.settings.DeleteLawRequest
 	(*DeleteLawResponse)(nil),             // 9: services.settings.DeleteLawResponse
-	(*laws.LawBook)(nil),                  // 10: resources.laws.LawBook
-	(*timestamp.Timestamp)(nil),           // 11: resources.timestamp.Timestamp
-	(*laws.Law)(nil),                      // 12: resources.laws.Law
+	(*ReorderLawsRequest)(nil),            // 10: services.settings.ReorderLawsRequest
+	(*ReorderLawsResponse)(nil),           // 11: services.settings.ReorderLawsResponse
+	(*ReorderLawBooksRequest)(nil),        // 12: services.settings.ReorderLawBooksRequest
+	(*ReorderLawBooksResponse)(nil),       // 13: services.settings.ReorderLawBooksResponse
+	(*laws.LawBook)(nil),                  // 14: resources.laws.LawBook
+	(*timestamp.Timestamp)(nil),           // 15: resources.timestamp.Timestamp
+	(*laws.Law)(nil),                      // 16: resources.laws.Law
 }
 var file_services_settings_laws_proto_depIdxs = []int32{
-	10, // 0: services.settings.ListLawBooksResponse.books:type_name -> resources.laws.LawBook
-	10, // 1: services.settings.CreateOrUpdateLawBookRequest.law_book:type_name -> resources.laws.LawBook
-	10, // 2: services.settings.CreateOrUpdateLawBookResponse.law_book:type_name -> resources.laws.LawBook
-	11, // 3: services.settings.DeleteLawBookResponse.deleted_at:type_name -> resources.timestamp.Timestamp
-	12, // 4: services.settings.CreateOrUpdateLawRequest.law:type_name -> resources.laws.Law
-	12, // 5: services.settings.CreateOrUpdateLawResponse.law:type_name -> resources.laws.Law
-	11, // 6: services.settings.DeleteLawResponse.deleted_at:type_name -> resources.timestamp.Timestamp
+	14, // 0: services.settings.ListLawBooksResponse.books:type_name -> resources.laws.LawBook
+	14, // 1: services.settings.CreateOrUpdateLawBookRequest.law_book:type_name -> resources.laws.LawBook
+	14, // 2: services.settings.CreateOrUpdateLawBookResponse.law_book:type_name -> resources.laws.LawBook
+	15, // 3: services.settings.DeleteLawBookResponse.deleted_at:type_name -> resources.timestamp.Timestamp
+	16, // 4: services.settings.CreateOrUpdateLawRequest.law:type_name -> resources.laws.Law
+	16, // 5: services.settings.CreateOrUpdateLawResponse.law:type_name -> resources.laws.Law
+	15, // 6: services.settings.DeleteLawResponse.deleted_at:type_name -> resources.timestamp.Timestamp
 	0,  // 7: services.settings.LawsService.ListLawBooks:input_type -> services.settings.ListLawBooksRequest
 	2,  // 8: services.settings.LawsService.CreateOrUpdateLawBook:input_type -> services.settings.CreateOrUpdateLawBookRequest
 	4,  // 9: services.settings.LawsService.DeleteLawBook:input_type -> services.settings.DeleteLawBookRequest
-	6,  // 10: services.settings.LawsService.CreateOrUpdateLaw:input_type -> services.settings.CreateOrUpdateLawRequest
-	8,  // 11: services.settings.LawsService.DeleteLaw:input_type -> services.settings.DeleteLawRequest
-	1,  // 12: services.settings.LawsService.ListLawBooks:output_type -> services.settings.ListLawBooksResponse
-	3,  // 13: services.settings.LawsService.CreateOrUpdateLawBook:output_type -> services.settings.CreateOrUpdateLawBookResponse
-	5,  // 14: services.settings.LawsService.DeleteLawBook:output_type -> services.settings.DeleteLawBookResponse
-	7,  // 15: services.settings.LawsService.CreateOrUpdateLaw:output_type -> services.settings.CreateOrUpdateLawResponse
-	9,  // 16: services.settings.LawsService.DeleteLaw:output_type -> services.settings.DeleteLawResponse
-	12, // [12:17] is the sub-list for method output_type
-	7,  // [7:12] is the sub-list for method input_type
+	12, // 10: services.settings.LawsService.ReorderLawBooks:input_type -> services.settings.ReorderLawBooksRequest
+	6,  // 11: services.settings.LawsService.CreateOrUpdateLaw:input_type -> services.settings.CreateOrUpdateLawRequest
+	8,  // 12: services.settings.LawsService.DeleteLaw:input_type -> services.settings.DeleteLawRequest
+	10, // 13: services.settings.LawsService.ReorderLaws:input_type -> services.settings.ReorderLawsRequest
+	1,  // 14: services.settings.LawsService.ListLawBooks:output_type -> services.settings.ListLawBooksResponse
+	3,  // 15: services.settings.LawsService.CreateOrUpdateLawBook:output_type -> services.settings.CreateOrUpdateLawBookResponse
+	5,  // 16: services.settings.LawsService.DeleteLawBook:output_type -> services.settings.DeleteLawBookResponse
+	13, // 17: services.settings.LawsService.ReorderLawBooks:output_type -> services.settings.ReorderLawBooksResponse
+	7,  // 18: services.settings.LawsService.CreateOrUpdateLaw:output_type -> services.settings.CreateOrUpdateLawResponse
+	9,  // 19: services.settings.LawsService.DeleteLaw:output_type -> services.settings.DeleteLawResponse
+	11, // 20: services.settings.LawsService.ReorderLaws:output_type -> services.settings.ReorderLawsResponse
+	14, // [14:21] is the sub-list for method output_type
+	7,  // [7:14] is the sub-list for method input_type
 	7,  // [7:7] is the sub-list for extension type_name
 	7,  // [7:7] is the sub-list for extension extendee
 	0,  // [0:7] is the sub-list for field type_name
@@ -738,7 +970,7 @@ func file_services_settings_laws_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_settings_laws_proto_rawDesc), len(file_services_settings_laws_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

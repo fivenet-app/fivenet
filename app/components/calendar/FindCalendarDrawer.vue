@@ -74,7 +74,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
     <UDrawer
         :title="$t('components.calendar.FindCalendarDrawer.title')"
         :close="{ onClick: () => $emit('close', false) }"
-        :ui="{ title: 'flex' }"
+        :ui="{ title: 'flex flex-row gap-2' }"
     >
         <template #title>
             <span class="flex-1">{{ $t('components.calendar.FindCalendarDrawer.title') }}</span>

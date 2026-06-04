@@ -7,12 +7,13 @@ import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import LeafletLazyPopup from './LeafletLazyPopup.vue';
 import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
+import { checkIfCanEditMarker } from './markers/helpers.js';
 
 defineProps<{
     marker: MarkerMarker;
 }>();
 
-const { can } = useAuth();
+const { activeChar, can } = useAuth();
 
 const overlay = useOverlay();
 
@@ -67,7 +68,13 @@ function openMarkerEditor(marker: MarkerMarker, closePopup: () => void): void {
                             />
                         </UTooltip>
 
-                        <UTooltip v-if="can('livemap.LivemapService/CreateOrUpdateMarker').value" :text="$t('common.edit')">
+                        <UTooltip
+                            v-if="
+                                can('livemap.LivemapService/CreateOrUpdateMarker').value &&
+                                checkIfCanEditMarker(activeChar, marker.creator)
+                            "
+                            :text="$t('common.edit')"
+                        >
                             <UButton
                                 variant="link"
                                 icon="i-mdi-pencil"

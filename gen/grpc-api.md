@@ -5407,6 +5407,7 @@ Dummy - DO NOT USE!
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `lawbook_id` | [int64](#int64) |  |  |
+| `sort_order` | [int32](#int32) |  |  |
 | `name` | [string](#string) |  |  |
 | `description` | [string](#string) | optional |  |
 | `hint` | [string](#string) | optional |  |
@@ -5427,6 +5428,7 @@ Dummy - DO NOT USE!
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `sort_order` | [int32](#int32) |  |  |
 | `name` | [string](#string) |  |  |
 | `description` | [string](#string) | optional |  |
 | `laws` | [Law](#resourceslawsLaw) | repeated |  |
@@ -12856,6 +12858,41 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
+
+### services.settings.ReorderLawBooksRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `law_book_ids` | [int64](#int64) | repeated |  |
+
+
+
+
+
+### services.settings.ReorderLawBooksResponse
+
+
+
+
+
+### services.settings.ReorderLawsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `law_book_id` | [int64](#int64) |  |  |
+| `law_ids` | [int64](#int64) | repeated |  |
+
+
+
+
+
+### services.settings.ReorderLawsResponse
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -12870,8 +12907,10 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `ListLawBooks` | [ListLawBooksRequest](#servicessettingsListLawBooksRequest) | [ListLawBooksResponse](#servicessettingsListLawBooksResponse) | |
 | `CreateOrUpdateLawBook` | [CreateOrUpdateLawBookRequest](#servicessettingsCreateOrUpdateLawBookRequest) | [CreateOrUpdateLawBookResponse](#servicessettingsCreateOrUpdateLawBookResponse) | |
 | `DeleteLawBook` | [DeleteLawBookRequest](#servicessettingsDeleteLawBookRequest) | [DeleteLawBookResponse](#servicessettingsDeleteLawBookResponse) | |
+| `ReorderLawBooks` | [ReorderLawBooksRequest](#servicessettingsReorderLawBooksRequest) | [ReorderLawBooksResponse](#servicessettingsReorderLawBooksResponse) | |
 | `CreateOrUpdateLaw` | [CreateOrUpdateLawRequest](#servicessettingsCreateOrUpdateLawRequest) | [CreateOrUpdateLawResponse](#servicessettingsCreateOrUpdateLawResponse) | |
 | `DeleteLaw` | [DeleteLawRequest](#servicessettingsDeleteLawRequest) | [DeleteLawResponse](#servicessettingsDeleteLawResponse) | |
+| `ReorderLaws` | [ReorderLawsRequest](#servicessettingsReorderLawsRequest) | [ReorderLawsResponse](#servicessettingsReorderLawsResponse) | |
 
  <!-- end services -->
 

@@ -14,6 +14,7 @@ message LawBook {
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
+  int32 sort_order = 8 [(buf.validate.field).int32.gte = 0];
   string name = 5 [
     (buf.validate.field).string = {
       min_len: 3
@@ -34,6 +35,7 @@ message Law {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   int64 lawbook_id = 5;
+  int32 sort_order = 12 [(buf.validate.field).int32.gte = 0];
   string name = 6 [
     (buf.validate.field).string = {
       min_len: 3

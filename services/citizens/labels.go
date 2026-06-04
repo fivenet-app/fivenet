@@ -30,6 +30,38 @@ var (
 	tCitizensLabelsJobAccess = table.FivenetUserLabelsJobJobAccess
 )
 
+type sortOrderResult struct {
+	SortOrder int32 `alias:"sort_order"`
+}
+
+func (s *Server) nextLabelSortOrder(
+	ctx context.Context,
+	q qrm.Queryable,
+	job string,
+) (int32, error) {
+	stmt := tCitizensLabelsJob.
+		SELECT(
+			mysql.COALESCE(mysql.MAX(tCitizensLabelsJob.SortOrder), mysql.Int32(-1)).
+				AS("sort_order"),
+		).
+		FROM(tCitizensLabelsJob).
+		WHERE(mysql.AND(
+			tCitizensLabelsJob.Job.EQ(mysql.String(job)),
+			tCitizensLabelsJob.DeletedAt.IS_NULL(),
+		))
+
+	var dest sortOrderResult
+	if err := stmt.QueryContext(ctx, q, &dest); err != nil {
+		return 0, err
+	}
+
+	if dest.SortOrder >= math.MaxInt32 {
+		return 0, errorscitizens.ErrFailedQuery
+	}
+
+	return dest.SortOrder + 1, nil
+}
+
 func (s *Server) ListLabels(
 	ctx context.Context,
 	req *pbcitizens.ListLabelsRequest,
@@ -91,6 +123,7 @@ func (s *Server) ListLabels(
 	columns := mysql.ProjectionList{
 		tCitizensLabelsJob.ID,
 		tCitizensLabelsJob.CreatedAt,
+		tCitizensLabelsJob.SortOrder,
 		tCitizensLabelsJob.Name,
 		tCitizensLabelsJob.Color,
 		tCitizensLabelsJob.Icon,
@@ -216,6 +249,7 @@ func (s *Server) getLabel(
 			tCitizensLabelsJob.UpdatedAt,
 			tCitizensLabelsJob.DeletedAt,
 			tCitizensLabelsJob.Job,
+			tCitizensLabelsJob.SortOrder,
 			tCitizensLabelsJob.Name,
 			tCitizensLabelsJob.Color,
 			tCitizensLabelsJob.Icon,
@@ -284,9 +318,16 @@ func (s *Server) CreateOrUpdateLabel(
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	} else {
+		sortOrder, err := s.nextLabelSortOrder(ctx, tx, userInfo.GetJob())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		}
+		label.SortOrder = sortOrder
+
 		stmt := tCitizensLabelsJob.
 			INSERT(
 				tCitizensLabelsJob.Job,
+				tCitizensLabelsJob.SortOrder,
 				tCitizensLabelsJob.Name,
 				tCitizensLabelsJob.Color,
 				tCitizensLabelsJob.Icon,
@@ -294,6 +335,7 @@ func (s *Server) CreateOrUpdateLabel(
 			).
 			VALUES(
 				label.Job,
+				label.SortOrder,
 				label.Name,
 				label.Color,
 				label.Icon,

@@ -29,6 +29,6 @@ func TestDetectContentType(t *testing.T) {
 		t.Parallel()
 
 		data := []byte{0x00, 0xff, 0x81, 0x82, 0x00, 0x01, 0x02, 0x03}
-		assert.Equal(t, "", detectContentType(data))
+		assert.Empty(t, detectContentType(data))
 	})
 }
