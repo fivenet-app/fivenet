@@ -33,6 +33,10 @@ export interface LawBook {
      */
     deletedAt?: Timestamp;
     /**
+     * @generated from protobuf field: int32 sort_order = 8
+     */
+    sortOrder: number;
+    /**
      * @generated from protobuf field: string name = 5
      */
     name: string;
@@ -70,6 +74,10 @@ export interface Law {
      */
     lawbookId: number;
     /**
+     * @generated from protobuf field: int32 sort_order = 12
+     */
+    sortOrder: number;
+    /**
      * @generated from protobuf field: string name = 6
      */
     name: string;
@@ -102,6 +110,7 @@ class LawBook$Type extends MessageType<LawBook> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 8, name: "sort_order", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } }, "tagger.tags": "alias:\"sort_order\"" } },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 7, name: "laws", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Law }
@@ -110,6 +119,7 @@ class LawBook$Type extends MessageType<LawBook> {
     create(value?: PartialMessage<LawBook>): LawBook {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
+        message.sortOrder = 0;
         message.name = "";
         message.laws = [];
         if (value !== undefined)
@@ -132,6 +142,9 @@ class LawBook$Type extends MessageType<LawBook> {
                     break;
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* int32 sort_order */ 8:
+                    message.sortOrder = reader.int32();
                     break;
                 case /* string name */ 5:
                     message.name = reader.string();
@@ -175,6 +188,9 @@ class LawBook$Type extends MessageType<LawBook> {
         /* repeated resources.laws.Law laws = 7; */
         for (let i = 0; i < message.laws.length; i++)
             Law.internalBinaryWrite(message.laws[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* int32 sort_order = 8; */
+        if (message.sortOrder !== 0)
+            writer.tag(8, WireType.Varint).int32(message.sortOrder);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -194,6 +210,7 @@ class Law$Type extends MessageType<Law> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "lawbook_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 12, name: "sort_order", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } }, "tagger.tags": "alias:\"sort_order\"" } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 8, name: "hint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
@@ -206,6 +223,7 @@ class Law$Type extends MessageType<Law> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.lawbookId = 0;
+        message.sortOrder = 0;
         message.name = "";
         if (value !== undefined)
             reflectionMergePartial<Law>(this, message, value);
@@ -230,6 +248,9 @@ class Law$Type extends MessageType<Law> {
                     break;
                 case /* int64 lawbook_id */ 5:
                     message.lawbookId = reader.int64().toNumber();
+                    break;
+                case /* int32 sort_order */ 12:
+                    message.sortOrder = reader.int32();
                     break;
                 case /* string name */ 6:
                     message.name = reader.string();
@@ -294,6 +315,9 @@ class Law$Type extends MessageType<Law> {
         /* optional uint32 stvo_points = 11; */
         if (message.stvoPoints !== undefined)
             writer.tag(11, WireType.Varint).uint32(message.stvoPoints);
+        /* int32 sort_order = 12; */
+        if (message.sortOrder !== 0)
+            writer.tag(12, WireType.Varint).int32(message.sortOrder);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

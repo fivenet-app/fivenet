@@ -22,8 +22,10 @@ const (
 	LawsService_ListLawBooks_FullMethodName          = "/services.settings.LawsService/ListLawBooks"
 	LawsService_CreateOrUpdateLawBook_FullMethodName = "/services.settings.LawsService/CreateOrUpdateLawBook"
 	LawsService_DeleteLawBook_FullMethodName         = "/services.settings.LawsService/DeleteLawBook"
+	LawsService_ReorderLawBooks_FullMethodName       = "/services.settings.LawsService/ReorderLawBooks"
 	LawsService_CreateOrUpdateLaw_FullMethodName     = "/services.settings.LawsService/CreateOrUpdateLaw"
 	LawsService_DeleteLaw_FullMethodName             = "/services.settings.LawsService/DeleteLaw"
+	LawsService_ReorderLaws_FullMethodName           = "/services.settings.LawsService/ReorderLaws"
 )
 
 // LawsServiceClient is the client API for LawsService service.
@@ -33,8 +35,10 @@ type LawsServiceClient interface {
 	ListLawBooks(ctx context.Context, in *ListLawBooksRequest, opts ...grpc.CallOption) (*ListLawBooksResponse, error)
 	CreateOrUpdateLawBook(ctx context.Context, in *CreateOrUpdateLawBookRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawBookResponse, error)
 	DeleteLawBook(ctx context.Context, in *DeleteLawBookRequest, opts ...grpc.CallOption) (*DeleteLawBookResponse, error)
+	ReorderLawBooks(ctx context.Context, in *ReorderLawBooksRequest, opts ...grpc.CallOption) (*ReorderLawBooksResponse, error)
 	CreateOrUpdateLaw(ctx context.Context, in *CreateOrUpdateLawRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawResponse, error)
 	DeleteLaw(ctx context.Context, in *DeleteLawRequest, opts ...grpc.CallOption) (*DeleteLawResponse, error)
+	ReorderLaws(ctx context.Context, in *ReorderLawsRequest, opts ...grpc.CallOption) (*ReorderLawsResponse, error)
 }
 
 type lawsServiceClient struct {
@@ -75,6 +79,16 @@ func (c *lawsServiceClient) DeleteLawBook(ctx context.Context, in *DeleteLawBook
 	return out, nil
 }
 
+func (c *lawsServiceClient) ReorderLawBooks(ctx context.Context, in *ReorderLawBooksRequest, opts ...grpc.CallOption) (*ReorderLawBooksResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReorderLawBooksResponse)
+	err := c.cc.Invoke(ctx, LawsService_ReorderLawBooks_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *lawsServiceClient) CreateOrUpdateLaw(ctx context.Context, in *CreateOrUpdateLawRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateOrUpdateLawResponse)
@@ -95,6 +109,16 @@ func (c *lawsServiceClient) DeleteLaw(ctx context.Context, in *DeleteLawRequest,
 	return out, nil
 }
 
+func (c *lawsServiceClient) ReorderLaws(ctx context.Context, in *ReorderLawsRequest, opts ...grpc.CallOption) (*ReorderLawsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReorderLawsResponse)
+	err := c.cc.Invoke(ctx, LawsService_ReorderLaws_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LawsServiceServer is the server API for LawsService service.
 // All implementations must embed UnimplementedLawsServiceServer
 // for forward compatibility.
@@ -102,8 +126,10 @@ type LawsServiceServer interface {
 	ListLawBooks(context.Context, *ListLawBooksRequest) (*ListLawBooksResponse, error)
 	CreateOrUpdateLawBook(context.Context, *CreateOrUpdateLawBookRequest) (*CreateOrUpdateLawBookResponse, error)
 	DeleteLawBook(context.Context, *DeleteLawBookRequest) (*DeleteLawBookResponse, error)
+	ReorderLawBooks(context.Context, *ReorderLawBooksRequest) (*ReorderLawBooksResponse, error)
 	CreateOrUpdateLaw(context.Context, *CreateOrUpdateLawRequest) (*CreateOrUpdateLawResponse, error)
 	DeleteLaw(context.Context, *DeleteLawRequest) (*DeleteLawResponse, error)
+	ReorderLaws(context.Context, *ReorderLawsRequest) (*ReorderLawsResponse, error)
 	mustEmbedUnimplementedLawsServiceServer()
 }
 
@@ -123,11 +149,17 @@ func (UnimplementedLawsServiceServer) CreateOrUpdateLawBook(context.Context, *Cr
 func (UnimplementedLawsServiceServer) DeleteLawBook(context.Context, *DeleteLawBookRequest) (*DeleteLawBookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteLawBook not implemented")
 }
+func (UnimplementedLawsServiceServer) ReorderLawBooks(context.Context, *ReorderLawBooksRequest) (*ReorderLawBooksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReorderLawBooks not implemented")
+}
 func (UnimplementedLawsServiceServer) CreateOrUpdateLaw(context.Context, *CreateOrUpdateLawRequest) (*CreateOrUpdateLawResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateLaw not implemented")
 }
 func (UnimplementedLawsServiceServer) DeleteLaw(context.Context, *DeleteLawRequest) (*DeleteLawResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteLaw not implemented")
+}
+func (UnimplementedLawsServiceServer) ReorderLaws(context.Context, *ReorderLawsRequest) (*ReorderLawsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReorderLaws not implemented")
 }
 func (UnimplementedLawsServiceServer) mustEmbedUnimplementedLawsServiceServer() {}
 func (UnimplementedLawsServiceServer) testEmbeddedByValue()                     {}
@@ -204,6 +236,24 @@ func _LawsService_DeleteLawBook_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LawsService_ReorderLawBooks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReorderLawBooksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LawsServiceServer).ReorderLawBooks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LawsService_ReorderLawBooks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LawsServiceServer).ReorderLawBooks(ctx, req.(*ReorderLawBooksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _LawsService_CreateOrUpdateLaw_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateOrUpdateLawRequest)
 	if err := dec(in); err != nil {
@@ -240,6 +290,24 @@ func _LawsService_DeleteLaw_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LawsService_ReorderLaws_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReorderLawsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LawsServiceServer).ReorderLaws(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LawsService_ReorderLaws_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LawsServiceServer).ReorderLaws(ctx, req.(*ReorderLawsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LawsService_ServiceDesc is the grpc.ServiceDesc for LawsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -260,12 +328,20 @@ var LawsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _LawsService_DeleteLawBook_Handler,
 		},
 		{
+			MethodName: "ReorderLawBooks",
+			Handler:    _LawsService_ReorderLawBooks_Handler,
+		},
+		{
 			MethodName: "CreateOrUpdateLaw",
 			Handler:    _LawsService_CreateOrUpdateLaw_Handler,
 		},
 		{
 			MethodName: "DeleteLaw",
 			Handler:    _LawsService_DeleteLaw_Handler,
+		},
+		{
+			MethodName: "ReorderLaws",
+			Handler:    _LawsService_ReorderLaws_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

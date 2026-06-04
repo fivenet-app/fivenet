@@ -78,7 +78,7 @@ func newFivenetStatsDailyRollupTableImpl(schemaName, tableName, alias string) fi
 		ValueColumn      = mysql.IntegerColumn("value")
 		allColumns       = mysql.ColumnList{DayColumn, JobColumn, SourceKindColumn, SourceKeyColumn, MetricKeyColumn, Dimension1Column, Dimension2Column, Dimension3Column, ValueColumn}
 		mutableColumns   = mysql.ColumnList{ValueColumn}
-		defaultColumns   = mysql.ColumnList{}
+		defaultColumns   = mysql.ColumnList{Dimension1Column, Dimension2Column, Dimension3Column}
 	)
 
 	return fivenetStatsDailyRollupTable{

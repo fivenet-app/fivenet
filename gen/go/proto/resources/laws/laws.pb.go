@@ -31,6 +31,7 @@ type LawBook struct {
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	SortOrder     int32                  `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty" alias:"sort_order"`
 	Name          string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
 	Description   *string                `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Laws          []*Law                 `protobuf:"bytes,7,rep,name=laws,proto3" json:"laws,omitempty"`
@@ -91,6 +92,13 @@ func (x *LawBook) GetDeletedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *LawBook) GetSortOrder() int32 {
+	if x != nil {
+		return x.SortOrder
+	}
+	return 0
+}
+
 func (x *LawBook) GetName() string {
 	if x != nil {
 		return x.Name
@@ -126,6 +134,10 @@ func (x *LawBook) SetUpdatedAt(v *timestamp.Timestamp) {
 
 func (x *LawBook) SetDeletedAt(v *timestamp.Timestamp) {
 	x.DeletedAt = v
+}
+
+func (x *LawBook) SetSortOrder(v int32) {
+	x.SortOrder = v
 }
 
 func (x *LawBook) SetName(v string) {
@@ -191,6 +203,7 @@ type LawBook_builder struct {
 	CreatedAt   *timestamp.Timestamp
 	UpdatedAt   *timestamp.Timestamp
 	DeletedAt   *timestamp.Timestamp
+	SortOrder   int32
 	Name        string
 	Description *string
 	Laws        []*Law
@@ -204,6 +217,7 @@ func (b0 LawBook_builder) Build() *LawBook {
 	x.CreatedAt = b.CreatedAt
 	x.UpdatedAt = b.UpdatedAt
 	x.DeletedAt = b.DeletedAt
+	x.SortOrder = b.SortOrder
 	x.Name = b.Name
 	x.Description = b.Description
 	x.Laws = b.Laws
@@ -217,6 +231,7 @@ type Law struct {
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	LawbookId     int64                  `protobuf:"varint,5,opt,name=lawbook_id,json=lawbookId,proto3" json:"lawbook_id,omitempty"`
+	SortOrder     int32                  `protobuf:"varint,12,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty" alias:"sort_order"`
 	Name          string                 `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
 	Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Hint          *string                `protobuf:"bytes,8,opt,name=hint,proto3,oneof" json:"hint,omitempty"`
@@ -287,6 +302,13 @@ func (x *Law) GetLawbookId() int64 {
 	return 0
 }
 
+func (x *Law) GetSortOrder() int32 {
+	if x != nil {
+		return x.SortOrder
+	}
+	return 0
+}
+
 func (x *Law) GetName() string {
 	if x != nil {
 		return x.Name
@@ -347,6 +369,10 @@ func (x *Law) SetDeletedAt(v *timestamp.Timestamp) {
 
 func (x *Law) SetLawbookId(v int64) {
 	x.LawbookId = v
+}
+
+func (x *Law) SetSortOrder(v int32) {
+	x.SortOrder = v
 }
 
 func (x *Law) SetName(v string) {
@@ -469,6 +495,7 @@ type Law_builder struct {
 	UpdatedAt     *timestamp.Timestamp
 	DeletedAt     *timestamp.Timestamp
 	LawbookId     int64
+	SortOrder     int32
 	Name          string
 	Description   *string
 	Hint          *string
@@ -486,6 +513,7 @@ func (b0 Law_builder) Build() *Law {
 	x.UpdatedAt = b.UpdatedAt
 	x.DeletedAt = b.DeletedAt
 	x.LawbookId = b.LawbookId
+	x.SortOrder = b.SortOrder
 	x.Name = b.Name
 	x.Description = b.Description
 	x.Hint = b.Hint
@@ -499,7 +527,7 @@ var File_resources_laws_laws_proto protoreflect.FileDescriptor
 
 const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/laws/laws.proto\x12\x0eresources.laws\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb9\x03\n" +
+	"\x19resources/laws/laws.proto\x12\x0eresources.laws\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xf1\x03\n" +
 	"\aLawBook\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -507,14 +535,16 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1a\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x126\n" +
+	"\n" +
+	"sort_order\x18\b \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"sort_order\"R\tsortOrder\x12\x1a\n" +
 	"\x04name\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x04name\x12-\n" +
 	"\vdescription\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x03R\vdescription\x88\x01\x01\x12'\n" +
 	"\x04laws\x18\a \x03(\v2\x13.resources.laws.LawR\x04lawsB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
-	"\f_description\"\xf0\x04\n" +
+	"\f_description\"\xa8\x05\n" +
 	"\x03Law\x125\n" +
 	"\x02id\x18\x01 \x01(\x03B%\x9a\x84\x9e\x03 sql:\"primary_key\" alias:\"law.id\"R\x02id\x12B\n" +
 	"\n" +
@@ -524,7 +554,9 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"lawbook_id\x18\x05 \x01(\x03R\tlawbookId\x12\x1a\n" +
+	"lawbook_id\x18\x05 \x01(\x03R\tlawbookId\x126\n" +
+	"\n" +
+	"sort_order\x18\f \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"sort_order\"R\tsortOrder\x12\x1a\n" +
 	"\x04name\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x04name\x12-\n" +
 	"\vdescription\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x03R\vdescription\x88\x01\x01\x12\x1f\n" +
 	"\x04hint\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x04R\x04hint\x88\x01\x01\x12\x17\n" +

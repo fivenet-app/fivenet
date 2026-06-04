@@ -101,6 +101,38 @@ export interface DeleteLawResponse {
      */
     deletedAt?: Timestamp;
 }
+/**
+ * @generated from protobuf message services.settings.ReorderLawsRequest
+ */
+export interface ReorderLawsRequest {
+    /**
+     * @generated from protobuf field: int64 law_book_id = 1
+     */
+    lawBookId: number;
+    /**
+     * @generated from protobuf field: repeated int64 law_ids = 2
+     */
+    lawIds: number[];
+}
+/**
+ * @generated from protobuf message services.settings.ReorderLawsResponse
+ */
+export interface ReorderLawsResponse {
+}
+/**
+ * @generated from protobuf message services.settings.ReorderLawBooksRequest
+ */
+export interface ReorderLawBooksRequest {
+    /**
+     * @generated from protobuf field: repeated int64 law_book_ids = 1
+     */
+    lawBookIds: number[];
+}
+/**
+ * @generated from protobuf message services.settings.ReorderLawBooksResponse
+ */
+export interface ReorderLawBooksResponse {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class ListLawBooksRequest$Type extends MessageType<ListLawBooksRequest> {
     constructor() {
@@ -556,6 +588,200 @@ class DeleteLawResponse$Type extends MessageType<DeleteLawResponse> {
  * @generated MessageType for protobuf message services.settings.DeleteLawResponse
  */
 export const DeleteLawResponse = new DeleteLawResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReorderLawsRequest$Type extends MessageType<ReorderLawsRequest> {
+    constructor() {
+        super("services.settings.ReorderLawsRequest", [
+            { no: 1, name: "law_book_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "law_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "200", items: { int64: { gt: "0" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReorderLawsRequest>): ReorderLawsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.lawBookId = 0;
+        message.lawIds = [];
+        if (value !== undefined)
+            reflectionMergePartial<ReorderLawsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReorderLawsRequest): ReorderLawsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 law_book_id */ 1:
+                    message.lawBookId = reader.int64().toNumber();
+                    break;
+                case /* repeated int64 law_ids */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.lawIds.push(reader.int64().toNumber());
+                    else
+                        message.lawIds.push(reader.int64().toNumber());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReorderLawsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 law_book_id = 1; */
+        if (message.lawBookId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.lawBookId);
+        /* repeated int64 law_ids = 2; */
+        if (message.lawIds.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.lawIds.length; i++)
+                writer.int64(message.lawIds[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.ReorderLawsRequest
+ */
+export const ReorderLawsRequest = new ReorderLawsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReorderLawsResponse$Type extends MessageType<ReorderLawsResponse> {
+    constructor() {
+        super("services.settings.ReorderLawsResponse", []);
+    }
+    create(value?: PartialMessage<ReorderLawsResponse>): ReorderLawsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ReorderLawsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReorderLawsResponse): ReorderLawsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReorderLawsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.ReorderLawsResponse
+ */
+export const ReorderLawsResponse = new ReorderLawsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReorderLawBooksRequest$Type extends MessageType<ReorderLawBooksRequest> {
+    constructor() {
+        super("services.settings.ReorderLawBooksRequest", [
+            { no: 1, name: "law_book_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "200", items: { int64: { gt: "0" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReorderLawBooksRequest>): ReorderLawBooksRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.lawBookIds = [];
+        if (value !== undefined)
+            reflectionMergePartial<ReorderLawBooksRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReorderLawBooksRequest): ReorderLawBooksRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated int64 law_book_ids */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.lawBookIds.push(reader.int64().toNumber());
+                    else
+                        message.lawBookIds.push(reader.int64().toNumber());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReorderLawBooksRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int64 law_book_ids = 1; */
+        if (message.lawBookIds.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.lawBookIds.length; i++)
+                writer.int64(message.lawBookIds[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.ReorderLawBooksRequest
+ */
+export const ReorderLawBooksRequest = new ReorderLawBooksRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReorderLawBooksResponse$Type extends MessageType<ReorderLawBooksResponse> {
+    constructor() {
+        super("services.settings.ReorderLawBooksResponse", []);
+    }
+    create(value?: PartialMessage<ReorderLawBooksResponse>): ReorderLawBooksResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ReorderLawBooksResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReorderLawBooksResponse): ReorderLawBooksResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReorderLawBooksResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.ReorderLawBooksResponse
+ */
+export const ReorderLawBooksResponse = new ReorderLawBooksResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.settings.LawsService
  */
@@ -563,6 +789,8 @@ export const LawsService = new ServiceType("services.settings.LawsService", [
     { name: "ListLawBooks", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateLawBook" } }, I: ListLawBooksRequest, O: ListLawBooksResponse },
     { name: "CreateOrUpdateLawBook", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateLawBookRequest, O: CreateOrUpdateLawBookResponse },
     { name: "DeleteLawBook", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteLawBookRequest, O: DeleteLawBookResponse },
+    { name: "ReorderLawBooks", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateLawBook" } }, I: ReorderLawBooksRequest, O: ReorderLawBooksResponse },
     { name: "CreateOrUpdateLaw", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateLawBook" } }, I: CreateOrUpdateLawRequest, O: CreateOrUpdateLawResponse },
-    { name: "DeleteLaw", options: { "codegen.perms.perms": { enabled: true, name: "DeleteLawBook" } }, I: DeleteLawRequest, O: DeleteLawResponse }
+    { name: "DeleteLaw", options: { "codegen.perms.perms": { enabled: true, name: "DeleteLawBook" } }, I: DeleteLawRequest, O: DeleteLawResponse },
+    { name: "ReorderLaws", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateLawBook" } }, I: ReorderLawsRequest, O: ReorderLawsResponse }
 ], { "codegen.perms.perms_svc": { order: 122, icon: "i-mdi-scale-balance" } });

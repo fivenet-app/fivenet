@@ -5,10 +5,14 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { LawsService } from "./laws";
+import type { ReorderLawsResponse } from "./laws";
+import type { ReorderLawsRequest } from "./laws";
 import type { DeleteLawResponse } from "./laws";
 import type { DeleteLawRequest } from "./laws";
 import type { CreateOrUpdateLawResponse } from "./laws";
 import type { CreateOrUpdateLawRequest } from "./laws";
+import type { ReorderLawBooksResponse } from "./laws";
+import type { ReorderLawBooksRequest } from "./laws";
 import type { DeleteLawBookResponse } from "./laws";
 import type { DeleteLawBookRequest } from "./laws";
 import type { CreateOrUpdateLawBookResponse } from "./laws";
@@ -35,6 +39,10 @@ export interface ILawsServiceClient {
      */
     deleteLawBook(input: DeleteLawBookRequest, options?: RpcOptions): UnaryCall<DeleteLawBookRequest, DeleteLawBookResponse>;
     /**
+     * @generated from protobuf rpc: ReorderLawBooks
+     */
+    reorderLawBooks(input: ReorderLawBooksRequest, options?: RpcOptions): UnaryCall<ReorderLawBooksRequest, ReorderLawBooksResponse>;
+    /**
      * @generated from protobuf rpc: CreateOrUpdateLaw
      */
     createOrUpdateLaw(input: CreateOrUpdateLawRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse>;
@@ -42,6 +50,10 @@ export interface ILawsServiceClient {
      * @generated from protobuf rpc: DeleteLaw
      */
     deleteLaw(input: DeleteLawRequest, options?: RpcOptions): UnaryCall<DeleteLawRequest, DeleteLawResponse>;
+    /**
+     * @generated from protobuf rpc: ReorderLaws
+     */
+    reorderLaws(input: ReorderLawsRequest, options?: RpcOptions): UnaryCall<ReorderLawsRequest, ReorderLawsResponse>;
 }
 /**
  * @generated from protobuf service services.settings.LawsService
@@ -74,17 +86,31 @@ export class LawsServiceClient implements ILawsServiceClient, ServiceInfo {
         return stackIntercept<DeleteLawBookRequest, DeleteLawBookResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: ReorderLawBooks
+     */
+    reorderLawBooks(input: ReorderLawBooksRequest, options?: RpcOptions): UnaryCall<ReorderLawBooksRequest, ReorderLawBooksResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ReorderLawBooksRequest, ReorderLawBooksResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: CreateOrUpdateLaw
      */
     createOrUpdateLaw(input: CreateOrUpdateLawRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteLaw
      */
     deleteLaw(input: DeleteLawRequest, options?: RpcOptions): UnaryCall<DeleteLawRequest, DeleteLawResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteLawRequest, DeleteLawResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: ReorderLaws
+     */
+    reorderLaws(input: ReorderLawsRequest, options?: RpcOptions): UnaryCall<ReorderLawsRequest, ReorderLawsResponse> {
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ReorderLawsRequest, ReorderLawsResponse>("unary", this._transport, method, opt, input);
     }
 }

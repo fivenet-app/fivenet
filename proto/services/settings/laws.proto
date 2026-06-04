@@ -46,6 +46,31 @@ message DeleteLawResponse {
   optional resources.timestamp.Timestamp deleted_at = 1;
 }
 
+message ReorderLawsRequest {
+  int64 law_book_id = 1 [(buf.validate.field).int64.gt = 0];
+  repeated int64 law_ids = 2 [(buf.validate.field).repeated = {
+    items: {
+      int64: {gt: 0}
+    }
+    min_items: 1
+    max_items: 200
+  }];
+}
+
+message ReorderLawsResponse {}
+
+message ReorderLawBooksRequest {
+  repeated int64 law_book_ids = 1 [(buf.validate.field).repeated = {
+    items: {
+      int64: {gt: 0}
+    }
+    min_items: 1
+    max_items: 200
+  }];
+}
+
+message ReorderLawBooksResponse {}
+
 service LawsService {
   option (codegen.perms.perms_svc) = {
     order: 122
@@ -65,6 +90,12 @@ service LawsService {
   rpc DeleteLawBook(DeleteLawBookRequest) returns (DeleteLawBookResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }
+  rpc ReorderLawBooks(ReorderLawBooksRequest) returns (ReorderLawBooksResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateOrUpdateLawBook"
+    };
+  }
   rpc CreateOrUpdateLaw(CreateOrUpdateLawRequest) returns (CreateOrUpdateLawResponse) {
     option (codegen.perms.perms) = {
       enabled: true
@@ -75,6 +106,12 @@ service LawsService {
     option (codegen.perms.perms) = {
       enabled: true
       name: "DeleteLawBook"
+    };
+  }
+  rpc ReorderLaws(ReorderLawsRequest) returns (ReorderLawsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateOrUpdateLawBook"
     };
   }
 }

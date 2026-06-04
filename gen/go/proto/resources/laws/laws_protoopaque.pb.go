@@ -31,6 +31,7 @@ type LawBook struct {
 	xxx_hidden_CreatedAt   *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
 	xxx_hidden_UpdatedAt   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
 	xxx_hidden_DeletedAt   *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
+	xxx_hidden_SortOrder   int32                  `protobuf:"varint,8,opt,name=sort_order,json=sortOrder,proto3"`
 	xxx_hidden_Name        string                 `protobuf:"bytes,5,opt,name=name,proto3"`
 	xxx_hidden_Description *string                `protobuf:"bytes,6,opt,name=description,proto3,oneof"`
 	xxx_hidden_Laws        *[]*Law                `protobuf:"bytes,7,rep,name=laws,proto3"`
@@ -93,6 +94,13 @@ func (x *LawBook) GetDeletedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *LawBook) GetSortOrder() int32 {
+	if x != nil {
+		return x.xxx_hidden_SortOrder
+	}
+	return 0
+}
+
 func (x *LawBook) GetName() string {
 	if x != nil {
 		return x.xxx_hidden_Name
@@ -135,13 +143,17 @@ func (x *LawBook) SetDeletedAt(v *timestamp.Timestamp) {
 	x.xxx_hidden_DeletedAt = v
 }
 
+func (x *LawBook) SetSortOrder(v int32) {
+	x.xxx_hidden_SortOrder = v
+}
+
 func (x *LawBook) SetName(v string) {
 	x.xxx_hidden_Name = v
 }
 
 func (x *LawBook) SetDescription(v string) {
 	x.xxx_hidden_Description = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 7)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 8)
 }
 
 func (x *LawBook) SetLaws(v []*Law) {
@@ -173,7 +185,7 @@ func (x *LawBook) HasDescription() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
 }
 
 func (x *LawBook) ClearCreatedAt() {
@@ -189,7 +201,7 @@ func (x *LawBook) ClearDeletedAt() {
 }
 
 func (x *LawBook) ClearDescription() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
 	x.xxx_hidden_Description = nil
 }
 
@@ -200,6 +212,7 @@ type LawBook_builder struct {
 	CreatedAt   *timestamp.Timestamp
 	UpdatedAt   *timestamp.Timestamp
 	DeletedAt   *timestamp.Timestamp
+	SortOrder   int32
 	Name        string
 	Description *string
 	Laws        []*Law
@@ -213,9 +226,10 @@ func (b0 LawBook_builder) Build() *LawBook {
 	x.xxx_hidden_CreatedAt = b.CreatedAt
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	x.xxx_hidden_DeletedAt = b.DeletedAt
+	x.xxx_hidden_SortOrder = b.SortOrder
 	x.xxx_hidden_Name = b.Name
 	if b.Description != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 7)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 8)
 		x.xxx_hidden_Description = b.Description
 	}
 	x.xxx_hidden_Laws = &b.Laws
@@ -229,6 +243,7 @@ type Law struct {
 	xxx_hidden_UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
 	xxx_hidden_DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
 	xxx_hidden_LawbookId     int64                  `protobuf:"varint,5,opt,name=lawbook_id,json=lawbookId,proto3"`
+	xxx_hidden_SortOrder     int32                  `protobuf:"varint,12,opt,name=sort_order,json=sortOrder,proto3"`
 	xxx_hidden_Name          string                 `protobuf:"bytes,6,opt,name=name,proto3"`
 	xxx_hidden_Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof"`
 	xxx_hidden_Hint          *string                `protobuf:"bytes,8,opt,name=hint,proto3,oneof"`
@@ -301,6 +316,13 @@ func (x *Law) GetLawbookId() int64 {
 	return 0
 }
 
+func (x *Law) GetSortOrder() int32 {
+	if x != nil {
+		return x.xxx_hidden_SortOrder
+	}
+	return 0
+}
+
 func (x *Law) GetName() string {
 	if x != nil {
 		return x.xxx_hidden_Name
@@ -369,33 +391,37 @@ func (x *Law) SetLawbookId(v int64) {
 	x.xxx_hidden_LawbookId = v
 }
 
+func (x *Law) SetSortOrder(v int32) {
+	x.xxx_hidden_SortOrder = v
+}
+
 func (x *Law) SetName(v string) {
 	x.xxx_hidden_Name = v
 }
 
 func (x *Law) SetDescription(v string) {
 	x.xxx_hidden_Description = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 11)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 12)
 }
 
 func (x *Law) SetHint(v string) {
 	x.xxx_hidden_Hint = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 11)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 12)
 }
 
 func (x *Law) SetFine(v uint32) {
 	x.xxx_hidden_Fine = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 11)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 12)
 }
 
 func (x *Law) SetDetentionTime(v uint32) {
 	x.xxx_hidden_DetentionTime = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 11)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 12)
 }
 
 func (x *Law) SetStvoPoints(v uint32) {
 	x.xxx_hidden_StvoPoints = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 11)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 12)
 }
 
 func (x *Law) HasCreatedAt() bool {
@@ -423,35 +449,35 @@ func (x *Law) HasDescription() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
 }
 
 func (x *Law) HasHint() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *Law) HasFine() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
 }
 
 func (x *Law) HasDetentionTime() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
 }
 
 func (x *Law) HasStvoPoints() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
 }
 
 func (x *Law) ClearCreatedAt() {
@@ -467,27 +493,27 @@ func (x *Law) ClearDeletedAt() {
 }
 
 func (x *Law) ClearDescription() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
 	x.xxx_hidden_Description = nil
 }
 
 func (x *Law) ClearHint() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
 	x.xxx_hidden_Hint = nil
 }
 
 func (x *Law) ClearFine() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
 	x.xxx_hidden_Fine = 0
 }
 
 func (x *Law) ClearDetentionTime() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
 	x.xxx_hidden_DetentionTime = 0
 }
 
 func (x *Law) ClearStvoPoints() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
 	x.xxx_hidden_StvoPoints = 0
 }
 
@@ -499,6 +525,7 @@ type Law_builder struct {
 	UpdatedAt     *timestamp.Timestamp
 	DeletedAt     *timestamp.Timestamp
 	LawbookId     int64
+	SortOrder     int32
 	Name          string
 	Description   *string
 	Hint          *string
@@ -516,25 +543,26 @@ func (b0 Law_builder) Build() *Law {
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	x.xxx_hidden_DeletedAt = b.DeletedAt
 	x.xxx_hidden_LawbookId = b.LawbookId
+	x.xxx_hidden_SortOrder = b.SortOrder
 	x.xxx_hidden_Name = b.Name
 	if b.Description != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 11)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 12)
 		x.xxx_hidden_Description = b.Description
 	}
 	if b.Hint != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 11)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 12)
 		x.xxx_hidden_Hint = b.Hint
 	}
 	if b.Fine != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 11)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 12)
 		x.xxx_hidden_Fine = *b.Fine
 	}
 	if b.DetentionTime != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 11)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 12)
 		x.xxx_hidden_DetentionTime = *b.DetentionTime
 	}
 	if b.StvoPoints != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 11)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 12)
 		x.xxx_hidden_StvoPoints = *b.StvoPoints
 	}
 	return m0
@@ -544,7 +572,7 @@ var File_resources_laws_laws_proto protoreflect.FileDescriptor
 
 const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/laws/laws.proto\x12\x0eresources.laws\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb9\x03\n" +
+	"\x19resources/laws/laws.proto\x12\x0eresources.laws\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xf1\x03\n" +
 	"\aLawBook\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -552,14 +580,16 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1a\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x126\n" +
+	"\n" +
+	"sort_order\x18\b \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"sort_order\"R\tsortOrder\x12\x1a\n" +
 	"\x04name\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x04name\x12-\n" +
 	"\vdescription\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x03R\vdescription\x88\x01\x01\x12'\n" +
 	"\x04laws\x18\a \x03(\v2\x13.resources.laws.LawR\x04lawsB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
-	"\f_description\"\xf0\x04\n" +
+	"\f_description\"\xa8\x05\n" +
 	"\x03Law\x125\n" +
 	"\x02id\x18\x01 \x01(\x03B%\x9a\x84\x9e\x03 sql:\"primary_key\" alias:\"law.id\"R\x02id\x12B\n" +
 	"\n" +
@@ -569,7 +599,9 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"lawbook_id\x18\x05 \x01(\x03R\tlawbookId\x12\x1a\n" +
+	"lawbook_id\x18\x05 \x01(\x03R\tlawbookId\x126\n" +
+	"\n" +
+	"sort_order\x18\f \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"sort_order\"R\tsortOrder\x12\x1a\n" +
 	"\x04name\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x04name\x12-\n" +
 	"\vdescription\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x03R\vdescription\x88\x01\x01\x12\x1f\n" +
 	"\x04hint\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x04R\x04hint\x88\x01\x01\x12\x17\n" +

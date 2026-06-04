@@ -23,6 +23,7 @@ type fivenetLawbooksLawsTable struct {
 	DeletedAt     mysql.ColumnTimestamp
 	LawbookID     mysql.ColumnInteger
 	Name          mysql.ColumnString
+	SortOrder     mysql.ColumnInteger
 	SortKey       mysql.ColumnString
 	Description   mysql.ColumnString
 	Hint          mysql.ColumnString
@@ -76,15 +77,16 @@ func newFivenetLawbooksLawsTableImpl(schemaName, tableName, alias string) fivene
 		DeletedAtColumn     = mysql.TimestampColumn("deleted_at")
 		LawbookIDColumn     = mysql.IntegerColumn("lawbook_id")
 		NameColumn          = mysql.StringColumn("name")
+		SortOrderColumn     = mysql.IntegerColumn("sort_order")
 		SortKeyColumn       = mysql.StringColumn("sort_key")
 		DescriptionColumn   = mysql.StringColumn("description")
 		HintColumn          = mysql.StringColumn("hint")
 		FineColumn          = mysql.IntegerColumn("fine")
 		DetentionTimeColumn = mysql.IntegerColumn("detention_time")
 		StvoPointsColumn    = mysql.IntegerColumn("stvo_points")
-		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, LawbookIDColumn, NameColumn, SortKeyColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
-		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, LawbookIDColumn, NameColumn, SortKeyColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
-		defaultColumns      = mysql.ColumnList{CreatedAtColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
+		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, LawbookIDColumn, NameColumn, SortOrderColumn, SortKeyColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
+		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, LawbookIDColumn, NameColumn, SortOrderColumn, SortKeyColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
+		defaultColumns      = mysql.ColumnList{CreatedAtColumn, SortOrderColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
 	)
 
 	return fivenetLawbooksLawsTable{
@@ -97,6 +99,7 @@ func newFivenetLawbooksLawsTableImpl(schemaName, tableName, alias string) fivene
 		DeletedAt:     DeletedAtColumn,
 		LawbookID:     LawbookIDColumn,
 		Name:          NameColumn,
+		SortOrder:     SortOrderColumn,
 		SortKey:       SortKeyColumn,
 		Description:   DescriptionColumn,
 		Hint:          HintColumn,
