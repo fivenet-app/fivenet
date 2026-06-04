@@ -1,22 +1,7 @@
 # DSN for local test database run via the `docker-compose.dev.yaml`
-dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet_data?charset=utf8mb4&loc=Local"
+dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?charset=utf8mb4&loc=Local"
 excludeTables:
   - "fivenet_zschema_migrations"
-  - fivenet_calendar_job_access
-  - fivenet_calendar_user_access
-  - fivenet_centrum_units_job_access
-  - fivenet_centrum_units_qualifications_access
-  - fivenet_documents_job_access
-  - fivenet_documents_user_access
-  - fivenet_documents_templates_job_access
-  - fivenet_internet_domains_job_access
-  - fivenet_internet_domains_user_access
-  - fivenet_mailer_emails_job_access
-  - fivenet_mailer_emails_qualifications_access
-  - fivenet_mailer_emails_user_access
-  - fivenet_qualifications_job_access
-  - fivenet_wiki_page_job_access
-  - fivenet_wiki_page_user_access
 includeTables:
   "fivenet_*": ["*"]
   # Phone Msg Converters
