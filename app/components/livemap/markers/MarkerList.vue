@@ -9,6 +9,7 @@ import { useLivemapStore } from '~/stores/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import MarkerCreateOrUpdateSlideover from '../MarkerCreateOrUpdateSlideover.vue';
+import { checkIfCanEditMarker } from './helpers.js';
 
 const emits = defineEmits<{
     (e: 'editing', editing: boolean): void;
@@ -16,7 +17,7 @@ const emits = defineEmits<{
 
 const { t } = useI18n();
 
-const { can } = useAuth();
+const { activeChar, can } = useAuth();
 
 const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, gotoCoords } = livemapStore;
@@ -40,8 +41,6 @@ async function deleteMarker(id: number): Promise<void> {
     }
 }
 
-const editingMarker = ref(false);
-
 const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideover);
 const confirmModal = overlay.create(ConfirmModal);
 
@@ -59,7 +58,8 @@ const columns = computed(
                                 onClick: () => gotoCoords({ x: row.original.x, y: row.original.y }),
                             }),
                         ),
-                        can('livemap.LivemapService/CreateOrUpdateMarker').value
+                        can('livemap.LivemapService/CreateOrUpdateMarker').value &&
+                        checkIfCanEditMarker(activeChar.value, row.original.creator)
                             ? h(UTooltip, { text: t('common.edit') }, () =>
                                   h(UButton, {
                                       variant: 'link',
