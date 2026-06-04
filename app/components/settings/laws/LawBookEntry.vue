@@ -307,7 +307,7 @@ const columns = computed(
                     h(UTooltip, { text: t('common.expand_collapse') }, () =>
                         h(UButton, {
                             color: row.getIsExpanded() ? 'neutral' : 'primary',
-                            variant: 'ghost',
+                            variant: 'link',
                             icon: row.getIsExpanded() ? 'i-mdi-chevron-up' : 'i-mdi-pencil',
                             square: true,
                             'aria-label': 'Expand',
