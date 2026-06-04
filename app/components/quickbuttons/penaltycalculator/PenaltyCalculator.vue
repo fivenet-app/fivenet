@@ -216,7 +216,7 @@ const columns = computed(
                             class="w-full"
                             type="text"
                             name="search"
-                            :placeholder="$t('common.filter')"
+                            :placeholder="$t('common.search')"
                             :ui="{ trailing: 'pe-1' }"
                         >
                             <template #trailing>

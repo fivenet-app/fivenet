@@ -4,12 +4,15 @@ import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
 import { groupByJob } from '~/utils/livemap/groupByJob';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
+import MarkerSearchDrawer from './markers/MarkerSearchDrawer.vue';
 
 defineEmits<{
     (e: 'markerSelected', marker: MarkerMarker): void;
 }>();
 
 const { t } = useI18n();
+
+const overlay = useOverlay();
 
 const livemapStore = useLivemapStore();
 const { jobsMarkers, markersMarkers } = storeToRefs(livemapStore);
@@ -42,6 +45,8 @@ onBeforeMount(async () =>
         order: 3,
     }),
 );
+
+const markerSearchDrawer = overlay.create(MarkerSearchDrawer);
 </script>
 
 <template>
@@ -62,5 +67,11 @@ onBeforeMount(async () =>
         />
     </LLayerGroup>
 
-    <!-- TODO add a marker marker list for easy finding and "reading" up on markers -->
+    <LControl position="topright">
+        <div class="flex flex-col gap-2">
+            <UTooltip :text="$t('common.marker', 2)">
+                <UButton icon="i-mdi-map-markers" @click="markerSearchDrawer.open()" />
+            </UTooltip>
+        </div>
+    </LControl>
 </template>

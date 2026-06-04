@@ -233,8 +233,13 @@ type PopupCandidateLayer = (Marker | Path) & {
     openPopup: () => void;
 };
 
+type PopupCandidateLayerShape = {
+    openPopup?: () => void;
+    options?: PopupCandidateLayer['options'];
+};
+
 function isPopupCandidateLayer(layer: Layer): layer is PopupCandidateLayer {
-    const candidate = layer as Partial<PopupCandidateLayer>;
+    const candidate = layer as Layer & Partial<PopupCandidateLayerShape>;
     const hasPopupHandler = typeof candidate.openPopup === 'function';
     const hasLivemapPayload =
         !!candidate.options?.userMarker || !!candidate.options?.dispatchMarker || !!candidate.options?.markerMarker;

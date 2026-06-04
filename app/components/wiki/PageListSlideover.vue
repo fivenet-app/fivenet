@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const emits = defineEmits<{
+defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 

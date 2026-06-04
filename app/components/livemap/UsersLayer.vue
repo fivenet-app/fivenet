@@ -124,7 +124,7 @@ const playerMarkersByJob = computed(() => {
                 type="text"
                 name="searchPlayer"
                 size="xs"
-                :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"
+                :placeholder="`${$t('common.employee', 1)} ${$t('common.search')}`"
                 autocomplete="off"
                 leading-icon="i-mdi-user-multiple"
                 :ui="{ trailing: 'pe-1' }"

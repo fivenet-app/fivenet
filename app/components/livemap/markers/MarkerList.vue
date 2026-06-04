@@ -8,6 +8,11 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/markers/marker_marker';
+import MarkerCreateOrUpdateSlideover from '../MarkerCreateOrUpdateSlideover.vue';
+
+const emits = defineEmits<{
+    (e: 'editing', editing: boolean): void;
+}>();
 
 const { t } = useI18n();
 
@@ -35,6 +40,11 @@ async function deleteMarker(id: number): Promise<void> {
     }
 }
 
+const editingMarker = ref(false);
+
+const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideover);
+const confirmModal = overlay.create(ConfirmModal);
+
 const columns = computed(
     () =>
         [
@@ -49,9 +59,25 @@ const columns = computed(
                                 onClick: () => gotoCoords({ x: row.original.x, y: row.original.y }),
                             }),
                         ),
-                        h(UTooltip, { text: t('common.delete') }, () =>
-                            can('livemap.LivemapService/DeleteMarker').value
-                                ? h(UButton, {
+                        can('livemap.LivemapService/CreateOrUpdateMarker').value
+                            ? h(UTooltip, { text: t('common.edit') }, () =>
+                                  h(UButton, {
+                                      variant: 'link',
+                                      icon: 'i-mdi-pencil',
+                                      onClick: () => {
+                                          emits('editing', true);
+                                          markerCreateOrUpdateSlideover
+                                              .open({
+                                                  marker: row.original,
+                                              })
+                                              .finally(() => emits('editing', false));
+                                      },
+                                  }),
+                              )
+                            : null,
+                        can('livemap.LivemapService/DeleteMarker').value
+                            ? h(UTooltip, { text: t('common.delete') }, () =>
+                                  h(UButton, {
                                       variant: 'link',
                                       icon: 'i-mdi-delete',
                                       color: 'error',
@@ -60,9 +86,9 @@ const columns = computed(
                                               confirm: async () => deleteMarker(row.original.id),
                                           });
                                       },
-                                  })
-                                : null,
-                        ),
+                                  }),
+                              )
+                            : null,
                     ]),
             },
             {
@@ -106,41 +132,52 @@ const columns = computed(
                         ? h(CitizenInfoPopover, { user: row.original.creator, trailing: false })
                         : t('common.unknown'),
             },
-            {
-                accessorKey: 'job',
-                header: t('common.job'),
-                cell: ({ row }) => row.original.creator?.jobLabel ?? t('common.na'),
-            },
         ] as TableColumn<MarkerMarker>[],
 );
 
-const confirmModal = overlay.create(ConfirmModal);
+const querySearchRaw = ref('');
+const querySearch = computed(() => querySearchRaw.value.trim().toLowerCase());
+
+const filteredMarkers = computed(() =>
+    Array.from(markersMarkers.value.values())
+        .filter((marker) => querySearch.value === '' || marker.name.toLowerCase().includes(querySearch.value))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+);
 </script>
 
 <template>
-    <div class="flex h-full grow flex-col px-1">
-        <div class="flex justify-between">
-            <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold text-toned">
-                {{ $t('common.marker', 2) }}
-            </h2>
+    <div class="flex h-full min-h-0 flex-col gap-2">
+        <UFormField name="search">
+            <UInput
+                v-model="querySearchRaw"
+                class="w-full"
+                type="text"
+                name="search"
+                :placeholder="$t('common.search')"
+                :ui="{ trailing: 'pe-1' }"
+            >
+                <template #trailing>
+                    <UButton
+                        v-if="querySearchRaw !== ''"
+                        color="red"
+                        variant="link"
+                        icon="i-mdi-clear"
+                        aria-controls="search"
+                        @click="querySearchRaw = ''"
+                    />
+                </template>
+            </UInput>
+        </UFormField>
 
-            <h2 class="text-base font-semibold text-toned">
-                {{ $t('common.count') }}:
-                {{ [...markersMarkers.values()].length }}
-            </h2>
-        </div>
-
-        <div class="flex flex-1 flex-col overflow-x-auto overflow-y-auto">
-            <UTable
-                class="overflow-x-visible"
-                :columns="columns"
-                :data="Array.from(markersMarkers.values())"
-                :empty="$t('common.not_found', [$t('common.marker', 2)])"
-                :pagination-options="{ manualPagination: true }"
-                :sorting-options="{ manualSorting: true }"
-            />
-
-            <div class="flex-1" />
-        </div>
+        <UTable
+            class="min-h-0 flex-1"
+            :columns="columns"
+            :data="filteredMarkers"
+            :empty="$t('common.not_found', [$t('common.marker', 2)])"
+            :pagination-options="{ manualPagination: true }"
+            :sorting-options="{ manualSorting: true }"
+            sticky
+            :virtualize="{ estimateSize: 40 }"
+        />
     </div>
 </template>

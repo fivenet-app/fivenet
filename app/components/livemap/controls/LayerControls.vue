@@ -64,75 +64,75 @@ function toggleAllLayers(category: string, visible: boolean) {
 
 <template>
     <LControl position="topright">
-        <UTooltip :text="$t('common.layer', 2)">
-            <UPopover :ui="{ content: 'w-full' }">
+        <UPopover :ui="{ content: 'w-full' }">
+            <UTooltip :text="$t('common.layer', 2)">
                 <UButton
                     class="border border-black/20 bg-clip-padding p-1.5"
                     size="xl"
                     icon="i-mdi-layers-triple"
                     :ui="{ leadingIcon: 'size-8!' }"
                 />
+            </UTooltip>
 
-                <template #content>
-                    <div class="w-full max-w-xl divide-y divide-default py-1">
-                        <div class="px-1 pb-0.5">
-                            <p class="truncate text-base font-bold text-highlighted">
-                                {{ $t('common.layer', 2) }}
-                            </p>
-
-                            <URadioGroup
-                                v-model="livemapTileLayer"
-                                class="overflow-y-hidden"
-                                :items="tileLayers"
-                                value-key="key"
-                                :ui-radio="{ inner: 'ms-1' }"
-                                :ui="{ fieldset: 'grid auto-cols-auto grid-flow-col gap-1' }"
-                            >
-                                <template #label="{ item }">
-                                    {{ $t(item.label ?? item.id) }}
-                                </template>
-                            </URadioGroup>
-                        </div>
-
-                        <p v-if="Object.keys(groupedLayers).length === 0" class="truncate">
-                            {{ $t('common.layers', 0) }}
+            <template #content>
+                <div class="w-full max-w-xl divide-y divide-default py-1">
+                    <div class="px-1 pb-0.5">
+                        <p class="truncate text-base font-bold text-highlighted">
+                            {{ $t('common.layer', 2) }}
                         </p>
-                        <div
-                            v-else
-                            class="flex auto-cols-auto grid-flow-col flex-col divide-x divide-y divide-default md:grid md:divide-y-0"
-                        >
-                            <div
-                                v-for="(category, key) in groupedLayers"
-                                :key="key"
-                                class="grid min-w-0 grid-flow-row auto-rows-min gap-1 overflow-y-hidden px-1 pb-1 md:pb-0"
-                            >
-                                <div class="flex items-center justify-between gap-1">
-                                    <p class="truncate text-base font-bold text-highlighted">
-                                        {{ category.category?.label ?? $t('common.na') }}
-                                    </p>
 
-                                    <USwitch
-                                        :model-value="category.layers.every((l) => l.visible)"
-                                        size="xs"
-                                        @update:model-value="(v) => toggleAllLayers(category.category?.key ?? '', v)"
-                                    />
-                                </div>
+                        <URadioGroup
+                            v-model="livemapTileLayer"
+                            class="overflow-y-hidden"
+                            :items="tileLayers"
+                            value-key="key"
+                            :ui-radio="{ inner: 'ms-1' }"
+                            :ui="{ fieldset: 'grid auto-cols-auto grid-flow-col gap-1' }"
+                        >
+                            <template #label="{ item }">
+                                {{ $t(item.label ?? item.id) }}
+                            </template>
+                        </URadioGroup>
+                    </div>
+
+                    <p v-if="Object.keys(groupedLayers).length === 0" class="truncate">
+                        {{ $t('common.layers', 0) }}
+                    </p>
+                    <div
+                        v-else
+                        class="flex auto-cols-auto grid-flow-col flex-col divide-x divide-y divide-default md:grid md:divide-y-0"
+                    >
+                        <div
+                            v-for="(category, key) in groupedLayers"
+                            :key="key"
+                            class="grid min-w-0 grid-flow-row auto-rows-min gap-1 overflow-y-hidden px-1 pb-1 md:pb-0"
+                        >
+                            <div class="flex items-center justify-between gap-1">
+                                <p class="truncate text-base font-bold text-highlighted">
+                                    {{ category.category?.label ?? $t('common.na') }}
+                                </p>
 
                                 <USwitch
-                                    v-for="layer in category.layers"
-                                    :key="layer.key"
-                                    v-model="layer.visible"
-                                    :label="layer.label"
-                                    :disabled="!!layer.disabled"
-                                    :ui="{ label: 'truncate text-sm hover:line-clamp-2' }"
+                                    :model-value="category.layers.every((l) => l.visible)"
+                                    size="xs"
+                                    @update:model-value="(v) => toggleAllLayers(category.category?.key ?? '', v)"
                                 />
                             </div>
-                        </div>
 
-                        <slot />
+                            <USwitch
+                                v-for="layer in category.layers"
+                                :key="layer.key"
+                                v-model="layer.visible"
+                                :label="layer.label"
+                                :disabled="!!layer.disabled"
+                                :ui="{ label: 'truncate text-sm hover:line-clamp-2' }"
+                            />
+                        </div>
                     </div>
-                </template>
-            </UPopover>
-        </UTooltip>
+
+                    <slot />
+                </div>
+            </template>
+        </UPopover>
     </LControl>
 </template>

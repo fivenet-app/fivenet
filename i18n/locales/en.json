@@ -346,7 +346,6 @@
         "dispatch": "Dispatch | Dispatches",
         "latitude": "Latitude",
         "longitude": "Longitude",
-        "filter": "Filter",
         "postal": "ZIP | ZIPs",
         "retry": "Retry",
         "time_range": "Time Range",
