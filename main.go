@@ -2,14 +2,10 @@
 package main
 
 import (
-	"os"
 	"runtime"
-	"strconv"
-	"time"
 
 	"github.com/alecthomas/kong"
 	"github.com/fivenet-app/fivenet/v2026/cmd"
-	"github.com/fivenet-app/fivenet/v2026/cmd/envs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 )
 
@@ -19,39 +15,14 @@ func main() {
 	runtime.SetBlockProfileRate(20000)
 	runtime.SetMutexProfileFraction(100)
 
-	ctx := kong.Parse(&cmd.Cli,
+	cli := &cmd.CLI{}
+	ctx := kong.Parse(cli,
 		kong.Vars{
 			"version": version.Version,
 		},
+		kong.Bind(cli),
 	)
 
-	// Cli flag overrides env var
-	if cmd.Cli.Config != "" {
-		if err := os.Setenv(envs.ConfigFileEnvVar, cmd.Cli.Config); err != nil {
-			panic(err)
-		}
-	}
-	if cmd.Cli.SkipMigrations != nil {
-		if err := os.Setenv(
-			envs.SkipDBMigrationsEnv,
-			strconv.FormatBool(*cmd.Cli.SkipMigrations),
-		); err != nil {
-			panic(err)
-		}
-	}
-	if cmd.Cli.IgnoreRequirements != nil {
-		if err := os.Setenv(
-			envs.IgnoreRequirementsEnv,
-			strconv.FormatBool(*cmd.Cli.IgnoreRequirements),
-		); err != nil {
-			panic(err)
-		}
-	}
-
-	if cmd.Cli.StartTimeout <= 0 {
-		cmd.Cli.StartTimeout = 180 * time.Second
-	}
-
-	err := ctx.Run(&cmd.Context{})
+	err := ctx.Run()
 	ctx.FatalIfErrorf(err)
 }

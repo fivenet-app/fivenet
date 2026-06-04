@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type SyncCmd struct {
+type ToolsSyncCmd struct {
 	Status SyncStatusCmd `cmd:"" help:"Check sync status"`
 }
 

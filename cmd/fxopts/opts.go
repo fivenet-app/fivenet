@@ -1,4 +1,4 @@
-package cmd
+package fxopts
 
 import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
@@ -20,7 +20,7 @@ import (
 	"go.uber.org/fx"
 )
 
-const defaultStopTimeout = 180 // seconds
+const DefaultStopTimeout = 180 // seconds
 
 // Option groups for fx modules, to be reused across commands.
 

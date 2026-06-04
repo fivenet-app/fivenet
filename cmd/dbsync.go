@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/fivenet-app/fivenet/v2026/cmd/fxopts"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/kardianos/service"
@@ -35,9 +36,9 @@ type DBSyncCmd struct {
 	Uninstall UninstallCmd `cmd:"" help:"Uninstall the DBSync service from your OS's service manager"`
 }
 
-func getService() service.Service {
-	fxOpts := getFxBaseOpts(Cli.StartTimeout, false, false)
-	fxOpts = append(fxOpts, FxDBSyncOpts()...)
+func getService(cli *CLI) service.Service {
+	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, false)
+	fxOpts = append(fxOpts, fxopts.FxDBSyncOpts()...)
 	fxOpts = append(fxOpts, fx.Invoke(func(admin.AdminServer) {}))
 
 	app := fx.New(fxOpts...)
@@ -55,10 +56,10 @@ func getService() service.Service {
 
 type RunCmd struct{}
 
-func (c *RunCmd) Run(ctx *Context) error {
+func (c *RunCmd) Run(cli *CLI) error {
 	instance.SetComponent("dbsync")
 
-	s := getService()
+	s := getService(cli)
 	if err := s.Run(); err != nil {
 		return err
 	}
@@ -68,10 +69,10 @@ func (c *RunCmd) Run(ctx *Context) error {
 
 type StartCmd struct{}
 
-func (c *StartCmd) Run(_ *Context) error {
+func (c *StartCmd) Run(cli *CLI) error {
 	log.Println("Starting FiveNet DBSync service")
 
-	s := getService()
+	s := getService(cli)
 	if err := s.Start(); err != nil {
 		return err
 	}
@@ -83,10 +84,10 @@ func (c *StartCmd) Run(_ *Context) error {
 
 type RestartCmd struct{}
 
-func (c *RestartCmd) Run(_ *Context) error {
+func (c *RestartCmd) Run(cli *CLI) error {
 	log.Println("Restarting FiveNet DBSync service")
 
-	s := getService()
+	s := getService(cli)
 	if err := s.Restart(); err != nil {
 		return err
 	}
@@ -98,10 +99,10 @@ func (c *RestartCmd) Run(_ *Context) error {
 
 type StopCmd struct{}
 
-func (c *StopCmd) Run(_ *Context) error {
+func (c *StopCmd) Run(cli *CLI) error {
 	log.Println("Stopping FiveNet DBSync service")
 
-	s := getService()
+	s := getService(cli)
 	if err := s.Stop(); err != nil {
 		return err
 	}
@@ -113,8 +114,8 @@ func (c *StopCmd) Run(_ *Context) error {
 
 type StatusCmd struct{}
 
-func (c *StatusCmd) Run(_ *Context) error {
-	s := getService()
+func (c *StatusCmd) Run(cli *CLI) error {
+	s := getService(cli)
 	status, err := s.Status()
 	if err != nil {
 		return err
@@ -136,13 +137,13 @@ func (c *StatusCmd) Run(_ *Context) error {
 
 type InstallCmd struct{}
 
-func (c *InstallCmd) Run(_ *Context) error {
+func (c *InstallCmd) Run(cli *CLI) error {
 	log.Println("Installing FiveNet DBSync service")
 
 	// Check default config file location/name
 	c.checkIfConfigInWd("dbsync.yaml")
 
-	s := getService()
+	s := getService(cli)
 	if err := s.Install(); err != nil {
 		log.Fatalf("Failed to install service. %v", err)
 	}
@@ -175,10 +176,10 @@ You must copy the dbsync config file to the /etc/fivenet directory yourself for 
 
 type UninstallCmd struct{}
 
-func (c *UninstallCmd) Run(_ *Context) error {
+func (c *UninstallCmd) Run(cli *CLI) error {
 	log.Println("Uninstalling FiveNet DBSync service")
 
-	s := getService()
+	s := getService(cli)
 	if err := s.Uninstall(); err != nil {
 		log.Fatalf("Failed to uninstall service. %v", err)
 	}
@@ -199,7 +200,7 @@ func (p *dbSyncProgram) Start(s service.Service) error {
 }
 
 func (p *dbSyncProgram) Stop(s service.Service) error {
-	ctx, cancel := context.WithTimeout(context.Background(), defaultStopTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), fxopts.DefaultStopTimeout)
 	defer cancel()
 
 	return p.app.Stop(ctx)

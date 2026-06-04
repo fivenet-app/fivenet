@@ -1,94 +1,30 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/alecthomas/kong"
-	"github.com/fivenet-app/fivenet/v2026/i18n"
-	"github.com/fivenet-app/fivenet/v2026/internal/modules"
-	"github.com/fivenet-app/fivenet/v2026/pkg/audit"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
-	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2026/pkg/crypt"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbsync"
-	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
-	dbsynctablemanager "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/tablemanager"
-	"github.com/fivenet-app/fivenet/v2026/pkg/demo"
-	"github.com/fivenet-app/fivenet/v2026/pkg/discord"
-	"github.com/fivenet-app/fivenet/v2026/pkg/discord/commands"
-	"github.com/fivenet-app/fivenet/v2026/pkg/events"
-	pkgfilestore "github.com/fivenet-app/fivenet/v2026/pkg/filestore"
-	"github.com/fivenet-app/fivenet/v2026/pkg/grpc"
-	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
-	tiptapsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/tiptap"
-	"github.com/fivenet-app/fivenet/v2026/pkg/server"
-	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
-	"github.com/fivenet-app/fivenet/v2026/pkg/server/api"
-	"github.com/fivenet-app/fivenet/v2026/pkg/server/filestore"
-	"github.com/fivenet-app/fivenet/v2026/pkg/server/icons"
-	"github.com/fivenet-app/fivenet/v2026/pkg/server/images"
-	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2"
-	"github.com/fivenet-app/fivenet/v2026/pkg/server/wk"
-	"github.com/fivenet-app/fivenet/v2026/pkg/stats"
-	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
-	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2026/pkg/tracker/manager"
-	"github.com/fivenet-app/fivenet/v2026/pkg/updatecheck"
-	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
-	"github.com/fivenet-app/fivenet/v2026/query"
-	pbauth "github.com/fivenet-app/fivenet/v2026/services/auth"
-	pbcalendar "github.com/fivenet-app/fivenet/v2026/services/calendar"
-	pbcentrum "github.com/fivenet-app/fivenet/v2026/services/centrum"
-	centrumbot "github.com/fivenet-app/fivenet/v2026/services/centrum/bot"
-	"github.com/fivenet-app/fivenet/v2026/services/centrum/converter"
-	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
-	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
-	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
-	centrumhousekeeper "github.com/fivenet-app/fivenet/v2026/services/centrum/housekeeper"
-	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
-	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
-	pbcitizens "github.com/fivenet-app/fivenet/v2026/services/citizens"
-	pbcompletor "github.com/fivenet-app/fivenet/v2026/services/completor"
-	pbdocuments "github.com/fivenet-app/fivenet/v2026/services/documents"
-	pbfilestore "github.com/fivenet-app/fivenet/v2026/services/filestore"
-	pbjobs "github.com/fivenet-app/fivenet/v2026/services/jobs"
-	pblivemap "github.com/fivenet-app/fivenet/v2026/services/livemap"
-	pbmailer "github.com/fivenet-app/fivenet/v2026/services/mailer"
-	pbnotifications "github.com/fivenet-app/fivenet/v2026/services/notifications"
-	pbqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications"
-	pbsettings "github.com/fivenet-app/fivenet/v2026/services/settings"
-	pbstats "github.com/fivenet-app/fivenet/v2026/services/stats"
-	pbsync "github.com/fivenet-app/fivenet/v2026/services/sync"
-	pbvehicles "github.com/fivenet-app/fivenet/v2026/services/vehicles"
-	pbwiki "github.com/fivenet-app/fivenet/v2026/services/wiki"
-	"github.com/microcosm-cc/bluemonday"
-	"go.uber.org/fx"
-	"go.uber.org/fx/fxevent"
-	"go.uber.org/zap"
+	"github.com/fivenet-app/fivenet/v2026/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 )
 
-type Context struct{}
+type CLI struct {
+	VersionFlag kong.VersionFlag `name:"version" short:"v" aliases:"V" help:"Print version information and quit"`
 
-var Cli struct {
-	Version kong.VersionFlag `short:"v" aliases:"V" help:"Print version information and quit"`
+	Config             string        `help:"Config file path"                                  env:"FIVENET_CONFIG_FILE"`
+	StartTimeout       time.Duration `help:"App start timeout duration"                        env:"FIVENET_START_TIMEOUT"       default:"180s"`
+	SkipMigrations     *bool         `help:"Disable the automatic DB migrations on startup."   env:"FIVENET_SKIP_DB_MIGRATIONS"`
+	IgnoreRequirements *bool         `help:"Ignore database and Nats requirements on startup." env:"FIVENET_IGNORE_REQUIREMENTS"`
 
-	Config             string        `               help:"Config file path"                                  env:"FIVENET_CONFIG_FILE"`
-	StartTimeout       time.Duration `default:"180s" help:"App start timeout duration"                        env:"FIVENET_START_TIMEOUT"`
-	SkipMigrations     *bool         `               help:"Disable the automatic DB migrations on startup."   env:"FIVENET_SKIP_DB_MIGRATIONS"`
-	IgnoreRequirements *bool         `               help:"Ignore database and Nats requirements on startup." env:"FIVENET_IGNORE_REQUIREMENTS"`
+	Version VersionCmd `help:"Print version information and quit." cmd:""`
 
-	Server   ServerCmd   `cmd:"" help:"Run FiveNet server."`
-	Worker   WorkerCmd   `cmd:"" help:"Run FiveNet worker."`
-	Discord  DiscordCmd  `cmd:"" help:"Run FiveNet Discord bot."`
-	DBSync   DBSyncCmd   `cmd:"" help:"Run FiveNet database sync."                        name:"dbsync"`
-	AllInOne AllInOneCmd `cmd:"" help:"Run FiveNet server and worker in one." alias:"aio" name:"allinone"`
+	Server  ServerCmd  `cmd:"" help:"Run FiveNet server."`
+	Worker  WorkerCmd  `cmd:"" help:"Run FiveNet worker."`
+	Discord DiscordCmd `cmd:"" help:"Run FiveNet Discord bot."`
+	DBSync  DBSyncCmd  `cmd:"" help:"Run FiveNet database sync." name:"dbsync" alias:"db-sync"`
 
 	Update UpdateCmd `cmd:"" help:"Check for updates and update the FiveNet binary." alias:"upd"`
 
@@ -96,148 +32,49 @@ var Cli struct {
 	Migrations MigrationsCmd `cmd:"" help:"Run FiveNet migration helpers."`
 }
 
-func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool) []fx.Option {
-	opts := []fx.Option{
-		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
-			l := &fxevent.ZapLogger{Logger: log}
-			// Show fx logs only when on debug level
-			l.UseLogLevel(zap.DebugLevel)
-			l.UseErrorLevel(zap.ErrorLevel)
-			return l
-		}),
-		fx.StartTimeout(startTimeout),
+type VersionCmd struct{}
 
-		// Base
-		admin.Module,
-		appconfig.Module,
-		audit.Module,
-		auth.AuthModule,
-		auth.PermsModule,
-		auth.TokenMgrModule,
-		centrumbot.Module,
-		croner.ExecutorModule,
-		croner.HandlersModule,
-		croner.SchedulerModule,
-		croner.RegistryModule,
-		events.Module,
-		grpc.ServerModule,
-		htmlsanitizer.Module,
-		tiptapsanitizer.Module,
-		i18n.Module,
-		fx.Provide(
-			converter.New,
-			dispatchers.New,
-			dispatches.New,
-			settings.New,
-			units.New,
-			helpers.New,
-		),
-		centrumhousekeeper.Module,
-		modules.LoggerModule,
-		modules.TracerProviderModule,
-		perms.Module,
-		server.HTTPEngineModule,
-		server.HTTPServerModule,
-		storage.Module,
-		storage.MetricsCollectorModule,
-		housekeeper.Module,
-		crypt.Module,
-		demo.Module,
-		updatecheck.Module,
-		fx.Provide(stats.NewService),
+func (c *VersionCmd) Run() error {
+	fmt.Println(version.Version)
+	return nil
+}
 
-		// DBSync
-		dbsync.Module,
-		dbsynctablemanager.Module,
-		dbsyncconfig.StateModule,
+type ToolsCmd struct {
+	DB ToolsDBCmd `cmd:""`
 
-		userinfo.PollerModule,
-		userinfo.RetrieverModule,
+	Sync ToolsSyncCmd `cmd:""`
+}
 
-		pbcitizens.HousekeeperModule,
-		pbjobs.HousekeeperModule,
-		pbvehicles.HousekeeperModule,
-		pbdocuments.WorkflowModule,
-		pkgfilestore.Module,
+type MigrationsCmd struct {
+	HTMLToJSON MigrationsHTMLToJSONCmd `cmd:"" help:"Migrate documents, comments, etc., from (raw) HTML format to the legacy custom JSON format." name:"htmltojson"`
+	Filestore  MigrationsFilestoreCmd  `cmd:"" help:"Migrate files from the old database format to the new filestore format."                     name:"filestore"`
 
-		// Discord Bot
-		discord.StateModule,
-		discord.BotModule,
-		commands.Module,
-		fx.Provide(
-			commands.AsCommand(commands.NewAbsentCommand),
-			commands.AsCommand(commands.NewFivenetCommand),
-			commands.AsCommand(commands.NewHelpCommand),
-			commands.AsCommand(commands.NewSyncCommand),
-		),
+	StatsBackfill MigrationsStatsBackfillCmd `cmd:"" help:"Backfill stats for documents." name:"statsbackfill"`
+}
 
-		fx.Provide(
-			manager.New,
-			mstlystcdata.NewDocumentCategories,
-			mstlystcdata.NewEnricher,
-			mstlystcdata.NewJobs,
-			mstlystcdata.NewJobsSearch,
-			mstlystcdata.NewLaws,
-			mstlystcdata.NewUserAwareEnricher,
-			notifi.New,
-			postals.New,
-			tracker.New,
-
-			// HTTP Services
-			server.AsService(api.New),
-			server.AsService(filestore.New),
-			server.AsService(icons.New),
-			server.AsService(images.New),
-			server.AsService(oauth2.New),
-			server.AsService(wk.New),
-		),
-
-		// GRPC Services
-		fx.Provide(
-			grpc.AsService(pbauth.NewServer),
-			grpc.AsService(pbcalendar.NewServer),
-			pbcentrum.NewServer,
-			grpc.AsService(pbcitizens.NewServer),
-			grpc.AsService(pbcompletor.NewServer),
-			pbdocuments.NewServer,
-			grpc.AsService(pbfilestore.NewServer),
-			grpc.AsService(pbjobs.NewServer),
-			grpc.AsService(pblivemap.NewServer),
-			grpc.AsService(pbmailer.NewServer),
-			grpc.AsService(pbnotifications.NewServer),
-			grpc.AsService(pbqualifications.NewServer),
-			grpc.AsService(pbsettings.NewServer),
-			grpc.AsService(pbstats.NewServer),
-			pbsync.NewServer,
-			grpc.AsService(pbvehicles.NewServer),
-			grpc.AsService(pbwiki.NewServer),
-		),
-
-		// Ensure sanitizer instances are created and initialized
-		fx.Invoke(func(*bluemonday.Policy) {}),
-		fx.Invoke(func(*tiptapsanitizer.Sanitizer) {}),
+func (c *CLI) AfterApply(cli *CLI) error {
+	// Cli flag overrides env var
+	if cli.Config != "" {
+		if err := os.Setenv(envs.ConfigFileEnvVar, cli.Config); err != nil {
+			panic(err)
+		}
+	}
+	if cli.SkipMigrations != nil {
+		if err := os.Setenv(
+			envs.SkipDBMigrationsEnv,
+			strconv.FormatBool(*cli.SkipMigrations),
+		); err != nil {
+			panic(err)
+		}
+	}
+	if cli.IgnoreRequirements != nil {
+		if err := os.Setenv(
+			envs.IgnoreRequirementsEnv,
+			strconv.FormatBool(*cli.IgnoreRequirements),
+		); err != nil {
+			panic(err)
+		}
 	}
 
-	if withServer {
-		opts = append(opts,
-			fx.Invoke(func(admin.AdminServer) {}),
-			fx.Invoke(func(croner.IRegistry) {}),
-			fx.Invoke(func(*croner.Scheduler) {}),
-		)
-	}
-
-	if withConfig {
-		opts = append(opts,
-			config.Module,
-			query.Module,
-		)
-	} else {
-		// Don't include query module (for DB connection), provide only the dbsync config and db instance
-		opts = append(opts,
-			dbsyncconfig.Module,
-			fx.Provide(dbsync.NewDB),
-		)
-	}
-
-	return opts
+	return nil
 }

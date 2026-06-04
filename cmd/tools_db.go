@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alecthomas/kong"
 	"github.com/fivenet-app/fivenet/v2026/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2026/cmd/fxopts"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/dsn"
 	"github.com/fivenet-app/fivenet/v2026/query"
@@ -18,15 +18,15 @@ import (
 	"go.uber.org/zap"
 )
 
-type DBCmd struct {
-	Version VersionCmd `cmd:"" help:"Display db migration version info"`
-	Up      UpCmd      `cmd:"" help:"Run any outstanding migrations"`
+type ToolsDBCmd struct {
+	Version DBVersionCmd `cmd:"" help:"Display db migration version info"`
+	Up      UpCmd        `cmd:"" help:"Run any outstanding migrations"`
 }
 
-type VersionCmd struct{}
+type DBVersionCmd struct{}
 
-func (c *VersionCmd) Run(_ *kong.Context) error {
-	fxOpts := getFxBaseOpts(Cli.StartTimeout, false, true)
+func (c *DBVersionCmd) Run(cli *CLI) error {
+	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, true)
 
 	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
 		return err
@@ -54,7 +54,7 @@ func (c *VersionCmd) Run(_ *kong.Context) error {
 	return nil
 }
 
-func (c *VersionCmd) run(_ context.Context, cfg *config.Config) error {
+func (c *DBVersionCmd) run(_ context.Context, cfg *config.Config) error {
 	dsn, err := dsn.PrepareDSN(
 		cfg.Database.DSN,
 		cfg.Database.DisableLocking,
@@ -87,8 +87,8 @@ func (c *VersionCmd) run(_ context.Context, cfg *config.Config) error {
 
 type UpCmd struct{}
 
-func (c *UpCmd) Run(_ *kong.Context) error {
-	fxOpts := getFxBaseOpts(Cli.StartTimeout, false, true)
+func (c *UpCmd) Run(cli *CLI) error {
+	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, true)
 
 	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
 		return err

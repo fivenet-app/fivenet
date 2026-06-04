@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2026/cmd/fxopts"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -30,8 +31,8 @@ type MigrationsStatsBackfillCmd struct {
 	DryRun    bool   `help:"By default this command only estimates impact. Use --no-dry-run to apply changes."             default:"true" negatable:""`
 }
 
-func (c *MigrationsStatsBackfillCmd) Run() error {
-	fxOpts := getFxBaseOpts(12*time.Hour, false, true)
+func (c *MigrationsStatsBackfillCmd) Run(cli *CLI) error {
+	fxOpts := fxopts.GetFxBaseOpts(12*time.Hour, false, true)
 
 	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
 		return err

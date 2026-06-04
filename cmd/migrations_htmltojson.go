@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2026/cmd/fxopts"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -25,7 +26,7 @@ type MigrationsHTMLToJSONCmd struct {
 }
 
 func (c *MigrationsHTMLToJSONCmd) Run() error {
-	fxOpts := getFxBaseOpts(12*time.Hour, false, true)
+	fxOpts := fxopts.GetFxBaseOpts(12*time.Hour, false, true)
 
 	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
 		return err
