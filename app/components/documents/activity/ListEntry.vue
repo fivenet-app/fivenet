@@ -5,7 +5,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
 import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity/activity';
-import { getDocAtivityIcon } from '../helpers';
+import { getDocActivityColor, getDocAtivityIcon } from '../helpers';
 import AccessUpdated from './AccessUpdated.vue';
 
 defineProps<{
@@ -30,7 +30,11 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
     >
         <div v-if="!spoilerNeeded(entry.activityType)" class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <UIcon class="size-7" :name="getDocAtivityIcon(entry.activityType)" />
+                <UIcon
+                    class="size-7"
+                    :class="getDocActivityColor(entry.activityType)"
+                    :name="getDocAtivityIcon(entry.activityType)"
+                />
             </div>
 
             <div class="flex-1 space-y-1">

@@ -230,3 +230,21 @@ export function getDocAtivityIcon(activityType: DocActivityType): string {
             return 'i-mdi-help';
     }
 }
+
+export function getDocActivityColor(activityType: DocActivityType): string {
+    switch (activityType) {
+        case DocActivityType.APPROVAL_ASSIGNED:
+            return 'text-info';
+        case DocActivityType.APPROVAL_APPROVED:
+            return 'text-success';
+        case DocActivityType.APPROVAL_REJECTED:
+            return 'text-error';
+        case DocActivityType.APPROVAL_REVOKED:
+            return 'text-error';
+        case DocActivityType.APPROVAL_REMOVED:
+            return 'text-warning';
+
+        default:
+            return '';
+    }
+}

@@ -15,8 +15,9 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { data, status, refresh, error } = useLazyAsyncData(`document-${props.documentId}-${page.value}`, () =>
-    listDocumentActivity(),
+const { data, status, refresh, error } = useLazyAsyncData(
+    () => `document-${props.documentId}-${page.value}`,
+    () => listDocumentActivity(),
 );
 
 async function listDocumentActivity(): Promise<ListDocumentActivityResponse> {
