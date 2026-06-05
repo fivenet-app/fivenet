@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
 import { z } from 'zod';
+import ApprovalBadge from '~/components/documents/approval/ApprovalBadge.vue';
 import TaskStatusBadge from '~/components/documents/approval/TaskStatusBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -210,14 +211,7 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                                     />
                                 </div>
 
-                                <UBadge
-                                    v-if="task.document?.meta?.apPoliciesActive"
-                                    class="inline-flex gap-1"
-                                    size="md"
-                                    :color="task.document?.meta?.approved ? 'info' : 'warning'"
-                                    icon="i-mdi-approval"
-                                    :label="task.document?.meta?.approved ? $t('common.approved') : $t('common.unapproved')"
-                                />
+                                <ApprovalBadge :meta="task.document?.meta" />
 
                                 <div class="flex flex-row items-center gap-1">
                                     <OpenClosedBadge :closed="task.document?.meta?.closed" />

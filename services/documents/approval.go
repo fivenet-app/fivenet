@@ -1368,11 +1368,19 @@ func (s *Server) RevokeApproval(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
+	meta, err := s.getDocumentMeta(ctx, tx, pol.GetDocumentId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	return &pbdocuments.RevokeApprovalResponse{Approval: &apr}, nil
+	return &pbdocuments.RevokeApprovalResponse{
+		Approval: &apr,
+		DocMeta:  meta,
+	}, nil
 }
 
 // DecideApproval supports both task-based and ad-hoc approvals.
@@ -1700,6 +1708,7 @@ func (s *Server) DecideApproval(
 				tApprovals.Status,
 				tApprovals.Comment,
 				tApprovals.TaskID,
+				tApprovals.RevokedAt,
 			).
 			VALUES(
 				pol.GetDocumentId(),
@@ -1712,6 +1721,7 @@ func (s *Server) DecideApproval(
 				int32(artifactStatus),
 				req.GetComment(),
 				dbutils.Int64P(taskIDForArtifact),
+				nil,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				tApprovals.SnapshotDate.SET(mysql.RawTimestamp("VALUES(`snapshot_date`)")),
@@ -1723,6 +1733,7 @@ func (s *Server) DecideApproval(
 				tApprovals.Status.SET(mysql.Int32(int32(artifactStatus))),
 				tApprovals.Comment.SET(mysql.String(req.GetComment())),
 				tApprovals.TaskID.SET(dbutils.Int64P(taskIDForArtifact)),
+				tApprovals.RevokedAt.SET(mysql.DateTimeExp(mysql.NULL)),
 			).
 			ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -1739,6 +1750,7 @@ func (s *Server) DecideApproval(
 				tApprovals.Status,
 				tApprovals.Comment,
 				tApprovals.TaskID,
+				tApprovals.RevokedAt,
 			).
 			SET(
 				snapDate,
@@ -1750,6 +1762,7 @@ func (s *Server) DecideApproval(
 				artifactStatus,
 				req.GetComment(),
 				dbutils.Int64P(taskIDForArtifact),
+				nil,
 			).
 			WHERE(tApprovals.ID.EQ(mysql.Int64(existing.ID))).
 			LIMIT(1).
@@ -2053,11 +2066,25 @@ func (s *Server) recomputeApprovalPolicyTx(
 	if err := tApprovals.
 		SELECT(
 			mysql.SUM(mysql.CASE().
-				WHEN(tApprovals.Status.EQ(mysql.Int32(int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_APPROVED)))).
+				WHEN(mysql.AND(
+					tApprovals.RevokedAt.IS_NULL(),
+					tApprovals.Status.EQ(
+						mysql.Int32(
+							int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_APPROVED),
+						),
+					),
+				)).
 				THEN(mysql.Int(1)).
 				ELSE(mysql.Int(0))).AS("approved"),
 			mysql.SUM(mysql.CASE().
-				WHEN(tApprovals.Status.EQ(mysql.Int32(int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_DECLINED)))).
+				WHEN(mysql.AND(
+					tApprovals.RevokedAt.IS_NULL(),
+					tApprovals.Status.EQ(
+						mysql.Int32(
+							int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_DECLINED),
+						),
+					),
+				)).
 				THEN(mysql.Int(1)).
 				ELSE(mysql.Int(0))).AS("declined"),
 		).

@@ -355,6 +355,15 @@ func (m *RevokeApprovalResponse) Sanitize() error {
 		}
 	}
 
+	// Field: DocMeta
+	if m.DocMeta != nil {
+		if v, ok := any(m.GetDocMeta()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 

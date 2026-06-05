@@ -1521,8 +1521,9 @@ func (b0 RevokeApprovalRequest_builder) Build() *RevokeApprovalRequest {
 }
 
 type RevokeApprovalResponse struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Approval      *approval.Approval     `protobuf:"bytes,1,opt,name=approval,proto3" json:"approval,omitempty"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
+	Approval      *approval.Approval      `protobuf:"bytes,1,opt,name=approval,proto3" json:"approval,omitempty"`
+	DocMeta       *documents.DocumentMeta `protobuf:"bytes,2,opt,name=doc_meta,json=docMeta,proto3" json:"doc_meta,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1559,8 +1560,19 @@ func (x *RevokeApprovalResponse) GetApproval() *approval.Approval {
 	return nil
 }
 
+func (x *RevokeApprovalResponse) GetDocMeta() *documents.DocumentMeta {
+	if x != nil {
+		return x.DocMeta
+	}
+	return nil
+}
+
 func (x *RevokeApprovalResponse) SetApproval(v *approval.Approval) {
 	x.Approval = v
+}
+
+func (x *RevokeApprovalResponse) SetDocMeta(v *documents.DocumentMeta) {
+	x.DocMeta = v
 }
 
 func (x *RevokeApprovalResponse) HasApproval() bool {
@@ -1570,14 +1582,26 @@ func (x *RevokeApprovalResponse) HasApproval() bool {
 	return x.Approval != nil
 }
 
+func (x *RevokeApprovalResponse) HasDocMeta() bool {
+	if x == nil {
+		return false
+	}
+	return x.DocMeta != nil
+}
+
 func (x *RevokeApprovalResponse) ClearApproval() {
 	x.Approval = nil
+}
+
+func (x *RevokeApprovalResponse) ClearDocMeta() {
+	x.DocMeta = nil
 }
 
 type RevokeApprovalResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Approval *approval.Approval
+	DocMeta  *documents.DocumentMeta
 }
 
 func (b0 RevokeApprovalResponse_builder) Build() *RevokeApprovalResponse {
@@ -1585,6 +1609,7 @@ func (b0 RevokeApprovalResponse_builder) Build() *RevokeApprovalResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.Approval = b.Approval
+	x.DocMeta = b.DocMeta
 	return m0
 }
 
@@ -2266,9 +2291,10 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x15RevokeApprovalRequest\x12\x1f\n" +
 	"\vapproval_id\x18\x01 \x01(\x03R\n" +
 	"approvalId\x12\x18\n" +
-	"\acomment\x18\x02 \x01(\tR\acomment\"\\\n" +
+	"\acomment\x18\x02 \x01(\tR\acomment\"\x9a\x01\n" +
 	"\x16RevokeApprovalResponse\x12B\n" +
-	"\bapproval\x18\x01 \x01(\v2&.resources.documents.approval.ApprovalR\bapproval\"\xc5\x02\n" +
+	"\bapproval\x18\x01 \x01(\v2&.resources.documents.approval.ApprovalR\bapproval\x12<\n" +
+	"\bdoc_meta\x18\x02 \x01(\v2!.resources.documents.DocumentMetaR\adocMeta\"\xc5\x02\n" +
 	"\x15DecideApprovalRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x1c\n" +
@@ -2367,41 +2393,42 @@ var file_services_documents_approval_proto_depIdxs = []int32{
 	30, // 16: services.documents.ListApprovalsRequest.status:type_name -> resources.documents.approval.ApprovalStatus
 	31, // 17: services.documents.ListApprovalsResponse.approvals:type_name -> resources.documents.approval.Approval
 	31, // 18: services.documents.RevokeApprovalResponse.approval:type_name -> resources.documents.approval.Approval
-	24, // 19: services.documents.DecideApprovalRequest.new_status:type_name -> resources.documents.approval.ApprovalTaskStatus
-	31, // 20: services.documents.DecideApprovalResponse.approval:type_name -> resources.documents.approval.Approval
-	26, // 21: services.documents.DecideApprovalResponse.task:type_name -> resources.documents.approval.ApprovalTask
-	27, // 22: services.documents.DecideApprovalResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
-	28, // 23: services.documents.DecideApprovalResponse.doc_meta:type_name -> resources.documents.DocumentMeta
-	26, // 24: services.documents.ReopenApprovalTaskResponse.task:type_name -> resources.documents.approval.ApprovalTask
-	27, // 25: services.documents.ReopenApprovalTaskResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
-	27, // 26: services.documents.RecomputeApprovalPolicyCountersResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
-	0,  // 27: services.documents.ApprovalService.ListApprovalTasksInbox:input_type -> services.documents.ListApprovalTasksInboxRequest
-	2,  // 28: services.documents.ApprovalService.ListApprovalPolicies:input_type -> services.documents.ListApprovalPoliciesRequest
-	4,  // 29: services.documents.ApprovalService.UpsertApprovalPolicy:input_type -> services.documents.UpsertApprovalPolicyRequest
-	6,  // 30: services.documents.ApprovalService.ListApprovalTasks:input_type -> services.documents.ListApprovalTasksRequest
-	9,  // 31: services.documents.ApprovalService.UpsertApprovalTasks:input_type -> services.documents.UpsertApprovalTasksRequest
-	11, // 32: services.documents.ApprovalService.DeleteApprovalTasks:input_type -> services.documents.DeleteApprovalTasksRequest
-	13, // 33: services.documents.ApprovalService.ListApprovals:input_type -> services.documents.ListApprovalsRequest
-	15, // 34: services.documents.ApprovalService.RevokeApproval:input_type -> services.documents.RevokeApprovalRequest
-	17, // 35: services.documents.ApprovalService.DecideApproval:input_type -> services.documents.DecideApprovalRequest
-	19, // 36: services.documents.ApprovalService.ReopenApprovalTask:input_type -> services.documents.ReopenApprovalTaskRequest
-	21, // 37: services.documents.ApprovalService.RecomputeApprovalPolicyCounters:input_type -> services.documents.RecomputeApprovalPolicyCountersRequest
-	1,  // 38: services.documents.ApprovalService.ListApprovalTasksInbox:output_type -> services.documents.ListApprovalTasksInboxResponse
-	3,  // 39: services.documents.ApprovalService.ListApprovalPolicies:output_type -> services.documents.ListApprovalPoliciesResponse
-	5,  // 40: services.documents.ApprovalService.UpsertApprovalPolicy:output_type -> services.documents.UpsertApprovalPolicyResponse
-	7,  // 41: services.documents.ApprovalService.ListApprovalTasks:output_type -> services.documents.ListApprovalTasksResponse
-	10, // 42: services.documents.ApprovalService.UpsertApprovalTasks:output_type -> services.documents.UpsertApprovalTasksResponse
-	12, // 43: services.documents.ApprovalService.DeleteApprovalTasks:output_type -> services.documents.DeleteApprovalTasksResponse
-	14, // 44: services.documents.ApprovalService.ListApprovals:output_type -> services.documents.ListApprovalsResponse
-	16, // 45: services.documents.ApprovalService.RevokeApproval:output_type -> services.documents.RevokeApprovalResponse
-	18, // 46: services.documents.ApprovalService.DecideApproval:output_type -> services.documents.DecideApprovalResponse
-	20, // 47: services.documents.ApprovalService.ReopenApprovalTask:output_type -> services.documents.ReopenApprovalTaskResponse
-	22, // 48: services.documents.ApprovalService.RecomputeApprovalPolicyCounters:output_type -> services.documents.RecomputeApprovalPolicyCountersResponse
-	38, // [38:49] is the sub-list for method output_type
-	27, // [27:38] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	28, // 19: services.documents.RevokeApprovalResponse.doc_meta:type_name -> resources.documents.DocumentMeta
+	24, // 20: services.documents.DecideApprovalRequest.new_status:type_name -> resources.documents.approval.ApprovalTaskStatus
+	31, // 21: services.documents.DecideApprovalResponse.approval:type_name -> resources.documents.approval.Approval
+	26, // 22: services.documents.DecideApprovalResponse.task:type_name -> resources.documents.approval.ApprovalTask
+	27, // 23: services.documents.DecideApprovalResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
+	28, // 24: services.documents.DecideApprovalResponse.doc_meta:type_name -> resources.documents.DocumentMeta
+	26, // 25: services.documents.ReopenApprovalTaskResponse.task:type_name -> resources.documents.approval.ApprovalTask
+	27, // 26: services.documents.ReopenApprovalTaskResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
+	27, // 27: services.documents.RecomputeApprovalPolicyCountersResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
+	0,  // 28: services.documents.ApprovalService.ListApprovalTasksInbox:input_type -> services.documents.ListApprovalTasksInboxRequest
+	2,  // 29: services.documents.ApprovalService.ListApprovalPolicies:input_type -> services.documents.ListApprovalPoliciesRequest
+	4,  // 30: services.documents.ApprovalService.UpsertApprovalPolicy:input_type -> services.documents.UpsertApprovalPolicyRequest
+	6,  // 31: services.documents.ApprovalService.ListApprovalTasks:input_type -> services.documents.ListApprovalTasksRequest
+	9,  // 32: services.documents.ApprovalService.UpsertApprovalTasks:input_type -> services.documents.UpsertApprovalTasksRequest
+	11, // 33: services.documents.ApprovalService.DeleteApprovalTasks:input_type -> services.documents.DeleteApprovalTasksRequest
+	13, // 34: services.documents.ApprovalService.ListApprovals:input_type -> services.documents.ListApprovalsRequest
+	15, // 35: services.documents.ApprovalService.RevokeApproval:input_type -> services.documents.RevokeApprovalRequest
+	17, // 36: services.documents.ApprovalService.DecideApproval:input_type -> services.documents.DecideApprovalRequest
+	19, // 37: services.documents.ApprovalService.ReopenApprovalTask:input_type -> services.documents.ReopenApprovalTaskRequest
+	21, // 38: services.documents.ApprovalService.RecomputeApprovalPolicyCounters:input_type -> services.documents.RecomputeApprovalPolicyCountersRequest
+	1,  // 39: services.documents.ApprovalService.ListApprovalTasksInbox:output_type -> services.documents.ListApprovalTasksInboxResponse
+	3,  // 40: services.documents.ApprovalService.ListApprovalPolicies:output_type -> services.documents.ListApprovalPoliciesResponse
+	5,  // 41: services.documents.ApprovalService.UpsertApprovalPolicy:output_type -> services.documents.UpsertApprovalPolicyResponse
+	7,  // 42: services.documents.ApprovalService.ListApprovalTasks:output_type -> services.documents.ListApprovalTasksResponse
+	10, // 43: services.documents.ApprovalService.UpsertApprovalTasks:output_type -> services.documents.UpsertApprovalTasksResponse
+	12, // 44: services.documents.ApprovalService.DeleteApprovalTasks:output_type -> services.documents.DeleteApprovalTasksResponse
+	14, // 45: services.documents.ApprovalService.ListApprovals:output_type -> services.documents.ListApprovalsResponse
+	16, // 46: services.documents.ApprovalService.RevokeApproval:output_type -> services.documents.RevokeApprovalResponse
+	18, // 47: services.documents.ApprovalService.DecideApproval:output_type -> services.documents.DecideApprovalResponse
+	20, // 48: services.documents.ApprovalService.ReopenApprovalTask:output_type -> services.documents.ReopenApprovalTaskResponse
+	22, // 49: services.documents.ApprovalService.RecomputeApprovalPolicyCounters:output_type -> services.documents.RecomputeApprovalPolicyCountersResponse
+	39, // [39:50] is the sub-list for method output_type
+	28, // [28:39] is the sub-list for method input_type
+	28, // [28:28] is the sub-list for extension type_name
+	28, // [28:28] is the sub-list for extension extendee
+	0,  // [0:28] is the sub-list for field type_name
 }
 
 func init() { file_services_documents_approval_proto_init() }

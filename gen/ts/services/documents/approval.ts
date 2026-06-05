@@ -314,6 +314,10 @@ export interface RevokeApprovalResponse {
      * @generated from protobuf field: resources.documents.approval.Approval approval = 1
      */
     approval?: Approval;
+    /**
+     * @generated from protobuf field: resources.documents.DocumentMeta doc_meta = 2
+     */
+    docMeta?: DocumentMeta;
 }
 /**
  * @generated from protobuf message services.documents.DecideApprovalRequest
@@ -1364,7 +1368,8 @@ export const RevokeApprovalRequest = new RevokeApprovalRequest$Type();
 class RevokeApprovalResponse$Type extends MessageType<RevokeApprovalResponse> {
     constructor() {
         super("services.documents.RevokeApprovalResponse", [
-            { no: 1, name: "approval", kind: "message", T: () => Approval }
+            { no: 1, name: "approval", kind: "message", T: () => Approval },
+            { no: 2, name: "doc_meta", kind: "message", T: () => DocumentMeta }
         ]);
     }
     create(value?: PartialMessage<RevokeApprovalResponse>): RevokeApprovalResponse {
@@ -1381,6 +1386,9 @@ class RevokeApprovalResponse$Type extends MessageType<RevokeApprovalResponse> {
                 case /* resources.documents.approval.Approval approval */ 1:
                     message.approval = Approval.internalBinaryRead(reader, reader.uint32(), options, message.approval);
                     break;
+                case /* resources.documents.DocumentMeta doc_meta */ 2:
+                    message.docMeta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.docMeta);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1396,6 +1404,9 @@ class RevokeApprovalResponse$Type extends MessageType<RevokeApprovalResponse> {
         /* resources.documents.approval.Approval approval = 1; */
         if (message.approval)
             Approval.internalBinaryWrite(message.approval, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.DocumentMeta doc_meta = 2; */
+        if (message.docMeta)
+            DocumentMeta.internalBinaryWrite(message.docMeta, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -9392,6 +9392,7 @@ List approvals (artifacts) for a policy/snapshot. If snapshot_date is unset, ser
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `approval` | [resources.documents.approval.Approval](#resourcesdocumentsapprovalApproval) |  |  |
+| `doc_meta` | [resources.documents.DocumentMeta](#resourcesdocumentsDocumentMeta) |  |  |
 
 
 

@@ -9,6 +9,7 @@ import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import { type ApprovalPolicy, ApprovalStatus } from '~~/gen/ts/resources/documents/approval/approval';
 import type { ListApprovalsResponse } from '~~/gen/ts/services/documents/approval';
 import StatusBadge from './StatusBadge.vue';
+import type { DocumentMeta } from '~~/gen/ts/resources/documents/documents.js';
 
 const props = defineProps<{
     documentId: number;
@@ -18,6 +19,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (e: 'refresh'): void;
+    (e: 'update:docMeta', v: DocumentMeta): void;
 }>();
 
 const overlay = useOverlay();
@@ -50,8 +52,9 @@ async function revokeApproval(approvalId: number, comment: string = '') {
             approvalId: approvalId,
             comment: comment,
         });
-        await call;
+        const { response } = await call;
 
+        if (response.docMeta) emits('update:docMeta', response.docMeta);
         emits('refresh');
     } catch (e) {
         handleGRPCError(e as RpcError);

@@ -31,6 +31,7 @@ import ScrollToTop from '../partials/ScrollToTop.vue';
 import ApprovalDrawer from './approval/ApprovalDrawer.vue';
 import ReminderDrawer from './ReminderDrawer.vue';
 import RequestDrawer from './requests/RequestDrawer.vue';
+import ApprovalBadge from './approval/ApprovalBadge.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -148,7 +149,7 @@ async function openApprovalDrawer(): Promise<void> {
     approvalDrawer
         .open({
             documentId: props.documentId,
-            doc: doc.value!.document!,
+            docCreatorId: doc.value?.document?.creatorId,
             docMeta: doc.value!.document!.meta,
             canEdit: canDo.value.edit,
             'onUpdate:docMeta': ($event) => {
@@ -549,14 +550,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
 
                         <OpenClosedBadge :closed="doc.document?.meta?.closed" size="md" />
 
-                        <UBadge
-                            v-if="doc.document?.meta?.apPoliciesActive"
-                            class="inline-flex gap-1"
-                            size="md"
-                            :color="doc.document?.meta?.approved ? 'info' : 'warning'"
-                            icon="i-mdi-approval"
-                            :label="doc.document?.meta?.approved ? $t('common.approved') : $t('common.unapproved')"
-                        />
+                        <ApprovalBadge :meta="doc.document?.meta" />
 
                         <UBadge
                             v-if="doc.document?.meta?.state"

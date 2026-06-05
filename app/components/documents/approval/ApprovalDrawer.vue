@@ -9,7 +9,7 @@ import {
     OnEditBehavior,
     type ApprovalPolicy,
 } from '~~/gen/ts/resources/documents/approval/approval';
-import type { DocumentMeta, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import type { DocumentMeta } from '~~/gen/ts/resources/documents/documents';
 import ApprovalList from './ApprovalList.vue';
 import PolicyForm from './PolicyForm.vue';
 import TaskDecideDrawer from './TaskDecideDrawer.vue';
@@ -19,7 +19,7 @@ import TaskStatusBadge from './TaskStatusBadge.vue';
 
 const props = defineProps<{
     documentId: number;
-    doc: DocumentShort;
+    docCreatorId: number | undefined;
     canEdit?: boolean;
 }>();
 
@@ -102,14 +102,22 @@ const taskFormDrawer = overlay.create(TaskForm);
                 <span>{{ $t('common.approve') }}</span>
 
                 <div v-if="policy?.ruleKind !== undefined && policy?.approvedCount !== undefined">
-                    <TaskStatusBadge
-                        v-if="policy.ruleKind === ApprovalRuleKind.REQUIRE_ALL"
-                        :status="
-                            !!docMeta?.approved || (policy.assignedCount > 0 && policy.approvedCount >= policy.assignedCount)
-                                ? ApprovalTaskStatus.APPROVED
-                                : ApprovalTaskStatus.DECLINED
-                        "
-                    />
+                    <template v-if="policy.ruleKind === ApprovalRuleKind.REQUIRE_ALL">
+                        <UBadge
+                            v-if="policy.assignedCount === 0 && policy.approvedCount === 0 && policy.declinedCount === 0"
+                            :label="$t('common.unapproved')"
+                            color="warning"
+                        />
+                        <TaskStatusBadge
+                            v-else
+                            :status="
+                                !!docMeta?.approved ||
+                                (policy.assignedCount > 0 && policy.approvedCount >= policy.assignedCount)
+                                    ? ApprovalTaskStatus.APPROVED
+                                    : ApprovalTaskStatus.DECLINED
+                            "
+                        />
+                    </template>
                     <TaskStatusBadge
                         v-else
                         :status="
@@ -122,6 +130,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                     />
                 </div>
             </div>
+
             <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>
 
@@ -296,8 +305,9 @@ const taskFormDrawer = overlay.create(TaskForm);
                         <div class="flex flex-1 basis-3/4 flex-col gap-4 overflow-x-hidden p-0.5">
                             <ApprovalList
                                 :document-id="documentId"
-                                :doc-creator-id="doc.creatorId"
+                                :doc-creator-id="docCreatorId"
                                 @refresh="() => refresh()"
+                                @update:doc-meta="($event) => (docMeta = $event)"
                             />
 
                             <TaskList :document-id="documentId" @refresh="() => refresh()">

@@ -7,6 +7,7 @@ import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import DraftBadge from '../partials/DraftBadge.vue';
+import ApprovalBadge from './approval/ApprovalBadge.vue';
 
 const props = defineProps<{
     document: DocumentShort;
@@ -94,14 +95,7 @@ const links = computed(() =>
                                 :label="document.meta.state"
                             />
 
-                            <UBadge
-                                v-if="document?.meta?.apPoliciesActive"
-                                class="inline-flex gap-1"
-                                size="md"
-                                :color="document?.meta?.approved ? 'info' : 'warning'"
-                                icon="i-mdi-approval"
-                                :label="document?.meta?.approved ? $t('common.approved') : $t('common.unapproved')"
-                            />
+                            <ApprovalBadge :meta="document?.meta" />
                         </div>
 
                         <div class="flex flex-row items-center gap-1">

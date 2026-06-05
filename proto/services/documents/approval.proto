@@ -150,6 +150,7 @@ message RevokeApprovalRequest {
 
 message RevokeApprovalResponse {
   resources.documents.approval.Approval approval = 1;
+  resources.documents.DocumentMeta doc_meta = 2;
 }
 
 message DecideApprovalRequest {
