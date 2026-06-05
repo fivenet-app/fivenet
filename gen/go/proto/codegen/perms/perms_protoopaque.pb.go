@@ -634,11 +634,11 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"_namespaceB\n" +
 	"\n" +
 	"\b_serviceB\a\n" +
-	"\x05_name\"\x9f\x01\n" +
+	"\x05_name\"\xa9\x01\n" +
 	"\x04Attr\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value\x12C\n" +
-	"\x04type\x18\x03 \x01(\x0e2/.resources.permissions.attributes.AttributeTypeR\x04type\x12*\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\x12M\n" +
+	"\x04type\x18\x03 \x01(\x0e2/.resources.permissions.attributes.AttributeTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12*\n" +
 	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList\"\xf5\x01\n" +
 	"\x0eServiceOptions\x12\x14\n" +
 	"\x05order\x18\x01 \x01(\x05R\x05order\x12\x17\n" +

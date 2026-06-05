@@ -3261,29 +3261,30 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\bvehicles\x18\x04 \x01(\v2\x1f.resources.sync.data.DataStatusR\bvehicles\x12;\n" +
 	"\baccounts\x18\x05 \x01(\v2\x1f.resources.sync.data.DataStatusR\baccountsB\x13\n" +
 	"\x11_last_synced_dataB\x17\n" +
-	"\x15_last_synced_activity\"\x91\x01\n" +
-	"\x16RegisterAccountRequest\x12\x1e\n" +
+	"\x15_last_synced_activity\"\xa3\x01\n" +
+	"\x16RegisterAccountRequest\x12'\n" +
 	"\n" +
-	"identifier\x18\x01 \x01(\tR\n" +
+	"identifier\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\n" +
 	"identifier\x12\x1f\n" +
 	"\vreset_token\x18\x02 \x01(\bR\n" +
-	"resetToken\x12%\n" +
-	"\flast_char_id\x18\x03 \x01(\x05H\x00R\n" +
+	"resetToken\x12.\n" +
+	"\flast_char_id\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x00R\n" +
 	"lastCharId\x88\x01\x01B\x0f\n" +
-	"\r_last_char_id\"\xaa\x01\n" +
-	"\x17RegisterAccountResponse\x12 \n" +
-	"\treg_token\x18\x01 \x01(\tH\x00R\bregToken\x88\x01\x01\x12\"\n" +
+	"\r_last_char_id\"\xc0\x01\n" +
+	"\x17RegisterAccountResponse\x126\n" +
+	"\treg_token\x18\x01 \x01(\tB\x14\xbaH\x11r\x0f2\n" +
+	"^[0-9]{6}$\x98\x01\x06H\x00R\bregToken\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"account_id\x18\x02 \x01(\x03H\x01R\taccountId\x88\x01\x01\x12\x1f\n" +
 	"\busername\x18\x03 \x01(\tH\x02R\busername\x88\x01\x01B\f\n" +
 	"\n" +
 	"_reg_tokenB\r\n" +
 	"\v_account_idB\v\n" +
-	"\t_username\"Z\n" +
-	"\x16TransferAccountRequest\x12\x1f\n" +
-	"\vold_license\x18\x01 \x01(\tR\n" +
-	"oldLicense\x12\x1f\n" +
-	"\vnew_license\x18\x02 \x01(\tR\n" +
+	"\t_username\"l\n" +
+	"\x16TransferAccountRequest\x12(\n" +
+	"\vold_license\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\n" +
+	"oldLicense\x12(\n" +
+	"\vnew_license\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18@R\n" +
 	"newLicense\"\x19\n" +
 	"\x17TransferAccountResponse\"d\n" +
 	"\x18AddUserOAuth2ConnRequest\x12H\n" +
@@ -3307,19 +3308,19 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\x14AddUserUpdateRequest\x12D\n" +
 	"\vuser_update\x18\x01 \x01(\v2#.resources.sync.activity.UserUpdateR\n" +
 	"userUpdate\"\x15\n" +
-	"\x13AddActivityResponse\":\n" +
-	"\x0fSendJobsRequest\x12'\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x04jobs\"W\n" +
-	"\x13SendLicensesRequest\x12@\n" +
-	"\blicenses\x18\x01 \x03(\v2$.resources.citizens.licenses.LicenseR\blicenses\"f\n" +
-	"\x13SendAccountsRequest\x12O\n" +
-	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"G\n" +
-	"\x10SendUsersRequest\x123\n" +
-	"\x05users\x18\x01 \x03(\v2\x1d.resources.sync.data.DataUserR\x05users\"N\n" +
-	"\x13SendVehiclesRequest\x127\n" +
-	"\bvehicles\x18\x01 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"\x87\x01\n" +
-	"\x18SendUserLocationsRequest\x12;\n" +
-	"\x05users\x18\x01 \x03(\v2%.resources.sync.data.CitizenLocationsR\x05users\x12 \n" +
+	"\x13AddActivityResponse\"E\n" +
+	"\x0fSendJobsRequest\x122\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobB\t\xbaH\x06\x92\x01\x03\x10\xc8\x01R\x04jobs\"b\n" +
+	"\x13SendLicensesRequest\x12K\n" +
+	"\blicenses\x18\x01 \x03(\v2$.resources.citizens.licenses.LicenseB\t\xbaH\x06\x92\x01\x03\x10\xc8\x01R\blicenses\"q\n" +
+	"\x13SendAccountsRequest\x12Z\n" +
+	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateB\t\xbaH\x06\x92\x01\x03\x10\xc8\x01R\x0eaccountUpdates\"R\n" +
+	"\x10SendUsersRequest\x12>\n" +
+	"\x05users\x18\x01 \x03(\v2\x1d.resources.sync.data.DataUserB\t\xbaH\x06\x92\x01\x03\x10\xac\x02R\x05users\"Y\n" +
+	"\x13SendVehiclesRequest\x12B\n" +
+	"\bvehicles\x18\x01 \x03(\v2\x1b.resources.vehicles.VehicleB\t\xbaH\x06\x92\x01\x03\x10\xf4\x03R\bvehicles\"\x92\x01\n" +
+	"\x18SendUserLocationsRequest\x12F\n" +
+	"\x05users\x18\x01 \x03(\v2%.resources.sync.data.CitizenLocationsB\t\xbaH\x06\x92\x01\x03\x10\xd0\x0fR\x05users\x12 \n" +
 	"\tclear_all\x18\x02 \x01(\bH\x00R\bclearAll\x88\x01\x01B\f\n" +
 	"\n" +
 	"_clear_all\"Y\n" +
@@ -3327,14 +3328,14 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\flast_char_id\x18\x01 \x01(\v2\x1f.resources.sync.data.LastCharIDR\n" +
 	"lastCharId\"7\n" +
 	"\x10SendDataResponse\x12#\n" +
-	"\rrows_affected\x18\x01 \x01(\x03R\frowsAffected\"/\n" +
-	"\x12DeleteUsersRequest\x12\x19\n" +
-	"\buser_ids\x18\x01 \x03(\x05R\auserIds\"/\n" +
-	"\x15DeleteVehiclesRequest\x12\x16\n" +
-	"\x06plates\x18\x01 \x03(\tR\x06plates\"6\n" +
+	"\rrows_affected\x18\x01 \x01(\x03R\frowsAffected\":\n" +
+	"\x12DeleteUsersRequest\x12$\n" +
+	"\buser_ids\x18\x01 \x03(\x05B\t\xbaH\x06\x92\x01\x03\x10\xac\x02R\auserIds\":\n" +
+	"\x15DeleteVehiclesRequest\x12!\n" +
+	"\x06plates\x18\x01 \x03(\tB\t\xbaH\x06\x92\x01\x03\x10\xf4\x03R\x06plates\"=\n" +
 	"\x0eStreamResponse\x12\x19\n" +
-	"\auser_id\x18\x01 \x01(\x05H\x00R\x06userIdB\t\n" +
-	"\apayload\"\xec\x05\n" +
+	"\auser_id\x18\x01 \x01(\x05H\x00R\x06userIdB\x10\n" +
+	"\apayload\x12\x05\xbaH\x02\b\x01\"\xf3\x05\n" +
 	"\x12AddActivityRequest\x12J\n" +
 	"\vuser_oauth2\x18\x01 \x01(\v2'.resources.sync.activity.UserOAuth2ConnH\x00R\n" +
 	"userOauth2\x12D\n" +
@@ -3347,9 +3348,8 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\rjob_timeclock\x18\a \x01(\v2(.resources.sync.activity.TimeclockUpdateH\x00R\fjobTimeclock\x12O\n" +
 	"\x0eaccount_update\x18\t \x01(\v2&.resources.sync.activity.AccountUpdateH\x00R\raccountUpdate\x12F\n" +
 	"\vuser_update\x18\b \x01(\v2#.resources.sync.activity.UserUpdateH\x00R\n" +
-	"userUpdateB\n" +
-	"\n" +
-	"\bactivity\"\xdf\x03\n" +
+	"userUpdateB\x11\n" +
+	"\bactivity\x12\x05\xbaH\x02\b\x01\"\xe6\x03\n" +
 	"\x0fSendDataRequest\x123\n" +
 	"\x04jobs\x18\x01 \x01(\v2\x1d.resources.sync.data.DataJobsH\x00R\x04jobs\x12?\n" +
 	"\blicenses\x18\x02 \x01(\v2!.resources.sync.data.DataLicensesH\x00R\blicenses\x12?\n" +
@@ -3358,16 +3358,16 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\bvehicles\x18\x04 \x01(\v2!.resources.sync.data.DataVehiclesH\x00R\bvehicles\x12O\n" +
 	"\x0euser_locations\x18\x05 \x01(\v2&.resources.sync.data.DataUserLocationsH\x00R\ruserLocations\x12C\n" +
 	"\flast_char_id\x18\x06 \x01(\v2\x1f.resources.sync.data.LastCharIDH\x00R\n" +
-	"lastCharIdB\x06\n" +
-	"\x04data\"\x98\x01\n" +
+	"lastCharIdB\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"\x9f\x01\n" +
 	"\x11DeleteDataRequest\x128\n" +
 	"\x05users\x18\x01 \x01(\v2 .resources.sync.data.DeleteUsersH\x00R\x05users\x12A\n" +
-	"\bvehicles\x18\x02 \x01(\v2#.resources.sync.data.DeleteVehiclesH\x00R\bvehiclesB\x06\n" +
-	"\x04data\"9\n" +
+	"\bvehicles\x18\x02 \x01(\v2#.resources.sync.data.DeleteVehiclesH\x00R\bvehiclesB\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"9\n" +
 	"\x12DeleteDataResponse\x12#\n" +
-	"\rrows_affected\x18\x01 \x01(\x03R\frowsAffected\":\n" +
-	"\rStreamRequest\x12\x1d\n" +
-	"\aversion\x18\x01 \x01(\tH\x00R\aversion\x88\x01\x01B\n" +
+	"\rrows_affected\x18\x01 \x01(\x03R\frowsAffected\"C\n" +
+	"\rStreamRequest\x12&\n" +
+	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 H\x00R\aversion\x88\x01\x01B\n" +
 	"\n" +
 	"\b_version2\xc0\x11\n" +
 	"\vSyncService\x12N\n" +

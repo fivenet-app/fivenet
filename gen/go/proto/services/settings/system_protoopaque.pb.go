@@ -804,40 +804,40 @@ var File_services_settings_system_proto protoreflect.FileDescriptor
 
 const file_services_settings_system_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/settings/system.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a1resources/permissions/attributes/attributes.proto\x1a3resources/permissions/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a\x1fresources/settings/status.proto\",\n" +
-	"\x18GetAllPermissionsRequest\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\"\xbd\x01\n" +
+	"\x1eservices/settings/system.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a1resources/permissions/attributes/attributes.proto\x1a3resources/permissions/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a\x1fresources/settings/status.proto\"5\n" +
+	"\x18GetAllPermissionsRequest\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\"\xbd\x01\n" +
 	"\x19GetAllPermissionsResponse\x12O\n" +
 	"\vpermissions\x18\x01 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
 	"attributes\x18\x02 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
-	"attributes\"'\n" +
-	"\x13GetJobLimitsRequest\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\"\xfa\x01\n" +
-	"\x14GetJobLimitsResponse\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\x12 \n" +
+	"attributes\"0\n" +
+	"\x13GetJobLimitsRequest\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\"\x83\x02\n" +
+	"\x14GetJobLimitsResponse\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12 \n" +
 	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12O\n" +
 	"\vpermissions\x18\x03 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
 	"attributes\x18\x04 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
 	"attributesB\f\n" +
 	"\n" +
-	"_job_label\"\xb6\x01\n" +
-	"\x16UpdateJobLimitsRequest\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\x12:\n" +
+	"_job_label\"\xbf\x01\n" +
+	"\x16UpdateJobLimitsRequest\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12:\n" +
 	"\x05perms\x18\x02 \x01(\v2\x1f.resources.settings.PermsUpdateH\x00R\x05perms\x88\x01\x01\x12:\n" +
 	"\x05attrs\x18\x03 \x01(\v2\x1f.resources.settings.AttrsUpdateH\x01R\x05attrs\x88\x01\x01B\b\n" +
 	"\x06_permsB\b\n" +
 	"\x06_attrs\"\x19\n" +
-	"\x17UpdateJobLimitsResponse\"(\n" +
-	"\x14DeleteFactionRequest\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\"\x17\n" +
+	"\x17UpdateJobLimitsResponse\"1\n" +
+	"\x14DeleteFactionRequest\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\"\x17\n" +
 	"\x15DeleteFactionResponse\"\x12\n" +
 	"\x10GetStatusRequest\"M\n" +
 	"\x11GetStatusResponse\x128\n" +
-	"\x06status\x18\x01 \x01(\v2 .resources.settings.SystemStatusR\x06status\"1\n" +
-	"\x16TriggerUserSyncRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\"\x19\n" +
+	"\x06status\x18\x01 \x01(\v2 .resources.settings.SystemStatusR\x06status\":\n" +
+	"\x16TriggerUserSyncRequest\x12 \n" +
+	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\"\x19\n" +
 	"\x17TriggerUserSyncResponse2\xe3\x05\n" +
 	"\rSystemService\x12i\n" +
 	"\tGetStatus\x12#.services.settings.GetStatusRequest\x1a$.services.settings.GetStatusResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12\x81\x01\n" +

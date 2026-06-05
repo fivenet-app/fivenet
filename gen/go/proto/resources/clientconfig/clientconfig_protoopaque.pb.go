@@ -1024,15 +1024,15 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\aDiscord\x127\n" +
 	"\vbot_enabled\x18\x01 \x01(\bB\x16\x9a\x84\x9e\x03\x11json:\"botEnabled\"R\n" +
 	"botEnabled\"\x0e\n" +
-	"\fFeatureGates\"\xa5\x06\n" +
+	"\fFeatureGates\"\xcd\x06\n" +
 	"\x04Game\x12M\n" +
 	"\x13unemployed_job_name\x18\x01 \x01(\tB\x1d\x9a\x84\x9e\x03\x18json:\"unemployedJobName\"R\x11unemployedJobName\x12A\n" +
 	"\x0fstart_job_grade\x18\x02 \x01(\x05B\x19\x9a\x84\x9e\x03\x14json:\"startJobGrade\"R\rstartJobGrade\x12J\n" +
 	"\alivemap\x18\x03 \x01(\v2\x1b.resources.settings.LivemapB\x13\x9a\x84\x9e\x03\x0ejson:\"livemap\"R\alivemap\x12p\n" +
-	" max_wanted_duration_user_enabled\x18\x04 \x01(\bB(\x9a\x84\x9e\x03#json:\"maxWantedDurationUserEnabled\"R\x1cmaxWantedDurationUserEnabled\x12\x84\x01\n" +
-	"\x18max_wanted_duration_user\x18\x05 \x01(\v2\x19.google.protobuf.DurationB+\x9a\x84\x9e\x03&json:\"maxWantedDurationUser,omitempty\"H\x00R\x15maxWantedDurationUser\x88\x01\x01\x12y\n" +
-	"#max_wanted_duration_vehicle_enabled\x18\x06 \x01(\bB+\x9a\x84\x9e\x03&json:\"maxWantedDurationVehicleEnabled\"R\x1fmaxWantedDurationVehicleEnabled\x12\x8d\x01\n" +
-	"\x1bmax_wanted_duration_vehicle\x18\a \x01(\v2\x19.google.protobuf.DurationB.\x9a\x84\x9e\x03)json:\"maxWantedDurationVehicle,omitempty\"H\x01R\x18maxWantedDurationVehicle\x88\x01\x01B\x1b\n" +
+	" max_wanted_duration_user_enabled\x18\x04 \x01(\bB(\x9a\x84\x9e\x03#json:\"maxWantedDurationUserEnabled\"R\x1cmaxWantedDurationUserEnabled\x12\x98\x01\n" +
+	"\x18max_wanted_duration_user\x18\x05 \x01(\v2\x19.google.protobuf.DurationB?\x9a\x84\x9e\x03&json:\"maxWantedDurationUser,omitempty\"\xbaH\x11\xaa\x01\x0e\"\x06\b\x80\x86\xb0\x96\x012\x04\b\x80\xa3\x05H\x00R\x15maxWantedDurationUser\x88\x01\x01\x12y\n" +
+	"#max_wanted_duration_vehicle_enabled\x18\x06 \x01(\bB+\x9a\x84\x9e\x03&json:\"maxWantedDurationVehicleEnabled\"R\x1fmaxWantedDurationVehicleEnabled\x12\xa1\x01\n" +
+	"\x1bmax_wanted_duration_vehicle\x18\a \x01(\v2\x19.google.protobuf.DurationBB\x9a\x84\x9e\x03)json:\"maxWantedDurationVehicle,omitempty\"\xbaH\x11\xaa\x01\x0e\"\x06\b\x80\x86\xb0\x96\x012\x04\b\x80\xa3\x05H\x01R\x18maxWantedDurationVehicle\x88\x01\x01B\x1b\n" +
 	"\x19_max_wanted_duration_userB\x1e\n" +
 	"\x1c_max_wanted_duration_vehicle\"\xb3\x02\n" +
 	"\x06System\x12V\n" +

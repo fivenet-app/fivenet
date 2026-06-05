@@ -766,31 +766,31 @@ var File_services_mailer_mailer_proto protoreflect.FileDescriptor
 
 const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservices/mailer/mailer.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a#resources/mailer/emails/email.proto\"\x80\x01\n" +
-	"\x11ListEmailsRequest\x12L\n" +
+	"\x1cservices/mailer/mailer.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a#resources/mailer/emails/email.proto\"\x88\x01\n" +
+	"\x11ListEmailsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x15\n" +
 	"\x03all\x18\x02 \x01(\bH\x00R\x03all\x88\x01\x01B\x06\n" +
-	"\x04_all\"\xa1\x01\n" +
-	"\x12ListEmailsResponse\x12M\n" +
+	"\x04_all\"\xa9\x01\n" +
+	"\x12ListEmailsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12<\n" +
-	"\x06emails\x18\x02 \x03(\v2\x1e.resources.mailer.emails.EmailB\x04\xc8\xf3\x18\x01R\x06emails\"!\n" +
-	"\x0fGetEmailRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"H\n" +
-	"\x10GetEmailResponse\x124\n" +
-	"\x05email\x18\x01 \x01(\v2\x1e.resources.mailer.emails.EmailR\x05email\"R\n" +
-	"\x1aCreateOrUpdateEmailRequest\x124\n" +
-	"\x05email\x18\x01 \x01(\v2\x1e.resources.mailer.emails.EmailR\x05email\"S\n" +
+	"\x06emails\x18\x02 \x03(\v2\x1e.resources.mailer.emails.EmailB\x04\xc8\xf3\x18\x01R\x06emails\"*\n" +
+	"\x0fGetEmailRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"P\n" +
+	"\x10GetEmailResponse\x12<\n" +
+	"\x05email\x18\x01 \x01(\v2\x1e.resources.mailer.emails.EmailB\x06\xbaH\x03\xc8\x01\x01R\x05email\"Z\n" +
+	"\x1aCreateOrUpdateEmailRequest\x12<\n" +
+	"\x05email\x18\x01 \x01(\v2\x1e.resources.mailer.emails.EmailB\x06\xbaH\x03\xc8\x01\x01R\x05email\"S\n" +
 	"\x1bCreateOrUpdateEmailResponse\x124\n" +
-	"\x05email\x18\x01 \x01(\v2\x1e.resources.mailer.emails.EmailR\x05email\"$\n" +
-	"\x12DeleteEmailRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x15\n" +
-	"\x13DeleteEmailResponse\"y\n" +
-	"\x18GetEmailProposalsRequest\x12\x14\n" +
-	"\x05input\x18\x01 \x01(\tR\x05input\x12\x15\n" +
+	"\x05email\x18\x01 \x01(\v2\x1e.resources.mailer.emails.EmailR\x05email\"-\n" +
+	"\x12DeleteEmailRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x15\n" +
+	"\x13DeleteEmailResponse\"\x82\x01\n" +
+	"\x18GetEmailProposalsRequest\x12\x1d\n" +
+	"\x05input\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18(R\x05input\x12\x15\n" +
 	"\x03job\x18\x02 \x01(\bH\x00R\x03job\x88\x01\x01\x12\x1c\n" +
 	"\auser_id\x18\x03 \x01(\x05H\x01R\x06userId\x88\x01\x01B\x06\n" +
 	"\x04_jobB\n" +

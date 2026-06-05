@@ -22,7 +22,7 @@ build_dir:
 
 buf:
 ifeq (, $(shell which buf))
-	$(GO) install github.com/bufbuild/buf/cmd/buf@v1.55.1
+	$(GO) install github.com/bufbuild/buf/cmd/buf@v1.70.0
 endif
 
 protoc-gen-doc:

@@ -389,7 +389,7 @@ var File_resources_mailer_emails_email_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_emails_email_proto_rawDesc = "" +
 	"\n" +
-	"#resources/mailer/emails/email.proto\x12\x17resources.mailer.emails\x1a!codegen/sanitizer/sanitizer.proto\x1a$resources/mailer/access/access.proto\x1a(resources/mailer/settings/settings.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\xe7\x05\n" +
+	"#resources/mailer/emails/email.proto\x12\x17resources.mailer.emails\x1a!codegen/sanitizer/sanitizer.proto\x1a$resources/mailer/access/access.proto\x1a(resources/mailer/settings/settings.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\x8a\x06\n" +
 	"\x05Email\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -398,14 +398,14 @@ const file_resources_mailer_emails_email_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12 \n" +
-	"\vdeactivated\x18\x05 \x01(\bR\vdeactivated\x12\x15\n" +
-	"\x03job\x18\x06 \x01(\tH\x02R\x03job\x88\x01\x01\x12\x1c\n" +
-	"\auser_id\x18\a \x01(\x05H\x03R\x06userId\x88\x01\x01\x129\n" +
-	"\x04user\x18\b \x01(\v2 .resources.users.short.UserShortH\x04R\x04user\x88\x01\x01\x12\x1e\n" +
-	"\x05email\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05email\x12H\n" +
+	"\vdeactivated\x18\x05 \x01(\bR\vdeactivated\x12\x1e\n" +
+	"\x03job\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18(H\x02R\x03job\x88\x01\x01\x12%\n" +
+	"\auser_id\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x03R\x06userId\x88\x01\x01\x129\n" +
+	"\x04user\x18\b \x01(\v2 .resources.users.short.UserShortH\x04R\x04user\x88\x01\x01\x12'\n" +
+	"\x05email\x18\t \x01(\tB\x11\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x06r\x04\x10\x06\x18PR\x05email\x12H\n" +
 	"\remail_changed\x18\n" +
-	" \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\femailChanged\x88\x01\x01\x12#\n" +
-	"\x05label\x18\v \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x05label\x88\x01\x01\x127\n" +
+	" \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\femailChanged\x88\x01\x01\x12+\n" +
+	"\x05label\x18\v \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x01H\x06R\x05label\x88\x01\x01\x127\n" +
 	"\x06access\x18\f \x01(\v2\x1f.resources.mailer.access.AccessR\x06access\x12I\n" +
 	"\bsettings\x18\r \x01(\v2(.resources.mailer.settings.EmailSettingsH\aR\bsettings\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +

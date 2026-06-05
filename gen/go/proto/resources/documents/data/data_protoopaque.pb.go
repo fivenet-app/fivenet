@@ -432,21 +432,24 @@ const file_resources_documents_data_data_proto_rawDesc = "" +
 	"#resources/documents/data/data.proto\x12\x18resources.documents.data\x1a!codegen/dbscanner/dbscanner.proto\"\x92\x01\n" +
 	"\fDocumentData\x12c\n" +
 	"\x12penalty_calculator\x18\x02 \x01(\v2/.resources.documents.data.PenaltyCalculatorDataH\x00R\x11penaltyCalculator\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x15\n" +
-	"\x13_penalty_calculator\"\xd3\x01\n" +
-	"\x15PenaltyCalculatorData\x12\x1c\n" +
-	"\treduction\x18\x01 \x01(\x05R\treduction\x12E\n" +
-	"\bselected\x18\x02 \x03(\v2).resources.documents.data.SelectedPenaltyR\bselected\x12K\n" +
+	"\x13_penalty_calculator\"\xe8\x01\n" +
+	"\x15PenaltyCalculatorData\x12'\n" +
+	"\treduction\x18\x01 \x01(\x05B\t\xbaH\x06\x1a\x04\x10d(\x00R\treduction\x12O\n" +
+	"\bselected\x18\x02 \x03(\v2).resources.documents.data.SelectedPenaltyB\b\xbaH\x05\x92\x01\x02\x10\x1eR\bselected\x12K\n" +
 	"\x05total\x18\x03 \x01(\v20.resources.documents.data.PenaltyCalculatorTotalH\x00R\x05total\x88\x01\x01B\b\n" +
-	"\x06_total\">\n" +
-	"\x0fSelectedPenalty\x12\x15\n" +
-	"\x06law_id\x18\x01 \x01(\x03R\x05lawId\x12\x14\n" +
-	"\x05count\x18\x02 \x01(\rR\x05count\"\xd4\x01\n" +
-	"\x16PenaltyCalculatorTotal\x12\x19\n" +
-	"\x05count\x18\x01 \x01(\rH\x00R\x05count\x88\x01\x01\x12\x17\n" +
-	"\x04fine\x18\b \x01(\rH\x01R\x04fine\x88\x01\x01\x12*\n" +
-	"\x0edetention_time\x18\t \x01(\rH\x02R\rdetentionTime\x88\x01\x01\x12$\n" +
+	"\x06_total\"R\n" +
+	"\x0fSelectedPenalty\x12\x1e\n" +
+	"\x06law_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x05lawId\x12\x1f\n" +
+	"\x05count\x18\x02 \x01(\rB\t\xbaH\x06*\x04\x10d \x00R\x05count\"\x86\x02\n" +
+	"\x16PenaltyCalculatorTotal\x12%\n" +
+	"\x05count\x18\x01 \x01(\rB\n" +
+	"\xbaH\a*\x05\x10\xe8\a(\x00H\x00R\x05count\x88\x01\x01\x12%\n" +
+	"\x04fine\x18\b \x01(\rB\f\xbaH\t*\a\x10\x80\xad\xe2\x04(\x00H\x01R\x04fine\x88\x01\x01\x126\n" +
+	"\x0edetention_time\x18\t \x01(\rB\n" +
+	"\xbaH\a*\x05\x10\x90N(\x00H\x02R\rdetentionTime\x88\x01\x01\x120\n" +
 	"\vstvo_points\x18\n" +
-	" \x01(\rH\x03R\n" +
+	" \x01(\rB\n" +
+	"\xbaH\a*\x05\x10\xe8\a(\x00H\x03R\n" +
 	"stvoPoints\x88\x01\x01B\b\n" +
 	"\x06_countB\a\n" +
 	"\x05_fineB\x11\n" +

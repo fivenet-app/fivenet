@@ -130,9 +130,9 @@ var File_resources_settings_data_proto protoreflect.FileDescriptor
 
 const file_resources_settings_data_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/settings/data.proto\x12\x12resources.settings\"8\n" +
-	"\x04Data\x120\n" +
-	"\x04mode\x18\x01 \x01(\x0e2\x1c.resources.settings.DataModeR\x04mode*q\n" +
+	"\x1dresources/settings/data.proto\x12\x12resources.settings\"B\n" +
+	"\x04Data\x12:\n" +
+	"\x04mode\x18\x01 \x01(\x0e2\x1c.resources.settings.DataModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04mode*q\n" +
 	"\bDataMode\x12\x19\n" +
 	"\x15DATA_MODE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15DATA_MODE_UNAVAILABLE\x10\x01\x12\x16\n" +

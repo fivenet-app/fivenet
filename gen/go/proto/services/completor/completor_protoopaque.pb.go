@@ -683,22 +683,22 @@ var File_services_completor_completor_proto protoreflect.FileDescriptor
 
 const file_services_completor_completor_proto_rawDesc = "" +
 	"\n" +
-	"\"services/completor/completor.proto\x12\x12services.completor\x1a\x19codegen/perms/perms.proto\x1a+resources/documents/category/category.proto\x1a\x19resources/jobs/jobs.proto\x1a\x19resources/laws/laws.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xe7\x01\n" +
-	"\x17CompleteCitizensRequest\x12\x16\n" +
-	"\x06search\x18\x01 \x01(\tR\x06search\x12$\n" +
+	"\"services/completor/completor.proto\x12\x12services.completor\x1a\x19codegen/perms/perms.proto\x1a+resources/documents/category/category.proto\x1a\x19resources/jobs/jobs.proto\x1a\x19resources/laws/laws.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xfe\x01\n" +
+	"\x17CompleteCitizensRequest\x12\x1f\n" +
+	"\x06search\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\x06search\x12$\n" +
 	"\vcurrent_job\x18\x02 \x01(\bH\x00R\n" +
 	"currentJob\x88\x01\x01\x12\x1c\n" +
-	"\aon_duty\x18\x03 \x01(\bH\x01R\x06onDuty\x88\x01\x01\x12\x19\n" +
-	"\buser_ids\x18\x04 \x03(\x05R\auserIds\x12'\n" +
+	"\aon_duty\x18\x03 \x01(\bH\x01R\x06onDuty\x88\x01\x01\x12'\n" +
+	"\buser_ids\x18\x04 \x03(\x05B\f\xbaH\t\x92\x01\x06\"\x04\x1a\x02 \x00R\auserIds\x12'\n" +
 	"\ruser_ids_only\x18\x05 \x01(\bH\x02R\vuserIdsOnly\x88\x01\x01B\x0e\n" +
 	"\f_current_jobB\n" +
 	"\n" +
 	"\b_on_dutyB\x10\n" +
 	"\x0e_user_ids_only\"e\n" +
 	"\x18CompleteCitizensResponse\x12I\n" +
-	"\x05users\x18\x01 \x03(\v2 .resources.users.short.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x05users\"\xa9\x01\n" +
-	"\x13CompleteJobsRequest\x12\x1b\n" +
-	"\x06search\x18\x01 \x01(\tH\x00R\x06search\x88\x01\x01\x12$\n" +
+	"\x05users\x18\x01 \x03(\v2 .resources.users.short.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x05users\"\xb2\x01\n" +
+	"\x13CompleteJobsRequest\x12$\n" +
+	"\x06search\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@H\x00R\x06search\x88\x01\x01\x12$\n" +
 	"\vexact_match\x18\x02 \x01(\bH\x01R\n" +
 	"exactMatch\x88\x01\x01\x12$\n" +
 	"\vcurrent_job\x18\x03 \x01(\bH\x02R\n" +
@@ -707,10 +707,10 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"\f_exact_matchB\x0e\n" +
 	"\f_current_job\"?\n" +
 	"\x14CompleteJobsResponse\x12'\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x04jobs\"^\n" +
-	"!CompleteDocumentCategoriesRequest\x12\x16\n" +
-	"\x06search\x18\x01 \x01(\tR\x06search\x12!\n" +
-	"\fcategory_ids\x18\x02 \x03(\x03R\vcategoryIds\"l\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x04jobs\"u\n" +
+	"!CompleteDocumentCategoriesRequest\x12\x1f\n" +
+	"\x06search\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\x06search\x12/\n" +
+	"\fcategory_ids\x18\x02 \x03(\x03B\f\xbaH\t\x92\x01\x06\"\x04\"\x02 \x00R\vcategoryIds\"l\n" +
 	"\"CompleteDocumentCategoriesResponse\x12F\n" +
 	"\n" +
 	"categories\x18\x01 \x03(\v2&.resources.documents.category.CategoryR\n" +

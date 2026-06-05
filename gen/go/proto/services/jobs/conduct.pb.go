@@ -797,13 +797,14 @@ var File_services_jobs_conduct_proto protoreflect.FileDescriptor
 
 const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
-	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a$resources/jobs/conduct/conduct.proto\"\x83\x03\n" +
-	"\x19ListConductEntriesRequest\x12L\n" +
+	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a$resources/jobs/conduct/conduct.proto\"\x9a\x03\n" +
+	"\x19ListConductEntriesRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x129\n" +
-	"\x05types\x18\x03 \x03(\x0e2#.resources.jobs.conduct.ConductTypeR\x05types\x12&\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12H\n" +
+	"\x05types\x18\x03 \x03(\x0e2#.resources.jobs.conduct.ConductTypeB\r\xbaH\n" +
+	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01R\x05types\x12&\n" +
 	"\fshow_expired\x18\x04 \x01(\bH\x01R\vshowExpired\x88\x01\x01\x12$\n" +
 	"\vshow_drafts\x18\x05 \x01(\bH\x02R\n" +
 	"showDrafts\x88\x01\x01\x12\x19\n" +
@@ -811,24 +812,24 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\x03ids\x18\a \x03(\x03R\x03idsB\a\n" +
 	"\x05_sortB\x0f\n" +
 	"\r_show_expiredB\x0e\n" +
-	"\f_show_drafts\"\xb1\x01\n" +
-	"\x1aListConductEntriesResponse\x12M\n" +
+	"\f_show_drafts\"\xb9\x01\n" +
+	"\x1aListConductEntriesResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12D\n" +
-	"\aentries\x18\x02 \x03(\v2$.resources.jobs.conduct.ConductEntryB\x04\xc8\xf3\x18\x01R\aentries\"(\n" +
-	"\x16GetConductEntryRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"U\n" +
-	"\x17GetConductEntryResponse\x12:\n" +
-	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"W\n" +
-	"\x19CreateConductEntryRequest\x12:\n" +
-	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"X\n" +
+	"\aentries\x18\x02 \x03(\v2$.resources.jobs.conduct.ConductEntryB\x04\xc8\xf3\x18\x01R\aentries\"0\n" +
+	"\x16GetConductEntryRequest\x12\x16\n" +
+	"\x02id\x18\x01 \x01(\x03B\x06\xbaH\x03\xc8\x01\x01R\x02id\"]\n" +
+	"\x17GetConductEntryResponse\x12B\n" +
+	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\"_\n" +
+	"\x19CreateConductEntryRequest\x12B\n" +
+	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\"X\n" +
 	"\x1aCreateConductEntryResponse\x12:\n" +
-	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"W\n" +
-	"\x19UpdateConductEntryRequest\x12:\n" +
-	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"X\n" +
-	"\x1aUpdateConductEntryResponse\x12:\n" +
-	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"+\n" +
+	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"_\n" +
+	"\x19UpdateConductEntryRequest\x12B\n" +
+	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\"`\n" +
+	"\x1aUpdateConductEntryResponse\x12B\n" +
+	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\"+\n" +
 	"\x19DeleteConductEntryRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1c\n" +
 	"\x1aDeleteConductEntryResponse2\x94\x06\n" +

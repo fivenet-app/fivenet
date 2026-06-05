@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"path"
 	"slices"
 	"strings"
@@ -95,23 +94,21 @@ func (p *PermifyModule) Execute(
 
 					for i, a := range v.Attrs {
 						atype := "StringList"
+						kind := "stringList"
 						switch a.Type {
 						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_LIST:
 							atype = "JobList"
+							kind = "jobList"
 						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_GRADE_LIST:
 							atype = "JobGradeList"
+							kind = "jobGradeList"
 						}
 
 						perm.Attrs[i] = Attr{
-							Key:  a.Key,
-							Type: atype,
-						}
-						if a.ValidStringList != nil {
-							perm.Attrs[i].Valid += "[]string{"
-							for _, v := range a.ValidStringList {
-								perm.Attrs[i].Valid += fmt.Sprintf("%q, ", v)
-							}
-							perm.Attrs[i].Valid += "}"
+							Key:    a.Key,
+							Type:   atype,
+							Kind:   kind,
+							Values: slices.Clone(a.ValidStringList),
 						}
 					}
 
@@ -164,23 +161,21 @@ func (p *PermifyModule) Execute(
 					perm.Attrs = make([]Attr, len(val.Attrs))
 					for i, a := range val.Attrs {
 						atype := "StringList"
+						kind := "stringList"
 						switch a.Type {
 						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_LIST:
 							atype = "JobList"
+							kind = "jobList"
 						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_GRADE_LIST:
 							atype = "JobGradeList"
+							kind = "jobGradeList"
 						}
 
 						perm.Attrs[i] = Attr{
-							Key:  a.Key,
-							Type: atype,
-						}
-						if a.ValidStringList != nil {
-							perm.Attrs[i].Valid += "[]string{"
-							for _, v := range a.ValidStringList {
-								perm.Attrs[i].Valid += fmt.Sprintf("%q, ", v)
-							}
-							perm.Attrs[i].Valid += "}"
+							Key:    a.Key,
+							Type:   atype,
+							Kind:   kind,
+							Values: slices.Clone(a.ValidStringList),
 						}
 					}
 
@@ -244,6 +239,52 @@ export const GRPCServiceMethods = [
 	{{- end }}
 {{- end }}
 ];
+
+export const PermAttributes = {
+{{- range $sName, $service := $.Permissions }}
+	{{- range $permName, $perm := $service }}
+	'{{ $sName }}/{{ $perm.Name }}': {
+		{{- range $i, $attr := $perm.Attrs }}
+		'{{ $attr.Key }}': {
+			type: '{{ $attr.Kind }}',
+			{{- if $attr.Values }}
+			values: [{{- range $j, $value := $attr.Values }}'{{ $value }}', {{- end }}] as const,
+			{{- end }}
+		},
+		{{- end }}
+	},
+	{{- end }}
+{{- end }}
+} as const;
+
+export type PermAttributesMap = typeof PermAttributes;
+export type PermAttrKind = 'stringList' | 'jobList' | 'jobGradeList';
+
+export type PermAttrPerm = keyof PermAttributesMap;
+
+export type PermAttrKey<P extends Perms> = P extends keyof PermAttributesMap
+	? keyof PermAttributesMap[P] & string
+	: never;
+
+export type PermAttrDescriptor<P extends Perms, K extends PermAttrKey<P>> = P extends keyof PermAttributesMap
+	? K extends keyof PermAttributesMap[P]
+		? PermAttributesMap[P][K]
+		: never
+	: never;
+
+export type PermAttrType<P extends Perms, K extends PermAttrKey<P>> = PermAttrDescriptor<P, K>['type'];
+
+export type PermAttrValue<P extends Perms, K extends PermAttrKey<P>> = PermAttrDescriptor<P, K> extends {
+	values: readonly (infer V)[];
+}
+	? V
+	: string;
+
+export type PermAttrKeysByType<P extends Perms, T extends PermAttrKind> = P extends keyof PermAttributesMap
+	? {
+			[K in keyof PermAttributesMap[P] & string]: PermAttributesMap[P][K] extends { type: T } ? K : never;
+		}[keyof PermAttributesMap[P] & string]
+	: never;
 `
 
 type Perm struct {
@@ -253,8 +294,8 @@ type Perm struct {
 }
 
 type Attr struct {
-	Key     string
-	Type    string
-	Valid   string
-	Default string
+	Key    string
+	Type   string
+	Kind   string
+	Values []string
 }

@@ -170,12 +170,12 @@ var File_resources_citizens_licenses_licenses_proto protoreflect.FileDescriptor
 
 const file_resources_citizens_licenses_licenses_proto_rawDesc = "" +
 	"\n" +
-	"*resources/citizens/licenses/licenses.proto\x12\x1bresources.citizens.licenses\"3\n" +
-	"\aLicense\x12\x12\n" +
-	"\x04type\x18\x01 \x01(\tR\x04type\x12\x14\n" +
-	"\x05label\x18\x02 \x01(\tR\x05label\"e\n" +
-	"\bLicenses\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12@\n" +
+	"*resources/citizens/licenses/licenses.proto\x12\x1bresources.citizens.licenses\"G\n" +
+	"\aLicense\x12\x1d\n" +
+	"\x04type\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18<R\x04type\x12\x1d\n" +
+	"\x05label\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18<R\x05label\"n\n" +
+	"\bLicenses\x12 \n" +
+	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12@\n" +
 	"\blicenses\x18\x02 \x03(\v2$.resources.citizens.licenses.LicenseR\blicensesB`Z^github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses;citizenslicensesb\x06proto3"
 
 var file_resources_citizens_licenses_licenses_proto_msgTypes = make([]protoimpl.MessageInfo, 2)

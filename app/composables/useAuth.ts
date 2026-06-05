@@ -1,7 +1,8 @@
+import type { ComputedRef } from 'vue';
 import { useAuthStore } from '~/stores/auth';
 import slug from '~/utils/slugify';
-import type { Perms } from '~~/gen/ts/perms';
-import type { JobGrades } from '~~/gen/ts/resources/permissions/attributes/attributes';
+import type { PermAttrKey, PermAttrKeysByType, PermAttrValue, Perms } from '~~/gen/ts/perms';
+import type { JobGrades, RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 
 export type canMode = 'oneof' | 'all';
@@ -44,6 +45,29 @@ const _useAuth = () => {
         return ok;
     }
 
+    type JobGradeListValue = {
+        fineGrained: boolean;
+        jobs: {
+            [key: string]: number;
+        };
+        grades: {
+            [key: string]: JobGrades;
+        };
+    };
+
+    function getAttr<P extends Perms, K extends PermAttrKey<P>>(perm: P, key: K): ComputedRef<RoleAttribute | undefined>;
+    function getAttr(perm: Perms, key: string): ComputedRef<RoleAttribute | undefined>;
+    function getAttr(perm: Perms, key: string): ComputedRef<RoleAttribute | undefined> {
+        return computed(() => {
+            const [serviceKey, name] = perm.split('/');
+            const [namespace, service] = serviceKey?.split('.') ?? [];
+
+            return attributes.value.find(
+                (a) => a.namespace === namespace && a.service === service && a.name === name && a.key === key,
+            );
+        });
+    }
+
     /**
      * @param perm one or more perms to check
      * @param mode default 'oneof'
@@ -57,38 +81,37 @@ const _useAuth = () => {
         });
     };
 
-    const getAttr = (perm: Perms, key: string) =>
-        computed(() => {
-            const [serviceKey, name] = perm.split('/');
-            const [namespace, service] = serviceKey?.split('.') ?? [];
-
-            return attributes.value.find(
-                (a) => a.namespace === namespace && a.service === service && a.name === name && a.key === key,
-            );
-        });
-
-    const attr = (perm: Perms, key: string, val: string) =>
-        computed(() => {
+    function attr<P extends Perms, K extends PermAttrKey<P>>(perm: P, key: K, val: PermAttrValue<P, K>): ComputedRef<boolean>;
+    function attr(perm: Perms, key: string, val: string): ComputedRef<boolean>;
+    function attr(perm: Perms, key: string, val: unknown): ComputedRef<boolean> {
+        return computed(() => {
             if (isSuperuser.value === true) return true;
 
+            const attrValue = val as string;
             const a = getAttr(perm, key).value;
 
             if (a?.value?.validValues.oneofKind === 'stringList') {
-                return a.value.validValues.stringList.strings.includes(val);
+                return a.value.validValues.stringList.strings.includes(attrValue);
             } else if (a?.value?.validValues.oneofKind === 'jobList') {
-                return a.value.validValues.jobList.strings.includes(val);
+                return a.value.validValues.jobList.strings.includes(attrValue);
             } else if (a?.value?.validValues.oneofKind === 'jobGradeList') {
                 return (
-                    a.value.validValues.jobGradeList.jobs[val] !== undefined ||
-                    a.value.validValues.jobGradeList.grades[val] !== undefined
+                    a.value.validValues.jobGradeList.jobs[attrValue] !== undefined ||
+                    a.value.validValues.jobGradeList.grades[attrValue] !== undefined
                 );
             }
 
             return false;
         });
+    }
 
-    const attrStringList = (perm: Perms, key: string) =>
-        computed<string[]>(() => {
+    function attrStringList<P extends Perms, K extends PermAttrKeysByType<P, 'stringList'>>(
+        perm: P,
+        key: K,
+    ): ComputedRef<ReadonlyArray<PermAttrValue<P, K>>>;
+    function attrStringList(perm: Perms, key: string): ComputedRef<ReadonlyArray<string>>;
+    function attrStringList(perm: Perms, key: string): ComputedRef<ReadonlyArray<string>> {
+        return computed(() => {
             const a = getAttr(perm, key).value;
 
             if (a?.value?.validValues.oneofKind === 'stringList') {
@@ -96,9 +119,15 @@ const _useAuth = () => {
             }
             return [];
         });
+    }
 
-    const attrJobList = (perm: Perms, key: string) =>
-        computed<string[]>(() => {
+    function attrJobList<P extends Perms, K extends PermAttrKeysByType<P, 'jobList'>>(
+        perm: P,
+        key: K,
+    ): ComputedRef<ReadonlyArray<PermAttrValue<P, K>>>;
+    function attrJobList(perm: Perms, key: string): ComputedRef<ReadonlyArray<string>>;
+    function attrJobList(perm: Perms, key: string): ComputedRef<ReadonlyArray<string>> {
+        return computed(() => {
             const a = getAttr(perm, key).value;
 
             if (a?.value?.validValues.oneofKind === 'jobList') {
@@ -106,17 +135,15 @@ const _useAuth = () => {
             }
             return [];
         });
+    }
 
-    const attrJobGradeList = (perm: Perms, key: string) =>
-        computed<{
-            fineGrained: boolean;
-            jobs: {
-                [key: string]: number;
-            };
-            grades: {
-                [key: string]: JobGrades;
-            };
-        }>(() => {
+    function attrJobGradeList<P extends Perms, K extends PermAttrKeysByType<P, 'jobGradeList'>>(
+        perm: P,
+        key: K,
+    ): ComputedRef<JobGradeListValue>;
+    function attrJobGradeList(perm: Perms, key: string): ComputedRef<JobGradeListValue>;
+    function attrJobGradeList(perm: Perms, key: string): ComputedRef<JobGradeListValue> {
+        return computed(() => {
             const a = getAttr(perm, key).value;
 
             if (a?.value?.validValues.oneofKind === 'jobGradeList') {
@@ -129,6 +156,7 @@ const _useAuth = () => {
                 grades: {},
             };
         });
+    }
 
     return {
         // Getters

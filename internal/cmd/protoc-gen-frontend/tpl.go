@@ -17,6 +17,7 @@ var fns = template.FuncMap{
 	"replace": func(s, old, new string) string {
 		return strings.ReplaceAll(s, old, new)
 	},
+	"lower": strings.ToLower,
 }
 
 func StringToTitle(s string) string {

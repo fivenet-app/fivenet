@@ -1956,7 +1956,8 @@ var File_resources_documents_templates_templates_proto protoreflect.FileDescript
 
 const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\n" +
-	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a'resources/documents/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xea\t\n" +
+	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a'resources/documents/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xd0\n" +
+	"\n" +
 	"\bTemplate\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -1964,22 +1965,22 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12Y\n" +
-	"\bcategory\x18\x04 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
-	"\x06weight\x18\x05 \x01(\rR\x06weight\x12\x1c\n" +
-	"\x05title\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
-	"\vdescription\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
-	"\x05color\x18\b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\x05color\x88\x01\x01\x12!\n" +
-	"\x04icon\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04icon\x88\x01\x01\x12Z\n" +
+	"\bcategory\x18\x04 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12#\n" +
+	"\x06weight\x18\x05 \x01(\rB\v\xbaH\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12#\n" +
+	"\x05title\x18\x06 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x10\x03R\x05title\x120\n" +
+	"\vdescription\x18\a \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01R\vdescription\x12,\n" +
+	"\x05color\x18\b \x01(\tB\x11\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x06r\x04\x10\x03\x18\aH\x02R\x05color\x88\x01\x01\x12)\n" +
+	"\x04icon\x18\t \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x01H\x03R\x04icon\x88\x01\x01\x12d\n" +
 	"\rcontent_title\x18\n" +
-	" \x01(\tB5\xda\xf3\x18\x17\b\x01\x12\x13SanitizeAndUnescape\x9a\x84\x9e\x03\x15alias:\"content_title\"R\fcontentTitle\x12I\n" +
-	"\acontent\x18\v \x01(\tB/\xda\xf3\x18\x17\b\x01\x12\x13SanitizeAndUnescape\x9a\x84\x9e\x03\x0falias:\"content\"R\acontent\x12(\n" +
-	"\x05state\x18\f \x01(\tB\x12\x9a\x84\x9e\x03\ralias:\"state\"R\x05state\x12Z\n" +
-	"\x06schema\x18\r \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
-	"\vcreator_job\x18\x0e \x01(\tR\n" +
-	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x0f \x01(\tH\x04R\x0fcreatorJobLabel\x88\x01\x01\x12O\n" +
+	" \x01(\tB?\xda\xf3\x18\x17\b\x01\x12\x13SanitizeAndUnescape\x9a\x84\x9e\x03\x15alias:\"content_title\"\xbaH\ar\x05\x10\x03(\x80PR\fcontentTitle\x12T\n" +
+	"\acontent\x18\v \x01(\tB:\xda\xf3\x18\x17\b\x01\x12\x13SanitizeAndUnescape\x9a\x84\x9e\x03\x0falias:\"content\"\xbaH\br\x06\x10\x00(\x80\x89zR\acontent\x120\n" +
+	"\x05state\x18\f \x01(\tB\x1a\x9a\x84\x9e\x03\ralias:\"state\"\xbaH\x05r\x03\x18\x80\x04R\x05state\x12Z\n" +
+	"\x06schema\x18\r \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12(\n" +
+	"\vcreator_job\x18\x0e \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
+	"creatorJob\x128\n" +
+	"\x11creator_job_label\x18\x0f \x01(\tB\a\xbaH\x04r\x02\x182H\x04R\x0fcreatorJobLabel\x88\x01\x01\x12Y\n" +
 	"\n" +
-	"job_access\x18\x10 \x03(\v20.resources.documents.templates.TemplateJobAccessR\tjobAccess\x12f\n" +
+	"job_access\x18\x10 \x03(\v20.resources.documents.templates.TemplateJobAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\tjobAccess\x12f\n" +
 	"\x0econtent_access\x18\x11 \x01(\v2*.resources.documents.access.DocumentAccessB\x13\x9a\x84\x9e\x03\x0ealias:\"access\"R\rcontentAccess\x12G\n" +
 	"\bworkflow\x18\x12 \x01(\v2&.resources.documents.workflow.WorkflowH\x05R\bworkflow\x88\x01\x01\x12P\n" +
 	"\bapproval\x18\x13 \x01(\v2/.resources.documents.templates.TemplateApprovalH\x06R\bapproval\x88\x01\x01B\r\n" +
@@ -1989,7 +1990,7 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
 	"\t_workflowB\v\n" +
-	"\t_approval\"\x86\x06\n" +
+	"\t_approval\"\xc5\x06\n" +
 	"\rTemplateShort\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -1997,17 +1998,17 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12Y\n" +
-	"\bcategory\x18\x04 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
-	"\x06weight\x18\x05 \x01(\rR\x06weight\x12\x1c\n" +
-	"\x05title\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
-	"\vdescription\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
-	"\x05color\x18\b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\x05color\x88\x01\x01\x12!\n" +
-	"\x04icon\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04icon\x88\x01\x01\x12Z\n" +
+	"\bcategory\x18\x04 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12#\n" +
+	"\x06weight\x18\x05 \x01(\rB\v\xbaH\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12#\n" +
+	"\x05title\x18\x06 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x10\x03R\x05title\x120\n" +
+	"\vdescription\x18\a \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01R\vdescription\x12,\n" +
+	"\x05color\x18\b \x01(\tB\x11\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x06r\x04\x10\x03\x18\aH\x02R\x05color\x88\x01\x01\x12)\n" +
+	"\x04icon\x18\t \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x01H\x03R\x04icon\x88\x01\x01\x12Z\n" +
 	"\x06schema\x18\n" +
-	" \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
-	"\vcreator_job\x18\v \x01(\tR\n" +
-	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\f \x01(\tH\x04R\x0fcreatorJobLabel\x88\x01\x01\x12G\n" +
+	" \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12(\n" +
+	"\vcreator_job\x18\v \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
+	"creatorJob\x128\n" +
+	"\x11creator_job_label\x18\f \x01(\tB\a\xbaH\x04r\x02\x182H\x04R\x0fcreatorJobLabel\x88\x01\x01\x12G\n" +
 	"\bworkflow\x18\x12 \x01(\v2&.resources.documents.workflow.WorkflowH\x05R\bworkflow\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\b\n" +
@@ -2031,48 +2032,48 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\x03max\x18\x03 \x01(\x05H\x02R\x03max\x88\x01\x01B\v\n" +
 	"\t_requiredB\x06\n" +
 	"\x04_minB\x06\n" +
-	"\x04_max\"\xf9\x01\n" +
-	"\fTemplateData\x126\n" +
-	"\vactive_char\x18\x01 \x01(\v2\x15.resources.users.UserR\n" +
-	"activeChar\x12@\n" +
-	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortR\tdocuments\x126\n" +
-	"\x05users\x18\x03 \x03(\v2 .resources.users.short.UserShortR\x05users\x127\n" +
-	"\bvehicles\x18\x04 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"\xa7\x03\n" +
+	"\x04_max\"\x9f\x02\n" +
+	"\fTemplateData\x12>\n" +
+	"\vactive_char\x18\x01 \x01(\v2\x15.resources.users.UserB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"activeChar\x12J\n" +
+	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortB\b\xbaH\x05\x92\x01\x02\x10\fR\tdocuments\x12@\n" +
+	"\x05users\x18\x03 \x03(\v2 .resources.users.short.UserShortB\b\xbaH\x05\x92\x01\x02\x10\fR\x05users\x12A\n" +
+	"\bvehicles\x18\x04 \x03(\v2\x1b.resources.vehicles.VehicleB\b\xbaH\x05\x92\x01\x02\x10\fR\bvehicles\"\xd5\x03\n" +
 	"\x11TemplateJobAccess\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x125\n" +
-	"\ttarget_id\x18\x03 \x01(\x03B\x18\x9a\x84\x9e\x03\x13alias:\"template_id\"R\btargetId\x12\x10\n" +
-	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x05 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12#\n" +
-	"\rminimum_grade\x18\x06 \x01(\x05R\fminimumGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\a \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12?\n" +
-	"\x06access\x18\b \x01(\x0e2'.resources.documents.access.AccessLevelR\x06accessB\r\n" +
+	"\ttarget_id\x18\x03 \x01(\x03B\x18\x9a\x84\x9e\x03\x13alias:\"template_id\"R\btargetId\x12\x19\n" +
+	"\x03job\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
+	"\tjob_label\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\bjobLabel\x88\x01\x01\x12,\n" +
+	"\rminimum_grade\x18\x06 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\fminimumGrade\x124\n" +
+	"\x0fjob_grade_label\x18\a \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\rjobGradeLabel\x88\x01\x01\x12I\n" +
+	"\x06access\x18\b \x01(\x0e2'.resources.documents.access.AccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06accessB\r\n" +
 	"\v_created_atB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_label\"\x14\n" +
-	"\x12TemplateUserAccess\"\xe2\x01\n" +
+	"\x12TemplateUserAccess\"\xec\x01\n" +
 	"\x10TemplateApproval\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12R\n" +
-	"\x06policy\x18\x02 \x01(\v25.resources.documents.templates.TemplateApprovalPolicyH\x00R\x06policy\x88\x01\x01\x12M\n" +
-	"\x05tasks\x18\x03 \x03(\v27.resources.documents.templates.TemplateApprovalTaskSeedR\x05tasks:\x06\xe2\xf3\x18\x02\b\x01B\t\n" +
-	"\a_policy\"\xdd\x02\n" +
-	"\x16TemplateApprovalPolicy\x12K\n" +
-	"\trule_kind\x18\x01 \x01(\x0e2..resources.documents.approval.ApprovalRuleKindR\bruleKind\x12V\n" +
-	"\x10on_edit_behavior\x18\x02 \x01(\x0e2,.resources.documents.approval.OnEditBehaviorR\x0eonEditBehavior\x12*\n" +
-	"\x0erequired_count\x18\x03 \x01(\x05H\x00R\rrequiredCount\x88\x01\x01\x12-\n" +
+	"\x06policy\x18\x02 \x01(\v25.resources.documents.templates.TemplateApprovalPolicyH\x00R\x06policy\x88\x01\x01\x12W\n" +
+	"\x05tasks\x18\x03 \x03(\v27.resources.documents.templates.TemplateApprovalTaskSeedB\b\xbaH\x05\x92\x01\x02\x10\x05R\x05tasks:\x06\xe2\xf3\x18\x02\b\x01B\t\n" +
+	"\a_policy\"\xfa\x02\n" +
+	"\x16TemplateApprovalPolicy\x12U\n" +
+	"\trule_kind\x18\x01 \x01(\x0e2..resources.documents.approval.ApprovalRuleKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\bruleKind\x12`\n" +
+	"\x10on_edit_behavior\x18\x02 \x01(\x0e2,.resources.documents.approval.OnEditBehaviorB\b\xbaH\x05\x82\x01\x02\x10\x01R\x0eonEditBehavior\x123\n" +
+	"\x0erequired_count\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02(\x01H\x00R\rrequiredCount\x88\x01\x01\x12-\n" +
 	"\x12signature_required\x18\x04 \x01(\bR\x11signatureRequired\x120\n" +
 	"\x14self_approve_allowed\x18\x05 \x01(\bR\x12selfApproveAllowedB\x11\n" +
-	"\x0f_required_count\"\xbe\x02\n" +
+	"\x0f_required_count\"\xd0\x02\n" +
 	"\x18TemplateApprovalTaskSeed\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12#\n" +
-	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x12#\n" +
-	"\x05label\x18\x04 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x00R\x05label\x88\x01\x01\x12-\n" +
-	"\x12signature_required\x18\x05 \x01(\bR\x11signatureRequired\x12\x14\n" +
-	"\x05slots\x18\x06 \x01(\x05R\x05slots\x12#\n" +
+	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x12*\n" +
+	"\x05label\x18\x04 \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x18xH\x00R\x05label\x88\x01\x01\x12-\n" +
+	"\x12signature_required\x18\x05 \x01(\bR\x11signatureRequired\x12\x1f\n" +
+	"\x05slots\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x05slots\x12#\n" +
 	"\vdue_in_days\x18\a \x01(\x05H\x01R\tdueInDays\x88\x01\x01\x12\x1d\n" +
 	"\acomment\x18\b \x01(\tH\x02R\acomment\x88\x01\x01B\b\n" +
 	"\x06_labelB\x0e\n" +

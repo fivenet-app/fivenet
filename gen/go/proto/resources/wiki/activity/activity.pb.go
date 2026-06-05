@@ -1072,31 +1072,31 @@ var File_resources_wiki_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_wiki_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"&resources/wiki/activity/activity.proto\x12\x17resources.wiki.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a,resources/common/content/diff_activity.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\"resources/wiki/access/access.proto\x1a\x13tagger/tagger.proto\"\xab\x04\n" +
+	"&resources/wiki/activity/activity.proto\x12\x17resources.wiki.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a,resources/common/content/diff_activity.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\"resources/wiki/access/access.proto\x1a\x13tagger/tagger.proto\"\xda\x04\n" +
 	"\fPageActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x17\n" +
-	"\apage_id\x18\x03 \x01(\x03R\x06pageId\x12N\n" +
-	"\ractivity_type\x18\x04 \x01(\x0e2).resources.wiki.activity.PageActivityTypeR\factivityType\x12\"\n" +
+	"\apage_id\x18\x03 \x01(\x03R\x06pageId\x12X\n" +
+	"\ractivity_type\x18\x04 \x01(\x0e2).resources.wiki.activity.PageActivityTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\factivityType\x12+\n" +
 	"\n" +
-	"creator_id\x18\x05 \x01(\x05H\x00R\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\x06 \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x01R\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\a \x01(\tR\n" +
-	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\b \x01(\tH\x02R\x0fcreatorJobLabel\x88\x01\x01\x12\x1b\n" +
-	"\x06reason\x18\t \x01(\tH\x03R\x06reason\x88\x01\x01\x12=\n" +
+	"creator_id\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x00R\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\x06 \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x01R\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
+	"creatorJob\x128\n" +
+	"\x11creator_job_label\x18\b \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\x0fcreatorJobLabel\x88\x01\x01\x12%\n" +
+	"\x06reason\x18\t \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x03R\x06reason\x88\x01\x01\x12=\n" +
 	"\x04data\x18\n" +
 	" \x01(\v2).resources.wiki.activity.PageActivityDataR\x04dataB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\t\n" +
-	"\a_reason\"\xb9\x01\n" +
+	"\a_reason\"\xc0\x01\n" +
 	"\x10PageActivityData\x12@\n" +
 	"\aupdated\x18\x01 \x01(\v2$.resources.wiki.activity.PageUpdatedH\x00R\aupdated\x12S\n" +
-	"\x0eaccess_updated\x18\x02 \x01(\v2*.resources.wiki.activity.PageAccessUpdatedH\x00R\raccessUpdated:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
-	"\x04data\"\xd0\x04\n" +
+	"\x0eaccess_updated\x18\x02 \x01(\v2*.resources.wiki.activity.PageAccessUpdatedH\x00R\raccessUpdated:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"\xd0\x04\n" +
 	"\vPageUpdated\x12\"\n" +
 	"\n" +
 	"title_diff\x18\x01 \x01(\tH\x00R\ttitleDiff\x88\x01\x01\x12K\n" +
@@ -1119,15 +1119,15 @@ const file_resources_wiki_activity_activity_proto_rawDesc = "" +
 	"\adeleted\x18\x02 \x01(\x03R\adeleted\"\x98\x01\n" +
 	"\x11PageAccessUpdated\x12?\n" +
 	"\x04jobs\x18\x01 \x01(\v2+.resources.wiki.activity.PageAccessJobsDiffR\x04jobs\x12B\n" +
-	"\x05users\x18\x02 \x01(\v2,.resources.wiki.activity.PageAccessUsersDiffR\x05users\"\xdd\x01\n" +
-	"\x12PageAccessJobsDiff\x12A\n" +
-	"\tto_create\x18\x01 \x03(\v2$.resources.wiki.access.PageJobAccessR\btoCreate\x12A\n" +
-	"\tto_update\x18\x02 \x03(\v2$.resources.wiki.access.PageJobAccessR\btoUpdate\x12A\n" +
-	"\tto_delete\x18\x03 \x03(\v2$.resources.wiki.access.PageJobAccessR\btoDelete\"\xe1\x01\n" +
-	"\x13PageAccessUsersDiff\x12B\n" +
-	"\tto_create\x18\x01 \x03(\v2%.resources.wiki.access.PageUserAccessR\btoCreate\x12B\n" +
-	"\tto_update\x18\x02 \x03(\v2%.resources.wiki.access.PageUserAccessR\btoUpdate\x12B\n" +
-	"\tto_delete\x18\x03 \x03(\v2%.resources.wiki.access.PageUserAccessR\btoDelete*\x89\x02\n" +
+	"\x05users\x18\x02 \x01(\v2,.resources.wiki.activity.PageAccessUsersDiffR\x05users\"\xfb\x01\n" +
+	"\x12PageAccessJobsDiff\x12K\n" +
+	"\tto_create\x18\x01 \x03(\v2$.resources.wiki.access.PageJobAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoCreate\x12K\n" +
+	"\tto_update\x18\x02 \x03(\v2$.resources.wiki.access.PageJobAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoUpdate\x12K\n" +
+	"\tto_delete\x18\x03 \x03(\v2$.resources.wiki.access.PageJobAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoDelete\"\xff\x01\n" +
+	"\x13PageAccessUsersDiff\x12L\n" +
+	"\tto_create\x18\x01 \x03(\v2%.resources.wiki.access.PageUserAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoCreate\x12L\n" +
+	"\tto_update\x18\x02 \x03(\v2%.resources.wiki.access.PageUserAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoUpdate\x12L\n" +
+	"\tto_delete\x18\x03 \x03(\v2%.resources.wiki.access.PageUserAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoDelete*\x89\x02\n" +
 	"\x10PageActivityType\x12\"\n" +
 	"\x1ePAGE_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aPAGE_ACTIVITY_TYPE_CREATED\x10\x01\x12\x1e\n" +

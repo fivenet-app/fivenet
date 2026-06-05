@@ -875,14 +875,14 @@ var File_resources_centrum_settings_settings_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_settings_settings_proto_rawDesc = "" +
 	"\n" +
-	")resources/centrum/settings/settings.proto\x12\x1aresources.centrum.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a%resources/centrum/access/access.proto\x1a\x13tagger/tagger.proto\"\xc7\x06\n" +
-	"\bSettings\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\x12\x18\n" +
-	"\aenabled\x18\x02 \x01(\bR\aenabled\x12;\n" +
-	"\x04type\x18\x03 \x01(\x0e2'.resources.centrum.settings.CentrumTypeR\x04type\x12\x16\n" +
-	"\x06public\x18\t \x01(\bR\x06public\x12;\n" +
-	"\x04mode\x18\b \x01(\x0e2'.resources.centrum.settings.CentrumModeR\x04mode\x12L\n" +
-	"\rfallback_mode\x18\x04 \x01(\x0e2'.resources.centrum.settings.CentrumModeR\ffallbackMode\x12^\n" +
+	")resources/centrum/settings/settings.proto\x12\x1aresources.centrum.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a%resources/centrum/access/access.proto\x1a\x13tagger/tagger.proto\"\xee\x06\n" +
+	"\bSettings\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x18\n" +
+	"\aenabled\x18\x02 \x01(\bR\aenabled\x12E\n" +
+	"\x04type\x18\x03 \x01(\x0e2'.resources.centrum.settings.CentrumTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x16\n" +
+	"\x06public\x18\t \x01(\bR\x06public\x12E\n" +
+	"\x04mode\x18\b \x01(\x0e2'.resources.centrum.settings.CentrumModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04mode\x12V\n" +
+	"\rfallback_mode\x18\x04 \x01(\x0e2'.resources.centrum.settings.CentrumModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\ffallbackMode\x12^\n" +
 	"\x11predefined_status\x18\x05 \x01(\v2,.resources.centrum.settings.PredefinedStatusH\x00R\x10predefinedStatus\x88\x01\x01\x12=\n" +
 	"\atimings\x18\x06 \x01(\v2#.resources.centrum.settings.TimingsR\atimings\x12O\n" +
 	"\rconfiguration\x18\n" +
@@ -893,30 +893,33 @@ const file_resources_centrum_settings_settings_proto_rawDesc = "" +
 	"\x12_predefined_statusB\t\n" +
 	"\a_accessB\x11\n" +
 	"\x0f_offered_accessB\x13\n" +
-	"\x11_effective_access\"x\n" +
-	"\x10PredefinedStatus\x12)\n" +
-	"\vunit_status\x18\x01 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\n" +
-	"unitStatus\x121\n" +
-	"\x0fdispatch_status\x18\x02 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x0edispatchStatus:\x06\xe2\xf3\x18\x02\b\x01\"\xa3\x01\n" +
-	"\aTimings\x12*\n" +
-	"\x11dispatch_max_wait\x18\x01 \x01(\x03R\x0fdispatchMaxWait\x12!\n" +
-	"\frequire_unit\x18\x02 \x01(\bR\vrequireUnit\x12A\n" +
-	"\x1drequire_unit_reminder_seconds\x18\x03 \x01(\x03R\x1arequireUnitReminderSeconds:\x06\xe2\xf3\x18\x02\b\x01\"\xf1\x01\n" +
+	"\x11_effective_access\"\x94\x01\n" +
+	"\x10PredefinedStatus\x127\n" +
+	"\vunit_status\x18\x01 \x03(\tB\x16\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\v\x92\x01\b\x10\x14\"\x04r\x02\x18@R\n" +
+	"unitStatus\x12?\n" +
+	"\x0fdispatch_status\x18\x02 \x03(\tB\x16\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\v\x92\x01\b\x10\x14\"\x04r\x02\x18@R\x0edispatchStatus:\x06\xe2\xf3\x18\x02\b\x01\"\xbb\x01\n" +
+	"\aTimings\x126\n" +
+	"\x11dispatch_max_wait\x18\x01 \x01(\x03B\n" +
+	"\xbaH\a\"\x05\x10\xf0. \x1eR\x0fdispatchMaxWait\x12!\n" +
+	"\frequire_unit\x18\x02 \x01(\bR\vrequireUnit\x12M\n" +
+	"\x1drequire_unit_reminder_seconds\x18\x03 \x01(\x03B\n" +
+	"\xbaH\a\"\x05\x10\xf0. \x1eR\x1arequireUnitReminderSeconds:\x06\xe2\xf3\x18\x02\b\x01\"\x8d\x02\n" +
 	"\rConfiguration\x123\n" +
-	"\x15deduplication_enabled\x18\x01 \x01(\bR\x14deduplicationEnabled\x121\n" +
-	"\x14deduplication_radius\x18\x02 \x01(\x03R\x13deduplicationRadius\x12U\n" +
-	"\x16deduplication_duration\x18\x03 \x01(\v2\x19.google.protobuf.DurationH\x00R\x15deduplicationDuration\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x19\n" +
+	"\x15deduplication_enabled\x18\x01 \x01(\bR\x14deduplicationEnabled\x12>\n" +
+	"\x14deduplication_radius\x18\x02 \x01(\x03B\v\xbaH\b\"\x06\x10\xc0\x84= \x05R\x13deduplicationRadius\x12d\n" +
+	"\x16deduplication_duration\x18\x03 \x01(\v2\x19.google.protobuf.DurationB\r\xbaH\n" +
+	"\xaa\x01\a\"\x03\b\x90\x1c*\x00H\x00R\x15deduplicationDuration\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x19\n" +
 	"\x17_deduplication_duration\"f\n" +
 	"\x0fEffectiveAccess\x12S\n" +
 	"\n" +
 	"dispatches\x18\x01 \x01(\v23.resources.centrum.settings.EffectiveDispatchAccessR\n" +
 	"dispatches\"r\n" +
 	"\x17EffectiveDispatchAccess\x12W\n" +
-	"\x04jobs\x18\x01 \x03(\v2*.resources.centrum.settings.JobAccessEntryB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\"\x98\x01\n" +
-	"\x0eJobAccessEntry\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12D\n" +
-	"\x06access\x18\x03 \x01(\x0e2,.resources.centrum.access.CentrumAccessLevelR\x06accessB\f\n" +
+	"\x04jobs\x18\x01 \x03(\v2*.resources.centrum.settings.JobAccessEntryB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\"\xab\x01\n" +
+	"\x0eJobAccessEntry\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12 \n" +
+	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12N\n" +
+	"\x06access\x18\x03 \x01(\x0e2,.resources.centrum.access.CentrumAccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06accessB\f\n" +
 	"\n" +
 	"_job_label*a\n" +
 	"\vCentrumType\x12\x1c\n" +

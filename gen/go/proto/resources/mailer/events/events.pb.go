@@ -470,7 +470,7 @@ var File_resources_mailer_events_events_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_events_events_proto_rawDesc = "" +
 	"\n" +
-	"$resources/mailer/events/events.proto\x12\x17resources.mailer.events\x1a#resources/mailer/emails/email.proto\x1a'resources/mailer/messages/message.proto\x1a(resources/mailer/settings/settings.proto\x1a%resources/mailer/threads/thread.proto\"\xa0\x04\n" +
+	"$resources/mailer/events/events.proto\x12\x17resources.mailer.events\x1a#resources/mailer/emails/email.proto\x1a'resources/mailer/messages/message.proto\x1a(resources/mailer/settings/settings.proto\x1a%resources/mailer/threads/thread.proto\"\xa7\x04\n" +
 	"\vMailerEvent\x12C\n" +
 	"\femail_update\x18\x01 \x01(\v2\x1e.resources.mailer.emails.EmailH\x00R\vemailUpdate\x12#\n" +
 	"\femail_delete\x18\x02 \x01(\x03H\x00R\vemailDelete\x12`\n" +
@@ -479,8 +479,8 @@ const file_resources_mailer_events_events_proto_rawDesc = "" +
 	"\rthread_delete\x18\x05 \x01(\x03H\x00R\fthreadDelete\x12W\n" +
 	"\x13thread_state_update\x18\x06 \x01(\v2%.resources.mailer.threads.ThreadStateH\x00R\x11threadStateUpdate\x12K\n" +
 	"\x0emessage_update\x18\a \x01(\v2\".resources.mailer.messages.MessageH\x00R\rmessageUpdate\x12'\n" +
-	"\x0emessage_delete\x18\b \x01(\x03H\x00R\rmessageDeleteB\x06\n" +
-	"\x04dataBXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events;mailereventsb\x06proto3"
+	"\x0emessage_delete\x18\b \x01(\x03H\x00R\rmessageDeleteB\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01BXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events;mailereventsb\x06proto3"
 
 var file_resources_mailer_events_events_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_mailer_events_events_proto_goTypes = []any{

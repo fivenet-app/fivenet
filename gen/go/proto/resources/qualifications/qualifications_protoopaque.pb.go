@@ -2096,7 +2096,7 @@ var File_resources_qualifications_qualifications_proto protoreflect.FileDescript
 
 const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
-	"-resources/qualifications/qualifications.proto\x12\x18resources.qualifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a,resources/qualifications/access/access.proto\x1a(resources/qualifications/exam/exam.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x8b\x0e\n" +
+	"-resources/qualifications/qualifications.proto\x12\x18resources.qualifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a,resources/qualifications/access/access.proto\x1a(resources/qualifications/exam/exam.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xe6\x0e\n" +
 	"\rQualification\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -2104,35 +2104,35 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x10\n" +
-	"\x03job\x18\x05 \x01(\tR\x03job\x12\x16\n" +
-	"\x06weight\x18\x06 \x01(\rR\x06weight\x12\x16\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x19\n" +
+	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12#\n" +
+	"\x06weight\x18\x06 \x01(\rB\v\xbaH\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12\x16\n" +
 	"\x06closed\x18\a \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\b \x01(\bR\x05draft\x12\x16\n" +
-	"\x06public\x18\t \x01(\bR\x06public\x12,\n" +
+	"\x06public\x18\t \x01(\bR\x06public\x123\n" +
 	"\fabbreviation\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\fabbreviation\x12\x1c\n" +
-	"\x05title\x18\v \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12/\n" +
-	"\vdescription\x18\f \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\vdescription\x88\x01\x01\x12;\n" +
-	"\acontent\x18\r \x01(\v2!.resources.common.content.ContentR\acontent\x12\"\n" +
+	" \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x18\x14R\fabbreviation\x12&\n" +
+	"\x05title\x18\v \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\bR\x05title\x127\n" +
+	"\vdescription\x18\f \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x04H\x03R\vdescription\x88\x01\x01\x12;\n" +
+	"\acontent\x18\r \x01(\v2!.resources.common.content.ContentR\acontent\x12+\n" +
 	"\n" +
-	"creator_id\x18\x0e \x01(\x05H\x04R\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\x0f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\x10 \x01(\tR\n" +
+	"creator_id\x18\x0e \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\x0f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\x10 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x12L\n" +
 	"\x06access\x18\x11 \x01(\v24.resources.qualifications.access.QualificationAccessR\x06access\x12V\n" +
 	"\frequirements\x18\x12 \x03(\v22.resources.qualifications.QualificationRequirementR\frequirements\x120\n" +
 	"\x14discord_sync_enabled\x18\x13 \x01(\bR\x12discordSyncEnabled\x12f\n" +
-	"\x10discord_settings\x18\x14 \x01(\v26.resources.qualifications.QualificationDiscordSettingsH\x06R\x0fdiscordSettings\x88\x01\x01\x12Q\n" +
-	"\texam_mode\x18\x15 \x01(\x0e24.resources.qualifications.exam.QualificationExamModeR\bexamMode\x12b\n" +
+	"\x10discord_settings\x18\x14 \x01(\v26.resources.qualifications.QualificationDiscordSettingsH\x06R\x0fdiscordSettings\x88\x01\x01\x12[\n" +
+	"\texam_mode\x18\x15 \x01(\x0e24.resources.qualifications.exam.QualificationExamModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\bexamMode\x12b\n" +
 	"\rexam_settings\x18\x16 \x01(\v28.resources.qualifications.exam.QualificationExamSettingsH\aR\fexamSettings\x88\x01\x01\x12E\n" +
 	"\x04exam\x18\x17 \x01(\v2,.resources.qualifications.exam.ExamQuestionsH\bR\x04exam\x88\x01\x01\x12J\n" +
 	"\x06result\x18\x18 \x01(\v2-.resources.qualifications.QualificationResultH\tR\x06result\x88\x01\x01\x12M\n" +
 	"\arequest\x18\x19 \x01(\v2..resources.qualifications.QualificationRequestH\n" +
 	"R\arequest\x88\x01\x01\x12,\n" +
-	"\x12label_sync_enabled\x18\x1a \x01(\bR\x10labelSyncEnabled\x129\n" +
-	"\x11label_sync_format\x18\x1b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\vR\x0flabelSyncFormat\x88\x01\x01\x12>\n" +
-	"\x05files\x18\x1c \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05filesB\r\n" +
+	"\x12label_sync_enabled\x18\x1a \x01(\bR\x10labelSyncEnabled\x12A\n" +
+	"\x11label_sync_format\x18\x1b \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x01H\vR\x0flabelSyncFormat\x88\x01\x01\x12F\n" +
+	"\x05files\x18\x1c \x03(\v2\x14.resources.file.FileB\x1a\x9a\x84\x9e\x03\ralias:\"files\"\xbaH\x05\x92\x01\x02\x10\x05R\x05filesB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
@@ -2146,7 +2146,7 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\a_resultB\n" +
 	"\n" +
 	"\b_requestB\x14\n" +
-	"\x12_label_sync_format\"\xec\b\n" +
+	"\x12_label_sync_format\"\xb7\t\n" +
 	"\x12QualificationShort\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -2154,23 +2154,23 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x10\n" +
-	"\x03job\x18\x05 \x01(\tR\x03job\x12\x16\n" +
-	"\x06weight\x18\x06 \x01(\rR\x06weight\x12\x16\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x19\n" +
+	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12#\n" +
+	"\x06weight\x18\x06 \x01(\rB\v\xbaH\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12\x16\n" +
 	"\x06closed\x18\a \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\b \x01(\bR\x05draft\x12\x16\n" +
-	"\x06public\x18\t \x01(\bR\x06public\x12,\n" +
+	"\x06public\x18\t \x01(\bR\x06public\x123\n" +
 	"\fabbreviation\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\fabbreviation\x12\x1c\n" +
-	"\x05title\x18\v \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12/\n" +
-	"\vdescription\x18\f \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\vdescription\x88\x01\x01\x12\"\n" +
+	" \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x18\x14R\fabbreviation\x12&\n" +
+	"\x05title\x18\v \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\bR\x05title\x127\n" +
+	"\vdescription\x18\f \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x04H\x03R\vdescription\x88\x01\x01\x12+\n" +
 	"\n" +
-	"creator_id\x18\x0e \x01(\x05H\x04R\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\x0f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\x10 \x01(\tR\n" +
+	"creator_id\x18\x0e \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\x0f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\x10 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x12V\n" +
-	"\frequirements\x18\x12 \x03(\v22.resources.qualifications.QualificationRequirementR\frequirements\x12Q\n" +
-	"\texam_mode\x18\x15 \x01(\x0e24.resources.qualifications.exam.QualificationExamModeR\bexamMode\x12b\n" +
+	"\frequirements\x18\x12 \x03(\v22.resources.qualifications.QualificationRequirementR\frequirements\x12[\n" +
+	"\texam_mode\x18\x15 \x01(\x0e24.resources.qualifications.exam.QualificationExamModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\bexamMode\x12b\n" +
 	"\rexam_settings\x18\x16 \x01(\v28.resources.qualifications.exam.QualificationExamSettingsH\x06R\fexamSettings\x88\x01\x01\x12J\n" +
 	"\x06result\x18\x18 \x01(\v2-.resources.qualifications.QualificationResultH\aR\x06result\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
@@ -2190,30 +2190,30 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x17target_qualification_id\x18\x04 \x01(\x03R\x15targetQualificationId\x12\x86\x01\n" +
 	"\x14target_qualification\x18\x05 \x01(\v2,.resources.qualifications.QualificationShortB \x9a\x84\x9e\x03\x1balias:\"targetqualification\"H\x01R\x13targetQualification\x88\x01\x01B\r\n" +
 	"\v_created_atB\x17\n" +
-	"\x15_target_qualification\"\x8c\x01\n" +
-	"\x1cQualificationDiscordSettings\x12 \n" +
-	"\trole_name\x18\x01 \x01(\tH\x00R\broleName\x88\x01\x01\x12$\n" +
-	"\vrole_format\x18\x02 \x01(\tH\x01R\n" +
+	"\x15_target_qualification\"\x9e\x01\n" +
+	"\x1cQualificationDiscordSettings\x12)\n" +
+	"\trole_name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@H\x00R\broleName\x88\x01\x01\x12-\n" +
+	"\vrole_format\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18@H\x01R\n" +
 	"roleFormat\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\f\n" +
 	"\n" +
 	"_role_nameB\x0e\n" +
-	"\f_role_format\"\x8c\b\n" +
+	"\f_role_format\"\xb6\b\n" +
 	"\x14QualificationRequest\x12B\n" +
 	"\n" +
 	"created_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12Z\n" +
 	"\x10qualification_id\x18\x03 \x01(\x03B/\x9a\x84\x9e\x03*sql:\"primary_key\" alias:\"qualification_id\"R\x0fqualificationId\x12W\n" +
-	"\rqualification\x18\x04 \x01(\v2,.resources.qualifications.QualificationShortH\x02R\rqualification\x88\x01\x01\x12/\n" +
-	"\auser_id\x18\x05 \x01(\x05B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x06userId\x12G\n" +
-	"\x04user\x18\x06 \x01(\v2 .resources.users.short.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04user\x120\n" +
-	"\fuser_comment\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\vuserComment\x88\x01\x01\x12D\n" +
-	"\x06status\x18\b \x01(\x0e2'.resources.qualifications.RequestStatusH\x04R\x06status\x88\x01\x01\x12D\n" +
+	"\rqualification\x18\x04 \x01(\v2,.resources.qualifications.QualificationShortH\x02R\rqualification\x88\x01\x01\x126\n" +
+	"\auser_id\x18\x05 \x01(\x05B\x1d\x9a\x84\x9e\x03\x11sql:\"primary_key\"\xbaH\x04\x1a\x02(\x00R\x06userId\x12G\n" +
+	"\x04user\x18\x06 \x01(\v2 .resources.users.short.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04user\x128\n" +
+	"\fuser_comment\x18\a \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x04H\x03R\vuserComment\x88\x01\x01\x12N\n" +
+	"\x06status\x18\b \x01(\x0e2'.resources.qualifications.RequestStatusB\b\xbaH\x05\x82\x01\x02\x10\x01H\x04R\x06status\x88\x01\x01\x12D\n" +
 	"\vapproved_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\n" +
-	"approvedAt\x88\x01\x01\x128\n" +
+	"approvedAt\x88\x01\x01\x12@\n" +
 	"\x10approver_comment\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x0fapproverComment\x88\x01\x01\x12$\n" +
-	"\vapprover_id\x18\v \x01(\x05H\aR\n" +
+	" \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x04H\x06R\x0fapproverComment\x88\x01\x01\x12-\n" +
+	"\vapprover_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\aR\n" +
 	"approverId\x88\x01\x01\x12X\n" +
 	"\bapprover\x18\f \x01(\v2 .resources.users.short.UserShortB\x15\x9a\x84\x9e\x03\x10alias:\"approver\"H\bR\bapprover\x88\x01\x01\x12&\n" +
 	"\fapprover_job\x18\r \x01(\tH\tR\vapproverJob\x88\x01\x01B\r\n" +
@@ -2226,7 +2226,7 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x11_approver_commentB\x0e\n" +
 	"\f_approver_idB\v\n" +
 	"\t_approverB\x0f\n" +
-	"\r_approver_job\"\x81\x06\n" +
+	"\r_approver_job\"\xbf\x06\n" +
 	"\x13QualificationResult\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -2234,17 +2234,19 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
 	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12)\n" +
 	"\x10qualification_id\x18\x04 \x01(\x03R\x0fqualificationId\x12W\n" +
-	"\rqualification\x18\x05 \x01(\v2,.resources.qualifications.QualificationShortH\x02R\rqualification\x88\x01\x01\x12\x17\n" +
-	"\auser_id\x18\x06 \x01(\x05R\x06userId\x12G\n" +
-	"\x04user\x18\a \x01(\v2 .resources.users.short.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04user\x12>\n" +
-	"\x06status\x18\b \x01(\x0e2&.resources.qualifications.ResultStatusR\x06status\x12\x19\n" +
-	"\x05score\x18\t \x01(\x02H\x03R\x05score\x88\x01\x01\x12\"\n" +
-	"\asummary\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\asummary\x12\x1d\n" +
+	"\rqualification\x18\x05 \x01(\v2,.resources.qualifications.QualificationShortH\x02R\rqualification\x88\x01\x01\x12 \n" +
+	"\auser_id\x18\x06 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12G\n" +
+	"\x04user\x18\a \x01(\v2 .resources.users.short.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04user\x12H\n" +
+	"\x06status\x18\b \x01(\x0e2&.resources.qualifications.ResultStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12*\n" +
+	"\x05score\x18\t \x01(\x02B\x0f\xbaH\f\n" +
 	"\n" +
-	"creator_id\x18\v \x01(\x05R\tcreatorId\x12P\n" +
-	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"R\acreator\x12\x1f\n" +
-	"\vcreator_job\x18\r \x01(\tR\n" +
+	"\x1d\x00\x00zD-\x00\x00\x00\x00H\x03R\x05score\x88\x01\x01\x12*\n" +
+	"\asummary\x18\n" +
+	" \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x04R\asummary\x12&\n" +
+	"\n" +
+	"creator_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\tcreatorId\x12P\n" +
+	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"R\acreator\x12(\n" +
+	"\vcreator_job\x18\r \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJobB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_deleted_atB\x10\n" +

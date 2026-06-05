@@ -301,19 +301,19 @@ var File_resources_documents_relations_relations_proto protoreflect.FileDescript
 
 const file_resources_documents_relations_relations_proto_rawDesc = "" +
 	"\n" +
-	"-resources/documents/relations/relations.proto\x12\x1dresources.documents.relations\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xd4\x05\n" +
+	"-resources/documents/relations/relations.proto\x12\x1dresources.documents.relations\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xea\x05\n" +
 	"\x10DocumentRelation\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tcreatedAt\x88\x01\x01\x12\x1f\n" +
 	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12Z\n" +
-	"\bdocument\x18\x04 \x01(\v2\".resources.documents.DocumentShortB\x15\x9a\x84\x9e\x03\x10alias:\"document\"H\x02R\bdocument\x88\x01\x01\x12A\n" +
-	"\x0esource_user_id\x18\x05 \x01(\x05B\x1b\x9a\x84\x9e\x03\x16alias:\"source_user_id\"R\fsourceUserId\x12`\n" +
+	"\bdocument\x18\x04 \x01(\v2\".resources.documents.DocumentShortB\x15\x9a\x84\x9e\x03\x10alias:\"document\"H\x02R\bdocument\x88\x01\x01\x12H\n" +
+	"\x0esource_user_id\x18\x05 \x01(\x05B\"\x9a\x84\x9e\x03\x16alias:\"source_user_id\"\xbaH\x04\x1a\x02 \x00R\fsourceUserId\x12`\n" +
 	"\vsource_user\x18\x06 \x01(\v2 .resources.users.short.UserShortB\x18\x9a\x84\x9e\x03\x13alias:\"source_user\"H\x03R\n" +
-	"sourceUser\x88\x01\x01\x12]\n" +
-	"\brelation\x18\a \x01(\x0e2*.resources.documents.relations.DocRelationB\x15\x9a\x84\x9e\x03\x10alias:\"relation\"R\brelation\x12A\n" +
-	"\x0etarget_user_id\x18\b \x01(\x05B\x1b\x9a\x84\x9e\x03\x16alias:\"target_user_id\"R\ftargetUserId\x12`\n" +
+	"sourceUser\x88\x01\x01\x12e\n" +
+	"\brelation\x18\a \x01(\x0e2*.resources.documents.relations.DocRelationB\x1d\x9a\x84\x9e\x03\x10alias:\"relation\"\xbaH\x05\x82\x01\x02\x10\x01R\brelation\x12H\n" +
+	"\x0etarget_user_id\x18\b \x01(\x05B\"\x9a\x84\x9e\x03\x16alias:\"target_user_id\"\xbaH\x04\x1a\x02 \x00R\ftargetUserId\x12`\n" +
 	"\vtarget_user\x18\t \x01(\v2 .resources.users.short.UserShortB\x18\x9a\x84\x9e\x03\x13alias:\"target_user\"H\x04R\n" +
 	"targetUser\x88\x01\x01B\x05\n" +
 	"\x03_idB\r\n" +

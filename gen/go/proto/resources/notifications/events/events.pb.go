@@ -709,22 +709,22 @@ var File_resources_notifications_events_events_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_events_events_proto_rawDesc = "" +
 	"\n" +
-	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a!resources/userinfo/userinfo.proto\"\x96\x02\n" +
+	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a!resources/userinfo/userinfo.proto\"\x9d\x02\n" +
 	"\tUserEvent\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshToken\x12K\n" +
 	"\fnotification\x18\x02 \x01(\v2%.resources.notifications.NotificationH\x00R\fnotification\x12:\n" +
 	"\x18notifications_read_count\x18\x03 \x01(\x03H\x00R\x16notificationsReadCount\x12Q\n" +
-	"\x11user_info_changed\x18\x04 \x01(\v2#.resources.userinfo.UserInfoChangedH\x00R\x0fuserInfoChangedB\x06\n" +
-	"\x04data\"Q\n" +
+	"\x11user_info_changed\x18\x04 \x01(\v2#.resources.userinfo.UserInfoChangedH\x00R\x0fuserInfoChangedB\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"X\n" +
 	"\bJobEvent\x12=\n" +
-	"\tjob_props\x18\x01 \x01(\v2\x1e.resources.jobs.props.JobPropsH\x00R\bjobPropsB\x06\n" +
-	"\x04data\">\n" +
+	"\tjob_props\x18\x01 \x01(\v2\x1e.resources.jobs.props.JobPropsH\x00R\bjobPropsB\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"E\n" +
 	"\rJobGradeEvent\x12%\n" +
-	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshTokenB\x06\n" +
-	"\x04data\"b\n" +
+	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshTokenB\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"i\n" +
 	"\vSystemEvent\x12K\n" +
-	"\rclient_config\x18\x01 \x01(\v2$.resources.clientconfig.ClientConfigH\x00R\fclientConfigB\x06\n" +
-	"\x04dataBfZdgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events;notificationseventsb\x06proto3"
+	"\rclient_config\x18\x01 \x01(\v2$.resources.clientconfig.ClientConfigH\x00R\fclientConfigB\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01BfZdgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events;notificationseventsb\x06proto3"
 
 var file_resources_notifications_events_events_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_notifications_events_events_proto_goTypes = []any{

@@ -329,7 +329,7 @@ var File_resources_documents_requests_requests_proto protoreflect.FileDescriptor
 
 const file_resources_documents_requests_requests_proto_rawDesc = "" +
 	"\n" +
-	"+resources/documents/requests/requests.proto\x12\x1cresources.documents.requests\x1a+resources/documents/activity/activity.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xa4\x05\n" +
+	"+resources/documents/requests/requests.proto\x12\x1cresources.documents.requests\x1a+resources/documents/activity/activity.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xdf\x05\n" +
 	"\n" +
 	"DocRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
@@ -338,16 +338,16 @@ const file_resources_documents_requests_requests_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\x12\x1f\n" +
 	"\vdocument_id\x18\x04 \x01(\x03R\n" +
-	"documentId\x12P\n" +
-	"\frequest_type\x18\x05 \x01(\x0e2-.resources.documents.activity.DocActivityTypeR\vrequestType\x12\"\n" +
+	"documentId\x12f\n" +
+	"\frequest_type\x18\x05 \x01(\x0e2-.resources.documents.activity.DocActivityTypeB\x14\xbaH\x11\x82\x01\x0e\x10\x01\x18\r\x18\x0e\x18\x0f\x18\x10\x18\x11\x18\x12R\vrequestType\x12+\n" +
 	"\n" +
-	"creator_id\x18\x06 \x01(\x05H\x00R\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\a \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x01R\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\b \x01(\tR\n" +
-	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\t \x01(\tH\x02R\x0fcreatorJobLabel\x88\x01\x01\x12\x1b\n" +
+	"creator_id\x18\x06 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x00R\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\a \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x01R\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
+	"creatorJob\x128\n" +
+	"\x11creator_job_label\x18\t \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\x0fcreatorJobLabel\x88\x01\x01\x12%\n" +
 	"\x06reason\x18\n" +
-	" \x01(\tH\x03R\x06reason\x88\x01\x01\x12A\n" +
+	" \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x03R\x06reason\x88\x01\x01\x12A\n" +
 	"\x04data\x18\v \x01(\v2-.resources.documents.activity.DocActivityDataR\x04data\x12\x1f\n" +
 	"\baccepted\x18\f \x01(\bH\x04R\baccepted\x88\x01\x01B\r\n" +
 	"\v_creator_idB\n" +

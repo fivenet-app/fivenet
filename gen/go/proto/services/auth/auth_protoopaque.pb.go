@@ -1859,10 +1859,10 @@ var File_services_auth_auth_proto protoreflect.FileDescriptor
 
 const file_services_auth_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x1ccodegen/audit/redacted.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a!resources/accounts/accounts.proto\x1a&resources/accounts/oauth2/oauth2.proto\x1a resources/jobs/props/props.proto\x1a1resources/permissions/attributes/attributes.proto\x1a3resources/permissions/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"L\n" +
-	"\fLoginRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12 \n" +
-	"\bpassword\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\bpassword\"\xb2\x01\n" +
+	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x1ccodegen/audit/redacted.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a!resources/accounts/accounts.proto\x1a&resources/accounts/oauth2/oauth2.proto\x1a resources/jobs/props/props.proto\x1a1resources/permissions/attributes/attributes.proto\x1a3resources/permissions/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"\x80\x01\n" +
+	"\fLoginRequest\x12E\n" +
+	"\busername\x18\x01 \x01(\tB)\xbaH&r$\x10\x03\x18\x182\x1e(?i)^[0-9A-ZÄÖÜß_-]{3,24}$R\busername\x12)\n" +
+	"\bpassword\x18\x02 \x01(\tB\r\xf0\xf3\x18\x01\xbaH\x06r\x04\x10\x06(FR\bpassword\"\xb2\x01\n" +
 	"\rLoginResponse\x128\n" +
 	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12\x1d\n" +
 	"\n" +
@@ -1871,25 +1871,27 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x05_char\"\x0f\n" +
 	"\rLogoutRequest\"*\n" +
 	"\x0eLogoutResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x81\x01\n" +
-	"\x14CreateAccountRequest\x12!\n" +
-	"\treg_token\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\bregToken\x12$\n" +
-	"\busername\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\busername\x12 \n" +
-	"\bpassword\x18\x03 \x01(\tB\x04\xf0\xf3\x18\x01R\bpassword\"6\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xc7\x01\n" +
+	"\x14CreateAccountRequest\x125\n" +
+	"\treg_token\x18\x01 \x01(\tB\x18\xf0\xf3\x18\x01\xbaH\x11r\x0f2\n" +
+	"^[0-9]{6}$\x98\x01\x06R\bregToken\x12M\n" +
+	"\busername\x18\x02 \x01(\tB1\xda\xf3\x18\x04\b\x01\x18\x01\xbaH&r$\x10\x03\x18\x182\x1e(?i)^[0-9A-ZÄÖÜß_-]{3,24}$R\busername\x12)\n" +
+	"\bpassword\x18\x03 \x01(\tB\r\xf0\xf3\x18\x01\xbaH\x06r\x04\x10\x06(FR\bpassword\"6\n" +
 	"\x15CreateAccountResponse\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\x03R\taccountId\"q\n" +
-	"\x15ChangePasswordRequest\x12/\n" +
-	"\x10current_password\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\x0fcurrentPassword\x12'\n" +
-	"\fnew_password\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\vnewPassword\"\x18\n" +
-	"\x16ChangePasswordResponse\"o\n" +
-	"\x15ChangeUsernameRequest\x12)\n" +
-	"\x10current_username\x18\x01 \x01(\tR\x0fcurrentUsername\x12+\n" +
-	"\fnew_username\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\vnewUsername\"\x18\n" +
-	"\x16ChangeUsernameResponse\"R\n" +
-	"\x15ForgotPasswordRequest\x12!\n" +
-	"\treg_token\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\bregToken\x12\x16\n" +
-	"\x03new\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\x03new\"\x18\n" +
+	"account_id\x18\x01 \x01(\x03R\taccountId\"\x83\x01\n" +
+	"\x15ChangePasswordRequest\x128\n" +
+	"\x10current_password\x18\x01 \x01(\tB\r\xf0\xf3\x18\x01\xbaH\x06r\x04\x10\x06(FR\x0fcurrentPassword\x120\n" +
+	"\fnew_password\x18\x02 \x01(\tB\r\xf0\xf3\x18\x01\xbaH\x06r\x04\x10\x06(FR\vnewPassword\"\x18\n" +
+	"\x16ChangePasswordResponse\"\xc3\x01\n" +
+	"\x15ChangeUsernameRequest\x12T\n" +
+	"\x10current_username\x18\x01 \x01(\tB)\xbaH&r$\x10\x03\x18\x182\x1e(?i)^[0-9A-ZÄÖÜß_-]{3,24}$R\x0fcurrentUsername\x12T\n" +
+	"\fnew_username\x18\x02 \x01(\tB1\xda\xf3\x18\x04\b\x01\x18\x01\xbaH&r$\x10\x03\x18\x182\x1e(?i)^[0-9A-ZÄÖÜß_-]{3,24}$R\vnewUsername\"\x18\n" +
+	"\x16ChangeUsernameResponse\"o\n" +
+	"\x15ForgotPasswordRequest\x125\n" +
+	"\treg_token\x18\x01 \x01(\tB\x18\xf0\xf3\x18\x01\xbaH\x11r\x0f2\n" +
+	"^[0-9]{6}$\x98\x01\x06R\bregToken\x12\x1f\n" +
+	"\x03new\x18\x02 \x01(\tB\r\xf0\xf3\x18\x01\xbaH\x06r\x04\x10\x06(FR\x03new\"\x18\n" +
 	"\x16ForgotPasswordResponse\"\x17\n" +
 	"\x15GetAccountInfoRequest\"\xfe\x01\n" +
 	"\x16GetAccountInfoResponse\x125\n" +
@@ -1898,9 +1900,9 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x12oauth2_connections\x18\x03 \x03(\v2(.resources.accounts.oauth2.OAuth2AccountR\x11oauth2Connections\"\x16\n" +
 	"\x14GetCharactersRequest\"L\n" +
 	"\x15GetCharactersResponse\x123\n" +
-	"\x05chars\x18\x01 \x03(\v2\x1d.resources.accounts.CharacterR\x05chars\"1\n" +
-	"\x16ChooseCharacterRequest\x12\x17\n" +
-	"\achar_id\x18\x01 \x01(\x05R\x06charId\"\xa2\x03\n" +
+	"\x05chars\x18\x01 \x03(\v2\x1d.resources.accounts.CharacterR\x05chars\":\n" +
+	"\x16ChooseCharacterRequest\x12 \n" +
+	"\achar_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06charId\"\xa2\x03\n" +
 	"\x17ChooseCharacterResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x128\n" +
@@ -1910,9 +1912,9 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\vpermissions\x18\x06 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
 	"attributes\x18\a \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
-	"attributes\"4\n" +
-	"\x15ImpersonateJobRequest\x12\x1b\n" +
-	"\tjob_grade\x18\x01 \x01(\x05R\bjobGrade\"\xde\x02\n" +
+	"attributes\"F\n" +
+	"\x15ImpersonateJobRequest\x12-\n" +
+	"\tjob_grade\x18\x01 \x01(\x05B\x10\xbaH\r\x1a\v(\xff\xff\xff\xff\xff\xff\xff\xff\xff\x01R\bjobGrade\"\xde\x02\n" +
 	"\x16ImpersonateJobResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x128\n" +
 	"\aexpires\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12<\n" +
@@ -1921,14 +1923,14 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\n" +
 	"attributes\x18\x05 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
 	"attributes\x12\x14\n" +
-	"\x05state\x18\x06 \x01(\bR\x05state\"@\n" +
-	"\x18DeleteSocialLoginRequest\x12$\n" +
-	"\bprovider\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\bprovider\"5\n" +
+	"\x05state\x18\x06 \x01(\bR\x05state\"G\n" +
+	"\x18DeleteSocialLoginRequest\x12+\n" +
+	"\bprovider\x18\x01 \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x182R\bprovider\"5\n" +
 	"\x19DeleteSocialLoginResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"V\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"_\n" +
 	"\x17SetSuperuserModeRequest\x12\x1c\n" +
-	"\tsuperuser\x18\x01 \x01(\bR\tsuperuser\x12\x15\n" +
-	"\x03job\x18\x02 \x01(\tH\x00R\x03job\x88\x01\x01B\x06\n" +
+	"\tsuperuser\x18\x01 \x01(\bR\tsuperuser\x12\x1e\n" +
+	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x00R\x03job\x88\x01\x01B\x06\n" +
 	"\x04_job\"\x9a\x03\n" +
 	"\x18SetSuperuserModeResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x128\n" +

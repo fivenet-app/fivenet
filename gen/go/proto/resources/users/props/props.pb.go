@@ -489,9 +489,9 @@ var File_resources_users_props_props_proto protoreflect.FileDescriptor
 
 const file_resources_users_props_props_proto_rawDesc = "" +
 	"\n" +
-	"!resources/users/props/props.proto\x12\x15resources.users.props\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/citizens/labels/labels.proto\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xd3\t\n" +
-	"\tUserProps\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12B\n" +
+	"!resources/users/props/props.proto\x12\x15resources.users.props\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/citizens/labels/labels.proto\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xe5\t\n" +
+	"\tUserProps\x12 \n" +
+	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12B\n" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\x1b\n" +
 	"\x06wanted\x18\x03 \x01(\bH\x01R\x06wanted\x88\x01\x01\x12@\n" +
@@ -512,8 +512,8 @@ const file_resources_users_props_props_proto_rawDesc = "" +
 	"blood_type\x18\r \x01(\tH\vR\tbloodType\x88\x01\x01\x12+\n" +
 	"\x0fmugshot_file_id\x18\x0e \x01(\x03H\fR\rmugshotFileId\x88\x01\x01\x12I\n" +
 	"\amugshot\x18\x0f \x01(\v2\x14.resources.file.FileB\x14\x9a\x84\x9e\x03\x0falias:\"mugshot\"H\rR\amugshot\x88\x01\x01\x12>\n" +
-	"\x06labels\x18\x10 \x01(\v2!.resources.citizens.labels.LabelsH\x0eR\x06labels\x88\x01\x01\x12#\n" +
-	"\x05email\x18\x11 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x0fR\x05email\x88\x01\x01B\r\n" +
+	"\x06labels\x18\x10 \x01(\v2!.resources.citizens.labels.LabelsH\x0eR\x06labels\x88\x01\x01\x12,\n" +
+	"\x05email\x18\x11 \x01(\tB\x11\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x06r\x04\x10\x06\x18PH\x0fR\x05email\x88\x01\x01B\r\n" +
 	"\v_updated_atB\t\n" +
 	"\a_wantedB\f\n" +
 	"\n" +

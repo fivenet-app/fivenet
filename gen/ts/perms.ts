@@ -253,3 +253,340 @@ export const GRPCServiceMethods = [
 	'wiki.WikiService/UpdatePage',
 	'wiki.WikiService/UploadFile',
 ];
+
+export const PermAttributes = {
+	'auth.AuthService/ChooseCharacter': {
+	},
+	'calendar.CalendarService/CreateCalendar': {
+		'Fields': {
+			type: 'stringList',
+			values: ['Job','Public',] as const,
+		},
+	},
+	'centrum.CentrumService/Stream': {
+	},
+	'centrum.CentrumService/TakeControl': {
+	},
+	'centrum.CentrumService/UpdateDispatchers': {
+	},
+	'centrum.CentrumService/UpdateSettings': {
+		'Access': {
+			type: 'stringList',
+			values: ['Shared','Public',] as const,
+		},
+	},
+	'centrum.DispatchesService/CreateDispatch': {
+	},
+	'centrum.DispatchesService/DeleteDispatch': {
+	},
+	'centrum.DispatchesService/TakeDispatch': {
+	},
+	'centrum.DispatchesService/UpdateDispatch': {
+	},
+	'centrum.UnitsService/CreateOrUpdateUnit': {
+	},
+	'centrum.UnitsService/DeleteUnit': {
+	},
+	'citizens.CitizensService/GetUser': {
+		'Jobs': {
+			type: 'jobGradeList',
+		},
+	},
+	'citizens.CitizensService/ListCitizens': {
+		'Fields': {
+			type: 'stringList',
+			values: ['PhoneNumber','Licenses','UserProps.Wanted','UserProps.Job','UserProps.TrafficInfractionPoints','UserProps.OpenFines','UserProps.BloodType','UserProps.Mugshot','UserProps.Labels','UserProps.Email',] as const,
+		},
+	},
+	'citizens.CitizensService/ListUserActivity': {
+		'Fields': {
+			type: 'stringList',
+			values: ['SourceUser','Own',] as const,
+		},
+	},
+	'citizens.CitizensService/SetUserProps': {
+		'Fields': {
+			type: 'stringList',
+			values: ['Wanted','Job','TrafficInfractionPoints','Mugshot','Labels',] as const,
+		},
+	},
+	'citizens.LabelsService/CreateOrUpdateLabel': {
+	},
+	'citizens.LabelsService/DeleteLabel': {
+	},
+	'documents.ApprovalService/DeleteApprovalTasks': {
+	},
+	'documents.ApprovalService/RevokeApproval': {
+	},
+	'documents.ApprovalService/UpsertApprovalPolicy': {
+	},
+	'documents.ApprovalService/UpsertApprovalTasks': {
+	},
+	'documents.CategoriesService/CreateOrUpdateCategory': {
+	},
+	'documents.CategoriesService/DeleteCategory': {
+	},
+	'documents.CategoriesService/ListCategories': {
+		'Jobs': {
+			type: 'jobList',
+		},
+	},
+	'documents.CommentsService/DeleteComment': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+	},
+	'documents.DocumentsService/AddDocumentReference': {
+	},
+	'documents.DocumentsService/AddDocumentRelation': {
+	},
+	'documents.DocumentsService/ChangeDocumentOwner': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+	},
+	'documents.DocumentsService/CreateDocumentReq': {
+		'Types': {
+			type: 'stringList',
+			values: ['Access','Closure','Update','Deletion','OwnerChange',] as const,
+		},
+	},
+	'documents.DocumentsService/DeleteDocument': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+	},
+	'documents.DocumentsService/DeleteDocumentReq': {
+	},
+	'documents.DocumentsService/ListDocumentActivity': {
+	},
+	'documents.DocumentsService/ListDocumentReqs': {
+	},
+	'documents.DocumentsService/ListDocuments': {
+	},
+	'documents.DocumentsService/ListUserDocuments': {
+	},
+	'documents.DocumentsService/SetDocumentReminder': {
+	},
+	'documents.DocumentsService/ToggleDocument': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+	},
+	'documents.DocumentsService/ToggleDocumentPin': {
+		'Types': {
+			type: 'stringList',
+			values: ['JobWide',] as const,
+		},
+	},
+	'documents.DocumentsService/UpdateDocument': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+	},
+	'documents.StampsService/DeleteStamp': {
+	},
+	'documents.StampsService/ListUsableStamps': {
+	},
+	'documents.StampsService/UpsertStamp': {
+	},
+	'documents.StatsService/GetStats': {
+		'Categories': {
+			type: 'stringList',
+			values: ['PenaltyCalculator',] as const,
+		},
+		'Jobs': {
+			type: 'jobList',
+		},
+	},
+	'documents.TemplatesService/CreateTemplate': {
+	},
+	'documents.TemplatesService/DeleteTemplate': {
+	},
+	'documents.TemplatesService/ListTemplates': {
+	},
+	'jobs.ColleaguesService/GetColleague': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+		'Types': {
+			type: 'stringList',
+			values: ['Note','Labels',] as const,
+		},
+	},
+	'jobs.ColleaguesService/ListColleagueActivity': {
+		'Types': {
+			type: 'stringList',
+			values: ['HIRED','FIRED','PROMOTED','DEMOTED','ABSENCE_DATE','NOTE','LABELS','NAME',] as const,
+		},
+	},
+	'jobs.ColleaguesService/ListColleagues': {
+	},
+	'jobs.ColleaguesService/ManageLabels': {
+	},
+	'jobs.ColleaguesService/SetColleagueProps': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+		'Types': {
+			type: 'stringList',
+			values: ['AbsenceDate','Note','Labels','Name',] as const,
+		},
+	},
+	'jobs.ConductService/CreateConductEntry': {
+	},
+	'jobs.ConductService/DeleteConductEntry': {
+	},
+	'jobs.ConductService/ListConductEntries': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','All',] as const,
+		},
+	},
+	'jobs.ConductService/UpdateConductEntry': {
+	},
+	'jobs.ConductService/UploadFile': {
+	},
+	'jobs.JobsService/SetMOTD': {
+	},
+	'jobs.StatsService/GetStats': {
+	},
+	'jobs.TimeclockService/ListInactiveEmployees': {
+	},
+	'jobs.TimeclockService/ListTimeclock': {
+		'Access': {
+			type: 'stringList',
+			values: ['All',] as const,
+		},
+	},
+	'livemap.LivemapService/CreateOrUpdateMarker': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+	},
+	'livemap.LivemapService/DeleteMarker': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+	},
+	'livemap.LivemapService/Stream': {
+		'Markers': {
+			type: 'jobList',
+		},
+		'Players': {
+			type: 'jobGradeList',
+		},
+	},
+	'mailer.MailerService/CreateOrUpdateEmail': {
+		'Fields': {
+			type: 'stringList',
+			values: ['Job',] as const,
+		},
+	},
+	'mailer.MailerService/DeleteEmail': {
+	},
+	'mailer.MailerService/ListEmails': {
+	},
+	'qualifications.QualificationsService/DeleteQualification': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+	},
+	'qualifications.QualificationsService/ListQualifications': {
+	},
+	'qualifications.QualificationsService/UpdateQualification': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+		'Fields': {
+			type: 'stringList',
+			values: ['Public',] as const,
+		},
+	},
+	'settings.LawsService/CreateOrUpdateLawBook': {
+	},
+	'settings.LawsService/DeleteLawBook': {
+	},
+	'settings.SettingsService/CreateRole': {
+	},
+	'settings.SettingsService/DeleteRole': {
+	},
+	'settings.SettingsService/GetJobProps': {
+	},
+	'settings.SettingsService/GetRoles': {
+	},
+	'settings.SettingsService/SetJobProps': {
+	},
+	'settings.SettingsService/UpdateRolePerms': {
+	},
+	'settings.SettingsService/ViewAuditLog': {
+	},
+	'vehicles.VehiclesService/ListVehicles': {
+		'Fields': {
+			type: 'stringList',
+			values: ['Wanted',] as const,
+		},
+	},
+	'vehicles.VehiclesService/SetVehicleProps': {
+		'Fields': {
+			type: 'stringList',
+			values: ['Wanted',] as const,
+		},
+	},
+	'wiki.WikiService/CreatePage': {
+	},
+	'wiki.WikiService/DeletePage': {
+	},
+	'wiki.WikiService/ListPageActivity': {
+	},
+	'wiki.WikiService/ListPages': {
+	},
+	'wiki.WikiService/UpdatePage': {
+		'Fields': {
+			type: 'stringList',
+			values: ['Public',] as const,
+		},
+	},
+	'wiki.WikiService/UploadFile': {
+	},
+} as const;
+
+export type PermAttributesMap = typeof PermAttributes;
+export type PermAttrKind = 'stringList' | 'jobList' | 'jobGradeList';
+
+export type PermAttrPerm = keyof PermAttributesMap;
+
+export type PermAttrKey<P extends Perms> = P extends keyof PermAttributesMap
+	? keyof PermAttributesMap[P] & string
+	: never;
+
+export type PermAttrDescriptor<P extends Perms, K extends PermAttrKey<P>> = P extends keyof PermAttributesMap
+	? K extends keyof PermAttributesMap[P]
+		? PermAttributesMap[P][K]
+		: never
+	: never;
+
+export type PermAttrType<P extends Perms, K extends PermAttrKey<P>> = PermAttrDescriptor<P, K>['type'];
+
+export type PermAttrValue<P extends Perms, K extends PermAttrKey<P>> = PermAttrDescriptor<P, K> extends {
+	values: readonly (infer V)[];
+}
+	? V
+	: string;
+
+export type PermAttrKeysByType<P extends Perms, T extends PermAttrKind> = P extends keyof PermAttributesMap
+	? {
+			[K in keyof PermAttributesMap[P] & string]: PermAttributesMap[P][K] extends { type: T } ? K : never;
+		}[keyof PermAttributesMap[P] & string]
+	: never;

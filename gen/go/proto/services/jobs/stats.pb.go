@@ -249,12 +249,12 @@ var File_services_jobs_stats_proto protoreflect.FileDescriptor
 
 const file_services_jobs_stats_proto_rawDesc = "" +
 	"\n" +
-	"\x19services/jobs/stats.proto\x12\rservices.jobs\x1a\x19codegen/perms/perms.proto\x1a\x1bresources/stats/stats.proto\x1a#resources/timestamp/timestamp.proto\"\xeb\x01\n" +
+	"\x19services/jobs/stats.proto\x12\rservices.jobs\x1a\x19codegen/perms/perms.proto\x1a\x1bresources/stats/stats.proto\x1a#resources/timestamp/timestamp.proto\"\xff\x01\n" +
 	"\x0fGetStatsRequest\x124\n" +
 	"\x05start\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x05start\x120\n" +
-	"\x03end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\x03end\x124\n" +
-	"\x06period\x18\x03 \x01(\x0e2\x1c.resources.stats.StatsPeriodR\x06period\x12:\n" +
-	"\bcategory\x18\x04 \x01(\x0e2\x1e.resources.stats.StatsCategoryR\bcategory\"\xf0\x01\n" +
+	"\x03end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\x03end\x12>\n" +
+	"\x06period\x18\x03 \x01(\x0e2\x1c.resources.stats.StatsPeriodB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06period\x12D\n" +
+	"\bcategory\x18\x04 \x01(\x0e2\x1e.resources.stats.StatsCategoryB\b\xbaH\x05\x82\x01\x02\x10\x01R\bcategory\"\xf0\x01\n" +
 	"\x10GetStatsResponse\x12@\n" +
 	"\rperiod_values\x18\x01 \x03(\v2\x1b.resources.stats.DailyValueR\fperiodValues\x12T\n" +
 	"\x14period_series_values\x18\x02 \x03(\v2\".resources.stats.PeriodSeriesValueR\x12periodSeriesValues\x12\x1f\n" +
