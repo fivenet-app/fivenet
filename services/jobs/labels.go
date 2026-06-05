@@ -166,7 +166,7 @@ func (s *Server) ManageLabels(
 					tJobLabels.Name.SET(mysql.RawString("VALUES(`name`)")),
 					tJobLabels.Color.SET(mysql.RawString("VALUES(`color`)")),
 					tJobLabels.Icon.SET(mysql.RawString("VALUES(`icon`)")),
-					tJobLabels.SortOrder.SET(mysql.RawInt("VALUES(`order`)")),
+					tJobLabels.SortOrder.SET(mysql.RawInt("VALUES(`sort_order`)")),
 					tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 				)
 
