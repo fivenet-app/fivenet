@@ -120,7 +120,7 @@
         "zod": "4.4.3"
     },
     "devDependencies": {
-        "@csmith/release-it-calver-plugin": "2026.4.0",
+        "@csmith/release-it-calver-plugin": "2026.6.0",
         "@nuxt/eslint": "1.15.2",
         "@nuxt/test-utils": "4.0.3",
         "@nuxtjs/i18n": "10.4.0",
@@ -149,7 +149,7 @@
         "eslint": "10.4.1",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.6",
-        "happy-dom": "20.9.0",
+        "happy-dom": "20.10.1",
         "nuxt": "4.4.7",
         "nuxt-tiptap-editor": "3.4.0",
         "nuxt-typed-router": "4.0.7",
@@ -166,7 +166,7 @@
         "tailwindcss": "4.3.0",
         "typescript": "6.0.3",
         "vite": "7.3.5",
-        "vitest": "4.1.7",
+        "vitest": "4.1.8",
         "vue-router": "5.1.0",
         "vue-tsc": "3.3.3",
         "westures": "1.1.1"
