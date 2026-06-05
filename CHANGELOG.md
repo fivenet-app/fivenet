@@ -2,6 +2,91 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.6.0] - 2026-06-05
+
+### 🚀 Features
+
+- Add basic private discord message handler to bot and add i18n
+- Add more buttons for table edit popover in tiptap editor
+- Add image removal to file list modal
+- Add proper file limit logic to filestore
+- Split job colleague labels into separate page and fix labels not
+- Add creator filter for dispatches archive and add repeated proto
+- Add enum defined only validation where missing from proto files
+- Add centrum units reorder api and ui
+- Add dispatcher removal button and highlight current user
+- Add no dispatches list to dispatch center
+- Add citizen labels sorting
+- Add job selection to documents stats
+- (re-)store dispatch center pane sizes
+- Detect and filter content type of uploaded files
+- Introduce re-useable DraggablHandle and ReorderButtons components
+- *(livemap)* Add rectangle and polygon marker proto types
+- *(livemap)* Add interactive marker geometry editing on map
+- Add laws sort_order column and re-gen sql and proto
+- Add laws order sort_order ui handling
+- Add maker search drawer to livemap
+- Color document activity icons for approval entries
+
+### 🐛 Bug Fixes
+
+- Add limits to most UPDATE and DELETE queries
+- Some perm translations and autocomplete change in nuxt/ui 4.8.0
+- Update config example comments
+- Upsert stamps call issues
+- Continue documents stamps work
+- Improve discord private message text
+- Tiptap editor files not giving file limit feedback
+- Sql query tests caused by jet paranthesis changes
+- Tiptap image removal when image doesn't exist in editor
+- Add action successful notification to file removal in file list
+- Consistently use stretchr/testify/assert and require packages for
+- Duplicate SetUserProps perm in citizens.LabelsService
+- Penalty calculator view difference between html and tiptap json
+- Remove case_count metric from documents
+- Input time picker and remove delete penalty calculator button from
+- Qualifications labels sync creating label without color
+- Doc stats generation tests
+- Jobs stats returning empty list
+- Jobs colleagues stats average vacation
+- Use minimum release age to 1 day
+- Remove exclude flag from git describe calls
+- Centralize user locale logic in a composable
+- App config penalty calculator max leeway validation issue
+- Client config json field name for stats page setting
+- Cleanup http server and improve iconify proxy request building
+- Run golangci-lint --fix
+- Add more created_at columns and check int size in reorder units api
+- Unit list ordering
+- Unit list sorting
+- Update sortOrder in client centrum store
+- Type issue due to job labels order -> sortOrder
+- Icon select menu performance and other general issues
+- "conflicting" citizens labels permission and cleanup components
+- Colleagues list cards labels list overflowing
+- Citizen labels access table naming
+- Some dispatch center automatic statuses not having creator job and
+- Dispatch list card view created at time badge
+- Debug output in dispatch list card view
+- Centrum -> dispatch pages rename issue
+- OnBeforeRouteLeave handler for centrum/dispatch pages
+- Centrum to dispatch rename
+- Cleanup some ui and status creation issues for dispatch center
+- Ensure own job's doc categories on top of completor results
+- Dispatch center unit icon/color usage
+- Remove debug output from centrum store
+- Improve filestore upload filter error handling on client-side
+- Remove dispatcher perm check in dispatcher drawer
+- Documents stats categories not being returned correctly
+- Replace table header buttons with generic component
+- Add go vscode extension to recommendations
+- Remove old excluded tables from gen-sql
+- Cleanup kong command handling logic
+- Convert stats backfill query to use go-jet tables
+- Check edit access to livemap marker
+- Jobs colleagues labels query issue
+- Improve document approval status logic and badge
+
 ## [2026.5.1] - 2026-05-21
 
 ### 🚀 Features
