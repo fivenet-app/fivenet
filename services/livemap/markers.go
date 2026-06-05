@@ -88,10 +88,7 @@ func (s *Server) CreateOrUpdateMarker(
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
-		fields, err := s.ps.AttrStringList(
-			userInfo,
-			permslivemap.LivemapService.CreateOrUpdateMarker.Access,
-		)
+		fields, err := permslivemap.LivemapService.CreateOrUpdateMarker.AccessTyped.Get(s.ps, userInfo)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
@@ -102,7 +99,7 @@ func (s *Server) CreateOrUpdateMarker(
 		}
 
 		if !access.CheckIfHasOwnJobAccess(
-			fields,
+			fields.StringList(),
 			userInfo,
 			marker.GetCreator().GetJob(),
 			marker.GetCreator(),
@@ -174,10 +171,7 @@ func (s *Server) DeleteMarker(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permslivemap.LivemapService.DeleteMarker.Access,
-	)
+	fields, err := permslivemap.LivemapService.DeleteMarker.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
@@ -192,7 +186,7 @@ func (s *Server) DeleteMarker(
 	}
 
 	if !access.CheckIfHasOwnJobAccess(
-		fields,
+		fields.StringList(),
 		userInfo,
 		marker.GetCreator().GetJob(),
 		marker.GetCreator(),

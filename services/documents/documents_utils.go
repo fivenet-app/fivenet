@@ -143,11 +143,8 @@ func (s *Server) listDocumentsQuery(
 		}
 
 		// Field Permission Check
-		fields, _ := s.ps.AttrStringList(
-			userInfo,
-			permscitizens.CitizensService.ListCitizens.Fields,
-		)
-		if fields.Contains("PhoneNumber") {
+		fields, _ := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+		if fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber) {
 			columns = append(columns, tCreator.PhoneNumber)
 		}
 
@@ -311,11 +308,8 @@ func (s *Server) getDocumentQuery(
 		}
 
 		// Field Permission Check
-		fields, _ := s.ps.AttrStringList(
-			userInfo,
-			permscitizens.CitizensService.ListCitizens.Fields,
-		)
-		if fields.Contains("PhoneNumber") {
+		fields, _ := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+		if fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber) {
 			columns = append(columns, tCreator.PhoneNumber)
 		}
 	}

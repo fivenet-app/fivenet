@@ -39,14 +39,11 @@ func (s *Server) ListTimeclock(
 	statsCondition := tTimeClock.Job.EQ(mysql.String(userInfo.GetJob()))
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsjobs.TimeclockService.ListTimeclock.Access,
-	)
+	fields, err := permsjobs.TimeclockService.ListTimeclock.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if !fields.Contains("All") {
+	if !fields.Contains(permsjobs.TimeclockServiceListTimeclockAccessPermValueAll) {
 		req.UserMode = jobstimeclock.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF
 	}
 
@@ -436,14 +433,11 @@ func (s *Server) GetTimeclockStats(
 	userId := userInfo.GetUserId()
 	if req.UserId != nil && req.GetUserId() > 0 && req.GetUserId() != userInfo.GetUserId() {
 		// Field Permission Check
-		fields, err := s.ps.AttrStringList(
-			userInfo,
-			permsjobs.TimeclockService.ListTimeclock.Access,
-		)
+		fields, err := permsjobs.TimeclockService.ListTimeclock.AccessTyped.Get(s.ps, userInfo)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
-		if fields.Contains("All") {
+		if fields.Contains(permsjobs.TimeclockServiceListTimeclockAccessPermValueAll) {
 			userId = req.GetUserId()
 		}
 	}

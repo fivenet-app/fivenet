@@ -629,14 +629,11 @@ func (s *Server) UpdatePage(
 	}
 
 	// Field Permission Check
-	fields, err := s.perms.AttrStringList(
-		userInfo,
-		permswiki.WikiService.UpdatePage.Fields,
-	)
+	fields, err := permswiki.WikiService.UpdatePage.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
-	if !fields.Contains("Public") {
+	if !fields.Contains(permswiki.WikiServiceUpdatePageFieldsPermValuePublic) {
 		req.Page.Meta.Public = oldPage.GetMeta().GetPublic()
 	}
 

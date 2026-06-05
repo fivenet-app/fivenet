@@ -38,17 +38,14 @@ func (s *Server) GetColleagueLabels(
 	}
 
 	// Fields Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsjobs.ColleaguesService.GetColleague.Types,
-	)
+	fields, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	if userInfo.GetSuperuser() {
-		fields.Strings = []string{"Labels"}
+		fields.Set(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels)
 	}
-	if !fields.Contains("Labels") {
+	if !fields.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) {
 		// Fallback to checking if user has manage colleague labels permission
 		if !s.ps.Can(
 			userInfo,
@@ -326,17 +323,14 @@ func (s *Server) GetColleagueLabelsStats(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Types Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsjobs.ColleaguesService.GetColleague.Types,
-	)
+	fields, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	if userInfo.GetSuperuser() {
-		fields.Strings = []string{"Labels"}
+		fields.Set(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels)
 	}
-	if !fields.Contains("Labels") {
+	if !fields.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) {
 		return &pbjobs.GetColleagueLabelsStatsResponse{}, nil
 	}
 

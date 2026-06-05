@@ -40,17 +40,14 @@ func (s *Server) ListConductEntries(
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsjobs.ConductService.ListConductEntries.Access,
-	)
+	fields, err := permsjobs.ConductService.ListConductEntries.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	// "All" is a pass, but if no fields or "Own" is given, return user's created conduct entries
-	if fields.Contains("All") {
-	} else if fields.Len() == 0 || fields.Contains("Own") {
+	if fields.Contains(permsjobs.ConductServiceListConductEntriesAccessPermValueAll) {
+	} else if fields.Len() == 0 || fields.Contains(permsjobs.ConductServiceListConductEntriesAccessPermValueOwn) {
 		condition = condition.AND(tConduct.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())))
 	} else {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)

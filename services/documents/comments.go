@@ -439,15 +439,12 @@ func (s *Server) DeleteComment(
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsdocuments.CommentsService.DeleteComment.Access,
-	)
+	fields, err := permsdocuments.CommentsService.DeleteComment.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if !access.CheckIfHasOwnJobAccess(
-		fields,
+		fields.StringList(),
 		userInfo,
 		comment.GetCreatorJob(),
 		comment.GetCreator(),

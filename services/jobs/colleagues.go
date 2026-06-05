@@ -14,7 +14,6 @@ import (
 	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
-	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
@@ -24,6 +23,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -55,10 +55,7 @@ func (s *Server) ListColleagues(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access Permission Check
-	types, err := s.ps.AttrStringList(
-		userInfo,
-		permsjobs.ColleaguesService.GetColleague.Types,
-	)
+	types, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -115,7 +112,7 @@ func (s *Server) ListColleagues(
 		}
 	}
 
-	if len(req.GetLabelIds()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
+	if len(req.GetLabelIds()) > 0 && (types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetSuperuser()) {
 		labelIDExprs := []mysql.Expression{}
 		for _, labelId := range req.GetLabelIds() {
 			labelIDExprs = append(labelIDExprs, mysql.Int64(labelId))
@@ -255,7 +252,7 @@ func (s *Server) ListColleagues(
 		}
 	}
 
-	if len(resp.GetColleagues()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
+	if len(resp.GetColleagues()) > 0 && (types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetSuperuser()) {
 		userIds := []mysql.Expression{}
 		for _, colleague := range resp.GetColleagues() {
 			userIds = append(userIds, mysql.Int32(colleague.GetUserId()))
@@ -421,10 +418,7 @@ func (s *Server) GetColleague(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access Permission Check
-	colleagueAccess, err := s.ps.AttrStringList(
-		userInfo,
-		permsjobs.ColleaguesService.GetColleague.Access,
-	)
+	colleagueAccess, err := permsjobs.ColleaguesService.GetColleague.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -440,7 +434,7 @@ func (s *Server) GetColleague(
 	infoOnly := req.GetInfoOnly()
 
 	check := access.CheckIfHasOwnJobAccess(
-		colleagueAccess,
+		colleagueAccess.StringList(),
 		userInfo,
 		targetUser.GetJob(),
 		&usershort.UserShort{
@@ -456,24 +450,21 @@ func (s *Server) GetColleague(
 	}
 
 	// Field Permission Check
-	fields := &permissionsattributes.StringList{}
+	fields := perms.NewTypedStringList[permsjobs.ColleaguesServiceGetColleagueTypesPermValue]()
 	if !infoOnly {
-		fields, err = s.ps.AttrStringList(
-			userInfo,
-			permsjobs.ColleaguesService.GetColleague.Types,
-		)
+		fields, err = permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.ps, userInfo)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 	if userInfo.GetSuperuser() {
-		fields.Strings = []string{"Note"}
+		fields.Set(permsjobs.ColleaguesServiceGetColleagueTypesPermValueNote)
 	}
 
 	withColumns := mysql.ProjectionList{}
-	for _, fType := range fields.GetStrings() {
+	for _, fType := range fields.Values() {
 		switch fType {
-		case "Note":
+		case permsjobs.ColleaguesServiceGetColleagueTypesPermValueNote:
 			withColumns = append(withColumns, tColleagueProps.Note)
 		}
 	}
@@ -503,21 +494,20 @@ func (s *Server) GetSelf(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Field Permission Check
-	types, err := s.ps.AttrStringList(
-		userInfo,
-		permsjobs.ColleaguesService.GetColleague.Types,
-	)
+	types, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	if userInfo.GetSuperuser() {
-		types.Strings = append(types.Strings, "AbsenceDate", "Note")
+		types.Append(
+			permsjobs.ColleaguesServiceGetColleagueTypesPermValueNote,
+		)
 	}
 
 	withColumns := mysql.ProjectionList{}
-	for _, fType := range types.GetStrings() {
+	for _, fType := range types.Values() {
 		switch fType {
-		case "Note":
+		case permsjobs.ColleaguesServiceGetColleagueTypesPermValueNote:
 			withColumns = append(withColumns, tColleagueProps.Note)
 		}
 	}
@@ -554,10 +544,7 @@ func (s *Server) SetColleagueProps(
 	}
 
 	// Access Permission Check
-	colleagueAccess, err := s.ps.AttrStringList(
-		userInfo,
-		permsjobs.ColleaguesService.SetColleagueProps.Access,
-	)
+	colleagueAccess, err := permsjobs.ColleaguesService.SetColleagueProps.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -577,7 +564,7 @@ func (s *Server) SetColleagueProps(
 	}
 
 	if !access.CheckIfHasOwnJobAccess(
-		colleagueAccess,
+		colleagueAccess.StringList(),
 		userInfo,
 		targetUser.GetJob(),
 		&usershort.UserShort{
@@ -590,15 +577,17 @@ func (s *Server) SetColleagueProps(
 	}
 
 	// Types Permission Check
-	types, err := s.ps.AttrStringList(
-		userInfo,
-		permsjobs.ColleaguesService.SetColleagueProps.Types,
-	)
+	types, err := permsjobs.ColleaguesService.SetColleagueProps.TypesTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	if userInfo.GetSuperuser() {
-		types.Strings = []string{"AbsenceDate", "Note", "Labels", "Name"}
+		types.Set(
+			permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueAbsenceDate,
+			permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueNote,
+			permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueLabels,
+			permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueName,
+		)
 	}
 
 	props, err := colleaguesstore.GetColleagueProps(
@@ -606,7 +595,7 @@ func (s *Server) SetColleagueProps(
 		s.db,
 		targetUser.GetJob(),
 		targetUser.GetUserId(),
-		types.GetStrings(),
+		types.Strings(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -616,7 +605,7 @@ func (s *Server) SetColleagueProps(
 
 	if reqProps.GetAbsenceBegin() != nil && reqProps.GetAbsenceEnd() != nil {
 		// Allow users to set their own absence date regardless of types perms check
-		if userInfo.GetUserId() != targetUser.GetUserId() && !types.Contains("AbsenceDate") &&
+		if userInfo.GetUserId() != targetUser.GetUserId() && !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueAbsenceDate) &&
 			!userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
@@ -645,14 +634,14 @@ func (s *Server) SetColleagueProps(
 
 	// Generate the update sets
 	if reqProps.Note != nil {
-		if !types.Contains("Note") && !userInfo.GetSuperuser() {
+		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueNote) && !userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsNoteDenied
 		}
 	}
 
 	if reqProps.GetLabels() != nil {
 		// Check if user is allowed to update labels
-		if !types.Contains("Labels") && !userInfo.GetSuperuser() {
+		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueLabels) && !userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
@@ -674,7 +663,7 @@ func (s *Server) SetColleagueProps(
 	}
 
 	if reqProps.NamePrefix != nil || reqProps.NameSuffix != nil {
-		if !types.Contains("Name") && !userInfo.GetSuperuser() {
+		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueName) && !userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsNameDenied
 		}
 	}
@@ -716,7 +705,7 @@ func (s *Server) SetColleagueProps(
 		s.db,
 		targetUser.GetJob(),
 		targetUser.GetUserId(),
-		types.GetStrings(),
+		types.Strings(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -740,7 +729,7 @@ func (s *Server) SetColleagueProps(
 func (s *Server) getConditionForColleagueAccess(
 	actTable *table.FivenetJobColleagueActivityTable,
 	usersTable *table.FivenetUserTable,
-	levels []string,
+	levels []permsjobs.ColleaguesServiceGetColleagueAccessPermValue,
 	userInfo *userinfo.UserInfo,
 ) mysql.BoolExpression {
 	condition := mysql.Bool(true)
@@ -753,16 +742,16 @@ func (s *Server) getConditionForColleagueAccess(
 		return actTable.TargetUserID.EQ(mysql.Int32(userInfo.GetUserId()))
 	}
 
-	if slices.Contains(levels, "Any") {
+	if slices.Contains(levels, permsjobs.ColleaguesServiceGetColleagueAccessPermValueAny) {
 		return condition
 	}
-	if slices.Contains(levels, "Lower_Rank") {
+	if slices.Contains(levels, permsjobs.ColleaguesServiceGetColleagueAccessPermValueLowerRank) {
 		return usersTable.ID.LT(mysql.Int32(userInfo.GetJobGrade()))
 	}
-	if slices.Contains(levels, "Same_Rank") {
+	if slices.Contains(levels, permsjobs.ColleaguesServiceGetColleagueAccessPermValueSameRank) {
 		return usersTable.ID.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))
 	}
-	if slices.Contains(levels, "Own") {
+	if slices.Contains(levels, permsjobs.ColleaguesServiceGetColleagueAccessPermValueOwn) {
 		return usersTable.ID.EQ(mysql.Int32(userInfo.GetUserId()))
 	}
 
@@ -778,10 +767,7 @@ func (s *Server) ListColleagueActivity(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access Field Permission Check
-	colleagueAccess, err := s.ps.AttrStringList(
-		userInfo,
-		permsjobs.ColleaguesService.GetColleague.Access,
-	)
+	colleagueAccess, err := permsjobs.ColleaguesService.GetColleague.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -812,7 +798,7 @@ func (s *Server) ListColleagueActivity(
 			s.getConditionForColleagueAccess(
 				tColleagueActivity,
 				tTargetColleague,
-				colleagueAccess.GetStrings(),
+				colleagueAccess.Values(),
 				userInfo,
 			),
 		)
@@ -838,7 +824,7 @@ func (s *Server) ListColleagueActivity(
 		}
 
 		if !access.CheckIfHasOwnJobAccess(
-			colleagueAccess,
+			colleagueAccess.StringList(),
 			userInfo,
 			targetUser.GetJob(),
 			&usershort.UserShort{
@@ -854,10 +840,7 @@ func (s *Server) ListColleagueActivity(
 	}
 
 	// Types Field Permission Check
-	types, err := s.ps.AttrStringList(
-		userInfo,
-		permsjobs.ColleaguesService.ListColleagueActivity.Types,
-	)
+	types, err := permsjobs.ColleaguesService.ListColleagueActivity.TypesTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -865,16 +848,15 @@ func (s *Server) ListColleagueActivity(
 		if !userInfo.GetSuperuser() {
 			return resp, nil
 		} else {
-			types.Strings = append(
-				types.Strings,
-				"HIRED",
-				"FIRED",
-				"PROMOTED",
-				"DEMOTED",
-				"ABSENCE_DATE",
-				"NOTE",
-				"LABELS",
-				"NAME",
+			types.Set(
+				permsjobs.ColleaguesServiceListColleagueActivityTypesPermValueHIRED,
+				permsjobs.ColleaguesServiceListColleagueActivityTypesPermValueFIRED,
+				permsjobs.ColleaguesServiceListColleagueActivityTypesPermValuePROMOTED,
+				permsjobs.ColleaguesServiceListColleagueActivityTypesPermValueDEMOTED,
+				permsjobs.ColleaguesServiceListColleagueActivityTypesPermValueABSENCEDATE,
+				permsjobs.ColleaguesServiceListColleagueActivityTypesPermValueNOTE,
+				permsjobs.ColleaguesServiceListColleagueActivityTypesPermValueLABELS,
+				permsjobs.ColleaguesServiceListColleagueActivityTypesPermValueNAME,
 			)
 		}
 	}
@@ -883,8 +865,8 @@ func (s *Server) ListColleagueActivity(
 		req.ActivityTypes = slices.DeleteFunc(
 			req.GetActivityTypes(),
 			func(t colleaguesactivity.ColleagueActivityType) bool {
-				return !slices.ContainsFunc(types.GetStrings(), func(s string) bool {
-					return strings.Contains(t.String(), "COLLEAGUE_ACTIVITY_TYPE_"+s)
+				return !slices.ContainsFunc(types.Values(), func(s permsjobs.ColleaguesServiceListColleagueActivityTypesPermValue) bool {
+					return strings.Contains(t.String(), "COLLEAGUE_ACTIVITY_TYPE_"+string(s))
 				})
 			},
 		)

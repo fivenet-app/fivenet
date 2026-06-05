@@ -366,15 +366,12 @@ func (s *Server) UpdateQualification(
 	}
 
 	// Field Permission Check
-	ownAccess, err := s.perms.AttrStringList(
-		userInfo,
-		permsqualifications.QualificationsService.UpdateQualification.Access,
-	)
+	ownAccess, err := permsqualifications.QualificationsService.UpdateQualification.AccessTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !access.CheckIfHasOwnJobAccess(
-		ownAccess,
+		ownAccess.StringList(),
 		userInfo,
 		oldQuali.GetCreatorJob(),
 		oldQuali.GetCreator(),
@@ -382,14 +379,11 @@ func (s *Server) UpdateQualification(
 		return nil, errorsqualifications.ErrQualiUpdateDenied
 	}
 
-	fields, err := s.perms.AttrStringList(
-		userInfo,
-		permsqualifications.QualificationsService.UpdateQualification.Fields,
-	)
+	fields, err := permsqualifications.QualificationsService.UpdateQualification.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !fields.Contains("Public") {
+	if !fields.Contains(permsqualifications.QualificationsServiceUpdateQualificationFieldsPermValuePublic) {
 		req.Qualification.Public = oldQuali.GetPublic()
 	}
 
@@ -561,14 +555,11 @@ func (s *Server) DeleteQualification(
 	}
 
 	// Field Permission Check
-	fields, err := s.perms.AttrStringList(
-		userInfo,
-		permsqualifications.QualificationsService.DeleteQualification.Access,
-	)
+	fields, err := permsqualifications.QualificationsService.DeleteQualification.AccessTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields, userInfo, quali.GetCreatorJob(), quali.GetCreator()) {
+	if !access.CheckIfHasOwnJobAccess(fields.StringList(), userInfo, quali.GetCreatorJob(), quali.GetCreator()) {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 

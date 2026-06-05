@@ -568,15 +568,12 @@ func (s *Server) UpdateDocument(
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsdocuments.DocumentsService.UpdateDocument.Access,
-	)
+	fields, err := permsdocuments.DocumentsService.UpdateDocument.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if !access.CheckIfHasOwnJobAccess(
-		fields,
+		fields.StringList(),
 		userInfo,
 		oldDoc.GetCreatorJob(),
 		oldDoc.GetCreator(),
@@ -921,14 +918,11 @@ func (s *Server) DeleteDocument(
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsdocuments.DocumentsService.DeleteDocument.Access,
-	)
+	fields, err := permsdocuments.DocumentsService.DeleteDocument.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
+	if !access.CheckIfHasOwnJobAccess(fields.StringList(), userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
 		return nil, errorsdocuments.ErrDocDeleteDenied
 	}
 
@@ -1011,14 +1005,11 @@ func (s *Server) ToggleDocument(
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsdocuments.DocumentsService.ToggleDocument.Access,
-	)
+	fields, err := permsdocuments.DocumentsService.ToggleDocument.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
+	if !access.CheckIfHasOwnJobAccess(fields.StringList(), userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
 		return nil, errorsdocuments.ErrDocToggleDenied
 	}
 
@@ -1130,14 +1121,11 @@ func (s *Server) ChangeDocumentOwner(
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsdocuments.DocumentsService.ChangeDocumentOwner.Access,
-	)
+	fields, err := permsdocuments.DocumentsService.ChangeDocumentOwner.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
+	if !access.CheckIfHasOwnJobAccess(fields.StringList(), userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
 		return nil, errorsdocuments.ErrDocOwnerFailed
 	}
 

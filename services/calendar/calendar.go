@@ -280,15 +280,12 @@ func (s *Server) CreateCalendar(
 ) (*pbcalendar.CreateCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permscalendar.CalendarService.CreateCalendar.Fields,
-	)
+	fields, err := permscalendar.CalendarService.CreateCalendar.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	if req.Calendar.Job != nil && !fields.Contains("Job") {
+	if req.Calendar.Job != nil && !fields.Contains(permscalendar.CalendarServiceCreateCalendarFieldsPermValueJob) {
 		return nil, errorscalendar.ErrFailedQuery
 	}
 	if req.GetCalendar().GetColor() == "" {
@@ -408,15 +405,12 @@ func (s *Server) UpdateCalendar(
 ) (*pbcalendar.UpdateCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permscalendar.CalendarService.CreateCalendar.Fields,
-	)
+	fields, err := permscalendar.CalendarService.CreateCalendar.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	if req.Calendar.Job != nil && !fields.Contains("Job") {
+	if req.Calendar.Job != nil && !fields.Contains(permscalendar.CalendarServiceCreateCalendarFieldsPermValueJob) {
 		return nil, errorscalendar.ErrFailedQuery
 	}
 	if req.GetCalendar().GetColor() == "" {
@@ -455,7 +449,7 @@ func (s *Server) UpdateCalendar(
 		empty := ""
 		req.Calendar.Description = &empty
 	}
-	if !fields.Contains("Public") && calendar.GetPublic() && req.GetCalendar().GetPublic() {
+	if !fields.Contains(permscalendar.CalendarServiceCreateCalendarFieldsPermValuePublic) && calendar.GetPublic() && req.GetCalendar().GetPublic() {
 		req.Calendar.Public = false
 	}
 

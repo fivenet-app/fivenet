@@ -402,15 +402,12 @@ func (s *Server) CreateOrUpdateEmail(
 		req.Email.Job = &userInfo.Job
 
 		// Field Permission Check
-		fields, err := s.ps.AttrStringList(
-			userInfo,
-			permsmailer.MailerService.CreateOrUpdateEmail.Fields,
-		)
+		fields, err := permsmailer.MailerService.CreateOrUpdateEmail.FieldsTyped.Get(s.ps, userInfo)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
-		if !fields.Contains("Job") {
+		if !fields.Contains(permsmailer.MailerServiceCreateOrUpdateEmailFieldsPermValueJob) {
 			return nil, errswrap.NewError(err, errorsmailer.ErrEmailAccessDenied)
 		}
 	}

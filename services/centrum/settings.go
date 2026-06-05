@@ -71,21 +71,18 @@ func (s *Server) UpdateSettings(
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permscentrum.CentrumService.UpdateSettings.Access,
-	)
+	fields, err := permscentrum.CentrumService.UpdateSettings.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	// Reset access if the user doesn't have access to the shared dispatch center feature
-	if !fields.Contains("Shared") {
+	if !fields.Contains(permscentrum.CentrumServiceUpdateSettingsAccessPermValueShared) {
 		req.Settings.Access = current.GetAccess()
 		req.Settings.OfferedAccess = current.GetOfferedAccess()
 		req.Settings.EffectiveAccess = current.GetEffectiveAccess()
 	}
-	if !fields.Contains("Public") {
+	if !fields.Contains(permscentrum.CentrumServiceUpdateSettingsAccessPermValuePublic) {
 		req.Settings.Public = current.GetPublic()
 	}
 

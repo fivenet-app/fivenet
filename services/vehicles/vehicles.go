@@ -33,10 +33,7 @@ func (s *Server) ListVehicles(
 	tUsers := table.FivenetUser.AS("user_short")
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsvehicles.VehiclesService.SetVehicleProps.Fields,
-	)
+	fields, err := permsvehicles.VehiclesService.SetVehicleProps.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
@@ -80,7 +77,7 @@ func (s *Server) ListVehicles(
 		)
 	}
 
-	if fields.Contains("Wanted") || userInfo.GetSuperuser() {
+	if fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) || userInfo.GetSuperuser() {
 		if req.Wanted != nil && req.GetWanted() {
 			logRequest = true
 			condition = mysql.AND(condition,
@@ -162,22 +159,19 @@ func (s *Server) ListVehicles(
 	}
 
 	// Field Permission Check
-	userFields, err := s.ps.AttrStringList(
-		userInfo,
-		permscitizens.CitizensService.ListCitizens.Fields,
-	)
+	userFields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	if userFields.Contains("PhoneNumber") {
+	if userFields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber) {
 		columns = append(columns, tUsers.PhoneNumber)
 	}
 
 	if fields.Len() > 0 {
 		columns = append(columns, tVehicleProps.UpdatedAt)
 	}
-	if fields.Contains("Wanted") || userInfo.GetSuperuser() {
+	if fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) || userInfo.GetSuperuser() {
 		columns = append(columns,
 			tVehicleProps.Wanted,
 			tVehicleProps.WantedReason,
@@ -240,17 +234,14 @@ func (s *Server) SetVehicleProps(
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsvehicles.VehiclesService.SetVehicleProps.Fields,
-	)
+	fields, err := permsvehicles.VehiclesService.SetVehicleProps.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
 	// Generate the update sets
 	if req.Props.Wanted != nil {
-		if !fields.Contains("Wanted") && !userInfo.GetSuperuser() {
+		if !fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) && !userInfo.GetSuperuser() {
 			return nil, errorsvehicles.ErrPropsWantedDenied
 		}
 	}

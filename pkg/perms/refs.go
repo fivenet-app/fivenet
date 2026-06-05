@@ -100,6 +100,12 @@ type TypedStringList[T StringListValue] struct {
 	values []T
 }
 
+func NewTypedStringList[T StringListValue](values ...T) *TypedStringList[T] {
+	return &TypedStringList[T]{
+		values: append([]T(nil), values...),
+	}
+}
+
 func NewStringListAttrRef(perm PermissionRef, key Key) AttrRef[StringListAttr] {
 	return AttrRef[StringListAttr]{perm: perm, key: key}
 }
@@ -158,6 +164,22 @@ func (a StringListAttrRef[T]) Get(
 	return &TypedStringList[T]{values: vals}, nil
 }
 
+func (s *TypedStringList[T]) Set(values ...T) {
+	if s == nil {
+		return
+	}
+
+	s.values = append(s.values[:0], values...)
+}
+
+func (s *TypedStringList[T]) Append(values ...T) {
+	if s == nil {
+		return
+	}
+
+	s.values = append(s.values, values...)
+}
+
 func (s *TypedStringList[T]) Values() []T {
 	if s == nil {
 		return nil
@@ -167,6 +189,29 @@ func (s *TypedStringList[T]) Values() []T {
 	copy(out, s.values)
 
 	return out
+}
+
+func (s *TypedStringList[T]) Strings() []string {
+	if s == nil {
+		return nil
+	}
+
+	out := make([]string, len(s.values))
+	for i := range s.values {
+		out[i] = string(s.values[i])
+	}
+
+	return out
+}
+
+func (s *TypedStringList[T]) StringList() *permissionsattributes.StringList {
+	if s == nil {
+		return nil
+	}
+
+	return &permissionsattributes.StringList{
+		Strings: s.Strings(),
+	}
 }
 
 func (s *TypedStringList[T]) Contains(items ...T) bool {

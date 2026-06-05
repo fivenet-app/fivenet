@@ -54,14 +54,11 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 	}
 
 	// Field Permission Check for same job handling
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permsdocuments.DocumentsService.UpdateDocument.Access,
-	)
+	fields, err := permsdocuments.DocumentsService.UpdateDocument.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
+	if !access.CheckIfHasOwnJobAccess(fields.StringList(), userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
 		return errorsdocuments.ErrNotFoundOrNoPerms
 	}
 
