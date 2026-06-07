@@ -158,7 +158,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
     }
 }
 
-watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
+useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
 
 const entries = computed(() => {
     if (data.value?.entries.oneofKind === 'daily') {

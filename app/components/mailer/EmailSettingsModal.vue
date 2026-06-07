@@ -39,36 +39,85 @@ const state = reactive<Schema>({
     emails: selectedEmail.value?.settings?.blockedEmails ?? [],
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state, {
+    serializer: (value) =>
+        JSON.stringify({
+            signature: value.signature,
+            emails: value.emails.map((email) => email.trim()),
+        }),
+});
+
+function setFromSelectedEmail(): void {
+    state.signature = selectedEmail.value?.settings?.signature?.tiptapJson
+        ? (Struct.toJson(selectedEmail.value.settings.signature.tiptapJson) as JSONContent)
+        : (selectedEmail.value?.settings?.signature?.rawHtml ?? '');
+    state.emails = selectedEmail.value?.settings?.blockedEmails ?? [];
+    syncSnapshot();
+}
+
+watch(selectedEmail, () => setFromSelectedEmail());
+
 const canManage = computed(() => canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.MANAGE));
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (!selectedEmail.value?.id) return;
     canSubmit.value = false;
 
     const values = event.data;
-    await mailerStore
-        .setEmailSettings({
-            settings: {
-                emailId: selectedEmail.value?.id,
-                signature: {
-                    contentType: ContentType.TIPTAP_JSON,
-                    version: '',
-                    tiptapJson: Struct.fromJsonString(JSON.stringify(values.signature)),
+    if (values)
+        await mailerStore
+            .setEmailSettings({
+                settings: {
+                    emailId: selectedEmail.value?.id,
+                    signature: {
+                        contentType: ContentType.TIPTAP_JSON,
+                        version: '',
+                        tiptapJson: Struct.fromJsonString(
+                            JSON.stringify(!values.signature ? { type: 'doc', content: [] } : values.signature),
+                        ),
+                    },
+                    blockedEmails: values.emails.map((e) => e.trim()),
                 },
-                blockedEmails: values.emails.map((e) => e.trim()),
-            },
-        })
-        .finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+            })
+            .finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 
     emit('close', false);
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
-    <UModal :title="`${$t('common.settings')}: ${selectedEmail?.email}`" :overlay="false">
+    <UModal
+        :title="`${$t('common.settings')}: ${selectedEmail?.email}`"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+        :overlay="false"
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">{{ $t('common.settings') }}: {{ selectedEmail?.email }}</h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-col gap-2">
@@ -119,6 +168,8 @@ const formRef = useTemplateRef('formRef');
                                 :disabled="disabled || !canManage"
                                 :limit="1024"
                                 wrapper-class="min-h-44"
+                                content-type="json"
+                                disable-images
                             />
                         </ClientOnly>
                     </UFormField>
@@ -128,7 +179,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     v-if="!disabled || canManage"

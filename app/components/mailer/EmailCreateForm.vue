@@ -29,6 +29,7 @@ const props = withDefaults(
 const emit = defineEmits<{
     (e: 'update:modelValue', email: Email | undefined): void;
     (e: 'refresh'): void;
+    (e: 'dirty-change', value: boolean): void;
 }>();
 
 const { t } = useI18n();
@@ -112,8 +113,13 @@ const state = reactive<Schema>({
     },
 });
 
+const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
+
 function setFromProps(): void {
-    if (!props.modelValue || !props.modelValue?.email) return;
+    if (!props.modelValue || !props.modelValue?.email) {
+        syncSnapshot();
+        return;
+    }
 
     const split = props.modelValue?.email.split('@');
     if (split[0] && split[1]) {
@@ -125,10 +131,20 @@ function setFromProps(): void {
     if (props.modelValue.access) {
         state.access = props.modelValue.access;
     }
+
+    syncSnapshot();
 }
 
 setFromProps();
 watch(props, setFromProps);
+
+watch(
+    hasUnsavedChanges,
+    (value) => {
+        emit('dirty-change', value);
+    },
+    { immediate: true },
+);
 
 async function createOrUpdateEmail(values: Schema): Promise<undefined> {
     values.access.users.forEach((user) => {
@@ -170,9 +186,10 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
     }
 
     emit('refresh');
+    syncSnapshot();
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
 

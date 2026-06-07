@@ -39,7 +39,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>): Promise<void> {
     isOpen.value = false;
 }
 
-const isOpen = ref(false);
+const isOpen = ref<boolean>(false);
 </script>
 
 <template>

@@ -120,7 +120,7 @@ function applyVersion(version: Version<HistoryContent>): void {
 
 const formRef = useTemplateRef('formRef');
 
-const isLinkOpen = ref(false);
+const isLinkOpen = ref<boolean>(false);
 </script>
 
 <template>

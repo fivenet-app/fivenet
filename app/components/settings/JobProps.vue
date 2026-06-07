@@ -126,6 +126,8 @@ const state = reactive<Schema>({
     },
 });
 
+const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
+
 async function getJobProps(): Promise<JobProps> {
     try {
         const call = settingsSettingsClient.getJobProps({});
@@ -171,6 +173,7 @@ async function setJobProps(values: Schema): Promise<void> {
         if (response.jobProps) {
             jobProps.value = response.jobProps;
             authStore.setJobProps(jobProps.value);
+            setSettingsValues();
         }
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -224,13 +227,15 @@ function setSettingsValues(): void {
             state.settings = jobProps.value.settings;
         }
     }
+
+    syncSnapshot();
 }
 
 watch(jobProps, () => setSettingsValues());
 
 const canEdit = can('settings.SettingsService/SetJobProps');
 
-const dcConnectRequired = ref(false);
+const dcConnectRequired = ref<boolean>(false);
 const { data: userGuilds } = useLazyAsyncData(`settings-userguilds`, () => listGuilds(), {
     immediate: appConfig.discord.botEnabled,
     transform: (guilds) =>
@@ -339,7 +344,7 @@ const selectedChange = ref<DiscordSyncChange | undefined>();
 
 const formRef = useTemplateRef('formRef');
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') return;
 
@@ -364,7 +369,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     <UButton
                         v-if="!!jobProps && canEdit"
                         trailing-icon="i-mdi-content-save"
-                        :disabled="!canSubmit"
+                        :disabled="!canSubmit || !hasUnsavedChanges"
                         :loading="!canSubmit"
                         :label="$t('common.save', 1)"
                         @click="() => formRef?.submit()"

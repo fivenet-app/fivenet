@@ -3,10 +3,10 @@ import { LazyHelpSlideover, LazyNotificationsNotificationSlideover } from '#comp
 const _useDashboard = () => {
     const route = useRoute();
 
-    const isDashboardSidebarSlideoverOpen = ref(false);
-    const isHelpSlideoverOpen = ref(false);
-    const isNotificationSlideoverOpen = ref(false);
-    const isCommandSearchOpen = ref(false);
+    const isDashboardSidebarSlideoverOpen = ref<boolean>(false);
+    const isHelpSlideoverOpen = ref<boolean>(false);
+    const isNotificationSlideoverOpen = ref<boolean>(false);
+    const isCommandSearchOpen = ref<boolean>(false);
 
     const overlay = useOverlay();
 

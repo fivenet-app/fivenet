@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
+import { computed } from 'vue';
 import { z } from 'zod';
 import ApprovalBadge from '~/components/documents/approval/ApprovalBadge.vue';
 import TaskStatusBadge from '~/components/documents/approval/TaskStatusBadge.vue';
@@ -74,10 +75,9 @@ const schema = z.object({
 
 const query = useSearchForm('documents-approvals', schema);
 
-const { data, status, error, refresh } = useLazyAsyncData(
-    () => `documents-approvals-${JSON.stringify(query)}`,
-    () => listApprovalTasksInbox(),
-);
+const approvalTasksInboxKey = computed(() => `documents-approvals-${JSON.stringify(query)}`);
+
+const { data, status, error, refresh } = useLazyAsyncData(approvalTasksInboxKey, () => listApprovalTasksInbox());
 
 async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse> {
     const call = approvalClient.listApprovalTasksInbox({

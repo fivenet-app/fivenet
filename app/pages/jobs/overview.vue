@@ -36,7 +36,7 @@ const { game } = useAppConfig();
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
 
-const showRadioFrequency = ref(false);
+const showRadioFrequency = ref<boolean>(false);
 </script>
 
 <template>

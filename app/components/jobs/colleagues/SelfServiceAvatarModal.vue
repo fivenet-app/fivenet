@@ -38,6 +38,20 @@ const state = reactive<Schema>({
     reset: false,
 });
 
+const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state, {
+    serializer: (value) =>
+        JSON.stringify({
+            reset: value.reset,
+            profilePicture: value.profilePicture
+                ? {
+                      name: value.profilePicture.name,
+                      size: value.profilePicture.size,
+                      type: value.profilePicture.type,
+                  }
+                : null,
+        }),
+});
+
 const { resizeAndUpload } = useFileUploader((_) => citizensCitizensClient.uploadAvatar(_), 'documents', 0);
 const { uploadImages } = useImageUpload();
 
@@ -105,10 +119,39 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (formRef.value?.loading) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
-    <UModal :title="$t('components.jobs.self_service.set_profile_picture')">
+    <UModal
+        :title="$t('components.jobs.self_service.set_profile_picture')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && !formRef?.loading"
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('components.jobs.self_service.set_profile_picture') }}
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="formRef?.loading"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="profilePicture" :label="$t('common.profile_picture')">
@@ -169,7 +212,14 @@ const formRef = useTemplateRef('formRef');
                     "
                 />
 
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="formRef?.loading"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
             </UFieldGroup>
         </template>
     </UModal>

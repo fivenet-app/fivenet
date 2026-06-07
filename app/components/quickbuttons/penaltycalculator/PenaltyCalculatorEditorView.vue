@@ -21,15 +21,21 @@ const reduction = useState<number>('quickButton:penaltyCalculator:reduction', ()
 
 const localDocumentData = ref<DocumentData | undefined>();
 const documentData = inject<Ref<DocumentData | undefined>>('documents:editor:data', localDocumentData);
-const disablePenaltyCalculatorBlockEditing = inject<Ref<boolean>>('tiptap:disablePenaltyCalculatorBlockEditing', ref(false));
-const enablePenaltyCalculatorBlockRemoval = inject<Ref<boolean>>('tiptap:enablePenaltyCalculatorBlockRemoval', ref(false));
+const disablePenaltyCalculatorBlockEditing = inject<Ref<boolean>>(
+    'tiptap:disablePenaltyCalculatorBlockEditing',
+    ref<boolean>(false),
+);
+const enablePenaltyCalculatorBlockRemoval = inject<Ref<boolean>>(
+    'tiptap:enablePenaltyCalculatorBlockRemoval',
+    ref<boolean>(false),
+);
 
 const overlay = useOverlay();
 const penaltyCalculatorDrawer = overlay.create(PenaltyCalculatorDrawer);
 
-const isActionsOpen = ref(false);
-const confirmDelete = ref(false);
-const confirmClear = ref(false);
+const isActionsOpen = ref<boolean>(false);
+const confirmDelete = ref<boolean>(false);
+const confirmClear = ref<boolean>(false);
 
 const { start: startConfirmDeleteTimeout, stop: stopConfirmDeleteTimeout } = useTimeoutFn(
     () => {

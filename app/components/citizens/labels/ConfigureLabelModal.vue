@@ -47,6 +47,20 @@ const state = reactive<Schema>({
     expiresAt: props.label.expiresAt ? toDate(props.label.expiresAt) : undefined,
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state, {
+    serializer: (value) =>
+        JSON.stringify({
+            id: value.id,
+            sortOrder: value.sortOrder,
+            name: value.name,
+            color: value.color,
+            icon: value.icon ?? '',
+            expiresAt: value.expiresAt ? value.expiresAt.toISOString() : '',
+        }),
+});
+
+syncSnapshot();
+
 const minExpiresAt = computed(() =>
     dateToCalendarDateTime(
         props.label.settings?.minDuration
@@ -78,15 +92,31 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 const formatDuration = useDurationFormatter();
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emits('close', undefined);
+}
 </script>
 
 <template>
-    <UModal>
-        <template #title>
-            <div class="inline-flex gap-2">
-                <span>{{ $t('common.label') }}</span>
+    <UModal :close="false" :dismissible="!hasUnsavedChanges">
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <div class="inline-flex gap-2">
+                    <span class="font-semibold text-highlighted">{{ $t('common.label') }}</span>
 
-                <LabelBadge :label="label" hide-expires-at />
+                    <LabelBadge :label="label" hide-expires-at />
+                </div>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
             </div>
         </template>
 
@@ -126,13 +156,7 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton
-                    class="flex-1"
-                    color="neutral"
-                    block
-                    :label="$t('common.close', 1)"
-                    @click="$emit('close', undefined)"
-                />
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="closeModal" />
 
                 <UButton class="flex-1" block :label="$t('common.save')" @click="formRef?.submit()" />
             </UFieldGroup>

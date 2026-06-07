@@ -31,6 +31,10 @@ const state = reactive<Schema>({
     units: [],
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state, {
+    serializer: (value) => JSON.stringify([...value.units].sort((a, b) => a - b)),
+});
+
 async function assignDispatch(): Promise<void> {
     if (dispatch.value === undefined) return;
 
@@ -108,24 +112,54 @@ const grouped = computedAsync(async () => {
 
 function updateDispatchUnits(): void {
     state.units = [...(dispatch.value?.units?.map((du) => du.unitId) ?? [])];
+    syncSnapshot();
 }
 
-watch(dispatch, () => updateDispatchUnits);
+watch(dispatch, () => updateDispatchUnits());
 updateDispatchUnits();
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await assignDispatch().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
-    <UModal :title="$t('components.dispatch.assign_dispatch.title')">
-        <template #actions>
-            <IDCopyBadge :id="dispatch?.id ?? dispatchId" class="ml-2" prefix="DSP" />
+    <UModal
+        :title="$t('components.dispatch.assign_dispatch.title')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('components.dispatch.assign_dispatch.title') }}
+                </h3>
+
+                <div class="flex items-center gap-2">
+                    <IDCopyBadge :id="dispatch?.id ?? dispatchId" prefix="DSP" />
+
+                    <UButton
+                        color="neutral"
+                        variant="ghost"
+                        icon="i-mdi-close"
+                        :disabled="!canSubmit"
+                        :aria-label="$t('common.close', 1)"
+                        @click="closeModal"
+                    />
+                </div>
+            </div>
         </template>
 
         <template #body>
@@ -174,7 +208,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     class="flex-1"

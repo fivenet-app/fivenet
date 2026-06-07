@@ -132,7 +132,7 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     }
 }
 
-watchDebounced(query, async () => refresh(), {
+useDebouncedRefresh(query, refresh, {
     debounce: 200,
     maxWait: 1250,
 });
@@ -275,7 +275,7 @@ watch(
     },
 );
 
-const dataToggled = ref(false);
+const dataToggled = ref<boolean>(false);
 
 const today = new Date();
 const tomorrow = addDays(today, 1);

@@ -30,7 +30,7 @@ const props = defineProps<Props<A, VK, M, Mod, C>>();
 defineSlots</* @vue-ignore */ InputMenuSlots<A, VK, M, Mod, C, T>>();
 defineEmits</* @vue-ignore */ InputMenuEmits<A, VK, M, Mod, C>>();
 
-const loading = ref(false);
+const loading = ref<boolean>(false);
 
 const searchTerm = ref('');
 const searchTermDebounced = debouncedRef(searchTerm, 200);

@@ -57,9 +57,9 @@ async function createAccount(values: Schema): Promise<void> {
     }
 }
 
-const passwordVisibility = ref(false);
+const passwordVisibility = ref<boolean>(false);
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await createAccount(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

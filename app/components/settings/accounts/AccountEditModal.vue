@@ -30,6 +30,8 @@ const state = reactive<Schema>({
     enabled: true,
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
+
 async function updateAccount(values: Schema): Promise<UpdateAccountResponse | undefined> {
     try {
         const call = settingsAccountsClient.updateAccount({
@@ -63,24 +65,53 @@ function setFromProps(): void {
 
     state.enabled = account.value.enabled;
     state.groups = account.value.groups?.groups ?? [];
+    syncSnapshot();
 }
 
 setFromProps();
 watch(account, () => setFromProps());
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await updateAccount(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
     <UModal
         :title="`${$t('components.settings.accounts.edit_account')}: ${account.username} (${$t('common.id')}: ${account.id})`"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
     >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('components.settings.accounts.edit_account') }}: {{ account.username }} ({{ $t('common.id') }}:
+                    {{ account.id }})
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="enabled" :label="$t('common.enabled')" required>
@@ -118,7 +149,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    block
+                    color="neutral"
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     class="flex-1"

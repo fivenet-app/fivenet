@@ -26,16 +26,29 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
+const editing = ref(false);
+
 const state = reactive<Schema>({
     reason: '',
     note: modelValue.value ?? '',
 });
 
-watch(modelValue, () => {
-    state.note = modelValue.value ?? '';
+const { snapshotDirty: changed, syncSnapshot } = useSnapshotChanges(state, {
+    dirty: editing,
+    serializer: (value) =>
+        JSON.stringify({
+            note: value.note ?? '',
+        }),
 });
 
-const changed = ref(false);
+function setFromProps(): void {
+    state.note = modelValue.value ?? '';
+    syncSnapshot();
+}
+
+watch(modelValue, () => {
+    setFromProps();
+});
 
 async function setJobsUserNote(values: Schema): Promise<undefined | SetColleaguePropsResponse> {
     try {
@@ -50,11 +63,11 @@ async function setJobsUserNote(values: Schema): Promise<undefined | SetColleague
         const { response } = await call;
 
         editing.value = false;
-        changed.value = false;
         state.reason = '';
         emit('refresh');
 
         state.note = response.props?.note ?? '';
+        syncSnapshot();
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -74,16 +87,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await setJobsUserNote(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
-
-watch(state, () => {
-    if (state.note === modelValue.value) {
-        changed.value = false;
-    } else {
-        changed.value = true;
-    }
-});
-
-const editing = ref(false);
 </script>
 
 <template>
@@ -97,8 +100,9 @@ const editing = ref(false);
                     icon="i-mdi-cancel"
                     color="error"
                     @click="
-                        state.note = modelValue ?? '';
+                        state.reason = '';
                         editing = false;
+                        setFromProps();
                     "
                 />
             </UTooltip>

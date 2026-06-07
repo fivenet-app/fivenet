@@ -18,6 +18,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
+    (e: 'dirty-change', v: boolean): void;
 }>();
 
 const notifications = useNotificationsStore();
@@ -39,10 +40,13 @@ const state = reactive<Schema>({
     content: '',
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
+
 function setFromProps(): void {
     if (!props.template) {
         state.title = '';
         state.content = '';
+        syncSnapshot();
         return;
     }
 
@@ -50,9 +54,18 @@ function setFromProps(): void {
     state.content = props.template?.content?.tiptapJson
         ? (Struct.toJson(props.template.content.tiptapJson) as JSONContent)
         : (props.template.content?.rawHtml ?? '');
+    syncSnapshot();
 }
 
 watch(props, () => setFromProps());
+
+watch(
+    hasUnsavedChanges,
+    (value) => {
+        emit('dirty-change', value);
+    },
+    { immediate: true },
+);
 
 async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTemplateRequest> {
     try {
@@ -78,6 +91,7 @@ async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTem
 
         emit('refresh');
         emit('close', false);
+        syncSnapshot();
 
         return response;
     } catch (e) {
@@ -86,11 +100,20 @@ async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTem
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await createOrUpdateTemplate(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+async function closeForm(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('dirty-change', false);
+    emit('close', false);
+}
 
 onBeforeMount(() => setFromProps());
 </script>
@@ -105,7 +128,7 @@ onBeforeMount(() => setFromProps());
         <UFieldGroup class="mb-2 flex">
             <UButton class="flex-1" type="submit" icon="i-mdi-pencil" :label="$t('common.save')" />
 
-            <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="$emit('close', false)" />
+            <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="closeForm" />
         </UFieldGroup>
 
         <UFormField class="w-full" name="title" :label="$t('common.name')">

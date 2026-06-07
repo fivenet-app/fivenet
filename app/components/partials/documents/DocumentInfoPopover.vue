@@ -75,7 +75,7 @@ watch(documentId, (val) => {
     data.value = undefined;
 });
 
-const opened = ref(false);
+const opened = ref<boolean>(false);
 watchOnce(opened, async () => {
     if (props.document) {
         useTimeoutFn(async () => refresh(), popover.waitTime);

@@ -9,7 +9,7 @@ const { t } = useI18n();
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
 
-const shortcuts = ref(false);
+const shortcuts = ref<boolean>(false);
 const query = ref('');
 
 const links = computed(() =>

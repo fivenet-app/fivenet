@@ -131,7 +131,7 @@ async function updateUtStatus(id: number, status?: StatusUnit): Promise<void> {
     await updateUnitStatus(id, status);
 }
 
-const open = ref(false);
+const open = ref<boolean>(false);
 
 async function toggleSidebarBasedOnUnit(): Promise<void> {
     if (getOwnUnit.value !== undefined) {
@@ -190,13 +190,13 @@ watch(open, async () => {
     }
 });
 
-const canSubmitUnitStatus = ref(true);
+const canSubmitUnitStatus = ref<boolean>(true);
 const onSubmitUnitStatusThrottle = useThrottleFn(async (unitId: number, status?: StatusUnit) => {
     canSubmitUnitStatus.value = false;
     await updateUtStatus(unitId, status).finally(() => useTimeoutFn(() => (canSubmitUnitStatus.value = true), 300));
 }, 1000);
 
-const canSubmitDispatchStatus = ref(true);
+const canSubmitDispatchStatus = ref<boolean>(true);
 const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: number, status?: StatusDispatch) => {
     canSubmitDispatchStatus.value = false;
     await updateDspStatus(dispatchId, status).finally(() => useTimeoutFn(() => (canSubmitDispatchStatus.value = true), 300));

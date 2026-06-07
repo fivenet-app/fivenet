@@ -86,7 +86,7 @@ async function listAccounts(): Promise<ListAccountsResponse> {
     }
 }
 
-watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
+useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
 
 async function deleteAccount(id: number): Promise<void> {
     try {

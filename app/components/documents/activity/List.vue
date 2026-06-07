@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { computed } from 'vue';
 import ListEntry from '~/components/documents/activity/ListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -15,10 +16,9 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { data, status, refresh, error } = useLazyAsyncData(
-    () => `document-${props.documentId}-${page.value}`,
-    () => listDocumentActivity(),
-);
+const documentActivityKey = computed(() => `document-${props.documentId}-${page.value}`);
+
+const { data, status, refresh, error } = useLazyAsyncData(documentActivityKey, () => listDocumentActivity());
 
 async function listDocumentActivity(): Promise<ListDocumentActivityResponse> {
     try {

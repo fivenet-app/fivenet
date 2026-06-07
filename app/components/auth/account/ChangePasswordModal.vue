@@ -25,6 +25,8 @@ const state = reactive<Schema>({
     newPassword: '',
 });
 
+const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state);
+
 async function changePassword(values: Schema): Promise<void> {
     try {
         const call = authAuthClient.changePassword({
@@ -32,7 +34,6 @@ async function changePassword(values: Schema): Promise<void> {
             newPassword: values.newPassword,
         });
         await call;
-        emit('close', false);
 
         notifications.add({
             title: { key: 'notifications.auth.changed_password.title', parameters: {} },
@@ -40,17 +41,26 @@ async function changePassword(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        await navigateTo('/auth/logout');
+        await navigateTo({ name: 'auth-logout', query: { redirect: '/auth/login' } });
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
-const currentPasswordVisibility = ref(false);
-const newPasswordVisibility = ref(false);
+const currentPasswordVisibility = ref<boolean>(false);
+const newPasswordVisibility = ref<boolean>(false);
 
-const canSubmit = ref(true);
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
+
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await changePassword(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -60,12 +70,34 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="$t('components.auth.ChangePasswordModal.change_password')" :dismissible="canSubmit">
+    <UModal
+        :title="$t('components.auth.ChangePasswordModal.change_password')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-1.5">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('components.auth.ChangePasswordModal.change_password') }}
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">
                     <UInput
                         v-model="state.currentPassword"
+                        class="w-full"
                         name="currentPassword"
                         :type="currentPasswordVisibility ? 'text' : 'password'"
                         autocomplete="current-password"
@@ -89,6 +121,7 @@ const formRef = useTemplateRef('formRef');
                 <UFormField name="newPassword" :label="$t('components.auth.ChangePasswordModal.new_password')">
                     <UInput
                         v-model="state.newPassword"
+                        class="w-full"
                         name="newPassword"
                         :type="newPasswordVisibility ? 'text' : 'password'"
                         autocomplete="new-password"
@@ -114,7 +147,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     class="flex-1"

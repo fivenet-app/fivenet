@@ -35,7 +35,7 @@ watch(chars, async () => {
 
 const charLockActive = computed(() => chars.value?.some((c) => c.available === false) ?? false);
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (charId: number) => {
     canSubmit.value = false;
 

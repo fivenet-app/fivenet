@@ -27,8 +27,6 @@ const overlay = useOverlay();
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
-const changed = ref(false);
-
 const schema = z.object({
     labels: z
         .object({
@@ -58,6 +56,14 @@ const state = reactive<Schema>({
     reason: '',
 });
 
+const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
+
+function setFromProps(): void {
+    state.labels = labels.value?.list !== undefined ? labels.value.list.slice() : [];
+    state.reason = '';
+    syncSnapshot();
+}
+
 async function setJobProp(userId: number, values: Schema): Promise<void> {
     const userProps: UserProps = {
         userId: userId,
@@ -80,29 +86,20 @@ async function setJobProp(userId: number, values: Schema): Promise<void> {
         });
 
         labels.value = response.props?.labels;
-        state.reason = '';
+        setFromProps();
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await setJobProp(props.userId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-    changed.value = false;
 }, 1000);
 
-watch(labels, () => (state.labels = labels.value?.list !== undefined ? labels.value?.list.slice() : []));
-
-watch(state, () => {
-    if (state.labels.length === labels.value?.list.length && state.labels.every((el, idx) => el === labels.value?.list[idx])) {
-        changed.value = false;
-    } else {
-        changed.value = true;
-    }
-});
+watch(labels, () => setFromProps());
 
 const selectedLabel = ref<Label | null>(null);
 
@@ -117,7 +114,6 @@ function handleLabelUpdate(label: Label | null): void {
         onClose: ($event) => {
             if (!$event) return;
 
-            changed.value = true;
             const idx = state.labels.findIndex((l) => l.id === $event.id);
             if (idx == -1) {
                 state.labels.unshift({
@@ -220,7 +216,7 @@ const formRef = useTemplateRef('formRef');
             </UFieldGroup>
         </div>
 
-        <template v-if="formRef?.dirty || changed">
+        <template v-if="hasUnsavedChanges">
             <UFormField name="reason" :label="$t('common.reason')" required>
                 <UInput v-model="state.reason" class="w-full" type="text" />
             </UFormField>

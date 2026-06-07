@@ -33,7 +33,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const disabled = ref(false);
+const disabled = ref<boolean>(false);
 
 const endsAtTime = toDate(props.examUser.endsAt).getTime();
 
@@ -204,7 +204,7 @@ const formRef = useTemplateRef('formRef');
 
 const containerRef = useTemplateRef('containerRef');
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await submitExam(event.data, false)

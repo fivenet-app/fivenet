@@ -92,7 +92,7 @@ const denyView = computed(
         props.userId === activeChar.value?.userId && !attr('citizens.CitizensService/ListUserActivity', 'Fields', 'Own').value,
 );
 
-watchDebounced(query, async () => (await formRef.value?.validate({})) && refresh(), {
+useFormValidatedDebouncedRefresh(query, () => formRef.value?.validate({}), refresh, {
     debounce: 500,
     maxWait: 1250,
 });

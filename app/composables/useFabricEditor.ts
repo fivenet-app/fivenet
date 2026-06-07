@@ -110,13 +110,13 @@ function createFabricEditor() {
     // Alignment guide snapping threshold (in pixels)
     const snapThreshold = ref(5);
 
-    const isDragging = ref(false);
+    const isDragging = ref<boolean>(false);
     const lastPosX = ref(0);
     const lastPosY = ref(0);
     const exportedJSON = ref<string>('');
     const exportedSVG = ref<string>('');
 
-    const pickingColor = ref(false);
+    const pickingColor = ref<boolean>(false);
     const pickedColor = ref<string | null>(null);
 
     const clipboard = ref<FabricObject | null>(null);

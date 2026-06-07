@@ -39,7 +39,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover, {
     },
 });
 
-const checked = ref(false);
+const checked = ref<boolean>(false);
 
 onBeforeMount(() => {
     if (props.preselected === true) {

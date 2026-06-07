@@ -57,7 +57,14 @@ onBeforeMount(async () => {
 });
 
 // Disable create form when email is selected
-watch(selectedEmail, async () => {
+watch(selectedEmail, async (newEmail, oldEmail) => {
+    if (newEmail?.id === oldEmail?.id) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) {
+        selectedEmail.value = oldEmail;
+        return;
+    }
+
     if (!selectedEmail.value) return;
 
     loading.value = true;
@@ -72,10 +79,34 @@ const canCreate = computed(
         attr('mailer.MailerService/CreateOrUpdateEmail', 'Fields', 'Job').value,
 );
 
-const loading = ref(false);
-const creating = ref(false);
+const loading = ref<boolean>(false);
+const creating = ref<boolean>(false);
+const emailFormDirty = ref<boolean>(false);
+
+const { hasUnsavedChanges, confirmLeave } = useUnsavedChanges({
+    dirty: emailFormDirty,
+});
 
 const confirmModal = overlay.create(ConfirmModal);
+
+async function openCreateForm(): Promise<void> {
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    creating.value = true;
+    selectedEmail.value = undefined;
+}
+
+async function closeCreateForm(): Promise<void> {
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    creating.value = false;
+}
+
+async function clearSelectedEmail(): Promise<void> {
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    selectedEmail.value = undefined;
+}
 </script>
 
 <template>
@@ -112,7 +143,12 @@ const confirmModal = overlay.create(ConfirmModal);
                         <p class="text-bas">{{ $t('components.mailer.manage.subtitle') }}</p>
                     </div>
 
-                    <EmailCreateForm v-if="can('mailer.MailerService/CreateOrUpdateEmail').value" personal-email hide-label />
+                    <EmailCreateForm
+                        v-if="can('mailer.MailerService/CreateOrUpdateEmail').value"
+                        personal-email
+                        hide-label
+                        @dirty-change="emailFormDirty = $event"
+                    />
                 </div>
             </div>
         </template>
@@ -139,10 +175,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         trailing-icon="i-mdi-plus"
                         color="neutral"
                         variant="outline"
-                        @click="
-                            creating = !creating;
-                            selectedEmail = undefined;
-                        "
+                        @click="openCreateForm"
                     />
                 </template>
             </UDashboardNavbar>
@@ -172,7 +205,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         icon="i-mdi-arrow-back"
                         color="gray"
                         variant="ghost"
-                        @click="creating = false"
+                        @click="closeCreateForm"
                     />
 
                     <template v-else-if="selectedEmail">
@@ -182,7 +215,7 @@ const confirmModal = overlay.create(ConfirmModal);
                             variant="ghost"
                             icon="i-mdi-arrow-back"
                             :label="$t('common.back')"
-                            @click="selectedEmail = undefined"
+                            @click="clearSelectedEmail"
                         />
 
                         <UButton
@@ -216,7 +249,12 @@ const confirmModal = overlay.create(ConfirmModal);
             <div v-if="creating" class="flex flex-1 flex-col items-center">
                 <div class="flex flex-1 flex-col items-center justify-center gap-2 text-dimmed">
                     <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
-                    <EmailCreateForm v-if="canCreate" :personal-email="false" @refresh="creating = false" />
+                    <EmailCreateForm
+                        v-if="canCreate"
+                        :personal-email="false"
+                        @refresh="creating = false"
+                        @dirty-change="emailFormDirty = $event"
+                    />
                 </div>
             </div>
 
@@ -230,6 +268,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         !canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE) ||
                         (!isSuperuser && selectedEmail.deactivated)
                     "
+                    @dirty-change="emailFormDirty = $event"
                 />
             </template>
             <div v-else class="hidden flex-1 flex-col items-center justify-center gap-2 text-dimmed lg:flex">

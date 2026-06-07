@@ -70,7 +70,7 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
     }
 }
 
-watchDebounced(query, async () => refresh(), {
+useDebouncedRefresh(query, refresh, {
     debounce: 200,
     maxWait: 1250,
 });
@@ -98,7 +98,7 @@ defineShortcuts({
     '/': () => input.value?.inputRef?.focus(),
 });
 
-const mount = ref(false);
+const mount = ref<boolean>(false);
 </script>
 
 <template>

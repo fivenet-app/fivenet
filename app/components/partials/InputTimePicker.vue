@@ -103,7 +103,7 @@ function isSameModelValue(a: ModelValue, b: ModelValue): boolean {
 
 const localModelValue = ref<ModelValue>(cloneModelValue(props.modelValue));
 const inputTimeRenderKey = ref(0);
-const skipNextRangeRemount = ref(false);
+const skipNextRangeRemount = ref<boolean>(false);
 
 watch(
     () => props.modelValue,

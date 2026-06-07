@@ -76,7 +76,7 @@ async function reorderUnits(units: Unit[]): Promise<void> {
         });
         await call;
 
-        orderChanged.value = false;
+        syncSnapshot();
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -89,7 +89,7 @@ async function reorderUnits(units: Unit[]): Promise<void> {
     }
 }
 
-const orderChanged = ref(false);
+const { snapshotDirty: orderChanged, syncSnapshot } = useSnapshotChanges(() => units.value?.map((unit) => unit.id) ?? []);
 const tableRef = useTemplateRef('tableRef');
 const tableBodyRef = computed<HTMLElement | null>(() => {
     const rootEl = tableRef.value?.$el as HTMLElement | undefined;
@@ -97,15 +97,25 @@ const tableBodyRef = computed<HTMLElement | null>(() => {
 });
 
 const { moveUp, moveDown } = useListReorder(units, {
-    onMove: () => (orderChanged.value = true),
+    onMove: () => undefined,
 });
 
 useDraggable(tableBodyRef, units, {
     animation: 150,
     handle: '.handle-choice',
     draggable: 'tr',
-    onUpdate: () => (orderChanged.value = true),
+    onUpdate: () => undefined,
 });
+
+watch(
+    status,
+    (newStatus) => {
+        if (!isRequestPending(newStatus)) {
+            syncSnapshot();
+        }
+    },
+    { immediate: true },
+);
 
 const columns = computed<TableColumn<Unit>[]>(() => [
     {

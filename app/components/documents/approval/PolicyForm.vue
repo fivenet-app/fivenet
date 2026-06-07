@@ -40,6 +40,8 @@ const state = reactive<Schema>({
     selfApproveAllowed: false,
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
+
 function setFromProps(): void {
     if (!policy.value) {
         state.ruleKind = ApprovalRuleKind.REQUIRE_ALL;
@@ -47,6 +49,7 @@ function setFromProps(): void {
         state.requiredCount = 2;
         state.signatureRequired = false;
         state.selfApproveAllowed = false;
+        syncSnapshot();
         return;
     }
 
@@ -56,6 +59,7 @@ function setFromProps(): void {
         policy.value.requiredCount === undefined || policy.value.requiredCount <= 0 ? 1 : policy.value.requiredCount;
     state.signatureRequired = policy.value.signatureRequired;
     state.selfApproveAllowed = policy.value.selfApproveAllowed;
+    syncSnapshot();
 }
 
 setFromProps();
@@ -92,20 +96,29 @@ async function upsertPolicy(values: Schema): Promise<void> {
     });
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await upsertPolicy(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeDrawer(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emits('close', false);
+}
 </script>
 
 <template>
     <UDrawer
         :title="$t('common.approve')"
         handle-only
-        :close="{ onClick: () => $emit('close', false) }"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+        :close="{ onClick: closeDrawer }"
         :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <template #title>
@@ -114,7 +127,7 @@ const formRef = useTemplateRef('formRef');
                 <UIcon name="i-mdi-slash-forward" />
                 <span>{{ $t('common.policy') }}</span>
             </div>
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
+            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="closeDrawer" />
         </template>
 
         <template #body>
@@ -156,7 +169,8 @@ const formRef = useTemplateRef('formRef');
                         variant="ghost"
                         icon="i-mdi-arrow-back"
                         :label="$t('common.back')"
-                        @click="() => $emit('close', false)"
+                        :disabled="!canSubmit"
+                        @click="closeDrawer"
                     />
                 </UFieldGroup>
             </div>

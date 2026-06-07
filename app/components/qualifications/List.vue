@@ -55,7 +55,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
     }
 }
 
-watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
+useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
 </script>
 
 <template>

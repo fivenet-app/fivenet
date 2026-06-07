@@ -23,7 +23,7 @@ const { height: bodyHeight } = useElementSize(bodyRef);
 const cardRef = useTemplateRef<HTMLElement | null>('cardRef');
 const { width } = useElementSize(cardRef);
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 
 async function getColleagueLabelsStats(): Promise<GetColleagueLabelsStatsResponse> {
     canSubmit.value = false;

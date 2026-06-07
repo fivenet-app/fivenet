@@ -143,7 +143,7 @@ const items = computed<NavigationMenuItem[]>(() =>
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller('lg');
 
-const isOpen = ref(false);
+const isOpen = ref<boolean>(false);
 </script>
 
 <template>

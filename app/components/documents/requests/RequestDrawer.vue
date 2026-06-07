@@ -52,6 +52,8 @@ const state = reactive<Schema>({
     requestType: availableRequestTypes.value[0]?.key ?? undefined,
 });
 
+const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state);
+
 const offset = ref(0);
 
 const {
@@ -137,25 +139,34 @@ const canDo = computed(() => ({
         ),
 }));
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await createDocumentRequest(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeDrawer(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
     <UDrawer
         :title="$t('common.request', 2)"
         :overlay="false"
-        :close="{ onClick: () => $emit('close', false) }"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+        :close="{ onClick: closeDrawer }"
         :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <template #title>
             <span class="flex-1">{{ $t('common.request', 2) }}</span>
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
+            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="closeDrawer" />
         </template>
 
         <template #body>
@@ -261,7 +272,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeDrawer"
+                />
 
                 <UButton
                     v-if="canDo.create"

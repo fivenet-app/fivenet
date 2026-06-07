@@ -30,7 +30,7 @@ const err = computed<CommonError | undefined>({
     },
 });
 
-const disabled = ref(true);
+const disabled = ref<boolean>(true);
 
 const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
 </script>

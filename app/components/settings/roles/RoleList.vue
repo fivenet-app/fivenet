@@ -114,7 +114,7 @@ const columns = computed(
 
 const route = useRoute('settings-roles-id');
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await createRole().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

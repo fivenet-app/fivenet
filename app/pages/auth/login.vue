@@ -86,7 +86,7 @@ onMounted(async () => {
     }
 });
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 </script>
 
 <template>

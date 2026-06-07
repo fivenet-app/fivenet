@@ -76,7 +76,7 @@ const filteredDispatches = computedAsync(async () => {
     return filtered.sort((a, b) => (a.status?.status ?? 0) - (b.status?.status ?? 0)).map((d) => d.id);
 });
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
     canSubmit.value = false;
     await takeDispatches(resp).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

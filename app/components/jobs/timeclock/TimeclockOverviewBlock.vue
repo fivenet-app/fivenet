@@ -34,13 +34,13 @@ async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
     }
 }
 
-const canRefresh = ref(true);
+const canRefresh = ref<boolean>(true);
 const refreshThrottle = useThrottleFn(async () => {
     canRefresh.value = false;
     await refresh().finally(() => useTimeoutFn(() => (canRefresh.value = true), 400));
 }, 2500);
 
-const loadingState = ref(false);
+const loadingState = ref<boolean>(false);
 watch(
     () => props.loading,
     () => {

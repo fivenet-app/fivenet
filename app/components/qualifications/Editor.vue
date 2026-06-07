@@ -209,8 +209,9 @@ const state = reactive<Schema>({
     requirements: [],
 });
 
-const changed = ref(false);
-const saving = ref(false);
+const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
+
+const saving = ref<boolean>(false);
 
 // Track last saved string and timestamp
 let lastSavedString: JSONContent | string | undefined = undefined;
@@ -248,17 +249,8 @@ historyStore.handleRefresh(() => saveHistory(state));
 watchDebounced(
     state,
     () => {
-        if (changed.value) {
-            const now = Date.now();
-            // Skip if identical to last saved or if within MIN_GAP
-            if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) return;
-
+        if (hasUnsavedChanges.value) {
             saveHistory(state);
-
-            lastSavedString = state.content;
-            lastSaveTimestamp = now;
-        } else {
-            changed.value = true;
         }
     },
     {
@@ -351,6 +343,7 @@ function setFromProps(): void {
     state.labelSyncFormat = qualification.value.labelSyncFormat || '%abbr%: %name%';
     state.files = qualification.value.files;
     state.requirements = qualification.value.requirements;
+    syncSnapshot();
 }
 
 watch(qualification, () => setFromProps());
@@ -421,12 +414,13 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') return;
 
     canSubmit.value = false;
     await updateQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    syncSnapshot();
 }, 1000);
 
 const accessTypes: AccessType[] = [{ label: t('common.job', 2), value: 'job' }];

@@ -388,7 +388,7 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter((emoji) => !emoji.
 
 const contentRef = useTemplateRef('contentRef');
 
-const openLink = ref(false);
+const openLink = ref<boolean>(false);
 const openLinkPopover = refDebounced(openLink, 200);
 const anchor = ref({ x: 0, y: 0 });
 

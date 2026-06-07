@@ -15,6 +15,7 @@ import type { Comment } from '~~/gen/ts/resources/documents/comment/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetCommentsResponse } from '~~/gen/ts/services/documents/comments';
 import CommentEntry from './CommentEntry.vue';
+import { isEmptyDoc } from '~/utils/tiptap';
 
 const props = withDefaults(
     defineProps<{
@@ -80,11 +81,19 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    content: '',
+    content: undefined,
 });
 
-const changed = ref(false);
-const saving = ref(false);
+function serializeCommentContent(value: Schema): string {
+    if (isEmptyDoc(value.content as JSONContent | undefined)) return '__empty__';
+    return JSON.stringify(value.content);
+}
+
+const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state, {
+    serializer: serializeCommentContent,
+});
+
+const saving = ref<boolean>(false);
 
 // Track last saved string and timestamp
 let lastSavedString: JSONContent | string | undefined = undefined;
@@ -122,10 +131,8 @@ historyStore.handleRefresh(() => saveHistory(state));
 watchDebounced(
     state,
     () => {
-        if (changed.value) {
+        if (hasUnsavedChanges.value) {
             saveHistory(state);
-        } else {
-            changed.value = true;
         }
     },
     {
@@ -163,6 +170,7 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
         }
 
         state.content = undefined;
+        syncSnapshot();
 
         emit('newComment');
     } catch (e) {
@@ -190,7 +198,7 @@ const isVisible = useElementVisibility(commentsEl);
 
 watchOnce(isVisible, async () => refresh());
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await addComment(props.documentId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

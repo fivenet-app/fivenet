@@ -98,9 +98,9 @@ const groupedEntries = computed(() => ({
     invited: data.value?.entries.filter((e) => e.response === RsvpResponses.INVITED),
 }));
 
-const openShare = ref(false);
+const openShare = ref<boolean>(false);
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
     canSubmit.value = false;
     await rsvpCalendarEntry(rsvpResponse).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

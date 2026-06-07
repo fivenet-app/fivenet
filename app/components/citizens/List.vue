@@ -102,7 +102,10 @@ async function listCitizens(): Promise<ListCitizensResponse> {
     }
 }
 
-watchDebounced(query, async () => (await formRef.value?.validate({})) && refresh(), { debounce: 200, maxWait: 1250 });
+useFormValidatedDebouncedRefresh(query, () => formRef.value?.validate({}), refresh, {
+    debounce: 200,
+    maxWait: 1250,
+});
 
 const numberFormatter = useDisplayNumberFormat();
 

@@ -51,7 +51,7 @@ const is2xl = breakpoints.greaterOrEqual('2xl');
 
 watch(is2xl, (val) => (open.value = (val && !open.value) || val), { immediate: true });
 
-const editing = ref(false);
+const editing = ref<boolean>(false);
 </script>
 
 <template>

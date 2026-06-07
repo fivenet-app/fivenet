@@ -13,6 +13,7 @@ import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Comment } from '~~/gen/ts/resources/documents/comment/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { isEmptyDoc } from '~/utils/tiptap';
 
 const props = withDefaults(
     defineProps<{
@@ -42,7 +43,7 @@ const historyStore = useHistoryStore();
 
 const documentsCommentsClient = await getDocumentsCommentsClient();
 
-const editing = ref(false);
+const editing = ref<boolean>(false);
 
 const schema = z.object({
     content: z.custom<JSONContent | string>().optional(),
@@ -51,11 +52,20 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    content: '',
+    content: undefined,
 });
 
-const changed = ref(false);
-const saving = ref(false);
+function serializeCommentContent(value: Schema): string {
+    if (isEmptyDoc(value.content as JSONContent | undefined)) return '__empty__';
+    return JSON.stringify(value.content);
+}
+
+const { snapshotDirty, syncSnapshot } = useSnapshotChanges(state, {
+    dirty: editing,
+    serializer: serializeCommentContent,
+});
+
+const saving = ref<boolean>(false);
 
 // Track last saved string and timestamp
 let lastSavedString: JSONContent | string | undefined = undefined;
@@ -93,10 +103,8 @@ historyStore.handleRefresh(() => saveHistory(state));
 watchDebounced(
     state,
     () => {
-        if (changed.value) {
+        if (snapshotDirty.value) {
             saveHistory(state);
-        } else {
-            changed.value = true;
         }
     },
     {
@@ -163,12 +171,18 @@ function setFromProps(): void {
     state.content = comment.value.content?.tiptapJson
         ? (Struct.toJson(comment.value.content.tiptapJson) as JSONContent)
         : (comment.value.content?.rawHtml ?? '');
+    syncSnapshot();
 }
 
 onBeforeMount(() => setFromProps());
 watch(props, () => setFromProps());
 
-const canSubmit = ref(true);
+function cancelEdit(): void {
+    editing.value = false;
+    nextTick(() => setFromProps());
+}
+
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (!comment.value) return;
 
@@ -242,13 +256,22 @@ const confirmModal = overlay.create(ConfirmModal);
                         </ClientOnly>
                     </UFormField>
 
-                    <div class="mt-2 shrink-0">
+                    <div class="mt-2 flex shrink-0 justify-between">
                         <UButton
                             type="submit"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
                             trailing-icon="i-mdi-comment-edit"
                             :label="$t('common.edit')"
+                        />
+
+                        <UButton
+                            type="button"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                            color="red"
+                            :label="$t('common.cancel')"
+                            @click="cancelEdit"
                         />
                     </div>
                 </UForm>

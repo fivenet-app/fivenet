@@ -46,7 +46,7 @@ const numberFormatter = useDisplayNumberFormat();
 
 const settingsLawsClient = await getSettingsLawsClient();
 
-const orderChanged = ref(false);
+const { changed: orderChanged, markChanged: markOrderChanged, resetChanged: resetOrderChanged } = useUnsavedChanges();
 const tableRef = useTemplateRef('tableRef');
 const tableBodyRef = computed<HTMLElement | null>(() => {
     const rootEl = tableRef.value?.$el as HTMLElement | undefined;
@@ -54,18 +54,14 @@ const tableBodyRef = computed<HTMLElement | null>(() => {
 });
 
 const { moveUp, moveDown } = useListReorder(laws, {
-    onMove: () => {
-        orderChanged.value = true;
-    },
+    onMove: () => markOrderChanged(),
 });
 
 useDraggable(tableBodyRef, laws, {
     animation: 150,
     handle: '.law-row-handle',
     draggable: 'tr',
-    onUpdate: () => {
-        orderChanged.value = true;
-    },
+    onUpdate: () => markOrderChanged(),
 });
 
 const schema = z.object({
@@ -159,7 +155,7 @@ async function reorderLaws(): Promise<void> {
         });
         await call;
 
-        orderChanged.value = false;
+        resetOrderChanged();
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -172,7 +168,7 @@ async function reorderLaws(): Promise<void> {
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (!lawBook.value) return;
 

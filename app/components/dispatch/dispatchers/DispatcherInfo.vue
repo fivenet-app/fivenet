@@ -36,7 +36,7 @@ async function takeControl(signon: boolean): Promise<void> {
 
 const dispatchers = computed(() => getJobDispatchers.value ?? { dispatchers: [] });
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
     canSubmit.value = false;
     await takeControl(e).finally(() => useTimeoutFn(() => (canSubmit.value = true), 850));

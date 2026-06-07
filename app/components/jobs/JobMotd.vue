@@ -54,7 +54,7 @@ async function setMOTD(values: Schema): Promise<SetMOTDResponse> {
 
 const canDo = can('jobs.JobsService/SetMOTD');
 
-const editing = ref(false);
+const editing = ref<boolean>(false);
 
 watch(editing, async () => {
     if (!editing.value) {
@@ -62,7 +62,7 @@ watch(editing, async () => {
     }
 });
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await setMOTD(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

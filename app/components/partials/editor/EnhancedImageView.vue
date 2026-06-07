@@ -6,8 +6,8 @@ import AlignmentBar from '~/components/partials/editor/AlignmentBar.vue';
 const props = defineProps<NodeViewProps>();
 
 const imgRef = ref<HTMLImageElement | null>(null);
-const showAlignmentBar = ref(false);
-const isResizing = ref(false);
+const showAlignmentBar = ref<boolean>(false);
+const isResizing = ref<boolean>(false);
 const startX = ref(0);
 const startWidth = ref(0);
 

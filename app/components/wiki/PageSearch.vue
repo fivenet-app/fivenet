@@ -1,22 +1,22 @@
 <script lang="ts" setup>
 import type { CommandPaletteGroup, CommandPaletteItem } from '@nuxt/ui';
+import { computed } from 'vue';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
 
 const appConfig = useAppConfig();
 
 const { t } = useI18n();
 
-const isOpen = ref(false);
+const isOpen = ref<boolean>(false);
 
 const wikiWikiClient = await getWikiWikiClient();
 
 const searchTerm = ref('');
 const searchTermDebounced = debouncedRef(searchTerm, 200);
 
-const { data: pages, status } = useLazyAsyncData(
-    () => `wiki-pages-search-${searchTermDebounced.value}`,
-    () => listPages(searchTerm.value),
-);
+const pagesKey = computed(() => `wiki-pages-search-${searchTermDebounced.value}`);
+
+const { data: pages, status } = useLazyAsyncData(pagesKey, () => listPages(searchTerm.value));
 
 async function listPages(q: string): Promise<CommandPaletteItem[]> {
     if (q.length < 3) return [];

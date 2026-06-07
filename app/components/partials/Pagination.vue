@@ -32,7 +32,7 @@ const pageSize = computed(() => props.pagination?.pageSize ?? 10);
 
 const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
 
-const loadingState = ref(false);
+const loadingState = ref<boolean>(false);
 watch(
     () => props.status,
     () => {

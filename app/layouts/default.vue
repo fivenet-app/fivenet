@@ -28,7 +28,7 @@ const { unreadCount } = storeToRefs(mailerStore);
 
 const route = useRoute();
 
-const open = ref(false);
+const open = ref<boolean>(false);
 
 const links = computed<NavigationMenuItem[]>(() =>
     [

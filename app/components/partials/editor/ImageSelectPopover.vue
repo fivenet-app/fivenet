@@ -173,9 +173,9 @@ async function onFileHandler(file: File | null | undefined): Promise<void> {
 
 const fileLimitReached = computed(() => props.files.length >= props.fileLimit);
 
-const open = ref(false);
+const open = ref<boolean>(false);
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
 

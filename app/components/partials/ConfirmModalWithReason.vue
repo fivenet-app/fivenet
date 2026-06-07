@@ -36,7 +36,9 @@ const state = reactive<Schema>({
     reason: '',
 });
 
-const canSubmit = ref(true);
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
+
+const canSubmit = ref<boolean>(true);
 
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
@@ -45,13 +47,27 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    props.cancel?.();
+    emit('close', false);
+    syncSnapshot();
+}
 </script>
 
 <template>
     <UModal
         :title="title ?? $t('components.partials.confirm_dialog.title')"
         :description="description ?? $t('components.partials.confirm_dialog.description')"
-        @update:model-value="cancel && cancel()"
+        :close="false"
+        :dismissible="!hasUnsavedChanges"
+        @update:model-value="
+            (open: boolean) => {
+                if (!open) closeModal();
+            }
+        "
     >
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
@@ -64,14 +80,7 @@ const formRef = useTemplateRef('formRef');
         <template #footer>
             <UButton :color="color" :label="$t('common.confirm')" @click="formRef?.submit()" />
 
-            <UButton
-                color="neutral"
-                :label="$t('common.cancel')"
-                @click="
-                    cancel?.();
-                    $emit('close', false);
-                "
-            />
+            <UButton color="neutral" :label="$t('common.cancel')" @click="closeModal" />
         </template>
     </UModal>
 </template>

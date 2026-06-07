@@ -12,7 +12,7 @@ import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/settings';
 import { canAccess } from './helpers';
 import TemplateEditForm from './TemplateEditForm.vue';
 
-defineEmits<{
+const emit = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
@@ -50,12 +50,43 @@ const accordionItems = computed(() =>
 
 const canManage = computed(() => canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.MANAGE));
 
-const creating = ref(false);
-const editing = ref(false);
+const creating = ref<boolean>(false);
+const editing = ref<boolean>(false);
+const childDirty = ref<boolean>(false);
+
+const { hasUnsavedChanges, confirmLeave } = useUnsavedChanges({
+    dirty: childDirty,
+});
+
+async function closeModal(): Promise<void> {
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
+
+function resetCreating(): void {
+    creating.value = false;
+    childDirty.value = false;
+}
+
+function resetEditing(): void {
+    editing.value = false;
+    childDirty.value = false;
+}
 </script>
 
 <template>
-    <UModal :title="$t('common.template', 2)" fullscreen>
+    <UModal :title="$t('common.template', 2)" :close="false" :dismissible="!hasUnsavedChanges" fullscreen>
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-1.5">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('common.template', 2) }}
+                </h3>
+
+                <UButton color="neutral" variant="ghost" icon="i-mdi-close" @click="closeModal" />
+            </div>
+        </template>
+
         <template #body>
             <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-col gap-2">
                 <UButton
@@ -65,7 +96,12 @@ const editing = ref(false);
                     @click="creating = true"
                 />
 
-                <TemplateEditForm v-if="creating" @refresh="refresh" @close="creating = false" />
+                <TemplateEditForm
+                    v-if="creating"
+                    @refresh="refresh"
+                    @dirty-change="childDirty = $event"
+                    @close="resetCreating"
+                />
                 <template v-else>
                     <DataPendingBlock
                         v-if="isRequestPending(status)"
@@ -121,7 +157,8 @@ const editing = ref(false);
                                     v-else
                                     :template="templates.templates[index]"
                                     @refresh="refresh"
-                                    @close="editing = false"
+                                    @dirty-change="childDirty = $event"
+                                    @close="resetEditing"
                                 />
                             </template>
                         </template>
@@ -132,7 +169,7 @@ const editing = ref(false);
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="closeModal" />
             </UFieldGroup>
         </template>
     </UModal>

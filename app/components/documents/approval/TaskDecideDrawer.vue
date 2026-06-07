@@ -36,7 +36,11 @@ const state = reactive<Schema>({
     signature: undefined,
 });
 
-const isOpen = ref(false);
+const isOpen = ref<boolean>(false);
+
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
+
+syncSnapshot();
 
 watch(isOpen, (newVal) => {
     if (!newVal) emits('close', false);
@@ -60,6 +64,8 @@ async function onSubmit(values: FormSubmitEvent<Schema>) {
         isOpen.value = false;
 
         state.reason = '';
+        state.signature = undefined;
+        syncSnapshot();
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -70,6 +76,12 @@ async function onSubmit(values: FormSubmitEvent<Schema>) {
         handleGRPCError(e as RpcError);
     }
 }
+
+async function closeDrawer(): Promise<void> {
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    isOpen.value = false;
+}
 </script>
 
 <template>
@@ -77,13 +89,14 @@ async function onSubmit(values: FormSubmitEvent<Schema>) {
         v-model:open="isOpen"
         :title="$t('common.approve')"
         handle-only
+        :dismissible="!hasUnsavedChanges"
         :ui="{ container: 'flex-1', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <slot />
 
         <template #title>
             <span class="flex-1">{{ $t(approve ? 'common.approve' : 'common.decline') }}</span>
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="isOpen = false" />
+            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="closeDrawer" />
         </template>
 
         <template #body>
@@ -121,7 +134,7 @@ async function onSubmit(values: FormSubmitEvent<Schema>) {
         <template #footer>
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-4">
                 <UFieldGroup class="w-full flex-1">
-                    <UButton class="flex-1" color="neutral" block :label="$t('common.cancel')" @click="isOpen = false" />
+                    <UButton class="flex-1" color="neutral" block :label="$t('common.cancel')" @click="closeDrawer" />
                 </UFieldGroup>
             </div>
         </template>

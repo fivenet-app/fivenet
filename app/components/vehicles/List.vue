@@ -75,7 +75,7 @@ if (props.userId !== undefined && !query.userIds?.includes(props.userId)) {
     query.userIds = [props.userId];
 }
 
-const hideVehicleModell = ref(false);
+const hideVehicleModell = ref<boolean>(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
     `vehicles-${JSON.stringify(query.userIds)}-${JSON.stringify(query.sorting)}-${query.page}`,
@@ -111,7 +111,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
     }
 }
 
-watchDebounced(query, async () => refresh(), {
+useDebouncedRefresh(query, refresh, {
     debounce: 200,
     maxWait: 1250,
 });

@@ -51,7 +51,11 @@ const settingsSettingsClient = await getSettingsSettingsClient();
 
 const { data: role, status, refresh, error } = useLazyAsyncData(`settings-roles-${props.roleId}`, () => getRole(props.roleId));
 
-const changed = ref(false);
+const attrChangedStates = ref(new Map<number, boolean>());
+const childHasUnsavedChanges = computed(() => attrChangedStates.value.size > 0);
+const { hasUnsavedChanges, markChanged, resetChanged } = useUnsavedChanges({
+    dirty: childHasUnsavedChanges,
+});
 
 const permList = ref<Permission[]>([]);
 const permNamespaces = ref<PermissionNamespaceGroup[]>([]);
@@ -135,7 +139,7 @@ async function propogateRolePermissionStates(role: Role): Promise<void> {
 }
 
 async function updatePermissionState(perm: number, state: boolean | undefined): Promise<void> {
-    changed.value = true;
+    markChanged();
     permStates.value.set(perm, state);
 }
 
@@ -204,7 +208,8 @@ async function updateRolePerms(): Promise<void> {
         attrs.toUpdate.length === 0 &&
         attrs.toRemove.length === 0
     ) {
-        changed.value = false;
+        resetChanged();
+        attrChangedStates.value.clear();
         return;
     }
 
@@ -221,7 +226,8 @@ async function updateRolePerms(): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        changed.value = false;
+        resetChanged();
+        attrChangedStates.value.clear();
         await refresh();
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -230,7 +236,8 @@ async function updateRolePerms(): Promise<void> {
 }
 
 function clearState(): void {
-    changed.value = false;
+    resetChanged();
+    attrChangedStates.value.clear();
     permList.value.length = 0;
     attrList.value.length = 0;
     permNamespaces.value.length = 0;
@@ -262,7 +269,7 @@ function resetRole(): void {
                 break;
         }
     });
-    changed.value = true;
+    markChanged();
 }
 
 function toggleAll(): void {
@@ -274,7 +281,7 @@ function toggleAll(): void {
         attrList.value[idx].value = AttributeValues.clone(attrList.value[idx].validValues);
     });
 
-    changed.value = true;
+    markChanged();
 }
 
 type CopyRole = {
@@ -388,7 +395,15 @@ async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
     });
 
     state.input = '';
-    changed.value = true;
+    markChanged();
+}
+
+function setAttrChanged(attrId: number, value: boolean): void {
+    if (value) {
+        attrChangedStates.value.set(attrId, true);
+    } else {
+        attrChangedStates.value.delete(attrId);
+    }
 }
 
 async function impersonateRole(grade: number): Promise<void> {
@@ -449,7 +464,7 @@ const confirmImpersonateModal = overlay.create(ConfirmModal, {
     },
 });
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await updateRolePerms().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -542,7 +557,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         <template v-if="canUpdate">
                             <UButton
                                 class="flex-1"
-                                :disabled="!changed || !canSubmit"
+                                :disabled="!hasUnsavedChanges || !canSubmit"
                                 :loading="!canSubmit"
                                 icon="i-mdi-content-save"
                                 :label="$t('common.save', 1)"
@@ -551,7 +566,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                             <UPopover>
                                 <UButton
-                                    :disabled="changed"
+                                    :disabled="hasUnsavedChanges"
                                     color="neutral"
                                     icon="i-mdi-form-textarea"
                                     :label="$t('common.paste')"
@@ -574,7 +589,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                         <UButton
                             icon="i-mdi-content-copy"
-                            :disabled="changed"
+                            :disabled="hasUnsavedChanges"
                             color="neutral"
                             :label="$t('common.copy')"
                             @click="copyRole"
@@ -644,7 +659,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             v-model="attrList[idx]!"
                                             :permission="perm"
                                             :disabled="!canUpdate || permStates.get(perm.id) !== true"
-                                            @changed="changed = true"
+                                            @changed="setAttrChanged(attr.attrId, $event)"
                                         />
                                     </template>
                                 </div>
@@ -716,7 +731,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                     v-model="attrList[idx]!"
                                                     :permission="perm"
                                                     :disabled="!canUpdate || permStates.get(perm.id) !== true"
-                                                    @changed="changed = true"
+                                                    @changed="setAttrChanged(attr.attrId, $event)"
                                                 />
                                             </template>
                                         </div>

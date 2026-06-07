@@ -53,6 +53,21 @@ const state = reactive<Schema>({
     reset: false,
 });
 
+const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state, {
+    serializer: (value) =>
+        JSON.stringify({
+            reason: value.reason,
+            reset: value.reset,
+            mugshot: value.mugshot
+                ? {
+                      name: value.mugshot.name,
+                      size: value.mugshot.size,
+                      type: value.mugshot.type,
+                  }
+                : null,
+        }),
+});
+
 const { resizeAndUpload } = useFileUploader((_) => citizensCitizensClient.uploadMugshot(_), 'documents', user.value.userId);
 const { uploadImages } = useImageUpload();
 
@@ -132,10 +147,39 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (formRef.value?.loading) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
-    <UModal :title="$t('components.citizens.CitizenInfoProfile.set_mugshot')">
+    <UModal
+        :title="$t('components.citizens.CitizenInfoProfile.set_mugshot')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && !formRef?.loading"
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('components.citizens.CitizenInfoProfile.set_mugshot') }}
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="formRef?.loading"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="reason" :label="$t('common.reason')" required>
@@ -197,7 +241,14 @@ const formRef = useTemplateRef('formRef');
                     "
                 />
 
-                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    block
+                    color="neutral"
+                    :disabled="formRef?.loading"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
             </UFieldGroup>
         </template>
     </UModal>

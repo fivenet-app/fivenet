@@ -79,6 +79,30 @@ const state = reactive<Schema>({
     },
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state, {
+    serializer: (value) =>
+        JSON.stringify({
+            id: value.id,
+            name: value.name,
+            color: value.color,
+            icon: value.icon ?? '',
+            settings: {
+                requiresExpiration: value.settings.requiresExpiration,
+                minDuration: value.settings.minDuration ?? undefined,
+                maxDuration: value.settings.maxDuration ?? undefined,
+            },
+            access: {
+                jobs: value.access.jobs.map((job) => ({
+                    id: job.id,
+                    targetId: job.targetId,
+                    job: job.job,
+                    minimumGrade: job.minimumGrade,
+                    access: job.access,
+                })),
+            },
+        }),
+});
+
 const { data, status, error, refresh } = useLazyAsyncData(
     `citizens-label-${props.labelId}`,
     () => getCitizenLabel(props.labelId!),
@@ -119,7 +143,26 @@ async function getCitizenLabel(labelId: number): Promise<GetLabelResponse> {
 }
 
 function setFromData(label: Label | undefined): void {
-    if (!label) return;
+    if (!label) {
+        state.id = 0;
+        state.name = '';
+        state.color = '#ffffff';
+        state.icon = undefined;
+        state.settings.requiresExpiration = false;
+        state.settings.minDuration = undefined;
+        state.settings.maxDuration = undefined;
+        state.access.jobs = [
+            {
+                id: 0,
+                targetId: 0,
+                job: activeChar.value?.job ?? '',
+                minimumGrade: activeChar.value?.jobGrade ?? game.startJobGrade,
+                access: AccessLevel.REMOVE,
+            },
+        ];
+        syncSnapshot();
+        return;
+    }
 
     state.id = label.id;
     state.name = label.name;
@@ -129,6 +172,7 @@ function setFromData(label: Label | undefined): void {
     state.settings.minDuration = label.settings?.minDuration;
     state.settings.maxDuration = label.settings?.maxDuration;
     state.access.jobs = label.access?.jobs ?? [];
+    syncSnapshot();
 }
 
 watch(data, () => setFromData(data.value?.label));
@@ -166,6 +210,7 @@ async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelR
         state.settings.minDuration = label.settings?.minDuration;
         state.settings.maxDuration = label.settings?.maxDuration;
         state.access.jobs = label.access?.jobs ?? [];
+        syncSnapshot();
 
         emits('refresh');
         emits('close', true);
@@ -177,17 +222,46 @@ async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelR
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await createOrUpdateLabel(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emits('close', false);
+}
 </script>
 
 <template>
-    <UModal :title="$t('components.citizens.citizen_labels.title')">
+    <UModal
+        :title="$t('components.citizens.citizen_labels.title')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('components.citizens.citizen_labels.title') }}
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <DataPendingBlock
                 v-if="labelId && isRequestPending(status)"
@@ -257,7 +331,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     class="flex-1"

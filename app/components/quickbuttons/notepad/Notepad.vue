@@ -20,8 +20,9 @@ const state = reactive<Schema>({
 
 const logger = useLogger('🗒️ Notepad');
 
-const changed = ref(false);
-const saving = ref(false);
+const changed = ref<boolean>(false);
+
+const saving = ref<boolean>(false);
 
 const historyType = 'quickbutton-notepad' as const;
 // Track last saved string and timestamp

@@ -15,7 +15,7 @@ const props = defineProps<{
 const router = useRouter();
 const route = router.currentRoute;
 
-const buttonDisabled = ref(true);
+const buttonDisabled = ref<boolean>(true);
 
 onMounted(() => useTimeoutFn(() => (buttonDisabled.value = false), 2000));
 

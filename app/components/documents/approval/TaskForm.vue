@@ -48,6 +48,10 @@ const state = reactive<Schema>({
     ],
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
+
+syncSnapshot();
+
 async function upsertApprovalTasks(values: Schema): Promise<void> {
     try {
         const call = approvalClient.upsertApprovalTasks({
@@ -79,7 +83,7 @@ async function upsertApprovalTasks(values: Schema): Promise<void> {
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await upsertApprovalTasks(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -103,6 +107,14 @@ function removeTask(idx: number): void {
 
 const formRef = useTemplateRef('formRef');
 
+async function closeDrawer(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emits('close', false);
+}
+
 onBeforeMount(async () => listJobs());
 </script>
 
@@ -110,7 +122,8 @@ onBeforeMount(async () => listJobs());
     <UDrawer
         :title="$t('common.approve')"
         handle-only
-        :close="{ onClick: () => $emit('close', false) }"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+        :close="{ onClick: closeDrawer }"
         :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <template #title>
@@ -119,7 +132,7 @@ onBeforeMount(async () => listJobs());
                 <UIcon name="i-mdi-slash-forward" />
                 <span>{{ $t('components.documents.approval.task_form.title') }}</span>
             </div>
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
+            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="closeDrawer" />
         </template>
 
         <template #body>
@@ -189,7 +202,8 @@ onBeforeMount(async () => listJobs());
                         variant="ghost"
                         icon="i-mdi-arrow-back"
                         :label="$t('common.back')"
-                        @click="() => $emit('close', false)"
+                        :disabled="!canSubmit"
+                        @click="closeDrawer"
                     />
                 </UFieldGroup>
             </div>

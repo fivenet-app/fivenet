@@ -38,7 +38,7 @@ async function joinOrLeaveUnit(unitId?: number): Promise<void> {
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (unitID?: number) => {
     canSubmit.value = false;
     await joinOrLeaveUnit(unitID).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

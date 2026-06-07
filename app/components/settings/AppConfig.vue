@@ -257,6 +257,8 @@ const state = reactive<Schema>({
     },
 });
 
+const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
+
 async function updateAppConfig(values: Schema): Promise<void> {
     if (!config.value || !config.value?.config) return;
 
@@ -420,6 +422,8 @@ function setSettingsValues(): void {
         state.game.maxWantedDurationVehicleEnabled = config.value.config.game.maxWantedDurationVehicleEnabled;
         state.game.maxWantedDurationVehicle = config.value.config.game.maxWantedDurationVehicle;
     }
+
+    syncSnapshot();
 }
 
 watch(config, () => setSettingsValues());
@@ -456,7 +460,7 @@ const selectedTab = computed({
     },
 });
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') return;
 
@@ -481,7 +485,7 @@ const formRef = useTemplateRef('formRef');
                     <UButton
                         v-if="!streamerMode && config"
                         trailing-icon="i-mdi-content-save"
-                        :disabled="!canSubmit"
+                        :disabled="!canSubmit || !hasUnsavedChanges"
                         :loading="!canSubmit"
                         :label="$t('common.save', 1)"
                         @click="() => formRef?.submit()"

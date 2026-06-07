@@ -75,6 +75,24 @@ const state = reactive<Schema>({
     expiresAt: undefined,
 });
 
+const formSnapshot = computed(() => ({
+    targetUserId: state.targetUserId,
+    type: state.type,
+    draft: state.draft,
+    message: state.message,
+    files: state.files.map((file) => ({
+        id: file.id,
+        parentId: file.parentId ?? null,
+        filePath: file.filePath,
+        byteSize: file.byteSize,
+        contentType: file.contentType,
+        isDir: file.isDir,
+    })),
+    expiresAt: state.expiresAt?.toISOString() ?? null,
+}));
+
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(formSnapshot);
+
 const {
     data: entry,
     error,
@@ -145,6 +163,7 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: number): Promise<
         });
 
         emit('close', false);
+        syncSnapshot();
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -162,13 +181,14 @@ async function setFromProps(): Promise<void> {
         : (entry.value.message?.rawHtml ?? '');
     state.files = entry.value.files ?? [];
     state.expiresAt = entry.value.expiresAt ? toDate(entry.value.expiresAt) : undefined;
+    syncSnapshot();
 }
 
 setFromProps();
 watch(entry, () => setFromProps());
 onBeforeMount(() => setFromProps());
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await conductCreateOrUpdateEntry(event.data, entry.value?.id).finally(() =>
@@ -179,10 +199,39 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 const formRef = useTemplateRef('formRef');
 
 const confirmModal = overlay.create(ConfirmModal);
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value || isRequestPending(status.value)) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
-    <UModal :title="`${$t('components.jobs.conduct.CreateOrUpdateModal.update.title')}: #${entry?.id ?? ''}`" fullscreen>
+    <UModal
+        :title="`${$t('components.jobs.conduct.CreateOrUpdateModal.update.title')}: #${entry?.id ?? ''}`"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit && !isRequestPending(status)"
+        fullscreen
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-1.5">
+                <h3 class="font-semibold text-highlighted">
+                    {{ `${$t('components.jobs.conduct.CreateOrUpdateModal.update.title')}: #${entry?.id ?? ''}` }}
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit || isRequestPending(status)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.entry', 1)])" />
             <DataErrorBlock
@@ -331,7 +380,14 @@ const confirmModal = overlay.create(ConfirmModal);
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit || isRequestPending(status)"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     class="flex-1"

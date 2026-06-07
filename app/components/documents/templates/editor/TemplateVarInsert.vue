@@ -32,8 +32,8 @@ const templateVars: Record<string, { label: string; value: string }[]> = {
 const selectedCategory = ref<(typeof categories)[0] | undefined>(undefined);
 const selectedProperty = ref<string | undefined>(undefined);
 const customInput = ref('');
-const leftTrim = ref(false);
-const rightTrim = ref(false);
+const leftTrim = ref<boolean>(false);
+const rightTrim = ref<boolean>(false);
 
 const insert = () => {
     if (!selectedCategory.value || !selectedProperty.value) return;

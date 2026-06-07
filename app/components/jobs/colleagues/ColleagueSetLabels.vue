@@ -35,8 +35,6 @@ async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsRe
     }
 }
 
-const changed = ref(false);
-
 const schema = z.object({
     reason: z.coerce.string().min(3).max(255),
     labels: z
@@ -54,10 +52,31 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
+const editing = ref(false);
+
 const state = reactive<Schema>({
     reason: '',
     labels: labels.value?.list.map((l) => ({ ...l, selected: true })) ?? [],
 });
+
+const { snapshotDirty: changed, syncSnapshot } = useSnapshotChanges(state, {
+    dirty: editing,
+    serializer: (value) =>
+        JSON.stringify({
+            labels: value.labels.map((label) => ({
+                id: label.id,
+                name: label.name,
+                color: label.color,
+                icon: label.icon,
+                sortOrder: label.sortOrder,
+            })),
+        }),
+});
+
+function setFromProps(): void {
+    state.labels = labels.value?.list.map((l) => ({ ...l, selected: true })) ?? [];
+    syncSnapshot();
+}
 
 async function setUserJobProp(userId: number, values: Schema): Promise<SetColleaguePropsResponse> {
     const jobsUserProps: ColleagueProps = {
@@ -75,12 +94,12 @@ async function setUserJobProp(userId: number, values: Schema): Promise<SetCollea
         });
         const { response } = await call;
 
-        changed.value = false;
         editing.value = false;
         state.reason = '';
         emit('refresh');
 
         state.labels = labels.value?.list.map((l) => ({ ...l, selected: true })) ?? [];
+        syncSnapshot();
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -101,20 +120,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await setUserJobProp(props.userId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-watch(labels, () => (state.labels = labels.value?.list !== undefined ? labels.value?.list.slice() : []));
-
-watch(state, () => {
-    if (
-        state.labels.length === labels.value?.list.length &&
-        state.labels.every((el, idx) => el.name === labels.value?.list[idx]?.name)
-    ) {
-        changed.value = false;
-    } else {
-        changed.value = true;
-    }
+watch(labels, () => {
+    setFromProps();
 });
-
-const editing = ref(false);
 </script>
 
 <template>
@@ -128,8 +136,9 @@ const editing = ref(false);
                     icon="i-mdi-cancel"
                     color="error"
                     @click="
-                        state.labels = labels?.list.map((l) => ({ ...l, selected: true })) ?? [];
+                        state.reason = '';
                         editing = false;
+                        setFromProps();
                     "
                 />
             </UTooltip>
@@ -164,10 +173,7 @@ const editing = ref(false);
                             size="md"
                             variant="link"
                             icon="i-mdi-close"
-                            @click="
-                                changed = true;
-                                state.labels.splice(idx, 1);
-                            "
+                            @click="state.labels.splice(idx, 1)"
                         />
                     </UTooltip>
                 </UFieldGroup>

@@ -54,7 +54,7 @@ async function takeExam(cancel = false): Promise<TakeExamResponse> {
     }
 }
 
-const timesUp = ref(false);
+const timesUp = ref<boolean>(false);
 const exam = ref<ExamQuestions | undefined>();
 const examUser = ref<ExamUser | undefined>();
 const examResponses = ref<ExamResponses | undefined>();

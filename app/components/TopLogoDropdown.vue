@@ -8,7 +8,7 @@ const { isNotificationSlideoverOpen } = useDashboard();
 const notifications = useNotificationsStore();
 const { notificationsCount, doNotDisturb } = storeToRefs(notifications);
 
-const newNotification = ref(false);
+const newNotification = ref<boolean>(false);
 
 const { start } = useTimeoutFn(() => (newNotification.value = false), 1000, {
     immediate: false,

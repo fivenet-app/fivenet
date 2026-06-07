@@ -43,6 +43,8 @@ const state = reactive<Schema>({
     reset: false,
 });
 
+const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state);
+
 async function setJobProp(values: Schema): Promise<void> {
     const userProps: UserProps = {
         userId: props.user.userId,
@@ -82,7 +84,7 @@ async function setJobProp(values: Schema): Promise<void> {
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await setJobProp(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -90,11 +92,40 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 const formRef = useTemplateRef('formRef');
 
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
+
 onBeforeMount(async () => listJobs());
 </script>
 
 <template>
-    <UModal :title="$t('components.citizens.CitizenInfoProfile.set_job')">
+    <UModal
+        :title="$t('components.citizens.CitizenInfoProfile.set_job')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
@@ -166,7 +197,14 @@ onBeforeMount(async () => listJobs());
                     "
                 />
 
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
             </UFieldGroup>
         </template>
     </UModal>

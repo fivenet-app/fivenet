@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { fromDate, getLocalTimeZone } from '@internationalized/date';
-import { watchDebounced } from '@vueuse/shared';
 import { addDays } from 'date-fns';
 import { z } from 'zod';
 import ListEntry from '~/components/documents/ListEntry.vue';
@@ -158,9 +157,9 @@ const activeTab = computed({
 
 const formRef = useTemplateRef('formRef');
 
-watchDebounced(query, async () => (await formRef.value?.validate({})) && refresh(), { debounce: 200, maxWait: 1250 });
+useFormValidatedDebouncedRefresh(query, () => formRef.value?.validate({}), refresh);
 
-const isPinnedDocumentsVisible = ref(false);
+const isPinnedDocumentsVisible = ref<boolean>(false);
 
 const templateDrawer = overlay.create(TemplateDrawer);
 

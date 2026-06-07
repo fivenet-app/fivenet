@@ -93,10 +93,10 @@ async function markUnread(unread: boolean, ...ids: number[]): Promise<void> {
     });
 }
 
-watchDebounced(query, async () => refresh(), { debounce: 500, maxWait: 1500 });
+useDebouncedRefresh(query, refresh, { debounce: 500, maxWait: 1500 });
 
 const { start: timeoutFn } = useTimeoutFn(() => (canSubmit.value = true), 400, { immediate: false });
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 </script>
 
 <template>

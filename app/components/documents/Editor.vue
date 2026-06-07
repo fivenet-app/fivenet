@@ -93,6 +93,8 @@ function setFromProps(): void {
     }
     state.files = document.value.document.files;
     state.data = document.value.document.data ?? {};
+
+    syncSnapshot();
 }
 
 const onSync = (s: boolean) => {
@@ -104,6 +106,8 @@ const onSync = (s: boolean) => {
         // If the content is empty, we need to set it from the props
         setFromProps();
     }
+
+    syncSnapshot();
     provider.off('sync', onSync);
 };
 provider.on('sync', onSync);
@@ -147,7 +151,10 @@ const {
     { immediate: false },
 );
 
-watch(document, async () => await Promise.all([refreshReferences(), refreshRelations()]));
+watch(document, async () => {
+    await Promise.all([refreshReferences(), refreshRelations()]);
+    syncSnapshot();
+});
 
 const route = useRoute();
 
@@ -203,8 +210,8 @@ const categoryModel = computed<Category | undefined>({
     },
 });
 
-const changed = ref(false);
-const saving = ref(false);
+const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
+const saving = ref<boolean>(false);
 
 // Track last saved string and timestamp
 let lastSavedDocument: JSONContent | string | undefined = undefined;
@@ -242,11 +249,7 @@ historyStore.handleRefresh(() => saveHistory(state));
 watchDebounced(
     state,
     () => {
-        if (changed.value) {
-            saveHistory(state);
-        } else {
-            changed.value = true;
-        }
+        if (hasUnsavedChanges.value) saveHistory(state);
     },
     {
         debounce: 1_000,
@@ -254,7 +257,7 @@ watchDebounced(
     },
 );
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
 
@@ -348,6 +351,8 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         if (response.document) {
             state.draft = response.document.meta?.draft ?? false;
         }
+
+        syncSnapshot();
 
         clipboardStore.clear();
     } catch (e) {

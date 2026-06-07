@@ -12,6 +12,7 @@
 import type { SelectMenuEmits, SelectMenuItem, SelectMenuProps, SelectMenuSlots } from '@nuxt/ui';
 import type { ModelModifiers } from '@nuxt/ui/runtime/types/input.js';
 import type { ArrayOrNested, GetItemKeys, NestedItem } from '@nuxt/ui/runtime/types/utils.js';
+import { computed } from 'vue';
 
 interface Props<
     T extends ArrayOrNested<SelectMenuItem>,
@@ -48,13 +49,15 @@ const props = defineProps<Props<T, VK, M, Mod, C>>();
 defineSlots</* @vue-ignore */ Slots<T, VK, M, Mod, C>>();
 defineEmits</* @vue-ignore */ SelectMenuEmits<T, VK, M, Mod, C>>();
 
-const loading = ref(false);
+const loading = ref<boolean>(false);
 
 const searchTerm = ref('');
 const searchTermDebounced = debouncedRef(searchTerm, 175);
 
+const searchableItemsKey = computed(() => `${props.searchableKey}-${searchTermDebounced.value}`);
+
 const { data: items } = useLazyAsyncData(
-    () => `${props.searchableKey}-${searchTermDebounced.value}`,
+    searchableItemsKey,
     async () => {
         if (props.searchable === undefined) return [];
 

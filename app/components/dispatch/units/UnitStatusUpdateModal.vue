@@ -5,13 +5,13 @@ import { unitStatusToBadgeColor, unitStatuses } from '~/components/dispatch/help
 import { useCentrumStore } from '~/stores/centrum';
 import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
+import type { Coords } from '~~/gen/ts/resources/livemap/coords';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { Coordinate } from '~~/shared/types/types';
 
 const props = defineProps<{
     unit: Unit;
     status?: StatusUnit;
-    location?: Coordinate;
+    location?: Coords;
 }>();
 
 const emit = defineEmits<{
@@ -37,6 +37,8 @@ const state = reactive<Schema>({
     status: props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN,
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
+
 async function updateUnitStatus(id: number, values: Schema): Promise<void> {
     try {
         const call = centrumUnitsClient.updateUnitStatus({
@@ -60,13 +62,16 @@ async function updateUnitStatus(id: number, values: Schema): Promise<void> {
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await updateUnitStatus(props.unit.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-watch(props, () => (state.status = props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN));
+watch(props, () => {
+    state.status = props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN;
+    syncSnapshot();
+});
 
 function updateReasonField(value: string): void {
     if (value.length === 0) return;
@@ -75,10 +80,39 @@ function updateReasonField(value: string): void {
 }
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
-    <UModal :title="`${$t('components.dispatch.update_unit_status.title')}: ${unit.name} (${unit.initials})`">
+    <UModal
+        :title="`${$t('components.dispatch.update_unit_status.title')}: ${unit.name} (${unit.initials})`"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('components.dispatch.update_unit_status.title') }}: {{ unit.name }} ({{ unit.initials }})
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-y divide-default">
@@ -154,7 +188,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     class="flex-1"

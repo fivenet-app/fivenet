@@ -39,6 +39,19 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
+const formSnapshot = computed(() => ({
+    title: state.value.title,
+    content: state.value.content,
+    recipients: state.value.recipients.map((recipient) => recipient.label.trim().toLowerCase()),
+    attachments: state.value.attachments.map((attachment) => ({
+        type: attachment.data.oneofKind,
+        documentId: attachment.data.oneofKind === 'document' ? attachment.data.document.id : null,
+    })),
+    selectedEmailId: selectedEmail.value?.id ?? null,
+}));
+
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(formSnapshot);
+
 async function createThread(values: Schema): Promise<void> {
     if (!selectedEmail.value?.id) return;
 
@@ -88,6 +101,7 @@ async function createThread(values: Schema): Promise<void> {
     state.value.content = '';
     state.value.recipients = [];
     state.value.attachments = [];
+    syncSnapshot();
 
     emit('close', false);
 }
@@ -105,6 +119,8 @@ onBeforeMount(() => {
     ) {
         state.value.content = defaultEmptyContent + selectedEmail.value?.settings?.signature;
     }
+
+    syncSnapshot();
 });
 
 watch(
@@ -115,7 +131,7 @@ watch(
         )),
 );
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await createThread(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
@@ -124,10 +140,33 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 const editorRef = useTemplateRef('editorRef');
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
-    <UModal :title="$t('components.mailer.create_thread')" fullscreen>
+    <UModal
+        :title="$t('components.mailer.create_thread')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+        fullscreen
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-1.5">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('components.mailer.create_thread') }}
+                </h3>
+
+                <UButton color="neutral" variant="ghost" icon="i-mdi-close" :disabled="!canSubmit" @click="closeModal" />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="mx-auto">
@@ -312,7 +351,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    block
+                    color="neutral"
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     class="flex-1"

@@ -68,7 +68,7 @@ async function deleteDocumentReq(id: number): Promise<void> {
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
     canSubmit.value = false;
     await updateDocumentReq(props.request.documentId, props.request.id, accepted).finally(() =>

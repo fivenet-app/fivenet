@@ -15,7 +15,7 @@ export const useCookiesStore = defineStore(
         /**
          * Controls visibility of the consent modal
          */
-        const isConsentModalOpen = ref(false);
+        const isConsentModalOpen = ref<boolean>(false);
 
         // Watchers
         /**

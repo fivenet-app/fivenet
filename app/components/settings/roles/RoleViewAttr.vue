@@ -12,7 +12,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'changed'): void;
+    (e: 'changed', value: boolean): void;
 }>();
 
 const completorStore = useCompletorStore();
@@ -149,7 +149,30 @@ const maxValues = attribute.value.maxValues;
 
 const validValues = computed<AttributeValues | undefined>(() => attribute.value.validValues);
 
-watchOnce(attrValues, () => emit('changed'), { deep: true });
+const initialAttrValues = ref('');
+
+function syncChangedState(): void {
+    emit('changed', JSON.stringify(attrValues.value) !== initialAttrValues.value);
+}
+
+initialAttrValues.value = JSON.stringify(attrValues.value);
+
+watch(
+    attrValues,
+    () => {
+        syncChangedState();
+    },
+    {
+        deep: true,
+        immediate: true,
+    },
+);
+
+watch(attribute, () => {
+    attrValues.value = attribute.value.value!;
+    initialAttrValues.value = JSON.stringify(attrValues.value);
+    emit('changed', false);
+});
 
 async function toggleStringListValue(value: string): Promise<void> {
     if (attrValues.value.validValues.oneofKind !== 'stringList') return;

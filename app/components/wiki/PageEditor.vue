@@ -153,8 +153,8 @@ async function listPages(): Promise<PageShort[]> {
     }
 }
 
-const changed = ref(false);
-const saving = ref(false);
+const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
+const saving = ref<boolean>(false);
 
 // Track last saved string and timestamp
 let lastSavedString: JSONContent | string | undefined = undefined;
@@ -192,10 +192,8 @@ historyStore.handleRefresh(() => saveHistory(state));
 watchDebounced(
     state,
     () => {
-        if (changed.value) {
+        if (hasUnsavedChanges.value) {
             saveHistory(state);
-        } else {
-            changed.value = true;
         }
     },
     {
@@ -222,6 +220,8 @@ function setFromProps(): void {
         state.access.users = page.value.access.users;
     }
     state.files = page.value.files;
+
+    syncSnapshot();
 }
 
 const onSync = (s: boolean) => {
@@ -232,6 +232,8 @@ const onSync = (s: boolean) => {
         // If the content is empty, we need to set it from the props
         setFromProps();
     }
+
+    syncSnapshot();
     provider.off('sync', onSync);
 };
 provider.on('sync', onSync);
@@ -283,6 +285,8 @@ async function updatePage(values: Schema): Promise<void> {
         if (responsePage) {
             page.value = responsePage;
         }
+
+        syncSnapshot();
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -383,7 +387,7 @@ const { sendClientView } = useClientUpdate(ObjectType.WIKI_PAGE, () =>
 );
 sendClientView(props.pageId);
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await updatePage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

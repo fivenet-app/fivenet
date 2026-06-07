@@ -28,18 +28,32 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
+const editing = ref(false);
+
 const state = reactive<Schema>({
     reason: '',
     prefix: namePrefix.value ?? '',
     suffix: nameSuffix.value ?? '',
 });
 
-watch([namePrefix, nameSuffix], () => {
-    state.prefix = namePrefix.value ?? '';
-    state.suffix = nameSuffix.value ?? '';
+const { snapshotDirty: changed, syncSnapshot } = useSnapshotChanges(state, {
+    dirty: editing,
+    serializer: (value) =>
+        JSON.stringify({
+            prefix: value.prefix ?? '',
+            suffix: value.suffix ?? '',
+        }),
 });
 
-const changed = ref(false);
+function setFromProps(): void {
+    state.prefix = namePrefix.value ?? '';
+    state.suffix = nameSuffix.value ?? '';
+    syncSnapshot();
+}
+
+watch([namePrefix, nameSuffix], () => {
+    setFromProps();
+});
 
 async function setJobsUserNote(values: Schema): Promise<undefined | SetColleaguePropsResponse> {
     try {
@@ -54,13 +68,13 @@ async function setJobsUserNote(values: Schema): Promise<undefined | SetColleague
         });
         const { response } = await call;
 
-        changed.value = false;
         editing.value = false;
         state.reason = '';
         emit('refresh');
 
         state.prefix = response.props?.namePrefix;
         state.suffix = response.props?.nameSuffix;
+        syncSnapshot();
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -80,16 +94,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await setJobsUserNote(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
-
-watch(state, () => {
-    if (state.prefix === namePrefix.value && state.suffix === nameSuffix.value) {
-        changed.value = false;
-    } else {
-        changed.value = true;
-    }
-});
-
-const editing = ref(false);
 </script>
 
 <template>
@@ -103,9 +107,9 @@ const editing = ref(false);
                     icon="i-mdi-cancel"
                     color="error"
                     @click="
-                        state.prefix = namePrefix;
-                        state.suffix = nameSuffix;
+                        state.reason = '';
                         editing = false;
+                        setFromProps();
                     "
                 />
             </UTooltip>

@@ -30,7 +30,7 @@ const reqStatus = ref<Record<RequirementType, boolean>>({
     vehicles: false,
 });
 
-const readyToCreate = ref(false);
+const readyToCreate = ref<boolean>(false);
 
 watch(reqStatus.value, () => {
     readyToCreate.value = requirementTypes.every((type) => reqStatus.value[type]);
@@ -86,7 +86,7 @@ function goBackDialog(): void {
     nextTick(() => selectTemplate());
 }
 
-const submit = ref(false);
+const submit = ref<boolean>(false);
 
 async function clipboardDialog(): Promise<void> {
     submit.value = true;

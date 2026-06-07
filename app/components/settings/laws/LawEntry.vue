@@ -99,7 +99,7 @@ async function saveLaw(id: number, values: Schema): Promise<void> {
 
 const canSaveLaw = computed(() => state.lawbookId > 0 && availableLawBooks.value.some((book) => book.id === state.lawbookId));
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (!canSaveLaw.value) return;
 

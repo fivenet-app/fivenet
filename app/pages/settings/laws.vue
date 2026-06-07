@@ -33,13 +33,11 @@ const {
     error,
 } = useLazyAsyncData(`lawbooks`, () => settingsLawsClient.listLawBooks({}).then((resp) => resp.response.books));
 
-const bookOrderChanged = ref(false);
 const lawBookListRef = useTemplateRef('lawBookListRef');
 
+const { snapshotDirty: orderChanged, syncSnapshot } = useSnapshotChanges(() => lawBooks.value?.map((book) => book.id) ?? []);
 const { moveUp: moveLawBookUp, moveDown: moveLawBookDown } = useListReorder(lawBooks, {
-    onMove: () => {
-        bookOrderChanged.value = true;
-    },
+    onMove: () => undefined,
 });
 
 function deletedLawBook(id: number, deletedAt?: Timestamp): void {
@@ -69,7 +67,7 @@ function addLawBook(): void {
 
 const canSaveBookOrder = computed(
     () =>
-        bookOrderChanged.value &&
+        orderChanged.value &&
         (lawBooks.value?.every((book) => book.deletedAt !== undefined || book.id > 0) ?? false) &&
         (lawBooks.value?.some((book) => book.deletedAt === undefined) ?? false),
 );
@@ -86,7 +84,7 @@ async function reorderLawBooks(): Promise<void> {
         });
         await call;
 
-        bookOrderChanged.value = false;
+        syncSnapshot();
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -124,9 +122,7 @@ function updateLaw(event: { id: number; law: Law }): void {
         return;
     }
 
-    if (source) {
-        source.book.laws.splice(source.index, 1);
-    }
+    if (source) source.book.laws.splice(source.index, 1);
 
     const destinationIndex = destinationBook.laws.findIndex((law) => law.id === event.id || law.id === event.law.id);
     if (destinationIndex === -1) {
@@ -141,11 +137,19 @@ onMounted(() => {
         animation: 150,
         handle: '.law-book-handle',
         draggable: 'li',
-        onUpdate: () => {
-            bookOrderChanged.value = true;
-        },
+        onUpdate: () => undefined,
     });
 });
+
+watch(
+    status,
+    (newStatus) => {
+        if (!isRequestPending(newStatus)) {
+            syncSnapshot();
+        }
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
@@ -159,7 +163,7 @@ onMounted(() => {
                 <template #right>
                     <PartialsBackButton fallback-to="/settings" />
 
-                    <UTooltip v-if="bookOrderChanged" :text="$t('common.save', 1)">
+                    <UTooltip v-if="orderChanged" :text="$t('common.save', 1)">
                         <UButton
                             color="primary"
                             variant="outline"

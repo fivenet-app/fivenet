@@ -2,7 +2,7 @@
 import type Big from 'big.js';
 import { evaluateTokens } from './helpers';
 
-const powerOn = ref(true);
+const powerOn = ref<boolean>(true);
 
 const histroryOperation = useState<
     {

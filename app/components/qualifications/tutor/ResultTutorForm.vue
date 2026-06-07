@@ -64,6 +64,15 @@ const state = reactive<Schema>({
     summary: '',
 });
 
+const formSnapshot = computed(() => ({
+    status: state.status,
+    score: state.score,
+    summary: state.summary,
+    selectedUserId: selectedUser.value?.userId ?? null,
+}));
+
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(formSnapshot);
+
 async function createOrUpdateQualificationResult(
     qualificationId: number,
     values: Schema,
@@ -92,6 +101,7 @@ async function createOrUpdateQualificationResult(
 
         emit('refresh');
         emit('close', false);
+        syncSnapshot();
 
         return response;
     } catch (e) {
@@ -102,10 +112,13 @@ async function createOrUpdateQualificationResult(
 
 watch(
     () => props.score,
-    () => (state.score = props.score ?? 0),
+    () => {
+        state.score = props.score ?? 0;
+        syncSnapshot();
+    },
 );
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await createOrUpdateQualificationResult(props.qualificationId, event.data).finally(() =>
@@ -114,17 +127,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
-    <UModal>
+    <UModal
+        :title="$t('components.qualifications.result_modal.title')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+    >
         <template #header>
             <div class="flex w-full items-center justify-between">
                 <h3 class="flex-1 text-2xl leading-6 font-semibold">
                     {{ $t('components.qualifications.result_modal.title') }}
                 </h3>
 
-                <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" @click="$emit('close', false)" />
+                <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" :disabled="!canSubmit" @click="closeModal" />
             </div>
         </template>
 
@@ -225,7 +250,7 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="closeModal" />
 
                 <UButton
                     v-if="!viewOnly"

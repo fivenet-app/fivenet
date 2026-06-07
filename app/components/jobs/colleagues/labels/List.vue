@@ -73,7 +73,7 @@ async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await manageLabels(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

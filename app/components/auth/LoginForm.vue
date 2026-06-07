@@ -41,7 +41,7 @@ const socialLoginEnabled = ref(hasCookiesAccepted.value && !nuiEnabled.value);
 
 watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.value && !nuiEnabled.value));
 
-const passwordVisibility = ref(false);
+const passwordVisibility = ref<boolean>(false);
 </script>
 
 <template>

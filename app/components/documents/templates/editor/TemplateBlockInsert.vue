@@ -16,8 +16,8 @@ const options = [
 
 const selected = ref('');
 const expression = ref('');
-const leftTrim = ref(false);
-const rightTrim = ref(false);
+const leftTrim = ref<boolean>(false);
+const rightTrim = ref<boolean>(false);
 
 const canInsert = computed(() => selected.value && expression.value);
 

@@ -61,6 +61,21 @@ const state = reactive<Schema>({
     users: [],
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state, {
+    serializer: (value) =>
+        JSON.stringify({
+            calendarId: value.calendar?.id ?? 0,
+            title: value.title,
+            startTime: value.startTime ? value.startTime.toISOString() : '',
+            endTime: value.endTime ? value.endTime.toISOString() : '',
+            allDay: value.allDay,
+            content: value.content ? JSON.stringify(value.content) : '',
+            closed: value.closed,
+            rsvpOpen: value.rsvpOpen,
+            users: [...value.users.map((user) => user.userId)].sort((a, b) => a - b),
+        }),
+});
+
 const { data, status, refresh, error } = useLazyAsyncData(
     `calendar-entry:${props.entryId}`,
     () => calendarStore.getCalendarEntry({ entryId: props.entryId! }),
@@ -107,10 +122,14 @@ function setFromProps(): void {
     if (props.day) {
         state.startTime = addHours(props.day.date, 1);
         state.endTime = addHours(props.day.date, 2);
+        syncSnapshot();
         return;
     }
 
-    if (!data.value?.entry) return;
+    if (!data.value?.entry) {
+        syncSnapshot();
+        return;
+    }
 
     const entry = data.value?.entry;
     if (entry.calendar) state.calendar = entry.calendar;
@@ -123,6 +142,7 @@ function setFromProps(): void {
         : (entry.content?.rawHtml ?? '');
     state.closed = entry.closed;
     state.rsvpOpen = entry.rsvpOpen !== undefined;
+    syncSnapshot();
 }
 
 setFromProps();
@@ -153,13 +173,21 @@ watch(
     },
 );
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await createOrUpdateCalendarEntry(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
@@ -169,7 +197,30 @@ const formRef = useTemplateRef('formRef');
                 ? $t('components.calendar.EntryCreateOrUpdateModal.update.title')
                 : $t('components.calendar.EntryCreateOrUpdateModal.create.title')
         "
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
     >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">
+                    {{
+                        entryId
+                            ? $t('components.calendar.EntryCreateOrUpdateModal.update.title')
+                            : $t('components.calendar.EntryCreateOrUpdateModal.create.title')
+                    }}
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <DataPendingBlock
@@ -344,7 +395,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     class="flex-1"

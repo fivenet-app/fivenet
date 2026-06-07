@@ -4,10 +4,10 @@ import { z } from 'zod';
 import { useLivemapStore } from '~/stores/livemap';
 import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
-import type { Coordinate } from '~~/shared/types/types';
+import type { Coords } from '~~/gen/ts/resources/livemap/coords';
 
 const props = defineProps<{
-    location?: Coordinate;
+    location?: Coords;
     dispatch?: Dispatch;
 }>();
 
@@ -54,6 +54,16 @@ const state = reactive<Schema>({
     },
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state, {
+    serializer: (value) =>
+        JSON.stringify({
+            message: value.message,
+            description: value.description,
+            anon: value.anon,
+            jobs: [...value.jobs.jobs].sort(),
+        }),
+});
+
 async function createDispatch(values: Schema): Promise<void> {
     try {
         const call = centrumDispatchesClient.createDispatch({
@@ -86,23 +96,53 @@ async function createDispatch(values: Schema): Promise<void> {
 watch(dispatchTargetJobs, (jobs) => {
     if (!jobs || jobs?.length <= 0) {
         state.jobs.jobs = [];
+        syncSnapshot();
         return;
     }
 
     state.jobs.jobs = [jobs[0]?.name ?? activeChar.value!.job];
+    syncSnapshot();
 });
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await createDispatch(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeSlideover(): Promise<void> {
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
-    <USlideover :title="$t('components.dispatch.create_dispatch.title')" :overlay="false">
+    <USlideover
+        :title="$t('components.dispatch.create_dispatch.title')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+        :overlay="false"
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('components.dispatch.create_dispatch.title') }}
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeSlideover"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-y divide-default">
@@ -202,7 +242,7 @@ const formRef = useTemplateRef('formRef');
                     @click="() => formRef?.submit()"
                 />
 
-                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="closeSlideover" />
             </UFieldGroup>
         </template>
     </USlideover>

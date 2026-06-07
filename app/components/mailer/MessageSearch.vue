@@ -7,7 +7,7 @@ const { t, d } = useI18n();
 
 const appConfig = useAppConfig();
 
-const isOpen = ref(false);
+const isOpen = ref<boolean>(false);
 
 const mailerStore = useMailerStore();
 const { selectedEmail, selectedThread } = storeToRefs(mailerStore);

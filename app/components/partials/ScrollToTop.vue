@@ -12,7 +12,7 @@ const props = withDefaults(
 
 const { y } = useScroll(() => props.element);
 
-const show = ref(false);
+const show = ref<boolean>(false);
 
 watchDebounced(
     y,

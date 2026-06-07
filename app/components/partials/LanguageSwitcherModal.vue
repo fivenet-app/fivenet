@@ -25,7 +25,7 @@ onBeforeMount(async () => {
     });
 });
 
-const preventClose = ref(false);
+const preventClose = ref<boolean>(false);
 
 async function switchLanguage(lang: LocaleObject): Promise<void> {
     if (currentLocale.value === lang.code) return;

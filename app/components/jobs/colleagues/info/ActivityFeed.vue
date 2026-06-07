@@ -103,7 +103,7 @@ async function listColleagueActivity(values: Schema): Promise<ListColleagueActiv
     }
 }
 
-watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
+useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
 
 const accessAttrs = attrStringList('jobs.ColleaguesService/GetColleague', 'Access');
 const colleagueSearchAttrs = ['Own', 'Lower_Rank', 'Same_Rank', 'Any'];

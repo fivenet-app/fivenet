@@ -36,6 +36,21 @@ const state = reactive<Schema>({
     file: undefined,
 });
 
+const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state, {
+    serializer: (value) =>
+        JSON.stringify({
+            category: value.category,
+            name: value.name,
+            file: value.file
+                ? {
+                      name: value.file.name,
+                      size: value.file.size,
+                      type: value.file.type,
+                  }
+                : null,
+        }),
+});
+
 const categories = ['jobassets'];
 
 async function upload(values: Schema): Promise<UploadFileResponse | undefined> {
@@ -67,17 +82,42 @@ async function upload(values: Schema): Promise<UploadFileResponse | undefined> {
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await upload(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
-    <UModal :title="$t('common.upload')">
+    <UModal :title="$t('common.upload')" :close="false" :dismissible="!hasUnsavedChanges && canSubmit">
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-1.5">
+                <h3 class="font-semibold text-highlighted">
+                    {{ $t('common.upload') }}
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="category" :label="$t('common.category')" required>
@@ -113,7 +153,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    block
+                    color="neutral"
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     class="flex-1"

@@ -79,7 +79,7 @@ async function reorderLabels(labels: Label[]) {
         });
         await call;
 
-        orderChanged.value = false;
+        syncSnapshot();
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -92,7 +92,7 @@ async function reorderLabels(labels: Label[]) {
     }
 }
 
-const orderChanged = ref(false);
+const { snapshotDirty: orderChanged, syncSnapshot } = useSnapshotChanges(() => labels.value?.map((label) => label.id) ?? []);
 const tableRef = useTemplateRef('tableRef');
 const tableBodyRef = computed<HTMLElement | null>(() => {
     const rootEl = tableRef.value?.$el as HTMLElement | undefined;
@@ -100,15 +100,25 @@ const tableBodyRef = computed<HTMLElement | null>(() => {
 });
 
 const { moveUp, moveDown } = useListReorder(labels, {
-    onMove: () => (orderChanged.value = true),
+    onMove: () => undefined,
 });
 
 useDraggable(tableBodyRef, labels, {
     animation: 150,
     handle: '.handle-choice',
     draggable: 'tr',
-    onUpdate: () => (orderChanged.value = true),
+    onUpdate: () => undefined,
 });
+
+watch(
+    status,
+    (newStatus) => {
+        if (!isRequestPending(newStatus)) {
+            syncSnapshot();
+        }
+    },
+    { immediate: true },
+);
 
 const columns = computed<TableColumn<Label>[]>(() => [
     {

@@ -30,7 +30,7 @@ const props = withDefaults(
     },
 );
 
-defineEmits<{
+const emit = defineEmits<{
     (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
@@ -59,6 +59,19 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
+const formSnapshot = computed(() => ({
+    title: state.value.title,
+    content: state.value.content,
+    recipients: state.value.recipients.map((recipient) => recipient.label.trim().toLowerCase()),
+    attachments: state.value.attachments.map((attachment) => ({
+        type: attachment.data.oneofKind,
+        documentId: attachment.data.oneofKind === 'document' ? attachment.data.document.id : null,
+    })),
+    selectedEmailId: selectedEmail.value?.id ?? null,
+}));
+
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(formSnapshot);
+
 function resetForm(): void {
     if (selectedThread.value) {
         if (state.value.title === '') {
@@ -76,6 +89,8 @@ function resetForm(): void {
             );
         }
     }
+
+    syncSnapshot();
 }
 
 const { data: thread, status } = useLazyAsyncData(
@@ -207,7 +222,7 @@ function onCreate(item: string): void {
     state.value.recipients.push({ label: email });
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (!selectedEmail.value?.id) return;
 
@@ -219,6 +234,12 @@ const editorRef = useTemplateRef('editorRef');
 
 const confirmModal = overlay.create(ConfirmModal);
 const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
+
+async function closeThread(): Promise<void> {
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
@@ -232,13 +253,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                 </template>
 
                 <template #leading>
-                    <UButton
-                        class="-ms-1.5"
-                        icon="i-mdi-close"
-                        color="neutral"
-                        variant="ghost"
-                        @click="$emit('close', false)"
-                    />
+                    <UButton class="-ms-1.5" icon="i-mdi-close" color="neutral" variant="ghost" @click="closeThread" />
                 </template>
             </UDashboardNavbar>
 

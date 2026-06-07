@@ -72,8 +72,8 @@ const { refresh, status, error } = useLazyAsyncData(
     { immediate: false },
 );
 
-watchDebounced(currentDate.value, async () => refresh(), { debounce: 100, maxWait: 1000 });
-watchDebounced(activeCalendarIds, async () => refresh());
+useDebouncedRefresh(currentDate.value, refresh, { debounce: 100, maxWait: 1000 });
+useDebouncedRefresh(activeCalendarIds, refresh);
 
 function formatStartEndTime(entry: CalendarEntry): string {
     const start = toDate(entry.startTime);
@@ -239,7 +239,7 @@ async function resetToToday(): Promise<void> {
     calRef.value?.calRef?.focusDate(new Date());
 }
 
-const loadingState = ref(false);
+const loadingState = ref<boolean>(false);
 watch(status, () => {
     if (isRequestPending(status.value)) {
         loadingState.value = true;

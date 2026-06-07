@@ -54,7 +54,7 @@ const orderedUnits = computed(() => unitOrder.filter((unit) => activeUnits.value
 const unitOptions = computed(() => activeUnits.value.map((unit) => ({ value: unit })));
 
 const selectedUnit = ref<DurationUnit>(activeUnits.value[0] ?? 'minute');
-const isInternalSingleValueUpdate = ref(false);
+const isInternalSingleValueUpdate = ref<boolean>(false);
 watch(
     activeUnits,
     (units) => {

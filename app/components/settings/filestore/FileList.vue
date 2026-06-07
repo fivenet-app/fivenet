@@ -209,7 +209,10 @@ function goBackDirectory(): void {
     query.prefix = parts.length > 0 ? parts.join('/') + '/' : '';
 }
 
-watchDebounced(query, async () => (await formRef.value?.validate({})) && refresh(), { debounce: 200, maxWait: 1250 });
+useFormValidatedDebouncedRefresh(query, () => formRef.value?.validate({}), refresh, {
+    debounce: 200,
+    maxWait: 1250,
+});
 
 const formRef = useTemplateRef('formRef');
 

@@ -37,7 +37,11 @@ const state = reactive<Schema>({
     maxReminderCount: 1,
 });
 
-watch(reminderTime, () => (state.reminderTime = reminderTime.value ? toDate(reminderTime.value) : undefined));
+const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state);
+
+watch(reminderTime, () => {
+    state.reminderTime = reminderTime.value ? toDate(reminderTime.value) : undefined;
+});
 
 async function setDocumentReminder(values: Schema): Promise<SetDocumentReminderResponse> {
     try {
@@ -66,7 +70,7 @@ async function setDocumentReminder(values: Schema): Promise<SetDocumentReminderR
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await setDocumentReminder(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -76,18 +80,27 @@ const today = new Date();
 const yesterday = subDays(today, 1);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeDrawer(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
     <UDrawer
         :overlay="false"
-        :close="{ onClick: () => $emit('close', false) }"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+        :close="{ onClick: closeDrawer }"
         :ui="{ container: 'flex-1', content: 'min-h-[275px]', title: 'flex flex-row gap-2 justify-between', body: 'h-full' }"
     >
         <template #title>
             <span>{{ $t('common.reminder', 2) }}</span>
 
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
+            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="closeDrawer" />
         </template>
 
         <template #body>
@@ -124,7 +137,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeDrawer"
+                />
 
                 <UButton
                     class="flex-1"

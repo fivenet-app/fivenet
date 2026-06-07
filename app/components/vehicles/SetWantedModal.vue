@@ -29,6 +29,8 @@ const state = reactive<Schema>({
     reason: '',
 });
 
+const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state);
+
 async function setWantedState(values: Schema): Promise<void> {
     const vProps: VehicleProps = {
         plate: props.plate,
@@ -57,17 +59,46 @@ async function setWantedState(values: Schema): Promise<void> {
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await setWantedState(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emits('close', false);
+}
 </script>
 
 <template>
-    <UModal :title="vehicleProps?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')">
+    <UModal
+        :title="vehicleProps?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">
+                    {{ vehicleProps?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted') }}
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
@@ -78,7 +109,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     class="flex-1"

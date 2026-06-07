@@ -164,7 +164,7 @@ const state = reactive<Schema>({
     },
 });
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') return;
 
@@ -191,6 +191,11 @@ const schemaEditor = ref<TemplateRequirements>({
         max: 0,
     },
 });
+
+const { syncSnapshot } = useSnapshotChanges(() => ({
+    state,
+    schemaEditor: schemaEditor.value,
+}));
 
 const accessTypes: AccessType[] = [{ label: t('common.job', 2), value: 'job' }];
 const contentAccessTypes: AccessType[] = [
@@ -219,7 +224,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
             color: values.color,
             icon: values.icon,
             contentTitle: values.contentTitle,
-            // Handle templates as raw HTML content
+            // Handle templates as raw HTML content instead of TipTap JSON
             content: values.content ?? '',
             state: values.contentState,
             schema: {
@@ -397,6 +402,8 @@ function setValuesFromTemplate(tpl: Template): void {
     schemaEditor.value.documents = tpl.schema?.requirements?.documents;
 
     schemaEditor.value.vehicles = tpl.schema?.requirements?.vehicles;
+
+    syncSnapshot();
 }
 
 const extensions = [TemplateVar.configure(), TemplateBlock.configure()];
@@ -437,6 +444,7 @@ onBeforeMount(async () => {
     }
 
     findCategories();
+    syncSnapshot();
 });
 
 const items = computed(() => [

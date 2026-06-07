@@ -36,6 +36,8 @@ const state = reactive<Schema>({
     status: props.status ?? StatusDispatch.NEW,
 });
 
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
+
 async function updateDispatchStatus(dispatchId: number, values: Schema): Promise<void> {
     try {
         const call = centrumDispatchesClient.updateDispatchStatus({
@@ -59,7 +61,7 @@ async function updateDispatchStatus(dispatchId: number, values: Schema): Promise
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await updateDispatchStatus(props.dispatchId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -67,6 +69,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 watch(props, () => {
     state.status = props.status ?? StatusDispatch.NEW;
+    syncSnapshot();
 });
 
 function updateReasonField(value: string): void {
@@ -76,12 +79,42 @@ function updateReasonField(value: string): void {
 }
 
 const formRef = useTemplateRef('formRef');
+
+async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 </script>
 
 <template>
-    <UModal :title="$t('components.dispatch.update_dispatch_status.title')" :overlay="false">
-        <template #actions>
-            <IDCopyBadge :id="dispatchId" class="ml-2" prefix="DSP" />
+    <UModal
+        :title="$t('components.dispatch.update_dispatch_status.title')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+        :overlay="false"
+    >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                    <h3 class="font-semibold text-highlighted">
+                        {{ $t('components.dispatch.update_dispatch_status.title') }}
+                    </h3>
+
+                    <IDCopyBadge :id="dispatchId" prefix="DSP" />
+                </div>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :disabled="!canSubmit"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
+            </div>
         </template>
 
         <template #body>
@@ -179,7 +212,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    block
+                    :disabled="!canSubmit"
+                    :label="$t('common.close', 1)"
+                    @click="closeModal"
+                />
 
                 <UButton
                     class="flex-1"

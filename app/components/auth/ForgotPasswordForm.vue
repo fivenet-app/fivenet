@@ -58,7 +58,7 @@ async function forgotPassword(values: Schema): Promise<void> {
     }
 }
 
-const passwordVisibility = ref(false);
+const passwordVisibility = ref<boolean>(false);
 
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;

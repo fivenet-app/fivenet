@@ -103,7 +103,7 @@ async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsRe
     }
 }
 
-watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
+useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
 
 function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
     const colleague = data.value?.colleagues.find((c) => c.userId === value.userId);
