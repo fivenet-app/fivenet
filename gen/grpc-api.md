@@ -5530,6 +5530,7 @@ Dummy - DO NOT USE!
 | `icon` | [IconMarker](#resourceslivemapmarkersIconMarker) |  |  |
 | `rectangle` | [RectangleMarker](#resourceslivemapmarkersRectangleMarker) |  |  |
 | `polygon` | [PolygonMarker](#resourceslivemapmarkersPolygonMarker) |  |  |
+| `polyline` | [PolylineMarker](#resourceslivemapmarkersPolylineMarker) |  |  |
 
 
 
@@ -5567,20 +5568,19 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `points` | [PolygonPoint](#resourceslivemapmarkersPolygonPoint) | repeated |  |
+| `points` | [resources.livemap.Coords](#resourceslivemapCoords) | repeated |  |
 | `opacity` | [float](#float) | optional |  |
 
 
 
 
 
-### resources.livemap.markers.PolygonPoint
+### resources.livemap.markers.PolylineMarker
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `x` | [double](#double) |  |  |
-| `y` | [double](#double) |  |  |
+| `points` | [resources.livemap.Coords](#resourceslivemapCoords) | repeated |  |
 
 
 
@@ -5611,6 +5611,7 @@ Dummy - DO NOT USE!
 | `MARKER_TYPE_ICON` | 3 |  |
 | `MARKER_TYPE_RECTANGLE` | 4 |  |
 | `MARKER_TYPE_POLYGON` | 5 |  |
+| `MARKER_TYPE_POLYLINE` | 6 |  |
 
 
  <!-- end enums -->

@@ -6,12 +6,12 @@ import ColorPicker from '~/components/partials/ColorPicker.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
-import { type MarkerMarker, MarkerType, type PolygonPoint } from '~~/gen/ts/resources/livemap/markers/marker_marker';
-import type { Coordinate } from '~~/shared/types/types';
+import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import InputDatePicker from '../partials/InputDatePicker.vue';
+import type { Coords } from '~~/gen/ts/resources/livemap/coords.js';
 
 const props = defineProps<{
-    location?: Coordinate;
+    location?: Coords;
     marker?: MarkerMarker;
 }>();
 
@@ -31,9 +31,12 @@ const markerTypes = [
     { icon: 'i-mdi-emoticon', value: MarkerType.ICON },
     { icon: 'i-mdi-vector-rectangle', value: MarkerType.RECTANGLE },
     { icon: 'i-mdi-vector-polygon', value: MarkerType.POLYGON },
+    { icon: 'i-mdi-vector-polyline', value: MarkerType.POLYLINE },
 ];
 
-function clonePolygonPointsPlain(points?: PolygonPoint[]): PolygonPoint[] {
+type ShapePointsKind = 'polygon' | 'polyline';
+
+function clonePoints(points?: Coords[]): Coords[] {
     if (!points) return [];
     return points.map((point) => ({ x: point.x, y: point.y }));
 }
@@ -43,11 +46,18 @@ function cloneDataPlain<T>(value: T): T {
 }
 
 function resolveInitialMarkerType(marker?: MarkerMarker): MarkerType {
-    const kind = marker?.data?.data.oneofKind;
-    if (kind === 'circle') return MarkerType.CIRCLE;
-    if (kind === 'icon') return MarkerType.ICON;
-    if (kind === 'rectangle') return MarkerType.RECTANGLE;
-    if (kind === 'polygon') return MarkerType.POLYGON;
+    switch (marker?.data?.data.oneofKind) {
+        case 'circle':
+            return MarkerType.CIRCLE;
+        case 'icon':
+            return MarkerType.ICON;
+        case 'rectangle':
+            return MarkerType.RECTANGLE;
+        case 'polygon':
+            return MarkerType.POLYGON;
+        case 'polyline':
+            return MarkerType.POLYLINE;
+    }
 
     if (marker?.type !== undefined && marker.type !== MarkerType.UNSPECIFIED) {
         return marker.type;
@@ -56,13 +66,70 @@ function resolveInitialMarkerType(marker?: MarkerMarker): MarkerType {
     return MarkerType.CIRCLE;
 }
 
+function getInitialCircleRadius(marker?: MarkerMarker): number {
+    if (marker?.data?.data.oneofKind === 'circle' && marker.data.data.circle.radius) return marker.data.data.circle.radius;
+    return 50;
+}
+
+function getInitialCircleOpacity(marker?: MarkerMarker): number {
+    if (marker?.data?.data.oneofKind === 'circle' && marker.data.data.circle.opacity) return marker.data.data.circle.opacity;
+    return 15;
+}
+
+function getInitialRectangleEndX(marker?: MarkerMarker, initialX = 0): number {
+    if (marker?.data?.data.oneofKind === 'rectangle' && marker.data.data.rectangle.endX !== undefined) {
+        return marker.data.data.rectangle.endX;
+    }
+    return initialX + 75;
+}
+
+function getInitialRectangleEndY(marker?: MarkerMarker, initialY = 0): number {
+    if (marker?.data?.data.oneofKind === 'rectangle' && marker.data.data.rectangle.endY !== undefined) {
+        return marker.data.data.rectangle.endY;
+    }
+    return initialY + 75;
+}
+
+function getInitialShapeOpacity(marker?: MarkerMarker): number {
+    if (marker?.data?.data.oneofKind === 'rectangle') return marker.data.data.rectangle.opacity ?? 15;
+    if (marker?.data?.data.oneofKind === 'polygon') return marker.data.data.polygon.opacity ?? 15;
+    return 15;
+}
+
+function getInitialPolygonPoints(marker?: MarkerMarker, fallback: Coords[] = []): Coords[] {
+    if (marker?.data?.data.oneofKind === 'polygon' && marker.data.data.polygon.points.length >= 2) {
+        return clonePoints(marker.data.data.polygon.points);
+    }
+    return clonePoints(fallback);
+}
+
+function getInitialPolylinePoints(marker?: MarkerMarker, fallback: Coords[] = []): Coords[] {
+    if (marker?.data?.data.oneofKind === 'polyline' && marker.data.data.polyline.points.length >= 2) {
+        return clonePoints(marker.data.data.polyline.points);
+    }
+    return clonePoints(fallback);
+}
+
+function getInitialIcon(marker?: MarkerMarker): string {
+    if (marker?.data?.data.oneofKind === 'icon' && marker.data.data.icon.icon) return marker.data.data.icon.icon;
+    return HelpIcon.name ?? 'i-mdi-help';
+}
+
 const defaultExpiresAt = ref<Date>(new Date());
 defaultExpiresAt.value.setTime(defaultExpiresAt.value.getTime() + 1 * 60 * 60 * 1000);
+
 const initialX = props.marker?.x ?? props.location?.x ?? storeLocation.value?.x ?? 0;
 const initialY = props.marker?.y ?? props.location?.y ?? storeLocation.value?.y ?? 0;
-const defaultPolygonPoints: PolygonPoint[] = [
+
+const defaultPolygonPoints: Coords[] = [
     { x: initialX + 75, y: initialY },
     { x: initialX + 35, y: initialY + 75 },
+];
+
+const defaultPolylinePoints: Coords[] = [
+    { x: initialX + 75, y: initialY },
+    { x: initialX + 35, y: initialY + 75 },
+    { x: initialX + 70, y: initialY + 150 },
 ];
 
 const schema = z.object({
@@ -82,6 +149,10 @@ const schema = z.object({
         .array(z.object({ x: z.coerce.number(), y: z.coerce.number() }))
         .min(2)
         .max(18),
+    polylinePoints: z
+        .array(z.object({ x: z.coerce.number(), y: z.coerce.number() }))
+        .min(2)
+        .max(18),
     icon: z.string().max(128).optional(),
 });
 
@@ -95,43 +166,55 @@ const state = reactive<Schema>({
     x: initialX,
     y: initialY,
     markerType: resolveInitialMarkerType(props.marker),
-    circleRadius:
-        props.marker?.data?.data.oneofKind === 'circle' && props.marker?.data?.data.circle.radius
-            ? props.marker?.data?.data.circle.radius
-            : 50,
-    circleOpacity:
-        props.marker?.data?.data.oneofKind === 'circle' && props.marker?.data?.data.circle.opacity
-            ? props.marker?.data?.data.circle.opacity
-            : 15,
-    rectangleEndX:
-        props.marker?.data?.data.oneofKind === 'rectangle' && props.marker?.data?.data.rectangle.endX
-            ? props.marker?.data?.data.rectangle.endX
-            : initialX + 75,
-    rectangleEndY:
-        props.marker?.data?.data.oneofKind === 'rectangle' && props.marker?.data?.data.rectangle.endY
-            ? props.marker?.data?.data.rectangle.endY
-            : initialY + 75,
-    shapeOpacity:
-        props.marker?.data?.data.oneofKind === 'rectangle' && props.marker?.data?.data.rectangle.opacity
-            ? props.marker?.data?.data.rectangle.opacity
-            : props.marker?.data?.data.oneofKind === 'polygon' && props.marker?.data?.data.polygon.opacity
-              ? props.marker?.data?.data.polygon.opacity
-              : 15,
-    polygonPoints:
-        props.marker?.data?.data.oneofKind === 'polygon' && props.marker?.data?.data.polygon.points.length >= 2
-            ? clonePolygonPointsPlain(props.marker?.data?.data.polygon.points)
-            : clonePolygonPointsPlain(defaultPolygonPoints),
-    icon:
-        props.marker?.data?.data.oneofKind === 'icon' && props.marker?.data?.data.icon.icon
-            ? props.marker?.data?.data.icon.icon
-            : HelpIcon.name,
+    circleRadius: getInitialCircleRadius(props.marker),
+    circleOpacity: getInitialCircleOpacity(props.marker),
+    rectangleEndX: getInitialRectangleEndX(props.marker, initialX),
+    rectangleEndY: getInitialRectangleEndY(props.marker, initialY),
+    shapeOpacity: getInitialShapeOpacity(props.marker),
+    polygonPoints: getInitialPolygonPoints(props.marker, defaultPolygonPoints),
+    polylinePoints: getInitialPolylinePoints(props.marker, defaultPolylinePoints),
+    icon: getInitialIcon(props.marker),
 });
 
+const isPointShape = computed<boolean>(
+    () => state.markerType === MarkerType.POLYGON || state.markerType === MarkerType.POLYLINE,
+);
+const currentShapePoints = computed<Coords[]>(() => getShapePoints());
+const currentShapeFieldName = computed<string>(() =>
+    state.markerType === MarkerType.POLYLINE ? 'polylinePoints' : 'polygonPoints',
+);
+
+const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state, {
+    serializer: (value) =>
+        JSON.stringify({
+            name: value.name,
+            description: value.description ?? '',
+            expiresAt: value.expiresAt ? value.expiresAt.toISOString() : '',
+            color: value.color,
+            x: value.x,
+            y: value.y,
+            markerType: value.markerType,
+            circleRadius: value.circleRadius,
+            circleOpacity: value.circleOpacity ?? null,
+            rectangleEndX: value.rectangleEndX,
+            rectangleEndY: value.rectangleEndY,
+            shapeOpacity: value.shapeOpacity ?? null,
+            polygonPoints: value.polygonPoints.map((point) => ({ x: point.x, y: point.y })),
+            polylinePoints: value.polylinePoints.map((point) => ({ x: point.x, y: point.y })),
+            icon: value.icon ?? '',
+        }),
+});
+
+function getShapePoints(): Coords[] {
+    return state.markerType === MarkerType.POLYLINE ? state.polylinePoints : state.polygonPoints;
+}
+
 const isPickingCoordinates = computed<boolean>(() => markerCoordPickerActive.value === true);
-const rectangleSelectionAwaitingEnd = ref(false);
-const polygonSelectionIndex = ref<number | undefined>(undefined);
-const polygonVertexEditIndex = ref<number | undefined>(undefined);
-const saved = ref(false);
+const rectangleSelectionAwaitingEnd = ref<boolean>(false);
+const shapeSelectionIndex = ref<number | undefined>(undefined);
+const shapeVertexEditIndex = ref<number | undefined>(undefined);
+
+const saved = ref<boolean>(false);
 const previewTarget = computed<MarkerMarker | undefined>(() =>
     props.marker?.id ? markersMarkers.value.get(props.marker.id) : undefined,
 );
@@ -151,12 +234,12 @@ const coordinatePickerHint = computed<string | undefined>(() => {
         return rectangleSelectionAwaitingEnd.value ? '2/2' : '1/2';
     }
 
-    if (state.markerType === MarkerType.POLYGON) {
-        if (polygonVertexEditIndex.value !== undefined) {
-            return `V${polygonVertexEditIndex.value + 1}`;
+    if (isPointShape.value) {
+        if (shapeVertexEditIndex.value !== undefined) {
+            return `V${shapeVertexEditIndex.value + 1}`;
         }
-        const index = polygonSelectionIndex.value ?? 0;
-        const total = state.polygonPoints.length + 1;
+        const index = shapeSelectionIndex.value ?? 0;
+        const total = getShapePoints().length + 1;
         return `${Math.min(index + 1, total)}/${total}`;
     }
 
@@ -165,8 +248,8 @@ const coordinatePickerHint = computed<string | undefined>(() => {
 
 function resetCoordinatePickingProgress(): void {
     rectangleSelectionAwaitingEnd.value = false;
-    polygonSelectionIndex.value = undefined;
-    polygonVertexEditIndex.value = undefined;
+    shapeSelectionIndex.value = undefined;
+    shapeVertexEditIndex.value = undefined;
 }
 
 function stopCoordinatePicking(): void {
@@ -200,30 +283,40 @@ watch([() => state.rectangleEndX, () => state.rectangleEndY, () => state.shapeOp
     previewTarget.value.data.data.rectangle.opacity = opacity;
 });
 
+function syncPointShapePreview(kind: ShapePointsKind, points: Coords[]): void {
+    const data = previewTarget.value?.data?.data;
+    if (!data) return;
+
+    if (kind === 'polygon') {
+        if (data.oneofKind !== 'polygon') return;
+        data.polygon.points = clonePoints(toRaw(points));
+    } else {
+        if (data.oneofKind !== 'polyline') return;
+        data.polyline.points = clonePoints(toRaw(points));
+    }
+}
+
 watch(
     () => state.polygonPoints,
-    (points) => {
-        if (
-            !previewTarget.value ||
-            state.markerType !== MarkerType.POLYGON ||
-            previewTarget.value.data?.data.oneofKind !== 'polygon'
-        )
-            return;
-        previewTarget.value.data.data.polygon.points = clonePolygonPointsPlain(toRaw(points));
-    },
+    (points) => syncPointShapePreview('polygon', points),
+    { deep: true },
+);
+
+watch(
+    () => state.polylinePoints,
+    (points) => syncPointShapePreview('polyline', points),
     { deep: true },
 );
 
 watch(
     () => state.shapeOpacity,
     (opacity) => {
-        if (
-            !previewTarget.value ||
-            state.markerType !== MarkerType.POLYGON ||
-            previewTarget.value.data?.data.oneofKind !== 'polygon'
-        )
-            return;
-        previewTarget.value.data.data.polygon.opacity = opacity;
+        if (!previewTarget.value || previewTarget.value.data?.data.oneofKind === 'polyline') return;
+        if (previewTarget.value.data?.data.oneofKind === 'rectangle') {
+            previewTarget.value.data.data.rectangle.opacity = opacity;
+        } else if (previewTarget.value.data?.data.oneofKind === 'polygon') {
+            previewTarget.value.data.data.polygon.opacity = opacity;
+        }
     },
 );
 
@@ -247,13 +340,15 @@ watch(
             return;
         }
 
-        if (state.markerType === MarkerType.POLYGON) {
-            if (polygonVertexEditIndex.value !== undefined) {
-                if (polygonVertexEditIndex.value === 0) {
+        if (isPointShape.value) {
+            const points = getShapePoints();
+
+            if (shapeVertexEditIndex.value !== undefined) {
+                if (shapeVertexEditIndex.value === 0) {
                     state.x = val.x;
                     state.y = val.y;
-                } else if (polygonVertexEditIndex.value - 1 < state.polygonPoints.length) {
-                    state.polygonPoints[polygonVertexEditIndex.value - 1] = {
+                } else if (shapeVertexEditIndex.value - 1 < points.length) {
+                    points[shapeVertexEditIndex.value - 1] = {
                         x: val.x,
                         y: val.y,
                     };
@@ -263,13 +358,13 @@ watch(
                 return;
             }
 
-            const currentIndex = polygonSelectionIndex.value ?? 0;
-            const totalPoints = state.polygonPoints.length + 1;
+            const currentIndex = shapeSelectionIndex.value ?? 0;
+            const totalPoints = points.length + 1;
             if (currentIndex === 0) {
                 state.x = val.x;
                 state.y = val.y;
-            } else if (currentIndex - 1 < state.polygonPoints.length) {
-                state.polygonPoints[currentIndex - 1] = {
+            } else if (currentIndex - 1 < points.length) {
+                points[currentIndex - 1] = {
                     x: val.x,
                     y: val.y,
                 };
@@ -279,7 +374,7 @@ watch(
             if (nextIndex >= totalPoints) {
                 stopCoordinatePicking();
             } else {
-                polygonSelectionIndex.value = nextIndex;
+                shapeSelectionIndex.value = nextIndex;
             }
             return;
         }
@@ -306,8 +401,8 @@ function toggleCoordinatePicker(): void {
     resetCoordinatePickingProgress();
     if (state.markerType === MarkerType.RECTANGLE) {
         showLocationMarker.value = false;
-    } else if (state.markerType === MarkerType.POLYGON) {
-        polygonSelectionIndex.value = 0;
+    } else if (isPointShape.value) {
+        shapeSelectionIndex.value = 0;
         showLocationMarker.value = false;
     } else {
         storeLocation.value = { x: state.x, y: state.y };
@@ -315,27 +410,86 @@ function toggleCoordinatePicker(): void {
     }
 }
 
-function beginPolygonVertexEdit(index: number): void {
-    if (index < 0 || index > state.polygonPoints.length) return;
+function beginShapeVertexEdit(index: number): void {
+    if (index < 0 || index > getShapePoints().length) return;
     resetCoordinatePickingProgress();
-    polygonVertexEditIndex.value = index;
+    shapeVertexEditIndex.value = index;
     markerCoordPickerActive.value = true;
     showLocationMarker.value = false;
 }
 
-function addPolygonPoint(): void {
-    if (state.polygonPoints.length >= 18) return;
-    const source = state.polygonPoints[state.polygonPoints.length - 1] ?? { x: state.x, y: state.y };
-    state.polygonPoints.push({
+function addShapePoint(): void {
+    const points = getShapePoints();
+    if (points.length >= 18) return;
+
+    const source = points[points.length - 1] ?? { x: state.x, y: state.y };
+    points.push({
         x: source.x + 25,
         y: source.y + 25,
     });
 }
 
-function removePolygonPoint(index: number): void {
-    if (state.polygonPoints.length <= 2) return;
-    polygonVertexEditIndex.value = undefined;
-    state.polygonPoints.splice(index, 1);
+function removeShapePoint(index: number): void {
+    const points = getShapePoints();
+    if (points.length <= 2) return;
+    shapeVertexEditIndex.value = undefined;
+    points.splice(index, 1);
+}
+
+function createMarkerData(values: Schema): MarkerMarker['data'] | undefined {
+    switch (values.markerType) {
+        case MarkerType.CIRCLE:
+            return {
+                data: {
+                    oneofKind: 'circle',
+                    circle: {
+                        radius: values.circleRadius,
+                        opacity: values.circleOpacity ?? 3,
+                    },
+                },
+            };
+        case MarkerType.ICON:
+            return {
+                data: {
+                    oneofKind: 'icon',
+                    icon: {
+                        icon: values.icon ?? 'i-mdi-help',
+                    },
+                },
+            };
+        case MarkerType.RECTANGLE:
+            return {
+                data: {
+                    oneofKind: 'rectangle',
+                    rectangle: {
+                        endX: values.rectangleEndX,
+                        endY: values.rectangleEndY,
+                        opacity: values.shapeOpacity ?? 15,
+                    },
+                },
+            };
+        case MarkerType.POLYGON:
+            return {
+                data: {
+                    oneofKind: 'polygon',
+                    polygon: {
+                        points: clonePoints(values.polygonPoints),
+                        opacity: values.shapeOpacity ?? 15,
+                    },
+                },
+            };
+        case MarkerType.POLYLINE:
+            return {
+                data: {
+                    oneofKind: 'polyline',
+                    polyline: {
+                        points: clonePoints(values.polylinePoints),
+                    },
+                },
+            };
+        default:
+            return undefined;
+    }
 }
 
 async function createOrUpdateMarker(values: Schema): Promise<void> {
@@ -354,49 +508,8 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
             color: values.color,
             expiresAt: expiresAt,
             type: values.markerType,
+            data: createMarkerData(values),
         };
-
-        if (values.markerType === MarkerType.CIRCLE) {
-            marker.data = {
-                data: {
-                    oneofKind: 'circle',
-                    circle: {
-                        radius: values.circleRadius,
-                        opacity: values.circleOpacity ?? 3,
-                    },
-                },
-            };
-        } else if (values.markerType === MarkerType.ICON) {
-            marker.data = {
-                data: {
-                    oneofKind: 'icon',
-                    icon: {
-                        icon: values.icon ?? 'i-mdi-help',
-                    },
-                },
-            };
-        } else if (values.markerType === MarkerType.RECTANGLE) {
-            marker.data = {
-                data: {
-                    oneofKind: 'rectangle',
-                    rectangle: {
-                        endX: values.rectangleEndX,
-                        endY: values.rectangleEndY,
-                        opacity: values.shapeOpacity ?? 15,
-                    },
-                },
-            };
-        } else if (values.markerType === MarkerType.POLYGON) {
-            marker.data = {
-                data: {
-                    oneofKind: 'polygon',
-                    polygon: {
-                        points: values.polygonPoints,
-                        opacity: values.shapeOpacity ?? 15,
-                    },
-                },
-            };
-        }
 
         const call = livemapLivemapClient.createOrUpdateMarker({
             marker,
@@ -415,13 +528,19 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
     }
 }
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await createOrUpdateMarker(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+async function closeSlideover(): Promise<void> {
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
+    emit('close', false);
+}
 
 onBeforeUnmount(() => {
     stopCoordinatePicking();
@@ -439,7 +558,8 @@ onBeforeUnmount(() => {
         :title="!marker ? $t('components.livemap.create_marker.title') : $t('components.livemap.update_marker.title')"
         :overlay="false"
         :modal="false"
-        :dismissible="!isPickingCoordinates"
+        :close="{ onClick: closeSlideover }"
+        :dismissible="!isPickingCoordinates && !hasUnsavedChanges"
         :ui="{ content: isPickingCoordinates ? 'max-w-sm' : 'max-w-xl' }"
     >
         <template #body>
@@ -682,10 +802,7 @@ onBeforeUnmount(() => {
                         </dd>
                     </div>
 
-                    <div
-                        v-if="state.markerType === MarkerType.POLYGON"
-                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-                    >
+                    <div v-if="isPointShape" class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
                             <label class="block text-sm leading-6 font-medium">
                                 {{ $t('common.points', 2) }}
@@ -703,25 +820,25 @@ onBeforeUnmount(() => {
                                         size="xs"
                                         :label="$t('common.select')"
                                         type="button"
-                                        @click="beginPolygonVertexEdit(0)"
+                                        @click="beginShapeVertexEdit(0)"
                                     />
                                 </div>
                                 <div class="grid grid-cols-2 gap-2">
-                                    <UFormField name="x">
+                                    <UFormField :name="`${currentShapeFieldName}.0.x`">
                                         <UInputNumber
                                             v-model="state.x"
                                             class="w-full"
-                                            name="polygonStartX"
+                                            :name="`${currentShapeFieldName}.0.x`"
                                             :step="0.00001"
                                             :placeholder="$t('common.longitude')"
                                         />
                                     </UFormField>
 
-                                    <UFormField name="y">
+                                    <UFormField :name="`${currentShapeFieldName}.0.y`">
                                         <UInputNumber
                                             v-model="state.y"
                                             class="w-full"
-                                            name="polygonStartY"
+                                            :name="`${currentShapeFieldName}.0.y`"
                                             :step="0.00001"
                                             :placeholder="$t('common.latitude')"
                                         />
@@ -730,8 +847,8 @@ onBeforeUnmount(() => {
                             </div>
 
                             <div
-                                v-for="(point, idx) in state.polygonPoints"
-                                :key="`poly-point-${idx}`"
+                                v-for="(point, idx) in currentShapePoints"
+                                :key="`${currentShapeFieldName}-${idx}`"
                                 class="rounded-md border border-default p-2"
                             >
                                 <div class="mb-1 flex items-center justify-between text-xs text-dimmed">
@@ -744,7 +861,7 @@ onBeforeUnmount(() => {
                                             size="xs"
                                             :label="$t('common.select')"
                                             type="button"
-                                            @click="beginPolygonVertexEdit(idx + 1)"
+                                            @click="beginShapeVertexEdit(idx + 1)"
                                         />
                                         <UButton
                                             color="error"
@@ -752,28 +869,28 @@ onBeforeUnmount(() => {
                                             icon="i-mdi-delete"
                                             size="xs"
                                             type="button"
-                                            :disabled="state.polygonPoints.length <= 2"
-                                            @click="removePolygonPoint(idx)"
+                                            :disabled="currentShapePoints.length <= 2"
+                                            @click="removeShapePoint(idx)"
                                         />
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-2">
-                                    <UFormField :name="`polygonPoints.${idx}.x`">
+                                    <UFormField :name="`${currentShapeFieldName}.${idx + 1}.x`">
                                         <UInputNumber
                                             v-model="point.x"
                                             class="w-full"
-                                            :name="`polygonPoints.${idx}.x`"
+                                            :name="`${currentShapeFieldName}.${idx + 1}.x`"
                                             :step="0.00001"
                                             :placeholder="$t('common.longitude')"
                                         />
                                     </UFormField>
 
-                                    <UFormField :name="`polygonPoints.${idx}.y`">
+                                    <UFormField :name="`${currentShapeFieldName}.${idx + 1}.y`">
                                         <UInputNumber
                                             v-model="point.y"
                                             class="w-full"
-                                            :name="`polygonPoints.${idx}.y`"
+                                            :name="`${currentShapeFieldName}.${idx + 1}.y`"
                                             :step="0.00001"
                                             :placeholder="$t('common.latitude')"
                                         />
@@ -786,8 +903,8 @@ onBeforeUnmount(() => {
                                 icon="i-mdi-plus"
                                 variant="soft"
                                 type="button"
-                                :disabled="state.polygonPoints.length >= 18"
-                                @click="addPolygonPoint"
+                                :disabled="currentShapePoints.length >= 18"
+                                @click="addShapePoint"
                             />
                         </dd>
                     </div>
@@ -819,7 +936,7 @@ onBeforeUnmount(() => {
                     @click="formRef?.submit()"
                 />
 
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="closeSlideover" />
             </UFieldGroup>
         </template>
     </USlideover>

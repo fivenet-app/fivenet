@@ -5,6 +5,7 @@ package resources.livemap.markers;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/livemap/coords.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
@@ -18,6 +19,7 @@ enum MarkerType {
   MARKER_TYPE_ICON = 3;
   MARKER_TYPE_RECTANGLE = 4;
   MARKER_TYPE_POLYGON = 5;
+  MARKER_TYPE_POLYLINE = 6;
 }
 
 message MarkerMarker {
@@ -82,6 +84,7 @@ message MarkerData {
     IconMarker icon = 4;
     RectangleMarker rectangle = 5;
     PolygonMarker polygon = 6;
+    PolylineMarker polyline = 7;
   }
 }
 
@@ -112,18 +115,20 @@ message RectangleMarker {
   }];
 }
 
-message PolygonPoint {
-  double x = 1;
-  double y = 2;
-}
-
 message PolygonMarker {
-  repeated PolygonPoint points = 1 [(buf.validate.field).repeated = {
+  repeated Coords points = 1 [(buf.validate.field).repeated = {
     min_items: 2
     max_items: 18
   }];
   optional float opacity = 2 [(buf.validate.field).float = {
     gte: 1
     lte: 75
+  }];
+}
+
+message PolylineMarker {
+  repeated Coords points = 1 [(buf.validate.field).repeated = {
+    min_items: 2
+    max_items: 18
   }];
 }

@@ -11,6 +11,7 @@ package livemapmarkers
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	livemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -36,6 +37,7 @@ const (
 	MarkerType_MARKER_TYPE_ICON        MarkerType = 3
 	MarkerType_MARKER_TYPE_RECTANGLE   MarkerType = 4
 	MarkerType_MARKER_TYPE_POLYGON     MarkerType = 5
+	MarkerType_MARKER_TYPE_POLYLINE    MarkerType = 6
 )
 
 // Enum value maps for MarkerType.
@@ -47,6 +49,7 @@ var (
 		3: "MARKER_TYPE_ICON",
 		4: "MARKER_TYPE_RECTANGLE",
 		5: "MARKER_TYPE_POLYGON",
+		6: "MARKER_TYPE_POLYLINE",
 	}
 	MarkerType_value = map[string]int32{
 		"MARKER_TYPE_UNSPECIFIED": 0,
@@ -55,6 +58,7 @@ var (
 		"MARKER_TYPE_ICON":        3,
 		"MARKER_TYPE_RECTANGLE":   4,
 		"MARKER_TYPE_POLYGON":     5,
+		"MARKER_TYPE_POLYLINE":    6,
 	}
 )
 
@@ -479,6 +483,7 @@ type MarkerData struct {
 	//	*MarkerData_Icon
 	//	*MarkerData_Rectangle
 	//	*MarkerData_Polygon
+	//	*MarkerData_Polyline
 	Data          isMarkerData_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -552,6 +557,15 @@ func (x *MarkerData) GetPolygon() *PolygonMarker {
 	return nil
 }
 
+func (x *MarkerData) GetPolyline() *PolylineMarker {
+	if x != nil {
+		if x, ok := x.Data.(*MarkerData_Polyline); ok {
+			return x.Polyline
+		}
+	}
+	return nil
+}
+
 func (x *MarkerData) SetCircle(v *CircleMarker) {
 	if v == nil {
 		x.Data = nil
@@ -582,6 +596,14 @@ func (x *MarkerData) SetPolygon(v *PolygonMarker) {
 		return
 	}
 	x.Data = &MarkerData_Polygon{v}
+}
+
+func (x *MarkerData) SetPolyline(v *PolylineMarker) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &MarkerData_Polyline{v}
 }
 
 func (x *MarkerData) HasData() bool {
@@ -623,6 +645,14 @@ func (x *MarkerData) HasPolygon() bool {
 	return ok
 }
 
+func (x *MarkerData) HasPolyline() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MarkerData_Polyline)
+	return ok
+}
+
 func (x *MarkerData) ClearData() {
 	x.Data = nil
 }
@@ -651,11 +681,18 @@ func (x *MarkerData) ClearPolygon() {
 	}
 }
 
+func (x *MarkerData) ClearPolyline() {
+	if _, ok := x.Data.(*MarkerData_Polyline); ok {
+		x.Data = nil
+	}
+}
+
 const MarkerData_Data_not_set_case case_MarkerData_Data = 0
 const MarkerData_Circle_case case_MarkerData_Data = 3
 const MarkerData_Icon_case case_MarkerData_Data = 4
 const MarkerData_Rectangle_case case_MarkerData_Data = 5
 const MarkerData_Polygon_case case_MarkerData_Data = 6
+const MarkerData_Polyline_case case_MarkerData_Data = 7
 
 func (x *MarkerData) WhichData() case_MarkerData_Data {
 	if x == nil {
@@ -670,6 +707,8 @@ func (x *MarkerData) WhichData() case_MarkerData_Data {
 		return MarkerData_Rectangle_case
 	case *MarkerData_Polygon:
 		return MarkerData_Polygon_case
+	case *MarkerData_Polyline:
+		return MarkerData_Polyline_case
 	default:
 		return MarkerData_Data_not_set_case
 	}
@@ -683,6 +722,7 @@ type MarkerData_builder struct {
 	Icon      *IconMarker
 	Rectangle *RectangleMarker
 	Polygon   *PolygonMarker
+	Polyline  *PolylineMarker
 	// -- end of Data
 }
 
@@ -701,6 +741,9 @@ func (b0 MarkerData_builder) Build() *MarkerData {
 	}
 	if b.Polygon != nil {
 		x.Data = &MarkerData_Polygon{b.Polygon}
+	}
+	if b.Polyline != nil {
+		x.Data = &MarkerData_Polyline{b.Polyline}
 	}
 	return m0
 }
@@ -735,6 +778,10 @@ type MarkerData_Polygon struct {
 	Polygon *PolygonMarker `protobuf:"bytes,6,opt,name=polygon,proto3,oneof"`
 }
 
+type MarkerData_Polyline struct {
+	Polyline *PolylineMarker `protobuf:"bytes,7,opt,name=polyline,proto3,oneof"`
+}
+
 func (*MarkerData_Circle) isMarkerData_Data() {}
 
 func (*MarkerData_Icon) isMarkerData_Data() {}
@@ -742,6 +789,8 @@ func (*MarkerData_Icon) isMarkerData_Data() {}
 func (*MarkerData_Rectangle) isMarkerData_Data() {}
 
 func (*MarkerData_Polygon) isMarkerData_Data() {}
+
+func (*MarkerData_Polyline) isMarkerData_Data() {}
 
 type CircleMarker struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
@@ -978,80 +1027,9 @@ func (b0 RectangleMarker_builder) Build() *RectangleMarker {
 	return m0
 }
 
-type PolygonPoint struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	X             float64                `protobuf:"fixed64,1,opt,name=x,proto3" json:"x,omitempty"`
-	Y             float64                `protobuf:"fixed64,2,opt,name=y,proto3" json:"y,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PolygonPoint) Reset() {
-	*x = PolygonPoint{}
-	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PolygonPoint) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PolygonPoint) ProtoMessage() {}
-
-func (x *PolygonPoint) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *PolygonPoint) GetX() float64 {
-	if x != nil {
-		return x.X
-	}
-	return 0
-}
-
-func (x *PolygonPoint) GetY() float64 {
-	if x != nil {
-		return x.Y
-	}
-	return 0
-}
-
-func (x *PolygonPoint) SetX(v float64) {
-	x.X = v
-}
-
-func (x *PolygonPoint) SetY(v float64) {
-	x.Y = v
-}
-
-type PolygonPoint_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	X float64
-	Y float64
-}
-
-func (b0 PolygonPoint_builder) Build() *PolygonPoint {
-	m0 := &PolygonPoint{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.X = b.X
-	x.Y = b.Y
-	return m0
-}
-
 type PolygonMarker struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Points        []*PolygonPoint        `protobuf:"bytes,1,rep,name=points,proto3" json:"points,omitempty"`
+	Points        []*livemap.Coords      `protobuf:"bytes,1,rep,name=points,proto3" json:"points,omitempty"`
 	Opacity       *float32               `protobuf:"fixed32,2,opt,name=opacity,proto3,oneof" json:"opacity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1059,7 +1037,7 @@ type PolygonMarker struct {
 
 func (x *PolygonMarker) Reset() {
 	*x = PolygonMarker{}
-	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[6]
+	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1071,7 +1049,7 @@ func (x *PolygonMarker) String() string {
 func (*PolygonMarker) ProtoMessage() {}
 
 func (x *PolygonMarker) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[6]
+	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1082,7 +1060,7 @@ func (x *PolygonMarker) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *PolygonMarker) GetPoints() []*PolygonPoint {
+func (x *PolygonMarker) GetPoints() []*livemap.Coords {
 	if x != nil {
 		return x.Points
 	}
@@ -1096,7 +1074,7 @@ func (x *PolygonMarker) GetOpacity() float32 {
 	return 0
 }
 
-func (x *PolygonMarker) SetPoints(v []*PolygonPoint) {
+func (x *PolygonMarker) SetPoints(v []*livemap.Coords) {
 	x.Points = v
 }
 
@@ -1118,7 +1096,7 @@ func (x *PolygonMarker) ClearOpacity() {
 type PolygonMarker_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Points  []*PolygonPoint
+	Points  []*livemap.Coords
 	Opacity *float32
 }
 
@@ -1131,11 +1109,68 @@ func (b0 PolygonMarker_builder) Build() *PolygonMarker {
 	return m0
 }
 
+type PolylineMarker struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Points        []*livemap.Coords      `protobuf:"bytes,1,rep,name=points,proto3" json:"points,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolylineMarker) Reset() {
+	*x = PolylineMarker{}
+	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolylineMarker) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolylineMarker) ProtoMessage() {}
+
+func (x *PolylineMarker) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PolylineMarker) GetPoints() []*livemap.Coords {
+	if x != nil {
+		return x.Points
+	}
+	return nil
+}
+
+func (x *PolylineMarker) SetPoints(v []*livemap.Coords) {
+	x.Points = v
+}
+
+type PolylineMarker_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Points []*livemap.Coords
+}
+
+func (b0 PolylineMarker_builder) Build() *PolylineMarker {
+	m0 := &PolylineMarker{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Points = b.Points
+	return m0
+}
+
 var File_resources_livemap_markers_marker_marker_proto protoreflect.FileDescriptor
 
 const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\n" +
-	"-resources/livemap/markers/marker_marker.proto\x12\x19resources.livemap.markers\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xe7\a\n" +
+	"-resources/livemap/markers/marker_marker.proto\x12\x19resources.livemap.markers\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1eresources/livemap/coords.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x99\a\n" +
 	"\fMarkerMarker\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\f\n" +
 	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
@@ -1147,18 +1182,18 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\n" +
 	"expires_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\texpiresAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\tdeletedAt\x88\x01\x01\x12$\n" +
-	"\x04name\x18\b \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x01\x18\xff\x01R\x04name\x125\n" +
-	"\vdescription\x18\t \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\bH\x04R\vdescription\x88\x01\x01\x12,\n" +
+	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\tdeletedAt\x88\x01\x01\x12\x1a\n" +
+	"\x04name\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x04name\x12-\n" +
+	"\vdescription\x18\t \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x04R\vdescription\x88\x01\x01\x12%\n" +
 	"\x06postal\x18\n" +
-	" \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x180H\x05R\x06postal\x88\x01\x01\x12>\n" +
-	"\x05color\x18\v \x01(\tB#\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x06R\x05color\x88\x01\x01\x12\x19\n" +
-	"\x03job\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x1b\n" +
-	"\tjob_label\x18\r \x01(\tR\bjobLabel\x12Z\n" +
-	"\x04type\x18\x0e \x01(\x0e2%.resources.livemap.markers.MarkerTypeB\x1f\x9a\x84\x9e\x03\x12alias:\"markerType\"\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12R\n" +
-	"\x04data\x18\x0f \x01(\v2%.resources.livemap.markers.MarkerDataB\x17\x9a\x84\x9e\x03\x12alias:\"markerData\"R\x04data\x12+\n" +
+	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x05R\x06postal\x88\x01\x01\x12#\n" +
+	"\x05color\x18\v \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x05color\x88\x01\x01\x12\x10\n" +
+	"\x03job\x18\f \x01(\tR\x03job\x12\x1b\n" +
+	"\tjob_label\x18\r \x01(\tR\bjobLabel\x12R\n" +
+	"\x04type\x18\x0e \x01(\x0e2%.resources.livemap.markers.MarkerTypeB\x17\x9a\x84\x9e\x03\x12alias:\"markerType\"R\x04type\x12R\n" +
+	"\x04data\x18\x0f \x01(\v2%.resources.livemap.markers.MarkerDataB\x17\x9a\x84\x9e\x03\x12alias:\"markerData\"R\x04data\x12\"\n" +
 	"\n" +
-	"creator_id\x18\x10 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\aR\tcreatorId\x88\x01\x01\x12?\n" +
+	"creator_id\x18\x10 \x01(\x05H\aR\tcreatorId\x88\x01\x01\x12?\n" +
 	"\acreator\x18\x11 \x01(\v2 .resources.users.short.UserShortH\bR\acreator\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
@@ -1169,43 +1204,36 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\x06_colorB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
-	"\b_creator\"\xb7\x02\n" +
+	"\b_creator\"\xf9\x02\n" +
 	"\n" +
 	"MarkerData\x12A\n" +
 	"\x06circle\x18\x03 \x01(\v2'.resources.livemap.markers.CircleMarkerH\x00R\x06circle\x12;\n" +
 	"\x04icon\x18\x04 \x01(\v2%.resources.livemap.markers.IconMarkerH\x00R\x04icon\x12J\n" +
 	"\trectangle\x18\x05 \x01(\v2*.resources.livemap.markers.RectangleMarkerH\x00R\trectangle\x12D\n" +
-	"\apolygon\x18\x06 \x01(\v2(.resources.livemap.markers.PolygonMarkerH\x00R\apolygon:\b\xe2\xf3\x18\x04\b\x01\x10\x01B\r\n" +
-	"\x04data\x12\x05\xbaH\x02\b\x01\"b\n" +
+	"\apolygon\x18\x06 \x01(\v2(.resources.livemap.markers.PolygonMarkerH\x00R\apolygon\x12G\n" +
+	"\bpolyline\x18\a \x01(\v2).resources.livemap.markers.PolylineMarkerH\x00R\bpolyline:\b\xe2\xf3\x18\x04\b\x01\x10\x01B\x06\n" +
+	"\x04data\"Q\n" +
 	"\fCircleMarker\x12\x16\n" +
-	"\x06radius\x18\x01 \x01(\x05R\x06radius\x12.\n" +
-	"\aopacity\x18\x02 \x01(\x02B\x0f\xbaH\f\n" +
-	"\n" +
-	"\x1d\x00\x00\x96B-\x00\x00\x80?H\x00R\aopacity\x88\x01\x01B\n" +
-	"\n" +
-	"\b_opacity\"2\n" +
-	"\n" +
-	"IconMarker\x12$\n" +
-	"\x04icon\x18\x01 \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x01R\x04icon\"w\n" +
-	"\x0fRectangleMarker\x12\x13\n" +
-	"\x05end_x\x18\x01 \x01(\x01R\x04endX\x12\x13\n" +
-	"\x05end_y\x18\x02 \x01(\x01R\x04endY\x12.\n" +
-	"\aopacity\x18\x03 \x01(\x02B\x0f\xbaH\f\n" +
-	"\n" +
-	"\x1d\x00\x00\x96B-\x00\x00\x80?H\x00R\aopacity\x88\x01\x01B\n" +
+	"\x06radius\x18\x01 \x01(\x05R\x06radius\x12\x1d\n" +
+	"\aopacity\x18\x02 \x01(\x02H\x00R\aopacity\x88\x01\x01B\n" +
 	"\n" +
 	"\b_opacity\"*\n" +
-	"\fPolygonPoint\x12\f\n" +
-	"\x01x\x18\x01 \x01(\x01R\x01x\x12\f\n" +
-	"\x01y\x18\x02 \x01(\x01R\x01y\"\x98\x01\n" +
-	"\rPolygonMarker\x12K\n" +
-	"\x06points\x18\x01 \x03(\v2'.resources.livemap.markers.PolygonPointB\n" +
-	"\xbaH\a\x92\x01\x04\b\x02\x10\x12R\x06points\x12.\n" +
-	"\aopacity\x18\x02 \x01(\x02B\x0f\xbaH\f\n" +
 	"\n" +
-	"\x1d\x00\x00\x96B-\x00\x00\x80?H\x00R\aopacity\x88\x01\x01B\n" +
+	"IconMarker\x12\x1c\n" +
+	"\x04icon\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04icon\"f\n" +
+	"\x0fRectangleMarker\x12\x13\n" +
+	"\x05end_x\x18\x01 \x01(\x01R\x04endX\x12\x13\n" +
+	"\x05end_y\x18\x02 \x01(\x01R\x04endY\x12\x1d\n" +
+	"\aopacity\x18\x03 \x01(\x02H\x00R\aopacity\x88\x01\x01B\n" +
 	"\n" +
-	"\b_opacity*\xa0\x01\n" +
+	"\b_opacity\"m\n" +
+	"\rPolygonMarker\x121\n" +
+	"\x06points\x18\x01 \x03(\v2\x19.resources.livemap.CoordsR\x06points\x12\x1d\n" +
+	"\aopacity\x18\x02 \x01(\x02H\x00R\aopacity\x88\x01\x01B\n" +
+	"\n" +
+	"\b_opacity\"C\n" +
+	"\x0ePolylineMarker\x121\n" +
+	"\x06points\x18\x01 \x03(\v2\x19.resources.livemap.CoordsR\x06points*\xba\x01\n" +
 	"\n" +
 	"MarkerType\x12\x1b\n" +
 	"\x17MARKER_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +
@@ -1213,7 +1241,8 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\x12MARKER_TYPE_CIRCLE\x10\x02\x12\x14\n" +
 	"\x10MARKER_TYPE_ICON\x10\x03\x12\x19\n" +
 	"\x15MARKER_TYPE_RECTANGLE\x10\x04\x12\x17\n" +
-	"\x13MARKER_TYPE_POLYGON\x10\x05B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers;livemapmarkersb\x06proto3"
+	"\x13MARKER_TYPE_POLYGON\x10\x05\x12\x18\n" +
+	"\x14MARKER_TYPE_POLYLINE\x10\x06B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers;livemapmarkersb\x06proto3"
 
 var file_resources_livemap_markers_marker_marker_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_livemap_markers_marker_marker_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
@@ -1224,10 +1253,11 @@ var file_resources_livemap_markers_marker_marker_proto_goTypes = []any{
 	(*CircleMarker)(nil),        // 3: resources.livemap.markers.CircleMarker
 	(*IconMarker)(nil),          // 4: resources.livemap.markers.IconMarker
 	(*RectangleMarker)(nil),     // 5: resources.livemap.markers.RectangleMarker
-	(*PolygonPoint)(nil),        // 6: resources.livemap.markers.PolygonPoint
-	(*PolygonMarker)(nil),       // 7: resources.livemap.markers.PolygonMarker
+	(*PolygonMarker)(nil),       // 6: resources.livemap.markers.PolygonMarker
+	(*PolylineMarker)(nil),      // 7: resources.livemap.markers.PolylineMarker
 	(*timestamp.Timestamp)(nil), // 8: resources.timestamp.Timestamp
 	(*short.UserShort)(nil),     // 9: resources.users.short.UserShort
+	(*livemap.Coords)(nil),      // 10: resources.livemap.Coords
 }
 var file_resources_livemap_markers_marker_marker_proto_depIdxs = []int32{
 	8,  // 0: resources.livemap.markers.MarkerMarker.created_at:type_name -> resources.timestamp.Timestamp
@@ -1240,13 +1270,15 @@ var file_resources_livemap_markers_marker_marker_proto_depIdxs = []int32{
 	3,  // 7: resources.livemap.markers.MarkerData.circle:type_name -> resources.livemap.markers.CircleMarker
 	4,  // 8: resources.livemap.markers.MarkerData.icon:type_name -> resources.livemap.markers.IconMarker
 	5,  // 9: resources.livemap.markers.MarkerData.rectangle:type_name -> resources.livemap.markers.RectangleMarker
-	7,  // 10: resources.livemap.markers.MarkerData.polygon:type_name -> resources.livemap.markers.PolygonMarker
-	6,  // 11: resources.livemap.markers.PolygonMarker.points:type_name -> resources.livemap.markers.PolygonPoint
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	6,  // 10: resources.livemap.markers.MarkerData.polygon:type_name -> resources.livemap.markers.PolygonMarker
+	7,  // 11: resources.livemap.markers.MarkerData.polyline:type_name -> resources.livemap.markers.PolylineMarker
+	10, // 12: resources.livemap.markers.PolygonMarker.points:type_name -> resources.livemap.Coords
+	10, // 13: resources.livemap.markers.PolylineMarker.points:type_name -> resources.livemap.Coords
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_resources_livemap_markers_marker_marker_proto_init() }
@@ -1260,10 +1292,11 @@ func file_resources_livemap_markers_marker_marker_proto_init() {
 		(*MarkerData_Icon)(nil),
 		(*MarkerData_Rectangle)(nil),
 		(*MarkerData_Polygon)(nil),
+		(*MarkerData_Polyline)(nil),
 	}
 	file_resources_livemap_markers_marker_marker_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_livemap_markers_marker_marker_proto_msgTypes[4].OneofWrappers = []any{}
-	file_resources_livemap_markers_marker_marker_proto_msgTypes[6].OneofWrappers = []any{}
+	file_resources_livemap_markers_marker_marker_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

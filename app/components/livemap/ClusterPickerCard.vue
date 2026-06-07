@@ -51,6 +51,8 @@ function getMarkerMarkerIconName(h: Hit): string | undefined {
             return 'i-mdi-circle-outline';
         case 'polygon':
             return 'i-mdi-vector-polygon';
+        case 'polyline':
+            return 'i-mdi-vector-polyline';
         case 'rectangle':
             return 'i-mdi-rectangle-outline';
         default:

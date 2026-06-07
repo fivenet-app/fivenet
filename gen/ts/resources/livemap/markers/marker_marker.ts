@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Coords } from "../coords";
 import { UserShort } from "../../users/short/user";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
@@ -118,6 +119,12 @@ export interface MarkerData {
          */
         polygon: PolygonMarker;
     } | {
+        oneofKind: "polyline";
+        /**
+         * @generated from protobuf field: resources.livemap.markers.PolylineMarker polyline = 7
+         */
+        polyline: PolylineMarker;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -161,30 +168,26 @@ export interface RectangleMarker {
     opacity?: number;
 }
 /**
- * @generated from protobuf message resources.livemap.markers.PolygonPoint
- */
-export interface PolygonPoint {
-    /**
-     * @generated from protobuf field: double x = 1
-     */
-    x: number;
-    /**
-     * @generated from protobuf field: double y = 2
-     */
-    y: number;
-}
-/**
  * @generated from protobuf message resources.livemap.markers.PolygonMarker
  */
 export interface PolygonMarker {
     /**
-     * @generated from protobuf field: repeated resources.livemap.markers.PolygonPoint points = 1
+     * @generated from protobuf field: repeated resources.livemap.Coords points = 1
      */
-    points: PolygonPoint[];
+    points: Coords[];
     /**
      * @generated from protobuf field: optional float opacity = 2
      */
     opacity?: number;
+}
+/**
+ * @generated from protobuf message resources.livemap.markers.PolylineMarker
+ */
+export interface PolylineMarker {
+    /**
+     * @generated from protobuf field: repeated resources.livemap.Coords points = 1
+     */
+    points: Coords[];
 }
 /**
  * @generated from protobuf enum resources.livemap.markers.MarkerType
@@ -213,7 +216,11 @@ export enum MarkerType {
     /**
      * @generated from protobuf enum value: MARKER_TYPE_POLYGON = 5;
      */
-    POLYGON = 5
+    POLYGON = 5,
+    /**
+     * @generated from protobuf enum value: MARKER_TYPE_POLYLINE = 6;
+     */
+    POLYLINE = 6
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class MarkerMarker$Type extends MessageType<MarkerMarker> {
@@ -387,7 +394,8 @@ class MarkerData$Type extends MessageType<MarkerData> {
             { no: 3, name: "circle", kind: "message", oneof: "data", T: () => CircleMarker },
             { no: 4, name: "icon", kind: "message", oneof: "data", T: () => IconMarker },
             { no: 5, name: "rectangle", kind: "message", oneof: "data", T: () => RectangleMarker },
-            { no: 6, name: "polygon", kind: "message", oneof: "data", T: () => PolygonMarker }
+            { no: 6, name: "polygon", kind: "message", oneof: "data", T: () => PolygonMarker },
+            { no: 7, name: "polyline", kind: "message", oneof: "data", T: () => PolylineMarker }
         ], { "codegen.dbscanner.dbscanner": { enabled: true, notJson: true } });
     }
     create(value?: PartialMessage<MarkerData>): MarkerData {
@@ -426,6 +434,12 @@ class MarkerData$Type extends MessageType<MarkerData> {
                         polygon: PolygonMarker.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).polygon)
                     };
                     break;
+                case /* resources.livemap.markers.PolylineMarker polyline */ 7:
+                    message.data = {
+                        oneofKind: "polyline",
+                        polyline: PolylineMarker.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).polyline)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -450,6 +464,9 @@ class MarkerData$Type extends MessageType<MarkerData> {
         /* resources.livemap.markers.PolygonMarker polygon = 6; */
         if (message.data.oneofKind === "polygon")
             PolygonMarker.internalBinaryWrite(message.data.polygon, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.livemap.markers.PolylineMarker polyline = 7; */
+        if (message.data.oneofKind === "polyline")
+            PolylineMarker.internalBinaryWrite(message.data.polyline, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -624,65 +641,10 @@ class RectangleMarker$Type extends MessageType<RectangleMarker> {
  */
 export const RectangleMarker = new RectangleMarker$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class PolygonPoint$Type extends MessageType<PolygonPoint> {
-    constructor() {
-        super("resources.livemap.markers.PolygonPoint", [
-            { no: 1, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 2, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ }
-        ]);
-    }
-    create(value?: PartialMessage<PolygonPoint>): PolygonPoint {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.x = 0;
-        message.y = 0;
-        if (value !== undefined)
-            reflectionMergePartial<PolygonPoint>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PolygonPoint): PolygonPoint {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* double x */ 1:
-                    message.x = reader.double();
-                    break;
-                case /* double y */ 2:
-                    message.y = reader.double();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PolygonPoint, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* double x = 1; */
-        if (message.x !== 0)
-            writer.tag(1, WireType.Bit64).double(message.x);
-        /* double y = 2; */
-        if (message.y !== 0)
-            writer.tag(2, WireType.Bit64).double(message.y);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.livemap.markers.PolygonPoint
- */
-export const PolygonPoint = new PolygonPoint$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class PolygonMarker$Type extends MessageType<PolygonMarker> {
     constructor() {
         super("resources.livemap.markers.PolygonMarker", [
-            { no: 1, name: "points", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PolygonPoint, options: { "buf.validate.field": { repeated: { minItems: "2", maxItems: "18" } } } },
+            { no: 1, name: "points", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Coords, options: { "buf.validate.field": { repeated: { minItems: "2", maxItems: "18" } } } },
             { no: 2, name: "opacity", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.field": { float: { lte: 75, gte: 1 } } } }
         ]);
     }
@@ -698,8 +660,8 @@ class PolygonMarker$Type extends MessageType<PolygonMarker> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.livemap.markers.PolygonPoint points */ 1:
-                    message.points.push(PolygonPoint.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.livemap.Coords points */ 1:
+                    message.points.push(Coords.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* optional float opacity */ 2:
                     message.opacity = reader.float();
@@ -716,9 +678,9 @@ class PolygonMarker$Type extends MessageType<PolygonMarker> {
         return message;
     }
     internalBinaryWrite(message: PolygonMarker, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.livemap.markers.PolygonPoint points = 1; */
+        /* repeated resources.livemap.Coords points = 1; */
         for (let i = 0; i < message.points.length; i++)
-            PolygonPoint.internalBinaryWrite(message.points[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Coords.internalBinaryWrite(message.points[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* optional float opacity = 2; */
         if (message.opacity !== undefined)
             writer.tag(2, WireType.Bit32).float(message.opacity);
@@ -732,3 +694,50 @@ class PolygonMarker$Type extends MessageType<PolygonMarker> {
  * @generated MessageType for protobuf message resources.livemap.markers.PolygonMarker
  */
 export const PolygonMarker = new PolygonMarker$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PolylineMarker$Type extends MessageType<PolylineMarker> {
+    constructor() {
+        super("resources.livemap.markers.PolylineMarker", [
+            { no: 1, name: "points", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Coords, options: { "buf.validate.field": { repeated: { minItems: "2", maxItems: "18" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<PolylineMarker>): PolylineMarker {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.points = [];
+        if (value !== undefined)
+            reflectionMergePartial<PolylineMarker>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PolylineMarker): PolylineMarker {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.livemap.Coords points */ 1:
+                    message.points.push(Coords.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PolylineMarker, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.livemap.Coords points = 1; */
+        for (let i = 0; i < message.points.length; i++)
+            Coords.internalBinaryWrite(message.points[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.livemap.markers.PolylineMarker
+ */
+export const PolylineMarker = new PolylineMarker$Type();

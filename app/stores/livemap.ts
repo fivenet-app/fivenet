@@ -2,6 +2,7 @@ import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
+import type { Coords } from '~~/gen/ts/resources/livemap/coords';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
@@ -14,7 +15,6 @@ import type {
     UserDeletes,
     UserUpdates,
 } from '~~/gen/ts/services/livemap/livemap';
-import type { Coordinate } from '~~/shared/types/types';
 import { useSettingsStore, type LivemapSettings } from './settings';
 
 const logger = useLogger('🗺️ Livemap');
@@ -32,7 +32,7 @@ export const useLivemapStore = defineStore(
         const stopping = ref<boolean>(false);
         const reconnectBackoffTime = ref<number>(0);
 
-        const location = ref<Coordinate | undefined>();
+        const location = ref<Coords | undefined>();
         const showLocationMarker = ref<boolean>(false);
         const markerCoordPickerActive = ref<boolean>(false);
         const markerDragEnabled = ref<boolean>(false);
@@ -419,10 +419,10 @@ export const useLivemapStore = defineStore(
         /**
          * Move to the given coordinates and optionally set an in-game waypoint.
          *
-         * @param {Coordinate} loc - The coordinates to move to.
+         * @param {Coords} loc - The coordinates to move to.
          * @param {boolean} [ingame=true] - Whether to set an in-game waypoint.
          */
-        const gotoCoords = async (loc: Coordinate, ingame: boolean = true): Promise<void> => {
+        const gotoCoords = async (loc: Coords, ingame: boolean = true): Promise<void> => {
             location.value = { x: loc.x, y: loc.y };
             if (ingame) return await setWaypoint(loc.x, loc.y);
         };

@@ -808,6 +808,10 @@
                 "title": "Gefährliche Aktion",
                 "description": "Sind Sie sicher, dass Sie diese potenziell gefährlichen Aktionen durchführen wollen? Alle damit verbundenen Daten werden für immer von unseren Servern gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
             },
+            "form_changed": {
+                "title": "Ungespeicherte Änderungen",
+                "description": "Du hast ungespeicherte Änderungen. Diese Seite ohne Speichern verlassen?"
+            },
             "table_pagination": {
                 "page_count": "Seite {current} à {size} Einträge",
                 "page_count_with_total": "Seite {current} von {maxPage} à {size} Einträge (Gesamt {total})"
@@ -2798,7 +2802,8 @@
                 "CIRCLE": "Kreis",
                 "ICON": "Icon",
                 "RECTANGLE": "Rechteck",
-                "POLYGON": "Polygon"
+                "POLYGON": "Polygon",
+                "POLYLINE": "Polyline"
             }
         },
         "jobs": {

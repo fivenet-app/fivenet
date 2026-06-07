@@ -5,6 +5,7 @@ import MarkerCreateOrUpdateSlideover from '~/components/livemap/MarkerCreateOrUp
 import { resolveIconComponent } from '~/components/partials/icons';
 import { useLivemapStore } from '~/stores/livemap';
 import { MarkerType, type MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
+import type { Coords } from '~~/gen/ts/resources/livemap/coords';
 
 const props = withDefaults(
     defineProps<{
@@ -34,6 +35,10 @@ const popupAnchor = computed<PointExpression>(() => [0, (props.size / 2) * -1]);
 const dragHandleAnchor: PointExpression = [5, 5];
 const dragHandleSize: PointExpression = [10, 10];
 const canEditMarkers = computed(() => can('livemap.LivemapService/CreateOrUpdateMarker').value);
+type PointShapeKind = 'polygon' | 'polyline';
+type PointShapeData = {
+    points: Coords[];
+};
 
 function cloneMarkerPlain(marker: MarkerMarker): MarkerMarker {
     return JSON.parse(JSON.stringify(toRaw(marker))) as MarkerMarker;
@@ -63,16 +68,25 @@ function hasPersistedRectangleEnd(markerId: number, endX: number, endY: number):
     );
 }
 
-function hasPersistedPolygonPoint(markerId: number, pointIndex: number, x: number, y: number): boolean {
+function getPointShapeData(marker: MarkerMarker, kind: PointShapeKind): PointShapeData | undefined {
+    if (kind === 'polygon' && marker.data?.data.oneofKind === 'polygon') return marker.data.data.polygon;
+    if (kind === 'polyline' && marker.data?.data.oneofKind === 'polyline') return marker.data.data.polyline;
+    return undefined;
+}
+
+function hasPersistedShapePoint(markerId: number, kind: PointShapeKind, pointIndex: number, x: number, y: number): boolean {
     const persisted = markersMarkers.value.get(markerId);
-    if (persisted?.data?.data.oneofKind !== 'polygon') return false;
+    if (!persisted) return false;
+
+    const shape = getPointShapeData(persisted, kind);
+    if (!shape) return false;
     const epsilon = 0.000001;
 
     if (pointIndex === 0) {
         return Math.abs(persisted.x - x) <= epsilon && Math.abs(persisted.y - y) <= epsilon;
     }
 
-    const point = persisted.data.data.polygon.points[pointIndex - 1];
+    const point = shape.points[pointIndex - 1];
     if (!point) return false;
     return Math.abs(point.x - x) <= epsilon && Math.abs(point.y - y) <= epsilon;
 }
@@ -140,39 +154,45 @@ async function onRectanglePointDragEnd(event: DragEndEvent, marker: MarkerMarker
     });
 }
 
-async function onPolygonPointDragEnd(event: DragEndEvent, marker: MarkerMarker, pointIndex: number): Promise<void> {
-    if (!canMoveMarker(marker) || marker.data?.data.oneofKind !== 'polygon') return;
+async function onShapePointDragEnd(
+    event: DragEndEvent,
+    marker: MarkerMarker,
+    shapeKind: PointShapeKind,
+    pointIndex: number,
+): Promise<void> {
+    const shape = getPointShapeData(marker, shapeKind);
+    if (!canMoveMarker(marker) || !shape) return;
 
     suppressMapPreclick(500);
 
     const latlng = event.target.getLatLng();
     const previousLatLng: [number, number] =
-        pointIndex === 0
-            ? [marker.y, marker.x]
-            : [marker.data.data.polygon.points[pointIndex - 1]!.y, marker.data.data.polygon.points[pointIndex - 1]!.x];
+        pointIndex === 0 ? [marker.y, marker.x] : [shape.points[pointIndex - 1]!.y, shape.points[pointIndex - 1]!.x];
 
     const nextMarker = cloneMarkerPlain(marker);
-    if (nextMarker.data?.data.oneofKind !== 'polygon') return;
+    const nextShape = getPointShapeData(nextMarker, shapeKind);
+    if (!nextShape) return;
 
     if (pointIndex === 0) {
         nextMarker.x = latlng.lng;
         nextMarker.y = latlng.lat;
     } else {
-        nextMarker.data.data.polygon.points[pointIndex - 1] = {
+        nextShape.points[pointIndex - 1] = {
             x: latlng.lng,
             y: latlng.lat,
         };
     }
 
     openDragEditSlideover(nextMarker, (saved) => {
-        if (saved === true || hasPersistedPolygonPoint(marker.id, pointIndex, latlng.lng, latlng.lat)) return;
+        if (saved === true || hasPersistedShapePoint(marker.id, shapeKind, pointIndex, latlng.lng, latlng.lat)) return;
         event.target.setLatLng(previousLatLng);
     });
 }
 
-function getPolygonDragPoints(marker: MarkerMarker): { x: number; y: number }[] {
-    if (marker.data?.data.oneofKind !== 'polygon') return [];
-    return [{ x: marker.x, y: marker.y }, ...marker.data.data.polygon.points];
+function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: number; y: number }[] {
+    const shape = getPointShapeData(marker, kind);
+    if (!shape) return [];
+    return [{ x: marker.x, y: marker.y }, ...shape.points];
 }
 </script>
 
@@ -271,12 +291,37 @@ function getPolygonDragPoints(marker: MarkerMarker): { x: number; y: number }[] 
         <MarkerMarkerPopup :marker="marker" />
     </LPolygon>
     <LMarker
-        v-for="(point, idx) in canMoveMarker(marker) ? getPolygonDragPoints(marker) : []"
-        :key="`poly-handle-${marker.id}-${idx}`"
+        v-for="(point, idx) in canMoveMarker(marker) ? getShapeDragPoints(marker, 'polygon') : []"
+        :key="`polygon-handle-${marker.id}-${idx}`"
         :lat-lng="[point.y, point.x]"
         :draggable="true"
         @dragstart="onMarkerDragStart"
-        @dragend="onPolygonPointDragEnd($event, marker, idx)"
+        @dragend="onShapePointDragEnd($event, marker, 'polygon', idx)"
+    >
+        <LIcon :icon-size="dragHandleSize" :icon-anchor="dragHandleAnchor">
+            <div class="size-full rounded-sm border border-black bg-white/90"></div>
+        </LIcon>
+    </LMarker>
+
+    <LPolyline
+        v-if="marker.data?.data.oneofKind === 'polyline'"
+        :name="marker.name"
+        :lat-lngs="[
+            [marker.y, marker.x],
+            ...marker.data.data.polyline.points.map((point) => [point.y, point.x] satisfies LatLngTuple),
+        ]"
+        :color="marker.color ?? livemap.markerMarkers.fallbackColor"
+        :options="{ markerMarker: marker }"
+    >
+        <MarkerMarkerPopup :marker="marker" />
+    </LPolyline>
+    <LMarker
+        v-for="(point, idx) in canMoveMarker(marker) ? getShapeDragPoints(marker, 'polyline') : []"
+        :key="`polyline-handle-${marker.id}-${idx}`"
+        :lat-lng="[point.y, point.x]"
+        :draggable="true"
+        @dragstart="onMarkerDragStart"
+        @dragend="onShapePointDragEnd($event, marker, 'polyline', idx)"
     >
         <LIcon :icon-size="dragHandleSize" :icon-anchor="dragHandleAnchor">
             <div class="size-full rounded-sm border border-black bg-white/90"></div>
@@ -310,6 +355,7 @@ function getPolygonDragPoints(marker: MarkerMarker): { x: number; y: number }[] 
             marker.data?.data.oneofKind !== 'circle' &&
             marker.data?.data.oneofKind !== 'rectangle' &&
             marker.data?.data.oneofKind !== 'polygon' &&
+            marker.data?.data.oneofKind !== 'polyline' &&
             marker.data?.data.oneofKind !== 'icon'
         "
         :name="marker.name"

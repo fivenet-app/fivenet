@@ -808,6 +808,10 @@
                 "title": "Dangerous Action",
                 "description": "Are you sure want to do this potentially dangerous actions? All data associated will be permanently deleted from our servers forever. This action cannot be undone."
             },
+            "form_changed": {
+                "title": "Unsaved Changes",
+                "description": "You have unsaved changes. Leave this page without saving?"
+            },
             "table_pagination": {
                 "page_count": "Page {current} à {size} records",
                 "page_count_with_total": "Page {current} of {maxPage} à {size} records (Total {total})"
@@ -2798,7 +2802,8 @@
                 "CIRCLE": "Circle",
                 "ICON": "Icon",
                 "RECTANGLE": "Rectangle",
-                "POLYGON": "Polygon"
+                "POLYGON": "Polygon",
+                "POLYLINE": "Polyline"
             }
         },
         "jobs": {

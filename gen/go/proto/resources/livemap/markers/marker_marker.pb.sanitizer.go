@@ -53,6 +53,14 @@ func (m *MarkerData) Sanitize() error {
 			}
 		}
 
+		// Field: Polyline
+	case *MarkerData_Polyline:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 		// Field: Rectangle
 	case *MarkerData_Rectangle:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
@@ -157,6 +165,28 @@ func (m *MarkerMarker) Sanitize() error {
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
 func (m *PolygonMarker) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Points
+	for idx, item := range m.Points {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *PolylineMarker) Sanitize() error {
 	if m == nil {
 		return nil
 	}

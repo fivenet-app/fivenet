@@ -12,7 +12,7 @@ const { location, showLocationMarker } = storeToRefs(livemapStore);
 
 const iconAnchor: PointExpression = [livemap.value.markerSize / 2, livemap.value.markerSize];
 
-const showMarker = ref(false);
+const showMarker = ref<boolean>(false);
 
 const { start } = useTimeoutFn(() => (showMarker.value = false), 5000, { immediate: false });
 

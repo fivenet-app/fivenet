@@ -11,7 +11,7 @@ withDefaults(
 );
 
 const popupRef = useTemplateRef<{ leafletObject?: { close?: () => void } }>('popupRef');
-const popupOpen = ref(false);
+const popupOpen = ref<boolean>(false);
 
 function closePopup(): void {
     popupRef.value?.leafletObject?.close?.();
