@@ -607,7 +607,7 @@ var File_resources_mailer_messages_message_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_messages_message_proto_rawDesc = "" +
 	"\n" +
-	"'resources/mailer/messages/message.proto\x12\x19resources.mailer.messages\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a#resources/mailer/emails/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb7\x05\n" +
+	"'resources/mailer/messages/message.proto\x12\x19resources.mailer.messages\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a#resources/mailer/emails/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xad\x05\n" +
 	"\aMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\x12\x1b\n" +
@@ -618,8 +618,8 @@ const file_resources_mailer_messages_message_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12(\n" +
-	"\x05title\x18\b \x01(\tB\x12\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12C\n" +
+	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1e\n" +
+	"\x05title\x18\b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05title\x12C\n" +
 	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentB\x06\xda\xf3\x18\x02\b\x01R\acontent\x12?\n" +
 	"\x04data\x18\n" +
 	" \x01(\v2&.resources.mailer.messages.MessageDataH\x03R\x04data\x88\x01\x01\x12\"\n" +
@@ -632,15 +632,15 @@ const file_resources_mailer_messages_message_proto_rawDesc = "" +
 	"\v_deleted_atB\a\n" +
 	"\x05_dataB\r\n" +
 	"\v_creator_idB\x0e\n" +
-	"\f_creator_job\"o\n" +
-	"\vMessageData\x12X\n" +
-	"\vattachments\x18\x01 \x03(\v2,.resources.mailer.messages.MessageAttachmentB\b\xbaH\x05\x92\x01\x02\x10\x03R\vattachments:\x06\xe2\xf3\x18\x02\b\x01\"v\n" +
+	"\f_creator_job\"e\n" +
+	"\vMessageData\x12N\n" +
+	"\vattachments\x18\x01 \x03(\v2,.resources.mailer.messages.MessageAttachmentR\vattachments:\x06\xe2\xf3\x18\x02\b\x01\"o\n" +
 	"\x11MessageAttachment\x12R\n" +
-	"\bdocument\x18\x01 \x01(\v24.resources.mailer.messages.MessageAttachmentDocumentH\x00R\bdocumentB\r\n" +
-	"\x04data\x12\x05\xbaH\x02\b\x01\"Z\n" +
+	"\bdocument\x18\x01 \x01(\v24.resources.mailer.messages.MessageAttachmentDocumentH\x00R\bdocumentB\x06\n" +
+	"\x04data\"P\n" +
 	"\x19MessageAttachmentDocument\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
-	"\x05title\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x06H\x00R\x05title\x88\x01\x01B\b\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
+	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01B\b\n" +
 	"\x06_titleB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/messages;mailermessagesb\x06proto3"
 
 var file_resources_mailer_messages_message_proto_msgTypes = make([]protoimpl.MessageInfo, 4)

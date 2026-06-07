@@ -2693,66 +2693,62 @@ var File_resources_qualifications_exam_exam_proto protoreflect.FileDescriptor
 
 const file_resources_qualifications_exam_exam_proto_rawDesc = "" +
 	"\n" +
-	"(resources/qualifications/exam/exam.proto\x12\x1dresources.qualifications.exam\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\"\x8e\x02\n" +
-	"\x19QualificationExamSettings\x12C\n" +
-	"\x04time\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x14\xbaH\x11\xc8\x01\x01\xaa\x01\v\x1a\x04\b\x80\xa4?2\x03\b\xac\x02R\x04time\x12\x1d\n" +
+	"(resources/qualifications/exam/exam.proto\x12\x1dresources.qualifications.exam\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\"\xee\x01\n" +
+	"\x19QualificationExamSettings\x12-\n" +
+	"\x04time\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\x04time\x12\x1d\n" +
 	"\n" +
-	"auto_grade\x18\x02 \x01(\bR\tautoGrade\x12^\n" +
-	"\x0fauto_grade_mode\x18\x03 \x01(\x0e2,.resources.qualifications.exam.AutoGradeModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\rautoGradeMode\x12%\n" +
-	"\x0eminimum_points\x18\x04 \x01(\x05R\rminimumPoints:\x06\xe2\xf3\x18\x02\b\x01\"d\n" +
-	"\rExamQuestions\x12S\n" +
-	"\tquestions\x18\x01 \x03(\v2+.resources.qualifications.exam.ExamQuestionB\b\xbaH\x05\x92\x01\x02\x10dR\tquestions\"\xdf\x04\n" +
+	"auto_grade\x18\x02 \x01(\bR\tautoGrade\x12T\n" +
+	"\x0fauto_grade_mode\x18\x03 \x01(\x0e2,.resources.qualifications.exam.AutoGradeModeR\rautoGradeMode\x12%\n" +
+	"\x0eminimum_points\x18\x04 \x01(\x05R\rminimumPoints:\x06\xe2\xf3\x18\x02\b\x01\"Z\n" +
+	"\rExamQuestions\x12I\n" +
+	"\tquestions\x18\x01 \x03(\v2+.resources.qualifications.exam.ExamQuestionR\tquestions\"\xb2\x04\n" +
 	"\fExamQuestion\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12)\n" +
 	"\x10qualification_id\x18\x02 \x01(\x03R\x0fqualificationId\x12B\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12&\n" +
-	"\x05title\x18\x05 \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x04R\x05title\x127\n" +
-	"\vdescription\x18\x06 \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\bH\x02R\vdescription\x88\x01\x01\x12K\n" +
-	"\x04data\x18\a \x01(\v2/.resources.qualifications.exam.ExamQuestionDataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x12R\n" +
-	"\x06answer\x18\b \x01(\v25.resources.qualifications.exam.ExamQuestionAnswerDataH\x03R\x06answer\x88\x01\x01\x12$\n" +
-	"\x06points\x18\t \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x04R\x06points\x88\x01\x01\x12 \n" +
+	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x1e\n" +
+	"\x05title\x18\x05 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05title\x12/\n" +
+	"\vdescription\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\vdescription\x88\x01\x01\x12C\n" +
+	"\x04data\x18\a \x01(\v2/.resources.qualifications.exam.ExamQuestionDataR\x04data\x12R\n" +
+	"\x06answer\x18\b \x01(\v25.resources.qualifications.exam.ExamQuestionAnswerDataH\x03R\x06answer\x88\x01\x01\x12\x1b\n" +
+	"\x06points\x18\t \x01(\x05H\x04R\x06points\x88\x01\x01\x12\x14\n" +
 	"\x05order\x18\n" +
-	" \x01(\x05B\n" +
-	"\xbaH\a\x1a\x05\x18\xe8\a(\x00R\x05orderB\r\n" +
+	" \x01(\x05R\x05orderB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\x0e\n" +
 	"\f_descriptionB\t\n" +
 	"\a_answerB\t\n" +
-	"\a_points\"\xa9\x04\n" +
+	"\a_points\"\xa2\x04\n" +
 	"\x10ExamQuestionData\x12T\n" +
 	"\tseparator\x18\x01 \x01(\v24.resources.qualifications.exam.ExamQuestionSeparatorH\x00R\tseparator\x12H\n" +
 	"\x05image\x18\x06 \x01(\v20.resources.qualifications.exam.ExamQuestionImageH\x00R\x05image\x12H\n" +
 	"\x05yesno\x18\x02 \x01(\v20.resources.qualifications.exam.ExamQuestionYesNoH\x00R\x05yesno\x12N\n" +
 	"\tfree_text\x18\x03 \x01(\v2/.resources.qualifications.exam.ExamQuestionTextH\x00R\bfreeText\x12^\n" +
 	"\rsingle_choice\x18\x04 \x01(\v27.resources.qualifications.exam.ExamQuestionSingleChoiceH\x00R\fsingleChoice\x12d\n" +
-	"\x0fmultiple_choice\x18\x05 \x01(\v29.resources.qualifications.exam.ExamQuestionMultipleChoiceH\x00R\x0emultipleChoice:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
-	"\x04data\x12\x05\xbaH\x02\b\x01\"\x17\n" +
-	"\x15ExamQuestionSeparator\"h\n" +
+	"\x0fmultiple_choice\x18\x05 \x01(\v29.resources.qualifications.exam.ExamQuestionMultipleChoiceH\x00R\x0emultipleChoice:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
+	"\x04data\"\x17\n" +
+	"\x15ExamQuestionSeparator\"^\n" +
 	"\x11ExamQuestionImage\x12*\n" +
-	"\x05image\x18\x01 \x01(\v2\x14.resources.file.FileR\x05image\x12\x1f\n" +
-	"\x03alt\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x00R\x03alt\x88\x01\x01B\x06\n" +
+	"\x05image\x18\x01 \x01(\v2\x14.resources.file.FileR\x05image\x12\x15\n" +
+	"\x03alt\x18\x02 \x01(\tH\x00R\x03alt\x88\x01\x01B\x06\n" +
 	"\x04_alt\"\x13\n" +
 	"\x11ExamQuestionYesNo\"P\n" +
 	"\x10ExamQuestionText\x12\x1d\n" +
 	"\n" +
 	"min_length\x18\x01 \x01(\x05R\tminLength\x12\x1d\n" +
 	"\n" +
-	"max_length\x18\x02 \x01(\x05R\tmaxLength\"F\n" +
-	"\x18ExamQuestionSingleChoice\x12*\n" +
-	"\achoices\x18\x01 \x03(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\achoices\"x\n" +
-	"\x1aExamQuestionMultipleChoice\x12*\n" +
-	"\achoices\x18\x01 \x03(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\achoices\x12$\n" +
-	"\x05limit\x18\x02 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
-	"(\x00H\x00R\x05limit\x88\x01\x01B\b\n" +
-	"\x06_limit\"\xb3\x03\n" +
-	"\x16ExamQuestionAnswerData\x12'\n" +
+	"max_length\x18\x02 \x01(\x05R\tmaxLength\">\n" +
+	"\x18ExamQuestionSingleChoice\x12\"\n" +
+	"\achoices\x18\x01 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\achoices\"e\n" +
+	"\x1aExamQuestionMultipleChoice\x12\"\n" +
+	"\achoices\x18\x01 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\achoices\x12\x19\n" +
+	"\x05limit\x18\x02 \x01(\x05H\x00R\x05limit\x88\x01\x01B\b\n" +
+	"\x06_limit\"\xa9\x03\n" +
+	"\x16ExamQuestionAnswerData\x12\x1d\n" +
 	"\n" +
-	"answer_key\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\bR\tanswerKey\x12H\n" +
+	"answer_key\x18\x01 \x01(\tR\tanswerKey\x12H\n" +
 	"\x05yesno\x18\x04 \x01(\v20.resources.qualifications.exam.ExamResponseYesNoH\x00R\x05yesno\x12N\n" +
 	"\tfree_text\x18\x05 \x01(\v2/.resources.qualifications.exam.ExamResponseTextH\x00R\bfreeText\x12^\n" +
 	"\rsingle_choice\x18\x06 \x01(\v27.resources.qualifications.exam.ExamResponseSingleChoiceH\x00R\fsingleChoice\x12d\n" +
@@ -2771,42 +2767,40 @@ const file_resources_qualifications_exam_exam_proto_rawDesc = "" +
 	"\v_started_atB\n" +
 	"\n" +
 	"\b_ends_atB\v\n" +
-	"\t_ended_at\"\xb0\x01\n" +
+	"\t_ended_at\"\xa6\x01\n" +
 	"\rExamResponses\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12S\n" +
-	"\tresponses\x18\x03 \x03(\v2+.resources.qualifications.exam.ExamResponseB\b\xbaH\x05\x92\x01\x02\x10dR\tresponses:\x06\xe2\xf3\x18\x02\b\x01\"\xde\x01\n" +
+	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12I\n" +
+	"\tresponses\x18\x03 \x03(\v2+.resources.qualifications.exam.ExamResponseR\tresponses:\x06\xe2\xf3\x18\x02\b\x01\"\xde\x01\n" +
 	"\fExamResponse\x12\x1f\n" +
 	"\vquestion_id\x18\x01 \x01(\x03R\n" +
 	"questionId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12G\n" +
 	"\bquestion\x18\x03 \x01(\v2+.resources.qualifications.exam.ExamQuestionR\bquestion\x12K\n" +
-	"\bresponse\x18\x04 \x01(\v2/.resources.qualifications.exam.ExamResponseDataR\bresponse\"\xdb\x03\n" +
+	"\bresponse\x18\x04 \x01(\v2/.resources.qualifications.exam.ExamResponseDataR\bresponse\"\xd4\x03\n" +
 	"\x10ExamResponseData\x12T\n" +
 	"\tseparator\x18\x03 \x01(\v24.resources.qualifications.exam.ExamResponseSeparatorH\x00R\tseparator\x12H\n" +
 	"\x05yesno\x18\x04 \x01(\v20.resources.qualifications.exam.ExamResponseYesNoH\x00R\x05yesno\x12N\n" +
 	"\tfree_text\x18\x05 \x01(\v2/.resources.qualifications.exam.ExamResponseTextH\x00R\bfreeText\x12^\n" +
 	"\rsingle_choice\x18\x06 \x01(\v27.resources.qualifications.exam.ExamResponseSingleChoiceH\x00R\fsingleChoice\x12d\n" +
-	"\x0fmultiple_choice\x18\a \x01(\v29.resources.qualifications.exam.ExamResponseMultipleChoiceH\x00R\x0emultipleChoiceB\x11\n" +
-	"\bresponse\x12\x05\xbaH\x02\b\x01\"\x17\n" +
+	"\x0fmultiple_choice\x18\a \x01(\v29.resources.qualifications.exam.ExamResponseMultipleChoiceH\x00R\x0emultipleChoiceB\n" +
+	"\n" +
+	"\bresponse\"\x17\n" +
 	"\x15ExamResponseSeparator\")\n" +
 	"\x11ExamResponseYesNo\x12\x14\n" +
-	"\x05value\x18\x01 \x01(\bR\x05value\"9\n" +
-	"\x10ExamResponseText\x12%\n" +
-	"\x04text\x18\x01 \x01(\tB\x11\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x06r\x04(\xa0\xc2\x1eR\x04text\"D\n" +
-	"\x18ExamResponseSingleChoice\x12(\n" +
-	"\x06choice\x18\x01 \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x04R\x06choice\"H\n" +
-	"\x1aExamResponseMultipleChoice\x12*\n" +
-	"\achoices\x18\x01 \x03(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\achoices\"q\n" +
-	"\vExamGrading\x12Z\n" +
-	"\tresponses\x18\x01 \x03(\v22.resources.qualifications.exam.ExamGradingResponseB\b\xbaH\x05\x92\x01\x02\x10dR\tresponses:\x06\xe2\xf3\x18\x02\b\x01\"\x8a\x01\n" +
+	"\x05value\x18\x01 \x01(\bR\x05value\"0\n" +
+	"\x10ExamResponseText\x12\x1c\n" +
+	"\x04text\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04text\"<\n" +
+	"\x18ExamResponseSingleChoice\x12 \n" +
+	"\x06choice\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x06choice\"@\n" +
+	"\x1aExamResponseMultipleChoice\x12\"\n" +
+	"\achoices\x18\x01 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\achoices\"g\n" +
+	"\vExamGrading\x12P\n" +
+	"\tresponses\x18\x01 \x03(\v22.resources.qualifications.exam.ExamGradingResponseR\tresponses:\x06\xe2\xf3\x18\x02\b\x01\"y\n" +
 	"\x13ExamGradingResponse\x12\x1f\n" +
 	"\vquestion_id\x18\x01 \x01(\x03R\n" +
-	"questionId\x12'\n" +
-	"\x06points\x18\x02 \x01(\x02B\x0f\xbaH\f\n" +
-	"\n" +
-	"\x1d\x00\x00zD-\x00\x00\x00\x00R\x06points\x12\x1d\n" +
+	"questionId\x12\x16\n" +
+	"\x06points\x18\x02 \x01(\x02R\x06points\x12\x1d\n" +
 	"\achecked\x18\x03 \x01(\bH\x00R\achecked\x88\x01\x01B\n" +
 	"\n" +
 	"\b_checked*\xb7\x01\n" +

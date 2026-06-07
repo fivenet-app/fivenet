@@ -1871,10 +1871,10 @@ var File_resources_users_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"'resources/users/activity/activity.proto\x12\x18resources.users.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/citizens/labels/labels.proto\x1a*resources/citizens/licenses/licenses.proto\x1a-resources/documents/relations/relations.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x86\b\n" +
+	"'resources/users/activity/activity.proto\x12\x18resources.users.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/citizens/labels/labels.proto\x1a*resources/citizens/licenses/licenses.proto\x1a-resources/documents/relations/relations.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xdf\a\n" +
 	"\fUserActivity\x12-\n" +
-	"\x02id\x18\x01 \x01(\x03B\x1d\x9a\x84\x9e\x03\x18alias:\"user_activity.id\"R\x02id\x12g\n" +
-	"\x04type\x18\x02 \x01(\x0e2*.resources.users.activity.UserActivityTypeB'\x9a\x84\x9e\x03\x1aalias:\"user_activity.type\"\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12d\n" +
+	"\x02id\x18\x01 \x01(\x03B\x1d\x9a\x84\x9e\x03\x18alias:\"user_activity.id\"R\x02id\x12_\n" +
+	"\x04type\x18\x02 \x01(\x0e2*.resources.users.activity.UserActivityTypeB\x1f\x9a\x84\x9e\x03\x1aalias:\"user_activity.type\"R\x04type\x12d\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampB%\x9a\x84\x9e\x03 alias:\"user_activity.created_at\"R\tcreatedAt\x12F\n" +
 	"\x0esource_user_id\x18\x04 \x01(\x05B\x1b\x9a\x84\x9e\x03\x16alias:\"source_user_id\"H\x00R\fsourceUserId\x88\x01\x01\x12`\n" +
@@ -1882,16 +1882,16 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"sourceUser\x88\x01\x01\x12A\n" +
 	"\x0etarget_user_id\x18\x06 \x01(\x05B\x1b\x9a\x84\x9e\x03\x16alias:\"target_user_id\"R\ftargetUserId\x12[\n" +
 	"\vtarget_user\x18\a \x01(\v2 .resources.users.short.UserShortB\x18\x9a\x84\x9e\x03\x13alias:\"target_user\"R\n" +
-	"targetUser\x12=\n" +
-	"\x03key\x18\b \x01(\tB+\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x19alias:\"user_activity.key\"\xbaH\x04r\x02\x18@R\x03key\x12G\n" +
-	"\x06reason\x18\t \x01(\tB/\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x1calias:\"user_activity.reason\"\xbaH\x05r\x03\x18\xff\x01R\x06reason\x12d\n" +
+	"targetUser\x126\n" +
+	"\x03key\x18\b \x01(\tB$\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x19alias:\"user_activity.key\"R\x03key\x12?\n" +
+	"\x06reason\x18\t \x01(\tB'\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x1calias:\"user_activity.reason\"R\x06reason\x12d\n" +
 	"\x04data\x18\n" +
-	" \x01(\v2*.resources.users.activity.UserActivityDataB\x1f\x9a\x84\x9e\x03\x1aalias:\"user_activity.data\"H\x02R\x04data\x88\x01\x01\x12I\n" +
-	"\told_value\x18\v \x01(\tB,\x9a\x84\x9e\x03\x1falias:\"user_activity.old_value\"\xbaH\x05r\x03\x18\xff\x01R\boldValue\x12I\n" +
-	"\tnew_value\x18\f \x01(\tB,\x9a\x84\x9e\x03\x1falias:\"user_activity.new_value\"\xbaH\x05r\x03\x18\xff\x01R\bnewValueB\x11\n" +
+	" \x01(\v2*.resources.users.activity.UserActivityDataB\x1f\x9a\x84\x9e\x03\x1aalias:\"user_activity.data\"H\x02R\x04data\x88\x01\x01\x12A\n" +
+	"\told_value\x18\v \x01(\tB$\x9a\x84\x9e\x03\x1falias:\"user_activity.old_value\"R\boldValue\x12A\n" +
+	"\tnew_value\x18\f \x01(\tB$\x9a\x84\x9e\x03\x1falias:\"user_activity.new_value\"R\bnewValueB\x11\n" +
 	"\x0f_source_user_idB\x0e\n" +
 	"\f_source_userB\a\n" +
-	"\x05_data\"\xf5\x06\n" +
+	"\x05_data\"\xee\x06\n" +
 	"\x10UserActivityData\x12G\n" +
 	"\vname_change\x18\x01 \x01(\v2$.resources.users.activity.NameChangeH\x00R\n" +
 	"nameChange\x12R\n" +
@@ -1907,8 +1907,8 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"jailChange\x12G\n" +
 	"\vfine_change\x18\n" +
 	" \x01(\v2$.resources.users.activity.FineChangeH\x00R\n" +
-	"fineChange:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
-	"\x04data\x12\x05\xbaH\x02\b\x01\"0\n" +
+	"fineChange:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
+	"\x04data\"0\n" +
 	"\n" +
 	"NameChange\x12\x10\n" +
 	"\x03old\x18\x01 \x01(\tR\x03old\x12\x10\n" +
@@ -1948,12 +1948,12 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\n" +
 	"_job_labelB\b\n" +
 	"\x06_gradeB\x0e\n" +
-	"\f_grade_label\"\xa2\x01\n" +
+	"\f_grade_label\"\x98\x01\n" +
 	"\x17CitizenDocumentRelation\x12\x14\n" +
 	"\x05added\x18\x01 \x01(\bR\x05added\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\x12P\n" +
-	"\brelation\x18\x03 \x01(\x0e2*.resources.documents.relations.DocRelationB\b\xbaH\x05\x82\x01\x02\x10\x01R\brelation\"j\n" +
+	"documentId\x12F\n" +
+	"\brelation\x18\x03 \x01(\x0e2*.resources.documents.relations.DocRelationR\brelation\"j\n" +
 	"\n" +
 	"JailChange\x12\x18\n" +
 	"\aseconds\x18\x01 \x01(\x05R\aseconds\x12\x14\n" +

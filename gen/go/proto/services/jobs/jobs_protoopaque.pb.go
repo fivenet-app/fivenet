@@ -245,9 +245,9 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\x18services/jobs/jobs.proto\x12\rservices.jobs\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\"\x10\n" +
 	"\x0eGetMOTDRequest\"%\n" +
 	"\x0fGetMOTDResponse\x12\x12\n" +
-	"\x04motd\x18\x01 \x01(\tR\x04motd\"6\n" +
-	"\x0eSetMOTDRequest\x12$\n" +
-	"\x04motd\x18\x01 \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\bR\x04motd\"%\n" +
+	"\x04motd\x18\x01 \x01(\tR\x04motd\".\n" +
+	"\x0eSetMOTDRequest\x12\x1c\n" +
+	"\x04motd\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04motd\"%\n" +
 	"\x0fSetMOTDResponse\x12\x12\n" +
 	"\x04motd\x18\x01 \x01(\tR\x04motd2\xd7\x01\n" +
 	"\vJobsService\x12U\n" +

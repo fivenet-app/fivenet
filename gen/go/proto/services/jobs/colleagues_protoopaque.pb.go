@@ -1376,73 +1376,69 @@ var File_services_jobs_colleagues_proto protoreflect.FileDescriptor
 
 const file_services_jobs_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/jobs/colleagues.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a\"resources/jobs/labels/labels.proto\"\xf9\x03\n" +
-	"\x15ListColleaguesRequest\x12T\n" +
+	"\x1eservices/jobs/colleagues.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a\"resources/jobs/labels/labels.proto\"\xbc\x03\n" +
+	"\x15ListColleaguesRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x1f\n" +
-	"\x06search\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18@R\x06search\x12)\n" +
-	"\buser_ids\x18\x04 \x03(\x05B\x0e\xbaH\v\x92\x01\b\x10\n" +
-	"\"\x04\x1a\x02(\x00R\auserIds\x12 \n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x16\n" +
+	"\x06search\x18\x03 \x01(\tR\x06search\x12\x19\n" +
+	"\buser_ids\x18\x04 \x03(\x05R\auserIds\x12 \n" +
 	"\tuser_only\x18\x05 \x01(\bH\x01R\buserOnly\x88\x01\x01\x12\x1b\n" +
-	"\x06absent\x18\x06 \x01(\bH\x02R\x06absent\x88\x01\x01\x12%\n" +
-	"\tlabel_ids\x18\a \x03(\x03B\b\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\blabelIds\x12-\n" +
-	"\vname_prefix\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\fH\x03R\n" +
-	"namePrefix\x88\x01\x01\x12-\n" +
-	"\vname_suffix\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\fH\x04R\n" +
+	"\x06absent\x18\x06 \x01(\bH\x02R\x06absent\x88\x01\x01\x12\x1b\n" +
+	"\tlabel_ids\x18\a \x03(\x03R\blabelIds\x12$\n" +
+	"\vname_prefix\x18\b \x01(\tH\x03R\n" +
+	"namePrefix\x88\x01\x01\x12$\n" +
+	"\vname_suffix\x18\t \x01(\tH\x04R\n" +
 	"nameSuffix\x88\x01\x01B\a\n" +
 	"\x05_sortB\f\n" +
 	"\n" +
 	"_user_onlyB\t\n" +
 	"\a_absentB\x0e\n" +
 	"\f_name_prefixB\x0e\n" +
-	"\f_name_suffix\"\xbb\x01\n" +
-	"\x16ListColleaguesResponse\x12U\n" +
+	"\f_name_suffix\"\xb3\x01\n" +
+	"\x16ListColleaguesResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12J\n" +
 	"\n" +
 	"colleagues\x18\x02 \x03(\v2$.resources.jobs.colleagues.ColleagueB\x04\xc8\xf3\x18\x01R\n" +
 	"colleagues\"\x10\n" +
 	"\x0eGetSelfRequest\"U\n" +
 	"\x0fGetSelfResponse\x12B\n" +
-	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"g\n" +
-	"\x13GetColleagueRequest\x12 \n" +
-	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12 \n" +
+	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"^\n" +
+	"\x13GetColleagueRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12 \n" +
 	"\tinfo_only\x18\x02 \x01(\bH\x00R\binfoOnly\x88\x01\x01B\f\n" +
 	"\n" +
 	"_info_only\"Z\n" +
 	"\x14GetColleagueResponse\x12B\n" +
-	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"\xc5\x02\n" +
-	"\x1cListColleagueActivityRequest\x12T\n" +
+	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"\xac\x02\n" +
+	"\x1cListColleagueActivityRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x19\n" +
-	"\buser_ids\x18\x03 \x03(\x05R\auserIds\x12q\n" +
-	"\x0eactivity_types\x18\x04 \x03(\x0e29.resources.jobs.colleagues.activity.ColleagueActivityTypeB\x0f\xbaH\f\x92\x01\t\x10\n" +
-	"\"\x05\x82\x01\x02\x10\x01R\ractivityTypesB\a\n" +
-	"\x05_sort\"\xcf\x01\n" +
-	"\x1dListColleagueActivityResponse\x12U\n" +
+	"\buser_ids\x18\x03 \x03(\x05R\auserIds\x12`\n" +
+	"\x0eactivity_types\x18\x04 \x03(\x0e29.resources.jobs.colleagues.activity.ColleagueActivityTypeR\ractivityTypesB\a\n" +
+	"\x05_sort\"\xc7\x01\n" +
+	"\x1dListColleagueActivityResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12W\n" +
-	"\bactivity\x18\x02 \x03(\v25.resources.jobs.colleagues.activity.ColleagueActivityB\x04\xc8\xf3\x18\x01R\bactivity\"\x88\x01\n" +
+	"\bactivity\x18\x02 \x03(\v25.resources.jobs.colleagues.activity.ColleagueActivityB\x04\xc8\xf3\x18\x01R\bactivity\"{\n" +
 	"\x18SetColleaguePropsRequest\x12?\n" +
-	"\x05props\x18\x01 \x01(\v2).resources.jobs.colleagues.ColleaguePropsR\x05props\x12+\n" +
-	"\x06reason\x18\x02 \x01(\tB\x13\xda\xf3\x18\x02\b\x01\xbaH\n" +
-	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason\"\\\n" +
+	"\x05props\x18\x01 \x01(\v2).resources.jobs.colleagues.ColleaguePropsR\x05props\x12\x1e\n" +
+	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\\\n" +
 	"\x19SetColleaguePropsResponse\x12?\n" +
-	"\x05props\x18\x01 \x01(\v2).resources.jobs.colleagues.ColleaguePropsR\x05props\"L\n" +
-	"\x19GetColleagueLabelsRequest\x12$\n" +
-	"\x06search\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 H\x00R\x06search\x88\x01\x01B\t\n" +
+	"\x05props\x18\x01 \x01(\v2).resources.jobs.colleagues.ColleaguePropsR\x05props\"C\n" +
+	"\x19GetColleagueLabelsRequest\x12\x1b\n" +
+	"\x06search\x18\x01 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +
 	"\a_search\"R\n" +
 	"\x1aGetColleagueLabelsResponse\x124\n" +
-	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"U\n" +
-	"\x13ManageLabelsRequest\x12>\n" +
-	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelB\b\xbaH\x05\x92\x01\x02\x102R\x06labels\"L\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"K\n" +
+	"\x13ManageLabelsRequest\x124\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"L\n" +
 	"\x14ManageLabelsResponse\x124\n" +
 	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"=\n" +
 	"\x1eGetColleagueLabelsStatsRequest\x12\x1b\n" +

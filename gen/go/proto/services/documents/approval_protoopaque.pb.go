@@ -2270,54 +2270,54 @@ var File_services_documents_approval_proto protoreflect.FileDescriptor
 
 const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a+resources/documents/approval/approval.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\"\xd1\x02\n" +
-	"\x1dListApprovalTasksInboxRequest\x12T\n" +
+	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a+resources/documents/approval/approval.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\"\xb8\x02\n" +
+	"\x1dListApprovalTasksInboxRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"pagination\x12]\n" +
-	"\bstatuses\x18\x02 \x03(\x0e20.resources.documents.approval.ApprovalTaskStatusB\x0f\xbaH\f\x92\x01\t\x10\x04\"\x05\x82\x01\x02\x10\x01R\bstatuses\x12$\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x12L\n" +
+	"\bstatuses\x18\x02 \x03(\x0e20.resources.documents.approval.ApprovalTaskStatusR\bstatuses\x12$\n" +
 	"\vonly_drafts\x18\x03 \x01(\bH\x00R\n" +
 	"onlyDrafts\x88\x01\x01\x12/\n" +
 	"\x11not_already_acted\x18\x04 \x01(\bH\x01R\x0fnotAlreadyActed\x88\x01\x01B\x0e\n" +
 	"\f_only_draftsB\x14\n" +
-	"\x12_not_already_acted\"\xbf\x01\n" +
-	"\x1eListApprovalTasksInboxResponse\x12U\n" +
+	"\x12_not_already_acted\"\xb7\x01\n" +
+	"\x1eListApprovalTasksInboxResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12F\n" +
-	"\x05tasks\x18\x02 \x03(\v2*.resources.documents.approval.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"G\n" +
-	"\x1bListApprovalPoliciesRequest\x12(\n" +
-	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"\x05tasks\x18\x02 \x03(\v2*.resources.documents.approval.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\">\n" +
+	"\x1bListApprovalPoliciesRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"\xa2\x01\n" +
 	"\x1cListApprovalPoliciesResponse\x12D\n" +
 	"\x06policy\x18\x01 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\x12<\n" +
-	"\bdoc_meta\x18\x02 \x01(\v2!.resources.documents.DocumentMetaR\adocMeta\"k\n" +
-	"\x1bUpsertApprovalPolicyRequest\x12L\n" +
-	"\x06policy\x18\x01 \x01(\v2,.resources.documents.approval.ApprovalPolicyB\x06\xbaH\x03\xc8\x01\x01R\x06policy\"\xa2\x01\n" +
+	"\bdoc_meta\x18\x02 \x01(\v2!.resources.documents.DocumentMetaR\adocMeta\"c\n" +
+	"\x1bUpsertApprovalPolicyRequest\x12D\n" +
+	"\x06policy\x18\x01 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\"\xa2\x01\n" +
 	"\x1cUpsertApprovalPolicyResponse\x12D\n" +
 	"\x06policy\x18\x01 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\x12<\n" +
-	"\bdoc_meta\x18\x02 \x01(\v2!.resources.documents.DocumentMetaR\adocMeta\"\xa3\x01\n" +
-	"\x18ListApprovalTasksRequest\x12(\n" +
-	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
-	"documentId\x12]\n" +
-	"\bstatuses\x18\x02 \x03(\x0e20.resources.documents.approval.ApprovalTaskStatusB\x0f\xbaH\f\x92\x01\t\x10\x04\"\x05\x82\x01\x02\x10\x01R\bstatuses\"c\n" +
+	"\bdoc_meta\x18\x02 \x01(\v2!.resources.documents.DocumentMetaR\adocMeta\"\x89\x01\n" +
+	"\x18ListApprovalTasksRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"documentId\x12L\n" +
+	"\bstatuses\x18\x02 \x03(\x0e20.resources.documents.approval.ApprovalTaskStatusR\bstatuses\"c\n" +
 	"\x19ListApprovalTasksResponse\x12F\n" +
-	"\x05tasks\x18\x01 \x03(\v2*.resources.documents.approval.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\xda\x02\n" +
+	"\x05tasks\x18\x01 \x03(\v2*.resources.documents.approval.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\xc8\x02\n" +
 	"\x10ApprovalTaskSeed\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12#\n" +
-	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x12*\n" +
-	"\x05label\x18\x04 \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x18xH\x00R\x05label\x88\x01\x01\x12-\n" +
-	"\x12signature_required\x18\x05 \x01(\bR\x11signatureRequired\x12\x1f\n" +
-	"\x05slots\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x05slots\x12:\n" +
+	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x12#\n" +
+	"\x05label\x18\x04 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x00R\x05label\x88\x01\x01\x12-\n" +
+	"\x12signature_required\x18\x05 \x01(\bR\x11signatureRequired\x12\x14\n" +
+	"\x05slots\x18\x06 \x01(\x05R\x05slots\x12:\n" +
 	"\x06due_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05dueAt\x88\x01\x01\x12\x1d\n" +
 	"\acomment\x18\b \x01(\tH\x02R\acomment\x88\x01\x01B\b\n" +
 	"\x06_labelB\t\n" +
 	"\a_due_atB\n" +
 	"\n" +
-	"\b_comment\"\xde\x01\n" +
-	"\x1aUpsertApprovalTasksRequest\x12(\n" +
-	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"\b_comment\"\xd5\x01\n" +
+	"\x1aUpsertApprovalTasksRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12H\n" +
 	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\fsnapshotDate\x88\x01\x01\x12:\n" +
 	"\x05seeds\x18\x03 \x03(\v2$.services.documents.ApprovalTaskSeedR\x05seedsB\x10\n" +
@@ -2325,19 +2325,19 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x1bUpsertApprovalTasksResponse\x12#\n" +
 	"\rtasks_created\x18\x01 \x01(\x05R\ftasksCreated\x12#\n" +
 	"\rtasks_ensured\x18\x02 \x01(\x05R\ftasksEnsured\x12D\n" +
-	"\x06policy\x18\x03 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\"\x99\x01\n" +
-	"\x1aDeleteApprovalTasksRequest\x12(\n" +
-	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
-	"documentId\x12#\n" +
-	"\btask_ids\x18\x02 \x03(\x03B\b\xbaH\x05\x92\x01\x02\b\x01R\ataskIds\x12,\n" +
+	"\x06policy\x18\x03 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\"\x86\x01\n" +
+	"\x1aDeleteApprovalTasksRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"documentId\x12\x19\n" +
+	"\btask_ids\x18\x02 \x03(\x03R\ataskIds\x12,\n" +
 	"\x12delete_all_pending\x18\x03 \x01(\bR\x10deleteAllPending\"\x1d\n" +
-	"\x1bDeleteApprovalTasksResponse\"\xd9\x02\n" +
-	"\x14ListApprovalsRequest\x12(\n" +
-	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
-	"documentId\x12%\n" +
-	"\atask_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\x06taskId\x88\x01\x01\x12H\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\fsnapshotDate\x88\x01\x01\x12S\n" +
-	"\x06status\x18\x04 \x01(\x0e2,.resources.documents.approval.ApprovalStatusB\b\xbaH\x05\x82\x01\x02\x10\x01H\x02R\x06status\x88\x01\x01\x12\x1c\n" +
+	"\x1bDeleteApprovalTasksResponse\"\xbd\x02\n" +
+	"\x14ListApprovalsRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"documentId\x12\x1c\n" +
+	"\atask_id\x18\x02 \x01(\x03H\x00R\x06taskId\x88\x01\x01\x12H\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\fsnapshotDate\x88\x01\x01\x12I\n" +
+	"\x06status\x18\x04 \x01(\x0e2,.resources.documents.approval.ApprovalStatusH\x02R\x06status\x88\x01\x01\x12\x1c\n" +
 	"\auser_id\x18\x05 \x01(\x05H\x03R\x06userId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_task_idB\x10\n" +
@@ -2346,21 +2346,21 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
 	"\b_user_id\"]\n" +
 	"\x15ListApprovalsResponse\x12D\n" +
-	"\tapprovals\x18\x03 \x03(\v2&.resources.documents.approval.ApprovalR\tapprovals\"e\n" +
-	"\x15RevokeApprovalRequest\x12(\n" +
-	"\vapproval_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
-	"approvalId\x12\"\n" +
-	"\acomment\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\acomment\"\x9a\x01\n" +
+	"\tapprovals\x18\x03 \x03(\v2&.resources.documents.approval.ApprovalR\tapprovals\"R\n" +
+	"\x15RevokeApprovalRequest\x12\x1f\n" +
+	"\vapproval_id\x18\x01 \x01(\x03R\n" +
+	"approvalId\x12\x18\n" +
+	"\acomment\x18\x02 \x01(\tR\acomment\"\x9a\x01\n" +
 	"\x16RevokeApprovalResponse\x12B\n" +
 	"\bapproval\x18\x01 \x01(\v2&.resources.documents.approval.ApprovalR\bapproval\x12<\n" +
-	"\bdoc_meta\x18\x02 \x01(\v2!.resources.documents.DocumentMetaR\adocMeta\"\xeb\x02\n" +
-	"\x15DecideApprovalRequest\x12(\n" +
-	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
-	"documentId\x12%\n" +
-	"\atask_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\x06taskId\x88\x01\x01\x12Y\n" +
+	"\bdoc_meta\x18\x02 \x01(\v2!.resources.documents.DocumentMetaR\adocMeta\"\xc5\x02\n" +
+	"\x15DecideApprovalRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"documentId\x12\x1c\n" +
+	"\atask_id\x18\x02 \x01(\x03H\x00R\x06taskId\x88\x01\x01\x12O\n" +
 	"\n" +
-	"new_status\x18\x03 \x01(\x0e20.resources.documents.approval.ApprovalTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\tnewStatus\x12\"\n" +
-	"\acomment\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\acomment\x129\n" +
+	"new_status\x18\x03 \x01(\x0e20.resources.documents.approval.ApprovalTaskStatusR\tnewStatus\x12\x18\n" +
+	"\acomment\x18\x04 \x01(\tR\acomment\x129\n" +
 	"\vpayload_svg\x18\x05 \x01(\tB\x13\xda\xf3\x18\x0f\b\x01\x12\vSanitizeSVGH\x01R\n" +
 	"payloadSvg\x88\x01\x01\x12\x1e\n" +
 	"\bstamp_id\x18\x06 \x01(\x03H\x02R\astampId\x88\x01\x01B\n" +
@@ -2372,15 +2372,15 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\bapproval\x18\x01 \x01(\v2&.resources.documents.approval.ApprovalR\bapproval\x12>\n" +
 	"\x04task\x18\x02 \x01(\v2*.resources.documents.approval.ApprovalTaskR\x04task\x12D\n" +
 	"\x06policy\x18\x03 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\x12<\n" +
-	"\bdoc_meta\x18\x04 \x01(\v2!.resources.documents.DocumentMetaR\adocMeta\"a\n" +
-	"\x19ReopenApprovalTaskRequest\x12 \n" +
-	"\atask_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x06taskId\x12\"\n" +
-	"\acomment\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\acomment\"\xa2\x01\n" +
+	"\bdoc_meta\x18\x04 \x01(\v2!.resources.documents.DocumentMetaR\adocMeta\"N\n" +
+	"\x19ReopenApprovalTaskRequest\x12\x17\n" +
+	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12\x18\n" +
+	"\acomment\x18\x02 \x01(\tR\acomment\"\xa2\x01\n" +
 	"\x1aReopenApprovalTaskResponse\x12>\n" +
 	"\x04task\x18\x01 \x01(\v2*.resources.documents.approval.ApprovalTaskR\x04task\x12D\n" +
-	"\x06policy\x18\x02 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\"R\n" +
-	"&RecomputeApprovalPolicyCountersRequest\x12(\n" +
-	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"\x06policy\x18\x02 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\"I\n" +
+	"&RecomputeApprovalPolicyCountersRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"o\n" +
 	"'RecomputeApprovalPolicyCountersResponse\x12D\n" +
 	"\x06policy\x18\x01 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy2\xf0\f\n" +

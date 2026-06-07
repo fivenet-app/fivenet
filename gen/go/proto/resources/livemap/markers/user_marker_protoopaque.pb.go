@@ -600,17 +600,17 @@ var File_resources_livemap_markers_user_marker_proto protoreflect.FileDescriptor
 
 const file_resources_livemap_markers_user_marker_proto_rawDesc = "" +
 	"\n" +
-	"+resources/livemap/markers/user_marker.proto\x12\x19resources.livemap.markers\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/centrum/units/units.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb8\x05\n" +
+	"+resources/livemap/markers/user_marker.proto\x12\x19resources.livemap.markers\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/centrum/units/units.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x84\x05\n" +
 	"\n" +
-	"UserMarker\x12 \n" +
-	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12\f\n" +
+	"UserMarker\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\f\n" +
 	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
 	"\x01y\x18\x03 \x01(\x01R\x01y\x12B\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12,\n" +
-	"\x06postal\x18\x05 \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x180H\x01R\x06postal\x88\x01\x01\x12>\n" +
-	"\x05color\x18\x06 \x01(\tB#\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x02R\x05color\x88\x01\x01\x12\x19\n" +
-	"\x03job\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x1b\n" +
+	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12%\n" +
+	"\x06postal\x18\x05 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x01R\x06postal\x88\x01\x01\x12#\n" +
+	"\x05color\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\x05color\x88\x01\x01\x12\x10\n" +
+	"\x03job\x18\a \x01(\tR\x03job\x12\x1b\n" +
 	"\tjob_label\x18\b \x01(\tR\bjobLabel\x12 \n" +
 	"\tjob_grade\x18\r \x01(\x05H\x03R\bjobGrade\x88\x01\x01\x12K\n" +
 	"\x04user\x18\t \x01(\v2$.resources.jobs.colleagues.ColleagueB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04user\x12\x1c\n" +
@@ -627,11 +627,11 @@ const file_resources_livemap_markers_user_marker_proto_rawDesc = "" +
 	"\n" +
 	"\b_unit_idB\a\n" +
 	"\x05_unitB\a\n" +
-	"\x05_data\"\xd0\x02\n" +
+	"\x05_data\"\xc7\x02\n" +
 	"\x0eUserMarkerData\x12Q\n" +
 	"\rname_override\x18\x01 \x01(\v2'.resources.livemap.markers.NameOverrideH\x00R\fnameOverride\x88\x01\x01\x12\"\n" +
-	"\ris_in_vehicle\x18\x02 \x01(\bR\visInVehicle\x121\n" +
-	"\rvehicle_plate\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18 H\x01R\fvehiclePlate\x88\x01\x01\x12Q\n" +
+	"\ris_in_vehicle\x18\x02 \x01(\bR\visInVehicle\x12(\n" +
+	"\rvehicle_plate\x18\x03 \x01(\tH\x01R\fvehiclePlate\x88\x01\x01\x12Q\n" +
 	"\x12vehicle_updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x10vehicleUpdatedAt\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x10\n" +
 	"\x0e_name_overrideB\x10\n" +
 	"\x0e_vehicle_plateB\x15\n" +

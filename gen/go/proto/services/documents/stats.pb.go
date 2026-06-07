@@ -305,13 +305,13 @@ var File_services_documents_stats_proto protoreflect.FileDescriptor
 
 const file_services_documents_stats_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/documents/stats.proto\x12\x12services.documents\x1a\x19codegen/perms/perms.proto\x1a\x1bresources/stats/stats.proto\x1a#resources/timestamp/timestamp.proto\"\xa3\x02\n" +
+	"\x1eservices/documents/stats.proto\x12\x12services.documents\x1a\x19codegen/perms/perms.proto\x1a\x1bresources/stats/stats.proto\x1a#resources/timestamp/timestamp.proto\"\xff\x01\n" +
 	"\x0fGetStatsRequest\x124\n" +
 	"\x05start\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x05start\x120\n" +
-	"\x03end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\x03end\x12>\n" +
-	"\x06period\x18\x03 \x01(\x0e2\x1c.resources.stats.StatsPeriodB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06period\x12D\n" +
-	"\bcategory\x18\x04 \x01(\x0e2\x1e.resources.stats.StatsCategoryB\b\xbaH\x05\x82\x01\x02\x10\x01R\bcategory\x12\"\n" +
-	"\x04jobs\x18\x05 \x03(\tB\x0e\xbaH\v\x92\x01\b\x10\x0f\"\x04r\x02\x18(R\x04jobs\"\xbf\x03\n" +
+	"\x03end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\x03end\x124\n" +
+	"\x06period\x18\x03 \x01(\x0e2\x1c.resources.stats.StatsPeriodR\x06period\x12:\n" +
+	"\bcategory\x18\x04 \x01(\x0e2\x1e.resources.stats.StatsCategoryR\bcategory\x12\x12\n" +
+	"\x04jobs\x18\x05 \x03(\tR\x04jobs\"\xbf\x03\n" +
 	"\x10GetStatsResponse\x124\n" +
 	"\btop_laws\x18\x01 \x03(\v2\x19.resources.stats.KeyValueR\atopLaws\x12C\n" +
 	"\x0ffines_over_time\x18\x02 \x03(\v2\x1b.resources.stats.DailyValueR\rfinesOverTime\x12R\n" +

@@ -194,10 +194,10 @@ var File_resources_centrum_dispatchers_dispatchers_proto protoreflect.FileDescri
 
 const file_resources_centrum_dispatchers_dispatchers_proto_rawDesc = "" +
 	"\n" +
-	"/resources/centrum/dispatchers/dispatchers.proto\x12\x1dresources.centrum.dispatchers\x1a*resources/jobs/colleagues/colleagues.proto\"\xa9\x01\n" +
-	"\vDispatchers\x12\x19\n" +
-	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
-	"\tjob_label\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12F\n" +
+	"/resources/centrum/dispatchers/dispatchers.proto\x12\x1dresources.centrum.dispatchers\x1a*resources/jobs/colleagues/colleagues.proto\"\x97\x01\n" +
+	"\vDispatchers\x12\x10\n" +
+	"\x03job\x18\x01 \x01(\tR\x03job\x12 \n" +
+	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12F\n" +
 	"\vdispatchers\x18\x03 \x03(\v2$.resources.jobs.colleagues.ColleagueR\vdispatchersB\f\n" +
 	"\n" +
 	"_job_label\"^\n" +

@@ -377,19 +377,19 @@ var File_resources_notifications_clientview_clientview_proto protoreflect.FileDe
 
 const file_resources_notifications_clientview_clientview_proto_rawDesc = "" +
 	"\n" +
-	"3resources/notifications/clientview/clientview.proto\x12\"resources.notifications.clientview\x1a\x1cgoogle/protobuf/struct.proto\"v\n" +
+	"3resources/notifications/clientview/clientview.proto\x12\"resources.notifications.clientview\x1a\x1cgoogle/protobuf/struct.proto\"l\n" +
 	"\n" +
-	"ClientView\x12L\n" +
-	"\x04type\x18\x01 \x01(\x0e2..resources.notifications.clientview.ObjectTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x13\n" +
+	"ClientView\x12B\n" +
+	"\x04type\x18\x01 \x01(\x0e2..resources.notifications.clientview.ObjectTypeR\x04type\x12\x13\n" +
 	"\x02id\x18\x02 \x01(\x03H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id\"\xeb\x02\n" +
-	"\vObjectEvent\x12L\n" +
-	"\x04type\x18\x01 \x01(\x0e2..resources.notifications.clientview.ObjectTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x13\n" +
-	"\x02id\x18\x02 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\\\n" +
+	"\x03_id\"\xc5\x02\n" +
+	"\vObjectEvent\x12B\n" +
+	"\x04type\x18\x01 \x01(\x0e2..resources.notifications.clientview.ObjectTypeR\x04type\x12\x13\n" +
+	"\x02id\x18\x02 \x01(\x03H\x00R\x02id\x88\x01\x01\x12R\n" +
 	"\n" +
-	"event_type\x18\x03 \x01(\x0e23.resources.notifications.clientview.ObjectEventTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\teventType\x12%\n" +
-	"\auser_id\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x01R\x06userId\x88\x01\x01\x12\x1e\n" +
-	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x02R\x03job\x88\x01\x01\x120\n" +
+	"event_type\x18\x03 \x01(\x0e23.resources.notifications.clientview.ObjectEventTypeR\teventType\x12\x1c\n" +
+	"\auser_id\x18\x04 \x01(\x05H\x01R\x06userId\x88\x01\x01\x12\x15\n" +
+	"\x03job\x18\x05 \x01(\tH\x02R\x03job\x88\x01\x01\x120\n" +
 	"\x04data\x18\x06 \x01(\v2\x17.google.protobuf.StructH\x03R\x04data\x88\x01\x01B\x05\n" +
 	"\x03_idB\n" +
 	"\n" +

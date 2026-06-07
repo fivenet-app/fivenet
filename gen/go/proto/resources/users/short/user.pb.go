@@ -279,22 +279,18 @@ var File_resources_users_short_user_proto protoreflect.FileDescriptor
 
 const file_resources_users_short_user_proto_rawDesc = "" +
 	"\n" +
-	" resources/users/short/user.proto\x12\x15resources.users.short\x1a\x13tagger/tagger.proto\"\xe3\x04\n" +
-	"\tUserShort\x12/\n" +
-	"\auser_id\x18\x01 \x01(\x05B\x16\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"\xbaH\x04\x1a\x02 \x00R\x06userId\x12\x1c\n" +
-	"\x03job\x18\x03 \x01(\tB\n" +
-	"\xbaH\a\xd8\x01\x01r\x02\x18\x14R\x03job\x12)\n" +
-	"\tjob_label\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12'\n" +
-	"\tjob_grade\x18\x05 \x01(\x05B\n" +
-	"\xbaH\a\xd8\x01\x01\x1a\x02(\x00R\bjobGrade\x124\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\rjobGradeLabel\x88\x01\x01\x12'\n" +
-	"\tfirstname\x18\a \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\tfirstname\x12(\n" +
-	"\blastname\x18\b \x01(\tB\f\xbaH\t\xd8\x01\x01r\x04\x10\x01\x182R\blastname\x12,\n" +
-	"\vdateofbirth\x18\t \x01(\tB\n" +
-	"\xbaH\a\xd8\x01\x01r\x02\x18\n" +
-	"R\vdateofbirth\x12/\n" +
-	"\fphone_number\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x02R\vphoneNumber\x88\x01\x01\x12:\n" +
+	" resources/users/short/user.proto\x12\x15resources.users.short\x1a\x13tagger/tagger.proto\"\x84\x04\n" +
+	"\tUserShort\x12(\n" +
+	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
+	"alias:\"id\"R\x06userId\x12\x10\n" +
+	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
+	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
+	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
+	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1a\n" +
+	"\blastname\x18\b \x01(\tR\blastname\x12 \n" +
+	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12&\n" +
+	"\fphone_number\x18\f \x01(\tH\x02R\vphoneNumber\x88\x01\x01\x12:\n" +
 	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x03R\x14profilePictureFileId\x88\x01\x01\x12,\n" +
 	"\x0fprofile_picture\x18\x12 \x01(\tH\x04R\x0eprofilePicture\x88\x01\x01B\f\n" +
 	"\n" +

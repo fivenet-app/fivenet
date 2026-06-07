@@ -35,7 +35,7 @@ message ConductEntry {
     (buf.validate.field).repeated.max_items = 5
   ];
   optional resources.timestamp.Timestamp expires_at = 10;
-  int32 target_user_id = 11 [(buf.validate.field).int32.gt = 0];
+  int32 target_user_id = 11 [(buf.validate.field).int32.gte = 0];
   optional resources.jobs.colleagues.Colleague target_user = 12 [(tagger.tags) = "alias:\"target_user\""];
   int32 creator_id = 13 [(buf.validate.field).int32.gt = 0];
   optional resources.jobs.colleagues.Colleague creator = 14 [(tagger.tags) = "alias:\"creator\""];

@@ -651,43 +651,42 @@ var File_resources_jobs_colleagues_colleagues_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_colleagues_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"*resources/jobs/colleagues/colleagues.proto\x12\x19resources.jobs.colleagues\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/jobs/labels/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x92\x06\n" +
-	"\tColleague\x12/\n" +
-	"\auser_id\x18\x01 \x01(\x05B\x16\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"\xbaH\x04\x1a\x02 \x00R\x06userId\x12\x19\n" +
-	"\x03job\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
-	"\tjob_label\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12$\n" +
-	"\tjob_grade\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\bjobGrade\x124\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\rjobGradeLabel\x88\x01\x01\x12'\n" +
-	"\tfirstname\x18\a \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\tfirstname\x12%\n" +
-	"\blastname\x18\b \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\blastname\x12)\n" +
-	"\vdateofbirth\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\n" +
-	"R\vdateofbirth\x12/\n" +
-	"\fphone_number\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x02R\vphoneNumber\x88\x01\x01\x12:\n" +
+	"*resources/jobs/colleagues/colleagues.proto\x12\x19resources.jobs.colleagues\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/jobs/labels/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb6\x05\n" +
+	"\tColleague\x12(\n" +
+	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
+	"alias:\"id\"R\x06userId\x12\x10\n" +
+	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
+	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
+	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
+	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1a\n" +
+	"\blastname\x18\b \x01(\tR\blastname\x12 \n" +
+	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12&\n" +
+	"\fphone_number\x18\f \x01(\tH\x02R\vphoneNumber\x88\x01\x01\x12:\n" +
 	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x03R\x14profilePictureFileId\x88\x01\x01\x12J\n" +
 	"\x0fprofile_picture\x18\x12 \x01(\tB\x1c\x9a\x84\x9e\x03\x17alias:\"profile_picture\"H\x04R\x0eprofilePicture\x88\x01\x01\x12]\n" +
-	"\x05props\x18\x13 \x01(\v2).resources.jobs.colleagues.ColleaguePropsB\x1c\x9a\x84\x9e\x03\x17alias:\"colleague_props\"R\x05props\x12,\n" +
-	"\x05email\x18\x14 \x01(\tB\x11\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x06r\x04\x10\x06\x18PH\x05R\x05email\x88\x01\x01B\f\n" +
+	"\x05props\x18\x13 \x01(\v2).resources.jobs.colleagues.ColleaguePropsB\x1c\x9a\x84\x9e\x03\x17alias:\"colleague_props\"R\x05props\x12#\n" +
+	"\x05email\x18\x14 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x05R\x05email\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x0f\n" +
 	"\r_phone_numberB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
 	"\x10_profile_pictureB\b\n" +
-	"\x06_emailJ\x04\b\x02\x10\x03\"\xc3\x04\n" +
-	"\x0eColleagueProps\x12 \n" +
-	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12\x19\n" +
-	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12B\n" +
+	"\x06_emailJ\x04\b\x02\x10\x03\"\x9f\x04\n" +
+	"\x0eColleagueProps\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
+	"\x03job\x18\x02 \x01(\tR\x03job\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01\x12H\n" +
 	"\rabsence_begin\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\fabsenceBegin\x88\x01\x01\x12D\n" +
 	"\vabsence_end\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\n" +
 	"absenceEnd\x88\x01\x01\x12!\n" +
 	"\x04note\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04note\x88\x01\x01\x12:\n" +
-	"\x06labels\x18\a \x01(\v2\x1d.resources.jobs.labels.LabelsH\x04R\x06labels\x88\x01\x01\x12-\n" +
-	"\vname_prefix\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\fH\x05R\n" +
-	"namePrefix\x88\x01\x01\x12-\n" +
-	"\vname_suffix\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\fH\x06R\n" +
+	"\x06labels\x18\a \x01(\v2\x1d.resources.jobs.labels.LabelsH\x04R\x06labels\x88\x01\x01\x12$\n" +
+	"\vname_prefix\x18\b \x01(\tH\x05R\n" +
+	"namePrefix\x88\x01\x01\x12$\n" +
+	"\vname_suffix\x18\t \x01(\tH\x06R\n" +
 	"nameSuffix\x88\x01\x01B\r\n" +
 	"\v_deleted_atB\x10\n" +
 	"\x0e_absence_beginB\x0e\n" +

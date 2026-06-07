@@ -832,7 +832,7 @@ var File_resources_grpcws_grpcws_proto protoreflect.FileDescriptor
 
 const file_resources_grpcws_grpcws_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/grpcws/grpcws.proto\x12\x10resources.grpcws\x1a\x1ccodegen/audit/redacted.proto\"\xef\x02\n" +
+	"\x1dresources/grpcws/grpcws.proto\x12\x10resources.grpcws\x1a\x1ccodegen/audit/redacted.proto\"\xe8\x02\n" +
 	"\tGrpcFrame\x12\x1b\n" +
 	"\tstream_id\x18\x01 \x01(\rR\bstreamId\x12,\n" +
 	"\x04ping\x18\x03 \x01(\v2\x16.resources.grpcws.PingH\x00R\x04ping\x122\n" +
@@ -840,8 +840,8 @@ const file_resources_grpcws_grpcws_proto_rawDesc = "" +
 	"\x04body\x18\x05 \x01(\v2\x16.resources.grpcws.BodyH\x00R\x04body\x128\n" +
 	"\bcomplete\x18\x06 \x01(\v2\x1a.resources.grpcws.CompleteH\x00R\bcomplete\x125\n" +
 	"\afailure\x18\a \x01(\v2\x19.resources.grpcws.FailureH\x00R\afailure\x122\n" +
-	"\x06cancel\x18\b \x01(\v2\x18.resources.grpcws.CancelH\x00R\x06cancelB\x10\n" +
-	"\apayload\x12\x05\xbaH\x02\b\x01\"\x1a\n" +
+	"\x06cancel\x18\b \x01(\v2\x18.resources.grpcws.CancelH\x00R\x06cancelB\t\n" +
+	"\apayload\"\x1a\n" +
 	"\x04Ping\x12\x12\n" +
 	"\x04pong\x18\x01 \x01(\bR\x04pong\"\xda\x01\n" +
 	"\x06Header\x12\x1c\n" +

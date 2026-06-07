@@ -692,13 +692,13 @@ const file_services_documents_templates_proto_rawDesc = "" +
 	"\a_render\"v\n" +
 	"\x13GetTemplateResponse\x12C\n" +
 	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\x12\x1a\n" +
-	"\brendered\x18\x02 \x01(\bR\brendered\"d\n" +
-	"\x15CreateTemplateRequest\x12K\n" +
-	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"(\n" +
+	"\brendered\x18\x02 \x01(\bR\brendered\"\\\n" +
+	"\x15CreateTemplateRequest\x12C\n" +
+	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"(\n" +
 	"\x16CreateTemplateResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"d\n" +
-	"\x15UpdateTemplateRequest\x12K\n" +
-	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"]\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\\\n" +
+	"\x15UpdateTemplateRequest\x12C\n" +
+	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"]\n" +
 	"\x16UpdateTemplateResponse\x12C\n" +
 	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"'\n" +
 	"\x15DeleteTemplateRequest\x12\x0e\n" +

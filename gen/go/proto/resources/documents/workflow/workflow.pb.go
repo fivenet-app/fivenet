@@ -794,42 +794,38 @@ const file_resources_documents_workflow_workflow_proto_rawDesc = "" +
 	"\x11reminder_settings\x18\x02 \x01(\v2..resources.documents.workflow.ReminderSettingsR\x10reminderSettings\x12\x1d\n" +
 	"\n" +
 	"auto_close\x18\x03 \x01(\bR\tautoClose\x12_\n" +
-	"\x13auto_close_settings\x18\x04 \x01(\v2/.resources.documents.workflow.AutoCloseSettingsR\x11autoCloseSettings:\x06\xe2\xf3\x18\x02\b\x01\"\x9b\x01\n" +
-	"\x10ReminderSettings\x12N\n" +
-	"\treminders\x18\x01 \x03(\v2&.resources.documents.workflow.ReminderB\b\xbaH\x05\x92\x01\x02\x10\x03R\treminders\x127\n" +
-	"\x12max_reminder_count\x18\x02 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
-	"(\x01R\x10maxReminderCount\"|\n" +
-	"\bReminder\x12L\n" +
-	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x15\xbaH\x12\xc8\x01\x01\xaa\x01\f\x1a\x05\b\x80\xce\xda\x032\x03\b\x90\x1cR\bduration\x12\"\n" +
-	"\amessage\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\amessage\"\x86\x01\n" +
-	"\x11AutoCloseSettings\x12M\n" +
-	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x16\xbaH\x13\xc8\x01\x01\xaa\x01\r\x1a\x05\b\x80\xce\xda\x032\x04\b\x80\xa3\x05R\bduration\x12\"\n" +
-	"\amessage\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\amessage\"2\n" +
+	"\x13auto_close_settings\x18\x04 \x01(\v2/.resources.documents.workflow.AutoCloseSettingsR\x11autoCloseSettings:\x06\xe2\xf3\x18\x02\b\x01\"\x86\x01\n" +
+	"\x10ReminderSettings\x12D\n" +
+	"\treminders\x18\x01 \x03(\v2&.resources.documents.workflow.ReminderR\treminders\x12,\n" +
+	"\x12max_reminder_count\x18\x02 \x01(\x05R\x10maxReminderCount\"[\n" +
+	"\bReminder\x125\n" +
+	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\bduration\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"d\n" +
+	"\x11AutoCloseSettings\x125\n" +
+	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\bduration\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"2\n" +
 	"\x10WorkflowCronData\x12\x1e\n" +
-	"\vlast_doc_id\x18\x01 \x01(\x03R\tlastDocId\"\xe7\x03\n" +
+	"\vlast_doc_id\x18\x01 \x01(\x03R\tlastDocId\"\xdc\x03\n" +
 	"\rWorkflowState\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12Q\n" +
 	"\x12next_reminder_time\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x10nextReminderTime\x88\x01\x01\x123\n" +
-	"\x13next_reminder_count\x18\x03 \x01(\x05H\x01R\x11nextReminderCount\x88\x01\x01\x120\n" +
-	"\x0ereminder_count\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
-	"(\x01R\rreminderCount\x12K\n" +
+	"\x13next_reminder_count\x18\x03 \x01(\x05H\x01R\x11nextReminderCount\x88\x01\x01\x12%\n" +
+	"\x0ereminder_count\x18\x05 \x01(\x05R\rreminderCount\x12K\n" +
 	"\x0fauto_close_time\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\rautoCloseTime\x88\x01\x01\x12^\n" +
 	"\bworkflow\x18\x06 \x01(\v2&.resources.documents.workflow.WorkflowB\x15\x9a\x84\x9e\x03\x10alias:\"workflow\"H\x03R\bworkflow\x88\x01\x01B\x15\n" +
 	"\x13_next_reminder_timeB\x16\n" +
 	"\x14_next_reminder_countB\x12\n" +
 	"\x10_auto_close_timeB\v\n" +
-	"\t_workflow\"\x81\x04\n" +
+	"\t_workflow\"\xd8\x03\n" +
 	"\x11WorkflowUserState\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12 \n" +
-	"\auser_id\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12U\n" +
-	"\x14manual_reminder_time\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x12manualReminderTime\x88\x01\x01\x12E\n" +
-	"\x17manual_reminder_message\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x01R\x15manualReminderMessage\x88\x01\x01\x120\n" +
-	"\x0ereminder_count\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
-	"(\x01R\rreminderCount\x127\n" +
-	"\x12max_reminder_count\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
-	"(\x01R\x10maxReminderCount\x12^\n" +
+	"documentId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12U\n" +
+	"\x14manual_reminder_time\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x12manualReminderTime\x88\x01\x01\x12;\n" +
+	"\x17manual_reminder_message\x18\x04 \x01(\tH\x01R\x15manualReminderMessage\x88\x01\x01\x12%\n" +
+	"\x0ereminder_count\x18\x05 \x01(\x05R\rreminderCount\x12,\n" +
+	"\x12max_reminder_count\x18\x06 \x01(\x05R\x10maxReminderCount\x12^\n" +
 	"\bworkflow\x18\a \x01(\v2&.resources.documents.workflow.WorkflowB\x15\x9a\x84\x9e\x03\x10alias:\"workflow\"H\x02R\bworkflow\x88\x01\x01B\x17\n" +
 	"\x15_manual_reminder_timeB\x1a\n" +
 	"\x18_manual_reminder_messageB\v\n" +

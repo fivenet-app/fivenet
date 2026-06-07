@@ -123,7 +123,7 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
             { no: 8, name: "message", kind: "message", T: () => Content },
             { no: 9, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "buf.validate.field": { repeated: { maxItems: "5" } }, "tagger.tags": "alias:\"files\"" } },
             { no: 10, name: "expires_at", kind: "message", T: () => Timestamp },
-            { no: 11, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 11, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 12, name: "target_user", kind: "message", T: () => Colleague, options: { "tagger.tags": "alias:\"target_user\"" } },
             { no: 13, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 14, name: "creator", kind: "message", T: () => Colleague, options: { "tagger.tags": "alias:\"creator\"" } }

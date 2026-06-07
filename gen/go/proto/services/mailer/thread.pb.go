@@ -1599,86 +1599,82 @@ var File_services_mailer_thread_proto protoreflect.FileDescriptor
 
 const file_services_mailer_thread_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservices/mailer/thread.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a'resources/mailer/messages/message.proto\x1a%resources/mailer/threads/thread.proto\x1a#resources/timestamp/timestamp.proto\"\xef\x01\n" +
-	"\x12ListThreadsRequest\x12T\n" +
+	"\x1cservices/mailer/thread.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a'resources/mailer/messages/message.proto\x1a%resources/mailer/threads/thread.proto\x1a#resources/timestamp/timestamp.proto\"\xd5\x01\n" +
+	"\x12ListThreadsRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"pagination\x12-\n" +
-	"\temail_ids\x18\x02 \x03(\x03B\x10\xbaH\r\x92\x01\n" +
-	"\b\x01\x10\n" +
-	"\"\x04\"\x02 \x00R\bemailIds\x12\x1b\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x12\x1b\n" +
+	"\temail_ids\x18\x02 \x03(\x03R\bemailIds\x12\x1b\n" +
 	"\x06unread\x18\x04 \x01(\bH\x00R\x06unread\x88\x01\x01\x12\x1f\n" +
 	"\barchived\x18\x05 \x01(\bH\x01R\barchived\x88\x01\x01B\t\n" +
 	"\a_unreadB\v\n" +
-	"\t_archived\"\xae\x01\n" +
-	"\x13ListThreadsResponse\x12U\n" +
+	"\t_archived\"\xa6\x01\n" +
+	"\x13ListThreadsResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12@\n" +
-	"\athreads\x18\x02 \x03(\v2 .resources.mailer.threads.ThreadB\x04\xc8\xf3\x18\x01R\athreads\"\\\n" +
-	"\x10GetThreadRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
-	"\tthread_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\"M\n" +
+	"\athreads\x18\x02 \x03(\v2 .resources.mailer.threads.ThreadB\x04\xc8\xf3\x18\x01R\athreads\"J\n" +
+	"\x10GetThreadRequest\x12\x19\n" +
+	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x1b\n" +
+	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\"M\n" +
 	"\x11GetThreadResponse\x128\n" +
-	"\x06thread\x18\x01 \x01(\v2 .resources.mailer.threads.ThreadR\x06thread\"\xd9\x01\n" +
-	"\x13CreateThreadRequest\x12@\n" +
-	"\x06thread\x18\x01 \x01(\v2 .resources.mailer.threads.ThreadB\x06\xbaH\x03\xc8\x01\x01R\x06thread\x12D\n" +
-	"\amessage\x18\x02 \x01(\v2\".resources.mailer.messages.MessageB\x06\xbaH\x03\xc8\x01\x01R\amessage\x12:\n" +
+	"\x06thread\x18\x01 \x01(\v2 .resources.mailer.threads.ThreadR\x06thread\"\xb7\x01\n" +
+	"\x13CreateThreadRequest\x128\n" +
+	"\x06thread\x18\x01 \x01(\v2 .resources.mailer.threads.ThreadR\x06thread\x12<\n" +
+	"\amessage\x18\x02 \x01(\v2\".resources.mailer.messages.MessageR\amessage\x12(\n" +
 	"\n" +
-	"recipients\x18\x03 \x03(\tB\x1a\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x0f\x92\x01\f\b\x01\x10\x0f\"\x06r\x04\x10\x06\x18PR\n" +
+	"recipients\x18\x03 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\n" +
 	"recipients\"P\n" +
 	"\x14CreateThreadResponse\x128\n" +
-	"\x06thread\x18\x01 \x01(\v2 .resources.mailer.threads.ThreadR\x06thread\"_\n" +
-	"\x13DeleteThreadRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
-	"\tthread_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\"\x16\n" +
-	"\x14DeleteThreadResponse\"a\n" +
-	"\x15GetThreadStateRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
-	"\tthread_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\"U\n" +
+	"\x06thread\x18\x01 \x01(\v2 .resources.mailer.threads.ThreadR\x06thread\"M\n" +
+	"\x13DeleteThreadRequest\x12\x19\n" +
+	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x1b\n" +
+	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\"\x16\n" +
+	"\x14DeleteThreadResponse\"O\n" +
+	"\x15GetThreadStateRequest\x12\x19\n" +
+	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x1b\n" +
+	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\"U\n" +
 	"\x16GetThreadStateResponse\x12;\n" +
-	"\x05state\x18\x01 \x01(\v2%.resources.mailer.threads.ThreadStateR\x05state\"\\\n" +
-	"\x15SetThreadStateRequest\x12C\n" +
-	"\x05state\x18\x01 \x01(\v2%.resources.mailer.threads.ThreadStateB\x06\xbaH\x03\xc8\x01\x01R\x05state\"U\n" +
+	"\x05state\x18\x01 \x01(\v2%.resources.mailer.threads.ThreadStateR\x05state\"T\n" +
+	"\x15SetThreadStateRequest\x12;\n" +
+	"\x05state\x18\x01 \x01(\v2%.resources.mailer.threads.ThreadStateR\x05state\"U\n" +
 	"\x16SetThreadStateResponse\x12;\n" +
-	"\x05state\x18\x01 \x01(\v2%.resources.mailer.threads.ThreadStateR\x05state\"\x8d\x01\n" +
-	"\x14SearchThreadsRequest\x12T\n" +
+	"\x05state\x18\x01 \x01(\v2%.resources.mailer.threads.ThreadStateR\x05state\"|\n" +
+	"\x14SearchThreadsRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"pagination\x12\x1f\n" +
-	"\x06search\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18@R\x06search\"\xb4\x01\n" +
-	"\x15SearchThreadsResponse\x12U\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x12\x16\n" +
+	"\x06search\x18\x02 \x01(\tR\x06search\"\xac\x01\n" +
+	"\x15SearchThreadsResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12D\n" +
-	"\bmessages\x18\x02 \x03(\v2\".resources.mailer.messages.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"\x80\x02\n" +
-	"\x19ListThreadMessagesRequest\x12T\n" +
+	"\bmessages\x18\x02 \x03(\v2\".resources.mailer.messages.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"\xe6\x01\n" +
+	"\x19ListThreadMessagesRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"pagination\x12\"\n" +
-	"\bemail_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
-	"\tthread_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\x129\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x12\x19\n" +
+	"\bemail_id\x18\x02 \x01(\x03R\aemailId\x12\x1b\n" +
+	"\tthread_id\x18\x03 \x01(\x03R\bthreadId\x129\n" +
 	"\x05after\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05after\x88\x01\x01B\b\n" +
-	"\x06_after\"\xb9\x01\n" +
-	"\x1aListThreadMessagesResponse\x12U\n" +
+	"\x06_after\"\xb1\x01\n" +
+	"\x1aListThreadMessagesResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12D\n" +
-	"\bmessages\x18\x02 \x03(\v2\".resources.mailer.messages.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"\x94\x01\n" +
-	"\x12PostMessageRequest\x12D\n" +
-	"\amessage\x18\x01 \x01(\v2\".resources.mailer.messages.MessageB\x06\xbaH\x03\xc8\x01\x01R\amessage\x128\n" +
+	"\bmessages\x18\x02 \x03(\v2\".resources.mailer.messages.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"|\n" +
+	"\x12PostMessageRequest\x12<\n" +
+	"\amessage\x18\x01 \x01(\v2\".resources.mailer.messages.MessageR\amessage\x12(\n" +
 	"\n" +
-	"recipients\x18\x02 \x03(\tB\x18\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\r\x92\x01\n" +
-	"\x10\n" +
-	"\"\x06r\x04\x10\x06\x18PR\n" +
+	"recipients\x18\x02 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\n" +
 	"recipients\"S\n" +
 	"\x13PostMessageResponse\x12<\n" +
-	"\amessage\x18\x01 \x01(\v2\".resources.mailer.messages.MessageR\amessage\"\x88\x01\n" +
-	"\x14DeleteMessageRequest\x12\"\n" +
-	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
-	"\tthread_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\x12&\n" +
+	"\amessage\x18\x01 \x01(\v2\".resources.mailer.messages.MessageR\amessage\"m\n" +
+	"\x14DeleteMessageRequest\x12\x19\n" +
+	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x1b\n" +
+	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\x12\x1d\n" +
 	"\n" +
-	"message_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\tmessageId\"\x17\n" +
+	"message_id\x18\x03 \x01(\x03R\tmessageId\"\x17\n" +
 	"\x15DeleteMessageResponse2\xaa\t\n" +
 	"\rThreadService\x12l\n" +
 	"\vListThreads\x12#.services.mailer.ListThreadsRequest\x1a$.services.mailer.ListThreadsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +

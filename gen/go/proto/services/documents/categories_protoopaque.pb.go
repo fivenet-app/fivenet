@@ -371,11 +371,11 @@ const file_services_documents_categories_proto_rawDesc = "" +
 	"\x16ListCategoriesResponse\x12F\n" +
 	"\n" +
 	"categories\x18\x01 \x03(\v2&.resources.documents.category.CategoryR\n" +
-	"categories\"k\n" +
-	"\x1dCreateOrUpdateCategoryRequest\x12J\n" +
-	"\bcategory\x18\x01 \x01(\v2&.resources.documents.category.CategoryB\x06\xbaH\x03\xc8\x01\x01R\bcategory\"l\n" +
-	"\x1eCreateOrUpdateCategoryResponse\x12J\n" +
-	"\bcategory\x18\x01 \x01(\v2&.resources.documents.category.CategoryB\x06\xbaH\x03\xc8\x01\x01R\bcategory\"'\n" +
+	"categories\"c\n" +
+	"\x1dCreateOrUpdateCategoryRequest\x12B\n" +
+	"\bcategory\x18\x01 \x01(\v2&.resources.documents.category.CategoryR\bcategory\"d\n" +
+	"\x1eCreateOrUpdateCategoryResponse\x12B\n" +
+	"\bcategory\x18\x01 \x01(\v2&.resources.documents.category.CategoryR\bcategory\"'\n" +
 	"\x15DeleteCategoryRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
 	"\x16DeleteCategoryResponse2\x9e\x03\n" +

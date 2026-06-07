@@ -515,10 +515,9 @@ var File_resources_citizens_labels_labels_proto protoreflect.FileDescriptor
 
 const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"\n" +
-	"&resources/citizens/labels/labels.proto\x12\x19resources.citizens.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a&resources/citizens/labels/access.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"P\n" +
-	"\x06Labels\x12>\n" +
-	"\x04list\x18\x01 \x03(\v2 .resources.citizens.labels.LabelB\b\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\x81\x06\n" +
+	"&resources/citizens/labels/labels.proto\x12\x19resources.citizens.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a&resources/citizens/labels/access.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"F\n" +
+	"\x06Labels\x124\n" +
+	"\x04list\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\xbd\x05\n" +
 	"\x05Label\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12=\n" +
 	"\n" +
@@ -526,16 +525,16 @@ const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x1e\n" +
-	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x02R\x03job\x88\x01\x01\x12&\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x15\n" +
+	"\x03job\x18\x05 \x01(\tH\x02R\x03job\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\f \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\tsortOrder\x12#\n" +
-	"\x04name\x18\x06 \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x180R\x04name\x129\n" +
-	"\x05color\x18\a \x01(\tB#\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x12)\n" +
-	"\x04icon\x18\b \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x01H\x03R\x04icon\x88\x01\x01\x12D\n" +
-	"\bsettings\x18\t \x01(\v2#.resources.citizens.labels.SettingsH\x04R\bsettings\x88\x01\x01\x12K\n" +
+	"sort_order\x18\f \x01(\x05R\tsortOrder\x12\x1c\n" +
+	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12\x1e\n" +
+	"\x05color\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12!\n" +
+	"\x04icon\x18\b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04icon\x88\x01\x01\x12D\n" +
+	"\bsettings\x18\t \x01(\v2#.resources.citizens.labels.SettingsH\x04R\bsettings\x88\x01\x01\x12C\n" +
 	"\x06access\x18\n" +
-	" \x01(\v2&.resources.citizens.labels.LabelAccessB\x06\xbaH\x03\xc8\x01\x01H\x05R\x06access\x88\x01\x01\x12B\n" +
+	" \x01(\v2&.resources.citizens.labels.LabelAccessH\x05R\x06access\x88\x01\x01\x12B\n" +
 	"\n" +
 	"expires_at\x18\v \x01(\v2\x1e.resources.timestamp.TimestampH\x06R\texpiresAt\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +
@@ -544,11 +543,11 @@ const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"\x05_iconB\v\n" +
 	"\t_settingsB\t\n" +
 	"\a_accessB\r\n" +
-	"\v_expires_at\"\x93\x02\n" +
+	"\v_expires_at\"\xeb\x01\n" +
 	"\bSettings\x12/\n" +
-	"\x13requires_expiration\x18\x01 \x01(\bR\x12requiresExpiration\x12U\n" +
-	"\fmin_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x12\xbaH\x0f\xaa\x01\f\"\x05\b\x80\x83\x98K2\x03\b\x84\aH\x00R\vminDuration\x88\x01\x01\x12U\n" +
-	"\fmax_duration\x18\x03 \x01(\v2\x19.google.protobuf.DurationB\x12\xbaH\x0f\xaa\x01\f\"\x05\b\x80\x83\x98K2\x03\b\x84\aH\x01R\vmaxDuration\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x0f\n" +
+	"\x13requires_expiration\x18\x01 \x01(\bR\x12requiresExpiration\x12A\n" +
+	"\fmin_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationH\x00R\vminDuration\x88\x01\x01\x12A\n" +
+	"\fmax_duration\x18\x03 \x01(\v2\x19.google.protobuf.DurationH\x01R\vmaxDuration\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x0f\n" +
 	"\r_min_durationB\x0f\n" +
 	"\r_max_durationB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels;citizenslabelsb\x06proto3"
 

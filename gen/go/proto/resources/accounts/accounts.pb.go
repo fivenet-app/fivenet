@@ -421,7 +421,7 @@ var File_resources_accounts_accounts_proto protoreflect.FileDescriptor
 
 const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"\n" +
-	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a&resources/accounts/oauth2/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"\x88\x05\n" +
+	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a&resources/accounts/oauth2/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"\xe5\x04\n" +
 	"\aAccount\x12&\n" +
 	"\x02id\x18\x01 \x01(\x03B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x02id\x12B\n" +
 	"\n" +
@@ -430,22 +430,21 @@ const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x18\n" +
-	"\aenabled\x18\x05 \x01(\bR\aenabled\x12#\n" +
-	"\busername\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18\x18R\busername\x12!\n" +
-	"\alicense\x18\a \x01(\tB\a\xbaH\x04r\x02\x18@R\alicense\x12>\n" +
-	"\x06groups\x18\b \x01(\v2!.resources.accounts.AccountGroupsH\x03R\x06groups\x88\x01\x01\x12)\n" +
-	"\tlast_char\x18\t \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x04R\blastChar\x88\x01\x01\x12v\n" +
+	"\aenabled\x18\x05 \x01(\bR\aenabled\x12\x1a\n" +
+	"\busername\x18\x06 \x01(\tR\busername\x12\x18\n" +
+	"\alicense\x18\a \x01(\tR\alicense\x12>\n" +
+	"\x06groups\x18\b \x01(\v2!.resources.accounts.AccountGroupsH\x03R\x06groups\x88\x01\x01\x12 \n" +
+	"\tlast_char\x18\t \x01(\x05H\x04R\blastChar\x88\x01\x01\x12n\n" +
 	"\x0foauth2_accounts\x18\n" +
-	" \x03(\v2(.resources.accounts.oauth2.OAuth2AccountB#\x9a\x84\x9e\x03\x16alias:\"oauth2_account\"\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\x0eoauth2AccountsB\r\n" +
+	" \x03(\v2(.resources.accounts.oauth2.OAuth2AccountB\x1b\x9a\x84\x9e\x03\x16alias:\"oauth2_account\"R\x0eoauth2AccountsB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\t\n" +
 	"\a_groupsB\f\n" +
 	"\n" +
-	"_last_char\"1\n" +
-	"\rAccountGroups\x12 \n" +
-	"\x06groups\x18\x01 \x03(\tB\b\xbaH\x05\x92\x01\x02\x10\x14R\x06groups\"}\n" +
+	"_last_char\"'\n" +
+	"\rAccountGroups\x12\x16\n" +
+	"\x06groups\x18\x01 \x03(\tR\x06groups\"}\n" +
 	"\tCharacter\x12\x1c\n" +
 	"\tavailable\x18\x01 \x01(\bR\tavailable\x12\x14\n" +
 	"\x05group\x18\x02 \x01(\tR\x05group\x12<\n" +

@@ -272,7 +272,7 @@ var File_resources_documents_comment_comment_proto protoreflect.FileDescriptor
 
 const file_resources_documents_comment_comment_proto_rawDesc = "" +
 	"\n" +
-	")resources/documents/comment/comment.proto\x12\x1bresources.documents.comment\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xca\x04\n" +
+	")resources/documents/comment/comment.proto\x12\x1bresources.documents.comment\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xb8\x04\n" +
 	"\aComment\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -284,11 +284,11 @@ const file_resources_documents_comment_comment_proto_rawDesc = "" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1f\n" +
 	"\vdocument_id\x18\x05 \x01(\x03R\n" +
 	"documentId\x12;\n" +
-	"\acontent\x18\x06 \x01(\v2!.resources.common.content.ContentR\acontent\x12+\n" +
+	"\acontent\x18\x06 \x01(\v2!.resources.common.content.ContentR\acontent\x12\"\n" +
 	"\n" +
-	"creator_id\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x03R\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\b \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x04R\acreator\x88\x01\x01\x12(\n" +
-	"\vcreator_job\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
+	"creator_id\x18\a \x01(\x05H\x03R\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\b \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x04R\acreator\x88\x01\x01\x12\x1f\n" +
+	"\vcreator_job\x18\t \x01(\tR\n" +
 	"creatorJobB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
