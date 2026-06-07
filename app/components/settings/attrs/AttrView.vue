@@ -20,8 +20,9 @@ import { AttributeValues, type RoleAttribute } from '~~/gen/ts/resources/permiss
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/resources/settings/perms';
 import type { GetJobLimitsResponse } from '~~/gen/ts/services/settings/system';
+import type { Perms } from '~~/gen/ts/perms';
 import AttrTemplates from './AttrTemplates.vue';
-import type { AttributeTemplate, PermissionTemplate } from './templates';
+import type { TemplateAttribute } from './templates';
 
 const props = defineProps<{
     job: string;
@@ -54,7 +55,11 @@ const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
-const changed = ref(false);
+const attrChangedStates = ref(new Map<number, boolean>());
+const childHasUnsavedChanges = computed(() => attrChangedStates.value.size > 0);
+const { hasUnsavedChanges, markChanged, resetChanged } = useUnsavedChanges({
+    dirty: childHasUnsavedChanges,
+});
 
 const permList = ref<Permission[]>([]);
 const permCategories = ref<PermissionNamespaceGroup[]>([]);
@@ -115,7 +120,7 @@ async function propogatePermissionStates(): Promise<void> {
 }
 
 async function updatePermissionState(perm: number, state: boolean | undefined): Promise<void> {
-    changed.value = true;
+    markChanged();
     permStates.value.set(perm, state);
 }
 
@@ -183,7 +188,8 @@ async function updateJobLimits(): Promise<void> {
         attrs.toUpdate.length === 0 &&
         attrs.toRemove.length === 0
     ) {
-        changed.value = false;
+        resetChanged();
+        attrChangedStates.value.clear();
         return;
     }
 
@@ -200,7 +206,8 @@ async function updateJobLimits(): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        changed.value = false;
+        resetChanged();
+        attrChangedStates.value.clear();
         refresh();
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -209,7 +216,8 @@ async function updateJobLimits(): Promise<void> {
 }
 
 function clearState(): void {
-    changed.value = false;
+    resetChanged();
+    attrChangedStates.value.clear();
     permList.value.length = 0;
     permCategories.value.length = 0;
     permStates.value.clear();
@@ -344,7 +352,7 @@ async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
     });
 
     state.input = '';
-    changed.value = true;
+    markChanged();
 }
 
 const accordionCategories = computed(() =>
@@ -387,9 +395,13 @@ async function deleteFaction(job: string): Promise<void> {
     }
 }
 
-function applyTemplate(permissions: PermissionTemplate[], attributes: AttributeTemplate[]): void {
-    changed.value = true;
-    if (permissions.length === 0 && attributes.length === 0) {
+function applyTemplate(
+    permissions: Perms[],
+    attributes: TemplateAttribute[],
+    grantAllPermissions = false,
+): void {
+    markChanged();
+    if (!grantAllPermissions && permissions.length === 0 && attributes.length === 0) {
         // If no permissions or attributes, just clear everything
         permStates.value.clear();
         attrList.value.forEach((attr) => {
@@ -427,8 +439,8 @@ function applyTemplate(permissions: PermissionTemplate[], attributes: AttributeT
         return;
     }
 
-    // Handle special case where permissions is length 1 and has only Superuser permission, which means all permissions should be applied
-    if (permissions.length === 1 && permissions[0]!.namespace === 'Superuser' && permissions[0]!.name === 'Superuser') {
+    if (grantAllPermissions) {
+        // "Full perms" is handled explicitly by the template flag rather than a fake permission.
         permList.value.forEach((perm) => {
             permStates.value.set(perm.id, true);
         });
@@ -465,61 +477,69 @@ function applyTemplate(permissions: PermissionTemplate[], attributes: AttributeT
                 };
             }
         });
+        return;
+    }
+
+    permissions.forEach((perm) => {
+        const p = permList.value.find((v) => toPermId(v) === perm);
+        if (p) {
+            permStates.value.set(p.id, true);
+        }
+    });
+
+    attributes.forEach((attr) => {
+        const a = attrList.value.find((v) => toPermId(v) === attr.permission && v.key === attr.key);
+        if (!a) return;
+
+        if (!attr.validValues) {
+            a.maxValues = undefined;
+        } else if (attr.validValues?.validValues.oneofKind === 'stringList') {
+            a.maxValues = AttributeValues.clone(attr.validValues);
+        } else if (attr.validValues?.validValues.oneofKind === 'jobList') {
+            a.maxValues = {
+                validValues: {
+                    oneofKind: 'jobList',
+                    jobList: {
+                        strings: [props.job],
+                    },
+                },
+            };
+        } else if (attr.validValues?.validValues.oneofKind === 'jobGradeList') {
+            const jobsObj: Record<string, number> = {};
+            const job = jobs.value.find((j) => j.name === props.job);
+            const maxGrade =
+                job && job.grades.length > 0 ? Math.max(...job.grades.map((g) => g.grade)) : game.startJobGrade;
+            jobsObj[props.job] = maxGrade;
+
+            a.maxValues = {
+                validValues: {
+                    oneofKind: 'jobGradeList',
+                    jobGradeList: {
+                        fineGrained: false,
+                        jobs: jobsObj,
+                        grades: {},
+                    },
+                },
+            };
+        }
+    });
+}
+
+function toPermId(perm: Pick<Permission, 'namespace' | 'service' | 'name'>): Perms {
+    return `${perm.namespace}.${perm.service}/${perm.name}` as Perms;
+}
+
+function setAttrChanged(attrId: number, value: boolean): void {
+    if (value) {
+        attrChangedStates.value.set(attrId, true);
     } else {
-        permissions.forEach((perm) => {
-            const p = permList.value.find(
-                (v) => v.namespace === perm.namespace && v.service === perm.service && v.name === perm.name,
-            );
-            if (p) {
-                permStates.value.set(p.id, true);
-            }
-        });
-
-        attributes.forEach((attr) => {
-            const a = attrList.value.find(
-                (v) =>
-                    v.namespace === attr.namespace && v.service === attr.service && v.name === attr.name && v.key === attr.key,
-            );
-            if (!a) return;
-
-            if (!attr.validValues) {
-                a.maxValues = undefined;
-            } else if (attr.validValues?.validValues.oneofKind === 'stringList') {
-                a.maxValues = AttributeValues.clone(attr.validValues);
-            } else if (attr.validValues?.validValues.oneofKind === 'jobList') {
-                a.maxValues = {
-                    validValues: {
-                        oneofKind: 'jobList',
-                        jobList: {
-                            strings: [props.job],
-                        },
-                    },
-                };
-            } else if (attr.validValues?.validValues.oneofKind === 'jobGradeList') {
-                const jobsObj: Record<string, number> = {};
-                const job = jobs.value.find((j) => j.name === props.job);
-                const maxGrade =
-                    job && job.grades.length > 0 ? Math.max(...job.grades.map((g) => g.grade)) : game.startJobGrade;
-                jobsObj[props.job] = maxGrade;
-
-                a.maxValues = {
-                    validValues: {
-                        oneofKind: 'jobGradeList',
-                        jobGradeList: {
-                            fineGrained: false,
-                            jobs: jobsObj,
-                            grades: {},
-                        },
-                    },
-                };
-            }
-        });
+        attrChangedStates.value.delete(attrId);
     }
 }
 
 onBeforeMount(async () => listJobs());
 
-const canSubmit = ref(true);
+const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await updateJobLimits().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -568,7 +588,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     <div class="flex flex-row gap-1">
                         <UButton
                             class="flex-1"
-                            :disabled="!changed || !canSubmit"
+                            :disabled="!hasUnsavedChanges || !canSubmit"
                             :loading="!canSubmit"
                             icon="i-mdi-content-save"
                             :label="$t('common.save', 1)"
@@ -577,7 +597,7 @@ const confirmModal = overlay.create(ConfirmModal);
 
                         <UPopover>
                             <UButton
-                                :disabled="changed"
+                                :disabled="hasUnsavedChanges"
                                 color="neutral"
                                 icon="i-mdi-form-textarea"
                                 :label="$t('common.paste')"
@@ -598,7 +618,7 @@ const confirmModal = overlay.create(ConfirmModal);
 
                         <UButton
                             icon="i-mdi-content-copy"
-                            :disabled="changed"
+                            :disabled="hasUnsavedChanges"
                             color="neutral"
                             :label="$t('common.copy')"
                             @click="copyRole"
@@ -653,7 +673,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                             v-if="attr.permissionId === perm.id"
                                             v-model="attrList[idx]!"
                                             :permission="perm"
-                                            @changed="changed = true"
+                                            @changed="setAttrChanged(attr.attrId, $event)"
                                         />
                                     </template>
                                 </div>
@@ -709,7 +729,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                                     v-if="attr.permissionId === perm.id"
                                                     v-model="attrList[idx]!"
                                                     :permission="perm"
-                                                    @changed="changed = true"
+                                                    @changed="setAttrChanged(attr.attrId, $event)"
                                                 />
                                             </template>
                                         </div>
@@ -721,7 +741,12 @@ const confirmModal = overlay.create(ConfirmModal);
 
                     <USeparator class="my-2" />
 
-                    <AttrTemplates @apply-template="(permissions, attributes) => applyTemplate(permissions, attributes)" />
+                    <AttrTemplates
+                        @apply-template="
+                            (permissions, attributes, grantAllPermissions) =>
+                                applyTemplate(permissions, attributes, grantAllPermissions)
+                        "
+                    />
                 </div>
             </template>
         </div>

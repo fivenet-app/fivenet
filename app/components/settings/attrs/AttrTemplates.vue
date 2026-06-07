@@ -2,14 +2,15 @@
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import {
     gangJobTemplate,
+    fullPermsTemplate,
     neutralJobTemplate,
     policeJobTemplate,
-    type AttributeTemplate,
-    type PermissionTemplate,
+    type TemplateAttribute,
 } from './templates';
+import type { Perms } from '~~/gen/ts/perms';
 
 defineEmits<{
-    (e: 'apply-template', permissions: PermissionTemplate[], attributes: AttributeTemplate[]): void;
+    (e: 'apply-template', permissions: Perms[], attributes: TemplateAttribute[], grantAllPermissions: boolean): void;
 }>();
 
 const overlay = useOverlay();
@@ -20,8 +21,9 @@ const templates = ref<
     {
         title: string;
         description?: string;
-        permissions: PermissionTemplate[];
-        attributes: AttributeTemplate[];
+        permissions: Perms[];
+        attributes: TemplateAttribute[];
+        grantAllPermissions?: boolean;
     }[]
 >([
     {
@@ -51,8 +53,9 @@ const templates = ref<
     {
         title: t('components.settings.attr_view.templates.full_perms.title'),
         description: t('components.settings.attr_view.templates.full_perms.description'),
-        permissions: [{ namespace: 'Superuser', service: 'Superuser', name: 'Superuser' }],
-        attributes: [],
+        permissions: fullPermsTemplate.permissions,
+        attributes: fullPermsTemplate.attributes,
+        grantAllPermissions: fullPermsTemplate.grantAllPermissions,
     },
 ]);
 
@@ -64,7 +67,7 @@ const confirmModal = overlay.create(ConfirmModal);
         <UButton :label="$t('common.template', 2)" block color="neutral" variant="subtle" trailing-icon="i-mdi-chevron-down" />
 
         <template #content>
-            <div class="flex flex-col gap-2 p-2">
+            <div class="flex flex-col gap-4 p-2">
                 <UAlert
                     icon="i-mdi-information-outline"
                     color="warning"
@@ -92,7 +95,13 @@ const confirmModal = overlay.create(ConfirmModal);
                                             name: template.title,
                                         }),
                                         description: $t('components.settings.attr_view.template_apply.description'),
-                                        confirm: () => $emit('apply-template', template.permissions, template.attributes),
+                                        confirm: () =>
+                                            $emit(
+                                                'apply-template',
+                                                template.permissions,
+                                                template.attributes,
+                                                template.grantAllPermissions ?? false,
+                                            ),
                                     })
                                 "
                             />

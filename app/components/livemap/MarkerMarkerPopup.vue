@@ -13,7 +13,7 @@ defineProps<{
     marker: MarkerMarker;
 }>();
 
-const { activeChar, can } = useAuth();
+const { can } = useAuth();
 
 const overlay = useOverlay();
 
@@ -70,8 +70,7 @@ function openMarkerEditor(marker: MarkerMarker, closePopup: () => void): void {
 
                         <UTooltip
                             v-if="
-                                can('livemap.LivemapService/CreateOrUpdateMarker').value &&
-                                checkIfCanEditMarker(activeChar, marker.creator)
+                                can('livemap.LivemapService/CreateOrUpdateMarker').value && checkIfCanEditMarker(marker.creator)
                             "
                             :text="$t('common.edit')"
                         >

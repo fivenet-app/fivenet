@@ -17,7 +17,7 @@ const emits = defineEmits<{
 
 const { t } = useI18n();
 
-const { activeChar, can } = useAuth();
+const { can } = useAuth();
 
 const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, gotoCoords } = livemapStore;
@@ -58,8 +58,7 @@ const columns = computed(
                                 onClick: () => gotoCoords({ x: row.original.x, y: row.original.y }),
                             }),
                         ),
-                        can('livemap.LivemapService/CreateOrUpdateMarker').value &&
-                        checkIfCanEditMarker(activeChar.value, row.original.creator)
+                        can('livemap.LivemapService/CreateOrUpdateMarker').value && checkIfCanEditMarker(row.original.creator)
                             ? h(UTooltip, { text: t('common.edit') }, () =>
                                   h(UButton, {
                                       variant: 'link',

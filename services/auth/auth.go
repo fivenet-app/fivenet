@@ -323,6 +323,14 @@ func (s *Server) ChangeUsername(
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 
+	// Make sure current and new username aren't the same
+	currentUsername := req.GetCurrentUsername()
+	newUsername := normalizeUsername(req.GetNewUsername())
+	if strings.EqualFold(currentUsername, newUsername) {
+		return nil, errorsauth.ErrBadUsername
+	}
+
+	// Retrieve account from db using account ID and username
 	acc, err := s.getAccountFromIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
@@ -333,23 +341,22 @@ func (s *Server) ChangeUsername(
 
 	// No username nor password set on account, fail
 	if acc.Username == nil || acc.Password == nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrNoAccount)
+		return nil, errorsauth.ErrNoAccount
 	}
 
-	username := normalizeUsername(req.GetNewUsername())
 	// Make sure current username matches the sent current username
-	if !strings.EqualFold(*acc.Username, username) {
+	if !strings.EqualFold(*acc.Username, currentUsername) {
 		return nil, errorsauth.ErrBadUsername
 	}
 
 	// New username is same as current username.. just return here.
 	resp := &pbauth.ChangeUsernameResponse{}
-	if *acc.Username == username {
+	if *acc.Username == newUsername {
 		return nil, errorsauth.ErrBadUsername
 	}
 
 	// If there is an account with the new username, fail
-	newAcc, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(mysql.String(username)), false)
+	newAcc, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(mysql.String(newUsername)), false)
 	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		// Other database error
 		return nil, errswrap.NewError(err, errorsauth.ErrBadUsername)
@@ -359,14 +366,14 @@ func (s *Server) ChangeUsername(
 		return nil, errorsauth.ErrBadUsername
 	}
 
-	acc.Username = &username
+	acc.Username = &newUsername
 
 	stmt := tAccounts.
 		UPDATE(
 			tAccounts.Username,
 		).
 		SET(
-			tAccounts.Username.SET(mysql.String(username)),
+			tAccounts.Username.SET(mysql.String(newUsername)),
 		).
 		WHERE(
 			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
@@ -375,6 +382,11 @@ func (s *Server) ChangeUsername(
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrUpdateAccount)
+	}
+
+	// Destroy session
+	if err := s.destroyCookies(ctx); err != nil {
+		return nil, err
 	}
 
 	return resp, nil
@@ -422,6 +434,11 @@ func (s *Server) ForgotPassword(
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
+	}
+
+	// Destroy session
+	if err := s.destroyCookies(ctx); err != nil {
+		return nil, err
 	}
 
 	return &pbauth.ForgotPasswordResponse{}, nil
