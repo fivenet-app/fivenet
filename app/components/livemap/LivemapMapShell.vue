@@ -45,12 +45,11 @@ const emit = defineEmits<{
 const mapRef = useTemplateRef('mapRef');
 const mapContainer = useTemplateRef('mapContainer');
 const mapResize = useDebounceFn(() => mapRef.value?.leafletObject?.invalidateSize(), 150, { maxWait: 400 });
+
 const backgroundColor = computed(() => getMapBackgroundColor(props.backgroundLayer));
 
 function scheduleResize(): void {
-    nextTick(() => {
-        requestAnimationFrame(() => mapResize());
-    });
+    nextTick(() => requestAnimationFrame(() => mapResize()));
 }
 
 function onMapReady(map: Map): void {
@@ -70,12 +69,12 @@ defineExpose({
 </script>
 
 <template>
-    <div ref="mapContainer" :class="props.containerClass" :style="{ backgroundColor }">
+    <div ref="mapContainer" :class="props.containerClass" :style="{ backgroundColor: backgroundColor }">
         <LMap
             ref="mapRef"
             v-model:zoom="zoom"
             v-model:center="center"
-            :style="{ backgroundColor }"
+            :style="{ backgroundColor: 'rgba(0,0,0,0.0)' }"
             :bounds="props.bounds"
             :max-bounds="props.maxBounds"
             :min-zoom="props.minZoom"
