@@ -55,10 +55,6 @@ func (s *Server) nextLabelSortOrder(
 		return 0, err
 	}
 
-	if dest.SortOrder >= math.MaxInt32 {
-		return 0, errorscitizens.ErrFailedQuery
-	}
-
 	return dest.SortOrder + 1, nil
 }
 

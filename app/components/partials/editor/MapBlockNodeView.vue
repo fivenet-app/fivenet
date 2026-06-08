@@ -34,7 +34,7 @@ function save(): void {
 </script>
 
 <template>
-    <NodeViewWrapper class="inline-flex align-middle" as="span">
+    <NodeViewWrapper class="map-block align-middle" as="span">
         <span class="group relative inline-flex align-middle">
             <MapBlockContentView :show-goto-coords="false" v-bind="contentProps" />
 
@@ -70,3 +70,12 @@ function save(): void {
         </span>
     </NodeViewWrapper>
 </template>
+
+<style scoped>
+.map-block::before,
+.map-block::after {
+    content: '\200b';
+    font-size: 0;
+    line-height: 0;
+}
+</style>

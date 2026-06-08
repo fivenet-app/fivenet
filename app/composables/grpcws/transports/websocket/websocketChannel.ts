@@ -17,6 +17,7 @@ const CONTROL_OP_REAUTH = 'reauth' as const;
 const CONTROL_OP_AUTH_OK = 'auth_ok' as const;
 
 type TokenProvider = () => string | null;
+type WebSocketLike = Pick<UseWebSocketReturn<ArrayBuffer>, 'data' | 'status' | 'send' | 'open'>;
 
 type AuthState =
     | { kind: 'none' }
@@ -31,7 +32,7 @@ function defaultTokenProvider(): string | null {
 
 export function WebsocketChannelTransport(
     logger: ILogger,
-    webSocket: UseWebSocketReturn<ArrayBuffer>,
+    webSocket: WebSocketLike,
     tokenProvider: TokenProvider = defaultTokenProvider,
 ): TransportFactory {
     const wsChannel = new WebsocketChannelImpl(logger, webSocket, tokenProvider);
@@ -46,7 +47,7 @@ export function WebsocketChannelTransport(
     };
 }
 
-interface GrpcStream extends Transport {
+export interface GrpcStream extends Transport {
     readonly streamId: number;
     readonly service: string;
     readonly method: string;
@@ -59,21 +60,22 @@ interface WebsocketChannel {
     getStream(options: TransportOptions): GrpcStream;
 }
 
-class WebsocketChannelImpl implements WebsocketChannel {
+export class WebsocketChannelImpl implements WebsocketChannel {
     private logger: ILogger;
-    protected ws: UseWebSocketReturn<ArrayBuffer>;
+    protected ws: WebSocketLike;
     private tokenProvider: TokenProvider;
 
-    readonly activeStreams = new Map<number, [TransportOptions, WebsocketChannelStream]>();
+    readonly activeStreams = new Map<number, [TransportOptions, GrpcStream]>();
 
-    public lastStreamId = 1;
+    private readonly availableStreamIds = new Set<number>();
 
     private authState: AuthState = { kind: 'none' };
 
-    constructor(logger: ILogger, ws: UseWebSocketReturn<ArrayBuffer>, tokenProvider: TokenProvider) {
+    constructor(logger: ILogger, ws: WebSocketLike, tokenProvider: TokenProvider) {
         this.logger = logger;
         this.ws = ws;
         this.tokenProvider = tokenProvider;
+        this.resetAvailableStreamIds();
 
         watch(ws.data, async (val) => this.onMessage(val));
         watchThrottled(
@@ -88,7 +90,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                     this.activeStreams.delete(as[1].streamId);
                 });
 
-                this.lastStreamId = 1;
+                this.resetAvailableStreamIds();
                 this.authState = { kind: 'none' };
             },
             {
@@ -124,7 +126,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
             return;
         }
 
-        const wsStream: WebsocketChannelStream = stream[1];
+        const wsStream: GrpcStream = stream[1];
         switch (frame.payload.oneofKind) {
             case 'header': {
                 stream[0].debug &&
@@ -139,6 +141,9 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 const err = createRpcError(metaData, stream[0].methodDefinition);
                 if (err) {
                     stream[0].onEnd(err);
+                    wsStream.closed = true;
+                    this.activeStreams.delete(streamId);
+                    this.releaseStreamId(streamId);
                 }
                 break;
             }
@@ -162,6 +167,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 wsStream.closed = true;
                 // Remove completed stream
                 this.activeStreams.delete(streamId);
+                this.releaseStreamId(streamId);
                 break;
             }
 
@@ -169,6 +175,9 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 const failure = frame.payload.failure;
                 if (failure === null) {
                     stream[0].onEnd(errInternal);
+                    wsStream.closed = true;
+                    this.activeStreams.delete(streamId);
+                    this.releaseStreamId(streamId);
                     return;
                 }
 
@@ -187,6 +196,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 const err = createRpcError(metaData, stream[0].methodDefinition);
                 stream[0].onEnd(err);
                 this.activeStreams.delete(streamId);
+                this.releaseStreamId(streamId);
                 break;
             }
 
@@ -195,6 +205,9 @@ class WebsocketChannelImpl implements WebsocketChannel {
                     this.logger.debug('Received cancel for stream', streamId, `${stream[1].service}/${stream[1].method}`);
 
                 stream[0].onEnd(errCancelled);
+                wsStream.closed = true;
+                this.activeStreams.delete(streamId);
+                this.releaseStreamId(streamId);
                 break;
             }
 
@@ -322,13 +335,25 @@ class WebsocketChannelImpl implements WebsocketChannel {
     }
 
     public getNextStreamId(): number {
-        // Reset stream id back to 1 if max is reached
-        if (this.lastStreamId >= websocketChannelMaxStreamCount) {
-            this.lastStreamId = 1;
-            return this.lastStreamId;
+        const nextStreamId = this.availableStreamIds.values().next();
+        if (nextStreamId.done) {
+            throw new Error('No available websocket stream ids');
         }
 
-        return this.lastStreamId++;
+        this.availableStreamIds.delete(nextStreamId.value);
+        return nextStreamId.value;
+    }
+
+    private releaseStreamId(streamId: number) {
+        if (streamId <= 0 || streamId > websocketChannelMaxStreamCount) return;
+        this.availableStreamIds.add(streamId);
+    }
+
+    private resetAvailableStreamIds() {
+        this.availableStreamIds.clear();
+        for (let i = 1; i <= websocketChannelMaxStreamCount; i++) {
+            this.availableStreamIds.add(i);
+        }
     }
 
     getStream(opts: TransportOptions): GrpcStream {

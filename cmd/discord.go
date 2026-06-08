@@ -3,6 +3,8 @@ package cmd
 import (
 	"github.com/fivenet-app/fivenet/v2026/cmd/fxopts"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord/commands"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"go.uber.org/fx"
 )
@@ -15,7 +17,10 @@ func (c *DiscordCmd) Run(cli *CLI) error {
 	instance.SetComponent("discord")
 
 	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, true, true)
-	fxOpts = append(fxOpts, fxopts.FxDiscordOpts()...)
+	fxOpts = append(fxOpts,
+		fx.Invoke(func(*discord.Bot) {}),
+		fx.Invoke(func(*commands.Cmds) {}),
+	)
 
 	if c.ModuleCronAgent {
 		fxOpts = append(fxOpts, fx.Invoke(func(*croner.Executor) {}))

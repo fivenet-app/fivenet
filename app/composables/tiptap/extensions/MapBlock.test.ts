@@ -1,3 +1,4 @@
+import { getSchema } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
@@ -7,6 +8,12 @@ import { MapBlock } from './MapBlock';
 
 describe('MapBlock', () => {
     const extensions = [Document, Paragraph, Text, MapBlock];
+
+    it('is not selectable as a node selection', () => {
+        const schema = getSchema(extensions);
+
+        expect(schema.nodes.mapBlock.spec.selectable).toBe(false);
+    });
 
     it('round-trips html with data attributes', () => {
         const doc = {

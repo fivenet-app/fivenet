@@ -48,6 +48,7 @@ function openFullscreen(): void {
 
             <UTooltip v-if="showGotoCoords" :text="$t('common.goto')">
                 <UButton
+                    class="!my-0"
                     icon="i-mdi-map-marker"
                     color="neutral"
                     variant="subtle"

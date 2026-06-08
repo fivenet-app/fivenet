@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import type { ColumnFiltersState } from '@tanstack/vue-table';
 import { UBadge, UButton, UKbd, UTooltip } from '#components';
-import type { TableColumn } from '@nuxt/ui';
+import type { Form, TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import { getSettingsCronClient } from '~~/gen/ts/clients';
 import { Any } from '~~/gen/ts/google/protobuf/any';
@@ -10,6 +11,7 @@ import type { ListCronjobsResponse } from '~~/gen/ts/services/settings/cron';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import Pagination from '../partials/Pagination.vue';
+import { z } from 'zod';
 
 const settingsCronClient = await getSettingsCronClient();
 
@@ -19,6 +21,15 @@ const notifications = useNotificationsStore();
 
 const uiState = useUIStateStore();
 const { windowFocus } = storeToRefs(uiState);
+
+const schema = z.object({
+    search: z.string().max(128).default(''),
+});
+
+const query = useSearchForm('settings_auditlog', schema);
+
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
 const { data: cronjobs, status, refresh, error } = useLazyAsyncData(`settings-cronjobs`, () => listCronjobs());
 
@@ -41,7 +52,7 @@ async function runCronjob(name: string): Promise<void> {
             name: name,
         });
 
-        refresh();
+        await refresh();
     } catch (e) {
         handleGRPCError(e as RpcError);
     }
@@ -148,6 +159,19 @@ const columns = computed(
             },
         ] as TableColumn<Cronjob>[],
 );
+
+const columnFilters = computed<ColumnFiltersState>(() => [
+    {
+        id: 'name',
+        value: validatedQuery.value.search,
+    },
+]);
+
+const input = useTemplateRef('input');
+
+defineShortcuts({
+    '/': () => input.value?.inputRef?.focus(),
+});
 </script>
 
 <template>
@@ -158,6 +182,37 @@ const columns = computed(
                     <PartialsBackButton fallback-to="/settings" />
                 </template>
             </UDashboardNavbar>
+
+            <UDashboardToolbar>
+                <template #default>
+                    <UForm
+                        ref="formRef"
+                        class="my-2 flex w-full flex-1 flex-col gap-2"
+                        :schema="schema"
+                        :state="query"
+                        @submit="commitValidatedQuery"
+                    >
+                        <div class="flex flex-1 flex-row gap-2">
+                            <UFormField class="flex-1" :label="$t('common.search')" name="search">
+                                <UInput
+                                    ref="input"
+                                    v-model="query.search"
+                                    class="w-full"
+                                    type="text"
+                                    name="license"
+                                    :placeholder="$t('common.cronjob')"
+                                    block
+                                    leading-icon="i-mdi-search"
+                                >
+                                    <template #trailing>
+                                        <UKbd value="/" />
+                                    </template>
+                                </UInput>
+                            </UFormField>
+                        </div>
+                    </UForm>
+                </template>
+            </UDashboardToolbar>
         </template>
 
         <template #body>
@@ -170,6 +225,7 @@ const columns = computed(
 
             <UTable
                 v-else
+                v-model:column-filters="columnFilters"
                 class="flex-1"
                 :loading="isRequestPending(status)"
                 :columns="columns"
