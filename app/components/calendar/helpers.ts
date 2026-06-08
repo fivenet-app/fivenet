@@ -1,5 +1,5 @@
-import type { Calendar } from '~~/gen/ts/resources/calendar/calendar';
 import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access/access';
+import type { Calendar } from '~~/gen/ts/resources/calendar/calendar';
 import { CalendarEntryOccurrenceKind, type CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 

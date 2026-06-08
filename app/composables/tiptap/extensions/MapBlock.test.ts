@@ -11,8 +11,12 @@ describe('MapBlock', () => {
 
     it('is not selectable as a node selection', () => {
         const schema = getSchema(extensions);
+        const mapBlock = schema.nodes.mapBlock;
 
-        expect(schema.nodes.mapBlock.spec.selectable).toBe(false);
+        expect(mapBlock).toBeDefined();
+        if (!mapBlock) throw new Error('mapBlock node is missing from the schema');
+
+        expect(mapBlock.spec.selectable).toBe(false);
     });
 
     it('round-trips html with data attributes', () => {
