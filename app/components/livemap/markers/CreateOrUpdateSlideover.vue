@@ -7,7 +7,7 @@ import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/markers/marker_marker';
-import InputDatePicker from '../partials/InputDatePicker.vue';
+import InputDatePicker from '../../partials/InputDatePicker.vue';
 import type { Coords } from '~~/gen/ts/resources/livemap/coords.js';
 
 const props = defineProps<{
