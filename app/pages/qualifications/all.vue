@@ -3,11 +3,11 @@ import List from '~/components/qualifications/List.vue';
 import ListPage from '~/components/qualifications/ListPage.vue';
 
 useHead({
-    title: 'pages.qualifications.title',
+    title: 'components.qualifications.all_qualifications',
 });
 
 definePageMeta({
-    title: 'pages.qualifications.title',
+    title: 'components.qualifications.all_qualifications',
     requiresAuth: true,
     permission: 'qualifications.QualificationsService/ListQualifications',
 });

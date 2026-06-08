@@ -4,11 +4,11 @@ import RequestList from '~/components/qualifications/request/RequestList.vue';
 import ResultList from '~/components/qualifications/result/ResultList.vue';
 
 useHead({
-    title: 'pages.qualifications.title',
+    title: 'components.qualifications.user_qualifications',
 });
 
 definePageMeta({
-    title: 'pages.qualifications.title',
+    title: 'components.qualifications.user_qualifications',
     requiresAuth: true,
     permission: 'qualifications.QualificationsService/ListQualifications',
 });
