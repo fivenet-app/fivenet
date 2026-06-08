@@ -62,7 +62,10 @@ const links = computed(() =>
                     </span>
 
                     <span v-if="attr.customData.time">
-                        <template v-if="attr.customData.timeEnd && isSameDay(day.date, toDate(attr.customData.endTime))">
+                        <template v-if="attr.customData.occurrence?.allDay">
+                            {{ attr.customData.time }}
+                        </template>
+                        <template v-else-if="attr.customData.timeEnd && isSameDay(day.date, toDate(attr.customData.endTime))">
                             {{ attr.customData.timeEnd }}
                         </template>
                         <template v-else-if="isSameDay(day.date, toDate(attr.customData.startTime))">
@@ -92,7 +95,10 @@ const links = computed(() =>
                     </span>
 
                     <span v-if="attr.customData.time">
-                        <template v-if="attr.customData.timeEnd && isSameDay(day.date, toDate(attr.customData.endTime))">
+                        <template v-if="attr.customData.occurrence?.allDay">
+                            {{ attr.customData.time }}
+                        </template>
+                        <template v-else-if="attr.customData.timeEnd && isSameDay(day.date, toDate(attr.customData.endTime))">
                             {{ attr.customData.timeEnd }}
                         </template>
                         <template v-else-if="isSameDay(day.date, toDate(attr.customData.startTime))">

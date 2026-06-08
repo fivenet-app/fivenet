@@ -9,7 +9,7 @@ import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useCalendarStore } from '~/stores/calendar';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import CalendarCreateOrUpdateModal from './CalendarCreateOrUpdateModal.vue';
-import { checkCalendarAccess } from './helpers';
+import { checkCalendarAccess, isSystemManagedCalendar } from './helpers';
 
 const props = defineProps<{
     calendarId: number;
@@ -33,6 +33,7 @@ const { data, status, refresh, error } = useLazyAsyncData(`calendar-${props.cale
 );
 
 const calendar = computed(() => data.value?.calendar);
+const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
 </script>
 
 <template>
@@ -52,13 +53,17 @@ const calendar = computed(() => data.value?.calendar);
                         @click="
                             calendarCreateOrUpdateModal.open({
                                 calendarId: calendar?.id,
+                                systemManaged: isSystemManaged,
                             })
                         "
                     />
                 </UTooltip>
 
                 <UTooltip
-                    v-if="checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE, calendar?.creatorJob)"
+                    v-if="
+                        !isSystemManaged &&
+                        checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE, calendar?.creatorJob)
+                    "
                     :text="$t('common.delete')"
                 >
                     <UButton
@@ -87,9 +92,9 @@ const calendar = computed(() => data.value?.calendar);
 
             <template v-else>
                 <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
-                    <OpenClosedBadge :closed="calendar.closed" />
+                    <OpenClosedBadge v-if="!isSystemManaged" :closed="calendar.closed" />
 
-                    <UBadge class="inline-flex gap-1 text-xs" color="neutral" icon="i-mdi-account">
+                    <UBadge v-if="!isSystemManaged" class="inline-flex gap-1 text-xs" color="neutral" icon="i-mdi-account">
                         <span class="font-medium">{{ $t('common.created_by') }}</span>
                         <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name text-class="text-xs" />
                     </UBadge>
@@ -114,10 +119,18 @@ const calendar = computed(() => data.value?.calendar);
                             : calendar.description
                     }}
                 </p>
+
+                <p v-if="isSystemManaged" class="text-sm text-neutral-500 dark:text-neutral-400">
+                    {{ $t('common.read_only') }}
+                </p>
             </template>
 
             <UCollapsible
-                v-if="calendar?.access && (calendar?.access?.jobs.length > 0 || calendar?.access?.users.length > 0)"
+                v-if="
+                    !isSystemManaged &&
+                    calendar?.access &&
+                    (calendar?.access?.jobs.length > 0 || calendar?.access?.users.length > 0)
+                "
                 class="group flex flex-col gap-2"
             >
                 <UButton

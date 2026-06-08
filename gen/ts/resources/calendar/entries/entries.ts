@@ -16,6 +16,31 @@ import { Content } from "../../common/content/content";
 import { Calendar } from "../calendar";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
+ * @generated from protobuf message resources.calendar.entries.CalendarEntryOccurrence
+ */
+export interface CalendarEntryOccurrence {
+    /**
+     * @generated from protobuf field: string key = 1
+     */
+    key: string;
+    /**
+     * @generated from protobuf field: resources.calendar.entries.CalendarEntryOccurrenceKind kind = 2
+     */
+    kind: CalendarEntryOccurrenceKind;
+    /**
+     * @generated from protobuf field: optional int64 source_entry_id = 3
+     */
+    sourceEntryId?: number;
+    /**
+     * @generated from protobuf field: optional int32 source_user_id = 4
+     */
+    sourceUserId?: number;
+    /**
+     * @generated from protobuf field: bool all_day = 5
+     */
+    allDay: boolean;
+}
+/**
  * @generated from protobuf message resources.calendar.entries.CalendarEntry
  */
 export interface CalendarEntry {
@@ -91,15 +116,19 @@ export interface CalendarEntry {
      * @generated from protobuf field: optional resources.calendar.entries.CalendarEntryRSVP rsvp = 18
      */
     rsvp?: CalendarEntryRSVP;
+    /**
+     * @generated from protobuf field: optional resources.calendar.entries.CalendarEntryOccurrence occurrence = 19
+     */
+    occurrence?: CalendarEntryOccurrence;
 }
 /**
  * @generated from protobuf message resources.calendar.entries.CalendarEntryRecurring
  */
 export interface CalendarEntryRecurring {
     /**
-     * @generated from protobuf field: string every = 1
+     * @generated from protobuf field: resources.calendar.entries.CalendarEntryRecurringEvery every = 1
      */
-    every: string;
+    every: CalendarEntryRecurringEvery;
     /**
      * @generated from protobuf field: int32 count = 2
      */
@@ -135,6 +164,52 @@ export interface CalendarEntryRSVP {
     response: RsvpResponses;
 }
 /**
+ * @generated from protobuf enum resources.calendar.entries.CalendarEntryOccurrenceKind
+ */
+export enum CalendarEntryOccurrenceKind {
+    /**
+     * @generated from protobuf enum value: CALENDAR_ENTRY_OCCURRENCE_KIND_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: CALENDAR_ENTRY_OCCURRENCE_KIND_MANUAL = 1;
+     */
+    MANUAL = 1,
+    /**
+     * @generated from protobuf enum value: CALENDAR_ENTRY_OCCURRENCE_KIND_RECURRING = 2;
+     */
+    RECURRING = 2,
+    /**
+     * @generated from protobuf enum value: CALENDAR_ENTRY_OCCURRENCE_KIND_BIRTHDAY = 3;
+     */
+    BIRTHDAY = 3
+}
+/**
+ * @generated from protobuf enum resources.calendar.entries.CalendarEntryRecurringEvery
+ */
+export enum CalendarEntryRecurringEvery {
+    /**
+     * @generated from protobuf enum value: CALENDAR_ENTRY_RECURRING_EVERY_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: CALENDAR_ENTRY_RECURRING_EVERY_DAY = 1;
+     */
+    DAY = 1,
+    /**
+     * @generated from protobuf enum value: CALENDAR_ENTRY_RECURRING_EVERY_WEEK = 2;
+     */
+    WEEK = 2,
+    /**
+     * @generated from protobuf enum value: CALENDAR_ENTRY_RECURRING_EVERY_MONTH = 3;
+     */
+    MONTH = 3,
+    /**
+     * @generated from protobuf enum value: CALENDAR_ENTRY_RECURRING_EVERY_YEAR = 4;
+     */
+    YEAR = 4
+}
+/**
  * @generated from protobuf enum resources.calendar.entries.RsvpResponses
  */
 export enum RsvpResponses {
@@ -164,6 +239,83 @@ export enum RsvpResponses {
     YES = 5
 }
 // @generated message type with reflection information, may provide speed optimized methods
+class CalendarEntryOccurrence$Type extends MessageType<CalendarEntryOccurrence> {
+    constructor() {
+        super("resources.calendar.entries.CalendarEntryOccurrence", [
+            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
+            { no: 2, name: "kind", kind: "enum", T: () => ["resources.calendar.entries.CalendarEntryOccurrenceKind", CalendarEntryOccurrenceKind, "CALENDAR_ENTRY_OCCURRENCE_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 3, name: "source_entry_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "source_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
+            { no: 5, name: "all_day", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CalendarEntryOccurrence>): CalendarEntryOccurrence {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.key = "";
+        message.kind = 0;
+        message.allDay = false;
+        if (value !== undefined)
+            reflectionMergePartial<CalendarEntryOccurrence>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CalendarEntryOccurrence): CalendarEntryOccurrence {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string key */ 1:
+                    message.key = reader.string();
+                    break;
+                case /* resources.calendar.entries.CalendarEntryOccurrenceKind kind */ 2:
+                    message.kind = reader.int32();
+                    break;
+                case /* optional int64 source_entry_id */ 3:
+                    message.sourceEntryId = reader.int64().toNumber();
+                    break;
+                case /* optional int32 source_user_id */ 4:
+                    message.sourceUserId = reader.int32();
+                    break;
+                case /* bool all_day */ 5:
+                    message.allDay = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CalendarEntryOccurrence, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string key = 1; */
+        if (message.key !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.key);
+        /* resources.calendar.entries.CalendarEntryOccurrenceKind kind = 2; */
+        if (message.kind !== 0)
+            writer.tag(2, WireType.Varint).int32(message.kind);
+        /* optional int64 source_entry_id = 3; */
+        if (message.sourceEntryId !== undefined)
+            writer.tag(3, WireType.Varint).int64(message.sourceEntryId);
+        /* optional int32 source_user_id = 4; */
+        if (message.sourceUserId !== undefined)
+            writer.tag(4, WireType.Varint).int32(message.sourceUserId);
+        /* bool all_day = 5; */
+        if (message.allDay !== false)
+            writer.tag(5, WireType.Varint).bool(message.allDay);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.calendar.entries.CalendarEntryOccurrence
+ */
+export const CalendarEntryOccurrence = new CalendarEntryOccurrence$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class CalendarEntry$Type extends MessageType<CalendarEntry> {
     constructor() {
         super("resources.calendar.entries.CalendarEntry", [
@@ -184,7 +336,8 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 15, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 16, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 17, name: "recurring", kind: "message", T: () => CalendarEntryRecurring },
-            { no: 18, name: "rsvp", kind: "message", T: () => CalendarEntryRSVP }
+            { no: 18, name: "rsvp", kind: "message", T: () => CalendarEntryRSVP },
+            { no: 19, name: "occurrence", kind: "message", T: () => CalendarEntryOccurrence }
         ]);
     }
     create(value?: PartialMessage<CalendarEntry>): CalendarEntry {
@@ -257,6 +410,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                 case /* optional resources.calendar.entries.CalendarEntryRSVP rsvp */ 18:
                     message.rsvp = CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options, message.rsvp);
                     break;
+                case /* optional resources.calendar.entries.CalendarEntryOccurrence occurrence */ 19:
+                    message.occurrence = CalendarEntryOccurrence.internalBinaryRead(reader, reader.uint32(), options, message.occurrence);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -323,6 +479,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* optional resources.calendar.entries.CalendarEntryRSVP rsvp = 18; */
         if (message.rsvp)
             CalendarEntryRSVP.internalBinaryWrite(message.rsvp, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.calendar.entries.CalendarEntryOccurrence occurrence = 19; */
+        if (message.occurrence)
+            CalendarEntryOccurrence.internalBinaryWrite(message.occurrence, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -337,14 +496,14 @@ export const CalendarEntry = new CalendarEntry$Type();
 class CalendarEntryRecurring$Type extends MessageType<CalendarEntryRecurring> {
     constructor() {
         super("resources.calendar.entries.CalendarEntryRecurring", [
-            { no: 1, name: "every", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "every", kind: "enum", T: () => ["resources.calendar.entries.CalendarEntryRecurringEvery", CalendarEntryRecurringEvery, "CALENDAR_ENTRY_RECURRING_EVERY_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 2, name: "count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "until", kind: "message", T: () => Timestamp }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<CalendarEntryRecurring>): CalendarEntryRecurring {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.every = "";
+        message.every = 0;
         message.count = 0;
         if (value !== undefined)
             reflectionMergePartial<CalendarEntryRecurring>(this, message, value);
@@ -355,8 +514,8 @@ class CalendarEntryRecurring$Type extends MessageType<CalendarEntryRecurring> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string every */ 1:
-                    message.every = reader.string();
+                case /* resources.calendar.entries.CalendarEntryRecurringEvery every */ 1:
+                    message.every = reader.int32();
                     break;
                 case /* int32 count */ 2:
                     message.count = reader.int32();
@@ -376,9 +535,9 @@ class CalendarEntryRecurring$Type extends MessageType<CalendarEntryRecurring> {
         return message;
     }
     internalBinaryWrite(message: CalendarEntryRecurring, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string every = 1; */
-        if (message.every !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.every);
+        /* resources.calendar.entries.CalendarEntryRecurringEvery every = 1; */
+        if (message.every !== 0)
+            writer.tag(1, WireType.Varint).int32(message.every);
         /* int32 count = 2; */
         if (message.count !== 0)
             writer.tag(2, WireType.Varint).int32(message.count);

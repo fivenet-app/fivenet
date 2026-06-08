@@ -795,7 +795,8 @@
         "asc": "Ascending",
         "coordinate": "Coordinate | Coordinates",
         "insert": "Insert",
-        "map": "Map"
+        "map": "Map",
+        "read_only": "Read only"
     },
     "components": {
         "partials": {
@@ -1521,6 +1522,11 @@
             "signed_in_as": "Signed in as"
         },
         "calendar": {
+            "birthday_calendar_name": "{job} Birthdays",
+            "birthday_entry_block": {
+                "title": "Happy birthday!",
+                "description": "This birthday event is managed automatically and is read-only."
+            },
             "CalendarCreateOrUpdateModal": {
                 "create": {
                     "title": "Create Calendar"

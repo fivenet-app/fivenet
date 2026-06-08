@@ -795,7 +795,8 @@
         "asc": "Aufsteigend",
         "coordinate": "Koordinate | Koordinaten",
         "insert": "Einfügen",
-        "map": "Karte"
+        "map": "Karte",
+        "read_only": "Schreibgeschützt"
     },
     "components": {
         "partials": {
@@ -1521,6 +1522,11 @@
             "signed_in_as": "Angemeldet als"
         },
         "calendar": {
+            "birthday_calendar_name": "{job} Geburtstage",
+            "birthday_entry_block": {
+                "title": "Alles Gute zum Geburtstag!",
+                "description": "Dieser Geburtstagseintrag wird automatisch verwaltet und ist schreibgeschützt."
+            },
             "CalendarCreateOrUpdateModal": {
                 "create": {
                     "title": "Kalender erstellen"
