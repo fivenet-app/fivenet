@@ -11,6 +11,11 @@ import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar;calendar";
 
+enum CalendarSystemKind {
+  CALENDAR_SYSTEM_KIND_UNSPECIFIED = 0;
+  CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS = 1;
+}
+
 message Calendar {
   int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
@@ -42,6 +47,7 @@ message Calendar {
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional CalendarSub subscription = 14;
   resources.calendar.access.CalendarAccess access = 15;
+  optional CalendarSystemKind system_kind = 16 [(buf.validate.field).enum.defined_only = true];
 }
 
 message CalendarShort {
@@ -69,6 +75,7 @@ message CalendarShort {
     }
   ];
   optional CalendarSub subscription = 14;
+  optional CalendarSystemKind system_kind = 15 [(buf.validate.field).enum.defined_only = true];
 }
 
 message CalendarSub {

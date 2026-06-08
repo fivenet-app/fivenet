@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -58,13 +59,12 @@ func (s *Server) ListCalendarEntries(
 					)),
 			),
 			tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+			s.birthdayCalendarVisible(userInfo),
 		),
 	)
 
 	if req.GetAfter() != nil {
-		condition = condition.AND(
-			tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())),
-		)
+		condition = condition.AND(tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())))
 	}
 
 	baseDate := now.New(
@@ -73,13 +73,17 @@ func (s *Server) ListCalendarEntries(
 	startDate := baseDate.BeginningOfMonth()
 	endDate := baseDate.EndOfMonth()
 
-	condition = condition.
-		AND(mysql.AND(
-			tCalendarEntry.StartTime.GT_EQ(mysql.DateTimeT(startDate)),
-			tCalendarEntry.StartTime.LT(mysql.DateTimeT(endDate)),
-		))
+	condition = condition.AND(tCalendarEntry.StartTime.LT_EQ(mysql.DateTimeT(endDate)))
 
 	resp := &pbcalendar.ListCalendarEntriesResponse{}
+	regularCondition := condition.
+		AND(tCalendarEntry.StartTime.GT_EQ(mysql.DateTimeT(startDate))).
+		AND(tCalendar.SystemKind.NOT_EQ(
+			mysql.Int32(int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS)),
+		))
+	birthdayCondition := condition.AND(
+		tCalendar.SystemKind.EQ(mysql.Int32(int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS))),
+	)
 
 	if len(req.GetCalendarIds()) > 0 {
 		ids := []mysql.Expression{}
@@ -90,32 +94,44 @@ func (s *Server) ListCalendarEntries(
 			ids = append(ids, mysql.Int64(req.GetCalendarIds()[i]))
 		}
 
-		condition = condition.AND(tCalendarEntry.CalendarID.IN(ids...))
+		regularCondition = regularCondition.AND(tCalendarEntry.CalendarID.IN(ids...))
+		birthdayCondition = birthdayCondition.AND(tCalendarEntry.CalendarID.IN(ids...))
 	}
 
-	stmt := s.listCalendarEntriesQuery(
-		condition,
+	regularEntries, err := s.loadExpandedCalendarEntries(
+		ctx,
 		userInfo,
-		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		regularCondition,
+		calendarEntryVisibility(
+			userInfo,
+			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+			rsvpResponse,
+		),
+		startDate,
+		endDate,
+		int64Ptr(100),
 	)
-
-	if req.GetAfter() != nil {
-		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())))
+	if err != nil {
+		return nil, err
 	}
 
-	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
+	birthdayEntries, err := s.loadExpandedCalendarEntries(
+		ctx,
+		userInfo,
+		birthdayCondition,
+		s.birthdayCalendarVisible(userInfo),
+		startDate,
+		endDate,
+		nil,
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.GetEntries() {
-		if resp.GetEntries()[i].GetCreator() != nil {
-			jobInfoFn(resp.GetEntries()[i].GetCreator())
-		}
-	}
-
+	resp.Entries = s.finalizeCalendarEntries(
+		append(regularEntries, birthdayEntries...),
+		userInfo,
+	)
 	return resp, nil
 }
 
@@ -128,6 +144,9 @@ func (s *Server) GetUpcomingEntries(
 	resp := &pbcalendar.GetUpcomingEntriesResponse{
 		Entries: []*calendarentries.CalendarEntry{},
 	}
+
+	rangeStart := time.Now().Add(-1 * time.Minute)
+	rangeEnd := time.Now().Add(time.Duration(req.GetSeconds()) * time.Second)
 
 	condition := mysql.AND(
 		tCalendarEntry.DeletedAt.IS_NULL(),
@@ -148,29 +167,50 @@ func (s *Server) GetUpcomingEntries(
 			),
 			tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 		),
-		tCalendarEntry.StartTime.LT_EQ(
-			// Now plus X seconds
-			mysql.CURRENT_TIMESTAMP().
-				ADD(mysql.INTERVALd(time.Duration(req.GetSeconds())*time.Second)),
-		),
-		tCalendarEntry.StartTime.GT_EQ(
-			// Now minus 1 minute
-			mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVALd(1*time.Minute)),
-		),
+		tCalendarEntry.StartTime.LT_EQ(mysql.TimestampT(rangeEnd)),
 	)
 
-	stmt := s.listCalendarEntriesQuery(
-		condition,
+	regularCondition := condition.AND(tCalendar.SystemKind.NOT_EQ(
+		mysql.Int32(int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS)),
+	))
+	birthdayCondition := condition.AND(
+		tCalendar.SystemKind.EQ(mysql.Int32(int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS))),
+	)
+
+	regularEntries, err := s.loadExpandedCalendarEntries(
+		ctx,
 		userInfo,
-		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		regularCondition,
+		calendarEntryVisibility(
+			userInfo,
+			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+			calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN,
+		),
+		rangeStart,
+		rangeEnd,
+		int64Ptr(100),
 	)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
+	if err != nil {
+		return nil, err
 	}
 
+	birthdayEntries, err := s.loadExpandedCalendarEntries(
+		ctx,
+		userInfo,
+		birthdayCondition,
+		s.birthdayCalendarVisible(userInfo),
+		rangeStart,
+		rangeEnd,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp.Entries = s.finalizeCalendarEntries(
+		append(regularEntries, birthdayEntries...),
+		userInfo,
+	)
 	return resp, nil
 }
 
@@ -185,6 +225,12 @@ func (s *Server) GetCalendarEntry(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	if entry == nil {
+		return nil, errorscalendar.ErrNoPerms
+	}
+	if entry.GetCalendar() != nil &&
+		entry.GetCalendar().
+			GetSystemKind() !=
+			calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED {
 		return nil, errorscalendar.ErrNoPerms
 	}
 
@@ -245,6 +291,9 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 	}
 	if calendar == nil || calendar.GetClosed() {
 		return nil, errorscalendar.ErrCalendarClosed
+	}
+	if calendar.GetSystemKind() != calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED {
+		return nil, errorscalendar.ErrNoPerms
 	}
 
 	req.Entry.CreatorId = &userInfo.UserId
@@ -386,6 +435,12 @@ func (s *Server) DeleteCalendarEntry(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	if entry == nil {
+		return nil, errorscalendar.ErrNoPerms
+	}
+	if entry.GetCalendar() != nil &&
+		entry.GetCalendar().
+			GetSystemKind() !=
+			calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED {
 		return nil, errorscalendar.ErrNoPerms
 	}
 

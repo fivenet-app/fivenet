@@ -7,6 +7,7 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
@@ -35,6 +36,12 @@ func (s *Server) ShareCalendarEntry(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	if entry == nil {
+		return nil, errorscalendar.ErrNoPerms
+	}
+	if entry.GetCalendar() != nil &&
+		entry.GetCalendar().
+			GetSystemKind() !=
+			calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED {
 		return nil, errorscalendar.ErrNoPerms
 	}
 

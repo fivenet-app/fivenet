@@ -76,6 +76,15 @@ func (m *CalendarEntry) Sanitize() error {
 		*m.Job = htmlsanitizer.Sanitize(*m.Job)
 	}
 
+	// Field: Occurrence
+	if m.Occurrence != nil {
+		if v, ok := any(m.GetOccurrence()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Recurring
 	if m.Recurring != nil {
 		if v, ok := any(m.GetRecurring()).(interface{ Sanitize() error }); ok {
@@ -120,6 +129,19 @@ func (m *CalendarEntry) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *CalendarEntryOccurrence) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Key
+	m.Key = htmlsanitizer.Sanitize(m.Key)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CalendarEntryRSVP) Sanitize() error {
 	if m == nil {
 		return nil
@@ -152,9 +174,6 @@ func (m *CalendarEntryRecurring) Sanitize() error {
 	if m == nil {
 		return nil
 	}
-
-	// Field: Every
-	m.Every = htmlsanitizer.Sanitize(m.Every)
 
 	// Field: Until
 	if m.Until != nil {

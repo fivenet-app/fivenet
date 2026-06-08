@@ -5,6 +5,8 @@ package calendarentries
 
 import (
 	"database/sql/driver"
+	"encoding/json"
+	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 )
@@ -16,15 +18,24 @@ func (x *CalendarEntryRecurring) Scan(value any) error {
 		if t == "" {
 			return nil
 		}
+		if normalized, ok := normalizeCalendarEntryRecurringJSON([]byte(t)); ok {
+			return protoutils.UnmarshalPartialJSON(normalized, x)
+		}
 		return protoutils.UnmarshalPartialJSON([]byte(t), x)
 	case *string:
 		if t == nil {
 			return nil
 		}
+		if normalized, ok := normalizeCalendarEntryRecurringJSON([]byte(*t)); ok {
+			return protoutils.UnmarshalPartialJSON(normalized, x)
+		}
 		return protoutils.UnmarshalPartialJSON([]byte(*t), x)
 	case []byte:
 		if len(t) == 0 {
 			return nil
+		}
+		if normalized, ok := normalizeCalendarEntryRecurringJSON(t); ok {
+			return protoutils.UnmarshalPartialJSON(normalized, x)
 		}
 		return protoutils.UnmarshalPartialJSON(t, x)
 	}
@@ -39,4 +50,56 @@ func (x *CalendarEntryRecurring) Value() (driver.Value, error) {
 
 	out, err := protoutils.MarshalToJSON(x)
 	return string(out), err
+}
+
+func normalizeCalendarEntryRecurringJSON(raw []byte) ([]byte, bool) {
+	var payload map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &payload); err != nil {
+		return nil, false
+	}
+
+	everyRaw, ok := payload["every"]
+	if !ok {
+		return nil, false
+	}
+
+	var every string
+	if err := json.Unmarshal(everyRaw, &every); err != nil {
+		return nil, false
+	}
+
+	normalized := normalizeCalendarEntryRecurringEvery(every)
+	if normalized == every {
+		return nil, false
+	}
+
+	rewrittenEvery, err := json.Marshal(normalized)
+	if err != nil {
+		return nil, false
+	}
+	payload["every"] = rewrittenEvery
+
+	out, err := json.Marshal(payload)
+	if err != nil {
+		return nil, false
+	}
+
+	return out, true
+}
+
+func normalizeCalendarEntryRecurringEvery(value string) string {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "day", "days", "calendar_entry_recurring_every_day":
+		return "CALENDAR_ENTRY_RECURRING_EVERY_DAY"
+	case "week", "weeks", "calendar_entry_recurring_every_week":
+		return "CALENDAR_ENTRY_RECURRING_EVERY_WEEK"
+	case "month", "months", "calendar_entry_recurring_every_month":
+		return "CALENDAR_ENTRY_RECURRING_EVERY_MONTH"
+	case "year", "years", "calendar_entry_recurring_every_year":
+		return "CALENDAR_ENTRY_RECURRING_EVERY_YEAR"
+	case "unspecified", "calendar_entry_recurring_every_unspecified":
+		return "CALENDAR_ENTRY_RECURRING_EVERY_UNSPECIFIED"
+	default:
+		return value
+	}
 }

@@ -24,4 +24,5 @@ type FivenetCalendar struct {
 	Color       *string    `json:"color"`
 	CreatorID   *int32     `json:"creator_id"`
 	CreatorJob  string     `json:"creator_job"`
+	SystemKind  *int32     `json:"system_kind"`
 }

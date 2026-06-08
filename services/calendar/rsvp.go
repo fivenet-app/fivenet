@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
@@ -31,6 +32,12 @@ func (s *Server) ListCalendarEntryRSVP(
 	}
 	if entry == nil {
 		return nil, errorscalendar.ErrFailedQuery
+	}
+	if entry.GetCalendar() != nil &&
+		entry.GetCalendar().
+			GetSystemKind() !=
+			calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED {
+		return nil, errorscalendar.ErrNoPerms
 	}
 
 	check, err := s.checkIfUserHasAccessToCalendarEntry(
@@ -149,6 +156,12 @@ func (s *Server) RSVPCalendarEntry(
 	}
 	if entry == nil {
 		return nil, errorscalendar.ErrFailedQuery
+	}
+	if entry.GetCalendar() != nil &&
+		entry.GetCalendar().
+			GetSystemKind() !=
+			calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED {
+		return nil, errorscalendar.ErrNoPerms
 	}
 
 	check, err := s.checkIfUserHasAccessToCalendarEntry(

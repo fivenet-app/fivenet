@@ -27,6 +27,9 @@ func (s *Server) ListCalendars(
 	req *pbcalendar.ListCalendarsRequest,
 ) (*pbcalendar.ListCalendarsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	if _, err := s.ensureJobBirthdayCalendar(ctx, userInfo); err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
 
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
@@ -132,34 +135,37 @@ func (s *Server) ListCalendars(
 		return resp, nil
 	}
 
+	selectColumns := []mysql.Projection{
+		tCalendar.ID,
+		tCalendar.CreatedAt,
+		tCalendar.UpdatedAt,
+		tCalendar.DeletedAt,
+		tCalendar.Job,
+		tCalendar.Name,
+		tCalendar.Description,
+		tCalendar.Public,
+		tCalendar.Closed,
+		tCalendar.Color,
+		tCalendar.CreatorID,
+		tCreator.ID,
+		tCreator.Job,
+		tCreator.JobGrade,
+		tCreator.Firstname,
+		tCreator.Lastname,
+		tCreator.Dateofbirth,
+		tCreator.PhoneNumber,
+		tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
+		tAvatar.FilePath.AS("creator.profile_picture"),
+		tCalendarSubs.CalendarID,
+		tCalendarSubs.UserID,
+		tCalendarSubs.CreatedAt,
+		tCalendarSubs.Confirmed,
+		tCalendarSubs.Muted,
+	}
+	selectColumns = append(selectColumns, tCalendar.SystemKind)
+
 	stmt := tCalendar.
-		SELECT(
-			tCalendar.ID,
-			tCalendar.CreatedAt,
-			tCalendar.UpdatedAt,
-			tCalendar.DeletedAt,
-			tCalendar.Job,
-			tCalendar.Name,
-			tCalendar.Description,
-			tCalendar.Public,
-			tCalendar.Closed,
-			tCalendar.Color,
-			tCalendar.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
-			tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-			tAvatar.FilePath.AS("creator.profile_picture"),
-			tCalendarSubs.CalendarID,
-			tCalendarSubs.UserID,
-			tCalendarSubs.CreatedAt,
-			tCalendarSubs.Confirmed,
-			tCalendarSubs.Muted,
-		).
+		SELECT(selectColumns[0], selectColumns[1:]...).
 		FROM(tCalendar.
 			LEFT_JOIN(tCreator,
 				tCalendar.CreatorID.EQ(tCreator.ID),
@@ -223,15 +229,15 @@ func (s *Server) GetCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(mysql.Int64(req.GetCalendarId())))
+	cal, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(mysql.Int64(req.GetCalendarId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	if calendar == nil {
+	if cal == nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	access, err := s.getAccess(ctx, calendar.GetId())
+	access, err := s.getAccess(ctx, cal.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -247,10 +253,10 @@ func (s *Server) GetCalendar(
 		}
 	}
 
-	calendar.Access = access
+	cal.Access = access
 
 	return &pbcalendar.GetCalendarResponse{
-		Calendar: calendar,
+		Calendar: cal,
 	}, nil
 }
 
@@ -285,7 +291,8 @@ func (s *Server) CreateCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	if req.Calendar.Job != nil && !fields.Contains(permscalendar.CalendarServiceCreateCalendarFieldsPermValueJob) {
+	if req.Calendar.Job != nil &&
+		!fields.Contains(permscalendar.CalendarServiceCreateCalendarFieldsPermValueJob) {
 		return nil, errorscalendar.ErrFailedQuery
 	}
 	if req.GetCalendar().GetColor() == "" {
@@ -303,6 +310,11 @@ func (s *Server) CreateCalendar(
 	// Check if user has access to existing calendar
 	if req.GetCalendar().GetId() > 0 {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	if req.GetCalendar().
+		GetSystemKind() !=
+		calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED {
+		return nil, errorscalendar.ErrNoPerms
 	}
 
 	// Allow only one private calendar per user (job field will be null for private calendars)
@@ -405,37 +417,13 @@ func (s *Server) UpdateCalendar(
 ) (*pbcalendar.UpdateCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	fields, err := permscalendar.CalendarService.CreateCalendar.FieldsTyped.Get(s.ps, userInfo)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
-
-	if req.Calendar.Job != nil && !fields.Contains(permscalendar.CalendarServiceCreateCalendarFieldsPermValueJob) {
-		return nil, errorscalendar.ErrFailedQuery
-	}
-	if req.GetCalendar().GetColor() == "" {
-		req.Calendar.Color = "blue"
-	}
-
 	// Check if user has access to existing calendar
 	if req.GetCalendar().GetId() == 0 {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
-	check, err := s.checkIfUserHasAccessToCalendar(
-		ctx,
-		req.GetCalendar().GetId(),
-		userInfo,
-		calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
-		false,
-	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
-	if !check {
-		return nil, errorscalendar.ErrNoPerms
+		return nil, errorscalendar.ErrFailedQuery
 	}
 
-	calendar, err := s.getCalendar(
+	tCalendar := table.FivenetCalendar
+	currentCalendar, err := s.getCalendar(
 		ctx,
 		userInfo,
 		tCalendar.ID.EQ(mysql.Int64(req.GetCalendar().GetId())),
@@ -443,13 +431,83 @@ func (s *Server) UpdateCalendar(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	req.Calendar.Job = calendar.Job
+	if currentCalendar == nil {
+		return nil, errorscalendar.ErrNoPerms
+	}
+
+	isBirthdayCalendar := currentCalendar.GetSystemKind() == calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS
+	if !isBirthdayCalendar &&
+		currentCalendar.GetSystemKind() != calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED {
+		return nil, errorscalendar.ErrNoPerms
+	}
+
+	if req.GetCalendar().GetColor() == "" {
+		if isBirthdayCalendar && currentCalendar.GetColor() != "" {
+			req.Calendar.Color = currentCalendar.GetColor()
+		} else {
+			req.Calendar.Color = "blue"
+		}
+	}
+
+	fields, err := permscalendar.CalendarService.CreateCalendar.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
+	if !isBirthdayCalendar && req.Calendar.Job != nil &&
+		!fields.Contains(permscalendar.CalendarServiceCreateCalendarFieldsPermValueJob) {
+		return nil, errorscalendar.ErrFailedQuery
+	}
+
+	if isBirthdayCalendar {
+		check, err := s.checkIfUserHasAccessToCalendar(
+			ctx,
+			currentCalendar.GetId(),
+			userInfo,
+			calendaraccess.AccessLevel_ACCESS_LEVEL_EDIT,
+			false,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
+		if !check {
+			return nil, errorscalendar.ErrNoPerms
+		}
+
+		req.Calendar.Job = currentCalendar.Job
+		req.Calendar.Name = currentCalendar.Name
+		req.Calendar.Description = currentCalendar.Description
+		req.Calendar.Public = currentCalendar.Public
+		req.Calendar.Closed = currentCalendar.Closed
+		if currentCalendar.Color != "" && req.GetCalendar().GetColor() == "" {
+			req.Calendar.Color = currentCalendar.Color
+		}
+	}
+
+	if !isBirthdayCalendar {
+		check, err := s.checkIfUserHasAccessToCalendar(
+			ctx,
+			req.GetCalendar().GetId(),
+			userInfo,
+			calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+			false,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
+		if !check {
+			return nil, errorscalendar.ErrNoPerms
+		}
+	}
 
 	if req.Calendar.Description == nil {
 		empty := ""
 		req.Calendar.Description = &empty
 	}
-	if !fields.Contains(permscalendar.CalendarServiceCreateCalendarFieldsPermValuePublic) && calendar.GetPublic() && req.GetCalendar().GetPublic() {
+	if !isBirthdayCalendar &&
+		!fields.Contains(permscalendar.CalendarServiceCreateCalendarFieldsPermValuePublic) &&
+		currentCalendar.GetPublic() &&
+		req.GetCalendar().GetPublic() {
 		req.Calendar.Public = false
 	}
 
@@ -461,7 +519,6 @@ func (s *Server) UpdateCalendar(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tCalendar := table.FivenetCalendar
 	stmt := tCalendar.
 		UPDATE(
 			tCalendar.Name,
@@ -488,15 +545,17 @@ func (s *Server) UpdateCalendar(
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	if _, err := s.access.HandleAccessChanges(
-		ctx,
-		tx,
-		req.GetCalendar().GetId(),
-		req.GetCalendar().GetAccess().GetJobs(),
-		req.GetCalendar().GetAccess().GetUsers(),
-		nil,
-	); err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	if !isBirthdayCalendar {
+		if _, err := s.access.HandleAccessChanges(
+			ctx,
+			tx,
+			req.GetCalendar().GetId(),
+			req.GetCalendar().GetAccess().GetJobs(),
+			req.GetCalendar().GetAccess().GetUsers(),
+			nil,
+		); err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
 	}
 
 	// Commit the transaction
@@ -504,7 +563,7 @@ func (s *Server) UpdateCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	calendar, err = s.getCalendar(
+	calendar, err := s.getCalendar(
 		ctx,
 		userInfo,
 		tCalendar.AS("calendar").ID.EQ(mysql.Int64(req.GetCalendar().GetId())),
@@ -538,16 +597,19 @@ func (s *Server) DeleteCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(mysql.Int64(req.GetCalendarId())))
+	cal, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(mysql.Int64(req.GetCalendarId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	if calendar == nil {
+	if cal == nil {
+		return nil, errorscalendar.ErrNoPerms
+	}
+	if cal.GetSystemKind() != calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED {
 		return nil, errorscalendar.ErrNoPerms
 	}
 
 	var deletedAtTime *timestamp.Timestamp
-	if calendar.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if cal.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {
@@ -581,35 +643,38 @@ func (s *Server) getCalendar(
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
+	columns := []mysql.Projection{
+		tCalendar.ID,
+		tCalendar.CreatedAt,
+		tCalendar.UpdatedAt,
+		tCalendar.DeletedAt,
+		tCalendar.Job,
+		tCalendar.Name,
+		tCalendar.Description,
+		tCalendar.Public,
+		tCalendar.Closed,
+		tCalendar.Color,
+		tCalendar.CreatorID,
+		tCalendar.CreatorJob,
+		tCreator.ID,
+		tCreator.Job,
+		tCreator.JobGrade,
+		tCreator.Firstname,
+		tCreator.Lastname,
+		tCreator.Dateofbirth,
+		tCreator.PhoneNumber,
+		tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
+		tAvatar.FilePath.AS("creator.profile_picture"),
+		tCalendarSubs.CalendarID,
+		tCalendarSubs.UserID,
+		tCalendarSubs.CreatedAt,
+		tCalendarSubs.Confirmed,
+		tCalendarSubs.Muted,
+	}
+	columns = append(columns, tCalendar.SystemKind)
+
 	stmt := tCalendar.
-		SELECT(
-			tCalendar.ID,
-			tCalendar.CreatedAt,
-			tCalendar.UpdatedAt,
-			tCalendar.DeletedAt,
-			tCalendar.Job,
-			tCalendar.Name,
-			tCalendar.Description,
-			tCalendar.Public,
-			tCalendar.Closed,
-			tCalendar.Color,
-			tCalendar.CreatorID,
-			tCalendar.CreatorJob,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
-			tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-			tAvatar.FilePath.AS("creator.profile_picture"),
-			tCalendarSubs.CalendarID,
-			tCalendarSubs.UserID,
-			tCalendarSubs.CreatedAt,
-			tCalendarSubs.Confirmed,
-			tCalendarSubs.Muted,
-		).
+		SELECT(columns[0], columns[1:]...).
 		FROM(tCalendar.
 			LEFT_JOIN(tCreator,
 				tCalendar.CreatorID.EQ(tCreator.ID),
