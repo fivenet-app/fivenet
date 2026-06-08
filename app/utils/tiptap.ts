@@ -285,6 +285,13 @@ export function tiptapTextPreview(
             return;
         }
 
+        if (type === 'mapBlock') {
+            const postal = node.attrs?.postal;
+            const coords = `${Number(node.attrs?.x ?? 0).toFixed(2)}, ${Number(node.attrs?.y ?? 0).toFixed(2)}`;
+            push(postal ? `[Map: ${String(postal)} ${coords}]` : `[Map: ${coords}]`);
+            return;
+        }
+
         if (type === 'taskItem') {
             const checked = !!node.attrs?.checked;
             push(checked ? '[x] ' : '[ ] ');
@@ -349,6 +356,8 @@ export function isEmptyRichContentDoc(content: RichTextHtmlNode | null | undefin
         }
 
         if ((node.text ?? '').trim().length > 0) return true;
+
+        if (node.attrs?.['data-embed'] === 'map' || node.attrs?.['data-type'] === 'map') return true;
 
         if (node.type === NodeType.ELEMENT && contentfulVoidTags.includes(node.tag.toLowerCase())) return true;
 

@@ -32,7 +32,7 @@ import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import FormatBuilder from '../partials/FormatBuilder.vue';
-import ExamEditor, { examSettings } from './exam/ExamEditor.vue';
+import ExamEditor, { examSettingsSchema } from './exam/ExamEditor.vue';
 
 const props = defineProps<{
     qualificationId: number;
@@ -67,7 +67,7 @@ const schema = z.object({
         roleFormat: z.string().max(64).optional(),
     }),
     examMode: z.enum(QualificationExamMode).default(QualificationExamMode.DISABLED),
-    examSettings: examSettings,
+    examSettings: examSettingsSchema,
     exam: z.object({
         questions: z
             .object({

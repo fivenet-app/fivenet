@@ -29,6 +29,7 @@ import UniqueID from '@tiptap/extension-unique-id';
 import { CharacterCount, Dropcursor, Focus, Gapcursor, Placeholder } from '@tiptap/extensions';
 import { v4 as uuidv4 } from 'uuid';
 import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
+import { MapBlock } from '~/composables/tiptap/extensions/MapBlock';
 import SearchAndReplace from '~/composables/tiptap/extensions/SearchAndReplace';
 import { EnhancedImage } from './tiptap/extensions/EnhancedImage';
 import { PenaltyCalculator } from './tiptap/extensions/PenaltyCalculator';
@@ -155,6 +156,7 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
 
         // Custom extensions
         EnhancedImage.configure({}),
+        MapBlock.configure({}),
         PenaltyCalculator.configure({}),
     ];
 

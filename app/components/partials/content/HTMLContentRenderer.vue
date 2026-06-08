@@ -1,6 +1,7 @@
 <script lang="ts">
 import { UCheckbox, UIcon } from '#components';
 import { defineComponent, getCurrentInstance, h, Text, type Component, type VNode } from 'vue';
+import MapBlockContentView from '~/components/partials/content/MapBlockContentView.vue';
 import PenaltyCalculatorContentView from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorContentView.vue';
 import type { RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
 import GenericImg from '../elements/GenericImg.vue';
@@ -53,6 +54,20 @@ export default defineComponent({
                 return h(GenericImg, {
                     ...value.attrs,
                     src: cleanupImageURL(value.attrs?.src || ''),
+                });
+            }
+
+            if (
+                (value.tag === 'div' || value.tag === 'figure' || value.tag === 'span') &&
+                value.attrs?.['data-embed'] === 'map'
+            ) {
+                return h(MapBlockContentView, {
+                    x: Number(value.attrs?.['data-map-x'] ?? 0),
+                    y: Number(value.attrs?.['data-map-y'] ?? 0),
+                    zoom: Number(value.attrs?.['data-map-zoom'] ?? 2),
+                    postal: String(value.attrs?.['data-map-postal'] ?? '') || undefined,
+                    layer: String(value.attrs?.['data-map-layer'] ?? '') || undefined,
+                    showGotoCoords: true,
                 });
             }
 

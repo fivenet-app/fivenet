@@ -6,6 +6,7 @@ import type { HistoryContent, Version } from '~/types/history';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import FileListModal from './FileListModal.vue';
+import MapBlockInsertPopover from './MapBlockInsertPopover.vue';
 import ImageSelectPopover from './ImageSelectPopover.vue';
 import SearchAndReplacePopover from './SearchAndReplacePopover.vue';
 import SourceCodeModal from './SourceCodeModal.vue';
@@ -555,6 +556,8 @@ const isLinkOpen = ref<boolean>(false);
                     })
             "
         />
+
+        <MapBlockInsertPopover :editor="editor" :disabled="disabled" />
 
         <TablePopover :editor="unref(editor)" :active="ui.table" :disabled="disabled" />
 

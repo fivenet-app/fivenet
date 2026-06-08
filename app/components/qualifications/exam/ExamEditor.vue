@@ -37,7 +37,7 @@ const { moveUp, moveDown } = useListReorder(toRef(exam.value.questions));
 </script>
 
 <script lang="ts">
-export const examSettings = z.object({
+export const examSettingsSchema = z.object({
     time: zodProtoDurationSchema({
         required: true,
         min: { seconds: 60, nanos: 0 },
@@ -48,7 +48,7 @@ export const examSettings = z.object({
     minimumPoints: z.coerce.number().min(0).default(0),
 });
 
-export type ExamSettingsSchema = z.output<typeof examSettings>;
+export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;
 </script>
 
 <template>
@@ -77,70 +77,76 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     </ClientOnly>
                 </UFormField>
 
-                <UFormField
-                    class="grid grid-cols-2 items-center gap-2"
-                    name="examSettings.time"
-                    :label="$t('components.qualifications.exam_editor.exam_duration')"
-                >
-                    <InputDurationPicker
-                        v-model="examSettings.time"
-                        class="w-full"
-                        mode="composite"
-                        :units="['hour', 'minute', 'second']"
-                        :min="secondsToDuration(60)"
-                        :step="0.1"
-                        :max="secondsToDuration(60 * 60 * 12)"
-                    />
-                </UFormField>
-
-                <UFormField
-                    class="grid grid-cols-2 items-center gap-2"
-                    name="examSettings.autoGrade"
-                    :label="$t('components.qualifications.exam_editor.auto_grade.title')"
-                    :description="$t('components.qualifications.exam_editor.auto_grade.description')"
-                >
-                    <USwitch v-model="examSettings.autoGrade" />
-                </UFormField>
-
-                <UFormField
-                    class="grid grid-cols-2 items-center gap-2"
-                    name="mode"
-                    :label="$t('components.qualifications.exam_editor.auto_grade_mode.title')"
-                    :description="$t('components.qualifications.exam_editor.auto_grade_mode.description')"
-                >
-                    <ClientOnly>
-                        <USelectMenu
-                            v-model="examSettings.autoGradeMode"
+                <UForm nested name="examSettings" :schema="examSettingsSchema">
+                    <UFormField
+                        class="grid grid-cols-2 items-center gap-2"
+                        name="time"
+                        :label="$t('components.qualifications.exam_editor.exam_duration')"
+                    >
+                        <InputDurationPicker
+                            v-model="examSettings.time"
                             class="w-full"
-                            :items="modes"
-                            value-key="mode"
-                            :search-input="{ placeholder: $t('common.search_field') }"
-                        >
-                            <template #default>
-                                {{ $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[settings.autoGradeMode ?? 0]}`) }}
-                            </template>
+                            mode="composite"
+                            :units="['hour', 'minute', 'second']"
+                            :min="secondsToDuration(60)"
+                            :step="0.1"
+                            :max="secondsToDuration(60 * 60 * 12)"
+                        />
+                    </UFormField>
 
-                            <template #item-label="{ item }">
-                                {{ $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[item.mode ?? 0]}`) }}
-                            </template>
-                        </USelectMenu>
-                    </ClientOnly>
-                </UFormField>
+                    <UFormField
+                        class="grid grid-cols-2 items-center gap-2"
+                        name="autoGrade"
+                        :label="$t('components.qualifications.exam_editor.auto_grade.title')"
+                        :description="$t('components.qualifications.exam_editor.auto_grade.description')"
+                    >
+                        <USwitch v-model="examSettings.autoGrade" />
+                    </UFormField>
 
-                <UFormField
-                    class="grid grid-cols-2 items-center gap-2"
-                    name="examSettings.miniumPoints"
-                    :label="$t('components.qualifications.exam_editor.minimum_points')"
-                >
-                    <UInputNumber
-                        v-model="examSettings.minimumPoints"
-                        class="w-full"
-                        :min="0"
-                        :max="999999"
-                        :step="1"
-                        :placeholder="$t('components.qualifications.exam_editor.minimum_points')"
-                    />
-                </UFormField>
+                    <UFormField
+                        class="grid grid-cols-2 items-center gap-2"
+                        name="autoGradeMode"
+                        :label="$t('components.qualifications.exam_editor.auto_grade_mode.title')"
+                        :description="$t('components.qualifications.exam_editor.auto_grade_mode.description')"
+                    >
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="examSettings.autoGradeMode"
+                                class="w-full"
+                                :items="modes"
+                                value-key="mode"
+                                :search-input="{ placeholder: $t('common.search_field') }"
+                            >
+                                <template #default>
+                                    {{
+                                        $t(
+                                            `enums.qualifications.AutoGradeMode.${AutoGradeMode[examSettings.autoGradeMode ?? 0]}`,
+                                        )
+                                    }}
+                                </template>
+
+                                <template #item-label="{ item }">
+                                    {{ $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[item.mode ?? 0]}`) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
+                    </UFormField>
+
+                    <UFormField
+                        class="grid grid-cols-2 items-center gap-2"
+                        name="minimumPoints"
+                        :label="$t('components.qualifications.exam_editor.minimum_points')"
+                    >
+                        <UInputNumber
+                            v-model="examSettings.minimumPoints"
+                            class="w-full"
+                            :min="0"
+                            :max="999999"
+                            :step="1"
+                            :placeholder="$t('components.qualifications.exam_editor.minimum_points')"
+                        />
+                    </UFormField>
+                </UForm>
             </UPageCard>
 
             <div class="mb-2">

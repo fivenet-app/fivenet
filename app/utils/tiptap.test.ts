@@ -91,6 +91,25 @@ describe('tiptapTextPreview', () => {
         expect(tiptapTextPreview(doc, 1)).toBe('…');
         expect(tiptapTextPreview(doc, 40)).toContain('[Image]');
     });
+
+    it('should include map blocks in previews', () => {
+        const doc = {
+            type: 'doc',
+            content: [
+                {
+                    type: 'mapBlock',
+                    attrs: {
+                        x: 12.34,
+                        y: 56.78,
+                        zoom: 3,
+                        postal: '12345',
+                    },
+                },
+            ],
+        };
+
+        expect(tiptapTextPreview(doc, 120)).toContain('[Map: 12345');
+    });
 });
 
 describe('isEmptyDoc', () => {
@@ -228,6 +247,29 @@ describe('isEmptyRichContentDoc', () => {
                     attrs: {},
                 },
                 { type: NodeType.ELEMENT, tag: 'hr', content: [], attrs: {} },
+            ],
+            attrs: {},
+        };
+
+        expect(isEmptyRichContentDoc(doc)).toBe(false);
+    });
+
+    it('should return false for map embeds', () => {
+        const doc: RichTextHtmlNode = {
+            type: NodeType.DOC,
+            tag: 'body',
+            content: [
+                {
+                    type: NodeType.ELEMENT,
+                    tag: 'figure',
+                    content: [],
+                    attrs: {
+                        'data-embed': 'map',
+                        'data-map-x': '12.34',
+                        'data-map-y': '56.78',
+                        'data-map-zoom': '3',
+                    },
+                },
             ],
             attrs: {},
         };

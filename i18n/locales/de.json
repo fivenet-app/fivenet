@@ -792,7 +792,10 @@
         "share": "Teilen",
         "error": "Fehler",
         "desc": "Absteigend",
-        "asc": "Aufsteigend"
+        "asc": "Aufsteigend",
+        "coordinate": "Koordinate | Koordinaten",
+        "insert": "Einfügen",
+        "map": "Karte"
     },
     "components": {
         "partials": {
@@ -1067,8 +1070,7 @@
             "toggle_all_layers": "Alle Ebenen umschalten",
             "use_unit_color": "Einheitsfarbe für Icon verwenden",
             "unfollow_marker": "Markierung nicht mehr verfolgen",
-            "enable_marker_dragging": "Markierung verschiebbar machen",
-            "disable_marker_dragging": "Markierung nicht mehr verschiebbar machen"
+            "enable_marker_dragging": "Drag'n'Drop für Markierungen"
         },
         "debug_info": {
             "title": "Debug-Informationen",
