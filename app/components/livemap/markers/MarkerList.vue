@@ -8,7 +8,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/markers/marker_marker';
-import MarkerCreateOrUpdateSlideover from '../MarkerCreateOrUpdateSlideover.vue';
+import MarkerCreateOrUpdateSlideover from '../markers/CreateOrUpdateSlideover.vue';
 import { checkIfCanEditMarker } from './helpers.js';
 
 const emits = defineEmits<{

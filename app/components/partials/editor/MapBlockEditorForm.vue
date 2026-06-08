@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { MapBlockAttrs } from '~/composables/tiptap/extensions/MapBlock';
-import { deepToRaw } from '~/utils/deepToRaw';
+import { createMapBlockAttrs, defaultMapBlockLayerKey, type MapBlockAttrs } from '~/composables/tiptap/extensions/MapBlock';
+import MapFullscreenModal from '~/components/livemap/MapFullscreenModal.vue';
 import MapPositionPicker from '~/components/livemap/MapPositionPicker.vue';
 import PostalSearchSelect from '~/components/livemap/controls/PostalSearchSelect.vue';
-import { tileLayers, type Postal } from '~/types/livemap';
+import type { Postal } from '~/types/livemap';
 
 const props = defineProps<{
     modelValue: MapBlockAttrs;
@@ -14,13 +14,14 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: MapBlockAttrs): void;
 }>();
 
-const draft = ref<MapBlockAttrs>(structuredClone(deepToRaw(props.modelValue)));
+const draft = ref<MapBlockAttrs>(createMapBlockAttrs(props.modelValue));
 const selectedPostal = ref<Postal | undefined>();
+const fullscreenOpen = ref(false);
 
 watch(
     () => props.modelValue,
     (value) => {
-        draft.value = structuredClone(deepToRaw(value));
+        draft.value = createMapBlockAttrs(value);
     },
     { immediate: true, deep: true },
 );
@@ -45,7 +46,7 @@ watch(selectedPostal, (postal) => {
     });
 });
 
-function applyPosition(x: number, y: number, zoom: number, layer: string): void {
+function applyPosition(x: number, y: number, zoom: number, layer: string = defaultMapBlockLayerKey): void {
     selectedPostal.value = undefined;
     applyDraft({
         x,
@@ -54,6 +55,10 @@ function applyPosition(x: number, y: number, zoom: number, layer: string): void 
         postal: '',
         layer,
     });
+}
+
+function openFullscreen(): void {
+    fullscreenOpen.value = true;
 }
 </script>
 
@@ -66,7 +71,19 @@ function applyPosition(x: number, y: number, zoom: number, layer: string): void 
         <div class="flex flex-col gap-1">
             <div class="flex items-center justify-between gap-2 text-xs text-neutral-500 dark:text-neutral-400">
                 <span>{{ $t('common.select') }}</span>
-                <span>{{ draft.x.toFixed(2) }}, {{ draft.y.toFixed(2) }} · {{ $t('common.zoom') }} {{ draft.zoom }}</span>
+                <div class="inline-flex items-center gap-2">
+                    <span>{{ draft.x.toFixed(2) }}, {{ draft.y.toFixed(2) }} · {{ $t('common.zoom') }} {{ draft.zoom }}</span>
+                    <UTooltip :text="$t('common.fullscreen_enter')">
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            size="xs"
+                            icon="i-mdi-fullscreen"
+                            :aria-label="$t('common.fullscreen_enter')"
+                            @click="openFullscreen"
+                        />
+                    </UTooltip>
+                </div>
             </div>
 
             <MapPositionPicker
@@ -75,11 +92,26 @@ function applyPosition(x: number, y: number, zoom: number, layer: string): void 
                 :zoom="draft.zoom"
                 :layer="draft.layer ?? ''"
                 :disabled="disabled"
-                @update:x="(value) => applyPosition(value, draft.y, draft.zoom, draft.layer || tileLayers[0]!.key)"
-                @update:y="(value) => applyPosition(draft.x, value, draft.zoom, draft.layer || tileLayers[0]!.key)"
-                @update:zoom="(value) => applyPosition(draft.x, draft.y, value, draft.layer || tileLayers[0]!.key)"
+                @update:x="(value) => applyPosition(value, draft.y, draft.zoom, draft.layer)"
+                @update:y="(value) => applyPosition(draft.x, value, draft.zoom, draft.layer)"
+                @update:zoom="(value) => applyPosition(draft.x, draft.y, value, draft.layer)"
                 @update:layer="(value) => applyDraft({ layer: value })"
             />
         </div>
     </div>
+
+    <MapFullscreenModal
+        v-model:open="fullscreenOpen"
+        :title="$t('common.map')"
+        :summary="`${draft.x.toFixed(2)}, ${draft.y.toFixed(2)} · ${$t('common.zoom')} ${draft.zoom}`"
+        :x="draft.x"
+        :y="draft.y"
+        :zoom="draft.zoom"
+        :layer="draft.layer ?? ''"
+        :disabled="disabled"
+        @update:x="(value) => applyPosition(value, draft.y, draft.zoom, draft.layer)"
+        @update:y="(value) => applyPosition(draft.x, value, draft.zoom, draft.layer)"
+        @update:zoom="(value) => applyPosition(draft.x, draft.y, value, draft.layer)"
+        @update:layer="(value) => applyDraft({ layer: value })"
+    />
 </template>

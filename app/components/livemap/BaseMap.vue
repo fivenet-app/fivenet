@@ -16,15 +16,10 @@ import {
 } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet.heat';
+import LivemapMapShell from '~/components/livemap/LivemapMapShell.vue';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 import { simpleGraticule } from '~/composables/leaflet/L.SimpleGraticule';
-import {
-    customMapCRS,
-    getMapBackgroundColor,
-    getZoomOffset,
-    mapBounds,
-    mapMaxBounds,
-} from '~/composables/livemap/useMapProjection';
+import { getZoomOffset } from '~/composables/livemap/useMapProjection';
 import { useLivemapStore } from '~/stores/livemap';
 import { overlayCayoPericoBounds, tileLayers } from '~/types/livemap';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
@@ -33,7 +28,6 @@ import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker
 import ClusterPickerCard from './ClusterPickerCard.vue';
 import LayerControls from './controls/LayerControls.vue';
 import HeatmapLayer from './HeatmapLayer.vue';
-import MapCayoPerico from './MapCayoPerico.vue';
 
 defineProps<{
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -58,16 +52,11 @@ const { location, selectedMarker, zoom, markerCoordPickerActive, showLocationMar
     storeToRefs(livemapStore);
 
 let map: Map | undefined;
+const mapShellRef = useTemplateRef('mapShellRef');
 
 function mapResize(): void {
-    if (map === undefined) return;
-
-    map.invalidateSize();
+    mapShellRef.value?.mapResize();
 }
-
-const mapContainer = useTemplateRef('mapContainer');
-const mapResizeDebounced = useDebounceFn(mapResize, 350, { maxWait: 700 });
-useResizeObserver(mapContainer, (_) => mapResizeDebounced());
 
 const center = ref<PointExpression>([0, 0]);
 
@@ -108,8 +97,6 @@ watchDebounced(
     },
     { debounce: 1000, maxWait: 3000 },
 );
-
-const backgroundColor = computed(() => getMapBackgroundColor(livemapTileLayer.value));
 
 function stringifyHash(currZoom: number, centerLat: number, centerLong: number): string {
     const precision = Math.max(0, Math.ceil(Math.log(zoom.value) / Math.LN2));
@@ -241,7 +228,6 @@ async function showChooser(latlng: LatLngExpression, hits: PopupCandidateLayer[]
 
 async function onMapReady(m: Map): Promise<void> {
     map = m;
-    map.invalidateSize();
 
     const startPos = parseLocationQuery(currentLocationQuery.value as string);
     if (startPos) {
@@ -262,14 +248,6 @@ async function onMapReady(m: Map): Promise<void> {
         if (!markerCoordPickerActive.value || !event.latlng) return;
         location.value = { x: event.latlng.lng, y: event.latlng.lat };
         showLocationMarker.value = true;
-    });
-
-    map.on('movestart', async () => {
-        isMoving.value = true;
-    });
-
-    map.on('moveend', async () => {
-        isMoving.value = false;
     });
 
     function gatherNearbyMarkers(
@@ -359,30 +337,29 @@ watch(
     },
 );
 
-defineExpose({
-    mapResize,
-});
+defineExpose({ mapResize });
 
 onBeforeUnmount(() => (map = undefined));
 </script>
 
 <template>
-    <div ref="mapContainer" class="mapContainer flex h-full flex-row" :style="{ backgroundColor }">
-        <LMap
-            v-model:zoom="zoom"
-            v-model:center="center"
-            :bounds="mapBounds"
-            :max-bounds="mapMaxBounds"
-            :crs="customMapCRS"
-            :min-zoom="1"
-            :max-zoom="7"
-            :inertia="false"
-            :style="{ backgroundColor: 'rgba(0,0,0,0.0)' }"
-            use-global-leaflet
-            :options="mapOptions"
-            @click="selectedMarker = undefined"
-            @ready="onMapReady($event)"
-        >
+    <LivemapMapShell
+        ref="mapShellRef"
+        v-model:center="center"
+        v-model:zoom="zoom"
+        container-class="mapContainer flex h-full flex-row"
+        map-class="block h-full w-full"
+        :background-layer="livemapTileLayer"
+        :map-options="mapOptions"
+        :show-cayo-perico="game.livemap?.enableCayoPerico"
+        :cayo-tile-layer="livemapTileLayer"
+        :cayo-bounds="overlayCayoPericoBounds"
+        @click="selectedMarker = undefined"
+        @ready="onMapReady($event)"
+        @movestart="isMoving = true"
+        @moveend="isMoving = false"
+    >
+        <template #layers>
             <LTileLayer
                 v-for="layer in tileLayers"
                 :key="layer.key"
@@ -396,50 +373,43 @@ onBeforeUnmount(() => (map = undefined));
                 :max-zoom="layer.options?.maxZoom || 7"
                 :attribution="layer.options?.attribution || undefined"
             />
+        </template>
 
-            <MapCayoPerico
-                v-if="game.livemap?.enableCayoPerico"
-                :tile-layer="livemapTileLayer"
-                :bounds="overlayCayoPericoBounds"
-            />
+        <ZoomControls />
 
-            <ZoomControls />
-
-            <LayerControls>
-                <div v-if="can('centrum.CentrumService/TakeControl').value">
-                    <div class="mt-1 overflow-y-hidden px-1">
-                        <USwitch
-                            v-model="livemapSettings.showHeatmap"
-                            :label="$t('common.heatmap')"
-                            :ui="{ label: 'truncate text-sm hover:line-clamp-2' }"
-                        />
-                    </div>
+        <LayerControls>
+            <div v-if="can('centrum.CentrumService/TakeControl').value">
+                <div class="mt-1 overflow-y-hidden px-1">
+                    <USwitch
+                        v-model="livemapSettings.showHeatmap"
+                        :label="$t('common.heatmap')"
+                        :ui="{ label: 'truncate text-sm hover:line-clamp-2' }"
+                    />
                 </div>
+            </div>
 
-                <slot name="layerControls" />
-            </LayerControls>
+            <slot name="layerControls" />
+        </LayerControls>
 
-            <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-            <LControl class="leaflet-control-attribution !rounded-tl-none rounded-tr-sm" position="bottomleft">
-                <span class="font-semibold">{{ isMobile ? $t('common.longitude_short') : $t('common.longitude') }}:</span>
-                {{ mouseLat.toFixed(3) }} |
-                <span class="font-semibold">{{ isMobile ? $t('common.latitude_short') : $t('common.latitude') }}:</span>
-                {{ mouseLong.toFixed(3) }}
-            </LControl>
+        <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
+        <LControl class="leaflet-control-attribution !rounded-tl-none rounded-tr-sm" position="bottomleft">
+            <span class="font-semibold">{{ isMobile ? $t('common.longitude_short') : $t('common.longitude') }}:</span>
+            {{ mouseLat.toFixed(3) }} |
+            <span class="font-semibold">{{ isMobile ? $t('common.latitude_short') : $t('common.latitude') }}:</span>
+            {{ mouseLong.toFixed(3) }}
+        </LControl>
 
-            <slot />
+        <slot />
 
-            <HeatmapLayer :show="livemapSettings.showHeatmap" />
+        <HeatmapLayer :show="livemapSettings.showHeatmap" />
 
-            <LMarker v-if="chooser" ref="chooserRef" :lat-lng="chooser.latlng" :options="{ opacity: 0 }">
-                <LPopup class="min-w-[110px] md:min-w-[200px]" :options="{ closeButton: false }">
-                    <ClusterPickerCard :hits="chooser.hits" :hidden-count="chooser.hiddenCount" />
-                </LPopup>
-            </LMarker>
-        </LMap>
-
-        <slot name="afterMap" />
-    </div>
+        <LMarker v-if="chooser" ref="chooserRef" :lat-lng="chooser.latlng" :options="{ opacity: 0 }">
+            <LPopup class="min-w-[110px] md:min-w-[200px]" :options="{ closeButton: false }">
+                <ClusterPickerCard :hits="chooser.hits" :hidden-count="chooser.hiddenCount" />
+            </LPopup>
+        </LMarker>
+    </LivemapMapShell>
+    <slot name="afterMap" />
 </template>
 
 <style scoped>

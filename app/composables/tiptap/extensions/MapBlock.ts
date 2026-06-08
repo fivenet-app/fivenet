@@ -16,6 +16,41 @@ export interface MapBlockOptions {
     HTMLAttributes: Record<string, any>;
 }
 
+export const defaultMapBlockLayerKey = tileLayers[0]!.key;
+
+type MapBlockAttrsInput = Partial<MapBlockAttrs> | Record<string, unknown> | undefined;
+
+function readMapBlockAttr(attrs: MapBlockAttrsInput, key: keyof MapBlockAttrs): unknown {
+    return (attrs as Record<string, unknown> | undefined)?.[key];
+}
+
+function parseMapBlockNumber(value: unknown, fallback: number): number {
+    if (value === null || value === undefined || value === '') return fallback;
+
+    const parsed = Number.parseFloat(String(value));
+    return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+export function normalizeMapBlockLayer(value: string | null | undefined): string {
+    if (!value) return defaultMapBlockLayerKey;
+
+    return tileLayers.some((layer) => layer.key === value) ? value : defaultMapBlockLayerKey;
+}
+
+export function normalizeMapBlockAttrs(attrs: MapBlockAttrsInput = {}): MapBlockAttrs {
+    return {
+        x: parseMapBlockNumber(readMapBlockAttr(attrs, 'x'), 0),
+        y: parseMapBlockNumber(readMapBlockAttr(attrs, 'y'), 0),
+        zoom: parseMapBlockNumber(readMapBlockAttr(attrs, 'zoom'), 2),
+        postal: String(readMapBlockAttr(attrs, 'postal') ?? ''),
+        layer: normalizeMapBlockLayer(String(readMapBlockAttr(attrs, 'layer') ?? '') || undefined),
+    };
+}
+
+export function createMapBlockAttrs(attrs: MapBlockAttrsInput = {}): MapBlockAttrs {
+    return normalizeMapBlockAttrs(attrs);
+}
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
         mapBlock: {
@@ -32,9 +67,9 @@ function parseNumber(value: string | null | undefined, fallback: number): number
 }
 
 function parseLayer(value: string | null | undefined): string {
-    if (!value) return tileLayers[0]!.key;
+    if (!value) return defaultMapBlockLayerKey;
 
-    return tileLayers.some((layer) => layer.key === value) ? value : tileLayers[0]!.key;
+    return tileLayers.some((layer) => layer.key === value) ? value : defaultMapBlockLayerKey;
 }
 
 export const MapBlock = Node.create<MapBlockOptions>({
@@ -71,9 +106,9 @@ export const MapBlock = Node.create<MapBlockOptions>({
                 renderHTML: (attributes) => ({ 'data-map-zoom': attributes.zoom }),
             },
             layer: {
-                default: tileLayers[0]!.key,
+                default: defaultMapBlockLayerKey,
                 parseHTML: (element) => parseLayer(element.getAttribute('data-map-layer')),
-                renderHTML: (attributes) => ({ 'data-map-layer': attributes.layer || tileLayers[0]!.key }),
+                renderHTML: (attributes) => ({ 'data-map-layer': attributes.layer || defaultMapBlockLayerKey }),
             },
             postal: {
                 default: '',
@@ -112,7 +147,7 @@ export const MapBlock = Node.create<MapBlockOptions>({
                             y: payload.y,
                             zoom: payload.zoom,
                             postal: payload.postal ?? '',
-                            layer: payload.layer ?? tileLayers[0]!.key,
+                            layer: payload.layer ?? defaultMapBlockLayerKey,
                         },
                     }),
         };

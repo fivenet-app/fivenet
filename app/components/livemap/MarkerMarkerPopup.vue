@@ -6,7 +6,7 @@ import { useLivemapStore } from '~/stores/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import LeafletLazyPopup from './LeafletLazyPopup.vue';
-import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
+import MarkerCreateOrUpdateSlideover from './markers/CreateOrUpdateSlideover.vue';
 import { checkIfCanEditMarker } from './markers/helpers.js';
 
 defineProps<{

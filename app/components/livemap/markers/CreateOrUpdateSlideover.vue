@@ -26,12 +26,12 @@ const { addOrUpdateMarkerMarker } = livemapStore;
 const livemapLivemapClient = await getLivemapLivemapClient();
 
 const markerTypes = [
-    { icon: 'i-mdi-vector-circle', value: MarkerType.CIRCLE },
-    { icon: 'i-mdi-dot', value: MarkerType.DOT },
     { icon: 'i-mdi-emoticon', value: MarkerType.ICON },
+    { icon: 'i-mdi-dot', value: MarkerType.DOT },
+    { icon: 'i-mdi-vector-circle', value: MarkerType.CIRCLE },
+    { icon: 'i-mdi-vector-polyline', value: MarkerType.POLYLINE },
     { icon: 'i-mdi-vector-rectangle', value: MarkerType.RECTANGLE },
     { icon: 'i-mdi-vector-polygon', value: MarkerType.POLYGON },
-    { icon: 'i-mdi-vector-polyline', value: MarkerType.POLYLINE },
 ];
 
 type ShapePointsKind = 'polygon' | 'polyline';
@@ -47,23 +47,23 @@ function cloneDataPlain<T>(value: T): T {
 
 function resolveInitialMarkerType(marker?: MarkerMarker): MarkerType {
     switch (marker?.data?.data.oneofKind) {
-        case 'circle':
-            return MarkerType.CIRCLE;
         case 'icon':
             return MarkerType.ICON;
+        case 'circle':
+            return MarkerType.CIRCLE;
+        case 'polyline':
+            return MarkerType.POLYLINE;
         case 'rectangle':
             return MarkerType.RECTANGLE;
         case 'polygon':
             return MarkerType.POLYGON;
-        case 'polyline':
-            return MarkerType.POLYLINE;
     }
 
     if (marker?.type !== undefined && marker.type !== MarkerType.UNSPECIFIED) {
         return marker.type;
     }
 
-    return MarkerType.CIRCLE;
+    return MarkerType.ICON;
 }
 
 function getInitialCircleRadius(marker?: MarkerMarker): number {

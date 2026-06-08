@@ -1,17 +1,11 @@
 <script lang="ts" setup>
-import type { LatLngExpression, PointExpression } from 'leaflet';
+import type { PointExpression } from 'leaflet';
 import { MapMarkerDownIcon } from 'mdi-vue3';
-import {
-    customMapCRS,
-    getMapBackgroundColor,
-    mapBounds,
-    mapMaxBounds,
-    mapTileLayers,
-} from '~/composables/livemap/useMapProjection';
+import { mapTileLayers } from '~/composables/livemap/useMapProjection';
 import { overlayCayoPericoBounds, tileLayers } from '~/types/livemap';
+import LivemapMapShell from './LivemapMapShell.vue';
 import MapZoomControls from './controls/MapZoomControls.vue';
 import TileLayerSelector from './controls/TileLayerSelector.vue';
-import MapCayoPerico from './MapCayoPerico.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -21,11 +15,13 @@ const props = withDefaults(
         layer?: string;
         disabled?: boolean;
         showControls?: boolean;
+        containerClass?: string;
     }>(),
     {
         layer: '',
         disabled: false,
         showControls: true,
+        containerClass: 'relative h-64 w-full overflow-hidden rounded-lg border border-neutral-300 dark:border-neutral-700',
     },
 );
 
@@ -41,10 +37,7 @@ const { game } = useAppConfig();
 const settingsStore = useSettingsStore();
 const { livemapTileLayer, livemap } = storeToRefs(settingsStore);
 
-const mapRef = useTemplateRef('mapRef');
-const mapContainer = useTemplateRef('mapContainer');
-const mapResize = useDebounceFn(() => mapRef.value?.leafletObject?.invalidateSize(), 150, { maxWait: 400 });
-const center = ref<LatLngExpression>([props.y, props.x]);
+const center = ref<PointExpression>([props.y, props.x]);
 const currentZoom = ref(props.zoom);
 
 const currentLayer = computed({
@@ -55,46 +48,19 @@ const currentLayer = computed({
 const activeLayer = computed(() => mapTileLayers.find((layer) => layer.key === currentLayer.value) ?? tileLayers[0]!);
 const iconAnchor = computed<PointExpression>(() => [livemap.value.markerSize / 2, livemap.value.markerSize]);
 const iconSize = computed<[number, number]>(() => [livemap.value.markerSize, livemap.value.markerSize]);
-const backgroundColor = computed(() => getMapBackgroundColor(activeLayer.value.key));
-
-function scheduleResize(): void {
-    nextTick(() => {
-        requestAnimationFrame(() => mapResize());
-    });
-}
-
-function syncMapView(): void {
-    center.value = [props.y, props.x];
-    currentZoom.value = props.zoom;
-    mapRef.value?.leafletObject?.setView(center.value, currentZoom.value, { animate: false });
-}
 
 watch(
-    () => [props.x, props.y, props.zoom, currentLayer.value],
+    () => [props.x, props.y, props.zoom],
     () => {
-        syncMapView();
-        scheduleResize();
+        center.value = [props.y, props.x];
+        currentZoom.value = props.zoom;
     },
     { immediate: true },
 );
 
-useResizeObserver(mapContainer, () => mapResize());
-
-function onMapReady(): void {
-    syncMapView();
-    scheduleResize();
-}
-
 function updatePosition(latlng: { lat: number; lng: number }): void {
     emit('update:x', latlng.lng);
     emit('update:y', latlng.lat);
-}
-
-function onZoomEnd(): void {
-    const nextZoom = mapRef.value?.leafletObject?.getZoom();
-    if (typeof nextZoom === 'number' && nextZoom !== props.zoom) {
-        currentZoom.value = nextZoom;
-    }
 }
 
 function onMapClick(event: { latlng?: { lat: number; lng: number } }): void {
@@ -102,12 +68,6 @@ function onMapClick(event: { latlng?: { lat: number; lng: number } }): void {
 
     updatePosition(event.latlng);
     center.value = [event.latlng.lat, event.latlng.lng];
-    mapRef.value?.leafletObject?.setView(center.value, currentZoom.value, { animate: false });
-    scheduleResize();
-}
-
-function onZoomUpdate(value: number): void {
-    currentZoom.value = value;
 }
 
 watch(currentZoom, (value) => {
@@ -118,30 +78,18 @@ watch(currentZoom, (value) => {
 
 <template>
     <ClientOnly>
-        <div
-            ref="mapContainer"
-            class="relative h-64 w-full overflow-hidden rounded-lg border border-neutral-300 dark:border-neutral-700"
-            :style="{ backgroundColor }"
+        <LivemapMapShell
+            v-model:center="center"
+            v-model:zoom="currentZoom"
+            :container-class="containerClass"
+            map-class="absolute inset-0 block h-full w-full"
+            :background-layer="activeLayer.key"
+            :show-cayo-perico="game.livemap?.enableCayoPerico"
+            :cayo-tile-layer="livemapTileLayer"
+            :cayo-bounds="overlayCayoPericoBounds"
+            @click="onMapClick"
         >
-            <LMap
-                ref="mapRef"
-                class="absolute inset-0 block h-full w-full"
-                :style="{ backgroundColor }"
-                :bounds="mapBounds"
-                :max-bounds="mapMaxBounds"
-                :min-zoom="1"
-                :max-zoom="7"
-                :zoom="currentZoom"
-                :center="center"
-                :crs="customMapCRS"
-                :inertia="false"
-                :options="{ zoomControl: false }"
-                use-global-leaflet
-                @ready="onMapReady"
-                @click="onMapClick"
-                @update:zoom="onZoomUpdate"
-                @moveend="onZoomEnd"
-            >
+            <template #layers>
                 <LTileLayer
                     :url="activeLayer.url"
                     layer-type="base"
@@ -153,35 +101,29 @@ watch(currentZoom, (value) => {
                     :max-zoom="activeLayer.options?.maxZoom || 7"
                     :attribution="activeLayer.options?.attribution || undefined"
                 />
+            </template>
 
-                <MapCayoPerico
-                    v-if="game.livemap?.enableCayoPerico"
-                    :tile-layer="livemapTileLayer"
-                    :bounds="overlayCayoPericoBounds"
-                />
+            <LMarker :lat-lng="[props.y, props.x]">
+                <LIcon
+                    :icon-size="iconSize"
+                    :icon-anchor="iconAnchor"
+                    class-name="pointer-events-none!"
+                    :options="{ pmIgnore: true }"
+                >
+                    <MapMarkerDownIcon class="size-full text-primary-500 drop-shadow-sm" />
+                </LIcon>
 
-                <LMarker :lat-lng="[props.y, props.x]">
-                    <LIcon
-                        :icon-size="iconSize"
-                        :icon-anchor="iconAnchor"
-                        class-name="pointer-events-none!"
-                        :options="{ pmIgnore: true }"
-                    >
-                        <MapMarkerDownIcon class="size-full text-primary-500 drop-shadow-sm" />
-                    </LIcon>
-
-                    <LPopup :options="{ closeButton: false }">
-                        <div class="text-xs">
-                            <div class="font-medium">
-                                {{ $t('common.coordinate') }}: {{ props.x.toFixed(2) }}, {{ props.y.toFixed(2) }}
-                            </div>
+                <LPopup :options="{ closeButton: false }">
+                    <div class="text-xs">
+                        <div class="font-medium">
+                            {{ $t('common.coordinate') }}: {{ props.x.toFixed(2) }}, {{ props.y.toFixed(2) }}
                         </div>
-                    </LPopup>
-                </LMarker>
+                    </div>
+                </LPopup>
+            </LMarker>
 
-                <MapZoomControls v-if="showControls && !disabled" v-model="currentZoom" />
-                <TileLayerSelector v-if="showControls && !disabled" v-model="currentLayer" />
-            </LMap>
-        </div>
+            <MapZoomControls v-if="showControls && !disabled" v-model="currentZoom" />
+            <TileLayerSelector v-if="showControls && !disabled" v-model="currentLayer" />
+        </LivemapMapShell>
     </ClientOnly>
 </template>

@@ -2,6 +2,7 @@
 import { UCheckbox, UIcon } from '#components';
 import { defineComponent, getCurrentInstance, h, Text, type Component, type VNode } from 'vue';
 import MapBlockContentView from '~/components/partials/content/MapBlockContentView.vue';
+import { normalizeMapBlockAttrs } from '~/composables/tiptap/extensions/MapBlock';
 import PenaltyCalculatorContentView from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorContentView.vue';
 import type { RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
 import GenericImg from '../elements/GenericImg.vue';
@@ -62,11 +63,13 @@ export default defineComponent({
                 value.attrs?.['data-embed'] === 'map'
             ) {
                 return h(MapBlockContentView, {
-                    x: Number(value.attrs?.['data-map-x'] ?? 0),
-                    y: Number(value.attrs?.['data-map-y'] ?? 0),
-                    zoom: Number(value.attrs?.['data-map-zoom'] ?? 2),
-                    postal: String(value.attrs?.['data-map-postal'] ?? '') || undefined,
-                    layer: String(value.attrs?.['data-map-layer'] ?? '') || undefined,
+                    ...normalizeMapBlockAttrs({
+                        x: value.attrs?.['data-map-x'],
+                        y: value.attrs?.['data-map-y'],
+                        zoom: value.attrs?.['data-map-zoom'],
+                        postal: value.attrs?.['data-map-postal'],
+                        layer: value.attrs?.['data-map-layer'],
+                    }),
                     showGotoCoords: true,
                 });
             }

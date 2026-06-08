@@ -19,7 +19,7 @@ describe('deepToRaw', () => {
         expect(isProxy(raw.nested.items[0])).toBe(false);
         expect(raw.count).toBe(1);
         expect(raw.nested.label).toBe('hello');
-        expect(raw.nested.items[0].id).toBe(2);
+        expect(raw.nested.items[0]!.id).toBe(2);
         expect(() => structuredClone(raw)).not.toThrow();
     });
 });

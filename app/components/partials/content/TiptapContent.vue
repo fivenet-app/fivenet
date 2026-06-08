@@ -2,6 +2,7 @@
 import type { Extensions, JSONContent } from '@tiptap/core';
 import { h, type ComputedRef, type Ref } from 'vue';
 import MapBlockContentView from '~/components/partials/content/MapBlockContentView.vue';
+import { normalizeMapBlockAttrs } from '~/composables/tiptap/extensions/MapBlock';
 import PenaltyCalculatorContentView from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorContentView.vue';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
@@ -29,14 +30,7 @@ provide('documents:content:data', documentData);
 const options = computed(() => ({
     nodeMapping: {
         mapBlock: ({ node }: { node: { attrs: Record<string, unknown> } }) =>
-            h(MapBlockContentView, {
-                x: Number(node.attrs.x ?? 0),
-                y: Number(node.attrs.y ?? 0),
-                zoom: Number(node.attrs.zoom ?? 2),
-                postal: String(node.attrs.postal ?? '') || undefined,
-                layer: String(node.attrs.layer ?? '') || undefined,
-                showGotoCoords: true,
-            }),
+            h(MapBlockContentView, { ...normalizeMapBlockAttrs(node.attrs), showGotoCoords: true }),
         penaltyCalculator: () => h(PenaltyCalculatorContentView),
     },
 }));

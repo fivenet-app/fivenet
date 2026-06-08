@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { DragEndEvent, LatLngTuple, LeafletEvent, PointExpression } from 'leaflet';
 import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
-import MarkerCreateOrUpdateSlideover from '~/components/livemap/MarkerCreateOrUpdateSlideover.vue';
+import MarkerCreateOrUpdateSlideover from '~/components/livemap/markers/CreateOrUpdateSlideover.vue';
 import { resolveIconComponent } from '~/components/partials/icons';
 import { useLivemapStore } from '~/stores/livemap';
 import { MarkerType, type MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';

@@ -2,7 +2,7 @@
 import type { ContextMenuItemClickEvent, MapOptions } from 'leaflet';
 import DispatchCreateOrUpdateSlideover from '~/components/dispatch/dispatches/DispatchCreateOrUpdateSlideover.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
-import MarkerCreateOrUpdateSlideover from '~/components/livemap/MarkerCreateOrUpdateSlideover.vue';
+import MarkerCreateOrUpdateSlideover from '~/components/livemap/markers/CreateOrUpdateSlideover.vue';
 import MarkersLayer from '~/components/livemap/MarkersLayer.vue';
 import ReconnectingPopup from '~/components/livemap/ReconnectingPopup.vue';
 import TempMarker from '~/components/livemap/TempMarker.vue';

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import MapFullscreenModal from '~/components/livemap/MapFullscreenModal.vue';
 import MapPositionPicker from '~/components/livemap/MapPositionPicker.vue';
 import { mapTileLayers } from '~/composables/livemap/useMapProjection';
 import { tileLayers } from '~/types/livemap';
@@ -13,10 +14,16 @@ const props = defineProps<{
 }>();
 
 const open = ref(false);
+const fullscreenOpen = ref(false);
 
 const displayCoords = computed(() => `${props.x.toFixed(2)}, ${props.y.toFixed(2)}`);
 const activeLayer = computed(() => mapTileLayers.find((layer) => layer.key === props.layer) ?? tileLayers[0]!);
 const showGotoCoords = computed(() => props.showGotoCoords !== false);
+
+function openFullscreen(): void {
+    open.value = false;
+    fullscreenOpen.value = true;
+}
 </script>
 
 <template>
@@ -60,13 +67,25 @@ const showGotoCoords = computed(() => props.showGotoCoords !== false);
                         </div>
                     </div>
 
-                    <UButton
-                        color="neutral"
-                        variant="ghost"
-                        icon="i-mdi-close"
-                        :label="$t('common.close')"
-                        @click="open = false"
-                    />
+                    <UFieldGroup>
+                        <UTooltip :text="$t('common.fullscreen_enter')">
+                            <UButton
+                                color="neutral"
+                                variant="ghost"
+                                icon="i-mdi-fullscreen"
+                                :aria-label="$t('common.fullscreen_enter')"
+                                @click="openFullscreen"
+                            />
+                        </UTooltip>
+
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            trailing-icon="i-mdi-close"
+                            :label="$t('common.close')"
+                            @click="open = false"
+                        />
+                    </UFieldGroup>
                 </div>
 
                 <ClientOnly>
@@ -75,4 +94,15 @@ const showGotoCoords = computed(() => props.showGotoCoords !== false);
             </div>
         </template>
     </UPopover>
+
+    <MapFullscreenModal
+        v-model:open="fullscreenOpen"
+        :title="postal || $t('common.map')"
+        :summary="`${displayCoords} · ${$t(activeLayer.label)} · ${$t('common.zoom')} ${zoom}`"
+        :x="x"
+        :y="y"
+        :zoom="zoom"
+        :layer="layer"
+        disabled
+    />
 </template>
