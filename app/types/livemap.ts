@@ -1,10 +1,5 @@
 import type { LatLngBoundsExpression } from 'leaflet';
 
-export const backgroundColorList = {
-    postal: '#74aace',
-    satelite: '#133e6b',
-} as const;
-
 export const tileLayers = [
     {
         key: 'postal',

@@ -79,11 +79,7 @@ const schema = z.object({
                     <UFormField
                         v-if="can('livemap.LivemapService/CreateOrUpdateMarker').value"
                         name="markerDragEnabled"
-                        :label="
-                            markerDragEnabled
-                                ? $t('components.livemap.enable_marker_dragging')
-                                : $t('components.livemap.disable_marker_dragging')
-                        "
+                        :label="$t('components.livemap.enable_marker_dragging')"
                     >
                         <USwitch v-model="markerDragEnabled" />
                     </UFormField>

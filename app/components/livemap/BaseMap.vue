@@ -1,11 +1,8 @@
 <script lang="ts" setup>
 import { breakpointsTailwind } from '@vueuse/core';
 import {
-    CRS,
-    extend,
     type HeatLayer,
     LatLng,
-    latLngBounds,
     type LatLngExpression,
     type Layer,
     type LayersControlEvent,
@@ -15,22 +12,28 @@ import {
     type Path,
     type Point,
     type PointExpression,
-    Projection,
     stamp,
-    Transformation,
 } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet.heat';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 import { simpleGraticule } from '~/composables/leaflet/L.SimpleGraticule';
+import {
+    customMapCRS,
+    getMapBackgroundColor,
+    getZoomOffset,
+    mapBounds,
+    mapMaxBounds,
+} from '~/composables/livemap/useMapProjection';
 import { useLivemapStore } from '~/stores/livemap';
-import { backgroundColorList, overlayCayoPericoBounds, tileLayers } from '~/types/livemap';
+import { overlayCayoPericoBounds, tileLayers } from '~/types/livemap';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
 import ClusterPickerCard from './ClusterPickerCard.vue';
 import LayerControls from './controls/LayerControls.vue';
 import HeatmapLayer from './HeatmapLayer.vue';
+import MapCayoPerico from './MapCayoPerico.vue';
 
 defineProps<{
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -66,58 +69,12 @@ const mapContainer = useTemplateRef('mapContainer');
 const mapResizeDebounced = useDebounceFn(mapResize, 350, { maxWait: 700 });
 useResizeObserver(mapContainer, (_) => mapResizeDebounced());
 
-const centerX = 117.3;
-const centerY = 172.8;
-const scaleX = 0.02072;
-const scaleY = 0.0205;
-
-const bounds = latLngBounds([-4_000, -4_000], [8_000, 8_000]);
-const maxBounds = latLngBounds([-9_000, -9_000], [11_000, 11_000]);
-
-const customCRS = extend({}, CRS.Simple, {
-    projection: Projection.LonLat,
-    scale: function (zoom: number): number {
-        return Math.pow(2, zoom);
-    },
-    zoom: function (sc: number): number {
-        return Math.log(sc) / 0.6931471805599453;
-    },
-    distance: function (pos1: LatLng, pos2: LatLng): number {
-        const xDiff = pos2.lng - pos1.lng;
-        const yDiff = pos2.lat - pos1.lat;
-        return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-    },
-    transformation: new Transformation(scaleX, centerX, -scaleY, centerY),
-    infinite: true,
-});
-
 const center = ref<PointExpression>([0, 0]);
 
 const mouseLat = ref<number>(0);
 const mouseLong = ref<number>(0);
 
 const currentLocationQuery = useRouteQuery<string>('loc', '');
-
-function getZoomOffset(zoom: number): number {
-    switch (zoom) {
-        case 1:
-            return 1950;
-        case 2:
-            return 1450;
-        case 3:
-            return 1150;
-        case 4:
-            return 650;
-        case 5:
-            return 375;
-        case 6:
-            return 200;
-        case 7:
-            return 75;
-        default:
-            return 350;
-    }
-}
 
 watch(selectedMarker, async () => {
     if (map === undefined || selectedMarker.value === undefined) return;
@@ -152,22 +109,7 @@ watchDebounced(
     { debounce: 1000, maxWait: 3000 },
 );
 
-const backgroundColor = ref<(typeof backgroundColorList)[keyof typeof backgroundColorList]>(backgroundColorList.postal);
-
-async function updateBackground(layer: string): Promise<void> {
-    switch (layer) {
-        case 'satelite':
-            backgroundColor.value = backgroundColorList.satelite;
-            break;
-
-        case 'postal':
-        default:
-            backgroundColor.value = backgroundColorList.postal;
-            break;
-    }
-}
-
-watch(livemapTileLayer, async (layer) => updateBackground(layer));
+const backgroundColor = computed(() => getMapBackgroundColor(livemapTileLayer.value));
 
 function stringifyHash(currZoom: number, centerLat: number, centerLong: number): string {
     const precision = Math.max(0, Math.ceil(Math.log(zoom.value) / Math.LN2));
@@ -298,8 +240,6 @@ async function showChooser(latlng: LatLngExpression, hits: PopupCandidateLayer[]
 }
 
 async function onMapReady(m: Map): Promise<void> {
-    updateBackground(livemapTileLayer.value);
-
     map = m;
     map.invalidateSize();
 
@@ -307,8 +247,6 @@ async function onMapReady(m: Map): Promise<void> {
     if (startPos) {
         map.setView(startPos.latlng, startPos.zoom);
     }
-
-    map.on('baselayerchange', async (event: LayersControlEvent) => updateBackground(event.name));
 
     map.on('overlayadd', (event) => emit('overlayadd', event));
     map.on('overlayremove', (event) => emit('overlayremove', event));
@@ -433,9 +371,9 @@ onBeforeUnmount(() => (map = undefined));
         <LMap
             v-model:zoom="zoom"
             v-model:center="center"
-            :bounds="bounds"
-            :max-bounds="maxBounds"
-            :crs="customCRS"
+            :bounds="mapBounds"
+            :max-bounds="mapMaxBounds"
+            :crs="customMapCRS"
             :min-zoom="1"
             :max-zoom="7"
             :inertia="false"
@@ -459,9 +397,9 @@ onBeforeUnmount(() => (map = undefined));
                 :attribution="layer.options?.attribution || undefined"
             />
 
-            <LImageOverlay
+            <MapCayoPerico
                 v-if="game.livemap?.enableCayoPerico"
-                :url="`/images/livemap/overlays/cayo-perico/${livemapTileLayer}.webp`"
+                :tile-layer="livemapTileLayer"
                 :bounds="overlayCayoPericoBounds"
             />
 
