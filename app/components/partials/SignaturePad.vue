@@ -123,6 +123,7 @@ defineExpose({
                     <div class="flex w-full flex-col space-y-4">
                         <UFormField
                             class="grid grid-cols-2 items-center gap-2"
+                            name="signature.minStrokeWidth"
                             :label="$t('components.partials.signature_pad.min_stroke_width')"
                         >
                             <div class="flex items-center gap-2">
@@ -133,6 +134,7 @@ defineExpose({
 
                         <UFormField
                             class="grid grid-cols-2 items-center gap-2"
+                            name="signature.maxStrokeWidth"
                             :label="$t('components.partials.signature_pad.max_stroke_width')"
                         >
                             <div class="flex items-center gap-2">

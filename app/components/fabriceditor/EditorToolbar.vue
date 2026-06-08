@@ -162,7 +162,7 @@ const fileMenuItems = computed<DropdownMenuItem[][]>(() => [
             />
         </UTooltip>
 
-        <UFormField>
+        <UFormField name="zoom">
             <div class="inline-flex gap-2">
                 <UFieldGroup>
                     <UInputNumber

@@ -306,7 +306,7 @@ function clearValue(): void {
             class="grid gap-2"
             :class="orderedUnits.length >= 3 ? 'grid-cols-3' : orderedUnits.length === 2 ? 'grid-cols-2' : 'grid-cols-1'"
         >
-            <UFormField v-for="unit in orderedUnits" :key="unit" :label="$t(`common.time_ago.${unit}`, 2)">
+            <UFormField v-for="unit in orderedUnits" :key="unit" :name="unit" :label="$t(`common.time_ago.${unit}`, 2)">
                 <UInputNumber
                     class="w-full"
                     :model-value="compositeState[unit]"

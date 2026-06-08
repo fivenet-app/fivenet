@@ -120,7 +120,10 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
                                 class="flex flex-row gap-2"
                             >
                                 <div class="flex flex-col gap-2 md:flex-row">
-                                    <UFormField :label="$t('common.corrected')">
+                                    <UFormField
+                                        :name="`grading.responses.${getGradingIndex(question.question.questionId)}.checked`"
+                                        :label="$t('common.corrected')"
+                                    >
                                         <div class="flex flex-col md:items-center">
                                             <UCheckbox
                                                 v-model="
@@ -132,7 +135,10 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
                                         </div>
                                     </UFormField>
 
-                                    <UFormField :label="$t('common.points', 2)">
+                                    <UFormField
+                                        :name="`grading.responses.${getGradingIndex(question.question.questionId)}.points`"
+                                        :label="$t('common.points', 2)"
+                                    >
                                         <UInputNumber
                                             v-model="
                                                 data.grading!.responses[getGradingIndex(question.question.questionId)]!.points

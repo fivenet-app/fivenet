@@ -47,13 +47,14 @@ const insertBlock = () => {
                 </h3>
 
                 <div class="flex flex-col gap-2">
-                    <UFormField>
+                    <UFormField name="selected">
                         <USelectMenu v-model="selected" class="w-full" :items="options" value-key="value" />
                     </UFormField>
 
                     <div class="flex flex-row gap-2">
                         <UFormField
                             class="justify-center"
+                            name="leftTrim"
                             :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_left')"
                         >
                             <USwitch v-model="leftTrim" />
@@ -61,13 +62,14 @@ const insertBlock = () => {
 
                         <UFormField
                             class="justify-center"
+                            name="rightTrim"
                             :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_right')"
                         >
                             <USwitch v-model="rightTrim" />
                         </UFormField>
                     </div>
 
-                    <UFormField>
+                    <UFormField name="expression">
                         <UInput
                             v-model="expression"
                             class="w-full"

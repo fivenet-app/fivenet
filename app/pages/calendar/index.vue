@@ -517,6 +517,7 @@ const viewOptions = [
             >
                 <UFormField
                     class="flex flex-row items-center gap-2"
+                    name="view"
                     :label="$t('common.view')"
                     :ui="{ container: '', label: 'hidden md:inline-flex' }"
                 >
@@ -633,6 +634,7 @@ const viewOptions = [
             <div class="flex flex-col gap-2 p-2">
                 <UFormField
                     class="flex flex-1 flex-row items-center gap-2"
+                    name="view"
                     :label="$t('common.view')"
                     :ui="{ container: 'flex-1' }"
                 >

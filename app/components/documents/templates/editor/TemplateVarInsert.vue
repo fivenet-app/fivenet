@@ -71,11 +71,11 @@ const insertCustom = () => {
                 </h3>
 
                 <div class="flex flex-col gap-2">
-                    <UFormField :label="$t('common.category', 1)">
+                    <UFormField name="category" :label="$t('common.category', 1)">
                         <USelectMenu v-model="selectedCategory" class="w-full" :items="categories" />
                     </UFormField>
 
-                    <UFormField :label="$t('common.property', 1)">
+                    <UFormField name="property" :label="$t('common.property', 1)">
                         <USelectMenu
                             v-model="selectedProperty"
                             class="w-full"
@@ -87,6 +87,7 @@ const insertCustom = () => {
                     <div class="flex flex-row gap-2">
                         <UFormField
                             class="justify-center"
+                            name="leftTrim"
                             :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_left')"
                         >
                             <USwitch v-model="leftTrim" />
@@ -94,6 +95,7 @@ const insertCustom = () => {
 
                         <UFormField
                             class="justify-center"
+                            name="rightTrim"
                             :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_right')"
                         >
                             <USwitch v-model="rightTrim" />
@@ -109,7 +111,10 @@ const insertCustom = () => {
                         />
                     </UFormField>
 
-                    <UFormField :label="$t('components.partials.tiptap_editor.extensions.template_var.custom_template')">
+                    <UFormField
+                        name="customInput"
+                        :label="$t('components.partials.tiptap_editor.extensions.template_var.custom_template')"
+                    >
                         <UInput
                             v-model="customInput"
                             class="w-full"

@@ -297,7 +297,7 @@ async function closeModal(): Promise<void> {
                         />
                     </UFormField>
 
-                    <UFormField class="flex-1">
+                    <UFormField class="flex-1" name="allDay">
                         <UTabs
                             :items="[
                                 { label: $t('common.time_range'), icon: 'i-mdi-calendar-today' },
