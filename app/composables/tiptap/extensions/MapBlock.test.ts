@@ -13,14 +13,19 @@ describe('MapBlock', () => {
             type: 'doc',
             content: [
                 {
-                    type: 'mapBlock',
-                    attrs: {
-                        x: 12.34,
-                        y: 56.78,
-                        zoom: 3,
-                        postal: '12345',
-                        layer: 'postal',
-                    },
+                    type: 'paragraph',
+                    content: [
+                        {
+                            type: 'mapBlock',
+                            attrs: {
+                                x: 12.34,
+                                y: 56.78,
+                                zoom: 3,
+                                postal: '12345',
+                                layer: 'postal',
+                            },
+                        },
+                    ],
                 },
             ],
         };
@@ -46,14 +51,19 @@ describe('MapBlock', () => {
             type: 'doc',
             content: [
                 {
-                    type: 'mapBlock',
-                    attrs: {
-                        x: 1.5,
-                        y: 2.5,
-                        zoom: 4,
-                        postal: '',
-                        layer: 'postal',
-                    },
+                    type: 'paragraph',
+                    content: [
+                        {
+                            type: 'mapBlock',
+                            attrs: {
+                                x: 1.5,
+                                y: 2.5,
+                                zoom: 4,
+                                postal: '',
+                                layer: 'postal',
+                            },
+                        },
+                    ],
                 },
             ],
         });
