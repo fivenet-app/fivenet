@@ -14,6 +14,7 @@ const props = withDefaults(
         showControls?: boolean;
     }>(),
     {
+        layer: undefined,
         disabled: false,
         showControls: false,
     },
@@ -26,8 +27,6 @@ const emit = defineEmits<{
     (e: 'update:zoom', value: number): void;
     (e: 'update:layer', value: string): void;
 }>();
-
-const fullscreenMapContainerClass = 'relative h-[calc(100vh-12rem)] w-full overflow-hidden rounded-lg border border-neutral-300 dark:border-neutral-700';
 
 const openModel = computed({
     get: () => props.open,
@@ -56,7 +55,7 @@ const openModel = computed({
                     :layer="layer"
                     :disabled="disabled"
                     :show-controls="showControls"
-                    :container-class="fullscreenMapContainerClass"
+                    container-class="relative h-[calc(100vh-12rem)] w-full overflow-hidden rounded-lg border border-neutral-300 dark:border-neutral-700"
                     @update:x="(value) => emit('update:x', value)"
                     @update:y="(value) => emit('update:y', value)"
                     @update:zoom="(value) => emit('update:zoom', value)"

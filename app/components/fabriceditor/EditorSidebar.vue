@@ -431,11 +431,7 @@ const updateCurvedTextFillColor = (val: string) => {
                         />
                     </UFormField>
 
-                    <UFormField
-                        v-if="(activeObject as FabricHtmlInput).inputType === 'select'"
-                        name="options"
-                        label="Options"
-                    >
+                    <UFormField v-if="(activeObject as FabricHtmlInput).inputType === 'select'" name="options" label="Options">
                         <UInputTags
                             v-model="(activeObject as FabricHtmlInput).options"
                             class="w-full"

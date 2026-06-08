@@ -1,16 +1,12 @@
 <script lang="ts" setup>
-import { type LeafletMouseEvent, type Map, type PointExpression, type LatLngBoundsExpression } from 'leaflet';
-import {
-    customMapCRS,
-    getMapBackgroundColor,
-    mapBounds,
-    mapMaxBounds,
-} from '~/composables/livemap/useMapProjection';
+import type { LeafletMouseEvent, Map, PointExpression, LatLngBoundsExpression } from 'leaflet';
+import { customMapCRS, getMapBackgroundColor, mapBounds, mapMaxBounds } from '~/composables/livemap/useMapProjection';
 import MapCayoPerico from './MapCayoPerico.vue';
 
 const props = withDefaults(
     defineProps<{
         backgroundLayer: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         mapOptions?: Record<string, any>;
         bounds?: LatLngBoundsExpression;
         maxBounds?: LatLngBoundsExpression;
@@ -77,14 +73,13 @@ defineExpose({
     <div ref="mapContainer" :class="props.containerClass" :style="{ backgroundColor }">
         <LMap
             ref="mapRef"
-            :class="props.mapClass"
+            v-model:zoom="zoom"
+            v-model:center="center"
             :style="{ backgroundColor }"
             :bounds="props.bounds"
             :max-bounds="props.maxBounds"
             :min-zoom="props.minZoom"
             :max-zoom="props.maxZoom"
-            v-model:zoom="zoom"
-            v-model:center="center"
             :crs="customMapCRS"
             :inertia="false"
             :options="props.mapOptions"

@@ -52,21 +52,9 @@ function save(): void {
                     <MapBlockEditorForm v-model="draft" :disabled="!editor.isEditable" />
 
                     <UFieldGroup>
-                        <UButton
-                            block
-                            color="neutral"
-                            icon="i-mdi-close"
-                            :label="$t('common.cancel')"
-                            @click="open = false"
-                        />
+                        <UButton block color="neutral" icon="i-mdi-close" :label="$t('common.cancel')" @click="open = false" />
 
-                        <UButton
-                            block
-                            color="neutral"
-                            icon="i-mdi-content-save"
-                            :label="$t('common.save')"
-                            @click="save"
-                        />
+                        <UButton block color="neutral" icon="i-mdi-content-save" :label="$t('common.save')" @click="save" />
                     </UFieldGroup>
                 </MapBlockEditorPopoverShell>
 
