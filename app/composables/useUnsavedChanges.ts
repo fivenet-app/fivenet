@@ -13,8 +13,15 @@ export function useUnsavedChanges(options: UseUnsavedChangesOptions = {}) {
     const overlay = useOverlay();
     const formChangedModal = overlay.create(FormChangedModal);
     const changed = ref<boolean>(false);
+    let stopBeforeUnloadWatch: (() => void) | undefined;
 
     const hasUnsavedChanges = computed(() => Boolean(changed.value || toValue(options.dirty ?? false)));
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+        if (!hasUnsavedChanges.value) return;
+
+        event.preventDefault();
+        event.returnValue = '';
+    };
 
     function markChanged(): void {
         changed.value = true;
@@ -37,6 +44,25 @@ export function useUnsavedChanges(options: UseUnsavedChangesOptions = {}) {
             },
         );
     }
+
+    onMounted(() => {
+        stopBeforeUnloadWatch = watch(
+            hasUnsavedChanges,
+            (isDirty) => {
+                if (isDirty) {
+                    window.addEventListener('beforeunload', handleBeforeUnload);
+                } else {
+                    window.removeEventListener('beforeunload', handleBeforeUnload);
+                }
+            },
+            { immediate: true },
+        );
+    });
+
+    onBeforeUnmount(() => {
+        stopBeforeUnloadWatch?.();
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+    });
 
     onBeforeRouteLeave(async () => {
         if (!hasUnsavedChanges.value) return;
