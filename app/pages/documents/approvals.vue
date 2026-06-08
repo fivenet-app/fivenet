@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { NavigationMenuItem } from '@nuxt/ui';
+import type { Form, NavigationMenuItem } from '@nuxt/ui';
 import { computed } from 'vue';
 import { z } from 'zod';
 import ApprovalBadge from '~/components/documents/approval/ApprovalBadge.vue';
@@ -73,20 +73,27 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
+type Schema = z.output<typeof schema>;
+
 const query = useSearchForm('documents-approvals', schema);
 
-const approvalTasksInboxKey = computed(() => `documents-approvals-${JSON.stringify(query)}`);
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-const { data, status, error, refresh } = useLazyAsyncData(approvalTasksInboxKey, () => listApprovalTasksInbox());
+const approvalTasksInboxKey = computed(() => `documents-approvals-${JSON.stringify(validatedQuery.value)}`);
 
-async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse> {
+const { data, status, error, refresh } = useLazyAsyncData(approvalTasksInboxKey, () =>
+    listApprovalTasksInbox(validatedQuery.value),
+);
+
+async function listApprovalTasksInbox(values: Schema): Promise<ListApprovalTasksInboxResponse> {
     const call = approvalClient.listApprovalTasksInbox({
         pagination: {
-            offset: calculateOffset(query.page, data.value?.pagination),
+            offset: calculateOffset(values.page, data.value?.pagination),
         },
-        statuses: query.statuses,
-        onlyDrafts: query.onlyDrafts,
-        notAlreadyActed: query.notAlreadyActed,
+        statuses: values.statuses,
+        onlyDrafts: values.onlyDrafts,
+        notAlreadyActed: values.notAlreadyActed,
     });
     const { response } = await call;
 
@@ -113,7 +120,7 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                     class="my-2 flex w-full flex-1 flex-col gap-2"
                     :schema="schema"
                     :state="query"
-                    @submit="refresh()"
+                    @submit="commitValidatedQuery"
                 >
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex flex-1 shrink-0 flex-col" name="onlyDrafts" :label="$t('common.status')">

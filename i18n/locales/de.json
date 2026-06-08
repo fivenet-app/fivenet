@@ -810,7 +810,7 @@
             },
             "form_changed": {
                 "title": "Ungespeicherte Änderungen",
-                "description": "Du hast ungespeicherte Änderungen. Diese Seite ohne Speichern verlassen?"
+                "description": "Sie haben ungespeicherte Änderungen. Möchten Sie ohne zu speichern fortfahren?"
             },
             "table_pagination": {
                 "page_count": "Seite {current} à {size} Einträge",

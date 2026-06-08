@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { UBadge, UButton, UTooltip } from '#components';
 import { CalendarDate } from '@internationalized/date';
-import type { TableColumn } from '@nuxt/ui';
+import type { Form, TableColumn } from '@nuxt/ui';
 import { addDays } from 'date-fns';
 import { h } from 'vue';
 import VueJsonPretty from 'vue-json-pretty';
@@ -61,6 +61,10 @@ const schema = z.object({
 });
 
 const query = useSearchForm('settings_auditlog', schema);
+type Schema = z.output<typeof schema>;
+
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
 const eventActions = Object.keys(EventAction)
     .map((e) => EventAction[e as keyof typeof EventAction])
@@ -94,31 +98,31 @@ const resultOptions = eventResults.map((e) => ({
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
-        `settings-audit-${JSON.stringify(query.sorting)}-${query.page}-${query.date?.start}-${query.date?.end}-${query.methods}-${query.services}-${query.search}-${query.users.join(',')}`,
-    () => viewAuditLog(),
+        `settings-audit-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.date?.start}-${validatedQuery.value.date?.end}-${validatedQuery.value.methods}-${validatedQuery.value.services}-${validatedQuery.value.search}-${validatedQuery.value.users.join(',')}`,
+    () => viewAuditLog(validatedQuery.value),
 );
 
-async function viewAuditLog(): Promise<ViewAuditLogResponse> {
+async function viewAuditLog(values: Schema): Promise<ViewAuditLogResponse> {
     const req: ViewAuditLogRequest = {
         pagination: {
-            offset: calculateOffset(query.page, data.value?.pagination),
+            offset: calculateOffset(values.page, data.value?.pagination),
         },
-        sort: query.sorting,
-        userIds: query.users,
-        services: query.services,
+        sort: values.sorting,
+        userIds: values.users,
+        services: values.services,
         // Make sure to remove the service from the beginning
-        methods: query.methods.map((m) => m.split('/').pop() ?? m),
-        actions: query.actions,
-        results: query.results,
+        methods: values.methods.map((m) => m.split('/').pop() ?? m),
+        actions: values.actions,
+        results: values.results,
     };
 
-    if (query.date) {
-        req.from = toTimestamp(query.date.start);
-        req.to = toTimestamp(query.date.end);
+    if (values.date) {
+        req.from = toTimestamp(values.date.start);
+        req.to = toTimestamp(values.date.end);
     }
 
-    if (query.search !== '') {
-        req.search = query.search;
+    if (values.search !== '') {
+        req.search = values.search;
     }
 
     try {
@@ -131,11 +135,6 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         throw e;
     }
 }
-
-useDebouncedRefresh(query, refresh, {
-    debounce: 200,
-    maxWait: 1250,
-});
 
 const notifications = useNotificationsStore();
 
@@ -296,7 +295,13 @@ const tomorrow = addDays(today, 1);
 
             <UDashboardToolbar>
                 <template #default>
-                    <UForm class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
+                    <UForm
+                        ref="formRef"
+                        class="my-2 flex w-full flex-1 flex-col gap-2"
+                        :schema="schema"
+                        :state="query"
+                        @submit="commitValidatedQuery"
+                    >
                         <div class="flex flex-1 flex-row gap-2">
                             <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
                                 <InputDateRangePopover

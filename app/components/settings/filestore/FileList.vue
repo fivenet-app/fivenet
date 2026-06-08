@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { UButton, UIcon, UTooltip } from '#components';
-import type { TableColumn } from '@nuxt/ui';
+import type { Form, TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -32,22 +32,24 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
+type Schema = z.output<typeof schema>;
+
 const query = useSearchForm('settings-filelist', schema);
 
-const {
-    data: files,
-    status,
-    refresh,
-    error,
-} = useLazyAsyncData(`files-${query.page}-${query.prefix}`, () => listFiles(query.page, query.prefix));
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-async function listFiles(page: number, prefix: string): Promise<ListFilesResponse> {
+const filesKey = computed(() => `files-${validatedQuery.value.page}-${validatedQuery.value.prefix}`);
+
+const { data: files, status, refresh, error } = useLazyAsyncData(filesKey, () => listFiles(validatedQuery.value));
+
+async function listFiles(values: Schema): Promise<ListFilesResponse> {
     try {
         const { response } = filestoreFilestoreClient.listFiles({
             pagination: {
-                offset: calculateOffset(page, files.value?.pagination),
+                offset: calculateOffset(values.page, files.value?.pagination),
             },
-            path: prefix,
+            path: values.prefix,
         });
 
         return response;
@@ -209,13 +211,6 @@ function goBackDirectory(): void {
     query.prefix = parts.length > 0 ? parts.join('/') + '/' : '';
 }
 
-useFormValidatedDebouncedRefresh(query, () => formRef.value?.validate({}), refresh, {
-    debounce: 200,
-    maxWait: 1250,
-});
-
-const formRef = useTemplateRef('formRef');
-
 const inputRef = useTemplateRef('inputRef');
 
 defineShortcuts({
@@ -249,7 +244,7 @@ defineShortcuts({
                     class="my-2 flex w-full flex-1 flex-col gap-2"
                     :schema="schema"
                     :state="query"
-                    @submit="refresh()"
+                    @submit="commitValidatedQuery"
                 >
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" name="prefix" :label="$t('common.search')">

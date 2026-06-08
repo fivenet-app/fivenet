@@ -395,11 +395,7 @@ async function deleteFaction(job: string): Promise<void> {
     }
 }
 
-function applyTemplate(
-    permissions: Perms[],
-    attributes: TemplateAttribute[],
-    grantAllPermissions = false,
-): void {
+function applyTemplate(permissions: Perms[], attributes: TemplateAttribute[], grantAllPermissions = false): void {
     markChanged();
     if (!grantAllPermissions && permissions.length === 0 && attributes.length === 0) {
         // If no permissions or attributes, just clear everything
@@ -507,8 +503,7 @@ function applyTemplate(
         } else if (attr.validValues?.validValues.oneofKind === 'jobGradeList') {
             const jobsObj: Record<string, number> = {};
             const job = jobs.value.find((j) => j.name === props.job);
-            const maxGrade =
-                job && job.grades.length > 0 ? Math.max(...job.grades.map((g) => g.grade)) : game.startJobGrade;
+            const maxGrade = job && job.grades.length > 0 ? Math.max(...job.grades.map((g) => g.grade)) : game.startJobGrade;
             jobsObj[props.job] = maxGrade;
 
             a.maxValues = {

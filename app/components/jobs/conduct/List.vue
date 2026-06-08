@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { UBadge, UButton, UTooltip } from '#components';
-import type { TableColumn } from '@nuxt/ui';
+import type { Form, TableColumn } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
 import { h } from 'vue';
 import { z } from 'zod';
@@ -74,29 +74,33 @@ const schema = z.object({
 });
 
 const query = useSearchForm('jobs_conduct', schema);
+type Schema = z.output<typeof schema>;
+
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
-        `jobs-conduct-${JSON.stringify(query.sorting)}-${query.page}-${query.types.join(',')}-${query.showExpired}-${query.id}`,
-    () => listConductEntries(),
+        `jobs-conduct-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.types.join(',')}-${validatedQuery.value.showExpired}-${validatedQuery.value.id}`,
+    () => listConductEntries(validatedQuery.value),
 );
 
-async function listConductEntries(): Promise<ListConductEntriesResponse> {
+async function listConductEntries(values: Schema): Promise<ListConductEntriesResponse> {
     const entryIds: number[] = [];
-    if (query.id) {
-        entryIds.push(typeof query.id === 'string' ? parseInt(query.id, 10) : query.id);
+    if (values.id) {
+        entryIds.push(typeof values.id === 'string' ? parseInt(values.id, 10) : values.id);
     }
 
-    const userIds = props.userId ? [props.userId] : query.user ? [query.user] : [];
+    const userIds = props.userId ? [props.userId] : values.user ? [values.user] : [];
     try {
         const call = jobsConductClient.listConductEntries({
             pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
-            sort: query.sorting,
-            types: query.types,
-            showExpired: query.showExpired,
-            showDrafts: query.showDrafts,
+            sort: values.sorting,
+            types: values.types,
+            showExpired: values.showExpired,
+            showDrafts: values.showDrafts,
             userIds: userIds,
             ids: entryIds,
         });
@@ -126,8 +130,6 @@ async function deleteConductEntry(id: number): Promise<void> {
         throw e;
     }
 }
-
-useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
 
 async function updateEntryInPlace(entry: ConductEntry): Promise<void> {
     if (data.value === null) {
@@ -273,7 +275,7 @@ const columns = computed(
         <template #header>
             <UDashboardToolbar>
                 <template #default>
-                    <UForm class="my-2 w-full" :schema="schema" :state="query" @submit="refresh()">
+                    <UForm ref="formRef" class="my-2 w-full" :schema="schema" :state="query" @submit="commitValidatedQuery">
                         <div class="flex flex-row gap-2">
                             <UFormField v-if="hideUserSearch !== true" class="flex-1" name="user" :label="$t('common.search')">
                                 <SelectMenu

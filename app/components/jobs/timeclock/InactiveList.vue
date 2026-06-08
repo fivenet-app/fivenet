@@ -21,7 +21,7 @@ const { can } = useAuth();
 const jobsTimeclockClient = await getJobsTimeclockClient();
 
 const schema = z.object({
-    days: z.coerce.number().min(1).max(31),
+    days: z.coerce.number().min(1).max(31).default(14),
     sorting: z
         .object({
             columns: z
@@ -36,34 +36,28 @@ const schema = z.object({
                 ]),
         })
         .default({ columns: [{ id: 'rank', desc: false }] }),
+    page: pageNumberSchema,
 });
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive<Schema>({
-    days: 14,
-    sorting: {
-        columns: [
-            {
-                id: 'rank',
-                desc: false,
-            },
-        ],
-    },
-});
+const query = useSearchForm('jobs_timeclock_inactive', schema);
 
-const page = useRouteQuery('page', '1', { transform: Number });
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-const { data, status, refresh, error } = useLazyAsyncData(
-    `jobs-timeclock-inactive-${JSON.stringify(state.sorting)}-${page.value}-${state.days}`,
-    () => listInactiveEmployees(state),
+const inactiveKey = computed(
+    () =>
+        `jobs-timeclock-inactive-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.days}`,
 );
+
+const { data, status, refresh, error } = useLazyAsyncData(inactiveKey, () => listInactiveEmployees(validatedQuery.value));
 
 async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmployeesResponse> {
     try {
         const call = jobsTimeclockClient.listInactiveEmployees({
             pagination: {
-                offset: calculateOffset(page.value, data.value?.pagination),
+                offset: calculateOffset(validatedQuery.value.page, data.value?.pagination),
             },
             sort: values.sorting,
             days: values.days,
@@ -77,19 +71,6 @@ async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmploy
         throw e;
     }
 }
-
-const formRef = ref<null | Form<Schema>>();
-
-watchDebounced(
-    state,
-    async () => {
-        const valid = await formRef.value?.validate({});
-        if (valid) {
-            refresh();
-        }
-    },
-    { debounce: 200, maxWait: 1250 },
-);
 
 const columns = computed(() =>
     (
@@ -204,12 +185,12 @@ const { game } = useAppConfig();
                         ref="formRef"
                         class="my-2 flex w-full flex-row justify-between gap-2"
                         :schema="schema"
-                        :state="state"
-                        @submit="refresh()"
+                        :state="query"
+                        @submit="commitValidatedQuery"
                     >
                         <UFormField class="flex-1" name="days" :label="$t('common.time_ago.day', 2)">
                             <UInputNumber
-                                v-model="state.days"
+                                v-model="query.days"
                                 name="days"
                                 :step="1"
                                 :min="1"
@@ -233,7 +214,7 @@ const { game } = useAppConfig();
 
             <UTable
                 v-else
-                v-model:sorting="state.sorting.columns"
+                v-model:sorting="query.sorting.columns"
                 :columns="columns"
                 :data="data?.colleagues"
                 :loading="isRequestPending(status)"
@@ -245,7 +226,7 @@ const { game } = useAppConfig();
         </template>
 
         <template #footer>
-            <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+            <Pagination v-model="validatedQuery.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
         </template>
     </UDashboardPanel>
 </template>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { UButton } from '#components';
 import { CalendarDate } from '@internationalized/date';
-import type { TableColumn, TabsItem } from '@nuxt/ui';
+import type { Form, TableColumn, TabsItem } from '@nuxt/ui';
 import { addDays, addWeeks, isBefore, isFuture, nextSaturday, subDays, subMonths, subWeeks } from 'date-fns';
 import { z } from 'zod';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
@@ -101,6 +101,8 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
+type Schema = z.output<typeof schema>;
+
 const query = useSearchForm('jobs_timeclock', schema);
 
 function setFromProps(): void {
@@ -113,39 +115,45 @@ function setFromProps(): void {
 setFromProps();
 watch(props, setFromProps);
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
+
+const timeclockKey = computed(
     () =>
-        `jobs-timeclock-${JSON.stringify(query.sorting)}-${query.date.start.toDateString()}-${query.date.end.toDateString()}-${query.perDay}-${query.users.join(',')}-${query.page}`,
-    () => listTimeclockEntries(),
+        `jobs-timeclock-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.date.start.toDateString()}-${validatedQuery.value.date.end.toDateString()}-${validatedQuery.value.perDay}-${validatedQuery.value.users.join(',')}-${validatedQuery.value.page}`,
 );
 
-async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
+const { data, status, refresh, error } = useLazyAsyncData(timeclockKey, () => listTimeclockEntries(validatedQuery.value));
+
+async function listTimeclockEntries(values: Schema): Promise<ListTimeclockResponse> {
     try {
-        if (!isBefore(query.date.start, query.date.end)) {
-            query.date.start = query.mode > TimeclockMode.DAILY ? subWeeks(query.date.end, 1) : query.date.start;
-        }
+        const startDate = isBefore(values.date.start, values.date.end)
+            ? values.date.start
+            : values.mode > TimeclockMode.DAILY
+              ? subWeeks(values.date.end, 1)
+              : values.date.start;
 
         const req: ListTimeclockRequest = {
             pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
-            sort: query.sorting,
-            userMode: query.viewMode,
-            mode: query.mode,
+            sort: values.sorting,
+            userMode: values.viewMode,
+            mode: values.mode,
             date: {
                 start: {
                     timestamp: googleProtobufTimestamp.Timestamp.fromDate(
-                        query.viewMode === TimeclockViewMode.ALL && query.mode === TimeclockMode.DAILY
-                            ? query.date.end
-                            : query.date.start,
+                        values.viewMode === TimeclockViewMode.ALL && values.mode === TimeclockMode.DAILY
+                            ? values.date.end
+                            : startDate,
                     ),
                 },
                 end: {
-                    timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.date.end),
+                    timestamp: googleProtobufTimestamp.Timestamp.fromDate(values.date.end),
                 },
             },
-            userIds: query.users,
-            perDay: query.perDay,
+            userIds: values.users,
+            perDay: values.perDay,
         };
 
         const call = jobsTimeclockClient.listTimeclock(req);
@@ -157,8 +165,6 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
         throw e;
     }
 }
-
-useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
 
 const entries = computed(() => {
     if (data.value?.entries.oneofKind === 'daily') {
@@ -296,7 +302,13 @@ const { game } = useAppConfig();
         <template #header>
             <UDashboardToolbar>
                 <template #default>
-                    <UForm class="flex flex-1 flex-col gap-1" :schema="schema" :state="query" @submit="refresh">
+                    <UForm
+                        ref="formRef"
+                        class="flex flex-1 flex-col gap-1"
+                        :schema="schema"
+                        :state="query"
+                        @submit="commitValidatedQuery"
+                    >
                         <div class="flex min-w-0 flex-col justify-between lg:flex-row">
                             <UTabs
                                 v-if="props.userId === undefined && tabItems.length > 1"

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { UBadge, UButton, UTooltip } from '#components';
-import type { TableColumn } from '@nuxt/ui';
+import type { Form, TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -68,6 +68,7 @@ const schema = z.object({
         }),
     page: pageNumberSchema,
 });
+type Schema = z.output<typeof schema>;
 
 const query = useSearchForm(props.searchKey, schema);
 
@@ -77,22 +78,26 @@ if (props.userId !== undefined && !query.userIds?.includes(props.userId)) {
 
 const hideVehicleModell = ref<boolean>(false);
 
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
+
 const { data, status, refresh, error } = useLazyAsyncData(
-    `vehicles-${JSON.stringify(query.userIds)}-${JSON.stringify(query.sorting)}-${query.page}`,
-    () => listVehicles(),
+    () =>
+        `vehicles-${JSON.stringify(validatedQuery.value.userIds)}-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
+    () => listVehicles(validatedQuery.value),
 );
 
-async function listVehicles(): Promise<ListVehiclesResponse> {
+async function listVehicles(values: Schema): Promise<ListVehiclesResponse> {
     try {
         const call = vehiclesVehiclesClient.listVehicles({
             pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
-            sort: query.sorting,
-            licensePlate: query.licensePlate,
-            model: query.model,
-            userIds: query.userIds,
-            wanted: query.wanted,
+            sort: values.sorting,
+            licensePlate: values.licensePlate,
+            model: values.model,
+            userIds: values.userIds,
+            wanted: values.wanted,
         });
         const { response } = await call;
 
@@ -110,11 +115,6 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
         throw e;
     }
 }
-
-useDebouncedRefresh(query, refresh, {
-    debounce: 200,
-    maxWait: 1250,
-});
 
 function addToClipboard(vehicle: Vehicle): void {
     clipboardStore.addVehicle(vehicle);
@@ -251,7 +251,13 @@ defineShortcuts({
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm class="my-2 flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
+            <UForm
+                ref="formRef"
+                class="my-2 flex w-full flex-row gap-2"
+                :schema="schema"
+                :state="query"
+                @submit="commitValidatedQuery"
+            >
                 <UFormField class="flex-1" name="licensePlate" :label="$t('common.license_plate')">
                     <UInput
                         ref="input"

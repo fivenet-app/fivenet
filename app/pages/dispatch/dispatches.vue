@@ -11,6 +11,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useLivemapStore } from '~/stores/livemap';
+import type { Form } from '@nuxt/ui';
 import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/services/centrum/dispatches';
@@ -39,25 +40,32 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
+type Schema = z.output<typeof schema>;
+
 const query = useSearchForm('centrum_dispatches_archive', schema);
 
-const { data, status, refresh, error } = useLazyAsyncData(`centrum-dispatches-${query.page}`, () => listDispatches());
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-async function listDispatches(): Promise<ListDispatchesResponse> {
+const dispatchesKey = computed(() => `centrum-dispatches-${JSON.stringify(validatedQuery.value)}`);
+
+const { data, status, refresh, error } = useLazyAsyncData(dispatchesKey, () => listDispatches(validatedQuery.value));
+
+async function listDispatches(values: Schema): Promise<ListDispatchesResponse> {
     try {
         const req: ListDispatchesRequest = {
             pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
             notStatus: [],
             status: [],
             ids: [],
-            postal: query.postal.replaceAll('-', '').replace(/\D/g, ''),
-            creatorIds: query.creatorIds,
+            postal: values.postal.replaceAll('-', '').replace(/\D/g, ''),
+            creatorIds: values.creatorIds,
         };
 
-        if (query.id && query.id > 0) {
-            req.ids.push(query.id);
+        if (values.id && values.id > 0) {
+            req.ids.push(values.id);
         }
 
         const call = centrumDispatchesClient.listDispatches(req);
@@ -69,11 +77,6 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
         throw e;
     }
 }
-
-useDebouncedRefresh(query, refresh, {
-    debounce: 200,
-    maxWait: 1250,
-});
 
 const baseMapRef = useTemplateRef('baseMapRef');
 const mapResizeFn = () => baseMapRef.value?.mapResize();
@@ -135,7 +138,13 @@ const mount = ref<boolean>(false);
                     <Pane :size="65">
                         <div class="max-h-full overflow-y-auto">
                             <div class="mb-2 px-2">
-                                <UForm class="flex flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
+                                <UForm
+                                    ref="formRef"
+                                    class="flex flex-row gap-2"
+                                    :schema="schema"
+                                    :state="query"
+                                    @submit="commitValidatedQuery"
+                                >
                                     <UFormField class="flex-1" name="postal" :label="$t('common.postal')">
                                         <UInput
                                             ref="input"

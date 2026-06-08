@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { UButton, UTooltip } from '#components';
-import type { TableColumn } from '@nuxt/ui';
+import type { Form, TableColumn } from '@nuxt/ui';
 import { isFuture } from 'date-fns';
 import { h } from 'vue';
 import { z } from 'zod';
@@ -57,29 +57,33 @@ const schema = z.object({
 });
 
 const query = useSearchForm('jobs_colleagues', schema);
+type Schema = z.output<typeof schema>;
+
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
 const settingsStore = useSettingsStore();
 const { jobsService } = storeToRefs(settingsStore);
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
-        `jobs-colleagues-${JSON.stringify(query.sorting)}-${query.page}-${query.name}-${query.absent}-${query.labels.join(',')}-${query.namePrefix}-${query.nameSuffix}`,
-    () => listColleagues(),
+        `jobs-colleagues-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.name}-${validatedQuery.value.absent}-${validatedQuery.value.labels.join(',')}-${validatedQuery.value.namePrefix}-${validatedQuery.value.nameSuffix}`,
+    () => listColleagues(validatedQuery.value),
 );
 
-async function listColleagues(): Promise<ListColleaguesResponse> {
+async function listColleagues(values: Schema): Promise<ListColleaguesResponse> {
     try {
         const call = jobsColleaguesClient.listColleagues({
             pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
-            sort: query.sorting,
-            search: query.name,
+            sort: values.sorting,
+            search: values.name,
             userIds: [],
-            absent: query.absent,
-            labelIds: query.labels,
-            namePrefix: query.namePrefix,
-            nameSuffix: query.nameSuffix,
+            absent: values.absent,
+            labelIds: values.labels,
+            namePrefix: values.namePrefix,
+            nameSuffix: values.nameSuffix,
         });
         const { response } = await call;
 
@@ -102,8 +106,6 @@ async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsRe
         throw e;
     }
 }
-
-useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
 
 function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
     const colleague = data.value?.colleagues.find((c) => c.userId === value.userId);
@@ -255,7 +257,13 @@ defineShortcuts({
     <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardToolbar>
-                <UForm class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
+                <UForm
+                    ref="formRef"
+                    class="my-2 flex w-full flex-1 flex-col gap-2"
+                    :schema="schema"
+                    :state="query"
+                    @submit="commitValidatedQuery"
+                >
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" name="name" :label="$t('common.search')">
                             <UInput

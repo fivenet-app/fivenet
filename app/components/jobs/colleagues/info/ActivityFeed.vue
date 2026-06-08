@@ -7,6 +7,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import SortButton from '~/components/partials/SortButton.vue';
+import type { Form } from '@nuxt/ui';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
@@ -74,15 +75,19 @@ type Schema = z.output<typeof schema>;
 
 const query = useSearchForm('jobs_colleagues_activity' + (props.userId !== undefined ? '' : '_individual'), schema);
 
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
+
+const activityKey = computed(
+    () =>
+        `jobs-colleague-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.colleagues.join(',')}-${validatedQuery.value.types.join(':')}-${props.userId}`,
+);
+
 if (props.userId !== undefined) {
     query.colleagues = [props.userId];
 }
 
-const { data, status, refresh, error } = useLazyAsyncData(
-    () =>
-        `jobs-colleague-${JSON.stringify(query.sorting)}-${query.page}-${query.colleagues.join(',')}-${query.types.join(':')}-${props.userId}`,
-    () => listColleagueActivity(query),
-);
+const { data, status, refresh, error } = useLazyAsyncData(activityKey, () => listColleagueActivity(validatedQuery.value));
 
 async function listColleagueActivity(values: Schema): Promise<ListColleagueActivityResponse> {
     try {
@@ -103,12 +108,19 @@ async function listColleagueActivity(values: Schema): Promise<ListColleagueActiv
     }
 }
 
-useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
-
 const accessAttrs = attrStringList('jobs.ColleaguesService/GetColleague', 'Access');
 const colleagueSearchAttrs = ['Own', 'Lower_Rank', 'Same_Rank', 'Any'];
 
-watch(props, async () => refresh());
+watch(
+    () => props.userId,
+    async (userId) => {
+        if (userId !== undefined) {
+            query.colleagues = [userId];
+        }
+
+        await commitValidatedQuery();
+    },
+);
 </script>
 
 <template>
@@ -117,7 +129,13 @@ watch(props, async () => refresh());
             <UDashboardToolbar
                 v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a)) || isSuperuser"
             >
-                <UForm class="my-2 flex w-full gap-2" :schema="schema" :state="query" @submit="refresh()">
+                <UForm
+                    ref="formRef"
+                    class="my-2 flex w-full gap-2"
+                    :schema="schema"
+                    :state="query"
+                    @submit="commitValidatedQuery"
+                >
                     <UFormField v-if="userId === undefined" class="flex-1" name="colleagues" :label="$t('common.search')">
                         <SelectMenu
                             v-model="query.colleagues"

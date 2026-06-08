@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import type { BadgeProps, ButtonProps } from '@nuxt/ui';
 import { isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
@@ -36,19 +37,24 @@ const { activeCalendarIds, currentDate, view, calendars, entries, hasEditAccessT
 
 const calRef = useTemplateRef('calRef');
 
-const page = useRouteQuery('page', '1', { transform: Number });
+const schema = z.object({
+    page: pageNumberSchema,
+    entryId: z.coerce.number().nonnegative().optional(),
+});
+
+const query = useSearchForm('calendar', schema);
 
 const {
     data: calendarsData,
     status: calendarsStatus,
     error: calendarsError,
     refresh: calendarsRefresh,
-} = useLazyAsyncData(`calendars:${page.value}`, () => listCalendars());
+} = useLazyAsyncData(`calendars:${query.page}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListCalendarsResponse> {
     const response = await calendarStore.listCalendars({
         pagination: {
-            offset: calculateOffset(page.value, calendarsData.value?.pagination),
+            offset: calculateOffset(query.page, calendarsData.value?.pagination),
         },
         onlyPublic: false,
         calendarIds: [],
@@ -213,27 +219,31 @@ function calendarIdChange(calendarId: number, state: boolean): void {
     }
 }
 
-const entryIdQuery = useRouteQuery('entry_id', undefined, { transform: Number });
-
 const calendarViewSlideover = overlay.create(CalendarViewSlideover);
 const calendarCreateOrUpdateModal = overlay.create(CalendarCreateOrUpdateModal);
 const entryViewSlideover = overlay.create(EntryViewSlideover);
 const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 const findCalendarsDrawer = overlay.create(FindCalendarDrawer);
 
-watch(entryIdQuery, () => {
-    if (!entryIdQuery.value) return;
+watch(toRef(query, 'entryId'), (value) => {
+    if (!value) return;
 
-    entryViewSlideover.open({
-        entryId: entryIdQuery.value,
-    });
+    entryViewSlideover
+        .open({
+            entryId: value,
+        })
+        .then(() => (query.entryId = undefined));
 });
 
-if (entryIdQuery.value) {
-    entryViewSlideover.open({
-        entryId: entryIdQuery.value,
-    });
-}
+onMounted(() => {
+    if (query.entryId) {
+        entryViewSlideover
+            .open({
+                entryId: query.entryId,
+            })
+            .then(() => (query.entryId = undefined));
+    }
+});
 
 async function resetToToday(): Promise<void> {
     calRef.value?.calRef?.focusDate(new Date());

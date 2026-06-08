@@ -11,6 +11,7 @@ import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { useSettingsStore } from '~/stores/settings';
 import type { ToggleItem } from '~/utils/types';
+import type { Form } from '@nuxt/ui';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
@@ -83,51 +84,51 @@ const schema = z.object({
         .default({ columns: [{ id: 'createdAt', desc: true }] }),
     page: pageNumberSchema,
 });
+type Schema = z.output<typeof schema>;
 
 const query = useSearchForm('documents', schema);
 
-const { data, status, refresh, error } = useLazyAsyncData(`documents-${JSON.stringify(query.sorting)}-${query.page}`, () =>
-    listDocuments(),
-);
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-async function listDocuments(): Promise<ListDocumentsResponse> {
+const documentsKey = computed(() => `documents-${JSON.stringify(validatedQuery.value)}`);
+
+const { data, status, refresh, error } = useLazyAsyncData(documentsKey, () => listDocuments(validatedQuery.value));
+
+async function listDocuments(values: Schema): Promise<ListDocumentsResponse> {
     const pagination = {
         offset: 0,
         pageSize: 20,
         end: 0,
-        totalCount: query.page * 20,
+        totalCount: values.page * 20,
 
         ...data.value?.pagination,
     };
 
     const req: ListDocumentsRequest = {
         pagination: {
-            offset: calculateOffset(query.page, pagination),
+            offset: calculateOffset(values.page, pagination),
         },
-        sort: query.sorting,
-        search: query.title ?? '',
-        categoryIds: query.categories,
-        creatorIds: query.creators,
+        sort: values.sorting,
+        search: values.title ?? '',
+        categoryIds: values.categories,
+        creatorIds: values.creators,
         documentIds: [],
-        onlyDrafts: query.onlyDrafts,
+        onlyDrafts: values.onlyDrafts,
     };
 
-    if (query.documentIds) {
-        const id = parseInt(query.documentIds.trim().replaceAll('-', '').replace(/\D/g, ''));
+    if (values.documentIds) {
+        const id = parseInt(values.documentIds.trim().replaceAll('-', '').replace(/\D/g, ''));
         if (id > 0) {
             req.documentIds.push(id);
         }
     }
-    if (query.date) {
-        req.from = {
-            timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.date.start),
-        };
-        req.to = {
-            timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.date.end),
-        };
+    if (values.date) {
+        req.from = { timestamp: googleProtobufTimestamp.Timestamp.fromDate(values.date.start) };
+        req.to = { timestamp: googleProtobufTimestamp.Timestamp.fromDate(values.date.end) };
     }
-    if (query.closed !== undefined) {
-        req.closed = query.closed;
+    if (values.closed !== undefined) {
+        req.closed = values.closed;
     }
 
     try {
@@ -154,10 +155,6 @@ const activeTab = computed({
         }
     },
 });
-
-const formRef = useTemplateRef('formRef');
-
-useFormValidatedDebouncedRefresh(query, () => formRef.value?.validate({}), refresh);
 
 const isPinnedDocumentsVisible = ref<boolean>(false);
 
@@ -237,7 +234,7 @@ defineShortcuts({
                     class="my-2 flex w-full flex-1 flex-col gap-2"
                     :schema="schema"
                     :state="query"
-                    @submit="refresh()"
+                    @submit="commitValidatedQuery"
                 >
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" name="title" :label="$t('common.search')">
@@ -360,7 +357,7 @@ defineShortcuts({
                                     </SelectMenu>
                                 </UFormField>
 
-                                <UFormField class="flex-1" name="creator" :label="$t('common.creator')">
+                                <UFormField class="flex-1" name="creators" :label="$t('common.creator')">
                                     <SelectMenu
                                         v-model="query.creators"
                                         class="w-full"

@@ -5,6 +5,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import type { Form } from '@nuxt/ui';
 import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
 import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetNotificationsResponse } from '~~/gen/ts/services/notifications/notifications';
@@ -40,19 +41,22 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const query = reactive<Schema>(schema.parse({}));
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-const { data, status, refresh, error } = useLazyAsyncData(`notifications-${query.page}-${query.includeRead}`, () =>
-    getNotifications(),
+const { data, status, refresh, error } = useLazyAsyncData(
+    () => `notifications-${validatedQuery.value.page}-${validatedQuery.value.includeRead}`,
+    () => getNotifications(validatedQuery.value),
 );
 
-async function getNotifications(): Promise<GetNotificationsResponse> {
+async function getNotifications(values: Schema): Promise<GetNotificationsResponse> {
     try {
         const call = notificationsNotificationsClient.getNotifications({
             pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
-            includeRead: query.includeRead,
-            categories: query.categories,
+            includeRead: values.includeRead,
+            categories: values.categories,
         });
 
         const { response } = await call;
@@ -93,8 +97,6 @@ async function markUnread(unread: boolean, ...ids: number[]): Promise<void> {
     });
 }
 
-useDebouncedRefresh(query, refresh, { debounce: 500, maxWait: 1500 });
-
 const { start: timeoutFn } = useTimeoutFn(() => (canSubmit.value = true), 400, { immediate: false });
 const canSubmit = ref<boolean>(true);
 </script>
@@ -114,7 +116,7 @@ const canSubmit = ref<boolean>(true);
 
             <UDashboardToolbar>
                 <template #default>
-                    <UForm class="my-2 flex-1" :schema="schema" :state="query" @submit="refresh()">
+                    <UForm ref="formRef" class="my-2 flex-1" :schema="schema" :state="query" @submit="commitValidatedQuery">
                         <div class="flex flex-row gap-2">
                             <UFormField
                                 class="flex flex-initial flex-col"

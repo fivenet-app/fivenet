@@ -6,6 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ListEntry from '~/components/qualifications/ListEntry.vue';
+import type { Form } from '@nuxt/ui';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
@@ -29,22 +30,28 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
+type Schema = z.output<typeof schema>;
+
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const query = useSearchForm('qualifications_list', schema);
 
-const { data, status, refresh, error } = useLazyAsyncData(`qualifications-${JSON.stringify(query.sorting)}-${query.page}`, () =>
-    listQualifications(),
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
+
+const { data, status, refresh, error } = useLazyAsyncData(
+    () => `qualifications-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
+    () => listQualifications(validatedQuery.value),
 );
 
-async function listQualifications(): Promise<ListQualificationsResponse> {
+async function listQualifications(values: Schema): Promise<ListQualificationsResponse> {
     try {
         const call = qualificationsQualificationsClient.listQualifications({
             pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
-            sort: query.sorting,
-            search: query.search,
+            sort: values.sorting,
+            search: values.search,
         });
         const { response } = await call;
 
@@ -54,8 +61,6 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
         throw e;
     }
 }
-
-useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
 </script>
 
 <template>
@@ -66,7 +71,13 @@ useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
                     {{ $t('components.qualifications.all_qualifications') }}
                 </h3>
 
-                <UForm class="flex items-center gap-2" :schema="schema" :state="query" @submit="refresh">
+                <UForm
+                    ref="formRef"
+                    class="flex items-center gap-2"
+                    :schema="schema"
+                    :state="query"
+                    @submit="commitValidatedQuery"
+                >
                     <UFormField name="search">
                         <UInput
                             v-model="query.search"

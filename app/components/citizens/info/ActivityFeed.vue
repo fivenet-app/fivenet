@@ -6,6 +6,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
+import type { Form } from '@nuxt/ui';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { UserActivityType } from '~~/gen/ts/resources/users/activity/activity';
@@ -63,20 +64,24 @@ const schema = z.object({
 
 const query = useSearchForm('citizen_activity', schema);
 
-const { data, status, refresh, error } = useLazyAsyncData(
-    `citizeninfo-activity-${JSON.stringify(query.sorting)}-${props.userId}-${query.page}`,
-    () => listUserActivity(),
-);
+type Schema = z.output<typeof schema>;
 
-async function listUserActivity(): Promise<ListUserActivityResponse> {
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
+
+const activityKey = computed(() => `citizeninfo-activity-${props.userId}-${JSON.stringify(validatedQuery.value)}`);
+
+const { data, status, refresh, error } = useLazyAsyncData(activityKey, () => listUserActivity(validatedQuery.value));
+
+async function listUserActivity(values: Schema): Promise<ListUserActivityResponse> {
     try {
         const call = citizensCitizensClient.listUserActivity({
             pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
-            sort: query.sorting,
+            sort: values.sorting,
             userId: props.userId,
-            types: query.types,
+            types: values.types,
         });
         const { response } = await call;
 
@@ -91,13 +96,6 @@ const denyView = computed(
     () =>
         props.userId === activeChar.value?.userId && !attr('citizens.CitizensService/ListUserActivity', 'Fields', 'Own').value,
 );
-
-useFormValidatedDebouncedRefresh(query, () => formRef.value?.validate({}), refresh, {
-    debounce: 500,
-    maxWait: 1250,
-});
-
-const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -110,7 +108,7 @@ const formRef = useTemplateRef('formRef');
                         class="my-2 flex w-full flex-row gap-2"
                         :schema="schema"
                         :state="query"
-                        @submit="refresh()"
+                        @submit="commitValidatedQuery"
                     >
                         <UFormField class="flex-1 grow" name="types" :label="$t('common.type', 2)">
                             <ClientOnly>

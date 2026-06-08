@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { UBadge } from '#components';
-import type { TableColumn } from '@nuxt/ui';
+import type { Form, TableColumn } from '@nuxt/ui';
 import { listEnumValues } from '@protobuf-ts/runtime';
 import { computed, h } from 'vue';
 import { z } from 'zod';
@@ -64,24 +64,28 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
+type Schema = z.output<typeof schema>;
+
 const query = useSearchForm('citizen_documents', schema);
 
-const { data, status, refresh, error } = useLazyAsyncData(
-    `citizeninfo-documents-${props.userId}-${query.page}-${JSON.stringify(query)}`,
-    () => listUserDocuments(),
-);
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
+const documentsKey = computed(() => `citizeninfo-documents-${props.userId}-${JSON.stringify(validatedQuery.value)}`);
+
+const { data, status, refresh, error } = useLazyAsyncData(documentsKey, () => listUserDocuments(validatedQuery.value));
+
+async function listUserDocuments(values: Schema): Promise<ListUserDocumentsResponse> {
     try {
         const call = documentsDocumentsClient.listUserDocuments({
             pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
-            sort: query.sorting,
+            sort: values.sorting,
             userId: props.userId,
-            relations: query.relations,
-            closed: query.closed,
-            includeCreated: query.includeCreated,
+            relations: values.relations,
+            closed: values.closed,
+            includeCreated: values.includeCreated,
         });
         const { response } = await call;
 
@@ -91,11 +95,6 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
         throw e;
     }
 }
-
-useFormValidatedDebouncedRefresh(query, () => formRef.value?.validate({}), refresh, {
-    debounce: 250,
-    maxWait: 1250,
-});
 
 const columns = computed(
     () =>
@@ -142,14 +141,18 @@ const columns = computed(
             },
         ] as TableColumn<DocumentRelation>[],
 );
-
-const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm ref="formRef" class="my-2 flex w-full flex-row gap-2" :state="query" :schema="schema">
+            <UForm
+                ref="formRef"
+                class="my-2 flex w-full flex-row gap-2"
+                :state="query"
+                :schema="schema"
+                @submit="commitValidatedQuery"
+            >
                 <UFormField class="flex-1" name="closed" :label="$t('common.close', 2)">
                     <ClientOnly>
                         <USelectMenu

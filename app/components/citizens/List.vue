@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { UButton, UTooltip } from '#components';
-import type { TableColumn } from '@nuxt/ui';
+import type { Form, TableColumn } from '@nuxt/ui';
 import { vMaska } from 'maska/vue';
 import { h } from 'vue';
 import { z } from 'zod';
@@ -54,42 +54,46 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
+type Schema = z.output<typeof schema>;
+
 const query = useSearchForm('citizens', schema);
 
-const { data, status, refresh, error } = useLazyAsyncData(
-    `citizens-${JSON.stringify(query.sorting)}-${query.page}-${JSON.stringify(query)}`,
-    () => listCitizens(),
-);
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-async function listCitizens(): Promise<ListCitizensResponse> {
+const citizensKey = computed(() => `citizens-${JSON.stringify(validatedQuery.value)}`);
+
+const { data, status, refresh, error } = useLazyAsyncData(citizensKey, () => listCitizens(validatedQuery.value));
+
+async function listCitizens(values: Schema): Promise<ListCitizensResponse> {
     try {
         const req: ListCitizensRequest = {
             pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
-            sort: query.sorting,
-            search: query.name ?? '',
+            sort: values.sorting,
+            search: values.name ?? '',
         };
-        if (query.wanted) {
-            req.wanted = query.wanted;
+        if (values.wanted) {
+            req.wanted = values.wanted;
         }
-        if (query.phoneNumber) {
-            req.phoneNumber = query.phoneNumber;
+        if (values.phoneNumber) {
+            req.phoneNumber = values.phoneNumber;
         }
-        if (query.trafficInfractionPoints) {
-            req.trafficInfractionPoints = query.trafficInfractionPoints ?? 0;
+        if (values.trafficInfractionPoints) {
+            req.trafficInfractionPoints = values.trafficInfractionPoints ?? 0;
         }
-        if (query.openFines) {
-            req.openFines = query.openFines ?? 0;
+        if (values.openFines) {
+            req.openFines = values.openFines ?? 0;
         }
-        if (query.dateofbirth) {
-            req.dateofbirth = query.dateofbirth;
+        if (values.dateofbirth) {
+            req.dateofbirth = values.dateofbirth;
         }
-        if (query.height[0] && query.height[0] > 0) {
-            req.minHeight = query.height[0];
+        if (values.height[0] && values.height[0] > 0) {
+            req.minHeight = values.height[0];
         }
-        if (query.height[1] && query.height[1] < 250) {
-            req.maxHeight = query.height[1];
+        if (values.height[1] && values.height[1] < 250) {
+            req.maxHeight = values.height[1];
         }
 
         const call = citizensCitizensClient.listCitizens(req);
@@ -101,11 +105,6 @@ async function listCitizens(): Promise<ListCitizensResponse> {
         throw e;
     }
 }
-
-useFormValidatedDebouncedRefresh(query, () => formRef.value?.validate({}), refresh, {
-    debounce: 200,
-    maxWait: 1250,
-});
 
 const numberFormatter = useDisplayNumberFormat();
 
@@ -272,8 +271,6 @@ const columns = computed(() =>
     ).filter((c) => c !== undefined),
 );
 
-const formRef = useTemplateRef('formRef');
-
 const input = useTemplateRef('input');
 
 defineShortcuts({
@@ -305,7 +302,7 @@ defineShortcuts({
                     class="my-2 flex w-full flex-1 flex-col gap-2"
                     :schema="schema"
                     :state="query"
-                    @submit="refresh()"
+                    @submit="commitValidatedQuery"
                 >
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" :label="$t('common.search')" name="name">

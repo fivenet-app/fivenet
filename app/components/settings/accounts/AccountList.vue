@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Row, TableMeta } from '@tanstack/vue-table';
 import { UBadge, UButton, UTooltip } from '#components';
-import type { TableColumn } from '@nuxt/ui';
+import type { Form, TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -51,31 +51,32 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
+type Schema = z.output<typeof schema>;
+
 const query = useSearchForm('settings_accounts', schema);
 
-const {
-    data: accounts,
-    status,
-    refresh,
-    error,
-} = useLazyAsyncData(
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
+
+const accountsKey = computed(
     () =>
-        `settings-accounts-${query.license}-${query.onlyDisabled}-${query.username}-${query.externalId}-${JSON.stringify(query.sorting)}-${query.page}`,
-    () => listAccounts(),
+        `settings-accounts-${validatedQuery.value.license}-${validatedQuery.value.onlyDisabled}-${validatedQuery.value.username}-${validatedQuery.value.externalId}-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
 );
 
-async function listAccounts(): Promise<ListAccountsResponse> {
+const { data: accounts, status, refresh, error } = useLazyAsyncData(accountsKey, () => listAccounts(validatedQuery.value));
+
+async function listAccounts(values: Schema): Promise<ListAccountsResponse> {
     try {
         const call = settingsAccountsClient.listAccounts({
             pagination: {
-                offset: calculateOffset(query.page, accounts.value?.pagination),
+                offset: calculateOffset(values.page, accounts.value?.pagination),
             },
-            sort: query.sorting,
-            onlyDisabled: query.onlyDisabled,
-            license: query.license,
-            username: query.username,
-            externalId: query.externalId,
-            group: query.group,
+            sort: values.sorting,
+            onlyDisabled: values.onlyDisabled,
+            license: values.license,
+            username: values.username,
+            externalId: values.externalId,
+            group: values.group,
         });
         const { response } = await call;
 
@@ -85,8 +86,6 @@ async function listAccounts(): Promise<ListAccountsResponse> {
         throw e;
     }
 }
-
-useDebouncedRefresh(query, refresh, { debounce: 200, maxWait: 1250 });
 
 async function deleteAccount(id: number): Promise<void> {
     try {
@@ -244,10 +243,11 @@ const columns = computed(
             <UDashboardToolbar>
                 <UForm
                     v-if="!streamerMode"
+                    ref="formRef"
                     class="my-2 flex w-full flex-1 flex-col gap-2"
                     :schema="schema"
                     :state="query"
-                    @submit="refresh()"
+                    @submit="commitValidatedQuery"
                 >
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" :label="$t('common.search')" name="license">

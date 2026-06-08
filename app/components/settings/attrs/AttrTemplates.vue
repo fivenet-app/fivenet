@@ -1,12 +1,6 @@
 <script lang="ts" setup>
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import {
-    gangJobTemplate,
-    fullPermsTemplate,
-    neutralJobTemplate,
-    policeJobTemplate,
-    type TemplateAttribute,
-} from './templates';
+import { gangJobTemplate, fullPermsTemplate, neutralJobTemplate, policeJobTemplate, type TemplateAttribute } from './templates';
 import type { Perms } from '~~/gen/ts/perms';
 
 defineEmits<{
