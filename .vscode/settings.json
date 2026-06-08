@@ -13,8 +13,6 @@
         "--stdin"
     ],
     "go.testTimeout": "240s",
-    "javascript.preferences.quoteStyle": "single",
-    "typescript.preferences.quoteStyle": "single",
     "i18n-ally.localesPaths": [
         "i18n/locales"
     ],
@@ -31,17 +29,20 @@
         "editor.formatOnSave": true
     },
     "[vue]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
 		"editor.formatOnSave": true
     },
-    "typescript.tsdk": "node_modules/typescript/lib",
+    "js/ts.preferences.quoteStyle": "single",
+    "js/ts.tsdk.path": "node_modules/typescript/lib",
+    "js/ts.updateImportsOnFileMove.enabled": "never",
+    "js/ts.preferences.importModuleSpecifier": "non-relative",
+    "js/ts.preferences.importModuleSpecifierEnding": "minimal",
     "tailwindCSS.classAttributes": [
         "active-class",
         "inactive-class"
     ],
     "tailwind-fold.foldStyle": "QUOTES",
     "prettier.prettierPath": "./node_modules/prettier",
-    "javascript.updateImportsOnFileMove.enabled": "never",
     "vitest.shellType": "terminal",
     "editor.unicodeHighlight.allowedCharacters": {
         "ℹ": true
