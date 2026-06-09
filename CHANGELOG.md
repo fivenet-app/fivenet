@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.6.1] - 2026-06-09
+
+### 🚀 Features
+
+- Add shared unsaved-changes handling
+- Add polyline support for livemap markers
+- Validate list/search requests using composable and form state
+- *(tiptap)* Add map block embeds
+- Add map location block extension to editor
+- Use beforeunload event to block refresh for unsaved changes
+- *(calendar)* Add birthday system calendars
+- *(calendar)* Support birthday occurrences in ui
+- *(documents)* Add menu with predefined times as the reminder button
+- *(calendar)* Finish calendar recurring appointments and discord
+
+### 🐛 Bug Fixes
+
+- Use typed string list in backend code where possible
+- *(frontend)* Add typed frontend permission attributes
+- Add missing name attribute to UFormFields
+- UseFormSearchValidation issue for nested proxy in objects
+- Wrong import path for maker creat/update dialog
+- Adjut vscode settings to prefer non-relative import paths
+- Ts lint issues
+- Mapblock vitest case
+- Livemap background color issue
+- General UI and transport cleanup
+- Lint issue and MapBlock test
+- Update html and tiptap sanitizer for new extensions
+- Go fmt files and use assert/require for new calendar tests
+- Improve mapblock inline behavior
+- Change birthday default color
+- *(calendar)* Cleanup birthday entry view
+- *(calendar)* Handle birthday occurrences and legacy system kinds
+- *(calendar)* Summary list missing entry icon
+- *(calendar)* Reorganize calendar components
+- *(calendar)* Remove unused code path
+- Improve tiptap empty check and tiptap to text
+- Gosec warning
+- Run discord calendar reminders as standalone loop and not cronjob
+
 ## [2026.6.0] - 2026-06-05
 
 ### 🚀 Features
