@@ -1523,6 +1523,7 @@
         },
         "calendar": {
             "birthday_calendar_name": "{job} Birthdays",
+            "birthday_entry_action": "Yippee!",
             "birthday_entry_block": {
                 "title": "Happy birthday!",
                 "description": "This birthday event is managed automatically and is read-only."
@@ -1550,7 +1551,8 @@
             },
             "FindCalendarDrawer": {
                 "title": "Find Calendars"
-            }
+            },
+            "system_generated_entry": "System generated"
         },
         "mathcalculator": {
             "title": "Calculator"

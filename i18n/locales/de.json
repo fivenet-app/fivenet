@@ -1523,6 +1523,7 @@
         },
         "calendar": {
             "birthday_calendar_name": "{job} Geburtstage",
+            "birthday_entry_action": "Jippie!",
             "birthday_entry_block": {
                 "title": "Alles Gute zum Geburtstag!",
                 "description": "Dieser Geburtstagseintrag wird automatisch verwaltet und ist schreibgeschützt."
@@ -1550,7 +1551,8 @@
             },
             "FindCalendarDrawer": {
                 "title": "Kalender finden"
-            }
+            },
+            "system_generated_entry": "Vom System generiert"
         },
         "mathcalculator": {
             "title": "Taschenrechner"

@@ -422,7 +422,6 @@ func (s *Server) UpdateCalendar(
 		return nil, errorscalendar.ErrFailedQuery
 	}
 
-	tCalendar := table.FivenetCalendar
 	currentCalendar, err := s.getCalendar(
 		ctx,
 		userInfo,
@@ -518,6 +517,8 @@ func (s *Server) UpdateCalendar(
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
+
+	tCalendar := table.FivenetCalendar
 
 	stmt := tCalendar.
 		UPDATE(

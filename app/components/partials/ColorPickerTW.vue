@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { ChipProps } from '@nuxt/ui';
-import { backgroundColors, primaryColors } from '~/utils/color';
+import { backgroundColors, primaryColors, type PaletteColor } from '~/utils/color';
+
+type ColorPickerColor = PaletteColor | 'primary';
 
 const color = defineModel<string | undefined>({ default: 'primary' });
 
@@ -8,14 +10,31 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const availableColorOptions = [...primaryColors, ...backgroundColors];
+const availableColorOptions = [
+    { label: 'primary', chip: { color: 'primary' }, class: 'bg-primary-500 dark:bg-primary-400' },
+    ...primaryColors,
+    ...backgroundColors,
+] as const;
+
+const availableColorLabels = availableColorOptions.map((option) => option.label);
+
+function isColorPickerColor(value: string | undefined): value is ColorPickerColor {
+    return value !== undefined && availableColorLabels.includes(value as ColorPickerColor);
+}
+
+const selectColor = computed<ColorPickerColor | undefined>({
+    get: () => (isColorPickerColor(color.value) ? color.value : 'primary'),
+    set: (value) => {
+        color.value = value;
+    },
+});
 </script>
 
 <template>
     <ClientOnly>
         <USelectMenu
-            v-model="color"
-            :items="availableColorOptions"
+            v-model="selectColor"
+            :items="[...availableColorOptions]"
             :placeholder="$t('common.color')"
             value-key="label"
             v-bind="$attrs"

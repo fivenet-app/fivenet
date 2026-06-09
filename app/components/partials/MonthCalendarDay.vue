@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { isSameDay } from 'date-fns';
-import type { Attribute } from 'v-calendar/dist/types/src/utils/attribute.js';
 import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page.js';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
+import type { CalendarEntryAttribute } from '~/components/calendar/helpers';
 import EntryCreateOrUpdateModal from '../calendar/entry/EntryCreateOrUpdateModal.vue';
 
 const props = defineProps<{
     day: CalendarDay;
-    attributes: Attribute[];
+    attributes: CalendarEntryAttribute[];
 }>();
 
 defineEmits<{
@@ -20,8 +20,8 @@ const overlay = useOverlay();
 const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 
 const attributes = computed(() => ({
-    past: props.attributes.filter((a: Attribute) => a.customData.isPast),
-    upcoming: props.attributes.filter((a: Attribute) => !a.customData.isPast),
+    past: props.attributes.filter((a) => a.customData.isPast),
+    upcoming: props.attributes.filter((a) => !a.customData.isPast),
 }));
 
 const links = computed(() =>
@@ -58,6 +58,7 @@ const links = computed(() =>
                     @click="$emit('selected', attr.customData)"
                 >
                     <span class="inline-flex items-center gap-0.5">
+                        <UIcon v-if="attr.customData.icon" class="size-4" :name="attr.customData.icon" />
                         {{ attr.customData.title }}
                     </span>
 
@@ -91,6 +92,8 @@ const links = computed(() =>
                 >
                     <span class="inline-flex items-center gap-0.5">
                         <UIcon v-if="attr.customData.ongoing" class="size-3 text-amber-800" name="i-mdi-timer-sand" />
+
+                        <UIcon v-if="attr.customData.icon" class="size-4" :name="attr.customData.icon" />
                         {{ attr.customData.title }}
                     </span>
 

@@ -21,6 +21,7 @@ import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import EntryRSVPList from './EntryRSVPList.vue';
+import { emojiBlast } from 'emoji-blast';
 
 const props = defineProps<{
     entryId?: number;
@@ -191,24 +192,26 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                             <CitizenInfoPopover :user="entry.creator" :show-avatar-in-name="false" text-class="text-xs" />
                         </UBadge>
 
-                        <UBadge v-else-if="!isSystemManaged" class="inline-flex gap-1" color="neutral" icon="i-mdi-cog">
-                            System generated
-                        </UBadge>
+                        <UBadge
+                            v-else-if="!isSystemManaged"
+                            class="inline-flex gap-1"
+                            color="neutral"
+                            icon="i-mdi-cog"
+                            :label="$t('components.calendar.system_generated_entry')"
+                        />
 
-                        <UBadge class="inline-flex gap-1" color="neutral" icon="i-mdi-calendar">
-                            {{ $t('common.created_at') }}
-                            <GenericTime :value="entry.createdAt" type="long" />
-                        </UBadge>
+                        <template v-if="!isSystemManaged">
+                            <UBadge class="inline-flex gap-1" color="neutral" icon="i-mdi-calendar">
+                                {{ $t('common.created_at') }}
+                                <GenericTime :value="entry.createdAt" type="long" />
+                            </UBadge>
 
-                        <UBadge v-if="entry.updatedAt" class="inline-flex gap-1" color="neutral" icon="i-mdi-calendar-edit">
-                            {{ $t('common.updated_at') }}
-                            <GenericTime :value="entry.updatedAt" type="long" />
-                        </UBadge>
+                            <UBadge v-if="entry.updatedAt" class="inline-flex gap-1" color="neutral" icon="i-mdi-calendar-edit">
+                                {{ $t('common.updated_at') }}
+                                <GenericTime :value="entry.updatedAt" type="long" />
+                            </UBadge>
+                        </template>
                     </div>
-
-                    <p v-if="isSystemManaged" class="text-sm text-neutral-500 dark:text-neutral-400">
-                        {{ $t('common.read_only') }}
-                    </p>
 
                     <USeparator />
 
@@ -233,6 +236,18 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                             variant="subtle"
                             :title="$t('components.calendar.birthday_entry_block.title')"
                             :description="$t('components.calendar.birthday_entry_block.description')"
+                            :actions="[
+                                {
+                                    label: $t('components.calendar.birthday_entry_action'),
+                                    icon: 'i-mdi-party-popper',
+                                    variant: 'subtle',
+                                    onClick: () => {
+                                        emojiBlast({
+                                            emojis: ['🎂', '🎁', '🍰', '🎈', '🎉', '🥳', '🎊', '✨'],
+                                        });
+                                    },
+                                },
+                            ]"
                             :ui="{ icon: 'size-6' }"
                         />
                         <div v-else class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-900">

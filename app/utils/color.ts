@@ -1,4 +1,4 @@
-export const primaryColors: Color[] = [
+export const primaryColors = [
     // Primary - Default
     { label: 'green', chip: { color: 'green' }, class: 'bg-green-500 dark:bg-green-400' },
     { label: 'teal', chip: { color: 'teal' }, class: 'bg-teal-500 dark:bg-teal-400' },
@@ -18,15 +18,27 @@ export const primaryColors: Color[] = [
     { label: 'orange', chip: { color: 'orange' }, class: 'bg-orange-500 dark:bg-orange-400' },
     { label: 'red', chip: { color: 'red' }, class: 'bg-red-500 dark:bg-red-400' },
     { label: 'purple', chip: { color: 'purple' }, class: 'bg-purple-500 dark:bg-purple-400' },
-] as const;
+] as const satisfies readonly Color[];
 
-export const backgroundColors: Color[] = [
+export const backgroundColors = [
     // Gray Colors
     { label: 'slate', chip: { color: 'slate' }, class: 'bg-slate-500 dark:bg-slate-400' },
     { label: 'zinc', chip: { color: 'zinc' }, class: 'bg-zinc-500 dark:bg-zinc-400' },
     { label: 'neutral', chip: { color: 'neutral' }, class: 'bg-old-neutral-500 dark:bg-old-neutral-400' },
     { label: 'stone', chip: { color: 'stone' }, class: 'bg-stone-500 dark:bg-stone-400' },
-] as const;
+] as const satisfies readonly Color[];
+
+export type PaletteColor = (typeof primaryColors)[number]['label'] | (typeof backgroundColors)[number]['label'];
+
+const nuxtUiSemanticColors = ['primary', 'secondary', 'success', 'info', 'warning', 'error', 'gray'] as const;
+
+export type NuxtUIColor = (typeof nuxtUiSemanticColors)[number] | PaletteColor;
+
+export const nuxtUiColors = [
+    ...nuxtUiSemanticColors,
+    ...primaryColors.map((color) => color.label as NuxtUIColor),
+    ...backgroundColors.map((color) => color.label as NuxtUIColor),
+] as const satisfies readonly NuxtUIColor[];
 
 export const rgbBlack = { r: 0, g: 0, b: 0 };
 

@@ -91,10 +91,10 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
             <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar')" icon="i-mdi-calendar" />
 
             <template v-else>
-                <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
-                    <OpenClosedBadge v-if="!isSystemManaged" :closed="calendar.closed" />
+                <div v-if="!isSystemManaged" class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
+                    <OpenClosedBadge :closed="calendar.closed" />
 
-                    <UBadge v-if="!isSystemManaged" class="inline-flex gap-1 text-xs" color="neutral" icon="i-mdi-account">
+                    <UBadge class="inline-flex gap-1 text-xs" color="neutral" icon="i-mdi-account">
                         <span class="font-medium">{{ $t('common.created_by') }}</span>
                         <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name text-class="text-xs" />
                     </UBadge>
