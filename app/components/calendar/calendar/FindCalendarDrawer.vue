@@ -72,12 +72,12 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
 
 <template>
     <UDrawer
-        :title="$t('components.calendar.FindCalendarDrawer.title')"
+        :title="$t('components.calendar.calendar.FindCalendarDrawer.title')"
         :close="{ onClick: () => $emit('close', false) }"
         :ui="{ title: 'flex flex-row gap-2' }"
     >
         <template #title>
-            <span class="flex-1">{{ $t('components.calendar.FindCalendarDrawer.title') }}</span>
+            <span class="flex-1">{{ $t('components.calendar.calendar.FindCalendarDrawer.title') }}</span>
 
             <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>

@@ -12,7 +12,7 @@ import { isSystemManagedCalendar } from '~/components/calendar/helpers';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateCalendarResponse, UpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
-import TiptapEditor from '../partials/editor/TiptapEditor.vue';
+import TiptapEditor from '../../partials/editor/TiptapEditor.vue';
 
 const props = defineProps<{
     calendarId?: number;
@@ -164,8 +164,8 @@ async function closeModal(): Promise<void> {
     <UModal
         :title="
             calendarId
-                ? $t('components.calendar.CalendarCreateOrUpdateModal.update.title')
-                : $t('components.calendar.CalendarCreateOrUpdateModal.create.title')
+                ? $t('components.calendar.calendar.CreateOrUpdateModal.update.title')
+                : $t('components.calendar.calendar.CreateOrUpdateModal.create.title')
         "
         :close="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
@@ -175,8 +175,8 @@ async function closeModal(): Promise<void> {
                 <h3 class="font-semibold text-highlighted">
                     {{
                         calendarId
-                            ? $t('components.calendar.CalendarCreateOrUpdateModal.update.title')
-                            : $t('components.calendar.CalendarCreateOrUpdateModal.create.title')
+                            ? $t('components.calendar.calendar.CreateOrUpdateModal.update.title')
+                            : $t('components.calendar.calendar.CreateOrUpdateModal.create.title')
                     }}
                 </h3>
 
@@ -234,7 +234,7 @@ async function closeModal(): Promise<void> {
                             <UFormField
                                 class="flex-1"
                                 name="private"
-                                :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
+                                :label="$t('components.calendar.calendar.CreateOrUpdateModal.private')"
                             >
                                 <USwitch
                                     v-model="state.private"

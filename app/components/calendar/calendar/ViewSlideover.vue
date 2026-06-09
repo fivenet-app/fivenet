@@ -8,8 +8,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useCalendarStore } from '~/stores/calendar';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
-import CalendarCreateOrUpdateModal from './CalendarCreateOrUpdateModal.vue';
-import { checkCalendarAccess, isSystemManagedCalendar } from './helpers';
+import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
+import { checkCalendarAccess, isSystemManagedCalendar } from '../helpers';
 
 const props = defineProps<{
     calendarId: number;
@@ -26,7 +26,7 @@ const calendarStore = useCalendarStore();
 const overlay = useOverlay();
 
 const confirmModal = overlay.create(ConfirmModal);
-const calendarCreateOrUpdateModal = overlay.create(CalendarCreateOrUpdateModal);
+const calendarCreateOrUpdateModal = overlay.create(CreateOrUpdateModal);
 
 const { data, status, refresh, error } = useLazyAsyncData(`calendar-${props.calendarId}`, () =>
     calendarStore.getCalendar({ calendarId: props.calendarId }),
@@ -105,8 +105,8 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
                         :icon="calendar.public ? 'i-mdi-public' : 'i-mdi-calendar-lock'"
                         :label="
                             calendar.public
-                                ? $t('components.calendar.CalendarCreateOrUpdateModal.public')
-                                : $t('components.calendar.CalendarCreateOrUpdateModal.private')
+                                ? $t('components.calendar.calendar.CreateOrUpdateModal.public')
+                                : $t('components.calendar.calendar.CreateOrUpdateModal.private')
                         "
                     />
                 </div>

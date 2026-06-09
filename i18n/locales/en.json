@@ -1534,15 +1534,20 @@
                 "title": "Happy birthday!",
                 "description": "This birthday event is managed automatically and is read-only."
             },
-            "CalendarCreateOrUpdateModal": {
-                "create": {
-                    "title": "Create Calendar"
+            "calendar": {
+                "CreateOrUpdateModal": {
+                    "create": {
+                        "title": "Create Calendar"
+                    },
+                    "update": {
+                        "title": "Update Calendar"
+                    },
+                    "private": "Private Calendar",
+                    "public": "Public Calendar"
                 },
-                "update": {
-                    "title": "Update Calendar"
-                },
-                "private": "Private Calendar",
-                "public": "Public Calendar"
+                "FindCalendarDrawer": {
+                    "title": "Find Calendars"
+                }
             },
             "EntryCreateOrUpdateModal": {
                 "create": {
@@ -1554,9 +1559,6 @@
             },
             "EntryShareModal": {
                 "title": "Share Calendar Entry"
-            },
-            "FindCalendarDrawer": {
-                "title": "Find Calendars"
             },
             "system_generated_entry": "System generated"
         },

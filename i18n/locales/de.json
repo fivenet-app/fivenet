@@ -1534,15 +1534,20 @@
                 "title": "Alles Gute zum Geburtstag!",
                 "description": "Dieser Geburtstagseintrag wird automatisch verwaltet und ist schreibgeschützt."
             },
-            "CalendarCreateOrUpdateModal": {
-                "create": {
-                    "title": "Kalender erstellen"
+            "calendar": {
+                "CreateOrUpdateModal": {
+                    "create": {
+                        "title": "Kalender erstellen"
+                    },
+                    "update": {
+                        "title": "Kalender aktualisieren"
+                    },
+                    "private": "Privater Kalender",
+                    "public": "Öffentlicher Kalender"
                 },
-                "update": {
-                    "title": "Kalender aktualisieren"
-                },
-                "private": "Privater Kalender",
-                "public": "Öffentlicher Kalender"
+                "FindCalendarDrawer": {
+                    "title": "Kalender finden"
+                }
             },
             "EntryCreateOrUpdateModal": {
                 "create": {
@@ -1554,9 +1559,6 @@
             },
             "EntryShareModal": {
                 "title": "Kalender Eintrag teilen"
-            },
-            "FindCalendarDrawer": {
-                "title": "Kalender finden"
             },
             "system_generated_entry": "Vom System generiert"
         },

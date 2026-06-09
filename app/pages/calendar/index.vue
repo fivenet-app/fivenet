@@ -3,9 +3,9 @@ import { z } from 'zod';
 import type { BadgeProps, ButtonProps } from '@nuxt/ui';
 import { isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
-import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
-import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
-import FindCalendarDrawer from '~/components/calendar/FindCalendarDrawer.vue';
+import CreateOrUpdateModal from '~/components/calendar/calendar/CreateOrUpdateModal.vue';
+import ViewSlideover from '~/components/calendar/calendar/ViewSlideover.vue';
+import FindCalendarDrawer from '~/components/calendar/calendar/FindCalendarDrawer.vue';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
 import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.vue';
 import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
@@ -228,8 +228,8 @@ function calendarIdChange(calendarId: number, state: boolean): void {
     }
 }
 
-const calendarViewSlideover = overlay.create(CalendarViewSlideover);
-const calendarCreateOrUpdateModal = overlay.create(CalendarCreateOrUpdateModal);
+const calendarViewSlideover = overlay.create(ViewSlideover);
+const calendarCreateOrUpdateModal = overlay.create(CreateOrUpdateModal);
 const entryViewSlideover = overlay.create(EntryViewSlideover);
 const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 const findCalendarsDrawer = overlay.create(FindCalendarDrawer);
@@ -568,7 +568,7 @@ const viewOptions = [
                     <UButton
                         class="font-semibold"
                         icon="i-mdi-calendar-search"
-                        :label="$t('components.calendar.FindCalendarDrawer.title')"
+                        :label="$t('components.calendar.calendar.FindCalendarDrawer.title')"
                         @click="findCalendarsDrawer.open({})"
                     />
                 </div>
@@ -684,7 +684,7 @@ const viewOptions = [
                 <UButton
                     class="font-semibold"
                     icon="i-mdi-calendar-search"
-                    :label="$t('components.calendar.FindCalendarDrawer.title')"
+                    :label="$t('components.calendar.calendar.FindCalendarDrawer.title')"
                     @click="findCalendarsDrawer.open({})"
                 />
             </div>
