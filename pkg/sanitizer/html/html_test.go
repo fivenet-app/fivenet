@@ -93,7 +93,7 @@ func TestStripHTMLTags(t *testing.T) {
 func TestSanitizePreservesMapBlockAndPenaltyCalculator(t *testing.T) {
 	t.Parallel()
 
-	mapHTML := `<span class="map-block inline-flex align-middle" data-embed="map" data-map-x="12.34" data-map-y="56.78" data-map-zoom="3" data-map-postal="12345" data-map-layer="postal"></span>`
+	mapHTML := `<span data-embed="map" data-map-x="12.34" data-map-y="56.78" data-map-zoom="3" data-map-postal="12345" data-map-layer="postal"></span>`
 	mapOut := Sanitize(mapHTML)
 	assert.Contains(t, mapOut, `<span`, "map block tag should survive sanitization: %s", mapOut)
 	assert.Contains(t, mapOut, `data-embed="map"`)
@@ -114,4 +114,17 @@ func TestSanitizePreservesMapBlockAndPenaltyCalculator(t *testing.T) {
 	)
 	assert.Contains(t, penaltyOut, `data-type="penalty-calculator"`)
 	assert.Contains(t, penaltyOut, `data-embed="penalty-calculator"`)
+}
+
+func TestSanitizeRejectsNonExportedMapBlockAndPenaltyCalculatorValues(t *testing.T) {
+	t.Parallel()
+
+	mapOut := Sanitize(`<span data-embed="map-legacy" data-map-x="12.34" data-map-y="56.78" data-map-zoom="3"></span>`)
+	assert.NotContains(t, mapOut, `data-embed="map-legacy"`)
+	assert.Contains(t, mapOut, `<span`, "map block wrapper should still survive sanitization: %s", mapOut)
+
+	penaltyOut := Sanitize(`<div data-type="penaltyCalculator" data-embed="penaltyCalculator"></div>`)
+	assert.NotContains(t, penaltyOut, `data-type="penaltyCalculator"`)
+	assert.NotContains(t, penaltyOut, `data-embed="penaltyCalculator"`)
+	assert.Contains(t, penaltyOut, `<div`, "penalty calculator wrapper should still survive sanitization: %s", penaltyOut)
 }

@@ -41,6 +41,13 @@ type AttrPolicy struct {
 
 var hexColor = regexp.MustCompile(`^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$`)
 
+const defaultMapBlockLayerKey = "postal"
+
+var allowedMapBlockLayers = map[string]struct{}{
+	defaultMapBlockLayerKey: {},
+	"satelite":              {},
+}
+
 // normalizeLinkHref ensures the href is safe and normalized.
 // It allows relative URLs and absolute HTTPS URLs only.
 func normalizeLinkHref(raw string) (string, bool) {
@@ -150,9 +157,17 @@ func parseNumberAttr(v any, fallback float64) float64 {
 	return fallback
 }
 
-func parseStringAttr(v any) string {
+func normalizeMapBlockLayer(v any) string {
 	s, _ := v.(string)
-	return strings.TrimSpace(s)
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return defaultMapBlockLayerKey
+	}
+	if _, ok := allowedMapBlockLayers[s]; ok {
+		return s
+	}
+
+	return defaultMapBlockLayerKey
 }
 
 func New() *Sanitizer {
@@ -357,12 +372,10 @@ func buildAllowed() *Sanitizer {
 				"zoom": parseNumberAttr(a["zoom"], 2),
 			}
 
-			if postal := parseStringAttr(a["postal"]); postal != "" {
-				out["postal"] = postal
+			if postal, _ := a["postal"].(string); strings.TrimSpace(postal) != "" {
+				out["postal"] = strings.TrimSpace(postal)
 			}
-			if layer := parseStringAttr(a["layer"]); layer != "" {
-				out["layer"] = layer
-			}
+			out["layer"] = normalizeMapBlockLayer(a["layer"])
 
 			return true, out
 		}},
@@ -486,14 +499,25 @@ func SanitizeStruct(
 	maxBytes int,
 	maxDepth int,
 ) error {
+	if doc == nil {
+		return nil
+	}
+
 	// Convert proto struct to map[string]any
 	docMap := doc.AsMap()
 
 	// Run through the Sanitize function
-	_, _, err := Sanitize(docMap, maxBytes, maxDepth)
+	out, _, err := Sanitize(docMap, maxBytes, maxDepth)
 	if err != nil {
 		return err
 	}
+
+	cleaned, err := structpb.NewStruct(out)
+	if err != nil {
+		return err
+	}
+
+	doc.Fields = cleaned.GetFields()
 
 	return nil
 }

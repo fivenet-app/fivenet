@@ -122,7 +122,7 @@ export const MapBlock = Node.create<MapBlockOptions>({
     },
 
     parseHTML() {
-        return [{ tag: 'figure[data-embed="map"]' }, { tag: 'div[data-embed="map"]' }, { tag: 'span[data-embed="map"]' }];
+        return [{ tag: 'div[data-embed="map"]' }, { tag: 'span[data-embed="map"]' }];
     },
 
     renderHTML({ HTMLAttributes }) {
