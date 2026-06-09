@@ -27,7 +27,7 @@
         "@galexrt/nuxt-update": "2.2.0",
         "@iconify-json/flagpack": "1.2.7",
         "@iconify-json/mdi": "1.2.3",
-        "@iconify-json/simple-icons": "1.2.85",
+        "@iconify-json/simple-icons": "1.2.86",
         "@internationalized/date": "3.12.2",
         "@nuxt/content": "3.14.0",
         "@nuxt/fonts": "0.14.0",
@@ -38,7 +38,7 @@
         "@protobuf-ts/grpcweb-transport": "2.11.1",
         "@samemichaeltadele/tiptap-compare": "0.0.3",
         "@selemondev/vue3-signature-pad": "1.9.0",
-        "@tailwindcss/typography": "0.5.19",
+        "@tailwindcss/typography": "0.5.20",
         "@tiptap/extension-blockquote": "3.26.0",
         "@tiptap/extension-bold": "3.26.0",
         "@tiptap/extension-character-count": "3.26.0",
@@ -168,7 +168,7 @@
         "vite": "7.3.5",
         "vitest": "4.1.8",
         "vue-router": "5.1.0",
-        "vue-tsc": "3.3.3",
+        "vue-tsc": "3.3.4",
         "westures": "1.1.1"
     },
     "resolutions": {
