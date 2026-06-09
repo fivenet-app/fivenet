@@ -6,7 +6,7 @@ toolchain go1.26.4
 
 require (
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/fivenet-app/fivenet/v2026 v2026.6.0
+	github.com/fivenet-app/fivenet/v2026 v2026.6.1
 	github.com/lyft/protoc-gen-star/v2 v2.0.4
 	google.golang.org/protobuf v1.36.11
 )
@@ -88,7 +88,7 @@ require (
 	golang.org/x/mod v0.35.0 // indirect
 	golang.org/x/net v0.55.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
-	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/sys v0.45.0 // indirect
 	golang.org/x/text v0.37.0 // indirect
 	golang.org/x/tools v0.44.0 // indirect
