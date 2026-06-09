@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	birthdayCalendarColor = "rose"
+	birthdayCalendarColor = "neutral"
 )
 
 type birthdayColleague struct {
