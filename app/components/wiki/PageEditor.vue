@@ -7,8 +7,8 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import type { HistoryContent } from '~/types/history';
+import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
@@ -208,9 +208,7 @@ function setFromProps(): void {
     state.parentId = page.value?.parentId ?? 0;
     state.meta.title = page.value.meta?.title ?? '';
     state.meta.description = page.value.meta?.description ?? '';
-    state.content = page.value.content?.tiptapJson
-        ? (Struct.toJson(page.value.content.tiptapJson) as JSONContent)
-        : (page.value.content?.rawHtml ?? '');
+    state.content = contentToTiptapValue(page.value.content);
     state.meta.toc = page.value.meta?.toc ?? true;
     state.meta.draft = page.value.meta?.draft ?? true;
     state.meta.public = page.value.meta?.public ?? false;
@@ -258,11 +256,7 @@ async function updatePage(values: Schema): Promise<void> {
             startpage: values.meta.startpage,
             tags: [],
         },
-        content: {
-            contentType: ContentType.TIPTAP_JSON,
-            version: '',
-            tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
-        },
+        content: tiptapToContent(values.content),
         parentId: values.parentId,
         access: values.access,
         files: values.files,

@@ -3,6 +3,9 @@ package calendar
 import (
 	"context"
 	"errors"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
@@ -146,6 +149,10 @@ func (s *Server) RSVPCalendarEntry(
 ) (*pbcalendar.RSVPCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	if req.GetEntry() == nil {
+		return nil, errorscalendar.ErrNoPerms
+	}
+
 	entry, err := s.getEntry(
 		ctx,
 		userInfo,
@@ -183,33 +190,94 @@ func (s *Server) RSVPCalendarEntry(
 		return nil, errorscalendar.ErrEntryClosed
 	}
 
-	if req.Remove != nil && req.GetRemove() {
-		req.Entry.Response = calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN
+	occurrenceKey := strings.TrimSpace(req.GetOccurrenceKey())
+	if occurrenceKey == "" && req.GetEntry() != nil {
+		occurrenceKey = strings.TrimSpace(req.GetEntry().GetOccurrenceKey())
 	}
 
-	tCalendarRSVP := table.FivenetCalendarRsvp
-	stmt := tCalendarRSVP.
-		INSERT(
-			tCalendarRSVP.EntryID,
-			tCalendarRSVP.UserID,
-			tCalendarRSVP.Response,
-		).
-		VALUES(
-			req.GetEntry().GetEntryId(),
-			userInfo.GetUserId(),
-			req.GetEntry().GetResponse(),
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tCalendarRSVP.Response.SET(mysql.Int32(int32(req.GetEntry().GetResponse()))),
-		)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	if occurrenceKey != "" {
+		if entry.GetRecurring() == nil {
+			return nil, errorscalendar.ErrNoPerms
+		}
+		if err := validateRecurringOccurrenceKey(entry, occurrenceKey); err != nil {
+			return nil, err
 		}
 	}
 
-	rsvpEntry, err := s.getRSVPCalendarEntry(ctx, req.GetEntry().GetEntryId(), userInfo.GetUserId())
+	if req.Remove != nil && req.GetRemove() && occurrenceKey == "" {
+		req.Entry.Response = calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN
+	}
+
+	if occurrenceKey != "" {
+		tCalendarRsvpOccurrence := table.FivenetCalendarRsvpOccurrence
+
+		if req.Remove != nil && req.GetRemove() {
+			stmt := tCalendarRsvpOccurrence.
+				DELETE().
+				WHERE(mysql.AND(
+					tCalendarRsvpOccurrence.EntryID.EQ(mysql.Int64(req.GetEntry().GetEntryId())),
+					tCalendarRsvpOccurrence.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					tCalendarRsvpOccurrence.OccurrenceKey.EQ(mysql.String(occurrenceKey)),
+				)).
+				LIMIT(1)
+
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+			}
+		} else {
+			stmt := tCalendarRsvpOccurrence.
+				INSERT(
+					tCalendarRsvpOccurrence.EntryID,
+					tCalendarRsvpOccurrence.OccurrenceKey,
+					tCalendarRsvpOccurrence.UserID,
+					tCalendarRsvpOccurrence.Response,
+				).
+				VALUES(
+					req.GetEntry().GetEntryId(),
+					occurrenceKey,
+					userInfo.GetUserId(),
+					req.GetEntry().GetResponse(),
+				).
+				ON_DUPLICATE_KEY_UPDATE(
+					tCalendarRsvpOccurrence.Response.SET(mysql.Int32(int32(req.GetEntry().GetResponse()))),
+				)
+
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				if !dbutils.IsDuplicateError(err) {
+					return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+				}
+			}
+		}
+	} else {
+		tCalendarRSVP := table.FivenetCalendarRsvp
+		stmt := tCalendarRSVP.
+			INSERT(
+				tCalendarRSVP.EntryID,
+				tCalendarRSVP.UserID,
+				tCalendarRSVP.Response,
+			).
+			VALUES(
+				req.GetEntry().GetEntryId(),
+				userInfo.GetUserId(),
+				req.GetEntry().GetResponse(),
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				tCalendarRSVP.Response.SET(mysql.Int32(int32(req.GetEntry().GetResponse()))),
+			)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if !dbutils.IsDuplicateError(err) {
+				return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+			}
+		}
+	}
+
+	rsvpEntry, err := s.getRSVPCalendarEntry(
+		ctx,
+		req.GetEntry().GetEntryId(),
+		userInfo.GetUserId(),
+		occurrenceKey,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -226,6 +294,28 @@ func (s *Server) RSVPCalendarEntry(
 }
 
 func (s *Server) getRSVPCalendarEntry(
+	ctx context.Context,
+	entryId int64,
+	userId int32,
+	occurrenceKey string,
+) (*calendarentries.CalendarEntryRSVP, error) {
+	if occurrenceKey != "" {
+		if dest, err := s.getOccurrenceRSVPCalendarEntry(
+			ctx,
+			entryId,
+			userId,
+			occurrenceKey,
+		); err != nil {
+			return nil, err
+		} else if dest != nil {
+			return dest, nil
+		}
+	}
+
+	return s.getSeriesRSVPCalendarEntry(ctx, entryId, userId)
+}
+
+func (s *Server) getSeriesRSVPCalendarEntry(
 	ctx context.Context,
 	entryId int64,
 	userId int32,
@@ -278,4 +368,111 @@ func (s *Server) getRSVPCalendarEntry(
 	}
 
 	return &dest, nil
+}
+
+func (s *Server) getOccurrenceRSVPCalendarEntry(
+	ctx context.Context,
+	entryId int64,
+	userId int32,
+	occurrenceKey string,
+) (*calendarentries.CalendarEntryRSVP, error) {
+	tUser := table.FivenetUser.AS("user_short")
+	tAvatar := table.FivenetFiles.AS("profile_picture")
+
+	stmt := table.FivenetCalendarRsvpOccurrence.
+		SELECT(
+			table.FivenetCalendarRsvpOccurrence.EntryID,
+			table.FivenetCalendarRsvpOccurrence.CreatedAt,
+			table.FivenetCalendarRsvpOccurrence.UserID,
+			table.FivenetCalendarRsvpOccurrence.Response,
+			table.FivenetCalendarRsvpOccurrence.OccurrenceKey,
+			tUser.ID,
+			tUser.Job,
+			tUser.JobGrade,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Dateofbirth,
+			tUser.PhoneNumber,
+			tUserProps.AvatarFileID.AS("user_short.profile_picture_file_id"),
+			tAvatar.FilePath.AS("user_short.profile_picture"),
+		).
+		FROM(table.FivenetCalendarRsvpOccurrence.
+			LEFT_JOIN(tUser,
+				table.FivenetCalendarRsvpOccurrence.UserID.EQ(tUser.ID),
+			).
+			LEFT_JOIN(tUserProps,
+				tUserProps.UserID.EQ(tUser.ID),
+			).
+			LEFT_JOIN(tAvatar,
+				tAvatar.ID.EQ(tUserProps.AvatarFileID),
+			),
+		).
+		WHERE(mysql.AND(
+			table.FivenetCalendarRsvpOccurrence.EntryID.EQ(mysql.Int64(entryId)),
+			table.FivenetCalendarRsvpOccurrence.UserID.EQ(mysql.Int32(userId)),
+			table.FivenetCalendarRsvpOccurrence.OccurrenceKey.EQ(mysql.String(occurrenceKey)),
+		)).
+		LIMIT(1)
+
+	var dest calendarentries.CalendarEntryRSVP
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	if dest.GetEntryId() == 0 {
+		return nil, nil
+	}
+
+	return &dest, nil
+}
+
+func validateRecurringOccurrenceKey(
+	entry *calendarentries.CalendarEntry,
+	occurrenceKey string,
+) error {
+	parts := strings.Split(occurrenceKey, ":")
+	if len(parts) != 3 || parts[0] != "recurring" {
+		return errorscalendar.ErrNoPerms
+	}
+
+	entryID, err := strconv.ParseInt(parts[1], 10, 64)
+	if err != nil || entryID != entry.GetId() {
+		return errorscalendar.ErrNoPerms
+	}
+
+	targetUnix, err := strconv.ParseInt(parts[2], 10, 64)
+	if err != nil {
+		return errorscalendar.ErrNoPerms
+	}
+
+	if entry.GetStartTime() == nil || entry.GetRecurring() == nil {
+		return errorscalendar.ErrNoPerms
+	}
+
+	occurrenceStart := entry.GetStartTime().AsTime()
+	interval := entry.GetRecurring().GetCount()
+	if interval <= 0 {
+		interval = 1
+	}
+
+	for !occurrenceStart.After(time.Unix(targetUnix, 0)) {
+		if until := entry.GetRecurring().
+			GetUntil(); until != nil &&
+			occurrenceStart.After(until.AsTime()) {
+			break
+		}
+		if occurrenceStart.Unix() == targetUnix {
+			return nil
+		}
+
+		occurrenceStart = nextRecurringOccurrence(
+			occurrenceStart,
+			interval,
+			entry.GetRecurring().GetEvery(),
+		)
+	}
+
+	return errorscalendar.ErrNoPerms
 }

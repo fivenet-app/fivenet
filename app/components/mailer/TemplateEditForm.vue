@@ -5,8 +5,7 @@ import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerSettingsClient } from '~~/gen/ts/clients';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import { ContentType } from '~~/gen/ts/resources/common/content/content';
+import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import type { Template } from '~~/gen/ts/resources/mailer/templates/template';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateOrUpdateTemplateRequest } from '~~/gen/ts/services/mailer/settings';
@@ -51,9 +50,7 @@ function setFromProps(): void {
     }
 
     state.title = props.template?.title ?? '';
-    state.content = props.template?.content?.tiptapJson
-        ? (Struct.toJson(props.template.content.tiptapJson) as JSONContent)
-        : (props.template.content?.rawHtml ?? '');
+    state.content = contentToTiptapValue(props.template.content);
     syncSnapshot();
 }
 
@@ -74,11 +71,7 @@ async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTem
                 id: props.template?.id ?? 0,
                 emailId: selectedEmail.value!.id,
                 title: values.title,
-                content: {
-                    contentType: ContentType.TIPTAP_JSON,
-                    version: '',
-                    tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
-                },
+                content: tiptapToContent(values.content),
             },
         });
         const { response } = await call;

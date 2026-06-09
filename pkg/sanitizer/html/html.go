@@ -45,6 +45,11 @@ var (
 	boolTrueRegex = regexp.MustCompile(`(?i)^(true|checked)$`)
 	// inputTypeCheckbox matches the string "checkbox" (case-insensitive).
 	inputTypeCheckbox = regexp.MustCompile(`(?i)checkbox`)
+
+	// exportedMapEmbed matches the exported map block marker.
+	exportedMapEmbed = regexp.MustCompile(`^map$`)
+	// exportedPenaltyCalculatorType matches the exported penalty calculator markers.
+	exportedPenaltyCalculatorType = regexp.MustCompile(`^penalty-calculator$`)
 )
 
 // Module provides the Fx module for the HTML sanitizer, wiring up dependency injection.
@@ -134,11 +139,12 @@ func setupSanitizer() {
 	sanitizer.AllowAttrs("data-template-var", "data-left-trim", "data-right-trim").
 		OnElements("span")
 
-	// Custom editor blocks
-	sanitizer.AllowElements("figure")
-	sanitizer.AllowAttrs("data-type", "data-embed").OnElements("div", "span", "figure")
+	// Exported custom editor blocks
+	sanitizer.AllowAttrs("data-embed").Matching(exportedMapEmbed).OnElements("span")
 	sanitizer.AllowAttrs("data-map-x", "data-map-y", "data-map-zoom", "data-map-postal", "data-map-layer").
-		OnElements("div", "span", "figure")
+		OnElements("span")
+	sanitizer.AllowAttrs("data-type").Matching(exportedPenaltyCalculatorType).OnElements("div")
+	sanitizer.AllowAttrs("data-embed").Matching(exportedPenaltyCalculatorType).OnElements("div")
 }
 
 // New creates and returns a new bluemonday.Policy for HTML sanitization, optionally enabling image proxy rewriting if configured.

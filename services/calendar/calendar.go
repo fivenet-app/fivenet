@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	permscalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar/perms"
+	permssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -20,16 +21,19 @@ import (
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
+
+func (s *Server) canEditCalendarDiscordSettings(userInfo *userinfo.UserInfo) bool {
+	return s.ps.Can(userInfo, permssettings.SettingsService.SetJobProps.Perm)
+}
 
 func (s *Server) ListCalendars(
 	ctx context.Context,
 	req *pbcalendar.ListCalendarsRequest,
 ) (*pbcalendar.ListCalendarsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	if _, err := s.ensureJobBirthdayCalendar(ctx, userInfo); err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
 
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
@@ -70,18 +74,30 @@ func (s *Server) ListCalendars(
 				)),
 		)
 	} else {
-		accessExists = mysql.Bool(true)
+		accessExists = mysql.OR(
+			tCalendar.SystemKind.IS_NULL(),
+			tCalendar.SystemKind.NOT_EQ(
+				mysql.Int32(
+					int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+				),
+			),
+		)
 	}
 
 	orderBys := []mysql.OrderByClause{
 		tCalendar.Name.ASC(),
 	}
+	creatorPrivateCondition := mysql.AND(
+		tCalendar.Job.IS_NULL(),
+		tCalendar.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+	)
 	condition := mysql.AND(
 		tCalendar.DeletedAt.IS_NULL(),
 		mysql.OR(
 			subsCondition,
-			tCalendar.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+			creatorPrivateCondition,
 			accessExists,
+			s.birthdayCalendarVisible(tCalendar.ID, minAccessLevel, userInfo),
 		),
 	)
 
@@ -141,6 +157,7 @@ func (s *Server) ListCalendars(
 		tCalendar.UpdatedAt,
 		tCalendar.DeletedAt,
 		tCalendar.Job,
+		tCalendar.DiscordSettings,
 		tCalendar.Name,
 		tCalendar.Description,
 		tCalendar.Public,
@@ -335,10 +352,26 @@ func (s *Server) CreateCalendar(
 		req.Calendar.Job = &userInfo.Job
 	}
 
+	discordSettings, discordSettingsJSON, err := s.prepareCalendarDiscordSettings(
+		ctx,
+		req.GetCalendar(),
+	)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	if discordSettings != nil && !s.canEditCalendarDiscordSettings(userInfo) {
+		return nil, status.Error(
+			codes.PermissionDenied,
+			"missing permission to configure calendar discord reminders",
+		)
+	}
+	req.Calendar.DiscordSettings = discordSettings
+
 	tCalendar := table.FivenetCalendar
 	stmt := tCalendar.
 		INSERT(
 			tCalendar.Job,
+			tCalendar.DiscordSettings,
 			tCalendar.Name,
 			tCalendar.Description,
 			tCalendar.Public,
@@ -349,6 +382,7 @@ func (s *Server) CreateCalendar(
 		).
 		VALUES(
 			req.GetCalendar().Job,
+			discordSettingsJSON,
 			req.GetCalendar().GetName(),
 			req.GetCalendar().GetDescription(),
 			req.GetCalendar().GetPublic(),
@@ -358,6 +392,7 @@ func (s *Server) CreateCalendar(
 			userInfo.GetJob(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
+			tCalendar.DiscordSettings.SET(mysql.RawString("VALUES(`discord_settings`)")),
 			tCalendar.Name.SET(mysql.String(req.GetCalendar().GetName())),
 			tCalendar.Description.SET(mysql.String("VALUES(`description`)")),
 			tCalendar.Public.SET(mysql.Bool(req.GetCalendar().GetPublic())),
@@ -510,6 +545,24 @@ func (s *Server) UpdateCalendar(
 		req.Calendar.Public = false
 	}
 
+	if !s.canEditCalendarDiscordSettings(userInfo) {
+		req.Calendar.DiscordSettings = currentCalendar.GetDiscordSettings()
+	}
+
+	discordSettings, discordSettingsJSON, err := s.prepareCalendarDiscordSettings(
+		ctx,
+		req.GetCalendar(),
+	)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	req.Calendar.DiscordSettings = discordSettings
+
+	discordSettingsValue := mysql.StringExp(mysql.NULL)
+	if discordSettingsJSON != nil {
+		discordSettingsValue = mysql.String(*discordSettingsJSON)
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -522,6 +575,7 @@ func (s *Server) UpdateCalendar(
 
 	stmt := tCalendar.
 		UPDATE(
+			tCalendar.DiscordSettings,
 			tCalendar.Name,
 			tCalendar.Description,
 			tCalendar.Public,
@@ -529,6 +583,7 @@ func (s *Server) UpdateCalendar(
 			tCalendar.Color,
 		).
 		SET(
+			discordSettingsValue,
 			req.GetCalendar().GetName(),
 			req.GetCalendar().GetDescription(),
 			req.GetCalendar().GetPublic(),
@@ -650,6 +705,7 @@ func (s *Server) getCalendar(
 		tCalendar.UpdatedAt,
 		tCalendar.DeletedAt,
 		tCalendar.Job,
+		tCalendar.DiscordSettings,
 		tCalendar.Name,
 		tCalendar.Description,
 		tCalendar.Public,

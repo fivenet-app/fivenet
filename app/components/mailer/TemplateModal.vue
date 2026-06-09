@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import type { JSONContent } from '@tiptap/core';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerSettingsClient } from '~~/gen/ts/clients';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { contentToTiptapValue } from '~/utils/content';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/settings';
 import { canAccess } from './helpers';
@@ -140,13 +139,7 @@ function resetEditing(): void {
 
                                     <ClientOnly>
                                         <TiptapEditor
-                                            :model-value="
-                                                templates.templates[index].content?.tiptapJson
-                                                    ? (Struct.toJson(
-                                                          templates.templates[index].content.tiptapJson,
-                                                      ) as JSONContent)
-                                                    : (templates.templates[index].content?.rawHtml ?? '')
-                                            "
+                                            :model-value="contentToTiptapValue(templates.templates[index].content)"
                                             disabled
                                             hide-toolbar
                                             wrapper-class="min-h-44"

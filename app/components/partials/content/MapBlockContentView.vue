@@ -55,7 +55,11 @@ function openFullscreen(): void {
                     color="neutral"
                     variant="subtle"
                     :to="`/livemap?loc=${zoom}/${y}/${x}`"
-                    @click.prevent="navigateTo(`/livemap?loc=${zoom}/${y}/${x}`)"
+                    @click.prevent="
+                        () => {
+                            navigateTo(`/livemap?loc=${zoom}/${y}/${x}`);
+                        }
+                    "
                 />
             </UTooltip>
         </UFieldGroup>

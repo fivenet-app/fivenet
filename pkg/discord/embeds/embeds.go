@@ -6,10 +6,10 @@ import (
 )
 
 const (
-	ColorInfo    = 5627360
-	ColorWarn    = 16166445
-	ColorError   = 14100024
-	ColorSuccess = 2346603
+	ColorInfo    discord.Color = 5627360
+	ColorWarn    discord.Color = 16166445
+	ColorError   discord.Color = 14100024
+	ColorSuccess discord.Color = 2346603
 )
 
 var (

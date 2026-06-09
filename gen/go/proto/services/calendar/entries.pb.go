@@ -991,6 +991,7 @@ type RSVPCalendarEntryRequest struct {
 	Entry         *entries.CalendarEntryRSVP `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	Subscribe     bool                       `protobuf:"varint,2,opt,name=subscribe,proto3" json:"subscribe,omitempty"`
 	Remove        *bool                      `protobuf:"varint,3,opt,name=remove,proto3,oneof" json:"remove,omitempty"`
+	OccurrenceKey *string                    `protobuf:"bytes,4,opt,name=occurrence_key,json=occurrenceKey,proto3,oneof" json:"occurrence_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1041,6 +1042,13 @@ func (x *RSVPCalendarEntryRequest) GetRemove() bool {
 	return false
 }
 
+func (x *RSVPCalendarEntryRequest) GetOccurrenceKey() string {
+	if x != nil && x.OccurrenceKey != nil {
+		return *x.OccurrenceKey
+	}
+	return ""
+}
+
 func (x *RSVPCalendarEntryRequest) SetEntry(v *entries.CalendarEntryRSVP) {
 	x.Entry = v
 }
@@ -1051,6 +1059,10 @@ func (x *RSVPCalendarEntryRequest) SetSubscribe(v bool) {
 
 func (x *RSVPCalendarEntryRequest) SetRemove(v bool) {
 	x.Remove = &v
+}
+
+func (x *RSVPCalendarEntryRequest) SetOccurrenceKey(v string) {
+	x.OccurrenceKey = &v
 }
 
 func (x *RSVPCalendarEntryRequest) HasEntry() bool {
@@ -1067,6 +1079,13 @@ func (x *RSVPCalendarEntryRequest) HasRemove() bool {
 	return x.Remove != nil
 }
 
+func (x *RSVPCalendarEntryRequest) HasOccurrenceKey() bool {
+	if x == nil {
+		return false
+	}
+	return x.OccurrenceKey != nil
+}
+
 func (x *RSVPCalendarEntryRequest) ClearEntry() {
 	x.Entry = nil
 }
@@ -1075,12 +1094,17 @@ func (x *RSVPCalendarEntryRequest) ClearRemove() {
 	x.Remove = nil
 }
 
+func (x *RSVPCalendarEntryRequest) ClearOccurrenceKey() {
+	x.OccurrenceKey = nil
+}
+
 type RSVPCalendarEntryRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Entry     *entries.CalendarEntryRSVP
-	Subscribe bool
-	Remove    *bool
+	Entry         *entries.CalendarEntryRSVP
+	Subscribe     bool
+	Remove        *bool
+	OccurrenceKey *string
 }
 
 func (b0 RSVPCalendarEntryRequest_builder) Build() *RSVPCalendarEntryRequest {
@@ -1090,6 +1114,7 @@ func (b0 RSVPCalendarEntryRequest_builder) Build() *RSVPCalendarEntryRequest {
 	x.Entry = b.Entry
 	x.Subscribe = b.Subscribe
 	x.Remove = b.Remove
+	x.OccurrenceKey = b.OccurrenceKey
 	return m0
 }
 
@@ -1206,12 +1231,14 @@ const file_services_calendar_entries_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12M\n" +
-	"\aentries\x18\x02 \x03(\v2-.resources.calendar.entries.CalendarEntryRSVPB\x04\xc8\xf3\x18\x01R\aentries\"\xa5\x01\n" +
+	"\aentries\x18\x02 \x03(\v2-.resources.calendar.entries.CalendarEntryRSVPB\x04\xc8\xf3\x18\x01R\aentries\"\xe4\x01\n" +
 	"\x18RSVPCalendarEntryRequest\x12C\n" +
 	"\x05entry\x18\x01 \x01(\v2-.resources.calendar.entries.CalendarEntryRSVPR\x05entry\x12\x1c\n" +
 	"\tsubscribe\x18\x02 \x01(\bR\tsubscribe\x12\x1b\n" +
-	"\x06remove\x18\x03 \x01(\bH\x00R\x06remove\x88\x01\x01B\t\n" +
-	"\a_remove\"o\n" +
+	"\x06remove\x18\x03 \x01(\bH\x00R\x06remove\x88\x01\x01\x12*\n" +
+	"\x0eoccurrence_key\x18\x04 \x01(\tH\x01R\roccurrenceKey\x88\x01\x01B\t\n" +
+	"\a_removeB\x11\n" +
+	"\x0f_occurrence_key\"o\n" +
 	"\x19RSVPCalendarEntryResponse\x12H\n" +
 	"\x05entry\x18\x01 \x01(\v2-.resources.calendar.entries.CalendarEntryRSVPH\x00R\x05entry\x88\x01\x01B\b\n" +
 	"\x06_entry2\xd6\b\n" +

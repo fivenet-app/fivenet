@@ -8,9 +8,8 @@ import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/a
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import RequirementEntry from '~/components/qualifications/RequirementEntry.vue';
 import type { HistoryContent } from '~/types/history';
+import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access/access';
@@ -296,9 +295,7 @@ function setFromProps(): void {
     state.abbreviation = qualification.value.abbreviation;
     state.title = qualification.value.title;
     state.description = qualification.value.description;
-    state.content = qualification.value.content?.tiptapJson
-        ? (Struct.toJson(qualification.value.content.tiptapJson) as JSONContent)
-        : (qualification.value.content?.rawHtml ?? '');
+    state.content = contentToTiptapValue(qualification.value.content);
     state.closed = qualification.value.closed;
     state.public = qualification.value.public;
     state.abbreviation = qualification.value.abbreviation;
@@ -362,11 +359,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             abbreviation: values.abbreviation,
             title: values.title,
             description: values.description,
-            content: {
-                contentType: ContentType.TIPTAP_JSON,
-                version: '',
-                tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
-            },
+            content: tiptapToContent(values.content),
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
             requirements: state.requirements,

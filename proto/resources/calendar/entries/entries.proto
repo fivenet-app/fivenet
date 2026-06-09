@@ -90,4 +90,5 @@ message CalendarEntryRSVP {
   int32 user_id = 3 [(buf.validate.field).int32.gt = 0];
   optional resources.users.short.UserShort user = 4;
   RsvpResponses response = 5 [(buf.validate.field).enum.defined_only = true];
+  optional string occurrence_key = 6 [(buf.validate.field).string.max_len = 128];
 }

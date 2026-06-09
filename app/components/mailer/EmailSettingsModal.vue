@@ -4,8 +4,7 @@ import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import { ContentType } from '~~/gen/ts/resources/common/content/content';
+import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 import { canAccess } from './helpers';
 
@@ -33,9 +32,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    signature: selectedEmail.value?.settings?.signature?.tiptapJson
-        ? (Struct.toJson(selectedEmail.value.settings.signature.tiptapJson) as JSONContent)
-        : (selectedEmail.value?.settings?.signature?.rawHtml ?? ''),
+    signature: contentToTiptapValue(selectedEmail.value?.settings?.signature),
     emails: selectedEmail.value?.settings?.blockedEmails ?? [],
 });
 
@@ -48,9 +45,7 @@ const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(sta
 });
 
 function setFromSelectedEmail(): void {
-    state.signature = selectedEmail.value?.settings?.signature?.tiptapJson
-        ? (Struct.toJson(selectedEmail.value.settings.signature.tiptapJson) as JSONContent)
-        : (selectedEmail.value?.settings?.signature?.rawHtml ?? '');
+    state.signature = contentToTiptapValue(selectedEmail.value?.settings?.signature);
     state.emails = selectedEmail.value?.settings?.blockedEmails ?? [];
     syncSnapshot();
 }
@@ -70,13 +65,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             .setEmailSettings({
                 settings: {
                     emailId: selectedEmail.value?.id,
-                    signature: {
-                        contentType: ContentType.TIPTAP_JSON,
-                        version: '',
-                        tiptapJson: Struct.fromJsonString(
-                            JSON.stringify(!values.signature ? { type: 'doc', content: [] } : values.signature),
-                        ),
-                    },
+                    signature: tiptapToContent(values.signature),
                     blockedEmails: values.emails.map((e) => e.trim()),
                 },
             })

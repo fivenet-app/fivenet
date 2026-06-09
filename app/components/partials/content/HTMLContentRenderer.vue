@@ -27,12 +27,12 @@ export default defineComponent({
         return (): VNode => {
             const value = props.value;
 
-            // 1. Text Node
+            // Text Node
             if (value.text) {
                 return h(Text, null, value.text);
             }
 
-            // 2. Checkbox input
+            // Checkbox input
             if (value.tag === 'input' && value.attrs?.type === 'checkbox') {
                 return h(UCheckbox, {
                     disabled: true,
@@ -45,12 +45,12 @@ export default defineComponent({
                 });
             }
 
-            // 3. <br> tag
+            // <br> tag
             if (value.tag === 'br') {
                 return h('br', value.attrs);
             }
 
-            // 4. img tag
+            // img tag
             if (value.tag === 'img') {
                 return h(GenericImg, {
                     ...value.attrs,
@@ -58,10 +58,7 @@ export default defineComponent({
                 });
             }
 
-            if (
-                (value.tag === 'div' || value.tag === 'figure' || value.tag === 'span') &&
-                value.attrs?.['data-embed'] === 'map'
-            ) {
+            if ((value.tag === 'div' || value.tag === 'span') && value.attrs?.['data-embed'] === 'map') {
                 return h(MapBlockContentView, {
                     ...normalizeMapBlockAttrs({
                         x: value.attrs?.['data-map-x'],
@@ -74,7 +71,7 @@ export default defineComponent({
                 });
             }
 
-            // 4.1 Penalty calculator embed marker (template preview fallback)
+            // Penalty calculator embed marker (template preview fallback)
             if (
                 value.tag === 'div' &&
                 (value.attrs?.['data-embed'] === 'penalty-calculator' ||
@@ -84,14 +81,14 @@ export default defineComponent({
                 return h(PenaltyCalculatorContentView);
             }
 
-            // 5. Tag remapping
+            // Other tag remapping
             if (tagRemapping[value.tag]) {
                 return h(tagRemapping[value.tag]!, value.attrs);
             }
 
             const tag = value.tag === 'body' ? 'div' : value.tag;
 
-            // 6. Recursively render children
+            // Recursively render children
             const children = (value.content || []).map((child: RichTextHtmlNode, idx: number) =>
                 h(self, {
                     key: idx,
@@ -99,7 +96,7 @@ export default defineComponent({
                 }),
             );
 
-            // 7. Append external link icon
+            // Append external link icon
             if (value.tag === 'a' && !value.attrs?.href?.startsWith('/')) {
                 children.push(
                     h(UIcon, {
@@ -109,7 +106,7 @@ export default defineComponent({
                 );
             }
 
-            // 8. Return final tag/component with attributes
+            // Return final tag/component with attributes
             return h(
                 tag,
                 {

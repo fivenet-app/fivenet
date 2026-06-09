@@ -38,7 +38,7 @@ const (
 )
 
 type AbsentCommand struct {
-	l     *i18n.I18n
+	l     i18n.Ii18n
 	db    *sql.DB
 	b     discordtypes.BotState
 	perms perms.Permissions

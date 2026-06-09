@@ -8,17 +8,20 @@ import { useAuthStore } from '~/stores/auth';
 import { useCalendarStore } from '~/stores/calendar';
 import { type CalendarEntryRSVP, RsvpResponses } from '~~/gen/ts/resources/calendar/entries/entries';
 import type { ListCalendarEntryRSVPResponse, RSVPCalendarEntryResponse } from '~~/gen/ts/services/calendar/entries';
+import EntryRsvpScopeModal from './EntryRsvpScopeModal.vue';
 import EntryShareForm from './EntryShareForm.vue';
 
 const props = withDefaults(
     defineProps<{
         entryId: number;
+        occurrenceKey?: string;
         rsvpOpen?: boolean;
         disabled?: boolean;
         showRemove?: boolean;
         canShare?: boolean;
     }>(),
     {
+        occurrenceKey: undefined,
         showRemove: true,
         canShare: false,
     },
@@ -33,7 +36,11 @@ const calendarStore = useCalendarStore();
 
 const ownEntry = defineModel<CalendarEntryRSVP | undefined>();
 
-const page = useRouteQuery('page', '1', { transform: Number });
+const page = ref<number>(1);
+type RsvpScope = 'series' | 'occurrence';
+
+const pendingRsvpAction = ref<{ response: RsvpResponses; remove: boolean } | null>(null);
+const showRsvpScopeModal = ref<boolean>(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(`calendar-entry:${props.entryId}-${page.value}`, () =>
     listCalendarEntryRSVP(),
@@ -58,8 +65,9 @@ async function listCalendarEntryRSVP(): Promise<ListCalendarEntryRSVPResponse> {
 async function rsvpCalendarEntry(
     rsvpResponse: RsvpResponses,
     remove?: boolean,
+    scope: RsvpScope = 'series',
 ): Promise<undefined | RSVPCalendarEntryResponse> {
-    if (ownEntry.value?.response === rsvpResponse) return;
+    if (!props.occurrenceKey && ownEntry.value?.response === rsvpResponse) return;
 
     try {
         const response = await calendarStore.rsvpCalendarEntry({
@@ -67,12 +75,14 @@ async function rsvpCalendarEntry(
                 entryId: props.entryId,
                 response: rsvpResponse,
                 userId: activeChar.value!.userId!,
+                occurrenceKey: scope === 'occurrence' ? props.occurrenceKey : undefined,
             },
             subscribe: true,
             remove: remove,
+            occurrenceKey: scope === 'occurrence' ? props.occurrenceKey : undefined,
         });
 
-        if (response.entry) {
+        if (response.entry && !response.entry.occurrenceKey) {
             const idx = data.value!.entries.findIndex(
                 (e) => e.entryId === response.entry?.entryId && e.userId === response.entry?.userId,
             );
@@ -91,6 +101,37 @@ async function rsvpCalendarEntry(
     }
 }
 
+const submitRsvp = useThrottleFn(async (rsvpResponse: RsvpResponses, remove?: boolean, scope: RsvpScope = 'series') => {
+    canSubmit.value = false;
+    await rsvpCalendarEntry(rsvpResponse, remove, scope).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
+
+function requestRsvp(rsvpResponse: RsvpResponses, remove = false): void {
+    if (props.occurrenceKey) {
+        pendingRsvpAction.value = { response: rsvpResponse, remove };
+        showRsvpScopeModal.value = true;
+        return;
+    }
+
+    void submitRsvp(rsvpResponse, remove, 'series');
+}
+
+async function chooseRsvpScope(scope: RsvpScope): Promise<void> {
+    if (!pendingRsvpAction.value) return;
+
+    const action = pendingRsvpAction.value;
+    pendingRsvpAction.value = null;
+    showRsvpScopeModal.value = false;
+
+    await submitRsvp(action.response, action.remove, scope);
+}
+
+watch(showRsvpScopeModal, (open) => {
+    if (!open) {
+        pendingRsvpAction.value = null;
+    }
+});
+
 const groupedEntries = computed(() => ({
     yes: data.value?.entries.filter((e) => e.response === RsvpResponses.YES),
     maybe: data.value?.entries.filter((e) => e.response === RsvpResponses.MAYBE),
@@ -101,17 +142,13 @@ const groupedEntries = computed(() => ({
 const openShare = ref<boolean>(false);
 
 const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
-    canSubmit.value = false;
-    await rsvpCalendarEntry(rsvpResponse).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
 
 const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <div>
-        <div class="flex gap-2">
+    <div class="flex w-full flex-col gap-2">
+        <div class="flex flex-1 flex-row gap-2">
             <UFieldGroup v-if="rsvpOpen" class="inline-flex w-full">
                 <UButton
                     class="flex-1"
@@ -121,7 +158,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     color="success"
                     :variant="ownEntry?.response === RsvpResponses.YES ? 'soft' : 'solid'"
                     :label="$t('common.yes')"
-                    @click="onSubmitThrottle(RsvpResponses.YES)"
+                    @click="requestRsvp(RsvpResponses.YES)"
                 />
 
                 <UButton
@@ -132,7 +169,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     color="warning"
                     :variant="ownEntry?.response === RsvpResponses.MAYBE ? 'soft' : 'solid'"
                     :label="$t('common.maybe')"
-                    @click="onSubmitThrottle(RsvpResponses.MAYBE)"
+                    @click="requestRsvp(RsvpResponses.MAYBE)"
                 />
 
                 <UButton
@@ -143,7 +180,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     color="error"
                     :variant="ownEntry?.response === RsvpResponses.NO ? 'soft' : 'solid'"
                     :label="$t('common.no')"
-                    @click="onSubmitThrottle(RsvpResponses.NO)"
+                    @click="requestRsvp(RsvpResponses.NO)"
                 />
             </UFieldGroup>
 
@@ -153,19 +190,38 @@ const confirmModal = overlay.create(ConfirmModal);
                     icon="i-mdi-calendar-remove"
                     color="neutral"
                     @click="
-                        confirmModal.open({
-                            confirm: async () => rsvpCalendarEntry(RsvpResponses.NO, true),
-                        })
+                        props.occurrenceKey
+                            ? requestRsvp(RsvpResponses.NO, true)
+                            : confirmModal.open({
+                                  confirm: async () => submitRsvp(RsvpResponses.NO, true, 'series'),
+                              })
                     "
                 />
 
-                <UButton v-if="canShare" :icon="!openShare ? 'i-mdi-invite' : 'i-mdi-close'" @click="openShare = !openShare" />
+                <UTooltip v-if="canShare" :text="$t('common.invite')">
+                    <UButton :icon="!openShare ? 'i-mdi-invite' : 'i-mdi-close'" />
+                </UTooltip>
             </UFieldGroup>
         </div>
 
-        <EntryShareForm v-if="canShare && openShare" :entry-id="entryId" @close="openShare = false" @refresh="refresh()" />
+        <EntryShareForm
+            v-if="canShare && openShare"
+            :entry-id="entryId"
+            @refresh="refresh()"
+            @close="() => (openShare = !openShare)"
+        />
 
-        <UCollapsible class="my-2" :ui="{ content: 'p-1' }">
+        <p v-if="ownEntry?.occurrenceKey" class="mt-1 text-xs text-toned">
+            {{ $t('components.calendar.rsvp_scope.occurrence_active') }}
+        </p>
+
+        <EntryRsvpScopeModal
+            v-model:open="showRsvpScopeModal"
+            :remove="pendingRsvpAction?.remove ?? false"
+            @confirm="chooseRsvpScope"
+        />
+
+        <UCollapsible :ui="{ content: 'p-1' }">
             <UButton
                 class="group"
                 color="neutral"

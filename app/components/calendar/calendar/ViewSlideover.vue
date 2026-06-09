@@ -43,7 +43,13 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
                 <UTooltip
                     v-if="
                         can('calendar.CalendarService/CreateCalendar').value &&
-                        checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT, calendar?.creatorJob)
+                        checkCalendarAccess(
+                            calendar?.access,
+                            calendar?.creator,
+                            AccessLevel.EDIT,
+                            calendar?.job,
+                            calendar?.creatorJob,
+                        )
                     "
                     :text="$t('common.edit')"
                 >
@@ -62,7 +68,13 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
                 <UTooltip
                     v-if="
                         !isSystemManaged &&
-                        checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE, calendar?.creatorJob)
+                        checkCalendarAccess(
+                            calendar?.access,
+                            calendar?.creator,
+                            AccessLevel.MANAGE,
+                            calendar?.job,
+                            calendar?.creatorJob,
+                        )
                     "
                     :text="$t('common.delete')"
                 >
@@ -109,18 +121,18 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
                                 : $t('components.calendar.calendar.CreateOrUpdateModal.private')
                         "
                     />
+
+                    <p>
+                        <span class="font-semibold">{{ $t('common.description') }}:</span>
+                        {{
+                            calendar.description === undefined || calendar.description === ''
+                                ? $t('common.na')
+                                : calendar.description
+                        }}
+                    </p>
                 </div>
 
-                <p>
-                    <span class="font-semibold">{{ $t('common.description') }}:</span>
-                    {{
-                        calendar.description === undefined || calendar.description === ''
-                            ? $t('common.na')
-                            : calendar.description
-                    }}
-                </p>
-
-                <p v-if="isSystemManaged" class="text-sm text-neutral-500 dark:text-neutral-400">
+                <p v-else class="text-sm text-neutral-500 dark:text-neutral-400">
                     {{ $t('common.read_only') }}
                 </p>
             </template>

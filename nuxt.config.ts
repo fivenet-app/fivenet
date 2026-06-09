@@ -277,6 +277,7 @@ export default defineNuxtConfig({
                 'splitpanes',
                 'uuid',
                 'v-calendar',
+                'v-code-diff',
                 'vue-countup-v3',
                 'vue-draggable-plus',
                 'vue-json-pretty',

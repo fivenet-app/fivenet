@@ -52,7 +52,12 @@ describe('checkAccess', () => {
         };
     }
 
-    it('should return false if access is undefined', () => {
+    it('should return true if activeChar is the creator even when access is undefined', () => {
+        const result = checkAccess(activeChar, undefined, activeChar, 1, 'police');
+        expect(result).toBe(true);
+    });
+
+    it('should return false if access is undefined and activeChar is not the creator', () => {
         const result = checkAccess(activeChar, undefined, creator, 1);
         expect(result).toBe(false);
     });

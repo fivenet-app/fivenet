@@ -20,7 +20,7 @@ var helpTopics = []string{
 }
 
 type HelpCommand struct {
-	l *i18n.I18n
+	l i18n.Ii18n
 
 	url string
 }

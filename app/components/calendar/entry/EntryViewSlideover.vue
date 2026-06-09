@@ -17,7 +17,8 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useCalendarStore } from '~/stores/calendar';
 import { getCalendarEntryDisplayEndDate, getCalendarEntryDisplayStartDate } from '~/utils/calendar';
-import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
+import { toDate } from '~/utils/time';
+import { CalendarEntryRecurringEvery, type CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import EntryRSVPList from './EntryRSVPList.vue';
@@ -35,6 +36,7 @@ defineEmits<{
 const overlay = useOverlay();
 
 const { can } = useAuth();
+const { t, d } = useI18n();
 
 const calendarStore = useCalendarStore();
 const { calendars } = storeToRefs(calendarStore);
@@ -46,6 +48,7 @@ const w = window;
 const fetched = props.entry
     ? undefined
     : useLazyAsyncData(`calendar-entry:${props.entryId}`, () => calendarStore.getCalendarEntry({ entryId: props.entryId! }));
+
 const calendarDetails = props.entry
     ? useLazyAsyncData(`calendar-entry-calendar:${props.entry.calendarId}`, () =>
           calendarStore.getCalendar({ calendarId: props.entry!.calendarId }),
@@ -73,15 +76,41 @@ const displayEndTime = computed(() => (entry.value ? getCalendarEntryDisplayEndD
 
 const color = computed(() => (calendar.value?.color ?? 'primary') as BadgeProps['color']);
 
+const recurringLabel = computed(() => {
+    const recurring = entry.value?.recurring;
+    if (!recurring || recurring.every === CalendarEntryRecurringEvery.UNSPECIFIED) return '';
+
+    const everyUnit = (() => {
+        switch (recurring.every) {
+            case CalendarEntryRecurringEvery.DAY:
+                return t('common.time_ago.day', recurring.count);
+            case CalendarEntryRecurringEvery.WEEK:
+                return t('common.time_ago.week', recurring.count);
+            case CalendarEntryRecurringEvery.MONTH:
+                return t('common.time_ago.month', recurring.count);
+            case CalendarEntryRecurringEvery.YEAR:
+                return t('common.time_ago.year', recurring.count);
+            default:
+                return '';
+        }
+    })();
+
+    const until = recurring.until
+        ? ` · ${t('components.calendar.EntryCreateOrUpdateModal.recurring.until')} ${d(toDate(recurring.until), 'date')}`
+        : '';
+
+    return `${t('components.calendar.EntryCreateOrUpdateModal.recurring.every')} ${recurring.count} ${everyUnit}${until}`;
+});
+
 function copyLinkToClipboard(): void {
     const url = new URL(w.location.href);
 
     if (entry.value?.occurrence?.key) {
-        url.searchParams.set('entry_key', entry.value.occurrence.key);
-        url.searchParams.delete('entry_id');
+        url.searchParams.set('entryKey', entry.value.occurrence.key);
+        url.searchParams.delete('entryId');
     } else {
-        url.searchParams.set('entry_id', String(props.entryId ?? entry.value?.id ?? 0));
-        url.searchParams.delete('entry_key');
+        url.searchParams.set('entryId', String(props.entryId ?? entry.value?.id ?? 0));
+        url.searchParams.delete('entryKey');
     }
 
     copyToClipboardWrapper(url.toString());
@@ -97,13 +126,31 @@ function copyLinkToClipboard(): void {
 const canDo = computed(() => ({
     share:
         !isSystemManaged.value &&
-        checkCalendarAccess(calendar.value?.access, entry.value?.creator, AccessLevel.SHARE, calendar.value?.creatorJob),
+        checkCalendarAccess(
+            calendar.value?.access,
+            entry.value?.creator,
+            AccessLevel.SHARE,
+            calendar.value?.job,
+            calendar.value?.creatorJob,
+        ),
     edit:
         !isSystemManaged.value &&
-        checkCalendarAccess(calendar.value?.access, entry.value?.creator, AccessLevel.EDIT, calendar.value?.creatorJob),
+        checkCalendarAccess(
+            calendar.value?.access,
+            entry.value?.creator,
+            AccessLevel.EDIT,
+            calendar.value?.job,
+            calendar.value?.creatorJob,
+        ),
     manage:
         !isSystemManaged.value &&
-        checkCalendarAccess(calendar.value?.access, entry.value?.creator, AccessLevel.MANAGE, calendar.value?.creatorJob),
+        checkCalendarAccess(
+            calendar.value?.access,
+            entry.value?.creator,
+            AccessLevel.MANAGE,
+            calendar.value?.job,
+            calendar.value?.creatorJob,
+        ),
 }));
 
 const confirmModal = overlay.create(ConfirmModal);
@@ -147,7 +194,7 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
         </template>
 
         <template #body>
-            <div class="flex h-full flex-1 flex-col">
+            <div class="flex h-full w-full flex-1 flex-col gap-2">
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.entry', 1)])" />
                 <DataErrorBlock
                     v-else-if="error"
@@ -181,6 +228,10 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                         <OpenClosedBadge v-if="!isSystemManaged" :closed="entry.closed" />
+
+                        <UBadge v-if="recurringLabel" class="inline-flex gap-1" color="neutral" icon="i-mdi-repeat">
+                            {{ recurringLabel }}
+                        </UBadge>
 
                         <UBadge
                             v-if="!isSystemManaged && entry.creator"
@@ -219,6 +270,7 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                         <EntryRSVPList
                             v-model="entry.rsvp"
                             :entry-id="entry.id"
+                            :occurrence-key="entry.occurrence?.key"
                             :rsvp-open="entry.rsvpOpen"
                             :disabled="entry.closed"
                             :show-remove="!calendars.find((c) => c.id === entry?.calendarId)"
@@ -250,8 +302,9 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                             ]"
                             :ui="{ icon: 'size-6' }"
                         />
-                        <div v-else class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-900">
+                        <div v-else class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
                             <CustomContentRenderer v-if="entry.content" :value="entry.content" />
+                            <p v-else>{{ $t('common.na') }}</p>
                         </div>
                     </div>
                 </template>

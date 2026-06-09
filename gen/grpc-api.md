@@ -83,10 +83,10 @@ description: Documentation for GRPC Protobuf files.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `enabled` | [bool](#bool) |  |  |
+| `enabled` | [bool](#bool) |  | Default false |
 | `method` | [string](#string) | optional |  |
-| `strip_html_tags` | [bool](#bool) | optional |  |
-| `tiptap_json` | [bool](#bool) | optional |  |
+| `strip_html_tags` | [bool](#bool) | optional | Default false |
+| `tiptap_json` | [bool](#bool) | optional | Default false |
 | `max_bytes` | [uint32](#uint32) | optional |  |
 
 
@@ -991,6 +991,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) | optional |  |
+| `system_kind` | [CalendarSystemKind](#resourcescalendarCalendarSystemKind) | optional |  |
 | `name` | [string](#string) |  |  |
 | `description` | [string](#string) | optional |  |
 | `public` | [bool](#bool) |  |  |
@@ -1001,7 +1002,46 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `creator_job` | [string](#string) |  |  |
 | `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
 | `access` | [access.CalendarAccess](#resourcescalendaraccessCalendarAccess) |  |  |
-| `system_kind` | [CalendarSystemKind](#resourcescalendarCalendarSystemKind) | optional |  |
+| `discord_settings` | [CalendarDiscordSettings](#resourcescalendarCalendarDiscordSettings) | optional |  |
+
+
+
+
+
+### resources.calendar.CalendarDiscordReminderEmbed
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) | optional |  |
+| `description` | [string](#string) | optional |  |
+| `color` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.calendar.CalendarDiscordReminderStep
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `at_minute` | [int32](#int32) |  |  |
+| `message` | [string](#string) | optional |  |
+| `embed` | [CalendarDiscordReminderEmbed](#resourcescalendarCalendarDiscordReminderEmbed) | optional |  |
+
+
+
+
+
+### resources.calendar.CalendarDiscordSettings
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `channel_id` | [string](#string) |  |  |
+| `reminder_steps` | [CalendarDiscordReminderStep](#resourcescalendarCalendarDiscordReminderStep) | repeated |  |
 
 
 
@@ -1208,6 +1248,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `response` | [RsvpResponses](#resourcescalendarentriesRsvpResponses) |  |  |
+| `occurrence_key` | [string](#string) | optional |  |
 
 
 
@@ -8148,6 +8189,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `entry` | [resources.calendar.entries.CalendarEntryRSVP](#resourcescalendarentriesCalendarEntryRSVP) |  |  |
 | `subscribe` | [bool](#bool) |  |  |
 | `remove` | [bool](#bool) | optional |  |
+| `occurrence_key` | [string](#string) | optional |  |
 
 
 

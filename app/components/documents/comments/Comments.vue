@@ -8,9 +8,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { HistoryContent } from '~/types/history';
+import { tiptapToContent } from '~/utils/content';
 import { getDocumentsCommentsClient } from '~~/gen/ts/clients';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Comment } from '~~/gen/ts/resources/documents/comment/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetCommentsResponse } from '~~/gen/ts/services/documents/comments';
@@ -147,11 +146,7 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
     const comment: Comment = {
         id: 0,
         documentId,
-        content: {
-            contentType: ContentType.TIPTAP_JSON,
-            version: '',
-            tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
-        },
+        content: tiptapToContent(values.content),
         creatorJob: '',
     };
 

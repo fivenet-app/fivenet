@@ -25,15 +25,24 @@ import (
 )
 
 const (
+	birthdayCalendarColor = "neutral"
+
 	birthdaySyncCronName      = "calendar.birthday_sync"
 	birthdaySyncBatchSize     = 5
 	birthdaySyncOffsetAttrKey = "job_offset"
 )
 
+type birthdayColleague struct {
+	UserID      int32  `alias:"user_id"`
+	Firstname   string `alias:"firstname"`
+	Lastname    string `alias:"lastname"`
+	Dateofbirth string `alias:"dateofbirth"`
+}
+
 type BirthdaySyncer struct {
 	logger   *zap.Logger
 	db       *sql.DB
-	i18n     *i18n.I18n
+	i18n     i18n.Ii18n
 	appCfg   appconfig.IConfig
 	enricher *mstlystcdata.UserAwareEnricher
 }
@@ -43,7 +52,7 @@ type BirthdaySyncerParams struct {
 
 	Logger    *zap.Logger
 	DB        *sql.DB
-	I18n      *i18n.I18n
+	I18n      i18n.Ii18n
 	AppConfig appconfig.IConfig
 	Enricher  *mstlystcdata.UserAwareEnricher
 }
@@ -359,6 +368,7 @@ func (s *BirthdaySyncer) insertBirthdayEntry(
 ) error {
 	birthDate, err := time.Parse("02.01.2006", colleague.Dateofbirth)
 	if err != nil {
+		//nolint:nilerr // Ignore error of invalid dateofbirth values
 		return nil
 	}
 

@@ -24,12 +24,15 @@ const (
 )
 
 type FieldOptions struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	Method        *string                `protobuf:"bytes,2,opt,name=method,proto3,oneof" json:"method,omitempty"`
-	StripHtmlTags *bool                  `protobuf:"varint,3,opt,name=strip_html_tags,json=stripHtmlTags,proto3,oneof" json:"strip_html_tags,omitempty"`
-	TiptapJson    *bool                  `protobuf:"varint,4,opt,name=tiptap_json,json=tiptapJson,proto3,oneof" json:"tiptap_json,omitempty"`
-	MaxBytes      *uint32                `protobuf:"varint,5,opt,name=max_bytes,json=maxBytes,proto3,oneof" json:"max_bytes,omitempty"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// Default false
+	Enabled bool    `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Method  *string `protobuf:"bytes,2,opt,name=method,proto3,oneof" json:"method,omitempty"`
+	// Default false
+	StripHtmlTags *bool `protobuf:"varint,3,opt,name=strip_html_tags,json=stripHtmlTags,proto3,oneof" json:"strip_html_tags,omitempty"`
+	// Default false
+	TiptapJson    *bool   `protobuf:"varint,4,opt,name=tiptap_json,json=tiptapJson,proto3,oneof" json:"tiptap_json,omitempty"`
+	MaxBytes      *uint32 `protobuf:"varint,5,opt,name=max_bytes,json=maxBytes,proto3,oneof" json:"max_bytes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -161,11 +164,14 @@ func (x *FieldOptions) ClearMaxBytes() {
 type FieldOptions_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Enabled       bool
-	Method        *string
+	// Default false
+	Enabled bool
+	Method  *string
+	// Default false
 	StripHtmlTags *bool
-	TiptapJson    *bool
-	MaxBytes      *uint32
+	// Default false
+	TiptapJson *bool
+	MaxBytes   *uint32
 }
 
 func (b0 FieldOptions_builder) Build() *FieldOptions {

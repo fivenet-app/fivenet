@@ -75,10 +75,10 @@ func New(p Params) *Checker {
 		currentTag: version.Version, // Initialize with the current version to avoid logging on first run
 	}
 
-	cancelCtx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		c.wg.Go(func() {
-			c.Start(cancelCtx)
+			c.Start(ctxCancel)
 		})
 		return nil
 	}))

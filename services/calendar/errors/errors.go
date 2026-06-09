@@ -31,4 +31,20 @@ var (
 		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrEntryClosed.content"},
 		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrEntryClosed.title"},
 	)
+
+	ErrNoDiscordGuildID = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrNoDiscordGuildID"},
+		nil,
+	)
+	ErrInvalidDiscordChannel = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrInvalidDiscordChannel"},
+		nil,
+	)
+	ErrInvalidReminderStep = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrInvalidReminderStep"},
+		nil,
+	)
 )

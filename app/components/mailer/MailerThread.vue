@@ -8,8 +8,7 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import { ContentType } from '~~/gen/ts/resources/common/content/content';
+import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/messages/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -83,9 +82,7 @@ function resetForm(): void {
 
             editorRef.value?.editor?.commands.insertContentAt(
                 end,
-                selectedEmail.value.settings.signature.tiptapJson
-                    ? (Struct.toJson(selectedEmail.value.settings.signature.tiptapJson) as JSONContent)
-                    : selectedEmail.value.settings.signature.rawHtml || '',
+                contentToTiptapValue(selectedEmail.value.settings.signature),
             );
         }
     }
@@ -150,11 +147,7 @@ async function postMessage(values: Schema): Promise<void> {
             senderId: selectedEmail.value.id,
             threadId: props.threadId,
             title: values.title,
-            content: {
-                contentType: ContentType.TIPTAP_JSON,
-                version: '',
-                tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
-            },
+            content: tiptapToContent(values.content),
             data: {
                 attachments: values.attachments.filter((a) => {
                     if (a.data.oneofKind === 'document') {

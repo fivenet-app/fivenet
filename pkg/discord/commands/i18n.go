@@ -12,11 +12,11 @@ var commandLocaleLangs = map[discord.Language]string{
 }
 
 type commandLocalizer struct {
-	i18n *i18n.I18n
+	i18n i18n.Ii18n
 	base string
 }
 
-func newCommandLocalizer(i18n *i18n.I18n, base string) *commandLocalizer {
+func newCommandLocalizer(i18n i18n.Ii18n, base string) *commandLocalizer {
 	return &commandLocalizer{
 		i18n: i18n,
 		base: base,

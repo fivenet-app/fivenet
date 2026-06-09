@@ -796,7 +796,8 @@
         "coordinate": "Coordinate | Coordinates",
         "insert": "Insert",
         "map": "Map",
-        "read_only": "Read only"
+        "read_only": "Read only",
+        "invite": "Invite"
     },
     "components": {
         "partials": {
@@ -1534,6 +1535,14 @@
                 "title": "Happy birthday!",
                 "description": "This birthday event is managed automatically and is read-only."
             },
+            "rsvp_scope": {
+                "title": "Choose RSVP scope",
+                "description": "Apply this RSVP to the whole series or only to this occurrence.",
+                "remove_description": "Remove the RSVP from the whole series or only from this occurrence.",
+                "occurrence_only": "This occurrence only",
+                "series": "Entire series",
+                "occurrence_active": "This RSVP applies only to this occurrence."
+            },
             "calendar": {
                 "CreateOrUpdateModal": {
                     "create": {
@@ -1543,7 +1552,27 @@
                         "title": "Update Calendar"
                     },
                     "private": "Private Calendar",
-                    "public": "Public Calendar"
+                    "public": "Public Calendar",
+                    "discord_settings": {
+                        "title": "Discord Reminders",
+                        "description": "Send reminder messages to a Discord text channel before calendar events start.",
+                        "reminder_steps": {
+                            "label": "Reminder Intervals",
+                            "description": "Each step sends at the selected number of minutes before the event starts.",
+                            "at_minute": {
+                                "label": "Minutes before event",
+                                "description": "Selecting 0 minutes will send a notification at the event's start time."
+                            },
+                            "message": "Message",
+                            "message_description": "You can mention roles using the <\\@&ROLE_ID> format.",
+                            "message_placeholder": "Optional Discord message",
+                            "embed_title": "Embed title",
+                            "embed_title_placeholder": "Optional embed title",
+                            "embed_description": "Embed description",
+                            "embed_description_placeholder": "Optional embed description",
+                            "embed_color": "Embed color"
+                        }
+                    }
                 },
                 "FindCalendarDrawer": {
                     "title": "Find Calendars"
@@ -1555,6 +1584,18 @@
                 },
                 "update": {
                     "title": "Update Calendar Entry"
+                },
+                "recurring": {
+                    "title": "Recurring",
+                    "subtitle": "Repeat this entry on a schedule.",
+                    "enabled": "Repeat this entry",
+                    "every": "Repeat every",
+                    "count": "Interval",
+                    "until": "Ends on",
+                    "every_day": "Daily",
+                    "every_week": "Weekly",
+                    "every_month": "Monthly",
+                    "every_year": "Yearly"
                 }
             },
             "EntryShareModal": {
@@ -2537,7 +2578,10 @@
                 "ErrEntryClosed": {
                     "title": "Calendar Entry is closed",
                     "content": "The calendar entry is closed and can't be RSVPed to anymore."
-                }
+                },
+                "ErrNoDiscordGuildID": "Your job does not have set up the Discord bot. The Discord bot is required for the feature to work.",
+                "ErrInvalidDiscordChannel": "Invalid Discord channel! Either channel doesn't exist, is not a text channel or not part of the job's Discord server.",
+                "ErrInvalidReminderStep": "Invalid reminder intervals! Make sure you don't have duplicate intervals specified."
             }
         },
         "wiki": {
@@ -3215,6 +3259,12 @@
                 "desc": "If you need help with FiveNet, use the Help button below or run `/help` on a server where the FiveNet Bot is installed.",
                 "help_button": "Help Command (/help)"
             }
+        },
+        "calendar": {
+            "calendar_name": "**Calendar:** {name}",
+            "start_time": "**Starts at:** <t:{ts}:F>",
+            "end_time": "**Ends at:** <t:{ts}:F>",
+            "link": "__[Open in Fivenet]({link})__"
         }
     },
     "perms": {

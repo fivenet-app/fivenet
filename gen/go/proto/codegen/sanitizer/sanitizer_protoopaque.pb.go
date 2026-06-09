@@ -174,11 +174,14 @@ func (x *FieldOptions) ClearMaxBytes() {
 type FieldOptions_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Enabled       bool
-	Method        *string
+	// Default false
+	Enabled bool
+	Method  *string
+	// Default false
 	StripHtmlTags *bool
-	TiptapJson    *bool
-	MaxBytes      *uint32
+	// Default false
+	TiptapJson *bool
+	MaxBytes   *uint32
 }
 
 func (b0 FieldOptions_builder) Build() *FieldOptions {

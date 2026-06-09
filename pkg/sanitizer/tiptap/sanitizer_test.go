@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 func TestBuildAllowedContainsAllNodePolicies(t *testing.T) {
@@ -393,6 +394,54 @@ func TestSanitizeMapBlockAndPenaltyCalculatorNodes(t *testing.T) {
 		penalty["type"],
 		NodeTypePenaltyCalculator,
 	)
+}
+
+func TestSanitizeStructNormalizesMapBlockLayer(t *testing.T) {
+	t.Parallel()
+	New()
+
+	doc, err := structpb.NewStruct(map[string]any{
+		"type": NodeTypeDoc,
+		"content": []any{
+			map[string]any{
+				"type": NodeTypeParagraph,
+				"content": []any{
+					map[string]any{
+						"type": NodeTypeMapBlock,
+						"attrs": map[string]any{
+							"x":      float64(12.34),
+							"y":      float64(56.78),
+							"zoom":   float64(3),
+							"postal": "12345",
+							"layer":  "invalid-layer",
+						},
+					},
+				},
+			},
+		},
+	})
+	require.NoError(t, err, "struct construction failed")
+
+	require.NoError(t, SanitizeStruct(doc, 0, 10), "sanitize struct returned error")
+
+	out := doc.AsMap()
+	content, _ := out["content"].([]any)
+	require.Len(t, content, 1, "root content length = %d, want 1", len(content))
+
+	paragraph, _ := content[0].(map[string]any)
+	paragraphContent, _ := paragraph["content"].([]any)
+	require.Len(
+		t,
+		paragraphContent,
+		1,
+		"paragraph content length = %d, want 1",
+		len(paragraphContent),
+	)
+
+	mapBlock, _ := paragraphContent[0].(map[string]any)
+	attrs, _ := mapBlock["attrs"].(map[string]any)
+	require.NotNil(t, attrs, "map block attrs should be present")
+	assert.Equal(t, "postal", attrs["layer"], "map block layer = %v, want postal", attrs["layer"])
 }
 
 func TestSanitizeNestedContentAndHeadingExtraction(t *testing.T) {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	calendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -36,16 +37,6 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 ) ([]*calendarAccessEntry, error) {
 	var dest []*calendarAccessEntry
 	if len(calendarIds) == 0 {
-		return dest, nil
-	}
-
-	// Allow superusers access to any ids
-	if userInfo.GetSuperuser() {
-		for i := range calendarIds {
-			dest = append(dest, &calendarAccessEntry{
-				ID: calendarIds[i],
-			})
-		}
 		return dest, nil
 	}
 
@@ -82,8 +73,19 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 					),
 				)),
 		)
-	} else {
-		accessExists = mysql.Bool(true)
+	}
+
+	visibleCondition := mysql.OR(accessExists, condition)
+	if userInfo.GetSuperuser() {
+		visibleCondition = mysql.OR(
+			tCalendar.SystemKind.IS_NULL(),
+			tCalendar.SystemKind.NOT_EQ(
+				mysql.Int32(
+					int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+				),
+			),
+			s.birthdayCalendarVisible(tCalendar.ID, access, userInfo),
+		)
 	}
 
 	stmt := tCalendar.
@@ -98,10 +100,7 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 		WHERE(mysql.AND(
 			tCalendar.ID.IN(ids...),
 			tCalendar.DeletedAt.IS_NULL(),
-			mysql.OR(
-				accessExists,
-				condition,
-			),
+			visibleCondition,
 		)).
 		ORDER_BY(tCalendar.ID.DESC())
 

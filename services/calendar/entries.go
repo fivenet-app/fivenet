@@ -58,8 +58,23 @@ func (s *Server) ListCalendarEntries(
 						tCalendarRSVP.Response.GT(mysql.Int32(int32(rsvpResponse))),
 					)),
 			),
+			tCalendarEntry.ID.IN(
+				tCalendarRSVPOccurrence.
+					SELECT(
+						tCalendarRSVPOccurrence.EntryID,
+					).
+					FROM(tCalendarRSVPOccurrence).
+					WHERE(mysql.AND(
+						tCalendarRSVPOccurrence.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						tCalendarRSVPOccurrence.Response.GT(mysql.Int32(int32(rsvpResponse))),
+					)),
+			),
 			tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
-			s.birthdayCalendarVisible(userInfo),
+			s.birthdayCalendarVisible(
+				tCalendarEntry.CalendarID,
+				calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+				userInfo,
+			),
 		),
 	)
 
@@ -130,7 +145,11 @@ func (s *Server) ListCalendarEntries(
 		ctx,
 		userInfo,
 		birthdayCondition,
-		s.birthdayCalendarVisible(userInfo),
+		s.birthdayCalendarVisible(
+			tCalendarEntry.CalendarID,
+			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+			userInfo,
+		),
 		startDate,
 		endDate,
 		nil,
@@ -172,6 +191,19 @@ func (s *Server) GetUpcomingEntries(
 						tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						// RSVP responses: Maybe and Yes
 						tCalendarRSVP.Response.GT(
+							mysql.Int32(int32(calendarentries.RsvpResponses_RSVP_RESPONSES_NO)),
+						),
+					)),
+			),
+			tCalendarEntry.ID.IN(
+				tCalendarRSVPOccurrence.
+					SELECT(
+						tCalendarRSVPOccurrence.EntryID,
+					).
+					FROM(tCalendarRSVPOccurrence).
+					WHERE(mysql.AND(
+						tCalendarRSVPOccurrence.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						tCalendarRSVPOccurrence.Response.GT(
 							mysql.Int32(int32(calendarentries.RsvpResponses_RSVP_RESPONSES_NO)),
 						),
 					)),
@@ -218,7 +250,11 @@ func (s *Server) GetUpcomingEntries(
 		ctx,
 		userInfo,
 		birthdayCondition,
-		s.birthdayCalendarVisible(userInfo),
+		s.birthdayCalendarVisible(
+			tCalendarEntry.CalendarID,
+			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+			userInfo,
+		),
 		rangeStart,
 		rangeEnd,
 		nil,
@@ -227,8 +263,11 @@ func (s *Server) GetUpcomingEntries(
 		return nil, err
 	}
 
-	resp.Entries = s.finalizeCalendarEntries(
-		append(regularEntries, birthdayEntries...),
+	resp.Entries = filterUpcomingCalendarEntries(
+		s.finalizeCalendarEntries(
+			append(regularEntries, birthdayEntries...),
+			userInfo,
+		),
 		userInfo,
 	)
 	return resp, nil

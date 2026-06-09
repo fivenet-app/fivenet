@@ -156,6 +156,11 @@ func (m *CalendarEntryRSVP) Sanitize() error {
 		}
 	}
 
+	// Field: OccurrenceKey
+	if m.OccurrenceKey != nil {
+		*m.OccurrenceKey = htmlsanitizer.Sanitize(*m.OccurrenceKey)
+	}
+
 	// Field: User
 	if m.User != nil {
 		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {

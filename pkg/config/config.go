@@ -391,10 +391,11 @@ type Discord struct {
 	Sync    bool   `default:"true"  yaml:"sync"`
 	Token   string `                yaml:"token"`
 
-	UserInfoSync   DiscordUserInfoSync       `yaml:"userInfoSync"`
-	GroupSync      DiscordGroupSync          `yaml:"groupSync"`
-	Qualifications DiscordQualificationsSync `yaml:"qualifications"`
-	Commands       DiscordCommands           `yaml:"commands"`
+	UserInfoSync      DiscordUserInfoSync       `yaml:"userInfoSync"`
+	GroupSync         DiscordGroupSync          `yaml:"groupSync"`
+	Qualifications    DiscordQualificationsSync `yaml:"qualifications"`
+	Commands          DiscordCommands           `yaml:"commands"`
+	CalendarReminders bool                      `yaml:"calendarReminders" default:"true"`
 }
 
 func (c *Discord) IsAnyEnabled() bool {

@@ -187,6 +187,10 @@ export interface RSVPCalendarEntryRequest {
      * @generated from protobuf field: optional bool remove = 3
      */
     remove?: boolean;
+    /**
+     * @generated from protobuf field: optional string occurrence_key = 4
+     */
+    occurrenceKey?: string;
 }
 /**
  * @generated from protobuf message services.calendar.RSVPCalendarEntryResponse
@@ -924,7 +928,8 @@ class RSVPCalendarEntryRequest$Type extends MessageType<RSVPCalendarEntryRequest
         super("services.calendar.RSVPCalendarEntryRequest", [
             { no: 1, name: "entry", kind: "message", T: () => CalendarEntryRSVP },
             { no: 2, name: "subscribe", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "remove", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "remove", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "occurrence_key", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<RSVPCalendarEntryRequest>): RSVPCalendarEntryRequest {
@@ -948,6 +953,9 @@ class RSVPCalendarEntryRequest$Type extends MessageType<RSVPCalendarEntryRequest
                 case /* optional bool remove */ 3:
                     message.remove = reader.bool();
                     break;
+                case /* optional string occurrence_key */ 4:
+                    message.occurrenceKey = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -969,6 +977,9 @@ class RSVPCalendarEntryRequest$Type extends MessageType<RSVPCalendarEntryRequest
         /* optional bool remove = 3; */
         if (message.remove !== undefined)
             writer.tag(3, WireType.Varint).bool(message.remove);
+        /* optional string occurrence_key = 4; */
+        if (message.occurrenceKey !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.occurrenceKey);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

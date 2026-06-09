@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { Editor, JSONContent } from '@tiptap/core';
+import type { Editor } from '@tiptap/core';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerSettingsClient } from '~~/gen/ts/clients';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { contentToTiptapValue } from '~/utils/content';
 import type { Template } from '~~/gen/ts/resources/mailer/templates/template';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/settings';
 
@@ -40,12 +40,7 @@ const selectedTemplate = ref<Template | undefined>(undefined);
 function selectTemplate(template: Template | undefined): void {
     if (!props.editor || !template) return;
 
-    if (template.content?.tiptapJson) {
-        const content = Struct.toJson(template.content.tiptapJson) as JSONContent;
-        props.editor.commands.insertContent(content);
-    } else if (template.content?.rawHtml) {
-        props.editor.commands.insertContent(template.content.rawHtml);
-    }
+    props.editor.commands.insertContent(contentToTiptapValue(template.content));
 
     selectedTemplate.value = undefined;
 }

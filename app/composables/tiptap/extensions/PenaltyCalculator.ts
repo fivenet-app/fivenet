@@ -49,9 +49,6 @@ export const PenaltyCalculator = Node.create<PenaltyCalculatorOptions>({
             {
                 tag: 'div[data-type="penaltyCalculator"]',
             },
-            {
-                tag: 'span[data-type="penalty-calculator"]',
-            },
         ];
     },
 

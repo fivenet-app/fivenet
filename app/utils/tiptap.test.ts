@@ -110,6 +110,19 @@ describe('tiptapTextPreview', () => {
 
         expect(tiptapTextPreview(doc, 120)).toContain('[Map: 12345');
     });
+
+    it('should include penalty calculators in previews', () => {
+        const doc = {
+            type: 'doc',
+            content: [
+                {
+                    type: 'penaltyCalculator',
+                },
+            ],
+        };
+
+        expect(tiptapTextPreview(doc, 120)).toContain('[Penalty Calculator]');
+    });
 });
 
 describe('isEmptyDoc', () => {
@@ -142,6 +155,19 @@ describe('isEmptyDoc', () => {
                 {
                     type: 'paragraph',
                     content: [{ type: 'text', text: 'Kaufinformationen :' }],
+                },
+            ],
+        };
+
+        expect(isEmptyDoc(doc)).toBe(false);
+    });
+
+    it('should return false for docs that only contain penalty calculators', () => {
+        const doc = {
+            type: 'doc',
+            content: [
+                {
+                    type: 'penaltyCalculator',
                 },
             ],
         };
@@ -261,7 +287,7 @@ describe('isEmptyRichContentDoc', () => {
             content: [
                 {
                     type: NodeType.ELEMENT,
-                    tag: 'figure',
+                    tag: 'span',
                     content: [],
                     attrs: {
                         'data-embed': 'map',
@@ -275,5 +301,70 @@ describe('isEmptyRichContentDoc', () => {
         };
 
         expect(isEmptyRichContentDoc(doc)).toBe(false);
+    });
+
+    it('should return false for div map fallback embeds', () => {
+        const doc: RichTextHtmlNode = {
+            type: NodeType.DOC,
+            tag: 'body',
+            content: [
+                {
+                    type: NodeType.ELEMENT,
+                    tag: 'div',
+                    content: [],
+                    attrs: {
+                        'data-embed': 'map',
+                        'data-map-x': '12.34',
+                        'data-map-y': '56.78',
+                        'data-map-zoom': '3',
+                    },
+                },
+            ],
+            attrs: {},
+        };
+
+        expect(isEmptyRichContentDoc(doc)).toBe(false);
+    });
+
+    it('should return false for penalty calculator embeds', () => {
+        const doc: RichTextHtmlNode = {
+            type: NodeType.DOC,
+            tag: 'body',
+            content: [
+                {
+                    type: NodeType.ELEMENT,
+                    tag: 'div',
+                    content: [],
+                    attrs: {
+                        'data-embed': 'penalty-calculator',
+                        'data-type': 'penalty-calculator',
+                    },
+                },
+            ],
+            attrs: {},
+        };
+
+        expect(isEmptyRichContentDoc(doc)).toBe(false);
+    });
+
+    it('should ignore non-div penalty calculator embeds', () => {
+        const doc: RichTextHtmlNode = {
+            type: NodeType.DOC,
+            tag: 'body',
+            content: [
+                {
+                    type: NodeType.ELEMENT,
+                    tag: 'span',
+                    content: [],
+                    attrs: {
+                        'data-embed': 'penalty-calculator',
+                        'data-type': 'penalty-calculator',
+                    },
+                },
+            ],
+            attrs: {},
+        };
+
+        expect(isEmptyRichContentDoc(doc)).toBe(true);
     });
 });

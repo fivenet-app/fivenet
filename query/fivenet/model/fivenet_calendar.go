@@ -12,17 +12,18 @@ import (
 )
 
 type FivenetCalendar struct {
-	ID          int64      `sql:"primary_key" json:"id"`
-	CreatedAt   *time.Time `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at"`
-	DeletedAt   *time.Time `json:"deleted_at"`
-	Job         *string    `json:"job"`
-	Name        string     `json:"name"`
-	Description *string    `json:"description"`
-	Public      *bool      `json:"public"`
-	Closed      *bool      `json:"closed"`
-	Color       *string    `json:"color"`
-	CreatorID   *int32     `json:"creator_id"`
-	CreatorJob  string     `json:"creator_job"`
-	SystemKind  *int32     `json:"system_kind"`
+	ID              int64      `sql:"primary_key" json:"id"`
+	CreatedAt       *time.Time `json:"created_at"`
+	UpdatedAt       *time.Time `json:"updated_at"`
+	DeletedAt       *time.Time `json:"deleted_at"`
+	Job             *string    `json:"job"`
+	DiscordSettings *string    `json:"discord_settings"`
+	Name            string     `json:"name"`
+	Description     *string    `json:"description"`
+	Public          *bool      `json:"public"`
+	Closed          *bool      `json:"closed"`
+	Color           *string    `json:"color"`
+	CreatorID       *int32     `json:"creator_id"`
+	CreatorJob      string     `json:"creator_job"`
+	SystemKind      *int32     `json:"system_kind"`
 }

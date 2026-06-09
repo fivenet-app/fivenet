@@ -4,6 +4,8 @@ import { Fragment, h, type VNodeChild } from 'vue';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { NodeType, type RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
 
+export const emptyDoc = { type: 'doc', content: [] } as const;
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function isSameDoc(a: JSONContent, b: JSONContent, extensions: Extensions) {
     const schema = getSchema(extensions);
@@ -292,6 +294,11 @@ export function tiptapTextPreview(
             return;
         }
 
+        if (type === 'penaltyCalculator') {
+            push('[Penalty Calculator]');
+            return;
+        }
+
         if (type === 'taskItem') {
             const checked = !!node.attrs?.checked;
             push(checked ? '[x] ' : '[ ] ');
@@ -357,9 +364,23 @@ export function isEmptyRichContentDoc(content: RichTextHtmlNode | null | undefin
 
         if ((node.text ?? '').trim().length > 0) return true;
 
-        if (node.attrs?.['data-embed'] === 'map' || node.attrs?.['data-type'] === 'map') return true;
+        if (
+            (node.tag.toLowerCase() === 'span' || node.tag.toLowerCase() === 'div') &&
+            (node.attrs?.['data-embed'] === 'map' || node.attrs?.['data-type'] === 'map')
+        ) {
+            return true;
+        }
 
         if (node.type === NodeType.ELEMENT && contentfulVoidTags.includes(node.tag.toLowerCase())) return true;
+
+        if (
+            node.tag.toLowerCase() === 'div' &&
+            (node.attrs?.['data-embed'] === 'penalty-calculator' ||
+                node.attrs?.['data-type'] === 'penalty-calculator' ||
+                node.attrs?.['data-type'] === 'penaltyCalculator')
+        ) {
+            return true;
+        }
 
         if (!node.content || node.content.length === 0) return false;
 
