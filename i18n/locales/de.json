@@ -998,7 +998,13 @@
                 "difference": "Unterschied"
             },
             "document_view": {
-                "take_ownership": "Besitz übernehmen"
+                "take_ownership": "Besitz übernehmen",
+                "reminder_duration": {
+                    "custom": "Eigene Zeit",
+                    "in_days": "In {n} Tag | In {n} Tagen",
+                    "in_weeks": "In {n} Woche | In {n} Wochen",
+                    "in_months": "In {n} Monat | In {n} Monaten"
+                }
             },
             "document_request_access": {
                 "title": "Sie haben keinen Zugriff auf das Dokument",

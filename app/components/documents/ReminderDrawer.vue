@@ -39,9 +39,12 @@ const state = reactive<Schema>({
 
 const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state);
 
-watch(reminderTime, () => {
+function setFromProps(): void {
     state.reminderTime = reminderTime.value ? toDate(reminderTime.value) : undefined;
-});
+}
+
+setFromProps();
+watch(reminderTime, () => setFromProps());
 
 async function setDocumentReminder(values: Schema): Promise<SetDocumentReminderResponse> {
     try {

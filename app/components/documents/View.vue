@@ -32,6 +32,7 @@ import ApprovalDrawer from './approval/ApprovalDrawer.vue';
 import ReminderDrawer from './ReminderDrawer.vue';
 import RequestDrawer from './requests/RequestDrawer.vue';
 import ApprovalBadge from './approval/ApprovalBadge.vue';
+import { addDays, addMonths, addWeeks } from 'date-fns';
 
 const props = defineProps<{
     documentId: number;
@@ -308,6 +309,54 @@ function setCommentCount(count: number): void {
     doc.value.document.meta.commentCount = count;
 }
 
+const reminderMenuItems = computed<DropdownMenuItem[][]>(() => [
+    [
+        {
+            label: $t('components.documents.document_view.reminder_duration.in_days', 1),
+            icon: 'i-mdi-calendar-day',
+            onClick: () =>
+                reminderDrawer.open({
+                    documentId: props.documentId,
+                    reminderTime: toTimestamp(addDays(new Date(), 1)),
+                    'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+                }),
+        },
+        {
+            label: $t('components.documents.document_view.reminder_duration.in_weeks', 1),
+            icon: 'i-mdi-calendar-week',
+            onClick: () =>
+                reminderDrawer.open({
+                    documentId: props.documentId,
+                    reminderTime: toTimestamp(addWeeks(new Date(), 1)),
+                    'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+                }),
+        },
+        {
+            label: $t('components.documents.document_view.reminder_duration.in_months', 1),
+            icon: 'i-mdi-calendar-month',
+            onClick: () =>
+                reminderDrawer.open({
+                    documentId: props.documentId,
+                    reminderTime: toTimestamp(addMonths(new Date(), 1)),
+                    'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+                }),
+        },
+    ],
+    [
+        {
+            label: $t('components.documents.document_view.reminder_duration.custom'),
+            icon: 'i-mdi-calendar-time',
+            onClick: () => {
+                reminderDrawer.open({
+                    documentId: props.documentId,
+                    reminderTime: doc.value?.document?.workflowUser?.manualReminderTime ?? undefined,
+                    'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+                });
+            },
+        },
+    ],
+]);
+
 const scrollRef = useTemplateRef('scrollRef');
 
 const confirmModal = overlay.create(ConfirmModal);
@@ -465,24 +514,26 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                             />
                         </UTooltip>
 
-                        <UTooltip v-if="canDo.reminder" class="flex-1" :text="$t('common.reminder')">
-                            <UButton
-                                block
-                                color="neutral"
-                                variant="ghost"
-                                icon="i-mdi-reminder"
-                                :label="$t('common.reminder')"
-                                @click="
-                                    () => {
-                                        reminderDrawer.open({
-                                            documentId: documentId,
-                                            reminderTime: doc?.document?.workflowUser?.manualReminderTime ?? undefined,
-                                            'onUpdate:reminderTime': ($event) => updateReminderTime($event),
-                                        });
-                                    }
-                                "
-                            />
-                        </UTooltip>
+                        <UDropdownMenu v-if="canDo.reminder" :items="reminderMenuItems">
+                            <template #default="{ open }">
+                                <UTooltip class="flex-1" :text="$t('common.reminder')">
+                                    <UButton
+                                        class="group"
+                                        block
+                                        color="neutral"
+                                        icon="i-mdi-reminder"
+                                        trailing-icon="i-mdi-chevron-down"
+                                        :label="$t('common.reminder')"
+                                        variant="ghost"
+                                        :ui="{
+                                            trailingIcon:
+                                                'group-data-[state=open]:rotate-180 transition-transform duration-200' +
+                                                (open ? ' rotate-180' : ''),
+                                        }"
+                                    />
+                                </UTooltip>
+                            </template>
+                        </UDropdownMenu>
 
                         <UTooltip
                             v-if="canDo.takeOwnership"
