@@ -118,51 +118,59 @@ function formatStartEndTime(entry: CalendarEntry): string {
     );
 }
 
-const transformedCalendarEntries = computedAsync(
-    async (): Promise<CalendarEntryAttribute[]> =>
-        entries.value
-            .filter((e) => activeCalendarIds.value.includes(e.calendarId))
-            .map((entry) => {
-                const startTime = getCalendarEntryDisplayStartDate(entry);
-                const endTime = getCalendarEntryDisplayEndDate(entry);
-                const rangeEndTime = getCalendarEntryDisplayRangeEndDate(entry);
-                const past = endTime ? isPast(endTime) : isPast(startTime);
+const transformedCalendarEntries = computedAsync(async (): Promise<CalendarEntryAttribute[]> => {
+    const result = entries.value
+        .filter((e) => activeCalendarIds.value.includes(e.calendarId))
+        .map((entry) => {
+            const startTime = getCalendarEntryDisplayStartDate(entry);
+            const endTime = getCalendarEntryDisplayEndDate(entry);
+            const rangeEndTime = getCalendarEntryDisplayRangeEndDate(entry);
+            const past = endTime ? isPast(endTime) : isPast(startTime);
 
-                return {
-                    key: entry.occurrence?.key ?? `${startTime.toISOString()}-${entry.id}-${entry.calendarId}`,
-                    customData: {
-                        ...entry,
-                        color: (entry.calendar?.color as ButtonProps['color'] | undefined) ?? 'primary',
-                        icon:
-                            entry.calendar?.systemKind === CalendarSystemKind.JOB_BIRTHDAYS
-                                ? 'i-mdi-birthday-cake'
-                                : entry.recurring?.every && entry.recurring.every > CalendarEntryRecurringEvery.UNSPECIFIED
-                                  ? 'i-mdi-repeat'
-                                  : undefined,
-                        isPast: past,
-                        multiDay: !!rangeEndTime && !isSameDay(startTime, rangeEndTime),
-                        ongoing: !!endTime && isPast(startTime) && isFuture(endTime),
-                        time: formatStartEndTime(entry),
-                        timeEnd:
-                            endTime && !isSameDay(startTime, endTime)
-                                ? d(startTime, {
-                                      month: '2-digit',
-                                      day: '2-digit',
-                                      hour: 'numeric',
-                                      minute: 'numeric',
-                                  }) +
-                                  ' - ' +
-                                  d(endTime, 'time')
-                                : undefined,
-                    },
-                    dates: {
-                        start: startTime,
-                        end: rangeEndTime,
-                    } as DateRangeSource,
-                };
-            })
-            .sort((a, b) => a.key.localeCompare(b.key) + (b.customData.id - a.customData.id)),
-);
+            return {
+                key: entry.occurrence?.key ?? `${startTime.toISOString()}-${entry.id}-${entry.calendarId}`,
+                customData: {
+                    ...entry,
+                    color: (entry.calendar?.color as ButtonProps['color'] | undefined) ?? 'primary',
+                    icon:
+                        entry.calendar?.systemKind === CalendarSystemKind.JOB_BIRTHDAYS
+                            ? 'i-mdi-birthday-cake'
+                            : entry.recurring?.every && entry.recurring.every > CalendarEntryRecurringEvery.UNSPECIFIED
+                              ? 'i-mdi-repeat'
+                              : undefined,
+                    isPast: past,
+                    multiDay: !!rangeEndTime && !isSameDay(startTime, rangeEndTime),
+                    ongoing: !!endTime && isPast(startTime) && isFuture(endTime),
+                    time: formatStartEndTime(entry),
+                    timeEnd:
+                        endTime && !isSameDay(startTime, endTime)
+                            ? d(startTime, {
+                                  month: '2-digit',
+                                  day: '2-digit',
+                                  hour: 'numeric',
+                                  minute: 'numeric',
+                              }) +
+                              ' - ' +
+                              d(endTime, 'time')
+                            : undefined,
+                },
+                dates: {
+                    start: startTime,
+                    end: rangeEndTime,
+                } as DateRangeSource,
+            };
+        });
+
+    return result.sort((left, right) => {
+        const leftStart = getCalendarEntryDisplayStartDate(left.customData).getTime();
+        const rightStart = getCalendarEntryDisplayStartDate(right.customData).getTime();
+        if (leftStart !== rightStart) return leftStart - rightStart;
+        if (left.customData.calendarId !== right.customData.calendarId) {
+            return left.customData.calendarId - right.customData.calendarId;
+        }
+        return left.customData.id - right.customData.id;
+    });
+});
 
 type GroupedCalendarEntries = {
     key: string;

@@ -80,9 +80,12 @@ func (s *Server) ListCalendarEntries(
 	resp := &pbcalendar.ListCalendarEntriesResponse{}
 	regularCondition := condition.
 		AND(tCalendarEntry.StartTime.GT_EQ(mysql.DateTimeT(startDate))).
-		AND(tCalendar.SystemKind.NOT_EQ(
-			mysql.Int32(
-				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+		AND(mysql.OR(
+			tCalendar.SystemKind.IS_NULL(),
+			tCalendar.SystemKind.NOT_EQ(
+				mysql.Int32(
+					int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+				),
 			),
 		))
 	birthdayCondition := condition.AND(
@@ -178,8 +181,13 @@ func (s *Server) GetUpcomingEntries(
 		tCalendarEntry.StartTime.LT_EQ(mysql.TimestampT(rangeEnd)),
 	)
 
-	regularCondition := condition.AND(tCalendar.SystemKind.NOT_EQ(
-		mysql.Int32(int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS)),
+	regularCondition := condition.AND(mysql.OR(
+		tCalendar.SystemKind.IS_NULL(),
+		tCalendar.SystemKind.NOT_EQ(
+			mysql.Int32(
+				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+			),
+		),
 	))
 	birthdayCondition := condition.AND(
 		tCalendar.SystemKind.EQ(

@@ -8,9 +8,9 @@ type BirthdayOccurrenceDate = {
 };
 
 export function parseBirthdayOccurrenceKey(key: string): BirthdayOccurrenceDate | undefined {
-    const [kind, _userId, year, month, day] = key.split(':');
+    const [kind, _calendarId, _userId, year, month, day] = key.split(':');
 
-    if (kind !== 'birthday' || !_userId || !year || !month || !day) return undefined;
+    if (kind !== 'birthday' || !_calendarId || !_userId || !year || !month || !day) return undefined;
 
     const parsedYear = Number(year);
     const parsedMonth = Number(month);
