@@ -109,18 +109,18 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
                                 : $t('components.calendar.calendar.CreateOrUpdateModal.private')
                         "
                     />
+
+                    <p>
+                        <span class="font-semibold">{{ $t('common.description') }}:</span>
+                        {{
+                            calendar.description === undefined || calendar.description === ''
+                                ? $t('common.na')
+                                : calendar.description
+                        }}
+                    </p>
                 </div>
 
-                <p>
-                    <span class="font-semibold">{{ $t('common.description') }}:</span>
-                    {{
-                        calendar.description === undefined || calendar.description === ''
-                            ? $t('common.na')
-                            : calendar.description
-                    }}
-                </p>
-
-                <p v-if="isSystemManaged" class="text-sm text-neutral-500 dark:text-neutral-400">
+                <p v-else class="text-sm text-neutral-500 dark:text-neutral-400">
                     {{ $t('common.read_only') }}
                 </p>
             </template>

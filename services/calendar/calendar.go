@@ -27,9 +27,6 @@ func (s *Server) ListCalendars(
 	req *pbcalendar.ListCalendarsRequest,
 ) (*pbcalendar.ListCalendarsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	if _, err := s.ensureJobBirthdayCalendar(ctx, userInfo); err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
 
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")

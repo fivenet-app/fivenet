@@ -25,10 +25,19 @@ import (
 )
 
 const (
+	birthdayCalendarColor = "neutral"
+
 	birthdaySyncCronName      = "calendar.birthday_sync"
 	birthdaySyncBatchSize     = 5
 	birthdaySyncOffsetAttrKey = "job_offset"
 )
+
+type birthdayColleague struct {
+	UserID      int32  `alias:"user_id"`
+	Firstname   string `alias:"firstname"`
+	Lastname    string `alias:"lastname"`
+	Dateofbirth string `alias:"dateofbirth"`
+}
 
 type BirthdaySyncer struct {
 	logger   *zap.Logger
