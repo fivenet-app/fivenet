@@ -126,7 +126,7 @@ type Result struct {
 }
 
 func New(p BotParams) Result {
-	cancelCtx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	oauth2ProviderName := "discord"
 	if provider := p.Config.OAuth2.GetProviderByType(
@@ -173,7 +173,7 @@ func New(p BotParams) Result {
 			b.wg.Go(func() {
 				for {
 					select {
-					case <-cancelCtx.Done():
+					case <-ctxCancel.Done():
 						return
 
 					case guild := <-b.workCh:
@@ -229,7 +229,7 @@ func New(p BotParams) Result {
 			return err
 		}
 
-		if err := b.start(cancelCtx); err != nil {
+		if err := b.start(ctxCancel); err != nil {
 			return err
 		}
 
@@ -238,7 +238,7 @@ func New(p BotParams) Result {
 			configUpdateCh := b.appCfg.Subscribe()
 			for {
 				select {
-				case <-cancelCtx.Done():
+				case <-ctxCancel.Done():
 					b.appCfg.Unsubscribe(configUpdateCh)
 					return
 
@@ -246,12 +246,12 @@ func New(p BotParams) Result {
 					if cfg == nil {
 						continue
 					}
-					b.handleAppConfigUpdate(cancelCtx, cfg)
+					b.handleAppConfigUpdate(ctxCancel, cfg)
 				}
 			}
 		}()
 
-		go b.syncLoop(cancelCtx)
+		go b.syncLoop(ctxCancel)
 
 		return nil
 	}))

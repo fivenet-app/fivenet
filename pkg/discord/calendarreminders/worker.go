@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/diamondburned/arikawa/v3/api"
@@ -16,11 +17,9 @@ import (
 	discordstate "github.com/diamondburned/arikawa/v3/state"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
 	discordembeds "github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -28,7 +27,6 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 const cronName = "calendar.discord_reminders"
@@ -50,6 +48,8 @@ type Worker struct {
 type Params struct {
 	fx.In
 
+	LC fx.Lifecycle
+
 	Logger  *zap.Logger
 	DB      *sql.DB
 	Config  *config.Config
@@ -57,14 +57,7 @@ type Params struct {
 	I18n    i18n.Ii18n
 }
 
-type Result struct {
-	fx.Out
-
-	Worker       *Worker
-	CronRegister croner.CronRegister `group:"cronjobregister"`
-}
-
-func NewWorker(p Params) Result {
+func NewWorker(p Params) *Worker {
 	w := &Worker{
 		logger: p.Logger.Named("discord.calendar_reminders"),
 		db:     p.DB,
@@ -84,34 +77,39 @@ func NewWorker(p Params) Result {
 		return err
 	}
 
-	return Result{
-		Worker:       w,
-		CronRegister: w,
-	}
-}
+	ctxCancel, cancel := context.WithCancel(context.Background())
+	var wg sync.WaitGroup
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		// Discord bot not enabled
+		if !w.enabled {
+			return nil
+		}
 
-func (w *Worker) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
-	if !w.enabled || w.dc == nil {
+		wg.Go(func() {
+			for {
+				select {
+				case <-ctxCancel.Done():
+					return
+
+				case <-time.After(1 * time.Minute):
+				}
+
+				if err := w.run(ctxCancel); err != nil {
+					w.logger.Error("error during discord calendar reminders run", zap.Error(err))
+				}
+			}
+		})
+
 		return nil
-	}
+	}))
+	p.LC.Append(fx.StopHook(func(ctxStartup context.Context) error {
+		cancel()
 
-	return registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     cronName,
-		Schedule: "* * * * *",
-		Timeout:  durationpb.New(45 * time.Second),
-	})
-}
-
-func (w *Worker) RegisterCronjobHandlers(h *croner.Handlers) error {
-	if !w.enabled || w.dc == nil {
+		wg.Wait()
 		return nil
-	}
+	}))
 
-	h.Add(cronName, func(ctx context.Context, _ *cron.CronjobData) error {
-		return w.run(ctx)
-	})
-
-	return nil
+	return w
 }
 
 func (w *Worker) run(ctx context.Context) error {

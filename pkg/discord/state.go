@@ -33,7 +33,7 @@ func NewDCState(p StateParams) *state.State {
 		return nil
 	}
 
-	cancelCtx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	// Create a new Discord session using the provided login information.
 	state := state.New("Bot " + p.Config.Discord.Token)
@@ -44,7 +44,7 @@ func NewDCState(p StateParams) *state.State {
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		go func() {
-			if err := state.Connect(cancelCtx); err != nil {
+			if err := state.Connect(ctxCancel); err != nil {
 				p.Logger.Error("failed to connect to discord gateway", zap.Error(err))
 
 				if err := p.Shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
