@@ -473,12 +473,14 @@ const viewOptions = [
                                         @click="openSelectedEntry(attr.customData)"
                                     >
                                         <span class="inline-flex items-center gap-1">
-                                            <UBadge :color="attr.customData.color as ButtonProps['color']" size="lg" />
+                                            <UBadge :color="attr.customData.color" size="lg" />
 
                                             <template v-if="attr.customData.time">
                                                 {{ attr.customData.time }}
                                             </template>
                                             <span>-</span>
+
+                                            <UIcon v-if="attr.customData.icon" class="size-4" :name="attr.customData.icon" />
 
                                             {{ attr.customData.title }}
                                         </span>
@@ -506,7 +508,7 @@ const viewOptions = [
                                         @click="openSelectedEntry(attr.customData)"
                                     >
                                         <span class="inline-flex items-center gap-1">
-                                            <UBadge :color="attr.customData.color as ButtonProps['color']" size="lg" />
+                                            <UBadge :color="attr.customData.color" size="lg" />
 
                                             <template v-if="attr.customData.time">
                                                 {{ attr.customData.time }}
@@ -518,6 +520,8 @@ const viewOptions = [
                                                 class="size-3 text-amber-800"
                                                 name="i-mdi-timer-sand"
                                             />
+
+                                            <UIcon v-if="attr.customData.icon" class="size-4" :name="attr.customData.icon" />
 
                                             {{ attr.customData.title }}
                                         </span>
@@ -626,7 +630,7 @@ const viewOptions = [
                         <div v-for="calendar in calendars" :key="calendar.id" class="flex items-center gap-2 truncate">
                             <USwitch
                                 :model-value="activeCalendarIds.includes(calendar.id)"
-                                @update:model-value="($event) => calendarIdChange(calendar.id, $event as boolean)"
+                                @update:model-value="($event) => calendarIdChange(calendar.id, $event)"
                             />
 
                             <UButton
