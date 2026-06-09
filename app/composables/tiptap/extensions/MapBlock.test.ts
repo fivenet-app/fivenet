@@ -9,14 +9,17 @@ import { MapBlock } from './MapBlock';
 describe('MapBlock', () => {
     const extensions = [Document, Paragraph, Text, MapBlock];
 
-    it('is not selectable as a node selection', () => {
+    it('is an inline atom embed', () => {
         const schema = getSchema(extensions);
         const mapBlock = schema.nodes.mapBlock;
 
         expect(mapBlock).toBeDefined();
         if (!mapBlock) throw new Error('mapBlock node is missing from the schema');
 
-        expect(mapBlock.spec.selectable).toBe(false);
+        expect(mapBlock.spec.inline).toBe(true);
+        expect(mapBlock.spec.group).toBe('inline');
+        expect(mapBlock.spec.atom).toBe(true);
+        expect(mapBlock.spec.selectable).toBe(true);
     });
 
     it('round-trips html with data attributes', () => {

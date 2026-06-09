@@ -34,18 +34,25 @@ function save(): void {
 </script>
 
 <template>
-    <NodeViewWrapper class="map-block align-middle" as="span">
+    <NodeViewWrapper class="map-block align-middle" as="span" contenteditable="false">
         <span class="group relative inline-flex align-middle">
             <MapBlockContentView :show-goto-coords="false" v-bind="contentProps" />
 
             <div
                 v-if="editor.isEditable"
-                class="absolute top-2 right-2 flex gap-1 opacity-100 transition-opacity group-hover:opacity-100"
+                class="absolute top-1.5 right-1.5 flex opacity-100 transition-opacity group-hover:opacity-100"
             >
                 <MapBlockEditorPopoverShell v-model:open="open" :title="$t('common.map')">
                     <template #trigger>
                         <UTooltip :text="$t('common.edit')">
-                            <UButton color="neutral" variant="soft" size="xs" icon="i-mdi-pencil" :label="$t('common.edit')" />
+                            <UButton
+                                class="rounded-r-none"
+                                color="neutral"
+                                variant="soft"
+                                size="xs"
+                                icon="i-mdi-pencil"
+                                :label="$t('common.edit')"
+                            />
                         </UTooltip>
                     </template>
 
@@ -54,28 +61,20 @@ function save(): void {
                     <UFieldGroup>
                         <UButton block color="neutral" icon="i-mdi-close" :label="$t('common.cancel')" @click="open = false" />
 
-                        <UButton block color="neutral" icon="i-mdi-content-save" :label="$t('common.save')" @click="save" />
+                        <UButton block color="neutral" icon="i-mdi-content-save" :label="$t('common.update')" @click="save" />
                     </UFieldGroup>
                 </MapBlockEditorPopoverShell>
 
                 <UButton
+                    class="rounded-l-none"
                     color="error"
                     variant="soft"
                     size="xs"
                     icon="i-mdi-delete"
-                    :label="$t('common.delete')"
+                    :aria-label="$t('common.delete')"
                     @click="props.deleteNode()"
                 />
             </div>
         </span>
     </NodeViewWrapper>
 </template>
-
-<style scoped>
-.map-block::before,
-.map-block::after {
-    content: '\200b';
-    font-size: 0;
-    line-height: 0;
-}
-</style>

@@ -79,8 +79,8 @@ export const MapBlock = Node.create<MapBlockOptions>({
     group: 'inline',
     atom: true,
     draggable: true,
-    selectable: false,
-    isolating: true,
+    selectable: true,
+    isolating: false,
 
     addOptions() {
         return {

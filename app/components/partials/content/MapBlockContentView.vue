@@ -33,10 +33,11 @@ function openFullscreen(): void {
                 class="overflow-hidden text-left text-sm"
                 icon="i-mdi-map"
                 color="neutral"
+                size="sm"
                 variant="outline"
-                :ui="{ leadingIcon: 'size-8' }"
+                :ui="{ leadingIcon: 'size-7' }"
             >
-                <div class="flex items-start gap-3 p-2.5">
+                <div class="flex items-start gap-3 p-1">
                     <div class="min-w-0 flex-1">
                         <div class="font-medium">{{ postal || $t('common.map') }}</div>
                         <div class="mt-0.5 truncate text-xs text-neutral-500 dark:text-neutral-400">
@@ -49,6 +50,7 @@ function openFullscreen(): void {
             <UTooltip v-if="showGotoCoords" :text="$t('common.goto')">
                 <UButton
                     class="!my-0"
+                    size="sm"
                     icon="i-mdi-map-marker"
                     color="neutral"
                     variant="subtle"
