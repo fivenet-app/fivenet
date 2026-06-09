@@ -33,6 +33,8 @@ func TestBuildAllowedContainsAllNodePolicies(t *testing.T) {
 		NodeTypeCheckboxStandalone,
 		NodeTypeImage,
 		NodeTypeMention,
+		NodeTypeMapBlock,
+		NodeTypePenaltyCalculator,
 		NodeTypeTemplateVar,
 		NodeTypeTemplateBlock,
 	}
@@ -145,6 +147,24 @@ func TestNodePoliciesBasicValidation(t *testing.T) {
 			typ:   NodeTypeMention,
 			attrs: map[string]any{"id": " "},
 			ok:    false,
+		},
+		{
+			name: "mapBlock-valid",
+			typ:  NodeTypeMapBlock,
+			attrs: map[string]any{
+				"x":      float64(12.34),
+				"y":      float64(56.78),
+				"zoom":   float64(3),
+				"postal": "12345",
+				"layer":  "postal",
+			},
+			ok: true,
+		},
+		{
+			name:  "penaltyCalculator-valid",
+			typ:   NodeTypePenaltyCalculator,
+			attrs: map[string]any{},
+			ok:    true,
 		},
 		{
 			name:  "templateVar-valid",
@@ -298,6 +318,81 @@ func TestSanitizeMentionNode(t *testing.T) {
 	attrs, _ := out["attrs"].(map[string]any)
 	assert.Equal(t, "user-42", attrs["id"], "sanitized mention id = %v, want user-42", attrs["id"])
 	assert.Equal(t, "Ada", attrs["label"], "sanitized mention label = %v, want Ada", attrs["label"])
+}
+
+func TestSanitizeMapBlockAndPenaltyCalculatorNodes(t *testing.T) {
+	t.Parallel()
+	New()
+
+	doc := map[string]any{
+		"type": NodeTypeDoc,
+		"content": []any{
+			map[string]any{
+				"type": NodeTypeParagraph,
+				"content": []any{
+					map[string]any{"type": NodeTypeText, "text": "Before"},
+					map[string]any{
+						"type": NodeTypeMapBlock,
+						"attrs": map[string]any{
+							"x":      float64(12.34),
+							"y":      float64(56.78),
+							"zoom":   float64(3),
+							"postal": "12345",
+							"layer":  "postal",
+						},
+					},
+					map[string]any{"type": NodeTypeText, "text": "After"},
+				},
+			},
+			map[string]any{
+				"type":  NodeTypePenaltyCalculator,
+				"attrs": map[string]any{},
+			},
+		},
+	}
+
+	out, _, err := Sanitize(doc, 0, 10)
+	require.NoError(t, err, "sanitize returned error")
+
+	content, _ := out["content"].([]any)
+	require.Len(t, content, 2, "root content length = %d, want 2", len(content))
+
+	paragraph, _ := content[0].(map[string]any)
+	paragraphContent, _ := paragraph["content"].([]any)
+	require.Len(
+		t,
+		paragraphContent,
+		3,
+		"paragraph content length = %d, want 3",
+		len(paragraphContent),
+	)
+
+	mapBlock, _ := paragraphContent[1].(map[string]any)
+	assert.Equal(
+		t,
+		NodeTypeMapBlock,
+		mapBlock["type"],
+		"map block type = %v, want %q",
+		mapBlock["type"],
+		NodeTypeMapBlock,
+	)
+	attrs, _ := mapBlock["attrs"].(map[string]any)
+	require.NotNil(t, attrs, "map block attrs should be present")
+	assert.Equal(t, 12.34, attrs["x"])
+	assert.Equal(t, 56.78, attrs["y"])
+	assert.Equal(t, 3.0, attrs["zoom"])
+	assert.Equal(t, "12345", attrs["postal"])
+	assert.Equal(t, "postal", attrs["layer"])
+
+	penalty, _ := content[1].(map[string]any)
+	assert.Equal(
+		t,
+		NodeTypePenaltyCalculator,
+		penalty["type"],
+		"penalty block type = %v, want %q",
+		penalty["type"],
+		NodeTypePenaltyCalculator,
+	)
 }
 
 func TestSanitizeNestedContentAndHeadingExtraction(t *testing.T) {

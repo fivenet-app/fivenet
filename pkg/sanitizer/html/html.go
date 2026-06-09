@@ -134,8 +134,11 @@ func setupSanitizer() {
 	sanitizer.AllowAttrs("data-template-var", "data-left-trim", "data-right-trim").
 		OnElements("span")
 
-	// Penalty Calculator block
-	sanitizer.AllowAttrs("data-type", "data-embed").OnElements("div")
+	// Custom editor blocks
+	sanitizer.AllowElements("figure")
+	sanitizer.AllowAttrs("data-type", "data-embed").OnElements("div", "span", "figure")
+	sanitizer.AllowAttrs("data-map-x", "data-map-y", "data-map-zoom", "data-map-postal", "data-map-layer").
+		OnElements("div", "span", "figure")
 }
 
 // New creates and returns a new bluemonday.Policy for HTML sanitization, optionally enabling image proxy rewriting if configured.

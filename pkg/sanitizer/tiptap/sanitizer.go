@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -110,6 +111,48 @@ func normalizeColor(v any) (string, bool) {
 		return s, true
 	}
 	return "", false
+}
+
+func parseNumberAttr(v any, fallback float64) float64 {
+	switch value := v.(type) {
+	case nil:
+		return fallback
+	case float64:
+		return value
+	case float32:
+		return float64(value)
+	case int:
+		return float64(value)
+	case int32:
+		return float64(value)
+	case int64:
+		return float64(value)
+	case uint:
+		return float64(value)
+	case uint32:
+		return float64(value)
+	case uint64:
+		return float64(value)
+	case json.Number:
+		if parsed, err := value.Float64(); err == nil {
+			return parsed
+		}
+	case string:
+		value = strings.TrimSpace(value)
+		if value == "" {
+			return fallback
+		}
+		if parsed, err := strconv.ParseFloat(value, 64); err == nil {
+			return parsed
+		}
+	}
+
+	return fallback
+}
+
+func parseStringAttr(v any) string {
+	s, _ := v.(string)
+	return strings.TrimSpace(s)
 }
 
 func New() *Sanitizer {
@@ -307,6 +350,25 @@ func buildAllowed() *Sanitizer {
 			}
 			return false, nil
 		}},
+		NodeTypeMapBlock: {Validate: func(a map[string]any) (bool, map[string]any) {
+			out := map[string]any{
+				"x":    parseNumberAttr(a["x"], 0),
+				"y":    parseNumberAttr(a["y"], 0),
+				"zoom": parseNumberAttr(a["zoom"], 2),
+			}
+
+			if postal := parseStringAttr(a["postal"]); postal != "" {
+				out["postal"] = postal
+			}
+			if layer := parseStringAttr(a["layer"]); layer != "" {
+				out["layer"] = layer
+			}
+
+			return true, out
+		}},
+		NodeTypePenaltyCalculator: {
+			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
+		},
 		NodeTypeTemplateVar: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 
