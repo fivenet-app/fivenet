@@ -922,7 +922,12 @@ func (s *Server) DeleteDocument(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields.StringList(), userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
+	if !access.CheckIfHasOwnJobAccess(
+		fields.StringList(),
+		userInfo,
+		doc.GetCreatorJob(),
+		doc.GetCreator(),
+	) {
 		return nil, errorsdocuments.ErrDocDeleteDenied
 	}
 
@@ -1009,7 +1014,12 @@ func (s *Server) ToggleDocument(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields.StringList(), userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
+	if !access.CheckIfHasOwnJobAccess(
+		fields.StringList(),
+		userInfo,
+		doc.GetCreatorJob(),
+		doc.GetCreator(),
+	) {
 		return nil, errorsdocuments.ErrDocToggleDenied
 	}
 
@@ -1121,11 +1131,19 @@ func (s *Server) ChangeDocumentOwner(
 	}
 
 	// Field Permission Check
-	fields, err := permsdocuments.DocumentsService.ChangeDocumentOwner.AccessTyped.Get(s.ps, userInfo)
+	fields, err := permsdocuments.DocumentsService.ChangeDocumentOwner.AccessTyped.Get(
+		s.ps,
+		userInfo,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields.StringList(), userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
+	if !access.CheckIfHasOwnJobAccess(
+		fields.StringList(),
+		userInfo,
+		doc.GetCreatorJob(),
+		doc.GetCreator(),
+	) {
 		return nil, errorsdocuments.ErrDocOwnerFailed
 	}
 

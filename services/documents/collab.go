@@ -58,7 +58,12 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasOwnJobAccess(fields.StringList(), userInfo, doc.GetCreatorJob(), doc.GetCreator()) {
+	if !access.CheckIfHasOwnJobAccess(
+		fields.StringList(),
+		userInfo,
+		doc.GetCreatorJob(),
+		doc.GetCreator(),
+	) {
 		return errorsdocuments.ErrNotFoundOrNoPerms
 	}
 

@@ -64,7 +64,9 @@ func (s *Server) ListCalendarEntries(
 	)
 
 	if req.GetAfter() != nil {
-		condition = condition.AND(tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())))
+		condition = condition.AND(
+			tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())),
+		)
 	}
 
 	baseDate := now.New(
@@ -79,10 +81,16 @@ func (s *Server) ListCalendarEntries(
 	regularCondition := condition.
 		AND(tCalendarEntry.StartTime.GT_EQ(mysql.DateTimeT(startDate))).
 		AND(tCalendar.SystemKind.NOT_EQ(
-			mysql.Int32(int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS)),
+			mysql.Int32(
+				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+			),
 		))
 	birthdayCondition := condition.AND(
-		tCalendar.SystemKind.EQ(mysql.Int32(int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS))),
+		tCalendar.SystemKind.EQ(
+			mysql.Int32(
+				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+			),
+		),
 	)
 
 	if len(req.GetCalendarIds()) > 0 {
@@ -174,7 +182,11 @@ func (s *Server) GetUpcomingEntries(
 		mysql.Int32(int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS)),
 	))
 	birthdayCondition := condition.AND(
-		tCalendar.SystemKind.EQ(mysql.Int32(int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS))),
+		tCalendar.SystemKind.EQ(
+			mysql.Int32(
+				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+			),
+		),
 	)
 
 	regularEntries, err := s.loadExpandedCalendarEntries(

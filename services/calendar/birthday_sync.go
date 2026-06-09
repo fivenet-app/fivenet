@@ -142,6 +142,8 @@ func (s *BirthdaySyncer) listBirthdayJobs(
 	ctx context.Context,
 	offset, limit int,
 ) ([]string, error) {
+	unemployedJob := s.appCfg.Get().GetJobInfo().GetUnemployedJob()
+
 	tJobs := table.FivenetJobs.AS("job")
 	stmt := tJobs.
 		SELECT(
@@ -150,7 +152,10 @@ func (s *BirthdaySyncer) listBirthdayJobs(
 		FROM(tJobs).
 		WHERE(mysql.AND(
 			tJobs.DeletedAt.IS_NULL(),
-			tJobs.Name.NOT_EQ(mysql.String("")),
+			tJobs.Name.NOT_IN(
+				mysql.String(""),
+				mysql.String(unemployedJob.GetName()),
+			),
 		)).
 		ORDER_BY(tJobs.Name.ASC())
 

@@ -42,7 +42,10 @@ func (s *Server) GetStats(
 
 	period := max(req.GetPeriod(), stats.StatsPeriod_STATS_PERIOD_DAILY)
 
-	allowedCategories, err := permsdocuments.StatsService.GetStats.CategoriesTyped.Get(s.ps, userInfo)
+	allowedCategories, err := permsdocuments.StatsService.GetStats.CategoriesTyped.Get(
+		s.ps,
+		userInfo,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -150,7 +153,9 @@ func (s *Server) GetStats(
 
 	case stats.StatsCategory_STATS_CATEGORY_TOP_LAWS:
 		// Ensure the user has permission to view penalty calculator stats before querying for top laws, as they are related to the penalty calculator.
-		if !allowedCategories.Contains(permsdocuments.StatsServiceGetStatsCategoriesPermValuePenaltyCalculator) {
+		if !allowedCategories.Contains(
+			permsdocuments.StatsServiceGetStatsCategoriesPermValuePenaltyCalculator,
+		) {
 			return nil, status.Error(
 				codes.PermissionDenied,
 				"user does not have permission to view penalty calculator stats",
@@ -204,7 +209,9 @@ func (s *Server) GetStats(
 
 	case stats.StatsCategory_STATS_CATEGORY_PENALTIES_OVER_TIME:
 		// Ensure the user has permission to view penalty calculator stats before querying for top laws, as they are related to the penalty calculator.
-		if !allowedCategories.Contains(permsdocuments.StatsServiceGetStatsCategoriesPermValuePenaltyCalculator) {
+		if !allowedCategories.Contains(
+			permsdocuments.StatsServiceGetStatsCategoriesPermValuePenaltyCalculator,
+		) {
 			return nil, status.Error(
 				codes.PermissionDenied,
 				"user does not have permission to view penalty calculator stats",

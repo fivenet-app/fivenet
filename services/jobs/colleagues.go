@@ -112,7 +112,8 @@ func (s *Server) ListColleagues(
 		}
 	}
 
-	if len(req.GetLabelIds()) > 0 && (types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetSuperuser()) {
+	if len(req.GetLabelIds()) > 0 &&
+		(types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetSuperuser()) {
 		labelIDExprs := []mysql.Expression{}
 		for _, labelId := range req.GetLabelIds() {
 			labelIDExprs = append(labelIDExprs, mysql.Int64(labelId))
@@ -252,7 +253,8 @@ func (s *Server) ListColleagues(
 		}
 	}
 
-	if len(resp.GetColleagues()) > 0 && (types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetSuperuser()) {
+	if len(resp.GetColleagues()) > 0 &&
+		(types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetSuperuser()) {
 		userIds := []mysql.Expression{}
 		for _, colleague := range resp.GetColleagues() {
 			userIds = append(userIds, mysql.Int32(colleague.GetUserId()))
@@ -544,7 +546,10 @@ func (s *Server) SetColleagueProps(
 	}
 
 	// Access Permission Check
-	colleagueAccess, err := permsjobs.ColleaguesService.SetColleagueProps.AccessTyped.Get(s.ps, userInfo)
+	colleagueAccess, err := permsjobs.ColleaguesService.SetColleagueProps.AccessTyped.Get(
+		s.ps,
+		userInfo,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -605,7 +610,10 @@ func (s *Server) SetColleagueProps(
 
 	if reqProps.GetAbsenceBegin() != nil && reqProps.GetAbsenceEnd() != nil {
 		// Allow users to set their own absence date regardless of types perms check
-		if userInfo.GetUserId() != targetUser.GetUserId() && !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueAbsenceDate) &&
+		if userInfo.GetUserId() != targetUser.GetUserId() &&
+			!types.Contains(
+				permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueAbsenceDate,
+			) &&
 			!userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
@@ -634,14 +642,16 @@ func (s *Server) SetColleagueProps(
 
 	// Generate the update sets
 	if reqProps.Note != nil {
-		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueNote) && !userInfo.GetSuperuser() {
+		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueNote) &&
+			!userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsNoteDenied
 		}
 	}
 
 	if reqProps.GetLabels() != nil {
 		// Check if user is allowed to update labels
-		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueLabels) && !userInfo.GetSuperuser() {
+		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueLabels) &&
+			!userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
@@ -663,7 +673,8 @@ func (s *Server) SetColleagueProps(
 	}
 
 	if reqProps.NamePrefix != nil || reqProps.NameSuffix != nil {
-		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueName) && !userInfo.GetSuperuser() {
+		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueName) &&
+			!userInfo.GetSuperuser() {
 			return nil, errorsjobs.ErrPropsNameDenied
 		}
 	}
@@ -865,9 +876,12 @@ func (s *Server) ListColleagueActivity(
 		req.ActivityTypes = slices.DeleteFunc(
 			req.GetActivityTypes(),
 			func(t colleaguesactivity.ColleagueActivityType) bool {
-				return !slices.ContainsFunc(types.Values(), func(s permsjobs.ColleaguesServiceListColleagueActivityTypesPermValue) bool {
-					return strings.Contains(t.String(), "COLLEAGUE_ACTIVITY_TYPE_"+string(s))
-				})
+				return !slices.ContainsFunc(
+					types.Values(),
+					func(s permsjobs.ColleaguesServiceListColleagueActivityTypesPermValue) bool {
+						return strings.Contains(t.String(), "COLLEAGUE_ACTIVITY_TYPE_"+string(s))
+					},
+				)
 			},
 		)
 	}

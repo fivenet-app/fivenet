@@ -58,7 +58,9 @@ func calendarEntryVisibility(
 func (s *Server) birthdayCalendarVisible(userInfo *userinfo.UserInfo) mysql.BoolExpression {
 	return mysql.AND(
 		tCalendar.SystemKind.EQ(
-			mysql.Int32(int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS)),
+			mysql.Int32(
+				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+			),
 		),
 		mysql.EXISTS(
 			mysql.
@@ -66,7 +68,9 @@ func (s *Server) birthdayCalendarVisible(userInfo *userinfo.UserInfo) mysql.Bool
 				FROM(tCAccess).
 				WHERE(mysql.AND(
 					tCAccess.TargetID.EQ(tCalendarEntry.CalendarID),
-					tCAccess.Access.GT_EQ(mysql.Int32(int32(calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW))),
+					tCAccess.Access.GT_EQ(
+						mysql.Int32(int32(calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW)),
+					),
 					mysql.OR(
 						tCAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						mysql.AND(

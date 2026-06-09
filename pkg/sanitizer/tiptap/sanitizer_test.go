@@ -378,9 +378,9 @@ func TestSanitizeMapBlockAndPenaltyCalculatorNodes(t *testing.T) {
 	)
 	attrs, _ := mapBlock["attrs"].(map[string]any)
 	require.NotNil(t, attrs, "map block attrs should be present")
-	assert.Equal(t, 12.34, attrs["x"])
-	assert.Equal(t, 56.78, attrs["y"])
-	assert.Equal(t, 3.0, attrs["zoom"])
+	assert.InDelta(t, 12.34, attrs["x"], 0.000001)
+	assert.InDelta(t, 56.78, attrs["y"], 0.000001)
+	assert.InDelta(t, 3.0, attrs["zoom"], 0.000001)
 	assert.Equal(t, "12345", attrs["postal"])
 	assert.Equal(t, "postal", attrs["layer"])
 

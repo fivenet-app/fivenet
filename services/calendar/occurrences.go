@@ -370,11 +370,7 @@ func expandRecurringEntry(
 	occurrenceStart := entry.GetStartTime().AsTime()
 	occurrenceIndex := 0
 
-	for {
-		if occurrenceStart.After(rangeEnd) {
-			break
-		}
-
+	for !occurrenceStart.After(rangeEnd) {
 		if until := entry.GetRecurring().
 			GetUntil(); until != nil &&
 			occurrenceStart.After(until.AsTime()) {
