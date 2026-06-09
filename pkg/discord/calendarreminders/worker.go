@@ -501,6 +501,11 @@ func parseDiscordHexColor(color string) discord.Color {
 		return 0
 	}
 
+	// Check if parsed value is in int32 bounds
+	if value > math.MaxInt32 {
+		return 0
+	}
+
 	return discord.Color(value)
 }
 

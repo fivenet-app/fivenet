@@ -368,6 +368,7 @@ func (s *BirthdaySyncer) insertBirthdayEntry(
 ) error {
 	birthDate, err := time.Parse("02.01.2006", colleague.Dateofbirth)
 	if err != nil {
+		//nolint:nilerr // Ignore error of invalid dateofbirth values
 		return nil
 	}
 
