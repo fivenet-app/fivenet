@@ -13,6 +13,21 @@ import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries;calendarentries";
 
+enum CalendarEntryOccurrenceKind {
+  CALENDAR_ENTRY_OCCURRENCE_KIND_UNSPECIFIED = 0;
+  CALENDAR_ENTRY_OCCURRENCE_KIND_MANUAL = 1;
+  CALENDAR_ENTRY_OCCURRENCE_KIND_RECURRING = 2;
+  CALENDAR_ENTRY_OCCURRENCE_KIND_BIRTHDAY = 3;
+}
+
+message CalendarEntryOccurrence {
+  string key = 1 [(buf.validate.field).string.max_len = 128];
+  CalendarEntryOccurrenceKind kind = 2 [(buf.validate.field).enum.defined_only = true];
+  optional int64 source_entry_id = 3;
+  optional int32 source_user_id = 4 [(buf.validate.field).int32.gte = 0];
+  bool all_day = 5;
+}
+
 message CalendarEntry {
   int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
@@ -41,12 +56,21 @@ message CalendarEntry {
   string creator_job = 16 [(buf.validate.field).string.max_len = 20];
   optional CalendarEntryRecurring recurring = 17;
   optional CalendarEntryRSVP rsvp = 18;
+  optional CalendarEntryOccurrence occurrence = 19;
+}
+
+enum CalendarEntryRecurringEvery {
+  CALENDAR_ENTRY_RECURRING_EVERY_UNSPECIFIED = 0;
+  CALENDAR_ENTRY_RECURRING_EVERY_DAY = 1;
+  CALENDAR_ENTRY_RECURRING_EVERY_WEEK = 2;
+  CALENDAR_ENTRY_RECURRING_EVERY_MONTH = 3;
+  CALENDAR_ENTRY_RECURRING_EVERY_YEAR = 4;
 }
 
 message CalendarEntryRecurring {
   option (codegen.dbscanner.dbscanner) = {enabled: true};
 
-  string every = 1;
+  CalendarEntryRecurringEvery every = 1 [(buf.validate.field).enum.defined_only = true];
   int32 count = 2;
   optional resources.timestamp.Timestamp until = 3;
 }

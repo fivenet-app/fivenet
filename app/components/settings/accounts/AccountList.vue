@@ -225,6 +225,12 @@ const columns = computed(
             },
         ] as TableColumn<Account>[],
 );
+
+const input = useTemplateRef('input');
+
+defineShortcuts({
+    '/': () => input.value?.inputRef?.focus(),
+});
 </script>
 
 <template>

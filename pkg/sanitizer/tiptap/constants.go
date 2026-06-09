@@ -21,6 +21,8 @@ const (
 	NodeTypeCheckboxStandalone = "checkboxStandalone"
 	NodeTypeImage              = "image"
 	NodeTypeMention            = "mention"
+	NodeTypeMapBlock           = "mapBlock"
+	NodeTypePenaltyCalculator  = "penaltyCalculator"
 	NodeTypeTemplateVar        = "templateVar"
 	NodeTypeTemplateBlock      = "templateBlock"
 )

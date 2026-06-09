@@ -386,7 +386,7 @@ func (s *UnitDB) nextSortOrder(ctx context.Context, q qrm.Queryable, job string)
 		return 0, err
 	}
 
-	if dest.SortOrder >= math.MaxInt32 {
+	if dest.SortOrder == math.MaxInt32 {
 		return 0, errors.New("unit sort order overflow")
 	}
 

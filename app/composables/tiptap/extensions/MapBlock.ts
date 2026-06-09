@@ -80,7 +80,7 @@ export const MapBlock = Node.create<MapBlockOptions>({
     atom: true,
     draggable: true,
     selectable: true,
-    isolating: true,
+    isolating: false,
 
     addOptions() {
         return {

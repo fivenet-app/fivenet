@@ -1001,6 +1001,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `creator_job` | [string](#string) |  |  |
 | `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
 | `access` | [access.CalendarAccess](#resourcescalendaraccessCalendarAccess) |  |  |
+| `system_kind` | [CalendarSystemKind](#resourcescalendarCalendarSystemKind) | optional |  |
 
 
 
@@ -1020,6 +1021,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `closed` | [bool](#bool) |  |  |
 | `color` | [string](#string) |  |  |
 | `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
+| `system_kind` | [CalendarSystemKind](#resourcescalendarCalendarSystemKind) | optional |  |
 
 
 
@@ -1041,6 +1043,15 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
  <!-- end messages -->
+
+
+### resources.calendar.CalendarSystemKind
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CALENDAR_SYSTEM_KIND_UNSPECIFIED` | 0 |  |
+| `CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS` | 1 |  |
+
 
  <!-- end enums -->
 
@@ -1166,6 +1177,22 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `creator_job` | [string](#string) |  |  |
 | `recurring` | [CalendarEntryRecurring](#resourcescalendarentriesCalendarEntryRecurring) | optional |  |
 | `rsvp` | [CalendarEntryRSVP](#resourcescalendarentriesCalendarEntryRSVP) | optional |  |
+| `occurrence` | [CalendarEntryOccurrence](#resourcescalendarentriesCalendarEntryOccurrence) | optional |  |
+
+
+
+
+
+### resources.calendar.entries.CalendarEntryOccurrence
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `kind` | [CalendarEntryOccurrenceKind](#resourcescalendarentriesCalendarEntryOccurrenceKind) |  |  |
+| `source_entry_id` | [int64](#int64) | optional |  |
+| `source_user_id` | [int32](#int32) | optional |  |
+| `all_day` | [bool](#bool) |  |  |
 
 
 
@@ -1191,7 +1218,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `every` | [string](#string) |  |  |
+| `every` | [CalendarEntryRecurringEvery](#resourcescalendarentriesCalendarEntryRecurringEvery) |  |  |
 | `count` | [int32](#int32) |  |  |
 | `until` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
@@ -1199,6 +1226,29 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
  <!-- end messages -->
+
+
+### resources.calendar.entries.CalendarEntryOccurrenceKind
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CALENDAR_ENTRY_OCCURRENCE_KIND_UNSPECIFIED` | 0 |  |
+| `CALENDAR_ENTRY_OCCURRENCE_KIND_MANUAL` | 1 |  |
+| `CALENDAR_ENTRY_OCCURRENCE_KIND_RECURRING` | 2 |  |
+| `CALENDAR_ENTRY_OCCURRENCE_KIND_BIRTHDAY` | 3 |  |
+
+
+
+### resources.calendar.entries.CalendarEntryRecurringEvery
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CALENDAR_ENTRY_RECURRING_EVERY_UNSPECIFIED` | 0 |  |
+| `CALENDAR_ENTRY_RECURRING_EVERY_DAY` | 1 |  |
+| `CALENDAR_ENTRY_RECURRING_EVERY_WEEK` | 2 |  |
+| `CALENDAR_ENTRY_RECURRING_EVERY_MONTH` | 3 |  |
+| `CALENDAR_ENTRY_RECURRING_EVERY_YEAR` | 4 |  |
+
 
 
 ### resources.calendar.entries.RsvpResponses

@@ -2,15 +2,12 @@ package fxopts
 
 import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbsync"
-	dbsynctablemanager "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/tablemanager"
 	"github.com/fivenet-app/fivenet/v2026/pkg/demo"
-	"github.com/fivenet-app/fivenet/v2026/pkg/discord"
-	"github.com/fivenet-app/fivenet/v2026/pkg/discord/commands"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker/manager"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
+	pbcalendar "github.com/fivenet-app/fivenet/v2026/services/calendar"
 	centrumbot "github.com/fivenet-app/fivenet/v2026/services/centrum/bot"
 	centrumhousekeeper "github.com/fivenet-app/fivenet/v2026/services/centrum/housekeeper"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/services/citizens"
@@ -74,19 +71,6 @@ func FxServiceHousekeeperOpts() []fx.Option {
 		fx.Invoke(func(*pbjobs.Housekeeper) {}),
 		fx.Invoke(func(*pbvehicles.Housekeeper) {}),
 		fx.Invoke(func(*pbdocuments.Workflow) {}),
-	}
-}
-
-func FxDiscordOpts() []fx.Option {
-	return []fx.Option{
-		fx.Invoke(func(*discord.Bot) {}),
-		fx.Invoke(func(*commands.Cmds) {}),
-	}
-}
-
-func FxDBSyncOpts() []fx.Option {
-	return []fx.Option{
-		fx.Invoke(func(*dbsynctablemanager.TableManager) {}),
-		fx.Invoke(func(*dbsync.Sync) {}),
+		fx.Invoke(func(*pbcalendar.BirthdaySyncer) {}),
 	}
 }

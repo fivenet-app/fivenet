@@ -78,6 +78,10 @@ export interface Calendar {
      * @generated from protobuf field: resources.calendar.access.CalendarAccess access = 15
      */
     access?: CalendarAccess;
+    /**
+     * @generated from protobuf field: optional resources.calendar.CalendarSystemKind system_kind = 16
+     */
+    systemKind?: CalendarSystemKind;
 }
 /**
  * @generated from protobuf message resources.calendar.CalendarShort
@@ -119,6 +123,10 @@ export interface CalendarShort {
      * @generated from protobuf field: optional resources.calendar.CalendarSub subscription = 14
      */
     subscription?: CalendarSub;
+    /**
+     * @generated from protobuf field: optional resources.calendar.CalendarSystemKind system_kind = 15
+     */
+    systemKind?: CalendarSystemKind;
 }
 /**
  * @generated from protobuf message resources.calendar.CalendarSub
@@ -149,6 +157,19 @@ export interface CalendarSub {
      */
     muted: boolean;
 }
+/**
+ * @generated from protobuf enum resources.calendar.CalendarSystemKind
+ */
+export enum CalendarSystemKind {
+    /**
+     * @generated from protobuf enum value: CALENDAR_SYSTEM_KIND_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS = 1;
+     */
+    JOB_BIRTHDAYS = 1
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Calendar$Type extends MessageType<Calendar> {
     constructor() {
@@ -167,7 +188,8 @@ class Calendar$Type extends MessageType<Calendar> {
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 14, name: "subscription", kind: "message", T: () => CalendarSub },
-            { no: 15, name: "access", kind: "message", T: () => CalendarAccess }
+            { no: 15, name: "access", kind: "message", T: () => CalendarAccess },
+            { no: 16, name: "system_kind", kind: "enum", opt: true, T: () => ["resources.calendar.CalendarSystemKind", CalendarSystemKind, "CALENDAR_SYSTEM_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<Calendar>): Calendar {
@@ -232,6 +254,9 @@ class Calendar$Type extends MessageType<Calendar> {
                 case /* resources.calendar.access.CalendarAccess access */ 15:
                     message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
+                case /* optional resources.calendar.CalendarSystemKind system_kind */ 16:
+                    message.systemKind = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -289,6 +314,9 @@ class Calendar$Type extends MessageType<Calendar> {
         /* resources.calendar.access.CalendarAccess access = 15; */
         if (message.access)
             CalendarAccess.internalBinaryWrite(message.access, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.calendar.CalendarSystemKind system_kind = 16; */
+        if (message.systemKind !== undefined)
+            writer.tag(16, WireType.Varint).int32(message.systemKind);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -311,7 +339,8 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
             { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 10, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 14, name: "subscription", kind: "message", T: () => CalendarSub }
+            { no: 14, name: "subscription", kind: "message", T: () => CalendarSub },
+            { no: 15, name: "system_kind", kind: "enum", opt: true, T: () => ["resources.calendar.CalendarSystemKind", CalendarSystemKind, "CALENDAR_SYSTEM_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<CalendarShort>): CalendarShort {
@@ -357,6 +386,9 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
                 case /* optional resources.calendar.CalendarSub subscription */ 14:
                     message.subscription = CalendarSub.internalBinaryRead(reader, reader.uint32(), options, message.subscription);
                     break;
+                case /* optional resources.calendar.CalendarSystemKind system_kind */ 15:
+                    message.systemKind = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -396,6 +428,9 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
         /* optional resources.calendar.CalendarSub subscription = 14; */
         if (message.subscription)
             CalendarSub.internalBinaryWrite(message.subscription, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.calendar.CalendarSystemKind system_kind = 15; */
+        if (message.systemKind !== undefined)
+            writer.tag(15, WireType.Varint).int32(message.systemKind);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -85,7 +85,7 @@ func (s *Server) nextLawSortOrder(
 		return 0, err
 	}
 
-	if dest.SortOrder >= math.MaxInt32 {
+	if dest.SortOrder == math.MaxInt32 {
 		return 0, errors.New("law sort order overflow")
 	}
 

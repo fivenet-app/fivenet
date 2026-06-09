@@ -89,3 +89,29 @@ func TestStripHTMLTags(t *testing.T) {
 		assert.Equal(t, StripHTMLTags(run.input), run.result, run.msg)
 	}
 }
+
+func TestSanitizePreservesMapBlockAndPenaltyCalculator(t *testing.T) {
+	t.Parallel()
+
+	mapHTML := `<span class="map-block inline-flex align-middle" data-embed="map" data-map-x="12.34" data-map-y="56.78" data-map-zoom="3" data-map-postal="12345" data-map-layer="postal"></span>`
+	mapOut := Sanitize(mapHTML)
+	assert.Contains(t, mapOut, `<span`, "map block tag should survive sanitization: %s", mapOut)
+	assert.Contains(t, mapOut, `data-embed="map"`)
+	assert.Contains(t, mapOut, `data-map-x="12.34"`)
+	assert.Contains(t, mapOut, `data-map-y="56.78"`)
+	assert.Contains(t, mapOut, `data-map-zoom="3"`)
+	assert.Contains(t, mapOut, `data-map-postal="12345"`)
+	assert.Contains(t, mapOut, `data-map-layer="postal"`)
+
+	penaltyHTML := `<div data-type="penalty-calculator" data-embed="penalty-calculator"></div>`
+	penaltyOut := Sanitize(penaltyHTML)
+	assert.Contains(
+		t,
+		penaltyOut,
+		`<div`,
+		"penalty calculator tag should survive sanitization: %s",
+		penaltyOut,
+	)
+	assert.Contains(t, penaltyOut, `data-type="penalty-calculator"`)
+	assert.Contains(t, penaltyOut, `data-embed="penalty-calculator"`)
+}

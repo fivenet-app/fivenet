@@ -8,6 +8,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/stores/calendar';
+import { isSystemManagedCalendar } from '~/components/calendar/helpers';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateCalendarResponse, UpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
@@ -15,6 +16,7 @@ import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 
 const props = defineProps<{
     calendarId?: number;
+    systemManaged?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -36,6 +38,8 @@ const canDo = computed(() => ({
     privateCalendar: attr('calendar.CalendarService/CreateCalendar', 'Fields', 'Job').value,
     publicCalendar: attr('calendar.CalendarService/CreateCalendar', 'Fields', 'Public').value,
 }));
+
+const isSystemManaged = computed(() => props.systemManaged || isSystemManagedCalendar(data.value?.calendar));
 
 const schema = z.object({
     name: z.coerce.string().min(3).max(255),
@@ -90,7 +94,11 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarRes
     try {
         const response = await calendarStore.createOrUpdateCalendar({
             id: data.value?.calendar?.id ?? 0,
-            job: values.private ? undefined : activeChar.value?.job,
+            job: isSystemManaged.value
+                ? (data.value?.calendar?.job ?? activeChar.value?.job)
+                : values.private
+                  ? undefined
+                  : activeChar.value?.job,
             name: values.name,
             description: values.description,
             public: values.public,
@@ -202,58 +210,60 @@ async function closeModal(): Promise<void> {
                 />
 
                 <template v-else>
-                    <UFormField class="flex-1" name="title" :label="$t('common.name')" required>
-                        <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
-                    </UFormField>
+                    <p v-if="isSystemManaged" class="text-sm text-neutral-500 dark:text-neutral-400">
+                        {{ $t('common.read_only') }}
+                    </p>
 
                     <UFormField class="flex-1" name="color" :label="$t('common.color')">
                         <ColorPickerTW v-model="state.color" class="w-full" />
                     </UFormField>
 
-                    <UFormField class="flex-1" name="description" :label="$t('common.description')">
-                        <TiptapEditor
-                            v-model="state.description"
-                            class="w-full"
-                            name="content"
-                            wrapper-class="min-h-80"
-                            :placeholder="$t('common.description')"
-                            :limit="1_000"
-                        />
-                    </UFormField>
-
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        <UFormField
-                            class="flex-1"
-                            name="private"
-                            :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
-                        >
-                            <USwitch
-                                v-model="state.private"
-                                :disabled="
-                                    !canDo.privateCalendar ||
-                                    calendarId !== undefined ||
-                                    (!props.calendarId && hasPrivateCalendar)
-                                "
+                    <template v-if="!isSystemManaged">
+                        <UFormField class="flex-1" name="description" :label="$t('common.description')">
+                            <TiptapEditor
+                                v-model="state.description"
+                                class="w-full"
+                                name="content"
+                                wrapper-class="min-h-80"
+                                :placeholder="$t('common.description')"
+                                :limit="1_000"
                             />
                         </UFormField>
 
-                        <UFormField v-if="canDo.publicCalendar" class="flex-1" name="public" :label="$t('common.public')">
-                            <USwitch v-model="state.public" />
-                        </UFormField>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                            <UFormField
+                                class="flex-1"
+                                name="private"
+                                :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
+                            >
+                                <USwitch
+                                    v-model="state.private"
+                                    :disabled="
+                                        !canDo.privateCalendar ||
+                                        calendarId !== undefined ||
+                                        (!props.calendarId && hasPrivateCalendar)
+                                    "
+                                />
+                            </UFormField>
 
-                        <UFormField class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
-                            <USwitch v-model="state.closed" />
-                        </UFormField>
-                    </div>
+                            <UFormField v-if="canDo.publicCalendar" class="flex-1" name="public" :label="$t('common.public')">
+                                <USwitch v-model="state.public" />
+                            </UFormField>
 
-                    <UFormField class="flex-1" name="access" :label="$t('common.access')">
-                        <AccessManager
-                            v-model:jobs="state.access.jobs"
-                            v-model:users="state.access.users"
-                            :target-id="calendarId ?? 0"
-                            :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.calendar.AccessLevel')"
-                        />
-                    </UFormField>
+                            <UFormField class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
+                                <USwitch v-model="state.closed" />
+                            </UFormField>
+                        </div>
+
+                        <UFormField class="flex-1" name="access" :label="$t('common.access')">
+                            <AccessManager
+                                v-model:jobs="state.access.jobs"
+                                v-model:users="state.access.users"
+                                :target-id="calendarId ?? 0"
+                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.calendar.AccessLevel')"
+                            />
+                        </UFormField>
+                    </template>
                 </template>
             </UForm>
         </template>

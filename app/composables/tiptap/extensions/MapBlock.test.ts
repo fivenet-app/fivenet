@@ -1,3 +1,4 @@
+import { getSchema } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
@@ -7,6 +8,19 @@ import { MapBlock } from './MapBlock';
 
 describe('MapBlock', () => {
     const extensions = [Document, Paragraph, Text, MapBlock];
+
+    it('is an inline atom embed', () => {
+        const schema = getSchema(extensions);
+        const mapBlock = schema.nodes.mapBlock;
+
+        expect(mapBlock).toBeDefined();
+        if (!mapBlock) throw new Error('mapBlock node is missing from the schema');
+
+        expect(mapBlock.spec.inline).toBe(true);
+        expect(mapBlock.spec.group).toBe('inline');
+        expect(mapBlock.spec.atom).toBe(true);
+        expect(mapBlock.spec.selectable).toBe(true);
+    });
 
     it('round-trips html with data attributes', () => {
         const doc = {

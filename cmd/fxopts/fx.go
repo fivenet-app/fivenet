@@ -173,6 +173,7 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		fx.Provide(
 			grpc.AsService(pbauth.NewServer),
 			grpc.AsService(pbcalendar.NewServer),
+			pbcalendar.NewBirthdaySyncer,
 			pbcentrum.NewServer,
 			grpc.AsService(pbcitizens.NewServer),
 			grpc.AsService(pbcompletor.NewServer),

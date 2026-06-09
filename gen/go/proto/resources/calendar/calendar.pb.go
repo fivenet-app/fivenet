@@ -27,6 +27,47 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type CalendarSystemKind int32
+
+const (
+	CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED   CalendarSystemKind = 0
+	CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS CalendarSystemKind = 1
+)
+
+// Enum value maps for CalendarSystemKind.
+var (
+	CalendarSystemKind_name = map[int32]string{
+		0: "CALENDAR_SYSTEM_KIND_UNSPECIFIED",
+		1: "CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS",
+	}
+	CalendarSystemKind_value = map[string]int32{
+		"CALENDAR_SYSTEM_KIND_UNSPECIFIED":   0,
+		"CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS": 1,
+	}
+)
+
+func (x CalendarSystemKind) Enum() *CalendarSystemKind {
+	p := new(CalendarSystemKind)
+	*p = x
+	return p
+}
+
+func (x CalendarSystemKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CalendarSystemKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_calendar_calendar_proto_enumTypes[0].Descriptor()
+}
+
+func (CalendarSystemKind) Type() protoreflect.EnumType {
+	return &file_resources_calendar_calendar_proto_enumTypes[0]
+}
+
+func (x CalendarSystemKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
 type Calendar struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
@@ -44,6 +85,7 @@ type Calendar struct {
 	CreatorJob    string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	Subscription  *CalendarSub           `protobuf:"bytes,14,opt,name=subscription,proto3,oneof" json:"subscription,omitempty"`
 	Access        *access.CalendarAccess `protobuf:"bytes,15,opt,name=access,proto3" json:"access,omitempty"`
+	SystemKind    *CalendarSystemKind    `protobuf:"varint,16,opt,name=system_kind,json=systemKind,proto3,enum=resources.calendar.CalendarSystemKind,oneof" json:"system_kind,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -178,6 +220,13 @@ func (x *Calendar) GetAccess() *access.CalendarAccess {
 	return nil
 }
 
+func (x *Calendar) GetSystemKind() CalendarSystemKind {
+	if x != nil && x.SystemKind != nil {
+		return *x.SystemKind
+	}
+	return CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED
+}
+
 func (x *Calendar) SetId(v int64) {
 	x.Id = v
 }
@@ -236,6 +285,10 @@ func (x *Calendar) SetSubscription(v *CalendarSub) {
 
 func (x *Calendar) SetAccess(v *access.CalendarAccess) {
 	x.Access = v
+}
+
+func (x *Calendar) SetSystemKind(v CalendarSystemKind) {
+	x.SystemKind = &v
 }
 
 func (x *Calendar) HasCreatedAt() bool {
@@ -301,6 +354,13 @@ func (x *Calendar) HasAccess() bool {
 	return x.Access != nil
 }
 
+func (x *Calendar) HasSystemKind() bool {
+	if x == nil {
+		return false
+	}
+	return x.SystemKind != nil
+}
+
 func (x *Calendar) ClearCreatedAt() {
 	x.CreatedAt = nil
 }
@@ -337,6 +397,10 @@ func (x *Calendar) ClearAccess() {
 	x.Access = nil
 }
 
+func (x *Calendar) ClearSystemKind() {
+	x.SystemKind = nil
+}
+
 type Calendar_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -355,6 +419,7 @@ type Calendar_builder struct {
 	CreatorJob   string
 	Subscription *CalendarSub
 	Access       *access.CalendarAccess
+	SystemKind   *CalendarSystemKind
 }
 
 func (b0 Calendar_builder) Build() *Calendar {
@@ -376,6 +441,7 @@ func (b0 Calendar_builder) Build() *Calendar {
 	x.CreatorJob = b.CreatorJob
 	x.Subscription = b.Subscription
 	x.Access = b.Access
+	x.SystemKind = b.SystemKind
 	return m0
 }
 
@@ -390,6 +456,7 @@ type CalendarShort struct {
 	Closed        bool                   `protobuf:"varint,9,opt,name=closed,proto3" json:"closed,omitempty"`
 	Color         string                 `protobuf:"bytes,10,opt,name=color,proto3" json:"color,omitempty"`
 	Subscription  *CalendarSub           `protobuf:"bytes,14,opt,name=subscription,proto3,oneof" json:"subscription,omitempty"`
+	SystemKind    *CalendarSystemKind    `protobuf:"varint,15,opt,name=system_kind,json=systemKind,proto3,enum=resources.calendar.CalendarSystemKind,oneof" json:"system_kind,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -482,6 +549,13 @@ func (x *CalendarShort) GetSubscription() *CalendarSub {
 	return nil
 }
 
+func (x *CalendarShort) GetSystemKind() CalendarSystemKind {
+	if x != nil && x.SystemKind != nil {
+		return *x.SystemKind
+	}
+	return CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED
+}
+
 func (x *CalendarShort) SetId(v int64) {
 	x.Id = v
 }
@@ -518,6 +592,10 @@ func (x *CalendarShort) SetSubscription(v *CalendarSub) {
 	x.Subscription = v
 }
 
+func (x *CalendarShort) SetSystemKind(v CalendarSystemKind) {
+	x.SystemKind = &v
+}
+
 func (x *CalendarShort) HasCreatedAt() bool {
 	if x == nil {
 		return false
@@ -546,6 +624,13 @@ func (x *CalendarShort) HasSubscription() bool {
 	return x.Subscription != nil
 }
 
+func (x *CalendarShort) HasSystemKind() bool {
+	if x == nil {
+		return false
+	}
+	return x.SystemKind != nil
+}
+
 func (x *CalendarShort) ClearCreatedAt() {
 	x.CreatedAt = nil
 }
@@ -562,6 +647,10 @@ func (x *CalendarShort) ClearSubscription() {
 	x.Subscription = nil
 }
 
+func (x *CalendarShort) ClearSystemKind() {
+	x.SystemKind = nil
+}
+
 type CalendarShort_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -574,6 +663,7 @@ type CalendarShort_builder struct {
 	Closed       bool
 	Color        string
 	Subscription *CalendarSub
+	SystemKind   *CalendarSystemKind
 }
 
 func (b0 CalendarShort_builder) Build() *CalendarShort {
@@ -589,6 +679,7 @@ func (b0 CalendarShort_builder) Build() *CalendarShort {
 	x.Closed = b.Closed
 	x.Color = b.Color
 	x.Subscription = b.Subscription
+	x.SystemKind = b.SystemKind
 	return m0
 }
 
@@ -745,7 +836,7 @@ var File_resources_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/calendar/access/access.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xcf\x06\n" +
+	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/calendar/access/access.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xad\a\n" +
 	"\bCalendar\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -767,7 +858,9 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\vcreator_job\x18\r \x01(\tR\n" +
 	"creatorJob\x12H\n" +
 	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\aR\fsubscription\x88\x01\x01\x12A\n" +
-	"\x06access\x18\x0f \x01(\v2).resources.calendar.access.CalendarAccessR\x06accessB\r\n" +
+	"\x06access\x18\x0f \x01(\v2).resources.calendar.access.CalendarAccessR\x06access\x12L\n" +
+	"\vsystem_kind\x18\x10 \x01(\x0e2&.resources.calendar.CalendarSystemKindH\bR\n" +
+	"systemKind\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x06\n" +
@@ -776,7 +869,8 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x0f\n" +
-	"\r_subscription\"\xb4\x03\n" +
+	"\r_subscriptionB\x0e\n" +
+	"\f_system_kind\"\x92\x04\n" +
 	"\rCalendarShort\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -788,11 +882,14 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\x06closed\x18\t \x01(\bR\x06closed\x12\x1e\n" +
 	"\x05color\x18\n" +
 	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12H\n" +
-	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\x03R\fsubscription\x88\x01\x01B\r\n" +
+	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\x03R\fsubscription\x88\x01\x01\x12L\n" +
+	"\vsystem_kind\x18\x0f \x01(\x0e2&.resources.calendar.CalendarSystemKindH\x04R\n" +
+	"systemKind\x88\x01\x01B\r\n" +
 	"\v_created_atB\x06\n" +
 	"\x04_jobB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
-	"\r_subscription\"\x92\x02\n" +
+	"\r_subscriptionB\x0e\n" +
+	"\f_system_kind\"\x92\x02\n" +
 	"\vCalendarSub\x12\x1f\n" +
 	"\vcalendar_id\x18\x01 \x01(\x03R\n" +
 	"calendarId\x12\x17\n" +
@@ -803,33 +900,40 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\tconfirmed\x18\x05 \x01(\bR\tconfirmed\x12\x14\n" +
 	"\x05muted\x18\x06 \x01(\bR\x05mutedB\a\n" +
 	"\x05_userB\r\n" +
-	"\v_created_atBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar;calendarb\x06proto3"
+	"\v_created_at*b\n" +
+	"\x12CalendarSystemKind\x12$\n" +
+	" CALENDAR_SYSTEM_KIND_UNSPECIFIED\x10\x00\x12&\n" +
+	"\"CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS\x10\x01BOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar;calendarb\x06proto3"
 
+var file_resources_calendar_calendar_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_calendar_calendar_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_calendar_calendar_proto_goTypes = []any{
-	(*Calendar)(nil),              // 0: resources.calendar.Calendar
-	(*CalendarShort)(nil),         // 1: resources.calendar.CalendarShort
-	(*CalendarSub)(nil),           // 2: resources.calendar.CalendarSub
-	(*timestamp.Timestamp)(nil),   // 3: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),       // 4: resources.users.short.UserShort
-	(*access.CalendarAccess)(nil), // 5: resources.calendar.access.CalendarAccess
+	(CalendarSystemKind)(0),       // 0: resources.calendar.CalendarSystemKind
+	(*Calendar)(nil),              // 1: resources.calendar.Calendar
+	(*CalendarShort)(nil),         // 2: resources.calendar.CalendarShort
+	(*CalendarSub)(nil),           // 3: resources.calendar.CalendarSub
+	(*timestamp.Timestamp)(nil),   // 4: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),       // 5: resources.users.short.UserShort
+	(*access.CalendarAccess)(nil), // 6: resources.calendar.access.CalendarAccess
 }
 var file_resources_calendar_calendar_proto_depIdxs = []int32{
-	3,  // 0: resources.calendar.Calendar.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 1: resources.calendar.Calendar.updated_at:type_name -> resources.timestamp.Timestamp
-	3,  // 2: resources.calendar.Calendar.deleted_at:type_name -> resources.timestamp.Timestamp
-	4,  // 3: resources.calendar.Calendar.creator:type_name -> resources.users.short.UserShort
-	2,  // 4: resources.calendar.Calendar.subscription:type_name -> resources.calendar.CalendarSub
-	5,  // 5: resources.calendar.Calendar.access:type_name -> resources.calendar.access.CalendarAccess
-	3,  // 6: resources.calendar.CalendarShort.created_at:type_name -> resources.timestamp.Timestamp
-	2,  // 7: resources.calendar.CalendarShort.subscription:type_name -> resources.calendar.CalendarSub
-	4,  // 8: resources.calendar.CalendarSub.user:type_name -> resources.users.short.UserShort
-	3,  // 9: resources.calendar.CalendarSub.created_at:type_name -> resources.timestamp.Timestamp
-	10, // [10:10] is the sub-list for method output_type
-	10, // [10:10] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	4,  // 0: resources.calendar.Calendar.created_at:type_name -> resources.timestamp.Timestamp
+	4,  // 1: resources.calendar.Calendar.updated_at:type_name -> resources.timestamp.Timestamp
+	4,  // 2: resources.calendar.Calendar.deleted_at:type_name -> resources.timestamp.Timestamp
+	5,  // 3: resources.calendar.Calendar.creator:type_name -> resources.users.short.UserShort
+	3,  // 4: resources.calendar.Calendar.subscription:type_name -> resources.calendar.CalendarSub
+	6,  // 5: resources.calendar.Calendar.access:type_name -> resources.calendar.access.CalendarAccess
+	0,  // 6: resources.calendar.Calendar.system_kind:type_name -> resources.calendar.CalendarSystemKind
+	4,  // 7: resources.calendar.CalendarShort.created_at:type_name -> resources.timestamp.Timestamp
+	3,  // 8: resources.calendar.CalendarShort.subscription:type_name -> resources.calendar.CalendarSub
+	0,  // 9: resources.calendar.CalendarShort.system_kind:type_name -> resources.calendar.CalendarSystemKind
+	5,  // 10: resources.calendar.CalendarSub.user:type_name -> resources.users.short.UserShort
+	4,  // 11: resources.calendar.CalendarSub.created_at:type_name -> resources.timestamp.Timestamp
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_resources_calendar_calendar_proto_init() }
@@ -845,13 +949,14 @@ func file_resources_calendar_calendar_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_calendar_calendar_proto_rawDesc), len(file_resources_calendar_calendar_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_resources_calendar_calendar_proto_goTypes,
 		DependencyIndexes: file_resources_calendar_calendar_proto_depIdxs,
+		EnumInfos:         file_resources_calendar_calendar_proto_enumTypes,
 		MessageInfos:      file_resources_calendar_calendar_proto_msgTypes,
 	}.Build()
 	File_resources_calendar_calendar_proto = out.File

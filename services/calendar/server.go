@@ -5,6 +5,7 @@ import (
 
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
+	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
@@ -26,6 +27,7 @@ var (
 
 	tCAccess = table.FivenetCalendarAccess.AS("calendar_access")
 
+	tUserJobs  = table.FivenetUserJobs.AS("user_jobs")
 	tUserProps = table.FivenetUserProps
 )
 
@@ -71,6 +73,7 @@ type Server struct {
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	appCfg   appconfig.IConfig
+	i18n     *i18n.I18n
 	notif    notifi.INotifi
 	js       *events.JSWrapper
 
@@ -84,6 +87,7 @@ type Params struct {
 	P         perms.Permissions
 	Enricher  *mstlystcdata.UserAwareEnricher
 	AppConfig appconfig.IConfig
+	I18n      *i18n.I18n
 	Notif     notifi.INotifi
 	JS        *events.JSWrapper
 }
@@ -94,6 +98,7 @@ func NewServer(p Params) *Server {
 		ps:       p.P,
 		enricher: p.Enricher,
 		appCfg:   p.AppConfig,
+		i18n:     p.I18n,
 		notif:    p.Notif,
 		js:       p.JS,
 		access: access.NewGrouped[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, access.DummyQualificationAccess[calendaraccess.AccessLevel], *access.DummyQualificationAccess[calendaraccess.AccessLevel], calendaraccess.AccessLevel](

@@ -88,7 +88,10 @@ func (s *Server) CreateOrUpdateMarker(
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
-		fields, err := permslivemap.LivemapService.CreateOrUpdateMarker.AccessTyped.Get(s.ps, userInfo)
+		fields, err := permslivemap.LivemapService.CreateOrUpdateMarker.AccessTyped.Get(
+			s.ps,
+			userInfo,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}

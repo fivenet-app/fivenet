@@ -14,8 +14,15 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/stores/calendar';
-import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
+import type { CalendarEntryAttribute } from '~/components/calendar/helpers';
+import {
+    getCalendarEntryDisplayEndDate,
+    getCalendarEntryDisplayRangeEndDate,
+    getCalendarEntryDisplayStartDate,
+} from '~/utils/calendar';
+import { CalendarEntryRecurringEvery, type CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
+import { CalendarSystemKind } from '~~/gen/ts/resources/calendar/calendar';
 
 useHead({
     title: 'common.calendar',
@@ -40,6 +47,7 @@ const calRef = useTemplateRef('calRef');
 const schema = z.object({
     page: pageNumberSchema,
     entryId: z.coerce.number().nonnegative().optional(),
+    entryKey: z.string().optional(),
 });
 
 const query = useSearchForm('calendar', schema);
@@ -82,8 +90,12 @@ useDebouncedRefresh(currentDate.value, refresh, { debounce: 100, maxWait: 1000 }
 useDebouncedRefresh(activeCalendarIds, refresh);
 
 function formatStartEndTime(entry: CalendarEntry): string {
-    const start = toDate(entry.startTime);
-    const end = entry.endTime ? toDate(entry.endTime) : undefined;
+    if (entry.occurrence?.allDay) {
+        return t('common.all_day');
+    }
+
+    const start = getCalendarEntryDisplayStartDate(entry);
+    const end = getCalendarEntryDisplayEndDate(entry);
 
     if (!end) {
         return d(start, 'time');
@@ -106,34 +118,28 @@ function formatStartEndTime(entry: CalendarEntry): string {
     );
 }
 
-type CalEntry = {
-    key: string;
-    customData: CalendarEntry & {
-        color: string;
-        isPast: boolean;
-        multiDay: boolean;
-        ongoing: boolean;
-        time: string;
-        timeEnd?: string;
-    };
-    dates: DateRangeSource | DateRangeSource[];
-};
-
-const transformedCalendarEntries = computedAsync(async () =>
-    entries.value
+const transformedCalendarEntries = computedAsync(async (): Promise<CalendarEntryAttribute[]> => {
+    const result = entries.value
         .filter((e) => activeCalendarIds.value.includes(e.calendarId))
         .map((entry) => {
-            const startTime = toDate(entry.startTime);
-            const endTime = entry.endTime ? toDate(entry.endTime) : undefined;
+            const startTime = getCalendarEntryDisplayStartDate(entry);
+            const endTime = getCalendarEntryDisplayEndDate(entry);
+            const rangeEndTime = getCalendarEntryDisplayRangeEndDate(entry);
             const past = endTime ? isPast(endTime) : isPast(startTime);
 
             return {
-                key: `${startTime.toISOString()}-${entry.id}-${entry.calendarId}`,
+                key: entry.occurrence?.key ?? `${startTime.toISOString()}-${entry.id}-${entry.calendarId}`,
                 customData: {
                     ...entry,
-                    color: entry.calendar?.color ?? 'primary',
+                    color: (entry.calendar?.color as ButtonProps['color'] | undefined) ?? 'primary',
+                    icon:
+                        entry.calendar?.systemKind === CalendarSystemKind.JOB_BIRTHDAYS
+                            ? 'i-mdi-birthday-cake'
+                            : entry.recurring?.every && entry.recurring.every > CalendarEntryRecurringEvery.UNSPECIFIED
+                              ? 'i-mdi-repeat'
+                              : undefined,
                     isPast: past,
-                    multiDay: !!endTime && !isSameDay(startTime, endTime),
+                    multiDay: !!rangeEndTime && !isSameDay(startTime, rangeEndTime),
                     ongoing: !!endTime && isPast(startTime) && isFuture(endTime),
                     time: formatStartEndTime(entry),
                     timeEnd:
@@ -150,31 +156,34 @@ const transformedCalendarEntries = computedAsync(async () =>
                 },
                 dates: {
                     start: startTime,
-                    end: endTime,
-                    repeat: entry.recurring
-                        ? {
-                              every: [entry.recurring.count, entry.recurring.every],
-                              until: entry.recurring?.until ? toDate(entry.recurring?.until) : undefined,
-                          }
-                        : undefined,
+                    end: rangeEndTime,
                 } as DateRangeSource,
             };
-        })
-        .sort((a, b) => a.key.localeCompare(b.key) + (b.customData.id - a.customData.id)),
-);
+        });
+
+    return result.sort((left, right) => {
+        const leftStart = getCalendarEntryDisplayStartDate(left.customData).getTime();
+        const rightStart = getCalendarEntryDisplayStartDate(right.customData).getTime();
+        if (leftStart !== rightStart) return leftStart - rightStart;
+        if (left.customData.calendarId !== right.customData.calendarId) {
+            return left.customData.calendarId - right.customData.calendarId;
+        }
+        return left.customData.id - right.customData.id;
+    });
+});
 
 type GroupedCalendarEntries = {
     key: string;
     date: Date;
     isToday: boolean;
-    entries: { past: CalEntry[]; upcoming: CalEntry[] };
+    entries: { past: CalendarEntryAttribute[]; upcoming: CalendarEntryAttribute[] };
 }[];
 
 const groupedCalendarEntries = computedAsync(async () => {
     const groups: GroupedCalendarEntries = [];
     transformedCalendarEntries.value?.forEach((entry) => {
-        const date = toDate(entry.customData.startTime);
-        let idx = groups.findIndex((g) => g.key === toDate(entry.customData.startTime).toDateString());
+        const date = getCalendarEntryDisplayStartDate(entry.customData);
+        let idx = groups.findIndex((g) => g.key === date.toDateString());
         if (idx === -1) {
             idx = groups.push({
                 key: date.toDateString(),
@@ -225,24 +234,48 @@ const entryViewSlideover = overlay.create(EntryViewSlideover);
 const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 const findCalendarsDrawer = overlay.create(FindCalendarDrawer);
 
-watch(toRef(query, 'entryId'), (value) => {
-    if (!value) return;
+function openSelectedEntry(entry: CalendarEntry): void {
+    entryViewSlideover.open({
+        entry,
+    });
+}
 
-    entryViewSlideover
-        .open({
-            entryId: value,
-        })
-        .then(() => (query.entryId = undefined));
-});
+function openEntryFromQuery(): void {
+    if (query.entryKey) {
+        const entry = entries.value.find((candidate) => candidate.occurrence?.key === query.entryKey);
+        if (entry) {
+            openSelectedEntry(entry);
+            query.entryKey = undefined;
+            query.entryId = undefined;
+        }
+        return;
+    }
+
+    if (!query.entryId) return;
+
+    const entry = entries.value.find((candidate) => candidate.id === query.entryId);
+    if (entry) {
+        openSelectedEntry(entry);
+    } else {
+        entryViewSlideover.open({
+            entryId: query.entryId,
+        });
+    }
+
+    query.entryId = undefined;
+    query.entryKey = undefined;
+}
+
+watch(
+    [toRef(query, 'entryId'), toRef(query, 'entryKey'), entries],
+    () => {
+        openEntryFromQuery();
+    },
+    { deep: true },
+);
 
 onMounted(() => {
-    if (query.entryId) {
-        entryViewSlideover
-            .open({
-                entryId: query.entryId,
-            })
-            .then(() => (query.entryId = undefined));
-    }
+    openEntryFromQuery();
 });
 
 async function resetToToday(): Promise<void> {
@@ -368,7 +401,7 @@ const viewOptions = [
                                             />
 
                                             <UButton
-                                                :color="calendar.color as ButtonProps['color']"
+                                                :color="stringToButtonColor(calendar.color)"
                                                 size="sm"
                                                 truncate
                                                 :label="calendar.name"
@@ -401,11 +434,7 @@ const viewOptions = [
                     class="flex flex-1"
                     :view="view === 'week' ? 'weekly' : 'monthly'"
                     :attributes="transformedCalendarEntries"
-                    @selected="
-                        entryViewSlideover.open({
-                            entryId: $event.id,
-                        })
-                    "
+                    @selected="openSelectedEntry"
                     @did-move="
                         currentDate.year = $event[0].year;
                         currentDate.month = $event[0].month;
@@ -441,11 +470,7 @@ const viewOptions = [
                                 <li v-for="attr in calendarEntries.entries.past" :key="attr.key">
                                     <ULink
                                         class="inline-flex w-full items-center justify-between gap-1"
-                                        @click="
-                                            entryViewSlideover.open({
-                                                entryId: attr.customData.id,
-                                            })
-                                        "
+                                        @click="openSelectedEntry(attr.customData)"
                                     >
                                         <span class="inline-flex items-center gap-1">
                                             <UBadge :color="attr.customData.color as ButtonProps['color']" size="lg" />
@@ -478,11 +503,7 @@ const viewOptions = [
                                 <li v-for="attr in calendarEntries.entries.upcoming" :key="attr.key">
                                     <ULink
                                         class="inline-flex w-full items-center justify-between gap-1"
-                                        @click="
-                                            entryViewSlideover.open({
-                                                entryId: attr.customData.id,
-                                            })
-                                        "
+                                        @click="openSelectedEntry(attr.customData)"
                                     >
                                         <span class="inline-flex items-center gap-1">
                                             <UBadge :color="attr.customData.color as ButtonProps['color']" size="lg" />

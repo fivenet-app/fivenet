@@ -2,7 +2,11 @@
 import type { BadgeProps } from '@nuxt/ui';
 import { isSameDay } from 'date-fns';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
-import { checkCalendarAccess } from '~/components/calendar/helpers';
+import {
+    checkCalendarAccess,
+    isBirthdayEntry as isBirthdayCalendarEntry,
+    isSystemManagedCalendarEntry,
+} from '~/components/calendar/helpers';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
@@ -12,12 +16,16 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useCalendarStore } from '~/stores/calendar';
+import { getCalendarEntryDisplayEndDate, getCalendarEntryDisplayStartDate } from '~/utils/calendar';
+import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import EntryRSVPList from './EntryRSVPList.vue';
+import { emojiBlast } from 'emoji-blast';
 
 const props = defineProps<{
-    entryId: number;
+    entryId?: number;
+    entry?: CalendarEntry;
 }>();
 
 defineEmits<{
@@ -35,16 +43,48 @@ const notifications = useNotificationsStore();
 
 const w = window;
 
-const { data, status, refresh, error } = useLazyAsyncData(`calendar-entry:${props.entryId}`, () =>
-    calendarStore.getCalendarEntry({ entryId: props.entryId }),
+const fetched = props.entry
+    ? undefined
+    : useLazyAsyncData(`calendar-entry:${props.entryId}`, () => calendarStore.getCalendarEntry({ entryId: props.entryId! }));
+const calendarDetails = props.entry
+    ? useLazyAsyncData(`calendar-entry-calendar:${props.entry.calendarId}`, () =>
+          calendarStore.getCalendar({ calendarId: props.entry!.calendarId }),
+      )
+    : undefined;
+
+const entry = computed(() => props.entry ?? fetched?.data.value?.entry);
+const status = computed(() => (props.entry ? 'success' : (fetched?.status.value ?? 'idle')));
+const error = computed(() => (props.entry ? undefined : fetched?.error.value));
+const refresh = async (): Promise<void> => {
+    if (fetched) await fetched.refresh();
+};
+
+const calendar = computed(
+    () =>
+        calendarDetails?.data.value?.calendar ??
+        entry.value?.calendar ??
+        calendars.value.find((candidate) => candidate.id === entry.value?.calendarId),
 );
+const isSystemManaged = computed(() => isSystemManagedCalendarEntry(calendar.value, entry.value));
+const isBirthdayEntry = computed(() => isBirthdayCalendarEntry(entry.value));
 
-const entry = computed(() => data.value?.entry);
+const displayStartTime = computed(() => (entry.value ? getCalendarEntryDisplayStartDate(entry.value) : new Date()));
+const displayEndTime = computed(() => (entry.value ? getCalendarEntryDisplayEndDate(entry.value) : undefined));
 
-const color = computed(() => (entry.value?.calendar?.color ?? 'primary') as BadgeProps['color']);
+const color = computed(() => (calendar.value?.color ?? 'primary') as BadgeProps['color']);
 
 function copyLinkToClipboard(): void {
-    copyToClipboardWrapper(`${w.location.href}?entry_id=${props.entryId}`);
+    const url = new URL(w.location.href);
+
+    if (entry.value?.occurrence?.key) {
+        url.searchParams.set('entry_key', entry.value.occurrence.key);
+        url.searchParams.delete('entry_id');
+    } else {
+        url.searchParams.set('entry_id', String(props.entryId ?? entry.value?.id ?? 0));
+        url.searchParams.delete('entry_key');
+    }
+
+    copyToClipboardWrapper(url.toString());
 
     notifications.add({
         title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
@@ -55,24 +95,15 @@ function copyLinkToClipboard(): void {
 }
 
 const canDo = computed(() => ({
-    share: checkCalendarAccess(
-        data.value?.entry?.calendar?.access,
-        entry.value?.creator,
-        AccessLevel.SHARE,
-        data.value?.entry?.calendar?.creatorJob,
-    ),
-    edit: checkCalendarAccess(
-        data.value?.entry?.calendar?.access,
-        entry.value?.creator,
-        AccessLevel.EDIT,
-        data.value?.entry?.calendar?.creatorJob,
-    ),
-    manage: checkCalendarAccess(
-        data.value?.entry?.calendar?.access,
-        entry.value?.creator,
-        AccessLevel.MANAGE,
-        data.value?.entry?.calendar?.creatorJob,
-    ),
+    share:
+        !isSystemManaged.value &&
+        checkCalendarAccess(calendar.value?.access, entry.value?.creator, AccessLevel.SHARE, calendar.value?.creatorJob),
+    edit:
+        !isSystemManaged.value &&
+        checkCalendarAccess(calendar.value?.access, entry.value?.creator, AccessLevel.EDIT, calendar.value?.creatorJob),
+    manage:
+        !isSystemManaged.value &&
+        checkCalendarAccess(calendar.value?.access, entry.value?.creator, AccessLevel.MANAGE, calendar.value?.creatorJob),
 }));
 
 const confirmModal = overlay.create(ConfirmModal);
@@ -130,12 +161,12 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                         <UBadge class="inline-flex items-center gap-1" color="neutral" size="lg" icon="i-mdi-access-time">
                             {{ $t('common.date') }}
-                            <GenericTime :value="entry?.startTime" type="long" />
-                            <template v-if="entry.endTime">
+                            <GenericTime :value="displayStartTime" :type="entry?.occurrence?.allDay ? 'date' : 'long'" />
+                            <template v-if="displayEndTime && !entry?.occurrence?.allDay">
                                 -
                                 <GenericTime
-                                    :value="entry?.endTime"
-                                    :type="isSameDay(toDate(entry?.startTime), toDate(entry?.endTime)) ? 'time' : 'long'"
+                                    :value="displayEndTime"
+                                    :type="isSameDay(displayStartTime, displayEndTime) ? 'time' : 'long'"
                                 />
                             </template>
                         </UBadge>
@@ -149,22 +180,37 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                     </div>
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
-                        <OpenClosedBadge :closed="entry.closed" />
+                        <OpenClosedBadge v-if="!isSystemManaged" :closed="entry.closed" />
 
-                        <UBadge class="inline-flex gap-1" color="neutral" icon="i-mdi-account">
+                        <UBadge
+                            v-if="!isSystemManaged && entry.creator"
+                            class="inline-flex gap-1"
+                            color="neutral"
+                            icon="i-mdi-account"
+                        >
                             <span>{{ $t('common.created_by') }}</span>
                             <CitizenInfoPopover :user="entry.creator" :show-avatar-in-name="false" text-class="text-xs" />
                         </UBadge>
 
-                        <UBadge class="inline-flex gap-1" color="neutral" icon="i-mdi-calendar">
-                            {{ $t('common.created_at') }}
-                            <GenericTime :value="entry.createdAt" type="long" />
-                        </UBadge>
+                        <UBadge
+                            v-else-if="!isSystemManaged"
+                            class="inline-flex gap-1"
+                            color="neutral"
+                            icon="i-mdi-cog"
+                            :label="$t('components.calendar.system_generated_entry')"
+                        />
 
-                        <UBadge v-if="entry.updatedAt" class="inline-flex gap-1" color="neutral" icon="i-mdi-calendar-edit">
-                            {{ $t('common.updated_at') }}
-                            <GenericTime :value="entry.updatedAt" type="long" />
-                        </UBadge>
+                        <template v-if="!isSystemManaged">
+                            <UBadge class="inline-flex gap-1" color="neutral" icon="i-mdi-calendar">
+                                {{ $t('common.created_at') }}
+                                <GenericTime :value="entry.createdAt" type="long" />
+                            </UBadge>
+
+                            <UBadge v-if="entry.updatedAt" class="inline-flex gap-1" color="neutral" icon="i-mdi-calendar-edit">
+                                {{ $t('common.updated_at') }}
+                                <GenericTime :value="entry.updatedAt" type="long" />
+                            </UBadge>
+                        </template>
                     </div>
 
                     <USeparator />
@@ -182,10 +228,31 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                         <USeparator />
                     </template>
 
-                    <div
-                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-900"
-                    >
-                        <CustomContentRenderer v-if="entry.content" :value="entry.content" />
+                    <div class="mx-auto w-full max-w-(--breakpoint-xl) break-words">
+                        <UAlert
+                            v-if="isBirthdayEntry"
+                            class="rounded-lg"
+                            icon="i-mdi-birthday-cake"
+                            variant="subtle"
+                            :title="$t('components.calendar.birthday_entry_block.title')"
+                            :description="$t('components.calendar.birthday_entry_block.description')"
+                            :actions="[
+                                {
+                                    label: $t('components.calendar.birthday_entry_action'),
+                                    icon: 'i-mdi-party-popper',
+                                    variant: 'subtle',
+                                    onClick: () => {
+                                        emojiBlast({
+                                            emojis: ['🎂', '🎁', '🍰', '🎈', '🎉', '🥳', '🎊', '✨'],
+                                        });
+                                    },
+                                },
+                            ]"
+                            :ui="{ icon: 'size-6' }"
+                        />
+                        <div v-else class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-900">
+                            <CustomContentRenderer v-if="entry.content" :value="entry.content" />
+                        </div>
                     </div>
                 </template>
             </div>

@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 
 	"github.com/fivenet-app/fivenet/v2026/cmd/fxopts"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbsync"
+	dbsynctablemanager "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/tablemanager"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/kardianos/service"
@@ -38,8 +40,11 @@ type DBSyncCmd struct {
 
 func getService(cli *CLI) service.Service {
 	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, false)
-	fxOpts = append(fxOpts, fxopts.FxDBSyncOpts()...)
-	fxOpts = append(fxOpts, fx.Invoke(func(admin.AdminServer) {}))
+	fxOpts = append(fxOpts,
+		fx.Invoke(func(*dbsynctablemanager.TableManager) {}),
+		fx.Invoke(func(*dbsync.Sync) {}),
+		fx.Invoke(func(admin.AdminServer) {}),
+	)
 
 	app := fx.New(fxOpts...)
 

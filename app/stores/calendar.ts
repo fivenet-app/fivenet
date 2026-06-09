@@ -1,10 +1,11 @@
 import { format } from 'date-fns';
 import { defineStore } from 'pinia';
 import { checkCalendarAccess } from '~/components/calendar/helpers';
+import { getCalendarEntryDisplayStartDate } from '~/utils/calendar';
 import { getCalendarCalendarClient, getCalendarEntriesClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import type { Calendar } from '~~/gen/ts/resources/calendar/calendar';
-import { type CalendarEntry, RsvpResponses } from '~~/gen/ts/resources/calendar/entries/entries';
+import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type {
     CreateCalendarResponse,
@@ -66,9 +67,9 @@ export const useCalendarStore = defineStore(
         const entries = ref<CalendarEntry[]>([]);
 
         /**
-         * Map of event reminders (eventId -> reminder time).
+         * Map of event reminders (occurrence key -> reminder time).
          */
-        const eventReminders = ref<Map<number, number>>(new Map());
+        const eventReminders = ref<Map<string, number>>(new Map());
 
         /**
          * Notification sound for calendar events.
@@ -91,20 +92,22 @@ export const useCalendarStore = defineStore(
 
                 const now = new Date();
                 response.entries.forEach((entry) => {
-                    const startTime = toDate(entry.startTime);
+                    const startTime = getCalendarEntryDisplayStartDate(entry);
                     const time = startTime.getTime() - now.getTime();
 
                     const closestTime = reminderTimes.reduce((prev, curr) =>
                         Math.abs(curr - time) < Math.abs(prev - time) ? curr : prev,
                     );
 
-                    if (eventReminders.value.get(entry.id) === closestTime) return;
+                    const reminderKey = entry.occurrence?.key ?? `entry:${entry.id}`;
+
+                    if (eventReminders.value.get(reminderKey) === closestTime) return;
                     if (closestTime > time) return;
 
                     if (time <= 0) {
-                        eventReminders.value.delete(entry.id);
+                        eventReminders.value.delete(reminderKey);
                     } else {
-                        eventReminders.value.set(entry.id, closestTime);
+                        eventReminders.value.set(reminderKey, closestTime);
                     }
 
                     notifications.add({
@@ -128,7 +131,9 @@ export const useCalendarStore = defineStore(
                             {
                                 label: { key: 'common.open' },
                                 icon: 'i-mdi-calendar',
-                                to: `/calendar?entry_id=${entry.id}`,
+                                to: entry.occurrence?.key
+                                    ? `/calendar?entry_key=${encodeURIComponent(entry.occurrence.key)}`
+                                    : `/calendar?entry_id=${entry.id}`,
                             },
                         ],
                     });
@@ -181,6 +186,9 @@ export const useCalendarStore = defineStore(
                     if (response.calendars.length === 0) {
                         calendars.value.length = 0;
                     } else {
+                        const nextActiveIds = new Set(
+                            activeCalendarIds.value.length > 0 ? activeCalendarIds.value : response.calendars.map((c) => c.id),
+                        );
                         const foundCalendars: number[] = [];
                         response.calendars.forEach((calendar) => {
                             const idx = calendars.value.findIndex((c) => c.id === calendar!.id);
@@ -191,6 +199,8 @@ export const useCalendarStore = defineStore(
                             }
                             foundCalendars.push(calendar.id);
                         });
+
+                        activeCalendarIds.value = Array.from(nextActiveIds);
 
                         // Remove non-accessible calendars (ignore public ones) and their entries from our list
                         calendars.value = calendars.value.filter((calendar): boolean => {
@@ -288,15 +298,6 @@ export const useCalendarStore = defineStore(
             const call = calendarEntriesClient.getCalendarEntry(req);
             const { response } = await call;
 
-            if (response.entry) {
-                const idx = entries.value.findIndex((c) => c.id === response.entry!.id);
-                if (idx > -1) {
-                    entries.value[idx] = response.entry;
-                } else {
-                    entries.value.push(response.entry);
-                }
-            }
-
             return response;
         };
 
@@ -318,22 +319,7 @@ export const useCalendarStore = defineStore(
             try {
                 const call = calendarEntriesClient.listCalendarEntries(req);
                 const { response } = await call;
-
-                if (response.entries.length > 0) {
-                    response.entries.forEach((entry) => {
-                        // Make sure that we have the calendar in our list before adding it
-                        if (!calendars.value.find((c) => c.id === entry.calendarId)) return;
-
-                        const idx = entries.value.findIndex((c) => c.id === entry!.id);
-                        if (idx > -1) {
-                            entries.value[idx] = entry;
-                        } else {
-                            entries.value.push(entry);
-                        }
-                    });
-                } else {
-                    entries.value.length = 0;
-                }
+                entries.value = response.entries;
 
                 return response;
             } catch (e) {
@@ -379,14 +365,7 @@ export const useCalendarStore = defineStore(
             });
             const { response } = await call;
 
-            if (response.entry) {
-                const idx = entries.value.findIndex((e) => e.id === response.entry?.id);
-                if (idx > -1) {
-                    entries.value[idx] = response.entry;
-                } else {
-                    entries.value.push(response.entry);
-                }
-            }
+            await listCalendarEntries();
 
             return response;
         };
@@ -404,11 +383,7 @@ export const useCalendarStore = defineStore(
                     entryId: entryId,
                 });
                 await call;
-
-                const idx = entries.value.findIndex((c) => c.id === entryId);
-                if (idx > -1) {
-                    entries.value.splice(idx, 1);
-                }
+                await listCalendarEntries();
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
@@ -446,16 +421,7 @@ export const useCalendarStore = defineStore(
             try {
                 const call = calendarEntriesClient.rSVPCalendarEntry(req);
                 const { response } = await call;
-
-                // Retrieve calendar entry if a "should be visible" response and it is not in our list yet
-                if (req.entry?.entryId && response.entry?.response && response.entry.response > RsvpResponses.HIDDEN) {
-                    const foundEntry = entries.value.find((e) => e.id === response.entry?.entryId);
-                    if (!foundEntry) {
-                        await getCalendarEntry({ entryId: req.entry?.entryId });
-                    } else {
-                        foundEntry.rsvp = response.entry;
-                    }
-                }
+                await listCalendarEntries();
 
                 return response;
             } catch (e) {

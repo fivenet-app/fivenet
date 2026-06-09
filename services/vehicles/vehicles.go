@@ -77,7 +77,8 @@ func (s *Server) ListVehicles(
 		)
 	}
 
-	if fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) || userInfo.GetSuperuser() {
+	if fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) ||
+		userInfo.GetSuperuser() {
 		if req.Wanted != nil && req.GetWanted() {
 			logRequest = true
 			condition = mysql.AND(condition,
@@ -171,7 +172,8 @@ func (s *Server) ListVehicles(
 	if fields.Len() > 0 {
 		columns = append(columns, tVehicleProps.UpdatedAt)
 	}
-	if fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) || userInfo.GetSuperuser() {
+	if fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) ||
+		userInfo.GetSuperuser() {
 		columns = append(columns,
 			tVehicleProps.Wanted,
 			tVehicleProps.WantedReason,
@@ -241,7 +243,8 @@ func (s *Server) SetVehicleProps(
 
 	// Generate the update sets
 	if req.Props.Wanted != nil {
-		if !fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) && !userInfo.GetSuperuser() {
+		if !fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) &&
+			!userInfo.GetSuperuser() {
 			return nil, errorsvehicles.ErrPropsWantedDenied
 		}
 	}
