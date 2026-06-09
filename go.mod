@@ -227,7 +227,7 @@ require (
 	github.com/wasilibs/wazero-helpers v0.0.0-20250123031827-cd30c44769bb // indirect
 	github.com/zeebo/xxh3 v1.1.0 // indirect
 	gitlab.com/gitlab-org/api/client-go v1.46.0 // indirect
-	go.etcd.io/bbolt v1.4.0 // indirect
+	go.etcd.io/bbolt v1.4.3 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.6.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 // indirect
