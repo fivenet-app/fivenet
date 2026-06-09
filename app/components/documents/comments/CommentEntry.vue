@@ -8,9 +8,8 @@ import CustomContentRenderer from '~/components/partials/content/CustomContentRe
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { HistoryContent } from '~/types/history';
+import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { getDocumentsCommentsClient } from '~~/gen/ts/clients';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Comment } from '~~/gen/ts/resources/documents/comment/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { isEmptyDoc } from '~/utils/tiptap';
@@ -119,11 +118,7 @@ async function editComment(documentId: number, commentId: number, values: Schema
             comment: {
                 id: commentId,
                 documentId,
-                content: {
-                    contentType: ContentType.TIPTAP_JSON,
-                    version: '',
-                    tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
-                },
+                content: tiptapToContent(values.content),
                 creatorJob: '',
             },
         });
@@ -168,9 +163,7 @@ async function deleteComment(id: number): Promise<void> {
 function setFromProps(): void {
     if (!comment.value) return;
 
-    state.content = comment.value.content?.tiptapJson
-        ? (Struct.toJson(comment.value.content.tiptapJson) as JSONContent)
-        : (comment.value.content?.rawHtml ?? '');
+    state.content = contentToTiptapValue(comment.value.content);
     syncSnapshot();
 }
 

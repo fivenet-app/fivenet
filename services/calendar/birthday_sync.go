@@ -42,7 +42,7 @@ type birthdayColleague struct {
 type BirthdaySyncer struct {
 	logger   *zap.Logger
 	db       *sql.DB
-	i18n     *i18n.I18n
+	i18n     i18n.Ii18n
 	appCfg   appconfig.IConfig
 	enricher *mstlystcdata.UserAwareEnricher
 }
@@ -52,7 +52,7 @@ type BirthdaySyncerParams struct {
 
 	Logger    *zap.Logger
 	DB        *sql.DB
-	I18n      *i18n.I18n
+	I18n      i18n.Ii18n
 	AppConfig appconfig.IConfig
 	Enricher  *mstlystcdata.UserAwareEnricher
 }

@@ -18,7 +18,7 @@ const { currentDate } = storeToRefs(calendarStore);
 
 const calendarCalendarClient = await getCalendarCalendarClient();
 
-const page = useRouteQuery('page', '1', { transform: Number });
+const page = ref<number>(1);
 
 const { data, status, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listCalendars());
 

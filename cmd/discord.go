@@ -4,6 +4,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/cmd/fxopts"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord"
+	discordcalendarreminders "github.com/fivenet-app/fivenet/v2026/pkg/discord/calendarreminders"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/commands"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"go.uber.org/fx"
@@ -20,10 +21,13 @@ func (c *DiscordCmd) Run(cli *CLI) error {
 	fxOpts = append(fxOpts,
 		fx.Invoke(func(*discord.Bot) {}),
 		fx.Invoke(func(*commands.Cmds) {}),
+		fx.Invoke(func(*discordcalendarreminders.Worker) {}),
 	)
 
 	if c.ModuleCronAgent {
-		fxOpts = append(fxOpts, fx.Invoke(func(*croner.Executor) {}))
+		fxOpts = append(fxOpts,
+			fx.Invoke(func(*croner.Executor) {}),
+		)
 	}
 
 	app := fx.New(fxOpts...)

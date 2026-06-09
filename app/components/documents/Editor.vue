@@ -10,8 +10,8 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
 import type { HistoryContent } from '~/types/history';
+import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access/access';
 import { Category } from '~~/gen/ts/resources/documents/category/category';
@@ -81,9 +81,7 @@ function setFromProps(): void {
     state.closed = document.value.document.meta?.closed ?? false;
     state.draft = document.value.document.meta?.draft ?? false;
     state.public = document.value.document.meta?.public ?? false;
-    state.content = document.value.document.content?.tiptapJson
-        ? (Struct.toJson(document.value.document.content.tiptapJson) as JSONContent)
-        : (document.value.document.content?.rawHtml ?? '');
+    state.content = contentToTiptapValue(document.value.document.content);
     state.category = document.value.document.category
         ? Category.clone(document.value.document.category)
         : Category.clone(emptyCategory);
@@ -274,11 +272,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
     const req: UpdateDocumentRequest = {
         documentId: id,
         title: values.title,
-        content: {
-            contentType: ContentType.TIPTAP_JSON,
-            version: '',
-            tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
-        },
+        content: tiptapToContent(values.content),
         contentType: ContentType.HTML,
         data: values.data ?? {},
         meta: {

@@ -4,6 +4,8 @@ import { Fragment, h, type VNodeChild } from 'vue';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { NodeType, type RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
 
+export const emptyDoc = { type: 'doc', content: [] } as const;
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function isSameDoc(a: JSONContent, b: JSONContent, extensions: Extensions) {
     const schema = getSchema(extensions);

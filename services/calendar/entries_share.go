@@ -211,7 +211,7 @@ func (s *Server) sendShareNotifications(
 			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 			Data: &notifications.Data{
 				Link: &notifications.Link{
-					To: fmt.Sprintf("/calendar?entry_id=%d", entry.GetId()),
+					To: fmt.Sprintf("/calendar?entryId=%d", entry.GetId()),
 				},
 				CausedBy: &usershort.UserShort{
 					UserId:      sourceUserId,

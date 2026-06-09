@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.calendar;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/calendar/access/access.proto";
 import "resources/timestamp/timestamp.proto";
@@ -22,6 +23,7 @@ message Calendar {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   optional string job = 5 [(buf.validate.field).string.max_len = 20];
+  optional CalendarSystemKind system_kind = 16 [(buf.validate.field).enum.defined_only = true];
   string name = 6 [
     (buf.validate.field).string = {
       min_len: 3
@@ -47,7 +49,7 @@ message Calendar {
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional CalendarSub subscription = 14;
   resources.calendar.access.CalendarAccess access = 15;
-  optional CalendarSystemKind system_kind = 16 [(buf.validate.field).enum.defined_only = true];
+  optional CalendarDiscordSettings discord_settings = 17;
 }
 
 message CalendarShort {
@@ -85,4 +87,48 @@ message CalendarSub {
   optional resources.timestamp.Timestamp created_at = 4;
   bool confirmed = 5;
   bool muted = 6;
+}
+
+message CalendarDiscordSettings {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  bool enabled = 1;
+  string channel_id = 2 [(buf.validate.field).string.max_len = 32];
+  repeated CalendarDiscordReminderStep reminder_steps = 3 [(buf.validate.field).repeated.max_items = 2];
+}
+
+message CalendarDiscordReminderStep {
+  int32 at_minute = 1 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 10080 // 7 days
+  }];
+  optional string message = 2 [
+    (buf.validate.field).string.max_len = 2000,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "SanitizeAndUnescape"
+    }
+  ];
+  optional CalendarDiscordReminderEmbed embed = 3;
+}
+
+message CalendarDiscordReminderEmbed {
+  optional string title = 1 [
+    (buf.validate.field).string.max_len = 256,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "SanitizeAndUnescape"
+    }
+  ];
+  optional string description = 2 [
+    (buf.validate.field).string.max_len = 4096,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "SanitizeAndUnescape"
+    }
+  ];
+  optional string color = 3 [(buf.validate.field).string = {
+    len: 7
+    pattern: "^#[A-Fa-f0-9]{6}$"
+  }];
 }

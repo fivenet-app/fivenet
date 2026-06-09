@@ -11,12 +11,12 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
+import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { useCalendarStore } from '~/stores/calendar';
 import { useCompletorStore } from '~/stores/completor';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import type { CalendarShort } from '~~/gen/ts/resources/calendar/calendar';
-import { ContentType } from '~~/gen/ts/resources/common/content/content';
+import { CalendarEntryRecurringEvery } from '~~/gen/ts/resources/calendar/entries/entries';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/entries';
 
@@ -34,6 +34,7 @@ const emit = defineEmits<{
 const calendarStore = useCalendarStore();
 
 const completorStore = useCompletorStore();
+const { t } = useI18n();
 
 const schema = z.object({
     calendar: z.custom<CalendarShort>().optional(),
@@ -45,6 +46,10 @@ const schema = z.object({
     closed: z.coerce.boolean(),
     rsvpOpen: z.coerce.boolean(),
     users: z.custom<UserShort>().array().max(20).default([]),
+    recurringEnabled: z.coerce.boolean().default(false),
+    recurringEvery: z.enum(CalendarEntryRecurringEvery).default(CalendarEntryRecurringEvery.DAY),
+    recurringCount: z.coerce.number().int().min(1).default(1),
+    recurringUntil: z.date().optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -59,7 +64,30 @@ const state = reactive<Schema>({
     closed: false,
     rsvpOpen: true,
     users: [],
+    recurringEnabled: false,
+    recurringEvery: CalendarEntryRecurringEvery.DAY,
+    recurringCount: 1,
+    recurringUntil: undefined,
 });
+
+const recurringEveryItems = computed(() => [
+    {
+        label: t('components.calendar.EntryCreateOrUpdateModal.recurring.every_day'),
+        value: CalendarEntryRecurringEvery.DAY,
+    },
+    {
+        label: t('components.calendar.EntryCreateOrUpdateModal.recurring.every_week'),
+        value: CalendarEntryRecurringEvery.WEEK,
+    },
+    {
+        label: t('components.calendar.EntryCreateOrUpdateModal.recurring.every_month'),
+        value: CalendarEntryRecurringEvery.MONTH,
+    },
+    {
+        label: t('components.calendar.EntryCreateOrUpdateModal.recurring.every_year'),
+        value: CalendarEntryRecurringEvery.YEAR,
+    },
+]);
 
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state, {
     serializer: (value) =>
@@ -73,8 +101,28 @@ const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(sta
             closed: value.closed,
             rsvpOpen: value.rsvpOpen,
             users: [...value.users.map((user) => user.userId)].sort((a, b) => a - b),
+            recurringEnabled: value.recurringEnabled,
+            recurringEvery: value.recurringEvery,
+            recurringCount: value.recurringCount,
+            recurringUntil: value.recurringUntil ? value.recurringUntil.toISOString() : '',
         }),
 });
+
+function resetState(): void {
+    state.calendar = undefined;
+    state.title = '';
+    state.startTime = addHours(new Date(), 1);
+    state.endTime = addHours(new Date(), 2);
+    state.allDay = false;
+    state.content = '';
+    state.closed = false;
+    state.rsvpOpen = true;
+    state.users = [];
+    state.recurringEnabled = false;
+    state.recurringEvery = CalendarEntryRecurringEvery.DAY;
+    state.recurringCount = 1;
+    state.recurringUntil = undefined;
+}
 
 const { data, status, refresh, error } = useLazyAsyncData(
     `calendar-entry:${props.entryId}`,
@@ -97,11 +145,14 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
                 title: values.title,
                 startTime: toTimestamp(values.startTime),
                 endTime: values.allDay ? undefined : toTimestamp(values.endTime),
-                content: {
-                    contentType: ContentType.TIPTAP_JSON,
-                    version: '',
-                    tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
-                },
+                recurring: values.recurringEnabled
+                    ? {
+                          every: values.recurringEvery,
+                          count: values.recurringCount,
+                          until: toTimestamp(values.recurringUntil),
+                      }
+                    : undefined,
+                content: tiptapToContent(values.content),
                 closed: values.closed,
                 rsvpOpen: values.rsvpOpen,
                 creatorJob: '',
@@ -119,6 +170,8 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
 }
 
 function setFromProps(): void {
+    resetState();
+
     if (props.day) {
         state.startTime = addHours(props.day.date, 1);
         state.endTime = addHours(props.day.date, 2);
@@ -137,11 +190,15 @@ function setFromProps(): void {
     state.startTime = toDate(entry.startTime);
     state.endTime = entry.endTime ? toDate(entry.endTime) : undefined;
     state.allDay = state.endTime === undefined;
-    state.content = entry.content?.tiptapJson
-        ? (Struct.toJson(entry.content.tiptapJson) as JSONContent)
-        : (entry.content?.rawHtml ?? '');
+    state.content = contentToTiptapValue(entry.content);
     state.closed = entry.closed;
     state.rsvpOpen = entry.rsvpOpen !== undefined;
+    const recurring = entry.recurring;
+    state.recurringEnabled = recurring !== undefined;
+    state.recurringEvery = recurring?.every ?? CalendarEntryRecurringEvery.DAY;
+    const recurringCount = recurring?.count ?? 0;
+    state.recurringCount = recurringCount > 0 ? recurringCount : 1;
+    state.recurringUntil = recurring?.until ? toDate(recurring.until) : undefined;
     syncSnapshot();
 }
 
@@ -338,6 +395,83 @@ async function closeModal(): Promise<void> {
                             />
                         </ClientOnly>
                     </UFormField>
+
+                    <UFormField
+                        class="flex-1"
+                        name="recurringEnabled"
+                        :label="$t('components.calendar.EntryCreateOrUpdateModal.recurring.title')"
+                    >
+                        <div class="flex items-center gap-3">
+                            <USwitch v-model="state.recurringEnabled" />
+                            <span class="text-sm text-toned">
+                                {{ $t('components.calendar.EntryCreateOrUpdateModal.recurring.enabled') }}
+                            </span>
+                        </div>
+                    </UFormField>
+
+                    <div v-if="state.recurringEnabled" class="rounded-md border border-default bg-elevated/40 p-4">
+                        <div class="mb-3 flex items-center justify-between gap-2">
+                            <div>
+                                <h4 class="font-medium text-highlighted">
+                                    {{ $t('components.calendar.EntryCreateOrUpdateModal.recurring.title') }}
+                                </h4>
+                                <p class="text-sm text-dimmed">
+                                    {{ $t('components.calendar.EntryCreateOrUpdateModal.recurring.subtitle') }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid gap-3 md:grid-cols-3">
+                            <UFormField
+                                class="flex-1"
+                                name="recurringCount"
+                                :label="$t('components.calendar.EntryCreateOrUpdateModal.recurring.count')"
+                            >
+                                <UInputNumber
+                                    v-model="state.recurringCount"
+                                    class="w-full"
+                                    :min="1"
+                                    :placeholder="$t('components.calendar.EntryCreateOrUpdateModal.recurring.count')"
+                                />
+                            </UFormField>
+
+                            <UFormField
+                                class="flex-1"
+                                name="recurringEvery"
+                                :label="$t('components.calendar.EntryCreateOrUpdateModal.recurring.every')"
+                            >
+                                <USelectMenu
+                                    v-model="state.recurringEvery"
+                                    class="w-full"
+                                    :items="recurringEveryItems"
+                                    label-key="label"
+                                    value-key="value"
+                                    :placeholder="$t('components.calendar.EntryCreateOrUpdateModal.recurring.every')"
+                                >
+                                    <template #empty>
+                                        {{
+                                            $t('common.not_found', [
+                                                $t('components.calendar.EntryCreateOrUpdateModal.recurring.every'),
+                                            ])
+                                        }}
+                                    </template>
+                                </USelectMenu>
+                            </UFormField>
+
+                            <UFormField
+                                class="flex-1"
+                                name="recurringUntil"
+                                :label="$t('components.calendar.EntryCreateOrUpdateModal.recurring.until')"
+                            >
+                                <InputDatePicker
+                                    v-model="state.recurringUntil"
+                                    class="w-full"
+                                    date-format="date"
+                                    :clearable="true"
+                                />
+                            </UFormField>
+                        </div>
+                    </div>
 
                     <UFormField class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
                         <USwitch v-model="state.closed" />

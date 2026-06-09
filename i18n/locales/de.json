@@ -796,7 +796,8 @@
         "coordinate": "Koordinate | Koordinaten",
         "insert": "Einfügen",
         "map": "Karte",
-        "read_only": "Schreibgeschützt"
+        "read_only": "Schreibgeschützt",
+        "invite": "Einladen"
     },
     "components": {
         "partials": {
@@ -1534,6 +1535,14 @@
                 "title": "Alles Gute zum Geburtstag!",
                 "description": "Dieser Geburtstagseintrag wird automatisch verwaltet und ist schreibgeschützt."
             },
+            "rsvp_scope": {
+                "title": "RSVP-Bereich wählen",
+                "description": "Diese Rückmeldung für die gesamte Serie oder nur für diese einzelne Wiederholung anwenden.",
+                "remove_description": "Die Rückmeldung aus der gesamten Serie oder nur aus dieser Wiederholung entfernen.",
+                "occurrence_only": "Nur diese Wiederholung",
+                "series": "Gesamte Serie",
+                "occurrence_active": "Diese Rückmeldung gilt nur für diese Wiederholung."
+            },
             "calendar": {
                 "CreateOrUpdateModal": {
                     "create": {
@@ -1543,7 +1552,27 @@
                         "title": "Kalender aktualisieren"
                     },
                     "private": "Privater Kalender",
-                    "public": "Öffentlicher Kalender"
+                    "public": "Öffentlicher Kalender",
+                    "discord_settings": {
+                        "title": "Discord-Erinnerungen",
+                        "description": "Sende Erinnerungsnachrichten an einen Discord-Textkanal, bevor Kalenderereignisse beginnen.",
+                        "reminder_steps": {
+                            "label": "Erinnerungsintervall",
+                            "description": "Jeder Schritt erfolgt zur ausgewählten Anzahl an Minuten vor Beginn des Ereignisses.",
+                            "at_minute": {
+                                "label": "Minuten vor Beginn",
+                                "description": "Wenn Sie 0 Minuten auswählen, wird zum Startzeitpunkt des Termins eine Benachrichtigung gesendet."
+                            },
+                            "message": "Nachricht",
+                            "message_description": "Sie können Rollen im Format <\\@&ROLE_ID> erwähnen.",
+                            "message_placeholder": "Optionale Discord Nachricht",
+                            "embed_title": "Embed Titel",
+                            "embed_title_placeholder": "Optionaler Embed Titel",
+                            "embed_description": "Embed description",
+                            "embed_description_placeholder": "Optionale Embed Beschreibung",
+                            "embed_color": "Embed Farbe"
+                        }
+                    }
                 },
                 "FindCalendarDrawer": {
                     "title": "Kalender finden"
@@ -1555,6 +1584,18 @@
                 },
                 "update": {
                     "title": "Kalendereintrag aktualisieren"
+                },
+                "recurring": {
+                    "title": "Wiederkehrend",
+                    "subtitle": "Diesen Eintrag nach einem festen Rhythmus wiederholen.",
+                    "enabled": "Eintrag wiederholen",
+                    "every": "Wiederhole alle",
+                    "count": "Intervall",
+                    "until": "Endet am",
+                    "every_day": "Täglich",
+                    "every_week": "Wöchentlich",
+                    "every_month": "Monatlich",
+                    "every_year": "Jährlich"
                 }
             },
             "EntryShareModal": {
@@ -2537,7 +2578,10 @@
                 "ErrEntryClosed": {
                     "title": "Kalendar Eintrag ist geschlossen",
                     "content": "Der Kalendar Eintrag ist geschlossen. Auf diesen Eintrag kann man nicht mehr antworten."
-                }
+                },
+                "ErrNoDiscordGuildID": "Ihr Beruf hat den Discord-Bot nicht eingerichtet. Der Discord-Bot ist benötigt um die Funktion nutzen zu können.",
+                "ErrInvalidDiscordChannel": "",
+                "ErrInvalidReminderStep": ""
             }
         },
         "wiki": {
@@ -3215,6 +3259,12 @@
                 "desc": "Wenn du Hilfe zu FiveNet brauchst, nutze den Help-Button unten oder verwende `/help` auf einem Server mit dem FiveNet Bot.",
                 "help_button": "Hilfe-Befehl (/help)"
             }
+        },
+        "calendar": {
+            "calendar_name": "**Kalendar:** {name}",
+            "start_time": "**Beginnt um:** <t:{ts}:F>",
+            "end_time": "**Endet um:** <t:{ts}:F>",
+            "link": "__[In FiveNet öffnen]({link})__"
         }
     },
     "perms": {

@@ -9,11 +9,10 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
+import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsConductClient } from '~~/gen/ts/clients';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -108,11 +107,7 @@ const {
                 creatorId: activeChar.value?.userId ?? 0,
                 type: ConductType.NOTE,
                 draft: true,
-                message: {
-                    contentType: ContentType.TIPTAP_JSON,
-                    version: '',
-                    tiptapJson: Struct.fromJsonString(JSON.stringify({ type: 'doc', content: [] })),
-                },
+                message: tiptapToContent(),
                 files: [],
             },
         });
@@ -140,11 +135,7 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: number): Promise<
                 creatorId: activeChar.value?.userId ?? 0,
                 type: values.type,
                 draft: values.draft,
-                message: {
-                    contentType: ContentType.TIPTAP_JSON,
-                    version: '',
-                    tiptapJson: Struct.fromJsonString(JSON.stringify(values.message)),
-                },
+                message: tiptapToContent(values.message),
                 files: values.files,
                 targetUserId: values.targetUserId,
                 expiresAt: values.expiresAt ? toTimestamp(values.expiresAt) : undefined,
@@ -176,9 +167,7 @@ async function setFromProps(): Promise<void> {
     state.draft = entry.value.draft;
     state.targetUserId = entry.value.targetUserId;
     state.type = entry.value.type;
-    state.message = entry.value.message?.tiptapJson
-        ? (Struct.toJson(entry.value.message.tiptapJson) as JSONContent)
-        : (entry.value.message?.rawHtml ?? '');
+    state.message = contentToTiptapValue(entry.value.message);
     state.files = entry.value.files ?? [];
     state.expiresAt = entry.value.expiresAt ? toDate(entry.value.expiresAt) : undefined;
     syncSnapshot();

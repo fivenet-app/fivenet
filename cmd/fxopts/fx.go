@@ -16,6 +16,7 @@ import (
 	dbsynctablemanager "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/tablemanager"
 	"github.com/fivenet-app/fivenet/v2026/pkg/demo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord"
+	discordcalendarreminders "github.com/fivenet-app/fivenet/v2026/pkg/discord/calendarreminders"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/commands"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	pkgfilestore "github.com/fivenet-app/fivenet/v2026/pkg/filestore"
@@ -174,6 +175,7 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			grpc.AsService(pbauth.NewServer),
 			grpc.AsService(pbcalendar.NewServer),
 			pbcalendar.NewBirthdaySyncer,
+			discordcalendarreminders.NewWorker,
 			pbcentrum.NewServer,
 			grpc.AsService(pbcitizens.NewServer),
 			grpc.AsService(pbcompletor.NewServer),

@@ -86,7 +86,7 @@ type BotParams struct {
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	Perms     perms.Permissions
-	I18n      *i18n.I18n
+	I18n      i18n.Ii18n
 
 	Discord *state.State
 }
@@ -102,7 +102,7 @@ type Bot struct {
 	dcCfg    *config.Discord
 	appCfg   appconfig.IConfig
 	perms    perms.Permissions
-	i18n     *i18n.I18n
+	i18n     i18n.Ii18n
 
 	publicURL          string
 	oauth2ProviderName string

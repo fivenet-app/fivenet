@@ -1,0 +1,101 @@
+package calendar
+
+import (
+	"fmt"
+	"testing"
+	"time"
+
+	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
+	"github.com/go-jet/jet/v2/mysql"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestValidateRecurringOccurrenceKey(t *testing.T) {
+	t.Parallel()
+
+	entry := &calendarentries.CalendarEntry{
+		Id:        42,
+		StartTime: timestamp.New(time.Date(2026, time.January, 15, 10, 0, 0, 0, time.UTC)),
+		Recurring: &calendarentries.CalendarEntryRecurring{
+			Every: calendarentries.CalendarEntryRecurringEvery_CALENDAR_ENTRY_RECURRING_EVERY_WEEK,
+			Count: 1,
+		},
+	}
+
+	key := fmt.Sprintf("recurring:%d:%d", entry.GetId(), entry.GetStartTime().AsTime().Unix())
+
+	require.NoError(t, validateRecurringOccurrenceKey(entry, key))
+	assert.ErrorIs(
+		t,
+		validateRecurringOccurrenceKey(entry, "recurring:41:0"),
+		errorscalendar.ErrNoPerms,
+	)
+}
+
+func TestFilterUpcomingCalendarEntries(t *testing.T) {
+	t.Parallel()
+
+	userInfo := &userinfo.UserInfo{UserId: 7}
+
+	entries := []*calendarentries.CalendarEntry{
+		{
+			Id:        1,
+			Title:     "birthday",
+			StartTime: timestamp.New(time.Date(2026, time.January, 15, 10, 0, 0, 0, time.UTC)),
+			Occurrence: &calendarentries.CalendarEntryOccurrence{
+				Kind: calendarentries.CalendarEntryOccurrenceKind_CALENDAR_ENTRY_OCCURRENCE_KIND_BIRTHDAY,
+			},
+		},
+		{
+			Id:        2,
+			Title:     "not visible",
+			StartTime: timestamp.New(time.Date(2026, time.January, 16, 10, 0, 0, 0, time.UTC)),
+			Occurrence: &calendarentries.CalendarEntryOccurrence{
+				Kind: calendarentries.CalendarEntryOccurrenceKind_CALENDAR_ENTRY_OCCURRENCE_KIND_RECURRING,
+			},
+		},
+		{
+			Id:        3,
+			Title:     "override yes",
+			StartTime: timestamp.New(time.Date(2026, time.January, 17, 10, 0, 0, 0, time.UTC)),
+			Occurrence: &calendarentries.CalendarEntryOccurrence{
+				Kind: calendarentries.CalendarEntryOccurrenceKind_CALENDAR_ENTRY_OCCURRENCE_KIND_RECURRING,
+			},
+			Rsvp: &calendarentries.CalendarEntryRSVP{
+				Response: calendarentries.RsvpResponses_RSVP_RESPONSES_YES,
+			},
+		},
+		{
+			Id:        4,
+			Title:     "own entry",
+			StartTime: timestamp.New(time.Date(2026, time.January, 18, 10, 0, 0, 0, time.UTC)),
+			CreatorId: func() *int32 { v := int32(7); return &v }(),
+		},
+	}
+
+	filtered := filterUpcomingCalendarEntries(entries, userInfo)
+	require.Len(t, filtered, 3)
+	assert.Equal(t, "birthday", filtered[0].GetTitle())
+	assert.Equal(t, "override yes", filtered[1].GetTitle())
+	assert.Equal(t, "own entry", filtered[2].GetTitle())
+}
+
+func TestCalendarEntryVisibilityIncludesRecurringOverrides(t *testing.T) {
+	t.Parallel()
+
+	stmt := tCalendarEntry.
+		SELECT(mysql.Int(1)).
+		WHERE(calendarEntryVisibility(
+			&userinfo.UserInfo{UserId: 7, Job: "test", JobGrade: 0},
+			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+			calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN,
+		))
+
+	sql, _ := stmt.Sql()
+	assert.Contains(t, sql, "fivenet_calendar_rsvp_occurrence")
+}

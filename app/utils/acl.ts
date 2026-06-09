@@ -30,10 +30,10 @@ export function checkAccess<L = number>(
     level: L,
     creatorJob?: string,
 ): boolean {
-    if (access === undefined) return false;
-
     if (creator !== undefined && activeChar.userId === creator.userId && activeChar.job === (creatorJob ?? creator.job))
         return true;
+
+    if (access === undefined) return false;
 
     const ju = access.users?.find((ua) => ua.userId === activeChar.userId && level <= ua.access);
     if (ju !== undefined) return true;

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
+import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
@@ -7,12 +8,18 @@ import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DraggableHandle from '~/components/partials/DraggableHandle.vue';
+import ReorderButtons from '~/components/partials/ReorderButtons.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCalendarStore } from '~/stores/calendar';
 import { isSystemManagedCalendar } from '~/components/calendar/helpers';
+import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
+import type { Channel } from '~~/gen/ts/resources/discord/discord';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateCalendarResponse, UpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 import TiptapEditor from '../../partials/editor/TiptapEditor.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 
 const props = defineProps<{
     calendarId?: number;
@@ -25,10 +32,12 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const { attr, activeChar } = useAuth();
+const { attr, activeChar, can } = useAuth();
 
 const calendarStore = useCalendarStore();
 const { hasPrivateCalendar } = storeToRefs(calendarStore);
+const settingsSettingsClient = await getSettingsSettingsClient();
+const appConfig = useAppConfig();
 
 const notifications = useNotificationsStore();
 
@@ -40,6 +49,31 @@ const canDo = computed(() => ({
 }));
 
 const isSystemManaged = computed(() => props.systemManaged || isSystemManagedCalendar(data.value?.calendar));
+const canEditDiscordReminderSettings = can('settings.SettingsService/SetJobProps');
+const showDiscordReminderSection = computed(
+    () => appConfig.discord.botEnabled && !isSystemManaged.value && !state.private && !!activeChar.value?.job,
+);
+const canConfigureDiscordReminders = computed(() => showDiscordReminderSection.value && canEditDiscordReminderSettings.value);
+
+function emptyDiscordReminderStep() {
+    return {
+        atMinute: 15,
+        message: '',
+        embed: {
+            title: '',
+            description: '',
+            color: '',
+        },
+    };
+}
+
+function emptyDiscordSettings() {
+    return {
+        enabled: false,
+        channelId: '',
+        reminderSteps: [] as ReturnType<typeof emptyDiscordReminderStep>[],
+    };
+}
 
 const schema = z.object({
     name: z.coerce.string().min(3).max(255),
@@ -52,6 +86,23 @@ const schema = z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
         users: userAccessEntries(t).max(maxAccessEntries).default([]),
     }),
+    discordSettings: z.object({
+        enabled: z.coerce.boolean(),
+        channelId: z.coerce.string().max(64),
+        reminderSteps: z
+            .object({
+                atMinute: z.coerce.number().int().min(0).max(10080),
+                message: z.coerce.string().max(2000),
+                embed: z.object({
+                    title: z.coerce.string().max(256),
+                    description: z.coerce.string().max(4096),
+                    color: z.union([z.literal(''), z.coerce.string().regex(/^#[A-Fa-f0-9]{6}$/)]),
+                }),
+            })
+            .array()
+            .max(2)
+            .default([]),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -59,7 +110,7 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     name: '',
     description: '',
-    private: !hasPrivateCalendar,
+    private: !hasPrivateCalendar.value,
     public: false,
     closed: false,
     color: 'blue',
@@ -67,9 +118,11 @@ const state = reactive<Schema>({
         jobs: [],
         users: [],
     },
+    discordSettings: emptyDiscordSettings(),
 });
 
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
+const { moveUp, moveDown } = useListReorder(toRef(() => state.discordSettings.reminderSteps));
 
 const {
     data: data,
@@ -106,6 +159,11 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarRes
             color: values.color,
             access: values.access,
             creatorJob: '',
+            discordSettings: values.private
+                ? undefined
+                : canEditDiscordReminderSettings.value
+                  ? toProtoDiscordSettings(values.discordSettings)
+                  : data.value?.calendar?.discordSettings,
         });
 
         notifications.add({
@@ -136,12 +194,107 @@ function setFromProps(): void {
     if (calendar.access) {
         state.access = calendar.access;
     }
+    state.discordSettings = fromProtoDiscordSettings(calendar.discordSettings);
 
     syncSnapshot();
 }
 
+function fromProtoDiscordSettings(
+    settings:
+        | {
+              enabled: boolean;
+              channelId: string;
+              reminderSteps: {
+                  atMinute: number;
+                  message?: string;
+                  embed?: {
+                      title?: string;
+                      description?: string;
+                      color?: string;
+                  };
+              }[];
+          }
+        | undefined,
+) {
+    if (!settings) return emptyDiscordSettings();
+
+    return {
+        enabled: settings.enabled ?? false,
+        channelId: settings.channelId ?? '',
+        reminderSteps:
+            settings.reminderSteps?.map((step) => ({
+                atMinute: step.atMinute ?? 0,
+                message: step.message ?? '',
+                embed: {
+                    title: step.embed?.title ?? '',
+                    description: step.embed?.description ?? '',
+                    color: step.embed?.color ?? '',
+                },
+            })) ?? [],
+    };
+}
+
+function toProtoDiscordSettings(values: Schema['discordSettings']) {
+    const channelId = values.channelId.trim();
+    const reminderSteps = values.reminderSteps.map((step) => {
+        const message = step.message.trim();
+        const title = step.embed.title.trim();
+        const description = step.embed.description.trim();
+        const color = step.embed.color.trim();
+
+        const embed =
+            title.length > 0 || description.length > 0
+                ? {
+                      title: title.length > 0 ? title : undefined,
+                      description: description.length > 0 ? description : undefined,
+                      color: color.length > 0 ? color : undefined,
+                  }
+                : undefined;
+
+        return {
+            atMinute: step.atMinute,
+            message: message.length > 0 ? message : undefined,
+            embed,
+        };
+    });
+
+    if (!values.enabled && channelId.length === 0 && reminderSteps.length === 0) {
+        return undefined;
+    }
+
+    return {
+        enabled: values.enabled,
+        channelId: channelId.length > 0 ? channelId : '',
+        reminderSteps,
+    };
+}
+
+async function searchChannels() {
+    if (!canEditDiscordReminderSettings.value) {
+        return [] as Channel[];
+    }
+
+    try {
+        const call = settingsSettingsClient.listDiscordChannels({});
+        const { response } = await call;
+
+        return response.channels.sort((a, b) => a.position - b.position);
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        return [] as Channel[];
+    }
+}
+
 watch(data, () => setFromProps());
 watch(props, async () => refresh());
+watch(
+    () => state.private,
+    (isPrivate) => {
+        if (isPrivate) {
+            state.discordSettings = emptyDiscordSettings();
+        }
+    },
+);
 
 const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -169,6 +322,7 @@ async function closeModal(): Promise<void> {
         "
         :close="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
+        fullscreen
     >
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">
@@ -214,6 +368,10 @@ async function closeModal(): Promise<void> {
                         {{ $t('common.read_only') }}
                     </p>
 
+                    <UFormField v-else class="flex-1" name="title" :label="$t('common.name')" required>
+                        <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
+                    </UFormField>
+
                     <UFormField class="flex-1" name="color" :label="$t('common.color')">
                         <ColorPickerTW v-model="state.color" class="w-full" />
                     </UFormField>
@@ -254,6 +412,235 @@ async function closeModal(): Promise<void> {
                                 <USwitch v-model="state.closed" />
                             </UFormField>
                         </div>
+
+                        <UPageCard
+                            v-if="showDiscordReminderSection"
+                            :title="$t('components.calendar.calendar.CreateOrUpdateModal.discord_settings.title')"
+                            :description="$t('components.calendar.calendar.CreateOrUpdateModal.discord_settings.description')"
+                        >
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="discordSettings.enabled"
+                                :label="$t('common.enabled')"
+                            >
+                                <USwitch v-model="state.discordSettings.enabled" :disabled="!canEditDiscordReminderSettings" />
+                            </UFormField>
+
+                            <UFormField
+                                class="grid grid-cols-1 items-center gap-2"
+                                name="discordSettings.channelId"
+                                :label="$t('common.channel')"
+                                required
+                            >
+                                <SelectMenu
+                                    v-if="canEditDiscordReminderSettings"
+                                    v-model="state.discordSettings.channelId"
+                                    class="w-full"
+                                    name="discordSettings.channelId"
+                                    :disabled="!canConfigureDiscordReminders"
+                                    :searchable="
+                                        () =>
+                                            searchChannels().then((channels) =>
+                                                channels.map((channel) => ({
+                                                    id: channel.id,
+                                                    type: 'item',
+                                                    label: `${channel.name} (${channel.id})`,
+                                                    item: channel,
+                                                })),
+                                            )
+                                    "
+                                    searchable-key="calendar-discord-reminder-channels"
+                                    :filter-fields="['name']"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    value-key="id"
+                                    :placeholder="$t('common.channel')"
+                                >
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.channel', 1)]) }}
+                                    </template>
+                                </SelectMenu>
+
+                                <UInput
+                                    v-else
+                                    class="w-full"
+                                    :model-value="state.discordSettings.channelId"
+                                    :placeholder="$t('common.channel')"
+                                    disabled
+                                />
+                            </UFormField>
+
+                            <UFormField
+                                name="discordSettings.reminderSteps"
+                                :label="
+                                    $t('components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.label')
+                                "
+                                :description="
+                                    $t(
+                                        'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.description',
+                                    )
+                                "
+                            >
+                                <VueDraggable
+                                    v-model="state.discordSettings.reminderSteps"
+                                    class="flex flex-col gap-4"
+                                    :disabled="!canConfigureDiscordReminders"
+                                    handle=".handle-choice"
+                                >
+                                    <div
+                                        v-for="(_, idx) in state.discordSettings.reminderSteps"
+                                        :key="idx"
+                                        class="rounded-lg border border-default p-3"
+                                    >
+                                        <div class="mb-3 flex items-center gap-1">
+                                            <DraggableHandle
+                                                handle-class="handle-choice"
+                                                :disabled="!canConfigureDiscordReminders"
+                                            />
+                                            <ReorderButtons
+                                                :idx="idx"
+                                                :move-up="moveUp"
+                                                :move-down="moveDown"
+                                                :button="{ disabled: !canConfigureDiscordReminders }"
+                                            />
+
+                                            <div class="ml-auto">
+                                                <UTooltip :text="$t('common.remove')">
+                                                    <UButton
+                                                        icon="i-mdi-close"
+                                                        color="error"
+                                                        :disabled="!canConfigureDiscordReminders"
+                                                        @click="state.discordSettings.reminderSteps.splice(idx, 1)"
+                                                    />
+                                                </UTooltip>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex flex-col gap-4">
+                                            <UFormField
+                                                class="w-full"
+                                                :name="`discordSettings.reminderSteps.${idx}.atMinute`"
+                                                :label="
+                                                    $t(
+                                                        'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.at_minute.label',
+                                                    )
+                                                "
+                                                :description="
+                                                    $t(
+                                                        'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.at_minute.description',
+                                                    )
+                                                "
+                                            >
+                                                <UInputNumber
+                                                    v-model="state.discordSettings.reminderSteps[idx]!.atMinute"
+                                                    class="w-full"
+                                                    :min="0"
+                                                    :max="10080"
+                                                    :step="1"
+                                                    :disabled="!canConfigureDiscordReminders"
+                                                />
+                                            </UFormField>
+
+                                            <UFormField
+                                                class="w-full"
+                                                :name="`discordSettings.reminderSteps.${idx}.message`"
+                                                :label="
+                                                    $t(
+                                                        'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.message',
+                                                    )
+                                                "
+                                                :description="
+                                                    $t(
+                                                        'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.message_description',
+                                                    )
+                                                "
+                                            >
+                                                <UTextarea
+                                                    v-model="state.discordSettings.reminderSteps[idx]!.message"
+                                                    class="w-full"
+                                                    :disabled="!canConfigureDiscordReminders"
+                                                    :rows="3"
+                                                    :maxrows="6"
+                                                    :placeholder="
+                                                        $t(
+                                                            'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.message_placeholder',
+                                                        )
+                                                    "
+                                                />
+                                            </UFormField>
+
+                                            <USeparator />
+
+                                            <div class="flex flex-row gap-4">
+                                                <UFormField
+                                                    :name="`discordSettings.reminderSteps.${idx}.embed.color`"
+                                                    :label="
+                                                        $t(
+                                                            'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.embed_color',
+                                                        )
+                                                    "
+                                                >
+                                                    <ColorPicker
+                                                        v-model="state.discordSettings.reminderSteps[idx]!.embed.color"
+                                                        :disabled="!canConfigureDiscordReminders"
+                                                    />
+                                                </UFormField>
+
+                                                <UFormField
+                                                    class="flex-1"
+                                                    :name="`discordSettings.reminderSteps.${idx}.embed.title`"
+                                                    :label="
+                                                        $t(
+                                                            'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.embed_title',
+                                                        )
+                                                    "
+                                                >
+                                                    <UInput
+                                                        v-model="state.discordSettings.reminderSteps[idx]!.embed.title"
+                                                        class="w-full"
+                                                        :disabled="!canConfigureDiscordReminders"
+                                                        :placeholder="
+                                                            $t(
+                                                                'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.embed_title_placeholder',
+                                                            )
+                                                        "
+                                                    />
+                                                </UFormField>
+                                            </div>
+
+                                            <UFormField
+                                                class="w-full"
+                                                :name="`discordSettings.reminderSteps.${idx}.embed.description`"
+                                                :label="
+                                                    $t(
+                                                        'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.embed_description',
+                                                    )
+                                                "
+                                            >
+                                                <UTextarea
+                                                    v-model="state.discordSettings.reminderSteps[idx]!.embed.description"
+                                                    class="w-full"
+                                                    :disabled="!canConfigureDiscordReminders"
+                                                    :rows="3"
+                                                    :maxrows="6"
+                                                    :placeholder="
+                                                        $t(
+                                                            'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.embed_description_placeholder',
+                                                        )
+                                                    "
+                                                />
+                                            </UFormField>
+                                        </div>
+                                    </div>
+                                </VueDraggable>
+
+                                <UButton
+                                    class="mt-3"
+                                    icon="i-mdi-plus"
+                                    :disabled="state.discordSettings.reminderSteps.length >= 2 || !canConfigureDiscordReminders"
+                                    @click="state.discordSettings.reminderSteps.push(emptyDiscordReminderStep())"
+                                />
+                            </UFormField>
+                        </UPageCard>
 
                         <UFormField class="flex-1" name="access" :label="$t('common.access')">
                             <AccessManager

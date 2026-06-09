@@ -119,12 +119,28 @@ func TestSanitizePreservesMapBlockAndPenaltyCalculator(t *testing.T) {
 func TestSanitizeRejectsNonExportedMapBlockAndPenaltyCalculatorValues(t *testing.T) {
 	t.Parallel()
 
-	mapOut := Sanitize(`<span data-embed="map-legacy" data-map-x="12.34" data-map-y="56.78" data-map-zoom="3"></span>`)
+	mapOut := Sanitize(
+		`<span data-embed="map-legacy" data-map-x="12.34" data-map-y="56.78" data-map-zoom="3"></span>`,
+	)
 	assert.NotContains(t, mapOut, `data-embed="map-legacy"`)
-	assert.Contains(t, mapOut, `<span`, "map block wrapper should still survive sanitization: %s", mapOut)
+	assert.Contains(
+		t,
+		mapOut,
+		`<span`,
+		"map block wrapper should still survive sanitization: %s",
+		mapOut,
+	)
 
-	penaltyOut := Sanitize(`<div data-type="penaltyCalculator" data-embed="penaltyCalculator"></div>`)
+	penaltyOut := Sanitize(
+		`<div data-type="penaltyCalculator" data-embed="penaltyCalculator"></div>`,
+	)
 	assert.NotContains(t, penaltyOut, `data-type="penaltyCalculator"`)
 	assert.NotContains(t, penaltyOut, `data-embed="penaltyCalculator"`)
-	assert.Contains(t, penaltyOut, `<div`, "penalty calculator wrapper should still survive sanitization: %s", penaltyOut)
+	assert.Contains(
+		t,
+		penaltyOut,
+		`<div`,
+		"penalty calculator wrapper should still survive sanitization: %s",
+		penaltyOut,
+	)
 }

@@ -61,6 +61,15 @@ func (m *Calendar) Sanitize() error {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
 
+	// Field: DiscordSettings
+	if m.DiscordSettings != nil {
+		if v, ok := any(m.GetDiscordSettings()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Job
 	if m.Job != nil {
 		*m.Job = htmlsanitizer.Sanitize(*m.Job)
@@ -85,6 +94,80 @@ func (m *Calendar) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *CalendarDiscordReminderEmbed) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Color
+	if m.Color != nil {
+		*m.Color = htmlsanitizer.Sanitize(*m.Color)
+	}
+
+	// Field: Description
+	if m.Description != nil {
+		*m.Description = htmlsanitizer.SanitizeAndUnescape(*m.Description)
+	}
+
+	// Field: Title
+	if m.Title != nil {
+		*m.Title = htmlsanitizer.SanitizeAndUnescape(*m.Title)
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *CalendarDiscordReminderStep) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Embed
+	if m.Embed != nil {
+		if v, ok := any(m.GetEmbed()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Message
+	if m.Message != nil {
+		*m.Message = htmlsanitizer.SanitizeAndUnescape(*m.Message)
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *CalendarDiscordSettings) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ChannelId
+	m.ChannelId = htmlsanitizer.Sanitize(m.ChannelId)
+
+	// Field: ReminderSteps
+	for idx, item := range m.ReminderSteps {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil

@@ -45,7 +45,7 @@ const defaultMapBlockLayerKey = "postal"
 
 var allowedMapBlockLayers = map[string]struct{}{
 	defaultMapBlockLayerKey: {},
-	"satelite":              {},
+	"satellite":             {},
 }
 
 // normalizeLinkHref ensures the href is safe and normalized.

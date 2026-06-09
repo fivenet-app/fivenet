@@ -36,7 +36,7 @@ func birthdayCalendarDisplayName(
 }
 
 func birthdayCalendarTitle(
-	i18n *i18n.I18n,
+	i18n i18n.Ii18n,
 	appCfg appconfig.IConfig,
 	job string,
 	jobInfo *jobs.Job,

@@ -4,8 +4,7 @@ import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import { ContentType } from '~~/gen/ts/resources/common/content/content';
+import { tiptapToContent } from '~/utils/content';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/messages/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { defaultEmptyContent } from './helpers';
@@ -69,11 +68,7 @@ async function createThread(values: Schema): Promise<void> {
             threadId: 0,
             senderId: selectedEmail.value?.id,
             title: values.title,
-            content: {
-                contentType: ContentType.TIPTAP_JSON,
-                version: '',
-                tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
-            },
+            content: tiptapToContent(values.content),
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
             data: {

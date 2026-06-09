@@ -1,7 +1,25 @@
 import type { TocLink } from '@nuxt/content';
 import type { JSONContent } from '@tiptap/core';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import type { Content, RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
+import { type Content, ContentType, type RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
+
+const emptyDoc = { type: 'doc', content: [] } as const;
+
+export function tiptapToContent(doc?: JSONContent | string, version = ''): Content {
+    return {
+        version: version,
+        contentType: ContentType.TIPTAP_JSON,
+        tiptapJson: Struct.fromJsonString(JSON.stringify(doc === undefined || typeof doc === 'string' ? emptyDoc : doc)),
+    };
+}
+
+export function contentToTiptapValue(content?: Content | null): JSONContent | string {
+    if (content?.tiptapJson) {
+        return Struct.toJson(content.tiptapJson) as JSONContent;
+    }
+
+    return content?.rawHtml ?? '';
+}
 
 export function jsonNodeToTocLinks(n: Content): TocLink[] {
     if (n.content) {

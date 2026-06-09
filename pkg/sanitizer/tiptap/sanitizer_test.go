@@ -430,7 +430,13 @@ func TestSanitizeStructNormalizesMapBlockLayer(t *testing.T) {
 
 	paragraph, _ := content[0].(map[string]any)
 	paragraphContent, _ := paragraph["content"].([]any)
-	require.Len(t, paragraphContent, 1, "paragraph content length = %d, want 1", len(paragraphContent))
+	require.Len(
+		t,
+		paragraphContent,
+		1,
+		"paragraph content length = %d, want 1",
+		len(paragraphContent),
+	)
 
 	mapBlock, _ := paragraphContent[0].(map[string]any)
 	attrs, _ := mapBlock["attrs"].(map[string]any)

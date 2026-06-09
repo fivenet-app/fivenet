@@ -906,14 +906,17 @@ func (b0 CalendarEntryRecurring_builder) Build() *CalendarEntryRecurring {
 }
 
 type CalendarEntryRSVP struct {
-	state                protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_EntryId   int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3"`
-	xxx_hidden_CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
-	xxx_hidden_UserId    int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_User      *short.UserShort       `protobuf:"bytes,4,opt,name=user,proto3,oneof"`
-	xxx_hidden_Response  RsvpResponses          `protobuf:"varint,5,opt,name=response,proto3,enum=resources.calendar.entries.RsvpResponses"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	state                    protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_EntryId       int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3"`
+	xxx_hidden_CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
+	xxx_hidden_UserId        int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_User          *short.UserShort       `protobuf:"bytes,4,opt,name=user,proto3,oneof"`
+	xxx_hidden_Response      RsvpResponses          `protobuf:"varint,5,opt,name=response,proto3,enum=resources.calendar.entries.RsvpResponses"`
+	xxx_hidden_OccurrenceKey *string                `protobuf:"bytes,6,opt,name=occurrence_key,json=occurrenceKey,proto3,oneof"`
+	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
+	XXX_presence             [1]uint32
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *CalendarEntryRSVP) Reset() {
@@ -976,6 +979,16 @@ func (x *CalendarEntryRSVP) GetResponse() RsvpResponses {
 	return RsvpResponses_RSVP_RESPONSES_UNSPECIFIED
 }
 
+func (x *CalendarEntryRSVP) GetOccurrenceKey() string {
+	if x != nil {
+		if x.xxx_hidden_OccurrenceKey != nil {
+			return *x.xxx_hidden_OccurrenceKey
+		}
+		return ""
+	}
+	return ""
+}
+
 func (x *CalendarEntryRSVP) SetEntryId(v int64) {
 	x.xxx_hidden_EntryId = v
 }
@@ -996,6 +1009,11 @@ func (x *CalendarEntryRSVP) SetResponse(v RsvpResponses) {
 	x.xxx_hidden_Response = v
 }
 
+func (x *CalendarEntryRSVP) SetOccurrenceKey(v string) {
+	x.xxx_hidden_OccurrenceKey = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 6)
+}
+
 func (x *CalendarEntryRSVP) HasCreatedAt() bool {
 	if x == nil {
 		return false
@@ -1010,6 +1028,13 @@ func (x *CalendarEntryRSVP) HasUser() bool {
 	return x.xxx_hidden_User != nil
 }
 
+func (x *CalendarEntryRSVP) HasOccurrenceKey() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+}
+
 func (x *CalendarEntryRSVP) ClearCreatedAt() {
 	x.xxx_hidden_CreatedAt = nil
 }
@@ -1018,14 +1043,20 @@ func (x *CalendarEntryRSVP) ClearUser() {
 	x.xxx_hidden_User = nil
 }
 
+func (x *CalendarEntryRSVP) ClearOccurrenceKey() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_OccurrenceKey = nil
+}
+
 type CalendarEntryRSVP_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	EntryId   int64
-	CreatedAt *timestamp.Timestamp
-	UserId    int32
-	User      *short.UserShort
-	Response  RsvpResponses
+	EntryId       int64
+	CreatedAt     *timestamp.Timestamp
+	UserId        int32
+	User          *short.UserShort
+	Response      RsvpResponses
+	OccurrenceKey *string
 }
 
 func (b0 CalendarEntryRSVP_builder) Build() *CalendarEntryRSVP {
@@ -1037,6 +1068,10 @@ func (b0 CalendarEntryRSVP_builder) Build() *CalendarEntryRSVP {
 	x.xxx_hidden_UserId = b.UserId
 	x.xxx_hidden_User = b.User
 	x.xxx_hidden_Response = b.Response
+	if b.OccurrenceKey != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 6)
+		x.xxx_hidden_OccurrenceKey = b.OccurrenceKey
+	}
 	return m0
 }
 
@@ -1103,16 +1138,18 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\x05every\x18\x01 \x01(\x0e27.resources.calendar.entries.CalendarEntryRecurringEveryR\x05every\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x05R\x05count\x129\n" +
 	"\x05until\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05until\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\b\n" +
-	"\x06_until\"\xa5\x02\n" +
+	"\x06_until\"\xe4\x02\n" +
 	"\x11CalendarEntryRSVP\x12\x19\n" +
 	"\bentry_id\x18\x01 \x01(\x03R\aentryId\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x05R\x06userId\x129\n" +
 	"\x04user\x18\x04 \x01(\v2 .resources.users.short.UserShortH\x01R\x04user\x88\x01\x01\x12E\n" +
-	"\bresponse\x18\x05 \x01(\x0e2).resources.calendar.entries.RsvpResponsesR\bresponseB\r\n" +
+	"\bresponse\x18\x05 \x01(\x0e2).resources.calendar.entries.RsvpResponsesR\bresponse\x12*\n" +
+	"\x0eoccurrence_key\x18\x06 \x01(\tH\x02R\roccurrenceKey\x88\x01\x01B\r\n" +
 	"\v_created_atB\a\n" +
-	"\x05_user*\xd3\x01\n" +
+	"\x05_userB\x11\n" +
+	"\x0f_occurrence_key*\xd3\x01\n" +
 	"\x1bCalendarEntryOccurrenceKind\x12.\n" +
 	"*CALENDAR_ENTRY_OCCURRENCE_KIND_UNSPECIFIED\x10\x00\x12)\n" +
 	"%CALENDAR_ENTRY_OCCURRENCE_KIND_MANUAL\x10\x01\x12,\n" +

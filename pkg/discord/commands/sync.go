@@ -12,7 +12,7 @@ import (
 )
 
 type SyncCommand struct {
-	l *i18n.I18n
+	l i18n.Ii18n
 	b discordtypes.BotState
 
 	url string

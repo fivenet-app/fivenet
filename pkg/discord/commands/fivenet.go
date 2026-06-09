@@ -11,7 +11,7 @@ import (
 )
 
 type FivenetCommand struct {
-	l *i18n.I18n
+	l i18n.Ii18n
 
 	url string
 }

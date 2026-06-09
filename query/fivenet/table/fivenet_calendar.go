@@ -17,19 +17,20 @@ type fivenetCalendarTable struct {
 	mysql.Table
 
 	// Columns
-	ID          mysql.ColumnInteger
-	CreatedAt   mysql.ColumnTimestamp
-	UpdatedAt   mysql.ColumnTimestamp
-	DeletedAt   mysql.ColumnTimestamp
-	Job         mysql.ColumnString
-	Name        mysql.ColumnString
-	Description mysql.ColumnString
-	Public      mysql.ColumnBool
-	Closed      mysql.ColumnBool
-	Color       mysql.ColumnString
-	CreatorID   mysql.ColumnInteger
-	CreatorJob  mysql.ColumnString
-	SystemKind  mysql.ColumnInteger
+	ID              mysql.ColumnInteger
+	CreatedAt       mysql.ColumnTimestamp
+	UpdatedAt       mysql.ColumnTimestamp
+	DeletedAt       mysql.ColumnTimestamp
+	Job             mysql.ColumnString
+	DiscordSettings mysql.ColumnString
+	Name            mysql.ColumnString
+	Description     mysql.ColumnString
+	Public          mysql.ColumnBool
+	Closed          mysql.ColumnBool
+	Color           mysql.ColumnString
+	CreatorID       mysql.ColumnInteger
+	CreatorJob      mysql.ColumnString
+	SystemKind      mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -71,41 +72,43 @@ func newFivenetCalendarTable(schemaName, tableName, alias string) *FivenetCalend
 
 func newFivenetCalendarTableImpl(schemaName, tableName, alias string) fivenetCalendarTable {
 	var (
-		IDColumn          = mysql.IntegerColumn("id")
-		CreatedAtColumn   = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
-		JobColumn         = mysql.StringColumn("job")
-		NameColumn        = mysql.StringColumn("name")
-		DescriptionColumn = mysql.StringColumn("description")
-		PublicColumn      = mysql.BoolColumn("public")
-		ClosedColumn      = mysql.BoolColumn("closed")
-		ColorColumn       = mysql.StringColumn("color")
-		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		CreatorJobColumn  = mysql.StringColumn("creator_job")
-		SystemKindColumn  = mysql.IntegerColumn("system_kind")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn, SystemKindColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn, SystemKindColumn}
-		defaultColumns    = mysql.ColumnList{CreatedAtColumn, PublicColumn, ClosedColumn, ColorColumn}
+		IDColumn              = mysql.IntegerColumn("id")
+		CreatedAtColumn       = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn       = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn       = mysql.TimestampColumn("deleted_at")
+		JobColumn             = mysql.StringColumn("job")
+		DiscordSettingsColumn = mysql.StringColumn("discord_settings")
+		NameColumn            = mysql.StringColumn("name")
+		DescriptionColumn     = mysql.StringColumn("description")
+		PublicColumn          = mysql.BoolColumn("public")
+		ClosedColumn          = mysql.BoolColumn("closed")
+		ColorColumn           = mysql.StringColumn("color")
+		CreatorIDColumn       = mysql.IntegerColumn("creator_id")
+		CreatorJobColumn      = mysql.StringColumn("creator_job")
+		SystemKindColumn      = mysql.IntegerColumn("system_kind")
+		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, DiscordSettingsColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn, SystemKindColumn}
+		mutableColumns        = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, DiscordSettingsColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn, SystemKindColumn}
+		defaultColumns        = mysql.ColumnList{CreatedAtColumn, PublicColumn, ClosedColumn, ColorColumn}
 	)
 
 	return fivenetCalendarTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:          IDColumn,
-		CreatedAt:   CreatedAtColumn,
-		UpdatedAt:   UpdatedAtColumn,
-		DeletedAt:   DeletedAtColumn,
-		Job:         JobColumn,
-		Name:        NameColumn,
-		Description: DescriptionColumn,
-		Public:      PublicColumn,
-		Closed:      ClosedColumn,
-		Color:       ColorColumn,
-		CreatorID:   CreatorIDColumn,
-		CreatorJob:  CreatorJobColumn,
-		SystemKind:  SystemKindColumn,
+		ID:              IDColumn,
+		CreatedAt:       CreatedAtColumn,
+		UpdatedAt:       UpdatedAtColumn,
+		DeletedAt:       DeletedAtColumn,
+		Job:             JobColumn,
+		DiscordSettings: DiscordSettingsColumn,
+		Name:            NameColumn,
+		Description:     DescriptionColumn,
+		Public:          PublicColumn,
+		Closed:          ClosedColumn,
+		Color:           ColorColumn,
+		CreatorID:       CreatorIDColumn,
+		CreatorJob:      CreatorJobColumn,
+		SystemKind:      SystemKindColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

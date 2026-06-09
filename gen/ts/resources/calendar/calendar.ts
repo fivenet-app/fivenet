@@ -39,6 +39,10 @@ export interface Calendar {
      */
     job?: string;
     /**
+     * @generated from protobuf field: optional resources.calendar.CalendarSystemKind system_kind = 16
+     */
+    systemKind?: CalendarSystemKind;
+    /**
      * @generated from protobuf field: string name = 6
      */
     name: string;
@@ -79,9 +83,9 @@ export interface Calendar {
      */
     access?: CalendarAccess;
     /**
-     * @generated from protobuf field: optional resources.calendar.CalendarSystemKind system_kind = 16
+     * @generated from protobuf field: optional resources.calendar.CalendarDiscordSettings discord_settings = 17
      */
-    systemKind?: CalendarSystemKind;
+    discordSettings?: CalendarDiscordSettings;
 }
 /**
  * @generated from protobuf message resources.calendar.CalendarShort
@@ -158,6 +162,57 @@ export interface CalendarSub {
     muted: boolean;
 }
 /**
+ * @generated from protobuf message resources.calendar.CalendarDiscordSettings
+ */
+export interface CalendarDiscordSettings {
+    /**
+     * @generated from protobuf field: bool enabled = 1
+     */
+    enabled: boolean;
+    /**
+     * @generated from protobuf field: string channel_id = 2
+     */
+    channelId: string;
+    /**
+     * @generated from protobuf field: repeated resources.calendar.CalendarDiscordReminderStep reminder_steps = 3
+     */
+    reminderSteps: CalendarDiscordReminderStep[];
+}
+/**
+ * @generated from protobuf message resources.calendar.CalendarDiscordReminderStep
+ */
+export interface CalendarDiscordReminderStep {
+    /**
+     * @generated from protobuf field: int32 at_minute = 1
+     */
+    atMinute: number;
+    /**
+     * @generated from protobuf field: optional string message = 2
+     */
+    message?: string;
+    /**
+     * @generated from protobuf field: optional resources.calendar.CalendarDiscordReminderEmbed embed = 3
+     */
+    embed?: CalendarDiscordReminderEmbed;
+}
+/**
+ * @generated from protobuf message resources.calendar.CalendarDiscordReminderEmbed
+ */
+export interface CalendarDiscordReminderEmbed {
+    /**
+     * @generated from protobuf field: optional string title = 1
+     */
+    title?: string;
+    /**
+     * @generated from protobuf field: optional string description = 2
+     */
+    description?: string;
+    /**
+     * @generated from protobuf field: optional string color = 3
+     */
+    color?: string;
+}
+/**
  * @generated from protobuf enum resources.calendar.CalendarSystemKind
  */
 export enum CalendarSystemKind {
@@ -179,6 +234,7 @@ class Calendar$Type extends MessageType<Calendar> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 16, name: "system_kind", kind: "enum", opt: true, T: () => ["resources.calendar.CalendarSystemKind", CalendarSystemKind, "CALENDAR_SYSTEM_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -189,7 +245,7 @@ class Calendar$Type extends MessageType<Calendar> {
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 14, name: "subscription", kind: "message", T: () => CalendarSub },
             { no: 15, name: "access", kind: "message", T: () => CalendarAccess },
-            { no: 16, name: "system_kind", kind: "enum", opt: true, T: () => ["resources.calendar.CalendarSystemKind", CalendarSystemKind, "CALENDAR_SYSTEM_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+            { no: 17, name: "discord_settings", kind: "message", T: () => CalendarDiscordSettings }
         ]);
     }
     create(value?: PartialMessage<Calendar>): Calendar {
@@ -224,6 +280,9 @@ class Calendar$Type extends MessageType<Calendar> {
                 case /* optional string job */ 5:
                     message.job = reader.string();
                     break;
+                case /* optional resources.calendar.CalendarSystemKind system_kind */ 16:
+                    message.systemKind = reader.int32();
+                    break;
                 case /* string name */ 6:
                     message.name = reader.string();
                     break;
@@ -254,8 +313,8 @@ class Calendar$Type extends MessageType<Calendar> {
                 case /* resources.calendar.access.CalendarAccess access */ 15:
                     message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
-                case /* optional resources.calendar.CalendarSystemKind system_kind */ 16:
-                    message.systemKind = reader.int32();
+                case /* optional resources.calendar.CalendarDiscordSettings discord_settings */ 17:
+                    message.discordSettings = CalendarDiscordSettings.internalBinaryRead(reader, reader.uint32(), options, message.discordSettings);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -317,6 +376,9 @@ class Calendar$Type extends MessageType<Calendar> {
         /* optional resources.calendar.CalendarSystemKind system_kind = 16; */
         if (message.systemKind !== undefined)
             writer.tag(16, WireType.Varint).int32(message.systemKind);
+        /* optional resources.calendar.CalendarDiscordSettings discord_settings = 17; */
+        if (message.discordSettings)
+            CalendarDiscordSettings.internalBinaryWrite(message.discordSettings, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -526,3 +588,187 @@ class CalendarSub$Type extends MessageType<CalendarSub> {
  * @generated MessageType for protobuf message resources.calendar.CalendarSub
  */
 export const CalendarSub = new CalendarSub$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CalendarDiscordSettings$Type extends MessageType<CalendarDiscordSettings> {
+    constructor() {
+        super("resources.calendar.CalendarDiscordSettings", [
+            { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "channel_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 3, name: "reminder_steps", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CalendarDiscordReminderStep, options: { "buf.validate.field": { repeated: { maxItems: "2" } } } }
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
+    }
+    create(value?: PartialMessage<CalendarDiscordSettings>): CalendarDiscordSettings {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.enabled = false;
+        message.channelId = "";
+        message.reminderSteps = [];
+        if (value !== undefined)
+            reflectionMergePartial<CalendarDiscordSettings>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CalendarDiscordSettings): CalendarDiscordSettings {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool enabled */ 1:
+                    message.enabled = reader.bool();
+                    break;
+                case /* string channel_id */ 2:
+                    message.channelId = reader.string();
+                    break;
+                case /* repeated resources.calendar.CalendarDiscordReminderStep reminder_steps */ 3:
+                    message.reminderSteps.push(CalendarDiscordReminderStep.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CalendarDiscordSettings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool enabled = 1; */
+        if (message.enabled !== false)
+            writer.tag(1, WireType.Varint).bool(message.enabled);
+        /* string channel_id = 2; */
+        if (message.channelId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.channelId);
+        /* repeated resources.calendar.CalendarDiscordReminderStep reminder_steps = 3; */
+        for (let i = 0; i < message.reminderSteps.length; i++)
+            CalendarDiscordReminderStep.internalBinaryWrite(message.reminderSteps[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.calendar.CalendarDiscordSettings
+ */
+export const CalendarDiscordSettings = new CalendarDiscordSettings$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CalendarDiscordReminderStep$Type extends MessageType<CalendarDiscordReminderStep> {
+    constructor() {
+        super("resources.calendar.CalendarDiscordReminderStep", [
+            { no: 1, name: "at_minute", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10080, gte: 0 } } } },
+            { no: 2, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "2000" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeAndUnescape" } } },
+            { no: 3, name: "embed", kind: "message", T: () => CalendarDiscordReminderEmbed }
+        ]);
+    }
+    create(value?: PartialMessage<CalendarDiscordReminderStep>): CalendarDiscordReminderStep {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.atMinute = 0;
+        if (value !== undefined)
+            reflectionMergePartial<CalendarDiscordReminderStep>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CalendarDiscordReminderStep): CalendarDiscordReminderStep {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 at_minute */ 1:
+                    message.atMinute = reader.int32();
+                    break;
+                case /* optional string message */ 2:
+                    message.message = reader.string();
+                    break;
+                case /* optional resources.calendar.CalendarDiscordReminderEmbed embed */ 3:
+                    message.embed = CalendarDiscordReminderEmbed.internalBinaryRead(reader, reader.uint32(), options, message.embed);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CalendarDiscordReminderStep, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 at_minute = 1; */
+        if (message.atMinute !== 0)
+            writer.tag(1, WireType.Varint).int32(message.atMinute);
+        /* optional string message = 2; */
+        if (message.message !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.message);
+        /* optional resources.calendar.CalendarDiscordReminderEmbed embed = 3; */
+        if (message.embed)
+            CalendarDiscordReminderEmbed.internalBinaryWrite(message.embed, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.calendar.CalendarDiscordReminderStep
+ */
+export const CalendarDiscordReminderStep = new CalendarDiscordReminderStep$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CalendarDiscordReminderEmbed$Type extends MessageType<CalendarDiscordReminderEmbed> {
+    constructor() {
+        super("resources.calendar.CalendarDiscordReminderEmbed", [
+            { no: 1, name: "title", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "256" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeAndUnescape" } } },
+            { no: 2, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "4096" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeAndUnescape" } } },
+            { no: 3, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CalendarDiscordReminderEmbed>): CalendarDiscordReminderEmbed {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CalendarDiscordReminderEmbed>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CalendarDiscordReminderEmbed): CalendarDiscordReminderEmbed {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string title */ 1:
+                    message.title = reader.string();
+                    break;
+                case /* optional string description */ 2:
+                    message.description = reader.string();
+                    break;
+                case /* optional string color */ 3:
+                    message.color = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CalendarDiscordReminderEmbed, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string title = 1; */
+        if (message.title !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.title);
+        /* optional string description = 2; */
+        if (message.description !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.description);
+        /* optional string color = 3; */
+        if (message.color !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.color);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.calendar.CalendarDiscordReminderEmbed
+ */
+export const CalendarDiscordReminderEmbed = new CalendarDiscordReminderEmbed$Type();

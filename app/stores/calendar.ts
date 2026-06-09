@@ -132,8 +132,8 @@ export const useCalendarStore = defineStore(
                                 label: { key: 'common.open' },
                                 icon: 'i-mdi-calendar',
                                 to: entry.occurrence?.key
-                                    ? `/calendar?entry_key=${encodeURIComponent(entry.occurrence.key)}`
-                                    : `/calendar?entry_id=${entry.id}`,
+                                    ? `/calendar?entryKey=${encodeURIComponent(entry.occurrence.key)}`
+                                    : `/calendar?entryId=${entry.id}`,
                             },
                         ],
                     });
@@ -445,12 +445,9 @@ export const useCalendarStore = defineStore(
          * @returns {boolean} True if the user has edit access, false otherwise.
          */
         const hasEditAccessToCalendar = computed(() => {
-            const { activeChar } = useAuth();
-            return !!calendars.value.find((c) => {
-                if (c.job === undefined && c.creatorId === activeChar.value?.userId) return true;
-
-                return checkCalendarAccess(c.access, c.creator, AccessLevel.EDIT, c.creatorJob);
-            });
+            return !!calendars.value.find((c) =>
+                checkCalendarAccess(c.access, c.creator, AccessLevel.EDIT, c.job, c.creatorJob),
+            );
         });
 
         return {

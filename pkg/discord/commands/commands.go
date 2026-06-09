@@ -45,7 +45,7 @@ type CommandParams struct {
 	Cfg      *config.Config
 	JS       *events.JSWrapper
 	DB       *sql.DB
-	I18n     *i18n.I18n
+	I18n     i18n.Ii18n
 	BotState discordtypes.BotState
 	Perms    perms.Permissions
 }

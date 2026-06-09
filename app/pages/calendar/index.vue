@@ -42,27 +42,26 @@ const overlay = useOverlay();
 const calendarStore = useCalendarStore();
 const { activeCalendarIds, currentDate, view, calendars, entries, hasEditAccessToCalendar } = storeToRefs(calendarStore);
 
-const calRef = useTemplateRef('calRef');
-
 const schema = z.object({
-    page: pageNumberSchema,
     entryId: z.coerce.number().nonnegative().optional(),
     entryKey: z.string().optional(),
 });
 
 const query = useSearchForm('calendar', schema);
 
+const page = ref<number>(1);
+
 const {
     data: calendarsData,
     status: calendarsStatus,
     error: calendarsError,
     refresh: calendarsRefresh,
-} = useLazyAsyncData(`calendars:${query.page}`, () => listCalendars());
+} = useLazyAsyncData(`calendars:${page.value}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListCalendarsResponse> {
     const response = await calendarStore.listCalendars({
         pagination: {
-            offset: calculateOffset(query.page, calendarsData.value?.pagination),
+            offset: calculateOffset(page.value, calendarsData.value?.pagination),
         },
         onlyPublic: false,
         calendarIds: [],
@@ -236,7 +235,7 @@ const findCalendarsDrawer = overlay.create(FindCalendarDrawer);
 
 function openSelectedEntry(entry: CalendarEntry): void {
     entryViewSlideover.open({
-        entry,
+        entry: entry,
     });
 }
 
@@ -266,17 +265,11 @@ function openEntryFromQuery(): void {
     query.entryKey = undefined;
 }
 
-watch(
-    [toRef(query, 'entryId'), toRef(query, 'entryKey'), entries],
-    () => {
-        openEntryFromQuery();
-    },
-    { deep: true },
-);
+watch([toRef(query, 'entryId'), toRef(query, 'entryKey'), entries], () => openEntryFromQuery(), { deep: true });
 
-onMounted(() => {
-    openEntryFromQuery();
-});
+onMounted(() => openEntryFromQuery());
+
+const calRef = useTemplateRef('calRef');
 
 async function resetToToday(): Promise<void> {
     calRef.value?.calRef?.focusDate(new Date());

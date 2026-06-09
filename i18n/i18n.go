@@ -12,6 +12,15 @@ import (
 	"strings"
 )
 
+type Ii18n interface {
+	Langs() []string
+
+	GetFallbackLanguage() string
+	SetFallbackLanguage(lang string)
+
+	Translator(lang string) TFunc
+}
+
 // TFunc is the translation function type. It takes a key and a map of variables, and returns the translated string.
 type TFunc func(string, map[string]any) string
 

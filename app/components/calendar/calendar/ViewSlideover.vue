@@ -43,7 +43,13 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
                 <UTooltip
                     v-if="
                         can('calendar.CalendarService/CreateCalendar').value &&
-                        checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT, calendar?.creatorJob)
+                        checkCalendarAccess(
+                            calendar?.access,
+                            calendar?.creator,
+                            AccessLevel.EDIT,
+                            calendar?.job,
+                            calendar?.creatorJob,
+                        )
                     "
                     :text="$t('common.edit')"
                 >
@@ -62,7 +68,13 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
                 <UTooltip
                     v-if="
                         !isSystemManaged &&
-                        checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE, calendar?.creatorJob)
+                        checkCalendarAccess(
+                            calendar?.access,
+                            calendar?.creator,
+                            AccessLevel.MANAGE,
+                            calendar?.job,
+                            calendar?.creatorJob,
+                        )
                     "
                     :text="$t('common.delete')"
                 >

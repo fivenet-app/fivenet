@@ -162,6 +162,10 @@ export interface CalendarEntryRSVP {
      * @generated from protobuf field: resources.calendar.entries.RsvpResponses response = 5
      */
     response: RsvpResponses;
+    /**
+     * @generated from protobuf field: optional string occurrence_key = 6
+     */
+    occurrenceKey?: string;
 }
 /**
  * @generated from protobuf enum resources.calendar.entries.CalendarEntryOccurrenceKind
@@ -562,7 +566,8 @@ class CalendarEntryRSVP$Type extends MessageType<CalendarEntryRSVP> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 4, name: "user", kind: "message", T: () => UserShort },
-            { no: 5, name: "response", kind: "enum", T: () => ["resources.calendar.entries.RsvpResponses", RsvpResponses, "RSVP_RESPONSES_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+            { no: 5, name: "response", kind: "enum", T: () => ["resources.calendar.entries.RsvpResponses", RsvpResponses, "RSVP_RESPONSES_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 6, name: "occurrence_key", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<CalendarEntryRSVP>): CalendarEntryRSVP {
@@ -594,6 +599,9 @@ class CalendarEntryRSVP$Type extends MessageType<CalendarEntryRSVP> {
                 case /* resources.calendar.entries.RsvpResponses response */ 5:
                     message.response = reader.int32();
                     break;
+                case /* optional string occurrence_key */ 6:
+                    message.occurrenceKey = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -621,6 +629,9 @@ class CalendarEntryRSVP$Type extends MessageType<CalendarEntryRSVP> {
         /* resources.calendar.entries.RsvpResponses response = 5; */
         if (message.response !== 0)
             writer.tag(5, WireType.Varint).int32(message.response);
+        /* optional string occurrence_key = 6; */
+        if (message.occurrenceKey !== undefined)
+            writer.tag(6, WireType.LengthDelimited).string(message.occurrenceKey);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

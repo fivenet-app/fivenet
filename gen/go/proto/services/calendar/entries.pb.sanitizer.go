@@ -3,6 +3,10 @@
 
 package calendar
 
+import (
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
+)
+
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
 func (m *CreateOrUpdateCalendarEntryRequest) Sanitize() error {
@@ -187,6 +191,11 @@ func (m *RSVPCalendarEntryRequest) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: OccurrenceKey
+	if m.OccurrenceKey != nil {
+		*m.OccurrenceKey = htmlsanitizer.Sanitize(*m.OccurrenceKey)
 	}
 
 	return nil

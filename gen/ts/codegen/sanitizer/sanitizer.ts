@@ -16,6 +16,8 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface FieldOptions {
     /**
+     * Default false
+     *
      * @generated from protobuf field: bool enabled = 1
      */
     enabled: boolean;
@@ -24,10 +26,14 @@ export interface FieldOptions {
      */
     method?: string;
     /**
+     * Default false
+     *
      * @generated from protobuf field: optional bool strip_html_tags = 3
      */
     stripHtmlTags?: boolean;
     /**
+     * Default false
+     *
      * @generated from protobuf field: optional bool tiptap_json = 4
      */
     tiptapJson?: boolean;

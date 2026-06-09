@@ -17,13 +17,49 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+type calendarEntryOccurrenceKey struct {
+	entryID       int64
+	occurrenceKey string
+}
+
+func calendarEntryRSVPVisible(
+	userInfo *userinfo.UserInfo,
+	rsvpResponse calendarentries.RsvpResponses,
+) mysql.BoolExpression {
+	tCalendarEntryRsvp := tCalendarRSVP.AS("calendar_entry_rsvp_visibility")
+	tCalendarEntryRsvpOccurrence := tCalendarRSVPOccurrence.AS(
+		"calendar_entry_rsvp_occurrence_visibility",
+	)
+
+	return mysql.OR(
+		mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
+				FROM(tCalendarEntryRsvp).
+				WHERE(mysql.AND(
+					tCalendarEntryRsvp.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					tCalendarEntryRsvp.Response.GT(mysql.Int32(int32(rsvpResponse))),
+					tCalendarEntryRsvp.EntryID.EQ(tCalendarEntry.ID),
+				)),
+		),
+		mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
+				FROM(tCalendarEntryRsvpOccurrence).
+				WHERE(mysql.AND(
+					tCalendarEntryRsvpOccurrence.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					tCalendarEntryRsvpOccurrence.Response.GT(mysql.Int32(int32(rsvpResponse))),
+					tCalendarEntryRsvpOccurrence.EntryID.EQ(tCalendarEntry.ID),
+				)),
+		),
+	)
+}
+
 func calendarEntryVisibility(
 	userInfo *userinfo.UserInfo,
 	access calendaraccess.AccessLevel,
 	rsvpResponse calendarentries.RsvpResponses,
 ) mysql.BoolExpression {
-	tCalendarEntryRsvp := tCalendarRSVP.AS("r2")
-
 	return mysql.OR(
 		mysql.EXISTS(
 			mysql.
@@ -41,35 +77,31 @@ func calendarEntryVisibility(
 					),
 				)),
 		),
-		mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tCalendarEntryRsvp).
-				WHERE(mysql.AND(
-					tCalendarEntryRsvp.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-					tCalendarEntryRsvp.Response.GT(mysql.Int32(int32(rsvpResponse))),
-					tCalendarEntryRsvp.EntryID.EQ(tCalendarEntry.ID),
-				)),
-		),
+		calendarEntryRSVPVisible(userInfo, rsvpResponse),
 		tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 	)
 }
 
-func (s *Server) birthdayCalendarVisible(userInfo *userinfo.UserInfo) mysql.BoolExpression {
+func (s *Server) birthdayCalendarVisible(
+	calendarID mysql.IntegerExpression,
+	access calendaraccess.AccessLevel,
+	userInfo *userinfo.UserInfo,
+) mysql.BoolExpression {
 	return mysql.AND(
 		tCalendar.SystemKind.EQ(
 			mysql.Int32(
 				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
 			),
 		),
+		tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
 		mysql.EXISTS(
 			mysql.
 				SELECT(mysql.Int(1)).
 				FROM(tCAccess).
 				WHERE(mysql.AND(
-					tCAccess.TargetID.EQ(tCalendarEntry.CalendarID),
+					tCAccess.TargetID.EQ(calendarID),
 					tCAccess.Access.GT_EQ(
-						mysql.Int32(int32(calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW)),
+						mysql.Int32(int32(access)),
 					),
 					mysql.OR(
 						tCAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
@@ -111,6 +143,7 @@ func calendarEntriesQuery(
 			tCalendarEntry.StartTime,
 			tCalendarEntry.EndTime,
 			tCalendarEntry.Title,
+			tCalendarEntry.Content,
 			tCalendarEntry.Closed,
 			tCalendarEntry.RsvpOpen,
 			tCalendarEntry.CreatorID,
@@ -190,7 +223,102 @@ func (s *Server) loadExpandedCalendarEntries(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
+	if err := s.overlayCalendarEntryRSVPOverrides(ctx, userInfo, expanded); err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
 	return expanded, nil
+}
+
+func (s *Server) overlayCalendarEntryRSVPOverrides(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	entries []*calendarentries.CalendarEntry,
+) error {
+	occurrenceKeys := map[calendarEntryOccurrenceKey]struct{}{}
+	entryIDs := map[int64]struct{}{}
+	for i := range entries {
+		occurrence := entries[i].GetOccurrence()
+		if occurrence == nil ||
+			occurrence.GetKind() != calendarentries.CalendarEntryOccurrenceKind_CALENDAR_ENTRY_OCCURRENCE_KIND_RECURRING ||
+			occurrence.GetKey() == "" ||
+			occurrence.GetSourceEntryId() <= 0 {
+			continue
+		}
+
+		key := calendarEntryOccurrenceKey{
+			entryID:       occurrence.GetSourceEntryId(),
+			occurrenceKey: occurrence.GetKey(),
+		}
+		occurrenceKeys[key] = struct{}{}
+		entryIDs[key.entryID] = struct{}{}
+	}
+
+	if len(occurrenceKeys) == 0 {
+		return nil
+	}
+
+	entryIDExprs := make([]mysql.Expression, 0, len(entryIDs))
+	for entryID := range entryIDs {
+		entryIDExprs = append(entryIDExprs, mysql.Int64(entryID))
+	}
+
+	stmt := tCalendarRSVPOccurrence.
+		SELECT(
+			tCalendarRSVPOccurrence.EntryID,
+			tCalendarRSVPOccurrence.OccurrenceKey,
+			tCalendarRSVPOccurrence.CreatedAt,
+			tCalendarRSVPOccurrence.UserID,
+			tCalendarRSVPOccurrence.Response,
+		).
+		FROM(tCalendarRSVPOccurrence).
+		WHERE(mysql.AND(
+			tCalendarRSVPOccurrence.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+			tCalendarRSVPOccurrence.EntryID.IN(entryIDExprs...),
+		))
+
+	overrides := []*calendarentries.CalendarEntryRSVP{}
+	if err := stmt.QueryContext(ctx, s.db, &overrides); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
+	}
+
+	overrideByKey := make(
+		map[calendarEntryOccurrenceKey]*calendarentries.CalendarEntryRSVP,
+		len(overrides),
+	)
+	for i := range overrides {
+		if overrides[i] == nil || overrides[i].GetOccurrenceKey() == "" {
+			continue
+		}
+		overrideByKey[calendarEntryOccurrenceKey{
+			entryID:       overrides[i].GetEntryId(),
+			occurrenceKey: overrides[i].GetOccurrenceKey(),
+		}] = overrides[i]
+	}
+
+	for i := range entries {
+		occurrence := entries[i].GetOccurrence()
+		if occurrence == nil ||
+			occurrence.GetKind() != calendarentries.CalendarEntryOccurrenceKind_CALENDAR_ENTRY_OCCURRENCE_KIND_RECURRING ||
+			occurrence.GetKey() == "" ||
+			occurrence.GetSourceEntryId() <= 0 {
+			continue
+		}
+
+		override := overrideByKey[calendarEntryOccurrenceKey{
+			entryID:       occurrence.GetSourceEntryId(),
+			occurrenceKey: occurrence.GetKey(),
+		}]
+		if override == nil {
+			continue
+		}
+
+		entries[i].Rsvp = override
+	}
+
+	return nil
 }
 
 func (s *Server) finalizeCalendarEntries(
@@ -233,6 +361,44 @@ func (s *Server) finalizeCalendarEntries(
 	}
 
 	return entries
+}
+
+func filterUpcomingCalendarEntries(
+	entries []*calendarentries.CalendarEntry,
+	userInfo *userinfo.UserInfo,
+) []*calendarentries.CalendarEntry {
+	if len(entries) == 0 {
+		return entries
+	}
+
+	filtered := make([]*calendarentries.CalendarEntry, 0, len(entries))
+	for i := range entries {
+		if entries[i] == nil {
+			continue
+		}
+
+		if entries[i].GetOccurrence() != nil &&
+			entries[i].GetOccurrence().
+				GetKind() ==
+				calendarentries.CalendarEntryOccurrenceKind_CALENDAR_ENTRY_OCCURRENCE_KIND_BIRTHDAY {
+			filtered = append(filtered, entries[i])
+			continue
+		}
+
+		if entries[i].GetCreatorId() == userInfo.GetUserId() {
+			filtered = append(filtered, entries[i])
+			continue
+		}
+
+		if entries[i].GetRsvp() != nil &&
+			entries[i].GetRsvp().
+				GetResponse() >
+				calendarentries.RsvpResponses_RSVP_RESPONSES_NO {
+			filtered = append(filtered, entries[i])
+		}
+	}
+
+	return filtered
 }
 
 func int64Ptr(v int64) *int64 {

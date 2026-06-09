@@ -2,7 +2,7 @@ import type { JsonObject } from '@protobuf-ts/runtime';
 import { describe, expect, it } from 'vitest';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType, NodeType, type Content, type RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
-import { getTextFromContent, jsonNodeToTocLinks } from './content';
+import { contentToTiptapValue, getTextFromContent, jsonNodeToTocLinks, tiptapToContent } from './content';
 
 function richNode(node: Partial<RichTextHtmlNode> & Pick<RichTextHtmlNode, 'tag'>): RichTextHtmlNode {
     const { tag, ...rest } = node;
@@ -151,6 +151,59 @@ describe('jsonNodeToTocLinks', () => {
                 text: 'API Reference',
             },
         ]);
+    });
+});
+
+describe('tiptapToContent', () => {
+    it('should build a full content message with explicit version and tiptap json', () => {
+        const content = tiptapToContent({ type: 'doc', content: [] }, '1');
+
+        expect(content).toEqual({
+            version: '1',
+            contentType: ContentType.TIPTAP_JSON,
+            tiptapJson: Struct.fromJson({ type: 'doc', content: [] }),
+        });
+    });
+
+    it('should default to an empty doc for missing or string content', () => {
+        expect(tiptapToContent()).toEqual({
+            version: '',
+            contentType: ContentType.TIPTAP_JSON,
+            tiptapJson: Struct.fromJson({ type: 'doc', content: [] }),
+        });
+
+        expect(tiptapToContent('legacy-html')).toEqual({
+            version: '',
+            contentType: ContentType.TIPTAP_JSON,
+            tiptapJson: Struct.fromJson({ type: 'doc', content: [] }),
+        });
+    });
+});
+
+describe('contentToTiptapValue', () => {
+    it('should prefer tiptap json when available', () => {
+        const content: Content = {
+            version: '1',
+            contentType: ContentType.TIPTAP_JSON,
+            tiptapJson: Struct.fromJson({ type: 'doc', content: [] }),
+        };
+
+        expect(contentToTiptapValue(content)).toEqual({ type: 'doc', content: [] });
+    });
+
+    it('should fall back to raw html when tiptap json is missing', () => {
+        const content: Content = {
+            version: '1',
+            contentType: ContentType.HTML,
+            rawHtml: '<p>Hello</p>',
+        };
+
+        expect(contentToTiptapValue(content)).toBe('<p>Hello</p>');
+    });
+
+    it('should return an empty string when content is missing', () => {
+        expect(contentToTiptapValue()).toBe('');
+        expect(contentToTiptapValue(null)).toBe('');
     });
 });
 

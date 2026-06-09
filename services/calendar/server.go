@@ -3,10 +3,12 @@ package calendar
 import (
 	"database/sql"
 
+	discordstate "github.com/diamondburned/arikawa/v3/state"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
@@ -22,8 +24,11 @@ var (
 	tCalendar     = table.FivenetCalendar.AS("calendar")
 	tCalendarSubs = table.FivenetCalendarSubs.AS("calendar_sub")
 
-	tCalendarEntry = table.FivenetCalendarEntries.AS("calendar_entry")
-	tCalendarRSVP  = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")
+	tCalendarEntry          = table.FivenetCalendarEntries.AS("calendar_entry")
+	tCalendarRSVP           = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")
+	tCalendarRSVPOccurrence = table.FivenetCalendarRsvpOccurrence.AS(
+		"calendar_entry_rsvp_occurrence",
+	)
 
 	tCAccess = table.FivenetCalendarAccess.AS("calendar_access")
 
@@ -59,9 +64,24 @@ func init() {
 						Table:      table.FivenetCalendarRsvp,
 						ForeignKey: table.FivenetCalendarRsvp.EntryID,
 					},
+					{
+						Table:      table.FivenetCalendarRsvpOccurrence,
+						ForeignKey: table.FivenetCalendarRsvpOccurrence.EntryID,
+					},
+					{
+						Table:      table.FivenetCalendarDiscordReminderSends,
+						ForeignKey: table.FivenetCalendarDiscordReminderSends.EntryID,
+					},
 				},
 			},
 		},
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetCalendarDiscordReminderSends,
+		IDColumn:        table.FivenetCalendarDiscordReminderSends.ID,
+		TimestampColumn: table.FivenetCalendarDiscordReminderSends.CreatedAt,
+		MinDays:         30,
 	})
 }
 
@@ -70,12 +90,14 @@ type Server struct {
 	pbcalendar.EntriesServiceServer
 
 	db       *sql.DB
+	cfg      *config.Config
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	appCfg   appconfig.IConfig
-	i18n     *i18n.I18n
+	i18n     i18n.Ii18n
 	notif    notifi.INotifi
 	js       *events.JSWrapper
+	dc       *discordstate.State
 
 	access *access.Grouped[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, access.DummyQualificationAccess[calendaraccess.AccessLevel], *access.DummyQualificationAccess[calendaraccess.AccessLevel], calendaraccess.AccessLevel]
 }
@@ -84,23 +106,27 @@ type Params struct {
 	fx.In
 
 	DB        *sql.DB
+	Config    *config.Config
 	P         perms.Permissions
 	Enricher  *mstlystcdata.UserAwareEnricher
 	AppConfig appconfig.IConfig
-	I18n      *i18n.I18n
+	I18n      i18n.Ii18n
 	Notif     notifi.INotifi
 	JS        *events.JSWrapper
+	Discord   *discordstate.State
 }
 
 func NewServer(p Params) *Server {
 	return &Server{
 		db:       p.DB,
+		cfg:      p.Config,
 		ps:       p.P,
 		enricher: p.Enricher,
 		appCfg:   p.AppConfig,
 		i18n:     p.I18n,
 		notif:    p.Notif,
 		js:       p.JS,
+		dc:       p.Discord,
 		access: access.NewGrouped[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, access.DummyQualificationAccess[calendaraccess.AccessLevel], *access.DummyQualificationAccess[calendaraccess.AccessLevel], calendaraccess.AccessLevel](
 			p.DB,
 			table.FivenetDocuments,
