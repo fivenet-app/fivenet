@@ -562,15 +562,14 @@ const formRef = useTemplateRef('formRef');
                                                 <USelectMenu
                                                     v-model="state.perms.default[idx]!.category"
                                                     class="w-full"
+                                                    value-key="value"
                                                     :placeholder="$t('common.service')"
-                                                    :items="GRPCServices"
+                                                    :items="
+                                                        GRPCServices.map((s) => ({ label: $t(`perms.${s}.service`), value: s }))
+                                                    "
                                                 >
                                                     <template v-if="state.perms.default[idx]!.category" #default>
                                                         {{ $t(`perms.${state.perms.default[idx]!.category}.service`) }}
-                                                    </template>
-
-                                                    <template #item-label="{ item }">
-                                                        {{ $t(`perms.${item}.service`) }}
                                                     </template>
 
                                                     <template #empty>

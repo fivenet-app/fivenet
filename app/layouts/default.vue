@@ -365,14 +365,14 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
 </script>
 
 <template>
-    <UDashboardGroup unit="%" storage="local">
+    <UDashboardGroup unit="rem" storage="local">
         <UDashboardSidebar
             id="default"
             v-model:open="open"
             class="bg-elevated/25"
-            :default-size="15"
-            :min-size="10"
-            :max-size="25"
+            :default-size="16.5"
+            :min-size="13.5"
+            :max-size="23"
             collapsible
             resizable
             :ui="{ footer: 'lg:border-t lg:border-default' }"

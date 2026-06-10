@@ -615,8 +615,8 @@ func (s *Server) createEmail(
 			tEmails.CreatorID,
 		).
 		VALUES(
-			email.GetJob(),
-			email.GetUserId(),
+			dbutils.StringEmpty(email.GetJob()),
+			dbutils.Int32P(email.GetUserId()),
 			email.GetEmail(),
 			email.Label,
 			userInfo.GetUserId(),

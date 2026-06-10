@@ -245,10 +245,10 @@ const isOpen = ref<boolean>(false);
         v-if="!isMobile"
         id="citizen-id-actions"
         class="bg-elevated/25"
-        :default-size="25"
-        :min-size="20"
-        :max-size="40"
         resizable
+        :default-size="23"
+        :min-size="18"
+        :max-size="34"
         :ui="{ body: 'gap-2 sm:gap-2' }"
     >
         <template #header>

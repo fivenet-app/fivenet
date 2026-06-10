@@ -13,7 +13,6 @@ import type { GetEmailProposalsResponse } from '~~/gen/ts/services/mailer/mailer
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: Email | undefined;
         personalEmail?: boolean;
         disabled?: boolean;
         hideLabel?: boolean;
@@ -27,10 +26,11 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', email: Email | undefined): void;
     (e: 'refresh'): void;
     (e: 'dirty-change', value: boolean): void;
 }>();
+
+const email = defineModel<Email | undefined>();
 
 const { t } = useI18n();
 
@@ -72,6 +72,7 @@ watch(proposals, () => {
     if (state.domain === '') {
         if (proposals.value?.domains[0]) {
             state.domain = proposals.value?.domains[0];
+            syncSnapshot();
         }
     }
 });
@@ -116,35 +117,27 @@ const state = reactive<Schema>({
 const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
 
 function setFromProps(): void {
-    if (!props.modelValue || !props.modelValue?.email) {
+    if (!email.value || !email.value?.email) {
         syncSnapshot();
         return;
     }
 
-    const split = props.modelValue?.email.split('@');
+    const split = email.value?.email.split('@');
     if (split[0] && split[1]) {
         state.email = split[0];
         state.domain = split[1];
     }
-
-    state.deactivated = props.modelValue.deactivated;
-    if (props.modelValue.access) {
-        state.access = props.modelValue.access;
-    }
+    state.label = email.value.label;
+    state.deactivated = email.value.deactivated;
+    if (email.value.access) state.access = email.value.access;
 
     syncSnapshot();
 }
 
 setFromProps();
-watch(props, setFromProps);
+watch(email, setFromProps);
 
-watch(
-    hasUnsavedChanges,
-    (value) => {
-        emit('dirty-change', value);
-    },
-    { immediate: true },
-);
+watch(hasUnsavedChanges, (value) => emit('dirty-change', value), { immediate: true });
 
 async function createOrUpdateEmail(values: Schema): Promise<undefined> {
     values.access.users.forEach((user) => {
@@ -158,12 +151,12 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
 
     const response = await mailerStore.createOrUpdateEmail({
         email: {
-            id: props.modelValue?.id ?? 0,
+            id: email.value?.id ?? 0,
             email: values.email + '@' + values.domain,
             label: values.label !== '' ? values.label : undefined,
             deactivated: values.deactivated,
-            job: !props.personalEmail ? (props.modelValue?.job ?? activeChar.value!.job) : undefined,
-            userId: props.personalEmail ? (props.modelValue?.userId ?? activeChar.value!.userId) : undefined,
+            job: !props.personalEmail ? (email.value?.job ?? activeChar.value!.job) : undefined,
+            userId: props.personalEmail ? (email.value?.userId ?? activeChar.value!.userId) : undefined,
             access: values.access,
         },
     });
@@ -174,19 +167,20 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
         type: NotificationType.SUCCESS,
     });
 
-    if (redirectToMail) {
-        await navigateTo({ name: 'mail-thread', params: { thread: undefined } });
-    }
-
     if (response.email) {
-        emit('update:modelValue', response.email);
+        email.value = response.email;
+        setFromProps();
 
         // Restart notificator stream
         await notifications.restartStream();
     }
 
+    // Refresh emails list
     emit('refresh');
-    syncSnapshot();
+
+    if (redirectToMail) {
+        await navigateTo({ name: 'mail-thread', params: { thread: undefined } });
+    }
 }
 
 const canSubmit = ref<boolean>(true);

@@ -61,9 +61,9 @@ const editing = ref<boolean>(false);
         class="overflow-x-hidden"
         breakpoint="2xl"
         resizable
-        :width="15"
-        :min-size="12"
-        :max-size="28"
+        :default-size="18"
+        :min-size="15"
+        :max-size="40"
         :ui="{ body: 'p-1 sm:p-1 gap-0 sm:gap-0' }"
     >
         <template #header>
