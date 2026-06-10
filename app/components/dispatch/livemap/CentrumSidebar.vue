@@ -449,7 +449,7 @@ defineShortcuts({
     </UDashboardPanel>
 
     <UDashboardPanel
-        v-if="canStream && !open"
+        v-if="canStream && open"
         id="centrum-sidebar"
         class="max-w-[25rem]"
         resizable
