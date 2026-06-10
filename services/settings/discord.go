@@ -121,7 +121,7 @@ func (s *Server) ListUserGuilds(
 
 	guilds, err := getUserGuilds(ctx, accessToken)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+		return nil, err
 	}
 
 	resp := &pbsettings.ListUserGuildsResponse{
@@ -148,7 +148,12 @@ func getUserGuilds(ctx context.Context, accessToken string) ([]discord.Guild, er
 
 	guilds, err := dc.Guilds(200)
 	if err != nil {
-		return nil, err
+		if reqErr, ok := errors.AsType[httputil.JSONError](err); ok {
+			if strings.Contains(reqErr.Error(), "invalid_grant") {
+				return nil, errorssettings.ErrDiscordTokenExpired
+			}
+		}
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
 	return guilds, nil

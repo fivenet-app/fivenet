@@ -57,4 +57,9 @@ var (
 		&common.I18NItem{Key: "errors.settings.SettingsService.ErrCannotDeleteOwnAccount.content"},
 		&common.I18NItem{Key: "errors.settings.SettingsService.ErrCannotDeleteOwnAccount.title"},
 	)
+	ErrDiscordTokenExpired = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrDiscordTokenExpired.title"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrDiscordTokenExpired.title"},
+	)
 )

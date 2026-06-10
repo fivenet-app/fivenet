@@ -44,9 +44,10 @@ func RefreshDiscordAccessToken(
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
 		return "", "", 0, fmt.Errorf(
-			"discord token refresh error %d: %s",
+			"discord token refresh error %d (%s). %w",
 			resp.StatusCode,
 			string(body),
+			err,
 		)
 	}
 
