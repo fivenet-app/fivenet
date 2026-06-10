@@ -28,6 +28,98 @@ declare module '@tiptap/core' {
     }
 }
 
+export type ImageAlign = 'left' | 'center' | 'right';
+
+const DEFAULT_IMAGE_ALIGN: ImageAlign = 'left';
+
+function extractStyleValue(style: unknown, property: 'width' | 'height'): string | null {
+    if (typeof style !== 'string') return null;
+
+    const match = style.match(new RegExp(`(?:^|;)\\s*${property}\\s*:\\s*([^;]+)`, 'i'));
+    return match?.[1]?.trim() ?? null;
+}
+
+function parsePixelValue(value: string | null): number | null {
+    if (!value) return null;
+
+    const match = value.match(/^(\d+)px$/i);
+    return match ? Number(match[1]) : null;
+}
+
+function getAlignFromStyle(style: unknown): ImageAlign | null {
+    if (typeof style !== 'string') return null;
+
+    const normalized = style.replace(/\s+/g, ' ').toLowerCase();
+
+    if (/margin:\s*0\s+auto/.test(normalized)) {
+        return 'center';
+    }
+
+    if (/margin:\s*0\s+0\s+0\s+auto/.test(normalized)) {
+        return 'right';
+    }
+
+    if (/margin:\s*0\s+auto\s+0\s+0/.test(normalized)) {
+        return 'left';
+    }
+
+    return null;
+}
+
+export function removeStyleProperties(style: unknown, properties: string[]): string {
+    if (typeof style !== 'string') return '';
+
+    const blocked = new Set(properties.map((p) => p.toLowerCase()));
+
+    return style
+        .split(';')
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .filter((part) => {
+            const [key] = part.split(':', 1);
+            return !blocked.has(key!.trim().toLowerCase());
+        })
+        .join('; ');
+}
+
+function normalizeImageAttrs(attrs: Record<string, any>): Record<string, any> {
+    const next = { ...attrs };
+
+    if (!next.align) {
+        next.align = getAlignFromStyle(next.style) ?? attrs['data-align'] ?? DEFAULT_IMAGE_ALIGN;
+    }
+
+    if (next.width == null) {
+        next.width = parsePixelValue(extractStyleValue(next.style, 'width'));
+    }
+    if (next.height == null) {
+        next.height = parsePixelValue(extractStyleValue(next.style, 'height'));
+    }
+
+    next.style = removeStyleProperties(next.style, ['width', 'height', 'margin']);
+
+    return next;
+}
+
+export function getAlignStyle(align: unknown): string {
+    switch (align) {
+        case 'center':
+            return 'margin: 0 auto;';
+        case 'right':
+            return 'margin: 0 0 0 auto;';
+        case 'left':
+        default:
+            return 'margin: 0 auto 0 0;';
+    }
+}
+
+const mergeStyle = (...styles: Array<string | null | undefined>) => {
+    return styles
+        .map((style) => style?.trim())
+        .filter(Boolean)
+        .join(' ');
+};
+
 export const EnhancedImage = Node.create<EnhancedImageOptions>({
     name: 'image',
     inline: true,
@@ -61,11 +153,50 @@ export const EnhancedImage = Node.create<EnhancedImageOptions>({
                     return { 'data-file-id': attributes.fileId };
                 },
             },
+            align: {
+                default: DEFAULT_IMAGE_ALIGN,
+                parseHTML: (element) => {
+                    console.log('parsed from html', element);
+                    return (
+                        element.getAttribute('data-align') ||
+                        getAlignFromStyle(element.getAttribute('style')) ||
+                        DEFAULT_IMAGE_ALIGN
+                    );
+                },
+                renderHTML: (attributes) => {
+                    return { 'data-align': attributes.align ?? DEFAULT_IMAGE_ALIGN };
+                },
+            },
             width: {
                 default: null,
+                parseHTML: (element) => {
+                    const width = element.getAttribute('width');
+                    if (width && Number(width) > 0) return Number(width);
+
+                    const match = element.getAttribute('style')?.match(/width:\s*(\d+)px/i);
+                    return match ? Number(match[1]) : null;
+                },
+                renderHTML: (attributes) => {
+                    if (attributes.width == null) return {};
+                    return { width: attributes.width };
+                },
+            },
+            height: {
+                default: null,
+                parseHTML: (element) => {
+                    const height = element.getAttribute('height');
+                    if (height && Number(height) > 0) return Number(height);
+
+                    const match = element.getAttribute('style')?.match(/height:\s*(\d+)px/i);
+                    return match ? Number(match[1]) : null;
+                },
+                renderHTML: (attributes) => {
+                    if (attributes.height == null) return {};
+                    return { height: attributes.height };
+                },
             },
             style: {
-                default: 'width: 100%; height: auto; cursor: pointer; margin: 0 auto 0 0;',
+                default: 'width: 100%; height: auto; cursor: pointer;',
                 parseHTML: (element) => {
                     // Get style string from element
                     let style = element.getAttribute('style') || '';
@@ -101,9 +232,17 @@ export const EnhancedImage = Node.create<EnhancedImageOptions>({
     },
 
     renderHTML({ HTMLAttributes }) {
+        const attrs = normalizeImageAttrs(HTMLAttributes);
+
+        const { align, style, ...rest } = attrs;
+
         return [
             'img',
-            mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { src: cleanupImageURL(HTMLAttributes.src) }),
+            mergeAttributes(this.options.HTMLAttributes, rest, {
+                src: cleanupImageURL(attrs.src),
+                'data-align': align,
+                style: mergeStyle(style, 'display: block; ' + getAlignStyle(align)),
+            }),
         ];
     },
 

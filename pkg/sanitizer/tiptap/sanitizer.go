@@ -48,6 +48,14 @@ var allowedMapBlockLayers = map[string]struct{}{
 	"satellite":             {},
 }
 
+const defaultImageAlignKey = "left"
+
+var allowedImageAlign = map[string]struct{}{
+	"left":   {},
+	"center": {},
+	"right":  {},
+}
+
 // normalizeLinkHref ensures the href is safe and normalized.
 // It allows relative URLs and absolute HTTPS URLs only.
 func normalizeLinkHref(raw string) (string, bool) {
@@ -168,6 +176,46 @@ func normalizeMapBlockLayer(v any) string {
 	}
 
 	return defaultMapBlockLayerKey
+}
+
+func parseImageAlignFromMargin(value string) (string, bool) {
+	value = strings.ToLower(strings.Join(strings.Fields(value), " "))
+
+	switch value {
+	case "0 auto", "0 auto 0 auto":
+		return "center", true
+	case "0 0 0 auto":
+		return "right", true
+	case "0 auto 0 0":
+		return "left", true
+	default:
+		return "", false
+	}
+}
+
+func normalizeImageAlign(v any) string {
+	s, _ := v.(string)
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return defaultImageAlignKey
+	}
+	if _, ok := allowedImageAlign[s]; ok {
+		return s
+	}
+
+	return defaultImageAlignKey
+}
+
+func parseCSSPxValue(value string) (int, bool) {
+	value = strings.TrimSpace(value)
+	value = strings.TrimSuffix(value, "px")
+
+	n, err := strconv.Atoi(value)
+	if err != nil || n <= 0 || n > 5000 {
+		return 0, false
+	}
+
+	return n, true
 }
 
 func New() *Sanitizer {
@@ -321,17 +369,44 @@ func buildAllowed() *Sanitizer {
 				}
 
 				for _, part := range split {
+					part = strings.TrimSpace(part)
+					if part == "" {
+						continue
+					}
+
 					keyValue := strings.SplitN(part, ":", 2)
 					if len(keyValue) != 2 {
 						return false, nil
 					}
-					if keyValue[0] != "width" {
-						continue
-					}
+					key := strings.TrimSpace(keyValue[0])
+					value := strings.TrimSpace(keyValue[1])
 
-					// Set width from style attribute
-					a["width"] = strings.TrimSpace(keyValue[1])
+					// Set height/width from style attribute
+					switch key {
+					case "width":
+						if width, ok := parseCSSPxValue(value); ok {
+							out["width"] = width
+						}
+					case "height":
+						if height, ok := parseCSSPxValue(value); ok {
+							out["height"] = height
+						}
+
+					case "margin":
+						// If margin is already set, skip
+						if _, ok := a["align"]; ok {
+							continue
+						}
+
+						if align, ok := parseImageAlignFromMargin(value); ok {
+							a["align"] = align
+						}
+					}
 				}
+			}
+
+			if align, ok := a["align"].(string); ok {
+				out["align"] = normalizeImageAlign(align)
 			}
 			if width, ok := a["width"].(float64); ok && width > 0 && width <= 5000 {
 				out["width"] = int(width)

@@ -2,6 +2,7 @@
 import { type NodeViewProps, NodeViewWrapper } from '@tiptap/vue-3';
 import { computed, ref, watch } from 'vue';
 import AlignmentBar from '~/components/partials/editor/AlignmentBar.vue';
+import { getAlignStyle, type ImageAlign } from '~/composables/tiptap/extensions/EnhancedImage';
 
 const props = defineProps<NodeViewProps>();
 
@@ -19,13 +20,17 @@ const currentAlignment = computed<'left' | 'center' | 'right'>(() => {
     return 'left';
 });
 
-function setAlignment(align: 'left' | 'center' | 'right') {
+function setAlignment(align: ImageAlign) {
     let margin = '';
     if (align === 'left') margin = 'margin: 0 auto 0 0;';
     else if (align === 'center') margin = 'margin: 0 auto;';
     else if (align === 'right') margin = 'margin: 0 0 0 auto;';
+
     const style = ((props.node.attrs.style as string) || '').replace(/margin:[^;]+;/, '') + ' ' + margin;
-    props.updateAttributes({ style });
+    props.updateAttributes({
+        align: align,
+        style: style,
+    });
 }
 
 function onImageClick() {
@@ -36,28 +41,46 @@ function onBlur() {
     showAlignmentBar.value = false;
 }
 
+let activeMouseMoveHandler: ((e: MouseEvent) => void) | null = null;
+
 function onResizeMouseDown(e: MouseEvent, corner: number) {
     if (!props.editor.isEditable) return;
+
     e.preventDefault();
+
     isResizing.value = true;
     startX.value = e.clientX;
     startWidth.value = imgRef.value?.width || 0;
-    document.addEventListener('mousemove', (ev) => onResizeMouseMove(ev, corner));
+
+    activeMouseMoveHandler = (ev) => onResizeMouseMove(ev, corner);
+
+    document.addEventListener('mousemove', activeMouseMoveHandler);
     document.addEventListener('mouseup', onResizeMouseUp, { once: true });
 }
 
 function onResizeMouseMove(e: MouseEvent, corner: number) {
     if (!isResizing.value || !imgRef.value) return;
+
     const deltaX = corner % 2 === 0 ? -(e.clientX - startX.value) : e.clientX - startX.value;
     const newWidth = Math.max(32, startWidth.value + deltaX);
-    imgRef.value.style.width = newWidth + 'px';
-    props.updateAttributes({ style: updateStyleWidth(props.node.attrs.style as string, newWidth) });
+
+    imgRef.value.style.width = `${newWidth}px`;
+
+    props.updateAttributes({
+        width: newWidth,
+        height: null,
+        style: updateStyleWidth(props.node.attrs.style as string, newWidth),
+    });
 }
 
 function onResizeMouseUp() {
     isResizing.value = false;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    document.removeEventListener('mousemove', onResizeMouseMove as any);
+
+    if (activeMouseMoveHandler) {
+        document.removeEventListener('mousemove', activeMouseMoveHandler);
+        activeMouseMoveHandler = null;
+    }
+
     // After resizing, if node is not selected, hide the bar
     if (!props.selected) {
         showAlignmentBar.value = false;
@@ -67,9 +90,11 @@ function onResizeMouseUp() {
 function onResizeTouchStart(e: TouchEvent, corner: number) {
     if (!props.editor.isEditable) return;
     if (e.cancelable) e.preventDefault();
+
     isResizing.value = true;
     startX.value = e.touches[0]?.clientX || 0;
     startWidth.value = imgRef.value?.width || 0;
+
     document.addEventListener('touchmove', (ev) => onResizeTouchMove(ev, corner));
     document.addEventListener('touchend', onResizeTouchEnd, { once: true });
 }
@@ -79,7 +104,12 @@ function onResizeTouchMove(e: TouchEvent, corner: number) {
     const deltaX = corner % 2 === 0 ? -(e.touches[0].clientX - startX.value) : e.touches[0].clientX - startX.value;
     const newWidth = Math.max(32, startWidth.value + deltaX);
     imgRef.value.style.width = newWidth + 'px';
-    props.updateAttributes({ style: updateStyleWidth(props.node.attrs.style as string, newWidth) });
+
+    props.updateAttributes({
+        width: newWidth,
+        height: null,
+        style: updateStyleWidth(props.node.attrs.style as string, newWidth),
+    });
 }
 
 function onResizeTouchEnd() {
@@ -104,6 +134,8 @@ const dotPositions = [
     { bottom: '-8px', right: '-8px', cursor: 'nwse-resize' },
 ];
 
+const alignmentStyle = computed(() => getAlignStyle(props.node.attrs.align));
+
 // Watch the selected prop from Tiptap
 watch(
     () => props.selected,
@@ -125,9 +157,14 @@ watch(
                     class="h-auto max-w-full cursor-pointer select-none"
                     :class="[selected || isResizing ? 'border border-primary-500' : '']"
                     style="border-radius: 4px"
+                    :style="[node.attrs.style, alignmentStyle]"
                     :draggable="true"
                     :src="cleanupImageURL(node.attrs.src)"
-                    v-bind="node.attrs"
+                    :alt="node.attrs.alt || ''"
+                    :title="node.attrs.title || undefined"
+                    :width="node.attrs.width || undefined"
+                    :height="node.attrs.height || undefined"
+                    :data-file-id="node.attrs.fileId || undefined"
                     @click="onImageClick"
                 />
 

@@ -645,3 +645,31 @@ func TestSanitizePrefersHeadingOverParagraphFallback(t *testing.T) {
 		"Real Heading",
 	)
 }
+
+func TestSanitizerImageWithStyle(t *testing.T) {
+	t.Parallel()
+	New()
+
+	doc := map[string]any{
+		"type": NodeTypeDoc,
+		"content": []any{
+			map[string]any{
+				"type": NodeTypeImage,
+				"content": []any{
+					map[string]any{"type": NodeTypeText, "text": "Paragraph candidate"},
+				},
+			},
+		},
+	}
+
+	_, stats, err := Sanitize(doc, 0, 10)
+	require.NoError(t, err, "sanitize returned error")
+	assert.Equal(
+		t,
+		"Real Heading",
+		stats.FirstHeading,
+		"first heading = %q, want %q",
+		stats.FirstHeading,
+		"Real Heading",
+	)
+}
