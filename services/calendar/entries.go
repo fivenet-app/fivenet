@@ -507,7 +507,7 @@ func (s *Server) DeleteCalendarEntry(
 		ctx,
 		entry.GetCalendarId(),
 		userInfo,
-		calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_EDIT,
 		false,
 	)
 	if err != nil {
