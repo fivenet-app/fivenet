@@ -1072,7 +1072,7 @@
             "restarting_datastream": "Wiederherstellung des Datenstroms...",
             "tile_layers": {
                 "postal": "Postleitzahlen",
-                "satelite": "Satellitenansicht"
+                "satellite": "Satellitenansicht"
             },
             "show_grid": "Raster anzeigen",
             "toggle_all_layers": "Alle Ebenen umschalten",
@@ -2755,8 +2755,12 @@
                     "content": "Bitte stellen Sie sicher, dass Ihr Discord-Konto mit FiveNet verbunden ist."
                 },
                 "ErrCannotDeleteOwnAccount": {
-                    "title": "Du kannst deinen eigenen Account nicht löschen!",
-                    "content": "Bitte logge dich mit einem anderen Account ein, um diesen Account zu löschen."
+                    "title": "Sie können Ihren eigenen Account nicht löschen!",
+                    "content": "Bitte loggen Sie sich mit einem anderen Account ein, um diesen Account zu löschen."
+                },
+                "ErrDiscordTokenExpired": {
+                    "title": "Ihr Discord Token ist abgelaufen!",
+                    "content": "Bitte loggen Sie sich aus FiveNet aus und melden Sie sich erneut über den Discord-Social-Login an."
                 }
             }
         },

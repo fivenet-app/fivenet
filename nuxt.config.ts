@@ -245,6 +245,7 @@ export default defineNuxtConfig({
                 '@unovis/vue',
                 '@vue-leaflet/vue-leaflet',
                 '@vue/devtools-core',
+                '@vue/devtools-kit',
                 '@vueuse/integrations/useSortable',
                 '@zxcvbn-ts/core',
                 'browser-headers', // CJS

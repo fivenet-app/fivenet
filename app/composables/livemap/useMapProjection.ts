@@ -3,7 +3,7 @@ import { tileLayers } from '~/types/livemap';
 
 export const mapBackgroundColors = {
     postal: '#74aace',
-    satelite: '#133e6b',
+    satellite: '#133e6b',
 } as const;
 
 const centerX = 117.3;

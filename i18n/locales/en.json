@@ -1072,7 +1072,7 @@
             "restarting_datastream": "Reconnecting data stream...",
             "tile_layers": {
                 "postal": "Postal Codes",
-                "satelite": "Satellite"
+                "satellite": "Satellite"
             },
             "show_grid": "Show Grid",
             "toggle_all_layers": "Toggle All Layers",
@@ -2757,6 +2757,10 @@
                 "ErrCannotDeleteOwnAccount": {
                     "title": "You can't delete your own account!",
                     "content": "Please ask another administrator to delete your account or change your password if you want to prevent access to your account."
+                },
+                "ErrDiscordTokenExpired": {
+                    "title": "Your Discord token has expired!",
+                    "content": "Please logout of FiveNet and login with Discord social login again."
                 }
             }
         },
