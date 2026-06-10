@@ -978,129 +978,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-## resources/calendar/calendar.proto
-
-
-### resources.calendar.Calendar
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `job` | [string](#string) | optional |  |
-| `system_kind` | [CalendarSystemKind](#resourcescalendarCalendarSystemKind) | optional |  |
-| `name` | [string](#string) |  |  |
-| `description` | [string](#string) | optional |  |
-| `public` | [bool](#bool) |  |  |
-| `closed` | [bool](#bool) |  |  |
-| `color` | [string](#string) |  |  |
-| `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `creator_job` | [string](#string) |  |  |
-| `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
-| `access` | [access.CalendarAccess](#resourcescalendaraccessCalendarAccess) |  |  |
-| `discord_settings` | [CalendarDiscordSettings](#resourcescalendarCalendarDiscordSettings) | optional |  |
-
-
-
-
-
-### resources.calendar.CalendarDiscordReminderEmbed
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `title` | [string](#string) | optional |  |
-| `description` | [string](#string) | optional |  |
-| `color` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.calendar.CalendarDiscordReminderStep
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `at_minute` | [int32](#int32) |  |  |
-| `message` | [string](#string) | optional |  |
-| `embed` | [CalendarDiscordReminderEmbed](#resourcescalendarCalendarDiscordReminderEmbed) | optional |  |
-
-
-
-
-
-### resources.calendar.CalendarDiscordSettings
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `enabled` | [bool](#bool) |  |  |
-| `channel_id` | [string](#string) |  |  |
-| `reminder_steps` | [CalendarDiscordReminderStep](#resourcescalendarCalendarDiscordReminderStep) | repeated |  |
-
-
-
-
-
-### resources.calendar.CalendarShort
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `job` | [string](#string) | optional |  |
-| `name` | [string](#string) |  |  |
-| `description` | [string](#string) | optional |  |
-| `public` | [bool](#bool) |  |  |
-| `closed` | [bool](#bool) |  |  |
-| `color` | [string](#string) |  |  |
-| `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
-| `system_kind` | [CalendarSystemKind](#resourcescalendarCalendarSystemKind) | optional |  |
-
-
-
-
-
-### resources.calendar.CalendarSub
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `calendar_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `confirmed` | [bool](#bool) |  |  |
-| `muted` | [bool](#bool) |  |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.calendar.CalendarSystemKind
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `CALENDAR_SYSTEM_KIND_UNSPECIFIED` | 0 |  |
-| `CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS` | 1 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/common/content/content.proto
 
 
@@ -1181,6 +1058,129 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `NODE_TYPE_ELEMENT` | 2 |  |
 | `NODE_TYPE_TEXT` | 3 |  |
 | `NODE_TYPE_COMMENT` | 4 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/calendar/calendar.proto
+
+
+### resources.calendar.Calendar
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `job` | [string](#string) | optional |  |
+| `system_kind` | [CalendarSystemKind](#resourcescalendarCalendarSystemKind) | optional |  |
+| `name` | [string](#string) |  |  |
+| `description` | [resources.common.content.Content](#resourcescommoncontentContent) | optional |  |
+| `public` | [bool](#bool) |  |  |
+| `closed` | [bool](#bool) |  |  |
+| `color` | [string](#string) |  |  |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `creator_job` | [string](#string) |  |  |
+| `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
+| `access` | [access.CalendarAccess](#resourcescalendaraccessCalendarAccess) |  |  |
+| `discord_settings` | [CalendarDiscordSettings](#resourcescalendarCalendarDiscordSettings) | optional |  |
+
+
+
+
+
+### resources.calendar.CalendarDiscordReminderEmbed
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) | optional |  |
+| `description` | [string](#string) | optional |  |
+| `color` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.calendar.CalendarDiscordReminderStep
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `at_minute` | [int32](#int32) |  |  |
+| `message` | [string](#string) | optional |  |
+| `embed` | [CalendarDiscordReminderEmbed](#resourcescalendarCalendarDiscordReminderEmbed) | optional |  |
+
+
+
+
+
+### resources.calendar.CalendarDiscordSettings
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `channel_id` | [string](#string) |  |  |
+| `reminder_steps` | [CalendarDiscordReminderStep](#resourcescalendarCalendarDiscordReminderStep) | repeated |  |
+
+
+
+
+
+### resources.calendar.CalendarShort
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `job` | [string](#string) | optional |  |
+| `name` | [string](#string) |  |  |
+| `description` | [resources.common.content.Content](#resourcescommoncontentContent) | optional |  |
+| `public` | [bool](#bool) |  |  |
+| `closed` | [bool](#bool) |  |  |
+| `color` | [string](#string) |  |  |
+| `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
+| `system_kind` | [CalendarSystemKind](#resourcescalendarCalendarSystemKind) | optional |  |
+
+
+
+
+
+### resources.calendar.CalendarSub
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `calendar_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `confirmed` | [bool](#bool) |  |  |
+| `muted` | [bool](#bool) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.calendar.CalendarSystemKind
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CALENDAR_SYSTEM_KIND_UNSPECIFIED` | 0 |  |
+| `CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS` | 1 |  |
 
 
  <!-- end enums -->

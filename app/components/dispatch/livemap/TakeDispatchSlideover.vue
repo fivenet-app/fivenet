@@ -8,7 +8,7 @@ import { type Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resou
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings/settings';
 
 const emit = defineEmits<{
-    close: [boolean];
+    (e: 'close', v: boolean): void;
 }>();
 
 const centrumStore = useCentrumStore();

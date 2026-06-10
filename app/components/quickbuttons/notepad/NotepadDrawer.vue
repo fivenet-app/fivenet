@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 defineEmits<{
-    close: [boolean];
+    (e: 'close', v: boolean): void;
 }>();
 
 const settingsStore = useSettingsStore();

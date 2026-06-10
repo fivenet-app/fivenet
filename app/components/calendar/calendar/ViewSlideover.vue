@@ -16,7 +16,7 @@ const props = defineProps<{
 }>();
 
 defineEmits<{
-    close: [boolean];
+    (e: 'close', v: boolean): void;
 }>();
 
 const { can } = useAuth();
@@ -125,7 +125,7 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
                     <p>
                         <span class="font-semibold">{{ $t('common.description') }}:</span>
                         {{
-                            calendar.description === undefined || calendar.description === ''
+                            calendar.description === undefined || isEmptyDoc(calendar.description?.tiptapJson)
                                 ? $t('common.na')
                                 : calendar.description
                         }}

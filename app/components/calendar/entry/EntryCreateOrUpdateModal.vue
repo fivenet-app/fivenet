@@ -291,7 +291,7 @@ async function closeModal(): Promise<void> {
                     :retry="refresh"
                 />
                 <DataNoDataBlock
-                    v-if="props.entryId && (!data || !data.entry)"
+                    v-else-if="props.entryId && (!data || !data.entry)"
                     :type="$t('common.entry', 1)"
                     icon="i-mdi-calendar"
                 />

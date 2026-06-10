@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { JSONContent } from '@tiptap/core';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
@@ -77,7 +78,7 @@ function emptyDiscordSettings() {
 
 const schema = z.object({
     name: z.coerce.string().min(3).max(255),
-    description: z.string().optional(),
+    description: z.custom<JSONContent | string>().optional(),
     private: z.coerce.boolean(),
     public: z.coerce.boolean(),
     closed: z.coerce.boolean(),
@@ -153,7 +154,7 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarRes
                   ? undefined
                   : activeChar.value?.job,
             name: values.name,
-            description: values.description,
+            description: tiptapToContent(values.description),
             public: values.public,
             closed: values.closed,
             color: values.color,
@@ -186,7 +187,7 @@ function setFromProps(): void {
 
     const calendar = data.value?.calendar;
     state.name = calendar.name;
-    state.description = calendar.description;
+    state.description = contentToTiptapValue(calendar.description);
     state.private = calendar.job === undefined;
     state.public = calendar.public;
     state.closed = calendar.closed;
@@ -358,7 +359,7 @@ async function closeModal(): Promise<void> {
                     :retry="refresh"
                 />
                 <DataNoDataBlock
-                    v-if="props.calendarId && (!data || !data.calendar)"
+                    v-else-if="props.calendarId && (!data || !data.calendar)"
                     :type="$t('common.calendar')"
                     icon="i-mdi-calendar"
                 />
@@ -383,7 +384,6 @@ async function closeModal(): Promise<void> {
                                 class="w-full"
                                 name="content"
                                 wrapper-class="min-h-80"
-                                :placeholder="$t('common.description')"
                                 :limit="1_000"
                             />
                         </UFormField>

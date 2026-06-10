@@ -22,7 +22,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    close: [boolean];
+    (e: 'close', v: boolean): void;
 }>();
 
 const { can } = useAuth();

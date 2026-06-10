@@ -30,7 +30,7 @@ const props = defineProps<{
 }>();
 
 defineEmits<{
-    close: [boolean];
+    (e: 'close', v: boolean): void;
 }>();
 
 const overlay = useOverlay();

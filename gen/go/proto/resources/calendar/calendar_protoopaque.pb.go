@@ -12,6 +12,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -78,7 +79,7 @@ type Calendar struct {
 	xxx_hidden_Job             *string                  `protobuf:"bytes,5,opt,name=job,proto3,oneof"`
 	xxx_hidden_SystemKind      CalendarSystemKind       `protobuf:"varint,16,opt,name=system_kind,json=systemKind,proto3,enum=resources.calendar.CalendarSystemKind,oneof"`
 	xxx_hidden_Name            string                   `protobuf:"bytes,6,opt,name=name,proto3"`
-	xxx_hidden_Description     *string                  `protobuf:"bytes,7,opt,name=description,proto3,oneof"`
+	xxx_hidden_Description     *content.Content         `protobuf:"bytes,7,opt,name=description,proto3,oneof"`
 	xxx_hidden_Public          bool                     `protobuf:"varint,8,opt,name=public,proto3"`
 	xxx_hidden_Closed          bool                     `protobuf:"varint,9,opt,name=closed,proto3"`
 	xxx_hidden_Color           string                   `protobuf:"bytes,10,opt,name=color,proto3"`
@@ -173,14 +174,11 @@ func (x *Calendar) GetName() string {
 	return ""
 }
 
-func (x *Calendar) GetDescription() string {
+func (x *Calendar) GetDescription() *content.Content {
 	if x != nil {
-		if x.xxx_hidden_Description != nil {
-			return *x.xxx_hidden_Description
-		}
-		return ""
+		return x.xxx_hidden_Description
 	}
-	return ""
+	return nil
 }
 
 func (x *Calendar) GetPublic() bool {
@@ -276,9 +274,8 @@ func (x *Calendar) SetName(v string) {
 	x.xxx_hidden_Name = v
 }
 
-func (x *Calendar) SetDescription(v string) {
-	x.xxx_hidden_Description = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 17)
+func (x *Calendar) SetDescription(v *content.Content) {
+	x.xxx_hidden_Description = v
 }
 
 func (x *Calendar) SetPublic(v bool) {
@@ -357,7 +354,7 @@ func (x *Calendar) HasDescription() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+	return x.xxx_hidden_Description != nil
 }
 
 func (x *Calendar) HasCreatorId() bool {
@@ -418,7 +415,6 @@ func (x *Calendar) ClearSystemKind() {
 }
 
 func (x *Calendar) ClearDescription() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
 	x.xxx_hidden_Description = nil
 }
 
@@ -453,7 +449,7 @@ type Calendar_builder struct {
 	Job             *string
 	SystemKind      *CalendarSystemKind
 	Name            string
-	Description     *string
+	Description     *content.Content
 	Public          bool
 	Closed          bool
 	Color           string
@@ -482,10 +478,7 @@ func (b0 Calendar_builder) Build() *Calendar {
 		x.xxx_hidden_SystemKind = *b.SystemKind
 	}
 	x.xxx_hidden_Name = b.Name
-	if b.Description != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 17)
-		x.xxx_hidden_Description = b.Description
-	}
+	x.xxx_hidden_Description = b.Description
 	x.xxx_hidden_Public = b.Public
 	x.xxx_hidden_Closed = b.Closed
 	x.xxx_hidden_Color = b.Color
@@ -507,7 +500,7 @@ type CalendarShort struct {
 	xxx_hidden_CreatedAt    *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
 	xxx_hidden_Job          *string                `protobuf:"bytes,5,opt,name=job,proto3,oneof"`
 	xxx_hidden_Name         string                 `protobuf:"bytes,6,opt,name=name,proto3"`
-	xxx_hidden_Description  *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof"`
+	xxx_hidden_Description  *content.Content       `protobuf:"bytes,7,opt,name=description,proto3,oneof"`
 	xxx_hidden_Public       bool                   `protobuf:"varint,8,opt,name=public,proto3"`
 	xxx_hidden_Closed       bool                   `protobuf:"varint,9,opt,name=closed,proto3"`
 	xxx_hidden_Color        string                 `protobuf:"bytes,10,opt,name=color,proto3"`
@@ -575,14 +568,11 @@ func (x *CalendarShort) GetName() string {
 	return ""
 }
 
-func (x *CalendarShort) GetDescription() string {
+func (x *CalendarShort) GetDescription() *content.Content {
 	if x != nil {
-		if x.xxx_hidden_Description != nil {
-			return *x.xxx_hidden_Description
-		}
-		return ""
+		return x.xxx_hidden_Description
 	}
-	return ""
+	return nil
 }
 
 func (x *CalendarShort) GetPublic() bool {
@@ -639,9 +629,8 @@ func (x *CalendarShort) SetName(v string) {
 	x.xxx_hidden_Name = v
 }
 
-func (x *CalendarShort) SetDescription(v string) {
-	x.xxx_hidden_Description = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 10)
+func (x *CalendarShort) SetDescription(v *content.Content) {
+	x.xxx_hidden_Description = v
 }
 
 func (x *CalendarShort) SetPublic(v bool) {
@@ -683,7 +672,7 @@ func (x *CalendarShort) HasDescription() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+	return x.xxx_hidden_Description != nil
 }
 
 func (x *CalendarShort) HasSubscription() bool {
@@ -710,7 +699,6 @@ func (x *CalendarShort) ClearJob() {
 }
 
 func (x *CalendarShort) ClearDescription() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
 	x.xxx_hidden_Description = nil
 }
 
@@ -730,7 +718,7 @@ type CalendarShort_builder struct {
 	CreatedAt    *timestamp.Timestamp
 	Job          *string
 	Name         string
-	Description  *string
+	Description  *content.Content
 	Public       bool
 	Closed       bool
 	Color        string
@@ -749,10 +737,7 @@ func (b0 CalendarShort_builder) Build() *CalendarShort {
 		x.xxx_hidden_Job = b.Job
 	}
 	x.xxx_hidden_Name = b.Name
-	if b.Description != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 10)
-		x.xxx_hidden_Description = b.Description
-	}
+	x.xxx_hidden_Description = b.Description
 	x.xxx_hidden_Public = b.Public
 	x.xxx_hidden_Closed = b.Closed
 	x.xxx_hidden_Color = b.Color
@@ -1265,7 +1250,7 @@ var File_resources_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/calendar/access/access.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x9f\b\n" +
+	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/calendar/access/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xc2\b\n" +
 	"\bCalendar\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1277,8 +1262,8 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\x03job\x18\x05 \x01(\tH\x03R\x03job\x88\x01\x01\x12L\n" +
 	"\vsystem_kind\x18\x10 \x01(\x0e2&.resources.calendar.CalendarSystemKindH\x04R\n" +
 	"systemKind\x88\x01\x01\x12\x1c\n" +
-	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12%\n" +
-	"\vdescription\x18\a \x01(\tH\x05R\vdescription\x88\x01\x01\x12\x16\n" +
+	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12H\n" +
+	"\vdescription\x18\a \x01(\v2!.resources.common.content.ContentH\x05R\vdescription\x88\x01\x01\x12\x16\n" +
 	"\x06public\x18\b \x01(\bR\x06public\x12\x16\n" +
 	"\x06closed\x18\t \x01(\bR\x06closed\x12\x1e\n" +
 	"\x05color\x18\n" +
@@ -1301,14 +1286,14 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\x0f\n" +
 	"\r_subscriptionB\x13\n" +
-	"\x11_discord_settings\"\x92\x04\n" +
+	"\x11_discord_settings\"\xb5\x04\n" +
 	"\rCalendarShort\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x15\n" +
 	"\x03job\x18\x05 \x01(\tH\x01R\x03job\x88\x01\x01\x12\x1c\n" +
-	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12%\n" +
-	"\vdescription\x18\a \x01(\tH\x02R\vdescription\x88\x01\x01\x12\x16\n" +
+	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12H\n" +
+	"\vdescription\x18\a \x01(\v2!.resources.common.content.ContentH\x02R\vdescription\x88\x01\x01\x12\x16\n" +
 	"\x06public\x18\b \x01(\bR\x06public\x12\x16\n" +
 	"\x06closed\x18\t \x01(\bR\x06closed\x12\x1e\n" +
 	"\x05color\x18\n" +
@@ -1366,30 +1351,33 @@ var file_resources_calendar_calendar_proto_goTypes = []any{
 	(*CalendarDiscordReminderStep)(nil),  // 5: resources.calendar.CalendarDiscordReminderStep
 	(*CalendarDiscordReminderEmbed)(nil), // 6: resources.calendar.CalendarDiscordReminderEmbed
 	(*timestamp.Timestamp)(nil),          // 7: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),              // 8: resources.users.short.UserShort
-	(*access.CalendarAccess)(nil),        // 9: resources.calendar.access.CalendarAccess
+	(*content.Content)(nil),              // 8: resources.common.content.Content
+	(*short.UserShort)(nil),              // 9: resources.users.short.UserShort
+	(*access.CalendarAccess)(nil),        // 10: resources.calendar.access.CalendarAccess
 }
 var file_resources_calendar_calendar_proto_depIdxs = []int32{
 	7,  // 0: resources.calendar.Calendar.created_at:type_name -> resources.timestamp.Timestamp
 	7,  // 1: resources.calendar.Calendar.updated_at:type_name -> resources.timestamp.Timestamp
 	7,  // 2: resources.calendar.Calendar.deleted_at:type_name -> resources.timestamp.Timestamp
 	0,  // 3: resources.calendar.Calendar.system_kind:type_name -> resources.calendar.CalendarSystemKind
-	8,  // 4: resources.calendar.Calendar.creator:type_name -> resources.users.short.UserShort
-	3,  // 5: resources.calendar.Calendar.subscription:type_name -> resources.calendar.CalendarSub
-	9,  // 6: resources.calendar.Calendar.access:type_name -> resources.calendar.access.CalendarAccess
-	4,  // 7: resources.calendar.Calendar.discord_settings:type_name -> resources.calendar.CalendarDiscordSettings
-	7,  // 8: resources.calendar.CalendarShort.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 9: resources.calendar.CalendarShort.subscription:type_name -> resources.calendar.CalendarSub
-	0,  // 10: resources.calendar.CalendarShort.system_kind:type_name -> resources.calendar.CalendarSystemKind
-	8,  // 11: resources.calendar.CalendarSub.user:type_name -> resources.users.short.UserShort
-	7,  // 12: resources.calendar.CalendarSub.created_at:type_name -> resources.timestamp.Timestamp
-	5,  // 13: resources.calendar.CalendarDiscordSettings.reminder_steps:type_name -> resources.calendar.CalendarDiscordReminderStep
-	6,  // 14: resources.calendar.CalendarDiscordReminderStep.embed:type_name -> resources.calendar.CalendarDiscordReminderEmbed
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	8,  // 4: resources.calendar.Calendar.description:type_name -> resources.common.content.Content
+	9,  // 5: resources.calendar.Calendar.creator:type_name -> resources.users.short.UserShort
+	3,  // 6: resources.calendar.Calendar.subscription:type_name -> resources.calendar.CalendarSub
+	10, // 7: resources.calendar.Calendar.access:type_name -> resources.calendar.access.CalendarAccess
+	4,  // 8: resources.calendar.Calendar.discord_settings:type_name -> resources.calendar.CalendarDiscordSettings
+	7,  // 9: resources.calendar.CalendarShort.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 10: resources.calendar.CalendarShort.description:type_name -> resources.common.content.Content
+	3,  // 11: resources.calendar.CalendarShort.subscription:type_name -> resources.calendar.CalendarSub
+	0,  // 12: resources.calendar.CalendarShort.system_kind:type_name -> resources.calendar.CalendarSystemKind
+	9,  // 13: resources.calendar.CalendarSub.user:type_name -> resources.users.short.UserShort
+	7,  // 14: resources.calendar.CalendarSub.created_at:type_name -> resources.timestamp.Timestamp
+	5,  // 15: resources.calendar.CalendarDiscordSettings.reminder_steps:type_name -> resources.calendar.CalendarDiscordReminderStep
+	6,  // 16: resources.calendar.CalendarDiscordReminderStep.embed:type_name -> resources.calendar.CalendarDiscordReminderEmbed
+	17, // [17:17] is the sub-list for method output_type
+	17, // [17:17] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_resources_calendar_calendar_proto_init() }

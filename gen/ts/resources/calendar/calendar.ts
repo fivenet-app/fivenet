@@ -13,6 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { CalendarAccess } from "./access/access";
 import { UserShort } from "../users/short/user";
+import { Content } from "../common/content/content";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.calendar.Calendar
@@ -47,9 +48,9 @@ export interface Calendar {
      */
     name: string;
     /**
-     * @generated from protobuf field: optional string description = 7
+     * @generated from protobuf field: optional resources.common.content.Content description = 7
      */
-    description?: string;
+    description?: Content;
     /**
      * @generated from protobuf field: bool public = 8
      */
@@ -108,9 +109,9 @@ export interface CalendarShort {
      */
     name: string;
     /**
-     * @generated from protobuf field: optional string description = 7
+     * @generated from protobuf field: optional resources.common.content.Content description = 7
      */
-    description?: string;
+    description?: Content;
     /**
      * @generated from protobuf field: bool public = 8
      */
@@ -236,7 +237,7 @@ class Calendar$Type extends MessageType<Calendar> {
             { no: 5, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 16, name: "system_kind", kind: "enum", opt: true, T: () => ["resources.calendar.CalendarSystemKind", CalendarSystemKind, "CALENDAR_SYSTEM_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "description", kind: "message", T: () => Content },
             { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 10, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
@@ -286,8 +287,8 @@ class Calendar$Type extends MessageType<Calendar> {
                 case /* string name */ 6:
                     message.name = reader.string();
                     break;
-                case /* optional string description */ 7:
-                    message.description = reader.string();
+                case /* optional resources.common.content.Content description */ 7:
+                    message.description = Content.internalBinaryRead(reader, reader.uint32(), options, message.description);
                     break;
                 case /* bool public */ 8:
                     message.public = reader.bool();
@@ -346,9 +347,9 @@ class Calendar$Type extends MessageType<Calendar> {
         /* string name = 6; */
         if (message.name !== "")
             writer.tag(6, WireType.LengthDelimited).string(message.name);
-        /* optional string description = 7; */
-        if (message.description !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.description);
+        /* optional resources.common.content.Content description = 7; */
+        if (message.description)
+            Content.internalBinaryWrite(message.description, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* bool public = 8; */
         if (message.public !== false)
             writer.tag(8, WireType.Varint).bool(message.public);
@@ -397,7 +398,7 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "description", kind: "message", T: () => Content },
             { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 10, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
@@ -433,8 +434,8 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
                 case /* string name */ 6:
                     message.name = reader.string();
                     break;
-                case /* optional string description */ 7:
-                    message.description = reader.string();
+                case /* optional resources.common.content.Content description */ 7:
+                    message.description = Content.internalBinaryRead(reader, reader.uint32(), options, message.description);
                     break;
                 case /* bool public */ 8:
                     message.public = reader.bool();
@@ -475,9 +476,9 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
         /* string name = 6; */
         if (message.name !== "")
             writer.tag(6, WireType.LengthDelimited).string(message.name);
-        /* optional string description = 7; */
-        if (message.description !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.description);
+        /* optional resources.common.content.Content description = 7; */
+        if (message.description)
+            Content.internalBinaryWrite(message.description, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* bool public = 8; */
         if (message.public !== false)
             writer.tag(8, WireType.Varint).bool(message.public);

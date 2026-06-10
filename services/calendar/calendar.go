@@ -414,12 +414,26 @@ func (s *Server) CreateCalendar(
 		req.Calendar.Id = lastId
 	}
 
+	// FIXME some generic helper for this across the code base would be nice to have
+	access := req.GetCalendar().GetAccess()
+	if access == nil || len(access.GetJobs()) == 0 {
+		access = &calendaraccess.CalendarAccess{
+			Jobs: []*calendaraccess.CalendarJobAccess{
+				{
+					TargetId:     req.GetCalendar().GetId(),
+					Job:          userInfo.GetJob(),
+					MinimumGrade: userInfo.GetJobGrade(),
+					Access:       calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+				},
+			},
+		}
+	}
 	if _, err := s.access.HandleAccessChanges(
 		ctx,
 		tx,
 		req.GetCalendar().GetId(),
-		req.GetCalendar().GetAccess().GetJobs(),
-		req.GetCalendar().GetAccess().GetUsers(),
+		access.GetJobs(),
+		access.GetUsers(),
 		nil,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -534,10 +548,6 @@ func (s *Server) UpdateCalendar(
 		}
 	}
 
-	if req.Calendar.Description == nil {
-		empty := ""
-		req.Calendar.Description = &empty
-	}
 	if !isBirthdayCalendar &&
 		!fields.Contains(permscalendar.CalendarServiceCreateCalendarFieldsPermValuePublic) &&
 		currentCalendar.GetPublic() &&
@@ -602,6 +612,20 @@ func (s *Server) UpdateCalendar(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	if !isBirthdayCalendar {
+		// FIXME some generic helper for this across the code base would be nice to have
+		access := req.GetCalendar().GetAccess()
+		if access == nil || len(access.GetJobs()) == 0 {
+			access = &calendaraccess.CalendarAccess{
+				Jobs: []*calendaraccess.CalendarJobAccess{
+					{
+						TargetId:     req.GetCalendar().GetId(),
+						Job:          userInfo.GetJob(),
+						MinimumGrade: userInfo.GetJobGrade(),
+						Access:       calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+					},
+				},
+			}
+		}
 		if _, err := s.access.HandleAccessChanges(
 			ctx,
 			tx,

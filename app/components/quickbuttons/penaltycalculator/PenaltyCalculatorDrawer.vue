@@ -13,7 +13,7 @@ const props = withDefaults(
 );
 
 const emits = defineEmits<{
-    close: [boolean];
+    (e: 'close', v: boolean): void;
 }>();
 
 function closeDrawer(): void {

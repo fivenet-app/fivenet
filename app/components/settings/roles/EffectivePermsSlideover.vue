@@ -23,7 +23,7 @@ const props = defineProps<{
 }>();
 
 defineEmits<{
-    close: [boolean];
+    (e: 'close', v: boolean): void;
 }>();
 
 const { t, te } = useI18n();

@@ -58,7 +58,11 @@ func (m *Calendar) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.Sanitize(*m.Description)
+		if v, ok := any(m.GetDescription()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: DiscordSettings
@@ -194,7 +198,11 @@ func (m *CalendarShort) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.Sanitize(*m.Description)
+		if v, ok := any(m.GetDescription()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: Job
