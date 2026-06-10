@@ -89,6 +89,9 @@ useDebouncedRefresh(currentDate.value, refresh, { debounce: 100, maxWait: 1000 }
 useDebouncedRefresh(activeCalendarIds, refresh);
 
 function formatStartEndTime(entry: CalendarEntry): string {
+    // Don't show any time for birthdays
+    if (entry.calendar?.systemKind === CalendarSystemKind.JOB_BIRTHDAYS) return '';
+
     if (entry.occurrence?.allDay) {
         return t('common.all_day');
     }
