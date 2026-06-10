@@ -252,7 +252,6 @@ export const useSettingsStore = defineStore(
             if ((livemapTileLayer.value as string) === 'satelite') {
                 livemapTileLayer.value = 'satellite';
             }
-            console.log('migrated store');
         };
 
         return {

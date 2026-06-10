@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/vue-3';
 import { createMapBlockAttrs, normalizeMapBlockAttrs, type MapBlockAttrs } from '~/composables/tiptap/extensions/MapBlock';
-import MapBlockContentView from '~/components/partials/content/MapBlockContentView.vue';
+import MapBlockContentView from '~/components/partials/content/extensions/MapBlockContentView.vue';
 import MapBlockEditorForm from './MapBlockEditorForm.vue';
 import MapBlockEditorPopoverShell from './MapBlockEditorPopoverShell.vue';
 

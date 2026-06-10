@@ -1,7 +1,7 @@
 <script setup lang="ts">
-defineProps<{ modelValue: 'left' | 'center' | 'right' }>();
+import type { ImageAlign } from '~/composables/tiptap/extensions/EnhancedImage';
 
-defineEmits(['update:modelValue']);
+const align = defineModel<ImageAlign>({ required: true });
 </script>
 
 <template>
@@ -10,27 +10,31 @@ defineEmits(['update:modelValue']);
             :disabled="modelValue === 'left'"
             :title="$t('components.partials.tiptap_editor.align_left')"
             color="neutral"
-            @click="$emit('update:modelValue', 'left')"
-        >
-            <UIcon name="i-mdi-align-horizontal-left" />
-        </UButton>
+            variant="subtle"
+            icon="i-mdi-align-horizontal-left"
+            square
+            @click="align = 'left'"
+        />
 
         <UButton
             :disabled="modelValue === 'center'"
             :title="$t('components.partials.tiptap_editor.align_center')"
             color="neutral"
-            @click="$emit('update:modelValue', 'center')"
+            variant="subtle"
+            icon="i-mdi-align-horizontal-center"
+            square
+            @click="align = 'center'"
         >
-            <UIcon name="i-mdi-align-horizontal-center" />
         </UButton>
 
         <UButton
             :disabled="modelValue === 'right'"
             :title="$t('components.partials.tiptap_editor.align_right')"
             color="neutral"
-            @click="$emit('update:modelValue', 'right')"
-        >
-            <UIcon name="i-mdi-align-horizontal-right" />
-        </UButton>
+            variant="subtle"
+            icon="i-mdi-align-horizontal-right"
+            square
+            @click="align = 'right'"
+        />
     </UFieldGroup>
 </template>

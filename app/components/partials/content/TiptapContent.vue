@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import type { Extensions, JSONContent } from '@tiptap/core';
 import { h, type ComputedRef, type Ref } from 'vue';
-import MapBlockContentView from '~/components/partials/content/MapBlockContentView.vue';
+import MapBlockContentView from '~/components/partials/content/extensions/MapBlockContentView.vue';
 import { normalizeMapBlockAttrs } from '~/composables/tiptap/extensions/MapBlock';
 import PenaltyCalculatorContentView from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorContentView.vue';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import TiptapContentRenderer from './TiptapContentRenderer.vue';
+import EnhancedImageView from '~/components/partials/content/extensions/EnhancedImageView.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -32,6 +33,7 @@ const options = computed(() => ({
         mapBlock: ({ node }: { node: { attrs: Record<string, unknown> } }) =>
             h(MapBlockContentView, { ...normalizeMapBlockAttrs(node.attrs), showGotoCoords: true }),
         penaltyCalculator: () => h(PenaltyCalculatorContentView),
+        image: ({ node }: { node: { attrs: Record<string, unknown> } }) => h(EnhancedImageView, { ...node.attrs }),
     },
 }));
 </script>

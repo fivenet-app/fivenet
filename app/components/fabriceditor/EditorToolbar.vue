@@ -178,7 +178,7 @@ const fileMenuItems = computed<DropdownMenuItem[][]>(() => [
                         }"
                     />
 
-                    <UTooltip :text="$t('components.fabric_editor.zoom_to_fit')">
+                    <UTooltip :text="$t('common.zoom_to_fit')">
                         <UButton icon="i-mdi-fit-to-screen" @click="fitToView" />
                     </UTooltip>
                 </UFieldGroup>

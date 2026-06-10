@@ -2,7 +2,7 @@
 import { type NodeViewProps, NodeViewWrapper } from '@tiptap/vue-3';
 import { computed, ref, watch } from 'vue';
 import AlignmentBar from '~/components/partials/editor/AlignmentBar.vue';
-import { getAlignStyle, type ImageAlign } from '~/composables/tiptap/extensions/EnhancedImage';
+import { getAlignStyle, removeStyleProperties, type ImageAlign } from '~/composables/tiptap/extensions/EnhancedImage';
 
 const props = defineProps<NodeViewProps>();
 
@@ -12,24 +12,15 @@ const isResizing = ref<boolean>(false);
 const startX = ref(0);
 const startWidth = ref(0);
 
-const currentAlignment = computed<'left' | 'center' | 'right'>(() => {
-    const style = (props.node.attrs.style as string) || '';
-    if (style.includes('margin: 0 auto 0 0')) return 'left';
-    if (style.includes('margin: 0 auto;')) return 'center';
-    if (style.includes('margin: 0 0 0 auto')) return 'right';
-    return 'left';
+const currentAlignment = computed<ImageAlign>(() => {
+    const align = props.node.attrs.align;
+    return align === 'center' || align === 'right' ? align : 'left';
 });
 
 function setAlignment(align: ImageAlign) {
-    let margin = '';
-    if (align === 'left') margin = 'margin: 0 auto 0 0;';
-    else if (align === 'center') margin = 'margin: 0 auto;';
-    else if (align === 'right') margin = 'margin: 0 0 0 auto;';
-
-    const style = ((props.node.attrs.style as string) || '').replace(/margin:[^;]+;/, '') + ' ' + margin;
     props.updateAttributes({
         align: align,
-        style: style,
+        style: removeStyleProperties(props.node.attrs.style ?? '', ['margin']),
     });
 }
 
@@ -64,12 +55,9 @@ function onResizeMouseMove(e: MouseEvent, corner: number) {
     const deltaX = corner % 2 === 0 ? -(e.clientX - startX.value) : e.clientX - startX.value;
     const newWidth = Math.max(32, startWidth.value + deltaX);
 
-    imgRef.value.style.width = `${newWidth}px`;
-
     props.updateAttributes({
         width: newWidth,
         height: null,
-        style: updateStyleWidth(props.node.attrs.style as string, newWidth),
     });
 }
 
@@ -101,14 +89,13 @@ function onResizeTouchStart(e: TouchEvent, corner: number) {
 
 function onResizeTouchMove(e: TouchEvent, corner: number) {
     if (!isResizing.value || !imgRef.value || !e.touches[0]) return;
+
     const deltaX = corner % 2 === 0 ? -(e.touches[0].clientX - startX.value) : e.touches[0].clientX - startX.value;
     const newWidth = Math.max(32, startWidth.value + deltaX);
-    imgRef.value.style.width = newWidth + 'px';
 
     props.updateAttributes({
         width: newWidth,
         height: null,
-        style: updateStyleWidth(props.node.attrs.style as string, newWidth),
     });
 }
 
@@ -121,12 +108,6 @@ function onResizeTouchEnd() {
     }
 }
 
-function updateStyleWidth(style: string, width: number) {
-    // Remove any previous width and add new
-    const s = (style || '').replace(/width:[^;]+;/, '');
-    return `width: ${width}px;${s}`;
-}
-
 const dotPositions = [
     { top: '-8px', left: '-8px', cursor: 'nwse-resize' },
     { top: '-8px', right: '-8px', cursor: 'nesw-resize' },
@@ -135,6 +116,17 @@ const dotPositions = [
 ];
 
 const alignmentStyle = computed(() => getAlignStyle(props.node.attrs.align));
+const style = computed(() => removeStyleProperties(props.node.attrs.style ?? '', ['width', 'height', 'margin']));
+
+const imageWidth = computed(() => {
+    const width = Number(props.node.attrs.width);
+    return Number.isFinite(width) && width > 0 ? width : undefined;
+});
+
+const imageHeight = computed(() => {
+    const height = Number(props.node.attrs.height);
+    return Number.isFinite(height) && height > 0 ? height : undefined;
+});
 
 // Watch the selected prop from Tiptap
 watch(
@@ -149,47 +141,47 @@ watch(
 </script>
 
 <template>
-    <NodeViewWrapper class="enhanced-image-nodeview" @blur="onBlur">
+    <NodeViewWrapper class="enhanced-image-nodeview relative my-2 w-full" @blur="onBlur">
         <div class="relative w-full">
-            <div class="relative" :style="node.attrs.style || ''">
-                <img
-                    ref="imgRef"
-                    class="h-auto max-w-full cursor-pointer select-none"
-                    :class="[selected || isResizing ? 'border border-primary-500' : '']"
-                    style="border-radius: 4px"
-                    :style="[node.attrs.style, alignmentStyle]"
-                    :draggable="true"
-                    :src="cleanupImageURL(node.attrs.src)"
-                    :alt="node.attrs.alt || ''"
-                    :title="node.attrs.title || undefined"
-                    :width="node.attrs.width || undefined"
-                    :height="node.attrs.height || undefined"
-                    :data-file-id="node.attrs.fileId || undefined"
-                    @click="onImageClick"
-                />
+            <div class="relative w-fit" :style="alignmentStyle">
+                <div class="relative inline-block">
+                    <img
+                        ref="imgRef"
+                        class="h-auto max-w-full cursor-pointer select-none"
+                        :class="[selected || isResizing ? 'border border-primary-500' : '']"
+                        :style="style"
+                        :draggable="true"
+                        :src="cleanupImageURL(node.attrs.src)"
+                        :alt="node.attrs.alt || ''"
+                        :title="node.attrs.title || undefined"
+                        :width="imageWidth"
+                        :height="imageHeight"
+                        :data-file-id="node.attrs.fileId || undefined"
+                        @click="onImageClick"
+                    />
 
-                <div
-                    v-if="(showAlignmentBar || isResizing) && (selected || isResizing)"
-                    class="pointer-events-none absolute -top-4 left-1/2 z-20 w-full -translate-x-1/2 transform"
-                >
-                    <div class="pointer-events-auto flex justify-center">
-                        <AlignmentBar :model-value="currentAlignment" @update:model-value="setAlignment" />
-                    </div>
-                </div>
-
-                <template v-if="(showAlignmentBar || isResizing) && props.editor.isEditable && (selected || isResizing)">
                     <div
-                        v-for="(pos, i) in dotPositions"
-                        :key="i"
-                        class="resize-dot absolute z-10 h-4 w-4 rounded-full border border-neutral-500 bg-white"
-                        :style="{
-                            ...pos,
-                            borderWidth: '1.5px', // Closest to Tailwind border-2
-                        }"
-                        @mousedown="(e) => onResizeMouseDown(e, i)"
-                        @touchstart="(e) => onResizeTouchStart(e, i)"
-                    ></div>
-                </template>
+                        v-if="(showAlignmentBar || isResizing) && (selected || isResizing)"
+                        class="pointer-events-none absolute -top-4 left-1/2 z-20 w-full -translate-x-1/2 transform"
+                    >
+                        <div class="pointer-events-auto flex justify-center">
+                            <AlignmentBar :model-value="currentAlignment" @update:model-value="setAlignment" />
+                        </div>
+                    </div>
+
+                    <template v-if="(showAlignmentBar || isResizing) && props.editor.isEditable && (selected || isResizing)">
+                        <div
+                            v-for="(pos, i) in dotPositions"
+                            :key="i"
+                            class="resize-dot absolute z-10 h-4 w-4 rounded-full bg-elevated ring ring-accented ring-inset hover:bg-accented/75"
+                            :style="{
+                                ...pos,
+                            }"
+                            @mousedown="(e) => onResizeMouseDown(e, i)"
+                            @touchstart="(e) => onResizeTouchStart(e, i)"
+                        />
+                    </template>
+                </div>
             </div>
         </div>
     </NodeViewWrapper>
@@ -204,8 +196,5 @@ watch(
 .resize-dot {
     box-sizing: border-box;
     transition: background 0.2s;
-}
-.resize-dot:hover {
-    background: var(--color-neutral-200);
 }
 </style>

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { UCheckbox, UIcon } from '#components';
 import { defineComponent, getCurrentInstance, h, Text, type Component, type VNode } from 'vue';
-import MapBlockContentView from '~/components/partials/content/MapBlockContentView.vue';
+import MapBlockContentView from '~/components/partials/content/extensions/MapBlockContentView.vue';
 import { normalizeMapBlockAttrs } from '~/composables/tiptap/extensions/MapBlock';
 import PenaltyCalculatorContentView from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorContentView.vue';
 import type { RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';

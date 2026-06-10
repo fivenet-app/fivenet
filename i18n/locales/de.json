@@ -797,7 +797,10 @@
         "insert": "Einfügen",
         "map": "Karte",
         "read_only": "Schreibgeschützt",
-        "invite": "Einladen"
+        "invite": "Einladen",
+        "zoom_to_fit": "An Bildschirm anpassen",
+        "rotate_left": "Nach links rotieren",
+        "rotate_right": "Nach rechts rotieren"
     },
     "components": {
         "partials": {
@@ -1938,7 +1941,6 @@
             },
             "group": "Gruppieren",
             "ungroup": "Gruppierung aufheben",
-            "zoom_to_fit": "An Bildschirm anpassen",
             "reset_zoom": "Zoom zurücksetzen",
             "bring_forward": "Eine Ebene nach vorne",
             "send_backward": "Eine Ebene nach hinten",
