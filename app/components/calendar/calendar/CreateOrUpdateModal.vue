@@ -29,6 +29,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
+    (e: 'refresh'): void;
 }>();
 
 const { t } = useI18n();
@@ -174,6 +175,7 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarRes
         });
 
         emit('close', false);
+        emit('refresh');
 
         return response;
     } catch (e) {

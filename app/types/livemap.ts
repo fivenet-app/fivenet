@@ -19,7 +19,11 @@ export const tileLayers = [
             maxZoom: 7,
         },
     },
-];
+] as const;
+
+type TileLayerItem = (typeof tileLayers)[number];
+
+export type TileLayerKeys = TileLayerItem['key'];
 
 export type Postal = {
     x: number;

@@ -1,6 +1,7 @@
 import type { RoutePathSchema } from '@typed-router';
 import { defineStore } from 'pinia';
 import type { Locale } from 'vue-i18n';
+import type { TileLayerKeys } from '~/types/livemap';
 import type { Perms } from '~~/gen/ts/perms';
 
 const logger = useLogger('⚙️ Settings');
@@ -107,7 +108,7 @@ export const useSettingsStore = defineStore(
             },
         });
 
-        const livemapTileLayer = ref<string>('postal');
+        const livemapTileLayer = ref<TileLayerKeys>('postal');
         const livemapLayers = ref<LivemapLayer[]>([]);
         const livemapLayerCategories = ref<LivemapLayerCategory[]>([]);
 
@@ -161,6 +162,11 @@ export const useSettingsStore = defineStore(
         const notepadFullscreen = ref<boolean>(false);
 
         // Actions
+        /**
+         * Return the settings logger.
+         */
+        const getLogger = (): ILogger => logger;
+
         /**
          * Set the application version.
          *
@@ -238,7 +244,16 @@ export const useSettingsStore = defineStore(
             livemapLayers.value.splice(idx, 1);
         };
 
-        const getLogger = (): ILogger => logger;
+        /**
+         * Migrate store
+         */
+        const migrateStore = (): void => {
+            // Fixup livemap tile layer name
+            if ((livemapTileLayer.value as string) === 'satelite') {
+                livemapTileLayer.value = 'satellite';
+            }
+            console.log('migrated store');
+        };
 
         return {
             // State
@@ -272,6 +287,7 @@ export const useSettingsStore = defineStore(
             addOrUpdateLivemapCategory,
             addOrUpdateLivemapLayer,
             removeLivemapLayer,
+            migrateStore,
 
             eventsShowSnowflakes,
         };
@@ -279,6 +295,10 @@ export const useSettingsStore = defineStore(
     {
         persist: {
             omit: ['livemapLayerCategories'],
+
+            afterHydrate: (ctx) => {
+                ctx.store.migrateStore();
+            },
         },
     },
 );

@@ -10,6 +10,7 @@ import { useCalendarStore } from '~/stores/calendar';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
 import { checkCalendarAccess, isSystemManagedCalendar } from '../helpers';
+import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
 
 const props = defineProps<{
     calendarId: number;
@@ -60,6 +61,7 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
                             calendarCreateOrUpdateModal.open({
                                 calendarId: calendar?.id,
                                 systemManaged: isSystemManaged,
+                                onRefresh: () => refresh(),
                             })
                         "
                     />
@@ -93,80 +95,82 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
         </template>
 
         <template #body>
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.calendar')])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.calendar')])"
-                :error="error"
-                :retry="refresh"
-            />
-            <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar')" icon="i-mdi-calendar" />
-
-            <template v-else>
-                <div v-if="!isSystemManaged" class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
-                    <OpenClosedBadge :closed="calendar.closed" />
-
-                    <UBadge class="inline-flex gap-1 text-xs" color="neutral" icon="i-mdi-account">
-                        <span class="font-medium">{{ $t('common.created_by') }}</span>
-                        <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name text-class="text-xs" />
-                    </UBadge>
-
-                    <UBadge
-                        class="inline-flex gap-1"
-                        color="neutral"
-                        :icon="calendar.public ? 'i-mdi-public' : 'i-mdi-calendar-lock'"
-                        :label="
-                            calendar.public
-                                ? $t('components.calendar.calendar.CreateOrUpdateModal.public')
-                                : $t('components.calendar.calendar.CreateOrUpdateModal.private')
-                        "
-                    />
-
-                    <p>
-                        <span class="font-semibold">{{ $t('common.description') }}:</span>
-                        {{
-                            calendar.description === undefined || isEmptyDoc(calendar.description?.tiptapJson)
-                                ? $t('common.na')
-                                : calendar.description
-                        }}
-                    </p>
-                </div>
-
-                <p v-else class="text-sm text-neutral-500 dark:text-neutral-400">
-                    {{ $t('common.read_only') }}
-                </p>
-            </template>
-
-            <UCollapsible
-                v-if="
-                    !isSystemManaged &&
-                    calendar?.access &&
-                    (calendar?.access?.jobs.length > 0 || calendar?.access?.users.length > 0)
-                "
-                class="group flex flex-col gap-2"
-            >
-                <UButton
-                    class="w-full"
-                    color="neutral"
-                    variant="subtle"
-                    :label="$t('common.access')"
-                    icon="i-mdi-lock"
-                    trailing-icon="i-mdi-chevron-down"
-                    block
-                    :ui="{
-                        trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
-                    }"
+            <div class="flex h-full w-full flex-1 flex-col gap-2">
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.calendar')])" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.calendar')])"
+                    :error="error"
+                    :retry="refresh"
                 />
+                <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar')" icon="i-mdi-calendar" />
 
-                <template #content>
-                    <AccessBadges
-                        :access-level="AccessLevel"
-                        :jobs="calendar?.access.jobs"
-                        :users="calendar?.access.users"
-                        i18n-key="enums.calendar"
-                    />
+                <template v-else>
+                    <template v-if="!isSystemManaged">
+                        <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
+                            <OpenClosedBadge :closed="calendar.closed" />
+
+                            <UBadge class="inline-flex gap-1 text-xs" color="neutral" icon="i-mdi-account">
+                                <span class="font-medium">{{ $t('common.created_by') }}</span>
+                                <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name text-class="text-xs" />
+                            </UBadge>
+
+                            <UBadge
+                                class="inline-flex gap-1"
+                                color="neutral"
+                                :icon="calendar.public ? 'i-mdi-public' : 'i-mdi-calendar-lock'"
+                                :label="
+                                    calendar.public
+                                        ? $t('components.calendar.calendar.CreateOrUpdateModal.public')
+                                        : $t('components.calendar.calendar.CreateOrUpdateModal.private')
+                                "
+                            />
+                        </div>
+
+                        <div class="mx-auto w-full max-w-(--breakpoint-xl) break-words">
+                            <div class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
+                                <CustomContentRenderer v-if="calendar.description" :value="calendar.description" />
+                                <p v-else>{{ $t('common.na') }}</p>
+                            </div>
+                        </div>
+                    </template>
+
+                    <p v-else class="text-sm text-neutral-500 dark:text-neutral-400">
+                        {{ $t('common.read_only') }}
+                    </p>
+
+                    <UCollapsible
+                        v-if="
+                            !isSystemManaged &&
+                            calendar?.access &&
+                            (calendar?.access?.jobs.length > 0 || calendar?.access?.users.length > 0)
+                        "
+                        class="group flex flex-col gap-2"
+                    >
+                        <UButton
+                            class="w-full"
+                            color="neutral"
+                            variant="subtle"
+                            :label="$t('common.access')"
+                            icon="i-mdi-lock"
+                            trailing-icon="i-mdi-chevron-down"
+                            block
+                            :ui="{
+                                trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                            }"
+                        />
+
+                        <template #content>
+                            <AccessBadges
+                                :access-level="AccessLevel"
+                                :jobs="calendar?.access.jobs"
+                                :users="calendar?.access.users"
+                                i18n-key="enums.calendar"
+                            />
+                        </template>
+                    </UCollapsible>
                 </template>
-            </UCollapsible>
+            </div>
         </template>
 
         <template #footer>
