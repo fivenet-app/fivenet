@@ -1,9 +1,6 @@
 package wiki
 
 import (
-	"slices"
-	"strings"
-
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
 )
 
@@ -47,33 +44,18 @@ func mapPagesToNavItems(pages []*wiki.PageShort) []*wiki.PageShort {
 		}
 	}
 
-	mapped := make(map[int64]*wiki.PageShort, len(rootPages))
+	seen := make(map[int64]struct{}, len(rootPages))
+	result := make([]*wiki.PageShort, 0, len(rootPages))
 	for _, root := range rootPages {
-		mapped[root.GetId()] = &wiki.PageShort{
-			Id:          root.GetId(),
-			Job:         root.GetJob(),
-			JobLabel:    root.JobLabel,
-			Slug:        root.Slug,
-			Title:       root.GetTitle(),
-			Description: root.GetDescription(),
-			Children:    root.GetChildren(),
+		if root == nil || root.GetId() <= 0 {
+			continue
 		}
+		if _, ok := seen[root.GetId()]; ok {
+			continue
+		}
+		seen[root.GetId()] = struct{}{}
+		result = append(result, root)
 	}
-
-	result := []*wiki.PageShort{}
-	for _, page := range mapped {
-		result = append(result, page)
-	}
-
-	slices.SortStableFunc(result, func(a, b *wiki.PageShort) int {
-		if a.GetStartpage() == b.GetStartpage() {
-			return strings.Compare(a.GetTitle(), b.GetTitle())
-		}
-		if a.GetStartpage() {
-			return -1
-		}
-		return 1
-	})
 
 	return result
 }

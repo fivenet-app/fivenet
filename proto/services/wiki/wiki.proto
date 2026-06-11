@@ -59,6 +59,14 @@ message DeletePageRequest {
 
 message DeletePageResponse {}
 
+message MovePageRequest {
+  int64 page_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 before_id = 2 [(buf.validate.field).int64.gt = 0];
+  optional int64 after_id = 3 [(buf.validate.field).int64.gt = 0];
+}
+
+message MovePageResponse {}
+
 message ListPageActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   int64 page_id = 2;
@@ -105,6 +113,13 @@ service WikiService {
   }
   rpc DeletePage(DeletePageRequest) returns (DeletePageResponse) {
     option (codegen.perms.perms) = {enabled: true};
+  }
+
+  rpc MovePage(MovePageRequest) returns (MovePageResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpdatePage"
+    };
   }
 
   rpc ListPageActivity(ListPageActivityRequest) returns (ListPageActivityResponse) {

@@ -10,6 +10,8 @@ import type { UploadFileRequest } from "../../resources/file/filestore";
 import type { ClientStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { ListPageActivityResponse } from "./wiki";
 import type { ListPageActivityRequest } from "./wiki";
+import type { MovePageResponse } from "./wiki";
+import type { MovePageRequest } from "./wiki";
 import type { DeletePageResponse } from "./wiki";
 import type { DeletePageRequest } from "./wiki";
 import type { UpdatePageResponse } from "./wiki";
@@ -47,6 +49,10 @@ export interface IWikiServiceClient {
      * @generated from protobuf rpc: DeletePage
      */
     deletePage(input: DeletePageRequest, options?: RpcOptions): UnaryCall<DeletePageRequest, DeletePageResponse>;
+    /**
+     * @generated from protobuf rpc: MovePage
+     */
+    movePage(input: MovePageRequest, options?: RpcOptions): UnaryCall<MovePageRequest, MovePageResponse>;
     /**
      * @generated from protobuf rpc: ListPageActivity
      */
@@ -101,17 +107,24 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
         return stackIntercept<DeletePageRequest, DeletePageResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: MovePage
+     */
+    movePage(input: MovePageRequest, options?: RpcOptions): UnaryCall<MovePageRequest, MovePageResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<MovePageRequest, MovePageResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: ListPageActivity
      */
     listPageActivity(input: ListPageActivityRequest, options?: RpcOptions): UnaryCall<ListPageActivityRequest, ListPageActivityResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListPageActivityRequest, ListPageActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UploadFile
      */
     uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
 }

@@ -92,7 +92,7 @@ type PageActivity struct {
 	PageId          int64                  `protobuf:"varint,3,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
 	ActivityType    PageActivityType       `protobuf:"varint,4,opt,name=activity_type,json=activityType,proto3,enum=resources.wiki.activity.PageActivityType" json:"activity_type,omitempty"`
 	CreatorId       *int32                 `protobuf:"varint,5,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator         *short.UserShort       `protobuf:"bytes,6,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Creator         *short.UserShort       `protobuf:"bytes,6,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	CreatorJob      string                 `protobuf:"bytes,7,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                `protobuf:"bytes,8,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
 	Reason          *string                `protobuf:"bytes,9,opt,name=reason,proto3,oneof" json:"reason,omitempty"`

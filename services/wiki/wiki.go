@@ -81,7 +81,7 @@ func (s *Server) ListPages(
 						ORDER_BY(
 							subPage.Startpage.DESC(),
 							subPage.ParentID.ASC().NULLS_FIRST(),
-							subPage.SortKey.ASC(),
+							subPage.SortRank.ASC(),
 							subPage.Draft.ASC(),
 							subPage.ID.ASC(),
 						),
@@ -215,8 +215,9 @@ func (s *Server) ListPages(
 			tPageShort.Job.ASC(),
 			tPageShort.Startpage.DESC(),
 			tPageShort.ParentID.ASC().NULLS_FIRST(),
-			tPageShort.SortKey.ASC(),
+			tPageShort.SortRank.ASC(),
 			tPageShort.Draft.ASC(),
+			tPageShort.ID.ASC(),
 		).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(defaultWikiUpperLimit)
@@ -479,11 +480,21 @@ func (s *Server) CreatePage(
 	defer tx.Rollback()
 
 	tPage := table.FivenetWikiPages
+	var parentID *int64
+	if req.GetParentId() > 0 {
+		parentID = req.ParentId
+	}
+
+	sortRank, err := s.nextPageGroupRank(ctx, tx, userInfo.GetJob(), parentID, false, 0)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
 
 	stmt := tPage.
 		INSERT(
 			tPage.Job,
 			tPage.ParentID,
+			tPage.SortRank,
 			tPage.ContentType,
 			tPage.Toc,
 			tPage.Draft,
@@ -499,6 +510,7 @@ func (s *Server) CreatePage(
 		VALUES(
 			userInfo.GetJob(),
 			req.ParentId,
+			sortRank,
 			int32(content.ContentType_CONTENT_TYPE_TIPTAP_JSON),
 			true,
 			true,
@@ -610,8 +622,18 @@ func (s *Server) UpdatePage(
 		req.GetPage().GetParentId() <= 0 {
 		req.Page.ParentId = nil
 	}
+	if req.GetPage().GetParentId() > 0 {
+		req.Page.Meta.Startpage = false
+	}
 
 	oldPage, err := s.getPage(ctx, req.GetPage().GetId(), true, true, userInfo)
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errorswiki.ErrPageNotFound
+		}
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+	oldOrder, err := s.getPageOrderInfo(ctx, s.db, req.GetPage().GetId())
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errorswiki.ErrPageNotFound
@@ -655,9 +677,35 @@ func (s *Server) UpdatePage(
 	defer tx.Rollback()
 
 	tPage := table.FivenetWikiPages
+	sortRank := oldOrder.SortRank
+	groupChanged := false
+	newParentID := req.GetPage().ParentId
+	switch {
+	case oldOrder.ParentID == nil && newParentID == nil:
+		groupChanged = oldOrder.Startpage != req.GetPage().GetMeta().GetStartpage()
+	case oldOrder.ParentID != nil && newParentID != nil:
+		groupChanged = *oldOrder.ParentID != *newParentID
+	default:
+		groupChanged = true
+	}
+	if groupChanged {
+		sortRank, err = s.nextPageGroupRank(
+			ctx,
+			tx,
+			userInfo.GetJob(),
+			newParentID,
+			req.GetPage().GetMeta().GetStartpage(),
+			req.GetPage().GetId(),
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+	}
+
 	stmt := tPage.
 		UPDATE(
 			tPage.ParentID,
+			tPage.SortRank,
 			tPage.ContentType,
 			tPage.Toc,
 			tPage.Draft,
@@ -671,6 +719,7 @@ func (s *Server) UpdatePage(
 		).
 		SET(
 			req.GetPage().ParentId,
+			sortRank,
 			int32(req.GetPage().GetContent().GetContentType()),
 			req.GetPage().GetMeta().Toc,
 			req.GetPage().GetMeta().GetDraft(),
@@ -687,7 +736,7 @@ func (s *Server) UpdatePage(
 		)).
 		LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
@@ -786,6 +835,96 @@ func (s *Server) UpdatePage(
 	return &pbwiki.UpdatePageResponse{
 		Page: page,
 	}, nil
+}
+
+func (s *Server) MovePage(
+	ctx context.Context,
+	req *pbwiki.MovePageRequest,
+) (*pbwiki.MovePageResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.GetPageId()})
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetPageId(),
+		userInfo,
+		wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errorswiki.ErrPageDenied
+	}
+
+	if req.GetBeforeId() > 0 && req.GetAfterId() > 0 {
+		return nil, errorswiki.ErrFailedQuery
+	}
+
+	pageOrder, err := s.getPageOrderInfo(ctx, s.db, req.GetPageId())
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errorswiki.ErrPageNotFound
+		}
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+	defer tx.Rollback()
+
+	sortRank, err := s.insertPageGroupRank(
+		ctx,
+		tx,
+		pageOrder.Job,
+		pageOrder.ParentID,
+		pageOrder.Startpage,
+		req.GetPageId(),
+		req.BeforeId,
+		req.AfterId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	tPage := table.FivenetWikiPages
+	if _, err := tPage.
+		UPDATE(
+			tPage.SortRank,
+		).
+		SET(
+			sortRank,
+		).
+		WHERE(mysql.AND(
+			tPage.ID.EQ(mysql.Int64(req.GetPageId())),
+			tPage.Job.EQ(mysql.String(pageOrder.Job)),
+			tPage.DeletedAt.IS_NULL(),
+		)).
+		LIMIT(1).
+		ExecContext(ctx, tx); err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+
+	s.collabServer.SendTargetSaved(ctx, req.GetPageId())
+	s.notifi.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
+		Type:      notificationsclientview.ObjectType_OBJECT_TYPE_WIKI_PAGE,
+		Id:        &req.PageId,
+		EventType: notificationsclientview.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+
+		UserId: &userInfo.UserId,
+		Job:    &userInfo.Job,
+	})
+
+	return &pbwiki.MovePageResponse{}, nil
 }
 
 func (s *Server) handlePageAccessChange(

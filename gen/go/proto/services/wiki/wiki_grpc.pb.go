@@ -25,6 +25,7 @@ const (
 	WikiService_CreatePage_FullMethodName       = "/services.wiki.WikiService/CreatePage"
 	WikiService_UpdatePage_FullMethodName       = "/services.wiki.WikiService/UpdatePage"
 	WikiService_DeletePage_FullMethodName       = "/services.wiki.WikiService/DeletePage"
+	WikiService_MovePage_FullMethodName         = "/services.wiki.WikiService/MovePage"
 	WikiService_ListPageActivity_FullMethodName = "/services.wiki.WikiService/ListPageActivity"
 	WikiService_UploadFile_FullMethodName       = "/services.wiki.WikiService/UploadFile"
 )
@@ -38,6 +39,7 @@ type WikiServiceClient interface {
 	CreatePage(ctx context.Context, in *CreatePageRequest, opts ...grpc.CallOption) (*CreatePageResponse, error)
 	UpdatePage(ctx context.Context, in *UpdatePageRequest, opts ...grpc.CallOption) (*UpdatePageResponse, error)
 	DeletePage(ctx context.Context, in *DeletePageRequest, opts ...grpc.CallOption) (*DeletePageResponse, error)
+	MovePage(ctx context.Context, in *MovePageRequest, opts ...grpc.CallOption) (*MovePageResponse, error)
 	ListPageActivity(ctx context.Context, in *ListPageActivityRequest, opts ...grpc.CallOption) (*ListPageActivityResponse, error)
 	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 }
@@ -100,6 +102,16 @@ func (c *wikiServiceClient) DeletePage(ctx context.Context, in *DeletePageReques
 	return out, nil
 }
 
+func (c *wikiServiceClient) MovePage(ctx context.Context, in *MovePageRequest, opts ...grpc.CallOption) (*MovePageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MovePageResponse)
+	err := c.cc.Invoke(ctx, WikiService_MovePage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *wikiServiceClient) ListPageActivity(ctx context.Context, in *ListPageActivityRequest, opts ...grpc.CallOption) (*ListPageActivityResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPageActivityResponse)
@@ -132,6 +144,7 @@ type WikiServiceServer interface {
 	CreatePage(context.Context, *CreatePageRequest) (*CreatePageResponse, error)
 	UpdatePage(context.Context, *UpdatePageRequest) (*UpdatePageResponse, error)
 	DeletePage(context.Context, *DeletePageRequest) (*DeletePageResponse, error)
+	MovePage(context.Context, *MovePageRequest) (*MovePageResponse, error)
 	ListPageActivity(context.Context, *ListPageActivityRequest) (*ListPageActivityResponse, error)
 	UploadFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	mustEmbedUnimplementedWikiServiceServer()
@@ -158,6 +171,9 @@ func (UnimplementedWikiServiceServer) UpdatePage(context.Context, *UpdatePageReq
 }
 func (UnimplementedWikiServiceServer) DeletePage(context.Context, *DeletePageRequest) (*DeletePageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePage not implemented")
+}
+func (UnimplementedWikiServiceServer) MovePage(context.Context, *MovePageRequest) (*MovePageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MovePage not implemented")
 }
 func (UnimplementedWikiServiceServer) ListPageActivity(context.Context, *ListPageActivityRequest) (*ListPageActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPageActivity not implemented")
@@ -276,6 +292,24 @@ func _WikiService_DeletePage_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WikiService_MovePage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MovePageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WikiServiceServer).MovePage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WikiService_MovePage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WikiServiceServer).MovePage(ctx, req.(*MovePageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WikiService_ListPageActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListPageActivityRequest)
 	if err := dec(in); err != nil {
@@ -327,6 +361,10 @@ var WikiService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePage",
 			Handler:    _WikiService_DeletePage_Handler,
+		},
+		{
+			MethodName: "MovePage",
+			Handler:    _WikiService_MovePage_Handler,
 		},
 		{
 			MethodName: "ListPageActivity",

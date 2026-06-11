@@ -491,6 +491,7 @@ export const grpcMethods = [
 	'wiki.WikiService/CreatePage',
 	'wiki.WikiService/UpdatePage',
 	'wiki.WikiService/DeletePage',
+	'wiki.WikiService/MovePage',
 	'wiki.WikiService/ListPageActivity',
 	'wiki.WikiService/UploadFile',
 ];

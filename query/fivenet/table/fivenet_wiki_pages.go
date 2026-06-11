@@ -30,6 +30,7 @@ type fivenetWikiPagesTable struct {
 	Startpage   mysql.ColumnBool
 	Slug        mysql.ColumnString
 	Title       mysql.ColumnString
+	SortRank    mysql.ColumnString
 	SortKey     mysql.ColumnString
 	Description mysql.ColumnString
 	Content     mysql.ColumnString
@@ -89,13 +90,14 @@ func newFivenetWikiPagesTableImpl(schemaName, tableName, alias string) fivenetWi
 		StartpageColumn   = mysql.BoolColumn("startpage")
 		SlugColumn        = mysql.StringColumn("slug")
 		TitleColumn       = mysql.StringColumn("title")
+		SortRankColumn    = mysql.StringColumn("sort_rank")
 		SortKeyColumn     = mysql.StringColumn("sort_key")
 		DescriptionColumn = mysql.StringColumn("description")
 		ContentColumn     = mysql.StringColumn("content")
 		DataColumn        = mysql.StringColumn("data")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		allColumns        = mysql.ColumnList{IDColumn, JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, DraftColumn, PublicColumn, StartpageColumn, SlugColumn, TitleColumn, SortKeyColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
-		mutableColumns    = mysql.ColumnList{JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, DraftColumn, PublicColumn, StartpageColumn, SlugColumn, TitleColumn, SortKeyColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
+		allColumns        = mysql.ColumnList{IDColumn, JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, DraftColumn, PublicColumn, StartpageColumn, SlugColumn, TitleColumn, SortRankColumn, SortKeyColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
+		mutableColumns    = mysql.ColumnList{JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, DraftColumn, PublicColumn, StartpageColumn, SlugColumn, TitleColumn, SortRankColumn, SortKeyColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
 		defaultColumns    = mysql.ColumnList{CreatedAtColumn, TocColumn, DraftColumn, PublicColumn, StartpageColumn}
 	)
 
@@ -116,6 +118,7 @@ func newFivenetWikiPagesTableImpl(schemaName, tableName, alias string) fivenetWi
 		Startpage:   StartpageColumn,
 		Slug:        SlugColumn,
 		Title:       TitleColumn,
+		SortRank:    SortRankColumn,
 		SortKey:     SortKeyColumn,
 		Description: DescriptionColumn,
 		Content:     ContentColumn,

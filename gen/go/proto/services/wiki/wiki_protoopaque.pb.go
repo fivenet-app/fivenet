@@ -826,6 +826,168 @@ func (b0 DeletePageResponse_builder) Build() *DeletePageResponse {
 	return m0
 }
 
+type MovePageRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_PageId      int64                  `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3"`
+	xxx_hidden_BeforeId    int64                  `protobuf:"varint,2,opt,name=before_id,json=beforeId,proto3,oneof"`
+	xxx_hidden_AfterId     int64                  `protobuf:"varint,3,opt,name=after_id,json=afterId,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *MovePageRequest) Reset() {
+	*x = MovePageRequest{}
+	mi := &file_services_wiki_wiki_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MovePageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MovePageRequest) ProtoMessage() {}
+
+func (x *MovePageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_wiki_wiki_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *MovePageRequest) GetPageId() int64 {
+	if x != nil {
+		return x.xxx_hidden_PageId
+	}
+	return 0
+}
+
+func (x *MovePageRequest) GetBeforeId() int64 {
+	if x != nil {
+		return x.xxx_hidden_BeforeId
+	}
+	return 0
+}
+
+func (x *MovePageRequest) GetAfterId() int64 {
+	if x != nil {
+		return x.xxx_hidden_AfterId
+	}
+	return 0
+}
+
+func (x *MovePageRequest) SetPageId(v int64) {
+	x.xxx_hidden_PageId = v
+}
+
+func (x *MovePageRequest) SetBeforeId(v int64) {
+	x.xxx_hidden_BeforeId = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+}
+
+func (x *MovePageRequest) SetAfterId(v int64) {
+	x.xxx_hidden_AfterId = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *MovePageRequest) HasBeforeId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *MovePageRequest) HasAfterId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *MovePageRequest) ClearBeforeId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_BeforeId = 0
+}
+
+func (x *MovePageRequest) ClearAfterId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_AfterId = 0
+}
+
+type MovePageRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	PageId   int64
+	BeforeId *int64
+	AfterId  *int64
+}
+
+func (b0 MovePageRequest_builder) Build() *MovePageRequest {
+	m0 := &MovePageRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_PageId = b.PageId
+	if b.BeforeId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_BeforeId = *b.BeforeId
+	}
+	if b.AfterId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_AfterId = *b.AfterId
+	}
+	return m0
+}
+
+type MovePageResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MovePageResponse) Reset() {
+	*x = MovePageResponse{}
+	mi := &file_services_wiki_wiki_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MovePageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MovePageResponse) ProtoMessage() {}
+
+func (x *MovePageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_wiki_wiki_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type MovePageResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 MovePageResponse_builder) Build() *MovePageResponse {
+	m0 := &MovePageResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 type ListPageActivityRequest struct {
 	state                 protoimpl.MessageState      `protogen:"opaque.v1"`
 	xxx_hidden_Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
@@ -836,7 +998,7 @@ type ListPageActivityRequest struct {
 
 func (x *ListPageActivityRequest) Reset() {
 	*x = ListPageActivityRequest{}
-	mi := &file_services_wiki_wiki_proto_msgTypes[10]
+	mi := &file_services_wiki_wiki_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -848,7 +1010,7 @@ func (x *ListPageActivityRequest) String() string {
 func (*ListPageActivityRequest) ProtoMessage() {}
 
 func (x *ListPageActivityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_wiki_wiki_proto_msgTypes[10]
+	mi := &file_services_wiki_wiki_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -918,7 +1080,7 @@ type ListPageActivityResponse struct {
 
 func (x *ListPageActivityResponse) Reset() {
 	*x = ListPageActivityResponse{}
-	mi := &file_services_wiki_wiki_proto_msgTypes[11]
+	mi := &file_services_wiki_wiki_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -930,7 +1092,7 @@ func (x *ListPageActivityResponse) String() string {
 func (*ListPageActivityResponse) ProtoMessage() {}
 
 func (x *ListPageActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_wiki_wiki_proto_msgTypes[11]
+	mi := &file_services_wiki_wiki_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1033,7 +1195,15 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\v2\x14.resources.wiki.PageR\x04page\"#\n" +
 	"\x11DeletePageRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x14\n" +
-	"\x12DeletePageResponse\"\x80\x01\n" +
+	"\x12DeletePageResponse\"\x87\x01\n" +
+	"\x0fMovePageRequest\x12\x17\n" +
+	"\apage_id\x18\x01 \x01(\x03R\x06pageId\x12 \n" +
+	"\tbefore_id\x18\x02 \x01(\x03H\x00R\bbeforeId\x88\x01\x01\x12\x1e\n" +
+	"\bafter_id\x18\x03 \x01(\x03H\x01R\aafterId\x88\x01\x01B\f\n" +
+	"\n" +
+	"_before_idB\v\n" +
+	"\t_after_id\"\x12\n" +
+	"\x10MovePageResponse\"\x80\x01\n" +
 	"\x17ListPageActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1043,7 +1213,7 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12G\n" +
-	"\bactivity\x18\x02 \x03(\v2%.resources.wiki.activity.PageActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xf9\x05\n" +
+	"\bactivity\x18\x02 \x03(\v2%.resources.wiki.activity.PageActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xda\x06\n" +
 	"\vWikiService\x12V\n" +
 	"\tListPages\x12\x1f.services.wiki.ListPagesRequest\x1a .services.wiki.ListPagesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12[\n" +
 	"\aGetPage\x12\x1d.services.wiki.GetPageRequest\x1a\x1e.services.wiki.GetPageResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tListPages\x12Y\n" +
@@ -1055,14 +1225,16 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"CreatePage:\x12\n" +
 	"\x06Fields\x18\x01\"\x06Public\x12Y\n" +
 	"\n" +
-	"DeletePage\x12 .services.wiki.DeletePageRequest\x1a!.services.wiki.DeletePageResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12k\n" +
+	"DeletePage\x12 .services.wiki.DeletePageRequest\x1a!.services.wiki.DeletePageResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12_\n" +
+	"\bMovePage\x12\x1e.services.wiki.MovePageRequest\x1a\x1f.services.wiki.MovePageResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
+	"UpdatePage\x12k\n" +
 	"\x10ListPageActivity\x12&.services.wiki.ListPageActivityRequest\x1a'.services.wiki.ListPageActivityResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
 	"\n" +
 	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1e\xd2\xf3\x18\x1a\b\x01*\n" +
 	"CreatePage*\n" +
 	"UpdatePage(\x01\x1a\x13\xea\xf3\x18\x0f\bn\x12\vi-mdi-brainBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki;wikib\x06proto3"
 
-var file_services_wiki_wiki_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_services_wiki_wiki_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_wiki_wiki_proto_goTypes = []any{
 	(*ListPagesRequest)(nil),            // 0: services.wiki.ListPagesRequest
 	(*ListPagesResponse)(nil),           // 1: services.wiki.ListPagesResponse
@@ -1074,46 +1246,50 @@ var file_services_wiki_wiki_proto_goTypes = []any{
 	(*UpdatePageResponse)(nil),          // 7: services.wiki.UpdatePageResponse
 	(*DeletePageRequest)(nil),           // 8: services.wiki.DeletePageRequest
 	(*DeletePageResponse)(nil),          // 9: services.wiki.DeletePageResponse
-	(*ListPageActivityRequest)(nil),     // 10: services.wiki.ListPageActivityRequest
-	(*ListPageActivityResponse)(nil),    // 11: services.wiki.ListPageActivityResponse
-	(*database.PaginationRequest)(nil),  // 12: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),               // 13: resources.common.database.Sort
-	(*database.PaginationResponse)(nil), // 14: resources.common.database.PaginationResponse
-	(*wiki.PageShort)(nil),              // 15: resources.wiki.PageShort
-	(*wiki.Page)(nil),                   // 16: resources.wiki.Page
-	(content.ContentType)(0),            // 17: resources.common.content.ContentType
-	(*activity.PageActivity)(nil),       // 18: resources.wiki.activity.PageActivity
-	(*file.UploadFileRequest)(nil),      // 19: resources.file.UploadFileRequest
-	(*file.UploadFileResponse)(nil),     // 20: resources.file.UploadFileResponse
+	(*MovePageRequest)(nil),             // 10: services.wiki.MovePageRequest
+	(*MovePageResponse)(nil),            // 11: services.wiki.MovePageResponse
+	(*ListPageActivityRequest)(nil),     // 12: services.wiki.ListPageActivityRequest
+	(*ListPageActivityResponse)(nil),    // 13: services.wiki.ListPageActivityResponse
+	(*database.PaginationRequest)(nil),  // 14: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),               // 15: resources.common.database.Sort
+	(*database.PaginationResponse)(nil), // 16: resources.common.database.PaginationResponse
+	(*wiki.PageShort)(nil),              // 17: resources.wiki.PageShort
+	(*wiki.Page)(nil),                   // 18: resources.wiki.Page
+	(content.ContentType)(0),            // 19: resources.common.content.ContentType
+	(*activity.PageActivity)(nil),       // 20: resources.wiki.activity.PageActivity
+	(*file.UploadFileRequest)(nil),      // 21: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),     // 22: resources.file.UploadFileResponse
 }
 var file_services_wiki_wiki_proto_depIdxs = []int32{
-	12, // 0: services.wiki.ListPagesRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	13, // 1: services.wiki.ListPagesRequest.sort:type_name -> resources.common.database.Sort
-	14, // 2: services.wiki.ListPagesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	15, // 3: services.wiki.ListPagesResponse.pages:type_name -> resources.wiki.PageShort
-	16, // 4: services.wiki.GetPageResponse.page:type_name -> resources.wiki.Page
-	17, // 5: services.wiki.CreatePageRequest.content_type:type_name -> resources.common.content.ContentType
-	16, // 6: services.wiki.UpdatePageRequest.page:type_name -> resources.wiki.Page
-	16, // 7: services.wiki.UpdatePageResponse.page:type_name -> resources.wiki.Page
-	12, // 8: services.wiki.ListPageActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	14, // 9: services.wiki.ListPageActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	18, // 10: services.wiki.ListPageActivityResponse.activity:type_name -> resources.wiki.activity.PageActivity
+	14, // 0: services.wiki.ListPagesRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	15, // 1: services.wiki.ListPagesRequest.sort:type_name -> resources.common.database.Sort
+	16, // 2: services.wiki.ListPagesResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	17, // 3: services.wiki.ListPagesResponse.pages:type_name -> resources.wiki.PageShort
+	18, // 4: services.wiki.GetPageResponse.page:type_name -> resources.wiki.Page
+	19, // 5: services.wiki.CreatePageRequest.content_type:type_name -> resources.common.content.ContentType
+	18, // 6: services.wiki.UpdatePageRequest.page:type_name -> resources.wiki.Page
+	18, // 7: services.wiki.UpdatePageResponse.page:type_name -> resources.wiki.Page
+	14, // 8: services.wiki.ListPageActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	16, // 9: services.wiki.ListPageActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	20, // 10: services.wiki.ListPageActivityResponse.activity:type_name -> resources.wiki.activity.PageActivity
 	0,  // 11: services.wiki.WikiService.ListPages:input_type -> services.wiki.ListPagesRequest
 	2,  // 12: services.wiki.WikiService.GetPage:input_type -> services.wiki.GetPageRequest
 	4,  // 13: services.wiki.WikiService.CreatePage:input_type -> services.wiki.CreatePageRequest
 	6,  // 14: services.wiki.WikiService.UpdatePage:input_type -> services.wiki.UpdatePageRequest
 	8,  // 15: services.wiki.WikiService.DeletePage:input_type -> services.wiki.DeletePageRequest
-	10, // 16: services.wiki.WikiService.ListPageActivity:input_type -> services.wiki.ListPageActivityRequest
-	19, // 17: services.wiki.WikiService.UploadFile:input_type -> resources.file.UploadFileRequest
-	1,  // 18: services.wiki.WikiService.ListPages:output_type -> services.wiki.ListPagesResponse
-	3,  // 19: services.wiki.WikiService.GetPage:output_type -> services.wiki.GetPageResponse
-	5,  // 20: services.wiki.WikiService.CreatePage:output_type -> services.wiki.CreatePageResponse
-	7,  // 21: services.wiki.WikiService.UpdatePage:output_type -> services.wiki.UpdatePageResponse
-	9,  // 22: services.wiki.WikiService.DeletePage:output_type -> services.wiki.DeletePageResponse
-	11, // 23: services.wiki.WikiService.ListPageActivity:output_type -> services.wiki.ListPageActivityResponse
-	20, // 24: services.wiki.WikiService.UploadFile:output_type -> resources.file.UploadFileResponse
-	18, // [18:25] is the sub-list for method output_type
-	11, // [11:18] is the sub-list for method input_type
+	10, // 16: services.wiki.WikiService.MovePage:input_type -> services.wiki.MovePageRequest
+	12, // 17: services.wiki.WikiService.ListPageActivity:input_type -> services.wiki.ListPageActivityRequest
+	21, // 18: services.wiki.WikiService.UploadFile:input_type -> resources.file.UploadFileRequest
+	1,  // 19: services.wiki.WikiService.ListPages:output_type -> services.wiki.ListPagesResponse
+	3,  // 20: services.wiki.WikiService.GetPage:output_type -> services.wiki.GetPageResponse
+	5,  // 21: services.wiki.WikiService.CreatePage:output_type -> services.wiki.CreatePageResponse
+	7,  // 22: services.wiki.WikiService.UpdatePage:output_type -> services.wiki.UpdatePageResponse
+	9,  // 23: services.wiki.WikiService.DeletePage:output_type -> services.wiki.DeletePageResponse
+	11, // 24: services.wiki.WikiService.MovePage:output_type -> services.wiki.MovePageResponse
+	13, // 25: services.wiki.WikiService.ListPageActivity:output_type -> services.wiki.ListPageActivityResponse
+	22, // 26: services.wiki.WikiService.UploadFile:output_type -> resources.file.UploadFileResponse
+	19, // [19:27] is the sub-list for method output_type
+	11, // [11:19] is the sub-list for method input_type
 	11, // [11:11] is the sub-list for extension type_name
 	11, // [11:11] is the sub-list for extension extendee
 	0,  // [0:11] is the sub-list for field type_name
@@ -1126,13 +1302,14 @@ func file_services_wiki_wiki_proto_init() {
 	}
 	file_services_wiki_wiki_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_wiki_wiki_proto_msgTypes[4].OneofWrappers = []any{}
+	file_services_wiki_wiki_proto_msgTypes[10].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_wiki_wiki_proto_rawDesc), len(file_services_wiki_wiki_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -138,6 +138,28 @@ export interface DeletePageRequest {
 export interface DeletePageResponse {
 }
 /**
+ * @generated from protobuf message services.wiki.MovePageRequest
+ */
+export interface MovePageRequest {
+    /**
+     * @generated from protobuf field: int64 page_id = 1
+     */
+    pageId: number;
+    /**
+     * @generated from protobuf field: optional int64 before_id = 2
+     */
+    beforeId?: number;
+    /**
+     * @generated from protobuf field: optional int64 after_id = 3
+     */
+    afterId?: number;
+}
+/**
+ * @generated from protobuf message services.wiki.MovePageResponse
+ */
+export interface MovePageResponse {
+}
+/**
  * @generated from protobuf message services.wiki.ListPageActivityRequest
  */
 export interface ListPageActivityRequest {
@@ -671,6 +693,105 @@ class DeletePageResponse$Type extends MessageType<DeletePageResponse> {
  */
 export const DeletePageResponse = new DeletePageResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class MovePageRequest$Type extends MessageType<MovePageRequest> {
+    constructor() {
+        super("services.wiki.MovePageRequest", [
+            { no: 1, name: "page_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "before_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 3, name: "after_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<MovePageRequest>): MovePageRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.pageId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<MovePageRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MovePageRequest): MovePageRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 page_id */ 1:
+                    message.pageId = reader.int64().toNumber();
+                    break;
+                case /* optional int64 before_id */ 2:
+                    message.beforeId = reader.int64().toNumber();
+                    break;
+                case /* optional int64 after_id */ 3:
+                    message.afterId = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: MovePageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 page_id = 1; */
+        if (message.pageId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.pageId);
+        /* optional int64 before_id = 2; */
+        if (message.beforeId !== undefined)
+            writer.tag(2, WireType.Varint).int64(message.beforeId);
+        /* optional int64 after_id = 3; */
+        if (message.afterId !== undefined)
+            writer.tag(3, WireType.Varint).int64(message.afterId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.wiki.MovePageRequest
+ */
+export const MovePageRequest = new MovePageRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class MovePageResponse$Type extends MessageType<MovePageResponse> {
+    constructor() {
+        super("services.wiki.MovePageResponse", []);
+    }
+    create(value?: PartialMessage<MovePageResponse>): MovePageResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<MovePageResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MovePageResponse): MovePageResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: MovePageResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.wiki.MovePageResponse
+ */
+export const MovePageResponse = new MovePageResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class ListPageActivityRequest$Type extends MessageType<ListPageActivityRequest> {
     constructor() {
         super("services.wiki.ListPageActivityRequest", [
@@ -787,6 +908,7 @@ export const WikiService = new ServiceType("services.wiki.WikiService", [
     { name: "CreatePage", options: { "codegen.perms.perms": { enabled: true } }, I: CreatePageRequest, O: CreatePageResponse },
     { name: "UpdatePage", options: { "codegen.perms.perms": { enabled: true, names: ["UpdatePage", "CreatePage"], attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Public"] }] } }, I: UpdatePageRequest, O: UpdatePageResponse },
     { name: "DeletePage", options: { "codegen.perms.perms": { enabled: true } }, I: DeletePageRequest, O: DeletePageResponse },
+    { name: "MovePage", options: { "codegen.perms.perms": { enabled: true, name: "UpdatePage" } }, I: MovePageRequest, O: MovePageResponse },
     { name: "ListPageActivity", options: { "codegen.perms.perms": { enabled: true } }, I: ListPageActivityRequest, O: ListPageActivityResponse },
     { name: "UploadFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, names: ["CreatePage", "UpdatePage"] } }, I: UploadFileRequest, O: UploadFileResponse }
 ], { "codegen.perms.perms_svc": { order: 110, icon: "i-mdi-brain" } });

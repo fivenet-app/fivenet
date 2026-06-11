@@ -31,14 +31,14 @@ const (
 
 type Page struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,3,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	ParentId      *int64                 `protobuf:"varint,4,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
 	Meta          *PageMeta              `protobuf:"bytes,5,opt,name=meta,proto3" json:"meta,omitempty"`
 	Content       *content.Content       `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
 	Access        *access.PageAccess     `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
-	Files         []*file.File           `protobuf:"bytes,8,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
+	Files         []*file.File           `protobuf:"bytes,8,rep,name=files,proto3" json:"files,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -248,7 +248,7 @@ type PageMeta struct {
 	Title         string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
 	Description   string                 `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
 	CreatorId     *int32                 `protobuf:"varint,7,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *short.UserShort       `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Creator       *short.UserShort       `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	ContentType   content.ContentType    `protobuf:"varint,9,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	Tags          []string               `protobuf:"bytes,10,rep,name=tags,proto3" json:"tags,omitempty"`
 	Toc           *bool                  `protobuf:"varint,11,opt,name=toc,proto3,oneof" json:"toc,omitempty"`
@@ -557,7 +557,7 @@ func (b0 PageMeta_builder) Build() *PageMeta {
 
 type PageShort struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,3,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	ParentId      *int64                 `protobuf:"varint,4,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
@@ -849,7 +849,7 @@ func (b0 PageShort_builder) Build() *PageShort {
 type PageRootInfo struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	LogoFileId    *int64                 `protobuf:"varint,1,opt,name=logo_file_id,json=logoFileId,proto3,oneof" json:"logo_file_id,omitempty"`
-	Logo          *file.File             `protobuf:"bytes,2,opt,name=logo,proto3,oneof" json:"logo,omitempty" alias:"logo"`
+	Logo          *file.File             `protobuf:"bytes,2,opt,name=logo,proto3,oneof" json:"logo,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
