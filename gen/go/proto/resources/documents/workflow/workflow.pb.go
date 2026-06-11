@@ -446,7 +446,7 @@ type WorkflowState struct {
 	NextReminderCount *int32                 `protobuf:"varint,3,opt,name=next_reminder_count,json=nextReminderCount,proto3,oneof" json:"next_reminder_count,omitempty"`
 	ReminderCount     int32                  `protobuf:"varint,5,opt,name=reminder_count,json=reminderCount,proto3" json:"reminder_count,omitempty"`
 	AutoCloseTime     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=auto_close_time,json=autoCloseTime,proto3,oneof" json:"auto_close_time,omitempty"`
-	Workflow          *Workflow              `protobuf:"bytes,6,opt,name=workflow,proto3,oneof" json:"workflow,omitempty" alias:"workflow"`
+	Workflow          *Workflow              `protobuf:"bytes,6,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -618,7 +618,7 @@ type WorkflowUserState struct {
 	ManualReminderMessage *string                `protobuf:"bytes,4,opt,name=manual_reminder_message,json=manualReminderMessage,proto3,oneof" json:"manual_reminder_message,omitempty"`
 	ReminderCount         int32                  `protobuf:"varint,5,opt,name=reminder_count,json=reminderCount,proto3" json:"reminder_count,omitempty"`
 	MaxReminderCount      int32                  `protobuf:"varint,6,opt,name=max_reminder_count,json=maxReminderCount,proto3" json:"max_reminder_count,omitempty"`
-	Workflow              *Workflow              `protobuf:"bytes,7,opt,name=workflow,proto3,oneof" json:"workflow,omitempty" alias:"workflow"`
+	Workflow              *Workflow              `protobuf:"bytes,7,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }

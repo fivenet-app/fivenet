@@ -316,7 +316,7 @@ func (b0 CalendarEntryOccurrence_builder) Build() *CalendarEntryOccurrence {
 
 type CalendarEntry struct {
 	state             protoimpl.MessageState   `protogen:"hybrid.v1"`
-	Id                int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id                int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt         *timestamp.Timestamp     `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt         *timestamp.Timestamp     `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt         *timestamp.Timestamp     `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -330,7 +330,7 @@ type CalendarEntry struct {
 	Closed            bool                     `protobuf:"varint,12,opt,name=closed,proto3" json:"closed,omitempty"`
 	RsvpOpen          *bool                    `protobuf:"varint,13,opt,name=rsvp_open,json=rsvpOpen,proto3,oneof" json:"rsvp_open,omitempty"`
 	CreatorId         *int32                   `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator           *short.UserShort         `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Creator           *short.UserShort         `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	CreatorJob        string                   `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	Recurring         *CalendarEntryRecurring  `protobuf:"bytes,17,opt,name=recurring,proto3,oneof" json:"recurring,omitempty"`
 	Rsvp              *CalendarEntryRSVP       `protobuf:"bytes,18,opt,name=rsvp,proto3,oneof" json:"rsvp,omitempty"`

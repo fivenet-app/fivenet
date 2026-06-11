@@ -1097,7 +1097,7 @@ type ChooseCharacterResponse struct {
 	Username      string                      `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 	Expires       *timestamp.Timestamp        `protobuf:"bytes,3,opt,name=expires,proto3" json:"expires,omitempty"`
 	JobProps      *props.JobProps             `protobuf:"bytes,4,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
-	Char          *users.User                 `protobuf:"bytes,5,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+	Char          *users.User                 `protobuf:"bytes,5,opt,name=char,proto3" json:"char,omitempty"`
 	Permissions   []*permissions.Permission   `protobuf:"bytes,6,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,7,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1326,7 +1326,7 @@ type ImpersonateJobResponse struct {
 	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Token         string                      `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	Expires       *timestamp.Timestamp        `protobuf:"bytes,2,opt,name=expires,proto3" json:"expires,omitempty"`
-	Char          *users.User                 `protobuf:"bytes,3,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+	Char          *users.User                 `protobuf:"bytes,3,opt,name=char,proto3" json:"char,omitempty"`
 	Permissions   []*permissions.Permission   `protobuf:"bytes,4,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,5,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	State         bool                        `protobuf:"varint,6,opt,name=state,proto3" json:"state,omitempty"`
@@ -1672,7 +1672,7 @@ type SetSuperuserModeResponse struct {
 	Token         string                      `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	Expires       *timestamp.Timestamp        `protobuf:"bytes,2,opt,name=expires,proto3" json:"expires,omitempty"`
 	JobProps      *props.JobProps             `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3,oneof" json:"job_props,omitempty"`
-	Char          *users.User                 `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+	Char          *users.User                 `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty"`
 	Permissions   []*permissions.Permission   `protobuf:"bytes,5,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,6,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields

@@ -139,7 +139,7 @@ func (b0 QualificationAccess_builder) Build() *QualificationAccess {
 
 type QualificationJobAccess struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,4,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	Job           string                 `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`

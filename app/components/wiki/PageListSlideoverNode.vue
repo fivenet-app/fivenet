@@ -77,6 +77,7 @@ function moveDown(idx: number): void {
                             :color="isCurrentPage ? 'primary' : 'neutral'"
                             :to="pagePath"
                             :label="page.title || $t('common.untitled')"
+                            :ui="{ base: isCurrentPage ? '' : 'text-highlighted' }"
                         />
 
                         <UBadge

@@ -80,8 +80,8 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 
 type CalendarAccess struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Jobs          []*CalendarJobAccess   `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
-	Users         []*CalendarUserAccess  `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"user_access"`
+	Jobs          []*CalendarJobAccess   `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
+	Users         []*CalendarUserAccess  `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

@@ -136,7 +136,7 @@ func (x ResultStatus) Number() protoreflect.EnumNumber {
 
 type Qualification struct {
 	state              protoimpl.MessageState          `protogen:"hybrid.v1"`
-	Id                 int64                           `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id                 int64                           `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt          *timestamp.Timestamp            `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt          *timestamp.Timestamp            `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt          *timestamp.Timestamp            `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -150,7 +150,7 @@ type Qualification struct {
 	Description        *string                         `protobuf:"bytes,12,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Content            *content.Content                `protobuf:"bytes,13,opt,name=content,proto3" json:"content,omitempty"`
 	CreatorId          *int32                          `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator            *short.UserShort                `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Creator            *short.UserShort                `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	CreatorJob         string                          `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	Access             *access.QualificationAccess     `protobuf:"bytes,17,opt,name=access,proto3" json:"access,omitempty"`
 	Requirements       []*QualificationRequirement     `protobuf:"bytes,18,rep,name=requirements,proto3" json:"requirements,omitempty"`
@@ -163,7 +163,7 @@ type Qualification struct {
 	Request            *QualificationRequest           `protobuf:"bytes,25,opt,name=request,proto3,oneof" json:"request,omitempty"`
 	LabelSyncEnabled   bool                            `protobuf:"varint,26,opt,name=label_sync_enabled,json=labelSyncEnabled,proto3" json:"label_sync_enabled,omitempty"`
 	LabelSyncFormat    *string                         `protobuf:"bytes,27,opt,name=label_sync_format,json=labelSyncFormat,proto3,oneof" json:"label_sync_format,omitempty"`
-	Files              []*file.File                    `protobuf:"bytes,28,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
+	Files              []*file.File                    `protobuf:"bytes,28,rep,name=files,proto3" json:"files,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -725,7 +725,7 @@ func (b0 Qualification_builder) Build() *Qualification {
 
 type QualificationShort struct {
 	state         protoimpl.MessageState          `protogen:"hybrid.v1"`
-	Id            int64                           `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id            int64                           `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp            `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp            `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp            `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -738,7 +738,7 @@ type QualificationShort struct {
 	Title         string                          `protobuf:"bytes,11,opt,name=title,proto3" json:"title,omitempty"`
 	Description   *string                         `protobuf:"bytes,12,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	CreatorId     *int32                          `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *short.UserShort                `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Creator       *short.UserShort                `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	CreatorJob    string                          `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	Requirements  []*QualificationRequirement     `protobuf:"bytes,18,rep,name=requirements,proto3" json:"requirements,omitempty"`
 	ExamMode      exam.QualificationExamMode      `protobuf:"varint,21,opt,name=exam_mode,json=examMode,proto3,enum=resources.qualifications.exam.QualificationExamMode" json:"exam_mode,omitempty"`
@@ -1122,11 +1122,11 @@ func (b0 QualificationShort_builder) Build() *QualificationShort {
 
 type QualificationRequirement struct {
 	state                 protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id                    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id                    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt             *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	QualificationId       int64                  `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	TargetQualificationId int64                  `protobuf:"varint,4,opt,name=target_qualification_id,json=targetQualificationId,proto3" json:"target_qualification_id,omitempty"`
-	TargetQualification   *QualificationShort    `protobuf:"bytes,5,opt,name=target_qualification,json=targetQualification,proto3,oneof" json:"target_qualification,omitempty" alias:"targetqualification"`
+	TargetQualification   *QualificationShort    `protobuf:"bytes,5,opt,name=target_qualification,json=targetQualification,proto3,oneof" json:"target_qualification,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -1352,16 +1352,16 @@ type QualificationRequest struct {
 	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	QualificationId int64                  `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty" alias:"qualification_id" sql:"primary_key"`
+	QualificationId int64                  `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Qualification   *QualificationShort    `protobuf:"bytes,4,opt,name=qualification,proto3,oneof" json:"qualification,omitempty"`
-	UserId          int32                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" sql:"primary_key"`
-	User            *short.UserShort       `protobuf:"bytes,6,opt,name=user,proto3" json:"user,omitempty" alias:"user"`
+	UserId          int32                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	User            *short.UserShort       `protobuf:"bytes,6,opt,name=user,proto3" json:"user,omitempty"`
 	UserComment     *string                `protobuf:"bytes,7,opt,name=user_comment,json=userComment,proto3,oneof" json:"user_comment,omitempty"`
 	Status          *RequestStatus         `protobuf:"varint,8,opt,name=status,proto3,enum=resources.qualifications.RequestStatus,oneof" json:"status,omitempty"`
 	ApprovedAt      *timestamp.Timestamp   `protobuf:"bytes,9,opt,name=approved_at,json=approvedAt,proto3,oneof" json:"approved_at,omitempty"`
 	ApproverComment *string                `protobuf:"bytes,10,opt,name=approver_comment,json=approverComment,proto3,oneof" json:"approver_comment,omitempty"`
 	ApproverId      *int32                 `protobuf:"varint,11,opt,name=approver_id,json=approverId,proto3,oneof" json:"approver_id,omitempty"`
-	Approver        *short.UserShort       `protobuf:"bytes,12,opt,name=approver,proto3,oneof" json:"approver,omitempty" alias:"approver"`
+	Approver        *short.UserShort       `protobuf:"bytes,12,opt,name=approver,proto3,oneof" json:"approver,omitempty"`
 	ApproverJob     *string                `protobuf:"bytes,13,opt,name=approver_job,json=approverJob,proto3,oneof" json:"approver_job,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -1696,18 +1696,18 @@ func (b0 QualificationRequest_builder) Build() *QualificationRequest {
 
 type QualificationResult struct {
 	state           protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	QualificationId int64                  `protobuf:"varint,4,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Qualification   *QualificationShort    `protobuf:"bytes,5,opt,name=qualification,proto3,oneof" json:"qualification,omitempty"`
 	UserId          int32                  `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	User            *short.UserShort       `protobuf:"bytes,7,opt,name=user,proto3" json:"user,omitempty" alias:"user"`
+	User            *short.UserShort       `protobuf:"bytes,7,opt,name=user,proto3" json:"user,omitempty"`
 	Status          ResultStatus           `protobuf:"varint,8,opt,name=status,proto3,enum=resources.qualifications.ResultStatus" json:"status,omitempty"`
 	Score           *float32               `protobuf:"fixed32,9,opt,name=score,proto3,oneof" json:"score,omitempty"`
 	Summary         string                 `protobuf:"bytes,10,opt,name=summary,proto3" json:"summary,omitempty"`
 	CreatorId       int32                  `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator         *short.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3" json:"creator,omitempty" alias:"creator"`
+	Creator         *short.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3" json:"creator,omitempty"`
 	CreatorJob      string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache

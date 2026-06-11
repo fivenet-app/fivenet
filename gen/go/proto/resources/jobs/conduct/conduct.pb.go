@@ -85,7 +85,7 @@ func (x ConductType) Number() protoreflect.EnumNumber {
 
 type ConductEntry struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -93,12 +93,12 @@ type ConductEntry struct {
 	Type          ConductType            `protobuf:"varint,6,opt,name=type,proto3,enum=resources.jobs.conduct.ConductType" json:"type,omitempty"`
 	Draft         bool                   `protobuf:"varint,7,opt,name=draft,proto3" json:"draft,omitempty"`
 	Message       *content.Content       `protobuf:"bytes,8,opt,name=message,proto3" json:"message,omitempty"`
-	Files         []*file.File           `protobuf:"bytes,9,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
+	Files         []*file.File           `protobuf:"bytes,9,rep,name=files,proto3" json:"files,omitempty"`
 	ExpiresAt     *timestamp.Timestamp   `protobuf:"bytes,10,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
 	TargetUserId  int32                  `protobuf:"varint,11,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
-	TargetUser    *colleagues.Colleague  `protobuf:"bytes,12,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty" alias:"target_user"`
+	TargetUser    *colleagues.Colleague  `protobuf:"bytes,12,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty"`
 	CreatorId     int32                  `protobuf:"varint,13,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator       *colleagues.Colleague  `protobuf:"bytes,14,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Creator       *colleagues.Colleague  `protobuf:"bytes,14,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

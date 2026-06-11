@@ -56,7 +56,7 @@ const {
 async function getPage(id: number): Promise<Page | undefined> {
     try {
         return await getWikiPage(id);
-    } catch (e) {
+    } catch {
         await navigateTo({
             name: 'wiki-job-id-slug',
             params: { job: route.params.job, id: route.params.id, slug: [route.params.slug] },

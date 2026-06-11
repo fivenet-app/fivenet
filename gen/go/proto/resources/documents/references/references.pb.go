@@ -80,13 +80,13 @@ type DocumentReference struct {
 	state            protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Id               *int64                   `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	CreatedAt        *timestamp.Timestamp     `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	SourceDocumentId int64                    `protobuf:"varint,3,opt,name=source_document_id,json=sourceDocumentId,proto3" json:"source_document_id,omitempty" alias:"source_document_id"`
-	SourceDocument   *documents.DocumentShort `protobuf:"bytes,4,opt,name=source_document,json=sourceDocument,proto3,oneof" json:"source_document,omitempty" alias:"source_document"`
-	Reference        DocReference             `protobuf:"varint,5,opt,name=reference,proto3,enum=resources.documents.references.DocReference" json:"reference,omitempty" alias:"reference"`
-	TargetDocumentId int64                    `protobuf:"varint,6,opt,name=target_document_id,json=targetDocumentId,proto3" json:"target_document_id,omitempty" alias:"target_document_id"`
-	TargetDocument   *documents.DocumentShort `protobuf:"bytes,7,opt,name=target_document,json=targetDocument,proto3,oneof" json:"target_document,omitempty" alias:"target_document"`
+	SourceDocumentId int64                    `protobuf:"varint,3,opt,name=source_document_id,json=sourceDocumentId,proto3" json:"source_document_id,omitempty"`
+	SourceDocument   *documents.DocumentShort `protobuf:"bytes,4,opt,name=source_document,json=sourceDocument,proto3,oneof" json:"source_document,omitempty"`
+	Reference        DocReference             `protobuf:"varint,5,opt,name=reference,proto3,enum=resources.documents.references.DocReference" json:"reference,omitempty"`
+	TargetDocumentId int64                    `protobuf:"varint,6,opt,name=target_document_id,json=targetDocumentId,proto3" json:"target_document_id,omitempty"`
+	TargetDocument   *documents.DocumentShort `protobuf:"bytes,7,opt,name=target_document,json=targetDocument,proto3,oneof" json:"target_document,omitempty"`
 	CreatorId        *int32                   `protobuf:"varint,8,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator          *short.UserShort         `protobuf:"bytes,9,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"ref_creator"`
+	Creator          *short.UserShort         `protobuf:"bytes,9,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }

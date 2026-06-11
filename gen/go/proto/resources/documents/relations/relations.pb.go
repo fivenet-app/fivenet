@@ -78,12 +78,12 @@ type DocumentRelation struct {
 	Id            *int64                   `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp     `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DocumentId    int64                    `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	Document      *documents.DocumentShort `protobuf:"bytes,4,opt,name=document,proto3,oneof" json:"document,omitempty" alias:"document"`
-	SourceUserId  int32                    `protobuf:"varint,5,opt,name=source_user_id,json=sourceUserId,proto3" json:"source_user_id,omitempty" alias:"source_user_id"`
-	SourceUser    *short.UserShort         `protobuf:"bytes,6,opt,name=source_user,json=sourceUser,proto3,oneof" json:"source_user,omitempty" alias:"source_user"`
-	Relation      DocRelation              `protobuf:"varint,7,opt,name=relation,proto3,enum=resources.documents.relations.DocRelation" json:"relation,omitempty" alias:"relation"`
-	TargetUserId  int32                    `protobuf:"varint,8,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty" alias:"target_user_id"`
-	TargetUser    *short.UserShort         `protobuf:"bytes,9,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty" alias:"target_user"`
+	Document      *documents.DocumentShort `protobuf:"bytes,4,opt,name=document,proto3,oneof" json:"document,omitempty"`
+	SourceUserId  int32                    `protobuf:"varint,5,opt,name=source_user_id,json=sourceUserId,proto3" json:"source_user_id,omitempty"`
+	SourceUser    *short.UserShort         `protobuf:"bytes,6,opt,name=source_user,json=sourceUser,proto3,oneof" json:"source_user,omitempty"`
+	Relation      DocRelation              `protobuf:"varint,7,opt,name=relation,proto3,enum=resources.documents.relations.DocRelation" json:"relation,omitempty"`
+	TargetUserId  int32                    `protobuf:"varint,8,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	TargetUser    *short.UserShort         `protobuf:"bytes,9,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

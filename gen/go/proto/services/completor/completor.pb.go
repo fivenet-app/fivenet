@@ -176,7 +176,7 @@ func (b0 CompleteCitizensRequest_builder) Build() *CompleteCitizensRequest {
 
 type CompleteCitizensResponse struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Users         []*short.UserShort     `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty" alias:"user"`
+	Users         []*short.UserShort     `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

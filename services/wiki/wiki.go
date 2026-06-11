@@ -678,16 +678,17 @@ func (s *Server) UpdatePage(
 
 	tPage := table.FivenetWikiPages
 	sortRank := oldOrder.SortRank
-	groupChanged := false
 	newParentID := req.GetPage().ParentId
-	switch {
-	case oldOrder.ParentID == nil && newParentID == nil:
-		groupChanged = oldOrder.Startpage != req.GetPage().GetMeta().GetStartpage()
-	case oldOrder.ParentID != nil && newParentID != nil:
-		groupChanged = *oldOrder.ParentID != *newParentID
-	default:
-		groupChanged = true
-	}
+	groupChanged := func() bool {
+		switch {
+		case oldOrder.ParentID == nil && newParentID == nil:
+			return oldOrder.Startpage != req.GetPage().GetMeta().GetStartpage()
+		case oldOrder.ParentID != nil && newParentID != nil:
+			return *oldOrder.ParentID != *newParentID
+		default:
+			return true
+		}
+	}()
 	if groupChanged {
 		sortRank, err = s.nextPageGroupRank(
 			ctx,

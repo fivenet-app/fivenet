@@ -36,23 +36,23 @@ const (
 
 type Template struct {
 	state           protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Category        *category.Category     `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
+	Category        *category.Category     `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
 	Weight          uint32                 `protobuf:"varint,5,opt,name=weight,proto3" json:"weight,omitempty"`
 	Title           string                 `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty"`
 	Description     string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
 	Color           *string                `protobuf:"bytes,8,opt,name=color,proto3,oneof" json:"color,omitempty"`
 	Icon            *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	ContentTitle    string                 `protobuf:"bytes,10,opt,name=content_title,json=contentTitle,proto3" json:"content_title,omitempty" alias:"content_title"`
-	Content         string                 `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty" alias:"content"`
-	State           string                 `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty" alias:"state"`
-	Schema          *TemplateSchema        `protobuf:"bytes,13,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`
+	ContentTitle    string                 `protobuf:"bytes,10,opt,name=content_title,json=contentTitle,proto3" json:"content_title,omitempty"`
+	Content         string                 `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty"`
+	State           string                 `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty"`
+	Schema          *TemplateSchema        `protobuf:"bytes,13,opt,name=schema,proto3" json:"schema,omitempty"`
 	CreatorJob      string                 `protobuf:"bytes,14,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                `protobuf:"bytes,15,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
 	JobAccess       []*TemplateJobAccess   `protobuf:"bytes,16,rep,name=job_access,json=jobAccess,proto3" json:"job_access,omitempty"`
-	ContentAccess   *access.DocumentAccess `protobuf:"bytes,17,opt,name=content_access,json=contentAccess,proto3" json:"content_access,omitempty" alias:"access"`
+	ContentAccess   *access.DocumentAccess `protobuf:"bytes,17,opt,name=content_access,json=contentAccess,proto3" json:"content_access,omitempty"`
 	Workflow        *workflow.Workflow     `protobuf:"bytes,18,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
 	Approval        *TemplateApproval      `protobuf:"bytes,19,opt,name=approval,proto3,oneof" json:"approval,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -455,16 +455,16 @@ func (b0 Template_builder) Build() *Template {
 
 type TemplateShort struct {
 	state           protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Category        *category.Category     `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
+	Category        *category.Category     `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
 	Weight          uint32                 `protobuf:"varint,5,opt,name=weight,proto3" json:"weight,omitempty"`
 	Title           string                 `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty"`
 	Description     string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
 	Color           *string                `protobuf:"bytes,8,opt,name=color,proto3,oneof" json:"color,omitempty"`
 	Icon            *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	Schema          *TemplateSchema        `protobuf:"bytes,10,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`
+	Schema          *TemplateSchema        `protobuf:"bytes,10,opt,name=schema,proto3" json:"schema,omitempty"`
 	CreatorJob      string                 `protobuf:"bytes,11,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                `protobuf:"bytes,12,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
 	Workflow        *workflow.Workflow     `protobuf:"bytes,18,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
@@ -1182,9 +1182,9 @@ func (b0 TemplateData_builder) Build() *TemplateData {
 
 type TemplateJobAccess struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty" alias:"template_id"`
+	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`

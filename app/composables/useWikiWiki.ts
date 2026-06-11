@@ -16,6 +16,7 @@ import type {
 export async function useWikiWiki() {
     const wikiWikiClient = await getWikiWikiClient();
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async function runWikiCall<T>(call: any): Promise<T> {
         try {
             const { response } = await call;

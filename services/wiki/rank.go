@@ -3,7 +3,6 @@ package wiki
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
@@ -30,7 +29,7 @@ type pageRankRow struct {
 
 func getPageRankBounds(rows []pageRankRow, beforeID, afterID *int64) (string, string, error) {
 	if beforeID != nil && afterID != nil {
-		return "", "", fmt.Errorf("before_id and after_id are mutually exclusive")
+		return "", "", errors.New("before_id and after_id are mutually exclusive")
 	}
 	if len(rows) == 0 {
 		return "", "", nil
@@ -215,7 +214,7 @@ func (s *Server) insertPageGroupRank(
 	}
 
 	if beforeID != nil && afterID != nil {
-		return "", fmt.Errorf("before_id and after_id are mutually exclusive")
+		return "", errors.New("before_id and after_id are mutually exclusive")
 	}
 
 	if len(rows) == 0 {

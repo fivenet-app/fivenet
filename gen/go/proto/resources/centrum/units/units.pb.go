@@ -133,7 +133,7 @@ func (x UnitAttribute) Number() protoreflect.EnumNumber {
 
 type Unit struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
@@ -584,8 +584,8 @@ func (b0 UnitAssignments_builder) Build() *UnitAssignments {
 
 type UnitAssignment struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	UnitId        int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty" alias:"unit_id" sql:"primary_key"`
-	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user_id" sql:"primary_key"`
+	UnitId        int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
+	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	User          *colleagues.Colleague  `protobuf:"bytes,3,opt,name=user,proto3,oneof" json:"user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -680,7 +680,7 @@ func (b0 UnitAssignment_builder) Build() *UnitAssignment {
 
 type UnitStatus struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UnitId        int64                  `protobuf:"varint,3,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
 	Unit          *Unit                  `protobuf:"bytes,4,opt,name=unit,proto3,oneof" json:"unit,omitempty"`

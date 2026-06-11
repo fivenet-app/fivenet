@@ -39,25 +39,25 @@ type Document struct {
 	UpdatedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt  *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	CategoryId *int64                 `protobuf:"varint,5,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
-	Category   *category.Category     `protobuf:"bytes,6,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`
+	Category   *category.Category     `protobuf:"bytes,6,opt,name=category,proto3,oneof" json:"category,omitempty"`
 	Title      string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
 	// Derived field (server authored)
 	WordCount *uint32 `protobuf:"varint,21,opt,name=word_count,json=wordCount,proto3,oneof" json:"word_count,omitempty"`
 	// Derived field (server authored)
 	FirstHeading    *string                     `protobuf:"bytes,22,opt,name=first_heading,json=firstHeading,proto3,oneof" json:"first_heading,omitempty"`
 	ContentType     content.ContentType         `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
-	Content         *content.Content            `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty" alias:"content_json"`
-	Data            *data.DocumentData          `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`
+	Content         *content.Content            `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
+	Data            *data.DocumentData          `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	CreatorId       *int32                      `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator         *short.UserShort            `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Creator         *short.UserShort            `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	CreatorJob      string                      `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                     `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Meta            *DocumentMeta               `protobuf:"bytes,15,opt,name=meta,proto3" json:"meta,omitempty" alias:"meta"`
+	Meta            *DocumentMeta               `protobuf:"bytes,15,opt,name=meta,proto3" json:"meta,omitempty"`
 	TemplateId      *int64                      `protobuf:"varint,16,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
-	Pin             *pins.DocumentPin           `protobuf:"bytes,17,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
+	Pin             *pins.DocumentPin           `protobuf:"bytes,17,opt,name=pin,proto3,oneof" json:"pin,omitempty"`
 	WorkflowState   *workflow.WorkflowState     `protobuf:"bytes,18,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
 	WorkflowUser    *workflow.WorkflowUserState `protobuf:"bytes,19,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
-	Files           []*file.File                `protobuf:"bytes,20,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
+	Files           []*file.File                `protobuf:"bytes,20,rep,name=files,proto3" json:"files,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -581,7 +581,7 @@ type DocumentShort struct {
 	UpdatedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt  *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	CategoryId *int64                 `protobuf:"varint,5,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
-	Category   *category.Category     `protobuf:"bytes,6,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`
+	Category   *category.Category     `protobuf:"bytes,6,opt,name=category,proto3,oneof" json:"category,omitempty"`
 	Title      string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
 	// Derived field (server authored)
 	WordCount *uint32 `protobuf:"varint,21,opt,name=word_count,json=wordCount,proto3,oneof" json:"word_count,omitempty"`
@@ -590,11 +590,11 @@ type DocumentShort struct {
 	ContentType     content.ContentType         `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	Content         *content.Content            `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
 	CreatorId       *int32                      `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator         *short.UserShort            `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Creator         *short.UserShort            `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	CreatorJob      string                      `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                     `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Meta            *DocumentMeta               `protobuf:"bytes,15,opt,name=meta,proto3" json:"meta,omitempty" alias:"meta"`
-	Pin             *pins.DocumentPin           `protobuf:"bytes,17,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
+	Meta            *DocumentMeta               `protobuf:"bytes,15,opt,name=meta,proto3" json:"meta,omitempty"`
+	Pin             *pins.DocumentPin           `protobuf:"bytes,17,opt,name=pin,proto3,oneof" json:"pin,omitempty"`
 	WorkflowState   *workflow.WorkflowState     `protobuf:"bytes,18,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
 	WorkflowUser    *workflow.WorkflowUserState `protobuf:"bytes,19,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
 	unknownFields   protoimpl.UnknownFields

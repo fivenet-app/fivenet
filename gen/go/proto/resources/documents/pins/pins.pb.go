@@ -26,9 +26,9 @@ const (
 
 type DocumentPin struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" sql:"primary_key"`
-	Job           *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty" sql:"primary_key"`
-	UserId        *int32                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty" sql:"primary_key"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	Job           *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	UserId        *int32                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	State         bool                   `protobuf:"varint,5,opt,name=state,proto3" json:"state,omitempty"`
 	CreatorId     int32                  `protobuf:"varint,6,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`

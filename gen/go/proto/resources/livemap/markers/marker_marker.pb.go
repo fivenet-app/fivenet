@@ -99,8 +99,8 @@ type MarkerMarker struct {
 	Color         *string                `protobuf:"bytes,11,opt,name=color,proto3,oneof" json:"color,omitempty"`
 	Job           string                 `protobuf:"bytes,12,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      string                 `protobuf:"bytes,13,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty"`
-	Type          MarkerType             `protobuf:"varint,14,opt,name=type,proto3,enum=resources.livemap.markers.MarkerType" json:"type,omitempty" alias:"markerType"`
-	Data          *MarkerData            `protobuf:"bytes,15,opt,name=data,proto3" json:"data,omitempty" alias:"markerData"`
+	Type          MarkerType             `protobuf:"varint,14,opt,name=type,proto3,enum=resources.livemap.markers.MarkerType" json:"type,omitempty"`
+	Data          *MarkerData            `protobuf:"bytes,15,opt,name=data,proto3" json:"data,omitempty"`
 	CreatorId     *int32                 `protobuf:"varint,16,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator       *short.UserShort       `protobuf:"bytes,17,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	unknownFields protoimpl.UnknownFields

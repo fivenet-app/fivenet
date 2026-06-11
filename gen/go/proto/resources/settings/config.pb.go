@@ -649,7 +649,7 @@ func (b0 Perm_builder) Build() *Perm {
 type Website struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Links         *Links                 `protobuf:"bytes,1,opt,name=links,proto3" json:"links,omitempty"`
-	StatsPage     bool                   `protobuf:"varint,2,opt,name=stats_page,json=statsPage,proto3" json:"statsPage"`
+	StatsPage     bool                   `protobuf:"varint,2,opt,name=stats_page,json=statsPage,proto3" json:"stats_page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1458,9 +1458,9 @@ func (b0 System_builder) Build() *System {
 type Display struct {
 	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
-	IntlLocale string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3" json:"intlLocale"`
+	IntlLocale string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3" json:"intl_locale,omitempty"`
 	// ISO 4217 currency code (e.g. "USD", "EUR")
-	CurrencyName  string `protobuf:"bytes,2,opt,name=currency_name,json=currencyName,proto3" json:"currencyName"`
+	CurrencyName  string `protobuf:"bytes,2,opt,name=currency_name,json=currencyName,proto3" json:"currency_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1532,7 +1532,7 @@ func (b0 Display_builder) Build() *Display {
 
 type QuickButtons struct {
 	state             protoimpl.MessageState `protogen:"hybrid.v1"`
-	PenaltyCalculator *PenaltyCalculator     `protobuf:"bytes,1,opt,name=penalty_calculator,json=penaltyCalculator,proto3" json:"penaltyCalculator"`
+	PenaltyCalculator *PenaltyCalculator     `protobuf:"bytes,1,opt,name=penalty_calculator,json=penaltyCalculator,proto3" json:"penalty_calculator,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -1600,10 +1600,10 @@ func (b0 QuickButtons_builder) Build() *QuickButtons {
 
 type PenaltyCalculator struct {
 	state             protoimpl.MessageState              `protogen:"hybrid.v1"`
-	MaxCount          *uint32                             `protobuf:"varint,1,opt,name=max_count,json=maxCount,proto3,oneof" json:"maxCount"`
-	DetentionTimeUnit *PenaltyCalculatorDetentionTimeUnit `protobuf:"bytes,2,opt,name=detention_time_unit,json=detentionTimeUnit,proto3,oneof" json:"detentionTimeUnit"`
-	WarnSettings      *PenaltyCalculatorWarn              `protobuf:"bytes,3,opt,name=warn_settings,json=warnSettings,proto3,oneof" json:"warnSettings"`
-	MaxLeeway         *uint32                             `protobuf:"varint,4,opt,name=max_leeway,json=maxLeeway,proto3,oneof" json:"maxLeeway"`
+	MaxCount          *uint32                             `protobuf:"varint,1,opt,name=max_count,json=maxCount,proto3,oneof" json:"max_count,omitempty"`
+	DetentionTimeUnit *PenaltyCalculatorDetentionTimeUnit `protobuf:"bytes,2,opt,name=detention_time_unit,json=detentionTimeUnit,proto3,oneof" json:"detention_time_unit,omitempty"`
+	WarnSettings      *PenaltyCalculatorWarn              `protobuf:"bytes,3,opt,name=warn_settings,json=warnSettings,proto3,oneof" json:"warn_settings,omitempty"`
+	MaxLeeway         *uint32                             `protobuf:"varint,4,opt,name=max_leeway,json=maxLeeway,proto3,oneof" json:"max_leeway,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -1838,9 +1838,9 @@ type PenaltyCalculatorWarn struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	Fine          *uint32                `protobuf:"varint,2,opt,name=fine,proto3,oneof" json:"fine,omitempty"`
-	DetentionTime *uint32                `protobuf:"varint,3,opt,name=detention_time,json=detentionTime,proto3,oneof" json:"detentionTime"`
-	StvoPoints    *uint32                `protobuf:"varint,4,opt,name=stvo_points,json=stvoPoints,proto3,oneof" json:"stvoPoints"`
-	WarnMessage   *string                `protobuf:"bytes,5,opt,name=warn_message,json=warnMessage,proto3,oneof" json:"warnMessage"`
+	DetentionTime *uint32                `protobuf:"varint,3,opt,name=detention_time,json=detentionTime,proto3,oneof" json:"detention_time,omitempty"`
+	StvoPoints    *uint32                `protobuf:"varint,4,opt,name=stvo_points,json=stvoPoints,proto3,oneof" json:"stvo_points,omitempty"`
+	WarnMessage   *string                `protobuf:"bytes,5,opt,name=warn_message,json=warnMessage,proto3,oneof" json:"warn_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

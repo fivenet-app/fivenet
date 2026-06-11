@@ -256,7 +256,7 @@ func (x DispatchAttribute) Number() protoreflect.EnumNumber {
 
 type Dispatch struct {
 	state     protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	// Deprecated: Marked as deprecated in resources/centrum/dispatches/dispatches.proto.
@@ -736,8 +736,8 @@ func (b0 DispatchAssignments_builder) Build() *DispatchAssignments {
 
 type DispatchAssignment struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	DispatchId    int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty" alias:"dispatch_id" sql:"primary_key"`
-	UnitId        int64                  `protobuf:"varint,2,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty" alias:"unit_id" sql:"primary_key"`
+	DispatchId    int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
+	UnitId        int64                  `protobuf:"varint,2,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
 	Unit          *units.Unit            `protobuf:"bytes,3,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	ExpiresAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
@@ -882,7 +882,7 @@ func (b0 DispatchAssignment_builder) Build() *DispatchAssignment {
 
 type DispatchStatus struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DispatchId    int64                  `protobuf:"varint,3,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
 	UnitId        *int64                 `protobuf:"varint,4,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`

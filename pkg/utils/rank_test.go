@@ -3,6 +3,8 @@ package utils
 import "testing"
 
 func TestRankBetween(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name  string
 		lower string
@@ -44,6 +46,8 @@ func TestRankBetween(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, ok := RankBetween(tt.lower, tt.upper)
 			if ok != tt.ok {
 				t.Fatalf("ok = %v, want %v", ok, tt.ok)
@@ -56,6 +60,8 @@ func TestRankBetween(t *testing.T) {
 }
 
 func TestNextRank(t *testing.T) {
+	t.Parallel()
+
 	got, err := NextRank(FormatRank(1000))
 	if err != nil {
 		t.Fatalf("NextRank() error = %v", err)

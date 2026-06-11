@@ -72,7 +72,7 @@ func (x CalendarSystemKind) Number() protoreflect.EnumNumber {
 
 type Calendar struct {
 	state           protoimpl.MessageState   `protogen:"hybrid.v1"`
-	Id              int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id              int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp     `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt       *timestamp.Timestamp     `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt       *timestamp.Timestamp     `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -84,7 +84,7 @@ type Calendar struct {
 	Closed          bool                     `protobuf:"varint,9,opt,name=closed,proto3" json:"closed,omitempty"`
 	Color           string                   `protobuf:"bytes,10,opt,name=color,proto3" json:"color,omitempty"`
 	CreatorId       *int32                   `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator         *short.UserShort         `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Creator         *short.UserShort         `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	CreatorJob      string                   `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	Subscription    *CalendarSub             `protobuf:"bytes,14,opt,name=subscription,proto3,oneof" json:"subscription,omitempty"`
 	Access          *access.CalendarAccess   `protobuf:"bytes,15,opt,name=access,proto3" json:"access,omitempty"`
@@ -474,7 +474,7 @@ func (b0 Calendar_builder) Build() *Calendar {
 
 type CalendarShort struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	Job           *string                `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	Name          string                 `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`

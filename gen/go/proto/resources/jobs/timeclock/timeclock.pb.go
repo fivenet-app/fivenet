@@ -121,11 +121,11 @@ func (x TimeclockViewMode) Number() protoreflect.EnumNumber {
 
 type TimeclockEntry struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" sql:"primary_key"`
+	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
-	Date          *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=date,proto3" json:"date,omitempty" sql:"primary_key"`
+	Date          *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=date,proto3" json:"date,omitempty"`
 	User          *colleagues.Colleague  `protobuf:"bytes,4,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	StartTime     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=start_time,json=startTime,proto3,oneof" json:"start_time,omitempty" sql:"primary_key"`
+	StartTime     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=start_time,json=startTime,proto3,oneof" json:"start_time,omitempty"`
 	EndTime       *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=end_time,json=endTime,proto3,oneof" json:"end_time,omitempty"`
 	SpentTime     float32                `protobuf:"fixed32,7,opt,name=spent_time,json=spentTime,proto3" json:"spent_time,omitempty"`
 	unknownFields protoimpl.UnknownFields

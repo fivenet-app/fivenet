@@ -720,7 +720,7 @@ func (b0 EffectiveAccess_builder) Build() *EffectiveAccess {
 
 type EffectiveDispatchAccess struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Jobs          []*JobAccessEntry      `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
+	Jobs          []*JobAccessEntry      `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
