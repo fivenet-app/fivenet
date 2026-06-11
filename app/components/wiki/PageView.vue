@@ -44,12 +44,6 @@ const notifications = useNotificationsStore();
 const { deletePage: deleteWikiPage } = await useWikiWiki();
 
 const confirmModal = overlay.create(ConfirmModal);
-const canManagePage = computed(
-    () =>
-        props.page !== undefined &&
-        can('wiki.WikiService/UpdatePage').value &&
-        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.EDIT, props.page?.job),
-);
 
 function openPageListSlideover(): void {
     if (!props.page) return;
@@ -133,25 +127,31 @@ const wikiService = await useWikiWiki();
 
 const tocLinks = computedAsync(async () => props.page?.content && jsonNodeToTocLinks(props.page?.content));
 
-const canAccessActivity = computed(
-    () =>
+const canDo = computed(() => ({
+    activity:
         can('wiki.WikiService/ListPageActivity').value &&
         checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.VIEW, props.page?.job),
-);
-
-const canAccessFiles = computed(
-    () =>
+    files:
         can('wiki.WikiService/ListPageActivity').value &&
         checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.ACCESS, props.page?.job),
-);
+    movePages:
+        can('wiki.WikiService/MovePage').value &&
+        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.EDIT, props.page?.job),
+    manage:
+        can('wiki.WikiService/UpdatePage').value &&
+        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.EDIT, props.page?.job),
+    delete:
+        can('wiki.WikiService/DeletePage').value &&
+        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.EDIT, props?.page?.job),
+}));
 
 const accordionItems = computed(() =>
     [
         { slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock' },
-        canAccessActivity.value
+        canDo.value.activity
             ? { slot: 'activity' as const, label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
-        canAccessFiles.value ? { slot: 'files' as const, label: t('common.file', 2), icon: 'i-mdi-file' } : undefined,
+        canDo.value.files ? { slot: 'files' as const, label: t('common.file', 2), icon: 'i-mdi-file' } : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
@@ -313,7 +313,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             <template #links>
                                 <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
 
-                                <UTooltip v-if="canManagePage" :text="$t('common.change_order')">
+                                <UTooltip v-if="canDo.movePages" :text="$t('common.change_order')">
                                     <UButton
                                         color="neutral"
                                         icon="i-mdi-swap-vertical"
@@ -322,15 +322,12 @@ const scrollRef = useTemplateRef('scrollRef');
                                     />
                                 </UTooltip>
 
-                                <UTooltip v-if="canManagePage" :text="$t('common.edit')">
+                                <UTooltip v-if="canDo.manage" :text="$t('common.edit')">
                                     <UButton color="neutral" icon="i-mdi-pencil" :to="pageEditURL(page)" />
                                 </UTooltip>
 
                                 <UTooltip
-                                    v-if="
-                                        can('wiki.WikiService/DeletePage').value &&
-                                        checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT, page?.job)
-                                    "
+                                    v-if="canDo.delete"
                                     :text="!page.meta.deletedAt ? $t('common.delete') : $t('common.restore')"
                                 >
                                     <UButton
@@ -446,13 +443,13 @@ const scrollRef = useTemplateRef('scrollRef');
                                     </UContainer>
                                 </template>
 
-                                <template v-if="canAccessActivity" #activity>
+                                <template v-if="canDo.activity" #activity>
                                     <UContainer class="mb-2">
                                         <List :page-id="page.id" />
                                     </UContainer>
                                 </template>
 
-                                <template v-if="canAccessFiles" #files>
+                                <template v-if="canDo.files" #files>
                                     <DataNoDataBlock
                                         v-if="!page.files || page.files.length === 0"
                                         icon="i-mdi-file-search"
