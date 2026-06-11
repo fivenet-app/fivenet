@@ -36,10 +36,10 @@ type Thread struct {
 	CreatorEmailId int64                   `protobuf:"varint,5,opt,name=creator_email_id,json=creatorEmailId,proto3" json:"creator_email_id,omitempty"`
 	CreatorEmail   *emails.Email           `protobuf:"bytes,6,opt,name=creator_email,json=creatorEmail,proto3,oneof" json:"creator_email,omitempty"`
 	CreatorId      *int32                  `protobuf:"varint,7,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator        *short.UserShort        `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	Creator        *short.UserShort        `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	Title          string                  `protobuf:"bytes,9,opt,name=title,proto3" json:"title,omitempty"`
 	Recipients     []*ThreadRecipientEmail `protobuf:"bytes,10,rep,name=recipients,proto3" json:"recipients,omitempty"`
-	State          *ThreadState            `protobuf:"bytes,11,opt,name=state,proto3,oneof" json:"state,omitempty"`
+	State          *ThreadState            `protobuf:"bytes,11,opt,name=state,proto3,oneof" json:"state,omitempty" alias:"thread_state"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -303,9 +303,9 @@ func (b0 Thread_builder) Build() *Thread {
 
 type ThreadRecipientEmail struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      int64                  `protobuf:"varint,4,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	TargetId      int64                  `protobuf:"varint,4,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty" alias:"thread_id"`
 	EmailId       int64                  `protobuf:"varint,5,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	Email         *emails.Email          `protobuf:"bytes,6,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields

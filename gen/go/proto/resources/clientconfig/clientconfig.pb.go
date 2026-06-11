@@ -27,17 +27,17 @@ const (
 
 type ClientConfig struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
-	DefaultLocale string                 `protobuf:"bytes,2,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
-	Auth          *Auth                  `protobuf:"bytes,3,opt,name=auth,proto3" json:"auth,omitempty"`
-	Discord       *Discord               `protobuf:"bytes,4,opt,name=discord,proto3" json:"discord,omitempty"`
-	Website       *settings.Website      `protobuf:"bytes,5,opt,name=website,proto3" json:"website,omitempty"`
-	FeatureGates  *FeatureGates          `protobuf:"bytes,6,opt,name=feature_gates,json=featureGates,proto3" json:"feature_gates,omitempty"`
-	Game          *Game                  `protobuf:"bytes,7,opt,name=game,proto3" json:"game,omitempty"`
-	System        *System                `protobuf:"bytes,8,opt,name=system,proto3" json:"system,omitempty"`
-	Display       *settings.Display      `protobuf:"bytes,9,opt,name=display,proto3" json:"display,omitempty"`
-	QuickButtons  *settings.QuickButtons `protobuf:"bytes,11,opt,name=quick_buttons,json=quickButtons,proto3" json:"quick_buttons,omitempty"`
-	Data          *settings.Data         `protobuf:"bytes,12,opt,name=data,proto3" json:"data,omitempty"`
+	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version"`
+	DefaultLocale string                 `protobuf:"bytes,2,opt,name=default_locale,json=defaultLocale,proto3" json:"defaultLocale"`
+	Auth          *Auth                  `protobuf:"bytes,3,opt,name=auth,proto3" json:"auth"`
+	Discord       *Discord               `protobuf:"bytes,4,opt,name=discord,proto3" json:"discord"`
+	Website       *settings.Website      `protobuf:"bytes,5,opt,name=website,proto3" json:"website"`
+	FeatureGates  *FeatureGates          `protobuf:"bytes,6,opt,name=feature_gates,json=featureGates,proto3" json:"featureGates"`
+	Game          *Game                  `protobuf:"bytes,7,opt,name=game,proto3" json:"game"`
+	System        *System                `protobuf:"bytes,8,opt,name=system,proto3" json:"system"`
+	Display       *settings.Display      `protobuf:"bytes,9,opt,name=display,proto3" json:"display"`
+	QuickButtons  *settings.QuickButtons `protobuf:"bytes,11,opt,name=quick_buttons,json=quickButtons,proto3" json:"quickButtons"`
+	Data          *settings.Data         `protobuf:"bytes,12,opt,name=data,proto3" json:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -323,9 +323,9 @@ func (b0 ClientConfig_builder) Build() *ClientConfig {
 
 type Auth struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	SignupEnabled bool                   `protobuf:"varint,1,opt,name=signup_enabled,json=signupEnabled,proto3" json:"signup_enabled,omitempty"`
-	LastCharLock  bool                   `protobuf:"varint,2,opt,name=last_char_lock,json=lastCharLock,proto3" json:"last_char_lock,omitempty"`
-	Providers     []*ProviderConfig      `protobuf:"bytes,3,rep,name=providers,proto3" json:"providers,omitempty"`
+	SignupEnabled bool                   `protobuf:"varint,1,opt,name=signup_enabled,json=signupEnabled,proto3" json:"signupEnabled"`
+	LastCharLock  bool                   `protobuf:"varint,2,opt,name=last_char_lock,json=lastCharLock,proto3" json:"lastCharLock"`
+	Providers     []*ProviderConfig      `protobuf:"bytes,3,rep,name=providers,proto3" json:"providers"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -408,10 +408,10 @@ func (b0 Auth_builder) Build() *Auth {
 
 type ProviderConfig struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name"`
+	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label"`
 	Icon          *string                `protobuf:"bytes,3,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	Homepage      string                 `protobuf:"bytes,4,opt,name=homepage,proto3" json:"homepage,omitempty"`
+	Homepage      string                 `protobuf:"bytes,4,opt,name=homepage,proto3" json:"homepage"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -518,7 +518,7 @@ func (b0 ProviderConfig_builder) Build() *ProviderConfig {
 
 type Discord struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	BotEnabled    bool                   `protobuf:"varint,1,opt,name=bot_enabled,json=botEnabled,proto3" json:"bot_enabled,omitempty"`
+	BotEnabled    bool                   `protobuf:"varint,1,opt,name=bot_enabled,json=botEnabled,proto3" json:"botEnabled"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -618,13 +618,13 @@ func (b0 FeatureGates_builder) Build() *FeatureGates {
 
 type Game struct {
 	state                           protoimpl.MessageState `protogen:"hybrid.v1"`
-	UnemployedJobName               string                 `protobuf:"bytes,1,opt,name=unemployed_job_name,json=unemployedJobName,proto3" json:"unemployed_job_name,omitempty"`
-	StartJobGrade                   int32                  `protobuf:"varint,2,opt,name=start_job_grade,json=startJobGrade,proto3" json:"start_job_grade,omitempty"`
-	Livemap                         *settings.Livemap      `protobuf:"bytes,3,opt,name=livemap,proto3" json:"livemap,omitempty"`
-	MaxWantedDurationUserEnabled    bool                   `protobuf:"varint,4,opt,name=max_wanted_duration_user_enabled,json=maxWantedDurationUserEnabled,proto3" json:"max_wanted_duration_user_enabled,omitempty"`
-	MaxWantedDurationUser           *durationpb.Duration   `protobuf:"bytes,5,opt,name=max_wanted_duration_user,json=maxWantedDurationUser,proto3,oneof" json:"max_wanted_duration_user,omitempty"`
-	MaxWantedDurationVehicleEnabled bool                   `protobuf:"varint,6,opt,name=max_wanted_duration_vehicle_enabled,json=maxWantedDurationVehicleEnabled,proto3" json:"max_wanted_duration_vehicle_enabled,omitempty"`
-	MaxWantedDurationVehicle        *durationpb.Duration   `protobuf:"bytes,7,opt,name=max_wanted_duration_vehicle,json=maxWantedDurationVehicle,proto3,oneof" json:"max_wanted_duration_vehicle,omitempty"`
+	UnemployedJobName               string                 `protobuf:"bytes,1,opt,name=unemployed_job_name,json=unemployedJobName,proto3" json:"unemployedJobName"`
+	StartJobGrade                   int32                  `protobuf:"varint,2,opt,name=start_job_grade,json=startJobGrade,proto3" json:"startJobGrade"`
+	Livemap                         *settings.Livemap      `protobuf:"bytes,3,opt,name=livemap,proto3" json:"livemap"`
+	MaxWantedDurationUserEnabled    bool                   `protobuf:"varint,4,opt,name=max_wanted_duration_user_enabled,json=maxWantedDurationUserEnabled,proto3" json:"maxWantedDurationUserEnabled"`
+	MaxWantedDurationUser           *durationpb.Duration   `protobuf:"bytes,5,opt,name=max_wanted_duration_user,json=maxWantedDurationUser,proto3,oneof" json:"maxWantedDurationUser,omitempty"`
+	MaxWantedDurationVehicleEnabled bool                   `protobuf:"varint,6,opt,name=max_wanted_duration_vehicle_enabled,json=maxWantedDurationVehicleEnabled,proto3" json:"maxWantedDurationVehicleEnabled"`
+	MaxWantedDurationVehicle        *durationpb.Duration   `protobuf:"bytes,7,opt,name=max_wanted_duration_vehicle,json=maxWantedDurationVehicle,proto3,oneof" json:"maxWantedDurationVehicle,omitempty"`
 	unknownFields                   protoimpl.UnknownFields
 	sizeCache                       protoimpl.SizeCache
 }
@@ -792,9 +792,9 @@ func (b0 Game_builder) Build() *Game {
 
 type System struct {
 	state                protoimpl.MessageState  `protogen:"hybrid.v1"`
-	BannerMessageEnabled bool                    `protobuf:"varint,1,opt,name=banner_message_enabled,json=bannerMessageEnabled,proto3" json:"banner_message_enabled,omitempty"`
-	BannerMessage        *settings.BannerMessage `protobuf:"bytes,2,opt,name=banner_message,json=bannerMessage,proto3,oneof" json:"banner_message,omitempty"`
-	Otlp                 *OTLPFrontend           `protobuf:"bytes,3,opt,name=otlp,proto3" json:"otlp,omitempty"`
+	BannerMessageEnabled bool                    `protobuf:"varint,1,opt,name=banner_message_enabled,json=bannerMessageEnabled,proto3" json:"bannerMessageEnabled"`
+	BannerMessage        *settings.BannerMessage `protobuf:"bytes,2,opt,name=banner_message,json=bannerMessage,proto3,oneof" json:"bannerMessage,omitempty"`
+	Otlp                 *OTLPFrontend           `protobuf:"bytes,3,opt,name=otlp,proto3" json:"otlp"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -899,9 +899,9 @@ func (b0 System_builder) Build() *System {
 
 type OTLPFrontend struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
-	Headers       map[string]string      `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled"`
+	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url"`
+	Headers       map[string]string      `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

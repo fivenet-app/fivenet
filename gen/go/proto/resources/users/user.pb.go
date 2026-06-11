@@ -28,7 +28,7 @@ const (
 
 type User struct {
 	state                protoimpl.MessageState `protogen:"hybrid.v1"`
-	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
 	Identifier           string                 `protobuf:"bytes,2,opt,name=identifier,proto3" json:"identifier,omitempty"`
 	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
@@ -44,8 +44,8 @@ type User struct {
 	PhoneNumbers         []*PhoneNumber         `protobuf:"bytes,19,rep,name=phone_numbers,json=phoneNumbers,proto3" json:"phone_numbers,omitempty"`
 	Visum                *int32                 `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty"`
 	Playtime             *int32                 `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty"`
-	Props                *props.UserProps       `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty"`
-	Licenses             []*licenses.License    `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty"`
+	Props                *props.UserProps       `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"fivenet_user_props"`
+	Licenses             []*licenses.License    `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"`
 	ProfilePictureFileId *int64                 `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof" json:"profile_picture_file_id,omitempty"`
 	ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty"`
 	unknownFields        protoimpl.UnknownFields
@@ -462,7 +462,7 @@ func (b0 User_builder) Build() *User {
 type PhoneNumber struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Number        string                 `protobuf:"bytes,2,opt,name=number,proto3" json:"number,omitempty"`
+	Number        string                 `protobuf:"bytes,2,opt,name=number,proto3" json:"number,omitempty" alias:"phone_number"`
 	IsPrimary     bool                   `protobuf:"varint,3,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`

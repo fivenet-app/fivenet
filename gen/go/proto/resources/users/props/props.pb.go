@@ -35,16 +35,16 @@ type UserProps struct {
 	Wanted                           *bool                  `protobuf:"varint,3,opt,name=wanted,proto3,oneof" json:"wanted,omitempty"`
 	WantedAt                         *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=wanted_at,json=wantedAt,proto3,oneof" json:"wanted_at,omitempty"`
 	WantedTill                       *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=wanted_till,json=wantedTill,proto3,oneof" json:"wanted_till,omitempty"`
-	JobName                          *string                `protobuf:"bytes,6,opt,name=job_name,json=jobName,proto3,oneof" json:"job_name,omitempty"`
+	JobName                          *string                `protobuf:"bytes,6,opt,name=job_name,json=jobName,proto3,oneof" json:"job_name,omitempty" alias:"job"`
 	Job                              *jobs.Job              `protobuf:"bytes,7,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	JobGradeNumber                   *int32                 `protobuf:"varint,8,opt,name=job_grade_number,json=jobGradeNumber,proto3,oneof" json:"job_grade_number,omitempty"`
+	JobGradeNumber                   *int32                 `protobuf:"varint,8,opt,name=job_grade_number,json=jobGradeNumber,proto3,oneof" json:"job_grade_number,omitempty" alias:"job_grade"`
 	JobGrade                         *jobs.JobGrade         `protobuf:"bytes,9,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
 	TrafficInfractionPoints          *uint32                `protobuf:"varint,10,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof" json:"traffic_infraction_points,omitempty"`
 	TrafficInfractionPointsUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,11,opt,name=traffic_infraction_points_updated_at,json=trafficInfractionPointsUpdatedAt,proto3,oneof" json:"traffic_infraction_points_updated_at,omitempty"`
 	OpenFines                        *int64                 `protobuf:"varint,12,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
 	BloodType                        *string                `protobuf:"bytes,13,opt,name=blood_type,json=bloodType,proto3,oneof" json:"blood_type,omitempty"`
 	MugshotFileId                    *int64                 `protobuf:"varint,14,opt,name=mugshot_file_id,json=mugshotFileId,proto3,oneof" json:"mugshot_file_id,omitempty"`
-	Mugshot                          *file.File             `protobuf:"bytes,15,opt,name=mugshot,proto3,oneof" json:"mugshot,omitempty"`
+	Mugshot                          *file.File             `protobuf:"bytes,15,opt,name=mugshot,proto3,oneof" json:"mugshot,omitempty" alias:"mugshot"`
 	Labels                           *labels.Labels         `protobuf:"bytes,16,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
 	Email                            *string                `protobuf:"bytes,17,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields                    protoimpl.UnknownFields

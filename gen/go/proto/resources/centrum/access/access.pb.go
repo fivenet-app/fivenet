@@ -77,7 +77,7 @@ func (x CentrumAccessLevel) Number() protoreflect.EnumNumber {
 
 type CentrumAccess struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Jobs          []*CentrumJobAccess    `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
+	Jobs          []*CentrumJobAccess    `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

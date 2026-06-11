@@ -28,14 +28,14 @@ const (
 
 type Comment struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	DocumentId    int64                  `protobuf:"varint,5,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	Content       *content.Content       `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
 	CreatorId     *int32                 `protobuf:"varint,7,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *short.UserShort       `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	Creator       *short.UserShort       `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob    string                 `protobuf:"bytes,9,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

@@ -25,7 +25,7 @@ const (
 
 type Job struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty" alias:"name" sql:"primary_key"`
 	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
 	Grades        []*JobGrade            `protobuf:"bytes,3,rep,name=grades,proto3" json:"grades,omitempty"`
 	unknownFields protoimpl.UnknownFields

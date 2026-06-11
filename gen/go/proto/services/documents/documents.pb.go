@@ -625,7 +625,7 @@ func (b0 GetDocumentReferencesRequest_builder) Build() *GetDocumentReferencesReq
 
 type GetDocumentReferencesResponse struct {
 	state         protoimpl.MessageState          `protogen:"hybrid.v1"`
-	References    []*references.DocumentReference `protobuf:"bytes,1,rep,name=references,proto3" json:"references,omitempty"`
+	References    []*references.DocumentReference `protobuf:"bytes,1,rep,name=references,proto3" json:"references,omitempty" alias:"reference"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -739,7 +739,7 @@ func (b0 GetDocumentRelationsRequest_builder) Build() *GetDocumentRelationsReque
 
 type GetDocumentRelationsResponse struct {
 	state         protoimpl.MessageState        `protogen:"hybrid.v1"`
-	Relations     []*relations.DocumentRelation `protobuf:"bytes,1,rep,name=relations,proto3" json:"relations,omitempty"`
+	Relations     []*relations.DocumentRelation `protobuf:"bytes,1,rep,name=relations,proto3" json:"relations,omitempty" alias:"relation"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1314,7 +1314,7 @@ func (b0 UpdateDocumentResponse_builder) Build() *UpdateDocumentResponse {
 
 type DeleteDocumentRequest struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
 	Reason        *string                `protobuf:"bytes,2,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1842,15 +1842,15 @@ func (b0 CreateDocumentResponse_builder) Build() *CreateDocumentResponse {
 
 type UpdateDocumentRequest struct {
 	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
-	DocumentId    int64                   `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	DocumentId    int64                   `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
 	CategoryId    *int64                  `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
-	Title         string                  `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Title         string                  `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty" alias:"title"`
 	Content       *content.Content        `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
 	ContentType   content.ContentType     `protobuf:"varint,5,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	Data          *data.DocumentData      `protobuf:"bytes,6,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	Meta          *documents.DocumentMeta `protobuf:"bytes,7,opt,name=meta,proto3" json:"meta,omitempty"`
 	Access        *access.DocumentAccess  `protobuf:"bytes,11,opt,name=access,proto3,oneof" json:"access,omitempty"`
-	Files         []*file.File            `protobuf:"bytes,12,rep,name=files,proto3" json:"files,omitempty"`
+	Files         []*file.File            `protobuf:"bytes,12,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3684,7 +3684,7 @@ func (b0 ToggleDocumentPinRequest_builder) Build() *ToggleDocumentPinRequest {
 
 type ToggleDocumentPinResponse struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Pin           *pins.DocumentPin      `protobuf:"bytes,1,opt,name=pin,proto3,oneof" json:"pin,omitempty"`
+	Pin           *pins.DocumentPin      `protobuf:"bytes,1,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

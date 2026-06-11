@@ -908,7 +908,7 @@ export const WikiService = new ServiceType("services.wiki.WikiService", [
     { name: "CreatePage", options: { "codegen.perms.perms": { enabled: true } }, I: CreatePageRequest, O: CreatePageResponse },
     { name: "UpdatePage", options: { "codegen.perms.perms": { enabled: true, names: ["UpdatePage", "CreatePage"], attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Public"] }] } }, I: UpdatePageRequest, O: UpdatePageResponse },
     { name: "DeletePage", options: { "codegen.perms.perms": { enabled: true } }, I: DeletePageRequest, O: DeletePageResponse },
-    { name: "MovePage", options: { "codegen.perms.perms": { enabled: true, name: "UpdatePage" } }, I: MovePageRequest, O: MovePageResponse },
+    { name: "MovePage", options: { "codegen.perms.perms": { enabled: true } }, I: MovePageRequest, O: MovePageResponse },
     { name: "ListPageActivity", options: { "codegen.perms.perms": { enabled: true } }, I: ListPageActivityRequest, O: ListPageActivityResponse },
     { name: "UploadFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, names: ["CreatePage", "UpdatePage"] } }, I: UploadFileRequest, O: UploadFileResponse }
 ], { "codegen.perms.perms_svc": { order: 110, icon: "i-mdi-brain" } });

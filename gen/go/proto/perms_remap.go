@@ -541,9 +541,6 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	"wiki.WikiService/GetPage": {
 		permswiki.WikiService.ListPages.Perm,
 	},
-	"wiki.WikiService/MovePage": {
-		permswiki.WikiService.UpdatePage.Perm,
-	},
 	"wiki.WikiService/UpdatePage": {
 		permswiki.WikiService.UpdatePage.Perm, permswiki.WikiService.CreatePage.Perm,
 	},

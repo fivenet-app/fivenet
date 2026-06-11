@@ -1213,7 +1213,7 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12G\n" +
-	"\bactivity\x18\x02 \x03(\v2%.resources.wiki.activity.PageActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xda\x06\n" +
+	"\bactivity\x18\x02 \x03(\v2%.resources.wiki.activity.PageActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xce\x06\n" +
 	"\vWikiService\x12V\n" +
 	"\tListPages\x12\x1f.services.wiki.ListPagesRequest\x1a .services.wiki.ListPagesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12[\n" +
 	"\aGetPage\x12\x1d.services.wiki.GetPageRequest\x1a\x1e.services.wiki.GetPageResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tListPages\x12Y\n" +
@@ -1225,9 +1225,8 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"CreatePage:\x12\n" +
 	"\x06Fields\x18\x01\"\x06Public\x12Y\n" +
 	"\n" +
-	"DeletePage\x12 .services.wiki.DeletePageRequest\x1a!.services.wiki.DeletePageResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12_\n" +
-	"\bMovePage\x12\x1e.services.wiki.MovePageRequest\x1a\x1f.services.wiki.MovePageResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
-	"UpdatePage\x12k\n" +
+	"DeletePage\x12 .services.wiki.DeletePageRequest\x1a!.services.wiki.DeletePageResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12S\n" +
+	"\bMovePage\x12\x1e.services.wiki.MovePageRequest\x1a\x1f.services.wiki.MovePageResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12k\n" +
 	"\x10ListPageActivity\x12&.services.wiki.ListPageActivityRequest\x1a'.services.wiki.ListPageActivityResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
 	"\n" +
 	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1e\xd2\xf3\x18\x1a\b\x01*\n" +

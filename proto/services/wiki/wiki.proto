@@ -116,10 +116,7 @@ service WikiService {
   }
 
   rpc MovePage(MovePageRequest) returns (MovePageResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "UpdatePage"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
 
   rpc ListPageActivity(ListPageActivityRequest) returns (ListPageActivityResponse) {

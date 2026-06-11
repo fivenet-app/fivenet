@@ -41,7 +41,7 @@ type JobProps struct {
 	DiscordSyncChanges  *settings.DiscordSyncChanges  `protobuf:"bytes,10,opt,name=discord_sync_changes,json=discordSyncChanges,proto3,oneof" json:"discord_sync_changes,omitempty"`
 	Motd                *string                       `protobuf:"bytes,11,opt,name=motd,proto3,oneof" json:"motd,omitempty"`
 	LogoFileId          *int64                        `protobuf:"varint,12,opt,name=logo_file_id,json=logoFileId,proto3,oneof" json:"logo_file_id,omitempty"`
-	LogoFile            *file.File                    `protobuf:"bytes,13,opt,name=logo_file,json=logoFile,proto3,oneof" json:"logo_file,omitempty"`
+	LogoFile            *file.File                    `protobuf:"bytes,13,opt,name=logo_file,json=logoFile,proto3,oneof" json:"logo_file,omitempty" alias:"logo_file"`
 	Settings            *settings.JobSettings         `protobuf:"bytes,14,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache

@@ -78,9 +78,9 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 
 type Access struct {
 	state          protoimpl.MessageState `protogen:"hybrid.v1"`
-	Jobs           []*JobAccess           `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
-	Users          []*UserAccess          `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty"`
-	Qualifications []*QualificationAccess `protobuf:"bytes,3,rep,name=qualifications,proto3" json:"qualifications,omitempty"`
+	Jobs           []*JobAccess           `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
+	Users          []*UserAccess          `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"user_access"`
+	Qualifications []*QualificationAccess `protobuf:"bytes,3,rep,name=qualifications,proto3" json:"qualifications,omitempty" alias:"qualification_access"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -163,7 +163,7 @@ func (b0 Access_builder) Build() *Access {
 
 type JobAccess struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`

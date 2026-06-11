@@ -71,15 +71,15 @@ func (x VehicleActivityType) Number() protoreflect.EnumNumber {
 
 type VehicleActivity struct {
 	state           protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"vehicle_activity.id"`
+	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"user_activity.created_at"`
 	Plate           string                 `protobuf:"bytes,3,opt,name=plate,proto3" json:"plate,omitempty"`
-	ActivityType    VehicleActivityType    `protobuf:"varint,4,opt,name=activity_type,json=activityType,proto3,enum=resources.vehicles.activity.VehicleActivityType" json:"activity_type,omitempty"`
+	ActivityType    VehicleActivityType    `protobuf:"varint,4,opt,name=activity_type,json=activityType,proto3,enum=resources.vehicles.activity.VehicleActivityType" json:"activity_type,omitempty" alias:"vehicle_activity.type"`
 	CreatorId       *int32                 `protobuf:"varint,5,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator         *short.UserShort       `protobuf:"bytes,6,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	Creator         *short.UserShort       `protobuf:"bytes,6,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob      string                 `protobuf:"bytes,7,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                `protobuf:"bytes,8,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Reason          *string                `protobuf:"bytes,9,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Reason          *string                `protobuf:"bytes,9,opt,name=reason,proto3,oneof" json:"reason,omitempty" alias:"user_activity.reason"`
 	Data            *VehicleActivityData   `protobuf:"bytes,10,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache

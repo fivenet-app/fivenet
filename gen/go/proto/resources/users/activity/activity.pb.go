@@ -103,18 +103,18 @@ func (x UserActivityType) Number() protoreflect.EnumNumber {
 
 type UserActivity struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type          UserActivityType       `protobuf:"varint,2,opt,name=type,proto3,enum=resources.users.activity.UserActivityType" json:"type,omitempty"`
-	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	SourceUserId  *int32                 `protobuf:"varint,4,opt,name=source_user_id,json=sourceUserId,proto3,oneof" json:"source_user_id,omitempty"`
-	SourceUser    *short.UserShort       `protobuf:"bytes,5,opt,name=source_user,json=sourceUser,proto3,oneof" json:"source_user,omitempty"`
-	TargetUserId  int32                  `protobuf:"varint,6,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
-	TargetUser    *short.UserShort       `protobuf:"bytes,7,opt,name=target_user,json=targetUser,proto3" json:"target_user,omitempty"`
-	Key           string                 `protobuf:"bytes,8,opt,name=key,proto3" json:"key,omitempty"`
-	Reason        string                 `protobuf:"bytes,9,opt,name=reason,proto3" json:"reason,omitempty"`
-	Data          *UserActivityData      `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty"`
-	OldValue      string                 `protobuf:"bytes,11,opt,name=old_value,json=oldValue,proto3" json:"old_value,omitempty"`
-	NewValue      string                 `protobuf:"bytes,12,opt,name=new_value,json=newValue,proto3" json:"new_value,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"user_activity.id"`
+	Type          UserActivityType       `protobuf:"varint,2,opt,name=type,proto3,enum=resources.users.activity.UserActivityType" json:"type,omitempty" alias:"user_activity.type"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"user_activity.created_at"`
+	SourceUserId  *int32                 `protobuf:"varint,4,opt,name=source_user_id,json=sourceUserId,proto3,oneof" json:"source_user_id,omitempty" alias:"source_user_id"`
+	SourceUser    *short.UserShort       `protobuf:"bytes,5,opt,name=source_user,json=sourceUser,proto3,oneof" json:"source_user,omitempty" alias:"source_user"`
+	TargetUserId  int32                  `protobuf:"varint,6,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty" alias:"target_user_id"`
+	TargetUser    *short.UserShort       `protobuf:"bytes,7,opt,name=target_user,json=targetUser,proto3" json:"target_user,omitempty" alias:"target_user"`
+	Key           string                 `protobuf:"bytes,8,opt,name=key,proto3" json:"key,omitempty" alias:"user_activity.key"`
+	Reason        string                 `protobuf:"bytes,9,opt,name=reason,proto3" json:"reason,omitempty" alias:"user_activity.reason"`
+	Data          *UserActivityData      `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"user_activity.data"`
+	OldValue      string                 `protobuf:"bytes,11,opt,name=old_value,json=oldValue,proto3" json:"old_value,omitempty" alias:"user_activity.old_value"`
+	NewValue      string                 `protobuf:"bytes,12,opt,name=new_value,json=newValue,proto3" json:"new_value,omitempty" alias:"user_activity.new_value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

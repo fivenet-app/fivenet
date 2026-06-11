@@ -33,7 +33,7 @@ type Message struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ThreadId      int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
 	SenderId      int64                  `protobuf:"varint,3,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
-	Sender        *emails.Email          `protobuf:"bytes,4,opt,name=sender,proto3,oneof" json:"sender,omitempty"`
+	Sender        *emails.Email          `protobuf:"bytes,4,opt,name=sender,proto3,oneof" json:"sender,omitempty" alias:"sender"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,7,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`

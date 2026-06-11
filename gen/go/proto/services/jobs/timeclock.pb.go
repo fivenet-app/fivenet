@@ -594,7 +594,7 @@ func (b0 TimeclockDay_builder) Build() *TimeclockDay {
 
 type TimeclockWeekly struct {
 	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
-	Date          *timestamp.Timestamp        `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
+	Date          *timestamp.Timestamp        `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty" sql:"primary_key"`
 	Entries       []*timeclock.TimeclockEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
 	Sum           int64                       `protobuf:"varint,3,opt,name=sum,proto3" json:"sum,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -690,7 +690,7 @@ func (b0 TimeclockWeekly_builder) Build() *TimeclockWeekly {
 
 type TimeclockRange struct {
 	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
-	Date          *timestamp.Timestamp        `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
+	Date          *timestamp.Timestamp        `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty" sql:"primary_key"`
 	Entries       []*timeclock.TimeclockEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
 	Sum           int64                       `protobuf:"varint,3,opt,name=sum,proto3" json:"sum,omitempty"`
 	unknownFields protoimpl.UnknownFields

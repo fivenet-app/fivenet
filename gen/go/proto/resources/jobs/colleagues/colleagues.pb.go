@@ -28,7 +28,7 @@ const (
 
 type Colleague struct {
 	state                protoimpl.MessageState `protogen:"hybrid.v1"`
-	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
 	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
@@ -38,8 +38,8 @@ type Colleague struct {
 	Dateofbirth          string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
 	PhoneNumber          *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
 	ProfilePictureFileId *int64                 `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof" json:"profile_picture_file_id,omitempty"`
-	ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty"`
-	Props                *ColleagueProps        `protobuf:"bytes,19,opt,name=props,proto3" json:"props,omitempty"`
+	ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty" alias:"profile_picture"`
+	Props                *ColleagueProps        `protobuf:"bytes,19,opt,name=props,proto3" json:"props,omitempty" alias:"colleague_props"`
 	Email                *string                `protobuf:"bytes,20,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache

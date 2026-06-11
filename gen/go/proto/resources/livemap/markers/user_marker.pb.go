@@ -39,11 +39,11 @@ type UserMarker struct {
 	Job           string                 `protobuf:"bytes,7,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      string                 `protobuf:"bytes,8,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty"`
 	JobGrade      *int32                 `protobuf:"varint,13,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
-	User          *colleagues.Colleague  `protobuf:"bytes,9,opt,name=user,proto3" json:"user,omitempty"`
+	User          *colleagues.Colleague  `protobuf:"bytes,9,opt,name=user,proto3" json:"user,omitempty" alias:"user"`
 	UnitId        *int64                 `protobuf:"varint,10,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
 	Unit          *units.Unit            `protobuf:"bytes,11,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
 	Hidden        bool                   `protobuf:"varint,12,opt,name=hidden,proto3" json:"hidden,omitempty"`
-	Data          *UserMarkerData        `protobuf:"bytes,14,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	Data          *UserMarkerData        `protobuf:"bytes,14,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

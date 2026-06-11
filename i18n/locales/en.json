@@ -3908,6 +3908,10 @@
                 "CreatePage": {
                     "key": "Create Pages",
                     "description": "Creating wiki pages (does implicitly allow to update pages)"
+                },
+                "MovePage": {
+                    "key": "Change Page Order",
+                    "description": "Changing the order of user visible pages."
                 }
             }
         },

@@ -77,8 +77,8 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 
 type PageAccess struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Jobs          []*PageJobAccess       `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
-	Users         []*PageUserAccess      `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty"`
+	Jobs          []*PageJobAccess       `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
+	Users         []*PageUserAccess      `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"user_access"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

@@ -586,7 +586,7 @@ type AccountUpdate struct {
 	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	License       string                  `protobuf:"bytes,1,opt,name=license,proto3" json:"license,omitempty"`
 	Group         *string                 `protobuf:"bytes,2,opt,name=group,proto3,oneof" json:"group,omitempty"`
-	Groups        *accounts.AccountGroups `protobuf:"bytes,3,opt,name=groups,proto3" json:"groups,omitempty"`
+	Groups        *accounts.AccountGroups `protobuf:"bytes,3,opt,name=groups,proto3" json:"groups,omitempty" alias:"groups"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

@@ -132,6 +132,7 @@ export type GRPCServicePerms =
 	| 'wiki.WikiService/DeletePage'
 	| 'wiki.WikiService/ListPageActivity'
 	| 'wiki.WikiService/ListPages'
+	| 'wiki.WikiService/MovePage'
 	| 'wiki.WikiService/UpdatePage'
 	| 'wiki.WikiService/UploadFile';
 
@@ -250,6 +251,7 @@ export const GRPCServiceMethods = [
 	'wiki.WikiService/DeletePage',
 	'wiki.WikiService/ListPageActivity',
 	'wiki.WikiService/ListPages',
+	'wiki.WikiService/MovePage',
 	'wiki.WikiService/UpdatePage',
 	'wiki.WikiService/UploadFile',
 ];
@@ -551,6 +553,8 @@ export const PermAttributes = {
 	'wiki.WikiService/ListPageActivity': {
 	},
 	'wiki.WikiService/ListPages': {
+	},
+	'wiki.WikiService/MovePage': {
 	},
 	'wiki.WikiService/UpdatePage': {
 		'Fields': {

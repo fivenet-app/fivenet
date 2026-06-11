@@ -3908,6 +3908,10 @@
                 "CreatePage": {
                     "key": "Seiten erstellen",
                     "description": "Lexikon Seiten erstellen können (erlaubt implizit das Aktualisieren von Seiten)."
+                },
+                "MovePage": {
+                    "key": "Seiten-Reihenfolge ändern",
+                    "description": "Die Reihenfolge der User sichtbaren Seiten verändern."
                 }
             }
         },

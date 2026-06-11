@@ -84,7 +84,7 @@ func (b0 Labels_builder) Build() *Labels {
 
 type Label struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	Job           *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`

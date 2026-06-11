@@ -72,8 +72,8 @@ func (x UnitAccessLevel) Number() protoreflect.EnumNumber {
 
 type UnitAccess struct {
 	state          protoimpl.MessageState     `protogen:"hybrid.v1"`
-	Jobs           []*UnitJobAccess           `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
-	Qualifications []*UnitQualificationAccess `protobuf:"bytes,3,rep,name=qualifications,proto3" json:"qualifications,omitempty"`
+	Jobs           []*UnitJobAccess           `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
+	Qualifications []*UnitQualificationAccess `protobuf:"bytes,3,rep,name=qualifications,proto3" json:"qualifications,omitempty" alias:"qualification_access"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }

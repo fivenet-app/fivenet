@@ -28,7 +28,7 @@ const (
 
 type Account struct {
 	state          protoimpl.MessageState  `protogen:"hybrid.v1"`
-	Id             int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id             int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key"`
 	CreatedAt      *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt      *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt      *timestamp.Timestamp    `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -37,7 +37,7 @@ type Account struct {
 	License        string                  `protobuf:"bytes,7,opt,name=license,proto3" json:"license,omitempty"`
 	Groups         *AccountGroups          `protobuf:"bytes,8,opt,name=groups,proto3,oneof" json:"groups,omitempty"`
 	LastChar       *int32                  `protobuf:"varint,9,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
-	Oauth2Accounts []*oauth2.OAuth2Account `protobuf:"bytes,10,rep,name=oauth2_accounts,json=oauth2Accounts,proto3" json:"oauth2_accounts,omitempty"`
+	Oauth2Accounts []*oauth2.OAuth2Account `protobuf:"bytes,10,rep,name=oauth2_accounts,json=oauth2Accounts,proto3" json:"oauth2_accounts,omitempty" alias:"oauth2_account"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -325,7 +325,7 @@ type Character struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Available     bool                   `protobuf:"varint,1,opt,name=available,proto3" json:"available,omitempty"`
 	Group         string                 `protobuf:"bytes,2,opt,name=group,proto3" json:"group,omitempty"`
-	Char          *users.User            `protobuf:"bytes,3,opt,name=char,proto3" json:"char,omitempty"`
+	Char          *users.User            `protobuf:"bytes,3,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

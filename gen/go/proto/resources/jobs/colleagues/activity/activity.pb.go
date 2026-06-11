@@ -92,13 +92,13 @@ func (x ColleagueActivityType) Number() protoreflect.EnumNumber {
 
 type ColleagueActivity struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
 	SourceUserId  *int32                 `protobuf:"varint,5,opt,name=source_user_id,json=sourceUserId,proto3,oneof" json:"source_user_id,omitempty"`
-	SourceUser    *colleagues.Colleague  `protobuf:"bytes,6,opt,name=source_user,json=sourceUser,proto3,oneof" json:"source_user,omitempty"`
+	SourceUser    *colleagues.Colleague  `protobuf:"bytes,6,opt,name=source_user,json=sourceUser,proto3,oneof" json:"source_user,omitempty" alias:"source_user"`
 	TargetUserId  int32                  `protobuf:"varint,7,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
-	TargetUser    *colleagues.Colleague  `protobuf:"bytes,8,opt,name=target_user,json=targetUser,proto3" json:"target_user,omitempty"`
+	TargetUser    *colleagues.Colleague  `protobuf:"bytes,8,opt,name=target_user,json=targetUser,proto3" json:"target_user,omitempty" alias:"target_user"`
 	ActivityType  ColleagueActivityType  `protobuf:"varint,9,opt,name=activity_type,json=activityType,proto3,enum=resources.jobs.colleagues.activity.ColleagueActivityType" json:"activity_type,omitempty"`
 	Reason        string                 `protobuf:"bytes,10,opt,name=reason,proto3" json:"reason,omitempty"`
 	Data          *ColleagueActivityData `protobuf:"bytes,11,opt,name=data,proto3" json:"data,omitempty"`
