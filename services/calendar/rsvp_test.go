@@ -17,6 +17,8 @@ import (
 )
 
 func TestValidateRecurringOccurrenceKey(t *testing.T) {
+	t.Parallel()
+
 	start := time.Date(2026, 6, 1, 10, 0, 0, 0, time.UTC)
 
 	entry := &calendarentries.CalendarEntry{
@@ -74,6 +76,8 @@ func TestValidateRecurringOccurrenceKey(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			err := validateRecurringOccurrenceKey(entry, tt.key)
 			if !errors.Is(err, tt.want) {
 				t.Fatalf("expected %v, got %v", tt.want, err)

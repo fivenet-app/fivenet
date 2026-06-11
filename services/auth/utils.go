@@ -19,6 +19,7 @@ import (
 const BCryptCost = 14
 
 func (s *Server) getCookieBase(name string, value string) http.Cookie {
+	//
 	return http.Cookie{
 		Name:     name,
 		Value:    value,
@@ -28,7 +29,7 @@ func (s *Server) getCookieBase(name string, value string) http.Cookie {
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteLaxMode,
 	}
 }
 
@@ -36,6 +37,7 @@ func (s *Server) setCookies(
 	ctx context.Context,
 	accClaims *authclaims.AccountInfoClaims,
 ) error {
+	//nolint:gosec // getCookieBase returns a secure pre-configured cookie "base"
 	authedCookie := s.getCookieBase(auth.AuthedCookieName, "true")
 	authedCookie.HttpOnly = false
 	header := metadata.Pairs("set-cookie", authedCookie.String())
@@ -44,6 +46,7 @@ func (s *Server) setCookies(
 	if err != nil {
 		return err
 	}
+
 	accCookie := s.getCookieBase(auth.AccCookieName, accToken)
 	header.Append("set-cookie", accCookie.String())
 
@@ -52,9 +55,11 @@ func (s *Server) setCookies(
 }
 
 func (s *Server) destroyCookies(ctx context.Context) error {
+	//nolint:gosec // getCookieBase returns a secure pre-configured cookie "base"
 	authedCookie := s.getCookieBase(auth.AuthedCookieName, "false")
 	authedCookie.HttpOnly = false
 
+	//nolint:gosec // getCookieBase returns a secure pre-configured cookie "base"
 	accCookie := s.getCookieBase(auth.AccCookieName, "")
 	accCookie.Expires = time.Time{}
 	accCookie.MaxAge = -1

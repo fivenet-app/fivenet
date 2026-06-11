@@ -38,7 +38,7 @@ func TestCalendarEntriesQueryUsesExplicitLimit(t *testing.T) {
 	require.NotEmpty(t, args, "expected limit arguments")
 	assert.Equal(
 		t,
-		int64(maxCalendarEntriesLimit),
+		maxCalendarEntriesLimit,
 		args[len(args)-1],
 		"expected limit argument %d, got %#v",
 		maxCalendarEntriesLimit,

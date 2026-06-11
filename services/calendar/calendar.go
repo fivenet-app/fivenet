@@ -630,8 +630,8 @@ func (s *Server) UpdateCalendar(
 			ctx,
 			tx,
 			req.GetCalendar().GetId(),
-			req.GetCalendar().GetAccess().GetJobs(),
-			req.GetCalendar().GetAccess().GetUsers(),
+			access.GetJobs(),
+			access.GetUsers(),
 			nil,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)

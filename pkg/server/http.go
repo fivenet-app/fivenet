@@ -205,7 +205,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 		MaxAge:   int((6 * time.Hour).Seconds()),
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteLaxMode,
 	})
 	e.Use(sessions.SessionsMany([]string{"fivenet_oauth2_state"}, sessStore))
 

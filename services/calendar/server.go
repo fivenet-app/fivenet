@@ -226,6 +226,10 @@ func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry
 		return err
 	}
 
+	if err := registry.UnregisterCronjob(ctx, "calendar.discord_reminders"); err != nil {
+		return err
+	}
+
 	return nil
 }
 

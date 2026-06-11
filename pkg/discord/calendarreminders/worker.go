@@ -29,8 +29,6 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const cronName = "calendar.discord_reminders"
-
 type sendReminderMessageFn func(channelID discord.ChannelID, data api.SendMessageData) error
 
 type Worker struct {

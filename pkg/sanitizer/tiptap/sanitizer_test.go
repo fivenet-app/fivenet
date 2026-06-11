@@ -681,8 +681,7 @@ func TestSanitizerImageWithAndAlign(t *testing.T) {
 	)
 	assert.Equal(
 		t,
-		firstNodeAttrs["align"],
-		"left",
+		"left", firstNodeAttrs["align"],
 		"expected align value to be reset to left due to invalid input",
 	)
 
@@ -713,8 +712,7 @@ func TestSanitizerImageWithAndAlign(t *testing.T) {
 	assert.InDelta(t, float64(50), firstNodeAttrs["height"], 0.000001)
 	assert.Equal(
 		t,
-		firstNodeAttrs["align"],
-		"center",
+		"center", firstNodeAttrs["align"],
 		"expected align value to be center because it is a valid value",
 	)
 }

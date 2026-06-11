@@ -9,8 +9,6 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-const cleanupLimit = 1000
-
 func (s *Server) cleanupStaleCalendarRSVPOccurrences(
 	ctx context.Context,
 	tx *sql.Tx,
@@ -33,8 +31,7 @@ func (s *Server) cleanupStaleCalendarRSVPOccurrences(
 			tCalendarRSVPOccurrence.RecurrenceVersion.NOT_EQ(
 				tCalendarEntry.RecurrenceVersion,
 			),
-		)).
-		LIMIT(1000)
+		))
 
 	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
@@ -64,8 +61,7 @@ func (s *Server) cleanupOrphanedCalendarRSVPOccurrences(
 		WHERE(mysql.AND(
 			tCalendarRSVPOccurrence.CreatedAt.LT(mysql.TimestampT(cutoff)),
 			tCalendarEntry.ID.IS_NULL(),
-		)).
-		LIMIT(1000)
+		))
 
 	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
