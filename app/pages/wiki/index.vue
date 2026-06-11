@@ -3,9 +3,9 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
+import { pageToURL } from '~/components/wiki/helpers';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
 import PageSearch from '~/components/wiki/PageSearch.vue';
-import { getWikiWikiClient } from '~~/gen/ts/clients';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
 useHead({
@@ -20,31 +20,25 @@ definePageMeta({
 
 const { activeChar, can } = useAuth();
 
-const wikiWikiClient = await getWikiWikiClient();
+const { listPages: listWikiPages } = await useWikiWiki();
 
 const { data: pages, status, refresh, error } = useLazyAsyncData(`wiki-pages-index`, () => listPages());
 
 async function listPages(): Promise<PageShort[]> {
-    try {
-        const call = wikiWikiClient.listPages({
-            pagination: {
-                offset: 0,
-            },
-            rootOnly: true,
-        });
-        const { response } = await call;
+    const response = await listWikiPages({
+        pagination: {
+            offset: 0,
+        },
+        rootOnly: true,
+    });
 
-        const pages = response.pages.sort((a, b) => (a.jobLabel ?? a.job).localeCompare(b.jobLabel ?? b.job));
-        if (pages.length > 0) {
-            const ownPageIdx = pages.findIndex((p) => p.job === activeChar.value?.job);
-            pages.unshift(pages.splice(ownPageIdx, 1)[0]!);
-        }
-
-        return pages;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
+    const pages = response.pages.sort((a, b) => (a.jobLabel ?? a.job).localeCompare(b.jobLabel ?? b.job));
+    if (pages.length > 0) {
+        const ownPageIdx = pages.findIndex((p) => p.job === activeChar.value?.job);
+        pages.unshift(pages.splice(ownPageIdx, 1)[0]!);
     }
+
+    return pages;
 }
 
 watch(pages, async () => {
@@ -125,7 +119,7 @@ const wikiService = await useWikiWiki();
                     v-for="p in pages"
                     :key="p.id"
                     :title="`${p.jobLabel} ${$t('common.wiki')}`"
-                    :to="`/wiki/${p.job}/${p.id}/${p.slug ?? ''}`"
+                    :to="pageToURL(p)"
                     icon="i-mdi-brain"
                     :ui="{ title: 'text-xl', leadingIcon: 'h-10 w-10' }"
                 >

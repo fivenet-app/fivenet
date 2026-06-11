@@ -44,6 +44,7 @@ const route = useRoute<'wiki-job-id-slug-edit'>();
 const logger = useLogger('📃 Wiki');
 
 const wikiClient = await getWikiWikiClient();
+const { getPage: getWikiPage, listPages: listWikiPages, updatePage: updateWikiPage } = await useWikiWiki();
 
 const {
     data: page,
@@ -54,15 +55,8 @@ const {
 
 async function getPage(id: number): Promise<Page | undefined> {
     try {
-        const call = wikiClient.getPage({
-            id: id,
-        });
-        const { response } = await call;
-
-        return response.page;
+        return await getWikiPage(id);
     } catch (e) {
-        handleGRPCError(e as RpcError);
-
         await navigateTo({
             name: 'wiki-job-id-slug',
             params: { job: route.params.job, id: route.params.id, slug: [route.params.slug] },
@@ -136,21 +130,15 @@ const {
 
 async function listPages(): Promise<PageShort[]> {
     const job = route.params.job ?? activeChar.value?.job ?? '';
-    try {
-        const call = wikiClient.listPages({
-            pagination: {
-                offset: 0,
-            },
-            job: job,
-            rootOnly: false,
-        });
-        const { response } = await call;
+    const response = await listWikiPages({
+        pagination: {
+            offset: 0,
+        },
+        job: job,
+        rootOnly: false,
+    });
 
-        return response.pages;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
+    return response.pages;
 }
 
 const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
@@ -262,29 +250,19 @@ async function updatePage(values: Schema): Promise<void> {
         files: values.files,
     };
 
-    try {
-        let responsePage: Page | undefined = undefined;
-        const call = wikiClient.updatePage({
-            page: req,
-        });
-        const { response } = await call;
-        responsePage = response.page;
+    const responsePage = await updateWikiPage(req);
 
-        notifications.add({
-            title: { key: 'notifications.action_successful.title', parameters: {} },
-            description: { key: 'notifications.action_successful.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
+    notifications.add({
+        title: { key: 'notifications.action_successful.title', parameters: {} },
+        description: { key: 'notifications.action_successful.content', parameters: {} },
+        type: NotificationType.SUCCESS,
+    });
 
-        if (responsePage) {
-            page.value = responsePage;
-        }
-
-        syncSnapshot();
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
+    if (responsePage) {
+        page.value = responsePage;
     }
+
+    syncSnapshot();
 }
 
 type PageItem = { id: number; title: string; draft: boolean };

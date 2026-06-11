@@ -48,3 +48,21 @@ export function pageToURL(page: PageShort | Page, fullUrl: boolean = false): str
         return `${base}/wiki/${page.job}/${page.id}/${page?.meta?.slug ?? ''}`;
     }
 }
+
+export function pageEditURL(page: PageShort | Page): string {
+    return `${pageToURL(page)}/edit`;
+}
+
+export function sameWikiMoveGroup(left: PageShort | undefined, right: PageShort | undefined): boolean {
+    if (!left || !right) return true;
+
+    const leftParentId = left.parentId ?? 0;
+    const rightParentId = right.parentId ?? 0;
+    if (leftParentId !== rightParentId) return false;
+
+    if (leftParentId === 0) {
+        return left.startpage === right.startpage;
+    }
+
+    return true;
+}

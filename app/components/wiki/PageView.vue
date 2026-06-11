@@ -10,17 +10,17 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { jsonNodeToTocLinks } from '~/utils/content';
-import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
 import DraftBadge from '../partials/DraftBadge.vue';
 import GenericImg from '../partials/elements/GenericImg.vue';
+import PageListSlideover from './PageListSlideover.vue';
 import RefreshButton from '../partials/RefreshButton.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
 import List from './activity/List.vue';
-import { checkPageAccess } from './helpers';
+import { checkPageAccess, pageEditURL, pageToURL } from './helpers';
 import PageSearch from './PageSearch.vue';
 
 const props = defineProps<{
@@ -29,6 +29,7 @@ const props = defineProps<{
     navItems?: NavigationMenuItem[];
     status: AsyncDataRequestStatus;
     refresh: () => Promise<void>;
+    pagesRefresh: () => Promise<void>;
     error: Error | undefined;
 }>();
 
@@ -40,9 +41,28 @@ const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
-const wikiWikiClient = await getWikiWikiClient();
+const { deletePage: deleteWikiPage } = await useWikiWiki();
 
 const confirmModal = overlay.create(ConfirmModal);
+const canManagePage = computed(
+    () =>
+        props.page !== undefined &&
+        can('wiki.WikiService/UpdatePage').value &&
+        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.EDIT, props.page?.job),
+);
+
+function openPageListSlideover(): void {
+    if (!props.page) return;
+
+    overlay
+        .create(PageListSlideover, {
+            props: {
+                job: props.page.job,
+                refresh: props.pagesRefresh,
+            },
+        })
+        .open();
+}
 
 const breadcrumbs = computed(() => {
     const breadcrumbList: { label: string; icon?: string; to?: string }[] = [
@@ -59,7 +79,7 @@ const breadcrumbs = computed(() => {
                 if (page.id !== 0) {
                     breadcrumbList.push({
                         label: page.title || t('common.untitled'),
-                        to: `/wiki/${page.job}/${page.id}/${page.slug}`,
+                        to: pageToURL(page),
                     });
                 }
 
@@ -85,36 +105,28 @@ const breadcrumbs = computed(() => {
 });
 
 async function deletePage(id: number): Promise<void> {
-    try {
-        const call = wikiWikiClient.deletePage({
-            id: id,
+    await deleteWikiPage(id);
+
+    notifications.add({
+        title: { key: 'notifications.action_successful.title', parameters: {} },
+        description: { key: 'notifications.action_successful.content', parameters: {} },
+        type: NotificationType.SUCCESS,
+    });
+
+    // If the deleted page is not the "top page", navigate to it
+    if (props.pages[0] && props.page?.id !== props.pages[0].id) {
+        await navigateTo({
+            name: 'wiki-job-id-slug',
+            params: {
+                job: props.pages[0].job,
+                id: props.pages[0].id,
+                slug: [props.pages[0].slug ?? ''],
+            },
         });
-        await call;
-
-        notifications.add({
-            title: { key: 'notifications.action_successful.title', parameters: {} },
-            description: { key: 'notifications.action_successful.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
-
-        // If the deleted page is not the "top page", navigate to it
-        if (props.pages[0] && props.page?.id !== props.pages[0].id) {
-            await navigateTo({
-                name: 'wiki-job-id-slug',
-                params: {
-                    job: props.pages[0].job,
-                    id: props.pages[0].id,
-                    slug: [props.pages[0].slug ?? ''],
-                },
-            });
-            return;
-        }
-
-        await navigateTo('/wiki');
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
+        return;
     }
+
+    await navigateTo('/wiki');
 }
 
 const wikiService = await useWikiWiki();
@@ -187,7 +199,7 @@ const surround = computedAsync(async () => {
                   id: prev.id,
                   title: prev.title || '',
                   description: prev.description ?? '',
-                  path: `/wiki/${prev.job}/${prev.id}/${prev.slug}`,
+                  path: pageToURL(prev),
               }
             : undefined,
         next
@@ -195,7 +207,7 @@ const surround = computedAsync(async () => {
                   id: next.id,
                   title: next.title || '',
                   description: next.description ?? '',
-                  path: `/wiki/${next.job}/${next.id}/${next.slug}`,
+                  path: pageToURL(next),
               }
             : undefined,
     ];
@@ -301,18 +313,17 @@ const scrollRef = useTemplateRef('scrollRef');
                             <template #links>
                                 <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
 
-                                <UTooltip
-                                    v-if="
-                                        can('wiki.WikiService/UpdatePage').value &&
-                                        checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT, page?.job)
-                                    "
-                                    :text="$t('common.edit')"
-                                >
+                                <UTooltip v-if="canManagePage" :text="$t('common.change_order')">
                                     <UButton
                                         color="neutral"
-                                        icon="i-mdi-pencil"
-                                        :to="`/wiki/${page.job}/${page.id}/${page.meta.slug ?? ''}/edit`"
+                                        icon="i-mdi-swap-vertical"
+                                        variant="outline"
+                                        @click="openPageListSlideover"
                                     />
+                                </UTooltip>
+
+                                <UTooltip v-if="canManagePage" :text="$t('common.edit')">
+                                    <UButton color="neutral" icon="i-mdi-pencil" :to="pageEditURL(page)" />
                                 </UTooltip>
 
                                 <UTooltip
