@@ -496,7 +496,7 @@
         "click_here": "Klicke hier",
         "yes": "Ja",
         "no": "Nein",
-        "page": "Seite",
+        "page": "Seite | Seiten",
         "department": "Dienststelle",
         "none": "Keine {0}",
         "department_postal": "Postleitzahl der Dienststelle",
@@ -800,7 +800,8 @@
         "invite": "Einladen",
         "zoom_to_fit": "An Bildschirm anpassen",
         "rotate_left": "Nach links rotieren",
-        "rotate_right": "Nach rechts rotieren"
+        "rotate_right": "Nach rechts rotieren",
+        "change_order": "Reihenfolge ändern"
     },
     "components": {
         "partials": {
@@ -3907,6 +3908,10 @@
                 "CreatePage": {
                     "key": "Seiten erstellen",
                     "description": "Lexikon Seiten erstellen können (erlaubt implizit das Aktualisieren von Seiten)."
+                },
+                "MovePage": {
+                    "key": "Seiten-Reihenfolge ändern",
+                    "description": "Die Reihenfolge der User sichtbaren Seiten verändern."
                 }
             }
         },

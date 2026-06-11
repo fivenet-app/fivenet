@@ -513,6 +513,10 @@ linters:
       # Default: false
       report-error-in-defer: false
 
+    goconst:
+      ignore-string-values:
+        - '\* \* \* \* \*'
+
   exclusions:
     # Log a warning if an exclusion rule is unused.
     warn-unused: true

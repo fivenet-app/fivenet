@@ -496,7 +496,7 @@
         "click_here": "Click here",
         "yes": "Yes",
         "no": "No",
-        "page": "Page",
+        "page": "Page | Pages",
         "department": "Department",
         "none": "No {0}",
         "department_postal": "Department Postal",
@@ -800,7 +800,8 @@
         "invite": "Invite",
         "zoom_to_fit": "Zoom to Fit",
         "rotate_left": "Rotate Left",
-        "rotate_right": "Rotate Right"
+        "rotate_right": "Rotate Right",
+        "change_order": "Change Order"
     },
     "components": {
         "partials": {
@@ -3907,6 +3908,10 @@
                 "CreatePage": {
                     "key": "Create Pages",
                     "description": "Creating wiki pages (does implicitly allow to update pages)"
+                },
+                "MovePage": {
+                    "key": "Change Page Order",
+                    "description": "Changing the order of user visible pages."
                 }
             }
         },

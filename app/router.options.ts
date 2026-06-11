@@ -11,16 +11,15 @@ function decodeHash(hash: string) {
 
 function findIdAnchor(hash: string): { el: string; top: number } | undefined {
     // Try normal #id selector first (may throw if hash is not a valid selector)
-    let el: HTMLElement | null = null;
     try {
-        el = document.querySelector(hash) as HTMLElement | null;
-    } catch {
-        el = null;
-    }
-    if (!el) return;
+        const el = document.querySelector(hash) as HTMLElement | null;
+        if (!el) return;
 
-    const top = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
-    return { el: hash, top };
+        const top = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+        return { el: hash, top };
+    } catch {
+        return;
+    }
 }
 
 function findDataIdElement(hash: string): { el: HTMLElement; top: number } | undefined {

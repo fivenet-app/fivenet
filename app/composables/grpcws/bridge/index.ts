@@ -163,13 +163,8 @@ export class GrpcWSTransport implements RpcTransport {
                 defTrailer.promise,
             );
 
-        let timeoutId: NodeJS.Timeout | undefined;
-
         if (opt.abort) {
-            opt.abort.addEventListener('abort', (_) => {
-                if (timeoutId) clearTimeout(timeoutId);
-                transport.cancel();
-            });
+            opt.abort.addEventListener('abort', (_) => transport.cancel());
         }
 
         transport.start(new Metadata());
@@ -237,13 +232,8 @@ export class GrpcWSTransport implements RpcTransport {
                 defTrailer.promise,
             );
 
-        let timeoutId: NodeJS.Timeout | undefined;
-
         if (opt.abort) {
-            opt.abort.addEventListener('abort', (_) => {
-                if (timeoutId) clearTimeout(timeoutId);
-                transport.cancel();
-            });
+            opt.abort.addEventListener('abort', (_) => transport.cancel());
         }
 
         transport.start(new Metadata());
@@ -310,13 +300,8 @@ export class GrpcWSTransport implements RpcTransport {
                 defTrailer.promise,
             );
 
-        let timeoutId: NodeJS.Timeout | undefined;
-
         if (opt.abort) {
-            opt.abort.addEventListener('abort', (_) => {
-                if (timeoutId) clearTimeout(timeoutId);
-                transport.cancel();
-            });
+            opt.abort.addEventListener('abort', (_) => transport.cancel());
         }
 
         transport.start(new Metadata());

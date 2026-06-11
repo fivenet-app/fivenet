@@ -19,6 +19,7 @@ const (
 	WikiServiceDeletePagePerm            perms.Name = "DeletePage"
 	WikiServiceListPageActivityPerm      perms.Name = "ListPageActivity"
 	WikiServiceListPagesPerm             perms.Name = "ListPages"
+	WikiServiceMovePagePerm              perms.Name = "MovePage"
 	WikiServiceUpdatePagePerm            perms.Name = "UpdatePage"
 	WikiServiceUpdatePageFieldsPermField perms.Key  = "Fields"
 )
@@ -34,6 +35,7 @@ type WikiServicePerms struct {
 	DeletePage       WikiServiceDeletePagePermRef
 	ListPageActivity WikiServiceListPageActivityPermRef
 	ListPages        WikiServiceListPagesPermRef
+	MovePage         WikiServiceMovePagePermRef
 	UpdatePage       WikiServiceUpdatePagePermRef
 }
 type WikiServiceCreatePagePermRef struct {
@@ -46,6 +48,9 @@ type WikiServiceListPageActivityPermRef struct {
 	Perm perms.PermissionRef
 }
 type WikiServiceListPagesPermRef struct {
+	Perm perms.PermissionRef
+}
+type WikiServiceMovePagePermRef struct {
 	Perm perms.PermissionRef
 }
 type WikiServiceUpdatePagePermRef struct {
@@ -66,6 +71,9 @@ var WikiService = WikiServicePerms{
 	},
 	ListPages: WikiServiceListPagesPermRef{
 		Perm: perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceListPagesPerm),
+	},
+	MovePage: WikiServiceMovePagePermRef{
+		Perm: perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceMovePagePerm),
 	},
 	UpdatePage: WikiServiceUpdatePagePermRef{
 		Perm: perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceUpdatePagePerm),

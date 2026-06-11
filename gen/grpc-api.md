@@ -14124,6 +14124,25 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 
 
+### services.wiki.MovePageRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `page_id` | [int64](#int64) |  |  |
+| `before_id` | [int64](#int64) | optional |  |
+| `after_id` | [int64](#int64) | optional |  |
+
+
+
+
+
+### services.wiki.MovePageResponse
+
+
+
+
+
 ### services.wiki.UpdatePageRequest
 
 
@@ -14161,6 +14180,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `CreatePage` | [CreatePageRequest](#serviceswikiCreatePageRequest) | [CreatePageResponse](#serviceswikiCreatePageResponse) | |
 | `UpdatePage` | [UpdatePageRequest](#serviceswikiUpdatePageRequest) | [UpdatePageResponse](#serviceswikiUpdatePageResponse) | |
 | `DeletePage` | [DeletePageRequest](#serviceswikiDeletePageRequest) | [DeletePageResponse](#serviceswikiDeletePageResponse) | |
+| `MovePage` | [MovePageRequest](#serviceswikiMovePageRequest) | [MovePageResponse](#serviceswikiMovePageResponse) | |
 | `ListPageActivity` | [ListPageActivityRequest](#serviceswikiListPageActivityRequest) | [ListPageActivityResponse](#serviceswikiListPageActivityResponse) | |
 | `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) | |
 

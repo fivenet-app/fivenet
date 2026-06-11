@@ -4,14 +4,13 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import ListEntry from '~/components/wiki/activity/ListEntry.vue';
-import { getWikiWikiClient } from '~~/gen/ts/clients';
 import type { ListPageActivityResponse } from '~~/gen/ts/services/wiki/wiki';
 
 const props = defineProps<{
     pageId: number;
 }>();
 
-const wikiWikiClient = await getWikiWikiClient();
+const { listPageActivity: listWikiPageActivity } = await useWikiWiki();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
@@ -20,20 +19,12 @@ const { data, status, refresh, error } = useLazyAsyncData(`wiki-page:${props.pag
 );
 
 async function listPageActivity(): Promise<ListPageActivityResponse> {
-    try {
-        const call = wikiWikiClient.listPageActivity({
-            pagination: {
-                offset: calculateOffset(page.value, data.value?.pagination),
-            },
-            pageId: props.pageId,
-        });
-        const { response } = await call;
-
-        return response;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
+    return listWikiPageActivity({
+        pagination: {
+            offset: calculateOffset(page.value, data.value?.pagination),
+        },
+        pageId: props.pageId,
+    });
 }
 </script>
 

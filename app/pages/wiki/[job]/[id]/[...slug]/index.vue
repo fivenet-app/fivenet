@@ -5,7 +5,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
 import PageList from '~/components/wiki/PageList.vue';
 import PageView from '~/components/wiki/PageView.vue';
-import { getWikiWikiClient } from '~~/gen/ts/clients';
+import { pageToURL } from '~/components/wiki/helpers';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 
 definePageMeta({
@@ -28,7 +28,7 @@ const { activeChar } = useAuth();
 
 const route = useRoute('wiki-job-id-slug');
 
-const wikiWikiClient = await getWikiWikiClient();
+const { getPage: getWikiPage, listPages: listWikiPages } = await useWikiWiki();
 
 const {
     data: pages,
@@ -39,21 +39,15 @@ const {
 
 async function listPages(): Promise<PageShort[]> {
     const job = route.params.job ?? activeChar.value?.job ?? '';
-    try {
-        const call = wikiWikiClient.listPages({
-            pagination: {
-                offset: 0,
-            },
-            job: job,
-            rootOnly: false,
-        });
-        const { response } = await call;
+    const response = await listWikiPages({
+        pagination: {
+            offset: 0,
+        },
+        job: job,
+        rootOnly: false,
+    });
 
-        return response.pages;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
+    return response.pages;
 }
 
 const {
@@ -66,17 +60,7 @@ const {
 });
 
 async function getPage(id: number): Promise<Page | undefined> {
-    try {
-        const call = wikiWikiClient.getPage({
-            id: id,
-        });
-        const { response } = await call;
-
-        return response.page;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
+    return getWikiPage(id);
 }
 
 useHead({
@@ -97,7 +81,7 @@ function mapPageToNavItem(page: PageShort): NavigationMenuItem {
     const active = isActive(page);
     return {
         label: page.title || t('common.untitled'),
-        to: `/wiki/${page.job}/${page.id}/${page.slug ?? ''}`,
+        to: pageToURL(page),
         icon: page.deletedAt !== undefined ? 'i-mdi-delete' : page.draft ? 'i-mdi-pencil' : undefined,
         children: page.children.map((p) => mapPageToNavItem(p)),
         active: active,
@@ -109,7 +93,15 @@ const navItems = computed(() => pages.value?.map((p) => mapPageToNavItem(p)) ?? 
 </script>
 
 <template>
-    <PageView :status="status" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []" :nav-items="navItems ?? []">
+    <PageView
+        :status="status"
+        :error="error"
+        :refresh="refresh"
+        :pages-refresh="pagesRefresh"
+        :page="page"
+        :pages="pages ?? []"
+        :nav-items="navItems ?? []"
+    >
         <template #left>
             <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
 
