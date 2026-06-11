@@ -29,7 +29,7 @@ const props = defineProps<{
     entry?: CalendarEntry;
 }>();
 
-defineEmits<{
+const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
@@ -163,12 +163,15 @@ function openUpdateModal(): void {
     });
 }
 
-function openDeleteConfirmModal(): void {
+async function openDeleteConfirmModal(): Promise<void> {
     if (!entry.value) return;
 
-    confirmModal.open({
+    const response = await confirmModal.open({
         confirm: async () => entry.value && calendarStore.deleteCalendarEntry(entry.value.id),
     });
+    if (response) {
+        emits('close', false);
+    }
 }
 
 defineShortcuts({

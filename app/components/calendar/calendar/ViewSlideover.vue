@@ -16,7 +16,7 @@ const props = defineProps<{
     calendarId: number;
 }>();
 
-defineEmits<{
+const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
@@ -67,12 +67,15 @@ function openUpdateModal(): void {
     });
 }
 
-function openDeleteConfirmModal(): void {
+async function openDeleteConfirmModal(): Promise<void> {
     if (!calendar.value) return;
 
-    confirmModal.open({
+    const response = await confirmModal.open({
         confirm: async () => calendar.value && calendarStore.deleteCalendar(calendar.value.id),
     });
+    if (response) {
+        emits('close', false);
+    }
 }
 
 defineShortcuts({
