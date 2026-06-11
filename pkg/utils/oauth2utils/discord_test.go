@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/diamondburned/arikawa/v3/utils/httputil"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIsDiscordTokenExpired(t *testing.T) {
@@ -25,7 +26,9 @@ func TestIsDiscordTokenExpired(t *testing.T) {
 			name: "http error invalid grant body",
 			err: &httputil.HTTPError{
 				Status: 400,
-				Body:   []byte(`{"error":"invalid_grant","error_description":"refresh token is invalid"}`),
+				Body: []byte(
+					`{"error":"invalid_grant","error_description":"refresh token is invalid"}`,
+				),
 			},
 			want: true,
 		},
@@ -50,12 +53,11 @@ func TestIsDiscordTokenExpired(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
 			if got := IsDiscordTokenExpired(tt.err); got != tt.want {
-				t.Fatalf("IsDiscordTokenExpired() = %v, want %v", got, tt.want)
+				assert.Equal(t, tt.want, got)
 			}
 		})
 	}
