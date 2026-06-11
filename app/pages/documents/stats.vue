@@ -106,11 +106,18 @@ const allowedJobs = computed(() => {
     if (isSuperuser.value) return jobs.value.map((j) => ({ name: j.name, label: j.label }));
 
     // Map the job names from the attribute to "actual" jobs
-    return attrJobList('documents.StatsService/GetStats', 'Jobs').value.map((j) => {
+    const js = attrJobList('documents.StatsService/GetStats', 'Jobs').value.map((j) => {
         const job = jobs.value.find((js) => js.name === j);
 
         return { name: job?.name ?? j, label: job?.label ?? j };
     });
+
+    if (activeChar.value && !js.find((j) => j.name === activeChar.value?.job)) {
+        const job = jobs.value.find((j) => j.name === activeChar.value?.job);
+        if (job) js.push(job);
+    }
+
+    return js;
 });
 
 const canSeePenalties = computed(

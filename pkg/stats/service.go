@@ -470,12 +470,12 @@ func (s *Service) QueryDocumentsByCategory(
 
 	stmt := tRollup.
 		SELECT(
-			categoryIDExpr.AS("categoryvalue.id"),
-			categoryNameExpr.AS("categoryvalue.name"),
-			categoryColorExpr.AS("categoryvalue.color"),
-			categoryIconExpr.AS("categoryvalue.icon"),
-			tRollup.Job.AS("categoryvalue.job"),
-			mysql.SUM(tRollup.Value).AS("categoryvalue.value"),
+			categoryIDExpr.AS("category_value.id"),
+			categoryNameExpr.AS("category_value.name"),
+			categoryColorExpr.AS("category_value.color"),
+			categoryIconExpr.AS("category_value.icon"),
+			tRollup.Job.AS("category_value.job"),
+			mysql.SUM(tRollup.Value).AS("category_value.value"),
 		).
 		FROM(
 			tRollup.LEFT_JOIN(

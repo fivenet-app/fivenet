@@ -59,11 +59,10 @@ func (s *Server) GetStats(
 	}
 
 	allowedJobs := make([]string, 0, len(jobsList.GetStrings()))
-	userJob := strings.TrimSpace(userInfo.GetJob())
+	allowedJobs = append(allowedJobs, jobsList.GetStrings()...)
 	// User always has access to their own job
-	if len(allowedJobs) == 0 {
-		allowedJobs = append(allowedJobs, userJob)
-	}
+	userJob := strings.TrimSpace(userInfo.GetJob())
+	allowedJobs = append(allowedJobs, userJob)
 
 	allowedJobsSet := make(map[string]struct{}, len(allowedJobs))
 	for _, job := range allowedJobs {
