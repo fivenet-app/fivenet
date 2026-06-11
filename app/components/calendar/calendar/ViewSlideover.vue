@@ -56,37 +56,41 @@ const canDo = computed(() => ({
             calendar.value?.creatorJob,
         ),
 }));
+
+function openUpdateModal(): void {
+    if (!calendar.value) return;
+
+    calendarCreateOrUpdateModal.open({
+        calendarId: calendar.value.id,
+        systemManaged: isSystemManaged.value,
+        onRefresh: () => refresh(),
+    });
+}
+
+function openDeleteConfirmModal(): void {
+    if (!calendar.value) return;
+
+    confirmModal.open({
+        confirm: async () => calendar.value && calendarStore.deleteCalendar(calendar.value.id),
+    });
+}
+
+defineShortcuts({
+    e: () => openUpdateModal(),
+    d: () => openDeleteConfirmModal(),
+});
 </script>
 
 <template>
     <USlideover :title="`${$t('common.calendar')}: ${calendar?.name ?? $t('common.calendar')}`" :overlay="false">
         <template #actions>
             <div v-if="calendar" class="flex items-center justify-between gap-2">
-                <UTooltip v-if="canDo.edit" :text="$t('common.edit')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-pencil"
-                        @click="
-                            calendarCreateOrUpdateModal.open({
-                                calendarId: calendar?.id,
-                                systemManaged: isSystemManaged,
-                                onRefresh: () => refresh(),
-                            })
-                        "
-                    />
+                <UTooltip v-if="canDo.edit" :text="$t('common.edit')" :kbds="['E']">
+                    <UButton variant="link" icon="i-mdi-pencil" @click="openUpdateModal" />
                 </UTooltip>
 
-                <UTooltip v-if="canDo.manage" :text="$t('common.delete')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-delete"
-                        color="error"
-                        @click="
-                            confirmModal.open({
-                                confirm: async () => calendarStore.deleteCalendar(calendar?.id!),
-                            })
-                        "
-                    />
+                <UTooltip v-if="canDo.manage" :text="$t('common.delete')" :kbds="['D']">
+                    <UButton variant="link" icon="i-mdi-delete" color="error" @click="openDeleteConfirmModal" />
                 </UTooltip>
             </div>
         </template>

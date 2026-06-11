@@ -399,7 +399,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 		oldEntry, err := s.getEntry(
 			ctx,
 			userInfo,
-			tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntry().GetId())),
+			tCalendarEntry.AS("calendar_entry").ID.EQ(mysql.Int64(req.GetEntry().GetId())),
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -607,6 +607,7 @@ func (s *Server) getEntry(
 	userInfo *userinfo.UserInfo,
 	condition mysql.BoolExpression,
 ) (*calendarentries.CalendarEntry, error) {
+	tCalendarEntry := tCalendarEntry
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 

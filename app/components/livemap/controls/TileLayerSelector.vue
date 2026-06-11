@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { tileLayers } from '~/types/livemap';
+import { tileLayers, type TileLayerKeys } from '~/types/livemap';
 
 const props = withDefaults(
     defineProps<{
-        modelValue: string;
+        modelValue: TileLayerKeys;
         disabled?: boolean;
         position?: 'topleft' | 'topright' | 'bottomleft' | 'bottomright';
     }>(),
@@ -14,13 +14,10 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: string): void;
+    (e: 'update:modelValue', value: TileLayerKeys): void;
 }>();
 
-const layer = computed({
-    get: () => props.modelValue,
-    set: (value: string) => emit('update:modelValue', value),
-});
+const tileLayerItems = computed(() => [...tileLayers]);
 </script>
 
 <template>
@@ -44,15 +41,16 @@ const layer = computed({
                         </p>
 
                         <URadioGroup
-                            v-model="layer"
                             class="overflow-y-hidden"
-                            :items="tileLayers"
+                            :model-value="props.modelValue"
+                            :items="tileLayerItems"
                             value-key="key"
                             :ui-radio="{ inner: 'ms-1' }"
                             :ui="{ fieldset: 'grid auto-cols-auto grid-flow-col gap-1' }"
+                            @update:model-value="(value) => emit('update:modelValue', value)"
                         >
                             <template #label="{ item }">
-                                {{ $t(item.label ?? item.id) }}
+                                {{ $t(item.label) }}
                             </template>
                         </URadioGroup>
                     </div>

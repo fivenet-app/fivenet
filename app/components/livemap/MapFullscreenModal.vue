@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import MapPositionPicker from '~/components/livemap/MapPositionPicker.vue';
+import type { TileLayerKeys } from '~/types/livemap';
 
 const props = withDefaults(
     defineProps<{
@@ -9,7 +10,7 @@ const props = withDefaults(
         x: number;
         y: number;
         zoom: number;
-        layer?: string;
+        layer?: TileLayerKeys;
         disabled?: boolean;
         showControls?: boolean;
     }>(),
@@ -25,7 +26,7 @@ const emit = defineEmits<{
     (e: 'update:x', value: number): void;
     (e: 'update:y', value: number): void;
     (e: 'update:zoom', value: number): void;
-    (e: 'update:layer', value: string): void;
+    (e: 'update:layer', value: TileLayerKeys): void;
 }>();
 
 const openModel = computed({

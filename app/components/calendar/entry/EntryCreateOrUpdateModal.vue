@@ -155,6 +155,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
                 content: tiptapToContent(values.content),
                 closed: values.closed,
                 rsvpOpen: values.rsvpOpen,
+                recurrenceVersion: 1,
                 creatorJob: '',
             },
             state.users.map((u) => u.userId),

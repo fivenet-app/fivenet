@@ -2,14 +2,14 @@
 import MapFullscreenModal from '~/components/livemap/MapFullscreenModal.vue';
 import MapPositionPicker from '~/components/livemap/MapPositionPicker.vue';
 import { mapTileLayers } from '~/composables/livemap/useMapProjection';
-import { tileLayers } from '~/types/livemap';
+import { tileLayers, type TileLayerKeys } from '~/types/livemap';
 
 const props = defineProps<{
     x: number;
     y: number;
     zoom: number;
     postal?: string;
-    layer?: string;
+    layer?: TileLayerKeys;
     showGotoCoords?: boolean;
 }>();
 

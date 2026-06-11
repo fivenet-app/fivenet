@@ -2,7 +2,7 @@
 import type { PointExpression } from 'leaflet';
 import { MapMarkerDownIcon } from 'mdi-vue3';
 import { mapTileLayers } from '~/composables/livemap/useMapProjection';
-import { overlayCayoPericoBounds, tileLayers } from '~/types/livemap';
+import { overlayCayoPericoBounds, tileLayers, type TileLayerKeys } from '~/types/livemap';
 import LivemapMapShell from './LivemapMapShell.vue';
 import MapZoomControls from './controls/MapZoomControls.vue';
 import TileLayerSelector from './controls/TileLayerSelector.vue';
@@ -12,13 +12,13 @@ const props = withDefaults(
         x: number;
         y: number;
         zoom: number;
-        layer?: string;
+        layer?: TileLayerKeys;
         disabled?: boolean;
         showControls?: boolean;
         containerClass?: string;
     }>(),
     {
-        layer: '',
+        layer: 'satellite',
         disabled: false,
         showControls: true,
         containerClass: 'relative h-64 w-full overflow-hidden rounded-lg border border-neutral-300 dark:border-neutral-700',
@@ -29,7 +29,7 @@ const emit = defineEmits<{
     (e: 'update:x', value: number): void;
     (e: 'update:y', value: number): void;
     (e: 'update:zoom', value: number): void;
-    (e: 'update:layer', value: string): void;
+    (e: 'update:layer', value: TileLayerKeys): void;
 }>();
 
 const { game } = useAppConfig();
@@ -42,7 +42,7 @@ const currentZoom = ref(props.zoom);
 
 const currentLayer = computed({
     get: () => props.layer ?? tileLayers[0]!.key,
-    set: (value: string) => emit('update:layer', value),
+    set: (value: TileLayerKeys) => emit('update:layer', value),
 });
 
 const activeLayer = computed(() => mapTileLayers.find((layer) => layer.key === currentLayer.value) ?? tileLayers[0]!);

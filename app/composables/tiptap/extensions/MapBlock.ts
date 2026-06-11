@@ -2,14 +2,14 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import MapBlockNodeView from '~/components/partials/editor/MapBlockNodeView.vue';
-import { tileLayers } from '~/types/livemap';
+import { tileLayers, type TileLayerKeys } from '~/types/livemap';
 
 export interface MapBlockAttrs {
     x: number;
     y: number;
     zoom: number;
     postal?: string;
-    layer?: string;
+    layer?: TileLayerKeys;
 }
 
 export interface MapBlockOptions {
@@ -31,10 +31,14 @@ function parseMapBlockNumber(value: unknown, fallback: number): number {
     return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-export function normalizeMapBlockLayer(value: string | null | undefined): string {
+function isTileLayerKey(value: string): value is TileLayerKeys {
+    return tileLayers.some((layer) => layer.key === value);
+}
+
+export function normalizeMapBlockLayer(value: string | null | undefined): TileLayerKeys {
     if (!value) return defaultMapBlockLayerKey;
 
-    return tileLayers.some((layer) => layer.key === value) ? value : defaultMapBlockLayerKey;
+    return isTileLayerKey(value) ? value : defaultMapBlockLayerKey;
 }
 
 export function normalizeMapBlockAttrs(attrs: MapBlockAttrsInput = {}): MapBlockAttrs {
@@ -66,10 +70,10 @@ function parseNumber(value: string | null | undefined, fallback: number): number
     return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-function parseLayer(value: string | null | undefined): string {
+function parseLayer(value: string | null | undefined): TileLayerKeys {
     if (!value) return defaultMapBlockLayerKey;
 
-    return tileLayers.some((layer) => layer.key === value) ? value : defaultMapBlockLayerKey;
+    return isTileLayerKey(value) ? value : defaultMapBlockLayerKey;
 }
 
 export const MapBlock = Node.create<MapBlockOptions>({
