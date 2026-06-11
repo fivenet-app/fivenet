@@ -1,23 +1,34 @@
 package calendar
 
 import (
+	"context"
 	"database/sql"
+	"fmt"
+	"strconv"
+	"time"
 
 	discordstate "github.com/diamondburned/arikawa/v3/state"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	pkggrpc "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 var (
@@ -89,6 +100,8 @@ type Server struct {
 	pbcalendar.CalendarServiceServer
 	pbcalendar.EntriesServiceServer
 
+	logger   *zap.Logger
+	tracer   trace.Tracer
 	db       *sql.DB
 	cfg      *config.Config
 	ps       perms.Permissions
@@ -105,6 +118,8 @@ type Server struct {
 type Params struct {
 	fx.In
 
+	Logger    *zap.Logger
+	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
 	Config    *config.Config
 	P         perms.Permissions
@@ -116,8 +131,18 @@ type Params struct {
 	Discord   *discordstate.State
 }
 
+type Result struct {
+	fx.Out
+
+	Server       *Server
+	Service      pkggrpc.Service     `group:"grpcservices"`
+	CronRegister croner.CronRegister `group:"cronjobregister"`
+}
+
 func NewServer(p Params) *Server {
 	return &Server{
+		logger:   p.Logger.Named("calendar"),
+		tracer:   p.TP.Tracer("calendar"),
 		db:       p.DB,
 		cfg:      p.Config,
 		ps:       p.P,
@@ -127,6 +152,7 @@ func NewServer(p Params) *Server {
 		notif:    p.Notif,
 		js:       p.JS,
 		dc:       p.Discord,
+
 		access: access.NewGrouped[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, access.DummyQualificationAccess[calendaraccess.AccessLevel], *access.DummyQualificationAccess[calendaraccess.AccessLevel], calendaraccess.AccessLevel](
 			p.DB,
 			table.FivenetDocuments,
@@ -183,6 +209,57 @@ func NewServer(p Params) *Server {
 			nil,
 		),
 	}
+}
+
+func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "calendar.rsvp.cleanup",
+		Schedule: "32 */6 * * *",
+		Timeout:  durationpb.New(1 * time.Minute),
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Server) RegisterCronjobHandlers(hand *croner.Handlers) error {
+	hand.Add("calendar.rsvp.cleanup", func(ctx context.Context, data *cron.CronjobData) error {
+		ctx, span := s.tracer.Start(ctx, "calendar.rsvp.cleanup")
+		defer span.End()
+
+		dest := &cron.GenericCronData{
+			Attributes: map[string]string{},
+		}
+		if err := data.Unmarshal(dest); err != nil {
+			s.logger.Warn(
+				"failed to unmarshal calendar rsvp occurrences cleanup cron data",
+				zap.Error(err),
+			)
+		}
+
+		rowsAffected, err := s.cleanupCalendarRSVPOccurrences(ctx)
+		if err != nil {
+			s.logger.Error(
+				"failed to generate calendar rsvp occurrences cleanup",
+				zap.Error(err),
+			)
+			return err
+		}
+		dest.SetAttribute("changed_rows", strconv.Itoa(int(rowsAffected)))
+
+		// Marshal the updated cron data
+		if err := data.MarshalFrom(dest); err != nil {
+			return fmt.Errorf(
+				"failed to marshal updated calendar rsvp occurrences cleanup cron data. %w",
+				err,
+			)
+		}
+
+		return nil
+	})
+
+	return nil
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {

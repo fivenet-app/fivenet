@@ -12,7 +12,7 @@ import (
 )
 
 type FivenetCalendarDiscordReminderSends struct {
-	ID            int64      `json:"id"`
+	ID            int64      `sql:"primary_key" json:"id"`
 	CreatedAt     *time.Time `json:"created_at"`
 	CalendarID    int64      `json:"calendar_id"`
 	EntryID       int64      `json:"entry_id"`

@@ -152,9 +152,10 @@ func expandRecurringEntry(
 			}
 
 			key := fmt.Sprintf(
-				"%s:%d:%d",
+				"%s:%d:%d:%d",
 				occurrenceKeyPrefix,
 				entry.GetId(),
+				entry.GetRecurrenceVersion(),
 				occurrenceStart.Unix(),
 			)
 			if sourceUserID != nil {

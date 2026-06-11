@@ -17,11 +17,13 @@ type fivenetCalendarRsvpOccurrenceTable struct {
 	mysql.Table
 
 	// Columns
-	EntryID       mysql.ColumnInteger
-	OccurrenceKey mysql.ColumnString
-	CreatedAt     mysql.ColumnTimestamp
-	UserID        mysql.ColumnInteger
-	Response      mysql.ColumnInteger
+	EntryID           mysql.ColumnInteger
+	OccurrenceKey     mysql.ColumnString
+	CreatedAt         mysql.ColumnTimestamp
+	UserID            mysql.ColumnInteger
+	Response          mysql.ColumnInteger
+	RecurrenceID      mysql.ColumnTimestamp
+	RecurrenceVersion mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -63,25 +65,29 @@ func newFivenetCalendarRsvpOccurrenceTable(schemaName, tableName, alias string) 
 
 func newFivenetCalendarRsvpOccurrenceTableImpl(schemaName, tableName, alias string) fivenetCalendarRsvpOccurrenceTable {
 	var (
-		EntryIDColumn       = mysql.IntegerColumn("entry_id")
-		OccurrenceKeyColumn = mysql.StringColumn("occurrence_key")
-		CreatedAtColumn     = mysql.TimestampColumn("created_at")
-		UserIDColumn        = mysql.IntegerColumn("user_id")
-		ResponseColumn      = mysql.IntegerColumn("response")
-		allColumns          = mysql.ColumnList{EntryIDColumn, OccurrenceKeyColumn, CreatedAtColumn, UserIDColumn, ResponseColumn}
-		mutableColumns      = mysql.ColumnList{CreatedAtColumn, ResponseColumn}
-		defaultColumns      = mysql.ColumnList{CreatedAtColumn, ResponseColumn}
+		EntryIDColumn           = mysql.IntegerColumn("entry_id")
+		OccurrenceKeyColumn     = mysql.StringColumn("occurrence_key")
+		CreatedAtColumn         = mysql.TimestampColumn("created_at")
+		UserIDColumn            = mysql.IntegerColumn("user_id")
+		ResponseColumn          = mysql.IntegerColumn("response")
+		RecurrenceIDColumn      = mysql.TimestampColumn("recurrence_id")
+		RecurrenceVersionColumn = mysql.IntegerColumn("recurrence_version")
+		allColumns              = mysql.ColumnList{EntryIDColumn, OccurrenceKeyColumn, CreatedAtColumn, UserIDColumn, ResponseColumn, RecurrenceIDColumn, RecurrenceVersionColumn}
+		mutableColumns          = mysql.ColumnList{CreatedAtColumn, ResponseColumn, RecurrenceIDColumn, RecurrenceVersionColumn}
+		defaultColumns          = mysql.ColumnList{CreatedAtColumn, ResponseColumn, RecurrenceVersionColumn}
 	)
 
 	return fivenetCalendarRsvpOccurrenceTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		EntryID:       EntryIDColumn,
-		OccurrenceKey: OccurrenceKeyColumn,
-		CreatedAt:     CreatedAtColumn,
-		UserID:        UserIDColumn,
-		Response:      ResponseColumn,
+		EntryID:           EntryIDColumn,
+		OccurrenceKey:     OccurrenceKeyColumn,
+		CreatedAt:         CreatedAtColumn,
+		UserID:            UserIDColumn,
+		Response:          ResponseColumn,
+		RecurrenceID:      RecurrenceIDColumn,
+		RecurrenceVersion: RecurrenceVersionColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

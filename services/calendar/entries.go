@@ -23,7 +23,7 @@ import (
 	"github.com/jinzhu/now"
 )
 
-const maxCalendarEntriesLimit = 125
+const maxCalendarEntriesLimit = int64(125)
 
 func (s *Server) ListCalendarEntries(
 	ctx context.Context,
@@ -62,13 +62,14 @@ func (s *Server) ListCalendarEntries(
 			),
 			tCalendarEntry.ID.IN(
 				tCalendarRSVPOccurrence.
-					SELECT(
-						tCalendarRSVPOccurrence.EntryID,
-					).
+					SELECT(tCalendarRSVPOccurrence.EntryID).
 					FROM(tCalendarRSVPOccurrence).
 					WHERE(mysql.AND(
 						tCalendarRSVPOccurrence.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						tCalendarRSVPOccurrence.Response.GT(mysql.Int32(int32(rsvpResponse))),
+						tCalendarRSVPOccurrence.RecurrenceVersion.EQ(
+							tCalendarEntry.RecurrenceVersion,
+						),
 					)),
 			),
 			tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
@@ -161,7 +162,7 @@ func (s *Server) ListCalendarEntries(
 		),
 		startDate,
 		endDate,
-		int64Ptr(maxCalendarEntriesLimit),
+		new(maxCalendarEntriesLimit),
 	)
 	if err != nil {
 		return nil, err
@@ -233,6 +234,9 @@ func (s *Server) GetUpcomingEntries(
 						tCalendarRSVPOccurrence.Response.GT(
 							mysql.Int32(int32(calendarentries.RsvpResponses_RSVP_RESPONSES_NO)),
 						),
+						tCalendarRSVPOccurrence.RecurrenceVersion.EQ(
+							tCalendarEntry.RecurrenceVersion,
+						),
 					)),
 			),
 			tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
@@ -267,7 +271,7 @@ func (s *Server) GetUpcomingEntries(
 		),
 		rangeStart,
 		rangeEnd,
-		int64Ptr(maxCalendarEntriesLimit),
+		new(maxCalendarEntriesLimit),
 	)
 	if err != nil {
 		return nil, err
@@ -382,8 +386,6 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	req.Entry.CreatorId = &userInfo.UserId
-
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -394,13 +396,38 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 
 	tCalendarEntry := table.FivenetCalendarEntries
 	if req.GetEntry().GetId() > 0 {
-		startTime := mysql.TimestampExp(mysql.NULL)
-		if req.GetEntry().GetStartTime() != nil {
-			startTime = mysql.TimestampT(req.GetEntry().GetStartTime().AsTime())
+		oldEntry, err := s.getEntry(
+			ctx,
+			userInfo,
+			tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntry().GetId())),
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
-		endTime := mysql.TimestampExp(mysql.NULL)
-		if req.GetEntry().GetEndTime() != nil {
-			endTime = mysql.TimestampT(req.GetEntry().GetEndTime().AsTime())
+		if oldEntry == nil {
+			return nil, errorscalendar.ErrNoPerms
+		}
+
+		values := []interface{}{
+			mysql.String(req.GetEntry().GetTitle()),
+			req.GetEntry().GetContent(),
+			dbutils.TimestampToMySQL(req.GetEntry().GetStartTime()),
+			dbutils.TimestampToMySQL(req.GetEntry().GetEndTime()),
+			mysql.Bool(req.GetEntry().GetClosed()),
+			mysql.Bool(req.GetEntry().GetRsvpOpen()),
+			req.GetEntry().GetRecurring(),
+			dbutils.TimestampToMySQL(req.GetEntry().GetRecurring().GetUntil()),
+		}
+
+		if recurrenceShapeChanged(oldEntry, req.GetEntry()) {
+			values = append(
+				values,
+				tCalendarEntry.RecurrenceVersion.SET(
+					tCalendarEntry.RecurrenceVersion.ADD(mysql.Int32(1)),
+				),
+			)
+		} else {
+			values = append(values, oldEntry.RecurrenceVersion)
 		}
 
 		stmt := tCalendarEntry.
@@ -413,16 +440,11 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 				tCalendarEntry.RsvpOpen,
 				tCalendarEntry.Recurring,
 				tCalendarEntry.RecurringUntil,
+				tCalendarEntry.RecurrenceVersion,
 			).
 			SET(
-				req.GetEntry().GetTitle(),
-				req.GetEntry().GetContent(),
-				startTime,
-				endTime,
-				req.GetEntry().GetClosed(),
-				req.GetEntry().GetRsvpOpen(),
-				req.GetEntry().GetRecurring(),
-				req.GetEntry().GetRecurring().GetUntil(),
+				values[0],
+				values[1:]...,
 			).
 			WHERE(mysql.AND(
 				tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntry().GetId())),
@@ -436,6 +458,8 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	} else {
+		req.GetEntry().CreatorId = &userInfo.UserId
+
 		stmt := tCalendarEntry.
 			INSERT(
 				tCalendarEntry.CalendarID,
@@ -448,6 +472,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 				tCalendarEntry.RsvpOpen,
 				tCalendarEntry.Recurring,
 				tCalendarEntry.RecurringUntil,
+				tCalendarEntry.RecurrenceVersion,
 				tCalendarEntry.CreatorID,
 				tCalendarEntry.CreatorJob,
 			).
@@ -462,6 +487,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 				req.GetEntry().GetRsvpOpen(),
 				req.GetEntry().GetRecurring(),
 				req.GetEntry().GetRecurring().GetUntil(),
+				1,
 				userInfo.GetUserId(),
 				userInfo.GetJob(),
 			)

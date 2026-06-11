@@ -30,7 +30,7 @@ func TestCalendarEntriesQueryUsesExplicitLimit(t *testing.T) {
 		&userinfo.UserInfo{UserId: 1},
 		mysql.Bool(true),
 		mysql.Bool(true),
-		int64Ptr(maxCalendarEntriesLimit),
+		new(maxCalendarEntriesLimit),
 	)
 
 	sql, args := stmt.Sql()

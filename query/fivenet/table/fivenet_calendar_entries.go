@@ -17,22 +17,23 @@ type fivenetCalendarEntriesTable struct {
 	mysql.Table
 
 	// Columns
-	ID             mysql.ColumnInteger
-	CreatedAt      mysql.ColumnTimestamp
-	UpdatedAt      mysql.ColumnTimestamp
-	DeletedAt      mysql.ColumnTimestamp
-	CalendarID     mysql.ColumnInteger
-	Job            mysql.ColumnString
-	StartTime      mysql.ColumnTimestamp
-	EndTime        mysql.ColumnTimestamp
-	Title          mysql.ColumnString
-	Content        mysql.ColumnString
-	Closed         mysql.ColumnBool
-	RsvpOpen       mysql.ColumnBool
-	CreatorID      mysql.ColumnInteger
-	CreatorJob     mysql.ColumnString
-	Recurring      mysql.ColumnString
-    RecurringUntil mysql.ColumnTimestamp
+	ID                mysql.ColumnInteger
+	CreatedAt         mysql.ColumnTimestamp
+	UpdatedAt         mysql.ColumnTimestamp
+	DeletedAt         mysql.ColumnTimestamp
+	CalendarID        mysql.ColumnInteger
+	Job               mysql.ColumnString
+	StartTime         mysql.ColumnTimestamp
+	EndTime           mysql.ColumnTimestamp
+	Title             mysql.ColumnString
+	Content           mysql.ColumnString
+	Closed            mysql.ColumnBool
+	RsvpOpen          mysql.ColumnBool
+	CreatorID         mysql.ColumnInteger
+	CreatorJob        mysql.ColumnString
+	Recurring         mysql.ColumnString
+	RecurringUntil    mysql.ColumnTimestamp
+	RecurrenceVersion mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -74,47 +75,49 @@ func newFivenetCalendarEntriesTable(schemaName, tableName, alias string) *Fivene
 
 func newFivenetCalendarEntriesTableImpl(schemaName, tableName, alias string) fivenetCalendarEntriesTable {
 	var (
-		IDColumn             = mysql.IntegerColumn("id")
-		CreatedAtColumn      = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn      = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn      = mysql.TimestampColumn("deleted_at")
-		CalendarIDColumn     = mysql.IntegerColumn("calendar_id")
-		JobColumn            = mysql.StringColumn("job")
-		StartTimeColumn      = mysql.TimestampColumn("start_time")
-		EndTimeColumn        = mysql.TimestampColumn("end_time")
-		TitleColumn          = mysql.StringColumn("title")
-		ContentColumn        = mysql.StringColumn("content")
-		ClosedColumn         = mysql.BoolColumn("closed")
-		RsvpOpenColumn       = mysql.BoolColumn("rsvp_open")
-		CreatorIDColumn      = mysql.IntegerColumn("creator_id")
-		CreatorJobColumn     = mysql.StringColumn("creator_job")
-		RecurringColumn      = mysql.StringColumn("recurring")
-        RecurringUntilColumn = mysql.TimestampColumn("recurring_until")
-		allColumns           = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, ClosedColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn, RecurringUntilColumn}
-		mutableColumns       = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, ClosedColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn, RecurringUntilColumn}
-		defaultColumns       = mysql.ColumnList{CreatedAtColumn, ClosedColumn, RsvpOpenColumn}
+		IDColumn                = mysql.IntegerColumn("id")
+		CreatedAtColumn         = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn         = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn         = mysql.TimestampColumn("deleted_at")
+		CalendarIDColumn        = mysql.IntegerColumn("calendar_id")
+		JobColumn               = mysql.StringColumn("job")
+		StartTimeColumn         = mysql.TimestampColumn("start_time")
+		EndTimeColumn           = mysql.TimestampColumn("end_time")
+		TitleColumn             = mysql.StringColumn("title")
+		ContentColumn           = mysql.StringColumn("content")
+		ClosedColumn            = mysql.BoolColumn("closed")
+		RsvpOpenColumn          = mysql.BoolColumn("rsvp_open")
+		CreatorIDColumn         = mysql.IntegerColumn("creator_id")
+		CreatorJobColumn        = mysql.StringColumn("creator_job")
+		RecurringColumn         = mysql.StringColumn("recurring")
+		RecurringUntilColumn    = mysql.TimestampColumn("recurring_until")
+		RecurrenceVersionColumn = mysql.IntegerColumn("recurrence_version")
+		allColumns              = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, ClosedColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn, RecurringUntilColumn, RecurrenceVersionColumn}
+		mutableColumns          = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, ClosedColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn, RecurringUntilColumn, RecurrenceVersionColumn}
+		defaultColumns          = mysql.ColumnList{CreatedAtColumn, ClosedColumn, RsvpOpenColumn, RecurrenceVersionColumn}
 	)
 
 	return fivenetCalendarEntriesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:             IDColumn,
-		CreatedAt:      CreatedAtColumn,
-		UpdatedAt:      UpdatedAtColumn,
-		DeletedAt:      DeletedAtColumn,
-		CalendarID:     CalendarIDColumn,
-		Job:            JobColumn,
-		StartTime:      StartTimeColumn,
-		EndTime:        EndTimeColumn,
-		Title:          TitleColumn,
-		Content:        ContentColumn,
-		Closed:         ClosedColumn,
-		RsvpOpen:       RsvpOpenColumn,
-		CreatorID:      CreatorIDColumn,
-		CreatorJob:     CreatorJobColumn,
-		Recurring:      RecurringColumn,
-        RecurringUntil: RecurringUntilColumn,
+		ID:                IDColumn,
+		CreatedAt:         CreatedAtColumn,
+		UpdatedAt:         UpdatedAtColumn,
+		DeletedAt:         DeletedAtColumn,
+		CalendarID:        CalendarIDColumn,
+		Job:               JobColumn,
+		StartTime:         StartTimeColumn,
+		EndTime:           EndTimeColumn,
+		Title:             TitleColumn,
+		Content:           ContentColumn,
+		Closed:            ClosedColumn,
+		RsvpOpen:          RsvpOpenColumn,
+		CreatorID:         CreatorIDColumn,
+		CreatorJob:        CreatorJobColumn,
+		Recurring:         RecurringColumn,
+		RecurringUntil:    RecurringUntilColumn,
+		RecurrenceVersion: RecurrenceVersionColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

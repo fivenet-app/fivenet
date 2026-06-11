@@ -146,7 +146,7 @@ func NewServer(p Params) Result {
 
 	s := &Server{
 		logger: p.Logger.Named("centrum"),
-		tracer: p.TP.Tracer("mstlystcdata-cache"),
+		tracer: p.TP.Tracer("centrum"),
 		wg:     sync.WaitGroup{},
 
 		db:       p.DB,

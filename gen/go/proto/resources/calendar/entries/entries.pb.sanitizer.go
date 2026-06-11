@@ -94,6 +94,15 @@ func (m *CalendarEntry) Sanitize() error {
 		}
 	}
 
+	// Field: RecurringUntil
+	if m.RecurringUntil != nil {
+		if v, ok := any(m.GetRecurringUntil()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Rsvp
 	if m.Rsvp != nil {
 		if v, ok := any(m.GetRsvp()).(interface{ Sanitize() error }); ok {
