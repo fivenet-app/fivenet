@@ -1414,7 +1414,7 @@
                     "double": "Doppelspalte (Großansicht)"
                 },
                 "calendar_notifications": {
-                    "title": "Kalendar Benachrichtigungen",
+                    "title": "Kalender Benachrichtigungen",
                     "description": "Legen Sie die Erinnerungszeiten für Kalenderereignisse fest, auf die Sie mit \"Ja\" und \"Vielleicht\" geantwortet haben.",
                     "reminder_times": {
                         "name": "Vor dem Termin zu versendende Erinnerungen",
@@ -2286,7 +2286,7 @@
         "calendar": {
             "entry_shared_with_you": {
                 "title": "Eingeladen zu \"{title}\" von {name}",
-                "content": "Sie wurden zu \"{title}\" eingeladen, schaue im Kalendar nach um zu Antworten."
+                "content": "Sie wurden zu \"{title}\" eingeladen, schaue im Kalender nach um zu Antworten."
             },
             "event_starting": {
                 "title": "Termin: \"{title}\" von {name}",
@@ -2578,8 +2578,8 @@
                     "content": "Der Kalender ist geschlossen und kann nicht mehr genutzt werden."
                 },
                 "ErrEntryClosed": {
-                    "title": "Kalendar Eintrag ist geschlossen",
-                    "content": "Der Kalendar Eintrag ist geschlossen. Auf diesen Eintrag kann man nicht mehr antworten."
+                    "title": "Kalender Eintrag ist geschlossen",
+                    "content": "Der Kalender Eintrag ist geschlossen. Auf diesen Eintrag kann man nicht mehr antworten."
                 },
                 "ErrNoDiscordGuildID": "Ihr Beruf hat den Discord-Bot nicht eingerichtet. Der Discord-Bot ist benötigt um die Funktion nutzen zu können.",
                 "ErrInvalidDiscordChannel": "",
@@ -3267,7 +3267,7 @@
             }
         },
         "calendar": {
-            "calendar_name": "**Kalendar:** {name}",
+            "calendar_name": "**Kalender:** {name}",
             "start_time": "**Beginnt um:** <t:{ts}:F>",
             "end_time": "**Endet um:** <t:{ts}:F>",
             "link": "__[In FiveNet öffnen]({link})__"
@@ -3864,7 +3864,7 @@
         "calendar": {
             "namespace": "Kalender",
             "CalendarService": {
-                "service": "Kalendar",
+                "service": "Kalender",
                 "CreateCalendar": {
                     "key": "Erstellen von Kalendern",
                     "description": "Verwalten von Kalendern.",
