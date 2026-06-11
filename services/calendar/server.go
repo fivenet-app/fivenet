@@ -139,8 +139,8 @@ type Result struct {
 	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
-func NewServer(p Params) *Server {
-	return &Server{
+func NewServer(p Params) Result {
+	s := &Server{
 		logger:   p.Logger.Named("calendar"),
 		tracer:   p.TP.Tracer("calendar"),
 		db:       p.DB,
@@ -208,6 +208,12 @@ func NewServer(p Params) *Server {
 			),
 			nil,
 		),
+	}
+
+	return Result{
+		Server:       s,
+		Service:      s,
+		CronRegister: s,
 	}
 }
 

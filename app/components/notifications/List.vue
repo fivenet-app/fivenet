@@ -99,7 +99,9 @@ async function markUnread(unread: boolean, ...ids: number[]): Promise<void> {
 
 defineShortcuts({
     shift_r: () =>
-        (!canSubmit.value || data.value?.notifications === undefined || data.value?.notifications.length === 0) &&
+        canSubmit.value &&
+        data.value?.notifications !== undefined &&
+        data.value?.notifications.length > 0 &&
         markAll().finally(timeoutFn),
 });
 
