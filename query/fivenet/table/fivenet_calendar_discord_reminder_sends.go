@@ -35,18 +35,22 @@ type FivenetCalendarDiscordReminderSendsTable struct {
 	NEW fivenetCalendarDiscordReminderSendsTable
 }
 
+// AS creates new FivenetCalendarDiscordReminderSendsTable with assigned alias
 func (a FivenetCalendarDiscordReminderSendsTable) AS(alias string) *FivenetCalendarDiscordReminderSendsTable {
 	return newFivenetCalendarDiscordReminderSendsTable(a.SchemaName(), a.TableName(), alias)
 }
 
+// Schema creates new FivenetCalendarDiscordReminderSendsTable with assigned schema name
 func (a FivenetCalendarDiscordReminderSendsTable) FromSchema(schemaName string) *FivenetCalendarDiscordReminderSendsTable {
 	return newFivenetCalendarDiscordReminderSendsTable(schemaName, a.TableName(), a.Alias())
 }
 
+// WithPrefix creates new FivenetCalendarDiscordReminderSendsTable with assigned table prefix
 func (a FivenetCalendarDiscordReminderSendsTable) WithPrefix(prefix string) *FivenetCalendarDiscordReminderSendsTable {
 	return newFivenetCalendarDiscordReminderSendsTable(a.SchemaName(), prefix+a.TableName(), a.TableName())
 }
 
+// WithSuffix creates new FivenetCalendarDiscordReminderSendsTable with assigned table suffix
 func (a FivenetCalendarDiscordReminderSendsTable) WithSuffix(suffix string) *FivenetCalendarDiscordReminderSendsTable {
 	return newFivenetCalendarDiscordReminderSendsTable(a.SchemaName(), a.TableName()+suffix, a.TableName())
 }
@@ -74,6 +78,7 @@ func newFivenetCalendarDiscordReminderSendsTableImpl(schemaName, tableName, alia
 	return fivenetCalendarDiscordReminderSendsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
+		//Columns
 		ID:            IDColumn,
 		CreatedAt:     CreatedAtColumn,
 		CalendarID:    CalendarIDColumn,

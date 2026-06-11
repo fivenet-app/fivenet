@@ -211,13 +211,27 @@ func (s *Server) RSVPCalendarEntry(
 	if occurrenceKey != "" {
 		tCalendarRsvpOccurrence := table.FivenetCalendarRsvpOccurrence
 
+		identity, err := parseRecurringOccurrenceKey(occurrenceKey)
+		if err != nil {
+			return nil, err
+		}
+
+		if identity.EntryID != req.GetEntry().GetEntryId() {
+			return nil, errorscalendar.ErrNoPerms
+		}
+
 		if req.Remove != nil && req.GetRemove() {
 			stmt := tCalendarRsvpOccurrence.
 				DELETE().
 				WHERE(mysql.AND(
-					tCalendarRsvpOccurrence.EntryID.EQ(mysql.Int64(req.GetEntry().GetEntryId())),
+					tCalendarRsvpOccurrence.EntryID.EQ(mysql.Int64(identity.EntryID)),
 					tCalendarRsvpOccurrence.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-					tCalendarRsvpOccurrence.OccurrenceKey.EQ(mysql.String(occurrenceKey)),
+					tCalendarRsvpOccurrence.RecurrenceVersion.EQ(
+						mysql.Int32(identity.RecurrenceVersion),
+					),
+					tCalendarRsvpOccurrence.RecurrenceID.EQ(
+						mysql.TimestampT(identity.RecurrenceID),
+					),
 				)).
 				LIMIT(1)
 
@@ -228,18 +242,25 @@ func (s *Server) RSVPCalendarEntry(
 			stmt := tCalendarRsvpOccurrence.
 				INSERT(
 					tCalendarRsvpOccurrence.EntryID,
+					tCalendarRsvpOccurrence.RecurrenceVersion,
+					tCalendarRsvpOccurrence.RecurrenceID,
 					tCalendarRsvpOccurrence.OccurrenceKey,
 					tCalendarRsvpOccurrence.UserID,
 					tCalendarRsvpOccurrence.Response,
 				).
 				VALUES(
-					req.GetEntry().GetEntryId(),
+					identity.EntryID,
+					identity.RecurrenceVersion,
+					identity.RecurrenceID,
 					occurrenceKey,
 					userInfo.GetUserId(),
 					req.GetEntry().GetResponse(),
 				).
 				ON_DUPLICATE_KEY_UPDATE(
-					tCalendarRsvpOccurrence.Response.SET(mysql.Int32(int32(req.GetEntry().GetResponse()))),
+					tCalendarRsvpOccurrence.Response.SET(
+						mysql.Int32(int32(req.GetEntry().GetResponse())),
+					),
+					tCalendarRsvpOccurrence.OccurrenceKey.SET(mysql.String(occurrenceKey)),
 				)
 
 			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -376,16 +397,27 @@ func (s *Server) getOccurrenceRSVPCalendarEntry(
 	userId int32,
 	occurrenceKey string,
 ) (*calendarentries.CalendarEntryRSVP, error) {
+	identity, err := parseRecurringOccurrenceKey(occurrenceKey)
+	if err != nil {
+		return nil, err
+	}
+
+	if identity.EntryID != entryId {
+		return nil, errorscalendar.ErrNoPerms
+	}
+
 	tUser := table.FivenetUser.AS("user_short")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
+	tOccurrence := table.FivenetCalendarRsvpOccurrence
 
-	stmt := table.FivenetCalendarRsvpOccurrence.
+	stmt := tOccurrence.
 		SELECT(
-			table.FivenetCalendarRsvpOccurrence.EntryID,
-			table.FivenetCalendarRsvpOccurrence.CreatedAt,
-			table.FivenetCalendarRsvpOccurrence.UserID,
-			table.FivenetCalendarRsvpOccurrence.Response,
-			table.FivenetCalendarRsvpOccurrence.OccurrenceKey,
+			tOccurrence.EntryID,
+			tOccurrence.CreatedAt,
+			tOccurrence.UserID,
+			tOccurrence.Response,
+			tOccurrence.OccurrenceKey,
+
 			tUser.ID,
 			tUser.Job,
 			tUser.JobGrade,
@@ -393,24 +425,20 @@ func (s *Server) getOccurrenceRSVPCalendarEntry(
 			tUser.Lastname,
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
+
 			tUserProps.AvatarFileID.AS("user_short.profile_picture_file_id"),
 			tAvatar.FilePath.AS("user_short.profile_picture"),
 		).
-		FROM(table.FivenetCalendarRsvpOccurrence.
-			LEFT_JOIN(tUser,
-				table.FivenetCalendarRsvpOccurrence.UserID.EQ(tUser.ID),
-			).
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUser.ID),
-			).
-			LEFT_JOIN(tAvatar,
-				tAvatar.ID.EQ(tUserProps.AvatarFileID),
-			),
+		FROM(tOccurrence.
+			LEFT_JOIN(tUser, tOccurrence.UserID.EQ(tUser.ID)).
+			LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tUser.ID)).
+			LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tUserProps.AvatarFileID)),
 		).
 		WHERE(mysql.AND(
-			table.FivenetCalendarRsvpOccurrence.EntryID.EQ(mysql.Int64(entryId)),
-			table.FivenetCalendarRsvpOccurrence.UserID.EQ(mysql.Int32(userId)),
-			table.FivenetCalendarRsvpOccurrence.OccurrenceKey.EQ(mysql.String(occurrenceKey)),
+			tOccurrence.EntryID.EQ(mysql.Int64(entryId)),
+			tOccurrence.UserID.EQ(mysql.Int32(userId)),
+			tOccurrence.RecurrenceVersion.EQ(mysql.Int32(identity.RecurrenceVersion)),
+			tOccurrence.RecurrenceID.EQ(mysql.TimestampT(identity.RecurrenceID)),
 		)).
 		LIMIT(1)
 
@@ -428,22 +456,58 @@ func (s *Server) getOccurrenceRSVPCalendarEntry(
 	return &dest, nil
 }
 
+type recurringOccurrenceIdentity struct {
+	EntryID           int64
+	RecurrenceVersion int32
+	RecurrenceID      time.Time
+	OccurrenceUnix    int64
+}
+
+func parseRecurringOccurrenceKey(
+	occurrenceKey string,
+) (*recurringOccurrenceIdentity, error) {
+	parts := strings.Split(occurrenceKey, ":")
+	if len(parts) != 4 || parts[0] != "recurring" {
+		return nil, errorscalendar.ErrNoPerms
+	}
+
+	entryID, err := strconv.ParseInt(parts[1], 10, 64)
+	if err != nil {
+		return nil, errorscalendar.ErrNoPerms
+	}
+
+	version, err := strconv.ParseInt(parts[2], 10, 32)
+	if err != nil {
+		return nil, errorscalendar.ErrNoPerms
+	}
+
+	occurrenceUnix, err := strconv.ParseInt(parts[3], 10, 64)
+	if err != nil {
+		return nil, errorscalendar.ErrNoPerms
+	}
+
+	return &recurringOccurrenceIdentity{
+		EntryID:           entryID,
+		RecurrenceVersion: int32(version),
+		OccurrenceUnix:    occurrenceUnix,
+		RecurrenceID:      time.Unix(occurrenceUnix, 0).UTC(),
+	}, nil
+}
+
 func validateRecurringOccurrenceKey(
 	entry *calendarentries.CalendarEntry,
 	occurrenceKey string,
 ) error {
-	parts := strings.Split(occurrenceKey, ":")
-	if len(parts) != 3 || parts[0] != "recurring" {
-		return errorscalendar.ErrNoPerms
-	}
-
-	entryID, err := strconv.ParseInt(parts[1], 10, 64)
-	if err != nil || entryID != entry.GetId() {
-		return errorscalendar.ErrNoPerms
-	}
-
-	targetUnix, err := strconv.ParseInt(parts[2], 10, 64)
+	identity, err := parseRecurringOccurrenceKey(occurrenceKey)
 	if err != nil {
+		return err
+	}
+
+	if identity.EntryID != entry.GetId() {
+		return errorscalendar.ErrNoPerms
+	}
+
+	if identity.RecurrenceVersion != entry.GetRecurrenceVersion() {
 		return errorscalendar.ErrNoPerms
 	}
 
@@ -451,19 +515,21 @@ func validateRecurringOccurrenceKey(
 		return errorscalendar.ErrNoPerms
 	}
 
+	targetTime := time.Unix(identity.OccurrenceUnix, 0)
 	occurrenceStart := entry.GetStartTime().AsTime()
+
 	interval := entry.GetRecurring().GetCount()
 	if interval <= 0 {
 		interval = 1
 	}
 
-	for !occurrenceStart.After(time.Unix(targetUnix, 0)) {
-		if until := entry.GetRecurring().
-			GetUntil(); until != nil &&
+	for !occurrenceStart.After(targetTime) {
+		if until := entry.GetRecurring().GetUntil(); until != nil &&
 			occurrenceStart.After(until.AsTime()) {
 			break
 		}
-		if occurrenceStart.Unix() == targetUnix {
+
+		if occurrenceStart.Unix() == identity.OccurrenceUnix {
 			return nil
 		}
 

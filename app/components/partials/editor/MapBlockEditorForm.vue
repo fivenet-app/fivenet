@@ -3,7 +3,7 @@ import { createMapBlockAttrs, defaultMapBlockLayerKey, type MapBlockAttrs } from
 import MapFullscreenModal from '~/components/livemap/MapFullscreenModal.vue';
 import MapPositionPicker from '~/components/livemap/MapPositionPicker.vue';
 import PostalSearchSelect from '~/components/livemap/controls/PostalSearchSelect.vue';
-import type { Postal } from '~/types/livemap';
+import type { Postal, TileLayerKeys } from '~/types/livemap';
 
 const props = defineProps<{
     modelValue: MapBlockAttrs;
@@ -46,7 +46,7 @@ watch(selectedPostal, (postal) => {
     });
 });
 
-function applyPosition(x: number, y: number, zoom: number, layer: string = defaultMapBlockLayerKey): void {
+function applyPosition(x: number, y: number, zoom: number, layer: TileLayerKeys = defaultMapBlockLayerKey): void {
     selectedPostal.value = undefined;
     applyDraft({
         x,
@@ -90,7 +90,7 @@ function openFullscreen(): void {
                 :x="draft.x"
                 :y="draft.y"
                 :zoom="draft.zoom"
-                :layer="draft.layer ?? ''"
+                :layer="draft.layer ?? defaultMapBlockLayerKey"
                 :disabled="disabled"
                 @update:x="(value) => applyPosition(value, draft.y, draft.zoom, draft.layer)"
                 @update:y="(value) => applyPosition(draft.x, value, draft.zoom, draft.layer)"
@@ -107,7 +107,7 @@ function openFullscreen(): void {
         :x="draft.x"
         :y="draft.y"
         :zoom="draft.zoom"
-        :layer="draft.layer ?? ''"
+        :layer="draft.layer ?? defaultMapBlockLayerKey"
         :disabled="disabled"
         @update:x="(value) => applyPosition(value, draft.y, draft.zoom, draft.layer)"
         @update:y="(value) => applyPosition(draft.x, value, draft.zoom, draft.layer)"

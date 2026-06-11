@@ -83,7 +83,7 @@ type HousekeeperParams struct {
 func NewHousekeeper(p HousekeeperParams) Result {
 	h := &Housekeeper{
 		logger: p.Logger.Named("housekeeper"),
-		tracer: p.TP.Tracer("mstlystcdata-cache"),
+		tracer: p.TP.Tracer("filestore-housekeeper"),
 		db:     p.DB,
 
 		getTablesListFn: func() []joinInfo {

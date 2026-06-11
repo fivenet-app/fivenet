@@ -4,11 +4,14 @@ package oauth2utils
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/diamondburned/arikawa/v3/utils/httputil"
 )
 
 // RefreshDiscordAccessToken refreshes a Discord OAuth2 access token using the provided credentials and refresh token.
@@ -44,10 +47,9 @@ func RefreshDiscordAccessToken(
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
 		return "", "", 0, fmt.Errorf(
-			"discord token refresh error %d (%s). %w",
+			"discord token refresh error %d (%s).",
 			resp.StatusCode,
 			string(body),
-			err,
 		)
 	}
 
@@ -64,4 +66,24 @@ func RefreshDiscordAccessToken(
 	}
 
 	return respData.AccessToken, respData.RefreshToken, respData.ExpiresIn, nil
+}
+
+// IsDiscordTokenExpired returns true when Discord reports an invalid_grant
+// style error for a token that can no longer be refreshed or used.
+func IsDiscordTokenExpired(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	if httpErr, ok := errors.AsType[httputil.HTTPError](err); ok {
+		if containsInvalidGrant(string(httpErr.Body)) {
+			return true
+		}
+	}
+
+	return containsInvalidGrant(err.Error())
+}
+
+func containsInvalidGrant(s string) bool {
+	return strings.Contains(strings.ToLower(s), "invalid_grant")
 }

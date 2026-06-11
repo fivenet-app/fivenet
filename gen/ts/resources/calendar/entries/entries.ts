@@ -120,6 +120,14 @@ export interface CalendarEntry {
      * @generated from protobuf field: optional resources.calendar.entries.CalendarEntryOccurrence occurrence = 19
      */
     occurrence?: CalendarEntryOccurrence;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp recurring_until = 20
+     */
+    recurringUntil?: Timestamp;
+    /**
+     * @generated from protobuf field: int32 recurrence_version = 21
+     */
+    recurrenceVersion: number;
 }
 /**
  * @generated from protobuf message resources.calendar.entries.CalendarEntryRecurring
@@ -341,7 +349,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 16, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 17, name: "recurring", kind: "message", T: () => CalendarEntryRecurring },
             { no: 18, name: "rsvp", kind: "message", T: () => CalendarEntryRSVP },
-            { no: 19, name: "occurrence", kind: "message", T: () => CalendarEntryOccurrence }
+            { no: 19, name: "occurrence", kind: "message", T: () => CalendarEntryOccurrence },
+            { no: 20, name: "recurring_until", kind: "message", T: () => Timestamp },
+            { no: 21, name: "recurrence_version", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<CalendarEntry>): CalendarEntry {
@@ -351,6 +361,7 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         message.title = "";
         message.closed = false;
         message.creatorJob = "";
+        message.recurrenceVersion = 0;
         if (value !== undefined)
             reflectionMergePartial<CalendarEntry>(this, message, value);
         return message;
@@ -416,6 +427,12 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                     break;
                 case /* optional resources.calendar.entries.CalendarEntryOccurrence occurrence */ 19:
                     message.occurrence = CalendarEntryOccurrence.internalBinaryRead(reader, reader.uint32(), options, message.occurrence);
+                    break;
+                case /* optional resources.timestamp.Timestamp recurring_until */ 20:
+                    message.recurringUntil = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.recurringUntil);
+                    break;
+                case /* int32 recurrence_version */ 21:
+                    message.recurrenceVersion = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -486,6 +503,12 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* optional resources.calendar.entries.CalendarEntryOccurrence occurrence = 19; */
         if (message.occurrence)
             CalendarEntryOccurrence.internalBinaryWrite(message.occurrence, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp recurring_until = 20; */
+        if (message.recurringUntil)
+            Timestamp.internalBinaryWrite(message.recurringUntil, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
+        /* int32 recurrence_version = 21; */
+        if (message.recurrenceVersion !== 0)
+            writer.tag(21, WireType.Varint).int32(message.recurrenceVersion);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

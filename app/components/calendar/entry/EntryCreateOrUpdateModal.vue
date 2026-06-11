@@ -155,6 +155,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
                 content: tiptapToContent(values.content),
                 closed: values.closed,
                 rsvpOpen: values.rsvpOpen,
+                recurrenceVersion: 1,
                 creatorJob: '',
             },
             state.users.map((u) => u.userId),
@@ -332,6 +333,17 @@ async function closeModal(): Promise<void> {
                                     v-if="modelValue"
                                     :class="ui.itemLeadingChip()"
                                     :color="(modelValue?.color ?? 'primary') as ChipProps['color']"
+                                    inset
+                                    standalone
+                                    :size="ui.itemLeadingChipSize() as ChipProps['size']"
+                                />
+                            </template>
+
+                            <template #item-leading="{ item, ui }">
+                                <UChip
+                                    v-if="item"
+                                    :class="ui.itemLeadingChip()"
+                                    :color="(item?.color ?? 'primary') as ChipProps['color']"
                                     inset
                                     standalone
                                     :size="ui.itemLeadingChipSize() as ChipProps['size']"

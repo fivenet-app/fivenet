@@ -1218,6 +1218,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `recurring` | [CalendarEntryRecurring](#resourcescalendarentriesCalendarEntryRecurring) | optional |  |
 | `rsvp` | [CalendarEntryRSVP](#resourcescalendarentriesCalendarEntryRSVP) | optional |  |
 | `occurrence` | [CalendarEntryOccurrence](#resourcescalendarentriesCalendarEntryOccurrence) | optional |  |
+| `recurring_until` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `recurrence_version` | [int32](#int32) |  |  |
 
 
 

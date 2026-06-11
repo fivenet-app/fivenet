@@ -9,12 +9,14 @@ import (
 	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"google.golang.org/protobuf/proto"
 )
 
 type calendarEntryOccurrenceKey struct {
@@ -146,6 +148,9 @@ func calendarEntriesQuery(
 			tCalendarEntry.Content,
 			tCalendarEntry.Closed,
 			tCalendarEntry.RsvpOpen,
+			tCalendarEntry.Recurring,
+			tCalendarEntry.RecurringUntil,
+			tCalendarEntry.RecurrenceVersion,
 			tCalendarEntry.CreatorID,
 			tCreator.ID,
 			tCreator.Job,
@@ -156,7 +161,6 @@ func calendarEntriesQuery(
 			tCreator.PhoneNumber,
 			tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
 			tAvatar.FilePath.AS("creator.profile_picture"),
-			tCalendarEntry.Recurring,
 			tCalendarRSVP.EntryID,
 			tCalendarRSVP.CreatedAt,
 			tCalendarRSVP.UserID,
@@ -401,6 +405,35 @@ func filterUpcomingCalendarEntries(
 	return filtered
 }
 
-func int64Ptr(v int64) *int64 {
-	return &v
+func recurrenceShapeChanged(
+	oldEntry *calendarentries.CalendarEntry,
+	newEntry *calendarentries.CalendarEntry,
+) bool {
+	if !timestampEqual(oldEntry.GetStartTime(), newEntry.GetStartTime()) {
+		return true
+	}
+
+	if !timestampEqual(oldEntry.GetEndTime(), newEntry.GetEndTime()) {
+		return true
+	}
+
+	if !proto.Equal(oldEntry.GetRecurring(), newEntry.GetRecurring()) {
+		return true
+	}
+
+	// If recurring_until is represented separately from Recurring.Until,
+	// compare it here too.
+	if !timestampEqual(oldEntry.GetRecurringUntil(), newEntry.GetRecurringUntil()) {
+		return true
+	}
+
+	return false
+}
+
+func timestampEqual(a, b *timestamp.Timestamp) bool {
+	if a == nil || b == nil {
+		return a == b
+	}
+
+	return a.AsTime().Equal(b.AsTime())
 }

@@ -1,3 +1,4 @@
+<!-- eslint-disable import/no-duplicates -->
 <script setup lang="ts">
 import { getAlignStyle } from '~/composables/tiptap/extensions/EnhancedImage';
 
@@ -172,6 +173,38 @@ async function rotateRight() {
 }
 
 const alignmentStyle = computed(() => getAlignStyle(props.align));
+</script>
+
+<script lang="ts">
+// eslint-disable-next-line import/first
+import {
+    normalizeImageAttrs,
+    type EnhancedImageAttrsInput,
+    type ImageAlign,
+    // eslint-disable-next-line import/no-duplicates
+} from '~/composables/tiptap/extensions/EnhancedImage';
+
+interface ImageViewAttrs {
+    src: string;
+    alt?: string | null;
+    title?: string | null;
+    width?: number | null;
+    height?: number | null;
+    align?: ImageAlign | null;
+}
+
+export function normalizeImageViewAttrs(attrs: EnhancedImageAttrsInput = {}): ImageViewAttrs {
+    const normalized = normalizeImageAttrs(attrs);
+
+    return {
+        src: String(normalized.src ?? ''),
+        alt: normalized.alt == null ? null : String(normalized.alt),
+        title: normalized.title == null ? null : String(normalized.title),
+        width: normalized.width ?? null,
+        height: normalized.height ?? null,
+        align: normalized.align ?? 'left',
+    };
+}
 </script>
 
 <template>

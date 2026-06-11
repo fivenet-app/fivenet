@@ -30,11 +30,18 @@ func TestCalendarEntriesQueryUsesExplicitLimit(t *testing.T) {
 		&userinfo.UserInfo{UserId: 1},
 		mysql.Bool(true),
 		mysql.Bool(true),
-		int64Ptr(100),
+		new(maxCalendarEntriesLimit),
 	)
 
 	sql, args := stmt.Sql()
 	require.Contains(t, sql, "LIMIT ?", "expected explicit limit placeholder in query, got %s", sql)
 	require.NotEmpty(t, args, "expected limit arguments")
-	assert.Equal(t, int64(100), args[len(args)-1], "expected limit argument 100, got %#v", args)
+	assert.Equal(
+		t,
+		int64(maxCalendarEntriesLimit),
+		args[len(args)-1],
+		"expected limit argument %d, got %#v",
+		maxCalendarEntriesLimit,
+		args,
+	)
 }

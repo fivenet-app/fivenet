@@ -57,6 +57,8 @@ message CalendarEntry {
   optional CalendarEntryRecurring recurring = 17;
   optional CalendarEntryRSVP rsvp = 18;
   optional CalendarEntryOccurrence occurrence = 19;
+  optional resources.timestamp.Timestamp recurring_until = 20;
+  int32 recurrence_version = 21 [(buf.validate.field).int32.gt = 0];
 }
 
 enum CalendarEntryRecurringEvery {

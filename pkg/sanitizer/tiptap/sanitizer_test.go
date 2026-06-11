@@ -646,7 +646,7 @@ func TestSanitizePrefersHeadingOverParagraphFallback(t *testing.T) {
 	)
 }
 
-func TestSanitizerImageWithStyle(t *testing.T) {
+func TestSanitizerImageWithAndAlign(t *testing.T) {
 	t.Parallel()
 	New()
 
@@ -655,21 +655,66 @@ func TestSanitizerImageWithStyle(t *testing.T) {
 		"content": []any{
 			map[string]any{
 				"type": NodeTypeImage,
-				"content": []any{
-					map[string]any{"type": NodeTypeText, "text": "Paragraph candidate"},
+				"attrs": map[string]any{
+					"src":    "https://example.com/a.png",
+					"width":  float64(100),
+					"height": float64(-50),
+					"align":  "right123",
 				},
 			},
 		},
 	}
 
-	_, stats, err := Sanitize(doc, 0, 10)
+	out, _, err := Sanitize(doc, 0, 10)
 	require.NoError(t, err, "sanitize returned error")
+	assert.Len(t, out["content"], 1)
+	content := out["content"].([]any)
+	require.NotNil(t, content)
+
+	firstNode := content[0].(map[string]any)
+	firstNodeAttrs := firstNode["attrs"].(map[string]any)
+	assert.InDelta(t, float64(100), firstNodeAttrs["width"], 0.000001)
+	assert.Nil(
+		t,
+		firstNodeAttrs["height"],
+		"expected height to be nil (unset) due to invalid height",
+	)
 	assert.Equal(
 		t,
-		"Real Heading",
-		stats.FirstHeading,
-		"first heading = %q, want %q",
-		stats.FirstHeading,
-		"Real Heading",
+		firstNodeAttrs["align"],
+		"left",
+		"expected align value to be reset to left due to invalid input",
+	)
+
+	doc = map[string]any{
+		"type": NodeTypeDoc,
+		"content": []any{
+			map[string]any{
+				"type": NodeTypeImage,
+				"attrs": map[string]any{
+					"src":    "https://example.com/a.png",
+					"width":  float64(4999),
+					"height": float64(50),
+					"align":  "center",
+				},
+			},
+		},
+	}
+
+	out, _, err = Sanitize(doc, 0, 10)
+	require.NoError(t, err, "sanitize returned error")
+	assert.Len(t, out["content"], 1)
+	content = out["content"].([]any)
+	require.NotNil(t, content)
+
+	firstNode = content[0].(map[string]any)
+	firstNodeAttrs = firstNode["attrs"].(map[string]any)
+	assert.InDelta(t, float64(4999), firstNodeAttrs["width"], 0.000001)
+	assert.InDelta(t, float64(50), firstNodeAttrs["height"], 0.000001)
+	assert.Equal(
+		t,
+		firstNodeAttrs["align"],
+		"center",
+		"expected align value to be center because it is a valid value",
 	)
 }

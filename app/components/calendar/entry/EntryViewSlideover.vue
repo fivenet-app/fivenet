@@ -155,36 +155,42 @@ const canDo = computed(() => ({
 
 const confirmModal = overlay.create(ConfirmModal);
 const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
+
+function openUpdateModal(): void {
+    entryCreateOrUpdateModal.open({
+        calendarId: entry.value?.calendarId,
+        entryId: entry.value?.id,
+    });
+}
+
+function openDeleteConfirmModal(): void {
+    if (!entry.value) return;
+
+    confirmModal.open({
+        confirm: async () => entry.value && calendarStore.deleteCalendarEntry(entry.value.id),
+    });
+}
+
+defineShortcuts({
+    e: () => openUpdateModal(),
+    d: () => openDeleteConfirmModal(),
+});
 </script>
 
 <template>
     <USlideover :title="entry?.title ?? $t('common.appointment', 1)" :overlay="false">
         <template #actions>
             <div v-if="entry" class="flex items-center justify-between gap-2">
-                <UTooltip v-if="can('calendar.CalendarService/CreateCalendar').value && canDo.edit" :text="$t('common.edit')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-pencil"
-                        @click="
-                            entryCreateOrUpdateModal.open({
-                                calendarId: entry?.calendarId,
-                                entryId: entry?.id,
-                            })
-                        "
-                    />
+                <UTooltip
+                    v-if="can('calendar.CalendarService/CreateCalendar').value && canDo.edit"
+                    :text="$t('common.edit')"
+                    :kbds="['E']"
+                >
+                    <UButton variant="link" icon="i-mdi-pencil" @click="openUpdateModal" />
                 </UTooltip>
 
-                <UTooltip v-if="canDo.manage" :text="$t('common.delete')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-delete"
-                        color="error"
-                        @click="
-                            confirmModal.open({
-                                confirm: async () => calendarStore.deleteCalendarEntry(entry?.id!),
-                            })
-                        "
-                    />
+                <UTooltip v-if="canDo.manage" :text="$t('common.delete')" :kbds="['D']">
+                    <UButton variant="link" icon="i-mdi-delete" color="error" @click="openDeleteConfirmModal" />
                 </UTooltip>
 
                 <UTooltip :text="$t('common.share')">
@@ -303,8 +309,7 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                             :ui="{ icon: 'size-6' }"
                         />
                         <div v-else class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
-                            <CustomContentRenderer v-if="entry.content" :value="entry.content" />
-                            <p v-else>{{ $t('common.na') }}</p>
+                            <CustomContentRenderer :value="entry.content" :placeholder="$t('common.na')" />
                         </div>
                     </div>
                 </template>

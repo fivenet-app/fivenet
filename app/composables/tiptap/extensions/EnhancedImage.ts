@@ -30,23 +30,54 @@ declare module '@tiptap/core' {
 
 export type ImageAlign = 'left' | 'center' | 'right';
 
-const DEFAULT_IMAGE_ALIGN: ImageAlign = 'left';
+export interface EnhancedImageAttrs {
+    src?: string | null;
+    alt?: string | null;
+    title?: string | null;
+    fileId?: number | string | null;
+    align?: ImageAlign | null;
+    width?: number | string | null;
+    height?: number | string | null;
+    style?: string | null;
+    'data-align'?: string | null;
+}
 
-function extractStyleValue(style: unknown, property: 'width' | 'height'): string | null {
+export type EnhancedImageAttrsInput = Partial<EnhancedImageAttrs> | Record<string, unknown> | undefined;
+
+export interface NormalizedEnhancedImageAttrs extends Omit<EnhancedImageAttrs, 'align' | 'width' | 'height' | 'style'> {
+    align: ImageAlign;
+    width: number | null;
+    height: number | null;
+    style: string;
+}
+
+export const DEFAULT_IMAGE_ALIGN: ImageAlign = 'left';
+
+export function extractStyleValue(style: unknown, property: 'width' | 'height'): string | null {
     if (typeof style !== 'string') return null;
 
     const match = style.match(new RegExp(`(?:^|;)\\s*${property}\\s*:\\s*([^;]+)`, 'i'));
     return match?.[1]?.trim() ?? null;
 }
 
-function parsePixelValue(value: string | null): number | null {
-    if (!value) return null;
+export function parseImageDimension(value: unknown): number | null {
+    if (typeof value === 'number') {
+        return Number.isFinite(value) && value > 0 ? value : null;
+    }
 
-    const match = value.match(/^(\d+)px$/i);
-    return match ? Number(match[1]) : null;
+    if (typeof value !== 'string') return null;
+
+    const normalized = value.trim();
+    if (!normalized) return null;
+
+    const pixelMatch = normalized.match(/^(\d+)px$/i);
+    if (pixelMatch) return Number(pixelMatch[1]);
+
+    const parsed = Number.parseFloat(normalized);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
 
-function getAlignFromStyle(style: unknown): ImageAlign | null {
+export function getAlignFromStyle(style: unknown): ImageAlign | null {
     if (typeof style !== 'string') return null;
 
     const normalized = style.replace(/\s+/g, ' ').toLowerCase();
@@ -66,6 +97,14 @@ function getAlignFromStyle(style: unknown): ImageAlign | null {
     return null;
 }
 
+export function normalizeImageAlign(value: unknown, style?: unknown): ImageAlign {
+    if (value === 'center' || value === 'right' || value === 'left') {
+        return value;
+    }
+
+    return getAlignFromStyle(style) ?? DEFAULT_IMAGE_ALIGN;
+}
+
 export function removeStyleProperties(style: unknown, properties: string[]): string {
     if (typeof style !== 'string') return '';
 
@@ -82,23 +121,19 @@ export function removeStyleProperties(style: unknown, properties: string[]): str
         .join('; ');
 }
 
-function normalizeImageAttrs(attrs: Record<string, any>): Record<string, any> {
-    const next = { ...attrs };
+export function normalizeImageAttrs(
+    attrs: EnhancedImageAttrsInput = {},
+): Record<string, unknown> & NormalizedEnhancedImageAttrs {
+    const next = { ...(attrs ?? {}) } as Record<string, unknown> & EnhancedImageAttrs;
 
-    if (!next.align) {
-        next.align = getAlignFromStyle(next.style) ?? attrs['data-align'] ?? DEFAULT_IMAGE_ALIGN;
-    }
+    next.align = normalizeImageAlign(next.align ?? next['data-align'], next.style);
 
-    if (next.width == null) {
-        next.width = parsePixelValue(extractStyleValue(next.style, 'width'));
-    }
-    if (next.height == null) {
-        next.height = parsePixelValue(extractStyleValue(next.style, 'height'));
-    }
+    next.width = parseImageDimension(next.width) ?? parseImageDimension(extractStyleValue(next.style, 'width'));
+    next.height = parseImageDimension(next.height) ?? parseImageDimension(extractStyleValue(next.style, 'height'));
 
     next.style = removeStyleProperties(next.style, ['width', 'height', 'margin']);
 
-    return next;
+    return next as Record<string, unknown> & NormalizedEnhancedImageAttrs;
 }
 
 export function getAlignStyle(align: unknown): string {
@@ -239,7 +274,7 @@ export const EnhancedImage = Node.create<EnhancedImageOptions>({
         return [
             'img',
             mergeAttributes(this.options.HTMLAttributes, rest, {
-                src: cleanupImageURL(attrs.src),
+                src: cleanupImageURL(String(attrs.src ?? '')),
                 'data-align': align,
                 style: mergeStyle(style, 'display: block; ' + getAlignStyle(align)),
             }),

@@ -97,6 +97,14 @@ async function markUnread(unread: boolean, ...ids: number[]): Promise<void> {
     });
 }
 
+defineShortcuts({
+    shift_r: () =>
+        canSubmit.value &&
+        data.value?.notifications !== undefined &&
+        data.value?.notifications.length > 0 &&
+        markAll().finally(timeoutFn),
+});
+
 const { start: timeoutFn } = useTimeoutFn(() => (canSubmit.value = true), 400, { immediate: false });
 const canSubmit = ref<boolean>(true);
 </script>
@@ -165,14 +173,16 @@ const canSubmit = ref<boolean>(true);
                             </UFormField>
 
                             <UFormField class="flex-initial" label="&nbsp;">
-                                <UButton
-                                    icon="i-mdi-notification-clear-all"
-                                    :disabled="
-                                        !canSubmit || data?.notifications === undefined || data?.notifications.length === 0
-                                    "
-                                    :label="$t('components.notifications.mark_all_read')"
-                                    @click="() => markAll().finally(timeoutFn)"
-                                />
+                                <UTooltip :text="$t('components.notifications.mark_all_read')" :kbds="['shift', 'R']">
+                                    <UButton
+                                        icon="i-mdi-notification-clear-all"
+                                        :disabled="
+                                            !canSubmit || data?.notifications === undefined || data?.notifications.length === 0
+                                        "
+                                        :label="$t('components.notifications.mark_all_read')"
+                                        @click="() => markAll().finally(timeoutFn)"
+                                    />
+                                </UTooltip>
                             </UFormField>
                         </div>
                     </UForm>

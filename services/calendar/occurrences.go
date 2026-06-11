@@ -135,17 +135,27 @@ func expandRecurringEntry(
 			break
 		}
 
-		if entryOverlapsRange(occurrenceStart, entry.GetEndTime(), rangeStart, rangeEnd) {
+		occurrenceEnd := (*timestamp.Timestamp)(nil)
+		if entry.GetEndTime() != nil {
+			end := occurrenceStart.Add(duration)
+			occurrenceEnd = timestamp.New(end)
+		}
+
+		if entryOverlapsRange(occurrenceStart, occurrenceEnd, rangeStart, rangeEnd) {
 			clone := proto.Clone(entry).(*calendarentries.CalendarEntry)
 			clone.StartTime = timestamp.New(occurrenceStart)
+			clone.EndTime = occurrenceEnd
+
 			if entry.GetEndTime() != nil {
 				end := occurrenceStart.Add(duration)
 				clone.EndTime = timestamp.New(end)
 			}
+
 			key := fmt.Sprintf(
-				"%s:%d:%d",
+				"%s:%d:%d:%d",
 				occurrenceKeyPrefix,
 				entry.GetId(),
+				entry.GetRecurrenceVersion(),
 				occurrenceStart.Unix(),
 			)
 			if sourceUserID != nil {

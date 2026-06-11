@@ -17,6 +17,7 @@ type FivenetCalendar struct {
 	UpdatedAt       *time.Time `json:"updated_at"`
 	DeletedAt       *time.Time `json:"deleted_at"`
 	Job             *string    `json:"job"`
+	SystemKind      *int16     `json:"system_kind"`
 	DiscordSettings *string    `json:"discord_settings"`
 	Name            string     `json:"name"`
 	Description     *string    `json:"description"`
@@ -25,5 +26,4 @@ type FivenetCalendar struct {
 	Color           *string    `json:"color"`
 	CreatorID       *int32     `json:"creator_id"`
 	CreatorJob      string     `json:"creator_job"`
-	SystemKind      *int32     `json:"system_kind"`
 }

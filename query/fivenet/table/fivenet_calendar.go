@@ -22,6 +22,7 @@ type fivenetCalendarTable struct {
 	UpdatedAt       mysql.ColumnTimestamp
 	DeletedAt       mysql.ColumnTimestamp
 	Job             mysql.ColumnString
+	SystemKind      mysql.ColumnInteger
 	DiscordSettings mysql.ColumnString
 	Name            mysql.ColumnString
 	Description     mysql.ColumnString
@@ -30,7 +31,6 @@ type fivenetCalendarTable struct {
 	Color           mysql.ColumnString
 	CreatorID       mysql.ColumnInteger
 	CreatorJob      mysql.ColumnString
-	SystemKind      mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -77,6 +77,7 @@ func newFivenetCalendarTableImpl(schemaName, tableName, alias string) fivenetCal
 		UpdatedAtColumn       = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn       = mysql.TimestampColumn("deleted_at")
 		JobColumn             = mysql.StringColumn("job")
+		SystemKindColumn      = mysql.IntegerColumn("system_kind")
 		DiscordSettingsColumn = mysql.StringColumn("discord_settings")
 		NameColumn            = mysql.StringColumn("name")
 		DescriptionColumn     = mysql.StringColumn("description")
@@ -85,9 +86,8 @@ func newFivenetCalendarTableImpl(schemaName, tableName, alias string) fivenetCal
 		ColorColumn           = mysql.StringColumn("color")
 		CreatorIDColumn       = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn      = mysql.StringColumn("creator_job")
-		SystemKindColumn      = mysql.IntegerColumn("system_kind")
-		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, DiscordSettingsColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn, SystemKindColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, DiscordSettingsColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn, SystemKindColumn}
+		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SystemKindColumn, DiscordSettingsColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns        = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SystemKindColumn, DiscordSettingsColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn}
 		defaultColumns        = mysql.ColumnList{CreatedAtColumn, PublicColumn, ClosedColumn, ColorColumn}
 	)
 
@@ -100,6 +100,7 @@ func newFivenetCalendarTableImpl(schemaName, tableName, alias string) fivenetCal
 		UpdatedAt:       UpdatedAtColumn,
 		DeletedAt:       DeletedAtColumn,
 		Job:             JobColumn,
+		SystemKind:      SystemKindColumn,
 		DiscordSettings: DiscordSettingsColumn,
 		Name:            NameColumn,
 		Description:     DescriptionColumn,
@@ -108,7 +109,6 @@ func newFivenetCalendarTableImpl(schemaName, tableName, alias string) fivenetCal
 		Color:           ColorColumn,
 		CreatorID:       CreatorIDColumn,
 		CreatorJob:      CreatorJobColumn,
-		SystemKind:      SystemKindColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

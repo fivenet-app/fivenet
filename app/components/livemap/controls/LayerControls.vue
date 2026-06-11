@@ -6,6 +6,7 @@ const { attr, can } = useAuth();
 
 const settingsStore = useSettingsStore();
 const { livemapLayers, livemapLayerCategories, livemapTileLayer } = storeToRefs(settingsStore);
+const tileLayerItems = computed(() => [...tileLayers]);
 
 const groupedLayers = computed(() => {
     const reduced = livemapLayers.value.reduce(
@@ -84,13 +85,13 @@ function toggleAllLayers(category: string, visible: boolean) {
                         <URadioGroup
                             v-model="livemapTileLayer"
                             class="overflow-y-hidden"
-                            :items="tileLayers"
+                            :items="tileLayerItems"
                             value-key="key"
                             :ui-radio="{ inner: 'ms-1' }"
                             :ui="{ fieldset: 'grid auto-cols-auto grid-flow-col gap-1' }"
                         >
                             <template #label="{ item }">
-                                {{ $t(item.label ?? item.id) }}
+                                {{ $t(item.label) }}
                             </template>
                         </URadioGroup>
                     </div>

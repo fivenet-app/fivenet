@@ -7,7 +7,7 @@ import PenaltyCalculatorContentView from '~/components/quickbuttons/penaltycalcu
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import TiptapContentRenderer from './TiptapContentRenderer.vue';
-import EnhancedImageView from '~/components/partials/content/extensions/EnhancedImageView.vue';
+import EnhancedImageView, { normalizeImageViewAttrs } from '~/components/partials/content/extensions/EnhancedImageView.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -33,7 +33,8 @@ const options = computed(() => ({
         mapBlock: ({ node }: { node: { attrs: Record<string, unknown> } }) =>
             h(MapBlockContentView, { ...normalizeMapBlockAttrs(node.attrs), showGotoCoords: true }),
         penaltyCalculator: () => h(PenaltyCalculatorContentView),
-        image: ({ node }: { node: { attrs: Record<string, unknown> } }) => h(EnhancedImageView, { ...node.attrs }),
+        image: ({ node }: { node: { attrs: Record<string, unknown> } }) =>
+            h(EnhancedImageView, { ...normalizeImageViewAttrs(node.attrs) }),
     },
 }));
 </script>

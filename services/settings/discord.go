@@ -17,6 +17,7 @@ import (
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/oauth2utils"
 	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
 )
 
@@ -148,10 +149,8 @@ func getUserGuilds(ctx context.Context, accessToken string) ([]discord.Guild, er
 
 	guilds, err := dc.Guilds(200)
 	if err != nil {
-		if reqErr, ok := errors.AsType[httputil.JSONError](err); ok {
-			if strings.Contains(reqErr.Error(), "invalid_grant") {
-				return nil, errorssettings.ErrDiscordTokenExpired
-			}
+		if oauth2utils.IsDiscordTokenExpired(err) {
+			return nil, errorssettings.ErrDiscordTokenExpired
 		}
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}

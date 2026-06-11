@@ -327,30 +327,32 @@ func (b0 CalendarEntryOccurrence_builder) Build() *CalendarEntryOccurrence {
 }
 
 type CalendarEntry struct {
-	state                  protoimpl.MessageState   `protogen:"opaque.v1"`
-	xxx_hidden_Id          int64                    `protobuf:"varint,1,opt,name=id,proto3"`
-	xxx_hidden_CreatedAt   *timestamp.Timestamp     `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
-	xxx_hidden_UpdatedAt   *timestamp.Timestamp     `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
-	xxx_hidden_DeletedAt   *timestamp.Timestamp     `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
-	xxx_hidden_CalendarId  int64                    `protobuf:"varint,5,opt,name=calendar_id,json=calendarId,proto3"`
-	xxx_hidden_Calendar    *calendar.Calendar       `protobuf:"bytes,6,opt,name=calendar,proto3,oneof"`
-	xxx_hidden_Job         *string                  `protobuf:"bytes,7,opt,name=job,proto3,oneof"`
-	xxx_hidden_StartTime   *timestamp.Timestamp     `protobuf:"bytes,8,opt,name=start_time,json=startTime,proto3"`
-	xxx_hidden_EndTime     *timestamp.Timestamp     `protobuf:"bytes,9,opt,name=end_time,json=endTime,proto3,oneof"`
-	xxx_hidden_Title       string                   `protobuf:"bytes,10,opt,name=title,proto3"`
-	xxx_hidden_Content     *content.Content         `protobuf:"bytes,11,opt,name=content,proto3"`
-	xxx_hidden_Closed      bool                     `protobuf:"varint,12,opt,name=closed,proto3"`
-	xxx_hidden_RsvpOpen    bool                     `protobuf:"varint,13,opt,name=rsvp_open,json=rsvpOpen,proto3,oneof"`
-	xxx_hidden_CreatorId   int32                    `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof"`
-	xxx_hidden_Creator     *short.UserShort         `protobuf:"bytes,15,opt,name=creator,proto3,oneof"`
-	xxx_hidden_CreatorJob  string                   `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3"`
-	xxx_hidden_Recurring   *CalendarEntryRecurring  `protobuf:"bytes,17,opt,name=recurring,proto3,oneof"`
-	xxx_hidden_Rsvp        *CalendarEntryRSVP       `protobuf:"bytes,18,opt,name=rsvp,proto3,oneof"`
-	xxx_hidden_Occurrence  *CalendarEntryOccurrence `protobuf:"bytes,19,opt,name=occurrence,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                        protoimpl.MessageState   `protogen:"opaque.v1"`
+	xxx_hidden_Id                int64                    `protobuf:"varint,1,opt,name=id,proto3"`
+	xxx_hidden_CreatedAt         *timestamp.Timestamp     `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
+	xxx_hidden_UpdatedAt         *timestamp.Timestamp     `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
+	xxx_hidden_DeletedAt         *timestamp.Timestamp     `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
+	xxx_hidden_CalendarId        int64                    `protobuf:"varint,5,opt,name=calendar_id,json=calendarId,proto3"`
+	xxx_hidden_Calendar          *calendar.Calendar       `protobuf:"bytes,6,opt,name=calendar,proto3,oneof"`
+	xxx_hidden_Job               *string                  `protobuf:"bytes,7,opt,name=job,proto3,oneof"`
+	xxx_hidden_StartTime         *timestamp.Timestamp     `protobuf:"bytes,8,opt,name=start_time,json=startTime,proto3"`
+	xxx_hidden_EndTime           *timestamp.Timestamp     `protobuf:"bytes,9,opt,name=end_time,json=endTime,proto3,oneof"`
+	xxx_hidden_Title             string                   `protobuf:"bytes,10,opt,name=title,proto3"`
+	xxx_hidden_Content           *content.Content         `protobuf:"bytes,11,opt,name=content,proto3"`
+	xxx_hidden_Closed            bool                     `protobuf:"varint,12,opt,name=closed,proto3"`
+	xxx_hidden_RsvpOpen          bool                     `protobuf:"varint,13,opt,name=rsvp_open,json=rsvpOpen,proto3,oneof"`
+	xxx_hidden_CreatorId         int32                    `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof"`
+	xxx_hidden_Creator           *short.UserShort         `protobuf:"bytes,15,opt,name=creator,proto3,oneof"`
+	xxx_hidden_CreatorJob        string                   `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3"`
+	xxx_hidden_Recurring         *CalendarEntryRecurring  `protobuf:"bytes,17,opt,name=recurring,proto3,oneof"`
+	xxx_hidden_Rsvp              *CalendarEntryRSVP       `protobuf:"bytes,18,opt,name=rsvp,proto3,oneof"`
+	xxx_hidden_Occurrence        *CalendarEntryOccurrence `protobuf:"bytes,19,opt,name=occurrence,proto3,oneof"`
+	xxx_hidden_RecurringUntil    *timestamp.Timestamp     `protobuf:"bytes,20,opt,name=recurring_until,json=recurringUntil,proto3,oneof"`
+	xxx_hidden_RecurrenceVersion int32                    `protobuf:"varint,21,opt,name=recurrence_version,json=recurrenceVersion,proto3"`
+	XXX_raceDetectHookData       protoimpl.RaceDetectHookData
+	XXX_presence                 [1]uint32
+	unknownFields                protoimpl.UnknownFields
+	sizeCache                    protoimpl.SizeCache
 }
 
 func (x *CalendarEntry) Reset() {
@@ -514,6 +516,20 @@ func (x *CalendarEntry) GetOccurrence() *CalendarEntryOccurrence {
 	return nil
 }
 
+func (x *CalendarEntry) GetRecurringUntil() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_RecurringUntil
+	}
+	return nil
+}
+
+func (x *CalendarEntry) GetRecurrenceVersion() int32 {
+	if x != nil {
+		return x.xxx_hidden_RecurrenceVersion
+	}
+	return 0
+}
+
 func (x *CalendarEntry) SetId(v int64) {
 	x.xxx_hidden_Id = v
 }
@@ -540,7 +556,7 @@ func (x *CalendarEntry) SetCalendar(v *calendar.Calendar) {
 
 func (x *CalendarEntry) SetJob(v string) {
 	x.xxx_hidden_Job = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 19)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 21)
 }
 
 func (x *CalendarEntry) SetStartTime(v *timestamp.Timestamp) {
@@ -565,12 +581,12 @@ func (x *CalendarEntry) SetClosed(v bool) {
 
 func (x *CalendarEntry) SetRsvpOpen(v bool) {
 	x.xxx_hidden_RsvpOpen = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 19)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 21)
 }
 
 func (x *CalendarEntry) SetCreatorId(v int32) {
 	x.xxx_hidden_CreatorId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 19)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 21)
 }
 
 func (x *CalendarEntry) SetCreator(v *short.UserShort) {
@@ -591,6 +607,14 @@ func (x *CalendarEntry) SetRsvp(v *CalendarEntryRSVP) {
 
 func (x *CalendarEntry) SetOccurrence(v *CalendarEntryOccurrence) {
 	x.xxx_hidden_Occurrence = v
+}
+
+func (x *CalendarEntry) SetRecurringUntil(v *timestamp.Timestamp) {
+	x.xxx_hidden_RecurringUntil = v
+}
+
+func (x *CalendarEntry) SetRecurrenceVersion(v int32) {
+	x.xxx_hidden_RecurrenceVersion = v
 }
 
 func (x *CalendarEntry) HasCreatedAt() bool {
@@ -691,6 +715,13 @@ func (x *CalendarEntry) HasOccurrence() bool {
 	return x.xxx_hidden_Occurrence != nil
 }
 
+func (x *CalendarEntry) HasRecurringUntil() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_RecurringUntil != nil
+}
+
 func (x *CalendarEntry) ClearCreatedAt() {
 	x.xxx_hidden_CreatedAt = nil
 }
@@ -750,28 +781,34 @@ func (x *CalendarEntry) ClearOccurrence() {
 	x.xxx_hidden_Occurrence = nil
 }
 
+func (x *CalendarEntry) ClearRecurringUntil() {
+	x.xxx_hidden_RecurringUntil = nil
+}
+
 type CalendarEntry_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id         int64
-	CreatedAt  *timestamp.Timestamp
-	UpdatedAt  *timestamp.Timestamp
-	DeletedAt  *timestamp.Timestamp
-	CalendarId int64
-	Calendar   *calendar.Calendar
-	Job        *string
-	StartTime  *timestamp.Timestamp
-	EndTime    *timestamp.Timestamp
-	Title      string
-	Content    *content.Content
-	Closed     bool
-	RsvpOpen   *bool
-	CreatorId  *int32
-	Creator    *short.UserShort
-	CreatorJob string
-	Recurring  *CalendarEntryRecurring
-	Rsvp       *CalendarEntryRSVP
-	Occurrence *CalendarEntryOccurrence
+	Id                int64
+	CreatedAt         *timestamp.Timestamp
+	UpdatedAt         *timestamp.Timestamp
+	DeletedAt         *timestamp.Timestamp
+	CalendarId        int64
+	Calendar          *calendar.Calendar
+	Job               *string
+	StartTime         *timestamp.Timestamp
+	EndTime           *timestamp.Timestamp
+	Title             string
+	Content           *content.Content
+	Closed            bool
+	RsvpOpen          *bool
+	CreatorId         *int32
+	Creator           *short.UserShort
+	CreatorJob        string
+	Recurring         *CalendarEntryRecurring
+	Rsvp              *CalendarEntryRSVP
+	Occurrence        *CalendarEntryOccurrence
+	RecurringUntil    *timestamp.Timestamp
+	RecurrenceVersion int32
 }
 
 func (b0 CalendarEntry_builder) Build() *CalendarEntry {
@@ -785,7 +822,7 @@ func (b0 CalendarEntry_builder) Build() *CalendarEntry {
 	x.xxx_hidden_CalendarId = b.CalendarId
 	x.xxx_hidden_Calendar = b.Calendar
 	if b.Job != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 19)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 21)
 		x.xxx_hidden_Job = b.Job
 	}
 	x.xxx_hidden_StartTime = b.StartTime
@@ -794,11 +831,11 @@ func (b0 CalendarEntry_builder) Build() *CalendarEntry {
 	x.xxx_hidden_Content = b.Content
 	x.xxx_hidden_Closed = b.Closed
 	if b.RsvpOpen != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 19)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 21)
 		x.xxx_hidden_RsvpOpen = *b.RsvpOpen
 	}
 	if b.CreatorId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 19)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 21)
 		x.xxx_hidden_CreatorId = *b.CreatorId
 	}
 	x.xxx_hidden_Creator = b.Creator
@@ -806,6 +843,8 @@ func (b0 CalendarEntry_builder) Build() *CalendarEntry {
 	x.xxx_hidden_Recurring = b.Recurring
 	x.xxx_hidden_Rsvp = b.Rsvp
 	x.xxx_hidden_Occurrence = b.Occurrence
+	x.xxx_hidden_RecurringUntil = b.RecurringUntil
+	x.xxx_hidden_RecurrenceVersion = b.RecurrenceVersion
 	return m0
 }
 
@@ -1087,7 +1126,8 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\x0esource_user_id\x18\x04 \x01(\x05H\x01R\fsourceUserId\x88\x01\x01\x12\x17\n" +
 	"\aall_day\x18\x05 \x01(\bR\x06allDayB\x12\n" +
 	"\x10_source_entry_idB\x11\n" +
-	"\x0f_source_user_id\"\xce\t\n" +
+	"\x0f_source_user_id\"\xdf\n" +
+	"\n" +
 	"\rCalendarEntry\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1118,7 +1158,9 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"R\x04rsvp\x88\x01\x01\x12X\n" +
 	"\n" +
 	"occurrence\x18\x13 \x01(\v23.resources.calendar.entries.CalendarEntryOccurrenceH\vR\n" +
-	"occurrence\x88\x01\x01B\r\n" +
+	"occurrence\x88\x01\x01\x12L\n" +
+	"\x0frecurring_until\x18\x14 \x01(\v2\x1e.resources.timestamp.TimestampH\fR\x0erecurringUntil\x88\x01\x01\x12-\n" +
+	"\x12recurrence_version\x18\x15 \x01(\x05R\x11recurrenceVersionB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\v\n" +
@@ -1133,7 +1175,8 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\n" +
 	"_recurringB\a\n" +
 	"\x05_rsvpB\r\n" +
-	"\v_occurrence\"\xca\x01\n" +
+	"\v_occurrenceB\x12\n" +
+	"\x10_recurring_until\"\xca\x01\n" +
 	"\x16CalendarEntryRecurring\x12M\n" +
 	"\x05every\x18\x01 \x01(\x0e27.resources.calendar.entries.CalendarEntryRecurringEveryR\x05every\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x05R\x05count\x129\n" +
@@ -1197,16 +1240,17 @@ var file_resources_calendar_entries_entries_proto_depIdxs = []int32{
 	5,  // 9: resources.calendar.entries.CalendarEntry.recurring:type_name -> resources.calendar.entries.CalendarEntryRecurring
 	6,  // 10: resources.calendar.entries.CalendarEntry.rsvp:type_name -> resources.calendar.entries.CalendarEntryRSVP
 	3,  // 11: resources.calendar.entries.CalendarEntry.occurrence:type_name -> resources.calendar.entries.CalendarEntryOccurrence
-	1,  // 12: resources.calendar.entries.CalendarEntryRecurring.every:type_name -> resources.calendar.entries.CalendarEntryRecurringEvery
-	7,  // 13: resources.calendar.entries.CalendarEntryRecurring.until:type_name -> resources.timestamp.Timestamp
-	7,  // 14: resources.calendar.entries.CalendarEntryRSVP.created_at:type_name -> resources.timestamp.Timestamp
-	10, // 15: resources.calendar.entries.CalendarEntryRSVP.user:type_name -> resources.users.short.UserShort
-	2,  // 16: resources.calendar.entries.CalendarEntryRSVP.response:type_name -> resources.calendar.entries.RsvpResponses
-	17, // [17:17] is the sub-list for method output_type
-	17, // [17:17] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	7,  // 12: resources.calendar.entries.CalendarEntry.recurring_until:type_name -> resources.timestamp.Timestamp
+	1,  // 13: resources.calendar.entries.CalendarEntryRecurring.every:type_name -> resources.calendar.entries.CalendarEntryRecurringEvery
+	7,  // 14: resources.calendar.entries.CalendarEntryRecurring.until:type_name -> resources.timestamp.Timestamp
+	7,  // 15: resources.calendar.entries.CalendarEntryRSVP.created_at:type_name -> resources.timestamp.Timestamp
+	10, // 16: resources.calendar.entries.CalendarEntryRSVP.user:type_name -> resources.users.short.UserShort
+	2,  // 17: resources.calendar.entries.CalendarEntryRSVP.response:type_name -> resources.calendar.entries.RsvpResponses
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_resources_calendar_entries_entries_proto_init() }

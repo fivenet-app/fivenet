@@ -315,28 +315,30 @@ func (b0 CalendarEntryOccurrence_builder) Build() *CalendarEntryOccurrence {
 }
 
 type CalendarEntry struct {
-	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
-	Id            int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt     *timestamp.Timestamp     `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt     *timestamp.Timestamp     `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt     *timestamp.Timestamp     `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	CalendarId    int64                    `protobuf:"varint,5,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
-	Calendar      *calendar.Calendar       `protobuf:"bytes,6,opt,name=calendar,proto3,oneof" json:"calendar,omitempty"`
-	Job           *string                  `protobuf:"bytes,7,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	StartTime     *timestamp.Timestamp     `protobuf:"bytes,8,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime       *timestamp.Timestamp     `protobuf:"bytes,9,opt,name=end_time,json=endTime,proto3,oneof" json:"end_time,omitempty"`
-	Title         string                   `protobuf:"bytes,10,opt,name=title,proto3" json:"title,omitempty"`
-	Content       *content.Content         `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty"`
-	Closed        bool                     `protobuf:"varint,12,opt,name=closed,proto3" json:"closed,omitempty"`
-	RsvpOpen      *bool                    `protobuf:"varint,13,opt,name=rsvp_open,json=rsvpOpen,proto3,oneof" json:"rsvp_open,omitempty"`
-	CreatorId     *int32                   `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *short.UserShort         `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
-	CreatorJob    string                   `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	Recurring     *CalendarEntryRecurring  `protobuf:"bytes,17,opt,name=recurring,proto3,oneof" json:"recurring,omitempty"`
-	Rsvp          *CalendarEntryRSVP       `protobuf:"bytes,18,opt,name=rsvp,proto3,oneof" json:"rsvp,omitempty"`
-	Occurrence    *CalendarEntryOccurrence `protobuf:"bytes,19,opt,name=occurrence,proto3,oneof" json:"occurrence,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState   `protogen:"hybrid.v1"`
+	Id                int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt         *timestamp.Timestamp     `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt         *timestamp.Timestamp     `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt         *timestamp.Timestamp     `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	CalendarId        int64                    `protobuf:"varint,5,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
+	Calendar          *calendar.Calendar       `protobuf:"bytes,6,opt,name=calendar,proto3,oneof" json:"calendar,omitempty"`
+	Job               *string                  `protobuf:"bytes,7,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	StartTime         *timestamp.Timestamp     `protobuf:"bytes,8,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime           *timestamp.Timestamp     `protobuf:"bytes,9,opt,name=end_time,json=endTime,proto3,oneof" json:"end_time,omitempty"`
+	Title             string                   `protobuf:"bytes,10,opt,name=title,proto3" json:"title,omitempty"`
+	Content           *content.Content         `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty"`
+	Closed            bool                     `protobuf:"varint,12,opt,name=closed,proto3" json:"closed,omitempty"`
+	RsvpOpen          *bool                    `protobuf:"varint,13,opt,name=rsvp_open,json=rsvpOpen,proto3,oneof" json:"rsvp_open,omitempty"`
+	CreatorId         *int32                   `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator           *short.UserShort         `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	CreatorJob        string                   `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	Recurring         *CalendarEntryRecurring  `protobuf:"bytes,17,opt,name=recurring,proto3,oneof" json:"recurring,omitempty"`
+	Rsvp              *CalendarEntryRSVP       `protobuf:"bytes,18,opt,name=rsvp,proto3,oneof" json:"rsvp,omitempty"`
+	Occurrence        *CalendarEntryOccurrence `protobuf:"bytes,19,opt,name=occurrence,proto3,oneof" json:"occurrence,omitempty"`
+	RecurringUntil    *timestamp.Timestamp     `protobuf:"bytes,20,opt,name=recurring_until,json=recurringUntil,proto3,oneof" json:"recurring_until,omitempty"`
+	RecurrenceVersion int32                    `protobuf:"varint,21,opt,name=recurrence_version,json=recurrenceVersion,proto3" json:"recurrence_version,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *CalendarEntry) Reset() {
@@ -497,6 +499,20 @@ func (x *CalendarEntry) GetOccurrence() *CalendarEntryOccurrence {
 	return nil
 }
 
+func (x *CalendarEntry) GetRecurringUntil() *timestamp.Timestamp {
+	if x != nil {
+		return x.RecurringUntil
+	}
+	return nil
+}
+
+func (x *CalendarEntry) GetRecurrenceVersion() int32 {
+	if x != nil {
+		return x.RecurrenceVersion
+	}
+	return 0
+}
+
 func (x *CalendarEntry) SetId(v int64) {
 	x.Id = v
 }
@@ -571,6 +587,14 @@ func (x *CalendarEntry) SetRsvp(v *CalendarEntryRSVP) {
 
 func (x *CalendarEntry) SetOccurrence(v *CalendarEntryOccurrence) {
 	x.Occurrence = v
+}
+
+func (x *CalendarEntry) SetRecurringUntil(v *timestamp.Timestamp) {
+	x.RecurringUntil = v
+}
+
+func (x *CalendarEntry) SetRecurrenceVersion(v int32) {
+	x.RecurrenceVersion = v
 }
 
 func (x *CalendarEntry) HasCreatedAt() bool {
@@ -671,6 +695,13 @@ func (x *CalendarEntry) HasOccurrence() bool {
 	return x.Occurrence != nil
 }
 
+func (x *CalendarEntry) HasRecurringUntil() bool {
+	if x == nil {
+		return false
+	}
+	return x.RecurringUntil != nil
+}
+
 func (x *CalendarEntry) ClearCreatedAt() {
 	x.CreatedAt = nil
 }
@@ -727,28 +758,34 @@ func (x *CalendarEntry) ClearOccurrence() {
 	x.Occurrence = nil
 }
 
+func (x *CalendarEntry) ClearRecurringUntil() {
+	x.RecurringUntil = nil
+}
+
 type CalendarEntry_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id         int64
-	CreatedAt  *timestamp.Timestamp
-	UpdatedAt  *timestamp.Timestamp
-	DeletedAt  *timestamp.Timestamp
-	CalendarId int64
-	Calendar   *calendar.Calendar
-	Job        *string
-	StartTime  *timestamp.Timestamp
-	EndTime    *timestamp.Timestamp
-	Title      string
-	Content    *content.Content
-	Closed     bool
-	RsvpOpen   *bool
-	CreatorId  *int32
-	Creator    *short.UserShort
-	CreatorJob string
-	Recurring  *CalendarEntryRecurring
-	Rsvp       *CalendarEntryRSVP
-	Occurrence *CalendarEntryOccurrence
+	Id                int64
+	CreatedAt         *timestamp.Timestamp
+	UpdatedAt         *timestamp.Timestamp
+	DeletedAt         *timestamp.Timestamp
+	CalendarId        int64
+	Calendar          *calendar.Calendar
+	Job               *string
+	StartTime         *timestamp.Timestamp
+	EndTime           *timestamp.Timestamp
+	Title             string
+	Content           *content.Content
+	Closed            bool
+	RsvpOpen          *bool
+	CreatorId         *int32
+	Creator           *short.UserShort
+	CreatorJob        string
+	Recurring         *CalendarEntryRecurring
+	Rsvp              *CalendarEntryRSVP
+	Occurrence        *CalendarEntryOccurrence
+	RecurringUntil    *timestamp.Timestamp
+	RecurrenceVersion int32
 }
 
 func (b0 CalendarEntry_builder) Build() *CalendarEntry {
@@ -774,6 +811,8 @@ func (b0 CalendarEntry_builder) Build() *CalendarEntry {
 	x.Recurring = b.Recurring
 	x.Rsvp = b.Rsvp
 	x.Occurrence = b.Occurrence
+	x.RecurringUntil = b.RecurringUntil
+	x.RecurrenceVersion = b.RecurrenceVersion
 	return m0
 }
 
@@ -1045,7 +1084,8 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\x0esource_user_id\x18\x04 \x01(\x05H\x01R\fsourceUserId\x88\x01\x01\x12\x17\n" +
 	"\aall_day\x18\x05 \x01(\bR\x06allDayB\x12\n" +
 	"\x10_source_entry_idB\x11\n" +
-	"\x0f_source_user_id\"\xce\t\n" +
+	"\x0f_source_user_id\"\xdf\n" +
+	"\n" +
 	"\rCalendarEntry\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1076,7 +1116,9 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"R\x04rsvp\x88\x01\x01\x12X\n" +
 	"\n" +
 	"occurrence\x18\x13 \x01(\v23.resources.calendar.entries.CalendarEntryOccurrenceH\vR\n" +
-	"occurrence\x88\x01\x01B\r\n" +
+	"occurrence\x88\x01\x01\x12L\n" +
+	"\x0frecurring_until\x18\x14 \x01(\v2\x1e.resources.timestamp.TimestampH\fR\x0erecurringUntil\x88\x01\x01\x12-\n" +
+	"\x12recurrence_version\x18\x15 \x01(\x05R\x11recurrenceVersionB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\v\n" +
@@ -1091,7 +1133,8 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\n" +
 	"_recurringB\a\n" +
 	"\x05_rsvpB\r\n" +
-	"\v_occurrence\"\xca\x01\n" +
+	"\v_occurrenceB\x12\n" +
+	"\x10_recurring_until\"\xca\x01\n" +
 	"\x16CalendarEntryRecurring\x12M\n" +
 	"\x05every\x18\x01 \x01(\x0e27.resources.calendar.entries.CalendarEntryRecurringEveryR\x05every\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x05R\x05count\x129\n" +
@@ -1155,16 +1198,17 @@ var file_resources_calendar_entries_entries_proto_depIdxs = []int32{
 	5,  // 9: resources.calendar.entries.CalendarEntry.recurring:type_name -> resources.calendar.entries.CalendarEntryRecurring
 	6,  // 10: resources.calendar.entries.CalendarEntry.rsvp:type_name -> resources.calendar.entries.CalendarEntryRSVP
 	3,  // 11: resources.calendar.entries.CalendarEntry.occurrence:type_name -> resources.calendar.entries.CalendarEntryOccurrence
-	1,  // 12: resources.calendar.entries.CalendarEntryRecurring.every:type_name -> resources.calendar.entries.CalendarEntryRecurringEvery
-	7,  // 13: resources.calendar.entries.CalendarEntryRecurring.until:type_name -> resources.timestamp.Timestamp
-	7,  // 14: resources.calendar.entries.CalendarEntryRSVP.created_at:type_name -> resources.timestamp.Timestamp
-	10, // 15: resources.calendar.entries.CalendarEntryRSVP.user:type_name -> resources.users.short.UserShort
-	2,  // 16: resources.calendar.entries.CalendarEntryRSVP.response:type_name -> resources.calendar.entries.RsvpResponses
-	17, // [17:17] is the sub-list for method output_type
-	17, // [17:17] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	7,  // 12: resources.calendar.entries.CalendarEntry.recurring_until:type_name -> resources.timestamp.Timestamp
+	1,  // 13: resources.calendar.entries.CalendarEntryRecurring.every:type_name -> resources.calendar.entries.CalendarEntryRecurringEvery
+	7,  // 14: resources.calendar.entries.CalendarEntryRecurring.until:type_name -> resources.timestamp.Timestamp
+	7,  // 15: resources.calendar.entries.CalendarEntryRSVP.created_at:type_name -> resources.timestamp.Timestamp
+	10, // 16: resources.calendar.entries.CalendarEntryRSVP.user:type_name -> resources.users.short.UserShort
+	2,  // 17: resources.calendar.entries.CalendarEntryRSVP.response:type_name -> resources.calendar.entries.RsvpResponses
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_resources_calendar_entries_entries_proto_init() }

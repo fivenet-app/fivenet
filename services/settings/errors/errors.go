@@ -59,7 +59,7 @@ var (
 	)
 	ErrDiscordTokenExpired = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.settings.SettingsService.ErrDiscordTokenExpired.title"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrDiscordTokenExpired.content"},
 		&common.I18NItem{Key: "errors.settings.SettingsService.ErrDiscordTokenExpired.title"},
 	)
 )
