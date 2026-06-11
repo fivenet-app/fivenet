@@ -338,6 +338,17 @@ async function closeModal(): Promise<void> {
                                 />
                             </template>
 
+                            <template #item-leading="{ item, ui }">
+                                <UChip
+                                    v-if="item"
+                                    :class="ui.itemLeadingChip()"
+                                    :color="(item?.color ?? 'primary') as ChipProps['color']"
+                                    inset
+                                    standalone
+                                    :size="ui.itemLeadingChipSize() as ChipProps['size']"
+                                />
+                            </template>
+
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.calendar')]) }}
                             </template>

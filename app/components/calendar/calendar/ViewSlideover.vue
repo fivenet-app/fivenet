@@ -35,25 +35,34 @@ const { data, status, refresh, error } = useLazyAsyncData(`calendar-${props.cale
 
 const calendar = computed(() => data.value?.calendar);
 const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
+
+const canDo = computed(() => ({
+    edit:
+        can('calendar.CalendarService/CreateCalendar').value &&
+        checkCalendarAccess(
+            calendar.value?.access,
+            calendar.value?.creator,
+            AccessLevel.EDIT,
+            calendar.value?.job,
+            calendar.value?.creatorJob,
+        ),
+    manage:
+        !isSystemManaged.value &&
+        checkCalendarAccess(
+            calendar.value?.access,
+            calendar.value?.creator,
+            AccessLevel.MANAGE,
+            calendar.value?.job,
+            calendar.value?.creatorJob,
+        ),
+}));
 </script>
 
 <template>
     <USlideover :title="`${$t('common.calendar')}: ${calendar?.name ?? $t('common.calendar')}`" :overlay="false">
         <template #actions>
             <div v-if="calendar" class="flex items-center justify-between gap-2">
-                <UTooltip
-                    v-if="
-                        can('calendar.CalendarService/CreateCalendar').value &&
-                        checkCalendarAccess(
-                            calendar?.access,
-                            calendar?.creator,
-                            AccessLevel.EDIT,
-                            calendar?.job,
-                            calendar?.creatorJob,
-                        )
-                    "
-                    :text="$t('common.edit')"
-                >
+                <UTooltip v-if="canDo.edit" :text="$t('common.edit')">
                     <UButton
                         variant="link"
                         icon="i-mdi-pencil"
@@ -67,19 +76,7 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
                     />
                 </UTooltip>
 
-                <UTooltip
-                    v-if="
-                        !isSystemManaged &&
-                        checkCalendarAccess(
-                            calendar?.access,
-                            calendar?.creator,
-                            AccessLevel.MANAGE,
-                            calendar?.job,
-                            calendar?.creatorJob,
-                        )
-                    "
-                    :text="$t('common.delete')"
-                >
+                <UTooltip v-if="canDo.manage" :text="$t('common.delete')">
                     <UButton
                         variant="link"
                         icon="i-mdi-delete"
@@ -129,46 +126,41 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
 
                         <div class="mx-auto w-full max-w-(--breakpoint-xl) break-words">
                             <div class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
-                                <CustomContentRenderer v-if="calendar.description" :value="calendar.description" />
-                                <p v-else>{{ $t('common.na') }}</p>
+                                <CustomContentRenderer :value="calendar.description" :placeholder="$t('common.na')" />
                             </div>
                         </div>
+
+                        <UCollapsible
+                            v-if="calendar.access && (calendar.access?.jobs.length > 0 || calendar.access?.users.length > 0)"
+                            class="group flex flex-col gap-2"
+                        >
+                            <UButton
+                                class="w-full"
+                                color="neutral"
+                                variant="subtle"
+                                :label="$t('common.access')"
+                                icon="i-mdi-lock"
+                                trailing-icon="i-mdi-chevron-down"
+                                block
+                                :ui="{
+                                    trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                                }"
+                            />
+
+                            <template #content>
+                                <AccessBadges
+                                    :access-level="AccessLevel"
+                                    :jobs="calendar.access.jobs"
+                                    :users="calendar.access.users"
+                                    i18n-key="enums.calendar"
+                                />
+                            </template>
+                        </UCollapsible>
                     </template>
 
                     <p v-else class="text-sm text-neutral-500 dark:text-neutral-400">
                         {{ $t('common.read_only') }}
                     </p>
-
-                    <UCollapsible
-                        v-if="
-                            !isSystemManaged &&
-                            calendar?.access &&
-                            (calendar?.access?.jobs.length > 0 || calendar?.access?.users.length > 0)
-                        "
-                        class="group flex flex-col gap-2"
-                    >
-                        <UButton
-                            class="w-full"
-                            color="neutral"
-                            variant="subtle"
-                            :label="$t('common.access')"
-                            icon="i-mdi-lock"
-                            trailing-icon="i-mdi-chevron-down"
-                            block
-                            :ui="{
-                                trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
-                            }"
-                        />
-
-                        <template #content>
-                            <AccessBadges
-                                :access-level="AccessLevel"
-                                :jobs="calendar?.access.jobs"
-                                :users="calendar?.access.users"
-                                i18n-key="enums.calendar"
-                            />
-                        </template>
-                    </UCollapsible>
                 </template>
             </div>
         </template>

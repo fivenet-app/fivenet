@@ -23,6 +23,8 @@ import (
 	"github.com/jinzhu/now"
 )
 
+const maxCalendarEntriesLimit = 125
+
 func (s *Server) ListCalendarEntries(
 	ctx context.Context,
 	req *pbcalendar.ListCalendarEntriesRequest,
@@ -92,9 +94,32 @@ func (s *Server) ListCalendarEntries(
 
 	condition = condition.AND(tCalendarEntry.StartTime.LT_EQ(mysql.DateTimeT(endDate)))
 
-	resp := &pbcalendar.ListCalendarEntriesResponse{}
+	dateWindowCondition := mysql.OR(
+		// Non-recurring entries overlapping the requested range.
+		mysql.AND(
+			tCalendarEntry.Recurring.IS_NULL(),
+			mysql.OR(
+				tCalendarEntry.EndTime.IS_NULL().
+					AND(tCalendarEntry.StartTime.GT_EQ(mysql.DateTimeT(startDate))),
+				tCalendarEntry.EndTime.GT_EQ(mysql.DateTimeT(startDate)),
+			),
+		),
+
+		// Recurring entries that started before range end and have not ended before range start.
+		mysql.AND(
+			tCalendarEntry.Recurring.IS_NOT_NULL(),
+			mysql.OR(
+				// No recurring-until means it may still produce occurrences.
+				tCalendarEntry.RecurringUntil.IS_NULL(),
+
+				// Series still active in this range.
+				tCalendarEntry.RecurringUntil.GT_EQ(mysql.DateTimeT(startDate)),
+			),
+		),
+	)
+
 	regularCondition := condition.
-		AND(tCalendarEntry.StartTime.GT_EQ(mysql.DateTimeT(startDate))).
+		AND(dateWindowCondition).
 		AND(mysql.OR(
 			tCalendar.SystemKind.IS_NULL(),
 			tCalendar.SystemKind.NOT_EQ(
@@ -103,6 +128,7 @@ func (s *Server) ListCalendarEntries(
 				),
 			),
 		))
+
 	birthdayCondition := condition.AND(
 		tCalendar.SystemKind.EQ(
 			mysql.Int32(
@@ -135,7 +161,7 @@ func (s *Server) ListCalendarEntries(
 		),
 		startDate,
 		endDate,
-		int64Ptr(100),
+		int64Ptr(maxCalendarEntriesLimit),
 	)
 	if err != nil {
 		return nil, err
@@ -158,11 +184,12 @@ func (s *Server) ListCalendarEntries(
 		return nil, err
 	}
 
-	resp.Entries = s.finalizeCalendarEntries(
-		append(regularEntries, birthdayEntries...),
-		userInfo,
-	)
-	return resp, nil
+	return &pbcalendar.ListCalendarEntriesResponse{
+		Entries: s.finalizeCalendarEntries(
+			append(regularEntries, birthdayEntries...),
+			userInfo,
+		),
+	}, nil
 }
 
 func (s *Server) GetUpcomingEntries(
@@ -240,7 +267,7 @@ func (s *Server) GetUpcomingEntries(
 		),
 		rangeStart,
 		rangeEnd,
-		int64Ptr(100),
+		int64Ptr(maxCalendarEntriesLimit),
 	)
 	if err != nil {
 		return nil, err
@@ -385,6 +412,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 				tCalendarEntry.Closed,
 				tCalendarEntry.RsvpOpen,
 				tCalendarEntry.Recurring,
+				tCalendarEntry.RecurringUntil,
 			).
 			SET(
 				req.GetEntry().GetTitle(),
@@ -394,6 +422,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 				req.GetEntry().GetClosed(),
 				req.GetEntry().GetRsvpOpen(),
 				req.GetEntry().GetRecurring(),
+				req.GetEntry().GetRecurring().GetUntil(),
 			).
 			WHERE(mysql.AND(
 				tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntry().GetId())),
@@ -418,6 +447,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 				tCalendarEntry.Closed,
 				tCalendarEntry.RsvpOpen,
 				tCalendarEntry.Recurring,
+				tCalendarEntry.RecurringUntil,
 				tCalendarEntry.CreatorID,
 				tCalendarEntry.CreatorJob,
 			).
@@ -431,6 +461,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 				req.GetEntry().GetClosed(),
 				req.GetEntry().GetRsvpOpen(),
 				req.GetEntry().GetRecurring(),
+				req.GetEntry().GetRecurring().GetUntil(),
 				userInfo.GetUserId(),
 				userInfo.GetJob(),
 			)

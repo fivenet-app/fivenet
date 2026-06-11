@@ -12,19 +12,20 @@ import (
 )
 
 type FivenetCalendarEntries struct {
-	ID         int64      `sql:"primary_key" json:"id"`
-	CreatedAt  *time.Time `json:"created_at"`
-	UpdatedAt  *time.Time `json:"updated_at"`
-	DeletedAt  *time.Time `json:"deleted_at"`
-	CalendarID int64      `json:"calendar_id"`
-	Job        *string    `json:"job"`
-	StartTime  time.Time  `json:"start_time"`
-	EndTime    *time.Time `json:"end_time"`
-	Title      string     `json:"title"`
-	Content    *string    `json:"content"`
-	Closed     *bool      `json:"closed"`
-	RsvpOpen   *bool      `json:"rsvp_open"`
-	CreatorID  *int32     `json:"creator_id"`
-	CreatorJob string     `json:"creator_job"`
-	Recurring  *string    `json:"recurring"`
+	ID             int64      `sql:"primary_key" json:"id"`
+	CreatedAt      *time.Time `json:"created_at"`
+	UpdatedAt      *time.Time `json:"updated_at"`
+	DeletedAt      *time.Time `json:"deleted_at"`
+	CalendarID     int64      `json:"calendar_id"`
+	Job            *string    `json:"job"`
+	StartTime      time.Time  `json:"start_time"`
+	EndTime        *time.Time `json:"end_time"`
+	Title          string     `json:"title"`
+	Content        *string    `json:"content"`
+	Closed         *bool      `json:"closed"`
+	RsvpOpen       *bool      `json:"rsvp_open"`
+	CreatorID      *int32     `json:"creator_id"`
+	CreatorJob     string     `json:"creator_job"`
+	Recurring      *string    `json:"recurring"`
+    RecurringUntil *time.Time `json:"recurring_until"`
 }
