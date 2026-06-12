@@ -11,6 +11,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
+import { isValidCalendarEntryRecurring } from '~/components/calendar/helpers';
 import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { useCalendarStore } from '~/stores/calendar';
 import { useCompletorStore } from '~/stores/completor';
@@ -140,7 +141,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
     try {
         const response = await calendarStore.createOrUpdateCalendarEntry(
             {
-                id: data.value?.entry?.id ?? 0,
+                id: data.value?.id ?? 0,
                 calendarId: values.calendar?.id,
                 title: values.title,
                 startTime: toTimestamp(values.startTime),
@@ -161,7 +162,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
             state.users.map((u) => u.userId),
         );
 
-        emit('close', false);
+        emit('close', true);
 
         return response;
     } catch (e) {
@@ -180,12 +181,12 @@ function setFromProps(): void {
         return;
     }
 
-    if (!data.value?.entry) {
+    if (!data.value) {
         syncSnapshot();
         return;
     }
 
-    const entry = data.value?.entry;
+    const entry = data.value;
     if (entry.calendar) state.calendar = entry.calendar;
     state.title = entry.title;
     state.startTime = toDate(entry.startTime);
@@ -195,11 +196,12 @@ function setFromProps(): void {
     state.closed = entry.closed;
     state.rsvpOpen = entry.rsvpOpen !== undefined;
     const recurring = entry.recurring;
-    state.recurringEnabled = recurring !== undefined;
-    state.recurringEvery = recurring?.every ?? CalendarEntryRecurringEvery.DAY;
-    const recurringCount = recurring?.count ?? 0;
-    state.recurringCount = recurringCount > 0 ? recurringCount : 1;
-    state.recurringUntil = recurring?.until ? toDate(recurring.until) : undefined;
+    if (isValidCalendarEntryRecurring(recurring)) {
+        state.recurringEnabled = true;
+        state.recurringEvery = recurring.every;
+        state.recurringCount = recurring.count;
+        state.recurringUntil = recurring.until ? toDate(recurring.until) : undefined;
+    }
     syncSnapshot();
 }
 
@@ -291,11 +293,7 @@ async function closeModal(): Promise<void> {
                     :error="error"
                     :retry="refresh"
                 />
-                <DataNoDataBlock
-                    v-else-if="props.entryId && (!data || !data.entry)"
-                    :type="$t('common.entry', 1)"
-                    icon="i-mdi-calendar"
-                />
+                <DataNoDataBlock v-else-if="props.entryId && !data" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
 
                 <template v-else>
                     <UFormField class="flex-1" name="calendar" :label="$t('common.calendar')" required>

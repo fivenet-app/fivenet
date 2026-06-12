@@ -57,7 +57,7 @@ const links = computed(() =>
                     :color="attr.customData.color"
                     @click="$emit('selected', attr.customData)"
                 >
-                    <span class="line-clamp-2 inline-flex items-center gap-0.5 hover:line-clamp-4">
+                    <span class="line-clamp-3 inline-flex items-center gap-0.5">
                         <UIcon v-if="attr.customData.icon" class="size-4" :name="attr.customData.icon" />
                         {{ attr.customData.title }}
                     </span>
@@ -90,7 +90,7 @@ const links = computed(() =>
                     :color="attr.customData.color"
                     @click="$emit('selected', attr.customData)"
                 >
-                    <span class="line-clamp-2 inline-flex items-center gap-0.5 hover:line-clamp-4">
+                    <span class="line-clamp-3 inline-flex items-center gap-0.5">
                         <UIcon v-if="attr.customData.ongoing" class="size-3 text-amber-800" name="i-mdi-timer-sand" />
 
                         <UIcon v-if="attr.customData.icon" class="size-4" :name="attr.customData.icon" />

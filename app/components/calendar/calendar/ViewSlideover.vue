@@ -57,14 +57,16 @@ const canDo = computed(() => ({
         ),
 }));
 
-function openUpdateModal(): void {
+async function openUpdateModal(): Promise<void> {
     if (!calendar.value) return;
 
-    calendarCreateOrUpdateModal.open({
+    const response = await calendarCreateOrUpdateModal.open({
         calendarId: calendar.value.id,
         systemManaged: isSystemManaged.value,
-        onRefresh: () => refresh(),
     });
+    if (response) {
+        refresh();
+    }
 }
 
 async function openDeleteConfirmModal(): Promise<void> {

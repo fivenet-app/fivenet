@@ -3,7 +3,12 @@ import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range
 import type { UserLike } from '~/utils/strings';
 import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access/access';
 import { CalendarSystemKind, type Calendar } from '~~/gen/ts/resources/calendar/calendar';
-import { CalendarEntryOccurrenceKind, type CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
+import {
+    CalendarEntryOccurrenceKind,
+    CalendarEntryRecurringEvery,
+    type CalendarEntry,
+    type CalendarEntryRecurring,
+} from '~~/gen/ts/resources/calendar/entries/entries';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 export type CalendarEntryAttributeData = CalendarEntry & {
@@ -49,6 +54,12 @@ export function isSystemManagedCalendar(calendar?: Pick<Calendar, 'systemKind'> 
 
 export function isBirthdayEntry(entry?: Pick<CalendarEntry, 'occurrence'> | undefined): boolean {
     return entry?.occurrence?.kind === CalendarEntryOccurrenceKind.BIRTHDAY;
+}
+
+export function isValidCalendarEntryRecurring(
+    recurring?: Pick<CalendarEntryRecurring, 'every' | 'count' | 'until'> | undefined,
+): recurring is CalendarEntryRecurring {
+    return recurring !== undefined && recurring.every > CalendarEntryRecurringEvery.UNSPECIFIED && recurring.count > 0;
 }
 
 export function isSystemManagedCalendarEntry(

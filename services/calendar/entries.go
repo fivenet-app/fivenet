@@ -39,6 +39,7 @@ func (s *Server) ListCalendarEntries(
 	condition := mysql.AND(
 		tCalendarEntry.DeletedAt.IS_NULL(),
 		mysql.OR(
+			// Allow access to user's calendar subscriptions
 			tCalendar.ID.IN(
 				tCalendarSubs.
 					SELECT(
@@ -49,6 +50,7 @@ func (s *Server) ListCalendarEntries(
 						tCalendarSubs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 					)),
 			),
+			// Allow access to invited entries
 			tCalendarEntry.ID.IN(
 				tCalendarRSVP.
 					SELECT(
@@ -60,6 +62,7 @@ func (s *Server) ListCalendarEntries(
 						tCalendarRSVP.Response.GT(mysql.Int32(int32(rsvpResponse))),
 					)),
 			),
+			// Allow access to invited recurring entries
 			tCalendarEntry.ID.IN(
 				tCalendarRSVPOccurrence.
 					SELECT(tCalendarRSVPOccurrence.EntryID).
@@ -72,11 +75,17 @@ func (s *Server) ListCalendarEntries(
 						),
 					)),
 			),
-			tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+			// Allow birthday calendar entries access
 			s.birthdayCalendarVisible(
 				tCalendarEntry.CalendarID,
 				calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
 				userInfo,
+			),
+			// Allow entries from calendars the user can view directly
+			calendarEntryVisibility(
+				userInfo,
+				calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+				rsvpResponse,
 			),
 		),
 	)

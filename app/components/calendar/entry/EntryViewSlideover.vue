@@ -5,6 +5,7 @@ import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrU
 import {
     checkCalendarAccess,
     isBirthdayEntry as isBirthdayCalendarEntry,
+    isValidCalendarEntryRecurring,
     isSystemManagedCalendarEntry,
 } from '~/components/calendar/helpers';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -44,23 +45,31 @@ const { calendars } = storeToRefs(calendarStore);
 const notifications = useNotificationsStore();
 
 const w = window;
+const entryId = props.entry?.id ?? props.entryId;
 
-const fetched = props.entry
-    ? undefined
-    : useLazyAsyncData(`calendar-entry:${props.entryId}`, () => calendarStore.getCalendarEntry({ entryId: props.entryId! }));
+const {
+    data: entry,
+    refresh,
+    error,
+    status,
+} = useLazyAsyncData(
+    `calendar-entry:${entryId}`,
+    async () => {
+        if (!entryId) return props.entry;
+
+        return await calendarStore.getCalendarEntry({ entryId });
+    },
+    {
+        default: () => props.entry,
+        immediate: !props.entry && !!entryId,
+    },
+);
 
 const calendarDetails = props.entry
     ? useLazyAsyncData(`calendar-entry-calendar:${props.entry.calendarId}`, () =>
           calendarStore.getCalendar({ calendarId: props.entry!.calendarId }),
       )
     : undefined;
-
-const entry = computed(() => props.entry ?? fetched?.data.value?.entry);
-const status = computed(() => (props.entry ? 'success' : (fetched?.status.value ?? 'idle')));
-const error = computed(() => (props.entry ? undefined : fetched?.error.value));
-const refresh = async (): Promise<void> => {
-    if (fetched) await fetched.refresh();
-};
 
 const calendar = computed(
     () =>
@@ -73,12 +82,14 @@ const isBirthdayEntry = computed(() => isBirthdayCalendarEntry(entry.value));
 
 const displayStartTime = computed(() => (entry.value ? getCalendarEntryDisplayStartDate(entry.value) : new Date()));
 const displayEndTime = computed(() => (entry.value ? getCalendarEntryDisplayEndDate(entry.value) : undefined));
+const isEntryLoading = computed(() => isRequestPending(status.value) && !entry.value);
+const hasEntryError = computed(() => !!error && !entry.value);
 
 const color = computed(() => (calendar.value?.color ?? 'primary') as BadgeProps['color']);
 
 const recurringLabel = computed(() => {
     const recurring = entry.value?.recurring;
-    if (!recurring || recurring.every === CalendarEntryRecurringEvery.UNSPECIFIED) return '';
+    if (!isValidCalendarEntryRecurring(recurring)) return '';
 
     const everyUnit = (() => {
         switch (recurring.every) {
@@ -156,11 +167,14 @@ const canDo = computed(() => ({
 const confirmModal = overlay.create(ConfirmModal);
 const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 
-function openUpdateModal(): void {
-    entryCreateOrUpdateModal.open({
+async function openUpdateModal(): Promise<void> {
+    const response = await entryCreateOrUpdateModal.open({
         calendarId: entry.value?.calendarId,
         entryId: entry.value?.id,
     });
+    if (response) {
+        await refresh();
+    }
 }
 
 async function openDeleteConfirmModal(): Promise<void> {
@@ -204,9 +218,9 @@ defineShortcuts({
 
         <template #body>
             <div class="flex h-full w-full flex-1 flex-col gap-2">
-                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.entry', 1)])" />
+                <DataPendingBlock v-if="isEntryLoading" :message="$t('common.loading', [$t('common.entry', 1)])" />
                 <DataErrorBlock
-                    v-else-if="error"
+                    v-else-if="hasEntryError"
                     :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
                     :error="error"
                     :retry="refresh"

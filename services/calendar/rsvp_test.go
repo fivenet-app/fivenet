@@ -125,6 +125,11 @@ func TestFilterUpcomingCalendarEntries(t *testing.T) {
 			StartTime: timestamp.New(time.Date(2026, time.January, 18, 10, 0, 0, 0, time.UTC)),
 			CreatorId: func() *int32 { v := int32(7); return &v }(),
 		},
+		{
+			Id:        5,
+			Title:     "not visible",
+			StartTime: timestamp.New(time.Date(2026, time.January, 19, 10, 0, 0, 0, time.UTC)),
+		},
 	}
 
 	filtered := filterUpcomingCalendarEntries(entries, userInfo)

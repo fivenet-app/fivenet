@@ -63,6 +63,7 @@ func calendarEntryVisibility(
 	rsvpResponse calendarentries.RsvpResponses,
 ) mysql.BoolExpression {
 	return mysql.OR(
+		// User has access to calendar
 		mysql.EXISTS(
 			mysql.
 				SELECT(mysql.Int(1)).
@@ -79,8 +80,8 @@ func calendarEntryVisibility(
 					),
 				)),
 		),
+		// User can see entry because they were invited (RSVP)
 		calendarEntryRSVPVisible(userInfo, rsvpResponse),
-		tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 	)
 }
 

@@ -105,6 +105,7 @@ const policePermissions = [
     'documents.StampsService/DeleteStamp',
     'documents.StampsService/ListUsableStamps',
     'documents.StampsService/UpsertStamp',
+    'documents.StatsService/GetStats',
     'documents.TemplatesService/CreateTemplate',
     'documents.TemplatesService/DeleteTemplate',
     'documents.TemplatesService/ListTemplates',
@@ -230,6 +231,10 @@ const policeAttributes = [
     templateAttribute('livemap.LivemapService/DeleteMarker', 'Access'),
     templateAttribute('documents.DocumentsService/ChangeDocumentOwner', 'Access'),
     templateAttribute('documents.DocumentsService/CreateDocumentReq', 'Types'),
+    templateAttribute('documents.StatsService/GetStats', 'Categories', {
+        validValues: { oneofKind: 'stringList', stringList: { strings: ['PenaltyCalculator'] } },
+    }),
+    templateAttribute('documents.StatsService/GetStats', 'Jobs'),
     templateAttribute('jobs.ConductService/ListConductEntries', 'Access'),
     templateAttribute('jobs.TimeclockService/ListTimeclock', 'Access'),
     templateAttribute('jobs.ColleaguesService/SetColleagueProps', 'Access'),

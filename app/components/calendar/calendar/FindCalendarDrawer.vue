@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { BadgeProps } from '@nuxt/ui';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -107,8 +108,9 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                             <UBadge :color="calendar.color as BadgeProps['color']" size="lg" label="&nbsp;" />
 
                             <span>{{ calendar.name }}</span>
-                            <span v-if="calendar.description" class="hidden sm:block"
-                                >({{ $t('common.description') }}: {{ calendar.description }})</span
+                            <span v-if="calendar.description" class="line-clamp-2 hidden text-muted sm:block"
+                                >({{ $t('common.description') }}:
+                                <CustomContentRenderer :placeholder="$t('common.na')" />)</span
                             >
 
                             <CitizenInfoPopover v-if="calendar.creator" :user="calendar.creator" />

@@ -435,7 +435,11 @@ const accordionCategories = computed(() =>
         const singleService = services.length === 1 ? services[0] : undefined;
         if (singleService) {
             const serviceNamespaceKey = `perms.${singleService.namespace}.namespace`;
-            if (te(serviceNamespaceKey)) singleService.label = t(serviceNamespaceKey) + ` - ${singleService.label}`;
+            if (te(serviceNamespaceKey)) {
+                const serviceNamespace = t(serviceNamespaceKey);
+                if (serviceNamespace !== singleService.label)
+                    singleService.label = serviceNamespace + ` - ${singleService.label}`;
+            }
         }
 
         return {

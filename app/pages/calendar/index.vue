@@ -13,14 +13,14 @@ import RefreshButton from '~/components/partials/RefreshButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { isValidCalendarEntryRecurring, type CalendarEntryAttribute } from '~/components/calendar/helpers';
 import { useCalendarStore } from '~/stores/calendar';
-import type { CalendarEntryAttribute } from '~/components/calendar/helpers';
 import {
     getCalendarEntryDisplayEndDate,
     getCalendarEntryDisplayRangeEndDate,
     getCalendarEntryDisplayStartDate,
 } from '~/utils/calendar';
-import { CalendarEntryRecurringEvery, type CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
+import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
 import { CalendarSystemKind } from '~~/gen/ts/resources/calendar/calendar';
 
@@ -137,7 +137,7 @@ const transformedCalendarEntries = computedAsync(async (): Promise<CalendarEntry
                     icon:
                         entry.calendar?.systemKind === CalendarSystemKind.JOB_BIRTHDAYS
                             ? 'i-mdi-birthday-cake'
-                            : entry.recurring?.every && entry.recurring.every > CalendarEntryRecurringEvery.UNSPECIFIED
+                            : isValidCalendarEntryRecurring(entry.recurring)
                               ? 'i-mdi-repeat'
                               : undefined,
                     isPast: past,

@@ -18,7 +18,6 @@ import type {
 import type {
     CreateOrUpdateCalendarEntryResponse,
     GetCalendarEntryRequest,
-    GetCalendarEntryResponse,
     GetUpcomingEntriesRequest,
     GetUpcomingEntriesResponse,
     ListCalendarEntriesRequest,
@@ -290,15 +289,15 @@ export const useCalendarStore = defineStore(
         /**
          * Retrieves a calendar entry by its request parameters.
          * @param {GetCalendarEntryRequest} req - The request parameters to fetch the calendar entry.
-         * @returns {Promise<GetCalendarEntryResponse>} A promise that resolves with the calendar entry response.
+         * @returns {Promise<CalendarEntry | undefined>} A promise that resolves with the calendar entry.
          */
-        const getCalendarEntry = async (req: GetCalendarEntryRequest): Promise<GetCalendarEntryResponse> => {
+        const getCalendarEntry = async (req: GetCalendarEntryRequest): Promise<CalendarEntry | undefined> => {
             const calendarEntriesClient = await getCalendarEntriesClient();
 
             const call = calendarEntriesClient.getCalendarEntry(req);
             const { response } = await call;
 
-            return response;
+            return response.entry;
         };
 
         /**
