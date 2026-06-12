@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { ProgressProps } from '@nuxt/ui';
-import { zxcvbn, zxcvbnOptions } from '@zxcvbn-ts/core';
+import { ZxcvbnFactory } from '@zxcvbn-ts/core';
 
 const props = defineProps<{
     input: string;
     showFeedback?: boolean;
 }>();
 
-zxcvbnOptions.setOptions({
+const zxcvbn = new ZxcvbnFactory({
     maxLength: 70,
 });
 
@@ -15,7 +15,7 @@ const percent = ref<number>(0);
 const feedback = ref<string | null>('');
 const color = ref<ProgressProps['color']>('neutral');
 
-const result = computed(() => zxcvbn(props.input));
+const result = computed(() => zxcvbn.check(props.input));
 
 watch(result, () => {
     percent.value = Math.min((result.value.score * 100) / 3, 100);

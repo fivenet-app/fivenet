@@ -1088,7 +1088,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @clack/core (1.3.1)
+The following software may be included in this product: @clack/core (1.4.1)
 This software contains the following license and notice below:
 
 MIT License
@@ -1103,7 +1103,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @clack/prompts (1.4.0)
+The following software may be included in this product: @clack/prompts (1.5.1)
 This software contains the following license and notice below:
 
 MIT License
@@ -6109,7 +6109,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/y-tiptap (3.0.4)
+The following software may be included in this product: @tiptap/y-tiptap (3.0.5)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -7244,6 +7244,33 @@ SOFTWARE
 
 ---
 
+The following software may be included in this product: @types/estree (1.0.9)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Microsoft Corporation.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE
+
+---
+
 The following software may be included in this product: @types/geojson (7946.0.16)
 This software contains the following license and notice below:
 
@@ -7541,7 +7568,7 @@ SOFTWARE
 
 ---
 
-The following software may be included in this product: @types/node (25.9.2)
+The following software may be included in this product: @types/node (25.9.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -8162,7 +8189,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/parser (8.58.1)
+The following software may be included in this product: @typescript-eslint/parser (8.61.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8189,7 +8216,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/project-service (8.58.1)
+The following software may be included in this product: @typescript-eslint/project-service (8.61.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8243,7 +8270,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/scope-manager (8.58.1)
+The following software may be included in this product: @typescript-eslint/scope-manager (8.61.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8270,7 +8297,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/tsconfig-utils (8.58.1)
+The following software may be included in this product: @typescript-eslint/tsconfig-utils (8.61.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8351,7 +8378,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/types (8.58.1)
+The following software may be included in this product: @typescript-eslint/types (8.61.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8378,7 +8405,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/typescript-estree (8.58.1)
+The following software may be included in this product: @typescript-eslint/typescript-estree (8.61.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8459,7 +8486,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/visitor-keys (8.58.1)
+The following software may be included in this product: @typescript-eslint/visitor-keys (8.61.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8560,6 +8587,21 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---
+
+The following software may be included in this product: @valibot/to-json-schema (1.7.1)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Fabian Hiller
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
@@ -9737,10 +9779,11 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @zxcvbn-ts/core (3.0.4)
+The following software may be included in this product: @zxcvbn-ts/core (4.1.0)
 This software contains the following license and notice below:
 
 Copyright (c) 2012-2016 Dan Wheeler and Dropbox, Inc.
+Copyright (c) 2021 @zxcvbn-ts
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -11107,7 +11150,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: caniuse-api (3.0.0)
+The following software may be included in this product: caniuse-api (4.0.0)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -12609,7 +12652,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: cssnano (8.0.1)
+The following software may be included in this product: cssnano (8.0.2)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -12637,7 +12680,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: cssnano-preset-default (8.0.1)
+The following software may be included in this product: cssnano-preset-default (8.0.2)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -12665,7 +12708,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: cssnano-utils (6.0.0)
+The following software may be included in this product: cssnano-utils (6.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -16133,7 +16176,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: globals (17.5.0)
+The following software may be included in this product: globals (17.6.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -19588,59 +19631,6 @@ terms above.
 
 ---
 
-The following software may be included in this product: lodash.memoize (4.1.2)
-This software contains the following license and notice below:
-
-Copyright jQuery Foundation and other contributors <https://jquery.org/>
-
-Based on Underscore.js, copyright Jeremy Ashkenas,
-DocumentCloud and Investigative Reporters & Editors <http://underscorejs.org/>
-
-This software consists of voluntary contributions made by many
-individuals. For exact contribution history, see the revision history
-available at https://github.com/lodash/lodash
-
-The following license applies to all parts of this software except as
-documented below:
-
-====
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-====
-
-Copyright and related rights for sample code are waived via CC0. Sample
-code is defined as all source code displayed within the prose of the
-documentation.
-
-CC0: http://creativecommons.org/publicdomain/zero/1.0/
-
-====
-
-Files located in the node_modules and vendor directories are externally
-maintained libraries used by this software which have their own
-licenses; we recommend you read them, as their terms may differ from the
-terms above.
-
----
-
 The following software may be included in this product: lodash.merge (4.6.2)
 This software contains the following license and notice below:
 
@@ -19695,59 +19685,6 @@ terms above.
 ---
 
 The following software may be included in this product: lodash.truncate (4.4.2)
-This software contains the following license and notice below:
-
-Copyright jQuery Foundation and other contributors <https://jquery.org/>
-
-Based on Underscore.js, copyright Jeremy Ashkenas,
-DocumentCloud and Investigative Reporters & Editors <http://underscorejs.org/>
-
-This software consists of voluntary contributions made by many
-individuals. For exact contribution history, see the revision history
-available at https://github.com/lodash/lodash
-
-The following license applies to all parts of this software except as
-documented below:
-
-====
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-====
-
-Copyright and related rights for sample code are waived via CC0. Sample
-code is defined as all source code displayed within the prose of the
-documentation.
-
-CC0: http://creativecommons.org/publicdomain/zero/1.0/
-
-====
-
-Files located in the node_modules and vendor directories are externally
-maintained libraries used by this software which have their own
-licenses; we recommend you read them, as their terms may differ from the
-terms above.
-
----
-
-The following software may be included in this product: lodash.uniq (4.5.0)
 This software contains the following license and notice below:
 
 Copyright jQuery Foundation and other contributors <https://jquery.org/>
@@ -23811,7 +23748,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-colormin (8.0.0)
+The following software may be included in this product: postcss-colormin (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -23839,7 +23776,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-convert-values (8.0.0)
+The following software may be included in this product: postcss-convert-values (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -23867,7 +23804,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-discard-comments (8.0.0)
+The following software may be included in this product: postcss-discard-comments (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -23895,7 +23832,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-discard-duplicates (8.0.0)
+The following software may be included in this product: postcss-discard-duplicates (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -23923,7 +23860,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-discard-empty (8.0.0)
+The following software may be included in this product: postcss-discard-empty (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -23951,7 +23888,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-discard-overridden (8.0.0)
+The following software may be included in this product: postcss-discard-overridden (8.0.1)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -24004,7 +23941,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-merge-longhand (8.0.0)
+The following software may be included in this product: postcss-merge-longhand (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24032,7 +23969,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-merge-rules (8.0.0)
+The following software may be included in this product: postcss-merge-rules (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24060,7 +23997,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-minify-font-values (8.0.0)
+The following software may be included in this product: postcss-minify-font-values (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Bogdan Chadkin <trysound@yandex.ru>
@@ -24088,7 +24025,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-minify-gradients (8.0.0)
+The following software may be included in this product: postcss-minify-gradients (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24116,7 +24053,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-minify-params (8.0.0)
+The following software may be included in this product: postcss-minify-params (8.0.1)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -24142,7 +24079,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-minify-selectors (8.0.1)
+The following software may be included in this product: postcss-minify-selectors (8.0.2)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24170,7 +24107,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-normalize-charset (8.0.0)
+The following software may be included in this product: postcss-normalize-charset (8.0.1)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -24196,7 +24133,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-normalize-display-values (8.0.0)
+The following software may be included in this product: postcss-normalize-display-values (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24224,7 +24161,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-normalize-positions (8.0.0)
+The following software may be included in this product: postcss-normalize-positions (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24252,7 +24189,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-normalize-repeat-style (8.0.0)
+The following software may be included in this product: postcss-normalize-repeat-style (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24280,7 +24217,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-normalize-string (8.0.0)
+The following software may be included in this product: postcss-normalize-string (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24308,7 +24245,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-normalize-timing-functions (8.0.0)
+The following software may be included in this product: postcss-normalize-timing-functions (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24336,7 +24273,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-normalize-unicode (8.0.0)
+The following software may be included in this product: postcss-normalize-unicode (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24364,7 +24301,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-normalize-url (8.0.0)
+The following software may be included in this product: postcss-normalize-url (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24392,7 +24329,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-normalize-whitespace (8.0.0)
+The following software may be included in this product: postcss-normalize-whitespace (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24420,7 +24357,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-ordered-values (8.0.0)
+The following software may be included in this product: postcss-ordered-values (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24448,7 +24385,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-reduce-initial (8.0.0)
+The following software may be included in this product: postcss-reduce-initial (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24476,7 +24413,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-reduce-transforms (8.0.0)
+The following software may be included in this product: postcss-reduce-transforms (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24612,7 +24549,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-selector-parser (7.1.1)
+The following software may be included in this product: postcss-selector-parser (7.1.3)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24640,7 +24577,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-svgo (8.0.0)
+The following software may be included in this product: postcss-svgo (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -24668,7 +24605,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss-unique-selectors (8.0.0)
+The following software may be included in this product: postcss-unique-selectors (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -30375,7 +30312,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: stylehacks (8.0.0)
+The following software may be included in this product: stylehacks (8.0.1)
 This software contains the following license and notice below:
 
 Copyright (c) Ben Briggs <beneb.info@gmail.com> (http://beneb.info)
@@ -32742,6 +32679,21 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+The following software may be included in this product: valibot (1.4.1)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Fabian Hiller
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
@@ -48947,12 +48899,12 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: ansis (4.2.0)
+The following software may be included in this product: ansis (4.3.1)
 This software contains the following license and notice below:
 
 ISC License
 
-Copyright (c) 2025, webdiscus
+Copyright (c) 2026, webdiscus
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -50467,7 +50419,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ---
 
-The following software may be included in this product: semver (7.8.1)
+The following software may be included in this product: semver (7.8.4)
 This software contains the following license and notice below:
 
 The ISC License
