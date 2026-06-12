@@ -160,7 +160,7 @@ func (m *ListDispatchesRequest) Sanitize() error {
 
 	// Field: Postal
 	if m.Postal != nil {
-		*m.Postal = htmlsanitizer.Sanitize(*m.Postal)
+		*m.Postal = htmlsanitizer.SanitizeAndUnescape(*m.Postal)
 	}
 
 	// Field: Status
@@ -212,7 +212,7 @@ func (m *TakeDispatchRequest) Sanitize() error {
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
 	}
 
 	return nil
@@ -265,12 +265,12 @@ func (m *UpdateDispatchStatusRequest) Sanitize() error {
 
 	// Field: Code
 	if m.Code != nil {
-		*m.Code = htmlsanitizer.Sanitize(*m.Code)
+		*m.Code = htmlsanitizer.SanitizeAndUnescape(*m.Code)
 	}
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
 	}
 
 	return nil

@@ -46,7 +46,7 @@ func (m *ContentDiffOp) Sanitize() error {
 	}
 
 	// Field: Text
-	m.Text = htmlsanitizer.Sanitize(m.Text)
+	m.Text = htmlsanitizer.SanitizeAndUnescape(m.Text)
 
 	return nil
 }

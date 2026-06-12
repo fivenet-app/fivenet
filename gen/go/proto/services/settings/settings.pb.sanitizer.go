@@ -15,7 +15,7 @@ func (m *CreateRoleRequest) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	return nil
 }
@@ -333,7 +333,7 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 
 	// Field: Search
 	if m.Search != nil {
-		*m.Search = htmlsanitizer.Sanitize(*m.Search)
+		*m.Search = htmlsanitizer.SanitizeAndUnescape(*m.Search)
 	}
 
 	// Field: Services

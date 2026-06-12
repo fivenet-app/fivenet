@@ -25,7 +25,7 @@ func (m *AuditEntry) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		*m.Data = htmlsanitizer.Sanitize(*m.Data)
+		*m.Data = htmlsanitizer.SanitizeAndUnescape(*m.Data)
 	}
 
 	// Field: Meta
@@ -38,10 +38,10 @@ func (m *AuditEntry) Sanitize() error {
 	}
 
 	// Field: Method
-	m.Method = htmlsanitizer.Sanitize(m.Method)
+	m.Method = htmlsanitizer.SanitizeAndUnescape(m.Method)
 
 	// Field: Service
-	m.Service = htmlsanitizer.Sanitize(m.Service)
+	m.Service = htmlsanitizer.SanitizeAndUnescape(m.Service)
 
 	// Field: TargetUser
 	if m.TargetUser != nil {
@@ -54,7 +54,7 @@ func (m *AuditEntry) Sanitize() error {
 
 	// Field: TargetUserJob
 	if m.TargetUserJob != nil {
-		*m.TargetUserJob = htmlsanitizer.Sanitize(*m.TargetUserJob)
+		*m.TargetUserJob = htmlsanitizer.SanitizeAndUnescape(*m.TargetUserJob)
 	}
 
 	// Field: User
@@ -67,7 +67,7 @@ func (m *AuditEntry) Sanitize() error {
 	}
 
 	// Field: UserJob
-	m.UserJob = htmlsanitizer.Sanitize(m.UserJob)
+	m.UserJob = htmlsanitizer.SanitizeAndUnescape(m.UserJob)
 
 	return nil
 }
@@ -83,7 +83,7 @@ func (m *AuditEntryMeta) Sanitize() error {
 	for idx, item := range m.Meta {
 		_, _ = idx, item
 
-		m.Meta[idx] = htmlsanitizer.Sanitize(m.Meta[idx])
+		m.Meta[idx] = htmlsanitizer.SanitizeAndUnescape(m.Meta[idx])
 
 	}
 

@@ -15,7 +15,7 @@ func (m *CompleteCitizensRequest) Sanitize() error {
 	}
 
 	// Field: Search
-	m.Search = htmlsanitizer.Sanitize(m.Search)
+	m.Search = htmlsanitizer.SanitizeAndUnescape(m.Search)
 
 	return nil
 }
@@ -50,7 +50,7 @@ func (m *CompleteDocumentCategoriesRequest) Sanitize() error {
 	}
 
 	// Field: Search
-	m.Search = htmlsanitizer.Sanitize(m.Search)
+	m.Search = htmlsanitizer.SanitizeAndUnescape(m.Search)
 
 	return nil
 }
@@ -86,7 +86,7 @@ func (m *CompleteJobsRequest) Sanitize() error {
 
 	// Field: Search
 	if m.Search != nil {
-		*m.Search = htmlsanitizer.Sanitize(*m.Search)
+		*m.Search = htmlsanitizer.SanitizeAndUnescape(*m.Search)
 	}
 
 	return nil

@@ -15,7 +15,7 @@ func (m *SimpleObject) Sanitize() error {
 	}
 
 	// Field: Field1
-	m.Field1 = htmlsanitizer.Sanitize(m.Field1)
+	m.Field1 = htmlsanitizer.SanitizeAndUnescape(m.Field1)
 
 	return nil
 }

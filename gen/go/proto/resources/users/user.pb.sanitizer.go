@@ -24,7 +24,7 @@ func (m *PhoneNumber) Sanitize() error {
 	}
 
 	// Field: Number
-	m.Number = htmlsanitizer.Sanitize(m.Number)
+	m.Number = htmlsanitizer.SanitizeAndUnescape(m.Number)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -46,25 +46,25 @@ func (m *User) Sanitize() error {
 	}
 
 	// Field: Dateofbirth
-	m.Dateofbirth = htmlsanitizer.Sanitize(m.Dateofbirth)
+	m.Dateofbirth = htmlsanitizer.SanitizeAndUnescape(m.Dateofbirth)
 
 	// Field: Firstname
-	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
+	m.Firstname = htmlsanitizer.SanitizeAndUnescape(m.Firstname)
 
 	// Field: Identifier
-	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
+	m.Identifier = htmlsanitizer.SanitizeAndUnescape(m.Identifier)
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobGradeLabel
 	if m.JobGradeLabel != nil {
-		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+		*m.JobGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobGradeLabel)
 	}
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: Jobs
@@ -80,7 +80,7 @@ func (m *User) Sanitize() error {
 	}
 
 	// Field: Lastname
-	m.Lastname = htmlsanitizer.Sanitize(m.Lastname)
+	m.Lastname = htmlsanitizer.SanitizeAndUnescape(m.Lastname)
 
 	// Field: Licenses
 	for idx, item := range m.Licenses {
@@ -96,7 +96,7 @@ func (m *User) Sanitize() error {
 
 	// Field: PhoneNumber
 	if m.PhoneNumber != nil {
-		*m.PhoneNumber = htmlsanitizer.Sanitize(*m.PhoneNumber)
+		*m.PhoneNumber = htmlsanitizer.SanitizeAndUnescape(*m.PhoneNumber)
 	}
 
 	// Field: PhoneNumbers
@@ -113,7 +113,7 @@ func (m *User) Sanitize() error {
 
 	// Field: ProfilePicture
 	if m.ProfilePicture != nil {
-		*m.ProfilePicture = htmlsanitizer.Sanitize(*m.ProfilePicture)
+		*m.ProfilePicture = htmlsanitizer.SanitizeAndUnescape(*m.ProfilePicture)
 	}
 
 	// Field: Props
@@ -127,7 +127,7 @@ func (m *User) Sanitize() error {
 
 	// Field: Sex
 	if m.Sex != nil {
-		*m.Sex = htmlsanitizer.Sanitize(*m.Sex)
+		*m.Sex = htmlsanitizer.SanitizeAndUnescape(*m.Sex)
 	}
 
 	return nil
@@ -151,15 +151,15 @@ func (m *UserJob) Sanitize() error {
 
 	// Field: GradeLabel
 	if m.GradeLabel != nil {
-		*m.GradeLabel = htmlsanitizer.Sanitize(*m.GradeLabel)
+		*m.GradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.GradeLabel)
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: UpdatedAt

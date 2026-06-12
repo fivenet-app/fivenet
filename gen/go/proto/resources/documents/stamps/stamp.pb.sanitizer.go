@@ -33,11 +33,11 @@ func (m *Stamp) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: Name
@@ -88,16 +88,16 @@ func (m *StampJobAccess) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobGradeLabel
 	if m.JobGradeLabel != nil {
-		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+		*m.JobGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobGradeLabel)
 	}
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	return nil

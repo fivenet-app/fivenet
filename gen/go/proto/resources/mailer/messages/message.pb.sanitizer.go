@@ -34,7 +34,7 @@ func (m *Message) Sanitize() error {
 
 	// Field: CreatorJob
 	if m.CreatorJob != nil {
-		*m.CreatorJob = htmlsanitizer.Sanitize(*m.CreatorJob)
+		*m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJob)
 	}
 
 	// Field: Data
@@ -110,7 +110,7 @@ func (m *MessageAttachmentDocument) Sanitize() error {
 
 	// Field: Title
 	if m.Title != nil {
-		*m.Title = htmlsanitizer.Sanitize(*m.Title)
+		*m.Title = htmlsanitizer.SanitizeAndUnescape(*m.Title)
 	}
 
 	return nil

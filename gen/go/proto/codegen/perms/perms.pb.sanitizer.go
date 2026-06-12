@@ -27,7 +27,7 @@ func (m *AdditionalServicePerm) Sanitize() error {
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }
@@ -40,18 +40,18 @@ func (m *Attr) Sanitize() error {
 	}
 
 	// Field: Key
-	m.Key = htmlsanitizer.Sanitize(m.Key)
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
 
 	// Field: ValidStringList
 	for idx, item := range m.ValidStringList {
 		_, _ = idx, item
 
-		m.ValidStringList[idx] = htmlsanitizer.Sanitize(m.ValidStringList[idx])
+		m.ValidStringList[idx] = htmlsanitizer.SanitizeAndUnescape(m.ValidStringList[idx])
 
 	}
 
 	// Field: Value
-	m.Value = htmlsanitizer.Sanitize(m.Value)
+	m.Value = htmlsanitizer.SanitizeAndUnescape(m.Value)
 
 	return nil
 }
@@ -77,25 +77,25 @@ func (m *PermsOptions) Sanitize() error {
 
 	// Field: Name
 	if m.Name != nil {
-		*m.Name = htmlsanitizer.Sanitize(*m.Name)
+		*m.Name = htmlsanitizer.SanitizeAndUnescape(*m.Name)
 	}
 
 	// Field: Names
 	for idx, item := range m.Names {
 		_, _ = idx, item
 
-		m.Names[idx] = htmlsanitizer.Sanitize(m.Names[idx])
+		m.Names[idx] = htmlsanitizer.SanitizeAndUnescape(m.Names[idx])
 
 	}
 
 	// Field: Namespace
 	if m.Namespace != nil {
-		*m.Namespace = htmlsanitizer.Sanitize(*m.Namespace)
+		*m.Namespace = htmlsanitizer.SanitizeAndUnescape(*m.Namespace)
 	}
 
 	// Field: Service
 	if m.Service != nil {
-		*m.Service = htmlsanitizer.Sanitize(*m.Service)
+		*m.Service = htmlsanitizer.SanitizeAndUnescape(*m.Service)
 	}
 
 	return nil
@@ -122,17 +122,17 @@ func (m *ServiceOptions) Sanitize() error {
 
 	// Field: Icon
 	if m.Icon != nil {
-		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
+		*m.Icon = htmlsanitizer.SanitizeAndUnescape(*m.Icon)
 	}
 
 	// Field: Namespace
 	if m.Namespace != nil {
-		*m.Namespace = htmlsanitizer.Sanitize(*m.Namespace)
+		*m.Namespace = htmlsanitizer.SanitizeAndUnescape(*m.Namespace)
 	}
 
 	// Field: Service
 	if m.Service != nil {
-		*m.Service = htmlsanitizer.Sanitize(*m.Service)
+		*m.Service = htmlsanitizer.SanitizeAndUnescape(*m.Service)
 	}
 
 	return nil

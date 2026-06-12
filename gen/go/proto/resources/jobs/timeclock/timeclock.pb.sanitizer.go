@@ -33,7 +33,7 @@ func (m *TimeclockEntry) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: StartTime
 	if m.StartTime != nil {
@@ -64,7 +64,7 @@ func (m *TimeclockStats) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	return nil
 }

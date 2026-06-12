@@ -16,19 +16,19 @@ func (m *CategoryValue) Sanitize() error {
 
 	// Field: Color
 	if m.Color != nil {
-		*m.Color = htmlsanitizer.Sanitize(*m.Color)
+		*m.Color = htmlsanitizer.SanitizeAndUnescape(*m.Color)
 	}
 
 	// Field: Icon
 	if m.Icon != nil {
-		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
+		*m.Icon = htmlsanitizer.SanitizeAndUnescape(*m.Icon)
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }
@@ -60,7 +60,7 @@ func (m *KeyValue) Sanitize() error {
 	}
 
 	// Field: Key
-	m.Key = htmlsanitizer.Sanitize(m.Key)
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
 
 	return nil
 }
@@ -82,10 +82,10 @@ func (m *PeriodSeriesValue) Sanitize() error {
 	}
 
 	// Field: Key
-	m.Key = htmlsanitizer.Sanitize(m.Key)
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
 
 	// Field: Label
-	m.Label = htmlsanitizer.Sanitize(m.Label)
+	m.Label = htmlsanitizer.SanitizeAndUnescape(m.Label)
 
 	return nil
 }

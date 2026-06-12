@@ -15,7 +15,7 @@ func (m *File) Sanitize() error {
 	}
 
 	// Field: ContentType
-	m.ContentType = htmlsanitizer.Sanitize(m.ContentType)
+	m.ContentType = htmlsanitizer.SanitizeAndUnescape(m.ContentType)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -27,7 +27,7 @@ func (m *File) Sanitize() error {
 	}
 
 	// Field: FilePath
-	m.FilePath = htmlsanitizer.Sanitize(m.FilePath)
+	m.FilePath = htmlsanitizer.SanitizeAndUnescape(m.FilePath)
 
 	// Field: Meta
 	if m.Meta != nil {

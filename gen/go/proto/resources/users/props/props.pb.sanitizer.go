@@ -16,7 +16,7 @@ func (m *UserProps) Sanitize() error {
 
 	// Field: BloodType
 	if m.BloodType != nil {
-		*m.BloodType = htmlsanitizer.Sanitize(*m.BloodType)
+		*m.BloodType = htmlsanitizer.SanitizeAndUnescape(*m.BloodType)
 	}
 
 	// Field: Email
@@ -44,7 +44,7 @@ func (m *UserProps) Sanitize() error {
 
 	// Field: JobName
 	if m.JobName != nil {
-		*m.JobName = htmlsanitizer.Sanitize(*m.JobName)
+		*m.JobName = htmlsanitizer.SanitizeAndUnescape(*m.JobName)
 	}
 
 	// Field: Labels

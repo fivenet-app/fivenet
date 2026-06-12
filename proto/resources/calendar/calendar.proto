@@ -105,10 +105,7 @@ message CalendarDiscordReminderStep {
   }];
   optional string message = 2 [
     (buf.validate.field).string.max_len = 2000,
-    (codegen.sanitizer.sanitizer) = {
-      enabled: true
-      method: "SanitizeAndUnescape"
-    }
+    (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
   optional CalendarDiscordReminderEmbed embed = 3;
 }
@@ -116,17 +113,11 @@ message CalendarDiscordReminderStep {
 message CalendarDiscordReminderEmbed {
   optional string title = 1 [
     (buf.validate.field).string.max_len = 256,
-    (codegen.sanitizer.sanitizer) = {
-      enabled: true
-      method: "SanitizeAndUnescape"
-    }
+    (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
   optional string description = 2 [
     (buf.validate.field).string.max_len = 4096,
-    (codegen.sanitizer.sanitizer) = {
-      enabled: true
-      method: "SanitizeAndUnescape"
-    }
+    (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
   optional string color = 3 [(buf.validate.field).string = {
     len: 7

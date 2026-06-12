@@ -15,7 +15,7 @@ func (m *GetMOTDResponse) Sanitize() error {
 	}
 
 	// Field: Motd
-	m.Motd = htmlsanitizer.Sanitize(m.Motd)
+	m.Motd = htmlsanitizer.SanitizeAndUnescape(m.Motd)
 
 	return nil
 }
@@ -41,7 +41,7 @@ func (m *SetMOTDResponse) Sanitize() error {
 	}
 
 	// Field: Motd
-	m.Motd = htmlsanitizer.Sanitize(m.Motd)
+	m.Motd = htmlsanitizer.SanitizeAndUnescape(m.Motd)
 
 	return nil
 }

@@ -16,17 +16,17 @@ func (m *ListVehiclesRequest) Sanitize() error {
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	// Field: LicensePlate
 	if m.LicensePlate != nil {
-		*m.LicensePlate = htmlsanitizer.Sanitize(*m.LicensePlate)
+		*m.LicensePlate = htmlsanitizer.SanitizeAndUnescape(*m.LicensePlate)
 	}
 
 	// Field: Model
 	if m.Model != nil {
-		*m.Model = htmlsanitizer.Sanitize(*m.Model)
+		*m.Model = htmlsanitizer.SanitizeAndUnescape(*m.Model)
 	}
 
 	// Field: Pagination
@@ -117,7 +117,7 @@ func (m *SetVehiclePropsResponse) Sanitize() error {
 	}
 
 	// Field: Reason
-	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
 
 	return nil
 }

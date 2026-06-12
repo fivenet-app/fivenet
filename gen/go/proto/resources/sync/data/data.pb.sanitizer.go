@@ -24,7 +24,7 @@ func (m *CitizenLocations) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	return nil
 }
@@ -103,25 +103,25 @@ func (m *DataUser) Sanitize() error {
 	}
 
 	// Field: Dateofbirth
-	m.Dateofbirth = htmlsanitizer.Sanitize(m.Dateofbirth)
+	m.Dateofbirth = htmlsanitizer.SanitizeAndUnescape(m.Dateofbirth)
 
 	// Field: Firstname
-	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
+	m.Firstname = htmlsanitizer.SanitizeAndUnescape(m.Firstname)
 
 	// Field: Identifier
-	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
+	m.Identifier = htmlsanitizer.SanitizeAndUnescape(m.Identifier)
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobGradeLabel
 	if m.JobGradeLabel != nil {
-		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+		*m.JobGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobGradeLabel)
 	}
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: Jobs
@@ -138,7 +138,7 @@ func (m *DataUser) Sanitize() error {
 
 	// Field: Lastname
 	if m.Lastname != nil {
-		*m.Lastname = htmlsanitizer.Sanitize(*m.Lastname)
+		*m.Lastname = htmlsanitizer.SanitizeAndUnescape(*m.Lastname)
 	}
 
 	// Field: Licenses
@@ -155,7 +155,7 @@ func (m *DataUser) Sanitize() error {
 
 	// Field: PhoneNumber
 	if m.PhoneNumber != nil {
-		*m.PhoneNumber = htmlsanitizer.Sanitize(*m.PhoneNumber)
+		*m.PhoneNumber = htmlsanitizer.SanitizeAndUnescape(*m.PhoneNumber)
 	}
 
 	// Field: PhoneNumbers
@@ -172,12 +172,12 @@ func (m *DataUser) Sanitize() error {
 
 	// Field: ProfilePicture
 	if m.ProfilePicture != nil {
-		*m.ProfilePicture = htmlsanitizer.Sanitize(*m.ProfilePicture)
+		*m.ProfilePicture = htmlsanitizer.SanitizeAndUnescape(*m.ProfilePicture)
 	}
 
 	// Field: Sex
 	if m.Sex != nil {
-		*m.Sex = htmlsanitizer.Sanitize(*m.Sex)
+		*m.Sex = htmlsanitizer.SanitizeAndUnescape(*m.Sex)
 	}
 
 	// Field: UpdatedAt
@@ -269,7 +269,7 @@ func (m *DeleteVehicles) Sanitize() error {
 	for idx, item := range m.Plates {
 		_, _ = idx, item
 
-		m.Plates[idx] = htmlsanitizer.Sanitize(m.Plates[idx])
+		m.Plates[idx] = htmlsanitizer.SanitizeAndUnescape(m.Plates[idx])
 
 	}
 
@@ -284,7 +284,7 @@ func (m *LastCharID) Sanitize() error {
 	}
 
 	// Field: License
-	m.License = htmlsanitizer.Sanitize(m.License)
+	m.License = htmlsanitizer.SanitizeAndUnescape(m.License)
 
 	return nil
 }

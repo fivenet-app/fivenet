@@ -16,7 +16,7 @@ func (m *JailChange) Sanitize() error {
 
 	// Field: Location
 	if m.Location != nil {
-		*m.Location = htmlsanitizer.Sanitize(*m.Location)
+		*m.Location = htmlsanitizer.SanitizeAndUnescape(*m.Location)
 	}
 
 	return nil
@@ -31,17 +31,17 @@ func (m *JobChange) Sanitize() error {
 
 	// Field: GradeLabel
 	if m.GradeLabel != nil {
-		*m.GradeLabel = htmlsanitizer.Sanitize(*m.GradeLabel)
+		*m.GradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.GradeLabel)
 	}
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	return nil
@@ -143,7 +143,7 @@ func (m *MugshotChange) Sanitize() error {
 
 	// Field: New
 	if m.New != nil {
-		*m.New = htmlsanitizer.Sanitize(*m.New)
+		*m.New = htmlsanitizer.SanitizeAndUnescape(*m.New)
 	}
 
 	return nil
@@ -157,10 +157,10 @@ func (m *NameChange) Sanitize() error {
 	}
 
 	// Field: New
-	m.New = htmlsanitizer.Sanitize(m.New)
+	m.New = htmlsanitizer.SanitizeAndUnescape(m.New)
 
 	// Field: Old
-	m.Old = htmlsanitizer.Sanitize(m.Old)
+	m.Old = htmlsanitizer.SanitizeAndUnescape(m.Old)
 
 	return nil
 }
@@ -191,16 +191,16 @@ func (m *UserActivity) Sanitize() error {
 	}
 
 	// Field: Key
-	m.Key = htmlsanitizer.Sanitize(m.Key)
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
 
 	// Field: NewValue
-	m.NewValue = htmlsanitizer.Sanitize(m.NewValue)
+	m.NewValue = htmlsanitizer.SanitizeAndUnescape(m.NewValue)
 
 	// Field: OldValue
-	m.OldValue = htmlsanitizer.Sanitize(m.OldValue)
+	m.OldValue = htmlsanitizer.SanitizeAndUnescape(m.OldValue)
 
 	// Field: Reason
-	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
 
 	// Field: SourceUser
 	if m.SourceUser != nil {

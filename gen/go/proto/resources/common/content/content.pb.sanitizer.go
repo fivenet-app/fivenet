@@ -26,7 +26,7 @@ func (m *Content) Sanitize() error {
 
 	// Field: RawHtml
 	if m.RawHtml != nil {
-		*m.RawHtml = htmlsanitizer.Sanitize(*m.RawHtml)
+		*m.RawHtml = htmlsanitizer.SanitizeAndUnescape(*m.RawHtml)
 	}
 
 	// Field: TiptapJson
@@ -38,7 +38,7 @@ func (m *Content) Sanitize() error {
 	}
 
 	// Field: Version
-	m.Version = htmlsanitizer.Sanitize(m.Version)
+	m.Version = htmlsanitizer.SanitizeAndUnescape(m.Version)
 
 	return nil
 }
@@ -51,10 +51,10 @@ func (m *ExtractedContent) Sanitize() error {
 	}
 
 	// Field: FirstHeading
-	m.FirstHeading = htmlsanitizer.Sanitize(m.FirstHeading)
+	m.FirstHeading = htmlsanitizer.SanitizeAndUnescape(m.FirstHeading)
 
 	// Field: Text
-	m.Text = htmlsanitizer.Sanitize(m.Text)
+	m.Text = htmlsanitizer.SanitizeAndUnescape(m.Text)
 
 	return nil
 }

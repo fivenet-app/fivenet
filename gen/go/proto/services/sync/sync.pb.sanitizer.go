@@ -305,7 +305,7 @@ func (m *DeleteVehiclesRequest) Sanitize() error {
 	for idx, item := range m.Plates {
 		_, _ = idx, item
 
-		m.Plates[idx] = htmlsanitizer.Sanitize(m.Plates[idx])
+		m.Plates[idx] = htmlsanitizer.SanitizeAndUnescape(m.Plates[idx])
 
 	}
 
@@ -393,7 +393,7 @@ func (m *RegisterAccountRequest) Sanitize() error {
 	}
 
 	// Field: Identifier
-	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
+	m.Identifier = htmlsanitizer.SanitizeAndUnescape(m.Identifier)
 
 	return nil
 }
@@ -407,12 +407,12 @@ func (m *RegisterAccountResponse) Sanitize() error {
 
 	// Field: RegToken
 	if m.RegToken != nil {
-		*m.RegToken = htmlsanitizer.Sanitize(*m.RegToken)
+		*m.RegToken = htmlsanitizer.SanitizeAndUnescape(*m.RegToken)
 	}
 
 	// Field: Username
 	if m.Username != nil {
-		*m.Username = htmlsanitizer.Sanitize(*m.Username)
+		*m.Username = htmlsanitizer.SanitizeAndUnescape(*m.Username)
 	}
 
 	return nil
@@ -648,7 +648,7 @@ func (m *StreamRequest) Sanitize() error {
 
 	// Field: Version
 	if m.Version != nil {
-		*m.Version = htmlsanitizer.Sanitize(*m.Version)
+		*m.Version = htmlsanitizer.SanitizeAndUnescape(*m.Version)
 	}
 
 	return nil
@@ -662,10 +662,10 @@ func (m *TransferAccountRequest) Sanitize() error {
 	}
 
 	// Field: NewLicense
-	m.NewLicense = htmlsanitizer.Sanitize(m.NewLicense)
+	m.NewLicense = htmlsanitizer.SanitizeAndUnescape(m.NewLicense)
 
 	// Field: OldLicense
-	m.OldLicense = htmlsanitizer.Sanitize(m.OldLicense)
+	m.OldLicense = htmlsanitizer.SanitizeAndUnescape(m.OldLicense)
 
 	return nil
 }

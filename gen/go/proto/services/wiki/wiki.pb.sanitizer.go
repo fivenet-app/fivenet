@@ -15,7 +15,7 @@ func (m *CreatePageResponse) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	return nil
 }
@@ -98,7 +98,7 @@ func (m *ListPagesRequest) Sanitize() error {
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	// Field: Pagination
@@ -112,7 +112,7 @@ func (m *ListPagesRequest) Sanitize() error {
 
 	// Field: Search
 	if m.Search != nil {
-		*m.Search = htmlsanitizer.Sanitize(*m.Search)
+		*m.Search = htmlsanitizer.SanitizeAndUnescape(*m.Search)
 	}
 
 	// Field: Sort

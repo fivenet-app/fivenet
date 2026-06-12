@@ -46,7 +46,7 @@ func (m *BannerMessage) Sanitize() error {
 	m.Id = htmlsanitizer.StripHTMLTags(m.Id)
 
 	// Field: Title
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.SanitizeAndUnescape(m.Title)
 
 	return nil
 }

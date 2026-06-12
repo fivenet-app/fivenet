@@ -42,7 +42,7 @@ func (m *Comment) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {

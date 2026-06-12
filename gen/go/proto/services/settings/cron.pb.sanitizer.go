@@ -37,7 +37,7 @@ func (m *RunCronjobRequest) Sanitize() error {
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }

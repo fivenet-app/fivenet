@@ -15,35 +15,35 @@ func (m *UserShort) Sanitize() error {
 	}
 
 	// Field: Dateofbirth
-	m.Dateofbirth = htmlsanitizer.Sanitize(m.Dateofbirth)
+	m.Dateofbirth = htmlsanitizer.SanitizeAndUnescape(m.Dateofbirth)
 
 	// Field: Firstname
-	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
+	m.Firstname = htmlsanitizer.SanitizeAndUnescape(m.Firstname)
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobGradeLabel
 	if m.JobGradeLabel != nil {
-		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+		*m.JobGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobGradeLabel)
 	}
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: Lastname
-	m.Lastname = htmlsanitizer.Sanitize(m.Lastname)
+	m.Lastname = htmlsanitizer.SanitizeAndUnescape(m.Lastname)
 
 	// Field: PhoneNumber
 	if m.PhoneNumber != nil {
-		*m.PhoneNumber = htmlsanitizer.Sanitize(*m.PhoneNumber)
+		*m.PhoneNumber = htmlsanitizer.SanitizeAndUnescape(*m.PhoneNumber)
 	}
 
 	// Field: ProfilePicture
 	if m.ProfilePicture != nil {
-		*m.ProfilePicture = htmlsanitizer.Sanitize(*m.ProfilePicture)
+		*m.ProfilePicture = htmlsanitizer.SanitizeAndUnescape(*m.ProfilePicture)
 	}
 
 	return nil

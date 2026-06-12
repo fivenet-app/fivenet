@@ -24,21 +24,21 @@ func (m *Permission) Sanitize() error {
 	}
 
 	// Field: GuardName
-	m.GuardName = htmlsanitizer.Sanitize(m.GuardName)
+	m.GuardName = htmlsanitizer.SanitizeAndUnescape(m.GuardName)
 
 	// Field: Icon
 	if m.Icon != nil {
-		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
+		*m.Icon = htmlsanitizer.SanitizeAndUnescape(*m.Icon)
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	// Field: Namespace
-	m.Namespace = htmlsanitizer.Sanitize(m.Namespace)
+	m.Namespace = htmlsanitizer.SanitizeAndUnescape(m.Namespace)
 
 	// Field: Service
-	m.Service = htmlsanitizer.Sanitize(m.Service)
+	m.Service = htmlsanitizer.SanitizeAndUnescape(m.Service)
 
 	return nil
 }
@@ -72,16 +72,16 @@ func (m *Role) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobGradeLabel
 	if m.JobGradeLabel != nil {
-		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+		*m.JobGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobGradeLabel)
 	}
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: Permissions

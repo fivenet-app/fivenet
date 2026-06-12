@@ -25,7 +25,7 @@ func (m *DocumentPin) Sanitize() error {
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	return nil

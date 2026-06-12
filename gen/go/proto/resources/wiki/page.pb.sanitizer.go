@@ -49,7 +49,7 @@ func (m *Page) Sanitize() error {
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: Meta
@@ -115,7 +115,7 @@ func (m *PageMeta) Sanitize() error {
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.SanitizeAndUnescape(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -177,14 +177,14 @@ func (m *PageShort) Sanitize() error {
 	}
 
 	// Field: Description
-	m.Description = htmlsanitizer.Sanitize(m.Description)
+	m.Description = htmlsanitizer.SanitizeAndUnescape(m.Description)
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: RootInfo
@@ -202,7 +202,7 @@ func (m *PageShort) Sanitize() error {
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.SanitizeAndUnescape(m.Title)
 
 	return nil
 }

@@ -73,7 +73,7 @@ func (m *ListLabelsRequest) Sanitize() error {
 
 	// Field: Search
 	if m.Search != nil {
-		*m.Search = htmlsanitizer.Sanitize(*m.Search)
+		*m.Search = htmlsanitizer.SanitizeAndUnescape(*m.Search)
 	}
 
 	return nil

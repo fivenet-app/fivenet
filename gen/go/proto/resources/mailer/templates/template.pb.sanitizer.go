@@ -34,7 +34,7 @@ func (m *Template) Sanitize() error {
 
 	// Field: CreatorJob
 	if m.CreatorJob != nil {
-		*m.CreatorJob = htmlsanitizer.Sanitize(*m.CreatorJob)
+		*m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJob)
 	}
 
 	// Field: DeletedAt

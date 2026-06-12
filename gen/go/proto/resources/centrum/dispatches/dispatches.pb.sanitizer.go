@@ -43,11 +43,11 @@ func (m *Dispatch) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.Sanitize(*m.Description)
+		*m.Description = htmlsanitizer.SanitizeAndUnescape(*m.Description)
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: Jobs
 	if m.Jobs != nil {
@@ -59,11 +59,11 @@ func (m *Dispatch) Sanitize() error {
 	}
 
 	// Field: Message
-	m.Message = htmlsanitizer.Sanitize(m.Message)
+	m.Message = htmlsanitizer.SanitizeAndUnescape(m.Message)
 
 	// Field: Postal
 	if m.Postal != nil {
-		*m.Postal = htmlsanitizer.Sanitize(*m.Postal)
+		*m.Postal = htmlsanitizer.SanitizeAndUnescape(*m.Postal)
 	}
 
 	// Field: References
@@ -153,7 +153,7 @@ func (m *DispatchAssignments) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: Units
 	for idx, item := range m.Units {
@@ -217,7 +217,7 @@ func (m *DispatchStatus) Sanitize() error {
 
 	// Field: Code
 	if m.Code != nil {
-		*m.Code = htmlsanitizer.Sanitize(*m.Code)
+		*m.Code = htmlsanitizer.SanitizeAndUnescape(*m.Code)
 	}
 
 	// Field: CreatedAt
@@ -231,17 +231,17 @@ func (m *DispatchStatus) Sanitize() error {
 
 	// Field: CreatorJob
 	if m.CreatorJob != nil {
-		*m.CreatorJob = htmlsanitizer.Sanitize(*m.CreatorJob)
+		*m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJob)
 	}
 
 	// Field: Postal
 	if m.Postal != nil {
-		*m.Postal = htmlsanitizer.Sanitize(*m.Postal)
+		*m.Postal = htmlsanitizer.SanitizeAndUnescape(*m.Postal)
 	}
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
 	}
 
 	// Field: Unit

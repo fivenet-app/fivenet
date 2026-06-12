@@ -115,6 +115,8 @@ const wikiService = await useWikiWiki();
                 class="mx-auto w-full max-w-(--breakpoint-xl)"
                 :class="pages.length === 1 ? 'sm:grid-cols-1 lg:grid-cols-1' : pages.length === 2 ? 'lg:grid-cols-2' : ''"
             >
+                {{ pages }}
+
                 <UPageCard
                     v-for="p in pages"
                     :key="p.id"

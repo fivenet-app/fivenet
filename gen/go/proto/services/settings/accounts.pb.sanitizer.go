@@ -24,10 +24,10 @@ func (m *CreateAccountRequest) Sanitize() error {
 	}
 
 	// Field: License
-	m.License = htmlsanitizer.Sanitize(m.License)
+	m.License = htmlsanitizer.SanitizeAndUnescape(m.License)
 
 	// Field: Username
-	m.Username = htmlsanitizer.Sanitize(m.Username)
+	m.Username = htmlsanitizer.SanitizeAndUnescape(m.Username)
 
 	return nil
 }
@@ -40,7 +40,7 @@ func (m *CreateAccountResponse) Sanitize() error {
 	}
 
 	// Field: RegToken
-	m.RegToken = htmlsanitizer.Sanitize(m.RegToken)
+	m.RegToken = htmlsanitizer.SanitizeAndUnescape(m.RegToken)
 
 	return nil
 }
@@ -72,7 +72,7 @@ func (m *DisconnectSocialLoginRequest) Sanitize() error {
 	}
 
 	// Field: ProviderName
-	m.ProviderName = htmlsanitizer.Sanitize(m.ProviderName)
+	m.ProviderName = htmlsanitizer.SanitizeAndUnescape(m.ProviderName)
 
 	return nil
 }
@@ -86,17 +86,17 @@ func (m *ListAccountsRequest) Sanitize() error {
 
 	// Field: ExternalId
 	if m.ExternalId != nil {
-		*m.ExternalId = htmlsanitizer.Sanitize(*m.ExternalId)
+		*m.ExternalId = htmlsanitizer.SanitizeAndUnescape(*m.ExternalId)
 	}
 
 	// Field: Group
 	if m.Group != nil {
-		*m.Group = htmlsanitizer.Sanitize(*m.Group)
+		*m.Group = htmlsanitizer.SanitizeAndUnescape(*m.Group)
 	}
 
 	// Field: License
 	if m.License != nil {
-		*m.License = htmlsanitizer.Sanitize(*m.License)
+		*m.License = htmlsanitizer.SanitizeAndUnescape(*m.License)
 	}
 
 	// Field: Pagination
@@ -119,7 +119,7 @@ func (m *ListAccountsRequest) Sanitize() error {
 
 	// Field: Username
 	if m.Username != nil {
-		*m.Username = htmlsanitizer.Sanitize(*m.Username)
+		*m.Username = htmlsanitizer.SanitizeAndUnescape(*m.Username)
 	}
 
 	return nil

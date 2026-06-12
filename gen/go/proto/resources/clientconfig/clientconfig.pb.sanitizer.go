@@ -55,7 +55,7 @@ func (m *ClientConfig) Sanitize() error {
 	}
 
 	// Field: DefaultLocale
-	m.DefaultLocale = htmlsanitizer.Sanitize(m.DefaultLocale)
+	m.DefaultLocale = htmlsanitizer.SanitizeAndUnescape(m.DefaultLocale)
 
 	// Field: Discord
 	if m.Discord != nil {
@@ -112,7 +112,7 @@ func (m *ClientConfig) Sanitize() error {
 	}
 
 	// Field: Version
-	m.Version = htmlsanitizer.Sanitize(m.Version)
+	m.Version = htmlsanitizer.SanitizeAndUnescape(m.Version)
 
 	// Field: Website
 	if m.Website != nil {
@@ -161,7 +161,7 @@ func (m *Game) Sanitize() error {
 	}
 
 	// Field: UnemployedJobName
-	m.UnemployedJobName = htmlsanitizer.Sanitize(m.UnemployedJobName)
+	m.UnemployedJobName = htmlsanitizer.SanitizeAndUnescape(m.UnemployedJobName)
 
 	return nil
 }
@@ -177,12 +177,12 @@ func (m *OTLPFrontend) Sanitize() error {
 	for idx, item := range m.Headers {
 		_, _ = idx, item
 
-		m.Headers[idx] = htmlsanitizer.Sanitize(m.Headers[idx])
+		m.Headers[idx] = htmlsanitizer.SanitizeAndUnescape(m.Headers[idx])
 
 	}
 
 	// Field: Url
-	m.Url = htmlsanitizer.Sanitize(m.Url)
+	m.Url = htmlsanitizer.SanitizeAndUnescape(m.Url)
 
 	return nil
 }
@@ -195,18 +195,18 @@ func (m *ProviderConfig) Sanitize() error {
 	}
 
 	// Field: Homepage
-	m.Homepage = htmlsanitizer.Sanitize(m.Homepage)
+	m.Homepage = htmlsanitizer.SanitizeAndUnescape(m.Homepage)
 
 	// Field: Icon
 	if m.Icon != nil {
-		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
+		*m.Icon = htmlsanitizer.SanitizeAndUnescape(*m.Icon)
 	}
 
 	// Field: Label
-	m.Label = htmlsanitizer.Sanitize(m.Label)
+	m.Label = htmlsanitizer.SanitizeAndUnescape(m.Label)
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }

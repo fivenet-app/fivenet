@@ -42,7 +42,7 @@ func (m *Account) Sanitize() error {
 	}
 
 	// Field: License
-	m.License = htmlsanitizer.Sanitize(m.License)
+	m.License = htmlsanitizer.SanitizeAndUnescape(m.License)
 
 	// Field: Oauth2Accounts
 	for idx, item := range m.Oauth2Accounts {
@@ -66,7 +66,7 @@ func (m *Account) Sanitize() error {
 	}
 
 	// Field: Username
-	m.Username = htmlsanitizer.Sanitize(m.Username)
+	m.Username = htmlsanitizer.SanitizeAndUnescape(m.Username)
 
 	return nil
 }
@@ -82,7 +82,7 @@ func (m *AccountGroups) Sanitize() error {
 	for idx, item := range m.Groups {
 		_, _ = idx, item
 
-		m.Groups[idx] = htmlsanitizer.Sanitize(m.Groups[idx])
+		m.Groups[idx] = htmlsanitizer.SanitizeAndUnescape(m.Groups[idx])
 
 	}
 
@@ -106,7 +106,7 @@ func (m *Character) Sanitize() error {
 	}
 
 	// Field: Group
-	m.Group = htmlsanitizer.Sanitize(m.Group)
+	m.Group = htmlsanitizer.SanitizeAndUnescape(m.Group)
 
 	return nil
 }

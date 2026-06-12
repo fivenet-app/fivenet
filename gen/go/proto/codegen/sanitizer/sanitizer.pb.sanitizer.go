@@ -16,7 +16,7 @@ func (m *FieldOptions) Sanitize() error {
 
 	// Field: Method
 	if m.Method != nil {
-		*m.Method = htmlsanitizer.Sanitize(*m.Method)
+		*m.Method = htmlsanitizer.SanitizeAndUnescape(*m.Method)
 	}
 
 	return nil

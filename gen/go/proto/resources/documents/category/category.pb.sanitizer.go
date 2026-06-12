@@ -39,7 +39,7 @@ func (m *Category) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.Sanitize(*m.Description)
+		*m.Description = htmlsanitizer.SanitizeAndUnescape(*m.Description)
 	}
 
 	// Field: Icon
@@ -49,11 +49,11 @@ func (m *Category) Sanitize() error {
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }

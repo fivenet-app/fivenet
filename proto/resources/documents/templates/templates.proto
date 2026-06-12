@@ -54,10 +54,7 @@ message Template {
       min_len: 3
       max_bytes: 10240
     },
-    (codegen.sanitizer.sanitizer) = {
-      enabled: true
-      method: "SanitizeAndUnescape"
-    },
+    (codegen.sanitizer.sanitizer) = {enabled: true},
     (tagger.tags) = "alias:\"content_title\""
   ];
   string content = 11 [
@@ -65,10 +62,7 @@ message Template {
       min_len: 0
       max_bytes: 2000000
     },
-    (codegen.sanitizer.sanitizer) = {
-      enabled: true
-      method: "SanitizeAndUnescape"
-    },
+    (codegen.sanitizer.sanitizer) = {enabled: true},
     (tagger.tags) = "alias:\"content\""
   ];
   string state = 12 [

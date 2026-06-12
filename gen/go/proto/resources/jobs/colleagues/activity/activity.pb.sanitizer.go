@@ -61,10 +61,10 @@ func (m *ColleagueActivity) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: Reason
-	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
 
 	// Field: SourceUser
 	if m.SourceUser != nil {
@@ -141,7 +141,7 @@ func (m *GradeChange) Sanitize() error {
 	}
 
 	// Field: GradeLabel
-	m.GradeLabel = htmlsanitizer.Sanitize(m.GradeLabel)
+	m.GradeLabel = htmlsanitizer.SanitizeAndUnescape(m.GradeLabel)
 
 	return nil
 }
@@ -189,12 +189,12 @@ func (m *NameChange) Sanitize() error {
 
 	// Field: Prefix
 	if m.Prefix != nil {
-		*m.Prefix = htmlsanitizer.Sanitize(*m.Prefix)
+		*m.Prefix = htmlsanitizer.SanitizeAndUnescape(*m.Prefix)
 	}
 
 	// Field: Suffix
 	if m.Suffix != nil {
-		*m.Suffix = htmlsanitizer.Sanitize(*m.Suffix)
+		*m.Suffix = htmlsanitizer.SanitizeAndUnescape(*m.Suffix)
 	}
 
 	return nil

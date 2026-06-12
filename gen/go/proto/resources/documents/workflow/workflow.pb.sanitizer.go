@@ -24,7 +24,7 @@ func (m *AutoCloseSettings) Sanitize() error {
 	}
 
 	// Field: Message
-	m.Message = htmlsanitizer.Sanitize(m.Message)
+	m.Message = htmlsanitizer.SanitizeAndUnescape(m.Message)
 
 	return nil
 }
@@ -46,7 +46,7 @@ func (m *Reminder) Sanitize() error {
 	}
 
 	// Field: Message
-	m.Message = htmlsanitizer.Sanitize(m.Message)
+	m.Message = htmlsanitizer.SanitizeAndUnescape(m.Message)
 
 	return nil
 }
@@ -147,7 +147,7 @@ func (m *WorkflowUserState) Sanitize() error {
 
 	// Field: ManualReminderMessage
 	if m.ManualReminderMessage != nil {
-		*m.ManualReminderMessage = htmlsanitizer.Sanitize(*m.ManualReminderMessage)
+		*m.ManualReminderMessage = htmlsanitizer.SanitizeAndUnescape(*m.ManualReminderMessage)
 	}
 
 	// Field: ManualReminderTime

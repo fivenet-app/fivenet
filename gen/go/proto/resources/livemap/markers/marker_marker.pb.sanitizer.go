@@ -124,7 +124,7 @@ func (m *MarkerMarker) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.Sanitize(*m.Description)
+		*m.Description = htmlsanitizer.SanitizeAndUnescape(*m.Description)
 	}
 
 	// Field: ExpiresAt
@@ -137,13 +137,13 @@ func (m *MarkerMarker) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobLabel
-	m.JobLabel = htmlsanitizer.Sanitize(m.JobLabel)
+	m.JobLabel = htmlsanitizer.SanitizeAndUnescape(m.JobLabel)
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	// Field: Postal
 	if m.Postal != nil {

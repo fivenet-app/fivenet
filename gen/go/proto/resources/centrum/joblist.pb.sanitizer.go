@@ -38,11 +38,11 @@ func (m *JobListEntry) Sanitize() error {
 
 	// Field: Label
 	if m.Label != nil {
-		*m.Label = htmlsanitizer.Sanitize(*m.Label)
+		*m.Label = htmlsanitizer.SanitizeAndUnescape(*m.Label)
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }

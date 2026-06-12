@@ -195,7 +195,7 @@ func (m *RSVPCalendarEntryRequest) Sanitize() error {
 
 	// Field: OccurrenceKey
 	if m.OccurrenceKey != nil {
-		*m.OccurrenceKey = htmlsanitizer.Sanitize(*m.OccurrenceKey)
+		*m.OccurrenceKey = htmlsanitizer.SanitizeAndUnescape(*m.OccurrenceKey)
 	}
 
 	return nil

@@ -15,10 +15,10 @@ func (m *ChangePasswordRequest) Sanitize() error {
 	}
 
 	// Field: CurrentPassword
-	m.CurrentPassword = htmlsanitizer.Sanitize(m.CurrentPassword)
+	m.CurrentPassword = htmlsanitizer.SanitizeAndUnescape(m.CurrentPassword)
 
 	// Field: NewPassword
-	m.NewPassword = htmlsanitizer.Sanitize(m.NewPassword)
+	m.NewPassword = htmlsanitizer.SanitizeAndUnescape(m.NewPassword)
 
 	return nil
 }
@@ -31,7 +31,7 @@ func (m *ChangeUsernameRequest) Sanitize() error {
 	}
 
 	// Field: CurrentUsername
-	m.CurrentUsername = htmlsanitizer.Sanitize(m.CurrentUsername)
+	m.CurrentUsername = htmlsanitizer.SanitizeAndUnescape(m.CurrentUsername)
 
 	// Field: NewUsername
 	m.NewUsername = htmlsanitizer.StripHTMLTags(m.NewUsername)
@@ -98,10 +98,10 @@ func (m *ChooseCharacterResponse) Sanitize() error {
 	}
 
 	// Field: Token
-	m.Token = htmlsanitizer.Sanitize(m.Token)
+	m.Token = htmlsanitizer.SanitizeAndUnescape(m.Token)
 
 	// Field: Username
-	m.Username = htmlsanitizer.Sanitize(m.Username)
+	m.Username = htmlsanitizer.SanitizeAndUnescape(m.Username)
 
 	return nil
 }
@@ -114,10 +114,10 @@ func (m *CreateAccountRequest) Sanitize() error {
 	}
 
 	// Field: Password
-	m.Password = htmlsanitizer.Sanitize(m.Password)
+	m.Password = htmlsanitizer.SanitizeAndUnescape(m.Password)
 
 	// Field: RegToken
-	m.RegToken = htmlsanitizer.Sanitize(m.RegToken)
+	m.RegToken = htmlsanitizer.SanitizeAndUnescape(m.RegToken)
 
 	// Field: Username
 	m.Username = htmlsanitizer.StripHTMLTags(m.Username)
@@ -146,10 +146,10 @@ func (m *ForgotPasswordRequest) Sanitize() error {
 	}
 
 	// Field: New
-	m.New = htmlsanitizer.Sanitize(m.New)
+	m.New = htmlsanitizer.SanitizeAndUnescape(m.New)
 
 	// Field: RegToken
-	m.RegToken = htmlsanitizer.Sanitize(m.RegToken)
+	m.RegToken = htmlsanitizer.SanitizeAndUnescape(m.RegToken)
 
 	return nil
 }
@@ -269,7 +269,7 @@ func (m *ImpersonateJobResponse) Sanitize() error {
 	}
 
 	// Field: Token
-	m.Token = htmlsanitizer.Sanitize(m.Token)
+	m.Token = htmlsanitizer.SanitizeAndUnescape(m.Token)
 
 	return nil
 }
@@ -282,10 +282,10 @@ func (m *LoginRequest) Sanitize() error {
 	}
 
 	// Field: Password
-	m.Password = htmlsanitizer.Sanitize(m.Password)
+	m.Password = htmlsanitizer.SanitizeAndUnescape(m.Password)
 
 	// Field: Username
-	m.Username = htmlsanitizer.Sanitize(m.Username)
+	m.Username = htmlsanitizer.SanitizeAndUnescape(m.Username)
 
 	return nil
 }
@@ -327,7 +327,7 @@ func (m *SetSuperuserModeRequest) Sanitize() error {
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	return nil
@@ -392,7 +392,7 @@ func (m *SetSuperuserModeResponse) Sanitize() error {
 	}
 
 	// Field: Token
-	m.Token = htmlsanitizer.Sanitize(m.Token)
+	m.Token = htmlsanitizer.SanitizeAndUnescape(m.Token)
 
 	return nil
 }

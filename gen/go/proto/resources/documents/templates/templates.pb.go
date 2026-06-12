@@ -1834,7 +1834,7 @@ var File_resources_documents_templates_templates_proto protoreflect.FileDescript
 
 const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\n" +
-	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a'resources/documents/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xea\t\n" +
+	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a'resources/documents/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xc0\t\n" +
 	"\bTemplate\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -1847,10 +1847,10 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\x05title\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
 	"\vdescription\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
 	"\x05color\x18\b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\x05color\x88\x01\x01\x12!\n" +
-	"\x04icon\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04icon\x88\x01\x01\x12Z\n" +
+	"\x04icon\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04icon\x88\x01\x01\x12E\n" +
 	"\rcontent_title\x18\n" +
-	" \x01(\tB5\xda\xf3\x18\x17\b\x01\x12\x13SanitizeAndUnescape\x9a\x84\x9e\x03\x15alias:\"content_title\"R\fcontentTitle\x12I\n" +
-	"\acontent\x18\v \x01(\tB/\xda\xf3\x18\x17\b\x01\x12\x13SanitizeAndUnescape\x9a\x84\x9e\x03\x0falias:\"content\"R\acontent\x12(\n" +
+	" \x01(\tB \xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x15alias:\"content_title\"R\fcontentTitle\x124\n" +
+	"\acontent\x18\v \x01(\tB\x1a\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x0falias:\"content\"R\acontent\x12(\n" +
 	"\x05state\x18\f \x01(\tB\x12\x9a\x84\x9e\x03\ralias:\"state\"R\x05state\x12Z\n" +
 	"\x06schema\x18\r \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
 	"\vcreator_job\x18\x0e \x01(\tR\n" +

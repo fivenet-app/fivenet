@@ -65,7 +65,7 @@ func (m *SortByColumn) Sanitize() error {
 	}
 
 	// Field: Id
-	m.Id = htmlsanitizer.Sanitize(m.Id)
+	m.Id = htmlsanitizer.SanitizeAndUnescape(m.Id)
 
 	return nil
 }

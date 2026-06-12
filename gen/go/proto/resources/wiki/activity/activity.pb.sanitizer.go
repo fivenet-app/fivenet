@@ -153,11 +153,11 @@ func (m *PageActivity) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: CreatorJobLabel
 	if m.CreatorJobLabel != nil {
-		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+		*m.CreatorJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJobLabel)
 	}
 
 	// Field: Data
@@ -171,7 +171,7 @@ func (m *PageActivity) Sanitize() error {
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
 	}
 
 	return nil
@@ -225,7 +225,7 @@ func (m *PageUpdated) Sanitize() error {
 
 	// Field: ContentDiff
 	if m.ContentDiff != nil {
-		*m.ContentDiff = htmlsanitizer.Sanitize(*m.ContentDiff)
+		*m.ContentDiff = htmlsanitizer.SanitizeAndUnescape(*m.ContentDiff)
 	}
 
 	// Field: DescriptionCdiff
@@ -239,7 +239,7 @@ func (m *PageUpdated) Sanitize() error {
 
 	// Field: DescriptionDiff
 	if m.DescriptionDiff != nil {
-		*m.DescriptionDiff = htmlsanitizer.Sanitize(*m.DescriptionDiff)
+		*m.DescriptionDiff = htmlsanitizer.SanitizeAndUnescape(*m.DescriptionDiff)
 	}
 
 	// Field: FilesChange
@@ -262,7 +262,7 @@ func (m *PageUpdated) Sanitize() error {
 
 	// Field: TitleDiff
 	if m.TitleDiff != nil {
-		*m.TitleDiff = htmlsanitizer.Sanitize(*m.TitleDiff)
+		*m.TitleDiff = htmlsanitizer.SanitizeAndUnescape(*m.TitleDiff)
 	}
 
 	return nil

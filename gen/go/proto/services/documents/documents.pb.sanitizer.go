@@ -63,7 +63,7 @@ func (m *CreateDocumentReqRequest) Sanitize() error {
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
 	}
 
 	return nil
@@ -396,7 +396,7 @@ func (m *ListDocumentsRequest) Sanitize() error {
 
 	// Field: Search
 	if m.Search != nil {
-		*m.Search = htmlsanitizer.Sanitize(*m.Search)
+		*m.Search = htmlsanitizer.SanitizeAndUnescape(*m.Search)
 	}
 
 	// Field: Sort
@@ -596,7 +596,7 @@ func (m *UpdateDocumentReqRequest) Sanitize() error {
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
 	}
 
 	return nil

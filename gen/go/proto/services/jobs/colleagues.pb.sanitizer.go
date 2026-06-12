@@ -16,7 +16,7 @@ func (m *GetColleagueLabelsRequest) Sanitize() error {
 
 	// Field: Search
 	if m.Search != nil {
-		*m.Search = htmlsanitizer.Sanitize(*m.Search)
+		*m.Search = htmlsanitizer.SanitizeAndUnescape(*m.Search)
 	}
 
 	return nil
@@ -178,12 +178,12 @@ func (m *ListColleaguesRequest) Sanitize() error {
 
 	// Field: NamePrefix
 	if m.NamePrefix != nil {
-		*m.NamePrefix = htmlsanitizer.Sanitize(*m.NamePrefix)
+		*m.NamePrefix = htmlsanitizer.SanitizeAndUnescape(*m.NamePrefix)
 	}
 
 	// Field: NameSuffix
 	if m.NameSuffix != nil {
-		*m.NameSuffix = htmlsanitizer.Sanitize(*m.NameSuffix)
+		*m.NameSuffix = htmlsanitizer.SanitizeAndUnescape(*m.NameSuffix)
 	}
 
 	// Field: Pagination
@@ -196,7 +196,7 @@ func (m *ListColleaguesRequest) Sanitize() error {
 	}
 
 	// Field: Search
-	m.Search = htmlsanitizer.Sanitize(m.Search)
+	m.Search = htmlsanitizer.SanitizeAndUnescape(m.Search)
 
 	// Field: Sort
 	if m.Sort != nil {
@@ -302,7 +302,7 @@ func (m *SetColleaguePropsRequest) Sanitize() error {
 	}
 
 	// Field: Reason
-	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
 
 	return nil
 }

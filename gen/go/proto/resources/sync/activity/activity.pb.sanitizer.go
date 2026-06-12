@@ -16,7 +16,7 @@ func (m *AccountUpdate) Sanitize() error {
 
 	// Field: Group
 	if m.Group != nil {
-		*m.Group = htmlsanitizer.Sanitize(*m.Group)
+		*m.Group = htmlsanitizer.SanitizeAndUnescape(*m.Group)
 	}
 
 	// Field: Groups
@@ -29,7 +29,7 @@ func (m *AccountUpdate) Sanitize() error {
 	}
 
 	// Field: License
-	m.License = htmlsanitizer.Sanitize(m.License)
+	m.License = htmlsanitizer.SanitizeAndUnescape(m.License)
 
 	return nil
 }
@@ -52,7 +52,7 @@ func (m *ColleagueProps) Sanitize() error {
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
 	}
 
 	return nil
@@ -66,7 +66,7 @@ func (m *TimeclockUpdate) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	return nil
 }
@@ -79,16 +79,16 @@ func (m *UserOAuth2Conn) Sanitize() error {
 	}
 
 	// Field: ExternalId
-	m.ExternalId = htmlsanitizer.Sanitize(m.ExternalId)
+	m.ExternalId = htmlsanitizer.SanitizeAndUnescape(m.ExternalId)
 
 	// Field: Identifier
-	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
+	m.Identifier = htmlsanitizer.SanitizeAndUnescape(m.Identifier)
 
 	// Field: ProviderName
-	m.ProviderName = htmlsanitizer.Sanitize(m.ProviderName)
+	m.ProviderName = htmlsanitizer.SanitizeAndUnescape(m.ProviderName)
 
 	// Field: Username
-	m.Username = htmlsanitizer.Sanitize(m.Username)
+	m.Username = htmlsanitizer.SanitizeAndUnescape(m.Username)
 
 	return nil
 }
@@ -111,7 +111,7 @@ func (m *UserProps) Sanitize() error {
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
 	}
 
 	return nil
@@ -126,22 +126,22 @@ func (m *UserUpdate) Sanitize() error {
 
 	// Field: Firstname
 	if m.Firstname != nil {
-		*m.Firstname = htmlsanitizer.Sanitize(*m.Firstname)
+		*m.Firstname = htmlsanitizer.SanitizeAndUnescape(*m.Firstname)
 	}
 
 	// Field: Group
 	if m.Group != nil {
-		*m.Group = htmlsanitizer.Sanitize(*m.Group)
+		*m.Group = htmlsanitizer.SanitizeAndUnescape(*m.Group)
 	}
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	// Field: Lastname
 	if m.Lastname != nil {
-		*m.Lastname = htmlsanitizer.Sanitize(*m.Lastname)
+		*m.Lastname = htmlsanitizer.SanitizeAndUnescape(*m.Lastname)
 	}
 
 	return nil

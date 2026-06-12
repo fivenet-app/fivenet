@@ -25,7 +25,7 @@ func (m *JobProps) Sanitize() error {
 
 	// Field: DiscordGuildId
 	if m.DiscordGuildId != nil {
-		*m.DiscordGuildId = htmlsanitizer.Sanitize(*m.DiscordGuildId)
+		*m.DiscordGuildId = htmlsanitizer.SanitizeAndUnescape(*m.DiscordGuildId)
 	}
 
 	// Field: DiscordLastSync
@@ -56,15 +56,15 @@ func (m *JobProps) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: LivemapMarkerColor
-	m.LivemapMarkerColor = htmlsanitizer.Sanitize(m.LivemapMarkerColor)
+	m.LivemapMarkerColor = htmlsanitizer.SanitizeAndUnescape(m.LivemapMarkerColor)
 
 	// Field: LogoFile
 	if m.LogoFile != nil {
@@ -77,7 +77,7 @@ func (m *JobProps) Sanitize() error {
 
 	// Field: Motd
 	if m.Motd != nil {
-		*m.Motd = htmlsanitizer.Sanitize(*m.Motd)
+		*m.Motd = htmlsanitizer.SanitizeAndUnescape(*m.Motd)
 	}
 
 	// Field: QuickButtons
@@ -91,7 +91,7 @@ func (m *JobProps) Sanitize() error {
 
 	// Field: RadioFrequency
 	if m.RadioFrequency != nil {
-		*m.RadioFrequency = htmlsanitizer.Sanitize(*m.RadioFrequency)
+		*m.RadioFrequency = htmlsanitizer.SanitizeAndUnescape(*m.RadioFrequency)
 	}
 
 	// Field: Settings

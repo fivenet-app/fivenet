@@ -51,7 +51,7 @@ func (m *CalendarEntry) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
@@ -73,7 +73,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	// Field: Occurrence
@@ -144,7 +144,7 @@ func (m *CalendarEntryOccurrence) Sanitize() error {
 	}
 
 	// Field: Key
-	m.Key = htmlsanitizer.Sanitize(m.Key)
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
 
 	return nil
 }
@@ -167,7 +167,7 @@ func (m *CalendarEntryRSVP) Sanitize() error {
 
 	// Field: OccurrenceKey
 	if m.OccurrenceKey != nil {
-		*m.OccurrenceKey = htmlsanitizer.Sanitize(*m.OccurrenceKey)
+		*m.OccurrenceKey = htmlsanitizer.SanitizeAndUnescape(*m.OccurrenceKey)
 	}
 
 	// Field: User

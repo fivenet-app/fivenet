@@ -63,7 +63,7 @@ func (m *ConductEntry) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: Message
 	if m.Message != nil {

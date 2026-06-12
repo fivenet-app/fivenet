@@ -15,7 +15,7 @@ func (m *DiscordSyncChange) Sanitize() error {
 	}
 
 	// Field: Plan
-	m.Plan = htmlsanitizer.Sanitize(m.Plan)
+	m.Plan = htmlsanitizer.SanitizeAndUnescape(m.Plan)
 
 	// Field: Time
 	if m.Time != nil {
@@ -77,7 +77,7 @@ func (m *DiscordSyncSettings) Sanitize() error {
 	}
 
 	// Field: QualificationsRoleFormat
-	m.QualificationsRoleFormat = htmlsanitizer.Sanitize(m.QualificationsRoleFormat)
+	m.QualificationsRoleFormat = htmlsanitizer.SanitizeAndUnescape(m.QualificationsRoleFormat)
 
 	// Field: StatusLogSettings
 	if m.StatusLogSettings != nil {
@@ -108,7 +108,7 @@ func (m *GroupMapping) Sanitize() error {
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }
@@ -139,7 +139,7 @@ func (m *JobsAbsenceSettings) Sanitize() error {
 	}
 
 	// Field: AbsenceRole
-	m.AbsenceRole = htmlsanitizer.Sanitize(m.AbsenceRole)
+	m.AbsenceRole = htmlsanitizer.SanitizeAndUnescape(m.AbsenceRole)
 
 	return nil
 }
@@ -152,7 +152,7 @@ func (m *StatusLogSettings) Sanitize() error {
 	}
 
 	// Field: ChannelId
-	m.ChannelId = htmlsanitizer.Sanitize(m.ChannelId)
+	m.ChannelId = htmlsanitizer.SanitizeAndUnescape(m.ChannelId)
 
 	return nil
 }
@@ -165,10 +165,10 @@ func (m *UserInfoSyncSettings) Sanitize() error {
 	}
 
 	// Field: EmployeeRoleFormat
-	m.EmployeeRoleFormat = htmlsanitizer.Sanitize(m.EmployeeRoleFormat)
+	m.EmployeeRoleFormat = htmlsanitizer.SanitizeAndUnescape(m.EmployeeRoleFormat)
 
 	// Field: GradeRoleFormat
-	m.GradeRoleFormat = htmlsanitizer.Sanitize(m.GradeRoleFormat)
+	m.GradeRoleFormat = htmlsanitizer.SanitizeAndUnescape(m.GradeRoleFormat)
 
 	// Field: GroupMapping
 	for idx, item := range m.GroupMapping {
@@ -183,7 +183,7 @@ func (m *UserInfoSyncSettings) Sanitize() error {
 	}
 
 	// Field: UnemployedRoleName
-	m.UnemployedRoleName = htmlsanitizer.Sanitize(m.UnemployedRoleName)
+	m.UnemployedRoleName = htmlsanitizer.SanitizeAndUnescape(m.UnemployedRoleName)
 
 	return nil
 }

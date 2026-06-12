@@ -16,7 +16,7 @@ func (m *ApprovalTaskSeed) Sanitize() error {
 
 	// Field: Comment
 	if m.Comment != nil {
-		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
+		*m.Comment = htmlsanitizer.SanitizeAndUnescape(*m.Comment)
 	}
 
 	// Field: DueAt
@@ -29,7 +29,7 @@ func (m *ApprovalTaskSeed) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: Label
 	if m.Label != nil {
@@ -47,7 +47,7 @@ func (m *DecideApprovalRequest) Sanitize() error {
 	}
 
 	// Field: Comment
-	m.Comment = htmlsanitizer.Sanitize(m.Comment)
+	m.Comment = htmlsanitizer.SanitizeAndUnescape(m.Comment)
 
 	// Field: PayloadSvg
 	if m.PayloadSvg != nil {
@@ -293,7 +293,7 @@ func (m *ReopenApprovalTaskRequest) Sanitize() error {
 	}
 
 	// Field: Comment
-	m.Comment = htmlsanitizer.Sanitize(m.Comment)
+	m.Comment = htmlsanitizer.SanitizeAndUnescape(m.Comment)
 
 	return nil
 }
@@ -334,7 +334,7 @@ func (m *RevokeApprovalRequest) Sanitize() error {
 	}
 
 	// Field: Comment
-	m.Comment = htmlsanitizer.Sanitize(m.Comment)
+	m.Comment = htmlsanitizer.SanitizeAndUnescape(m.Comment)
 
 	return nil
 }

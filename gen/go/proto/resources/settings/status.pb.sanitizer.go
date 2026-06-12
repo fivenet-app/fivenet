@@ -16,7 +16,7 @@ func (m *DBSyncStatus) Sanitize() error {
 
 	// Field: LastDbsyncVersion
 	if m.LastDbsyncVersion != nil {
-		*m.LastDbsyncVersion = htmlsanitizer.Sanitize(*m.LastDbsyncVersion)
+		*m.LastDbsyncVersion = htmlsanitizer.SanitizeAndUnescape(*m.LastDbsyncVersion)
 	}
 
 	// Field: LastSyncedActivity
@@ -48,13 +48,13 @@ func (m *Database) Sanitize() error {
 	}
 
 	// Field: DbCharset
-	m.DbCharset = htmlsanitizer.Sanitize(m.DbCharset)
+	m.DbCharset = htmlsanitizer.SanitizeAndUnescape(m.DbCharset)
 
 	// Field: DbCollation
-	m.DbCollation = htmlsanitizer.Sanitize(m.DbCollation)
+	m.DbCollation = htmlsanitizer.SanitizeAndUnescape(m.DbCollation)
 
 	// Field: Version
-	m.Version = htmlsanitizer.Sanitize(m.Version)
+	m.Version = htmlsanitizer.SanitizeAndUnescape(m.Version)
 
 	return nil
 }
@@ -67,7 +67,7 @@ func (m *Nats) Sanitize() error {
 	}
 
 	// Field: Version
-	m.Version = htmlsanitizer.Sanitize(m.Version)
+	m.Version = htmlsanitizer.SanitizeAndUnescape(m.Version)
 
 	return nil
 }
@@ -89,10 +89,10 @@ func (m *NewVersionInfo) Sanitize() error {
 	}
 
 	// Field: Url
-	m.Url = htmlsanitizer.Sanitize(m.Url)
+	m.Url = htmlsanitizer.SanitizeAndUnescape(m.Url)
 
 	// Field: Version
-	m.Version = htmlsanitizer.Sanitize(m.Version)
+	m.Version = htmlsanitizer.SanitizeAndUnescape(m.Version)
 
 	return nil
 }
@@ -151,7 +151,7 @@ func (m *VersionStatus) Sanitize() error {
 	}
 
 	// Field: Current
-	m.Current = htmlsanitizer.Sanitize(m.Current)
+	m.Current = htmlsanitizer.SanitizeAndUnescape(m.Current)
 
 	// Field: NewVersion
 	if m.NewVersion != nil {

@@ -34,16 +34,16 @@ func (m *Law) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.Sanitize(*m.Description)
+		*m.Description = htmlsanitizer.SanitizeAndUnescape(*m.Description)
 	}
 
 	// Field: Hint
 	if m.Hint != nil {
-		*m.Hint = htmlsanitizer.Sanitize(*m.Hint)
+		*m.Hint = htmlsanitizer.SanitizeAndUnescape(*m.Hint)
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -84,7 +84,7 @@ func (m *LawBook) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.Sanitize(*m.Description)
+		*m.Description = htmlsanitizer.SanitizeAndUnescape(*m.Description)
 	}
 
 	// Field: Laws
@@ -100,7 +100,7 @@ func (m *LawBook) Sanitize() error {
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {

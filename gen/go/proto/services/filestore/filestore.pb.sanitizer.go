@@ -15,7 +15,7 @@ func (m *DeleteFileByPathRequest) Sanitize() error {
 	}
 
 	// Field: Path
-	m.Path = htmlsanitizer.Sanitize(m.Path)
+	m.Path = htmlsanitizer.SanitizeAndUnescape(m.Path)
 
 	return nil
 }
@@ -38,7 +38,7 @@ func (m *ListFilesRequest) Sanitize() error {
 
 	// Field: Path
 	if m.Path != nil {
-		*m.Path = htmlsanitizer.Sanitize(*m.Path)
+		*m.Path = htmlsanitizer.SanitizeAndUnescape(*m.Path)
 	}
 
 	return nil

@@ -16,17 +16,17 @@ func (m *Vehicle) Sanitize() error {
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: Model
 	if m.Model != nil {
-		*m.Model = htmlsanitizer.Sanitize(*m.Model)
+		*m.Model = htmlsanitizer.SanitizeAndUnescape(*m.Model)
 	}
 
 	// Field: Owner
@@ -40,11 +40,11 @@ func (m *Vehicle) Sanitize() error {
 
 	// Field: OwnerIdentifier
 	if m.OwnerIdentifier != nil {
-		*m.OwnerIdentifier = htmlsanitizer.Sanitize(*m.OwnerIdentifier)
+		*m.OwnerIdentifier = htmlsanitizer.SanitizeAndUnescape(*m.OwnerIdentifier)
 	}
 
 	// Field: Plate
-	m.Plate = htmlsanitizer.Sanitize(m.Plate)
+	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
 
 	// Field: Props
 	if m.Props != nil {
@@ -56,7 +56,7 @@ func (m *Vehicle) Sanitize() error {
 	}
 
 	// Field: Type
-	m.Type = htmlsanitizer.Sanitize(m.Type)
+	m.Type = htmlsanitizer.SanitizeAndUnescape(m.Type)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {

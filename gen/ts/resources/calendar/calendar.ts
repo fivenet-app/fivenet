@@ -657,7 +657,7 @@ class CalendarDiscordReminderStep$Type extends MessageType<CalendarDiscordRemind
     constructor() {
         super("resources.calendar.CalendarDiscordReminderStep", [
             { no: 1, name: "at_minute", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10080, gte: 0 } } } },
-            { no: 2, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "2000" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeAndUnescape" } } },
+            { no: 2, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "2000" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 3, name: "embed", kind: "message", T: () => CalendarDiscordReminderEmbed }
         ]);
     }
@@ -717,8 +717,8 @@ export const CalendarDiscordReminderStep = new CalendarDiscordReminderStep$Type(
 class CalendarDiscordReminderEmbed$Type extends MessageType<CalendarDiscordReminderEmbed> {
     constructor() {
         super("resources.calendar.CalendarDiscordReminderEmbed", [
-            { no: 1, name: "title", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "256" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeAndUnescape" } } },
-            { no: 2, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "4096" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeAndUnescape" } } },
+            { no: 1, name: "title", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "256" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 2, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "4096" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 3, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } }
         ]);
     }

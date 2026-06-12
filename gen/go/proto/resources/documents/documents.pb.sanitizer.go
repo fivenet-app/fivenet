@@ -51,11 +51,11 @@ func (m *Document) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: CreatorJobLabel
 	if m.CreatorJobLabel != nil {
-		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+		*m.CreatorJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJobLabel)
 	}
 
 	// Field: Data
@@ -90,7 +90,7 @@ func (m *Document) Sanitize() error {
 
 	// Field: FirstHeading
 	if m.FirstHeading != nil {
-		*m.FirstHeading = htmlsanitizer.Sanitize(*m.FirstHeading)
+		*m.FirstHeading = htmlsanitizer.SanitizeAndUnescape(*m.FirstHeading)
 	}
 
 	// Field: Meta
@@ -161,7 +161,7 @@ func (m *DocumentMeta) Sanitize() error {
 	}
 
 	// Field: State
-	m.State = htmlsanitizer.Sanitize(m.State)
+	m.State = htmlsanitizer.SanitizeAndUnescape(m.State)
 
 	return nil
 }
@@ -210,11 +210,11 @@ func (m *DocumentShort) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: CreatorJobLabel
 	if m.CreatorJobLabel != nil {
-		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+		*m.CreatorJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJobLabel)
 	}
 
 	// Field: DeletedAt
@@ -228,7 +228,7 @@ func (m *DocumentShort) Sanitize() error {
 
 	// Field: FirstHeading
 	if m.FirstHeading != nil {
-		*m.FirstHeading = htmlsanitizer.Sanitize(*m.FirstHeading)
+		*m.FirstHeading = htmlsanitizer.SanitizeAndUnescape(*m.FirstHeading)
 	}
 
 	// Field: Meta

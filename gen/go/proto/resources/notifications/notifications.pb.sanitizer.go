@@ -53,11 +53,11 @@ func (m *Link) Sanitize() error {
 
 	// Field: Title
 	if m.Title != nil {
-		*m.Title = htmlsanitizer.Sanitize(*m.Title)
+		*m.Title = htmlsanitizer.SanitizeAndUnescape(*m.Title)
 	}
 
 	// Field: To
-	m.To = htmlsanitizer.Sanitize(m.To)
+	m.To = htmlsanitizer.SanitizeAndUnescape(m.To)
 
 	return nil
 }

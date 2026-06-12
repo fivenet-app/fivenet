@@ -94,7 +94,7 @@ func (p *SanitizerModule) generate(f pgs.File) {
 
 			s := &Sanitize{
 				Name:   f.Name().UpperCamelCase().String(),
-				Method: "Sanitize",
+				Method: "SanitizeAndUnescape",
 				F:      f,
 			}
 

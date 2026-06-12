@@ -161,12 +161,12 @@ func (m *UpdateUnitStatusRequest) Sanitize() error {
 
 	// Field: Code
 	if m.Code != nil {
-		*m.Code = htmlsanitizer.Sanitize(*m.Code)
+		*m.Code = htmlsanitizer.SanitizeAndUnescape(*m.Code)
 	}
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
 	}
 
 	return nil

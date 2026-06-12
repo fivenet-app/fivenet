@@ -54,7 +54,7 @@ func (m *Qualification) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
@@ -110,7 +110,7 @@ func (m *Qualification) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: LabelSyncFormat
 	if m.LabelSyncFormat != nil {
@@ -148,7 +148,7 @@ func (m *Qualification) Sanitize() error {
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.SanitizeAndUnescape(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -171,12 +171,12 @@ func (m *QualificationDiscordSettings) Sanitize() error {
 
 	// Field: RoleFormat
 	if m.RoleFormat != nil {
-		*m.RoleFormat = htmlsanitizer.Sanitize(*m.RoleFormat)
+		*m.RoleFormat = htmlsanitizer.SanitizeAndUnescape(*m.RoleFormat)
 	}
 
 	// Field: RoleName
 	if m.RoleName != nil {
-		*m.RoleName = htmlsanitizer.Sanitize(*m.RoleName)
+		*m.RoleName = htmlsanitizer.SanitizeAndUnescape(*m.RoleName)
 	}
 
 	return nil
@@ -214,7 +214,7 @@ func (m *QualificationRequest) Sanitize() error {
 
 	// Field: ApproverJob
 	if m.ApproverJob != nil {
-		*m.ApproverJob = htmlsanitizer.Sanitize(*m.ApproverJob)
+		*m.ApproverJob = htmlsanitizer.SanitizeAndUnescape(*m.ApproverJob)
 	}
 
 	// Field: CreatedAt
@@ -315,7 +315,7 @@ func (m *QualificationResult) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
@@ -379,7 +379,7 @@ func (m *QualificationShort) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
@@ -405,7 +405,7 @@ func (m *QualificationShort) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: Requirements
 	for idx, item := range m.Requirements {
@@ -429,7 +429,7 @@ func (m *QualificationShort) Sanitize() error {
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.SanitizeAndUnescape(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {

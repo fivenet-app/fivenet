@@ -15,7 +15,7 @@ func (m *OAuth2Account) Sanitize() error {
 	}
 
 	// Field: Avatar
-	m.Avatar = htmlsanitizer.Sanitize(m.Avatar)
+	m.Avatar = htmlsanitizer.SanitizeAndUnescape(m.Avatar)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -27,7 +27,7 @@ func (m *OAuth2Account) Sanitize() error {
 	}
 
 	// Field: ExternalId
-	m.ExternalId = htmlsanitizer.Sanitize(m.ExternalId)
+	m.ExternalId = htmlsanitizer.SanitizeAndUnescape(m.ExternalId)
 
 	// Field: Provider
 	if m.Provider != nil {
@@ -39,10 +39,10 @@ func (m *OAuth2Account) Sanitize() error {
 	}
 
 	// Field: ProviderName
-	m.ProviderName = htmlsanitizer.Sanitize(m.ProviderName)
+	m.ProviderName = htmlsanitizer.SanitizeAndUnescape(m.ProviderName)
 
 	// Field: Username
-	m.Username = htmlsanitizer.Sanitize(m.Username)
+	m.Username = htmlsanitizer.SanitizeAndUnescape(m.Username)
 
 	return nil
 }
@@ -55,18 +55,18 @@ func (m *OAuth2Provider) Sanitize() error {
 	}
 
 	// Field: Homepage
-	m.Homepage = htmlsanitizer.Sanitize(m.Homepage)
+	m.Homepage = htmlsanitizer.SanitizeAndUnescape(m.Homepage)
 
 	// Field: Icon
 	if m.Icon != nil {
-		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
+		*m.Icon = htmlsanitizer.SanitizeAndUnescape(*m.Icon)
 	}
 
 	// Field: Label
-	m.Label = htmlsanitizer.Sanitize(m.Label)
+	m.Label = htmlsanitizer.SanitizeAndUnescape(m.Label)
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }

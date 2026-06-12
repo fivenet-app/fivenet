@@ -15,10 +15,10 @@ func (m *NameOverride) Sanitize() error {
 	}
 
 	// Field: Firstname
-	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
+	m.Firstname = htmlsanitizer.SanitizeAndUnescape(m.Firstname)
 
 	// Field: Lastname
-	m.Lastname = htmlsanitizer.Sanitize(m.Lastname)
+	m.Lastname = htmlsanitizer.SanitizeAndUnescape(m.Lastname)
 
 	return nil
 }
@@ -45,10 +45,10 @@ func (m *UserMarker) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobLabel
-	m.JobLabel = htmlsanitizer.Sanitize(m.JobLabel)
+	m.JobLabel = htmlsanitizer.SanitizeAndUnescape(m.JobLabel)
 
 	// Field: Postal
 	if m.Postal != nil {
@@ -103,7 +103,7 @@ func (m *UserMarkerData) Sanitize() error {
 
 	// Field: VehiclePlate
 	if m.VehiclePlate != nil {
-		*m.VehiclePlate = htmlsanitizer.Sanitize(*m.VehiclePlate)
+		*m.VehiclePlate = htmlsanitizer.SanitizeAndUnescape(*m.VehiclePlate)
 	}
 
 	// Field: VehicleUpdatedAt

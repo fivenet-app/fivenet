@@ -45,7 +45,7 @@ func (m *Calendar) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
@@ -76,7 +76,7 @@ func (m *Calendar) Sanitize() error {
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	// Field: Name
@@ -112,7 +112,7 @@ func (m *CalendarDiscordReminderEmbed) Sanitize() error {
 
 	// Field: Color
 	if m.Color != nil {
-		*m.Color = htmlsanitizer.Sanitize(*m.Color)
+		*m.Color = htmlsanitizer.SanitizeAndUnescape(*m.Color)
 	}
 
 	// Field: Description
@@ -160,7 +160,7 @@ func (m *CalendarDiscordSettings) Sanitize() error {
 	}
 
 	// Field: ChannelId
-	m.ChannelId = htmlsanitizer.Sanitize(m.ChannelId)
+	m.ChannelId = htmlsanitizer.SanitizeAndUnescape(m.ChannelId)
 
 	// Field: ReminderSteps
 	for idx, item := range m.ReminderSteps {
@@ -207,7 +207,7 @@ func (m *CalendarShort) Sanitize() error {
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	// Field: Name

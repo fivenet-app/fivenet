@@ -90,7 +90,7 @@ func (m *RoleAttribute) Sanitize() error {
 	}
 
 	// Field: Key
-	m.Key = htmlsanitizer.Sanitize(m.Key)
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
 
 	// Field: MaxValues
 	if m.MaxValues != nil {
@@ -102,16 +102,16 @@ func (m *RoleAttribute) Sanitize() error {
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	// Field: Namespace
-	m.Namespace = htmlsanitizer.Sanitize(m.Namespace)
+	m.Namespace = htmlsanitizer.SanitizeAndUnescape(m.Namespace)
 
 	// Field: Service
-	m.Service = htmlsanitizer.Sanitize(m.Service)
+	m.Service = htmlsanitizer.SanitizeAndUnescape(m.Service)
 
 	// Field: Type
-	m.Type = htmlsanitizer.Sanitize(m.Type)
+	m.Type = htmlsanitizer.SanitizeAndUnescape(m.Type)
 
 	// Field: ValidValues
 	if m.ValidValues != nil {

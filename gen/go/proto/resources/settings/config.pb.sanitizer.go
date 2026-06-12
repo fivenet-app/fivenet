@@ -33,7 +33,7 @@ func (m *AppConfig) Sanitize() error {
 	}
 
 	// Field: DefaultLocale
-	m.DefaultLocale = htmlsanitizer.Sanitize(m.DefaultLocale)
+	m.DefaultLocale = htmlsanitizer.SanitizeAndUnescape(m.DefaultLocale)
 
 	// Field: Discord
 	if m.Discord != nil {
@@ -117,7 +117,7 @@ func (m *AppConfig) Sanitize() error {
 	}
 
 	// Field: Version
-	m.Version = htmlsanitizer.Sanitize(m.Version)
+	m.Version = htmlsanitizer.SanitizeAndUnescape(m.Version)
 
 	// Field: Website
 	if m.Website != nil {
@@ -333,12 +333,12 @@ func (m *PenaltyCalculatorDetentionTimeUnit) Sanitize() error {
 
 	// Field: Plural
 	if m.Plural != nil {
-		*m.Plural = htmlsanitizer.Sanitize(*m.Plural)
+		*m.Plural = htmlsanitizer.SanitizeAndUnescape(*m.Plural)
 	}
 
 	// Field: Singular
 	if m.Singular != nil {
-		*m.Singular = htmlsanitizer.Sanitize(*m.Singular)
+		*m.Singular = htmlsanitizer.SanitizeAndUnescape(*m.Singular)
 	}
 
 	return nil
@@ -353,7 +353,7 @@ func (m *PenaltyCalculatorWarn) Sanitize() error {
 
 	// Field: WarnMessage
 	if m.WarnMessage != nil {
-		*m.WarnMessage = htmlsanitizer.Sanitize(*m.WarnMessage)
+		*m.WarnMessage = htmlsanitizer.SanitizeAndUnescape(*m.WarnMessage)
 	}
 
 	return nil
@@ -443,7 +443,7 @@ func (m *UnemployedJob) Sanitize() error {
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }

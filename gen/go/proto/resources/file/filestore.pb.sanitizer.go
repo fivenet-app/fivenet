@@ -54,7 +54,7 @@ func (m *UploadFileResponse) Sanitize() error {
 	}
 
 	// Field: Url
-	m.Url = htmlsanitizer.Sanitize(m.Url)
+	m.Url = htmlsanitizer.SanitizeAndUnescape(m.Url)
 
 	return nil
 }
@@ -67,16 +67,16 @@ func (m *UploadMeta) Sanitize() error {
 	}
 
 	// Field: ContentType
-	m.ContentType = htmlsanitizer.Sanitize(m.ContentType)
+	m.ContentType = htmlsanitizer.SanitizeAndUnescape(m.ContentType)
 
 	// Field: Namespace
-	m.Namespace = htmlsanitizer.Sanitize(m.Namespace)
+	m.Namespace = htmlsanitizer.SanitizeAndUnescape(m.Namespace)
 
 	// Field: OriginalName
-	m.OriginalName = htmlsanitizer.Sanitize(m.OriginalName)
+	m.OriginalName = htmlsanitizer.SanitizeAndUnescape(m.OriginalName)
 
 	// Field: Reason
-	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
 
 	return nil
 }

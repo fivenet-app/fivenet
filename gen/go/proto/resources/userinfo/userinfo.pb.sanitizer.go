@@ -24,10 +24,10 @@ func (m *UserInfo) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: License
-	m.License = htmlsanitizer.Sanitize(m.License)
+	m.License = htmlsanitizer.SanitizeAndUnescape(m.License)
 
 	return nil
 }
@@ -50,21 +50,21 @@ func (m *UserInfoChanged) Sanitize() error {
 
 	// Field: NewJob
 	if m.NewJob != nil {
-		*m.NewJob = htmlsanitizer.Sanitize(*m.NewJob)
+		*m.NewJob = htmlsanitizer.SanitizeAndUnescape(*m.NewJob)
 	}
 
 	// Field: NewJobGradeLabel
 	if m.NewJobGradeLabel != nil {
-		*m.NewJobGradeLabel = htmlsanitizer.Sanitize(*m.NewJobGradeLabel)
+		*m.NewJobGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.NewJobGradeLabel)
 	}
 
 	// Field: NewJobLabel
 	if m.NewJobLabel != nil {
-		*m.NewJobLabel = htmlsanitizer.Sanitize(*m.NewJobLabel)
+		*m.NewJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.NewJobLabel)
 	}
 
 	// Field: OldJob
-	m.OldJob = htmlsanitizer.Sanitize(m.OldJob)
+	m.OldJob = htmlsanitizer.SanitizeAndUnescape(m.OldJob)
 
 	return nil
 }

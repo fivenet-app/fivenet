@@ -91,7 +91,7 @@ func (m *ExamQuestionAnswerData) Sanitize() error {
 	}
 
 	// Field: AnswerKey
-	m.AnswerKey = htmlsanitizer.Sanitize(m.AnswerKey)
+	m.AnswerKey = htmlsanitizer.SanitizeAndUnescape(m.AnswerKey)
 
 	// Field: FreeText
 	switch v := m.Answer.(type) {
@@ -203,7 +203,7 @@ func (m *ExamQuestionImage) Sanitize() error {
 
 	// Field: Alt
 	if m.Alt != nil {
-		*m.Alt = htmlsanitizer.Sanitize(*m.Alt)
+		*m.Alt = htmlsanitizer.SanitizeAndUnescape(*m.Alt)
 	}
 
 	// Field: Image

@@ -27,10 +27,10 @@ func (m *Job) Sanitize() error {
 	}
 
 	// Field: Label
-	m.Label = htmlsanitizer.Sanitize(m.Label)
+	m.Label = htmlsanitizer.SanitizeAndUnescape(m.Label)
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }
@@ -44,11 +44,11 @@ func (m *JobGrade) Sanitize() error {
 
 	// Field: JobName
 	if m.JobName != nil {
-		*m.JobName = htmlsanitizer.Sanitize(*m.JobName)
+		*m.JobName = htmlsanitizer.SanitizeAndUnescape(*m.JobName)
 	}
 
 	// Field: Label
-	m.Label = htmlsanitizer.Sanitize(m.Label)
+	m.Label = htmlsanitizer.SanitizeAndUnescape(m.Label)
 
 	return nil
 }

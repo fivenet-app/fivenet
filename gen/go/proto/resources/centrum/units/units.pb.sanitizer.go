@@ -46,12 +46,12 @@ func (m *Unit) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.Sanitize(*m.Description)
+		*m.Description = htmlsanitizer.SanitizeAndUnescape(*m.Description)
 	}
 
 	// Field: HomePostal
 	if m.HomePostal != nil {
-		*m.HomePostal = htmlsanitizer.Sanitize(*m.HomePostal)
+		*m.HomePostal = htmlsanitizer.SanitizeAndUnescape(*m.HomePostal)
 	}
 
 	// Field: Icon
@@ -60,18 +60,18 @@ func (m *Unit) Sanitize() error {
 	}
 
 	// Field: Initials
-	m.Initials = htmlsanitizer.Sanitize(m.Initials)
+	m.Initials = htmlsanitizer.SanitizeAndUnescape(m.Initials)
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	// Field: Status
 	if m.Status != nil {
@@ -133,7 +133,7 @@ func (m *UnitAssignments) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: Users
 	for idx, item := range m.Users {
@@ -175,7 +175,7 @@ func (m *UnitStatus) Sanitize() error {
 
 	// Field: Code
 	if m.Code != nil {
-		*m.Code = htmlsanitizer.Sanitize(*m.Code)
+		*m.Code = htmlsanitizer.SanitizeAndUnescape(*m.Code)
 	}
 
 	// Field: CreatedAt
@@ -198,17 +198,17 @@ func (m *UnitStatus) Sanitize() error {
 
 	// Field: CreatorJob
 	if m.CreatorJob != nil {
-		*m.CreatorJob = htmlsanitizer.Sanitize(*m.CreatorJob)
+		*m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJob)
 	}
 
 	// Field: Postal
 	if m.Postal != nil {
-		*m.Postal = htmlsanitizer.Sanitize(*m.Postal)
+		*m.Postal = htmlsanitizer.SanitizeAndUnescape(*m.Postal)
 	}
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
 	}
 
 	// Field: Unit

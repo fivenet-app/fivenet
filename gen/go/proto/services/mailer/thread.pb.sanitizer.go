@@ -272,7 +272,7 @@ func (m *SearchThreadsRequest) Sanitize() error {
 	}
 
 	// Field: Search
-	m.Search = htmlsanitizer.Sanitize(m.Search)
+	m.Search = htmlsanitizer.SanitizeAndUnescape(m.Search)
 
 	return nil
 }

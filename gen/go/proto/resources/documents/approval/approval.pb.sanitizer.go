@@ -16,7 +16,7 @@ func (m *Approval) Sanitize() error {
 
 	// Field: Comment
 	if m.Comment != nil {
-		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
+		*m.Comment = htmlsanitizer.SanitizeAndUnescape(*m.Comment)
 	}
 
 	// Field: CreatedAt
@@ -71,17 +71,17 @@ func (m *Approval) Sanitize() error {
 
 	// Field: UserGradeLabel
 	if m.UserGradeLabel != nil {
-		*m.UserGradeLabel = htmlsanitizer.Sanitize(*m.UserGradeLabel)
+		*m.UserGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.UserGradeLabel)
 	}
 
 	// Field: UserJob
 	if m.UserJob != nil {
-		*m.UserJob = htmlsanitizer.Sanitize(*m.UserJob)
+		*m.UserJob = htmlsanitizer.SanitizeAndUnescape(*m.UserJob)
 	}
 
 	// Field: UserJobLabel
 	if m.UserJobLabel != nil {
-		*m.UserJobLabel = htmlsanitizer.Sanitize(*m.UserJobLabel)
+		*m.UserJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.UserJobLabel)
 	}
 
 	return nil
@@ -160,7 +160,7 @@ func (m *ApprovalTask) Sanitize() error {
 
 	// Field: Comment
 	if m.Comment != nil {
-		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
+		*m.Comment = htmlsanitizer.SanitizeAndUnescape(*m.Comment)
 	}
 
 	// Field: CompletedAt
@@ -191,11 +191,11 @@ func (m *ApprovalTask) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: CreatorJobLabel
 	if m.CreatorJobLabel != nil {
-		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+		*m.CreatorJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJobLabel)
 	}
 
 	// Field: Document
@@ -218,17 +218,17 @@ func (m *ApprovalTask) Sanitize() error {
 
 	// Field: Job
 	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	// Field: JobGradeLabel
 	if m.JobGradeLabel != nil {
-		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+		*m.JobGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobGradeLabel)
 	}
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	// Field: Label

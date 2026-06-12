@@ -15,7 +15,7 @@ func (m *DeleteMugshotRequest) Sanitize() error {
 	}
 
 	// Field: Reason
-	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
 
 	return nil
 }
@@ -48,7 +48,7 @@ func (m *ListCitizensRequest) Sanitize() error {
 
 	// Field: Dateofbirth
 	if m.Dateofbirth != nil {
-		*m.Dateofbirth = htmlsanitizer.Sanitize(*m.Dateofbirth)
+		*m.Dateofbirth = htmlsanitizer.SanitizeAndUnescape(*m.Dateofbirth)
 	}
 
 	// Field: Pagination
@@ -62,11 +62,11 @@ func (m *ListCitizensRequest) Sanitize() error {
 
 	// Field: PhoneNumber
 	if m.PhoneNumber != nil {
-		*m.PhoneNumber = htmlsanitizer.Sanitize(*m.PhoneNumber)
+		*m.PhoneNumber = htmlsanitizer.SanitizeAndUnescape(*m.PhoneNumber)
 	}
 
 	// Field: Search
-	m.Search = htmlsanitizer.Sanitize(m.Search)
+	m.Search = htmlsanitizer.SanitizeAndUnescape(m.Search)
 
 	// Field: Sort
 	if m.Sort != nil {
@@ -193,7 +193,7 @@ func (m *SetUserPropsRequest) Sanitize() error {
 	}
 
 	// Field: Reason
-	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
 
 	return nil
 }

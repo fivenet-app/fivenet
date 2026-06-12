@@ -27,7 +27,7 @@ func (m *GetStatsRequest) Sanitize() error {
 	for idx, item := range m.Jobs {
 		_, _ = idx, item
 
-		m.Jobs[idx] = htmlsanitizer.Sanitize(m.Jobs[idx])
+		m.Jobs[idx] = htmlsanitizer.SanitizeAndUnescape(m.Jobs[idx])
 
 	}
 

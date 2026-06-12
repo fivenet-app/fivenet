@@ -27,10 +27,10 @@ func (m *Failure) Sanitize() error {
 	}
 
 	// Field: ErrorMessage
-	m.ErrorMessage = htmlsanitizer.Sanitize(m.ErrorMessage)
+	m.ErrorMessage = htmlsanitizer.SanitizeAndUnescape(m.ErrorMessage)
 
 	// Field: ErrorStatus
-	m.ErrorStatus = htmlsanitizer.Sanitize(m.ErrorStatus)
+	m.ErrorStatus = htmlsanitizer.SanitizeAndUnescape(m.ErrorStatus)
 
 	// Field: Headers
 	for idx, item := range m.Headers {
@@ -129,7 +129,7 @@ func (m *Header) Sanitize() error {
 	}
 
 	// Field: Operation
-	m.Operation = htmlsanitizer.Sanitize(m.Operation)
+	m.Operation = htmlsanitizer.SanitizeAndUnescape(m.Operation)
 
 	return nil
 }
@@ -145,7 +145,7 @@ func (m *HeaderValue) Sanitize() error {
 	for idx, item := range m.Value {
 		_, _ = idx, item
 
-		m.Value[idx] = htmlsanitizer.Sanitize(m.Value[idx])
+		m.Value[idx] = htmlsanitizer.SanitizeAndUnescape(m.Value[idx])
 
 	}
 

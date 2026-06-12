@@ -74,7 +74,7 @@ func (m *ClientUpdate) Sanitize() error {
 
 	// Field: Label
 	if m.Label != nil {
-		*m.Label = htmlsanitizer.Sanitize(*m.Label)
+		*m.Label = htmlsanitizer.SanitizeAndUnescape(*m.Label)
 	}
 
 	return nil

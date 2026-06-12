@@ -42,7 +42,7 @@ func (m *Cronjob) Sanitize() error {
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	// Field: NextScheduleTime
 	if m.NextScheduleTime != nil {
@@ -54,7 +54,7 @@ func (m *Cronjob) Sanitize() error {
 	}
 
 	// Field: Schedule
-	m.Schedule = htmlsanitizer.Sanitize(m.Schedule)
+	m.Schedule = htmlsanitizer.SanitizeAndUnescape(m.Schedule)
 
 	// Field: StartedTime
 	if m.StartedTime != nil {
@@ -113,14 +113,14 @@ func (m *CronjobCompletedEvent) Sanitize() error {
 
 	// Field: ErrorMessage
 	if m.ErrorMessage != nil {
-		*m.ErrorMessage = htmlsanitizer.Sanitize(*m.ErrorMessage)
+		*m.ErrorMessage = htmlsanitizer.SanitizeAndUnescape(*m.ErrorMessage)
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	// Field: NodeName
-	m.NodeName = htmlsanitizer.Sanitize(m.NodeName)
+	m.NodeName = htmlsanitizer.SanitizeAndUnescape(m.NodeName)
 
 	return nil
 }
@@ -161,7 +161,7 @@ func (m *CronjobLockOwnerState) Sanitize() error {
 	}
 
 	// Field: Hostname
-	m.Hostname = htmlsanitizer.Sanitize(m.Hostname)
+	m.Hostname = htmlsanitizer.SanitizeAndUnescape(m.Hostname)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {

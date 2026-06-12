@@ -62,15 +62,15 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: CreatorJobLabel
 	if m.CreatorJobLabel != nil {
-		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+		*m.CreatorJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJobLabel)
 	}
 
 	// Field: Description
-	m.Description = htmlsanitizer.Sanitize(m.Description)
+	m.Description = htmlsanitizer.SanitizeAndUnescape(m.Description)
 
 	// Field: Icon
 	if m.Icon != nil {
@@ -99,10 +99,10 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: State
-	m.State = htmlsanitizer.Sanitize(m.State)
+	m.State = htmlsanitizer.SanitizeAndUnescape(m.State)
 
 	// Field: Title
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.SanitizeAndUnescape(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -165,11 +165,11 @@ func (m *TemplateApprovalTaskSeed) Sanitize() error {
 
 	// Field: Comment
 	if m.Comment != nil {
-		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
+		*m.Comment = htmlsanitizer.SanitizeAndUnescape(*m.Comment)
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: Label
 	if m.Label != nil {
@@ -251,16 +251,16 @@ func (m *TemplateJobAccess) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
 	// Field: JobGradeLabel
 	if m.JobGradeLabel != nil {
-		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+		*m.JobGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobGradeLabel)
 	}
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	return nil
@@ -353,15 +353,15 @@ func (m *TemplateShort) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: CreatorJobLabel
 	if m.CreatorJobLabel != nil {
-		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+		*m.CreatorJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJobLabel)
 	}
 
 	// Field: Description
-	m.Description = htmlsanitizer.Sanitize(m.Description)
+	m.Description = htmlsanitizer.SanitizeAndUnescape(m.Description)
 
 	// Field: Icon
 	if m.Icon != nil {
@@ -378,7 +378,7 @@ func (m *TemplateShort) Sanitize() error {
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.SanitizeAndUnescape(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {

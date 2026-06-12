@@ -15,10 +15,10 @@ func (m *License) Sanitize() error {
 	}
 
 	// Field: Label
-	m.Label = htmlsanitizer.Sanitize(m.Label)
+	m.Label = htmlsanitizer.SanitizeAndUnescape(m.Label)
 
 	// Field: Type
-	m.Type = htmlsanitizer.Sanitize(m.Type)
+	m.Type = htmlsanitizer.SanitizeAndUnescape(m.Type)
 
 	return nil
 }

@@ -15,13 +15,13 @@ func (m *Channel) Sanitize() error {
 	}
 
 	// Field: GuildId
-	m.GuildId = htmlsanitizer.Sanitize(m.GuildId)
+	m.GuildId = htmlsanitizer.SanitizeAndUnescape(m.GuildId)
 
 	// Field: Id
-	m.Id = htmlsanitizer.Sanitize(m.Id)
+	m.Id = htmlsanitizer.SanitizeAndUnescape(m.Id)
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }
@@ -43,13 +43,13 @@ func (m *Guild) Sanitize() error {
 	}
 
 	// Field: Icon
-	m.Icon = htmlsanitizer.Sanitize(m.Icon)
+	m.Icon = htmlsanitizer.SanitizeAndUnescape(m.Icon)
 
 	// Field: Id
-	m.Id = htmlsanitizer.Sanitize(m.Id)
+	m.Id = htmlsanitizer.SanitizeAndUnescape(m.Id)
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
 
 	return nil
 }

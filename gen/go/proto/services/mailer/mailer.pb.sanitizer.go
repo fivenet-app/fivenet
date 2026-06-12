@@ -53,7 +53,7 @@ func (m *GetEmailProposalsRequest) Sanitize() error {
 	}
 
 	// Field: Input
-	m.Input = htmlsanitizer.Sanitize(m.Input)
+	m.Input = htmlsanitizer.SanitizeAndUnescape(m.Input)
 
 	return nil
 }
@@ -69,7 +69,7 @@ func (m *GetEmailProposalsResponse) Sanitize() error {
 	for idx, item := range m.Domains {
 		_, _ = idx, item
 
-		m.Domains[idx] = htmlsanitizer.Sanitize(m.Domains[idx])
+		m.Domains[idx] = htmlsanitizer.SanitizeAndUnescape(m.Domains[idx])
 
 	}
 
@@ -77,7 +77,7 @@ func (m *GetEmailProposalsResponse) Sanitize() error {
 	for idx, item := range m.Emails {
 		_, _ = idx, item
 
-		m.Emails[idx] = htmlsanitizer.Sanitize(m.Emails[idx])
+		m.Emails[idx] = htmlsanitizer.SanitizeAndUnescape(m.Emails[idx])
 
 	}
 

@@ -33,11 +33,11 @@ func (m *VehicleActivity) Sanitize() error {
 	}
 
 	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+	m.CreatorJob = htmlsanitizer.SanitizeAndUnescape(m.CreatorJob)
 
 	// Field: CreatorJobLabel
 	if m.CreatorJobLabel != nil {
-		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+		*m.CreatorJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJobLabel)
 	}
 
 	// Field: Data
@@ -50,11 +50,11 @@ func (m *VehicleActivity) Sanitize() error {
 	}
 
 	// Field: Plate
-	m.Plate = htmlsanitizer.Sanitize(m.Plate)
+	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
 	}
 
 	return nil

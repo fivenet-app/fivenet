@@ -15,7 +15,7 @@ func (m *VehicleProps) Sanitize() error {
 	}
 
 	// Field: Plate
-	m.Plate = htmlsanitizer.Sanitize(m.Plate)
+	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -37,7 +37,7 @@ func (m *VehicleProps) Sanitize() error {
 
 	// Field: WantedReason
 	if m.WantedReason != nil {
-		*m.WantedReason = htmlsanitizer.Sanitize(*m.WantedReason)
+		*m.WantedReason = htmlsanitizer.SanitizeAndUnescape(*m.WantedReason)
 	}
 
 	// Field: WantedTill
