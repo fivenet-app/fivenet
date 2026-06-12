@@ -56,7 +56,7 @@ const unitInverseColor = computed(() => hexToRgb(unit.value?.color ?? livemap.us
 
 const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
-const icon = computed(() => (unit.value?.icon ? convertComponentIconNameToDynamic(unit.value.icon) : 'i-mdi-map-marker-icon'));
+const icon = computed(() => (unit.value?.icon ? convertComponentIconNameToDynamic(unit.value.icon) : 'i-mdi-map-marker'));
 
 const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status));
 
