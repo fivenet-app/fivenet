@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.6.2] - 2026-06-12
+
+### 🚀 Features
+
+- *(editor)* Add fullscreen modal for images in document view
+- *(wiki)* Add rank-based page ordering
+- *(wiki)* Reuse shared client helpers
+- *(wiki)* Change MovePage to be a standalone permission
+
+### 🐛 Bug Fixes
+
+- *(livemap)* Satelite -> satelitte typo
+- *(discord)* Custom error for expired discord token
+- *(docs)* De-duplicate screenshot for readme
+- *(mailer)* Private email creation and confirm leave issues with new
+- *(calendar)* Description not using content message and no default access being set for calendar
+- *(calendar)* Access level for entry deletion not being EDIT
+- *(calendar)* Hide all day label for birthdays
+- Livemap satelite -> satelitte issue and calendar description
+- *(editor)* Image height/width + align handling in node
+- *(centrum)* Dispatch sidebar always being shown
+- *(i18n)* German calendar translation
+- *(calendar)* Recurring entries query logic
+- *(sanitizer)* Tiptap image test case
+- *(calendar)* Use separate occurence version for rsvp logic
+- Cleanup some type issues and add shortucts
+- *(discord)* Add helper to check error
+- *(calendar)* Recurrence version missing from query
+- File fomatting
+- Address some golangci-linit complaints
+- *(wiki)* Keep active page highlighted
+- Linter complaints
+- Wiki page view ui permission checks
+- *(documents)* Stats not returning results for other jobs
+- *(calendar)* Cal/entry deletion not closing view slideover
+- Update limiter templates to include wiki reoder page permission
+- Update zxcvbn-ts to v4.1.0
+
 ## [2026.6.1] - 2026-06-09
 
 ### 🚀 Features
