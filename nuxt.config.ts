@@ -196,6 +196,7 @@ export default defineNuxtConfig({
         },
         optimizeDeps: {
             include: [
+                '@iconify/vue',
                 '@internationalized/date',
                 '@nuxt/ui > prosemirror-gapcursor',
                 '@nuxt/ui > prosemirror-model',
@@ -269,6 +270,7 @@ export default defineNuxtConfig({
                 'prosemirror-dropcursor',
                 'prosemirror-gapcursor',
                 'prosemirror-history',
+                'prosemirror-inputrules',
                 'prosemirror-keymap',
                 'prosemirror-model',
                 'prosemirror-schema-list',

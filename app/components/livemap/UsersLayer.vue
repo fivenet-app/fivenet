@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import MapUserMarker from '~/components/livemap/MapUserMarker.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
 import { groupByJob } from '~/utils/livemap/groupByJob';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
+import UsersJobLayer from './UsersJobLayer.vue';
 
 withDefaults(
     defineProps<{
@@ -14,8 +14,9 @@ withDefaults(
     }>(),
     {
         centerSelectedMarker: true,
-        filterPlayers: true,
         showUserFilter: true,
+        showUnitNames: false,
+        showUnitStatus: false,
     },
 );
 
@@ -74,7 +75,7 @@ onBeforeRouteLeave(async (to) => {
 const playerQueryRaw = ref<string>('');
 const playerQuery = computed(() => playerQueryRaw.value.toLowerCase());
 
-const playerMarkersByJob = computed(() => {
+const markersByJob = computed(() => {
     const query = playerQuery.value;
     return groupByJob<UserMarker>(markersUsers.value.values(), (marker) => {
         if (query === '') return true;
@@ -85,25 +86,17 @@ const playerMarkersByJob = computed(() => {
 </script>
 
 <template>
-    <LLayerGroup
+    <UsersJobLayer
         v-for="job in jobsUsers"
         :key="job.name"
-        :name="`${$t('common.employee', 2)} ${job.label}`"
-        layer-type="overlay"
+        :job="job"
+        :markers="markersByJob.get(job.name) ?? []"
         :visible="livemapLayers.find((l) => l.key === `users_${job.name}`)?.visible === true"
-        :options="{ name: `users_${job.name}` }"
-    >
-        <MapUserMarker
-            v-for="marker in playerMarkersByJob.get(job.name) ?? []"
-            :key="marker.userId"
-            :marker="marker"
-            :size="livemap.markerSize"
-            :show-unit-names="showUnitNames || livemap.showUnitNames"
-            :show-unit-status="showUnitStatus || livemap.showUnitStatus"
-            :use-unit-color="livemap.useUnitColor"
-            @selected="$emit('userSelected', marker)"
-        />
-    </LLayerGroup>
+        :show-unit-names="showUnitNames"
+        :show-unit-status="showUnitStatus"
+        :use-unit-color="livemap.useUnitColor"
+        @user-selected="$emit('userSelected', $event)"
+    />
 
     <LControl position="topleft">
         <UTooltip v-if="ownMarker" :text="$t('common.my_location')">

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import MapMarkerMarker from '~/components/livemap/MapMarkerMarker.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
 import { groupByJob } from '~/utils/livemap/groupByJob';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import MarkerSearchDrawer from './markers/MarkerSearchDrawer.vue';
+import MarkersJobLayer from '~/components/livemap/MarkersJobLayer.vue';
 
 defineEmits<{
     (e: 'markerSelected', marker: MarkerMarker): void;
@@ -19,7 +19,7 @@ const { jobsMarkers, markersMarkers } = storeToRefs(livemapStore);
 
 const settingsStore = useSettingsStore();
 const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
-const { livemap, livemapLayers } = storeToRefs(settingsStore);
+const { livemapLayers } = storeToRefs(settingsStore);
 
 watch(jobsMarkers, (val) =>
     val.forEach((job) =>
@@ -50,22 +50,14 @@ const markerSearchDrawer = overlay.create(MarkerSearchDrawer);
 </script>
 
 <template>
-    <LLayerGroup
+    <MarkersJobLayer
         v-for="job in jobsMarkers"
         :key="job.name"
-        :name="`${$t('common.marker', 2)} ${job.label}`"
-        layer-type="overlay"
+        :job="job"
+        :markers="markersByJob.get(job.name) ?? []"
         :visible="livemapLayers.find((l) => l.key === `markers_${job.name}`)?.visible === true"
-        :options="{ name: `markers_${job.name}` }"
-    >
-        <MapMarkerMarker
-            v-for="marker in markersByJob.get(job.name) ?? []"
-            :key="marker.id"
-            :marker="marker"
-            :size="livemap.markerSize"
-            @selected="$emit('markerSelected', marker)"
-        />
-    </LLayerGroup>
+        @marker-selected="$emit('markerSelected', $event)"
+    />
 
     <LControl position="topright">
         <div class="flex flex-col gap-2">

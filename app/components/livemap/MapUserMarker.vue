@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { LeafletMouseEvent, PointExpression } from 'leaflet';
-import { MapMarkerIcon } from 'mdi-vue3';
 import { unitStatusToBGColor } from '~/components/dispatch/helpers';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
@@ -10,7 +9,6 @@ import UnitDetailsSlideover from '../dispatch/units/UnitDetailsSlideover.vue';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import { checkIfCanAccessColleague } from '../jobs/colleagues/helpers';
 import PhoneNumberBlock from '../partials/citizens/PhoneNumberBlock.vue';
-import { resolveIconComponent } from '../partials/icons';
 import UnitInfoPopover from '../dispatch/units/UnitInfoPopover.vue';
 
 const props = withDefaults(
@@ -58,7 +56,7 @@ const unitInverseColor = computed(() => hexToRgb(unit.value?.color ?? livemap.us
 
 const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
-const icon = computed(() => (unit.value?.icon ? resolveIconComponent(unit.value.icon) : MapMarkerIcon));
+const icon = computed(() => (unit.value?.icon ? convertComponentIconNameToDynamic(unit.value.icon) : 'i-mdi-map-marker-icon'));
 
 const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status));
 
@@ -101,9 +99,10 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                     {{ unit?.initials }}
                 </span>
 
-                <component
-                    :is="icon"
+                <UIcon
                     class="size-full"
+                    :size="size"
+                    :name="icon"
                     :style="{ color: useUnitColor ? (unit?.color ?? markerColor) : markerColor }"
                 />
             </div>

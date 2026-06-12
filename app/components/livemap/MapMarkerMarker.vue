@@ -2,7 +2,7 @@
 import type { DragEndEvent, LatLngTuple, LeafletEvent, PointExpression } from 'leaflet';
 import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
 import MarkerCreateOrUpdateSlideover from '~/components/livemap/markers/CreateOrUpdateSlideover.vue';
-import { resolveIconComponent } from '~/components/partials/icons';
+import { fallbackIconName } from '~/components/partials/icons';
 import { useLivemapStore } from '~/stores/livemap';
 import { MarkerType, type MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import type { Coords } from '~~/gen/ts/resources/livemap/coords';
@@ -11,9 +11,11 @@ const props = withDefaults(
     defineProps<{
         marker: MarkerMarker;
         size?: number;
+        iconKey?: string;
     }>(),
     {
         size: 20,
+        iconKey: undefined,
     },
 );
 
@@ -25,6 +27,7 @@ const { can, activeChar, isSuperuser } = useAuth();
 
 const { livemap } = useAppConfig();
 const overlay = useOverlay();
+
 const livemapStore = useLivemapStore();
 const { suppressMapPreclick } = livemapStore;
 const { markerDragEnabled, markersMarkers } = storeToRefs(livemapStore);
@@ -35,6 +38,7 @@ const popupAnchor = computed<PointExpression>(() => [0, (props.size / 2) * -1]);
 const dragHandleAnchor: PointExpression = [5, 5];
 const dragHandleSize: PointExpression = [10, 10];
 const canEditMarkers = computed(() => can('livemap.LivemapService/CreateOrUpdateMarker').value);
+
 type PointShapeKind = 'polygon' | 'polyline';
 type PointShapeData = {
     points: Coords[];
@@ -194,6 +198,13 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
     if (!shape) return [];
     return [{ x: marker.x, y: marker.y }, ...shape.points];
 }
+
+const settingsStore = useSettingsStore();
+const { livemapLayers } = storeToRefs(settingsStore);
+
+const iconKey = computed(() =>
+    (livemapLayers.value.find((l) => l.key === 'markers_' + props.marker.job)?.visible ?? false).toString(),
+);
 </script>
 
 <template>
@@ -339,9 +350,11 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
         @dragend="onMarkerDragEnd($event, marker)"
     >
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
-            <component
-                :is="resolveIconComponent(convertDynamicIconNameToComponent(marker.data?.data.icon.icon))"
-                class="size-full"
+            <UIcon
+                :key="iconKey"
+                :name="convertComponentIconNameToDynamic(marker.data?.data.icon.icon)"
+                mode="svg"
+                :size="size"
                 :style="{ color: marker.color ?? 'currentColor' }"
             />
         </LIcon>
@@ -367,7 +380,13 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
         @dragend="onMarkerDragEnd($event, marker)"
     >
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
-            <component :is="resolveIconComponent()" :fill="marker.color ?? 'currentColor'" />
+            <UIcon
+                :key="iconKey"
+                :name="convertComponentIconNameToDynamic(fallbackIconName)"
+                mode="svg"
+                :size="size"
+                :style="{ color: marker.color ?? 'currentColor' }"
+            />
         </LIcon>
 
         <MarkerMarkerPopup :marker="marker" />
