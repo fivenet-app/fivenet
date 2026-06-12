@@ -85,7 +85,7 @@
         "@tiptap/y-tiptap": "3.0.4",
         "@unovis/ts": "1.6.5",
         "@unovis/vue": "1.6.5",
-        "@zxcvbn-ts/core": "3.0.4",
+        "@zxcvbn-ts/core": "4.1.0",
         "better-sqlite3": "12.10.0",
         "big.js": "7.0.1",
         "browser-headers": "0.4.1",

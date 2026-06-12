@@ -210,8 +210,8 @@ importers:
         specifier: 1.6.5
         version: 1.6.5(@unovis/ts@1.6.5)(vue@3.5.35(typescript@6.0.3))
       '@zxcvbn-ts/core':
-        specifier: 3.0.4
-        version: 3.0.4
+        specifier: 4.1.0
+        version: 4.1.0
       better-sqlite3:
         specifier: 12.10.0
         version: 12.10.0
@@ -4956,8 +4956,8 @@ packages:
   '@webcontainer/env@1.1.1':
     resolution: {integrity: sha512-6aN99yL695Hi9SuIk1oC88l9o0gmxL1nGWWQ/kNy81HigJ0FoaoTXpytCj6ItzgyCEwA9kF1wixsTuv5cjsgng==}
 
-  '@zxcvbn-ts/core@3.0.4':
-    resolution: {integrity: sha512-aQeiT0F09FuJaAqNrxynlAwZ2mW/1MdXakKWNmGM1Qp/VaY6CnB/GfnMS2T8gB2231Esp1/maCWd8vTG4OuShw==}
+  '@zxcvbn-ts/core@4.1.0':
+    resolution: {integrity: sha512-n2b+2dVwTmdQuaxI+Df0aBSEc7Gmoj/Kx1YDAaXOJqP1GyR4v1Te8HQNwxhSNjflppjckaONidqjrikrYkb/zQ==}
 
   abbrev@2.0.0:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
@@ -14989,7 +14989,7 @@ snapshots:
 
   '@webcontainer/env@1.1.1': {}
 
-  '@zxcvbn-ts/core@3.0.4':
+  '@zxcvbn-ts/core@4.1.0':
     dependencies:
       fastest-levenshtein: 1.0.16
 
