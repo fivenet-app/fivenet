@@ -18,12 +18,14 @@ const props = withDefaults(
         showUnitNames?: boolean;
         showUnitStatus?: boolean;
         useUnitColor?: boolean;
+        iconKey?: string;
     }>(),
     {
         size: 20,
         showUnitNames: false,
         showUnitStatus: false,
         useUnitColor: false,
+        iconKey: undefined,
     },
 );
 
@@ -100,9 +102,10 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                 </span>
 
                 <UIcon
-                    class="size-full"
-                    :size="size"
+                    :key="iconKey"
                     :name="icon"
+                    mode="svg"
+                    :size="size"
                     :style="{ color: useUnitColor ? (unit?.color ?? markerColor) : markerColor }"
                 />
             </div>

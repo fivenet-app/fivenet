@@ -198,13 +198,6 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
     if (!shape) return [];
     return [{ x: marker.x, y: marker.y }, ...shape.points];
 }
-
-const settingsStore = useSettingsStore();
-const { livemapLayers } = storeToRefs(settingsStore);
-
-const iconKey = computed(() =>
-    (livemapLayers.value.find((l) => l.key === 'markers_' + props.marker.job)?.visible ?? false).toString(),
-);
 </script>
 
 <template>

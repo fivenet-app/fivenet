@@ -36,6 +36,7 @@ const { livemap } = storeToRefs(settingsStore);
             :show-unit-names="showUnitNames || livemap.showUnitNames"
             :show-unit-status="showUnitStatus || livemap.showUnitStatus"
             :use-unit-color="useUnitColor || livemap.useUnitColor"
+            :icon-key="`users_${marker.userId}_${marker.job}_${visible}`"
             @selected="$emit('userSelected', marker)"
         />
     </LLayerGroup>
