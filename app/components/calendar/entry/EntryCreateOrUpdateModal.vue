@@ -401,7 +401,7 @@ async function closeModal(): Promise<void> {
                                 class="w-full"
                                 name="content"
                                 wrapper-class="min-h-80"
-                                :limit="10_000"
+                                :limit="8_000"
                             />
                         </ClientOnly>
                     </UFormField>

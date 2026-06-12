@@ -174,7 +174,6 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarRes
         });
 
         emit('close', true);
-        emit('refresh');
 
         return response;
     } catch (e) {
@@ -385,7 +384,7 @@ async function closeModal(): Promise<void> {
                                 class="w-full"
                                 name="content"
                                 wrapper-class="min-h-80"
-                                :limit="1_000"
+                                :limit="800"
                             />
                         </UFormField>
 

@@ -278,34 +278,36 @@ const isLinkOpen = ref<boolean>(false);
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
         <!-- Font Family -->
-        <UTooltip :text="$t('components.partials.tiptap_editor.font_family')">
-            <USelectMenu
-                v-model="selectedFont"
-                class="w-full max-w-44"
-                name="selectedFont"
-                :filter-fields="['label']"
-                :items="fonts"
-                :placeholder="$t('components.partials.tiptap_editor.font_family', 1)"
-                :disabled="disabled"
-                :style="{ fontFamily: selectedFont.value }"
-            >
-                <template #default>
-                    <span class="truncate" :style="{ fontFamily: selectedFont.value }">{{
-                        selectedFont.label.includes('.') ? $t(selectedFont.label) : selectedFont.label
-                    }}</span>
-                </template>
+        <UFormField name="selectedFont">
+            <UTooltip :text="$t('components.partials.tiptap_editor.font_family')">
+                <USelectMenu
+                    v-model="selectedFont"
+                    class="w-full max-w-44"
+                    name="selectedFont"
+                    :filter-fields="['label']"
+                    :items="fonts"
+                    :placeholder="$t('components.partials.tiptap_editor.font_family', 1)"
+                    :disabled="disabled"
+                    :style="{ fontFamily: selectedFont.value }"
+                >
+                    <template #default>
+                        <span class="truncate" :style="{ fontFamily: selectedFont.value }">{{
+                            selectedFont.label.includes('.') ? $t(selectedFont.label) : selectedFont.label
+                        }}</span>
+                    </template>
 
-                <template #item-label="{ item }">
-                    <span class="truncate" :style="{ fontFamily: item.value }">{{
-                        item.label.includes('.') ? $t(item.label) : item.label
-                    }}</span>
-                </template>
+                    <template #item-label="{ item }">
+                        <span class="truncate" :style="{ fontFamily: item.value }">{{
+                            item.label.includes('.') ? $t(item.label) : item.label
+                        }}</span>
+                    </template>
 
-                <template #empty>
-                    {{ $t('common.not_found', [$t('components.partials.tiptap_editor.font_family')]) }}
-                </template>
-            </USelectMenu>
-        </UTooltip>
+                    <template #empty>
+                        {{ $t('common.not_found', [$t('components.partials.tiptap_editor.font_family')]) }}
+                    </template>
+                </USelectMenu>
+            </UTooltip>
+        </UFormField>
 
         <UFieldGroup>
             <UPopover>
