@@ -328,7 +328,7 @@ func (w *Worker) processOccurrence(
 			continue
 		}
 
-		data := buildReminderSendMessage(w.i18n.Translator("de"), step, occurrence, w.publicURL)
+		data := buildReminderSendMessage(reminderTranslator(w.i18n), step, occurrence, w.publicURL)
 		if err := w.sendFn(channelID, data); err != nil {
 			return err
 		}
@@ -345,6 +345,19 @@ func (w *Worker) processOccurrence(
 	}
 
 	return nil
+}
+
+func reminderTranslator(localizer i18n.Ii18n) i18n.TFunc {
+	if localizer == nil {
+		return i18n.DummyTranslator()
+	}
+
+	locale := strings.TrimSpace(localizer.GetFallbackLanguage())
+	if locale == "" {
+		locale = "en"
+	}
+
+	return localizer.Translator(locale)
 }
 
 func reminderStepDue(
