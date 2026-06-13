@@ -1,3 +1,4 @@
+import { MarkerType } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 export function checkIfCanEditMarker(creator: UserShort | null | undefined): boolean {
@@ -24,4 +25,24 @@ export function checkIfCanEditMarker(creator: UserShort | null | undefined): boo
     }
 
     return false;
+}
+
+export function markerTypeToIcon(mt: MarkerType): string {
+    switch (mt) {
+        case MarkerType.ICON:
+            return 'i-mdi-emoticon';
+        case MarkerType.DOT:
+            return 'i-mdi-dot';
+        case MarkerType.CIRCLE:
+            return 'i-mdi-circle-outline';
+        case MarkerType.POLYLINE:
+            return 'i-mdi-vector-polyline';
+        case MarkerType.RECTANGLE:
+            return 'i-mdi-rectangle-outline';
+        case MarkerType.POLYGON:
+            return 'i-mdi-vector-polygon';
+
+        default:
+            return 'i-mdi-map-marker-question-outline';
+    }
 }

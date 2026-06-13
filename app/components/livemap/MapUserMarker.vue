@@ -191,7 +191,7 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                                 icon="i-mdi-track-changes"
                                 block
                                 :label="
-                                    followMarker && selectedMarker?.userId === marker.userId
+                                    followMarker && selectedMarker && selectedMarker.userId === marker.userId
                                         ? $t('common.unfollow')
                                         : $t('common.follow')
                                 "

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { listEnumValues } from '@protobuf-ts/runtime';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { HelpIcon } from 'mdi-vue3';
 import { z } from 'zod';
@@ -9,6 +10,7 @@ import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import InputDatePicker from '../../partials/InputDatePicker.vue';
 import type { Coords } from '~~/gen/ts/resources/livemap/coords.js';
+import { markerTypeToIcon } from '~/components/livemap/markers/helpers';
 
 const props = defineProps<{
     location?: Coords;
@@ -19,20 +21,21 @@ const emit = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
+const { t } = useI18n();
+
 const livemapStore = useLivemapStore();
 const { location: storeLocation, showLocationMarker, markerCoordPickerActive, markersMarkers } = storeToRefs(livemapStore);
 const { addOrUpdateMarkerMarker } = livemapStore;
 
 const livemapLivemapClient = await getLivemapLivemapClient();
 
-const markerTypes = [
-    { icon: 'i-mdi-emoticon', value: MarkerType.ICON },
-    { icon: 'i-mdi-dot', value: MarkerType.DOT },
-    { icon: 'i-mdi-vector-circle', value: MarkerType.CIRCLE },
-    { icon: 'i-mdi-vector-polyline', value: MarkerType.POLYLINE },
-    { icon: 'i-mdi-vector-rectangle', value: MarkerType.RECTANGLE },
-    { icon: 'i-mdi-vector-polygon', value: MarkerType.POLYGON },
-];
+const markerTypes = listEnumValues(MarkerType)
+    .filter((e) => e.number !== 0)
+    .map((e) => ({
+        label: t(`enums.livemap.MarkerType.${MarkerType[(e.number ?? 0) as MarkerType]}`),
+        icon: markerTypeToIcon(e.number),
+        value: e.number as MarkerType,
+    }));
 
 type ShapePointsKind = 'polygon' | 'polyline';
 
@@ -46,19 +49,6 @@ function cloneDataPlain<T>(value: T): T {
 }
 
 function resolveInitialMarkerType(marker?: MarkerMarker): MarkerType {
-    switch (marker?.data?.data.oneofKind) {
-        case 'icon':
-            return MarkerType.ICON;
-        case 'circle':
-            return MarkerType.CIRCLE;
-        case 'polyline':
-            return MarkerType.POLYLINE;
-        case 'rectangle':
-            return MarkerType.RECTANGLE;
-        case 'polygon':
-            return MarkerType.POLYGON;
-    }
-
     if (marker?.type !== undefined && marker.type !== MarkerType.UNSPECIFIED) {
         return marker.type;
     }
@@ -645,15 +635,8 @@ onBeforeUnmount(() => {
                                         :items="markerTypes"
                                         value-key="value"
                                         :search-input="{ placeholder: $t('common.search_field') }"
-                                    >
-                                        <template #default>
-                                            {{ $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`) }}
-                                        </template>
-
-                                        <template #item-label="{ item }">
-                                            {{ $t(`enums.livemap.MarkerType.${MarkerType[item.value ?? 0]}`) }}
-                                        </template>
-                                    </USelectMenu>
+                                        :icon="state.markerType > 0 ? markerTypeToIcon(state.markerType) : undefined"
+                                    />
                                 </ClientOnly>
                             </UFormField>
                         </dd>

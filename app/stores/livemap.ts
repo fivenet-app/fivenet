@@ -307,8 +307,8 @@ export const useLivemapStore = defineStore(
                 if (!um || um.job !== userDelete.job) continue;
                 markersUsers.value.delete(userId);
                 if (selectedMarker.value?.userId === userId) {
-                    selectedMarker.value = undefined;
                     followMarker.value = false;
+                    selectedMarker.value = undefined;
                 }
                 if (ownMarker.value?.userId === userId) {
                     ownMarker.value = undefined;

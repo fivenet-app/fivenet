@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { markerTypeToIcon } from '~/components/livemap/markers/helpers';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
@@ -46,24 +47,13 @@ function getMarkerMarkerIconName(h: Hit): string | undefined {
         return convertComponentIconNameToDynamic(h.markerMarker.data?.data.icon.icon);
     }
 
-    switch (h.markerMarker.data?.data.oneofKind) {
-        case 'circle':
-            return 'i-mdi-circle-outline';
-        case 'polygon':
-            return 'i-mdi-vector-polygon';
-        case 'polyline':
-            return 'i-mdi-vector-polyline';
-        case 'rectangle':
-            return 'i-mdi-rectangle-outline';
-        default:
-            return 'i-mdi-map-marker-radius-outline';
-    }
+    return markerTypeToIcon(h.markerMarker.type);
 }
 </script>
 
 <template>
     <UCard
-        class="-my-[13px] -mr-[24px] -ml-[20px] flex max-h-[90dvh] min-w-[200px] flex-col overflow-y-auto"
+        class="-my-[13px] -mr-[24px] -ml-[20px] flex max-h-[75dvh] min-w-[200px] flex-col overflow-y-auto"
         :ui="{ header: 'mx-auto p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto max-h-[50%]', footer: 'mx-auto p-1 sm:px-2' }"
     >
         <template #header>

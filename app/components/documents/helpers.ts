@@ -248,3 +248,14 @@ export function getDocActivityColor(activityType: DocActivityType): string {
             return '';
     }
 }
+
+export function docActivityEntrySpoilerNeeded(activityType: DocActivityType): boolean {
+    switch (activityType) {
+        case DocActivityType.ACCESS_UPDATED:
+        case DocActivityType.UPDATED:
+            return true;
+
+        default:
+            return false;
+    }
+}
