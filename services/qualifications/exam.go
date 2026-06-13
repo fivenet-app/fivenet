@@ -41,7 +41,7 @@ func (s *Server) GetExamInfo(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -159,7 +159,7 @@ func (s *Server) TakeExam(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -276,7 +276,7 @@ func (s *Server) SubmitExam(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -466,7 +466,7 @@ func (s *Server) GetUserExam(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

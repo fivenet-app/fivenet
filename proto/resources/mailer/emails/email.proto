@@ -4,6 +4,7 @@ package resources.mailer.emails;
 
 import "buf/validate/validate.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/access/access.proto";
 import "resources/mailer/access/access.proto";
 import "resources/mailer/settings/settings.proto";
 import "resources/timestamp/timestamp.proto";
@@ -38,6 +39,6 @@ message Email {
       strip_html_tags: true
     }
   ];
-  resources.mailer.access.Access access = 12;
+  resources.access.Access access = 12;
   optional resources.mailer.settings.EmailSettings settings = 13;
 }

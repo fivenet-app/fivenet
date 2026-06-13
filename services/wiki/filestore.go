@@ -30,7 +30,7 @@ func (s *Server) UploadFile(
 		ctx,
 		meta.GetParentId(),
 		userInfo,
-		wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return errswrap.NewError(err, errorswiki.ErrPageDenied)

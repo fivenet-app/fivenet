@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Access } from "../../access/access";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.documents.stamps.Stamp
@@ -43,55 +44,9 @@ export interface Stamp {
      */
     svgTemplate: string;
     /**
-     * @generated from protobuf field: resources.documents.stamps.StampAccess access = 7
+     * @generated from protobuf field: resources.access.Access access = 7
      */
-    access?: StampAccess;
-}
-/**
- * @generated from protobuf message resources.documents.stamps.StampAccess
- */
-export interface StampAccess {
-    /**
-     * @generated from protobuf field: repeated resources.documents.stamps.StampJobAccess jobs = 1
-     */
-    jobs: StampJobAccess[];
-}
-/**
- * @generated from protobuf message resources.documents.stamps.StampJobAccess
- */
-export interface StampJobAccess {
-    /**
-     * @generated from protobuf field: int64 id = 1
-     */
-    id: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: int64 target_id = 3
-     */
-    targetId: number;
-    /**
-     * @generated from protobuf field: string job = 4
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: optional string job_label = 5
-     */
-    jobLabel?: string;
-    /**
-     * @generated from protobuf field: int32 minimum_grade = 6
-     */
-    minimumGrade: number;
-    /**
-     * @generated from protobuf field: optional string job_grade_label = 7
-     */
-    jobGradeLabel?: string;
-    /**
-     * @generated from protobuf field: resources.documents.stamps.StampAccessLevel access = 8
-     */
-    access: StampAccessLevel;
+    access?: Access;
 }
 /**
  * @generated from protobuf enum resources.documents.stamps.StampAccessLevel
@@ -124,7 +79,7 @@ class Stamp$Type extends MessageType<Stamp> {
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 6, name: "svg_template", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeSVG" } } },
-            { no: 7, name: "access", kind: "message", T: () => StampAccess }
+            { no: 7, name: "access", kind: "message", T: () => Access }
         ]);
     }
     create(value?: PartialMessage<Stamp>): Stamp {
@@ -160,8 +115,8 @@ class Stamp$Type extends MessageType<Stamp> {
                 case /* string svg_template */ 6:
                     message.svgTemplate = reader.string();
                     break;
-                case /* resources.documents.stamps.StampAccess access */ 7:
-                    message.access = StampAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* resources.access.Access access */ 7:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -193,9 +148,9 @@ class Stamp$Type extends MessageType<Stamp> {
         /* string svg_template = 6; */
         if (message.svgTemplate !== "")
             writer.tag(6, WireType.LengthDelimited).string(message.svgTemplate);
-        /* resources.documents.stamps.StampAccess access = 7; */
+        /* resources.access.Access access = 7; */
         if (message.access)
-            StampAccess.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -206,150 +161,3 @@ class Stamp$Type extends MessageType<Stamp> {
  * @generated MessageType for protobuf message resources.documents.stamps.Stamp
  */
 export const Stamp = new Stamp$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class StampAccess$Type extends MessageType<StampAccess> {
-    constructor() {
-        super("resources.documents.stamps.StampAccess", [
-            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => StampJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"job_access\"" } }
-        ]);
-    }
-    create(value?: PartialMessage<StampAccess>): StampAccess {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.jobs = [];
-        if (value !== undefined)
-            reflectionMergePartial<StampAccess>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StampAccess): StampAccess {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.documents.stamps.StampJobAccess jobs */ 1:
-                    message.jobs.push(StampJobAccess.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: StampAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.stamps.StampJobAccess jobs = 1; */
-        for (let i = 0; i < message.jobs.length; i++)
-            StampJobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.stamps.StampAccess
- */
-export const StampAccess = new StampAccess$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class StampJobAccess$Type extends MessageType<StampJobAccess> {
-    constructor() {
-        super("resources.documents.stamps.StampJobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 8, name: "access", kind: "enum", T: () => ["resources.documents.stamps.StampAccessLevel", StampAccessLevel, "STAMP_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<StampJobAccess>): StampJobAccess {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        message.targetId = 0;
-        message.job = "";
-        message.minimumGrade = 0;
-        message.access = 0;
-        if (value !== undefined)
-            reflectionMergePartial<StampJobAccess>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StampJobAccess): StampJobAccess {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 id */ 1:
-                    message.id = reader.int64().toNumber();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* int64 target_id */ 3:
-                    message.targetId = reader.int64().toNumber();
-                    break;
-                case /* string job */ 4:
-                    message.job = reader.string();
-                    break;
-                case /* optional string job_label */ 5:
-                    message.jobLabel = reader.string();
-                    break;
-                case /* int32 minimum_grade */ 6:
-                    message.minimumGrade = reader.int32();
-                    break;
-                case /* optional string job_grade_label */ 7:
-                    message.jobGradeLabel = reader.string();
-                    break;
-                case /* resources.documents.stamps.StampAccessLevel access */ 8:
-                    message.access = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: StampJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).int64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int64 target_id = 3; */
-        if (message.targetId !== 0)
-            writer.tag(3, WireType.Varint).int64(message.targetId);
-        /* string job = 4; */
-        if (message.job !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.job);
-        /* optional string job_label = 5; */
-        if (message.jobLabel !== undefined)
-            writer.tag(5, WireType.LengthDelimited).string(message.jobLabel);
-        /* int32 minimum_grade = 6; */
-        if (message.minimumGrade !== 0)
-            writer.tag(6, WireType.Varint).int32(message.minimumGrade);
-        /* optional string job_grade_label = 7; */
-        if (message.jobGradeLabel !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.jobGradeLabel);
-        /* resources.documents.stamps.StampAccessLevel access = 8; */
-        if (message.access !== 0)
-            writer.tag(8, WireType.Varint).int32(message.access);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.stamps.StampJobAccess
- */
-export const StampJobAccess = new StampJobAccess$Type();

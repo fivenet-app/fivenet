@@ -35,7 +35,7 @@ func (s *Server) ListPageActivity(
 		ctx,
 		req.GetPageId(),
 		userInfo,
-		wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)

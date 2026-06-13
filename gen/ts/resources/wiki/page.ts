@@ -15,7 +15,7 @@ import { ContentType } from "../common/content/content";
 import { UserShort } from "../users/short/user";
 import { Timestamp } from "../timestamp/timestamp";
 import { File } from "../file/file";
-import { PageAccess } from "./access/access";
+import { Access } from "../access/access";
 import { Content } from "../common/content/content";
 /**
  * @generated from protobuf message resources.wiki.Page
@@ -46,9 +46,9 @@ export interface Page {
      */
     content?: Content;
     /**
-     * @generated from protobuf field: resources.wiki.access.PageAccess access = 7
+     * @generated from protobuf field: resources.access.Access access = 7
      */
-    access?: PageAccess;
+    access?: Access;
     /**
      * @generated from protobuf field: repeated resources.file.File files = 8
      */
@@ -195,7 +195,7 @@ class Page$Type extends MessageType<Page> {
             { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "meta", kind: "message", T: () => PageMeta, options: { "buf.validate.field": { required: true } } },
             { no: 6, name: "content", kind: "message", T: () => Content },
-            { no: 7, name: "access", kind: "message", T: () => PageAccess, options: { "buf.validate.field": { required: true } } },
+            { no: 7, name: "access", kind: "message", T: () => Access, options: { "buf.validate.field": { required: true } } },
             { no: 8, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "buf.validate.field": { repeated: { maxItems: "5" } }, "tagger.tags": "alias:\"files\"" } }
         ]);
     }
@@ -231,8 +231,8 @@ class Page$Type extends MessageType<Page> {
                 case /* resources.common.content.Content content */ 6:
                     message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
-                case /* resources.wiki.access.PageAccess access */ 7:
-                    message.access = PageAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* resources.access.Access access */ 7:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 case /* repeated resources.file.File files */ 8:
                     message.files.push(File.internalBinaryRead(reader, reader.uint32(), options));
@@ -267,9 +267,9 @@ class Page$Type extends MessageType<Page> {
         /* resources.common.content.Content content = 6; */
         if (message.content)
             Content.internalBinaryWrite(message.content, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.wiki.access.PageAccess access = 7; */
+        /* resources.access.Access access = 7; */
         if (message.access)
-            PageAccess.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.file.File files = 8; */
         for (let i = 0; i < message.files.length; i++)
             File.internalBinaryWrite(message.files[i], writer.tag(8, WireType.LengthDelimited).fork(), options).join();

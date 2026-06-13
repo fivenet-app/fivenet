@@ -8,6 +8,7 @@ import (
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -17,6 +18,78 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
+var documentSubjectAccessOptions = access.SubjectAccessOptions{
+	BlockedAccess: int32(documentsaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
+	DeniedAccessLevels: []int32{
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_COMMENT),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_STATUS),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_ACCESS),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+	},
+}
+
+func canUserAccessDocument(
+	ctx context.Context,
+	v2 *access.SubjectObjectAccess,
+	targetID int64,
+	userInfo *userinfo.UserInfo,
+	level documentsaccess.AccessLevel,
+) (bool, error) {
+	if userInfo.GetSuperuser() {
+		return true, nil
+	}
+
+	allowed, err := v2.CanUserAccessTarget(ctx, targetID, userInfo, int32(level))
+	if err != nil {
+		return false, err
+	}
+	if allowed {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (s *Server) canUserAccessDocument(
+	ctx context.Context,
+	targetID int64,
+	userInfo *userinfo.UserInfo,
+	level documentsaccess.AccessLevel,
+) (bool, error) {
+	return canUserAccessDocument(ctx, s.subjectAccess, targetID, userInfo, level)
+}
+
+func (s *Server) canUserAccessDocumentIDs(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	level documentsaccess.AccessLevel,
+	targetIDs ...int64,
+) ([]int64, error) {
+	out := make([]int64, 0, len(targetIDs))
+	for _, targetID := range targetIDs {
+		allowed, err := s.canUserAccessDocument(ctx, targetID, userInfo, level)
+		if err != nil {
+			return nil, err
+		}
+		if allowed {
+			out = append(out, targetID)
+		}
+	}
+
+	return out, nil
+}
+
+func (s *Server) canUserAccessDocuments(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	level documentsaccess.AccessLevel,
+	targetIDs ...int64,
+) (bool, error) {
+	out, err := s.canUserAccessDocumentIDs(ctx, userInfo, level, targetIDs...)
+	return len(out) == len(targetIDs), err
+}
+
 func (s *Server) GetDocumentAccess(
 	ctx context.Context,
 	req *pbdocuments.GetDocumentAccessRequest,
@@ -24,7 +97,7 @@ func (s *Server) GetDocumentAccess(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -68,7 +141,7 @@ func (s *Server) SetDocumentAccess(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -114,20 +187,7 @@ func (s *Server) getDocumentAccess(
 	ctx context.Context,
 	documentId int64,
 ) (*documentsaccess.DocumentAccess, error) {
-	jobAccess, err := s.access.Jobs.List(ctx, s.db, documentId)
-	if err != nil {
-		return nil, err
-	}
-
-	userAccess, err := s.access.Users.List(ctx, s.db, documentId)
-	if err != nil {
-		return nil, err
-	}
-
-	return &documentsaccess.DocumentAccess{
-		Jobs:  jobAccess,
-		Users: userAccess,
-	}, nil
+	return s.subjectAccess.ListTargetAccess(ctx, s.db, documentId, documentSubjectAccessOptions)
 }
 
 func (s *Server) handleDocumentAccessChange(
@@ -135,11 +195,11 @@ func (s *Server) handleDocumentAccessChange(
 	tx qrm.DB,
 	documentId int64,
 	userInfo *userinfo.UserInfo,
-	access *documentsaccess.DocumentAccess,
+	docAccess *documentsaccess.DocumentAccess,
 	addActivity bool,
 ) error {
 	// Validate job access entries
-	valid, err := s.access.Jobs.Validate(s.jobs, &access.Jobs, true)
+	valid, err := access.ValidateJobAccessEntries(s.jobs, &docAccess.Jobs, true)
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -147,13 +207,13 @@ func (s *Server) handleDocumentAccessChange(
 		return errorsdocuments.ErrDocAccessInvalid
 	}
 
-	changes, err := s.access.HandleAccessChanges(
+	changes, err := s.subjectAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
+		s.subjectResolver,
 		documentId,
-		access.GetJobs(),
-		access.GetUsers(),
-		nil,
+		docAccess,
+		documentSubjectAccessOptions,
 	)
 	if err != nil {
 		if dbutils.IsDuplicateError(err) {

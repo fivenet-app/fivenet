@@ -39,7 +39,7 @@ func (s *Server) GetEmailSettings(
 		ctx,
 		req.GetEmailId(),
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -103,7 +103,7 @@ func (s *Server) SetEmailSettings(
 		ctx,
 		req.GetSettings().GetEmailId(),
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

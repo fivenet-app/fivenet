@@ -11,8 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { DocumentUserAccess } from "../access/access";
-import { DocumentJobAccess } from "../access/access";
+import { UserAccess } from "../../access/access";
+import { JobAccess } from "../../access/access";
 import { AccessLevel } from "../access/access";
 import { ContentDiff } from "../../common/content/diff_activity";
 import { UserShort } from "../../users/short/user";
@@ -189,34 +189,34 @@ export interface DocAccessUpdated {
  */
 export interface DocAccessJobsDiff {
     /**
-     * @generated from protobuf field: repeated resources.documents.access.DocumentJobAccess to_create = 1
+     * @generated from protobuf field: repeated resources.access.JobAccess to_create = 1
      */
-    toCreate: DocumentJobAccess[];
+    toCreate: JobAccess[];
     /**
-     * @generated from protobuf field: repeated resources.documents.access.DocumentJobAccess to_update = 2
+     * @generated from protobuf field: repeated resources.access.JobAccess to_update = 2
      */
-    toUpdate: DocumentJobAccess[];
+    toUpdate: JobAccess[];
     /**
-     * @generated from protobuf field: repeated resources.documents.access.DocumentJobAccess to_delete = 3
+     * @generated from protobuf field: repeated resources.access.JobAccess to_delete = 3
      */
-    toDelete: DocumentJobAccess[];
+    toDelete: JobAccess[];
 }
 /**
  * @generated from protobuf message resources.documents.activity.DocAccessUsersDiff
  */
 export interface DocAccessUsersDiff {
     /**
-     * @generated from protobuf field: repeated resources.documents.access.DocumentUserAccess to_create = 1
+     * @generated from protobuf field: repeated resources.access.UserAccess to_create = 1
      */
-    toCreate: DocumentUserAccess[];
+    toCreate: UserAccess[];
     /**
-     * @generated from protobuf field: repeated resources.documents.access.DocumentUserAccess to_update = 2
+     * @generated from protobuf field: repeated resources.access.UserAccess to_update = 2
      */
-    toUpdate: DocumentUserAccess[];
+    toUpdate: UserAccess[];
     /**
-     * @generated from protobuf field: repeated resources.documents.access.DocumentUserAccess to_delete = 3
+     * @generated from protobuf field: repeated resources.access.UserAccess to_delete = 3
      */
-    toDelete: DocumentUserAccess[];
+    toDelete: UserAccess[];
 }
 /**
  * @generated from protobuf message resources.documents.activity.DocSigningRequested
@@ -856,9 +856,9 @@ export const DocAccessUpdated = new DocAccessUpdated$Type();
 class DocAccessJobsDiff$Type extends MessageType<DocAccessJobsDiff> {
     constructor() {
         super("resources.documents.activity.DocAccessJobsDiff", [
-            { no: 1, name: "to_create", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
-            { no: 2, name: "to_update", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
-            { no: 3, name: "to_delete", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
+            { no: 1, name: "to_create", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
+            { no: 2, name: "to_update", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
+            { no: 3, name: "to_delete", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<DocAccessJobsDiff>): DocAccessJobsDiff {
@@ -875,14 +875,14 @@ class DocAccessJobsDiff$Type extends MessageType<DocAccessJobsDiff> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.access.DocumentJobAccess to_create */ 1:
-                    message.toCreate.push(DocumentJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.JobAccess to_create */ 1:
+                    message.toCreate.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.documents.access.DocumentJobAccess to_update */ 2:
-                    message.toUpdate.push(DocumentJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.JobAccess to_update */ 2:
+                    message.toUpdate.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.documents.access.DocumentJobAccess to_delete */ 3:
-                    message.toDelete.push(DocumentJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.JobAccess to_delete */ 3:
+                    message.toDelete.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -896,15 +896,15 @@ class DocAccessJobsDiff$Type extends MessageType<DocAccessJobsDiff> {
         return message;
     }
     internalBinaryWrite(message: DocAccessJobsDiff, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.access.DocumentJobAccess to_create = 1; */
+        /* repeated resources.access.JobAccess to_create = 1; */
         for (let i = 0; i < message.toCreate.length; i++)
-            DocumentJobAccess.internalBinaryWrite(message.toCreate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.access.DocumentJobAccess to_update = 2; */
+            JobAccess.internalBinaryWrite(message.toCreate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.access.JobAccess to_update = 2; */
         for (let i = 0; i < message.toUpdate.length; i++)
-            DocumentJobAccess.internalBinaryWrite(message.toUpdate[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.access.DocumentJobAccess to_delete = 3; */
+            JobAccess.internalBinaryWrite(message.toUpdate[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.access.JobAccess to_delete = 3; */
         for (let i = 0; i < message.toDelete.length; i++)
-            DocumentJobAccess.internalBinaryWrite(message.toDelete[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            JobAccess.internalBinaryWrite(message.toDelete[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -919,9 +919,9 @@ export const DocAccessJobsDiff = new DocAccessJobsDiff$Type();
 class DocAccessUsersDiff$Type extends MessageType<DocAccessUsersDiff> {
     constructor() {
         super("resources.documents.activity.DocAccessUsersDiff", [
-            { no: 1, name: "to_create", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentUserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
-            { no: 2, name: "to_update", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentUserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
-            { no: 3, name: "to_delete", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentUserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
+            { no: 1, name: "to_create", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
+            { no: 2, name: "to_update", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
+            { no: 3, name: "to_delete", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<DocAccessUsersDiff>): DocAccessUsersDiff {
@@ -938,14 +938,14 @@ class DocAccessUsersDiff$Type extends MessageType<DocAccessUsersDiff> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.access.DocumentUserAccess to_create */ 1:
-                    message.toCreate.push(DocumentUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.UserAccess to_create */ 1:
+                    message.toCreate.push(UserAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.documents.access.DocumentUserAccess to_update */ 2:
-                    message.toUpdate.push(DocumentUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.UserAccess to_update */ 2:
+                    message.toUpdate.push(UserAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.documents.access.DocumentUserAccess to_delete */ 3:
-                    message.toDelete.push(DocumentUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.UserAccess to_delete */ 3:
+                    message.toDelete.push(UserAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -959,15 +959,15 @@ class DocAccessUsersDiff$Type extends MessageType<DocAccessUsersDiff> {
         return message;
     }
     internalBinaryWrite(message: DocAccessUsersDiff, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.access.DocumentUserAccess to_create = 1; */
+        /* repeated resources.access.UserAccess to_create = 1; */
         for (let i = 0; i < message.toCreate.length; i++)
-            DocumentUserAccess.internalBinaryWrite(message.toCreate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.access.DocumentUserAccess to_update = 2; */
+            UserAccess.internalBinaryWrite(message.toCreate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.access.UserAccess to_update = 2; */
         for (let i = 0; i < message.toUpdate.length; i++)
-            DocumentUserAccess.internalBinaryWrite(message.toUpdate[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.access.DocumentUserAccess to_delete = 3; */
+            UserAccess.internalBinaryWrite(message.toUpdate[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.access.UserAccess to_delete = 3; */
         for (let i = 0; i < message.toDelete.length; i++)
-            DocumentUserAccess.internalBinaryWrite(message.toDelete[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            UserAccess.internalBinaryWrite(message.toDelete[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

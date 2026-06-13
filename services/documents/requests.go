@@ -40,7 +40,7 @@ func (s *Server) ListDocumentReqs(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -140,7 +140,7 @@ func (s *Server) CreateDocumentReq(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -309,7 +309,7 @@ func (s *Server) UpdateDocumentReq(
 		return nil, errorsdocuments.ErrFailedQuery
 	}
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		request.GetDocumentId(),
 		userInfo,
@@ -416,15 +416,13 @@ func (s *Server) UpdateDocumentReq(
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 
-			if err := s.access.Users.CreateEntry(
+			if err := s.subjectAccess.CreateUserAccess(
 				ctx,
 				tx,
+				s.subjectResolver,
 				request.GetDocumentId(),
-				&documentsaccess.DocumentUserAccess{
-					UserId:   request.GetCreatorId(),
-					TargetId: request.GetDocumentId(),
-					Access:   request.GetData().GetAccessRequested().GetLevel(),
-				},
+				request.GetCreatorId(),
+				int32(request.GetData().GetAccessRequested().GetLevel()),
 			); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
@@ -471,7 +469,7 @@ func (s *Server) DeleteDocumentReq(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		request.GetDocumentId(),
 		userInfo,
@@ -505,7 +503,7 @@ func (s *Server) notifyUserAboutRequest(
 	}
 
 	// Make sure target user has access to document
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		doc.GetId(),
 		userInfo,

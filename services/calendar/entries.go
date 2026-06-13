@@ -83,6 +83,7 @@ func (s *Server) ListCalendarEntries(
 			),
 			// Allow entries from calendars the user can view directly
 			calendarEntryVisibility(
+				s.access,
 				userInfo,
 				calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
 				rsvpResponse,
@@ -165,6 +166,7 @@ func (s *Server) ListCalendarEntries(
 		userInfo,
 		regularCondition,
 		calendarEntryVisibility(
+			s.access,
 			userInfo,
 			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
 			rsvpResponse,
@@ -274,6 +276,7 @@ func (s *Server) GetUpcomingEntries(
 		userInfo,
 		regularCondition,
 		calendarEntryVisibility(
+			s.access,
 			userInfo,
 			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
 			calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN,

@@ -7,11 +7,13 @@ import (
 	"html/template"
 
 	"github.com/Masterminds/sprig/v3"
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -23,7 +25,20 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-var tDTemplatesAccess = table.FivenetDocumentsTemplatesAccess.AS("template_job_access")
+var templateSubjectAccessOptions = access.SubjectAccessOptions{
+	BlockedAccess: int32(documentsaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
+	DeniedAccessLevels: []int32{
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_COMMENT),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_STATUS),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_ACCESS),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+	},
+}
+
+func templateJobAccess(jobs []*documentstemplates.TemplateJobAccess) *resourcesaccess.Access {
+	return &resourcesaccess.Access{Jobs: jobs}
+}
 
 func (s *Server) ListTemplates(
 	ctx context.Context,
@@ -54,24 +69,13 @@ func (s *Server) ListTemplates(
 		).
 		FROM(
 			tDTemplates.
-				LEFT_JOIN(tDTemplatesAccess,
-					mysql.AND(
-						tDTemplatesAccess.TargetID.EQ(tDTemplates.ID),
-						tDTemplatesAccess.Access.GT_EQ(
-							mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-						),
-					),
-				).
 				LEFT_JOIN(tDCategory,
 					tDCategory.ID.EQ(tDTemplates.CategoryID),
 				),
 		).
 		WHERE(mysql.AND(
 			tDTemplates.DeletedAt.IS_NULL(),
-			mysql.AND(
-				tDTemplatesAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-				tDTemplatesAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-			),
+			s.templateAccess.ACLAccessExistsCondition(tDTemplates.ID, userInfo, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 		)).
 		ORDER_BY(
 			tDTemplates.Weight.DESC(),
@@ -105,7 +109,7 @@ func (s *Server) GetTemplate(
 		ctx,
 		req.GetTemplateId(),
 		userInfo,
-		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -125,10 +129,11 @@ func (s *Server) GetTemplate(
 	}
 
 	if req.Render == nil || !req.GetRender() {
-		resp.Template.JobAccess, err = s.templateAccess.Jobs.List(ctx, s.db, req.GetTemplateId())
+		access, err := s.templateAccess.ListTargetAccess(ctx, s.db, req.GetTemplateId(), templateSubjectAccessOptions)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
+		resp.Template.JobAccess = access.GetJobs()
 	} else if req.Render != nil && req.GetRender() && req.GetData() != nil {
 		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(
 			resp.GetTemplate(),
@@ -337,13 +342,13 @@ func (s *Server) CreateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := s.templateAccess.HandleAccessChanges(
+	if _, err := s.templateAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
+		s.subjectResolver,
 		lastId,
-		req.GetTemplate().GetJobAccess(),
-		nil,
-		nil,
+		templateJobAccess(req.GetTemplate().GetJobAccess()),
+		templateSubjectAccessOptions,
 	); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateAccessDuplicate)
@@ -378,7 +383,7 @@ func (s *Server) UpdateTemplate(
 		ctx,
 		req.GetTemplate().GetId(),
 		userInfo,
-		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -452,13 +457,13 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := s.templateAccess.HandleAccessChanges(
+	if _, err := s.templateAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
+		s.subjectResolver,
 		req.GetTemplate().GetId(),
-		req.GetTemplate().GetJobAccess(),
-		nil,
-		nil,
+		templateJobAccess(req.GetTemplate().GetJobAccess()),
+		templateSubjectAccessOptions,
 	); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateAccessDuplicate)
@@ -476,10 +481,11 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	tmpl.JobAccess, err = s.templateAccess.Jobs.List(ctx, s.db, req.GetTemplate().GetId())
+	access, err := s.templateAccess.ListTargetAccess(ctx, s.db, req.GetTemplate().GetId(), templateSubjectAccessOptions)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	tmpl.JobAccess = access.GetJobs()
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
@@ -500,7 +506,7 @@ func (s *Server) DeleteTemplate(
 		ctx,
 		req.GetId(),
 		userInfo,
-		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

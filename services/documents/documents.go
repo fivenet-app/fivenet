@@ -46,7 +46,6 @@ var (
 	tDocument      = table.FivenetDocuments.AS("document")
 	tDocumentShort = table.FivenetDocuments.AS("document_short")
 	tDMeta         = table.FivenetDocumentsMeta.AS("meta")
-	tDAccess       = table.FivenetDocumentsAccess.AS("job_access")
 )
 
 func (s *Server) ListDocuments(
@@ -198,7 +197,7 @@ func (s *Server) GetDocument(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -403,7 +402,7 @@ func (s *Server) CreateDocument(
 		docAccess.Jobs = append(docAccess.Jobs, &documentsaccess.DocumentJobAccess{
 			Job:          userInfo.GetJob(),
 			MinimumGrade: userInfo.GetJobGrade(),
-			Access:       documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+			Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 		})
 	}
 
@@ -521,7 +520,7 @@ func (s *Server) UpdateDocument(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -533,7 +532,7 @@ func (s *Server) UpdateDocument(
 
 	var onlyUpdateAccess bool
 	if !check && !userInfo.GetSuperuser() {
-		onlyUpdateAccess, err = s.access.CanUserAccessTarget(
+		onlyUpdateAccess, err = s.canUserAccessDocument(
 			ctx,
 			req.GetDocumentId(),
 			userInfo,
@@ -887,7 +886,7 @@ func (s *Server) DeleteDocument(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -975,7 +974,7 @@ func (s *Server) ToggleDocument(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -1097,7 +1096,7 @@ func (s *Server) ChangeDocumentOwner(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,

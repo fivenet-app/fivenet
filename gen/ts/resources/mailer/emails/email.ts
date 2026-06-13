@@ -12,7 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { EmailSettings } from "../settings/settings";
-import { Access } from "../access/access";
+import { Access } from "../../access/access";
 import { UserShort } from "../../users/short/user";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
@@ -64,7 +64,7 @@ export interface Email {
      */
     label?: string;
     /**
-     * @generated from protobuf field: resources.mailer.access.Access access = 12
+     * @generated from protobuf field: resources.access.Access access = 12
      */
     access?: Access;
     /**
@@ -138,7 +138,7 @@ class Email$Type extends MessageType<Email> {
                 case /* optional string label */ 11:
                     message.label = reader.string();
                     break;
-                case /* resources.mailer.access.Access access */ 12:
+                case /* resources.access.Access access */ 12:
                     message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 case /* optional resources.mailer.settings.EmailSettings settings */ 13:
@@ -189,7 +189,7 @@ class Email$Type extends MessageType<Email> {
         /* optional string label = 11; */
         if (message.label !== undefined)
             writer.tag(11, WireType.LengthDelimited).string(message.label);
-        /* resources.mailer.access.Access access = 12; */
+        /* resources.access.Access access = 12; */
         if (message.access)
             Access.internalBinaryWrite(message.access, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.mailer.settings.EmailSettings settings = 13; */

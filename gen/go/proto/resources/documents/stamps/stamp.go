@@ -1,9 +1,6 @@
 package documentsstamps
 
-func (x *StampJobAccess) GetJobGrade() int32 {
-	return x.GetMinimumGrade()
-}
+import resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 
-func (x *StampJobAccess) SetJobGrade(grade int32) {
-	x.MinimumGrade = grade
-}
+type StampAccess = resourcesaccess.Access
+type StampJobAccess = resourcesaccess.JobAccess

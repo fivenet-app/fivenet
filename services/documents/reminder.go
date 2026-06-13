@@ -79,7 +79,7 @@ func (s *Server) SetDocumentReminder(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,

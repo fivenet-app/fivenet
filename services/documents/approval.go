@@ -35,26 +35,7 @@ func (s *Server) ListApprovalTasksInbox(
 
 	var existsAccess mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		existsAccess = mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tDAccess).
-				WHERE(mysql.AND(
-					tDAccess.TargetID.EQ(tApprovalTasks.DocumentID),
-					mysql.OR(
-						// Direct user access
-						tDAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						// or job + grade access
-						mysql.AND(
-							tDAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tDAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
-					),
-					tDAccess.Access.GT_EQ(
-						mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-					),
-				)),
-		)
+		existsAccess = s.subjectAccess.ACLAccessExistsCondition(tApprovalTasks.DocumentID, userInfo, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW))
 	} else {
 		existsAccess = mysql.Bool(true)
 	}
@@ -304,7 +285,7 @@ func (s *Server) ListApprovalPolicies(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -470,7 +451,7 @@ func (s *Server) UpsertApprovalPolicy(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		pol.GetDocumentId(),
 		userInfo,
@@ -567,7 +548,7 @@ func (s *Server) ListApprovalTasks(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -708,7 +689,7 @@ func (s *Server) UpsertApprovalTasks(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access: must be allowed to edit the document to seed tasks
-	ok, err := s.access.CanUserAccessTarget(
+	ok, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -990,7 +971,7 @@ func (s *Server) DeleteApprovalTasks(
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	ok, err := s.access.CanUserAccessTarget(
+	ok, err := s.canUserAccessDocument(
 		ctx,
 		pol.GetDocumentId(),
 		userInfo,
@@ -1072,7 +1053,7 @@ func (s *Server) canUserAccessApprovalTask(
 		return errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		task.DocumentId,
 		userInfo,
@@ -1095,7 +1076,7 @@ func (s *Server) ListApprovals(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Permission: viewer can list approval artifacts
-	ok, err := s.access.CanUserAccessTarget(
+	ok, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -1248,7 +1229,7 @@ func (s *Server) RevokeApproval(
 	}
 
 	// Access: require EDIT on the document
-	ok, err := s.access.CanUserAccessTarget(
+	ok, err := s.canUserAccessDocument(
 		ctx,
 		apr.GetDocumentId(),
 		userInfo,
@@ -1399,7 +1380,7 @@ func (s *Server) DecideApproval(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access: must be able to VIEW the document to decide (tighten if you want)
-	ok, err := s.access.CanUserAccessTarget(
+	ok, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -1959,7 +1940,7 @@ func (s *Server) RecomputeApprovalPolicyCounters(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,

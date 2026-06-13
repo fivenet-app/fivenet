@@ -3,8 +3,10 @@ package documentstemplates
 import (
 	"fmt"
 
-	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 )
+
+type TemplateJobAccess = resourcesaccess.JobAccess
 
 func (x *Template) GetJob() string {
 	return x.GetCreatorJob()
@@ -21,28 +23,6 @@ func (x *TemplateShort) GetJob() string {
 func (x *TemplateShort) SetJobLabel(label string) {
 	x.CreatorJobLabel = &label
 }
-
-// pkg/access compatibility
-
-func (x *TemplateUserAccess) GetAccess() documentsaccess.AccessLevel {
-	return documentsaccess.AccessLevel_ACCESS_LEVEL_UNSPECIFIED
-}
-
-func (x *TemplateUserAccess) GetId() int64 {
-	return 0
-}
-
-func (x *TemplateUserAccess) GetTargetId() int64 {
-	return 0
-}
-
-func (x *TemplateUserAccess) SetAccess(access documentsaccess.AccessLevel) {}
-
-func (x *TemplateUserAccess) GetUserId() int32 {
-	return 0
-}
-
-func (x *TemplateUserAccess) SetUserId(userId int32) {}
 
 func TemplateAccessHasDuplicates(jobs []*TemplateJobAccess) bool {
 	jobKeys := map[string]any{}

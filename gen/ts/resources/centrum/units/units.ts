@@ -12,7 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Colleague } from "../../jobs/colleagues/colleagues";
-import { UnitAccess } from "./access/access";
+import { Access } from "../../access/access";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.centrum.units.Unit
@@ -79,9 +79,9 @@ export interface Unit {
      */
     homePostal?: string;
     /**
-     * @generated from protobuf field: resources.centrum.units.access.UnitAccess access = 14
+     * @generated from protobuf field: resources.access.Access access = 14
      */
-    access?: UnitAccess;
+    access?: Access;
 }
 /**
  * @generated from protobuf message resources.centrum.units.UnitAssignments
@@ -264,7 +264,7 @@ class Unit$Type extends MessageType<Unit> {
             { no: 11, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitAssignment },
             { no: 12, name: "attributes", kind: "message", T: () => UnitAttributes },
             { no: 13, name: "home_postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
-            { no: 14, name: "access", kind: "message", T: () => UnitAccess }
+            { no: 14, name: "access", kind: "message", T: () => Access }
         ]);
     }
     create(value?: PartialMessage<Unit>): Unit {
@@ -330,8 +330,8 @@ class Unit$Type extends MessageType<Unit> {
                 case /* optional string home_postal */ 13:
                     message.homePostal = reader.string();
                     break;
-                case /* resources.centrum.units.access.UnitAccess access */ 14:
-                    message.access = UnitAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* resources.access.Access access */ 14:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -381,9 +381,9 @@ class Unit$Type extends MessageType<Unit> {
         /* optional string home_postal = 13; */
         if (message.homePostal !== undefined)
             writer.tag(13, WireType.LengthDelimited).string(message.homePostal);
-        /* resources.centrum.units.access.UnitAccess access = 14; */
+        /* resources.access.Access access = 14; */
         if (message.access)
-            UnitAccess.internalBinaryWrite(message.access, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
         /* optional string job_label = 15; */
         if (message.jobLabel !== undefined)
             writer.tag(15, WireType.LengthDelimited).string(message.jobLabel);

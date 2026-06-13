@@ -27,7 +27,7 @@ func (s *Server) GetThreadState(
 		userInfo,
 		req.GetThreadId(),
 		req.GetEmailId(),
-		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
 	); err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (s *Server) SetThreadState(
 		userInfo,
 		req.GetState().GetThreadId(),
 		req.GetState().GetEmailId(),
-		maileraccess.AccessLevel_ACCESS_LEVEL_WRITE,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_WRITE),
 	); err != nil {
 		return nil, err
 	}

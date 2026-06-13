@@ -47,6 +47,7 @@ const schema = z.object({
     attributes: z.enum(UnitAttribute).array().max(5).default([]),
     access: z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
+        users: userAccessEntries(t).max(0).default([]),
         qualifications: qualificationAccessEntries(t).max(maxAccessEntries).default([]),
     }),
 });
@@ -62,6 +63,7 @@ const state = reactive<Schema>({
     attributes: [],
     access: {
         jobs: [],
+        users: [],
         qualifications: [],
     },
 });
@@ -130,6 +132,7 @@ async function updateUnitInForm(): Promise<void> {
     state.homePostal = props.unit.homePostal;
     state.access = {
         jobs: props.unit.access?.jobs ?? [],
+        users: [],
         qualifications: props.unit.access?.qualifications ?? [],
     };
 

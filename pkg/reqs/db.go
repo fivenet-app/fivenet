@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"sync"
 )
 
@@ -55,8 +56,7 @@ func (r *DBReqs) SetMigrationState(version uint, dirty bool) {
 }
 
 func (r *DBReqs) ValidateVersion(ctx context.Context) error {
-	err := r.db.QueryRowContext(ctx, "SELECT VERSION()").Scan(&r.version)
-	if err != nil {
+	if err := r.db.QueryRowContext(ctx, "SELECT VERSION()").Scan(&r.version); err != nil {
 		return err
 	}
 
@@ -64,19 +64,27 @@ func (r *DBReqs) ValidateVersion(ctx context.Context) error {
 	// At least MariaDB's version string has the "extra info" kinda semver compatible.
 	// We will just check the major and minor version numbers.
 	var major, minor int
-	_, err = fmt.Sscanf(r.version, "%d.%d", &major, &minor)
-	if err != nil {
+	if _, err := fmt.Sscanf(r.version, "%d.%d", &major, &minor); err != nil {
 		return fmt.Errorf("failed to parse DB version. %w", err)
 	}
 
-	if major < 8 {
-		return fmt.Errorf(
-			"database version %s is not supported, requires at least MySQL 8.0 or MariaDB 11.4",
-			r.version,
-		)
+	// If `MariaDB` is detected in the version string, check for that version constraint
+	if strings.Contains(r.version, "MariaDB") && major < 11 && minor < 4 {
+		return returnDBVersionErr(r.version)
+	}
+	// "Fallback" to MySQL version check
+	if major < 8 && minor < 4 {
+		return returnDBVersionErr(r.version)
 	}
 
 	return nil
+}
+
+func returnDBVersionErr(current string) error {
+	return fmt.Errorf(
+		"database version %s is not supported, requires at least MySQL 8.4 or MariaDB 11.4",
+		current,
+	)
 }
 
 func (r *DBReqs) ValidateTables(ctx context.Context) error {

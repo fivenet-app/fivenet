@@ -3,33 +3,6 @@
 
 package citizenslabels
 
-import (
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
-)
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *JobAccess) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Job
-	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
-
-	// Field: JobGradeLabel
-	if m.JobGradeLabel != nil {
-		*m.JobGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobGradeLabel)
-	}
-
-	// Field: JobLabel
-	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
-	}
-
-	return nil
-}
-
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
 func (m *LabelAccess) Sanitize() error {

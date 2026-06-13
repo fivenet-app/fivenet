@@ -39,7 +39,7 @@ func (s *Server) GetDocumentReferences(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -94,7 +94,7 @@ func (s *Server) GetDocumentReferences(
 		}
 	}
 
-	ids, err := s.access.CanUserAccessTargetIDs(
+	ids, err := s.canUserAccessDocumentIDs(
 		ctx,
 		userInfo,
 		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
@@ -215,7 +215,7 @@ func (s *Server) GetDocumentRelations(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -254,7 +254,7 @@ func (s *Server) AddDocumentReference(
 	}
 
 	// Check if user has access to both documents
-	check, err := s.access.CanUserAccessTargets(
+	check, err := s.canUserAccessDocuments(
 		ctx,
 		userInfo,
 		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
@@ -347,7 +347,7 @@ func (s *Server) RemoveDocumentReference(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	check, err := s.access.CanUserAccessTargets(
+	check, err := s.canUserAccessDocuments(
 		ctx,
 		userInfo,
 		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
@@ -394,7 +394,7 @@ func (s *Server) AddDocumentRelation(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetRelation().GetDocumentId(),
 		userInfo,
@@ -542,7 +542,7 @@ func (s *Server) RemoveDocumentRelation(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		docID.ID,
 		userInfo,
@@ -748,7 +748,7 @@ func (s *Server) notifyMentionedUser(
 	}
 
 	// Make sure target user has access to document
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		documentId,
 		userInfo,

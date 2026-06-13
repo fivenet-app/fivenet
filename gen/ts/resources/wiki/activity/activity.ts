@@ -11,8 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { PageUserAccess } from "../access/access";
-import { PageJobAccess } from "../access/access";
+import { UserAccess } from "../../access/access";
+import { JobAccess } from "../../access/access";
 import { ContentDiff } from "../../common/content/diff_activity";
 import { UserShort } from "../../users/short/user";
 import { Timestamp } from "../../timestamp/timestamp";
@@ -148,34 +148,34 @@ export interface PageAccessUpdated {
  */
 export interface PageAccessJobsDiff {
     /**
-     * @generated from protobuf field: repeated resources.wiki.access.PageJobAccess to_create = 1
+     * @generated from protobuf field: repeated resources.access.JobAccess to_create = 1
      */
-    toCreate: PageJobAccess[];
+    toCreate: JobAccess[];
     /**
-     * @generated from protobuf field: repeated resources.wiki.access.PageJobAccess to_update = 2
+     * @generated from protobuf field: repeated resources.access.JobAccess to_update = 2
      */
-    toUpdate: PageJobAccess[];
+    toUpdate: JobAccess[];
     /**
-     * @generated from protobuf field: repeated resources.wiki.access.PageJobAccess to_delete = 3
+     * @generated from protobuf field: repeated resources.access.JobAccess to_delete = 3
      */
-    toDelete: PageJobAccess[];
+    toDelete: JobAccess[];
 }
 /**
  * @generated from protobuf message resources.wiki.activity.PageAccessUsersDiff
  */
 export interface PageAccessUsersDiff {
     /**
-     * @generated from protobuf field: repeated resources.wiki.access.PageUserAccess to_create = 1
+     * @generated from protobuf field: repeated resources.access.UserAccess to_create = 1
      */
-    toCreate: PageUserAccess[];
+    toCreate: UserAccess[];
     /**
-     * @generated from protobuf field: repeated resources.wiki.access.PageUserAccess to_update = 2
+     * @generated from protobuf field: repeated resources.access.UserAccess to_update = 2
      */
-    toUpdate: PageUserAccess[];
+    toUpdate: UserAccess[];
     /**
-     * @generated from protobuf field: repeated resources.wiki.access.PageUserAccess to_delete = 3
+     * @generated from protobuf field: repeated resources.access.UserAccess to_delete = 3
      */
-    toDelete: PageUserAccess[];
+    toDelete: UserAccess[];
 }
 /**
  * @generated from protobuf enum resources.wiki.activity.PageActivityType
@@ -585,9 +585,9 @@ export const PageAccessUpdated = new PageAccessUpdated$Type();
 class PageAccessJobsDiff$Type extends MessageType<PageAccessJobsDiff> {
     constructor() {
         super("resources.wiki.activity.PageAccessJobsDiff", [
-            { no: 1, name: "to_create", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
-            { no: 2, name: "to_update", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
-            { no: 3, name: "to_delete", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
+            { no: 1, name: "to_create", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
+            { no: 2, name: "to_update", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
+            { no: 3, name: "to_delete", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<PageAccessJobsDiff>): PageAccessJobsDiff {
@@ -604,14 +604,14 @@ class PageAccessJobsDiff$Type extends MessageType<PageAccessJobsDiff> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.wiki.access.PageJobAccess to_create */ 1:
-                    message.toCreate.push(PageJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.JobAccess to_create */ 1:
+                    message.toCreate.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.wiki.access.PageJobAccess to_update */ 2:
-                    message.toUpdate.push(PageJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.JobAccess to_update */ 2:
+                    message.toUpdate.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.wiki.access.PageJobAccess to_delete */ 3:
-                    message.toDelete.push(PageJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.JobAccess to_delete */ 3:
+                    message.toDelete.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -625,15 +625,15 @@ class PageAccessJobsDiff$Type extends MessageType<PageAccessJobsDiff> {
         return message;
     }
     internalBinaryWrite(message: PageAccessJobsDiff, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.wiki.access.PageJobAccess to_create = 1; */
+        /* repeated resources.access.JobAccess to_create = 1; */
         for (let i = 0; i < message.toCreate.length; i++)
-            PageJobAccess.internalBinaryWrite(message.toCreate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.wiki.access.PageJobAccess to_update = 2; */
+            JobAccess.internalBinaryWrite(message.toCreate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.access.JobAccess to_update = 2; */
         for (let i = 0; i < message.toUpdate.length; i++)
-            PageJobAccess.internalBinaryWrite(message.toUpdate[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.wiki.access.PageJobAccess to_delete = 3; */
+            JobAccess.internalBinaryWrite(message.toUpdate[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.access.JobAccess to_delete = 3; */
         for (let i = 0; i < message.toDelete.length; i++)
-            PageJobAccess.internalBinaryWrite(message.toDelete[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            JobAccess.internalBinaryWrite(message.toDelete[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -648,9 +648,9 @@ export const PageAccessJobsDiff = new PageAccessJobsDiff$Type();
 class PageAccessUsersDiff$Type extends MessageType<PageAccessUsersDiff> {
     constructor() {
         super("resources.wiki.activity.PageAccessUsersDiff", [
-            { no: 1, name: "to_create", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageUserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
-            { no: 2, name: "to_update", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageUserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
-            { no: 3, name: "to_delete", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageUserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
+            { no: 1, name: "to_create", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
+            { no: 2, name: "to_update", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
+            { no: 3, name: "to_delete", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<PageAccessUsersDiff>): PageAccessUsersDiff {
@@ -667,14 +667,14 @@ class PageAccessUsersDiff$Type extends MessageType<PageAccessUsersDiff> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.wiki.access.PageUserAccess to_create */ 1:
-                    message.toCreate.push(PageUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.UserAccess to_create */ 1:
+                    message.toCreate.push(UserAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.wiki.access.PageUserAccess to_update */ 2:
-                    message.toUpdate.push(PageUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.UserAccess to_update */ 2:
+                    message.toUpdate.push(UserAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.wiki.access.PageUserAccess to_delete */ 3:
-                    message.toDelete.push(PageUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.UserAccess to_delete */ 3:
+                    message.toDelete.push(UserAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -688,15 +688,15 @@ class PageAccessUsersDiff$Type extends MessageType<PageAccessUsersDiff> {
         return message;
     }
     internalBinaryWrite(message: PageAccessUsersDiff, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.wiki.access.PageUserAccess to_create = 1; */
+        /* repeated resources.access.UserAccess to_create = 1; */
         for (let i = 0; i < message.toCreate.length; i++)
-            PageUserAccess.internalBinaryWrite(message.toCreate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.wiki.access.PageUserAccess to_update = 2; */
+            UserAccess.internalBinaryWrite(message.toCreate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.access.UserAccess to_update = 2; */
         for (let i = 0; i < message.toUpdate.length; i++)
-            PageUserAccess.internalBinaryWrite(message.toUpdate[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.wiki.access.PageUserAccess to_delete = 3; */
+            UserAccess.internalBinaryWrite(message.toUpdate[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.access.UserAccess to_delete = 3; */
         for (let i = 0; i < message.toDelete.length; i++)
-            PageUserAccess.internalBinaryWrite(message.toDelete[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            UserAccess.internalBinaryWrite(message.toDelete[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

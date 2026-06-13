@@ -10,7 +10,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getDocumentsStampsClient } from '~~/gen/ts/clients';
-import { StampAccessLevel, type StampJobAccess } from '~~/gen/ts/resources/documents/stamps/stamp';
+import type { JobAccess, QualificationAccess, UserAccess } from '~~/gen/ts/resources/access/access';
+import { StampAccessLevel } from '~~/gen/ts/resources/documents/stamps/stamp';
 
 useHead({
     title: 'pages.documents.stamps.update',
@@ -36,7 +37,9 @@ const schema = z.object({
     name: z.string().min(1).max(120),
     svgData: z.string().max(99999),
     access: z.object({
-        jobs: z.custom<StampJobAccess>().array().max(5),
+        jobs: z.custom<JobAccess>().array().max(5),
+        users: z.custom<UserAccess>().array().max(0),
+        qualifications: z.custom<QualificationAccess>().array().max(0),
     }),
 });
 
@@ -47,6 +50,8 @@ const state = reactive<Schema>({
     svgData: '',
     access: {
         jobs: [],
+        users: [],
+        qualifications: [],
     },
 });
 

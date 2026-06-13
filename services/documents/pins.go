@@ -155,7 +155,7 @@ func (s *Server) ToggleDocumentPin(
 
 	// Adding a pin requires view access to the document, but removing a pin does not
 	if req.GetState() {
-		check, err := s.access.CanUserAccessTarget(
+		check, err := s.canUserAccessDocument(
 			ctx,
 			req.GetDocumentId(),
 			userInfo,

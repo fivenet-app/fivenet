@@ -34,7 +34,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 		ctx,
 		pageId,
 		userInfo,
-		wikiaccess.AccessLevel_ACCESS_LEVEL_ACCESS,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_ACCESS),
 	)
 	if err != nil {
 		return errswrap.NewError(err, errorswiki.ErrPageDenied)

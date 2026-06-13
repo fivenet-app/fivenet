@@ -17,12 +17,12 @@ type fivenetWikiPagesAccessTable struct {
 	mysql.Table
 
 	// Columns
-	ID           mysql.ColumnInteger
-	TargetID     mysql.ColumnInteger
-	UserID       mysql.ColumnInteger
-	Job          mysql.ColumnString
-	MinimumGrade mysql.ColumnInteger
-	Access       mysql.ColumnInteger
+	ID        mysql.ColumnInteger
+	TargetID  mysql.ColumnInteger
+	SubjectID mysql.ColumnInteger
+	Access    mysql.ColumnInteger
+	Effect    mysql.ColumnBool
+	CreatedAt mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -64,27 +64,27 @@ func newFivenetWikiPagesAccessTable(schemaName, tableName, alias string) *Fivene
 
 func newFivenetWikiPagesAccessTableImpl(schemaName, tableName, alias string) fivenetWikiPagesAccessTable {
 	var (
-		IDColumn           = mysql.IntegerColumn("id")
-		TargetIDColumn     = mysql.IntegerColumn("target_id")
-		UserIDColumn       = mysql.IntegerColumn("user_id")
-		JobColumn          = mysql.StringColumn("job")
-		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
-		AccessColumn       = mysql.IntegerColumn("access")
-		allColumns         = mysql.ColumnList{IDColumn, TargetIDColumn, UserIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
-		mutableColumns     = mysql.ColumnList{TargetIDColumn, UserIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
-		defaultColumns     = mysql.ColumnList{}
+		IDColumn        = mysql.IntegerColumn("id")
+		TargetIDColumn  = mysql.IntegerColumn("target_id")
+		SubjectIDColumn = mysql.IntegerColumn("subject_id")
+		AccessColumn    = mysql.IntegerColumn("access")
+		EffectColumn    = mysql.BoolColumn("effect")
+		CreatedAtColumn = mysql.TimestampColumn("created_at")
+		allColumns      = mysql.ColumnList{IDColumn, TargetIDColumn, SubjectIDColumn, AccessColumn, EffectColumn, CreatedAtColumn}
+		mutableColumns  = mysql.ColumnList{TargetIDColumn, SubjectIDColumn, AccessColumn, EffectColumn, CreatedAtColumn}
+		defaultColumns  = mysql.ColumnList{EffectColumn, CreatedAtColumn}
 	)
 
 	return fivenetWikiPagesAccessTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:           IDColumn,
-		TargetID:     TargetIDColumn,
-		UserID:       UserIDColumn,
-		Job:          JobColumn,
-		MinimumGrade: MinimumGradeColumn,
-		Access:       AccessColumn,
+		ID:        IDColumn,
+		TargetID:  TargetIDColumn,
+		SubjectID: SubjectIDColumn,
+		Access:    AccessColumn,
+		Effect:    EffectColumn,
+		CreatedAt: CreatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

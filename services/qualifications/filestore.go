@@ -33,7 +33,7 @@ func (s *Server) UploadFile(
 		ctx,
 		meta.GetParentId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return errswrap.NewError(err, errorsqualifications.ErrQualiViewDenied)

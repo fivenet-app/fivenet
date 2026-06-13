@@ -8,7 +8,6 @@ import (
 	"time"
 
 	discordstate "github.com/diamondburned/arikawa/v3/state"
-	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
@@ -40,8 +39,6 @@ var (
 	tCalendarRSVPOccurrence = table.FivenetCalendarRsvpOccurrence.AS(
 		"calendar_entry_rsvp_occurrence",
 	)
-
-	tCAccess = table.FivenetCalendarAccess.AS("calendar_access")
 
 	tUserJobs  = table.FivenetUserJobs.AS("user_jobs")
 	tUserProps = table.FivenetUserProps
@@ -112,7 +109,8 @@ type Server struct {
 	js       *events.JSWrapper
 	dc       *discordstate.State
 
-	access *access.Grouped[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, access.DummyQualificationAccess[calendaraccess.AccessLevel], *access.DummyQualificationAccess[calendaraccess.AccessLevel], calendaraccess.AccessLevel]
+	access         *access.SubjectObjectAccess
+	accessResolver *access.SubjectResolver
 }
 
 type Params struct {
@@ -153,61 +151,8 @@ func NewServer(p Params) Result {
 		js:       p.JS,
 		dc:       p.Discord,
 
-		access: access.NewGrouped[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, access.DummyQualificationAccess[calendaraccess.AccessLevel], *access.DummyQualificationAccess[calendaraccess.AccessLevel], calendaraccess.AccessLevel](
-			p.DB,
-			table.FivenetDocuments,
-			&access.TargetTableColumns{
-				ID:         table.FivenetDocuments.ID,
-				DeletedAt:  table.FivenetDocuments.DeletedAt,
-				CreatorJob: table.FivenetDocuments.CreatorJob,
-				CreatorID:  table.FivenetDocuments.CreatorID,
-			},
-			access.NewJobs[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.AccessLevel](
-				table.FivenetCalendarAccess,
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCalendarAccess.ID,
-						TargetID: table.FivenetCalendarAccess.TargetID,
-						Access:   table.FivenetCalendarAccess.Access,
-					},
-					Job:          table.FivenetCalendarAccess.Job,
-					MinimumGrade: table.FivenetCalendarAccess.MinimumGrade,
-				},
-				table.FivenetCalendarAccess.AS("calendar_job_access"),
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCalendarAccess.AS("calendar_job_access").ID,
-						TargetID: table.FivenetCalendarAccess.AS("calendar_job_access").TargetID,
-						Access:   table.FivenetCalendarAccess.AS("calendar_job_access").Access,
-					},
-					Job: table.FivenetCalendarAccess.AS("calendar_job_access").Job,
-					MinimumGrade: table.FivenetCalendarAccess.AS(
-						"calendar_job_access",
-					).MinimumGrade,
-				},
-			),
-			access.NewUsers[calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, calendaraccess.AccessLevel](
-				table.FivenetCalendarAccess,
-				&access.UserAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCalendarAccess.ID,
-						TargetID: table.FivenetCalendarAccess.TargetID,
-						Access:   table.FivenetCalendarAccess.Access,
-					},
-					UserID: table.FivenetCalendarAccess.UserID,
-				},
-				table.FivenetCalendarAccess.AS("calendar_user_access"),
-				&access.UserAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCalendarAccess.AS("calendar_user_access").ID,
-						TargetID: table.FivenetCalendarAccess.AS("calendar_user_access").TargetID,
-						Access:   table.FivenetCalendarAccess.AS("calendar_user_access").Access,
-					},
-					UserID: table.FivenetCalendarAccess.AS("calendar_user_access").UserID,
-				},
-			),
-			nil,
-		),
+		access:         access.NewCalendarSubjectObjectAccess(p.DB),
+		accessResolver: access.NewSubjectResolver(p.DB),
 	}
 
 	return Result{

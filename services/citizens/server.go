@@ -6,7 +6,6 @@ import (
 	"math"
 	"slices"
 
-	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
@@ -41,7 +40,8 @@ type Server struct {
 	profilePictureHandler *filestore.Handler[int32]
 	mugshotHandler        *filestore.Handler[int32]
 
-	labelsAccess *access.Grouped[citizenslabels.JobAccess, *citizenslabels.JobAccess, access.DummyUserAccess[citizenslabels.AccessLevel], *access.DummyUserAccess[citizenslabels.AccessLevel], access.DummyQualificationAccess[citizenslabels.AccessLevel], *access.DummyQualificationAccess[citizenslabels.AccessLevel], citizenslabels.AccessLevel]
+	labelsAccess         *access.SubjectObjectAccess
+	labelsAccessResolver *access.SubjectResolver
 }
 
 type Params struct {
@@ -101,44 +101,8 @@ func NewServer(p Params) *Server {
 		profilePictureHandler: profilePictureHandler,
 		mugshotHandler:        mugshotHandler,
 
-		labelsAccess: access.NewGrouped[citizenslabels.JobAccess, *citizenslabels.JobAccess, access.DummyUserAccess[citizenslabels.AccessLevel], *access.DummyUserAccess[citizenslabels.AccessLevel], access.DummyQualificationAccess[citizenslabels.AccessLevel], *access.DummyQualificationAccess[citizenslabels.AccessLevel], citizenslabels.AccessLevel](
-			p.DB,
-			table.FivenetUserLabelsJob,
-			&access.TargetTableColumns{
-				ID:         table.FivenetUserLabelsJob.ID,
-				DeletedAt:  table.FivenetUserLabelsJob.DeletedAt,
-				CreatorID:  nil,
-				CreatorJob: table.FivenetUserLabelsJob.Job,
-			},
-			access.NewJobs[citizenslabels.JobAccess, *citizenslabels.JobAccess, citizenslabels.AccessLevel](
-				table.FivenetUserLabelsJobJobAccess,
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetUserLabelsJobJobAccess.ID,
-						TargetID: table.FivenetUserLabelsJobJobAccess.TargetID,
-						Access:   table.FivenetUserLabelsJobJobAccess.Access,
-					},
-					Job:          table.FivenetUserLabelsJobJobAccess.Job,
-					MinimumGrade: table.FivenetUserLabelsJobJobAccess.MinimumGrade,
-				},
-				table.FivenetUserLabelsJobJobAccess.AS("job_access"),
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID: table.FivenetUserLabelsJobJobAccess.AS("job_access").ID,
-						TargetID: table.FivenetUserLabelsJobJobAccess.AS(
-							"job_access",
-						).TargetID,
-						Access: table.FivenetUserLabelsJobJobAccess.AS("job_access").Access,
-					},
-					Job: table.FivenetUserLabelsJobJobAccess.AS("job_access").Job,
-					MinimumGrade: table.FivenetUserLabelsJobJobAccess.AS(
-						"job_access",
-					).MinimumGrade,
-				},
-			),
-			nil,
-			nil,
-		),
+		labelsAccess:         access.NewCitizenLabelsSubjectObjectAccess(p.DB),
+		labelsAccessResolver: access.NewSubjectResolver(p.DB),
 	}
 
 	access.RegisterAccess("citizen", &access.GroupedAccessAdapter{

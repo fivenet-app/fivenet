@@ -7,6 +7,7 @@ import (
 	calendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -21,6 +22,16 @@ func (s *Server) checkIfUserHasAccessToCalendar(
 ) (bool, error) {
 	out, err := s.checkIfUserHasAccessToCalendarIDs(ctx, userInfo, access, publicOk, calendarId)
 	return len(out) > 0, err
+}
+
+var calendarSubjectAccessOptions = access.SubjectAccessOptions{
+	BlockedAccess: int32(calendaraccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
+	DeniedAccessLevels: []int32{
+		int32(calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		int32(calendaraccess.AccessLevel_ACCESS_LEVEL_SHARE),
+		int32(calendaraccess.AccessLevel_ACCESS_LEVEL_EDIT),
+		int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
+	},
 }
 
 type calendarAccessEntry struct {
@@ -57,22 +68,7 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 
 	var accessExists mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		accessExists = mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tCAccess).
-				WHERE(mysql.AND(
-					tCAccess.TargetID.EQ(tCalendar.ID),
-					tCAccess.Access.GT_EQ(mysql.Int32(int32(access))),
-					mysql.OR(
-						tCAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						mysql.AND(
-							tCAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tCAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
-					),
-				)),
-		)
+		accessExists = s.access.ACLAccessExistsCondition(tCalendar.ID, userInfo, int32(access))
 	}
 
 	visibleCondition := mysql.OR(accessExists, condition)

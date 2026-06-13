@@ -3,10 +3,6 @@
 
 package qualificationsaccess
 
-import (
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
-)
-
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
 func (m *QualificationAccess) Sanitize() error {
@@ -24,38 +20,6 @@ func (m *QualificationAccess) Sanitize() error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *QualificationJobAccess) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Job
-	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
-
-	// Field: JobGradeLabel
-	if m.JobGradeLabel != nil {
-		*m.JobGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobGradeLabel)
-	}
-
-	// Field: JobLabel
-	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
 	}
 
 	return nil

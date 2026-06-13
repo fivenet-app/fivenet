@@ -5,6 +5,7 @@ package resources.documents.templates;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/access/access.proto";
 import "resources/documents/access/access.proto";
 import "resources/documents/approval/approval.proto";
 import "resources/documents/category/category.proto";
@@ -72,8 +73,8 @@ message Template {
   TemplateSchema schema = 13 [(tagger.tags) = "alias:\"schema\""];
   string creator_job = 14 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 15 [(buf.validate.field).string.max_len = 50];
-  repeated TemplateJobAccess job_access = 16 [(buf.validate.field).repeated.max_items = 20];
-  resources.documents.access.DocumentAccess content_access = 17 [(tagger.tags) = "alias:\"access\""];
+  repeated resources.access.JobAccess job_access = 16 [(buf.validate.field).repeated.max_items = 20];
+  resources.access.Access content_access = 17 [(tagger.tags) = "alias:\"access\""];
   optional resources.documents.workflow.Workflow workflow = 18;
   optional TemplateApproval approval = 19;
 }
@@ -139,20 +140,6 @@ message TemplateData {
   repeated resources.users.short.UserShort users = 3 [(buf.validate.field).repeated.max_items = 12];
   repeated resources.vehicles.Vehicle vehicles = 4 [(buf.validate.field).repeated.max_items = 12];
 }
-
-message TemplateJobAccess {
-  int64 id = 1 [(tagger.tags) = "alias:\"id\""];
-  optional resources.timestamp.Timestamp created_at = 2;
-  int64 target_id = 3 [(tagger.tags) = "alias:\"template_id\""];
-  string job = 4 [(buf.validate.field).string.max_len = 20];
-  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
-  int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
-  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
-  resources.documents.access.AccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
-}
-
-// Dummy - DO NOT USE!
-message TemplateUserAccess {}
 
 message TemplateApproval {
   option (codegen.dbscanner.dbscanner) = {enabled: true};

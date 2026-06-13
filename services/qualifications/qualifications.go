@@ -128,7 +128,7 @@ func (s *Server) GetQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -165,7 +165,7 @@ func (s *Server) GetQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -179,7 +179,7 @@ func (s *Server) GetQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -314,11 +314,11 @@ func (s *Server) CreateQualification(
 			TargetId:     lastId,
 			Job:          job.GetName(),
 			MinimumGrade: highestGrade,
-			Access:       qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+			Access:       int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 		})
 	}
 
-	if _, err := s.access.HandleAccessChanges(ctx, tx, lastId, jobAccess, nil, nil); err != nil {
+	if _, err := s.access.ReplaceTargetAccess(ctx, tx, s.accessResolver, lastId, qualificationJobAccess(jobAccess), qualificationSubjectAccessOptions); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -349,7 +349,7 @@ func (s *Server) UpdateQualification(
 		ctx,
 		req.GetQualification().GetId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -473,13 +473,13 @@ func (s *Server) UpdateQualification(
 	}
 
 	if req.GetQualification().GetAccess() != nil {
-		if _, err := s.access.HandleAccessChanges(
+		if _, err := s.access.ReplaceTargetAccess(
 			ctx,
 			tx,
+			s.accessResolver,
 			req.GetQualification().GetId(),
-			req.GetQualification().GetAccess().GetJobs(),
-			nil,
-			nil,
+			qualificationJobAccess(req.GetQualification().GetAccess().GetJobs()),
+			qualificationSubjectAccessOptions,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -545,7 +545,7 @@ func (s *Server) DeleteQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

@@ -13,13 +13,13 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { OnEditBehavior } from "../approval/approval";
 import { ApprovalRuleKind } from "../approval/approval";
-import { AccessLevel } from "../access/access";
 import { Vehicle } from "../../vehicles/vehicles";
 import { UserShort } from "../../users/short/user";
 import { DocumentShort } from "../documents";
 import { User } from "../../users/user";
 import { Workflow } from "../workflow/workflow";
-import { DocumentAccess } from "../access/access";
+import { Access } from "../../access/access";
+import { JobAccess } from "../../access/access";
 import { Category } from "../category/category";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
@@ -87,13 +87,13 @@ export interface Template {
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: repeated resources.documents.templates.TemplateJobAccess job_access = 16
+     * @generated from protobuf field: repeated resources.access.JobAccess job_access = 16
      */
-    jobAccess: TemplateJobAccess[];
+    jobAccess: JobAccess[];
     /**
-     * @generated from protobuf field: resources.documents.access.DocumentAccess content_access = 17
+     * @generated from protobuf field: resources.access.Access content_access = 17
      */
-    contentAccess?: DocumentAccess;
+    contentAccess?: Access;
     /**
      * @generated from protobuf field: optional resources.documents.workflow.Workflow workflow = 18
      */
@@ -225,50 +225,6 @@ export interface TemplateData {
     vehicles: Vehicle[];
 }
 /**
- * @generated from protobuf message resources.documents.templates.TemplateJobAccess
- */
-export interface TemplateJobAccess {
-    /**
-     * @generated from protobuf field: int64 id = 1
-     */
-    id: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: int64 target_id = 3
-     */
-    targetId: number;
-    /**
-     * @generated from protobuf field: string job = 4
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: optional string job_label = 5
-     */
-    jobLabel?: string;
-    /**
-     * @generated from protobuf field: int32 minimum_grade = 6
-     */
-    minimumGrade: number;
-    /**
-     * @generated from protobuf field: optional string job_grade_label = 7
-     */
-    jobGradeLabel?: string;
-    /**
-     * @generated from protobuf field: resources.documents.access.AccessLevel access = 8
-     */
-    access: AccessLevel;
-}
-/**
- * Dummy - DO NOT USE!
- *
- * @generated from protobuf message resources.documents.templates.TemplateUserAccess
- */
-export interface TemplateUserAccess {
-}
-/**
  * @generated from protobuf message resources.documents.templates.TemplateApproval
  */
 export interface TemplateApproval {
@@ -376,8 +332,8 @@ class Template$Type extends MessageType<Template> {
             { no: 13, name: "schema", kind: "message", T: () => TemplateSchema, options: { "tagger.tags": "alias:\"schema\"" } },
             { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 15, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 16, name: "job_access", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => TemplateJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
-            { no: 17, name: "content_access", kind: "message", T: () => DocumentAccess, options: { "tagger.tags": "alias:\"access\"" } },
+            { no: 16, name: "job_access", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
+            { no: 17, name: "content_access", kind: "message", T: () => Access, options: { "tagger.tags": "alias:\"access\"" } },
             { no: 18, name: "workflow", kind: "message", T: () => Workflow },
             { no: 19, name: "approval", kind: "message", T: () => TemplateApproval }
         ]);
@@ -447,11 +403,11 @@ class Template$Type extends MessageType<Template> {
                 case /* optional string creator_job_label */ 15:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* repeated resources.documents.templates.TemplateJobAccess job_access */ 16:
-                    message.jobAccess.push(TemplateJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.JobAccess job_access */ 16:
+                    message.jobAccess.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* resources.documents.access.DocumentAccess content_access */ 17:
-                    message.contentAccess = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.contentAccess);
+                case /* resources.access.Access content_access */ 17:
+                    message.contentAccess = Access.internalBinaryRead(reader, reader.uint32(), options, message.contentAccess);
                     break;
                 case /* optional resources.documents.workflow.Workflow workflow */ 18:
                     message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
@@ -516,12 +472,12 @@ class Template$Type extends MessageType<Template> {
         /* optional string creator_job_label = 15; */
         if (message.creatorJobLabel !== undefined)
             writer.tag(15, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* repeated resources.documents.templates.TemplateJobAccess job_access = 16; */
+        /* repeated resources.access.JobAccess job_access = 16; */
         for (let i = 0; i < message.jobAccess.length; i++)
-            TemplateJobAccess.internalBinaryWrite(message.jobAccess[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.access.DocumentAccess content_access = 17; */
+            JobAccess.internalBinaryWrite(message.jobAccess[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+        /* resources.access.Access content_access = 17; */
         if (message.contentAccess)
-            DocumentAccess.internalBinaryWrite(message.contentAccess, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.contentAccess, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.documents.workflow.Workflow workflow = 18; */
         if (message.workflow)
             Workflow.internalBinaryWrite(message.workflow, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
@@ -909,144 +865,6 @@ class TemplateData$Type extends MessageType<TemplateData> {
  * @generated MessageType for protobuf message resources.documents.templates.TemplateData
  */
 export const TemplateData = new TemplateData$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
-    constructor() {
-        super("resources.documents.templates.TemplateJobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"id\"" } },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"template_id\"" } },
-            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 8, name: "access", kind: "enum", T: () => ["resources.documents.access.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<TemplateJobAccess>): TemplateJobAccess {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        message.targetId = 0;
-        message.job = "";
-        message.minimumGrade = 0;
-        message.access = 0;
-        if (value !== undefined)
-            reflectionMergePartial<TemplateJobAccess>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TemplateJobAccess): TemplateJobAccess {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 id */ 1:
-                    message.id = reader.int64().toNumber();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* int64 target_id */ 3:
-                    message.targetId = reader.int64().toNumber();
-                    break;
-                case /* string job */ 4:
-                    message.job = reader.string();
-                    break;
-                case /* optional string job_label */ 5:
-                    message.jobLabel = reader.string();
-                    break;
-                case /* int32 minimum_grade */ 6:
-                    message.minimumGrade = reader.int32();
-                    break;
-                case /* optional string job_grade_label */ 7:
-                    message.jobGradeLabel = reader.string();
-                    break;
-                case /* resources.documents.access.AccessLevel access */ 8:
-                    message.access = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: TemplateJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).int64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int64 target_id = 3; */
-        if (message.targetId !== 0)
-            writer.tag(3, WireType.Varint).int64(message.targetId);
-        /* string job = 4; */
-        if (message.job !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.job);
-        /* optional string job_label = 5; */
-        if (message.jobLabel !== undefined)
-            writer.tag(5, WireType.LengthDelimited).string(message.jobLabel);
-        /* int32 minimum_grade = 6; */
-        if (message.minimumGrade !== 0)
-            writer.tag(6, WireType.Varint).int32(message.minimumGrade);
-        /* optional string job_grade_label = 7; */
-        if (message.jobGradeLabel !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.jobGradeLabel);
-        /* resources.documents.access.AccessLevel access = 8; */
-        if (message.access !== 0)
-            writer.tag(8, WireType.Varint).int32(message.access);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.templates.TemplateJobAccess
- */
-export const TemplateJobAccess = new TemplateJobAccess$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class TemplateUserAccess$Type extends MessageType<TemplateUserAccess> {
-    constructor() {
-        super("resources.documents.templates.TemplateUserAccess", []);
-    }
-    create(value?: PartialMessage<TemplateUserAccess>): TemplateUserAccess {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<TemplateUserAccess>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TemplateUserAccess): TemplateUserAccess {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: TemplateUserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.templates.TemplateUserAccess
- */
-export const TemplateUserAccess = new TemplateUserAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TemplateApproval$Type extends MessageType<TemplateApproval> {
     constructor() {

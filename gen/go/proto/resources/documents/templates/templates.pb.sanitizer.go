@@ -236,38 +236,6 @@ func (m *TemplateData) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *TemplateJobAccess) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Job
-	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
-
-	// Field: JobGradeLabel
-	if m.JobGradeLabel != nil {
-		*m.JobGradeLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobGradeLabel)
-	}
-
-	// Field: JobLabel
-	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *TemplateRequirements) Sanitize() error {
 	if m == nil {
 		return nil

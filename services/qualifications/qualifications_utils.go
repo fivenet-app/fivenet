@@ -16,10 +16,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var (
-	tQAccess = table.FivenetQualificationsAccess
-	tQReqs   = table.FivenetQualificationsRequirements.AS("qualification_requirement")
-)
+var tQReqs = table.FivenetQualificationsRequirements.AS("qualification_requirement")
 
 func (s *Server) listQualificationsQuery(
 	where mysql.BoolExpression,
@@ -30,22 +27,7 @@ func (s *Server) listQualificationsQuery(
 
 	wheres := []mysql.BoolExpression{}
 	if !userInfo.GetSuperuser() {
-		accessExists := mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tQAccess).
-				WHERE(mysql.AND(
-					tQAccess.TargetID.EQ(tQuali.ID),
-					tQAccess.Access.IS_NOT_NULL(),
-					tQAccess.Access.GT_EQ(
-						mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-					),
-					mysql.AND(
-						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-					),
-				)),
-		)
+		accessExists := s.access.ACLAccessExistsCondition(tQuali.ID, userInfo, int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW))
 
 		wheres = append(wheres,
 			mysql.AND(
@@ -162,22 +144,7 @@ func (s *Server) getQualificationQuery(
 		tQuali.ID.EQ(mysql.Int64(qualificationId)),
 	}
 	if !userInfo.GetSuperuser() {
-		accessExists := mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tQAccess).
-				WHERE(mysql.AND(
-					tQAccess.TargetID.EQ(tQuali.ID),
-					tQAccess.Access.IS_NOT_NULL(),
-					tQAccess.Access.GT_EQ(
-						mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-					),
-					mysql.AND(
-						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-					),
-				)),
-		)
+		accessExists := s.access.ACLAccessExistsCondition(tQuali.ID, userInfo, int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW))
 
 		wheres = append(wheres,
 			mysql.AND(

@@ -5,9 +5,9 @@ import (
 	"errors"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
-	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsstamps "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -18,6 +18,14 @@ import (
 
 const stampLimit = 5
 
+var stampSubjectAccessOptions = access.SubjectAccessOptions{
+	BlockedAccess: int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_BLOCKED),
+	DeniedAccessLevels: []int32{
+		int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
+		int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE),
+	},
+}
+
 func (s *Server) ListUsableStamps(
 	ctx context.Context,
 	req *pbdocuments.ListUsableStampsRequest,
@@ -25,7 +33,6 @@ func (s *Server) ListUsableStamps(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tStamp := table.FivenetDocumentsStamps.AS("stamp")
-	tStampAccess := table.FivenetDocumentsStampsAccess.AS("stamp_access")
 
 	deletedAtCond := mysql.Bool(true)
 	if !userInfo.GetSuperuser() {
@@ -34,21 +41,10 @@ func (s *Server) ListUsableStamps(
 
 	var existsAccess mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		existsAccess = mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tStampAccess).
-				WHERE(mysql.AND(
-					tStampAccess.TargetID.EQ(tStamp.ID),
-					// Job + grade access
-					mysql.AND(
-						tStampAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-						tStampAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-					),
-					tStampAccess.Access.GT_EQ(
-						mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-					),
-				)),
+		existsAccess = s.signingStampAccess.ACLAccessExistsCondition(
+			tStamp.ID,
+			userInfo,
+			int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
 		)
 	} else {
 		existsAccess = mysql.Bool(true)
@@ -111,7 +107,7 @@ func (s *Server) GetStamp(
 		ctx,
 		req.GetId(),
 		userInfo,
-		documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE,
+		int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -161,13 +157,11 @@ func (s *Server) getStamp(
 	}
 
 	if withAccess {
-		accessList, err := s.signingStampAccess.Jobs.List(ctx, s.db, stampId)
+		access, err := s.signingStampAccess.ListTargetAccess(ctx, s.db, stampId, stampSubjectAccessOptions)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		stamp.Access = &documentsstamps.StampAccess{
-			Jobs: accessList,
-		}
+		stamp.Access = access
 	}
 
 	return &stamp, nil
@@ -212,7 +206,7 @@ func (s *Server) UpsertStamp(
 		st.Access.Jobs = append(st.Access.Jobs, &documentsstamps.StampJobAccess{
 			Job:          userInfo.GetJob(),
 			MinimumGrade: userInfo.GetJobGrade(),
-			Access:       documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
+			Access:       int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE),
 		})
 	}
 
@@ -234,7 +228,7 @@ func (s *Server) UpsertStamp(
 			ctx,
 			st.GetId(),
 			userInfo,
-			documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
+			int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE),
 		)
 		if err != nil {
 			return nil, err
@@ -257,7 +251,7 @@ func (s *Server) UpsertStamp(
 			WHERE(tStamp.ID.EQ(mysql.Int64(st.GetId()))).
 			LIMIT(1)
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	} else {
@@ -273,7 +267,7 @@ func (s *Server) UpsertStamp(
 				st.GetSvgTemplate(),
 				nil,
 			)
-		res, err := stmt.ExecContext(ctx, s.db)
+		res, err := stmt.ExecContext(ctx, tx)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -284,13 +278,13 @@ func (s *Server) UpsertStamp(
 		req.GetStamp().SetId(lastId)
 	}
 
-	if _, err := s.signingStampAccess.HandleAccessChanges(
+	if _, err := s.signingStampAccess.ReplaceTargetAccess(
 		ctx,
-		s.db,
+		tx,
+		s.subjectResolver,
 		st.GetId(),
-		st.Access.Jobs,
-		nil,
-		nil,
+		st.GetAccess(),
+		stampSubjectAccessOptions,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -319,7 +313,7 @@ func (s *Server) DeleteStamp(
 		ctx,
 		req.GetStampId(),
 		userInfo,
-		documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
+		int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

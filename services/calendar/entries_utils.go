@@ -11,6 +11,7 @@ import (
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
@@ -58,28 +59,14 @@ func calendarEntryRSVPVisible(
 }
 
 func calendarEntryVisibility(
+	acl *access.SubjectObjectAccess,
 	userInfo *userinfo.UserInfo,
 	access calendaraccess.AccessLevel,
 	rsvpResponse calendarentries.RsvpResponses,
 ) mysql.BoolExpression {
 	return mysql.OR(
 		// User has access to calendar
-		mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tCAccess).
-				WHERE(mysql.AND(
-					tCAccess.TargetID.EQ(tCalendarEntry.CalendarID),
-					tCAccess.Access.GT_EQ(mysql.Int32(int32(access))),
-					mysql.OR(
-						tCAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						mysql.AND(
-							tCAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tCAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
-					),
-				)),
-		),
+		acl.ACLAccessExistsCondition(tCalendarEntry.CalendarID, userInfo, int32(access)),
 		// User can see entry because they were invited (RSVP)
 		calendarEntryRSVPVisible(userInfo, rsvpResponse),
 	)
@@ -97,24 +84,7 @@ func (s *Server) birthdayCalendarVisible(
 			),
 		),
 		tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
-		mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tCAccess).
-				WHERE(mysql.AND(
-					tCAccess.TargetID.EQ(calendarID),
-					tCAccess.Access.GT_EQ(
-						mysql.Int32(int32(access)),
-					),
-					mysql.OR(
-						tCAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						mysql.AND(
-							tCAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tCAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
-					),
-				)),
-		),
+		s.access.ACLAccessExistsCondition(calendarID, userInfo, int32(access)),
 	)
 }
 

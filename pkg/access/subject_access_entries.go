@@ -1,0 +1,677 @@
+package access
+
+import (
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
+	"slices"
+
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
+)
+
+type SubjectAccessOptions struct {
+	BlockedAccess      int32
+	DeniedAccessLevels []int32
+}
+
+type SubjectAccessEntryChanges[T any] struct {
+	ToCreate []T
+	ToUpdate []T
+	ToDelete []T
+}
+
+func (c *SubjectAccessEntryChanges[T]) IsEmpty() bool {
+	return len(c.ToCreate) == 0 && len(c.ToUpdate) == 0 && len(c.ToDelete) == 0
+}
+
+type SubjectAccessChanges struct {
+	Jobs           *SubjectAccessEntryChanges[*resourcesaccess.JobAccess]
+	Users          *SubjectAccessEntryChanges[*resourcesaccess.UserAccess]
+	Qualifications *SubjectAccessEntryChanges[*resourcesaccess.QualificationAccess]
+}
+
+func (c *SubjectAccessChanges) IsEmpty() bool {
+	return c.Jobs.IsEmpty() && c.Users.IsEmpty() && c.Qualifications.IsEmpty()
+}
+
+func (a *SubjectObjectAccess) ListTargetAccess(
+	ctx context.Context,
+	tx qrm.DB,
+	targetID int64,
+	opts SubjectAccessOptions,
+) (*resourcesaccess.Access, error) {
+	tAccess := a.accessTable
+	tSubjects := table.FivenetAclSubjects.AS("acl_subject")
+	tJobGrade := table.FivenetAclSubjectJobGradeScopes.AS("subject_job_grade")
+	tQualifications := table.FivenetAclSubjectQualifications.AS("subject_qualification")
+	tUserSubjects := table.FivenetAclSubjectUsers.AS("subject_user")
+	tUsers := table.FivenetUser.AS("user_short")
+
+	columns := a.accessColumns
+
+	stmt := tAccess.
+		SELECT(
+			columns.ID.AS("subject_access_row.id"),
+			columns.TargetID.AS("subject_access_row.target_id"),
+			columns.Access.AS("subject_access_row.access"),
+			columns.Effect.AS("subject_access_row.effect"),
+			tSubjects.SubjectType.AS("subject_access_row.subject_type"),
+			tJobGrade.Job.AS("subject_access_row.acl_job"),
+			tJobGrade.MinimumGrade.AS("subject_access_row.acl_minimum_grade"),
+			tQualifications.QualificationID.AS("subject_access_row.acl_qualification_id"),
+			tUserSubjects.UserID.AS("subject_access_row.subject_user_id"),
+			tUsers.Job.AS("subject_access_row.user_job"),
+			tUsers.JobGrade.AS("subject_access_row.user_job_grade"),
+			tUsers.Firstname.AS("subject_access_row.user_firstname"),
+			tUsers.Lastname.AS("subject_access_row.user_lastname"),
+			tUsers.Dateofbirth.AS("subject_access_row.user_dateofbirth"),
+			tUsers.PhoneNumber.AS("subject_access_row.user_phone_number"),
+		).
+		FROM(tAccess.
+			INNER_JOIN(tSubjects,
+				tSubjects.ID.EQ(columns.SubjectID),
+			).
+			LEFT_JOIN(tJobGrade,
+				tJobGrade.SubjectID.EQ(columns.SubjectID),
+			).
+			LEFT_JOIN(tQualifications,
+				tQualifications.SubjectID.EQ(columns.SubjectID),
+			).
+			LEFT_JOIN(tUserSubjects,
+				tUserSubjects.SubjectID.EQ(columns.SubjectID),
+			).
+			LEFT_JOIN(tUsers,
+				tUsers.ID.EQ(tUserSubjects.UserID),
+			),
+		).
+		WHERE(columns.TargetID.EQ(mysql.Int64(targetID))).
+		ORDER_BY(columns.ID.ASC())
+
+	var rows []subjectAccessRow
+	if err := stmt.QueryContext(ctx, tx, &rows); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return subjectAccessRowsToProto(rows, opts), nil
+}
+
+func (a *SubjectObjectAccess) ReplaceTargetAccess(
+	ctx context.Context,
+	tx qrm.DB,
+	resolver *SubjectResolver,
+	targetID int64,
+	in *resourcesaccess.Access,
+	opts SubjectAccessOptions,
+) (*SubjectAccessChanges, error) {
+	current, err := a.ListTargetAccess(ctx, tx, targetID, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	changes := compareSubjectAccess(current, in)
+
+	if err := a.ClearTarget(ctx, tx, targetID); err != nil {
+		return nil, err
+	}
+
+	if err := a.createTargetAccess(ctx, tx, resolver, targetID, in, opts); err != nil {
+		return nil, err
+	}
+
+	return changes, nil
+}
+
+func (a *SubjectObjectAccess) CreateUserAccess(
+	ctx context.Context,
+	tx qrm.DB,
+	resolver *SubjectResolver,
+	targetID int64,
+	userID int32,
+	access int32,
+) error {
+	subjectID, err := resolver.EnsureUserSubject(ctx, tx, userID)
+	if err != nil {
+		return err
+	}
+
+	return a.CreateEntry(ctx, tx, targetID, subjectID, access, AccessEffectAllow)
+}
+
+func (a *SubjectObjectAccess) ACLAccessExistsCondition(
+	targetID mysql.IntegerExpression,
+	userInfo interface {
+		GetUserId() int32
+		GetJob() string
+		GetJobGrade() int32
+	},
+	access int32,
+) mysql.BoolExpression {
+	tAccess := a.accessTable
+	columns := a.accessColumns
+	tSubjectUsers := table.FivenetAclSubjectUsers.AS("subject_acl_user_exists")
+	tSubjectQualis := table.FivenetAclSubjectQualifications.AS("subject_acl_qualification_exists")
+	tQualiResults := table.FivenetQualificationsResults.AS("subject_acl_qualification_results_exists")
+	tSubjectJobGrade := table.FivenetAclSubjectJobGradeScopes.AS("subject_acl_job_grade_exists")
+	tUserJobs := table.FivenetUserJobs.AS("subject_acl_user_jobs_exists")
+
+	return mysql.EXISTS(
+		mysql.SELECT(mysql.Int(1)).
+			FROM(tAccess).
+			WHERE(mysql.AND(
+				columns.TargetID.EQ(targetID),
+				columns.Effect.EQ(mysql.Int8(int8(AccessEffectAllow))),
+				columns.Access.GT_EQ(mysql.Int32(access)),
+				mysql.OR(
+					columns.SubjectID.IN(
+						tSubjectUsers.
+							SELECT(tSubjectUsers.SubjectID).
+							FROM(tSubjectUsers).
+							WHERE(tSubjectUsers.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+					),
+					columns.SubjectID.IN(
+						tSubjectQualis.
+							SELECT(tSubjectQualis.SubjectID).
+							FROM(tSubjectQualis.
+								INNER_JOIN(tQualiResults,
+									mysql.AND(
+										tQualiResults.QualificationID.EQ(tSubjectQualis.QualificationID),
+										tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+										tQualiResults.DeletedAt.IS_NULL(),
+										tQualiResults.Status.EQ(mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
+									),
+								),
+							),
+					),
+					columns.SubjectID.IN(
+						tSubjectJobGrade.
+							SELECT(tSubjectJobGrade.SubjectID).
+							FROM(tSubjectJobGrade.
+								INNER_JOIN(tUserJobs,
+									mysql.AND(
+										tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+										tUserJobs.Job.EQ(tSubjectJobGrade.Job),
+										tUserJobs.Grade.GT_EQ(tSubjectJobGrade.MinimumGrade),
+									),
+								),
+							),
+					),
+					columns.SubjectID.IN(
+						tSubjectJobGrade.
+							SELECT(tSubjectJobGrade.SubjectID).
+							FROM(tSubjectJobGrade).
+							WHERE(mysql.AND(
+								tSubjectJobGrade.Job.EQ(mysql.String(userInfo.GetJob())),
+								tSubjectJobGrade.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+							)),
+					),
+				),
+			)),
+	)
+}
+
+func (a *SubjectObjectAccess) createTargetAccess(
+	ctx context.Context,
+	tx qrm.DB,
+	resolver *SubjectResolver,
+	targetID int64,
+	in *resourcesaccess.Access,
+	opts SubjectAccessOptions,
+) error {
+	if in == nil {
+		return nil
+	}
+
+	for _, jobAccess := range in.GetJobs() {
+		subjectID, err := resolver.EnsureJobGradeSubject(
+			ctx,
+			tx,
+			jobAccess.GetJob(),
+			jobAccess.GetMinimumGrade(),
+		)
+		if err != nil {
+			return err
+		}
+
+		if jobAccess.GetAccess() == opts.BlockedAccess {
+			if err := a.createDeniedAccess(ctx, tx, targetID, subjectID, opts); err != nil {
+				return err
+			}
+			continue
+		}
+
+		if err := a.CreateEntry(ctx, tx, targetID, subjectID, jobAccess.GetAccess(), AccessEffectAllow); err != nil {
+			return err
+		}
+	}
+
+	for _, userAccess := range in.GetUsers() {
+		subjectID, err := resolver.EnsureUserSubject(ctx, tx, userAccess.GetUserId())
+		if err != nil {
+			return err
+		}
+
+		if userAccess.GetAccess() == opts.BlockedAccess {
+			if err := a.createDeniedAccess(ctx, tx, targetID, subjectID, opts); err != nil {
+				return err
+			}
+			continue
+		}
+
+		if err := a.CreateEntry(ctx, tx, targetID, subjectID, userAccess.GetAccess(), AccessEffectAllow); err != nil {
+			return err
+		}
+	}
+
+	for _, qualiAccess := range in.GetQualifications() {
+		subjectID, err := resolver.EnsureQualificationSubject(ctx, tx, qualiAccess.GetQualificationId())
+		if err != nil {
+			return err
+		}
+
+		if qualiAccess.GetAccess() == opts.BlockedAccess {
+			if err := a.createDeniedAccess(ctx, tx, targetID, subjectID, opts); err != nil {
+				return err
+			}
+			continue
+		}
+
+		if err := a.CreateEntry(ctx, tx, targetID, subjectID, qualiAccess.GetAccess(), AccessEffectAllow); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (a *SubjectObjectAccess) createDeniedAccess(
+	ctx context.Context,
+	tx qrm.DB,
+	targetID int64,
+	subjectID int64,
+	opts SubjectAccessOptions,
+) error {
+	for _, level := range opts.DeniedAccessLevels {
+		if err := a.CreateEntry(ctx, tx, targetID, subjectID, level, AccessEffectDeny); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func compareSubjectAccess(current *resourcesaccess.Access, in *resourcesaccess.Access) *SubjectAccessChanges {
+	changes := &SubjectAccessChanges{
+		Jobs:           &SubjectAccessEntryChanges[*resourcesaccess.JobAccess]{},
+		Users:          &SubjectAccessEntryChanges[*resourcesaccess.UserAccess]{},
+		Qualifications: &SubjectAccessEntryChanges[*resourcesaccess.QualificationAccess]{},
+	}
+	if current == nil {
+		current = &resourcesaccess.Access{}
+	}
+	if in == nil {
+		in = &resourcesaccess.Access{}
+	}
+
+	changes.Jobs.ToCreate, changes.Jobs.ToUpdate, changes.Jobs.ToDelete = compareSubjectJobAccess(current.GetJobs(), in.GetJobs())
+	changes.Users.ToCreate, changes.Users.ToUpdate, changes.Users.ToDelete = compareSubjectUserAccess(current.GetUsers(), in.GetUsers())
+	changes.Qualifications.ToCreate, changes.Qualifications.ToUpdate, changes.Qualifications.ToDelete = compareSubjectQualificationAccess(current.GetQualifications(), in.GetQualifications())
+
+	return changes
+}
+
+func compareSubjectJobAccess(
+	current []*resourcesaccess.JobAccess,
+	in []*resourcesaccess.JobAccess,
+) ([]*resourcesaccess.JobAccess, []*resourcesaccess.JobAccess, []*resourcesaccess.JobAccess) {
+	toCreate := []*resourcesaccess.JobAccess{}
+	toUpdate := []*resourcesaccess.JobAccess{}
+	toDelete := []*resourcesaccess.JobAccess{}
+
+	if len(current) == 0 {
+		return in, toUpdate, toDelete
+	}
+
+	slices.SortFunc(current, func(a, b *resourcesaccess.JobAccess) int {
+		return int(a.GetId() - b.GetId())
+	})
+
+	foundTracker := []int{}
+	for _, currentEntry := range current {
+		var found *resourcesaccess.JobAccess
+		var foundIdx int
+		for i, inputEntry := range in {
+			if currentEntry.GetJob() != inputEntry.GetJob() || currentEntry.GetMinimumGrade() != inputEntry.GetMinimumGrade() {
+				continue
+			}
+			found = inputEntry
+			foundIdx = i
+			break
+		}
+		if found == nil {
+			toDelete = append(toDelete, currentEntry)
+			continue
+		}
+
+		foundTracker = append(foundTracker, foundIdx)
+		if currentEntry.GetAccess() != found.GetAccess() {
+			currentEntry.SetAccess(found.GetAccess())
+			toUpdate = append(toUpdate, currentEntry)
+		}
+	}
+
+	for i, inputEntry := range in {
+		if slices.Index(foundTracker, i) == -1 {
+			toCreate = append(toCreate, inputEntry)
+		}
+	}
+
+	return toCreate, toUpdate, toDelete
+}
+
+func compareSubjectUserAccess(
+	current []*resourcesaccess.UserAccess,
+	in []*resourcesaccess.UserAccess,
+) ([]*resourcesaccess.UserAccess, []*resourcesaccess.UserAccess, []*resourcesaccess.UserAccess) {
+	toCreate := []*resourcesaccess.UserAccess{}
+	toUpdate := []*resourcesaccess.UserAccess{}
+	toDelete := []*resourcesaccess.UserAccess{}
+
+	if len(current) == 0 {
+		return in, toUpdate, toDelete
+	}
+
+	slices.SortFunc(current, func(a, b *resourcesaccess.UserAccess) int {
+		return int(a.GetId() - b.GetId())
+	})
+
+	foundTracker := []int{}
+	for _, currentEntry := range current {
+		var found *resourcesaccess.UserAccess
+		var foundIdx int
+		for i, inputEntry := range in {
+			if currentEntry.GetUserId() != inputEntry.GetUserId() {
+				continue
+			}
+			found = inputEntry
+			foundIdx = i
+			break
+		}
+		if found == nil {
+			toDelete = append(toDelete, currentEntry)
+			continue
+		}
+
+		foundTracker = append(foundTracker, foundIdx)
+		if currentEntry.GetAccess() != found.GetAccess() {
+			currentEntry.SetAccess(found.GetAccess())
+			toUpdate = append(toUpdate, currentEntry)
+		}
+	}
+
+	for i, inputEntry := range in {
+		if slices.Index(foundTracker, i) == -1 {
+			toCreate = append(toCreate, inputEntry)
+		}
+	}
+
+	return toCreate, toUpdate, toDelete
+}
+
+func compareSubjectQualificationAccess(
+	current []*resourcesaccess.QualificationAccess,
+	in []*resourcesaccess.QualificationAccess,
+) ([]*resourcesaccess.QualificationAccess, []*resourcesaccess.QualificationAccess, []*resourcesaccess.QualificationAccess) {
+	toCreate := []*resourcesaccess.QualificationAccess{}
+	toUpdate := []*resourcesaccess.QualificationAccess{}
+	toDelete := []*resourcesaccess.QualificationAccess{}
+
+	if len(current) == 0 {
+		return in, toUpdate, toDelete
+	}
+
+	slices.SortFunc(current, func(a, b *resourcesaccess.QualificationAccess) int {
+		return int(a.GetId() - b.GetId())
+	})
+
+	foundTracker := []int{}
+	for _, currentEntry := range current {
+		var found *resourcesaccess.QualificationAccess
+		var foundIdx int
+		for i, inputEntry := range in {
+			if currentEntry.GetQualificationId() != inputEntry.GetQualificationId() {
+				continue
+			}
+			found = inputEntry
+			foundIdx = i
+			break
+		}
+		if found == nil {
+			toDelete = append(toDelete, currentEntry)
+			continue
+		}
+
+		foundTracker = append(foundTracker, foundIdx)
+		if currentEntry.GetAccess() != found.GetAccess() {
+			currentEntry.SetAccess(found.GetAccess())
+			toUpdate = append(toUpdate, currentEntry)
+		}
+	}
+
+	for i, inputEntry := range in {
+		if slices.Index(foundTracker, i) == -1 {
+			toCreate = append(toCreate, inputEntry)
+		}
+	}
+
+	return toCreate, toUpdate, toDelete
+}
+
+type subjectAccessRow struct {
+	ID          int64
+	TargetID    int64
+	Access      int32
+	Effect      int8
+	SubjectType int16
+
+	ACLJob             sql.NullString
+	ACLMinimumGrade    sql.NullInt32
+	ACLQualificationID sql.NullInt64
+
+	SubjectUserID   sql.NullInt32
+	UserJob         sql.NullString
+	UserJobGrade    sql.NullInt32
+	UserFirstname   sql.NullString
+	UserLastname    sql.NullString
+	UserDateofbirth sql.NullString
+	UserPhoneNumber sql.NullString
+}
+
+func subjectAccessRowsToProto(rows []subjectAccessRow, opts SubjectAccessOptions) *resourcesaccess.Access {
+	out := &resourcesaccess.Access{
+		Jobs:           make([]*resourcesaccess.JobAccess, 0, len(rows)),
+		Users:          make([]*resourcesaccess.UserAccess, 0, len(rows)),
+		Qualifications: make([]*resourcesaccess.QualificationAccess, 0, len(rows)),
+	}
+
+	blockedJobKeys := map[string]struct{}{}
+	blockedUserIDs := map[int32]struct{}{}
+	blockedQualificationIDs := map[int64]struct{}{}
+	allowedJobs := make([]*resourcesaccess.JobAccess, 0, len(rows))
+	allowedUsers := make([]*resourcesaccess.UserAccess, 0, len(rows))
+	allowedQualifications := make([]*resourcesaccess.QualificationAccess, 0, len(rows))
+
+	for _, row := range rows {
+		switch SubjectType(row.SubjectType) {
+		case SubjectTypeJobGrade:
+			if !row.ACLJob.Valid || !row.ACLMinimumGrade.Valid {
+				continue
+			}
+
+			entry := &resourcesaccess.JobAccess{
+				Id:           row.ID,
+				TargetId:     row.TargetID,
+				Job:          row.ACLJob.String,
+				MinimumGrade: row.ACLMinimumGrade.Int32,
+				Access:       row.Access,
+			}
+
+			if AccessEffect(row.Effect) == AccessEffectDeny {
+				key := subjectJobAccessKey(entry.GetJob(), entry.GetMinimumGrade())
+				if _, ok := blockedJobKeys[key]; ok {
+					continue
+				}
+				blockedJobKeys[key] = struct{}{}
+				entry.Access = opts.BlockedAccess
+				out.Jobs = append(out.Jobs, entry)
+				continue
+			}
+
+			allowedJobs = append(allowedJobs, entry)
+
+		case SubjectTypeUser:
+			if !row.SubjectUserID.Valid {
+				continue
+			}
+
+			entry := &resourcesaccess.UserAccess{
+				Id:       row.ID,
+				TargetId: row.TargetID,
+				UserId:   row.SubjectUserID.Int32,
+				Access:   row.Access,
+				User:     subjectAccessUserShort(row),
+			}
+
+			if AccessEffect(row.Effect) == AccessEffectDeny {
+				if _, ok := blockedUserIDs[entry.GetUserId()]; ok {
+					continue
+				}
+				blockedUserIDs[entry.GetUserId()] = struct{}{}
+				entry.Access = opts.BlockedAccess
+				out.Users = append(out.Users, entry)
+				continue
+			}
+
+			allowedUsers = append(allowedUsers, entry)
+		case SubjectTypeQualification:
+			if !row.ACLQualificationID.Valid {
+				continue
+			}
+
+			entry := &resourcesaccess.QualificationAccess{
+				Id:              row.ID,
+				TargetId:        row.TargetID,
+				QualificationId: row.ACLQualificationID.Int64,
+				Access:          row.Access,
+			}
+
+			if AccessEffect(row.Effect) == AccessEffectDeny {
+				if _, ok := blockedQualificationIDs[entry.GetQualificationId()]; ok {
+					continue
+				}
+				blockedQualificationIDs[entry.GetQualificationId()] = struct{}{}
+				entry.Access = opts.BlockedAccess
+				out.Qualifications = append(out.Qualifications, entry)
+				continue
+			}
+
+			allowedQualifications = append(allowedQualifications, entry)
+		}
+	}
+
+	out.Jobs = append(out.Jobs, filterAllowedSubjectJobAccess(allowedJobs, blockedJobKeys)...)
+	out.Users = append(out.Users, filterAllowedSubjectUserAccess(allowedUsers, blockedUserIDs)...)
+	out.Qualifications = append(out.Qualifications, filterAllowedSubjectQualificationAccess(allowedQualifications, blockedQualificationIDs)...)
+
+	return out
+}
+
+func filterAllowedSubjectQualificationAccess(
+	rows []*resourcesaccess.QualificationAccess,
+	blocked map[int64]struct{},
+) []*resourcesaccess.QualificationAccess {
+	out := make([]*resourcesaccess.QualificationAccess, 0, len(rows))
+	for _, row := range rows {
+		if _, ok := blocked[row.GetQualificationId()]; ok {
+			continue
+		}
+		out = append(out, row)
+	}
+
+	return out
+}
+
+func subjectAccessUserShort(row subjectAccessRow) *usershort.UserShort {
+	if !row.SubjectUserID.Valid {
+		return nil
+	}
+
+	user := &usershort.UserShort{
+		UserId:      row.SubjectUserID.Int32,
+		Job:         nullString(row.UserJob),
+		JobGrade:    nullInt32(row.UserJobGrade),
+		Firstname:   nullString(row.UserFirstname),
+		Lastname:    nullString(row.UserLastname),
+		Dateofbirth: nullString(row.UserDateofbirth),
+	}
+	if row.UserPhoneNumber.Valid {
+		user.PhoneNumber = &row.UserPhoneNumber.String
+	}
+
+	return user
+}
+
+func nullString(in sql.NullString) string {
+	if !in.Valid {
+		return ""
+	}
+	return in.String
+}
+
+func nullInt32(in sql.NullInt32) int32 {
+	if !in.Valid {
+		return 0
+	}
+	return in.Int32
+}
+
+func subjectJobAccessKey(job string, minimumGrade int32) string {
+	return fmt.Sprintf("%s:%d", job, minimumGrade)
+}
+
+func filterAllowedSubjectJobAccess(
+	rows []*resourcesaccess.JobAccess,
+	blocked map[string]struct{},
+) []*resourcesaccess.JobAccess {
+	out := make([]*resourcesaccess.JobAccess, 0, len(rows))
+	for _, row := range rows {
+		if _, ok := blocked[subjectJobAccessKey(row.GetJob(), row.GetMinimumGrade())]; ok {
+			continue
+		}
+		out = append(out, row)
+	}
+
+	return out
+}
+
+func filterAllowedSubjectUserAccess(
+	rows []*resourcesaccess.UserAccess,
+	blocked map[int32]struct{},
+) []*resourcesaccess.UserAccess {
+	out := make([]*resourcesaccess.UserAccess, 0, len(rows))
+	for _, row := range rows {
+		if _, ok := blocked[row.GetUserId()]; ok {
+			continue
+		}
+		out = append(out, row)
+	}
+
+	return out
+}

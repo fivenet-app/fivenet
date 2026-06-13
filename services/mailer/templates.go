@@ -30,7 +30,7 @@ func (s *Server) ListTemplates(
 		ctx,
 		req.GetEmailId(),
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -124,7 +124,7 @@ func (s *Server) GetTemplate(
 		ctx,
 		req.GetEmailId(),
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -154,7 +154,7 @@ func (s *Server) CreateOrUpdateTemplate(
 		ctx,
 		req.GetTemplate().GetEmailId(),
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -269,7 +269,7 @@ func (s *Server) DeleteTemplate(
 		ctx,
 		req.GetId(),
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

@@ -57,7 +57,7 @@ func (s *Server) ListQualificationRequests(
 			ctx,
 			req.GetQualificationId(),
 			userInfo,
-			qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
+			int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -70,28 +70,12 @@ func (s *Server) ListQualificationRequests(
 			tQualiRequests.QualificationID.EQ(mysql.Int64(req.GetQualificationId())),
 		)
 	} else {
-		accessExists := mysql.EXISTS(
-			mysql.SELECT(mysql.Int(1)).
-				FROM(tQAccess).
-				WHERE(mysql.AND(
-					tQAccess.TargetID.EQ(tQualiRequests.QualificationID),
-					tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-					tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-
-					mysql.OR(
-						tQAccess.Access.GT_EQ(
-							mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE)),
-						),
-						mysql.AND(
-							tQAccess.Access.GT_EQ(
-								mysql.Int32(
-									int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-								),
-							),
-							tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						),
-					),
-				)),
+		accessExists := mysql.OR(
+			s.access.ACLAccessExistsCondition(tQualiRequests.QualificationID, userInfo, int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE)),
+			mysql.AND(
+				s.access.ACLAccessExistsCondition(tQualiRequests.QualificationID, userInfo, int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
+				tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+			),
 		)
 
 		condition = condition.AND(mysql.AND(
@@ -142,13 +126,6 @@ func (s *Server) ListQualificationRequests(
 			tQualiRequests.
 				INNER_JOIN(tQuali,
 					tQuali.ID.EQ(tQualiRequests.QualificationID),
-				).
-				LEFT_JOIN(tQAccess,
-					mysql.AND(
-						tQAccess.TargetID.EQ(tQuali.ID),
-						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-					),
 				).
 				LEFT_JOIN(tUser,
 					tQualiRequests.UserID.EQ(tUser.ID),
@@ -244,13 +221,6 @@ func (s *Server) ListQualificationRequests(
 				).
 				LEFT_JOIN(tApprover,
 					tQualiRequests.ApproverID.EQ(tApprover.ID),
-				).
-				LEFT_JOIN(tQAccess,
-					mysql.AND(
-						tQAccess.TargetID.EQ(tQuali.ID),
-						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-					),
 				),
 		).
 		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).
@@ -289,7 +259,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		ctx,
 		req.GetRequest().GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -383,7 +353,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			ctx,
 			req.GetRequest().GetQualificationId(),
 			userInfo,
-			qualificationsaccess.AccessLevel_ACCESS_LEVEL_REQUEST,
+			int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_REQUEST),
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -575,7 +545,7 @@ func (s *Server) DeleteQualificationReq(
 		ctx,
 		re.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

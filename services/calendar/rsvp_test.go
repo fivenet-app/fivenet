@@ -10,6 +10,7 @@ import (
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/stretchr/testify/assert"
@@ -145,6 +146,7 @@ func TestCalendarEntryVisibilityIncludesRecurringOverrides(t *testing.T) {
 	stmt := tCalendarEntry.
 		SELECT(mysql.Int(1)).
 		WHERE(calendarEntryVisibility(
+			access.NewCalendarSubjectObjectAccess(nil),
 			&userinfo.UserInfo{UserId: 7, Job: "test", JobGrade: 0},
 			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
 			calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN,

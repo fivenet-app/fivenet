@@ -41,7 +41,7 @@ func TestBirthdayCalendarAccessEntries(t *testing.T) {
 
 	assert.Equal(
 		t,
-		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		int32(calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW),
 		entries[0].GetAccess(),
 		"unexpected view access entry: %+v",
 		entries[0],
@@ -56,7 +56,7 @@ func TestBirthdayCalendarAccessEntries(t *testing.T) {
 
 	assert.Equal(
 		t,
-		calendaraccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(calendaraccess.AccessLevel_ACCESS_LEVEL_EDIT),
 		entries[1].GetAccess(),
 		"unexpected edit access entry: %+v",
 		entries[1],

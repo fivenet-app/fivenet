@@ -45,7 +45,7 @@ func (s *Server) GetComments(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -169,7 +169,7 @@ func (s *Server) PostComment(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetComment().GetDocumentId(),
 		userInfo,
@@ -274,7 +274,7 @@ func (s *Server) EditComment(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetComment().GetDocumentId(),
 		userInfo,
@@ -425,7 +425,7 @@ func (s *Server) DeleteComment(
 		comment.CreatorJob = userInfo.GetJob()
 	}
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		comment.GetDocumentId(),
 		userInfo,
@@ -565,7 +565,7 @@ func (s *Server) notifyUsersNewComment(
 			return err
 		}
 
-		check, err := s.access.CanUserAccessTarget(
+		check, err := s.canUserAccessDocument(
 			ctx,
 			doc.GetId(),
 			userInfo,
@@ -591,7 +591,7 @@ func (s *Server) notifyUsersNewComment(
 			return err
 		}
 
-		check, err := s.access.CanUserAccessTarget(
+		check, err := s.canUserAccessDocument(
 			ctx,
 			doc.GetId(),
 			userInfo,

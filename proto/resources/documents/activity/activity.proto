@@ -5,6 +5,7 @@ package resources.documents.activity;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/access/access.proto";
 import "resources/common/content/diff_activity.proto";
 import "resources/documents/access/access.proto";
 import "resources/timestamp/timestamp.proto";
@@ -111,15 +112,15 @@ message DocAccessUpdated {
 }
 
 message DocAccessJobsDiff {
-  repeated resources.documents.access.DocumentJobAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
-  repeated resources.documents.access.DocumentJobAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
-  repeated resources.documents.access.DocumentJobAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.JobAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.JobAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.JobAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
 }
 
 message DocAccessUsersDiff {
-  repeated resources.documents.access.DocumentUserAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
-  repeated resources.documents.access.DocumentUserAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
-  repeated resources.documents.access.DocumentUserAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.UserAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.UserAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.UserAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
 }
 
 message DocSigningRequested {

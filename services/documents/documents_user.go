@@ -30,26 +30,7 @@ func (s *Server) ListUserDocuments(
 
 	var userCondition mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		userCondition = mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tDAccess).
-				WHERE(mysql.AND(
-					tDAccess.TargetID.EQ(tDocument.ID),
-					mysql.OR(
-						// Direct user access
-						tDAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						// or job + grade access
-						mysql.AND(
-							tDAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tDAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
-					),
-					tDAccess.Access.GT_EQ(
-						mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-					),
-				)),
-		)
+		userCondition = s.subjectAccess.ACLAccessExistsCondition(tDocument.ID, userInfo, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW))
 	} else {
 		userCondition = mysql.Bool(true)
 	}

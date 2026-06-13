@@ -191,6 +191,7 @@ export const useCentrumStore = defineStore(
                 if (!unit.access) {
                     unit.access = {
                         jobs: [],
+                        users: [],
                         qualifications: [],
                     };
                 }

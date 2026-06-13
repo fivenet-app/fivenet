@@ -10,8 +10,8 @@ package documentsstamps
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -80,8 +80,8 @@ type Stamp struct {
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	Name      string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
 	// Parameterized SVG with slots
-	SvgTemplate   string       `protobuf:"bytes,6,opt,name=svg_template,json=svgTemplate,proto3" json:"svg_template,omitempty"`
-	Access        *StampAccess `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
+	SvgTemplate   string         `protobuf:"bytes,6,opt,name=svg_template,json=svgTemplate,proto3" json:"svg_template,omitempty"`
+	Access        *access.Access `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -153,7 +153,7 @@ func (x *Stamp) GetSvgTemplate() string {
 	return ""
 }
 
-func (x *Stamp) GetAccess() *StampAccess {
+func (x *Stamp) GetAccess() *access.Access {
 	if x != nil {
 		return x.Access
 	}
@@ -184,7 +184,7 @@ func (x *Stamp) SetSvgTemplate(v string) {
 	x.SvgTemplate = v
 }
 
-func (x *Stamp) SetAccess(v *StampAccess) {
+func (x *Stamp) SetAccess(v *access.Access) {
 	x.Access = v
 }
 
@@ -231,7 +231,7 @@ type Stamp_builder struct {
 	Name      string
 	// Parameterized SVG with slots
 	SvgTemplate string
-	Access      *StampAccess
+	Access      *access.Access
 }
 
 func (b0 Stamp_builder) Build() *Stamp {
@@ -248,256 +248,11 @@ func (b0 Stamp_builder) Build() *Stamp {
 	return m0
 }
 
-type StampAccess struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Jobs          []*StampJobAccess      `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *StampAccess) Reset() {
-	*x = StampAccess{}
-	mi := &file_resources_documents_stamps_stamp_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *StampAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StampAccess) ProtoMessage() {}
-
-func (x *StampAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_stamps_stamp_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *StampAccess) GetJobs() []*StampJobAccess {
-	if x != nil {
-		return x.Jobs
-	}
-	return nil
-}
-
-func (x *StampAccess) SetJobs(v []*StampJobAccess) {
-	x.Jobs = v
-}
-
-type StampAccess_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Jobs []*StampJobAccess
-}
-
-func (b0 StampAccess_builder) Build() *StampAccess {
-	m0 := &StampAccess{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.Jobs = b.Jobs
-	return m0
-}
-
-type StampJobAccess struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
-	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
-	JobGradeLabel *string                `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
-	Access        StampAccessLevel       `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.stamps.StampAccessLevel" json:"access,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *StampJobAccess) Reset() {
-	*x = StampJobAccess{}
-	mi := &file_resources_documents_stamps_stamp_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *StampJobAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StampJobAccess) ProtoMessage() {}
-
-func (x *StampJobAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_stamps_stamp_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *StampJobAccess) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *StampJobAccess) GetCreatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *StampJobAccess) GetTargetId() int64 {
-	if x != nil {
-		return x.TargetId
-	}
-	return 0
-}
-
-func (x *StampJobAccess) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
-}
-
-func (x *StampJobAccess) GetJobLabel() string {
-	if x != nil && x.JobLabel != nil {
-		return *x.JobLabel
-	}
-	return ""
-}
-
-func (x *StampJobAccess) GetMinimumGrade() int32 {
-	if x != nil {
-		return x.MinimumGrade
-	}
-	return 0
-}
-
-func (x *StampJobAccess) GetJobGradeLabel() string {
-	if x != nil && x.JobGradeLabel != nil {
-		return *x.JobGradeLabel
-	}
-	return ""
-}
-
-func (x *StampJobAccess) GetAccess() StampAccessLevel {
-	if x != nil {
-		return x.Access
-	}
-	return StampAccessLevel_STAMP_ACCESS_LEVEL_UNSPECIFIED
-}
-
-func (x *StampJobAccess) SetId(v int64) {
-	x.Id = v
-}
-
-func (x *StampJobAccess) SetCreatedAt(v *timestamp.Timestamp) {
-	x.CreatedAt = v
-}
-
-func (x *StampJobAccess) SetTargetId(v int64) {
-	x.TargetId = v
-}
-
-func (x *StampJobAccess) SetJob(v string) {
-	x.Job = v
-}
-
-func (x *StampJobAccess) SetJobLabel(v string) {
-	x.JobLabel = &v
-}
-
-func (x *StampJobAccess) SetMinimumGrade(v int32) {
-	x.MinimumGrade = v
-}
-
-func (x *StampJobAccess) SetJobGradeLabel(v string) {
-	x.JobGradeLabel = &v
-}
-
-func (x *StampJobAccess) SetAccess(v StampAccessLevel) {
-	x.Access = v
-}
-
-func (x *StampJobAccess) HasCreatedAt() bool {
-	if x == nil {
-		return false
-	}
-	return x.CreatedAt != nil
-}
-
-func (x *StampJobAccess) HasJobLabel() bool {
-	if x == nil {
-		return false
-	}
-	return x.JobLabel != nil
-}
-
-func (x *StampJobAccess) HasJobGradeLabel() bool {
-	if x == nil {
-		return false
-	}
-	return x.JobGradeLabel != nil
-}
-
-func (x *StampJobAccess) ClearCreatedAt() {
-	x.CreatedAt = nil
-}
-
-func (x *StampJobAccess) ClearJobLabel() {
-	x.JobLabel = nil
-}
-
-func (x *StampJobAccess) ClearJobGradeLabel() {
-	x.JobGradeLabel = nil
-}
-
-type StampJobAccess_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id            int64
-	CreatedAt     *timestamp.Timestamp
-	TargetId      int64
-	Job           string
-	JobLabel      *string
-	MinimumGrade  int32
-	JobGradeLabel *string
-	Access        StampAccessLevel
-}
-
-func (b0 StampJobAccess_builder) Build() *StampJobAccess {
-	m0 := &StampJobAccess{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.Id = b.Id
-	x.CreatedAt = b.CreatedAt
-	x.TargetId = b.TargetId
-	x.Job = b.Job
-	x.JobLabel = b.JobLabel
-	x.MinimumGrade = b.MinimumGrade
-	x.JobGradeLabel = b.JobGradeLabel
-	x.Access = b.Access
-	return m0
-}
-
 var File_resources_documents_stamps_stamp_proto protoreflect.FileDescriptor
 
 const file_resources_documents_stamps_stamp_proto_rawDesc = "" +
 	"\n" +
-	"&resources/documents/stamps/stamp.proto\x12\x1aresources.documents.stamps\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xaf\x02\n" +
+	"&resources/documents/stamps/stamp.proto\x12\x1aresources.documents.stamps\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a#resources/timestamp/timestamp.proto\"\xa0\x02\n" +
 	"\x05Stamp\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12 \n" +
@@ -505,26 +260,10 @@ const file_resources_documents_stamps_stamp_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x1c\n" +
 	"\x04name\x18\x05 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x126\n" +
-	"\fsvg_template\x18\x06 \x01(\tB\x13\xda\xf3\x18\x0f\b\x01\x12\vSanitizeSVGR\vsvgTemplate\x12?\n" +
-	"\x06access\x18\a \x01(\v2'.resources.documents.stamps.StampAccessR\x06accessB\f\n" +
+	"\fsvg_template\x18\x06 \x01(\tB\x13\xda\xf3\x18\x0f\b\x01\x12\vSanitizeSVGR\vsvgTemplate\x120\n" +
+	"\x06access\x18\a \x01(\v2\x18.resources.access.AccessR\x06accessB\f\n" +
 	"\n" +
-	"_job_label\"f\n" +
-	"\vStampAccess\x12W\n" +
-	"\x04jobs\x18\x01 \x03(\v2*.resources.documents.stamps.StampJobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\"\xfe\x02\n" +
-	"\x0eStampJobAccess\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
-	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x10\n" +
-	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x05 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12#\n" +
-	"\rminimum_grade\x18\x06 \x01(\x05R\fminimumGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\a \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12D\n" +
-	"\x06access\x18\b \x01(\x0e2,.resources.documents.stamps.StampAccessLevelR\x06accessB\r\n" +
-	"\v_created_atB\f\n" +
-	"\n" +
-	"_job_labelB\x12\n" +
-	"\x10_job_grade_label*\x91\x01\n" +
+	"_job_label*\x91\x01\n" +
 	"\x10StampAccessLevel\x12\"\n" +
 	"\x1eSTAMP_ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aSTAMP_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1a\n" +
@@ -532,25 +271,21 @@ const file_resources_documents_stamps_stamp_proto_rawDesc = "" +
 	"\x19STAMP_ACCESS_LEVEL_MANAGE\x10\x03B^Z\\github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps;documentsstampsb\x06proto3"
 
 var file_resources_documents_stamps_stamp_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_documents_stamps_stamp_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_resources_documents_stamps_stamp_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_documents_stamps_stamp_proto_goTypes = []any{
 	(StampAccessLevel)(0),       // 0: resources.documents.stamps.StampAccessLevel
 	(*Stamp)(nil),               // 1: resources.documents.stamps.Stamp
-	(*StampAccess)(nil),         // 2: resources.documents.stamps.StampAccess
-	(*StampJobAccess)(nil),      // 3: resources.documents.stamps.StampJobAccess
-	(*timestamp.Timestamp)(nil), // 4: resources.timestamp.Timestamp
+	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
+	(*access.Access)(nil),       // 3: resources.access.Access
 }
 var file_resources_documents_stamps_stamp_proto_depIdxs = []int32{
-	4, // 0: resources.documents.stamps.Stamp.created_at:type_name -> resources.timestamp.Timestamp
-	2, // 1: resources.documents.stamps.Stamp.access:type_name -> resources.documents.stamps.StampAccess
-	3, // 2: resources.documents.stamps.StampAccess.jobs:type_name -> resources.documents.stamps.StampJobAccess
-	4, // 3: resources.documents.stamps.StampJobAccess.created_at:type_name -> resources.timestamp.Timestamp
-	0, // 4: resources.documents.stamps.StampJobAccess.access:type_name -> resources.documents.stamps.StampAccessLevel
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	2, // 0: resources.documents.stamps.Stamp.created_at:type_name -> resources.timestamp.Timestamp
+	3, // 1: resources.documents.stamps.Stamp.access:type_name -> resources.access.Access
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_stamps_stamp_proto_init() }
@@ -559,14 +294,13 @@ func file_resources_documents_stamps_stamp_proto_init() {
 		return
 	}
 	file_resources_documents_stamps_stamp_proto_msgTypes[0].OneofWrappers = []any{}
-	file_resources_documents_stamps_stamp_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_stamps_stamp_proto_rawDesc), len(file_resources_documents_stamps_stamp_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   3,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

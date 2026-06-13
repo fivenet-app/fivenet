@@ -57,22 +57,7 @@ func (s *Server) ListCalendars(
 
 	var accessExists mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		accessExists = mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tCAccess).
-				WHERE(mysql.AND(
-					tCAccess.TargetID.EQ(tCalendar.ID),
-					tCAccess.Access.GT_EQ(mysql.Int32(int32(minAccessLevel))),
-					mysql.OR(
-						tCAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						mysql.AND(
-							tCAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tCAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
-					),
-				)),
-		)
+		accessExists = s.access.ACLAccessExistsCondition(tCalendar.ID, userInfo, int32(minAccessLevel))
 	} else {
 		accessExists = mysql.OR(
 			tCalendar.SystemKind.IS_NULL(),
@@ -281,20 +266,7 @@ func (s *Server) getAccess(
 	ctx context.Context,
 	calendarId int64,
 ) (*calendaraccess.CalendarAccess, error) {
-	jobAccess, err := s.access.Jobs.List(ctx, s.db, calendarId)
-	if err != nil {
-		return nil, err
-	}
-
-	userAccess, err := s.access.Users.List(ctx, s.db, calendarId)
-	if err != nil {
-		return nil, err
-	}
-
-	return &calendaraccess.CalendarAccess{
-		Jobs:  jobAccess,
-		Users: userAccess,
-	}, nil
+	return s.access.ListTargetAccess(ctx, s.db, calendarId, calendarSubjectAccessOptions)
 }
 
 func (s *Server) CreateCalendar(
@@ -423,18 +395,18 @@ func (s *Server) CreateCalendar(
 					TargetId:     req.GetCalendar().GetId(),
 					Job:          userInfo.GetJob(),
 					MinimumGrade: userInfo.GetJobGrade(),
-					Access:       calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+					Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 				},
 			},
 		}
 	}
-	if _, err := s.access.HandleAccessChanges(
+	if _, err := s.access.ReplaceTargetAccess(
 		ctx,
 		tx,
+		s.accessResolver,
 		req.GetCalendar().GetId(),
-		access.GetJobs(),
-		access.GetUsers(),
-		nil,
+		access,
+		calendarSubjectAccessOptions,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -621,18 +593,18 @@ func (s *Server) UpdateCalendar(
 						TargetId:     req.GetCalendar().GetId(),
 						Job:          userInfo.GetJob(),
 						MinimumGrade: userInfo.GetJobGrade(),
-						Access:       calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+						Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 					},
 				},
 			}
 		}
-		if _, err := s.access.HandleAccessChanges(
+		if _, err := s.access.ReplaceTargetAccess(
 			ctx,
 			tx,
+			s.accessResolver,
 			req.GetCalendar().GetId(),
-			access.GetJobs(),
-			access.GetUsers(),
-			nil,
+			access,
+			calendarSubjectAccessOptions,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}

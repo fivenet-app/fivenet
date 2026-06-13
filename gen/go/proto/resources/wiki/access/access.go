@@ -1,13 +1,7 @@
 package wikiaccess
 
-func (x *PageJobAccess) GetJobGrade() int32 {
-	return x.GetMinimumGrade()
-}
+import resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 
-func (x *PageJobAccess) SetJobGrade(grade int32) {
-	x.MinimumGrade = grade
-}
-
-func (x *PageAccess) IsEmpty() bool {
-	return len(x.GetJobs()) == 0 && len(x.GetUsers()) == 0
-}
+type PageAccess = resourcesaccess.Access
+type PageJobAccess = resourcesaccess.JobAccess
+type PageUserAccess = resourcesaccess.UserAccess

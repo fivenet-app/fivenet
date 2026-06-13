@@ -13,7 +13,8 @@ import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { type PageJobAccess, type PageUserAccess, AccessLevel } from '~~/gen/ts/resources/wiki/access/access';
+import type { JobAccess, UserAccess } from '~~/gen/ts/resources/access/access';
+import { AccessLevel } from '~~/gen/ts/resources/wiki/access/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
@@ -96,6 +97,7 @@ const schema = z.object({
     access: z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
         users: userAccessEntries(t).max(maxAccessEntries).default([]),
+        qualifications: qualificationAccessEntries(t).max(0).default([]),
     }),
     files: z.custom<File>().array().max(5).default([]),
 });
@@ -116,6 +118,7 @@ const state = reactive<Schema>({
     access: {
         jobs: [],
         users: [],
+        qualifications: [],
     },
     files: [],
 });
@@ -374,13 +377,13 @@ useYBoolean(detailsYdoc, 'toc', toRef(state.meta, 'toc'), { provider: provider }
 useYBoolean(detailsYdoc, 'draft', toRef(state.meta, 'draft'), { provider: provider });
 
 // Access
-useYArrayFiltered<PageJobAccess>(
+useYArrayFiltered<JobAccess>(
     ydoc.getArray('access_jobs'),
     toRef(state.access, 'jobs'),
     { omit: ['createdAt', 'user'] },
     { provider: provider },
 );
-useYArrayFiltered<PageUserAccess>(
+useYArrayFiltered<UserAccess>(
     ydoc.getArray('access_users'),
     toRef(state.access, 'users'),
     {

@@ -16,6 +16,7 @@ import (
 	wikiactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
 	pbwiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki"
 	permswiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -29,6 +30,15 @@ import (
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
+var wikiPageSubjectAccessOptions = access.SubjectAccessOptions{
+	BlockedAccess: int32(wikiaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
+	DeniedAccessLevels: []int32{
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_ACCESS),
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+	},
+}
+
 func (s *Server) ListPages(
 	ctx context.Context,
 	req *pbwiki.ListPagesRequest,
@@ -36,7 +46,6 @@ func (s *Server) ListPages(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tPageShort := table.FivenetWikiPages.AS("page_short")
-	tPAccess := table.FivenetWikiPagesAccess.AS("access")
 	tJobProps := table.FivenetJobProps
 
 	condition := mysql.Bool(true)
@@ -96,27 +105,7 @@ func (s *Server) ListPages(
 						subPage.Job.EQ(mysql.String(userInfo.GetJob())),
 						subPage.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 					),
-					mysql.EXISTS(
-						mysql.
-							SELECT(mysql.Int(1)).
-							FROM(tPAccess).
-							WHERE(mysql.AND(
-								tPAccess.TargetID.EQ(subPage.ID),
-								tPAccess.Access.IS_NOT_NULL(),
-								tPAccess.Access.GT_EQ(
-									mysql.Int32(int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-								),
-								mysql.OR(
-									tPAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-									mysql.AND(
-										tPAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-										tPAccess.MinimumGrade.LT_EQ(
-											mysql.Int32(userInfo.GetJobGrade()),
-										),
-									),
-								),
-							)),
-					),
+					s.access.ACLAccessExistsCondition(subPage.ID, userInfo, int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 				),
 			),
 			).AsTable("ranked_pages")
@@ -128,26 +117,7 @@ func (s *Server) ListPages(
 				WHERE(mysql.RawBool("ranked_pages.rn = 1")),
 		))
 	} else if !userInfo.GetSuperuser() {
-		accessExists := mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tPAccess).
-				WHERE(mysql.AND(
-					tPAccess.TargetID.EQ(tPageShort.ID),
-					tPAccess.Access.IS_NOT_NULL(),
-					tPAccess.Access.GT_EQ(
-						mysql.Int32(int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-					),
-
-					mysql.OR(
-						tPAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						mysql.AND(
-							tPAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tPAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
-					),
-				)),
-		)
+		accessExists := s.access.ACLAccessExistsCondition(tPageShort.ID, userInfo, int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW))
 
 		condition = condition.AND(mysql.AND(
 			tPageShort.DeletedAt.IS_NULL(),
@@ -254,7 +224,7 @@ func (s *Server) GetPage(
 		ctx,
 		req.GetId(),
 		userInfo,
-		wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -303,30 +273,22 @@ func (s *Server) getPageAccess(
 	userInfo *userinfo.UserInfo,
 	pageId int64,
 ) (*wikiaccess.PageAccess, error) {
-	jobsAccess, err := s.access.Jobs.List(ctx, s.db, pageId)
+	access, err := s.access.ListTargetAccess(ctx, s.db, pageId, wikiPageSubjectAccessOptions)
 	if err != nil {
 		return nil, errorswiki.ErrFailedQuery
 	}
-
-	usersAccess, err := s.access.Users.List(ctx, s.db, pageId)
-	if err != nil {
-		return nil, errorswiki.ErrFailedQuery
-	}
-	for i := range jobsAccess {
-		s.enricher.EnrichJobInfo(jobsAccess[i])
+	for i := range access.GetJobs() {
+		s.enricher.EnrichJobInfo(access.GetJobs()[i])
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range usersAccess {
-		if usersAccess[i].GetUser() != nil {
-			jobInfoFn(usersAccess[i].GetUser())
+	for i := range access.GetUsers() {
+		if access.GetUsers()[i].GetUser() != nil {
+			jobInfoFn(access.GetUsers()[i].GetUser())
 		}
 	}
 
-	return &wikiaccess.PageAccess{
-		Jobs:  jobsAccess,
-		Users: usersAccess,
-	}, nil
+	return access, nil
 }
 
 func (s *Server) getPage(
@@ -437,7 +399,7 @@ func (s *Server) CreatePage(
 			ctx,
 			req.GetParentId(),
 			userInfo,
-			wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+			int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -454,7 +416,7 @@ func (s *Server) CreatePage(
 			{
 				Job:          userInfo.GetJob(),
 				MinimumGrade: userInfo.GetJobGrade(),
-				Access:       wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+				Access:       int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 			},
 		},
 	}
@@ -466,7 +428,7 @@ func (s *Server) CreatePage(
 			pageAccess.Jobs = append(pageAccess.Jobs, &wikiaccess.PageJobAccess{
 				Job:          job.GetName(),
 				MinimumGrade: highestGrade.GetGrade(),
-				Access:       wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+				Access:       int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 			})
 		}
 	}
@@ -580,7 +542,7 @@ func (s *Server) UpdatePage(
 		ctx,
 		req.GetPage().GetId(),
 		userInfo,
-		wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -606,7 +568,7 @@ func (s *Server) UpdatePage(
 			ctx,
 			req.GetPage().GetParentId(),
 			userInfo,
-			wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+			int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -664,7 +626,7 @@ func (s *Server) UpdatePage(
 		req.Page.Access.Jobs = append(req.Page.Access.Jobs, &wikiaccess.PageJobAccess{
 			Job:          userInfo.GetJob(),
 			MinimumGrade: userInfo.GetJobGrade(),
-			Access:       wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+			Access:       int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 		})
 	}
 
@@ -850,7 +812,7 @@ func (s *Server) MovePage(
 		ctx,
 		req.GetPageId(),
 		userInfo,
-		wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -933,16 +895,16 @@ func (s *Server) handlePageAccessChange(
 	tx qrm.DB,
 	pageId int64,
 	userInfo *userinfo.UserInfo,
-	access *wikiaccess.PageAccess,
+	pageAccess *wikiaccess.PageAccess,
 	addActivity bool,
 ) error {
-	changes, err := s.access.HandleAccessChanges(
+	changes, err := s.access.ReplaceTargetAccess(
 		ctx,
 		tx,
+		s.accessResolver,
 		pageId,
-		access.GetJobs(),
-		access.GetUsers(),
-		nil,
+		pageAccess,
+		wikiPageSubjectAccessOptions,
 	)
 	if err != nil {
 		if dbutils.IsDuplicateError(err) {
@@ -993,7 +955,7 @@ func (s *Server) DeletePage(
 		ctx,
 		req.GetId(),
 		userInfo,
-		wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)

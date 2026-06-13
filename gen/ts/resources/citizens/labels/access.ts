@@ -11,47 +11,15 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { JobAccess } from "../../access/access";
 /**
  * @generated from protobuf message resources.citizens.labels.LabelAccess
  */
 export interface LabelAccess {
     /**
-     * @generated from protobuf field: repeated resources.citizens.labels.JobAccess jobs = 1
+     * @generated from protobuf field: repeated resources.access.JobAccess jobs = 1
      */
     jobs: JobAccess[];
-}
-/**
- * @generated from protobuf message resources.citizens.labels.JobAccess
- */
-export interface JobAccess {
-    /**
-     * @generated from protobuf field: int64 id = 1
-     */
-    id: number;
-    /**
-     * @generated from protobuf field: int64 target_id = 2
-     */
-    targetId: number;
-    /**
-     * @generated from protobuf field: string job = 3
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: optional string job_label = 4
-     */
-    jobLabel?: string;
-    /**
-     * @generated from protobuf field: int32 minimum_grade = 5
-     */
-    minimumGrade: number;
-    /**
-     * @generated from protobuf field: optional string job_grade_label = 6
-     */
-    jobGradeLabel?: string;
-    /**
-     * @generated from protobuf field: resources.citizens.labels.AccessLevel access = 7
-     */
-    access: AccessLevel;
 }
 /**
  * @generated from protobuf enum resources.citizens.labels.AccessLevel
@@ -78,7 +46,7 @@ export enum AccessLevel {
 class LabelAccess$Type extends MessageType<LabelAccess> {
     constructor() {
         super("resources.citizens.labels.LabelAccess", [
-            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"job_access\"" } }
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<LabelAccess>): LabelAccess {
@@ -93,7 +61,7 @@ class LabelAccess$Type extends MessageType<LabelAccess> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.citizens.labels.JobAccess jobs */ 1:
+                case /* repeated resources.access.JobAccess jobs */ 1:
                     message.jobs.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -108,7 +76,7 @@ class LabelAccess$Type extends MessageType<LabelAccess> {
         return message;
     }
     internalBinaryWrite(message: LabelAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.citizens.labels.JobAccess jobs = 1; */
+        /* repeated resources.access.JobAccess jobs = 1; */
         for (let i = 0; i < message.jobs.length; i++)
             JobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -121,96 +89,3 @@ class LabelAccess$Type extends MessageType<LabelAccess> {
  * @generated MessageType for protobuf message resources.citizens.labels.LabelAccess
  */
 export const LabelAccess = new LabelAccess$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class JobAccess$Type extends MessageType<JobAccess> {
-    constructor() {
-        super("resources.citizens.labels.JobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\"" } },
-            { no: 2, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 5, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 6, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 7, name: "access", kind: "enum", T: () => ["resources.citizens.labels.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<JobAccess>): JobAccess {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        message.targetId = 0;
-        message.job = "";
-        message.minimumGrade = 0;
-        message.access = 0;
-        if (value !== undefined)
-            reflectionMergePartial<JobAccess>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobAccess): JobAccess {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 id */ 1:
-                    message.id = reader.int64().toNumber();
-                    break;
-                case /* int64 target_id */ 2:
-                    message.targetId = reader.int64().toNumber();
-                    break;
-                case /* string job */ 3:
-                    message.job = reader.string();
-                    break;
-                case /* optional string job_label */ 4:
-                    message.jobLabel = reader.string();
-                    break;
-                case /* int32 minimum_grade */ 5:
-                    message.minimumGrade = reader.int32();
-                    break;
-                case /* optional string job_grade_label */ 6:
-                    message.jobGradeLabel = reader.string();
-                    break;
-                case /* resources.citizens.labels.AccessLevel access */ 7:
-                    message.access = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: JobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).int64(message.id);
-        /* int64 target_id = 2; */
-        if (message.targetId !== 0)
-            writer.tag(2, WireType.Varint).int64(message.targetId);
-        /* string job = 3; */
-        if (message.job !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.job);
-        /* optional string job_label = 4; */
-        if (message.jobLabel !== undefined)
-            writer.tag(4, WireType.LengthDelimited).string(message.jobLabel);
-        /* int32 minimum_grade = 5; */
-        if (message.minimumGrade !== 0)
-            writer.tag(5, WireType.Varint).int32(message.minimumGrade);
-        /* optional string job_grade_label = 6; */
-        if (message.jobGradeLabel !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.jobGradeLabel);
-        /* resources.citizens.labels.AccessLevel access = 7; */
-        if (message.access !== 0)
-            writer.tag(7, WireType.Varint).int32(message.access);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.citizens.labels.JobAccess
- */
-export const JobAccess = new JobAccess$Type();

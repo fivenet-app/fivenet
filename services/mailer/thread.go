@@ -43,7 +43,7 @@ func (s *Server) ListThreads(
 	emailIds, err := s.access.CanUserAccessTargetIDs(
 		ctx,
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
 		req.GetEmailIds()...)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -283,7 +283,7 @@ func (s *Server) GetThread(
 		userInfo,
 		req.GetThreadId(),
 		req.GetEmailId(),
-		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
 	); err != nil {
 		return nil, err
 	}
@@ -310,7 +310,7 @@ func (s *Server) CreateThread(
 		ctx,
 		req.GetThread().GetCreatorEmailId(),
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_WRITE,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_WRITE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

@@ -10,7 +10,7 @@ package maileremails
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
-	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	settings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
@@ -389,7 +389,7 @@ var File_resources_mailer_emails_email_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_emails_email_proto_rawDesc = "" +
 	"\n" +
-	"#resources/mailer/emails/email.proto\x12\x17resources.mailer.emails\x1a!codegen/sanitizer/sanitizer.proto\x1a$resources/mailer/access/access.proto\x1a(resources/mailer/settings/settings.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\xe7\x05\n" +
+	"#resources/mailer/emails/email.proto\x12\x17resources.mailer.emails\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a(resources/mailer/settings/settings.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\xe0\x05\n" +
 	"\x05Email\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -405,8 +405,8 @@ const file_resources_mailer_emails_email_proto_rawDesc = "" +
 	"\x05email\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05email\x12H\n" +
 	"\remail_changed\x18\n" +
 	" \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\femailChanged\x88\x01\x01\x12#\n" +
-	"\x05label\x18\v \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x05label\x88\x01\x01\x127\n" +
-	"\x06access\x18\f \x01(\v2\x1f.resources.mailer.access.AccessR\x06access\x12I\n" +
+	"\x05label\x18\v \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x05label\x88\x01\x01\x120\n" +
+	"\x06access\x18\f \x01(\v2\x18.resources.access.AccessR\x06access\x12I\n" +
 	"\bsettings\x18\r \x01(\v2(.resources.mailer.settings.EmailSettingsH\aR\bsettings\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x06\n" +
@@ -423,7 +423,7 @@ var file_resources_mailer_emails_email_proto_goTypes = []any{
 	(*Email)(nil),                  // 0: resources.mailer.emails.Email
 	(*timestamp.Timestamp)(nil),    // 1: resources.timestamp.Timestamp
 	(*short.UserShort)(nil),        // 2: resources.users.short.UserShort
-	(*access.Access)(nil),          // 3: resources.mailer.access.Access
+	(*access.Access)(nil),          // 3: resources.access.Access
 	(*settings.EmailSettings)(nil), // 4: resources.mailer.settings.EmailSettings
 }
 var file_resources_mailer_emails_email_proto_depIdxs = []int32{
@@ -432,7 +432,7 @@ var file_resources_mailer_emails_email_proto_depIdxs = []int32{
 	1, // 2: resources.mailer.emails.Email.deleted_at:type_name -> resources.timestamp.Timestamp
 	2, // 3: resources.mailer.emails.Email.user:type_name -> resources.users.short.UserShort
 	1, // 4: resources.mailer.emails.Email.email_changed:type_name -> resources.timestamp.Timestamp
-	3, // 5: resources.mailer.emails.Email.access:type_name -> resources.mailer.access.Access
+	3, // 5: resources.mailer.emails.Email.access:type_name -> resources.access.Access
 	4, // 6: resources.mailer.emails.Email.settings:type_name -> resources.mailer.settings.EmailSettings
 	7, // [7:7] is the sub-list for method output_type
 	7, // [7:7] is the sub-list for method input_type

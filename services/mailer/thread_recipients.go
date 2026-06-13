@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
@@ -21,7 +20,7 @@ func (s *Server) checkIfEmailPartOfThread(
 	userInfo *userinfo.UserInfo,
 	threadId int64,
 	emailId int64,
-	accessLevel maileraccess.AccessLevel,
+	accessLevel int32,
 ) error {
 	check, err := s.access.CanUserAccessTarget(ctx, emailId, userInfo, accessLevel)
 	if err != nil {

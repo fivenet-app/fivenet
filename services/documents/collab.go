@@ -33,7 +33,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", docId})
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		docId,
 		userInfo,

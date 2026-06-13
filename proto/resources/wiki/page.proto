@@ -4,6 +4,7 @@ package resources.wiki;
 
 import "buf/validate/validate.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/access/access.proto";
 import "resources/common/content/content.proto";
 import "resources/file/file.proto";
 import "resources/timestamp/timestamp.proto";
@@ -26,7 +27,7 @@ message Page {
   optional int64 parent_id = 4;
   PageMeta meta = 5 [(buf.validate.field).required = true];
   resources.common.content.Content content = 6;
-  resources.wiki.access.PageAccess access = 7 [(buf.validate.field).required = true];
+  resources.access.Access access = 7 [(buf.validate.field).required = true];
   repeated resources.file.File files = 8 [
     (tagger.tags) = "alias:\"files\"",
     (buf.validate.field).repeated.max_items = 5

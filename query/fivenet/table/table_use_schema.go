@@ -12,6 +12,10 @@ package table
 func UseSchema(schema string) {
 	FivenetAccounts = FivenetAccounts.FromSchema(schema)
 	FivenetAccountsOauth2 = FivenetAccountsOauth2.FromSchema(schema)
+	FivenetACLSubjectJobGradeScopes = FivenetACLSubjectJobGradeScopes.FromSchema(schema)
+	FivenetACLSubjectQualifications = FivenetACLSubjectQualifications.FromSchema(schema)
+	FivenetACLSubjectUsers = FivenetACLSubjectUsers.FromSchema(schema)
+	FivenetACLSubjects = FivenetACLSubjects.FromSchema(schema)
 	FivenetAuditLog = FivenetAuditLog.FromSchema(schema)
 	FivenetCalendar = FivenetCalendar.FromSchema(schema)
 	FivenetCalendarAccess = FivenetCalendarAccess.FromSchema(schema)

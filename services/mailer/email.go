@@ -11,11 +11,11 @@ import (
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
 	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
 	permsmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -34,12 +34,17 @@ const (
 var (
 	tEmails = table.FivenetMailerEmails.AS("email")
 
-	tEmailsAccess = table.FivenetMailerEmailsAccess
-
-	tQualificationsResults = table.FivenetQualificationsResults
-
 	tUserProps = table.FivenetUserProps
 )
+
+var mailerSubjectAccessOptions = access.SubjectAccessOptions{
+	BlockedAccess: int32(maileraccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
+	DeniedAccessLevels: []int32{
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_WRITE),
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
+	},
+}
 
 func (s *Server) ListEmails(
 	ctx context.Context,
@@ -50,28 +55,13 @@ func (s *Server) ListEmails(
 	condition := mysql.Bool(true)
 
 	if !userInfo.GetSuperuser() || (userInfo.GetSuperuser() && req.All != nil && !req.GetAll()) {
+		acl := s.access.ACLAccessExistsCondition(tEmails.ID, userInfo, int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ))
 		// Include deactivated e-mails
 		condition = condition.AND(mysql.AND(
 			tEmails.DeletedAt.IS_NULL(),
 			mysql.OR(
 				tEmails.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-				mysql.OR(
-					tEmailsAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-					mysql.AND(
-						tEmailsAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-						tEmailsAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-					),
-					mysql.AND(
-						tEmailsAccess.QualificationID.IS_NOT_NULL(),
-						tQualificationsResults.DeletedAt.IS_NULL(),
-						tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID),
-						tQualificationsResults.Status.EQ(
-							mysql.Int32(
-								int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
-							),
-						),
-					),
-				),
+				acl,
 			),
 		))
 	}
@@ -80,23 +70,7 @@ func (s *Server) ListEmails(
 		SELECT(
 			mysql.COUNT(mysql.DISTINCT(tEmails.ID)).AS("data_count.total"),
 		).
-		FROM(
-			tEmails.
-				LEFT_JOIN(tEmailsAccess,
-					mysql.AND(
-						tEmailsAccess.TargetID.EQ(tEmails.ID),
-						tEmailsAccess.Access.GT_EQ(
-							mysql.Int32(int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ)),
-						),
-					),
-				).
-				LEFT_JOIN(tQualificationsResults,
-					mysql.AND(
-						tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID),
-						tQualificationsResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-					),
-				),
-		).
+		FROM(tEmails).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -156,63 +130,7 @@ func ListUserEmails(
 	}
 
 	if !userInfo.GetSuperuser() {
-		access := int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ)
-		// Access predicates via EXISTS (no joins)
-		userAccessExists := mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tEmailsAccess).
-				WHERE(mysql.AND(
-					tEmailsAccess.TargetID.EQ(tEmails.ID),
-					tEmailsAccess.Access.GT_EQ(mysql.Int32(access)),
-					tEmailsAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-				)),
-		)
-
-		jobAccessExists := mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tEmailsAccess).
-				WHERE(mysql.AND(
-					tEmailsAccess.TargetID.EQ(tEmails.ID),
-					tEmailsAccess.Access.GT_EQ(mysql.Int32(access)),
-					tEmailsAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-					tEmailsAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-				)),
-		)
-
-		// Qualification-based access: there exists an access row with a QualificationID
-		// for this email AND the user has a successful (non-deleted) result for it.
-		ea := tEmailsAccess.AS("ea")
-		qr := tQualificationsResults.AS("qr")
-
-		qualAccessExists := mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tEmailsAccess.AS("ea")).
-				WHERE(mysql.AND(
-					ea.TargetID.EQ(tEmails.ID),
-					ea.Access.GT_EQ(mysql.Int32(access)),
-					ea.QualificationID.IS_NOT_NULL(),
-					mysql.EXISTS(
-						mysql.
-							SELECT(mysql.Int(1)).
-							FROM(tQualificationsResults.AS("qr")).
-							WHERE(mysql.AND(
-								qr.QualificationID.EQ(ea.QualificationID),
-								qr.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-								qr.DeletedAt.IS_NULL(),
-								qr.Status.EQ(
-									mysql.Int32(
-										int32(
-											qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
-										),
-									),
-								),
-							)),
-					),
-				)),
-		)
+		acl := access.NewMailerEmailsSubjectObjectAccess(nil).ACLAccessExistsCondition(tEmails.ID, userInfo, int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ))
 
 		condition = condition.AND(
 			baseCondition.AND(
@@ -220,9 +138,7 @@ func ListUserEmails(
 					// owner may always see their email
 					tEmails.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 					// access by explicit user, by job+grade, or by qualification
-					userAccessExists,
-					jobAccessExists,
-					qualAccessExists,
+					acl,
 				),
 			),
 		)
@@ -343,7 +259,7 @@ func (s *Server) GetEmail(
 		ctx,
 		req.GetId(),
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -365,27 +281,7 @@ func (s *Server) GetEmail(
 }
 
 func (s *Server) getEmailAccess(ctx context.Context, emailId int64) (*maileraccess.Access, error) {
-	access := &maileraccess.Access{}
-
-	jobsAccess, err := s.access.Jobs.List(ctx, s.db, emailId)
-	if err != nil {
-		return nil, err
-	}
-	access.Jobs = jobsAccess
-
-	usersAccess, err := s.access.Users.List(ctx, s.db, emailId)
-	if err != nil {
-		return nil, err
-	}
-	access.Users = usersAccess
-
-	qualiAccess, err := s.access.Qualifications.List(ctx, s.db, emailId)
-	if err != nil {
-		return nil, err
-	}
-	access.Qualifications = qualiAccess
-
-	return access, nil
+	return s.access.ListTargetAccess(ctx, s.db, emailId, mailerSubjectAccessOptions)
 }
 
 func (s *Server) CreateOrUpdateEmail(
@@ -461,7 +357,7 @@ func (s *Server) CreateOrUpdateEmail(
 			ctx,
 			req.GetEmail().GetId(),
 			userInfo,
-			maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+			int32(maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -563,13 +459,13 @@ func (s *Server) CreateOrUpdateEmail(
 			return nil, errorsmailer.ErrEmailAccessRequired
 		}
 
-		if _, err := s.access.HandleAccessChanges(
+		if _, err := s.access.ReplaceTargetAccess(
 			ctx,
 			tx,
+			s.accessResolver,
 			req.GetEmail().GetId(),
-			req.GetEmail().GetAccess().GetJobs(),
-			req.GetEmail().GetAccess().GetUsers(),
-			req.GetEmail().GetAccess().GetQualifications(),
+			req.GetEmail().GetAccess(),
+			mailerSubjectAccessOptions,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -668,7 +564,7 @@ func (s *Server) DeleteEmail(
 		ctx,
 		req.GetId(),
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

@@ -61,6 +61,7 @@ const schema = z.object({
     contentAccess: z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
         users: userAccessEntries(t).max(maxAccessEntries).default([]),
+        qualifications: qualificationAccessEntries(t).max(0).default([]),
     }),
     workflow: zWorkflow,
     approval: z
@@ -132,6 +133,7 @@ const state = reactive<Schema>({
     contentAccess: {
         jobs: [],
         users: [],
+        qualifications: [],
     },
     workflow: {
         autoClose: {
@@ -343,6 +345,7 @@ function setValuesFromTemplate(tpl: Template): void {
     state.contentAccess = tpl.contentAccess ?? {
         jobs: [],
         users: [],
+        qualifications: [],
     };
 
     const autoCloseDuration = fromDuration(tpl.workflow?.autoCloseSettings?.duration);

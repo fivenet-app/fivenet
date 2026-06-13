@@ -12,10 +12,10 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	documents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
-	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	data "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/data"
 	pins "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/pins"
@@ -500,7 +500,7 @@ func (b0 GetDocumentRequest_builder) Build() *GetDocumentRequest {
 type GetDocumentResponse struct {
 	state               protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Document *documents.Document    `protobuf:"bytes,1,opt,name=document,proto3"`
-	xxx_hidden_Access   *access.DocumentAccess `protobuf:"bytes,2,opt,name=access,proto3"`
+	xxx_hidden_Access   *access.Access         `protobuf:"bytes,2,opt,name=access,proto3"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -537,7 +537,7 @@ func (x *GetDocumentResponse) GetDocument() *documents.Document {
 	return nil
 }
 
-func (x *GetDocumentResponse) GetAccess() *access.DocumentAccess {
+func (x *GetDocumentResponse) GetAccess() *access.Access {
 	if x != nil {
 		return x.xxx_hidden_Access
 	}
@@ -548,7 +548,7 @@ func (x *GetDocumentResponse) SetDocument(v *documents.Document) {
 	x.xxx_hidden_Document = v
 }
 
-func (x *GetDocumentResponse) SetAccess(v *access.DocumentAccess) {
+func (x *GetDocumentResponse) SetAccess(v *access.Access) {
 	x.xxx_hidden_Access = v
 }
 
@@ -578,7 +578,7 @@ type GetDocumentResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Document *documents.Document
-	Access   *access.DocumentAccess
+	Access   *access.Access
 }
 
 func (b0 GetDocumentResponse_builder) Build() *GetDocumentResponse {
@@ -1901,7 +1901,7 @@ type UpdateDocumentRequest struct {
 	xxx_hidden_ContentType content.ContentType     `protobuf:"varint,5,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType"`
 	xxx_hidden_Data        *data.DocumentData      `protobuf:"bytes,6,opt,name=data,proto3,oneof"`
 	xxx_hidden_Meta        *documents.DocumentMeta `protobuf:"bytes,7,opt,name=meta,proto3"`
-	xxx_hidden_Access      *access.DocumentAccess  `protobuf:"bytes,11,opt,name=access,proto3,oneof"`
+	xxx_hidden_Access      *access.Access          `protobuf:"bytes,11,opt,name=access,proto3,oneof"`
 	xxx_hidden_Files       *[]*file.File           `protobuf:"bytes,12,rep,name=files,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
@@ -1983,7 +1983,7 @@ func (x *UpdateDocumentRequest) GetMeta() *documents.DocumentMeta {
 	return nil
 }
 
-func (x *UpdateDocumentRequest) GetAccess() *access.DocumentAccess {
+func (x *UpdateDocumentRequest) GetAccess() *access.Access {
 	if x != nil {
 		return x.xxx_hidden_Access
 	}
@@ -2028,7 +2028,7 @@ func (x *UpdateDocumentRequest) SetMeta(v *documents.DocumentMeta) {
 	x.xxx_hidden_Meta = v
 }
 
-func (x *UpdateDocumentRequest) SetAccess(v *access.DocumentAccess) {
+func (x *UpdateDocumentRequest) SetAccess(v *access.Access) {
 	x.xxx_hidden_Access = v
 }
 
@@ -2102,7 +2102,7 @@ type UpdateDocumentRequest_builder struct {
 	ContentType content.ContentType
 	Data        *data.DocumentData
 	Meta        *documents.DocumentMeta
-	Access      *access.DocumentAccess
+	Access      *access.Access
 	Files       []*file.File
 }
 
@@ -3043,7 +3043,7 @@ func (b0 GetDocumentAccessRequest_builder) Build() *GetDocumentAccessRequest {
 
 type GetDocumentAccessResponse struct {
 	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Access *access.DocumentAccess `protobuf:"bytes,1,opt,name=access,proto3"`
+	xxx_hidden_Access *access.Access         `protobuf:"bytes,1,opt,name=access,proto3"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -3073,14 +3073,14 @@ func (x *GetDocumentAccessResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *GetDocumentAccessResponse) GetAccess() *access.DocumentAccess {
+func (x *GetDocumentAccessResponse) GetAccess() *access.Access {
 	if x != nil {
 		return x.xxx_hidden_Access
 	}
 	return nil
 }
 
-func (x *GetDocumentAccessResponse) SetAccess(v *access.DocumentAccess) {
+func (x *GetDocumentAccessResponse) SetAccess(v *access.Access) {
 	x.xxx_hidden_Access = v
 }
 
@@ -3098,7 +3098,7 @@ func (x *GetDocumentAccessResponse) ClearAccess() {
 type GetDocumentAccessResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Access *access.DocumentAccess
+	Access *access.Access
 }
 
 func (b0 GetDocumentAccessResponse_builder) Build() *GetDocumentAccessResponse {
@@ -3112,7 +3112,7 @@ func (b0 GetDocumentAccessResponse_builder) Build() *GetDocumentAccessResponse {
 type SetDocumentAccessRequest struct {
 	state                 protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3"`
-	xxx_hidden_Access     *access.DocumentAccess `protobuf:"bytes,2,opt,name=access,proto3"`
+	xxx_hidden_Access     *access.Access         `protobuf:"bytes,2,opt,name=access,proto3"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -3149,7 +3149,7 @@ func (x *SetDocumentAccessRequest) GetDocumentId() int64 {
 	return 0
 }
 
-func (x *SetDocumentAccessRequest) GetAccess() *access.DocumentAccess {
+func (x *SetDocumentAccessRequest) GetAccess() *access.Access {
 	if x != nil {
 		return x.xxx_hidden_Access
 	}
@@ -3160,7 +3160,7 @@ func (x *SetDocumentAccessRequest) SetDocumentId(v int64) {
 	x.xxx_hidden_DocumentId = v
 }
 
-func (x *SetDocumentAccessRequest) SetAccess(v *access.DocumentAccess) {
+func (x *SetDocumentAccessRequest) SetAccess(v *access.Access) {
 	x.xxx_hidden_Access = v
 }
 
@@ -3179,7 +3179,7 @@ type SetDocumentAccessRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	DocumentId int64
-	Access     *access.DocumentAccess
+	Access     *access.Access
 }
 
 func (b0 SetDocumentAccessRequest_builder) Build() *SetDocumentAccessRequest {
@@ -4038,7 +4038,7 @@ var File_services_documents_documents_proto protoreflect.FileDescriptor
 
 const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"\"services/documents/documents.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a'resources/documents/access/access.proto\x1a+resources/documents/activity/activity.proto\x1a#resources/documents/data/data.proto\x1a#resources/documents/documents.proto\x1a#resources/documents/pins/pins.proto\x1a/resources/documents/references/references.proto\x1a-resources/documents/relations/relations.proto\x1a+resources/documents/requests/requests.proto\x1a-resources/documents/templates/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x92\x04\n" +
+	"\"services/documents/documents.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a+resources/documents/activity/activity.proto\x1a#resources/documents/data/data.proto\x1a#resources/documents/documents.proto\x1a#resources/documents/pins/pins.proto\x1a/resources/documents/references/references.proto\x1a-resources/documents/relations/relations.proto\x1a+resources/documents/requests/requests.proto\x1a-resources/documents/templates/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x92\x04\n" +
 	"\x14ListDocumentsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -4071,10 +4071,10 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"documentId\x12 \n" +
 	"\tinfo_only\x18\x02 \x01(\bH\x00R\binfoOnly\x88\x01\x01B\f\n" +
 	"\n" +
-	"_info_only\"\x94\x01\n" +
+	"_info_only\"\x82\x01\n" +
 	"\x13GetDocumentResponse\x129\n" +
-	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\x12B\n" +
-	"\x06access\x18\x02 \x01(\v2*.resources.documents.access.DocumentAccessR\x06access\"?\n" +
+	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\x120\n" +
+	"\x06access\x18\x02 \x01(\v2\x18.resources.access.AccessR\x06access\"?\n" +
 	"\x1cGetDocumentReferencesRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"\x8a\x01\n" +
@@ -4129,7 +4129,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\f_template_idB\x10\n" +
 	"\x0e_template_data\"(\n" +
 	"\x16CreateDocumentResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xcd\x04\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xbb\x04\n" +
 	"\x15UpdateDocumentRequest\x120\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\n" +
@@ -4140,8 +4140,8 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\acontent\x18\x04 \x01(\v2!.resources.common.content.ContentR\acontent\x12H\n" +
 	"\fcontent_type\x18\x05 \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12?\n" +
 	"\x04data\x18\x06 \x01(\v2&.resources.documents.data.DocumentDataH\x01R\x04data\x88\x01\x01\x125\n" +
-	"\x04meta\x18\a \x01(\v2!.resources.documents.DocumentMetaR\x04meta\x12G\n" +
-	"\x06access\x18\v \x01(\v2*.resources.documents.access.DocumentAccessH\x02R\x06access\x88\x01\x01\x12>\n" +
+	"\x04meta\x18\a \x01(\v2!.resources.documents.DocumentMetaR\x04meta\x125\n" +
+	"\x06access\x18\v \x01(\v2\x18.resources.access.AccessH\x02R\x06access\x88\x01\x01\x12>\n" +
 	"\x05files\x18\f \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05filesB\x0e\n" +
 	"\f_category_idB\a\n" +
 	"\x05_dataB\t\n" +
@@ -4197,13 +4197,13 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x19DeleteDocumentReqResponse\";\n" +
 	"\x18GetDocumentAccessRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\"_\n" +
-	"\x19GetDocumentAccessResponse\x12B\n" +
-	"\x06access\x18\x01 \x01(\v2*.resources.documents.access.DocumentAccessR\x06access\"\x7f\n" +
+	"documentId\"M\n" +
+	"\x19GetDocumentAccessResponse\x120\n" +
+	"\x06access\x18\x01 \x01(\v2\x18.resources.access.AccessR\x06access\"m\n" +
 	"\x18SetDocumentAccessRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12B\n" +
-	"\x06access\x18\x02 \x01(\v2*.resources.documents.access.DocumentAccessR\x06access\"\x1b\n" +
+	"documentId\x120\n" +
+	"\x06access\x18\x02 \x01(\v2\x18.resources.access.AccessR\x06access\"\x1b\n" +
 	"\x19SetDocumentAccessResponse\"\xf8\x02\n" +
 	"\x18ListUserDocumentsRequest\x12L\n" +
 	"\n" +
@@ -4346,7 +4346,7 @@ var file_services_documents_documents_proto_goTypes = []any{
 	(*database.PaginationResponse)(nil),     // 51: resources.common.database.PaginationResponse
 	(*documents.DocumentShort)(nil),         // 52: resources.documents.DocumentShort
 	(*documents.Document)(nil),              // 53: resources.documents.Document
-	(*access.DocumentAccess)(nil),           // 54: resources.documents.access.DocumentAccess
+	(*access.Access)(nil),                   // 54: resources.access.Access
 	(*references.DocumentReference)(nil),    // 55: resources.documents.references.DocumentReference
 	(*relations.DocumentRelation)(nil),      // 56: resources.documents.relations.DocumentRelation
 	(content.ContentType)(0),                // 57: resources.common.content.ContentType
@@ -4372,7 +4372,7 @@ var file_services_documents_documents_proto_depIdxs = []int32{
 	51, // 4: services.documents.ListDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	52, // 5: services.documents.ListDocumentsResponse.documents:type_name -> resources.documents.DocumentShort
 	53, // 6: services.documents.GetDocumentResponse.document:type_name -> resources.documents.Document
-	54, // 7: services.documents.GetDocumentResponse.access:type_name -> resources.documents.access.DocumentAccess
+	54, // 7: services.documents.GetDocumentResponse.access:type_name -> resources.access.Access
 	55, // 8: services.documents.GetDocumentReferencesResponse.references:type_name -> resources.documents.references.DocumentReference
 	56, // 9: services.documents.GetDocumentRelationsResponse.relations:type_name -> resources.documents.relations.DocumentRelation
 	55, // 10: services.documents.AddDocumentReferenceRequest.reference:type_name -> resources.documents.references.DocumentReference
@@ -4384,7 +4384,7 @@ var file_services_documents_documents_proto_depIdxs = []int32{
 	57, // 16: services.documents.UpdateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
 	60, // 17: services.documents.UpdateDocumentRequest.data:type_name -> resources.documents.data.DocumentData
 	61, // 18: services.documents.UpdateDocumentRequest.meta:type_name -> resources.documents.DocumentMeta
-	54, // 19: services.documents.UpdateDocumentRequest.access:type_name -> resources.documents.access.DocumentAccess
+	54, // 19: services.documents.UpdateDocumentRequest.access:type_name -> resources.access.Access
 	62, // 20: services.documents.UpdateDocumentRequest.files:type_name -> resources.file.File
 	48, // 21: services.documents.ListDocumentActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	63, // 22: services.documents.ListDocumentActivityRequest.activity_types:type_name -> resources.documents.activity.DocActivityType
@@ -4398,8 +4398,8 @@ var file_services_documents_documents_proto_depIdxs = []int32{
 	65, // 30: services.documents.CreateDocumentReqResponse.request:type_name -> resources.documents.requests.DocRequest
 	66, // 31: services.documents.UpdateDocumentReqRequest.data:type_name -> resources.documents.activity.DocActivityData
 	65, // 32: services.documents.UpdateDocumentReqResponse.request:type_name -> resources.documents.requests.DocRequest
-	54, // 33: services.documents.GetDocumentAccessResponse.access:type_name -> resources.documents.access.DocumentAccess
-	54, // 34: services.documents.SetDocumentAccessRequest.access:type_name -> resources.documents.access.DocumentAccess
+	54, // 33: services.documents.GetDocumentAccessResponse.access:type_name -> resources.access.Access
+	54, // 34: services.documents.SetDocumentAccessRequest.access:type_name -> resources.access.Access
 	48, // 35: services.documents.ListUserDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	49, // 36: services.documents.ListUserDocumentsRequest.sort:type_name -> resources.common.database.Sort
 	67, // 37: services.documents.ListUserDocumentsRequest.relations:type_name -> resources.documents.relations.DocRelation

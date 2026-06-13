@@ -9,9 +9,6 @@
 package documentsaccess
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
-	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
-	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -81,444 +78,11 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-type DocumentAccess struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Jobs          []*DocumentJobAccess   `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
-	Users         []*DocumentUserAccess  `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"user_access"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DocumentAccess) Reset() {
-	*x = DocumentAccess{}
-	mi := &file_resources_documents_access_access_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DocumentAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DocumentAccess) ProtoMessage() {}
-
-func (x *DocumentAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_access_access_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *DocumentAccess) GetJobs() []*DocumentJobAccess {
-	if x != nil {
-		return x.Jobs
-	}
-	return nil
-}
-
-func (x *DocumentAccess) GetUsers() []*DocumentUserAccess {
-	if x != nil {
-		return x.Users
-	}
-	return nil
-}
-
-func (x *DocumentAccess) SetJobs(v []*DocumentJobAccess) {
-	x.Jobs = v
-}
-
-func (x *DocumentAccess) SetUsers(v []*DocumentUserAccess) {
-	x.Users = v
-}
-
-type DocumentAccess_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Jobs  []*DocumentJobAccess
-	Users []*DocumentUserAccess
-}
-
-func (b0 DocumentAccess_builder) Build() *DocumentAccess {
-	m0 := &DocumentAccess{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.Jobs = b.Jobs
-	x.Users = b.Users
-	return m0
-}
-
-type DocumentJobAccess struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
-	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
-	JobGradeLabel *string                `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
-	Access        AccessLevel            `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.access.AccessLevel" json:"access,omitempty"`
-	Required      *bool                  `protobuf:"varint,9,opt,name=required,proto3,oneof" json:"required,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DocumentJobAccess) Reset() {
-	*x = DocumentJobAccess{}
-	mi := &file_resources_documents_access_access_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DocumentJobAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DocumentJobAccess) ProtoMessage() {}
-
-func (x *DocumentJobAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_access_access_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *DocumentJobAccess) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *DocumentJobAccess) GetTargetId() int64 {
-	if x != nil {
-		return x.TargetId
-	}
-	return 0
-}
-
-func (x *DocumentJobAccess) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
-}
-
-func (x *DocumentJobAccess) GetJobLabel() string {
-	if x != nil && x.JobLabel != nil {
-		return *x.JobLabel
-	}
-	return ""
-}
-
-func (x *DocumentJobAccess) GetMinimumGrade() int32 {
-	if x != nil {
-		return x.MinimumGrade
-	}
-	return 0
-}
-
-func (x *DocumentJobAccess) GetJobGradeLabel() string {
-	if x != nil && x.JobGradeLabel != nil {
-		return *x.JobGradeLabel
-	}
-	return ""
-}
-
-func (x *DocumentJobAccess) GetAccess() AccessLevel {
-	if x != nil {
-		return x.Access
-	}
-	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
-}
-
-func (x *DocumentJobAccess) GetRequired() bool {
-	if x != nil && x.Required != nil {
-		return *x.Required
-	}
-	return false
-}
-
-func (x *DocumentJobAccess) SetId(v int64) {
-	x.Id = v
-}
-
-func (x *DocumentJobAccess) SetTargetId(v int64) {
-	x.TargetId = v
-}
-
-func (x *DocumentJobAccess) SetJob(v string) {
-	x.Job = v
-}
-
-func (x *DocumentJobAccess) SetJobLabel(v string) {
-	x.JobLabel = &v
-}
-
-func (x *DocumentJobAccess) SetMinimumGrade(v int32) {
-	x.MinimumGrade = v
-}
-
-func (x *DocumentJobAccess) SetJobGradeLabel(v string) {
-	x.JobGradeLabel = &v
-}
-
-func (x *DocumentJobAccess) SetAccess(v AccessLevel) {
-	x.Access = v
-}
-
-func (x *DocumentJobAccess) SetRequired(v bool) {
-	x.Required = &v
-}
-
-func (x *DocumentJobAccess) HasJobLabel() bool {
-	if x == nil {
-		return false
-	}
-	return x.JobLabel != nil
-}
-
-func (x *DocumentJobAccess) HasJobGradeLabel() bool {
-	if x == nil {
-		return false
-	}
-	return x.JobGradeLabel != nil
-}
-
-func (x *DocumentJobAccess) HasRequired() bool {
-	if x == nil {
-		return false
-	}
-	return x.Required != nil
-}
-
-func (x *DocumentJobAccess) ClearJobLabel() {
-	x.JobLabel = nil
-}
-
-func (x *DocumentJobAccess) ClearJobGradeLabel() {
-	x.JobGradeLabel = nil
-}
-
-func (x *DocumentJobAccess) ClearRequired() {
-	x.Required = nil
-}
-
-type DocumentJobAccess_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id            int64
-	TargetId      int64
-	Job           string
-	JobLabel      *string
-	MinimumGrade  int32
-	JobGradeLabel *string
-	Access        AccessLevel
-	Required      *bool
-}
-
-func (b0 DocumentJobAccess_builder) Build() *DocumentJobAccess {
-	m0 := &DocumentJobAccess{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.Id = b.Id
-	x.TargetId = b.TargetId
-	x.Job = b.Job
-	x.JobLabel = b.JobLabel
-	x.MinimumGrade = b.MinimumGrade
-	x.JobGradeLabel = b.JobGradeLabel
-	x.Access = b.Access
-	x.Required = b.Required
-	return m0
-}
-
-type DocumentUserAccess struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
-	UserId        int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	User          *short.UserShort       `protobuf:"bytes,5,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	Access        AccessLevel            `protobuf:"varint,6,opt,name=access,proto3,enum=resources.documents.access.AccessLevel" json:"access,omitempty"`
-	Required      *bool                  `protobuf:"varint,7,opt,name=required,proto3,oneof" json:"required,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DocumentUserAccess) Reset() {
-	*x = DocumentUserAccess{}
-	mi := &file_resources_documents_access_access_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DocumentUserAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DocumentUserAccess) ProtoMessage() {}
-
-func (x *DocumentUserAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_access_access_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *DocumentUserAccess) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *DocumentUserAccess) GetTargetId() int64 {
-	if x != nil {
-		return x.TargetId
-	}
-	return 0
-}
-
-func (x *DocumentUserAccess) GetUserId() int32 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *DocumentUserAccess) GetUser() *short.UserShort {
-	if x != nil {
-		return x.User
-	}
-	return nil
-}
-
-func (x *DocumentUserAccess) GetAccess() AccessLevel {
-	if x != nil {
-		return x.Access
-	}
-	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
-}
-
-func (x *DocumentUserAccess) GetRequired() bool {
-	if x != nil && x.Required != nil {
-		return *x.Required
-	}
-	return false
-}
-
-func (x *DocumentUserAccess) SetId(v int64) {
-	x.Id = v
-}
-
-func (x *DocumentUserAccess) SetTargetId(v int64) {
-	x.TargetId = v
-}
-
-func (x *DocumentUserAccess) SetUserId(v int32) {
-	x.UserId = v
-}
-
-func (x *DocumentUserAccess) SetUser(v *short.UserShort) {
-	x.User = v
-}
-
-func (x *DocumentUserAccess) SetAccess(v AccessLevel) {
-	x.Access = v
-}
-
-func (x *DocumentUserAccess) SetRequired(v bool) {
-	x.Required = &v
-}
-
-func (x *DocumentUserAccess) HasUser() bool {
-	if x == nil {
-		return false
-	}
-	return x.User != nil
-}
-
-func (x *DocumentUserAccess) HasRequired() bool {
-	if x == nil {
-		return false
-	}
-	return x.Required != nil
-}
-
-func (x *DocumentUserAccess) ClearUser() {
-	x.User = nil
-}
-
-func (x *DocumentUserAccess) ClearRequired() {
-	x.Required = nil
-}
-
-type DocumentUserAccess_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id       int64
-	TargetId int64
-	UserId   int32
-	User     *short.UserShort
-	Access   AccessLevel
-	Required *bool
-}
-
-func (b0 DocumentUserAccess_builder) Build() *DocumentUserAccess {
-	m0 := &DocumentUserAccess{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.Id = b.Id
-	x.TargetId = b.TargetId
-	x.UserId = b.UserId
-	x.User = b.User
-	x.Access = b.Access
-	x.Required = b.Required
-	return m0
-}
-
 var File_resources_documents_access_access_proto protoreflect.FileDescriptor
 
 const file_resources_documents_access_access_proto_rawDesc = "" +
 	"\n" +
-	"'resources/documents/access/access.proto\x12\x1aresources.documents.access\x1a!codegen/dbscanner/dbscanner.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xd4\x01\n" +
-	"\x0eDocumentAccess\x12Z\n" +
-	"\x04jobs\x18\x01 \x03(\v2-.resources.documents.access.DocumentJobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\x12^\n" +
-	"\x05users\x18\x02 \x03(\v2..resources.documents.access.DocumentUserAccessB\x18\x9a\x84\x9e\x03\x13alias:\"user_access\"R\x05users:\x06\xe2\xf3\x18\x02\b\x01\"\xdd\x02\n" +
-	"\x11DocumentJobAccess\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x10\n" +
-	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x05 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12#\n" +
-	"\rminimum_grade\x18\x06 \x01(\x05R\fminimumGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\a \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12?\n" +
-	"\x06access\x18\b \x01(\x0e2'.resources.documents.access.AccessLevelR\x06access\x12\x1f\n" +
-	"\brequired\x18\t \x01(\bH\x02R\brequired\x88\x01\x01B\f\n" +
-	"\n" +
-	"_job_labelB\x12\n" +
-	"\x10_job_grade_labelB\v\n" +
-	"\t_requiredJ\x04\b\x02\x10\x03\"\x93\x02\n" +
-	"\x12DocumentUserAccess\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x05R\x06userId\x129\n" +
-	"\x04user\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x00R\x04user\x88\x01\x01\x12?\n" +
-	"\x06access\x18\x06 \x01(\x0e2'.resources.documents.access.AccessLevelR\x06access\x12\x1f\n" +
-	"\brequired\x18\a \x01(\bH\x01R\brequired\x88\x01\x01B\a\n" +
-	"\x05_userB\v\n" +
-	"\t_requiredJ\x04\b\x02\x10\x03*\xbf\x01\n" +
+	"'resources/documents/access/access.proto\x12\x1aresources.documents.access*\xbf\x01\n" +
 	"\vAccessLevel\x12\x1c\n" +
 	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14ACCESS_LEVEL_BLOCKED\x10\x01\x12\x15\n" +
@@ -529,25 +93,15 @@ const file_resources_documents_access_access_proto_rawDesc = "" +
 	"\x11ACCESS_LEVEL_EDIT\x10\x06B^Z\\github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access;documentsaccessb\x06proto3"
 
 var file_resources_documents_access_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_documents_access_access_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_documents_access_access_proto_goTypes = []any{
-	(AccessLevel)(0),           // 0: resources.documents.access.AccessLevel
-	(*DocumentAccess)(nil),     // 1: resources.documents.access.DocumentAccess
-	(*DocumentJobAccess)(nil),  // 2: resources.documents.access.DocumentJobAccess
-	(*DocumentUserAccess)(nil), // 3: resources.documents.access.DocumentUserAccess
-	(*short.UserShort)(nil),    // 4: resources.users.short.UserShort
+	(AccessLevel)(0), // 0: resources.documents.access.AccessLevel
 }
 var file_resources_documents_access_access_proto_depIdxs = []int32{
-	2, // 0: resources.documents.access.DocumentAccess.jobs:type_name -> resources.documents.access.DocumentJobAccess
-	3, // 1: resources.documents.access.DocumentAccess.users:type_name -> resources.documents.access.DocumentUserAccess
-	0, // 2: resources.documents.access.DocumentJobAccess.access:type_name -> resources.documents.access.AccessLevel
-	4, // 3: resources.documents.access.DocumentUserAccess.user:type_name -> resources.users.short.UserShort
-	0, // 4: resources.documents.access.DocumentUserAccess.access:type_name -> resources.documents.access.AccessLevel
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_access_access_proto_init() }
@@ -555,22 +109,19 @@ func file_resources_documents_access_access_proto_init() {
 	if File_resources_documents_access_access_proto != nil {
 		return
 	}
-	file_resources_documents_access_access_proto_msgTypes[1].OneofWrappers = []any{}
-	file_resources_documents_access_access_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_access_access_proto_rawDesc), len(file_resources_documents_access_access_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   3,
+			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_resources_documents_access_access_proto_goTypes,
 		DependencyIndexes: file_resources_documents_access_access_proto_depIdxs,
 		EnumInfos:         file_resources_documents_access_access_proto_enumTypes,
-		MessageInfos:      file_resources_documents_access_access_proto_msgTypes,
 	}.Build()
 	File_resources_documents_access_access_proto = out.File
 	file_resources_documents_access_access_proto_goTypes = nil

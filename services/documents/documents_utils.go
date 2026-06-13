@@ -57,26 +57,7 @@ func (s *Server) listDocumentsQuery(
 
 	var existsAccess mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		existsAccess = mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tDAccess).
-				WHERE(mysql.AND(
-					tDAccess.TargetID.EQ(tDocumentShort.ID),
-					mysql.OR(
-						// Direct user access
-						tDAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						// or job + grade access
-						mysql.AND(
-							tDAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tDAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
-					),
-					tDAccess.Access.GT_EQ(
-						mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-					),
-				)),
-		)
+		existsAccess = s.subjectAccess.ACLAccessExistsCondition(tDocumentShort.ID, userInfo, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW))
 	} else {
 		existsAccess = mysql.Bool(true)
 	}
@@ -206,26 +187,7 @@ func (s *Server) getDocumentQuery(
 
 	var wheres []mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		accessExists := mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tDAccess).
-				WHERE(mysql.AND(
-					tDAccess.TargetID.EQ(tDocument.ID),
-					mysql.OR(
-						// Direct user access
-						tDAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						// or job + grade access
-						mysql.AND(
-							tDAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tDAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
-					),
-					tDAccess.Access.GT_EQ(
-						mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-					),
-				)),
-		)
+		accessExists := s.subjectAccess.ACLAccessExistsCondition(tDocument.ID, userInfo, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW))
 
 		wheres = []mysql.BoolExpression{
 			mysql.AND(

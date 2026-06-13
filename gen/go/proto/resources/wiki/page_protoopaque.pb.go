@@ -10,11 +10,11 @@ package wiki
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
-	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -37,7 +37,7 @@ type Page struct {
 	xxx_hidden_ParentId    int64                  `protobuf:"varint,4,opt,name=parent_id,json=parentId,proto3,oneof"`
 	xxx_hidden_Meta        *PageMeta              `protobuf:"bytes,5,opt,name=meta,proto3"`
 	xxx_hidden_Content     *content.Content       `protobuf:"bytes,6,opt,name=content,proto3"`
-	xxx_hidden_Access      *access.PageAccess     `protobuf:"bytes,7,opt,name=access,proto3"`
+	xxx_hidden_Access      *access.Access         `protobuf:"bytes,7,opt,name=access,proto3"`
 	xxx_hidden_Files       *[]*file.File          `protobuf:"bytes,8,rep,name=files,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
@@ -115,7 +115,7 @@ func (x *Page) GetContent() *content.Content {
 	return nil
 }
 
-func (x *Page) GetAccess() *access.PageAccess {
+func (x *Page) GetAccess() *access.Access {
 	if x != nil {
 		return x.xxx_hidden_Access
 	}
@@ -157,7 +157,7 @@ func (x *Page) SetContent(v *content.Content) {
 	x.xxx_hidden_Content = v
 }
 
-func (x *Page) SetAccess(v *access.PageAccess) {
+func (x *Page) SetAccess(v *access.Access) {
 	x.xxx_hidden_Access = v
 }
 
@@ -231,7 +231,7 @@ type Page_builder struct {
 	ParentId *int64
 	Meta     *PageMeta
 	Content  *content.Content
-	Access   *access.PageAccess
+	Access   *access.Access
 	Files    []*file.File
 }
 
@@ -1017,15 +1017,15 @@ var File_resources_wiki_page_proto protoreflect.FileDescriptor
 
 const file_resources_wiki_page_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/wiki/page.proto\x12\x0eresources.wiki\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\"resources/wiki/access/access.proto\x1a\x13tagger/tagger.proto\"\x9b\x03\n" +
+	"\x19resources/wiki/page.proto\x12\x0eresources.wiki\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x92\x03\n" +
 	"\x04Page\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x1a\n" +
 	"\x03job\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x03job\x12 \n" +
 	"\tjob_label\x18\x03 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12 \n" +
 	"\tparent_id\x18\x04 \x01(\x03H\x01R\bparentId\x88\x01\x01\x12,\n" +
 	"\x04meta\x18\x05 \x01(\v2\x18.resources.wiki.PageMetaR\x04meta\x12;\n" +
-	"\acontent\x18\x06 \x01(\v2!.resources.common.content.ContentR\acontent\x129\n" +
-	"\x06access\x18\a \x01(\v2!.resources.wiki.access.PageAccessR\x06access\x12>\n" +
+	"\acontent\x18\x06 \x01(\v2!.resources.common.content.ContentR\acontent\x120\n" +
+	"\x06access\x18\a \x01(\v2\x18.resources.access.AccessR\x06access\x12>\n" +
 	"\x05files\x18\b \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05filesB\f\n" +
 	"\n" +
 	"_job_labelB\f\n" +
@@ -1097,7 +1097,7 @@ var file_resources_wiki_page_proto_goTypes = []any{
 	(*PageShort)(nil),           // 2: resources.wiki.PageShort
 	(*PageRootInfo)(nil),        // 3: resources.wiki.PageRootInfo
 	(*content.Content)(nil),     // 4: resources.common.content.Content
-	(*access.PageAccess)(nil),   // 5: resources.wiki.access.PageAccess
+	(*access.Access)(nil),       // 5: resources.access.Access
 	(*file.File)(nil),           // 6: resources.file.File
 	(*timestamp.Timestamp)(nil), // 7: resources.timestamp.Timestamp
 	(*short.UserShort)(nil),     // 8: resources.users.short.UserShort
@@ -1106,7 +1106,7 @@ var file_resources_wiki_page_proto_goTypes = []any{
 var file_resources_wiki_page_proto_depIdxs = []int32{
 	1,  // 0: resources.wiki.Page.meta:type_name -> resources.wiki.PageMeta
 	4,  // 1: resources.wiki.Page.content:type_name -> resources.common.content.Content
-	5,  // 2: resources.wiki.Page.access:type_name -> resources.wiki.access.PageAccess
+	5,  // 2: resources.wiki.Page.access:type_name -> resources.access.Access
 	6,  // 3: resources.wiki.Page.files:type_name -> resources.file.File
 	7,  // 4: resources.wiki.PageMeta.created_at:type_name -> resources.timestamp.Timestamp
 	7,  // 5: resources.wiki.PageMeta.updated_at:type_name -> resources.timestamp.Timestamp

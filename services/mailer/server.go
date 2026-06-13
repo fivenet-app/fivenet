@@ -3,7 +3,6 @@ package mailer
 import (
 	"database/sql"
 
-	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
@@ -63,7 +62,8 @@ type Server struct {
 	enricher *mstlystcdata.UserAwareEnricher
 	js       *events.JSWrapper
 
-	access *access.Grouped[maileraccess.JobAccess, *maileraccess.JobAccess, maileraccess.UserAccess, *maileraccess.UserAccess, maileraccess.QualificationAccess, *maileraccess.QualificationAccess, maileraccess.AccessLevel]
+	access         *access.SubjectObjectAccess
+	accessResolver *access.SubjectResolver
 }
 
 type Params struct {
@@ -82,81 +82,8 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		js:       p.JS,
 
-		access: access.NewGrouped(
-			p.DB,
-			table.FivenetMailerEmails,
-			&access.TargetTableColumns{
-				ID:        table.FivenetMailerEmails.ID,
-				DeletedAt: table.FivenetMailerEmails.DeletedAt,
-				CreatorID: table.FivenetMailerEmails.UserID,
-			},
-			access.NewJobs[maileraccess.JobAccess, *maileraccess.JobAccess, maileraccess.AccessLevel](
-				table.FivenetMailerEmailsAccess,
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetMailerEmailsAccess.ID,
-						TargetID: table.FivenetMailerEmailsAccess.TargetID,
-						Access:   table.FivenetMailerEmailsAccess.Access,
-					},
-					Job:          table.FivenetMailerEmailsAccess.Job,
-					MinimumGrade: table.FivenetMailerEmailsAccess.MinimumGrade,
-				},
-				table.FivenetMailerEmailsAccess.AS("job_access"),
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetMailerEmailsAccess.AS("job_access").ID,
-						TargetID: table.FivenetMailerEmailsAccess.AS("job_access").TargetID,
-						Access:   table.FivenetMailerEmailsAccess.AS("job_access").Access,
-					},
-					Job:          table.FivenetMailerEmailsAccess.AS("job_access").Job,
-					MinimumGrade: table.FivenetMailerEmailsAccess.AS("job_access").MinimumGrade,
-				},
-			),
-			access.NewUsers[maileraccess.UserAccess, *maileraccess.UserAccess, maileraccess.AccessLevel](
-				table.FivenetMailerEmailsAccess,
-				&access.UserAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetMailerEmailsAccess.ID,
-						TargetID: table.FivenetMailerEmailsAccess.TargetID,
-						Access:   table.FivenetMailerEmailsAccess.Access,
-					},
-					UserID: table.FivenetMailerEmailsAccess.UserID,
-				},
-				table.FivenetMailerEmailsAccess.AS("user_access"),
-				&access.UserAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetMailerEmailsAccess.AS("user_access").ID,
-						TargetID: table.FivenetMailerEmailsAccess.AS("user_access").TargetID,
-						Access:   table.FivenetMailerEmailsAccess.AS("user_access").Access,
-					},
-					UserID: table.FivenetMailerEmailsAccess.AS("user_access").UserID,
-				},
-			),
-			access.NewQualifications[maileraccess.QualificationAccess, *maileraccess.QualificationAccess, maileraccess.AccessLevel](
-				table.FivenetMailerEmailsAccess,
-				&access.QualificationAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetMailerEmailsAccess.ID,
-						TargetID: table.FivenetMailerEmailsAccess.TargetID,
-						Access:   table.FivenetMailerEmailsAccess.Access,
-					},
-					QualificationID: table.FivenetMailerEmailsAccess.QualificationID,
-				},
-				table.FivenetMailerEmailsAccess.AS("qualification_access"),
-				&access.QualificationAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID: table.FivenetMailerEmailsAccess.AS("qualification_access").ID,
-						TargetID: table.FivenetMailerEmailsAccess.AS(
-							"qualification_access",
-						).TargetID,
-						Access: table.FivenetMailerEmailsAccess.AS("qualification_access").Access,
-					},
-					QualificationID: table.FivenetMailerEmailsAccess.AS(
-						"qualification_access",
-					).QualificationID,
-				},
-			),
-		),
+		access:         access.NewMailerEmailsSubjectObjectAccess(p.DB),
+		accessResolver: access.NewSubjectResolver(p.DB),
 	}
 }
 
