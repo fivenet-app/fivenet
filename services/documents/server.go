@@ -23,6 +23,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -122,11 +123,12 @@ type Server struct {
 
 	js            *events.JSWrapper
 	ps            perms.Permissions
-	jobs          *mstlystcdata.Jobs
-	docCategories *mstlystcdata.DocumentCategories
+	jobs          mstlystcdata.IJobs
+	docCategories mstlystcdata.IDocumentCategories
 	enricher      mstlystcdata.IUserAwareEnricher
 	ui            userinfo.UserInfoRetriever
 	notifi        notifi.INotifi
+	store         documentsstore.IStore
 
 	subjectAccess   *access.SubjectObjectAccess
 	subjectResolver *access.SubjectResolver
@@ -149,13 +151,14 @@ type Params struct {
 	TP            *tracesdk.TracerProvider
 	Perms         perms.Permissions
 	Storage       storage.IStorage
-	Jobs          *mstlystcdata.Jobs
-	DocCategories *mstlystcdata.DocumentCategories
+	Jobs          mstlystcdata.IJobs
+	DocCategories mstlystcdata.IDocumentCategories
 	Enricher      mstlystcdata.IUserAwareEnricher
 	Ui            userinfo.UserInfoRetriever
 	Notif         notifi.INotifi
 	JS            *events.JSWrapper
 	Stats         *docstats.Service
+	Store         documentsstore.IStore
 }
 
 type Result struct {
@@ -205,6 +208,7 @@ func NewServer(p Params) Result {
 		enricher:      p.Enricher,
 		ui:            p.Ui,
 		notifi:        p.Notif,
+		store:         p.Store,
 
 		subjectAccess:   docSubjectAccess,
 		subjectResolver: docSubjectResolver,

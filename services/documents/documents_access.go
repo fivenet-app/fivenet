@@ -125,7 +125,12 @@ func (s *Server) GetDocumentAccess(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	docAccess, err = access.NormalizeAccess(docAccess, requiredAccess, nil, documentAccessEntryLimit)
+	docAccess, err = access.NormalizeAccess(
+		docAccess,
+		requiredAccess,
+		nil,
+		documentAccessEntryLimit,
+	)
 	if err != nil {
 		if isAccessEntryLimitError(err) {
 			return nil, errorsdocuments.ErrDocRequiredAccessTemplate
@@ -268,7 +273,12 @@ func (s *Server) handleDocumentAccessChange(
 		},
 	}
 
-	docAccess, err = access.NormalizeAccess(docAccess, requiredAccess, fallbackAccess, documentAccessEntryLimit)
+	docAccess, err = access.NormalizeAccess(
+		docAccess,
+		requiredAccess,
+		fallbackAccess,
+		documentAccessEntryLimit,
+	)
 	if err != nil {
 		if isAccessEntryLimitError(err) {
 			return errorsdocuments.ErrDocRequiredAccessTemplate

@@ -19,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -28,6 +29,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -55,99 +57,21 @@ func (s *Server) ListDocuments(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	logRequest := false
 
-	condition := mysql.Bool(true)
 	if req.Search != nil && req.GetSearch() != "" {
 		logRequest = true
-		condition = dbutils.MATCH(tDocumentShort.Title, mysql.String(req.GetSearch()))
-	}
-	if len(req.GetCategoryIds()) > 0 {
-		ids := make([]mysql.Expression, len(req.GetCategoryIds()))
-		for i := range req.GetCategoryIds() {
-			ids[i] = mysql.Int64(req.GetCategoryIds()[i])
-		}
-
-		condition = condition.AND(
-			tDocumentShort.CategoryID.IN(ids...),
-		)
 	}
 
 	if len(req.GetCreatorIds()) > 0 {
 		logRequest = true
-		ids := make([]mysql.Expression, len(req.GetCreatorIds()))
-		for i := range req.GetCreatorIds() {
-			ids[i] = mysql.Int32(req.GetCreatorIds()[i])
-		}
-
-		condition = condition.AND(
-			tDocumentShort.CreatorID.IN(ids...),
-		)
-	}
-
-	if req.GetFrom() != nil {
-		condition = condition.AND(tDocumentShort.CreatedAt.GT_EQ(
-			mysql.TimestampT(req.GetFrom().AsTime()),
-		))
-	}
-	if req.GetTo() != nil {
-		condition = condition.AND(tDocumentShort.CreatedAt.LT_EQ(
-			mysql.TimestampT(req.GetTo().AsTime()),
-		))
-	}
-
-	if req.Closed != nil {
-		condition = condition.AND(tDocumentShort.Closed.EQ(
-			mysql.Bool(req.GetClosed()),
-		))
-	}
-
-	if len(req.GetDocumentIds()) > 0 {
-		ids := make([]mysql.Expression, len(req.GetDocumentIds()))
-		for i := range req.GetDocumentIds() {
-			ids[i] = mysql.Int64(req.GetDocumentIds()[i])
-		}
-
-		condition = condition.AND(
-			tDocumentShort.ID.IN(ids...),
-		)
-	}
-
-	if req.OnlyDrafts != nil {
-		condition = condition.AND(tDocumentShort.Draft.EQ(mysql.Bool(req.GetOnlyDrafts())))
 	}
 
 	if !logRequest {
 		grpc_audit.Skip(ctx)
 	}
 
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "title":
-				column = tDocumentShort.Title
-
-			case "createdAt":
-				fallthrough
-			default:
-				column = tDocumentShort.CreatedAt
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys,
-					column.DESC(),
-					tDocumentShort.UpdatedAt.DESC(),
-				)
-			} else {
-				orderBys = append(orderBys,
-					column.ASC(),
-					tDocumentShort.UpdatedAt.DESC(),
-				)
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tDocumentShort.UpdatedAt.DESC())
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	pag, limit := req.GetPagination().
@@ -156,24 +80,25 @@ func (s *Server) ListDocuments(
 		Pagination: pag,
 	}
 
-	stmt := s.listDocumentsQuery(
-		condition,
-		nil,
-		nil,
-		userInfo,
-		func(stmt mysql.SelectStatement) mysql.SelectStatement {
-			return stmt.
-				ORDER_BY(orderBys...).
-				OFFSET(req.GetPagination().GetOffset()).
-				LIMIT(limit)
-		},
-	)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
+	docs, err := s.store.List(ctx, documentsstore.ListQuery{
+		Search:             req.GetSearch(),
+		CategoryIDs:        req.GetCategoryIds(),
+		CreatorIDs:         req.GetCreatorIds(),
+		From:               req.GetFrom(),
+		To:                 req.GetTo(),
+		Closed:             req.Closed,
+		DocumentIDs:        req.GetDocumentIds(),
+		OnlyDrafts:         req.OnlyDrafts,
+		Sort:               req.GetSort(),
+		Offset:             req.GetPagination().GetOffset(),
+		Limit:              limit,
+		IncludePhoneNumber: fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber),
+		UserInfo:           userInfo,
+	})
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	resp.Documents = docs
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetDocuments() {
@@ -196,6 +121,10 @@ func (s *Server) GetDocument(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 
 	check, err := s.canUserAccessDocument(
 		ctx,
@@ -214,8 +143,12 @@ func (s *Server) GetDocument(
 	withContent := req.InfoOnly == nil || !req.GetInfoOnly()
 
 	resp := &pbdocuments.GetDocumentResponse{}
-	resp.Document, err = s.getDocument(ctx,
-		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())), userInfo, withContent)
+	resp.Document, err = s.store.Get(ctx, documentsstore.GetQuery{
+		DocumentID:         req.GetDocumentId(),
+		IncludePhoneNumber: fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber),
+		WithContent:        withContent,
+		UserInfo:           userInfo,
+	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -1184,7 +1117,7 @@ func (s *Server) ChangeDocumentOwner(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if err := s.updateDocumentOwner(ctx, tx, req.GetDocumentId(), userInfo, &newOwner); err != nil {
+	if err := s.store.UpdateDocumentOwner(ctx, tx, req.GetDocumentId(), userInfo, &newOwner); err != nil {
 		return nil, err
 	}
 
