@@ -49,7 +49,14 @@ func (s *Server) GetQualificationAccess(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !check {
-		quali, err := s.getQualification(ctx, req.GetQualificationId(), nil, userInfo, false)
+		quali, err := s.store.GetQualification(
+			ctx,
+			req.GetQualificationId(),
+			nil,
+			userInfo,
+			false,
+			false,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}

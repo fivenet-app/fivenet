@@ -163,8 +163,8 @@ func (s *Server) GetQualification(
 	}
 
 	resp := &pbqualifications.GetQualificationResponse{}
-	resp.Qualification, err = s.getQualification(ctx, req.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())), userInfo, canContent)
+	resp.Qualification, err = s.store.GetQualification(ctx, req.GetQualificationId(),
+		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())), userInfo, canContent, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -304,9 +304,9 @@ func (s *Server) UpdateQualification(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	oldQuali, err := s.getQualification(ctx, req.GetQualification().GetId(),
+	oldQuali, err := s.store.GetQualification(ctx, req.GetQualification().GetId(),
 		tQuali.ID.EQ(mysql.Int64(req.GetQualification().GetId())),
-		userInfo, true)
+		userInfo, true, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -454,8 +454,8 @@ func (s *Server) DeleteQualification(
 		}
 	}
 
-	quali, err := s.getQualification(ctx, req.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())), userInfo, true)
+	quali, err := s.store.GetQualification(ctx, req.GetQualificationId(),
+		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())), userInfo, true, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

@@ -1,4 +1,4 @@
-package qualifications
+package qualificationsstore
 
 import (
 	"context"

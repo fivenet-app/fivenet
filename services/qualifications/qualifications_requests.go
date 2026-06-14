@@ -124,11 +124,12 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	quali, err := s.getQualification(
+	quali, err := s.store.GetQualification(
 		ctx,
 		req.GetRequest().GetQualificationId(),
 		tQuali.ID.EQ(mysql.Int64(req.GetRequest().GetQualificationId())),
 		userInfo,
+		false,
 		false,
 	)
 	if err != nil {
@@ -211,7 +212,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		}
 
 		// Make sure the requirements of the qualification are fullfiled by the user, ErrRequirementsMissing
-		reqsFullfilled, err := s.checkRequirementsMetForQualification(
+		reqsFullfilled, err := s.store.CheckRequirementsMetForQualification(
 			ctx,
 			req.GetRequest().GetQualificationId(),
 			userInfo.GetUserId(),

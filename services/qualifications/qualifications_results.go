@@ -195,11 +195,12 @@ func (s *Server) createOrUpdateQualificationResult(
 		return 0, err
 	}
 
-	quali, err := s.getQualification(
+	quali, err := s.store.GetQualification(
 		ctx,
 		qualificationId,
 		tQuali.ID.EQ(mysql.Int64(qualificationId)),
 		userInfo,
+		false,
 		false,
 	)
 	if err != nil {
@@ -381,11 +382,12 @@ func (s *Server) DeleteQualificationResult(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	quali, err := s.getQualification(
+	quali, err := s.store.GetQualification(
 		ctx,
 		result.GetQualificationId(),
 		tQuali.ID.EQ(mysql.Int64(result.GetQualificationId())),
 		userInfo,
+		false,
 		false,
 	)
 	if err != nil {

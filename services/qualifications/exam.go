@@ -66,7 +66,7 @@ func (s *Server) GetExamInfo(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	examUser, err := s.getExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -103,14 +103,6 @@ func (s *Server) checkIfUserCanTakeExam(
 	}
 
 	return true, nil
-}
-
-func (s *Server) getExamUser(
-	ctx context.Context,
-	qualificationId int64,
-	userId int32,
-) (*qualificationsexam.ExamUser, error) {
-	return s.store.GetExamUser(ctx, qualificationId, userId)
 }
 
 func (s *Server) TakeExam(
@@ -153,7 +145,7 @@ func (s *Server) TakeExam(
 		return nil, errorsqualifications.ErrExamDisabled
 	}
 
-	examUser, err := s.getExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -207,7 +199,7 @@ func (s *Server) TakeExam(
 		}
 	}
 
-	examUser, err = s.getExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err = s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -244,14 +236,21 @@ func (s *Server) SubmitExam(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	quali, err := s.getQualification(ctx, req.GetQualificationId(), nil, userInfo, false)
+	quali, err := s.store.GetQualification(
+		ctx,
+		req.GetQualificationId(),
+		nil,
+		userInfo,
+		false,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	var duration time.Duration
 	endedAt := time.Now()
-	examUser, err := s.getExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -429,7 +428,7 @@ func (s *Server) GetUserExam(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	examUser, err := s.getExamUser(ctx, req.GetQualificationId(), req.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), req.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
