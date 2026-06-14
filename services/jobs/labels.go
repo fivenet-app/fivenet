@@ -2,29 +2,16 @@ package jobs
 
 import (
 	context "context"
-	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
-)
-
-var (
-	tJobLabels       = table.FivenetJobLabels.AS("label")
-	tColleagueLabels = table.FivenetJobColleagueLabels
 )
 
 func (s *Server) GetColleagueLabels(
@@ -55,42 +42,11 @@ func (s *Server) GetColleagueLabels(
 		}
 	}
 
-	condition := mysql.AND(
-		tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
-		tJobLabels.DeletedAt.IS_NULL(),
-	)
-
-	if req.GetSearch() != "" {
-		search := dbutils.PrepareForLikeSearch(req.GetSearch())
-		if search != "" {
-			condition = condition.AND(
-				tJobLabels.Name.LIKE(mysql.String(search)),
-			)
-		}
+	labels, err := s.store.GetColleagueLabels(ctx, s.db, userInfo.GetJob(), req.GetSearch())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-
-	stmt := tJobLabels.
-		SELECT(
-			tJobLabels.ID,
-			tJobLabels.Job,
-			tJobLabels.DeletedAt,
-			tJobLabels.Name,
-			tJobLabels.Color,
-			tJobLabels.Icon,
-			tJobLabels.SortOrder,
-		).
-		FROM(tJobLabels).
-		WHERE(condition).
-		ORDER_BY(
-			tJobLabels.SortOrder.ASC(),
-			tJobLabels.SortKey.ASC(),
-		)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
-	}
+	resp.Labels = labels
 
 	return resp, nil
 }
@@ -101,219 +57,15 @@ func (s *Server) ManageLabels(
 ) (*pbjobs.ManageLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	stmt := tJobLabels.
-		SELECT(
-			tJobLabels.ID,
-			tJobLabels.DeletedAt,
-			tJobLabels.Job,
-			tJobLabels.Name,
-			tJobLabels.Color,
-			tJobLabels.Icon,
-			tJobLabels.SortOrder,
-		).
-		FROM(tJobLabels).
-		WHERE(mysql.AND(
-			tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
-		))
-
-	labels := []*jobslabels.Label{}
-	if err := stmt.QueryContext(ctx, s.db, &labels); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
+	labels, err := s.store.ManageLabels(ctx, s.db, userInfo.GetJob(), req.GetLabels())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-
-	_, removed := utils.SlicesDifferenceFunc(labels, req.GetLabels(),
-		func(in *jobslabels.Label) int64 {
-			return in.GetId()
-		})
-
-	var i int32
-	for _, label := range req.GetLabels() {
-		label.Job = &userInfo.Job
-		label.SortOrder = i
-		i++
-	}
-
-	tJobLabels := table.FivenetJobLabels
-	if len(req.GetLabels()) > 0 {
-		toCreate := []*jobslabels.Label{}
-		toUpdate := []*jobslabels.Label{}
-
-		for _, label := range req.GetLabels() {
-			if label.GetId() == 0 {
-				toCreate = append(toCreate, label)
-			} else {
-				toUpdate = append(toUpdate, label)
-			}
-		}
-
-		if len(toCreate) > 0 {
-			insertStmt := tJobLabels.
-				INSERT(
-					tJobLabels.Job,
-					tJobLabels.Name,
-					tJobLabels.Color,
-					tJobLabels.Icon,
-					tJobLabels.SortOrder,
-					tJobLabels.DeletedAt,
-				).
-				MODELS(toCreate).
-				ON_DUPLICATE_KEY_UPDATE(
-					tJobLabels.Name.SET(mysql.RawString("VALUES(`name`)")),
-					tJobLabels.Color.SET(mysql.RawString("VALUES(`color`)")),
-					tJobLabels.Icon.SET(mysql.RawString("VALUES(`icon`)")),
-					tJobLabels.SortOrder.SET(mysql.RawInt("VALUES(`sort_order`)")),
-					tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-				)
-
-			if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
-				return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-			}
-		}
-
-		if len(toUpdate) > 0 {
-			for _, label := range toUpdate {
-				updateStmt := tJobLabels.
-					UPDATE(
-						tJobLabels.Name,
-						tJobLabels.Color,
-						tJobLabels.Icon,
-						tJobLabels.SortOrder,
-						tJobLabels.DeletedAt,
-					).
-					SET(
-						tJobLabels.Name.SET(mysql.String(label.GetName())),
-						tJobLabels.Color.SET(mysql.String(label.GetColor())),
-						tJobLabels.Icon.SET(dbutils.StringEmpty(label.GetIcon())),
-						tJobLabels.SortOrder.SET(mysql.Int32(label.GetSortOrder())),
-						tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-					).
-					WHERE(mysql.AND(
-						tJobLabels.ID.EQ(mysql.Int64(label.GetId())),
-						tJobLabels.Job.EQ(mysql.String(label.GetJob())),
-					)).
-					LIMIT(1)
-
-				if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
-					return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-				}
-			}
-		}
-	}
-
-	if len(removed) > 0 {
-		ids := make([]mysql.Expression, len(removed))
-
-		for i := range removed {
-			ids[i] = mysql.Int64(removed[i].GetId())
-		}
-
-		deleteStmt := tJobLabels.
-			UPDATE().
-			SET(
-				tJobLabels.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
-			).
-			WHERE(mysql.AND(
-				tJobLabels.ID.IN(ids...),
-				tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
-			)).
-			LIMIT(int64(len(removed)))
-
-		if _, err := deleteStmt.ExecContext(ctx, s.db); err != nil {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
-	}
-
-	resp := &pbjobs.ManageLabelsResponse{
-		Labels: []*jobslabels.Label{},
-	}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
-	}
+	resp := &pbjobs.ManageLabelsResponse{Labels: labels}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return resp, nil
-}
-
-func (s *Server) validateLabels(
-	ctx context.Context,
-	userInfo *userinfo.UserInfo,
-	labels []*jobslabels.Label,
-) (bool, error) {
-	if len(labels) == 0 {
-		return true, nil
-	}
-
-	idsExp := make([]mysql.Expression, len(labels))
-	for i := range labels {
-		idsExp[i] = mysql.Int64(labels[i].GetId())
-	}
-
-	stmt := tJobLabels.
-		SELECT(
-			mysql.COUNT(tJobLabels.ID).AS("data_count.total"),
-		).
-		FROM(tJobLabels).
-		WHERE(mysql.AND(
-			tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
-			tJobLabels.DeletedAt.IS_NULL(),
-			tJobLabels.ID.IN(idsExp...),
-		)).
-		ORDER_BY(
-			tJobLabels.Name.DESC(),
-		).
-		LIMIT(10)
-
-	var count database.DataCount
-	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return false, err
-		}
-	}
-
-	return len(labels) == int(count.Total), nil
-}
-
-func (s *Server) getUserLabels(
-	ctx context.Context,
-	userInfo *userinfo.UserInfo,
-	userId int32,
-) (*jobslabels.Labels, error) {
-	stmt := tColleagueLabels.
-		SELECT(
-			tJobLabels.ID,
-			tJobLabels.Job,
-			tJobLabels.Name,
-			tJobLabels.Color,
-			tJobLabels.Icon,
-		).
-		FROM(
-			tColleagueLabels.
-				INNER_JOIN(tJobLabels,
-					tJobLabels.ID.EQ(tColleagueLabels.LabelID),
-				),
-		).
-		WHERE(mysql.AND(
-			tColleagueLabels.UserID.EQ(mysql.Int32(userId)),
-			tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
-			tJobLabels.DeletedAt.IS_NULL(),
-		)).
-		ORDER_BY(tJobLabels.SortOrder.ASC())
-
-	list := &jobslabels.Labels{
-		List: []*jobslabels.Label{},
-	}
-	if err := stmt.QueryContext(ctx, s.db, &list.List); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return list, nil
 }
 
 func (s *Server) GetColleagueLabelsStats(
@@ -334,43 +86,9 @@ func (s *Server) GetColleagueLabelsStats(
 		return &pbjobs.GetColleagueLabelsStatsResponse{}, nil
 	}
 
-	tColleague := table.FivenetUser.AS("user")
-
-	stmt := tColleagueLabels.
-		SELECT(
-			mysql.COUNT(tColleagueLabels.LabelID).AS("label_count.count"),
-			tJobLabels.ID,
-			tJobLabels.Job,
-			tJobLabels.Name,
-			tJobLabels.Color,
-			tJobLabels.Icon,
-		).
-		FROM(
-			tColleagueLabels.
-				INNER_JOIN(tJobLabels,
-					tJobLabels.ID.EQ(tColleagueLabels.LabelID),
-				).
-				INNER_JOIN(tColleague,
-					tColleague.ID.EQ(tColleagueLabels.UserID),
-				),
-		).
-		WHERE(mysql.AND(
-			tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
-			tJobLabels.DeletedAt.IS_NULL(),
-			tColleagueLabels.Job.EQ(mysql.String(userInfo.GetJob())),
-			tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
-		)).
-		GROUP_BY(tJobLabels.ID).
-		ORDER_BY(
-			tJobLabels.SortOrder.ASC(),
-			tJobLabels.SortKey.ASC(),
-		)
-
-	dest := []*jobslabels.LabelCount{}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
+	dest, err := s.store.GetColleagueLabelsStats(ctx, s.db, userInfo.GetJob())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	return &pbjobs.GetColleagueLabelsStatsResponse{

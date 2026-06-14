@@ -2,21 +2,11 @@ package jobs
 
 import (
 	"context"
-	"errors"
 
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
-)
-
-var (
-	tUserProps = table.FivenetUserProps
-	tUserJobs  = table.FivenetUserJobs
-	tJobProps  = table.FivenetJobProps
 )
 
 func (s *Server) GetMOTD(
@@ -24,25 +14,12 @@ func (s *Server) GetMOTD(
 	req *pbjobs.GetMOTDRequest,
 ) (*pbjobs.GetMOTDResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	stmt := tJobProps.
-		SELECT(
-			tJobProps.Motd.AS("get_motd_response.motd"),
-		).
-		FROM(tJobProps).
-		WHERE(
-			tJobProps.Job.EQ(mysql.String(userInfo.GetJob())),
-		).
-		LIMIT(1)
-
-	resp := &pbjobs.GetMOTDResponse{}
-	if err := stmt.QueryContext(ctx, s.db, resp); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	motd, err := s.store.GetMOTD(ctx, s.db, userInfo.GetJob())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	return resp, nil
+	return &pbjobs.GetMOTDResponse{Motd: motd}, nil
 }
 
 func (s *Server) SetMOTD(
@@ -50,21 +27,7 @@ func (s *Server) SetMOTD(
 	req *pbjobs.SetMOTDRequest,
 ) (*pbjobs.SetMOTDResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	stmt := tJobProps.
-		INSERT(
-			tJobProps.Job,
-			tJobProps.Motd,
-		).
-		VALUES(
-			userInfo.GetJob(),
-			req.GetMotd(),
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tJobProps.Motd.SET(mysql.String(req.GetMotd())),
-		)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.SetMOTD(ctx, s.db, userInfo.GetJob(), req.GetMotd()); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 

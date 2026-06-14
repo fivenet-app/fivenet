@@ -2,11 +2,9 @@ package jobs
 
 import (
 	"context"
-	"errors"
 	"math"
 	"time"
 
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -16,8 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
+	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -33,11 +30,6 @@ func (s *Server) ListTimeclock(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tColleague := table.FivenetUser.AS("colleague")
-
-	condition := tTimeClock.Job.EQ(mysql.String(userInfo.GetJob()))
-	statsCondition := tTimeClock.Job.EQ(mysql.String(userInfo.GetJob()))
-
 	// Field Permission Check
 	fields, err := permsjobs.TimeclockService.ListTimeclock.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
@@ -47,54 +39,11 @@ func (s *Server) ListTimeclock(
 		req.UserMode = jobstimeclock.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF
 	}
 
-	if req.GetUserMode() <= jobstimeclock.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF {
-		condition = condition.AND(tTimeClock.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
-		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
-	} else if len(req.GetUserIds()) > 0 {
-		ids := make([]mysql.Expression, len(req.GetUserIds()))
-		for i := range req.GetUserIds() {
-			ids[i] = mysql.Int32(req.GetUserIds()[i])
-		}
-
-		condition = condition.AND(
-			tTimeClock.UserID.IN(ids...),
-		)
-		statsCondition = statsCondition.AND(
-			tTimeClock.UserID.IN(ids...),
-		)
+	if req.GetDate() != nil && req.GetMode() <= jobstimeclock.TimeclockMode_TIMECLOCK_MODE_DAILY &&
+		req.GetDate().GetEnd() == nil {
+		req.Date.End = timestamp.Now()
 	}
-
 	if req.GetDate() != nil {
-		if req.GetMode() <= jobstimeclock.TimeclockMode_TIMECLOCK_MODE_DAILY {
-			if req.GetDate().GetEnd() == nil {
-				req.Date.End = timestamp.Now()
-			}
-
-			condition = condition.AND(tTimeClock.Date.EQ(
-				mysql.DateT(req.GetDate().GetEnd().AsTime()),
-			))
-		} else if req.GetMode() == jobstimeclock.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
-			if req.GetDate().GetEnd() != nil {
-				condition = condition.AND(
-					mysql.RawBool("YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
-						mysql.RawArgs{"$date": req.GetDate().GetEnd().AsTime()},
-					),
-				)
-			}
-		} else {
-			if req.GetDate().GetStart() != nil {
-				condition = condition.AND(tTimeClock.Date.GT_EQ(
-					mysql.DateT(req.GetDate().GetStart().AsTime()),
-				))
-			}
-			if req.GetDate().GetEnd() != nil {
-				condition = condition.AND(tTimeClock.Date.LT_EQ(
-					mysql.DateT(req.GetDate().GetEnd().AsTime()),
-				))
-			}
-		}
-
-		// Make sure the provided dates are not "out of range"
 		now := time.Now()
 		if req.GetDate().GetStart() != nil &&
 			now.Sub(req.GetDate().GetStart().AsTime()) >= TimeclockMaxDays {
@@ -106,193 +55,55 @@ func (s *Server) ListTimeclock(
 		}
 	}
 
-	groupBys := []mysql.GroupByClause{}
-	countExpr := mysql.COUNT(mysql.DISTINCT(tTimeClock.UserID))
-	dateSelectExpr := mysql.Expression(tTimeClock.Date)
-	if req.GetPerDay() {
-		groupBys = append(groupBys, tTimeClock.Date, tTimeClock.UserID)
-		countExpr = mysql.COUNT(
-			mysql.RawString("DISTINCT `timeclock_entry`.`date`, `timeclock_entry`.`user_id`"),
-		)
-	} else {
-		groupBys = append(groupBys, tTimeClock.UserID)
-		dateSelectExpr = mysql.MAX(tTimeClock.Date)
+	countQuery := jobsstore.TimeclockQuery{
+		Job:      userInfo.GetJob(),
+		UserMode: req.GetUserMode(),
+		Mode:     req.GetMode(),
+		Date:     req.GetDate(),
+		PerDay:   req.GetPerDay(),
+		UserIDs:  req.GetUserIds(),
+		UserID:   userInfo.GetUserId(),
 	}
 
-	// User mode doesn't change the count query
-	countStmt := tTimeClock.
-		SELECT(
-			countExpr.AS("data_count.total"),
-		).
-		FROM(
-			tTimeClock.
-				INNER_JOIN(tColleague,
-					tColleague.ID.EQ(tTimeClock.UserID),
-				),
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	count, err := s.store.CountTimeclock(ctx, s.db, countQuery)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 30)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, 30)
 	resp := &pbjobs.ListTimeclockResponse{
 		Pagination: pag,
 	}
 
-	resp.Stats, err = s.getTimeclockStats(ctx, statsCondition)
+	resp.Stats, err = s.store.GetTimeclockStats(ctx, s.db, countQuery)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	resp.StatsWeekly, err = s.getTimeclockWeeklyStats(ctx, statsCondition)
+	resp.StatsWeekly, err = s.store.GetTimeclockWeeklyStats(ctx, s.db, countQuery)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if count.Total <= 0 {
+	if count <= 0 {
 		return resp, nil
 	}
 
-	spentTimeColumn := mysql.StringColumn("timeclock_entry.spent_time")
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		staticOrderBys := []mysql.OrderByClause{}
-		hasStaticDateOrder := false
-
-		for _, sc := range req.GetSort().GetColumns() {
-			switch sc.GetId() {
-			case "date":
-				if sc.GetDesc() {
-					orderBys = append(orderBys, mysql.DateColumn("agg.date").DESC())
-				} else {
-					orderBys = append(orderBys, mysql.DateColumn("agg.date").ASC())
-				}
-			case rankColumn:
-				if !hasStaticDateOrder {
-					staticOrderBys = append(staticOrderBys, mysql.DateColumn("agg.date").DESC())
-					hasStaticDateOrder = true
-				}
-				if sc.GetDesc() {
-					orderBys = append(orderBys, tColleague.JobGrade.DESC(), spentTimeColumn.DESC())
-				} else {
-					orderBys = append(orderBys, tColleague.JobGrade.ASC(), spentTimeColumn.DESC())
-				}
-			case nameColumn:
-				if !hasStaticDateOrder {
-					staticOrderBys = append(staticOrderBys, mysql.DateColumn("agg.date").DESC())
-					hasStaticDateOrder = true
-				}
-				if sc.GetDesc() {
-					orderBys = append(orderBys, tColleague.Firstname.DESC(), spentTimeColumn.DESC())
-				} else {
-					orderBys = append(orderBys, tColleague.Firstname.ASC(), spentTimeColumn.DESC())
-				}
-			case "time":
-				fallthrough
-			default:
-				if sc.GetDesc() {
-					orderBys = append(orderBys, spentTimeColumn.DESC())
-				} else {
-					orderBys = append(orderBys, spentTimeColumn.ASC())
-				}
-			}
-		}
-
-		orderBys = append(staticOrderBys, orderBys...)
-	} else {
-		orderBys = append(orderBys,
-			tTimeClock.Date.DESC(),
-			spentTimeColumn.DESC(),
-		)
-	}
-
-	agg := tTimeClock.
-		SELECT(
-			tTimeClock.UserID.AS("agg.user_id"),
-			dateSelectExpr.AS("agg.date"),
-			mysql.MIN(tTimeClock.StartTime).AS("agg.start_time"),
-			mysql.MAX(tTimeClock.EndTime).AS("agg.end_time"),
-			mysql.SUM(tTimeClock.SpentTime).AS("agg.spent_time"),
-		).
-		FROM(tTimeClock).
-		WHERE(condition).
-		GROUP_BY(groupBys...).
-		AsTable("agg")
-
-	stmt := agg.
-		SELECT(
-			mysql.IntegerColumn("agg.user_id").AS("timeclock_entry.user_id"),
-			mysql.DateColumn("agg.date").AS("timeclock_entry.date"),
-			mysql.DateTimeColumn("agg.start_time").AS("timeclock_entry.start_time"),
-			mysql.DateTimeColumn("agg.end_time").AS("timeclock_entry.end_time"),
-			mysql.FloatColumn("agg.spent_time").AS("timeclock_entry.spent_time"),
-
-			tColleague.ID,
-			tUserJobs.Job.AS("colleague.job"),
-			tUserJobs.Grade.AS("colleague.job_grade"),
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-			tAvatar.FilePath.AS("colleague.profile_picture"),
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.AbsenceBegin,
-			tColleagueProps.AbsenceEnd,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-		).
-		FROM(
-			agg.
-				INNER_JOIN(tColleague,
-					tColleague.ID.EQ(mysql.IntegerColumn("agg.user_id")),
-				).
-				INNER_JOIN(tUserJobs,
-					mysql.AND(
-						tUserJobs.UserID.EQ(tColleague.ID),
-						tUserJobs.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tColleague.ID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tColleague.ID),
-						tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
-		ORDER_BY(orderBys...).
-		OFFSET(req.GetPagination().GetOffset()).
-		LIMIT(limit)
+	listQuery := countQuery
+	listQuery.Offset = req.GetPagination().GetOffset()
+	listQuery.Limit = limit
 
 	switch req.GetMode() {
 	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_UNSPECIFIED:
 		fallthrough
 
 	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_DAILY:
-		resp.Entries = &pbjobs.ListTimeclockResponse_Daily{
-			Daily: &pbjobs.TimeclockDay{},
-		}
-
+		resp.Entries = &pbjobs.ListTimeclockResponse_Daily{Daily: &pbjobs.TimeclockDay{}}
 		data := resp.GetDaily()
-		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-			}
+		data.Entries, err = s.store.ListTimeclock(ctx, s.db, listQuery)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
-
 		data.Date = req.GetDate().GetEnd()
 		for i := range data.GetEntries() {
 			if data.GetEntries()[i].GetUser() != nil {
@@ -300,124 +111,53 @@ func (s *Server) ListTimeclock(
 			}
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
-
 		resp.GetPagination().Update(len(data.GetEntries()))
 
 	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_WEEKLY:
-		resp.Entries = &pbjobs.ListTimeclockResponse_Weekly{
-			Weekly: &pbjobs.TimeclockWeekly{},
-		}
-
+		resp.Entries = &pbjobs.ListTimeclockResponse_Weekly{Weekly: &pbjobs.TimeclockWeekly{}}
 		data := resp.GetWeekly()
-		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-			}
+		data.Entries, err = s.store.ListTimeclock(ctx, s.db, listQuery)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
-
 		for i := range data.GetEntries() {
 			if data.GetEntries()[i].GetUser() != nil {
 				s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 			}
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
-
 		resp.GetPagination().Update(len(data.GetEntries()))
 
 	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_RANGE:
-		resp.Entries = &pbjobs.ListTimeclockResponse_Range{
-			Range: &pbjobs.TimeclockRange{},
-		}
-
+		resp.Entries = &pbjobs.ListTimeclockResponse_Range{Range: &pbjobs.TimeclockRange{}}
 		data := resp.GetRange()
-		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-			}
+		data.Entries, err = s.store.ListTimeclock(ctx, s.db, listQuery)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
-
 		data.Date = req.GetDate().GetEnd()
 		for i := range data.GetEntries() {
 			if data.GetEntries()[i].GetUser() != nil {
 				s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 			}
-
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
-
 		resp.GetPagination().Update(len(data.GetEntries()))
 
 	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_TIMELINE:
-		resp.Entries = &pbjobs.ListTimeclockResponse_Range{
-			Range: &pbjobs.TimeclockRange{},
-		}
-
-		stmt := tTimeClock.
-			SELECT(
-				tTimeClock.UserID,
-				tTimeClock.Date,
-				tTimeClock.StartTime,
-				tTimeClock.EndTime,
-				tTimeClock.SpentTime,
-				tColleague.ID,
-				tUserJobs.Job.AS("colleague.job"),
-				tUserJobs.Grade.AS("colleague.job_grade"),
-				tColleague.Firstname,
-				tColleague.Lastname,
-				tColleague.Dateofbirth,
-				tColleague.PhoneNumber,
-				tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-				tAvatar.FilePath.AS("colleague.profile_picture"),
-				tColleagueProps.UserID,
-				tColleagueProps.Job,
-				tColleagueProps.AbsenceBegin,
-				tColleagueProps.AbsenceEnd,
-				tColleagueProps.NamePrefix,
-				tColleagueProps.NameSuffix,
-			).
-			FROM(
-				tTimeClock.
-					INNER_JOIN(tColleague,
-						tColleague.ID.EQ(tTimeClock.UserID),
-					).
-					INNER_JOIN(tUserJobs,
-						mysql.AND(
-							tUserJobs.UserID.EQ(tColleague.ID),
-							tUserJobs.Job.EQ(mysql.String(userInfo.GetJob())),
-						),
-					).
-					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tColleague.ID),
-					).
-					LEFT_JOIN(tColleagueProps,
-						mysql.AND(
-							tColleagueProps.UserID.EQ(tColleague.ID),
-							tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
-						),
-					).
-					LEFT_JOIN(tAvatar,
-						tAvatar.ID.EQ(tUserProps.AvatarFileID),
-					),
-			).
-			WHERE(condition).
-			ORDER_BY(tTimeClock.Date.DESC(), tTimeClock.UserID.DESC())
-
+		resp.Entries = &pbjobs.ListTimeclockResponse_Range{Range: &pbjobs.TimeclockRange{}}
 		data := resp.GetRange()
-		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-			}
+		data.Entries, err = s.store.ListTimeclockTimeline(ctx, s.db, listQuery)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
-
 		data.Date = req.GetDate().GetEnd()
 		for i := range data.GetEntries() {
 			if data.GetEntries()[i].GetUser() != nil {
 				s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 			}
-
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
-
 		resp.GetPagination().Update(len(data.GetEntries()))
 	}
 
@@ -442,17 +182,13 @@ func (s *Server) GetTimeclockStats(
 		}
 	}
 
-	condition := mysql.AND(
-		tTimeClock.Job.EQ(mysql.String(userInfo.GetJob())),
-		tTimeClock.UserID.EQ(mysql.Int32(userId)),
-	)
-
-	stats, err := s.getTimeclockStats(ctx, condition)
+	statsQuery := jobsstore.TimeclockQuery{Job: userInfo.GetJob(), UserID: userId}
+	stats, err := s.store.GetTimeclockStats(ctx, s.db, statsQuery)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	weekly, err := s.getTimeclockWeeklyStats(ctx, condition)
+	weekly, err := s.store.GetTimeclockWeeklyStats(ctx, s.db, statsQuery)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -469,168 +205,36 @@ func (s *Server) ListInactiveEmployees(
 ) (*pbjobs.ListInactiveEmployeesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tColleague := table.FivenetUser.AS("colleague")
-
-	condition := mysql.AND(
-		tTimeClock.Job.EQ(mysql.String(userInfo.GetJob())),
-		tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
-		mysql.OR(
-			mysql.AND(
-				tColleagueProps.AbsenceBegin.IS_NULL(),
-				tColleagueProps.AbsenceEnd.IS_NULL(),
-			),
-			tColleagueProps.AbsenceBegin.LT_EQ(
-				mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(req.GetDays(), mysql.DAY))),
-			),
-			tColleagueProps.AbsenceEnd.LT_EQ(
-				mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(req.GetDays(), mysql.DAY))),
-			),
-		),
-		tTimeClock.UserID.NOT_IN(
-			tTimeClock.
-				SELECT(
-					tTimeClock.UserID,
-				).
-				FROM(tTimeClock).
-				WHERE(mysql.AND(
-					tTimeClock.Job.EQ(mysql.String(userInfo.GetJob())),
-					tTimeClock.Date.GT_EQ(
-						mysql.DateExp(
-							mysql.CURRENT_DATE().SUB(mysql.INTERVAL(req.GetDays(), mysql.DAY)),
-						),
-					),
-				)).
-				GROUP_BY(tTimeClock.UserID),
-		),
-	)
-
-	countStmt := tTimeClock.
-		SELECT(
-			mysql.COUNT(mysql.DISTINCT(tTimeClock.UserID)).AS("data_count.total"),
-		).
-		FROM(
-			tTimeClock.
-				INNER_JOIN(tColleague,
-					tColleague.ID.EQ(tTimeClock.UserID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tTimeClock.UserID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tTimeClock.UserID),
-						tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				),
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	count, err := s.store.CountInactiveEmployees(ctx, s.db, jobsstore.InactiveEmployeesQuery{
+		Days: req.GetDays(),
+		Job:  userInfo.GetJob(),
+	})
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, 20)
 	resp := &pbjobs.ListInactiveEmployeesResponse{
 		Pagination: pag,
 		Colleagues: []*jobscolleagues.Colleague{},
 	}
-	if count.Total <= 0 {
+	if count <= 0 {
 		return resp, nil
 	}
 
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var columns []mysql.Column
-			switch sc.GetId() {
-			case nameColumn:
-				columns = append(columns, tColleague.Firstname, tColleague.Lastname)
-			case rankColumn:
-				fallthrough
-			default:
-				columns = append(columns, tColleague.JobGrade)
-			}
-
-			for _, column := range columns {
-				if sc.GetDesc() {
-					orderBys = append(orderBys, column.DESC())
-				} else {
-					orderBys = append(orderBys, column.ASC())
-				}
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tColleague.JobGrade.ASC())
-	}
-
-	stmt := tTimeClock.
-		SELECT(
-			tTimeClock.UserID,
-			tColleague.ID,
-			tColleague.Job,
-			tColleague.JobGrade,
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-			tAvatar.FilePath.AS("colleague.profile_picture"),
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.AbsenceBegin,
-			tColleagueProps.AbsenceEnd,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-		).
-		FROM(
-			tTimeClock.
-				INNER_JOIN(tColleague,
-					tColleague.ID.EQ(tTimeClock.UserID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tTimeClock.UserID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tTimeClock.UserID),
-						tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
-		WHERE(condition).
-		ORDER_BY(orderBys...).
-		GROUP_BY(
-			tTimeClock.UserID,
-			tColleague.ID,
-			tColleague.Job,
-			tColleague.JobGrade,
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID,
-			tAvatar.FilePath,
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.AbsenceBegin,
-			tColleagueProps.AbsenceEnd,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-		).
-		OFFSET(req.GetPagination().GetOffset()).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Colleagues); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	resp.Colleagues, err = s.store.ListInactiveEmployees(
+		ctx,
+		s.db,
+		jobsstore.InactiveEmployeesQuery{
+			Days:   req.GetDays(),
+			Sort:   req.GetSort(),
+			Offset: req.GetPagination().GetOffset(),
+			Limit:  limit,
+			Job:    userInfo.GetJob(),
+		},
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)

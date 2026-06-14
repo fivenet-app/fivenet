@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/stats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -83,6 +84,7 @@ type Server struct {
 	stats    *stats.Service
 
 	customDB *config.CustomDB
+	store    jobsstore.IStore
 
 	fHandler *filestore.Handler[int64]
 }
@@ -100,6 +102,7 @@ type Params struct {
 	Notifi            notifi.INotifi
 	Storage           storage.IStorage
 	Stats             *stats.Service
+	Store             jobsstore.IStore
 }
 
 func NewServer(p Params) *Server {
@@ -129,8 +132,12 @@ func NewServer(p Params) *Server {
 		stats:    p.Stats,
 
 		customDB: &p.Config.Database.Custom,
+		store:    p.Store,
 
 		fHandler: conductFileHandler,
+	}
+	if s.store == nil {
+		s.store = jobsstore.New(p.DB, &p.Config.Database.Custom)
 	}
 
 	return s
