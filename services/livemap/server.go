@@ -2,13 +2,11 @@ package livemap
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"time"
 
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	pblivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
@@ -18,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -63,13 +62,13 @@ type Server struct {
 	jsCons jetstream.ConsumeContext
 
 	tracer   trace.Tracer
-	db       *sql.DB
 	js       *events.JSWrapper
 	ps       perms.Permissions
 	enricher mstlystcdata.IEnricher
 	tracker  tracker.ITracker
 	appCfg   appconfig.IConfig
 	postals  postals.Postals
+	store    livemapstore.IStore
 
 	markersCache        *xsync.Map[string, []*livemapmarkers.MarkerMarker]
 	markersDeletedCache *xsync.Map[string, []int64]
@@ -84,14 +83,13 @@ type Params struct {
 
 	Logger    *zap.Logger
 	TP        *tracesdk.TracerProvider
-	DB        *sql.DB
 	JS        *events.JSWrapper
 	Perms     perms.Permissions
 	Enricher  mstlystcdata.IEnricher
-	Config    *config.Config
 	Tracker   tracker.ITracker
 	AppConfig appconfig.IConfig
 	Postals   postals.Postals
+	Store     livemapstore.IStore
 }
 
 type brokerEvent struct {
@@ -106,13 +104,13 @@ func NewServer(p Params) *Server {
 		logger: p.Logger,
 
 		tracer:   p.TP.Tracer("livemap"),
-		db:       p.DB,
 		js:       p.JS,
 		ps:       p.Perms,
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
 		appCfg:   p.AppConfig,
 		postals:  p.Postals,
+		store:    p.Store,
 
 		markersCache:        xsync.NewMap[string, []*livemapmarkers.MarkerMarker](),
 		markersDeletedCache: xsync.NewMap[string, []int64](),

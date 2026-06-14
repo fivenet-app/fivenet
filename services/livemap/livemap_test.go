@@ -7,8 +7,10 @@ import (
 	pblivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	grpcserver "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
@@ -36,8 +38,10 @@ func TestBasicCentrumFlow(t *testing.T) {
 		modules.GetFxTestOpts(
 			dbServer.FxProvide(),
 			natsServer.FxProvide(),
+			fx.Provide(func() *config.CustomDB { return &config.CustomDB{} }),
 			fx.Provide(modules.TestUserInfoRetriever),
 			fx.Provide(tracker.NewForTests),
+			fx.Provide(livemapstore.New),
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) *Server {
 				srv = NewServer(p)
