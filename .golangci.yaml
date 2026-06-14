@@ -517,6 +517,9 @@ linters:
       ignore-string-values:
         - '\* \* \* \* \*'
 
+    dupl:
+      threshold: 225
+
   exclusions:
     # Log a warning if an exclusion rule is unused.
     warn-unused: true

@@ -31,7 +31,7 @@ type SettingsDB struct {
 
 	db       *sql.DB
 	js       *events.JSWrapper
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 
 	store *store.Store[centrumsettings.Settings, *centrumsettings.Settings]
 
@@ -48,7 +48,7 @@ type Params struct {
 	JS       *events.JSWrapper
 	DB       *sql.DB
 	Cfg      *config.Config
-	Enricher *mstlystcdata.Enricher
+	Enricher mstlystcdata.IEnricher
 }
 
 func New(p Params) *SettingsDB {

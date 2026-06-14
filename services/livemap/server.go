@@ -66,7 +66,7 @@ type Server struct {
 	db       *sql.DB
 	js       *events.JSWrapper
 	ps       perms.Permissions
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 	tracker  tracker.ITracker
 	appCfg   appconfig.IConfig
 	postals  postals.Postals
@@ -87,7 +87,7 @@ type Params struct {
 	DB        *sql.DB
 	JS        *events.JSWrapper
 	Perms     perms.Permissions
-	Enricher  *mstlystcdata.Enricher
+	Enricher  mstlystcdata.IEnricher
 	Config    *config.Config
 	Tracker   tracker.ITracker
 	AppConfig appconfig.IConfig

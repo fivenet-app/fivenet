@@ -57,7 +57,11 @@ func (s *Server) listDocumentsQuery(
 
 	var existsAccess mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		existsAccess = s.subjectAccess.ACLAccessExistsCondition(tDocumentShort.ID, userInfo, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW))
+		existsAccess = s.subjectAccess.ACLAccessExistsCondition(
+			tDocumentShort.ID,
+			userInfo,
+			int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		)
 	} else {
 		existsAccess = mysql.Bool(true)
 	}
@@ -187,7 +191,11 @@ func (s *Server) getDocumentQuery(
 
 	var wheres []mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		accessExists := s.subjectAccess.ACLAccessExistsCondition(tDocument.ID, userInfo, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW))
+		accessExists := s.subjectAccess.ACLAccessExistsCondition(
+			tDocument.ID,
+			userInfo,
+			int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		)
 
 		wheres = []mysql.BoolExpression{
 			mysql.AND(

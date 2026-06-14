@@ -42,8 +42,8 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 			mstlystcdata.NewDocumentCategories,
 			mstlystcdata.NewJobs,
 			mstlystcdata.NewLaws,
-			mstlystcdata.NewEnricher,
-			mstlystcdata.NewUserAwareEnricher,
+			mstlystcdata.NewDummyEnricher,
+			mstlystcdata.NewDummyUserAwareEnricher,
 		),
 
 		fx.Invoke(func(*bluemonday.Policy) {}),

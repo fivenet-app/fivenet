@@ -124,7 +124,7 @@ type Server struct {
 	ps            perms.Permissions
 	jobs          *mstlystcdata.Jobs
 	docCategories *mstlystcdata.DocumentCategories
-	enricher      *mstlystcdata.UserAwareEnricher
+	enricher      mstlystcdata.IUserAwareEnricher
 	ui            userinfo.UserInfoRetriever
 	notifi        notifi.INotifi
 
@@ -151,7 +151,7 @@ type Params struct {
 	Storage       storage.IStorage
 	Jobs          *mstlystcdata.Jobs
 	DocCategories *mstlystcdata.DocumentCategories
-	Enricher      *mstlystcdata.UserAwareEnricher
+	Enricher      mstlystcdata.IUserAwareEnricher
 	Ui            userinfo.UserInfoRetriever
 	Notif         notifi.INotifi
 	JS            *events.JSWrapper

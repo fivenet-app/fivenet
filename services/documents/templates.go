@@ -75,7 +75,11 @@ func (s *Server) ListTemplates(
 		).
 		WHERE(mysql.AND(
 			tDTemplates.DeletedAt.IS_NULL(),
-			s.templateAccess.ACLAccessExistsCondition(tDTemplates.ID, userInfo, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
+			s.templateAccess.ACLAccessExistsCondition(
+				tDTemplates.ID,
+				userInfo,
+				int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			),
 		)).
 		ORDER_BY(
 			tDTemplates.Weight.DESC(),
@@ -129,7 +133,12 @@ func (s *Server) GetTemplate(
 	}
 
 	if req.Render == nil || !req.GetRender() {
-		access, err := s.templateAccess.ListTargetAccess(ctx, s.db, req.GetTemplateId(), templateSubjectAccessOptions)
+		access, err := s.templateAccess.ListTargetAccess(
+			ctx,
+			s.db,
+			req.GetTemplateId(),
+			templateSubjectAccessOptions,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -481,7 +490,12 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	access, err := s.templateAccess.ListTargetAccess(ctx, s.db, req.GetTemplate().GetId(), templateSubjectAccessOptions)
+	access, err := s.templateAccess.ListTargetAccess(
+		ctx,
+		s.db,
+		req.GetTemplate().GetId(),
+		templateSubjectAccessOptions,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}

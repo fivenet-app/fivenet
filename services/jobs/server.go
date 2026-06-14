@@ -78,11 +78,11 @@ type Server struct {
 
 	db       *sql.DB
 	ps       perms.Permissions
-	enricher *mstlystcdata.UserAwareEnricher
+	enricher mstlystcdata.IUserAwareEnricher
 	notifi   notifi.INotifi
 	stats    *stats.Service
 
-	customDB config.CustomDB
+	customDB *config.CustomDB
 
 	fHandler *filestore.Handler[int64]
 }
@@ -96,7 +96,7 @@ type Params struct {
 	DB                *sql.DB
 	Config            *config.Config
 	Perms             perms.Permissions
-	UserAwareEnricher *mstlystcdata.UserAwareEnricher
+	UserAwareEnricher mstlystcdata.IUserAwareEnricher
 	Notifi            notifi.INotifi
 	Storage           storage.IStorage
 	Stats             *stats.Service
@@ -128,7 +128,7 @@ func NewServer(p Params) *Server {
 		notifi:   p.Notifi,
 		stats:    p.Stats,
 
-		customDB: p.Config.Database.Custom,
+		customDB: &p.Config.Database.Custom,
 
 		fHandler: conductFileHandler,
 	}

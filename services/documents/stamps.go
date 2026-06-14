@@ -157,7 +157,12 @@ func (s *Server) getStamp(
 	}
 
 	if withAccess {
-		access, err := s.signingStampAccess.ListTargetAccess(ctx, s.db, stampId, stampSubjectAccessOptions)
+		access, err := s.signingStampAccess.ListTargetAccess(
+			ctx,
+			s.db,
+			stampId,
+			stampSubjectAccessOptions,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}

@@ -8,7 +8,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -35,6 +34,8 @@ const (
 	SubjectSpecificityJobGrade      int32 = 200
 )
 
+const subjectCleanupDeleteLimit int64 = 500
+
 type ActorSubject struct {
 	SubjectID        int64 `alias:"subject_id"`
 	Specificity      int32 `alias:"specificity"`
@@ -49,44 +50,78 @@ func NewSubjectResolver(db *sql.DB) *SubjectResolver {
 	return &SubjectResolver{db: db}
 }
 
+func (r *SubjectResolver) ensureSubject(
+	ctx context.Context,
+	tx qrm.DB,
+	subjectType SubjectType,
+	find func() (int64, error),
+	upsert func(subjectID int64) (int64, error),
+) (int64, error) {
+	if subjectID, err := find(); err == nil {
+		return subjectID, nil
+	} else if !errors.Is(err, qrm.ErrNoRows) {
+		return 0, err
+	}
+
+	subjectID, err := createSubject(ctx, tx, subjectType)
+	if err != nil {
+		return 0, err
+	}
+
+	mappedID, err := upsert(subjectID)
+	if err != nil {
+		return 0, err
+	}
+	if mappedID != 0 && mappedID != subjectID {
+		_ = deleteSubject(ctx, tx, subjectID)
+		return mappedID, nil
+	}
+
+	return subjectID, nil
+}
+
+func lookupSubjectIDFromMapping(
+	ctx context.Context,
+	tx qrm.DB,
+	subjectAlias string,
+	subjectType SubjectType,
+	mappingTable mysql.ReadableTable,
+	subjectID mysql.IntegerExpression,
+	where mysql.BoolExpression,
+) (int64, error) {
+	tSubjects := table.FivenetACLSubjects.AS(subjectAlias)
+	stmt := mappingTable.
+		SELECT(subjectID).
+		FROM(mappingTable.INNER_JOIN(tSubjects,
+			mysql.AND(
+				tSubjects.ID.EQ(subjectID),
+				tSubjects.SubjectType.EQ(mysql.Int16(int16(subjectType))),
+			),
+		)).
+		WHERE(where).
+		LIMIT(1)
+
+	return querySubjectID(ctx, tx, stmt)
+}
+
 func (r *SubjectResolver) EnsureUserSubject(
 	ctx context.Context,
 	tx qrm.DB,
 	userID int32,
 ) (int64, error) {
-	return ensureSubject(
-		ctx,
-		tx,
-		SubjectTypeUser,
-		func() (int64, error) {
-			tSubjects := table.FivenetAclSubjects.AS("user_subject")
-			stmt := table.FivenetAclSubjectUsers.
-				SELECT(table.FivenetAclSubjectUsers.SubjectID).
-				FROM(table.FivenetAclSubjectUsers.
-					INNER_JOIN(tSubjects,
-						mysql.AND(
-							tSubjects.ID.EQ(table.FivenetAclSubjectUsers.SubjectID),
-							tSubjects.SubjectType.EQ(mysql.Int16(int16(SubjectTypeUser))),
-						),
-					),
-				).
-				WHERE(table.FivenetAclSubjectUsers.UserID.EQ(mysql.Int32(userID))).
-				LIMIT(1)
-
-			return querySubjectID(ctx, tx, stmt)
-		},
-		func(subjectID int64) error {
-			stmt := table.FivenetAclSubjectUsers.
-				INSERT(
-					table.FivenetAclSubjectUsers.SubjectID,
-					table.FivenetAclSubjectUsers.UserID,
-				).
-				VALUES(subjectID, userID)
-
-			_, err := stmt.ExecContext(ctx, tx)
-			return err
-		},
-	)
+	return r.ensureSubject(ctx, tx, SubjectTypeUser, func() (int64, error) {
+		return lookupSubjectIDFromMapping(
+			ctx,
+			tx,
+			"user_subject",
+			SubjectTypeUser,
+			table.FivenetACLSubjectUsers,
+			table.FivenetACLSubjectUsers.SubjectID,
+			table.FivenetACLSubjectUsers.UserID.EQ(mysql.Int32(userID)),
+		)
+	}, func(subjectID int64) (int64, error) {
+		return upsertUserSubject(ctx, tx, subjectID, userID)
+	})
 }
 
 func (r *SubjectResolver) EnsureQualificationSubject(
@@ -94,37 +129,25 @@ func (r *SubjectResolver) EnsureQualificationSubject(
 	tx qrm.DB,
 	qualificationID int64,
 ) (int64, error) {
-	return ensureSubject(
+	return r.ensureSubject(
 		ctx,
 		tx,
 		SubjectTypeQualification,
 		func() (int64, error) {
-			tSubjects := table.FivenetAclSubjects.AS("qualification_subject")
-			stmt := table.FivenetAclSubjectQualifications.
-				SELECT(table.FivenetAclSubjectQualifications.SubjectID).
-				FROM(table.FivenetAclSubjectQualifications.
-					INNER_JOIN(tSubjects,
-						mysql.AND(
-							tSubjects.ID.EQ(table.FivenetAclSubjectQualifications.SubjectID),
-							tSubjects.SubjectType.EQ(mysql.Int16(int16(SubjectTypeQualification))),
-						),
-					),
-				).
-				WHERE(table.FivenetAclSubjectQualifications.QualificationID.EQ(mysql.Int64(qualificationID))).
-				LIMIT(1)
-
-			return querySubjectID(ctx, tx, stmt)
+			return lookupSubjectIDFromMapping(
+				ctx,
+				tx,
+				"qualification_subject",
+				SubjectTypeQualification,
+				table.FivenetACLSubjectQualifications,
+				table.FivenetACLSubjectQualifications.SubjectID,
+				table.FivenetACLSubjectQualifications.QualificationID.EQ(
+					mysql.Int64(qualificationID),
+				),
+			)
 		},
-		func(subjectID int64) error {
-			stmt := table.FivenetAclSubjectQualifications.
-				INSERT(
-					table.FivenetAclSubjectQualifications.SubjectID,
-					table.FivenetAclSubjectQualifications.QualificationID,
-				).
-				VALUES(subjectID, qualificationID)
-
-			_, err := stmt.ExecContext(ctx, tx)
-			return err
+		func(subjectID int64) (int64, error) {
+			return upsertQualificationSubject(ctx, tx, subjectID, qualificationID)
 		},
 	)
 }
@@ -135,41 +158,28 @@ func (r *SubjectResolver) EnsureJobGradeSubject(
 	job string,
 	minimumGrade int32,
 ) (int64, error) {
-	return ensureSubject(
+	return r.ensureSubject(
 		ctx,
 		tx,
 		SubjectTypeJobGrade,
 		func() (int64, error) {
-			tSubjects := table.FivenetAclSubjects.AS("job_grade_subject")
-			stmt := table.FivenetAclSubjectJobGradeScopes.
-				SELECT(table.FivenetAclSubjectJobGradeScopes.SubjectID).
-				FROM(table.FivenetAclSubjectJobGradeScopes.
-					INNER_JOIN(tSubjects,
-						mysql.AND(
-							tSubjects.ID.EQ(table.FivenetAclSubjectJobGradeScopes.SubjectID),
-							tSubjects.SubjectType.EQ(mysql.Int16(int16(SubjectTypeJobGrade))),
-						),
+			return lookupSubjectIDFromMapping(
+				ctx,
+				tx,
+				"job_grade_subject",
+				SubjectTypeJobGrade,
+				table.FivenetACLSubjectJobGradeScopes,
+				table.FivenetACLSubjectJobGradeScopes.SubjectID,
+				mysql.AND(
+					table.FivenetACLSubjectJobGradeScopes.Job.EQ(mysql.String(job)),
+					table.FivenetACLSubjectJobGradeScopes.MinimumGrade.EQ(
+						mysql.Int32(minimumGrade),
 					),
-				).
-				WHERE(mysql.AND(
-					table.FivenetAclSubjectJobGradeScopes.Job.EQ(mysql.String(job)),
-					table.FivenetAclSubjectJobGradeScopes.MinimumGrade.EQ(mysql.Int32(minimumGrade)),
-				)).
-				LIMIT(1)
-
-			return querySubjectID(ctx, tx, stmt)
+				),
+			)
 		},
-		func(subjectID int64) error {
-			stmt := table.FivenetAclSubjectJobGradeScopes.
-				INSERT(
-					table.FivenetAclSubjectJobGradeScopes.SubjectID,
-					table.FivenetAclSubjectJobGradeScopes.Job,
-					table.FivenetAclSubjectJobGradeScopes.MinimumGrade,
-				).
-				VALUES(subjectID, job, minimumGrade)
-
-			_, err := stmt.ExecContext(ctx, tx)
-			return err
+		func(subjectID int64) (int64, error) {
+			return upsertJobGradeSubject(ctx, tx, subjectID, job, minimumGrade)
 		},
 	)
 }
@@ -183,131 +193,148 @@ func (r *SubjectResolver) ResolveActorSubjects(
 		return nil, nil
 	}
 
-	var dest []ActorSubject
-	if err := appendActorSubjects(ctx, tx, &dest, mysql.SELECT(
-		table.FivenetAclSubjectUsers.SubjectID.AS("subject_id"),
+	tSubjectQualis := table.FivenetACLSubjectQualifications.AS("asq_resolve")
+	tQualiResults := table.FivenetQualificationsResults.AS("qr_resolve")
+	tSubjectJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("asjg_resolve")
+	tUserJobs := table.FivenetUserJobs.AS("uj_resolve")
+	stmt := mysql.SELECT(
+		table.FivenetACLSubjectUsers.SubjectID.AS("subject_id"),
 		mysql.Int32(SubjectSpecificityUser).AS("specificity"),
 		mysql.Int32(-1).AS("grade_specificity"),
 	).
-		FROM(table.FivenetAclSubjectUsers).
-		WHERE(table.FivenetAclSubjectUsers.UserID.EQ(mysql.Int32(userInfo.GetUserId())))); err != nil {
-		return nil, err
-	}
-
-	tSubjectQualis := table.FivenetAclSubjectQualifications.AS("asq_resolve")
-	tQualiResults := table.FivenetQualificationsResults.AS("qr_resolve")
-	if err := appendActorSubjects(ctx, tx, &dest, mysql.SELECT(
-		tSubjectQualis.SubjectID.AS("subject_id"),
-		mysql.Int32(SubjectSpecificityQualification).AS("specificity"),
-		mysql.Int32(-1).AS("grade_specificity"),
-	).
-		FROM(tSubjectQualis.
-			INNER_JOIN(tQualiResults,
-				mysql.AND(
-					tQualiResults.QualificationID.EQ(tSubjectQualis.QualificationID),
-					tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-					tQualiResults.DeletedAt.IS_NULL(),
-					tQualiResults.Status.EQ(mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
+		FROM(table.FivenetACLSubjectUsers).
+		WHERE(table.FivenetACLSubjectUsers.UserID.EQ(mysql.Int32(userInfo.GetUserId()))).
+		UNION_ALL(
+			mysql.SELECT(
+				tSubjectQualis.SubjectID.AS("subject_id"),
+				mysql.Int32(SubjectSpecificityQualification).AS("specificity"),
+				mysql.Int32(-1).AS("grade_specificity"),
+			).
+				FROM(tSubjectQualis.
+					INNER_JOIN(tQualiResults,
+						mysql.AND(
+							tQualiResults.QualificationID.EQ(tSubjectQualis.QualificationID),
+							tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+							tQualiResults.DeletedAt.IS_NULL(),
+							tQualiResults.Status.EQ(
+								mysql.Int32(
+									int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
+								),
+							),
+						),
+					),
 				),
-			),
-		)); err != nil {
-		return nil, err
-	}
-
-	tSubjectJobGrade := table.FivenetAclSubjectJobGradeScopes.AS("asjg_resolve")
-	tUserJobs := table.FivenetUserJobs.AS("uj_resolve")
-	if err := appendActorSubjects(ctx, tx, &dest, mysql.SELECT(
-		tSubjectJobGrade.SubjectID.AS("subject_id"),
-		mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
-		tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
-	).
-		FROM(tSubjectJobGrade.
-			INNER_JOIN(tUserJobs,
-				mysql.AND(
-					tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-					tUserJobs.Job.EQ(tSubjectJobGrade.Job),
-					tUserJobs.Grade.GT_EQ(tSubjectJobGrade.MinimumGrade),
+		).
+		UNION_ALL(
+			mysql.SELECT(
+				tSubjectJobGrade.SubjectID.AS("subject_id"),
+				mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
+				tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
+			).
+				FROM(tSubjectJobGrade.
+					INNER_JOIN(tUserJobs,
+						mysql.AND(
+							tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+							tUserJobs.Job.EQ(tSubjectJobGrade.Job),
+							tUserJobs.Grade.GT_EQ(tSubjectJobGrade.MinimumGrade),
+						),
+					),
 				),
-			),
-		)); err != nil {
-		return nil, err
-	}
+		).
+		UNION_ALL(
+			mysql.SELECT(
+				tSubjectJobGrade.SubjectID.AS("subject_id"),
+				mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
+				tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
+			).
+				FROM(tSubjectJobGrade).
+				WHERE(mysql.AND(
+					tSubjectJobGrade.Job.EQ(mysql.String(userInfo.GetJob())),
+					tSubjectJobGrade.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+				)),
+		)
 
-	if err := appendActorSubjects(ctx, tx, &dest, mysql.SELECT(
-		tSubjectJobGrade.SubjectID.AS("subject_id"),
-		mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
-		tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
-	).
-		FROM(tSubjectJobGrade).
-		WHERE(mysql.AND(
-			tSubjectJobGrade.Job.EQ(mysql.String(userInfo.GetJob())),
-			tSubjectJobGrade.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-		))); err != nil {
-		return nil, err
+	var dest []ActorSubject
+	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return dest, nil
 }
 
-func appendActorSubjects(
-	ctx context.Context,
-	tx qrm.DB,
-	dest *[]ActorSubject,
-	stmt mysql.SelectStatement,
-) error {
-	var out []ActorSubject
-	if err := stmt.QueryContext(ctx, tx, &out); err != nil {
-		if errors.Is(err, qrm.ErrNoRows) {
-			return nil
-		}
-		return err
-	}
-
-	*dest = append(*dest, out...)
-	return nil
+func (r *SubjectResolver) CleanupOrphanSubjects(ctx context.Context, tx qrm.DB) error {
+	_, err := r.cleanupOrphanSubjectsStmt().ExecContext(ctx, tx)
+	return err
 }
 
-func (r *SubjectResolver) CleanupOrphanSubjects(ctx context.Context, tx qrm.DB) error {
-	_, err := tx.ExecContext(ctx, `
-DELETE s
-FROM fivenet_acl_subjects s
-LEFT JOIN fivenet_acl_subject_users su ON su.subject_id = s.id
-LEFT JOIN fivenet_acl_subject_qualifications sq ON sq.subject_id = s.id
-LEFT JOIN fivenet_acl_subject_job_grade_scopes sj ON sj.subject_id = s.id
-WHERE su.subject_id IS NULL
-  AND sq.subject_id IS NULL
-  AND sj.subject_id IS NULL`)
-	return err
+func (r *SubjectResolver) cleanupOrphanSubjectsStmt() mysql.DeleteStatement {
+	tSubjects := table.FivenetACLSubjects.AS("orphan_subject")
+	tSubjectUsers := table.FivenetACLSubjectUsers.AS("orphan_subject_user")
+	tSubjectQuals := table.FivenetACLSubjectQualifications.AS("orphan_subject_qual")
+	tSubjectJobGrades := table.FivenetACLSubjectJobGradeScopes.AS("orphan_subject_job_grade")
+
+	return tSubjects.
+		DELETE().
+		WHERE(mysql.AND(
+			mysql.NOT(mysql.EXISTS(
+				mysql.SELECT(mysql.Int(1)).
+					FROM(tSubjectUsers).
+					WHERE(tSubjectUsers.SubjectID.EQ(tSubjects.ID)),
+			)),
+			mysql.NOT(mysql.EXISTS(
+				mysql.SELECT(mysql.Int(1)).
+					FROM(tSubjectQuals).
+					WHERE(tSubjectQuals.SubjectID.EQ(tSubjects.ID)),
+			)),
+			mysql.NOT(mysql.EXISTS(
+				mysql.SELECT(mysql.Int(1)).
+					FROM(tSubjectJobGrades).
+					WHERE(tSubjectJobGrades.SubjectID.EQ(tSubjects.ID)),
+			)),
+		)).
+		LIMIT(subjectCleanupDeleteLimit)
 }
 
 func (r *SubjectResolver) CleanupStaleJobGradeSubjects(ctx context.Context, tx qrm.DB) error {
-	_, err := tx.ExecContext(ctx, `
-DELETE s
-FROM fivenet_acl_subjects s
-JOIN fivenet_acl_subject_job_grade_scopes sj ON sj.subject_id = s.id
-LEFT JOIN fivenet_jobs_grades jg ON jg.job_name = sj.job AND jg.grade = sj.minimum_grade
-WHERE s.subject_type = ?
-  AND jg.job_name IS NULL`, int16(SubjectTypeJobGrade))
+	_, err := r.cleanupStaleJobGradeSubjectsStmt().ExecContext(ctx, tx)
 	return err
 }
 
-func ensureSubject(
-	ctx context.Context,
-	tx qrm.DB,
-	subjectType SubjectType,
-	find func() (int64, error),
-	insertMapping func(subjectID int64) error,
-) (int64, error) {
-	subjectID, err := find()
-	if err == nil {
-		return subjectID, nil
-	}
-	if !errors.Is(err, qrm.ErrNoRows) {
-		return 0, err
-	}
+func (r *SubjectResolver) cleanupStaleJobGradeSubjectsStmt() mysql.DeleteStatement {
+	tSubjects := table.FivenetACLSubjects.AS("stale_job_grade_subject")
+	tSubjectJobGrades := table.FivenetACLSubjectJobGradeScopes.AS("stale_job_grade_scope")
+	tJobGrades := table.FivenetJobsGrades.AS("stale_job_grade")
 
-	stmt := table.FivenetAclSubjects.
-		INSERT(table.FivenetAclSubjects.SubjectType).
+	return tSubjects.
+		DELETE().
+		WHERE(mysql.AND(
+			tSubjects.SubjectType.EQ(mysql.Int16(int16(SubjectTypeJobGrade))),
+			mysql.EXISTS(
+				mysql.SELECT(mysql.Int(1)).
+					FROM(tSubjectJobGrades).
+					WHERE(tSubjectJobGrades.SubjectID.EQ(tSubjects.ID)),
+			),
+			mysql.NOT(mysql.EXISTS(
+				mysql.SELECT(mysql.Int(1)).
+					FROM(tSubjectJobGrades.
+						INNER_JOIN(tJobGrades,
+							mysql.AND(
+								tJobGrades.JobName.EQ(tSubjectJobGrades.Job),
+								tJobGrades.Grade.EQ(tSubjectJobGrades.MinimumGrade),
+							),
+						),
+					).
+					WHERE(tSubjectJobGrades.SubjectID.EQ(tSubjects.ID)),
+			)),
+		)).
+		LIMIT(subjectCleanupDeleteLimit)
+}
+
+func createSubject(ctx context.Context, tx qrm.DB, subjectType SubjectType) (int64, error) {
+	stmt := table.FivenetACLSubjects.
+		INSERT(table.FivenetACLSubjects.SubjectType).
 		VALUES(int16(subjectType))
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -315,58 +342,103 @@ func ensureSubject(
 		return 0, err
 	}
 
-	subjectID, err = res.LastInsertId()
+	return res.LastInsertId()
+}
+
+func deleteSubject(ctx context.Context, tx qrm.DB, subjectID int64) error {
+	_, err := table.FivenetACLSubjects.
+		DELETE().
+		WHERE(table.FivenetACLSubjects.ID.EQ(mysql.Int64(subjectID))).
+		LIMIT(1).
+		ExecContext(ctx, tx)
+	return err
+}
+
+func upsertUserSubject(
+	ctx context.Context,
+	tx qrm.DB,
+	subjectID int64,
+	userID int32,
+) (int64, error) {
+	stmt := table.FivenetACLSubjectUsers.
+		INSERT(
+			table.FivenetACLSubjectUsers.SubjectID,
+			table.FivenetACLSubjectUsers.UserID,
+		).
+		VALUES(
+			subjectID,
+			userID,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			table.FivenetACLSubjectUsers.SubjectID.SET(
+				mysql.RawInt("LAST_INSERT_ID(`subject_id`)"),
+			),
+		)
+
+	return upsertSubjectMapping(ctx, tx, stmt)
+}
+
+func upsertQualificationSubject(
+	ctx context.Context,
+	tx qrm.DB,
+	subjectID int64,
+	qualificationID int64,
+) (int64, error) {
+	stmt := table.FivenetACLSubjectQualifications.
+		INSERT(
+			table.FivenetACLSubjectQualifications.SubjectID,
+			table.FivenetACLSubjectQualifications.QualificationID,
+		).
+		VALUES(
+			subjectID,
+			qualificationID,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			table.FivenetACLSubjectQualifications.SubjectID.SET(
+				mysql.RawInt("LAST_INSERT_ID(`subject_id`)"),
+			),
+		)
+
+	return upsertSubjectMapping(ctx, tx, stmt)
+}
+
+func upsertJobGradeSubject(
+	ctx context.Context,
+	tx qrm.DB,
+	subjectID int64,
+	job string,
+	minimumGrade int32,
+) (int64, error) {
+	stmt := table.FivenetACLSubjectJobGradeScopes.
+		INSERT(
+			table.FivenetACLSubjectJobGradeScopes.SubjectID,
+			table.FivenetACLSubjectJobGradeScopes.Job,
+			table.FivenetACLSubjectJobGradeScopes.MinimumGrade,
+		).
+		VALUES(
+			subjectID,
+			job,
+			minimumGrade,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			table.FivenetACLSubjectJobGradeScopes.SubjectID.SET(
+				mysql.RawInt("LAST_INSERT_ID(`subject_id`)"),
+			),
+		)
+
+	return upsertSubjectMapping(ctx, tx, stmt)
+}
+
+func upsertSubjectMapping(
+	ctx context.Context,
+	tx qrm.DB,
+	stmt mysql.InsertStatement,
+) (int64, error) {
+	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
 		return 0, err
 	}
-
-	if err = insertMapping(subjectID); err != nil {
-		if existingID, findErr := find(); findErr == nil {
-			return existingID, nil
-		}
-		if dbutils.IsDuplicateError(err) {
-			if cleanupErr := cleanupOrphanSubjectMappings(ctx, tx); cleanupErr != nil {
-				return 0, cleanupErr
-			}
-			if retryErr := insertMapping(subjectID); retryErr == nil {
-				return subjectID, nil
-			}
-			if existingID, findErr := find(); findErr == nil {
-				return existingID, nil
-			}
-		}
-		return 0, err
-	}
-
-	return subjectID, nil
-}
-
-func cleanupOrphanSubjectMappings(ctx context.Context, tx qrm.DB) error {
-	if _, err := tx.ExecContext(ctx, `
-DELETE su
-FROM fivenet_acl_subject_users su
-LEFT JOIN fivenet_acl_subjects s ON s.id = su.subject_id
-WHERE s.id IS NULL`); err != nil {
-		return err
-	}
-
-	if _, err := tx.ExecContext(ctx, `
-DELETE sq
-FROM fivenet_acl_subject_qualifications sq
-LEFT JOIN fivenet_acl_subjects s ON s.id = sq.subject_id
-WHERE s.id IS NULL`); err != nil {
-		return err
-	}
-
-	if _, err := tx.ExecContext(ctx, `
-DELETE sj
-FROM fivenet_acl_subject_job_grade_scopes sj
-LEFT JOIN fivenet_acl_subjects s ON s.id = sj.subject_id
-WHERE s.id IS NULL`); err != nil {
-		return err
-	}
-
-	return nil
+	return res.LastInsertId()
 }
 
 type subjectIDDest struct {
@@ -378,13 +450,17 @@ func querySubjectID(ctx context.Context, tx qrm.DB, stmt mysql.SelectStatement) 
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
 		return 0, err
 	}
+	if dest.SubjectID == 0 {
+		return 0, qrm.ErrNoRows
+	}
 	return dest.SubjectID, nil
 }
 
 type SubjectAccessColumns struct {
 	BaseAccessColumns
+
 	SubjectID mysql.ColumnInteger
-	Effect    mysql.ColumnInteger
+	Effect    mysql.ColumnBool
 }
 
 type SubjectTargetTableColumns struct {
@@ -733,7 +809,7 @@ func (a *SubjectObjectAccess) visibleObjectsStatement(
 	actorGradeSpecificity := mysql.IntegerColumn("grade_specificity").From(actorSubjects)
 
 	matchingTargetID := mysql.IntegerColumn("target_id").From(matchingACL)
-	matchingEffect := mysql.IntegerColumn("effect").From(matchingACL)
+	matchingEffect := mysql.BoolColumn("effect").From(matchingACL)
 	matchingSpecificity := mysql.IntegerColumn("specificity").From(matchingACL)
 	matchingGradeSpecificity := mysql.IntegerColumn("grade_specificity").From(matchingACL)
 	matchingSpecificityRank := mysql.IntegerColumn("specificity_rank").From(matchingACL)
@@ -789,24 +865,26 @@ func (a *SubjectObjectAccess) visibleObjectsStatement(
 
 	aclCondition := mysql.AND(
 		mysql.IntExp(mysql.SUM(mysql.CASE().
-			WHEN(matchingEffect.EQ(mysql.Int8(int8(AccessEffectDeny)))).
+			WHEN(matchingEffect.IS_FALSE()).
 			THEN(mysql.Int(1)).
 			ELSE(mysql.Int(0)))).EQ(mysql.Int(0)),
 		mysql.IntExp(mysql.SUM(mysql.CASE().
-			WHEN(matchingEffect.EQ(mysql.Int8(int8(AccessEffectAllow)))).
+			WHEN(matchingEffect.IS_TRUE()).
 			THEN(mysql.Int(1)).
 			ELSE(mysql.Int(0)))).GT(mysql.Int(0)),
 	)
 	if includeImplicitAccess {
-		visibleSelect = visibleSelect.HAVING(mysql.OR(publicCondition, creatorCondition, aclCondition))
+		visibleSelect = visibleSelect.HAVING(
+			mysql.OR(publicCondition, creatorCondition, aclCondition),
+		)
 	} else {
 		visibleSelect = visibleSelect.HAVING(aclCondition)
 	}
 
-	tSubjectUsers := table.FivenetAclSubjectUsers.AS("asu")
-	tSubjectQualis := table.FivenetAclSubjectQualifications.AS("asq")
+	tSubjectUsers := table.FivenetACLSubjectUsers.AS("asu")
+	tSubjectQualis := table.FivenetACLSubjectQualifications.AS("asq")
 	tQualiResults := table.FivenetQualificationsResults.AS("qr")
-	tSubjectJobGrade := table.FivenetAclSubjectJobGradeScopes.AS("asjg")
+	tSubjectJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("asjg")
 	tUserJobs := table.FivenetUserJobs.AS("uj")
 
 	actorSubjectsUnion := mysql.SELECT(
@@ -828,7 +906,11 @@ func (a *SubjectObjectAccess) visibleObjectsStatement(
 							tQualiResults.QualificationID.EQ(tSubjectQualis.QualificationID),
 							tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 							tQualiResults.DeletedAt.IS_NULL(),
-							tQualiResults.Status.EQ(mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
+							tQualiResults.Status.EQ(
+								mysql.Int32(
+									int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
+								),
+							),
 						),
 					),
 				),
@@ -893,11 +975,11 @@ func (a *SubjectObjectAccess) visibleObjectsStatement(
 				).
 				WHERE(mysql.OR(
 					mysql.AND(
-						a.accessColumns.Effect.EQ(mysql.Int8(int8(AccessEffectAllow))),
+						a.accessColumns.Effect.IS_TRUE(),
 						a.accessColumns.Access.GT_EQ(mysql.Int32(access)),
 					),
 					mysql.AND(
-						a.accessColumns.Effect.EQ(mysql.Int8(int8(AccessEffectDeny))),
+						a.accessColumns.Effect.IS_FALSE(),
 						a.accessColumns.Access.EQ(mysql.Int32(access)),
 					),
 				)),
@@ -938,17 +1020,17 @@ func (a *SubjectObjectAccess) CreateEntry(
 			a.accessColumns.Access,
 			a.accessColumns.Effect,
 		).
-		VALUES(targetID, subjectID, access, int8(effect))
+		VALUES(targetID, subjectID, access, effect == AccessEffectAllow)
 
 	_, err = stmt.ExecContext(ctx, tx)
 	return err
 }
 
 func subjectExists(ctx context.Context, tx qrm.DB, subjectID int64) (bool, error) {
-	stmt := table.FivenetAclSubjects.
+	stmt := table.FivenetACLSubjects.
 		SELECT(mysql.Int(1).AS("exists")).
-		FROM(table.FivenetAclSubjects).
-		WHERE(table.FivenetAclSubjects.ID.EQ(mysql.Int64(subjectID))).
+		FROM(table.FivenetACLSubjects).
+		WHERE(table.FivenetACLSubjects.ID.EQ(mysql.Int64(subjectID))).
 		LIMIT(1)
 
 	var dest struct {
@@ -974,7 +1056,12 @@ func (a *SubjectObjectAccess) ClearTarget(ctx context.Context, tx qrm.DB, target
 	return err
 }
 
-func (a *SubjectObjectAccess) DeleteEntry(ctx context.Context, tx qrm.DB, targetID int64, id int64) error {
+func (a *SubjectObjectAccess) DeleteEntry(
+	ctx context.Context,
+	tx qrm.DB,
+	targetID int64,
+	id int64,
+) error {
 	stmt := a.accessTable.
 		DELETE().
 		WHERE(mysql.AND(
@@ -1002,7 +1089,7 @@ func (a *SubjectObjectAccess) UpdateEntry(
 			a.accessColumns.Access,
 			a.accessColumns.Effect,
 		).
-		SET(subjectID, access, int8(effect)).
+		SET(subjectID, access, effect == AccessEffectAllow).
 		WHERE(mysql.AND(
 			a.accessColumns.ID.EQ(mysql.Int64(id)),
 			a.accessColumns.TargetID.EQ(mysql.Int64(targetID)),
@@ -1015,17 +1102,19 @@ func (a *SubjectObjectAccess) UpdateEntry(
 
 func (a *SubjectObjectAccess) Validate() error {
 	if a.db == nil {
-		return fmt.Errorf("subject object access requires db")
+		return errors.New("subject object access requires db")
 	}
 	if a.targetTable == nil || a.accessTable == nil {
-		return fmt.Errorf("subject object access requires target and access tables")
+		return errors.New("subject object access requires target and access tables")
 	}
 	if a.targetTableColumns == nil || a.targetTableColumns.ID == nil {
-		return fmt.Errorf("subject object access requires target id column")
+		return errors.New("subject object access requires target id column")
 	}
 	if a.accessColumns == nil || a.accessColumns.TargetID == nil ||
 		a.accessColumns.SubjectID == nil || a.accessColumns.Access == nil || a.accessColumns.Effect == nil {
-		return fmt.Errorf("subject object access requires access target, subject, access, and effect columns")
+		return errors.New(
+			"subject object access requires access target, subject, access, and effect columns",
+		)
 	}
 
 	return nil

@@ -38,8 +38,16 @@ func TestSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 	assert.Contains(t, sql, "fivenet_documents_access")
 	assert.Contains(t, sql, "ROW_NUMBER() OVER")
 	assert.Contains(t, sql, "PARTITION BY fivenet_documents_access.target_id")
-	assert.Contains(t, compactSQL, "fivenet_documents_access.effect = ?) AND (fivenet_documents_access.access >= ?")
-	assert.Contains(t, compactSQL, "fivenet_documents_access.effect = ?) AND (fivenet_documents_access.access = ?")
+	assert.Contains(
+		t,
+		compactSQL,
+		"fivenet_documents_access.effect IS TRUE) AND (fivenet_documents_access.access >= ?",
+	)
+	assert.Contains(
+		t,
+		compactSQL,
+		"fivenet_documents_access.effect IS FALSE) AND (fivenet_documents_access.access = ?",
+	)
 	assert.Contains(t, sql, "HAVING")
 	assert.Contains(t, sql, "fivenet_documents.public IS TRUE")
 	require.NotEmpty(t, args)
@@ -71,9 +79,29 @@ func TestSubjectObjectAccessCountStatementShape(t *testing.T) {
 func TestSubjectConstants(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, SubjectType(1), SubjectTypeUser)
-	assert.Equal(t, SubjectType(2), SubjectTypeQualification)
-	assert.Equal(t, SubjectType(3), SubjectTypeJobGrade)
-	assert.Equal(t, AccessEffect(0), AccessEffectDeny)
-	assert.Equal(t, AccessEffect(1), AccessEffectAllow)
+	assert.Equal(t, SubjectTypeUser, SubjectType(1))
+	assert.Equal(t, SubjectTypeQualification, SubjectType(2))
+	assert.Equal(t, SubjectTypeJobGrade, SubjectType(3))
+	assert.Equal(t, AccessEffectDeny, AccessEffect(0))
+	assert.Equal(t, AccessEffectAllow, AccessEffect(1))
+}
+
+func TestSubjectCleanupOrphanSubjectsStatementShape(t *testing.T) {
+	t.Parallel()
+
+	stmt := NewSubjectResolver(nil).cleanupOrphanSubjectsStmt()
+	sql, args := stmt.Sql()
+
+	assert.Contains(t, sql, "LIMIT ?")
+	assert.Contains(t, args, subjectCleanupDeleteLimit)
+}
+
+func TestSubjectCleanupStaleJobGradeSubjectsStatementShape(t *testing.T) {
+	t.Parallel()
+
+	stmt := NewSubjectResolver(nil).cleanupStaleJobGradeSubjectsStmt()
+	sql, args := stmt.Sql()
+
+	assert.Contains(t, sql, "LIMIT ?")
+	assert.Contains(t, args, subjectCleanupDeleteLimit)
 }

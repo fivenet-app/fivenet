@@ -99,7 +99,7 @@ type Server struct {
 	tracker  tracker.ITracker
 	postals  postals.Postals
 	appCfg   appconfig.IConfig
-	enricher *mstlystcdata.UserAwareEnricher
+	enricher mstlystcdata.IUserAwareEnricher
 	jobs     *mstlystcdata.Jobs
 
 	helpers     *helpers.Helpers
@@ -123,7 +123,7 @@ type Params struct {
 	AppConfig appconfig.IConfig
 	Tracker   tracker.ITracker
 	Postals   postals.Postals
-	Enricher  *mstlystcdata.UserAwareEnricher
+	Enricher  mstlystcdata.IUserAwareEnricher
 	Jobs      *mstlystcdata.Jobs
 
 	Helpers     *helpers.Helpers

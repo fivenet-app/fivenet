@@ -6,9 +6,11 @@ import (
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 )
 
-type DocumentAccess = resourcesaccess.Access
-type DocumentJobAccess = resourcesaccess.JobAccess
-type DocumentUserAccess = resourcesaccess.UserAccess
+type (
+	DocumentAccess     = resourcesaccess.Access
+	DocumentJobAccess  = resourcesaccess.JobAccess
+	DocumentUserAccess = resourcesaccess.UserAccess
+)
 
 func DocumentAccessHasDuplicates(access *DocumentAccess) bool {
 	jobKeys := map[string]any{}

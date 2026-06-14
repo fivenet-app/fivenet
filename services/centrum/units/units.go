@@ -59,7 +59,7 @@ type UnitDB struct {
 
 	db       *sql.DB
 	js       *events.JSWrapper
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 	tracker  tracker.ITracker
 	postals  postals.Postals
 
@@ -81,7 +81,7 @@ type Params struct {
 	JS       *events.JSWrapper
 	DB       *sql.DB
 	Cfg      *config.Config
-	Enricher *mstlystcdata.Enricher
+	Enricher mstlystcdata.IEnricher
 	Tracker  tracker.ITracker
 	Postals  postals.Postals
 }

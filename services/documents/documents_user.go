@@ -30,7 +30,11 @@ func (s *Server) ListUserDocuments(
 
 	var userCondition mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		userCondition = s.subjectAccess.ACLAccessExistsCondition(tDocument.ID, userInfo, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW))
+		userCondition = s.subjectAccess.ACLAccessExistsCondition(
+			tDocument.ID,
+			userInfo,
+			int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		)
 	} else {
 		userCondition = mysql.Bool(true)
 	}

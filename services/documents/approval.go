@@ -35,7 +35,11 @@ func (s *Server) ListApprovalTasksInbox(
 
 	var existsAccess mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		existsAccess = s.subjectAccess.ACLAccessExistsCondition(tApprovalTasks.DocumentID, userInfo, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW))
+		existsAccess = s.subjectAccess.ACLAccessExistsCondition(
+			tApprovalTasks.DocumentID,
+			userInfo,
+			int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		)
 	} else {
 		existsAccess = mysql.Bool(true)
 	}

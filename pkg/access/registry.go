@@ -45,14 +45,14 @@ func RegisterAccess(name string, access GroupedAccess) {
 	groupedAccesses[name] = access
 }
 
-func GetAccess(accessLevel string) GroupedAccess {
+func GetAccess(accessLevel string) (GroupedAccess, bool) {
 	groupedAccessesMu.RLock()
 	defer groupedAccessesMu.RUnlock()
 
 	access, ok := groupedAccesses[accessLevel]
 	if !ok {
-		return nil
+		return nil, false
 	}
 
-	return access
+	return access, true
 }

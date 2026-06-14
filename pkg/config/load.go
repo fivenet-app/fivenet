@@ -31,6 +31,8 @@ type Result struct {
 	Config *Config
 	// DiscordConfig is a pointer to the Discord configuration
 	DiscordConfig *Discord
+	// CustomDB
+	CustomDB *CustomDB
 }
 
 // Load reads the application configuration from file and environment variables, sets defaults, and returns a Result.
@@ -65,6 +67,7 @@ func Load() (Result, error) {
 	}
 	res.Config = c
 	res.DiscordConfig = &c.Discord
+	res.CustomDB = &c.Database.Custom
 
 	if err := v.Unmarshal(c); err != nil {
 		return res, fmt.Errorf("failed to unmarshal config. %w", err)

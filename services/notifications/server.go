@@ -38,7 +38,7 @@ type Server struct {
 	tm       *auth.TokenMgr
 	ui       userinfo.UserInfoRetriever
 	js       *events.JSWrapper
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 	appCfg   appconfig.IConfig
 }
 
@@ -53,7 +53,7 @@ type Params struct {
 	TM        *auth.TokenMgr
 	UI        userinfo.UserInfoRetriever
 	JS        *events.JSWrapper
-	Enricher  *mstlystcdata.Enricher
+	Enricher  mstlystcdata.IEnricher
 	AppConfig appconfig.IConfig
 }
 

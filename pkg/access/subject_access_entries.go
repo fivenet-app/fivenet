@@ -47,10 +47,10 @@ func (a *SubjectObjectAccess) ListTargetAccess(
 	opts SubjectAccessOptions,
 ) (*resourcesaccess.Access, error) {
 	tAccess := a.accessTable
-	tSubjects := table.FivenetAclSubjects.AS("acl_subject")
-	tJobGrade := table.FivenetAclSubjectJobGradeScopes.AS("subject_job_grade")
-	tQualifications := table.FivenetAclSubjectQualifications.AS("subject_qualification")
-	tUserSubjects := table.FivenetAclSubjectUsers.AS("subject_user")
+	tSubjects := table.FivenetACLSubjects.AS("acl_subject")
+	tJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("subject_job_grade")
+	tQualifications := table.FivenetACLSubjectQualifications.AS("subject_qualification")
+	tUserSubjects := table.FivenetACLSubjectUsers.AS("subject_user")
 	tUsers := table.FivenetUser.AS("user_short")
 
 	columns := a.accessColumns
@@ -156,10 +156,12 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 ) mysql.BoolExpression {
 	tAccess := a.accessTable
 	columns := a.accessColumns
-	tSubjectUsers := table.FivenetAclSubjectUsers.AS("subject_acl_user_exists")
-	tSubjectQualis := table.FivenetAclSubjectQualifications.AS("subject_acl_qualification_exists")
-	tQualiResults := table.FivenetQualificationsResults.AS("subject_acl_qualification_results_exists")
-	tSubjectJobGrade := table.FivenetAclSubjectJobGradeScopes.AS("subject_acl_job_grade_exists")
+	tSubjectUsers := table.FivenetACLSubjectUsers.AS("subject_acl_user_exists")
+	tSubjectQualis := table.FivenetACLSubjectQualifications.AS("subject_acl_qualification_exists")
+	tQualiResults := table.FivenetQualificationsResults.AS(
+		"subject_acl_qualification_results_exists",
+	)
+	tSubjectJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("subject_acl_job_grade_exists")
 	tUserJobs := table.FivenetUserJobs.AS("subject_acl_user_jobs_exists")
 
 	return mysql.EXISTS(
@@ -167,7 +169,7 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 			FROM(tAccess).
 			WHERE(mysql.AND(
 				columns.TargetID.EQ(targetID),
-				columns.Effect.EQ(mysql.Int8(int8(AccessEffectAllow))),
+				columns.Effect.IS_TRUE(),
 				columns.Access.GT_EQ(mysql.Int32(access)),
 				mysql.OR(
 					columns.SubjectID.IN(
@@ -182,10 +184,18 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 							FROM(tSubjectQualis.
 								INNER_JOIN(tQualiResults,
 									mysql.AND(
-										tQualiResults.QualificationID.EQ(tSubjectQualis.QualificationID),
+										tQualiResults.QualificationID.EQ(
+											tSubjectQualis.QualificationID,
+										),
 										tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 										tQualiResults.DeletedAt.IS_NULL(),
-										tQualiResults.Status.EQ(mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
+										tQualiResults.Status.EQ(
+											mysql.Int32(
+												int32(
+													qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
+												),
+											),
+										),
 									),
 								),
 							),
@@ -209,7 +219,9 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 							FROM(tSubjectJobGrade).
 							WHERE(mysql.AND(
 								tSubjectJobGrade.Job.EQ(mysql.String(userInfo.GetJob())),
-								tSubjectJobGrade.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+								tSubjectJobGrade.MinimumGrade.LT_EQ(
+									mysql.Int32(userInfo.GetJobGrade()),
+								),
 							)),
 					),
 				),
@@ -247,7 +259,14 @@ func (a *SubjectObjectAccess) createTargetAccess(
 			continue
 		}
 
-		if err := a.CreateEntry(ctx, tx, targetID, subjectID, jobAccess.GetAccess(), AccessEffectAllow); err != nil {
+		if err := a.CreateEntry(
+			ctx,
+			tx,
+			targetID,
+			subjectID,
+			jobAccess.GetAccess(),
+			AccessEffectAllow,
+		); err != nil {
 			return err
 		}
 	}
@@ -265,13 +284,24 @@ func (a *SubjectObjectAccess) createTargetAccess(
 			continue
 		}
 
-		if err := a.CreateEntry(ctx, tx, targetID, subjectID, userAccess.GetAccess(), AccessEffectAllow); err != nil {
+		if err := a.CreateEntry(
+			ctx,
+			tx,
+			targetID,
+			subjectID,
+			userAccess.GetAccess(),
+			AccessEffectAllow,
+		); err != nil {
 			return err
 		}
 	}
 
 	for _, qualiAccess := range in.GetQualifications() {
-		subjectID, err := resolver.EnsureQualificationSubject(ctx, tx, qualiAccess.GetQualificationId())
+		subjectID, err := resolver.EnsureQualificationSubject(
+			ctx,
+			tx,
+			qualiAccess.GetQualificationId(),
+		)
 		if err != nil {
 			return err
 		}
@@ -283,7 +313,14 @@ func (a *SubjectObjectAccess) createTargetAccess(
 			continue
 		}
 
-		if err := a.CreateEntry(ctx, tx, targetID, subjectID, qualiAccess.GetAccess(), AccessEffectAllow); err != nil {
+		if err := a.CreateEntry(
+			ctx,
+			tx,
+			targetID,
+			subjectID,
+			qualiAccess.GetAccess(),
+			AccessEffectAllow,
+		); err != nil {
 			return err
 		}
 	}
@@ -307,7 +344,10 @@ func (a *SubjectObjectAccess) createDeniedAccess(
 	return nil
 }
 
-func compareSubjectAccess(current *resourcesaccess.Access, in *resourcesaccess.Access) *SubjectAccessChanges {
+func compareSubjectAccess(
+	current *resourcesaccess.Access,
+	in *resourcesaccess.Access,
+) *SubjectAccessChanges {
 	changes := &SubjectAccessChanges{
 		Jobs:           &SubjectAccessEntryChanges[*resourcesaccess.JobAccess]{},
 		Users:          &SubjectAccessEntryChanges[*resourcesaccess.UserAccess]{},
@@ -320,9 +360,18 @@ func compareSubjectAccess(current *resourcesaccess.Access, in *resourcesaccess.A
 		in = &resourcesaccess.Access{}
 	}
 
-	changes.Jobs.ToCreate, changes.Jobs.ToUpdate, changes.Jobs.ToDelete = compareSubjectJobAccess(current.GetJobs(), in.GetJobs())
-	changes.Users.ToCreate, changes.Users.ToUpdate, changes.Users.ToDelete = compareSubjectUserAccess(current.GetUsers(), in.GetUsers())
-	changes.Qualifications.ToCreate, changes.Qualifications.ToUpdate, changes.Qualifications.ToDelete = compareSubjectQualificationAccess(current.GetQualifications(), in.GetQualifications())
+	changes.Jobs.ToCreate, changes.Jobs.ToUpdate, changes.Jobs.ToDelete = compareSubjectJobAccess(
+		current.GetJobs(),
+		in.GetJobs(),
+	)
+	changes.Users.ToCreate, changes.Users.ToUpdate, changes.Users.ToDelete = compareSubjectUserAccess(
+		current.GetUsers(),
+		in.GetUsers(),
+	)
+	changes.Qualifications.ToCreate, changes.Qualifications.ToUpdate, changes.Qualifications.ToDelete = compareSubjectQualificationAccess(
+		current.GetQualifications(),
+		in.GetQualifications(),
+	)
 
 	return changes
 }
@@ -331,142 +380,128 @@ func compareSubjectJobAccess(
 	current []*resourcesaccess.JobAccess,
 	in []*resourcesaccess.JobAccess,
 ) ([]*resourcesaccess.JobAccess, []*resourcesaccess.JobAccess, []*resourcesaccess.JobAccess) {
-	toCreate := []*resourcesaccess.JobAccess{}
-	toUpdate := []*resourcesaccess.JobAccess{}
-	toDelete := []*resourcesaccess.JobAccess{}
-
-	if len(current) == 0 {
-		return in, toUpdate, toDelete
-	}
-
-	slices.SortFunc(current, func(a, b *resourcesaccess.JobAccess) int {
-		return int(a.GetId() - b.GetId())
-	})
-
-	foundTracker := []int{}
-	for _, currentEntry := range current {
-		var found *resourcesaccess.JobAccess
-		var foundIdx int
-		for i, inputEntry := range in {
-			if currentEntry.GetJob() != inputEntry.GetJob() || currentEntry.GetMinimumGrade() != inputEntry.GetMinimumGrade() {
-				continue
+	return compareSubjectAccessEntries(
+		current,
+		in,
+		func(entry *resourcesaccess.JobAccess) subjectAccessKey {
+			return subjectAccessKey{
+				job:          entry.GetJob(),
+				minimumGrade: entry.GetMinimumGrade(),
 			}
-			found = inputEntry
-			foundIdx = i
-			break
-		}
-		if found == nil {
-			toDelete = append(toDelete, currentEntry)
-			continue
-		}
-
-		foundTracker = append(foundTracker, foundIdx)
-		if currentEntry.GetAccess() != found.GetAccess() {
-			currentEntry.SetAccess(found.GetAccess())
-			toUpdate = append(toUpdate, currentEntry)
-		}
-	}
-
-	for i, inputEntry := range in {
-		if slices.Index(foundTracker, i) == -1 {
-			toCreate = append(toCreate, inputEntry)
-		}
-	}
-
-	return toCreate, toUpdate, toDelete
+		},
+		func(entry *resourcesaccess.JobAccess) int64 {
+			return entry.GetId()
+		},
+		func(entry *resourcesaccess.JobAccess) int32 {
+			return entry.GetAccess()
+		},
+		func(entry *resourcesaccess.JobAccess, access int32) {
+			entry.SetAccess(access)
+		},
+	)
 }
 
 func compareSubjectUserAccess(
 	current []*resourcesaccess.UserAccess,
 	in []*resourcesaccess.UserAccess,
 ) ([]*resourcesaccess.UserAccess, []*resourcesaccess.UserAccess, []*resourcesaccess.UserAccess) {
-	toCreate := []*resourcesaccess.UserAccess{}
-	toUpdate := []*resourcesaccess.UserAccess{}
-	toDelete := []*resourcesaccess.UserAccess{}
-
-	if len(current) == 0 {
-		return in, toUpdate, toDelete
-	}
-
-	slices.SortFunc(current, func(a, b *resourcesaccess.UserAccess) int {
-		return int(a.GetId() - b.GetId())
-	})
-
-	foundTracker := []int{}
-	for _, currentEntry := range current {
-		var found *resourcesaccess.UserAccess
-		var foundIdx int
-		for i, inputEntry := range in {
-			if currentEntry.GetUserId() != inputEntry.GetUserId() {
-				continue
-			}
-			found = inputEntry
-			foundIdx = i
-			break
-		}
-		if found == nil {
-			toDelete = append(toDelete, currentEntry)
-			continue
-		}
-
-		foundTracker = append(foundTracker, foundIdx)
-		if currentEntry.GetAccess() != found.GetAccess() {
-			currentEntry.SetAccess(found.GetAccess())
-			toUpdate = append(toUpdate, currentEntry)
-		}
-	}
-
-	for i, inputEntry := range in {
-		if slices.Index(foundTracker, i) == -1 {
-			toCreate = append(toCreate, inputEntry)
-		}
-	}
-
-	return toCreate, toUpdate, toDelete
+	return compareSubjectAccessEntries(
+		current,
+		in,
+		func(entry *resourcesaccess.UserAccess) int32 {
+			return entry.GetUserId()
+		},
+		func(entry *resourcesaccess.UserAccess) int64 {
+			return entry.GetId()
+		},
+		func(entry *resourcesaccess.UserAccess) int32 {
+			return entry.GetAccess()
+		},
+		func(entry *resourcesaccess.UserAccess, access int32) {
+			entry.SetAccess(access)
+		},
+	)
 }
 
 func compareSubjectQualificationAccess(
 	current []*resourcesaccess.QualificationAccess,
 	in []*resourcesaccess.QualificationAccess,
 ) ([]*resourcesaccess.QualificationAccess, []*resourcesaccess.QualificationAccess, []*resourcesaccess.QualificationAccess) {
-	toCreate := []*resourcesaccess.QualificationAccess{}
-	toUpdate := []*resourcesaccess.QualificationAccess{}
-	toDelete := []*resourcesaccess.QualificationAccess{}
+	return compareSubjectAccessEntries(
+		current,
+		in,
+		func(entry *resourcesaccess.QualificationAccess) int64 {
+			return entry.GetQualificationId()
+		},
+		func(entry *resourcesaccess.QualificationAccess) int64 {
+			return entry.GetId()
+		},
+		func(entry *resourcesaccess.QualificationAccess) int32 {
+			return entry.GetAccess()
+		},
+		func(entry *resourcesaccess.QualificationAccess, access int32) {
+			entry.SetAccess(access)
+		},
+	)
+}
+
+type subjectAccessKey struct {
+	job          string
+	minimumGrade int32
+}
+
+func compareSubjectAccessEntries[T any, K comparable](
+	current []T,
+	in []T,
+	keyFn func(T) K,
+	idFn func(T) int64,
+	accessFn func(T) int32,
+	setAccessFn func(T, int32),
+) ([]T, []T, []T) {
+	toCreate := make([]T, 0, len(in))
+	toUpdate := make([]T, 0, len(current))
+	toDelete := make([]T, 0, len(current))
 
 	if len(current) == 0 {
 		return in, toUpdate, toDelete
 	}
 
-	slices.SortFunc(current, func(a, b *resourcesaccess.QualificationAccess) int {
-		return int(a.GetId() - b.GetId())
+	slices.SortFunc(current, func(a, b T) int {
+		switch {
+		case idFn(a) < idFn(b):
+			return -1
+		case idFn(a) > idFn(b):
+			return 1
+		default:
+			return 0
+		}
 	})
 
-	foundTracker := []int{}
+	inputByKey := make(map[K]T, len(in))
+	for _, inputEntry := range in {
+		inputByKey[keyFn(inputEntry)] = inputEntry
+	}
+
 	for _, currentEntry := range current {
-		var found *resourcesaccess.QualificationAccess
-		var foundIdx int
-		for i, inputEntry := range in {
-			if currentEntry.GetQualificationId() != inputEntry.GetQualificationId() {
-				continue
-			}
-			found = inputEntry
-			foundIdx = i
-			break
-		}
-		if found == nil {
+		inputEntry, found := inputByKey[keyFn(currentEntry)]
+		if !found {
 			toDelete = append(toDelete, currentEntry)
 			continue
 		}
 
-		foundTracker = append(foundTracker, foundIdx)
-		if currentEntry.GetAccess() != found.GetAccess() {
-			currentEntry.SetAccess(found.GetAccess())
+		if accessFn(currentEntry) != accessFn(inputEntry) {
+			setAccessFn(currentEntry, accessFn(inputEntry))
 			toUpdate = append(toUpdate, currentEntry)
 		}
 	}
 
-	for i, inputEntry := range in {
-		if slices.Index(foundTracker, i) == -1 {
+	currentKeys := make(map[K]struct{}, len(current))
+	for _, currentEntry := range current {
+		currentKeys[keyFn(currentEntry)] = struct{}{}
+	}
+
+	for _, inputEntry := range in {
+		if _, ok := currentKeys[keyFn(inputEntry)]; !ok {
 			toCreate = append(toCreate, inputEntry)
 		}
 	}
@@ -478,7 +513,7 @@ type subjectAccessRow struct {
 	ID          int64
 	TargetID    int64
 	Access      int32
-	Effect      int8
+	Effect      bool
 	SubjectType int16
 
 	ACLJob             sql.NullString
@@ -494,7 +529,10 @@ type subjectAccessRow struct {
 	UserPhoneNumber sql.NullString
 }
 
-func subjectAccessRowsToProto(rows []subjectAccessRow, opts SubjectAccessOptions) *resourcesaccess.Access {
+func subjectAccessRowsToProto(
+	rows []subjectAccessRow,
+	opts SubjectAccessOptions,
+) *resourcesaccess.Access {
 	out := &resourcesaccess.Access{
 		Jobs:           make([]*resourcesaccess.JobAccess, 0, len(rows)),
 		Users:          make([]*resourcesaccess.UserAccess, 0, len(rows)),
@@ -523,7 +561,7 @@ func subjectAccessRowsToProto(rows []subjectAccessRow, opts SubjectAccessOptions
 				Access:       row.Access,
 			}
 
-			if AccessEffect(row.Effect) == AccessEffectDeny {
+			if !row.Effect {
 				key := subjectJobAccessKey(entry.GetJob(), entry.GetMinimumGrade())
 				if _, ok := blockedJobKeys[key]; ok {
 					continue
@@ -549,7 +587,7 @@ func subjectAccessRowsToProto(rows []subjectAccessRow, opts SubjectAccessOptions
 				User:     subjectAccessUserShort(row),
 			}
 
-			if AccessEffect(row.Effect) == AccessEffectDeny {
+			if !row.Effect {
 				if _, ok := blockedUserIDs[entry.GetUserId()]; ok {
 					continue
 				}
@@ -572,7 +610,7 @@ func subjectAccessRowsToProto(rows []subjectAccessRow, opts SubjectAccessOptions
 				Access:          row.Access,
 			}
 
-			if AccessEffect(row.Effect) == AccessEffectDeny {
+			if !row.Effect {
 				if _, ok := blockedQualificationIDs[entry.GetQualificationId()]; ok {
 					continue
 				}
@@ -588,7 +626,9 @@ func subjectAccessRowsToProto(rows []subjectAccessRow, opts SubjectAccessOptions
 
 	out.Jobs = append(out.Jobs, filterAllowedSubjectJobAccess(allowedJobs, blockedJobKeys)...)
 	out.Users = append(out.Users, filterAllowedSubjectUserAccess(allowedUsers, blockedUserIDs)...)
-	out.Qualifications = append(out.Qualifications, filterAllowedSubjectQualificationAccess(allowedQualifications, blockedQualificationIDs)...)
+	out.Qualifications = append(
+		out.Qualifications,
+		filterAllowedSubjectQualificationAccess(allowedQualifications, blockedQualificationIDs)...)
 
 	return out
 }

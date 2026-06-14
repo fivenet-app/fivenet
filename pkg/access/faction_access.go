@@ -39,27 +39,39 @@ func CheckIfHasOwnJobAccess(
 		return creator.GetUserId() == userInfo.GetUserId()
 	}
 
-	// Grant access if any level is "Any"
-	if levels.Contains("Any") {
+	var (
+		hasAny       bool
+		hasLowerRank bool
+		hasSameRank  bool
+		hasOwn       bool
+	)
+	for _, level := range levels.GetStrings() {
+		switch level {
+		case "Any":
+			hasAny = true
+		case "Lower_Rank":
+			hasLowerRank = true
+		case "Same_Rank":
+			hasSameRank = true
+		case "Own":
+			hasOwn = true
+		}
+	}
+
+	if hasAny {
 		return true
 	}
 	// Grant access if user has a higher rank than the creator
-	if levels.Contains("Lower_Rank") {
-		if creator.GetJobGrade() < userInfo.GetJobGrade() {
-			return true
-		}
+	if hasLowerRank && creator.GetJobGrade() < userInfo.GetJobGrade() {
+		return true
 	}
 	// Grant access if user has the same or higher rank than the creator
-	if levels.Contains("Same_Rank") {
-		if creator.GetJobGrade() <= userInfo.GetJobGrade() {
-			return true
-		}
+	if hasSameRank && creator.GetJobGrade() <= userInfo.GetJobGrade() {
+		return true
 	}
 	// Grant access if user is the creator
-	if levels.Contains("Own") {
-		if creator.GetUserId() == userInfo.GetUserId() {
-			return true
-		}
+	if hasOwn && creator.GetUserId() == userInfo.GetUserId() {
+		return true
 	}
 
 	return false

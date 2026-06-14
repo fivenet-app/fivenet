@@ -51,7 +51,8 @@ func (s *Server) ListUnits(
 	// Resolve qualifications access for the user
 	for _, unit := range resp.GetUnits() {
 		if unit.GetAccess() != nil && len(unit.GetAccess().GetQualifications()) > 0 {
-			access, err := s.units.GetAccess().ListTargetAccess(ctx, s.db, unit.GetId(), centrumunitsdb.UnitSubjectAccessOptions())
+			access, err := s.units.GetAccess().
+				ListTargetAccess(ctx, s.db, unit.GetId(), centrumunitsdb.UnitSubjectAccessOptions())
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}

@@ -18,6 +18,21 @@ const (
 	NotAvailablePlaceholder = "N/A"
 )
 
+type IEnricher interface {
+	EnrichJobInfo(user common.IJobInfo)
+	EnrichJobInfoNoFallback(usr common.IJobInfo)
+	EnrichJobName(usr common.IJobName)
+	GetJobByName(job string) *jobs.Job
+	GetJobGrade(job string, grade int32) (*jobs.Job, *jobs.JobGrade)
+}
+
+type IUserAwareEnricher interface {
+	IEnricher
+
+	EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common.IJobInfo)
+	EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) func(usr common.IJobInfo)
+}
+
 // Enricher provides methods to enrich job information for users based on job data and config.
 type Enricher struct {
 	// jobs is the job data source
@@ -30,7 +45,7 @@ type Enricher struct {
 }
 
 // NewEnricher creates a new Enricher instance with the given job data and config.
-func NewEnricher(jobs *Jobs, appCfg appconfig.IConfig, cfg *config.Config) *Enricher {
+func NewEnricher(jobs *Jobs, appCfg appconfig.IConfig, cfg *config.Config) IEnricher {
 	return &Enricher{
 		jobs: jobs,
 
@@ -131,7 +146,7 @@ type UserAwareEnricher struct {
 }
 
 // NewUserAwareEnricher creates a new UserAwareEnricher with the given enricher and permissions.
-func NewUserAwareEnricher(enricher *Enricher, ps perms.Permissions) *UserAwareEnricher {
+func NewUserAwareEnricher(enricher *Enricher, ps perms.Permissions) IUserAwareEnricher {
 	return &UserAwareEnricher{
 		Enricher: enricher,
 		ps:       ps,

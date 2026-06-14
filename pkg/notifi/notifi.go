@@ -138,8 +138,17 @@ func (n *Notifi) SendObjectEvent(
 	ctx context.Context,
 	event *notificationsclientview.ObjectEvent,
 ) error {
+	if event == nil {
+		return errors.New("object event is required")
+	}
+
 	if event.Id == nil {
 		return errors.New("object event ID is required")
+	}
+
+	spec, ok := event.GetType().Spec()
+	if !ok {
+		return fmt.Errorf("unsupported object event type: %s", event.GetType().String())
 	}
 
 	if _, err := n.js.PublishAsyncProto(
@@ -148,7 +157,7 @@ func (n *Notifi) SendObjectEvent(
 			"%s.%s.%s.%d",
 			BaseSubject,
 			ObjectTopic,
-			event.GetType().ToNatsKey(),
+			spec.NatsKey,
 			event.GetId(),
 		),
 		event,

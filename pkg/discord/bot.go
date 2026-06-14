@@ -82,7 +82,7 @@ type BotParams struct {
 	TP        *tracesdk.TracerProvider
 	JS        *events.JSWrapper
 	DB        *sql.DB
-	Enricher  *mstlystcdata.Enricher
+	Enricher  mstlystcdata.IEnricher
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	Perms     perms.Permissions
@@ -98,7 +98,7 @@ type Bot struct {
 	tracer   trace.Tracer
 	js       *events.JSWrapper
 	db       *sql.DB
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 	dcCfg    *config.Discord
 	appCfg   appconfig.IConfig
 	perms    perms.Permissions
