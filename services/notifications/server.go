@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	notificationsstore "github.com/fivenet-app/fivenet/v2026/stores/notifications"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
@@ -40,6 +41,7 @@ type Server struct {
 	js       *events.JSWrapper
 	enricher mstlystcdata.IEnricher
 	appCfg   appconfig.IConfig
+	store    notificationsstore.IStore
 }
 
 type Params struct {
@@ -55,6 +57,7 @@ type Params struct {
 	JS        *events.JSWrapper
 	Enricher  mstlystcdata.IEnricher
 	AppConfig appconfig.IConfig
+	Store     notificationsstore.IStore
 }
 
 func NewServer(p Params) *Server {
@@ -70,6 +73,7 @@ func NewServer(p Params) *Server {
 		js:       p.JS,
 		enricher: p.Enricher,
 		appCfg:   p.AppConfig,
+		store:    p.Store,
 	}
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {

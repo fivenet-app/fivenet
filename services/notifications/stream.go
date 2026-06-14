@@ -184,7 +184,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	}
 	clientViewSubjects := []string{}
 
-	notificationCount, err := s.getNotificationCount(ctx, userInfo.GetUserId())
+	notificationCount, err := s.store.CountUnread(ctx, userInfo.GetUserId())
 	if err != nil {
 		return errswrap.NewError(err, ErrFailedStream)
 	}
