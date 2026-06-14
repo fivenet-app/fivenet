@@ -179,7 +179,7 @@ func (s *Server) ChangePassword(
 		)
 	}
 
-	acc, err := s.getAccountFromIDAndUsername(ctx, claims.AccID, claims.Username, true)
+	acc, err := s.store.GetAccountByIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
@@ -248,7 +248,7 @@ func (s *Server) ChangeUsername(
 	}
 
 	// Retrieve account from db using account ID and username
-	acc, err := s.getAccountFromIDAndUsername(ctx, claims.AccID, claims.Username, true)
+	acc, err := s.store.GetAccountByIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
@@ -345,7 +345,7 @@ func (s *Server) GetCharacters(
 	}
 
 	// Load account to make sure it (still) exists
-	acc, err := s.getAccountFromIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
+	acc, err := s.store.GetAccountByIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
@@ -428,7 +428,7 @@ func (s *Server) ChooseCharacter(
 	}
 
 	// Load account data for token creation
-	acc, err := s.getAccountFromIDAndUsername(
+	acc, err := s.store.GetAccountByIDAndUsername(
 		ctx,
 		currentAccClaims.AccID,
 		currentAccClaims.Username,
@@ -617,7 +617,7 @@ func (s *Server) ImpersonateJob(
 	}
 
 	// Load user's account data for token creation
-	acc, err := s.getAccountFromIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
+	acc, err := s.store.GetAccountByIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)

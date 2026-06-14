@@ -12,7 +12,6 @@ import (
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/go-jet/jet/v2/qrm"
 	"golang.org/x/crypto/bcrypt"
 	grpc "google.golang.org/grpc"
@@ -74,15 +73,6 @@ func (s *Server) destroyCookies(ctx context.Context) error {
 		"set-cookie", authedCookie.String(),
 	)
 	return grpc.SendHeader(ctx, header)
-}
-
-// Helper to fetch account from claims.
-func (s *Server) getAccountFromIDAndUsername(
-	ctx context.Context,
-	accId int64, username string,
-	withPassword bool,
-) (*model.FivenetAccounts, error) {
-	return s.store.GetAccountByIDAndUsername(ctx, accId, username, withPassword)
 }
 
 func (s *Server) getCharacter(

@@ -1,4 +1,4 @@
-package auth
+package authstore
 
 import (
 	"regexp"
@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func newTestStore(t *testing.T) (*Store, sqlmock.Sqlmock) {
+func newTestStore(t *testing.T) (IStore, sqlmock.Sqlmock) {
 	t.Helper()
 
 	db, mock, err := sqlmock.New()
