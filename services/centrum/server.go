@@ -100,7 +100,7 @@ type Server struct {
 	postals  postals.Postals
 	appCfg   appconfig.IConfig
 	enricher mstlystcdata.IUserAwareEnricher
-	jobs     *mstlystcdata.Jobs
+	jobs     mstlystcdata.IJobs
 
 	helpers     *helpers.Helpers
 	settings    *settings.SettingsDB
@@ -124,7 +124,7 @@ type Params struct {
 	Tracker   tracker.ITracker
 	Postals   postals.Postals
 	Enricher  mstlystcdata.IUserAwareEnricher
-	Jobs      *mstlystcdata.Jobs
+	Jobs      mstlystcdata.IJobs
 
 	Helpers     *helpers.Helpers
 	Settings    *settings.SettingsDB
