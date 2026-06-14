@@ -17,7 +17,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
-	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"go.uber.org/multierr"
@@ -568,7 +567,7 @@ func (s *Server) DeleteFaction(
 	}
 
 	// Set job props to be deleted as last action to start the removal of a faction and it's data from the database
-	if err := s.deleteJobProps(ctx, s.db, req.GetJob()); err != nil {
+	if err := s.store.DeleteJobProps(ctx, req.GetJob()); err != nil {
 		errs = multierr.Append(errs, err)
 	}
 
@@ -579,22 +578,4 @@ func (s *Server) DeleteFaction(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbsettings.DeleteFactionResponse{}, nil
-}
-
-func (s *Server) deleteJobProps(ctx context.Context, tx qrm.DB, job string) error {
-	stmt := tJobProps.
-		UPDATE().
-		SET(
-			tJobProps.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
-		).
-		WHERE(
-			tJobProps.Job.EQ(mysql.String(job)),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
 }

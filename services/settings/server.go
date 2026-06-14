@@ -20,6 +20,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/updatecheck"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	syncservice "github.com/fivenet-app/fivenet/v2026/services/sync"
+	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -48,7 +50,7 @@ type Server struct {
 	db           *sql.DB
 	ps           perms.Permissions
 	enricher     mstlystcdata.IUserAwareEnricher
-	laws         *mstlystcdata.Laws
+	laws         mstlystcdata.ILaws
 	st           storage.IStorage
 	cfg          *config.Config
 	appCfg       appconfig.IConfig
@@ -67,6 +69,8 @@ type Server struct {
 	dbReq         *reqs.DBReqs
 	natsReq       *reqs.NatsReqs
 	updateChecker *updatecheck.Checker
+	store         settingsstore.IStore
+	jobsStore     jobsstore.IStore
 }
 
 type Params struct {
@@ -76,7 +80,7 @@ type Params struct {
 	DB           *sql.DB
 	PS           perms.Permissions
 	Enricher     mstlystcdata.IUserAwareEnricher
-	Laws         *mstlystcdata.Laws
+	Laws         mstlystcdata.ILaws
 	Storage      storage.IStorage
 	Config       *config.Config
 	AppConfig    appconfig.IConfig
@@ -90,6 +94,8 @@ type Params struct {
 	DBReq         *reqs.DBReqs
 	NatsReq       *reqs.NatsReqs
 	UpdateChecker *updatecheck.Checker
+	Store         settingsstore.IStore
+	JobsStore     jobsstore.IStore
 }
 
 func NewServer(p Params) *Server {
@@ -123,6 +129,15 @@ func NewServer(p Params) *Server {
 		}
 	}
 
+	store := p.Store
+	if store == nil {
+		store = settingsstore.New(p.DB)
+	}
+	jobsStore := p.JobsStore
+	if jobsStore == nil {
+		jobsStore = jobsstore.New(p.DB, &p.Config.Database.Custom)
+	}
+
 	s := &Server{
 		logger:       p.Logger,
 		db:           p.DB,
@@ -147,6 +162,8 @@ func NewServer(p Params) *Server {
 		dbReq:         p.DBReq,
 		natsReq:       p.NatsReq,
 		updateChecker: p.UpdateChecker,
+		store:         store,
+		jobsStore:     jobsStore,
 	}
 
 	return s
