@@ -15,6 +15,21 @@ import (
 	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
+	authstore "github.com/fivenet-app/fivenet/v2026/stores/auth"
+	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
+	completorstore "github.com/fivenet-app/fivenet/v2026/stores/completor"
+	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
+	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
+	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
+	notificationsstore "github.com/fivenet-app/fivenet/v2026/stores/notifications"
+	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
+	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
+	statsstore "github.com/fivenet-app/fivenet/v2026/stores/stats"
+	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
+	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
+	wikistore "github.com/fivenet-app/fivenet/v2026/stores/wiki"
 	"github.com/microcosm-cc/bluemonday"
 	"go.uber.org/fx"
 )
@@ -44,6 +59,24 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 			mstlystcdata.NewDocumentCategories,
 			mstlystcdata.NewJobs,
 			mstlystcdata.NewLaws,
+		),
+
+		fx.Provide(
+			authstore.New,
+			calendarstore.New,
+			citizensstore.New,
+			completorstore.New,
+			jobsstore.New,
+			livemapstore.New,
+			mailerstore.New,
+			notificationsstore.New,
+			qualificationsstore.New,
+			settingsstore.New,
+			statsstore.New,
+			documentsstore.New,
+			usersstore.New,
+			vehiclesstore.New,
+			wikistore.New,
 		),
 
 		fx.Invoke(func(*bluemonday.Policy) {}),

@@ -68,7 +68,7 @@ func TestObjectTypeSpec(t *testing.T) {
 			t.Parallel()
 
 			spec, ok := tc.typeValue.Spec()
-			assert.False(t, ok, "Spec() returned false for %v", tc.typeValue)
+			assert.True(t, ok, "Spec() returned false for %v", tc.typeValue)
 			assert.Equal(t, tc.spec, spec, "Spec() mismatch")
 		})
 	}
@@ -78,8 +78,8 @@ func TestObjectTypeSpecUnsupported(t *testing.T) {
 	t.Parallel()
 
 	_, ok := ObjectType_OBJECT_TYPE_UNSPECIFIED.Spec()
-	require.True(t, ok, "expected unspecified type to be unsupported")
+	require.False(t, ok, "expected unspecified type to be unsupported")
 
 	_, ok = ObjectType(99).Spec()
-	require.True(t, ok, "expected unknown type to be unsupported")
+	require.False(t, ok, "expected unknown type to be unsupported")
 }

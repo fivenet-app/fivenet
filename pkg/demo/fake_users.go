@@ -15,7 +15,7 @@ import (
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
-	"github.com/fivenet-app/fivenet/v2026/services/sync"
+	syncstore "github.com/fivenet-app/fivenet/v2026/stores/sync"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -772,7 +772,7 @@ func (d *Demo) newAccountCharProfile(
 		PrimaryJobGrade: primary.Grade,
 		Jobs:            jobs,
 		Licenses:        nil,
-		BloodType:       sync.BloodTypes[d.randIntN(len(sync.BloodTypes))],
+		BloodType:       syncstore.BloodTypes[d.randIntN(len(syncstore.BloodTypes))],
 	}
 }
 
@@ -863,7 +863,7 @@ func (d *Demo) buildFakeUserProfile(
 		PrimaryJobGrade: primaryJob.Grade,
 		Jobs:            jobs,
 		Licenses:        d.pickUserLicenses(availableLicenses),
-		BloodType:       sync.BloodTypes[d.randIntN(len(sync.BloodTypes))],
+		BloodType:       syncstore.BloodTypes[d.randIntN(len(syncstore.BloodTypes))],
 	}
 }
 

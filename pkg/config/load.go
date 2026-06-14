@@ -160,14 +160,18 @@ var TestModule = fx.Module("config_test",
 
 // LoadTestConfig returns a config with defaults set for testing.
 // Sets audit log retention days high so they won't run in "short" tests.
-func LoadTestConfig() (*Config, error) {
+func LoadTestConfig() (Result, error) {
+	res := Result{}
+
 	c := &Config{}
 	if err := defaults.Set(c); err != nil {
-		return nil, fmt.Errorf("failed to set config defaults. %w", err)
+		return res, fmt.Errorf("failed to set config defaults. %w", err)
 	}
+	res.Config = c
+	res.CustomDB = &c.Database.Custom
 
 	// Set audit log retention days high so they won't run in "short" tests
 	c.Audit.RetentionDays = 365
 
-	return c, nil
+	return res, nil
 }
