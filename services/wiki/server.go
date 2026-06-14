@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 
-	reswiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
-	wikiactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
 	pbwiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/collab"
@@ -19,7 +17,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	wikistore "github.com/fivenet-app/fivenet/v2026/stores/wiki"
 	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -62,43 +59,7 @@ type Server struct {
 
 	collabServer *collab.CollabServer
 	fHandler     *filestore.Handler[int64]
-	store        wikiStore
-}
-
-type wikiStore interface {
-	ListPages(ctx context.Context, q wikistore.ListPagesQuery) (*wikistore.ListPagesResult, error)
-	GetPage(ctx context.Context, pageID int64, withContent bool) (*reswiki.Page, error)
-	GetPageOrderInfo(ctx context.Context, q qrm.DB, pageID int64) (*wikistore.PageOrderInfo, error)
-	NextPageGroupRank(
-		ctx context.Context,
-		q qrm.DB,
-		job string,
-		parentID *int64,
-		startpage bool,
-		excludeID int64,
-	) (string, error)
-	InsertPageGroupRank(
-		ctx context.Context,
-		q qrm.DB,
-		job string,
-		parentID *int64,
-		startpage bool,
-		excludeID int64,
-		beforeID, afterID *int64,
-	) (string, error)
-	CountPageActivity(ctx context.Context, pageID int64) (int64, error)
-	ListPageActivity(
-		ctx context.Context,
-		pageID int64,
-		offset int64,
-		limit int64,
-	) ([]*wikiactivity.PageActivity, error)
-	AddPageActivity(
-		ctx context.Context,
-		tx qrm.DB,
-		activity *wikiactivity.PageActivity,
-	) (int64, error)
-	CountPageChildren(ctx context.Context, pageID int64) (int64, error)
+	store        wikistore.IStore
 }
 
 type Params struct {
@@ -113,7 +74,7 @@ type Params struct {
 	JS       *events.JSWrapper
 	Storage  storage.IStorage
 	Notifi   notifi.INotifi
-	Store    wikiStore `optional:"true"`
+	Store    wikistore.IStore `optional:"true"`
 }
 
 func NewServer(p Params) *Server {
@@ -140,11 +101,6 @@ func NewServer(p Params) *Server {
 	objAccess := access.NewWikiPageSubjectObjectAccess(p.DB)
 	access.RegisterAccess("wiki_page", objAccess)
 
-	store := p.Store
-	if store == nil {
-		store = wikistore.New(p.DB)
-	}
-
 	s := &Server{
 		logger: p.Logger.Named("wiki"),
 		db:     p.DB,
@@ -158,7 +114,7 @@ func NewServer(p Params) *Server {
 		accessResolver: access.NewSubjectResolver(p.DB),
 		collabServer:   collabServer,
 		fHandler:       fHandler,
-		store:          store,
+		store:          p.Store,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
