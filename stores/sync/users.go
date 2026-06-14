@@ -1,0 +1,589 @@
+package syncstore
+
+import (
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
+	"math/rand/v2"
+	"slices"
+	"strings"
+	"time"
+
+	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/zap"
+)
+
+var BloodTypes = []string{"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"}
+
+var (
+	tAccounts             = table.FivenetAccounts
+	tUsers                = table.FivenetUser
+	tUserProps            = table.FivenetUserProps
+	tCitizensPhoneNumbers = table.FivenetUserPhoneNumbers
+	tLicenses             = table.FivenetUserLicenses
+	tCitizensJobs         = table.FivenetUserJobs
+
+	tSyncUser = table.FivenetSyncUser
+)
+
+type existingUser struct {
+	UserID     int32  `alias:"user_id"`
+	Identifier string `alias:"identifier"`
+	DataHash   uint64 `alias:"data_hash"`
+}
+
+func (s *Store) SendUsers(ctx context.Context, data []*syncdata.DataUser) (int64, error) {
+	return s.handleUsersData(ctx, data)
+}
+
+func (s *Store) DeleteUsers(ctx context.Context, userIDs []int32) (*pbsync.DeleteDataResponse, error) {
+	if len(userIDs) == 0 {
+		return &pbsync.DeleteDataResponse{}, nil
+	}
+
+	userExprs := make([]mysql.Expression, 0, len(userIDs))
+	for _, userID := range userIDs {
+		userExprs = append(userExprs, mysql.Int32(userID))
+	}
+
+	delStmt := tUsers.DELETE().WHERE(tUsers.ID.IN(userExprs...)).LIMIT(int64(len(userIDs)))
+	res, err := delStmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute users delete statement. %w", err)
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve rows affected for users delete. %w", err)
+	}
+
+	return &pbsync.DeleteDataResponse{RowsAffected: rows}, nil
+}
+
+func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (int64, error) {
+	if len(us) == 0 {
+		return 0, nil
+	}
+
+	syncedAt := time.Now()
+
+	userIds := []mysql.Expression{}
+	for i := range us {
+		userIds = append(userIds, mysql.Int32(us[i].GetUserId()))
+
+		if len(us[i].Jobs) == 0 {
+			us[i].Jobs = []*users.UserJob{{Job: us[i].GetJob(), Grade: us[i].GetJobGrade(), IsPrimary: true}}
+		} else {
+			slices.SortFunc(us[i].GetJobs(), func(a, b *users.UserJob) int {
+				if a.GetIsPrimary() && !b.GetIsPrimary() {
+					return -1
+				}
+				if !a.GetIsPrimary() && b.GetIsPrimary() {
+					return 1
+				}
+				return strings.Compare(a.GetJob(), b.GetJob())
+			})
+
+			foundPrimary := false
+			primaryJob := us[i].GetJob()
+			for _, job := range us[i].GetJobs() {
+				if job.GetJob() == primaryJob {
+					foundPrimary = true
+					job.IsPrimary = true
+				} else {
+					job.IsPrimary = false
+				}
+			}
+			if !foundPrimary {
+				us[i].Jobs[0].IsPrimary = true
+			}
+		}
+
+		if len(us[i].PhoneNumbers) == 0 {
+			if us[i].GetPhoneNumber() != "" {
+				us[i].PhoneNumbers = []*users.PhoneNumber{{Number: us[i].GetPhoneNumber(), IsPrimary: true}}
+			} else {
+				foundPrimary := false
+				for _, phoneNumber := range us[i].GetPhoneNumbers() {
+					if phoneNumber.GetNumber() == us[i].GetPhoneNumber() {
+						foundPrimary = true
+						phoneNumber.IsPrimary = true
+					} else {
+						phoneNumber.IsPrimary = false
+					}
+				}
+				if !foundPrimary && len(us[i].GetPhoneNumbers()) > 0 {
+					us[i].PhoneNumbers[0].IsPrimary = true
+				}
+			}
+		}
+	}
+
+	checkStmt := tSyncUser.
+		SELECT(tSyncUser.UserID.AS("user_id"), tSyncUser.Identifier.AS("identifier"), tSyncUser.DataHash.AS("data_hash")).
+		FROM(tSyncUser).
+		WHERE(tSyncUser.UserID.IN(userIds...)).
+		LIMIT(int64(len(userIds)))
+
+	var existing []*existingUser
+	if err := checkStmt.QueryContext(ctx, s.db, &existing); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return 0, fmt.Errorf("failed to query existing users. %w", err)
+		}
+	}
+
+	toCreate, toUpdate := []*syncdata.DataUser{}, []*syncdata.DataUser{}
+	if len(existing) == 0 {
+		toCreate = us
+	} else {
+		for _, user := range us {
+			if idx := slices.IndexFunc(existing, func(userId *existingUser) bool { return userId.UserID == user.GetUserId() }); idx == -1 {
+				toCreate = append(toCreate, user)
+			} else {
+				existingUser := existing[idx]
+				_, hash, err := protoutils.JSONAndHash(user)
+				if err != nil {
+					return 0, fmt.Errorf("failed to get JSON and hash for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+				}
+				if existingUser.DataHash == hash {
+					s.logger.Info("user data hash is the same as existing entry, skipping update for user", zap.Int32("user_id", user.GetUserId()), zap.String("identifier", user.GetIdentifier()))
+					continue
+				}
+				toUpdate = append(toUpdate, user)
+			}
+		}
+	}
+
+	rowsAffected := int64(0)
+	if len(toCreate) > 0 {
+		for _, user := range toCreate {
+			affected, err := s.createUser(ctx, syncedAt, user)
+			if err != nil {
+				return 0, fmt.Errorf("failed to create user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+			}
+			if affected == -1 {
+				stmt := tUsers.DELETE().WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).LIMIT(1)
+				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+					return 0, fmt.Errorf("failed to delete duplicate user %d with identifier %s. %w", user.GetUserId(), user.GetIdentifier(), err)
+				}
+				affected, err = s.updateUser(ctx, syncedAt, user)
+				if err != nil {
+					return 0, fmt.Errorf("failed to update user %d (%s) after duplicate removal. %w", user.GetUserId(), user.GetIdentifier(), err)
+				}
+			}
+			rowsAffected += affected
+		}
+	}
+
+	if len(toUpdate) > 0 {
+		for _, user := range toUpdate {
+			affected, err := s.updateUser(ctx, syncedAt, user)
+			if err != nil {
+				return 0, fmt.Errorf("failed to update user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+			}
+			if affected == -1 {
+				stmt := tUsers.DELETE().WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).LIMIT(1)
+				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+					return 0, fmt.Errorf("failed to delete duplicate user %d with identifier %s. %w", user.GetUserId(), user.GetIdentifier(), err)
+				}
+				affected, err = s.updateUser(ctx, syncedAt, user)
+				if err != nil {
+					return 0, fmt.Errorf("failed to update user %d (%s) after duplicate removal. %w", user.GetUserId(), user.GetIdentifier(), err)
+				}
+			}
+			rowsAffected += affected
+		}
+	}
+
+	return rowsAffected, nil
+}
+
+func (s *Store) createUser(ctx context.Context, syncedAt time.Time, user *syncdata.DataUser) (int64, error) {
+	var accountIdStmt mysql.SelectStatement = nil
+	if user.GetIdentifier() != "" {
+		accountIdStmt = tAccounts.SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).FROM(tAccounts).WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).LIMIT(1)
+	}
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	defer tx.Rollback()
+
+	stmt := tUsers.
+		INSERT(tUsers.ID, tUsers.AccountID, tUsers.License, tUsers.Identifier, tUsers.Firstname, tUsers.Lastname, tUsers.Dateofbirth, tUsers.Job, tUsers.JobGrade, tUsers.Sex, tUsers.PhoneNumber, tUsers.Height, tUsers.Visum, tUsers.Playtime).
+		VALUES(user.GetUserId(), accountIdStmt, utils.GetLicenseFromIdentifier(user.Identifier), user.Identifier, user.Firstname, user.Lastname, user.GetDateofbirth(), user.GetJob(), user.GetJobGrade(), user.Sex, user.PhoneNumber, user.Height, user.Visum, user.Playtime).
+		ON_DUPLICATE_KEY_UPDATE(
+			tUsers.ID.SET(mysql.RawInt("VALUES(`id`)")),
+			tUsers.AccountID.SET(mysql.RawInt("VALUES(`account_id`)")),
+			tUsers.License.SET(mysql.RawString("VALUES(`license`)")),
+			tUsers.Identifier.SET(mysql.RawString("VALUES(`identifier`)")),
+			tUsers.Firstname.SET(mysql.RawString("VALUES(`firstname`)")),
+			tUsers.Lastname.SET(mysql.RawString("VALUES(`lastname`)")),
+			tUsers.Dateofbirth.SET(mysql.RawString("VALUES(`dateofbirth`)")),
+			tUsers.Job.SET(mysql.RawString("VALUES(`job`)")),
+			tUsers.JobGrade.SET(mysql.RawInt("VALUES(`job_grade`)")),
+			tUsers.Sex.SET(mysql.RawString("VALUES(`sex`)")),
+			tUsers.PhoneNumber.SET(mysql.RawString("VALUES(`phone_number`)")),
+			tUsers.Height.SET(mysql.RawFloat("VALUES(`height`)")),
+			tUsers.Visum.SET(mysql.RawInt("VALUES(`visum`)")),
+			tUsers.Playtime.SET(mysql.RawInt("VALUES(`playtime`)")),
+		)
+
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		if dbutils.IsDuplicateError(err) {
+			return -1, nil
+		}
+		return 0, fmt.Errorf("failed to execute user insert statement. %w", err)
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("failed to retrieve rows affected for user insert. %w", err)
+	}
+
+	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {
+		return 0, err
+	}
+	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
+		return 0, fmt.Errorf("failed to handle user jobs for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+	}
+	if err := s.handleUserLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
+		return 0, fmt.Errorf("failed to handle user licenses for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+	}
+	if err := s.handleUserPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
+		return 0, fmt.Errorf("failed to handle user phone numbers for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+	}
+	if err := s.setUserBloodType(ctx, tx, user.GetUserId()); err != nil {
+		return 0, fmt.Errorf("failed to set user blood type for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return 0, err
+	}
+
+	return rows, nil
+}
+
+func (s *Store) createOrUpdateSyncUserEntry(ctx context.Context, tx *sql.Tx, syncedAt time.Time, user *syncdata.DataUser) error {
+	out, hash, err := protoutils.JSONAndHash(user)
+	if err != nil {
+		return fmt.Errorf("failed to marshal user data to JSON for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+	}
+
+	syncStmt := tSyncUser.
+		INSERT(tSyncUser.UserID, tSyncUser.Identifier, tSyncUser.SourceUpdatedAt, tSyncUser.LastSyncedAt, tSyncUser.DataJSON, tSyncUser.DataHash).
+		VALUES(user.GetUserId(), user.GetIdentifier(), mysql.NULL, timestamp.New(syncedAt), out, hash).
+		ON_DUPLICATE_KEY_UPDATE(
+			tSyncUser.Identifier.SET(mysql.RawString("VALUES(`identifier`)")),
+			tSyncUser.SourceUpdatedAt.SET(mysql.RawTimestamp("VALUES(`source_updated_at`)")),
+			tSyncUser.LastSyncedAt.SET(mysql.RawTimestamp("VALUES(`last_synced_at`)")),
+			tSyncUser.DataJSON.SET(mysql.RawString("VALUES(`data_json`)")),
+			tSyncUser.DataHash.SET(mysql.RawInt("VALUES(`data_hash`)")),
+		)
+
+	if _, err := syncStmt.ExecContext(ctx, tx); err != nil {
+		return fmt.Errorf("failed to execute sync user insert statement. %w", err)
+	}
+
+	return nil
+}
+
+func (s *Store) setUserBloodType(ctx context.Context, tx *sql.Tx, userId int32) error {
+	//nolint:gosec // Blood type is randomly assigned and has no security implications.
+	idx := rand.IntN(len(BloodTypes))
+	bloodType := BloodTypes[idx]
+
+	stmt := tUserProps.
+		INSERT(tUserProps.UserID, tUserProps.BloodType).
+		VALUES(userId, bloodType)
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return fmt.Errorf("failed to execute user blood type insert statement. %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *Store) updateUser(ctx context.Context, syncedAt time.Time, user *syncdata.DataUser) (int64, error) {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	defer tx.Rollback()
+
+	accountIdStmt := tAccounts.SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).FROM(tAccounts).WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).LIMIT(1)
+
+	stmt := tUsers.
+		UPDATE(tUsers.ID, tUsers.AccountID, tUsers.License, tUsers.Identifier, tUsers.Firstname, tUsers.Lastname, tUsers.Dateofbirth, tUsers.Job, tUsers.JobGrade, tUsers.Sex, tUsers.PhoneNumber, tUsers.Height, tUsers.Visum, tUsers.Playtime).
+		SET(user.GetUserId(), accountIdStmt, utils.GetLicenseFromIdentifier(user.Identifier), user.Identifier, user.Firstname, user.Lastname, user.Dateofbirth, user.Job, user.JobGrade, user.Sex, user.PhoneNumber, user.Height, user.Visum, user.Playtime).
+		WHERE(mysql.OR(tUsers.ID.EQ(mysql.Int32(user.GetUserId())), tUsers.Identifier.EQ(mysql.String(user.GetIdentifier())))).
+		LIMIT(1)
+
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		if dbutils.IsDuplicateError(err) {
+			return -1, nil
+		}
+		return 0, fmt.Errorf("failed to execute user update statement. %w", err)
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("failed to retrieve rows affected for user update. %w", err)
+	}
+
+	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {
+		return 0, err
+	}
+	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
+		return 0, fmt.Errorf("failed to handle user jobs for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+	}
+	if err := s.handleUserLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
+		return 0, fmt.Errorf("failed to handle user licenses for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+	}
+	if err := s.handleUserPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
+		return 0, fmt.Errorf("failed to handle user phone numbers for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return 0, err
+	}
+
+	return rows, nil
+}
+
+func (s *Store) handleUserLicenses(ctx context.Context, tx *sql.Tx, userId int32, licenses []*userslicenses.License) error {
+	if len(licenses) == 0 {
+		stmt := tLicenses.DELETE().WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).LIMIT(25)
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
+		}
+		return nil
+	}
+
+	selectStmt := tLicenses.SELECT(tLicenses.Type).FROM(tLicenses).WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).ORDER_BY(tLicenses.Type)
+	currentLicenses := []string{}
+	if err := selectStmt.QueryContext(ctx, tx, &currentLicenses); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf("failed to query current user licenses for user ID %d. %w", userId, err)
+		}
+	}
+
+	licensesList := []string{}
+	for _, license := range licenses {
+		licensesList = append(licensesList, license.GetType())
+	}
+
+	toAdd, toRemove := utils.SlicesDifference(currentLicenses, licensesList)
+	if len(toAdd) > 0 {
+		stmt := tLicenses.INSERT(tLicenses.UserID, tLicenses.Type)
+		for _, t := range toAdd {
+			stmt = stmt.VALUES(userId, t)
+		}
+		stmt = stmt.ON_DUPLICATE_KEY_UPDATE(tLicenses.Type.SET(mysql.RawString("VALUES(`type`)")))
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user licenses insert statement. %w", err)
+		}
+	}
+
+	if len(toRemove) > 0 {
+		types := make([]mysql.Expression, 0, len(toRemove))
+		for _, t := range toRemove {
+			types = append(types, mysql.String(t))
+		}
+		stmt := tLicenses.DELETE().WHERE(mysql.AND(tLicenses.UserID.EQ(mysql.Int32(userId)), tLicenses.Type.IN(types...))).LIMIT(25)
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *Store) handleUserJobs(ctx context.Context, tx *sql.Tx, userId int32, jobs []*users.UserJob) error {
+	slices.SortFunc(jobs, func(a, b *users.UserJob) int {
+		if a.GetIsPrimary() && !b.GetIsPrimary() {
+			return -1
+		}
+		if !a.GetIsPrimary() && b.GetIsPrimary() {
+			return 1
+		}
+		return strings.Compare(a.GetJob(), b.GetJob())
+	})
+
+	if len(jobs) == 0 {
+		stmt := tCitizensJobs.DELETE().WHERE(tCitizensJobs.UserID.EQ(mysql.Int32(userId))).LIMIT(25)
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user jobs delete statement. %w", err)
+		}
+		return nil
+	}
+
+	tJobs := tCitizensJobs.AS("user_job")
+	selectStmt := tJobs.SELECT(tJobs.Job, tJobs.Grade, tJobs.IsPrimary).FROM(tJobs).WHERE(tJobs.UserID.EQ(mysql.Int32(userId))).ORDER_BY(tJobs.IsPrimary, tJobs.Job, tJobs.Grade)
+	currentJobs := []*users.UserJob{}
+	if err := selectStmt.QueryContext(ctx, tx, &currentJobs); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf("failed to query current user jobs for user ID %d. %w", userId, err)
+		}
+	}
+
+	toAdd, toUpdate, toRemove := compareJobs(currentJobs, jobs)
+	if len(toAdd) > 0 || len(toUpdate) > 0 {
+		stmt := tCitizensJobs.INSERT(tCitizensJobs.UserID, tCitizensJobs.Job, tCitizensJobs.Grade, tCitizensJobs.IsPrimary)
+		for _, t := range append(toAdd, toUpdate...) {
+			stmt = stmt.VALUES(userId, t.GetJob(), t.GetGrade(), t.GetIsPrimary())
+		}
+		stmt = stmt.ON_DUPLICATE_KEY_UPDATE(tCitizensJobs.Job.SET(mysql.RawString("VALUES(`job`)")), tCitizensJobs.Grade.SET(mysql.RawInt("VALUES(`grade`)")), tCitizensJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")))
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user jobs insert statement. %w", err)
+		}
+	}
+
+	if len(toRemove) > 0 {
+		jobExprs := make([]mysql.Expression, 0, len(toRemove))
+		for _, t := range toRemove {
+			jobExprs = append(jobExprs, mysql.String(t.GetJob()))
+		}
+		stmt := tCitizensJobs.DELETE().WHERE(mysql.AND(tCitizensJobs.UserID.EQ(mysql.Int32(userId)), tCitizensJobs.Job.IN(jobExprs...))).LIMIT(25)
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user jobs delete statement. %w", err)
+		}
+	}
+
+	return nil
+}
+
+func compareJobs(currentJobs, jobs []*users.UserJob) ([]*users.UserJob, []*users.UserJob, []*users.UserJob) {
+	toAdd, toUpdate, toRemove := []*users.UserJob{}, []*users.UserJob{}, []*users.UserJob{}
+	currentJobsMap := make(map[string]*users.UserJob)
+	for _, job := range currentJobs {
+		currentJobsMap[job.GetJob()] = job
+	}
+	incomingJobsMap := make(map[string]*users.UserJob)
+	for _, job := range jobs {
+		incomingJobsMap[job.GetJob()] = job
+	}
+	for jobName, incomingJob := range incomingJobsMap {
+		if currentJob, exists := currentJobsMap[jobName]; exists {
+			if currentJob.GetIsPrimary() != incomingJob.GetIsPrimary() || currentJob.GetGrade() != incomingJob.GetGrade() {
+				toUpdate = append(toUpdate, incomingJob)
+			}
+		} else {
+			toAdd = append(toAdd, incomingJob)
+		}
+	}
+	for jobName, currentJob := range currentJobsMap {
+		if _, exists := incomingJobsMap[jobName]; !exists {
+			toRemove = append(toRemove, currentJob)
+		}
+	}
+	return toAdd, toUpdate, toRemove
+}
+
+func (s *Store) handleUserPhoneNumbers(ctx context.Context, tx *sql.Tx, userId int32, phoneNumbers []*users.PhoneNumber) error {
+	slices.SortFunc(phoneNumbers, func(a, b *users.PhoneNumber) int {
+		if a.GetIsPrimary() && !b.GetIsPrimary() {
+			return -1
+		}
+		if !a.GetIsPrimary() && b.GetIsPrimary() {
+			return 1
+		}
+		return strings.Compare(a.GetNumber(), b.GetNumber())
+	})
+
+	if len(phoneNumbers) == 0 {
+		stmt := tCitizensPhoneNumbers.DELETE().WHERE(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId))).LIMIT(25)
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user phone numbers delete statement. %w", err)
+		}
+		return nil
+	}
+
+	tPhoneNumbers := tCitizensPhoneNumbers.AS("phone_number")
+	selectStmt := tPhoneNumbers.SELECT(tPhoneNumbers.UserID, tPhoneNumbers.PhoneNumber, tPhoneNumbers.IsPrimary).FROM(tPhoneNumbers).WHERE(tPhoneNumbers.UserID.EQ(mysql.Int32(userId))).ORDER_BY(tPhoneNumbers.IsPrimary, tPhoneNumbers.PhoneNumber)
+	currentPhoneNumbers := []*users.PhoneNumber{}
+	if err := selectStmt.QueryContext(ctx, tx, &currentPhoneNumbers); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf("failed to query current user phone numbers for user ID %d. %w", userId, err)
+		}
+	}
+
+	toAdd, toUpdate, toRemove := comparePhoneNumbers(currentPhoneNumbers, phoneNumbers)
+	if len(toAdd) > 0 || len(toUpdate) > 0 {
+		stmt := tCitizensPhoneNumbers.INSERT(tCitizensPhoneNumbers.UserID, tCitizensPhoneNumbers.PhoneNumber, tCitizensPhoneNumbers.IsPrimary)
+		for _, t := range append(toAdd, toUpdate...) {
+			stmt = stmt.VALUES(userId, t.GetNumber(), t.GetIsPrimary())
+		}
+		stmt = stmt.ON_DUPLICATE_KEY_UPDATE(tCitizensPhoneNumbers.PhoneNumber.SET(mysql.RawString("VALUES(`phone_number`)")), tCitizensPhoneNumbers.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")))
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user phone numbers insert statement. %w", err)
+		}
+	}
+
+	if len(toRemove) > 0 {
+		phoneExprs := make([]mysql.Expression, 0, len(toRemove))
+		for _, t := range toRemove {
+			phoneExprs = append(phoneExprs, mysql.String(t.GetNumber()))
+		}
+		stmt := tCitizensPhoneNumbers.DELETE().WHERE(mysql.AND(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId)), tCitizensPhoneNumbers.PhoneNumber.IN(phoneExprs...))).LIMIT(25)
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user phone numbers delete statement. %w", err)
+		}
+	}
+
+	return nil
+}
+
+func comparePhoneNumbers(currentPhoneNumbers, phoneNumbers []*users.PhoneNumber) ([]*users.PhoneNumber, []*users.PhoneNumber, []*users.PhoneNumber) {
+	toAdd, toUpdate, toRemove := []*users.PhoneNumber{}, []*users.PhoneNumber{}, []*users.PhoneNumber{}
+	currentPhoneNumbersMap := make(map[string]*users.PhoneNumber)
+	for _, phoneNumber := range currentPhoneNumbers {
+		currentPhoneNumbersMap[phoneNumber.GetNumber()] = phoneNumber
+	}
+	incomingPhoneNumbersMap := make(map[string]*users.PhoneNumber)
+	for _, phoneNumber := range phoneNumbers {
+		incomingPhoneNumbersMap[phoneNumber.GetNumber()] = phoneNumber
+	}
+	var newPrimary *users.PhoneNumber
+	for _, phoneNumber := range phoneNumbers {
+		if phoneNumber.GetIsPrimary() {
+			newPrimary = phoneNumber
+			break
+		}
+	}
+	for number, incomingPhoneNumber := range incomingPhoneNumbersMap {
+		if currentPhoneNumber, exists := currentPhoneNumbersMap[number]; exists {
+			if currentPhoneNumber.GetIsPrimary() != incomingPhoneNumber.GetIsPrimary() || currentPhoneNumber.GetNumber() != incomingPhoneNumber.GetNumber() {
+				toUpdate = append(toUpdate, incomingPhoneNumber)
+			}
+		} else {
+			toAdd = append(toAdd, incomingPhoneNumber)
+		}
+	}
+	if newPrimary != nil {
+		for _, currentPhoneNumber := range currentPhoneNumbers {
+			if currentPhoneNumber.GetIsPrimary() && currentPhoneNumber.GetNumber() != newPrimary.GetNumber() {
+				currentPhoneNumber.IsPrimary = false
+				toUpdate = append(toUpdate, currentPhoneNumber)
+			}
+		}
+	}
+	for number, currentPhoneNumber := range currentPhoneNumbersMap {
+		if _, exists := incomingPhoneNumbersMap[number]; !exists {
+			toRemove = append(toRemove, currentPhoneNumber)
+		}
+	}
+	return toAdd, toUpdate, toRemove
+}

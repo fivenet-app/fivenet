@@ -25,7 +25,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
-	"github.com/fivenet-app/fivenet/v2026/stores/users"
+	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
@@ -297,7 +297,12 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 		}
 		units[i].Status = status
 
-		if err := users.RetrieveUsersForUnit(ctx, s.db, s.enricher, &units[i].Users); err != nil {
+		if err := usersstore.RetrieveUsersForUnit(
+			ctx,
+			s.db,
+			s.enricher,
+			&units[i].Users,
+		); err != nil {
 			return err
 		}
 
@@ -418,7 +423,7 @@ func (s *UnitDB) UpdateStatus(
 
 	if in.UserId != nil {
 		var err error
-		in.User, err = users.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetUserId())
+		in.User, err = usersstore.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetUserId())
 		if err != nil {
 			return nil, err
 		}
@@ -435,7 +440,7 @@ func (s *UnitDB) UpdateStatus(
 			in.Creator = in.GetUser()
 		} else {
 			var err error
-			in.Creator, err = users.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetCreatorId())
+			in.Creator, err = usersstore.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetCreatorId())
 			if err != nil {
 				return nil, err
 			}
@@ -604,7 +609,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 			}
 
 			var err error
-			toAddUsers, err = users.RetrieveColleagueById(ctx, s.db, s.enricher, addIds...)
+			toAddUsers, err = usersstore.RetrieveColleagueById(ctx, s.db, s.enricher, addIds...)
 			if err != nil {
 				return err
 			}

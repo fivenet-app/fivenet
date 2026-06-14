@@ -1,4 +1,4 @@
-package jobs
+package jobsstore
 
 import "github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 

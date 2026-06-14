@@ -1,4 +1,4 @@
-package jobs
+package jobsstore
 
 import (
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"

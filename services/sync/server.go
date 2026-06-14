@@ -19,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	syncstore "github.com/fivenet-app/fivenet/v2026/stores/sync"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -29,10 +30,11 @@ type Server struct {
 
 	logger *zap.Logger
 
-	db   *sql.DB
-	js   *events.JSWrapper
-	auth *auth.GRPCAuth
-	cfg  *config.Config
+	db    *sql.DB
+	js    *events.JSWrapper
+	auth  *auth.GRPCAuth
+	cfg   *config.Config
+	store syncstore.IStore
 
 	dispatches    *dispatches.DispatchDB
 	citizensStore citizensstore.IStore
@@ -74,6 +76,7 @@ func NewServer(p Params) Result {
 		js:     p.JS,
 		auth:   p.Auth,
 		cfg:    p.Config,
+		store:  syncstore.New(p.DB, p.Logger, p.Config, p.DispatchDB, p.CitizensStore, p.JobsStore),
 
 		dispatches:    p.DispatchDB,
 		citizensStore: p.CitizensStore,

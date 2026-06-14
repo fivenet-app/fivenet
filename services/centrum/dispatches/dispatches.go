@@ -35,7 +35,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
-	"github.com/fivenet-app/fivenet/v2026/stores/users"
+	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
@@ -453,7 +453,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 		}
 
 		if dsps[i].CreatorId != nil && dsps[i].GetCreatorId() > 0 {
-			dsps[i].Creator, err = users.RetrieveUserById(ctx, s.db, dsps[i].GetCreatorId())
+			dsps[i].Creator, err = usersstore.RetrieveUserById(ctx, s.db, dsps[i].GetCreatorId())
 			if err != nil {
 				return 0, err
 			}
@@ -682,7 +682,7 @@ func (s *DispatchDB) UpdateStatus(
 
 	if in.UserId != nil {
 		var err error
-		in.User, err = users.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetUserId())
+		in.User, err = usersstore.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetUserId())
 		if err != nil {
 			return nil, err
 		}
@@ -1076,7 +1076,7 @@ func (s *DispatchDB) Create(
 
 	if dsp.GetCreatorId() > 0 {
 		var err error
-		dsp.Creator, err = users.RetrieveUserById(ctx, s.db, dsp.GetCreatorId())
+		dsp.Creator, err = usersstore.RetrieveUserById(ctx, s.db, dsp.GetCreatorId())
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve user for dispatch creator. %w", err)
 		}
