@@ -11,7 +11,7 @@ import (
 )
 
 func ValidateJobAccessEntries(
-	js *mstlystcdata.Jobs,
+	js mstlystcdata.IJobs,
 	in *[]*resourcesaccess.JobAccess,
 	fixEntries bool,
 ) (bool, error) {

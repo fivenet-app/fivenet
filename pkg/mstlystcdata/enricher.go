@@ -26,17 +26,10 @@ type IEnricher interface {
 	GetJobGrade(job string, grade int32) (*jobs.Job, *jobs.JobGrade)
 }
 
-type IUserAwareEnricher interface {
-	IEnricher
-
-	EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common.IJobInfo)
-	EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) func(usr common.IJobInfo)
-}
-
 // Enricher provides methods to enrich job information for users based on job data and config.
 type Enricher struct {
 	// jobs is the job data source
-	jobs *Jobs
+	jobs IJobs
 
 	// appCfg is the application configuration provider
 	appCfg appconfig.IConfig
@@ -45,7 +38,7 @@ type Enricher struct {
 }
 
 // NewEnricher creates a new Enricher instance with the given job data and config.
-func NewEnricher(jobs *Jobs, appCfg appconfig.IConfig, cfg *config.Config) IEnricher {
+func NewEnricher(jobs IJobs, appCfg appconfig.IConfig, cfg *config.Config) IEnricher {
 	return &Enricher{
 		jobs: jobs,
 
@@ -136,20 +129,34 @@ func (e *Enricher) GetJobGrade(job string, grade int32) (*jobs.Job, *jobs.JobGra
 	return nil, nil
 }
 
+type IUserAwareEnricher interface {
+	IEnricher
+
+	EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common.IJobInfo)
+	EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) func(usr common.IJobInfo)
+}
+
 // UserAwareEnricher extends Enricher with permission-aware enrichment for user job info.
 type UserAwareEnricher struct {
-	// Enricher is the embedded base enricher
-	*Enricher
+	IEnricher
 
+	// appCfg is the application configuration provider
+	appCfg appconfig.IConfig
 	// ps is the permissions provider
 	ps perms.Permissions
 }
 
 // NewUserAwareEnricher creates a new UserAwareEnricher with the given enricher and permissions.
-func NewUserAwareEnricher(enricher *Enricher, ps perms.Permissions) IUserAwareEnricher {
+func NewUserAwareEnricher(
+	appCfg appconfig.IConfig,
+	enricher IEnricher,
+	ps perms.Permissions,
+) IUserAwareEnricher {
 	return &UserAwareEnricher{
-		Enricher: enricher,
-		ps:       ps,
+		IEnricher: enricher,
+
+		appCfg: appCfg,
+		ps:     ps,
 	}
 }
 

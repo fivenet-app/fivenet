@@ -4,9 +4,8 @@ import (
 	"fmt"
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
+	"google.golang.org/protobuf/proto"
 )
-
-const defaultAccessEntryLimit = 20
 
 type AccessEntryLimitError struct {
 	Kind   string
@@ -230,30 +229,17 @@ func mergeRequiredQualificationAccessEntries(
 }
 
 func cloneJobAccessEntry(in *resourcesaccess.JobAccess) *resourcesaccess.JobAccess {
-	if in == nil {
-		return nil
-	}
-
-	out := *in
-	return &out
+	return proto.Clone(in).(*resourcesaccess.JobAccess)
 }
 
 func cloneUserAccessEntry(in *resourcesaccess.UserAccess) *resourcesaccess.UserAccess {
-	if in == nil {
-		return nil
-	}
-
-	out := *in
-	return &out
+	return proto.Clone(in).(*resourcesaccess.UserAccess)
 }
 
-func cloneQualificationAccessEntry(in *resourcesaccess.QualificationAccess) *resourcesaccess.QualificationAccess {
-	if in == nil {
-		return nil
-	}
-
-	out := *in
-	return &out
+func cloneQualificationAccessEntry(
+	in *resourcesaccess.QualificationAccess,
+) *resourcesaccess.QualificationAccess {
+	return proto.Clone(in).(*resourcesaccess.QualificationAccess)
 }
 
 func cloneJobAccessEntries(entries []*resourcesaccess.JobAccess) []*resourcesaccess.JobAccess {
@@ -279,7 +265,11 @@ func validateAccessLimit(access *resourcesaccess.Access, maxEntries int) error {
 		return &AccessEntryLimitError{Kind: "jobs", Max: maxEntries, Actual: len(access.GetJobs())}
 	}
 	if len(access.GetUsers()) > maxEntries {
-		return &AccessEntryLimitError{Kind: "users", Max: maxEntries, Actual: len(access.GetUsers())}
+		return &AccessEntryLimitError{
+			Kind:   "users",
+			Max:    maxEntries,
+			Actual: len(access.GetUsers()),
+		}
 	}
 	if len(access.GetQualifications()) > maxEntries {
 		return &AccessEntryLimitError{

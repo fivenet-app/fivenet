@@ -60,11 +60,11 @@ func (e *DummyEnricher) GetJobGrade(job string, grade int32) (*jobs.Job, *jobs.J
 }
 
 type DummyUserAwareEnricher struct {
-	IUserAwareEnricher
+	IEnricher
 }
 
 func NewDummyUserAwareEnricher() IUserAwareEnricher {
-	return &DummyUserAwareEnricher{}
+	return &DummyUserAwareEnricher{IEnricher: NewDummyEnricher()}
 }
 
 func (e *DummyUserAwareEnricher) EnrichJobInfoSafe(
