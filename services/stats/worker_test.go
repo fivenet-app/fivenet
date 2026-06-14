@@ -13,11 +13,9 @@ import (
 type mockStatsStore struct {
 	data Stats
 	err  error
-	ctx  context.Context
 }
 
 func (m *mockStatsStore) LoadPublicStats(ctx context.Context) (Stats, error) {
-	m.ctx = ctx
 	return m.data, m.err
 }
 

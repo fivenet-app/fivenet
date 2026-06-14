@@ -31,20 +31,15 @@ type Params struct {
 	DB        *sql.DB
 	JS        *events.JSWrapper
 	AppConfig appconfig.IConfig
-	Store     statsStore `optional:"true"`
+	Store     statsstore.IStore `optional:"true"`
 }
 
 func NewServer(p Params) *Server {
-	store := p.Store
-	if store == nil {
-		store = statsstore.New(p.DB)
-	}
-
 	s := &Server{
 		logger: p.Logger.Named("stats.worker"),
 		js:     p.JS,
 
-		worker: newWorker(p.Logger, store),
+		worker: newWorker(p.Logger, p.Store),
 	}
 
 	ctxCancel, cancel := context.WithCancel(context.Background())

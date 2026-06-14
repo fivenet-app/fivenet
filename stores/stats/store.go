@@ -1,11 +1,18 @@
-package stats
+package statsstore
 
-import "database/sql"
+import (
+	"context"
+	"database/sql"
+)
+
+type IStore interface {
+	LoadPublicStats(ctx context.Context) (Stats, error)
+}
 
 type Store struct {
 	db *sql.DB
 }
 
-func New(db *sql.DB) *Store {
+func New(db *sql.DB) IStore {
 	return &Store{db: db}
 }

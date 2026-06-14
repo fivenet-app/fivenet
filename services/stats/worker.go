@@ -12,21 +12,17 @@ import (
 
 type Stats = statsstore.Stats
 
-type statsStore interface {
-	LoadPublicStats(ctx context.Context) (Stats, error)
-}
-
 type worker struct {
 	mu sync.Mutex
 
 	logger *zap.Logger
-	store  statsStore
+	store  statsstore.IStore
 
 	active atomic.Bool
 	stats  atomic.Pointer[Stats]
 }
 
-func newWorker(logger *zap.Logger, store statsStore) *worker {
+func newWorker(logger *zap.Logger, store statsstore.IStore) *worker {
 	return &worker{
 		logger: logger,
 		store:  store,
