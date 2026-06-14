@@ -1,4 +1,4 @@
-package citizens
+package citizensstore
 
 import (
 	"regexp"
@@ -21,7 +21,7 @@ func TestStoreListLabels(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, config.CustomDB{})
+	store := New(db, &config.CustomDB{})
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user_labels_job AS citizen_label`) +
 		`(?s).*` + regexp.QuoteMeta(`WHERE ?`) +
@@ -61,7 +61,7 @@ func TestStoreInsertLabel(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, config.CustomDB{})
+	store := New(db, &config.CustomDB{})
 	job := "police"
 	icon := "shield"
 	label := &citizenslabels.Label{
@@ -90,7 +90,7 @@ func TestStoreUpdateLabel(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, config.CustomDB{})
+	store := New(db, &config.CustomDB{})
 	job := "police"
 	icon := "shield"
 	label := &citizenslabels.Label{
@@ -101,7 +101,11 @@ func TestStoreUpdateLabel(t *testing.T) {
 		Icon:  &icon,
 	}
 
-	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_user_labels_job`) + `(?s).*` + regexp.QuoteMeta(`WHERE`) + `(?s).*`
+	expectedQuery := regexp.QuoteMeta(
+		`UPDATE fivenet_user_labels_job`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`WHERE`,
+	) + `(?s).*`
 	mock.ExpectExec(expectedQuery).
 		WithArgs("Updated", "#123456", "shield", nil, int64(7), "police", int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -117,10 +121,14 @@ func TestStoreDeleteLabel(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, config.CustomDB{})
+	store := New(db, &config.CustomDB{})
 	deletedAt := timestamp.Now()
 
-	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_user_labels_job`) + `(?s).*` + regexp.QuoteMeta(`deleted_at`) + `(?s).*`
+	expectedQuery := regexp.QuoteMeta(
+		`UPDATE fivenet_user_labels_job`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`deleted_at`,
+	) + `(?s).*`
 	mock.ExpectExec(expectedQuery).
 		WithArgs(sqlmock.AnyArg(), int64(7), "police", int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -136,7 +144,7 @@ func TestStoreReorderLabels(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, config.CustomDB{})
+	store := New(db, &config.CustomDB{})
 	labelIDs := []int64{7, 4, 9}
 
 	lookupQuery := regexp.QuoteMeta(`FROM fivenet_user_labels_job AS citizen_label`) +
@@ -149,9 +157,11 @@ func TestStoreReorderLabels(t *testing.T) {
 
 	mock.ExpectBegin()
 	for idx, labelID := range labelIDs {
-		execQuery := regexp.QuoteMeta(`UPDATE fivenet_user_labels_job AS citizen_label SET sort_order = ? WHERE ( (citizen_label.id = ?) AND (citizen_label.job = ?) AND (citizen_label.deleted_at IS NULL) ) LIMIT ?;`)
+		execQuery := regexp.QuoteMeta(
+			`UPDATE fivenet_user_labels_job AS citizen_label SET sort_order = ? WHERE ( (citizen_label.id = ?) AND (citizen_label.job = ?) AND (citizen_label.deleted_at IS NULL) ) LIMIT ?;`,
+		)
 		mock.ExpectExec(execQuery).
-			WithArgs(int32(idx), int64(labelID), "police", int64(1)).
+			WithArgs(int32(idx), labelID, "police", int64(1)).
 			WillReturnResult(sqlmock.NewResult(0, 1))
 	}
 	mock.ExpectCommit()

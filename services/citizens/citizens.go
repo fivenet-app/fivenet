@@ -36,14 +36,30 @@ func (s *Server) ListCitizens(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 	resp, err := s.store.ListCitizens(ctx, req, citizensstore.ListCitizensOptions{
-		IncludePhoneNumber:             fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber),
-		IncludeWanted:                  fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted),
-		IncludeJob:                     fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob),
-		IncludeTrafficInfractionPoints: fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints),
-		IncludeOpenFines:               fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines),
-		IncludeBloodType:               fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType),
-		IncludeMugshot:                 fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot),
-		IncludeEmail:                   fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail),
+		IncludePhoneNumber: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+		),
+		IncludeWanted: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted,
+		),
+		IncludeJob: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob,
+		),
+		IncludeTrafficInfractionPoints: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints,
+		),
+		IncludeOpenFines: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines,
+		),
+		IncludeBloodType: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType,
+		),
+		IncludeMugshot: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot,
+		),
+		IncludeEmail: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail,
+		),
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -86,15 +102,31 @@ func (s *Server) GetUser(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 	resp, err := s.store.GetUser(ctx, req, citizensstore.GetUserOptions{
-		IncludePropsUpdated:            fields.Len() > 0,
-		IncludePhoneNumber:             fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber),
-		IncludeWanted:                  fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted),
-		IncludeJob:                     fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob),
-		IncludeTrafficInfractionPoints: fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints),
-		IncludeOpenFines:               fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines),
-		IncludeBloodType:               fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType),
-		IncludeMugshot:                 fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot),
-		IncludeEmail:                   fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail),
+		IncludePropsUpdated: fields.Len() > 0,
+		IncludePhoneNumber: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+		),
+		IncludeWanted: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted,
+		),
+		IncludeJob: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob,
+		),
+		IncludeTrafficInfractionPoints: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints,
+		),
+		IncludeOpenFines: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines,
+		),
+		IncludeBloodType: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType,
+		),
+		IncludeMugshot: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot,
+		),
+		IncludeEmail: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail,
+		),
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)

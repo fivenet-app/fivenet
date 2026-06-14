@@ -1,4 +1,4 @@
-package citizens
+package citizensstore
 
 import (
 	"context"
@@ -80,7 +80,11 @@ func (s *Store) ListCitizens(
 	if opts.IncludeTrafficInfractionPoints {
 		selectors = append(selectors, tUserProps.TrafficInfractionPoints)
 		if req.TrafficInfractionPoints != nil && req.GetTrafficInfractionPoints() > 0 {
-			condition = condition.AND(tUserProps.TrafficInfractionPoints.GT_EQ(mysql.Uint32(req.GetTrafficInfractionPoints())))
+			condition = condition.AND(
+				tUserProps.TrafficInfractionPoints.GT_EQ(
+					mysql.Uint32(req.GetTrafficInfractionPoints()),
+				),
+			)
 		}
 	}
 	if opts.IncludeOpenFines {
@@ -100,10 +104,17 @@ func (s *Store) ListCitizens(
 	}
 
 	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
-		condition = condition.AND(mysql.CONCAT(tUser.Firstname, mysql.String(" "), tUser.Lastname).LIKE(mysql.String(search)))
+		condition = condition.AND(
+			mysql.CONCAT(tUser.Firstname, mysql.String(" "), tUser.Lastname).
+				LIKE(mysql.String(search)),
+		)
 	}
 	if req.GetDateofbirth() != "" {
-		condition = condition.AND(tUser.Dateofbirth.LIKE(mysql.String(dbutils.PrepareForLikeSearch(req.GetDateofbirth()))))
+		condition = condition.AND(
+			tUser.Dateofbirth.LIKE(
+				mysql.String(dbutils.PrepareForLikeSearch(req.GetDateofbirth())),
+			),
+		)
 	}
 	if req.GetMinHeight() > 0 {
 		condition = condition.AND(tUser.Height.GT_EQ(mysql.Float(float64(req.GetMinHeight()))))

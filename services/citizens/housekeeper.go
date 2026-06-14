@@ -37,7 +37,7 @@ type Housekeeper struct {
 
 	db     *sql.DB
 	appCfg appconfig.IConfig
-	store  *citizensstore.Store
+	store  citizensstore.IStore
 }
 
 type HousekeeperParams struct {
@@ -63,7 +63,7 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 
 		db:     p.DB,
 		appCfg: p.AppConfig,
-		store:  citizensstore.New(p.DB, config.CustomDB{}),
+		store:  citizensstore.New(p.DB, &config.CustomDB{}),
 	}
 
 	return HousekeeperResult{

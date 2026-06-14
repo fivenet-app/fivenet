@@ -20,8 +20,10 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("label")
-var tCitizenLabels = table.FivenetUserLabels
+var (
+	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("label")
+	tCitizenLabels     = table.FivenetUserLabels
+)
 
 var labelSubjectAccessOptions = access.SubjectAccessOptions{BlockedAccess: -1}
 
@@ -227,7 +229,13 @@ func (s *Server) DeleteLabel(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
-	if err := s.store.DeleteLabel(ctx, s.db, userInfo.GetJob(), req.GetId(), deletedAtTime); err != nil {
+	if err := s.store.DeleteLabel(
+		ctx,
+		s.db,
+		userInfo.GetJob(),
+		req.GetId(),
+		deletedAtTime,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 

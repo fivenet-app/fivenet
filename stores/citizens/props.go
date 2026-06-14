@@ -1,4 +1,4 @@
-package citizens
+package citizensstore
 
 import (
 	"context"
@@ -61,7 +61,11 @@ func (s *Store) GetUserProps(
 
 	dest.UserId = userId
 
-	labels, err := s.GetUserLabels(ctx, tx, mysql.AND(tCitizenLabels.UserID.EQ(mysql.Int32(userId))))
+	labels, err := s.GetUserLabels(
+		ctx,
+		tx,
+		mysql.AND(tCitizenLabels.UserID.EQ(mysql.Int32(userId))),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +266,10 @@ func (s *Store) HandleUserPropsChanges(
 			Reason:       reason,
 			Data: &usersactivity.UserActivityData{
 				Data: &usersactivity.UserActivityData_TrafficInfractionPointsChange{
-					TrafficInfractionPointsChange: &usersactivity.TrafficInfractionPointsChange{Old: old, New: new},
+					TrafficInfractionPointsChange: &usersactivity.TrafficInfractionPointsChange{
+						Old: old,
+						New: new,
+					},
 				},
 			},
 		})
@@ -275,7 +282,9 @@ func (s *Store) HandleUserPropsChanges(
 			Type:         usersactivity.UserActivityType_USER_ACTIVITY_TYPE_MUGSHOT,
 			Reason:       reason,
 			Data: &usersactivity.UserActivityData{
-				Data: &usersactivity.UserActivityData_MugshotChange{MugshotChange: &usersactivity.MugshotChange{}},
+				Data: &usersactivity.UserActivityData_MugshotChange{
+					MugshotChange: &usersactivity.MugshotChange{},
+				},
 			},
 		})
 	}

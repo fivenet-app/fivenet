@@ -37,7 +37,7 @@ type Server struct {
 	cfg      *config.Config
 	customDB *config.CustomDB
 	notifi   notifi.INotifi
-	store    *citizensstore.Store
+	store    citizensstore.IStore
 
 	profilePictureHandler *filestore.Handler[int32]
 	mugshotHandler        *filestore.Handler[int32]
@@ -56,7 +56,7 @@ type Params struct {
 	Storage   storage.IStorage
 	AppConfig appconfig.IConfig
 	Notifi    notifi.INotifi
-	Store     *citizensstore.Store
+	Store     citizensstore.IStore
 }
 
 func NewServer(p Params) *Server {

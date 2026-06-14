@@ -1,4 +1,4 @@
-package citizens
+package citizensstore
 
 import (
 	"context"
@@ -73,7 +73,10 @@ func (s *Store) NextLabelSortOrder(
 	job string,
 ) (int32, error) {
 	stmt := tCitizensLabelsJob.
-		SELECT(mysql.COALESCE(mysql.MAX(tCitizensLabelsJob.SortOrder), mysql.Int32(-1)).AS("sort_order")).
+		SELECT(
+			mysql.COALESCE(mysql.MAX(tCitizensLabelsJob.SortOrder), mysql.Int32(-1)).
+				AS("sort_order"),
+		).
 		FROM(tCitizensLabelsJob).
 		WHERE(mysql.AND(
 			tCitizensLabelsJob.Job.EQ(mysql.String(job)),

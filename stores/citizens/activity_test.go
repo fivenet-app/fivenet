@@ -1,4 +1,4 @@
-package citizens
+package citizensstore
 
 import (
 	"regexp"
@@ -20,7 +20,7 @@ func TestStoreCountUserActivityAppliesTargetFilter(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, config.CustomDB{})
+	store := New(db, &config.CustomDB{})
 	pageSize := int64(5)
 	req := &pb.ListUserActivityRequest{
 		UserId: 42,
@@ -46,7 +46,7 @@ func TestStoreListUserActivityAppliesSortAndJoin(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, config.CustomDB{})
+	store := New(db, &config.CustomDB{})
 	pageSize := int64(20)
 	req := &pb.ListUserActivityRequest{
 		UserId: 42,

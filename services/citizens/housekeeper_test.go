@@ -63,7 +63,7 @@ func TestHousekeeperMaxWantedDurationHandling_Disabled(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
-		store:  citizensstore.New(db, config.CustomDB{}),
+		store:  citizensstore.New(db, &config.CustomDB{}),
 	}
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
@@ -91,7 +91,7 @@ func TestHousekeeperMaxWantedDurationHandling_NoDuration(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
-		store:  citizensstore.New(db, config.CustomDB{}),
+		store:  citizensstore.New(db, &config.CustomDB{}),
 	}
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
@@ -119,7 +119,7 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
-		store:  citizensstore.New(db, config.CustomDB{}),
+		store:  citizensstore.New(db, &config.CustomDB{}),
 	}
 
 	// Assert the key eligibility condition:
@@ -200,7 +200,7 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
-		store:  citizensstore.New(db, config.CustomDB{}),
+		store:  citizensstore.New(db, &config.CustomDB{}),
 	}
 
 	// Two eligible users are returned by the selection query

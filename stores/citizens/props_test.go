@@ -1,4 +1,4 @@
-package citizens
+package citizensstore
 
 import (
 	"regexp"
@@ -19,7 +19,7 @@ func TestStoreGetUserPropsLoadsPropsAndLabels(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, config.CustomDB{})
+	store := New(db, &config.CustomDB{})
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_props AS user_props`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_files AS mugshot ON`)).
 		WithArgs(int32(42), int64(1)).
@@ -59,7 +59,7 @@ func TestStoreGetUserPropsLoadsPropsAndLabels(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, int32(42), props.GetUserId())
 	require.NotNil(t, props.GetLabels())
-	require.Len(t, props.GetLabels().GetList(), 0)
+	require.Empty(t, props.GetLabels().GetList())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
@@ -70,7 +70,7 @@ func TestStoreHandleUserPropsChangesUpdatesWanted(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, config.CustomDB{})
+	store := New(db, &config.CustomDB{})
 	zeroInt64 := int64(0)
 	zeroUint32 := uint32(0)
 	wanted := true

@@ -1,4 +1,4 @@
-package citizens
+package citizensstore
 
 import (
 	"context"
@@ -93,7 +93,10 @@ func (s *Store) ListUserActivity(
 	return activities, nil
 }
 
-func (s *Store) CountUserActivity(ctx context.Context, req *pb.ListUserActivityRequest) (int64, error) {
+func (s *Store) CountUserActivity(
+	ctx context.Context,
+	req *pb.ListUserActivityRequest,
+) (int64, error) {
 	tUserActivity := table.FivenetUserActivity.AS("user_activity")
 
 	condition := tUserActivity.TargetUserID.EQ(mysql.Int32(req.GetUserId()))
