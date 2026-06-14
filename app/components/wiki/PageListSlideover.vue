@@ -6,6 +6,8 @@ import PageListSlideoverNode from './PageListSlideoverNode.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
+import { canReorderWikiPages, resolveWikiPageMovePayload } from './reorder';
+import WikiPageDragList from './WikiPageDragList.vue';
 
 defineEmits<{
     (e: 'close', v: boolean): void;
@@ -24,7 +26,12 @@ const wikiPageChunkSize = 250;
 
 const { data, status, refresh, error } = useLazyAsyncData(`wiki-pages-move-${props.job}`, () => listPages());
 
-const pages = computed(() => data.value ?? []);
+const pages = computed<PageShort[]>({
+    get: () => data.value ?? [],
+    set: (value) => {
+        data.value = value;
+    },
+});
 
 async function listPages(): Promise<PageShort[]> {
     const allPages: PageShort[] = [];
@@ -68,9 +75,23 @@ async function movePage(payload: { pageId: number; beforeId?: number; afterId?: 
 
         await refresh();
         void props.refresh().catch(() => undefined);
+    } catch (e) {
+        await refresh().catch(() => undefined);
+        throw e;
     } finally {
         movingPageId.value = undefined;
     }
+}
+
+function canMovePage(event: { dragged?: HTMLElement; related?: HTMLElement }): boolean {
+    return canReorderWikiPages(pages.value, event);
+}
+
+async function onDragEnd(event: { oldIndex?: number; newIndex?: number }): Promise<void> {
+    const payload = resolveWikiPageMovePayload(pages.value, event.oldIndex, event.newIndex);
+    if (!payload) return;
+
+    await movePage(payload);
 }
 </script>
 
@@ -92,7 +113,13 @@ async function movePage(payload: { pageId: number; beforeId?: number; afterId?: 
                 <DataNoDataBlock v-else-if="pages.length === 0" :type="$t('common.page', 2)" icon="i-mdi-file-tree" />
 
                 <template v-else>
-                    <div class="space-y-3">
+                    <WikiPageDragList
+                        v-model="pages"
+                        class="space-y-3"
+                        :disabled="movingPageId !== undefined"
+                        :on-move="canMovePage"
+                        :on-end="onDragEnd"
+                    >
                         <PageListSlideoverNode
                             v-for="(page, index) in pages"
                             :key="page.id"
@@ -102,7 +129,7 @@ async function movePage(payload: { pageId: number; beforeId?: number; afterId?: 
                             :moving-page-id="movingPageId"
                             @move="movePage"
                         />
-                    </div>
+                    </WikiPageDragList>
                 </template>
             </div>
         </template>
