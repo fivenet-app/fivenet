@@ -1,4 +1,4 @@
-package mailer
+package mailerstore
 
 import (
 	"context"

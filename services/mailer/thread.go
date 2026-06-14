@@ -17,7 +17,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
-	mailersstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
+	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -47,7 +47,7 @@ func (s *Server) ListThreads(
 			Pagination: &database.PaginationResponse{},
 		}, nil
 	}
-	query := mailersstore.ThreadListQuery{
+	query := mailerstore.ThreadListQuery{
 		EmailIDs:  emailIds,
 		Unread:    req.Unread,
 		Archived:  req.Archived,

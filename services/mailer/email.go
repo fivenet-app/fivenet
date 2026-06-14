@@ -21,7 +21,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
-	mailersstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
+	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -145,26 +145,13 @@ func ListUserEmails(
 		offset = pag.GetOffset()
 	}
 
-	store := mailersstore.New(nil)
+	store := mailerstore.New(nil)
 	emails, err := store.ListEmails(ctx, tx, condition, offset, listEmailsPageSize)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	return emails, nil
-}
-
-func (s *Server) getEmailByCondition(
-	ctx context.Context,
-	tx qrm.DB,
-	condition mysql.BoolExpression,
-) (*maileremails.Email, error) {
-	email, err := s.store.GetEmailByCondition(ctx, tx, condition)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-
-	return email, nil
 }
 
 func (s *Server) getEmail(
@@ -187,7 +174,7 @@ func (s *Server) getEmail(
 	}
 
 	if withSettings {
-		settings, err := s.getEmailSettings(ctx, s.db, emailId)
+		settings, err := s.store.GetEmailSettings(ctx, s.db, emailId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -276,7 +263,7 @@ func (s *Server) CreateOrUpdateEmail(
 	if req.GetEmail().GetId() <= 0 {
 		// Check if user already has a personal email
 		if req.Email.UserId != nil {
-			email, err := s.getEmailByCondition(
+			email, err := s.store.GetEmailByCondition(
 				ctx,
 				tx,
 				tEmails.UserID.EQ(mysql.Int32(req.GetEmail().GetUserId())),

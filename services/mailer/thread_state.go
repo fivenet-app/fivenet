@@ -5,7 +5,6 @@ import (
 
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
-	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -28,7 +27,7 @@ func (s *Server) GetThreadState(
 		return nil, err
 	}
 
-	state, err := s.getThreadState(ctx, req.GetThreadId(), req.GetEmailId())
+	state, err := s.store.GetThreadState(ctx, s.db, req.GetThreadId(), req.GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -58,7 +57,12 @@ func (s *Server) SetThreadState(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	state, err := s.getThreadState(ctx, req.GetState().GetThreadId(), req.GetState().GetEmailId())
+	state, err := s.store.GetThreadState(
+		ctx,
+		s.db,
+		req.GetState().GetThreadId(),
+		req.GetState().GetEmailId(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -72,17 +76,4 @@ func (s *Server) SetThreadState(
 	return &pbmailer.SetThreadStateResponse{
 		State: state,
 	}, nil
-}
-
-func (s *Server) getThreadState(
-	ctx context.Context,
-	threadId int64,
-	emaildId int64,
-) (*mailerthreads.ThreadState, error) {
-	state, err := s.store.GetThreadState(ctx, s.db, threadId, emaildId)
-	if err != nil {
-		return nil, err
-	}
-
-	return state, nil
 }

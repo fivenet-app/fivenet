@@ -5,7 +5,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
-	mailertemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/templates"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -40,19 +39,6 @@ func (s *Server) ListTemplates(
 	return &pbmailer.ListTemplatesResponse{Templates: templates}, nil
 }
 
-func (s *Server) getTemplate(
-	ctx context.Context,
-	id int64,
-	emailId *int64,
-) (*mailertemplates.Template, error) {
-	template, err := s.store.GetTemplate(ctx, s.db, id, emailId)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-
-	return template, nil
-}
-
 func (s *Server) GetTemplate(
 	ctx context.Context,
 	req *pbmailer.GetTemplateRequest,
@@ -73,7 +59,7 @@ func (s *Server) GetTemplate(
 	}
 
 	resp := &pbmailer.GetTemplateResponse{}
-	resp.Template, err = s.getTemplate(ctx, req.GetTemplateId(), &req.EmailId)
+	resp.Template, err = s.store.GetTemplate(ctx, s.db, req.GetTemplateId(), &req.EmailId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -125,7 +111,12 @@ func (s *Server) CreateOrUpdateTemplate(
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
-		template, err := s.getTemplate(ctx, req.GetTemplate().GetId(), &req.Template.EmailId)
+		template, err := s.store.GetTemplate(
+			ctx,
+			s.db,
+			req.GetTemplate().GetId(),
+			&req.Template.EmailId,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -141,7 +132,12 @@ func (s *Server) CreateOrUpdateTemplate(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	}
 
-	template, err := s.getTemplate(ctx, req.GetTemplate().GetId(), &req.Template.EmailId)
+	template, err := s.store.GetTemplate(
+		ctx,
+		s.db,
+		req.GetTemplate().GetId(),
+		&req.Template.EmailId,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

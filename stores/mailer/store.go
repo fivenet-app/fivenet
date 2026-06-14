@@ -1,11 +1,123 @@
-package mailer
+package mailerstore
 
-import "database/sql"
+import (
+	"context"
+	"database/sql"
+
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
+	mailermessages "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/messages"
+	mailersettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings"
+	mailertemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/templates"
+	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
+)
+
+type IStore interface {
+	CountThreads(ctx context.Context, db qrm.DB, in ThreadListQuery) (int64, error)
+	ListThreads(ctx context.Context, db qrm.DB, in ThreadListQuery) ([]*mailerthreads.Thread, error)
+	GetThread(
+		ctx context.Context,
+		db qrm.DB,
+		threadID int64,
+		emailID int64,
+	) (*mailerthreads.Thread, error)
+	UpdateThreadTime(ctx context.Context, db qrm.DB, threadID int64) error
+	AddThreadRecipients(
+		ctx context.Context,
+		db qrm.DB,
+		threadID int64,
+		recipients []*mailerthreads.ThreadRecipientEmail,
+	) error
+	ListThreadRecipients(
+		ctx context.Context,
+		db qrm.DB,
+		threadID int64,
+	) ([]*mailerthreads.ThreadRecipientEmail, error)
+	GetThreadState(
+		ctx context.Context,
+		db qrm.DB,
+		threadID int64,
+		emailID int64,
+	) (*mailerthreads.ThreadState, error)
+	SetThreadState(ctx context.Context, db qrm.DB, state *mailerthreads.ThreadState) error
+	SetUnreadState(
+		ctx context.Context,
+		db qrm.DB,
+		threadID int64,
+		senderID int64,
+		emailIDs []int64,
+	) error
+	CountThreadMessages(ctx context.Context, db qrm.DB, threadID int64) (int64, error)
+	ListThreadMessages(
+		ctx context.Context,
+		db qrm.DB,
+		in MessageListQuery,
+	) ([]*mailermessages.Message, error)
+	GetMessage(ctx context.Context, db qrm.DB, messageID int64) (*mailermessages.Message, error)
+	CreateMessage(ctx context.Context, db qrm.DB, msg *mailermessages.Message) (int64, error)
+	CountEmails(ctx context.Context, db qrm.DB, condition mysql.BoolExpression) (int64, error)
+	ListEmails(
+		ctx context.Context,
+		db qrm.DB,
+		condition mysql.BoolExpression,
+		offset int64,
+		limit int64,
+	) ([]*maileremails.Email, error)
+	GetEmailByCondition(
+		ctx context.Context,
+		db qrm.DB,
+		condition mysql.BoolExpression,
+	) (*maileremails.Email, error)
+	GetEmail(ctx context.Context, db qrm.DB, emailID int64) (*maileremails.Email, error)
+	GetUserShort(ctx context.Context, db qrm.DB, userID int32) (*usershort.UserShort, error)
+	ListRecipientsByEmails(
+		ctx context.Context,
+		db qrm.DB,
+		recipients []string,
+	) ([]*mailerthreads.ThreadRecipientEmail, error)
+	GetEmailSettings(
+		ctx context.Context,
+		db qrm.DB,
+		emailID int64,
+	) (*mailersettings.EmailSettings, error)
+	UpsertEmailSettingsSignature(
+		ctx context.Context,
+		db qrm.DB,
+		emailID int64,
+		signature *content.Content,
+	) error
+	AddBlockedEmails(ctx context.Context, db qrm.DB, emailID int64, blockedEmails []string) error
+	DeleteBlockedEmails(ctx context.Context, db qrm.DB, emailID int64, blockedEmails []string) error
+	ListTemplates(
+		ctx context.Context,
+		db qrm.DB,
+		emailID int64,
+		limit int64,
+	) ([]*mailertemplates.Template, error)
+	GetTemplate(
+		ctx context.Context,
+		db qrm.DB,
+		id int64,
+		emailID *int64,
+	) (*mailertemplates.Template, error)
+	CountTemplatesByCreatorJob(ctx context.Context, db qrm.DB, job string) (int64, error)
+	CreateTemplate(
+		ctx context.Context,
+		db qrm.DB,
+		template *mailertemplates.Template,
+		creatorID int32,
+	) (int64, error)
+	UpdateTemplate(ctx context.Context, db qrm.DB, template *mailertemplates.Template) error
+	DeleteTemplate(ctx context.Context, db qrm.DB, id int64) error
+}
 
 type Store struct {
 	db *sql.DB
 }
 
-func New(db *sql.DB) *Store {
+func New(db *sql.DB) IStore {
 	return &Store{db: db}
 }

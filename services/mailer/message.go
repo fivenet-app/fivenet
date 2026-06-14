@@ -19,7 +19,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
-	mailersstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
+	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -60,7 +60,7 @@ func (s *Server) ListThreadMessages(
 	if count <= 0 {
 		return resp, nil
 	}
-	messages, err := s.store.ListThreadMessages(ctx, s.db, mailersstore.MessageListQuery{
+	messages, err := s.store.ListThreadMessages(ctx, s.db, mailerstore.MessageListQuery{
 		ThreadID: req.GetThreadId(),
 		Offset:   req.GetPagination().GetOffset(),
 		Limit:    limit,
@@ -78,15 +78,6 @@ func (s *Server) ListThreadMessages(
 	}
 
 	return resp, nil
-}
-
-func (s *Server) getMessage(ctx context.Context, messageId int64) (*mailermessages.Message, error) {
-	message, err := s.store.GetMessage(ctx, s.db, messageId)
-	if err != nil {
-		return nil, err
-	}
-
-	return message, nil
 }
 
 func (s *Server) PostMessage(
@@ -193,7 +184,7 @@ func (s *Server) PostMessage(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	message, err := s.getMessage(ctx, req.GetMessage().GetId())
+	message, err := s.store.GetMessage(ctx, s.db, req.GetMessage().GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -223,7 +214,7 @@ func (s *Server) DeleteMessage(
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	message, err := s.getMessage(ctx, req.GetMessageId())
+	message, err := s.store.GetMessage(ctx, s.db, req.GetMessageId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

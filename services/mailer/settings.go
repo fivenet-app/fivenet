@@ -9,14 +9,12 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
-	mailersettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
-	"github.com/go-jet/jet/v2/qrm"
 )
 
 const SignatureMaxLength = 1024
@@ -40,7 +38,7 @@ func (s *Server) GetEmailSettings(
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	settings, err := s.getEmailSettings(ctx, s.db, req.GetEmailId())
+	settings, err := s.store.GetEmailSettings(ctx, s.db, req.GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -48,19 +46,6 @@ func (s *Server) GetEmailSettings(
 	return &pbmailer.GetEmailSettingsResponse{
 		Settings: settings,
 	}, nil
-}
-
-func (s *Server) getEmailSettings(
-	ctx context.Context,
-	tx qrm.DB,
-	emailId int64,
-) (*mailersettings.EmailSettings, error) {
-	settings, err := s.store.GetEmailSettings(ctx, tx, emailId)
-	if err != nil {
-		return nil, err
-	}
-
-	return settings, nil
 }
 
 func (s *Server) SetEmailSettings(
@@ -130,7 +115,7 @@ func (s *Server) SetEmailSettings(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	settings, err := s.getEmailSettings(ctx, tx, req.GetSettings().GetEmailId())
+	settings, err := s.store.GetEmailSettings(ctx, tx, req.GetSettings().GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -178,7 +163,7 @@ func (s *Server) SetEmailSettings(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	settings, err = s.getEmailSettings(ctx, s.db, req.GetSettings().GetEmailId())
+	settings, err = s.store.GetEmailSettings(ctx, s.db, req.GetSettings().GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
