@@ -205,6 +205,7 @@ func (s *Server) validateCalendarReminderChannel(
 	channelID string,
 ) error {
 	store := s.store
+	// TODO the store should already be initialized
 	if store == nil {
 		store = calendarstore.New(s.db)
 	}

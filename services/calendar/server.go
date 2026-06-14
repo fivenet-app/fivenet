@@ -35,8 +35,6 @@ var (
 	tCalendar = table.FivenetCalendar.AS("calendar")
 
 	tCalendarEntry = table.FivenetCalendarEntries.AS("calendar_entry")
-
-	tUserJobs = table.FivenetUserJobs.AS("user_jobs")
 )
 
 func init() {
@@ -103,7 +101,7 @@ type Server struct {
 	notif    notifi.INotifi
 	js       *events.JSWrapper
 	dc       *discordstate.State
-	store    *calendarstore.Store
+	store    calendarstore.IStore
 
 	access         *access.SubjectObjectAccess
 	accessResolver *access.SubjectResolver
@@ -123,7 +121,7 @@ type Params struct {
 	Notif     notifi.INotifi
 	JS        *events.JSWrapper
 	Discord   *discordstate.State
-	Store     *calendarstore.Store `optional:"true"`
+	Store     calendarstore.IStore `optional:"true"`
 }
 
 type Result struct {

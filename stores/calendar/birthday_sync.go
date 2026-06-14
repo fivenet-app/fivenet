@@ -1,4 +1,4 @@
-package calendar
+package calendarstore
 
 import (
 	"context"
@@ -19,7 +19,9 @@ import (
 
 const birthdayCalendarColor = "neutral"
 
-type birthdayColleague struct {
+var ErrInvalidDateofbirth = errors.New("failed to parse dateofbirth")
+
+type BirthdayColleague struct {
 	UserID      int32  `alias:"user_id"`
 	Firstname   string `alias:"firstname"`
 	Lastname    string `alias:"lastname"`
@@ -71,7 +73,16 @@ func birthdayCalendarAccessEntries(
 }
 
 func birthdayForYear(year int, month time.Month, day int) time.Time {
-	return time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
+	if day <= 0 {
+		day = 1
+	}
+
+	lastDay := time.Date(year, month+1, 0, 12, 0, 0, 0, time.UTC).Day()
+	if day > lastDay {
+		day = lastDay
+	}
+
+	return time.Date(year, month, day, 12, 0, 0, 0, time.UTC)
 }
 
 func (s *Store) ListBirthdayJobs(
@@ -233,7 +244,7 @@ func (s *Store) LoadBirthdayColleagues(
 	ctx context.Context,
 	tx qrm.DB,
 	job string,
-) ([]*birthdayColleague, error) {
+) ([]*BirthdayColleague, error) {
 	tUsers := table.FivenetUser.AS("birthday_colleague")
 	tUserJobs := table.FivenetUserJobs.AS("user_jobs")
 
@@ -260,7 +271,7 @@ func (s *Store) LoadBirthdayColleagues(
 		ORDER_BY(tUsers.ID.ASC()).
 		LIMIT(500)
 
-	colleagues := []*birthdayColleague{}
+	colleagues := []*BirthdayColleague{}
 	if err := stmt.QueryContext(ctx, tx, &colleagues); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -275,11 +286,11 @@ func (s *Store) InsertBirthdayEntry(
 	tx qrm.DB,
 	calendarID int64,
 	job string,
-	colleague *birthdayColleague,
+	colleague *BirthdayColleague,
 ) error {
 	birthDate, err := time.Parse("02.01.2006", colleague.Dateofbirth)
 	if err != nil {
-		return nil
+		return ErrInvalidDateofbirth
 	}
 
 	startTime := birthdayForYear(birthDate.Year(), birthDate.Month(), birthDate.Day())

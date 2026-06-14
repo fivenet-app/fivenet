@@ -17,8 +17,6 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-const maxCalendarEntriesLimit = int64(125)
-
 func (s *Server) ListCalendarEntries(
 	ctx context.Context,
 	req *pbcalendar.ListCalendarEntriesRequest,

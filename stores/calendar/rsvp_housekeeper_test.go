@@ -1,4 +1,4 @@
-package calendar
+package calendarstore
 
 import (
 	"testing"
