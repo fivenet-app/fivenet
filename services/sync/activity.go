@@ -14,7 +14,6 @@ import (
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
-	colleaguesstore "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -225,7 +224,7 @@ func (s *Server) handleColleagueProps(
 	defer tx.Rollback()
 
 	input := data.GetProps()
-	props, err := colleaguesstore.GetColleagueProps(
+	props, err := s.jobsStore.GetColleagueProps(
 		ctx,
 		tx,
 		input.GetJob(),
@@ -241,7 +240,7 @@ func (s *Server) handleColleagueProps(
 		reason = data.GetReason()
 	}
 
-	activities, err := colleaguesstore.HandleColleaguesPropsChanges(
+	activities, err := s.jobsStore.HandleColleaguePropsChanges(
 		ctx,
 		tx,
 		props,
