@@ -589,10 +589,6 @@ func (s *Server) UpdateDocument(
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 		}
-
-		if req != nil && !s.checkAccessAgainstTemplate(tmpl, req.GetAccess()) {
-			return nil, errorsdocuments.ErrDocRequiredAccessTemplate
-		}
 	}
 
 	// Begin transaction

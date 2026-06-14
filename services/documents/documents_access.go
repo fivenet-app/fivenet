@@ -2,7 +2,9 @@ package documents
 
 import (
 	context "context"
+	"errors"
 
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
@@ -14,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -28,6 +31,8 @@ var documentSubjectAccessOptions = access.SubjectAccessOptions{
 		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	},
 }
+
+const documentAccessEntryLimit = 20
 
 func canUserAccessDocument(
 	ctx context.Context,
@@ -110,24 +115,37 @@ func (s *Server) GetDocumentAccess(
 		return nil, errorsdocuments.ErrDocAccessViewDenied
 	}
 
-	access, err := s.getDocumentAccess(ctx, req.GetDocumentId())
+	docAccess, err := s.getDocumentAccess(ctx, req.GetDocumentId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	for i := range access.GetJobs() {
-		s.enricher.EnrichJobInfo(access.GetJobs()[i])
+	requiredAccess, err := s.getDocumentRequiredAccess(ctx, req.GetDocumentId(), userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	docAccess, err = access.NormalizeAccess(docAccess, requiredAccess, nil, documentAccessEntryLimit)
+	if err != nil {
+		if isAccessEntryLimitError(err) {
+			return nil, errorsdocuments.ErrDocRequiredAccessTemplate
+		}
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	for i := range docAccess.GetJobs() {
+		s.enricher.EnrichJobInfo(docAccess.GetJobs()[i])
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range access.GetUsers() {
-		if access.GetUsers()[i].GetUser() != nil {
-			jobInfoFn(access.GetUsers()[i].GetUser())
+	for i := range docAccess.GetUsers() {
+		if docAccess.GetUsers()[i].GetUser() != nil {
+			jobInfoFn(docAccess.GetUsers()[i].GetUser())
 		}
 	}
 
 	resp := &pbdocuments.GetDocumentAccessResponse{
-		Access: access,
+		Access: docAccess,
 	}
 
 	return resp, nil
@@ -190,6 +208,30 @@ func (s *Server) getDocumentAccess(
 	return s.subjectAccess.ListTargetAccess(ctx, s.db, documentId, documentSubjectAccessOptions)
 }
 
+func (s *Server) getDocumentRequiredAccess(
+	ctx context.Context,
+	documentId int64,
+	userInfo *userinfo.UserInfo,
+) (*resourcesaccess.Access, error) {
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(mysql.Int64(documentId)), userInfo, false)
+	if err != nil {
+		return nil, err
+	}
+	if doc.GetTemplateId() <= 0 {
+		return nil, nil
+	}
+
+	tmpl, err := s.getTemplate(ctx, doc.GetTemplateId())
+	if err != nil {
+		return nil, err
+	}
+	if tmpl.GetContentAccess() == nil || tmpl.GetContentAccess().IsEmpty() {
+		return nil, nil
+	}
+
+	return tmpl.GetContentAccess(), nil
+}
+
 func (s *Server) handleDocumentAccessChange(
 	ctx context.Context,
 	tx qrm.DB,
@@ -198,6 +240,10 @@ func (s *Server) handleDocumentAccessChange(
 	docAccess *documentsaccess.DocumentAccess,
 	addActivity bool,
 ) error {
+	if docAccess == nil {
+		docAccess = &documentsaccess.DocumentAccess{}
+	}
+
 	// Validate job access entries
 	valid, err := access.ValidateJobAccessEntries(s.jobs, &docAccess.Jobs, true)
 	if err != nil {
@@ -205,6 +251,33 @@ func (s *Server) handleDocumentAccessChange(
 	}
 	if !valid {
 		return errorsdocuments.ErrDocAccessInvalid
+	}
+
+	requiredAccess, err := s.getDocumentRequiredAccess(ctx, documentId, userInfo)
+	if err != nil {
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	fallbackAccess := &resourcesaccess.Access{
+		Jobs: []*resourcesaccess.JobAccess{
+			{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: userInfo.GetJobGrade(),
+				Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+			},
+		},
+	}
+
+	docAccess, err = access.NormalizeAccess(docAccess, requiredAccess, fallbackAccess, documentAccessEntryLimit)
+	if err != nil {
+		if isAccessEntryLimitError(err) {
+			return errorsdocuments.ErrDocRequiredAccessTemplate
+		}
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if documentsaccess.DocumentAccessHasDuplicates(docAccess) {
+		return errorsdocuments.ErrDocAccessDuplicate
 	}
 
 	changes, err := s.subjectAccess.ReplaceTargetAccess(
@@ -250,4 +323,9 @@ func (s *Server) handleDocumentAccessChange(
 	}
 
 	return nil
+}
+
+func isAccessEntryLimitError(err error) bool {
+	var limitErr *access.AccessEntryLimitError
+	return errors.As(err, &limitErr)
 }

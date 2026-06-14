@@ -12,6 +12,7 @@ const props = withDefaults(
     defineProps<{
         disabled?: boolean;
         showRequired?: boolean;
+        requiredReadonly?: boolean;
         accessTypes: AccessType[];
         accessRoles?: AccessLevelEnum[];
         jobs?: Job[] | undefined;
@@ -22,6 +23,7 @@ const props = withDefaults(
     {
         disabled: false,
         showRequired: false,
+        requiredReadonly: false,
         accessRoles: () => [],
         jobs: () => [],
         hideGrade: false,
@@ -39,6 +41,8 @@ const entry = defineModel<MixedAccessEntry>({ required: true });
 const completorStore = useCompletorStore();
 
 const { game } = useAppConfig();
+
+const isRequiredLocked = computed(() => props.requiredReadonly && !!entry.value.required);
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
@@ -129,7 +133,11 @@ watch(
             <div class="flex flex-initial flex-row items-center gap-2">
                 <UFormField v-if="showRequired" :name="`${$props.name}.required`">
                     <UTooltip class="flex-initial" :text="$t('common.require')">
-                        <UCheckbox v-model="entry.required" :disabled="disabled" name="required" />
+                        <UCheckbox
+                            v-model="entry.required"
+                            :disabled="disabled || (requiredReadonly && !!entry.required)"
+                            name="required"
+                        />
                     </UTooltip>
                 </UFormField>
 
@@ -144,7 +152,7 @@ watch(
                         <USelectMenu
                             v-model="entry.type"
                             class="w-full"
-                            :disabled="disabled"
+                            :disabled="disabled || isRequiredLocked"
                             :placeholder="$t('common.type')"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             value-key="value"
@@ -236,7 +244,7 @@ watch(
                         <USelectMenu
                             v-model="entry.job"
                             class="w-full"
-                            :disabled="disabled"
+                            :disabled="disabled || isRequiredLocked"
                             :filter-fields="['label', 'name']"
                             value-key="name"
                             :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
@@ -261,7 +269,7 @@ watch(
                             :model-value="
                                 jobs.find((j) => j.name === entry.job)?.grades.find((g) => g.grade === entry.minimumGrade)
                             "
-                            :disabled="disabled || !entry.job"
+                            :disabled="disabled || isRequiredLocked || !entry.job"
                             :filter-fields="['name', 'label']"
                             :items="jobs.find((j) => j.name === entry.job)?.grades ?? []"
                             :placeholder="$t('common.rank')"
@@ -284,7 +292,7 @@ watch(
                     <USelectMenu
                         v-model="entry.access"
                         class="w-full"
-                        :disabled="disabled"
+                        :disabled="disabled || isRequiredLocked"
                         value-key="value"
                         :items="accessRoles"
                         :filter-fields="['label']"
@@ -302,12 +310,13 @@ watch(
         </div>
 
         <UFormField class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
-            <UTooltip v-if="!disabled" :text="$t('components.access.remove_entry')">
+            <UTooltip v-if="!disabled" :text="isRequiredLocked ? $t('common.required') : $t('components.access.remove_entry')">
                 <UButton
                     class="flex-initial"
-                    color="red"
+                    :color="isRequiredLocked ? 'gray' : 'red'"
                     icon="i-mdi-remove"
                     :label="$t('components.access.remove_entry')"
+                    :disabled="isRequiredLocked"
                     :ui="{ label: 'md:hidden' }"
                     @click="$emit('delete')"
                 />

@@ -26,6 +26,7 @@ const props = withDefaults(
         defaultAccess?: number;
         disabled?: boolean;
         showRequired?: boolean;
+        requiredReadonly?: boolean;
         defaultAccessType?: AccessEntryType;
         totalLimit?: number;
         hideGrade?: boolean;
@@ -45,6 +46,7 @@ const props = withDefaults(
         totalLimit: undefined,
         hideGrade: false,
         hideJobs: () => [],
+        requiredReadonly: false,
         name: undefined,
         fullName: false,
     },
@@ -231,6 +233,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             :access-roles="accessRoles"
             :disabled="disabled"
             :show-required="showRequired"
+            :required-readonly="requiredReadonly"
             :jobs="jobsList"
             :hide-grade="hideGrade"
             :hide-jobs="hideJobs"
