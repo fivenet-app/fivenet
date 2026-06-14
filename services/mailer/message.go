@@ -19,6 +19,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
+	mailersstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -46,67 +47,28 @@ func (s *Server) ListThreadMessages(
 		return nil, err
 	}
 
-	countStmt := tMessages.
-		SELECT(
-			mysql.COUNT(mysql.DISTINCT(tMessages.ID)).AS("data_count.total"),
-		).
-		FROM(tMessages).
-		WHERE(mysql.AND(
-			tMessages.DeletedAt.IS_NULL(),
-			tMessages.ThreadID.EQ(mysql.Int64(req.GetThreadId())),
-		))
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
+	count, err := s.store.CountThreadMessages(ctx, s.db, req.GetThreadId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, MessagesDefaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, MessagesDefaultPageSize)
 	resp := &pbmailer.ListThreadMessagesResponse{
 		Pagination: pag,
 		Messages:   []*mailermessages.Message{},
 	}
-	if count.Total <= 0 {
+	if count <= 0 {
 		return resp, nil
 	}
-
-	stmt := tMessages.
-		SELECT(
-			tMessages.ID,
-			tMessages.ThreadID,
-			tMessages.SenderID,
-			tMessages.CreatedAt,
-			tMessages.UpdatedAt,
-			tMessages.DeletedAt,
-			tMessages.Title,
-			tMessages.Content,
-			tMessages.Data,
-			tMessages.CreatorID,
-			tMessages.SenderID.AS("sender.id"),
-			tMessages.CreatorEmail.AS("sender.email"),
-		).
-		FROM(
-			tMessages.
-				LEFT_JOIN(tEmails,
-					tEmails.ID.EQ(tMessages.SenderID),
-				),
-		).
-		WHERE(mysql.AND(
-			tMessages.DeletedAt.IS_NULL(),
-			tMessages.ThreadID.EQ(mysql.Int64(req.GetThreadId())),
-			tEmails.DeletedAt.IS_NULL(),
-		)).
-		OFFSET(req.GetPagination().GetOffset()).
-		ORDER_BY(tMessages.CreatedAt.DESC()).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Messages); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
+	messages, err := s.store.ListThreadMessages(ctx, s.db, mailersstore.MessageListQuery{
+		ThreadID: req.GetThreadId(),
+		Offset:   req.GetPagination().GetOffset(),
+		Limit:    limit,
+	})
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
+	resp.Messages = messages
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetMessages() {
@@ -119,36 +81,9 @@ func (s *Server) ListThreadMessages(
 }
 
 func (s *Server) getMessage(ctx context.Context, messageId int64) (*mailermessages.Message, error) {
-	stmt := tMessages.
-		SELECT(
-			tMessages.ID,
-			tMessages.ThreadID,
-			tMessages.SenderID,
-			tMessages.CreatedAt,
-			tMessages.UpdatedAt,
-			tMessages.DeletedAt,
-			tMessages.Title,
-			tMessages.Content,
-			tMessages.Data,
-			tMessages.CreatorID,
-			tMessages.SenderID.AS("sender.id"),
-			tMessages.CreatorEmail.AS("sender.email"),
-		).
-		FROM(tMessages).
-		WHERE(
-			tMessages.ID.EQ(mysql.Int64(messageId)),
-		).
-		LIMIT(1)
-
-	message := &mailermessages.Message{}
-	if err := stmt.QueryContext(ctx, s.db, message); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	if message.GetId() == 0 {
-		return nil, nil
+	message, err := s.store.GetMessage(ctx, s.db, messageId)
+	if err != nil {
+		return nil, err
 	}
 
 	return message, nil
@@ -207,14 +142,14 @@ func (s *Server) PostMessage(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	lastId, err := s.createMessage(ctx, tx, req.GetMessage())
+	lastId, err := s.store.CreateMessage(ctx, tx, req.GetMessage())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 	req.Message.Id = lastId
 
 	if len(emails) > 0 {
-		if err := s.handleRecipientsChanges(
+		if err := s.store.AddThreadRecipients(
 			ctx,
 			tx,
 			req.GetMessage().GetThreadId(),
@@ -224,11 +159,11 @@ func (s *Server) PostMessage(
 		}
 	}
 
-	if err := s.updateThreadTime(ctx, tx, req.GetMessage().GetThreadId()); err != nil {
+	if err := s.store.UpdateThreadTime(ctx, tx, req.GetMessage().GetThreadId()); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	recipients, err := s.getThreadRecipients(ctx, tx, req.GetMessage().GetThreadId())
+	recipients, err := s.store.ListThreadRecipients(ctx, tx, req.GetMessage().GetThreadId())
 	if err != nil {
 		return nil, errorsmailer.ErrFailedQuery
 	}
@@ -243,7 +178,7 @@ func (s *Server) PostMessage(
 		emailIds = append(emailIds, ua.GetEmailId())
 	}
 
-	if err := s.setUnreadState(
+	if err := s.store.SetUnreadState(
 		ctx,
 		tx,
 		req.GetMessage().GetThreadId(),
@@ -274,47 +209,6 @@ func (s *Server) PostMessage(
 	return &pbmailer.PostMessageResponse{
 		Message: message,
 	}, nil
-}
-
-func (s *Server) createMessage(
-	ctx context.Context,
-	tx qrm.DB,
-	msg *mailermessages.Message,
-) (int64, error) {
-	tMessages := table.FivenetMailerMessages
-	stmt := tMessages.
-		INSERT(
-			tMessages.ThreadID,
-			tMessages.SenderID,
-			tMessages.Title,
-			tMessages.Content,
-			tMessages.Data,
-			tMessages.CreatorID,
-			tMessages.CreatorJob,
-			tMessages.CreatorEmail,
-		).
-		VALUES(
-			msg.GetThreadId(),
-			msg.GetSenderId(),
-			msg.GetTitle(),
-			msg.GetContent(),
-			msg.GetData(),
-			msg.CreatorId,
-			msg.CreatorJob,
-			msg.GetSender().GetEmail(),
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-
-	return lastId, nil
 }
 
 func (s *Server) DeleteMessage(

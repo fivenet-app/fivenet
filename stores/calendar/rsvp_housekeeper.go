@@ -2,16 +2,16 @@ package calendar
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) cleanupStaleCalendarRSVPOccurrences(
+func (s *Store) cleanupStaleCalendarRSVPOccurrences(
 	ctx context.Context,
-	tx *sql.Tx,
+	tx qrm.DB,
 	cutoff time.Time,
 ) (int64, error) {
 	tCalendarEntry := table.FivenetCalendarEntries
@@ -41,9 +41,9 @@ func (s *Server) cleanupStaleCalendarRSVPOccurrences(
 	return res.RowsAffected()
 }
 
-func (s *Server) cleanupOrphanedCalendarRSVPOccurrences(
+func (s *Store) cleanupOrphanedCalendarRSVPOccurrences(
 	ctx context.Context,
-	tx *sql.Tx,
+	tx qrm.DB,
 	cutoff time.Time,
 ) (int64, error) {
 	tCalendarEntry := table.FivenetCalendarEntries
@@ -71,12 +71,11 @@ func (s *Server) cleanupOrphanedCalendarRSVPOccurrences(
 	return res.RowsAffected()
 }
 
-func (s *Server) cleanupCalendarRSVPOccurrences(ctx context.Context) (int64, error) {
+func (s *Store) CleanupCalendarRSVPOccurrences(ctx context.Context) (int64, error) {
 	cutoff := time.Now().AddDate(0, 0, -30)
 
 	rowsAffected := int64(0)
 
-	// DB transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return rowsAffected, err

@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -32,7 +33,8 @@ type Server struct {
 	auth *auth.GRPCAuth
 	cfg  *config.Config
 
-	dispatches *dispatches.DispatchDB
+	dispatches    *dispatches.DispatchDB
+	citizensStore *citizensstore.Store
 
 	tokens []string
 
@@ -46,12 +48,13 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger     *zap.Logger
-	DB         *sql.DB
-	JS         *events.JSWrapper
-	Auth       *auth.GRPCAuth
-	Config     *config.Config
-	DispatchDB *dispatches.DispatchDB
+	Logger        *zap.Logger
+	DB            *sql.DB
+	JS            *events.JSWrapper
+	Auth          *auth.GRPCAuth
+	Config        *config.Config
+	DispatchDB    *dispatches.DispatchDB
+	CitizensStore *citizensstore.Store
 }
 
 type Result struct {
@@ -69,11 +72,15 @@ func NewServer(p Params) Result {
 		auth:   p.Auth,
 		cfg:    p.Config,
 
-		dispatches: p.DispatchDB,
+		dispatches:    p.DispatchDB,
+		citizensStore: p.CitizensStore,
 
 		tokens: p.Config.Sync.APITokens,
 
 		lastDBSyncVersion: atomic.Pointer[string]{},
+	}
+	if s.citizensStore == nil {
+		s.citizensStore = citizensstore.New(p.DB, config.CustomDB{})
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

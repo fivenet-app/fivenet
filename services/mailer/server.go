@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	mailersstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
@@ -58,8 +59,9 @@ type Server struct {
 	pbmailer.ThreadServiceServer
 
 	db       *sql.DB
+	store    *mailersstore.Store
 	ps       perms.Permissions
-	enricher *mstlystcdata.UserAwareEnricher
+	enricher mstlystcdata.IUserAwareEnricher
 	js       *events.JSWrapper
 
 	access         *access.SubjectObjectAccess
@@ -71,13 +73,15 @@ type Params struct {
 
 	DB       *sql.DB
 	P        perms.Permissions
-	Enricher *mstlystcdata.UserAwareEnricher
+	Enricher mstlystcdata.IUserAwareEnricher
 	JS       *events.JSWrapper
+	Store    *mailersstore.Store `optional:"true"`
 }
 
 func NewServer(p Params) *Server {
 	return &Server{
 		db:       p.DB,
+		store:    p.Store,
 		ps:       p.P,
 		enricher: p.Enricher,
 		js:       p.JS,

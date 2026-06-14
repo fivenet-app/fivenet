@@ -2,12 +2,10 @@ package citizens
 
 import (
 	context "context"
-	"errors"
 	"math"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
-	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
@@ -15,10 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	grpc "google.golang.org/grpc"
 )
@@ -58,28 +53,19 @@ func (s *Server) DeleteAvatar(
 ) (*pbcitizens.DeleteAvatarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	stmt := tUserProps.
-		SELECT(tUserProps.AvatarFileID.AS("profile_picture_file_id")).
-		WHERE(tUserProps.UserID.EQ(mysql.Int32(userInfo.GetUserId()))).
-		LIMIT(1)
-
-	var props struct {
-		AvatarFileId *int64
-	}
-	if err := stmt.QueryContext(ctx, s.db, &props); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
+	avatarFileID, err := s.store.GetAvatarFileID(ctx, userInfo.GetUserId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if props.AvatarFileId == nil || *props.AvatarFileId == 0 {
+	if avatarFileID == nil || *avatarFileID == 0 {
 		return &pbcitizens.DeleteAvatarResponse{}, nil
 	}
 
 	if err := s.profilePictureHandler.Delete(
 		ctx,
 		userInfo.GetUserId(),
-		*props.AvatarFileId,
+		*avatarFileID,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -121,32 +107,12 @@ func (s *Server) UploadMugshot(
 	}
 	targetUserId := int32(parentId)
 
-	tUser := table.FivenetUser.AS("user")
-
-	u := &users.User{}
-	stmt := tUser.
-		SELECT(
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-		).
-		FROM(
-			tUser.
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUser.ID),
-				).
-				LEFT_JOIN(tFiles,
-					tFiles.ID.EQ(tUserProps.MugshotFileID),
-				),
-		).
-		WHERE(tUser.ID.EQ(mysql.Int32(targetUserId))).
-		LIMIT(1)
-
-	if err := stmt.QueryContext(ctx, s.db, u); err != nil {
+	u, err := s.store.GetUserAccess(ctx, targetUserId)
+	if err != nil {
 		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if u.GetUserId() <= 0 {
+	if u == nil || u.GetUserId() <= 0 {
 		return errorscitizens.ErrJobGradeNoPermission
 	}
 
@@ -160,13 +126,13 @@ func (s *Server) UploadMugshot(
 
 	meta.Namespace = "user_mugshots"
 
-	props, err := s.getUserProps(ctx, userInfo, targetUserId)
+	currentMugshotFileID, err := s.store.GetMugshotFileID(ctx, targetUserId)
 	if err != nil {
 		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if props.MugshotFileId != nil && props.GetMugshotFileId() > 0 {
-		if err := s.mugshotHandler.Delete(ctx, targetUserId, props.GetMugshotFileId()); err != nil {
+	if currentMugshotFileID != nil && *currentMugshotFileID > 0 {
+		if err := s.mugshotHandler.Delete(ctx, targetUserId, *currentMugshotFileID); err != nil {
 			return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
 	}
@@ -176,7 +142,7 @@ func (s *Server) UploadMugshot(
 		return err
 	}
 
-	if props.MugshotFileId == nil || resp.GetId() != props.GetMugshotFileId() {
+	if currentMugshotFileID == nil || resp.GetId() != *currentMugshotFileID {
 		if err := usersactivity.CreateUserActivities(ctx, s.db, &usersactivity.UserActivity{
 			SourceUserId: &userInfo.UserId,
 			TargetUserId: targetUserId,
@@ -207,32 +173,12 @@ func (s *Server) DeleteMugshot(
 		return nil, errorscitizens.ErrReasonRequired
 	}
 
-	tUser := table.FivenetUser.AS("user")
-
-	u := &users.User{}
-	uStmt := tUser.
-		SELECT(
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-		).
-		FROM(
-			tUser.
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUser.ID),
-				).
-				LEFT_JOIN(tFiles,
-					tFiles.ID.EQ(tUserProps.MugshotFileID),
-				),
-		).
-		WHERE(tUser.ID.EQ(mysql.Int32(req.GetUserId()))).
-		LIMIT(1)
-
-	if err := uStmt.QueryContext(ctx, s.db, u); err != nil {
+	u, err := s.store.GetUserAccess(ctx, req.GetUserId())
+	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if u.GetUserId() <= 0 {
+	if u == nil || u.GetUserId() <= 0 {
 		return nil, errorscitizens.ErrJobGradeNoPermission
 	}
 
@@ -244,18 +190,9 @@ func (s *Server) DeleteMugshot(
 		return nil, errorscitizens.ErrJobGradeNoPermission
 	}
 
-	stmt := tUserProps.
-		SELECT(tUserProps.MugshotFileID.AS("mugshot_file_id")).
-		WHERE(tUserProps.UserID.EQ(mysql.Int32(userInfo.GetUserId()))).
-		LIMIT(1)
-
-	var props struct {
-		MugshotFileId *int64
-	}
-	if err := stmt.QueryContext(ctx, s.db, &props); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
+	props, err := s.store.GetUserProps(ctx, s.db, userInfo.GetUserId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	if props.MugshotFileId == nil || *props.MugshotFileId == 0 {

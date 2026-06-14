@@ -11,7 +11,6 @@ import (
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
-	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -177,7 +176,7 @@ func (s *Server) handleUserProps(
 	defer tx.Rollback()
 
 	reqP := data.GetProps()
-	props, err := usersprops.GetUserProps(ctx, tx, reqP.GetUserId(), nil)
+	props, err := s.citizensStore.GetUserProps(ctx, tx, reqP.GetUserId())
 	if err != nil {
 		return fmt.Errorf("failed to get user props. %w", err)
 	}
@@ -187,9 +186,10 @@ func (s *Server) handleUserProps(
 		reason = data.GetReason()
 	}
 
-	activities, err := props.HandleChanges(
+	activities, err := s.citizensStore.HandleUserPropsChanges(
 		ctx,
 		tx,
+		props,
 		reqP,
 		&reqP.UserId,
 		reason,

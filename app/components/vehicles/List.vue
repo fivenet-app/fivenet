@@ -83,7 +83,7 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
-        `vehicles-${JSON.stringify(validatedQuery.value.userIds)}-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
+        `vehicles-${validatedQuery.value.licensePlate}-${JSON.stringify(validatedQuery.value.userIds)}-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
     () => listVehicles(validatedQuery.value),
 );
 

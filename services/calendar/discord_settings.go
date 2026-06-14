@@ -11,10 +11,8 @@ import (
 	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
+	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -206,7 +204,12 @@ func (s *Server) validateCalendarReminderChannel(
 	job string,
 	channelID string,
 ) error {
-	guildIDRaw, err := s.getCalendarReminderGuildID(ctx, job)
+	store := s.store
+	if store == nil {
+		store = calendarstore.New(s.db)
+	}
+
+	guildIDRaw, err := store.GetCalendarReminderGuildID(ctx, job)
 	if err != nil {
 		return err
 	}
@@ -247,45 +250,4 @@ func (s *Server) validateCalendarReminderChannel(
 	}
 
 	return nil
-}
-
-func (s *Server) getCalendarReminderGuildID(ctx context.Context, job string) (string, error) {
-	job = strings.TrimSpace(job)
-	if job == "" {
-		return "", errors.New("calendar job is required")
-	}
-
-	tJobProps := table.FivenetJobProps
-
-	stmt := tJobProps.
-		SELECT(tJobProps.DiscordGuildID.AS("discord_guild_id")).
-		FROM(tJobProps).
-		WHERE(mysql.AND(
-			tJobProps.Job.EQ(mysql.String(job)),
-			tJobProps.DeletedAt.IS_NULL(),
-			tJobProps.DiscordGuildID.IS_NOT_NULL(),
-		)).
-		LIMIT(1)
-
-	dest := struct {
-		DiscordGuildID string
-	}{}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if errors.Is(err, qrm.ErrNoRows) {
-			return "", errorscalendar.ErrNoDiscordGuildID
-		}
-		return "", errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
-
-	if len(dest.DiscordGuildID) == 0 {
-		return "", errorscalendar.ErrNoDiscordGuildID
-	}
-
-	guildID := dest.DiscordGuildID
-	guildID = strings.TrimSpace(guildID)
-	if guildID == "" {
-		return "", errorscalendar.ErrNoDiscordGuildID
-	}
-
-	return guildID, nil
 }

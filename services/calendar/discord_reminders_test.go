@@ -67,8 +67,8 @@ func TestValidateCalendarDiscordSettingsRejectsInvalidConfigurations(t *testing.
 			job:  "police",
 			settings: &calendarresource.CalendarDiscordSettings{
 				ReminderSteps: []*calendarresource.CalendarDiscordReminderStep{
-					{AtMinute: 10, Message: strPtr("a")},
-					{AtMinute: 10, Message: strPtr("b")},
+					{AtMinute: 10, Message: new("a")},
+					{AtMinute: 10, Message: new("b")},
 				},
 			},
 			server: &Server{},
@@ -89,7 +89,7 @@ func TestValidateCalendarDiscordSettingsRejectsInvalidConfigurations(t *testing.
 				Enabled:   true,
 				ChannelId: "123",
 				ReminderSteps: []*calendarresource.CalendarDiscordReminderStep{
-					{AtMinute: 5, Message: strPtr("test")},
+					{AtMinute: 5, Message: new("test")},
 				},
 			},
 			server: &Server{},
@@ -102,7 +102,7 @@ func TestValidateCalendarDiscordSettingsRejectsInvalidConfigurations(t *testing.
 				Enabled:   true,
 				ChannelId: "123",
 				ReminderSteps: []*calendarresource.CalendarDiscordReminderStep{
-					{AtMinute: 5, Message: strPtr("test")},
+					{AtMinute: 5, Message: new("test")},
 				},
 			},
 			server: &Server{},
@@ -114,7 +114,7 @@ func TestValidateCalendarDiscordSettingsRejectsInvalidConfigurations(t *testing.
 				Enabled:   true,
 				ChannelId: "123",
 				ReminderSteps: []*calendarresource.CalendarDiscordReminderStep{
-					{AtMinute: 5, Message: strPtr("test")},
+					{AtMinute: 5, Message: new("test")},
 				},
 			},
 			server: &Server{},
@@ -125,7 +125,7 @@ func TestValidateCalendarDiscordSettingsRejectsInvalidConfigurations(t *testing.
 			settings: &calendarresource.CalendarDiscordSettings{
 				Enabled: true,
 				ReminderSteps: []*calendarresource.CalendarDiscordReminderStep{
-					{AtMinute: 5, Message: strPtr("test")},
+					{AtMinute: 5, Message: new("test")},
 				},
 			},
 			server: &Server{dc: discordstate.New("Bot test")},
@@ -170,16 +170,12 @@ func TestValidateCalendarDiscordSettingsRejectsInvalidChannelID(t *testing.T) {
 			Enabled:   true,
 			ChannelId: "not-a-channel",
 			ReminderSteps: []*calendarresource.CalendarDiscordReminderStep{
-				{AtMinute: 5, Message: strPtr("test")},
+				{AtMinute: 5, Message: new("test")},
 			},
 		},
 	)
 	require.Error(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
-}
-
-func strPtr(v string) *string {
-	return &v
 }
 
 var _ driver.Valuer = (*calendarresource.CalendarDiscordSettings)(nil)

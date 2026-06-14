@@ -2,20 +2,14 @@ package completor
 
 import (
 	context "context"
-	"errors"
 
 	pbcompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscompletor "github.com/fivenet-app/fivenet/v2026/services/completor/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
+	completorstore "github.com/fivenet-app/fivenet/v2026/stores/completor"
 )
-
-var tDCategory = table.FivenetDocumentsCategories.AS("category")
 
 func (s *Server) CompleteDocumentCategories(
 	ctx context.Context,
@@ -34,57 +28,18 @@ func (s *Server) CompleteDocumentCategories(
 	if !jobs.Contains(userInfo.GetJob()) {
 		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
 	}
-
-	jobsExp := make([]mysql.Expression, jobs.Len())
-	for i := range jobs.GetStrings() {
-		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
+	categories, err := s.store.CompleteDocumentCategories(
+		ctx,
+		completorstore.DocumentCategoriesQuery{
+			Search:      req.GetSearch(),
+			CategoryIDs: req.GetCategoryIds(),
+			Jobs:        jobs.GetStrings(),
+			CurrentJob:  userInfo.GetJob(),
+		},
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 	}
 
-	orderBys := []mysql.OrderByClause{
-		tDCategory.Job.EQ(mysql.String(userInfo.GetJob())).DESC(),
-	}
-	condition := tDCategory.Job.IN(jobsExp...)
-
-	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
-		condition = condition.AND(
-			tDCategory.Name.LIKE(mysql.String(search)),
-		)
-	}
-
-	if len(req.GetCategoryIds()) > 0 {
-		categoryIds := []mysql.Expression{}
-		for _, v := range req.GetCategoryIds() {
-			categoryIds = append(categoryIds, mysql.Int64(v))
-		}
-
-		// Make sure to sort by the category IDs if provided
-		orderBys = append([]mysql.OrderByClause{
-			tDCategory.ID.IN(categoryIds...).DESC(),
-		}, orderBys...)
-	}
-
-	orderBys = append(orderBys, tDCategory.SortKey.ASC())
-
-	stmt := tDCategory.
-		SELECT(
-			tDCategory.ID,
-			tDCategory.Name,
-			tDCategory.Description,
-			tDCategory.Job,
-			tDCategory.Color,
-			tDCategory.Icon,
-		).
-		FROM(tDCategory).
-		WHERE(condition).
-		ORDER_BY(orderBys...).
-		LIMIT(15)
-
-	resp := &pbcompletor.CompleteDocumentCategoriesResponse{}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Categories); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
-		}
-	}
-
-	return resp, nil
+	return &pbcompletor.CompleteDocumentCategoriesResponse{Categories: categories}, nil
 }

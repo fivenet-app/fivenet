@@ -2,7 +2,6 @@ package mailer
 
 import (
 	"context"
-	"errors"
 
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
@@ -10,10 +9,7 @@ import (
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Server) GetThreadState(
@@ -58,66 +54,8 @@ func (s *Server) SetThreadState(
 		return nil, err
 	}
 
-	updateSets := []mysql.ColumnAssigment{}
-	if req.State.Unread != nil {
-		updateSets = append(updateSets, tThreadsState.Unread.SET(mysql.RawBool("VALUES(`unread`)")))
-	}
-	if req.GetState().GetLastRead() != nil {
-		updateSets = append(
-			updateSets,
-			tThreadsState.LastRead.SET(mysql.RawTimestamp("VALUES(`last_read`)")),
-		)
-	}
-	if req.State.Important != nil {
-		updateSets = append(
-			updateSets,
-			tThreadsState.Important.SET(mysql.RawBool("VALUES(`important`)")),
-		)
-	}
-	if req.State.Favorite != nil {
-		updateSets = append(
-			updateSets,
-			tThreadsState.Favorite.SET(mysql.RawBool("VALUES(`favorite`)")),
-		)
-	}
-	if req.State.Muted != nil {
-		updateSets = append(updateSets, tThreadsState.Muted.SET(mysql.RawBool("VALUES(`muted`)")))
-	}
-	if req.State.Archived != nil {
-		updateSets = append(
-			updateSets,
-			tThreadsState.Archived.SET(mysql.RawBool("VALUES(`archived`)")),
-		)
-	}
-
-	if len(updateSets) > 0 {
-		tThreadsState := table.FivenetMailerThreadsState
-		stmt := tThreadsState.
-			INSERT(
-				tThreadsState.ThreadID,
-				tThreadsState.EmailID,
-				tThreadsState.Unread,
-				tThreadsState.LastRead,
-				tThreadsState.Important,
-				tThreadsState.Favorite,
-				tThreadsState.Muted,
-				tThreadsState.Archived,
-			).
-			VALUES(
-				req.GetState().GetThreadId(),
-				req.GetState().GetEmailId(),
-				req.GetState().Unread,
-				req.GetState().GetLastRead(),
-				req.GetState().Important,
-				req.GetState().Favorite,
-				req.GetState().Muted,
-				req.GetState().Archived,
-			).
-			ON_DUPLICATE_KEY_UPDATE(updateSets...)
-
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
+	if err := s.store.SetThreadState(ctx, s.db, req.GetState()); err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	state, err := s.getThreadState(ctx, req.GetState().GetThreadId(), req.GetState().GetEmailId())
@@ -141,72 +79,10 @@ func (s *Server) getThreadState(
 	threadId int64,
 	emaildId int64,
 ) (*mailerthreads.ThreadState, error) {
-	stmt := tThreadsState.
-		SELECT(
-			tThreadsState.ThreadID,
-			tThreadsState.EmailID,
-			tThreadsState.Unread,
-			tThreadsState.LastRead,
-			tThreadsState.Important,
-			tThreadsState.Favorite,
-			tThreadsState.Muted,
-			tThreadsState.Archived,
-		).
-		FROM(tThreadsState).
-		WHERE(mysql.AND(
-			tThreadsState.ThreadID.EQ(mysql.Int64(threadId)),
-			tThreadsState.EmailID.EQ(mysql.Int64(emaildId)),
-		))
-
-	dest := &mailerthreads.ThreadState{}
-	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
+	state, err := s.store.GetThreadState(ctx, s.db, threadId, emaildId)
+	if err != nil {
+		return nil, err
 	}
 
-	if dest.GetThreadId() == 0 || dest.GetEmailId() == 0 {
-		return nil, nil
-	}
-
-	return dest, nil
-}
-
-func (s *Server) setUnreadState(
-	ctx context.Context,
-	tx qrm.DB,
-	threadId int64,
-	senderId int64,
-	emailIds []int64,
-) error {
-	if len(emailIds) == 0 {
-		return nil
-	}
-
-	tThreadsUserState := table.FivenetMailerThreadsState
-	stmt := tThreadsUserState.
-		INSERT(
-			tThreadsUserState.ThreadID,
-			tThreadsUserState.EmailID,
-			tThreadsUserState.Unread,
-		)
-
-	for _, emailId := range emailIds {
-		stmt = stmt.VALUES(
-			threadId,
-			emailId,
-			emailId != senderId,
-		)
-	}
-
-	stmt = stmt.
-		ON_DUPLICATE_KEY_UPDATE(
-			tThreadsUserState.Unread.SET(mysql.RawBool("VALUES(`unread`)")),
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
+	return state, nil
 }

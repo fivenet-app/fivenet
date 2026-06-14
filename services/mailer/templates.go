@@ -2,23 +2,16 @@ package mailer
 
 import (
 	"context"
-	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
 	mailertemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/templates"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 )
-
-var tTemplates = table.FivenetMailerTemplates.AS("template")
 
 func (s *Server) ListTemplates(
 	ctx context.Context,
@@ -39,32 +32,12 @@ func (s *Server) ListTemplates(
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	stmt := tTemplates.
-		SELECT(
-			tTemplates.ID,
-			tTemplates.CreatedAt,
-			tTemplates.UpdatedAt,
-			tTemplates.DeletedAt,
-			tTemplates.EmailID,
-			tTemplates.Title,
-			tTemplates.Content,
-		).
-		FROM(tTemplates).
-		WHERE(mysql.AND(
-			tTemplates.EmailID.EQ(mysql.Int64(req.GetEmailId())),
-		)).
-		LIMIT(25)
-
-	resp := &pbmailer.ListTemplatesResponse{
-		Templates: []*mailertemplates.Template{},
-	}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
+	templates, err := s.store.ListTemplates(ctx, s.db, req.GetEmailId(), 25)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	return resp, nil
+	return &pbmailer.ListTemplatesResponse{Templates: templates}, nil
 }
 
 func (s *Server) getTemplate(
@@ -72,46 +45,12 @@ func (s *Server) getTemplate(
 	id int64,
 	emailId *int64,
 ) (*mailertemplates.Template, error) {
-	condition := tTemplates.ID.EQ(mysql.Int64(id))
-
-	if emailId == nil || *emailId <= 0 {
-		condition = condition.AND(
-			tTemplates.EmailID.EQ(mysql.IntExp(mysql.NULL)),
-		)
-	} else {
-		condition = condition.AND(
-			tTemplates.EmailID.EQ(mysql.Int64(*emailId)),
-		)
+	template, err := s.store.GetTemplate(ctx, s.db, id, emailId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	stmt := tTemplates.
-		SELECT(
-			tTemplates.ID,
-			tTemplates.CreatedAt,
-			tTemplates.UpdatedAt,
-			tTemplates.DeletedAt,
-			tTemplates.EmailID,
-			tTemplates.Title,
-			tTemplates.Content,
-			tTemplates.CreatorJob,
-			tTemplates.CreatorID,
-		).
-		FROM(tTemplates).
-		WHERE(condition).
-		LIMIT(1)
-
-	dest := &mailertemplates.Template{}
-	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
-	}
-
-	if dest.GetId() == 0 {
-		return nil, nil
-	}
-
-	return dest, nil
+	return template, nil
 }
 
 func (s *Server) GetTemplate(
@@ -163,26 +102,14 @@ func (s *Server) CreateOrUpdateTemplate(
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	tTemplates := table.FivenetMailerTemplates
 	if req.GetTemplate().GetId() <= 0 {
-		countStmt := tTemplates.
-			SELECT(
-				mysql.COUNT(tTemplates.ID).AS("data_count.total"),
-			).
-			FROM(tTemplates).
-			WHERE(
-				tTemplates.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			)
-
-		var count database.DataCount
-		if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-			}
+		count, err := s.store.CountTemplatesByCreatorJob(ctx, s.db, userInfo.GetJob())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
 		// Max 5 templates per email
-		if count.Total >= 5 {
+		if count >= 5 {
 			return nil, errorsmailer.ErrTemplateLimitReached
 		}
 
@@ -190,32 +117,11 @@ func (s *Server) CreateOrUpdateTemplate(
 			req.Template.CreatorJob = &userInfo.Job
 		}
 
-		stmt := tTemplates.
-			INSERT(
-				tTemplates.EmailID,
-				tTemplates.Title,
-				tTemplates.Content,
-				tTemplates.CreatorJob,
-				tTemplates.CreatorID,
-			).
-			VALUES(
-				req.GetTemplate().GetEmailId(),
-				req.GetTemplate().GetTitle(),
-				req.GetTemplate().GetContent(),
-				req.GetTemplate().GetCreatorJob(),
-				userInfo.GetUserId(),
-			)
-
-		res, err := stmt.ExecContext(ctx, s.db)
+		lastID, err := s.store.CreateTemplate(ctx, s.db, req.GetTemplate(), userInfo.GetUserId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
-
-		lastId, err := res.LastInsertId()
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
-		req.Template.Id = lastId
+		req.Template.Id = lastID
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
@@ -228,21 +134,7 @@ func (s *Server) CreateOrUpdateTemplate(
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
-		stmt := tTemplates.
-			UPDATE(
-				tTemplates.Title,
-				tTemplates.Content,
-			).
-			SET(
-				req.GetTemplate().GetTitle(),
-				req.GetTemplate().GetContent(),
-			).
-			WHERE(mysql.AND(
-				tTemplates.ID.EQ(mysql.Int64(req.GetTemplate().GetId())),
-			)).
-			LIMIT(1)
-
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if err := s.store.UpdateTemplate(ctx, s.db, req.GetTemplate()); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
@@ -254,9 +146,7 @@ func (s *Server) CreateOrUpdateTemplate(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	return &pbmailer.CreateOrUpdateTemplateResponse{
-		Template: template,
-	}, nil
+	return &pbmailer.CreateOrUpdateTemplateResponse{Template: template}, nil
 }
 
 func (s *Server) DeleteTemplate(
@@ -278,17 +168,7 @@ func (s *Server) DeleteTemplate(
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	stmt := tTemplates.
-		UPDATE().
-		SET(
-			tTemplates.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
-		).
-		WHERE(mysql.AND(
-			tTemplates.ID.EQ(mysql.Int64(req.GetId())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeleteTemplate(ctx, s.db, req.GetId()); err != nil {
 		return nil, err
 	}
 

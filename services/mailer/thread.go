@@ -2,7 +2,6 @@ package mailer
 
 import (
 	"context"
-	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
@@ -18,8 +17,8 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
+	mailersstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -27,12 +26,7 @@ const (
 	ThreadsDefaultPageSize = 16
 )
 
-var (
-	tThreads      = table.FivenetMailerThreads.AS("thread")
-	tThreadsState = table.FivenetMailerThreadsState.AS("thread_state")
-
-	tThreadsRecipients = table.FivenetMailerThreadsRecipients
-)
+var tThreadsRecipients = table.FivenetMailerThreadsRecipients
 
 func (s *Server) ListThreads(
 	ctx context.Context,
@@ -53,150 +47,33 @@ func (s *Server) ListThreads(
 			Pagination: &database.PaginationResponse{},
 		}, nil
 	}
-
-	emailIDExprs := []mysql.Expression{}
-	for _, emailId := range emailIds {
-		emailIDExprs = append(emailIDExprs, mysql.Int64(emailId))
+	query := mailersstore.ThreadListQuery{
+		EmailIDs:  emailIds,
+		Unread:    req.Unread,
+		Archived:  req.Archived,
+		Superuser: userInfo.GetSuperuser(),
 	}
 
-	wheres := []mysql.BoolExpression{mysql.Bool(true)}
-	if !userInfo.GetSuperuser() {
-		wheres = []mysql.BoolExpression{tThreads.DeletedAt.IS_NULL()}
+	count, err := s.store.CountThreads(ctx, s.db, query)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	if req.Unread != nil {
-		wheres = append(
-			wheres,
-			mysql.AND(
-				tThreadsState.Unread.IS_NOT_NULL(),
-				tThreadsState.Unread.EQ(mysql.Bool(req.GetUnread())),
-			))
-	}
-	if req.Archived != nil {
-		wheres = append(
-			wheres,
-			mysql.AND(
-				tThreadsState.Archived.IS_NOT_NULL(),
-				tThreadsState.Archived.EQ(mysql.Bool(req.GetArchived())),
-			))
-	} else {
-		// Skip archived emails by default
-		wheres = append(
-			wheres,
-			tThreadsState.Archived.IS_NULL().OR(tThreadsState.Archived.EQ(mysql.Bool(false))),
-		)
-	}
-
-	// EXISTS filter: thread has at least one of the user’s email IDs as recipient
-	recipientExists := mysql.EXISTS(
-		mysql.
-			SELECT(mysql.Int(1)).
-			FROM(tThreadsRecipients).
-			WHERE(mysql.AND(
-				tThreadsRecipients.ThreadID.EQ(tThreads.ID),
-				tThreadsRecipients.EmailID.IN(emailIDExprs...),
-			)),
-	)
-
-	countStmt := tThreads.
-		SELECT(
-			mysql.COUNT(mysql.DISTINCT(tThreads.ID)).AS("data_count.total"),
-		).
-		FROM(
-			tThreads.
-				LEFT_JOIN(tThreadsState,
-					mysql.AND(
-						tThreadsState.ThreadID.EQ(tThreads.ID),
-						tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0])),
-					),
-				),
-		).
-		WHERE(mysql.AND(
-			mysql.AND(wheres...),
-			recipientExists,
-		))
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
-	}
-
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, ThreadsDefaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, ThreadsDefaultPageSize)
 	resp := &pbmailer.ListThreadsResponse{
 		Pagination: pag,
 	}
-	if count.Total <= 0 {
+	if count <= 0 {
 		return resp, nil
 	}
+	query.Offset = req.GetPagination().GetOffset()
+	query.Limit = limit
 
-	page := tThreads.
-		SELECT(tThreads.ID.AS("id")).
-		FROM(
-			tThreads.
-				LEFT_JOIN(tThreadsState,
-					mysql.AND(
-						tThreadsState.ThreadID.EQ(tThreads.ID),
-						tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0])),
-					),
-				),
-		).
-		WHERE(mysql.AND(
-			mysql.AND(wheres...),
-			recipientExists,
-		)).
-		ORDER_BY(
-			mysql.COALESCE(tThreads.UpdatedAt, tThreads.CreatedAt).DESC(),
-			tThreads.ID.DESC(),
-		).
-		OFFSET(req.GetPagination().GetOffset()).
-		LIMIT(limit).
-		AsTable("page")
-
-	stmt := page.
-		SELECT(
-			tThreads.ID,
-			tThreads.CreatedAt,
-			tThreads.UpdatedAt,
-			tThreads.DeletedAt,
-			tThreads.Title,
-			tThreads.CreatorEmailID,
-			tThreads.CreatorEmail,
-			tThreads.CreatorEmailID.AS("email.id"),
-			tThreads.CreatorEmail.AS("email.email"),
-			tThreads.CreatorID,
-			tThreadsState.ThreadID,
-			tThreadsState.EmailID,
-			tThreadsState.Unread,
-			tThreadsState.LastRead,
-			tThreadsState.Important,
-			tThreadsState.Favorite,
-			tThreadsState.Muted,
-			tThreadsState.Archived,
-		).
-		FROM(
-			page.
-				INNER_JOIN(tThreads,
-					tThreads.ID.EQ(mysql.RawInt("page.id")),
-				).
-				LEFT_JOIN(tThreadsState,
-					mysql.AND(
-						tThreadsState.ThreadID.EQ(tThreads.ID),
-						tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0])),
-					),
-				),
-		).
-		ORDER_BY(
-			mysql.COALESCE(tThreads.UpdatedAt, tThreads.CreatedAt).DESC(),
-			tThreads.ID.DESC(),
-		)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Threads); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
+	threads, err := s.store.ListThreads(ctx, s.db, query)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
+	resp.Threads = threads
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetThreads() {
@@ -214,48 +91,11 @@ func (s *Server) getThread(
 	emailId int64,
 	userInfo *userinfo.UserInfo,
 ) (*mailerthreads.Thread, error) {
-	stmt := tThreads.
-		SELECT(
-			tThreads.ID,
-			tThreads.CreatedAt,
-			tThreads.UpdatedAt,
-			tThreads.DeletedAt,
-			tThreads.Title,
-			tThreads.CreatorEmailID,
-			tThreads.CreatorID,
-			tThreads.CreatorEmailID.AS("email.id"),
-			tThreads.CreatorEmail.AS("email.email"),
-			tThreadsState.ThreadID,
-			tThreadsState.EmailID,
-			tThreadsState.Unread,
-			tThreadsState.LastRead,
-			tThreadsState.Important,
-			tThreadsState.Favorite,
-			tThreadsState.Muted,
-			tThreadsState.Archived,
-		).
-		FROM(
-			tThreads.
-				LEFT_JOIN(tThreadsState,
-					mysql.AND(
-						tThreadsState.ThreadID.EQ(tThreads.ID),
-						tThreadsState.EmailID.EQ(mysql.Int64(emailId)),
-					),
-				),
-		).
-		WHERE(mysql.AND(
-			tThreads.ID.EQ(mysql.Int64(threadId)),
-		)).
-		LIMIT(1)
-
-	var thread mailerthreads.Thread
-	if err := stmt.QueryContext(ctx, s.db, &thread); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
+	thread, err := s.store.GetThread(ctx, s.db, threadId, emailId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-
-	if thread.GetId() == 0 {
+	if thread == nil {
 		return nil, nil
 	}
 
@@ -263,13 +103,13 @@ func (s *Server) getThread(
 		s.enricher.EnrichJobInfoSafe(userInfo, thread.GetCreator())
 	}
 
-	recipients, err := s.getThreadRecipients(ctx, s.db, threadId)
+	recipients, err := s.store.ListThreadRecipients(ctx, s.db, threadId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 	thread.Recipients = recipients
 
-	return &thread, nil
+	return thread, nil
 }
 
 func (s *Server) GetThread(
@@ -373,7 +213,7 @@ func (s *Server) CreateThread(
 	req.Message.Sender = senderEmail
 	req.Message.CreatorId = &userInfo.UserId
 	req.Message.CreatorJob = &userInfo.Job
-	if _, err := s.createMessage(ctx, tx, req.GetMessage()); err != nil {
+	if _, err := s.store.CreateMessage(ctx, tx, req.GetMessage()); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
@@ -382,7 +222,7 @@ func (s *Server) CreateThread(
 		EmailId: senderEmail.GetId(),
 		Email:   senderEmail,
 	})
-	if err := s.handleRecipientsChanges(ctx, tx, req.GetThread().GetId(), emails); err != nil {
+	if err := s.store.AddThreadRecipients(ctx, tx, req.GetThread().GetId(), emails); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
@@ -390,7 +230,7 @@ func (s *Server) CreateThread(
 	for _, recipient := range emails {
 		emailIds = append(emailIds, recipient.GetEmailId())
 	}
-	if err := s.setUnreadState(
+	if err := s.store.SetUnreadState(
 		ctx,
 		tx,
 		req.GetThread().GetId(),
@@ -448,26 +288,6 @@ func (s *Server) CreateThread(
 	return &pbmailer.CreateThreadResponse{
 		Thread: thread,
 	}, nil
-}
-
-func (s *Server) updateThreadTime(ctx context.Context, tx qrm.DB, threadId int64) error {
-	stmt := tThreads.
-		UPDATE(
-			tThreads.UpdatedAt,
-		).
-		SET(
-			tThreads.UpdatedAt.SET(mysql.CURRENT_TIMESTAMP()),
-		).
-		WHERE(
-			tThreads.ID.EQ(mysql.Int64(threadId)),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (s *Server) DeleteThread(

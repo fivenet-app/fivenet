@@ -19,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
@@ -30,12 +31,13 @@ type Server struct {
 
 	db       *sql.DB
 	ps       perms.Permissions
-	enricher *mstlystcdata.UserAwareEnricher
+	enricher mstlystcdata.IUserAwareEnricher
 	st       storage.IStorage
 	appCfg   appconfig.IConfig
 	cfg      *config.Config
-	customDB config.CustomDB
+	customDB *config.CustomDB
 	notifi   notifi.INotifi
+	store    *citizensstore.Store
 
 	profilePictureHandler *filestore.Handler[int32]
 	mugshotHandler        *filestore.Handler[int32]
@@ -49,11 +51,12 @@ type Params struct {
 
 	DB        *sql.DB
 	P         perms.Permissions
-	Enricher  *mstlystcdata.UserAwareEnricher
+	Enricher  mstlystcdata.IUserAwareEnricher
 	Config    *config.Config
 	Storage   storage.IStorage
 	AppConfig appconfig.IConfig
 	Notifi    notifi.INotifi
+	Store     *citizensstore.Store
 }
 
 func NewServer(p Params) *Server {
@@ -95,8 +98,9 @@ func NewServer(p Params) *Server {
 		st:       p.Storage,
 		appCfg:   p.AppConfig,
 		cfg:      p.Config,
-		customDB: p.Config.Database.Custom,
+		customDB: &p.Config.Database.Custom,
 		notifi:   p.Notifi,
+		store:    p.Store,
 
 		profilePictureHandler: profilePictureHandler,
 		mugshotHandler:        mugshotHandler,

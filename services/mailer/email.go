@@ -2,7 +2,6 @@ package mailer
 
 import (
 	"context"
-	"errors"
 	"strings"
 	"time"
 
@@ -22,6 +21,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
+	mailersstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -55,7 +55,11 @@ func (s *Server) ListEmails(
 	condition := mysql.Bool(true)
 
 	if !userInfo.GetSuperuser() || (userInfo.GetSuperuser() && req.All != nil && !req.GetAll()) {
-		acl := s.access.ACLAccessExistsCondition(tEmails.ID, userInfo, int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ))
+		acl := s.access.ACLAccessExistsCondition(
+			tEmails.ID,
+			userInfo,
+			int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
+		)
 		// Include deactivated e-mails
 		condition = condition.AND(mysql.AND(
 			tEmails.DeletedAt.IS_NULL(),
@@ -66,25 +70,16 @@ func (s *Server) ListEmails(
 		))
 	}
 
-	countStmt := tEmails.
-		SELECT(
-			mysql.COUNT(mysql.DISTINCT(tEmails.ID)).AS("data_count.total"),
-		).
-		FROM(tEmails).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
+	count, err := s.store.CountEmails(ctx, s.db, condition)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	pag, _ := req.GetPagination().GetResponseWithPageSize(count.Total, listEmailsPageSize)
+	pag, _ := req.GetPagination().GetResponseWithPageSize(count, listEmailsPageSize)
 	resp := &pbmailer.ListEmailsResponse{
 		Pagination: pag,
 	}
-	if count.Total <= 0 {
+	if count <= 0 {
 		return resp, nil
 	}
 
@@ -130,7 +125,8 @@ func ListUserEmails(
 	}
 
 	if !userInfo.GetSuperuser() {
-		acl := access.NewMailerEmailsSubjectObjectAccess(nil).ACLAccessExistsCondition(tEmails.ID, userInfo, int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ))
+		acl := access.NewMailerEmailsSubjectObjectAccess(nil).
+			ACLAccessExistsCondition(tEmails.ID, userInfo, int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ))
 
 		condition = condition.AND(
 			baseCondition.AND(
@@ -144,40 +140,18 @@ func ListUserEmails(
 		)
 	}
 
-	stmt := tEmails.
-		SELECT(
-			tEmails.ID,
-			tEmails.CreatedAt,
-			tEmails.UpdatedAt,
-			tEmails.DeletedAt,
-			tEmails.Deactivated,
-			tEmails.Job,
-			tEmails.UserID,
-			tEmails.Email,
-			tEmails.EmailChanged,
-			tEmails.Label,
-		).
-		FROM(tEmails).
-		WHERE(condition).
-		ORDER_BY(
-			tEmails.Job.ASC(),
-			tEmails.Label.ASC(),
-		).
-		LIMIT(listEmailsPageSize)
-
+	var offset int64
 	if pag != nil {
-		stmt = stmt.
-			OFFSET(pag.GetOffset())
+		offset = pag.GetOffset()
 	}
 
-	resp := &pbmailer.ListEmailsResponse{}
-	if err := stmt.QueryContext(ctx, tx, &resp.Emails); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
+	store := mailersstore.New(nil)
+	emails, err := store.ListEmails(ctx, tx, condition, offset, listEmailsPageSize)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	return resp.GetEmails(), nil
+	return emails, nil
 }
 
 func (s *Server) getEmailByCondition(
@@ -185,35 +159,12 @@ func (s *Server) getEmailByCondition(
 	tx qrm.DB,
 	condition mysql.BoolExpression,
 ) (*maileremails.Email, error) {
-	stmt := tEmails.
-		SELECT(
-			tEmails.ID,
-			tEmails.CreatedAt,
-			tEmails.UpdatedAt,
-			tEmails.DeletedAt,
-			tEmails.Deactivated,
-			tEmails.Job,
-			tEmails.UserID,
-			tEmails.Email,
-			tEmails.EmailChanged,
-			tEmails.Label,
-		).
-		FROM(tEmails).
-		WHERE(condition).
-		LIMIT(1)
-
-	dest := &maileremails.Email{}
-	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
+	email, err := s.store.GetEmailByCondition(ctx, tx, condition)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	if dest.GetId() == 0 {
-		return nil, nil
-	}
-
-	return dest, nil
+	return email, nil
 }
 
 func (s *Server) getEmail(
@@ -222,12 +173,9 @@ func (s *Server) getEmail(
 	withAccess bool,
 	withSettings bool,
 ) (*maileremails.Email, error) {
-	email, err := s.getEmailByCondition(ctx, s.db, tEmails.ID.EQ(mysql.Int64(emailId)))
+	email, err := s.store.GetEmail(ctx, s.db, emailId)
 	if err != nil {
 		return nil, err
-	}
-	if email == nil {
-		return nil, nil
 	}
 
 	if withAccess {

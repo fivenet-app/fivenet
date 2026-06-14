@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorswiki "github.com/fivenet-app/fivenet/v2026/services/wiki/errors"
@@ -14,7 +13,7 @@ import (
 
 const wikiPageRankKeyStep = utils.RankStep
 
-type pageOrderInfo struct {
+type PageOrderInfo struct {
 	ID        int64
 	Job       string
 	ParentID  *int64
@@ -22,12 +21,12 @@ type pageOrderInfo struct {
 	SortRank  string
 }
 
-type pageRankRow struct {
+type PageRankRow struct {
 	ID       int64
 	SortRank string
 }
 
-func getPageRankBounds(rows []pageRankRow, beforeID, afterID *int64) (string, string, error) {
+func getPageRankBounds(rows []PageRankRow, beforeID, afterID *int64) (string, string, error) {
 	if beforeID != nil && afterID != nil {
 		return "", "", errors.New("before_id and after_id are mutually exclusive")
 	}
@@ -70,11 +69,11 @@ func getPageRankBounds(rows []pageRankRow, beforeID, afterID *int64) (string, st
 	}
 }
 
-func (s *Server) getPageOrderInfo(
+func (s *Store) GetPageOrderInfo(
 	ctx context.Context,
 	q qrm.DB,
 	pageID int64,
-) (*pageOrderInfo, error) {
+) (*PageOrderInfo, error) {
 	tPage := table.FivenetWikiPages.AS("page_order_info")
 
 	stmt := tPage.
@@ -92,7 +91,7 @@ func (s *Server) getPageOrderInfo(
 		)).
 		LIMIT(1)
 
-	dest := &pageOrderInfo{}
+	dest := &PageOrderInfo{}
 	if err := stmt.QueryContext(ctx, q, dest); err != nil {
 		return nil, err
 	}
@@ -100,14 +99,14 @@ func (s *Server) getPageOrderInfo(
 	return dest, nil
 }
 
-func (s *Server) listPageGroupRanks(
+func (s *Store) listPageGroupRanks(
 	ctx context.Context,
 	q qrm.DB,
 	job string,
 	parentID *int64,
 	startpage bool,
 	excludeID int64,
-) ([]pageRankRow, error) {
+) ([]PageRankRow, error) {
 	tPage := table.FivenetWikiPages.AS("page_rank_row")
 
 	condition := mysql.AND(
@@ -137,17 +136,17 @@ func (s *Server) listPageGroupRanks(
 		).
 		FOR(mysql.UPDATE())
 
-	rows := []pageRankRow{}
+	rows := []PageRankRow{}
 	if err := stmt.QueryContext(ctx, q, &rows); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+			return nil, err
 		}
 	}
 
 	return rows, nil
 }
 
-func (s *Server) rebalancePageGroupRanks(
+func (s *Store) rebalancePageGroupRanks(
 	ctx context.Context,
 	q qrm.DB,
 	job string,
@@ -173,14 +172,14 @@ func (s *Server) rebalancePageGroupRanks(
 			)).
 			LIMIT(1).
 			ExecContext(ctx, q); err != nil {
-			return errswrap.NewError(err, errorswiki.ErrFailedQuery)
+			return err
 		}
 	}
 
 	return nil
 }
 
-func (s *Server) nextPageGroupRank(
+func (s *Store) NextPageGroupRank(
 	ctx context.Context,
 	q qrm.DB,
 	job string,
@@ -199,7 +198,7 @@ func (s *Server) nextPageGroupRank(
 	return utils.NextRank(rows[len(rows)-1].SortRank)
 }
 
-func (s *Server) insertPageGroupRank(
+func (s *Store) InsertPageGroupRank(
 	ctx context.Context,
 	q qrm.DB,
 	job string,

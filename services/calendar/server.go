@@ -22,6 +22,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -31,17 +32,11 @@ import (
 )
 
 var (
-	tCalendar     = table.FivenetCalendar.AS("calendar")
-	tCalendarSubs = table.FivenetCalendarSubs.AS("calendar_sub")
+	tCalendar = table.FivenetCalendar.AS("calendar")
 
-	tCalendarEntry          = table.FivenetCalendarEntries.AS("calendar_entry")
-	tCalendarRSVP           = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")
-	tCalendarRSVPOccurrence = table.FivenetCalendarRsvpOccurrence.AS(
-		"calendar_entry_rsvp_occurrence",
-	)
+	tCalendarEntry = table.FivenetCalendarEntries.AS("calendar_entry")
 
-	tUserJobs  = table.FivenetUserJobs.AS("user_jobs")
-	tUserProps = table.FivenetUserProps
+	tUserJobs = table.FivenetUserJobs.AS("user_jobs")
 )
 
 func init() {
@@ -102,12 +97,13 @@ type Server struct {
 	db       *sql.DB
 	cfg      *config.Config
 	ps       perms.Permissions
-	enricher *mstlystcdata.UserAwareEnricher
+	enricher mstlystcdata.IUserAwareEnricher
 	appCfg   appconfig.IConfig
 	i18n     i18n.Ii18n
 	notif    notifi.INotifi
 	js       *events.JSWrapper
 	dc       *discordstate.State
+	store    *calendarstore.Store
 
 	access         *access.SubjectObjectAccess
 	accessResolver *access.SubjectResolver
@@ -121,12 +117,13 @@ type Params struct {
 	DB        *sql.DB
 	Config    *config.Config
 	P         perms.Permissions
-	Enricher  *mstlystcdata.UserAwareEnricher
+	Enricher  mstlystcdata.IUserAwareEnricher
 	AppConfig appconfig.IConfig
 	I18n      i18n.Ii18n
 	Notif     notifi.INotifi
 	JS        *events.JSWrapper
 	Discord   *discordstate.State
+	Store     *calendarstore.Store `optional:"true"`
 }
 
 type Result struct {
@@ -150,6 +147,7 @@ func NewServer(p Params) Result {
 		notif:    p.Notif,
 		js:       p.JS,
 		dc:       p.Discord,
+		store:    p.Store,
 
 		access:         access.NewCalendarSubjectObjectAccess(p.DB),
 		accessResolver: access.NewSubjectResolver(p.DB),
@@ -193,7 +191,7 @@ func (s *Server) RegisterCronjobHandlers(hand *croner.Handlers) error {
 			)
 		}
 
-		rowsAffected, err := s.cleanupCalendarRSVPOccurrences(ctx)
+		rowsAffected, err := s.store.CleanupCalendarRSVPOccurrences(ctx)
 		if err != nil {
 			s.logger.Error(
 				"failed to generate calendar rsvp occurrences cleanup",

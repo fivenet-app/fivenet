@@ -44,7 +44,7 @@ type BirthdaySyncer struct {
 	db       *sql.DB
 	i18n     i18n.Ii18n
 	appCfg   appconfig.IConfig
-	enricher *mstlystcdata.UserAwareEnricher
+	enricher mstlystcdata.IUserAwareEnricher
 }
 
 type BirthdaySyncerParams struct {
@@ -54,7 +54,7 @@ type BirthdaySyncerParams struct {
 	DB        *sql.DB
 	I18n      i18n.Ii18n
 	AppConfig appconfig.IConfig
-	Enricher  *mstlystcdata.UserAwareEnricher
+	Enricher  mstlystcdata.IUserAwareEnricher
 }
 
 type BirthdaySyncerResult struct {

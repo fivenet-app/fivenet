@@ -26,7 +26,9 @@ var qualificationSubjectAccessOptions = access.SubjectAccessOptions{
 	},
 }
 
-func qualificationJobAccess(jobs []*qualificationsaccess.QualificationJobAccess) *resourcesaccess.Access {
+func qualificationJobAccess(
+	jobs []*qualificationsaccess.QualificationJobAccess,
+) *resourcesaccess.Access {
 	return &resourcesaccess.Access{Jobs: jobs}
 }
 
@@ -56,7 +58,12 @@ func (s *Server) GetQualificationAccess(
 		}
 	}
 
-	access, err := s.access.ListTargetAccess(ctx, s.db, req.GetQualificationId(), qualificationSubjectAccessOptions)
+	access, err := s.access.ListTargetAccess(
+		ctx,
+		s.db,
+		req.GetQualificationId(),
+		qualificationSubjectAccessOptions,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

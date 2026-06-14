@@ -2,9 +2,7 @@ package calendar
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"slices"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
@@ -14,15 +12,12 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Server) ShareCalendarEntry(
@@ -31,7 +26,11 @@ func (s *Server) ShareCalendarEntry(
 ) (*pbcalendar.ShareCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntryId())))
+	entry, err := s.store.GetEntry(
+		ctx,
+		userInfo,
+		tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntryId())),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -45,7 +44,7 @@ func (s *Server) ShareCalendarEntry(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	check, err := s.checkIfUserHasAccessToCalendar(
+	check, err := s.store.CheckIfUserHasAccessToCalendar(
 		ctx,
 		entry.GetCalendarId(),
 		userInfo,
@@ -78,7 +77,7 @@ func (s *Server) ShareCalendarEntry(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	newUsers, err := s.shareCalendarEntry(ctx, tx, req.GetEntryId(), req.GetUserIds())
+	newUsers, err := s.store.ShareCalendarEntry(ctx, tx, req.GetEntryId(), req.GetUserIds())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -99,93 +98,14 @@ func (s *Server) ShareCalendarEntry(
 	return resp, nil
 }
 
-func (s *Server) shareCalendarEntry(
-	ctx context.Context,
-	tx qrm.DB,
-	entryId int64,
-	inUserIds []int32,
-) ([]int32, error) {
-	userIds := make([]mysql.Expression, len(inUserIds))
-	for i := range inUserIds {
-		userIds[i] = mysql.Int32(inUserIds[i])
-	}
-
-	stmt := tCalendarRSVP.
-		SELECT(
-			tCalendarRSVP.UserID,
-		).
-		FROM(tCalendarRSVP).
-		WHERE(mysql.AND(
-			tCalendarRSVP.EntryID.EQ(mysql.Int64(entryId)),
-			tCalendarRSVP.UserID.IN(userIds...),
-		))
-
-	var currentRSVPs []*calendarentries.CalendarEntryRSVP
-	if err := stmt.QueryContext(ctx, tx, &currentRSVPs); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
-	}
-
-	newUsers := []int32{}
-	if len(currentRSVPs) == 0 {
-		newUsers = append(newUsers, inUserIds...)
-	} else {
-		for _, rsvp := range currentRSVPs {
-			if !slices.Contains(inUserIds, rsvp.GetUserId()) {
-				newUsers = append(newUsers, rsvp.GetUserId())
-			}
-		}
-	}
-
-	tCalendarRSVP := table.FivenetCalendarRsvp
-	insertStmt := tCalendarRSVP.
-		INSERT(
-			tCalendarRSVP.EntryID,
-			tCalendarRSVP.UserID,
-			tCalendarRSVP.Response,
-		)
-	for i := range userIds {
-		insertStmt = insertStmt.VALUES(
-			entryId,
-			userIds[i],
-			calendarentries.RsvpResponses_RSVP_RESPONSES_INVITED,
-		)
-	}
-
-	if _, err := insertStmt.ExecContext(ctx, tx); err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
-	}
-
-	return newUsers, nil
-}
-
 func (s *Server) sendShareNotifications(
 	ctx context.Context,
 	sourceUserId int32,
 	entry *calendarentries.CalendarEntry,
 	targetCitizens []int32,
 ) error {
-	tUsers := table.FivenetUser.AS("user_short")
-
-	stmt := tUsers.
-		SELECT(
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.PhoneNumber,
-		).
-		FROM(
-			tUsers,
-		).
-		WHERE(
-			tUsers.ID.EQ(mysql.Int32(sourceUserId)),
-		).
-		LIMIT(1)
-
-	sourceUser := &usershort.UserShort{}
-	if err := stmt.QueryContext(ctx, s.db, sourceUser); err != nil {
+	sourceUser, err := s.store.GetUserShortByID(ctx, sourceUserId)
+	if err != nil {
 		return err
 	}
 

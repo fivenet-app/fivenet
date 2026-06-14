@@ -8,7 +8,9 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
@@ -59,7 +61,7 @@ func TestHousekeeperMaxWantedDurationHandling_Disabled(t *testing.T) {
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
-		db:     db,
+		store:  vehiclesstore.New(db, &config.CustomDB{}),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
 
@@ -86,7 +88,7 @@ func TestHousekeeperMaxWantedDurationHandling_NoDuration(t *testing.T) {
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
-		db:     db,
+		store:  vehiclesstore.New(db, &config.CustomDB{}),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
 
@@ -113,7 +115,7 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
-		db:     db,
+		store:  vehiclesstore.New(db, &config.CustomDB{}),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
 
@@ -164,7 +166,7 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleVehicles(t *testing.T
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
-		db:     db,
+		store:  vehiclesstore.New(db, &config.CustomDB{}),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
 

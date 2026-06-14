@@ -9,8 +9,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -35,6 +37,7 @@ type Housekeeper struct {
 
 	db     *sql.DB
 	appCfg appconfig.IConfig
+	store  *citizensstore.Store
 }
 
 type HousekeeperParams struct {
@@ -60,6 +63,7 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 
 		db:     p.DB,
 		appCfg: p.AppConfig,
+		store:  citizensstore.New(p.DB, config.CustomDB{}),
 	}
 
 	return HousekeeperResult{
@@ -169,34 +173,16 @@ func (s *Housekeeper) maxWantedDurationHandling(ctx context.Context) (int, error
 
 	maxDays := game.GetMaxWantedDurationUser().GetSeconds() / 24 / 3600
 
-	stmt := tUserProps.
-		SELECT(
-			tUserProps.UserID,
-		).
-		FROM(tUserProps).
-		WHERE(mysql.AND(
-			tUserProps.Wanted.IS_TRUE(),
-			mysql.OR(
-				tUserProps.WantedAt.LT(
-					mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(maxDays, "DAY")),
-				),
-				tUserProps.WantedTill.LT(mysql.CURRENT_TIMESTAMP()),
-			),
-		)).
-		LIMIT(100)
-
-	var dest []struct {
-		UserId int32
-	}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	dest, err := s.store.ListExpiredWantedUserProps(ctx, maxDays, 100)
+	if err != nil {
 		return 0, err
 	}
 
-	for _, row := range dest {
-		if err := s.unsetUserWantedState(ctx, s.db, row.UserId); err != nil {
+	for _, userId := range dest {
+		if err := s.unsetUserWantedState(ctx, s.db, userId); err != nil {
 			s.logger.Error(
 				"error updating user wanted state during cleanup",
-				zap.Int32("user_id", row.UserId),
+				zap.Int32("user_id", userId),
 				zap.Error(err),
 			)
 			continue
@@ -207,7 +193,7 @@ func (s *Housekeeper) maxWantedDurationHandling(ctx context.Context) (int, error
 }
 
 func (s *Housekeeper) unsetUserWantedState(ctx context.Context, tx qrm.DB, userId int32) error {
-	props, err := usersprops.GetUserProps(ctx, tx, userId, nil)
+	props, err := s.store.GetUserProps(ctx, tx, userId)
 	if err != nil {
 		return fmt.Errorf("error loading user %d props for cleanup. %w", userId, err)
 	}
@@ -217,7 +203,7 @@ func (s *Housekeeper) unsetUserWantedState(ctx context.Context, tx qrm.DB, userI
 	wanted := false
 	in.Wanted = &wanted
 
-	if _, err := props.HandleChanges(ctx, tx, in, nil, ""); err != nil {
+	if _, err := s.store.HandleUserPropsChanges(ctx, tx, props, in, nil, ""); err != nil {
 		return fmt.Errorf("error handling user %d props changes during cleanup. %w", userId, err)
 	}
 

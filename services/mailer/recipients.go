@@ -2,88 +2,13 @@ package mailer
 
 import (
 	"context"
-	"errors"
 	"slices"
 
 	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
 	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 )
-
-func (s *Server) handleRecipientsChanges(
-	ctx context.Context,
-	tx qrm.DB,
-	threadId int64,
-	recipients []*mailerthreads.ThreadRecipientEmail,
-) error {
-	if len(recipients) == 0 {
-		return nil
-	}
-
-	for _, recipient := range recipients {
-		stmt := tThreadsRecipients.
-			INSERT(
-				tThreadsRecipients.ThreadID,
-				tThreadsRecipients.EmailID,
-				tThreadsRecipients.Email,
-			).
-			VALUES(
-				threadId,
-				recipient.GetEmailId(),
-				recipient.GetEmail().GetEmail(),
-			)
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			if !dbutils.IsDuplicateError(err) {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (s *Server) getThreadRecipients(
-	ctx context.Context,
-	tx qrm.DB,
-	threadId int64,
-) ([]*mailerthreads.ThreadRecipientEmail, error) {
-	tThreadsRecipients := tThreadsRecipients.AS("thread_recipient_email")
-	stmt := tThreadsRecipients.
-		SELECT(
-			tThreadsRecipients.ID,
-			tThreadsRecipients.ThreadID,
-			tThreadsRecipients.EmailID,
-			tEmails.ID,
-			tThreadsRecipients.Email.AS("email.email"),
-		).
-		FROM(
-			tThreadsRecipients.
-				INNER_JOIN(tEmails,
-					mysql.AND(
-						tEmails.ID.EQ(tThreadsRecipients.EmailID),
-						tEmails.Deactivated.IS_FALSE(),
-					),
-				),
-		).
-		WHERE(mysql.AND(
-			tThreadsRecipients.ThreadID.EQ(mysql.Int64(threadId)),
-			tEmails.DeletedAt.IS_NULL(),
-		))
-
-	recipients := []*mailerthreads.ThreadRecipientEmail{}
-	if err := stmt.QueryContext(ctx, tx, &recipients); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return recipients, nil
-}
 
 func (s *Server) retrieveRecipientsToEmails(
 	ctx context.Context,
@@ -94,29 +19,9 @@ func (s *Server) retrieveRecipientsToEmails(
 		return nil, errorsmailer.ErrRecipientMinium
 	}
 
-	emails := make([]mysql.Expression, len(recipients))
-	for idx := range recipients {
-		emails[idx] = mysql.String(recipients[idx])
-	}
-
-	stmt := tEmails.
-		SELECT(
-			tEmails.ID.AS("thread_recipient_email.email_id"),
-			tEmails.Email,
-			tEmails.Deactivated,
-		).
-		FROM(tEmails).
-		WHERE(mysql.AND(
-			tEmails.Email.IN(emails...),
-			tEmails.DeletedAt.IS_NULL(),
-		)).
-		LIMIT(int64(len(recipients)))
-
-	dest := []*mailerthreads.ThreadRecipientEmail{}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
+	dest, err := s.store.ListRecipientsByEmails(ctx, s.db, recipients)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	if len(recipients) != len(dest) {

@@ -6,24 +6,21 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
-
-var tFiles = table.FivenetFiles.AS("mugshot")
 
 var ZeroTrafficInfractionPoints uint32 = 0
 
@@ -33,211 +30,22 @@ func (s *Server) ListCitizens(
 ) (*pbcitizens.ListCitizensResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tUser := table.FivenetUser.AS("user")
-
-	selectors := dbutils.Columns{
-		tUser.Firstname,
-		tUser.Lastname,
-		tUser.Job,
-		tUser.JobGrade,
-		tUser.Dateofbirth,
-		tUser.Sex,
-		tUser.Height,
-		tUserProps.UserID,
-		s.customDB.Columns.User.GetVisum(tUser.Alias()),
-	}
-	condition := s.customDB.Conditions.User.GetFilter(tUser.Alias())
-	orderBys := []mysql.OrderByClause{}
-
 	// Field Permission Check
 	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-
-	for _, field := range fields.Values() {
-		switch field {
-		case permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber:
-			selectors = append(selectors, tUser.PhoneNumber)
-
-			if req.GetPhoneNumber() != "" {
-				phoneNumber := dbutils.PrepareForLikeSearch(req.GetPhoneNumber())
-				condition = condition.AND(tUser.PhoneNumber.LIKE(mysql.String(phoneNumber)))
-			}
-
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted:
-			selectors = append(selectors, tUserProps.Wanted)
-
-			if req.Wanted != nil && req.GetWanted() {
-				condition = condition.AND(tUserProps.Wanted.IS_TRUE())
-
-				orderBys = append(orderBys, tUserProps.UpdatedAt.DESC())
-			}
-
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob:
-			selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
-
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints:
-			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
-
-			if req.TrafficInfractionPoints != nil && req.GetTrafficInfractionPoints() > 0 {
-				condition = condition.AND(
-					tUserProps.TrafficInfractionPoints.GT_EQ(
-						mysql.Uint32(req.GetTrafficInfractionPoints()),
-					),
-				)
-			}
-
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines:
-			selectors = append(selectors, tUserProps.OpenFines)
-
-			if req.OpenFines != nil && req.GetOpenFines() > 0 {
-				condition = condition.AND(
-					tUserProps.OpenFines.GT_EQ(mysql.Int64(req.GetOpenFines())),
-				)
-			}
-
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType:
-			selectors = append(selectors, tUserProps.BloodType)
-
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot:
-			selectors = append(selectors,
-				tUserProps.MugshotFileID,
-				tFiles.ID,
-				tFiles.FilePath,
-			)
-
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail:
-			selectors = append(selectors, tUserProps.Email)
-		}
-	}
-
-	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
-		condition = condition.AND(
-			mysql.CONCAT(tUser.Firstname, mysql.String(" "), tUser.Lastname).
-				LIKE(mysql.String(search)),
-		)
-	}
-
-	if req.GetDateofbirth() != "" {
-		dateofbirth := dbutils.PrepareForLikeSearch(req.GetDateofbirth())
-
-		condition = condition.AND(
-			tUser.Dateofbirth.LIKE(
-				mysql.String(dateofbirth),
-			),
-		)
-	}
-
-	if req.GetMinHeight() > 0 {
-		condition = condition.AND(
-			tUser.Height.GT_EQ(
-				mysql.Float(float64(req.GetMinHeight())),
-			),
-		)
-	}
-	if req.GetMaxHeight() > 0 {
-		condition = condition.AND(
-			tUser.Height.LT_EQ(
-				mysql.Float(float64(req.GetMaxHeight())),
-			),
-		)
-	}
-
-	// Get total count of values
-	countStmt := tUser.
-		SELECT(
-			mysql.COUNT(tUser.ID).AS("data_count.total"),
-		).
-		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
-		FROM(
-			tUser.
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUser.ID),
-				),
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
-	}
-
-	pag, limit := req.GetPagination().GetResponse(count.Total)
-	resp := &pbcitizens.ListCitizensResponse{
-		Pagination: pag,
-	}
-	if count.Total <= 0 {
-		return resp, nil
-	}
-
-	// Convert proto sort to db sorting
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "trafficInfractionPoints":
-				if fields.Contains(
-					permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints,
-				) {
-					column = tUserProps.TrafficInfractionPoints
-				}
-			case "openFines":
-				if fields.Contains(
-					permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines,
-				) {
-					column = tUserProps.OpenFines
-				}
-			case "name":
-				fallthrough
-			default:
-				column = tUser.Firstname
-			}
-			if column == nil {
-				column = tUser.Firstname
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys,
-					column.DESC(),
-					tUser.Lastname.DESC(),
-				)
-			} else {
-				orderBys = append(orderBys,
-					column.ASC(),
-					tUser.Lastname.ASC(),
-				)
-			}
-		}
-	} else {
-		orderBys = append(orderBys,
-			tUser.Firstname.ASC(),
-			tUser.Lastname.ASC(),
-		)
-	}
-
-	stmt := tUser.
-		SELECT(
-			tUser.ID,
-			selectors.Get()...,
-		).
-		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
-		FROM(tUser.
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUser.ID),
-			).
-			LEFT_JOIN(tFiles,
-				tFiles.ID.EQ(tUserProps.MugshotFileID),
-			),
-		).
-		WHERE(condition).
-		OFFSET(req.GetPagination().GetOffset()).
-		ORDER_BY(orderBys...).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {
+	resp, err := s.store.ListCitizens(ctx, req, citizensstore.ListCitizensOptions{
+		IncludePhoneNumber:             fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber),
+		IncludeWanted:                  fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted),
+		IncludeJob:                     fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob),
+		IncludeTrafficInfractionPoints: fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints),
+		IncludeOpenFines:               fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines),
+		IncludeBloodType:               fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType),
+		IncludeMugshot:                 fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot),
+		IncludeEmail:                   fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail),
+	})
+	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
@@ -270,20 +78,6 @@ func (s *Server) GetUser(
 
 	grpc_audit.SetTargetUser(ctx, req.GetUserId(), "")
 
-	tUser := table.FivenetUser.AS("user")
-
-	selectors := dbutils.Columns{
-		tUser.Firstname,
-		tUser.Lastname,
-		tUser.Job,
-		tUser.JobGrade,
-		tUser.Dateofbirth,
-		tUser.Sex,
-		tUser.Height,
-		tUserProps.UserID,
-		s.customDB.Columns.User.GetVisum(tUser.Alias()),
-	}
-
 	infoOnly := req.InfoOnly != nil && req.GetInfoOnly()
 
 	// Field Permission Check
@@ -291,64 +85,22 @@ func (s *Server) GetUser(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-	if fields.Len() > 0 {
-		selectors = append(selectors, tUserProps.UpdatedAt)
-	}
-
-	for _, field := range fields.Values() {
-		switch field {
-		case permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber:
-			selectors = append(selectors, tUser.PhoneNumber)
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted:
-			selectors = append(selectors, tUserProps.Wanted)
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob:
-			selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints:
-			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines:
-			selectors = append(selectors, tUserProps.OpenFines)
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType:
-			selectors = append(selectors, tUserProps.BloodType)
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot:
-			selectors = append(selectors,
-				tUserProps.MugshotFileID,
-				tFiles.ID,
-				tFiles.FilePath,
-			)
-		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail:
-			selectors = append(selectors, tUserProps.Email)
-		}
-	}
-
-	resp := &pbcitizens.GetUserResponse{
-		User: &users.User{},
-	}
-	stmt := tUser.
-		SELECT(
-			tUser.ID,
-			selectors.Get()...,
-		).
-		FROM(
-			tUser.
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUser.ID),
-				).
-				LEFT_JOIN(tFiles,
-					tFiles.ID.EQ(tUserProps.MugshotFileID),
-				),
-		).
-		WHERE(tUser.ID.EQ(mysql.Int32(req.GetUserId()))).
-		LIMIT(1)
-
-	if err := stmt.QueryContext(ctx, s.db, resp.GetUser()); err != nil {
-		if errors.Is(err, qrm.ErrNoRows) {
-			return nil, errorscitizens.ErrCitizenNotFound
-		}
+	resp, err := s.store.GetUser(ctx, req, citizensstore.GetUserOptions{
+		IncludePropsUpdated:            fields.Len() > 0,
+		IncludePhoneNumber:             fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber),
+		IncludeWanted:                  fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted),
+		IncludeJob:                     fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob),
+		IncludeTrafficInfractionPoints: fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints),
+		IncludeOpenFines:               fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines),
+		IncludeBloodType:               fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType),
+		IncludeMugshot:                 fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot),
+		IncludeEmail:                   fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail),
+	})
+	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-
-	if resp.GetUser() == nil || resp.GetUser().GetUserId() <= 0 {
-		return nil, errorscitizens.ErrJobGradeNoPermission
+	if resp == nil || resp.GetUser() == nil || resp.GetUser().GetUserId() <= 0 {
+		return nil, errorscitizens.ErrCitizenNotFound
 	}
 
 	grpc_audit.SetTargetUser(ctx, resp.GetUser().GetUserId(), resp.GetUser().GetJob())
@@ -385,9 +137,7 @@ func (s *Server) GetUser(
 	}
 
 	if resp.GetUser().GetProps() == nil {
-		resp.User.Props = &usersprops.UserProps{
-			UserId: resp.GetUser().GetUserId(),
-		}
+		resp.User.Props = &usersprops.UserProps{UserId: resp.GetUser().GetUserId()}
 	}
 
 	// Check if user can see licenses and fetch them
@@ -417,7 +167,21 @@ func (s *Server) GetUser(
 	}
 
 	if fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsLabels) {
-		labels, err := s.getUserLabels(ctx, userInfo, req.GetUserId())
+		condition := mysql.AND(
+			tCitizensLabelsJob.DeletedAt.IS_NULL(),
+			tCitizenLabels.UserID.EQ(mysql.Int32(req.GetUserId())),
+		)
+		if !userInfo.GetSuperuser() {
+			jobAccessExists := s.labelsAccess.ACLAccessExistsCondition(
+				tCitizensLabelsJob.ID,
+				userInfo,
+				int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW),
+			)
+
+			condition = condition.AND(jobAccessExists)
+		}
+
+		labels, err := s.store.GetUserLabels(ctx, s.db, condition)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
