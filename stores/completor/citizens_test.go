@@ -1,4 +1,4 @@
-package completor
+package completorstore
 
 import (
 	"regexp"
