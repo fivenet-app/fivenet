@@ -18,6 +18,7 @@ import (
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
@@ -44,10 +45,11 @@ const (
 )
 
 var (
-	tUserProps     = table.FivenetUserProps
 	tDocument      = table.FivenetDocuments.AS("document")
 	tDocumentShort = table.FivenetDocuments.AS("document_short")
+	tDCategory     = table.FivenetDocumentsCategories.AS("category")
 	tDMeta         = table.FivenetDocumentsMeta.AS("meta")
+	tDPins         = table.FivenetDocumentsPins.AS("pin")
 )
 
 func (s *Server) ListDocuments(
@@ -55,11 +57,7 @@ func (s *Server) ListDocuments(
 	req *pbdocuments.ListDocumentsRequest,
 ) (*pbdocuments.ListDocumentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	logRequest := false
-
-	if req.Search != nil && req.GetSearch() != "" {
-		logRequest = true
-	}
+	logRequest := req.Search != nil && req.GetSearch() != ""
 
 	if len(req.GetCreatorIds()) > 0 {
 		logRequest = true
@@ -81,19 +79,21 @@ func (s *Server) ListDocuments(
 	}
 
 	docs, err := s.store.List(ctx, documentsstore.ListQuery{
-		Search:             req.GetSearch(),
-		CategoryIDs:        req.GetCategoryIds(),
-		CreatorIDs:         req.GetCreatorIds(),
-		From:               req.GetFrom(),
-		To:                 req.GetTo(),
-		Closed:             req.Closed,
-		DocumentIDs:        req.GetDocumentIds(),
-		OnlyDrafts:         req.OnlyDrafts,
-		Sort:               req.GetSort(),
-		Offset:             req.GetPagination().GetOffset(),
-		Limit:              limit,
-		IncludePhoneNumber: fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber),
-		UserInfo:           userInfo,
+		Search:      req.GetSearch(),
+		CategoryIDs: req.GetCategoryIds(),
+		CreatorIDs:  req.GetCreatorIds(),
+		From:        req.GetFrom(),
+		To:          req.GetTo(),
+		Closed:      req.Closed,
+		DocumentIDs: req.GetDocumentIds(),
+		OnlyDrafts:  req.OnlyDrafts,
+		Sort:        req.GetSort(),
+		Offset:      req.GetPagination().GetOffset(),
+		Limit:       limit,
+		IncludePhoneNumber: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+		),
+		UserInfo: userInfo,
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -144,10 +144,12 @@ func (s *Server) GetDocument(
 
 	resp := &pbdocuments.GetDocumentResponse{}
 	resp.Document, err = s.store.Get(ctx, documentsstore.GetQuery{
-		DocumentID:         req.GetDocumentId(),
-		IncludePhoneNumber: fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber),
-		WithContent:        withContent,
-		UserInfo:           userInfo,
+		DocumentID: req.GetDocumentId(),
+		IncludePhoneNumber: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+		),
+		WithContent: withContent,
+		UserInfo:    userInfo,
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -161,7 +163,7 @@ func (s *Server) GetDocument(
 		s.enricher.EnrichJobInfoSafe(userInfo, resp.GetDocument().GetCreator())
 	}
 
-	resp.Document.Pin, err = s.getDocumentPin(ctx, resp.GetDocument().GetId(), userInfo)
+	resp.Document.Pin, err = s.store.GetDocumentPin(ctx, resp.GetDocument().GetId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -244,7 +246,7 @@ func (s *Server) CreateDocument(
 	var tmpl *documentstemplates.Template
 	if req.GetTemplateId() > 0 {
 		var err error
-		tmpl, err = s.getTemplate(ctx, req.GetTemplateId())
+		tmpl, err = s.store.GetTemplate(ctx, req.GetTemplateId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -415,21 +417,54 @@ func (s *Server) CreateDocument(
 	}
 
 	if tmpl != nil {
-		if err := s.createOrUpdateWorkflowState(ctx, tx, lastId, tmpl.GetWorkflow()); err != nil {
+		if err := s.store.UpsertWorkflowState(ctx, tx, lastId, tmpl.GetWorkflow()); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
 
 	for _, ref := range docReferences {
 		ref.SourceDocumentId = lastId
-		if _, err := s.addDocumentReference(ctx, tx, ref); err != nil {
+		if _, err := s.store.CreateDocumentReference(ctx, tx, ref); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
 	for _, rel := range docRelations {
 		rel.DocumentId = lastId
-		if _, err := s.addDocumentRelation(ctx, tx, userInfo, rel); err != nil {
+		_, created, err := s.store.CreateDocumentRelation(ctx, tx, rel)
+		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+		if created {
+			if err := s.addUserActivity(
+				ctx,
+				tx,
+				userInfo.GetUserId(),
+				rel.GetTargetUserId(),
+				usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT,
+				"",
+				&usersactivity.UserActivityData{
+					Data: &usersactivity.UserActivityData_DocumentRelation{
+						DocumentRelation: &usersactivity.CitizenDocumentRelation{
+							Added:      true,
+							DocumentId: rel.GetDocumentId(),
+							Relation:   rel.GetRelation(),
+						},
+					},
+				},
+			); err != nil {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			}
+
+			if rel.GetRelation() == documentsrelations.DocRelation_DOC_RELATION_MENTIONED {
+				if err := s.notifyMentionedUser(
+					ctx,
+					lastId,
+					userInfo.GetUserId(),
+					rel.GetTargetUserId(),
+				); err != nil {
+					return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+				}
+			}
 		}
 	}
 
@@ -516,7 +551,7 @@ func (s *Server) UpdateDocument(
 	var tmpl *documentstemplates.Template
 	if oldDoc.GetTemplateId() > 0 {
 		var err error
-		tmpl, err = s.getTemplate(ctx, oldDoc.GetTemplateId())
+		tmpl, err = s.store.GetTemplate(ctx, oldDoc.GetTemplateId())
 		if err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -619,7 +654,7 @@ func (s *Server) UpdateDocument(
 		}
 
 		if tmpl != nil && tmpl.GetWorkflow() != nil {
-			if err := s.createOrUpdateWorkflowState(
+			if err := s.store.UpsertWorkflowState(
 				ctx,
 				tx,
 				oldDoc.GetId(),
@@ -931,7 +966,7 @@ func (s *Server) ToggleDocument(
 	var tmpl *documentstemplates.Template
 	if !req.GetClosed() && doc.GetTemplateId() > 0 {
 		// If the document is opened, get template so we can update the reminder/auto close times
-		tmpl, err = s.getTemplate(ctx, doc.GetTemplateId())
+		tmpl, err = s.store.GetTemplate(ctx, doc.GetTemplateId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -988,7 +1023,7 @@ func (s *Server) ToggleDocument(
 	}
 
 	if tmpl != nil {
-		if err := s.createOrUpdateWorkflowState(
+		if err := s.store.UpsertWorkflowState(
 			ctx,
 			tx,
 			doc.GetId(),
@@ -1117,7 +1152,13 @@ func (s *Server) ChangeDocumentOwner(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if err := s.store.UpdateDocumentOwner(ctx, tx, req.GetDocumentId(), userInfo, &newOwner); err != nil {
+	if err := s.store.UpdateDocumentOwner(
+		ctx,
+		tx,
+		req.GetDocumentId(),
+		userInfo,
+		&newOwner,
+	); err != nil {
 		return nil, err
 	}
 

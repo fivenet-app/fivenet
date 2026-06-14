@@ -2,10 +2,8 @@ package documents
 
 import (
 	"context"
-	"errors"
 	"strings"
 
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
@@ -16,7 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/textdiff"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
-	"github.com/go-jet/jet/v2/mysql"
+	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -48,36 +46,20 @@ func (s *Server) ListDocumentActivity(
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
-	tDocActivity := table.FivenetDocumentsActivity.AS("doc_activity")
-
-	condition := tDocActivity.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))
-	if len(req.GetActivityTypes()) > 0 {
-		ids := make([]mysql.Expression, len(req.GetActivityTypes()))
-		for i := range req.GetActivityTypes() {
-			ids[i] = mysql.Int32(int32(*req.GetActivityTypes()[i].Enum()))
-		}
-		condition = condition.AND(tDocActivity.ActivityType.IN(ids...))
+	count, activity, err := s.store.ListDocumentActivity(
+		ctx,
+		documentsstore.ListDocumentActivityQuery{
+			DocumentID:    req.GetDocumentId(),
+			Pagination:    req.GetPagination(),
+			UserInfo:      userInfo,
+			ActivityTypes: req.GetActivityTypes(),
+		},
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	countStmt := tDocActivity.
-		SELECT(
-			mysql.COUNT(tDocActivity.ID).AS("data_count.total"),
-		).
-		FROM(
-			tDocActivity,
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-			}
-		}
-	}
-
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, ActivityDefaultPageSize)
+	pag, _ := req.GetPagination().GetResponseWithPageSize(count.Total, ActivityDefaultPageSize)
 	resp := &pbdocuments.ListDocumentActivityResponse{
 		Pagination: pag,
 		Activity:   []*documentsactivity.DocActivity{},
@@ -85,43 +67,7 @@ func (s *Server) ListDocumentActivity(
 	if count.Total <= 0 {
 		return resp, nil
 	}
-
-	tCreator := table.FivenetUser.AS("creator")
-
-	stmt := tDocActivity.
-		SELECT(
-			tDocActivity.ID,
-			tDocActivity.CreatedAt,
-			tDocActivity.DocumentID,
-			tDocActivity.ActivityType,
-			tDocActivity.CreatorID,
-			tDocActivity.CreatorJob,
-			tDocActivity.Reason,
-			tDocActivity.Data,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-		).
-		FROM(
-			tDocActivity.
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tDocActivity.CreatorID),
-				),
-		).
-		WHERE(condition).
-		OFFSET(
-			req.GetPagination().GetOffset(),
-		).
-		ORDER_BY(
-			tDocActivity.ID.DESC(),
-		).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
+	resp.Activity = activity
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetActivity() {
@@ -138,7 +84,7 @@ func addDocumentActivity(
 	tx qrm.DB,
 	activitiy *documentsactivity.DocActivity,
 ) (int64, error) {
-	stmt := tDocActivity.
+	stmt := table.FivenetDocumentsActivity.
 		INSERT(
 			tDocActivity.DocumentID,
 			tDocActivity.ActivityType,

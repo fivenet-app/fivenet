@@ -2,18 +2,14 @@ package documents
 
 import (
 	"context"
-	"errors"
 
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	documentsstamps "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
+	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 )
 
 const stampLimit = 5
@@ -32,69 +28,18 @@ func (s *Server) ListUsableStamps(
 ) (*pbdocuments.ListUsableStampsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tStamp := table.FivenetDocumentsStamps.AS("stamp")
-
-	deletedAtCond := mysql.Bool(true)
-	if !userInfo.GetSuperuser() {
-		deletedAtCond = tStamp.DeletedAt.IS_NULL()
+	pag, stamps, err := s.store.ListUsableStamps(ctx, documentsstore.ListUsableStampsQuery{
+		Pagination: req.GetPagination(),
+		UserInfo:   userInfo,
+	})
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	var existsAccess mysql.BoolExpression
-	if !userInfo.GetSuperuser() {
-		existsAccess = s.signingStampAccess.ACLAccessExistsCondition(
-			tStamp.ID,
-			userInfo,
-			int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
-		)
-	} else {
-		existsAccess = mysql.Bool(true)
-	}
-
-	condition := mysql.AND(
-		deletedAtCond,
-		existsAccess,
-	)
-
-	countStmt := mysql.
-		SELECT(
-			mysql.COUNT(tStamp.ID).AS("data_count.total"),
-		).
-		FROM(tStamp).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, err
-	}
-
-	pag, limit := req.GetPagination().
-		GetResponse(DocsDefaultPageSize)
-	resp := &pbdocuments.ListUsableStampsResponse{
+	return &pbdocuments.ListUsableStampsResponse{
 		Pagination: pag,
-	}
-	if count.Total <= 0 {
-		return resp, nil
-	}
-
-	stmt := mysql.
-		SELECT(
-			tStamp.ID,
-			tStamp.Name,
-			tStamp.SvgTemplate,
-			tStamp.VariantsJSON,
-			tStamp.CreatedAt,
-		).
-		FROM(tStamp).
-		WHERE(condition).
-		OFFSET(req.GetPagination().GetOffset()).
-		ORDER_BY(tStamp.SortKey.ASC(), tStamp.CreatedAt.DESC()).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Stamps); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+		Stamps:     stamps,
+	}, nil
 }
 
 func (s *Server) GetStamp(
@@ -121,38 +66,19 @@ func (s *Server) GetStamp(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	return &pbdocuments.GetStampResponse{
-		Stamp: stamp,
-	}, nil
+	return &pbdocuments.GetStampResponse{Stamp: stamp}, nil
 }
 
 func (s *Server) getStamp(
 	ctx context.Context,
-	stampId int64,
+	stampID int64,
 	withAccess bool,
 ) (*documentsstamps.Stamp, error) {
-	tStamp := table.FivenetDocumentsStamps.AS("stamp")
-
-	stmt := mysql.
-		SELECT(
-			tStamp.ID,
-			tStamp.Name,
-			tStamp.SvgTemplate,
-			tStamp.VariantsJSON,
-			tStamp.CreatedAt,
-		).
-		FROM(tStamp).
-		WHERE(mysql.AND(
-			tStamp.ID.EQ(mysql.Int64(stampId)),
-		)).
-		LIMIT(1)
-
-	var stamp documentsstamps.Stamp
-	if err := stmt.QueryContext(ctx, s.db, &stamp); err != nil {
+	stamp, err := s.store.GetStamp(ctx, stampID)
+	if err != nil {
 		return nil, err
 	}
-
-	if stamp.Id == 0 {
+	if stamp == nil {
 		return nil, nil
 	}
 
@@ -160,7 +86,7 @@ func (s *Server) getStamp(
 		access, err := s.signingStampAccess.ListTargetAccess(
 			ctx,
 			s.db,
-			stampId,
+			stampID,
 			stampSubjectAccessOptions,
 		)
 		if err != nil {
@@ -169,27 +95,7 @@ func (s *Server) getStamp(
 		stamp.Access = access
 	}
 
-	return &stamp, nil
-}
-
-func (s *Server) checkJobStampCount(ctx context.Context, job string) (int64, error) {
-	tStamp := table.FivenetDocumentsStamps.AS("stamp")
-
-	countStmt := tStamp.
-		SELECT(
-			mysql.COUNT(tStamp.ID).AS("data_count.total"),
-		).
-		FROM(tStamp).
-		WHERE(tStamp.Name.EQ(mysql.String(job)))
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return 0, err
-		}
-	}
-
-	return count.Total, nil
+	return stamp, nil
 }
 
 func (s *Server) UpsertStamp(
@@ -197,9 +103,6 @@ func (s *Server) UpsertStamp(
 	req *pbdocuments.UpsertStampRequest,
 ) (*pbdocuments.UpsertStampResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	tStamp := table.FivenetDocumentsStamps
-
 	st := req.GetStamp()
 
 	// Stamps are job only and are currently limited to 5!
@@ -207,7 +110,6 @@ func (s *Server) UpsertStamp(
 		st.Access = &documentsstamps.StampAccess{}
 	}
 	if len(st.Access.Jobs) == 0 {
-		// Add minimum access for the creator's job
 		st.Access.Jobs = append(st.Access.Jobs, &documentsstamps.StampJobAccess{
 			Job:          userInfo.GetJob(),
 			MinimumGrade: userInfo.GetJobGrade(),
@@ -215,8 +117,7 @@ func (s *Server) UpsertStamp(
 		})
 	}
 
-	// Check if stamp count for the job exceeds the limit
-	if count, err := s.checkJobStampCount(ctx, userInfo.GetJob()); err != nil {
+	if count, err := s.store.CheckJobStampCount(ctx, userInfo.GetJob()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	} else if count >= stampLimit && st.GetId() == 0 {
 		return nil, errorsdocuments.ErrStampLimitReached
@@ -242,45 +143,15 @@ func (s *Server) UpsertStamp(
 			return nil, errorsdocuments.ErrPermissionDenied
 		}
 
-		stmt := tStamp.
-			UPDATE(
-				tStamp.Name,
-				tStamp.SvgTemplate,
-				tStamp.VariantsJSON,
-			).
-			SET(
-				st.GetName(),
-				st.GetSvgTemplate(),
-				nil,
-			).
-			WHERE(tStamp.ID.EQ(mysql.Int64(st.GetId()))).
-			LIMIT(1)
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		if err := s.store.UpdateStamp(ctx, tx, st); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	} else {
-		// Create new stamp in db
-		stmt := tStamp.
-			INSERT(
-				tStamp.Name,
-				tStamp.SvgTemplate,
-				tStamp.VariantsJSON,
-			).
-			VALUES(
-				st.GetName(),
-				st.GetSvgTemplate(),
-				nil,
-			)
-		res, err := stmt.ExecContext(ctx, tx)
+		lastID, err := s.store.CreateStamp(ctx, tx, st)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		lastId, err := res.LastInsertId()
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-		req.GetStamp().SetId(lastId)
+		st.SetId(lastID)
 	}
 
 	if _, err := s.signingStampAccess.ReplaceTargetAccess(
@@ -303,9 +174,7 @@ func (s *Server) UpsertStamp(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	return &pbdocuments.UpsertStampResponse{
-		Stamp: stamp,
-	}, nil
+	return &pbdocuments.UpsertStampResponse{Stamp: stamp}, nil
 }
 
 func (s *Server) DeleteStamp(
@@ -327,14 +196,7 @@ func (s *Server) DeleteStamp(
 		return nil, errorsdocuments.ErrPermissionDenied
 	}
 
-	tStamp := table.FivenetDocumentsStamps.AS("stamp")
-
-	stmt := tStamp.
-		DELETE().
-		WHERE(tStamp.ID.EQ(mysql.Int64(req.GetStampId()))).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeleteStamp(ctx, s.db, req.GetStampId()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 

@@ -4,33 +4,18 @@ import (
 	context "context"
 	"errors"
 
-	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
-	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
-	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
-
-var documentSubjectAccessOptions = access.SubjectAccessOptions{
-	BlockedAccess: int32(documentsaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
-	DeniedAccessLevels: []int32{
-		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_COMMENT),
-		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_STATUS),
-		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_ACCESS),
-		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
-	},
-}
 
 const documentAccessEntryLimit = 20
 
@@ -115,12 +100,12 @@ func (s *Server) GetDocumentAccess(
 		return nil, errorsdocuments.ErrDocAccessViewDenied
 	}
 
-	docAccess, err := s.getDocumentAccess(ctx, req.GetDocumentId())
+	docAccess, err := s.store.GetDocumentAccess(ctx, req.GetDocumentId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	requiredAccess, err := s.getDocumentRequiredAccess(ctx, req.GetDocumentId(), userInfo)
+	requiredAccess, err := s.store.GetDocumentRequiredAccess(ctx, req.GetDocumentId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -206,37 +191,6 @@ func (s *Server) SetDocumentAccess(
 	return &pbdocuments.SetDocumentAccessResponse{}, nil
 }
 
-func (s *Server) getDocumentAccess(
-	ctx context.Context,
-	documentId int64,
-) (*documentsaccess.DocumentAccess, error) {
-	return s.subjectAccess.ListTargetAccess(ctx, s.db, documentId, documentSubjectAccessOptions)
-}
-
-func (s *Server) getDocumentRequiredAccess(
-	ctx context.Context,
-	documentId int64,
-	userInfo *userinfo.UserInfo,
-) (*resourcesaccess.Access, error) {
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(mysql.Int64(documentId)), userInfo, false)
-	if err != nil {
-		return nil, err
-	}
-	if doc.GetTemplateId() <= 0 {
-		return nil, nil
-	}
-
-	tmpl, err := s.getTemplate(ctx, doc.GetTemplateId())
-	if err != nil {
-		return nil, err
-	}
-	if tmpl.GetContentAccess() == nil || tmpl.GetContentAccess().IsEmpty() {
-		return nil, nil
-	}
-
-	return tmpl.GetContentAccess(), nil
-}
-
 func (s *Server) handleDocumentAccessChange(
 	ctx context.Context,
 	tx qrm.DB,
@@ -258,78 +212,15 @@ func (s *Server) handleDocumentAccessChange(
 		return errorsdocuments.ErrDocAccessInvalid
 	}
 
-	requiredAccess, err := s.getDocumentRequiredAccess(ctx, documentId, userInfo)
-	if err != nil {
-		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	fallbackAccess := &resourcesaccess.Access{
-		Jobs: []*resourcesaccess.JobAccess{
-			{
-				Job:          userInfo.GetJob(),
-				MinimumGrade: userInfo.GetJobGrade(),
-				Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
-			},
-		},
-	}
-
-	docAccess, err = access.NormalizeAccess(
-		docAccess,
-		requiredAccess,
-		fallbackAccess,
-		documentAccessEntryLimit,
-	)
-	if err != nil {
-		if isAccessEntryLimitError(err) {
-			return errorsdocuments.ErrDocRequiredAccessTemplate
-		}
-		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	if documentsaccess.DocumentAccessHasDuplicates(docAccess) {
-		return errorsdocuments.ErrDocAccessDuplicate
-	}
-
-	changes, err := s.subjectAccess.ReplaceTargetAccess(
+	if err := s.store.UpdateDocumentAccess(
 		ctx,
 		tx,
-		s.subjectResolver,
 		documentId,
+		userInfo,
 		docAccess,
-		documentSubjectAccessOptions,
-	)
-	if err != nil {
-		if dbutils.IsDuplicateError(err) {
-			return errswrap.NewError(err, errorsdocuments.ErrDocAccessDuplicate)
-		}
+		addActivity,
+	); err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	if addActivity && !changes.IsEmpty() {
-		if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
-			DocumentId:   documentId,
-			ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED,
-			CreatorId:    &userInfo.UserId,
-			CreatorJob:   userInfo.GetJob(),
-			Data: &documentsactivity.DocActivityData{
-				Data: &documentsactivity.DocActivityData_AccessUpdated{
-					AccessUpdated: &documentsactivity.DocAccessUpdated{
-						Jobs: &documentsactivity.DocAccessJobsDiff{
-							ToCreate: changes.Jobs.ToCreate,
-							ToUpdate: changes.Jobs.ToUpdate,
-							ToDelete: changes.Jobs.ToDelete,
-						},
-						Users: &documentsactivity.DocAccessUsersDiff{
-							ToCreate: changes.Users.ToCreate,
-							ToUpdate: changes.Users.ToUpdate,
-							ToDelete: changes.Users.ToDelete,
-						},
-					},
-				},
-			},
-		}); err != nil {
-			return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
 	}
 
 	return nil

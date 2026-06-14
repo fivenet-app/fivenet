@@ -3,7 +3,6 @@ package documents
 import (
 	"bytes"
 	context "context"
-	"errors"
 	"html/template"
 
 	"github.com/Masterminds/sprig/v3"
@@ -18,10 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -45,54 +41,11 @@ func (s *Server) ListTemplates(
 	req *pbdocuments.ListTemplatesRequest,
 ) (*pbdocuments.ListTemplatesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	tDTemplates := table.FivenetDocumentsTemplates.AS("template_short")
-
-	stmt := tDTemplates.
-		SELECT(
-			tDTemplates.ID,
-			tDTemplates.Weight,
-			tDCategory.ID,
-			tDCategory.Name,
-			tDCategory.Description,
-			tDCategory.Job,
-			tDCategory.Color,
-			tDCategory.Icon,
-			tDTemplates.Title,
-			tDTemplates.Description,
-			tDTemplates.Color,
-			tDTemplates.Icon,
-			tDTemplates.Schema,
-			tDTemplates.Workflow,
-			tDTemplates.Approval,
-			tDTemplates.CreatorJob,
-		).
-		FROM(
-			tDTemplates.
-				LEFT_JOIN(tDCategory,
-					tDCategory.ID.EQ(tDTemplates.CategoryID),
-				),
-		).
-		WHERE(mysql.AND(
-			tDTemplates.DeletedAt.IS_NULL(),
-			s.templateAccess.ACLAccessExistsCondition(
-				tDTemplates.ID,
-				userInfo,
-				int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-			),
-		)).
-		ORDER_BY(
-			tDTemplates.Weight.DESC(),
-			tDTemplates.ID.ASC(),
-		).
-		GROUP_BY(tDTemplates.ID)
-
-	resp := &pbdocuments.ListTemplatesResponse{}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
+	templates, err := s.store.ListTemplates(ctx, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	resp := &pbdocuments.ListTemplatesResponse{Templates: templates}
 
 	for i := range resp.GetTemplates() {
 		s.enricher.EnrichJobName(resp.GetTemplates()[i])
@@ -123,7 +76,7 @@ func (s *Server) GetTemplate(
 	}
 
 	resp := &pbdocuments.GetTemplateResponse{}
-	resp.Template, err = s.getTemplate(ctx, req.GetTemplateId())
+	resp.Template, err = s.store.GetTemplate(ctx, req.GetTemplateId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -165,61 +118,6 @@ func (s *Server) GetTemplate(
 	s.enricher.EnrichJobName(resp.GetTemplate())
 
 	return resp, nil
-}
-
-func (s *Server) getTemplate(
-	ctx context.Context,
-	templateId int64,
-) (*documentstemplates.Template, error) {
-	tDTemplates := table.FivenetDocumentsTemplates.AS("template")
-
-	stmt := tDTemplates.
-		SELECT(
-			tDTemplates.ID,
-			tDTemplates.Weight,
-			tDTemplates.CreatedAt,
-			tDTemplates.UpdatedAt,
-			tDCategory.ID,
-			tDCategory.Name,
-			tDCategory.Description,
-			tDCategory.Job,
-			tDCategory.Color,
-			tDCategory.Icon,
-			tDTemplates.Title,
-			tDTemplates.Description,
-			tDTemplates.Color,
-			tDTemplates.Icon,
-			tDTemplates.ContentTitle,
-			tDTemplates.Content,
-			tDTemplates.State,
-			tDTemplates.Access,
-			tDTemplates.Schema,
-			tDTemplates.Workflow,
-			tDTemplates.Approval,
-			tDTemplates.CreatorJob,
-		).
-		FROM(
-			tDTemplates.
-				LEFT_JOIN(tDCategory,
-					tDCategory.ID.EQ(tDTemplates.CategoryID),
-				),
-		).
-		WHERE(mysql.AND(
-			tDTemplates.DeletedAt.IS_NULL(),
-			tDTemplates.ID.EQ(mysql.Int64(templateId)),
-		)).
-		LIMIT(1)
-
-	var dest documentstemplates.Template
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
-	}
-
-	if dest.GetId() <= 0 {
-		return nil, nil
-	}
-
-	return &dest, nil
 }
 
 func (s *Server) renderTemplate(
@@ -287,14 +185,15 @@ func (s *Server) CreateTemplate(
 		return nil, errorsdocuments.ErrTemplateAccessDuplicate
 	}
 
-	categoryId := mysql.NULL
+	var categoryId *int64
 	if req.GetTemplate().GetCategory() != nil {
 		cat, err := s.getCategory(ctx, req.GetTemplate().GetCategory().GetId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		if cat != nil {
-			categoryId = mysql.Int64(cat.GetId())
+			id := cat.GetId()
+			categoryId = &id
 		}
 	}
 
@@ -306,47 +205,7 @@ func (s *Server) CreateTemplate(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tDTemplates := table.FivenetDocumentsTemplates
-	stmt := tDTemplates.
-		INSERT(
-			tDTemplates.Weight,
-			tDTemplates.CategoryID,
-			tDTemplates.Title,
-			tDTemplates.Description,
-			tDTemplates.Color,
-			tDTemplates.Icon,
-			tDTemplates.ContentTitle,
-			tDTemplates.Content,
-			tDTemplates.State,
-			tDTemplates.Access,
-			tDTemplates.Schema,
-			tDTemplates.Workflow,
-			tDTemplates.Approval,
-			tDTemplates.CreatorJob,
-		).
-		VALUES(
-			req.GetTemplate().GetWeight(),
-			categoryId,
-			req.GetTemplate().GetTitle(),
-			req.GetTemplate().GetDescription(),
-			req.GetTemplate().Color,
-			req.GetTemplate().Icon,
-			req.GetTemplate().GetContentTitle(),
-			req.GetTemplate().GetContent(),
-			req.GetTemplate().GetState(),
-			req.GetTemplate().GetContentAccess(),
-			req.GetTemplate().GetSchema(),
-			req.GetTemplate().GetWorkflow(),
-			req.GetTemplate().GetApproval(),
-			userInfo.GetJob(),
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	lastId, err := res.LastInsertId()
+	lastId, err := s.store.CreateTemplate(ctx, tx, req.GetTemplate(), userInfo.GetJob(), categoryId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -406,14 +265,15 @@ func (s *Server) UpdateTemplate(
 		return nil, errorsdocuments.ErrTemplateAccessDuplicate
 	}
 
-	categoryId := mysql.NULL
+	var categoryId *int64
 	if req.GetTemplate().GetCategory() != nil {
 		cat, err := s.getCategory(ctx, req.GetTemplate().GetCategory().GetId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		if cat != nil {
-			categoryId = mysql.Int64(cat.GetId())
+			id := cat.GetId()
+			categoryId = &id
 		}
 	}
 
@@ -425,44 +285,7 @@ func (s *Server) UpdateTemplate(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tDTemplates := table.FivenetDocumentsTemplates
-	stmt := tDTemplates.
-		UPDATE(
-			tDTemplates.Weight,
-			tDTemplates.CategoryID,
-			tDTemplates.Title,
-			tDTemplates.Description,
-			tDTemplates.Color,
-			tDTemplates.Icon,
-			tDTemplates.ContentTitle,
-			tDTemplates.Content,
-			tDTemplates.State,
-			tDTemplates.Access,
-			tDTemplates.Schema,
-			tDTemplates.Workflow,
-			tDTemplates.Approval,
-		).
-		SET(
-			req.GetTemplate().GetWeight(),
-			categoryId,
-			req.GetTemplate().GetTitle(),
-			req.GetTemplate().GetDescription(),
-			req.GetTemplate().Color,
-			req.GetTemplate().Icon,
-			req.GetTemplate().GetContentTitle(),
-			req.GetTemplate().GetContent(),
-			req.GetTemplate().GetState(),
-			req.GetTemplate().GetContentAccess(),
-			req.GetTemplate().GetSchema(),
-			req.GetTemplate().GetWorkflow(),
-			req.GetTemplate().GetApproval(),
-		).
-		WHERE(
-			tDTemplates.ID.EQ(mysql.Int64(req.GetTemplate().GetId())),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	if err := s.store.UpdateTemplate(ctx, tx, req.GetTemplate(), categoryId); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -485,7 +308,7 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	tmpl, err := s.getTemplate(ctx, req.GetTemplate().GetId())
+	tmpl, err := s.store.GetTemplate(ctx, req.GetTemplate().GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -526,7 +349,7 @@ func (s *Server) DeleteTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	dTmpl, err := s.getTemplate(ctx, req.GetId())
+	dTmpl, err := s.store.GetTemplate(ctx, req.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -544,21 +367,7 @@ func (s *Server) DeleteTemplate(
 		}
 	}
 
-	tDTemplates := table.FivenetDocumentsTemplates
-	stmt := tDTemplates.
-		UPDATE(
-			tDTemplates.DeletedAt,
-		).
-		SET(
-			tDTemplates.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
-		).
-		WHERE(mysql.AND(
-			tDTemplates.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			tDTemplates.ID.EQ(mysql.Int64(req.GetId())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeleteTemplate(ctx, s.db, req.GetId(), userInfo.GetJob()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 

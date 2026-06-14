@@ -2,24 +2,17 @@ package documents
 
 import (
 	"context"
-	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	documentscategory "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
-
-var tDCategory = table.FivenetDocumentsCategories.AS("category")
 
 func (s *Server) ListCategories(
 	ctx context.Context,
@@ -27,76 +20,18 @@ func (s *Server) ListCategories(
 ) (*pbdocuments.ListCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := tDCategory.Job.EQ(mysql.String(userInfo.GetJob()))
-	if !userInfo.GetSuperuser() {
-		condition = mysql.AND(
-			tDCategory.DeletedAt.IS_NULL(),
-			tDCategory.Job.EQ(mysql.String(userInfo.GetJob())),
-		)
+	categories, err := s.store.ListCategories(ctx, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-
-	stmt := tDCategory.
-		SELECT(
-			tDCategory.ID,
-			tDCategory.DeletedAt,
-			tDCategory.Name,
-			tDCategory.Description,
-			tDCategory.Job,
-			tDCategory.Color,
-			tDCategory.Icon,
-		).
-		FROM(
-			tDCategory,
-		).
-		WHERE(condition).
-		ORDER_BY(
-			tDCategory.SortKey.ASC(),
-		)
-
-	resp := &pbdocuments.ListCategoriesResponse{
-		Categories: []*documentscategory.Category{},
-	}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Categories); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-	}
+	resp := &pbdocuments.ListCategoriesResponse{Categories: categories}
 
 	return resp, nil
 }
 
 func (s *Server) getCategory(ctx context.Context, id int64) (*documentscategory.Category, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	stmt := tDCategory.
-		SELECT(
-			tDCategory.ID,
-			tDCategory.DeletedAt,
-			tDCategory.Name,
-			tDCategory.Description,
-			tDCategory.Job,
-			tDCategory.Color,
-			tDCategory.Icon,
-		).
-		FROM(
-			tDCategory,
-		).
-		WHERE(mysql.AND(
-			tDCategory.Job.EQ(mysql.String(userInfo.GetJob())),
-			tDCategory.ID.EQ(mysql.Int64(id)),
-		)).
-		LIMIT(1)
-
-	var dest documentscategory.Category
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
-	}
-
-	if dest.GetId() == 0 {
-		return nil, nil
-	}
-
-	return &dest, nil
+	return s.store.GetCategory(ctx, id, userInfo)
 }
 
 func (s *Server) CreateOrUpdateCategory(
@@ -105,61 +40,16 @@ func (s *Server) CreateOrUpdateCategory(
 ) (*pbdocuments.CreateOrUpdateCategoryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tDCategory := table.FivenetDocumentsCategories
-
 	if req.GetCategory().GetId() == 0 {
-		stmt := tDCategory.
-			INSERT(
-				tDCategory.Name,
-				tDCategory.Description,
-				tDCategory.Job,
-				tDCategory.Color,
-				tDCategory.Icon,
-			).
-			VALUES(
-				req.GetCategory().GetName(),
-				req.GetCategory().Description,
-				userInfo.GetJob(),
-				req.GetCategory().Color,
-				req.GetCategory().Icon,
-			)
-
-		res, err := stmt.ExecContext(ctx, s.db)
+		lastId, err := s.store.CreateCategory(ctx, s.db, req.GetCategory(), userInfo)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-
-		lastId, err := res.LastInsertId()
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-
 		req.Category.Id = lastId
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
-		stmt := tDCategory.
-			UPDATE(
-				tDCategory.Name,
-				tDCategory.Description,
-				tDCategory.Job,
-				tDCategory.Color,
-				tDCategory.Icon,
-			).
-			SET(
-				req.GetCategory().GetName(),
-				req.GetCategory().Description,
-				userInfo.GetJob(),
-				req.GetCategory().Color,
-				req.GetCategory().Icon,
-			).
-			WHERE(mysql.AND(
-				tDCategory.ID.EQ(mysql.Int64(req.GetCategory().GetId())),
-				tDCategory.Job.EQ(mysql.String(userInfo.GetJob())),
-			)).
-			LIMIT(1)
-
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if err := s.store.UpdateCategory(ctx, s.db, req.GetCategory(), userInfo); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
@@ -197,21 +87,7 @@ func (s *Server) DeleteCategory(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
-	tDCategory := table.FivenetDocumentsCategories
-	stmt := tDCategory.
-		UPDATE(
-			tDCategory.DeletedAt,
-		).
-		SET(
-			tDCategory.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
-		).
-		WHERE(mysql.AND(
-			tDCategory.Job.EQ(mysql.String(userInfo.GetJob())),
-			tDCategory.ID.EQ(mysql.Int64(req.GetId())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeleteCategory(ctx, s.db, req.GetId(), userInfo, deletedAtTime); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 

@@ -6,9 +6,11 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	resourcesdatabase "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -78,7 +80,7 @@ func TestStoreListAppliesFiltersAndSortFallback(t *testing.T) {
 
 	docs, err := store.List(t.Context(), query)
 	require.NoError(t, err)
-	assert.Len(t, docs, 0)
+	assert.Empty(t, docs)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
@@ -117,5 +119,39 @@ func TestStoreGetIncludesContentAndPhoneNumber(t *testing.T) {
 	doc, err := store.Get(t.Context(), query)
 	require.NoError(t, err)
 	assert.Nil(t, doc)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreGetDocumentMetaAndUpdateOwner(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = db.Close()
+	})
+
+	store := New(db)
+
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_meta AS document_meta`) + `(?s).*` + regexp.QuoteMeta(`document_meta.document_id = ?`) + `(?s).*` + regexp.QuoteMeta(`LIMIT ?`)).
+		WithArgs(int64(42), int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{}))
+
+	meta, err := store.GetDocumentMeta(t.Context(), db, 42)
+	require.NoError(t, err)
+	require.NotNil(t, meta)
+	assert.Equal(t, int64(42), meta.GetDocumentId())
+
+	userInfo := &userinfo.UserInfo{UserId: 3, Job: "doj"}
+	newOwner := &usershort.UserShort{UserId: 9, Job: "new"}
+
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_documents AS document SET`)).
+		WithArgs(int32(9), int64(42), int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_documents_activity`)).
+		WithArgs(int64(42), documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED, int32(3), "doj", sqlmock.AnyArg()).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	require.NoError(t, store.UpdateDocumentOwner(t.Context(), db, 42, userInfo, newOwner))
+
 	require.NoError(t, mock.ExpectationsWereMet())
 }

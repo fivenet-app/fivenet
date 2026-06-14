@@ -129,7 +129,7 @@ func (w *Workflow) handleWorkflowUserState(
 			return err
 		}
 
-		if err := deleteWorkflowUserState(
+		if err := w.store.DeleteWorkflowUserState(
 			ctx,
 			w.db,
 			state.GetDocumentId(),
@@ -137,77 +137,6 @@ func (w *Workflow) handleWorkflowUserState(
 		); err != nil {
 			return err
 		}
-	}
-
-	return nil
-}
-
-func updateWorkflowUserState(
-	ctx context.Context,
-	tx qrm.DB,
-	state *documentsworkflow.WorkflowUserState,
-) error {
-	reminderTime := mysql.TimestampExp(mysql.NULL)
-	if state.GetManualReminderTime() != nil {
-		reminderTime = mysql.TimestampT(state.GetManualReminderTime().AsTime())
-	}
-
-	reminderMessage := mysql.StringExp(mysql.NULL)
-	if state.ManualReminderMessage != nil && state.GetManualReminderMessage() != "" {
-		reminderMessage = mysql.String(state.GetManualReminderMessage())
-	}
-
-	tUserWorkflow := table.FivenetDocumentsWorkflowUsers
-
-	stmt := tUserWorkflow.
-		INSERT(
-			tUserWorkflow.DocumentID,
-			tUserWorkflow.UserID,
-			tUserWorkflow.ManualReminderTime,
-			tUserWorkflow.ManualReminderMessage,
-			tUserWorkflow.ReminderCount,
-			tUserWorkflow.MaxReminderCount,
-		).
-		VALUES(
-			state.GetDocumentId(),
-			state.GetUserId(),
-			state.GetManualReminderTime(),
-			state.ManualReminderMessage,
-			state.GetReminderCount(),
-			state.GetMaxReminderCount(),
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tUserWorkflow.ManualReminderTime.SET(reminderTime),
-			tUserWorkflow.ManualReminderMessage.SET(reminderMessage),
-			tUserWorkflow.ReminderCount.SET(mysql.Int32(state.GetReminderCount())),
-			tUserWorkflow.MaxReminderCount.SET(mysql.Int32(state.GetMaxReminderCount())),
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func deleteWorkflowUserState(
-	ctx context.Context,
-	tx qrm.DB,
-	documentId int64,
-	userId int32,
-) error {
-	tUserWorkflow := table.FivenetDocumentsWorkflowUsers
-
-	stmt := tUserWorkflow.
-		DELETE().
-		WHERE(mysql.AND(
-			tUserWorkflow.DocumentID.EQ(mysql.Int64(documentId)),
-			tUserWorkflow.UserID.EQ(mysql.Int32(userId)),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
 	}
 
 	return nil
