@@ -43,7 +43,13 @@ func TestStoreCreateMarker(t *testing.T) {
 		Type: livemapmarkers.MarkerType_MARKER_TYPE_DOT,
 	}
 
-	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_centrum_markers`) + `(?s).*` + regexp.QuoteMeta(`expires_at`) + `(?s).*` + regexp.QuoteMeta(`creator_id`)
+	expectedQuery := regexp.QuoteMeta(
+		`INSERT INTO fivenet_centrum_markers`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`expires_at`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`creator_id`,
+	)
 	mock.ExpectExec(expectedQuery).
 		WithArgs(marker.GetExpiresAt(), "police", marker.GetName(), marker.Description, marker.GetX(), marker.GetY(), marker.Postal, marker.Color, marker.GetType(), marker.GetData(), int32(3)).
 		WillReturnResult(sqlmock.NewResult(55, 1))
@@ -69,7 +75,15 @@ func TestStoreUpdateMarker(t *testing.T) {
 		Y:    9.2,
 	}
 
-	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_centrum_markers SET`) + `(?s).*` + regexp.QuoteMeta(`fivenet_centrum_markers.job = ?`) + `(?s).*` + regexp.QuoteMeta(`fivenet_centrum_markers.id = ?`) + `(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
+	expectedQuery := regexp.QuoteMeta(
+		`UPDATE fivenet_centrum_markers SET`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`fivenet_centrum_markers.job = ?`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`fivenet_centrum_markers.id = ?`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`LIMIT ?;`,
+	)
 	mock.ExpectExec(expectedQuery).
 		WithArgs(nil, marker.GetName(), marker.Description, marker.GetX(), marker.GetY(), marker.Postal, marker.Color, marker.GetType(), marker.GetData(), "police", int64(42), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -87,7 +101,15 @@ func TestStoreSoftDeleteMarker(t *testing.T) {
 
 	store := New(db, &config.CustomDB{})
 
-	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_centrum_markers SET`) + `(?s).*` + regexp.QuoteMeta(`deleted_at = CURRENT_TIMESTAMP`) + `(?s).*` + regexp.QuoteMeta(`fivenet_centrum_markers.id = ?`) + `(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
+	expectedQuery := regexp.QuoteMeta(
+		`UPDATE fivenet_centrum_markers SET`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`deleted_at = CURRENT_TIMESTAMP`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`fivenet_centrum_markers.id = ?`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`LIMIT ?;`,
+	)
 	mock.ExpectExec(expectedQuery).
 		WithArgs(int64(99), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))

@@ -40,7 +40,12 @@ func (s *Server) CreateOrUpdateMarker(
 	}
 
 	if req.GetMarker().GetId() <= 0 {
-		id, err := s.store.CreateMarker(ctx, req.GetMarker(), userInfo.GetUserId(), userInfo.GetJob())
+		id, err := s.store.CreateMarker(
+			ctx,
+			req.GetMarker(),
+			userInfo.GetUserId(),
+			userInfo.GetJob(),
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
@@ -83,7 +88,13 @@ func (s *Server) CreateOrUpdateMarker(
 	}
 	s.enricher.EnrichJobName(marker)
 
-	if err := s.sendUpdateEvent(ctx, MarkerTopic, MarkerUpdate, marker.GetJob(), marker); err != nil {
+	if err := s.sendUpdateEvent(
+		ctx,
+		MarkerTopic,
+		MarkerUpdate,
+		marker.GetJob(),
+		marker,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
 
@@ -126,7 +137,13 @@ func (s *Server) DeleteMarker(
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
 
-	if err := s.sendUpdateEvent(ctx, MarkerTopic, MarkerDelete, marker.GetJob(), marker); err != nil {
+	if err := s.sendUpdateEvent(
+		ctx,
+		MarkerTopic,
+		MarkerDelete,
+		marker.GetJob(),
+		marker,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
 
