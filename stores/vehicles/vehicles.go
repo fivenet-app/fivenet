@@ -1,4 +1,4 @@
-package vehicles
+package vehiclesstore
 
 import (
 	"context"
@@ -15,6 +15,18 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/proto"
 )
+
+type IStore interface {
+	Count(ctx context.Context, q ListQuery) (int64, error)
+	List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Vehicle, error)
+	GetProps(ctx context.Context, plate string) (*vehiclesprops.VehicleProps, error)
+	UpdateProps(
+		ctx context.Context,
+		in *vehiclesprops.VehicleProps,
+	) (*vehiclesprops.VehicleProps, error)
+	ListExpiredWanted(ctx context.Context, maxDays int64, limit int64) ([]string, error)
+	ClearWanted(ctx context.Context, plate string) error
+}
 
 type Store struct {
 	db       *sql.DB
@@ -38,7 +50,7 @@ type ListQuery struct {
 	Limit  int64
 }
 
-func New(db *sql.DB, customDB *config.CustomDB) *Store {
+func New(db *sql.DB, customDB *config.CustomDB) IStore {
 	return &Store{
 		db:       db,
 		customDB: customDB,

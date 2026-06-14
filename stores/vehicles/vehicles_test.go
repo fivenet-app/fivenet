@@ -1,4 +1,4 @@
-package vehicles
+package vehiclesstore
 
 import (
 	"regexp"

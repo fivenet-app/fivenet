@@ -1,11 +1,8 @@
 package vehicles
 
 import (
-	"context"
 	"database/sql"
 
-	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
-	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
@@ -15,21 +12,12 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-type vehicleStore interface {
-	Count(ctx context.Context, q vehiclesstore.ListQuery) (int64, error)
-	List(ctx context.Context, q vehiclesstore.ListQuery) ([]*resourcesvehicles.Vehicle, error)
-	UpdateProps(
-		ctx context.Context,
-		in *vehiclesprops.VehicleProps,
-	) (*vehiclesprops.VehicleProps, error)
-}
-
 type Server struct {
 	pbvehicles.VehiclesServiceServer
 
 	ps       perms.Permissions
 	enricher mstlystcdata.IEnricher
-	store    vehicleStore
+	store    vehiclesstore.IStore
 }
 
 type Params struct {
@@ -39,19 +27,14 @@ type Params struct {
 	Ps       perms.Permissions
 	Enricher mstlystcdata.IEnricher
 	Config   *config.Config
-	Store    vehicleStore
+	Store    vehiclesstore.IStore
 }
 
 func NewServer(p Params) *Server {
-	store := p.Store
-	if store == nil {
-		store = vehiclesstore.New(p.DB, &p.Config.Database.Custom)
-	}
-
 	return &Server{
 		ps:       p.Ps,
 		enricher: p.Enricher,
-		store:    store,
+		store:    p.Store,
 	}
 }
 

@@ -30,7 +30,7 @@ type Housekeeper struct {
 	logger *zap.Logger
 	tracer trace.Tracer
 
-	store  *vehiclesstore.Store
+	store  vehiclesstore.IStore
 	appCfg appconfig.IConfig
 }
 
