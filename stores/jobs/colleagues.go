@@ -336,13 +336,18 @@ func (s *Store) GetColleague(
 		return nil, nil
 	}
 	if dest.GetProps() == nil {
-		dest.Props = &jobscolleagues.ColleagueProps{UserId: dest.GetUserId(), Job: job}
+		dest.Props = &jobscolleagues.ColleagueProps{
+			UserId: dest.GetUserId(),
+			Job:    job,
+		}
 	}
+
 	labels, err := s.GetUserLabels(ctx, db, job, userId)
 	if err != nil {
 		return nil, err
 	}
 	dest.Props.Labels = labels
+
 	return dest, nil
 }
 

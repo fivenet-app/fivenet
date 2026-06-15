@@ -93,7 +93,7 @@ func init() {
 			Service:   permkeys.ConductServicePerm,
 			Name:      permkeys.ConductServiceCreateConductEntryPerm,
 			Attrs:     []perms.Attr{},
-			Order:     6700,
+			Order:     6500,
 			Icon:      "i-mdi-list-status",
 		},
 		{
@@ -101,7 +101,7 @@ func init() {
 			Service:   permkeys.ConductServicePerm,
 			Name:      permkeys.ConductServiceDeleteConductEntryPerm,
 			Attrs:     []perms.Attr{},
-			Order:     6700,
+			Order:     6500,
 			Icon:      "i-mdi-list-status",
 		},
 		{
@@ -115,7 +115,7 @@ func init() {
 					ValidValues: []string{"Own", "All"},
 				},
 			},
-			Order: 6700,
+			Order: 6500,
 			Icon:  "i-mdi-list-status",
 		},
 		{
@@ -123,7 +123,7 @@ func init() {
 			Service:   permkeys.ConductServicePerm,
 			Name:      permkeys.ConductServiceUpdateConductEntryPerm,
 			Attrs:     []perms.Attr{},
-			Order:     6700,
+			Order:     6500,
 			Icon:      "i-mdi-list-status",
 		},
 

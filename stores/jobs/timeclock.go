@@ -207,8 +207,17 @@ func (s *Store) CountInactiveEmployees(
 		SELECT(mysql.COUNT(mysql.DISTINCT(tTimeClock.UserID)).AS("data_count.total")).
 		FROM(tTimeClock.
 			INNER_JOIN(tColleague, tColleague.ID.EQ(tTimeClock.UserID)).
+			INNER_JOIN(tUserJobs,
+				mysql.AND(
+					tUserJobs.UserID.EQ(tColleague.ID),
+					tUserJobs.Job.EQ(mysql.String(q.Job)),
+				),
+			).
 			LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tTimeClock.UserID)).
-			LEFT_JOIN(tColleagueProps, mysql.AND(tColleagueProps.UserID.EQ(tTimeClock.UserID), tColleagueProps.Job.EQ(mysql.String(q.Job)))),
+			LEFT_JOIN(tColleagueProps, mysql.AND(
+				tColleagueProps.UserID.EQ(tTimeClock.UserID),
+				tColleagueProps.Job.EQ(mysql.String(q.Job))),
+			),
 		).
 		WHERE(condition)
 
@@ -668,8 +677,8 @@ func (s *Store) ListInactiveEmployees(
 		SELECT(
 			tTimeClock.UserID,
 			tColleague.ID,
-			tUserJobs.Job,
-			tUserJobs.Grade,
+			tUserJobs.Job.AS("colleague.job"),
+			tUserJobs.Grade.AS("colleague.job_grade"),
 			tColleague.Firstname,
 			tColleague.Lastname,
 			tColleague.Dateofbirth,
@@ -685,7 +694,10 @@ func (s *Store) ListInactiveEmployees(
 		).
 		FROM(tTimeClock.
 			INNER_JOIN(tColleague, tColleague.ID.EQ(tTimeClock.UserID)).
-			INNER_JOIN(tUserJobs, mysql.AND(tUserJobs.UserID.EQ(tColleague.ID), tUserJobs.Job.EQ(mysql.String(q.Job)))).
+			INNER_JOIN(tUserJobs, mysql.AND(
+				tUserJobs.UserID.EQ(tColleague.ID),
+				tUserJobs.Job.EQ(mysql.String(q.Job))),
+			).
 			LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tTimeClock.UserID)).
 			LEFT_JOIN(tColleagueProps, mysql.AND(tColleagueProps.UserID.EQ(tTimeClock.UserID), tColleagueProps.Job.EQ(mysql.String(q.Job)))).
 			LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tUserProps.AvatarFileID)),

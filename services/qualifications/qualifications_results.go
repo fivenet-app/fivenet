@@ -78,7 +78,7 @@ func (s *Server) ListQualificationsResults(
 		)
 
 		where = mysql.AND(
-			tQuali.DeletedAt.IS_NULL(),
+			tQuali.AS("qualification_short").DeletedAt.IS_NULL(),
 			mysql.OR(
 				mysql.AND(
 					tQualiResults.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
