@@ -11,8 +11,7 @@ import type { AccessLevelEnum, AccessType, MixedAccessEntry } from './helpers';
 const props = withDefaults(
     defineProps<{
         disabled?: boolean;
-        showRequired?: boolean;
-        showRequiredCheckbox?: boolean;
+        requiredMode?: 'badge' | 'checkbox' | 'none';
         lockRequiredCheckbox?: boolean;
         accessTypes: AccessType[];
         accessRoles?: AccessLevelEnum[];
@@ -23,8 +22,7 @@ const props = withDefaults(
     }>(),
     {
         disabled: false,
-        showRequired: false,
-        showRequiredCheckbox: false,
+        requiredMode: 'badge',
         lockRequiredCheckbox: false,
         accessRoles: () => [],
         jobs: () => [],
@@ -60,19 +58,24 @@ const accessRoleItems = computed(() => {
 
 const requiredSubjectLocked = computed(() => props.disabled || !!entry.value.required);
 
-watchEffect(() => {
-    if (!entry.value.required) return;
+watch(
+    () => [entry.value.required, entry.value.requiredAccess, entry.value.access] as const,
+    ([required, requiredAccess, access]) => {
+        if (!required) return;
 
-    if (entry.value.requiredAccess === undefined) {
-        entry.value.requiredAccess = entry.value.access;
-    }
+        const nextRequiredAccess = requiredAccess ?? access;
+        const nextAccess = Math.max(access, nextRequiredAccess);
 
-    if (entry.value.requiredAccess !== undefined && entry.value.access < entry.value.requiredAccess) {
-        entry.value.access = entry.value.requiredAccess;
-    }
-});
+        if (nextRequiredAccess === requiredAccess && nextAccess === access) return;
 
-const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+        entry.value = {
+            ...entry.value,
+            requiredAccess: nextRequiredAccess,
+            access: nextAccess,
+        };
+    },
+    { immediate: true },
+);
 
 const selectedUser = ref<UserShort | undefined>();
 watch(selectedUser, () => {
@@ -94,6 +97,8 @@ async function findUser(userId?: number): Promise<UserShort[]> {
         userIds: [userId],
     });
 }
+
+const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 async function setFromProps(): Promise<void> {
     if (entry.value.type === 'user' && entry.value.userId !== undefined) {
@@ -159,11 +164,13 @@ watch(
     <div class="flex flex-1 flex-col gap-1 pb-2 md:flex-row md:pb-0">
         <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
             <div class="flex flex-initial flex-row items-center gap-2">
-                <UFormField v-if="showRequired && entry.required" :name="`${$props.name}.required`">
-                    <UBadge color="amber" variant="soft" :label="$t('common.required')" />
+                <UFormField v-if="requiredMode === 'badge' && entry.required" :name="`${$props.name}.required`">
+                    <UTooltip :text="$t('components.access.required_notice')">
+                        <UBadge color="amber" variant="soft" :label="$t('common.required')" />
+                    </UTooltip>
                 </UFormField>
 
-                <UFormField v-if="showRequiredCheckbox" :name="`${$props.name}.required`">
+                <UFormField v-if="requiredMode === 'checkbox'" :name="`${$props.name}.required`">
                     <UTooltip class="flex-initial" :text="$t('common.require')">
                         <UCheckbox
                             v-model="entry.required"
@@ -343,7 +350,7 @@ watch(
             </UFormField>
         </div>
 
-        <UFormField class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
+        <UFormField v-if="requiredMode !== 'none'" class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
             <UTooltip v-if="!disabled" :text="entry.required ? $t('common.required') : $t('components.access.remove_entry')">
                 <UButton
                     class="flex-initial"

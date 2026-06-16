@@ -25,8 +25,7 @@ const props = withDefaults(
         accessRoles: AccessLevelEnum[];
         defaultAccess?: number;
         disabled?: boolean;
-        showRequired?: boolean;
-        showRequiredCheckbox?: boolean;
+        requiredMode?: 'badge' | 'checkbox' | 'none';
         lockRequiredCheckbox?: boolean;
         defaultAccessType?: AccessEntryType;
         totalLimit?: number;
@@ -42,8 +41,7 @@ const props = withDefaults(
         accessTypes: undefined,
         defaultAccess: 2, // All `AccessLevel` should have 0 = UNSPECIFIED, 1 = BLOCKED, 2 = VIEW levels
         disabled: false,
-        showRequired: false,
-        showRequiredCheckbox: false,
+        requiredMode: 'badge',
         defaultAccessType: 'job',
         totalLimit: undefined,
         hideGrade: false,
@@ -238,8 +236,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             :access-types="aTypes"
             :access-roles="accessRoles"
             :disabled="disabled"
-            :show-required="showRequired"
-            :show-required-checkbox="showRequiredCheckbox"
+            :required-mode="requiredMode"
             :lock-required-checkbox="lockRequiredCheckbox"
             :jobs="jobsList"
             :hide-grade="hideGrade"
@@ -249,8 +246,8 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             @delete="access?.splice(idx, 1)"
         />
 
-        <div>
-            <UTooltip v-if="!disabled" :text="$t('components.access.add_entry')">
+        <div v-if="!disabled" class="mt-1">
+            <UTooltip :text="$t('components.access.add_entry')">
                 <UButton
                     class="w-full justify-center md:w-auto"
                     :disabled="access.length >= maxEntries"

@@ -708,13 +708,13 @@ provide('yjsProvider', provider);
                                 <UFormField name="access">
                                     <AccessManager
                                         v-model:jobs="state.access.jobs"
-                                        v-model:users="state.access.users"
-                                        :disabled="!canDo.access"
-                                        :target-id="documentId ?? 0"
-                                        :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                        show-required
-                                        name="access"
-                                    />
+                                         v-model:users="state.access.users"
+                                         :disabled="!canDo.access"
+                                         :target-id="documentId ?? 0"
+                                         :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
+                                         required-mode="badge"
+                                         name="access"
+                                     />
                                 </UFormField>
                             </UPageCard>
                         </UContainer>

@@ -615,14 +615,14 @@ const formRef = useTemplateRef('formRef');
                                     :target-id="templateId ?? 0"
                                     :access-types="accessTypes"
                                     :access-roles="
-                                        enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel').filter(
-                                            (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
-                                        )
-                                    "
-                                    show-required-checkbox
-                                    name="jobAccess"
-                                    full-name
-                                />
+                                         enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel').filter(
+                                             (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
+                                         )
+                                     "
+                                     required-mode="checkbox"
+                                     name="jobAccess"
+                                     full-name
+                                 />
                             </UPageCard>
 
                             <UPageCard :title="$t('common.requirements', 2)">
@@ -745,13 +745,13 @@ const formRef = useTemplateRef('formRef');
                             <UPageCard :title="$t('common.access')">
                                 <AccessManager
                                     v-model:jobs="state.contentAccess.jobs"
-                                    v-model:users="state.contentAccess.users"
-                                    :target-id="templateId ?? 0"
-                                    :access-types="contentAccessTypes"
-                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                    show-required-checkbox
-                                    name="contentAccess"
-                                />
+                                     v-model:users="state.contentAccess.users"
+                                     :target-id="templateId ?? 0"
+                                     :access-types="contentAccessTypes"
+                                     :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
+                                     required-mode="checkbox"
+                                     name="contentAccess"
+                                 />
                             </UPageCard>
                         </UContainer>
                     </template>
