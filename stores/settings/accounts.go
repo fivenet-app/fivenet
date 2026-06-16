@@ -22,36 +22,36 @@ var (
 
 func (s *Store) ListAccounts(
 	ctx context.Context,
-	req *pbsettings.ListAccountsRequest,
+	opts ListAccountsOptions,
 ) (*pbsettings.ListAccountsResponse, error) {
 	var t mysql.ReadableTable = tAccounts
 
 	condition := mysql.Bool(true)
-	if req.License != nil && req.GetLicense() != "" {
+	if opts.License != "" {
 		condition = condition.AND(
-			tAccounts.License.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetLicense()))),
+			tAccounts.License.LIKE(mysql.String(fmt.Sprintf("%%%s%%", opts.License))),
 		)
 	}
-	if req.GetOnlyDisabled() {
+	if opts.OnlyDisabled {
 		condition = condition.AND(tAccounts.Enabled.EQ(mysql.Bool(false)))
 	}
-	if req.Username != nil && req.GetUsername() != "" {
+	if opts.Username != "" {
 		condition = condition.AND(
-			tAccounts.Username.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetUsername()))),
+			tAccounts.Username.LIKE(mysql.String(fmt.Sprintf("%%%s%%", opts.Username))),
 		)
 	}
-	if req.ExternalId != nil && req.GetExternalId() != "" {
+	if opts.ExternalID != "" {
 		condition = condition.AND(
-			tOauth2.ExternalID.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetExternalId()))),
+			tOauth2.ExternalID.LIKE(mysql.String(fmt.Sprintf("%%%s%%", opts.ExternalID))),
 		)
 		t = t.
 			INNER_JOIN(tOauth2,
 				tOauth2.AccountID.EQ(tAccounts.ID),
 			)
 	}
-	if req.Group != nil && req.GetGroup() != "" {
+	if opts.Group != "" {
 		condition = condition.AND(
-			dbutils.JSON_CONTAINS(tAccounts.Groups, mysql.String(req.GetGroup())),
+			dbutils.JSON_CONTAINS(tAccounts.Groups, mysql.String(opts.Group)),
 		)
 	}
 
@@ -69,36 +69,13 @@ func (s *Store) ListAccounts(
 		}
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 30)
+	pag, limit := opts.Pagination.GetResponseWithPageSize(count.Total, 30)
 	resp := &pbsettings.ListAccountsResponse{Pagination: pag}
 	if count.Total <= 0 {
 		return resp, nil
 	}
 
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "license":
-				column = tAccounts.License
-			case "username":
-				fallthrough
-			case "id":
-				fallthrough
-			default:
-				column = tAccounts.ID
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tAccounts.CreatedAt.DESC())
-	}
+	orderBys := s.accountSorter.Build(opts.Sort)
 
 	var accountIDs []int64
 	idStmt := tAccounts.
@@ -108,7 +85,7 @@ func (s *Store) ListAccounts(
 		FROM(t).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
-		OFFSET(req.GetPagination().GetOffset()).
+		OFFSET(opts.Pagination.GetOffset()).
 		LIMIT(limit)
 
 	if err := idStmt.QueryContext(ctx, s.db, &accountIDs); err != nil {

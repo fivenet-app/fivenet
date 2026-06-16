@@ -23,6 +23,7 @@ type fivenetDocumentsStampsTable struct {
 	VariantsJSON mysql.ColumnString
 	SortKey      mysql.ColumnString
 	CreatedAt    mysql.ColumnTimestamp
+	UpdatedAt    mysql.ColumnTimestamp
 	DeletedAt    mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
@@ -71,10 +72,11 @@ func newFivenetDocumentsStampsTableImpl(schemaName, tableName, alias string) fiv
 		VariantsJSONColumn = mysql.StringColumn("variants_json")
 		SortKeyColumn      = mysql.StringColumn("sort_key")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
-		allColumns         = mysql.ColumnList{IDColumn, NameColumn, SvgTemplateColumn, VariantsJSONColumn, SortKeyColumn, CreatedAtColumn, DeletedAtColumn}
-		mutableColumns     = mysql.ColumnList{NameColumn, SvgTemplateColumn, VariantsJSONColumn, SortKeyColumn, CreatedAtColumn, DeletedAtColumn}
-		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
+		allColumns         = mysql.ColumnList{IDColumn, NameColumn, SvgTemplateColumn, VariantsJSONColumn, SortKeyColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		mutableColumns     = mysql.ColumnList{NameColumn, SvgTemplateColumn, VariantsJSONColumn, SortKeyColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return fivenetDocumentsStampsTable{
@@ -87,6 +89,7 @@ func newFivenetDocumentsStampsTableImpl(schemaName, tableName, alias string) fiv
 		VariantsJSON: VariantsJSONColumn,
 		SortKey:      SortKeyColumn,
 		CreatedAt:    CreatedAtColumn,
+		UpdatedAt:    UpdatedAtColumn,
 		DeletedAt:    DeletedAtColumn,
 
 		AllColumns:     allColumns,

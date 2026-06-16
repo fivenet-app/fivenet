@@ -47,7 +47,10 @@ func (s *Store) SendUsers(ctx context.Context, data []*syncdata.DataUser) (int64
 	return s.handleUsersData(ctx, data)
 }
 
-func (s *Store) DeleteUsers(ctx context.Context, userIDs []int32) (*pbsync.DeleteDataResponse, error) {
+func (s *Store) DeleteUsers(
+	ctx context.Context,
+	userIDs []int32,
+) (*pbsync.DeleteDataResponse, error) {
 	if len(userIDs) == 0 {
 		return &pbsync.DeleteDataResponse{}, nil
 	}
@@ -82,7 +85,9 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 		userIds = append(userIds, mysql.Int32(us[i].GetUserId()))
 
 		if len(us[i].Jobs) == 0 {
-			us[i].Jobs = []*users.UserJob{{Job: us[i].GetJob(), Grade: us[i].GetJobGrade(), IsPrimary: true}}
+			us[i].Jobs = []*users.UserJob{
+				{Job: us[i].GetJob(), Grade: us[i].GetJobGrade(), IsPrimary: true},
+			}
 		} else {
 			slices.SortFunc(us[i].GetJobs(), func(a, b *users.UserJob) int {
 				if a.GetIsPrimary() && !b.GetIsPrimary() {
@@ -111,7 +116,9 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 
 		if len(us[i].PhoneNumbers) == 0 {
 			if us[i].GetPhoneNumber() != "" {
-				us[i].PhoneNumbers = []*users.PhoneNumber{{Number: us[i].GetPhoneNumber(), IsPrimary: true}}
+				us[i].PhoneNumbers = []*users.PhoneNumber{
+					{Number: us[i].GetPhoneNumber(), IsPrimary: true},
+				}
 			} else {
 				foundPrimary := false
 				for _, phoneNumber := range us[i].GetPhoneNumbers() {
@@ -130,7 +137,11 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 	}
 
 	checkStmt := tSyncUser.
-		SELECT(tSyncUser.UserID.AS("user_id"), tSyncUser.Identifier.AS("identifier"), tSyncUser.DataHash.AS("data_hash")).
+		SELECT(
+			tSyncUser.UserID.AS("user_id"),
+			tSyncUser.Identifier.AS("identifier"),
+			tSyncUser.DataHash.AS("data_hash"),
+		).
 		FROM(tSyncUser).
 		WHERE(tSyncUser.UserID.IN(userIds...)).
 		LIMIT(int64(len(userIds)))
@@ -147,16 +158,28 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 		toCreate = us
 	} else {
 		for _, user := range us {
-			if idx := slices.IndexFunc(existing, func(userId *existingUser) bool { return userId.UserID == user.GetUserId() }); idx == -1 {
+			if idx := slices.IndexFunc(
+				existing,
+				func(userId *existingUser) bool { return userId.UserID == user.GetUserId() },
+			); idx == -1 {
 				toCreate = append(toCreate, user)
 			} else {
 				existingUser := existing[idx]
 				_, hash, err := protoutils.JSONAndHash(user)
 				if err != nil {
-					return 0, fmt.Errorf("failed to get JSON and hash for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+					return 0, fmt.Errorf(
+						"failed to get JSON and hash for user %d (%s). %w",
+						user.GetUserId(),
+						user.GetIdentifier(),
+						err,
+					)
 				}
 				if existingUser.DataHash == hash {
-					s.logger.Info("user data hash is the same as existing entry, skipping update for user", zap.Int32("user_id", user.GetUserId()), zap.String("identifier", user.GetIdentifier()))
+					s.logger.Info(
+						"user data hash is the same as existing entry, skipping update for user",
+						zap.Int32("user_id", user.GetUserId()),
+						zap.String("identifier", user.GetIdentifier()),
+					)
 					continue
 				}
 				toUpdate = append(toUpdate, user)
@@ -169,16 +192,33 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 		for _, user := range toCreate {
 			affected, err := s.createUser(ctx, syncedAt, user)
 			if err != nil {
-				return 0, fmt.Errorf("failed to create user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+				return 0, fmt.Errorf(
+					"failed to create user %d (%s). %w",
+					user.GetUserId(),
+					user.GetIdentifier(),
+					err,
+				)
 			}
 			if affected == -1 {
-				stmt := tUsers.DELETE().WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).LIMIT(1)
+				stmt := tUsers.DELETE().
+					WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).
+					LIMIT(1)
 				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-					return 0, fmt.Errorf("failed to delete duplicate user %d with identifier %s. %w", user.GetUserId(), user.GetIdentifier(), err)
+					return 0, fmt.Errorf(
+						"failed to delete duplicate user %d with identifier %s. %w",
+						user.GetUserId(),
+						user.GetIdentifier(),
+						err,
+					)
 				}
 				affected, err = s.updateUser(ctx, syncedAt, user)
 				if err != nil {
-					return 0, fmt.Errorf("failed to update user %d (%s) after duplicate removal. %w", user.GetUserId(), user.GetIdentifier(), err)
+					return 0, fmt.Errorf(
+						"failed to update user %d (%s) after duplicate removal. %w",
+						user.GetUserId(),
+						user.GetIdentifier(),
+						err,
+					)
 				}
 			}
 			rowsAffected += affected
@@ -189,16 +229,33 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 		for _, user := range toUpdate {
 			affected, err := s.updateUser(ctx, syncedAt, user)
 			if err != nil {
-				return 0, fmt.Errorf("failed to update user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+				return 0, fmt.Errorf(
+					"failed to update user %d (%s). %w",
+					user.GetUserId(),
+					user.GetIdentifier(),
+					err,
+				)
 			}
 			if affected == -1 {
-				stmt := tUsers.DELETE().WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).LIMIT(1)
+				stmt := tUsers.DELETE().
+					WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).
+					LIMIT(1)
 				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-					return 0, fmt.Errorf("failed to delete duplicate user %d with identifier %s. %w", user.GetUserId(), user.GetIdentifier(), err)
+					return 0, fmt.Errorf(
+						"failed to delete duplicate user %d with identifier %s. %w",
+						user.GetUserId(),
+						user.GetIdentifier(),
+						err,
+					)
 				}
 				affected, err = s.updateUser(ctx, syncedAt, user)
 				if err != nil {
-					return 0, fmt.Errorf("failed to update user %d (%s) after duplicate removal. %w", user.GetUserId(), user.GetIdentifier(), err)
+					return 0, fmt.Errorf(
+						"failed to update user %d (%s) after duplicate removal. %w",
+						user.GetUserId(),
+						user.GetIdentifier(),
+						err,
+					)
 				}
 			}
 			rowsAffected += affected
@@ -208,10 +265,17 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 	return rowsAffected, nil
 }
 
-func (s *Store) createUser(ctx context.Context, syncedAt time.Time, user *syncdata.DataUser) (int64, error) {
+func (s *Store) createUser(
+	ctx context.Context,
+	syncedAt time.Time,
+	user *syncdata.DataUser,
+) (int64, error) {
 	var accountIdStmt mysql.SelectStatement = nil
 	if user.GetIdentifier() != "" {
-		accountIdStmt = tAccounts.SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).FROM(tAccounts).WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).LIMIT(1)
+		accountIdStmt = tAccounts.SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).
+			FROM(tAccounts).
+			WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).
+			LIMIT(1)
 	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -256,16 +320,41 @@ func (s *Store) createUser(ctx context.Context, syncedAt time.Time, user *syncda
 		return 0, err
 	}
 	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
-		return 0, fmt.Errorf("failed to handle user jobs for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+		return 0, fmt.Errorf(
+			"failed to handle user jobs for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
 	}
 	if err := s.handleUserLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
-		return 0, fmt.Errorf("failed to handle user licenses for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+		return 0, fmt.Errorf(
+			"failed to handle user licenses for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
 	}
-	if err := s.handleUserPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
-		return 0, fmt.Errorf("failed to handle user phone numbers for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+	if err := s.handleUserPhoneNumbers(
+		ctx,
+		tx,
+		user.GetUserId(),
+		user.GetPhoneNumbers(),
+	); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user phone numbers for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
 	}
 	if err := s.setUserBloodType(ctx, tx, user.GetUserId()); err != nil {
-		return 0, fmt.Errorf("failed to set user blood type for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+		return 0, fmt.Errorf(
+			"failed to set user blood type for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -275,10 +364,20 @@ func (s *Store) createUser(ctx context.Context, syncedAt time.Time, user *syncda
 	return rows, nil
 }
 
-func (s *Store) createOrUpdateSyncUserEntry(ctx context.Context, tx *sql.Tx, syncedAt time.Time, user *syncdata.DataUser) error {
+func (s *Store) createOrUpdateSyncUserEntry(
+	ctx context.Context,
+	tx *sql.Tx,
+	syncedAt time.Time,
+	user *syncdata.DataUser,
+) error {
 	out, hash, err := protoutils.JSONAndHash(user)
 	if err != nil {
-		return fmt.Errorf("failed to marshal user data to JSON for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+		return fmt.Errorf(
+			"failed to marshal user data to JSON for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
 	}
 
 	syncStmt := tSyncUser.
@@ -316,14 +415,21 @@ func (s *Store) setUserBloodType(ctx context.Context, tx *sql.Tx, userId int32) 
 	return nil
 }
 
-func (s *Store) updateUser(ctx context.Context, syncedAt time.Time, user *syncdata.DataUser) (int64, error) {
+func (s *Store) updateUser(
+	ctx context.Context,
+	syncedAt time.Time,
+	user *syncdata.DataUser,
+) (int64, error) {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return 0, err
 	}
 	defer tx.Rollback()
 
-	accountIdStmt := tAccounts.SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).FROM(tAccounts).WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).LIMIT(1)
+	accountIdStmt := tAccounts.SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).
+		FROM(tAccounts).
+		WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).
+		LIMIT(1)
 
 	stmt := tUsers.
 		UPDATE(tUsers.ID, tUsers.AccountID, tUsers.License, tUsers.Identifier, tUsers.Firstname, tUsers.Lastname, tUsers.Dateofbirth, tUsers.Job, tUsers.JobGrade, tUsers.Sex, tUsers.PhoneNumber, tUsers.Height, tUsers.Visum, tUsers.Playtime).
@@ -347,13 +453,33 @@ func (s *Store) updateUser(ctx context.Context, syncedAt time.Time, user *syncda
 		return 0, err
 	}
 	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
-		return 0, fmt.Errorf("failed to handle user jobs for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+		return 0, fmt.Errorf(
+			"failed to handle user jobs for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
 	}
 	if err := s.handleUserLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
-		return 0, fmt.Errorf("failed to handle user licenses for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+		return 0, fmt.Errorf(
+			"failed to handle user licenses for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
 	}
-	if err := s.handleUserPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
-		return 0, fmt.Errorf("failed to handle user phone numbers for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+	if err := s.handleUserPhoneNumbers(
+		ctx,
+		tx,
+		user.GetUserId(),
+		user.GetPhoneNumbers(),
+	); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user phone numbers for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -363,7 +489,12 @@ func (s *Store) updateUser(ctx context.Context, syncedAt time.Time, user *syncda
 	return rows, nil
 }
 
-func (s *Store) handleUserLicenses(ctx context.Context, tx *sql.Tx, userId int32, licenses []*userslicenses.License) error {
+func (s *Store) handleUserLicenses(
+	ctx context.Context,
+	tx *sql.Tx,
+	userId int32,
+	licenses []*userslicenses.License,
+) error {
 	if len(licenses) == 0 {
 		stmt := tLicenses.DELETE().WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -372,11 +503,18 @@ func (s *Store) handleUserLicenses(ctx context.Context, tx *sql.Tx, userId int32
 		return nil
 	}
 
-	selectStmt := tLicenses.SELECT(tLicenses.Type).FROM(tLicenses).WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).ORDER_BY(tLicenses.Type)
+	selectStmt := tLicenses.SELECT(tLicenses.Type).
+		FROM(tLicenses).
+		WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).
+		ORDER_BY(tLicenses.Type)
 	currentLicenses := []string{}
 	if err := selectStmt.QueryContext(ctx, tx, &currentLicenses); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return fmt.Errorf("failed to query current user licenses for user ID %d. %w", userId, err)
+			return fmt.Errorf(
+				"failed to query current user licenses for user ID %d. %w",
+				userId,
+				err,
+			)
 		}
 	}
 
@@ -402,7 +540,9 @@ func (s *Store) handleUserLicenses(ctx context.Context, tx *sql.Tx, userId int32
 		for _, t := range toRemove {
 			types = append(types, mysql.String(t))
 		}
-		stmt := tLicenses.DELETE().WHERE(mysql.AND(tLicenses.UserID.EQ(mysql.Int32(userId)), tLicenses.Type.IN(types...))).LIMIT(25)
+		stmt := tLicenses.DELETE().
+			WHERE(mysql.AND(tLicenses.UserID.EQ(mysql.Int32(userId)), tLicenses.Type.IN(types...))).
+			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
 		}
@@ -411,7 +551,12 @@ func (s *Store) handleUserLicenses(ctx context.Context, tx *sql.Tx, userId int32
 	return nil
 }
 
-func (s *Store) handleUserJobs(ctx context.Context, tx *sql.Tx, userId int32, jobs []*users.UserJob) error {
+func (s *Store) handleUserJobs(
+	ctx context.Context,
+	tx *sql.Tx,
+	userId int32,
+	jobs []*users.UserJob,
+) error {
 	slices.SortFunc(jobs, func(a, b *users.UserJob) int {
 		if a.GetIsPrimary() && !b.GetIsPrimary() {
 			return -1
@@ -431,7 +576,10 @@ func (s *Store) handleUserJobs(ctx context.Context, tx *sql.Tx, userId int32, jo
 	}
 
 	tJobs := tCitizensJobs.AS("user_job")
-	selectStmt := tJobs.SELECT(tJobs.Job, tJobs.Grade, tJobs.IsPrimary).FROM(tJobs).WHERE(tJobs.UserID.EQ(mysql.Int32(userId))).ORDER_BY(tJobs.IsPrimary, tJobs.Job, tJobs.Grade)
+	selectStmt := tJobs.SELECT(tJobs.Job, tJobs.Grade, tJobs.IsPrimary).
+		FROM(tJobs).
+		WHERE(tJobs.UserID.EQ(mysql.Int32(userId))).
+		ORDER_BY(tJobs.IsPrimary, tJobs.Job, tJobs.Grade)
 	currentJobs := []*users.UserJob{}
 	if err := selectStmt.QueryContext(ctx, tx, &currentJobs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -441,11 +589,20 @@ func (s *Store) handleUserJobs(ctx context.Context, tx *sql.Tx, userId int32, jo
 
 	toAdd, toUpdate, toRemove := compareJobs(currentJobs, jobs)
 	if len(toAdd) > 0 || len(toUpdate) > 0 {
-		stmt := tCitizensJobs.INSERT(tCitizensJobs.UserID, tCitizensJobs.Job, tCitizensJobs.Grade, tCitizensJobs.IsPrimary)
+		stmt := tCitizensJobs.INSERT(
+			tCitizensJobs.UserID,
+			tCitizensJobs.Job,
+			tCitizensJobs.Grade,
+			tCitizensJobs.IsPrimary,
+		)
 		for _, t := range append(toAdd, toUpdate...) {
 			stmt = stmt.VALUES(userId, t.GetJob(), t.GetGrade(), t.GetIsPrimary())
 		}
-		stmt = stmt.ON_DUPLICATE_KEY_UPDATE(tCitizensJobs.Job.SET(mysql.RawString("VALUES(`job`)")), tCitizensJobs.Grade.SET(mysql.RawInt("VALUES(`grade`)")), tCitizensJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")))
+		stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
+			tCitizensJobs.Job.SET(mysql.RawString("VALUES(`job`)")),
+			tCitizensJobs.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
+			tCitizensJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
+		)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user jobs insert statement. %w", err)
 		}
@@ -456,7 +613,9 @@ func (s *Store) handleUserJobs(ctx context.Context, tx *sql.Tx, userId int32, jo
 		for _, t := range toRemove {
 			jobExprs = append(jobExprs, mysql.String(t.GetJob()))
 		}
-		stmt := tCitizensJobs.DELETE().WHERE(mysql.AND(tCitizensJobs.UserID.EQ(mysql.Int32(userId)), tCitizensJobs.Job.IN(jobExprs...))).LIMIT(25)
+		stmt := tCitizensJobs.DELETE().
+			WHERE(mysql.AND(tCitizensJobs.UserID.EQ(mysql.Int32(userId)), tCitizensJobs.Job.IN(jobExprs...))).
+			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user jobs delete statement. %w", err)
 		}
@@ -465,7 +624,9 @@ func (s *Store) handleUserJobs(ctx context.Context, tx *sql.Tx, userId int32, jo
 	return nil
 }
 
-func compareJobs(currentJobs, jobs []*users.UserJob) ([]*users.UserJob, []*users.UserJob, []*users.UserJob) {
+func compareJobs(
+	currentJobs, jobs []*users.UserJob,
+) ([]*users.UserJob, []*users.UserJob, []*users.UserJob) {
 	toAdd, toUpdate, toRemove := []*users.UserJob{}, []*users.UserJob{}, []*users.UserJob{}
 	currentJobsMap := make(map[string]*users.UserJob)
 	for _, job := range currentJobs {
@@ -477,7 +638,8 @@ func compareJobs(currentJobs, jobs []*users.UserJob) ([]*users.UserJob, []*users
 	}
 	for jobName, incomingJob := range incomingJobsMap {
 		if currentJob, exists := currentJobsMap[jobName]; exists {
-			if currentJob.GetIsPrimary() != incomingJob.GetIsPrimary() || currentJob.GetGrade() != incomingJob.GetGrade() {
+			if currentJob.GetIsPrimary() != incomingJob.GetIsPrimary() ||
+				currentJob.GetGrade() != incomingJob.GetGrade() {
 				toUpdate = append(toUpdate, incomingJob)
 			}
 		} else {
@@ -492,7 +654,12 @@ func compareJobs(currentJobs, jobs []*users.UserJob) ([]*users.UserJob, []*users
 	return toAdd, toUpdate, toRemove
 }
 
-func (s *Store) handleUserPhoneNumbers(ctx context.Context, tx *sql.Tx, userId int32, phoneNumbers []*users.PhoneNumber) error {
+func (s *Store) handleUserPhoneNumbers(
+	ctx context.Context,
+	tx *sql.Tx,
+	userId int32,
+	phoneNumbers []*users.PhoneNumber,
+) error {
 	slices.SortFunc(phoneNumbers, func(a, b *users.PhoneNumber) int {
 		if a.GetIsPrimary() && !b.GetIsPrimary() {
 			return -1
@@ -504,7 +671,9 @@ func (s *Store) handleUserPhoneNumbers(ctx context.Context, tx *sql.Tx, userId i
 	})
 
 	if len(phoneNumbers) == 0 {
-		stmt := tCitizensPhoneNumbers.DELETE().WHERE(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId))).LIMIT(25)
+		stmt := tCitizensPhoneNumbers.DELETE().
+			WHERE(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId))).
+			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user phone numbers delete statement. %w", err)
 		}
@@ -512,21 +681,35 @@ func (s *Store) handleUserPhoneNumbers(ctx context.Context, tx *sql.Tx, userId i
 	}
 
 	tPhoneNumbers := tCitizensPhoneNumbers.AS("phone_number")
-	selectStmt := tPhoneNumbers.SELECT(tPhoneNumbers.UserID, tPhoneNumbers.PhoneNumber, tPhoneNumbers.IsPrimary).FROM(tPhoneNumbers).WHERE(tPhoneNumbers.UserID.EQ(mysql.Int32(userId))).ORDER_BY(tPhoneNumbers.IsPrimary, tPhoneNumbers.PhoneNumber)
+	selectStmt := tPhoneNumbers.SELECT(tPhoneNumbers.UserID, tPhoneNumbers.PhoneNumber, tPhoneNumbers.IsPrimary).
+		FROM(tPhoneNumbers).
+		WHERE(tPhoneNumbers.UserID.EQ(mysql.Int32(userId))).
+		ORDER_BY(tPhoneNumbers.IsPrimary, tPhoneNumbers.PhoneNumber)
 	currentPhoneNumbers := []*users.PhoneNumber{}
 	if err := selectStmt.QueryContext(ctx, tx, &currentPhoneNumbers); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return fmt.Errorf("failed to query current user phone numbers for user ID %d. %w", userId, err)
+			return fmt.Errorf(
+				"failed to query current user phone numbers for user ID %d. %w",
+				userId,
+				err,
+			)
 		}
 	}
 
 	toAdd, toUpdate, toRemove := comparePhoneNumbers(currentPhoneNumbers, phoneNumbers)
 	if len(toAdd) > 0 || len(toUpdate) > 0 {
-		stmt := tCitizensPhoneNumbers.INSERT(tCitizensPhoneNumbers.UserID, tCitizensPhoneNumbers.PhoneNumber, tCitizensPhoneNumbers.IsPrimary)
+		stmt := tCitizensPhoneNumbers.INSERT(
+			tCitizensPhoneNumbers.UserID,
+			tCitizensPhoneNumbers.PhoneNumber,
+			tCitizensPhoneNumbers.IsPrimary,
+		)
 		for _, t := range append(toAdd, toUpdate...) {
 			stmt = stmt.VALUES(userId, t.GetNumber(), t.GetIsPrimary())
 		}
-		stmt = stmt.ON_DUPLICATE_KEY_UPDATE(tCitizensPhoneNumbers.PhoneNumber.SET(mysql.RawString("VALUES(`phone_number`)")), tCitizensPhoneNumbers.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")))
+		stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
+			tCitizensPhoneNumbers.PhoneNumber.SET(mysql.RawString("VALUES(`phone_number`)")),
+			tCitizensPhoneNumbers.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
+		)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user phone numbers insert statement. %w", err)
 		}
@@ -537,7 +720,9 @@ func (s *Store) handleUserPhoneNumbers(ctx context.Context, tx *sql.Tx, userId i
 		for _, t := range toRemove {
 			phoneExprs = append(phoneExprs, mysql.String(t.GetNumber()))
 		}
-		stmt := tCitizensPhoneNumbers.DELETE().WHERE(mysql.AND(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId)), tCitizensPhoneNumbers.PhoneNumber.IN(phoneExprs...))).LIMIT(25)
+		stmt := tCitizensPhoneNumbers.DELETE().
+			WHERE(mysql.AND(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId)), tCitizensPhoneNumbers.PhoneNumber.IN(phoneExprs...))).
+			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user phone numbers delete statement. %w", err)
 		}
@@ -546,7 +731,9 @@ func (s *Store) handleUserPhoneNumbers(ctx context.Context, tx *sql.Tx, userId i
 	return nil
 }
 
-func comparePhoneNumbers(currentPhoneNumbers, phoneNumbers []*users.PhoneNumber) ([]*users.PhoneNumber, []*users.PhoneNumber, []*users.PhoneNumber) {
+func comparePhoneNumbers(
+	currentPhoneNumbers, phoneNumbers []*users.PhoneNumber,
+) ([]*users.PhoneNumber, []*users.PhoneNumber, []*users.PhoneNumber) {
 	toAdd, toUpdate, toRemove := []*users.PhoneNumber{}, []*users.PhoneNumber{}, []*users.PhoneNumber{}
 	currentPhoneNumbersMap := make(map[string]*users.PhoneNumber)
 	for _, phoneNumber := range currentPhoneNumbers {
@@ -565,7 +752,8 @@ func comparePhoneNumbers(currentPhoneNumbers, phoneNumbers []*users.PhoneNumber)
 	}
 	for number, incomingPhoneNumber := range incomingPhoneNumbersMap {
 		if currentPhoneNumber, exists := currentPhoneNumbersMap[number]; exists {
-			if currentPhoneNumber.GetIsPrimary() != incomingPhoneNumber.GetIsPrimary() || currentPhoneNumber.GetNumber() != incomingPhoneNumber.GetNumber() {
+			if currentPhoneNumber.GetIsPrimary() != incomingPhoneNumber.GetIsPrimary() ||
+				currentPhoneNumber.GetNumber() != incomingPhoneNumber.GetNumber() {
 				toUpdate = append(toUpdate, incomingPhoneNumber)
 			}
 		} else {
@@ -574,7 +762,8 @@ func comparePhoneNumbers(currentPhoneNumbers, phoneNumbers []*users.PhoneNumber)
 	}
 	if newPrimary != nil {
 		for _, currentPhoneNumber := range currentPhoneNumbers {
-			if currentPhoneNumber.GetIsPrimary() && currentPhoneNumber.GetNumber() != newPrimary.GetNumber() {
+			if currentPhoneNumber.GetIsPrimary() &&
+				currentPhoneNumber.GetNumber() != newPrimary.GetNumber() {
 				currentPhoneNumber.IsPrimary = false
 				toUpdate = append(toUpdate, currentPhoneNumber)
 			}

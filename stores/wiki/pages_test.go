@@ -7,6 +7,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -23,6 +24,7 @@ func TestStoreListPages(t *testing.T) {
 	query := ListPagesQuery{
 		Job:        "police",
 		Superuser:  true,
+		UserInfo:   &userinfo.UserInfo{Superuser: true},
 		Pagination: &database.PaginationRequest{PageSize: &pageSize},
 	}
 
@@ -76,20 +78,23 @@ func TestStoreListPagesRootOnly(t *testing.T) {
 	store := New(db)
 	pageSize := int64(5)
 	query := ListPagesQuery{
-		Job:               "police",
-		RootOnly:          true,
-		Superuser:         false,
-		UserJob:           "police",
-		UserID:            7,
-		ViewCondition:     nil,
-		RootViewCondition: nil,
-		Pagination:        &database.PaginationRequest{PageSize: &pageSize},
+		Job:        "police",
+		RootOnly:   true,
+		Superuser:  false,
+		UserInfo:   &userinfo.UserInfo{UserId: 7, Job: "police", JobGrade: 6},
+		Pagination: &database.PaginationRequest{PageSize: &pageSize},
 	}
 
 	countQuery := regexp.QuoteMeta(`FROM fivenet_wiki_pages AS page_short`) +
 		`(?s).*` + regexp.QuoteMeta(`ranked_pages.rn = 1`)
 	mock.ExpectQuery(countQuery).
-		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WithArgs(
+			sqlmock.AnyArg(),
+			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
+			sqlmock.AnyArg(),
+			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
+			sqlmock.AnyArg(),
+		).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
 
 	listQuery := regexp.QuoteMeta(
@@ -102,7 +107,13 @@ func TestStoreListPagesRootOnly(t *testing.T) {
 		`ORDER BY page_short.job ASC, page_short.startpage DESC, page_short.parent_id ASC, page_short.sort_rank ASC, page_short.draft ASC, page_short.id ASC LIMIT ? OFFSET ?;`,
 	)
 	mock.ExpectQuery(listQuery).
-		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), int64(5), int64(0)).
+		WithArgs(
+			sqlmock.AnyArg(),
+			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
+			sqlmock.AnyArg(),
+			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
+			sqlmock.AnyArg(), int64(5), int64(0),
+		).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"page_short.id",
 			"page_short.job",

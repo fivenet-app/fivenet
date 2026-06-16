@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	citizenslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
@@ -35,6 +37,24 @@ type GetUserOptions struct {
 	IncludeMugshot                 bool
 	IncludeEmail                   bool
 	IncludePropsUpdated            bool
+	IncludeLicenses                bool
+}
+
+type UserActivityOptions struct {
+	UserID int32
+	Types  []usersactivity.UserActivityType
+}
+
+type ListUserActivityOptions struct {
+	UserActivityOptions
+
+	Sort   *database.Sort
+	Offset int64
+	Limit  int64
+}
+
+type CountUserActivityOptions struct {
+	UserActivityOptions
 }
 
 func (s *Store) ListCitizens(
@@ -275,5 +295,43 @@ func (s *Store) GetUser(
 		resp.User.Props = &usersprops.UserProps{UserId: resp.GetUser().GetUserId()}
 	}
 
+	if opts.IncludeLicenses {
+		licenses, err := s.GetUserLicenses(ctx, req.GetUserId())
+		if err != nil {
+			return nil, err
+		}
+		resp.User.Licenses = licenses
+	}
+
 	return resp, nil
+}
+
+func (s *Store) GetUserLicenses(
+	ctx context.Context,
+	userId int32,
+) ([]*citizenslicenses.License, error) {
+	tCitizenLicenses := table.FivenetUserLicenses
+	tLicenses := table.FivenetLicenses
+
+	stmt := tCitizenLicenses.
+		SELECT(
+			tLicenses.Type.AS("license.type"),
+			tLicenses.Label.AS("license.label"),
+		).
+		FROM(
+			tCitizenLicenses.
+				LEFT_JOIN(tLicenses,
+					tCitizenLicenses.Type.EQ(tLicenses.Type)),
+		).
+		WHERE(tCitizenLicenses.UserID.EQ(mysql.Int32(userId))).
+		LIMIT(15)
+
+	var licenses []*citizenslicenses.License
+	if err := stmt.QueryContext(ctx, s.db, &licenses); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return licenses, nil
 }

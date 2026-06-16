@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	resourcesdatabase "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
@@ -62,10 +62,11 @@ func TestStoreListAppliesFiltersAndSortFallback(t *testing.T) {
 	mock.ExpectQuery(expectedQuery).
 		WithArgs(
 			true,
-			int32(3),
-			"doj",
-			true,
-			"fire",
+			"%fire%", "%fire%", "%fire%",
+			1,
+			"%fire%", "%fire%",
+			1,
+			"%fire%", "%fire%", "%fire%",
 			int64(7), int64(8),
 			int32(3), int32(4),
 			from.AsTime(),
@@ -79,6 +80,34 @@ func TestStoreListAppliesFiltersAndSortFallback(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 	docs, err := store.List(t.Context(), query)
+	require.NoError(t, err)
+	assert.Empty(t, docs)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreListUsesAclBranchesForNonSuperuser(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = db.Close()
+	})
+
+	store := New(db)
+
+	expectedQuery := `(?s).*WITH actor_subjects AS .*fivenet_documents_visibility_public.*fivenet_documents_visibility_creator.*fivenet_documents_visibility_subject.*AS doc_ids.*`
+	mock.ExpectQuery(expectedQuery).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+
+	docs, err := store.List(t.Context(), ListQuery{
+		Limit: 20,
+		UserInfo: &userinfo.UserInfo{
+			UserId:   3,
+			Job:      "doj",
+			JobGrade: 16,
+		},
+	})
 	require.NoError(t, err)
 	assert.Empty(t, docs)
 	require.NoError(t, mock.ExpectationsWereMet())
@@ -133,7 +162,7 @@ func TestStoreGetDocumentMetaAndUpdateOwner(t *testing.T) {
 
 	store := New(db)
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_meta AS document_meta`) + `(?s).*` + regexp.QuoteMeta(`document_meta.document_id = ?`) + `(?s).*` + regexp.QuoteMeta(`LIMIT ?`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_meta AS document_meta`)+`(?s).*`+regexp.QuoteMeta(`document_meta.document_id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
 		WithArgs(int64(42), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
@@ -147,6 +176,22 @@ func TestStoreGetDocumentMetaAndUpdateOwner(t *testing.T) {
 
 	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_documents AS document SET`)).
 		WithArgs(int32(9), int64(42), int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_documents_visibility_public`) + `(?s).*` + regexp.QuoteMeta(`WHERE fivenet_documents_visibility_public.target_id = ?`)).
+		WithArgs(int64(42)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_documents_visibility_creator`) + `(?s).*` + regexp.QuoteMeta(`WHERE fivenet_documents_visibility_creator.target_id = ?`)).
+		WithArgs(int64(42)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_documents_visibility_subject`) + `(?s).*` + regexp.QuoteMeta(`WHERE fivenet_documents_visibility_subject.target_id = ?`)).
+		WithArgs(int64(42)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT fivenet_documents.id AS "id"`)+`(?s).*`+regexp.QuoteMeta(`FROM fivenet_documents`)+`(?s).*`+regexp.QuoteMeta(`fivenet_documents.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
+		WithArgs(int64(42), int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "public", "creator_id", "creator_job"}).
+			AddRow(int64(42), false, int32(9), "new"))
+	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_documents_visibility_creator`)).
+		WithArgs(int64(42), int32(9), "new").
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_documents_activity`)).
 		WithArgs(int64(42), documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED, int32(3), "doj", sqlmock.AnyArg()).

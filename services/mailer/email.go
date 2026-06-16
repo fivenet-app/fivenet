@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
 	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
@@ -21,19 +20,16 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
-	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
 const (
 	emailLastChangedInterval = 14 * 24 * time.Hour
-	listEmailsPageSize       = 20
 )
 
 var (
-	tEmails = table.FivenetMailerEmails.AS("email")
-
+	tEmails    = table.FivenetMailerEmails
 	tUserProps = table.FivenetUserProps
 )
 
@@ -52,42 +48,17 @@ func (s *Server) ListEmails(
 ) (*pbmailer.ListEmailsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := mysql.Bool(true)
-
-	if !userInfo.GetSuperuser() || (userInfo.GetSuperuser() && req.All != nil && !req.GetAll()) {
-		acl := s.access.ACLAccessExistsCondition(
-			tEmails.ID,
-			userInfo,
-			int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
-		)
-		// Include deactivated e-mails
-		condition = condition.AND(mysql.AND(
-			tEmails.DeletedAt.IS_NULL(),
-			mysql.OR(
-				tEmails.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-				acl,
-			),
-		))
-	}
-
-	count, err := s.store.CountEmails(ctx, s.db, condition)
+	pag, emails, err := s.store.ListEmails(
+		ctx,
+		s.db,
+		userInfo,
+		req.GetPagination(),
+		req.GetAll(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-
-	pag, _ := req.GetPagination().GetResponseWithPageSize(count, listEmailsPageSize)
-	resp := &pbmailer.ListEmailsResponse{
-		Pagination: pag,
-	}
-	if count <= 0 {
-		return resp, nil
-	}
-
-	emails, err := ListUserEmails(ctx, s.db, userInfo, req.GetPagination(), true)
-	if err != nil {
-		return nil, err
-	}
-	resp.Emails = emails
+	resp := &pbmailer.ListEmailsResponse{Pagination: pag, Emails: emails}
 
 	// Retrieve user's private email with access and settings
 	for idx := range resp.GetEmails() {
@@ -109,49 +80,6 @@ func (s *Server) ListEmails(
 	}
 
 	return resp, nil
-}
-
-func ListUserEmails(
-	ctx context.Context,
-	tx qrm.DB,
-	userInfo *userinfo.UserInfo,
-	pag *database.PaginationRequest,
-	includeDisabled bool,
-) ([]*maileremails.Email, error) {
-	condition := mysql.Bool(true)
-	baseCondition := tEmails.DeletedAt.IS_NULL()
-	if !includeDisabled {
-		baseCondition = baseCondition.AND(tEmails.Deactivated.IS_FALSE())
-	}
-
-	if !userInfo.GetSuperuser() {
-		acl := access.NewMailerEmailsSubjectObjectAccess(nil).
-			ACLAccessExistsCondition(tEmails.ID, userInfo, int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ))
-
-		condition = condition.AND(
-			baseCondition.AND(
-				mysql.OR(
-					// owner may always see their email
-					tEmails.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-					// access by explicit user, by job+grade, or by qualification
-					acl,
-				),
-			),
-		)
-	}
-
-	var offset int64
-	if pag != nil {
-		offset = pag.GetOffset()
-	}
-
-	store := mailerstore.New(nil)
-	emails, err := store.ListEmails(ctx, tx, condition, offset, listEmailsPageSize)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-
-	return emails, nil
 }
 
 func (s *Server) getEmail(

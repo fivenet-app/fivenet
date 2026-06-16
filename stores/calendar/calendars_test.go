@@ -54,6 +54,23 @@ func TestListCalendarsStmtOrdersByCalendarIds(t *testing.T) {
 	assert.NotEmpty(t, args)
 }
 
+func TestListCalendarsStmtFiltersOnlyPublicWhenRequested(t *testing.T) {
+	t.Parallel()
+
+	store := New(nil).(*Store)
+	stmt := store.listCalendarsStmt(
+		ListQuery{UserInfo: &userinfo.UserInfo{UserId: 7, Job: "police"}, OnlyPublic: true},
+		7,
+		table.FivenetUser.AS("creator"),
+		table.FivenetFiles.AS("profile_picture"),
+		20,
+		40,
+	)
+
+	sql, _ := stmt.Sql()
+	assert.Contains(t, sql, "calendar.public IS TRUE")
+}
+
 func TestGetCalendarStmtIncludesCreatorJoins(t *testing.T) {
 	t.Parallel()
 

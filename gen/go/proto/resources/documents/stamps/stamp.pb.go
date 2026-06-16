@@ -78,10 +78,12 @@ type Stamp struct {
 	Job       string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel  *string                `protobuf:"bytes,3,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	Name      string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Name      string                 `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
 	// Parameterized SVG with slots
-	SvgTemplate   string         `protobuf:"bytes,6,opt,name=svg_template,json=svgTemplate,proto3" json:"svg_template,omitempty"`
-	Access        *access.Access `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
+	SvgTemplate   string         `protobuf:"bytes,8,opt,name=svg_template,json=svgTemplate,proto3" json:"svg_template,omitempty"`
+	Access        *access.Access `protobuf:"bytes,9,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -139,6 +141,20 @@ func (x *Stamp) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *Stamp) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *Stamp) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DeletedAt
+	}
+	return nil
+}
+
 func (x *Stamp) GetName() string {
 	if x != nil {
 		return x.Name
@@ -176,6 +192,14 @@ func (x *Stamp) SetCreatedAt(v *timestamp.Timestamp) {
 	x.CreatedAt = v
 }
 
+func (x *Stamp) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Stamp) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
 func (x *Stamp) SetName(v string) {
 	x.Name = v
 }
@@ -202,6 +226,20 @@ func (x *Stamp) HasCreatedAt() bool {
 	return x.CreatedAt != nil
 }
 
+func (x *Stamp) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Stamp) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
 func (x *Stamp) HasAccess() bool {
 	if x == nil {
 		return false
@@ -217,6 +255,14 @@ func (x *Stamp) ClearCreatedAt() {
 	x.CreatedAt = nil
 }
 
+func (x *Stamp) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Stamp) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
 func (x *Stamp) ClearAccess() {
 	x.Access = nil
 }
@@ -228,6 +274,8 @@ type Stamp_builder struct {
 	Job       string
 	JobLabel  *string
 	CreatedAt *timestamp.Timestamp
+	UpdatedAt *timestamp.Timestamp
+	DeletedAt *timestamp.Timestamp
 	Name      string
 	// Parameterized SVG with slots
 	SvgTemplate string
@@ -242,6 +290,8 @@ func (b0 Stamp_builder) Build() *Stamp {
 	x.Job = b.Job
 	x.JobLabel = b.JobLabel
 	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
 	x.Name = b.Name
 	x.SvgTemplate = b.SvgTemplate
 	x.Access = b.Access
@@ -252,18 +302,24 @@ var File_resources_documents_stamps_stamp_proto protoreflect.FileDescriptor
 
 const file_resources_documents_stamps_stamp_proto_rawDesc = "" +
 	"\n" +
-	"&resources/documents/stamps/stamp.proto\x12\x1aresources.documents.stamps\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a#resources/timestamp/timestamp.proto\"\xa0\x02\n" +
+	"&resources/documents/stamps/stamp.proto\x12\x1aresources.documents.stamps\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a#resources/timestamp/timestamp.proto\"\xc6\x03\n" +
 	"\x05Stamp\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12 \n" +
 	"\tjob_label\x18\x03 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12=\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x1c\n" +
-	"\x04name\x18\x05 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x126\n" +
-	"\fsvg_template\x18\x06 \x01(\tB\x13\xda\xf3\x18\x0f\b\x01\x12\vSanitizeSVGR\vsvgTemplate\x120\n" +
-	"\x06access\x18\a \x01(\v2\x18.resources.access.AccessR\x06accessB\f\n" +
+	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
-	"_job_label*\x91\x01\n" +
+	"updated_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1c\n" +
+	"\x04name\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x126\n" +
+	"\fsvg_template\x18\b \x01(\tB\x13\xda\xf3\x18\x0f\b\x01\x12\vSanitizeSVGR\vsvgTemplate\x120\n" +
+	"\x06access\x18\t \x01(\v2\x18.resources.access.AccessR\x06accessB\f\n" +
+	"\n" +
+	"_job_labelB\r\n" +
+	"\v_updated_atB\r\n" +
+	"\v_deleted_at*\x91\x01\n" +
 	"\x10StampAccessLevel\x12\"\n" +
 	"\x1eSTAMP_ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aSTAMP_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1a\n" +
@@ -280,12 +336,14 @@ var file_resources_documents_stamps_stamp_proto_goTypes = []any{
 }
 var file_resources_documents_stamps_stamp_proto_depIdxs = []int32{
 	2, // 0: resources.documents.stamps.Stamp.created_at:type_name -> resources.timestamp.Timestamp
-	3, // 1: resources.documents.stamps.Stamp.access:type_name -> resources.access.Access
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	2, // 1: resources.documents.stamps.Stamp.updated_at:type_name -> resources.timestamp.Timestamp
+	2, // 2: resources.documents.stamps.Stamp.deleted_at:type_name -> resources.timestamp.Timestamp
+	3, // 3: resources.documents.stamps.Stamp.access:type_name -> resources.access.Access
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_stamps_stamp_proto_init() }

@@ -34,7 +34,7 @@ type Params struct {
 	Tracker    tracker.ITracker
 	Enricher   mstlystcdata.IUserAwareEnricher
 	Config     *config.Config
-	Store      completorstore.IStore `optional:"true"`
+	Store      completorstore.IStore
 }
 
 func NewServer(p Params) *Server {

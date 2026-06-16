@@ -132,10 +132,10 @@ func (s *Store) EnsureBirthdayCalendarAccess(
 ) error {
 	jobAccess := birthdayCalendarAccessEntries(calendarID, job, jobInfo)
 
-	_, err := access.NewCalendarSubjectObjectAccess(nil).ReplaceTargetAccess(
+	_, err := s.access.ReplaceTargetAccess(
 		ctx,
 		q,
-		access.NewSubjectResolver(nil),
+		s.accessResolver,
 		calendarID,
 		&calendaraccess.CalendarAccess{Jobs: jobAccess},
 		birthdaySyncSubjectAccessOptions,

@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/textdiff"
 	errorswiki "github.com/fivenet-app/fivenet/v2026/services/wiki/errors"
+	wikistore "github.com/fivenet-app/fivenet/v2026/stores/wiki"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -36,7 +37,10 @@ func (s *Server) ListPageActivity(
 		return nil, errorswiki.ErrPageDenied
 	}
 
-	count, err := s.store.CountPageActivity(ctx, req.GetPageId())
+	count, err := s.store.CountPageActivity(
+		ctx,
+		wikistore.PageActivityQuery{PageID: req.GetPageId()},
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
@@ -50,12 +54,11 @@ func (s *Server) ListPageActivity(
 		return resp, nil
 	}
 
-	activity, err := s.store.ListPageActivity(
-		ctx,
-		req.GetPageId(),
-		req.GetPagination().GetOffset(),
-		limit,
-	)
+	activity, err := s.store.ListPageActivity(ctx, wikistore.PageActivityQuery{
+		PageID: req.GetPageId(),
+		Offset: req.GetPagination().GetOffset(),
+		Limit:  limit,
+	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}

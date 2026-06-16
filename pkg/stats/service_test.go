@@ -51,7 +51,7 @@ func TestService_RebuildDocumentMetrics_ReplacesBySource(t *testing.T) {
 					Job:        "police",
 					SourceKey:  "penalty_calculator",
 					MetricKey:  "law_count",
-					Dimension1: ptrString("10"),
+					Dimension1: new("10"),
 					Value:      2,
 					OccurredAt: time.Now().UTC(),
 				},
@@ -141,10 +141,6 @@ func TestService_RebuildDocumentMetrics_UnpublishedClearsAll(t *testing.T) {
 	err = svc.RebuildDocumentMetrics(t.Context(), doc)
 	require.NoError(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
-}
-
-func ptrString(v string) *string {
-	return &v
 }
 
 func TestService_BuildEmployeeCountMetrics(t *testing.T) {

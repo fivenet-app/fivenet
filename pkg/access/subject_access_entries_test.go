@@ -1,7 +1,6 @@
 package access
 
 import (
-	"database/sql"
 	"testing"
 
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
@@ -19,8 +18,8 @@ func TestSubjectAccessRowsToProto(t *testing.T) {
 			Access:          int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 			Effect:          true,
 			SubjectType:     int16(SubjectTypeJobGrade),
-			ACLJob:          sql.NullString{String: "5net", Valid: true},
-			ACLMinimumGrade: sql.NullInt32{Int32: 5, Valid: true},
+			ACLJob:          new("5net"),
+			ACLMinimumGrade: new(int32(5)),
 		},
 		{
 			ID:              2,
@@ -28,8 +27,8 @@ func TestSubjectAccessRowsToProto(t *testing.T) {
 			Access:          int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 			Effect:          true,
 			SubjectType:     int16(SubjectTypeJobGrade),
-			ACLJob:          sql.NullString{String: "5net", Valid: true},
-			ACLMinimumGrade: sql.NullInt32{Int32: 6, Valid: true},
+			ACLJob:          new("5net"),
+			ACLMinimumGrade: new(int32(6)),
 		},
 		{
 			ID:              3,
@@ -37,8 +36,8 @@ func TestSubjectAccessRowsToProto(t *testing.T) {
 			Access:          int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 			Effect:          false,
 			SubjectType:     int16(SubjectTypeJobGrade),
-			ACLJob:          sql.NullString{String: "5net", Valid: true},
-			ACLMinimumGrade: sql.NullInt32{Int32: 7, Valid: true},
+			ACLJob:          new("5net"),
+			ACLMinimumGrade: new(int32(7)),
 		},
 		{
 			ID:              4,
@@ -46,12 +45,12 @@ func TestSubjectAccessRowsToProto(t *testing.T) {
 			Access:          int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 			Effect:          true,
 			SubjectType:     int16(SubjectTypeUser),
-			SubjectUserID:   sql.NullInt32{Int32: 42, Valid: true},
-			UserJob:         sql.NullString{String: "5net", Valid: true},
-			UserJobGrade:    sql.NullInt32{Int32: 8, Valid: true},
-			UserFirstname:   sql.NullString{String: "Ada", Valid: true},
-			UserLastname:    sql.NullString{String: "Lovelace", Valid: true},
-			UserDateofbirth: sql.NullString{String: "1815-12-10", Valid: true},
+			SubjectUserID:   new(int32(42)),
+			UserJob:         new("5net"),
+			UserJobGrade:    new(int32(8)),
+			UserFirstname:   new("Ada"),
+			UserLastname:    new("Lovelace"),
+			UserDateofbirth: new("1815-12-10"),
 		},
 	}
 
@@ -104,8 +103,8 @@ func TestCompareSubjectAccess(t *testing.T) {
 			Access:          int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 			Effect:          true,
 			SubjectType:     int16(SubjectTypeJobGrade),
-			ACLJob:          sql.NullString{String: "5net", Valid: true},
-			ACLMinimumGrade: sql.NullInt32{Int32: 5, Valid: true},
+			ACLJob:          new("5net"),
+			ACLMinimumGrade: new(int32(5)),
 		},
 		{
 			ID:            2,
@@ -113,7 +112,7 @@ func TestCompareSubjectAccess(t *testing.T) {
 			Access:        int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 			Effect:        true,
 			SubjectType:   int16(SubjectTypeUser),
-			SubjectUserID: sql.NullInt32{Int32: 42, Valid: true},
+			SubjectUserID: new(int32(42)),
 		},
 	}, SubjectAccessOptions{})
 	in := subjectAccessRowsToProto([]subjectAccessRow{
@@ -123,8 +122,8 @@ func TestCompareSubjectAccess(t *testing.T) {
 			Access:          int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 			Effect:          true,
 			SubjectType:     int16(SubjectTypeJobGrade),
-			ACLJob:          sql.NullString{String: "5net", Valid: true},
-			ACLMinimumGrade: sql.NullInt32{Int32: 5, Valid: true},
+			ACLJob:          new("5net"),
+			ACLMinimumGrade: new(int32(5)),
 		},
 		{
 			ID:            11,
@@ -132,7 +131,7 @@ func TestCompareSubjectAccess(t *testing.T) {
 			Access:        int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 			Effect:        true,
 			SubjectType:   int16(SubjectTypeUser),
-			SubjectUserID: sql.NullInt32{Int32: 99, Valid: true},
+			SubjectUserID: new(int32(99)),
 		},
 	}, SubjectAccessOptions{})
 

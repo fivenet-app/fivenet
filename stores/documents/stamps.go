@@ -7,6 +7,7 @@ import (
 	resourcesdatabase "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	documentsstamps "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -48,37 +49,32 @@ func (s *Store) ListUsableStamps(
 
 	deletedAtCond := mysql.Bool(true)
 	if !q.UserInfo.GetSuperuser() {
-		deletedAtCond = tStamp.DeletedAt.IS_NULL()
+		deletedAtCond = table.FivenetDocumentsStamps.DeletedAt.IS_NULL()
 	}
 
-	var existsAccess mysql.BoolExpression
-	if !q.UserInfo.GetSuperuser() {
-		existsAccess = s.subjectAccess.ACLAccessExistsCondition(
-			tStamp.ID,
+	visibleIDsStmt := access.NewDocumentStampsSubjectObjectAccess(nil).
+		VisibleIDsByConditionStatement(
 			q.UserInfo,
 			int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
+			deletedAtCond,
 		)
-	} else {
-		existsAccess = mysql.Bool(true)
-	}
 
-	condition := mysql.AND(deletedAtCond, existsAccess)
-
-	countStmt := mysql.
-		SELECT(mysql.COUNT(tStamp.ID).AS("data_count.total")).
-		FROM(tStamp).
-		WHERE(condition)
-
-	var count resourcesdatabase.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+	var visibleIDs []int64
+	if err := visibleIDsStmt.QueryContext(ctx, s.db, &visibleIDs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil, err
 		}
 	}
 
+	count := resourcesdatabase.DataCount{Total: int64(len(visibleIDs))}
 	pag, limit := q.Pagination.GetResponseWithPageSize(count.Total, stampDefaultPageSize)
 	if count.Total <= 0 {
 		return pag, []*documentsstamps.Stamp{}, nil
+	}
+
+	ids := make([]mysql.Expression, len(visibleIDs))
+	for i := range visibleIDs {
+		ids[i] = mysql.Int64(visibleIDs[i])
 	}
 
 	stmt := mysql.
@@ -90,7 +86,7 @@ func (s *Store) ListUsableStamps(
 			tStamp.CreatedAt,
 		).
 		FROM(tStamp).
-		WHERE(condition).
+		WHERE(tStamp.ID.IN(ids...)).
 		OFFSET(q.Pagination.GetOffset()).
 		ORDER_BY(tStamp.SortKey.ASC(), tStamp.CreatedAt.DESC()).
 		LIMIT(limit)

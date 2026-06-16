@@ -440,7 +440,12 @@ func (s *UnitDB) UpdateStatus(
 			in.Creator = in.GetUser()
 		} else {
 			var err error
-			in.Creator, err = usersstore.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetCreatorId())
+			in.Creator, err = usersstore.RetrieveUserShortById(
+				ctx,
+				s.db,
+				s.enricher,
+				in.GetCreatorId(),
+			)
 			if err != nil {
 				return nil, err
 			}

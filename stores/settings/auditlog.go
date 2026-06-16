@@ -18,54 +18,54 @@ var tAuditLog = table.FivenetAuditLog.AS("audit_entry")
 
 func (s *Store) ViewAuditLog(
 	ctx context.Context,
-	req *pbsettings.ViewAuditLogRequest,
+	opts ViewAuditLogOptions,
 ) (*pbsettings.ViewAuditLogResponse, error) {
 	condition := mysql.Bool(true)
-	if len(req.GetUserIds()) > 0 {
-		ids := make([]mysql.Expression, len(req.GetUserIds()))
-		for i := range req.GetUserIds() {
-			ids[i] = mysql.Int32(req.GetUserIds()[i])
+	if len(opts.UserIDs) > 0 {
+		ids := make([]mysql.Expression, len(opts.UserIDs))
+		for i := range opts.UserIDs {
+			ids[i] = mysql.Int32(opts.UserIDs[i])
 		}
 		condition = condition.AND(tAuditLog.UserID.IN(ids...))
 	}
-	if req.GetFrom() != nil {
+	if opts.From != nil {
 		condition = condition.AND(
-			tAuditLog.CreatedAt.GT_EQ(mysql.DateTimeT(req.GetFrom().AsTime())),
+			tAuditLog.CreatedAt.GT_EQ(mysql.DateTimeT(opts.From.AsTime())),
 		)
 	}
-	if req.GetTo() != nil {
-		condition = condition.AND(tAuditLog.CreatedAt.LT_EQ(mysql.DateTimeT(req.GetTo().AsTime())))
+	if opts.To != nil {
+		condition = condition.AND(tAuditLog.CreatedAt.LT_EQ(mysql.DateTimeT(opts.To.AsTime())))
 	}
-	if len(req.GetServices()) > 0 {
-		svcs := make([]mysql.Expression, len(req.GetServices()))
-		for i, svc := range req.GetServices() {
+	if len(opts.Services) > 0 {
+		svcs := make([]mysql.Expression, len(opts.Services))
+		for i, svc := range opts.Services {
 			svcs[i] = mysql.String(svc)
 		}
 		condition = condition.AND(tAuditLog.Service.IN(svcs...))
 	}
-	if len(req.GetMethods()) > 0 {
-		methods := make([]mysql.Expression, len(req.GetMethods()))
-		for i := range req.GetMethods() {
-			methods[i] = mysql.String(req.GetMethods()[i])
+	if len(opts.Methods) > 0 {
+		methods := make([]mysql.Expression, len(opts.Methods))
+		for i := range opts.Methods {
+			methods[i] = mysql.String(opts.Methods[i])
 		}
 		condition = condition.AND(tAuditLog.Method.IN(methods...))
 	}
-	if len(req.GetActions()) > 0 {
-		actions := make([]mysql.Expression, len(req.GetActions()))
-		for i := range req.GetActions() {
-			actions[i] = mysql.Int32(int32(req.GetActions()[i]))
+	if len(opts.Actions) > 0 {
+		actions := make([]mysql.Expression, len(opts.Actions))
+		for i := range opts.Actions {
+			actions[i] = mysql.Int32(int32(opts.Actions[i]))
 		}
 		condition = condition.AND(tAuditLog.Action.IN(actions...))
 	}
-	if len(req.GetResults()) > 0 {
-		results := make([]mysql.Expression, len(req.GetResults()))
-		for i := range req.GetResults() {
-			results[i] = mysql.Int32(int32(req.GetResults()[i]))
+	if len(opts.Results) > 0 {
+		results := make([]mysql.Expression, len(opts.Results))
+		for i := range opts.Results {
+			results[i] = mysql.Int32(int32(opts.Results[i]))
 		}
 		condition = condition.AND(tAuditLog.Result.IN(results...))
 	}
-	if req.Search != nil && req.GetSearch() != "" {
-		condition = condition.AND(dbutils.MATCH(tAuditLog.Data, mysql.String(req.GetSearch())))
+	if opts.Search != "" {
+		condition = condition.AND(dbutils.MATCH(tAuditLog.Data, mysql.String(opts.Search)))
 	}
 
 	countStmt := tAuditLog.
@@ -80,36 +80,13 @@ func (s *Store) ViewAuditLog(
 		}
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, AuditLogPageSize)
+	pag, limit := opts.Pagination.GetResponseWithPageSize(count.Total, AuditLogPageSize)
 	resp := &pbsettings.ViewAuditLogResponse{Pagination: pag}
 	if count.Total <= 0 {
 		return resp, nil
 	}
 
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "service":
-				column = tAuditLog.Service
-			case "action":
-				column = tAuditLog.Action
-			case "createdAt":
-				fallthrough
-			default:
-				column = tAuditLog.CreatedAt
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tAuditLog.CreatedAt.DESC())
-	}
+	orderBys := s.auditLogSorter.Build(opts.Sort)
 
 	tUser := table.FivenetUser.AS("user_short")
 	stmt := tAuditLog.
@@ -141,7 +118,7 @@ func (s *Store) ViewAuditLog(
 		).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
-		OFFSET(req.GetPagination().GetOffset()).
+		OFFSET(opts.Pagination.GetOffset()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Logs); err != nil {

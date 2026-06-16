@@ -44,7 +44,7 @@ func (s *Server) ShareCalendarEntry(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	check, err := s.store.CheckIfUserHasAccessToCalendar(
+	calendar, err := s.store.GetAccessibleCalendar(
 		ctx,
 		entry.GetCalendarId(),
 		userInfo,
@@ -54,7 +54,7 @@ func (s *Server) ShareCalendarEntry(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	if !check {
+	if calendar == nil {
 		return nil, errorscalendar.ErrNoPerms
 	}
 
@@ -69,12 +69,10 @@ func (s *Server) ShareCalendarEntry(
 		return resp, nil
 	}
 
-	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
 	newUsers, err := s.store.ShareCalendarEntry(ctx, tx, req.GetEntryId(), req.GetUserIds())
@@ -82,7 +80,6 @@ func (s *Server) ShareCalendarEntry(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}

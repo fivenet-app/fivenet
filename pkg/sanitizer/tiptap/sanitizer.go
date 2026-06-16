@@ -374,12 +374,12 @@ func buildAllowed() *Sanitizer {
 						continue
 					}
 
-					keyValue := strings.SplitN(part, ":", 2)
-					if len(keyValue) != 2 {
+					key, value, ok := strings.Cut(part, ":")
+					key = strings.TrimSpace(key)
+					value = strings.TrimSpace(value)
+					if !ok || key == "" {
 						return false, nil
 					}
-					key := strings.TrimSpace(keyValue[0])
-					value := strings.TrimSpace(keyValue[1])
 
 					// Set height/width from style attribute
 					switch key {

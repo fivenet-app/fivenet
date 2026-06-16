@@ -563,7 +563,7 @@ func (s *Service) QueryTotalValue(
 	jobNames := jobExpressions(jobs)
 
 	var dest struct {
-		Total sql.NullInt64 `alias:"total"`
+		Total *int64 `alias:"total"`
 	}
 	stmt := tRollup.
 		SELECT(mysql.SUM(tRollup.Value).AS("total")).
@@ -580,11 +580,11 @@ func (s *Service) QueryTotalValue(
 		return 0, err
 	}
 
-	if !dest.Total.Valid {
+	if dest.Total == nil {
 		return 0, nil
 	}
 
-	return dest.Total.Int64, nil
+	return *dest.Total, nil
 }
 
 func (s *Service) QueryAverageValue(
@@ -604,7 +604,7 @@ func (s *Service) QueryAverageValue(
 	jobNames := jobExpressions(jobs)
 
 	var dest struct {
-		Average sql.NullFloat64 `alias:"average"`
+		Average *float64 `alias:"average"`
 	}
 	stmt := tRollup.
 		SELECT(mysql.AVG(tRollup.Value).AS("average")).
@@ -621,11 +621,11 @@ func (s *Service) QueryAverageValue(
 		return 0, err
 	}
 
-	if !dest.Average.Valid {
+	if dest.Average == nil {
 		return 0, nil
 	}
 
-	return dest.Average.Float64, nil
+	return *dest.Average, nil
 }
 
 func (s *Service) QueryPeriodValues(

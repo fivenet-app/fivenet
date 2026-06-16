@@ -12,7 +12,6 @@ import (
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -27,6 +26,11 @@ const maxCalendarEntriesLimit = int64(125)
 type calendarEntryOccurrenceKey struct {
 	entryID       int64
 	occurrenceKey string
+}
+
+type calendarAccessEntry struct {
+	ID     int64 `alias:"calendar.id"`
+	Public bool  `alias:"calendar.public"`
 }
 
 func calendarEntryRSVPVisible(
@@ -165,10 +169,10 @@ func calendarEntriesQuery(
 func (s *Store) ListCalendarEntries(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
-	req *pbcalendar.ListCalendarEntriesRequest,
+	opts ListCalendarEntriesOptions,
 ) ([]*calendarentries.CalendarEntry, error) {
 	rsvpResponse := calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN
-	if req.ShowHidden != nil && req.GetShowHidden() {
+	if opts.ShowHidden {
 		rsvpResponse = calendarentries.RsvpResponses_RSVP_RESPONSES_UNSPECIFIED
 	}
 
@@ -216,14 +220,14 @@ func (s *Store) ListCalendarEntries(
 		),
 	)
 
-	if req.GetAfter() != nil {
+	if opts.After != nil {
 		condition = condition.AND(
-			tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())),
+			tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(opts.After.AsTime())),
 		)
 	}
 
 	baseDate := now.New(
-		time.Date(int(req.GetYear()), time.Month(req.GetMonth()), 1, 0, 0, 0, 0, time.UTC),
+		time.Date(int(opts.Year), time.Month(opts.Month), 1, 0, 0, 0, 0, time.UTC),
 	)
 	startDate := baseDate.BeginningOfMonth()
 	endDate := baseDate.EndOfMonth()
@@ -265,13 +269,13 @@ func (s *Store) ListCalendarEntries(
 		),
 	)
 
-	if len(req.GetCalendarIds()) > 0 {
+	if len(opts.CalendarIDs) > 0 {
 		ids := []mysql.Expression{}
-		for i := range req.GetCalendarIds() {
-			if req.GetCalendarIds()[i] == 0 {
+		for i := range opts.CalendarIDs {
+			if opts.CalendarIDs[i] == 0 {
 				continue
 			}
-			ids = append(ids, mysql.Int64(req.GetCalendarIds()[i]))
+			ids = append(ids, mysql.Int64(opts.CalendarIDs[i]))
 		}
 
 		regularCondition = regularCondition.AND(tCalendarEntry.CalendarID.IN(ids...))
@@ -319,10 +323,10 @@ func (s *Store) ListCalendarEntries(
 func (s *Store) GetUpcomingEntries(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
-	req *pbcalendar.GetUpcomingEntriesRequest,
+	opts GetUpcomingEntriesOptions,
 ) ([]*calendarentries.CalendarEntry, error) {
 	rangeStart := time.Now().Add(-1 * time.Minute)
-	rangeEnd := time.Now().Add(time.Duration(req.GetSeconds()) * time.Second)
+	rangeEnd := time.Now().Add(time.Duration(opts.Seconds) * time.Second)
 
 	condition := mysql.AND(
 		tCalendarEntry.DeletedAt.IS_NULL(),

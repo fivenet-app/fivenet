@@ -14,12 +14,11 @@ import (
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	permsqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
-	"github.com/go-jet/jet/v2/mysql"
+	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
@@ -35,34 +34,6 @@ func (s *Server) ListQualifications(
 	req *pbqualifications.ListQualificationsRequest,
 ) (*pbqualifications.ListQualificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	condition := mysql.Bool(true)
-	if req.GetSearch() != "" {
-		search := dbutils.PrepareForLikeSearch(req.GetSearch())
-		condition = condition.AND(mysql.OR(
-			tQuali.Abbreviation.LIKE(mysql.String(search)),
-			tQuali.Title.LIKE(mysql.String(search)),
-		))
-	}
-
-	if !userInfo.GetSuperuser() {
-		accessExists := s.access.ACLAccessExistsCondition(
-			tQuali.ID,
-			userInfo,
-			int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-		)
-
-		condition = condition.AND(mysql.AND(
-			tQuali.DeletedAt.IS_NULL(),
-			mysql.OR(
-				tQuali.Public.IS_TRUE(),
-				mysql.AND(
-					tQuali.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
-					tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-				),
-				accessExists,
-			),
-		))
-	}
 
 	includePhoneNumber := false
 	if fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(
@@ -74,7 +45,11 @@ func (s *Server) ListQualifications(
 		)
 	}
 
-	resp, err := s.store.ListQualifications(ctx, req, userInfo, condition, includePhoneNumber)
+	resp, err := s.store.ListQualifications(ctx, qualificationsstore.ListQualificationsOptions{
+		Pagination: req.GetPagination(),
+		Sort:       req.GetSort(),
+		Search:     req.GetSearch(),
+	}, userInfo, includePhoneNumber)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -107,7 +82,7 @@ func (s *Server) GetQualification(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	quali, err := s.store.GetQualificationShort(ctx, req.GetQualificationId(), nil, userInfo, false)
+	quali, err := s.store.GetQualificationShort(ctx, req.GetQualificationId(), userInfo, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -164,7 +139,7 @@ func (s *Server) GetQualification(
 
 	resp := &pbqualifications.GetQualificationResponse{}
 	resp.Qualification, err = s.store.GetQualification(ctx, req.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())), userInfo, canContent, false)
+		userInfo, canContent, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -189,17 +164,20 @@ func (s *Server) GetQualification(
 		s.enricher.EnrichJobInfoSafe(userInfo, resp.GetQualification().GetCreator())
 	}
 
-	qualiAccess, err := s.GetQualificationAccess(
+	qualiAccess, err := s.access.ListTargetAccess(
 		ctx,
-		&pbqualifications.GetQualificationAccessRequest{
-			QualificationId: req.GetQualificationId(),
-		},
+		s.db,
+		req.GetQualificationId(),
+		qualificationSubjectAccessOptions,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	for i := range qualiAccess.GetJobs() {
+		s.enricher.EnrichJobInfo(qualiAccess.GetJobs()[i])
+	}
 	if qualiAccess != nil {
-		resp.Qualification.Access = qualiAccess.GetAccess()
+		resp.Qualification.Access = qualiAccess
 	}
 
 	files, err := s.fHandler.ListFilesForParentID(ctx, req.GetQualificationId())
@@ -305,7 +283,6 @@ func (s *Server) UpdateQualification(
 	}
 
 	oldQuali, err := s.store.GetQualification(ctx, req.GetQualification().GetId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualification().GetId())),
 		userInfo, true, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -455,7 +432,7 @@ func (s *Server) DeleteQualification(
 	}
 
 	quali, err := s.store.GetQualification(ctx, req.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())), userInfo, true, false)
+		userInfo, true, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

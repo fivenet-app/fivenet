@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -42,10 +44,21 @@ func TestStoreListEmails(t *testing.T) {
 	store := New(db)
 	now := time.Unix(0, 0).UTC()
 
-	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_emails AS email`) +
-		`(?s).*` + regexp.QuoteMeta(`ORDER BY email.job ASC, email.label ASC LIMIT ? OFFSET ?;`)
-	mock.ExpectQuery(expectedQuery).
-		WithArgs(true, int64(20), int64(5)).
+	countQuery := regexp.QuoteMeta(
+		`FROM fivenet_mailer_emails AS email WHERE email.id IN (( SELECT doc_ids.id AS "id" FROM (`,
+	)
+	mock.ExpectQuery(countQuery).
+		WithArgs(sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
+
+	listQuery := regexp.QuoteMeta(
+		`FROM fivenet_mailer_emails AS email WHERE email.id IN (( SELECT doc_ids.id AS "id" FROM (`,
+	) +
+		`(?s).*` + regexp.QuoteMeta(
+		`ORDER BY email.job ASC, email.label ASC LIMIT ? OFFSET ?;`,
+	)
+	mock.ExpectQuery(listQuery).
+		WithArgs(sqlmock.AnyArg(), int64(20), int64(0)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"email.id",
 			"email.created_at",
@@ -70,8 +83,18 @@ func TestStoreListEmails(t *testing.T) {
 			"Primary",
 		))
 
-	emails, err := store.ListEmails(t.Context(), db, mysql.Bool(true), 5, 20)
+	pageSize := int64(20)
+	pag := &database.PaginationRequest{Offset: 5, PageSize: &pageSize}
+	emailsPag, emails, err := store.ListEmails(
+		t.Context(),
+		db,
+		&userinfo.UserInfo{Superuser: true},
+		pag,
+		true,
+	)
 	require.NoError(t, err)
+	require.NotNil(t, emailsPag)
+	assert.Equal(t, int64(1), emailsPag.GetTotalCount())
 	require.Len(t, emails, 1)
 	assert.Equal(t, int64(9), emails[0].GetId())
 	assert.Equal(t, "user@example.com", emails[0].GetEmail())

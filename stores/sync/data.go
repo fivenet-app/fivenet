@@ -15,7 +15,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Store) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pbsync.SendDataResponse, error) {
+func (s *Store) SendData(
+	ctx context.Context,
+	req *pbsync.SendDataRequest,
+) (*pbsync.SendDataResponse, error) {
 	resp := &pbsync.SendDataResponse{RowsAffected: 0}
 
 	var err error
@@ -25,7 +28,10 @@ func (s *Store) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pbs
 			return nil, fmt.Errorf("failed to handle jobs data. %w", err)
 		}
 	case *pbsync.SendDataRequest_Licenses:
-		if resp.RowsAffected, err = s.handleLicensesData(ctx, d.Licenses.GetLicenses()); err != nil {
+		if resp.RowsAffected, err = s.handleLicensesData(
+			ctx,
+			d.Licenses.GetLicenses(),
+		); err != nil {
 			return nil, fmt.Errorf("failed to handle licenses data. %w", err)
 		}
 	case *pbsync.SendDataRequest_Users:
@@ -33,15 +39,25 @@ func (s *Store) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pbs
 			return nil, fmt.Errorf("failed to handle users data. %w", err)
 		}
 	case *pbsync.SendDataRequest_Vehicles:
-		if resp.RowsAffected, err = s.handleVehiclesData(ctx, d.Vehicles.GetVehicles()); err != nil {
+		if resp.RowsAffected, err = s.handleVehiclesData(
+			ctx,
+			d.Vehicles.GetVehicles(),
+		); err != nil {
 			return nil, fmt.Errorf("failed to handle vehicles data. %w", err)
 		}
 	case *pbsync.SendDataRequest_Accounts:
-		if resp.RowsAffected, err = s.handleAccountsData(ctx, d.Accounts.GetAccountUpdates()); err != nil {
+		if resp.RowsAffected, err = s.handleAccountsData(
+			ctx,
+			d.Accounts.GetAccountUpdates(),
+		); err != nil {
 			return nil, fmt.Errorf("failed to handle accounts data. %w", err)
 		}
 	case *pbsync.SendDataRequest_UserLocations:
-		if resp.RowsAffected, err = s.handleUserLocations(ctx, d.UserLocations.GetUsers(), d.UserLocations.GetClearAll()); err != nil {
+		if resp.RowsAffected, err = s.handleUserLocations(
+			ctx,
+			d.UserLocations.GetUsers(),
+			d.UserLocations.GetClearAll(),
+		); err != nil {
 			return nil, fmt.Errorf("failed to handle user locations data. %w", err)
 		}
 	case *pbsync.SendDataRequest_LastCharId:
@@ -53,7 +69,10 @@ func (s *Store) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pbs
 	return resp, nil
 }
 
-func (s *Store) SendLicenses(ctx context.Context, req *pbsync.SendLicensesRequest) (*pbsync.SendDataResponse, error) {
+func (s *Store) SendLicenses(
+	ctx context.Context,
+	req *pbsync.SendLicensesRequest,
+) (*pbsync.SendDataResponse, error) {
 	rowsAffected, err := s.handleLicensesData(ctx, req.GetLicenses())
 	if err != nil {
 		return nil, fmt.Errorf("failed to handle licenses data. %w", err)
@@ -62,7 +81,10 @@ func (s *Store) SendLicenses(ctx context.Context, req *pbsync.SendLicensesReques
 	return &pbsync.SendDataResponse{RowsAffected: rowsAffected}, nil
 }
 
-func (s *Store) SendAccounts(ctx context.Context, req *pbsync.SendAccountsRequest) (*pbsync.SendDataResponse, error) {
+func (s *Store) SendAccounts(
+	ctx context.Context,
+	req *pbsync.SendAccountsRequest,
+) (*pbsync.SendDataResponse, error) {
 	rowsAffected, err := s.handleAccountsData(ctx, req.GetAccountUpdates())
 	if err != nil {
 		return nil, fmt.Errorf("failed to handle accounts data. %w", err)
@@ -71,7 +93,10 @@ func (s *Store) SendAccounts(ctx context.Context, req *pbsync.SendAccountsReques
 	return &pbsync.SendDataResponse{RowsAffected: rowsAffected}, nil
 }
 
-func (s *Store) SetLastCharID(ctx context.Context, req *pbsync.SetLastCharIDRequest) (*pbsync.SendDataResponse, error) {
+func (s *Store) SetLastCharID(
+	ctx context.Context,
+	req *pbsync.SetLastCharIDRequest,
+) (*pbsync.SendDataResponse, error) {
 	rowsAffected, err := s.handleLastCharId(ctx, req.GetLastCharId())
 	if err != nil {
 		return nil, fmt.Errorf("failed to handle last character data. %w", err)
@@ -80,7 +105,10 @@ func (s *Store) SetLastCharID(ctx context.Context, req *pbsync.SetLastCharIDRequ
 	return &pbsync.SendDataResponse{RowsAffected: rowsAffected}, nil
 }
 
-func (s *Store) DeleteData(ctx context.Context, req *pbsync.DeleteDataRequest) (*pbsync.DeleteDataResponse, error) {
+func (s *Store) DeleteData(
+	ctx context.Context,
+	req *pbsync.DeleteDataRequest,
+) (*pbsync.DeleteDataResponse, error) {
 	switch d := req.GetData().(type) {
 	case *pbsync.DeleteDataRequest_Users:
 		return s.DeleteUsers(ctx, d.Users.GetUserIds())
@@ -91,7 +119,10 @@ func (s *Store) DeleteData(ctx context.Context, req *pbsync.DeleteDataRequest) (
 	return &pbsync.DeleteDataResponse{}, nil
 }
 
-func (s *Store) handleLicensesData(ctx context.Context, data []*citizenslicenses.License) (int64, error) {
+func (s *Store) handleLicensesData(
+	ctx context.Context,
+	data []*citizenslicenses.License,
+) (int64, error) {
 	if len(data) == 0 {
 		return 0, nil
 	}
@@ -122,7 +153,10 @@ func (s *Store) handleLicensesData(ctx context.Context, data []*citizenslicenses
 	return rowsAffected, nil
 }
 
-func (s *Store) handleAccountsData(ctx context.Context, data []*syncactivity.AccountUpdate) (int64, error) {
+func (s *Store) handleAccountsData(
+	ctx context.Context,
+	data []*syncactivity.AccountUpdate,
+) (int64, error) {
 	if len(data) == 0 {
 		return 0, nil
 	}
@@ -159,7 +193,10 @@ func (s *Store) handleAccountsData(ctx context.Context, data []*syncactivity.Acc
 
 func (s *Store) handleLastCharId(ctx context.Context, data *syncdata.LastCharID) (int64, error) {
 	if data.GetLicense() == "" || data.GetLastCharId() == 0 {
-		return 0, status.Error(codes.InvalidArgument, "LastCharId must contain char's identifier and lastCharId")
+		return 0, status.Error(
+			codes.InvalidArgument,
+			"LastCharId must contain char's identifier and lastCharId",
+		)
 	}
 
 	tAccounts := table.FivenetAccounts

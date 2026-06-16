@@ -193,7 +193,7 @@ async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelR
                     maxDuration: values.settings.maxDuration,
                 },
                 access: {
-                    jobs: [],
+                    jobs: values.access.jobs,
                 },
             },
         });

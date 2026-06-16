@@ -11,11 +11,11 @@ package qualifications
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	qualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
-	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	exam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -830,8 +830,8 @@ func (b0 GetQualificationAccessRequest_builder) Build() *GetQualificationAccessR
 }
 
 type GetQualificationAccessResponse struct {
-	state             protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_Access *access.QualificationAccess `protobuf:"bytes,1,opt,name=access,proto3"`
+	state             protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Access *access.Access         `protobuf:"bytes,1,opt,name=access,proto3"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -861,14 +861,14 @@ func (x *GetQualificationAccessResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *GetQualificationAccessResponse) GetAccess() *access.QualificationAccess {
+func (x *GetQualificationAccessResponse) GetAccess() *access.Access {
 	if x != nil {
 		return x.xxx_hidden_Access
 	}
 	return nil
 }
 
-func (x *GetQualificationAccessResponse) SetAccess(v *access.QualificationAccess) {
+func (x *GetQualificationAccessResponse) SetAccess(v *access.Access) {
 	x.xxx_hidden_Access = v
 }
 
@@ -886,7 +886,7 @@ func (x *GetQualificationAccessResponse) ClearAccess() {
 type GetQualificationAccessResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Access *access.QualificationAccess
+	Access *access.Access
 }
 
 func (b0 GetQualificationAccessResponse_builder) Build() *GetQualificationAccessResponse {
@@ -898,9 +898,9 @@ func (b0 GetQualificationAccessResponse_builder) Build() *GetQualificationAccess
 }
 
 type SetQualificationAccessRequest struct {
-	state                      protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_QualificationId int64                       `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3"`
-	xxx_hidden_Access          *access.QualificationAccess `protobuf:"bytes,2,opt,name=access,proto3"`
+	state                      protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3"`
+	xxx_hidden_Access          *access.Access         `protobuf:"bytes,2,opt,name=access,proto3"`
 	unknownFields              protoimpl.UnknownFields
 	sizeCache                  protoimpl.SizeCache
 }
@@ -937,7 +937,7 @@ func (x *SetQualificationAccessRequest) GetQualificationId() int64 {
 	return 0
 }
 
-func (x *SetQualificationAccessRequest) GetAccess() *access.QualificationAccess {
+func (x *SetQualificationAccessRequest) GetAccess() *access.Access {
 	if x != nil {
 		return x.xxx_hidden_Access
 	}
@@ -948,7 +948,7 @@ func (x *SetQualificationAccessRequest) SetQualificationId(v int64) {
 	x.xxx_hidden_QualificationId = v
 }
 
-func (x *SetQualificationAccessRequest) SetAccess(v *access.QualificationAccess) {
+func (x *SetQualificationAccessRequest) SetAccess(v *access.Access) {
 	x.xxx_hidden_Access = v
 }
 
@@ -967,7 +967,7 @@ type SetQualificationAccessRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	QualificationId int64
-	Access          *access.QualificationAccess
+	Access          *access.Access
 }
 
 func (b0 SetQualificationAccessRequest_builder) Build() *SetQualificationAccessRequest {
@@ -1028,7 +1028,7 @@ type ListQualificationRequestsRequest struct {
 	xxx_hidden_Sort            *database.Sort                 `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
 	xxx_hidden_QualificationId int64                          `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3,oneof"`
 	xxx_hidden_Status          []qualifications.RequestStatus `protobuf:"varint,4,rep,packed,name=status,proto3,enum=resources.qualifications.RequestStatus"`
-	xxx_hidden_UserId          int32                          `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof"`
+	xxx_hidden_UserIds         []int32                        `protobuf:"varint,5,rep,packed,name=user_ids,json=userIds,proto3"`
 	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
 	XXX_presence               [1]uint32
 	unknownFields              protoimpl.UnknownFields
@@ -1088,11 +1088,11 @@ func (x *ListQualificationRequestsRequest) GetStatus() []qualifications.RequestS
 	return nil
 }
 
-func (x *ListQualificationRequestsRequest) GetUserId() int32 {
+func (x *ListQualificationRequestsRequest) GetUserIds() []int32 {
 	if x != nil {
-		return x.xxx_hidden_UserId
+		return x.xxx_hidden_UserIds
 	}
-	return 0
+	return nil
 }
 
 func (x *ListQualificationRequestsRequest) SetPagination(v *database.PaginationRequest) {
@@ -1112,9 +1112,8 @@ func (x *ListQualificationRequestsRequest) SetStatus(v []qualifications.RequestS
 	x.xxx_hidden_Status = v
 }
 
-func (x *ListQualificationRequestsRequest) SetUserId(v int32) {
-	x.xxx_hidden_UserId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
+func (x *ListQualificationRequestsRequest) SetUserIds(v []int32) {
+	x.xxx_hidden_UserIds = v
 }
 
 func (x *ListQualificationRequestsRequest) HasPagination() bool {
@@ -1138,13 +1137,6 @@ func (x *ListQualificationRequestsRequest) HasQualificationId() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
-func (x *ListQualificationRequestsRequest) HasUserId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
-}
-
 func (x *ListQualificationRequestsRequest) ClearPagination() {
 	x.xxx_hidden_Pagination = nil
 }
@@ -1158,11 +1150,6 @@ func (x *ListQualificationRequestsRequest) ClearQualificationId() {
 	x.xxx_hidden_QualificationId = 0
 }
 
-func (x *ListQualificationRequestsRequest) ClearUserId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
-	x.xxx_hidden_UserId = 0
-}
-
 type ListQualificationRequestsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -1171,7 +1158,7 @@ type ListQualificationRequestsRequest_builder struct {
 	// Search params
 	QualificationId *int64
 	Status          []qualifications.RequestStatus
-	UserId          *int32
+	UserIds         []int32
 }
 
 func (b0 ListQualificationRequestsRequest_builder) Build() *ListQualificationRequestsRequest {
@@ -1185,10 +1172,7 @@ func (b0 ListQualificationRequestsRequest_builder) Build() *ListQualificationReq
 		x.xxx_hidden_QualificationId = *b.QualificationId
 	}
 	x.xxx_hidden_Status = b.Status
-	if b.UserId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
-		x.xxx_hidden_UserId = *b.UserId
-	}
+	x.xxx_hidden_UserIds = b.UserIds
 	return m0
 }
 
@@ -1532,7 +1516,7 @@ type ListQualificationsResultsRequest struct {
 	xxx_hidden_Sort            *database.Sort                `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
 	xxx_hidden_QualificationId int64                         `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3,oneof"`
 	xxx_hidden_Status          []qualifications.ResultStatus `protobuf:"varint,4,rep,packed,name=status,proto3,enum=resources.qualifications.ResultStatus"`
-	xxx_hidden_UserId          int32                         `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof"`
+	xxx_hidden_UserIds         []int32                       `protobuf:"varint,5,rep,packed,name=user_ids,json=userIds,proto3"`
 	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
 	XXX_presence               [1]uint32
 	unknownFields              protoimpl.UnknownFields
@@ -1592,11 +1576,11 @@ func (x *ListQualificationsResultsRequest) GetStatus() []qualifications.ResultSt
 	return nil
 }
 
-func (x *ListQualificationsResultsRequest) GetUserId() int32 {
+func (x *ListQualificationsResultsRequest) GetUserIds() []int32 {
 	if x != nil {
-		return x.xxx_hidden_UserId
+		return x.xxx_hidden_UserIds
 	}
-	return 0
+	return nil
 }
 
 func (x *ListQualificationsResultsRequest) SetPagination(v *database.PaginationRequest) {
@@ -1616,9 +1600,8 @@ func (x *ListQualificationsResultsRequest) SetStatus(v []qualifications.ResultSt
 	x.xxx_hidden_Status = v
 }
 
-func (x *ListQualificationsResultsRequest) SetUserId(v int32) {
-	x.xxx_hidden_UserId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
+func (x *ListQualificationsResultsRequest) SetUserIds(v []int32) {
+	x.xxx_hidden_UserIds = v
 }
 
 func (x *ListQualificationsResultsRequest) HasPagination() bool {
@@ -1642,13 +1625,6 @@ func (x *ListQualificationsResultsRequest) HasQualificationId() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
-func (x *ListQualificationsResultsRequest) HasUserId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
-}
-
 func (x *ListQualificationsResultsRequest) ClearPagination() {
 	x.xxx_hidden_Pagination = nil
 }
@@ -1662,11 +1638,6 @@ func (x *ListQualificationsResultsRequest) ClearQualificationId() {
 	x.xxx_hidden_QualificationId = 0
 }
 
-func (x *ListQualificationsResultsRequest) ClearUserId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
-	x.xxx_hidden_UserId = 0
-}
-
 type ListQualificationsResultsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -1675,7 +1646,7 @@ type ListQualificationsResultsRequest_builder struct {
 	// Search params
 	QualificationId *int64
 	Status          []qualifications.ResultStatus
-	UserId          *int32
+	UserIds         []int32
 }
 
 func (b0 ListQualificationsResultsRequest_builder) Build() *ListQualificationsResultsRequest {
@@ -1689,10 +1660,7 @@ func (b0 ListQualificationsResultsRequest_builder) Build() *ListQualificationsRe
 		x.xxx_hidden_QualificationId = *b.QualificationId
 	}
 	x.xxx_hidden_Status = b.Status
-	if b.UserId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
-		x.xxx_hidden_UserId = *b.UserId
-	}
+	x.xxx_hidden_UserIds = b.UserIds
 	return m0
 }
 
@@ -2045,7 +2013,7 @@ var File_services_qualifications_qualifications_proto protoreflect.FileDescripto
 
 const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
-	",services/qualifications/qualifications.proto\x12\x17services.qualifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a,resources/qualifications/access/access.proto\x1a(resources/qualifications/exam/exam.proto\x1a-resources/qualifications/qualifications.proto\"\xf3\x01\n" +
+	",services/qualifications/qualifications.proto\x12\x17services.qualifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a(resources/qualifications/exam/exam.proto\x1a-resources/qualifications/qualifications.proto\"\xf3\x01\n" +
 	"\x19ListQualificationsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -2080,25 +2048,23 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\"\x1d\n" +
 	"\x1bDeleteQualificationResponse\"J\n" +
 	"\x1dGetQualificationAccessRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\"n\n" +
-	"\x1eGetQualificationAccessResponse\x12L\n" +
-	"\x06access\x18\x01 \x01(\v24.resources.qualifications.access.QualificationAccessR\x06access\"\x98\x01\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\"R\n" +
+	"\x1eGetQualificationAccessResponse\x120\n" +
+	"\x06access\x18\x01 \x01(\v2\x18.resources.access.AccessR\x06access\"|\n" +
 	"\x1dSetQualificationAccessRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12L\n" +
-	"\x06access\x18\x02 \x01(\v24.resources.qualifications.access.QualificationAccessR\x06access\" \n" +
-	"\x1eSetQualificationAccessResponse\"\xe3\x02\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x120\n" +
+	"\x06access\x18\x02 \x01(\v2\x18.resources.access.AccessR\x06access\" \n" +
+	"\x1eSetQualificationAccessResponse\"\xd4\x02\n" +
 	" ListQualificationRequestsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12.\n" +
 	"\x10qualification_id\x18\x03 \x01(\x03H\x01R\x0fqualificationId\x88\x01\x01\x12?\n" +
-	"\x06status\x18\x04 \x03(\x0e2'.resources.qualifications.RequestStatusR\x06status\x12\x1c\n" +
-	"\auser_id\x18\x05 \x01(\x05H\x02R\x06userId\x88\x01\x01B\a\n" +
+	"\x06status\x18\x04 \x03(\x0e2'.resources.qualifications.RequestStatusR\x06status\x12\x19\n" +
+	"\buser_ids\x18\x05 \x03(\x05R\auserIdsB\a\n" +
 	"\x05_sortB\x13\n" +
-	"\x11_qualification_idB\n" +
-	"\n" +
-	"\b_user_id\"\xc4\x01\n" +
+	"\x11_qualification_id\"\xc4\x01\n" +
 	"!ListQualificationRequestsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -2111,19 +2077,17 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x1dDeleteQualificationReqRequest\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\" \n" +
-	"\x1eDeleteQualificationReqResponse\"\xe2\x02\n" +
+	"\x1eDeleteQualificationReqResponse\"\xd3\x02\n" +
 	" ListQualificationsResultsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12.\n" +
 	"\x10qualification_id\x18\x03 \x01(\x03H\x01R\x0fqualificationId\x88\x01\x01\x12>\n" +
-	"\x06status\x18\x04 \x03(\x0e2&.resources.qualifications.ResultStatusR\x06status\x12\x1c\n" +
-	"\auser_id\x18\x05 \x01(\x05H\x02R\x06userId\x88\x01\x01B\a\n" +
+	"\x06status\x18\x04 \x03(\x0e2&.resources.qualifications.ResultStatusR\x06status\x12\x19\n" +
+	"\buser_ids\x18\x05 \x03(\x05R\auserIdsB\a\n" +
 	"\x05_sortB\x13\n" +
-	"\x11_qualification_idB\n" +
-	"\n" +
-	"\b_user_id\"\xc1\x01\n" +
+	"\x11_qualification_id\"\xc1\x01\n" +
 	"!ListQualificationsResultsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -2192,7 +2156,7 @@ var file_services_qualifications_qualifications_proto_goTypes = []any{
 	(*database.PaginationResponse)(nil),                // 28: resources.common.database.PaginationResponse
 	(*qualifications.Qualification)(nil),               // 29: resources.qualifications.Qualification
 	(content.ContentType)(0),                           // 30: resources.common.content.ContentType
-	(*access.QualificationAccess)(nil),                 // 31: resources.qualifications.access.QualificationAccess
+	(*access.Access)(nil),                              // 31: resources.access.Access
 	(qualifications.RequestStatus)(0),                  // 32: resources.qualifications.RequestStatus
 	(*qualifications.QualificationRequest)(nil),        // 33: resources.qualifications.QualificationRequest
 	(qualifications.ResultStatus)(0),                   // 34: resources.qualifications.ResultStatus
@@ -2209,8 +2173,8 @@ var file_services_qualifications_qualifications_proto_depIdxs = []int32{
 	29, // 4: services.qualifications.GetQualificationResponse.qualification:type_name -> resources.qualifications.Qualification
 	30, // 5: services.qualifications.CreateQualificationRequest.content_type:type_name -> resources.common.content.ContentType
 	29, // 6: services.qualifications.UpdateQualificationRequest.qualification:type_name -> resources.qualifications.Qualification
-	31, // 7: services.qualifications.GetQualificationAccessResponse.access:type_name -> resources.qualifications.access.QualificationAccess
-	31, // 8: services.qualifications.SetQualificationAccessRequest.access:type_name -> resources.qualifications.access.QualificationAccess
+	31, // 7: services.qualifications.GetQualificationAccessResponse.access:type_name -> resources.access.Access
+	31, // 8: services.qualifications.SetQualificationAccessRequest.access:type_name -> resources.access.Access
 	26, // 9: services.qualifications.ListQualificationRequestsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	27, // 10: services.qualifications.ListQualificationRequestsRequest.sort:type_name -> resources.common.database.Sort
 	32, // 11: services.qualifications.ListQualificationRequestsRequest.status:type_name -> resources.qualifications.RequestStatus

@@ -5,28 +5,50 @@ import (
 	"database/sql"
 	"time"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	resqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+type ListQualificationsOptions struct {
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	Search     string
+}
+
+type ListQualificationRequestsOptions struct {
+	Pagination      *database.PaginationRequest
+	Sort            *database.Sort
+	QualificationID int64
+	Status          []resqualifications.RequestStatus
+	UserIDs         []int32
+}
+
+type ListQualificationsResultsOptions struct {
+	Pagination      *database.PaginationRequest
+	Sort            *database.Sort
+	QualificationID int64
+	Status          []resqualifications.ResultStatus
+	UserIDs         []int32
+}
+
 type IStore interface {
 	ListQualifications(
 		ctx context.Context,
-		req *pbqualifications.ListQualificationsRequest,
+		opts ListQualificationsOptions,
 		userInfo *userinfo.UserInfo,
-		where mysql.BoolExpression,
 		includePhoneNumber bool,
 	) (*pbqualifications.ListQualificationsResponse, error)
 	GetQualification(
 		ctx context.Context,
 		qualificationId int64,
-		where mysql.BoolExpression,
 		userInfo *userinfo.UserInfo,
 		selectContent bool,
 		includePhoneNumber bool,
@@ -34,7 +56,6 @@ type IStore interface {
 	GetQualificationShort(
 		ctx context.Context,
 		qualificationId int64,
-		where mysql.BoolExpression,
 		userInfo *userinfo.UserInfo,
 		includePhoneNumber bool,
 	) (*resqualifications.QualificationShort, error)
@@ -49,9 +70,8 @@ type IStore interface {
 	) (bool, error)
 	ListQualificationRequests(
 		ctx context.Context,
-		req *pbqualifications.ListQualificationRequestsRequest,
+		opts ListQualificationRequestsOptions,
 		userInfo *userinfo.UserInfo,
-		where mysql.BoolExpression,
 		includePhoneNumber bool,
 	) (*pbqualifications.ListQualificationRequestsResponse, error)
 	GetQualificationRequest(
@@ -62,9 +82,8 @@ type IStore interface {
 	) (*resqualifications.QualificationRequest, error)
 	ListQualificationsResults(
 		ctx context.Context,
-		req *pbqualifications.ListQualificationsResultsRequest,
+		opts ListQualificationsResultsOptions,
 		userInfo *userinfo.UserInfo,
-		where mysql.BoolExpression,
 		includePhoneNumber bool,
 	) (*pbqualifications.ListQualificationsResultsResponse, error)
 	GetQualificationResult(
@@ -194,9 +213,47 @@ type IStore interface {
 }
 
 type Store struct {
-	db *sql.DB
+	db                  *sql.DB
+	access              *access.SubjectObjectAccess
+	resultSorter        *database.SorterBuilder
+	requestSorter       *database.SorterBuilder
+	qualificationSorter *database.SorterBuilder
 }
 
 func New(db *sql.DB) IStore {
-	return &Store{db: db}
+	return &Store{
+		db:     db,
+		access: access.NewQualificationsSubjectObjectAccess(db),
+		resultSorter: database.New(
+			database.SpecMap{
+				"status":    database.Column{Col: tQualiResult.Status},
+				"createdAt": database.Column{Col: tQualiResult.CreatedAt},
+			},
+			[]mysql.OrderByClause{tQualiResult.CreatedAt.DESC()},
+			nil,
+			"createdAt",
+			3,
+		),
+		requestSorter: database.New(
+			database.SpecMap{
+				"status":     database.Column{Col: tQualiReq.Status},
+				"approvedAt": database.Column{Col: tQualiReq.ApprovedAt},
+				"createdAt":  database.Column{Col: tQualiReq.CreatedAt},
+			},
+			[]mysql.OrderByClause{tQualiReq.CreatedAt.DESC()},
+			nil,
+			"createdAt",
+			3,
+		),
+		qualificationSorter: database.New(
+			database.SpecMap{
+				"abbreviation": database.Column{Col: tQuali.Abbreviation},
+				"id":           database.Column{Col: tQualiResult.ID},
+			},
+			[]mysql.OrderByClause{tQualiResult.ID.DESC()},
+			nil,
+			"id",
+			3,
+		),
+	}
 }

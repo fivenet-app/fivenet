@@ -23,6 +23,7 @@ import {
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
 import { CalendarSystemKind } from '~~/gen/ts/resources/calendar/calendar';
+import Pagination from '~/components/partials/Pagination.vue';
 
 useHead({
     title: 'common.calendar',
@@ -56,12 +57,15 @@ const {
     status: calendarsStatus,
     error: calendarsError,
     refresh: calendarsRefresh,
-} = useLazyAsyncData(`calendars:${page.value}`, () => listCalendars());
+} = useLazyAsyncData(
+    () => `calendars:${page.value}`,
+    () => listCalendars(page.value),
+);
 
-async function listCalendars(): Promise<ListCalendarsResponse> {
+async function listCalendars(page: number): Promise<ListCalendarsResponse> {
     const response = await calendarStore.listCalendars({
         pagination: {
-            offset: calculateOffset(page.value, calendarsData.value?.pagination),
+            offset: calculateOffset(page, calendarsData.value?.pagination),
         },
         onlyPublic: false,
         calendarIds: [],
@@ -609,7 +613,7 @@ const viewOptions = [
         <template #body>
             <div class="mx-2 mb-2 flex h-full flex-col gap-2">
                 <div>
-                    <p class="font-semibold">{{ $t('common.calendar') }}</p>
+                    <p class="font-semibold">{{ $t('common.calendar', 2) }}</p>
 
                     <DataPendingBlock
                         v-if="isRequestPending(calendarsStatus)"
@@ -647,6 +651,19 @@ const viewOptions = [
 
                 <div class="flex-1" />
             </div>
+
+            <!-- TODO Implement pagination for users with more than pageSize total calendar
+            <Pagination
+                v-if="calendarsData?.pagination && calendarsData.pagination.totalCount > calendarsData.pagination.pageSize"
+                v-model="page"
+                :compact="true"
+                :status="calendarsStatus"
+                :pagination="calendarsData?.pagination"
+                :refresh="calendarsRefresh"
+                hide-text
+                hide-refresh
+            />
+            -->
         </template>
 
         <template #footer>

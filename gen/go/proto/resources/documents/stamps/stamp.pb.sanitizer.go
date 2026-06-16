@@ -32,6 +32,15 @@ func (m *Stamp) Sanitize() error {
 		}
 	}
 
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Job
 	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 
@@ -45,6 +54,15 @@ func (m *Stamp) Sanitize() error {
 
 	// Field: SvgTemplate
 	m.SvgTemplate = htmlsanitizer.SanitizeSVG(m.SvgTemplate)
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }

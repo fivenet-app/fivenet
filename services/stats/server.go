@@ -31,7 +31,7 @@ type Params struct {
 	DB        *sql.DB
 	JS        *events.JSWrapper
 	AppConfig appconfig.IConfig
-	Store     statsstore.IStore `optional:"true"`
+	Store     statsstore.IStore
 }
 
 func NewServer(p Params) *Server {

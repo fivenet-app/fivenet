@@ -32,6 +32,34 @@ var templateSubjectAccessOptions = access.SubjectAccessOptions{
 	},
 }
 
+func (s *Server) sanitizeTemplateAccess(
+	tmpl *documentstemplates.Template,
+	sanitizeJobAccess bool,
+	sanitizeContentAccess bool,
+) error {
+	if tmpl == nil {
+		return nil
+	}
+
+	if sanitizeJobAccess {
+		jobAccess, err := access.SanitizeJobAccessEntries(s.jobs, tmpl.GetJobAccess())
+		if err != nil {
+			return err
+		}
+		tmpl.JobAccess = access.NormalizeRequiredJobAccessFloors(jobAccess)
+	}
+
+	if sanitizeContentAccess {
+		contentAccess, err := access.SanitizeAccessJobs(s.jobs, tmpl.GetContentAccess())
+		if err != nil {
+			return err
+		}
+		tmpl.ContentAccess = access.NormalizeRequiredAccessFloors(contentAccess)
+	}
+
+	return nil
+}
+
 func templateJobAccess(jobs []*documentstemplates.TemplateJobAccess) *resourcesaccess.Access {
 	return &resourcesaccess.Access{Jobs: jobs}
 }
@@ -86,7 +114,7 @@ func (s *Server) GetTemplate(
 	}
 
 	if req.Render == nil || !req.GetRender() {
-		access, err := s.templateAccess.ListTargetAccess(
+		templateAccess, err := s.templateAccess.ListTargetAccess(
 			ctx,
 			s.db,
 			req.GetTemplateId(),
@@ -95,7 +123,10 @@ func (s *Server) GetTemplate(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		resp.Template.JobAccess = access.GetJobs()
+		resp.Template.JobAccess = templateAccess.GetJobs()
+		if err := s.sanitizeTemplateAccess(resp.Template, true, true); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
 	} else if req.Render != nil && req.GetRender() && req.GetData() != nil {
 		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(
 			resp.GetTemplate(),
@@ -180,6 +211,10 @@ func (s *Server) CreateTemplate(
 ) (*pbdocuments.CreateTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	if err := s.sanitizeTemplateAccess(req.GetTemplate(), true, true); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	if documentstemplates.TemplateAccessHasDuplicates(req.GetTemplate().GetJobAccess()) ||
 		documentsaccess.DocumentAccessHasDuplicates(req.GetTemplate().GetContentAccess()) {
 		return nil, errorsdocuments.ErrTemplateAccessDuplicate
@@ -260,6 +295,10 @@ func (s *Server) UpdateTemplate(
 		return nil, errorsdocuments.ErrTemplateNoPerms
 	}
 
+	if err := s.sanitizeTemplateAccess(req.GetTemplate(), true, true); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	if documentstemplates.TemplateAccessHasDuplicates(req.GetTemplate().GetJobAccess()) ||
 		documentsaccess.DocumentAccessHasDuplicates(req.GetTemplate().GetContentAccess()) {
 		return nil, errorsdocuments.ErrTemplateAccessDuplicate
@@ -313,7 +352,7 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	access, err := s.templateAccess.ListTargetAccess(
+	templateAccess, err := s.templateAccess.ListTargetAccess(
 		ctx,
 		s.db,
 		req.GetTemplate().GetId(),
@@ -322,8 +361,10 @@ func (s *Server) UpdateTemplate(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	tmpl.JobAccess = access.GetJobs()
-
+	tmpl.JobAccess = templateAccess.GetJobs()
+	if err := s.sanitizeTemplateAccess(tmpl, true, true); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbdocuments.UpdateTemplateResponse{

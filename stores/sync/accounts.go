@@ -18,7 +18,10 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Store) getAccount(ctx context.Context, identifier string) (*accounts.Account, *string, error) {
+func (s *Store) getAccount(
+	ctx context.Context,
+	identifier string,
+) (*accounts.Account, *string, error) {
 	tAccounts := table.FivenetAccounts.AS("account")
 	selectStmt := tAccounts.
 		SELECT(tAccounts.ID, tAccounts.Username, tAccounts.RegToken.AS("reg_token")).
@@ -28,6 +31,7 @@ func (s *Store) getAccount(ctx context.Context, identifier string) (*accounts.Ac
 
 	acc := &struct {
 		*accounts.Account
+
 		RegToken *string
 	}{Account: &accounts.Account{}}
 	if err := selectStmt.QueryContext(ctx, s.db, acc); err != nil {
@@ -39,7 +43,10 @@ func (s *Store) getAccount(ctx context.Context, identifier string) (*accounts.Ac
 	return acc.Account, acc.RegToken, nil
 }
 
-func (s *Store) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccountRequest) (*pbsync.RegisterAccountResponse, error) {
+func (s *Store) RegisterAccount(
+	ctx context.Context,
+	req *pbsync.RegisterAccountRequest,
+) (*pbsync.RegisterAccountResponse, error) {
 	acc, accToken, err := s.getAccount(ctx, req.GetIdentifier())
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve account. %w", err)
@@ -88,7 +95,10 @@ func (s *Store) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccount
 	return resp, nil
 }
 
-func (s *Store) TransferAccount(ctx context.Context, req *pbsync.TransferAccountRequest) (*pbsync.TransferAccountResponse, error) {
+func (s *Store) TransferAccount(
+	ctx context.Context,
+	req *pbsync.TransferAccountRequest,
+) (*pbsync.TransferAccountResponse, error) {
 	acc, _, err := s.getAccount(ctx, req.GetOldLicense())
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve account with old license. %w", err)
@@ -117,7 +127,10 @@ func (s *Store) TransferAccount(ctx context.Context, req *pbsync.TransferAccount
 	return resp, nil
 }
 
-func (s *Store) AddAccountUpdate(ctx context.Context, req *pbsync.AddAccountUpdateRequest) (*pbsync.AddActivityResponse, error) {
+func (s *Store) AddAccountUpdate(
+	ctx context.Context,
+	req *pbsync.AddAccountUpdateRequest,
+) (*pbsync.AddActivityResponse, error) {
 	if err := s.handleAccountUpdate(ctx, req.GetAccountUpdate()); err != nil {
 		return nil, fmt.Errorf("failed to handle account update. %w", err)
 	}
@@ -125,7 +138,10 @@ func (s *Store) AddAccountUpdate(ctx context.Context, req *pbsync.AddAccountUpda
 	return &pbsync.AddActivityResponse{}, nil
 }
 
-func (s *Store) AddUserOAuth2Conn(ctx context.Context, req *pbsync.AddUserOAuth2ConnRequest) (*pbsync.AddActivityResponse, error) {
+func (s *Store) AddUserOAuth2Conn(
+	ctx context.Context,
+	req *pbsync.AddUserOAuth2ConnRequest,
+) (*pbsync.AddActivityResponse, error) {
 	if err := s.handleUserOauth2(ctx, req.UserOauth2); err != nil {
 		return nil, fmt.Errorf("failed to handle UserOauth2 activity. %w", err)
 	}

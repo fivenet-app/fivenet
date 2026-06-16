@@ -269,10 +269,11 @@ func (s *Server) CreateDocument(
 		}
 
 		// Set access based on template
-		docAccess = &documentsaccess.DocumentAccess{
-			Jobs:  tmpl.GetContentAccess().GetJobs(),
-			Users: tmpl.GetContentAccess().GetUsers(),
+		docAccess, err = access.SanitizeAccessJobs(s.jobs, tmpl.GetContentAccess())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
+		docAccess = access.NormalizeRequiredAccessFloors(docAccess)
 
 		if tmpl.GetCategory() != nil {
 			categoryId = &tmpl.Category.Id
@@ -609,6 +610,10 @@ func (s *Server) UpdateDocument(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
+		if err := s.subjectAccess.RefreshTargetVisibility(ctx, tx, oldDoc.GetId()); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+
 		diff, err := s.generateDocumentDiff(oldDoc, &documents.Document{
 			Title:   req.GetTitle(),
 			Content: req.GetContent(),
@@ -902,6 +907,12 @@ func (s *Server) DeleteDocument(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	defer tx.Rollback()
+
 	stmt := tDocument.
 		UPDATE(
 			tDocument.DeletedAt,
@@ -913,17 +924,25 @@ func (s *Server) DeleteDocument(
 			tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
 		).
 		LIMIT(1)
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, s.db, &documentsactivity.DocActivity{
+	if err := s.subjectAccess.RefreshTargetVisibility(ctx, tx, req.GetDocumentId()); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   req.GetDocumentId(),
 		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_DELETED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
 		Reason:       req.Reason,
 	}); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 

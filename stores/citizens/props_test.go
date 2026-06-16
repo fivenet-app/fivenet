@@ -51,9 +51,9 @@ func TestStoreGetUserPropsLoadsPropsAndLabels(t *testing.T) {
 			"/files/mugshot.jpg",
 		))
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_labels`)+`(?s).*`+regexp.QuoteMeta(`INNER JOIN fivenet_user_labels_job AS citizen_label ON`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_labels INNER JOIN fivenet_user_labels_job AS label ON`)+`(?s).*`).
 		WithArgs(int32(42), int64(25)).
-		WillReturnRows(sqlmock.NewRows([]string{"citizen_label.id", "citizen_label.job", "citizen_label.name", "citizen_label.color"}))
+		WillReturnRows(sqlmock.NewRows([]string{"fivenet_user_labels_job.id", "fivenet_user_labels_job.job", "fivenet_user_labels_job.name", "fivenet_user_labels_job.color"}))
 
 	props, err := store.GetUserProps(t.Context(), db, 42)
 	require.NoError(t, err)

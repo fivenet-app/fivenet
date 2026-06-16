@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	calendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -17,6 +18,7 @@ func (s *Store) SetSubscription(
 	confirmed bool,
 	muted bool,
 ) error {
+	tCalendarSubs := table.FivenetCalendarSubs
 	if subscribe {
 		stmt := tCalendarSubs.
 			INSERT(

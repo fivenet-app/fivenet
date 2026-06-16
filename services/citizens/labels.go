@@ -10,18 +10,16 @@ import (
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
-	"github.com/go-jet/jet/v2/mysql"
 )
 
 var (
-	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("label")
+	tCitizensLabelsJob = table.FivenetUserLabelsJob
 	tCitizenLabels     = table.FivenetUserLabels
 )
 
@@ -51,44 +49,25 @@ func (s *Server) ListLabels(
 		}
 	}
 
-	condition := mysql.Bool(true)
-
-	if !userInfo.GetSuperuser() {
-		condition = condition.AND(tCitizensLabelsJob.DeletedAt.IS_NULL())
-	}
-
-	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
-		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(mysql.String(search)))
-	}
-
-	// When an user can create/update labels, the user is allowed to be returned all of their job's labels.
-	if req.GetOwnJobOnly() && canCreateLabel {
-		condition = condition.AND(tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())))
-	} else if !userInfo.GetSuperuser() {
-		minAccess := min(req.GetMinAccess(), citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW)
-
-		jobAccessExists := s.labelsAccess.ACLAccessExistsCondition(
-			tCitizensLabelsJob.ID,
-			userInfo,
-			int32(minAccess),
-		)
-
-		condition = mysql.AND(
-			condition,
-			jobAccessExists,
-		)
-	}
-
-	resp, err := s.store.ListLabels(ctx, s.db, condition, userInfo.GetSuperuser())
+	labels, err := s.store.ListLabels(
+		ctx,
+		s.db,
+		userInfo,
+		req.GetSearch(),
+		req.GetOwnJobOnly(),
+		canCreateLabel,
+		int32(min(req.GetMinAccess(), citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW)),
+		userInfo.GetSuperuser(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if err := s.fillLabelAccess(ctx, resp.GetList()...); err != nil {
+	if err := s.fillLabelAccess(ctx, labels.GetList()...); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	return &pbcitizens.ListLabelsResponse{Labels: resp.GetList()}, nil
+	return &pbcitizens.ListLabelsResponse{Labels: labels.GetList()}, nil
 }
 
 func (s *Server) GetLabel(
@@ -96,6 +75,19 @@ func (s *Server) GetLabel(
 	req *pbcitizens.GetLabelRequest,
 ) (*pbcitizens.GetLabelResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	check, err := s.labelsAccess.CanUserAccessTarget(
+		ctx,
+		req.GetId(),
+		userInfo,
+		int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW),
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errorscitizens.ErrLabelNotFound
+	}
 
 	label, err := s.store.GetLabel(ctx, s.db, userInfo.GetJob(), req.GetId())
 	if err != nil {

@@ -21,8 +21,10 @@ message Stamp {
   string job = 2 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 3;
   resources.timestamp.Timestamp created_at = 4;
+  optional resources.timestamp.Timestamp updated_at = 5;
+  optional resources.timestamp.Timestamp deleted_at = 6;
 
-  string name = 5 [
+  string name = 7 [
     (buf.validate.field).string.max_len = 120,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
@@ -31,10 +33,10 @@ message Stamp {
   ];
 
   // Parameterized SVG with slots
-  string svg_template = 6 [(codegen.sanitizer.sanitizer) = {
+  string svg_template = 8 [(codegen.sanitizer.sanitizer) = {
     enabled: true
     method: "SanitizeSVG"
   }];
 
-  resources.access.Access access = 7;
+  resources.access.Access access = 9;
 }

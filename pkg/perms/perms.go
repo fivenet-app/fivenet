@@ -309,7 +309,7 @@ type cacheRoleAttr struct {
 }
 
 func (ps *Perms) init(ctxCancel context.Context, ctxStartup context.Context, params Params) error {
-	cfgDefaultPerms := params.AppConfig.Get().Perms.GetDefault()
+	cfgDefaultPerms := params.AppConfig.Get().GetPerms().GetDefault()
 	defaultPerms := make([]string, len(cfgDefaultPerms))
 	for i := range cfgDefaultPerms {
 		split := strings.Split(cfgDefaultPerms[i].GetCategory(), ".")

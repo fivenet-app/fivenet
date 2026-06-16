@@ -465,53 +465,262 @@ type SubjectAccessColumns struct {
 
 type SubjectTargetTableColumns struct {
 	ID         mysql.ColumnInteger
+	CreatedAt  mysql.ColumnTimestamp
+	UpdatedAt  mysql.ColumnTimestamp
 	DeletedAt  mysql.ColumnTimestamp
 	Public     mysql.ColumnBool
 	CreatorID  mysql.ColumnInteger
 	CreatorJob mysql.ColumnString
 }
 
+type VisibilityRuleKind int16
+
+const (
+	VisibilityRulePublic  VisibilityRuleKind = 1
+	VisibilityRuleCreator VisibilityRuleKind = 2
+	VisibilityRuleCustom  VisibilityRuleKind = 3
+)
+
+type VisibilityRowKind int16
+
+const (
+	VisibilityRowKindPublic  VisibilityRowKind = 1
+	VisibilityRowKindCreator VisibilityRowKind = 2
+	VisibilityRowKindACL     VisibilityRowKind = 3
+)
+
+type VisibilityRule struct {
+	Kind   VisibilityRuleKind
+	Custom func(columns *SubjectTargetTableColumns, userInfo *userinfo.UserInfo) mysql.BoolExpression
+}
+
+type VisibilityPolicy struct {
+	Rules []VisibilityRule
+}
+
+func (p VisibilityPolicy) HasRules() bool {
+	return len(p.Rules) > 0
+}
+
+func (p VisibilityPolicy) HasRuleKind(kind VisibilityRuleKind) bool {
+	for _, rule := range p.Rules {
+		if rule.Kind == kind {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (p VisibilityPolicy) Condition(
+	columns *SubjectTargetTableColumns,
+	userInfo *userinfo.UserInfo,
+) mysql.BoolExpression {
+	if columns == nil || userInfo == nil {
+		return mysql.Bool(false)
+	}
+
+	var condition mysql.BoolExpression
+	hasCondition := false
+	for _, rule := range p.Rules {
+		var ruleCondition mysql.BoolExpression
+		hasRuleCondition := false
+
+		switch rule.Kind {
+		case VisibilityRulePublic:
+			if columns.Public != nil {
+				ruleCondition = columns.Public.IS_TRUE()
+				hasRuleCondition = true
+			}
+		case VisibilityRuleCreator:
+			creatorCondition := mysql.Bool(false)
+			hasCreatorCondition := false
+
+			if columns.CreatorID != nil {
+				creatorCondition = columns.CreatorID.EQ(mysql.Int32(userInfo.GetUserId()))
+				hasCreatorCondition = true
+			}
+			if columns.CreatorJob != nil {
+				jobCondition := columns.CreatorJob.EQ(mysql.String(userInfo.GetJob()))
+				if hasCreatorCondition {
+					creatorCondition = creatorCondition.AND(jobCondition)
+				} else {
+					creatorCondition = jobCondition
+					hasCreatorCondition = true
+				}
+			}
+
+			if hasCreatorCondition {
+				ruleCondition = creatorCondition
+				hasRuleCondition = true
+			}
+		case VisibilityRuleCustom:
+			if rule.Custom != nil {
+				ruleCondition = rule.Custom(columns, userInfo)
+				hasRuleCondition = ruleCondition != nil
+			}
+		}
+
+		if !hasRuleCondition || ruleCondition == nil {
+			continue
+		}
+		if !hasCondition {
+			condition = ruleCondition
+			hasCondition = true
+			continue
+		}
+		condition = condition.OR(ruleCondition)
+	}
+
+	if !hasCondition {
+		return mysql.Bool(false)
+	}
+
+	return condition
+}
+
+type SubjectObjectAccessConfig struct {
+	TargetTable                           mysql.Table
+	TargetColumns                         *SubjectTargetTableColumns
+	AccessTable                           mysql.Table
+	AccessColumns                         *SubjectAccessColumns
+	CalculatedVisibilityPublicTable       mysql.Table
+	CalculatedVisibilityCreatorTable      mysql.Table
+	CalculatedVisibilitySubjectTable      mysql.Table
+	CalculatedVisibilityPublicTargetID    mysql.ColumnInteger
+	CalculatedVisibilityCreatorTargetID   mysql.ColumnInteger
+	CalculatedVisibilityCreatorCreatorID  mysql.ColumnInteger
+	CalculatedVisibilityCreatorCreatorJob mysql.ColumnString
+	CalculatedVisibilitySubjectTargetID   mysql.ColumnInteger
+	CalculatedVisibilitySubjectSubjectID  mysql.ColumnInteger
+	CalculatedVisibilitySubjectAccess     mysql.ColumnInteger
+	CalculatedVisibilitySubjectEffect     mysql.ColumnBool
+	VisibilityTable                       mysql.Table
+	VisibilityCols                        *VisibilityColumns
+	Visibility                            VisibilityPolicy
+	CalculatedVisibilityMaps              bool
+}
+
 type SubjectObjectAccess struct {
-	db                 *sql.DB
-	targetTable        mysql.Table
-	targetTableColumns *SubjectTargetTableColumns
-	accessTable        mysql.Table
-	accessColumns      *SubjectAccessColumns
+	db                                    *sql.DB
+	targetTable                           mysql.Table
+	targetTableColumns                    *SubjectTargetTableColumns
+	accessTable                           mysql.Table
+	accessColumns                         *SubjectAccessColumns
+	calculatedVisibilityPublicTable       mysql.Table
+	calculatedVisibilityCreatorTable      mysql.Table
+	calculatedVisibilitySubjectTable      mysql.Table
+	calculatedVisibilityPublicTargetID    mysql.ColumnInteger
+	calculatedVisibilityCreatorTargetID   mysql.ColumnInteger
+	calculatedVisibilityCreatorCreatorID  mysql.ColumnInteger
+	calculatedVisibilityCreatorCreatorJob mysql.ColumnString
+	calculatedVisibilitySubjectTargetID   mysql.ColumnInteger
+	calculatedVisibilitySubjectSubjectID  mysql.ColumnInteger
+	calculatedVisibilitySubjectAccess     mysql.ColumnInteger
+	calculatedVisibilitySubjectEffect     mysql.ColumnBool
+	visibilityTable                       mysql.Table
+	visibilityColumns                     *VisibilityColumns
+	visibility                            VisibilityPolicy
+	visibilityBackend                     VisibilityBackend
 }
 
 type canAccessIdsHelper struct {
 	IDs []int64 `alias:"id"`
 }
 
-func NewSubjectObjectAccess(
-	db *sql.DB,
-	targetTable mysql.Table,
-	targetColumns *SubjectTargetTableColumns,
-	accessTable mysql.Table,
-	accessColumns *SubjectAccessColumns,
-) *SubjectObjectAccess {
-	return &SubjectObjectAccess{
-		db:                 db,
-		targetTable:        targetTable,
-		targetTableColumns: targetColumns,
-		accessTable:        accessTable,
-		accessColumns:      accessColumns,
+type VisibilityBackend interface {
+	VisibleIDsQuery(
+		userInfo *userinfo.UserInfo,
+		access int32,
+		targetIDs ...int64,
+	) VisibilityQuery
+	VisibleIDsByConditionQuery(
+		userInfo *userinfo.UserInfo,
+		access int32,
+		condition mysql.BoolExpression,
+	) VisibilityQuery
+	ACLVisibleIDsByConditionQuery(
+		userInfo *userinfo.UserInfo,
+		access int32,
+		condition mysql.BoolExpression,
+	) VisibilityQuery
+	VisibleIDsStatement(
+		userInfo *userinfo.UserInfo,
+		access int32,
+		targetIDs ...int64,
+	) mysql.Statement
+	VisibleIDsByConditionStatement(
+		userInfo *userinfo.UserInfo,
+		access int32,
+		condition mysql.BoolExpression,
+	) mysql.Statement
+	ACLVisibleIDsByConditionStatement(
+		userInfo *userinfo.UserInfo,
+		access int32,
+		condition mysql.BoolExpression,
+	) mysql.Statement
+	CountVisibleByConditionStatement(
+		userInfo *userinfo.UserInfo,
+		access int32,
+		condition mysql.BoolExpression,
+	) mysql.Statement
+	RefreshTargetVisibility(
+		ctx context.Context,
+		tx qrm.DB,
+		targetID int64,
+	) error
+}
+
+type VisibilityQuery struct {
+	CTEs      []mysql.CommonTableExpression
+	Table     mysql.SelectTable
+	Statement mysql.Statement
+}
+
+func NewSubjectObjectAccess(db *sql.DB, cfg SubjectObjectAccessConfig) *SubjectObjectAccess {
+	access := &SubjectObjectAccess{
+		db:                                    db,
+		targetTable:                           cfg.TargetTable,
+		targetTableColumns:                    cfg.TargetColumns,
+		accessTable:                           cfg.AccessTable,
+		accessColumns:                         cfg.AccessColumns,
+		calculatedVisibilityPublicTable:       cfg.CalculatedVisibilityPublicTable,
+		calculatedVisibilityCreatorTable:      cfg.CalculatedVisibilityCreatorTable,
+		calculatedVisibilitySubjectTable:      cfg.CalculatedVisibilitySubjectTable,
+		calculatedVisibilityPublicTargetID:    cfg.CalculatedVisibilityPublicTargetID,
+		calculatedVisibilityCreatorTargetID:   cfg.CalculatedVisibilityCreatorTargetID,
+		calculatedVisibilityCreatorCreatorID:  cfg.CalculatedVisibilityCreatorCreatorID,
+		calculatedVisibilityCreatorCreatorJob: cfg.CalculatedVisibilityCreatorCreatorJob,
+		calculatedVisibilitySubjectTargetID:   cfg.CalculatedVisibilitySubjectTargetID,
+		calculatedVisibilitySubjectSubjectID:  cfg.CalculatedVisibilitySubjectSubjectID,
+		calculatedVisibilitySubjectAccess:     cfg.CalculatedVisibilitySubjectAccess,
+		calculatedVisibilitySubjectEffect:     cfg.CalculatedVisibilitySubjectEffect,
+		visibilityTable:                       cfg.VisibilityTable,
+		visibilityColumns:                     cfg.VisibilityCols,
+		visibility:                            cfg.Visibility,
 	}
+	if cfg.CalculatedVisibilityMaps {
+		access.visibilityBackend = &calculatedVisibilityBackend{access: access}
+	} else {
+		access.visibilityBackend = &sqlVisibilityBackend{access: access}
+	}
+	return access
 }
 
 func NewDocumentsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(
-		db,
-		table.FivenetDocuments,
-		&SubjectTargetTableColumns{
+	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+		TargetTable: table.FivenetDocuments,
+		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetDocuments.ID,
+			CreatedAt:  table.FivenetDocuments.CreatedAt,
+			UpdatedAt:  table.FivenetDocuments.UpdatedAt,
 			DeletedAt:  table.FivenetDocuments.DeletedAt,
 			Public:     table.FivenetDocuments.Public,
 			CreatorID:  table.FivenetDocuments.CreatorID,
 			CreatorJob: table.FivenetDocuments.CreatorJob,
 		},
-		table.FivenetDocumentsAccess,
-		&SubjectAccessColumns{
+		AccessTable: table.FivenetDocumentsAccess,
+		AccessColumns: &SubjectAccessColumns{
 			BaseAccessColumns: BaseAccessColumns{
 				ID:       table.FivenetDocumentsAccess.ID,
 				TargetID: table.FivenetDocumentsAccess.TargetID,
@@ -520,20 +729,39 @@ func NewDocumentsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			SubjectID: table.FivenetDocumentsAccess.SubjectID,
 			Effect:    table.FivenetDocumentsAccess.Effect,
 		},
-	)
+		CalculatedVisibilityPublicTable:       table.FivenetDocumentsVisibilityPublic,
+		CalculatedVisibilityCreatorTable:      table.FivenetDocumentsVisibilityCreator,
+		CalculatedVisibilitySubjectTable:      table.FivenetDocumentsVisibilitySubject,
+		CalculatedVisibilityPublicTargetID:    table.FivenetDocumentsVisibilityPublic.TargetID,
+		CalculatedVisibilityCreatorTargetID:   table.FivenetDocumentsVisibilityCreator.TargetID,
+		CalculatedVisibilityCreatorCreatorID:  table.FivenetDocumentsVisibilityCreator.CreatorID,
+		CalculatedVisibilityCreatorCreatorJob: table.FivenetDocumentsVisibilityCreator.CreatorJob,
+		CalculatedVisibilitySubjectTargetID:   table.FivenetDocumentsVisibilitySubject.TargetID,
+		CalculatedVisibilitySubjectSubjectID:  table.FivenetDocumentsVisibilitySubject.SubjectID,
+		CalculatedVisibilitySubjectAccess:     table.FivenetDocumentsVisibilitySubject.Access,
+		CalculatedVisibilitySubjectEffect:     table.FivenetDocumentsVisibilitySubject.Effect,
+		Visibility: VisibilityPolicy{
+			Rules: []VisibilityRule{
+				{Kind: VisibilityRulePublic},
+				{Kind: VisibilityRuleCreator},
+			},
+		},
+		CalculatedVisibilityMaps: true,
+	})
 }
 
 func NewDocumentTemplatesSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(
-		db,
-		table.FivenetDocumentsTemplates,
-		&SubjectTargetTableColumns{
+	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+		TargetTable: table.FivenetDocumentsTemplates,
+		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetDocumentsTemplates.ID,
+			CreatedAt:  table.FivenetDocumentsTemplates.CreatedAt,
+			UpdatedAt:  table.FivenetDocumentsTemplates.UpdatedAt,
 			DeletedAt:  table.FivenetDocumentsTemplates.DeletedAt,
 			CreatorJob: table.FivenetDocumentsTemplates.CreatorJob,
 		},
-		table.FivenetDocumentsTemplatesAccess,
-		&SubjectAccessColumns{
+		AccessTable: table.FivenetDocumentsTemplatesAccess,
+		AccessColumns: &SubjectAccessColumns{
 			BaseAccessColumns: BaseAccessColumns{
 				ID:       table.FivenetDocumentsTemplatesAccess.ID,
 				TargetID: table.FivenetDocumentsTemplatesAccess.TargetID,
@@ -542,19 +770,36 @@ func NewDocumentTemplatesSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			SubjectID: table.FivenetDocumentsTemplatesAccess.SubjectID,
 			Effect:    table.FivenetDocumentsTemplatesAccess.Effect,
 		},
-	)
+		CalculatedVisibilityCreatorTable:      table.FivenetDocumentsTemplatesVisibilityCreator,
+		CalculatedVisibilitySubjectTable:      table.FivenetDocumentsTemplatesVisibilitySubject,
+		CalculatedVisibilityCreatorTargetID:   table.FivenetDocumentsTemplatesVisibilityCreator.TargetID,
+		CalculatedVisibilityCreatorCreatorID:  table.FivenetDocumentsTemplatesVisibilityCreator.CreatorID,
+		CalculatedVisibilityCreatorCreatorJob: table.FivenetDocumentsTemplatesVisibilityCreator.CreatorJob,
+		CalculatedVisibilitySubjectTargetID:   table.FivenetDocumentsTemplatesVisibilitySubject.TargetID,
+		CalculatedVisibilitySubjectSubjectID:  table.FivenetDocumentsTemplatesVisibilitySubject.SubjectID,
+		CalculatedVisibilitySubjectAccess:     table.FivenetDocumentsTemplatesVisibilitySubject.Access,
+		CalculatedVisibilitySubjectEffect:     table.FivenetDocumentsTemplatesVisibilitySubject.Effect,
+		Visibility: VisibilityPolicy{
+			Rules: []VisibilityRule{
+				{Kind: VisibilityRuleCreator},
+			},
+		},
+		CalculatedVisibilityMaps: true,
+	})
 }
 
 func NewDocumentStampsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(
-		db,
-		table.FivenetDocumentsStamps,
-		&SubjectTargetTableColumns{
-			ID:        table.FivenetDocumentsStamps.ID,
-			DeletedAt: table.FivenetDocumentsStamps.DeletedAt,
+	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+		TargetTable: table.FivenetDocumentsStamps,
+		TargetColumns: &SubjectTargetTableColumns{
+			ID:         table.FivenetDocumentsStamps.ID,
+			CreatedAt:  table.FivenetDocumentsStamps.CreatedAt,
+			UpdatedAt:  table.FivenetDocumentsStamps.UpdatedAt,
+			DeletedAt:  table.FivenetDocumentsStamps.DeletedAt,
+			CreatorJob: table.FivenetDocumentsStamps.Name,
 		},
-		table.FivenetDocumentsStampsAccess,
-		&SubjectAccessColumns{
+		AccessTable: table.FivenetDocumentsStampsAccess,
+		AccessColumns: &SubjectAccessColumns{
 			BaseAccessColumns: BaseAccessColumns{
 				ID:       table.FivenetDocumentsStampsAccess.ID,
 				TargetID: table.FivenetDocumentsStampsAccess.TargetID,
@@ -563,22 +808,35 @@ func NewDocumentStampsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			SubjectID: table.FivenetDocumentsStampsAccess.SubjectID,
 			Effect:    table.FivenetDocumentsStampsAccess.Effect,
 		},
-	)
+		CalculatedVisibilityCreatorTable:      table.FivenetDocumentsStampsVisibilityCreator,
+		CalculatedVisibilitySubjectTable:      table.FivenetDocumentsStampsVisibilitySubject,
+		CalculatedVisibilityCreatorTargetID:   table.FivenetDocumentsStampsVisibilityCreator.TargetID,
+		CalculatedVisibilityCreatorCreatorJob: table.FivenetDocumentsStampsVisibilityCreator.CreatorJob,
+		CalculatedVisibilitySubjectTargetID:   table.FivenetDocumentsStampsVisibilitySubject.TargetID,
+		CalculatedVisibilitySubjectSubjectID:  table.FivenetDocumentsStampsVisibilitySubject.SubjectID,
+		CalculatedVisibilitySubjectAccess:     table.FivenetDocumentsStampsVisibilitySubject.Access,
+		CalculatedVisibilitySubjectEffect:     table.FivenetDocumentsStampsVisibilitySubject.Effect,
+		Visibility: VisibilityPolicy{
+			Rules: []VisibilityRule{{Kind: VisibilityRuleCreator}},
+		},
+		CalculatedVisibilityMaps: true,
+	})
 }
 
 func NewCalendarSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(
-		db,
-		table.FivenetCalendar,
-		&SubjectTargetTableColumns{
+	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+		TargetTable: table.FivenetCalendar,
+		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetCalendar.ID,
+			CreatedAt:  table.FivenetCalendar.CreatedAt,
+			UpdatedAt:  table.FivenetCalendar.UpdatedAt,
 			DeletedAt:  table.FivenetCalendar.DeletedAt,
 			Public:     table.FivenetCalendar.Public,
 			CreatorID:  table.FivenetCalendar.CreatorID,
 			CreatorJob: table.FivenetCalendar.CreatorJob,
 		},
-		table.FivenetCalendarAccess,
-		&SubjectAccessColumns{
+		AccessTable: table.FivenetCalendarAccess,
+		AccessColumns: &SubjectAccessColumns{
 			BaseAccessColumns: BaseAccessColumns{
 				ID:       table.FivenetCalendarAccess.ID,
 				TargetID: table.FivenetCalendarAccess.TargetID,
@@ -587,22 +845,41 @@ func NewCalendarSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			SubjectID: table.FivenetCalendarAccess.SubjectID,
 			Effect:    table.FivenetCalendarAccess.Effect,
 		},
-	)
+		CalculatedVisibilityPublicTable:       table.FivenetCalendarVisibilityPublic,
+		CalculatedVisibilityCreatorTable:      table.FivenetCalendarVisibilityCreator,
+		CalculatedVisibilitySubjectTable:      table.FivenetCalendarVisibilitySubject,
+		CalculatedVisibilityPublicTargetID:    table.FivenetCalendarVisibilityPublic.TargetID,
+		CalculatedVisibilityCreatorTargetID:   table.FivenetCalendarVisibilityCreator.TargetID,
+		CalculatedVisibilityCreatorCreatorID:  table.FivenetCalendarVisibilityCreator.CreatorID,
+		CalculatedVisibilityCreatorCreatorJob: table.FivenetCalendarVisibilityCreator.CreatorJob,
+		CalculatedVisibilitySubjectTargetID:   table.FivenetCalendarVisibilitySubject.TargetID,
+		CalculatedVisibilitySubjectSubjectID:  table.FivenetCalendarVisibilitySubject.SubjectID,
+		CalculatedVisibilitySubjectAccess:     table.FivenetCalendarVisibilitySubject.Access,
+		CalculatedVisibilitySubjectEffect:     table.FivenetCalendarVisibilitySubject.Effect,
+		Visibility: VisibilityPolicy{
+			Rules: []VisibilityRule{
+				{Kind: VisibilityRulePublic},
+				{Kind: VisibilityRuleCreator},
+			},
+		},
+		CalculatedVisibilityMaps: true,
+	})
 }
 
 func NewWikiPageSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(
-		db,
-		table.FivenetWikiPages,
-		&SubjectTargetTableColumns{
+	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+		TargetTable: table.FivenetWikiPages,
+		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetWikiPages.ID,
+			CreatedAt:  table.FivenetWikiPages.CreatedAt,
+			UpdatedAt:  table.FivenetWikiPages.UpdatedAt,
 			DeletedAt:  table.FivenetWikiPages.DeletedAt,
 			Public:     table.FivenetWikiPages.Public,
 			CreatorID:  table.FivenetWikiPages.CreatorID,
 			CreatorJob: table.FivenetWikiPages.Job,
 		},
-		table.FivenetWikiPagesAccess,
-		&SubjectAccessColumns{
+		AccessTable: table.FivenetWikiPagesAccess,
+		AccessColumns: &SubjectAccessColumns{
 			BaseAccessColumns: BaseAccessColumns{
 				ID:       table.FivenetWikiPagesAccess.ID,
 				TargetID: table.FivenetWikiPagesAccess.TargetID,
@@ -611,20 +888,39 @@ func NewWikiPageSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			SubjectID: table.FivenetWikiPagesAccess.SubjectID,
 			Effect:    table.FivenetWikiPagesAccess.Effect,
 		},
-	)
+		CalculatedVisibilityCreatorTable:      table.FivenetWikiPagesVisibilityCreator,
+		CalculatedVisibilityPublicTable:       table.FivenetWikiPagesVisibilityPublic,
+		CalculatedVisibilityCreatorTargetID:   table.FivenetWikiPagesVisibilityCreator.TargetID,
+		CalculatedVisibilityCreatorCreatorID:  table.FivenetWikiPagesVisibilityCreator.CreatorID,
+		CalculatedVisibilityCreatorCreatorJob: table.FivenetWikiPagesVisibilityCreator.CreatorJob,
+		CalculatedVisibilitySubjectTable:      table.FivenetWikiPagesVisibilitySubject,
+		CalculatedVisibilityPublicTargetID:    table.FivenetWikiPagesVisibilityPublic.TargetID,
+		CalculatedVisibilitySubjectTargetID:   table.FivenetWikiPagesVisibilitySubject.TargetID,
+		CalculatedVisibilitySubjectSubjectID:  table.FivenetWikiPagesVisibilitySubject.SubjectID,
+		CalculatedVisibilitySubjectAccess:     table.FivenetWikiPagesVisibilitySubject.Access,
+		CalculatedVisibilitySubjectEffect:     table.FivenetWikiPagesVisibilitySubject.Effect,
+		Visibility: VisibilityPolicy{
+			Rules: []VisibilityRule{
+				{Kind: VisibilityRulePublic},
+				{Kind: VisibilityRuleCreator},
+			},
+		},
+		CalculatedVisibilityMaps: true,
+	})
 }
 
 func NewCitizenLabelsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(
-		db,
-		table.FivenetUserLabelsJob,
-		&SubjectTargetTableColumns{
+	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+		TargetTable: table.FivenetUserLabelsJob,
+		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetUserLabelsJob.ID,
+			CreatedAt:  table.FivenetUserLabelsJob.CreatedAt,
+			UpdatedAt:  table.FivenetUserLabelsJob.UpdatedAt,
 			DeletedAt:  table.FivenetUserLabelsJob.DeletedAt,
 			CreatorJob: table.FivenetUserLabelsJob.Job,
 		},
-		table.FivenetUserLabelsJobJobAccess,
-		&SubjectAccessColumns{
+		AccessTable: table.FivenetUserLabelsJobJobAccess,
+		AccessColumns: &SubjectAccessColumns{
 			BaseAccessColumns: BaseAccessColumns{
 				ID:       table.FivenetUserLabelsJobJobAccess.ID,
 				TargetID: table.FivenetUserLabelsJobJobAccess.TargetID,
@@ -633,22 +929,37 @@ func NewCitizenLabelsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			SubjectID: table.FivenetUserLabelsJobJobAccess.SubjectID,
 			Effect:    table.FivenetUserLabelsJobJobAccess.Effect,
 		},
-	)
+		CalculatedVisibilityCreatorTable:      table.FivenetUserLabelsJobVisibilityCreator,
+		CalculatedVisibilitySubjectTable:      table.FivenetUserLabelsJobVisibilitySubject,
+		CalculatedVisibilityCreatorTargetID:   table.FivenetUserLabelsJobVisibilityCreator.TargetID,
+		CalculatedVisibilityCreatorCreatorJob: table.FivenetUserLabelsJobVisibilityCreator.CreatorJob,
+		CalculatedVisibilitySubjectTargetID:   table.FivenetUserLabelsJobVisibilitySubject.TargetID,
+		CalculatedVisibilitySubjectSubjectID:  table.FivenetUserLabelsJobVisibilitySubject.SubjectID,
+		CalculatedVisibilitySubjectAccess:     table.FivenetUserLabelsJobVisibilitySubject.Access,
+		CalculatedVisibilitySubjectEffect:     table.FivenetUserLabelsJobVisibilitySubject.Effect,
+		Visibility: VisibilityPolicy{
+			Rules: []VisibilityRule{
+				{Kind: VisibilityRuleCreator},
+			},
+		},
+		CalculatedVisibilityMaps: true,
+	})
 }
 
 func NewQualificationsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(
-		db,
-		table.FivenetQualifications,
-		&SubjectTargetTableColumns{
+	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+		TargetTable: table.FivenetQualifications,
+		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetQualifications.ID,
+			CreatedAt:  table.FivenetQualifications.CreatedAt,
+			UpdatedAt:  table.FivenetQualifications.UpdatedAt,
 			DeletedAt:  table.FivenetQualifications.DeletedAt,
 			Public:     table.FivenetQualifications.Public,
 			CreatorID:  table.FivenetQualifications.CreatorID,
 			CreatorJob: table.FivenetQualifications.CreatorJob,
 		},
-		table.FivenetQualificationsAccess,
-		&SubjectAccessColumns{
+		AccessTable: table.FivenetQualificationsAccess,
+		AccessColumns: &SubjectAccessColumns{
 			BaseAccessColumns: BaseAccessColumns{
 				ID:       table.FivenetQualificationsAccess.ID,
 				TargetID: table.FivenetQualificationsAccess.TargetID,
@@ -657,20 +968,39 @@ func NewQualificationsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			SubjectID: table.FivenetQualificationsAccess.SubjectID,
 			Effect:    table.FivenetQualificationsAccess.Effect,
 		},
-	)
+		CalculatedVisibilityPublicTable:       table.FivenetQualificationsVisibilityPublic,
+		CalculatedVisibilityCreatorTable:      table.FivenetQualificationsVisibilityCreator,
+		CalculatedVisibilitySubjectTable:      table.FivenetQualificationsVisibilitySubject,
+		CalculatedVisibilityPublicTargetID:    table.FivenetQualificationsVisibilityPublic.TargetID,
+		CalculatedVisibilityCreatorTargetID:   table.FivenetQualificationsVisibilityCreator.TargetID,
+		CalculatedVisibilityCreatorCreatorID:  table.FivenetQualificationsVisibilityCreator.CreatorID,
+		CalculatedVisibilityCreatorCreatorJob: table.FivenetQualificationsVisibilityCreator.CreatorJob,
+		CalculatedVisibilitySubjectTargetID:   table.FivenetQualificationsVisibilitySubject.TargetID,
+		CalculatedVisibilitySubjectSubjectID:  table.FivenetQualificationsVisibilitySubject.SubjectID,
+		CalculatedVisibilitySubjectAccess:     table.FivenetQualificationsVisibilitySubject.Access,
+		CalculatedVisibilitySubjectEffect:     table.FivenetQualificationsVisibilitySubject.Effect,
+		Visibility: VisibilityPolicy{
+			Rules: []VisibilityRule{
+				{Kind: VisibilityRulePublic},
+				{Kind: VisibilityRuleCreator},
+			},
+		},
+		CalculatedVisibilityMaps: true,
+	})
 }
 
 func NewMailerEmailsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(
-		db,
-		table.FivenetMailerEmails,
-		&SubjectTargetTableColumns{
+	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+		TargetTable: table.FivenetMailerEmails,
+		TargetColumns: &SubjectTargetTableColumns{
 			ID:        table.FivenetMailerEmails.ID,
+			CreatedAt: table.FivenetMailerEmails.CreatedAt,
+			UpdatedAt: table.FivenetMailerEmails.UpdatedAt,
 			DeletedAt: table.FivenetMailerEmails.DeletedAt,
 			CreatorID: table.FivenetMailerEmails.UserID,
 		},
-		table.FivenetMailerEmailsAccess,
-		&SubjectAccessColumns{
+		AccessTable: table.FivenetMailerEmailsAccess,
+		AccessColumns: &SubjectAccessColumns{
 			BaseAccessColumns: BaseAccessColumns{
 				ID:       table.FivenetMailerEmailsAccess.ID,
 				TargetID: table.FivenetMailerEmailsAccess.TargetID,
@@ -679,19 +1009,35 @@ func NewMailerEmailsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			SubjectID: table.FivenetMailerEmailsAccess.SubjectID,
 			Effect:    table.FivenetMailerEmailsAccess.Effect,
 		},
-	)
+		CalculatedVisibilityCreatorTable:      table.FivenetMailerEmailsVisibilityCreator,
+		CalculatedVisibilitySubjectTable:      table.FivenetMailerEmailsVisibilitySubject,
+		CalculatedVisibilityCreatorTargetID:   table.FivenetMailerEmailsVisibilityCreator.TargetID,
+		CalculatedVisibilityCreatorCreatorID:  table.FivenetMailerEmailsVisibilityCreator.CreatorID,
+		CalculatedVisibilityCreatorCreatorJob: table.FivenetMailerEmailsVisibilityCreator.CreatorJob,
+		CalculatedVisibilitySubjectTargetID:   table.FivenetMailerEmailsVisibilitySubject.TargetID,
+		CalculatedVisibilitySubjectSubjectID:  table.FivenetMailerEmailsVisibilitySubject.SubjectID,
+		CalculatedVisibilitySubjectAccess:     table.FivenetMailerEmailsVisibilitySubject.Access,
+		CalculatedVisibilitySubjectEffect:     table.FivenetMailerEmailsVisibilitySubject.Effect,
+		Visibility: VisibilityPolicy{
+			Rules: []VisibilityRule{
+				{Kind: VisibilityRuleCreator},
+			},
+		},
+		CalculatedVisibilityMaps: true,
+	})
 }
 
 func NewCentrumUnitsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(
-		db,
-		table.FivenetCentrumUnits,
-		&SubjectTargetTableColumns{
+	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+		TargetTable: table.FivenetCentrumUnits,
+		TargetColumns: &SubjectTargetTableColumns{
 			ID:        table.FivenetCentrumUnits.ID,
+			CreatedAt: table.FivenetCentrumUnits.CreatedAt,
+			UpdatedAt: table.FivenetCentrumUnits.UpdatedAt,
 			DeletedAt: table.FivenetCentrumUnits.DeletedAt,
 		},
-		table.FivenetCentrumUnitsAccess,
-		&SubjectAccessColumns{
+		AccessTable: table.FivenetCentrumUnitsAccess,
+		AccessColumns: &SubjectAccessColumns{
 			BaseAccessColumns: BaseAccessColumns{
 				ID:       table.FivenetCentrumUnitsAccess.ID,
 				TargetID: table.FivenetCentrumUnitsAccess.TargetID,
@@ -700,7 +1046,7 @@ func NewCentrumUnitsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			SubjectID: table.FivenetCentrumUnitsAccess.SubjectID,
 			Effect:    table.FivenetCentrumUnitsAccess.Effect,
 		},
-	)
+	})
 }
 
 func (a *SubjectObjectAccess) CanUserAccessTarget(
@@ -722,11 +1068,10 @@ func (a *SubjectObjectAccess) CanUserAccessTargetIDs(
 	if len(targetIDs) == 0 {
 		return nil, nil
 	}
-	if userInfo.GetSuperuser() {
+	if userInfo != nil && userInfo.GetSuperuser() {
 		return targetIDs, nil
 	}
-
-	stmt := a.VisibleIDsStatement(userInfo, access, targetIDs...)
+	stmt := a.backend().VisibleIDsStatement(userInfo, access, targetIDs...)
 
 	dest := &canAccessIdsHelper{}
 	if err := stmt.QueryContext(ctx, a.db, &dest.IDs); err != nil {
@@ -743,17 +1088,15 @@ func (a *SubjectObjectAccess) VisibleIDsStatement(
 	access int32,
 	targetIDs ...int64,
 ) mysql.Statement {
-	ids := make([]mysql.Expression, 0, len(targetIDs))
-	for _, targetID := range targetIDs {
-		ids = append(ids, mysql.Int64(targetID))
-	}
+	return a.backend().VisibleIDsStatement(userInfo, access, targetIDs...)
+}
 
-	condition := a.targetTableColumns.ID.IN(ids...)
-	if a.targetTableColumns.DeletedAt != nil {
-		condition = condition.AND(a.targetTableColumns.DeletedAt.IS_NULL())
-	}
-
-	return a.visibleObjectsStatement(userInfo, access, condition, false, true)
+func (a *SubjectObjectAccess) VisibleIDsQuery(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	targetIDs ...int64,
+) VisibilityQuery {
+	return a.backend().VisibleIDsQuery(userInfo, access, targetIDs...)
 }
 
 func (a *SubjectObjectAccess) VisibleIDsByConditionStatement(
@@ -761,11 +1104,15 @@ func (a *SubjectObjectAccess) VisibleIDsByConditionStatement(
 	access int32,
 	condition mysql.BoolExpression,
 ) mysql.Statement {
-	if a.targetTableColumns.DeletedAt != nil {
-		condition = condition.AND(a.targetTableColumns.DeletedAt.IS_NULL())
-	}
+	return a.backend().VisibleIDsByConditionStatement(userInfo, access, condition)
+}
 
-	return a.visibleObjectsStatement(userInfo, access, condition, false, true)
+func (a *SubjectObjectAccess) VisibleIDsByConditionQuery(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	condition mysql.BoolExpression,
+) VisibilityQuery {
+	return a.backend().VisibleIDsByConditionQuery(userInfo, access, condition)
 }
 
 func (a *SubjectObjectAccess) ACLVisibleIDsByConditionStatement(
@@ -773,11 +1120,15 @@ func (a *SubjectObjectAccess) ACLVisibleIDsByConditionStatement(
 	access int32,
 	condition mysql.BoolExpression,
 ) mysql.Statement {
-	if a.targetTableColumns.DeletedAt != nil {
-		condition = condition.AND(a.targetTableColumns.DeletedAt.IS_NULL())
-	}
+	return a.backend().ACLVisibleIDsByConditionStatement(userInfo, access, condition)
+}
 
-	return a.visibleObjectsStatement(userInfo, access, condition, false, false)
+func (a *SubjectObjectAccess) ACLVisibleIDsByConditionQuery(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	condition mysql.BoolExpression,
+) VisibilityQuery {
+	return a.backend().ACLVisibleIDsByConditionQuery(userInfo, access, condition)
 }
 
 func (a *SubjectObjectAccess) CountVisibleByConditionStatement(
@@ -785,20 +1136,249 @@ func (a *SubjectObjectAccess) CountVisibleByConditionStatement(
 	access int32,
 	condition mysql.BoolExpression,
 ) mysql.Statement {
+	return a.backend().CountVisibleByConditionStatement(userInfo, access, condition)
+}
+
+func (a *SubjectObjectAccess) RefreshTargetVisibility(
+	ctx context.Context,
+	tx qrm.DB,
+	targetID int64,
+) error {
+	return a.backend().RefreshTargetVisibility(ctx, tx, targetID)
+}
+
+func (a *SubjectObjectAccess) RefreshTargetVisibilityWithCreator(
+	ctx context.Context,
+	tx qrm.DB,
+	targetID int64,
+	creatorID int32,
+	creatorJob string,
+) error {
+	if backend, ok := a.backend().(interface {
+		RefreshTargetVisibilityWithCreator(
+			ctx context.Context,
+			tx qrm.DB,
+			targetID int64,
+			creatorID int32,
+			creatorJob string,
+		) error
+	}); ok {
+		return backend.RefreshTargetVisibilityWithCreator(ctx, tx, targetID, creatorID, creatorJob)
+	}
+
+	return a.RefreshTargetVisibility(ctx, tx, targetID)
+}
+
+func (a *SubjectObjectAccess) backend() VisibilityBackend {
+	if a.visibilityBackend == nil {
+		a.visibilityBackend = &sqlVisibilityBackend{access: a}
+	}
+	return a.visibilityBackend
+}
+
+type sqlVisibilityBackend struct {
+	access *SubjectObjectAccess
+}
+
+func (b *sqlVisibilityBackend) VisibleIDsQuery(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	targetIDs ...int64,
+) VisibilityQuery {
+	ids := make([]mysql.Expression, 0, len(targetIDs))
+	for _, targetID := range targetIDs {
+		ids = append(ids, mysql.Int64(targetID))
+	}
+
+	condition := b.access.targetTableColumns.ID.IN(ids...)
+	return b.VisibleIDsByConditionQuery(userInfo, access, condition)
+}
+
+func (b *sqlVisibilityBackend) VisibleIDsStatement(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	targetIDs ...int64,
+) mysql.Statement {
+	query := b.VisibleIDsQuery(userInfo, access, targetIDs...)
+	if len(query.CTEs) == 0 {
+		return query.Statement
+	}
+	return mysql.WITH(query.CTEs...)(query.Statement)
+}
+
+func (b *sqlVisibilityBackend) VisibleIDsByConditionStatement(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	condition mysql.BoolExpression,
+) mysql.Statement {
+	query := b.VisibleIDsByConditionQuery(userInfo, access, condition)
+	if len(query.CTEs) == 0 {
+		return query.Statement
+	}
+	return mysql.WITH(query.CTEs...)(query.Statement)
+}
+
+func (b *sqlVisibilityBackend) VisibleIDsByConditionQuery(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	condition mysql.BoolExpression,
+) VisibilityQuery {
+	if userInfo == nil {
+		userInfo = &userinfo.UserInfo{}
+	}
+	condition = b.access.normalizeTargetCondition(condition)
+	if userInfo != nil && userInfo.GetSuperuser() {
+		return VisibilityQuery{
+			Table:     b.access.visibleTargetIDsStatement(condition).AsTable("doc_ids"),
+			Statement: b.access.visibleTargetIDsStatement(condition),
+		}
+	}
+
+	implicitStmt := b.access.implicitVisibleIDsStatement(userInfo, condition)
+	aclCtes, aclSelect := b.access.aclVisibleIDsComponents(userInfo, access, condition, false)
+	if implicitStmt == nil {
+		return VisibilityQuery{
+			CTEs:      aclCtes,
+			Table:     aclSelect.AsTable("doc_ids"),
+			Statement: aclSelect,
+		}
+	}
+
+	combined := implicitStmt.UNION(aclSelect)
+	return VisibilityQuery{
+		CTEs:      aclCtes,
+		Table:     combined.AsTable("doc_ids"),
+		Statement: combined,
+	}
+}
+
+func (b *sqlVisibilityBackend) ACLVisibleIDsByConditionQuery(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	condition mysql.BoolExpression,
+) VisibilityQuery {
+	if userInfo == nil {
+		userInfo = &userinfo.UserInfo{}
+	}
+	condition = b.access.normalizeTargetCondition(condition)
+	if userInfo != nil && userInfo.GetSuperuser() {
+		return VisibilityQuery{
+			Table:     b.access.visibleTargetIDsStatement(condition).AsTable("doc_ids"),
+			Statement: b.access.visibleTargetIDsStatement(condition),
+		}
+	}
+
+	aclCtes, aclSelect := b.access.aclVisibleIDsComponents(userInfo, access, condition, false)
+	return VisibilityQuery{
+		CTEs:      aclCtes,
+		Table:     aclSelect.AsTable("doc_ids"),
+		Statement: aclSelect,
+	}
+}
+
+func (b *sqlVisibilityBackend) ACLVisibleIDsByConditionStatement(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	condition mysql.BoolExpression,
+) mysql.Statement {
+	query := b.ACLVisibleIDsByConditionQuery(userInfo, access, condition)
+	if len(query.CTEs) == 0 {
+		return query.Statement
+	}
+	return mysql.WITH(query.CTEs...)(query.Statement)
+}
+
+func (b *sqlVisibilityBackend) CountVisibleByConditionStatement(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	condition mysql.BoolExpression,
+) mysql.Statement {
+	if userInfo == nil {
+		userInfo = &userinfo.UserInfo{}
+	}
+	condition = b.access.normalizeTargetCondition(condition)
+	if userInfo != nil && userInfo.GetSuperuser() {
+		return b.access.countTargetIDsStatement(condition)
+	}
+
+	query := b.VisibleIDsByConditionQuery(userInfo, access, condition)
+	visibleID := mysql.IntegerColumn("id").From(query.Table)
+	countSelect := mysql.SELECT(mysql.COUNT(visibleID).AS("exact_total")).FROM(query.Table)
+	if len(query.CTEs) == 0 {
+		return countSelect
+	}
+	return mysql.WITH(
+		query.CTEs...,
+	)(countSelect)
+}
+
+func (b *sqlVisibilityBackend) RefreshTargetVisibility(
+	ctx context.Context,
+	tx qrm.DB,
+	targetID int64,
+) error {
+	return nil
+}
+
+func (a *SubjectObjectAccess) normalizeTargetCondition(
+	condition mysql.BoolExpression,
+) mysql.BoolExpression {
 	if a.targetTableColumns.DeletedAt != nil {
 		condition = condition.AND(a.targetTableColumns.DeletedAt.IS_NULL())
 	}
 
-	return a.visibleObjectsStatement(userInfo, access, condition, true, true)
+	return condition
 }
 
-func (a *SubjectObjectAccess) visibleObjectsStatement(
+func (a *SubjectObjectAccess) visibleTargetIDsStatement(
+	condition mysql.BoolExpression,
+) mysql.SelectStatement {
+	return a.targetTable.
+		SELECT(a.targetTableColumns.ID.AS("id")).
+		FROM(a.targetTable).
+		WHERE(condition).
+		DISTINCT()
+}
+
+func (a *SubjectObjectAccess) countTargetIDsStatement(
+	condition mysql.BoolExpression,
+) mysql.Statement {
+	visibleIDs := mysql.CTE("visible_ids")
+	visibleID := mysql.IntegerColumn("id").From(visibleIDs)
+	return mysql.WITH(
+		visibleIDs.AS(a.visibleTargetIDsStatement(condition)),
+	)(mysql.SELECT(mysql.COUNT(visibleID).AS("exact_total")).FROM(visibleIDs))
+}
+
+func (a *SubjectObjectAccess) implicitVisibleIDsStatement(
+	userInfo *userinfo.UserInfo,
+	targetCondition mysql.BoolExpression,
+) mysql.SelectStatement {
+	if !a.visibility.HasRules() || userInfo == nil {
+		return nil
+	}
+
+	implicitCondition := a.visibility.Condition(a.targetTableColumns, userInfo)
+	if implicitCondition == nil {
+		return nil
+	}
+
+	return a.targetTable.
+		SELECT(a.targetTableColumns.ID.AS("id")).
+		FROM(a.targetTable).
+		WHERE(targetCondition.AND(implicitCondition)).
+		DISTINCT()
+}
+
+func (a *SubjectObjectAccess) aclVisibleIDsComponents(
 	userInfo *userinfo.UserInfo,
 	access int32,
 	targetCondition mysql.BoolExpression,
 	countOnly bool,
-	includeImplicitAccess bool,
-) mysql.Statement {
+) ([]mysql.CommonTableExpression, mysql.SelectStatement) {
+	if userInfo == nil {
+		userInfo = &userinfo.UserInfo{}
+	}
 	actorSubjects := mysql.CTE("actor_subjects")
 	matchingACL := mysql.CTE("matching_acl")
 	winningSpecificity := mysql.CTE("winning_specificity")
@@ -820,22 +1400,6 @@ func (a *SubjectObjectAccess) visibleObjectsStatement(
 
 	visibleID := mysql.IntegerColumn("id").From(visibleObjects)
 
-	publicCondition := mysql.Bool(false)
-	if a.targetTableColumns.Public != nil {
-		publicCondition = a.targetTableColumns.Public.IS_TRUE()
-	}
-	creatorCondition := mysql.Bool(false)
-	if a.targetTableColumns.CreatorID != nil {
-		creatorCondition = a.targetTableColumns.CreatorID.EQ(mysql.Int32(userInfo.GetUserId()))
-		if a.targetTableColumns.CreatorJob != nil {
-			creatorCondition = creatorCondition.AND(
-				a.targetTableColumns.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			)
-		}
-	} else if a.targetTableColumns.CreatorJob != nil {
-		creatorCondition = a.targetTableColumns.CreatorJob.EQ(mysql.String(userInfo.GetJob()))
-	}
-
 	visibleSelect := mysql.SELECT(a.targetTableColumns.ID.AS("id")).
 		FROM(a.targetTable.
 			LEFT_JOIN(winningSpecificity,
@@ -851,17 +1415,7 @@ func (a *SubjectObjectAccess) visibleObjectsStatement(
 		).
 		WHERE(targetCondition)
 
-	groupBys := []mysql.GroupByClause{a.targetTableColumns.ID}
-	if a.targetTableColumns.Public != nil {
-		groupBys = append(groupBys, a.targetTableColumns.Public)
-	}
-	if a.targetTableColumns.CreatorID != nil {
-		groupBys = append(groupBys, a.targetTableColumns.CreatorID)
-	}
-	if a.targetTableColumns.CreatorJob != nil {
-		groupBys = append(groupBys, a.targetTableColumns.CreatorJob)
-	}
-	visibleSelect = visibleSelect.GROUP_BY(groupBys...)
+	visibleSelect = visibleSelect.GROUP_BY(a.targetTableColumns.ID)
 
 	aclCondition := mysql.AND(
 		mysql.IntExp(mysql.SUM(mysql.CASE().
@@ -873,13 +1427,7 @@ func (a *SubjectObjectAccess) visibleObjectsStatement(
 			THEN(mysql.Int(1)).
 			ELSE(mysql.Int(0)))).GT(mysql.Int(0)),
 	)
-	if includeImplicitAccess {
-		visibleSelect = visibleSelect.HAVING(
-			mysql.OR(publicCondition, creatorCondition, aclCondition),
-		)
-	} else {
-		visibleSelect = visibleSelect.HAVING(aclCondition)
-	}
+	visibleSelect = visibleSelect.HAVING(aclCondition)
 
 	tSubjectUsers := table.FivenetACLSubjectUsers.AS("asu")
 	tSubjectQualis := table.FivenetACLSubjectQualifications.AS("asq")
@@ -945,14 +1493,13 @@ func (a *SubjectObjectAccess) visibleObjectsStatement(
 		)
 
 	finalSelect := mysql.SELECT(visibleID.AS("id")).
-		FROM(visibleObjects).
-		ORDER_BY(visibleID.DESC())
+		FROM(visibleObjects)
 	if countOnly {
 		finalSelect = mysql.SELECT(mysql.COUNT(visibleID).AS("exact_total")).
 			FROM(visibleObjects)
 	}
 
-	return mysql.WITH(
+	return []mysql.CommonTableExpression{
 		actorSubjects.AS(actorSubjectsUnion),
 		matchingACL.AS(
 			mysql.SELECT(
@@ -994,7 +1541,7 @@ func (a *SubjectObjectAccess) visibleObjectsStatement(
 				WHERE(matchingSpecificityRank.EQ(mysql.Int(1))),
 		),
 		visibleObjects.AS(visibleSelect),
-	)(finalSelect)
+	}, finalSelect
 }
 
 func (a *SubjectObjectAccess) CreateEntry(
@@ -1115,6 +1662,9 @@ func (a *SubjectObjectAccess) Validate() error {
 		return errors.New(
 			"subject object access requires access target, subject, access, and effect columns",
 		)
+	}
+	if a.visibilityTable != nil && a.visibilityColumns == nil {
+		return errors.New("subject object access requires visibility columns for visibility table")
 	}
 
 	return nil

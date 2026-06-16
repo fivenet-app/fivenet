@@ -75,7 +75,7 @@ type Params struct {
 	P        perms.Permissions
 	Enricher mstlystcdata.IUserAwareEnricher
 	JS       *events.JSWrapper
-	Store    mailerstore.IStore `optional:"true"`
+	Store    mailerstore.IStore
 }
 
 func NewServer(p Params) *Server {

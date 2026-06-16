@@ -45,12 +45,24 @@ func (x *AppConfig) Default() {
 				Name:     "ListDocuments",
 			},
 			{
+				Category: "documents.DocumentsService",
+				Name:     "UpdateDocument",
+			},
+			{
 				Category: "qualifications.QualificationsService",
 				Name:     "ListQualifications",
 			},
 			{
 				Category: "wiki.WikiService",
 				Name:     "ListPages",
+			},
+			{
+				Category: "mailer.MailerService",
+				Name:     "ListEmails",
+			},
+			{
+				Category: "mailer.MailerService",
+				Name:     "CreateOrUpdateEmail",
 			},
 		}
 	}

@@ -6,12 +6,15 @@ import (
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/nats-io/nats.go/jetstream"
 )
 
+type jobGetter interface {
+	Get(job string) (*jobs.Job, error)
+}
+
 func ValidateJobAccessEntries(
-	js mstlystcdata.IJobs,
+	js jobGetter,
 	in *[]*resourcesaccess.JobAccess,
 	fixEntries bool,
 ) (bool, error) {

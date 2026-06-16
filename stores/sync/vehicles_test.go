@@ -27,10 +27,10 @@ func TestSendVehicles(t *testing.T) {
 
 	resp, err := store.SendVehicles(t.Context(), &pbsync.SendVehiclesRequest{
 		Vehicles: []*resourcesvehicles.Vehicle{{
-			OwnerId: ptr[int32](3),
-			Job:     ptr("police"),
+			OwnerId: new(int32(3)),
+			Job:     new("police"),
 			Plate:   "ABC DEF1",
-			Model:   ptr("adder"),
+			Model:   new("adder"),
 			Type:    "car",
 		}},
 	})
@@ -59,5 +59,3 @@ func TestDeleteVehicles(t *testing.T) {
 	assert.Equal(t, int64(2), resp.GetRowsAffected())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
-
-func ptr[T any](v T) *T { return &v }

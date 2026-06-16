@@ -13,7 +13,10 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Store) SendJobs(ctx context.Context, req *pbsync.SendJobsRequest) (*pbsync.SendDataResponse, error) {
+func (s *Store) SendJobs(
+	ctx context.Context,
+	req *pbsync.SendJobsRequest,
+) (*pbsync.SendDataResponse, error) {
 	rowsAffected, err := s.handleJobsData(ctx, req.GetJobs())
 	if err != nil {
 		return nil, fmt.Errorf("failed to handle jobs data. %w", err)
@@ -83,7 +86,11 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 	currentGrades := []*jobs.JobGrade{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentGrades); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return 0, fmt.Errorf("failed to query current job grades for job %s. %w", job.GetName(), err)
+			return 0, fmt.Errorf(
+				"failed to query current job grades for job %s. %w",
+				job.GetName(),
+				err,
+			)
 		}
 	}
 
@@ -172,11 +179,18 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 
 			res, err := stmt.ExecContext(ctx, s.db)
 			if err != nil {
-				return 0, fmt.Errorf("failed to execute job grades update statement for grade %d. %w", grade.GetGrade(), err)
+				return 0, fmt.Errorf(
+					"failed to execute job grades update statement for grade %d. %w",
+					grade.GetGrade(),
+					err,
+				)
 			}
 			rowsAffected, err := res.RowsAffected()
 			if err != nil {
-				return 0, fmt.Errorf("failed to retrieve rows affected for job grades update. %w", err)
+				return 0, fmt.Errorf(
+					"failed to retrieve rows affected for job grades update. %w",
+					err,
+				)
 			}
 			rowsAffectedCount += rowsAffected
 		}
@@ -198,7 +212,11 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 
 		res, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
-			return 0, fmt.Errorf("failed to execute job grades delete statement for grades %+v. %w", toDelete, err)
+			return 0, fmt.Errorf(
+				"failed to execute job grades delete statement for grades %+v. %w",
+				toDelete,
+				err,
+			)
 		}
 		rowsAffected, err := res.RowsAffected()
 		if err != nil {

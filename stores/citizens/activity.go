@@ -4,50 +4,40 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
-	pb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func newUserActivitySorter() *database.Builder {
-	tUserActivity := table.FivenetUserActivity.AS("user_activity")
-
-	return database.New(
-		database.SpecMap{
-			"createdAt": database.Column{Col: tUserActivity.CreatedAt, NullsLast: true},
-		},
-		[]mysql.OrderByClause{
-			tUserActivity.CreatedAt.DESC().NULLS_LAST(),
-		},
-		[]mysql.OrderByClause{
-			tUserActivity.ID.DESC(),
-		},
-		3,
-	)
-}
-
-func (s *Store) ListUserActivity(
-	ctx context.Context,
-	req *pb.ListUserActivityRequest,
-	limit int64,
-) ([]*usersactivity.UserActivity, error) {
-	tUserActivity := table.FivenetUserActivity.AS("user_activity")
-	tUTarget := table.FivenetUser.AS("target_user")
-	tUSource := tUTarget.AS("source_user")
-
-	condition := tUserActivity.TargetUserID.EQ(mysql.Int32(req.GetUserId()))
-	if len(req.GetTypes()) > 0 {
-		types := make([]mysql.Expression, 0, len(req.GetTypes()))
-		for _, t := range req.GetTypes() {
+func buildUserActivityCondition(
+	tUserActivity *table.FivenetUserActivityTable,
+	opts UserActivityOptions,
+) mysql.BoolExpression {
+	condition := tUserActivity.TargetUserID.EQ(mysql.Int32(opts.UserID))
+	if len(opts.Types) > 0 {
+		types := make([]mysql.Expression, 0, len(opts.Types))
+		for _, t := range opts.Types {
 			types = append(types, mysql.Int32(int32(*t.Enum())))
 		}
 		condition = condition.AND(tUserActivity.Type.IN(types...))
 	}
 
-	orderBys := newUserActivitySorter().Build(req.GetSort())
+	return condition
+}
+
+func (s *Store) ListUserActivity(
+	ctx context.Context,
+	opts ListUserActivityOptions,
+) ([]*usersactivity.UserActivity, error) {
+	tUserActivity := table.FivenetUserActivity.AS("user_activity")
+	tUTarget := table.FivenetUser.AS("target_user")
+	tUSource := tUTarget.AS("source_user")
+
+	condition := buildUserActivityCondition(tUserActivity, opts.UserActivityOptions)
+
+	orderBys := s.userActivitySorter.Build(opts.Sort)
 
 	stmt := mysql.
 		SELECT(
@@ -79,9 +69,9 @@ func (s *Store) ListUserActivity(
 				),
 		).
 		WHERE(condition).
-		OFFSET(req.GetPagination().GetOffset()).
+		OFFSET(opts.Offset).
 		ORDER_BY(orderBys...).
-		LIMIT(limit)
+		LIMIT(opts.Limit)
 
 	var activities []*usersactivity.UserActivity
 	if err := stmt.QueryContext(ctx, s.db, &activities); err != nil {
@@ -95,18 +85,11 @@ func (s *Store) ListUserActivity(
 
 func (s *Store) CountUserActivity(
 	ctx context.Context,
-	req *pb.ListUserActivityRequest,
+	opts CountUserActivityOptions,
 ) (int64, error) {
 	tUserActivity := table.FivenetUserActivity.AS("user_activity")
 
-	condition := tUserActivity.TargetUserID.EQ(mysql.Int32(req.GetUserId()))
-	if len(req.GetTypes()) > 0 {
-		types := make([]mysql.Expression, 0, len(req.GetTypes()))
-		for _, t := range req.GetTypes() {
-			types = append(types, mysql.Int32(int32(*t.Enum())))
-		}
-		condition = condition.AND(tUserActivity.Type.IN(types...))
-	}
+	condition := buildUserActivityCondition(tUserActivity, opts.UserActivityOptions)
 
 	countStmt := tUserActivity.
 		SELECT(

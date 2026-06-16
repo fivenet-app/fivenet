@@ -16,7 +16,3 @@ enum AccessLevel {
   ACCESS_LEVEL_GRADE = 5;
   ACCESS_LEVEL_EDIT = 6;
 }
-
-message QualificationAccess {
-  repeated resources.access.JobAccess jobs = 1;
-}

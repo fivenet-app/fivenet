@@ -550,7 +550,7 @@ const formRef = useTemplateRef('formRef');
                                         v-model="state.weight"
                                         name="weight"
                                         :min="0"
-                                        :max="999999"
+                                        :max="999_999"
                                         :step="1"
                                         :placeholder="$t('common.weight')"
                                     />
@@ -619,6 +619,7 @@ const formRef = useTemplateRef('formRef');
                                             (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
                                         )
                                     "
+                                    show-required-checkbox
                                     name="jobAccess"
                                     full-name
                                 />
@@ -748,7 +749,7 @@ const formRef = useTemplateRef('formRef');
                                     :target-id="templateId ?? 0"
                                     :access-types="contentAccessTypes"
                                     :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                    show-required
+                                    show-required-checkbox
                                     name="contentAccess"
                                 />
                             </UPageCard>

@@ -65,6 +65,10 @@ export interface JobAccess {
      * @generated from protobuf field: optional bool required = 9
      */
     required?: boolean;
+    /**
+     * @generated from protobuf field: optional int32 required_access = 10
+     */
+    requiredAccess?: number;
 }
 /**
  * @generated from protobuf message resources.access.UserAccess
@@ -94,6 +98,10 @@ export interface UserAccess {
      * @generated from protobuf field: optional bool required = 7
      */
     required?: boolean;
+    /**
+     * @generated from protobuf field: optional int32 required_access = 8
+     */
+    requiredAccess?: number;
 }
 /**
  * @generated from protobuf message resources.access.QualificationAccess
@@ -119,6 +127,10 @@ export interface QualificationAccess {
      * @generated from protobuf field: optional bool required = 7
      */
     required?: boolean;
+    /**
+     * @generated from protobuf field: optional int32 required_access = 8
+     */
+    requiredAccess?: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Access$Type extends MessageType<Access> {
@@ -194,7 +206,8 @@ class JobAccess$Type extends MessageType<JobAccess> {
             { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 8, name: "access", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 9, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 9, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 10, name: "required_access", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<JobAccess>): JobAccess {
@@ -237,6 +250,9 @@ class JobAccess$Type extends MessageType<JobAccess> {
                 case /* optional bool required */ 9:
                     message.required = reader.bool();
                     break;
+                case /* optional int32 required_access */ 10:
+                    message.requiredAccess = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -273,6 +289,9 @@ class JobAccess$Type extends MessageType<JobAccess> {
         /* optional bool required = 9; */
         if (message.required !== undefined)
             writer.tag(9, WireType.Varint).bool(message.required);
+        /* optional int32 required_access = 10; */
+        if (message.requiredAccess !== undefined)
+            writer.tag(10, WireType.Varint).int32(message.requiredAccess);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -292,7 +311,8 @@ class UserAccess$Type extends MessageType<UserAccess> {
             { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 5, name: "user", kind: "message", T: () => UserShort },
             { no: 6, name: "access", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 7, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 7, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "required_access", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<UserAccess>): UserAccess {
@@ -328,6 +348,9 @@ class UserAccess$Type extends MessageType<UserAccess> {
                 case /* optional bool required */ 7:
                     message.required = reader.bool();
                     break;
+                case /* optional int32 required_access */ 8:
+                    message.requiredAccess = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -358,6 +381,9 @@ class UserAccess$Type extends MessageType<UserAccess> {
         /* optional bool required = 7; */
         if (message.required !== undefined)
             writer.tag(7, WireType.Varint).bool(message.required);
+        /* optional int32 required_access = 8; */
+        if (message.requiredAccess !== undefined)
+            writer.tag(8, WireType.Varint).int32(message.requiredAccess);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -376,7 +402,8 @@ class QualificationAccess$Type extends MessageType<QualificationAccess> {
             { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 6, name: "access", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 7, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 7, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "required_access", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<QualificationAccess>): QualificationAccess {
@@ -409,6 +436,9 @@ class QualificationAccess$Type extends MessageType<QualificationAccess> {
                 case /* optional bool required */ 7:
                     message.required = reader.bool();
                     break;
+                case /* optional int32 required_access */ 8:
+                    message.requiredAccess = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -436,6 +466,9 @@ class QualificationAccess$Type extends MessageType<QualificationAccess> {
         /* optional bool required = 7; */
         if (message.required !== undefined)
             writer.tag(7, WireType.Varint).bool(message.required);
+        /* optional int32 required_access = 8; */
+        if (message.requiredAccess !== undefined)
+            writer.tag(8, WireType.Varint).int32(message.requiredAccess);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

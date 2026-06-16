@@ -2,36 +2,17 @@ package vehiclesstore
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/proto"
 )
-
-type IStore interface {
-	Count(ctx context.Context, q ListQuery) (int64, error)
-	List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Vehicle, error)
-	GetProps(ctx context.Context, plate string) (*vehiclesprops.VehicleProps, error)
-	UpdateProps(
-		ctx context.Context,
-		in *vehiclesprops.VehicleProps,
-	) (*vehiclesprops.VehicleProps, error)
-	ListExpiredWanted(ctx context.Context, maxDays int64, limit int64) ([]string, error)
-	ClearWanted(ctx context.Context, plate string) error
-}
-
-type Store struct {
-	db       *sql.DB
-	customDB *config.CustomDB
-}
 
 type ListQuery struct {
 	LicensePlate string
@@ -48,13 +29,6 @@ type ListQuery struct {
 	Sort   *database.Sort
 	Offset int64
 	Limit  int64
-}
-
-func New(db *sql.DB, customDB *config.CustomDB) IStore {
-	return &Store{
-		db:       db,
-		customDB: customDB,
-	}
 }
 
 func (s *Store) Count(ctx context.Context, q ListQuery) (int64, error) {
@@ -95,7 +69,7 @@ func (s *Store) List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Veh
 	tUsers := table.FivenetUser.AS("user_short")
 
 	condition, userCondition := s.listConditions(q, tVehicles, tVehicleProps, tUsers)
-	orderBys := buildListOrder(q.Sort, tVehicles)
+	orderBys := s.sorter.Build(q.Sort)
 
 	columns := dbutils.Columns{
 		s.customDB.Columns.Vehicle.GetModel(tVehicles.Alias()),
@@ -279,34 +253,4 @@ func (s *Store) listConditions(
 	}
 
 	return condition, userCondition
-}
-
-func buildListOrder(
-	sort *database.Sort,
-	tVehicles *table.FivenetOwnedVehiclesTable,
-) []mysql.OrderByClause {
-	orderBys := []mysql.OrderByClause{}
-	if sort != nil && len(sort.GetColumns()) > 0 {
-		for _, sc := range sort.GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "model":
-				column = tVehicles.Model
-			case "plate":
-				fallthrough
-			default:
-				column = tVehicles.Plate
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tVehicles.Plate.ASC())
-	}
-
-	return append(orderBys, tVehicles.Type.ASC())
 }

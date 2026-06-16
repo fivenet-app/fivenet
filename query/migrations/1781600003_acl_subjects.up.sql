@@ -132,9 +132,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_templates_access_v2` (
     CHECK (`effect` IN (0, 1))
 ) ENGINE=InnoDB;
 
-RENAME TABLE `fivenet_documents_stamps_access` TO `fivenet_documents_stamps_access_old`;
-
-CREATE TABLE IF NOT EXISTS `fivenet_documents_stamps_access` (
+CREATE TABLE IF NOT EXISTS `fivenet_documents_stamps_access_v2` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `target_id` bigint(20) unsigned NOT NULL,
   `subject_id` bigint(20) unsigned NOT NULL,
@@ -218,9 +216,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails_access_v2` (
     CHECK (`effect` IN (0, 1))
 ) ENGINE=InnoDB;
 
-RENAME TABLE `fivenet_centrum_units_access` TO `fivenet_centrum_units_access_old`;
-
-CREATE TABLE IF NOT EXISTS `fivenet_centrum_units_access` (
+CREATE TABLE IF NOT EXISTS `fivenet_centrum_units_access_v2` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `target_id` bigint(20) unsigned NOT NULL,
   `subject_id` bigint(20) unsigned NOT NULL,
@@ -623,7 +619,7 @@ INSERT INTO `tmp_fivenet_acl_stamp_subject_job_grades_backfill` (`subject_id`, `
 SELECT (@next_acl_subject_id := @next_acl_subject_id + 1), `legacy_job_access`.`job`, `legacy_job_access`.`minimum_grade`
 FROM (
   SELECT DISTINCT `sa`.`job`, `sa`.`minimum_grade`
-  FROM `fivenet_documents_stamps_access_old` `sa`
+  FROM `fivenet_documents_stamps_access` `sa`
   LEFT JOIN `fivenet_acl_subject_job_grade_scopes` `sj`
     ON `sj`.`job` = `sa`.`job` AND `sj`.`minimum_grade` = `sa`.`minimum_grade`
   WHERE `sa`.`job` IS NOT NULL
@@ -640,9 +636,9 @@ SELECT `subject_id`, `job`, `minimum_grade` FROM `tmp_fivenet_acl_stamp_subject_
 
 DROP TEMPORARY TABLE `tmp_fivenet_acl_stamp_subject_job_grades_backfill`;
 
-INSERT IGNORE INTO `fivenet_documents_stamps_access` (`target_id`, `subject_id`, `access`, `effect`)
+INSERT IGNORE INTO `fivenet_documents_stamps_access_v2` (`target_id`, `subject_id`, `access`, `effect`)
 SELECT `sa`.`target_id`, `sj`.`subject_id`, `denied_levels`.`access`, 0
-FROM `fivenet_documents_stamps_access_old` `sa`
+FROM `fivenet_documents_stamps_access` `sa`
 INNER JOIN `fivenet_acl_subject_job_grade_scopes` `sj`
   ON `sj`.`job` = `sa`.`job` AND `sj`.`minimum_grade` = `sa`.`minimum_grade`
 INNER JOIN (
@@ -653,9 +649,9 @@ WHERE `sa`.`job` IS NOT NULL
   AND `sa`.`minimum_grade` IS NOT NULL
   AND `sa`.`access` = 1;
 
-INSERT IGNORE INTO `fivenet_documents_stamps_access` (`target_id`, `subject_id`, `access`, `effect`)
+INSERT IGNORE INTO `fivenet_documents_stamps_access_v2` (`target_id`, `subject_id`, `access`, `effect`)
 SELECT `sa`.`target_id`, `sj`.`subject_id`, `sa`.`access`, 1
-FROM `fivenet_documents_stamps_access_old` `sa`
+FROM `fivenet_documents_stamps_access` `sa`
 INNER JOIN `fivenet_acl_subject_job_grade_scopes` `sj`
   ON `sj`.`job` = `sa`.`job` AND `sj`.`minimum_grade` = `sa`.`minimum_grade`
 WHERE `sa`.`job` IS NOT NULL
@@ -915,7 +911,7 @@ INSERT INTO `tmp_fivenet_acl_unit_subject_job_grades_backfill` (`subject_id`, `j
 SELECT (@next_acl_subject_id := @next_acl_subject_id + 1), `legacy_job_access`.`job`, `legacy_job_access`.`minimum_grade`
 FROM (
   SELECT DISTINCT `ua`.`job`, `ua`.`minimum_grade`
-  FROM `fivenet_centrum_units_access_old` `ua`
+  FROM `fivenet_centrum_units_access` `ua`
   LEFT JOIN `fivenet_acl_subject_job_grade_scopes` `sj`
     ON `sj`.`job` = `ua`.`job` AND `sj`.`minimum_grade` = `ua`.`minimum_grade`
   WHERE `ua`.`job` IS NOT NULL
@@ -945,7 +941,7 @@ INSERT INTO `tmp_fivenet_acl_unit_subject_qualifications_backfill` (`subject_id`
 SELECT (@next_acl_subject_id := @next_acl_subject_id + 1), `legacy_qualification_access`.`qualification_id`
 FROM (
   SELECT DISTINCT `ua`.`qualification_id`
-  FROM `fivenet_centrum_units_access_old` `ua`
+  FROM `fivenet_centrum_units_access` `ua`
   LEFT JOIN `fivenet_acl_subject_qualifications` `sq` ON `sq`.`qualification_id` = `ua`.`qualification_id`
   WHERE `ua`.`qualification_id` IS NOT NULL
     AND `sq`.`subject_id` IS NULL
@@ -960,9 +956,9 @@ SELECT `subject_id`, `qualification_id` FROM `tmp_fivenet_acl_unit_subject_quali
 
 DROP TEMPORARY TABLE `tmp_fivenet_acl_unit_subject_qualifications_backfill`;
 
-INSERT IGNORE INTO `fivenet_centrum_units_access` (`target_id`, `subject_id`, `access`, `effect`)
+INSERT IGNORE INTO `fivenet_centrum_units_access_v2` (`target_id`, `subject_id`, `access`, `effect`)
 SELECT `ua`.`target_id`, `subject_map`.`subject_id`, `denied_levels`.`access`, 0
-FROM `fivenet_centrum_units_access_old` `ua`
+FROM `fivenet_centrum_units_access` `ua`
 INNER JOIN (
   SELECT `qualification_id` AS `source_id`, `subject_id` FROM `fivenet_acl_subject_qualifications`
 ) `subject_map` ON `subject_map`.`source_id` = `ua`.`qualification_id`
@@ -970,9 +966,9 @@ INNER JOIN (SELECT 2 AS `access`) `denied_levels`
 WHERE `ua`.`qualification_id` IS NOT NULL
   AND `ua`.`access` = 1;
 
-INSERT IGNORE INTO `fivenet_centrum_units_access` (`target_id`, `subject_id`, `access`, `effect`)
+INSERT IGNORE INTO `fivenet_centrum_units_access_v2` (`target_id`, `subject_id`, `access`, `effect`)
 SELECT `ua`.`target_id`, `sj`.`subject_id`, `denied_levels`.`access`, 0
-FROM `fivenet_centrum_units_access_old` `ua`
+FROM `fivenet_centrum_units_access` `ua`
 INNER JOIN `fivenet_acl_subject_job_grade_scopes` `sj`
   ON `sj`.`job` = `ua`.`job` AND `sj`.`minimum_grade` = `ua`.`minimum_grade`
 INNER JOIN (SELECT 2 AS `access`) `denied_levels`
@@ -980,42 +976,46 @@ WHERE `ua`.`job` IS NOT NULL
   AND `ua`.`minimum_grade` IS NOT NULL
   AND `ua`.`access` = 1;
 
-INSERT IGNORE INTO `fivenet_centrum_units_access` (`target_id`, `subject_id`, `access`, `effect`)
+INSERT IGNORE INTO `fivenet_centrum_units_access_v2` (`target_id`, `subject_id`, `access`, `effect`)
 SELECT `ua`.`target_id`, `subject_map`.`subject_id`, `ua`.`access`, 1
-FROM `fivenet_centrum_units_access_old` `ua`
+FROM `fivenet_centrum_units_access` `ua`
 INNER JOIN (
   SELECT `qualification_id` AS `source_id`, `subject_id` FROM `fivenet_acl_subject_qualifications`
 ) `subject_map` ON `subject_map`.`source_id` = `ua`.`qualification_id`
 WHERE `ua`.`qualification_id` IS NOT NULL
   AND `ua`.`access` > 1;
 
-INSERT IGNORE INTO `fivenet_centrum_units_access` (`target_id`, `subject_id`, `access`, `effect`)
+INSERT IGNORE INTO `fivenet_centrum_units_access_v2` (`target_id`, `subject_id`, `access`, `effect`)
 SELECT `ua`.`target_id`, `sj`.`subject_id`, `ua`.`access`, 1
-FROM `fivenet_centrum_units_access_old` `ua`
+FROM `fivenet_centrum_units_access` `ua`
 INNER JOIN `fivenet_acl_subject_job_grade_scopes` `sj`
   ON `sj`.`job` = `ua`.`job` AND `sj`.`minimum_grade` = `ua`.`minimum_grade`
 WHERE `ua`.`job` IS NOT NULL
   AND `ua`.`minimum_grade` IS NOT NULL
   AND `ua`.`access` > 1;
 
-DROP TABLE IF EXISTS `fivenet_documents_access`;
+-- Drop old access tables and rename the new ones
 DROP TABLE IF EXISTS `fivenet_calendar_access`;
-DROP TABLE IF EXISTS `fivenet_wiki_pages_access`;
+DROP TABLE IF EXISTS `fivenet_centrum_units_access`;
+DROP TABLE IF EXISTS `fivenet_documents_access`;
+DROP TABLE IF EXISTS `fivenet_documents_stamps_access`;
 DROP TABLE IF EXISTS `fivenet_documents_templates_access`;
-DROP TABLE IF EXISTS `fivenet_user_labels_job_job_access`;
-DROP TABLE IF EXISTS `fivenet_qualifications_access`;
 DROP TABLE IF EXISTS `fivenet_mailer_emails_access`;
-DROP TABLE IF EXISTS `fivenet_documents_stamps_access_old`;
-DROP TABLE IF EXISTS `fivenet_centrum_units_access_old`;
+DROP TABLE IF EXISTS `fivenet_qualifications_access`;
+DROP TABLE IF EXISTS `fivenet_user_labels_job_job_access`;
+DROP TABLE IF EXISTS `fivenet_wiki_pages_access`;
 
-RENAME TABLE `fivenet_documents_access_v2` TO `fivenet_documents_access`;
 RENAME TABLE `fivenet_calendar_access_v2` TO `fivenet_calendar_access`;
-RENAME TABLE `fivenet_wiki_pages_access_v2` TO `fivenet_wiki_pages_access`;
+RENAME TABLE `fivenet_centrum_units_access_v2` TO `fivenet_centrum_units_access`;
+RENAME TABLE `fivenet_documents_access_v2` TO `fivenet_documents_access`;
+RENAME TABLE `fivenet_documents_stamps_access_v2` TO `fivenet_documents_stamps_access`;
 RENAME TABLE `fivenet_documents_templates_access_v2` TO `fivenet_documents_templates_access`;
-RENAME TABLE `fivenet_user_labels_job_job_access_v2` TO `fivenet_user_labels_job_job_access`;
-RENAME TABLE `fivenet_qualifications_access_v2` TO `fivenet_qualifications_access`;
 RENAME TABLE `fivenet_mailer_emails_access_v2` TO `fivenet_mailer_emails_access`;
+RENAME TABLE `fivenet_qualifications_access_v2` TO `fivenet_qualifications_access`;
+RENAME TABLE `fivenet_user_labels_job_job_access_v2` TO `fivenet_user_labels_job_job_access`;
+RENAME TABLE `fivenet_wiki_pages_access_v2` TO `fivenet_wiki_pages_access`;
 
+-- Table: fivenet_documents_templates - Convert access enum to int32
 UPDATE `fivenet_documents_templates`
 SET `access` = REPLACE(
   REPLACE(

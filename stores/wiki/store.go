@@ -6,6 +6,7 @@ import (
 
 	reswiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
 	wikiactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -30,13 +31,8 @@ type IStore interface {
 		excludeID int64,
 		beforeID, afterID *int64,
 	) (string, error)
-	CountPageActivity(ctx context.Context, pageID int64) (int64, error)
-	ListPageActivity(
-		ctx context.Context,
-		pageID int64,
-		offset int64,
-		limit int64,
-	) ([]*wikiactivity.PageActivity, error)
+	CountPageActivity(ctx context.Context, q PageActivityQuery) (int64, error)
+	ListPageActivity(ctx context.Context, q PageActivityQuery) ([]*wikiactivity.PageActivity, error)
 	AddPageActivity(
 		ctx context.Context,
 		tx qrm.DB,
@@ -46,9 +42,10 @@ type IStore interface {
 }
 
 type Store struct {
-	db *sql.DB
+	db     *sql.DB
+	access *access.SubjectObjectAccess
 }
 
 func New(db *sql.DB) IStore {
-	return &Store{db: db}
+	return &Store{db: db, access: access.NewWikiPageSubjectObjectAccess(db)}
 }

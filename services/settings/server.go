@@ -129,15 +129,6 @@ func NewServer(p Params) *Server {
 		}
 	}
 
-	store := p.Store
-	if store == nil {
-		store = settingsstore.New(p.DB)
-	}
-	jobsStore := p.JobsStore
-	if jobsStore == nil {
-		jobsStore = jobsstore.New(p.DB, &p.Config.Database.Custom)
-	}
-
 	s := &Server{
 		logger:       p.Logger,
 		db:           p.DB,
@@ -162,8 +153,8 @@ func NewServer(p Params) *Server {
 		dbReq:         p.DBReq,
 		natsReq:       p.NatsReq,
 		updateChecker: p.UpdateChecker,
-		store:         store,
-		jobsStore:     jobsStore,
+		store:         p.Store,
+		jobsStore:     p.JobsStore,
 	}
 
 	return s

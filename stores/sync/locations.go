@@ -12,7 +12,10 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Store) SendUserLocations(ctx context.Context, req *pbsync.SendUserLocationsRequest) (*pbsync.SendDataResponse, error) {
+func (s *Store) SendUserLocations(
+	ctx context.Context,
+	req *pbsync.SendUserLocationsRequest,
+) (*pbsync.SendDataResponse, error) {
 	rowsAffected, err := s.handleUserLocations(ctx, req.GetUsers(), req.GetClearAll())
 	if err != nil {
 		return nil, fmt.Errorf("failed to handle user locations data. %w", err)
@@ -21,7 +24,11 @@ func (s *Store) SendUserLocations(ctx context.Context, req *pbsync.SendUserLocat
 	return &pbsync.SendDataResponse{RowsAffected: rowsAffected}, nil
 }
 
-func (s *Store) handleUserLocations(ctx context.Context, users []*syncdata.CitizenLocations, clearAll bool) (int64, error) {
+func (s *Store) handleUserLocations(
+	ctx context.Context,
+	users []*syncdata.CitizenLocations,
+	clearAll bool,
+) (int64, error) {
 	tLocations := table.FivenetCentrumUserLocations
 
 	if clearAll {
@@ -33,7 +40,10 @@ func (s *Store) handleUserLocations(ctx context.Context, users []*syncdata.Citiz
 			FROM(tLocations).
 			WHERE(condition)
 		if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-			return 0, fmt.Errorf("failed to execute user locations clear all count statement. %w", err)
+			return 0, fmt.Errorf(
+				"failed to execute user locations clear all count statement. %w",
+				err,
+			)
 		}
 
 		stmt := tLocations.DELETE().WHERE(condition).LIMIT(count.Total)
@@ -65,7 +75,14 @@ func (s *Store) handleUserLocations(ctx context.Context, users []*syncdata.Citiz
 			jg = mysql.Int32(location.GetJobGrade())
 		}
 
-		stmt = stmt.VALUES(location.GetUserId(), location.GetJob(), jg, location.GetCoords().GetX(), location.GetCoords().GetY(), location.GetHidden())
+		stmt = stmt.VALUES(
+			location.GetUserId(),
+			location.GetJob(),
+			jg,
+			location.GetCoords().GetX(),
+			location.GetCoords().GetY(),
+			location.GetHidden(),
+		)
 		atLeastOne = true
 	}
 
@@ -81,12 +98,20 @@ func (s *Store) handleUserLocations(ctx context.Context, users []*syncdata.Citiz
 	if atLeastOne {
 		res, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
-			s.logger.Debug("failed to execute user locations insert statement", zap.Bool("clear_all", clearAll), zap.Any("users", users), zap.Error(err))
+			s.logger.Debug(
+				"failed to execute user locations insert statement",
+				zap.Bool("clear_all", clearAll),
+				zap.Any("users", users),
+				zap.Error(err),
+			)
 			return 0, fmt.Errorf("failed to execute user locations insert statement. %w", err)
 		}
 		rowsAffected, err = res.RowsAffected()
 		if err != nil {
-			return 0, fmt.Errorf("failed to retrieve rows affected for user locations insert. %w", err)
+			return 0, fmt.Errorf(
+				"failed to retrieve rows affected for user locations insert. %w",
+				err,
+			)
 		}
 	}
 
@@ -96,14 +121,19 @@ func (s *Store) handleUserLocations(ctx context.Context, users []*syncdata.Citiz
 			userIds = append(userIds, mysql.Int32(userId))
 		}
 
-		delStmt := tLocations.DELETE().WHERE(tLocations.UserID.IN(userIds...)).LIMIT(int64(len(toDelete)))
+		delStmt := tLocations.DELETE().
+			WHERE(tLocations.UserID.IN(userIds...)).
+			LIMIT(int64(len(toDelete)))
 		res, err := delStmt.ExecContext(ctx, s.db)
 		if err != nil {
 			return 0, fmt.Errorf("failed to execute user locations delete statement. %w", err)
 		}
 		rows, err := res.RowsAffected()
 		if err != nil {
-			return 0, fmt.Errorf("failed to retrieve rows affected for user locations delete. %w", err)
+			return 0, fmt.Errorf(
+				"failed to retrieve rows affected for user locations delete. %w",
+				err,
+			)
 		}
 		rowsAffected += rows
 	}

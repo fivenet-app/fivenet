@@ -1,7 +1,6 @@
 package documents
 
 import (
-	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -18,19 +17,12 @@ func (s *Server) getDocumentQuery(
 
 	var wheres []mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		accessExists := s.subjectAccess.ACLAccessExistsCondition(
-			tDocument.ID,
-			userInfo,
-			int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-		)
-
 		wheres = []mysql.BoolExpression{
 			mysql.AND(
 				tDocument.DeletedAt.IS_NULL(),
 				mysql.OR(
 					tDocument.Public.IS_TRUE(),
 					tDocument.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
-					accessExists,
 				),
 			),
 		}

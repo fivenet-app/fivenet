@@ -78,9 +78,9 @@ func SummaryFromText(text string, maxChars int) string {
 }
 
 func GetLicenseFromIdentifier(identifier string) string {
-	parts := strings.SplitN(identifier, ":", 2)
-	if len(parts) < 2 {
+	_, after, ok := strings.Cut(identifier, ":")
+	if !ok || after == "" {
 		return identifier
 	}
-	return parts[1]
+	return after
 }

@@ -2,7 +2,6 @@ package access
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"slices"
@@ -126,6 +125,10 @@ func (a *SubjectObjectAccess) ReplaceTargetAccess(
 		return nil, err
 	}
 
+	if err := a.RefreshTargetVisibility(ctx, tx, targetID); err != nil {
+		return nil, err
+	}
+
 	return changes, nil
 }
 
@@ -142,7 +145,11 @@ func (a *SubjectObjectAccess) CreateUserAccess(
 		return err
 	}
 
-	return a.CreateEntry(ctx, tx, targetID, subjectID, access, AccessEffectAllow)
+	if err := a.CreateEntry(ctx, tx, targetID, subjectID, access, AccessEffectAllow); err != nil {
+		return err
+	}
+
+	return a.RefreshTargetVisibility(ctx, tx, targetID)
 }
 
 func (a *SubjectObjectAccess) ACLAccessExistsCondition(
@@ -516,17 +523,17 @@ type subjectAccessRow struct {
 	Effect      bool
 	SubjectType int16
 
-	ACLJob             sql.NullString
-	ACLMinimumGrade    sql.NullInt32
-	ACLQualificationID sql.NullInt64
+	ACLJob             *string
+	ACLMinimumGrade    *int32
+	ACLQualificationID *int64
 
-	SubjectUserID   sql.NullInt32
-	UserJob         sql.NullString
-	UserJobGrade    sql.NullInt32
-	UserFirstname   sql.NullString
-	UserLastname    sql.NullString
-	UserDateofbirth sql.NullString
-	UserPhoneNumber sql.NullString
+	SubjectUserID   *int32
+	UserJob         *string
+	UserJobGrade    *int32
+	UserFirstname   *string
+	UserLastname    *string
+	UserDateofbirth *string
+	UserPhoneNumber *string
 }
 
 func subjectAccessRowsToProto(
@@ -549,15 +556,15 @@ func subjectAccessRowsToProto(
 	for _, row := range rows {
 		switch SubjectType(row.SubjectType) {
 		case SubjectTypeJobGrade:
-			if !row.ACLJob.Valid || !row.ACLMinimumGrade.Valid {
+			if row.ACLJob == nil || row.ACLMinimumGrade == nil {
 				continue
 			}
 
 			entry := &resourcesaccess.JobAccess{
 				Id:           row.ID,
 				TargetId:     row.TargetID,
-				Job:          row.ACLJob.String,
-				MinimumGrade: row.ACLMinimumGrade.Int32,
+				Job:          *row.ACLJob,
+				MinimumGrade: *row.ACLMinimumGrade,
 				Access:       row.Access,
 			}
 
@@ -575,14 +582,14 @@ func subjectAccessRowsToProto(
 			allowedJobs = append(allowedJobs, entry)
 
 		case SubjectTypeUser:
-			if !row.SubjectUserID.Valid {
+			if row.SubjectUserID == nil {
 				continue
 			}
 
 			entry := &resourcesaccess.UserAccess{
 				Id:       row.ID,
 				TargetId: row.TargetID,
-				UserId:   row.SubjectUserID.Int32,
+				UserId:   *row.SubjectUserID,
 				Access:   row.Access,
 				User:     subjectAccessUserShort(row),
 			}
@@ -599,14 +606,14 @@ func subjectAccessRowsToProto(
 
 			allowedUsers = append(allowedUsers, entry)
 		case SubjectTypeQualification:
-			if !row.ACLQualificationID.Valid {
+			if row.ACLQualificationID == nil {
 				continue
 			}
 
 			entry := &resourcesaccess.QualificationAccess{
 				Id:              row.ID,
 				TargetId:        row.TargetID,
-				QualificationId: row.ACLQualificationID.Int64,
+				QualificationId: *row.ACLQualificationID,
 				Access:          row.Access,
 			}
 
@@ -649,37 +656,37 @@ func filterAllowedSubjectQualificationAccess(
 }
 
 func subjectAccessUserShort(row subjectAccessRow) *usershort.UserShort {
-	if !row.SubjectUserID.Valid {
+	if row.SubjectUserID == nil {
 		return nil
 	}
 
 	user := &usershort.UserShort{
-		UserId:      row.SubjectUserID.Int32,
-		Job:         nullString(row.UserJob),
-		JobGrade:    nullInt32(row.UserJobGrade),
-		Firstname:   nullString(row.UserFirstname),
-		Lastname:    nullString(row.UserLastname),
-		Dateofbirth: nullString(row.UserDateofbirth),
+		UserId:      *row.SubjectUserID,
+		Job:         derefString(row.UserJob),
+		JobGrade:    derefInt32(row.UserJobGrade),
+		Firstname:   derefString(row.UserFirstname),
+		Lastname:    derefString(row.UserLastname),
+		Dateofbirth: derefString(row.UserDateofbirth),
 	}
-	if row.UserPhoneNumber.Valid {
-		user.PhoneNumber = &row.UserPhoneNumber.String
+	if row.UserPhoneNumber != nil {
+		user.PhoneNumber = row.UserPhoneNumber
 	}
 
 	return user
 }
 
-func nullString(in sql.NullString) string {
-	if !in.Valid {
+func derefString(in *string) string {
+	if in == nil {
 		return ""
 	}
-	return in.String
+	return *in
 }
 
-func nullInt32(in sql.NullInt32) int32 {
-	if !in.Valid {
+func derefInt32(in *int32) int32 {
+	if in == nil {
 		return 0
 	}
-	return in.Int32
+	return *in
 }
 
 func subjectJobAccessKey(job string, minimumGrade int32) string {

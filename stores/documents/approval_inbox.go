@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	resourcesdatabase "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsapproval "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/approval"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -12,7 +13,10 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Store) ListApprovalTasksInbox(ctx context.Context, q ListApprovalTasksInboxQuery) (resourcesdatabase.DataCount, []*documentsapproval.ApprovalTask, error) {
+func (s *Store) ListApprovalTasksInbox(
+	ctx context.Context,
+	q ListApprovalTasksInboxQuery,
+) (resourcesdatabase.DataCount, []*documentsapproval.ApprovalTask, error) {
 	if q.Pagination == nil {
 		q.Pagination = &resourcesdatabase.PaginationRequest{}
 	}
@@ -24,25 +28,31 @@ func (s *Store) ListApprovalTasksInbox(ctx context.Context, q ListApprovalTasksI
 	tApprovals := table.FivenetDocumentsApprovals
 	tDocumentShort := table.FivenetDocuments.AS("document_short")
 	tDMeta := table.FivenetDocumentsMeta.AS("meta")
-	
-	var existsAccess mysql.BoolExpression
-	if !q.UserInfo.GetSuperuser() {
-		existsAccess = s.subjectAccess.ACLAccessExistsCondition(
-			tApprovalTasks.DocumentID,
-			q.UserInfo,
-			int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER),
-		)
-	} else {
-		existsAccess = mysql.Bool(true)
-	}
+
+	visibleQuery := s.subjectAccess.VisibleIDsByConditionQuery(
+		q.UserInfo,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		table.FivenetDocuments.DeletedAt.IS_NULL(),
+	)
+	visibleIDs := mysql.
+		SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
+		FROM(visibleQuery.Table)
 
 	eligible := mysql.OR(
 		mysql.AND(
-			tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER))),
+			tApprovalTasks.AssigneeKind.EQ(
+				mysql.Int32(
+					int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER),
+				),
+			),
 			tApprovalTasks.UserID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
 		),
 		mysql.AND(
-			tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE))),
+			tApprovalTasks.AssigneeKind.EQ(
+				mysql.Int32(
+					int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE),
+				),
+			),
 			tApprovalTasks.Job.EQ(mysql.String(q.UserInfo.GetJob())),
 			tApprovalTasks.MinimumGrade.LT_EQ(mysql.Int32(q.UserInfo.GetJobGrade())),
 		),
@@ -59,8 +69,12 @@ func (s *Store) ListApprovalTasksInbox(ctx context.Context, q ListApprovalTasksI
 						tApprovals.SnapshotDate.EQ(tApprovalTasks.SnapshotDate),
 						tApprovals.UserID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
 						tApprovals.Status.IN(
-							mysql.Int32(int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_APPROVED)),
-							mysql.Int32(int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_DECLINED)),
+							mysql.Int32(
+								int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_APPROVED),
+							),
+							mysql.Int32(
+								int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_DECLINED),
+							),
 						),
 					)),
 			),
@@ -76,7 +90,10 @@ func (s *Store) ListApprovalTasksInbox(ctx context.Context, q ListApprovalTasksI
 			statuses = append(statuses, mysql.Int32(int32(st)))
 		}
 	} else {
-		statuses = append(statuses, mysql.Int32(int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)))
+		statuses = append(
+			statuses,
+			mysql.Int32(int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)),
+		)
 	}
 
 	maxSlotThisGroup := t2.
@@ -86,21 +103,26 @@ func (s *Store) ListApprovalTasksInbox(ctx context.Context, q ListApprovalTasksI
 			t2.DocumentID.EQ(tApprovalTasks.DocumentID),
 			t2.SnapshotDate.EQ(tApprovalTasks.SnapshotDate),
 			t2.AssigneeKind.EQ(tApprovalTasks.AssigneeKind),
-			mysql.IntExp(mysql.COALESCE(t2.UserID, mysql.Int32(0))).EQ(mysql.IntExp(mysql.COALESCE(tApprovalTasks.UserID, mysql.Int32(0)))),
-			mysql.StringExp(mysql.COALESCE(t2.Job, mysql.String(""))).EQ(mysql.StringExp(mysql.COALESCE(tApprovalTasks.Job, mysql.String("")))),
-			mysql.IntExp(mysql.COALESCE(t2.MinimumGrade, mysql.Int32(-1))).EQ(mysql.IntExp(mysql.COALESCE(tApprovalTasks.MinimumGrade, mysql.Int32(-1)))),
+			mysql.IntExp(mysql.COALESCE(t2.UserID, mysql.Int32(0))).
+				EQ(mysql.IntExp(mysql.COALESCE(tApprovalTasks.UserID, mysql.Int32(0)))),
+			mysql.StringExp(mysql.COALESCE(t2.Job, mysql.String(""))).
+				EQ(mysql.StringExp(mysql.COALESCE(tApprovalTasks.Job, mysql.String("")))),
+			mysql.IntExp(mysql.COALESCE(t2.MinimumGrade, mysql.Int32(-1))).
+				EQ(mysql.IntExp(mysql.COALESCE(tApprovalTasks.MinimumGrade, mysql.Int32(-1)))),
 			t2.Status.IN(statuses...),
 		)).
 		LIMIT(1)
 
 	onlyFirstSlot := mysql.OR(
-		tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER))),
+		tApprovalTasks.AssigneeKind.EQ(
+			mysql.Int32(int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER)),
+		),
 		maxSlotThisGroup.IN(tApprovalTasks.SlotNo),
 	)
 
 	condition := mysql.AND(
-		existsAccess,
 		tDocumentShort.DeletedAt.IS_NULL(),
+		tApprovalTasks.DocumentID.IN(visibleIDs),
 		eligible,
 		notAlreadyActed,
 		onlyFirstSlot,
@@ -111,13 +133,16 @@ func (s *Store) ListApprovalTasksInbox(ctx context.Context, q ListApprovalTasksI
 		condition = condition.AND(tDocumentShort.Draft.EQ(mysql.Bool(*q.OnlyDrafts)))
 	}
 
-	countStmt := tApprovalTasks.
+	var countStmt mysql.Statement = tApprovalTasks.
 		SELECT(mysql.COUNT(tApprovalTasks.ID).AS("data_count.total")).
 		FROM(
 			tApprovalTasks.
 				INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(tApprovalTasks.DocumentID)),
 		).
 		WHERE(condition)
+	if len(visibleQuery.CTEs) > 0 {
+		countStmt = mysql.WITH(visibleQuery.CTEs...)(countStmt)
+	}
 
 	var count resourcesdatabase.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -132,7 +157,7 @@ func (s *Store) ListApprovalTasksInbox(ctx context.Context, q ListApprovalTasksI
 
 	tUser := table.FivenetUser.AS("requester")
 	tCreator := table.FivenetUser.AS("creator")
-	stmt := mysql.
+	var stmt mysql.Statement = mysql.
 		SELECT(
 			tApprovalTasks.ID,
 			tApprovalTasks.DocumentID,
@@ -194,6 +219,9 @@ func (s *Store) ListApprovalTasksInbox(ctx context.Context, q ListApprovalTasksI
 		OFFSET(q.Pagination.GetOffset()).
 		ORDER_BY(tApprovalTasks.CreatedAt.ASC()).
 		LIMIT(20)
+	if len(visibleQuery.CTEs) > 0 {
+		stmt = mysql.WITH(visibleQuery.CTEs...)(stmt)
+	}
 
 	var tasks []*documentsapproval.ApprovalTask
 	if err := stmt.QueryContext(ctx, s.db, &tasks); err != nil {

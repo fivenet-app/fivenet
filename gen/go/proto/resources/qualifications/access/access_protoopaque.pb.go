@@ -9,7 +9,6 @@
 package qualificationsaccess
 
 import (
-	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -79,72 +78,11 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-type QualificationAccess struct {
-	state           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Jobs *[]*access.JobAccess   `protobuf:"bytes,1,rep,name=jobs,proto3"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *QualificationAccess) Reset() {
-	*x = QualificationAccess{}
-	mi := &file_resources_qualifications_access_access_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QualificationAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QualificationAccess) ProtoMessage() {}
-
-func (x *QualificationAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_qualifications_access_access_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *QualificationAccess) GetJobs() []*access.JobAccess {
-	if x != nil {
-		if x.xxx_hidden_Jobs != nil {
-			return *x.xxx_hidden_Jobs
-		}
-	}
-	return nil
-}
-
-func (x *QualificationAccess) SetJobs(v []*access.JobAccess) {
-	x.xxx_hidden_Jobs = &v
-}
-
-type QualificationAccess_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Jobs []*access.JobAccess
-}
-
-func (b0 QualificationAccess_builder) Build() *QualificationAccess {
-	m0 := &QualificationAccess{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Jobs = &b.Jobs
-	return m0
-}
-
 var File_resources_qualifications_access_access_proto protoreflect.FileDescriptor
 
 const file_resources_qualifications_access_access_proto_rawDesc = "" +
 	"\n" +
-	",resources/qualifications/access/access.proto\x12\x1fresources.qualifications.access\x1a\x1dresources/access/access.proto\"F\n" +
-	"\x13QualificationAccess\x12/\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x1b.resources.access.JobAccessR\x04jobs*\xbc\x01\n" +
+	",resources/qualifications/access/access.proto\x12\x1fresources.qualifications.access*\xbc\x01\n" +
 	"\vAccessLevel\x12\x1c\n" +
 	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14ACCESS_LEVEL_BLOCKED\x10\x01\x12\x15\n" +
@@ -155,19 +93,15 @@ const file_resources_qualifications_access_access_proto_rawDesc = "" +
 	"\x11ACCESS_LEVEL_EDIT\x10\x06BhZfgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access;qualificationsaccessb\x06proto3"
 
 var file_resources_qualifications_access_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_qualifications_access_access_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_qualifications_access_access_proto_goTypes = []any{
-	(AccessLevel)(0),            // 0: resources.qualifications.access.AccessLevel
-	(*QualificationAccess)(nil), // 1: resources.qualifications.access.QualificationAccess
-	(*access.JobAccess)(nil),    // 2: resources.access.JobAccess
+	(AccessLevel)(0), // 0: resources.qualifications.access.AccessLevel
 }
 var file_resources_qualifications_access_access_proto_depIdxs = []int32{
-	2, // 0: resources.qualifications.access.QualificationAccess.jobs:type_name -> resources.access.JobAccess
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_resources_qualifications_access_access_proto_init() }
@@ -181,14 +115,13 @@ func file_resources_qualifications_access_access_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_qualifications_access_access_proto_rawDesc), len(file_resources_qualifications_access_access_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   1,
+			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_resources_qualifications_access_access_proto_goTypes,
 		DependencyIndexes: file_resources_qualifications_access_access_proto_depIdxs,
 		EnumInfos:         file_resources_qualifications_access_access_proto_enumTypes,
-		MessageInfos:      file_resources_qualifications_access_access_proto_msgTypes,
 	}.Build()
 	File_resources_qualifications_access_access_proto = out.File
 	file_resources_qualifications_access_access_proto_goTypes = nil

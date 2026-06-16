@@ -73,6 +73,7 @@ async function listQualificationRequests(
             sort: query.sorting,
             qualificationId: qualificationId,
             status: status ?? [],
+            userIds: [],
         });
         const { response } = await call;
 

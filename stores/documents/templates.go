@@ -21,9 +21,16 @@ func (s *Store) ListTemplates(
 	}
 
 	tDTemplates := table.FivenetDocumentsTemplates.AS("template_short")
+	tDTemplatesFilter := table.FivenetDocumentsTemplates.AS("template_filter")
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
+	visibleQuery := s.templateAccess.VisibleIDsByConditionQuery(
+		userInfo,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		tDTemplatesFilter.DeletedAt.IS_NULL(),
+	)
+	templateID := mysql.IntegerColumn("id").From(visibleQuery.Table)
 
-	stmt := tDTemplates.
+	innerStmt := tDTemplates.
 		SELECT(
 			tDTemplates.ID,
 			tDTemplates.Weight,
@@ -43,24 +50,23 @@ func (s *Store) ListTemplates(
 			tDTemplates.CreatorJob,
 		).
 		FROM(
-			tDTemplates.
+			visibleQuery.Table.
+				INNER_JOIN(tDTemplates,
+					tDTemplates.ID.EQ(templateID),
+				).
 				LEFT_JOIN(tDCategory,
 					tDCategory.ID.EQ(tDTemplates.CategoryID),
 				),
 		).
-		WHERE(mysql.AND(
-			tDTemplates.DeletedAt.IS_NULL(),
-			s.templateAccess.ACLAccessExistsCondition(
-				tDTemplates.ID,
-				userInfo,
-				int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-			),
-		)).
 		ORDER_BY(
 			tDTemplates.Weight.DESC(),
 			tDTemplates.ID.ASC(),
-		).
-		GROUP_BY(tDTemplates.ID)
+		)
+
+	var stmt mysql.Statement = innerStmt
+	if len(visibleQuery.CTEs) > 0 {
+		stmt = mysql.WITH(visibleQuery.CTEs...)(innerStmt)
+	}
 
 	var dest []*documentstemplates.TemplateShort
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {

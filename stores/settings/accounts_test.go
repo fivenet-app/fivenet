@@ -22,12 +22,12 @@ func TestStoreListAccountsAppliesFiltersAndFallbackSort(t *testing.T) {
 	username := "alice"
 	group := "staff"
 	pageSize := int64(10)
-	req := &pbsettings.ListAccountsRequest{
+	req := ListAccountsOptions{
 		Pagination:   &database.PaginationRequest{PageSize: &pageSize},
-		License:      &license,
-		OnlyDisabled: &disabled,
-		Username:     &username,
-		Group:        &group,
+		License:      license,
+		OnlyDisabled: disabled,
+		Username:     username,
+		Group:        group,
 	}
 
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT COUNT(account.id) AS "data_count.total" FROM fivenet_accounts AS account WHERE`) + `(?s).*` + regexp.QuoteMeta(`account.license LIKE ?`) + `(?s).*` + regexp.QuoteMeta(`account.enabled = ?`) + `(?s).*` + regexp.QuoteMeta(`account.username LIKE ?`) + `(?s).*` + regexp.QuoteMeta("JSON_CONTAINS(account.`groups`, ?)")).

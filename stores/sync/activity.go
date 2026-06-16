@@ -17,7 +17,10 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Store) AddActivity(ctx context.Context, req *pbsync.AddActivityRequest) (*pbsync.AddActivityResponse, error) {
+func (s *Store) AddActivity(
+	ctx context.Context,
+	req *pbsync.AddActivityRequest,
+) (*pbsync.AddActivityResponse, error) {
 	resp := &pbsync.AddActivityResponse{}
 	if req == nil {
 		return resp, nil
@@ -67,49 +70,70 @@ func (s *Store) AddActivity(ctx context.Context, req *pbsync.AddActivityRequest)
 	return resp, nil
 }
 
-func (s *Store) AddUserActivity(ctx context.Context, req *pbsync.AddUserActivityRequest) (*pbsync.AddActivityResponse, error) {
+func (s *Store) AddUserActivity(
+	ctx context.Context,
+	req *pbsync.AddUserActivityRequest,
+) (*pbsync.AddActivityResponse, error) {
 	if err := s.createUserActivities(ctx, s.db, req.GetUserActivity()); err != nil {
 		return nil, fmt.Errorf("failed to create user activities. %w", err)
 	}
 	return &pbsync.AddActivityResponse{}, nil
 }
 
-func (s *Store) AddUserUpdate(ctx context.Context, req *pbsync.AddUserUpdateRequest) (*pbsync.AddActivityResponse, error) {
+func (s *Store) AddUserUpdate(
+	ctx context.Context,
+	req *pbsync.AddUserUpdateRequest,
+) (*pbsync.AddActivityResponse, error) {
 	if err := s.handleUserUpdate(ctx, req.GetUserUpdate()); err != nil {
 		return nil, fmt.Errorf("failed to handle user update data. %w", err)
 	}
 	return &pbsync.AddActivityResponse{}, nil
 }
 
-func (s *Store) AddUserProps(ctx context.Context, req *pbsync.AddUserPropsRequest) (*pbsync.AddActivityResponse, error) {
+func (s *Store) AddUserProps(
+	ctx context.Context,
+	req *pbsync.AddUserPropsRequest,
+) (*pbsync.AddActivityResponse, error) {
 	if err := s.handleUserProps(ctx, req.GetUserProps()); err != nil {
 		return nil, fmt.Errorf("failed to handle UserProps activity. %w", err)
 	}
 	return &pbsync.AddActivityResponse{}, nil
 }
 
-func (s *Store) AddColleagueActivity(ctx context.Context, req *pbsync.AddColleagueActivityRequest) (*pbsync.AddActivityResponse, error) {
+func (s *Store) AddColleagueActivity(
+	ctx context.Context,
+	req *pbsync.AddColleagueActivityRequest,
+) (*pbsync.AddActivityResponse, error) {
 	if err := s.createColleagueActivity(ctx, s.db, req.GetColleagueActivity()); err != nil {
 		return nil, fmt.Errorf("failed to create jobs user activities. %w", err)
 	}
 	return &pbsync.AddActivityResponse{}, nil
 }
 
-func (s *Store) AddColleagueProps(ctx context.Context, req *pbsync.AddColleaguePropsRequest) (*pbsync.AddActivityResponse, error) {
+func (s *Store) AddColleagueProps(
+	ctx context.Context,
+	req *pbsync.AddColleaguePropsRequest,
+) (*pbsync.AddActivityResponse, error) {
 	if err := s.handleColleagueProps(ctx, req.GetColleagueProps()); err != nil {
 		return nil, fmt.Errorf("failed to handle ColleagueProps activity. %w", err)
 	}
 	return &pbsync.AddActivityResponse{}, nil
 }
 
-func (s *Store) AddJobTimeclock(ctx context.Context, req *pbsync.AddJobTimeclockRequest) (*pbsync.AddActivityResponse, error) {
+func (s *Store) AddJobTimeclock(
+	ctx context.Context,
+	req *pbsync.AddJobTimeclockRequest,
+) (*pbsync.AddActivityResponse, error) {
 	if err := s.handleTimeclockEntry(ctx, req.GetJobTimeclock()); err != nil {
 		return nil, fmt.Errorf("failed to handle JobTimeclock activity. %w", err)
 	}
 	return &pbsync.AddActivityResponse{}, nil
 }
 
-func (s *Store) AddDispatch(ctx context.Context, req *pbsync.AddDispatchRequest) (*pbsync.AddActivityResponse, error) {
+func (s *Store) AddDispatch(
+	ctx context.Context,
+	req *pbsync.AddDispatchRequest,
+) (*pbsync.AddActivityResponse, error) {
 	if s.dispatches != nil {
 		if _, err := s.dispatches.Create(ctx, req.GetDispatch()); err != nil {
 			return nil, fmt.Errorf("failed to create dispatch. %w", err)
@@ -118,32 +142,66 @@ func (s *Store) AddDispatch(ctx context.Context, req *pbsync.AddDispatchRequest)
 	return &pbsync.AddActivityResponse{}, nil
 }
 
-func (s *Store) createUserActivities(ctx context.Context, tx qrm.DB, activities ...*usersactivity.UserActivity) error {
+func (s *Store) createUserActivities(
+	ctx context.Context,
+	tx qrm.DB,
+	activities ...*usersactivity.UserActivity,
+) error {
 	if len(activities) == 0 {
 		return nil
 	}
 
 	tUserActivity := table.FivenetUserActivity
 	stmt := tUserActivity.
-		INSERT(tUserActivity.SourceUserID, tUserActivity.TargetUserID, tUserActivity.Type, tUserActivity.Reason, tUserActivity.Data)
+		INSERT(
+			tUserActivity.SourceUserID,
+			tUserActivity.TargetUserID,
+			tUserActivity.Type,
+			tUserActivity.Reason,
+			tUserActivity.Data,
+		)
 	for _, activity := range activities {
-		stmt = stmt.VALUES(activity.SourceUserId, activity.GetTargetUserId(), activity.GetType(), activity.GetReason(), activity.Data)
+		stmt = stmt.VALUES(
+			activity.SourceUserId,
+			activity.GetTargetUserId(),
+			activity.GetType(),
+			activity.GetReason(),
+			activity.Data,
+		)
 	}
 
 	_, err := stmt.ExecContext(ctx, tx)
 	return err
 }
 
-func (s *Store) createColleagueActivity(ctx context.Context, tx qrm.DB, activities ...*colleaguesactivity.ColleagueActivity) error {
+func (s *Store) createColleagueActivity(
+	ctx context.Context,
+	tx qrm.DB,
+	activities ...*colleaguesactivity.ColleagueActivity,
+) error {
 	if len(activities) == 0 {
 		return nil
 	}
 
 	tJobColleagueActivity := table.FivenetJobColleagueActivity
 	stmt := tJobColleagueActivity.
-		INSERT(tJobColleagueActivity.Job, tJobColleagueActivity.SourceUserID, tJobColleagueActivity.TargetUserID, tJobColleagueActivity.ActivityType, tJobColleagueActivity.Reason, tJobColleagueActivity.Data)
+		INSERT(
+			tJobColleagueActivity.Job,
+			tJobColleagueActivity.SourceUserID,
+			tJobColleagueActivity.TargetUserID,
+			tJobColleagueActivity.ActivityType,
+			tJobColleagueActivity.Reason,
+			tJobColleagueActivity.Data,
+		)
 	for _, activity := range activities {
-		stmt = stmt.VALUES(activity.GetJob(), activity.SourceUserId, activity.TargetUserId, activity.GetActivityType(), activity.GetReason(), activity.Data)
+		stmt = stmt.VALUES(
+			activity.GetJob(),
+			activity.SourceUserId,
+			activity.TargetUserId,
+			activity.GetActivityType(),
+			activity.GetReason(),
+			activity.Data,
+		)
 	}
 
 	_, err := stmt.ExecContext(ctx, tx)
@@ -168,7 +226,14 @@ func (s *Store) handleUserProps(ctx context.Context, data *activity.UserProps) e
 		reason = data.GetReason()
 	}
 
-	activities, err := s.citizensStore.HandleUserPropsChanges(ctx, tx, props, reqP, &reqP.UserId, reason)
+	activities, err := s.citizensStore.HandleUserPropsChanges(
+		ctx,
+		tx,
+		props,
+		reqP,
+		&reqP.UserId,
+		reason,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to handle user props changes. %w", err)
 	}
@@ -204,7 +269,15 @@ func (s *Store) handleColleagueProps(ctx context.Context, data *activity.Colleag
 		reason = data.GetReason()
 	}
 
-	activities, err := s.jobsStore.HandleColleaguePropsChanges(ctx, tx, props, input, input.GetJob(), &input.UserId, reason)
+	activities, err := s.jobsStore.HandleColleaguePropsChanges(
+		ctx,
+		tx,
+		props,
+		input,
+		input.GetJob(),
+		&input.UserId,
+		reason,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to handle jobs user props changes. %w", err)
 	}
@@ -271,7 +344,10 @@ func (s *Store) handleTimeclockEntry(ctx context.Context, data *activity.Timeclo
 
 func (s *Store) handleUserUpdate(ctx context.Context, data *activity.UserUpdate) error {
 	tUser := table.FivenetUser
-	selectStmt := tUser.SELECT(tUser.ID).FROM(tUser).WHERE(tUser.ID.EQ(mysql.Int32(data.GetUserId()))).LIMIT(1)
+	selectStmt := tUser.SELECT(tUser.ID).
+		FROM(tUser).
+		WHERE(tUser.ID.EQ(mysql.Int32(data.GetUserId()))).
+		LIMIT(1)
 
 	user := &users.User{}
 	if err := selectStmt.QueryContext(ctx, s.db, user); err != nil {
@@ -299,7 +375,10 @@ func (s *Store) handleUserUpdate(ctx context.Context, data *activity.UserUpdate)
 	}
 
 	if len(updateSets) > 0 {
-		stmt := tUser.UPDATE().SET(updateSets[0]).WHERE(tUser.ID.EQ(mysql.Int32(data.GetUserId()))).LIMIT(1)
+		stmt := tUser.UPDATE().
+			SET(updateSets[0]).
+			WHERE(tUser.ID.EQ(mysql.Int32(data.GetUserId()))).
+			LIMIT(1)
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return fmt.Errorf("failed to update user. %w", err)
 		}

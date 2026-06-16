@@ -5,9 +5,11 @@ import (
 	"errors"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
 	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
 	mailersettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings"
 	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -47,12 +49,63 @@ func (s *Store) CountEmails(
 
 func (s *Store) ListEmails(
 	ctx context.Context,
-	q qrm.DB,
-	condition mysql.BoolExpression,
-	offset int64,
-	limit int64,
-) ([]*maileremails.Email, error) {
-	stmt := tEmails.
+	db qrm.DB,
+	userInfo *userinfo.UserInfo,
+	pag *database.PaginationRequest,
+	all bool,
+) (*database.PaginationResponse, []*maileremails.Email, error) {
+	if userInfo == nil {
+		userInfo = &userinfo.UserInfo{}
+	}
+	if pag == nil {
+		pag = &database.PaginationRequest{}
+	}
+
+	condition := mysql.Bool(true)
+	if !userInfo.GetSuperuser() || (userInfo.GetSuperuser() && !all) {
+		acl := s.subjectAccess.ACLAccessExistsCondition(
+			tEmails.ID,
+			userInfo,
+			int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
+		)
+		condition = condition.AND(mysql.AND(
+			tEmails.DeletedAt.IS_NULL(),
+			mysql.OR(
+				tEmails.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+				acl,
+			),
+		))
+	}
+
+	visibleQuery := s.subjectAccess.VisibleIDsByConditionQuery(
+		userInfo,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
+		condition,
+	)
+	visibleIDs := mysql.SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
+		FROM(visibleQuery.Table)
+
+	var countStmt mysql.Statement = tEmails.
+		SELECT(mysql.COUNT(mysql.DISTINCT(tEmails.ID)).AS("data_count.total")).
+		FROM(tEmails).
+		WHERE(tEmails.ID.IN(visibleIDs))
+	if len(visibleQuery.CTEs) > 0 {
+		countStmt = mysql.WITH(visibleQuery.CTEs...)(countStmt)
+	}
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.dbOr(db), &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, nil, err
+		}
+	}
+
+	pagination, limit := pag.GetResponseWithPageSize(count.Total, 20)
+	if count.Total <= 0 {
+		return pagination, []*maileremails.Email{}, nil
+	}
+
+	var stmt mysql.Statement = tEmails.
 		SELECT(
 			tEmails.ID,
 			tEmails.CreatedAt,
@@ -66,25 +119,25 @@ func (s *Store) ListEmails(
 			tEmails.Label,
 		).
 		FROM(tEmails).
-		WHERE(condition).
+		WHERE(tEmails.ID.IN(visibleIDs)).
 		ORDER_BY(
 			tEmails.Job.ASC(),
 			tEmails.Label.ASC(),
 		).
+		OFFSET(pagination.GetOffset()).
 		LIMIT(limit)
-
-	if offset > 0 {
-		stmt = stmt.OFFSET(offset)
+	if len(visibleQuery.CTEs) > 0 {
+		stmt = mysql.WITH(visibleQuery.CTEs...)(stmt)
 	}
 
 	emails := []*maileremails.Email{}
-	if err := stmt.QueryContext(ctx, s.dbOr(q), &emails); err != nil {
+	if err := stmt.QueryContext(ctx, s.dbOr(db), &emails); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
-	return emails, nil
+	return pagination, emails, nil
 }
 
 func (s *Store) GetEmailByCondition(

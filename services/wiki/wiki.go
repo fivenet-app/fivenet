@@ -47,29 +47,13 @@ func (s *Server) ListPages(
 		*req.Job = userInfo.GetJob()
 	}
 
-	tPageShort := table.FivenetWikiPages.AS("page_short")
-	subPage := table.FivenetWikiPages.AS("sub_page")
-	viewCondition := s.access.ACLAccessExistsCondition(
-		tPageShort.ID,
-		userInfo,
-		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-	)
-	rootViewCondition := s.access.ACLAccessExistsCondition(
-		subPage.ID,
-		userInfo,
-		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-	)
-
 	result, err := s.store.ListPages(ctx, wikistore.ListPagesQuery{
-		Search:            req.GetSearch(),
-		Job:               req.GetJob(),
-		RootOnly:          req.GetRootOnly(),
-		Superuser:         userInfo.GetSuperuser(),
-		UserJob:           userInfo.GetJob(),
-		UserID:            userInfo.GetUserId(),
-		ViewCondition:     viewCondition,
-		RootViewCondition: rootViewCondition,
-		Pagination:        req.GetPagination(),
+		Search:     req.GetSearch(),
+		Job:        req.GetJob(),
+		RootOnly:   req.GetRootOnly(),
+		Superuser:  userInfo.GetSuperuser(),
+		UserInfo:   userInfo,
+		Pagination: req.GetPagination(),
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -100,16 +84,6 @@ func (s *Server) GetPage(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
-		ctx,
-		req.GetId(),
-		userInfo,
-		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-
 	page, err := s.getPage(ctx, req.GetId(), true, true, userInfo)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
@@ -121,6 +95,15 @@ func (s *Server) GetPage(
 		return nil, errorswiki.ErrPageNotFound
 	}
 
+	check, err := s.access.CanUserAccessTarget(
+		ctx,
+		req.GetId(),
+		userInfo,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
 	if !check && !page.GetMeta().GetPublic() {
 		return nil, errorswiki.ErrPageDenied
 	}
@@ -349,6 +332,10 @@ func (s *Server) CreatePage(
 		false,
 	); err != nil {
 		return nil, err
+	}
+
+	if err := s.access.RefreshTargetVisibility(ctx, tx, resp.GetId()); err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
 	// Commit the transaction
@@ -587,6 +574,10 @@ func (s *Server) UpdatePage(
 		true,
 	); err != nil {
 		return nil, err
+	}
+
+	if err := s.access.RefreshTargetVisibility(ctx, tx, req.GetPage().GetId()); err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
 	if oldPage.GetMeta().GetDraft() != req.GetPage().GetMeta().GetDraft() {

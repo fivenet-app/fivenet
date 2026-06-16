@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	notificationsstore "github.com/fivenet-app/fivenet/v2026/stores/notifications"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -32,16 +33,17 @@ func init() {
 type Server struct {
 	pbnotifications.NotificationsServiceServer
 
-	logger   *zap.Logger
-	ctx      context.Context //nolint:containedctx // Server keeps lifecycle context for stream consumer cleanup.
-	db       *sql.DB
-	ps       perms.Permissions
-	tm       *auth.TokenMgr
-	ui       userinfo.UserInfoRetriever
-	js       *events.JSWrapper
-	enricher mstlystcdata.IEnricher
-	appCfg   appconfig.IConfig
-	store    notificationsstore.IStore
+	logger      *zap.Logger
+	ctx         context.Context //nolint:containedctx // Server keeps lifecycle context for stream consumer cleanup.
+	db          *sql.DB
+	ps          perms.Permissions
+	tm          *auth.TokenMgr
+	ui          userinfo.UserInfoRetriever
+	js          *events.JSWrapper
+	enricher    mstlystcdata.IEnricher
+	appCfg      appconfig.IConfig
+	store       notificationsstore.IStore
+	mailerStore mailerstore.IStore
 }
 
 type Params struct {
@@ -49,31 +51,33 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger    *zap.Logger
-	DB        *sql.DB
-	Perms     perms.Permissions
-	TM        *auth.TokenMgr
-	UI        userinfo.UserInfoRetriever
-	JS        *events.JSWrapper
-	Enricher  mstlystcdata.IEnricher
-	AppConfig appconfig.IConfig
-	Store     notificationsstore.IStore
+	Logger      *zap.Logger
+	DB          *sql.DB
+	Perms       perms.Permissions
+	TM          *auth.TokenMgr
+	UI          userinfo.UserInfoRetriever
+	JS          *events.JSWrapper
+	Enricher    mstlystcdata.IEnricher
+	AppConfig   appconfig.IConfig
+	Store       notificationsstore.IStore
+	MailerStore mailerstore.IStore
 }
 
 func NewServer(p Params) *Server {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &Server{
-		logger:   p.Logger,
-		ctx:      ctxCancel,
-		db:       p.DB,
-		ps:       p.Perms,
-		tm:       p.TM,
-		ui:       p.UI,
-		js:       p.JS,
-		enricher: p.Enricher,
-		appCfg:   p.AppConfig,
-		store:    p.Store,
+		logger:      p.Logger,
+		ctx:         ctxCancel,
+		db:          p.DB,
+		ps:          p.Perms,
+		tm:          p.TM,
+		ui:          p.UI,
+		js:          p.JS,
+		enricher:    p.Enricher,
+		appCfg:      p.AppConfig,
+		store:       p.Store,
+		mailerStore: p.MailerStore,
 	}
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {

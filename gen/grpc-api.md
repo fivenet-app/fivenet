@@ -392,6 +392,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `job_grade_label` | [string](#string) | optional |  |
 | `access` | [int32](#int32) |  |  |
 | `required` | [bool](#bool) | optional |  |
+| `required_access` | [int32](#int32) | optional |  |
 
 
 
@@ -407,6 +408,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `qualification_id` | [int64](#int64) |  |  |
 | `access` | [int32](#int32) |  |  |
 | `required` | [bool](#bool) | optional |  |
+| `required_access` | [int32](#int32) | optional |  |
 
 
 
@@ -423,6 +425,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `access` | [int32](#int32) |  |  |
 | `required` | [bool](#bool) | optional |  |
+| `required_access` | [int32](#int32) | optional |  |
 
 
 
@@ -3602,6 +3605,8 @@ States of Cronjbo
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `name` | [string](#string) |  |  |
 | `svg_template` | [string](#string) |  | Parameterized SVG with slots |
 | `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
@@ -5765,17 +5770,6 @@ User related events
 
 ## resources/qualifications/access/access.proto
 
-
-### resources.qualifications.access.QualificationAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.access.JobAccess](#resourcesaccessJobAccess) | repeated |  |
-
-
-
-
  <!-- end messages -->
 
 
@@ -6124,7 +6118,7 @@ User related events
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
-| `access` | [access.QualificationAccess](#resourcesqualificationsaccessQualificationAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 | `requirements` | [QualificationRequirement](#resourcesqualificationsQualificationRequirement) | repeated |  |
 | `discord_sync_enabled` | [bool](#bool) |  |  |
 | `discord_settings` | [QualificationDiscordSettings](#resourcesqualificationsQualificationDiscordSettings) | optional |  |
@@ -10832,6 +10826,24 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
+## services/jobs/groups.proto
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.jobs.GroupsService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+
+ <!-- end services -->
+
+
+
 ## services/jobs/jobs.proto
 
 
@@ -12135,7 +12147,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `access` | [resources.qualifications.access.QualificationAccess](#resourcesqualificationsaccessQualificationAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 
 
 
@@ -12173,7 +12185,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `qualification_id` | [int64](#int64) | optional | Search params |
 | `status` | [resources.qualifications.RequestStatus](#resourcesqualificationsRequestStatus) | repeated |  |
-| `user_id` | [int32](#int32) | optional |  |
+| `user_ids` | [int32](#int32) | repeated |  |
 
 
 
@@ -12226,7 +12238,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `qualification_id` | [int64](#int64) | optional | Search params |
 | `status` | [resources.qualifications.ResultStatus](#resourcesqualificationsResultStatus) | repeated |  |
-| `user_id` | [int32](#int32) | optional |  |
+| `user_ids` | [int32](#int32) | repeated |  |
 
 
 
@@ -12250,7 +12262,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `qualification_id` | [int64](#int64) |  |  |
-| `access` | [resources.qualifications.access.QualificationAccess](#resourcesqualificationsaccessQualificationAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 
 
 

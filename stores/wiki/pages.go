@@ -6,7 +6,9 @@ import (
 	"strings"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	reswiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
+	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -19,14 +21,10 @@ type ListPagesQuery struct {
 	Search string
 	Job    string
 
-	RootOnly  bool
-	Superuser bool
-	UserJob   string
-	UserID    int32
-
-	ViewCondition     mysql.BoolExpression
-	RootViewCondition mysql.BoolExpression
-	Pagination        *database.PaginationRequest
+	RootOnly   bool
+	Superuser  bool
+	UserInfo   *userinfo.UserInfo
+	Pagination *database.PaginationRequest
 }
 
 type ListPagesResult struct {
@@ -35,6 +33,10 @@ type ListPagesResult struct {
 }
 
 func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResult, error) {
+	if q.UserInfo == nil {
+		q.UserInfo = &userinfo.UserInfo{}
+	}
+
 	tPageShort := table.FivenetWikiPages.AS("page_short")
 	tJobProps := table.FivenetJobProps
 	tFiles := table.FivenetFiles.AS("logo")
@@ -59,6 +61,15 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 		tPageShort.Startpage,
 	}
 
+	visibleQuery := s.access.VisibleIDsByConditionQuery(
+		q.UserInfo,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		table.FivenetWikiPages.DeletedAt.IS_NULL(),
+	)
+	visibleIDs := mysql.
+		SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
+		FROM(visibleQuery.Table)
+
 	if q.RootOnly {
 		columns = append(columns,
 			tJobProps.LogoFileID.AS("page_root_info.logo_file_id"),
@@ -66,26 +77,11 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 			tFiles.FilePath,
 		)
 
+		rootVisibleIDs := visibleIDs
+
 		subPage := table.FivenetWikiPages.AS("sub_page")
 		rootCondition := mysql.AND(subPage.DeletedAt.IS_NULL())
-		if q.RootViewCondition != nil {
-			rootCondition = rootCondition.AND(mysql.OR(
-				subPage.Public.IS_TRUE(),
-				mysql.AND(
-					subPage.Job.EQ(mysql.String(q.UserJob)),
-					subPage.CreatorID.EQ(mysql.Int32(q.UserID)),
-				),
-				q.RootViewCondition,
-			))
-		} else {
-			rootCondition = rootCondition.AND(mysql.OR(
-				subPage.Public.IS_TRUE(),
-				mysql.AND(
-					subPage.Job.EQ(mysql.String(q.UserJob)),
-					subPage.CreatorID.EQ(mysql.Int32(q.UserID)),
-				),
-			))
-		}
+		rootCondition = rootCondition.AND(subPage.ID.IN(rootVisibleIDs))
 
 		rankedPages := subPage.
 			SELECT(
@@ -113,26 +109,10 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 				WHERE(mysql.RawBool("ranked_pages.rn = 1")),
 		))
 	} else if !q.Superuser {
-		pageCondition := mysql.AND(tPageShort.DeletedAt.IS_NULL())
-		if q.ViewCondition != nil {
-			pageCondition = pageCondition.AND(mysql.OR(
-				tPageShort.Public.IS_TRUE(),
-				mysql.AND(
-					tPageShort.Job.EQ(mysql.String(q.UserJob)),
-					tPageShort.CreatorID.EQ(mysql.Int32(q.UserID)),
-				),
-				q.ViewCondition,
-			))
-		} else {
-			pageCondition = pageCondition.AND(mysql.OR(
-				tPageShort.Public.IS_TRUE(),
-				mysql.AND(
-					tPageShort.Job.EQ(mysql.String(q.UserJob)),
-					tPageShort.CreatorID.EQ(mysql.Int32(q.UserID)),
-				),
-			))
-		}
-		condition = condition.AND(pageCondition)
+		condition = condition.AND(mysql.AND(
+			tPageShort.DeletedAt.IS_NULL(),
+			tPageShort.ID.IN(visibleIDs),
+		))
 	}
 
 	if q.Job != "" {
@@ -143,10 +123,13 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 		columns = append(columns, tPageShort.DeletedAt)
 	}
 
-	countStmt := tPageShort.
+	var countStmt mysql.Statement = tPageShort.
 		SELECT(mysql.COUNT(tPageShort.ID).AS("data_count.total")).
 		FROM(tPageShort).
 		WHERE(condition)
+	if len(visibleQuery.CTEs) > 0 {
+		countStmt = mysql.WITH(visibleQuery.CTEs...)(countStmt)
+	}
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -165,7 +148,7 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 		return result, nil
 	}
 
-	stmt := tPageShort.
+	var stmt mysql.Statement = tPageShort.
 		SELECT(tPageShort.ID, columns...).
 		FROM(
 			tPageShort.
@@ -187,6 +170,9 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 		).
 		OFFSET(pagination.GetOffset()).
 		LIMIT(limit)
+	if len(visibleQuery.CTEs) > 0 {
+		stmt = mysql.WITH(visibleQuery.CTEs...)(stmt)
+	}
 
 	if err := stmt.QueryContext(ctx, s.db, &result.Pages); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

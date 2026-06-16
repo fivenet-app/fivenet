@@ -185,6 +185,7 @@ export const userAccessEntry = z.object({
     user: z.custom<UserShort>().optional(),
     access: z.coerce.number().nonnegative(),
     required: z.coerce.boolean().optional(),
+    requiredAccess: z.coerce.number().optional(),
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -214,6 +215,7 @@ export const jobAccessEntry = z.object({
     minimumGrade: z.coerce.number().nonnegative(),
     access: z.coerce.number().nonnegative(),
     required: z.coerce.boolean().optional(),
+    requiredAccess: z.coerce.number().optional(),
 });
 
 // Extend the jobsAccessEntries schema to validate duplicates
@@ -244,6 +246,7 @@ export const qualificationAccessEntry = z.object({
     qualificationId: z.coerce.number(),
     access: z.coerce.number().nonnegative(),
     required: z.coerce.boolean().optional(),
+    requiredAccess: z.coerce.number().optional(),
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

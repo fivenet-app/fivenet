@@ -5,6 +5,7 @@ package services.qualifications;
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
+import "resources/access/access.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
@@ -65,12 +66,12 @@ message GetQualificationAccessRequest {
 }
 
 message GetQualificationAccessResponse {
-  resources.qualifications.access.QualificationAccess access = 1 [(buf.validate.field).required = true];
+  resources.access.Access access = 1 [(buf.validate.field).required = true];
 }
 
 message SetQualificationAccessRequest {
   int64 qualification_id = 1;
-  resources.qualifications.access.QualificationAccess access = 2 [(buf.validate.field).required = true];
+  resources.access.Access access = 2 [(buf.validate.field).required = true];
 }
 
 message SetQualificationAccessResponse {}
@@ -83,7 +84,10 @@ message ListQualificationRequestsRequest {
   // Search params
   optional int64 qualification_id = 3;
   repeated resources.qualifications.RequestStatus status = 4 [(buf.validate.field).repeated.items.enum.defined_only = true];
-  optional int32 user_id = 5 [(buf.validate.field).int32.gte = 0];
+  repeated int32 user_ids = 5 [
+    (buf.validate.field).repeated.max_items = 5,
+    (buf.validate.field).repeated.items.int32.gt = 0
+  ];
 }
 
 message ListQualificationRequestsResponse {
@@ -101,7 +105,7 @@ message CreateOrUpdateQualificationRequestResponse {
 
 message DeleteQualificationReqRequest {
   int64 qualification_id = 1;
-  int32 user_id = 2 [(buf.validate.field).int32.gte = 0];
+  int32 user_id = 2 [(buf.validate.field).int32.gt = 0];
 }
 
 message DeleteQualificationReqResponse {}
@@ -114,7 +118,10 @@ message ListQualificationsResultsRequest {
   // Search params
   optional int64 qualification_id = 3;
   repeated resources.qualifications.ResultStatus status = 4 [(buf.validate.field).repeated.items.enum.defined_only = true];
-  optional int32 user_id = 5 [(buf.validate.field).int32.gte = 0];
+  repeated int32 user_ids = 5 [
+    (buf.validate.field).repeated.max_items = 5,
+    (buf.validate.field).repeated.items.int32.gt = 0
+  ];
 }
 
 message ListQualificationsResultsResponse {

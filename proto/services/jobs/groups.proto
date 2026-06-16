@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package services.jobs;
+
+import "codegen/perms/perms.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobs";
+
+service GroupsService {
+  option (codegen.perms.perms_svc) = {
+    order: 66
+    icon: "i-mdi-account-group-outline"
+  };
+}

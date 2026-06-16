@@ -713,7 +713,6 @@ provide('yjsProvider', provider);
                                         :target-id="documentId ?? 0"
                                         :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
                                         show-required
-                                        required-readonly
                                         name="access"
                                     />
                                 </UFormField>

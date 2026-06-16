@@ -23,7 +23,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
-	pbmailer "github.com/fivenet-app/fivenet/v2026/services/mailer"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/nats-io/nats.go/jetstream"
@@ -66,7 +65,7 @@ func (s *Server) buildSubjects(
 
 	// Clone user info and disable superuser
 	userInfo.Superuser = false
-	emails, err := pbmailer.ListUserEmails(ctx, s.db, userInfo, nil, false)
+	emails, err := s.mailerStore.ListUserEmails(ctx, s.db, userInfo, nil, false)
 	if err != nil {
 		return baseSubjects, nil, errswrap.NewError(err, ErrFailedStream)
 	}

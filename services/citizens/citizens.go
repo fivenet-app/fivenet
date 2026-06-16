@@ -2,11 +2,9 @@ package citizens
 
 import (
 	context "context"
-	"errors"
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
@@ -14,11 +12,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -127,6 +122,9 @@ func (s *Server) GetUser(
 		IncludeEmail: fields.Contains(
 			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail,
 		),
+		IncludeLicenses: !infoOnly && fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueLicenses,
+		),
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -169,51 +167,13 @@ func (s *Server) GetUser(
 	}
 
 	if resp.GetUser().GetProps() == nil {
-		resp.User.Props = &usersprops.UserProps{UserId: resp.GetUser().GetUserId()}
-	}
-
-	// Check if user can see licenses and fetch them
-	if !infoOnly &&
-		fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueLicenses) {
-		tCitizenLicenses := table.FivenetUserLicenses
-		tLicenses := table.FivenetLicenses
-
-		stmt := tCitizenLicenses.
-			SELECT(
-				tLicenses.Type.AS("license.type"),
-				tLicenses.Label.AS("license.label"),
-			).
-			FROM(
-				tCitizenLicenses.
-					LEFT_JOIN(tLicenses,
-						tCitizenLicenses.Type.EQ(tLicenses.Type)),
-			).
-			WHERE(tCitizenLicenses.UserID.EQ(mysql.Int32(req.GetUserId()))).
-			LIMIT(15)
-
-		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-			}
+		resp.User.Props = &usersprops.UserProps{
+			UserId: resp.GetUser().GetUserId(),
 		}
 	}
 
 	if fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsLabels) {
-		condition := mysql.AND(
-			tCitizensLabelsJob.DeletedAt.IS_NULL(),
-			tCitizenLabels.UserID.EQ(mysql.Int32(req.GetUserId())),
-		)
-		if !userInfo.GetSuperuser() {
-			jobAccessExists := s.labelsAccess.ACLAccessExistsCondition(
-				tCitizensLabelsJob.ID,
-				userInfo,
-				int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW),
-			)
-
-			condition = condition.AND(jobAccessExists)
-		}
-
-		labels, err := s.store.GetUserLabels(ctx, s.db, condition)
+		labels, err := s.store.GetUserLabelsForUser(ctx, userInfo, req.GetUserId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `gksphone_job_message` (
   `anon` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- gksphone_settings definition
 CREATE TABLE IF NOT EXISTS `gksphone_settings` (
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `gksphone_settings` (
   `phone_number` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `avatar_url` longtext COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- phone_phones definition
 CREATE TABLE IF NOT EXISTS `phone_phones` (
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `phone_phones` (
   `last_seen` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `phone_number` (`phone_number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- phone_services_channels definition
 CREATE TABLE IF NOT EXISTS `phone_services_channels` (
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `phone_services_channels` (
   `last_message` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;
 
 -- phone_services_messages definition
 CREATE TABLE IF NOT EXISTS `phone_services_messages` (
@@ -62,4 +62,4 @@ CREATE TABLE IF NOT EXISTS `phone_services_messages` (
   PRIMARY KEY (`id`),
   KEY `channel_id` (`channel_id`),
   CONSTRAINT `phone_services_messages_ibfk_1` FOREIGN KEY (`channel_id`) REFERENCES `phone_services_channels` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB;

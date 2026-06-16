@@ -10,13 +10,22 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
+	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 )
 
 func (s *Server) ListAccounts(
 	ctx context.Context,
 	req *pbsettings.ListAccountsRequest,
 ) (*pbsettings.ListAccountsResponse, error) {
-	resp, err := s.store.ListAccounts(ctx, req)
+	resp, err := s.store.ListAccounts(ctx, settingsstore.ListAccountsOptions{
+		Pagination:   req.GetPagination(),
+		Sort:         req.GetSort(),
+		License:      req.GetLicense(),
+		OnlyDisabled: req.GetOnlyDisabled(),
+		Username:     req.GetUsername(),
+		ExternalID:   req.GetExternalId(),
+		Group:        req.GetGroup(),
+	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}

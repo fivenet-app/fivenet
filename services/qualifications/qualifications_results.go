@@ -20,74 +20,26 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
+	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-var (
-	tQualiResults = table.FivenetQualificationsResults.AS("qualification_result")
-
-	tJobLabels = table.FivenetJobLabels
-)
+var tJobLabels = table.FivenetJobLabels
 
 func (s *Server) ListQualificationsResults(
 	ctx context.Context,
 	req *pbqualifications.ListQualificationsResultsRequest,
 ) (*pbqualifications.ListQualificationsResultsResponse, error) {
-	if req.QualificationId != nil {
+	if req.GetQualificationId() > 0 {
 		logging.InjectFields(
 			ctx,
 			logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()},
 		)
 	}
-	if req.UserId != nil {
-		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.user_id", req.GetUserId()})
-	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	var where mysql.BoolExpression
-	if req.QualificationId != nil {
-		check, err := s.access.CanUserAccessTarget(
-			ctx,
-			req.GetQualificationId(),
-			userInfo,
-			int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
-		)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-		if !check {
-			return nil, errorsqualifications.ErrFailedQuery
-		}
-	} else {
-		accessExists := mysql.OR(
-			s.access.ACLAccessExistsCondition(
-				tQualiResults.QualificationID,
-				userInfo,
-				int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
-			),
-			mysql.AND(
-				s.access.ACLAccessExistsCondition(
-					tQualiResults.QualificationID,
-					userInfo,
-					int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-				),
-				tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-			),
-		)
-
-		where = mysql.AND(
-			tQuali.AS("qualification_short").DeletedAt.IS_NULL(),
-			mysql.OR(
-				mysql.AND(
-					tQualiResults.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
-					tQualiResults.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-				),
-				accessExists,
-			),
-		)
-	}
 
 	includePhoneNumber := false
 	if fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(
@@ -99,7 +51,18 @@ func (s *Server) ListQualificationsResults(
 		)
 	}
 
-	resp, err := s.store.ListQualificationsResults(ctx, req, userInfo, where, includePhoneNumber)
+	resp, err := s.store.ListQualificationsResults(
+		ctx,
+		qualificationsstore.ListQualificationsResultsOptions{
+			Pagination:      req.GetPagination(),
+			Sort:            req.GetSort(),
+			QualificationID: req.GetQualificationId(),
+			Status:          req.GetStatus(),
+			UserIDs:         req.GetUserIds(),
+		},
+		userInfo,
+		includePhoneNumber,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -198,7 +161,6 @@ func (s *Server) createOrUpdateQualificationResult(
 	quali, err := s.store.GetQualification(
 		ctx,
 		qualificationId,
-		tQuali.ID.EQ(mysql.Int64(qualificationId)),
 		userInfo,
 		false,
 		false,
@@ -385,7 +347,6 @@ func (s *Server) DeleteQualificationResult(
 	quali, err := s.store.GetQualification(
 		ctx,
 		result.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(result.GetQualificationId())),
 		userInfo,
 		false,
 		false,

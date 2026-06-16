@@ -8,6 +8,7 @@ import (
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -15,49 +16,94 @@ import (
 )
 
 var (
-	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("citizen_label")
+	tCitizensLabelsJob = table.FivenetUserLabelsJob
 	tCitizenLabels     = table.FivenetUserLabels
 )
 
 func (s *Store) ListLabels(
 	ctx context.Context,
 	q qrm.Queryable,
-	condition mysql.BoolExpression,
+	userInfo *userinfo.UserInfo,
+	search string,
+	ownJobOnly bool,
+	canCreateLabel bool,
+	minAccess int32,
 	includeDeleted bool,
 ) (*citizenslabels.Labels, error) {
+	if userInfo == nil {
+		userInfo = &userinfo.UserInfo{}
+	}
+
+	labelTable := tCitizensLabelsJob.AS("label")
+	baseLabel := tCitizensLabelsJob
+	condition := mysql.Bool(true)
+	if !userInfo.GetSuperuser() {
+		condition = condition.AND(baseLabel.DeletedAt.IS_NULL())
+	}
+
+	if search = dbutils.PrepareForLikeSearch(search); search != "" {
+		condition = condition.AND(baseLabel.Name.LIKE(mysql.String(search)))
+	}
+
+	if ownJobOnly && canCreateLabel {
+		condition = condition.AND(baseLabel.Job.EQ(mysql.String(userInfo.GetJob())))
+	} else if userInfo.GetSuperuser() {
+		condition = condition.AND(baseLabel.Job.EQ(mysql.String(userInfo.GetJob())))
+	} else {
+		jobAccessExists := s.labelsAccess.ACLAccessExistsCondition(
+			labelTable.ID,
+			userInfo,
+			minAccess,
+		)
+		condition = condition.AND(jobAccessExists)
+	}
+
+	visibleQuery := s.labelsAccess.VisibleIDsByConditionQuery(
+		userInfo,
+		int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW),
+		condition,
+	)
+	visibleIDs := mysql.SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
+		FROM(visibleQuery.Table)
+
 	columns := mysql.ProjectionList{
-		tCitizensLabelsJob.ID.AS("label.id"),
-		tCitizensLabelsJob.CreatedAt.AS("label.created_at"),
-		tCitizensLabelsJob.SortOrder.AS("label.sort_order"),
-		tCitizensLabelsJob.Name.AS("label.name"),
-		tCitizensLabelsJob.Color.AS("label.color"),
-		tCitizensLabelsJob.Icon.AS("label.icon"),
-		tCitizensLabelsJob.Settings.AS("label.settings"),
+		labelTable.ID,
+		labelTable.CreatedAt,
+		labelTable.SortOrder,
+		labelTable.Name,
+		labelTable.Color,
+		labelTable.Icon,
+		labelTable.Settings,
 	}
 	if includeDeleted {
-		columns = append(columns, tCitizensLabelsJob.DeletedAt.AS("label.deleted_at"))
+		columns = append(columns, labelTable.DeletedAt)
 	}
 
-	stmt := tCitizensLabelsJob.
+	var stmt mysql.Statement = labelTable.
 		SELECT(columns[0], columns[1:]...).
-		FROM(tCitizensLabelsJob).
-		WHERE(condition).
+		FROM(labelTable).
+		WHERE(labelTable.ID.IN(visibleIDs)).
 		GROUP_BY(
-			tCitizensLabelsJob.ID,
-			tCitizensLabelsJob.CreatedAt,
-			tCitizensLabelsJob.Name,
-			tCitizensLabelsJob.Color,
-			tCitizensLabelsJob.Icon,
-			tCitizensLabelsJob.Settings,
-			tCitizensLabelsJob.SortKey,
+			labelTable.ID,
+			labelTable.CreatedAt,
+			labelTable.Name,
+			labelTable.Color,
+			labelTable.Icon,
+			labelTable.Settings,
+			labelTable.SortKey,
 		).
 		ORDER_BY(
-			tCitizensLabelsJob.SortOrder.ASC(),
-			tCitizensLabelsJob.SortKey.ASC(),
+			labelTable.SortOrder.ASC(),
+			labelTable.SortKey.ASC(),
 		).
 		LIMIT(20)
+	if len(visibleQuery.CTEs) > 0 {
+		stmt = mysql.WITH(visibleQuery.CTEs...)(stmt)
+	}
 
-	resp := &citizenslabels.Labels{List: []*citizenslabels.Label{}}
+	resp := &citizenslabels.Labels{
+		List: []*citizenslabels.Label{},
+	}
 	if err := stmt.QueryContext(ctx, q, &resp.List); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -99,6 +145,8 @@ func (s *Store) GetLabel(
 	job string,
 	labelId int64,
 ) (*citizenslabels.Label, error) {
+	tCitizensLabelsJob := tCitizensLabelsJob.AS("label")
+
 	stmt := tCitizensLabelsJob.
 		SELECT(
 			tCitizensLabelsJob.ID,
@@ -293,14 +341,16 @@ func (s *Store) GetUserLabels(
 	q qrm.Queryable,
 	condition mysql.BoolExpression,
 ) (*citizenslabels.Labels, error) {
+	tCitizensLabelsJob := tCitizensLabelsJob.AS("label")
+
 	stmt := tCitizenLabels.
 		SELECT(
-			tCitizensLabelsJob.ID.AS("label.id"),
-			tCitizensLabelsJob.Job.AS("label.job"),
-			tCitizensLabelsJob.Name.AS("label.name"),
-			tCitizensLabelsJob.Color.AS("label.color"),
-			tCitizensLabelsJob.Icon.AS("label.icon"),
-			tCitizensLabelsJob.Settings.AS("label.settings"),
+			tCitizensLabelsJob.ID,
+			tCitizensLabelsJob.Job,
+			tCitizensLabelsJob.Name,
+			tCitizensLabelsJob.Color,
+			tCitizensLabelsJob.Icon,
+			tCitizensLabelsJob.Settings,
 			tCitizenLabels.ExpiresAt.AS("label.expiresAt"),
 		).
 		FROM(
@@ -317,7 +367,9 @@ func (s *Store) GetUserLabels(
 		).
 		LIMIT(25)
 
-	list := &citizenslabels.Labels{List: []*citizenslabels.Label{}}
+	list := &citizenslabels.Labels{
+		List: []*citizenslabels.Label{},
+	}
 	if err := stmt.QueryContext(ctx, q, &list.List); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -325,6 +377,32 @@ func (s *Store) GetUserLabels(
 	}
 
 	return list, nil
+}
+
+func (s *Store) GetUserLabelsForUser(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	userId int32,
+) (*citizenslabels.Labels, error) {
+	if userInfo == nil {
+		userInfo = &userinfo.UserInfo{}
+	}
+
+	condition := mysql.AND(
+		tCitizensLabelsJob.DeletedAt.IS_NULL(),
+		tCitizenLabels.UserID.EQ(mysql.Int32(userId)),
+	)
+	if !userInfo.GetSuperuser() {
+		jobAccessExists := s.labelsAccess.ACLAccessExistsCondition(
+			tCitizensLabelsJob.ID,
+			userInfo,
+			int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW),
+		)
+
+		condition = condition.AND(jobAccessExists)
+	}
+
+	return s.GetUserLabels(ctx, s.db, condition)
 }
 
 func (s *Store) ValidateLabels(

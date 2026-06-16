@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
+	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -55,7 +56,10 @@ func (s *Server) ListCalendarEntryRSVP(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	resp, err := s.store.ListCalendarEntryRSVP(ctx, entry, req, userInfo)
+	resp, err := s.store.ListCalendarEntryRSVP(ctx, calendarstore.ListCalendarEntryRSVPOptions{
+		EntryID:    entry.GetId(),
+		Pagination: req.GetPagination(),
+	}, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}

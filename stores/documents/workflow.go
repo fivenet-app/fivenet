@@ -10,19 +10,28 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Store) UpsertWorkflowState(ctx context.Context, tx qrm.DB, documentID int64, workflow *documentsworkflow.Workflow) error {
+func (s *Store) UpsertWorkflowState(
+	ctx context.Context,
+	tx qrm.DB,
+	documentID int64,
+	workflow *documentsworkflow.Workflow,
+) error {
 	if workflow == nil || (!workflow.GetAutoClose() && !workflow.GetReminder()) {
 		return nil
 	}
 
 	now := time.Now()
 	autoCloseTime := mysql.TimestampExp(mysql.NULL)
-	if workflow.GetAutoClose() && workflow.GetAutoCloseSettings() != nil && workflow.GetAutoCloseSettings().GetDuration() != nil {
-		autoCloseTime = mysql.TimestampT(now.Add(workflow.GetAutoCloseSettings().GetDuration().AsDuration()))
+	if workflow.GetAutoClose() && workflow.GetAutoCloseSettings() != nil &&
+		workflow.GetAutoCloseSettings().GetDuration() != nil {
+		autoCloseTime = mysql.TimestampT(
+			now.Add(workflow.GetAutoCloseSettings().GetDuration().AsDuration()),
+		)
 	}
 
 	nextReminderTime := mysql.TimestampExp(mysql.NULL)
-	if workflow.GetReminder() && workflow.GetReminderSettings() != nil && len(workflow.GetReminderSettings().GetReminders()) > 0 {
+	if workflow.GetReminder() && workflow.GetReminderSettings() != nil &&
+		len(workflow.GetReminderSettings().GetReminders()) > 0 {
 		reminder := workflow.GetReminderSettings().GetReminders()[0]
 		nextReminderTime = mysql.TimestampT(now.Add(reminder.GetDuration().AsDuration()))
 	}
@@ -51,7 +60,11 @@ func (s *Store) UpsertWorkflowState(ctx context.Context, tx qrm.DB, documentID i
 	return err
 }
 
-func (s *Store) UpsertWorkflowUserState(ctx context.Context, tx qrm.DB, state *documentsworkflow.WorkflowUserState) error {
+func (s *Store) UpsertWorkflowUserState(
+	ctx context.Context,
+	tx qrm.DB,
+	state *documentsworkflow.WorkflowUserState,
+) error {
 	reminderTime := mysql.TimestampExp(mysql.NULL)
 	if state.GetManualReminderTime() != nil {
 		reminderTime = mysql.TimestampT(state.GetManualReminderTime().AsTime())
@@ -91,7 +104,12 @@ func (s *Store) UpsertWorkflowUserState(ctx context.Context, tx qrm.DB, state *d
 	return err
 }
 
-func (s *Store) DeleteWorkflowUserState(ctx context.Context, tx qrm.DB, documentID int64, userID int32) error {
+func (s *Store) DeleteWorkflowUserState(
+	ctx context.Context,
+	tx qrm.DB,
+	documentID int64,
+	userID int32,
+) error {
 	tUserWorkflow := table.FivenetDocumentsWorkflowUsers
 	stmt := tUserWorkflow.
 		DELETE().

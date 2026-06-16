@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
-	pb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -21,19 +19,14 @@ func TestStoreCountUserActivityAppliesTargetFilter(t *testing.T) {
 	t.Cleanup(func() { _ = db.Close() })
 
 	store := New(db, &config.CustomDB{})
-	pageSize := int64(5)
-	req := &pb.ListUserActivityRequest{
-		UserId: 42,
-		Pagination: &database.PaginationRequest{
-			PageSize: &pageSize,
-		},
-	}
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_activity AS user_activity`) + `(?s).*` + regexp.QuoteMeta(`user_activity.target_user_id = ?`)).
 		WithArgs(int32(42)).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(7)))
 
-	total, err := store.CountUserActivity(t.Context(), req)
+	total, err := store.CountUserActivity(t.Context(), CountUserActivityOptions{
+		UserActivityOptions: UserActivityOptions{UserID: 42},
+	})
 	require.NoError(t, err)
 	assert.Equal(t, int64(7), total)
 	require.NoError(t, mock.ExpectationsWereMet())
@@ -47,14 +40,6 @@ func TestStoreListUserActivityAppliesSortAndJoin(t *testing.T) {
 	t.Cleanup(func() { _ = db.Close() })
 
 	store := New(db, &config.CustomDB{})
-	pageSize := int64(20)
-	req := &pb.ListUserActivityRequest{
-		UserId: 42,
-		Pagination: &database.PaginationRequest{
-			Offset:   0,
-			PageSize: &pageSize,
-		},
-	}
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user_activity AS user_activity`) +
 		`(?s).*` + regexp.QuoteMeta(`INNER JOIN fivenet_user AS target_user ON`) +
@@ -102,7 +87,11 @@ func TestStoreListUserActivityAppliesSortAndJoin(t *testing.T) {
 			nil,
 		))
 
-	activities, err := store.ListUserActivity(t.Context(), req, 20)
+	activities, err := store.ListUserActivity(t.Context(), ListUserActivityOptions{
+		UserActivityOptions: UserActivityOptions{UserID: 42},
+		Offset:              0,
+		Limit:               20,
+	})
 	require.NoError(t, err)
 	require.Len(t, activities, 1)
 	assert.Equal(t, int32(42), activities[0].GetTargetUser().GetUserId())

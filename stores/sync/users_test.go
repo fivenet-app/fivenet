@@ -225,8 +225,16 @@ func TestComparePhoneNumbers(t *testing.T) {
 			}
 		}
 
-		assert.True(t, seenCurrentDemotion, "old primary should be demoted via current slice pointer")
+		assert.True(
+			t,
+			seenCurrentDemotion,
+			"old primary should be demoted via current slice pointer",
+		)
 		assert.True(t, seenIncomingNewPrimary, "new primary should come from incoming slice")
-		assert.False(t, currentPrimary.GetIsPrimary(), "old primary must be marked non-primary after compare")
+		assert.False(
+			t,
+			currentPrimary.GetIsPrimary(),
+			"old primary must be marked non-primary after compare",
+		)
 	})
 }

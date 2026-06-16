@@ -8,8 +8,8 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	"github.com/go-jet/jet/v2/mysql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -23,11 +23,11 @@ func TestStoreListLabels(t *testing.T) {
 
 	store := New(db, &config.CustomDB{})
 
-	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user_labels_job AS citizen_label`) +
-		`(?s).*` + regexp.QuoteMeta(`WHERE ?`) +
-		`(?s).*` + regexp.QuoteMeta(`ORDER BY citizen_label.sort_order ASC, citizen_label.sort_key ASC LIMIT ?;`)
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user_labels_job AS label`) +
+		`(?s).*` + regexp.QuoteMeta(`WHERE label.id IN (( SELECT doc_ids.id AS "id" FROM (`) +
+		`(?s).*` + regexp.QuoteMeta(`ORDER BY label.sort_order ASC, label.sort_key ASC LIMIT ?;`)
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(true, int64(20)).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), int64(20)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"label.id",
 			"label.created_at",
@@ -46,7 +46,16 @@ func TestStoreListLabels(t *testing.T) {
 			nil,
 		))
 
-	labels, err := store.ListLabels(t.Context(), db, mysql.Bool(true), false)
+	labels, err := store.ListLabels(
+		t.Context(),
+		db,
+		&userinfo.UserInfo{Superuser: true},
+		"",
+		false,
+		false,
+		0,
+		false,
+	)
 	require.NoError(t, err)
 	require.Len(t, labels.GetList(), 1)
 	assert.Equal(t, int64(7), labels.GetList()[0].GetId())
@@ -147,9 +156,9 @@ func TestStoreReorderLabels(t *testing.T) {
 	store := New(db, &config.CustomDB{})
 	labelIDs := []int64{7, 4, 9}
 
-	lookupQuery := regexp.QuoteMeta(`FROM fivenet_user_labels_job AS citizen_label`) +
-		`(?s).*` + regexp.QuoteMeta(`citizen_label.job = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`citizen_label.deleted_at IS NULL`) +
+	lookupQuery := regexp.QuoteMeta(`FROM fivenet_user_labels_job`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_user_labels_job.job = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_user_labels_job.deleted_at IS NULL`) +
 		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
 	mock.ExpectQuery(lookupQuery).
 		WithArgs("police", int64(3)).
@@ -158,7 +167,7 @@ func TestStoreReorderLabels(t *testing.T) {
 	mock.ExpectBegin()
 	for idx, labelID := range labelIDs {
 		execQuery := regexp.QuoteMeta(
-			`UPDATE fivenet_user_labels_job AS citizen_label SET sort_order = ? WHERE ( (citizen_label.id = ?) AND (citizen_label.job = ?) AND (citizen_label.deleted_at IS NULL) ) LIMIT ?;`,
+			`UPDATE fivenet_user_labels_job SET sort_order = ? WHERE ( (fivenet_user_labels_job.id = ?) AND (fivenet_user_labels_job.job = ?) AND (fivenet_user_labels_job.deleted_at IS NULL) ) LIMIT ?;`,
 		)
 		mock.ExpectExec(execQuery).
 			WithArgs(int32(idx), labelID, "police", int64(1)).

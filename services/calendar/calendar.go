@@ -76,23 +76,13 @@ func (s *Server) GetCalendar(
 	req *pbcalendar.GetCalendarRequest,
 ) (*pbcalendar.GetCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	// Check if user has access to existing calendar
-	check, err := s.store.CheckIfUserHasAccessToCalendar(
+	cal, err := s.store.GetAccessibleCalendar(
 		ctx,
 		req.GetCalendarId(),
 		userInfo,
 		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		true,
 	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
-	if !check {
-		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
-	}
-
-	cal, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(mysql.Int64(req.GetCalendarId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -142,15 +132,12 @@ func (s *Server) CreateCalendar(
 		req.Calendar.Color = "blue"
 	}
 
-	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	// Check if user has access to existing calendar
 	if req.GetCalendar().GetId() > 0 {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -160,9 +147,8 @@ func (s *Server) CreateCalendar(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	// Allow only one private calendar per user (job field will be null for private calendars)
 	if req.Calendar.Job == nil {
-		calendar, err := s.getCalendar(ctx, userInfo, mysql.AND(
+		calendar, err := s.store.GetCalendar(ctx, userInfo, mysql.AND(
 			tCalendar.DeletedAt.IS_NULL(),
 			tCalendar.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 			tCalendar.Job.IS_NULL(),
@@ -199,7 +185,6 @@ func (s *Server) CreateCalendar(
 	}
 	req.Calendar.Id = lastID
 
-	// FIXME some generic helper for this across the code base would be nice to have
 	access := req.GetCalendar().GetAccess()
 	if access == nil || len(access.GetJobs()) == 0 {
 		access = &calendaraccess.CalendarAccess{
@@ -224,7 +209,6 @@ func (s *Server) CreateCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -251,15 +235,16 @@ func (s *Server) UpdateCalendar(
 ) (*pbcalendar.UpdateCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// Check if user has access to existing calendar
 	if req.GetCalendar().GetId() == 0 {
 		return nil, errorscalendar.ErrFailedQuery
 	}
 
-	currentCalendar, err := s.getCalendar(
+	currentCalendar, err := s.store.GetAccessibleCalendar(
 		ctx,
+		req.GetCalendar().GetId(),
 		userInfo,
-		tCalendar.ID.EQ(mysql.Int64(req.GetCalendar().GetId())),
+		calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		false,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -293,20 +278,6 @@ func (s *Server) UpdateCalendar(
 	}
 
 	if isBirthdayCalendar {
-		check, err := s.store.CheckIfUserHasAccessToCalendar(
-			ctx,
-			currentCalendar.GetId(),
-			userInfo,
-			calendaraccess.AccessLevel_ACCESS_LEVEL_EDIT,
-			false,
-		)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
-		if !check {
-			return nil, errorscalendar.ErrNoPerms
-		}
-
 		req.Calendar.Job = currentCalendar.Job
 		req.Calendar.Name = currentCalendar.Name
 		req.Calendar.Description = currentCalendar.Description
@@ -314,22 +285,6 @@ func (s *Server) UpdateCalendar(
 		req.Calendar.Closed = currentCalendar.Closed
 		if currentCalendar.Color != "" && req.GetCalendar().GetColor() == "" {
 			req.Calendar.Color = currentCalendar.Color
-		}
-	}
-
-	if !isBirthdayCalendar {
-		check, err := s.store.CheckIfUserHasAccessToCalendar(
-			ctx,
-			req.GetCalendar().GetId(),
-			userInfo,
-			calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
-			false,
-		)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
-		if !check {
-			return nil, errorscalendar.ErrNoPerms
 		}
 	}
 
@@ -353,12 +308,10 @@ func (s *Server) UpdateCalendar(
 	}
 	req.Calendar.DiscordSettings = discordSettings
 
-	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
 	if err := s.store.UpdateCalendar(ctx, tx, req.GetCalendar(), discordSettingsJSON); err != nil {
@@ -368,7 +321,6 @@ func (s *Server) UpdateCalendar(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	if !isBirthdayCalendar {
-		// FIXME some generic helper for this across the code base would be nice to have
 		access := req.GetCalendar().GetAccess()
 		if access == nil || len(access.GetJobs()) == 0 {
 			access = &calendaraccess.CalendarAccess{
@@ -394,7 +346,6 @@ func (s *Server) UpdateCalendar(
 		}
 	}
 
-	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -419,21 +370,13 @@ func (s *Server) DeleteCalendar(
 ) (*pbcalendar.DeleteCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.store.CheckIfUserHasAccessToCalendar(
+	cal, err := s.store.GetAccessibleCalendar(
 		ctx,
 		req.GetCalendarId(),
 		userInfo,
 		calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
 		false,
 	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
-	if !check {
-		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
-	}
-
-	cal, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(mysql.Int64(req.GetCalendarId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}

@@ -6,11 +6,14 @@ import (
 	"errors"
 
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -31,8 +34,17 @@ type IStore interface {
 	ListLabels(
 		ctx context.Context,
 		q qrm.Queryable,
-		condition mysql.BoolExpression,
+		userInfo *userinfo.UserInfo,
+		search string,
+		ownJobOnly bool,
+		canCreateLabel bool,
+		minAccess int32,
 		includeDeleted bool,
+	) (*citizenslabels.Labels, error)
+	GetUserLabelsForUser(
+		ctx context.Context,
+		userInfo *userinfo.UserInfo,
+		userId int32,
 	) (*citizenslabels.Labels, error)
 	NextLabelSortOrder(ctx context.Context, q qrm.Queryable, job string) (int32, error)
 	GetLabel(
@@ -76,21 +88,37 @@ type IStore interface {
 	) ([]*usersactivity.UserActivity, error)
 	ListUserActivity(
 		ctx context.Context,
-		req *pbcitizens.ListUserActivityRequest,
-		limit int64,
+		opts ListUserActivityOptions,
 	) ([]*usersactivity.UserActivity, error)
-	CountUserActivity(ctx context.Context, req *pbcitizens.ListUserActivityRequest) (int64, error)
+	CountUserActivity(ctx context.Context, opts CountUserActivityOptions) (int64, error)
 }
 
 type Store struct {
-	db       *sql.DB
-	customDB *config.CustomDB
+	db                 *sql.DB
+	customDB           *config.CustomDB
+	labelsAccess       *access.SubjectObjectAccess
+	userActivitySorter *database.SorterBuilder
 }
 
 func New(db *sql.DB, customDB *config.CustomDB) IStore {
 	return &Store{
-		db:       db,
-		customDB: customDB,
+		db:           db,
+		customDB:     customDB,
+		labelsAccess: access.NewCitizenLabelsSubjectObjectAccess(db),
+		userActivitySorter: database.New(
+			database.SpecMap{
+				"createdAt": database.Column{
+					Col:       table.FivenetUserActivity.AS("user_activity").CreatedAt,
+					NullsLast: true,
+				},
+			},
+			[]mysql.OrderByClause{
+				table.FivenetUserActivity.AS("user_activity").CreatedAt.DESC().NULLS_LAST(),
+			},
+			[]mysql.OrderByClause{table.FivenetUserActivity.AS("user_activity").ID.DESC()},
+			"createdAt",
+			3,
+		),
 	}
 }
 

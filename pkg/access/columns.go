@@ -7,3 +7,13 @@ type BaseAccessColumns struct {
 	TargetID mysql.ColumnInteger
 	Access   mysql.ColumnInteger
 }
+
+type VisibilityColumns struct {
+	BaseAccessColumns
+
+	RuleKind   mysql.ColumnInteger
+	SubjectID  mysql.ColumnInteger
+	CreatorID  mysql.ColumnInteger
+	CreatorJob mysql.ColumnString
+	Effect     mysql.ColumnBool
+}

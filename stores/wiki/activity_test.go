@@ -27,7 +27,7 @@ func TestStoreCountPageActivity(t *testing.T) {
 		WithArgs(int64(42)).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(7)))
 
-	total, err := store.CountPageActivity(t.Context(), 42)
+	total, err := store.CountPageActivity(t.Context(), PageActivityQuery{PageID: 42})
 	require.NoError(t, err)
 	assert.Equal(t, int64(7), total)
 	require.NoError(t, mock.ExpectationsWereMet())
@@ -80,7 +80,10 @@ func TestStoreListPageActivity(t *testing.T) {
 			"Doe",
 		))
 
-	activity, err := store.ListPageActivity(t.Context(), 42, 5, 25)
+	activity, err := store.ListPageActivity(
+		t.Context(),
+		PageActivityQuery{PageID: 42, Offset: 5, Limit: 25},
+	)
 	require.NoError(t, err)
 	require.Len(t, activity, 1)
 	require.NotNil(t, activity[0].GetCreator())

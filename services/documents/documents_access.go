@@ -4,6 +4,7 @@ import (
 	context "context"
 	"errors"
 
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -105,22 +106,9 @@ func (s *Server) GetDocumentAccess(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	requiredAccess, err := s.store.GetDocumentRequiredAccess(ctx, req.GetDocumentId(), userInfo)
+	docAccess, err = s.normalizeDocumentAccess(ctx, req.GetDocumentId(), userInfo, docAccess, nil)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	docAccess, err = access.NormalizeAccess(
-		docAccess,
-		requiredAccess,
-		nil,
-		documentAccessEntryLimit,
-	)
-	if err != nil {
-		if isAccessEntryLimitError(err) {
-			return nil, errorsdocuments.ErrDocRequiredAccessTemplate
-		}
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		return nil, err
 	}
 
 	for i := range docAccess.GetJobs() {
@@ -139,6 +127,45 @@ func (s *Server) GetDocumentAccess(
 	}
 
 	return resp, nil
+}
+
+func (s *Server) normalizeDocumentAccess(
+	ctx context.Context,
+	documentID int64,
+	userInfo *userinfo.UserInfo,
+	docAccess *documentsaccess.DocumentAccess,
+	fallback *resourcesaccess.Access,
+) (*documentsaccess.DocumentAccess, error) {
+	sanitizedDocAccess, err := access.SanitizeAccessJobs(s.jobs, docAccess)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	requiredAccess, err := s.store.GetDocumentRequiredAccess(ctx, documentID, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	sanitizedRequiredAccess, err := access.SanitizeAccessJobs(s.jobs, requiredAccess)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	sanitizedRequiredAccess = access.NormalizeRequiredAccessFloors(sanitizedRequiredAccess)
+
+	normalizedAccess, err := access.NormalizeAccess(
+		sanitizedDocAccess,
+		sanitizedRequiredAccess,
+		fallback,
+		documentAccessEntryLimit,
+	)
+	if err != nil {
+		if isAccessEntryLimitError(err) {
+			return nil, errorsdocuments.ErrDocRequiredAccessTemplate
+		}
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	return normalizedAccess, nil
 }
 
 func (s *Server) SetDocumentAccess(
@@ -203,13 +230,25 @@ func (s *Server) handleDocumentAccessChange(
 		docAccess = &documentsaccess.DocumentAccess{}
 	}
 
-	// Validate job access entries
-	valid, err := access.ValidateJobAccessEntries(s.jobs, &docAccess.Jobs, true)
-	if err != nil {
-		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	fallbackAccess := &resourcesaccess.Access{
+		Jobs: []*resourcesaccess.JobAccess{
+			{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: userInfo.GetJobGrade(),
+				Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+			},
+		},
 	}
-	if !valid {
-		return errorsdocuments.ErrDocAccessInvalid
+
+	normalizedAccess, err := s.normalizeDocumentAccess(
+		ctx,
+		documentId,
+		userInfo,
+		docAccess,
+		fallbackAccess,
+	)
+	if err != nil {
+		return err
 	}
 
 	if err := s.store.UpdateDocumentAccess(
@@ -217,7 +256,7 @@ func (s *Server) handleDocumentAccessChange(
 		tx,
 		documentId,
 		userInfo,
-		docAccess,
+		normalizedAccess,
 		addActivity,
 	); err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

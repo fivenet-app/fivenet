@@ -9,7 +9,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,14 +19,14 @@ func TestStoreViewAuditLogAppliesFiltersAndSort(t *testing.T) {
 
 	search := "needle"
 	pageSize := int64(20)
-	req := &pbsettings.ViewAuditLogRequest{
+	req := ViewAuditLogOptions{
 		Pagination: &database.PaginationRequest{PageSize: &pageSize},
-		UserIds:    []int32{3},
+		UserIDs:    []int32{3},
 		From:       timestamp.New(time.Unix(100, 0)),
 		To:         timestamp.New(time.Unix(200, 0)),
 		Services:   []string{"settings"},
 		Methods:    []string{"UpdateAppConfig"},
-		Search:     &search,
+		Search:     search,
 		Actions:    []audit.EventAction{audit.EventAction_EVENT_ACTION_UPDATED},
 		Results:    []audit.EventResult{audit.EventResult_EVENT_RESULT_SUCCEEDED},
 		Sort:       &database.Sort{Columns: []*database.SortByColumn{{Id: "service", Desc: true}}},

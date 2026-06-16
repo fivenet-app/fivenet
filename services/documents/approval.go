@@ -30,13 +30,16 @@ func (s *Server) ListApprovalTasksInbox(
 	req *pbdocuments.ListApprovalTasksInboxRequest,
 ) (*pbdocuments.ListApprovalTasksInboxResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	count, tasks, err := s.store.ListApprovalTasksInbox(ctx, documentsstore.ListApprovalTasksInboxQuery{
-		Pagination:      req.GetPagination(),
-		UserInfo:        userInfo,
-		Statuses:        req.GetStatuses(),
-		NotAlreadyActed: req.GetNotAlreadyActed(),
-		OnlyDrafts:      req.OnlyDrafts,
-	})
+	count, tasks, err := s.store.ListApprovalTasksInbox(
+		ctx,
+		documentsstore.ListApprovalTasksInboxQuery{
+			Pagination:      req.GetPagination(),
+			UserInfo:        userInfo,
+			Statuses:        req.GetStatuses(),
+			NotAlreadyActed: req.GetNotAlreadyActed(),
+			OnlyDrafts:      req.OnlyDrafts,
+		},
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}

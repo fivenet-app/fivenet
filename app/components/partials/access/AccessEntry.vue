@@ -12,7 +12,8 @@ const props = withDefaults(
     defineProps<{
         disabled?: boolean;
         showRequired?: boolean;
-        requiredReadonly?: boolean;
+        showRequiredCheckbox?: boolean;
+        lockRequiredCheckbox?: boolean;
         accessTypes: AccessType[];
         accessRoles?: AccessLevelEnum[];
         jobs?: Job[] | undefined;
@@ -23,7 +24,8 @@ const props = withDefaults(
     {
         disabled: false,
         showRequired: false,
-        requiredReadonly: false,
+        showRequiredCheckbox: false,
+        lockRequiredCheckbox: false,
         accessRoles: () => [],
         jobs: () => [],
         hideGrade: false,
@@ -42,7 +44,33 @@ const completorStore = useCompletorStore();
 
 const { game } = useAppConfig();
 
-const isRequiredLocked = computed(() => props.requiredReadonly && !!entry.value.required);
+const requiredAccessFloor = computed(() => {
+    if (!entry.value.required) return undefined;
+
+    return entry.value.requiredAccess ?? entry.value.access;
+});
+
+const accessRoleItems = computed(() => {
+    if (requiredAccessFloor.value === undefined) {
+        return props.accessRoles;
+    }
+
+    return props.accessRoles.filter((role) => role.value >= requiredAccessFloor.value!);
+});
+
+const requiredSubjectLocked = computed(() => props.disabled || !!entry.value.required);
+
+watchEffect(() => {
+    if (!entry.value.required) return;
+
+    if (entry.value.requiredAccess === undefined) {
+        entry.value.requiredAccess = entry.value.access;
+    }
+
+    if (entry.value.requiredAccess !== undefined && entry.value.access < entry.value.requiredAccess) {
+        entry.value.access = entry.value.requiredAccess;
+    }
+});
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
@@ -131,11 +159,15 @@ watch(
     <div class="flex flex-1 flex-col gap-1 pb-2 md:flex-row md:pb-0">
         <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
             <div class="flex flex-initial flex-row items-center gap-2">
-                <UFormField v-if="showRequired" :name="`${$props.name}.required`">
+                <UFormField v-if="showRequired && entry.required" :name="`${$props.name}.required`">
+                    <UBadge color="amber" variant="soft" :label="$t('common.required')" />
+                </UFormField>
+
+                <UFormField v-if="showRequiredCheckbox" :name="`${$props.name}.required`">
                     <UTooltip class="flex-initial" :text="$t('common.require')">
                         <UCheckbox
                             v-model="entry.required"
-                            :disabled="disabled || (requiredReadonly && !!entry.required)"
+                            :disabled="disabled || (lockRequiredCheckbox && !!entry.required)"
                             name="required"
                         />
                     </UTooltip>
@@ -152,7 +184,7 @@ watch(
                         <USelectMenu
                             v-model="entry.type"
                             class="w-full"
-                            :disabled="disabled || isRequiredLocked"
+                            :disabled="requiredSubjectLocked"
                             :placeholder="$t('common.type')"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             value-key="value"
@@ -176,6 +208,7 @@ watch(
                 <SelectMenu
                     v-model="selectedUser"
                     class="w-full"
+                    :disabled="requiredSubjectLocked"
                     :searchable="
                         async (q: string) =>
                             await completorStore.completeCitizens({
@@ -210,6 +243,7 @@ watch(
                 <SelectMenu
                     v-model="selectedQualification"
                     class="w-full"
+                    :disabled="requiredSubjectLocked"
                     :searchable="
                         async (q: string) => {
                             const { response } = await qualificationsQualificationsClient.listQualifications({
@@ -244,7 +278,7 @@ watch(
                         <USelectMenu
                             v-model="entry.job"
                             class="w-full"
-                            :disabled="disabled || isRequiredLocked"
+                            :disabled="requiredSubjectLocked"
                             :filter-fields="['label', 'name']"
                             value-key="name"
                             :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
@@ -269,7 +303,7 @@ watch(
                             :model-value="
                                 jobs.find((j) => j.name === entry.job)?.grades.find((g) => g.grade === entry.minimumGrade)
                             "
-                            :disabled="disabled || isRequiredLocked || !entry.job"
+                            :disabled="requiredSubjectLocked || !entry.job"
                             :filter-fields="['name', 'label']"
                             :items="jobs.find((j) => j.name === entry.job)?.grades ?? []"
                             :placeholder="$t('common.rank')"
@@ -292,15 +326,15 @@ watch(
                     <USelectMenu
                         v-model="entry.access"
                         class="w-full"
-                        :disabled="disabled || isRequiredLocked"
+                        :disabled="disabled || accessRoleItems.length <= 1"
                         value-key="value"
-                        :items="accessRoles"
+                        :items="accessRoleItems"
                         :filter-fields="['label']"
                         :placeholder="$t('common.na')"
                         :search-input="{ placeholder: $t('common.search_field') }"
                     >
                         <template #default>
-                            {{ accessRoles?.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}
+                            {{ accessRoleItems?.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>
@@ -310,13 +344,13 @@ watch(
         </div>
 
         <UFormField class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
-            <UTooltip v-if="!disabled" :text="isRequiredLocked ? $t('common.required') : $t('components.access.remove_entry')">
+            <UTooltip v-if="!disabled" :text="entry.required ? $t('common.required') : $t('components.access.remove_entry')">
                 <UButton
                     class="flex-initial"
-                    :color="isRequiredLocked ? 'gray' : 'red'"
+                    :color="entry.required ? 'gray' : 'red'"
                     icon="i-mdi-remove"
                     :label="$t('components.access.remove_entry')"
-                    :disabled="isRequiredLocked"
+                    :disabled="entry.required"
                     :ui="{ label: 'md:hidden' }"
                     @click="$emit('delete')"
                 />

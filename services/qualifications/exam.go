@@ -15,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
-	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/protobuf/types/known/durationpb"
@@ -45,7 +44,6 @@ func (s *Server) GetExamInfo(
 	quali, err := s.store.GetQualificationShort(
 		ctx,
 		req.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())),
 		userInfo,
 		false,
 	)
@@ -129,7 +127,6 @@ func (s *Server) TakeExam(
 	quali, err := s.store.GetQualificationShort(
 		ctx,
 		req.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())),
 		userInfo,
 		false,
 	)
@@ -239,7 +236,6 @@ func (s *Server) SubmitExam(
 	quali, err := s.store.GetQualification(
 		ctx,
 		req.GetQualificationId(),
-		nil,
 		userInfo,
 		false,
 		false,

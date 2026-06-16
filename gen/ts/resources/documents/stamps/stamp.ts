@@ -34,17 +34,25 @@ export interface Stamp {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: string name = 5
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 5
+     */
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 6
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: string name = 7
      */
     name: string;
     /**
      * Parameterized SVG with slots
      *
-     * @generated from protobuf field: string svg_template = 6
+     * @generated from protobuf field: string svg_template = 8
      */
     svgTemplate: string;
     /**
-     * @generated from protobuf field: resources.access.Access access = 7
+     * @generated from protobuf field: resources.access.Access access = 9
      */
     access?: Access;
 }
@@ -77,9 +85,11 @@ class Stamp$Type extends MessageType<Stamp> {
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 6, name: "svg_template", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeSVG" } } },
-            { no: 7, name: "access", kind: "message", T: () => Access }
+            { no: 5, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 6, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 7, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 8, name: "svg_template", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeSVG" } } },
+            { no: 9, name: "access", kind: "message", T: () => Access }
         ]);
     }
     create(value?: PartialMessage<Stamp>): Stamp {
@@ -109,13 +119,19 @@ class Stamp$Type extends MessageType<Stamp> {
                 case /* resources.timestamp.Timestamp created_at */ 4:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* string name */ 5:
+                case /* optional resources.timestamp.Timestamp updated_at */ 5:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp deleted_at */ 6:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* string name */ 7:
                     message.name = reader.string();
                     break;
-                case /* string svg_template */ 6:
+                case /* string svg_template */ 8:
                     message.svgTemplate = reader.string();
                     break;
-                case /* resources.access.Access access */ 7:
+                case /* resources.access.Access access */ 9:
                     message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -142,15 +158,21 @@ class Stamp$Type extends MessageType<Stamp> {
         /* resources.timestamp.Timestamp created_at = 4; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* string name = 5; */
+        /* optional resources.timestamp.Timestamp updated_at = 5; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp deleted_at = 6; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* string name = 7; */
         if (message.name !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.name);
-        /* string svg_template = 6; */
+            writer.tag(7, WireType.LengthDelimited).string(message.name);
+        /* string svg_template = 8; */
         if (message.svgTemplate !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.svgTemplate);
-        /* resources.access.Access access = 7; */
+            writer.tag(8, WireType.LengthDelimited).string(message.svgTemplate);
+        /* resources.access.Access access = 9; */
         if (message.access)
-            Access.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

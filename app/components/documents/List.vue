@@ -375,6 +375,7 @@ defineShortcuts({
                                         :filter-fields="['firstname', 'lastname']"
                                         :placeholder="$t('common.creator')"
                                         trailing
+                                        clear
                                         value-key="userId"
                                     >
                                         <template #default="{ modelValue }">

@@ -5,12 +5,15 @@ import (
 	"database/sql"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
 	mailermessages "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/messages"
 	mailersettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings"
 	mailertemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/templates"
 	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -59,13 +62,20 @@ type IStore interface {
 	GetMessage(ctx context.Context, db qrm.DB, messageID int64) (*mailermessages.Message, error)
 	CreateMessage(ctx context.Context, db qrm.DB, msg *mailermessages.Message) (int64, error)
 	CountEmails(ctx context.Context, db qrm.DB, condition mysql.BoolExpression) (int64, error)
+	ListUserEmails(
+		ctx context.Context,
+		db qrm.DB,
+		userInfo *userinfo.UserInfo,
+		pag *database.PaginationRequest,
+		includeDisabled bool,
+	) ([]*maileremails.Email, error)
 	ListEmails(
 		ctx context.Context,
 		db qrm.DB,
-		condition mysql.BoolExpression,
-		offset int64,
-		limit int64,
-	) ([]*maileremails.Email, error)
+		userInfo *userinfo.UserInfo,
+		pag *database.PaginationRequest,
+		all bool,
+	) (*database.PaginationResponse, []*maileremails.Email, error)
 	GetEmailByCondition(
 		ctx context.Context,
 		db qrm.DB,
@@ -115,9 +125,13 @@ type IStore interface {
 }
 
 type Store struct {
-	db *sql.DB
+	db            *sql.DB
+	subjectAccess *access.SubjectObjectAccess
 }
 
 func New(db *sql.DB) IStore {
-	return &Store{db: db}
+	return &Store{
+		db:            db,
+		subjectAccess: access.NewMailerEmailsSubjectObjectAccess(db),
+	}
 }

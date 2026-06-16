@@ -74,7 +74,7 @@ type Params struct {
 	JS       *events.JSWrapper
 	Storage  storage.IStorage
 	Notifi   notifi.INotifi
-	Store    wikistore.IStore `optional:"true"`
+	Store    wikistore.IStore
 }
 
 func NewServer(p Params) *Server {

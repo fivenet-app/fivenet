@@ -5,6 +5,7 @@ package resources.qualifications;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/access/access.proto";
 import "resources/common/content/content.proto";
 import "resources/file/file.proto";
 import "resources/qualifications/access/access.proto";
@@ -50,7 +51,7 @@ message Qualification {
   optional int32 creator_id = 14 [(buf.validate.field).int32.gt = 0];
   optional resources.users.short.UserShort creator = 15 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 16 [(buf.validate.field).string.max_len = 20];
-  resources.qualifications.access.QualificationAccess access = 17;
+  resources.access.Access access = 17;
   repeated QualificationRequirement requirements = 18;
   bool discord_sync_enabled = 19;
   optional QualificationDiscordSettings discord_settings = 20;

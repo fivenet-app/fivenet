@@ -14,6 +14,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
+	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -22,7 +23,17 @@ func (s *Server) ListCalendarEntries(
 	req *pbcalendar.ListCalendarEntriesRequest,
 ) (*pbcalendar.ListCalendarEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	entries, err := s.store.ListCalendarEntries(ctx, userInfo, req)
+	entries, err := s.store.ListCalendarEntries(
+		ctx,
+		userInfo,
+		calendarstore.ListCalendarEntriesOptions{
+			ShowHidden:  req.GetShowHidden(),
+			After:       req.GetAfter(),
+			Year:        req.GetYear(),
+			Month:       req.GetMonth(),
+			CalendarIDs: req.GetCalendarIds(),
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +55,11 @@ func (s *Server) GetUpcomingEntries(
 	resp := &pbcalendar.GetUpcomingEntriesResponse{
 		Entries: []*calendarentries.CalendarEntry{},
 	}
-	entries, err := s.store.GetUpcomingEntries(ctx, userInfo, req)
+	entries, err := s.store.GetUpcomingEntries(
+		ctx,
+		userInfo,
+		calendarstore.GetUpcomingEntriesOptions{Seconds: int64(req.GetSeconds())},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +98,6 @@ func (s *Server) GetCalendarEntry(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	// Check if user has access to existing calendar
 	check, err := s.store.CheckIfUserHasAccessToCalendarEntry(
 		ctx,
 		entry.GetCalendarId(),
@@ -124,7 +138,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 ) (*pbcalendar.CreateOrUpdateCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.store.CheckIfUserHasAccessToCalendar(
+	calendar, err := s.store.GetAccessibleCalendar(
 		ctx,
 		req.GetEntry().GetCalendarId(),
 		userInfo,
@@ -134,19 +148,10 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	if !check {
+	if calendar == nil {
 		return nil, errorscalendar.ErrNoPerms
 	}
-
-	calendar, err := s.getCalendar(
-		ctx,
-		userInfo,
-		tCalendar.ID.EQ(mysql.Int64(req.GetEntry().GetCalendarId())),
-	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
-	if calendar == nil || calendar.GetClosed() {
+	if calendar.GetClosed() {
 		return nil, errorscalendar.ErrCalendarClosed
 	}
 	if calendar.GetSystemKind() != calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED {
@@ -255,7 +260,7 @@ func (s *Server) DeleteCalendarEntry(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	check, err := s.store.CheckIfUserHasAccessToCalendar(
+	calendar, err := s.store.GetAccessibleCalendar(
 		ctx,
 		entry.GetCalendarId(),
 		userInfo,
@@ -265,7 +270,7 @@ func (s *Server) DeleteCalendarEntry(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	if !check {
+	if calendar == nil {
 		return nil, errorscalendar.ErrNoPerms
 	}
 

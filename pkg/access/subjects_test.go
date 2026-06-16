@@ -1,7 +1,6 @@
 package access
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -28,28 +27,21 @@ func TestSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 	)
 
 	sql, args := stmt.Sql()
-	compactSQL := strings.Join(strings.Fields(sql), " ")
 
 	require.Contains(t, sql, "WITH actor_subjects AS")
 	assert.Contains(t, sql, "fivenet_acl_subject_users")
 	assert.Contains(t, sql, "fivenet_acl_subject_qualifications")
 	assert.Contains(t, sql, "fivenet_acl_subject_job_grade_scopes")
 	assert.Contains(t, sql, "fivenet_user_jobs")
-	assert.Contains(t, sql, "fivenet_documents_access")
-	assert.Contains(t, sql, "ROW_NUMBER() OVER")
-	assert.Contains(t, sql, "PARTITION BY fivenet_documents_access.target_id")
-	assert.Contains(
-		t,
-		compactSQL,
-		"fivenet_documents_access.effect IS TRUE) AND (fivenet_documents_access.access >= ?",
-	)
-	assert.Contains(
-		t,
-		compactSQL,
-		"fivenet_documents_access.effect IS FALSE) AND (fivenet_documents_access.access = ?",
-	)
-	assert.Contains(t, sql, "HAVING")
-	assert.Contains(t, sql, "fivenet_documents.public IS TRUE")
+	assert.Contains(t, sql, "fivenet_documents_visibility_public")
+	assert.Contains(t, sql, "fivenet_documents_visibility_creator")
+	assert.Contains(t, sql, "fivenet_documents_visibility_subject")
+	assert.Contains(t, sql, "UNION")
+	assert.Contains(t, sql, "SELECT DISTINCT doc_ids.id AS \"id\"")
+	assert.NotContains(t, sql, "ROW_NUMBER() OVER")
+	assert.NotContains(t, sql, "matching_acl")
+	assert.NotContains(t, sql, "visible_objects")
+	assert.NotContains(t, sql, "fivenet_documents_access")
 	require.NotEmpty(t, args)
 }
 
@@ -71,9 +63,36 @@ func TestSubjectObjectAccessCountStatementShape(t *testing.T) {
 	sql, _ := stmt.Sql()
 
 	require.Contains(t, sql, "WITH actor_subjects AS")
-	assert.Contains(t, sql, "COUNT(visible_objects.id) AS \"exact_total\"")
-	assert.NotContains(t, sql, "ORDER BY visible_objects.id")
+	assert.Contains(t, sql, "COUNT(doc_ids.id) AS \"exact_total\"")
+	assert.Contains(t, sql, "fivenet_documents_visibility_public")
+	assert.Contains(t, sql, "fivenet_documents_visibility_creator")
+	assert.Contains(t, sql, "fivenet_documents_visibility_subject")
+	assert.NotContains(t, sql, "ROW_NUMBER() OVER")
 	assert.Contains(t, sql, "fivenet_documents.deleted_at IS NULL")
+}
+
+func TestWikiPageSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
+	t.Parallel()
+
+	access := NewWikiPageSubjectObjectAccess(nil)
+
+	stmt := access.VisibleIDsStatement(
+		&userinfo.UserInfo{
+			UserId:   7,
+			Job:      "police",
+			JobGrade: 6,
+		},
+		2,
+		10,
+		11,
+	)
+
+	sql, args := stmt.Sql()
+
+	assert.Contains(t, sql, "fivenet_wiki_pages_visibility_public")
+	assert.Contains(t, sql, "fivenet_wiki_pages_visibility_creator")
+	assert.Contains(t, sql, "fivenet_wiki_pages_visibility_subject")
+	assert.NotEmpty(t, args)
 }
 
 func TestSubjectConstants(t *testing.T) {

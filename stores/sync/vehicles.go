@@ -10,7 +10,10 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-func (s *Store) SendVehicles(ctx context.Context, req *pbsync.SendVehiclesRequest) (*pbsync.SendDataResponse, error) {
+func (s *Store) SendVehicles(
+	ctx context.Context,
+	req *pbsync.SendVehiclesRequest,
+) (*pbsync.SendDataResponse, error) {
 	rowsAffected, err := s.handleVehiclesData(ctx, req.GetVehicles())
 	if err != nil {
 		return nil, fmt.Errorf("failed to handle vehicles data. %w", err)
@@ -19,7 +22,10 @@ func (s *Store) SendVehicles(ctx context.Context, req *pbsync.SendVehiclesReques
 	return &pbsync.SendDataResponse{RowsAffected: rowsAffected}, nil
 }
 
-func (s *Store) DeleteVehicles(ctx context.Context, plates []string) (*pbsync.DeleteDataResponse, error) {
+func (s *Store) DeleteVehicles(
+	ctx context.Context,
+	plates []string,
+) (*pbsync.DeleteDataResponse, error) {
 	if len(plates) == 0 {
 		return &pbsync.DeleteDataResponse{}, nil
 	}
@@ -47,7 +53,10 @@ func (s *Store) DeleteVehicles(ctx context.Context, plates []string) (*pbsync.De
 	return &pbsync.DeleteDataResponse{RowsAffected: rows}, nil
 }
 
-func (s *Store) handleVehiclesData(ctx context.Context, data []*resourcesvehicles.Vehicle) (int64, error) {
+func (s *Store) handleVehiclesData(
+	ctx context.Context,
+	data []*resourcesvehicles.Vehicle,
+) (int64, error) {
 	if len(data) == 0 {
 		return 0, nil
 	}
@@ -75,7 +84,14 @@ func (s *Store) handleVehiclesData(ctx context.Context, data []*resourcesvehicle
 				WHERE(tUsers.Identifier.EQ(mysql.String(vehicle.GetOwnerIdentifier())))
 		}
 
-		stmt = stmt.VALUES(ownerId, vehicle.Job, vehicle.GetPlate(), vehicle.Model, vehicle.GetType(), mysql.NULL)
+		stmt = stmt.VALUES(
+			ownerId,
+			vehicle.Job,
+			vehicle.GetPlate(),
+			vehicle.Model,
+			vehicle.GetType(),
+			mysql.NULL,
+		)
 	}
 
 	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(

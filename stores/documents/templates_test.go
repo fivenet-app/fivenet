@@ -22,10 +22,33 @@ func TestStoreListTemplates(t *testing.T) {
 
 	store := New(db)
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_templates AS template_short`) + `(?s).*` + regexp.QuoteMeta(`ORDER BY template_short.weight DESC, template_short.id ASC`)).
+	mock.ExpectQuery(`(?s).*AS doc_ids INNER JOIN fivenet_documents_templates AS template_short.*ORDER BY template_short\.weight DESC, template_short\.id ASC.*`).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 	templates, err := store.ListTemplates(t.Context(), &userinfo.UserInfo{Superuser: true})
+	require.NoError(t, err)
+	assert.Empty(t, templates)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreListTemplatesUsesVisibilityTablesForNonSuperuser(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = db.Close()
+	})
+
+	store := New(db)
+
+	mock.ExpectQuery(`(?s).*WITH actor_subjects AS .*fivenet_documents_templates_visibility_creator.*fivenet_documents_templates_visibility_subject.*AS doc_ids INNER JOIN fivenet_documents_templates AS template_short.*ORDER BY template_short\.weight DESC, template_short\.id ASC.*`).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+
+	templates, err := store.ListTemplates(
+		t.Context(),
+		&userinfo.UserInfo{UserId: 3, Job: "doj", JobGrade: 16},
+	)
 	require.NoError(t, err)
 	assert.Empty(t, templates)
 	require.NoError(t, mock.ExpectationsWereMet())

@@ -80,15 +80,14 @@ func (s *Store) GetRSVPCalendarEntry(
 
 func (s *Store) ListCalendarEntryRSVP(
 	ctx context.Context,
-	entry *calendarentries.CalendarEntry,
-	req *pbcalendar.ListCalendarEntryRSVPRequest,
+	opts ListCalendarEntryRSVPOptions,
 	userInfo *userinfo.UserInfo,
 ) (*pbcalendar.ListCalendarEntryRSVPResponse, error) {
 	tUser := table.FivenetUser.AS("user_short")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	condition := mysql.AND(
-		tCalendarRSVP.EntryID.EQ(mysql.Int64(entry.GetId())),
+		tCalendarRSVP.EntryID.EQ(mysql.Int64(opts.EntryID)),
 		tCalendarRSVP.Response.GT(
 			mysql.Int32(int32(calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN)),
 		),
@@ -112,7 +111,7 @@ func (s *Store) ListCalendarEntryRSVP(
 		}
 	}
 
-	pag, limit := req.GetPagination().GetResponse(count.Total)
+	pag, limit := opts.Pagination.GetResponse(count.Total)
 	resp := &pbcalendar.ListCalendarEntryRSVPResponse{Pagination: pag}
 	if count.Total <= 0 {
 		return resp, nil
@@ -147,7 +146,7 @@ func (s *Store) ListCalendarEntryRSVP(
 		).
 		WHERE(condition).
 		ORDER_BY(tCalendarRSVP.Response.DESC()).
-		OFFSET(req.GetPagination().GetOffset()).
+		OFFSET(opts.Pagination.GetOffset()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {

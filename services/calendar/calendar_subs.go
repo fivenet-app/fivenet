@@ -20,8 +20,7 @@ func (s *Server) SubscribeToCalendar(
 
 	req.Sub.UserId = userInfo.GetUserId()
 
-	// Check if user has access to existing calendar
-	check, err := s.store.CheckIfUserHasAccessToCalendar(
+	calendar, err := s.store.GetAccessibleCalendar(
 		ctx,
 		req.GetSub().GetCalendarId(),
 		userInfo,
@@ -31,7 +30,7 @@ func (s *Server) SubscribeToCalendar(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	if !check {
+	if calendar == nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 

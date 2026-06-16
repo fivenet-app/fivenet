@@ -121,7 +121,7 @@ type Params struct {
 	Notif     notifi.INotifi
 	JS        *events.JSWrapper
 	Discord   *discordstate.State
-	Store     calendarstore.IStore `optional:"true"`
+	Store     calendarstore.IStore
 }
 
 type Result struct {

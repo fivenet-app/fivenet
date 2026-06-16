@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -37,7 +38,13 @@ func (s *Server) ListUserActivity(
 			return resp, nil
 		}
 	}
-	count, err := s.store.CountUserActivity(ctx, req)
+	queryOpts := citizensstore.CountUserActivityOptions{
+		UserActivityOptions: citizensstore.UserActivityOptions{
+			UserID: req.GetUserId(),
+			Types:  req.GetTypes(),
+		},
+	}
+	count, err := s.store.CountUserActivity(ctx, queryOpts)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -48,7 +55,15 @@ func (s *Server) ListUserActivity(
 		return resp, nil
 	}
 
-	activities, err := s.store.ListUserActivity(ctx, req, limit)
+	activities, err := s.store.ListUserActivity(ctx, citizensstore.ListUserActivityOptions{
+		UserActivityOptions: citizensstore.UserActivityOptions{
+			UserID: req.GetUserId(),
+			Types:  req.GetTypes(),
+		},
+		Sort:   req.GetSort(),
+		Offset: req.GetPagination().GetOffset(),
+		Limit:  limit,
+	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}

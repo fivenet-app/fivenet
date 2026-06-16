@@ -15,69 +15,24 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
-	"github.com/go-jet/jet/v2/mysql"
+	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
-
-var tQualiRequests = table.FivenetQualificationsRequests.AS("qualification_request")
 
 func (s *Server) ListQualificationRequests(
 	ctx context.Context,
 	req *pbqualifications.ListQualificationRequestsRequest,
 ) (*pbqualifications.ListQualificationRequestsResponse, error) {
-	if req.QualificationId != nil {
+	if req.GetQualificationId() > 0 {
 		logging.InjectFields(
 			ctx,
 			logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()},
 		)
 	}
-	if req.UserId != nil {
-		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.user_id", req.GetUserId()})
-	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	var where mysql.BoolExpression
-	if req.QualificationId != nil {
-		check, err := s.access.CanUserAccessTarget(
-			ctx,
-			req.GetQualificationId(),
-			userInfo,
-			int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
-		)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-		if !check {
-			return nil, errorsqualifications.ErrFailedQuery
-		}
-	} else {
-		accessExists := mysql.OR(
-			s.access.ACLAccessExistsCondition(
-				tQualiRequests.QualificationID,
-				userInfo,
-				int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
-			),
-			mysql.AND(
-				s.access.ACLAccessExistsCondition(
-					tQualiRequests.QualificationID,
-					userInfo,
-					int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-				),
-				tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-			),
-		)
-
-		where = mysql.AND(
-			tQuali.AS("qualification_short").DeletedAt.IS_NULL(),
-			mysql.OR(
-				tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-				accessExists,
-			),
-		)
-	}
 
 	includePhoneNumber := false
 	if fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(
@@ -89,7 +44,18 @@ func (s *Server) ListQualificationRequests(
 		)
 	}
 
-	resp, err := s.store.ListQualificationRequests(ctx, req, userInfo, where, includePhoneNumber)
+	resp, err := s.store.ListQualificationRequests(
+		ctx,
+		qualificationsstore.ListQualificationRequestsOptions{
+			Pagination:      req.GetPagination(),
+			Sort:            req.GetSort(),
+			QualificationID: req.GetQualificationId(),
+			Status:          req.GetStatus(),
+			UserIDs:         req.GetUserIds(),
+		},
+		userInfo,
+		includePhoneNumber,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -127,7 +93,6 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 	quali, err := s.store.GetQualification(
 		ctx,
 		req.GetRequest().GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetRequest().GetQualificationId())),
 		userInfo,
 		false,
 		false,

@@ -118,10 +118,16 @@ func (s *Server) CreateDocumentReq(
 	if doc.GetCreatorJob() == userInfo.GetJob() &&
 		(doc.GetCreator() == nil || doc.GetCreator().GetJob() != doc.GetCreatorJob()) &&
 		req.GetRequestType() == documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE {
-		if err := s.store.UpdateDocumentOwner(ctx, s.db, doc.GetId(), userInfo, &usershort.UserShort{
-			UserId: userInfo.GetUserId(),
-			Job:    userInfo.GetJob(),
-		}); err != nil {
+		if err := s.store.UpdateDocumentOwner(
+			ctx,
+			s.db,
+			doc.GetId(),
+			userInfo,
+			&usershort.UserShort{
+				UserId: userInfo.GetUserId(),
+				Job:    userInfo.GetJob(),
+			},
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 

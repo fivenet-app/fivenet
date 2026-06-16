@@ -167,7 +167,7 @@ func (s *Store) CheckIfUserHasAccessToCalendarEntryIDs(
 		).
 		WHERE(mysql.AND(
 			tCalendarEntry.DeletedAt.IS_NULL(),
-			tCalendarRSVP.EntryID.IN(ids...),
+			tCalendarEntry.ID.IN(ids...),
 			mysql.OR(
 				mysql.AND(
 					tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),

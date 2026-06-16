@@ -5,21 +5,47 @@ import (
 	"database/sql"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	audit "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/laws"
 	resourcesettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	"github.com/go-jet/jet/v2/mysql"
 )
+
+type ViewAuditLogOptions struct {
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	UserIDs    []int32
+	From       *timestamp.Timestamp
+	To         *timestamp.Timestamp
+	Services   []string
+	Methods    []string
+	Actions    []audit.EventAction
+	Results    []audit.EventResult
+	Search     string
+}
+
+type ListAccountsOptions struct {
+	Pagination   *database.PaginationRequest
+	Sort         *database.Sort
+	License      string
+	OnlyDisabled bool
+	Username     string
+	ExternalID   string
+	Group        string
+}
 
 type IStore interface {
 	ViewAuditLog(
 		ctx context.Context,
-		req *pbsettings.ViewAuditLogRequest,
+		opts ViewAuditLogOptions,
 	) (*pbsettings.ViewAuditLogResponse, error)
 	ListAccounts(
 		ctx context.Context,
-		req *pbsettings.ListAccountsRequest,
+		opts ListAccountsOptions,
 	) (*pbsettings.ListAccountsResponse, error)
 	UpdateAccount(
 		ctx context.Context,
@@ -55,9 +81,35 @@ type IStore interface {
 }
 
 type Store struct {
-	db *sql.DB
+	db             *sql.DB
+	accountSorter  *database.SorterBuilder
+	auditLogSorter *database.SorterBuilder
 }
 
 func New(db *sql.DB) IStore {
-	return &Store{db: db}
+	return &Store{
+		db: db,
+		accountSorter: database.New(
+			database.SpecMap{
+				"license":  database.Column{Col: tAccounts.License},
+				"username": database.Column{Col: tAccounts.Username},
+				"id":       database.Column{Col: tAccounts.ID},
+			},
+			[]mysql.OrderByClause{tAccounts.CreatedAt.DESC()},
+			nil,
+			"id",
+			3,
+		),
+		auditLogSorter: database.New(
+			database.SpecMap{
+				"service":   database.Column{Col: tAuditLog.Service},
+				"action":    database.Column{Col: tAuditLog.Action},
+				"createdAt": database.Column{Col: tAuditLog.CreatedAt},
+			},
+			[]mysql.OrderByClause{tAuditLog.CreatedAt.DESC()},
+			nil,
+			"createdAt",
+			3,
+		),
+	}
 }

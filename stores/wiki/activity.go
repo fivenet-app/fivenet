@@ -12,9 +12,15 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Store) CountPageActivity(ctx context.Context, pageID int64) (int64, error) {
+type PageActivityQuery struct {
+	PageID int64
+	Offset int64
+	Limit  int64
+}
+
+func (s *Store) CountPageActivity(ctx context.Context, q PageActivityQuery) (int64, error) {
 	tPActivity := table.FivenetWikiPagesActivity.AS("page_activity")
-	condition := tPActivity.PageID.EQ(mysql.Int64(pageID))
+	condition := tPActivity.PageID.EQ(mysql.Int64(q.PageID))
 
 	countStmt := tPActivity.
 		SELECT(
@@ -37,12 +43,10 @@ func (s *Store) CountPageActivity(ctx context.Context, pageID int64) (int64, err
 
 func (s *Store) ListPageActivity(
 	ctx context.Context,
-	pageID int64,
-	offset int64,
-	limit int64,
+	q PageActivityQuery,
 ) ([]*wikiactivity.PageActivity, error) {
 	tPActivity := table.FivenetWikiPagesActivity.AS("page_activity")
-	condition := tPActivity.PageID.EQ(mysql.Int64(pageID))
+	condition := tPActivity.PageID.EQ(mysql.Int64(q.PageID))
 
 	tCreator := table.FivenetUser.AS("creator")
 
@@ -69,11 +73,11 @@ func (s *Store) ListPageActivity(
 				),
 		).
 		WHERE(condition).
-		OFFSET(offset).
+		OFFSET(q.Offset).
 		ORDER_BY(
 			tPActivity.ID.DESC(),
 		).
-		LIMIT(limit)
+		LIMIT(q.Limit)
 
 	activity := []*wikiactivity.PageActivity{}
 	if err := stmt.QueryContext(ctx, s.db, &activity); err != nil {

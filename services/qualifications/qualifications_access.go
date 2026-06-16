@@ -52,7 +52,6 @@ func (s *Server) GetQualificationAccess(
 		quali, err := s.store.GetQualification(
 			ctx,
 			req.GetQualificationId(),
-			nil,
 			userInfo,
 			false,
 			false,
@@ -79,7 +78,7 @@ func (s *Server) GetQualificationAccess(
 	}
 
 	resp := &pbqualifications.GetQualificationAccessResponse{
-		Access: &qualificationsaccess.QualificationAccess{Jobs: access.GetJobs()},
+		Access: access,
 	}
 
 	return resp, nil

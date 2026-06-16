@@ -62,7 +62,7 @@ type Params struct {
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	JS        *events.JSWrapper
-	Store     authstore.IStore `optional:"true"`
+	Store     authstore.IStore
 }
 
 func NewServer(p Params) *Server {

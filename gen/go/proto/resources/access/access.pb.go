@@ -111,17 +111,18 @@ func (b0 Access_builder) Build() *Access {
 }
 
 type JobAccess struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
-	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
-	JobGradeLabel *string                `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
-	Access        int32                  `protobuf:"varint,8,opt,name=access,proto3" json:"access,omitempty"`
-	Required      *bool                  `protobuf:"varint,9,opt,name=required,proto3,oneof" json:"required,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"hybrid.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TargetId       int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	Job            string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel       *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	MinimumGrade   int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
+	JobGradeLabel  *string                `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
+	Access         int32                  `protobuf:"varint,8,opt,name=access,proto3" json:"access,omitempty"`
+	Required       *bool                  `protobuf:"varint,9,opt,name=required,proto3,oneof" json:"required,omitempty"`
+	RequiredAccess *int32                 `protobuf:"varint,10,opt,name=required_access,json=requiredAccess,proto3,oneof" json:"required_access,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *JobAccess) Reset() {
@@ -205,6 +206,13 @@ func (x *JobAccess) GetRequired() bool {
 	return false
 }
 
+func (x *JobAccess) GetRequiredAccess() int32 {
+	if x != nil && x.RequiredAccess != nil {
+		return *x.RequiredAccess
+	}
+	return 0
+}
+
 func (x *JobAccess) SetId(v int64) {
 	x.Id = v
 }
@@ -237,6 +245,10 @@ func (x *JobAccess) SetRequired(v bool) {
 	x.Required = &v
 }
 
+func (x *JobAccess) SetRequiredAccess(v int32) {
+	x.RequiredAccess = &v
+}
+
 func (x *JobAccess) HasJobLabel() bool {
 	if x == nil {
 		return false
@@ -258,6 +270,13 @@ func (x *JobAccess) HasRequired() bool {
 	return x.Required != nil
 }
 
+func (x *JobAccess) HasRequiredAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.RequiredAccess != nil
+}
+
 func (x *JobAccess) ClearJobLabel() {
 	x.JobLabel = nil
 }
@@ -270,17 +289,22 @@ func (x *JobAccess) ClearRequired() {
 	x.Required = nil
 }
 
+func (x *JobAccess) ClearRequiredAccess() {
+	x.RequiredAccess = nil
+}
+
 type JobAccess_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id            int64
-	TargetId      int64
-	Job           string
-	JobLabel      *string
-	MinimumGrade  int32
-	JobGradeLabel *string
-	Access        int32
-	Required      *bool
+	Id             int64
+	TargetId       int64
+	Job            string
+	JobLabel       *string
+	MinimumGrade   int32
+	JobGradeLabel  *string
+	Access         int32
+	Required       *bool
+	RequiredAccess *int32
 }
 
 func (b0 JobAccess_builder) Build() *JobAccess {
@@ -295,19 +319,21 @@ func (b0 JobAccess_builder) Build() *JobAccess {
 	x.JobGradeLabel = b.JobGradeLabel
 	x.Access = b.Access
 	x.Required = b.Required
+	x.RequiredAccess = b.RequiredAccess
 	return m0
 }
 
 type UserAccess struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
-	UserId        int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	User          *short.UserShort       `protobuf:"bytes,5,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	Access        int32                  `protobuf:"varint,6,opt,name=access,proto3" json:"access,omitempty"`
-	Required      *bool                  `protobuf:"varint,7,opt,name=required,proto3,oneof" json:"required,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"hybrid.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TargetId       int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	UserId         int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	User           *short.UserShort       `protobuf:"bytes,5,opt,name=user,proto3,oneof" json:"user,omitempty"`
+	Access         int32                  `protobuf:"varint,6,opt,name=access,proto3" json:"access,omitempty"`
+	Required       *bool                  `protobuf:"varint,7,opt,name=required,proto3,oneof" json:"required,omitempty"`
+	RequiredAccess *int32                 `protobuf:"varint,8,opt,name=required_access,json=requiredAccess,proto3,oneof" json:"required_access,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *UserAccess) Reset() {
@@ -377,6 +403,13 @@ func (x *UserAccess) GetRequired() bool {
 	return false
 }
 
+func (x *UserAccess) GetRequiredAccess() int32 {
+	if x != nil && x.RequiredAccess != nil {
+		return *x.RequiredAccess
+	}
+	return 0
+}
+
 func (x *UserAccess) SetId(v int64) {
 	x.Id = v
 }
@@ -401,6 +434,10 @@ func (x *UserAccess) SetRequired(v bool) {
 	x.Required = &v
 }
 
+func (x *UserAccess) SetRequiredAccess(v int32) {
+	x.RequiredAccess = &v
+}
+
 func (x *UserAccess) HasUser() bool {
 	if x == nil {
 		return false
@@ -415,6 +452,13 @@ func (x *UserAccess) HasRequired() bool {
 	return x.Required != nil
 }
 
+func (x *UserAccess) HasRequiredAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.RequiredAccess != nil
+}
+
 func (x *UserAccess) ClearUser() {
 	x.User = nil
 }
@@ -423,15 +467,20 @@ func (x *UserAccess) ClearRequired() {
 	x.Required = nil
 }
 
+func (x *UserAccess) ClearRequiredAccess() {
+	x.RequiredAccess = nil
+}
+
 type UserAccess_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id       int64
-	TargetId int64
-	UserId   int32
-	User     *short.UserShort
-	Access   int32
-	Required *bool
+	Id             int64
+	TargetId       int64
+	UserId         int32
+	User           *short.UserShort
+	Access         int32
+	Required       *bool
+	RequiredAccess *int32
 }
 
 func (b0 UserAccess_builder) Build() *UserAccess {
@@ -444,6 +493,7 @@ func (b0 UserAccess_builder) Build() *UserAccess {
 	x.User = b.User
 	x.Access = b.Access
 	x.Required = b.Required
+	x.RequiredAccess = b.RequiredAccess
 	return m0
 }
 
@@ -454,6 +504,7 @@ type QualificationAccess struct {
 	QualificationId int64                  `protobuf:"varint,4,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Access          int32                  `protobuf:"varint,6,opt,name=access,proto3" json:"access,omitempty"`
 	Required        *bool                  `protobuf:"varint,7,opt,name=required,proto3,oneof" json:"required,omitempty"`
+	RequiredAccess  *int32                 `protobuf:"varint,8,opt,name=required_access,json=requiredAccess,proto3,oneof" json:"required_access,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -518,6 +569,13 @@ func (x *QualificationAccess) GetRequired() bool {
 	return false
 }
 
+func (x *QualificationAccess) GetRequiredAccess() int32 {
+	if x != nil && x.RequiredAccess != nil {
+		return *x.RequiredAccess
+	}
+	return 0
+}
+
 func (x *QualificationAccess) SetId(v int64) {
 	x.Id = v
 }
@@ -538,6 +596,10 @@ func (x *QualificationAccess) SetRequired(v bool) {
 	x.Required = &v
 }
 
+func (x *QualificationAccess) SetRequiredAccess(v int32) {
+	x.RequiredAccess = &v
+}
+
 func (x *QualificationAccess) HasRequired() bool {
 	if x == nil {
 		return false
@@ -545,8 +607,19 @@ func (x *QualificationAccess) HasRequired() bool {
 	return x.Required != nil
 }
 
+func (x *QualificationAccess) HasRequiredAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.RequiredAccess != nil
+}
+
 func (x *QualificationAccess) ClearRequired() {
 	x.Required = nil
+}
+
+func (x *QualificationAccess) ClearRequiredAccess() {
+	x.RequiredAccess = nil
 }
 
 type QualificationAccess_builder struct {
@@ -557,6 +630,7 @@ type QualificationAccess_builder struct {
 	QualificationId int64
 	Access          int32
 	Required        *bool
+	RequiredAccess  *int32
 }
 
 func (b0 QualificationAccess_builder) Build() *QualificationAccess {
@@ -568,6 +642,7 @@ func (b0 QualificationAccess_builder) Build() *QualificationAccess {
 	x.QualificationId = b.QualificationId
 	x.Access = b.Access
 	x.Required = b.Required
+	x.RequiredAccess = b.RequiredAccess
 	return m0
 }
 
@@ -579,7 +654,7 @@ const file_resources_access_access_proto_rawDesc = "" +
 	"\x06Access\x12H\n" +
 	"\x04jobs\x18\x01 \x03(\v2\x1b.resources.access.JobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\x12L\n" +
 	"\x05users\x18\x02 \x03(\v2\x1c.resources.access.UserAccessB\x18\x9a\x84\x9e\x03\x13alias:\"user_access\"R\x05users\x12p\n" +
-	"\x0equalifications\x18\x03 \x03(\v2%.resources.access.QualificationAccessB!\x9a\x84\x9e\x03\x1calias:\"qualification_access\"R\x0equalifications:\x06\xe2\xf3\x18\x02\b\x01\"\xac\x02\n" +
+	"\x0equalifications\x18\x03 \x03(\v2%.resources.access.QualificationAccessB!\x9a\x84\x9e\x03\x1calias:\"qualification_access\"R\x0equalifications:\x06\xe2\xf3\x18\x02\b\x01\"\xee\x02\n" +
 	"\tJobAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x10\n" +
@@ -588,11 +663,14 @@ const file_resources_access_access_proto_rawDesc = "" +
 	"\rminimum_grade\x18\x06 \x01(\x05R\fminimumGrade\x12+\n" +
 	"\x0fjob_grade_label\x18\a \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12\x16\n" +
 	"\x06access\x18\b \x01(\x05R\x06access\x12\x1f\n" +
-	"\brequired\x18\t \x01(\bH\x02R\brequired\x88\x01\x01B\f\n" +
+	"\brequired\x18\t \x01(\bH\x02R\brequired\x88\x01\x01\x12,\n" +
+	"\x0frequired_access\x18\n" +
+	" \x01(\x05H\x03R\x0erequiredAccess\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\v\n" +
-	"\t_requiredJ\x04\b\x02\x10\x03\"\xe2\x01\n" +
+	"\t_requiredB\x12\n" +
+	"\x10_required_accessJ\x04\b\x02\x10\x03\"\xa4\x02\n" +
 	"\n" +
 	"UserAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -600,16 +678,20 @@ const file_resources_access_access_proto_rawDesc = "" +
 	"\auser_id\x18\x04 \x01(\x05R\x06userId\x129\n" +
 	"\x04user\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x00R\x04user\x88\x01\x01\x12\x16\n" +
 	"\x06access\x18\x06 \x01(\x05R\x06access\x12\x1f\n" +
-	"\brequired\x18\a \x01(\bH\x01R\brequired\x88\x01\x01B\a\n" +
+	"\brequired\x18\a \x01(\bH\x01R\brequired\x88\x01\x01\x12,\n" +
+	"\x0frequired_access\x18\b \x01(\x05H\x02R\x0erequiredAccess\x88\x01\x01B\a\n" +
 	"\x05_userB\v\n" +
-	"\t_requiredJ\x04\b\x02\x10\x03\"\xb9\x01\n" +
+	"\t_requiredB\x12\n" +
+	"\x10_required_accessJ\x04\b\x02\x10\x03\"\xfb\x01\n" +
 	"\x13QualificationAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12)\n" +
 	"\x10qualification_id\x18\x04 \x01(\x03R\x0fqualificationId\x12\x16\n" +
 	"\x06access\x18\x06 \x01(\x05R\x06access\x12\x1f\n" +
-	"\brequired\x18\a \x01(\bH\x00R\brequired\x88\x01\x01B\v\n" +
-	"\t_requiredJ\x04\b\x02\x10\x03BTZRgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access;resourcesaccessb\x06proto3"
+	"\brequired\x18\a \x01(\bH\x00R\brequired\x88\x01\x01\x12,\n" +
+	"\x0frequired_access\x18\b \x01(\x05H\x01R\x0erequiredAccess\x88\x01\x01B\v\n" +
+	"\t_requiredB\x12\n" +
+	"\x10_required_accessJ\x04\b\x02\x10\x03BTZRgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access;resourcesaccessb\x06proto3"
 
 var file_resources_access_access_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_access_access_proto_goTypes = []any{

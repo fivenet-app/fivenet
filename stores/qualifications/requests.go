@@ -6,6 +6,7 @@ import (
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	resqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -15,12 +16,14 @@ import (
 
 func (s *Store) ListQualificationRequests(
 	ctx context.Context,
-	req *pbqualifications.ListQualificationRequestsRequest,
+	opts ListQualificationRequestsOptions,
 	userInfo *userinfo.UserInfo,
-	where mysql.BoolExpression,
 	includePhoneNumber bool,
 ) (*pbqualifications.ListQualificationRequestsResponse, error) {
-	tQuali := tQuali.AS("qualification_short")
+	if userInfo == nil {
+		userInfo = &userinfo.UserInfo{}
+	}
+
 	tUser := table.FivenetUser.AS("user")
 	tApprover := tUser.AS("approver")
 
@@ -30,18 +33,42 @@ func (s *Store) ListQualificationRequests(
 			mysql.Int32(int32(resqualifications.RequestStatus_REQUEST_STATUS_COMPLETED)),
 		),
 	)
-	if where != nil {
-		condition = condition.AND(where)
+
+	visibilityCondition := table.FivenetQualifications.DeletedAt.IS_NULL()
+	if opts.QualificationID > 0 {
+		visibilityCondition = visibilityCondition.AND(
+			table.FivenetQualifications.ID.EQ(mysql.Int64(opts.QualificationID)),
+		)
 	}
+	visibleGradeQuery := s.access.VisibleIDsByConditionQuery(
+		userInfo,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
+		visibilityCondition,
+	)
+	visibleGradeIDs := mysql.SELECT(
+		mysql.IntegerColumn("id").From(visibleGradeQuery.Table),
+	).FROM(visibleGradeQuery.Table)
+	visibleViewQuery := s.access.VisibleIDsByConditionQuery(
+		userInfo,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		visibilityCondition,
+	)
+	visibleViewIDs := mysql.SELECT(
+		mysql.IntegerColumn("id").From(visibleViewQuery.Table),
+	).FROM(visibleViewQuery.Table)
 
 	countColumn := mysql.Expression(tQualiReq.QualificationID)
-	if req.GetUserId() != 0 {
+	if len(opts.UserIDs) > 0 {
+		userIds := []mysql.Expression{}
+		for _, userId := range opts.UserIDs {
+			userIds = append(userIds, mysql.Int32(userId))
+		}
+
 		condition = condition.AND(mysql.AND(
-			tUser.Job.EQ(mysql.String(userInfo.GetJob())),
-			tQualiReq.UserID.EQ(mysql.Int32(req.GetUserId())),
+			tQualiReq.UserID.IN(userIds...),
 		))
 	} else {
-		if req.QualificationId == nil {
+		if opts.QualificationID == 0 {
 			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).
 				AND(tQualiReq.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
 			countColumn = mysql.DISTINCT(tQualiReq.QualificationID)
@@ -50,10 +77,10 @@ func (s *Store) ListQualificationRequests(
 		}
 	}
 
-	if len(req.GetStatus()) > 0 {
+	if len(opts.Status) > 0 {
 		statuses := []mysql.Expression{}
-		for i := range req.GetStatus() {
-			statuses = append(statuses, mysql.Int32(int32(req.GetStatus()[i])))
+		for i := range opts.Status {
+			statuses = append(statuses, mysql.Int32(int32(opts.Status[i])))
 		}
 		condition = condition.AND(tQualiReq.Status.IN(statuses...))
 	} else {
@@ -64,7 +91,19 @@ func (s *Store) ListQualificationRequests(
 		)
 	}
 
-	countStmt := tQualiReq.
+	if opts.QualificationID > 0 {
+		condition = condition.AND(tQualiReq.QualificationID.IN(visibleGradeIDs))
+	} else {
+		condition = condition.AND(mysql.OR(
+			tQualiReq.QualificationID.IN(visibleGradeIDs),
+			mysql.AND(
+				tQualiReq.QualificationID.IN(visibleViewIDs),
+				tQualiReq.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+			),
+		))
+	}
+
+	var countStmt mysql.Statement = tQualiReq.
 		SELECT(mysql.COUNT(countColumn).AS("data_count.total")).
 		FROM(
 			tQualiReq.
@@ -72,6 +111,9 @@ func (s *Store) ListQualificationRequests(
 				LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)),
 		).
 		WHERE(condition)
+	if len(visibleGradeQuery.CTEs) > 0 {
+		countStmt = mysql.WITH(visibleGradeQuery.CTEs...)(countStmt)
+	}
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -80,7 +122,7 @@ func (s *Store) ListQualificationRequests(
 		}
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, QualificationsPageSize)
+	pag, limit := opts.Pagination.GetResponseWithPageSize(count.Total, QualificationsPageSize)
 	resp := &pbqualifications.ListQualificationRequestsResponse{
 		Pagination: pag,
 		Requests:   []*resqualifications.QualificationRequest{},
@@ -89,30 +131,7 @@ func (s *Store) ListQualificationRequests(
 		return resp, nil
 	}
 
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "status":
-				column = tQualiReq.Status
-			case "approvedAt":
-				column = tQualiReq.ApprovedAt
-			case "createdAt":
-				fallthrough
-			default:
-				column = tQualiReq.CreatedAt
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tQualiReq.CreatedAt.DESC())
-	}
+	orderBys := s.requestSorter.Build(opts.Sort)
 
 	columns := mysql.ProjectionList{
 		tQualiReq.CreatedAt,
@@ -151,7 +170,7 @@ func (s *Store) ListQualificationRequests(
 		columns = append(columns, tUser.PhoneNumber, tApprover.PhoneNumber)
 	}
 
-	stmt := tQualiReq.
+	var stmt mysql.Statement = tQualiReq.
 		SELECT(columns[0], columns[1:]...).
 		FROM(
 			tQualiReq.
@@ -162,8 +181,11 @@ func (s *Store) ListQualificationRequests(
 		GROUP_BY(tQualiReq.QualificationID, tQualiReq.UserID).
 		ORDER_BY(orderBys...).
 		WHERE(condition).
-		OFFSET(req.GetPagination().GetOffset()).
+		OFFSET(opts.Pagination.GetOffset()).
 		LIMIT(limit)
+	if len(visibleGradeQuery.CTEs) > 0 {
+		stmt = mysql.WITH(visibleGradeQuery.CTEs...)(stmt)
+	}
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Requests); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -180,7 +202,6 @@ func (s *Store) GetQualificationRequest(
 	userId int32,
 	includePhoneNumber bool,
 ) (*resqualifications.QualificationRequest, error) {
-	tQuali := tQuali.AS("qualificationshort")
 	tUser := table.FivenetUser.AS("user")
 	tApprover := tUser.AS("approver")
 

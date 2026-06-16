@@ -2,25 +2,6 @@
 // @generated from protobuf file "resources/qualifications/access/access.proto" (package "resources.qualifications.access", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
-import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
-import type { BinaryReadOptions } from "@protobuf-ts/runtime";
-import type { IBinaryReader } from "@protobuf-ts/runtime";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
-import type { PartialMessage } from "@protobuf-ts/runtime";
-import { reflectionMergePartial } from "@protobuf-ts/runtime";
-import { MessageType } from "@protobuf-ts/runtime";
-import { JobAccess } from "../../access/access";
-/**
- * @generated from protobuf message resources.qualifications.access.QualificationAccess
- */
-export interface QualificationAccess {
-    /**
-     * @generated from protobuf field: repeated resources.access.JobAccess jobs = 1
-     */
-    jobs: JobAccess[];
-}
 /**
  * @generated from protobuf enum resources.qualifications.access.AccessLevel
  */
@@ -54,50 +35,3 @@ export enum AccessLevel {
      */
     EDIT = 6
 }
-// @generated message type with reflection information, may provide speed optimized methods
-class QualificationAccess$Type extends MessageType<QualificationAccess> {
-    constructor() {
-        super("resources.qualifications.access.QualificationAccess", [
-            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess }
-        ]);
-    }
-    create(value?: PartialMessage<QualificationAccess>): QualificationAccess {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.jobs = [];
-        if (value !== undefined)
-            reflectionMergePartial<QualificationAccess>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationAccess): QualificationAccess {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.access.JobAccess jobs */ 1:
-                    message.jobs.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: QualificationAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.access.JobAccess jobs = 1; */
-        for (let i = 0; i < message.jobs.length; i++)
-            JobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.qualifications.access.QualificationAccess
- */
-export const QualificationAccess = new QualificationAccess$Type();

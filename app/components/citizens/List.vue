@@ -430,6 +430,8 @@ defineShortcuts({
                                             name="openFines"
                                             :min="0"
                                             :step="1000"
+                                            :max="999_999_999_999"
+                                            :step-snapping="false"
                                             :placeholder="`${$t('common.fine')}`"
                                             :format-options="{
                                                 style: 'currency',

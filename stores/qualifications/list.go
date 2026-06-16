@@ -7,6 +7,7 @@ import (
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	resqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
@@ -17,27 +18,40 @@ import (
 
 func (s *Store) ListQualifications(
 	ctx context.Context,
-	req *pbqualifications.ListQualificationsRequest,
+	opts ListQualificationsOptions,
 	userInfo *userinfo.UserInfo,
-	where mysql.BoolExpression,
 	includePhoneNumber bool,
 ) (*pbqualifications.ListQualificationsResponse, error) {
-	tCreator := table.FivenetUser.AS("creator")
-
-	wheres := []mysql.BoolExpression{}
-	if where != nil {
-		wheres = append(wheres, where)
+	if userInfo == nil {
+		userInfo = &userinfo.UserInfo{}
 	}
 
-	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
-		wheres = append(wheres, mysql.OR(
+	tCreator := table.FivenetUser.AS("creator")
+	visibilityCondition := mysql.Bool(true)
+
+	if search := dbutils.PrepareForLikeSearch(opts.Search); search != "" {
+		visibilityCondition = visibilityCondition.AND(mysql.OR(
 			tQuali.Abbreviation.LIKE(mysql.String(search)),
 			tQuali.Title.LIKE(mysql.String(search)),
 		))
 	}
 
+	if !userInfo.GetSuperuser() {
+		visibilityCondition = visibilityCondition.AND(
+			table.FivenetQualifications.DeletedAt.IS_NULL(),
+		)
+	}
+
+	visibleQuery := s.access.VisibleIDsByConditionQuery(
+		userInfo,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		visibilityCondition,
+	)
+	visibleIDs := mysql.SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
+		FROM(visibleQuery.Table)
+
 	// Select id of last result for this user.
-	wheres = append(wheres, tQualiResult.ID.IS_NULL().OR(
+	lastResultFilter := tQualiResult.ID.IS_NULL().OR(
 		tQualiResult.ID.EQ(
 			mysql.RawInt(
 				"SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = qualification.id AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
@@ -46,9 +60,9 @@ func (s *Store) ListQualifications(
 				},
 			),
 		),
-	))
+	)
 
-	countStmt := tQuali.
+	var countStmt mysql.Statement = tQuali.
 		SELECT(mysql.COUNT(mysql.DISTINCT(tQuali.ID)).AS("data_count.total")).
 		FROM(
 			tQuali.
@@ -59,7 +73,13 @@ func (s *Store) ListQualifications(
 					tQualiResult.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 				)),
 		).
-		WHERE(mysql.AND(wheres...))
+		WHERE(mysql.AND(
+			tQuali.ID.IN(visibleIDs),
+			lastResultFilter,
+		))
+	if len(visibleQuery.CTEs) > 0 {
+		countStmt = mysql.WITH(visibleQuery.CTEs...)(countStmt)
+	}
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -68,7 +88,7 @@ func (s *Store) ListQualifications(
 		}
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, QualificationsPageSize)
+	pag, limit := opts.Pagination.GetResponseWithPageSize(count.Total, QualificationsPageSize)
 	resp := &pbqualifications.ListQualificationsResponse{
 		Pagination:     pag,
 		Qualifications: []*resqualifications.Qualification{},
@@ -77,7 +97,10 @@ func (s *Store) ListQualifications(
 		return resp, nil
 	}
 
-	stmt := s.listQualificationsQuery(req, userInfo, wheres, includePhoneNumber, limit)
+	stmt := s.listQualificationsQuery(opts, userInfo, visibleIDs, includePhoneNumber, limit)
+	if len(visibleQuery.CTEs) > 0 {
+		stmt = mysql.WITH(visibleQuery.CTEs...)(stmt)
+	}
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Qualifications); err != nil {
 		return nil, err
@@ -89,16 +112,12 @@ func (s *Store) ListQualifications(
 func (s *Store) GetQualification(
 	ctx context.Context,
 	qualificationId int64,
-	where mysql.BoolExpression,
 	userInfo *userinfo.UserInfo,
 	selectContent bool,
 	includePhoneNumber bool,
 ) (*resqualifications.Qualification, error) {
 	wheres := []mysql.BoolExpression{
 		tQuali.ID.EQ(mysql.Int64(qualificationId)),
-	}
-	if where != nil {
-		wheres = append(wheres, where)
 	}
 
 	// Select id of last result for this user.
@@ -115,7 +134,6 @@ func (s *Store) GetQualification(
 	))
 
 	stmt := s.getQualificationQuery(
-		qualificationId,
 		wheres,
 		userInfo,
 		selectContent,
@@ -167,66 +185,55 @@ func (s *Store) GetQualification(
 }
 
 func (s *Store) listQualificationsQuery(
-	req *pbqualifications.ListQualificationsRequest,
+	opts ListQualificationsOptions,
 	userInfo *userinfo.UserInfo,
-	wheres []mysql.BoolExpression,
+	visibleIDs mysql.SelectStatement,
 	includePhoneNumber bool,
 	limit int64,
-) mysql.SelectStatement {
+) mysql.Statement {
 	tCreator := table.FivenetUser.AS("creator")
 
-	orderBys := []mysql.OrderByClause{tQuali.Draft.ASC()}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "abbreviation":
-				column = tQuali.Abbreviation
-			case "id":
-				fallthrough
-			default:
-				column = tQualiResult.ID
-			}
+	orderBys := append(
+		[]mysql.OrderByClause{tQuali.Draft.ASC()},
+		s.qualificationSorter.Build(opts.Sort)...)
 
-			if sc.GetDesc() {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tQualiResult.ID.DESC())
+	columns := []mysql.Projection{
+		tQuali.ID,
+		tQuali.CreatedAt,
+		tQuali.UpdatedAt,
+		tQuali.Job,
+		tQuali.Weight,
+		tQuali.Closed,
+		tQuali.Draft,
+		tQuali.Public,
+		tQuali.Abbreviation,
+		tQuali.Title,
+		tQuali.Description,
+		tQuali.ExamMode,
+		tQuali.ExamSettings,
+		tQuali.CreatorID,
+		tCreator.ID,
+		tCreator.Job,
+		tCreator.JobGrade,
+		tCreator.Firstname,
+		tCreator.Lastname,
+		tCreator.Dateofbirth,
+		tQuali.CreatorJob,
+		tQualiResult.ID,
+		tQualiResult.QualificationID,
+		tQualiResult.Status,
+		tQualiResult.Score,
+		tQualiResult.Summary,
+		tQualiResult.CreatorID,
+	}
+	if includePhoneNumber {
+		columns = append(columns, tCreator.PhoneNumber)
 	}
 
-	return tQuali.
+	var stmt mysql.Statement = tQuali.
 		SELECT(
-			tQuali.ID,
-			tQuali.CreatedAt,
-			tQuali.UpdatedAt,
-			tQuali.Job,
-			tQuali.Weight,
-			tQuali.Closed,
-			tQuali.Draft,
-			tQuali.Public,
-			tQuali.Abbreviation,
-			tQuali.Title,
-			tQuali.Description,
-			tQuali.ExamMode,
-			tQuali.ExamSettings,
-			tQuali.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tQuali.CreatorJob,
-			tQualiResult.ID,
-			tQualiResult.QualificationID,
-			tQualiResult.Status,
-			tQualiResult.Score,
-			tQualiResult.Summary,
-			tQualiResult.CreatorID,
+			columns[0],
+			columns[1:]...,
 		).
 		FROM(
 			tQuali.
@@ -237,14 +244,27 @@ func (s *Store) listQualificationsQuery(
 					tQualiResult.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 				)),
 		).
-		WHERE(mysql.AND(wheres...)).
+		WHERE(mysql.AND(
+			tQuali.ID.IN(visibleIDs),
+			tQualiResult.ID.IS_NULL().OR(
+				tQualiResult.ID.EQ(
+					mysql.RawInt(
+						"SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = qualification.id AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
+						mysql.RawArgs{
+							"#userid": userInfo.GetUserId(),
+						},
+					),
+				),
+			),
+		)).
 		ORDER_BY(orderBys...).
-		OFFSET(req.GetPagination().GetOffset()).
+		OFFSET(opts.Pagination.GetOffset()).
 		LIMIT(limit)
+
+	return stmt
 }
 
 func (s *Store) getQualificationQuery(
-	qualificationId int64,
 	wheres []mysql.BoolExpression,
 	userInfo *userinfo.UserInfo,
 	selectContent bool,
@@ -314,14 +334,12 @@ func (s *Store) getQualificationQuery(
 func (s *Store) GetQualificationShort(
 	ctx context.Context,
 	qualificationId int64,
-	where mysql.BoolExpression,
 	userInfo *userinfo.UserInfo,
 	includePhoneNumber bool,
 ) (*resqualifications.QualificationShort, error) {
 	quali, err := s.GetQualification(
 		ctx,
 		qualificationId,
-		where,
 		userInfo,
 		false,
 		includePhoneNumber,

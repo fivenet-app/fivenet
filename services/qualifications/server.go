@@ -56,10 +56,7 @@ func init() {
 	})
 }
 
-var (
-	tQuali      = table.FivenetQualifications.AS("qualification")
-	tQualiFiles = table.FivenetQualificationsFiles
-)
+var tQualiFiles = table.FivenetQualificationsFiles
 
 type Server struct {
 	pbqualifications.QualificationsServiceServer
@@ -91,7 +88,7 @@ type Params struct {
 	Config            *config.Config
 	Notif             notifi.INotifi
 	Storage           storage.IStorage
-	Store             qualificationsstore.IStore `optional:"true"`
+	Store             qualificationsstore.IStore
 }
 
 func NewServer(p Params) *Server {

@@ -37,6 +37,7 @@ message JobAccess {
   optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
   int32 access = 8;
   optional bool required = 9;
+  optional int32 required_access = 10;
 }
 
 message UserAccess {
@@ -48,6 +49,7 @@ message UserAccess {
   optional resources.users.short.UserShort user = 5;
   int32 access = 6;
   optional bool required = 7;
+  optional int32 required_access = 8;
 }
 
 message QualificationAccess {
@@ -58,4 +60,5 @@ message QualificationAccess {
   int64 qualification_id = 4 [(buf.validate.field).int64.gt = 0];
   int32 access = 6;
   optional bool required = 7;
+  optional int32 required_access = 8;
 }
