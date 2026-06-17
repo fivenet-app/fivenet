@@ -39,7 +39,7 @@ func TestStoreGetQualificationResult(t *testing.T) {
 
 	now := time.Unix(0, 0).UTC()
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(int64(9), int64(42), int64(1)).
+		WithArgs(true, int64(9), int64(42), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"qualification_result.id",
 			"qualification_result.created_at",

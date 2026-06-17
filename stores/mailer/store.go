@@ -26,6 +26,7 @@ type IStore interface {
 		db qrm.DB,
 		threadID int64,
 		emailID int64,
+		includeDeleted bool,
 	) (*mailerthreads.Thread, error)
 	UpdateThreadTime(ctx context.Context, db qrm.DB, threadID int64) error
 	AddThreadRecipients(
@@ -38,6 +39,7 @@ type IStore interface {
 		ctx context.Context,
 		db qrm.DB,
 		threadID int64,
+		includeDeleted bool,
 	) ([]*mailerthreads.ThreadRecipientEmail, error)
 	GetThreadState(
 		ctx context.Context,
@@ -53,13 +55,24 @@ type IStore interface {
 		senderID int64,
 		emailIDs []int64,
 	) error
-	CountThreadMessages(ctx context.Context, db qrm.DB, threadID int64) (int64, error)
+	CountThreadMessages(
+		ctx context.Context,
+		db qrm.DB,
+		threadID int64,
+		includeDeleted bool,
+	) (int64, error)
 	ListThreadMessages(
 		ctx context.Context,
 		db qrm.DB,
 		in MessageListQuery,
+		includeDeleted bool,
 	) ([]*mailermessages.Message, error)
-	GetMessage(ctx context.Context, db qrm.DB, messageID int64) (*mailermessages.Message, error)
+	GetMessage(
+		ctx context.Context,
+		db qrm.DB,
+		messageID int64,
+		includeDeleted bool,
+	) (*mailermessages.Message, error)
 	CreateMessage(ctx context.Context, db qrm.DB, msg *mailermessages.Message) (int64, error)
 	CountEmails(ctx context.Context, db qrm.DB, condition mysql.BoolExpression) (int64, error)
 	ListUserEmails(
@@ -68,6 +81,7 @@ type IStore interface {
 		userInfo *userinfo.UserInfo,
 		pag *database.PaginationRequest,
 		includeDisabled bool,
+		includeDeleted bool,
 	) ([]*maileremails.Email, error)
 	ListEmails(
 		ctx context.Context,
@@ -81,7 +95,12 @@ type IStore interface {
 		db qrm.DB,
 		condition mysql.BoolExpression,
 	) (*maileremails.Email, error)
-	GetEmail(ctx context.Context, db qrm.DB, emailID int64) (*maileremails.Email, error)
+	GetEmail(
+		ctx context.Context,
+		db qrm.DB,
+		emailID int64,
+		includeDeleted bool,
+	) (*maileremails.Email, error)
 	GetUserShort(ctx context.Context, db qrm.DB, userID int32) (*usershort.UserShort, error)
 	ListRecipientsByEmails(
 		ctx context.Context,

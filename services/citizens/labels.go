@@ -3,7 +3,7 @@ package citizens
 import (
 	context "context"
 
-	accessProto "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
+	pbaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -25,8 +25,8 @@ var (
 
 var labelSubjectAccessOptions = access.SubjectAccessOptions{BlockedAccess: -1}
 
-func labelJobAccess(jobs []*citizenslabels.JobAccess) *accessProto.Access {
-	return &accessProto.Access{Jobs: jobs}
+func labelJobAccess(jobs []*citizenslabels.JobAccess) *pbaccess.Access {
+	return &pbaccess.Access{Jobs: jobs}
 }
 
 func (s *Server) ListLabels(
@@ -89,7 +89,13 @@ func (s *Server) GetLabel(
 		return nil, errorscitizens.ErrLabelNotFound
 	}
 
-	label, err := s.store.GetLabel(ctx, s.db, userInfo.GetJob(), req.GetId())
+	label, err := s.store.GetLabel(
+		ctx,
+		s.db,
+		userInfo.GetJob(),
+		req.GetId(),
+		userInfo.GetSuperuser(),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -153,25 +159,33 @@ func (s *Server) CreateOrUpdateLabel(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	}
 
-	access := label.GetAccess()
-	if access == nil || len(access.GetJobs()) == 0 {
-		access = &citizenslabels.LabelAccess{
-			Jobs: []*citizenslabels.JobAccess{
-				{
-					TargetId:     label.GetId(),
-					Job:          userInfo.GetJob(),
-					MinimumGrade: userInfo.GetJobGrade(),
-					Access:       int32(citizenslabels.AccessLevel_ACCESS_LEVEL_REMOVE),
-				},
+	fallbackAccess := &pbaccess.Access{
+		Jobs: []*pbaccess.JobAccess{
+			{
+				TargetId:     label.GetId(),
+				Job:          userInfo.GetJob(),
+				MinimumGrade: userInfo.GetJobGrade(),
+				Access:       int32(citizenslabels.AccessLevel_ACCESS_LEVEL_REMOVE),
 			},
-		}
+		},
 	}
+	labelAccess := label.GetAccess()
+	normalizedAccess, err := access.NormalizeAccess(
+		labelJobAccess(labelAccess.GetJobs()),
+		nil,
+		fallbackAccess,
+		15,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+
 	if _, err := s.labelsAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
 		s.labelsAccessResolver,
 		label.GetId(),
-		labelJobAccess(access.GetJobs()),
+		normalizedAccess,
 		labelSubjectAccessOptions,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -181,7 +195,7 @@ func (s *Server) CreateOrUpdateLabel(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	label, err = s.store.GetLabel(ctx, s.db, label.GetJob(), label.GetId())
+	label, err = s.store.GetLabel(ctx, s.db, label.GetJob(), label.GetId(), userInfo.GetSuperuser())
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +219,13 @@ func (s *Server) DeleteLabel(
 ) (*pbcitizens.DeleteLabelResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	label, err := s.store.GetLabel(ctx, s.db, userInfo.GetJob(), req.GetId())
+	label, err := s.store.GetLabel(
+		ctx,
+		s.db,
+		userInfo.GetJob(),
+		req.GetId(),
+		userInfo.GetSuperuser(),
+	)
 	if err != nil {
 		return nil, err
 	}

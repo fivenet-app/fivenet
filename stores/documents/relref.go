@@ -15,6 +15,7 @@ import (
 func (s *Store) GetDocumentReference(
 	ctx context.Context,
 	id int64,
+	includeDeleted bool,
 ) (*documentsreferences.DocumentReference, error) {
 	tRef := table.FivenetDocumentsReferences.AS("document_reference")
 	stmt := tRef.
@@ -27,7 +28,13 @@ func (s *Store) GetDocumentReference(
 			tRef.CreatorID,
 		).
 		FROM(tRef).
-		WHERE(tRef.ID.EQ(mysql.Int64(id))).
+		WHERE(mysql.AND(
+			tRef.ID.EQ(mysql.Int64(id)),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tRef.DeletedAt.IS_NULL(),
+			),
+		)).
 		LIMIT(1)
 
 	var dest documentsreferences.DocumentReference
@@ -43,6 +50,7 @@ func (s *Store) GetDocumentReference(
 func (s *Store) ListDocumentReferences(
 	ctx context.Context,
 	documentID int64,
+	includeDeleted bool,
 ) ([]*documentsreferences.DocumentReference, error) {
 	tRef := table.FivenetDocumentsReferences.AS("document_reference")
 	tSourceDoc := table.FivenetDocuments.AS("source_document")
@@ -103,10 +111,13 @@ func (s *Store) ListDocumentReferences(
 				),
 		).
 		WHERE(mysql.AND(
-			tRef.DeletedAt.IS_NULL(),
 			mysql.OR(
 				tRef.SourceDocumentID.EQ(mysql.Int64(documentID)),
 				tRef.TargetDocumentID.EQ(mysql.Int64(documentID)),
+			),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tRef.DeletedAt.IS_NULL(),
 			),
 		)).
 		ORDER_BY(tRef.CreatedAt.DESC()).
@@ -165,6 +176,7 @@ func (s *Store) DeleteDocumentReference(ctx context.Context, tx qrm.DB, id int64
 func (s *Store) GetDocumentRelation(
 	ctx context.Context,
 	id int64,
+	includeDeleted bool,
 ) (*documentsrelations.DocumentRelation, error) {
 	tRel := table.FivenetDocumentsRelations.AS("document_relation")
 	stmt := tRel.
@@ -177,7 +189,13 @@ func (s *Store) GetDocumentRelation(
 			tRel.TargetUserID,
 		).
 		FROM(tRel).
-		WHERE(tRel.ID.EQ(mysql.Int64(id))).
+		WHERE(mysql.AND(
+			tRel.ID.EQ(mysql.Int64(id)),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tRel.DeletedAt.IS_NULL(),
+			),
+		)).
 		LIMIT(1)
 
 	var dest documentsrelations.DocumentRelation
@@ -193,6 +211,7 @@ func (s *Store) GetDocumentRelation(
 func (s *Store) ListDocumentRelations(
 	ctx context.Context,
 	documentID int64,
+	includeDeleted bool,
 ) ([]*documentsrelations.DocumentRelation, error) {
 	tRel := table.FivenetDocumentsRelations.AS("document_relation")
 	tDocument := table.FivenetDocuments.AS("document")
@@ -244,7 +263,10 @@ func (s *Store) ListDocumentRelations(
 				LEFT_JOIN(tCategory,
 					mysql.AND(
 						tDocument.CategoryID.EQ(tCategory.ID),
-						tCategory.DeletedAt.IS_NULL(),
+						mysql.OR(
+							mysql.Bool(includeDeleted),
+							tCategory.DeletedAt.IS_NULL(),
+						),
 					),
 				).
 				LEFT_JOIN(tSourceUser,
@@ -256,7 +278,10 @@ func (s *Store) ListDocumentRelations(
 		).
 		WHERE(mysql.AND(
 			tRel.DocumentID.EQ(mysql.Int64(documentID)),
-			tRel.DeletedAt.IS_NULL(),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tRel.DeletedAt.IS_NULL(),
+			),
 		)).
 		ORDER_BY(tRel.CreatedAt.DESC()).
 		LIMIT(25)

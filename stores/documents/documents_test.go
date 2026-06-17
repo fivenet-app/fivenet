@@ -57,7 +57,10 @@ func TestStoreListAppliesFiltersAndSortFallback(t *testing.T) {
 		},
 	}
 
-	expectedQuery := `(?s).*`
+	expectedQuery := regexp.QuoteMeta(`SELECT document_short.id AS "document_short.id"`) +
+		`(?s).*` + regexp.QuoteMeta(`FROM ( SELECT document_page.id AS "id", document_page.created_at AS "created_at", document_page.updated_at AS "updated_at" FROM fivenet_documents AS document_page WHERE`) +
+		`(?s).*` + regexp.QuoteMeta(`ORDER BY document_page.created_at DESC, document_page.updated_at DESC LIMIT ? OFFSET ? ) AS doc_page INNER JOIN fivenet_documents AS document_short ON (document_short.id = doc_page.id)`) +
+		`(?s).*` + regexp.QuoteMeta(`ORDER BY document_short.created_at DESC, document_short.updated_at DESC;`)
 
 	mock.ExpectQuery(expectedQuery).
 		WithArgs(
@@ -65,8 +68,6 @@ func TestStoreListAppliesFiltersAndSortFallback(t *testing.T) {
 			"%fire%", "%fire%", "%fire%",
 			1,
 			"%fire%", "%fire%",
-			1,
-			"%fire%", "%fire%", "%fire%",
 			int64(7), int64(8),
 			int32(3), int32(4),
 			from.AsTime(),
@@ -96,7 +97,7 @@ func TestStoreListUsesAclBranchesForNonSuperuser(t *testing.T) {
 
 	store := New(db)
 
-	expectedQuery := `(?s).*WITH actor_subjects AS .*fivenet_documents_visibility_public.*fivenet_documents_visibility_creator.*fivenet_documents_visibility_subject.*AS doc_ids.*`
+	expectedQuery := `(?s).*FROM \( SELECT document_page\.id AS "id".*document_page\.public IS TRUE.*document_page\.creator_id = \?.*document_page\.creator_job = \?.*fivenet_documents_access.*subject_acl_user_exists.*subject_acl_qualification_exists.*subject_acl_job_grade_exists.*ORDER BY document_short\.updated_at DESC;`
 	mock.ExpectQuery(expectedQuery).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
@@ -139,7 +140,7 @@ func TestStoreGetIncludesContentAndPhoneNumber(t *testing.T) {
 		`(?s).*` + regexp.QuoteMeta(`document.data`) +
 		`(?s).*` + regexp.QuoteMeta(`document.content_json`) +
 		`(?s).*` + regexp.QuoteMeta(`creator.phone_number`) +
-		`(?s).*` + regexp.QuoteMeta(`ORDER BY document.created_at DESC, document.updated_at DESC LIMIT ?`)
+		`(?s).*` + regexp.QuoteMeta(`ORDER BY document.created_at DESC, document.updated_at DESC LIMIT ?;`)
 
 	mock.ExpectQuery(expectedQuery).
 		WithArgs(int32(3), int64(42), int64(1)).

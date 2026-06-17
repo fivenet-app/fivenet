@@ -259,7 +259,14 @@ func (s *Store) handleColleagueProps(ctx context.Context, data *activity.Colleag
 	defer tx.Rollback()
 
 	input := data.GetProps()
-	props, err := s.jobsStore.GetColleagueProps(ctx, tx, input.GetJob(), input.GetUserId(), nil)
+	props, err := s.jobsStore.GetColleagueProps(
+		ctx,
+		tx,
+		input.GetJob(),
+		input.GetUserId(),
+		nil,
+		false,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to get jobs user props. %w", err)
 	}

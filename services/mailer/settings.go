@@ -67,7 +67,7 @@ func (s *Server) SetEmailSettings(
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	email, err := s.getEmail(ctx, req.GetSettings().GetEmailId(), false, false)
+	email, err := s.getEmail(ctx, userInfo, req.GetSettings().GetEmailId(), false, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

@@ -6,7 +6,6 @@ import (
 
 	resourcesdatabase "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -16,13 +15,6 @@ func (s *Store) ListDocumentActivity(
 	ctx context.Context,
 	q ListDocumentActivityQuery,
 ) (resourcesdatabase.DataCount, []*documentsactivity.DocActivity, error) {
-	if q.Pagination == nil {
-		q.Pagination = &resourcesdatabase.PaginationRequest{}
-	}
-	if q.UserInfo == nil {
-		q.UserInfo = &userinfo.UserInfo{}
-	}
-
 	tDocActivity := table.FivenetDocumentsActivity.AS("doc_activity")
 	condition := tDocActivity.DocumentID.EQ(mysql.Int64(q.DocumentID))
 	if len(q.ActivityTypes) > 0 {

@@ -19,52 +19,26 @@ func (s *Store) ListUserEmails(
 	userInfo *userinfo.UserInfo,
 	pag *database.PaginationRequest,
 	includeDisabled bool,
+	includeDeleted bool,
 ) ([]*maileremails.Email, error) {
-	if userInfo == nil {
-		userInfo = &userinfo.UserInfo{}
-	}
-
-	tEmail := table.FivenetMailerEmails
 	tEmailAlias := table.FivenetMailerEmails.AS("email")
 
-	condition := mysql.Bool(true)
-	baseCondition := tEmail.DeletedAt.IS_NULL()
+	condition := mysql.Bool(includeDeleted).OR(tEmailAlias.DeletedAt.IS_NULL())
 	if !includeDisabled {
-		baseCondition = baseCondition.AND(tEmail.Deactivated.IS_FALSE())
+		condition = condition.AND(tEmailAlias.Deactivated.IS_FALSE())
 	}
 
 	if !userInfo.GetSuperuser() {
 		acl := s.subjectAccess.ACLAccessExistsCondition(
-			tEmail.ID,
+			tEmailAlias.ID,
 			userInfo,
 			int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
 		)
 
-		condition = condition.AND(baseCondition.AND(mysql.OR(
-			tEmail.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+		condition = condition.AND(mysql.OR(
+			tEmailAlias.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 			acl,
-		)))
-	} else {
-		condition = condition.AND(baseCondition)
-	}
-
-	visibleStmt := s.subjectAccess.VisibleIDsByConditionStatement(
-		userInfo,
-		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
-		condition,
-	)
-	var visibleIDs []int64
-	if err := visibleStmt.QueryContext(ctx, s.dbOr(db), &visibleIDs); err != nil {
-		return nil, err
-	}
-
-	if len(visibleIDs) == 0 {
-		return []*maileremails.Email{}, nil
-	}
-
-	ids := make([]mysql.Expression, len(visibleIDs))
-	for i := range visibleIDs {
-		ids[i] = mysql.Int64(visibleIDs[i])
+		))
 	}
 
 	stmt := tEmailAlias.
@@ -81,12 +55,11 @@ func (s *Store) ListUserEmails(
 			tEmailAlias.Label,
 		).
 		FROM(tEmailAlias).
-		WHERE(tEmailAlias.ID.IN(ids...)).
+		WHERE(condition).
 		ORDER_BY(tEmailAlias.Job.ASC(), tEmailAlias.Label.ASC())
 
 	if pag != nil {
 		stmt = stmt.OFFSET(pag.GetOffset())
-		stmt = stmt.LIMIT(int64(len(visibleIDs)))
 	}
 
 	emails := []*maileremails.Email{}

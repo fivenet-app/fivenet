@@ -96,6 +96,7 @@ type IStore interface {
 		job string,
 		userId int32,
 		withColumns mysql.ProjectionList,
+		includeDeleted bool,
 	) (*jobscolleagues.Colleague, error)
 	GetColleagueProps(
 		ctx context.Context,
@@ -103,6 +104,7 @@ type IStore interface {
 		job string,
 		userId int32,
 		fields []string,
+		includeDeleted bool,
 	) (*jobscolleagues.ColleagueProps, error)
 	HandleColleaguePropsChanges(
 		ctx context.Context,
@@ -129,12 +131,14 @@ type IStore interface {
 		db qrm.DB,
 		job string,
 		userId int32,
+		includeDeleted bool,
 	) (*jobslabels.Labels, error)
 	GetUsersLabels(
 		ctx context.Context,
 		db qrm.DB,
 		job string,
 		userIds []int32,
+		includeDeleted bool,
 	) ([]*UserLabels, error)
 	CountColleagueActivity(ctx context.Context, db qrm.DB, q ListQuery) (int64, error)
 	ListColleagueActivity(
@@ -148,6 +152,7 @@ type IStore interface {
 		db qrm.DB,
 		job string,
 		search string,
+		includeDeleted bool,
 	) ([]*jobslabels.Label, error)
 	ManageLabels(
 		ctx context.Context,

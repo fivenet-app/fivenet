@@ -13,7 +13,7 @@ type AccessEntryLimitError struct {
 	Actual int
 }
 
-func (e *AccessEntryLimitError) Error() string {
+func (e AccessEntryLimitError) Error() string {
 	return fmt.Sprintf("%s access entries exceed max %d (got %d)", e.Kind, e.Max, e.Actual)
 }
 

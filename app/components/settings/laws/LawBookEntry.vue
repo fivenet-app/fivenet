@@ -265,7 +265,7 @@ const meta = computed(
             class: {
                 tr: (row: Row<Law>) => {
                     return row.original.deletedAt
-                        ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-800/10 dark:hover:bg-warning-700/10'
+                        ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-900/10 dark:hover:bg-warning-800/10'
                         : '';
                 },
             },
@@ -380,7 +380,7 @@ const confirmModal = overlay.create(ConfirmModal);
         class="overflow-y-auto"
         :class="[
             lawBook.deletedAt
-                ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-800/10 dark:hover:bg-warning-700/10'
+                ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-900/10 dark:hover:bg-warning-800/10'
                 : '',
         ]"
         :ui="{

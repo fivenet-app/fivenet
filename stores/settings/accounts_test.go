@@ -89,7 +89,8 @@ func TestStoreUpdateAccountReturnsUpdatedAccount(t *testing.T) {
 	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_accounts AS account SET enabled = ?, last_char = ? WHERE account.id = ? LIMIT ?;`)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT account.id AS "account.id"`) + `(?s).*` + regexp.QuoteMeta(`FROM fivenet_accounts AS account WHERE ( (account.enabled IS TRUE) AND (account.deleted_at IS NULL) AND (account.id = ?) ) LIMIT ?;`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT account.id AS "account.id"`)+`(?s).*`+regexp.QuoteMeta(`FROM fivenet_accounts AS account WHERE`)+`(?s).*`+regexp.QuoteMeta(`account.enabled IS TRUE`)+`(?s).*`+regexp.QuoteMeta(`account.deleted_at IS NULL`)+`(?s).*`+regexp.QuoteMeta(`account.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
+		WithArgs(false, int64(7), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"account.id",
 			"account.created_at",
@@ -143,10 +144,11 @@ func TestStoreGetAccountByIDReturnsNilForMissingAccount(t *testing.T) {
 
 	store, mock := newTestStore(t)
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_accounts AS account`) + `(?s).*` + regexp.QuoteMeta(`account.id = ?`) + `(?s).*` + regexp.QuoteMeta(`LIMIT ?`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_accounts AS account`)+`(?s).*`+regexp.QuoteMeta(`account.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
+		WithArgs(false, int64(7), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"account.id"}))
 
-	acc, err := store.GetAccountByID(t.Context(), 7)
+	acc, err := store.GetAccountByID(t.Context(), 7, false)
 	require.NoError(t, err)
 	assert.Nil(t, acc)
 	require.NoError(t, mock.ExpectationsWereMet())

@@ -23,10 +23,10 @@ func TestStoreCountThreadMessages(t *testing.T) {
 		`(?s).*` + regexp.QuoteMeta(`message.deleted_at IS NULL`) +
 		`(?s).*` + regexp.QuoteMeta(`message.thread_id = ?`)
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(int64(42)).
+		WithArgs(false, int64(42)).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(3)))
 
-	total, err := store.CountThreadMessages(t.Context(), db, 42)
+	total, err := store.CountThreadMessages(t.Context(), db, 42, false)
 	require.NoError(t, err)
 	assert.Equal(t, int64(3), total)
 	require.NoError(t, mock.ExpectationsWereMet())
@@ -52,7 +52,7 @@ func TestStoreListThreadMessages(t *testing.T) {
 		`LIMIT ? OFFSET ?;`,
 	)
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(int64(42), int64(20), int64(5)).
+		WithArgs(false, int64(42), false, int64(20), int64(5)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"message.id",
 			"message.thread_id",
@@ -77,6 +77,7 @@ func TestStoreListThreadMessages(t *testing.T) {
 		t.Context(),
 		db,
 		MessageListQuery{ThreadID: 42, Offset: 5, Limit: 20},
+		false,
 	)
 	require.NoError(t, err)
 	require.Len(t, messages, 1)
@@ -99,7 +100,7 @@ func TestStoreGetMessage(t *testing.T) {
 		`(?s).*` + regexp.QuoteMeta(`message.id = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(int64(9), int64(1)).
+		WithArgs(int64(9), false, int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"message.id",
 			"message.thread_id",
@@ -120,7 +121,7 @@ func TestStoreGetMessage(t *testing.T) {
 		),
 		)
 
-	message, err := store.GetMessage(t.Context(), db, 9)
+	message, err := store.GetMessage(t.Context(), db, 9, false)
 	require.NoError(t, err)
 	require.NotNil(t, message)
 	assert.Equal(t, int64(9), message.GetId())

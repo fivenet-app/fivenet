@@ -6,7 +6,9 @@ import (
 
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -16,57 +18,52 @@ func (s *Store) ListTemplates(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
 ) ([]*documentstemplates.TemplateShort, error) {
-	if userInfo == nil {
-		userInfo = &userinfo.UserInfo{}
+	tTemplates := table.FivenetDocumentsTemplates.AS("template_short")
+	tCategory := table.FivenetDocumentsCategories.AS("category")
+	visibilityCondition := mysql.Bool(true)
+	if !userInfo.GetSuperuser() {
+		visibilityCondition = visibilityCondition.AND(tTemplates.DeletedAt.IS_NULL())
+		visibilityCondition = visibilityCondition.AND(mysql.OR(
+			tTemplates.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
+			s.templateAccess.ACLAccessExistsCondition(
+				tTemplates.ID,
+				userInfo,
+				int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			),
+		))
 	}
 
-	tDTemplates := table.FivenetDocumentsTemplates.AS("template_short")
-	tDTemplatesFilter := table.FivenetDocumentsTemplates.AS("template_filter")
-	tDCategory := table.FivenetDocumentsCategories.AS("category")
-	visibleQuery := s.templateAccess.VisibleIDsByConditionQuery(
-		userInfo,
-		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-		tDTemplatesFilter.DeletedAt.IS_NULL(),
-	)
-	templateID := mysql.IntegerColumn("id").From(visibleQuery.Table)
-
-	innerStmt := tDTemplates.
+	innerStmt := tTemplates.
 		SELECT(
-			tDTemplates.ID,
-			tDTemplates.Weight,
-			tDCategory.ID,
-			tDCategory.Name,
-			tDCategory.Description,
-			tDCategory.Job,
-			tDCategory.Color,
-			tDCategory.Icon,
-			tDTemplates.Title,
-			tDTemplates.Description,
-			tDTemplates.Color,
-			tDTemplates.Icon,
-			tDTemplates.Schema,
-			tDTemplates.Workflow,
-			tDTemplates.Approval,
-			tDTemplates.CreatorJob,
+			tTemplates.ID,
+			tTemplates.Weight,
+			tCategory.ID,
+			tCategory.Name,
+			tCategory.Description,
+			tCategory.Job,
+			tCategory.Color,
+			tCategory.Icon,
+			tTemplates.Title,
+			tTemplates.Description,
+			tTemplates.Color,
+			tTemplates.Icon,
+			tTemplates.Schema,
+			tTemplates.Workflow,
+			tTemplates.Approval,
+			tTemplates.CreatorJob,
 		).
-		FROM(
-			visibleQuery.Table.
-				INNER_JOIN(tDTemplates,
-					tDTemplates.ID.EQ(templateID),
-				).
-				LEFT_JOIN(tDCategory,
-					tDCategory.ID.EQ(tDTemplates.CategoryID),
-				),
+		FROM(tTemplates.
+			LEFT_JOIN(tCategory,
+				tCategory.ID.EQ(tTemplates.CategoryID),
+			),
 		).
+		WHERE(visibilityCondition).
 		ORDER_BY(
-			tDTemplates.Weight.DESC(),
-			tDTemplates.ID.ASC(),
+			tTemplates.Weight.DESC(),
+			tTemplates.ID.ASC(),
 		)
 
 	var stmt mysql.Statement = innerStmt
-	if len(visibleQuery.CTEs) > 0 {
-		stmt = mysql.WITH(visibleQuery.CTEs...)(innerStmt)
-	}
 
 	var dest []*documentstemplates.TemplateShort
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
@@ -81,9 +78,15 @@ func (s *Store) ListTemplates(
 func (s *Store) GetTemplate(
 	ctx context.Context,
 	templateID int64,
+	includeDeleted bool,
 ) (*documentstemplates.Template, error) {
 	tDTemplates := table.FivenetDocumentsTemplates.AS("template")
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
+
+	condition := tDTemplates.ID.EQ(mysql.Int64(templateID))
+	if includeDeleted {
+		condition = condition.AND(tDTemplates.DeletedAt.IS_NULL())
+	}
 
 	stmt := tDTemplates.
 		SELECT(
@@ -116,10 +119,7 @@ func (s *Store) GetTemplate(
 					tDCategory.ID.EQ(tDTemplates.CategoryID),
 				),
 		).
-		WHERE(mysql.AND(
-			tDTemplates.DeletedAt.IS_NULL(),
-			tDTemplates.ID.EQ(mysql.Int64(templateID)),
-		)).
+		WHERE(condition).
 		LIMIT(1)
 
 	var dest documentstemplates.Template
@@ -243,6 +243,7 @@ func (s *Store) DeleteTemplate(
 	tx qrm.DB,
 	templateID int64,
 	creatorJob string,
+	deletedAtTime *timestamp.Timestamp,
 ) error {
 	tDTemplates := table.FivenetDocumentsTemplates
 	stmt := tDTemplates.
@@ -250,7 +251,7 @@ func (s *Store) DeleteTemplate(
 			tDTemplates.DeletedAt,
 		).
 		SET(
-			tDTemplates.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
+			tDTemplates.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
 		WHERE(mysql.AND(
 			tDTemplates.CreatorJob.EQ(mysql.String(creatorJob)),

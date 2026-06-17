@@ -11,7 +11,7 @@ import (
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	objectaccess "github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -28,7 +28,7 @@ type BirthdayColleague struct {
 	Dateofbirth string `alias:"dateofbirth"`
 }
 
-var birthdaySyncSubjectAccessOptions = access.SubjectAccessOptions{
+var birthdaySyncSubjectAccessOptions = objectaccess.SubjectAccessOptions{
 	BlockedAccess: int32(calendaraccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
 	DeniedAccessLevels: []int32{
 		int32(calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW),
@@ -131,13 +131,22 @@ func (s *Store) EnsureBirthdayCalendarAccess(
 	jobInfo *jobs.Job,
 ) error {
 	jobAccess := birthdayCalendarAccessEntries(calendarID, job, jobInfo)
+	normalizedAccess, err := objectaccess.NormalizeAccess(
+		&calendaraccess.CalendarAccess{Jobs: jobAccess},
+		nil,
+		nil,
+		15,
+	)
+	if err != nil {
+		return err
+	}
 
-	_, err := s.access.ReplaceTargetAccess(
+	_, err = s.access.ReplaceTargetAccess(
 		ctx,
 		q,
 		s.accessResolver,
 		calendarID,
-		&calendaraccess.CalendarAccess{Jobs: jobAccess},
+		normalizedAccess,
 		birthdaySyncSubjectAccessOptions,
 	)
 	return err

@@ -7,7 +7,6 @@ import (
 	resourcesdatabase "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsrelations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -17,34 +16,38 @@ func (s *Store) ListUserDocuments(
 	ctx context.Context,
 	q ListUserDocumentsQuery,
 ) (resourcesdatabase.DataCount, []*documentsrelations.DocumentRelation, error) {
-	if q.UserInfo == nil {
-		q.UserInfo = &userinfo.UserInfo{}
-	}
-
 	tDocument := table.FivenetDocuments.AS("document")
 	tDocRel := table.FivenetDocumentsRelations.AS("document_relation")
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
 	tCreator := table.FivenetUser.AS("creator")
 	tASource := tCreator.AS("source_user")
 
-	visibleQuery := s.subjectAccess.VisibleIDsByConditionQuery(
-		q.UserInfo,
-		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-		table.FivenetDocuments.DeletedAt.IS_NULL(),
-	)
-	visibleIDs := mysql.
-		SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
-		FROM(visibleQuery.Table)
-
 	condition := tDocRel.TargetUserID.EQ(mysql.Int32(q.UserID))
 	if q.IncludeCreated {
 		condition = mysql.OR(condition, tDocRel.SourceUserID.EQ(mysql.Int32(q.UserID)))
 	}
 
+	documentVisibilityCondition := mysql.Bool(true)
+	if !q.UserInfo.GetSuperuser() {
+		documentVisibilityCondition = documentVisibilityCondition.AND(tDocument.DeletedAt.IS_NULL())
+		documentVisibilityCondition = documentVisibilityCondition.AND(mysql.OR(
+			tDocument.Public.IS_TRUE(),
+			mysql.AND(
+				tDocument.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
+				tDocument.CreatorJob.EQ(mysql.String(q.UserInfo.GetJob())),
+			),
+			s.subjectAccess.ACLAccessExistsCondition(
+				tDocument.ID,
+				q.UserInfo,
+				int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			),
+		))
+	}
+
 	condition = mysql.AND(
 		condition,
 		tDocRel.DeletedAt.IS_NULL(),
-		tDocument.ID.IN(visibleIDs),
+		documentVisibilityCondition,
 	)
 
 	if q.Closed != nil {
@@ -71,13 +74,7 @@ func (s *Store) ListUserDocuments(
 					tDocument.ID.EQ(tDocRel.DocumentID),
 				),
 		).
-		WHERE(mysql.AND(
-			condition,
-			tDocument.ID.IN(visibleIDs),
-		))
-	if len(visibleQuery.CTEs) > 0 {
-		countStmt = mysql.WITH(visibleQuery.CTEs...)(countStmt)
-	}
+		WHERE(condition)
 
 	var count resourcesdatabase.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -104,10 +101,7 @@ func (s *Store) ListUserDocuments(
 					tDocument.ID.EQ(tDocRel.DocumentID),
 				),
 		).
-		WHERE(mysql.AND(
-			condition,
-			tDocument.ID.IN(visibleIDs),
-		)).
+		WHERE(condition).
 		OFFSET(q.Pagination.GetOffset()).
 		ORDER_BY(orderBys...).
 		LIMIT(limit).
@@ -172,17 +166,11 @@ func (s *Store) ListUserDocuments(
 					tASource.ID.EQ(tDocRel.SourceUserID),
 				),
 		).
-		WHERE(mysql.AND(
-			tDocument.DeletedAt.IS_NULL(),
-			tDocument.ID.IN(visibleIDs),
-		)).
+		WHERE(condition).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
 	var relations []*documentsrelations.DocumentRelation
-	if len(visibleQuery.CTEs) > 0 {
-		stmt = mysql.WITH(visibleQuery.CTEs...)(stmt)
-	}
 	if err := stmt.QueryContext(ctx, s.db, &relations); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return resourcesdatabase.DataCount{}, nil, err

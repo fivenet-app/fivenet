@@ -65,7 +65,7 @@ func (s *Server) buildSubjects(
 
 	// Clone user info and disable superuser
 	userInfo.Superuser = false
-	emails, err := s.mailerStore.ListUserEmails(ctx, s.db, userInfo, nil, false)
+	emails, err := s.mailerStore.ListUserEmails(ctx, s.db, userInfo, nil, false, false)
 	if err != nil {
 		return baseSubjects, nil, errswrap.NewError(err, ErrFailedStream)
 	}

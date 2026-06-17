@@ -94,7 +94,13 @@ func (s *Server) ListColleagues(
 			userIds = append(userIds, colleague.GetUserId())
 		}
 
-		labels, err := s.store.GetUsersLabels(ctx, s.db, userInfo.GetJob(), userIds)
+		labels, err := s.store.GetUsersLabels(
+			ctx,
+			s.db,
+			userInfo.GetJob(),
+			userIds,
+			userInfo.GetSuperuser(),
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
@@ -133,7 +139,14 @@ func (s *Server) getColleague(
 	userId int32,
 	withColumns mysql.ProjectionList,
 ) (*jobscolleagues.Colleague, error) {
-	dest, err := s.store.GetColleague(ctx, s.db, job, userId, withColumns)
+	dest, err := s.store.GetColleague(
+		ctx,
+		s.db,
+		job,
+		userId,
+		withColumns,
+		userInfo != nil && userInfo.GetSuperuser(),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -336,6 +349,7 @@ func (s *Server) SetColleagueProps(
 		targetUser.GetJob(),
 		targetUser.GetUserId(),
 		types.Strings(),
+		userInfo.GetSuperuser(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -452,6 +466,7 @@ func (s *Server) SetColleagueProps(
 		targetUser.GetJob(),
 		targetUser.GetUserId(),
 		types.Strings(),
+		userInfo.GetSuperuser(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)

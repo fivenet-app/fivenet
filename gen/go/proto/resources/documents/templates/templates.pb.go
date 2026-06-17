@@ -39,22 +39,23 @@ type Template struct {
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Category        *category.Category     `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
-	Weight          uint32                 `protobuf:"varint,5,opt,name=weight,proto3" json:"weight,omitempty"`
-	Title           string                 `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty"`
-	Description     string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
-	Color           *string                `protobuf:"bytes,8,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	Icon            *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	ContentTitle    string                 `protobuf:"bytes,10,opt,name=content_title,json=contentTitle,proto3" json:"content_title,omitempty" alias:"content_title"`
-	Content         string                 `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty" alias:"content"`
-	State           string                 `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty" alias:"state"`
-	Schema          *TemplateSchema        `protobuf:"bytes,13,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`
-	CreatorJob      string                 `protobuf:"bytes,14,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	CreatorJobLabel *string                `protobuf:"bytes,15,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	JobAccess       []*access.JobAccess    `protobuf:"bytes,16,rep,name=job_access,json=jobAccess,proto3" json:"job_access,omitempty"`
-	ContentAccess   *access.Access         `protobuf:"bytes,17,opt,name=content_access,json=contentAccess,proto3" json:"content_access,omitempty" alias:"access"`
-	Workflow        *workflow.Workflow     `protobuf:"bytes,18,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
-	Approval        *TemplateApproval      `protobuf:"bytes,19,opt,name=approval,proto3,oneof" json:"approval,omitempty"`
+	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Category        *category.Category     `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
+	Weight          uint32                 `protobuf:"varint,6,opt,name=weight,proto3" json:"weight,omitempty"`
+	Title           string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
+	Description     string                 `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	Color           *string                `protobuf:"bytes,9,opt,name=color,proto3,oneof" json:"color,omitempty"`
+	Icon            *string                `protobuf:"bytes,10,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	ContentTitle    string                 `protobuf:"bytes,11,opt,name=content_title,json=contentTitle,proto3" json:"content_title,omitempty" alias:"content_title"`
+	Content         string                 `protobuf:"bytes,12,opt,name=content,proto3" json:"content,omitempty" alias:"content"`
+	State           string                 `protobuf:"bytes,13,opt,name=state,proto3" json:"state,omitempty" alias:"state"`
+	Schema          *TemplateSchema        `protobuf:"bytes,14,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`
+	CreatorJob      string                 `protobuf:"bytes,15,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJobLabel *string                `protobuf:"bytes,16,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	JobAccess       []*access.JobAccess    `protobuf:"bytes,17,rep,name=job_access,json=jobAccess,proto3" json:"job_access,omitempty"`
+	ContentAccess   *access.Access         `protobuf:"bytes,18,opt,name=content_access,json=contentAccess,proto3" json:"content_access,omitempty" alias:"access"`
+	Workflow        *workflow.Workflow     `protobuf:"bytes,19,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
+	Approval        *TemplateApproval      `protobuf:"bytes,20,opt,name=approval,proto3,oneof" json:"approval,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -101,6 +102,13 @@ func (x *Template) GetCreatedAt() *timestamp.Timestamp {
 func (x *Template) GetUpdatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *Template) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DeletedAt
 	}
 	return nil
 }
@@ -229,6 +237,10 @@ func (x *Template) SetUpdatedAt(v *timestamp.Timestamp) {
 	x.UpdatedAt = v
 }
 
+func (x *Template) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
 func (x *Template) SetCategory(v *category.Category) {
 	x.Category = v
 }
@@ -307,6 +319,13 @@ func (x *Template) HasUpdatedAt() bool {
 	return x.UpdatedAt != nil
 }
 
+func (x *Template) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
 func (x *Template) HasCategory() bool {
 	if x == nil {
 		return false
@@ -371,6 +390,10 @@ func (x *Template) ClearUpdatedAt() {
 	x.UpdatedAt = nil
 }
 
+func (x *Template) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
 func (x *Template) ClearCategory() {
 	x.Category = nil
 }
@@ -409,6 +432,7 @@ type Template_builder struct {
 	Id              int64
 	CreatedAt       *timestamp.Timestamp
 	UpdatedAt       *timestamp.Timestamp
+	DeletedAt       *timestamp.Timestamp
 	Category        *category.Category
 	Weight          uint32
 	Title           string
@@ -434,6 +458,7 @@ func (b0 Template_builder) Build() *Template {
 	x.Id = b.Id
 	x.CreatedAt = b.CreatedAt
 	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
 	x.Category = b.Category
 	x.Weight = b.Weight
 	x.Title = b.Title
@@ -458,16 +483,17 @@ type TemplateShort struct {
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Category        *category.Category     `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
-	Weight          uint32                 `protobuf:"varint,5,opt,name=weight,proto3" json:"weight,omitempty"`
-	Title           string                 `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty"`
-	Description     string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
-	Color           *string                `protobuf:"bytes,8,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	Icon            *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	Schema          *TemplateSchema        `protobuf:"bytes,10,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`
-	CreatorJob      string                 `protobuf:"bytes,11,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	CreatorJobLabel *string                `protobuf:"bytes,12,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Workflow        *workflow.Workflow     `protobuf:"bytes,18,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
+	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Category        *category.Category     `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
+	Weight          uint32                 `protobuf:"varint,6,opt,name=weight,proto3" json:"weight,omitempty"`
+	Title           string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
+	Description     string                 `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	Color           *string                `protobuf:"bytes,9,opt,name=color,proto3,oneof" json:"color,omitempty"`
+	Icon            *string                `protobuf:"bytes,10,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	Schema          *TemplateSchema        `protobuf:"bytes,14,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`
+	CreatorJob      string                 `protobuf:"bytes,15,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJobLabel *string                `protobuf:"bytes,16,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	Workflow        *workflow.Workflow     `protobuf:"bytes,19,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -514,6 +540,13 @@ func (x *TemplateShort) GetCreatedAt() *timestamp.Timestamp {
 func (x *TemplateShort) GetUpdatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *TemplateShort) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DeletedAt
 	}
 	return nil
 }
@@ -600,6 +633,10 @@ func (x *TemplateShort) SetUpdatedAt(v *timestamp.Timestamp) {
 	x.UpdatedAt = v
 }
 
+func (x *TemplateShort) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
 func (x *TemplateShort) SetCategory(v *category.Category) {
 	x.Category = v
 }
@@ -654,6 +691,13 @@ func (x *TemplateShort) HasUpdatedAt() bool {
 	return x.UpdatedAt != nil
 }
 
+func (x *TemplateShort) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
 func (x *TemplateShort) HasCategory() bool {
 	if x == nil {
 		return false
@@ -704,6 +748,10 @@ func (x *TemplateShort) ClearUpdatedAt() {
 	x.UpdatedAt = nil
 }
 
+func (x *TemplateShort) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
 func (x *TemplateShort) ClearCategory() {
 	x.Category = nil
 }
@@ -734,6 +782,7 @@ type TemplateShort_builder struct {
 	Id              int64
 	CreatedAt       *timestamp.Timestamp
 	UpdatedAt       *timestamp.Timestamp
+	DeletedAt       *timestamp.Timestamp
 	Category        *category.Category
 	Weight          uint32
 	Title           string
@@ -753,6 +802,7 @@ func (b0 TemplateShort_builder) Build() *TemplateShort {
 	x.Id = b.Id
 	x.CreatedAt = b.CreatedAt
 	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
 	x.Category = b.Category
 	x.Weight = b.Weight
 	x.Title = b.Title
@@ -1602,61 +1652,67 @@ var File_resources_documents_templates_templates_proto protoreflect.FileDescript
 
 const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\n" +
-	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\x99\t\n" +
+	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xec\t\n" +
 	"\bTemplate\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12Y\n" +
-	"\bcategory\x18\x04 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
-	"\x06weight\x18\x05 \x01(\rR\x06weight\x12\x1c\n" +
-	"\x05title\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
-	"\vdescription\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
-	"\x05color\x18\b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\x05color\x88\x01\x01\x12!\n" +
-	"\x04icon\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04icon\x88\x01\x01\x12E\n" +
-	"\rcontent_title\x18\n" +
-	" \x01(\tB \xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x15alias:\"content_title\"R\fcontentTitle\x124\n" +
-	"\acontent\x18\v \x01(\tB\x1a\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x0falias:\"content\"R\acontent\x12(\n" +
-	"\x05state\x18\f \x01(\tB\x12\x9a\x84\x9e\x03\ralias:\"state\"R\x05state\x12Z\n" +
-	"\x06schema\x18\r \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
-	"\vcreator_job\x18\x0e \x01(\tR\n" +
-	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x0f \x01(\tH\x04R\x0fcreatorJobLabel\x88\x01\x01\x12:\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"job_access\x18\x10 \x03(\v2\x1b.resources.access.JobAccessR\tjobAccess\x12T\n" +
-	"\x0econtent_access\x18\x11 \x01(\v2\x18.resources.access.AccessB\x13\x9a\x84\x9e\x03\x0ealias:\"access\"R\rcontentAccess\x12G\n" +
-	"\bworkflow\x18\x12 \x01(\v2&.resources.documents.workflow.WorkflowH\x05R\bworkflow\x88\x01\x01\x12P\n" +
-	"\bapproval\x18\x13 \x01(\v2/.resources.documents.templates.TemplateApprovalH\x06R\bapproval\x88\x01\x01B\r\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12Y\n" +
+	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
+	"\x06weight\x18\x06 \x01(\rR\x06weight\x12\x1c\n" +
+	"\x05title\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
+	"\vdescription\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
+	"\x05color\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x05color\x88\x01\x01\x12!\n" +
+	"\x04icon\x18\n" +
+	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x04R\x04icon\x88\x01\x01\x12E\n" +
+	"\rcontent_title\x18\v \x01(\tB \xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x15alias:\"content_title\"R\fcontentTitle\x124\n" +
+	"\acontent\x18\f \x01(\tB\x1a\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x0falias:\"content\"R\acontent\x12(\n" +
+	"\x05state\x18\r \x01(\tB\x12\x9a\x84\x9e\x03\ralias:\"state\"R\x05state\x12Z\n" +
+	"\x06schema\x18\x0e \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
+	"\vcreator_job\x18\x0f \x01(\tR\n" +
+	"creatorJob\x12/\n" +
+	"\x11creator_job_label\x18\x10 \x01(\tH\x05R\x0fcreatorJobLabel\x88\x01\x01\x12:\n" +
+	"\n" +
+	"job_access\x18\x11 \x03(\v2\x1b.resources.access.JobAccessR\tjobAccess\x12T\n" +
+	"\x0econtent_access\x18\x12 \x01(\v2\x18.resources.access.AccessB\x13\x9a\x84\x9e\x03\x0ealias:\"access\"R\rcontentAccess\x12G\n" +
+	"\bworkflow\x18\x13 \x01(\v2&.resources.documents.workflow.WorkflowH\x06R\bworkflow\x88\x01\x01\x12P\n" +
+	"\bapproval\x18\x14 \x01(\v2/.resources.documents.templates.TemplateApprovalH\aR\bapproval\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_updated_atB\b\n" +
+	"\v_updated_atB\r\n" +
+	"\v_deleted_atB\b\n" +
 	"\x06_colorB\a\n" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
 	"\t_workflowB\v\n" +
-	"\t_approval\"\x86\x06\n" +
+	"\t_approval\"\xd9\x06\n" +
 	"\rTemplateShort\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12Y\n" +
-	"\bcategory\x18\x04 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
-	"\x06weight\x18\x05 \x01(\rR\x06weight\x12\x1c\n" +
-	"\x05title\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
-	"\vdescription\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
-	"\x05color\x18\b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\x05color\x88\x01\x01\x12!\n" +
-	"\x04icon\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04icon\x88\x01\x01\x12Z\n" +
-	"\x06schema\x18\n" +
-	" \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
-	"\vcreator_job\x18\v \x01(\tR\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12Y\n" +
+	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
+	"\x06weight\x18\x06 \x01(\rR\x06weight\x12\x1c\n" +
+	"\x05title\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
+	"\vdescription\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
+	"\x05color\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x05color\x88\x01\x01\x12!\n" +
+	"\x04icon\x18\n" +
+	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x04R\x04icon\x88\x01\x01\x12Z\n" +
+	"\x06schema\x18\x0e \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
+	"\vcreator_job\x18\x0f \x01(\tR\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\f \x01(\tH\x04R\x0fcreatorJobLabel\x88\x01\x01\x12G\n" +
-	"\bworkflow\x18\x12 \x01(\v2&.resources.documents.workflow.WorkflowH\x05R\bworkflow\x88\x01\x01B\r\n" +
+	"\x11creator_job_label\x18\x10 \x01(\tH\x05R\x0fcreatorJobLabel\x88\x01\x01\x12G\n" +
+	"\bworkflow\x18\x13 \x01(\v2&.resources.documents.workflow.WorkflowH\x06R\bworkflow\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_updated_atB\b\n" +
+	"\v_updated_atB\r\n" +
+	"\v_deleted_atB\b\n" +
 	"\x06_colorB\a\n" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
@@ -1736,34 +1792,36 @@ var file_resources_documents_templates_templates_proto_goTypes = []any{
 var file_resources_documents_templates_templates_proto_depIdxs = []int32{
 	9,  // 0: resources.documents.templates.Template.created_at:type_name -> resources.timestamp.Timestamp
 	9,  // 1: resources.documents.templates.Template.updated_at:type_name -> resources.timestamp.Timestamp
-	10, // 2: resources.documents.templates.Template.category:type_name -> resources.documents.category.Category
-	2,  // 3: resources.documents.templates.Template.schema:type_name -> resources.documents.templates.TemplateSchema
-	11, // 4: resources.documents.templates.Template.job_access:type_name -> resources.access.JobAccess
-	12, // 5: resources.documents.templates.Template.content_access:type_name -> resources.access.Access
-	13, // 6: resources.documents.templates.Template.workflow:type_name -> resources.documents.workflow.Workflow
-	6,  // 7: resources.documents.templates.Template.approval:type_name -> resources.documents.templates.TemplateApproval
-	9,  // 8: resources.documents.templates.TemplateShort.created_at:type_name -> resources.timestamp.Timestamp
-	9,  // 9: resources.documents.templates.TemplateShort.updated_at:type_name -> resources.timestamp.Timestamp
-	10, // 10: resources.documents.templates.TemplateShort.category:type_name -> resources.documents.category.Category
-	2,  // 11: resources.documents.templates.TemplateShort.schema:type_name -> resources.documents.templates.TemplateSchema
-	13, // 12: resources.documents.templates.TemplateShort.workflow:type_name -> resources.documents.workflow.Workflow
-	3,  // 13: resources.documents.templates.TemplateSchema.requirements:type_name -> resources.documents.templates.TemplateRequirements
-	4,  // 14: resources.documents.templates.TemplateRequirements.documents:type_name -> resources.documents.templates.ObjectSpecs
-	4,  // 15: resources.documents.templates.TemplateRequirements.users:type_name -> resources.documents.templates.ObjectSpecs
-	4,  // 16: resources.documents.templates.TemplateRequirements.vehicles:type_name -> resources.documents.templates.ObjectSpecs
-	14, // 17: resources.documents.templates.TemplateData.active_char:type_name -> resources.users.User
-	15, // 18: resources.documents.templates.TemplateData.documents:type_name -> resources.documents.DocumentShort
-	16, // 19: resources.documents.templates.TemplateData.users:type_name -> resources.users.short.UserShort
-	17, // 20: resources.documents.templates.TemplateData.vehicles:type_name -> resources.vehicles.Vehicle
-	7,  // 21: resources.documents.templates.TemplateApproval.policy:type_name -> resources.documents.templates.TemplateApprovalPolicy
-	8,  // 22: resources.documents.templates.TemplateApproval.tasks:type_name -> resources.documents.templates.TemplateApprovalTaskSeed
-	18, // 23: resources.documents.templates.TemplateApprovalPolicy.rule_kind:type_name -> resources.documents.approval.ApprovalRuleKind
-	19, // 24: resources.documents.templates.TemplateApprovalPolicy.on_edit_behavior:type_name -> resources.documents.approval.OnEditBehavior
-	25, // [25:25] is the sub-list for method output_type
-	25, // [25:25] is the sub-list for method input_type
-	25, // [25:25] is the sub-list for extension type_name
-	25, // [25:25] is the sub-list for extension extendee
-	0,  // [0:25] is the sub-list for field type_name
+	9,  // 2: resources.documents.templates.Template.deleted_at:type_name -> resources.timestamp.Timestamp
+	10, // 3: resources.documents.templates.Template.category:type_name -> resources.documents.category.Category
+	2,  // 4: resources.documents.templates.Template.schema:type_name -> resources.documents.templates.TemplateSchema
+	11, // 5: resources.documents.templates.Template.job_access:type_name -> resources.access.JobAccess
+	12, // 6: resources.documents.templates.Template.content_access:type_name -> resources.access.Access
+	13, // 7: resources.documents.templates.Template.workflow:type_name -> resources.documents.workflow.Workflow
+	6,  // 8: resources.documents.templates.Template.approval:type_name -> resources.documents.templates.TemplateApproval
+	9,  // 9: resources.documents.templates.TemplateShort.created_at:type_name -> resources.timestamp.Timestamp
+	9,  // 10: resources.documents.templates.TemplateShort.updated_at:type_name -> resources.timestamp.Timestamp
+	9,  // 11: resources.documents.templates.TemplateShort.deleted_at:type_name -> resources.timestamp.Timestamp
+	10, // 12: resources.documents.templates.TemplateShort.category:type_name -> resources.documents.category.Category
+	2,  // 13: resources.documents.templates.TemplateShort.schema:type_name -> resources.documents.templates.TemplateSchema
+	13, // 14: resources.documents.templates.TemplateShort.workflow:type_name -> resources.documents.workflow.Workflow
+	3,  // 15: resources.documents.templates.TemplateSchema.requirements:type_name -> resources.documents.templates.TemplateRequirements
+	4,  // 16: resources.documents.templates.TemplateRequirements.documents:type_name -> resources.documents.templates.ObjectSpecs
+	4,  // 17: resources.documents.templates.TemplateRequirements.users:type_name -> resources.documents.templates.ObjectSpecs
+	4,  // 18: resources.documents.templates.TemplateRequirements.vehicles:type_name -> resources.documents.templates.ObjectSpecs
+	14, // 19: resources.documents.templates.TemplateData.active_char:type_name -> resources.users.User
+	15, // 20: resources.documents.templates.TemplateData.documents:type_name -> resources.documents.DocumentShort
+	16, // 21: resources.documents.templates.TemplateData.users:type_name -> resources.users.short.UserShort
+	17, // 22: resources.documents.templates.TemplateData.vehicles:type_name -> resources.vehicles.Vehicle
+	7,  // 23: resources.documents.templates.TemplateApproval.policy:type_name -> resources.documents.templates.TemplateApprovalPolicy
+	8,  // 24: resources.documents.templates.TemplateApproval.tasks:type_name -> resources.documents.templates.TemplateApprovalTaskSeed
+	18, // 25: resources.documents.templates.TemplateApprovalPolicy.rule_kind:type_name -> resources.documents.approval.ApprovalRuleKind
+	19, // 26: resources.documents.templates.TemplateApprovalPolicy.on_edit_behavior:type_name -> resources.documents.approval.OnEditBehavior
+	27, // [27:27] is the sub-list for method output_type
+	27, // [27:27] is the sub-list for method input_type
+	27, // [27:27] is the sub-list for extension type_name
+	27, // [27:27] is the sub-list for extension extendee
+	0,  // [0:27] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_templates_templates_proto_init() }

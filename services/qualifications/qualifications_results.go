@@ -314,6 +314,10 @@ func (s *Server) getQualificationResult(
 		s.enricher.EnrichJobInfoSafe(userInfo, result.GetCreator())
 	}
 
+	if !userInfo.GetSuperuser() && result.GetDeletedAt() != nil {
+		return nil, errorsqualifications.ErrQualiViewDenied
+	}
+
 	return result, nil
 }
 

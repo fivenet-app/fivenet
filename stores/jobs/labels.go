@@ -18,10 +18,14 @@ func (s *Store) GetColleagueLabels(
 	db qrm.DB,
 	job string,
 	search string,
+	includeDeleted bool,
 ) ([]*jobslabels.Label, error) {
 	condition := mysql.AND(
 		tJobLabels.Job.EQ(mysql.String(job)),
-		tJobLabels.DeletedAt.IS_NULL(),
+		mysql.OR(
+			mysql.Bool(includeDeleted),
+			tJobLabels.DeletedAt.IS_NULL(),
+		),
 	)
 
 	if search = dbutils.PrepareForLikeSearch(search); search != "" {
@@ -60,6 +64,7 @@ func (s *Store) GetUsersLabels(
 	db qrm.DB,
 	job string,
 	userIds []int32,
+	includeDeleted bool,
 ) ([]*UserLabels, error) {
 	if len(userIds) == 0 {
 		return []*UserLabels{}, nil
@@ -67,7 +72,7 @@ func (s *Store) GetUsersLabels(
 
 	labels := make([]*UserLabels, 0, len(userIds))
 	for _, userId := range userIds {
-		userLabels, err := s.GetUserLabels(ctx, db, job, userId)
+		userLabels, err := s.GetUserLabels(ctx, db, job, userId, includeDeleted)
 		if err != nil {
 			return nil, err
 		}

@@ -36,11 +36,11 @@ func TestStoreGetUsersLabels(t *testing.T) {
 	store, mock := newTestStore(t)
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_colleague_labels`)).
-		WithArgs(int32(1), "police").
+		WithArgs(int32(1), "police", false).
 		WillReturnRows(sqlmock.NewRows([]string{"label.id", "label.job", "label.name", "label.color", "label.icon", "label.sort_order"}).
 			AddRow(int64(11), "police", "alpha", "#111111", nil, int32(0)))
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_colleague_labels`)).
-		WithArgs(int32(2), "police").
+		WithArgs(int32(2), "police", false).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"label.id",
 			"label.job",
@@ -51,7 +51,7 @@ func TestStoreGetUsersLabels(t *testing.T) {
 		}).
 			AddRow(int64(12), "police", "beta", "#222222", nil, int32(0)))
 
-	labels, err := store.GetUsersLabels(t.Context(), store.db, "police", []int32{1, 2})
+	labels, err := store.GetUsersLabels(t.Context(), store.db, "police", []int32{1, 2}, false)
 	require.NoError(t, err)
 	require.Len(t, labels, 2)
 	require.NotNil(t, labels[0].Labels)

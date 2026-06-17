@@ -5,17 +5,34 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	reswiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
 	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
+	wikiactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
+	objectaccess "github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorswiki "github.com/fivenet-app/fivenet/v2026/services/wiki/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/gosimple/slug"
 )
 
 const defaultWikiUpperLimit = 250
+
+var wikiPageSubjectAccessOptions = objectaccess.SubjectAccessOptions{
+	BlockedAccess: int32(wikiaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
+	DeniedAccessLevels: []int32{
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_ACCESS),
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+	},
+}
 
 type ListPagesQuery struct {
 	Search string
@@ -33,10 +50,6 @@ type ListPagesResult struct {
 }
 
 func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResult, error) {
-	if q.UserInfo == nil {
-		q.UserInfo = &userinfo.UserInfo{}
-	}
-
 	tPageShort := table.FivenetWikiPages.AS("page_short")
 	tJobProps := table.FivenetJobProps
 	tFiles := table.FivenetFiles.AS("logo")
@@ -47,6 +60,23 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 		condition = condition.AND(mysql.OR(
 			dbutils.MATCH(tPageShort.Title, mysql.String(search)),
 			dbutils.MATCH(tPageShort.Content, mysql.String(search)),
+		))
+	}
+
+	visibilityCondition := mysql.Bool(true)
+	if !q.Superuser {
+		visibilityCondition = visibilityCondition.AND(tPageShort.DeletedAt.IS_NULL())
+		visibilityCondition = visibilityCondition.AND(mysql.OR(
+			tPageShort.Public.IS_TRUE(),
+			mysql.AND(
+				tPageShort.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
+				tPageShort.Job.EQ(mysql.String(q.UserInfo.GetJob())),
+			),
+			s.access.ACLAccessExistsCondition(
+				tPageShort.ID,
+				q.UserInfo,
+				int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			),
 		))
 	}
 
@@ -61,15 +91,6 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 		tPageShort.Startpage,
 	}
 
-	visibleQuery := s.access.VisibleIDsByConditionQuery(
-		q.UserInfo,
-		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-		table.FivenetWikiPages.DeletedAt.IS_NULL(),
-	)
-	visibleIDs := mysql.
-		SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
-		FROM(visibleQuery.Table)
-
 	if q.RootOnly {
 		columns = append(columns,
 			tJobProps.LogoFileID.AS("page_root_info.logo_file_id"),
@@ -77,11 +98,25 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 			tFiles.FilePath,
 		)
 
-		rootVisibleIDs := visibleIDs
-
 		subPage := table.FivenetWikiPages.AS("sub_page")
-		rootCondition := mysql.AND(subPage.DeletedAt.IS_NULL())
-		rootCondition = rootCondition.AND(subPage.ID.IN(rootVisibleIDs))
+		rootVisibilityCondition := mysql.Bool(true)
+		if !q.Superuser {
+			rootVisibilityCondition = rootVisibilityCondition.AND(subPage.DeletedAt.IS_NULL())
+			rootVisibilityCondition = rootVisibilityCondition.AND(mysql.OR(
+				subPage.Public.IS_TRUE(),
+				mysql.AND(
+					subPage.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
+					subPage.Job.EQ(mysql.String(q.UserInfo.GetJob())),
+				),
+				s.access.ACLAccessExistsCondition(
+					subPage.ID,
+					q.UserInfo,
+					int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+				),
+			))
+		}
+
+		rootCondition := rootVisibilityCondition
 
 		rankedPages := subPage.
 			SELECT(
@@ -102,17 +137,14 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 			WHERE(rootCondition).
 			AsTable("ranked_pages")
 
-		condition = condition.AND(tPageShort.ID.IN(
+		condition = condition.AND(visibilityCondition).AND(tPageShort.ID.IN(
 			rankedPages.
 				SELECT(mysql.IntegerColumn("sub_page.id")).
 				FROM(rankedPages).
 				WHERE(mysql.RawBool("ranked_pages.rn = 1")),
 		))
 	} else if !q.Superuser {
-		condition = condition.AND(mysql.AND(
-			tPageShort.DeletedAt.IS_NULL(),
-			tPageShort.ID.IN(visibleIDs),
-		))
+		condition = condition.AND(visibilityCondition)
 	}
 
 	if q.Job != "" {
@@ -127,9 +159,6 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 		SELECT(mysql.COUNT(tPageShort.ID).AS("data_count.total")).
 		FROM(tPageShort).
 		WHERE(condition)
-	if len(visibleQuery.CTEs) > 0 {
-		countStmt = mysql.WITH(visibleQuery.CTEs...)(countStmt)
-	}
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -170,9 +199,6 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 		).
 		OFFSET(pagination.GetOffset()).
 		LIMIT(limit)
-	if len(visibleQuery.CTEs) > 0 {
-		stmt = mysql.WITH(visibleQuery.CTEs...)(stmt)
-	}
 
 	if err := stmt.QueryContext(ctx, s.db, &result.Pages); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -240,4 +266,269 @@ func (s *Store) GetPage(
 	}
 
 	return dest, nil
+}
+
+func (s *Store) CreatePage(
+	ctx context.Context,
+	tx qrm.DB,
+	userInfo *userinfo.UserInfo,
+	parentID *int64,
+	contentType content.ContentType,
+	pageAccess *wikiaccess.PageAccess,
+) (int64, *wikiaccess.PageAccess, error) {
+	normalizedAccess, err := objectaccess.NormalizeAccess(pageAccess, nil, nil, 15)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	var parentPageID *int64
+	if parentID != nil && *parentID > 0 {
+		parentPageID = parentID
+	}
+
+	sortRank, err := s.NextPageGroupRank(ctx, tx, userInfo.GetJob(), parentPageID, false, 0)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	tPage := table.FivenetWikiPages
+	stmt := tPage.
+		INSERT(
+			tPage.Job,
+			tPage.ParentID,
+			tPage.SortRank,
+			tPage.ContentType,
+			tPage.Toc,
+			tPage.Draft,
+			tPage.Public,
+			tPage.Startpage,
+			tPage.Slug,
+			tPage.Title,
+			tPage.Description,
+			tPage.Content,
+			tPage.Data,
+			tPage.CreatorID,
+		).
+		VALUES(
+			userInfo.GetJob(),
+			parentID,
+			sortRank,
+			int32(contentType),
+			true,
+			true,
+			false,
+			false,
+			"",
+			"",
+			"",
+			"",
+			nil,
+			userInfo.GetUserId(),
+		)
+
+	result, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	lastID, err := result.LastInsertId()
+	if err != nil {
+		return 0, nil, err
+	}
+
+	if _, err := s.AddPageActivity(ctx, tx, &wikiactivity.PageActivity{
+		PageId:       lastID,
+		ActivityType: wikiactivity.PageActivityType_PAGE_ACTIVITY_TYPE_CREATED,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.GetJob(),
+	}); err != nil {
+		return lastID, nil, err
+	}
+
+	if err := s.handlePageAccessChange(
+		ctx,
+		tx,
+		lastID,
+		userInfo,
+		pageAccess,
+		false,
+	); err != nil {
+		return lastID, nil, err
+	}
+
+	if err := s.access.RefreshTargetVisibility(ctx, tx, lastID); err != nil {
+		return lastID, nil, err
+	}
+
+	return lastID, normalizedAccess, nil
+}
+
+func (s *Store) UpdatePage(
+	ctx context.Context,
+	tx qrm.DB,
+	userInfo *userinfo.UserInfo,
+	page *reswiki.Page,
+	sortRank string,
+) (*wikiaccess.PageAccess, error) {
+	pageAccess := page.GetAccess()
+	if pageAccess == nil || pageAccess.IsEmpty() {
+		pageAccess = &wikiaccess.PageAccess{
+			Jobs: []*wikiaccess.PageJobAccess{
+				{
+					Job:          userInfo.GetJob(),
+					MinimumGrade: userInfo.GetJobGrade(),
+					Access:       int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+				},
+			},
+		}
+	}
+
+	normalizedAccess, err := objectaccess.NormalizeAccess(pageAccess, nil, nil, 15)
+	if err != nil {
+		return nil, err
+	}
+
+	tPage := table.FivenetWikiPages
+	stmt := tPage.
+		UPDATE(
+			tPage.ParentID,
+			tPage.SortRank,
+			tPage.ContentType,
+			tPage.Toc,
+			tPage.Draft,
+			tPage.Public,
+			tPage.Startpage,
+			tPage.Slug,
+			tPage.Title,
+			tPage.Description,
+			tPage.Content,
+			tPage.Data,
+		).
+		SET(
+			page.ParentId,
+			sortRank,
+			int32(page.GetContent().GetContentType()),
+			page.GetMeta().GetToc(),
+			page.GetMeta().GetDraft(),
+			page.GetMeta().GetPublic(),
+			page.GetMeta().GetStartpage(),
+			slug.Make(utils.StringFirstN(page.GetMeta().GetTitle(), 100)),
+			page.GetMeta().GetTitle(),
+			page.GetMeta().GetDescription(),
+			page.GetContent(),
+			nil,
+		).
+		WHERE(mysql.AND(
+			tPage.ID.EQ(mysql.Int64(page.GetId())),
+		)).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return nil, err
+	}
+
+	if err := s.handlePageAccessChange(
+		ctx,
+		tx,
+		page.GetId(),
+		userInfo,
+		pageAccess,
+		true,
+	); err != nil {
+		return nil, err
+	}
+
+	if err := s.access.RefreshTargetVisibility(ctx, tx, page.GetId()); err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	return normalizedAccess, nil
+}
+
+func (s *Store) handlePageAccessChange(
+	ctx context.Context,
+	tx qrm.DB,
+	pageId int64,
+	userInfo *userinfo.UserInfo,
+	pageAccess *wikiaccess.PageAccess,
+	addActivity bool,
+) error {
+	changes, err := s.access.ReplaceTargetAccess(
+		ctx,
+		tx,
+		s.accessResolver,
+		pageId,
+		pageAccess,
+		wikiPageSubjectAccessOptions,
+	)
+	if err != nil {
+		if dbutils.IsDuplicateError(err) {
+			return errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+		return errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	if addActivity && !changes.IsEmpty() {
+		if _, err := s.AddPageActivity(ctx, tx, &wikiactivity.PageActivity{
+			PageId:       pageId,
+			ActivityType: wikiactivity.PageActivityType_PAGE_ACTIVITY_TYPE_ACCESS_UPDATED,
+			CreatorId:    &userInfo.UserId,
+			CreatorJob:   userInfo.GetJob(),
+			Data: &wikiactivity.PageActivityData{
+				Data: &wikiactivity.PageActivityData_AccessUpdated{
+					AccessUpdated: &wikiactivity.PageAccessUpdated{
+						Jobs: &wikiactivity.PageAccessJobsDiff{
+							ToCreate: changes.Jobs.ToCreate,
+							ToUpdate: changes.Jobs.ToUpdate,
+							ToDelete: changes.Jobs.ToDelete,
+						},
+						Users: &wikiactivity.PageAccessUsersDiff{
+							ToCreate: changes.Users.ToCreate,
+							ToUpdate: changes.Users.ToUpdate,
+							ToDelete: changes.Users.ToDelete,
+						},
+					},
+				},
+			},
+		}); err != nil {
+			return errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+	}
+
+	return nil
+}
+
+func (s *Store) DeletePage(
+	ctx context.Context,
+	tx qrm.DB,
+	pageId int64,
+	deletedAtTime *timestamp.Timestamp,
+	parentId int64,
+) error {
+	// Check if page has any un-deleted child pages
+	tPage := table.FivenetWikiPages
+
+	condition := tPage.ID.EQ(mysql.Int64(pageId))
+	// Restore the page's parent page if any
+	if deletedAtTime == nil && parentId > 0 {
+		condition = condition.OR(
+			tPage.ID.EQ(mysql.Int64(parentId)),
+		)
+	}
+
+	stmt := tPage.
+		UPDATE(
+			tPage.DeletedAt,
+		).
+		SET(
+			tPage.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
+		).
+		WHERE(condition).
+		LIMIT(2)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -257,7 +257,7 @@ func (s *Store) CreateOrUpdateLawBook(
 		return nil, err
 	}
 
-	lawBook, err := s.GetLawBook(ctx, lawbookID)
+	lawBook, err := s.GetLawBook(ctx, lawbookID, superuser)
 	if err != nil {
 		return nil, err
 	}
@@ -354,7 +354,11 @@ func (s *Store) ReorderLawBooks(
 	return tx.Commit()
 }
 
-func (s *Store) GetLawBook(ctx context.Context, lawbookID int64) (*laws.LawBook, error) {
+func (s *Store) GetLawBook(
+	ctx context.Context,
+	lawbookID int64,
+	includeDeleted bool,
+) (*laws.LawBook, error) {
 	tLawBooks := table.FivenetLawbooks.AS("law_book")
 
 	stmt := tLawBooks.
@@ -368,9 +372,13 @@ func (s *Store) GetLawBook(ctx context.Context, lawbookID int64) (*laws.LawBook,
 			tLawBooks.Description,
 		).
 		FROM(tLawBooks).
-		WHERE(
+		WHERE(mysql.AND(
 			tLawBooks.ID.EQ(mysql.Int64(lawbookID)),
-		).
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tLawBooks.DeletedAt.IS_NULL(),
+			),
+		)).
 		LIMIT(1)
 
 	var dest laws.LawBook
@@ -451,7 +459,7 @@ func (s *Store) CreateOrUpdateLaw(
 		lawID = lastId
 		refreshLawBookIDs[req.GetLaw().GetLawbookId()] = struct{}{}
 	} else {
-		existingLaw, err := s.GetLaw(ctx, lawID)
+		existingLaw, err := s.GetLaw(ctx, lawID, superuser)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -508,7 +516,7 @@ func (s *Store) CreateOrUpdateLaw(
 		return nil, nil, err
 	}
 
-	law, err := s.GetLaw(ctx, lawID)
+	law, err := s.GetLaw(ctx, lawID, superuser)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -618,7 +626,7 @@ func (s *Store) ReorderLaws(
 	return tx.Commit()
 }
 
-func (s *Store) GetLaw(ctx context.Context, lawId int64) (*laws.Law, error) {
+func (s *Store) GetLaw(ctx context.Context, lawId int64, includeDeleted bool) (*laws.Law, error) {
 	tLaws := table.FivenetLawbooksLaws.AS("law")
 
 	stmt := tLaws.
@@ -637,9 +645,13 @@ func (s *Store) GetLaw(ctx context.Context, lawId int64) (*laws.Law, error) {
 			tLaws.StvoPoints,
 		).
 		FROM(tLaws).
-		WHERE(
+		WHERE(mysql.AND(
 			tLaws.ID.EQ(mysql.Int64(lawId)),
-		).
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tLaws.DeletedAt.IS_NULL(),
+			),
+		)).
 		LIMIT(1)
 
 	var dest laws.Law

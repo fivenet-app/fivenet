@@ -15,17 +15,14 @@ import (
 	pbwiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki"
 	permswiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorswiki "github.com/fivenet-app/fivenet/v2026/services/wiki/errors"
 	wikistore "github.com/fivenet-app/fivenet/v2026/stores/wiki"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/gosimple/slug"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -166,6 +163,10 @@ func (s *Server) getPage(
 		return nil, err
 	}
 
+	if !userInfo.GetSuperuser() && (dest.GetMeta() == nil || dest.GetMeta().GetDeletedAt() != nil) {
+		return nil, errorswiki.ErrPageNotFound
+	}
+
 	s.enricher.EnrichJobName(dest)
 
 	if withAccess {
@@ -254,87 +255,15 @@ func (s *Server) CreatePage(
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
-
-	tPage := table.FivenetWikiPages
-	var parentID *int64
-	if req.GetParentId() > 0 {
-		parentID = req.ParentId
-	}
-
-	sortRank, err := s.store.NextPageGroupRank(ctx, tx, userInfo.GetJob(), parentID, false, 0)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-
-	stmt := tPage.
-		INSERT(
-			tPage.Job,
-			tPage.ParentID,
-			tPage.SortRank,
-			tPage.ContentType,
-			tPage.Toc,
-			tPage.Draft,
-			tPage.Public,
-			tPage.Startpage,
-			tPage.Slug,
-			tPage.Title,
-			tPage.Description,
-			tPage.Content,
-			tPage.Data,
-			tPage.CreatorID,
-		).
-		VALUES(
-			userInfo.GetJob(),
-			req.ParentId,
-			sortRank,
-			int32(content.ContentType_CONTENT_TYPE_TIPTAP_JSON),
-			true,
-			true,
-			false,
-			false,
-			"",
-			"",
-			"",
-			"",
-			nil,
-			userInfo.GetUserId(),
-		)
-
-	result, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-
-	lastId, err := result.LastInsertId()
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-	resp := &pbwiki.CreatePageResponse{
-		Job: userInfo.GetJob(),
-		Id:  lastId,
-	}
-
-	if _, err := s.store.AddPageActivity(ctx, tx, &wikiactivity.PageActivity{
-		PageId:       resp.GetId(),
-		ActivityType: wikiactivity.PageActivityType_PAGE_ACTIVITY_TYPE_CREATED,
-		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.GetJob(),
-	}); err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-
-	if err := s.handlePageAccessChange(
+	lastId, _, err := s.store.CreatePage(
 		ctx,
 		tx,
-		resp.GetId(),
 		userInfo,
+		req.ParentId,
+		content.ContentType_CONTENT_TYPE_TIPTAP_JSON,
 		pageAccess,
-		false,
-	); err != nil {
-		return nil, err
-	}
-
-	if err := s.access.RefreshTargetVisibility(ctx, tx, resp.GetId()); err != nil {
+	)
+	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
@@ -345,7 +274,10 @@ func (s *Server) CreatePage(
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
-	return resp, nil
+	return &pbwiki.CreatePageResponse{
+		Job: userInfo.GetJob(),
+		Id:  lastId,
+	}, nil
 }
 
 func (s *Server) UpdatePage(
@@ -439,15 +371,6 @@ func (s *Server) UpdatePage(
 		req.Page.Meta.Public = oldPage.GetMeta().GetPublic()
 	}
 
-	if req.GetPage().GetAccess().IsEmpty() {
-		// Ensure at least one access entry allowing the user's rank and higher to "edit" the page
-		req.Page.Access.Jobs = append(req.Page.Access.Jobs, &wikiaccess.PageJobAccess{
-			Job:          userInfo.GetJob(),
-			MinimumGrade: userInfo.GetJobGrade(),
-			Access:       int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
-		})
-	}
-
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -456,7 +379,6 @@ func (s *Server) UpdatePage(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tPage := table.FivenetWikiPages
 	sortRank := oldOrder.SortRank
 	newParentID := req.GetPage().ParentId
 	groupChanged := func() bool {
@@ -483,41 +405,7 @@ func (s *Server) UpdatePage(
 		}
 	}
 
-	stmt := tPage.
-		UPDATE(
-			tPage.ParentID,
-			tPage.SortRank,
-			tPage.ContentType,
-			tPage.Toc,
-			tPage.Draft,
-			tPage.Public,
-			tPage.Startpage,
-			tPage.Slug,
-			tPage.Title,
-			tPage.Description,
-			tPage.Content,
-			tPage.Data,
-		).
-		SET(
-			req.GetPage().ParentId,
-			sortRank,
-			int32(req.GetPage().GetContent().GetContentType()),
-			req.GetPage().GetMeta().Toc,
-			req.GetPage().GetMeta().GetDraft(),
-			req.GetPage().GetMeta().GetPublic(),
-			req.GetPage().GetMeta().GetStartpage(),
-			slug.Make(utils.StringFirstN(req.GetPage().GetMeta().GetTitle(), 100)),
-			req.GetPage().GetMeta().GetTitle(),
-			req.GetPage().GetMeta().GetDescription(),
-			req.GetPage().GetContent(),
-			nil,
-		).
-		WHERE(mysql.AND(
-			tPage.ID.EQ(mysql.Int64(req.GetPage().GetId())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	if _, err := s.store.UpdatePage(ctx, tx, userInfo, req.GetPage(), sortRank); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
@@ -563,21 +451,6 @@ func (s *Server) UpdatePage(
 		}); err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
-	}
-
-	if err := s.handlePageAccessChange(
-		ctx,
-		tx,
-		req.GetPage().GetId(),
-		userInfo,
-		req.GetPage().GetAccess(),
-		true,
-	); err != nil {
-		return nil, err
-	}
-
-	if err := s.access.RefreshTargetVisibility(ctx, tx, req.GetPage().GetId()); err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
 	if oldPage.GetMeta().GetDraft() != req.GetPage().GetMeta().GetDraft() {
@@ -712,59 +585,6 @@ func (s *Server) MovePage(
 	return &pbwiki.MovePageResponse{}, nil
 }
 
-func (s *Server) handlePageAccessChange(
-	ctx context.Context,
-	tx qrm.DB,
-	pageId int64,
-	userInfo *userinfo.UserInfo,
-	pageAccess *wikiaccess.PageAccess,
-	addActivity bool,
-) error {
-	changes, err := s.access.ReplaceTargetAccess(
-		ctx,
-		tx,
-		s.accessResolver,
-		pageId,
-		pageAccess,
-		wikiPageSubjectAccessOptions,
-	)
-	if err != nil {
-		if dbutils.IsDuplicateError(err) {
-			return errswrap.NewError(err, errorswiki.ErrFailedQuery)
-		}
-		return errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-
-	if addActivity && !changes.IsEmpty() {
-		if _, err := s.store.AddPageActivity(ctx, tx, &wikiactivity.PageActivity{
-			PageId:       pageId,
-			ActivityType: wikiactivity.PageActivityType_PAGE_ACTIVITY_TYPE_ACCESS_UPDATED,
-			CreatorId:    &userInfo.UserId,
-			CreatorJob:   userInfo.GetJob(),
-			Data: &wikiactivity.PageActivityData{
-				Data: &wikiactivity.PageActivityData_AccessUpdated{
-					AccessUpdated: &wikiactivity.PageAccessUpdated{
-						Jobs: &wikiactivity.PageAccessJobsDiff{
-							ToCreate: changes.Jobs.ToCreate,
-							ToUpdate: changes.Jobs.ToUpdate,
-							ToDelete: changes.Jobs.ToDelete,
-						},
-						Users: &wikiactivity.PageAccessUsersDiff{
-							ToCreate: changes.Users.ToCreate,
-							ToUpdate: changes.Users.ToUpdate,
-							ToDelete: changes.Users.ToDelete,
-						},
-					},
-				},
-			},
-		}); err != nil {
-			return errswrap.NewError(err, errorswiki.ErrFailedQuery)
-		}
-	}
-
-	return nil
-}
-
 func (s *Server) DeletePage(
 	ctx context.Context,
 	req *pbwiki.DeletePageRequest,
@@ -794,8 +614,6 @@ func (s *Server) DeletePage(
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	// Check if page has any un-deleted child pages
-	tPage := table.FivenetWikiPages
 	count, err := s.store.CountPageChildren(ctx, page.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -805,38 +623,24 @@ func (s *Server) DeletePage(
 		return nil, errorswiki.ErrPageHasChildren
 	}
 
-	condition := tPage.ID.EQ(mysql.Int64(req.GetId()))
-
 	var deletedAtTime *timestamp.Timestamp
+	// Check if page has any un-deleted child pages
 	if page.GetMeta() == nil || page.GetMeta().GetDeletedAt() == nil || !userInfo.GetSuperuser() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
-
-		// Restore the page's parent page if any
-		if page.GetParentId() > 0 {
-			condition = condition.OR(
-				tPage.ID.EQ(mysql.Int64(page.GetParentId())),
-			)
-		}
 	}
 
-	stmt := tPage.
-		UPDATE(
-			tPage.DeletedAt,
-		).
-		SET(
-			tPage.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
-		).
-		WHERE(condition).
-		LIMIT(2)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeletePage(
+		ctx,
+		s.db,
+		page.GetId(),
+		deletedAtTime,
+		page.GetParentId(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbwiki.DeletePageResponse{}, nil
 }

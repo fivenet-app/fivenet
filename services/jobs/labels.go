@@ -42,7 +42,13 @@ func (s *Server) GetColleagueLabels(
 		}
 	}
 
-	labels, err := s.store.GetColleagueLabels(ctx, s.db, userInfo.GetJob(), req.GetSearch())
+	labels, err := s.store.GetColleagueLabels(
+		ctx,
+		s.db,
+		userInfo.GetJob(),
+		req.GetSearch(),
+		userInfo.GetSuperuser(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}

@@ -91,7 +91,13 @@ func (s *Server) getThread(
 	emailId int64,
 	userInfo *userinfo.UserInfo,
 ) (*mailerthreads.Thread, error) {
-	thread, err := s.store.GetThread(ctx, s.db, threadId, emailId)
+	thread, err := s.store.GetThread(
+		ctx,
+		s.db,
+		threadId,
+		emailId,
+		userInfo != nil && userInfo.GetSuperuser(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -103,7 +109,12 @@ func (s *Server) getThread(
 		s.enricher.EnrichJobInfoSafe(userInfo, thread.GetCreator())
 	}
 
-	recipients, err := s.store.ListThreadRecipients(ctx, s.db, threadId)
+	recipients, err := s.store.ListThreadRecipients(
+		ctx,
+		s.db,
+		threadId,
+		userInfo != nil && userInfo.GetSuperuser(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -159,7 +170,7 @@ func (s *Server) CreateThread(
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	senderEmail, err := s.getEmail(ctx, req.GetThread().GetCreatorEmailId(), false, false)
+	senderEmail, err := s.getEmail(ctx, userInfo, req.GetThread().GetCreatorEmailId(), false, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

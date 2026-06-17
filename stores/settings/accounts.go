@@ -141,6 +141,7 @@ func (s *Store) getAccount(
 	ctx context.Context,
 	condition mysql.BoolExpression,
 	withPass bool,
+	includeDeleted bool,
 ) (*accounts.Account, error) {
 	columns := mysql.ProjectionList{
 		tAccounts.ID,
@@ -166,7 +167,10 @@ func (s *Store) getAccount(
 		FROM(tAccounts).
 		WHERE(mysql.AND(
 			tAccounts.Enabled.IS_TRUE(),
-			tAccounts.DeletedAt.IS_NULL(),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tAccounts.DeletedAt.IS_NULL(),
+			),
 			condition,
 		)).
 		LIMIT(1)
@@ -188,8 +192,9 @@ func (s *Store) getAccount(
 func (s *Store) GetAccountByID(
 	ctx context.Context,
 	accountID int64,
+	includeDeleted bool,
 ) (*accounts.Account, error) {
-	return s.getAccount(ctx, tAccounts.ID.EQ(mysql.Int64(accountID)), false)
+	return s.getAccount(ctx, tAccounts.ID.EQ(mysql.Int64(accountID)), false, includeDeleted)
 }
 
 func (s *Store) UpdateAccount(
@@ -224,7 +229,7 @@ func (s *Store) UpdateAccount(
 		}
 	}
 
-	acc, err := s.GetAccountByID(ctx, req.GetId())
+	acc, err := s.GetAccountByID(ctx, req.GetId(), false)
 	if err != nil {
 		return nil, err
 	}

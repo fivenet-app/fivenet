@@ -24,10 +24,10 @@ func TestStoreDocumentReferences(t *testing.T) {
 	store := New(db)
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_references AS document_reference`)+`(?s).*`+regexp.QuoteMeta(`document_reference.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
-		WithArgs(int64(7), int64(1)).
+		WithArgs(int64(7), false, int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"document_reference.id", "document_reference.source_document_id", "document_reference.target_document_id", "document_reference.reference", "document_reference.creator_id"}).AddRow(int64(7), int64(42), int64(99), 1, int32(3)))
 
-	ref, err := store.GetDocumentReference(t.Context(), 7)
+	ref, err := store.GetDocumentReference(t.Context(), 7, false)
 	require.NoError(t, err)
 	require.NotNil(t, ref)
 	assert.Equal(t, int64(7), ref.GetId())
@@ -36,10 +36,10 @@ func TestStoreDocumentReferences(t *testing.T) {
 	assert.Equal(t, int32(3), ref.GetCreatorId())
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_references AS document_reference`)+`(?s).*`+regexp.QuoteMeta(`document_reference.deleted_at IS NULL`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
-		WithArgs(int64(42), int64(42), int64(25)).
+		WithArgs(int64(42), int64(42), false, int64(25)).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	refs, err := store.ListDocumentReferences(t.Context(), 42)
+	refs, err := store.ListDocumentReferences(t.Context(), 42, false)
 	require.NoError(t, err)
 	assert.Empty(t, refs)
 
@@ -79,10 +79,10 @@ func TestStoreDocumentRelations(t *testing.T) {
 	store := New(db)
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_relations AS document_relation`)+`(?s).*`+regexp.QuoteMeta(`document_relation.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
-		WithArgs(int64(11), int64(1)).
+		WithArgs(int64(11), false, int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"document_relation.id", "document_relation.document_id", "document_relation.source_user_id", "document_relation.relation", "document_relation.target_user_id"}).AddRow(int64(11), int64(42), int32(3), int32(1), int32(8)))
 
-	rel, err := store.GetDocumentRelation(t.Context(), 11)
+	rel, err := store.GetDocumentRelation(t.Context(), 11, false)
 	require.NoError(t, err)
 	require.NotNil(t, rel)
 	assert.Equal(t, int64(11), rel.GetId())
@@ -91,10 +91,10 @@ func TestStoreDocumentRelations(t *testing.T) {
 	assert.Equal(t, int32(8), rel.GetTargetUserId())
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_relations AS document_relation`)+`(?s).*`+regexp.QuoteMeta(`document_relation.deleted_at IS NULL`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
-		WithArgs(int64(42), int64(25)).
+		WithArgs(false, int64(42), false, int64(25)).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	rels, err := store.ListDocumentRelations(t.Context(), 42)
+	rels, err := store.ListDocumentRelations(t.Context(), 42, false)
 	require.NoError(t, err)
 	assert.Empty(t, rels)
 

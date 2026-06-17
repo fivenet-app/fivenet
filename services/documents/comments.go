@@ -313,8 +313,6 @@ func (s *Server) DeleteComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
-
 	return &pbdocuments.DeleteCommentResponse{}, nil
 }
 

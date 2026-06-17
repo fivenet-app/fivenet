@@ -21,6 +21,9 @@ ADD INDEX `idx_creator_state_deleted` (`creator_id`, `state`, `deleted_at`);
 ALTER TABLE `fivenet_documents`
 ADD INDEX `idx_category_deleted_draft` (`category_id`, `deleted_at`, `draft`);
 
+ALTER TABLE `fivenet_documents`
+ADD INDEX `idx_fivenet_documents_public_deleted_updated_id` (`public`, `deleted_at`, `updated_at` DESC, `id`);
+
 -- fivenet_audit_log: High-volume append-only log table
 
 -- Remove low-selectivity index (rarely used in filters)

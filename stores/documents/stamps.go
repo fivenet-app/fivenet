@@ -6,8 +6,6 @@ import (
 
 	resourcesdatabase "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	documentsstamps "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -38,43 +36,35 @@ func (s *Store) ListUsableStamps(
 	ctx context.Context,
 	q ListUsableStampsQuery,
 ) (*resourcesdatabase.PaginationResponse, []*documentsstamps.Stamp, error) {
-	if q.Pagination == nil {
-		q.Pagination = &resourcesdatabase.PaginationRequest{}
-	}
-	if q.UserInfo == nil {
-		q.UserInfo = &userinfo.UserInfo{}
-	}
-
 	tStamp := table.FivenetDocumentsStamps.AS("stamp")
 
-	deletedAtCond := mysql.Bool(true)
+	condition := mysql.Bool(true)
 	if !q.UserInfo.GetSuperuser() {
-		deletedAtCond = table.FivenetDocumentsStamps.DeletedAt.IS_NULL()
+		condition = condition.AND(tStamp.DeletedAt.IS_NULL())
+		condition = condition.AND(mysql.OR(
+			tStamp.Name.EQ(mysql.String(q.UserInfo.GetJob())),
+			s.subjectAccess.ACLAccessExistsCondition(
+				tStamp.ID,
+				q.UserInfo,
+				int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
+			),
+		))
 	}
 
-	visibleIDsStmt := access.NewDocumentStampsSubjectObjectAccess(nil).
-		VisibleIDsByConditionStatement(
-			q.UserInfo,
-			int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
-			deletedAtCond,
-		)
+	countStmt := tStamp.
+		SELECT(mysql.COUNT(tStamp.ID).AS("data_count.total")).
+		FROM(tStamp).
+		WHERE(condition)
 
-	var visibleIDs []int64
-	if err := visibleIDsStmt.QueryContext(ctx, s.db, &visibleIDs); err != nil {
+	var count resourcesdatabase.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil, err
 		}
 	}
-
-	count := resourcesdatabase.DataCount{Total: int64(len(visibleIDs))}
 	pag, limit := q.Pagination.GetResponseWithPageSize(count.Total, stampDefaultPageSize)
 	if count.Total <= 0 {
 		return pag, []*documentsstamps.Stamp{}, nil
-	}
-
-	ids := make([]mysql.Expression, len(visibleIDs))
-	for i := range visibleIDs {
-		ids[i] = mysql.Int64(visibleIDs[i])
 	}
 
 	stmt := mysql.
@@ -86,7 +76,7 @@ func (s *Store) ListUsableStamps(
 			tStamp.CreatedAt,
 		).
 		FROM(tStamp).
-		WHERE(tStamp.ID.IN(ids...)).
+		WHERE(condition).
 		OFFSET(q.Pagination.GetOffset()).
 		ORDER_BY(tStamp.SortKey.ASC(), tStamp.CreatedAt.DESC()).
 		LIMIT(limit)

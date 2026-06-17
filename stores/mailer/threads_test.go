@@ -143,7 +143,7 @@ func TestStoreGetThread(t *testing.T) {
 		`LIMIT ?;`,
 	)
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(int64(7), int64(42), int64(1)).
+		WithArgs(int64(7), int64(42), false, int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"thread.id",
 			"thread.created_at",
@@ -170,7 +170,7 @@ func TestStoreGetThread(t *testing.T) {
 		),
 		)
 
-	thread, err := store.GetThread(t.Context(), db, 42, 7)
+	thread, err := store.GetThread(t.Context(), db, 42, 7, false)
 	require.NoError(t, err)
 	require.NotNil(t, thread)
 	assert.Equal(t, int64(42), thread.GetId())
@@ -201,7 +201,7 @@ func TestStoreListThreadRecipients(t *testing.T) {
 		`email.deleted_at IS NULL`,
 	)
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(int64(42)).
+		WithArgs(int64(42), false).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"thread_recipient_email.id",
 			"thread_recipient_email.thread_id",
@@ -211,7 +211,7 @@ func TestStoreListThreadRecipients(t *testing.T) {
 			"thread_recipient_email.created_at",
 		}).AddRow(int64(9), int64(42), int64(7), int64(7), "sender@example.com", now))
 
-	recipients, err := store.ListThreadRecipients(t.Context(), db, 42)
+	recipients, err := store.ListThreadRecipients(t.Context(), db, 42, false)
 	require.NoError(t, err)
 	require.Len(t, recipients, 1)
 	assert.Equal(t, int64(9), recipients[0].GetId())

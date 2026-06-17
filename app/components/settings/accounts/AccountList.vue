@@ -113,7 +113,7 @@ const meta = computed(
             class: {
                 tr: (row: Row<Account>) => {
                     return row.original.deletedAt
-                        ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-800/10 dark:hover:bg-warning-700/10'
+                        ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-900/10 dark:hover:bg-warning-800/10'
                         : '';
                 },
             },

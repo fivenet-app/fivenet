@@ -1,16 +1,5 @@
 BEGIN;
 
-CREATE TABLE IF NOT EXISTS `fivenet_documents_templates_visibility_creator` (
-  `target_id` bigint unsigned NOT NULL,
-  `creator_id` int NOT NULL,
-  `creator_job` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  PRIMARY KEY (`target_id`),
-  KEY `idx_fivenet_documents_templates_visibility_creator_lookup` (`creator_id`, `creator_job`, `target_id`),
-  KEY `idx_fivenet_documents_templates_visibility_creator_target` (`target_id`, `creator_id`, `creator_job`),
-  CONSTRAINT `fk_fivenet_documents_templates_visibility_creator_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_documents_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
 CREATE TABLE IF NOT EXISTS `fivenet_documents_templates_visibility_subject` (
   `target_id` bigint unsigned NOT NULL,
   `subject_id` bigint unsigned NOT NULL,
@@ -24,12 +13,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_templates_visibility_subject` (
   CONSTRAINT `fk_fivenet_documents_templates_visibility_subject_subject_id` FOREIGN KEY (`subject_id`) REFERENCES `fivenet_acl_subjects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `chk_fivenet_documents_templates_visibility_subject_effect` CHECK (`effect` IN (0, 1))
 ) ENGINE=InnoDB;
-
-INSERT IGNORE INTO `fivenet_documents_templates_visibility_creator` (`target_id`, `creator_id`, `creator_job`)
-SELECT t.`id`, 0, t.`creator_job`
-FROM `fivenet_documents_templates` t
-WHERE t.`deleted_at` IS NULL
-  AND t.`creator_job` <> '';
 
 INSERT IGNORE INTO `fivenet_documents_templates_visibility_subject` (`target_id`, `subject_id`, `access`, `effect`)
 SELECT ta.`target_id`, ta.`subject_id`, ta.`access`, ta.`effect`

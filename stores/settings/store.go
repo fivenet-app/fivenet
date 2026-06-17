@@ -52,7 +52,11 @@ type IStore interface {
 		req *pbsettings.UpdateAccountRequest,
 	) (*pbsettings.UpdateAccountResponse, error)
 	DisconnectSocialLogin(ctx context.Context, accountID int64, provider string) error
-	GetAccountByID(ctx context.Context, accountID int64) (*accounts.Account, error)
+	GetAccountByID(
+		ctx context.Context,
+		accountID int64,
+		includeDeleted bool,
+	) (*accounts.Account, error)
 	DeleteAccount(
 		ctx context.Context,
 		accountID int64,
@@ -67,7 +71,7 @@ type IStore interface {
 	) (*laws.LawBook, error)
 	DeleteLawBook(ctx context.Context, lawbookID int64, deletedAtTime *timestamp.Timestamp) error
 	ReorderLawBooks(ctx context.Context, req *pbsettings.ReorderLawBooksRequest) error
-	GetLawBook(ctx context.Context, lawbookID int64) (*laws.LawBook, error)
+	GetLawBook(ctx context.Context, lawbookID int64, includeDeleted bool) (*laws.LawBook, error)
 	CreateOrUpdateLaw(
 		ctx context.Context,
 		req *pbsettings.CreateOrUpdateLawRequest,
@@ -75,7 +79,7 @@ type IStore interface {
 	) (*laws.Law, []int64, error)
 	DeleteLaw(ctx context.Context, lawID int64, deletedAtTime *timestamp.Timestamp) error
 	ReorderLaws(ctx context.Context, req *pbsettings.ReorderLawsRequest) error
-	GetLaw(ctx context.Context, lawId int64) (*laws.Law, error)
+	GetLaw(ctx context.Context, lawId int64, includeDeleted bool) (*laws.Law, error)
 	SetJobProps(ctx context.Context, props *jobsprops.JobProps) error
 	DeleteJobProps(ctx context.Context, job string) error
 }

@@ -19,6 +19,7 @@ func TestCalendarEntriesQueryOmitLimitWhenNil(t *testing.T) {
 		&userinfo.UserInfo{UserId: 1},
 		mysql.Bool(true),
 		mysql.Bool(true),
+		false,
 		nil,
 	)
 
@@ -33,6 +34,7 @@ func TestCalendarEntriesQueryUsesExplicitLimit(t *testing.T) {
 		&userinfo.UserInfo{UserId: 1},
 		mysql.Bool(true),
 		mysql.Bool(true),
+		false,
 		new(maxCalendarEntriesLimit),
 	)
 

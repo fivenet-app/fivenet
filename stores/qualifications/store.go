@@ -78,6 +78,7 @@ type IStore interface {
 		ctx context.Context,
 		qualificationId int64,
 		userId int32,
+		userInfo *userinfo.UserInfo,
 		includePhoneNumber bool,
 	) (*resqualifications.QualificationRequest, error)
 	ListQualificationsResults(

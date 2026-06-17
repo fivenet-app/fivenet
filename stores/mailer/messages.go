@@ -19,14 +19,22 @@ type MessageListQuery struct {
 	Limit    int64
 }
 
-func (s *Store) CountThreadMessages(ctx context.Context, q qrm.DB, threadID int64) (int64, error) {
+func (s *Store) CountThreadMessages(
+	ctx context.Context,
+	q qrm.DB,
+	threadID int64,
+	includeDeleted bool,
+) (int64, error) {
 	countStmt := tMessages.
 		SELECT(
 			mysql.COUNT(mysql.DISTINCT(tMessages.ID)).AS("data_count.total"),
 		).
 		FROM(tMessages).
 		WHERE(mysql.AND(
-			tMessages.DeletedAt.IS_NULL(),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tMessages.DeletedAt.IS_NULL(),
+			),
 			tMessages.ThreadID.EQ(mysql.Int64(threadID)),
 		))
 
@@ -44,6 +52,7 @@ func (s *Store) ListThreadMessages(
 	ctx context.Context,
 	q qrm.DB,
 	in MessageListQuery,
+	includeDeleted bool,
 ) ([]*mailermessages.Message, error) {
 	stmt := tMessages.
 		SELECT(
@@ -67,9 +76,15 @@ func (s *Store) ListThreadMessages(
 				),
 		).
 		WHERE(mysql.AND(
-			tMessages.DeletedAt.IS_NULL(),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tMessages.DeletedAt.IS_NULL(),
+			),
 			tMessages.ThreadID.EQ(mysql.Int64(in.ThreadID)),
-			tEmails.DeletedAt.IS_NULL(),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tEmails.DeletedAt.IS_NULL(),
+			),
 		)).
 		OFFSET(in.Offset).
 		ORDER_BY(tMessages.CreatedAt.DESC()).
@@ -89,6 +104,7 @@ func (s *Store) GetMessage(
 	ctx context.Context,
 	q qrm.DB,
 	messageID int64,
+	includeDeleted bool,
 ) (*mailermessages.Message, error) {
 	stmt := tMessages.
 		SELECT(
@@ -106,7 +122,13 @@ func (s *Store) GetMessage(
 			tMessages.CreatorEmail.AS("sender.email"),
 		).
 		FROM(tMessages).
-		WHERE(tMessages.ID.EQ(mysql.Int64(messageID))).
+		WHERE(mysql.AND(
+			tMessages.ID.EQ(mysql.Int64(messageID)),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tMessages.DeletedAt.IS_NULL(),
+			),
+		)).
 		LIMIT(1)
 
 	message := &mailermessages.Message{}

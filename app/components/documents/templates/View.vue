@@ -270,12 +270,12 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                             <UFormField v-if="template.contentAccess" :label="$t('common.access')">
                                 <AccessManager
                                     v-model:jobs="template.contentAccess.jobs"
-                                     :target-id="templateId ?? 0"
-                                     :access-types="contentAccessTypes"
-                                     :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                     disabled
-                                     required-mode="badge"
-                                 />
+                                    :target-id="templateId ?? 0"
+                                    :access-types="contentAccessTypes"
+                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
+                                    disabled
+                                    required-mode="badge"
+                                />
                             </UFormField>
                         </UPageCard>
 

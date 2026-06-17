@@ -18,7 +18,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-const documentAccessEntryLimit = 20
+const documentAccessEntryLimit = 15
 
 func canUserAccessDocument(
 	ctx context.Context,
@@ -159,7 +159,7 @@ func (s *Server) normalizeDocumentAccess(
 		documentAccessEntryLimit,
 	)
 	if err != nil {
-		if isAccessEntryLimitError(err) {
+		if _, ok := errors.AsType[access.AccessEntryLimitError](err); ok {
 			return nil, errorsdocuments.ErrDocRequiredAccessTemplate
 		}
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -263,9 +263,4 @@ func (s *Server) handleDocumentAccessChange(
 	}
 
 	return nil
-}
-
-func isAccessEntryLimitError(err error) bool {
-	var limitErr *access.AccessEntryLimitError
-	return errors.As(err, &limitErr)
 }

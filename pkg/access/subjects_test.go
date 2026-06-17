@@ -22,6 +22,7 @@ func TestSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 			JobGrade: 6,
 		},
 		2,
+		false,
 		10,
 		11,
 	)
@@ -57,6 +58,7 @@ func TestSubjectObjectAccessCountStatementShape(t *testing.T) {
 			JobGrade: 6,
 		},
 		2,
+		false,
 		table.FivenetDocuments.ID.GT(mysql.Int(0)),
 	)
 
@@ -71,6 +73,29 @@ func TestSubjectObjectAccessCountStatementShape(t *testing.T) {
 	assert.Contains(t, sql, "fivenet_documents.deleted_at IS NULL")
 }
 
+func TestSubjectObjectAccessCountStatementIncludesDeletedForSuperuser(t *testing.T) {
+	t.Parallel()
+
+	access := NewDocumentsSubjectObjectAccess(nil)
+
+	stmt := access.CountVisibleByConditionStatement(
+		&userinfo.UserInfo{
+			UserId:    1,
+			Job:       "admin",
+			JobGrade:  10,
+			Superuser: true,
+		},
+		2,
+		true,
+		table.FivenetDocuments.ID.GT(mysql.Int(0)),
+	)
+
+	sql, _ := stmt.Sql()
+
+	assert.NotContains(t, sql, "fivenet_documents.deleted_at IS NULL")
+	assert.Contains(t, sql, "COUNT(visible_ids.id) AS \"exact_total\"")
+}
+
 func TestWikiPageSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 	t.Parallel()
 
@@ -83,6 +108,7 @@ func TestWikiPageSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 			JobGrade: 6,
 		},
 		2,
+		false,
 		10,
 		11,
 	)

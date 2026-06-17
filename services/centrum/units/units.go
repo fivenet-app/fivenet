@@ -805,12 +805,17 @@ func (s *UnitDB) CreateUnit(
 		return nil, err
 	}
 
+	normalizedAccess, err := access.NormalizeAccess(unit.GetAccess(), nil, nil, 15)
+	if err != nil {
+		return nil, err
+	}
+
 	if _, err := s.unitAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
 		s.unitAccessResolver,
 		unit.GetId(),
-		unit.GetAccess(),
+		normalizedAccess,
 		unitSubjectAccessOptions,
 	); err != nil {
 		return nil, err
@@ -872,12 +877,17 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrumunits.Unit) (*centrumu
 		return nil, err
 	}
 
+	normalizedAccess, err := access.NormalizeAccess(unit.GetAccess(), nil, nil, 15)
+	if err != nil {
+		return nil, err
+	}
+
 	if _, err := s.unitAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
 		s.unitAccessResolver,
 		unit.GetId(),
-		unit.GetAccess(),
+		normalizedAccess,
 		unitSubjectAccessOptions,
 	); err != nil {
 		return nil, err

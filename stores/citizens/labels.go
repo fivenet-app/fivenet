@@ -30,76 +30,60 @@ func (s *Store) ListLabels(
 	minAccess int32,
 	includeDeleted bool,
 ) (*citizenslabels.Labels, error) {
-	if userInfo == nil {
-		userInfo = &userinfo.UserInfo{}
-	}
-
-	labelTable := tCitizensLabelsJob.AS("label")
-	baseLabel := tCitizensLabelsJob
-	condition := mysql.Bool(true)
-	if !userInfo.GetSuperuser() {
-		condition = condition.AND(baseLabel.DeletedAt.IS_NULL())
-	}
+	tLabel := tCitizensLabelsJob.AS("label")
+	visibilityCondition := tLabel.DeletedAt.IS_NULL()
 
 	if search = dbutils.PrepareForLikeSearch(search); search != "" {
-		condition = condition.AND(baseLabel.Name.LIKE(mysql.String(search)))
+		visibilityCondition = visibilityCondition.AND(tLabel.Name.LIKE(mysql.String(search)))
 	}
 
 	if ownJobOnly && canCreateLabel {
-		condition = condition.AND(baseLabel.Job.EQ(mysql.String(userInfo.GetJob())))
+		visibilityCondition = visibilityCondition.AND(
+			tLabel.Job.EQ(mysql.String(userInfo.GetJob())),
+		)
 	} else if userInfo.GetSuperuser() {
-		condition = condition.AND(baseLabel.Job.EQ(mysql.String(userInfo.GetJob())))
+		visibilityCondition = visibilityCondition.AND(
+			tLabel.Job.EQ(mysql.String(userInfo.GetJob())),
+		)
 	} else {
-		jobAccessExists := s.labelsAccess.ACLAccessExistsCondition(
-			labelTable.ID,
+		visibilityCondition = visibilityCondition.AND(s.labelsAccess.ACLAccessExistsCondition(
+			tLabel.ID,
 			userInfo,
 			minAccess,
-		)
-		condition = condition.AND(jobAccessExists)
+		))
 	}
-
-	visibleQuery := s.labelsAccess.VisibleIDsByConditionQuery(
-		userInfo,
-		int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW),
-		condition,
-	)
-	visibleIDs := mysql.SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
-		FROM(visibleQuery.Table)
 
 	columns := mysql.ProjectionList{
-		labelTable.ID,
-		labelTable.CreatedAt,
-		labelTable.SortOrder,
-		labelTable.Name,
-		labelTable.Color,
-		labelTable.Icon,
-		labelTable.Settings,
+		tLabel.ID,
+		tLabel.CreatedAt,
+		tLabel.SortOrder,
+		tLabel.Name,
+		tLabel.Color,
+		tLabel.Icon,
+		tLabel.Settings,
 	}
 	if includeDeleted {
-		columns = append(columns, labelTable.DeletedAt)
+		columns = append(columns, tLabel.DeletedAt)
 	}
 
-	var stmt mysql.Statement = labelTable.
+	var stmt mysql.Statement = tLabel.
 		SELECT(columns[0], columns[1:]...).
-		FROM(labelTable).
-		WHERE(labelTable.ID.IN(visibleIDs)).
+		FROM(tLabel).
+		WHERE(visibilityCondition).
 		GROUP_BY(
-			labelTable.ID,
-			labelTable.CreatedAt,
-			labelTable.Name,
-			labelTable.Color,
-			labelTable.Icon,
-			labelTable.Settings,
-			labelTable.SortKey,
+			tLabel.ID,
+			tLabel.CreatedAt,
+			tLabel.Name,
+			tLabel.Color,
+			tLabel.Icon,
+			tLabel.Settings,
+			tLabel.SortKey,
 		).
 		ORDER_BY(
-			labelTable.SortOrder.ASC(),
-			labelTable.SortKey.ASC(),
+			tLabel.SortOrder.ASC(),
+			tLabel.SortKey.ASC(),
 		).
 		LIMIT(20)
-	if len(visibleQuery.CTEs) > 0 {
-		stmt = mysql.WITH(visibleQuery.CTEs...)(stmt)
-	}
 
 	resp := &citizenslabels.Labels{
 		List: []*citizenslabels.Label{},
@@ -144,6 +128,7 @@ func (s *Store) GetLabel(
 	q qrm.Queryable,
 	job string,
 	labelId int64,
+	includeDeleted bool,
 ) (*citizenslabels.Label, error) {
 	tCitizensLabelsJob := tCitizensLabelsJob.AS("label")
 
@@ -164,6 +149,10 @@ func (s *Store) GetLabel(
 		WHERE(mysql.AND(
 			tCitizensLabelsJob.ID.EQ(mysql.Int64(labelId)),
 			tCitizensLabelsJob.Job.EQ(mysql.String(job)),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tCitizensLabelsJob.DeletedAt.IS_NULL(),
+			),
 		)).
 		LIMIT(1)
 
@@ -384,12 +373,12 @@ func (s *Store) GetUserLabelsForUser(
 	userInfo *userinfo.UserInfo,
 	userId int32,
 ) (*citizenslabels.Labels, error) {
-	if userInfo == nil {
-		userInfo = &userinfo.UserInfo{}
-	}
-
+	includeDeleted := userInfo.GetSuperuser()
 	condition := mysql.AND(
-		tCitizensLabelsJob.DeletedAt.IS_NULL(),
+		mysql.OR(
+			mysql.Bool(includeDeleted),
+			tCitizensLabelsJob.DeletedAt.IS_NULL(),
+		),
 		tCitizenLabels.UserID.EQ(mysql.Int32(userId)),
 	)
 	if !userInfo.GetSuperuser() {

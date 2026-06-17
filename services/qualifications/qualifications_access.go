@@ -6,6 +6,7 @@ import (
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -30,6 +31,24 @@ func qualificationJobAccess(
 	jobs []*qualificationsaccess.QualificationJobAccess,
 ) *resourcesaccess.Access {
 	return &resourcesaccess.Access{Jobs: jobs}
+}
+
+func normalizeQualificationJobAccess(
+	userInfo *userinfo.UserInfo,
+	jobs []*qualificationsaccess.QualificationJobAccess,
+) (*resourcesaccess.Access, error) {
+	return access.NormalizeAccess(
+		qualificationJobAccess(jobs),
+		nil,
+		&resourcesaccess.Access{
+			Jobs: []*resourcesaccess.JobAccess{{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: userInfo.GetJobGrade(),
+				Access:       int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+			}},
+		},
+		15,
+	)
 }
 
 func (s *Server) GetQualificationAccess(
@@ -114,12 +133,20 @@ func (s *Server) SetQualificationAccess(
 	defer tx.Rollback()
 
 	if req.GetAccess() != nil {
+		normalizedAccess, err := normalizeQualificationJobAccess(
+			userInfo,
+			req.GetAccess().GetJobs(),
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+
 		if _, err := s.access.ReplaceTargetAccess(
 			ctx,
 			tx,
 			s.accessResolver,
 			req.GetQualificationId(),
-			qualificationJobAccess(req.GetAccess().GetJobs()),
+			normalizedAccess,
 			qualificationSubjectAccessOptions,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

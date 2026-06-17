@@ -196,19 +196,18 @@ watchDebounced(
 function setFromProps(): void {
     if (!page.value) return;
 
-    state.parentId = page.value?.parentId ?? 0;
-    state.meta.title = page.value.meta?.title ?? '';
-    state.meta.description = page.value.meta?.description ?? '';
-    state.content = contentToTiptapValue(page.value.content);
-    state.meta.toc = page.value.meta?.toc ?? true;
-    state.meta.draft = page.value.meta?.draft ?? true;
-    state.meta.public = page.value.meta?.public ?? false;
-    state.meta.startpage = page.value.meta?.startpage ?? false;
-    if (page.value.access) {
-        state.access.jobs = page.value.access.jobs;
-        state.access.users = page.value.access.users;
-    }
-    state.files = page.value.files;
+    const input = JSON.parse(JSON.stringify(page.value)) as Page;
+
+    state.parentId = input?.parentId ?? 0;
+    state.meta.title = input.meta?.title ?? '';
+    state.meta.description = input.meta?.description ?? '';
+    state.content = contentToTiptapValue(input.content);
+    state.meta.toc = input.meta?.toc ?? true;
+    state.meta.draft = input.meta?.draft ?? true;
+    state.meta.public = input.meta?.public ?? false;
+    state.meta.startpage = input.meta?.startpage ?? false;
+    state.access = input.access ?? { jobs: [], qualifications: [], users: [] };
+    state.files = input.files;
 
     syncSnapshot();
 }

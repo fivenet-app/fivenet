@@ -216,7 +216,7 @@ const links = computed<NavigationMenuItem[]>(() =>
             },
             kbds: ['G', 'W'],
             permission: 'centrum.CentrumService/TakeControl' as Perms,
-            active: route.name.startsWith('centrum'),
+            active: route.name.startsWith('dispatch') || route.name.startsWith('centrum'),
         },
         {
             label: t('common.wiki'),

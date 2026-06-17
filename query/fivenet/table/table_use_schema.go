@@ -62,7 +62,6 @@ func UseSchema(schema string) {
 	FivenetDocumentsStatsMetric = FivenetDocumentsStatsMetric.FromSchema(schema)
 	FivenetDocumentsTemplates = FivenetDocumentsTemplates.FromSchema(schema)
 	FivenetDocumentsTemplatesAccess = FivenetDocumentsTemplatesAccess.FromSchema(schema)
-	FivenetDocumentsTemplatesVisibilityCreator = FivenetDocumentsTemplatesVisibilityCreator.FromSchema(schema)
 	FivenetDocumentsTemplatesVisibilitySubject = FivenetDocumentsTemplatesVisibilitySubject.FromSchema(schema)
 	FivenetDocumentsWorkflowState = FivenetDocumentsWorkflowState.FromSchema(schema)
 	FivenetDocumentsWorkflowUsers = FivenetDocumentsWorkflowUsers.FromSchema(schema)

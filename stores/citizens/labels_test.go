@@ -24,10 +24,11 @@ func TestStoreListLabels(t *testing.T) {
 	store := New(db, &config.CustomDB{})
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user_labels_job AS label`) +
-		`(?s).*` + regexp.QuoteMeta(`WHERE label.id IN (( SELECT doc_ids.id AS "id" FROM (`) +
+		`(?s).*` + regexp.QuoteMeta(`label.deleted_at IS NULL`) +
+		`(?s).*` + regexp.QuoteMeta(`label.job = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`ORDER BY label.sort_order ASC, label.sort_key ASC LIMIT ?;`)
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), int64(20)).
+		WithArgs("police", int64(20)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"label.id",
 			"label.created_at",
@@ -49,7 +50,7 @@ func TestStoreListLabels(t *testing.T) {
 	labels, err := store.ListLabels(
 		t.Context(),
 		db,
-		&userinfo.UserInfo{Superuser: true},
+		&userinfo.UserInfo{Superuser: true, Job: "police"},
 		"",
 		false,
 		false,

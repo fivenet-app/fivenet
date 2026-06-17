@@ -86,6 +86,9 @@ func (s *Server) GetQualification(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	if !userInfo.GetSuperuser() && quali.GetDeletedAt() != nil {
+		return nil, errorsqualifications.ErrQualiViewDenied
+	}
 
 	if !check && !userInfo.GetSuperuser() && !quali.GetPublic() {
 		return nil, errorsqualifications.ErrFailedQuery
@@ -235,12 +238,17 @@ func (s *Server) CreateQualification(
 		})
 	}
 
+	normalizedAccess, err := normalizeQualificationJobAccess(userInfo, jobAccess)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
 	if _, err := s.access.ReplaceTargetAccess(
 		ctx,
 		tx,
 		s.accessResolver,
 		lastId,
-		qualificationJobAccess(jobAccess),
+		normalizedAccess,
 		qualificationSubjectAccessOptions,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -348,12 +356,20 @@ func (s *Server) UpdateQualification(
 	}
 
 	if req.GetQualification().GetAccess() != nil {
+		normalizedAccess, err := normalizeQualificationJobAccess(
+			userInfo,
+			req.GetQualification().GetAccess().GetJobs(),
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+
 		if _, err := s.access.ReplaceTargetAccess(
 			ctx,
 			tx,
 			s.accessResolver,
 			req.GetQualification().GetId(),
-			qualificationJobAccess(req.GetQualification().GetAccess().GetJobs()),
+			normalizedAccess,
 			qualificationSubjectAccessOptions,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

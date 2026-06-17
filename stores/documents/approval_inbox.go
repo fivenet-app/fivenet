@@ -7,7 +7,6 @@ import (
 	resourcesdatabase "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsapproval "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/approval"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -17,26 +16,27 @@ func (s *Store) ListApprovalTasksInbox(
 	ctx context.Context,
 	q ListApprovalTasksInboxQuery,
 ) (resourcesdatabase.DataCount, []*documentsapproval.ApprovalTask, error) {
-	if q.Pagination == nil {
-		q.Pagination = &resourcesdatabase.PaginationRequest{}
-	}
-	if q.UserInfo == nil {
-		q.UserInfo = &userinfo.UserInfo{}
-	}
-
 	tApprovalTasks := table.FivenetDocumentsApprovalTasks.AS("approval_task")
 	tApprovals := table.FivenetDocumentsApprovals
 	tDocumentShort := table.FivenetDocuments.AS("document_short")
 	tDMeta := table.FivenetDocumentsMeta.AS("meta")
 
-	visibleQuery := s.subjectAccess.VisibleIDsByConditionQuery(
-		q.UserInfo,
-		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-		table.FivenetDocuments.DeletedAt.IS_NULL(),
-	)
-	visibleIDs := mysql.
-		SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
-		FROM(visibleQuery.Table)
+	visibilityCondition := mysql.Bool(true)
+	if !q.UserInfo.GetSuperuser() {
+		visibilityCondition = visibilityCondition.AND(tDocumentShort.DeletedAt.IS_NULL())
+		visibilityCondition = visibilityCondition.AND(mysql.OR(
+			tDocumentShort.Public.IS_TRUE(),
+			mysql.AND(
+				tDocumentShort.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
+				tDocumentShort.CreatorJob.EQ(mysql.String(q.UserInfo.GetJob())),
+			),
+			s.subjectAccess.ACLAccessExistsCondition(
+				tDocumentShort.ID,
+				q.UserInfo,
+				int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			),
+		))
+	}
 
 	eligible := mysql.OR(
 		mysql.AND(
@@ -121,8 +121,7 @@ func (s *Store) ListApprovalTasksInbox(
 	)
 
 	condition := mysql.AND(
-		tDocumentShort.DeletedAt.IS_NULL(),
-		tApprovalTasks.DocumentID.IN(visibleIDs),
+		visibilityCondition,
 		eligible,
 		notAlreadyActed,
 		onlyFirstSlot,
@@ -140,9 +139,6 @@ func (s *Store) ListApprovalTasksInbox(
 				INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(tApprovalTasks.DocumentID)),
 		).
 		WHERE(condition)
-	if len(visibleQuery.CTEs) > 0 {
-		countStmt = mysql.WITH(visibleQuery.CTEs...)(countStmt)
-	}
 
 	var count resourcesdatabase.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -219,9 +215,6 @@ func (s *Store) ListApprovalTasksInbox(
 		OFFSET(q.Pagination.GetOffset()).
 		ORDER_BY(tApprovalTasks.CreatedAt.ASC()).
 		LIMIT(20)
-	if len(visibleQuery.CTEs) > 0 {
-		stmt = mysql.WITH(visibleQuery.CTEs...)(stmt)
-	}
 
 	var tasks []*documentsapproval.ApprovalTask
 	if err := stmt.QueryContext(ctx, s.db, &tasks); err != nil {

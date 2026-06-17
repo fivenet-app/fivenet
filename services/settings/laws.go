@@ -61,7 +61,7 @@ func (s *Server) DeleteLawBook(
 ) (*pbsettings.DeleteLawBookResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	lawBook, err := s.store.GetLawBook(ctx, req.GetId())
+	lawBook, err := s.store.GetLawBook(ctx, req.GetId(), userInfo.GetSuperuser())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -138,7 +138,7 @@ func (s *Server) DeleteLaw(
 ) (*pbsettings.DeleteLawResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	law, err := s.store.GetLaw(ctx, req.GetId())
+	law, err := s.store.GetLaw(ctx, req.GetId(), userInfo.GetSuperuser())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}

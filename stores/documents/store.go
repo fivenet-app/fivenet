@@ -36,7 +36,11 @@ type IStore interface {
 		ctx context.Context,
 		userInfo *userinfo.UserInfo,
 	) ([]*documentstemplates.TemplateShort, error)
-	GetTemplate(ctx context.Context, templateID int64) (*documentstemplates.Template, error)
+	GetTemplate(
+		ctx context.Context,
+		templateID int64,
+		includeDeleted bool,
+	) (*documentstemplates.Template, error)
 	GetDocumentAccess(
 		ctx context.Context,
 		documentID int64,
@@ -209,10 +213,12 @@ type IStore interface {
 	GetDocumentReference(
 		ctx context.Context,
 		id int64,
+		includeDeleted bool,
 	) (*documentsreferences.DocumentReference, error)
 	ListDocumentReferences(
 		ctx context.Context,
 		documentID int64,
+		includeDeleted bool,
 	) ([]*documentsreferences.DocumentReference, error)
 	CreateDocumentReference(
 		ctx context.Context,
@@ -220,10 +226,15 @@ type IStore interface {
 		ref *documentsreferences.DocumentReference,
 	) (int64, error)
 	DeleteDocumentReference(ctx context.Context, tx qrm.DB, id int64) error
-	GetDocumentRelation(ctx context.Context, id int64) (*documentsrelations.DocumentRelation, error)
+	GetDocumentRelation(
+		ctx context.Context,
+		id int64,
+		includeDeleted bool,
+	) (*documentsrelations.DocumentRelation, error)
 	ListDocumentRelations(
 		ctx context.Context,
 		documentID int64,
+		includeDeleted bool,
 	) ([]*documentsrelations.DocumentRelation, error)
 	CreateDocumentRelation(
 		ctx context.Context,
@@ -291,7 +302,13 @@ type IStore interface {
 		tmpl *documentstemplates.Template,
 		categoryID *int64,
 	) error
-	DeleteTemplate(ctx context.Context, tx qrm.DB, templateID int64, creatorJob string) error
+	DeleteTemplate(
+		ctx context.Context,
+		tx qrm.DB,
+		templateID int64,
+		creatorJob string,
+		deletedAtTime *timestamp.Timestamp,
+	) error
 	UpdateDocumentOwner(
 		ctx context.Context,
 		tx qrm.DB,

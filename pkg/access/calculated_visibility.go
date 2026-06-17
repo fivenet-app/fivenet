@@ -23,6 +23,7 @@ type visibilityRowsStatement interface {
 func (b *calculatedVisibilityBackend) VisibleIDsQuery(
 	userInfo *userinfo.UserInfo,
 	access int32,
+	includeDeleted bool,
 	targetIDs ...int64,
 ) VisibilityQuery {
 	ids := make([]mysql.Expression, 0, len(targetIDs))
@@ -31,50 +32,51 @@ func (b *calculatedVisibilityBackend) VisibleIDsQuery(
 	}
 
 	condition := b.access.targetTableColumns.ID.IN(ids...)
-	return b.VisibleIDsByConditionQuery(userInfo, access, condition)
+	return b.VisibleIDsByConditionQuery(userInfo, access, includeDeleted, condition)
 }
 
 func (b *calculatedVisibilityBackend) VisibleIDsStatement(
 	userInfo *userinfo.UserInfo,
 	access int32,
+	includeDeleted bool,
 	targetIDs ...int64,
 ) mysql.Statement {
-	query := b.VisibleIDsQuery(userInfo, access, targetIDs...)
+	query := b.VisibleIDsQuery(userInfo, access, includeDeleted, targetIDs...)
 	return b.idOnlyStatement(query)
 }
 
 func (b *calculatedVisibilityBackend) VisibleIDsByConditionStatement(
 	userInfo *userinfo.UserInfo,
 	access int32,
+	includeDeleted bool,
 	condition mysql.BoolExpression,
 ) mysql.Statement {
-	query := b.VisibleIDsByConditionQuery(userInfo, access, condition)
+	query := b.VisibleIDsByConditionQuery(userInfo, access, includeDeleted, condition)
 	return b.idOnlyStatement(query)
 }
 
 func (b *calculatedVisibilityBackend) ACLVisibleIDsByConditionStatement(
 	userInfo *userinfo.UserInfo,
 	access int32,
+	includeDeleted bool,
 	condition mysql.BoolExpression,
 ) mysql.Statement {
-	query := b.ACLVisibleIDsByConditionQuery(userInfo, access, condition)
+	query := b.ACLVisibleIDsByConditionQuery(userInfo, access, includeDeleted, condition)
 	return b.idOnlyStatement(query)
 }
 
 func (b *calculatedVisibilityBackend) CountVisibleByConditionStatement(
 	userInfo *userinfo.UserInfo,
 	access int32,
+	includeDeleted bool,
 	condition mysql.BoolExpression,
 ) mysql.Statement {
-	if userInfo == nil {
-		userInfo = &userinfo.UserInfo{}
-	}
-	condition = b.access.normalizeTargetCondition(condition)
+	condition = b.access.normalizeTargetCondition(condition, includeDeleted)
 	if userInfo.GetSuperuser() {
 		return b.access.countTargetIDsStatement(condition)
 	}
 
-	query := b.VisibleIDsByConditionQuery(userInfo, access, condition)
+	query := b.VisibleIDsByConditionQuery(userInfo, access, includeDeleted, condition)
 	visibleID := mysql.IntegerColumn("id").From(query.Table)
 	countSelect := mysql.SELECT(mysql.COUNT(visibleID).AS("exact_total")).FROM(query.Table)
 	if len(query.CTEs) == 0 {
@@ -185,12 +187,10 @@ func (b *calculatedVisibilityBackend) RefreshTargetVisibilityWithCreator(
 func (b *calculatedVisibilityBackend) VisibleIDsByConditionQuery(
 	userInfo *userinfo.UserInfo,
 	access int32,
+	includeDeleted bool,
 	condition mysql.BoolExpression,
 ) VisibilityQuery {
-	if userInfo == nil {
-		userInfo = &userinfo.UserInfo{}
-	}
-	condition = b.access.normalizeTargetCondition(condition)
+	condition = b.access.normalizeTargetCondition(condition, includeDeleted)
 	if userInfo.GetSuperuser() {
 		rows := b.visibleTargetRowsSelect(condition)
 		return VisibilityQuery{Table: rows.AsTable("doc_ids"), Statement: rows}
@@ -217,12 +217,10 @@ func (b *calculatedVisibilityBackend) VisibleIDsByConditionQuery(
 func (b *calculatedVisibilityBackend) ACLVisibleIDsByConditionQuery(
 	userInfo *userinfo.UserInfo,
 	access int32,
+	includeDeleted bool,
 	condition mysql.BoolExpression,
 ) VisibilityQuery {
-	if userInfo == nil {
-		userInfo = &userinfo.UserInfo{}
-	}
-	condition = b.access.normalizeTargetCondition(condition)
+	condition = b.access.normalizeTargetCondition(condition, includeDeleted)
 	if userInfo.GetSuperuser() {
 		rows := b.visibleTargetRowsSelect(condition)
 		return VisibilityQuery{Table: rows.AsTable("doc_ids"), Statement: rows}
@@ -512,15 +510,18 @@ func (b *calculatedVisibilityBackend) loadTargetRow(
 	targetID int64,
 ) (*calculatedVisibilityTargetRow, error) {
 	columns := []mysql.Projection{
-		b.access.targetTableColumns.ID.AS("id"),
+		b.access.targetTableColumns.ID.AS("calculatedvisibilitytargetrow.id"),
 	}
 	if b.access.targetTableColumns.Public != nil {
-		columns = append(columns, b.access.targetTableColumns.Public.AS("public"))
+		columns = append(
+			columns,
+			b.access.targetTableColumns.Public.AS("calculatedvisibilitytargetrow.public"),
+		)
 	}
 	if b.access.targetTableColumns.CreatorID != nil {
 		columns = append(columns,
-			b.access.targetTableColumns.CreatorID.AS("creator_id"),
-			b.access.targetTableColumns.CreatorJob.AS("creator_job"),
+			b.access.targetTableColumns.CreatorID.AS("calculatedvisibilitytargetrow.creator_id"),
+			b.access.targetTableColumns.CreatorJob.AS("calculatedvisibilitytargetrow.creator_job"),
 		)
 	}
 
@@ -560,8 +561,8 @@ func (b *calculatedVisibilityBackend) loadTargetCreatorRow(
 	targetID int64,
 ) (*calculatedVisibilityCreatorRow, error) {
 	stmt := mysql.SELECT(
-		b.access.targetTableColumns.CreatorID.AS("creator_id"),
-		b.access.targetTableColumns.CreatorJob.AS("creator_job"),
+		b.access.targetTableColumns.CreatorID.AS("calculatedvisibilitycreatorrow.creator_id"),
+		b.access.targetTableColumns.CreatorJob.AS("calculatedvisibilitycreatorrow.creator_job"),
 	).
 		FROM(b.access.targetTable).
 		WHERE(b.access.targetTableColumns.ID.EQ(mysql.Int64(targetID))).
@@ -593,9 +594,9 @@ func (b *calculatedVisibilityBackend) loadACLRows(
 ) ([]calculatedVisibilityACLRow, error) {
 	stmt := b.access.accessTable.
 		SELECT(
-			b.access.accessColumns.SubjectID.AS("subject_id"),
-			b.access.accessColumns.Access.AS("access"),
-			b.access.accessColumns.Effect.AS("effect"),
+			b.access.accessColumns.SubjectID.AS("calculatedvisibilityaclrow.subject_id"),
+			b.access.accessColumns.Access.AS("calculatedvisibilityaclrow.access"),
+			b.access.accessColumns.Effect.AS("calculatedvisibilityaclrow.effect"),
 		).
 		FROM(b.access.accessTable).
 		WHERE(b.access.accessColumns.TargetID.EQ(mysql.Int64(targetID))).

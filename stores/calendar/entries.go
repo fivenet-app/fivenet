@@ -82,6 +82,7 @@ func calendarEntriesQuery(
 	userInfo *userinfo.UserInfo,
 	condition mysql.BoolExpression,
 	visibility mysql.BoolExpression,
+	includeDeleted bool,
 	limit *int64,
 ) mysql.SelectStatement {
 	tCreator := table.FivenetUser.AS("creator")
@@ -131,7 +132,10 @@ func calendarEntriesQuery(
 			INNER_JOIN(tCalendar,
 				mysql.AND(
 					tCalendar.ID.EQ(tCalendarEntry.CalendarID),
-					tCalendar.DeletedAt.IS_NULL(),
+					mysql.OR(
+						mysql.Bool(includeDeleted),
+						tCalendar.DeletedAt.IS_NULL(),
+					),
 				),
 			).
 			LEFT_JOIN(tCreator,
@@ -152,6 +156,10 @@ func calendarEntriesQuery(
 		).
 		WHERE(mysql.AND(
 			visibility,
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tCalendarEntry.DeletedAt.IS_NULL(),
+			),
 			condition,
 		)).
 		ORDER_BY(
@@ -175,9 +183,9 @@ func (s *Store) ListCalendarEntries(
 	if opts.ShowHidden {
 		rsvpResponse = calendarentries.RsvpResponses_RSVP_RESPONSES_UNSPECIFIED
 	}
+	includeDeleted := userInfo.GetSuperuser()
 
 	condition := mysql.AND(
-		tCalendarEntry.DeletedAt.IS_NULL(),
 		mysql.OR(
 			tCalendar.ID.IN(
 				tCalendarSubs.
@@ -295,6 +303,7 @@ func (s *Store) ListCalendarEntries(
 		startDate,
 		endDate,
 		new(maxCalendarEntriesLimit),
+		includeDeleted,
 	)
 	if err != nil {
 		return nil, err
@@ -312,6 +321,7 @@ func (s *Store) ListCalendarEntries(
 		startDate,
 		endDate,
 		nil,
+		includeDeleted,
 	)
 	if err != nil {
 		return nil, err
@@ -327,9 +337,9 @@ func (s *Store) GetUpcomingEntries(
 ) ([]*calendarentries.CalendarEntry, error) {
 	rangeStart := time.Now().Add(-1 * time.Minute)
 	rangeEnd := time.Now().Add(time.Duration(opts.Seconds) * time.Second)
+	includeDeleted := userInfo.GetSuperuser()
 
 	condition := mysql.AND(
-		tCalendarEntry.DeletedAt.IS_NULL(),
 		mysql.OR(
 			tCalendarEntry.ID.IN(
 				tCalendarRSVP.
@@ -390,6 +400,7 @@ func (s *Store) GetUpcomingEntries(
 		rangeStart,
 		rangeEnd,
 		new(maxCalendarEntriesLimit),
+		includeDeleted,
 	)
 	if err != nil {
 		return nil, err
@@ -407,6 +418,7 @@ func (s *Store) GetUpcomingEntries(
 		rangeStart,
 		rangeEnd,
 		nil,
+		includeDeleted,
 	)
 	if err != nil {
 		return nil, err
@@ -422,6 +434,7 @@ func (s *Store) GetEntry(
 ) (*calendarentries.CalendarEntry, error) {
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
+	includeDeleted := userInfo.GetSuperuser()
 
 	stmt := tCalendarEntry.
 		SELECT(
@@ -467,7 +480,10 @@ func (s *Store) GetEntry(
 			INNER_JOIN(tCalendar,
 				mysql.AND(
 					tCalendar.ID.EQ(tCalendarEntry.CalendarID),
-					tCalendar.DeletedAt.IS_NULL(),
+					mysql.OR(
+						mysql.Bool(includeDeleted),
+						tCalendar.DeletedAt.IS_NULL(),
+					),
 				),
 			).
 			LEFT_JOIN(tCreator,
@@ -637,8 +653,9 @@ func (s *Store) loadExpandedCalendarEntries(
 	visibility mysql.BoolExpression,
 	rangeStart, rangeEnd time.Time,
 	limit *int64,
+	includeDeleted bool,
 ) ([]*calendarentries.CalendarEntry, error) {
-	stmt := calendarEntriesQuery(userInfo, condition, visibility, limit)
+	stmt := calendarEntriesQuery(userInfo, condition, visibility, includeDeleted, limit)
 
 	entries := []*calendarentries.CalendarEntry{}
 	if err := stmt.QueryContext(ctx, s.db, &entries); err != nil {

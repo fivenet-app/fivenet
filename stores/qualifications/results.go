@@ -21,36 +21,52 @@ func (s *Store) ListQualificationsResults(
 	userInfo *userinfo.UserInfo,
 	includePhoneNumber bool,
 ) (*pbqualifications.ListQualificationsResultsResponse, error) {
-	if userInfo == nil {
-		userInfo = &userinfo.UserInfo{}
-	}
-
 	tUser := table.FivenetUser.AS("user")
 	tCreator := tUser.AS("creator")
 
-	condition := tQualiResult.DeletedAt.IS_NULL()
-	visibilityCondition := table.FivenetQualifications.DeletedAt.IS_NULL()
-	if opts.QualificationID > 0 {
+	condition := mysql.Bool(true)
+	if !userInfo.GetSuperuser() {
+		condition = condition.AND(tQualiResult.DeletedAt.IS_NULL())
+	}
+	visibilityCondition := mysql.Bool(true)
+	if !userInfo.GetSuperuser() {
 		visibilityCondition = visibilityCondition.AND(
-			table.FivenetQualifications.ID.EQ(mysql.Int64(opts.QualificationID)),
+			tQuali.DeletedAt.IS_NULL(),
 		)
 	}
-	visibleGradeQuery := s.access.VisibleIDsByConditionQuery(
-		userInfo,
-		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
-		visibilityCondition,
-	)
-	visibleGradeIDs := mysql.SELECT(
-		mysql.IntegerColumn("id").From(visibleGradeQuery.Table),
-	).FROM(visibleGradeQuery.Table)
-	visibleViewQuery := s.access.VisibleIDsByConditionQuery(
-		userInfo,
-		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-		visibilityCondition,
-	)
-	visibleViewIDs := mysql.SELECT(
-		mysql.IntegerColumn("id").From(visibleViewQuery.Table),
-	).FROM(visibleViewQuery.Table)
+	if opts.QualificationID > 0 {
+		visibilityCondition = visibilityCondition.AND(
+			tQuali.ID.EQ(mysql.Int64(opts.QualificationID)),
+		)
+	}
+	visibleGradeCondition := visibilityCondition
+	visibleViewCondition := visibilityCondition
+	if !userInfo.GetSuperuser() {
+		visibleGradeCondition = visibleGradeCondition.AND(mysql.OR(
+			tQuali.Public.IS_TRUE(),
+			mysql.AND(
+				tQuali.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+				tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
+			),
+			s.access.ACLAccessExistsCondition(
+				tQuali.ID,
+				userInfo,
+				int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
+			),
+		))
+		visibleViewCondition = visibleViewCondition.AND(mysql.OR(
+			tQuali.Public.IS_TRUE(),
+			mysql.AND(
+				tQuali.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+				tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
+			),
+			s.access.ACLAccessExistsCondition(
+				tQuali.ID,
+				userInfo,
+				int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			),
+		))
+	}
 
 	countColumn := mysql.Expression(tQualiResult.QualificationID)
 	if len(opts.UserIDs) > 0 {
@@ -73,7 +89,7 @@ func (s *Store) ListQualificationsResults(
 	}
 
 	if opts.QualificationID > 0 {
-		condition = condition.AND(tQualiResult.QualificationID.IN(visibleGradeIDs))
+		condition = condition.AND(visibleGradeCondition)
 	} else {
 		condition = condition.AND(mysql.OR(
 			mysql.AND(
@@ -81,9 +97,9 @@ func (s *Store) ListQualificationsResults(
 				tQualiResult.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
 			),
 			mysql.OR(
-				tQualiResult.QualificationID.IN(visibleGradeIDs),
+				visibleGradeCondition,
 				mysql.AND(
-					tQualiResult.QualificationID.IN(visibleViewIDs),
+					visibleViewCondition,
 					tQualiResult.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 				),
 			),
@@ -106,9 +122,6 @@ func (s *Store) ListQualificationsResults(
 				LEFT_JOIN(tUser, tQualiResult.UserID.EQ(tUser.ID)),
 		).
 		WHERE(condition)
-	if len(visibleGradeQuery.CTEs) > 0 {
-		countStmt = mysql.WITH(visibleGradeQuery.CTEs...)(countStmt)
-	}
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -179,9 +192,6 @@ func (s *Store) ListQualificationsResults(
 		WHERE(condition).
 		OFFSET(opts.Pagination.GetOffset()).
 		LIMIT(limit)
-	if len(visibleGradeQuery.CTEs) > 0 {
-		stmt = mysql.WITH(visibleGradeQuery.CTEs...)(stmt)
-	}
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Results); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -204,7 +214,10 @@ func (s *Store) GetQualificationResult(
 	tUser := table.FivenetUser.AS("user")
 	tCreator := tUser.AS("creator")
 
-	condition := tQualiResult.DeletedAt.IS_NULL()
+	condition := mysql.Bool(true)
+	if userInfo == nil || !userInfo.GetSuperuser() {
+		condition = condition.AND(tQualiResult.DeletedAt.IS_NULL())
+	}
 	if resultId > 0 {
 		condition = condition.AND(tQualiResult.ID.EQ(mysql.Int64(resultId)))
 	} else if userId > 0 {

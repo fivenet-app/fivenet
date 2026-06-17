@@ -58,7 +58,10 @@ func (s *Server) ListEmails(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-	resp := &pbmailer.ListEmailsResponse{Pagination: pag, Emails: emails}
+	resp := &pbmailer.ListEmailsResponse{
+		Pagination: pag,
+		Emails:     emails,
+	}
 
 	// Retrieve user's private email with access and settings
 	for idx := range resp.GetEmails() {
@@ -70,7 +73,7 @@ func (s *Server) ListEmails(
 			continue
 		}
 
-		e, err := s.getEmail(ctx, resp.GetEmails()[idx].GetId(), true, true)
+		e, err := s.getEmail(ctx, userInfo, resp.GetEmails()[idx].GetId(), true, true)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -84,11 +87,12 @@ func (s *Server) ListEmails(
 
 func (s *Server) getEmail(
 	ctx context.Context,
+	userInfo *userinfo.UserInfo,
 	emailId int64,
 	withAccess bool,
 	withSettings bool,
 ) (*maileremails.Email, error) {
-	email, err := s.store.GetEmail(ctx, s.db, emailId)
+	email, err := s.store.GetEmail(ctx, s.db, emailId, userInfo != nil && userInfo.GetSuperuser())
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +135,7 @@ func (s *Server) GetEmail(
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	email, err := s.getEmail(ctx, req.GetId(), true, true)
+	email, err := s.getEmail(ctx, userInfo, req.GetId(), true, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -229,7 +233,7 @@ func (s *Server) CreateOrUpdateEmail(
 			return nil, errorsmailer.ErrNoPerms
 		}
 
-		email, err := s.getEmail(ctx, req.GetEmail().GetId(), false, false)
+		email, err := s.getEmail(ctx, userInfo, req.GetEmail().GetId(), false, false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -322,12 +326,30 @@ func (s *Server) CreateOrUpdateEmail(
 			return nil, errorsmailer.ErrEmailAccessRequired
 		}
 
+		fallbackAccess := &maileraccess.Access{
+			Jobs: []*maileraccess.JobAccess{{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: userInfo.GetJobGrade(),
+				Access:       int32(maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
+			}},
+		}
+
+		normalizedAccess, err := access.NormalizeAccess(
+			req.GetEmail().GetAccess(),
+			nil,
+			fallbackAccess,
+			15,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+
 		if _, err := s.access.ReplaceTargetAccess(
 			ctx,
 			tx,
 			s.accessResolver,
 			req.GetEmail().GetId(),
-			req.GetEmail().GetAccess(),
+			normalizedAccess,
 			mailerSubjectAccessOptions,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -340,7 +362,7 @@ func (s *Server) CreateOrUpdateEmail(
 	}
 
 	resp := &pbmailer.CreateOrUpdateEmailResponse{}
-	resp.Email, err = s.getEmail(ctx, req.GetEmail().GetId(), true, true)
+	resp.Email, err = s.getEmail(ctx, userInfo, req.GetEmail().GetId(), true, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -436,7 +458,7 @@ func (s *Server) DeleteEmail(
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	email, err := s.getEmail(ctx, req.GetId(), false, false)
+	email, err := s.getEmail(ctx, userInfo, req.GetId(), false, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

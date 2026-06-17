@@ -11,6 +11,7 @@ import (
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	permscalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar/perms"
 	permssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -185,9 +186,9 @@ func (s *Server) CreateCalendar(
 	}
 	req.Calendar.Id = lastID
 
-	access := req.GetCalendar().GetAccess()
-	if access == nil || len(access.GetJobs()) == 0 {
-		access = &calendaraccess.CalendarAccess{
+	calendarAccess := req.GetCalendar().GetAccess()
+	if calendarAccess == nil || len(calendarAccess.GetJobs()) == 0 {
+		calendarAccess = &calendaraccess.CalendarAccess{
 			Jobs: []*calendaraccess.CalendarJobAccess{
 				{
 					TargetId:     req.GetCalendar().GetId(),
@@ -198,12 +199,23 @@ func (s *Server) CreateCalendar(
 			},
 		}
 	}
+	fallbackAccess := &calendaraccess.CalendarAccess{
+		Jobs: []*calendaraccess.CalendarJobAccess{{
+			Job:          userInfo.GetJob(),
+			MinimumGrade: userInfo.GetJobGrade(),
+			Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
+		}},
+	}
+	normalizedAccess, err := access.NormalizeAccess(calendarAccess, nil, fallbackAccess, 15)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
 	if _, err := s.access.ReplaceTargetAccess(
 		ctx,
 		tx,
 		s.accessResolver,
 		req.GetCalendar().GetId(),
-		access,
+		normalizedAccess,
 		calendarSubjectAccessOptions,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -321,9 +333,9 @@ func (s *Server) UpdateCalendar(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	if !isBirthdayCalendar {
-		access := req.GetCalendar().GetAccess()
-		if access == nil || len(access.GetJobs()) == 0 {
-			access = &calendaraccess.CalendarAccess{
+		calendarAccess := req.GetCalendar().GetAccess()
+		if calendarAccess == nil || len(calendarAccess.GetJobs()) == 0 {
+			calendarAccess = &calendaraccess.CalendarAccess{
 				Jobs: []*calendaraccess.CalendarJobAccess{
 					{
 						TargetId:     req.GetCalendar().GetId(),
@@ -334,12 +346,23 @@ func (s *Server) UpdateCalendar(
 				},
 			}
 		}
+		fallbackAccess := &calendaraccess.CalendarAccess{
+			Jobs: []*calendaraccess.CalendarJobAccess{{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: userInfo.GetJobGrade(),
+				Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
+			}},
+		}
+		normalizedAccess, err := access.NormalizeAccess(calendarAccess, nil, fallbackAccess, 15)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
 		if _, err := s.access.ReplaceTargetAccess(
 			ctx,
 			tx,
 			s.accessResolver,
 			req.GetCalendar().GetId(),
-			access,
+			normalizedAccess,
 			calendarSubjectAccessOptions,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -398,8 +421,6 @@ func (s *Server) DeleteCalendar(
 	if err := s.store.DeleteCalendar(ctx, s.db, req.GetCalendarId(), deletedAtTime); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbcalendar.DeleteCalendarResponse{}, nil
 }

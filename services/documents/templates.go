@@ -10,6 +10,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -64,6 +66,24 @@ func templateJobAccess(jobs []*documentstemplates.TemplateJobAccess) *resourcesa
 	return &resourcesaccess.Access{Jobs: jobs}
 }
 
+func normalizeTemplateJobAccess(
+	userInfo *userinfo.UserInfo,
+	jobs []*documentstemplates.TemplateJobAccess,
+) (*resourcesaccess.Access, error) {
+	return access.NormalizeAccess(
+		templateJobAccess(jobs),
+		nil,
+		&resourcesaccess.Access{
+			Jobs: []*resourcesaccess.JobAccess{{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: userInfo.GetJobGrade(),
+				Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+			}},
+		},
+		15,
+	)
+}
+
 func (s *Server) ListTemplates(
 	ctx context.Context,
 	req *pbdocuments.ListTemplatesRequest,
@@ -104,7 +124,7 @@ func (s *Server) GetTemplate(
 	}
 
 	resp := &pbdocuments.GetTemplateResponse{}
-	resp.Template, err = s.store.GetTemplate(ctx, req.GetTemplateId())
+	resp.Template, err = s.store.GetTemplate(ctx, req.GetTemplateId(), userInfo.GetSuperuser())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -245,12 +265,17 @@ func (s *Server) CreateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
+	normalizedAccess, err := normalizeTemplateJobAccess(userInfo, req.GetTemplate().GetJobAccess())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	if _, err := s.templateAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
 		s.subjectResolver,
 		lastId,
-		templateJobAccess(req.GetTemplate().GetJobAccess()),
+		normalizedAccess,
 		templateSubjectAccessOptions,
 	); err != nil {
 		if dbutils.IsDuplicateError(err) {
@@ -328,12 +353,17 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
+	normalizedAccess, err := normalizeTemplateJobAccess(userInfo, req.GetTemplate().GetJobAccess())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	if _, err := s.templateAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
 		s.subjectResolver,
 		req.GetTemplate().GetId(),
-		templateJobAccess(req.GetTemplate().GetJobAccess()),
+		normalizedAccess,
 		templateSubjectAccessOptions,
 	); err != nil {
 		if dbutils.IsDuplicateError(err) {
@@ -347,7 +377,7 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	tmpl, err := s.store.GetTemplate(ctx, req.GetTemplate().GetId())
+	tmpl, err := s.store.GetTemplate(ctx, req.GetTemplate().GetId(), false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -390,7 +420,7 @@ func (s *Server) DeleteTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	dTmpl, err := s.store.GetTemplate(ctx, req.GetId())
+	dTmpl, err := s.store.GetTemplate(ctx, req.GetId(), true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -408,11 +438,24 @@ func (s *Server) DeleteTemplate(
 		}
 	}
 
-	if err := s.store.DeleteTemplate(ctx, s.db, req.GetId(), userInfo.GetJob()); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	var deletedAtTime *timestamp.Timestamp
+	// Check if page has any un-deleted child pages
+	if dTmpl.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	if err := s.store.DeleteTemplate(
+		ctx,
+		s.db,
+		req.GetId(),
+		userInfo.GetJob(),
+		deletedAtTime,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 
 	return &pbdocuments.DeleteTemplateResponse{}, nil
 }

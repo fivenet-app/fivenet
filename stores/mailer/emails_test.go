@@ -44,21 +44,19 @@ func TestStoreListEmails(t *testing.T) {
 	store := New(db)
 	now := time.Unix(0, 0).UTC()
 
-	countQuery := regexp.QuoteMeta(
-		`FROM fivenet_mailer_emails AS email WHERE email.id IN (( SELECT doc_ids.id AS "id" FROM (`,
-	)
+	countQuery := regexp.QuoteMeta(`FROM fivenet_mailer_emails AS email`) +
+		`(?s).*` + regexp.QuoteMeta(`WHERE ?`)
 	mock.ExpectQuery(countQuery).
 		WithArgs(sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
 
-	listQuery := regexp.QuoteMeta(
-		`FROM fivenet_mailer_emails AS email WHERE email.id IN (( SELECT doc_ids.id AS "id" FROM (`,
-	) +
+	listQuery := regexp.QuoteMeta(`FROM fivenet_mailer_emails AS email`) +
+		`(?s).*` + regexp.QuoteMeta(`WHERE ?`) +
 		`(?s).*` + regexp.QuoteMeta(
 		`ORDER BY email.job ASC, email.label ASC LIMIT ? OFFSET ?;`,
 	)
 	mock.ExpectQuery(listQuery).
-		WithArgs(sqlmock.AnyArg(), int64(20), int64(0)).
+		WithArgs(true, sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"email.id",
 			"email.created_at",
@@ -140,7 +138,7 @@ func TestStoreGetEmail(t *testing.T) {
 			nil,
 		))
 
-	email, err := store.GetEmail(t.Context(), db, 42)
+	email, err := store.GetEmail(t.Context(), db, 42, false)
 	require.NoError(t, err)
 	require.NotNil(t, email)
 	assert.Equal(t, int64(42), email.GetId())

@@ -19,7 +19,7 @@ func TestCheckIfUserHasAccessToCalendarEntryIDsUsesEntryID(t *testing.T) {
 
 	store := New(db).(*Store)
 	mock.ExpectQuery(regexp.QuoteMeta(`calendar_entry.id IN (?)`)+`(?s).*`).
-		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "entry_id"}).AddRow(int64(42), int64(42)))
 
 	ids, err := store.CheckIfUserHasAccessToCalendarEntryIDs(
@@ -47,6 +47,7 @@ func TestCheckIfUserHasAccessToCalendarIDsAllowsSuperuserBirthdayCalendar(t *tes
 			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
 			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
 			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
+			sqlmock.AnyArg(),
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"calendar.id"}).AddRow(int64(99)))
 

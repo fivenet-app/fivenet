@@ -111,9 +111,8 @@ func (s *Store) countCalendarsStmt(
 func (s *Store) listConditions(
 	q ListQuery,
 ) (mysql.BoolExpression, []mysql.OrderByClause) {
-	condition := mysql.AND(
-		tCalendar.DeletedAt.IS_NULL(),
-	)
+	includeDeleted := q.UserInfo != nil && q.UserInfo.GetSuperuser()
+	condition := mysql.Bool(includeDeleted).OR(tCalendar.DeletedAt.IS_NULL())
 	if q.OnlyPublic {
 		return condition.AND(
 				tCalendar.Public.IS_TRUE(),
@@ -284,6 +283,7 @@ func (s *Store) getCalendarStmt(
 	if userInfo != nil {
 		userID = userInfo.GetUserId()
 	}
+	includeDeleted := userInfo != nil && userInfo.GetSuperuser()
 
 	columns := []mysql.Projection{
 		tCalendar.ID,
@@ -335,7 +335,13 @@ func (s *Store) getCalendarStmt(
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
-		WHERE(condition).
+		WHERE(mysql.AND(
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tCalendar.DeletedAt.IS_NULL(),
+			),
+			condition,
+		)).
 		LIMIT(1)
 }
 

@@ -47,6 +47,17 @@ const { activeChar } = storeToRefs(authStore);
                     </span>
                 </UBadge>
 
+                <UBadge
+                    v-if="request?.deletedAt"
+                    class="inline-flex gap-1"
+                    color="warning"
+                    size="md"
+                    icon="i-mdi-calendar-remove"
+                >
+                    {{ $t('common.deleted') }}
+                    <GenericTime :value="request?.deletedAt" type="short" />
+                </UBadge>
+
                 <p v-if="request.createdAt" class="mt-1 text-xs leading-5">
                     {{ $t('common.created_at') }} <GenericTime :value="request.createdAt" />
                 </p>

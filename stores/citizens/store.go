@@ -52,6 +52,7 @@ type IStore interface {
 		q qrm.Queryable,
 		job string,
 		labelId int64,
+		includeDeleted bool,
 	) (*citizenslabels.Label, error)
 	UpdateLabel(ctx context.Context, tx qrm.DB, label *citizenslabels.Label, job string) error
 	InsertLabel(ctx context.Context, tx qrm.DB, label *citizenslabels.Label) (int64, error)

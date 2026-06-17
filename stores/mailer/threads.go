@@ -143,6 +143,7 @@ func (s *Store) GetThread(
 	q qrm.DB,
 	threadID int64,
 	emailID int64,
+	includeDeleted bool,
 ) (*mailerthreads.Thread, error) {
 	stmt := tThreads.
 		SELECT(
@@ -173,7 +174,13 @@ func (s *Store) GetThread(
 					),
 				),
 		).
-		WHERE(tThreads.ID.EQ(mysql.Int64(threadID))).
+		WHERE(mysql.AND(
+			tThreads.ID.EQ(mysql.Int64(threadID)),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tThreads.DeletedAt.IS_NULL(),
+			),
+		)).
 		LIMIT(1)
 
 	var thread mailerthreads.Thread
@@ -242,6 +249,7 @@ func (s *Store) ListThreadRecipients(
 	ctx context.Context,
 	q qrm.DB,
 	threadID int64,
+	includeDeleted bool,
 ) ([]*mailerthreads.ThreadRecipientEmail, error) {
 	tRecipients := tThreadsRecipients.AS("thread_recipient_email")
 	stmt := tRecipients.
@@ -263,7 +271,10 @@ func (s *Store) ListThreadRecipients(
 		).
 		WHERE(mysql.AND(
 			tRecipients.ThreadID.EQ(mysql.Int64(threadID)),
-			tEmails.DeletedAt.IS_NULL(),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tEmails.DeletedAt.IS_NULL(),
+			),
 		))
 
 	recipients := []*mailerthreads.ThreadRecipientEmail{}

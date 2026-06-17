@@ -235,7 +235,7 @@ func (s *Server) getQualificationRequest(
 	userId int32,
 	userInfo *userinfo.UserInfo,
 ) (*qualifications.QualificationRequest, error) {
-	request, err := s.store.GetQualificationRequest(ctx, qualificationId, userId, false)
+	request, err := s.store.GetQualificationRequest(ctx, qualificationId, userId, userInfo, false)
 	if err != nil {
 		return nil, err
 	}
@@ -246,6 +246,10 @@ func (s *Server) getQualificationRequest(
 
 	if request.GetApprover() != nil {
 		s.enricher.EnrichJobInfoSafe(userInfo, request.GetApprover())
+	}
+
+	if !userInfo.GetSuperuser() && request.GetDeletedAt() != nil {
+		return nil, errorsqualifications.ErrQualiViewDenied
 	}
 
 	return request, nil

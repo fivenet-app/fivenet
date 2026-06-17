@@ -246,7 +246,7 @@ func (s *Server) CreateDocument(
 	var tmpl *documentstemplates.Template
 	if req.GetTemplateId() > 0 {
 		var err error
-		tmpl, err = s.store.GetTemplate(ctx, req.GetTemplateId())
+		tmpl, err = s.store.GetTemplate(ctx, req.GetTemplateId(), false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -552,7 +552,7 @@ func (s *Server) UpdateDocument(
 	var tmpl *documentstemplates.Template
 	if oldDoc.GetTemplateId() > 0 {
 		var err error
-		tmpl, err = s.store.GetTemplate(ctx, oldDoc.GetTemplateId())
+		tmpl, err = s.store.GetTemplate(ctx, oldDoc.GetTemplateId(), false)
 		if err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -985,7 +985,7 @@ func (s *Server) ToggleDocument(
 	var tmpl *documentstemplates.Template
 	if !req.GetClosed() && doc.GetTemplateId() > 0 {
 		// If the document is opened, get template so we can update the reminder/auto close times
-		tmpl, err = s.store.GetTemplate(ctx, doc.GetTemplateId())
+		tmpl, err = s.store.GetTemplate(ctx, doc.GetTemplateId(), false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}

@@ -4050,6 +4050,7 @@ Policy snapshot applied to a specific version
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) |  |  |
 | `weight` | [uint32](#uint32) |  |  |
 | `title` | [string](#string) |  |  |
@@ -4163,6 +4164,7 @@ Policy snapshot applied to a specific version
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) |  |  |
 | `weight` | [uint32](#uint32) |  |  |
 | `title` | [string](#string) |  |  |

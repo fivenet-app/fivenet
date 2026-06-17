@@ -32,7 +32,7 @@ func (s *Store) CountEmails(
 ) (int64, error) {
 	stmt := tEmails.
 		SELECT(
-			mysql.COUNT(mysql.DISTINCT(tEmails.ID)).AS("data_count.total"),
+			mysql.COUNT(tEmails.ID).AS("data_count.total"),
 		).
 		FROM(tEmails).
 		WHERE(condition)
@@ -54,44 +54,32 @@ func (s *Store) ListEmails(
 	pag *database.PaginationRequest,
 	all bool,
 ) (*database.PaginationResponse, []*maileremails.Email, error) {
-	if userInfo == nil {
-		userInfo = &userinfo.UserInfo{}
-	}
 	if pag == nil {
 		pag = &database.PaginationRequest{}
 	}
 
-	condition := mysql.Bool(true)
+	visibilityCondition := mysql.Bool(true)
 	if !userInfo.GetSuperuser() || (userInfo.GetSuperuser() && !all) {
 		acl := s.subjectAccess.ACLAccessExistsCondition(
 			tEmails.ID,
 			userInfo,
 			int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
 		)
-		condition = condition.AND(mysql.AND(
-			tEmails.DeletedAt.IS_NULL(),
+		visibilityCondition = visibilityCondition.AND(mysql.AND(
 			mysql.OR(
 				tEmails.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 				acl,
 			),
 		))
 	}
-
-	visibleQuery := s.subjectAccess.VisibleIDsByConditionQuery(
-		userInfo,
-		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
-		condition,
-	)
-	visibleIDs := mysql.SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
-		FROM(visibleQuery.Table)
+	if !userInfo.GetSuperuser() {
+		visibilityCondition = visibilityCondition.AND(tEmails.DeletedAt.IS_NULL())
+	}
 
 	var countStmt mysql.Statement = tEmails.
-		SELECT(mysql.COUNT(mysql.DISTINCT(tEmails.ID)).AS("data_count.total")).
+		SELECT(mysql.COUNT(tEmails.ID).AS("data_count.total")).
 		FROM(tEmails).
-		WHERE(tEmails.ID.IN(visibleIDs))
-	if len(visibleQuery.CTEs) > 0 {
-		countStmt = mysql.WITH(visibleQuery.CTEs...)(countStmt)
-	}
+		WHERE(visibilityCondition)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.dbOr(db), &count); err != nil {
@@ -119,16 +107,13 @@ func (s *Store) ListEmails(
 			tEmails.Label,
 		).
 		FROM(tEmails).
-		WHERE(tEmails.ID.IN(visibleIDs)).
+		WHERE(visibilityCondition).
 		ORDER_BY(
 			tEmails.Job.ASC(),
 			tEmails.Label.ASC(),
 		).
 		OFFSET(pagination.GetOffset()).
 		LIMIT(limit)
-	if len(visibleQuery.CTEs) > 0 {
-		stmt = mysql.WITH(visibleQuery.CTEs...)(stmt)
-	}
 
 	emails := []*maileremails.Email{}
 	if err := stmt.QueryContext(ctx, s.dbOr(db), &emails); err != nil {
@@ -180,8 +165,13 @@ func (s *Store) GetEmail(
 	ctx context.Context,
 	q qrm.DB,
 	emailID int64,
+	includeDeleted bool,
 ) (*maileremails.Email, error) {
-	return s.GetEmailByCondition(ctx, q, tEmails.ID.EQ(mysql.Int64(emailID)))
+	condition := tEmails.ID.EQ(mysql.Int64(emailID))
+	if !includeDeleted {
+		condition = mysql.AND(condition, tEmails.DeletedAt.IS_NULL())
+	}
+	return s.GetEmailByCondition(ctx, q, condition)
 }
 
 func (s *Store) GetUserShort(

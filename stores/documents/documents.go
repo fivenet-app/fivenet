@@ -23,19 +23,18 @@ func (s *Store) List(
 	ctx context.Context,
 	q ListQuery,
 ) ([]*resourcesdocuments.DocumentShort, error) {
-	if q.UserInfo == nil {
-		q.UserInfo = &userinfo.UserInfo{}
-	}
-
 	tDocumentShort := table.FivenetDocuments.AS("document_short")
-	tDocumentFilter := table.FivenetDocuments
 	tDocumentPage := table.FivenetDocuments.AS("document_page")
+	tDocumentFilter := tDocumentPage
 	tCreator := table.FivenetUser.AS("creator")
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
 	tWorkflowState := table.FivenetDocumentsWorkflowState.AS("workflow_state")
 	tDMeta := table.FivenetDocumentsMeta.AS("meta")
 
 	visibilityCondition := mysql.Bool(true)
+	if !q.UserInfo.GetSuperuser() {
+		visibilityCondition = visibilityCondition.AND(tDocumentFilter.DeletedAt.IS_NULL())
+	}
 	if q.Search != "" {
 		search := mysql.String(dbutils.PrepareForLikeSearch(q.Search))
 		searchCategory := table.FivenetDocumentsCategories.AS("search_category")
@@ -99,6 +98,20 @@ func (s *Store) List(
 			tDocumentFilter.Draft.EQ(mysql.Bool(*q.OnlyDrafts)),
 		)
 	}
+	if !q.UserInfo.GetSuperuser() {
+		visibilityCondition = visibilityCondition.AND(mysql.OR(
+			tDocumentFilter.Public.IS_TRUE(),
+			mysql.AND(
+				tDocumentFilter.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
+				tDocumentFilter.CreatorJob.EQ(mysql.String(q.UserInfo.GetJob())),
+			),
+			s.subjectAccess.ACLAccessExistsCondition(
+				tDocumentFilter.ID,
+				q.UserInfo,
+				int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			),
+		))
+	}
 
 	columns := dbutils.Columns{
 		tDocumentShort.ID,
@@ -148,14 +161,6 @@ func (s *Store) List(
 	if q.IncludePhoneNumber {
 		columns = append(columns, tCreator.PhoneNumber)
 	}
-	visibleQuery := s.subjectAccess.VisibleIDsByConditionQuery(
-		q.UserInfo,
-		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-		visibilityCondition,
-	)
-	visibleIDs := mysql.SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
-		FROM(visibleQuery.Table)
-
 	var docPage mysql.SelectTable
 	if usesTitleSort(q.Sort) {
 		pageOrderBys := buildListOrder(
@@ -171,27 +176,26 @@ func (s *Store) List(
 				tDocumentPage.UpdatedAt.AS("updated_at"),
 			).
 			FROM(tDocumentPage).
-			WHERE(tDocumentPage.ID.IN(visibleIDs)).
+			WHERE(visibilityCondition).
 			ORDER_BY(pageOrderBys...).
 			OFFSET(q.Offset).
 			LIMIT(q.Limit).
 			AsTable("doc_page")
 	} else {
-		docIDsCreatedAt := mysql.TimestampColumn("created_at").From(visibleQuery.Table)
-		docIDsUpdatedAt := mysql.TimestampColumn("updated_at").From(visibleQuery.Table)
 		pageOrderBys := buildListOrder(
 			q.Sort,
-			mysql.StringColumn("title").From(visibleQuery.Table),
-			docIDsCreatedAt,
-			docIDsUpdatedAt,
+			tDocumentPage.Title,
+			tDocumentPage.CreatedAt,
+			tDocumentPage.UpdatedAt,
 		)
 		docPage = mysql.
 			SELECT(
-				mysql.IntegerColumn("id").From(visibleQuery.Table).AS("id"),
-				docIDsCreatedAt.AS("created_at"),
-				docIDsUpdatedAt.AS("updated_at"),
+				tDocumentPage.ID.AS("id"),
+				tDocumentPage.CreatedAt.AS("created_at"),
+				tDocumentPage.UpdatedAt.AS("updated_at"),
 			).
-			FROM(visibleQuery.Table).
+			FROM(tDocumentPage).
+			WHERE(visibilityCondition).
 			ORDER_BY(pageOrderBys...).
 			OFFSET(q.Offset).
 			LIMIT(q.Limit).
@@ -230,9 +234,6 @@ func (s *Store) List(
 		)...)
 
 	var stmt mysql.Statement = innerStmt
-	if len(visibleQuery.CTEs) > 0 {
-		stmt = mysql.WITH(visibleQuery.CTEs...)(innerStmt)
-	}
 	var docs []*resourcesdocuments.DocumentShort
 	if err := stmt.QueryContext(ctx, s.db, &docs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -244,10 +245,6 @@ func (s *Store) List(
 }
 
 func (s *Store) Get(ctx context.Context, q GetQuery) (*resourcesdocuments.Document, error) {
-	if q.UserInfo == nil {
-		q.UserInfo = &userinfo.UserInfo{}
-	}
-
 	tDocument := table.FivenetDocuments.AS("document")
 	tCreator := table.FivenetUser.AS("creator")
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
@@ -456,11 +453,11 @@ func (s *Store) GetDocumentRequiredAccess(
 		return nil, nil
 	}
 
-	tmpl, err := s.GetTemplate(ctx, doc.GetTemplateId())
+	tmpl, err := s.GetTemplate(ctx, doc.GetTemplateId(), false)
 	if err != nil {
 		return nil, err
 	}
-	if tmpl.GetContentAccess() == nil || tmpl.GetContentAccess().IsEmpty() {
+	if tmpl == nil || tmpl.GetContentAccess() == nil || tmpl.GetContentAccess().IsEmpty() {
 		return nil, nil
 	}
 
@@ -634,10 +631,6 @@ func (s *Store) UpdateDocumentOwner(
 	userInfo *userinfo.UserInfo,
 	newOwner *usershort.UserShort,
 ) error {
-	if userInfo == nil {
-		userInfo = &userinfo.UserInfo{}
-	}
-
 	tDocument := table.FivenetDocuments.AS("document")
 	stmt := tDocument.
 		UPDATE(

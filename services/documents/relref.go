@@ -42,7 +42,7 @@ func (s *Server) GetDocumentReferences(
 		return nil, errorsdocuments.ErrFeedRefsViewDenied
 	}
 
-	dest, err := s.store.ListDocumentReferences(ctx, req.GetDocumentId())
+	dest, err := s.store.ListDocumentReferences(ctx, req.GetDocumentId(), userInfo.GetSuperuser())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -107,7 +107,11 @@ func (s *Server) GetDocumentRelations(
 		return nil, errorsdocuments.ErrFeedRelsViewDenied
 	}
 
-	relations, err := s.store.ListDocumentRelations(ctx, req.GetDocumentId())
+	relations, err := s.store.ListDocumentRelations(
+		ctx,
+		req.GetDocumentId(),
+		userInfo.GetSuperuser(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -186,7 +190,7 @@ func (s *Server) RemoveDocumentReference(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	ref, err := s.store.GetDocumentReference(ctx, req.GetId())
+	ref, err := s.store.GetDocumentReference(ctx, req.GetId(), userInfo.GetSuperuser())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -303,7 +307,7 @@ func (s *Server) RemoveDocumentRelation(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	rel, err := s.store.GetDocumentRelation(ctx, req.GetId())
+	rel, err := s.store.GetDocumentRelation(ctx, req.GetId(), userInfo.GetSuperuser())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}

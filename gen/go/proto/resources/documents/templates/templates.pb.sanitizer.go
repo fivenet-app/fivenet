@@ -69,6 +69,15 @@ func (m *Template) Sanitize() error {
 		*m.CreatorJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJobLabel)
 	}
 
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Description
 	m.Description = htmlsanitizer.SanitizeAndUnescape(m.Description)
 
@@ -326,6 +335,15 @@ func (m *TemplateShort) Sanitize() error {
 	// Field: CreatorJobLabel
 	if m.CreatorJobLabel != nil {
 		*m.CreatorJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.CreatorJobLabel)
+	}
+
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: Description

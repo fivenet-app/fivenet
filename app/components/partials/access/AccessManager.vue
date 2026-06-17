@@ -246,7 +246,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             @delete="access?.splice(idx, 1)"
         />
 
-        <div v-if="!disabled" class="mt-1">
+        <div v-if="!disabled" :class="access.length ? 'mt-2' : ''">
             <UTooltip :text="$t('components.access.add_entry')">
                 <UButton
                     class="w-full justify-center md:w-auto"

@@ -39,6 +39,17 @@ defineProps<{
                     :label="`${$t('common.result')}: ${$t(`enums.qualifications.ResultStatus.${ResultStatus[result.status ?? 0]}`)}`"
                 />
 
+                <UBadge
+                    v-if="result?.deletedAt"
+                    class="inline-flex gap-1"
+                    color="warning"
+                    size="md"
+                    icon="i-mdi-calendar-remove"
+                >
+                    {{ $t('common.deleted') }}
+                    <GenericTime :value="result?.deletedAt" type="short" />
+                </UBadge>
+
                 <p v-if="result.createdAt" class="mt-1 text-xs leading-5">
                     {{ $t('common.created_at') }} <GenericTime :value="result.createdAt" />
                 </p>

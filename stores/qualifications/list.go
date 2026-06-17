@@ -22,10 +22,6 @@ func (s *Store) ListQualifications(
 	userInfo *userinfo.UserInfo,
 	includePhoneNumber bool,
 ) (*pbqualifications.ListQualificationsResponse, error) {
-	if userInfo == nil {
-		userInfo = &userinfo.UserInfo{}
-	}
-
 	tCreator := table.FivenetUser.AS("creator")
 	visibilityCondition := mysql.Bool(true)
 
@@ -37,18 +33,20 @@ func (s *Store) ListQualifications(
 	}
 
 	if !userInfo.GetSuperuser() {
-		visibilityCondition = visibilityCondition.AND(
-			table.FivenetQualifications.DeletedAt.IS_NULL(),
-		)
+		visibilityCondition = visibilityCondition.AND(tQuali.DeletedAt.IS_NULL())
+		visibilityCondition = visibilityCondition.AND(mysql.OR(
+			tQuali.Public.IS_TRUE(),
+			mysql.AND(
+				tQuali.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+				tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
+			),
+			s.access.ACLAccessExistsCondition(
+				tQuali.ID,
+				userInfo,
+				int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			),
+		))
 	}
-
-	visibleQuery := s.access.VisibleIDsByConditionQuery(
-		userInfo,
-		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-		visibilityCondition,
-	)
-	visibleIDs := mysql.SELECT(mysql.IntegerColumn("id").From(visibleQuery.Table)).
-		FROM(visibleQuery.Table)
 
 	// Select id of last result for this user.
 	lastResultFilter := tQualiResult.ID.IS_NULL().OR(
@@ -73,13 +71,7 @@ func (s *Store) ListQualifications(
 					tQualiResult.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 				)),
 		).
-		WHERE(mysql.AND(
-			tQuali.ID.IN(visibleIDs),
-			lastResultFilter,
-		))
-	if len(visibleQuery.CTEs) > 0 {
-		countStmt = mysql.WITH(visibleQuery.CTEs...)(countStmt)
-	}
+		WHERE(mysql.AND(visibilityCondition, lastResultFilter))
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -97,10 +89,13 @@ func (s *Store) ListQualifications(
 		return resp, nil
 	}
 
-	stmt := s.listQualificationsQuery(opts, userInfo, visibleIDs, includePhoneNumber, limit)
-	if len(visibleQuery.CTEs) > 0 {
-		stmt = mysql.WITH(visibleQuery.CTEs...)(stmt)
-	}
+	stmt := s.listQualificationsQuery(
+		opts,
+		userInfo,
+		visibilityCondition,
+		includePhoneNumber,
+		limit,
+	)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Qualifications); err != nil {
 		return nil, err
@@ -160,6 +155,7 @@ func (s *Store) GetQualification(
 		ctx,
 		qualificationId,
 		userInfo.GetUserId(),
+		userInfo,
 		includePhoneNumber,
 	)
 	if err != nil {
@@ -187,7 +183,7 @@ func (s *Store) GetQualification(
 func (s *Store) listQualificationsQuery(
 	opts ListQualificationsOptions,
 	userInfo *userinfo.UserInfo,
-	visibleIDs mysql.SelectStatement,
+	visibilityCondition mysql.BoolExpression,
 	includePhoneNumber bool,
 	limit int64,
 ) mysql.Statement {
@@ -245,7 +241,7 @@ func (s *Store) listQualificationsQuery(
 				)),
 		).
 		WHERE(mysql.AND(
-			tQuali.ID.IN(visibleIDs),
+			visibilityCondition,
 			tQualiResult.ID.IS_NULL().OR(
 				tQualiResult.ID.EQ(
 					mysql.RawInt(
@@ -309,9 +305,7 @@ func (s *Store) getQualificationQuery(
 	if selectContent {
 		columns = append(columns, tQuali.Content)
 	}
-	if userInfo.GetSuperuser() {
-		columns = append(columns, tQuali.DeletedAt)
-	}
+	columns = append(columns, tQuali.DeletedAt)
 	if includePhoneNumber {
 		columns = append(columns, tCreator.PhoneNumber)
 	}

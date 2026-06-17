@@ -117,6 +117,20 @@ func (s *Server) UpsertStamp(
 		})
 	}
 
+	fallbackAccess := &documentsstamps.StampAccess{
+		Jobs: []*documentsstamps.StampJobAccess{{
+			Job:          userInfo.GetJob(),
+			MinimumGrade: userInfo.GetJobGrade(),
+			Access:       int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE),
+		}},
+	}
+
+	normalizedAccess, err := access.NormalizeAccess(st.GetAccess(), nil, fallbackAccess, 15)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	st.Access = normalizedAccess
+
 	if count, err := s.store.CheckJobStampCount(ctx, userInfo.GetJob()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	} else if count >= stampLimit && st.GetId() == 0 {
@@ -159,7 +173,7 @@ func (s *Server) UpsertStamp(
 		tx,
 		s.subjectResolver,
 		st.GetId(),
-		st.GetAccess(),
+		normalizedAccess,
 		stampSubjectAccessOptions,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

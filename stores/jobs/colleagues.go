@@ -293,6 +293,7 @@ func (s *Store) GetColleague(
 	job string,
 	userId int32,
 	withColumns mysql.ProjectionList,
+	includeDeleted bool,
 ) (*jobscolleagues.Colleague, error) {
 	tColleague := table.FivenetUser.AS("colleague")
 	columns := mysql.ProjectionList{
@@ -342,7 +343,7 @@ func (s *Store) GetColleague(
 		}
 	}
 
-	labels, err := s.GetUserLabels(ctx, db, job, userId)
+	labels, err := s.GetUserLabels(ctx, db, job, userId, includeDeleted)
 	if err != nil {
 		return nil, err
 	}
@@ -476,6 +477,7 @@ func (s *Store) GetColleagueProps(
 	job string,
 	userId int32,
 	fields []string,
+	includeDeleted bool,
 ) (*jobscolleagues.ColleagueProps, error) {
 	columns := mysql.ProjectionList{
 		tColleagueProps.Job,
@@ -515,7 +517,7 @@ func (s *Store) GetColleagueProps(
 		}
 	}
 
-	labels, err := s.GetUserLabels(ctx, db, job, userId)
+	labels, err := s.GetUserLabels(ctx, db, job, userId, includeDeleted)
 	if err != nil {
 		return nil, err
 	}
@@ -759,6 +761,7 @@ func (s *Store) GetUserLabels(
 	db qrm.DB,
 	job string,
 	userId int32,
+	includeDeleted bool,
 ) (*jobslabels.Labels, error) {
 	stmt := tColleagueLabels.
 		SELECT(
@@ -778,7 +781,10 @@ func (s *Store) GetUserLabels(
 		WHERE(mysql.AND(
 			tColleagueLabels.UserID.EQ(mysql.Int32(userId)),
 			tJobLabels.Job.EQ(mysql.String(job)),
-			tJobLabels.DeletedAt.IS_NULL(),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tJobLabels.DeletedAt.IS_NULL(),
+			),
 		)).
 		ORDER_BY(
 			tJobLabels.SortOrder.ASC(),

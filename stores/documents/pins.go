@@ -19,13 +19,6 @@ func (s *Store) ListDocumentPins(
 	ctx context.Context,
 	q ListDocumentPinsQuery,
 ) (*resourcesdatabase.PaginationResponse, []*resourcesdocuments.DocumentShort, error) {
-	if q.Pagination == nil {
-		q.Pagination = &resourcesdatabase.PaginationRequest{}
-	}
-	if q.UserInfo == nil {
-		q.UserInfo = &userinfo.UserInfo{}
-	}
-
 	tDPins := table.FivenetDocumentsPins.AS("document_pin")
 
 	var idCondition mysql.BoolExpression

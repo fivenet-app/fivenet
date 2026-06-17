@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestStoreListUsableStampsUsesVisibilityTablesForNonSuperuser(t *testing.T) {
+func TestStoreListUsableStampsUsesAclBranchesForNonSuperuser(t *testing.T) {
 	t.Parallel()
 
 	db, mock, err := sqlmock.New()
@@ -20,7 +20,7 @@ func TestStoreListUsableStampsUsesVisibilityTablesForNonSuperuser(t *testing.T) 
 
 	store := New(db)
 
-	mock.ExpectQuery(`(?s).*WITH actor_subjects AS .*fivenet_documents_stamps_visibility_creator.*fivenet_documents_stamps_visibility_subject.*AS doc_ids.*`).
+	mock.ExpectQuery(`(?s).*FROM fivenet_documents_stamps AS stamp.*stamp\.name = \?.*fivenet_documents_access.*subject_acl_user_exists.*subject_acl_qualification_exists.*subject_acl_job_grade_exists.*`).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 	pag, stamps, err := store.ListUsableStamps(t.Context(), ListUsableStampsQuery{

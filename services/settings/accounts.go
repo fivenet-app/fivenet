@@ -70,7 +70,7 @@ func (s *Server) DeleteAccount(
 		return nil, errorssettings.ErrCannotDeleteOwnAccount
 	}
 
-	account, err := s.store.GetAccountByID(ctx, req.GetId())
+	account, err := s.store.GetAccountByID(ctx, req.GetId(), userInfo.GetSuperuser())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}

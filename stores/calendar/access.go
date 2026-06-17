@@ -84,7 +84,10 @@ func (s *Store) CheckIfUserHasAccessToCalendarIDs(
 		).
 		WHERE(mysql.AND(
 			tCalendar.ID.IN(ids...),
-			tCalendar.DeletedAt.IS_NULL(),
+			mysql.OR(
+				mysql.Bool(userInfo.GetSuperuser()),
+				tCalendar.DeletedAt.IS_NULL(),
+			),
 			visibleCondition,
 		)).
 		ORDER_BY(tCalendar.ID.DESC())
@@ -166,7 +169,10 @@ func (s *Store) CheckIfUserHasAccessToCalendarEntryIDs(
 			),
 		).
 		WHERE(mysql.AND(
-			tCalendarEntry.DeletedAt.IS_NULL(),
+			mysql.OR(
+				mysql.Bool(userInfo.GetSuperuser()),
+				tCalendarEntry.DeletedAt.IS_NULL(),
+			),
 			tCalendarEntry.ID.IN(ids...),
 			mysql.OR(
 				mysql.AND(
