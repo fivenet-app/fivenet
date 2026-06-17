@@ -16,6 +16,7 @@ var FivenetWikiPagesVisibilityCreator = newFivenetWikiPagesVisibilityCreatorTabl
 type fivenetWikiPagesVisibilityCreatorTable struct {
 	mysql.Table
 
+	// Columns
 	TargetID   mysql.ColumnInteger
 	CreatorID  mysql.ColumnInteger
 	CreatorJob mysql.ColumnString
@@ -28,21 +29,26 @@ type fivenetWikiPagesVisibilityCreatorTable struct {
 
 type FivenetWikiPagesVisibilityCreatorTable struct {
 	fivenetWikiPagesVisibilityCreatorTable
+
 	NEW fivenetWikiPagesVisibilityCreatorTable
 }
 
+// AS creates new FivenetWikiPagesVisibilityCreatorTable with assigned alias
 func (a FivenetWikiPagesVisibilityCreatorTable) AS(alias string) *FivenetWikiPagesVisibilityCreatorTable {
 	return newFivenetWikiPagesVisibilityCreatorTable(a.SchemaName(), a.TableName(), alias)
 }
 
+// Schema creates new FivenetWikiPagesVisibilityCreatorTable with assigned schema name
 func (a FivenetWikiPagesVisibilityCreatorTable) FromSchema(schemaName string) *FivenetWikiPagesVisibilityCreatorTable {
 	return newFivenetWikiPagesVisibilityCreatorTable(schemaName, a.TableName(), a.Alias())
 }
 
+// WithPrefix creates new FivenetWikiPagesVisibilityCreatorTable with assigned table prefix
 func (a FivenetWikiPagesVisibilityCreatorTable) WithPrefix(prefix string) *FivenetWikiPagesVisibilityCreatorTable {
 	return newFivenetWikiPagesVisibilityCreatorTable(a.SchemaName(), prefix+a.TableName(), a.TableName())
 }
 
+// WithSuffix creates new FivenetWikiPagesVisibilityCreatorTable with assigned table suffix
 func (a FivenetWikiPagesVisibilityCreatorTable) WithSuffix(suffix string) *FivenetWikiPagesVisibilityCreatorTable {
 	return newFivenetWikiPagesVisibilityCreatorTable(a.SchemaName(), a.TableName()+suffix, a.TableName())
 }
@@ -61,13 +67,21 @@ func newFivenetWikiPagesVisibilityCreatorTableImpl(schemaName, tableName, alias 
 		CreatorJobColumn = mysql.StringColumn("creator_job")
 		CreatedAtColumn  = mysql.TimestampColumn("created_at")
 		allColumns       = mysql.ColumnList{TargetIDColumn, CreatorIDColumn, CreatorJobColumn, CreatedAtColumn}
-		mutableColumns   = mysql.ColumnList{TargetIDColumn, CreatorIDColumn, CreatorJobColumn, CreatedAtColumn}
-		defaultColumns   = mysql.ColumnList{CreatorIDColumn, CreatorJobColumn, CreatedAtColumn}
+		mutableColumns   = mysql.ColumnList{CreatorIDColumn, CreatorJobColumn, CreatedAtColumn}
+		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetWikiPagesVisibilityCreatorTable{
-		Table:    mysql.NewTable(schemaName, tableName, alias, allColumns...),
-		TargetID: TargetIDColumn, CreatorID: CreatorIDColumn, CreatorJob: CreatorJobColumn, CreatedAt: CreatedAtColumn,
-		AllColumns: allColumns, MutableColumns: mutableColumns, DefaultColumns: defaultColumns,
+		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
+
+		//Columns
+		TargetID:   TargetIDColumn,
+		CreatorID:  CreatorIDColumn,
+		CreatorJob: CreatorJobColumn,
+		CreatedAt:  CreatedAtColumn,
+
+		AllColumns:     allColumns,
+		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

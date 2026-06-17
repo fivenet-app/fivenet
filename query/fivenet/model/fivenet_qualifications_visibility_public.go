@@ -11,10 +11,7 @@ import (
 	"time"
 )
 
-type FivenetWikiPagesVisibilitySubject struct {
+type FivenetQualificationsVisibilityPublic struct {
 	TargetID  int64     `sql:"primary_key" json:"target_id"`
-	SubjectID int64     `sql:"primary_key" json:"subject_id"`
-	Access    int16     `sql:"primary_key" json:"access"`
-	Effect    bool      `sql:"primary_key" json:"effect"`
 	CreatedAt time.Time `json:"created_at"`
 }

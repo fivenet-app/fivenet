@@ -18,5 +18,6 @@ type FivenetDocumentsStamps struct {
 	VariantsJSON *string    `json:"variants_json"`
 	SortKey      *string    `json:"sort_key"`
 	CreatedAt    *time.Time `json:"created_at"`
+	UpdatedAt    *time.Time `json:"updated_at"`
 	DeletedAt    *time.Time `json:"deleted_at"`
 }

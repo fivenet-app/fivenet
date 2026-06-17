@@ -16,6 +16,7 @@ var FivenetWikiPagesVisibilityPublic = newFivenetWikiPagesVisibilityPublicTable(
 type fivenetWikiPagesVisibilityPublicTable struct {
 	mysql.Table
 
+	// Columns
 	TargetID  mysql.ColumnInteger
 	CreatedAt mysql.ColumnTimestamp
 
@@ -26,21 +27,26 @@ type fivenetWikiPagesVisibilityPublicTable struct {
 
 type FivenetWikiPagesVisibilityPublicTable struct {
 	fivenetWikiPagesVisibilityPublicTable
+
 	NEW fivenetWikiPagesVisibilityPublicTable
 }
 
+// AS creates new FivenetWikiPagesVisibilityPublicTable with assigned alias
 func (a FivenetWikiPagesVisibilityPublicTable) AS(alias string) *FivenetWikiPagesVisibilityPublicTable {
 	return newFivenetWikiPagesVisibilityPublicTable(a.SchemaName(), a.TableName(), alias)
 }
 
+// Schema creates new FivenetWikiPagesVisibilityPublicTable with assigned schema name
 func (a FivenetWikiPagesVisibilityPublicTable) FromSchema(schemaName string) *FivenetWikiPagesVisibilityPublicTable {
 	return newFivenetWikiPagesVisibilityPublicTable(schemaName, a.TableName(), a.Alias())
 }
 
+// WithPrefix creates new FivenetWikiPagesVisibilityPublicTable with assigned table prefix
 func (a FivenetWikiPagesVisibilityPublicTable) WithPrefix(prefix string) *FivenetWikiPagesVisibilityPublicTable {
 	return newFivenetWikiPagesVisibilityPublicTable(a.SchemaName(), prefix+a.TableName(), a.TableName())
 }
 
+// WithSuffix creates new FivenetWikiPagesVisibilityPublicTable with assigned table suffix
 func (a FivenetWikiPagesVisibilityPublicTable) WithSuffix(suffix string) *FivenetWikiPagesVisibilityPublicTable {
 	return newFivenetWikiPagesVisibilityPublicTable(a.SchemaName(), a.TableName()+suffix, a.TableName())
 }
@@ -57,13 +63,19 @@ func newFivenetWikiPagesVisibilityPublicTableImpl(schemaName, tableName, alias s
 		TargetIDColumn  = mysql.IntegerColumn("target_id")
 		CreatedAtColumn = mysql.TimestampColumn("created_at")
 		allColumns      = mysql.ColumnList{TargetIDColumn, CreatedAtColumn}
-		mutableColumns  = mysql.ColumnList{TargetIDColumn, CreatedAtColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn}
 		defaultColumns  = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetWikiPagesVisibilityPublicTable{
-		Table:    mysql.NewTable(schemaName, tableName, alias, allColumns...),
-		TargetID: TargetIDColumn, CreatedAt: CreatedAtColumn,
-		AllColumns: allColumns, MutableColumns: mutableColumns, DefaultColumns: defaultColumns,
+		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
+
+		//Columns
+		TargetID:  TargetIDColumn,
+		CreatedAt: CreatedAtColumn,
+
+		AllColumns:     allColumns,
+		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

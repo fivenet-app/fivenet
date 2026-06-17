@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type FivenetWikiPagesVisibilitySubject struct {
+type FivenetDocumentsTemplatesVisibilitySubject struct {
 	TargetID  int64     `sql:"primary_key" json:"target_id"`
 	SubjectID int64     `sql:"primary_key" json:"subject_id"`
 	Access    int16     `sql:"primary_key" json:"access"`

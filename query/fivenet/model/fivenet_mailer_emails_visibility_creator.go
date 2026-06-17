@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type FivenetDocumentsVisibilityCreator struct {
+type FivenetMailerEmailsVisibilityCreator struct {
 	TargetID   int64     `sql:"primary_key" json:"target_id"`
 	CreatorID  int32     `json:"creator_id"`
 	CreatorJob string    `json:"creator_job"`

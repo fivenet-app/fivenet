@@ -16,6 +16,7 @@ var FivenetWikiPagesVisibilitySubject = newFivenetWikiPagesVisibilitySubjectTabl
 type fivenetWikiPagesVisibilitySubjectTable struct {
 	mysql.Table
 
+	// Columns
 	TargetID  mysql.ColumnInteger
 	SubjectID mysql.ColumnInteger
 	Access    mysql.ColumnInteger
@@ -29,21 +30,26 @@ type fivenetWikiPagesVisibilitySubjectTable struct {
 
 type FivenetWikiPagesVisibilitySubjectTable struct {
 	fivenetWikiPagesVisibilitySubjectTable
+
 	NEW fivenetWikiPagesVisibilitySubjectTable
 }
 
+// AS creates new FivenetWikiPagesVisibilitySubjectTable with assigned alias
 func (a FivenetWikiPagesVisibilitySubjectTable) AS(alias string) *FivenetWikiPagesVisibilitySubjectTable {
 	return newFivenetWikiPagesVisibilitySubjectTable(a.SchemaName(), a.TableName(), alias)
 }
 
+// Schema creates new FivenetWikiPagesVisibilitySubjectTable with assigned schema name
 func (a FivenetWikiPagesVisibilitySubjectTable) FromSchema(schemaName string) *FivenetWikiPagesVisibilitySubjectTable {
 	return newFivenetWikiPagesVisibilitySubjectTable(schemaName, a.TableName(), a.Alias())
 }
 
+// WithPrefix creates new FivenetWikiPagesVisibilitySubjectTable with assigned table prefix
 func (a FivenetWikiPagesVisibilitySubjectTable) WithPrefix(prefix string) *FivenetWikiPagesVisibilitySubjectTable {
 	return newFivenetWikiPagesVisibilitySubjectTable(a.SchemaName(), prefix+a.TableName(), a.TableName())
 }
 
+// WithSuffix creates new FivenetWikiPagesVisibilitySubjectTable with assigned table suffix
 func (a FivenetWikiPagesVisibilitySubjectTable) WithSuffix(suffix string) *FivenetWikiPagesVisibilitySubjectTable {
 	return newFivenetWikiPagesVisibilitySubjectTable(a.SchemaName(), a.TableName()+suffix, a.TableName())
 }
@@ -63,13 +69,22 @@ func newFivenetWikiPagesVisibilitySubjectTableImpl(schemaName, tableName, alias 
 		EffectColumn    = mysql.BoolColumn("effect")
 		CreatedAtColumn = mysql.TimestampColumn("created_at")
 		allColumns      = mysql.ColumnList{TargetIDColumn, SubjectIDColumn, AccessColumn, EffectColumn, CreatedAtColumn}
-		mutableColumns  = mysql.ColumnList{TargetIDColumn, SubjectIDColumn, AccessColumn, EffectColumn, CreatedAtColumn}
-		defaultColumns  = mysql.ColumnList{SubjectIDColumn, AccessColumn, EffectColumn, CreatedAtColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn}
+		defaultColumns  = mysql.ColumnList{EffectColumn, CreatedAtColumn}
 	)
 
 	return fivenetWikiPagesVisibilitySubjectTable{
-		Table:    mysql.NewTable(schemaName, tableName, alias, allColumns...),
-		TargetID: TargetIDColumn, SubjectID: SubjectIDColumn, Access: AccessColumn, Effect: EffectColumn, CreatedAt: CreatedAtColumn,
-		AllColumns: allColumns, MutableColumns: mutableColumns, DefaultColumns: defaultColumns,
+		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
+
+		//Columns
+		TargetID:  TargetIDColumn,
+		SubjectID: SubjectIDColumn,
+		Access:    AccessColumn,
+		Effect:    EffectColumn,
+		CreatedAt: CreatedAtColumn,
+
+		AllColumns:     allColumns,
+		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

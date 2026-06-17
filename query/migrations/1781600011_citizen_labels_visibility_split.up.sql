@@ -1,14 +1,5 @@
 BEGIN;
 
-CREATE TABLE IF NOT EXISTS `fivenet_user_labels_job_visibility_creator` (
-  `target_id` bigint unsigned NOT NULL,
-  `creator_job` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  PRIMARY KEY (`target_id`),
-  KEY `idx_fivenet_user_labels_job_visibility_creator_lookup` (`creator_job`, `target_id`),
-  CONSTRAINT `fk_fivenet_user_labels_job_visibility_creator_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_user_labels_job` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
 CREATE TABLE IF NOT EXISTS `fivenet_user_labels_job_visibility_subject` (
   `target_id` bigint unsigned NOT NULL,
   `subject_id` bigint unsigned NOT NULL,
@@ -22,12 +13,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_labels_job_visibility_subject` (
   CONSTRAINT `fk_fivenet_user_labels_job_visibility_subject_subject_id` FOREIGN KEY (`subject_id`) REFERENCES `fivenet_acl_subjects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `chk_fivenet_user_labels_job_visibility_subject_effect` CHECK (`effect` IN (0, 1))
 ) ENGINE=InnoDB;
-
-INSERT IGNORE INTO `fivenet_user_labels_job_visibility_creator` (`target_id`, `creator_job`)
-SELECT l.`id`, l.`job`
-FROM `fivenet_user_labels_job` l
-WHERE l.`deleted_at` IS NULL
-  AND l.`job` <> '';
 
 INSERT IGNORE INTO `fivenet_user_labels_job_visibility_subject` (`target_id`, `subject_id`, `access`, `effect`)
 SELECT la.`target_id`, la.`subject_id`, la.`access`, la.`effect`
