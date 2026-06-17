@@ -25,93 +25,11 @@ func (s *Store) List(
 ) ([]*resourcesdocuments.DocumentShort, error) {
 	tDocumentShort := table.FivenetDocuments.AS("document_short")
 	tDocumentPage := table.FivenetDocuments.AS("document_page")
-	tDocumentFilter := tDocumentPage
 	tCreator := table.FivenetUser.AS("creator")
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
 	tWorkflowState := table.FivenetDocumentsWorkflowState.AS("workflow_state")
 	tDMeta := table.FivenetDocumentsMeta.AS("meta")
-
-	visibilityCondition := mysql.Bool(true)
-	if !q.UserInfo.GetSuperuser() {
-		visibilityCondition = visibilityCondition.AND(tDocumentFilter.DeletedAt.IS_NULL())
-	}
-	if q.Search != "" {
-		search := mysql.String(dbutils.PrepareForLikeSearch(q.Search))
-		searchCategory := table.FivenetDocumentsCategories.AS("search_category")
-		visibilityCondition = visibilityCondition.AND(mysql.OR(
-			tDocumentFilter.Title.LIKE(search),
-			tDocumentFilter.ContentText.LIKE(search),
-			tDocumentFilter.CreatorJob.LIKE(search),
-			mysql.EXISTS(
-				searchCategory.
-					SELECT(mysql.Int(1)).
-					FROM(searchCategory).
-					WHERE(mysql.AND(
-						searchCategory.ID.EQ(tDocumentFilter.CategoryID),
-						searchCategory.DeletedAt.IS_NULL(),
-						mysql.OR(
-							searchCategory.Name.LIKE(search),
-							searchCategory.Description.LIKE(search),
-						),
-					)),
-			),
-		))
-	}
-	if len(q.CategoryIDs) > 0 {
-		ids := make([]mysql.Expression, len(q.CategoryIDs))
-		for i := range q.CategoryIDs {
-			ids[i] = mysql.Int64(q.CategoryIDs[i])
-		}
-		visibilityCondition = visibilityCondition.AND(tDocumentFilter.CategoryID.IN(ids...))
-	}
-	if len(q.CreatorIDs) > 0 {
-		ids := make([]mysql.Expression, len(q.CreatorIDs))
-		for i := range q.CreatorIDs {
-			ids[i] = mysql.Int32(q.CreatorIDs[i])
-		}
-		visibilityCondition = visibilityCondition.AND(tDocumentFilter.CreatorID.IN(ids...))
-	}
-	if q.From != nil {
-		visibilityCondition = visibilityCondition.AND(
-			tDocumentFilter.CreatedAt.GT_EQ(mysql.TimestampT(q.From.AsTime())),
-		)
-	}
-	if q.To != nil {
-		visibilityCondition = visibilityCondition.AND(
-			tDocumentFilter.CreatedAt.LT_EQ(mysql.TimestampT(q.To.AsTime())),
-		)
-	}
-	if q.Closed != nil {
-		visibilityCondition = visibilityCondition.AND(
-			tDocumentFilter.Closed.EQ(mysql.Bool(*q.Closed)),
-		)
-	}
-	if len(q.DocumentIDs) > 0 {
-		ids := make([]mysql.Expression, len(q.DocumentIDs))
-		for i := range q.DocumentIDs {
-			ids[i] = mysql.Int64(q.DocumentIDs[i])
-		}
-		visibilityCondition = visibilityCondition.AND(tDocumentFilter.ID.IN(ids...))
-	}
-	if q.OnlyDrafts != nil {
-		visibilityCondition = visibilityCondition.AND(
-			tDocumentFilter.Draft.EQ(mysql.Bool(*q.OnlyDrafts)),
-		)
-	}
-	if !q.UserInfo.GetSuperuser() {
-		visibilityCondition = visibilityCondition.AND(mysql.OR(
-			tDocumentFilter.Public.IS_TRUE(),
-			mysql.AND(
-				tDocumentFilter.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
-				tDocumentFilter.CreatorJob.EQ(mysql.String(q.UserInfo.GetJob())),
-			),
-			s.subjectAccess.ACLAccessExistsCondition(
-				tDocumentFilter.ID,
-				q.UserInfo,
-				int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-			),
-		))
-	}
+	superuser := q.UserInfo != nil && q.UserInfo.GetSuperuser()
 
 	columns := dbutils.Columns{
 		tDocumentShort.ID,
@@ -154,86 +72,115 @@ func (s *Store) List(
 		tDMeta.ApPoliciesActive,
 		tDMeta.CommentCount,
 	}
-
-	if q.UserInfo.GetSuperuser() {
+	if superuser {
 		columns = append(columns, tDocumentShort.DeletedAt)
 	}
 	if q.IncludePhoneNumber {
 		columns = append(columns, tCreator.PhoneNumber)
 	}
-	var docPage mysql.SelectTable
-	if usesTitleSort(q.Sort) {
-		pageOrderBys := buildListOrder(
-			q.Sort,
-			tDocumentPage.Title,
-			tDocumentPage.CreatedAt,
-			tDocumentPage.UpdatedAt,
-		)
-		docPage = mysql.
-			SELECT(
-				tDocumentPage.ID.AS("id"),
-				tDocumentPage.CreatedAt.AS("created_at"),
-				tDocumentPage.UpdatedAt.AS("updated_at"),
-			).
-			FROM(tDocumentPage).
-			WHERE(visibilityCondition).
-			ORDER_BY(pageOrderBys...).
-			OFFSET(q.Offset).
-			LIMIT(q.Limit).
-			AsTable("doc_page")
-	} else {
-		pageOrderBys := buildListOrder(
-			q.Sort,
-			tDocumentPage.Title,
-			tDocumentPage.CreatedAt,
-			tDocumentPage.UpdatedAt,
-		)
-		docPage = mysql.
-			SELECT(
-				tDocumentPage.ID.AS("id"),
-				tDocumentPage.CreatedAt.AS("created_at"),
-				tDocumentPage.UpdatedAt.AS("updated_at"),
-			).
-			FROM(tDocumentPage).
-			WHERE(visibilityCondition).
-			ORDER_BY(pageOrderBys...).
-			OFFSET(q.Offset).
-			LIMIT(q.Limit).
-			AsTable("doc_page")
-	}
-	docPageID := mysql.IntegerColumn("id").From(docPage)
 
-	innerStmt := mysql.
-		SELECT(
-			columns[0],
-			columns[1:]...,
-		).
-		FROM(docPage.
-			INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(docPageID)).
-			LEFT_JOIN(tDCategory,
-				mysql.AND(
-					tDocumentShort.CategoryID.EQ(tDCategory.ID),
-					tDCategory.DeletedAt.IS_NULL(),
+	var (
+		stmt mysql.Statement
+		ctes []mysql.CommonTableExpression
+	)
+	if superuser {
+		stmt = mysql.
+			SELECT(
+				columns[0],
+				columns[1:]...,
+			).
+			FROM(tDocumentShort.
+				LEFT_JOIN(tDCategory,
+					mysql.AND(
+						tDocumentShort.CategoryID.EQ(tDCategory.ID),
+						tDCategory.DeletedAt.IS_NULL(),
+					),
+				).
+				LEFT_JOIN(tCreator,
+					tDocumentShort.CreatorID.EQ(tCreator.ID),
+				).
+				LEFT_JOIN(tWorkflowState,
+					tWorkflowState.DocumentID.EQ(tDocumentShort.ID),
+				).
+				LEFT_JOIN(tDMeta,
+					tDMeta.DocumentID.EQ(tDocumentShort.ID),
 				),
 			).
-			LEFT_JOIN(tCreator,
-				tDocumentShort.CreatorID.EQ(tCreator.ID),
+			WHERE(buildListDocumentsCondition(tDocumentShort, q)).
+			ORDER_BY(buildListOrder(
+				q.Sort,
+				tDocumentShort.Title,
+				tDocumentShort.CreatedAt,
+				tDocumentShort.UpdatedAt,
+			)...).
+			OFFSET(q.Offset).
+			LIMIT(q.Limit)
+	} else {
+		visibleIDs := s.subjectAccess.VisibleIDsByConditionQuery(
+			q.UserInfo,
+			int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			false,
+			buildListDocumentsCondition(tDocumentPage, q),
+		)
+		ctes = visibleIDs.CTEs
+		visibleDocID := mysql.IntegerColumn("id").From(visibleIDs.Table)
+		docPage := mysql.
+			SELECT(
+				visibleDocID.AS("id"),
+				tDocumentPage.CreatedAt.AS("created_at"),
+				tDocumentPage.UpdatedAt.AS("updated_at"),
 			).
-			LEFT_JOIN(tWorkflowState,
-				tWorkflowState.DocumentID.EQ(tDocumentShort.ID),
+			FROM(visibleIDs.Table.
+				INNER_JOIN(tDocumentPage,
+					tDocumentPage.ID.EQ(visibleDocID),
+				),
 			).
-			LEFT_JOIN(tDMeta,
-				tDMeta.DocumentID.EQ(tDocumentShort.ID),
-			),
-		).
-		ORDER_BY(buildListOrder(
-			q.Sort,
-			tDocumentShort.Title,
-			tDocumentShort.CreatedAt,
-			tDocumentShort.UpdatedAt,
-		)...)
+			ORDER_BY(buildListOrder(
+				q.Sort,
+				tDocumentPage.Title,
+				tDocumentPage.CreatedAt,
+				tDocumentPage.UpdatedAt,
+			)...).
+			OFFSET(q.Offset).
+			LIMIT(q.Limit).
+			AsTable("doc_page")
 
-	var stmt mysql.Statement = innerStmt
+		docPageID := mysql.IntegerColumn("id").From(docPage)
+
+		stmt = mysql.
+			SELECT(
+				columns[0],
+				columns[1:]...,
+			).
+			FROM(docPage.
+				INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(docPageID)).
+				LEFT_JOIN(tDCategory,
+					mysql.AND(
+						tDocumentShort.CategoryID.EQ(tDCategory.ID),
+						tDCategory.DeletedAt.IS_NULL(),
+					),
+				).
+				LEFT_JOIN(tCreator,
+					tDocumentShort.CreatorID.EQ(tCreator.ID),
+				).
+				LEFT_JOIN(tWorkflowState,
+					tWorkflowState.DocumentID.EQ(tDocumentShort.ID),
+				).
+				LEFT_JOIN(tDMeta,
+					tDMeta.DocumentID.EQ(tDocumentShort.ID),
+				),
+			).
+			ORDER_BY(buildListOrder(
+				q.Sort,
+				tDocumentShort.Title,
+				tDocumentShort.CreatedAt,
+				tDocumentShort.UpdatedAt,
+			)...)
+	}
+
+	if len(ctes) > 0 {
+		stmt = mysql.WITH(ctes...)(stmt)
+	}
 	var docs []*resourcesdocuments.DocumentShort
 	if err := stmt.QueryContext(ctx, s.db, &docs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -279,7 +226,6 @@ func (s *Store) Get(ctx context.Context, q GetQuery) (*resourcesdocuments.Docume
 		tDocument.ID,
 		tDocument.CreatedAt,
 		tDocument.UpdatedAt,
-		tDocument.DeletedAt,
 		tDocument.CategoryID,
 		tDCategory.ID,
 		tDCategory.Name,
@@ -714,6 +660,70 @@ func (s *Store) UpdateDocumentOwner(
 	return nil
 }
 
+func buildListDocumentsCondition(
+	document *table.FivenetDocumentsTable,
+	q ListQuery,
+) mysql.BoolExpression {
+	condition := mysql.Bool(true)
+	if q.Search != "" {
+		search := mysql.String(dbutils.PrepareForLikeSearch(q.Search))
+		searchCategory := table.FivenetDocumentsCategories.AS("search_category")
+		condition = condition.AND(mysql.OR(
+			document.Title.LIKE(search),
+			document.ContentText.LIKE(search),
+			document.CreatorJob.LIKE(search),
+			mysql.EXISTS(
+				searchCategory.
+					SELECT(mysql.Int(1)).
+					FROM(searchCategory).
+					WHERE(mysql.AND(
+						searchCategory.ID.EQ(document.CategoryID),
+						searchCategory.DeletedAt.IS_NULL(),
+						mysql.OR(
+							searchCategory.Name.LIKE(search),
+							searchCategory.Description.LIKE(search),
+						),
+					)),
+			),
+		))
+	}
+	if len(q.CategoryIDs) > 0 {
+		ids := make([]mysql.Expression, len(q.CategoryIDs))
+		for i := range q.CategoryIDs {
+			ids[i] = mysql.Int64(q.CategoryIDs[i])
+		}
+		condition = condition.AND(document.CategoryID.IN(ids...))
+	}
+	if len(q.CreatorIDs) > 0 {
+		ids := make([]mysql.Expression, len(q.CreatorIDs))
+		for i := range q.CreatorIDs {
+			ids[i] = mysql.Int32(q.CreatorIDs[i])
+		}
+		condition = condition.AND(document.CreatorID.IN(ids...))
+	}
+	if q.From != nil {
+		condition = condition.AND(document.CreatedAt.GT_EQ(mysql.TimestampT(q.From.AsTime())))
+	}
+	if q.To != nil {
+		condition = condition.AND(document.CreatedAt.LT_EQ(mysql.TimestampT(q.To.AsTime())))
+	}
+	if q.Closed != nil {
+		condition = condition.AND(document.Closed.EQ(mysql.Bool(*q.Closed)))
+	}
+	if len(q.DocumentIDs) > 0 {
+		ids := make([]mysql.Expression, len(q.DocumentIDs))
+		for i := range q.DocumentIDs {
+			ids[i] = mysql.Int64(q.DocumentIDs[i])
+		}
+		condition = condition.AND(document.ID.IN(ids...))
+	}
+	if q.OnlyDrafts != nil {
+		condition = condition.AND(document.Draft.EQ(mysql.Bool(*q.OnlyDrafts)))
+	}
+
+	return condition
+}
+
 func buildListOrder(
 	sort *resourcesdatabase.Sort,
 	title mysql.ColumnString,
@@ -744,16 +754,4 @@ func buildListOrder(
 	}
 
 	return orderBys
-}
-
-func usesTitleSort(sort *resourcesdatabase.Sort) bool {
-	if sort == nil {
-		return false
-	}
-	for _, sc := range sort.GetColumns() {
-		if sc.GetId() == "title" {
-			return true
-		}
-	}
-	return false
 }

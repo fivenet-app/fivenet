@@ -89,11 +89,13 @@ func (s *Server) ListTemplates(
 	req *pbdocuments.ListTemplatesRequest,
 ) (*pbdocuments.ListTemplatesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	templates, err := s.store.ListTemplates(ctx, userInfo)
+	templates, err := s.store.ListTemplates(ctx, false, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	resp := &pbdocuments.ListTemplatesResponse{Templates: templates}
+	resp := &pbdocuments.ListTemplatesResponse{
+		Templates: templates,
+	}
 
 	for i := range resp.GetTemplates() {
 		s.enricher.EnrichJobName(resp.GetTemplates()[i])

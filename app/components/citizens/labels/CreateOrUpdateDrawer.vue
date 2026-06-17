@@ -240,7 +240,7 @@ async function closeModal(): Promise<void> {
 </script>
 
 <template>
-    <UModal
+    <UDrawer
         :title="$t('components.citizens.citizen_labels.title')"
         :close="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
@@ -263,70 +263,78 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <DataPendingBlock
-                v-if="labelId && isRequestPending(status)"
-                :message="$t('common.loading', [$t('common.label', 2)])"
-            />
-            <DataErrorBlock v-else-if="labelId && error" :error="error" :retry="refresh" />
+            <div class="mx-auto w-full max-w-(--breakpoint-xl)">
+                <DataPendingBlock
+                    v-if="labelId && isRequestPending(status)"
+                    :message="$t('common.loading', [$t('common.label', 2)])"
+                />
+                <DataErrorBlock v-else-if="labelId && error" :error="error" :retry="refresh" />
 
-            <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <UFormField class="flex-1" name="name" :label="$t('common.name')">
-                    <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
-                </UFormField>
+                <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                    <UFormField class="flex-1" name="name" :label="$t('common.name')">
+                        <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
+                    </UFormField>
 
-                <UFormField name="color" :label="$t('common.color')">
-                    <ColorPicker v-model="state.color" class="w-full" name="color" />
-                </UFormField>
+                    <UFormField name="color" :label="$t('common.color')">
+                        <ColorPicker v-model="state.color" class="w-full" name="color" />
+                    </UFormField>
 
-                <UFormField name="icon" :label="$t('common.icon')">
-                    <IconSelectMenu v-model="state.icon" class="w-full" name="icon" :hex-color="state.color" clear />
-                </UFormField>
+                    <UFormField name="icon" :label="$t('common.icon')">
+                        <IconSelectMenu v-model="state.icon" class="w-full" name="icon" :hex-color="state.color" clear />
+                    </UFormField>
 
-                <USeparator class="my-2" />
+                    <USeparator class="my-2" />
 
-                <UFormField
-                    name="settings.requiresExpiration"
-                    :label="$t('components.citizens.citizen_labels.settings.requires_expiration')"
-                >
-                    <USwitch v-model="state.settings.requiresExpiration" name="settings.requiresExpiration" />
-                </UFormField>
+                    <UFormField
+                        name="settings.requiresExpiration"
+                        :label="$t('components.citizens.citizen_labels.settings.requires_expiration')"
+                    >
+                        <USwitch v-model="state.settings.requiresExpiration" name="settings.requiresExpiration" />
+                    </UFormField>
 
-                <UFormField :label="$t('components.citizens.citizen_labels.settings.min_duration')" name="settings.minDuration">
-                    <InputDurationPicker
-                        v-model="state.settings.minDuration"
-                        class="w-full"
-                        :min="minLabelDuration"
-                        :max="maxLabelDuration"
-                        :units="['hour', 'day']"
-                        :step="1"
-                        clearable
-                        :disabled="!state.settings.requiresExpiration"
-                    />
-                </UFormField>
+                    <UFormField
+                        :label="$t('components.citizens.citizen_labels.settings.min_duration')"
+                        name="settings.minDuration"
+                    >
+                        <InputDurationPicker
+                            v-model="state.settings.minDuration"
+                            class="w-full"
+                            :min="minLabelDuration"
+                            :max="maxLabelDuration"
+                            :units="['hour', 'day']"
+                            :step="1"
+                            clearable
+                            :disabled="!state.settings.requiresExpiration"
+                        />
+                    </UFormField>
 
-                <UFormField :label="$t('components.citizens.citizen_labels.settings.max_duration')" name="settings.maxDuration">
-                    <InputDurationPicker
-                        v-model="state.settings.maxDuration"
-                        class="w-full"
-                        :min="minLabelDuration"
-                        :max="maxLabelDuration"
-                        :units="['hour', 'day']"
-                        :step="1"
-                        clearable
-                        :disabled="!state.settings.requiresExpiration"
-                    />
-                </UFormField>
+                    <UFormField
+                        :label="$t('components.citizens.citizen_labels.settings.max_duration')"
+                        name="settings.maxDuration"
+                    >
+                        <InputDurationPicker
+                            v-model="state.settings.maxDuration"
+                            class="w-full"
+                            :min="minLabelDuration"
+                            :max="maxLabelDuration"
+                            :units="['hour', 'day']"
+                            :step="1"
+                            clearable
+                            :disabled="!state.settings.requiresExpiration"
+                        />
+                    </UFormField>
 
-                <UFormField name="access" :label="$t('common.access')">
-                    <AccessManager
-                        v-model:jobs="state.access.jobs"
-                        :target-id="state.id"
-                        :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.citizens.labels.AccessLevel')"
-                        :access-types="[{ label: $t('common.job', 2), value: 'job' }]"
-                        name="access"
-                    />
-                </UFormField>
-            </UForm>
+                    <UFormField name="access" :label="$t('common.access')">
+                        <AccessManager
+                            v-model:jobs="state.access.jobs"
+                            :target-id="state.id"
+                            :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.citizens.labels.AccessLevel')"
+                            :access-types="[{ label: $t('common.job', 2), value: 'job' }]"
+                            name="access"
+                        />
+                    </UFormField>
+                </UForm>
+            </div>
         </template>
 
         <template #footer>
@@ -350,5 +358,5 @@ async function closeModal(): Promise<void> {
                 />
             </UFieldGroup>
         </template>
-    </UModal>
+    </UDrawer>
 </template>

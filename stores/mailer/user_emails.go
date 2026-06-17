@@ -3,6 +3,7 @@ package mailerstore
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
@@ -21,49 +22,53 @@ func (s *Store) ListUserEmails(
 	includeDisabled bool,
 	includeDeleted bool,
 ) ([]*maileremails.Email, error) {
-	tEmailAlias := table.FivenetMailerEmails.AS("email")
-
-	condition := mysql.Bool(includeDeleted).OR(tEmailAlias.DeletedAt.IS_NULL())
+	condition := mysql.Bool(true)
 	if !includeDisabled {
-		condition = condition.AND(tEmailAlias.Deactivated.IS_FALSE())
+		condition = condition.AND(table.FivenetMailerEmails.Deactivated.IS_FALSE())
 	}
 
-	if !userInfo.GetSuperuser() {
-		acl := s.subjectAccess.ACLAccessExistsCondition(
-			tEmailAlias.ID,
-			userInfo,
-			int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
-		)
+	visibleIDs := s.subjectAccess.VisibleIDsByConditionQuery(
+		userInfo,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
+		includeDeleted,
+		condition,
+	)
+	ctes := visibleIDs.CTEs
+	visibleEmailID := mysql.IntegerColumn("id").From(visibleIDs.Table)
 
-		condition = condition.AND(mysql.OR(
-			tEmailAlias.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-			acl,
-		))
-	}
-
-	stmt := tEmailAlias.
+	stmt := tEmails.
 		SELECT(
-			tEmailAlias.ID,
-			tEmailAlias.CreatedAt,
-			tEmailAlias.UpdatedAt,
-			tEmailAlias.DeletedAt,
-			tEmailAlias.Deactivated,
-			tEmailAlias.Job,
-			tEmailAlias.UserID,
-			tEmailAlias.Email,
-			tEmailAlias.EmailChanged,
-			tEmailAlias.Label,
+			tEmails.ID,
+			tEmails.CreatedAt,
+			tEmails.UpdatedAt,
+			tEmails.DeletedAt,
+			tEmails.Deactivated,
+			tEmails.Job,
+			tEmails.UserID,
+			tEmails.Email,
+			tEmails.EmailChanged,
+			tEmails.Label,
 		).
-		FROM(tEmailAlias).
-		WHERE(condition).
-		ORDER_BY(tEmailAlias.Job.ASC(), tEmailAlias.Label.ASC())
+		FROM(
+			visibleIDs.Table.
+				INNER_JOIN(tEmails,
+					tEmails.ID.EQ(visibleEmailID),
+				),
+		).
+		ORDER_BY(tEmails.Job.ASC(), tEmails.Label.ASC())
 
 	if pag != nil {
 		stmt = stmt.OFFSET(pag.GetOffset())
 	}
 
+	var finalStmt mysql.Statement = stmt
+	if len(ctes) > 0 {
+		finalStmt = mysql.WITH(ctes...)(stmt)
+	}
+	fmt.Println(finalStmt.DebugSql())
+
 	emails := []*maileremails.Email{}
-	if err := stmt.QueryContext(ctx, s.dbOr(db), &emails); err != nil {
+	if err := finalStmt.QueryContext(ctx, s.dbOr(db), &emails); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}

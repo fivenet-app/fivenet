@@ -16,54 +16,87 @@ import (
 
 func (s *Store) ListTemplates(
 	ctx context.Context,
+	ownJobOnly bool,
 	userInfo *userinfo.UserInfo,
 ) ([]*documentstemplates.TemplateShort, error) {
 	tTemplates := table.FivenetDocumentsTemplates.AS("template_short")
 	tCategory := table.FivenetDocumentsCategories.AS("category")
-	visibilityCondition := mysql.Bool(true)
-	if !userInfo.GetSuperuser() {
-		visibilityCondition = visibilityCondition.AND(tTemplates.DeletedAt.IS_NULL())
-		visibilityCondition = visibilityCondition.AND(mysql.OR(
-			tTemplates.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			s.templateAccess.ACLAccessExistsCondition(
-				tTemplates.ID,
-				userInfo,
-				int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-			),
-		))
+
+	columns := []mysql.Projection{
+		tTemplates.ID,
+		tTemplates.Weight,
+		tCategory.ID,
+		tCategory.CreatedAt,
+		tCategory.Name,
+		tCategory.Description,
+		tCategory.Job,
+		tCategory.Color,
+		tCategory.Icon,
+		tTemplates.Title,
+		tTemplates.Description,
+		tTemplates.Color,
+		tTemplates.Icon,
+		tTemplates.Schema,
+		tTemplates.Workflow,
+		tTemplates.Approval,
+		tTemplates.CreatorJob,
 	}
 
-	innerStmt := tTemplates.
+	if userInfo != nil && userInfo.GetSuperuser() {
+		columns = append(columns, tTemplates.DeletedAt)
+	}
+
+	selectStmt := tTemplates.
 		SELECT(
-			tTemplates.ID,
-			tTemplates.Weight,
-			tCategory.ID,
-			tCategory.Name,
-			tCategory.Description,
-			tCategory.Job,
-			tCategory.Color,
-			tCategory.Icon,
-			tTemplates.Title,
-			tTemplates.Description,
-			tTemplates.Color,
-			tTemplates.Icon,
-			tTemplates.Schema,
-			tTemplates.Workflow,
-			tTemplates.Approval,
-			tTemplates.CreatorJob,
-		).
-		FROM(tTemplates.
-			LEFT_JOIN(tCategory,
-				tCategory.ID.EQ(tTemplates.CategoryID),
-			),
-		).
-		WHERE(visibilityCondition).
-		ORDER_BY(
-			tTemplates.Weight.DESC(),
-			tTemplates.ID.ASC(),
+			columns[0],
+			columns[1:]...,
 		)
 
-	var stmt mysql.Statement = innerStmt
+	orderBys := []mysql.OrderByClause{
+		tTemplates.Weight.DESC(),
+		tTemplates.ID.ASC(),
+	}
+
+	var stmt mysql.Statement
+	if userInfo != nil && userInfo.GetSuperuser() {
+		stmt = selectStmt.
+			FROM(tTemplates.
+				LEFT_JOIN(tCategory,
+					tCategory.ID.EQ(tTemplates.CategoryID),
+				),
+			).
+			ORDER_BY(orderBys...).
+			WHERE(tTemplates.CreatorJob.EQ(mysql.String(userInfo.GetJob())))
+	} else {
+		visibileCondition := table.FivenetDocumentsTemplates.DeletedAt.IS_NULL()
+		if ownJobOnly {
+			visibileCondition = visibileCondition.AND(
+				table.FivenetDocumentsTemplates.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
+			)
+		}
+
+		visibleIDs := s.templateAccess.VisibleIDsByConditionQuery(
+			userInfo,
+			int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			false,
+			visibileCondition,
+		)
+		visibleTemplateID := mysql.IntegerColumn("id").From(visibleIDs.Table)
+		stmt = selectStmt.
+			FROM(visibleIDs.Table.
+				INNER_JOIN(tTemplates,
+					tTemplates.ID.EQ(visibleTemplateID),
+				).
+				LEFT_JOIN(tCategory,
+					tCategory.ID.EQ(tTemplates.CategoryID),
+				),
+			).
+			ORDER_BY(orderBys...)
+
+		if len(visibleIDs.CTEs) > 0 {
+			stmt = mysql.WITH(visibleIDs.CTEs...)(stmt)
+		}
+	}
 
 	var dest []*documentstemplates.TemplateShort
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
@@ -166,8 +199,8 @@ func (s *Store) CreateTemplate(
 			categoryID,
 			tmpl.GetTitle(),
 			tmpl.GetDescription(),
-			tmpl.Color,
-			tmpl.Icon,
+			dbutils.StringPEmpty(tmpl.Color),
+			dbutils.StringPEmpty(tmpl.Icon),
 			tmpl.GetContentTitle(),
 			tmpl.GetContent(),
 			tmpl.GetState(),

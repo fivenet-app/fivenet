@@ -94,14 +94,15 @@ func (s *Store) handleVehiclesData(
 		)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tVehicles.UserID.SET(mysql.RawInt("VALUES(`user_id`)")),
-		tVehicles.Job.SET(mysql.RawString("VALUES(`job`)")),
-		tVehicles.Plate.SET(mysql.RawString("VALUES(`plate`)")),
-		tVehicles.Model.SET(mysql.RawString("VALUES(`model`)")),
-		tVehicles.Type.SET(mysql.RawString("VALUES(`type`)")),
-		tVehicles.Data.SET(mysql.RawString("VALUES(`data`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tVehicles.UserID.SET(mysql.RawInt("VALUES(`user_id`)")),
+			tVehicles.Job.SET(mysql.RawString("VALUES(`job`)")),
+			tVehicles.Plate.SET(mysql.RawString("VALUES(`plate`)")),
+			tVehicles.Model.SET(mysql.RawString("VALUES(`model`)")),
+			tVehicles.Type.SET(mysql.RawString("VALUES(`type`)")),
+			tVehicles.Data.SET(mysql.RawString("VALUES(`data`)")),
+		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {

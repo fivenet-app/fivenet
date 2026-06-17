@@ -212,7 +212,8 @@ func (s *Store) UpdateAccount(
 	}
 
 	if len(updateSets) > 0 {
-		stmt := tAccounts.UPDATE()
+		stmt := tAccounts.
+			UPDATE()
 		if len(updateSets) == 1 {
 			stmt = stmt.SET(updateSets[0])
 		} else {

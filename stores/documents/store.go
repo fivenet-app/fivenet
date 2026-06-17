@@ -34,6 +34,7 @@ type IStore interface {
 	Get(ctx context.Context, q GetQuery) (*resourcesdocuments.Document, error)
 	ListTemplates(
 		ctx context.Context,
+		ownJobOnly bool,
 		userInfo *userinfo.UserInfo,
 	) ([]*documentstemplates.TemplateShort, error)
 	GetTemplate(
@@ -321,6 +322,7 @@ type IStore interface {
 type Store struct {
 	db                 *sql.DB
 	subjectAccess      *access.SubjectObjectAccess
+	stampAccess        *access.SubjectObjectAccess
 	subjectResolver    *access.SubjectResolver
 	templateAccess     *access.SubjectObjectAccess
 	userDocumentSorter *resourcesdatabase.SorterBuilder
@@ -417,6 +419,7 @@ func New(db *sql.DB) IStore {
 	return &Store{
 		db:              db,
 		subjectAccess:   access.NewDocumentsSubjectObjectAccess(db),
+		stampAccess:     access.NewDocumentStampsSubjectObjectAccess(db),
 		subjectResolver: access.NewSubjectResolver(db),
 		templateAccess:  access.NewDocumentTemplatesSubjectObjectAccess(db),
 		userDocumentSorter: resourcesdatabase.New(

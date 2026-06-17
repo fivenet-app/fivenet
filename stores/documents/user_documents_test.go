@@ -1,7 +1,6 @@
 package documentsstore
 
 import (
-	"regexp"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -23,11 +22,12 @@ func TestStoreListUserDocuments(t *testing.T) {
 
 	store := New(db)
 
-	countRows := sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1))
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT COUNT(DISTINCT document_relation.document_id) AS "data_count.total" FROM fivenet_documents_relations AS document_relation`) + `(?s).*`).
-		WillReturnRows(countRows)
+	countQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*SELECT COUNT\(DISTINCT document_relation\.document_id\) AS "data_count\.total".*document_relation\.deleted_at IS NULL.*`
+	mock.ExpectQuery(countQuery).
+		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_relations AS document_relation`) + `(?s).*` + regexp.QuoteMeta(`ORDER BY document.created_at DESC`) + `(?s).*` + regexp.QuoteMeta(`LIMIT ?`)).
+	listQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*SELECT document_relation\.id AS "id", document_relation\.document_id AS "document_id".*ORDER BY document\.created_at DESC LIMIT \?;`
+	mock.ExpectQuery(listQuery).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
 	pag, relations, err := store.ListUserDocuments(t.Context(), ListUserDocumentsQuery{

@@ -519,40 +519,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-## resources/citizens/labels/access.proto
-
-
-### resources.citizens.labels.LabelAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.access.JobAccess](#resourcesaccessJobAccess) | repeated |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.citizens.labels.AccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_VIEW` | 1 |  |
-| `ACCESS_LEVEL_GIVE` | 2 |  |
-| `ACCESS_LEVEL_REMOVE` | 3 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/citizens/labels/labels.proto
 
 
@@ -571,7 +537,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `color` | [string](#string) |  |  |
 | `icon` | [string](#string) | optional |  |
 | `settings` | [Settings](#resourcescitizenslabelsSettings) | optional |  |
-| `access` | [LabelAccess](#resourcescitizenslabelsLabelAccess) | optional |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) | optional |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Citizen label assignment data |
 
 
@@ -2023,6 +1989,29 @@ Dummy - DO NOT USE!
 | `CENTRUM_TYPE_UNSPECIFIED` | 0 |  |
 | `CENTRUM_TYPE_DISPATCH` | 1 |  |
 | `CENTRUM_TYPE_DELIVERY` | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/citizens/labels/access.proto
+
+ <!-- end messages -->
+
+
+### resources.citizens.labels.AccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_VIEW` | 1 |  |
+| `ACCESS_LEVEL_GIVE` | 2 |  |
+| `ACCESS_LEVEL_REMOVE` | 3 |  |
 
 
  <!-- end enums -->

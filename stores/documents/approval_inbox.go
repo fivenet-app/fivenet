@@ -20,23 +20,14 @@ func (s *Store) ListApprovalTasksInbox(
 	tApprovals := table.FivenetDocumentsApprovals
 	tDocumentShort := table.FivenetDocuments.AS("document_short")
 	tDMeta := table.FivenetDocumentsMeta.AS("meta")
-
-	visibilityCondition := mysql.Bool(true)
-	if !q.UserInfo.GetSuperuser() {
-		visibilityCondition = visibilityCondition.AND(tDocumentShort.DeletedAt.IS_NULL())
-		visibilityCondition = visibilityCondition.AND(mysql.OR(
-			tDocumentShort.Public.IS_TRUE(),
-			mysql.AND(
-				tDocumentShort.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
-				tDocumentShort.CreatorJob.EQ(mysql.String(q.UserInfo.GetJob())),
-			),
-			s.subjectAccess.ACLAccessExistsCondition(
-				tDocumentShort.ID,
-				q.UserInfo,
-				int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-			),
-		))
+	tUser := table.FivenetUser.AS("requester")
+	tCreator := table.FivenetUser.AS("creator")
+	pagination := q.Pagination
+	if pagination == nil {
+		pagination = &resourcesdatabase.PaginationRequest{}
 	}
+
+	documentCondition := buildApprovalInboxDocumentCondition(tDocumentShort, q)
 
 	eligible := mysql.OR(
 		mysql.AND(
@@ -62,7 +53,8 @@ func (s *Store) ListApprovalTasksInbox(
 	if q.NotAlreadyActed {
 		notAlreadyActed = mysql.NOT(
 			mysql.EXISTS(
-				mysql.SELECT(mysql.Int(1)).
+				mysql.
+					SELECT(mysql.Int(1)).
 					FROM(tApprovals).
 					WHERE(mysql.AND(
 						tApprovals.DocumentID.EQ(tApprovalTasks.DocumentID),
@@ -120,27 +112,177 @@ func (s *Store) ListApprovalTasksInbox(
 		maxSlotThisGroup.IN(tApprovalTasks.SlotNo),
 	)
 
-	condition := mysql.AND(
-		visibilityCondition,
+	taskCondition := mysql.AND(
 		eligible,
 		notAlreadyActed,
 		onlyFirstSlot,
 		tApprovalTasks.Status.IN(statuses...),
 	)
 
-	if q.OnlyDrafts != nil {
-		condition = condition.AND(tDocumentShort.Draft.EQ(mysql.Bool(*q.OnlyDrafts)))
+	var count resourcesdatabase.DataCount
+	var countStmt mysql.Statement
+	var stmt mysql.Statement
+	var ctes []mysql.CommonTableExpression
+
+	if q.UserInfo.GetSuperuser() {
+		baseFrom := tApprovalTasks.
+			INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(tApprovalTasks.DocumentID))
+		countStmt = tApprovalTasks.
+			SELECT(
+				mysql.COUNT(tApprovalTasks.ID).AS("data_count.total"),
+			).
+			FROM(baseFrom).
+			WHERE(mysql.AND(taskCondition, documentCondition))
+
+		stmt = mysql.
+			SELECT(
+				tApprovalTasks.ID,
+				tApprovalTasks.DocumentID,
+				tApprovalTasks.SnapshotDate,
+				tApprovalTasks.AssigneeKind,
+				tApprovalTasks.UserID,
+				tApprovalTasks.Job,
+				tApprovalTasks.MinimumGrade,
+				tApprovalTasks.Label,
+				tApprovalTasks.SignatureRequired,
+				tApprovalTasks.SlotNo,
+				tApprovalTasks.Status,
+				tApprovalTasks.Comment,
+				tApprovalTasks.CreatedAt,
+				tApprovalTasks.CompletedAt,
+				tApprovalTasks.DueAt,
+				tApprovalTasks.DecisionCount,
+				tApprovalTasks.CreatorID,
+				tApprovalTasks.CreatorJob,
+				tUser.ID,
+				tUser.Firstname,
+				tUser.Lastname,
+				tUser.Dateofbirth,
+				tUser.Job,
+				tUser.JobGrade,
+				tDocumentShort.Title,
+				tDocumentShort.ContentType,
+				tDocumentShort.CreatorID,
+				tCreator.ID,
+				tCreator.Job,
+				tCreator.JobGrade,
+				tCreator.Firstname,
+				tCreator.Lastname,
+				tCreator.Dateofbirth,
+				tDocumentShort.CreatorJob,
+				tDocumentShort.State.AS("meta.state"),
+				tDocumentShort.Closed.AS("meta.closed"),
+				tDocumentShort.Draft.AS("meta.draft"),
+				tDocumentShort.Public.AS("meta.public"),
+				tDMeta.DocumentID,
+				tDMeta.Approved,
+				tDMeta.ApRequiredTotal,
+				tDMeta.ApCollectedApproved,
+				tDMeta.ApRequiredRemaining,
+				tDMeta.ApDeclinedCount,
+				tDMeta.ApPendingCount,
+				tDMeta.ApAnyDeclined,
+				tDMeta.ApPoliciesActive,
+				tDMeta.CommentCount,
+			).
+			FROM(
+				baseFrom.
+					LEFT_JOIN(tUser, tUser.ID.EQ(tApprovalTasks.UserID)).
+					LEFT_JOIN(tCreator, tCreator.ID.EQ(tApprovalTasks.CreatorID)).
+					LEFT_JOIN(tDMeta, tDMeta.DocumentID.EQ(tDocumentShort.ID)),
+			).
+			WHERE(mysql.AND(taskCondition, documentCondition)).
+			OFFSET(pagination.GetOffset()).
+			ORDER_BY(tApprovalTasks.CreatedAt.ASC()).
+			LIMIT(20)
+	} else {
+		visibleIDs := s.subjectAccess.VisibleIDsByConditionQuery(
+			q.UserInfo,
+			int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			false,
+			documentCondition,
+		)
+		ctes = visibleIDs.CTEs
+		visibleDocID := mysql.IntegerColumn("id").From(visibleIDs.Table)
+		baseFrom := visibleIDs.Table.
+			INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(visibleDocID)).
+			INNER_JOIN(tApprovalTasks, tApprovalTasks.DocumentID.EQ(tDocumentShort.ID))
+
+		countStmt = tApprovalTasks.
+			SELECT(
+				mysql.COUNT(tApprovalTasks.ID).AS("data_count.total"),
+			).
+			FROM(baseFrom).
+			WHERE(taskCondition)
+
+		stmt = mysql.
+			SELECT(
+				tApprovalTasks.ID,
+				tApprovalTasks.DocumentID,
+				tApprovalTasks.SnapshotDate,
+				tApprovalTasks.AssigneeKind,
+				tApprovalTasks.UserID,
+				tApprovalTasks.Job,
+				tApprovalTasks.MinimumGrade,
+				tApprovalTasks.Label,
+				tApprovalTasks.SignatureRequired,
+				tApprovalTasks.SlotNo,
+				tApprovalTasks.Status,
+				tApprovalTasks.Comment,
+				tApprovalTasks.CreatedAt,
+				tApprovalTasks.CompletedAt,
+				tApprovalTasks.DueAt,
+				tApprovalTasks.DecisionCount,
+				tApprovalTasks.CreatorID,
+				tApprovalTasks.CreatorJob,
+				tUser.ID,
+				tUser.Firstname,
+				tUser.Lastname,
+				tUser.Dateofbirth,
+				tUser.Job,
+				tUser.JobGrade,
+				tDocumentShort.Title,
+				tDocumentShort.ContentType,
+				tDocumentShort.CreatorID,
+				tCreator.ID,
+				tCreator.Job,
+				tCreator.JobGrade,
+				tCreator.Firstname,
+				tCreator.Lastname,
+				tCreator.Dateofbirth,
+				tDocumentShort.CreatorJob,
+				tDocumentShort.State.AS("meta.state"),
+				tDocumentShort.Closed.AS("meta.closed"),
+				tDocumentShort.Draft.AS("meta.draft"),
+				tDocumentShort.Public.AS("meta.public"),
+				tDMeta.DocumentID,
+				tDMeta.Approved,
+				tDMeta.ApRequiredTotal,
+				tDMeta.ApCollectedApproved,
+				tDMeta.ApRequiredRemaining,
+				tDMeta.ApDeclinedCount,
+				tDMeta.ApPendingCount,
+				tDMeta.ApAnyDeclined,
+				tDMeta.ApPoliciesActive,
+				tDMeta.CommentCount,
+			).
+			FROM(
+				baseFrom.
+					LEFT_JOIN(tUser, tUser.ID.EQ(tApprovalTasks.UserID)).
+					LEFT_JOIN(tCreator, tCreator.ID.EQ(tApprovalTasks.CreatorID)).
+					LEFT_JOIN(tDMeta, tDMeta.DocumentID.EQ(tDocumentShort.ID)),
+			).
+			WHERE(taskCondition).
+			OFFSET(pagination.GetOffset()).
+			ORDER_BY(tApprovalTasks.CreatedAt.ASC()).
+			LIMIT(20)
 	}
 
-	var countStmt mysql.Statement = tApprovalTasks.
-		SELECT(mysql.COUNT(tApprovalTasks.ID).AS("data_count.total")).
-		FROM(
-			tApprovalTasks.
-				INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(tApprovalTasks.DocumentID)),
-		).
-		WHERE(condition)
+	if len(ctes) > 0 {
+		countStmt = mysql.WITH(ctes...)(countStmt)
+		stmt = mysql.WITH(ctes...)(stmt)
+	}
 
-	var count resourcesdatabase.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return resourcesdatabase.DataCount{}, nil, err
@@ -151,71 +293,6 @@ func (s *Store) ListApprovalTasksInbox(
 		return count, []*documentsapproval.ApprovalTask{}, nil
 	}
 
-	tUser := table.FivenetUser.AS("requester")
-	tCreator := table.FivenetUser.AS("creator")
-	var stmt mysql.Statement = mysql.
-		SELECT(
-			tApprovalTasks.ID,
-			tApprovalTasks.DocumentID,
-			tApprovalTasks.SnapshotDate,
-			tApprovalTasks.AssigneeKind,
-			tApprovalTasks.UserID,
-			tApprovalTasks.Job,
-			tApprovalTasks.MinimumGrade,
-			tApprovalTasks.Label,
-			tApprovalTasks.SignatureRequired,
-			tApprovalTasks.SlotNo,
-			tApprovalTasks.Status,
-			tApprovalTasks.Comment,
-			tApprovalTasks.CreatedAt,
-			tApprovalTasks.CompletedAt,
-			tApprovalTasks.DueAt,
-			tApprovalTasks.DecisionCount,
-			tApprovalTasks.CreatorID,
-			tApprovalTasks.CreatorJob,
-			tUser.ID,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.Job,
-			tUser.JobGrade,
-			tDocumentShort.Title,
-			tDocumentShort.ContentType,
-			tDocumentShort.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tDocumentShort.CreatorJob,
-			tDocumentShort.State.AS("meta.state"),
-			tDocumentShort.Closed.AS("meta.closed"),
-			tDocumentShort.Draft.AS("meta.draft"),
-			tDocumentShort.Public.AS("meta.public"),
-			tDMeta.DocumentID,
-			tDMeta.Approved,
-			tDMeta.ApRequiredTotal,
-			tDMeta.ApCollectedApproved,
-			tDMeta.ApRequiredRemaining,
-			tDMeta.ApDeclinedCount,
-			tDMeta.ApPendingCount,
-			tDMeta.ApAnyDeclined,
-			tDMeta.ApPoliciesActive,
-			tDMeta.CommentCount,
-		).
-		FROM(
-			tApprovalTasks.
-				INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(tApprovalTasks.DocumentID)).
-				LEFT_JOIN(tUser, tUser.ID.EQ(tApprovalTasks.UserID)).
-				LEFT_JOIN(tCreator, tCreator.ID.EQ(tApprovalTasks.CreatorID)).
-				LEFT_JOIN(tDMeta, tDMeta.DocumentID.EQ(tDocumentShort.ID)),
-		).
-		WHERE(condition).
-		OFFSET(q.Pagination.GetOffset()).
-		ORDER_BY(tApprovalTasks.CreatedAt.ASC()).
-		LIMIT(20)
-
 	var tasks []*documentsapproval.ApprovalTask
 	if err := stmt.QueryContext(ctx, s.db, &tasks); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -224,4 +301,16 @@ func (s *Store) ListApprovalTasksInbox(
 	}
 
 	return count, tasks, nil
+}
+
+func buildApprovalInboxDocumentCondition(
+	document *table.FivenetDocumentsTable,
+	q ListApprovalTasksInboxQuery,
+) mysql.BoolExpression {
+	condition := mysql.Bool(true)
+	if q.OnlyDrafts != nil {
+		condition = condition.AND(document.Draft.EQ(mysql.Bool(*q.OnlyDrafts)))
+	}
+
+	return condition
 }

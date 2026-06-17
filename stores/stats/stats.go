@@ -30,31 +30,37 @@ func (s *Store) LoadPublicStats(ctx context.Context) (Stats, error) {
 	queries := []statQuery{
 		{
 			key: "users_registered",
-			stmt: tAccounts.SELECT(mysql.COUNT(tAccounts.ID).AS("value")).
+			stmt: tAccounts.
+				SELECT(mysql.COUNT(tAccounts.ID).AS("value")).
 				WHERE(tAccounts.DeletedAt.IS_NULL()),
 		},
 		{
 			key: "documents_created",
-			stmt: tDocuments.SELECT(mysql.COUNT(tDocuments.ID).AS("value")).
+			stmt: tDocuments.
+				SELECT(mysql.COUNT(tDocuments.ID).AS("value")).
 				WHERE(tDocuments.DeletedAt.IS_NULL()),
 		},
 		{
-			key:  "dispatches_created",
-			stmt: tDispatches.SELECT(mysql.MAX(tDispatches.ID).AS("value")),
+			key: "dispatches_created",
+			stmt: tDispatches.
+				SELECT(mysql.MAX(tDispatches.ID).AS("value")),
 		},
 		{
-			key:  "citizen_activity",
-			stmt: tCitizenActivity.SELECT(mysql.COUNT(tCitizenActivity.ID).AS("value")),
+			key: "citizen_activity",
+			stmt: tCitizenActivity.
+				SELECT(mysql.COUNT(tCitizenActivity.ID).AS("value")),
 		},
 		{
 			key: "timeclock_tracked",
-			stmt: tJobUserTimeclock.SELECT(
-				mysql.CAST(mysql.SUM(tJobUserTimeclock.SpentTime)).AS_SIGNED().AS("value"),
-			),
+			stmt: tJobUserTimeclock.
+				SELECT(
+					mysql.CAST(mysql.SUM(tJobUserTimeclock.SpentTime)).AS_SIGNED().AS("value"),
+				),
 		},
 		{
-			key:  "citizens_total",
-			stmt: tUsers.SELECT(mysql.COUNT(tUsers.ID).AS("value")),
+			key: "citizens_total",
+			stmt: tUsers.
+				SELECT(mysql.COUNT(tUsers.ID).AS("value")),
 		},
 	}
 

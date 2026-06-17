@@ -23,10 +23,8 @@ var (
 	tCitizenLabels     = table.FivenetUserLabels
 )
 
-var labelSubjectAccessOptions = access.SubjectAccessOptions{BlockedAccess: -1}
-
-func labelJobAccess(jobs []*citizenslabels.JobAccess) *pbaccess.Access {
-	return &pbaccess.Access{Jobs: jobs}
+var labelSubjectAccessOptions = access.SubjectAccessOptions{
+	BlockedAccess: -1,
 }
 
 func (s *Server) ListLabels(
@@ -169,9 +167,8 @@ func (s *Server) CreateOrUpdateLabel(
 			},
 		},
 	}
-	labelAccess := label.GetAccess()
 	normalizedAccess, err := access.NormalizeAccess(
-		labelJobAccess(labelAccess.GetJobs()),
+		label.GetAccess(),
 		nil,
 		fallbackAccess,
 		15,
@@ -268,7 +265,9 @@ func (s *Server) fillLabelAccess(ctx context.Context, labels ...*citizenslabels.
 		if err != nil {
 			return err
 		}
-		label.Access = &citizenslabels.LabelAccess{Jobs: access.GetJobs()}
+		label.Access = &pbaccess.Access{
+			Jobs: access.GetJobs(),
+		}
 	}
 	return nil
 }

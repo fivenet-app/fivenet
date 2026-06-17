@@ -60,7 +60,10 @@ func (s *Store) DeleteUsers(
 		userExprs = append(userExprs, mysql.Int32(userID))
 	}
 
-	delStmt := tUsers.DELETE().WHERE(tUsers.ID.IN(userExprs...)).LIMIT(int64(len(userIDs)))
+	delStmt := tUsers.
+		DELETE().
+		WHERE(tUsers.ID.IN(userExprs...)).
+		LIMIT(int64(len(userIDs)))
 	res, err := delStmt.ExecContext(ctx, s.db)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute users delete statement. %w", err)
@@ -200,7 +203,8 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 				)
 			}
 			if affected == -1 {
-				stmt := tUsers.DELETE().
+				stmt := tUsers.
+					DELETE().
 					WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).
 					LIMIT(1)
 				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -237,7 +241,8 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 				)
 			}
 			if affected == -1 {
-				stmt := tUsers.DELETE().
+				stmt := tUsers.
+					DELETE().
 					WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).
 					LIMIT(1)
 				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -272,7 +277,8 @@ func (s *Store) createUser(
 ) (int64, error) {
 	var accountIdStmt mysql.SelectStatement = nil
 	if user.GetIdentifier() != "" {
-		accountIdStmt = tAccounts.SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).
+		accountIdStmt = tAccounts.
+			SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).
 			FROM(tAccounts).
 			WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).
 			LIMIT(1)
@@ -426,7 +432,8 @@ func (s *Store) updateUser(
 	}
 	defer tx.Rollback()
 
-	accountIdStmt := tAccounts.SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).
+	accountIdStmt := tAccounts.
+		SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).
 		FROM(tAccounts).
 		WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).
 		LIMIT(1)
@@ -496,14 +503,18 @@ func (s *Store) handleUserLicenses(
 	licenses []*userslicenses.License,
 ) error {
 	if len(licenses) == 0 {
-		stmt := tLicenses.DELETE().WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).LIMIT(25)
+		stmt := tLicenses.
+			DELETE().
+			WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).
+			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
 		}
 		return nil
 	}
 
-	selectStmt := tLicenses.SELECT(tLicenses.Type).
+	selectStmt := tLicenses.
+		SELECT(tLicenses.Type).
 		FROM(tLicenses).
 		WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).
 		ORDER_BY(tLicenses.Type)
@@ -525,11 +536,13 @@ func (s *Store) handleUserLicenses(
 
 	toAdd, toRemove := utils.SlicesDifference(currentLicenses, licensesList)
 	if len(toAdd) > 0 {
-		stmt := tLicenses.INSERT(tLicenses.UserID, tLicenses.Type)
+		stmt := tLicenses.
+			INSERT(tLicenses.UserID, tLicenses.Type)
 		for _, t := range toAdd {
 			stmt = stmt.VALUES(userId, t)
 		}
-		stmt = stmt.ON_DUPLICATE_KEY_UPDATE(tLicenses.Type.SET(mysql.RawString("VALUES(`type`)")))
+		stmt = stmt.
+			ON_DUPLICATE_KEY_UPDATE(tLicenses.Type.SET(mysql.RawString("VALUES(`type`)")))
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user licenses insert statement. %w", err)
 		}
@@ -540,7 +553,8 @@ func (s *Store) handleUserLicenses(
 		for _, t := range toRemove {
 			types = append(types, mysql.String(t))
 		}
-		stmt := tLicenses.DELETE().
+		stmt := tLicenses.
+			DELETE().
 			WHERE(mysql.AND(tLicenses.UserID.EQ(mysql.Int32(userId)), tLicenses.Type.IN(types...))).
 			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -568,7 +582,10 @@ func (s *Store) handleUserJobs(
 	})
 
 	if len(jobs) == 0 {
-		stmt := tCitizensJobs.DELETE().WHERE(tCitizensJobs.UserID.EQ(mysql.Int32(userId))).LIMIT(25)
+		stmt := tCitizensJobs.
+			DELETE().
+			WHERE(tCitizensJobs.UserID.EQ(mysql.Int32(userId))).
+			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user jobs delete statement. %w", err)
 		}
@@ -576,7 +593,8 @@ func (s *Store) handleUserJobs(
 	}
 
 	tJobs := tCitizensJobs.AS("user_job")
-	selectStmt := tJobs.SELECT(tJobs.Job, tJobs.Grade, tJobs.IsPrimary).
+	selectStmt := tJobs.
+		SELECT(tJobs.Job, tJobs.Grade, tJobs.IsPrimary).
 		FROM(tJobs).
 		WHERE(tJobs.UserID.EQ(mysql.Int32(userId))).
 		ORDER_BY(tJobs.IsPrimary, tJobs.Job, tJobs.Grade)
@@ -589,20 +607,22 @@ func (s *Store) handleUserJobs(
 
 	toAdd, toUpdate, toRemove := compareJobs(currentJobs, jobs)
 	if len(toAdd) > 0 || len(toUpdate) > 0 {
-		stmt := tCitizensJobs.INSERT(
-			tCitizensJobs.UserID,
-			tCitizensJobs.Job,
-			tCitizensJobs.Grade,
-			tCitizensJobs.IsPrimary,
-		)
+		stmt := tCitizensJobs.
+			INSERT(
+				tCitizensJobs.UserID,
+				tCitizensJobs.Job,
+				tCitizensJobs.Grade,
+				tCitizensJobs.IsPrimary,
+			)
 		for _, t := range append(toAdd, toUpdate...) {
 			stmt = stmt.VALUES(userId, t.GetJob(), t.GetGrade(), t.GetIsPrimary())
 		}
-		stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-			tCitizensJobs.Job.SET(mysql.RawString("VALUES(`job`)")),
-			tCitizensJobs.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
-			tCitizensJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
-		)
+		stmt = stmt.
+			ON_DUPLICATE_KEY_UPDATE(
+				tCitizensJobs.Job.SET(mysql.RawString("VALUES(`job`)")),
+				tCitizensJobs.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
+				tCitizensJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
+			)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user jobs insert statement. %w", err)
 		}
@@ -613,7 +633,8 @@ func (s *Store) handleUserJobs(
 		for _, t := range toRemove {
 			jobExprs = append(jobExprs, mysql.String(t.GetJob()))
 		}
-		stmt := tCitizensJobs.DELETE().
+		stmt := tCitizensJobs.
+			DELETE().
 			WHERE(mysql.AND(tCitizensJobs.UserID.EQ(mysql.Int32(userId)), tCitizensJobs.Job.IN(jobExprs...))).
 			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -671,7 +692,8 @@ func (s *Store) handleUserPhoneNumbers(
 	})
 
 	if len(phoneNumbers) == 0 {
-		stmt := tCitizensPhoneNumbers.DELETE().
+		stmt := tCitizensPhoneNumbers.
+			DELETE().
 			WHERE(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId))).
 			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -681,7 +703,8 @@ func (s *Store) handleUserPhoneNumbers(
 	}
 
 	tPhoneNumbers := tCitizensPhoneNumbers.AS("phone_number")
-	selectStmt := tPhoneNumbers.SELECT(tPhoneNumbers.UserID, tPhoneNumbers.PhoneNumber, tPhoneNumbers.IsPrimary).
+	selectStmt := tPhoneNumbers.
+		SELECT(tPhoneNumbers.UserID, tPhoneNumbers.PhoneNumber, tPhoneNumbers.IsPrimary).
 		FROM(tPhoneNumbers).
 		WHERE(tPhoneNumbers.UserID.EQ(mysql.Int32(userId))).
 		ORDER_BY(tPhoneNumbers.IsPrimary, tPhoneNumbers.PhoneNumber)
@@ -698,18 +721,20 @@ func (s *Store) handleUserPhoneNumbers(
 
 	toAdd, toUpdate, toRemove := comparePhoneNumbers(currentPhoneNumbers, phoneNumbers)
 	if len(toAdd) > 0 || len(toUpdate) > 0 {
-		stmt := tCitizensPhoneNumbers.INSERT(
-			tCitizensPhoneNumbers.UserID,
-			tCitizensPhoneNumbers.PhoneNumber,
-			tCitizensPhoneNumbers.IsPrimary,
-		)
+		stmt := tCitizensPhoneNumbers.
+			INSERT(
+				tCitizensPhoneNumbers.UserID,
+				tCitizensPhoneNumbers.PhoneNumber,
+				tCitizensPhoneNumbers.IsPrimary,
+			)
 		for _, t := range append(toAdd, toUpdate...) {
 			stmt = stmt.VALUES(userId, t.GetNumber(), t.GetIsPrimary())
 		}
-		stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-			tCitizensPhoneNumbers.PhoneNumber.SET(mysql.RawString("VALUES(`phone_number`)")),
-			tCitizensPhoneNumbers.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
-		)
+		stmt = stmt.
+			ON_DUPLICATE_KEY_UPDATE(
+				tCitizensPhoneNumbers.PhoneNumber.SET(mysql.RawString("VALUES(`phone_number`)")),
+				tCitizensPhoneNumbers.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
+			)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user phone numbers insert statement. %w", err)
 		}
@@ -720,7 +745,8 @@ func (s *Store) handleUserPhoneNumbers(
 		for _, t := range toRemove {
 			phoneExprs = append(phoneExprs, mysql.String(t.GetNumber()))
 		}
-		stmt := tCitizensPhoneNumbers.DELETE().
+		stmt := tCitizensPhoneNumbers.
+			DELETE().
 			WHERE(mysql.AND(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId)), tCitizensPhoneNumbers.PhoneNumber.IN(phoneExprs...))).
 			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {

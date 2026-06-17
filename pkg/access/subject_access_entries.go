@@ -9,6 +9,7 @@ import (
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -172,7 +173,8 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 	tUserJobs := table.FivenetUserJobs.AS("subject_acl_user_jobs_exists")
 
 	return mysql.EXISTS(
-		mysql.SELECT(mysql.Int(1)).
+		mysql.
+			SELECT(mysql.Int(1)).
 			FROM(tAccess).
 			WHERE(mysql.AND(
 				columns.TargetID.EQ(targetID),
@@ -662,31 +664,17 @@ func subjectAccessUserShort(row subjectAccessRow) *usershort.UserShort {
 
 	user := &usershort.UserShort{
 		UserId:      *row.SubjectUserID,
-		Job:         derefString(row.UserJob),
-		JobGrade:    derefInt32(row.UserJobGrade),
-		Firstname:   derefString(row.UserFirstname),
-		Lastname:    derefString(row.UserLastname),
-		Dateofbirth: derefString(row.UserDateofbirth),
+		Job:         utils.Deref(row.UserJob),
+		JobGrade:    utils.Deref(row.UserJobGrade),
+		Firstname:   utils.Deref(row.UserFirstname),
+		Lastname:    utils.Deref(row.UserLastname),
+		Dateofbirth: utils.Deref(row.UserDateofbirth),
 	}
 	if row.UserPhoneNumber != nil {
 		user.PhoneNumber = row.UserPhoneNumber
 	}
 
 	return user
-}
-
-func derefString(in *string) string {
-	if in == nil {
-		return ""
-	}
-	return *in
-}
-
-func derefInt32(in *int32) int32 {
-	if in == nil {
-		return 0
-	}
-	return *in
 }
 
 func subjectJobAccessKey(job string, minimumGrade int32) string {

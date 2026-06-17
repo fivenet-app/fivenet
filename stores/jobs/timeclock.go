@@ -194,12 +194,16 @@ func (s *Store) CountInactiveEmployees(
 			),
 		),
 		tTimeClock.UserID.NOT_IN(
-			tTimeClock.SELECT(tTimeClock.UserID).FROM(tTimeClock).WHERE(mysql.AND(
-				tTimeClock.Job.EQ(mysql.String(q.Job)),
-				tTimeClock.Date.GT_EQ(
-					mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY))),
-				),
-			)).GROUP_BY(tTimeClock.UserID),
+			tTimeClock.
+				SELECT(tTimeClock.UserID).
+				FROM(tTimeClock).
+				WHERE(mysql.AND(
+					tTimeClock.Job.EQ(mysql.String(q.Job)),
+					tTimeClock.Date.GT_EQ(
+						mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY))),
+					),
+				)).
+				GROUP_BY(tTimeClock.UserID),
 		),
 	)
 
@@ -603,7 +607,8 @@ func (s *Store) ListTimeclockTimeline(
 		stmt = stmt.OFFSET(q.Offset)
 	}
 	if q.Limit > 0 {
-		stmt = stmt.LIMIT(q.Limit)
+		stmt = stmt.
+			LIMIT(q.Limit)
 	}
 
 	entries := []*jobstimeclock.TimeclockEntry{}
@@ -639,12 +644,15 @@ func (s *Store) ListInactiveEmployees(
 			),
 		),
 		tTimeClock.UserID.NOT_IN(
-			tTimeClock.SELECT(tTimeClock.UserID).FROM(tTimeClock).WHERE(mysql.AND(
-				tTimeClock.Job.EQ(mysql.String(q.Job)),
-				tTimeClock.Date.GT_EQ(
-					mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY))),
-				),
-			)).GROUP_BY(tTimeClock.UserID),
+			tTimeClock.
+				SELECT(tTimeClock.UserID).FROM(tTimeClock).
+				WHERE(mysql.AND(
+					tTimeClock.Job.EQ(mysql.String(q.Job)),
+					tTimeClock.Date.GT_EQ(
+						mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY))),
+					),
+				)).
+				GROUP_BY(tTimeClock.UserID),
 		),
 	)
 

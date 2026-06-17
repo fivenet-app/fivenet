@@ -141,9 +141,10 @@ func (s *Store) SetUnreadState(
 		stmt = stmt.VALUES(threadID, emailID, emailID != senderID)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		table.FivenetMailerThreadsState.Unread.SET(mysql.RawBool("VALUES(`unread`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			table.FivenetMailerThreadsState.Unread.SET(mysql.RawBool("VALUES(`unread`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, s.dbOr(q)); err != nil {
 		return err

@@ -46,7 +46,10 @@ func (s *Store) handleUserLocations(
 			)
 		}
 
-		stmt := tLocations.DELETE().WHERE(condition).LIMIT(count.Total)
+		stmt := tLocations.
+			DELETE().
+			WHERE(condition).
+			LIMIT(count.Total)
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return 0, fmt.Errorf("failed to execute user locations clear all statement. %w", err)
 		}
@@ -86,13 +89,14 @@ func (s *Store) handleUserLocations(
 		atLeastOne = true
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tLocations.Job.SET(mysql.RawString("VALUES(`job`)")),
-		tLocations.JobGrade.SET(mysql.RawInt("VALUES(`job_grade`)")),
-		tLocations.X.SET(mysql.RawFloat("VALUES(`x`)")),
-		tLocations.Y.SET(mysql.RawFloat("VALUES(`y`)")),
-		tLocations.Hidden.SET(mysql.RawBool("VALUES(`hidden`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tLocations.Job.SET(mysql.RawString("VALUES(`job`)")),
+			tLocations.JobGrade.SET(mysql.RawInt("VALUES(`job_grade`)")),
+			tLocations.X.SET(mysql.RawFloat("VALUES(`x`)")),
+			tLocations.Y.SET(mysql.RawFloat("VALUES(`y`)")),
+			tLocations.Hidden.SET(mysql.RawBool("VALUES(`hidden`)")),
+		)
 
 	rowsAffected := int64(0)
 	if atLeastOne {
@@ -121,7 +125,8 @@ func (s *Store) handleUserLocations(
 			userIds = append(userIds, mysql.Int32(userId))
 		}
 
-		delStmt := tLocations.DELETE().
+		delStmt := tLocations.
+			DELETE().
 			WHERE(tLocations.UserID.IN(userIds...)).
 			LIMIT(int64(len(toDelete)))
 		res, err := delStmt.ExecContext(ctx, s.db)

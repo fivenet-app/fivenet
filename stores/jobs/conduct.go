@@ -48,7 +48,8 @@ func (s *Store) CountConductEntries(ctx context.Context, db qrm.DB, q ConductQue
 		condition = condition.AND(tConduct.TargetUserID.IN(ids...))
 	}
 
-	countStmt := tConduct.SELECT(mysql.COUNT(tConduct.ID).AS("data_count.total")).
+	countStmt := tConduct.
+		SELECT(mysql.COUNT(tConduct.ID).AS("data_count.total")).
 		FROM(tConduct).
 		WHERE(condition)
 	var count database.DataCount

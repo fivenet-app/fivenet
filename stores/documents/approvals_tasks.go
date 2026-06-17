@@ -162,15 +162,16 @@ func (s *Store) CreateApprovalTasks(
 			)
 		}
 
-		ins = ins.ON_DUPLICATE_KEY_UPDATE(
-			tApprovalTasks.Job.SET(mysql.RawString("VALUES(`job`)")),
-			tApprovalTasks.MinimumGrade.SET(mysql.RawInt("VALUES(`minimum_grade`)")),
-			tApprovalTasks.Label.SET(mysql.RawString("VALUES(`label`)")),
-			tApprovalTasks.SignatureRequired.SET(mysql.RawBool("VALUES(`signature_required`)")),
-			tApprovalTasks.SlotNo.SET(mysql.RawInt("VALUES(`slot_no`)")),
-			tApprovalTasks.Comment.SET(mysql.RawString("VALUES(`comment`)")),
-			tApprovalTasks.DueAt.SET(mysql.RawTimestamp("VALUES(`due_at`)")),
-		)
+		ins = ins.
+			ON_DUPLICATE_KEY_UPDATE(
+				tApprovalTasks.Job.SET(mysql.RawString("VALUES(`job`)")),
+				tApprovalTasks.MinimumGrade.SET(mysql.RawInt("VALUES(`minimum_grade`)")),
+				tApprovalTasks.Label.SET(mysql.RawString("VALUES(`label`)")),
+				tApprovalTasks.SignatureRequired.SET(mysql.RawBool("VALUES(`signature_required`)")),
+				tApprovalTasks.SlotNo.SET(mysql.RawInt("VALUES(`slot_no`)")),
+				tApprovalTasks.Comment.SET(mysql.RawString("VALUES(`comment`)")),
+				tApprovalTasks.DueAt.SET(mysql.RawTimestamp("VALUES(`due_at`)")),
+			)
 
 		if _, err := ins.ExecContext(ctx, tx); err != nil {
 			return 0, 0, err
@@ -217,7 +218,11 @@ func (s *Store) DeleteApprovalTasks(
 		return nil
 	}
 
-	_, err := tApprovalTasks.DELETE().WHERE(condition).LIMIT(deleteLimit).ExecContext(ctx, tx)
+	_, err := tApprovalTasks.
+		DELETE().
+		WHERE(condition).
+		LIMIT(deleteLimit).
+		ExecContext(ctx, tx)
 	return err
 }
 

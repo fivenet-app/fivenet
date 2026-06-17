@@ -110,7 +110,10 @@ func (s *Store) TransferAccount(
 	}
 
 	tAccounts := table.FivenetAccounts
-	delStmt := tAccounts.DELETE().WHERE(tAccounts.ID.EQ(mysql.Int64(acc.GetId()))).LIMIT(1)
+	delStmt := tAccounts.
+		DELETE().
+		WHERE(tAccounts.ID.EQ(mysql.Int64(acc.GetId()))).
+		LIMIT(1)
 	if _, err := delStmt.ExecContext(ctx, s.db); err != nil {
 		return nil, fmt.Errorf("failed to delete new account. %w", err)
 	}

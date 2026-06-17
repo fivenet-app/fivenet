@@ -3,6 +3,7 @@ package mailerstore
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
@@ -58,28 +59,95 @@ func (s *Store) ListEmails(
 		pag = &database.PaginationRequest{}
 	}
 
-	visibilityCondition := mysql.Bool(true)
-	if !userInfo.GetSuperuser() || (userInfo.GetSuperuser() && !all) {
-		acl := s.subjectAccess.ACLAccessExistsCondition(
-			tEmails.ID,
-			userInfo,
-			int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
-		)
-		visibilityCondition = visibilityCondition.AND(mysql.AND(
-			mysql.OR(
-				tEmails.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-				acl,
-			),
-		))
-	}
-	if !userInfo.GetSuperuser() {
-		visibilityCondition = visibilityCondition.AND(tEmails.DeletedAt.IS_NULL())
+	if userInfo != nil && userInfo.GetSuperuser() && all {
+		return s.listAllEmails(ctx, db, pag)
 	}
 
+	visibilityUserInfo := userInfo
+	includeDeleted := false
+	if userInfo != nil && userInfo.GetSuperuser() {
+		includeDeleted = true
+		visibilityUserInfo = cloneUserInfoWithoutSuperuser(userInfo)
+	}
+	visibleIDs := s.subjectAccess.VisibleIDsByConditionQuery(
+		visibilityUserInfo,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
+		includeDeleted,
+		mysql.Bool(true),
+	)
+	ctes := visibleIDs.CTEs
+	visibleEmailID := mysql.IntegerColumn("id").From(visibleIDs.Table)
+
+	var countStmt mysql.Statement = tEmails.
+		SELECT(mysql.COUNT(visibleEmailID).AS("data_count.total")).
+		FROM(visibleIDs.Table)
+
+	if len(ctes) > 0 {
+		countStmt = mysql.WITH(ctes...)(countStmt)
+	}
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.dbOr(db), &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, nil, err
+		}
+	}
+
+	pagination, limit := pag.GetResponseWithPageSize(count.Total, 20)
+	if count.Total <= 0 {
+		return pagination, []*maileremails.Email{}, nil
+	}
+
+	var stmt mysql.Statement = tEmails.
+		SELECT(
+			tEmails.ID,
+			tEmails.CreatedAt,
+			tEmails.UpdatedAt,
+			tEmails.DeletedAt,
+			tEmails.Deactivated,
+			tEmails.Job,
+			tEmails.UserID,
+			tEmails.Email,
+			tEmails.EmailChanged,
+			tEmails.Label,
+		).
+		FROM(
+			visibleIDs.Table.
+				INNER_JOIN(tEmails,
+					tEmails.ID.EQ(visibleEmailID),
+				),
+		).
+		ORDER_BY(
+			tEmails.Job.ASC(),
+			tEmails.Label.ASC(),
+		).
+		OFFSET(pagination.GetOffset()).
+		LIMIT(limit)
+
+	if len(ctes) > 0 {
+		stmt = mysql.WITH(ctes...)(stmt)
+	}
+
+	fmt.Println(stmt.DebugSql())
+
+	emails := []*maileremails.Email{}
+	if err := stmt.QueryContext(ctx, s.dbOr(db), &emails); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, nil, err
+		}
+	}
+
+	return pagination, emails, nil
+}
+
+func (s *Store) listAllEmails(
+	ctx context.Context,
+	db qrm.DB,
+	pag *database.PaginationRequest,
+) (*database.PaginationResponse, []*maileremails.Email, error) {
 	var countStmt mysql.Statement = tEmails.
 		SELECT(mysql.COUNT(tEmails.ID).AS("data_count.total")).
-		FROM(tEmails).
-		WHERE(visibilityCondition)
+		FROM(tEmails)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.dbOr(db), &count); err != nil {
@@ -107,7 +175,6 @@ func (s *Store) ListEmails(
 			tEmails.Label,
 		).
 		FROM(tEmails).
-		WHERE(visibilityCondition).
 		ORDER_BY(
 			tEmails.Job.ASC(),
 			tEmails.Label.ASC(),
@@ -123,6 +190,16 @@ func (s *Store) ListEmails(
 	}
 
 	return pagination, emails, nil
+}
+
+func cloneUserInfoWithoutSuperuser(userInfo *userinfo.UserInfo) *userinfo.UserInfo {
+	if userInfo == nil {
+		return nil
+	}
+
+	cloned := *userInfo
+	cloned.Superuser = false
+	return &cloned
 }
 
 func (s *Store) GetEmailByCondition(

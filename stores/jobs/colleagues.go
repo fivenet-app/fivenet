@@ -116,7 +116,8 @@ func (s *Store) CountColleagues(
 		}
 
 		condition = condition.AND(mysql.EXISTS(
-			mysql.SELECT(mysql.Int(1)).
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(tColleagueLabels).
 				WHERE(mysql.AND(
 					tColleagueLabels.UserID.EQ(tColleague.ID),
@@ -209,7 +210,8 @@ func (s *Store) ListColleagues(
 		}
 
 		condition = condition.AND(mysql.EXISTS(
-			mysql.SELECT(mysql.Int(1)).
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(tColleagueLabels).
 				WHERE(mysql.AND(
 					tColleagueLabels.UserID.EQ(tColleague.ID),
@@ -360,7 +362,8 @@ func (s *Store) CountColleagueActivity(ctx context.Context, db qrm.DB, q ListQue
 		condition = condition.AND(q.Where)
 	}
 
-	countStmt := tActivity.SELECT(mysql.COUNT(tActivity.ID).AS("data_count.total")).
+	countStmt := tActivity.
+		SELECT(mysql.COUNT(tActivity.ID).AS("data_count.total")).
 		FROM(tActivity).
 		WHERE(condition)
 	var count database.DataCount

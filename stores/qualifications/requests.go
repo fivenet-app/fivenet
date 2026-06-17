@@ -9,6 +9,7 @@ import (
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
+	objectaccess "github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -22,6 +23,10 @@ func (s *Store) ListQualificationRequests(
 ) (*pbqualifications.ListQualificationRequestsResponse, error) {
 	tUser := table.FivenetUser.AS("user")
 	tApprover := tUser.AS("approver")
+	userID := int32(0)
+	if userInfo != nil {
+		userID = userInfo.GetUserId()
+	}
 
 	condition := mysql.AND(
 		tQualiReq.Status.NOT_EQ(
@@ -33,15 +38,8 @@ func (s *Store) ListQualificationRequests(
 	}
 
 	visibilityCondition := mysql.Bool(true)
-	if opts.QualificationID > 0 {
-		visibilityCondition = visibilityCondition.AND(
-			tQuali.ID.EQ(mysql.Int64(opts.QualificationID)),
-		)
-	}
 	if !userInfo.GetSuperuser() {
-		visibilityCondition = visibilityCondition.AND(
-			tQuali.DeletedAt.IS_NULL(),
-		)
+		visibilityCondition = visibilityCondition.AND(tQuali.DeletedAt.IS_NULL())
 	}
 	visibleGradeCondition := visibilityCondition
 	visibleViewCondition := visibilityCondition
@@ -49,7 +47,7 @@ func (s *Store) ListQualificationRequests(
 		visibleGradeCondition = visibleGradeCondition.AND(mysql.OR(
 			tQuali.Public.IS_TRUE(),
 			mysql.AND(
-				tQuali.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+				tQuali.CreatorID.EQ(mysql.Int32(userID)),
 				tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
 			),
 			s.access.ACLAccessExistsCondition(
@@ -61,7 +59,7 @@ func (s *Store) ListQualificationRequests(
 		visibleViewCondition = visibleViewCondition.AND(mysql.OR(
 			tQuali.Public.IS_TRUE(),
 			mysql.AND(
-				tQuali.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+				tQuali.CreatorID.EQ(mysql.Int32(userID)),
 				tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
 			),
 			s.access.ACLAccessExistsCondition(
@@ -85,7 +83,7 @@ func (s *Store) ListQualificationRequests(
 	} else {
 		if opts.QualificationID == 0 {
 			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).
-				AND(tQualiReq.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
+				AND(tQualiReq.UserID.EQ(mysql.Int32(userID)))
 			countColumn = mysql.DISTINCT(tQualiReq.QualificationID)
 		} else {
 			countColumn = mysql.DISTINCT(tQualiReq.UserID)
@@ -113,19 +111,55 @@ func (s *Store) ListQualificationRequests(
 			visibleGradeCondition,
 			mysql.AND(
 				visibleViewCondition,
-				tQualiReq.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+				tQualiReq.UserID.EQ(mysql.Int32(userID)),
 			),
 		))
 	}
 
-	var countStmt mysql.Statement = tQualiReq.
-		SELECT(mysql.COUNT(countColumn).AS("data_count.total")).
-		FROM(
-			tQualiReq.
-				INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiReq.QualificationID)).
-				LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)),
-		).
-		WHERE(condition)
+	var (
+		countStmt  mysql.Statement
+		ctes       []mysql.CommonTableExpression
+		visibleIDs objectaccess.VisibilityQuery
+	)
+
+	if userInfo != nil && !userInfo.GetSuperuser() {
+		visibleQualificationCondition := mysql.Bool(true)
+		if opts.QualificationID > 0 {
+			visibleQualificationCondition = visibleQualificationCondition.AND(
+				tQuali.ID.EQ(mysql.Int64(opts.QualificationID)),
+			)
+		}
+		visibleIDs = s.access.VisibleIDsByConditionQuery(
+			userInfo,
+			int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			false,
+			visibleQualificationCondition,
+		)
+		ctes = visibleIDs.CTEs
+		visibleQualiID := mysql.IntegerColumn("id").From(visibleIDs.Table)
+
+		countStmt = tQualiReq.
+			SELECT(mysql.COUNT(countColumn).AS("data_count.total")).
+			FROM(
+				visibleIDs.Table.
+					INNER_JOIN(tQuali, tQuali.ID.EQ(visibleQualiID)).
+					INNER_JOIN(tQualiReq, tQualiReq.QualificationID.EQ(tQuali.ID)).
+					LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)),
+			).
+			WHERE(condition)
+		if len(ctes) > 0 {
+			countStmt = mysql.WITH(ctes...)(countStmt)
+		}
+	} else {
+		countStmt = tQualiReq.
+			SELECT(mysql.COUNT(countColumn).AS("data_count.total")).
+			FROM(
+				tQualiReq.
+					INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiReq.QualificationID)).
+					LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)),
+			).
+			WHERE(condition)
+	}
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -182,19 +216,43 @@ func (s *Store) ListQualificationRequests(
 		columns = append(columns, tUser.PhoneNumber, tApprover.PhoneNumber)
 	}
 
-	var stmt mysql.Statement = tQualiReq.
-		SELECT(columns[0], columns[1:]...).
-		FROM(
-			tQualiReq.
-				INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiReq.QualificationID)).
-				LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)).
-				LEFT_JOIN(tApprover, tQualiReq.ApproverID.EQ(tApprover.ID)),
-		).
-		GROUP_BY(tQualiReq.QualificationID, tQualiReq.UserID).
-		ORDER_BY(orderBys...).
-		WHERE(condition).
-		OFFSET(opts.Pagination.GetOffset()).
-		LIMIT(limit)
+	var stmt mysql.Statement
+	if userInfo != nil && !userInfo.GetSuperuser() {
+		visibleQualiID := mysql.IntegerColumn("id").From(visibleIDs.Table)
+
+		stmt = tQualiReq.
+			SELECT(columns[0], columns[1:]...).
+			FROM(
+				visibleIDs.Table.
+					INNER_JOIN(tQuali, tQuali.ID.EQ(visibleQualiID)).
+					INNER_JOIN(tQualiReq, tQualiReq.QualificationID.EQ(tQuali.ID)).
+					LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)).
+					LEFT_JOIN(tApprover, tQualiReq.ApproverID.EQ(tApprover.ID)),
+			).
+			GROUP_BY(tQualiReq.QualificationID, tQualiReq.UserID).
+			ORDER_BY(orderBys...).
+			WHERE(condition).
+			OFFSET(opts.Pagination.GetOffset()).
+			LIMIT(limit)
+	} else {
+		stmt = tQualiReq.
+			SELECT(columns[0], columns[1:]...).
+			FROM(
+				tQualiReq.
+					INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiReq.QualificationID)).
+					LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)).
+					LEFT_JOIN(tApprover, tQualiReq.ApproverID.EQ(tApprover.ID)),
+			).
+			GROUP_BY(tQualiReq.QualificationID, tQualiReq.UserID).
+			ORDER_BY(orderBys...).
+			WHERE(condition).
+			OFFSET(opts.Pagination.GetOffset()).
+			LIMIT(limit)
+	}
+
+	if len(ctes) > 0 {
+		stmt = mysql.WITH(ctes...)(stmt)
+	}
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Requests); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

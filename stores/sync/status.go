@@ -12,7 +12,8 @@ import (
 
 func (s *Store) CountJobs(ctx context.Context) (int64, error) {
 	tJobs := table.FivenetJobs
-	stmt := tJobs.SELECT(mysql.COUNT(tJobs.Name)).FROM(tJobs)
+	stmt := tJobs.
+		SELECT(mysql.COUNT(tJobs.Name)).FROM(tJobs)
 
 	var count database.DataCount
 	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -26,7 +27,8 @@ func (s *Store) CountJobs(ctx context.Context) (int64, error) {
 
 func (s *Store) CountAccounts(ctx context.Context) (int64, error) {
 	tUsers := table.FivenetUser
-	stmt := tUsers.SELECT(mysql.COUNT(tUsers.ID)).FROM(tUsers)
+	stmt := tUsers.
+		SELECT(mysql.COUNT(tUsers.ID)).FROM(tUsers)
 
 	var count database.DataCount
 	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -40,7 +42,8 @@ func (s *Store) CountAccounts(ctx context.Context) (int64, error) {
 
 func (s *Store) CountUsers(ctx context.Context) (int64, error) {
 	tUsers := table.FivenetUser
-	stmt := tUsers.SELECT(mysql.COUNT(tUsers.ID)).FROM(tUsers)
+	stmt := tUsers.
+		SELECT(mysql.COUNT(tUsers.ID)).FROM(tUsers)
 
 	var count database.DataCount
 	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -54,7 +57,8 @@ func (s *Store) CountUsers(ctx context.Context) (int64, error) {
 
 func (s *Store) CountVehicles(ctx context.Context) (int64, error) {
 	tVehicles := table.FivenetOwnedVehicles
-	stmt := tVehicles.SELECT(mysql.COUNT(tVehicles.Plate)).FROM(tVehicles)
+	stmt := tVehicles.
+		SELECT(mysql.COUNT(tVehicles.Plate)).FROM(tVehicles)
 
 	var count database.DataCount
 	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -68,7 +72,8 @@ func (s *Store) CountVehicles(ctx context.Context) (int64, error) {
 
 func (s *Store) CountLicenses(ctx context.Context) (int64, error) {
 	tLicenses := table.FivenetLicenses
-	stmt := tLicenses.SELECT(mysql.COUNT(tLicenses.Type)).FROM(tLicenses)
+	stmt := tLicenses.
+		SELECT(mysql.COUNT(tLicenses.Type)).FROM(tLicenses)
 
 	var count database.DataCount
 	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {

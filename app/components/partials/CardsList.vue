@@ -26,12 +26,19 @@ const { can } = useAuth();
             :to="module.to"
             :title="module.title"
             :icon="showIcon && module.icon?.startsWith('i-') ? module.icon : undefined"
+            :ui="{ title: 'w-full flex flex-row gap-2' }"
             @click="
                 () => {
                     !module.to && $emit('selected', index);
                 }
             "
         >
+            <template #title>
+                <span>{{ module.title }}</span>
+
+                <UBadge v-if="module.deletedAt" icon="i-mdi-delete" :label="$t('common.deleted')" color="amber" />
+            </template>
+
             <template v-if="showIcon && module.icon" #leading>
                 <template v-if="!module.icon.startsWith('i-')">
                     <UIcon

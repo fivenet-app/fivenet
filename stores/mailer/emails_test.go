@@ -44,19 +44,15 @@ func TestStoreListEmails(t *testing.T) {
 	store := New(db)
 	now := time.Unix(0, 0).UTC()
 
-	countQuery := regexp.QuoteMeta(`FROM fivenet_mailer_emails AS email`) +
-		`(?s).*` + regexp.QuoteMeta(`WHERE ?`)
+	countQuery := regexp.QuoteMeta(`SELECT COUNT(email.id) AS "data_count.total" FROM fivenet_mailer_emails AS email;`)
 	mock.ExpectQuery(countQuery).
-		WithArgs(sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
 
 	listQuery := regexp.QuoteMeta(`FROM fivenet_mailer_emails AS email`) +
-		`(?s).*` + regexp.QuoteMeta(`WHERE ?`) +
 		`(?s).*` + regexp.QuoteMeta(
 		`ORDER BY email.job ASC, email.label ASC LIMIT ? OFFSET ?;`,
 	)
 	mock.ExpectQuery(listQuery).
-		WithArgs(true, sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"email.id",
 			"email.created_at",
@@ -96,6 +92,64 @@ func TestStoreListEmails(t *testing.T) {
 	require.Len(t, emails, 1)
 	assert.Equal(t, int64(9), emails[0].GetId())
 	assert.Equal(t, "user@example.com", emails[0].GetEmail())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreListEmailsVisible(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(db)
+	now := time.Unix(0, 0).UTC()
+
+	countQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*data_count.total`
+	mock.ExpectQuery(countQuery).
+		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
+
+	listQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*` +
+		regexp.QuoteMeta(`ORDER BY email.job ASC, email.label ASC LIMIT ? OFFSET ?;`)
+	mock.ExpectQuery(listQuery).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"email.id",
+			"email.created_at",
+			"email.updated_at",
+			"email.deleted_at",
+			"email.deactivated",
+			"email.job",
+			"email.user_id",
+			"email.email",
+			"email.email_changed",
+			"email.label",
+		}).AddRow(
+			int64(12),
+			now,
+			now,
+			nil,
+			false,
+			"police",
+			int32(3),
+			"user2@example.com",
+			nil,
+			"Secondary",
+		))
+
+	pageSize := int64(20)
+	emailsPag, emails, err := store.ListEmails(
+		t.Context(),
+		db,
+		&userinfo.UserInfo{UserId: 3, Job: "police", Superuser: true},
+		&database.PaginationRequest{PageSize: &pageSize},
+		false,
+	)
+	require.NoError(t, err)
+	require.NotNil(t, emailsPag)
+	assert.Equal(t, int64(1), emailsPag.GetTotalCount())
+	require.Len(t, emails, 1)
+	assert.Equal(t, int64(12), emails[0].GetId())
+	assert.Equal(t, "user2@example.com", emails[0].GetEmail())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

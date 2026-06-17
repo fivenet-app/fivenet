@@ -215,7 +215,8 @@ func TestRefreshUserLocations(t *testing.T) {
 				return nil
 			}
 
-			stmt := tLocs.SELECT(mysql.COUNT(tLocs.UserID).AS("total_count"))
+			stmt := tLocs.
+				SELECT(mysql.COUNT(tLocs.UserID).AS("total_count"))
 			var dest database.DataCount
 			if err := stmt.QueryContext(ctx, db, &dest); err != nil {
 				return err

@@ -7,17 +7,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_qualifications_visibility_public` (
   CONSTRAINT `fk_fivenet_qualifications_visibility_public_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `fivenet_qualifications_visibility_creator` (
-  `target_id` bigint unsigned NOT NULL,
-  `creator_id` int NOT NULL,
-  `creator_job` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  PRIMARY KEY (`target_id`),
-  KEY `idx_fivenet_qualifications_visibility_creator_lookup` (`creator_id`, `creator_job`, `target_id`),
-  KEY `idx_fivenet_qualifications_visibility_creator_qualification` (`target_id`, `creator_id`, `creator_job`),
-  CONSTRAINT `fk_fivenet_qualifications_visibility_creator_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
 CREATE TABLE IF NOT EXISTS `fivenet_qualifications_visibility_subject` (
   `target_id` bigint unsigned NOT NULL,
   `subject_id` bigint unsigned NOT NULL,
@@ -37,12 +26,6 @@ SELECT q.`id`
 FROM `fivenet_qualifications` q
 WHERE q.`deleted_at` IS NULL
   AND q.`public` = 1;
-
-INSERT IGNORE INTO `fivenet_qualifications_visibility_creator` (`target_id`, `creator_id`, `creator_job`)
-SELECT q.`id`, q.`creator_id`, q.`creator_job`
-FROM `fivenet_qualifications` q
-WHERE q.`deleted_at` IS NULL
-  AND q.`creator_id` IS NOT NULL;
 
 INSERT IGNORE INTO `fivenet_qualifications_visibility_subject` (`target_id`, `subject_id`, `access`, `effect`)
 SELECT qa.`target_id`, qa.`subject_id`, qa.`access`, qa.`effect`

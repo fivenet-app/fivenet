@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCheckIfHasAccess(t *testing.T) {
+func TestCheckIfHasOwnJobAccess(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name       string

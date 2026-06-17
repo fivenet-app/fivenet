@@ -23,30 +23,28 @@ func (s *Store) ListQualifications(
 	includePhoneNumber bool,
 ) (*pbqualifications.ListQualificationsResponse, error) {
 	tCreator := table.FivenetUser.AS("creator")
-	visibilityCondition := mysql.Bool(true)
+	searchCondition := mysql.Bool(true)
 
 	if search := dbutils.PrepareForLikeSearch(opts.Search); search != "" {
-		visibilityCondition = visibilityCondition.AND(mysql.OR(
+		searchCondition = searchCondition.AND(mysql.OR(
 			tQuali.Abbreviation.LIKE(mysql.String(search)),
 			tQuali.Title.LIKE(mysql.String(search)),
 		))
 	}
 
-	if !userInfo.GetSuperuser() {
-		visibilityCondition = visibilityCondition.AND(tQuali.DeletedAt.IS_NULL())
-		visibilityCondition = visibilityCondition.AND(mysql.OR(
-			tQuali.Public.IS_TRUE(),
-			mysql.AND(
-				tQuali.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
-				tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			),
-			s.access.ACLAccessExistsCondition(
-				tQuali.ID,
-				userInfo,
-				int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-			),
-		))
+	includeDeleted := userInfo != nil && userInfo.GetSuperuser()
+	userID := int32(0)
+	if userInfo != nil {
+		userID = userInfo.GetUserId()
 	}
+	visibleIDs := s.access.VisibleIDsByConditionQuery(
+		userInfo,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		includeDeleted,
+		searchCondition,
+	)
+	ctes := visibleIDs.CTEs
+	visibleQualiID := mysql.IntegerColumn("id").From(visibleIDs.Table)
 
 	// Select id of last result for this user.
 	lastResultFilter := tQualiResult.ID.IS_NULL().OR(
@@ -54,24 +52,31 @@ func (s *Store) ListQualifications(
 			mysql.RawInt(
 				"SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = qualification.id AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
 				mysql.RawArgs{
-					"#userid": userInfo.GetUserId(),
+					"#userid": userID,
 				},
 			),
 		),
 	)
-
-	var countStmt mysql.Statement = tQuali.
+	visibleQuery := tQuali.
 		SELECT(mysql.COUNT(mysql.DISTINCT(tQuali.ID)).AS("data_count.total")).
 		FROM(
-			tQuali.
+			visibleIDs.Table.
+				INNER_JOIN(tQuali,
+					tQuali.ID.EQ(visibleQualiID),
+				).
 				LEFT_JOIN(tCreator, tQuali.CreatorID.EQ(tCreator.ID)).
 				LEFT_JOIN(tQualiResult, mysql.AND(
 					tQualiResult.QualificationID.EQ(tQuali.ID),
 					tQualiResult.DeletedAt.IS_NULL(),
-					tQualiResult.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					tQualiResult.UserID.EQ(mysql.Int32(userID)),
 				)),
 		).
-		WHERE(mysql.AND(visibilityCondition, lastResultFilter))
+		WHERE(lastResultFilter)
+
+	var countStmt mysql.Statement = visibleQuery
+	if len(ctes) > 0 {
+		countStmt = mysql.WITH(ctes...)(countStmt)
+	}
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -92,7 +97,9 @@ func (s *Store) ListQualifications(
 	stmt := s.listQualificationsQuery(
 		opts,
 		userInfo,
-		visibilityCondition,
+		visibleIDs.Table,
+		ctes,
+		lastResultFilter,
 		includePhoneNumber,
 		limit,
 	)
@@ -183,11 +190,18 @@ func (s *Store) GetQualification(
 func (s *Store) listQualificationsQuery(
 	opts ListQualificationsOptions,
 	userInfo *userinfo.UserInfo,
-	visibilityCondition mysql.BoolExpression,
+	visibleIDs mysql.SelectTable,
+	ctes []mysql.CommonTableExpression,
+	lastResultFilter mysql.BoolExpression,
 	includePhoneNumber bool,
 	limit int64,
 ) mysql.Statement {
 	tCreator := table.FivenetUser.AS("creator")
+	visibleQualiID := mysql.IntegerColumn("id").From(visibleIDs)
+	userID := int32(0)
+	if userInfo != nil {
+		userID = userInfo.GetUserId()
+	}
 
 	orderBys := append(
 		[]mysql.OrderByClause{tQuali.Draft.ASC()},
@@ -232,30 +246,25 @@ func (s *Store) listQualificationsQuery(
 			columns[1:]...,
 		).
 		FROM(
-			tQuali.
+			visibleIDs.
+				INNER_JOIN(tQuali,
+					tQuali.ID.EQ(visibleQualiID),
+				).
 				LEFT_JOIN(tCreator, tQuali.CreatorID.EQ(tCreator.ID)).
 				LEFT_JOIN(tQualiResult, mysql.AND(
 					tQualiResult.QualificationID.EQ(tQuali.ID),
 					tQualiResult.DeletedAt.IS_NULL(),
-					tQualiResult.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					tQualiResult.UserID.EQ(mysql.Int32(userID)),
 				)),
 		).
-		WHERE(mysql.AND(
-			visibilityCondition,
-			tQualiResult.ID.IS_NULL().OR(
-				tQualiResult.ID.EQ(
-					mysql.RawInt(
-						"SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = qualification.id AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
-						mysql.RawArgs{
-							"#userid": userInfo.GetUserId(),
-						},
-					),
-				),
-			),
-		)).
+		WHERE(lastResultFilter).
 		ORDER_BY(orderBys...).
 		OFFSET(opts.Pagination.GetOffset()).
 		LIMIT(limit)
+
+	if len(ctes) > 0 {
+		stmt = mysql.WITH(ctes...)(stmt)
+	}
 
 	return stmt
 }

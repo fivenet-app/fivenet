@@ -168,7 +168,8 @@ func calendarEntriesQuery(
 		)
 
 	if limit != nil && *limit > 0 {
-		stmt = stmt.LIMIT(*limit)
+		stmt = stmt.
+			LIMIT(*limit)
 	}
 
 	return stmt

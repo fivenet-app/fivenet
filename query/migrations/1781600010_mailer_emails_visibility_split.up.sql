@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails_visibility_subject` (
   CONSTRAINT `chk_fivenet_mailer_emails_visibility_subject_effect` CHECK (`effect` IN (0, 1))
 ) ENGINE=InnoDB;
 
+UPDATE `fivenet_mailer_emails` SET `job` = NULL WHERE `job` = '';
+
 INSERT IGNORE INTO `fivenet_mailer_emails_visibility_creator` (`target_id`, `creator_id`, `creator_job`)
 SELECT e.`id`, e.`user_id`, ''
 FROM `fivenet_mailer_emails` e

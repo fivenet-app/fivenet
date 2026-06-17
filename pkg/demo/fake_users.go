@@ -1156,12 +1156,13 @@ func (d *Demo) upsertFakeUserJobs(
 		return nil
 	}
 
-	insertStmt := tUserJobs.INSERT(
-		tUserJobs.UserID,
-		tUserJobs.Job,
-		tUserJobs.Grade,
-		tUserJobs.IsPrimary,
-	)
+	insertStmt := tUserJobs.
+		INSERT(
+			tUserJobs.UserID,
+			tUserJobs.Job,
+			tUserJobs.Grade,
+			tUserJobs.IsPrimary,
+		)
 
 	jobNames := make([]mysql.Expression, 0, len(jobs))
 	for _, job := range jobs {
@@ -1169,10 +1170,11 @@ func (d *Demo) upsertFakeUserJobs(
 		insertStmt = insertStmt.VALUES(userID, job.Job, job.Grade, job.IsPrimary)
 	}
 
-	insertStmt = insertStmt.ON_DUPLICATE_KEY_UPDATE(
-		tUserJobs.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
-		tUserJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
-	)
+	insertStmt = insertStmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tUserJobs.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
+			tUserJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
+		)
 
 	if _, err := insertStmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert fake user jobs. %w", err)
@@ -1258,9 +1260,10 @@ func (d *Demo) upsertFakeUserLicenses(
 		insertStmt = insertStmt.VALUES(userID, licenseType)
 	}
 
-	insertStmt = insertStmt.ON_DUPLICATE_KEY_UPDATE(
-		tUserLicenses.Type.SET(mysql.RawString("VALUES(`type`)")),
-	)
+	insertStmt = insertStmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tUserLicenses.Type.SET(mysql.RawString("VALUES(`type`)")),
+		)
 
 	if _, err := insertStmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert fake user licenses. %w", err)

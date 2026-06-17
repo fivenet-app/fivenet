@@ -9,8 +9,6 @@
 package citizenslabels
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
-	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -71,70 +69,11 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-type LabelAccess struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Jobs          []*access.JobAccess    `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *LabelAccess) Reset() {
-	*x = LabelAccess{}
-	mi := &file_resources_citizens_labels_access_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *LabelAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*LabelAccess) ProtoMessage() {}
-
-func (x *LabelAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_citizens_labels_access_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *LabelAccess) GetJobs() []*access.JobAccess {
-	if x != nil {
-		return x.Jobs
-	}
-	return nil
-}
-
-func (x *LabelAccess) SetJobs(v []*access.JobAccess) {
-	x.Jobs = v
-}
-
-type LabelAccess_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Jobs []*access.JobAccess
-}
-
-func (b0 LabelAccess_builder) Build() *LabelAccess {
-	m0 := &LabelAccess{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.Jobs = b.Jobs
-	return m0
-}
-
 var File_resources_citizens_labels_access_proto protoreflect.FileDescriptor
 
 const file_resources_citizens_labels_access_proto_rawDesc = "" +
 	"\n" +
-	"&resources/citizens/labels/access.proto\x12\x19resources.citizens.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a\x1dresources/access/access.proto\"F\n" +
-	"\vLabelAccess\x12/\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x1b.resources.access.JobAccessR\x04jobs:\x06\xe2\xf3\x18\x02\b\x01*r\n" +
+	"&resources/citizens/labels/access.proto\x12\x19resources.citizens.labels*r\n" +
 	"\vAccessLevel\x12\x1c\n" +
 	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11ACCESS_LEVEL_VIEW\x10\x01\x12\x15\n" +
@@ -142,19 +81,15 @@ const file_resources_citizens_labels_access_proto_rawDesc = "" +
 	"\x13ACCESS_LEVEL_REMOVE\x10\x03B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels;citizenslabelsb\x06proto3"
 
 var file_resources_citizens_labels_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_citizens_labels_access_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_citizens_labels_access_proto_goTypes = []any{
-	(AccessLevel)(0),         // 0: resources.citizens.labels.AccessLevel
-	(*LabelAccess)(nil),      // 1: resources.citizens.labels.LabelAccess
-	(*access.JobAccess)(nil), // 2: resources.access.JobAccess
+	(AccessLevel)(0), // 0: resources.citizens.labels.AccessLevel
 }
 var file_resources_citizens_labels_access_proto_depIdxs = []int32{
-	2, // 0: resources.citizens.labels.LabelAccess.jobs:type_name -> resources.access.JobAccess
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_resources_citizens_labels_access_proto_init() }
@@ -168,14 +103,13 @@ func file_resources_citizens_labels_access_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_citizens_labels_access_proto_rawDesc), len(file_resources_citizens_labels_access_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   1,
+			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_resources_citizens_labels_access_proto_goTypes,
 		DependencyIndexes: file_resources_citizens_labels_access_proto_depIdxs,
 		EnumInfos:         file_resources_citizens_labels_access_proto_enumTypes,
-		MessageInfos:      file_resources_citizens_labels_access_proto_msgTypes,
 	}.Build()
 	File_resources_citizens_labels_access_proto = out.File
 	file_resources_citizens_labels_access_proto_goTypes = nil

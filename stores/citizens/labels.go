@@ -31,27 +31,7 @@ func (s *Store) ListLabels(
 	includeDeleted bool,
 ) (*citizenslabels.Labels, error) {
 	tLabel := tCitizensLabelsJob.AS("label")
-	visibilityCondition := tLabel.DeletedAt.IS_NULL()
-
-	if search = dbutils.PrepareForLikeSearch(search); search != "" {
-		visibilityCondition = visibilityCondition.AND(tLabel.Name.LIKE(mysql.String(search)))
-	}
-
-	if ownJobOnly && canCreateLabel {
-		visibilityCondition = visibilityCondition.AND(
-			tLabel.Job.EQ(mysql.String(userInfo.GetJob())),
-		)
-	} else if userInfo.GetSuperuser() {
-		visibilityCondition = visibilityCondition.AND(
-			tLabel.Job.EQ(mysql.String(userInfo.GetJob())),
-		)
-	} else {
-		visibilityCondition = visibilityCondition.AND(s.labelsAccess.ACLAccessExistsCondition(
-			tLabel.ID,
-			userInfo,
-			minAccess,
-		))
-	}
+	visibilityCondition := buildLabelVisibilityCondition(tLabel, search)
 
 	columns := mysql.ProjectionList{
 		tLabel.ID,
@@ -66,24 +46,69 @@ func (s *Store) ListLabels(
 		columns = append(columns, tLabel.DeletedAt)
 	}
 
-	var stmt mysql.Statement = tLabel.
-		SELECT(columns[0], columns[1:]...).
-		FROM(tLabel).
-		WHERE(visibilityCondition).
-		GROUP_BY(
-			tLabel.ID,
-			tLabel.CreatedAt,
-			tLabel.Name,
-			tLabel.Color,
-			tLabel.Icon,
-			tLabel.Settings,
-			tLabel.SortKey,
-		).
-		ORDER_BY(
-			tLabel.SortOrder.ASC(),
-			tLabel.SortKey.ASC(),
-		).
-		LIMIT(20)
+	var (
+		stmt mysql.Statement
+		ctes []mysql.CommonTableExpression
+	)
+
+	if userInfo.GetSuperuser() || (ownJobOnly && canCreateLabel) {
+		visibilityCondition = visibilityCondition.AND(
+			tLabel.Job.EQ(mysql.String(userInfo.GetJob())),
+		)
+
+		stmt = tLabel.
+			SELECT(columns[0], columns[1:]...).
+			FROM(tLabel).
+			WHERE(visibilityCondition).
+			GROUP_BY(
+				tLabel.ID,
+				tLabel.CreatedAt,
+				tLabel.Name,
+				tLabel.Color,
+				tLabel.Icon,
+				tLabel.Settings,
+				tLabel.SortKey,
+			).
+			ORDER_BY(
+				tLabel.SortOrder.ASC(),
+				tLabel.SortKey.ASC(),
+			).
+			LIMIT(20)
+	} else {
+		visibleIDs := s.labelsAccess.VisibleIDsByConditionQuery(
+			userInfo,
+			minAccess,
+			false,
+			buildLabelVisibilityCondition(tCitizensLabelsJob, search),
+		)
+		ctes = visibleIDs.CTEs
+		visibleLabelID := mysql.IntegerColumn("id").From(visibleIDs.Table)
+
+		stmt = tLabel.
+			SELECT(columns[0], columns[1:]...).
+			FROM(
+				visibleIDs.Table.
+					INNER_JOIN(tLabel, tLabel.ID.EQ(visibleLabelID)),
+			).
+			GROUP_BY(
+				tLabel.ID,
+				tLabel.CreatedAt,
+				tLabel.Name,
+				tLabel.Color,
+				tLabel.Icon,
+				tLabel.Settings,
+				tLabel.SortKey,
+			).
+			ORDER_BY(
+				tLabel.SortOrder.ASC(),
+				tLabel.SortKey.ASC(),
+			).
+			LIMIT(20)
+	}
+
+	if len(ctes) > 0 {
+		stmt = mysql.WITH(ctes...)(stmt)
+	}
 
 	resp := &citizenslabels.Labels{
 		List: []*citizenslabels.Label{},
@@ -95,6 +120,19 @@ func (s *Store) ListLabels(
 	}
 
 	return resp, nil
+}
+
+func buildLabelVisibilityCondition(
+	label *table.FivenetUserLabelsJobTable,
+	search string,
+) mysql.BoolExpression {
+	condition := label.DeletedAt.IS_NULL()
+
+	if search = dbutils.PrepareForLikeSearch(search); search != "" {
+		condition = condition.AND(label.Name.LIKE(mysql.String(search)))
+	}
+
+	return condition
 }
 
 func (s *Store) NextLabelSortOrder(

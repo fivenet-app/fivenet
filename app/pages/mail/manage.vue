@@ -108,7 +108,10 @@ onBeforeMount(async () => await listEmails());
 </script>
 
 <template>
-    <UDashboardPanel v-if="route.query?.tab === 'new' || getPrivateEmail?.deactivated === true" id="mail-emails">
+    <UDashboardPanel
+        v-if="(route.query?.tab === 'new' && !getPrivateEmail) || getPrivateEmail?.deactivated === true"
+        id="mail-emails"
+    >
         <template #header>
             <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
                 <template #leading>

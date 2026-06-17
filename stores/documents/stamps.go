@@ -39,22 +39,26 @@ func (s *Store) ListUsableStamps(
 	tStamp := table.FivenetDocumentsStamps.AS("stamp")
 
 	condition := mysql.Bool(true)
-	if !q.UserInfo.GetSuperuser() {
-		condition = condition.AND(tStamp.DeletedAt.IS_NULL())
-		condition = condition.AND(mysql.OR(
-			tStamp.Name.EQ(mysql.String(q.UserInfo.GetJob())),
-			s.subjectAccess.ACLAccessExistsCondition(
-				tStamp.ID,
-				q.UserInfo,
-				int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
-			),
-		))
+	includeDeleted := false
+	if q.UserInfo != nil && q.UserInfo.GetSuperuser() {
+		includeDeleted = true
 	}
+	visibleIDs := s.stampAccess.VisibleIDsByConditionQuery(
+		q.UserInfo,
+		int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
+		includeDeleted,
+		condition,
+	)
+	ctes := visibleIDs.CTEs
+	visibleStampID := mysql.IntegerColumn("id").From(visibleIDs.Table)
 
-	countStmt := tStamp.
-		SELECT(mysql.COUNT(tStamp.ID).AS("data_count.total")).
-		FROM(tStamp).
-		WHERE(condition)
+	var countStmt mysql.Statement = tStamp.
+		SELECT(mysql.COUNT(visibleStampID).AS("data_count.total")).
+		FROM(visibleIDs.Table)
+
+	if len(ctes) > 0 {
+		countStmt = mysql.WITH(ctes...)(countStmt)
+	}
 
 	var count resourcesdatabase.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -67,7 +71,7 @@ func (s *Store) ListUsableStamps(
 		return pag, []*documentsstamps.Stamp{}, nil
 	}
 
-	stmt := mysql.
+	var stmt mysql.Statement = mysql.
 		SELECT(
 			tStamp.ID,
 			tStamp.Name,
@@ -75,11 +79,19 @@ func (s *Store) ListUsableStamps(
 			tStamp.VariantsJSON,
 			tStamp.CreatedAt,
 		).
-		FROM(tStamp).
-		WHERE(condition).
+		FROM(
+			visibleIDs.Table.
+				INNER_JOIN(tStamp,
+					tStamp.ID.EQ(visibleStampID),
+				),
+		).
 		OFFSET(q.Pagination.GetOffset()).
 		ORDER_BY(tStamp.SortKey.ASC(), tStamp.CreatedAt.DESC()).
 		LIMIT(limit)
+
+	if len(ctes) > 0 {
+		stmt = mysql.WITH(ctes...)(stmt)
+	}
 
 	var stamps []*documentsstamps.Stamp
 	if err := stmt.QueryContext(ctx, s.db, &stamps); err != nil {
@@ -166,8 +178,12 @@ func (s *Store) UpdateStamp(ctx context.Context, tx qrm.DB, stamp *documentsstam
 }
 
 func (s *Store) DeleteStamp(ctx context.Context, tx qrm.DB, stampID int64) error {
+	// TODO implement soft delete like other places using a deletedAtTimestamp
 	tStamp := table.FivenetDocumentsStamps.AS("stamp")
-	stmt := tStamp.DELETE().WHERE(tStamp.ID.EQ(mysql.Int64(stampID))).LIMIT(1)
+	stmt := tStamp.
+		DELETE().
+		WHERE(tStamp.ID.EQ(mysql.Int64(stampID))).
+		LIMIT(1)
 	_, err := stmt.ExecContext(ctx, tx)
 	return err
 }

@@ -351,7 +351,8 @@ func (s *Store) handleTimeclockEntry(ctx context.Context, data *activity.Timeclo
 
 func (s *Store) handleUserUpdate(ctx context.Context, data *activity.UserUpdate) error {
 	tUser := table.FivenetUser
-	selectStmt := tUser.SELECT(tUser.ID).
+	selectStmt := tUser.
+		SELECT(tUser.ID).
 		FROM(tUser).
 		WHERE(tUser.ID.EQ(mysql.Int32(data.GetUserId()))).
 		LIMIT(1)
@@ -382,7 +383,8 @@ func (s *Store) handleUserUpdate(ctx context.Context, data *activity.UserUpdate)
 	}
 
 	if len(updateSets) > 0 {
-		stmt := tUser.UPDATE().
+		stmt := tUser.
+			UPDATE().
 			SET(updateSets[0]).
 			WHERE(tUser.ID.EQ(mysql.Int32(data.GetUserId()))).
 			LIMIT(1)

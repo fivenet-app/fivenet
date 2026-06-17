@@ -129,9 +129,10 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 		)
 
 	if job != "" {
-		stmt = stmt.WHERE(
-			tCentrumDispatchers.Job.EQ(mysql.String(job)),
-		)
+		stmt = stmt.
+			WHERE(
+				tCentrumDispatchers.Job.EQ(mysql.String(job)),
+			)
 	}
 
 	var dest []*jobscolleagues.Colleague

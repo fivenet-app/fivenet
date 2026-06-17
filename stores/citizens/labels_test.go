@@ -64,6 +64,56 @@ func TestStoreListLabels(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestStoreListLabelsUsesVisibilityForNonSuperuser(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(db, &config.CustomDB{})
+
+	expectedQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*` +
+		regexp.QuoteMeta(`SELECT label.id AS "label.id"`) +
+		`.*` + regexp.QuoteMeta(`FROM ( SELECT DISTINCT fivenet_user_labels_job.id AS "id"`) +
+		`.*` + regexp.QuoteMeta(`INNER JOIN winning_visibility ON (winning_visibility.target_id = fivenet_user_labels_job.id)`) +
+		`.*` + regexp.QuoteMeta(`fivenet_user_labels_job.deleted_at IS NULL`) +
+		`.*` + regexp.QuoteMeta(`fivenet_user_labels_job.name LIKE ?`) +
+		`.*` + regexp.QuoteMeta(`ORDER BY label.sort_order ASC, label.sort_key ASC LIMIT ?;`)
+	mock.ExpectQuery(expectedQuery).
+		WithArgs(
+			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
+			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
+			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
+			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
+			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
+			sqlmock.AnyArg(), sqlmock.AnyArg(),
+		).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"label.id",
+			"label.created_at",
+			"label.sort_order",
+			"label.name",
+			"label.color",
+			"label.icon",
+			"label.settings",
+		}))
+
+	labels, err := store.ListLabels(
+		t.Context(),
+		db,
+		&userinfo.UserInfo{UserId: 3, Job: "police", JobGrade: 16},
+		"patrol",
+		false,
+		false,
+		1,
+		false,
+	)
+	require.NoError(t, err)
+	require.Empty(t, labels.GetList())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreInsertLabel(t *testing.T) {
 	t.Parallel()
 

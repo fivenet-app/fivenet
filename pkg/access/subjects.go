@@ -34,426 +34,20 @@ const (
 	SubjectSpecificityJobGrade      int32 = 200
 )
 
-const subjectCleanupDeleteLimit int64 = 500
-
-type ActorSubject struct {
-	SubjectID        int64 `alias:"subject_id"`
-	Specificity      int32 `alias:"specificity"`
-	GradeSpecificity int32 `alias:"grade_specificity"`
+type BaseAccessColumns struct {
+	ID       mysql.ColumnInteger
+	TargetID mysql.ColumnInteger
+	Access   mysql.ColumnInteger
 }
 
-type SubjectResolver struct {
-	db *sql.DB
-}
+type VisibilityColumns struct {
+	BaseAccessColumns
 
-func NewSubjectResolver(db *sql.DB) *SubjectResolver {
-	return &SubjectResolver{db: db}
-}
-
-func (r *SubjectResolver) ensureSubject(
-	ctx context.Context,
-	tx qrm.DB,
-	subjectType SubjectType,
-	find func() (int64, error),
-	upsert func(subjectID int64) (int64, error),
-) (int64, error) {
-	if subjectID, err := find(); err == nil {
-		return subjectID, nil
-	} else if !errors.Is(err, qrm.ErrNoRows) {
-		return 0, err
-	}
-
-	subjectID, err := createSubject(ctx, tx, subjectType)
-	if err != nil {
-		return 0, err
-	}
-
-	mappedID, err := upsert(subjectID)
-	if err != nil {
-		return 0, err
-	}
-	if mappedID != 0 && mappedID != subjectID {
-		_ = deleteSubject(ctx, tx, subjectID)
-		return mappedID, nil
-	}
-
-	return subjectID, nil
-}
-
-func lookupSubjectIDFromMapping(
-	ctx context.Context,
-	tx qrm.DB,
-	subjectAlias string,
-	subjectType SubjectType,
-	mappingTable mysql.ReadableTable,
-	subjectID mysql.IntegerExpression,
-	where mysql.BoolExpression,
-) (int64, error) {
-	tSubjects := table.FivenetACLSubjects.AS(subjectAlias)
-	stmt := mappingTable.
-		SELECT(subjectID).
-		FROM(mappingTable.INNER_JOIN(tSubjects,
-			mysql.AND(
-				tSubjects.ID.EQ(subjectID),
-				tSubjects.SubjectType.EQ(mysql.Int16(int16(subjectType))),
-			),
-		)).
-		WHERE(where).
-		LIMIT(1)
-
-	return querySubjectID(ctx, tx, stmt)
-}
-
-func (r *SubjectResolver) EnsureUserSubject(
-	ctx context.Context,
-	tx qrm.DB,
-	userID int32,
-) (int64, error) {
-	return r.ensureSubject(ctx, tx, SubjectTypeUser, func() (int64, error) {
-		return lookupSubjectIDFromMapping(
-			ctx,
-			tx,
-			"user_subject",
-			SubjectTypeUser,
-			table.FivenetACLSubjectUsers,
-			table.FivenetACLSubjectUsers.SubjectID,
-			table.FivenetACLSubjectUsers.UserID.EQ(mysql.Int32(userID)),
-		)
-	}, func(subjectID int64) (int64, error) {
-		return upsertUserSubject(ctx, tx, subjectID, userID)
-	})
-}
-
-func (r *SubjectResolver) EnsureQualificationSubject(
-	ctx context.Context,
-	tx qrm.DB,
-	qualificationID int64,
-) (int64, error) {
-	return r.ensureSubject(
-		ctx,
-		tx,
-		SubjectTypeQualification,
-		func() (int64, error) {
-			return lookupSubjectIDFromMapping(
-				ctx,
-				tx,
-				"qualification_subject",
-				SubjectTypeQualification,
-				table.FivenetACLSubjectQualifications,
-				table.FivenetACLSubjectQualifications.SubjectID,
-				table.FivenetACLSubjectQualifications.QualificationID.EQ(
-					mysql.Int64(qualificationID),
-				),
-			)
-		},
-		func(subjectID int64) (int64, error) {
-			return upsertQualificationSubject(ctx, tx, subjectID, qualificationID)
-		},
-	)
-}
-
-func (r *SubjectResolver) EnsureJobGradeSubject(
-	ctx context.Context,
-	tx qrm.DB,
-	job string,
-	minimumGrade int32,
-) (int64, error) {
-	return r.ensureSubject(
-		ctx,
-		tx,
-		SubjectTypeJobGrade,
-		func() (int64, error) {
-			return lookupSubjectIDFromMapping(
-				ctx,
-				tx,
-				"job_grade_subject",
-				SubjectTypeJobGrade,
-				table.FivenetACLSubjectJobGradeScopes,
-				table.FivenetACLSubjectJobGradeScopes.SubjectID,
-				mysql.AND(
-					table.FivenetACLSubjectJobGradeScopes.Job.EQ(mysql.String(job)),
-					table.FivenetACLSubjectJobGradeScopes.MinimumGrade.EQ(
-						mysql.Int32(minimumGrade),
-					),
-				),
-			)
-		},
-		func(subjectID int64) (int64, error) {
-			return upsertJobGradeSubject(ctx, tx, subjectID, job, minimumGrade)
-		},
-	)
-}
-
-func (r *SubjectResolver) ResolveActorSubjects(
-	ctx context.Context,
-	tx qrm.DB,
-	userInfo *userinfo.UserInfo,
-) ([]ActorSubject, error) {
-	if userInfo == nil || userInfo.GetUserId() <= 0 {
-		return nil, nil
-	}
-
-	tSubjectQualis := table.FivenetACLSubjectQualifications.AS("asq_resolve")
-	tQualiResults := table.FivenetQualificationsResults.AS("qr_resolve")
-	tSubjectJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("asjg_resolve")
-	tUserJobs := table.FivenetUserJobs.AS("uj_resolve")
-	stmt := mysql.SELECT(
-		table.FivenetACLSubjectUsers.SubjectID.AS("subject_id"),
-		mysql.Int32(SubjectSpecificityUser).AS("specificity"),
-		mysql.Int32(-1).AS("grade_specificity"),
-	).
-		FROM(table.FivenetACLSubjectUsers).
-		WHERE(table.FivenetACLSubjectUsers.UserID.EQ(mysql.Int32(userInfo.GetUserId()))).
-		UNION_ALL(
-			mysql.SELECT(
-				tSubjectQualis.SubjectID.AS("subject_id"),
-				mysql.Int32(SubjectSpecificityQualification).AS("specificity"),
-				mysql.Int32(-1).AS("grade_specificity"),
-			).
-				FROM(tSubjectQualis.
-					INNER_JOIN(tQualiResults,
-						mysql.AND(
-							tQualiResults.QualificationID.EQ(tSubjectQualis.QualificationID),
-							tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-							tQualiResults.DeletedAt.IS_NULL(),
-							tQualiResults.Status.EQ(
-								mysql.Int32(
-									int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
-								),
-							),
-						),
-					),
-				),
-		).
-		UNION_ALL(
-			mysql.SELECT(
-				tSubjectJobGrade.SubjectID.AS("subject_id"),
-				mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
-				tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
-			).
-				FROM(tSubjectJobGrade.
-					INNER_JOIN(tUserJobs,
-						mysql.AND(
-							tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-							tUserJobs.Job.EQ(tSubjectJobGrade.Job),
-							tUserJobs.Grade.GT_EQ(tSubjectJobGrade.MinimumGrade),
-						),
-					),
-				),
-		).
-		UNION_ALL(
-			mysql.SELECT(
-				tSubjectJobGrade.SubjectID.AS("subject_id"),
-				mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
-				tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
-			).
-				FROM(tSubjectJobGrade).
-				WHERE(mysql.AND(
-					tSubjectJobGrade.Job.EQ(mysql.String(userInfo.GetJob())),
-					tSubjectJobGrade.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-				)),
-		)
-
-	var dest []ActorSubject
-	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return dest, nil
-}
-
-func (r *SubjectResolver) CleanupOrphanSubjects(ctx context.Context, tx qrm.DB) error {
-	_, err := r.cleanupOrphanSubjectsStmt().ExecContext(ctx, tx)
-	return err
-}
-
-func (r *SubjectResolver) cleanupOrphanSubjectsStmt() mysql.DeleteStatement {
-	tSubjects := table.FivenetACLSubjects.AS("orphan_subject")
-	tSubjectUsers := table.FivenetACLSubjectUsers.AS("orphan_subject_user")
-	tSubjectQuals := table.FivenetACLSubjectQualifications.AS("orphan_subject_qual")
-	tSubjectJobGrades := table.FivenetACLSubjectJobGradeScopes.AS("orphan_subject_job_grade")
-
-	return tSubjects.
-		DELETE().
-		WHERE(mysql.AND(
-			mysql.NOT(mysql.EXISTS(
-				mysql.SELECT(mysql.Int(1)).
-					FROM(tSubjectUsers).
-					WHERE(tSubjectUsers.SubjectID.EQ(tSubjects.ID)),
-			)),
-			mysql.NOT(mysql.EXISTS(
-				mysql.SELECT(mysql.Int(1)).
-					FROM(tSubjectQuals).
-					WHERE(tSubjectQuals.SubjectID.EQ(tSubjects.ID)),
-			)),
-			mysql.NOT(mysql.EXISTS(
-				mysql.SELECT(mysql.Int(1)).
-					FROM(tSubjectJobGrades).
-					WHERE(tSubjectJobGrades.SubjectID.EQ(tSubjects.ID)),
-			)),
-		)).
-		LIMIT(subjectCleanupDeleteLimit)
-}
-
-func (r *SubjectResolver) CleanupStaleJobGradeSubjects(ctx context.Context, tx qrm.DB) error {
-	_, err := r.cleanupStaleJobGradeSubjectsStmt().ExecContext(ctx, tx)
-	return err
-}
-
-func (r *SubjectResolver) cleanupStaleJobGradeSubjectsStmt() mysql.DeleteStatement {
-	tSubjects := table.FivenetACLSubjects.AS("stale_job_grade_subject")
-	tSubjectJobGrades := table.FivenetACLSubjectJobGradeScopes.AS("stale_job_grade_scope")
-	tJobGrades := table.FivenetJobsGrades.AS("stale_job_grade")
-
-	return tSubjects.
-		DELETE().
-		WHERE(mysql.AND(
-			tSubjects.SubjectType.EQ(mysql.Int16(int16(SubjectTypeJobGrade))),
-			mysql.EXISTS(
-				mysql.SELECT(mysql.Int(1)).
-					FROM(tSubjectJobGrades).
-					WHERE(tSubjectJobGrades.SubjectID.EQ(tSubjects.ID)),
-			),
-			mysql.NOT(mysql.EXISTS(
-				mysql.SELECT(mysql.Int(1)).
-					FROM(tSubjectJobGrades.
-						INNER_JOIN(tJobGrades,
-							mysql.AND(
-								tJobGrades.JobName.EQ(tSubjectJobGrades.Job),
-								tJobGrades.Grade.EQ(tSubjectJobGrades.MinimumGrade),
-							),
-						),
-					).
-					WHERE(tSubjectJobGrades.SubjectID.EQ(tSubjects.ID)),
-			)),
-		)).
-		LIMIT(subjectCleanupDeleteLimit)
-}
-
-func createSubject(ctx context.Context, tx qrm.DB, subjectType SubjectType) (int64, error) {
-	stmt := table.FivenetACLSubjects.
-		INSERT(table.FivenetACLSubjects.SubjectType).
-		VALUES(int16(subjectType))
-
-	res, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return 0, err
-	}
-
-	return res.LastInsertId()
-}
-
-func deleteSubject(ctx context.Context, tx qrm.DB, subjectID int64) error {
-	_, err := table.FivenetACLSubjects.
-		DELETE().
-		WHERE(table.FivenetACLSubjects.ID.EQ(mysql.Int64(subjectID))).
-		LIMIT(1).
-		ExecContext(ctx, tx)
-	return err
-}
-
-func upsertUserSubject(
-	ctx context.Context,
-	tx qrm.DB,
-	subjectID int64,
-	userID int32,
-) (int64, error) {
-	stmt := table.FivenetACLSubjectUsers.
-		INSERT(
-			table.FivenetACLSubjectUsers.SubjectID,
-			table.FivenetACLSubjectUsers.UserID,
-		).
-		VALUES(
-			subjectID,
-			userID,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			table.FivenetACLSubjectUsers.SubjectID.SET(
-				mysql.RawInt("LAST_INSERT_ID(`subject_id`)"),
-			),
-		)
-
-	return upsertSubjectMapping(ctx, tx, stmt)
-}
-
-func upsertQualificationSubject(
-	ctx context.Context,
-	tx qrm.DB,
-	subjectID int64,
-	qualificationID int64,
-) (int64, error) {
-	stmt := table.FivenetACLSubjectQualifications.
-		INSERT(
-			table.FivenetACLSubjectQualifications.SubjectID,
-			table.FivenetACLSubjectQualifications.QualificationID,
-		).
-		VALUES(
-			subjectID,
-			qualificationID,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			table.FivenetACLSubjectQualifications.SubjectID.SET(
-				mysql.RawInt("LAST_INSERT_ID(`subject_id`)"),
-			),
-		)
-
-	return upsertSubjectMapping(ctx, tx, stmt)
-}
-
-func upsertJobGradeSubject(
-	ctx context.Context,
-	tx qrm.DB,
-	subjectID int64,
-	job string,
-	minimumGrade int32,
-) (int64, error) {
-	stmt := table.FivenetACLSubjectJobGradeScopes.
-		INSERT(
-			table.FivenetACLSubjectJobGradeScopes.SubjectID,
-			table.FivenetACLSubjectJobGradeScopes.Job,
-			table.FivenetACLSubjectJobGradeScopes.MinimumGrade,
-		).
-		VALUES(
-			subjectID,
-			job,
-			minimumGrade,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			table.FivenetACLSubjectJobGradeScopes.SubjectID.SET(
-				mysql.RawInt("LAST_INSERT_ID(`subject_id`)"),
-			),
-		)
-
-	return upsertSubjectMapping(ctx, tx, stmt)
-}
-
-func upsertSubjectMapping(
-	ctx context.Context,
-	tx qrm.DB,
-	stmt mysql.InsertStatement,
-) (int64, error) {
-	res, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return 0, err
-	}
-	return res.LastInsertId()
-}
-
-type subjectIDDest struct {
-	SubjectID int64 `alias:"subject_id"`
-}
-
-func querySubjectID(ctx context.Context, tx qrm.DB, stmt mysql.SelectStatement) (int64, error) {
-	dest := subjectIDDest{}
-	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
-		return 0, err
-	}
-	if dest.SubjectID == 0 {
-		return 0, qrm.ErrNoRows
-	}
-	return dest.SubjectID, nil
+	RuleKind   mysql.ColumnInteger
+	SubjectID  mysql.ColumnInteger
+	CreatorID  mysql.ColumnInteger
+	CreatorJob mysql.ColumnString
+	Effect     mysql.ColumnBool
 }
 
 type SubjectAccessColumns struct {
@@ -711,345 +305,12 @@ func NewSubjectObjectAccess(db *sql.DB, cfg SubjectObjectAccessConfig) *SubjectO
 	} else {
 		access.visibilityBackend = &sqlVisibilityBackend{access: access}
 	}
+
+	if err := access.Validate(); err != nil {
+		panic(err)
+	}
+
 	return access
-}
-
-func NewDocumentsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
-		TargetTable: table.FivenetDocuments,
-		TargetColumns: &SubjectTargetTableColumns{
-			ID:         table.FivenetDocuments.ID,
-			CreatedAt:  table.FivenetDocuments.CreatedAt,
-			UpdatedAt:  table.FivenetDocuments.UpdatedAt,
-			DeletedAt:  table.FivenetDocuments.DeletedAt,
-			Public:     table.FivenetDocuments.Public,
-			CreatorID:  table.FivenetDocuments.CreatorID,
-			CreatorJob: table.FivenetDocuments.CreatorJob,
-		},
-		AccessTable: table.FivenetDocumentsAccess,
-		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetDocumentsAccess.ID,
-				TargetID: table.FivenetDocumentsAccess.TargetID,
-				Access:   table.FivenetDocumentsAccess.Access,
-			},
-			SubjectID: table.FivenetDocumentsAccess.SubjectID,
-			Effect:    table.FivenetDocumentsAccess.Effect,
-		},
-		CalculatedVisibilityPublicTable:       table.FivenetDocumentsVisibilityPublic,
-		CalculatedVisibilityCreatorTable:      table.FivenetDocumentsVisibilityCreator,
-		CalculatedVisibilitySubjectTable:      table.FivenetDocumentsVisibilitySubject,
-		CalculatedVisibilityPublicTargetID:    table.FivenetDocumentsVisibilityPublic.TargetID,
-		CalculatedVisibilityCreatorTargetID:   table.FivenetDocumentsVisibilityCreator.TargetID,
-		CalculatedVisibilityCreatorCreatorID:  table.FivenetDocumentsVisibilityCreator.CreatorID,
-		CalculatedVisibilityCreatorCreatorJob: table.FivenetDocumentsVisibilityCreator.CreatorJob,
-		CalculatedVisibilitySubjectTargetID:   table.FivenetDocumentsVisibilitySubject.TargetID,
-		CalculatedVisibilitySubjectSubjectID:  table.FivenetDocumentsVisibilitySubject.SubjectID,
-		CalculatedVisibilitySubjectAccess:     table.FivenetDocumentsVisibilitySubject.Access,
-		CalculatedVisibilitySubjectEffect:     table.FivenetDocumentsVisibilitySubject.Effect,
-		Visibility: VisibilityPolicy{
-			Rules: []VisibilityRule{
-				{Kind: VisibilityRulePublic},
-				{Kind: VisibilityRuleCreator},
-			},
-		},
-		CalculatedVisibilityMaps: true,
-	})
-}
-
-func NewDocumentTemplatesSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
-		TargetTable: table.FivenetDocumentsTemplates,
-		TargetColumns: &SubjectTargetTableColumns{
-			ID:         table.FivenetDocumentsTemplates.ID,
-			CreatedAt:  table.FivenetDocumentsTemplates.CreatedAt,
-			UpdatedAt:  table.FivenetDocumentsTemplates.UpdatedAt,
-			DeletedAt:  table.FivenetDocumentsTemplates.DeletedAt,
-			CreatorJob: table.FivenetDocumentsTemplates.CreatorJob,
-		},
-		AccessTable: table.FivenetDocumentsTemplatesAccess,
-		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetDocumentsTemplatesAccess.ID,
-				TargetID: table.FivenetDocumentsTemplatesAccess.TargetID,
-				Access:   table.FivenetDocumentsTemplatesAccess.Access,
-			},
-			SubjectID: table.FivenetDocumentsTemplatesAccess.SubjectID,
-			Effect:    table.FivenetDocumentsTemplatesAccess.Effect,
-		},
-		CalculatedVisibilitySubjectTable:     table.FivenetDocumentsTemplatesVisibilitySubject,
-		CalculatedVisibilitySubjectTargetID:  table.FivenetDocumentsTemplatesVisibilitySubject.TargetID,
-		CalculatedVisibilitySubjectSubjectID: table.FivenetDocumentsTemplatesVisibilitySubject.SubjectID,
-		CalculatedVisibilitySubjectAccess:    table.FivenetDocumentsTemplatesVisibilitySubject.Access,
-		CalculatedVisibilitySubjectEffect:    table.FivenetDocumentsTemplatesVisibilitySubject.Effect,
-		Visibility: VisibilityPolicy{
-			Rules: []VisibilityRule{
-				{Kind: VisibilityRuleCreator},
-			},
-		},
-		CalculatedVisibilityMaps: true,
-	})
-}
-
-func NewDocumentStampsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
-		TargetTable: table.FivenetDocumentsStamps,
-		TargetColumns: &SubjectTargetTableColumns{
-			ID:         table.FivenetDocumentsStamps.ID,
-			CreatedAt:  table.FivenetDocumentsStamps.CreatedAt,
-			UpdatedAt:  table.FivenetDocumentsStamps.UpdatedAt,
-			DeletedAt:  table.FivenetDocumentsStamps.DeletedAt,
-			CreatorJob: table.FivenetDocumentsStamps.Name,
-		},
-		AccessTable: table.FivenetDocumentsStampsAccess,
-		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetDocumentsStampsAccess.ID,
-				TargetID: table.FivenetDocumentsStampsAccess.TargetID,
-				Access:   table.FivenetDocumentsStampsAccess.Access,
-			},
-			SubjectID: table.FivenetDocumentsStampsAccess.SubjectID,
-			Effect:    table.FivenetDocumentsStampsAccess.Effect,
-		},
-		CalculatedVisibilityCreatorTable:      table.FivenetDocumentsStampsVisibilityCreator,
-		CalculatedVisibilitySubjectTable:      table.FivenetDocumentsStampsVisibilitySubject,
-		CalculatedVisibilityCreatorTargetID:   table.FivenetDocumentsStampsVisibilityCreator.TargetID,
-		CalculatedVisibilityCreatorCreatorJob: table.FivenetDocumentsStampsVisibilityCreator.CreatorJob,
-		CalculatedVisibilitySubjectTargetID:   table.FivenetDocumentsStampsVisibilitySubject.TargetID,
-		CalculatedVisibilitySubjectSubjectID:  table.FivenetDocumentsStampsVisibilitySubject.SubjectID,
-		CalculatedVisibilitySubjectAccess:     table.FivenetDocumentsStampsVisibilitySubject.Access,
-		CalculatedVisibilitySubjectEffect:     table.FivenetDocumentsStampsVisibilitySubject.Effect,
-		Visibility: VisibilityPolicy{
-			Rules: []VisibilityRule{{Kind: VisibilityRuleCreator}},
-		},
-		CalculatedVisibilityMaps: true,
-	})
-}
-
-func NewCalendarSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
-		TargetTable: table.FivenetCalendar,
-		TargetColumns: &SubjectTargetTableColumns{
-			ID:         table.FivenetCalendar.ID,
-			CreatedAt:  table.FivenetCalendar.CreatedAt,
-			UpdatedAt:  table.FivenetCalendar.UpdatedAt,
-			DeletedAt:  table.FivenetCalendar.DeletedAt,
-			Public:     table.FivenetCalendar.Public,
-			CreatorID:  table.FivenetCalendar.CreatorID,
-			CreatorJob: table.FivenetCalendar.CreatorJob,
-		},
-		AccessTable: table.FivenetCalendarAccess,
-		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetCalendarAccess.ID,
-				TargetID: table.FivenetCalendarAccess.TargetID,
-				Access:   table.FivenetCalendarAccess.Access,
-			},
-			SubjectID: table.FivenetCalendarAccess.SubjectID,
-			Effect:    table.FivenetCalendarAccess.Effect,
-		},
-		CalculatedVisibilityPublicTable:       table.FivenetCalendarVisibilityPublic,
-		CalculatedVisibilityCreatorTable:      table.FivenetCalendarVisibilityCreator,
-		CalculatedVisibilitySubjectTable:      table.FivenetCalendarVisibilitySubject,
-		CalculatedVisibilityPublicTargetID:    table.FivenetCalendarVisibilityPublic.TargetID,
-		CalculatedVisibilityCreatorTargetID:   table.FivenetCalendarVisibilityCreator.TargetID,
-		CalculatedVisibilityCreatorCreatorID:  table.FivenetCalendarVisibilityCreator.CreatorID,
-		CalculatedVisibilityCreatorCreatorJob: table.FivenetCalendarVisibilityCreator.CreatorJob,
-		CalculatedVisibilitySubjectTargetID:   table.FivenetCalendarVisibilitySubject.TargetID,
-		CalculatedVisibilitySubjectSubjectID:  table.FivenetCalendarVisibilitySubject.SubjectID,
-		CalculatedVisibilitySubjectAccess:     table.FivenetCalendarVisibilitySubject.Access,
-		CalculatedVisibilitySubjectEffect:     table.FivenetCalendarVisibilitySubject.Effect,
-		Visibility: VisibilityPolicy{
-			Rules: []VisibilityRule{
-				{Kind: VisibilityRulePublic},
-				{Kind: VisibilityRuleCreator},
-			},
-		},
-		CalculatedVisibilityMaps: true,
-	})
-}
-
-func NewWikiPageSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
-		TargetTable: table.FivenetWikiPages,
-		TargetColumns: &SubjectTargetTableColumns{
-			ID:         table.FivenetWikiPages.ID,
-			CreatedAt:  table.FivenetWikiPages.CreatedAt,
-			UpdatedAt:  table.FivenetWikiPages.UpdatedAt,
-			DeletedAt:  table.FivenetWikiPages.DeletedAt,
-			Public:     table.FivenetWikiPages.Public,
-			CreatorID:  table.FivenetWikiPages.CreatorID,
-			CreatorJob: table.FivenetWikiPages.Job,
-		},
-		AccessTable: table.FivenetWikiPagesAccess,
-		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetWikiPagesAccess.ID,
-				TargetID: table.FivenetWikiPagesAccess.TargetID,
-				Access:   table.FivenetWikiPagesAccess.Access,
-			},
-			SubjectID: table.FivenetWikiPagesAccess.SubjectID,
-			Effect:    table.FivenetWikiPagesAccess.Effect,
-		},
-		CalculatedVisibilityCreatorTable:      table.FivenetWikiPagesVisibilityCreator,
-		CalculatedVisibilityPublicTable:       table.FivenetWikiPagesVisibilityPublic,
-		CalculatedVisibilityCreatorTargetID:   table.FivenetWikiPagesVisibilityCreator.TargetID,
-		CalculatedVisibilityCreatorCreatorID:  table.FivenetWikiPagesVisibilityCreator.CreatorID,
-		CalculatedVisibilityCreatorCreatorJob: table.FivenetWikiPagesVisibilityCreator.CreatorJob,
-		CalculatedVisibilitySubjectTable:      table.FivenetWikiPagesVisibilitySubject,
-		CalculatedVisibilityPublicTargetID:    table.FivenetWikiPagesVisibilityPublic.TargetID,
-		CalculatedVisibilitySubjectTargetID:   table.FivenetWikiPagesVisibilitySubject.TargetID,
-		CalculatedVisibilitySubjectSubjectID:  table.FivenetWikiPagesVisibilitySubject.SubjectID,
-		CalculatedVisibilitySubjectAccess:     table.FivenetWikiPagesVisibilitySubject.Access,
-		CalculatedVisibilitySubjectEffect:     table.FivenetWikiPagesVisibilitySubject.Effect,
-		Visibility: VisibilityPolicy{
-			Rules: []VisibilityRule{
-				{Kind: VisibilityRulePublic},
-				{Kind: VisibilityRuleCreator},
-			},
-		},
-		CalculatedVisibilityMaps: true,
-	})
-}
-
-func NewCitizenLabelsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
-		TargetTable: table.FivenetUserLabelsJob,
-		TargetColumns: &SubjectTargetTableColumns{
-			ID:         table.FivenetUserLabelsJob.ID,
-			CreatedAt:  table.FivenetUserLabelsJob.CreatedAt,
-			UpdatedAt:  table.FivenetUserLabelsJob.UpdatedAt,
-			DeletedAt:  table.FivenetUserLabelsJob.DeletedAt,
-			CreatorJob: table.FivenetUserLabelsJob.Job,
-		},
-		AccessTable: table.FivenetUserLabelsJobJobAccess,
-		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetUserLabelsJobJobAccess.ID,
-				TargetID: table.FivenetUserLabelsJobJobAccess.TargetID,
-				Access:   table.FivenetUserLabelsJobJobAccess.Access,
-			},
-			SubjectID: table.FivenetUserLabelsJobJobAccess.SubjectID,
-			Effect:    table.FivenetUserLabelsJobJobAccess.Effect,
-		},
-		CalculatedVisibilityCreatorTable:      table.FivenetUserLabelsJobVisibilityCreator,
-		CalculatedVisibilitySubjectTable:      table.FivenetUserLabelsJobVisibilitySubject,
-		CalculatedVisibilityCreatorTargetID:   table.FivenetUserLabelsJobVisibilityCreator.TargetID,
-		CalculatedVisibilityCreatorCreatorJob: table.FivenetUserLabelsJobVisibilityCreator.CreatorJob,
-		CalculatedVisibilitySubjectTargetID:   table.FivenetUserLabelsJobVisibilitySubject.TargetID,
-		CalculatedVisibilitySubjectSubjectID:  table.FivenetUserLabelsJobVisibilitySubject.SubjectID,
-		CalculatedVisibilitySubjectAccess:     table.FivenetUserLabelsJobVisibilitySubject.Access,
-		CalculatedVisibilitySubjectEffect:     table.FivenetUserLabelsJobVisibilitySubject.Effect,
-		Visibility: VisibilityPolicy{
-			Rules: []VisibilityRule{
-				{Kind: VisibilityRuleCreator},
-			},
-		},
-		CalculatedVisibilityMaps: true,
-	})
-}
-
-func NewQualificationsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
-		TargetTable: table.FivenetQualifications,
-		TargetColumns: &SubjectTargetTableColumns{
-			ID:         table.FivenetQualifications.ID,
-			CreatedAt:  table.FivenetQualifications.CreatedAt,
-			UpdatedAt:  table.FivenetQualifications.UpdatedAt,
-			DeletedAt:  table.FivenetQualifications.DeletedAt,
-			Public:     table.FivenetQualifications.Public,
-			CreatorID:  table.FivenetQualifications.CreatorID,
-			CreatorJob: table.FivenetQualifications.CreatorJob,
-		},
-		AccessTable: table.FivenetQualificationsAccess,
-		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetQualificationsAccess.ID,
-				TargetID: table.FivenetQualificationsAccess.TargetID,
-				Access:   table.FivenetQualificationsAccess.Access,
-			},
-			SubjectID: table.FivenetQualificationsAccess.SubjectID,
-			Effect:    table.FivenetQualificationsAccess.Effect,
-		},
-		CalculatedVisibilityPublicTable:       table.FivenetQualificationsVisibilityPublic,
-		CalculatedVisibilityCreatorTable:      table.FivenetQualificationsVisibilityCreator,
-		CalculatedVisibilitySubjectTable:      table.FivenetQualificationsVisibilitySubject,
-		CalculatedVisibilityPublicTargetID:    table.FivenetQualificationsVisibilityPublic.TargetID,
-		CalculatedVisibilityCreatorTargetID:   table.FivenetQualificationsVisibilityCreator.TargetID,
-		CalculatedVisibilityCreatorCreatorID:  table.FivenetQualificationsVisibilityCreator.CreatorID,
-		CalculatedVisibilityCreatorCreatorJob: table.FivenetQualificationsVisibilityCreator.CreatorJob,
-		CalculatedVisibilitySubjectTargetID:   table.FivenetQualificationsVisibilitySubject.TargetID,
-		CalculatedVisibilitySubjectSubjectID:  table.FivenetQualificationsVisibilitySubject.SubjectID,
-		CalculatedVisibilitySubjectAccess:     table.FivenetQualificationsVisibilitySubject.Access,
-		CalculatedVisibilitySubjectEffect:     table.FivenetQualificationsVisibilitySubject.Effect,
-		Visibility: VisibilityPolicy{
-			Rules: []VisibilityRule{
-				{Kind: VisibilityRulePublic},
-				{Kind: VisibilityRuleCreator},
-			},
-		},
-		CalculatedVisibilityMaps: true,
-	})
-}
-
-func NewMailerEmailsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
-		TargetTable: table.FivenetMailerEmails,
-		TargetColumns: &SubjectTargetTableColumns{
-			ID:        table.FivenetMailerEmails.ID,
-			CreatedAt: table.FivenetMailerEmails.CreatedAt,
-			UpdatedAt: table.FivenetMailerEmails.UpdatedAt,
-			DeletedAt: table.FivenetMailerEmails.DeletedAt,
-			CreatorID: table.FivenetMailerEmails.UserID,
-		},
-		AccessTable: table.FivenetMailerEmailsAccess,
-		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetMailerEmailsAccess.ID,
-				TargetID: table.FivenetMailerEmailsAccess.TargetID,
-				Access:   table.FivenetMailerEmailsAccess.Access,
-			},
-			SubjectID: table.FivenetMailerEmailsAccess.SubjectID,
-			Effect:    table.FivenetMailerEmailsAccess.Effect,
-		},
-		CalculatedVisibilityCreatorTable:      table.FivenetMailerEmailsVisibilityCreator,
-		CalculatedVisibilitySubjectTable:      table.FivenetMailerEmailsVisibilitySubject,
-		CalculatedVisibilityCreatorTargetID:   table.FivenetMailerEmailsVisibilityCreator.TargetID,
-		CalculatedVisibilityCreatorCreatorID:  table.FivenetMailerEmailsVisibilityCreator.CreatorID,
-		CalculatedVisibilityCreatorCreatorJob: table.FivenetMailerEmailsVisibilityCreator.CreatorJob,
-		CalculatedVisibilitySubjectTargetID:   table.FivenetMailerEmailsVisibilitySubject.TargetID,
-		CalculatedVisibilitySubjectSubjectID:  table.FivenetMailerEmailsVisibilitySubject.SubjectID,
-		CalculatedVisibilitySubjectAccess:     table.FivenetMailerEmailsVisibilitySubject.Access,
-		CalculatedVisibilitySubjectEffect:     table.FivenetMailerEmailsVisibilitySubject.Effect,
-		Visibility: VisibilityPolicy{
-			Rules: []VisibilityRule{
-				{Kind: VisibilityRuleCreator},
-			},
-		},
-		CalculatedVisibilityMaps: true,
-	})
-}
-
-func NewCentrumUnitsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
-		TargetTable: table.FivenetCentrumUnits,
-		TargetColumns: &SubjectTargetTableColumns{
-			ID:        table.FivenetCentrumUnits.ID,
-			CreatedAt: table.FivenetCentrumUnits.CreatedAt,
-			UpdatedAt: table.FivenetCentrumUnits.UpdatedAt,
-			DeletedAt: table.FivenetCentrumUnits.DeletedAt,
-		},
-		AccessTable: table.FivenetCentrumUnitsAccess,
-		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetCentrumUnitsAccess.ID,
-				TargetID: table.FivenetCentrumUnitsAccess.TargetID,
-				Access:   table.FivenetCentrumUnitsAccess.Access,
-			},
-			SubjectID: table.FivenetCentrumUnitsAccess.SubjectID,
-			Effect:    table.FivenetCentrumUnitsAccess.Effect,
-		},
-	})
 }
 
 func (a *SubjectObjectAccess) CanUserAccessTarget(
@@ -1187,148 +448,6 @@ func (a *SubjectObjectAccess) backend() VisibilityBackend {
 	return a.visibilityBackend
 }
 
-type sqlVisibilityBackend struct {
-	access *SubjectObjectAccess
-}
-
-func (b *sqlVisibilityBackend) VisibleIDsQuery(
-	userInfo *userinfo.UserInfo,
-	access int32,
-	includeDeleted bool,
-	targetIDs ...int64,
-) VisibilityQuery {
-	ids := make([]mysql.Expression, 0, len(targetIDs))
-	for _, targetID := range targetIDs {
-		ids = append(ids, mysql.Int64(targetID))
-	}
-
-	condition := b.access.targetTableColumns.ID.IN(ids...)
-	return b.VisibleIDsByConditionQuery(userInfo, access, includeDeleted, condition)
-}
-
-func (b *sqlVisibilityBackend) VisibleIDsStatement(
-	userInfo *userinfo.UserInfo,
-	access int32,
-	includeDeleted bool,
-	targetIDs ...int64,
-) mysql.Statement {
-	query := b.VisibleIDsQuery(userInfo, access, includeDeleted, targetIDs...)
-	if len(query.CTEs) == 0 {
-		return query.Statement
-	}
-	return mysql.WITH(query.CTEs...)(query.Statement)
-}
-
-func (b *sqlVisibilityBackend) VisibleIDsByConditionStatement(
-	userInfo *userinfo.UserInfo,
-	access int32,
-	includeDeleted bool,
-	condition mysql.BoolExpression,
-) mysql.Statement {
-	query := b.VisibleIDsByConditionQuery(userInfo, access, includeDeleted, condition)
-	if len(query.CTEs) == 0 {
-		return query.Statement
-	}
-	return mysql.WITH(query.CTEs...)(query.Statement)
-}
-
-func (b *sqlVisibilityBackend) VisibleIDsByConditionQuery(
-	userInfo *userinfo.UserInfo,
-	access int32,
-	includeDeleted bool,
-	condition mysql.BoolExpression,
-) VisibilityQuery {
-	condition = b.access.normalizeTargetCondition(condition, includeDeleted)
-	if userInfo != nil && userInfo.GetSuperuser() {
-		return VisibilityQuery{
-			Table:     b.access.visibleTargetIDsStatement(condition).AsTable("doc_ids"),
-			Statement: b.access.visibleTargetIDsStatement(condition),
-		}
-	}
-
-	implicitStmt := b.access.implicitVisibleIDsStatement(userInfo, condition)
-	aclCtes, aclSelect := b.access.aclVisibleIDsComponents(userInfo, access, condition, false)
-	if implicitStmt == nil {
-		return VisibilityQuery{
-			CTEs:      aclCtes,
-			Table:     aclSelect.AsTable("doc_ids"),
-			Statement: aclSelect,
-		}
-	}
-
-	combined := implicitStmt.UNION(aclSelect)
-	return VisibilityQuery{
-		CTEs:      aclCtes,
-		Table:     combined.AsTable("doc_ids"),
-		Statement: combined,
-	}
-}
-
-func (b *sqlVisibilityBackend) ACLVisibleIDsByConditionQuery(
-	userInfo *userinfo.UserInfo,
-	access int32,
-	includeDeleted bool,
-	condition mysql.BoolExpression,
-) VisibilityQuery {
-	condition = b.access.normalizeTargetCondition(condition, includeDeleted)
-	if userInfo != nil && userInfo.GetSuperuser() {
-		return VisibilityQuery{
-			Table:     b.access.visibleTargetIDsStatement(condition).AsTable("doc_ids"),
-			Statement: b.access.visibleTargetIDsStatement(condition),
-		}
-	}
-
-	aclCtes, aclSelect := b.access.aclVisibleIDsComponents(userInfo, access, condition, false)
-	return VisibilityQuery{
-		CTEs:      aclCtes,
-		Table:     aclSelect.AsTable("doc_ids"),
-		Statement: aclSelect,
-	}
-}
-
-func (b *sqlVisibilityBackend) ACLVisibleIDsByConditionStatement(
-	userInfo *userinfo.UserInfo,
-	access int32,
-	includeDeleted bool,
-	condition mysql.BoolExpression,
-) mysql.Statement {
-	query := b.ACLVisibleIDsByConditionQuery(userInfo, access, includeDeleted, condition)
-	if len(query.CTEs) == 0 {
-		return query.Statement
-	}
-	return mysql.WITH(query.CTEs...)(query.Statement)
-}
-
-func (b *sqlVisibilityBackend) CountVisibleByConditionStatement(
-	userInfo *userinfo.UserInfo,
-	access int32,
-	includeDeleted bool,
-	condition mysql.BoolExpression,
-) mysql.Statement {
-	condition = b.access.normalizeTargetCondition(condition, includeDeleted)
-	if userInfo != nil && userInfo.GetSuperuser() {
-		return b.access.countTargetIDsStatement(condition)
-	}
-
-	query := b.VisibleIDsByConditionQuery(userInfo, access, includeDeleted, condition)
-	visibleID := mysql.IntegerColumn("id").From(query.Table)
-	countSelect := mysql.SELECT(mysql.COUNT(visibleID).AS("exact_total")).FROM(query.Table)
-	if len(query.CTEs) == 0 {
-		return countSelect
-	}
-	return mysql.WITH(
-		query.CTEs...,
-	)(countSelect)
-}
-
-func (b *sqlVisibilityBackend) RefreshTargetVisibility(
-	ctx context.Context,
-	tx qrm.DB,
-	targetID int64,
-) error {
-	return nil
-}
-
 func (a *SubjectObjectAccess) normalizeTargetCondition(
 	condition mysql.BoolExpression,
 	includeDeleted bool,
@@ -1357,7 +476,8 @@ func (a *SubjectObjectAccess) countTargetIDsStatement(
 	visibleID := mysql.IntegerColumn("id").From(visibleIDs)
 	return mysql.WITH(
 		visibleIDs.AS(a.visibleTargetIDsStatement(condition)),
-	)(mysql.SELECT(mysql.COUNT(visibleID).AS("exact_total")).FROM(visibleIDs))
+	)(mysql.
+		SELECT(mysql.COUNT(visibleID).AS("exact_total")).FROM(visibleIDs))
 }
 
 func (a *SubjectObjectAccess) implicitVisibleIDsStatement(
@@ -1407,7 +527,8 @@ func (a *SubjectObjectAccess) aclVisibleIDsComponents(
 
 	visibleID := mysql.IntegerColumn("id").From(visibleObjects)
 
-	visibleSelect := mysql.SELECT(a.targetTableColumns.ID.AS("id")).
+	visibleSelect := mysql.
+		SELECT(a.targetTableColumns.ID.AS("id")).
 		FROM(a.targetTable.
 			LEFT_JOIN(winningSpecificity,
 				winningTargetID.EQ(a.targetTableColumns.ID),
@@ -1422,7 +543,8 @@ func (a *SubjectObjectAccess) aclVisibleIDsComponents(
 		).
 		WHERE(targetCondition)
 
-	visibleSelect = visibleSelect.GROUP_BY(a.targetTableColumns.ID)
+	visibleSelect = visibleSelect.
+		GROUP_BY(a.targetTableColumns.ID)
 
 	aclCondition := mysql.AND(
 		mysql.IntExp(mysql.SUM(mysql.CASE().
@@ -1442,19 +564,21 @@ func (a *SubjectObjectAccess) aclVisibleIDsComponents(
 	tSubjectJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("asjg")
 	tUserJobs := table.FivenetUserJobs.AS("uj")
 
-	actorSubjectsUnion := mysql.SELECT(
-		tSubjectUsers.SubjectID.AS("subject_id"),
-		mysql.Int32(SubjectSpecificityUser).AS("specificity"),
-		mysql.Int32(-1).AS("grade_specificity"),
-	).
+	actorSubjectsUnion := mysql.
+		SELECT(
+			tSubjectUsers.SubjectID.AS("subject_id"),
+			mysql.Int32(SubjectSpecificityUser).AS("specificity"),
+			mysql.Int32(-1).AS("grade_specificity"),
+		).
 		FROM(tSubjectUsers).
 		WHERE(tSubjectUsers.UserID.EQ(mysql.Int32(userInfo.GetUserId()))).
 		UNION_ALL(
-			mysql.SELECT(
-				tSubjectQualis.SubjectID.AS("subject_id"),
-				mysql.Int32(SubjectSpecificityQualification).AS("specificity"),
-				mysql.Int32(-1).AS("grade_specificity"),
-			).
+			mysql.
+				SELECT(
+					tSubjectQualis.SubjectID.AS("subject_id"),
+					mysql.Int32(SubjectSpecificityQualification).AS("specificity"),
+					mysql.Int32(-1).AS("grade_specificity"),
+				).
 				FROM(tSubjectQualis.
 					INNER_JOIN(tQualiResults,
 						mysql.AND(
@@ -1471,11 +595,12 @@ func (a *SubjectObjectAccess) aclVisibleIDsComponents(
 				),
 		).
 		UNION_ALL(
-			mysql.SELECT(
-				tSubjectJobGrade.SubjectID.AS("subject_id"),
-				mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
-				tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
-			).
+			mysql.
+				SELECT(
+					tSubjectJobGrade.SubjectID.AS("subject_id"),
+					mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
+					tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
+				).
 				FROM(tSubjectJobGrade.
 					INNER_JOIN(tUserJobs,
 						mysql.AND(
@@ -1487,11 +612,12 @@ func (a *SubjectObjectAccess) aclVisibleIDsComponents(
 				),
 		).
 		UNION_ALL(
-			mysql.SELECT(
-				tSubjectJobGrade.SubjectID.AS("subject_id"),
-				mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
-				tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
-			).
+			mysql.
+				SELECT(
+					tSubjectJobGrade.SubjectID.AS("subject_id"),
+					mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
+					tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
+				).
 				FROM(tSubjectJobGrade).
 				WHERE(mysql.AND(
 					tSubjectJobGrade.Job.EQ(mysql.String(userInfo.GetJob())),
@@ -1499,29 +625,32 @@ func (a *SubjectObjectAccess) aclVisibleIDsComponents(
 				)),
 		)
 
-	finalSelect := mysql.SELECT(visibleID.AS("id")).
+	finalSelect := mysql.
+		SELECT(visibleID.AS("id")).
 		FROM(visibleObjects)
 	if countOnly {
-		finalSelect = mysql.SELECT(mysql.COUNT(visibleID).AS("exact_total")).
+		finalSelect = mysql.
+			SELECT(mysql.COUNT(visibleID).AS("exact_total")).
 			FROM(visibleObjects)
 	}
 
 	return []mysql.CommonTableExpression{
 		actorSubjects.AS(actorSubjectsUnion),
 		matchingACL.AS(
-			mysql.SELECT(
-				a.accessColumns.TargetID.AS("target_id"),
-				a.accessColumns.Effect.AS("effect"),
-				actorSpecificity.AS("specificity"),
-				mysql.COALESCE(actorGradeSpecificity, mysql.Int32(-1)).AS("grade_specificity"),
-				mysql.ROW_NUMBER().OVER(
-					mysql.PARTITION_BY(a.accessColumns.TargetID).
-						ORDER_BY(
-							actorSpecificity.DESC(),
-							mysql.COALESCE(actorGradeSpecificity, mysql.Int32(-1)).DESC(),
-						),
-				).AS("specificity_rank"),
-			).
+			mysql.
+				SELECT(
+					a.accessColumns.TargetID.AS("target_id"),
+					a.accessColumns.Effect.AS("effect"),
+					actorSpecificity.AS("specificity"),
+					mysql.COALESCE(actorGradeSpecificity, mysql.Int32(-1)).AS("grade_specificity"),
+					mysql.ROW_NUMBER().OVER(
+						mysql.PARTITION_BY(a.accessColumns.TargetID).
+							ORDER_BY(
+								actorSpecificity.DESC(),
+								mysql.COALESCE(actorGradeSpecificity, mysql.Int32(-1)).DESC(),
+							),
+					).AS("specificity_rank"),
+				).
 				FROM(a.accessTable.
 					INNER_JOIN(actorSubjects,
 						actorSubjectID.EQ(a.accessColumns.SubjectID),
@@ -1539,11 +668,12 @@ func (a *SubjectObjectAccess) aclVisibleIDsComponents(
 				)),
 		),
 		winningSpecificity.AS(
-			mysql.SELECT(
-				matchingTargetID.AS("target_id"),
-				matchingSpecificity.AS("specificity"),
-				matchingGradeSpecificity.AS("grade_specificity"),
-			).
+			mysql.
+				SELECT(
+					matchingTargetID.AS("target_id"),
+					matchingSpecificity.AS("specificity"),
+					matchingGradeSpecificity.AS("grade_specificity"),
+				).
 				FROM(matchingACL).
 				WHERE(matchingSpecificityRank.EQ(mysql.Int(1))),
 		),

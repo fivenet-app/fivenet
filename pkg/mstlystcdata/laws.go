@@ -151,9 +151,10 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 		LIMIT(1000)
 
 	if lawBookId > 0 {
-		stmt = stmt.WHERE(
-			tLawBooks.ID.EQ(mysql.Int64(lawBookId)),
-		)
+		stmt = stmt.
+			WHERE(
+				tLawBooks.ID.EQ(mysql.Int64(lawBookId)),
+			)
 	}
 
 	var dest []*laws.LawBook

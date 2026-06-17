@@ -51,34 +51,9 @@ type ListPagesResult struct {
 
 func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResult, error) {
 	tPageShort := table.FivenetWikiPages.AS("page_short")
+	tPage := table.FivenetWikiPages
 	tJobProps := table.FivenetJobProps
 	tFiles := table.FivenetFiles.AS("logo")
-
-	condition := mysql.Bool(true)
-	if search := strings.TrimRight(q.Search, "*"); search != "" {
-		search += "*"
-		condition = condition.AND(mysql.OR(
-			dbutils.MATCH(tPageShort.Title, mysql.String(search)),
-			dbutils.MATCH(tPageShort.Content, mysql.String(search)),
-		))
-	}
-
-	visibilityCondition := mysql.Bool(true)
-	if !q.Superuser {
-		visibilityCondition = visibilityCondition.AND(tPageShort.DeletedAt.IS_NULL())
-		visibilityCondition = visibilityCondition.AND(mysql.OR(
-			tPageShort.Public.IS_TRUE(),
-			mysql.AND(
-				tPageShort.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
-				tPageShort.Job.EQ(mysql.String(q.UserInfo.GetJob())),
-			),
-			s.access.ACLAccessExistsCondition(
-				tPageShort.ID,
-				q.UserInfo,
-				int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-			),
-		))
-	}
 
 	columns := mysql.ProjectionList{
 		tPageShort.Job,
@@ -97,28 +72,166 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 			tFiles.ID,
 			tFiles.FilePath,
 		)
+	}
 
-		subPage := table.FivenetWikiPages.AS("sub_page")
-		rootVisibilityCondition := mysql.Bool(true)
-		if !q.Superuser {
-			rootVisibilityCondition = rootVisibilityCondition.AND(subPage.DeletedAt.IS_NULL())
-			rootVisibilityCondition = rootVisibilityCondition.AND(mysql.OR(
-				subPage.Public.IS_TRUE(),
-				mysql.AND(
-					subPage.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
-					subPage.Job.EQ(mysql.String(q.UserInfo.GetJob())),
-				),
-				s.access.ACLAccessExistsCondition(
-					subPage.ID,
-					q.UserInfo,
-					int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-				),
-			))
+	searchConditionBase := wikiPageSearchCondition(tPage, q.Search)
+	searchConditionShort := wikiPageSearchCondition(tPageShort, q.Search)
+	jobCondition := mysql.Bool(true)
+	if q.Job != "" {
+		jobCondition = jobCondition.AND(tPageShort.Job.EQ(mysql.String(q.Job)))
+	}
+	outerCondition := mysql.AND(searchConditionShort, jobCondition)
+
+	if q.RootOnly {
+		return s.listRootPages(
+			ctx,
+			q,
+			tPageShort,
+			tJobProps,
+			tFiles,
+			columns,
+			outerCondition,
+			searchConditionBase,
+		)
+	}
+
+	if q.Superuser {
+		return s.listPagesSuperuser(
+			ctx,
+			q,
+			tPageShort,
+			tJobProps,
+			tFiles,
+			columns,
+			outerCondition,
+		)
+	}
+	return s.listVisiblePages(
+		ctx,
+		q,
+		tPageShort,
+		tJobProps,
+		tFiles,
+		columns,
+		outerCondition,
+		searchConditionBase,
+	)
+}
+
+func wikiPageSearchCondition(
+	page *table.FivenetWikiPagesTable,
+	search string,
+) mysql.BoolExpression {
+	condition := mysql.Bool(true)
+	if search = strings.TrimRight(search, "*"); search != "" {
+		search += "*"
+		condition = condition.AND(mysql.OR(
+			dbutils.MATCH(page.Title, mysql.String(search)),
+			dbutils.MATCH(page.Content, mysql.String(search)),
+		))
+	}
+	return condition
+}
+
+func (s *Store) listVisiblePages(
+	ctx context.Context,
+	q ListPagesQuery,
+	tPageShort *table.FivenetWikiPagesTable,
+	tJobProps *table.FivenetJobPropsTable,
+	tFiles *table.FivenetFilesTable,
+	columns mysql.ProjectionList,
+	outerCondition mysql.BoolExpression,
+	searchConditionBase mysql.BoolExpression,
+) (*ListPagesResult, error) {
+	visibleIDs := s.access.VisibleIDsByConditionQuery(
+		q.UserInfo,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		false,
+		searchConditionBase,
+	)
+	ctes := visibleIDs.CTEs
+	visiblePageID := mysql.IntegerColumn("id").From(visibleIDs.Table)
+
+	var countStmt mysql.Statement = tPageShort.
+		SELECT(mysql.COUNT(visiblePageID).AS("data_count.total")).
+		FROM(visibleIDs.Table)
+
+	if len(ctes) > 0 {
+		countStmt = mysql.WITH(ctes...)(countStmt)
+	}
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
 		}
+	}
 
-		rootCondition := rootVisibilityCondition
+	var paginationReq *database.PaginationRequest
+	if q.Pagination != nil {
+		paginationReq = q.Pagination
+	}
+	pagination, limit := paginationReq.GetResponseWithPageSize(count.Total, defaultWikiUpperLimit)
+	result := &ListPagesResult{Pagination: pagination, Pages: []*reswiki.PageShort{}}
+	if count.Total <= 0 {
+		return result, nil
+	}
 
-		rankedPages := subPage.
+	var stmt mysql.Statement = tPageShort.
+		SELECT(tPageShort.ID, columns...).
+		FROM(
+			visibleIDs.Table.
+				INNER_JOIN(tPageShort,
+					tPageShort.ID.EQ(visiblePageID),
+				).
+				LEFT_JOIN(tJobProps,
+					tJobProps.Job.EQ(tPageShort.Job),
+				).
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tJobProps.LogoFileID),
+				),
+		).
+		WHERE(outerCondition).
+		ORDER_BY(
+			tPageShort.Job.ASC(),
+			tPageShort.Startpage.DESC(),
+			tPageShort.ParentID.ASC().NULLS_FIRST(),
+			tPageShort.SortRank.ASC(),
+			tPageShort.Draft.ASC(),
+			tPageShort.ID.ASC(),
+		).
+		OFFSET(pagination.GetOffset()).
+		LIMIT(limit)
+
+	if len(ctes) > 0 {
+		stmt = mysql.WITH(ctes...)(stmt)
+	}
+
+	if err := stmt.QueryContext(ctx, s.db, &result.Pages); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return result, nil
+}
+
+func (s *Store) listRootPages(
+	ctx context.Context,
+	q ListPagesQuery,
+	tPageShort *table.FivenetWikiPagesTable,
+	tJobProps *table.FivenetJobPropsTable,
+	tFiles *table.FivenetFilesTable,
+	columns mysql.ProjectionList,
+	outerCondition mysql.BoolExpression,
+	searchConditionBase mysql.BoolExpression,
+) (*ListPagesResult, error) {
+	subPage := table.FivenetWikiPages.AS("sub_page")
+	var rankedPages mysql.SelectTable
+	var ctes []mysql.CommonTableExpression
+
+	if q.Superuser {
+		rankedPages = subPage.
 			SELECT(
 				subPage.ID,
 				subPage.Job,
@@ -134,31 +247,61 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 				).AS("rn"),
 			).
 			FROM(subPage).
-			WHERE(rootCondition).
 			AsTable("ranked_pages")
-
-		condition = condition.AND(visibilityCondition).AND(tPageShort.ID.IN(
-			rankedPages.
-				SELECT(mysql.IntegerColumn("sub_page.id")).
-				FROM(rankedPages).
-				WHERE(mysql.RawBool("ranked_pages.rn = 1")),
-		))
-	} else if !q.Superuser {
-		condition = condition.AND(visibilityCondition)
+	} else {
+		visibleIDs := s.access.VisibleIDsByConditionQuery(
+			q.UserInfo,
+			int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			false,
+			searchConditionBase,
+		)
+		ctes = visibleIDs.CTEs
+		visiblePageID := mysql.IntegerColumn("id").From(visibleIDs.Table)
+		rankedPages = subPage.
+			SELECT(
+				subPage.ID,
+				subPage.Job,
+				mysql.ROW_NUMBER().OVER(
+					mysql.PARTITION_BY(subPage.Job).
+						ORDER_BY(
+							subPage.Startpage.DESC(),
+							subPage.ParentID.ASC().NULLS_FIRST(),
+							subPage.SortRank.ASC(),
+							subPage.Draft.ASC(),
+							subPage.ID.ASC(),
+						),
+				).AS("rn"),
+			).
+			FROM(
+				visibleIDs.Table.
+					INNER_JOIN(subPage,
+						subPage.ID.EQ(visiblePageID),
+					),
+			).
+			AsTable("ranked_pages")
 	}
 
-	if q.Job != "" {
-		condition = condition.AND(tPageShort.Job.EQ(mysql.String(q.Job)))
-	}
-
-	if q.Superuser {
-		columns = append(columns, tPageShort.DeletedAt)
-	}
+	rootIDs := rankedPages.
+		SELECT(mysql.IntegerColumn("sub_page.id")).
+		FROM(rankedPages).
+		WHERE(mysql.RawBool("ranked_pages.rn = 1"))
 
 	var countStmt mysql.Statement = tPageShort.
 		SELECT(mysql.COUNT(tPageShort.ID).AS("data_count.total")).
-		FROM(tPageShort).
-		WHERE(condition)
+		FROM(
+			tPageShort.
+				LEFT_JOIN(tJobProps,
+					tJobProps.Job.EQ(tPageShort.Job),
+				).
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tJobProps.LogoFileID),
+				),
+		).
+		WHERE(mysql.AND(outerCondition, tPageShort.ID.IN(rootIDs)))
+
+	if len(ctes) > 0 {
+		countStmt = mysql.WITH(ctes...)(countStmt)
+	}
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -188,7 +331,84 @@ func (s *Store) ListPages(ctx context.Context, q ListPagesQuery) (*ListPagesResu
 					tFiles.ID.EQ(tJobProps.LogoFileID),
 				),
 		).
-		WHERE(condition).
+		WHERE(mysql.AND(outerCondition, tPageShort.ID.IN(rootIDs))).
+		ORDER_BY(
+			tPageShort.Job.ASC(),
+			tPageShort.Startpage.DESC(),
+			tPageShort.ParentID.ASC().NULLS_FIRST(),
+			tPageShort.SortRank.ASC(),
+			tPageShort.Draft.ASC(),
+			tPageShort.ID.ASC(),
+		).
+		OFFSET(pagination.GetOffset()).
+		LIMIT(limit)
+
+	if len(ctes) > 0 {
+		stmt = mysql.WITH(ctes...)(stmt)
+	}
+
+	if err := stmt.QueryContext(ctx, s.db, &result.Pages); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return result, nil
+}
+
+func (s *Store) listPagesSuperuser(
+	ctx context.Context,
+	q ListPagesQuery,
+	tPageShort *table.FivenetWikiPagesTable,
+	tJobProps *table.FivenetJobPropsTable,
+	tFiles *table.FivenetFilesTable,
+	columns mysql.ProjectionList,
+	outerCondition mysql.BoolExpression,
+) (*ListPagesResult, error) {
+	columns = append(columns, tPageShort.DeletedAt)
+
+	var countStmt mysql.Statement = tPageShort.
+		SELECT(mysql.COUNT(tPageShort.ID).AS("data_count.total")).
+		FROM(
+			tPageShort.
+				LEFT_JOIN(tJobProps,
+					tJobProps.Job.EQ(tPageShort.Job),
+				).
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tJobProps.LogoFileID),
+				),
+		).
+		WHERE(outerCondition)
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	var paginationReq *database.PaginationRequest
+	if q.Pagination != nil {
+		paginationReq = q.Pagination
+	}
+	pagination, limit := paginationReq.GetResponseWithPageSize(count.Total, defaultWikiUpperLimit)
+	result := &ListPagesResult{Pagination: pagination, Pages: []*reswiki.PageShort{}}
+	if count.Total <= 0 {
+		return result, nil
+	}
+
+	var stmt mysql.Statement = tPageShort.
+		SELECT(tPageShort.ID, columns...).
+		FROM(
+			tPageShort.
+				LEFT_JOIN(tJobProps,
+					tJobProps.Job.EQ(tPageShort.Job),
+				).
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tJobProps.LogoFileID),
+				),
+		).
+		WHERE(outerCondition).
 		ORDER_BY(
 			tPageShort.Job.ASC(),
 			tPageShort.Startpage.DESC(),

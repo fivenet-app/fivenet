@@ -14,9 +14,3 @@ enum AccessLevel {
   ACCESS_LEVEL_GIVE = 2;
   ACCESS_LEVEL_REMOVE = 3;
 }
-
-message LabelAccess {
-  option (codegen.dbscanner.dbscanner) = {enabled: true};
-
-  repeated resources.access.JobAccess jobs = 1 [(buf.validate.field).repeated.max_items = 20];
-}

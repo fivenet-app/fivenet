@@ -95,7 +95,6 @@ func UseSchema(schema string) {
 	FivenetOwnedVehicles = FivenetOwnedVehicles.FromSchema(schema)
 	FivenetQualifications = FivenetQualifications.FromSchema(schema)
 	FivenetQualificationsAccess = FivenetQualificationsAccess.FromSchema(schema)
-	FivenetQualificationsVisibilityCreator = FivenetQualificationsVisibilityCreator.FromSchema(schema)
 	FivenetQualificationsVisibilityPublic = FivenetQualificationsVisibilityPublic.FromSchema(schema)
 	FivenetQualificationsVisibilitySubject = FivenetQualificationsVisibilitySubject.FromSchema(schema)
 	FivenetQualificationsExamQuestions = FivenetQualificationsExamQuestions.FromSchema(schema)

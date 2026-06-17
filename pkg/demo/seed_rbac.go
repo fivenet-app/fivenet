@@ -108,9 +108,10 @@ func (d *Demo) upsertDemoTargetJobRolePerms(
 		stmt = stmt.VALUES(roleID, permissionID, true)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tRbacRolePerms.Val.SET(mysql.RawBool("VALUES(`val`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tRbacRolePerms.Val.SET(mysql.RawBool("VALUES(`val`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
 		return fmt.Errorf(
@@ -150,9 +151,10 @@ func (d *Demo) upsertDemoTargetJobRoleAttrs(
 		stmt = stmt.VALUES(roleID, attr.AttrID, valueJSON)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tRbacRoleAttrs.Value.SET(mysql.RawString("VALUES(`value`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tRbacRoleAttrs.Value.SET(mysql.RawString("VALUES(`value`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
 		return fmt.Errorf("failed to upsert demo rbac role attributes. %w", err)
@@ -176,9 +178,10 @@ func (d *Demo) upsertDemoTargetJobPerms(
 		stmt = stmt.VALUES(job, permissionID, true)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tRbacJobPerms.Val.SET(mysql.RawBool("VALUES(`val`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tRbacJobPerms.Val.SET(mysql.RawBool("VALUES(`val`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
 		return fmt.Errorf("failed to upsert demo rbac job permissions for job %s. %w", job, err)
@@ -212,9 +215,10 @@ func (d *Demo) upsertDemoTargetJobAttrs(
 		stmt = stmt.VALUES(job, attr.AttrID, valueJSON)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tRbacJobAttrs.MaxValues.SET(mysql.RawString("VALUES(`max_values`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tRbacJobAttrs.MaxValues.SET(mysql.RawString("VALUES(`max_values`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
 		return fmt.Errorf("failed to upsert demo rbac job attributes for job %s. %w", job, err)

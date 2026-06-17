@@ -12,7 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Duration } from "../../../google/protobuf/duration";
-import { LabelAccess } from "./access";
+import { Access } from "../../access/access";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.citizens.labels.Labels
@@ -68,9 +68,9 @@ export interface Label {
      */
     settings?: Settings;
     /**
-     * @generated from protobuf field: optional resources.citizens.labels.LabelAccess access = 10
+     * @generated from protobuf field: optional resources.access.Access access = 10
      */
-    access?: LabelAccess;
+    access?: Access;
     /**
      * Citizen label assignment data
      *
@@ -156,7 +156,7 @@ class Label$Type extends MessageType<Label> {
             { no: 7, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 8, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 9, name: "settings", kind: "message", T: () => Settings },
-            { no: 10, name: "access", kind: "message", T: () => LabelAccess, options: { "buf.validate.field": { required: true } } },
+            { no: 10, name: "access", kind: "message", T: () => Access, options: { "buf.validate.field": { required: true } } },
             { no: 11, name: "expires_at", kind: "message", T: () => Timestamp }
         ]);
     }
@@ -205,8 +205,8 @@ class Label$Type extends MessageType<Label> {
                 case /* optional resources.citizens.labels.Settings settings */ 9:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
-                case /* optional resources.citizens.labels.LabelAccess access */ 10:
-                    message.access = LabelAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* optional resources.access.Access access */ 10:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 case /* optional resources.timestamp.Timestamp expires_at */ 11:
                     message.expiresAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expiresAt);
@@ -250,9 +250,9 @@ class Label$Type extends MessageType<Label> {
         /* optional resources.citizens.labels.Settings settings = 9; */
         if (message.settings)
             Settings.internalBinaryWrite(message.settings, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.citizens.labels.LabelAccess access = 10; */
+        /* optional resources.access.Access access = 10; */
         if (message.access)
-            LabelAccess.internalBinaryWrite(message.access, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.timestamp.Timestamp expires_at = 11; */
         if (message.expiresAt)
             Timestamp.internalBinaryWrite(message.expiresAt, writer.tag(11, WireType.LengthDelimited).fork(), options).join();

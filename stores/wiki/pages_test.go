@@ -29,22 +29,19 @@ func TestStoreListPages(t *testing.T) {
 	}
 
 	countQuery := regexp.QuoteMeta(`FROM fivenet_wiki_pages AS page_short`) +
-		`(?s).*` + regexp.QuoteMeta(`WHERE ? AND (page_short.job = ?)`)
+		`(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_job_props ON (fivenet_job_props.job = page_short.job)`) +
+		`(?s).*` + regexp.QuoteMeta(`WHERE ( ? AND (? AND (page_short.job = ?)) );`)
 	mock.ExpectQuery(countQuery).
-		WithArgs(true, "police").
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
 
 	listQuery := regexp.QuoteMeta(
 		`FROM fivenet_wiki_pages AS page_short LEFT JOIN fivenet_job_props`,
 	) +
-		`(?s).*` + regexp.QuoteMeta(
-		`WHERE ? AND (page_short.job = ?)`,
-	) +
+		`(?s).*` + regexp.QuoteMeta(`WHERE ( ? AND (? AND (page_short.job = ?)) )`) +
 		`(?s).*` + regexp.QuoteMeta(
 		`ORDER BY page_short.job ASC, page_short.startpage DESC, page_short.parent_id ASC, page_short.sort_rank ASC, page_short.draft ASC, page_short.id ASC LIMIT ? OFFSET ?;`,
 	)
 	mock.ExpectQuery(listQuery).
-		WithArgs(true, "police", int64(5), int64(0)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"page_short.id",
 			"page_short.job",
@@ -85,41 +82,15 @@ func TestStoreListPagesRootOnly(t *testing.T) {
 		Pagination: &database.PaginationRequest{PageSize: &pageSize},
 	}
 
-	countQuery := regexp.QuoteMeta(`FROM fivenet_wiki_pages AS page_short`) +
-		`(?s).*` + regexp.QuoteMeta(`ranked_pages.rn = 1`)
+	countQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*page_short\.id IN.*ranked_pages\.rn = 1`
 	mock.ExpectQuery(countQuery).
-		WithArgs(
-			sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
-			sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(),
-		).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
 
-	listQuery := regexp.QuoteMeta(
-		`FROM fivenet_wiki_pages AS page_short LEFT JOIN fivenet_job_props`,
-	) +
-		`(?s).*` + regexp.QuoteMeta(
-		`ranked_pages.rn = 1`,
-	) +
-		`(?s).*` + regexp.QuoteMeta(
-		`ORDER BY page_short.job ASC, page_short.startpage DESC, page_short.parent_id ASC, page_short.sort_rank ASC, page_short.draft ASC, page_short.id ASC LIMIT ? OFFSET ?;`,
-	)
+	listQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*page_short\.id IN.*ranked_pages\.rn = 1.*` +
+		regexp.QuoteMeta(
+			`ORDER BY page_short.job ASC, page_short.startpage DESC, page_short.parent_id ASC, page_short.sort_rank ASC, page_short.draft ASC, page_short.id ASC LIMIT ? OFFSET ?;`,
+		)
 	mock.ExpectQuery(listQuery).
-		WithArgs(
-			sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
-			sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
-			sqlmock.AnyArg(), sqlmock.AnyArg(), int64(5), int64(0),
-		).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"page_short.id",
 			"page_short.job",

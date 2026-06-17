@@ -23,10 +23,10 @@ func TestStoreListTemplates(t *testing.T) {
 	store := New(db)
 
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT template_short.id AS "template_short.id"`) +
-		`(?s).*` + regexp.QuoteMeta(`FROM fivenet_documents_templates AS template_short LEFT JOIN fivenet_documents_categories AS category ON (category.id = template_short.category_id) WHERE ? ORDER BY template_short.weight DESC, template_short.id ASC;`)).
+		`(?s).*` + regexp.QuoteMeta(`FROM fivenet_documents_templates AS template_short LEFT JOIN fivenet_documents_categories AS category ON (category.id = template_short.category_id) ORDER BY template_short.weight DESC, template_short.id ASC;`)).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
-	templates, err := store.ListTemplates(t.Context(), &userinfo.UserInfo{Superuser: true})
+	templates, err := store.ListTemplates(t.Context(), false, &userinfo.UserInfo{Superuser: true})
 	require.NoError(t, err)
 	assert.Empty(t, templates)
 	require.NoError(t, mock.ExpectationsWereMet())
@@ -43,13 +43,19 @@ func TestStoreListTemplatesUsesAclBranchesForNonSuperuser(t *testing.T) {
 
 	store := New(db)
 
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT template_short.id AS "template_short.id"`) +
-		`(?s).*FROM fivenet_documents_templates AS template_short.*template_short\.creator_job = \?.*fivenet_documents_templates_access.*subject_acl_user_exists.*subject_acl_qualification_exists.*subject_acl_job_grade_exists.*ORDER BY template_short.weight DESC, template_short.id ASC;`).
+	mock.ExpectQuery(`(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*` +
+		regexp.QuoteMeta(`SELECT template_short.id AS "template_short.id"`) +
+		`.*fivenet_documents_templates_visibility_creator.*fivenet_documents_templates_visibility_subject.*fivenet_documents_templates_access.*ORDER BY template_short.weight DESC, template_short.id ASC;`).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 	templates, err := store.ListTemplates(
 		t.Context(),
-		&userinfo.UserInfo{UserId: 3, Job: "doj", JobGrade: 16},
+		false,
+		&userinfo.UserInfo{
+			UserId:   3,
+			Job:      "doj",
+			JobGrade: 16,
+		},
 	)
 	require.NoError(t, err)
 	assert.Empty(t, templates)

@@ -27,29 +27,6 @@ func (s *Store) ListUserDocuments(
 		condition = mysql.OR(condition, tDocRel.SourceUserID.EQ(mysql.Int32(q.UserID)))
 	}
 
-	documentVisibilityCondition := mysql.Bool(true)
-	if !q.UserInfo.GetSuperuser() {
-		documentVisibilityCondition = documentVisibilityCondition.AND(tDocument.DeletedAt.IS_NULL())
-		documentVisibilityCondition = documentVisibilityCondition.AND(mysql.OR(
-			tDocument.Public.IS_TRUE(),
-			mysql.AND(
-				tDocument.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
-				tDocument.CreatorJob.EQ(mysql.String(q.UserInfo.GetJob())),
-			),
-			s.subjectAccess.ACLAccessExistsCondition(
-				tDocument.ID,
-				q.UserInfo,
-				int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-			),
-		))
-	}
-
-	condition = mysql.AND(
-		condition,
-		tDocRel.DeletedAt.IS_NULL(),
-		documentVisibilityCondition,
-	)
-
 	if q.Closed != nil {
 		condition = condition.AND(tDocument.Closed.EQ(mysql.Bool(*q.Closed)))
 	}
@@ -64,17 +41,43 @@ func (s *Store) ListUserDocuments(
 	}
 	condition = condition.AND(tDocRel.Relation.IN(types...))
 
+	visibleCondition := mysql.Bool(true)
+	includeDeleted := false
+	if q.UserInfo != nil && q.UserInfo.GetSuperuser() {
+		includeDeleted = true
+	}
+	visibleIDs := s.subjectAccess.VisibleIDsByConditionQuery(
+		q.UserInfo,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		includeDeleted,
+		visibleCondition,
+	)
+	ctes := visibleIDs.CTEs
+	visibleDocumentID := mysql.IntegerColumn("id").From(visibleIDs.Table)
+
+	condition = mysql.AND(
+		condition,
+		tDocRel.DeletedAt.IS_NULL(),
+	)
+
 	var countStmt mysql.Statement = tDocRel.
 		SELECT(
 			mysql.COUNT(mysql.DISTINCT(tDocRel.DocumentID)).AS("data_count.total"),
 		).
 		FROM(
-			tDocRel.
+			visibleIDs.Table.
 				INNER_JOIN(tDocument,
-					tDocument.ID.EQ(tDocRel.DocumentID),
+					tDocument.ID.EQ(visibleDocumentID),
+				).
+				INNER_JOIN(tDocRel,
+					tDocRel.DocumentID.EQ(tDocument.ID),
 				),
 		).
 		WHERE(condition)
+
+	if len(ctes) > 0 {
+		countStmt = mysql.WITH(ctes...)(countStmt)
+	}
 
 	var count resourcesdatabase.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -96,9 +99,12 @@ func (s *Store) ListUserDocuments(
 			tDocRel.DocumentID.AS("document_id"),
 		).
 		FROM(
-			tDocRel.
+			visibleIDs.Table.
 				INNER_JOIN(tDocument,
-					tDocument.ID.EQ(tDocRel.DocumentID),
+					tDocument.ID.EQ(visibleDocumentID),
+				).
+				INNER_JOIN(tDocRel,
+					tDocRel.DocumentID.EQ(tDocument.ID),
 				),
 		).
 		WHERE(condition).
@@ -169,6 +175,10 @@ func (s *Store) ListUserDocuments(
 		WHERE(condition).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
+
+	if len(ctes) > 0 {
+		stmt = mysql.WITH(ctes...)(stmt)
+	}
 
 	var relations []*documentsrelations.DocumentRelation
 	if err := stmt.QueryContext(ctx, s.db, &relations); err != nil {

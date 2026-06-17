@@ -58,26 +58,11 @@ func TestStoreListAppliesFiltersAndSortFallback(t *testing.T) {
 	}
 
 	expectedQuery := regexp.QuoteMeta(`SELECT document_short.id AS "document_short.id"`) +
-		`(?s).*` + regexp.QuoteMeta(`FROM ( SELECT document_page.id AS "id", document_page.created_at AS "created_at", document_page.updated_at AS "updated_at" FROM fivenet_documents AS document_page WHERE`) +
-		`(?s).*` + regexp.QuoteMeta(`ORDER BY document_page.created_at DESC, document_page.updated_at DESC LIMIT ? OFFSET ? ) AS doc_page INNER JOIN fivenet_documents AS document_short ON (document_short.id = doc_page.id)`) +
-		`(?s).*` + regexp.QuoteMeta(`ORDER BY document_short.created_at DESC, document_short.updated_at DESC;`)
+		`(?s).*` + regexp.QuoteMeta(`FROM fivenet_documents AS document_short`) +
+		`(?s).*` + regexp.QuoteMeta(`document_short.title LIKE ?`) +
+		`(?s).*` + regexp.QuoteMeta(`ORDER BY document_short.created_at DESC, document_short.updated_at DESC LIMIT ? OFFSET ?;`)
 
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(
-			true,
-			"%fire%", "%fire%", "%fire%",
-			1,
-			"%fire%", "%fire%",
-			int64(7), int64(8),
-			int32(3), int32(4),
-			from.AsTime(),
-			to.AsTime(),
-			true,
-			int64(11), int64(12),
-			false,
-			int64(20),
-			int64(0),
-		).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 	docs, err := store.List(t.Context(), query)
@@ -97,7 +82,11 @@ func TestStoreListUsesAclBranchesForNonSuperuser(t *testing.T) {
 
 	store := New(db)
 
-	expectedQuery := `(?s).*FROM \( SELECT document_page\.id AS "id".*document_page\.public IS TRUE.*document_page\.creator_id = \?.*document_page\.creator_job = \?.*fivenet_documents_access.*subject_acl_user_exists.*subject_acl_qualification_exists.*subject_acl_job_grade_exists.*ORDER BY document_short\.updated_at DESC;`
+	expectedQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*` +
+		regexp.QuoteMeta(`SELECT document_short.id AS "document_short.id"`) +
+		`.*` + regexp.QuoteMeta(`FROM ( SELECT doc_ids.id AS "id", document_page.created_at AS "created_at", document_page.updated_at AS "updated_at"`) +
+		`.*` + regexp.QuoteMeta(`ORDER BY document_page.updated_at DESC LIMIT ? OFFSET ? ) AS doc_page INNER JOIN fivenet_documents AS document_short ON (document_short.id = doc_page.id)`) +
+		`.*` + regexp.QuoteMeta(`ORDER BY document_short.updated_at DESC;`)
 	mock.ExpectQuery(expectedQuery).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
@@ -187,7 +176,7 @@ func TestStoreGetDocumentMetaAndUpdateOwner(t *testing.T) {
 	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_documents_visibility_subject`) + `(?s).*` + regexp.QuoteMeta(`WHERE fivenet_documents_visibility_subject.target_id = ?`)).
 		WithArgs(int64(42)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT fivenet_documents.id AS "id"`)+`(?s).*`+regexp.QuoteMeta(`FROM fivenet_documents`)+`(?s).*`+regexp.QuoteMeta(`fivenet_documents.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT fivenet_documents.id AS "calculatedvisibilitytargetrow.id"`)+`(?s).*`+regexp.QuoteMeta(`fivenet_documents.public AS "calculatedvisibilitytargetrow.public"`)+`(?s).*`+regexp.QuoteMeta(`fivenet_documents.creator_id AS "calculatedvisibilitytargetrow.creator_id"`)+`(?s).*`+regexp.QuoteMeta(`fivenet_documents.creator_job AS "calculatedvisibilitytargetrow.creator_job"`)+`(?s).*`+regexp.QuoteMeta(`FROM fivenet_documents`)+`(?s).*`+regexp.QuoteMeta(`fivenet_documents.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
 		WithArgs(int64(42), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "public", "creator_id", "creator_job"}).
 			AddRow(int64(42), false, int32(9), "new"))

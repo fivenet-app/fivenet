@@ -11,6 +11,7 @@ package citizenslabels
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -96,7 +97,7 @@ type Label struct {
 	Color     string                 `protobuf:"bytes,7,opt,name=color,proto3" json:"color,omitempty"`
 	Icon      *string                `protobuf:"bytes,8,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
 	Settings  *Settings              `protobuf:"bytes,9,opt,name=settings,proto3,oneof" json:"settings,omitempty"`
-	Access    *LabelAccess           `protobuf:"bytes,10,opt,name=access,proto3,oneof" json:"access,omitempty"`
+	Access    *access.Access         `protobuf:"bytes,10,opt,name=access,proto3,oneof" json:"access,omitempty"`
 	// Citizen label assignment data
 	ExpiresAt     *timestamp.Timestamp `protobuf:"bytes,11,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -198,7 +199,7 @@ func (x *Label) GetSettings() *Settings {
 	return nil
 }
 
-func (x *Label) GetAccess() *LabelAccess {
+func (x *Label) GetAccess() *access.Access {
 	if x != nil {
 		return x.Access
 	}
@@ -252,7 +253,7 @@ func (x *Label) SetSettings(v *Settings) {
 	x.Settings = v
 }
 
-func (x *Label) SetAccess(v *LabelAccess) {
+func (x *Label) SetAccess(v *access.Access) {
 	x.Access = v
 }
 
@@ -361,7 +362,7 @@ type Label_builder struct {
 	Color     string
 	Icon      *string
 	Settings  *Settings
-	Access    *LabelAccess
+	Access    *access.Access
 	// Citizen label assignment data
 	ExpiresAt *timestamp.Timestamp
 }
@@ -496,9 +497,9 @@ var File_resources_citizens_labels_labels_proto protoreflect.FileDescriptor
 
 const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"\n" +
-	"&resources/citizens/labels/labels.proto\x12\x19resources.citizens.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a&resources/citizens/labels/access.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"F\n" +
+	"&resources/citizens/labels/labels.proto\x12\x19resources.citizens.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1dresources/access/access.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"F\n" +
 	"\x06Labels\x124\n" +
-	"\x04list\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\xbd\x05\n" +
+	"\x04list\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\xaf\x05\n" +
 	"\x05Label\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12=\n" +
 	"\n" +
@@ -513,9 +514,9 @@ const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12\x1e\n" +
 	"\x05color\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12!\n" +
 	"\x04icon\x18\b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04icon\x88\x01\x01\x12D\n" +
-	"\bsettings\x18\t \x01(\v2#.resources.citizens.labels.SettingsH\x04R\bsettings\x88\x01\x01\x12C\n" +
+	"\bsettings\x18\t \x01(\v2#.resources.citizens.labels.SettingsH\x04R\bsettings\x88\x01\x01\x125\n" +
 	"\x06access\x18\n" +
-	" \x01(\v2&.resources.citizens.labels.LabelAccessH\x05R\x06access\x88\x01\x01\x12B\n" +
+	" \x01(\v2\x18.resources.access.AccessH\x05R\x06access\x88\x01\x01\x12B\n" +
 	"\n" +
 	"expires_at\x18\v \x01(\v2\x1e.resources.timestamp.TimestampH\x06R\texpiresAt\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +
@@ -538,7 +539,7 @@ var file_resources_citizens_labels_labels_proto_goTypes = []any{
 	(*Label)(nil),               // 1: resources.citizens.labels.Label
 	(*Settings)(nil),            // 2: resources.citizens.labels.Settings
 	(*timestamp.Timestamp)(nil), // 3: resources.timestamp.Timestamp
-	(*LabelAccess)(nil),         // 4: resources.citizens.labels.LabelAccess
+	(*access.Access)(nil),       // 4: resources.access.Access
 	(*durationpb.Duration)(nil), // 5: google.protobuf.Duration
 }
 var file_resources_citizens_labels_labels_proto_depIdxs = []int32{
@@ -547,7 +548,7 @@ var file_resources_citizens_labels_labels_proto_depIdxs = []int32{
 	3, // 2: resources.citizens.labels.Label.updated_at:type_name -> resources.timestamp.Timestamp
 	3, // 3: resources.citizens.labels.Label.deleted_at:type_name -> resources.timestamp.Timestamp
 	2, // 4: resources.citizens.labels.Label.settings:type_name -> resources.citizens.labels.Settings
-	4, // 5: resources.citizens.labels.Label.access:type_name -> resources.citizens.labels.LabelAccess
+	4, // 5: resources.citizens.labels.Label.access:type_name -> resources.access.Access
 	3, // 6: resources.citizens.labels.Label.expires_at:type_name -> resources.timestamp.Timestamp
 	5, // 7: resources.citizens.labels.Settings.min_duration:type_name -> google.protobuf.Duration
 	5, // 8: resources.citizens.labels.Settings.max_duration:type_name -> google.protobuf.Duration
@@ -563,7 +564,6 @@ func file_resources_citizens_labels_labels_proto_init() {
 	if File_resources_citizens_labels_labels_proto != nil {
 		return
 	}
-	file_resources_citizens_labels_access_proto_init()
 	file_resources_citizens_labels_labels_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_citizens_labels_labels_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
