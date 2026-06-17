@@ -3,7 +3,6 @@ package mailerstore
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
@@ -65,7 +64,6 @@ func (s *Store) ListUserEmails(
 	if len(ctes) > 0 {
 		finalStmt = mysql.WITH(ctes...)(stmt)
 	}
-	fmt.Println(finalStmt.DebugSql())
 
 	emails := []*maileremails.Email{}
 	if err := finalStmt.QueryContext(ctx, s.dbOr(db), &emails); err != nil {

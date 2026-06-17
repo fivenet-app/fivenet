@@ -1,12 +1,13 @@
 import type { BadgeProps } from '@nuxt/ui';
 import type { Perms } from '~~/gen/ts/perms';
-import type { AccessLevel, QualificationAccess } from '~~/gen/ts/resources/qualifications/access/access';
+import type { Access } from '~~/gen/ts/resources/access/access';
+import type { AccessLevel } from '~~/gen/ts/resources/qualifications/access/access';
 import { type QualificationRequirement, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { User } from '~~/gen/ts/resources/users/user';
 
 export function checkQualificationAccess(
-    qualiAccess: QualificationAccess | undefined,
+    qualiAccess: Access | undefined,
     creator: UserShort | undefined,
     level: AccessLevel,
     perm?: Perms,
@@ -34,7 +35,7 @@ export function checkQualificationAccess(
 
 function checkBaseQualificationAccess(
     activeChar: UserShort,
-    access: QualificationAccess | undefined,
+    access: Access | undefined,
     creator: UserShort | undefined,
     level: AccessLevel,
     creatorJob?: string,

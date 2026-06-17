@@ -3,7 +3,6 @@ package mailerstore
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
@@ -63,14 +62,12 @@ func (s *Store) ListEmails(
 		return s.listAllEmails(ctx, db, pag)
 	}
 
-	visibilityUserInfo := userInfo
 	includeDeleted := false
 	if userInfo != nil && userInfo.GetSuperuser() {
 		includeDeleted = true
-		visibilityUserInfo = cloneUserInfoWithoutSuperuser(userInfo)
 	}
 	visibleIDs := s.subjectAccess.VisibleIDsByConditionQuery(
-		visibilityUserInfo,
+		userInfo,
 		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),
 		includeDeleted,
 		mysql.Bool(true),
@@ -127,8 +124,6 @@ func (s *Store) ListEmails(
 	if len(ctes) > 0 {
 		stmt = mysql.WITH(ctes...)(stmt)
 	}
-
-	fmt.Println(stmt.DebugSql())
 
 	emails := []*maileremails.Email{}
 	if err := stmt.QueryContext(ctx, s.dbOr(db), &emails); err != nil {
@@ -190,16 +185,6 @@ func (s *Store) listAllEmails(
 	}
 
 	return pagination, emails, nil
-}
-
-func cloneUserInfoWithoutSuperuser(userInfo *userinfo.UserInfo) *userinfo.UserInfo {
-	if userInfo == nil {
-		return nil
-	}
-
-	cloned := *userInfo
-	cloned.Superuser = false
-	return &cloned
 }
 
 func (s *Store) GetEmailByCondition(

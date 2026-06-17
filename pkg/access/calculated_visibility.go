@@ -139,34 +139,37 @@ func (b *calculatedVisibilityBackend) RefreshTargetVisibilityWithCreator(
 			return err
 		}
 	}
-	if creatorID != 0 || creatorJob != "" {
-		row.CreatorID = &creatorID
-		if creatorJob != "" {
-			row.CreatorJob = &creatorJob
+
+	// Visibility creator table is required
+	if b.access.calculatedVisibilityCreatorTable != nil {
+		if creatorID != 0 || creatorJob != "" {
+			row.CreatorID = &creatorID
+			if creatorJob != "" {
+				row.CreatorJob = &creatorJob
+			}
 		}
-	}
-	if row.CreatorID == nil && row.CreatorJob == nil {
-		creatorRow, err := b.loadTargetCreatorRow(ctx, tx, targetID)
-		if err != nil {
-			return err
+		if row.CreatorID == nil && row.CreatorJob == nil {
+			creatorRow, err := b.loadTargetCreatorRow(ctx, tx, targetID)
+			if err != nil {
+				return err
+			}
+			if creatorRow != nil {
+				row.CreatorID = creatorRow.CreatorID
+				row.CreatorJob = creatorRow.CreatorJob
+			}
 		}
-		if creatorRow != nil {
-			row.CreatorID = creatorRow.CreatorID
-			row.CreatorJob = creatorRow.CreatorJob
-		}
-	}
-	if b.access.calculatedVisibilityCreatorTable != nil &&
-		(row.CreatorID != nil || row.CreatorJob != nil) {
-		creatorID := int64(0)
-		if row.CreatorID != nil {
-			creatorID = int64(*row.CreatorID)
-		}
-		creatorJob := ""
-		if row.CreatorJob != nil {
-			creatorJob = *row.CreatorJob
-		}
-		if err := b.insertCreatorRow(ctx, tx, row.ID, creatorID, creatorJob); err != nil {
-			return err
+		if row.CreatorID != nil || row.CreatorJob != nil {
+			creatorID := int64(0)
+			if row.CreatorID != nil {
+				creatorID = int64(*row.CreatorID)
+			}
+			creatorJob := ""
+			if row.CreatorJob != nil {
+				creatorJob = *row.CreatorJob
+			}
+			if err := b.insertCreatorRow(ctx, tx, row.ID, creatorID, creatorJob); err != nil {
+				return err
+			}
 		}
 	}
 

@@ -9,7 +9,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 import ConfigureLabelModal from '../../labels/ConfigureLabelModal.vue';
-import { AccessLevel, type LabelAccess } from '~~/gen/ts/resources/citizens/labels/access';
+import { AccessLevel } from '~~/gen/ts/resources/citizens/labels/access';
+import type { Access } from '~~/gen/ts/resources/access/access';
 
 const props = defineProps<{
     userId: number;
@@ -37,9 +38,11 @@ const schema = z.object({
             expiresAt: z.custom<Timestamp>().optional(),
             sortOrder: z.number().default(0),
             access: z
-                .custom<LabelAccess>()
+                .custom<Access>()
                 .default({
                     jobs: [],
+                    users: [],
+                    qualifications: [],
                 })
                 .optional(),
         })

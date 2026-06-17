@@ -44,7 +44,9 @@ func TestStoreListEmails(t *testing.T) {
 	store := New(db)
 	now := time.Unix(0, 0).UTC()
 
-	countQuery := regexp.QuoteMeta(`SELECT COUNT(email.id) AS "data_count.total" FROM fivenet_mailer_emails AS email;`)
+	countQuery := regexp.QuoteMeta(
+		`SELECT COUNT(email.id) AS "data_count.total" FROM fivenet_mailer_emails AS email;`,
+	)
 	mock.ExpectQuery(countQuery).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
 

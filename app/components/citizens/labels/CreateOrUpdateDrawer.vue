@@ -132,6 +132,8 @@ async function getCitizenLabel(labelId: number): Promise<GetLabelResponse> {
                         access: AccessLevel.REMOVE,
                     },
                 ],
+                users: [],
+                qualifications: [],
             };
         }
 
@@ -194,6 +196,8 @@ async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelR
                 },
                 access: {
                     jobs: values.access.jobs,
+                    users: [],
+                    qualifications: [],
                 },
             },
         });
