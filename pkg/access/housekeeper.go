@@ -85,7 +85,7 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 
 		if err := h.resolver.CleanupStaleJobGradeSubjects(ctx, h.resolver.db); err != nil {
 			h.logger.Error("error during stale job grade subject cleanup", zap.Error(err))
-			if errs == nil {
+			if errs != nil {
 				errs = multierr.Append(
 					errs,
 					fmt.Errorf("error during stale job grade subject cleanup. %w", err),

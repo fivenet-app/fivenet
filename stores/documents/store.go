@@ -317,6 +317,14 @@ type IStore interface {
 		userInfo *userinfo.UserInfo,
 		newOwner *usershort.UserShort,
 	) error
+	ToggleDocument(
+		ctx context.Context,
+		tx *sql.Tx,
+		documentId int64,
+		templateId int64,
+		closed bool,
+		userInfo *userinfo.UserInfo,
+	) error
 }
 
 type Store struct {

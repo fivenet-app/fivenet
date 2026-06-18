@@ -40,7 +40,6 @@ func CheckIfHasOwnJobAccess(
 	}
 
 	var (
-		hasAny       bool
 		hasLowerRank bool
 		hasSameRank  bool
 		hasOwn       bool
@@ -48,19 +47,19 @@ func CheckIfHasOwnJobAccess(
 	for _, level := range levels.GetStrings() {
 		switch level {
 		case "Any":
-			hasAny = true
+			return true
+
 		case "Lower_Rank":
 			hasLowerRank = true
+
 		case "Same_Rank":
 			hasSameRank = true
+
 		case "Own":
 			hasOwn = true
 		}
 	}
 
-	if hasAny {
-		return true
-	}
 	// Grant access if user has a higher rank than the creator
 	if hasLowerRank && creator.GetJobGrade() < userInfo.GetJobGrade() {
 		return true

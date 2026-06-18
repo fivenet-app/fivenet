@@ -22,7 +22,7 @@ const documentAccessEntryLimit = 15
 
 func canUserAccessDocument(
 	ctx context.Context,
-	v2 *access.SubjectObjectAccess,
+	access *access.SubjectObjectAccess,
 	targetID int64,
 	userInfo *userinfo.UserInfo,
 	level documentsaccess.AccessLevel,
@@ -31,9 +31,9 @@ func canUserAccessDocument(
 		return true, nil
 	}
 
-	allowed, err := v2.CanUserAccessTarget(ctx, targetID, userInfo, int32(level))
+	allowed, err := access.CanUserAccessTarget(ctx, targetID, userInfo, int32(level))
 	if err != nil {
-		return false, err
+		return false, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if allowed {
 		return true, nil

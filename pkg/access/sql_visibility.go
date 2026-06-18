@@ -143,6 +143,7 @@ func (b *sqlVisibilityBackend) CountVisibleByConditionStatement(
 	)(countSelect)
 }
 
+// RefreshTargetVisibility is a no-op for the SQL visibility backend.
 func (b *sqlVisibilityBackend) RefreshTargetVisibility(
 	ctx context.Context,
 	tx qrm.DB,

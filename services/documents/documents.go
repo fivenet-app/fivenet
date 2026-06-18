@@ -212,7 +212,6 @@ func (s *Server) getDocument(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
-
 	if doc.GetId() == 0 {
 		return nil, nil
 	}
@@ -287,6 +286,10 @@ func (s *Server) CreateDocument(
 		if tmpl != nil && req.GetTemplateData() != nil {
 			if len(req.GetTemplateData().GetDocuments()) > 0 {
 				for _, doc := range req.GetTemplateData().GetDocuments() {
+					if doc == nil {
+						continue
+					}
+
 					exists := false
 					for _, reference := range docReferences {
 						if reference.GetTargetDocumentId() == doc.GetId() {
@@ -759,7 +762,7 @@ func (s *Server) handleDocumentPublish(
 		return nil
 	}
 
-	pol, err := s.getApprovalPolicy(
+	pol, err := s.store.GetApprovalPolicy(
 		ctx,
 		tx,
 		table.FivenetDocumentsApprovalPolicies.AS(
@@ -809,7 +812,7 @@ func (s *Server) handleDocumentPublish(
 	}
 	newPol.Default()
 
-	if err = s.createApprovalPolicy(ctx, tx, doc.GetId(), newPol); err != nil {
+	if err = s.store.CreateApprovalPolicy(ctx, tx, doc.GetId(), newPol); err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -838,7 +841,7 @@ func (s *Server) handleDocumentPublish(
 		})
 	}
 
-	if _, _, err := s.createApprovalTasks(
+	if _, _, err := s.store.CreateApprovalTasks(
 		ctx,
 		tx,
 		userInfo,
@@ -883,6 +886,9 @@ func (s *Server) DeleteDocument(
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if doc == nil {
+		return nil, errorsdocuments.ErrFailedQuery
 	}
 
 	// Require a reason if the document is not already deleted
@@ -987,15 +993,6 @@ func (s *Server) ToggleDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	var tmpl *documentstemplates.Template
-	if !req.GetClosed() && doc.GetTemplateId() > 0 {
-		// If the document is opened, get template so we can update the reminder/auto close times
-		tmpl, err = s.store.GetTemplate(ctx, doc.GetTemplateId(), false)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-	}
-
 	// Field Permission Check
 	fields, err := permsdocuments.DocumentsService.ToggleDocument.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
@@ -1010,51 +1007,21 @@ func (s *Server) ToggleDocument(
 		return nil, errorsdocuments.ErrDocToggleDenied
 	}
 
-	activityType := documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
-	if !req.GetClosed() {
-		activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
-	}
-
-	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	defer tx.Rollback()
 
-	stmt := tDocument.
-		UPDATE(
-			tDocument.Closed,
-		).
-		SET(
-			req.GetClosed(),
-		).
-		WHERE(
-			tDocument.ID.EQ(mysql.Int64(doc.GetId())),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
-		DocumentId:   doc.GetId(),
-		ActivityType: activityType,
-		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.GetJob(),
-	}); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	if tmpl != nil {
-		if err := s.store.UpsertWorkflowState(
-			ctx,
-			tx,
-			doc.GetId(),
-			tmpl.GetWorkflow(),
-		); err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
+	if err := s.store.ToggleDocument(
+		ctx,
+		tx,
+		req.GetDocumentId(),
+		doc.GetTemplateId(),
+		req.GetClosed(),
+		userInfo,
+	); err != nil {
+		return nil, err
 	}
 
 	// Commit the transaction
@@ -1105,6 +1072,9 @@ func (s *Server) ChangeDocumentOwner(
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if doc == nil {
+		return nil, errorsdocuments.ErrFailedQuery
 	}
 
 	// Document must be created by the same job

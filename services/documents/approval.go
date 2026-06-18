@@ -112,9 +112,9 @@ func (s *Server) ListApprovalPolicies(
 		condition = condition.AND(tApprovalPolicy.DeletedAt.IS_NULL())
 	}
 
-	policy, err := s.getApprovalPolicy(ctx, s.db, condition)
+	policy, err := s.store.GetApprovalPolicy(ctx, s.db, condition)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	docMeta, err := s.store.GetDocumentMeta(ctx, s.db, req.GetDocumentId())
@@ -128,16 +128,6 @@ func (s *Server) ListApprovalPolicies(
 	}, nil
 }
 
-func (s *Server) getApprovalPolicy(
-	ctx context.Context, tx qrm.DB, condition mysql.BoolExpression,
-) (*documentsapproval.ApprovalPolicy, error) {
-	pol, err := s.store.GetApprovalPolicy(ctx, tx, condition)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-	return pol, nil
-}
-
 func (s *Server) getOrCreateApprovalPolicy(
 	ctx context.Context,
 	tx qrm.DB,
@@ -148,16 +138,16 @@ func (s *Server) getOrCreateApprovalPolicy(
 
 	condition := tApprovalPolicy.AS("approval_policy").DocumentID.EQ(mysql.Int64(documentId))
 
-	pol, err := s.getApprovalPolicy(ctx, tx, condition)
+	pol, err := s.store.GetApprovalPolicy(ctx, tx, condition)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if pol != nil {
 		return pol, nil
 	}
 
 	requiredCount := int32(1)
-	if err = s.createApprovalPolicy(ctx, tx, documentId, &documentsapproval.ApprovalPolicy{
+	if err = s.store.CreateApprovalPolicy(ctx, tx, documentId, &documentsapproval.ApprovalPolicy{
 		SnapshotDate:       snapshotDate,
 		RuleKind:           documentsapproval.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL,
 		RequiredCount:      &requiredCount,
@@ -168,24 +158,12 @@ func (s *Server) getOrCreateApprovalPolicy(
 		return nil, err
 	}
 
-	pol, err = s.getApprovalPolicy(ctx, tx, condition)
+	pol, err = s.store.GetApprovalPolicy(ctx, s.db, condition)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if pol == nil {
-		return nil, errorsdocuments.ErrFailedQuery
-	}
 
 	return pol, nil
-}
-
-func (s *Server) createApprovalPolicy(
-	ctx context.Context,
-	tx qrm.DB,
-	documentId int64,
-	pol *documentsapproval.ApprovalPolicy,
-) error {
-	return s.store.CreateApprovalPolicy(ctx, tx, documentId, pol)
 }
 
 func (s *Server) UpsertApprovalPolicy(
@@ -253,7 +231,7 @@ func (s *Server) UpsertApprovalPolicy(
 	tApprovalPolicy = tApprovalPolicy.AS("approval_policy")
 
 	condition := tApprovalPolicy.DocumentID.EQ(mysql.Int64(pol.GetDocumentId()))
-	policy, err := s.getApprovalPolicy(ctx, tx, condition)
+	policy, err := s.store.GetApprovalPolicy(ctx, tx, condition)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -271,7 +249,7 @@ func (s *Server) UpsertApprovalPolicy(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	policy, err = s.getApprovalPolicy(ctx, s.db, condition)
+	policy, err = s.store.GetApprovalPolicy(ctx, s.db, condition)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -380,18 +358,6 @@ func (s *Server) ListApprovalTasks(
 	return resp, nil
 }
 
-func (s *Server) getApprovalTask(
-	ctx context.Context,
-	tx qrm.DB,
-	taskId int64,
-) (*documentsapproval.ApprovalTask, error) {
-	task, err := s.store.GetApprovalTask(ctx, tx, taskId)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-	return task, nil
-}
-
 func (s *Server) UpsertApprovalTasks(
 	ctx context.Context,
 	req *pbdocuments.UpsertApprovalTasksRequest,
@@ -440,7 +406,7 @@ func (s *Server) UpsertApprovalTasks(
 	}
 	defer tx.Rollback()
 
-	created, ensured, err := s.createApprovalTasks(
+	created, ensured, err := s.store.CreateApprovalTasks(
 		ctx,
 		tx,
 		userInfo,
@@ -476,17 +442,6 @@ func (s *Server) UpsertApprovalTasks(
 		TasksEnsured: ensured,
 		Policy:       pol,
 	}, nil
-}
-
-func (s *Server) createApprovalTasks(
-	ctx context.Context,
-	tx qrm.DB,
-	userInfo *userinfo.UserInfo,
-	documentId int64,
-	snapDate *timestamp.Timestamp,
-	seeds []*pbdocuments.ApprovalTaskSeed,
-) (int32, int32, error) {
-	return s.store.CreateApprovalTasks(ctx, tx, userInfo, documentId, snapDate, seeds)
 }
 
 func (s *Server) DeleteApprovalTasks(
@@ -565,8 +520,8 @@ func (s *Server) canUserAccessApprovalTask(
 	taskId int64,
 	userInfo *userinfo.UserInfo,
 ) error {
-	task, err := s.getApprovalTask(ctx, tx, taskId)
-	if task == nil || err != nil {
+	task, err := s.store.GetApprovalTask(ctx, tx, taskId)
+	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
 
@@ -862,9 +817,9 @@ func (s *Server) DecideApproval(
 	// Path A: task_id provided -> validate and mark decided
 	if req.GetTaskId() > 0 {
 		// Load the task row
-		decidedTask, err = s.getApprovalTask(ctx, tx, req.GetTaskId())
+		decidedTask, err := s.store.GetApprovalTask(ctx, tx, req.GetTaskId())
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		if decidedTask.DocumentId == 0 {
 			return nil, errorsdocuments.ErrNotFoundOrNoPerms
@@ -1376,7 +1331,7 @@ func (s *Server) RecomputeApprovalPolicyCounters(
 
 	condition := tApprovalPolicy.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))
 
-	pol, err := s.getApprovalPolicy(ctx, s.db, condition)
+	pol, err := s.store.GetApprovalPolicy(ctx, s.db, condition)
 	if err != nil {
 		return nil, err
 	}
@@ -1390,7 +1345,7 @@ func (s *Server) RecomputeApprovalPolicyCounters(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	pol, err = s.getApprovalPolicy(ctx, s.db, condition)
+	pol, err = s.store.GetApprovalPolicy(ctx, s.db, condition)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -1418,7 +1373,7 @@ func (s *Server) handleApprovalOnEditBehaviors(
 	tx qrm.DB,
 	doc *documents.Document,
 ) error {
-	pol, err := s.getApprovalPolicy(
+	pol, err := s.store.GetApprovalPolicy(
 		ctx,
 		tx,
 		table.FivenetDocumentsApprovalPolicies.AS(

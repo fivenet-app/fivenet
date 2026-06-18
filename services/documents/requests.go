@@ -110,6 +110,9 @@ func (s *Server) CreateDocumentReq(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	if doc == nil {
+		return nil, errorsdocuments.ErrFailedQuery
+	}
 	if doc.GetId() <= 0 {
 		doc.Id = req.GetDocumentId()
 	}
@@ -288,8 +291,11 @@ func (s *Server) UpdateDocumentReq(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	if doc == nil {
+		return nil, errorsdocuments.ErrFailedQuery
+	}
 
-	if (doc.CreatorId != nil && doc.GetCreatorId() != userInfo.GetUserId()) &&
+	if (doc.GetCreatorId() > 0 && doc.GetCreatorId() != userInfo.GetUserId()) &&
 		!userInfo.GetSuperuser() {
 		return nil, errorsdocuments.ErrDocUpdateDenied
 	}
@@ -321,20 +327,28 @@ func (s *Server) UpdateDocumentReq(
 		case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE:
 			activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
 
-			if _, err := s.ToggleDocument(ctx, &pbdocuments.ToggleDocumentRequest{
-				DocumentId: request.GetDocumentId(),
-				Closed:     true,
-			}); err != nil {
+			if err := s.store.ToggleDocument(
+				ctx,
+				tx,
+				request.GetDocumentId(),
+				doc.GetTemplateId(),
+				true,
+				userInfo,
+			); err != nil {
 				return nil, err
 			}
 
 		case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OPENING:
 			activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
 
-			if _, err := s.ToggleDocument(ctx, &pbdocuments.ToggleDocumentRequest{
-				DocumentId: request.GetDocumentId(),
-				Closed:     false,
-			}); err != nil {
+			if err := s.store.ToggleDocument(
+				ctx,
+				tx,
+				request.GetDocumentId(),
+				doc.GetTemplateId(),
+				false,
+				userInfo,
+			); err != nil {
 				return nil, err
 			}
 
@@ -423,7 +437,7 @@ func (s *Server) DeleteDocumentReq(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if request == nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		return nil, errswrap.NewError(err, errorsdocuments.ErrDocReqAlreadyCompleted)
 	}
 
 	check, err := s.canUserAccessDocument(

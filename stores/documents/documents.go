@@ -2,6 +2,7 @@ package documentsstore
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
@@ -10,9 +11,11 @@ import (
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	documentspins "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/pins"
+	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -592,7 +595,7 @@ func (s *Store) UpdateDocumentOwner(
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	if err := s.subjectAccess.RefreshTargetVisibilityWithCreator(
@@ -602,7 +605,7 @@ func (s *Store) UpdateDocumentOwner(
 		newOwner.GetUserId(),
 		newOwner.GetJob(),
 	); err != nil {
-		return err
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	creatorVisibilityStmt := table.FivenetDocumentsVisibilityCreator.
@@ -628,7 +631,7 @@ func (s *Store) UpdateDocumentOwner(
 			),
 		)
 	if _, err := creatorVisibilityStmt.ExecContext(ctx, tx); err != nil {
-		return err
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	tDocActivity := table.FivenetDocumentsActivity
@@ -655,8 +658,10 @@ func (s *Store) UpdateDocumentOwner(
 			},
 		).
 		ExecContext(ctx, tx); err != nil {
-		return err
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+
+	// TODO the document relations that are owned by the previous owner should be moved to the new owner as well
 
 	return nil
 }
@@ -741,4 +746,66 @@ func buildListOrder(
 	}
 
 	return orderBys
+}
+
+func (s *Store) ToggleDocument(
+	ctx context.Context,
+	tx *sql.Tx,
+	documentId int64,
+	templateId int64,
+	closed bool,
+	userInfo *userinfo.UserInfo,
+) error {
+	var tmpl *documentstemplates.Template
+	if !closed && templateId > 0 {
+		// If the document is opened, get template so we can update the reminder/auto close times
+		var err error
+		tmpl, err = s.GetTemplate(ctx, templateId, false)
+		if err != nil {
+			return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+
+	activityType := documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
+	if !closed {
+		activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
+	}
+
+	tDocument := table.FivenetDocuments
+	stmt := tDocument.
+		UPDATE(
+			tDocument.Closed,
+		).
+		SET(
+			closed,
+		).
+		WHERE(
+			tDocument.ID.EQ(mysql.Int64(documentId)),
+		).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
+		DocumentId:   documentId,
+		ActivityType: activityType,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.GetJob(),
+	}); err != nil {
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if tmpl != nil {
+		if err := s.UpsertWorkflowState(
+			ctx,
+			tx,
+			documentId,
+			tmpl.GetWorkflow(),
+		); err != nil {
+			return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+	return nil
 }
