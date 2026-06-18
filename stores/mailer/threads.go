@@ -6,6 +6,7 @@ import (
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -204,6 +205,29 @@ func (s *Store) UpdateThreadTime(ctx context.Context, q qrm.DB, threadID int64) 
 		).
 		SET(
 			tThreads.UpdatedAt.SET(mysql.CURRENT_TIMESTAMP()),
+		).
+		WHERE(tThreads.ID.EQ(mysql.Int64(threadID))).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, s.dbOr(q)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Store) DeleteThread(
+	ctx context.Context,
+	q qrm.DB,
+	threadID int64,
+	deletedAt *timestamp.Timestamp,
+) error {
+	stmt := tThreads.
+		UPDATE(
+			tThreads.DeletedAt,
+		).
+		SET(
+			tThreads.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAt)),
 		).
 		WHERE(tThreads.ID.EQ(mysql.Int64(threadID))).
 		LIMIT(1)

@@ -21,7 +21,7 @@ func TestStoreListUserEmailsVisible(t *testing.T) {
 	store := New(db)
 	now := time.Unix(0, 0).UTC()
 
-	expectedQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*email.deactivated IS FALSE.*` +
+	expectedQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*fivenet_mailer_emails.deactivated IS FALSE.*` +
 		`ORDER BY email.job ASC, email.label ASC`
 	mock.ExpectQuery(expectedQuery).
 		WillReturnRows(sqlmock.NewRows([]string{

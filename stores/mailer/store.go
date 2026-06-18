@@ -11,6 +11,7 @@ import (
 	mailersettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings"
 	mailertemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/templates"
 	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -67,6 +68,12 @@ type IStore interface {
 		in MessageListQuery,
 		includeDeleted bool,
 	) ([]*mailermessages.Message, error)
+	DeleteThread(
+		ctx context.Context,
+		q qrm.DB,
+		threadID int64,
+		deletedAt *timestamp.Timestamp,
+	) error
 	GetMessage(
 		ctx context.Context,
 		db qrm.DB,
@@ -74,6 +81,13 @@ type IStore interface {
 		includeDeleted bool,
 	) (*mailermessages.Message, error)
 	CreateMessage(ctx context.Context, db qrm.DB, msg *mailermessages.Message) (int64, error)
+	DeleteMessage(
+		ctx context.Context,
+		q qrm.DB,
+		threadID int64,
+		messageID int64,
+		deletedAt *timestamp.Timestamp,
+	) error
 	CountEmails(ctx context.Context, db qrm.DB, condition mysql.BoolExpression) (int64, error)
 	ListUserEmails(
 		ctx context.Context,
@@ -101,6 +115,18 @@ type IStore interface {
 		emailID int64,
 		includeDeleted bool,
 	) (*maileremails.Email, error)
+	CreateEmail(
+		ctx context.Context,
+		q qrm.DB,
+		email *maileremails.Email,
+		creatorID int32,
+	) (int64, error)
+	DeleteEmail(
+		ctx context.Context,
+		q qrm.DB,
+		emailID int64,
+		deletedAt *timestamp.Timestamp,
+	) error
 	GetUserShort(ctx context.Context, db qrm.DB, userID int32) (*usershort.UserShort, error)
 	ListRecipientsByEmails(
 		ctx context.Context,

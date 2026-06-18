@@ -6,6 +6,8 @@ import (
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	mailermessages "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/messages"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -183,4 +185,31 @@ func (s *Store) CreateMessage(
 	}
 
 	return lastID, nil
+}
+
+func (s *Store) DeleteMessage(
+	ctx context.Context,
+	q qrm.DB,
+	threadID int64,
+	messageID int64,
+	deletedAt *timestamp.Timestamp,
+) error {
+	stmt := tMessages.
+		UPDATE(
+			tMessages.DeletedAt,
+		).
+		SET(
+			tMessages.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAt)),
+		).
+		WHERE(mysql.AND(
+			tMessages.ThreadID.EQ(mysql.Int64(threadID)),
+			tMessages.ID.EQ(mysql.Int64(messageID)),
+		)).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, s.dbOr(q)); err != nil {
+		return err
+	}
+
+	return nil
 }

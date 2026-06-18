@@ -7,6 +7,8 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/stretchr/testify/assert"
@@ -107,12 +109,19 @@ func TestStoreListEmailsVisible(t *testing.T) {
 	store := New(db)
 	now := time.Unix(0, 0).UTC()
 
-	countQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*data_count.total`
+	countQuery := regexp.QuoteMeta(
+		`SELECT COUNT(doc_ids.id) AS "data_count.total" FROM ( SELECT DISTINCT fivenet_mailer_emails.id AS "id"`,
+	) +
+		`(?s).*` + regexp.QuoteMeta(
+		`WHERE ? ) AS doc_ids;`,
+	)
 	mock.ExpectQuery(countQuery).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
 
-	listQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*` +
-		regexp.QuoteMeta(`ORDER BY email.job ASC, email.label ASC LIMIT ? OFFSET ?;`)
+	listQuery := regexp.QuoteMeta(`SELECT email.id AS "email.id"`) +
+		`(?s).*` + regexp.QuoteMeta(`FROM ( SELECT DISTINCT fivenet_mailer_emails.id AS "id"`) +
+		`(?s).*` + regexp.QuoteMeta(`INNER JOIN fivenet_mailer_emails AS email ON (email.id = doc_ids.id)`) +
+		`(?s).*` + regexp.QuoteMeta(`ORDER BY email.job ASC, email.label ASC LIMIT ? OFFSET ?;`)
 	mock.ExpectQuery(listQuery).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"email.id",
@@ -227,6 +236,57 @@ func TestStoreGetUserShort(t *testing.T) {
 	require.NotNil(t, user)
 	assert.Equal(t, "Jane", user.GetFirstname())
 	assert.Equal(t, "01.01.2000", user.GetDateofbirth())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreCreateEmail(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(db)
+	userID := int32(7)
+	label := "Primary"
+	email := &maileremails.Email{
+		Job:    func() *string { v := "police"; return &v }(),
+		UserId: &userID,
+		Email:  "user@example.com",
+		Label:  &label,
+	}
+
+	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_mailer_emails`) +
+		`(?s).*` + regexp.QuoteMeta(`VALUES (?, ?, ?, ?, ?)`)
+	mock.ExpectExec(expectedQuery).
+		WithArgs("police", int32(7), "user@example.com", "Primary", int32(3)).
+		WillReturnResult(sqlmock.NewResult(17, 1))
+
+	lastID, err := store.CreateEmail(t.Context(), db, email, 3)
+	require.NoError(t, err)
+	assert.Equal(t, int64(17), lastID)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreDeleteEmail(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(db)
+	deletedAt := time.Unix(0, 0).UTC()
+
+	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_emails AS email SET`) +
+		`(?s).*` + regexp.QuoteMeta(`deleted_at = CAST(? AS DATETIME)`) +
+		`(?s).*` + regexp.QuoteMeta(`email.id = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
+	mock.ExpectExec(expectedQuery).
+		WithArgs(deletedAt, int64(42), int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	require.NoError(t, store.DeleteEmail(t.Context(), db, 42, timestamp.New(deletedAt)))
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

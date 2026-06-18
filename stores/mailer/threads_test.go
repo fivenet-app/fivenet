@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -175,6 +176,28 @@ func TestStoreGetThread(t *testing.T) {
 	require.NotNil(t, thread)
 	assert.Equal(t, int64(42), thread.GetId())
 	assert.Equal(t, "Hello", thread.GetTitle())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreDeleteThread(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(db)
+	deletedAt := time.Unix(0, 0).UTC()
+
+	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_threads AS thread SET`) +
+		`(?s).*` + regexp.QuoteMeta(`deleted_at = CAST(? AS DATETIME)`) +
+		`(?s).*` + regexp.QuoteMeta(`thread.id = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
+	mock.ExpectExec(expectedQuery).
+		WithArgs(deletedAt, int64(42), int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	require.NoError(t, store.DeleteThread(t.Context(), db, 42, timestamp.New(deletedAt)))
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

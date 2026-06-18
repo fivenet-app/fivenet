@@ -86,7 +86,6 @@ type Permissions interface {
 		job string,
 		grade int32,
 	) ([]*permissionsattributes.RoleAttribute, error)
-	FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	GetEffectiveRoleAttributes(
 		ctx context.Context,
 		job string,

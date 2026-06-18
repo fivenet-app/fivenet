@@ -9,8 +9,10 @@ import (
 	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
 	mailersettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings"
 	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -294,6 +296,62 @@ func (s *Store) ListRecipientsByEmails(
 	}
 
 	return dest, nil
+}
+
+func (s *Store) CreateEmail(
+	ctx context.Context,
+	q qrm.DB,
+	email *maileremails.Email,
+	creatorID int32,
+) (int64, error) {
+	stmt := tEmails.
+		INSERT(
+			tEmails.Job,
+			tEmails.UserID,
+			tEmails.Email,
+			tEmails.Label,
+			tEmails.CreatorID,
+		).
+		VALUES(
+			dbutils.StringEmpty(email.GetJob()),
+			dbutils.Int32P(email.GetUserId()),
+			email.GetEmail(),
+			email.Label,
+			creatorID,
+		)
+
+	res, err := stmt.ExecContext(ctx, s.dbOr(q))
+	if err != nil {
+		return 0, err
+	}
+
+	lastID, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return lastID, nil
+}
+
+func (s *Store) DeleteEmail(
+	ctx context.Context,
+	q qrm.DB,
+	emailID int64,
+	deletedAt *timestamp.Timestamp,
+) error {
+	stmt := tEmails.
+		UPDATE().
+		SET(
+			tEmails.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAt)),
+		).
+		WHERE(tEmails.ID.EQ(mysql.Int64(emailID))).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, s.dbOr(q)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Store) GetEmailSettings(

@@ -11,14 +11,12 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
-	"github.com/go-jet/jet/v2/mysql"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -326,20 +324,7 @@ func (s *Server) DeleteThread(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
-	tThreads := table.FivenetMailerThreads
-	stmt := tThreads.
-		UPDATE(
-			tThreads.DeletedAt,
-		).
-		SET(
-			tThreads.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
-		).
-		WHERE(
-			tThreads.ID.EQ(mysql.Int64(req.GetThreadId())),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeleteThread(ctx, s.db, req.GetThreadId(), deletedAtTime); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 

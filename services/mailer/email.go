@@ -215,7 +215,7 @@ func (s *Server) CreateOrUpdateEmail(
 
 		lastId, err := s.createEmail(ctx, tx, req.GetEmail(), userInfo)
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
 		req.Email.Id = lastId
@@ -386,24 +386,7 @@ func (s *Server) createEmail(
 	email *maileremails.Email,
 	userInfo *userinfo.UserInfo,
 ) (int64, error) {
-	tEmails := table.FivenetMailerEmails
-	stmt := tEmails.
-		INSERT(
-			tEmails.Job,
-			tEmails.UserID,
-			tEmails.Email,
-			tEmails.Label,
-			tEmails.CreatorID,
-		).
-		VALUES(
-			dbutils.StringEmpty(email.GetJob()),
-			dbutils.Int32P(email.GetUserId()),
-			email.GetEmail(),
-			email.Label,
-			userInfo.GetUserId(),
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
+	lastId, err := s.store.CreateEmail(ctx, tx, email, userInfo.GetUserId())
 	if err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return 0, errorsmailer.ErrAddresseAlreadyTaken
@@ -411,12 +394,7 @@ func (s *Server) createEmail(
 		return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-
-	// Update user email in the user props
+	// Update user email in the user props if it is a "private" email
 	if email.UserId != nil {
 		upStmt := tUserProps.
 			INSERT(
@@ -484,18 +462,7 @@ func (s *Server) DeleteEmail(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
-	tEmails := table.FivenetMailerEmails
-	stmt := tEmails.
-		UPDATE().
-		SET(
-			tEmails.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
-		).
-		WHERE(mysql.AND(
-			tEmails.ID.EQ(mysql.Int64(req.GetId())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeleteEmail(ctx, s.db, req.GetId(), deletedAtTime); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 

@@ -232,21 +232,13 @@ func (s *Server) DeleteMessage(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
-	tMessages := table.FivenetMailerMessages
-	stmt := tMessages.
-		UPDATE(
-			tMessages.DeletedAt,
-		).
-		SET(
-			tMessages.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
-		).
-		WHERE(mysql.AND(
-			tMessages.ThreadID.EQ(mysql.Int64(req.GetThreadId())),
-			tMessages.ID.EQ(mysql.Int64(req.GetMessageId())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeleteMessage(
+		ctx,
+		s.db,
+		req.GetThreadId(),
+		req.GetMessageId(),
+		deletedAtTime,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
