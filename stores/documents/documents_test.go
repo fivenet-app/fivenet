@@ -186,6 +186,12 @@ func TestStoreGetDocumentMetaAndUpdateOwner(t *testing.T) {
 	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_documents_activity`)).
 		WithArgs(int64(42), documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED, int32(3), "doj", sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_documents_relations`)).
+		WithArgs(int32(9), int64(42), int32(3), int64(25)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_documents_references`)).
+		WithArgs(int32(9), int64(42), int32(3), int64(25)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
 	require.NoError(t, store.UpdateDocumentOwner(t.Context(), db, 42, userInfo, newOwner))
 
 	require.NoError(t, mock.ExpectationsWereMet())

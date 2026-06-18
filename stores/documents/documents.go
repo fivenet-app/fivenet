@@ -661,7 +661,59 @@ func (s *Store) UpdateDocumentOwner(
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	// TODO the document relations that are owned by the previous owner should be moved to the new owner as well
+	if err := s.changeDocumentRelRefOwner(
+		ctx,
+		tx,
+		documentID,
+		userInfo.UserId,
+		newOwner.GetUserId(),
+	); err != nil {
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	return nil
+}
+
+func (s *Store) changeDocumentRelRefOwner(
+	ctx context.Context,
+	tx qrm.DB,
+	documentID int64,
+	currentCreatorId int32,
+	newCreatorId int32,
+) error {
+	tRel := table.FivenetDocumentsRelations
+
+	relStmt := tRel.
+		UPDATE(tRel.SourceUserID).
+		SET(
+			newCreatorId,
+		).
+		WHERE(mysql.AND(
+			tRel.DocumentID.EQ(mysql.Int64(documentID)),
+			tRel.SourceUserID.EQ(mysql.Int32(currentCreatorId)),
+		)).
+		LIMIT(25)
+
+	if _, err := relStmt.ExecContext(ctx, tx); err != nil {
+		return err
+	}
+
+	tRef := table.FivenetDocumentsReferences
+
+	refStmt := tRef.
+		UPDATE(tRef.CreatorID).
+		SET(
+			newCreatorId,
+		).
+		WHERE(mysql.AND(
+			tRef.SourceDocumentID.EQ(mysql.Int64(documentID)),
+			tRef.CreatorID.EQ(mysql.Int32(currentCreatorId)),
+		)).
+		LIMIT(25)
+
+	if _, err := refStmt.ExecContext(ctx, tx); err != nil {
+		return err
+	}
 
 	return nil
 }
