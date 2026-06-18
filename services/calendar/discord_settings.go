@@ -12,7 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
-	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -204,13 +203,7 @@ func (s *Server) validateCalendarReminderChannel(
 	job string,
 	channelID string,
 ) error {
-	store := s.store
-	// TODO the store should already be initialized
-	if store == nil {
-		store = calendarstore.New(s.db)
-	}
-
-	guildIDRaw, err := store.GetCalendarReminderGuildID(ctx, job)
+	guildIDRaw, err := s.store.GetCalendarReminderGuildID(ctx, job)
 	if err != nil {
 		return err
 	}
