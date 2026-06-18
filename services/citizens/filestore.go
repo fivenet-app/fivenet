@@ -25,7 +25,7 @@ func (s *Server) UploadAvatar(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", userInfo.GetUserId()})
+	logging.InjectFields(ctx, logging.Fields{citizenIDLogFieldKey, userInfo.GetUserId()})
 
 	meta, err := s.profilePictureHandler.AwaitHandshake(srv)
 	if err != nil {
@@ -80,7 +80,7 @@ func (s *Server) UploadMugshot(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", userInfo.GetUserId()})
+	logging.InjectFields(ctx, logging.Fields{citizenIDLogFieldKey, userInfo.GetUserId()})
 
 	// Field Permission Check
 	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.ps, userInfo)

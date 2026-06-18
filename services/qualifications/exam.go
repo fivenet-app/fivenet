@@ -24,7 +24,7 @@ func (s *Server) GetExamInfo(
 	ctx context.Context,
 	req *pbqualifications.GetExamInfoRequest,
 ) (*pbqualifications.GetExamInfoResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -107,7 +107,7 @@ func (s *Server) TakeExam(
 	ctx context.Context,
 	req *pbqualifications.TakeExamRequest,
 ) (*pbqualifications.TakeExamResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -216,7 +216,7 @@ func (s *Server) SubmitExam(
 	ctx context.Context,
 	req *pbqualifications.SubmitExamRequest,
 ) (*pbqualifications.SubmitExamResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -388,7 +388,7 @@ func (s *Server) GetUserExam(
 	req *pbqualifications.GetUserExamRequest,
 ) (*pbqualifications.GetUserExamResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.qualifications.id", req.GetQualificationId(),
+		qualificationIDLogFieldKey, req.GetQualificationId(),
 		"fivenet.user_id", req.GetUserId(),
 	})
 

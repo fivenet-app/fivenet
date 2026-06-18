@@ -25,6 +25,8 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
+const citizenIDLogFieldKey = "fivenet.citizens.user_id"
+
 type Server struct {
 	pbcitizens.CitizensServiceServer
 	pbcitizens.LabelsServiceServer

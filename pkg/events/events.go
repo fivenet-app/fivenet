@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/reqs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
@@ -60,7 +61,7 @@ func New(p Params) (Result, error) {
 	logger := p.Logger.Named("events")
 
 	connOpts := []nats.Option{
-		nats.Name("FiveNet"),
+		nats.Name(version.Project),
 		nats.DisconnectErrHandler(func(nc *nats.Conn, err error) {
 			if !nc.IsClosed() {
 				logger.Error("nats: disconnected", zap.Error(err))

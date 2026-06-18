@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -172,7 +171,7 @@ func (r *SubjectResolver) ResolveActorSubjects(
 	}
 
 	tSubjectQualis := table.FivenetACLSubjectQualifications.AS("asq_resolve")
-	tQualiResults := table.FivenetQualificationsResults.AS("qr_resolve")
+	tQualiSuccess := table.FivenetQualificationsResultSuccessMap.AS("qrsm_resolve")
 	tSubjectJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("asjg_resolve")
 	tUserJobs := table.FivenetUserJobs.AS("uj_resolve")
 	stmt := mysql.
@@ -191,16 +190,10 @@ func (r *SubjectResolver) ResolveActorSubjects(
 					mysql.Int32(-1).AS("grade_specificity"),
 				).
 				FROM(tSubjectQualis.
-					INNER_JOIN(tQualiResults,
+					INNER_JOIN(tQualiSuccess,
 						mysql.AND(
-							tQualiResults.QualificationID.EQ(tSubjectQualis.QualificationID),
-							tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-							tQualiResults.DeletedAt.IS_NULL(),
-							tQualiResults.Status.EQ(
-								mysql.Int32(
-									int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
-								),
-							),
+							tQualiSuccess.QualificationID.EQ(tSubjectQualis.QualificationID),
+							tQualiSuccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						),
 					),
 				),

@@ -3,7 +3,6 @@ package documents
 import (
 	context "context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
@@ -119,7 +118,7 @@ func (s *Server) GetDocument(
 	ctx context.Context,
 	req *pbdocuments.GetDocumentRequest,
 ) (*pbdocuments.GetDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
@@ -208,7 +207,6 @@ func (s *Server) getDocument(
 	stmt := s.getDocumentQuery(condition, nil, userInfo, withContent).
 		LIMIT(1)
 
-	fmt.Println(stmt.DebugSql())
 	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -491,7 +489,7 @@ func (s *Server) UpdateDocument(
 	ctx context.Context,
 	req *pbdocuments.UpdateDocumentRequest,
 ) (*pbdocuments.UpdateDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -858,7 +856,7 @@ func (s *Server) DeleteDocument(
 	ctx context.Context,
 	req *pbdocuments.DeleteDocumentRequest,
 ) (*pbdocuments.DeleteDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -960,7 +958,7 @@ func (s *Server) ToggleDocument(
 	ctx context.Context,
 	req *pbdocuments.ToggleDocumentRequest,
 ) (*pbdocuments.ToggleDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -1082,7 +1080,7 @@ func (s *Server) ChangeDocumentOwner(
 	ctx context.Context,
 	req *pbdocuments.ChangeDocumentOwnerRequest,
 ) (*pbdocuments.ChangeDocumentOwnerResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

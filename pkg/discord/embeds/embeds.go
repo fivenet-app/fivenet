@@ -14,7 +14,7 @@ const (
 
 var (
 	EmbedAuthor = &discord.EmbedAuthor{
-		Name: "FiveNet Discord Bot",
+		Name: version.Project + " Discord Bot",
 		URL:  "https://fivenet.app/",
 		Icon: "https://raw.githubusercontent.com/fivenet-app/fivenet/main/public/images/logo-200x200.webp",
 	}
@@ -29,7 +29,7 @@ var (
 	}
 
 	EmbedFooterFiveNet = &discord.EmbedFooter{
-		Text: "FiveNet",
+		Text: version.Project,
 		Icon: "https://raw.githubusercontent.com/fivenet-app/fivenet/main/public/images/logo-200x200.webp",
 	}
 

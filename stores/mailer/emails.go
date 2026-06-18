@@ -62,10 +62,8 @@ func (s *Store) ListEmails(
 		return s.listAllEmails(ctx, db, pag)
 	}
 
-	includeDeleted := false
-	if userInfo != nil && userInfo.GetSuperuser() {
-		includeDeleted = true
-	}
+	includeDeleted := userInfo != nil && userInfo.GetSuperuser()
+
 	visibleIDs := s.subjectAccess.VisibleIDsByConditionQuery(
 		userInfo,
 		int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ),

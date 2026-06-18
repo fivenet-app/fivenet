@@ -28,6 +28,11 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
+const (
+	roleIDLogFieldKey  = "fivenet.settings.role_id"
+	jobNameLogFieldKey = "fivenet.settings.job"
+)
+
 func init() {
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetJobProps,

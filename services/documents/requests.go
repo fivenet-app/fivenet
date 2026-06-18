@@ -33,7 +33,7 @@ func (s *Server) ListDocumentReqs(
 	ctx context.Context,
 	req *pbdocuments.ListDocumentReqsRequest,
 ) (*pbdocuments.ListDocumentReqsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -83,7 +83,7 @@ func (s *Server) CreateDocumentReq(
 	ctx context.Context,
 	req *pbdocuments.CreateDocumentReqRequest,
 ) (*pbdocuments.CreateDocumentReqResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -247,7 +247,7 @@ func (s *Server) UpdateDocumentReq(
 	req *pbdocuments.UpdateDocumentReqRequest,
 ) (*pbdocuments.UpdateDocumentReqResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.documents.id", req.GetDocumentId(),
+		documentIDLogFieldKey, req.GetDocumentId(),
 		"fivenet.documents.request_id", req.GetRequestId(),
 	})
 

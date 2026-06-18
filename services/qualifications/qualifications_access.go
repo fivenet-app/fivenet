@@ -55,7 +55,7 @@ func (s *Server) GetQualificationAccess(
 	ctx context.Context,
 	req *pbqualifications.GetQualificationAccessRequest,
 ) (*pbqualifications.GetQualificationAccessResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	check, err := s.access.CanUserAccessTarget(
@@ -107,7 +107,7 @@ func (s *Server) SetQualificationAccess(
 	ctx context.Context,
 	req *pbqualifications.SetQualificationAccessRequest,
 ) (*pbqualifications.SetQualificationAccessResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

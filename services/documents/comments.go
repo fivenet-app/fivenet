@@ -36,7 +36,7 @@ func (s *Server) GetComments(
 	ctx context.Context,
 	req *pbdocuments.GetCommentsRequest,
 ) (*pbdocuments.GetCommentsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -93,7 +93,7 @@ func (s *Server) PostComment(
 ) (*pbdocuments.PostCommentResponse, error) {
 	logging.InjectFields(
 		ctx,
-		logging.Fields{"fivenet.documents.id", req.GetComment().GetDocumentId()},
+		logging.Fields{documentIDLogFieldKey, req.GetComment().GetDocumentId()},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -168,7 +168,7 @@ func (s *Server) EditComment(
 	logging.InjectFields(
 		ctx,
 		logging.Fields{
-			"fivenet.documents.id", req.GetComment().GetDocumentId(),
+			documentIDLogFieldKey, req.GetComment().GetDocumentId(),
 			"fivenet.documents.comment_id", req.GetComment().GetId(),
 		},
 	)
@@ -236,7 +236,7 @@ func (s *Server) DeleteComment(
 	ctx context.Context,
 	req *pbdocuments.DeleteCommentRequest,
 ) (*pbdocuments.DeleteCommentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetCommentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetCommentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

@@ -22,6 +22,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+const pageIDLogFieldKey = "fivenet.wiki.page_id"
+
 func init() {
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetWikiPages,

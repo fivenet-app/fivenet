@@ -11,6 +11,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 )
 
 var helpTopics = []string{
@@ -146,7 +147,7 @@ func (c *HelpCommand) getHelpTopicResponse(
 				Title:       title,
 				Description: desc,
 				Provider: &discord.EmbedProvider{
-					Name: "FiveNet",
+					Name: version.Project,
 					URL:  c.url,
 				},
 				Color:  embeds.ColorInfo,

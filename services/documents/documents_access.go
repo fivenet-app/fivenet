@@ -85,7 +85,7 @@ func (s *Server) GetDocumentAccess(
 	ctx context.Context,
 	req *pbdocuments.GetDocumentAccessRequest,
 ) (*pbdocuments.GetDocumentAccessResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	check, err := s.canUserAccessDocument(
@@ -172,7 +172,7 @@ func (s *Server) SetDocumentAccess(
 	ctx context.Context,
 	req *pbdocuments.SetDocumentAccessRequest,
 ) (*pbdocuments.SetDocumentAccessResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

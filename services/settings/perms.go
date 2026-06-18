@@ -220,7 +220,7 @@ func (s *Server) CreateRole(
 	req *pbsettings.CreateRoleRequest,
 ) (*pbsettings.CreateRoleResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.settings.job", req.GetJob(),
+		jobNameLogFieldKey, req.GetJob(),
 		"fivenet.settings.grade", req.GetGrade(),
 	})
 
@@ -267,7 +267,7 @@ func (s *Server) DeleteRole(
 	ctx context.Context,
 	req *pbsettings.DeleteRoleRequest,
 ) (*pbsettings.DeleteRoleResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.role_id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{roleIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -307,7 +307,7 @@ func (s *Server) UpdateRolePerms(
 	ctx context.Context,
 	req *pbsettings.UpdateRolePermsRequest,
 ) (*pbsettings.UpdateRolePermsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.role_id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{roleIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -454,7 +454,7 @@ func (s *Server) GetPermissions(
 	ctx context.Context,
 	req *pbsettings.GetPermissionsRequest,
 ) (*pbsettings.GetPermissionsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.role_id", req.GetRoleId()})
+	logging.InjectFields(ctx, logging.Fields{roleIDLogFieldKey, req.GetRoleId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -493,7 +493,7 @@ func (s *Server) GetEffectivePermissions(
 	ctx context.Context,
 	req *pbsettings.GetEffectivePermissionsRequest,
 ) (*pbsettings.GetEffectivePermissionsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.role_id", req.GetRoleId()})
+	logging.InjectFields(ctx, logging.Fields{roleIDLogFieldKey, req.GetRoleId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -535,9 +535,9 @@ func (s *Server) DeleteFaction(
 	ctx context.Context,
 	req *pbsettings.DeleteFactionRequest,
 ) (*pbsettings.DeleteFactionResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
+	logging.InjectFields(ctx, logging.Fields{jobNameLogFieldKey, req.GetJob()})
 
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
+	logging.InjectFields(ctx, logging.Fields{jobNameLogFieldKey, req.GetJob()})
 
 	roles, err := s.ps.GetJobRoles(ctx, req.GetJob())
 	if err != nil {

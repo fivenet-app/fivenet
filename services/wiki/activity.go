@@ -20,7 +20,7 @@ func (s *Server) ListPageActivity(
 	ctx context.Context,
 	req *pbwiki.ListPageActivityRequest,
 ) (*pbwiki.ListPageActivityResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.GetPageId()})
+	logging.InjectFields(ctx, logging.Fields{pageIDLogFieldKey, req.GetPageId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

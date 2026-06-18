@@ -20,6 +20,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+const qualificationIDLogFieldKey = "fivenet.qualifications.id"
+
 func init() {
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetQualifications,

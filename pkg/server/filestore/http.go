@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/gin-gonic/gin"
@@ -115,7 +116,7 @@ func (s *FilestoreHTTP) HEAD(c *gin.Context) {
 
 	ext := objInfo.GetExtension()
 	mimeType := filetype.GetType(ext)
-	mimeVal := "application/octet-stream"
+	mimeVal := filestore.ApplicationOctetStreamMIMEType
 	if mimeType != filetype.Unknown {
 		mimeVal = mimeType.MIME.Value
 	}
@@ -158,7 +159,7 @@ func (s *FilestoreHTTP) GET(c *gin.Context) {
 
 	ext := objInfo.GetExtension()
 	mimeType := filetype.GetType(ext)
-	mimeVal := "application/octet-stream"
+	mimeVal := filestore.ApplicationOctetStreamMIMEType
 	if mimeType != filetype.Unknown {
 		mimeVal = mimeType.MIME.Value
 	}

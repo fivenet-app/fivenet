@@ -29,7 +29,7 @@ func (s *Server) ListDocumentActivity(
 	ctx context.Context,
 	req *pbdocuments.ListDocumentActivityRequest,
 ) (*pbdocuments.ListDocumentActivityResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

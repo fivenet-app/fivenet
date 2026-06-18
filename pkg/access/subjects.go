@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -560,7 +559,7 @@ func (a *SubjectObjectAccess) aclVisibleIDsComponents(
 
 	tSubjectUsers := table.FivenetACLSubjectUsers.AS("asu")
 	tSubjectQualis := table.FivenetACLSubjectQualifications.AS("asq")
-	tQualiResults := table.FivenetQualificationsResults.AS("qr")
+	tQualiSuccess := table.FivenetQualificationsResultSuccessMap.AS("qrsm")
 	tSubjectJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("asjg")
 	tUserJobs := table.FivenetUserJobs.AS("uj")
 
@@ -580,16 +579,10 @@ func (a *SubjectObjectAccess) aclVisibleIDsComponents(
 					mysql.Int32(-1).AS("grade_specificity"),
 				).
 				FROM(tSubjectQualis.
-					INNER_JOIN(tQualiResults,
+					INNER_JOIN(tQualiSuccess,
 						mysql.AND(
-							tQualiResults.QualificationID.EQ(tSubjectQualis.QualificationID),
-							tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-							tQualiResults.DeletedAt.IS_NULL(),
-							tQualiResults.Status.EQ(
-								mysql.Int32(
-									int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
-								),
-							),
+							tQualiSuccess.QualificationID.EQ(tSubjectQualis.QualificationID),
+							tQualiSuccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						),
 					),
 				),
@@ -663,7 +656,7 @@ func (a *SubjectObjectAccess) aclVisibleIDsComponents(
 					),
 					mysql.AND(
 						a.accessColumns.Effect.IS_FALSE(),
-						a.accessColumns.Access.EQ(mysql.Int32(access)),
+						a.accessColumns.Access.GT_EQ(mysql.Int32(access)),
 					),
 				)),
 		),
@@ -802,6 +795,15 @@ func (a *SubjectObjectAccess) Validate() error {
 	}
 	if a.visibilityTable != nil && a.visibilityColumns == nil {
 		return errors.New("subject object access requires visibility columns for visibility table")
+	}
+	if a.calculatedVisibilitySubjectTable != nil &&
+		(a.calculatedVisibilitySubjectTargetID == nil ||
+			a.calculatedVisibilitySubjectSubjectID == nil ||
+			a.calculatedVisibilitySubjectAccess == nil ||
+			a.calculatedVisibilitySubjectEffect == nil) {
+		return errors.New(
+			"subject object access requires calculated visibility subject target, subject, access, and effect columns",
+		)
 	}
 
 	return nil

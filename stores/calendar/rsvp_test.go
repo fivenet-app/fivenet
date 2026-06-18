@@ -1,6 +1,7 @@
 package calendarstore
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"regexp"
@@ -92,7 +93,7 @@ func TestValidateRecuringOccurrenceKey(t *testing.T) {
 		},
 	}
 
-	store := New(nil)
+	store := New(new(sql.DB))
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()

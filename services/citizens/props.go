@@ -26,7 +26,7 @@ func (s *Server) SetUserProps(
 ) (*pbcitizens.SetUserPropsResponse, error) {
 	logging.InjectFields(
 		ctx,
-		logging.Fields{"fivenet.citizens.user_id", req.GetProps().GetUserId()},
+		logging.Fields{citizenIDLogFieldKey, req.GetProps().GetUserId()},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

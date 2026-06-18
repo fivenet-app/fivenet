@@ -42,3 +42,23 @@ func TestStoreListQualificationsUsesVisibilityCte(t *testing.T) {
 	assert.Empty(t, resp.GetQualifications())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
+
+func TestStoreCheckRequirementsMetForQualificationUsesSuccessMap(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(db)
+
+	query := `(?s).*FROM fivenet_qualifications_requirements AS qualification_requirement LEFT JOIN fivenet_qualifications_result_success_map AS qualification_result_success_map ON .*qualification_result_success_map\.qualification_id = qualification_requirement\.target_qualification_id.*qualification_result_success_map\.user_id = \?.*`
+	mock.ExpectQuery(query).
+		WithArgs(int32(7), int64(42)).
+		WillReturnRows(sqlmock.NewRows([]string{"qualification_id", "userid"}))
+
+	ok, err := store.CheckRequirementsMetForQualification(t.Context(), 42, 7)
+	require.NoError(t, err)
+	require.True(t, ok)
+	require.NoError(t, mock.ExpectationsWereMet())
+}

@@ -88,7 +88,7 @@ func (s *Server) ListApprovalPolicies(
 	ctx context.Context,
 	req *pbdocuments.ListApprovalPoliciesRequest,
 ) (*pbdocuments.ListApprovalPoliciesResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -194,7 +194,7 @@ func (s *Server) UpsertApprovalPolicy(
 ) (*pbdocuments.UpsertApprovalPolicyResponse, error) {
 	pol := req.GetPolicy()
 
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", pol.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, pol.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -291,7 +291,7 @@ func (s *Server) ListApprovalTasks(
 	ctx context.Context,
 	req *pbdocuments.ListApprovalTasksRequest,
 ) (*pbdocuments.ListApprovalTasksResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -1355,7 +1355,7 @@ func (s *Server) RecomputeApprovalPolicyCounters(
 	ctx context.Context,
 	req *pbdocuments.RecomputeApprovalPolicyCountersRequest,
 ) (*pbdocuments.RecomputeApprovalPolicyCountersResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

@@ -241,7 +241,7 @@ func (s *Server) GetDispatch(
 	ctx context.Context,
 	req *pbcentrum.GetDispatchRequest,
 ) (*pbcentrum.GetDispatchResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.dispatch_id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{dispatchIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -397,7 +397,7 @@ func (s *Server) UpdateDispatch(
 ) (*pbcentrum.UpdateDispatchResponse, error) {
 	logging.InjectFields(
 		ctx,
-		logging.Fields{"fivenet.centrum.dispatch_id", req.GetDispatch().GetId()},
+		logging.Fields{dispatchIDLogFieldKey, req.GetDispatch().GetId()},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -517,7 +517,7 @@ func (s *Server) AssignDispatch(
 	req *pbcentrum.AssignDispatchRequest,
 ) (*pbcentrum.AssignDispatchResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.centrum.dispatch_id", req.GetDispatchId(),
+		dispatchIDLogFieldKey, req.GetDispatchId(),
 		"fivenet.centrum.units.to_add", req.GetToAdd(),
 		"fivenet.centrum.units.to_remove", req.GetToRemove(),
 	})

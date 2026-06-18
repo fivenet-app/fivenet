@@ -1,6 +1,7 @@
 package access
 
 import (
+	"database/sql"
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -13,7 +14,7 @@ import (
 func TestSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 	t.Parallel()
 
-	access := NewDocumentsSubjectObjectAccess(nil)
+	access := NewDocumentsSubjectObjectAccess(new(sql.DB))
 
 	stmt := access.VisibleIDsStatement(
 		&userinfo.UserInfo{
@@ -35,11 +36,13 @@ func TestSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 	assert.Contains(t, sql, "ROW_NUMBER() OVER")
 	assert.Contains(t, sql, "fivenet_acl_subject_users")
 	assert.Contains(t, sql, "fivenet_acl_subject_qualifications")
+	assert.Contains(t, sql, "fivenet_qualifications_result_success_map")
 	assert.Contains(t, sql, "fivenet_acl_subject_job_grade_scopes")
 	assert.Contains(t, sql, "fivenet_user_jobs")
 	assert.Contains(t, sql, "fivenet_documents_visibility_public")
 	assert.Contains(t, sql, "fivenet_documents_visibility_creator")
 	assert.Contains(t, sql, "fivenet_documents_access")
+	assert.Contains(t, sql, "effect IS FALSE")
 	assert.Contains(t, sql, "SELECT DISTINCT doc_ids.id AS \"id\"")
 	assert.NotContains(t, sql, "actor_subjects")
 	assert.NotContains(t, sql, "matching_acl")
@@ -51,7 +54,7 @@ func TestSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 func TestSubjectObjectAccessCountStatementShape(t *testing.T) {
 	t.Parallel()
 
-	access := NewDocumentsSubjectObjectAccess(nil)
+	access := NewDocumentsSubjectObjectAccess(new(sql.DB))
 
 	stmt := access.CountVisibleByConditionStatement(
 		&userinfo.UserInfo{
@@ -73,6 +76,8 @@ func TestSubjectObjectAccessCountStatementShape(t *testing.T) {
 	assert.Contains(t, sql, "fivenet_documents_visibility_public")
 	assert.Contains(t, sql, "fivenet_documents_visibility_creator")
 	assert.NotContains(t, sql, "fivenet_documents_visibility_subject")
+	assert.Contains(t, sql, "fivenet_qualifications_result_success_map")
+	assert.NotContains(t, sql, "fivenet_qualifications_results")
 	assert.NotContains(t, sql, "matching_acl")
 	assert.NotContains(t, sql, "visible_objects")
 	assert.Contains(t, sql, "fivenet_documents.deleted_at IS NULL")
@@ -81,7 +86,7 @@ func TestSubjectObjectAccessCountStatementShape(t *testing.T) {
 func TestSubjectObjectAccessCountStatementIncludesDeletedForSuperuser(t *testing.T) {
 	t.Parallel()
 
-	access := NewDocumentsSubjectObjectAccess(nil)
+	access := NewDocumentsSubjectObjectAccess(new(sql.DB))
 
 	stmt := access.CountVisibleByConditionStatement(
 		&userinfo.UserInfo{
@@ -101,10 +106,38 @@ func TestSubjectObjectAccessCountStatementIncludesDeletedForSuperuser(t *testing
 	assert.Contains(t, sql, "COUNT(visible_ids.id) AS \"exact_total\"")
 }
 
+func TestSubjectObjectAccessACLVisibleIDsStatementShape(t *testing.T) {
+	t.Parallel()
+
+	access := NewDocumentsSubjectObjectAccess(new(sql.DB))
+
+	stmt := access.ACLVisibleIDsByConditionStatement(
+		&userinfo.UserInfo{
+			UserId:   7,
+			Job:      "police",
+			JobGrade: 6,
+		},
+		2,
+		false,
+		table.FivenetDocuments.ID.GT(mysql.Int(0)),
+	)
+
+	sql, args := stmt.Sql()
+
+	require.Contains(t, sql, "fivenet_documents_visibility_subject")
+	assert.Contains(t, sql, "fivenet_qualifications_result_success_map")
+	assert.NotContains(t, sql, "fivenet_qualifications_results")
+	assert.NotContains(t, sql, "required_access")
+	assert.Contains(t, sql, "access >= ?")
+	assert.Contains(t, sql, "effect IS TRUE")
+	assert.NotContains(t, sql, "fivenet_documents_access")
+	assert.NotEmpty(t, args)
+}
+
 func TestWikiPageSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 	t.Parallel()
 
-	access := NewWikiPageSubjectObjectAccess(nil)
+	access := NewWikiPageSubjectObjectAccess(new(sql.DB))
 
 	stmt := access.VisibleIDsStatement(
 		&userinfo.UserInfo{

@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_calendar_visibility_public` (
 CREATE TABLE IF NOT EXISTS `fivenet_calendar_visibility_creator` (
   `target_id` bigint unsigned NOT NULL,
   `creator_id` int NOT NULL,
-  `creator_job` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `creator_job` varchar(50) NOT NULL,
   `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`target_id`),
   KEY `idx_fivenet_calendar_visibility_creator_lookup` (`creator_id`, `creator_job`, `target_id`),

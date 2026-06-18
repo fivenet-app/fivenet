@@ -410,15 +410,11 @@ func (s *Store) CheckRequirementsMetForQualification(
 	stmt := tQualiReqs.
 		SELECT(
 			tQualiReqs.TargetQualificationID.AS("qualification_id"),
-			tQualiResult.UserID.AS("userid"),
+			tQualiResultSuccess.UserID.AS("userid"),
 		).
-		FROM(tQualiReqs.LEFT_JOIN(tQualiResult, mysql.AND(
-			tQualiResult.QualificationID.EQ(tQualiReqs.TargetQualificationID),
-			tQualiResult.DeletedAt.IS_NULL(),
-			tQualiResult.UserID.EQ(mysql.Int32(userId)),
-			tQualiResult.Status.EQ(
-				mysql.Int32(int32(resqualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
-			),
+		FROM(tQualiReqs.LEFT_JOIN(tQualiResultSuccess, mysql.AND(
+			tQualiResultSuccess.QualificationID.EQ(tQualiReqs.TargetQualificationID),
+			tQualiResultSuccess.UserID.EQ(mysql.Int32(userId)),
 		))).
 		WHERE(tQualiReqs.QualificationID.EQ(mysql.Int64(qualificationId)))
 

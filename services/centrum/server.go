@@ -36,6 +36,11 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
+const (
+	unitIDLogFieldKey     = "fivenet.centrum.unit_id"
+	dispatchIDLogFieldKey = "fivenet.centrum.dispatch_id"
+)
+
 func init() {
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetCentrumSettings,

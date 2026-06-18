@@ -1,6 +1,7 @@
 package calendarstore
 
 import (
+	"database/sql"
 	"regexp"
 	"testing"
 
@@ -34,7 +35,7 @@ func TestCountCalendarsReturnsCount(t *testing.T) {
 func TestListCalendarsStmtOrdersByCalendarIds(t *testing.T) {
 	t.Parallel()
 
-	store := New(nil).(*Store)
+	store := New(new(sql.DB)).(*Store)
 	stmt := store.listCalendarsStmt(
 		ListQuery{
 			UserInfo:    &userinfo.UserInfo{UserId: 7, Superuser: true},
@@ -57,7 +58,7 @@ func TestListCalendarsStmtOrdersByCalendarIds(t *testing.T) {
 func TestListCalendarsStmtFiltersOnlyPublicWhenRequested(t *testing.T) {
 	t.Parallel()
 
-	store := New(nil).(*Store)
+	store := New(new(sql.DB)).(*Store)
 	stmt := store.listCalendarsStmt(
 		ListQuery{UserInfo: &userinfo.UserInfo{UserId: 7, Job: "police"}, OnlyPublic: true},
 		7,
@@ -74,7 +75,7 @@ func TestListCalendarsStmtFiltersOnlyPublicWhenRequested(t *testing.T) {
 func TestGetCalendarStmtIncludesCreatorJoins(t *testing.T) {
 	t.Parallel()
 
-	store := New(nil).(*Store)
+	store := New(new(sql.DB)).(*Store)
 	stmt := store.getCalendarStmt(&userinfo.UserInfo{UserId: 7}, mysql.Bool(true))
 
 	sql, _ := stmt.Sql()

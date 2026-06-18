@@ -77,7 +77,7 @@ func (s *Server) GetPage(
 	ctx context.Context,
 	req *pbwiki.GetPageRequest,
 ) (*pbwiki.GetPageResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{pageIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -284,7 +284,7 @@ func (s *Server) UpdatePage(
 	ctx context.Context,
 	req *pbwiki.UpdatePageRequest,
 ) (*pbwiki.UpdatePageResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.GetPage().GetId()})
+	logging.InjectFields(ctx, logging.Fields{pageIDLogFieldKey, req.GetPage().GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -499,7 +499,7 @@ func (s *Server) MovePage(
 	ctx context.Context,
 	req *pbwiki.MovePageRequest,
 ) (*pbwiki.MovePageResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.GetPageId()})
+	logging.InjectFields(ctx, logging.Fields{pageIDLogFieldKey, req.GetPageId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -589,7 +589,7 @@ func (s *Server) DeletePage(
 	ctx context.Context,
 	req *pbwiki.DeletePageRequest,
 ) (*pbwiki.DeletePageResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{pageIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

@@ -193,7 +193,7 @@ func (s *Server) DeleteUnit(
 	ctx context.Context,
 	req *pbcentrum.DeleteUnitRequest,
 ) (*pbcentrum.DeleteUnitResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", req.GetUnitId()})
+	logging.InjectFields(ctx, logging.Fields{unitIDLogFieldKey, req.GetUnitId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -221,7 +221,7 @@ func (s *Server) UpdateUnitStatus(
 	ctx context.Context,
 	req *pbcentrum.UpdateUnitStatusRequest,
 ) (*pbcentrum.UpdateUnitStatusResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", req.GetUnitId()})
+	logging.InjectFields(ctx, logging.Fields{unitIDLogFieldKey, req.GetUnitId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -275,7 +275,7 @@ func (s *Server) AssignUnit(
 	req *pbcentrum.AssignUnitRequest,
 ) (*pbcentrum.AssignUnitResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.centrum.unit_id", req.GetUnitId(),
+		unitIDLogFieldKey, req.GetUnitId(),
 		"fivenet.centrum.users.to_add", req.GetToAdd(),
 		"fivenet.centrum.users.to_remove", req.GetToRemove(),
 	})
@@ -329,7 +329,7 @@ func (s *Server) JoinUnit(
 	defer cancel()
 
 	if req.UnitId != nil {
-		logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", req.GetUnitId()})
+		logging.InjectFields(ctx, logging.Fields{unitIDLogFieldKey, req.GetUnitId()})
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -451,7 +451,7 @@ func (s *Server) ListUnitActivity(
 	ctx context.Context,
 	req *pbcentrum.ListUnitActivityRequest,
 ) (*pbcentrum.ListUnitActivityResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{unitIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

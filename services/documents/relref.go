@@ -25,7 +25,7 @@ func (s *Server) GetDocumentReferences(
 	ctx context.Context,
 	req *pbdocuments.GetDocumentReferencesRequest,
 ) (*pbdocuments.GetDocumentReferencesResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -90,7 +90,7 @@ func (s *Server) GetDocumentRelations(
 	ctx context.Context,
 	req *pbdocuments.GetDocumentRelationsRequest,
 ) (*pbdocuments.GetDocumentRelationsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -223,7 +223,7 @@ func (s *Server) AddDocumentRelation(
 	req *pbdocuments.AddDocumentRelationRequest,
 ) (*pbdocuments.AddDocumentRelationResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.documents.id", req.GetRelation().GetDocumentId(),
+		documentIDLogFieldKey, req.GetRelation().GetDocumentId(),
 		"fivenet.documents.source_user_id", req.GetRelation().GetSourceUserId(),
 		"fivenet.documents.target_user_id", req.GetRelation().GetTargetUserId(),
 	})
@@ -303,7 +303,7 @@ func (s *Server) RemoveDocumentRelation(
 	ctx context.Context,
 	req *pbdocuments.RemoveDocumentRelationRequest,
 ) (*pbdocuments.RemoveDocumentRelationResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

@@ -32,7 +32,12 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-const housekeeperMinDays = 60
+const (
+	housekeeperMinDays = 60
+
+	documentIDLogFieldKey = "fivenet.documents.id"
+	templateIDLogFieldKey = "fivenet.documents.template_id"
+)
 
 func init() {
 	// Documents

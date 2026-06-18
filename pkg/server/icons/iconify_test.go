@@ -97,7 +97,7 @@ func TestBuildTargetURL(t *testing.T) {
 		{
 			name:       "invalid path suffix",
 			apiURL:     "https://api.iconify.design",
-			path:       "mdi",
+			path:       MDIIconSetName,
 			query:      url.Values{"icons": []string{"home"}},
 			wantErr:    true,
 			wantStatus: http.StatusBadRequest,

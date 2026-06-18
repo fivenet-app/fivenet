@@ -49,7 +49,7 @@ func TestUploadFilterValidate(t *testing.T) {
 			name:        "Image filter rejects unsupported content type",
 			filter:      NewImageUploadFilter(),
 			fileName:    "user_profile_pictures/photo.png",
-			contentType: "application/octet-stream",
+			contentType: ApplicationOctetStreamMIMEType,
 			expectError: true,
 		},
 		{

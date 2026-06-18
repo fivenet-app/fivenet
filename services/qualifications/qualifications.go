@@ -68,7 +68,7 @@ func (s *Server) GetQualification(
 	ctx context.Context,
 	req *pbqualifications.GetQualificationRequest,
 ) (*pbqualifications.GetQualificationResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -272,7 +272,7 @@ func (s *Server) UpdateQualification(
 ) (*pbqualifications.UpdateQualificationResponse, error) {
 	logging.InjectFields(
 		ctx,
-		logging.Fields{"fivenet.qualifications.id", req.GetQualification().GetId()},
+		logging.Fields{qualificationIDLogFieldKey, req.GetQualification().GetId()},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -428,7 +428,7 @@ func (s *Server) DeleteQualification(
 	ctx context.Context,
 	req *pbqualifications.DeleteQualificationRequest,
 ) (*pbqualifications.DeleteQualificationResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

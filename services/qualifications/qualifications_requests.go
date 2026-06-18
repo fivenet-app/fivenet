@@ -28,7 +28,7 @@ func (s *Server) ListQualificationRequests(
 	if req.GetQualificationId() > 0 {
 		logging.InjectFields(
 			ctx,
-			logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()},
+			logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()},
 		)
 	}
 

@@ -38,7 +38,9 @@ func (s *Store) ListQualificationsResults(
 		visibilityCondition = visibilityCondition.AND(tQuali.DeletedAt.IS_NULL())
 	}
 	if opts.QualificationID > 0 {
-		visibilityCondition = visibilityCondition.AND(tQuali.ID.EQ(mysql.Int64(opts.QualificationID)))
+		visibilityCondition = visibilityCondition.AND(
+			tQuali.ID.EQ(mysql.Int64(opts.QualificationID)),
+		)
 	}
 	visibleGradeCondition := visibilityCondition
 	visibleViewCondition := visibilityCondition
@@ -355,8 +357,20 @@ func (s *Store) DeleteQualificationResult(ctx context.Context, tx qrm.DB, result
 		WHERE(tQualiResult.ID.EQ(mysql.Int64(resultId))).
 		LIMIT(1)
 
-	_, err := stmt.ExecContext(ctx, tx)
-	return err
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return nil
+	}
+
+	return s.deleteQualificationResultSuccessMapByResultID(ctx, tx, resultId)
 }
 
 func (s *Store) CreateQualificationResult(
@@ -401,7 +415,25 @@ func (s *Store) CreateQualificationResult(
 		return 0, err
 	}
 
-	return res.LastInsertId()
+	lastInsertId, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	if status == resqualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
+		if err := s.syncQualificationResultSuccessMap(
+			ctx,
+			tx,
+			lastInsertId,
+			qualificationId,
+			userId,
+			true,
+		); err != nil {
+			return 0, err
+		}
+	}
+
+	return lastInsertId, nil
 }
 
 func (s *Store) UpdateQualificationResult(
@@ -435,8 +467,27 @@ func (s *Store) UpdateQualificationResult(
 		)).
 		LIMIT(1)
 
-	_, err := stmt.ExecContext(ctx, tx)
-	return err
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return nil
+	}
+
+	return s.syncQualificationResultSuccessMap(
+		ctx,
+		tx,
+		resultId,
+		qualificationId,
+		userId,
+		status == resqualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
+	)
 }
 
 func (s *Store) UpdateExamResponseGrading(

@@ -25,10 +25,7 @@ const (
 	qualificationsQueryLimit = 500
 )
 
-var (
-	tQualifications        = table.FivenetQualifications
-	tQualificationsResults = table.FivenetQualificationsResults
-)
+var tQualifications = table.FivenetQualifications
 
 type QualificationsSync struct {
 	*BaseModule
@@ -240,6 +237,7 @@ func (g *QualificationsSync) queryUsers(
 	tAccs := table.FivenetAccounts
 	tUsers := table.FivenetUser.AS("users")
 	tUserJobs := table.FivenetUserJobs.AS("user_jobs")
+	tSuccessMap := table.FivenetQualificationsResultSuccessMap.AS("qualification_success_map")
 
 	stmt := tAccsOauth2.
 		SELECT(
@@ -250,12 +248,12 @@ func (g *QualificationsSync) queryUsers(
 			tUserJobs.Grade.AS("jobs.grade"),
 		).
 		FROM(
-			tQualificationsResults.
+			tSuccessMap.
 				INNER_JOIN(tQualifications,
-					tQualifications.ID.EQ(tQualificationsResults.QualificationID),
+					tQualifications.ID.EQ(tSuccessMap.QualificationID),
 				).
 				INNER_JOIN(tUsers,
-					tUsers.ID.EQ(tQualificationsResults.UserID),
+					tUsers.ID.EQ(tSuccessMap.UserID),
 				).
 				INNER_JOIN(tAccs,
 					mysql.OR(
@@ -277,11 +275,7 @@ func (g *QualificationsSync) queryUsers(
 			tAccsOauth2.Provider.EQ(mysql.String("discord")),
 			tQualifications.Job.EQ(mysql.String(g.job)),
 			tQualifications.DeletedAt.IS_NULL(),
-			tQualificationsResults.QualificationID.EQ(mysql.Int64(qualificationId)),
-			tQualificationsResults.DeletedAt.IS_NULL(),
-			tQualificationsResults.Status.EQ(
-				mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
-			),
+			tSuccessMap.QualificationID.EQ(mysql.Int64(qualificationId)),
 		)).
 		OFFSET(offset).
 		LIMIT(qualificationsQueryLimit)

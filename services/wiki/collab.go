@@ -28,7 +28,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 		return err
 	}
 
-	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", pageId})
+	logging.InjectFields(ctx, logging.Fields{pageIDLogFieldKey, pageId})
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,

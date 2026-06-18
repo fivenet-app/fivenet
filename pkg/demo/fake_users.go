@@ -708,14 +708,14 @@ func (d *Demo) buildDemoAccountCharProfiles(accountID int64, license string) []*
 		{Job: targetJob, Grade: first.PrimaryJobGrade, IsPrimary: true},
 	}
 
-	secondJob := d.pickNonTargetJob(targetJob, nil, "ambulance", "doj")
+	secondJob := d.pickNonTargetJob(targetJob, nil, ambulanceJob, dojJob)
 	second := d.newAccountCharProfile(accountID, license, 2, secondJob)
 
 	exclude := map[string]struct{}{
 		targetJob: {},
 		secondJob: {},
 	}
-	thirdJob := d.pickNonTargetJob(targetJob, exclude, "doj", "mechanic", "ambulance", "cafe")
+	thirdJob := d.pickNonTargetJob(targetJob, exclude, dojJob, mechanicJob, ambulanceJob, cafeJob)
 	third := d.newAccountCharProfile(accountID, license, 3, thirdJob)
 
 	return []*fakeUserProfile{first, second, third}
@@ -817,7 +817,7 @@ func (d *Demo) pickNonTargetJob(
 		}
 	}
 
-	return "unemployed"
+	return unemployedJob
 }
 
 func (d *Demo) buildFakeUserProfile(
@@ -890,7 +890,7 @@ func (d *Demo) buildTargetJobUserProfile(index int, availableLicenses []string) 
 func (d *Demo) targetJobName() string {
 	targetJob := strings.TrimSpace(d.cfg.Demo.TargetJob)
 	if targetJob == "" {
-		return "police"
+		return PoliceJob
 	}
 	return targetJob
 }
@@ -930,7 +930,7 @@ func (d *Demo) fakePhoneNumber(index int) string {
 
 func (d *Demo) pickUserJobs() []fakeUserJob {
 	if len(d.demoJobNames) == 0 {
-		return []fakeUserJob{{Job: "unemployed", Grade: 1, IsPrimary: true}}
+		return []fakeUserJob{{Job: unemployedJob, Grade: 1, IsPrimary: true}}
 	}
 
 	primaryJob := d.demoJobNames[d.randIntN(len(d.demoJobNames))]
@@ -1292,7 +1292,7 @@ func (d *Demo) upsertFakeUserProps(
 ) error {
 	var job *string
 	var jobGrade *int32
-	if d.randIntN(2) == 0 && profile.PrimaryJob != demoUnemployedJobName {
+	if d.randIntN(2) == 0 && profile.PrimaryJob != unemployedJobName {
 		job = &profile.PrimaryJob
 		jobGrade = &profile.PrimaryJobGrade
 	}

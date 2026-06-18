@@ -68,7 +68,7 @@ func (s *Server) GetAllPermissions(
 	ctx context.Context,
 	req *pbsettings.GetAllPermissionsRequest,
 ) (*pbsettings.GetAllPermissionsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
+	logging.InjectFields(ctx, logging.Fields{jobNameLogFieldKey, req.GetJob()})
 
 	job := s.enricher.GetJobByName(req.GetJob())
 	if job == nil {
@@ -96,7 +96,7 @@ func (s *Server) GetJobLimits(
 	ctx context.Context,
 	req *pbsettings.GetJobLimitsRequest,
 ) (*pbsettings.GetJobLimitsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
+	logging.InjectFields(ctx, logging.Fields{jobNameLogFieldKey, req.GetJob()})
 
 	job := s.enricher.GetJobByName(req.GetJob())
 	if job == nil {
@@ -124,7 +124,7 @@ func (s *Server) UpdateJobLimits(
 	ctx context.Context,
 	req *pbsettings.UpdateJobLimitsRequest,
 ) (*pbsettings.UpdateJobLimitsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
+	logging.InjectFields(ctx, logging.Fields{jobNameLogFieldKey, req.GetJob()})
 
 	job := s.enricher.GetJobByName(req.GetJob())
 	if job == nil {

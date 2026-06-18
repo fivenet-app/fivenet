@@ -108,7 +108,7 @@ func (s *Server) GetTemplate(
 	ctx context.Context,
 	req *pbdocuments.GetTemplateRequest,
 ) (*pbdocuments.GetTemplateResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.template_id", req.GetTemplateId()})
+	logging.InjectFields(ctx, logging.Fields{templateIDLogFieldKey, req.GetTemplateId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -304,7 +304,7 @@ func (s *Server) UpdateTemplate(
 ) (*pbdocuments.UpdateTemplateResponse, error) {
 	logging.InjectFields(
 		ctx,
-		logging.Fields{"fivenet.documents.template_id", req.GetTemplate().GetId()},
+		logging.Fields{templateIDLogFieldKey, req.GetTemplate().GetId()},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -408,7 +408,7 @@ func (s *Server) DeleteTemplate(
 	ctx context.Context,
 	req *pbdocuments.DeleteTemplateRequest,
 ) (*pbdocuments.DeleteTemplateResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.template_id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{templateIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

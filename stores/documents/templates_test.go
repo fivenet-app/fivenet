@@ -23,7 +23,8 @@ func TestStoreListTemplates(t *testing.T) {
 	store := New(db)
 
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT template_short.id AS "template_short.id"`) +
-		`(?s).*` + regexp.QuoteMeta(`FROM fivenet_documents_templates AS template_short LEFT JOIN fivenet_documents_categories AS category ON (category.id = template_short.category_id) ORDER BY template_short.weight DESC, template_short.id ASC;`)).
+		`(?s).*` + regexp.QuoteMeta(`FROM fivenet_documents_templates AS template_short LEFT JOIN fivenet_documents_categories AS category ON (category.id = template_short.category_id)`) +
+		`(?s).*` + regexp.QuoteMeta(`WHERE template_short.creator_job = ? ORDER BY template_short.weight DESC, template_short.id ASC;`)).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 	templates, err := store.ListTemplates(t.Context(), false, &userinfo.UserInfo{Superuser: true})
@@ -43,9 +44,9 @@ func TestStoreListTemplatesUsesAclBranchesForNonSuperuser(t *testing.T) {
 
 	store := New(db)
 
-	mock.ExpectQuery(`(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*` +
+	mock.ExpectQuery(`(?s).*fivenet_documents_templates_access.*` +
 		regexp.QuoteMeta(`SELECT template_short.id AS "template_short.id"`) +
-		`.*fivenet_documents_templates_visibility_creator.*fivenet_documents_templates_visibility_subject.*fivenet_documents_templates_access.*ORDER BY template_short.weight DESC, template_short.id ASC;`).
+		`.*ORDER BY template_short.weight DESC, template_short.id ASC;`).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 	templates, err := store.ListTemplates(

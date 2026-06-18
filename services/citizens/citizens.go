@@ -83,7 +83,7 @@ func (s *Server) GetUser(
 	ctx context.Context,
 	req *pbcitizens.GetUserRequest,
 ) (*pbcitizens.GetUserResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", req.GetUserId()})
+	logging.InjectFields(ctx, logging.Fields{citizenIDLogFieldKey, req.GetUserId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

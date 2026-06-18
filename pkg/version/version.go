@@ -2,6 +2,9 @@
 package version
 
 const (
+	// Project Name for display.
+	Project = "FiveNet"
+
 	// Owner is the owner of the source repository.
 	Owner = "fivenet-app"
 	// Repo is the name of the source repository.

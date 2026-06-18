@@ -1,6 +1,7 @@
 package calendarstore
 
 import (
+	"database/sql"
 	"testing"
 	"time"
 
@@ -165,7 +166,7 @@ func TestFilterUpcomingCalendarEntries(t *testing.T) {
 		},
 	}
 
-	store := New(nil)
+	store := New(new(sql.DB))
 
 	filtered := store.FilterUpcomingCalendarEntries(entries, userInfo)
 	require.Len(t, filtered, 3)

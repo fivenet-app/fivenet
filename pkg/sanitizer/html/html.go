@@ -84,6 +84,7 @@ func setupSanitizer() {
 	sanitizer.AllowStyles("height").OnElements("img")
 	sanitizer.AllowStyles("width").OnElements("img")
 	sanitizer.AllowStyles("margin").OnElements("img")
+	sanitizer.AllowAttrs("data-align", "data-file-id").OnElements("img")
 
 	// Allow the 'color' property with valid RGB(A) hex values only (on any element allowed a 'style' attribute)
 	sanitizer.AllowStyles("color").Matching(colorRegex).Globally()

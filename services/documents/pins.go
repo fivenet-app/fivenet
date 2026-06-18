@@ -47,7 +47,7 @@ func (s *Server) ToggleDocumentPin(
 	ctx context.Context,
 	req *pbdocuments.ToggleDocumentPinRequest,
 ) (*pbdocuments.ToggleDocumentPinResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

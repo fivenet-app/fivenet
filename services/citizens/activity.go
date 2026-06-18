@@ -17,7 +17,7 @@ func (s *Server) ListUserActivity(
 	ctx context.Context,
 	req *pbcitizens.ListUserActivityRequest,
 ) (*pbcitizens.ListUserActivityResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", req.GetUserId()})
+	logging.InjectFields(ctx, logging.Fields{citizenIDLogFieldKey, req.GetUserId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

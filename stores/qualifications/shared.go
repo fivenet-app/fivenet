@@ -9,9 +9,12 @@ const (
 )
 
 var (
-	tQuali        = table.FivenetQualifications.AS("qualification")
-	tQualiReqs    = table.FivenetQualificationsRequirements.AS("qualification_requirement")
-	tQualiResult  = table.FivenetQualificationsResults.AS("qualification_result")
+	tQuali              = table.FivenetQualifications.AS("qualification")
+	tQualiReqs          = table.FivenetQualificationsRequirements.AS("qualification_requirement")
+	tQualiResult        = table.FivenetQualificationsResults.AS("qualification_result")
+	tQualiResultSuccess = table.FivenetQualificationsResultSuccessMap.AS(
+		"qualification_result_success_map",
+	)
 	tQualiReq     = table.FivenetQualificationsRequests.AS("qualification_request")
 	tExamQuestion = table.FivenetQualificationsExamQuestions.AS("exam_question")
 	tExamResponse = table.FivenetQualificationsExamResponses.AS("exam_response")

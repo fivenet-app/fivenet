@@ -3,11 +3,10 @@ package access
 import (
 	"context"
 	"errors"
-	"fmt"
 	"slices"
+	"strconv"
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -166,7 +165,7 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 	columns := a.accessColumns
 	tSubjectUsers := table.FivenetACLSubjectUsers.AS("subject_acl_user_exists")
 	tSubjectQualis := table.FivenetACLSubjectQualifications.AS("subject_acl_qualification_exists")
-	tQualiResults := table.FivenetQualificationsResults.AS(
+	tQualiSuccess := table.FivenetQualificationsResultSuccessMap.AS(
 		"subject_acl_qualification_results_exists",
 	)
 	tSubjectJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("subject_acl_job_grade_exists")
@@ -191,20 +190,12 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 						tSubjectQualis.
 							SELECT(tSubjectQualis.SubjectID).
 							FROM(tSubjectQualis.
-								INNER_JOIN(tQualiResults,
+								INNER_JOIN(tQualiSuccess,
 									mysql.AND(
-										tQualiResults.QualificationID.EQ(
+										tQualiSuccess.QualificationID.EQ(
 											tSubjectQualis.QualificationID,
 										),
-										tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-										tQualiResults.DeletedAt.IS_NULL(),
-										tQualiResults.Status.EQ(
-											mysql.Int32(
-												int32(
-													qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
-												),
-											),
-										),
+										tQualiSuccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 									),
 								),
 							),
@@ -344,10 +335,13 @@ func (a *SubjectObjectAccess) createDeniedAccess(
 	subjectID int64,
 	opts SubjectAccessOptions,
 ) error {
-	for _, level := range opts.DeniedAccessLevels {
-		if err := a.CreateEntry(ctx, tx, targetID, subjectID, level, AccessEffectDeny); err != nil {
-			return err
-		}
+	access := opts.BlockedAccess
+	if _, maxAccess, ok := accessRangeBounds(opts.DeniedAccessLevels); ok {
+		access = maxAccess
+	}
+
+	if err := a.CreateEntry(ctx, tx, targetID, subjectID, access, AccessEffectDeny); err != nil {
+		return err
 	}
 
 	return nil
@@ -392,11 +386,8 @@ func compareSubjectJobAccess(
 	return compareSubjectAccessEntries(
 		current,
 		in,
-		func(entry *resourcesaccess.JobAccess) subjectAccessKey {
-			return subjectAccessKey{
-				job:          entry.GetJob(),
-				minimumGrade: entry.GetMinimumGrade(),
-			}
+		func(entry *resourcesaccess.JobAccess) int64 {
+			return entry.GetId()
 		},
 		func(entry *resourcesaccess.JobAccess) int64 {
 			return entry.GetId()
@@ -417,8 +408,8 @@ func compareSubjectUserAccess(
 	return compareSubjectAccessEntries(
 		current,
 		in,
-		func(entry *resourcesaccess.UserAccess) int32 {
-			return entry.GetUserId()
+		func(entry *resourcesaccess.UserAccess) int64 {
+			return entry.GetId()
 		},
 		func(entry *resourcesaccess.UserAccess) int64 {
 			return entry.GetId()
@@ -440,7 +431,7 @@ func compareSubjectQualificationAccess(
 		current,
 		in,
 		func(entry *resourcesaccess.QualificationAccess) int64 {
-			return entry.GetQualificationId()
+			return entry.GetId()
 		},
 		func(entry *resourcesaccess.QualificationAccess) int64 {
 			return entry.GetId()
@@ -452,11 +443,6 @@ func compareSubjectQualificationAccess(
 			entry.SetAccess(access)
 		},
 	)
-}
-
-type subjectAccessKey struct {
-	job          string
-	minimumGrade int32
 }
 
 func compareSubjectAccessEntries[T any, K comparable](
@@ -548,9 +534,12 @@ func subjectAccessRowsToProto(
 		Qualifications: make([]*resourcesaccess.QualificationAccess, 0, len(rows)),
 	}
 
-	blockedJobKeys := map[string]struct{}{}
-	blockedUserIDs := map[int32]struct{}{}
-	blockedQualificationIDs := map[int64]struct{}{}
+	blockedJobIndexes := map[subjectJobAccessKeyValue]int{}
+	blockedJobAccesses := map[subjectJobAccessKeyValue]int32{}
+	blockedUserIndexes := map[int32]int{}
+	blockedUserAccesses := map[int32]int32{}
+	blockedQualificationIndexes := map[int64]int{}
+	blockedQualificationAccesses := map[int64]int32{}
 	allowedJobs := make([]*resourcesaccess.JobAccess, 0, len(rows))
 	allowedUsers := make([]*resourcesaccess.UserAccess, 0, len(rows))
 	allowedQualifications := make([]*resourcesaccess.QualificationAccess, 0, len(rows))
@@ -563,20 +552,31 @@ func subjectAccessRowsToProto(
 			}
 
 			entry := &resourcesaccess.JobAccess{
-				Id:           row.ID,
-				TargetId:     row.TargetID,
-				Job:          *row.ACLJob,
-				MinimumGrade: *row.ACLMinimumGrade,
-				Access:       row.Access,
+				Id:             row.ID,
+				TargetId:       row.TargetID,
+				Job:            *row.ACLJob,
+				MinimumGrade:   *row.ACLMinimumGrade,
+				Access:         row.Access,
+				RequiredAccess: requiredAccessPtr(row.Access),
 			}
 
 			if !row.Effect {
-				key := subjectJobAccessKey(entry.GetJob(), entry.GetMinimumGrade())
-				if _, ok := blockedJobKeys[key]; ok {
+				key := subjectJobAccessKeyValue{
+					job:          entry.GetJob(),
+					minimumGrade: entry.GetMinimumGrade(),
+				}
+				if idx, ok := blockedJobIndexes[key]; ok {
+					if row.Access <= blockedJobAccesses[key] {
+						continue
+					}
+					blockedJobAccesses[key] = row.Access
+					out.Jobs[idx].Id = row.ID
 					continue
 				}
-				blockedJobKeys[key] = struct{}{}
+				blockedJobIndexes[key] = len(out.Jobs)
+				blockedJobAccesses[key] = row.Access
 				entry.Access = opts.BlockedAccess
+				entry.RequiredAccess = requiredAccessPtr(deniedAccessFloor(opts, row.Access))
 				out.Jobs = append(out.Jobs, entry)
 				continue
 			}
@@ -589,19 +589,27 @@ func subjectAccessRowsToProto(
 			}
 
 			entry := &resourcesaccess.UserAccess{
-				Id:       row.ID,
-				TargetId: row.TargetID,
-				UserId:   *row.SubjectUserID,
-				Access:   row.Access,
-				User:     subjectAccessUserShort(row),
+				Id:             row.ID,
+				TargetId:       row.TargetID,
+				UserId:         *row.SubjectUserID,
+				Access:         row.Access,
+				RequiredAccess: requiredAccessPtr(row.Access),
+				User:           subjectAccessUserShort(row),
 			}
 
 			if !row.Effect {
-				if _, ok := blockedUserIDs[entry.GetUserId()]; ok {
+				if idx, ok := blockedUserIndexes[entry.GetUserId()]; ok {
+					if row.Access <= blockedUserAccesses[entry.GetUserId()] {
+						continue
+					}
+					blockedUserAccesses[entry.GetUserId()] = row.Access
+					out.Users[idx].Id = row.ID
 					continue
 				}
-				blockedUserIDs[entry.GetUserId()] = struct{}{}
+				blockedUserIndexes[entry.GetUserId()] = len(out.Users)
+				blockedUserAccesses[entry.GetUserId()] = row.Access
 				entry.Access = opts.BlockedAccess
+				entry.RequiredAccess = requiredAccessPtr(deniedAccessFloor(opts, row.Access))
 				out.Users = append(out.Users, entry)
 				continue
 			}
@@ -617,14 +625,22 @@ func subjectAccessRowsToProto(
 				TargetId:        row.TargetID,
 				QualificationId: *row.ACLQualificationID,
 				Access:          row.Access,
+				RequiredAccess:  requiredAccessPtr(row.Access),
 			}
 
 			if !row.Effect {
-				if _, ok := blockedQualificationIDs[entry.GetQualificationId()]; ok {
+				if idx, ok := blockedQualificationIndexes[entry.GetQualificationId()]; ok {
+					if row.Access <= blockedQualificationAccesses[entry.GetQualificationId()] {
+						continue
+					}
+					blockedQualificationAccesses[entry.GetQualificationId()] = row.Access
+					out.Qualifications[idx].Id = row.ID
 					continue
 				}
-				blockedQualificationIDs[entry.GetQualificationId()] = struct{}{}
+				blockedQualificationIndexes[entry.GetQualificationId()] = len(out.Qualifications)
+				blockedQualificationAccesses[entry.GetQualificationId()] = row.Access
 				entry.Access = opts.BlockedAccess
+				entry.RequiredAccess = requiredAccessPtr(deniedAccessFloor(opts, row.Access))
 				out.Qualifications = append(out.Qualifications, entry)
 				continue
 			}
@@ -633,26 +649,9 @@ func subjectAccessRowsToProto(
 		}
 	}
 
-	out.Jobs = append(out.Jobs, filterAllowedSubjectJobAccess(allowedJobs, blockedJobKeys)...)
-	out.Users = append(out.Users, filterAllowedSubjectUserAccess(allowedUsers, blockedUserIDs)...)
-	out.Qualifications = append(
-		out.Qualifications,
-		filterAllowedSubjectQualificationAccess(allowedQualifications, blockedQualificationIDs)...)
-
-	return out
-}
-
-func filterAllowedSubjectQualificationAccess(
-	rows []*resourcesaccess.QualificationAccess,
-	blocked map[int64]struct{},
-) []*resourcesaccess.QualificationAccess {
-	out := make([]*resourcesaccess.QualificationAccess, 0, len(rows))
-	for _, row := range rows {
-		if _, ok := blocked[row.GetQualificationId()]; ok {
-			continue
-		}
-		out = append(out, row)
-	}
+	out.Jobs = append(out.Jobs, allowedJobs...)
+	out.Users = append(out.Users, allowedUsers...)
+	out.Qualifications = append(out.Qualifications, allowedQualifications...)
 
 	return out
 }
@@ -677,36 +676,42 @@ func subjectAccessUserShort(row subjectAccessRow) *usershort.UserShort {
 	return user
 }
 
+type subjectJobAccessKeyValue struct {
+	job          string
+	minimumGrade int32
+}
+
+func requiredAccessPtr(access int32) *int32 {
+	v := access
+	return &v
+}
+
+func deniedAccessFloor(opts SubjectAccessOptions, access int32) int32 {
+	if floor, _, ok := accessRangeBounds(opts.DeniedAccessLevels); ok {
+		return floor
+	}
+	return access
+}
+
+func accessRangeBounds(levels []int32) (int32, int32, bool) {
+	if len(levels) == 0 {
+		return 0, 0, false
+	}
+
+	minLevel := levels[0]
+	maxLevel := levels[0]
+	for _, level := range levels[1:] {
+		if level < minLevel {
+			minLevel = level
+		}
+		if level > maxLevel {
+			maxLevel = level
+		}
+	}
+
+	return minLevel, maxLevel, true
+}
+
 func subjectJobAccessKey(job string, minimumGrade int32) string {
-	return fmt.Sprintf("%s:%d", job, minimumGrade)
-}
-
-func filterAllowedSubjectJobAccess(
-	rows []*resourcesaccess.JobAccess,
-	blocked map[string]struct{},
-) []*resourcesaccess.JobAccess {
-	out := make([]*resourcesaccess.JobAccess, 0, len(rows))
-	for _, row := range rows {
-		if _, ok := blocked[subjectJobAccessKey(row.GetJob(), row.GetMinimumGrade())]; ok {
-			continue
-		}
-		out = append(out, row)
-	}
-
-	return out
-}
-
-func filterAllowedSubjectUserAccess(
-	rows []*resourcesaccess.UserAccess,
-	blocked map[int32]struct{},
-) []*resourcesaccess.UserAccess {
-	out := make([]*resourcesaccess.UserAccess, 0, len(rows))
-	for _, row := range rows {
-		if _, ok := blocked[row.GetUserId()]; ok {
-			continue
-		}
-		out = append(out, row)
-	}
-
-	return out
+	return job + ":" + strconv.FormatInt(int64(minimumGrade), 10)
 }

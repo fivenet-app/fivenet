@@ -106,9 +106,9 @@ func (x *Content) Extract() *ExtractedContent {
 		return &ExtractedContent{}
 	}
 
-	if x.TiptapJson != nil {
+	if x.GetTiptapJson() != nil {
 		return ExtractFromTiptap(x.GetTiptapJson())
-	} else if x.Content != nil {
+	} else if x.GetContent() != nil {
 		return ExtractFromHTML(x.GetContent())
 	}
 

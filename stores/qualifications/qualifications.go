@@ -119,9 +119,25 @@ func (s *Store) DeleteQualification(
 			SET(tQuali.DeletedAt.SET(mysql.TimestampT(deletedAt.AsTime())))
 	}
 
-	_, err := stmt.
+	res, err := stmt.
 		WHERE(tQuali.ID.EQ(mysql.Int64(qualificationId))).
 		LIMIT(1).
 		ExecContext(ctx, tx)
-	return err
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return nil
+	}
+
+	if deletedAt != nil {
+		return s.deleteQualificationResultSuccessMapByQualificationID(ctx, tx, qualificationId)
+	}
+
+	return s.rebuildQualificationResultSuccessMapByQualificationID(ctx, tx, qualificationId)
 }

@@ -3,8 +3,8 @@ package access
 import (
 	"context"
 	"errors"
+	"sort"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -177,7 +177,8 @@ func (b *calculatedVisibilityBackend) RefreshTargetVisibilityWithCreator(
 	if err != nil {
 		return err
 	}
-	for _, aclRow := range aclRows {
+	collapsedACLRows := collapseCalculatedVisibilityACLRows(aclRows)
+	for _, aclRow := range collapsedACLRows {
 		if err := b.insertSubjectRow(
 			ctx,
 			tx,
@@ -354,7 +355,7 @@ func (b *calculatedVisibilityBackend) userSubjectsComponents(
 	userSubjects := mysql.CTE("user_subjects")
 	tSubjectUsers := table.FivenetACLSubjectUsers.AS("asu")
 	tSubjectQualis := table.FivenetACLSubjectQualifications.AS("asq")
-	tQualiResults := table.FivenetQualificationsResults.AS("qr")
+	tQualiSuccess := table.FivenetQualificationsResultSuccessMap.AS("qrsm")
 	tSubjectJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("asjg")
 	tUserJobs := table.FivenetUserJobs.AS("uj")
 
@@ -376,15 +377,9 @@ func (b *calculatedVisibilityBackend) userSubjectsComponents(
 					mysql.Int32(-1).AS("grade_specificity"),
 				).
 				FROM(tSubjectQualis.
-					INNER_JOIN(tQualiResults, mysql.AND(
-						tQualiResults.QualificationID.EQ(tSubjectQualis.QualificationID),
-						tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						tQualiResults.DeletedAt.IS_NULL(),
-						tQualiResults.Status.EQ(
-							mysql.Int32(
-								int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
-							),
-						),
+					INNER_JOIN(tQualiSuccess, mysql.AND(
+						tQualiSuccess.QualificationID.EQ(tSubjectQualis.QualificationID),
+						tQualiSuccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 					),
 					),
 				),
@@ -520,7 +515,7 @@ func (b *calculatedVisibilityBackend) aclVisibleSourceRowsSelect(
 			),
 			mysql.AND(
 				b.access.accessColumns.Effect.IS_FALSE(),
-				b.access.accessColumns.Access.EQ(mysql.Int32(access)),
+				b.access.accessColumns.Access.GT_EQ(mysql.Int32(access)),
 			),
 		)).
 		DISTINCT()
@@ -812,6 +807,61 @@ type calculatedVisibilityACLRow struct {
 	SubjectID int64 `alias:"subject_id"`
 	Access    int32 `alias:"access"`
 	Effect    bool  `alias:"effect"`
+}
+
+type calculatedVisibilityACLRangeRow struct {
+	SubjectID int64
+	Access    int32
+	Effect    bool
+}
+
+func collapseCalculatedVisibilityACLRows(
+	rows []calculatedVisibilityACLRow,
+) []calculatedVisibilityACLRangeRow {
+	type groupedRow struct {
+		row   calculatedVisibilityACLRangeRow
+		order int
+	}
+	type groupedRowKey struct {
+		subjectID int64
+		effect    bool
+	}
+
+	groups := make(map[groupedRowKey]*groupedRow, len(rows))
+	order := 0
+	for _, row := range rows {
+		key := groupedRowKey{
+			subjectID: row.SubjectID,
+			effect:    row.Effect,
+		}
+		if group, ok := groups[key]; ok {
+			if row.Access > group.row.Access {
+				group.row.Access = row.Access
+			}
+			continue
+		}
+
+		groups[key] = &groupedRow{
+			row:   calculatedVisibilityACLRangeRow(row),
+			order: order,
+		}
+		order++
+	}
+
+	out := make([]groupedRow, 0, len(groups))
+	for _, group := range groups {
+		out = append(out, *group)
+	}
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].order < out[j].order
+	})
+
+	collapsed := make([]calculatedVisibilityACLRangeRow, 0, len(out))
+	for _, group := range out {
+		collapsed = append(collapsed, group.row)
+	}
+
+	return collapsed
 }
 
 func (b *calculatedVisibilityBackend) loadACLRows(

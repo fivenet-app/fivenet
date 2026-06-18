@@ -24,7 +24,7 @@ const { listJobs } = completorStore;
 
 const settingsSettingsClient = await getSettingsSettingsClient();
 
-const { data: roles, status, refresh, error } = useLazyAsyncData('settings-roles', () => getRoles());
+const { data: roles, status, refresh, error } = useLazyAsyncData('settings-attrs-roles', () => getRoles());
 
 async function getRoles(): Promise<Role[]> {
     try {

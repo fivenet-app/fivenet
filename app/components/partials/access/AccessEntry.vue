@@ -161,7 +161,7 @@ watch(
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col gap-1 pb-2 md:flex-row md:pb-0">
+    <div class="flex flex-1 flex-col gap-2 pb-2 md:flex-row md:pb-0">
         <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
             <div class="flex flex-initial flex-row items-center gap-2">
                 <UFormField v-if="requiredMode === 'badge' && entry.required" :name="`${$props.name}.required`">

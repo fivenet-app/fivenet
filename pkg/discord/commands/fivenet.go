@@ -8,6 +8,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 )
 
 type FivenetCommand struct {
@@ -48,12 +49,12 @@ func (c *FivenetCommand) HandleCommand(
 		Embeds: &[]discord.Embed{
 			{
 				Type:        discord.LinkEmbed,
-				Title:       "FiveNet",
+				Title:       version.Project,
 				Description: t("discord.commands.fivenet.summary", nil),
 				URL:         c.url,
 				Thumbnail:   embeds.EmbedThumbnailLogo,
 				Provider: &discord.EmbedProvider{
-					Name: "FiveNet",
+					Name: version.Project,
 					URL:  c.url,
 				},
 				Color:  embeds.ColorInfo,
