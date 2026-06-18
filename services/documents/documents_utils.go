@@ -17,15 +17,7 @@ func (s *Server) getDocumentQuery(
 
 	var wheres []mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		wheres = []mysql.BoolExpression{
-			mysql.AND(
-				tDocument.DeletedAt.IS_NULL(),
-				mysql.OR(
-					tDocument.Public.IS_TRUE(),
-					tDocument.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
-				),
-			),
-		}
+		wheres = append(wheres, tDocument.DeletedAt.IS_NULL())
 	}
 
 	if where != nil {

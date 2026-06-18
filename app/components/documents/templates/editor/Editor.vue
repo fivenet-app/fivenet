@@ -502,11 +502,7 @@ const formRef = useTemplateRef('formRef');
                 </template>
 
                 <template #right>
-                    <PartialsBackButton
-                        :to="
-                            templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`
-                        "
-                    />
+                    <PartialsBackButton :to="templateId ? `/documents/templates/${templateId}` : `/documents/templates`" />
 
                     <UButton
                         trailing-icon="i-mdi-content-save"

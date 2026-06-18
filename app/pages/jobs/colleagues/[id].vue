@@ -19,7 +19,10 @@ definePageMeta({
     title: 'pages.jobs.colleagues.id.title',
     requiresAuth: true,
     permission: 'jobs.ColleaguesService/GetColleague',
-    redirect: { name: 'jobs-colleagues-id-info' },
+    redirect: (route) => {
+        route = route as TypedRouteFromName<'jobs-colleagues-id-info'>;
+        return { name: 'jobs-colleagues-id-info', params: { id: route.params.id } };
+    },
     validate: async (route) => {
         route = route as TypedRouteFromName<'jobs-colleagues-id-info'>;
         // Check if the id is made up of digits
@@ -37,6 +40,8 @@ const { attr, can } = useAuth();
 const notifications = useNotificationsStore();
 
 const route = useRoute('jobs-colleagues-id-info');
+
+const colleagueId = computed(() => route.params?.id ?? 0);
 
 const jobsColleaguesClient = await getJobsColleaguesClient();
 
@@ -104,32 +109,32 @@ const links = computed(() =>
     [
         {
             label: t('common.info'),
-            to: { name: 'jobs-colleagues-id-info', params: { id: route.params?.id ?? 0 } },
+            to: `/jobs/colleagues/${colleagueId.value}/info`,
             icon: 'i-mdi-information-outline',
             permission: 'jobs.ColleaguesService/GetColleague' as Perms,
         },
         {
             label: t('common.activity'),
-            to: { name: 'jobs-colleagues-id-activity', params: { id: route.params?.id ?? 0 } },
+            to: `/jobs/colleagues/${colleagueId.value}/activity`,
             icon: 'i-mdi-pulse',
             permission: 'jobs.ColleaguesService/ListColleagueActivity' as Perms,
         },
         {
             label: t('common.timeclock'),
-            to: { name: 'jobs-colleagues-id-timeclock', params: { id: route.params?.id ?? 0 } },
+            to: `/jobs/colleagues/${colleagueId.value}/timeclock`,
             icon: 'i-mdi-timeline-clock',
             permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
             check: attr('jobs.TimeclockService/ListTimeclock', 'Access', 'All').value,
         },
         {
             label: t('pages.qualifications.title'),
-            to: { name: 'jobs-colleagues-id-qualifications', params: { id: route.params?.id ?? 0 } },
+            to: `/jobs/colleagues/${colleagueId.value}/qualifications`,
             icon: 'i-mdi-school',
             permission: 'qualifications.QualificationsService/ListQualifications' as Perms,
         },
         {
             label: t('pages.jobs.conduct.title'),
-            to: { name: 'jobs-colleagues-id-conduct', params: { id: route.params?.id ?? 0 } },
+            to: `/jobs/colleagues/${colleagueId.value}/conduct`,
             icon: 'i-mdi-list-status',
             permission: 'jobs.ConductService/ListConductEntries' as Perms,
         },

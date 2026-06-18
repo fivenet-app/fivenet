@@ -287,7 +287,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                                         (qualification.examMode === QualificationExamMode.REQUEST_NEEDED &&
                                             qualification.request?.status !== RequestStatus.ACCEPTED)
                                             ? undefined
-                                            : { name: 'qualifications-id-exam', params: { id: qualification.id } }
+                                            : `/qualifications/${qualification.id}/exam`
                                     "
                                     :label="$t('components.qualifications.take_test')"
                                     variant="ghost"

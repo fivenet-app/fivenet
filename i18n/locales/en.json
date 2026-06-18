@@ -99,6 +99,9 @@
             },
             "activity": {
                 "title": "Activity"
+            },
+            "groups": {
+                "title": "Groups"
             }
         },
         "vehicles": {

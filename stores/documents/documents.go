@@ -120,7 +120,7 @@ func (s *Store) List(
 			q.UserInfo,
 			int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 			false,
-			buildListDocumentsCondition(tDocumentPage, q),
+			buildListDocumentsCondition(table.FivenetDocuments, q),
 		)
 		ctes = visibleIDs.CTEs
 		visibleDocID := mysql.IntegerColumn("id").From(visibleIDs.Table)
@@ -181,6 +181,7 @@ func (s *Store) List(
 	if len(ctes) > 0 {
 		stmt = mysql.WITH(ctes...)(stmt)
 	}
+
 	var docs []*resourcesdocuments.DocumentShort
 	if err := stmt.QueryContext(ctx, s.db, &docs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -667,24 +668,10 @@ func buildListDocumentsCondition(
 	condition := mysql.Bool(true)
 	if q.Search != "" {
 		search := mysql.String(dbutils.PrepareForLikeSearch(q.Search))
-		searchCategory := table.FivenetDocumentsCategories.AS("search_category")
 		condition = condition.AND(mysql.OR(
 			document.Title.LIKE(search),
 			document.ContentText.LIKE(search),
 			document.CreatorJob.LIKE(search),
-			mysql.EXISTS(
-				searchCategory.
-					SELECT(mysql.Int(1)).
-					FROM(searchCategory).
-					WHERE(mysql.AND(
-						searchCategory.ID.EQ(document.CategoryID),
-						searchCategory.DeletedAt.IS_NULL(),
-						mysql.OR(
-							searchCategory.Name.LIKE(search),
-							searchCategory.Description.LIKE(search),
-						),
-					)),
-			),
 		))
 	}
 	if len(q.CategoryIDs) > 0 {

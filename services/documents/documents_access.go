@@ -262,5 +262,9 @@ func (s *Server) handleDocumentAccessChange(
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
+	if err := s.subjectAccess.RefreshTargetVisibility(ctx, tx, documentId); err != nil {
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	return nil
 }

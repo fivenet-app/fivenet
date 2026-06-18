@@ -48,7 +48,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 
 	doc, err := s.getDocument(ctx,
 		tDocument.ID.EQ(mysql.Int64(docId)),
-		userInfo, true)
+		userInfo, false)
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}

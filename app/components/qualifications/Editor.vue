@@ -282,7 +282,7 @@ async function getQualification(qualificationId: number): Promise<Qualification>
     } catch (e) {
         handleGRPCError(e as RpcError);
 
-        await navigateTo({ name: 'qualifications' });
+        await navigateTo('/qualifications');
         throw e;
     }
 }

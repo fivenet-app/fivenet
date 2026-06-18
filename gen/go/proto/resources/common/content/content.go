@@ -102,6 +102,10 @@ func (x *Content) Value() (driver.Value, error) {
 }
 
 func (x *Content) Extract() *ExtractedContent {
+	if x != nil {
+		return &ExtractedContent{}
+	}
+
 	if x.TiptapJson != nil {
 		return ExtractFromTiptap(x.GetTiptapJson())
 	} else if x.Content != nil {

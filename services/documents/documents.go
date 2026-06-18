@@ -3,6 +3,7 @@ package documents
 import (
 	context "context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
@@ -207,10 +208,15 @@ func (s *Server) getDocument(
 	stmt := s.getDocumentQuery(condition, nil, userInfo, withContent).
 		LIMIT(1)
 
+	fmt.Println(stmt.DebugSql())
 	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
+	}
+
+	if doc.GetId() == 0 {
+		return nil, nil
 	}
 
 	if doc.GetCreator() != nil {
@@ -521,6 +527,9 @@ func (s *Server) UpdateDocument(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	if oldDoc == nil {
+		return nil, errorsdocuments.ErrPermissionDenied
+	}
 
 	// Document is closed and the update request isn't re-opening the document
 	if oldDoc.GetMeta().GetClosed() && req.GetMeta().GetClosed() && !userInfo.GetSuperuser() {
@@ -565,6 +574,8 @@ func (s *Server) UpdateDocument(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
 	if !onlyUpdateAccess {
 		extracted := req.GetContent().Extract()
@@ -607,10 +618,6 @@ func (s *Server) UpdateDocument(
 			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-
-		if err := s.subjectAccess.RefreshTargetVisibility(ctx, tx, oldDoc.GetId()); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 

@@ -40,7 +40,7 @@ const roleId = useRoute('settings-roles-id').params.id;
             :role-id="parseInt(roleId)"
             :role-count="roleCount"
             @deleted="
-                navigateTo({ name: 'settings-roles' });
+                navigateTo('/settings/roles');
                 $emit('deleted');
             "
         />

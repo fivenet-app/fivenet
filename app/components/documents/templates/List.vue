@@ -53,7 +53,7 @@ const items = computed<CardElement[]>(
             description: v.description,
             icon: v.icon ?? 'i-mdi-file-outline',
             color: v.color ?? 'primary',
-            to: props.link ? { name: 'documents-templates-id', params: { id: v.id } } : undefined,
+            to: props.link ? `/documents/templates/${v.id}` : undefined,
             deletedAt: v.deletedAt,
         })) ?? [],
 );

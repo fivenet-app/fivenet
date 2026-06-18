@@ -22,7 +22,7 @@ definePageMeta({
         'jobs.TimeclockService/ListInactiveEmployees',
         'jobs.TimeclockService/ListTimeclock',
     ],
-    redirect: { name: 'jobs-overview' },
+    redirect: '/jobs/overview',
 });
 </script>
 

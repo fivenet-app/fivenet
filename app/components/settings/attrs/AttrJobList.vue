@@ -93,7 +93,7 @@ const columns = computed(
                 cell: ({ row }) =>
                     h(UTooltip, { text: t('common.show') }, () =>
                         h(UButton, {
-                            to: { name: 'settings-limiter-job', params: { job: row.original.job } },
+                            to: `/settings/limiter/${row.original.job}`,
                             variant: 'link',
                             icon: 'i-mdi-eye',
                         }),
