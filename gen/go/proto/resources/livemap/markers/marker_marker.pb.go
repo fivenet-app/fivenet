@@ -1270,7 +1270,7 @@ var File_resources_livemap_markers_marker_marker_proto protoreflect.FileDescript
 
 const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\n" +
-	"-resources/livemap/markers/marker_marker.proto\x12\x19resources.livemap.markers\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1eresources/livemap/coords.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xc1\a\n" +
+	"-resources/livemap/markers/marker_marker.proto\x12\x19resources.livemap.markers\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1eresources/livemap/coords.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x8f\b\n" +
 	"\fMarkerMarker\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\f\n" +
 	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
@@ -1282,19 +1282,19 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\n" +
 	"expires_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\texpiresAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\tdeletedAt\x88\x01\x01\x12\x1a\n" +
-	"\x04name\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x04name\x12-\n" +
-	"\vdescription\x18\t \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x04R\vdescription\x88\x01\x01\x12%\n" +
+	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\tdeletedAt\x88\x01\x01\x12$\n" +
+	"\x04name\x18\b \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x01\x18\xff\x01R\x04name\x125\n" +
+	"\vdescription\x18\t \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\bH\x04R\vdescription\x88\x01\x01\x12,\n" +
 	"\x06postal\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x05R\x06postal\x88\x01\x01\x12#\n" +
-	"\x05color\x18\v \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x05color\x88\x01\x01\x12\x10\n" +
-	"\x03job\x18\f \x01(\tR\x03job\x12\x1b\n" +
+	" \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x180H\x05R\x06postal\x88\x01\x01\x12>\n" +
+	"\x05color\x18\v \x01(\tB#\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x06R\x05color\x88\x01\x01\x12\x19\n" +
+	"\x03job\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x1b\n" +
 	"\tjob_label\x18\r \x01(\tR\bjobLabel\x12\x1b\n" +
-	"\x06public\x18\x12 \x01(\bH\aR\x06public\x88\x01\x01\x12R\n" +
-	"\x04type\x18\x0e \x01(\x0e2%.resources.livemap.markers.MarkerTypeB\x17\x9a\x84\x9e\x03\x12alias:\"markerType\"R\x04type\x12R\n" +
-	"\x04data\x18\x0f \x01(\v2%.resources.livemap.markers.MarkerDataB\x17\x9a\x84\x9e\x03\x12alias:\"markerData\"R\x04data\x12\"\n" +
+	"\x06public\x18\x12 \x01(\bH\aR\x06public\x88\x01\x01\x12Z\n" +
+	"\x04type\x18\x0e \x01(\x0e2%.resources.livemap.markers.MarkerTypeB\x1f\x9a\x84\x9e\x03\x12alias:\"markerType\"\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12R\n" +
+	"\x04data\x18\x0f \x01(\v2%.resources.livemap.markers.MarkerDataB\x17\x9a\x84\x9e\x03\x12alias:\"markerData\"R\x04data\x12+\n" +
 	"\n" +
-	"creator_id\x18\x10 \x01(\x05H\bR\tcreatorId\x88\x01\x01\x12?\n" +
+	"creator_id\x18\x10 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\bR\tcreatorId\x88\x01\x01\x12?\n" +
 	"\acreator\x18\x11 \x01(\v2 .resources.users.short.UserShortH\tR\acreator\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
@@ -1306,42 +1306,50 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\a_publicB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
-	"\b_creator\"\xf9\x02\n" +
+	"\b_creator\"\x80\x03\n" +
 	"\n" +
 	"MarkerData\x12A\n" +
 	"\x06circle\x18\x03 \x01(\v2'.resources.livemap.markers.CircleMarkerH\x00R\x06circle\x12;\n" +
 	"\x04icon\x18\x04 \x01(\v2%.resources.livemap.markers.IconMarkerH\x00R\x04icon\x12J\n" +
 	"\trectangle\x18\x05 \x01(\v2*.resources.livemap.markers.RectangleMarkerH\x00R\trectangle\x12D\n" +
 	"\apolygon\x18\x06 \x01(\v2(.resources.livemap.markers.PolygonMarkerH\x00R\apolygon\x12G\n" +
-	"\bpolyline\x18\a \x01(\v2).resources.livemap.markers.PolylineMarkerH\x00R\bpolyline:\b\xe2\xf3\x18\x04\b\x01\x10\x01B\x06\n" +
-	"\x04data\"\xd7\x01\n" +
+	"\bpolyline\x18\a \x01(\v2).resources.livemap.markers.PolylineMarkerH\x00R\bpolyline:\b\xe2\xf3\x18\x04\b\x01\x10\x01B\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"\xf3\x01\n" +
 	"\fCircleMarker\x12\x16\n" +
-	"\x06radius\x18\x01 \x01(\x05R\x06radius\x12\x1d\n" +
-	"\aopacity\x18\x02 \x01(\x02H\x00R\aopacity\x88\x01\x01\x12\x1b\n" +
-	"\x06stroke\x18\x03 \x01(\bH\x01R\x06stroke\x88\x01\x01\x12&\n" +
-	"\fstroke_width\x18\x04 \x01(\x05H\x02R\vstrokeWidth\x88\x01\x01\x12\x19\n" +
+	"\x06radius\x18\x01 \x01(\x05R\x06radius\x12.\n" +
+	"\aopacity\x18\x02 \x01(\x02B\x0f\xbaH\f\n" +
+	"\n" +
+	"\x1d\x00\x00\x96B-\x00\x00\x80?H\x00R\aopacity\x88\x01\x01\x12\x1b\n" +
+	"\x06stroke\x18\x03 \x01(\bH\x01R\x06stroke\x88\x01\x01\x121\n" +
+	"\fstroke_width\x18\x04 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\f(\x00H\x02R\vstrokeWidth\x88\x01\x01\x12\x19\n" +
 	"\x05blink\x18\x05 \x01(\bH\x03R\x05blink\x88\x01\x01B\n" +
 	"\n" +
 	"\b_opacityB\t\n" +
 	"\a_strokeB\x0f\n" +
 	"\r_stroke_widthB\b\n" +
-	"\x06_blink\"*\n" +
+	"\x06_blink\"2\n" +
 	"\n" +
-	"IconMarker\x12\x1c\n" +
-	"\x04icon\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04icon\"f\n" +
+	"IconMarker\x12$\n" +
+	"\x04icon\x18\x01 \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x18\x80\x01R\x04icon\"w\n" +
 	"\x0fRectangleMarker\x12\x13\n" +
 	"\x05end_x\x18\x01 \x01(\x01R\x04endX\x12\x13\n" +
-	"\x05end_y\x18\x02 \x01(\x01R\x04endY\x12\x1d\n" +
-	"\aopacity\x18\x03 \x01(\x02H\x00R\aopacity\x88\x01\x01B\n" +
+	"\x05end_y\x18\x02 \x01(\x01R\x04endY\x12.\n" +
+	"\aopacity\x18\x03 \x01(\x02B\x0f\xbaH\f\n" +
 	"\n" +
-	"\b_opacity\"m\n" +
-	"\rPolygonMarker\x121\n" +
-	"\x06points\x18\x01 \x03(\v2\x19.resources.livemap.CoordsR\x06points\x12\x1d\n" +
-	"\aopacity\x18\x02 \x01(\x02H\x00R\aopacity\x88\x01\x01B\n" +
+	"\x1d\x00\x00\x96B-\x00\x00\x80?H\x00R\aopacity\x88\x01\x01B\n" +
 	"\n" +
-	"\b_opacity\"C\n" +
-	"\x0ePolylineMarker\x121\n" +
-	"\x06points\x18\x01 \x03(\v2\x19.resources.livemap.CoordsR\x06points*\xba\x01\n" +
+	"\b_opacity\"\x8a\x01\n" +
+	"\rPolygonMarker\x12=\n" +
+	"\x06points\x18\x01 \x03(\v2\x19.resources.livemap.CoordsB\n" +
+	"\xbaH\a\x92\x01\x04\b\x02\x10\x12R\x06points\x12.\n" +
+	"\aopacity\x18\x02 \x01(\x02B\x0f\xbaH\f\n" +
+	"\n" +
+	"\x1d\x00\x00\x96B-\x00\x00\x80?H\x00R\aopacity\x88\x01\x01B\n" +
+	"\n" +
+	"\b_opacity\"O\n" +
+	"\x0ePolylineMarker\x12=\n" +
+	"\x06points\x18\x01 \x03(\v2\x19.resources.livemap.CoordsB\n" +
+	"\xbaH\a\x92\x01\x04\b\x02\x10\x12R\x06points*\xba\x01\n" +
 	"\n" +
 	"MarkerType\x12\x1b\n" +
 	"\x17MARKER_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +

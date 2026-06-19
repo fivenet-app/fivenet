@@ -8,6 +8,7 @@ import (
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	jobsconduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
+	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
@@ -80,10 +81,35 @@ type ConductQuery struct {
 	IncludeDeleted bool
 }
 
+type GroupsQuery struct {
+	JobID           int64
+	States          []jobsgroups.GroupState
+	Search          string
+	IncludeCounts   bool
+	IncludeInactive bool
+	IncludeArchived bool
+	Sort            *database.Sort
+	Offset          int64
+	Limit           int64
+}
+
+type GroupQuery struct {
+	JobID           int64
+	IncludeArchived bool
+}
+
 type IStore interface {
 	GetMOTD(ctx context.Context, db qrm.DB, job string) (string, error)
 	SetMOTD(ctx context.Context, db qrm.DB, job string, motd string) error
 	GetJobProps(ctx context.Context, db qrm.DB, job string) (*jobsprops.JobProps, error)
+
+	CountGroups(ctx context.Context, db qrm.DB, q GroupsQuery) (int64, error)
+	ListGroups(ctx context.Context, db qrm.DB, q GroupsQuery) ([]*jobsgroups.Group, error)
+	GetGroup(ctx context.Context, db qrm.DB, q GroupQuery, id int64) (*jobsgroups.Group, error)
+	CreateGroup(ctx context.Context, db qrm.DB, group *jobsgroups.Group) (int64, error)
+	UpdateGroup(ctx context.Context, db qrm.DB, group *jobsgroups.Group) error
+	ArchiveGroup(ctx context.Context, db qrm.DB, jobID int64, id int64, updatedByUserID int64) error
+	RestoreGroup(ctx context.Context, db qrm.DB, jobID int64, id int64, updatedByUserID int64) error
 
 	CountColleagues(ctx context.Context, db qrm.DB, q ListColleaguesQuery) (int64, error)
 	ListColleagues(

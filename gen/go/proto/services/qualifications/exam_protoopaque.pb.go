@@ -814,12 +814,12 @@ const file_services_qualifications_exam_proto_rawDesc = "" +
 	"\x11SubmitExamRequest\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12J\n" +
 	"\tresponses\x18\x02 \x01(\v2,.resources.qualifications.exam.ExamResponsesR\tresponses\x12\x18\n" +
-	"\apartial\x18\x03 \x01(\bR\apartial\"K\n" +
-	"\x12SubmitExamResponse\x125\n" +
-	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\bduration\"X\n" +
+	"\apartial\x18\x03 \x01(\bR\apartial\"U\n" +
+	"\x12SubmitExamResponse\x12?\n" +
+	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x022\x00R\bduration\"a\n" +
 	"\x12GetUserExamRequest\x12)\n" +
-	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\"\xaf\x02\n" +
+	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12 \n" +
+	"\auser_id\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\"\xaf\x02\n" +
 	"\x13GetUserExamResponse\x12@\n" +
 	"\x04exam\x18\x01 \x01(\v2,.resources.qualifications.exam.ExamQuestionsR\x04exam\x12D\n" +
 	"\texam_user\x18\x02 \x01(\v2'.resources.qualifications.exam.ExamUserR\bexamUser\x12J\n" +

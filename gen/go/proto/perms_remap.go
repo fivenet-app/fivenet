@@ -328,6 +328,50 @@ var PermsRemap = map[string][]perms.PermissionRef{
 		permsjobs.ConductService.CreateConductEntry.Perm, permsjobs.ConductService.UpdateConductEntry.Perm,
 	},
 
+	// Service: jobs.GroupsService
+	"jobs.GroupsService/AddGroupLeader": {
+		permsjobs.GroupsService.AddGroupLeader.Perm, permsjobs.GroupsService.CreateGroup.Perm,
+	},
+	"jobs.GroupsService/AddGroupMember": {
+		permsjobs.GroupsService.CreateGroup.Perm,
+	},
+	"jobs.GroupsService/CreateGroupRule": {
+		permsjobs.GroupsService.CreateGroup.Perm,
+	},
+	"jobs.GroupsService/DeleteGroupRule": {
+		permsjobs.GroupsService.CreateGroup.Perm,
+	},
+	"jobs.GroupsService/ExcludeGroupMember": {
+		permsjobs.GroupsService.CreateGroup.Perm,
+	},
+	"jobs.GroupsService/GetGroup": {
+		permsjobs.GroupsService.ListGroups.Perm,
+	},
+	"jobs.GroupsService/ListGroupActivity": {
+		permsjobs.GroupsService.ListGroups.Perm,
+	},
+	"jobs.GroupsService/ListGroupMembers": {
+		permsjobs.GroupsService.ListGroups.Perm,
+	},
+	"jobs.GroupsService/RemoveGroupLeader": {
+		permsjobs.GroupsService.AddGroupLeader.Perm, permsjobs.GroupsService.CreateGroup.Perm,
+	},
+	"jobs.GroupsService/RemoveGroupMember": {
+		permsjobs.GroupsService.CreateGroup.Perm,
+	},
+	"jobs.GroupsService/RemoveGroupMemberExclusion": {
+		permsjobs.GroupsService.CreateGroup.Perm,
+	},
+	"jobs.GroupsService/RestoreGroup": {
+		permsjobs.GroupsService.ArchiveGroup.Perm,
+	},
+	"jobs.GroupsService/UpdateGroup": {
+		permsjobs.GroupsService.CreateGroup.Perm,
+	},
+	"jobs.GroupsService/UpdateGroupRule": {
+		permsjobs.GroupsService.CreateGroup.Perm,
+	},
+
 	// Service: jobs.JobsService
 	"jobs.JobsService/GetMOTD": {
 		perms.PermAnyRef,

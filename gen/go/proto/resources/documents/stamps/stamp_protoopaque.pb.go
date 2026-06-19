@@ -311,18 +311,18 @@ var File_resources_documents_stamps_stamp_proto protoreflect.FileDescriptor
 
 const file_resources_documents_stamps_stamp_proto_rawDesc = "" +
 	"\n" +
-	"&resources/documents/stamps/stamp.proto\x12\x1aresources.documents.stamps\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a#resources/timestamp/timestamp.proto\"\xc6\x03\n" +
+	"&resources/documents/stamps/stamp.proto\x12\x1aresources.documents.stamps\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a#resources/timestamp/timestamp.proto\"\xd6\x03\n" +
 	"\x05Stamp\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
-	"\x03job\x18\x02 \x01(\tR\x03job\x12 \n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
+	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12 \n" +
 	"\tjob_label\x18\x03 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
 	"updated_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1c\n" +
-	"\x04name\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x126\n" +
+	"deleted_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12#\n" +
+	"\x04name\x18\a \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x18xR\x04name\x126\n" +
 	"\fsvg_template\x18\b \x01(\tB\x13\xda\xf3\x18\x0f\b\x01\x12\vSanitizeSVGR\vsvgTemplate\x120\n" +
 	"\x06access\x18\t \x01(\v2\x18.resources.access.AccessR\x06accessB\f\n" +
 	"\n" +

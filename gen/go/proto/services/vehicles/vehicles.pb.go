@@ -677,43 +677,44 @@ var File_services_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a*resources/vehicles/activity/activity.proto\x1a$resources/vehicles/props/props.proto\x1a!resources/vehicles/vehicles.proto\"\xe9\x02\n" +
-	"\x13ListVehiclesRequest\x12L\n" +
+	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a*resources/vehicles/activity/activity.proto\x1a$resources/vehicles/props/props.proto\x1a!resources/vehicles/vehicles.proto\"\x9a\x03\n" +
+	"\x13ListVehiclesRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12(\n" +
-	"\rlicense_plate\x18\x03 \x01(\tH\x01R\flicensePlate\x88\x01\x01\x12\x19\n" +
-	"\x05model\x18\x04 \x01(\tH\x02R\x05model\x88\x01\x01\x12\x19\n" +
-	"\buser_ids\x18\x05 \x03(\x05R\auserIds\x12\x15\n" +
-	"\x03job\x18\x06 \x01(\tH\x03R\x03job\x88\x01\x01\x12\x1b\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x121\n" +
+	"\rlicense_plate\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18 H\x01R\flicensePlate\x88\x01\x01\x12\"\n" +
+	"\x05model\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18 H\x02R\x05model\x88\x01\x01\x12'\n" +
+	"\buser_ids\x18\x05 \x03(\x05B\f\xbaH\t\x92\x01\x06\"\x04\x1a\x02(\x00R\auserIds\x12\x1e\n" +
+	"\x03job\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\x03job\x88\x01\x01\x12\x1b\n" +
 	"\x06wanted\x18\a \x01(\bH\x04R\x06wanted\x88\x01\x01B\a\n" +
 	"\x05_sortB\x10\n" +
 	"\x0e_license_plateB\b\n" +
 	"\x06_modelB\x06\n" +
 	"\x04_jobB\t\n" +
-	"\a_wanted\"\xa4\x01\n" +
-	"\x14ListVehiclesResponse\x12M\n" +
+	"\a_wanted\"\xac\x01\n" +
+	"\x14ListVehiclesResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12=\n" +
-	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleB\x04\xc8\xf3\x18\x01R\bvehicles\"v\n" +
-	"\x16SetVehiclePropsRequest\x12<\n" +
-	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\x12\x1e\n" +
-	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"W\n" +
+	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleB\x04\xc8\xf3\x18\x01R\bvehicles\"\x8b\x01\n" +
+	"\x16SetVehiclePropsRequest\x12D\n" +
+	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsB\x06\xbaH\x03\xc8\x01\x01R\x05props\x12+\n" +
+	"\x06reason\x18\x02 \x01(\tB\x13\xda\xf3\x18\x02\b\x01\xbaH\n" +
+	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason\"W\n" +
 	"\x17SetVehiclePropsResponse\x12<\n" +
-	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\"\x8b\x02\n" +
-	"\x1aListVehicleActivityRequest\x12L\n" +
+	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\"\xaf\x02\n" +
+	"\x1aListVehicleActivityRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x14\n" +
-	"\x05plate\x18\x03 \x01(\tR\x05plate\x12F\n" +
-	"\x05types\x18\x04 \x03(\x0e20.resources.vehicles.activity.VehicleActivityTypeR\x05typesB\a\n" +
-	"\x05_sort\"\xbc\x01\n" +
-	"\x1bListVehicleActivityResponse\x12M\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x1f\n" +
+	"\x05plate\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18 R\x05plate\x12W\n" +
+	"\x05types\x18\x04 \x03(\x0e20.resources.vehicles.activity.VehicleActivityTypeB\x0f\xbaH\f\x92\x01\t\x10\x14\"\x05\x82\x01\x02\x10\x01R\x05typesB\a\n" +
+	"\x05_sort\"\xc4\x01\n" +
+	"\x1bListVehicleActivityResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12N\n" +
 	"\bactivity\x18\x02 \x03(\v2,.resources.vehicles.activity.VehicleActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xc9\x03\n" +
 	"\x0fVehiclesService\x12{\n" +

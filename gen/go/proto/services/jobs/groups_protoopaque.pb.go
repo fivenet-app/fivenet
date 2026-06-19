@@ -9,7 +9,11 @@
 package jobs
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	groups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -23,20 +27,4620 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ListGroupsRequest struct {
+	state                      protoimpl.MessageState      `protogen:"opaque.v1"`
+	xxx_hidden_Pagination      *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
+	xxx_hidden_Sort            *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
+	xxx_hidden_States          []groups.GroupState         `protobuf:"varint,3,rep,packed,name=states,proto3,enum=resources.jobs.groups.GroupState"`
+	xxx_hidden_Search          *string                     `protobuf:"bytes,4,opt,name=search,proto3,oneof"`
+	xxx_hidden_IncludeCounts   bool                        `protobuf:"varint,5,opt,name=include_counts,json=includeCounts,proto3"`
+	xxx_hidden_IncludeInactive bool                        `protobuf:"varint,6,opt,name=include_inactive,json=includeInactive,proto3"`
+	xxx_hidden_IncludeArchived bool                        `protobuf:"varint,7,opt,name=include_archived,json=includeArchived,proto3"`
+	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
+	XXX_presence               [1]uint32
+	unknownFields              protoimpl.UnknownFields
+	sizeCache                  protoimpl.SizeCache
+}
+
+func (x *ListGroupsRequest) Reset() {
+	*x = ListGroupsRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListGroupsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListGroupsRequest) ProtoMessage() {}
+
+func (x *ListGroupsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListGroupsRequest) GetPagination() *database.PaginationRequest {
+	if x != nil {
+		return x.xxx_hidden_Pagination
+	}
+	return nil
+}
+
+func (x *ListGroupsRequest) GetSort() *database.Sort {
+	if x != nil {
+		return x.xxx_hidden_Sort
+	}
+	return nil
+}
+
+func (x *ListGroupsRequest) GetStates() []groups.GroupState {
+	if x != nil {
+		return x.xxx_hidden_States
+	}
+	return nil
+}
+
+func (x *ListGroupsRequest) GetSearch() string {
+	if x != nil {
+		if x.xxx_hidden_Search != nil {
+			return *x.xxx_hidden_Search
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ListGroupsRequest) GetIncludeCounts() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeCounts
+	}
+	return false
+}
+
+func (x *ListGroupsRequest) GetIncludeInactive() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeInactive
+	}
+	return false
+}
+
+func (x *ListGroupsRequest) GetIncludeArchived() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeArchived
+	}
+	return false
+}
+
+func (x *ListGroupsRequest) SetPagination(v *database.PaginationRequest) {
+	x.xxx_hidden_Pagination = v
+}
+
+func (x *ListGroupsRequest) SetSort(v *database.Sort) {
+	x.xxx_hidden_Sort = v
+}
+
+func (x *ListGroupsRequest) SetStates(v []groups.GroupState) {
+	x.xxx_hidden_States = v
+}
+
+func (x *ListGroupsRequest) SetSearch(v string) {
+	x.xxx_hidden_Search = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 7)
+}
+
+func (x *ListGroupsRequest) SetIncludeCounts(v bool) {
+	x.xxx_hidden_IncludeCounts = v
+}
+
+func (x *ListGroupsRequest) SetIncludeInactive(v bool) {
+	x.xxx_hidden_IncludeInactive = v
+}
+
+func (x *ListGroupsRequest) SetIncludeArchived(v bool) {
+	x.xxx_hidden_IncludeArchived = v
+}
+
+func (x *ListGroupsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Pagination != nil
+}
+
+func (x *ListGroupsRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Sort != nil
+}
+
+func (x *ListGroupsRequest) HasSearch() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *ListGroupsRequest) ClearPagination() {
+	x.xxx_hidden_Pagination = nil
+}
+
+func (x *ListGroupsRequest) ClearSort() {
+	x.xxx_hidden_Sort = nil
+}
+
+func (x *ListGroupsRequest) ClearSearch() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Search = nil
+}
+
+type ListGroupsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	States          []groups.GroupState
+	Search          *string
+	IncludeCounts   bool
+	IncludeInactive bool
+	IncludeArchived bool
+}
+
+func (b0 ListGroupsRequest_builder) Build() *ListGroupsRequest {
+	m0 := &ListGroupsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Pagination = b.Pagination
+	x.xxx_hidden_Sort = b.Sort
+	x.xxx_hidden_States = b.States
+	if b.Search != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 7)
+		x.xxx_hidden_Search = b.Search
+	}
+	x.xxx_hidden_IncludeCounts = b.IncludeCounts
+	x.xxx_hidden_IncludeInactive = b.IncludeInactive
+	x.xxx_hidden_IncludeArchived = b.IncludeArchived
+	return m0
+}
+
+type ListGroupsResponse struct {
+	state                 protoimpl.MessageState       `protogen:"opaque.v1"`
+	xxx_hidden_Pagination *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3"`
+	xxx_hidden_Groups     *[]*groups.Group             `protobuf:"bytes,2,rep,name=groups,proto3"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *ListGroupsResponse) Reset() {
+	*x = ListGroupsResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListGroupsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListGroupsResponse) ProtoMessage() {}
+
+func (x *ListGroupsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListGroupsResponse) GetPagination() *database.PaginationResponse {
+	if x != nil {
+		return x.xxx_hidden_Pagination
+	}
+	return nil
+}
+
+func (x *ListGroupsResponse) GetGroups() []*groups.Group {
+	if x != nil {
+		if x.xxx_hidden_Groups != nil {
+			return *x.xxx_hidden_Groups
+		}
+	}
+	return nil
+}
+
+func (x *ListGroupsResponse) SetPagination(v *database.PaginationResponse) {
+	x.xxx_hidden_Pagination = v
+}
+
+func (x *ListGroupsResponse) SetGroups(v []*groups.Group) {
+	x.xxx_hidden_Groups = &v
+}
+
+func (x *ListGroupsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Pagination != nil
+}
+
+func (x *ListGroupsResponse) ClearPagination() {
+	x.xxx_hidden_Pagination = nil
+}
+
+type ListGroupsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Groups     []*groups.Group
+}
+
+func (b0 ListGroupsResponse_builder) Build() *ListGroupsResponse {
+	m0 := &ListGroupsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Pagination = b.Pagination
+	x.xxx_hidden_Groups = &b.Groups
+	return m0
+}
+
+type GetGroupRequest struct {
+	state                             protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id                     int64                  `protobuf:"varint,1,opt,name=id,proto3"`
+	xxx_hidden_IncludeRules           bool                   `protobuf:"varint,2,opt,name=include_rules,json=includeRules,proto3"`
+	xxx_hidden_IncludeLeaders         bool                   `protobuf:"varint,3,opt,name=include_leaders,json=includeLeaders,proto3"`
+	xxx_hidden_IncludeManualMembers   bool                   `protobuf:"varint,4,opt,name=include_manual_members,json=includeManualMembers,proto3"`
+	xxx_hidden_IncludeExclusions      bool                   `protobuf:"varint,5,opt,name=include_exclusions,json=includeExclusions,proto3"`
+	xxx_hidden_IncludeResolvedMembers bool                   `protobuf:"varint,6,opt,name=include_resolved_members,json=includeResolvedMembers,proto3"`
+	xxx_hidden_IncludeArchived        bool                   `protobuf:"varint,7,opt,name=include_archived,json=includeArchived,proto3"`
+	unknownFields                     protoimpl.UnknownFields
+	sizeCache                         protoimpl.SizeCache
+}
+
+func (x *GetGroupRequest) Reset() {
+	*x = GetGroupRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetGroupRequest) ProtoMessage() {}
+
+func (x *GetGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *GetGroupRequest) GetId() int64 {
+	if x != nil {
+		return x.xxx_hidden_Id
+	}
+	return 0
+}
+
+func (x *GetGroupRequest) GetIncludeRules() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeRules
+	}
+	return false
+}
+
+func (x *GetGroupRequest) GetIncludeLeaders() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeLeaders
+	}
+	return false
+}
+
+func (x *GetGroupRequest) GetIncludeManualMembers() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeManualMembers
+	}
+	return false
+}
+
+func (x *GetGroupRequest) GetIncludeExclusions() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeExclusions
+	}
+	return false
+}
+
+func (x *GetGroupRequest) GetIncludeResolvedMembers() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeResolvedMembers
+	}
+	return false
+}
+
+func (x *GetGroupRequest) GetIncludeArchived() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeArchived
+	}
+	return false
+}
+
+func (x *GetGroupRequest) SetId(v int64) {
+	x.xxx_hidden_Id = v
+}
+
+func (x *GetGroupRequest) SetIncludeRules(v bool) {
+	x.xxx_hidden_IncludeRules = v
+}
+
+func (x *GetGroupRequest) SetIncludeLeaders(v bool) {
+	x.xxx_hidden_IncludeLeaders = v
+}
+
+func (x *GetGroupRequest) SetIncludeManualMembers(v bool) {
+	x.xxx_hidden_IncludeManualMembers = v
+}
+
+func (x *GetGroupRequest) SetIncludeExclusions(v bool) {
+	x.xxx_hidden_IncludeExclusions = v
+}
+
+func (x *GetGroupRequest) SetIncludeResolvedMembers(v bool) {
+	x.xxx_hidden_IncludeResolvedMembers = v
+}
+
+func (x *GetGroupRequest) SetIncludeArchived(v bool) {
+	x.xxx_hidden_IncludeArchived = v
+}
+
+type GetGroupRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id                     int64
+	IncludeRules           bool
+	IncludeLeaders         bool
+	IncludeManualMembers   bool
+	IncludeExclusions      bool
+	IncludeResolvedMembers bool
+	IncludeArchived        bool
+}
+
+func (b0 GetGroupRequest_builder) Build() *GetGroupRequest {
+	m0 := &GetGroupRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Id = b.Id
+	x.xxx_hidden_IncludeRules = b.IncludeRules
+	x.xxx_hidden_IncludeLeaders = b.IncludeLeaders
+	x.xxx_hidden_IncludeManualMembers = b.IncludeManualMembers
+	x.xxx_hidden_IncludeExclusions = b.IncludeExclusions
+	x.xxx_hidden_IncludeResolvedMembers = b.IncludeResolvedMembers
+	x.xxx_hidden_IncludeArchived = b.IncludeArchived
+	return m0
+}
+
+type GetGroupResponse struct {
+	state                      protoimpl.MessageState          `protogen:"opaque.v1"`
+	xxx_hidden_Group           *groups.Group                   `protobuf:"bytes,1,opt,name=group,proto3"`
+	xxx_hidden_Rules           *[]*groups.GroupRule            `protobuf:"bytes,2,rep,name=rules,proto3"`
+	xxx_hidden_Leaders         *[]*groups.GroupLeader          `protobuf:"bytes,3,rep,name=leaders,proto3"`
+	xxx_hidden_ManualMembers   *[]*groups.GroupManualMember    `protobuf:"bytes,4,rep,name=manual_members,json=manualMembers,proto3"`
+	xxx_hidden_Exclusions      *[]*groups.GroupMemberExclusion `protobuf:"bytes,5,rep,name=exclusions,proto3"`
+	xxx_hidden_ResolvedMembers *[]*groups.GroupResolvedMember  `protobuf:"bytes,6,rep,name=resolved_members,json=resolvedMembers,proto3"`
+	unknownFields              protoimpl.UnknownFields
+	sizeCache                  protoimpl.SizeCache
+}
+
+func (x *GetGroupResponse) Reset() {
+	*x = GetGroupResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetGroupResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetGroupResponse) ProtoMessage() {}
+
+func (x *GetGroupResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *GetGroupResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *GetGroupResponse) GetRules() []*groups.GroupRule {
+	if x != nil {
+		if x.xxx_hidden_Rules != nil {
+			return *x.xxx_hidden_Rules
+		}
+	}
+	return nil
+}
+
+func (x *GetGroupResponse) GetLeaders() []*groups.GroupLeader {
+	if x != nil {
+		if x.xxx_hidden_Leaders != nil {
+			return *x.xxx_hidden_Leaders
+		}
+	}
+	return nil
+}
+
+func (x *GetGroupResponse) GetManualMembers() []*groups.GroupManualMember {
+	if x != nil {
+		if x.xxx_hidden_ManualMembers != nil {
+			return *x.xxx_hidden_ManualMembers
+		}
+	}
+	return nil
+}
+
+func (x *GetGroupResponse) GetExclusions() []*groups.GroupMemberExclusion {
+	if x != nil {
+		if x.xxx_hidden_Exclusions != nil {
+			return *x.xxx_hidden_Exclusions
+		}
+	}
+	return nil
+}
+
+func (x *GetGroupResponse) GetResolvedMembers() []*groups.GroupResolvedMember {
+	if x != nil {
+		if x.xxx_hidden_ResolvedMembers != nil {
+			return *x.xxx_hidden_ResolvedMembers
+		}
+	}
+	return nil
+}
+
+func (x *GetGroupResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *GetGroupResponse) SetRules(v []*groups.GroupRule) {
+	x.xxx_hidden_Rules = &v
+}
+
+func (x *GetGroupResponse) SetLeaders(v []*groups.GroupLeader) {
+	x.xxx_hidden_Leaders = &v
+}
+
+func (x *GetGroupResponse) SetManualMembers(v []*groups.GroupManualMember) {
+	x.xxx_hidden_ManualMembers = &v
+}
+
+func (x *GetGroupResponse) SetExclusions(v []*groups.GroupMemberExclusion) {
+	x.xxx_hidden_Exclusions = &v
+}
+
+func (x *GetGroupResponse) SetResolvedMembers(v []*groups.GroupResolvedMember) {
+	x.xxx_hidden_ResolvedMembers = &v
+}
+
+func (x *GetGroupResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *GetGroupResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type GetGroupResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Group           *groups.Group
+	Rules           []*groups.GroupRule
+	Leaders         []*groups.GroupLeader
+	ManualMembers   []*groups.GroupManualMember
+	Exclusions      []*groups.GroupMemberExclusion
+	ResolvedMembers []*groups.GroupResolvedMember
+}
+
+func (b0 GetGroupResponse_builder) Build() *GetGroupResponse {
+	m0 := &GetGroupResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Group = b.Group
+	x.xxx_hidden_Rules = &b.Rules
+	x.xxx_hidden_Leaders = &b.Leaders
+	x.xxx_hidden_ManualMembers = &b.ManualMembers
+	x.xxx_hidden_Exclusions = &b.Exclusions
+	x.xxx_hidden_ResolvedMembers = &b.ResolvedMembers
+	return m0
+}
+
+type CreateGroupRequest struct {
+	state                          protoimpl.MessageState     `protogen:"opaque.v1"`
+	xxx_hidden_JobId               int64                      `protobuf:"varint,1,opt,name=job_id,json=jobId,proto3"`
+	xxx_hidden_Name                string                     `protobuf:"bytes,2,opt,name=name,proto3"`
+	xxx_hidden_Description         *string                    `protobuf:"bytes,3,opt,name=description,proto3,oneof"`
+	xxx_hidden_ShortName           *string                    `protobuf:"bytes,4,opt,name=short_name,json=shortName,proto3,oneof"`
+	xxx_hidden_LogoFileId          *string                    `protobuf:"bytes,5,opt,name=logo_file_id,json=logoFileId,proto3,oneof"`
+	xxx_hidden_Color               *string                    `protobuf:"bytes,6,opt,name=color,proto3,oneof"`
+	xxx_hidden_Type                groups.GroupType           `protobuf:"varint,7,opt,name=type,proto3,enum=resources.jobs.groups.GroupType,oneof"`
+	xxx_hidden_MembershipMode      groups.GroupMembershipMode `protobuf:"varint,8,opt,name=membership_mode,json=membershipMode,proto3,enum=resources.jobs.groups.GroupMembershipMode,oneof"`
+	xxx_hidden_SortOrder           int32                      `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3,oneof"`
+	xxx_hidden_LeaderUserIds       []int64                    `protobuf:"varint,10,rep,packed,name=leader_user_ids,json=leaderUserIds,proto3"`
+	xxx_hidden_ManualMemberUserIds []int64                    `protobuf:"varint,11,rep,packed,name=manual_member_user_ids,json=manualMemberUserIds,proto3"`
+	xxx_hidden_Rules               *[]*GroupRuleInput         `protobuf:"bytes,12,rep,name=rules,proto3"`
+	XXX_raceDetectHookData         protoimpl.RaceDetectHookData
+	XXX_presence                   [1]uint32
+	unknownFields                  protoimpl.UnknownFields
+	sizeCache                      protoimpl.SizeCache
+}
+
+func (x *CreateGroupRequest) Reset() {
+	*x = CreateGroupRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateGroupRequest) ProtoMessage() {}
+
+func (x *CreateGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *CreateGroupRequest) GetJobId() int64 {
+	if x != nil {
+		return x.xxx_hidden_JobId
+	}
+	return 0
+}
+
+func (x *CreateGroupRequest) GetName() string {
+	if x != nil {
+		return x.xxx_hidden_Name
+	}
+	return ""
+}
+
+func (x *CreateGroupRequest) GetDescription() string {
+	if x != nil {
+		if x.xxx_hidden_Description != nil {
+			return *x.xxx_hidden_Description
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CreateGroupRequest) GetShortName() string {
+	if x != nil {
+		if x.xxx_hidden_ShortName != nil {
+			return *x.xxx_hidden_ShortName
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CreateGroupRequest) GetLogoFileId() string {
+	if x != nil {
+		if x.xxx_hidden_LogoFileId != nil {
+			return *x.xxx_hidden_LogoFileId
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CreateGroupRequest) GetColor() string {
+	if x != nil {
+		if x.xxx_hidden_Color != nil {
+			return *x.xxx_hidden_Color
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CreateGroupRequest) GetType() groups.GroupType {
+	if x != nil {
+		if protoimpl.X.Present(&(x.XXX_presence[0]), 6) {
+			return x.xxx_hidden_Type
+		}
+	}
+	return groups.GroupType(0)
+}
+
+func (x *CreateGroupRequest) GetMembershipMode() groups.GroupMembershipMode {
+	if x != nil {
+		if protoimpl.X.Present(&(x.XXX_presence[0]), 7) {
+			return x.xxx_hidden_MembershipMode
+		}
+	}
+	return groups.GroupMembershipMode(0)
+}
+
+func (x *CreateGroupRequest) GetSortOrder() int32 {
+	if x != nil {
+		return x.xxx_hidden_SortOrder
+	}
+	return 0
+}
+
+func (x *CreateGroupRequest) GetLeaderUserIds() []int64 {
+	if x != nil {
+		return x.xxx_hidden_LeaderUserIds
+	}
+	return nil
+}
+
+func (x *CreateGroupRequest) GetManualMemberUserIds() []int64 {
+	if x != nil {
+		return x.xxx_hidden_ManualMemberUserIds
+	}
+	return nil
+}
+
+func (x *CreateGroupRequest) GetRules() []*GroupRuleInput {
+	if x != nil {
+		if x.xxx_hidden_Rules != nil {
+			return *x.xxx_hidden_Rules
+		}
+	}
+	return nil
+}
+
+func (x *CreateGroupRequest) SetJobId(v int64) {
+	x.xxx_hidden_JobId = v
+}
+
+func (x *CreateGroupRequest) SetName(v string) {
+	x.xxx_hidden_Name = v
+}
+
+func (x *CreateGroupRequest) SetDescription(v string) {
+	x.xxx_hidden_Description = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 12)
+}
+
+func (x *CreateGroupRequest) SetShortName(v string) {
+	x.xxx_hidden_ShortName = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 12)
+}
+
+func (x *CreateGroupRequest) SetLogoFileId(v string) {
+	x.xxx_hidden_LogoFileId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 12)
+}
+
+func (x *CreateGroupRequest) SetColor(v string) {
+	x.xxx_hidden_Color = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 12)
+}
+
+func (x *CreateGroupRequest) SetType(v groups.GroupType) {
+	x.xxx_hidden_Type = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 12)
+}
+
+func (x *CreateGroupRequest) SetMembershipMode(v groups.GroupMembershipMode) {
+	x.xxx_hidden_MembershipMode = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 12)
+}
+
+func (x *CreateGroupRequest) SetSortOrder(v int32) {
+	x.xxx_hidden_SortOrder = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 12)
+}
+
+func (x *CreateGroupRequest) SetLeaderUserIds(v []int64) {
+	x.xxx_hidden_LeaderUserIds = v
+}
+
+func (x *CreateGroupRequest) SetManualMemberUserIds(v []int64) {
+	x.xxx_hidden_ManualMemberUserIds = v
+}
+
+func (x *CreateGroupRequest) SetRules(v []*GroupRuleInput) {
+	x.xxx_hidden_Rules = &v
+}
+
+func (x *CreateGroupRequest) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *CreateGroupRequest) HasShortName() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *CreateGroupRequest) HasLogoFileId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
+func (x *CreateGroupRequest) HasColor() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+}
+
+func (x *CreateGroupRequest) HasType() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
+}
+
+func (x *CreateGroupRequest) HasMembershipMode() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+}
+
+func (x *CreateGroupRequest) HasSortOrder() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
+}
+
+func (x *CreateGroupRequest) ClearDescription() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Description = nil
+}
+
+func (x *CreateGroupRequest) ClearShortName() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_ShortName = nil
+}
+
+func (x *CreateGroupRequest) ClearLogoFileId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_LogoFileId = nil
+}
+
+func (x *CreateGroupRequest) ClearColor() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_Color = nil
+}
+
+func (x *CreateGroupRequest) ClearType() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	x.xxx_hidden_Type = groups.GroupType_GROUP_TYPE_UNSPECIFIED
+}
+
+func (x *CreateGroupRequest) ClearMembershipMode() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	x.xxx_hidden_MembershipMode = groups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_UNSPECIFIED
+}
+
+func (x *CreateGroupRequest) ClearSortOrder() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	x.xxx_hidden_SortOrder = 0
+}
+
+type CreateGroupRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	JobId               int64
+	Name                string
+	Description         *string
+	ShortName           *string
+	LogoFileId          *string
+	Color               *string
+	Type                *groups.GroupType
+	MembershipMode      *groups.GroupMembershipMode
+	SortOrder           *int32
+	LeaderUserIds       []int64
+	ManualMemberUserIds []int64
+	Rules               []*GroupRuleInput
+}
+
+func (b0 CreateGroupRequest_builder) Build() *CreateGroupRequest {
+	m0 := &CreateGroupRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_JobId = b.JobId
+	x.xxx_hidden_Name = b.Name
+	if b.Description != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 12)
+		x.xxx_hidden_Description = b.Description
+	}
+	if b.ShortName != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 12)
+		x.xxx_hidden_ShortName = b.ShortName
+	}
+	if b.LogoFileId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 12)
+		x.xxx_hidden_LogoFileId = b.LogoFileId
+	}
+	if b.Color != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 12)
+		x.xxx_hidden_Color = b.Color
+	}
+	if b.Type != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 12)
+		x.xxx_hidden_Type = *b.Type
+	}
+	if b.MembershipMode != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 12)
+		x.xxx_hidden_MembershipMode = *b.MembershipMode
+	}
+	if b.SortOrder != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 12)
+		x.xxx_hidden_SortOrder = *b.SortOrder
+	}
+	x.xxx_hidden_LeaderUserIds = b.LeaderUserIds
+	x.xxx_hidden_ManualMemberUserIds = b.ManualMemberUserIds
+	x.xxx_hidden_Rules = &b.Rules
+	return m0
+}
+
+type CreateGroupResponse struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Group *groups.Group          `protobuf:"bytes,1,opt,name=group,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *CreateGroupResponse) Reset() {
+	*x = CreateGroupResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateGroupResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateGroupResponse) ProtoMessage() {}
+
+func (x *CreateGroupResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *CreateGroupResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *CreateGroupResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *CreateGroupResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *CreateGroupResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type CreateGroupResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Group *groups.Group
+}
+
+func (b0 CreateGroupResponse_builder) Build() *CreateGroupResponse {
+	m0 := &CreateGroupResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type UpdateGroupRequest struct {
+	state                     protoimpl.MessageState     `protogen:"opaque.v1"`
+	xxx_hidden_Id             int64                      `protobuf:"varint,1,opt,name=id,proto3"`
+	xxx_hidden_Name           *string                    `protobuf:"bytes,2,opt,name=name,proto3,oneof"`
+	xxx_hidden_Description    *string                    `protobuf:"bytes,3,opt,name=description,proto3,oneof"`
+	xxx_hidden_ShortName      *string                    `protobuf:"bytes,4,opt,name=short_name,json=shortName,proto3,oneof"`
+	xxx_hidden_LogoFileId     *string                    `protobuf:"bytes,5,opt,name=logo_file_id,json=logoFileId,proto3,oneof"`
+	xxx_hidden_Color          *string                    `protobuf:"bytes,6,opt,name=color,proto3,oneof"`
+	xxx_hidden_State          groups.GroupState          `protobuf:"varint,7,opt,name=state,proto3,enum=resources.jobs.groups.GroupState,oneof"`
+	xxx_hidden_Type           groups.GroupType           `protobuf:"varint,8,opt,name=type,proto3,enum=resources.jobs.groups.GroupType,oneof"`
+	xxx_hidden_MembershipMode groups.GroupMembershipMode `protobuf:"varint,9,opt,name=membership_mode,json=membershipMode,proto3,enum=resources.jobs.groups.GroupMembershipMode,oneof"`
+	xxx_hidden_SortOrder      int32                      `protobuf:"varint,10,opt,name=sort_order,json=sortOrder,proto3,oneof"`
+	XXX_raceDetectHookData    protoimpl.RaceDetectHookData
+	XXX_presence              [1]uint32
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
+}
+
+func (x *UpdateGroupRequest) Reset() {
+	*x = UpdateGroupRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateGroupRequest) ProtoMessage() {}
+
+func (x *UpdateGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *UpdateGroupRequest) GetId() int64 {
+	if x != nil {
+		return x.xxx_hidden_Id
+	}
+	return 0
+}
+
+func (x *UpdateGroupRequest) GetName() string {
+	if x != nil {
+		if x.xxx_hidden_Name != nil {
+			return *x.xxx_hidden_Name
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *UpdateGroupRequest) GetDescription() string {
+	if x != nil {
+		if x.xxx_hidden_Description != nil {
+			return *x.xxx_hidden_Description
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *UpdateGroupRequest) GetShortName() string {
+	if x != nil {
+		if x.xxx_hidden_ShortName != nil {
+			return *x.xxx_hidden_ShortName
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *UpdateGroupRequest) GetLogoFileId() string {
+	if x != nil {
+		if x.xxx_hidden_LogoFileId != nil {
+			return *x.xxx_hidden_LogoFileId
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *UpdateGroupRequest) GetColor() string {
+	if x != nil {
+		if x.xxx_hidden_Color != nil {
+			return *x.xxx_hidden_Color
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *UpdateGroupRequest) GetState() groups.GroupState {
+	if x != nil {
+		if protoimpl.X.Present(&(x.XXX_presence[0]), 6) {
+			return x.xxx_hidden_State
+		}
+	}
+	return groups.GroupState(0)
+}
+
+func (x *UpdateGroupRequest) GetType() groups.GroupType {
+	if x != nil {
+		if protoimpl.X.Present(&(x.XXX_presence[0]), 7) {
+			return x.xxx_hidden_Type
+		}
+	}
+	return groups.GroupType(0)
+}
+
+func (x *UpdateGroupRequest) GetMembershipMode() groups.GroupMembershipMode {
+	if x != nil {
+		if protoimpl.X.Present(&(x.XXX_presence[0]), 8) {
+			return x.xxx_hidden_MembershipMode
+		}
+	}
+	return groups.GroupMembershipMode(0)
+}
+
+func (x *UpdateGroupRequest) GetSortOrder() int32 {
+	if x != nil {
+		return x.xxx_hidden_SortOrder
+	}
+	return 0
+}
+
+func (x *UpdateGroupRequest) SetId(v int64) {
+	x.xxx_hidden_Id = v
+}
+
+func (x *UpdateGroupRequest) SetName(v string) {
+	x.xxx_hidden_Name = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 10)
+}
+
+func (x *UpdateGroupRequest) SetDescription(v string) {
+	x.xxx_hidden_Description = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 10)
+}
+
+func (x *UpdateGroupRequest) SetShortName(v string) {
+	x.xxx_hidden_ShortName = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 10)
+}
+
+func (x *UpdateGroupRequest) SetLogoFileId(v string) {
+	x.xxx_hidden_LogoFileId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 10)
+}
+
+func (x *UpdateGroupRequest) SetColor(v string) {
+	x.xxx_hidden_Color = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 10)
+}
+
+func (x *UpdateGroupRequest) SetState(v groups.GroupState) {
+	x.xxx_hidden_State = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 10)
+}
+
+func (x *UpdateGroupRequest) SetType(v groups.GroupType) {
+	x.xxx_hidden_Type = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 10)
+}
+
+func (x *UpdateGroupRequest) SetMembershipMode(v groups.GroupMembershipMode) {
+	x.xxx_hidden_MembershipMode = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 10)
+}
+
+func (x *UpdateGroupRequest) SetSortOrder(v int32) {
+	x.xxx_hidden_SortOrder = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 10)
+}
+
+func (x *UpdateGroupRequest) HasName() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *UpdateGroupRequest) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *UpdateGroupRequest) HasShortName() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *UpdateGroupRequest) HasLogoFileId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
+func (x *UpdateGroupRequest) HasColor() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+}
+
+func (x *UpdateGroupRequest) HasState() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
+}
+
+func (x *UpdateGroupRequest) HasType() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+}
+
+func (x *UpdateGroupRequest) HasMembershipMode() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
+}
+
+func (x *UpdateGroupRequest) HasSortOrder() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+}
+
+func (x *UpdateGroupRequest) ClearName() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Name = nil
+}
+
+func (x *UpdateGroupRequest) ClearDescription() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Description = nil
+}
+
+func (x *UpdateGroupRequest) ClearShortName() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_ShortName = nil
+}
+
+func (x *UpdateGroupRequest) ClearLogoFileId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_LogoFileId = nil
+}
+
+func (x *UpdateGroupRequest) ClearColor() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_Color = nil
+}
+
+func (x *UpdateGroupRequest) ClearState() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	x.xxx_hidden_State = groups.GroupState_GROUP_STATE_UNSPECIFIED
+}
+
+func (x *UpdateGroupRequest) ClearType() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	x.xxx_hidden_Type = groups.GroupType_GROUP_TYPE_UNSPECIFIED
+}
+
+func (x *UpdateGroupRequest) ClearMembershipMode() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	x.xxx_hidden_MembershipMode = groups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_UNSPECIFIED
+}
+
+func (x *UpdateGroupRequest) ClearSortOrder() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	x.xxx_hidden_SortOrder = 0
+}
+
+type UpdateGroupRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id             int64
+	Name           *string
+	Description    *string
+	ShortName      *string
+	LogoFileId     *string
+	Color          *string
+	State          *groups.GroupState
+	Type           *groups.GroupType
+	MembershipMode *groups.GroupMembershipMode
+	SortOrder      *int32
+}
+
+func (b0 UpdateGroupRequest_builder) Build() *UpdateGroupRequest {
+	m0 := &UpdateGroupRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Id = b.Id
+	if b.Name != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 10)
+		x.xxx_hidden_Name = b.Name
+	}
+	if b.Description != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 10)
+		x.xxx_hidden_Description = b.Description
+	}
+	if b.ShortName != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 10)
+		x.xxx_hidden_ShortName = b.ShortName
+	}
+	if b.LogoFileId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 10)
+		x.xxx_hidden_LogoFileId = b.LogoFileId
+	}
+	if b.Color != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 10)
+		x.xxx_hidden_Color = b.Color
+	}
+	if b.State != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 10)
+		x.xxx_hidden_State = *b.State
+	}
+	if b.Type != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 10)
+		x.xxx_hidden_Type = *b.Type
+	}
+	if b.MembershipMode != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 10)
+		x.xxx_hidden_MembershipMode = *b.MembershipMode
+	}
+	if b.SortOrder != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 10)
+		x.xxx_hidden_SortOrder = *b.SortOrder
+	}
+	return m0
+}
+
+type UpdateGroupResponse struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Group *groups.Group          `protobuf:"bytes,1,opt,name=group,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *UpdateGroupResponse) Reset() {
+	*x = UpdateGroupResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateGroupResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateGroupResponse) ProtoMessage() {}
+
+func (x *UpdateGroupResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *UpdateGroupResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *UpdateGroupResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *UpdateGroupResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *UpdateGroupResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type UpdateGroupResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Group *groups.Group
+}
+
+func (b0 UpdateGroupResponse_builder) Build() *UpdateGroupResponse {
+	m0 := &UpdateGroupResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type ArchiveGroupRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          int64                  `protobuf:"varint,1,opt,name=id,proto3"`
+	xxx_hidden_Reason      *string                `protobuf:"bytes,2,opt,name=reason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *ArchiveGroupRequest) Reset() {
+	*x = ArchiveGroupRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ArchiveGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ArchiveGroupRequest) ProtoMessage() {}
+
+func (x *ArchiveGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ArchiveGroupRequest) GetId() int64 {
+	if x != nil {
+		return x.xxx_hidden_Id
+	}
+	return 0
+}
+
+func (x *ArchiveGroupRequest) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ArchiveGroupRequest) SetId(v int64) {
+	x.xxx_hidden_Id = v
+}
+
+func (x *ArchiveGroupRequest) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+}
+
+func (x *ArchiveGroupRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *ArchiveGroupRequest) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Reason = nil
+}
+
+type ArchiveGroupRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id     int64
+	Reason *string
+}
+
+func (b0 ArchiveGroupRequest_builder) Build() *ArchiveGroupRequest {
+	m0 := &ArchiveGroupRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Id = b.Id
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	return m0
+}
+
+type ArchiveGroupResponse struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Group *groups.Group          `protobuf:"bytes,1,opt,name=group,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ArchiveGroupResponse) Reset() {
+	*x = ArchiveGroupResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ArchiveGroupResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ArchiveGroupResponse) ProtoMessage() {}
+
+func (x *ArchiveGroupResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ArchiveGroupResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *ArchiveGroupResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *ArchiveGroupResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *ArchiveGroupResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type ArchiveGroupResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Group *groups.Group
+}
+
+func (b0 ArchiveGroupResponse_builder) Build() *ArchiveGroupResponse {
+	m0 := &ArchiveGroupResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type RestoreGroupRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          int64                  `protobuf:"varint,1,opt,name=id,proto3"`
+	xxx_hidden_Reason      *string                `protobuf:"bytes,2,opt,name=reason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *RestoreGroupRequest) Reset() {
+	*x = RestoreGroupRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RestoreGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RestoreGroupRequest) ProtoMessage() {}
+
+func (x *RestoreGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RestoreGroupRequest) GetId() int64 {
+	if x != nil {
+		return x.xxx_hidden_Id
+	}
+	return 0
+}
+
+func (x *RestoreGroupRequest) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *RestoreGroupRequest) SetId(v int64) {
+	x.xxx_hidden_Id = v
+}
+
+func (x *RestoreGroupRequest) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+}
+
+func (x *RestoreGroupRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *RestoreGroupRequest) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Reason = nil
+}
+
+type RestoreGroupRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id     int64
+	Reason *string
+}
+
+func (b0 RestoreGroupRequest_builder) Build() *RestoreGroupRequest {
+	m0 := &RestoreGroupRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Id = b.Id
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	return m0
+}
+
+type RestoreGroupResponse struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Group *groups.Group          `protobuf:"bytes,1,opt,name=group,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *RestoreGroupResponse) Reset() {
+	*x = RestoreGroupResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RestoreGroupResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RestoreGroupResponse) ProtoMessage() {}
+
+func (x *RestoreGroupResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RestoreGroupResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *RestoreGroupResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *RestoreGroupResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *RestoreGroupResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type RestoreGroupResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Group *groups.Group
+}
+
+func (b0 RestoreGroupResponse_builder) Build() *RestoreGroupResponse {
+	m0 := &RestoreGroupResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type ListGroupMembersRequest struct {
+	state                      protoimpl.MessageState      `protogen:"opaque.v1"`
+	xxx_hidden_Pagination      *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
+	xxx_hidden_Sort            *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
+	xxx_hidden_GroupId         int64                       `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_Search          *string                     `protobuf:"bytes,4,opt,name=search,proto3,oneof"`
+	xxx_hidden_IncludeExcluded bool                        `protobuf:"varint,5,opt,name=include_excluded,json=includeExcluded,proto3"`
+	xxx_hidden_IncludeLeaders  bool                        `protobuf:"varint,6,opt,name=include_leaders,json=includeLeaders,proto3"`
+	xxx_hidden_IncludeReasons  bool                        `protobuf:"varint,7,opt,name=include_reasons,json=includeReasons,proto3"`
+	xxx_hidden_Sources         []groups.GroupMemberSource  `protobuf:"varint,8,rep,packed,name=sources,proto3,enum=resources.jobs.groups.GroupMemberSource"`
+	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
+	XXX_presence               [1]uint32
+	unknownFields              protoimpl.UnknownFields
+	sizeCache                  protoimpl.SizeCache
+}
+
+func (x *ListGroupMembersRequest) Reset() {
+	*x = ListGroupMembersRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListGroupMembersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListGroupMembersRequest) ProtoMessage() {}
+
+func (x *ListGroupMembersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListGroupMembersRequest) GetPagination() *database.PaginationRequest {
+	if x != nil {
+		return x.xxx_hidden_Pagination
+	}
+	return nil
+}
+
+func (x *ListGroupMembersRequest) GetSort() *database.Sort {
+	if x != nil {
+		return x.xxx_hidden_Sort
+	}
+	return nil
+}
+
+func (x *ListGroupMembersRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.xxx_hidden_GroupId
+	}
+	return 0
+}
+
+func (x *ListGroupMembersRequest) GetSearch() string {
+	if x != nil {
+		if x.xxx_hidden_Search != nil {
+			return *x.xxx_hidden_Search
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ListGroupMembersRequest) GetIncludeExcluded() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeExcluded
+	}
+	return false
+}
+
+func (x *ListGroupMembersRequest) GetIncludeLeaders() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeLeaders
+	}
+	return false
+}
+
+func (x *ListGroupMembersRequest) GetIncludeReasons() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeReasons
+	}
+	return false
+}
+
+func (x *ListGroupMembersRequest) GetSources() []groups.GroupMemberSource {
+	if x != nil {
+		return x.xxx_hidden_Sources
+	}
+	return nil
+}
+
+func (x *ListGroupMembersRequest) SetPagination(v *database.PaginationRequest) {
+	x.xxx_hidden_Pagination = v
+}
+
+func (x *ListGroupMembersRequest) SetSort(v *database.Sort) {
+	x.xxx_hidden_Sort = v
+}
+
+func (x *ListGroupMembersRequest) SetGroupId(v int64) {
+	x.xxx_hidden_GroupId = v
+}
+
+func (x *ListGroupMembersRequest) SetSearch(v string) {
+	x.xxx_hidden_Search = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 8)
+}
+
+func (x *ListGroupMembersRequest) SetIncludeExcluded(v bool) {
+	x.xxx_hidden_IncludeExcluded = v
+}
+
+func (x *ListGroupMembersRequest) SetIncludeLeaders(v bool) {
+	x.xxx_hidden_IncludeLeaders = v
+}
+
+func (x *ListGroupMembersRequest) SetIncludeReasons(v bool) {
+	x.xxx_hidden_IncludeReasons = v
+}
+
+func (x *ListGroupMembersRequest) SetSources(v []groups.GroupMemberSource) {
+	x.xxx_hidden_Sources = v
+}
+
+func (x *ListGroupMembersRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Pagination != nil
+}
+
+func (x *ListGroupMembersRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Sort != nil
+}
+
+func (x *ListGroupMembersRequest) HasSearch() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *ListGroupMembersRequest) ClearPagination() {
+	x.xxx_hidden_Pagination = nil
+}
+
+func (x *ListGroupMembersRequest) ClearSort() {
+	x.xxx_hidden_Sort = nil
+}
+
+func (x *ListGroupMembersRequest) ClearSearch() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Search = nil
+}
+
+type ListGroupMembersRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination      *database.PaginationRequest
+	Sort            *database.Sort
+	GroupId         int64
+	Search          *string
+	IncludeExcluded bool
+	IncludeLeaders  bool
+	IncludeReasons  bool
+	Sources         []groups.GroupMemberSource
+}
+
+func (b0 ListGroupMembersRequest_builder) Build() *ListGroupMembersRequest {
+	m0 := &ListGroupMembersRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Pagination = b.Pagination
+	x.xxx_hidden_Sort = b.Sort
+	x.xxx_hidden_GroupId = b.GroupId
+	if b.Search != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 8)
+		x.xxx_hidden_Search = b.Search
+	}
+	x.xxx_hidden_IncludeExcluded = b.IncludeExcluded
+	x.xxx_hidden_IncludeLeaders = b.IncludeLeaders
+	x.xxx_hidden_IncludeReasons = b.IncludeReasons
+	x.xxx_hidden_Sources = b.Sources
+	return m0
+}
+
+type ListGroupMembersResponse struct {
+	state                 protoimpl.MessageState         `protogen:"opaque.v1"`
+	xxx_hidden_Pagination *database.PaginationResponse   `protobuf:"bytes,1,opt,name=pagination,proto3"`
+	xxx_hidden_Members    *[]*groups.GroupResolvedMember `protobuf:"bytes,2,rep,name=members,proto3"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *ListGroupMembersResponse) Reset() {
+	*x = ListGroupMembersResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListGroupMembersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListGroupMembersResponse) ProtoMessage() {}
+
+func (x *ListGroupMembersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListGroupMembersResponse) GetPagination() *database.PaginationResponse {
+	if x != nil {
+		return x.xxx_hidden_Pagination
+	}
+	return nil
+}
+
+func (x *ListGroupMembersResponse) GetMembers() []*groups.GroupResolvedMember {
+	if x != nil {
+		if x.xxx_hidden_Members != nil {
+			return *x.xxx_hidden_Members
+		}
+	}
+	return nil
+}
+
+func (x *ListGroupMembersResponse) SetPagination(v *database.PaginationResponse) {
+	x.xxx_hidden_Pagination = v
+}
+
+func (x *ListGroupMembersResponse) SetMembers(v []*groups.GroupResolvedMember) {
+	x.xxx_hidden_Members = &v
+}
+
+func (x *ListGroupMembersResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Pagination != nil
+}
+
+func (x *ListGroupMembersResponse) ClearPagination() {
+	x.xxx_hidden_Pagination = nil
+}
+
+type ListGroupMembersResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Members    []*groups.GroupResolvedMember
+}
+
+func (b0 ListGroupMembersResponse_builder) Build() *ListGroupMembersResponse {
+	m0 := &ListGroupMembersResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Pagination = b.Pagination
+	x.xxx_hidden_Members = &b.Members
+	return m0
+}
+
+type AddGroupMemberRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_UserId      int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *AddGroupMemberRequest) Reset() {
+	*x = AddGroupMemberRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AddGroupMemberRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddGroupMemberRequest) ProtoMessage() {}
+
+func (x *AddGroupMemberRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *AddGroupMemberRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.xxx_hidden_GroupId
+	}
+	return 0
+}
+
+func (x *AddGroupMemberRequest) GetUserId() int64 {
+	if x != nil {
+		return x.xxx_hidden_UserId
+	}
+	return 0
+}
+
+func (x *AddGroupMemberRequest) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *AddGroupMemberRequest) SetGroupId(v int64) {
+	x.xxx_hidden_GroupId = v
+}
+
+func (x *AddGroupMemberRequest) SetUserId(v int64) {
+	x.xxx_hidden_UserId = v
+}
+
+func (x *AddGroupMemberRequest) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *AddGroupMemberRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *AddGroupMemberRequest) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Reason = nil
+}
+
+type AddGroupMemberRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	GroupId int64
+	UserId  int64
+	Reason  *string
+}
+
+func (b0 AddGroupMemberRequest_builder) Build() *AddGroupMemberRequest {
+	m0 := &AddGroupMemberRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_GroupId = b.GroupId
+	x.xxx_hidden_UserId = b.UserId
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	return m0
+}
+
+type AddGroupMemberResponse struct {
+	state             protoimpl.MessageState    `protogen:"opaque.v1"`
+	xxx_hidden_Member *groups.GroupManualMember `protobuf:"bytes,1,opt,name=member,proto3"`
+	xxx_hidden_Group  *groups.Group             `protobuf:"bytes,2,opt,name=group,proto3"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *AddGroupMemberResponse) Reset() {
+	*x = AddGroupMemberResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AddGroupMemberResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddGroupMemberResponse) ProtoMessage() {}
+
+func (x *AddGroupMemberResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *AddGroupMemberResponse) GetMember() *groups.GroupManualMember {
+	if x != nil {
+		return x.xxx_hidden_Member
+	}
+	return nil
+}
+
+func (x *AddGroupMemberResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *AddGroupMemberResponse) SetMember(v *groups.GroupManualMember) {
+	x.xxx_hidden_Member = v
+}
+
+func (x *AddGroupMemberResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *AddGroupMemberResponse) HasMember() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Member != nil
+}
+
+func (x *AddGroupMemberResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *AddGroupMemberResponse) ClearMember() {
+	x.xxx_hidden_Member = nil
+}
+
+func (x *AddGroupMemberResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type AddGroupMemberResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Member *groups.GroupManualMember
+	Group  *groups.Group
+}
+
+func (b0 AddGroupMemberResponse_builder) Build() *AddGroupMemberResponse {
+	m0 := &AddGroupMemberResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Member = b.Member
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type RemoveGroupMemberRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_UserId      int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *RemoveGroupMemberRequest) Reset() {
+	*x = RemoveGroupMemberRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveGroupMemberRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveGroupMemberRequest) ProtoMessage() {}
+
+func (x *RemoveGroupMemberRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RemoveGroupMemberRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.xxx_hidden_GroupId
+	}
+	return 0
+}
+
+func (x *RemoveGroupMemberRequest) GetUserId() int64 {
+	if x != nil {
+		return x.xxx_hidden_UserId
+	}
+	return 0
+}
+
+func (x *RemoveGroupMemberRequest) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *RemoveGroupMemberRequest) SetGroupId(v int64) {
+	x.xxx_hidden_GroupId = v
+}
+
+func (x *RemoveGroupMemberRequest) SetUserId(v int64) {
+	x.xxx_hidden_UserId = v
+}
+
+func (x *RemoveGroupMemberRequest) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *RemoveGroupMemberRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *RemoveGroupMemberRequest) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Reason = nil
+}
+
+type RemoveGroupMemberRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	GroupId int64
+	UserId  int64
+	Reason  *string
+}
+
+func (b0 RemoveGroupMemberRequest_builder) Build() *RemoveGroupMemberRequest {
+	m0 := &RemoveGroupMemberRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_GroupId = b.GroupId
+	x.xxx_hidden_UserId = b.UserId
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	return m0
+}
+
+type RemoveGroupMemberResponse struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Group *groups.Group          `protobuf:"bytes,1,opt,name=group,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *RemoveGroupMemberResponse) Reset() {
+	*x = RemoveGroupMemberResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveGroupMemberResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveGroupMemberResponse) ProtoMessage() {}
+
+func (x *RemoveGroupMemberResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RemoveGroupMemberResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *RemoveGroupMemberResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *RemoveGroupMemberResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *RemoveGroupMemberResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type RemoveGroupMemberResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Group *groups.Group
+}
+
+func (b0 RemoveGroupMemberResponse_builder) Build() *RemoveGroupMemberResponse {
+	m0 := &RemoveGroupMemberResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type ExcludeGroupMemberRequest struct {
+	state                  protoimpl.MessageState      `protogen:"opaque.v1"`
+	xxx_hidden_GroupId     int64                       `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_UserId      int64                       `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_ReasonType  groups.GroupExclusionReason `protobuf:"varint,3,opt,name=reason_type,json=reasonType,proto3,enum=resources.jobs.groups.GroupExclusionReason"`
+	xxx_hidden_Reason      *string                     `protobuf:"bytes,4,opt,name=reason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *ExcludeGroupMemberRequest) Reset() {
+	*x = ExcludeGroupMemberRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExcludeGroupMemberRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExcludeGroupMemberRequest) ProtoMessage() {}
+
+func (x *ExcludeGroupMemberRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ExcludeGroupMemberRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.xxx_hidden_GroupId
+	}
+	return 0
+}
+
+func (x *ExcludeGroupMemberRequest) GetUserId() int64 {
+	if x != nil {
+		return x.xxx_hidden_UserId
+	}
+	return 0
+}
+
+func (x *ExcludeGroupMemberRequest) GetReasonType() groups.GroupExclusionReason {
+	if x != nil {
+		return x.xxx_hidden_ReasonType
+	}
+	return groups.GroupExclusionReason(0)
+}
+
+func (x *ExcludeGroupMemberRequest) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ExcludeGroupMemberRequest) SetGroupId(v int64) {
+	x.xxx_hidden_GroupId = v
+}
+
+func (x *ExcludeGroupMemberRequest) SetUserId(v int64) {
+	x.xxx_hidden_UserId = v
+}
+
+func (x *ExcludeGroupMemberRequest) SetReasonType(v groups.GroupExclusionReason) {
+	x.xxx_hidden_ReasonType = v
+}
+
+func (x *ExcludeGroupMemberRequest) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
+}
+
+func (x *ExcludeGroupMemberRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *ExcludeGroupMemberRequest) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Reason = nil
+}
+
+type ExcludeGroupMemberRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	GroupId    int64
+	UserId     int64
+	ReasonType groups.GroupExclusionReason
+	Reason     *string
+}
+
+func (b0 ExcludeGroupMemberRequest_builder) Build() *ExcludeGroupMemberRequest {
+	m0 := &ExcludeGroupMemberRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_GroupId = b.GroupId
+	x.xxx_hidden_UserId = b.UserId
+	x.xxx_hidden_ReasonType = b.ReasonType
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	return m0
+}
+
+type ExcludeGroupMemberResponse struct {
+	state                protoimpl.MessageState       `protogen:"opaque.v1"`
+	xxx_hidden_Exclusion *groups.GroupMemberExclusion `protobuf:"bytes,1,opt,name=exclusion,proto3"`
+	xxx_hidden_Group     *groups.Group                `protobuf:"bytes,2,opt,name=group,proto3"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *ExcludeGroupMemberResponse) Reset() {
+	*x = ExcludeGroupMemberResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExcludeGroupMemberResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExcludeGroupMemberResponse) ProtoMessage() {}
+
+func (x *ExcludeGroupMemberResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ExcludeGroupMemberResponse) GetExclusion() *groups.GroupMemberExclusion {
+	if x != nil {
+		return x.xxx_hidden_Exclusion
+	}
+	return nil
+}
+
+func (x *ExcludeGroupMemberResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *ExcludeGroupMemberResponse) SetExclusion(v *groups.GroupMemberExclusion) {
+	x.xxx_hidden_Exclusion = v
+}
+
+func (x *ExcludeGroupMemberResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *ExcludeGroupMemberResponse) HasExclusion() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Exclusion != nil
+}
+
+func (x *ExcludeGroupMemberResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *ExcludeGroupMemberResponse) ClearExclusion() {
+	x.xxx_hidden_Exclusion = nil
+}
+
+func (x *ExcludeGroupMemberResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type ExcludeGroupMemberResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Exclusion *groups.GroupMemberExclusion
+	Group     *groups.Group
+}
+
+func (b0 ExcludeGroupMemberResponse_builder) Build() *ExcludeGroupMemberResponse {
+	m0 := &ExcludeGroupMemberResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Exclusion = b.Exclusion
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type RemoveGroupMemberExclusionRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_UserId      int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *RemoveGroupMemberExclusionRequest) Reset() {
+	*x = RemoveGroupMemberExclusionRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveGroupMemberExclusionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveGroupMemberExclusionRequest) ProtoMessage() {}
+
+func (x *RemoveGroupMemberExclusionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RemoveGroupMemberExclusionRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.xxx_hidden_GroupId
+	}
+	return 0
+}
+
+func (x *RemoveGroupMemberExclusionRequest) GetUserId() int64 {
+	if x != nil {
+		return x.xxx_hidden_UserId
+	}
+	return 0
+}
+
+func (x *RemoveGroupMemberExclusionRequest) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *RemoveGroupMemberExclusionRequest) SetGroupId(v int64) {
+	x.xxx_hidden_GroupId = v
+}
+
+func (x *RemoveGroupMemberExclusionRequest) SetUserId(v int64) {
+	x.xxx_hidden_UserId = v
+}
+
+func (x *RemoveGroupMemberExclusionRequest) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *RemoveGroupMemberExclusionRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *RemoveGroupMemberExclusionRequest) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Reason = nil
+}
+
+type RemoveGroupMemberExclusionRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	GroupId int64
+	UserId  int64
+	Reason  *string
+}
+
+func (b0 RemoveGroupMemberExclusionRequest_builder) Build() *RemoveGroupMemberExclusionRequest {
+	m0 := &RemoveGroupMemberExclusionRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_GroupId = b.GroupId
+	x.xxx_hidden_UserId = b.UserId
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	return m0
+}
+
+type RemoveGroupMemberExclusionResponse struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Group *groups.Group          `protobuf:"bytes,1,opt,name=group,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *RemoveGroupMemberExclusionResponse) Reset() {
+	*x = RemoveGroupMemberExclusionResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveGroupMemberExclusionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveGroupMemberExclusionResponse) ProtoMessage() {}
+
+func (x *RemoveGroupMemberExclusionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RemoveGroupMemberExclusionResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *RemoveGroupMemberExclusionResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *RemoveGroupMemberExclusionResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *RemoveGroupMemberExclusionResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type RemoveGroupMemberExclusionResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Group *groups.Group
+}
+
+func (b0 RemoveGroupMemberExclusionResponse_builder) Build() *RemoveGroupMemberExclusionResponse {
+	m0 := &RemoveGroupMemberExclusionResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type AddGroupLeaderRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_UserId      int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *AddGroupLeaderRequest) Reset() {
+	*x = AddGroupLeaderRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AddGroupLeaderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddGroupLeaderRequest) ProtoMessage() {}
+
+func (x *AddGroupLeaderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *AddGroupLeaderRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.xxx_hidden_GroupId
+	}
+	return 0
+}
+
+func (x *AddGroupLeaderRequest) GetUserId() int64 {
+	if x != nil {
+		return x.xxx_hidden_UserId
+	}
+	return 0
+}
+
+func (x *AddGroupLeaderRequest) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *AddGroupLeaderRequest) SetGroupId(v int64) {
+	x.xxx_hidden_GroupId = v
+}
+
+func (x *AddGroupLeaderRequest) SetUserId(v int64) {
+	x.xxx_hidden_UserId = v
+}
+
+func (x *AddGroupLeaderRequest) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *AddGroupLeaderRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *AddGroupLeaderRequest) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Reason = nil
+}
+
+type AddGroupLeaderRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	GroupId int64
+	UserId  int64
+	Reason  *string
+}
+
+func (b0 AddGroupLeaderRequest_builder) Build() *AddGroupLeaderRequest {
+	m0 := &AddGroupLeaderRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_GroupId = b.GroupId
+	x.xxx_hidden_UserId = b.UserId
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	return m0
+}
+
+type AddGroupLeaderResponse struct {
+	state             protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Leader *groups.GroupLeader    `protobuf:"bytes,1,opt,name=leader,proto3"`
+	xxx_hidden_Group  *groups.Group          `protobuf:"bytes,2,opt,name=group,proto3"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *AddGroupLeaderResponse) Reset() {
+	*x = AddGroupLeaderResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AddGroupLeaderResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddGroupLeaderResponse) ProtoMessage() {}
+
+func (x *AddGroupLeaderResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *AddGroupLeaderResponse) GetLeader() *groups.GroupLeader {
+	if x != nil {
+		return x.xxx_hidden_Leader
+	}
+	return nil
+}
+
+func (x *AddGroupLeaderResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *AddGroupLeaderResponse) SetLeader(v *groups.GroupLeader) {
+	x.xxx_hidden_Leader = v
+}
+
+func (x *AddGroupLeaderResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *AddGroupLeaderResponse) HasLeader() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Leader != nil
+}
+
+func (x *AddGroupLeaderResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *AddGroupLeaderResponse) ClearLeader() {
+	x.xxx_hidden_Leader = nil
+}
+
+func (x *AddGroupLeaderResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type AddGroupLeaderResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Leader *groups.GroupLeader
+	Group  *groups.Group
+}
+
+func (b0 AddGroupLeaderResponse_builder) Build() *AddGroupLeaderResponse {
+	m0 := &AddGroupLeaderResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Leader = b.Leader
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type RemoveGroupLeaderRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_UserId      int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *RemoveGroupLeaderRequest) Reset() {
+	*x = RemoveGroupLeaderRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveGroupLeaderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveGroupLeaderRequest) ProtoMessage() {}
+
+func (x *RemoveGroupLeaderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RemoveGroupLeaderRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.xxx_hidden_GroupId
+	}
+	return 0
+}
+
+func (x *RemoveGroupLeaderRequest) GetUserId() int64 {
+	if x != nil {
+		return x.xxx_hidden_UserId
+	}
+	return 0
+}
+
+func (x *RemoveGroupLeaderRequest) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *RemoveGroupLeaderRequest) SetGroupId(v int64) {
+	x.xxx_hidden_GroupId = v
+}
+
+func (x *RemoveGroupLeaderRequest) SetUserId(v int64) {
+	x.xxx_hidden_UserId = v
+}
+
+func (x *RemoveGroupLeaderRequest) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *RemoveGroupLeaderRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *RemoveGroupLeaderRequest) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Reason = nil
+}
+
+type RemoveGroupLeaderRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	GroupId int64
+	UserId  int64
+	Reason  *string
+}
+
+func (b0 RemoveGroupLeaderRequest_builder) Build() *RemoveGroupLeaderRequest {
+	m0 := &RemoveGroupLeaderRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_GroupId = b.GroupId
+	x.xxx_hidden_UserId = b.UserId
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	return m0
+}
+
+type RemoveGroupLeaderResponse struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Group *groups.Group          `protobuf:"bytes,1,opt,name=group,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *RemoveGroupLeaderResponse) Reset() {
+	*x = RemoveGroupLeaderResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveGroupLeaderResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveGroupLeaderResponse) ProtoMessage() {}
+
+func (x *RemoveGroupLeaderResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RemoveGroupLeaderResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *RemoveGroupLeaderResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *RemoveGroupLeaderResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *RemoveGroupLeaderResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type RemoveGroupLeaderResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Group *groups.Group
+}
+
+func (b0 RemoveGroupLeaderResponse_builder) Build() *RemoveGroupLeaderResponse {
+	m0 := &RemoveGroupLeaderResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type GroupRuleInput struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Enabled     bool                   `protobuf:"varint,1,opt,name=enabled,proto3,oneof"`
+	xxx_hidden_Rule        isGroupRuleInput_Rule  `protobuf_oneof:"rule"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *GroupRuleInput) Reset() {
+	*x = GroupRuleInput{}
+	mi := &file_services_jobs_groups_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GroupRuleInput) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GroupRuleInput) ProtoMessage() {}
+
+func (x *GroupRuleInput) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *GroupRuleInput) GetEnabled() bool {
+	if x != nil {
+		return x.xxx_hidden_Enabled
+	}
+	return false
+}
+
+func (x *GroupRuleInput) GetGrade() *groups.GroupGradeRule {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Rule.(*groupRuleInput_Grade); ok {
+			return x.Grade
+		}
+	}
+	return nil
+}
+
+func (x *GroupRuleInput) GetQualification() *groups.GroupQualificationRule {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Rule.(*groupRuleInput_Qualification); ok {
+			return x.Qualification
+		}
+	}
+	return nil
+}
+
+func (x *GroupRuleInput) SetEnabled(v bool) {
+	x.xxx_hidden_Enabled = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+}
+
+func (x *GroupRuleInput) SetGrade(v *groups.GroupGradeRule) {
+	if v == nil {
+		x.xxx_hidden_Rule = nil
+		return
+	}
+	x.xxx_hidden_Rule = &groupRuleInput_Grade{v}
+}
+
+func (x *GroupRuleInput) SetQualification(v *groups.GroupQualificationRule) {
+	if v == nil {
+		x.xxx_hidden_Rule = nil
+		return
+	}
+	x.xxx_hidden_Rule = &groupRuleInput_Qualification{v}
+}
+
+func (x *GroupRuleInput) HasEnabled() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *GroupRuleInput) HasRule() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Rule != nil
+}
+
+func (x *GroupRuleInput) HasGrade() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Rule.(*groupRuleInput_Grade)
+	return ok
+}
+
+func (x *GroupRuleInput) HasQualification() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Rule.(*groupRuleInput_Qualification)
+	return ok
+}
+
+func (x *GroupRuleInput) ClearEnabled() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Enabled = false
+}
+
+func (x *GroupRuleInput) ClearRule() {
+	x.xxx_hidden_Rule = nil
+}
+
+func (x *GroupRuleInput) ClearGrade() {
+	if _, ok := x.xxx_hidden_Rule.(*groupRuleInput_Grade); ok {
+		x.xxx_hidden_Rule = nil
+	}
+}
+
+func (x *GroupRuleInput) ClearQualification() {
+	if _, ok := x.xxx_hidden_Rule.(*groupRuleInput_Qualification); ok {
+		x.xxx_hidden_Rule = nil
+	}
+}
+
+const GroupRuleInput_Rule_not_set_case case_GroupRuleInput_Rule = 0
+const GroupRuleInput_Grade_case case_GroupRuleInput_Rule = 10
+const GroupRuleInput_Qualification_case case_GroupRuleInput_Rule = 11
+
+func (x *GroupRuleInput) WhichRule() case_GroupRuleInput_Rule {
+	if x == nil {
+		return GroupRuleInput_Rule_not_set_case
+	}
+	switch x.xxx_hidden_Rule.(type) {
+	case *groupRuleInput_Grade:
+		return GroupRuleInput_Grade_case
+	case *groupRuleInput_Qualification:
+		return GroupRuleInput_Qualification_case
+	default:
+		return GroupRuleInput_Rule_not_set_case
+	}
+}
+
+type GroupRuleInput_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Enabled *bool
+	// Fields of oneof xxx_hidden_Rule:
+	Grade         *groups.GroupGradeRule
+	Qualification *groups.GroupQualificationRule
+	// -- end of xxx_hidden_Rule
+}
+
+func (b0 GroupRuleInput_builder) Build() *GroupRuleInput {
+	m0 := &GroupRuleInput{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Enabled != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Enabled = *b.Enabled
+	}
+	if b.Grade != nil {
+		x.xxx_hidden_Rule = &groupRuleInput_Grade{b.Grade}
+	}
+	if b.Qualification != nil {
+		x.xxx_hidden_Rule = &groupRuleInput_Qualification{b.Qualification}
+	}
+	return m0
+}
+
+type case_GroupRuleInput_Rule protoreflect.FieldNumber
+
+func (x case_GroupRuleInput_Rule) String() string {
+	md := file_services_jobs_groups_proto_msgTypes[26].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
+type isGroupRuleInput_Rule interface {
+	isGroupRuleInput_Rule()
+}
+
+type groupRuleInput_Grade struct {
+	Grade *groups.GroupGradeRule `protobuf:"bytes,10,opt,name=grade,proto3,oneof"`
+}
+
+type groupRuleInput_Qualification struct {
+	Qualification *groups.GroupQualificationRule `protobuf:"bytes,11,opt,name=qualification,proto3,oneof"`
+}
+
+func (*groupRuleInput_Grade) isGroupRuleInput_Rule() {}
+
+func (*groupRuleInput_Qualification) isGroupRuleInput_Rule() {}
+
+type CreateGroupRuleRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_Rule        *GroupRuleInput        `protobuf:"bytes,2,opt,name=rule,proto3"`
+	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *CreateGroupRuleRequest) Reset() {
+	*x = CreateGroupRuleRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateGroupRuleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateGroupRuleRequest) ProtoMessage() {}
+
+func (x *CreateGroupRuleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *CreateGroupRuleRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.xxx_hidden_GroupId
+	}
+	return 0
+}
+
+func (x *CreateGroupRuleRequest) GetRule() *GroupRuleInput {
+	if x != nil {
+		return x.xxx_hidden_Rule
+	}
+	return nil
+}
+
+func (x *CreateGroupRuleRequest) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CreateGroupRuleRequest) SetGroupId(v int64) {
+	x.xxx_hidden_GroupId = v
+}
+
+func (x *CreateGroupRuleRequest) SetRule(v *GroupRuleInput) {
+	x.xxx_hidden_Rule = v
+}
+
+func (x *CreateGroupRuleRequest) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *CreateGroupRuleRequest) HasRule() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Rule != nil
+}
+
+func (x *CreateGroupRuleRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *CreateGroupRuleRequest) ClearRule() {
+	x.xxx_hidden_Rule = nil
+}
+
+func (x *CreateGroupRuleRequest) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Reason = nil
+}
+
+type CreateGroupRuleRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	GroupId int64
+	Rule    *GroupRuleInput
+	Reason  *string
+}
+
+func (b0 CreateGroupRuleRequest_builder) Build() *CreateGroupRuleRequest {
+	m0 := &CreateGroupRuleRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_GroupId = b.GroupId
+	x.xxx_hidden_Rule = b.Rule
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	return m0
+}
+
+type CreateGroupRuleResponse struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Rule  *groups.GroupRule      `protobuf:"bytes,1,opt,name=rule,proto3"`
+	xxx_hidden_Group *groups.Group          `protobuf:"bytes,2,opt,name=group,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *CreateGroupRuleResponse) Reset() {
+	*x = CreateGroupRuleResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateGroupRuleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateGroupRuleResponse) ProtoMessage() {}
+
+func (x *CreateGroupRuleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *CreateGroupRuleResponse) GetRule() *groups.GroupRule {
+	if x != nil {
+		return x.xxx_hidden_Rule
+	}
+	return nil
+}
+
+func (x *CreateGroupRuleResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *CreateGroupRuleResponse) SetRule(v *groups.GroupRule) {
+	x.xxx_hidden_Rule = v
+}
+
+func (x *CreateGroupRuleResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *CreateGroupRuleResponse) HasRule() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Rule != nil
+}
+
+func (x *CreateGroupRuleResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *CreateGroupRuleResponse) ClearRule() {
+	x.xxx_hidden_Rule = nil
+}
+
+func (x *CreateGroupRuleResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type CreateGroupRuleResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Rule  *groups.GroupRule
+	Group *groups.Group
+}
+
+func (b0 CreateGroupRuleResponse_builder) Build() *CreateGroupRuleResponse {
+	m0 := &CreateGroupRuleResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Rule = b.Rule
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type UpdateGroupRuleRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_RuleId      int64                  `protobuf:"varint,2,opt,name=rule_id,json=ruleId,proto3"`
+	xxx_hidden_Rule        *GroupRuleInput        `protobuf:"bytes,3,opt,name=rule,proto3"`
+	xxx_hidden_Reason      *string                `protobuf:"bytes,4,opt,name=reason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *UpdateGroupRuleRequest) Reset() {
+	*x = UpdateGroupRuleRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateGroupRuleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateGroupRuleRequest) ProtoMessage() {}
+
+func (x *UpdateGroupRuleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *UpdateGroupRuleRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.xxx_hidden_GroupId
+	}
+	return 0
+}
+
+func (x *UpdateGroupRuleRequest) GetRuleId() int64 {
+	if x != nil {
+		return x.xxx_hidden_RuleId
+	}
+	return 0
+}
+
+func (x *UpdateGroupRuleRequest) GetRule() *GroupRuleInput {
+	if x != nil {
+		return x.xxx_hidden_Rule
+	}
+	return nil
+}
+
+func (x *UpdateGroupRuleRequest) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *UpdateGroupRuleRequest) SetGroupId(v int64) {
+	x.xxx_hidden_GroupId = v
+}
+
+func (x *UpdateGroupRuleRequest) SetRuleId(v int64) {
+	x.xxx_hidden_RuleId = v
+}
+
+func (x *UpdateGroupRuleRequest) SetRule(v *GroupRuleInput) {
+	x.xxx_hidden_Rule = v
+}
+
+func (x *UpdateGroupRuleRequest) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
+}
+
+func (x *UpdateGroupRuleRequest) HasRule() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Rule != nil
+}
+
+func (x *UpdateGroupRuleRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *UpdateGroupRuleRequest) ClearRule() {
+	x.xxx_hidden_Rule = nil
+}
+
+func (x *UpdateGroupRuleRequest) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Reason = nil
+}
+
+type UpdateGroupRuleRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	GroupId int64
+	RuleId  int64
+	Rule    *GroupRuleInput
+	Reason  *string
+}
+
+func (b0 UpdateGroupRuleRequest_builder) Build() *UpdateGroupRuleRequest {
+	m0 := &UpdateGroupRuleRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_GroupId = b.GroupId
+	x.xxx_hidden_RuleId = b.RuleId
+	x.xxx_hidden_Rule = b.Rule
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	return m0
+}
+
+type UpdateGroupRuleResponse struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Rule  *groups.GroupRule      `protobuf:"bytes,1,opt,name=rule,proto3"`
+	xxx_hidden_Group *groups.Group          `protobuf:"bytes,2,opt,name=group,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *UpdateGroupRuleResponse) Reset() {
+	*x = UpdateGroupRuleResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateGroupRuleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateGroupRuleResponse) ProtoMessage() {}
+
+func (x *UpdateGroupRuleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *UpdateGroupRuleResponse) GetRule() *groups.GroupRule {
+	if x != nil {
+		return x.xxx_hidden_Rule
+	}
+	return nil
+}
+
+func (x *UpdateGroupRuleResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *UpdateGroupRuleResponse) SetRule(v *groups.GroupRule) {
+	x.xxx_hidden_Rule = v
+}
+
+func (x *UpdateGroupRuleResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *UpdateGroupRuleResponse) HasRule() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Rule != nil
+}
+
+func (x *UpdateGroupRuleResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *UpdateGroupRuleResponse) ClearRule() {
+	x.xxx_hidden_Rule = nil
+}
+
+func (x *UpdateGroupRuleResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type UpdateGroupRuleResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Rule  *groups.GroupRule
+	Group *groups.Group
+}
+
+func (b0 UpdateGroupRuleResponse_builder) Build() *UpdateGroupRuleResponse {
+	m0 := &UpdateGroupRuleResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Rule = b.Rule
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type DeleteGroupRuleRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_RuleId      int64                  `protobuf:"varint,2,opt,name=rule_id,json=ruleId,proto3"`
+	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *DeleteGroupRuleRequest) Reset() {
+	*x = DeleteGroupRuleRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteGroupRuleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteGroupRuleRequest) ProtoMessage() {}
+
+func (x *DeleteGroupRuleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *DeleteGroupRuleRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.xxx_hidden_GroupId
+	}
+	return 0
+}
+
+func (x *DeleteGroupRuleRequest) GetRuleId() int64 {
+	if x != nil {
+		return x.xxx_hidden_RuleId
+	}
+	return 0
+}
+
+func (x *DeleteGroupRuleRequest) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *DeleteGroupRuleRequest) SetGroupId(v int64) {
+	x.xxx_hidden_GroupId = v
+}
+
+func (x *DeleteGroupRuleRequest) SetRuleId(v int64) {
+	x.xxx_hidden_RuleId = v
+}
+
+func (x *DeleteGroupRuleRequest) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *DeleteGroupRuleRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *DeleteGroupRuleRequest) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Reason = nil
+}
+
+type DeleteGroupRuleRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	GroupId int64
+	RuleId  int64
+	Reason  *string
+}
+
+func (b0 DeleteGroupRuleRequest_builder) Build() *DeleteGroupRuleRequest {
+	m0 := &DeleteGroupRuleRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_GroupId = b.GroupId
+	x.xxx_hidden_RuleId = b.RuleId
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	return m0
+}
+
+type DeleteGroupRuleResponse struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Group *groups.Group          `protobuf:"bytes,1,opt,name=group,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *DeleteGroupRuleResponse) Reset() {
+	*x = DeleteGroupRuleResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteGroupRuleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteGroupRuleResponse) ProtoMessage() {}
+
+func (x *DeleteGroupRuleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *DeleteGroupRuleResponse) GetGroup() *groups.Group {
+	if x != nil {
+		return x.xxx_hidden_Group
+	}
+	return nil
+}
+
+func (x *DeleteGroupRuleResponse) SetGroup(v *groups.Group) {
+	x.xxx_hidden_Group = v
+}
+
+func (x *DeleteGroupRuleResponse) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Group != nil
+}
+
+func (x *DeleteGroupRuleResponse) ClearGroup() {
+	x.xxx_hidden_Group = nil
+}
+
+type DeleteGroupRuleResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Group *groups.Group
+}
+
+func (b0 DeleteGroupRuleResponse_builder) Build() *DeleteGroupRuleResponse {
+	m0 := &DeleteGroupRuleResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Group = b.Group
+	return m0
+}
+
+type ListGroupActivityRequest struct {
+	state                  protoimpl.MessageState      `protogen:"opaque.v1"`
+	xxx_hidden_Pagination  *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3,oneof"`
+	xxx_hidden_Sort        *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
+	xxx_hidden_GroupId     int64                       `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_Types       []groups.GroupActivityType  `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.jobs.groups.GroupActivityType"`
+	xxx_hidden_UserId      int64                       `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof"`
+	xxx_hidden_From        *timestamp.Timestamp        `protobuf:"bytes,6,opt,name=from,proto3,oneof"`
+	xxx_hidden_To          *timestamp.Timestamp        `protobuf:"bytes,7,opt,name=to,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *ListGroupActivityRequest) Reset() {
+	*x = ListGroupActivityRequest{}
+	mi := &file_services_jobs_groups_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListGroupActivityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListGroupActivityRequest) ProtoMessage() {}
+
+func (x *ListGroupActivityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListGroupActivityRequest) GetPagination() *database.PaginationRequest {
+	if x != nil {
+		return x.xxx_hidden_Pagination
+	}
+	return nil
+}
+
+func (x *ListGroupActivityRequest) GetSort() *database.Sort {
+	if x != nil {
+		return x.xxx_hidden_Sort
+	}
+	return nil
+}
+
+func (x *ListGroupActivityRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.xxx_hidden_GroupId
+	}
+	return 0
+}
+
+func (x *ListGroupActivityRequest) GetTypes() []groups.GroupActivityType {
+	if x != nil {
+		return x.xxx_hidden_Types
+	}
+	return nil
+}
+
+func (x *ListGroupActivityRequest) GetUserId() int64 {
+	if x != nil {
+		return x.xxx_hidden_UserId
+	}
+	return 0
+}
+
+func (x *ListGroupActivityRequest) GetFrom() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_From
+	}
+	return nil
+}
+
+func (x *ListGroupActivityRequest) GetTo() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_To
+	}
+	return nil
+}
+
+func (x *ListGroupActivityRequest) SetPagination(v *database.PaginationRequest) {
+	x.xxx_hidden_Pagination = v
+}
+
+func (x *ListGroupActivityRequest) SetSort(v *database.Sort) {
+	x.xxx_hidden_Sort = v
+}
+
+func (x *ListGroupActivityRequest) SetGroupId(v int64) {
+	x.xxx_hidden_GroupId = v
+}
+
+func (x *ListGroupActivityRequest) SetTypes(v []groups.GroupActivityType) {
+	x.xxx_hidden_Types = v
+}
+
+func (x *ListGroupActivityRequest) SetUserId(v int64) {
+	x.xxx_hidden_UserId = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 7)
+}
+
+func (x *ListGroupActivityRequest) SetFrom(v *timestamp.Timestamp) {
+	x.xxx_hidden_From = v
+}
+
+func (x *ListGroupActivityRequest) SetTo(v *timestamp.Timestamp) {
+	x.xxx_hidden_To = v
+}
+
+func (x *ListGroupActivityRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Pagination != nil
+}
+
+func (x *ListGroupActivityRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Sort != nil
+}
+
+func (x *ListGroupActivityRequest) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
+func (x *ListGroupActivityRequest) HasFrom() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_From != nil
+}
+
+func (x *ListGroupActivityRequest) HasTo() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_To != nil
+}
+
+func (x *ListGroupActivityRequest) ClearPagination() {
+	x.xxx_hidden_Pagination = nil
+}
+
+func (x *ListGroupActivityRequest) ClearSort() {
+	x.xxx_hidden_Sort = nil
+}
+
+func (x *ListGroupActivityRequest) ClearUserId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_UserId = 0
+}
+
+func (x *ListGroupActivityRequest) ClearFrom() {
+	x.xxx_hidden_From = nil
+}
+
+func (x *ListGroupActivityRequest) ClearTo() {
+	x.xxx_hidden_To = nil
+}
+
+type ListGroupActivityRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	GroupId    int64
+	Types      []groups.GroupActivityType
+	UserId     *int64
+	From       *timestamp.Timestamp
+	To         *timestamp.Timestamp
+}
+
+func (b0 ListGroupActivityRequest_builder) Build() *ListGroupActivityRequest {
+	m0 := &ListGroupActivityRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Pagination = b.Pagination
+	x.xxx_hidden_Sort = b.Sort
+	x.xxx_hidden_GroupId = b.GroupId
+	x.xxx_hidden_Types = b.Types
+	if b.UserId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 7)
+		x.xxx_hidden_UserId = *b.UserId
+	}
+	x.xxx_hidden_From = b.From
+	x.xxx_hidden_To = b.To
+	return m0
+}
+
+type ListGroupActivityResponse struct {
+	state                 protoimpl.MessageState       `protogen:"opaque.v1"`
+	xxx_hidden_Pagination *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3,oneof"`
+	xxx_hidden_Activity   *[]*groups.GroupActivity     `protobuf:"bytes,2,rep,name=activity,proto3"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *ListGroupActivityResponse) Reset() {
+	*x = ListGroupActivityResponse{}
+	mi := &file_services_jobs_groups_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListGroupActivityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListGroupActivityResponse) ProtoMessage() {}
+
+func (x *ListGroupActivityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_groups_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListGroupActivityResponse) GetPagination() *database.PaginationResponse {
+	if x != nil {
+		return x.xxx_hidden_Pagination
+	}
+	return nil
+}
+
+func (x *ListGroupActivityResponse) GetActivity() []*groups.GroupActivity {
+	if x != nil {
+		if x.xxx_hidden_Activity != nil {
+			return *x.xxx_hidden_Activity
+		}
+	}
+	return nil
+}
+
+func (x *ListGroupActivityResponse) SetPagination(v *database.PaginationResponse) {
+	x.xxx_hidden_Pagination = v
+}
+
+func (x *ListGroupActivityResponse) SetActivity(v []*groups.GroupActivity) {
+	x.xxx_hidden_Activity = &v
+}
+
+func (x *ListGroupActivityResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Pagination != nil
+}
+
+func (x *ListGroupActivityResponse) ClearPagination() {
+	x.xxx_hidden_Pagination = nil
+}
+
+type ListGroupActivityResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Activity   []*groups.GroupActivity
+}
+
+func (b0 ListGroupActivityResponse_builder) Build() *ListGroupActivityResponse {
+	m0 := &ListGroupActivityResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Pagination = b.Pagination
+	x.xxx_hidden_Activity = &b.Activity
+	return m0
+}
+
 var File_services_jobs_groups_proto protoreflect.FileDescriptor
 
 const file_services_jobs_groups_proto_rawDesc = "" +
 	"\n" +
-	"\x1aservices/jobs/groups.proto\x12\rservices.jobs\x1a\x19codegen/perms/perms.proto24\n" +
-	"\rGroupsService\x1a#\xea\xf3\x18\x1f\bB\x12\x1bi-mdi-account-group-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\x1aservices/jobs/groups.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a$resources/jobs/groups/activity.proto\x1a!resources/jobs/groups/group.proto\x1a#resources/timestamp/timestamp.proto\"\x8c\x03\n" +
+	"\x11ListGroupsRequest\x12T\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x128\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x129\n" +
+	"\x06states\x18\x03 \x03(\x0e2!.resources.jobs.groups.GroupStateR\x06states\x12\x1b\n" +
+	"\x06search\x18\x04 \x01(\tH\x01R\x06search\x88\x01\x01\x12%\n" +
+	"\x0einclude_counts\x18\x05 \x01(\bR\rincludeCounts\x12)\n" +
+	"\x10include_inactive\x18\x06 \x01(\bR\x0fincludeInactive\x12)\n" +
+	"\x10include_archived\x18\a \x01(\bR\x0fincludeArchivedB\a\n" +
+	"\x05_sortB\t\n" +
+	"\a_search\"\xa7\x01\n" +
+	"\x12ListGroupsResponse\x12U\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12:\n" +
+	"\x06groups\x18\x02 \x03(\v2\x1c.resources.jobs.groups.GroupB\x04\xc8\xf3\x18\x01R\x06groups\"\xb9\x02\n" +
+	"\x0fGetGroupRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
+	"\rinclude_rules\x18\x02 \x01(\bR\fincludeRules\x12'\n" +
+	"\x0finclude_leaders\x18\x03 \x01(\bR\x0eincludeLeaders\x124\n" +
+	"\x16include_manual_members\x18\x04 \x01(\bR\x14includeManualMembers\x12-\n" +
+	"\x12include_exclusions\x18\x05 \x01(\bR\x11includeExclusions\x128\n" +
+	"\x18include_resolved_members\x18\x06 \x01(\bR\x16includeResolvedMembers\x12)\n" +
+	"\x10include_archived\x18\a \x01(\bR\x0fincludeArchived\"\xb1\x03\n" +
+	"\x10GetGroupResponse\x122\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\x126\n" +
+	"\x05rules\x18\x02 \x03(\v2 .resources.jobs.groups.GroupRuleR\x05rules\x12<\n" +
+	"\aleaders\x18\x03 \x03(\v2\".resources.jobs.groups.GroupLeaderR\aleaders\x12O\n" +
+	"\x0emanual_members\x18\x04 \x03(\v2(.resources.jobs.groups.GroupManualMemberR\rmanualMembers\x12K\n" +
+	"\n" +
+	"exclusions\x18\x05 \x03(\v2+.resources.jobs.groups.GroupMemberExclusionR\n" +
+	"exclusions\x12U\n" +
+	"\x10resolved_members\x18\x06 \x03(\v2*.resources.jobs.groups.GroupResolvedMemberR\x0fresolvedMembers\"\xfd\x04\n" +
+	"\x12CreateGroupRequest\x12\x15\n" +
+	"\x06job_id\x18\x01 \x01(\x03R\x05jobId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12%\n" +
+	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"short_name\x18\x04 \x01(\tH\x01R\tshortName\x88\x01\x01\x12%\n" +
+	"\flogo_file_id\x18\x05 \x01(\tH\x02R\n" +
+	"logoFileId\x88\x01\x01\x12\x19\n" +
+	"\x05color\x18\x06 \x01(\tH\x03R\x05color\x88\x01\x01\x129\n" +
+	"\x04type\x18\a \x01(\x0e2 .resources.jobs.groups.GroupTypeH\x04R\x04type\x88\x01\x01\x12X\n" +
+	"\x0fmembership_mode\x18\b \x01(\x0e2*.resources.jobs.groups.GroupMembershipModeH\x05R\x0emembershipMode\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"sort_order\x18\t \x01(\x05H\x06R\tsortOrder\x88\x01\x01\x12&\n" +
+	"\x0fleader_user_ids\x18\n" +
+	" \x03(\x03R\rleaderUserIds\x123\n" +
+	"\x16manual_member_user_ids\x18\v \x03(\x03R\x13manualMemberUserIds\x123\n" +
+	"\x05rules\x18\f \x03(\v2\x1d.services.jobs.GroupRuleInputR\x05rulesB\x0e\n" +
+	"\f_descriptionB\r\n" +
+	"\v_short_nameB\x0f\n" +
+	"\r_logo_file_idB\b\n" +
+	"\x06_colorB\a\n" +
+	"\x05_typeB\x12\n" +
+	"\x10_membership_modeB\r\n" +
+	"\v_sort_order\"I\n" +
+	"\x13CreateGroupResponse\x122\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xba\x04\n" +
+	"\x12UpdateGroupRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"short_name\x18\x04 \x01(\tH\x02R\tshortName\x88\x01\x01\x12%\n" +
+	"\flogo_file_id\x18\x05 \x01(\tH\x03R\n" +
+	"logoFileId\x88\x01\x01\x12\x19\n" +
+	"\x05color\x18\x06 \x01(\tH\x04R\x05color\x88\x01\x01\x12<\n" +
+	"\x05state\x18\a \x01(\x0e2!.resources.jobs.groups.GroupStateH\x05R\x05state\x88\x01\x01\x129\n" +
+	"\x04type\x18\b \x01(\x0e2 .resources.jobs.groups.GroupTypeH\x06R\x04type\x88\x01\x01\x12X\n" +
+	"\x0fmembership_mode\x18\t \x01(\x0e2*.resources.jobs.groups.GroupMembershipModeH\aR\x0emembershipMode\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"sort_order\x18\n" +
+	" \x01(\x05H\bR\tsortOrder\x88\x01\x01B\a\n" +
+	"\x05_nameB\x0e\n" +
+	"\f_descriptionB\r\n" +
+	"\v_short_nameB\x0f\n" +
+	"\r_logo_file_idB\b\n" +
+	"\x06_colorB\b\n" +
+	"\x06_stateB\a\n" +
+	"\x05_typeB\x12\n" +
+	"\x10_membership_modeB\r\n" +
+	"\v_sort_order\"I\n" +
+	"\x13UpdateGroupResponse\x122\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"M\n" +
+	"\x13ArchiveGroupRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\x06reason\x18\x02 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"J\n" +
+	"\x14ArchiveGroupResponse\x122\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"M\n" +
+	"\x13RestoreGroupRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\x06reason\x18\x02 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"J\n" +
+	"\x14RestoreGroupResponse\x122\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xb6\x03\n" +
+	"\x17ListGroupMembersRequest\x12T\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x128\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x19\n" +
+	"\bgroup_id\x18\x03 \x01(\x03R\agroupId\x12\x1b\n" +
+	"\x06search\x18\x04 \x01(\tH\x01R\x06search\x88\x01\x01\x12)\n" +
+	"\x10include_excluded\x18\x05 \x01(\bR\x0fincludeExcluded\x12'\n" +
+	"\x0finclude_leaders\x18\x06 \x01(\bR\x0eincludeLeaders\x12'\n" +
+	"\x0finclude_reasons\x18\a \x01(\bR\x0eincludeReasons\x12B\n" +
+	"\asources\x18\b \x03(\x0e2(.resources.jobs.groups.GroupMemberSourceR\asourcesB\a\n" +
+	"\x05_sortB\t\n" +
+	"\a_search\"\xb7\x01\n" +
+	"\x18ListGroupMembersResponse\x12U\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12D\n" +
+	"\amembers\x18\x02 \x03(\v2*.resources.jobs.groups.GroupResolvedMemberR\amembers\"s\n" +
+	"\x15AddGroupMemberRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"\x8e\x01\n" +
+	"\x16AddGroupMemberResponse\x12@\n" +
+	"\x06member\x18\x01 \x01(\v2(.resources.jobs.groups.GroupManualMemberR\x06member\x122\n" +
+	"\x05group\x18\x02 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"v\n" +
+	"\x18RemoveGroupMemberRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"O\n" +
+	"\x19RemoveGroupMemberResponse\x122\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xc5\x01\n" +
+	"\x19ExcludeGroupMemberRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12L\n" +
+	"\vreason_type\x18\x03 \x01(\x0e2+.resources.jobs.groups.GroupExclusionReasonR\n" +
+	"reasonType\x12\x1b\n" +
+	"\x06reason\x18\x04 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"\x9b\x01\n" +
+	"\x1aExcludeGroupMemberResponse\x12I\n" +
+	"\texclusion\x18\x01 \x01(\v2+.resources.jobs.groups.GroupMemberExclusionR\texclusion\x122\n" +
+	"\x05group\x18\x02 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\x7f\n" +
+	"!RemoveGroupMemberExclusionRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"X\n" +
+	"\"RemoveGroupMemberExclusionResponse\x122\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"s\n" +
+	"\x15AddGroupLeaderRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"\x88\x01\n" +
+	"\x16AddGroupLeaderResponse\x12:\n" +
+	"\x06leader\x18\x01 \x01(\v2\".resources.jobs.groups.GroupLeaderR\x06leader\x122\n" +
+	"\x05group\x18\x02 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"v\n" +
+	"\x18RemoveGroupLeaderRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"O\n" +
+	"\x19RemoveGroupLeaderResponse\x122\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xd9\x01\n" +
+	"\x0eGroupRuleInput\x12\x1d\n" +
+	"\aenabled\x18\x01 \x01(\bH\x01R\aenabled\x88\x01\x01\x12=\n" +
+	"\x05grade\x18\n" +
+	" \x01(\v2%.resources.jobs.groups.GroupGradeRuleH\x00R\x05grade\x12U\n" +
+	"\rqualification\x18\v \x01(\v2-.resources.jobs.groups.GroupQualificationRuleH\x00R\rqualificationB\x06\n" +
+	"\x04ruleB\n" +
+	"\n" +
+	"\b_enabled\"\x8e\x01\n" +
+	"\x16CreateGroupRuleRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x121\n" +
+	"\x04rule\x18\x02 \x01(\v2\x1d.services.jobs.GroupRuleInputR\x04rule\x12\x1b\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"\x83\x01\n" +
+	"\x17CreateGroupRuleResponse\x124\n" +
+	"\x04rule\x18\x01 \x01(\v2 .resources.jobs.groups.GroupRuleR\x04rule\x122\n" +
+	"\x05group\x18\x02 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xa7\x01\n" +
+	"\x16UpdateGroupRuleRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
+	"\arule_id\x18\x02 \x01(\x03R\x06ruleId\x121\n" +
+	"\x04rule\x18\x03 \x01(\v2\x1d.services.jobs.GroupRuleInputR\x04rule\x12\x1b\n" +
+	"\x06reason\x18\x04 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"\x83\x01\n" +
+	"\x17UpdateGroupRuleResponse\x124\n" +
+	"\x04rule\x18\x01 \x01(\v2 .resources.jobs.groups.GroupRuleR\x04rule\x122\n" +
+	"\x05group\x18\x02 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"t\n" +
+	"\x16DeleteGroupRuleRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
+	"\arule_id\x18\x02 \x01(\x03R\x06ruleId\x12\x1b\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"M\n" +
+	"\x17DeleteGroupRuleResponse\x122\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xc2\x03\n" +
+	"\x18ListGroupActivityRequest\x12Q\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestH\x00R\n" +
+	"pagination\x88\x01\x01\x128\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x01R\x04sort\x88\x01\x01\x12\x19\n" +
+	"\bgroup_id\x18\x03 \x01(\x03R\agroupId\x12>\n" +
+	"\x05types\x18\x04 \x03(\x0e2(.resources.jobs.groups.GroupActivityTypeR\x05types\x12\x1c\n" +
+	"\auser_id\x18\x05 \x01(\x03H\x02R\x06userId\x88\x01\x01\x127\n" +
+	"\x04from\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\x04from\x88\x01\x01\x123\n" +
+	"\x02to\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x04R\x02to\x88\x01\x01B\r\n" +
+	"\v_paginationB\a\n" +
+	"\x05_sortB\n" +
+	"\n" +
+	"\b_user_idB\a\n" +
+	"\x05_fromB\x05\n" +
+	"\x03_to\"\xc0\x01\n" +
+	"\x19ListGroupActivityResponse\x12R\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseH\x00R\n" +
+	"pagination\x88\x01\x01\x12@\n" +
+	"\bactivity\x18\x02 \x03(\v2$.resources.jobs.groups.GroupActivityR\bactivityB\r\n" +
+	"\v_pagination2\xf8\x0f\n" +
+	"\rGroupsService\x12Q\n" +
+	"\n" +
+	"ListGroups\x12 .services.jobs.ListGroupsRequest\x1a!.services.jobs.ListGroupsResponse\x12_\n" +
+	"\bGetGroup\x12\x1e.services.jobs.GetGroupRequest\x1a\x1f.services.jobs.GetGroupResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
+	"ListGroups\x12\\\n" +
+	"\vCreateGroup\x12!.services.jobs.CreateGroupRequest\x1a\".services.jobs.CreateGroupResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12i\n" +
+	"\vUpdateGroup\x12!.services.jobs.UpdateGroupRequest\x1a\".services.jobs.UpdateGroupResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12_\n" +
+	"\fArchiveGroup\x12\".services.jobs.ArchiveGroupRequest\x1a#.services.jobs.ArchiveGroupResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12m\n" +
+	"\fRestoreGroup\x12\".services.jobs.RestoreGroupRequest\x1a#.services.jobs.RestoreGroupResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fArchiveGroup\x12w\n" +
+	"\x10ListGroupMembers\x12&.services.jobs.ListGroupMembersRequest\x1a'.services.jobs.ListGroupMembersResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
+	"ListGroups\x12r\n" +
+	"\x0eAddGroupMember\x12$.services.jobs.AddGroupMemberRequest\x1a%.services.jobs.AddGroupMemberResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12{\n" +
+	"\x11RemoveGroupMember\x12'.services.jobs.RemoveGroupMemberRequest\x1a(.services.jobs.RemoveGroupMemberResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12~\n" +
+	"\x12ExcludeGroupMember\x12(.services.jobs.ExcludeGroupMemberRequest\x1a).services.jobs.ExcludeGroupMemberResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12\x96\x01\n" +
+	"\x1aRemoveGroupMemberExclusion\x120.services.jobs.RemoveGroupMemberExclusionRequest\x1a1.services.jobs.RemoveGroupMemberExclusionResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12\x82\x01\n" +
+	"\x0eAddGroupLeader\x12$.services.jobs.AddGroupLeaderRequest\x1a%.services.jobs.AddGroupLeaderResponse\"#\xd2\xf3\x18\x1f\b\x01*\x0eAddGroupLeader*\vCreateGroup\x12\x8b\x01\n" +
+	"\x11RemoveGroupLeader\x12'.services.jobs.RemoveGroupLeaderRequest\x1a(.services.jobs.RemoveGroupLeaderResponse\"#\xd2\xf3\x18\x1f\b\x01*\x0eAddGroupLeader*\vCreateGroup\x12u\n" +
+	"\x0fCreateGroupRule\x12%.services.jobs.CreateGroupRuleRequest\x1a&.services.jobs.CreateGroupRuleResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12u\n" +
+	"\x0fUpdateGroupRule\x12%.services.jobs.UpdateGroupRuleRequest\x1a&.services.jobs.UpdateGroupRuleResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12u\n" +
+	"\x0fDeleteGroupRule\x12%.services.jobs.DeleteGroupRuleRequest\x1a&.services.jobs.DeleteGroupRuleResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12z\n" +
+	"\x11ListGroupActivity\x12'.services.jobs.ListGroupActivityRequest\x1a(.services.jobs.ListGroupActivityResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
+	"ListGroups\x1a#\xea\xf3\x18\x1f\bB\x12\x1bi-mdi-account-group-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
-var file_services_jobs_groups_proto_goTypes = []any{}
+var file_services_jobs_groups_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
+var file_services_jobs_groups_proto_goTypes = []any{
+	(*ListGroupsRequest)(nil),                  // 0: services.jobs.ListGroupsRequest
+	(*ListGroupsResponse)(nil),                 // 1: services.jobs.ListGroupsResponse
+	(*GetGroupRequest)(nil),                    // 2: services.jobs.GetGroupRequest
+	(*GetGroupResponse)(nil),                   // 3: services.jobs.GetGroupResponse
+	(*CreateGroupRequest)(nil),                 // 4: services.jobs.CreateGroupRequest
+	(*CreateGroupResponse)(nil),                // 5: services.jobs.CreateGroupResponse
+	(*UpdateGroupRequest)(nil),                 // 6: services.jobs.UpdateGroupRequest
+	(*UpdateGroupResponse)(nil),                // 7: services.jobs.UpdateGroupResponse
+	(*ArchiveGroupRequest)(nil),                // 8: services.jobs.ArchiveGroupRequest
+	(*ArchiveGroupResponse)(nil),               // 9: services.jobs.ArchiveGroupResponse
+	(*RestoreGroupRequest)(nil),                // 10: services.jobs.RestoreGroupRequest
+	(*RestoreGroupResponse)(nil),               // 11: services.jobs.RestoreGroupResponse
+	(*ListGroupMembersRequest)(nil),            // 12: services.jobs.ListGroupMembersRequest
+	(*ListGroupMembersResponse)(nil),           // 13: services.jobs.ListGroupMembersResponse
+	(*AddGroupMemberRequest)(nil),              // 14: services.jobs.AddGroupMemberRequest
+	(*AddGroupMemberResponse)(nil),             // 15: services.jobs.AddGroupMemberResponse
+	(*RemoveGroupMemberRequest)(nil),           // 16: services.jobs.RemoveGroupMemberRequest
+	(*RemoveGroupMemberResponse)(nil),          // 17: services.jobs.RemoveGroupMemberResponse
+	(*ExcludeGroupMemberRequest)(nil),          // 18: services.jobs.ExcludeGroupMemberRequest
+	(*ExcludeGroupMemberResponse)(nil),         // 19: services.jobs.ExcludeGroupMemberResponse
+	(*RemoveGroupMemberExclusionRequest)(nil),  // 20: services.jobs.RemoveGroupMemberExclusionRequest
+	(*RemoveGroupMemberExclusionResponse)(nil), // 21: services.jobs.RemoveGroupMemberExclusionResponse
+	(*AddGroupLeaderRequest)(nil),              // 22: services.jobs.AddGroupLeaderRequest
+	(*AddGroupLeaderResponse)(nil),             // 23: services.jobs.AddGroupLeaderResponse
+	(*RemoveGroupLeaderRequest)(nil),           // 24: services.jobs.RemoveGroupLeaderRequest
+	(*RemoveGroupLeaderResponse)(nil),          // 25: services.jobs.RemoveGroupLeaderResponse
+	(*GroupRuleInput)(nil),                     // 26: services.jobs.GroupRuleInput
+	(*CreateGroupRuleRequest)(nil),             // 27: services.jobs.CreateGroupRuleRequest
+	(*CreateGroupRuleResponse)(nil),            // 28: services.jobs.CreateGroupRuleResponse
+	(*UpdateGroupRuleRequest)(nil),             // 29: services.jobs.UpdateGroupRuleRequest
+	(*UpdateGroupRuleResponse)(nil),            // 30: services.jobs.UpdateGroupRuleResponse
+	(*DeleteGroupRuleRequest)(nil),             // 31: services.jobs.DeleteGroupRuleRequest
+	(*DeleteGroupRuleResponse)(nil),            // 32: services.jobs.DeleteGroupRuleResponse
+	(*ListGroupActivityRequest)(nil),           // 33: services.jobs.ListGroupActivityRequest
+	(*ListGroupActivityResponse)(nil),          // 34: services.jobs.ListGroupActivityResponse
+	(*database.PaginationRequest)(nil),         // 35: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),                      // 36: resources.common.database.Sort
+	(groups.GroupState)(0),                     // 37: resources.jobs.groups.GroupState
+	(*database.PaginationResponse)(nil),        // 38: resources.common.database.PaginationResponse
+	(*groups.Group)(nil),                       // 39: resources.jobs.groups.Group
+	(*groups.GroupRule)(nil),                   // 40: resources.jobs.groups.GroupRule
+	(*groups.GroupLeader)(nil),                 // 41: resources.jobs.groups.GroupLeader
+	(*groups.GroupManualMember)(nil),           // 42: resources.jobs.groups.GroupManualMember
+	(*groups.GroupMemberExclusion)(nil),        // 43: resources.jobs.groups.GroupMemberExclusion
+	(*groups.GroupResolvedMember)(nil),         // 44: resources.jobs.groups.GroupResolvedMember
+	(groups.GroupType)(0),                      // 45: resources.jobs.groups.GroupType
+	(groups.GroupMembershipMode)(0),            // 46: resources.jobs.groups.GroupMembershipMode
+	(groups.GroupMemberSource)(0),              // 47: resources.jobs.groups.GroupMemberSource
+	(groups.GroupExclusionReason)(0),           // 48: resources.jobs.groups.GroupExclusionReason
+	(*groups.GroupGradeRule)(nil),              // 49: resources.jobs.groups.GroupGradeRule
+	(*groups.GroupQualificationRule)(nil),      // 50: resources.jobs.groups.GroupQualificationRule
+	(groups.GroupActivityType)(0),              // 51: resources.jobs.groups.GroupActivityType
+	(*timestamp.Timestamp)(nil),                // 52: resources.timestamp.Timestamp
+	(*groups.GroupActivity)(nil),               // 53: resources.jobs.groups.GroupActivity
+}
 var file_services_jobs_groups_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	35, // 0: services.jobs.ListGroupsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	36, // 1: services.jobs.ListGroupsRequest.sort:type_name -> resources.common.database.Sort
+	37, // 2: services.jobs.ListGroupsRequest.states:type_name -> resources.jobs.groups.GroupState
+	38, // 3: services.jobs.ListGroupsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	39, // 4: services.jobs.ListGroupsResponse.groups:type_name -> resources.jobs.groups.Group
+	39, // 5: services.jobs.GetGroupResponse.group:type_name -> resources.jobs.groups.Group
+	40, // 6: services.jobs.GetGroupResponse.rules:type_name -> resources.jobs.groups.GroupRule
+	41, // 7: services.jobs.GetGroupResponse.leaders:type_name -> resources.jobs.groups.GroupLeader
+	42, // 8: services.jobs.GetGroupResponse.manual_members:type_name -> resources.jobs.groups.GroupManualMember
+	43, // 9: services.jobs.GetGroupResponse.exclusions:type_name -> resources.jobs.groups.GroupMemberExclusion
+	44, // 10: services.jobs.GetGroupResponse.resolved_members:type_name -> resources.jobs.groups.GroupResolvedMember
+	45, // 11: services.jobs.CreateGroupRequest.type:type_name -> resources.jobs.groups.GroupType
+	46, // 12: services.jobs.CreateGroupRequest.membership_mode:type_name -> resources.jobs.groups.GroupMembershipMode
+	26, // 13: services.jobs.CreateGroupRequest.rules:type_name -> services.jobs.GroupRuleInput
+	39, // 14: services.jobs.CreateGroupResponse.group:type_name -> resources.jobs.groups.Group
+	37, // 15: services.jobs.UpdateGroupRequest.state:type_name -> resources.jobs.groups.GroupState
+	45, // 16: services.jobs.UpdateGroupRequest.type:type_name -> resources.jobs.groups.GroupType
+	46, // 17: services.jobs.UpdateGroupRequest.membership_mode:type_name -> resources.jobs.groups.GroupMembershipMode
+	39, // 18: services.jobs.UpdateGroupResponse.group:type_name -> resources.jobs.groups.Group
+	39, // 19: services.jobs.ArchiveGroupResponse.group:type_name -> resources.jobs.groups.Group
+	39, // 20: services.jobs.RestoreGroupResponse.group:type_name -> resources.jobs.groups.Group
+	35, // 21: services.jobs.ListGroupMembersRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	36, // 22: services.jobs.ListGroupMembersRequest.sort:type_name -> resources.common.database.Sort
+	47, // 23: services.jobs.ListGroupMembersRequest.sources:type_name -> resources.jobs.groups.GroupMemberSource
+	38, // 24: services.jobs.ListGroupMembersResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	44, // 25: services.jobs.ListGroupMembersResponse.members:type_name -> resources.jobs.groups.GroupResolvedMember
+	42, // 26: services.jobs.AddGroupMemberResponse.member:type_name -> resources.jobs.groups.GroupManualMember
+	39, // 27: services.jobs.AddGroupMemberResponse.group:type_name -> resources.jobs.groups.Group
+	39, // 28: services.jobs.RemoveGroupMemberResponse.group:type_name -> resources.jobs.groups.Group
+	48, // 29: services.jobs.ExcludeGroupMemberRequest.reason_type:type_name -> resources.jobs.groups.GroupExclusionReason
+	43, // 30: services.jobs.ExcludeGroupMemberResponse.exclusion:type_name -> resources.jobs.groups.GroupMemberExclusion
+	39, // 31: services.jobs.ExcludeGroupMemberResponse.group:type_name -> resources.jobs.groups.Group
+	39, // 32: services.jobs.RemoveGroupMemberExclusionResponse.group:type_name -> resources.jobs.groups.Group
+	41, // 33: services.jobs.AddGroupLeaderResponse.leader:type_name -> resources.jobs.groups.GroupLeader
+	39, // 34: services.jobs.AddGroupLeaderResponse.group:type_name -> resources.jobs.groups.Group
+	39, // 35: services.jobs.RemoveGroupLeaderResponse.group:type_name -> resources.jobs.groups.Group
+	49, // 36: services.jobs.GroupRuleInput.grade:type_name -> resources.jobs.groups.GroupGradeRule
+	50, // 37: services.jobs.GroupRuleInput.qualification:type_name -> resources.jobs.groups.GroupQualificationRule
+	26, // 38: services.jobs.CreateGroupRuleRequest.rule:type_name -> services.jobs.GroupRuleInput
+	40, // 39: services.jobs.CreateGroupRuleResponse.rule:type_name -> resources.jobs.groups.GroupRule
+	39, // 40: services.jobs.CreateGroupRuleResponse.group:type_name -> resources.jobs.groups.Group
+	26, // 41: services.jobs.UpdateGroupRuleRequest.rule:type_name -> services.jobs.GroupRuleInput
+	40, // 42: services.jobs.UpdateGroupRuleResponse.rule:type_name -> resources.jobs.groups.GroupRule
+	39, // 43: services.jobs.UpdateGroupRuleResponse.group:type_name -> resources.jobs.groups.Group
+	39, // 44: services.jobs.DeleteGroupRuleResponse.group:type_name -> resources.jobs.groups.Group
+	35, // 45: services.jobs.ListGroupActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	36, // 46: services.jobs.ListGroupActivityRequest.sort:type_name -> resources.common.database.Sort
+	51, // 47: services.jobs.ListGroupActivityRequest.types:type_name -> resources.jobs.groups.GroupActivityType
+	52, // 48: services.jobs.ListGroupActivityRequest.from:type_name -> resources.timestamp.Timestamp
+	52, // 49: services.jobs.ListGroupActivityRequest.to:type_name -> resources.timestamp.Timestamp
+	38, // 50: services.jobs.ListGroupActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	53, // 51: services.jobs.ListGroupActivityResponse.activity:type_name -> resources.jobs.groups.GroupActivity
+	0,  // 52: services.jobs.GroupsService.ListGroups:input_type -> services.jobs.ListGroupsRequest
+	2,  // 53: services.jobs.GroupsService.GetGroup:input_type -> services.jobs.GetGroupRequest
+	4,  // 54: services.jobs.GroupsService.CreateGroup:input_type -> services.jobs.CreateGroupRequest
+	6,  // 55: services.jobs.GroupsService.UpdateGroup:input_type -> services.jobs.UpdateGroupRequest
+	8,  // 56: services.jobs.GroupsService.ArchiveGroup:input_type -> services.jobs.ArchiveGroupRequest
+	10, // 57: services.jobs.GroupsService.RestoreGroup:input_type -> services.jobs.RestoreGroupRequest
+	12, // 58: services.jobs.GroupsService.ListGroupMembers:input_type -> services.jobs.ListGroupMembersRequest
+	14, // 59: services.jobs.GroupsService.AddGroupMember:input_type -> services.jobs.AddGroupMemberRequest
+	16, // 60: services.jobs.GroupsService.RemoveGroupMember:input_type -> services.jobs.RemoveGroupMemberRequest
+	18, // 61: services.jobs.GroupsService.ExcludeGroupMember:input_type -> services.jobs.ExcludeGroupMemberRequest
+	20, // 62: services.jobs.GroupsService.RemoveGroupMemberExclusion:input_type -> services.jobs.RemoveGroupMemberExclusionRequest
+	22, // 63: services.jobs.GroupsService.AddGroupLeader:input_type -> services.jobs.AddGroupLeaderRequest
+	24, // 64: services.jobs.GroupsService.RemoveGroupLeader:input_type -> services.jobs.RemoveGroupLeaderRequest
+	27, // 65: services.jobs.GroupsService.CreateGroupRule:input_type -> services.jobs.CreateGroupRuleRequest
+	29, // 66: services.jobs.GroupsService.UpdateGroupRule:input_type -> services.jobs.UpdateGroupRuleRequest
+	31, // 67: services.jobs.GroupsService.DeleteGroupRule:input_type -> services.jobs.DeleteGroupRuleRequest
+	33, // 68: services.jobs.GroupsService.ListGroupActivity:input_type -> services.jobs.ListGroupActivityRequest
+	1,  // 69: services.jobs.GroupsService.ListGroups:output_type -> services.jobs.ListGroupsResponse
+	3,  // 70: services.jobs.GroupsService.GetGroup:output_type -> services.jobs.GetGroupResponse
+	5,  // 71: services.jobs.GroupsService.CreateGroup:output_type -> services.jobs.CreateGroupResponse
+	7,  // 72: services.jobs.GroupsService.UpdateGroup:output_type -> services.jobs.UpdateGroupResponse
+	9,  // 73: services.jobs.GroupsService.ArchiveGroup:output_type -> services.jobs.ArchiveGroupResponse
+	11, // 74: services.jobs.GroupsService.RestoreGroup:output_type -> services.jobs.RestoreGroupResponse
+	13, // 75: services.jobs.GroupsService.ListGroupMembers:output_type -> services.jobs.ListGroupMembersResponse
+	15, // 76: services.jobs.GroupsService.AddGroupMember:output_type -> services.jobs.AddGroupMemberResponse
+	17, // 77: services.jobs.GroupsService.RemoveGroupMember:output_type -> services.jobs.RemoveGroupMemberResponse
+	19, // 78: services.jobs.GroupsService.ExcludeGroupMember:output_type -> services.jobs.ExcludeGroupMemberResponse
+	21, // 79: services.jobs.GroupsService.RemoveGroupMemberExclusion:output_type -> services.jobs.RemoveGroupMemberExclusionResponse
+	23, // 80: services.jobs.GroupsService.AddGroupLeader:output_type -> services.jobs.AddGroupLeaderResponse
+	25, // 81: services.jobs.GroupsService.RemoveGroupLeader:output_type -> services.jobs.RemoveGroupLeaderResponse
+	28, // 82: services.jobs.GroupsService.CreateGroupRule:output_type -> services.jobs.CreateGroupRuleResponse
+	30, // 83: services.jobs.GroupsService.UpdateGroupRule:output_type -> services.jobs.UpdateGroupRuleResponse
+	32, // 84: services.jobs.GroupsService.DeleteGroupRule:output_type -> services.jobs.DeleteGroupRuleResponse
+	34, // 85: services.jobs.GroupsService.ListGroupActivity:output_type -> services.jobs.ListGroupActivityResponse
+	69, // [69:86] is the sub-list for method output_type
+	52, // [52:69] is the sub-list for method input_type
+	52, // [52:52] is the sub-list for extension type_name
+	52, // [52:52] is the sub-list for extension extendee
+	0,  // [0:52] is the sub-list for field type_name
 }
 
 func init() { file_services_jobs_groups_proto_init() }
@@ -44,18 +4648,40 @@ func file_services_jobs_groups_proto_init() {
 	if File_services_jobs_groups_proto != nil {
 		return
 	}
+	file_services_jobs_groups_proto_msgTypes[0].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[4].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[6].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[8].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[10].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[12].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[14].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[16].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[18].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[20].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[22].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[24].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[26].OneofWrappers = []any{
+		(*groupRuleInput_Grade)(nil),
+		(*groupRuleInput_Qualification)(nil),
+	}
+	file_services_jobs_groups_proto_msgTypes[27].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[29].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[31].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[33].OneofWrappers = []any{}
+	file_services_jobs_groups_proto_msgTypes[34].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_jobs_groups_proto_rawDesc), len(file_services_jobs_groups_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   35,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_services_jobs_groups_proto_goTypes,
 		DependencyIndexes: file_services_jobs_groups_proto_depIdxs,
+		MessageInfos:      file_services_jobs_groups_proto_msgTypes,
 	}.Build()
 	File_services_jobs_groups_proto = out.File
 	file_services_jobs_groups_proto_goTypes = nil

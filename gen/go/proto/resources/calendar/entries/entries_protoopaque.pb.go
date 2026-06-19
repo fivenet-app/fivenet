@@ -1118,16 +1118,15 @@ var File_resources_calendar_entries_entries_proto protoreflect.FileDescriptor
 
 const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\n" +
-	"(resources/calendar/entries/entries.proto\x12\x1aresources.calendar.entries\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a!resources/calendar/calendar.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x90\x02\n" +
-	"\x17CalendarEntryOccurrence\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12K\n" +
-	"\x04kind\x18\x02 \x01(\x0e27.resources.calendar.entries.CalendarEntryOccurrenceKindR\x04kind\x12+\n" +
-	"\x0fsource_entry_id\x18\x03 \x01(\x03H\x00R\rsourceEntryId\x88\x01\x01\x12)\n" +
-	"\x0esource_user_id\x18\x04 \x01(\x05H\x01R\fsourceUserId\x88\x01\x01\x12\x17\n" +
+	"(resources/calendar/entries/entries.proto\x12\x1aresources.calendar.entries\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a!resources/calendar/calendar.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xad\x02\n" +
+	"\x17CalendarEntryOccurrence\x12\x1a\n" +
+	"\x03key\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\x03key\x12U\n" +
+	"\x04kind\x18\x02 \x01(\x0e27.resources.calendar.entries.CalendarEntryOccurrenceKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04kind\x12+\n" +
+	"\x0fsource_entry_id\x18\x03 \x01(\x03H\x00R\rsourceEntryId\x88\x01\x01\x122\n" +
+	"\x0esource_user_id\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x01R\fsourceUserId\x88\x01\x01\x12\x17\n" +
 	"\aall_day\x18\x05 \x01(\bR\x06allDayB\x12\n" +
 	"\x10_source_entry_idB\x11\n" +
-	"\x0f_source_user_id\"\xdf\n" +
-	"\n" +
+	"\x0f_source_user_id\"\x8d\v\n" +
 	"\rCalendarEntry\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1138,20 +1137,20 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1f\n" +
 	"\vcalendar_id\x18\x05 \x01(\x03R\n" +
 	"calendarId\x12=\n" +
-	"\bcalendar\x18\x06 \x01(\v2\x1c.resources.calendar.CalendarH\x03R\bcalendar\x88\x01\x01\x12\x15\n" +
-	"\x03job\x18\a \x01(\tH\x04R\x03job\x88\x01\x01\x12=\n" +
+	"\bcalendar\x18\x06 \x01(\v2\x1c.resources.calendar.CalendarH\x03R\bcalendar\x88\x01\x01\x12\x1e\n" +
+	"\x03job\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x04R\x03job\x88\x01\x01\x12=\n" +
 	"\n" +
 	"start_time\x18\b \x01(\v2\x1e.resources.timestamp.TimestampR\tstartTime\x12>\n" +
-	"\bend_time\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\aendTime\x88\x01\x01\x12\x1e\n" +
+	"\bend_time\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\aendTime\x88\x01\x01\x12(\n" +
 	"\x05title\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05title\x12;\n" +
+	" \x01(\tB\x12\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12;\n" +
 	"\acontent\x18\v \x01(\v2!.resources.common.content.ContentR\acontent\x12\x16\n" +
 	"\x06closed\x18\f \x01(\bR\x06closed\x12 \n" +
-	"\trsvp_open\x18\r \x01(\bH\x06R\brsvpOpen\x88\x01\x01\x12\"\n" +
+	"\trsvp_open\x18\r \x01(\bH\x06R\brsvpOpen\x88\x01\x01\x12+\n" +
 	"\n" +
-	"creator_id\x18\x0e \x01(\x05H\aR\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\x0f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\bR\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\x10 \x01(\tR\n" +
+	"creator_id\x18\x0e \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\aR\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\x0f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\bR\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\x10 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x12U\n" +
 	"\trecurring\x18\x11 \x01(\v22.resources.calendar.entries.CalendarEntryRecurringH\tR\trecurring\x88\x01\x01\x12F\n" +
 	"\x04rsvp\x18\x12 \x01(\v2-.resources.calendar.entries.CalendarEntryRSVPH\n" +
@@ -1159,8 +1158,8 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\n" +
 	"occurrence\x18\x13 \x01(\v23.resources.calendar.entries.CalendarEntryOccurrenceH\vR\n" +
 	"occurrence\x88\x01\x01\x12L\n" +
-	"\x0frecurring_until\x18\x14 \x01(\v2\x1e.resources.timestamp.TimestampH\fR\x0erecurringUntil\x88\x01\x01\x12-\n" +
-	"\x12recurrence_version\x18\x15 \x01(\x05R\x11recurrenceVersionB\r\n" +
+	"\x0frecurring_until\x18\x14 \x01(\v2\x1e.resources.timestamp.TimestampH\fR\x0erecurringUntil\x88\x01\x01\x126\n" +
+	"\x12recurrence_version\x18\x15 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x11recurrenceVersionB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\v\n" +
@@ -1176,20 +1175,20 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"_recurringB\a\n" +
 	"\x05_rsvpB\r\n" +
 	"\v_occurrenceB\x12\n" +
-	"\x10_recurring_until\"\xca\x01\n" +
-	"\x16CalendarEntryRecurring\x12M\n" +
-	"\x05every\x18\x01 \x01(\x0e27.resources.calendar.entries.CalendarEntryRecurringEveryR\x05every\x12\x14\n" +
+	"\x10_recurring_until\"\xd4\x01\n" +
+	"\x16CalendarEntryRecurring\x12W\n" +
+	"\x05every\x18\x01 \x01(\x0e27.resources.calendar.entries.CalendarEntryRecurringEveryB\b\xbaH\x05\x82\x01\x02\x10\x01R\x05every\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x05R\x05count\x129\n" +
 	"\x05until\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05until\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\b\n" +
-	"\x06_until\"\xe4\x02\n" +
+	"\x06_until\"\x81\x03\n" +
 	"\x11CalendarEntryRSVP\x12\x19\n" +
 	"\bentry_id\x18\x01 \x01(\x03R\aentryId\x12B\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x05R\x06userId\x129\n" +
-	"\x04user\x18\x04 \x01(\v2 .resources.users.short.UserShortH\x01R\x04user\x88\x01\x01\x12E\n" +
-	"\bresponse\x18\x05 \x01(\x0e2).resources.calendar.entries.RsvpResponsesR\bresponse\x12*\n" +
-	"\x0eoccurrence_key\x18\x06 \x01(\tH\x02R\roccurrenceKey\x88\x01\x01B\r\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12 \n" +
+	"\auser_id\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x129\n" +
+	"\x04user\x18\x04 \x01(\v2 .resources.users.short.UserShortH\x01R\x04user\x88\x01\x01\x12O\n" +
+	"\bresponse\x18\x05 \x01(\x0e2).resources.calendar.entries.RsvpResponsesB\b\xbaH\x05\x82\x01\x02\x10\x01R\bresponse\x124\n" +
+	"\x0eoccurrence_key\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x02R\roccurrenceKey\x88\x01\x01B\r\n" +
 	"\v_created_atB\a\n" +
 	"\x05_userB\x11\n" +
 	"\x0f_occurrence_key*\xd3\x01\n" +

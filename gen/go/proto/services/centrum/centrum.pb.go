@@ -1523,9 +1523,10 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\aentries\x18\x02 \x03(\v2'.resources.livemap.heatmap.HeatmapEntryR\aentries\",\n" +
 	"\x12TakeControlRequest\x12\x16\n" +
 	"\x06signon\x18\x01 \x01(\bR\x06signon\"\x15\n" +
-	"\x13TakeControlResponse\"7\n" +
-	"\x18UpdateDispatchersRequest\x12\x1b\n" +
-	"\tto_remove\x18\x01 \x03(\x05R\btoRemove\"i\n" +
+	"\x13TakeControlResponse\"A\n" +
+	"\x18UpdateDispatchersRequest\x12%\n" +
+	"\tto_remove\x18\x01 \x03(\x05B\b\xbaH\x05\x92\x01\x02\x10\n" +
+	"R\btoRemove\"i\n" +
 	"\x19UpdateDispatchersResponse\x12L\n" +
 	"\vdispatchers\x18\x01 \x01(\v2*.resources.centrum.dispatchers.DispatchersR\vdispatchers\"\xd9\x01\n" +
 	"\x0fStreamHandshake\x12?\n" +
@@ -1541,7 +1542,7 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"dispatches\x18\x04 \x03(\v2&.resources.centrum.dispatches.DispatchR\n" +
 	"dispatchesB\x0e\n" +
 	"\f_own_unit_id\"\x0f\n" +
-	"\rStreamRequest\"\x88\x06\n" +
+	"\rStreamRequest\"\x8f\x06\n" +
 	"\x0eStreamResponse\x12A\n" +
 	"\thandshake\x18\x01 \x01(\v2!.services.centrum.StreamHandshakeH\x00R\thandshake\x12B\n" +
 	"\flatest_state\x18\x02 \x01(\v2\x1d.services.centrum.LatestStateH\x00R\vlatestState\x12B\n" +
@@ -1555,8 +1556,8 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x10dispatch_deleted\x18\t \x01(\x03H\x00R\x0fdispatchDeleted\x12S\n" +
 	"\x10dispatch_updated\x18\n" +
 	" \x01(\v2&.resources.centrum.dispatches.DispatchH\x00R\x0fdispatchUpdated\x12W\n" +
-	"\x0fdispatch_status\x18\v \x01(\v2,.resources.centrum.dispatches.DispatchStatusH\x00R\x0edispatchStatusB\b\n" +
-	"\x06change2\xdb\x05\n" +
+	"\x0fdispatch_status\x18\v \x01(\v2,.resources.centrum.dispatches.DispatchStatusH\x00R\x0edispatchStatusB\x0f\n" +
+	"\x06change\x12\x05\xbaH\x02\b\x012\xdb\x05\n" +
 	"\x0eCentrumService\x12j\n" +
 	"\vGetSettings\x12$.services.centrum.GetSettingsRequest\x1a%.services.centrum.GetSettingsResponse\"\x0e\xd2\xf3\x18\n" +
 	"\b\x01\"\x06Stream\x12\x87\x01\n" +

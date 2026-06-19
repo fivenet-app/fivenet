@@ -1108,41 +1108,42 @@ const file_services_centrum_units_proto_rawDesc = "" +
 	"\n" +
 	"\b_unit_id\"E\n" +
 	"\x10JoinUnitResponse\x121\n" +
-	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitR\x04unit\"O\n" +
-	"\x10ListUnitsRequest\x12;\n" +
-	"\x06status\x18\x01 \x03(\x0e2#.resources.centrum.units.StatusUnitR\x06status\"N\n" +
+	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitR\x04unit\"^\n" +
+	"\x10ListUnitsRequest\x12J\n" +
+	"\x06status\x18\x01 \x03(\x0e2#.resources.centrum.units.StatusUnitB\r\xbaH\n" +
+	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01R\x06status\"N\n" +
 	"\x11ListUnitsResponse\x129\n" +
-	"\x05units\x18\x01 \x03(\v2\x1d.resources.centrum.units.UnitB\x04\xc8\xf3\x18\x01R\x05units\"w\n" +
-	"\x17ListUnitActivityRequest\x12L\n" +
+	"\x05units\x18\x01 \x03(\v2\x1d.resources.centrum.units.UnitB\x04\xc8\xf3\x18\x01R\x05units\"\x7f\n" +
+	"\x17ListUnitActivityRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xb0\x01\n" +
-	"\x18ListUnitActivityResponse\x12M\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"\xb8\x01\n" +
+	"\x18ListUnitActivityResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12E\n" +
-	"\bactivity\x18\x02 \x03(\v2#.resources.centrum.units.UnitStatusB\x04\xc8\xf3\x18\x01R\bactivity\"N\n" +
-	"\x19CreateOrUpdateUnitRequest\x121\n" +
-	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitR\x04unit\"O\n" +
+	"\bactivity\x18\x02 \x03(\v2#.resources.centrum.units.UnitStatusB\x04\xc8\xf3\x18\x01R\bactivity\"V\n" +
+	"\x19CreateOrUpdateUnitRequest\x129\n" +
+	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitB\x06\xbaH\x03\xc8\x01\x01R\x04unit\"O\n" +
 	"\x1aCreateOrUpdateUnitResponse\x121\n" +
 	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitR\x04unit\",\n" +
 	"\x11DeleteUnitRequest\x12\x17\n" +
 	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\"\x14\n" +
-	"\x12DeleteUnitResponse\"0\n" +
-	"\x13ReorderUnitsRequest\x12\x19\n" +
-	"\bunit_ids\x18\x01 \x03(\x03R\aunitIds\"\x16\n" +
+	"\x12DeleteUnitResponse\"C\n" +
+	"\x13ReorderUnitsRequest\x12,\n" +
+	"\bunit_ids\x18\x01 \x03(\x03B\x11\xbaH\x0e\x92\x01\v\b\x01\x10\xfa\x01\"\x04\"\x02 \x00R\aunitIds\"\x16\n" +
 	"\x14ReorderUnitsResponse\"`\n" +
 	"\x11AssignUnitRequest\x12\x17\n" +
 	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12\x15\n" +
 	"\x06to_add\x18\x02 \x03(\x05R\x05toAdd\x12\x1b\n" +
 	"\tto_remove\x18\x03 \x03(\x05R\btoRemove\"\x14\n" +
-	"\x12AssignUnitResponse\"\xc9\x01\n" +
+	"\x12AssignUnitResponse\"\xe2\x01\n" +
 	"\x17UpdateUnitStatusRequest\x12\x17\n" +
-	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12;\n" +
-	"\x06status\x18\x02 \x01(\x0e2#.resources.centrum.units.StatusUnitR\x06status\x12#\n" +
-	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12\x1f\n" +
-	"\x04code\x18\x04 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x01R\x04code\x88\x01\x01B\t\n" +
+	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12E\n" +
+	"\x06status\x18\x02 \x01(\x0e2#.resources.centrum.units.StatusUnitB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12+\n" +
+	"\x06reason\x18\x03 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12&\n" +
+	"\x04code\x18\x04 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18\x14H\x01R\x04code\x88\x01\x01B\t\n" +
 	"\a_reasonB\a\n" +
 	"\x05_code\"\x1a\n" +
 	"\x18UpdateUnitStatusResponse2\xb6\b\n" +

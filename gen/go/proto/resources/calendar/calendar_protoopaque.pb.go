@@ -1250,7 +1250,7 @@ var File_resources_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xb1\b\n" +
+	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xe7\b\n" +
 	"\bCalendar\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1258,20 +1258,20 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x15\n" +
-	"\x03job\x18\x05 \x01(\tH\x03R\x03job\x88\x01\x01\x12L\n" +
-	"\vsystem_kind\x18\x10 \x01(\x0e2&.resources.calendar.CalendarSystemKindH\x04R\n" +
-	"systemKind\x88\x01\x01\x12\x1c\n" +
-	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12H\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1e\n" +
+	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\x03job\x88\x01\x01\x12V\n" +
+	"\vsystem_kind\x18\x10 \x01(\x0e2&.resources.calendar.CalendarSystemKindB\b\xbaH\x05\x82\x01\x02\x10\x01H\x04R\n" +
+	"systemKind\x88\x01\x01\x12&\n" +
+	"\x04name\x18\x06 \x01(\tB\x12\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\ar\x05\x10\x03\x18\xff\x01R\x04name\x12H\n" +
 	"\vdescription\x18\a \x01(\v2!.resources.common.content.ContentH\x05R\vdescription\x88\x01\x01\x12\x16\n" +
 	"\x06public\x18\b \x01(\bR\x06public\x12\x16\n" +
-	"\x06closed\x18\t \x01(\bR\x06closed\x12\x1e\n" +
+	"\x06closed\x18\t \x01(\bR\x06closed\x12%\n" +
 	"\x05color\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12\"\n" +
+	" \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x18\fR\x05color\x12+\n" +
 	"\n" +
-	"creator_id\x18\v \x01(\x05H\x06R\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\aR\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\r \x01(\tR\n" +
+	"creator_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x06R\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\aR\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\r \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x12H\n" +
 	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\bR\fsubscription\x88\x01\x01\x120\n" +
 	"\x06access\x18\x0f \x01(\v2\x18.resources.access.AccessR\x06access\x12[\n" +
@@ -1286,53 +1286,54 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\x0f\n" +
 	"\r_subscriptionB\x13\n" +
-	"\x11_discord_settings\"\xb5\x04\n" +
+	"\x11_discord_settings\"\xd9\x04\n" +
 	"\rCalendarShort\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x15\n" +
-	"\x03job\x18\x05 \x01(\tH\x01R\x03job\x88\x01\x01\x12\x1c\n" +
-	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12H\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1e\n" +
+	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x01R\x03job\x88\x01\x01\x12&\n" +
+	"\x04name\x18\x06 \x01(\tB\x12\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\ar\x05\x10\x03\x18\xff\x01R\x04name\x12H\n" +
 	"\vdescription\x18\a \x01(\v2!.resources.common.content.ContentH\x02R\vdescription\x88\x01\x01\x12\x16\n" +
 	"\x06public\x18\b \x01(\bR\x06public\x12\x16\n" +
-	"\x06closed\x18\t \x01(\bR\x06closed\x12\x1e\n" +
+	"\x06closed\x18\t \x01(\bR\x06closed\x12%\n" +
 	"\x05color\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12H\n" +
-	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\x03R\fsubscription\x88\x01\x01\x12L\n" +
-	"\vsystem_kind\x18\x0f \x01(\x0e2&.resources.calendar.CalendarSystemKindH\x04R\n" +
+	" \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x18\fR\x05color\x12H\n" +
+	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\x03R\fsubscription\x88\x01\x01\x12V\n" +
+	"\vsystem_kind\x18\x0f \x01(\x0e2&.resources.calendar.CalendarSystemKindB\b\xbaH\x05\x82\x01\x02\x10\x01H\x04R\n" +
 	"systemKind\x88\x01\x01B\r\n" +
 	"\v_created_atB\x06\n" +
 	"\x04_jobB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
 	"\r_subscriptionB\x0e\n" +
-	"\f_system_kind\"\x92\x02\n" +
+	"\f_system_kind\"\x9b\x02\n" +
 	"\vCalendarSub\x12\x1f\n" +
 	"\vcalendar_id\x18\x01 \x01(\x03R\n" +
-	"calendarId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\x129\n" +
+	"calendarId\x12 \n" +
+	"\auser_id\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x129\n" +
 	"\x04user\x18\x03 \x01(\v2 .resources.users.short.UserShortH\x00R\x04user\x88\x01\x01\x12B\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tcreatedAt\x88\x01\x01\x12\x1c\n" +
 	"\tconfirmed\x18\x05 \x01(\bR\tconfirmed\x12\x14\n" +
 	"\x05muted\x18\x06 \x01(\bR\x05mutedB\a\n" +
 	"\x05_userB\r\n" +
-	"\v_created_at\"\xb2\x01\n" +
+	"\v_created_at\"\xc5\x01\n" +
 	"\x17CalendarDiscordSettings\x12\x18\n" +
-	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1d\n" +
+	"\aenabled\x18\x01 \x01(\bR\aenabled\x12&\n" +
 	"\n" +
-	"channel_id\x18\x02 \x01(\tR\tchannelId\x12V\n" +
-	"\x0ereminder_steps\x18\x03 \x03(\v2/.resources.calendar.CalendarDiscordReminderStepR\rreminderSteps:\x06\xe2\xf3\x18\x02\b\x01\"\xc4\x01\n" +
-	"\x1bCalendarDiscordReminderStep\x12\x1b\n" +
-	"\tat_minute\x18\x01 \x01(\x05R\batMinute\x12%\n" +
-	"\amessage\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\amessage\x88\x01\x01\x12K\n" +
+	"channel_id\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18 R\tchannelId\x12`\n" +
+	"\x0ereminder_steps\x18\x03 \x03(\v2/.resources.calendar.CalendarDiscordReminderStepB\b\xbaH\x05\x92\x01\x02\x10\x02R\rreminderSteps:\x06\xe2\xf3\x18\x02\b\x01\"\xd8\x01\n" +
+	"\x1bCalendarDiscordReminderStep\x12'\n" +
+	"\tat_minute\x18\x01 \x01(\x05B\n" +
+	"\xbaH\a\x1a\x05\x18\xe0N(\x00R\batMinute\x12-\n" +
+	"\amessage\x18\x02 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xd0\x0fH\x00R\amessage\x88\x01\x01\x12K\n" +
 	"\x05embed\x18\x03 \x01(\v20.resources.calendar.CalendarDiscordReminderEmbedH\x01R\x05embed\x88\x01\x01B\n" +
 	"\n" +
 	"\b_messageB\b\n" +
-	"\x06_embed\"\xaf\x01\n" +
-	"\x1cCalendarDiscordReminderEmbed\x12!\n" +
-	"\x05title\x18\x01 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x05title\x88\x01\x01\x12-\n" +
-	"\vdescription\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x01R\vdescription\x88\x01\x01\x12\x19\n" +
-	"\x05color\x18\x03 \x01(\tH\x02R\x05color\x88\x01\x01B\b\n" +
+	"\x06_embed\"\xdc\x01\n" +
+	"\x1cCalendarDiscordReminderEmbed\x12)\n" +
+	"\x05title\x18\x01 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\x02H\x00R\x05title\x88\x01\x01\x125\n" +
+	"\vdescription\x18\x02 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80 H\x01R\vdescription\x88\x01\x01\x126\n" +
+	"\x05color\x18\x03 \x01(\tB\x1b\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x02R\x05color\x88\x01\x01B\b\n" +
 	"\x06_titleB\x0e\n" +
 	"\f_descriptionB\b\n" +
 	"\x06_color*b\n" +

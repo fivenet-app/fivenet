@@ -688,31 +688,32 @@ var File_services_citizens_labels_proto protoreflect.FileDescriptor
 
 const file_services_citizens_labels_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/citizens/labels.proto\x12\x11services.citizens\x1a\x19codegen/perms/perms.proto\x1a&resources/citizens/labels/access.proto\x1a&resources/citizens/labels/labels.proto\"\xce\x01\n" +
-	"\x11ListLabelsRequest\x12\x1b\n" +
-	"\x06search\x18\x01 \x01(\tH\x00R\x06search\x88\x01\x01\x12J\n" +
+	"\x1eservices/citizens/labels.proto\x12\x11services.citizens\x1a\x19codegen/perms/perms.proto\x1a&resources/citizens/labels/access.proto\x1a&resources/citizens/labels/labels.proto\"\xe1\x01\n" +
+	"\x11ListLabelsRequest\x12$\n" +
+	"\x06search\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@H\x00R\x06search\x88\x01\x01\x12T\n" +
 	"\n" +
-	"min_access\x18\x02 \x01(\x0e2&.resources.citizens.labels.AccessLevelH\x01R\tminAccess\x88\x01\x01\x12%\n" +
+	"min_access\x18\x02 \x01(\x0e2&.resources.citizens.labels.AccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01H\x01R\tminAccess\x88\x01\x01\x12%\n" +
 	"\fown_job_only\x18\x03 \x01(\bH\x02R\n" +
 	"ownJobOnly\x88\x01\x01B\t\n" +
 	"\a_searchB\r\n" +
 	"\v_min_accessB\x0f\n" +
 	"\r_own_job_only\"N\n" +
 	"\x12ListLabelsResponse\x128\n" +
-	"\x06labels\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x06labels\"!\n" +
-	"\x0fGetLabelRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"J\n" +
+	"\x06labels\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x06labels\"*\n" +
+	"\x0fGetLabelRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"J\n" +
 	"\x10GetLabelResponse\x126\n" +
-	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\"T\n" +
-	"\x1aCreateOrUpdateLabelRequest\x126\n" +
-	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\"U\n" +
+	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\"\\\n" +
+	"\x1aCreateOrUpdateLabelRequest\x12>\n" +
+	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelB\x06\xbaH\x03\xc8\x01\x01R\x05label\"U\n" +
 	"\x1bCreateOrUpdateLabelResponse\x126\n" +
-	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\"$\n" +
-	"\x12DeleteLabelRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x15\n" +
-	"\x13DeleteLabelResponse\"3\n" +
-	"\x14ReorderLabelsRequest\x12\x1b\n" +
-	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"\x17\n" +
+	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\"-\n" +
+	"\x12DeleteLabelRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x15\n" +
+	"\x13DeleteLabelResponse\"E\n" +
+	"\x14ReorderLabelsRequest\x12-\n" +
+	"\tlabel_ids\x18\x01 \x03(\x03B\x10\xbaH\r\x92\x01\n" +
+	"\b\x01\x102\"\x04\"\x02 \x00R\blabelIds\"\x17\n" +
 	"\x15ReorderLabelsResponse2\x86\x05\n" +
 	"\rLabelsService\x12{\n" +
 	"\n" +

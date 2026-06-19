@@ -796,31 +796,31 @@ var File_services_mailer_settings_proto protoreflect.FileDescriptor
 
 const file_services_mailer_settings_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/mailer/settings.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/mailer/settings/settings.proto\x1a)resources/mailer/templates/template.proto\"1\n" +
-	"\x14ListTemplatesRequest\x12\x19\n" +
-	"\bemail_id\x18\x01 \x01(\x03R\aemailId\"a\n" +
+	"\x1eservices/mailer/settings.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/mailer/settings/settings.proto\x1a)resources/mailer/templates/template.proto\":\n" +
+	"\x14ListTemplatesRequest\x12\"\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\"a\n" +
 	"\x15ListTemplatesResponse\x12H\n" +
-	"\ttemplates\x18\x01 \x03(\v2$.resources.mailer.templates.TemplateB\x04\xc8\xf3\x18\x01R\ttemplates\"P\n" +
-	"\x12GetTemplateRequest\x12\x19\n" +
-	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x1f\n" +
-	"\vtemplate_id\x18\x02 \x01(\x03R\n" +
-	"templateId\"W\n" +
-	"\x13GetTemplateResponse\x12@\n" +
-	"\btemplate\x18\x01 \x01(\v2$.resources.mailer.templates.TemplateR\btemplate\"a\n" +
-	"\x1dCreateOrUpdateTemplateRequest\x12@\n" +
-	"\btemplate\x18\x01 \x01(\v2$.resources.mailer.templates.TemplateR\btemplate\"b\n" +
-	"\x1eCreateOrUpdateTemplateResponse\x12@\n" +
-	"\btemplate\x18\x01 \x01(\v2$.resources.mailer.templates.TemplateR\btemplate\"B\n" +
-	"\x15DeleteTemplateRequest\x12\x19\n" +
-	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\x18\n" +
-	"\x16DeleteTemplateResponse\"4\n" +
-	"\x17GetEmailSettingsRequest\x12\x19\n" +
-	"\bemail_id\x18\x01 \x01(\x03R\aemailId\"`\n" +
+	"\ttemplates\x18\x01 \x03(\v2$.resources.mailer.templates.TemplateB\x04\xc8\xf3\x18\x01R\ttemplates\"b\n" +
+	"\x12GetTemplateRequest\x12\"\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12(\n" +
+	"\vtemplate_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"templateId\"_\n" +
+	"\x13GetTemplateResponse\x12H\n" +
+	"\btemplate\x18\x01 \x01(\v2$.resources.mailer.templates.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"i\n" +
+	"\x1dCreateOrUpdateTemplateRequest\x12H\n" +
+	"\btemplate\x18\x01 \x01(\v2$.resources.mailer.templates.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"j\n" +
+	"\x1eCreateOrUpdateTemplateResponse\x12H\n" +
+	"\btemplate\x18\x01 \x01(\v2$.resources.mailer.templates.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"T\n" +
+	"\x15DeleteTemplateRequest\x12\"\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12\x17\n" +
+	"\x02id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x18\n" +
+	"\x16DeleteTemplateResponse\"=\n" +
+	"\x17GetEmailSettingsRequest\x12\"\n" +
+	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\"`\n" +
 	"\x18GetEmailSettingsResponse\x12D\n" +
-	"\bsettings\x18\x01 \x01(\v2(.resources.mailer.settings.EmailSettingsR\bsettings\"_\n" +
-	"\x17SetEmailSettingsRequest\x12D\n" +
-	"\bsettings\x18\x01 \x01(\v2(.resources.mailer.settings.EmailSettingsR\bsettings\"`\n" +
+	"\bsettings\x18\x01 \x01(\v2(.resources.mailer.settings.EmailSettingsR\bsettings\"g\n" +
+	"\x17SetEmailSettingsRequest\x12L\n" +
+	"\bsettings\x18\x01 \x01(\v2(.resources.mailer.settings.EmailSettingsB\x06\xbaH\x03\xc8\x01\x01R\bsettings\"`\n" +
 	"\x18SetEmailSettingsResponse\x12D\n" +
 	"\bsettings\x18\x01 \x01(\v2(.resources.mailer.settings.EmailSettingsR\bsettings2\x91\x06\n" +
 	"\x0fSettingsService\x12r\n" +

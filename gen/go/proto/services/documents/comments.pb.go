@@ -566,24 +566,24 @@ var File_services_documents_comments_proto protoreflect.FileDescriptor
 
 const file_services_documents_comments_proto_rawDesc = "" +
 	"\n" +
-	"!services/documents/comments.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a)resources/documents/comment/comment.proto\"\x83\x01\n" +
-	"\x12GetCommentsRequest\x12L\n" +
+	"!services/documents/comments.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a)resources/documents/comment/comment.proto\"\x8b\x01\n" +
+	"\x12GetCommentsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\"\xac\x01\n" +
-	"\x13GetCommentsResponse\x12M\n" +
+	"documentId\"\xb4\x01\n" +
+	"\x13GetCommentsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12F\n" +
-	"\bcomments\x18\x02 \x03(\v2$.resources.documents.comment.CommentB\x04\xc8\xf3\x18\x01R\bcomments\"T\n" +
-	"\x12PostCommentRequest\x12>\n" +
-	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"U\n" +
+	"\bcomments\x18\x02 \x03(\v2$.resources.documents.comment.CommentB\x04\xc8\xf3\x18\x01R\bcomments\"\\\n" +
+	"\x12PostCommentRequest\x12F\n" +
+	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentB\x06\xbaH\x03\xc8\x01\x01R\acomment\"U\n" +
 	"\x13PostCommentResponse\x12>\n" +
-	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"T\n" +
-	"\x12EditCommentRequest\x12>\n" +
-	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"U\n" +
+	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"\\\n" +
+	"\x12EditCommentRequest\x12F\n" +
+	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentB\x06\xbaH\x03\xc8\x01\x01R\acomment\"U\n" +
 	"\x13EditCommentResponse\x12>\n" +
 	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"5\n" +
 	"\x14DeleteCommentRequest\x12\x1d\n" +

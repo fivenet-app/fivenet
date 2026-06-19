@@ -73,6 +73,7 @@ type Server struct {
 	pbjobs.JobsServiceServer
 	pbjobs.TimeclockServiceServer
 	pbjobs.StatsServiceServer
+	pbjobs.UnimplementedGroupsServiceServer
 
 	logger *zap.Logger
 	wg     sync.WaitGroup
@@ -149,4 +150,5 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbjobs.RegisterJobsServiceServer(srv, s)
 	pbjobs.RegisterStatsServiceServer(srv, s)
 	pbjobs.RegisterTimeclockServiceServer(srv, s)
+	pbjobs.RegisterGroupsServiceServer(srv, s)
 }

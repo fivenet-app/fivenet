@@ -3,7 +3,2991 @@
 // tslint:disable
 // @ts-nocheck
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
+import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
+import type { IBinaryWriter } from "@protobuf-ts/runtime";
+import type { BinaryReadOptions } from "@protobuf-ts/runtime";
+import type { IBinaryReader } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
+import type { PartialMessage } from "@protobuf-ts/runtime";
+import { reflectionMergePartial } from "@protobuf-ts/runtime";
+import { MessageType } from "@protobuf-ts/runtime";
+import { GroupActivity } from "../../resources/jobs/groups/activity";
+import { Timestamp } from "../../resources/timestamp/timestamp";
+import { GroupActivityType } from "../../resources/jobs/groups/activity";
+import { GroupQualificationRule } from "../../resources/jobs/groups/group";
+import { GroupGradeRule } from "../../resources/jobs/groups/group";
+import { GroupExclusionReason } from "../../resources/jobs/groups/group";
+import { GroupMemberSource } from "../../resources/jobs/groups/group";
+import { GroupMembershipMode } from "../../resources/jobs/groups/group";
+import { GroupType } from "../../resources/jobs/groups/group";
+import { GroupResolvedMember } from "../../resources/jobs/groups/group";
+import { GroupMemberExclusion } from "../../resources/jobs/groups/group";
+import { GroupManualMember } from "../../resources/jobs/groups/group";
+import { GroupLeader } from "../../resources/jobs/groups/group";
+import { GroupRule } from "../../resources/jobs/groups/group";
+import { Group } from "../../resources/jobs/groups/group";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { GroupState } from "../../resources/jobs/groups/group";
+import { Sort } from "../../resources/common/database/database";
+import { PaginationRequest } from "../../resources/common/database/database";
+/**
+ * @generated from protobuf message services.jobs.ListGroupsRequest
+ */
+export interface ListGroupsRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2
+     */
+    sort?: Sort;
+    /**
+     * Search params
+     *
+     * @generated from protobuf field: repeated resources.jobs.groups.GroupState states = 3
+     */
+    states: GroupState[];
+    /**
+     * @generated from protobuf field: optional string search = 4
+     */
+    search?: string;
+    /**
+     * @generated from protobuf field: bool include_counts = 5
+     */
+    includeCounts: boolean;
+    /**
+     * @generated from protobuf field: bool include_inactive = 6
+     */
+    includeInactive: boolean;
+    /**
+     * @generated from protobuf field: bool include_archived = 7
+     */
+    includeArchived: boolean;
+}
+/**
+ * @generated from protobuf message services.jobs.ListGroupsResponse
+ */
+export interface ListGroupsResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.groups.Group groups = 2
+     */
+    groups: Group[];
+}
+/**
+ * @generated from protobuf message services.jobs.GetGroupRequest
+ */
+export interface GetGroupRequest {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: bool include_rules = 2
+     */
+    includeRules: boolean;
+    /**
+     * @generated from protobuf field: bool include_leaders = 3
+     */
+    includeLeaders: boolean;
+    /**
+     * @generated from protobuf field: bool include_manual_members = 4
+     */
+    includeManualMembers: boolean;
+    /**
+     * @generated from protobuf field: bool include_exclusions = 5
+     */
+    includeExclusions: boolean;
+    /**
+     * @generated from protobuf field: bool include_resolved_members = 6
+     */
+    includeResolvedMembers: boolean;
+    /**
+     * @generated from protobuf field: bool include_archived = 7
+     */
+    includeArchived: boolean;
+}
+/**
+ * @generated from protobuf message services.jobs.GetGroupResponse
+ */
+export interface GetGroupResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 1
+     */
+    group?: Group;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.groups.GroupRule rules = 2
+     */
+    rules: GroupRule[];
+    /**
+     * @generated from protobuf field: repeated resources.jobs.groups.GroupLeader leaders = 3
+     */
+    leaders: GroupLeader[];
+    /**
+     * @generated from protobuf field: repeated resources.jobs.groups.GroupManualMember manual_members = 4
+     */
+    manualMembers: GroupManualMember[];
+    /**
+     * @generated from protobuf field: repeated resources.jobs.groups.GroupMemberExclusion exclusions = 5
+     */
+    exclusions: GroupMemberExclusion[];
+    /**
+     * @generated from protobuf field: repeated resources.jobs.groups.GroupResolvedMember resolved_members = 6
+     */
+    resolvedMembers: GroupResolvedMember[];
+}
+/**
+ * @generated from protobuf message services.jobs.CreateGroupRequest
+ */
+export interface CreateGroupRequest {
+    /**
+     * @generated from protobuf field: int64 job_id = 1
+     */
+    jobId: number;
+    /**
+     * @generated from protobuf field: string name = 2
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: optional string description = 3
+     */
+    description?: string;
+    /**
+     * @generated from protobuf field: optional string short_name = 4
+     */
+    shortName?: string;
+    /**
+     * @generated from protobuf field: optional string logo_file_id = 5
+     */
+    logoFileId?: string;
+    /**
+     * @generated from protobuf field: optional string color = 6
+     */
+    color?: string;
+    /**
+     * @generated from protobuf field: optional resources.jobs.groups.GroupType type = 7
+     */
+    type?: GroupType;
+    /**
+     * @generated from protobuf field: optional resources.jobs.groups.GroupMembershipMode membership_mode = 8
+     */
+    membershipMode?: GroupMembershipMode;
+    /**
+     * @generated from protobuf field: optional int32 sort_order = 9
+     */
+    sortOrder?: number;
+    /**
+     * @generated from protobuf field: repeated int64 leader_user_ids = 10
+     */
+    leaderUserIds: number[];
+    /**
+     * @generated from protobuf field: repeated int64 manual_member_user_ids = 11
+     */
+    manualMemberUserIds: number[];
+    /**
+     * @generated from protobuf field: repeated services.jobs.GroupRuleInput rules = 12
+     */
+    rules: GroupRuleInput[];
+}
+/**
+ * @generated from protobuf message services.jobs.CreateGroupResponse
+ */
+export interface CreateGroupResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 1
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.UpdateGroupRequest
+ */
+export interface UpdateGroupRequest {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: optional string name = 2
+     */
+    name?: string;
+    /**
+     * @generated from protobuf field: optional string description = 3
+     */
+    description?: string;
+    /**
+     * @generated from protobuf field: optional string short_name = 4
+     */
+    shortName?: string;
+    /**
+     * @generated from protobuf field: optional string logo_file_id = 5
+     */
+    logoFileId?: string;
+    /**
+     * @generated from protobuf field: optional string color = 6
+     */
+    color?: string;
+    /**
+     * @generated from protobuf field: optional resources.jobs.groups.GroupState state = 7
+     */
+    state?: GroupState;
+    /**
+     * @generated from protobuf field: optional resources.jobs.groups.GroupType type = 8
+     */
+    type?: GroupType;
+    /**
+     * @generated from protobuf field: optional resources.jobs.groups.GroupMembershipMode membership_mode = 9
+     */
+    membershipMode?: GroupMembershipMode;
+    /**
+     * @generated from protobuf field: optional int32 sort_order = 10
+     */
+    sortOrder?: number;
+}
+/**
+ * @generated from protobuf message services.jobs.UpdateGroupResponse
+ */
+export interface UpdateGroupResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 1
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.ArchiveGroupRequest
+ */
+export interface ArchiveGroupRequest {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: optional string reason = 2
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.ArchiveGroupResponse
+ */
+export interface ArchiveGroupResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 1
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.RestoreGroupRequest
+ */
+export interface RestoreGroupRequest {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: optional string reason = 2
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.RestoreGroupResponse
+ */
+export interface RestoreGroupResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 1
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.ListGroupMembersRequest
+ */
+export interface ListGroupMembersRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2
+     */
+    sort?: Sort;
+    /**
+     * @generated from protobuf field: int64 group_id = 3
+     */
+    groupId: number;
+    /**
+     * @generated from protobuf field: optional string search = 4
+     */
+    search?: string;
+    /**
+     * @generated from protobuf field: bool include_excluded = 5
+     */
+    includeExcluded: boolean;
+    /**
+     * @generated from protobuf field: bool include_leaders = 6
+     */
+    includeLeaders: boolean;
+    /**
+     * @generated from protobuf field: bool include_reasons = 7
+     */
+    includeReasons: boolean;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.groups.GroupMemberSource sources = 8
+     */
+    sources: GroupMemberSource[];
+}
+/**
+ * @generated from protobuf message services.jobs.ListGroupMembersResponse
+ */
+export interface ListGroupMembersResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.groups.GroupResolvedMember members = 2
+     */
+    members: GroupResolvedMember[];
+}
+/**
+ * @generated from protobuf message services.jobs.AddGroupMemberRequest
+ */
+export interface AddGroupMemberRequest {
+    /**
+     * @generated from protobuf field: int64 group_id = 1
+     */
+    groupId: number;
+    /**
+     * @generated from protobuf field: int64 user_id = 2
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional string reason = 3
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.AddGroupMemberResponse
+ */
+export interface AddGroupMemberResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.GroupManualMember member = 1
+     */
+    member?: GroupManualMember;
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 2
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.RemoveGroupMemberRequest
+ */
+export interface RemoveGroupMemberRequest {
+    /**
+     * @generated from protobuf field: int64 group_id = 1
+     */
+    groupId: number;
+    /**
+     * @generated from protobuf field: int64 user_id = 2
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional string reason = 3
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.RemoveGroupMemberResponse
+ */
+export interface RemoveGroupMemberResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 1
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.ExcludeGroupMemberRequest
+ */
+export interface ExcludeGroupMemberRequest {
+    /**
+     * @generated from protobuf field: int64 group_id = 1
+     */
+    groupId: number;
+    /**
+     * @generated from protobuf field: int64 user_id = 2
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: resources.jobs.groups.GroupExclusionReason reason_type = 3
+     */
+    reasonType: GroupExclusionReason;
+    /**
+     * @generated from protobuf field: optional string reason = 4
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.ExcludeGroupMemberResponse
+ */
+export interface ExcludeGroupMemberResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.GroupMemberExclusion exclusion = 1
+     */
+    exclusion?: GroupMemberExclusion;
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 2
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.RemoveGroupMemberExclusionRequest
+ */
+export interface RemoveGroupMemberExclusionRequest {
+    /**
+     * @generated from protobuf field: int64 group_id = 1
+     */
+    groupId: number;
+    /**
+     * @generated from protobuf field: int64 user_id = 2
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional string reason = 3
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.RemoveGroupMemberExclusionResponse
+ */
+export interface RemoveGroupMemberExclusionResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 1
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.AddGroupLeaderRequest
+ */
+export interface AddGroupLeaderRequest {
+    /**
+     * @generated from protobuf field: int64 group_id = 1
+     */
+    groupId: number;
+    /**
+     * @generated from protobuf field: int64 user_id = 2
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional string reason = 3
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.AddGroupLeaderResponse
+ */
+export interface AddGroupLeaderResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.GroupLeader leader = 1
+     */
+    leader?: GroupLeader;
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 2
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.RemoveGroupLeaderRequest
+ */
+export interface RemoveGroupLeaderRequest {
+    /**
+     * @generated from protobuf field: int64 group_id = 1
+     */
+    groupId: number;
+    /**
+     * @generated from protobuf field: int64 user_id = 2
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional string reason = 3
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.RemoveGroupLeaderResponse
+ */
+export interface RemoveGroupLeaderResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 1
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.GroupRuleInput
+ */
+export interface GroupRuleInput {
+    /**
+     * @generated from protobuf field: optional bool enabled = 1
+     */
+    enabled?: boolean;
+    /**
+     * @generated from protobuf oneof: rule
+     */
+    rule: {
+        oneofKind: "grade";
+        /**
+         * @generated from protobuf field: resources.jobs.groups.GroupGradeRule grade = 10
+         */
+        grade: GroupGradeRule;
+    } | {
+        oneofKind: "qualification";
+        /**
+         * @generated from protobuf field: resources.jobs.groups.GroupQualificationRule qualification = 11
+         */
+        qualification: GroupQualificationRule;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message services.jobs.CreateGroupRuleRequest
+ */
+export interface CreateGroupRuleRequest {
+    /**
+     * @generated from protobuf field: int64 group_id = 1
+     */
+    groupId: number;
+    /**
+     * @generated from protobuf field: services.jobs.GroupRuleInput rule = 2
+     */
+    rule?: GroupRuleInput;
+    /**
+     * @generated from protobuf field: optional string reason = 3
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.CreateGroupRuleResponse
+ */
+export interface CreateGroupRuleResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.GroupRule rule = 1
+     */
+    rule?: GroupRule;
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 2
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.UpdateGroupRuleRequest
+ */
+export interface UpdateGroupRuleRequest {
+    /**
+     * @generated from protobuf field: int64 group_id = 1
+     */
+    groupId: number;
+    /**
+     * @generated from protobuf field: int64 rule_id = 2
+     */
+    ruleId: number;
+    /**
+     * @generated from protobuf field: services.jobs.GroupRuleInput rule = 3
+     */
+    rule?: GroupRuleInput;
+    /**
+     * @generated from protobuf field: optional string reason = 4
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.UpdateGroupRuleResponse
+ */
+export interface UpdateGroupRuleResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.GroupRule rule = 1
+     */
+    rule?: GroupRule;
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 2
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.DeleteGroupRuleRequest
+ */
+export interface DeleteGroupRuleRequest {
+    /**
+     * @generated from protobuf field: int64 group_id = 1
+     */
+    groupId: number;
+    /**
+     * @generated from protobuf field: int64 rule_id = 2
+     */
+    ruleId: number;
+    /**
+     * @generated from protobuf field: optional string reason = 3
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.jobs.DeleteGroupRuleResponse
+ */
+export interface DeleteGroupRuleResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.groups.Group group = 1
+     */
+    group?: Group;
+}
+/**
+ * @generated from protobuf message services.jobs.ListGroupActivityRequest
+ */
+export interface ListGroupActivityRequest {
+    /**
+     * @generated from protobuf field: optional resources.common.database.PaginationRequest pagination = 1
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2
+     */
+    sort?: Sort;
+    /**
+     * @generated from protobuf field: int64 group_id = 3
+     */
+    groupId: number;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.groups.GroupActivityType types = 4
+     */
+    types: GroupActivityType[];
+    /**
+     * @generated from protobuf field: optional int64 user_id = 5
+     */
+    userId?: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 6
+     */
+    from?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 7
+     */
+    to?: Timestamp;
+}
+/**
+ * @generated from protobuf message services.jobs.ListGroupActivityResponse
+ */
+export interface ListGroupActivityResponse {
+    /**
+     * @generated from protobuf field: optional resources.common.database.PaginationResponse pagination = 1
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.groups.GroupActivity activity = 2
+     */
+    activity: GroupActivity[];
+}
+// @generated message type with reflection information, may provide speed optimized methods
+class ListGroupsRequest$Type extends MessageType<ListGroupsRequest> {
+    constructor() {
+        super("services.jobs.ListGroupsRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "states", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.groups.GroupState", GroupState, "GROUP_STATE_"] },
+            { no: 4, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "include_counts", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "include_inactive", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "include_archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ListGroupsRequest>): ListGroupsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.states = [];
+        message.includeCounts = false;
+        message.includeInactive = false;
+        message.includeArchived = false;
+        if (value !== undefined)
+            reflectionMergePartial<ListGroupsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListGroupsRequest): ListGroupsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* repeated resources.jobs.groups.GroupState states */ 3:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.states.push(reader.int32());
+                    else
+                        message.states.push(reader.int32());
+                    break;
+                case /* optional string search */ 4:
+                    message.search = reader.string();
+                    break;
+                case /* bool include_counts */ 5:
+                    message.includeCounts = reader.bool();
+                    break;
+                case /* bool include_inactive */ 6:
+                    message.includeInactive = reader.bool();
+                    break;
+                case /* bool include_archived */ 7:
+                    message.includeArchived = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListGroupsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.groups.GroupState states = 3; */
+        if (message.states.length) {
+            writer.tag(3, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.states.length; i++)
+                writer.int32(message.states[i]);
+            writer.join();
+        }
+        /* optional string search = 4; */
+        if (message.search !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.search);
+        /* bool include_counts = 5; */
+        if (message.includeCounts !== false)
+            writer.tag(5, WireType.Varint).bool(message.includeCounts);
+        /* bool include_inactive = 6; */
+        if (message.includeInactive !== false)
+            writer.tag(6, WireType.Varint).bool(message.includeInactive);
+        /* bool include_archived = 7; */
+        if (message.includeArchived !== false)
+            writer.tag(7, WireType.Varint).bool(message.includeArchived);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListGroupsRequest
+ */
+export const ListGroupsRequest = new ListGroupsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListGroupsResponse$Type extends MessageType<ListGroupsResponse> {
+    constructor() {
+        super("services.jobs.ListGroupsResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "groups", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Group, options: { "codegen.itemslen.enabled": true } }
+        ]);
+    }
+    create(value?: PartialMessage<ListGroupsResponse>): ListGroupsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groups = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListGroupsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListGroupsResponse): ListGroupsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.jobs.groups.Group groups */ 2:
+                    message.groups.push(Group.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListGroupsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.groups.Group groups = 2; */
+        for (let i = 0; i < message.groups.length; i++)
+            Group.internalBinaryWrite(message.groups[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListGroupsResponse
+ */
+export const ListGroupsResponse = new ListGroupsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetGroupRequest$Type extends MessageType<GetGroupRequest> {
+    constructor() {
+        super("services.jobs.GetGroupRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "include_rules", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "include_leaders", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "include_manual_members", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "include_exclusions", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "include_resolved_members", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "include_archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetGroupRequest>): GetGroupRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        message.includeRules = false;
+        message.includeLeaders = false;
+        message.includeManualMembers = false;
+        message.includeExclusions = false;
+        message.includeResolvedMembers = false;
+        message.includeArchived = false;
+        if (value !== undefined)
+            reflectionMergePartial<GetGroupRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetGroupRequest): GetGroupRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* bool include_rules */ 2:
+                    message.includeRules = reader.bool();
+                    break;
+                case /* bool include_leaders */ 3:
+                    message.includeLeaders = reader.bool();
+                    break;
+                case /* bool include_manual_members */ 4:
+                    message.includeManualMembers = reader.bool();
+                    break;
+                case /* bool include_exclusions */ 5:
+                    message.includeExclusions = reader.bool();
+                    break;
+                case /* bool include_resolved_members */ 6:
+                    message.includeResolvedMembers = reader.bool();
+                    break;
+                case /* bool include_archived */ 7:
+                    message.includeArchived = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetGroupRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* bool include_rules = 2; */
+        if (message.includeRules !== false)
+            writer.tag(2, WireType.Varint).bool(message.includeRules);
+        /* bool include_leaders = 3; */
+        if (message.includeLeaders !== false)
+            writer.tag(3, WireType.Varint).bool(message.includeLeaders);
+        /* bool include_manual_members = 4; */
+        if (message.includeManualMembers !== false)
+            writer.tag(4, WireType.Varint).bool(message.includeManualMembers);
+        /* bool include_exclusions = 5; */
+        if (message.includeExclusions !== false)
+            writer.tag(5, WireType.Varint).bool(message.includeExclusions);
+        /* bool include_resolved_members = 6; */
+        if (message.includeResolvedMembers !== false)
+            writer.tag(6, WireType.Varint).bool(message.includeResolvedMembers);
+        /* bool include_archived = 7; */
+        if (message.includeArchived !== false)
+            writer.tag(7, WireType.Varint).bool(message.includeArchived);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetGroupRequest
+ */
+export const GetGroupRequest = new GetGroupRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetGroupResponse$Type extends MessageType<GetGroupResponse> {
+    constructor() {
+        super("services.jobs.GetGroupResponse", [
+            { no: 1, name: "group", kind: "message", T: () => Group },
+            { no: 2, name: "rules", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupRule },
+            { no: 3, name: "leaders", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupLeader },
+            { no: 4, name: "manual_members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupManualMember },
+            { no: 5, name: "exclusions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupMemberExclusion },
+            { no: 6, name: "resolved_members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupResolvedMember }
+        ]);
+    }
+    create(value?: PartialMessage<GetGroupResponse>): GetGroupResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.rules = [];
+        message.leaders = [];
+        message.manualMembers = [];
+        message.exclusions = [];
+        message.resolvedMembers = [];
+        if (value !== undefined)
+            reflectionMergePartial<GetGroupResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetGroupResponse): GetGroupResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.Group group */ 1:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                case /* repeated resources.jobs.groups.GroupRule rules */ 2:
+                    message.rules.push(GroupRule.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.jobs.groups.GroupLeader leaders */ 3:
+                    message.leaders.push(GroupLeader.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.jobs.groups.GroupManualMember manual_members */ 4:
+                    message.manualMembers.push(GroupManualMember.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.jobs.groups.GroupMemberExclusion exclusions */ 5:
+                    message.exclusions.push(GroupMemberExclusion.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.jobs.groups.GroupResolvedMember resolved_members */ 6:
+                    message.resolvedMembers.push(GroupResolvedMember.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetGroupResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.Group group = 1; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.groups.GroupRule rules = 2; */
+        for (let i = 0; i < message.rules.length; i++)
+            GroupRule.internalBinaryWrite(message.rules[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.groups.GroupLeader leaders = 3; */
+        for (let i = 0; i < message.leaders.length; i++)
+            GroupLeader.internalBinaryWrite(message.leaders[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.groups.GroupManualMember manual_members = 4; */
+        for (let i = 0; i < message.manualMembers.length; i++)
+            GroupManualMember.internalBinaryWrite(message.manualMembers[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.groups.GroupMemberExclusion exclusions = 5; */
+        for (let i = 0; i < message.exclusions.length; i++)
+            GroupMemberExclusion.internalBinaryWrite(message.exclusions[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.groups.GroupResolvedMember resolved_members = 6; */
+        for (let i = 0; i < message.resolvedMembers.length; i++)
+            GroupResolvedMember.internalBinaryWrite(message.resolvedMembers[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetGroupResponse
+ */
+export const GetGroupResponse = new GetGroupResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateGroupRequest$Type extends MessageType<CreateGroupRequest> {
+    constructor() {
+        super("services.jobs.CreateGroupRequest", [
+            { no: 1, name: "job_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "short_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "logo_file_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "type", kind: "enum", opt: true, T: () => ["resources.jobs.groups.GroupType", GroupType, "GROUP_TYPE_"] },
+            { no: 8, name: "membership_mode", kind: "enum", opt: true, T: () => ["resources.jobs.groups.GroupMembershipMode", GroupMembershipMode, "GROUP_MEMBERSHIP_MODE_"] },
+            { no: 9, name: "sort_order", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 10, name: "leader_user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 11, name: "manual_member_user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 12, name: "rules", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupRuleInput }
+        ]);
+    }
+    create(value?: PartialMessage<CreateGroupRequest>): CreateGroupRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.jobId = 0;
+        message.name = "";
+        message.leaderUserIds = [];
+        message.manualMemberUserIds = [];
+        message.rules = [];
+        if (value !== undefined)
+            reflectionMergePartial<CreateGroupRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateGroupRequest): CreateGroupRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 job_id */ 1:
+                    message.jobId = reader.int64().toNumber();
+                    break;
+                case /* string name */ 2:
+                    message.name = reader.string();
+                    break;
+                case /* optional string description */ 3:
+                    message.description = reader.string();
+                    break;
+                case /* optional string short_name */ 4:
+                    message.shortName = reader.string();
+                    break;
+                case /* optional string logo_file_id */ 5:
+                    message.logoFileId = reader.string();
+                    break;
+                case /* optional string color */ 6:
+                    message.color = reader.string();
+                    break;
+                case /* optional resources.jobs.groups.GroupType type */ 7:
+                    message.type = reader.int32();
+                    break;
+                case /* optional resources.jobs.groups.GroupMembershipMode membership_mode */ 8:
+                    message.membershipMode = reader.int32();
+                    break;
+                case /* optional int32 sort_order */ 9:
+                    message.sortOrder = reader.int32();
+                    break;
+                case /* repeated int64 leader_user_ids */ 10:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.leaderUserIds.push(reader.int64().toNumber());
+                    else
+                        message.leaderUserIds.push(reader.int64().toNumber());
+                    break;
+                case /* repeated int64 manual_member_user_ids */ 11:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.manualMemberUserIds.push(reader.int64().toNumber());
+                    else
+                        message.manualMemberUserIds.push(reader.int64().toNumber());
+                    break;
+                case /* repeated services.jobs.GroupRuleInput rules */ 12:
+                    message.rules.push(GroupRuleInput.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateGroupRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 job_id = 1; */
+        if (message.jobId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.jobId);
+        /* string name = 2; */
+        if (message.name !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.name);
+        /* optional string description = 3; */
+        if (message.description !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.description);
+        /* optional string short_name = 4; */
+        if (message.shortName !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.shortName);
+        /* optional string logo_file_id = 5; */
+        if (message.logoFileId !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.logoFileId);
+        /* optional string color = 6; */
+        if (message.color !== undefined)
+            writer.tag(6, WireType.LengthDelimited).string(message.color);
+        /* optional resources.jobs.groups.GroupType type = 7; */
+        if (message.type !== undefined)
+            writer.tag(7, WireType.Varint).int32(message.type);
+        /* optional resources.jobs.groups.GroupMembershipMode membership_mode = 8; */
+        if (message.membershipMode !== undefined)
+            writer.tag(8, WireType.Varint).int32(message.membershipMode);
+        /* optional int32 sort_order = 9; */
+        if (message.sortOrder !== undefined)
+            writer.tag(9, WireType.Varint).int32(message.sortOrder);
+        /* repeated int64 leader_user_ids = 10; */
+        if (message.leaderUserIds.length) {
+            writer.tag(10, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.leaderUserIds.length; i++)
+                writer.int64(message.leaderUserIds[i]);
+            writer.join();
+        }
+        /* repeated int64 manual_member_user_ids = 11; */
+        if (message.manualMemberUserIds.length) {
+            writer.tag(11, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.manualMemberUserIds.length; i++)
+                writer.int64(message.manualMemberUserIds[i]);
+            writer.join();
+        }
+        /* repeated services.jobs.GroupRuleInput rules = 12; */
+        for (let i = 0; i < message.rules.length; i++)
+            GroupRuleInput.internalBinaryWrite(message.rules[i], writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.CreateGroupRequest
+ */
+export const CreateGroupRequest = new CreateGroupRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateGroupResponse$Type extends MessageType<CreateGroupResponse> {
+    constructor() {
+        super("services.jobs.CreateGroupResponse", [
+            { no: 1, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<CreateGroupResponse>): CreateGroupResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CreateGroupResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateGroupResponse): CreateGroupResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.Group group */ 1:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateGroupResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.Group group = 1; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.CreateGroupResponse
+ */
+export const CreateGroupResponse = new CreateGroupResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateGroupRequest$Type extends MessageType<UpdateGroupRequest> {
+    constructor() {
+        super("services.jobs.UpdateGroupRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "short_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "logo_file_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "state", kind: "enum", opt: true, T: () => ["resources.jobs.groups.GroupState", GroupState, "GROUP_STATE_"] },
+            { no: 8, name: "type", kind: "enum", opt: true, T: () => ["resources.jobs.groups.GroupType", GroupType, "GROUP_TYPE_"] },
+            { no: 9, name: "membership_mode", kind: "enum", opt: true, T: () => ["resources.jobs.groups.GroupMembershipMode", GroupMembershipMode, "GROUP_MEMBERSHIP_MODE_"] },
+            { no: 10, name: "sort_order", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateGroupRequest>): UpdateGroupRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<UpdateGroupRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateGroupRequest): UpdateGroupRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* optional string name */ 2:
+                    message.name = reader.string();
+                    break;
+                case /* optional string description */ 3:
+                    message.description = reader.string();
+                    break;
+                case /* optional string short_name */ 4:
+                    message.shortName = reader.string();
+                    break;
+                case /* optional string logo_file_id */ 5:
+                    message.logoFileId = reader.string();
+                    break;
+                case /* optional string color */ 6:
+                    message.color = reader.string();
+                    break;
+                case /* optional resources.jobs.groups.GroupState state */ 7:
+                    message.state = reader.int32();
+                    break;
+                case /* optional resources.jobs.groups.GroupType type */ 8:
+                    message.type = reader.int32();
+                    break;
+                case /* optional resources.jobs.groups.GroupMembershipMode membership_mode */ 9:
+                    message.membershipMode = reader.int32();
+                    break;
+                case /* optional int32 sort_order */ 10:
+                    message.sortOrder = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateGroupRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* optional string name = 2; */
+        if (message.name !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.name);
+        /* optional string description = 3; */
+        if (message.description !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.description);
+        /* optional string short_name = 4; */
+        if (message.shortName !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.shortName);
+        /* optional string logo_file_id = 5; */
+        if (message.logoFileId !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.logoFileId);
+        /* optional string color = 6; */
+        if (message.color !== undefined)
+            writer.tag(6, WireType.LengthDelimited).string(message.color);
+        /* optional resources.jobs.groups.GroupState state = 7; */
+        if (message.state !== undefined)
+            writer.tag(7, WireType.Varint).int32(message.state);
+        /* optional resources.jobs.groups.GroupType type = 8; */
+        if (message.type !== undefined)
+            writer.tag(8, WireType.Varint).int32(message.type);
+        /* optional resources.jobs.groups.GroupMembershipMode membership_mode = 9; */
+        if (message.membershipMode !== undefined)
+            writer.tag(9, WireType.Varint).int32(message.membershipMode);
+        /* optional int32 sort_order = 10; */
+        if (message.sortOrder !== undefined)
+            writer.tag(10, WireType.Varint).int32(message.sortOrder);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.UpdateGroupRequest
+ */
+export const UpdateGroupRequest = new UpdateGroupRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateGroupResponse$Type extends MessageType<UpdateGroupResponse> {
+    constructor() {
+        super("services.jobs.UpdateGroupResponse", [
+            { no: 1, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateGroupResponse>): UpdateGroupResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<UpdateGroupResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateGroupResponse): UpdateGroupResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.Group group */ 1:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateGroupResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.Group group = 1; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.UpdateGroupResponse
+ */
+export const UpdateGroupResponse = new UpdateGroupResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ArchiveGroupRequest$Type extends MessageType<ArchiveGroupRequest> {
+    constructor() {
+        super("services.jobs.ArchiveGroupRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ArchiveGroupRequest>): ArchiveGroupRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ArchiveGroupRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ArchiveGroupRequest): ArchiveGroupRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* optional string reason */ 2:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ArchiveGroupRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* optional string reason = 2; */
+        if (message.reason !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ArchiveGroupRequest
+ */
+export const ArchiveGroupRequest = new ArchiveGroupRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ArchiveGroupResponse$Type extends MessageType<ArchiveGroupResponse> {
+    constructor() {
+        super("services.jobs.ArchiveGroupResponse", [
+            { no: 1, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<ArchiveGroupResponse>): ArchiveGroupResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ArchiveGroupResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ArchiveGroupResponse): ArchiveGroupResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.Group group */ 1:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ArchiveGroupResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.Group group = 1; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ArchiveGroupResponse
+ */
+export const ArchiveGroupResponse = new ArchiveGroupResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RestoreGroupRequest$Type extends MessageType<RestoreGroupRequest> {
+    constructor() {
+        super("services.jobs.RestoreGroupRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<RestoreGroupRequest>): RestoreGroupRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<RestoreGroupRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RestoreGroupRequest): RestoreGroupRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* optional string reason */ 2:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RestoreGroupRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* optional string reason = 2; */
+        if (message.reason !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RestoreGroupRequest
+ */
+export const RestoreGroupRequest = new RestoreGroupRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RestoreGroupResponse$Type extends MessageType<RestoreGroupResponse> {
+    constructor() {
+        super("services.jobs.RestoreGroupResponse", [
+            { no: 1, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<RestoreGroupResponse>): RestoreGroupResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<RestoreGroupResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RestoreGroupResponse): RestoreGroupResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.Group group */ 1:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RestoreGroupResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.Group group = 1; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RestoreGroupResponse
+ */
+export const RestoreGroupResponse = new RestoreGroupResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListGroupMembersRequest$Type extends MessageType<ListGroupMembersRequest> {
+    constructor() {
+        super("services.jobs.ListGroupMembersRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "include_excluded", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "include_leaders", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "include_reasons", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "sources", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.groups.GroupMemberSource", GroupMemberSource, "GROUP_MEMBER_SOURCE_"] }
+        ]);
+    }
+    create(value?: PartialMessage<ListGroupMembersRequest>): ListGroupMembersRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groupId = 0;
+        message.includeExcluded = false;
+        message.includeLeaders = false;
+        message.includeReasons = false;
+        message.sources = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListGroupMembersRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListGroupMembersRequest): ListGroupMembersRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* int64 group_id */ 3:
+                    message.groupId = reader.int64().toNumber();
+                    break;
+                case /* optional string search */ 4:
+                    message.search = reader.string();
+                    break;
+                case /* bool include_excluded */ 5:
+                    message.includeExcluded = reader.bool();
+                    break;
+                case /* bool include_leaders */ 6:
+                    message.includeLeaders = reader.bool();
+                    break;
+                case /* bool include_reasons */ 7:
+                    message.includeReasons = reader.bool();
+                    break;
+                case /* repeated resources.jobs.groups.GroupMemberSource sources */ 8:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.sources.push(reader.int32());
+                    else
+                        message.sources.push(reader.int32());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListGroupMembersRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* int64 group_id = 3; */
+        if (message.groupId !== 0)
+            writer.tag(3, WireType.Varint).int64(message.groupId);
+        /* optional string search = 4; */
+        if (message.search !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.search);
+        /* bool include_excluded = 5; */
+        if (message.includeExcluded !== false)
+            writer.tag(5, WireType.Varint).bool(message.includeExcluded);
+        /* bool include_leaders = 6; */
+        if (message.includeLeaders !== false)
+            writer.tag(6, WireType.Varint).bool(message.includeLeaders);
+        /* bool include_reasons = 7; */
+        if (message.includeReasons !== false)
+            writer.tag(7, WireType.Varint).bool(message.includeReasons);
+        /* repeated resources.jobs.groups.GroupMemberSource sources = 8; */
+        if (message.sources.length) {
+            writer.tag(8, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.sources.length; i++)
+                writer.int32(message.sources[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListGroupMembersRequest
+ */
+export const ListGroupMembersRequest = new ListGroupMembersRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListGroupMembersResponse$Type extends MessageType<ListGroupMembersResponse> {
+    constructor() {
+        super("services.jobs.ListGroupMembersResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupResolvedMember }
+        ]);
+    }
+    create(value?: PartialMessage<ListGroupMembersResponse>): ListGroupMembersResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.members = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListGroupMembersResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListGroupMembersResponse): ListGroupMembersResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.jobs.groups.GroupResolvedMember members */ 2:
+                    message.members.push(GroupResolvedMember.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListGroupMembersResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.groups.GroupResolvedMember members = 2; */
+        for (let i = 0; i < message.members.length; i++)
+            GroupResolvedMember.internalBinaryWrite(message.members[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListGroupMembersResponse
+ */
+export const ListGroupMembersResponse = new ListGroupMembersResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddGroupMemberRequest$Type extends MessageType<AddGroupMemberRequest> {
+    constructor() {
+        super("services.jobs.AddGroupMemberRequest", [
+            { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<AddGroupMemberRequest>): AddGroupMemberRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groupId = 0;
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<AddGroupMemberRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddGroupMemberRequest): AddGroupMemberRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 group_id */ 1:
+                    message.groupId = reader.int64().toNumber();
+                    break;
+                case /* int64 user_id */ 2:
+                    message.userId = reader.int64().toNumber();
+                    break;
+                case /* optional string reason */ 3:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddGroupMemberRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 group_id = 1; */
+        if (message.groupId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.groupId);
+        /* int64 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.userId);
+        /* optional string reason = 3; */
+        if (message.reason !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.AddGroupMemberRequest
+ */
+export const AddGroupMemberRequest = new AddGroupMemberRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddGroupMemberResponse$Type extends MessageType<AddGroupMemberResponse> {
+    constructor() {
+        super("services.jobs.AddGroupMemberResponse", [
+            { no: 1, name: "member", kind: "message", T: () => GroupManualMember },
+            { no: 2, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<AddGroupMemberResponse>): AddGroupMemberResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddGroupMemberResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddGroupMemberResponse): AddGroupMemberResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.GroupManualMember member */ 1:
+                    message.member = GroupManualMember.internalBinaryRead(reader, reader.uint32(), options, message.member);
+                    break;
+                case /* resources.jobs.groups.Group group */ 2:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddGroupMemberResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.GroupManualMember member = 1; */
+        if (message.member)
+            GroupManualMember.internalBinaryWrite(message.member, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.groups.Group group = 2; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.AddGroupMemberResponse
+ */
+export const AddGroupMemberResponse = new AddGroupMemberResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RemoveGroupMemberRequest$Type extends MessageType<RemoveGroupMemberRequest> {
+    constructor() {
+        super("services.jobs.RemoveGroupMemberRequest", [
+            { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<RemoveGroupMemberRequest>): RemoveGroupMemberRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groupId = 0;
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<RemoveGroupMemberRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RemoveGroupMemberRequest): RemoveGroupMemberRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 group_id */ 1:
+                    message.groupId = reader.int64().toNumber();
+                    break;
+                case /* int64 user_id */ 2:
+                    message.userId = reader.int64().toNumber();
+                    break;
+                case /* optional string reason */ 3:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RemoveGroupMemberRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 group_id = 1; */
+        if (message.groupId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.groupId);
+        /* int64 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.userId);
+        /* optional string reason = 3; */
+        if (message.reason !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RemoveGroupMemberRequest
+ */
+export const RemoveGroupMemberRequest = new RemoveGroupMemberRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RemoveGroupMemberResponse$Type extends MessageType<RemoveGroupMemberResponse> {
+    constructor() {
+        super("services.jobs.RemoveGroupMemberResponse", [
+            { no: 1, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<RemoveGroupMemberResponse>): RemoveGroupMemberResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<RemoveGroupMemberResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RemoveGroupMemberResponse): RemoveGroupMemberResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.Group group */ 1:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RemoveGroupMemberResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.Group group = 1; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RemoveGroupMemberResponse
+ */
+export const RemoveGroupMemberResponse = new RemoveGroupMemberResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExcludeGroupMemberRequest$Type extends MessageType<ExcludeGroupMemberRequest> {
+    constructor() {
+        super("services.jobs.ExcludeGroupMemberRequest", [
+            { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "reason_type", kind: "enum", T: () => ["resources.jobs.groups.GroupExclusionReason", GroupExclusionReason, "GROUP_EXCLUSION_REASON_"] },
+            { no: 4, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ExcludeGroupMemberRequest>): ExcludeGroupMemberRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groupId = 0;
+        message.userId = 0;
+        message.reasonType = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ExcludeGroupMemberRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExcludeGroupMemberRequest): ExcludeGroupMemberRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 group_id */ 1:
+                    message.groupId = reader.int64().toNumber();
+                    break;
+                case /* int64 user_id */ 2:
+                    message.userId = reader.int64().toNumber();
+                    break;
+                case /* resources.jobs.groups.GroupExclusionReason reason_type */ 3:
+                    message.reasonType = reader.int32();
+                    break;
+                case /* optional string reason */ 4:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExcludeGroupMemberRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 group_id = 1; */
+        if (message.groupId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.groupId);
+        /* int64 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.userId);
+        /* resources.jobs.groups.GroupExclusionReason reason_type = 3; */
+        if (message.reasonType !== 0)
+            writer.tag(3, WireType.Varint).int32(message.reasonType);
+        /* optional string reason = 4; */
+        if (message.reason !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ExcludeGroupMemberRequest
+ */
+export const ExcludeGroupMemberRequest = new ExcludeGroupMemberRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExcludeGroupMemberResponse$Type extends MessageType<ExcludeGroupMemberResponse> {
+    constructor() {
+        super("services.jobs.ExcludeGroupMemberResponse", [
+            { no: 1, name: "exclusion", kind: "message", T: () => GroupMemberExclusion },
+            { no: 2, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<ExcludeGroupMemberResponse>): ExcludeGroupMemberResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ExcludeGroupMemberResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExcludeGroupMemberResponse): ExcludeGroupMemberResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.GroupMemberExclusion exclusion */ 1:
+                    message.exclusion = GroupMemberExclusion.internalBinaryRead(reader, reader.uint32(), options, message.exclusion);
+                    break;
+                case /* resources.jobs.groups.Group group */ 2:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExcludeGroupMemberResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.GroupMemberExclusion exclusion = 1; */
+        if (message.exclusion)
+            GroupMemberExclusion.internalBinaryWrite(message.exclusion, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.groups.Group group = 2; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ExcludeGroupMemberResponse
+ */
+export const ExcludeGroupMemberResponse = new ExcludeGroupMemberResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RemoveGroupMemberExclusionRequest$Type extends MessageType<RemoveGroupMemberExclusionRequest> {
+    constructor() {
+        super("services.jobs.RemoveGroupMemberExclusionRequest", [
+            { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<RemoveGroupMemberExclusionRequest>): RemoveGroupMemberExclusionRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groupId = 0;
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<RemoveGroupMemberExclusionRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RemoveGroupMemberExclusionRequest): RemoveGroupMemberExclusionRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 group_id */ 1:
+                    message.groupId = reader.int64().toNumber();
+                    break;
+                case /* int64 user_id */ 2:
+                    message.userId = reader.int64().toNumber();
+                    break;
+                case /* optional string reason */ 3:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RemoveGroupMemberExclusionRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 group_id = 1; */
+        if (message.groupId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.groupId);
+        /* int64 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.userId);
+        /* optional string reason = 3; */
+        if (message.reason !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RemoveGroupMemberExclusionRequest
+ */
+export const RemoveGroupMemberExclusionRequest = new RemoveGroupMemberExclusionRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RemoveGroupMemberExclusionResponse$Type extends MessageType<RemoveGroupMemberExclusionResponse> {
+    constructor() {
+        super("services.jobs.RemoveGroupMemberExclusionResponse", [
+            { no: 1, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<RemoveGroupMemberExclusionResponse>): RemoveGroupMemberExclusionResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<RemoveGroupMemberExclusionResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RemoveGroupMemberExclusionResponse): RemoveGroupMemberExclusionResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.Group group */ 1:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RemoveGroupMemberExclusionResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.Group group = 1; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RemoveGroupMemberExclusionResponse
+ */
+export const RemoveGroupMemberExclusionResponse = new RemoveGroupMemberExclusionResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddGroupLeaderRequest$Type extends MessageType<AddGroupLeaderRequest> {
+    constructor() {
+        super("services.jobs.AddGroupLeaderRequest", [
+            { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<AddGroupLeaderRequest>): AddGroupLeaderRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groupId = 0;
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<AddGroupLeaderRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddGroupLeaderRequest): AddGroupLeaderRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 group_id */ 1:
+                    message.groupId = reader.int64().toNumber();
+                    break;
+                case /* int64 user_id */ 2:
+                    message.userId = reader.int64().toNumber();
+                    break;
+                case /* optional string reason */ 3:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddGroupLeaderRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 group_id = 1; */
+        if (message.groupId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.groupId);
+        /* int64 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.userId);
+        /* optional string reason = 3; */
+        if (message.reason !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.AddGroupLeaderRequest
+ */
+export const AddGroupLeaderRequest = new AddGroupLeaderRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddGroupLeaderResponse$Type extends MessageType<AddGroupLeaderResponse> {
+    constructor() {
+        super("services.jobs.AddGroupLeaderResponse", [
+            { no: 1, name: "leader", kind: "message", T: () => GroupLeader },
+            { no: 2, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<AddGroupLeaderResponse>): AddGroupLeaderResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddGroupLeaderResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddGroupLeaderResponse): AddGroupLeaderResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.GroupLeader leader */ 1:
+                    message.leader = GroupLeader.internalBinaryRead(reader, reader.uint32(), options, message.leader);
+                    break;
+                case /* resources.jobs.groups.Group group */ 2:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddGroupLeaderResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.GroupLeader leader = 1; */
+        if (message.leader)
+            GroupLeader.internalBinaryWrite(message.leader, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.groups.Group group = 2; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.AddGroupLeaderResponse
+ */
+export const AddGroupLeaderResponse = new AddGroupLeaderResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RemoveGroupLeaderRequest$Type extends MessageType<RemoveGroupLeaderRequest> {
+    constructor() {
+        super("services.jobs.RemoveGroupLeaderRequest", [
+            { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<RemoveGroupLeaderRequest>): RemoveGroupLeaderRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groupId = 0;
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<RemoveGroupLeaderRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RemoveGroupLeaderRequest): RemoveGroupLeaderRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 group_id */ 1:
+                    message.groupId = reader.int64().toNumber();
+                    break;
+                case /* int64 user_id */ 2:
+                    message.userId = reader.int64().toNumber();
+                    break;
+                case /* optional string reason */ 3:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RemoveGroupLeaderRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 group_id = 1; */
+        if (message.groupId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.groupId);
+        /* int64 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.userId);
+        /* optional string reason = 3; */
+        if (message.reason !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RemoveGroupLeaderRequest
+ */
+export const RemoveGroupLeaderRequest = new RemoveGroupLeaderRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RemoveGroupLeaderResponse$Type extends MessageType<RemoveGroupLeaderResponse> {
+    constructor() {
+        super("services.jobs.RemoveGroupLeaderResponse", [
+            { no: 1, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<RemoveGroupLeaderResponse>): RemoveGroupLeaderResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<RemoveGroupLeaderResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RemoveGroupLeaderResponse): RemoveGroupLeaderResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.Group group */ 1:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RemoveGroupLeaderResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.Group group = 1; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RemoveGroupLeaderResponse
+ */
+export const RemoveGroupLeaderResponse = new RemoveGroupLeaderResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GroupRuleInput$Type extends MessageType<GroupRuleInput> {
+    constructor() {
+        super("services.jobs.GroupRuleInput", [
+            { no: 1, name: "enabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 10, name: "grade", kind: "message", oneof: "rule", T: () => GroupGradeRule },
+            { no: 11, name: "qualification", kind: "message", oneof: "rule", T: () => GroupQualificationRule }
+        ]);
+    }
+    create(value?: PartialMessage<GroupRuleInput>): GroupRuleInput {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.rule = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<GroupRuleInput>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GroupRuleInput): GroupRuleInput {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional bool enabled */ 1:
+                    message.enabled = reader.bool();
+                    break;
+                case /* resources.jobs.groups.GroupGradeRule grade */ 10:
+                    message.rule = {
+                        oneofKind: "grade",
+                        grade: GroupGradeRule.internalBinaryRead(reader, reader.uint32(), options, (message.rule as any).grade)
+                    };
+                    break;
+                case /* resources.jobs.groups.GroupQualificationRule qualification */ 11:
+                    message.rule = {
+                        oneofKind: "qualification",
+                        qualification: GroupQualificationRule.internalBinaryRead(reader, reader.uint32(), options, (message.rule as any).qualification)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GroupRuleInput, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional bool enabled = 1; */
+        if (message.enabled !== undefined)
+            writer.tag(1, WireType.Varint).bool(message.enabled);
+        /* resources.jobs.groups.GroupGradeRule grade = 10; */
+        if (message.rule.oneofKind === "grade")
+            GroupGradeRule.internalBinaryWrite(message.rule.grade, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.groups.GroupQualificationRule qualification = 11; */
+        if (message.rule.oneofKind === "qualification")
+            GroupQualificationRule.internalBinaryWrite(message.rule.qualification, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GroupRuleInput
+ */
+export const GroupRuleInput = new GroupRuleInput$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateGroupRuleRequest$Type extends MessageType<CreateGroupRuleRequest> {
+    constructor() {
+        super("services.jobs.CreateGroupRuleRequest", [
+            { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "rule", kind: "message", T: () => GroupRuleInput },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CreateGroupRuleRequest>): CreateGroupRuleRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groupId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<CreateGroupRuleRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateGroupRuleRequest): CreateGroupRuleRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 group_id */ 1:
+                    message.groupId = reader.int64().toNumber();
+                    break;
+                case /* services.jobs.GroupRuleInput rule */ 2:
+                    message.rule = GroupRuleInput.internalBinaryRead(reader, reader.uint32(), options, message.rule);
+                    break;
+                case /* optional string reason */ 3:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateGroupRuleRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 group_id = 1; */
+        if (message.groupId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.groupId);
+        /* services.jobs.GroupRuleInput rule = 2; */
+        if (message.rule)
+            GroupRuleInput.internalBinaryWrite(message.rule, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional string reason = 3; */
+        if (message.reason !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.CreateGroupRuleRequest
+ */
+export const CreateGroupRuleRequest = new CreateGroupRuleRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateGroupRuleResponse$Type extends MessageType<CreateGroupRuleResponse> {
+    constructor() {
+        super("services.jobs.CreateGroupRuleResponse", [
+            { no: 1, name: "rule", kind: "message", T: () => GroupRule },
+            { no: 2, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<CreateGroupRuleResponse>): CreateGroupRuleResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CreateGroupRuleResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateGroupRuleResponse): CreateGroupRuleResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.GroupRule rule */ 1:
+                    message.rule = GroupRule.internalBinaryRead(reader, reader.uint32(), options, message.rule);
+                    break;
+                case /* resources.jobs.groups.Group group */ 2:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateGroupRuleResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.GroupRule rule = 1; */
+        if (message.rule)
+            GroupRule.internalBinaryWrite(message.rule, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.groups.Group group = 2; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.CreateGroupRuleResponse
+ */
+export const CreateGroupRuleResponse = new CreateGroupRuleResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateGroupRuleRequest$Type extends MessageType<UpdateGroupRuleRequest> {
+    constructor() {
+        super("services.jobs.UpdateGroupRuleRequest", [
+            { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "rule_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "rule", kind: "message", T: () => GroupRuleInput },
+            { no: 4, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateGroupRuleRequest>): UpdateGroupRuleRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groupId = 0;
+        message.ruleId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<UpdateGroupRuleRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateGroupRuleRequest): UpdateGroupRuleRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 group_id */ 1:
+                    message.groupId = reader.int64().toNumber();
+                    break;
+                case /* int64 rule_id */ 2:
+                    message.ruleId = reader.int64().toNumber();
+                    break;
+                case /* services.jobs.GroupRuleInput rule */ 3:
+                    message.rule = GroupRuleInput.internalBinaryRead(reader, reader.uint32(), options, message.rule);
+                    break;
+                case /* optional string reason */ 4:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateGroupRuleRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 group_id = 1; */
+        if (message.groupId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.groupId);
+        /* int64 rule_id = 2; */
+        if (message.ruleId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.ruleId);
+        /* services.jobs.GroupRuleInput rule = 3; */
+        if (message.rule)
+            GroupRuleInput.internalBinaryWrite(message.rule, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional string reason = 4; */
+        if (message.reason !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.UpdateGroupRuleRequest
+ */
+export const UpdateGroupRuleRequest = new UpdateGroupRuleRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateGroupRuleResponse$Type extends MessageType<UpdateGroupRuleResponse> {
+    constructor() {
+        super("services.jobs.UpdateGroupRuleResponse", [
+            { no: 1, name: "rule", kind: "message", T: () => GroupRule },
+            { no: 2, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateGroupRuleResponse>): UpdateGroupRuleResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<UpdateGroupRuleResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateGroupRuleResponse): UpdateGroupRuleResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.GroupRule rule */ 1:
+                    message.rule = GroupRule.internalBinaryRead(reader, reader.uint32(), options, message.rule);
+                    break;
+                case /* resources.jobs.groups.Group group */ 2:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateGroupRuleResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.GroupRule rule = 1; */
+        if (message.rule)
+            GroupRule.internalBinaryWrite(message.rule, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.groups.Group group = 2; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.UpdateGroupRuleResponse
+ */
+export const UpdateGroupRuleResponse = new UpdateGroupRuleResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteGroupRuleRequest$Type extends MessageType<DeleteGroupRuleRequest> {
+    constructor() {
+        super("services.jobs.DeleteGroupRuleRequest", [
+            { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "rule_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteGroupRuleRequest>): DeleteGroupRuleRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groupId = 0;
+        message.ruleId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<DeleteGroupRuleRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteGroupRuleRequest): DeleteGroupRuleRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 group_id */ 1:
+                    message.groupId = reader.int64().toNumber();
+                    break;
+                case /* int64 rule_id */ 2:
+                    message.ruleId = reader.int64().toNumber();
+                    break;
+                case /* optional string reason */ 3:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteGroupRuleRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 group_id = 1; */
+        if (message.groupId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.groupId);
+        /* int64 rule_id = 2; */
+        if (message.ruleId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.ruleId);
+        /* optional string reason = 3; */
+        if (message.reason !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.DeleteGroupRuleRequest
+ */
+export const DeleteGroupRuleRequest = new DeleteGroupRuleRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteGroupRuleResponse$Type extends MessageType<DeleteGroupRuleResponse> {
+    constructor() {
+        super("services.jobs.DeleteGroupRuleResponse", [
+            { no: 1, name: "group", kind: "message", T: () => Group }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteGroupRuleResponse>): DeleteGroupRuleResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteGroupRuleResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteGroupRuleResponse): DeleteGroupRuleResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.groups.Group group */ 1:
+                    message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteGroupRuleResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.groups.Group group = 1; */
+        if (message.group)
+            Group.internalBinaryWrite(message.group, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.DeleteGroupRuleResponse
+ */
+export const DeleteGroupRuleResponse = new DeleteGroupRuleResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListGroupActivityRequest$Type extends MessageType<ListGroupActivityRequest> {
+    constructor() {
+        super("services.jobs.ListGroupActivityRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest },
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.groups.GroupActivityType", GroupActivityType, "GROUP_ACTIVITY_TYPE_"] },
+            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 6, name: "from", kind: "message", T: () => Timestamp },
+            { no: 7, name: "to", kind: "message", T: () => Timestamp }
+        ]);
+    }
+    create(value?: PartialMessage<ListGroupActivityRequest>): ListGroupActivityRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groupId = 0;
+        message.types = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListGroupActivityRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListGroupActivityRequest): ListGroupActivityRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* int64 group_id */ 3:
+                    message.groupId = reader.int64().toNumber();
+                    break;
+                case /* repeated resources.jobs.groups.GroupActivityType types */ 4:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.types.push(reader.int32());
+                    else
+                        message.types.push(reader.int32());
+                    break;
+                case /* optional int64 user_id */ 5:
+                    message.userId = reader.int64().toNumber();
+                    break;
+                case /* optional resources.timestamp.Timestamp from */ 6:
+                    message.from = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.from);
+                    break;
+                case /* optional resources.timestamp.Timestamp to */ 7:
+                    message.to = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.to);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListGroupActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* int64 group_id = 3; */
+        if (message.groupId !== 0)
+            writer.tag(3, WireType.Varint).int64(message.groupId);
+        /* repeated resources.jobs.groups.GroupActivityType types = 4; */
+        if (message.types.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.types.length; i++)
+                writer.int32(message.types[i]);
+            writer.join();
+        }
+        /* optional int64 user_id = 5; */
+        if (message.userId !== undefined)
+            writer.tag(5, WireType.Varint).int64(message.userId);
+        /* optional resources.timestamp.Timestamp from = 6; */
+        if (message.from)
+            Timestamp.internalBinaryWrite(message.from, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp to = 7; */
+        if (message.to)
+            Timestamp.internalBinaryWrite(message.to, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListGroupActivityRequest
+ */
+export const ListGroupActivityRequest = new ListGroupActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListGroupActivityResponse$Type extends MessageType<ListGroupActivityResponse> {
+    constructor() {
+        super("services.jobs.ListGroupActivityResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupActivity }
+        ]);
+    }
+    create(value?: PartialMessage<ListGroupActivityResponse>): ListGroupActivityResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.activity = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListGroupActivityResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListGroupActivityResponse): ListGroupActivityResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.jobs.groups.GroupActivity activity */ 2:
+                    message.activity.push(GroupActivity.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListGroupActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.groups.GroupActivity activity = 2; */
+        for (let i = 0; i < message.activity.length; i++)
+            GroupActivity.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ListGroupActivityResponse
+ */
+export const ListGroupActivityResponse = new ListGroupActivityResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.jobs.GroupsService
  */
-export const GroupsService = new ServiceType("services.jobs.GroupsService", [], { "codegen.perms.perms_svc": { order: 66, icon: "i-mdi-account-group-outline" } });
+export const GroupsService = new ServiceType("services.jobs.GroupsService", [
+    { name: "ListGroups", options: {}, I: ListGroupsRequest, O: ListGroupsResponse },
+    { name: "GetGroup", options: { "codegen.perms.perms": { enabled: true, name: "ListGroups" } }, I: GetGroupRequest, O: GetGroupResponse },
+    { name: "CreateGroup", options: { "codegen.perms.perms": { enabled: true } }, I: CreateGroupRequest, O: CreateGroupResponse },
+    { name: "UpdateGroup", options: { "codegen.perms.perms": { enabled: true, name: "CreateGroup" } }, I: UpdateGroupRequest, O: UpdateGroupResponse },
+    { name: "ArchiveGroup", options: { "codegen.perms.perms": { enabled: true } }, I: ArchiveGroupRequest, O: ArchiveGroupResponse },
+    { name: "RestoreGroup", options: { "codegen.perms.perms": { enabled: true, name: "ArchiveGroup" } }, I: RestoreGroupRequest, O: RestoreGroupResponse },
+    { name: "ListGroupMembers", options: { "codegen.perms.perms": { enabled: true, name: "ListGroups" } }, I: ListGroupMembersRequest, O: ListGroupMembersResponse },
+    { name: "AddGroupMember", options: { "codegen.perms.perms": { enabled: true, name: "CreateGroup" } }, I: AddGroupMemberRequest, O: AddGroupMemberResponse },
+    { name: "RemoveGroupMember", options: { "codegen.perms.perms": { enabled: true, name: "CreateGroup" } }, I: RemoveGroupMemberRequest, O: RemoveGroupMemberResponse },
+    { name: "ExcludeGroupMember", options: { "codegen.perms.perms": { enabled: true, name: "CreateGroup" } }, I: ExcludeGroupMemberRequest, O: ExcludeGroupMemberResponse },
+    { name: "RemoveGroupMemberExclusion", options: { "codegen.perms.perms": { enabled: true, name: "CreateGroup" } }, I: RemoveGroupMemberExclusionRequest, O: RemoveGroupMemberExclusionResponse },
+    { name: "AddGroupLeader", options: { "codegen.perms.perms": { enabled: true, names: ["AddGroupLeader", "CreateGroup"] } }, I: AddGroupLeaderRequest, O: AddGroupLeaderResponse },
+    { name: "RemoveGroupLeader", options: { "codegen.perms.perms": { enabled: true, names: ["AddGroupLeader", "CreateGroup"] } }, I: RemoveGroupLeaderRequest, O: RemoveGroupLeaderResponse },
+    { name: "CreateGroupRule", options: { "codegen.perms.perms": { enabled: true, name: "CreateGroup" } }, I: CreateGroupRuleRequest, O: CreateGroupRuleResponse },
+    { name: "UpdateGroupRule", options: { "codegen.perms.perms": { enabled: true, name: "CreateGroup" } }, I: UpdateGroupRuleRequest, O: UpdateGroupRuleResponse },
+    { name: "DeleteGroupRule", options: { "codegen.perms.perms": { enabled: true, name: "CreateGroup" } }, I: DeleteGroupRuleRequest, O: DeleteGroupRuleResponse },
+    { name: "ListGroupActivity", options: { "codegen.perms.perms": { enabled: true, name: "ListGroups" } }, I: ListGroupActivityRequest, O: ListGroupActivityResponse }
+], { "codegen.perms.perms_svc": { order: 66, icon: "i-mdi-account-group-outline" } });

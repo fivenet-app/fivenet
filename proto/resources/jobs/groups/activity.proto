@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package resources.jobs.groups;
+
+import "buf/validate/validate.proto";
+import "resources/common/content/content.proto";
+import "resources/file/file.proto";
+import "resources/jobs/colleagues/colleagues.proto";
+import "resources/timestamp/timestamp.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups;jobsgroups";
+
+enum GroupActivityType {
+  GROUP_ACTIVITY_TYPE_UNSPECIFIED = 0;
+
+  GROUP_ACTIVITY_TYPE_CREATED = 1;
+  GROUP_ACTIVITY_TYPE_UPDATED = 2;
+  GROUP_ACTIVITY_TYPE_ARCHIVED = 3;
+  GROUP_ACTIVITY_TYPE_RESTORED = 4;
+
+  GROUP_ACTIVITY_TYPE_MEMBER_ADDED = 10;
+  GROUP_ACTIVITY_TYPE_MEMBER_REMOVED = 11;
+  GROUP_ACTIVITY_TYPE_MEMBER_EXCLUDED = 12;
+  GROUP_ACTIVITY_TYPE_MEMBER_EXCLUSION_REMOVED = 13;
+
+  GROUP_ACTIVITY_TYPE_LEADER_ADDED = 20;
+  GROUP_ACTIVITY_TYPE_LEADER_REMOVED = 21;
+
+  GROUP_ACTIVITY_TYPE_RULE_ADDED = 30;
+  GROUP_ACTIVITY_TYPE_RULE_UPDATED = 31;
+  GROUP_ACTIVITY_TYPE_RULE_REMOVED = 32;
+
+  GROUP_ACTIVITY_TYPE_LOGO_UPDATED = 40;
+}
+
+message GroupActivity {
+  int64 id = 1;
+  int64 job_id = 2;
+  int64 group_id = 3;
+
+  GroupActivityType type = 4;
+
+  int64 actor_user_id = 5;
+
+  // Optional target user for member/leader events.
+  optional int64 target_user_id = 6;
+
+  // Optional target rule for rule events.
+  optional int64 rule_id = 7;
+
+  optional string reason = 8;
+
+  resources.timestamp.Timestamp created_at = 9;
+}

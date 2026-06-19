@@ -74,6 +74,7 @@ func UseSchema(schema string) {
 	FivenetJobColleagueProps = FivenetJobColleagueProps.FromSchema(schema)
 	FivenetJobConduct = FivenetJobConduct.FromSchema(schema)
 	FivenetJobConductFiles = FivenetJobConductFiles.FromSchema(schema)
+    FivenetJobGroups = FivenetJobGroups.FromSchema(schema)
 	FivenetJobLabels = FivenetJobLabels.FromSchema(schema)
 	FivenetJobProps = FivenetJobProps.FromSchema(schema)
 	FivenetJobTimeclock = FivenetJobTimeclock.FromSchema(schema)

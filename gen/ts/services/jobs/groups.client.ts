@@ -5,10 +5,115 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { GroupsService } from "./groups";
+import type { ListGroupActivityResponse } from "./groups";
+import type { ListGroupActivityRequest } from "./groups";
+import type { DeleteGroupRuleResponse } from "./groups";
+import type { DeleteGroupRuleRequest } from "./groups";
+import type { UpdateGroupRuleResponse } from "./groups";
+import type { UpdateGroupRuleRequest } from "./groups";
+import type { CreateGroupRuleResponse } from "./groups";
+import type { CreateGroupRuleRequest } from "./groups";
+import type { RemoveGroupLeaderResponse } from "./groups";
+import type { RemoveGroupLeaderRequest } from "./groups";
+import type { AddGroupLeaderResponse } from "./groups";
+import type { AddGroupLeaderRequest } from "./groups";
+import type { RemoveGroupMemberExclusionResponse } from "./groups";
+import type { RemoveGroupMemberExclusionRequest } from "./groups";
+import type { ExcludeGroupMemberResponse } from "./groups";
+import type { ExcludeGroupMemberRequest } from "./groups";
+import type { RemoveGroupMemberResponse } from "./groups";
+import type { RemoveGroupMemberRequest } from "./groups";
+import type { AddGroupMemberResponse } from "./groups";
+import type { AddGroupMemberRequest } from "./groups";
+import type { ListGroupMembersResponse } from "./groups";
+import type { ListGroupMembersRequest } from "./groups";
+import type { RestoreGroupResponse } from "./groups";
+import type { RestoreGroupRequest } from "./groups";
+import type { ArchiveGroupResponse } from "./groups";
+import type { ArchiveGroupRequest } from "./groups";
+import type { UpdateGroupResponse } from "./groups";
+import type { UpdateGroupRequest } from "./groups";
+import type { CreateGroupResponse } from "./groups";
+import type { CreateGroupRequest } from "./groups";
+import type { GetGroupResponse } from "./groups";
+import type { GetGroupRequest } from "./groups";
+import { stackIntercept } from "@protobuf-ts/runtime-rpc";
+import type { ListGroupsResponse } from "./groups";
+import type { ListGroupsRequest } from "./groups";
+import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
+import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
  * @generated from protobuf service services.jobs.GroupsService
  */
 export interface IGroupsServiceClient {
+    /**
+     * @generated from protobuf rpc: ListGroups
+     */
+    listGroups(input: ListGroupsRequest, options?: RpcOptions): UnaryCall<ListGroupsRequest, ListGroupsResponse>;
+    /**
+     * @generated from protobuf rpc: GetGroup
+     */
+    getGroup(input: GetGroupRequest, options?: RpcOptions): UnaryCall<GetGroupRequest, GetGroupResponse>;
+    /**
+     * @generated from protobuf rpc: CreateGroup
+     */
+    createGroup(input: CreateGroupRequest, options?: RpcOptions): UnaryCall<CreateGroupRequest, CreateGroupResponse>;
+    /**
+     * @generated from protobuf rpc: UpdateGroup
+     */
+    updateGroup(input: UpdateGroupRequest, options?: RpcOptions): UnaryCall<UpdateGroupRequest, UpdateGroupResponse>;
+    /**
+     * @generated from protobuf rpc: ArchiveGroup
+     */
+    archiveGroup(input: ArchiveGroupRequest, options?: RpcOptions): UnaryCall<ArchiveGroupRequest, ArchiveGroupResponse>;
+    /**
+     * @generated from protobuf rpc: RestoreGroup
+     */
+    restoreGroup(input: RestoreGroupRequest, options?: RpcOptions): UnaryCall<RestoreGroupRequest, RestoreGroupResponse>;
+    /**
+     * @generated from protobuf rpc: ListGroupMembers
+     */
+    listGroupMembers(input: ListGroupMembersRequest, options?: RpcOptions): UnaryCall<ListGroupMembersRequest, ListGroupMembersResponse>;
+    /**
+     * @generated from protobuf rpc: AddGroupMember
+     */
+    addGroupMember(input: AddGroupMemberRequest, options?: RpcOptions): UnaryCall<AddGroupMemberRequest, AddGroupMemberResponse>;
+    /**
+     * @generated from protobuf rpc: RemoveGroupMember
+     */
+    removeGroupMember(input: RemoveGroupMemberRequest, options?: RpcOptions): UnaryCall<RemoveGroupMemberRequest, RemoveGroupMemberResponse>;
+    /**
+     * @generated from protobuf rpc: ExcludeGroupMember
+     */
+    excludeGroupMember(input: ExcludeGroupMemberRequest, options?: RpcOptions): UnaryCall<ExcludeGroupMemberRequest, ExcludeGroupMemberResponse>;
+    /**
+     * @generated from protobuf rpc: RemoveGroupMemberExclusion
+     */
+    removeGroupMemberExclusion(input: RemoveGroupMemberExclusionRequest, options?: RpcOptions): UnaryCall<RemoveGroupMemberExclusionRequest, RemoveGroupMemberExclusionResponse>;
+    /**
+     * @generated from protobuf rpc: AddGroupLeader
+     */
+    addGroupLeader(input: AddGroupLeaderRequest, options?: RpcOptions): UnaryCall<AddGroupLeaderRequest, AddGroupLeaderResponse>;
+    /**
+     * @generated from protobuf rpc: RemoveGroupLeader
+     */
+    removeGroupLeader(input: RemoveGroupLeaderRequest, options?: RpcOptions): UnaryCall<RemoveGroupLeaderRequest, RemoveGroupLeaderResponse>;
+    /**
+     * @generated from protobuf rpc: CreateGroupRule
+     */
+    createGroupRule(input: CreateGroupRuleRequest, options?: RpcOptions): UnaryCall<CreateGroupRuleRequest, CreateGroupRuleResponse>;
+    /**
+     * @generated from protobuf rpc: UpdateGroupRule
+     */
+    updateGroupRule(input: UpdateGroupRuleRequest, options?: RpcOptions): UnaryCall<UpdateGroupRuleRequest, UpdateGroupRuleResponse>;
+    /**
+     * @generated from protobuf rpc: DeleteGroupRule
+     */
+    deleteGroupRule(input: DeleteGroupRuleRequest, options?: RpcOptions): UnaryCall<DeleteGroupRuleRequest, DeleteGroupRuleResponse>;
+    /**
+     * @generated from protobuf rpc: ListGroupActivity
+     */
+    listGroupActivity(input: ListGroupActivityRequest, options?: RpcOptions): UnaryCall<ListGroupActivityRequest, ListGroupActivityResponse>;
 }
 /**
  * @generated from protobuf service services.jobs.GroupsService
@@ -18,5 +123,124 @@ export class GroupsServiceClient implements IGroupsServiceClient, ServiceInfo {
     methods = GroupsService.methods;
     options = GroupsService.options;
     constructor(private readonly _transport: RpcTransport) {
+    }
+    /**
+     * @generated from protobuf rpc: ListGroups
+     */
+    listGroups(input: ListGroupsRequest, options?: RpcOptions): UnaryCall<ListGroupsRequest, ListGroupsResponse> {
+        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListGroupsRequest, ListGroupsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: GetGroup
+     */
+    getGroup(input: GetGroupRequest, options?: RpcOptions): UnaryCall<GetGroupRequest, GetGroupResponse> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetGroupRequest, GetGroupResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: CreateGroup
+     */
+    createGroup(input: CreateGroupRequest, options?: RpcOptions): UnaryCall<CreateGroupRequest, CreateGroupResponse> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<CreateGroupRequest, CreateGroupResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: UpdateGroup
+     */
+    updateGroup(input: UpdateGroupRequest, options?: RpcOptions): UnaryCall<UpdateGroupRequest, UpdateGroupResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UpdateGroupRequest, UpdateGroupResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: ArchiveGroup
+     */
+    archiveGroup(input: ArchiveGroupRequest, options?: RpcOptions): UnaryCall<ArchiveGroupRequest, ArchiveGroupResponse> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ArchiveGroupRequest, ArchiveGroupResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: RestoreGroup
+     */
+    restoreGroup(input: RestoreGroupRequest, options?: RpcOptions): UnaryCall<RestoreGroupRequest, RestoreGroupResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RestoreGroupRequest, RestoreGroupResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: ListGroupMembers
+     */
+    listGroupMembers(input: ListGroupMembersRequest, options?: RpcOptions): UnaryCall<ListGroupMembersRequest, ListGroupMembersResponse> {
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListGroupMembersRequest, ListGroupMembersResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: AddGroupMember
+     */
+    addGroupMember(input: AddGroupMemberRequest, options?: RpcOptions): UnaryCall<AddGroupMemberRequest, AddGroupMemberResponse> {
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddGroupMemberRequest, AddGroupMemberResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: RemoveGroupMember
+     */
+    removeGroupMember(input: RemoveGroupMemberRequest, options?: RpcOptions): UnaryCall<RemoveGroupMemberRequest, RemoveGroupMemberResponse> {
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RemoveGroupMemberRequest, RemoveGroupMemberResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: ExcludeGroupMember
+     */
+    excludeGroupMember(input: ExcludeGroupMemberRequest, options?: RpcOptions): UnaryCall<ExcludeGroupMemberRequest, ExcludeGroupMemberResponse> {
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ExcludeGroupMemberRequest, ExcludeGroupMemberResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: RemoveGroupMemberExclusion
+     */
+    removeGroupMemberExclusion(input: RemoveGroupMemberExclusionRequest, options?: RpcOptions): UnaryCall<RemoveGroupMemberExclusionRequest, RemoveGroupMemberExclusionResponse> {
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RemoveGroupMemberExclusionRequest, RemoveGroupMemberExclusionResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: AddGroupLeader
+     */
+    addGroupLeader(input: AddGroupLeaderRequest, options?: RpcOptions): UnaryCall<AddGroupLeaderRequest, AddGroupLeaderResponse> {
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddGroupLeaderRequest, AddGroupLeaderResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: RemoveGroupLeader
+     */
+    removeGroupLeader(input: RemoveGroupLeaderRequest, options?: RpcOptions): UnaryCall<RemoveGroupLeaderRequest, RemoveGroupLeaderResponse> {
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RemoveGroupLeaderRequest, RemoveGroupLeaderResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: CreateGroupRule
+     */
+    createGroupRule(input: CreateGroupRuleRequest, options?: RpcOptions): UnaryCall<CreateGroupRuleRequest, CreateGroupRuleResponse> {
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
+        return stackIntercept<CreateGroupRuleRequest, CreateGroupRuleResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: UpdateGroupRule
+     */
+    updateGroupRule(input: UpdateGroupRuleRequest, options?: RpcOptions): UnaryCall<UpdateGroupRuleRequest, UpdateGroupRuleResponse> {
+        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UpdateGroupRuleRequest, UpdateGroupRuleResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: DeleteGroupRule
+     */
+    deleteGroupRule(input: DeleteGroupRuleRequest, options?: RpcOptions): UnaryCall<DeleteGroupRuleRequest, DeleteGroupRuleResponse> {
+        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteGroupRuleRequest, DeleteGroupRuleResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: ListGroupActivity
+     */
+    listGroupActivity(input: ListGroupActivityRequest, options?: RpcOptions): UnaryCall<ListGroupActivityRequest, ListGroupActivityResponse> {
+        const method = this.methods[16], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListGroupActivityRequest, ListGroupActivityResponse>("unary", this._transport, method, opt, input);
     }
 }

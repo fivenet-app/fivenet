@@ -2,13 +2,362 @@ syntax = "proto3";
 
 package services.jobs;
 
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
+import "resources/common/database/database.proto";
+import "resources/jobs/groups/activity.proto";
+import "resources/jobs/groups/group.proto";
+import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobs";
+
+message ListGroupsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  optional resources.common.database.Sort sort = 2;
+  // Search params
+  repeated resources.jobs.groups.GroupState states = 3;
+  optional string search = 4;
+  bool include_counts = 5;
+  bool include_inactive = 6;
+  bool include_archived = 7;
+}
+
+message ListGroupsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.jobs.groups.Group groups = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message GetGroupRequest {
+  int64 id = 1;
+  bool include_rules = 2;
+  bool include_leaders = 3;
+  bool include_manual_members = 4;
+  bool include_exclusions = 5;
+  bool include_resolved_members = 6;
+  bool include_archived = 7;
+}
+
+message GetGroupResponse {
+  resources.jobs.groups.Group group = 1;
+  repeated resources.jobs.groups.GroupRule rules = 2;
+  repeated resources.jobs.groups.GroupLeader leaders = 3;
+  repeated resources.jobs.groups.GroupManualMember manual_members = 4;
+  repeated resources.jobs.groups.GroupMemberExclusion exclusions = 5;
+  repeated resources.jobs.groups.GroupResolvedMember resolved_members = 6;
+}
+
+message CreateGroupRequest {
+  int64 job_id = 1;
+
+  string name = 2;
+  optional string description = 3;
+  optional string short_name = 4;
+  optional string logo_file_id = 5;
+  optional string color = 6;
+
+  optional resources.jobs.groups.GroupType type = 7;
+  optional resources.jobs.groups.GroupMembershipMode membership_mode = 8;
+  optional int32 sort_order = 9;
+
+  repeated int64 leader_user_ids = 10;
+  repeated int64 manual_member_user_ids = 11;
+  repeated GroupRuleInput rules = 12;
+}
+
+message CreateGroupResponse {
+  resources.jobs.groups.Group group = 1;
+}
+
+message UpdateGroupRequest {
+  int64 id = 1;
+
+  optional string name = 2;
+  optional string description = 3;
+  optional string short_name = 4;
+  optional string logo_file_id = 5;
+  optional string color = 6;
+
+  optional resources.jobs.groups.GroupState state = 7;
+  optional resources.jobs.groups.GroupType type = 8;
+  optional resources.jobs.groups.GroupMembershipMode membership_mode = 9;
+  optional int32 sort_order = 10;
+}
+
+message UpdateGroupResponse {
+  resources.jobs.groups.Group group = 1;
+}
+
+message ArchiveGroupRequest {
+  int64 id = 1;
+  optional string reason = 2;
+}
+
+message ArchiveGroupResponse {
+  resources.jobs.groups.Group group = 1;
+}
+
+message RestoreGroupRequest {
+  int64 id = 1;
+  optional string reason = 2;
+}
+
+message RestoreGroupResponse {
+  resources.jobs.groups.Group group = 1;
+}
+
+message ListGroupMembersRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  optional resources.common.database.Sort sort = 2;
+
+  int64 group_id = 3;
+
+  optional string search = 4;
+
+  bool include_excluded = 5;
+  bool include_leaders = 6;
+  bool include_reasons = 7;
+
+  repeated resources.jobs.groups.GroupMemberSource sources = 8;
+}
+
+message ListGroupMembersResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.jobs.groups.GroupResolvedMember members = 2;
+}
+
+message AddGroupMemberRequest {
+  int64 group_id = 1;
+  int64 user_id = 2;
+  optional string reason = 3;
+}
+
+message AddGroupMemberResponse {
+  resources.jobs.groups.GroupManualMember member = 1;
+  resources.jobs.groups.Group group = 2;
+}
+
+message RemoveGroupMemberRequest {
+  int64 group_id = 1;
+  int64 user_id = 2;
+  optional string reason = 3;
+}
+
+message RemoveGroupMemberResponse {
+  resources.jobs.groups.Group group = 1;
+}
+
+message ExcludeGroupMemberRequest {
+  int64 group_id = 1;
+  int64 user_id = 2;
+  resources.jobs.groups.GroupExclusionReason reason_type = 3;
+  optional string reason = 4;
+}
+
+message ExcludeGroupMemberResponse {
+  resources.jobs.groups.GroupMemberExclusion exclusion = 1;
+  resources.jobs.groups.Group group = 2;
+}
+
+message RemoveGroupMemberExclusionRequest {
+  int64 group_id = 1;
+  int64 user_id = 2;
+  optional string reason = 3;
+}
+
+message RemoveGroupMemberExclusionResponse {
+  resources.jobs.groups.Group group = 1;
+}
+
+message AddGroupLeaderRequest {
+  int64 group_id = 1;
+  int64 user_id = 2;
+  optional string reason = 3;
+}
+
+message AddGroupLeaderResponse {
+  resources.jobs.groups.GroupLeader leader = 1;
+  resources.jobs.groups.Group group = 2;
+}
+
+message RemoveGroupLeaderRequest {
+  int64 group_id = 1;
+  int64 user_id = 2;
+  optional string reason = 3;
+}
+
+message RemoveGroupLeaderResponse {
+  resources.jobs.groups.Group group = 1;
+}
+
+message GroupRuleInput {
+  optional bool enabled = 1;
+
+  oneof rule {
+    resources.jobs.groups.GroupGradeRule grade = 10;
+    resources.jobs.groups.GroupQualificationRule qualification = 11;
+  }
+}
+
+message CreateGroupRuleRequest {
+  int64 group_id = 1;
+  GroupRuleInput rule = 2;
+  optional string reason = 3;
+}
+
+message CreateGroupRuleResponse {
+  resources.jobs.groups.GroupRule rule = 1;
+  resources.jobs.groups.Group group = 2;
+}
+
+message UpdateGroupRuleRequest {
+  int64 group_id = 1;
+  int64 rule_id = 2;
+  GroupRuleInput rule = 3;
+  optional string reason = 4;
+}
+
+message UpdateGroupRuleResponse {
+  resources.jobs.groups.GroupRule rule = 1;
+  resources.jobs.groups.Group group = 2;
+}
+
+message DeleteGroupRuleRequest {
+  int64 group_id = 1;
+  int64 rule_id = 2;
+  optional string reason = 3;
+}
+
+message DeleteGroupRuleResponse {
+  resources.jobs.groups.Group group = 1;
+}
+
+message ListGroupActivityRequest {
+  optional resources.common.database.PaginationRequest pagination = 1;
+  optional resources.common.database.Sort sort = 2;
+
+  int64 group_id = 3;
+
+  repeated resources.jobs.groups.GroupActivityType types = 4;
+  optional int64 user_id = 5;
+
+  optional resources.timestamp.Timestamp from = 6;
+  optional resources.timestamp.Timestamp to = 7;
+
+}
+
+message ListGroupActivityResponse {
+  optional resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.jobs.groups.GroupActivity activity = 2;
+}
 
 service GroupsService {
   option (codegen.perms.perms_svc) = {
     order: 66
     icon: "i-mdi-account-group-outline"
   };
+
+  rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse);
+  rpc GetGroup(GetGroupRequest) returns (GetGroupResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListGroups"
+    };
+  }
+
+  rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc UpdateGroup(UpdateGroupRequest) returns (UpdateGroupResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateGroup"
+    };
+  }
+  rpc ArchiveGroup(ArchiveGroupRequest) returns (ArchiveGroupResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  };
+  rpc RestoreGroup(RestoreGroupRequest) returns (RestoreGroupResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ArchiveGroup"
+      };
+  };
+
+  rpc ListGroupMembers(ListGroupMembersRequest) returns (ListGroupMembersResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListGroups"
+      };
+  };
+
+  rpc AddGroupMember(AddGroupMemberRequest) returns (AddGroupMemberResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true,
+      name: "CreateGroup"
+    };
+  }
+  rpc RemoveGroupMember(RemoveGroupMemberRequest) returns (RemoveGroupMemberResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true,
+      name: "CreateGroup"
+    };
+  }
+  rpc ExcludeGroupMember(ExcludeGroupMemberRequest) returns (ExcludeGroupMemberResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true,
+      name: "CreateGroup"
+    };
+  }
+  rpc RemoveGroupMemberExclusion(RemoveGroupMemberExclusionRequest) returns (RemoveGroupMemberExclusionResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true,
+      name: "CreateGroup"
+    };
+  }
+
+  rpc AddGroupLeader(AddGroupLeaderRequest) returns (AddGroupLeaderResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true,
+      names: [
+        "AddGroupLeader",
+        "CreateGroup"
+      ]
+    };
+  };
+  rpc RemoveGroupLeader(RemoveGroupLeaderRequest) returns (RemoveGroupLeaderResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      names: [
+        "AddGroupLeader",
+        "CreateGroup"
+      ]
+      };
+  }
+
+  rpc CreateGroupRule(CreateGroupRuleRequest) returns (CreateGroupRuleResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateGroup"
+    };
+  }
+  rpc UpdateGroupRule(UpdateGroupRuleRequest) returns (UpdateGroupRuleResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateGroup"
+    };
+  }
+  rpc DeleteGroupRule(DeleteGroupRuleRequest) returns (DeleteGroupRuleResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateGroup"
+    };
+  }
+
+  rpc ListGroupActivity(ListGroupActivityRequest) returns (ListGroupActivityResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListGroups"
+    };
+  }
 }

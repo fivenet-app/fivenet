@@ -4541,6 +4541,297 @@ Policy snapshot applied to a specific version
 
 
 
+## resources/jobs/groups/activity.proto
+
+
+### resources.jobs.groups.GroupActivity
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `job_id` | [int64](#int64) |  |  |
+| `group_id` | [int64](#int64) |  |  |
+| `type` | [GroupActivityType](#resourcesjobsgroupsGroupActivityType) |  |  |
+| `actor_user_id` | [int64](#int64) |  |  |
+| `target_user_id` | [int64](#int64) | optional | Optional target user for member/leader events. |
+| `rule_id` | [int64](#int64) | optional | Optional target rule for rule events. |
+| `reason` | [string](#string) | optional |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.jobs.groups.GroupActivityType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `GROUP_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
+| `GROUP_ACTIVITY_TYPE_CREATED` | 1 |  |
+| `GROUP_ACTIVITY_TYPE_UPDATED` | 2 |  |
+| `GROUP_ACTIVITY_TYPE_ARCHIVED` | 3 |  |
+| `GROUP_ACTIVITY_TYPE_RESTORED` | 4 |  |
+| `GROUP_ACTIVITY_TYPE_MEMBER_ADDED` | 10 |  |
+| `GROUP_ACTIVITY_TYPE_MEMBER_REMOVED` | 11 |  |
+| `GROUP_ACTIVITY_TYPE_MEMBER_EXCLUDED` | 12 |  |
+| `GROUP_ACTIVITY_TYPE_MEMBER_EXCLUSION_REMOVED` | 13 |  |
+| `GROUP_ACTIVITY_TYPE_LEADER_ADDED` | 20 |  |
+| `GROUP_ACTIVITY_TYPE_LEADER_REMOVED` | 21 |  |
+| `GROUP_ACTIVITY_TYPE_RULE_ADDED` | 30 |  |
+| `GROUP_ACTIVITY_TYPE_RULE_UPDATED` | 31 |  |
+| `GROUP_ACTIVITY_TYPE_RULE_REMOVED` | 32 |  |
+| `GROUP_ACTIVITY_TYPE_LOGO_UPDATED` | 40 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/jobs/groups/group.proto
+
+
+### resources.jobs.groups.Group
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `job_id` | [int64](#int64) |  | Job this group belongs to. Groups are job-local initially. |
+| `name` | [string](#string) |  | Main display name, e.g. "Traffic Unit" or "Command Staff". |
+| `description` | [string](#string) | optional | Optional longer explanation of the group's purpose. |
+| `short_name` | [string](#string) | optional | Optional compact display name, e.g. "TRF" or "CMD". |
+| `logo_file_id` | [string](#string) | optional | Optional file/avatar/logo reference. |
+| `color` | [string](#string) | optional | Optional UI color, e.g. hex color or predefined token depending on frontend convention. |
+| `type` | [GroupType](#resourcesjobsgroupsGroupType) |  | Describes the broad membership behavior. This can also be derived from rules/manual members, but storing it can simplify UI. |
+| `state` | [GroupState](#resourcesjobsgroupsGroupState) |  | Current lifecycle state. |
+| `membership_mode` | [GroupMembershipMode](#resourcesjobsgroupsGroupMembershipMode) |  | Controls whether manually added members must satisfy smart membership rules. |
+| `sort_order` | [int32](#int32) |  | Manual ordering for group lists. |
+| `members_count` | [int32](#int32) |  | Cached/resolved count of current non-excluded members. |
+| `leaders_count` | [int32](#int32) |  | Cached count of assigned group leaders. |
+| `rules_count` | [int32](#int32) |  | Cached count of enabled/defined membership rules. |
+| `exclusions_count` | [int32](#int32) |  | Cached count of manual exclusions. |
+| `created_by_user_id` | [int64](#int64) |  | User who created the group. |
+| `updated_by_user_id` | [int64](#int64) |  | User who last updated the group metadata. |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `archived_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Set when the group is archived. |
+
+
+
+
+
+### resources.jobs.groups.GroupGradeRule
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `type` | [GroupGradeRuleType](#resourcesjobsgroupsGroupGradeRuleType) |  | Determines which grade fields are used. |
+| `grade` | [int32](#int32) | optional | Used by MINIMUM and EXACT. |
+| `min_grade` | [int32](#int32) | optional | Used by RANGE. |
+| `max_grade` | [int32](#int32) | optional | Used by RANGE. |
+
+
+
+
+
+### resources.jobs.groups.GroupLeader
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  | Group this leader relation belongs to. |
+| `user_id` | [int64](#int64) |  | User who can manage/supervise the group. A leader does not automatically have to be a member. |
+| `created_by_user_id` | [int64](#int64) |  | User who assigned this leader. |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+
+
+
+
+
+### resources.jobs.groups.GroupManualMember
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  | Group this manual member relation belongs to. |
+| `user_id` | [int64](#int64) |  | User explicitly added to the group. |
+| `reason` | [string](#string) | optional | Optional admin/leader-provided reason for the manual assignment. |
+| `created_by_user_id` | [int64](#int64) |  | User who added this manual member. |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+
+
+
+
+
+### resources.jobs.groups.GroupMemberExclusion
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  | Group this exclusion belongs to. |
+| `user_id` | [int64](#int64) |  | User excluded from resolved group membership. |
+| `reason_type` | [GroupExclusionReason](#resourcesjobsgroupsGroupExclusionReason) |  | Structured exclusion reason. |
+| `reason` | [string](#string) | optional | Optional human-readable reason. |
+| `created_by_user_id` | [int64](#int64) |  | User who created the exclusion. |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+
+
+
+
+
+### resources.jobs.groups.GroupMembershipReason
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `source` | [GroupMemberSource](#resourcesjobsgroupsGroupMemberSource) |  | Source category that explains why the user appears in the resolved view. |
+| `rule_id` | [int64](#int64) | optional | Rule that caused the membership, if source is RULE. |
+| `label` | [string](#string) | optional | Human-readable explanation for UI display. Example: "Manual member", "Grade >= 5", "Has qualification: Helicopter Pilot". |
+
+
+
+
+
+### resources.jobs.groups.GroupQualificationRule
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `type` | [GroupQualificationRuleType](#resourcesjobsgroupsGroupQualificationRuleType) |  | Determines whether all or any listed qualifications are required. |
+| `qualification_ids` | [int64](#int64) | repeated | Qualification IDs checked by this rule. |
+| `require_completed` | [bool](#bool) |  | If true, only completed/successful qualifications count. |
+
+
+
+
+
+### resources.jobs.groups.GroupResolvedMember
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  | Group this resolved membership belongs to. |
+| `user_id` | [int64](#int64) |  | User being described. |
+| `is_member` | [bool](#bool) |  | True if the user is part of the final operational member set. |
+| `is_leader` | [bool](#bool) |  | True if the user is a group leader. |
+| `is_excluded` | [bool](#bool) |  | True if the user was excluded from final membership. |
+| `sources` | [GroupMemberSource](#resourcesjobsgroupsGroupMemberSource) | repeated | High-level membership sources that apply to this user. |
+| `reasons` | [GroupMembershipReason](#resourcesjobsgroupsGroupMembershipReason) | repeated | Detailed explanations for the UI/admin view. |
+
+
+
+
+
+### resources.jobs.groups.GroupRule
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `group_id` | [int64](#int64) |  | Group this rule belongs to. |
+| `enabled` | [bool](#bool) |  | Disabled rules remain stored but do not affect resolved membership. |
+| `grade` | [GroupGradeRule](#resourcesjobsgroupsGroupGradeRule) |  | Grade/rank-based membership rule. |
+| `qualification` | [GroupQualificationRule](#resourcesjobsgroupsGroupQualificationRule) |  | Qualification-based membership rule. |
+| `created_by_user_id` | [int64](#int64) |  | User who created the rule. |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.jobs.groups.GroupExclusionReason
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `GROUP_EXCLUSION_REASON_UNSPECIFIED` | 0 |  |
+| `GROUP_EXCLUSION_REASON_MANUAL` | 1 | Generic manual exclusion. |
+| `GROUP_EXCLUSION_REASON_TEMPORARY` | 2 | Temporary exclusion, e.g. paused assignment or temporary reassignment. |
+| `GROUP_EXCLUSION_REASON_NOT_ELIGIBLE` | 3 | User technically matches a rule but should not be considered eligible. |
+| `GROUP_EXCLUSION_REASON_OTHER` | 4 | Any other reason described in the free-text reason field. |
+
+
+
+### resources.jobs.groups.GroupGradeRuleType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `GROUP_GRADE_RULE_TYPE_UNSPECIFIED` | 0 |  |
+| `GROUP_GRADE_RULE_TYPE_MINIMUM` | 1 | Match users with grade >= grade. |
+| `GROUP_GRADE_RULE_TYPE_EXACT` | 2 | Match users with grade == grade. |
+| `GROUP_GRADE_RULE_TYPE_RANGE` | 3 | Match users with min_grade <= grade <= max_grade. |
+
+
+
+### resources.jobs.groups.GroupMemberSource
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `GROUP_MEMBER_SOURCE_UNSPECIFIED` | 0 |  |
+| `GROUP_MEMBER_SOURCE_MANUAL` | 1 | User was explicitly added to the group. |
+| `GROUP_MEMBER_SOURCE_RULE` | 2 | User matched one or more group rules. |
+| `GROUP_MEMBER_SOURCE_LEADER` | 3 | User is a group leader. Usually informational; leader status does not necessarily mean membership. |
+
+
+
+### resources.jobs.groups.GroupMembershipMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `GROUP_MEMBERSHIP_MODE_UNSPECIFIED` | 0 |  |
+| `GROUP_MEMBERSHIP_MODE_FLEXIBLE` | 1 | Manual members may be added even if they do not match the group's rules. |
+| `GROUP_MEMBERSHIP_MODE_STRICT` | 2 | Manual members must satisfy the group's rules. |
+
+
+
+### resources.jobs.groups.GroupQualificationRuleType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `GROUP_QUALIFICATION_RULE_TYPE_UNSPECIFIED` | 0 |  |
+| `GROUP_QUALIFICATION_RULE_TYPE_ALL` | 1 | User must have all listed qualifications. |
+| `GROUP_QUALIFICATION_RULE_TYPE_ANY` | 2 | User must have at least one listed qualification. |
+
+
+
+### resources.jobs.groups.GroupState
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `GROUP_STATE_UNSPECIFIED` | 0 |  |
+| `GROUP_STATE_ACTIVE` | 1 | Group is active and appears in normal group filters/lists. |
+| `GROUP_STATE_INACTIVE` | 2 | Group still exists but is hidden from default operational views. |
+| `GROUP_STATE_ARCHIVED` | 3 | Group is no longer used for current operations, but remains available for history/activity logs. |
+
+
+
+### resources.jobs.groups.GroupType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `GROUP_TYPE_UNSPECIFIED` | 0 |  |
+| `GROUP_TYPE_MANUAL` | 1 | Membership is only based on explicitly added manual members. |
+| `GROUP_TYPE_SMART` | 2 | Membership is derived from rules, such as grade/rank or qualifications. |
+| `GROUP_TYPE_MIXED` | 3 | Membership is derived from rules and adjusted by manual includes/exclusions. |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/jobs/settings/settings.proto
 
 
@@ -10902,6 +11193,473 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 ## services/jobs/groups.proto
 
+
+### services.jobs.AddGroupLeaderRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  |  |
+| `user_id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.AddGroupLeaderResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `leader` | [resources.jobs.groups.GroupLeader](#resourcesjobsgroupsGroupLeader) |  |  |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.AddGroupMemberRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  |  |
+| `user_id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.AddGroupMemberResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `member` | [resources.jobs.groups.GroupManualMember](#resourcesjobsgroupsGroupManualMember) |  |  |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.ArchiveGroupRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.ArchiveGroupResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.CreateGroupRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job_id` | [int64](#int64) |  |  |
+| `name` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `short_name` | [string](#string) | optional |  |
+| `logo_file_id` | [string](#string) | optional |  |
+| `color` | [string](#string) | optional |  |
+| `type` | [resources.jobs.groups.GroupType](#resourcesjobsgroupsGroupType) | optional |  |
+| `membership_mode` | [resources.jobs.groups.GroupMembershipMode](#resourcesjobsgroupsGroupMembershipMode) | optional |  |
+| `sort_order` | [int32](#int32) | optional |  |
+| `leader_user_ids` | [int64](#int64) | repeated |  |
+| `manual_member_user_ids` | [int64](#int64) | repeated |  |
+| `rules` | [GroupRuleInput](#servicesjobsGroupRuleInput) | repeated |  |
+
+
+
+
+
+### services.jobs.CreateGroupResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.CreateGroupRuleRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  |  |
+| `rule` | [GroupRuleInput](#servicesjobsGroupRuleInput) |  |  |
+| `reason` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.CreateGroupRuleResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `rule` | [resources.jobs.groups.GroupRule](#resourcesjobsgroupsGroupRule) |  |  |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.DeleteGroupRuleRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  |  |
+| `rule_id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.DeleteGroupRuleResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.ExcludeGroupMemberRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  |  |
+| `user_id` | [int64](#int64) |  |  |
+| `reason_type` | [resources.jobs.groups.GroupExclusionReason](#resourcesjobsgroupsGroupExclusionReason) |  |  |
+| `reason` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.ExcludeGroupMemberResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `exclusion` | [resources.jobs.groups.GroupMemberExclusion](#resourcesjobsgroupsGroupMemberExclusion) |  |  |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.GetGroupRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `include_rules` | [bool](#bool) |  |  |
+| `include_leaders` | [bool](#bool) |  |  |
+| `include_manual_members` | [bool](#bool) |  |  |
+| `include_exclusions` | [bool](#bool) |  |  |
+| `include_resolved_members` | [bool](#bool) |  |  |
+| `include_archived` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.jobs.GetGroupResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+| `rules` | [resources.jobs.groups.GroupRule](#resourcesjobsgroupsGroupRule) | repeated |  |
+| `leaders` | [resources.jobs.groups.GroupLeader](#resourcesjobsgroupsGroupLeader) | repeated |  |
+| `manual_members` | [resources.jobs.groups.GroupManualMember](#resourcesjobsgroupsGroupManualMember) | repeated |  |
+| `exclusions` | [resources.jobs.groups.GroupMemberExclusion](#resourcesjobsgroupsGroupMemberExclusion) | repeated |  |
+| `resolved_members` | [resources.jobs.groups.GroupResolvedMember](#resourcesjobsgroupsGroupResolvedMember) | repeated |  |
+
+
+
+
+
+### services.jobs.GroupRuleInput
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) | optional |  |
+| `grade` | [resources.jobs.groups.GroupGradeRule](#resourcesjobsgroupsGroupGradeRule) |  |  |
+| `qualification` | [resources.jobs.groups.GroupQualificationRule](#resourcesjobsgroupsGroupQualificationRule) |  |  |
+
+
+
+
+
+### services.jobs.ListGroupActivityRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) | optional |  |
+| `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
+| `group_id` | [int64](#int64) |  |  |
+| `types` | [resources.jobs.groups.GroupActivityType](#resourcesjobsgroupsGroupActivityType) | repeated |  |
+| `user_id` | [int64](#int64) | optional |  |
+| `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### services.jobs.ListGroupActivityResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) | optional |  |
+| `activity` | [resources.jobs.groups.GroupActivity](#resourcesjobsgroupsGroupActivity) | repeated |  |
+
+
+
+
+
+### services.jobs.ListGroupMembersRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
+| `group_id` | [int64](#int64) |  |  |
+| `search` | [string](#string) | optional |  |
+| `include_excluded` | [bool](#bool) |  |  |
+| `include_leaders` | [bool](#bool) |  |  |
+| `include_reasons` | [bool](#bool) |  |  |
+| `sources` | [resources.jobs.groups.GroupMemberSource](#resourcesjobsgroupsGroupMemberSource) | repeated |  |
+
+
+
+
+
+### services.jobs.ListGroupMembersResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `members` | [resources.jobs.groups.GroupResolvedMember](#resourcesjobsgroupsGroupResolvedMember) | repeated |  |
+
+
+
+
+
+### services.jobs.ListGroupsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
+| `states` | [resources.jobs.groups.GroupState](#resourcesjobsgroupsGroupState) | repeated | Search params |
+| `search` | [string](#string) | optional |  |
+| `include_counts` | [bool](#bool) |  |  |
+| `include_inactive` | [bool](#bool) |  |  |
+| `include_archived` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.jobs.ListGroupsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `groups` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) | repeated |  |
+
+
+
+
+
+### services.jobs.RemoveGroupLeaderRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  |  |
+| `user_id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.RemoveGroupLeaderResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.RemoveGroupMemberExclusionRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  |  |
+| `user_id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.RemoveGroupMemberExclusionResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.RemoveGroupMemberRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  |  |
+| `user_id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.RemoveGroupMemberResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.RestoreGroupRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.RestoreGroupResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.UpdateGroupRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `name` | [string](#string) | optional |  |
+| `description` | [string](#string) | optional |  |
+| `short_name` | [string](#string) | optional |  |
+| `logo_file_id` | [string](#string) | optional |  |
+| `color` | [string](#string) | optional |  |
+| `state` | [resources.jobs.groups.GroupState](#resourcesjobsgroupsGroupState) | optional |  |
+| `type` | [resources.jobs.groups.GroupType](#resourcesjobsgroupsGroupType) | optional |  |
+| `membership_mode` | [resources.jobs.groups.GroupMembershipMode](#resourcesjobsgroupsGroupMembershipMode) | optional |  |
+| `sort_order` | [int32](#int32) | optional |  |
+
+
+
+
+
+### services.jobs.UpdateGroupResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
+
+### services.jobs.UpdateGroupRuleRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group_id` | [int64](#int64) |  |  |
+| `rule_id` | [int64](#int64) |  |  |
+| `rule` | [GroupRuleInput](#servicesjobsGroupRuleInput) |  |  |
+| `reason` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.UpdateGroupRuleResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `rule` | [resources.jobs.groups.GroupRule](#resourcesjobsgroupsGroupRule) |  |  |
+| `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -10913,6 +11671,23 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
+| `ListGroups` | [ListGroupsRequest](#servicesjobsListGroupsRequest) | [ListGroupsResponse](#servicesjobsListGroupsResponse) | |
+| `GetGroup` | [GetGroupRequest](#servicesjobsGetGroupRequest) | [GetGroupResponse](#servicesjobsGetGroupResponse) | |
+| `CreateGroup` | [CreateGroupRequest](#servicesjobsCreateGroupRequest) | [CreateGroupResponse](#servicesjobsCreateGroupResponse) | |
+| `UpdateGroup` | [UpdateGroupRequest](#servicesjobsUpdateGroupRequest) | [UpdateGroupResponse](#servicesjobsUpdateGroupResponse) | |
+| `ArchiveGroup` | [ArchiveGroupRequest](#servicesjobsArchiveGroupRequest) | [ArchiveGroupResponse](#servicesjobsArchiveGroupResponse) | |
+| `RestoreGroup` | [RestoreGroupRequest](#servicesjobsRestoreGroupRequest) | [RestoreGroupResponse](#servicesjobsRestoreGroupResponse) | |
+| `ListGroupMembers` | [ListGroupMembersRequest](#servicesjobsListGroupMembersRequest) | [ListGroupMembersResponse](#servicesjobsListGroupMembersResponse) | |
+| `AddGroupMember` | [AddGroupMemberRequest](#servicesjobsAddGroupMemberRequest) | [AddGroupMemberResponse](#servicesjobsAddGroupMemberResponse) | |
+| `RemoveGroupMember` | [RemoveGroupMemberRequest](#servicesjobsRemoveGroupMemberRequest) | [RemoveGroupMemberResponse](#servicesjobsRemoveGroupMemberResponse) | |
+| `ExcludeGroupMember` | [ExcludeGroupMemberRequest](#servicesjobsExcludeGroupMemberRequest) | [ExcludeGroupMemberResponse](#servicesjobsExcludeGroupMemberResponse) | |
+| `RemoveGroupMemberExclusion` | [RemoveGroupMemberExclusionRequest](#servicesjobsRemoveGroupMemberExclusionRequest) | [RemoveGroupMemberExclusionResponse](#servicesjobsRemoveGroupMemberExclusionResponse) | |
+| `AddGroupLeader` | [AddGroupLeaderRequest](#servicesjobsAddGroupLeaderRequest) | [AddGroupLeaderResponse](#servicesjobsAddGroupLeaderResponse) | |
+| `RemoveGroupLeader` | [RemoveGroupLeaderRequest](#servicesjobsRemoveGroupLeaderRequest) | [RemoveGroupLeaderResponse](#servicesjobsRemoveGroupLeaderResponse) | |
+| `CreateGroupRule` | [CreateGroupRuleRequest](#servicesjobsCreateGroupRuleRequest) | [CreateGroupRuleResponse](#servicesjobsCreateGroupRuleResponse) | |
+| `UpdateGroupRule` | [UpdateGroupRuleRequest](#servicesjobsUpdateGroupRuleRequest) | [UpdateGroupRuleResponse](#servicesjobsUpdateGroupRuleResponse) | |
+| `DeleteGroupRule` | [DeleteGroupRuleRequest](#servicesjobsDeleteGroupRuleRequest) | [DeleteGroupRuleResponse](#servicesjobsDeleteGroupRuleResponse) | |
+| `ListGroupActivity` | [ListGroupActivityRequest](#servicesjobsListGroupActivityRequest) | [ListGroupActivityResponse](#servicesjobsListGroupActivityResponse) | |
 
  <!-- end services -->
 
