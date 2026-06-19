@@ -427,6 +427,7 @@ func (s *Store) GetUserLabelsForUser(
 	userId int32,
 ) (*citizenslabels.Labels, error) {
 	tCitizensLabelsJob := table.FivenetUserLabelsJob.AS("label")
+	tCitizensLabelsJobBase := table.FivenetUserLabelsJob
 
 	includeDeleted := userInfo.GetSuperuser()
 	condition := mysql.AND(
@@ -441,7 +442,7 @@ func (s *Store) GetUserLabelsForUser(
 			userInfo,
 			int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW),
 			includeDeleted,
-			tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
+			tCitizensLabelsJobBase.Job.EQ(mysql.String(userInfo.GetJob())),
 		)
 		visibleIDStmt := visibilityIDsSelect(visibleIDs)
 		condition = condition.AND(tCitizensLabelsJob.ID.IN(visibleIDStmt))
