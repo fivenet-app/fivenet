@@ -206,7 +206,7 @@ type IStore interface {
 	GetStamp(ctx context.Context, stampID int64) (*documentsstamps.Stamp, error)
 	CreateStamp(ctx context.Context, tx qrm.DB, stamp *documentsstamps.Stamp) (int64, error)
 	UpdateStamp(ctx context.Context, tx qrm.DB, stamp *documentsstamps.Stamp) error
-	DeleteStamp(ctx context.Context, tx qrm.DB, stampID int64) error
+	DeleteStamp(ctx context.Context, tx qrm.DB, stampID int64, deletedAt *timestamp.Timestamp) error
 	ListUserDocuments(
 		ctx context.Context,
 		q ListUserDocumentsQuery,

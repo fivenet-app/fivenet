@@ -6,6 +6,8 @@ import (
 
 	resourcesdatabase "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	documentsstamps "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -175,13 +177,25 @@ func (s *Store) UpdateStamp(ctx context.Context, tx qrm.DB, stamp *documentsstam
 	return err
 }
 
-func (s *Store) DeleteStamp(ctx context.Context, tx qrm.DB, stampID int64) error {
-	// TODO implement soft delete like other places using a deletedAtTimestamp
-	tStamp := table.FivenetDocumentsStamps.AS("stamp")
+func (s *Store) DeleteStamp(
+	ctx context.Context,
+	tx qrm.DB,
+	stampID int64,
+	deletedAt *timestamp.Timestamp,
+) error {
+	tStamp := table.FivenetDocumentsStamps
+
 	stmt := tStamp.
-		DELETE().
+		UPDATE().
+		SET(
+			tStamp.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAt)),
+		).
 		WHERE(tStamp.ID.EQ(mysql.Int64(stampID))).
 		LIMIT(1)
-	_, err := stmt.ExecContext(ctx, tx)
-	return err
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return err
+	}
+
+	return nil
 }

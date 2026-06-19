@@ -8,6 +8,8 @@ import (
 	resqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -110,19 +112,16 @@ func (s *Store) DeleteQualification(
 	qualificationId int64,
 	deletedAt *timestamp.Timestamp,
 ) error {
+	tQuali := table.FivenetQualifications
 	stmt := tQuali.
-		UPDATE(tQuali.DeletedAt).
-		SET(tQuali.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)))
-	if deletedAt != nil {
-		stmt = tQuali.
-			UPDATE(tQuali.DeletedAt).
-			SET(tQuali.DeletedAt.SET(mysql.TimestampT(deletedAt.AsTime())))
-	}
-
-	res, err := stmt.
+		UPDATE().
+		SET(
+			tQuali.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAt)),
+		).
 		WHERE(tQuali.ID.EQ(mysql.Int64(qualificationId))).
-		LIMIT(1).
-		ExecContext(ctx, tx)
+		LIMIT(1)
+
+	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
 		return err
 	}

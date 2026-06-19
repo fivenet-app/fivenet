@@ -3,11 +3,14 @@ package documents
 import (
 	"context"
 
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	documentsstamps "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 )
@@ -210,7 +213,20 @@ func (s *Server) DeleteStamp(
 		return nil, errorsdocuments.ErrPermissionDenied
 	}
 
-	if err := s.store.DeleteStamp(ctx, s.db, req.GetStampId()); err != nil {
+	stamp, err := s.store.GetStamp(ctx, req.GetStampId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	var deletedAtTime *timestamp.Timestamp
+	if stamp.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
+	}
+
+	if err := s.store.DeleteStamp(ctx, s.db, req.GetStampId(), deletedAtTime); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
