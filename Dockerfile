@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.24-labs
+# syntax=docker/dockerfile:1.25-labs
 
 # Frontend Build
 FROM docker.io/library/node:24.16.0-alpine3.22 AS nodebuilder
@@ -15,7 +15,7 @@ RUN apk add --no-cache git && \
         pnpm generate
 
 # Livemap Tiles Layer for improved caching
-FROM docker.io/library/alpine:3.24.0 AS livemaptiles
+FROM docker.io/library/alpine:3.24.1 AS livemaptiles
 
 WORKDIR /app
 
@@ -26,7 +26,7 @@ RUN find ./public/images/livemap/ \
         -exec rm -rf {} +
 
 # Iconify icon sets for backend server
-FROM docker.io/library/alpine:3.24.0 AS iconsets
+FROM docker.io/library/alpine:3.24.1 AS iconsets
 
 WORKDIR /app
 
@@ -56,7 +56,7 @@ RUN apt-get update && \
     make build-go
 
 # Final Image
-FROM docker.io/library/alpine:3.24.0
+FROM docker.io/library/alpine:3.24.1
 
 WORKDIR /app
 
