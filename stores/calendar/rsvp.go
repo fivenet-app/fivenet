@@ -323,7 +323,7 @@ func (s *Store) getOccurrenceRSVPCalendarEntry(
 
 	tUser := table.FivenetUser.AS("user_short")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
-	tOccurrence := table.FivenetCalendarRsvpOccurrence
+	tOccurrence := table.FivenetCalendarRsvpOccurrence.AS("calendar_entry_rsvp")
 
 	stmt := tOccurrence.
 		SELECT(

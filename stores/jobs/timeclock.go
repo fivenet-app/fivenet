@@ -180,6 +180,7 @@ func (s *Store) CountInactiveEmployees(
 	tColleague := table.FivenetUser.AS("colleague")
 	tUserJobs := table.FivenetUserJobs
 	tUserProps := table.FivenetUserProps
+	tTimeClock := table.FivenetJobTimeclock
 
 	condition := mysql.AND(
 		tTimeClock.Job.EQ(mysql.String(q.Job)),
@@ -217,10 +218,14 @@ func (s *Store) CountInactiveEmployees(
 					tUserJobs.Job.EQ(mysql.String(q.Job)),
 				),
 			).
-			LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tTimeClock.UserID)).
-			LEFT_JOIN(tColleagueProps, mysql.AND(
-				tColleagueProps.UserID.EQ(tTimeClock.UserID),
-				tColleagueProps.Job.EQ(mysql.String(q.Job))),
+			LEFT_JOIN(tUserProps,
+				tUserProps.UserID.EQ(tTimeClock.UserID),
+			).
+			LEFT_JOIN(tColleagueProps,
+				mysql.AND(
+					tColleagueProps.UserID.EQ(tTimeClock.UserID),
+					tColleagueProps.Job.EQ(mysql.String(q.Job)),
+				),
 			),
 		).
 		WHERE(condition)

@@ -77,7 +77,7 @@ func (s *Store) ListComments(
 	tComments := table.FivenetDocumentsComments.AS("comment")
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
-	tUserProps := table.FivenetUserProps
+	tUserProps := table.FivenetUserProps.AS("user_props")
 
 	condition := tComments.DocumentID.EQ(mysql.Int64(documentID))
 	if userInfo == nil || !userInfo.GetSuperuser() {
@@ -135,7 +135,7 @@ func (s *Store) GetComment(
 	tComments := table.FivenetDocumentsComments.AS("comment")
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
-	tUserProps := table.FivenetUserProps
+	tUserProps := table.FivenetUserProps.AS("user_props")
 
 	stmt := tComments.
 		SELECT(

@@ -136,7 +136,7 @@ func (s *Store) GetJobWithProps(
 	jobName string,
 ) (*jobs.Job, int32, *jobsprops.JobProps, error) {
 	tJobs := table.FivenetJobs.AS("job")
-	tJobsGrades := table.FivenetJobsGrades
+	tJobsGrades := table.FivenetJobsGrades.AS("jg")
 	tFiles := table.FivenetFiles.AS("logo_file")
 
 	stmt := tJobs.

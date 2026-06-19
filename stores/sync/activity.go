@@ -306,31 +306,8 @@ func (s *Store) handleTimeclockEntry(ctx context.Context, data *activity.Timeclo
 	tTimeClock := table.FivenetJobTimeclock
 
 	if data.GetStart() {
-		stmt := tTimeClock.
-			SELECT(tTimeClock.UserID, tTimeClock.Date, tTimeClock.EndTime).
-			FROM(tTimeClock).
-			WHERE(mysql.AND(tTimeClock.Job.EQ(mysql.String(data.GetJob())), tTimeClock.UserID.EQ(mysql.Int32(data.GetUserId())))).
-			ORDER_BY(tTimeClock.Date.DESC()).
-			LIMIT(1)
-
-		dest := &jobstimeclock.TimeclockEntry{}
-		if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return fmt.Errorf("failed to query timeclock entry. %w", err)
-			}
-		}
-
-		if dest.GetUserId() > 0 {
-			return nil
-		}
-
-		updateStmt := tTimeClock.
-			INSERT(tTimeClock.Job, tTimeClock.UserID, tTimeClock.Date).
-			VALUES(data.GetJob(), data.GetUserId(), mysql.CURRENT_DATE())
-		if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
-			if !dbutils.IsDuplicateError(err) {
-				return fmt.Errorf("failed to insert timeclock entry. %w", err)
-			}
+		if err := s.startTimeclockEntry(ctx, data); err != nil {
+			return err
 		}
 	} else {
 		stmt := tTimeClock.
@@ -339,10 +316,48 @@ func (s *Store) handleTimeclockEntry(ctx context.Context, data *activity.Timeclo
 				tTimeClock.SpentTime.SET(mysql.RawFloat("`spent_time` + CAST((TIMESTAMPDIFF(SECOND, `start_time`, `end_time`) / 3600) AS DECIMAL(10,2))")),
 				tTimeClock.EndTime.SET(mysql.CURRENT_TIMESTAMP()),
 			).
-			WHERE(mysql.AND(tTimeClock.Job.EQ(mysql.String(data.GetJob())), tTimeClock.UserID.EQ(mysql.Int32(data.GetUserId())), tTimeClock.StartTime.IS_NOT_NULL(), tTimeClock.EndTime.IS_NULL())).
+			WHERE(mysql.AND(
+				tTimeClock.Job.EQ(mysql.String(data.GetJob())),
+				tTimeClock.UserID.EQ(mysql.Int32(data.GetUserId())),
+				tTimeClock.StartTime.IS_NOT_NULL(),
+				tTimeClock.EndTime.IS_NULL()),
+			).
 			LIMIT(1)
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return fmt.Errorf("failed to update timeclock entry. %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *Store) startTimeclockEntry(ctx context.Context, data *activity.TimeclockUpdate) error {
+	tTimeClock := table.FivenetJobTimeclock
+
+	stmt := tTimeClock.
+		SELECT(tTimeClock.UserID, tTimeClock.Date, tTimeClock.EndTime).
+		FROM(tTimeClock).
+		WHERE(mysql.AND(tTimeClock.Job.EQ(mysql.String(data.GetJob())), tTimeClock.UserID.EQ(mysql.Int32(data.GetUserId())))).
+		ORDER_BY(tTimeClock.Date.DESC()).
+		LIMIT(1)
+
+	dest := &jobstimeclock.TimeclockEntry{}
+	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf("failed to query timeclock entry. %w", err)
+		}
+	}
+
+	if dest.GetUserId() > 0 {
+		return nil
+	}
+
+	updateStmt := tTimeClock.
+		INSERT(tTimeClock.Job, tTimeClock.UserID, tTimeClock.Date).
+		VALUES(data.GetJob(), data.GetUserId(), mysql.CURRENT_DATE())
+	if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return fmt.Errorf("failed to insert timeclock entry. %w", err)
 		}
 	}
 
