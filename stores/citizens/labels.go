@@ -411,6 +411,8 @@ func (s *Store) GetUserLabelsForUser(
 	userInfo *userinfo.UserInfo,
 	userId int32,
 ) (*citizenslabels.Labels, error) {
+	tCitizensLabelsJob := table.FivenetUserLabelsJob.AS("label")
+
 	includeDeleted := userInfo.GetSuperuser()
 	condition := mysql.AND(
 		mysql.OR(
@@ -443,6 +445,10 @@ func (s *Store) ValidateLabels(
 
 	idsExp := make([]mysql.Expression, len(labels))
 	for i := range labels {
+		// Remove access and settings info from passed in labels
+		labels[i].Access = nil
+		labels[i].Settings = nil
+
 		idsExp[i] = mysql.Int64(labels[i].GetId())
 	}
 

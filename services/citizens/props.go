@@ -150,7 +150,7 @@ func (s *Server) SetUserProps(
 			return nil, errorscitizens.ErrPropsLabelsDenied
 		}
 
-		if req.Props.Labels.List == nil {
+		if req.GetProps().GetLabels().GetList() == nil {
 			req.Props.Labels.List = []*citizenslabels.Label{}
 		}
 
