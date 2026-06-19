@@ -40,6 +40,7 @@ func (s *Store) CheckIfUserHasAccessToCalendarIDs(
 		return dest, nil
 	}
 
+	// TODO what?
 	tCreator := tCalendar.AS("creator")
 
 	ids := make([]mysql.Expression, len(calendarIDs))

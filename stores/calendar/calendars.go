@@ -165,15 +165,15 @@ func (s *Store) listConditions(
 		tCalendar.Job.IS_NULL(),
 		tCalendar.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
 	)
-	condition = mysql.AND(
-		condition,
-		mysql.OR(
-			subsCondition,
-			creatorPrivateCondition,
-			accessExists,
-			s.birthdayCalendarVisible(tCalendar.ID, minAccessLevel, q.UserInfo),
-		),
-	)
+		condition = mysql.AND(
+			condition,
+			mysql.OR(
+				subsCondition,
+				creatorPrivateCondition,
+				accessExists,
+				s.birthdayCalendarVisible(tCalendar.ID, minAccessLevel, q.UserInfo),
+			),
+		)
 
 	if q.After != nil {
 		condition = condition.AND(

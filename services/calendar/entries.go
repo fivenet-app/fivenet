@@ -61,7 +61,7 @@ func (s *Server) GetUpcomingEntries(
 		calendarstore.GetUpcomingEntriesOptions{Seconds: int64(req.GetSeconds())},
 	)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
 	resp.Entries = s.store.FilterUpcomingCalendarEntries(

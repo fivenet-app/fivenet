@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -50,6 +51,23 @@ func TestCalendarEntriesQueryUsesExplicitLimit(t *testing.T) {
 		maxCalendarEntriesLimit,
 		args,
 	)
+}
+
+func TestCalendarEntriesQueryUsesAliasedCalendarEntryColumnForBirthdayVisibility(t *testing.T) {
+	t.Parallel()
+
+	store := New(new(sql.DB)).(*Store)
+	stmt := calendarEntriesQuery(
+		&userinfo.UserInfo{UserId: 1, Job: "police", Superuser: true},
+		mysql.Bool(true),
+		store.birthdayCalendarVisible(tCalendarEntry.CalendarID, calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW, &userinfo.UserInfo{UserId: 1, Job: "police", Superuser: true}),
+		false,
+		nil,
+	)
+
+	sql, _ := stmt.Sql()
+	assert.Contains(t, sql, "calendar_entry.calendar_id")
+	assert.NotContains(t, sql, "fivenet_calendar_entries.calendar_id")
 }
 
 func TestNextRecurringOccurrence(t *testing.T) {

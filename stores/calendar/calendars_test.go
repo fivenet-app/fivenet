@@ -32,6 +32,26 @@ func TestCountCalendarsReturnsCount(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestCountCalendarsStmtUsesAliasedCalendarColumnForBirthdayAccess(t *testing.T) {
+	t.Parallel()
+
+	store := New(new(sql.DB)).(*Store)
+	stmt := store.countCalendarsStmt(
+		ListQuery{
+			UserInfo: &userinfo.UserInfo{
+				UserId:    7,
+				Job:       "police",
+				Superuser: true,
+			},
+		},
+		table.FivenetUser.AS("creator"),
+	)
+
+	sql, _ := stmt.Sql()
+	assert.Contains(t, sql, "calendar.id")
+	assert.NotContains(t, sql, "fivenet_calendar.id")
+}
+
 func TestListCalendarsStmtOrdersByCalendarIds(t *testing.T) {
 	t.Parallel()
 
