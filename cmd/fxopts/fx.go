@@ -156,6 +156,7 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		pkgfilestore.Module,
 
 		// Discord Bot
+		discord.SessionModule,
 		discord.StateModule,
 		discord.BotModule,
 		commands.Module,

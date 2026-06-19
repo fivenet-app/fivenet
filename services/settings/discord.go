@@ -41,7 +41,7 @@ func (s *Server) ListDiscordChannels(
 	}
 	// No Guild Id set yet, return empty response
 	// This is the case when the job is not linked to a Discord guild yet
-	if jp.DiscordGuildId == nil || jp.GetDiscordGuildId() == "" {
+	if jp.GetDiscordGuildId() == "" {
 		return resp, nil
 	}
 
@@ -53,8 +53,7 @@ func (s *Server) ListDiscordChannels(
 
 	channels, err := s.dc.WithContext(ctx).Channels(guildId)
 	if err != nil {
-		var restErr *httputil.HTTPError
-		if errors.As(err, &restErr) {
+		if restErr, ok := errors.AsType[*httputil.HTTPError](err); ok {
 			if restErr.Status == http.StatusNotFound {
 				return resp, nil // Guild not found, return empty response
 			}

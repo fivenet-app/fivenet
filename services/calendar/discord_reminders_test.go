@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	discordstate "github.com/diamondburned/arikawa/v3/state"
+	discordsession "github.com/diamondburned/arikawa/v3/session"
 	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	"github.com/stretchr/testify/assert"
@@ -129,7 +129,7 @@ func TestValidateCalendarDiscordSettingsRejectsInvalidConfigurations(t *testing.
 					{AtMinute: 5, Message: new("test")},
 				},
 			},
-			server: &Server{dc: discordstate.New("Bot test")},
+			server: &Server{dc: discordsession.New("Bot test")},
 		},
 	}
 
@@ -160,7 +160,7 @@ func TestValidateCalendarDiscordSettingsRejectsInvalidChannelID(t *testing.T) {
 
 	srv := &Server{
 		db:    db,
-		dc:    discordstate.New("Bot test"),
+		dc:    discordsession.New("Bot test"),
 		store: calendarstore.New(db),
 	}
 

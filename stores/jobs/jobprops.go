@@ -6,6 +6,7 @@ import (
 
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -54,6 +55,8 @@ func (s *Store) GetJobProps(
 	db qrm.DB,
 	job string,
 ) (*jobsprops.JobProps, error) {
+	tJobProps := table.FivenetJobProps.AS("job_props")
+
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.Job,

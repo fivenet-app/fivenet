@@ -4,6 +4,7 @@ import (
 	"context"
 
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 )
@@ -24,14 +25,14 @@ func (s *Store) SetJobProps(ctx context.Context, props *jobsprops.JobProps) erro
 		VALUES(
 			props.GetJob(),
 			props.GetLivemapMarkerColor(),
-			props.RadioFrequency,
+			dbutils.StringEmpty(props.GetRadioFrequency()),
 			props.GetQuickButtons(),
-			props.DiscordGuildId,
+			dbutils.StringEmpty(props.GetDiscordGuildId()),
 			props.GetDiscordSyncSettings(),
 			props.GetSettings(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tJobProps.LivemapMarkerColor.SET(mysql.String(props.GetLivemapMarkerColor())),
+			tJobProps.LivemapMarkerColor.SET(mysql.RawString("VALUES(`livemap_marker_color`)")),
 			tJobProps.RadioFrequency.SET(mysql.RawString("VALUES(`radio_frequency`)")),
 			tJobProps.QuickButtons.SET(mysql.RawString("VALUES(`quick_buttons`)")),
 			tJobProps.DiscordGuildID.SET(mysql.RawString("VALUES(`discord_guild_id`)")),

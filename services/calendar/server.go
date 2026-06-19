@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	discordstate "github.com/diamondburned/arikawa/v3/state"
+	discordsession "github.com/diamondburned/arikawa/v3/session"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
@@ -100,7 +100,7 @@ type Server struct {
 	i18n     i18n.Ii18n
 	notif    notifi.INotifi
 	js       *events.JSWrapper
-	dc       *discordstate.State
+	dc       *discordsession.Session
 	store    calendarstore.IStore
 
 	access         *access.SubjectObjectAccess
@@ -120,7 +120,7 @@ type Params struct {
 	I18n      i18n.Ii18n
 	Notif     notifi.INotifi
 	JS        *events.JSWrapper
-	Discord   *discordstate.State
+	Discord   *discordsession.Session
 	Store     calendarstore.IStore
 }
 
