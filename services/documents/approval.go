@@ -817,7 +817,7 @@ func (s *Server) DecideApproval(
 	// Path A: task_id provided -> validate and mark decided
 	if req.GetTaskId() > 0 {
 		// Load the task row
-		decidedTask, err := s.store.GetApprovalTask(ctx, tx, req.GetTaskId())
+		decidedTask, err = s.store.GetApprovalTask(ctx, tx, req.GetTaskId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}

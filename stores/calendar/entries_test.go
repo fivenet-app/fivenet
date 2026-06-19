@@ -60,7 +60,11 @@ func TestCalendarEntriesQueryUsesAliasedCalendarEntryColumnForBirthdayVisibility
 	stmt := calendarEntriesQuery(
 		&userinfo.UserInfo{UserId: 1, Job: "police", Superuser: true},
 		mysql.Bool(true),
-		store.birthdayCalendarVisible(tCalendarEntry.CalendarID, calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW, &userinfo.UserInfo{UserId: 1, Job: "police", Superuser: true}),
+		store.birthdayCalendarVisible(
+			tCalendarEntry.CalendarID,
+			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+			&userinfo.UserInfo{UserId: 1, Job: "police", Superuser: true},
+		),
 		false,
 		nil,
 	)

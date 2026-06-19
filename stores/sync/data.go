@@ -157,9 +157,9 @@ func (s *Store) handleLicensesData(
 func (s *Store) handleAccountsData(
 	ctx context.Context,
 	data []*syncactivity.AccountUpdate,
-	clear bool,
+	clearGroups bool,
 ) (int64, error) {
-	if len(data) == 0 && !clear {
+	if len(data) == 0 && !clearGroups {
 		return 0, nil
 	}
 
@@ -209,7 +209,7 @@ func (s *Store) handleAccountsData(
 		rowsAffected += rows
 	}
 
-	if clear && len(data) > 0 && len(accountLicenses) == 0 {
+	if clearGroups && len(data) > 0 && len(accountLicenses) == 0 {
 		if err := tx.Commit(); err != nil {
 			return 0, err
 		}
@@ -217,7 +217,7 @@ func (s *Store) handleAccountsData(
 		return rowsAffected, nil
 	}
 
-	if clear {
+	if clearGroups {
 		clearStmt := tAccounts.
 			UPDATE(tAccounts.Groups).
 			SET(mysql.StringExp(mysql.NULL))
