@@ -55,6 +55,7 @@ const links = computed(() =>
                     class="vc-day-entry mt-0 mb-1 flex w-full flex-col items-start! justify-start rounded-xs p-1 text-left text-xs leading-tight"
                     truncate
                     :color="attr.customData.color"
+                    :variant="attr.customData.deletedAt ? 'subtle' : 'solid'"
                     @click="$emit('selected', attr.customData)"
                 >
                     <span class="line-clamp-3 inline-flex items-center gap-0.5">
@@ -88,6 +89,7 @@ const links = computed(() =>
                     class="vc-day-entry mt-0 mb-1 flex w-full flex-col items-start! justify-start rounded-xs p-1 text-left text-xs leading-tight"
                     truncate
                     :color="attr.customData.color"
+                    :variant="attr.customData.deletedAt ? 'subtle' : 'solid'"
                     @click="$emit('selected', attr.customData)"
                 >
                     <span class="line-clamp-3 inline-flex items-center gap-0.5">

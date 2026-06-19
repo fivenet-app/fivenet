@@ -147,9 +147,11 @@ const transformedCalendarEntries = computedAsync(async (): Promise<CalendarEntry
                     icon:
                         entry.calendar?.systemKind === CalendarSystemKind.JOB_BIRTHDAYS
                             ? 'i-mdi-birthday-cake'
-                            : isValidCalendarEntryRecurring(entry.recurring)
-                              ? 'i-mdi-repeat'
-                              : undefined,
+                            : entry.deletedAt
+                              ? 'i-mdi-delete'
+                              : isValidCalendarEntryRecurring(entry.recurring)
+                                ? 'i-mdi-repeat'
+                                : undefined,
                     isPast: past,
                     multiDay: !!rangeEndTime && !isSameDay(startTime, rangeEndTime),
                     ongoing: !!endTime && isPast(startTime) && isFuture(endTime),
@@ -408,9 +410,11 @@ const viewOptions = [
 
                                             <UButton
                                                 :color="stringToButtonColor(calendar.color)"
+                                                :label="calendar.name"
+                                                :icon="calendar.deletedAt ? 'i-mdi-delete' : undefined"
                                                 size="sm"
                                                 truncate
-                                                :label="calendar.name"
+                                                :variant="calendar.deletedAt ? 'subtle' : 'solid'"
                                                 @click="calendarViewSlideover.open({ calendarId: calendar.id })"
                                             />
                                         </div>
@@ -642,9 +646,10 @@ const viewOptions = [
                             <UButton
                                 class="px-0.5 py-0"
                                 :color="calendar.color as ButtonProps['color']"
-                                variant="link"
+                                :icon="calendar.deletedAt ? 'i-mdi-delete' : undefined"
                                 size="sm"
                                 truncate
+                                :variant="calendar.deletedAt ? 'subtle' : 'link'"
                                 @click="calendarViewSlideover.open({ calendarId: calendar.id })"
                             >
                                 <UBadge :color="calendar.color as BadgeProps['color']" size="md" label="&nbsp;" />
