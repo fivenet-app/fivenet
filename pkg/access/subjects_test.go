@@ -134,6 +134,36 @@ func TestSubjectObjectAccessACLVisibleIDsStatementShape(t *testing.T) {
 	assert.NotEmpty(t, args)
 }
 
+func TestSubjectObjectAccessACLAccessExistsConditionUsesWinnerLogic(t *testing.T) {
+	t.Parallel()
+
+	access := NewDocumentsSubjectObjectAccess(new(sql.DB))
+
+	stmt := mysql.
+		SELECT(mysql.Int(1).AS("ok")).
+		FROM(table.FivenetDocuments).
+		WHERE(access.ACLAccessExistsCondition(
+			table.FivenetDocuments.ID,
+			&userinfo.UserInfo{
+				UserId:   7,
+				Job:      "police",
+				JobGrade: 6,
+			},
+			2,
+		))
+
+	sql, args := stmt.Sql()
+
+	require.Contains(t, sql, "AS acl_access_actor_subjects")
+	assert.Contains(t, sql, "AS acl_access_matching")
+	assert.Contains(t, sql, "AS acl_access_winning")
+	assert.Contains(t, sql, "ROW_NUMBER() OVER")
+	assert.Contains(t, sql, "effect ASC")
+	assert.Contains(t, sql, "access >= ?")
+	assert.Contains(t, sql, "effect IS TRUE")
+	require.NotEmpty(t, args)
+}
+
 func TestWikiPageSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 	t.Parallel()
 

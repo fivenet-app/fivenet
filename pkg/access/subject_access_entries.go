@@ -171,60 +171,117 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 	tSubjectJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("subject_acl_job_grade_exists")
 	tUserJobs := table.FivenetUserJobs.AS("subject_acl_user_jobs_exists")
 
+	actorSubjectsSelect := mysql.
+		SELECT(
+			tSubjectUsers.SubjectID.AS("subject_id"),
+			mysql.Int32(SubjectSpecificityUser).
+				AS("specificity"),
+			mysql.Int32(-1).AS("grade_specificity"),
+		).
+		FROM(tSubjectUsers).
+		WHERE(tSubjectUsers.UserID.EQ(mysql.Int32(userInfo.GetUserId()))).
+		UNION(
+			mysql.
+				SELECT(
+					tSubjectQualis.SubjectID.AS("subject_id"),
+					mysql.Int32(SubjectSpecificityQualification).
+						AS("specificity"),
+					mysql.Int32(-1).AS("grade_specificity"),
+				).
+				FROM(tSubjectQualis.
+					INNER_JOIN(tQualiSuccess, mysql.AND(
+						tQualiSuccess.QualificationID.EQ(tSubjectQualis.QualificationID),
+						tQualiSuccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					),
+					),
+				),
+		).
+		UNION_ALL(
+			mysql.
+				SELECT(
+					tSubjectJobGrade.SubjectID.AS("subject_id"),
+					mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
+					tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
+				).
+				FROM(tSubjectJobGrade.
+					INNER_JOIN(tUserJobs, mysql.AND(
+						tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						tUserJobs.Job.EQ(tSubjectJobGrade.Job),
+						tUserJobs.Grade.GT_EQ(tSubjectJobGrade.MinimumGrade),
+					)),
+				),
+		).
+		UNION_ALL(
+			mysql.
+				SELECT(
+					tSubjectJobGrade.SubjectID.AS("subject_id"),
+					mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
+					tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
+				).
+				FROM(tSubjectJobGrade).
+				WHERE(mysql.AND(
+					tSubjectJobGrade.Job.EQ(mysql.String(userInfo.GetJob())),
+					tSubjectJobGrade.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+				)),
+		)
+
+	actorSubjectsTable := actorSubjectsSelect.AsTable("acl_access_actor_subjects")
+	actorSubjectID := mysql.IntegerColumn("subject_id").From(actorSubjectsTable)
+	actorSpecificity := mysql.IntegerColumn("specificity").From(actorSubjectsTable)
+	actorGradeSpecificity := mysql.IntegerColumn("grade_specificity").From(actorSubjectsTable)
+
+	matchingACLSelect := mysql.
+		SELECT(
+			columns.TargetID.AS("target_id"),
+			columns.Effect.AS("effect"),
+			columns.Access.AS("access"),
+			actorSpecificity.AS("specificity"),
+			mysql.COALESCE(actorGradeSpecificity, mysql.Int32(-1)).AS("grade_specificity"),
+			mysql.ROW_NUMBER().OVER(
+				mysql.PARTITION_BY(columns.TargetID).
+					ORDER_BY(
+						actorSpecificity.DESC(),
+						mysql.COALESCE(actorGradeSpecificity, mysql.Int32(-1)).DESC(),
+						columns.Effect.ASC(),
+					),
+			).AS("access_rank"),
+		).
+		FROM(tAccess.
+			INNER_JOIN(actorSubjectsTable,
+				actorSubjectID.EQ(columns.SubjectID),
+			),
+		).
+		WHERE(mysql.AND(
+			columns.TargetID.EQ(targetID),
+			columns.Access.GT_EQ(mysql.Int32(access)),
+		)).
+		DISTINCT()
+
+	matchingACLTable := matchingACLSelect.AsTable("acl_access_matching")
+	matchingTargetID := mysql.IntegerColumn("target_id").From(matchingACLTable)
+	matchingEffect := mysql.BoolColumn("effect").From(matchingACLTable)
+	matchingRank := mysql.IntegerColumn("access_rank").From(matchingACLTable)
+
+	winningACLSelect := mysql.
+		SELECT(
+			matchingTargetID.AS("target_id"),
+			matchingEffect.AS("effect"),
+			matchingRank.AS("access_rank"),
+		).
+		FROM(matchingACLTable).
+		WHERE(matchingRank.EQ(mysql.Int(1)))
+
+	winningACLTable := winningACLSelect.AsTable("acl_access_winning")
+	winningTargetID := mysql.IntegerColumn("target_id").From(winningACLTable)
+	winningEffect := mysql.BoolColumn("effect").From(winningACLTable)
+
 	return mysql.EXISTS(
 		mysql.
 			SELECT(mysql.Int(1)).
-			FROM(tAccess).
+			FROM(winningACLTable).
 			WHERE(mysql.AND(
-				columns.TargetID.EQ(targetID),
-				columns.Effect.IS_TRUE(),
-				columns.Access.GT_EQ(mysql.Int32(access)),
-				mysql.OR(
-					columns.SubjectID.IN(
-						tSubjectUsers.
-							SELECT(tSubjectUsers.SubjectID).
-							FROM(tSubjectUsers).
-							WHERE(tSubjectUsers.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
-					),
-					columns.SubjectID.IN(
-						tSubjectQualis.
-							SELECT(tSubjectQualis.SubjectID).
-							FROM(tSubjectQualis.
-								INNER_JOIN(tQualiSuccess,
-									mysql.AND(
-										tQualiSuccess.QualificationID.EQ(
-											tSubjectQualis.QualificationID,
-										),
-										tQualiSuccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-									),
-								),
-							),
-					),
-					columns.SubjectID.IN(
-						tSubjectJobGrade.
-							SELECT(tSubjectJobGrade.SubjectID).
-							FROM(tSubjectJobGrade.
-								INNER_JOIN(tUserJobs,
-									mysql.AND(
-										tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-										tUserJobs.Job.EQ(tSubjectJobGrade.Job),
-										tUserJobs.Grade.GT_EQ(tSubjectJobGrade.MinimumGrade),
-									),
-								),
-							),
-					),
-					columns.SubjectID.IN(
-						tSubjectJobGrade.
-							SELECT(tSubjectJobGrade.SubjectID).
-							FROM(tSubjectJobGrade).
-							WHERE(mysql.AND(
-								tSubjectJobGrade.Job.EQ(mysql.String(userInfo.GetJob())),
-								tSubjectJobGrade.MinimumGrade.LT_EQ(
-									mysql.Int32(userInfo.GetJobGrade()),
-								),
-							)),
-					),
-				),
+				winningTargetID.EQ(targetID),
+				winningEffect.IS_TRUE(),
 			)),
 	)
 }

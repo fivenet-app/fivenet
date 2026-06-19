@@ -741,6 +741,10 @@ func (b *calculatedVisibilityBackend) loadTargetRow(
 	if b.access.targetTableColumns.CreatorID != nil {
 		columns = append(columns,
 			b.access.targetTableColumns.CreatorID.AS("calculatedvisibilitytargetrow.creator_id"),
+		)
+	}
+	if b.access.targetTableColumns.CreatorJob != nil {
+		columns = append(columns,
 			b.access.targetTableColumns.CreatorJob.AS("calculatedvisibilitytargetrow.creator_job"),
 		)
 	}
