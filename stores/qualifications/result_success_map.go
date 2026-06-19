@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	resqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -35,6 +36,7 @@ func (s *Store) upsertQualificationResultSuccessMap(
 	qualificationId int64,
 	userId int32,
 ) error {
+	tQualiResultSuccess := table.FivenetQualificationsResultSuccessMap
 	stmt := tQualiResultSuccess.
 		INSERT(
 			tQualiResultSuccess.QualificationID,
@@ -59,6 +61,7 @@ func (s *Store) deleteQualificationResultSuccessMapByResultID(
 	tx qrm.DB,
 	resultId int64,
 ) error {
+	tQualiResultSuccess := table.FivenetQualificationsResultSuccessMap
 	stmt := tQualiResultSuccess.
 		DELETE().
 		WHERE(tQualiResultSuccess.ResultID.EQ(mysql.Int64(resultId))).
@@ -73,6 +76,7 @@ func (s *Store) deleteQualificationResultSuccessMapByQualificationID(
 	tx qrm.DB,
 	qualificationId int64,
 ) error {
+	tQualiResultSuccess := table.FivenetQualificationsResultSuccessMap
 	stmt := tQualiResultSuccess.
 		DELETE().
 		WHERE(tQualiResultSuccess.QualificationID.EQ(mysql.Int64(qualificationId)))

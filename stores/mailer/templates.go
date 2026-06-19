@@ -114,6 +114,7 @@ func (s *Store) CreateTemplate(
 	template *mailertemplates.Template,
 	creatorID int32,
 ) (int64, error) {
+	tTemplates := table.FivenetMailerTemplates
 	stmt := tTemplates.
 		INSERT(
 			tTemplates.EmailID,
@@ -148,6 +149,7 @@ func (s *Store) UpdateTemplate(
 	q qrm.DB,
 	template *mailertemplates.Template,
 ) error {
+	tTemplates := table.FivenetMailerTemplates
 	stmt := tTemplates.
 		UPDATE(
 			tTemplates.Title,
@@ -168,6 +170,7 @@ func (s *Store) UpdateTemplate(
 }
 
 func (s *Store) DeleteTemplate(ctx context.Context, q qrm.DB, id int64) error {
+	tTemplates := table.FivenetMailerTemplates
 	stmt := tTemplates.
 		UPDATE().
 		SET(

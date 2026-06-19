@@ -19,6 +19,7 @@ func (s *Store) CreateQualification(
 	tx qrm.DB,
 	userInfo *userinfo.UserInfo,
 ) (int64, error) {
+	tQuali := table.FivenetQualifications
 	stmt := tQuali.
 		INSERT(
 			tQuali.Job,
@@ -64,6 +65,7 @@ func (s *Store) UpdateQualification(
 		*quali.Description = strings.TrimSuffix(quali.GetDescription(), "<br>")
 	}
 
+	tQuali := table.FivenetQualifications
 	stmt := tQuali.
 		UPDATE(
 			tQuali.Weight,
@@ -113,6 +115,7 @@ func (s *Store) DeleteQualification(
 	deletedAt *timestamp.Timestamp,
 ) error {
 	tQuali := table.FivenetQualifications
+
 	stmt := tQuali.
 		UPDATE().
 		SET(

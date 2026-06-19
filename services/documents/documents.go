@@ -924,6 +924,7 @@ func (s *Server) DeleteDocument(
 	}
 	defer tx.Rollback()
 
+	tDocument := table.FivenetDocuments
 	stmt := tDocument.
 		UPDATE(
 			tDocument.DeletedAt,

@@ -158,6 +158,7 @@ func (s *Server) ReorderUnits(
 			return nil, errorscentrum.ErrFailedQuery
 		}
 
+		tUnits := table.FivenetCentrumUnits
 		if _, err := tUnits.
 			UPDATE().
 			SET(

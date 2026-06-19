@@ -201,8 +201,9 @@ func (s *Store) UpdateAccount(
 	ctx context.Context,
 	req *pbsettings.UpdateAccountRequest,
 ) (*pbsettings.UpdateAccountResponse, error) {
-	updateSets := []interface{}{}
+	updateSets := []any{}
 
+	tAccounts := table.FivenetAccounts
 	if req.Enabled != nil {
 		updateSets = append(updateSets, tAccounts.Enabled.SET(mysql.Bool(req.GetEnabled())))
 	}
@@ -239,6 +240,7 @@ func (s *Store) UpdateAccount(
 }
 
 func (s *Store) DisconnectSocialLogin(ctx context.Context, accountID int64, provider string) error {
+	tOauth2 := table.FivenetAccountsOauth2
 	stmt := tOauth2.
 		DELETE().
 		WHERE(mysql.AND(

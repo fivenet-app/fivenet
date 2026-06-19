@@ -1187,9 +1187,9 @@ func (s *DispatchDB) Update(
 	_ *int32,
 	dsp *centrumdispatches.Dispatch,
 ) (*centrumdispatches.Dispatch, error) {
-	tDispatch := table.FivenetCentrumDispatches.AS("dispatch")
-
 	dsp.UpdatedAt = timestamp.Now()
+
+	tDispatch := table.FivenetCentrumDispatches
 	stmt := tDispatch.
 		UPDATE(
 			tDispatch.UpdatedAt,

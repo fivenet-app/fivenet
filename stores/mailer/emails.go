@@ -304,6 +304,7 @@ func (s *Store) CreateEmail(
 	email *maileremails.Email,
 	creatorID int32,
 ) (int64, error) {
+	tEmails := table.FivenetMailerEmails
 	stmt := tEmails.
 		INSERT(
 			tEmails.Job,
@@ -339,6 +340,7 @@ func (s *Store) DeleteEmail(
 	emailID int64,
 	deletedAt *timestamp.Timestamp,
 ) error {
+	tEmails := table.FivenetMailerEmails
 	stmt := tEmails.
 		UPDATE().
 		SET(

@@ -152,6 +152,7 @@ func (s *Store) CreateMessage(
 	q qrm.DB,
 	msg *mailermessages.Message,
 ) (int64, error) {
+	tMessages := table.FivenetMailerMessages
 	stmt := tMessages.
 		INSERT(
 			tMessages.ThreadID,
@@ -194,6 +195,7 @@ func (s *Store) DeleteMessage(
 	messageID int64,
 	deletedAt *timestamp.Timestamp,
 ) error {
+	tMessages := table.FivenetMailerMessages
 	stmt := tMessages.
 		UPDATE(
 			tMessages.DeletedAt,
