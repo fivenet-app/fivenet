@@ -389,17 +389,35 @@ func (s *Store) ListTimeclock(
 		return []*jobstimeclock.TimeclockEntry{}, nil
 	}
 
-	spentTimeColumn := mysql.StringColumn("timeclock_entry.spent_time")
-	orderBys := []mysql.OrderByClause{tTimeClock.Date.DESC(), spentTimeColumn.DESC()}
+	agg := tTimeClock.
+		SELECT(
+			tTimeClock.UserID.AS("user_id"),
+			dateSelectExpr.AS("date"),
+			mysql.MIN(tTimeClock.StartTime).AS("start_time"),
+			mysql.MAX(tTimeClock.EndTime).AS("end_time"),
+			mysql.SUM(tTimeClock.SpentTime).AS("spent_time"),
+		).
+		FROM(tTimeClock).
+		WHERE(condition).
+		GROUP_BY(groupBys...).
+		AsTable("agg")
+
+	aggUserID := mysql.IntegerColumn("user_id").From(agg)
+	aggDate := mysql.DateColumn("date").From(agg)
+	aggStartTime := mysql.DateTimeColumn("start_time").From(agg)
+	aggEndTime := mysql.DateTimeColumn("end_time").From(agg)
+	aggSpentTime := mysql.FloatColumn("spent_time").From(agg)
+
+	orderBys := []mysql.OrderByClause{aggDate.DESC(), aggSpentTime.DESC()}
 	if q.Sort != nil && len(q.Sort.GetColumns()) > 0 {
 		orderBys = []mysql.OrderByClause{}
 		for _, sc := range q.Sort.GetColumns() {
 			switch sc.GetId() {
 			case "date":
 				if sc.GetDesc() {
-					orderBys = append(orderBys, mysql.DateColumn("agg.date").DESC())
+					orderBys = append(orderBys, aggDate.DESC())
 				} else {
-					orderBys = append(orderBys, mysql.DateColumn("agg.date").ASC())
+					orderBys = append(orderBys, aggDate.ASC())
 				}
 			case rankColumn:
 				if sc.GetDesc() {
@@ -415,34 +433,21 @@ func (s *Store) ListTimeclock(
 				}
 			default:
 				if sc.GetDesc() {
-					orderBys = append(orderBys, spentTimeColumn.DESC())
+					orderBys = append(orderBys, aggSpentTime.DESC())
 				} else {
-					orderBys = append(orderBys, spentTimeColumn.ASC())
+					orderBys = append(orderBys, aggSpentTime.ASC())
 				}
 			}
 		}
 	}
 
-	agg := tTimeClock.
-		SELECT(
-			tTimeClock.UserID.AS("agg.user_id"),
-			dateSelectExpr.AS("agg.date"),
-			mysql.MIN(tTimeClock.StartTime).AS("agg.start_time"),
-			mysql.MAX(tTimeClock.EndTime).AS("agg.end_time"),
-			mysql.SUM(tTimeClock.SpentTime).AS("agg.spent_time"),
-		).
-		FROM(tTimeClock).
-		WHERE(condition).
-		GROUP_BY(groupBys...).
-		AsTable("agg")
-
 	stmt := agg.
 		SELECT(
-			mysql.IntegerColumn("agg.user_id").AS("timeclock_entry.user_id"),
-			mysql.DateColumn("agg.date").AS("timeclock_entry.date"),
-			mysql.DateTimeColumn("agg.start_time").AS("timeclock_entry.start_time"),
-			mysql.DateTimeColumn("agg.end_time").AS("timeclock_entry.end_time"),
-			mysql.FloatColumn("agg.spent_time").AS("timeclock_entry.spent_time"),
+			aggUserID.AS("timeclock_entry.user_id"),
+			aggDate.AS("timeclock_entry.date"),
+			aggStartTime.AS("timeclock_entry.start_time"),
+			aggEndTime.AS("timeclock_entry.end_time"),
+			aggSpentTime.AS("timeclock_entry.spent_time"),
 			tColleague.ID,
 			tUserJobs.Job.AS("colleague.job"),
 			tUserJobs.Grade.AS("colleague.job_grade"),
@@ -462,7 +467,7 @@ func (s *Store) ListTimeclock(
 		FROM(
 			agg.
 				INNER_JOIN(tColleague,
-					tColleague.ID.EQ(mysql.IntegerColumn("agg.user_id")),
+					tColleague.ID.EQ(aggUserID),
 				).
 				INNER_JOIN(tUserJobs,
 					mysql.AND(
