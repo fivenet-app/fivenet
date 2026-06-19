@@ -21,6 +21,7 @@ func (s *Store) ListQualificationRequests(
 	userInfo *userinfo.UserInfo,
 	includePhoneNumber bool,
 ) (*pbqualifications.ListQualificationRequestsResponse, error) {
+	tQuali := table.FivenetQualifications.AS("qualificationshort")
 	tUser := table.FivenetUser.AS("user")
 	tApprover := tUser.AS("approver")
 	userID := int32(0)
@@ -37,39 +38,6 @@ func (s *Store) ListQualificationRequests(
 		condition = condition.AND(tQualiReq.DeletedAt.IS_NULL())
 	}
 
-	visibilityCondition := mysql.Bool(true)
-	if !userInfo.GetSuperuser() {
-		visibilityCondition = visibilityCondition.AND(tQuali.DeletedAt.IS_NULL())
-	}
-	visibleGradeCondition := visibilityCondition
-	visibleViewCondition := visibilityCondition
-	if !userInfo.GetSuperuser() {
-		visibleGradeCondition = visibleGradeCondition.AND(mysql.OR(
-			tQuali.Public.IS_TRUE(),
-			mysql.AND(
-				tQuali.CreatorID.EQ(mysql.Int32(userID)),
-				tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			),
-			s.access.ACLAccessExistsCondition(
-				tQuali.ID,
-				userInfo,
-				int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
-			),
-		))
-		visibleViewCondition = visibleViewCondition.AND(mysql.OR(
-			tQuali.Public.IS_TRUE(),
-			mysql.AND(
-				tQuali.CreatorID.EQ(mysql.Int32(userID)),
-				tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			),
-			s.access.ACLAccessExistsCondition(
-				tQuali.ID,
-				userInfo,
-				int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-			),
-		))
-	}
-
 	countColumn := mysql.Expression(tQualiReq.QualificationID)
 	if len(opts.UserIDs) > 0 {
 		userIds := []mysql.Expression{}
@@ -82,8 +50,10 @@ func (s *Store) ListQualificationRequests(
 		))
 	} else {
 		if opts.QualificationID == 0 {
-			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).
-				AND(tQualiReq.UserID.EQ(mysql.Int32(userID)))
+			condition = condition.AND(mysql.AND(
+				tUser.Job.EQ(mysql.String(userInfo.GetJob())),
+				tQualiReq.UserID.EQ(mysql.Int32(userID)),
+			))
 			countColumn = mysql.DISTINCT(tQualiReq.QualificationID)
 		} else {
 			countColumn = mysql.DISTINCT(tQualiReq.UserID)
@@ -104,18 +74,6 @@ func (s *Store) ListQualificationRequests(
 		)
 	}
 
-	if opts.QualificationID > 0 {
-		condition = condition.AND(visibleGradeCondition)
-	} else {
-		condition = condition.AND(mysql.OR(
-			visibleGradeCondition,
-			mysql.AND(
-				visibleViewCondition,
-				tQualiReq.UserID.EQ(mysql.Int32(userID)),
-			),
-		))
-	}
-
 	var (
 		countStmt  mysql.Statement
 		ctes       []mysql.CommonTableExpression
@@ -126,7 +84,7 @@ func (s *Store) ListQualificationRequests(
 		visibleQualificationCondition := mysql.Bool(true)
 		if opts.QualificationID > 0 {
 			visibleQualificationCondition = visibleQualificationCondition.AND(
-				tQuali.ID.EQ(mysql.Int64(opts.QualificationID)),
+				table.FivenetQualifications.ID.EQ(mysql.Int64(opts.QualificationID)),
 			)
 		}
 		visibleIDs = s.access.VisibleIDsByConditionQuery(
@@ -147,9 +105,6 @@ func (s *Store) ListQualificationRequests(
 					LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)),
 			).
 			WHERE(condition)
-		if len(ctes) > 0 {
-			countStmt = mysql.WITH(ctes...)(countStmt)
-		}
 	} else {
 		countStmt = tQualiReq.
 			SELECT(mysql.COUNT(countColumn).AS("data_count.total")).
@@ -159,6 +114,10 @@ func (s *Store) ListQualificationRequests(
 					LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)),
 			).
 			WHERE(condition)
+	}
+
+	if len(ctes) > 0 {
+		countStmt = mysql.WITH(ctes...)(countStmt)
 	}
 
 	var count database.DataCount
@@ -311,6 +270,14 @@ func (s *Store) GetQualificationRequest(
 		columns = append(columns, tUser.PhoneNumber, tApprover.PhoneNumber)
 	}
 
+	condition := mysql.AND(
+		tQualiReq.QualificationID.EQ(mysql.Int64(qualificationId)),
+		tQualiReq.UserID.EQ(mysql.Int32(userId)),
+	)
+	if !userInfo.GetSuperuser() {
+		condition = condition.AND(tQualiReq.DeletedAt.IS_NULL())
+	}
+
 	stmt := tQualiReq.
 		SELECT(columns[0], columns[1:]...).
 		FROM(tQualiReq.
@@ -320,16 +287,7 @@ func (s *Store) GetQualificationRequest(
 		).
 		GROUP_BY(tQualiReq.QualificationID, tQualiReq.UserID).
 		ORDER_BY(tQualiReq.CreatedAt.DESC()).
-		WHERE(func() mysql.BoolExpression {
-			condition := mysql.AND(
-				tQualiReq.QualificationID.EQ(mysql.Int64(qualificationId)),
-				tQualiReq.UserID.EQ(mysql.Int32(userId)),
-			)
-			if !userInfo.GetSuperuser() {
-				condition = condition.AND(tQualiReq.DeletedAt.IS_NULL())
-			}
-			return condition
-		}()).
+		WHERE(condition).
 		LIMIT(1)
 
 	var request resqualifications.QualificationRequest

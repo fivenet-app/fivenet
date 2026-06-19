@@ -211,6 +211,7 @@ func (r *SubjectResolver) ResolveActorSubjects(
 							tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 							tUserJobs.Job.EQ(tSubjectJobGrade.Job),
 							tUserJobs.Grade.GT_EQ(tSubjectJobGrade.MinimumGrade),
+							tUserJobs.IsPrimary.IS_TRUE(),
 						),
 					),
 				),

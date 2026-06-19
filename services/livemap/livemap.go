@@ -51,7 +51,7 @@ func (s *Server) getAndSendACL(
 	}
 
 	if userInfo.GetSuperuser() {
-		for job := range s.markersCache.All() {
+		for job := range s.markersCache.AllRelaxed() {
 			markerJobs.Strings = append(markerJobs.Strings, job)
 		}
 		markerJobs.Strings = utils.RemoveSliceDuplicates(markerJobs.GetStrings())

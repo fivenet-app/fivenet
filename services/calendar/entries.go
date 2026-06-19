@@ -36,7 +36,7 @@ func (s *Server) ListCalendarEntries(
 		},
 	)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
 	return &pbcalendar.ListCalendarEntriesResponse{

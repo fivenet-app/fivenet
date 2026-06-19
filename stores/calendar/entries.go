@@ -201,25 +201,7 @@ func (s *Store) listCalendarEntriesVisibility(
 		userInfo,
 		int32(accessLevel),
 		includeDeleted,
-		mysql.OR(
-			tCalendar.SystemKind.IS_NULL(),
-			tCalendar.SystemKind.NOT_EQ(
-				mysql.Int32(
-					int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
-				),
-			),
-			mysql.AND(
-				tCalendar.SystemKind.EQ(
-					mysql.Int32(
-						int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
-					),
-				),
-				mysql.OR(
-					mysql.Bool(userInfo.GetSuperuser()),
-					tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
-				),
-			),
-		),
+		mysql.Bool(true),
 	)
 	visibleIDStmt := visibilityIDsSelect(visibleIDs)
 	visibleCalendarCondition := tCalendar.ID.IN(visibleIDStmt)

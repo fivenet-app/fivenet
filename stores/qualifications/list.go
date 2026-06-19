@@ -27,8 +27,8 @@ func (s *Store) ListQualifications(
 
 	if search := dbutils.PrepareForLikeSearch(opts.Search); search != "" {
 		searchCondition = searchCondition.AND(mysql.OR(
-			tQuali.Abbreviation.LIKE(mysql.String(search)),
-			tQuali.Title.LIKE(mysql.String(search)),
+			table.FivenetQualifications.Abbreviation.LIKE(mysql.String(search)),
+			table.FivenetQualifications.Title.LIKE(mysql.String(search)),
 		))
 	}
 
@@ -46,17 +46,19 @@ func (s *Store) ListQualifications(
 	ctes := visibleIDs.CTEs
 	visibleQualiID := mysql.IntegerColumn("id").From(visibleIDs.Table)
 
+	tQualiResultLatest := table.FivenetQualificationsResults.AS("qualificationresult_latest")
+
 	// Select id of last result for this user.
-	lastResultFilter := tQualiResult.ID.IS_NULL().OR(
-		tQualiResult.ID.EQ(
-			mysql.RawInt(
-				"SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = qualification.id AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
-				mysql.RawArgs{
-					"#userid": userID,
-				},
-			),
-		),
-	)
+	lastResultID := tQualiResultLatest.
+		SELECT(mysql.MAX(tQualiResultLatest.ID)).
+		FROM(tQualiResultLatest).
+		WHERE(mysql.AND(
+			tQualiResultLatest.QualificationID.EQ(tQuali.ID),
+			tQualiResultLatest.DeletedAt.IS_NULL(),
+			tQualiResultLatest.UserID.EQ(mysql.Int32(userID)),
+		)).
+		LIMIT(1)
+	lastResultFilter := tQualiResult.ID.IS_NULL().OR(tQualiResult.ID.EQ(mysql.IntExp(lastResultID)))
 	visibleQuery := tQuali.
 		SELECT(mysql.COUNT(mysql.DISTINCT(tQuali.ID)).AS("data_count.total")).
 		FROM(
@@ -122,18 +124,22 @@ func (s *Store) GetQualification(
 		tQuali.ID.EQ(mysql.Int64(qualificationId)),
 	}
 
+	tQualiResultLatest := table.FivenetQualificationsResults.AS("qualificationresult_latest")
+
 	// Select id of last result for this user.
-	wheres = append(wheres, tQualiResult.ID.IS_NULL().OR(
-		tQualiResult.ID.EQ(
-			mysql.RawInt(
-				"SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = #qualificationId AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
-				mysql.RawArgs{
-					"#qualificationId": qualificationId,
-					"#userid":          userInfo.GetUserId(),
-				},
-			),
-		),
-	))
+	lastResultID := tQualiResultLatest.
+		SELECT(mysql.MAX(tQualiResultLatest.ID)).
+		FROM(tQualiResultLatest).
+		WHERE(mysql.AND(
+			tQualiResultLatest.QualificationID.EQ(tQuali.ID),
+			tQualiResultLatest.DeletedAt.IS_NULL(),
+			tQualiResultLatest.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+		)).
+		LIMIT(1)
+	wheres = append(
+		wheres,
+		tQualiResult.ID.IS_NULL().OR(tQualiResult.ID.EQ(mysql.IntExp(lastResultID))),
+	)
 
 	stmt := s.getQualificationQuery(
 		wheres,

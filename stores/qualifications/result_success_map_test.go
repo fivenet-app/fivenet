@@ -54,7 +54,7 @@ func TestStoreUpdateQualificationResultSuccessfulSwapsSuccessMap(t *testing.T) {
 
 	store := New(db)
 
-	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_results AS qualification_result SET .*WHERE .*deleted_at IS NULL.*LIMIT \\?;").
+	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_results SET .*WHERE .*deleted_at IS NULL.*LIMIT \\?;").
 		WithArgs(int64(42), int32(7), int32(resqualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL), nil, "ok", int64(99), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec("(?s)DELETE FROM .*fivenet_qualifications_result_success_map.*LIMIT \\?.*").
@@ -89,7 +89,7 @@ func TestStoreUpdateQualificationResultNonSuccessfulDeletesSuccessMap(t *testing
 
 	store := New(db)
 
-	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_results AS qualification_result SET .*WHERE .*deleted_at IS NULL.*LIMIT \\?;").
+	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_results SET .*WHERE .*deleted_at IS NULL.*LIMIT \\?;").
 		WithArgs(int64(42), int32(7), int32(resqualifications.ResultStatus_RESULT_STATUS_FAILED), nil, "nope", int64(99), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec("(?s)DELETE FROM .*fivenet_qualifications_result_success_map.*LIMIT \\?.*").
@@ -121,7 +121,7 @@ func TestStoreDeleteQualificationResultDeletesSuccessMap(t *testing.T) {
 
 	store := New(db)
 
-	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_results AS qualification_result SET deleted_at = CURRENT_TIMESTAMP .*LIMIT \\?;").
+	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_results SET deleted_at = CURRENT_TIMESTAMP .*LIMIT \\?;").
 		WithArgs(int64(99), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec("(?s)DELETE FROM .*fivenet_qualifications_result_success_map.*LIMIT \\?.*").
@@ -143,7 +143,7 @@ func TestStoreDeleteQualificationClearsAndRebuildsSuccessMap(t *testing.T) {
 
 	now := timestamp.Now()
 
-	mock.ExpectExec("(?s)UPDATE fivenet_qualifications AS qualification SET .*deleted_at.*WHERE qualification\\.id = \\?.*LIMIT \\?;").
+	mock.ExpectExec("(?s)UPDATE fivenet_qualifications SET .*deleted_at.*WHERE fivenet_qualifications\\.id = \\?.*LIMIT \\?;").
 		WithArgs(now.AsTime(), int64(42), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec("(?s)DELETE FROM .*fivenet_qualifications_result_success_map.*WHERE .*qualification_id = \\?.*").
@@ -163,7 +163,7 @@ func TestStoreDeleteQualificationRestoreRebuildsSuccessMap(t *testing.T) {
 
 	store := New(db)
 
-	mock.ExpectExec("(?s)UPDATE fivenet_qualifications AS qualification SET .*deleted_at = NULL.*WHERE qualification\\.id = \\?.*LIMIT \\?;").
+	mock.ExpectExec("(?s)UPDATE fivenet_qualifications SET .*deleted_at = NULL.*WHERE fivenet_qualifications\\.id = \\?.*LIMIT \\?;").
 		WithArgs(int64(42), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec("(?s)DELETE FROM .*fivenet_qualifications_result_success_map.*WHERE .*qualification_id = \\?.*").

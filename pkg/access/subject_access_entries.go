@@ -208,6 +208,7 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 						tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						tUserJobs.Job.EQ(tSubjectJobGrade.Job),
 						tUserJobs.Grade.GT_EQ(tSubjectJobGrade.MinimumGrade),
+						tUserJobs.IsPrimary.IS_TRUE(),
 					)),
 				),
 		).
@@ -251,7 +252,10 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 				actorSubjectID.EQ(columns.SubjectID),
 			),
 		).
-		WHERE(columns.Access.GT_EQ(mysql.Int32(access))).
+		WHERE(
+			// FIXME previously `columns.TargetID.EQ(targetID),` was taken into account but not anymore
+			columns.Access.GT_EQ(mysql.Int32(access)),
+		).
 		DISTINCT()
 
 	matchingACLTable := matchingACLSelect.AsTable("acl_access_matching")

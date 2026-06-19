@@ -22,6 +22,7 @@ func (s *Store) ListQualificationsResults(
 	userInfo *userinfo.UserInfo,
 	includePhoneNumber bool,
 ) (*pbqualifications.ListQualificationsResultsResponse, error) {
+	tQuali := table.FivenetQualifications.AS("qualificationshort")
 	tUser := table.FivenetUser.AS("user")
 	tCreator := tUser.AS("creator")
 	userID := int32(0)
@@ -32,43 +33,6 @@ func (s *Store) ListQualificationsResults(
 	condition := mysql.Bool(true)
 	if !userInfo.GetSuperuser() {
 		condition = condition.AND(tQualiResult.DeletedAt.IS_NULL())
-	}
-	visibilityCondition := mysql.Bool(true)
-	if !userInfo.GetSuperuser() {
-		visibilityCondition = visibilityCondition.AND(tQuali.DeletedAt.IS_NULL())
-	}
-	if opts.QualificationID > 0 {
-		visibilityCondition = visibilityCondition.AND(
-			tQuali.ID.EQ(mysql.Int64(opts.QualificationID)),
-		)
-	}
-	visibleGradeCondition := visibilityCondition
-	visibleViewCondition := visibilityCondition
-	if !userInfo.GetSuperuser() {
-		visibleGradeCondition = visibleGradeCondition.AND(mysql.OR(
-			tQuali.Public.IS_TRUE(),
-			mysql.AND(
-				tQuali.CreatorID.EQ(mysql.Int32(userID)),
-				tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			),
-			s.access.ACLAccessExistsCondition(
-				tQuali.ID,
-				userInfo,
-				int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
-			),
-		))
-		visibleViewCondition = visibleViewCondition.AND(mysql.OR(
-			tQuali.Public.IS_TRUE(),
-			mysql.AND(
-				tQuali.CreatorID.EQ(mysql.Int32(userID)),
-				tQuali.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			),
-			s.access.ACLAccessExistsCondition(
-				tQuali.ID,
-				userInfo,
-				int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-			),
-		))
 	}
 
 	countColumn := mysql.Expression(tQualiResult.QualificationID)
@@ -89,24 +53,6 @@ func (s *Store) ListQualificationsResults(
 		} else {
 			countColumn = mysql.DISTINCT(tQualiResult.UserID)
 		}
-	}
-
-	if opts.QualificationID > 0 {
-		condition = condition.AND(visibleGradeCondition)
-	} else {
-		condition = condition.AND(mysql.OR(
-			mysql.AND(
-				tQualiResult.CreatorID.EQ(mysql.Int32(userID)),
-				tQualiResult.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			),
-			mysql.OR(
-				visibleGradeCondition,
-				mysql.AND(
-					visibleViewCondition,
-					tQualiResult.UserID.EQ(mysql.Int32(userID)),
-				),
-			),
-		))
 	}
 
 	if len(opts.Status) > 0 {
@@ -168,7 +114,7 @@ func (s *Store) ListQualificationsResults(
 		visibleQualificationCondition := mysql.Bool(true)
 		if opts.QualificationID > 0 {
 			visibleQualificationCondition = visibleQualificationCondition.AND(
-				tQuali.ID.EQ(mysql.Int64(opts.QualificationID)),
+				table.FivenetQualifications.ID.EQ(mysql.Int64(opts.QualificationID)),
 			)
 		}
 		visibleIDs = s.access.VisibleIDsByConditionQuery(
