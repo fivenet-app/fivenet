@@ -15,7 +15,7 @@
                 "centrum": "Leitstelle, für das Zuweisen von Einsätze.",
                 "qualifications": "Erweitern Sie ihr Wissen durch Qualifizierungen von Ihrer eigenen oder anderen Fraktionen.",
                 "calendar": "Öffentliche, private und Berufstermine, alle in einem Kalender.",
-                "wiki": "Ein Lexikon für einfache Informationsteilung.",
+                "wiki": "Ein Wiki für einfache Informationsteilung.",
                 "mailer": "E-Mail System um Bürger und Kollegen einfacher zu erreichen."
             }
         },
@@ -256,7 +256,7 @@
         },
         "wiki": {
             "id": {
-                "title": "Lexikon Seite"
+                "title": "Wiki Seite"
             },
             "edit": {
                 "title": "Seite bearbeiten"
@@ -587,7 +587,7 @@
         "view": "Ansicht",
         "answer_key": "Antwortschlüssel",
         "hint": "Hinweis",
-        "wiki": "Lexikon | Lexika",
+        "wiki": "Wiki",
         "parent_page": "Übergeordnete Seite",
         "corrected": "Korrigiert",
         "mail": "E-Mail | E-Mails",
@@ -2593,7 +2593,7 @@
         },
         "wiki": {
             "WikiService": {
-                "ErrFailedQuery": "Fehler beim Laden der Lexikon Daten!",
+                "ErrFailedQuery": "Fehler beim Laden der Wiki Daten!",
                 "ErrPageDenied": "Sie haben keinen Zugriff auf diese Seite!",
                 "ErrPageHasChildren": {
                     "title": "Die Seite hat Unterseiten!",
@@ -3884,16 +3884,16 @@
             }
         },
         "wiki": {
-            "namespace": "Lexikon",
+            "namespace": "Wiki",
             "WikiService": {
-                "service": "Lexikon",
+                "service": "Wiki",
                 "ListPages": {
                     "key": "Seiten auflisten und anzeigen",
                     "description": "Sollte immer gegeben werden."
                 },
                 "DeletePage": {
                     "key": "Seiten löschen",
-                    "description": "Lexikon Seiten löschen können (Erfordert Besitzer Rechte)."
+                    "description": "Wiki Seiten löschen können (Erfordert Besitzer Rechte)."
                 },
                 "ListPageActivity": {
                     "key": "Seiten Aktivität anzeigen",
@@ -3901,7 +3901,7 @@
                 },
                 "UpdatePage": {
                     "key": "Seiten aktualisieren",
-                    "description": "Lexikon Seiten aktualisieren können (erlaubt nicht das erstellen von Seiten).",
+                    "description": "Wiki Seiten aktualisieren können (erlaubt nicht das erstellen von Seiten).",
                     "attrs": {
                         "Public": "Öffentliche Seiten, die jeder aufrufen kann"
                     },
@@ -3911,7 +3911,7 @@
                 },
                 "CreatePage": {
                     "key": "Seiten erstellen",
-                    "description": "Lexikon Seiten erstellen können (erlaubt implizit das Aktualisieren von Seiten)."
+                    "description": "Wiki Seiten erstellen können (erlaubt implizit das Aktualisieren von Seiten)."
                 },
                 "MovePage": {
                     "key": "Seiten-Reihenfolge ändern",
