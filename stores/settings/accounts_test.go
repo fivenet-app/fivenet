@@ -86,7 +86,7 @@ func TestStoreUpdateAccountReturnsUpdatedAccount(t *testing.T) {
 	enabled := true
 	lastChar := int32(9)
 
-	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_accounts AS account SET enabled = ?, last_char = ? WHERE account.id = ? LIMIT ?;`)).
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_accounts SET enabled = ?, last_char = ? WHERE fivenet_accounts.id = ? LIMIT ?;`)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT account.id AS "account.id"`)+`(?s).*`+regexp.QuoteMeta(`FROM fivenet_accounts AS account WHERE`)+`(?s).*`+regexp.QuoteMeta(`account.enabled IS TRUE`)+`(?s).*`+regexp.QuoteMeta(`account.deleted_at IS NULL`)+`(?s).*`+regexp.QuoteMeta(`account.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).

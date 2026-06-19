@@ -278,10 +278,7 @@ func TestStoreDeleteEmail(t *testing.T) {
 	store := New(db)
 	deletedAt := time.Unix(0, 0).UTC()
 
-	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_emails AS email SET`) +
-		`(?s).*` + regexp.QuoteMeta(`deleted_at = CAST(? AS DATETIME)`) +
-		`(?s).*` + regexp.QuoteMeta(`email.id = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
+	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_emails SET deleted_at = CAST(? AS DATETIME) WHERE fivenet_mailer_emails.id = ? LIMIT ?;`)
 	mock.ExpectExec(expectedQuery).
 		WithArgs(deletedAt, int64(42), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))

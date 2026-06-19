@@ -138,11 +138,7 @@ func TestStoreUpdateTemplate(t *testing.T) {
 	store := New(db)
 	template := &mailertemplates.Template{Id: 11, Title: "Updated", Content: nil}
 
-	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_templates AS template SET`) +
-		`(?s).*` + regexp.QuoteMeta(`title = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`content = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`id = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
+	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_templates SET title = ?, content = ? WHERE fivenet_mailer_templates.id = ? LIMIT ?;`)
 	mock.ExpectExec(expectedQuery).
 		WithArgs("Updated", nil, int64(11), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -160,10 +156,7 @@ func TestStoreDeleteTemplate(t *testing.T) {
 
 	store := New(db)
 
-	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_templates AS template SET`) +
-		`(?s).*` + regexp.QuoteMeta(`deleted_at = CURRENT_TIMESTAMP`) +
-		`(?s).*` + regexp.QuoteMeta(`id = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
+	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_templates SET deleted_at = CURRENT_TIMESTAMP WHERE fivenet_mailer_templates.id = ? LIMIT ?;`)
 	mock.ExpectExec(expectedQuery).
 		WithArgs(int64(11), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))

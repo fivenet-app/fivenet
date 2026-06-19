@@ -533,9 +533,9 @@ func (s *Store) ListTimeclockTimeline(
 			switch sc.GetId() {
 			case "date":
 				if sc.GetDesc() {
-					orderBys = append(orderBys, mysql.DateColumn("timeclock_entry.date").DESC())
+					orderBys = append(orderBys, tTimeClock.Date.DESC())
 				} else {
-					orderBys = append(orderBys, mysql.DateColumn("timeclock_entry.date").ASC())
+					orderBys = append(orderBys, tTimeClock.Date.ASC())
 				}
 			case rankColumn:
 				if sc.GetDesc() {

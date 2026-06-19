@@ -165,7 +165,7 @@ func TestStoreRecomputeApprovalPolicyTx(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"total", "pending"}).AddRow(int32(3), int32(1)))
 	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_documents_meta`)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_documents_approval_policies AS approval_policy SET`)).
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_documents_approval_policies SET assigned_count = ?, approved_count = ?, declined_count = ?, pending_count = ?, any_declined = ? WHERE fivenet_documents_approval_policies.document_id = ? LIMIT ?;`)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	require.NoError(t, store.RecomputeApprovalPolicyTx(t.Context(), db, 42, snapDate))
