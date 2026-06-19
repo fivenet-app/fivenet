@@ -16,7 +16,7 @@ require (
 	github.com/blevesearch/bleve/v2 v2.6.0
 	github.com/brianvoe/gofakeit/v7 v7.15.0
 	github.com/cespare/xxhash/v2 v2.3.0
-	github.com/coder/websocket v1.8.14
+	github.com/coder/websocket v1.8.15
 	github.com/creasty/defaults v1.8.0
 	github.com/creativeprojects/go-selfupdate v1.5.2
 	github.com/desertbit/timer v1.0.1
@@ -82,7 +82,7 @@ require (
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.28.0
 	golang.org/x/crypto v0.53.0
-	golang.org/x/image v0.42.0
+	golang.org/x/image v0.43.0
 	golang.org/x/net v0.56.0
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/sync v0.21.0
