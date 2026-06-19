@@ -11,6 +11,7 @@ package documentsactivity
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	access1 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -1272,10 +1273,10 @@ func (b0 DocAccessUpdated_builder) Build() *DocAccessUpdated {
 }
 
 type DocAccessJobsDiff struct {
-	state               protoimpl.MessageState       `protogen:"opaque.v1"`
-	xxx_hidden_ToCreate *[]*access.DocumentJobAccess `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3"`
-	xxx_hidden_ToUpdate *[]*access.DocumentJobAccess `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3"`
-	xxx_hidden_ToDelete *[]*access.DocumentJobAccess `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3"`
+	state               protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_ToCreate *[]*access1.JobAccess  `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3"`
+	xxx_hidden_ToUpdate *[]*access1.JobAccess  `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3"`
+	xxx_hidden_ToDelete *[]*access1.JobAccess  `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -1305,7 +1306,7 @@ func (x *DocAccessJobsDiff) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *DocAccessJobsDiff) GetToCreate() []*access.DocumentJobAccess {
+func (x *DocAccessJobsDiff) GetToCreate() []*access1.JobAccess {
 	if x != nil {
 		if x.xxx_hidden_ToCreate != nil {
 			return *x.xxx_hidden_ToCreate
@@ -1314,7 +1315,7 @@ func (x *DocAccessJobsDiff) GetToCreate() []*access.DocumentJobAccess {
 	return nil
 }
 
-func (x *DocAccessJobsDiff) GetToUpdate() []*access.DocumentJobAccess {
+func (x *DocAccessJobsDiff) GetToUpdate() []*access1.JobAccess {
 	if x != nil {
 		if x.xxx_hidden_ToUpdate != nil {
 			return *x.xxx_hidden_ToUpdate
@@ -1323,7 +1324,7 @@ func (x *DocAccessJobsDiff) GetToUpdate() []*access.DocumentJobAccess {
 	return nil
 }
 
-func (x *DocAccessJobsDiff) GetToDelete() []*access.DocumentJobAccess {
+func (x *DocAccessJobsDiff) GetToDelete() []*access1.JobAccess {
 	if x != nil {
 		if x.xxx_hidden_ToDelete != nil {
 			return *x.xxx_hidden_ToDelete
@@ -1332,24 +1333,24 @@ func (x *DocAccessJobsDiff) GetToDelete() []*access.DocumentJobAccess {
 	return nil
 }
 
-func (x *DocAccessJobsDiff) SetToCreate(v []*access.DocumentJobAccess) {
+func (x *DocAccessJobsDiff) SetToCreate(v []*access1.JobAccess) {
 	x.xxx_hidden_ToCreate = &v
 }
 
-func (x *DocAccessJobsDiff) SetToUpdate(v []*access.DocumentJobAccess) {
+func (x *DocAccessJobsDiff) SetToUpdate(v []*access1.JobAccess) {
 	x.xxx_hidden_ToUpdate = &v
 }
 
-func (x *DocAccessJobsDiff) SetToDelete(v []*access.DocumentJobAccess) {
+func (x *DocAccessJobsDiff) SetToDelete(v []*access1.JobAccess) {
 	x.xxx_hidden_ToDelete = &v
 }
 
 type DocAccessJobsDiff_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	ToCreate []*access.DocumentJobAccess
-	ToUpdate []*access.DocumentJobAccess
-	ToDelete []*access.DocumentJobAccess
+	ToCreate []*access1.JobAccess
+	ToUpdate []*access1.JobAccess
+	ToDelete []*access1.JobAccess
 }
 
 func (b0 DocAccessJobsDiff_builder) Build() *DocAccessJobsDiff {
@@ -1363,10 +1364,10 @@ func (b0 DocAccessJobsDiff_builder) Build() *DocAccessJobsDiff {
 }
 
 type DocAccessUsersDiff struct {
-	state               protoimpl.MessageState        `protogen:"opaque.v1"`
-	xxx_hidden_ToCreate *[]*access.DocumentUserAccess `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3"`
-	xxx_hidden_ToUpdate *[]*access.DocumentUserAccess `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3"`
-	xxx_hidden_ToDelete *[]*access.DocumentUserAccess `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3"`
+	state               protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_ToCreate *[]*access1.UserAccess `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3"`
+	xxx_hidden_ToUpdate *[]*access1.UserAccess `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3"`
+	xxx_hidden_ToDelete *[]*access1.UserAccess `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -1396,7 +1397,7 @@ func (x *DocAccessUsersDiff) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *DocAccessUsersDiff) GetToCreate() []*access.DocumentUserAccess {
+func (x *DocAccessUsersDiff) GetToCreate() []*access1.UserAccess {
 	if x != nil {
 		if x.xxx_hidden_ToCreate != nil {
 			return *x.xxx_hidden_ToCreate
@@ -1405,7 +1406,7 @@ func (x *DocAccessUsersDiff) GetToCreate() []*access.DocumentUserAccess {
 	return nil
 }
 
-func (x *DocAccessUsersDiff) GetToUpdate() []*access.DocumentUserAccess {
+func (x *DocAccessUsersDiff) GetToUpdate() []*access1.UserAccess {
 	if x != nil {
 		if x.xxx_hidden_ToUpdate != nil {
 			return *x.xxx_hidden_ToUpdate
@@ -1414,7 +1415,7 @@ func (x *DocAccessUsersDiff) GetToUpdate() []*access.DocumentUserAccess {
 	return nil
 }
 
-func (x *DocAccessUsersDiff) GetToDelete() []*access.DocumentUserAccess {
+func (x *DocAccessUsersDiff) GetToDelete() []*access1.UserAccess {
 	if x != nil {
 		if x.xxx_hidden_ToDelete != nil {
 			return *x.xxx_hidden_ToDelete
@@ -1423,24 +1424,24 @@ func (x *DocAccessUsersDiff) GetToDelete() []*access.DocumentUserAccess {
 	return nil
 }
 
-func (x *DocAccessUsersDiff) SetToCreate(v []*access.DocumentUserAccess) {
+func (x *DocAccessUsersDiff) SetToCreate(v []*access1.UserAccess) {
 	x.xxx_hidden_ToCreate = &v
 }
 
-func (x *DocAccessUsersDiff) SetToUpdate(v []*access.DocumentUserAccess) {
+func (x *DocAccessUsersDiff) SetToUpdate(v []*access1.UserAccess) {
 	x.xxx_hidden_ToUpdate = &v
 }
 
-func (x *DocAccessUsersDiff) SetToDelete(v []*access.DocumentUserAccess) {
+func (x *DocAccessUsersDiff) SetToDelete(v []*access1.UserAccess) {
 	x.xxx_hidden_ToDelete = &v
 }
 
 type DocAccessUsersDiff_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	ToCreate []*access.DocumentUserAccess
-	ToUpdate []*access.DocumentUserAccess
-	ToDelete []*access.DocumentUserAccess
+	ToCreate []*access1.UserAccess
+	ToUpdate []*access1.UserAccess
+	ToDelete []*access1.UserAccess
 }
 
 func (b0 DocAccessUsersDiff_builder) Build() *DocAccessUsersDiff {
@@ -1541,7 +1542,7 @@ var File_resources_documents_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_documents_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"+resources/documents/activity/activity.proto\x12\x1cresources.documents.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a,resources/common/content/diff_activity.proto\x1a'resources/documents/access/access.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xc2\x04\n" +
+	"+resources/documents/activity/activity.proto\x12\x1cresources.documents.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a,resources/common/content/diff_activity.proto\x1a'resources/documents/access/access.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xc2\x04\n" +
 	"\vDocActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -1601,15 +1602,15 @@ const file_resources_documents_activity_activity_proto_rawDesc = "" +
 	"\x05level\x18\x01 \x01(\x0e2'.resources.documents.access.AccessLevelR\x05level\"\x9f\x01\n" +
 	"\x10DocAccessUpdated\x12C\n" +
 	"\x04jobs\x18\x01 \x01(\v2/.resources.documents.activity.DocAccessJobsDiffR\x04jobs\x12F\n" +
-	"\x05users\x18\x02 \x01(\v20.resources.documents.activity.DocAccessUsersDiffR\x05users\"\xf7\x01\n" +
-	"\x11DocAccessJobsDiff\x12J\n" +
-	"\tto_create\x18\x01 \x03(\v2-.resources.documents.access.DocumentJobAccessR\btoCreate\x12J\n" +
-	"\tto_update\x18\x02 \x03(\v2-.resources.documents.access.DocumentJobAccessR\btoUpdate\x12J\n" +
-	"\tto_delete\x18\x03 \x03(\v2-.resources.documents.access.DocumentJobAccessR\btoDelete\"\xfb\x01\n" +
-	"\x12DocAccessUsersDiff\x12K\n" +
-	"\tto_create\x18\x01 \x03(\v2..resources.documents.access.DocumentUserAccessR\btoCreate\x12K\n" +
-	"\tto_update\x18\x02 \x03(\v2..resources.documents.access.DocumentUserAccessR\btoUpdate\x12K\n" +
-	"\tto_delete\x18\x03 \x03(\v2..resources.documents.access.DocumentUserAccessR\btoDelete\"\xa3\x01\n" +
+	"\x05users\x18\x02 \x01(\v20.resources.documents.activity.DocAccessUsersDiffR\x05users\"\xc1\x01\n" +
+	"\x11DocAccessJobsDiff\x128\n" +
+	"\tto_create\x18\x01 \x03(\v2\x1b.resources.access.JobAccessR\btoCreate\x128\n" +
+	"\tto_update\x18\x02 \x03(\v2\x1b.resources.access.JobAccessR\btoUpdate\x128\n" +
+	"\tto_delete\x18\x03 \x03(\v2\x1b.resources.access.JobAccessR\btoDelete\"\xc5\x01\n" +
+	"\x12DocAccessUsersDiff\x129\n" +
+	"\tto_create\x18\x01 \x03(\v2\x1c.resources.access.UserAccessR\btoCreate\x129\n" +
+	"\tto_update\x18\x02 \x03(\v2\x1c.resources.access.UserAccessR\btoUpdate\x129\n" +
+	"\tto_delete\x18\x03 \x03(\v2\x1c.resources.access.UserAccessR\btoDelete\"\xa3\x01\n" +
 	"\x13DocSigningRequested\x12?\n" +
 	"\bdeadline\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\bdeadline\x88\x01\x01\x12>\n" +
 	"\tapprovers\x18\x02 \x03(\v2 .resources.users.short.UserShortR\tapproversB\v\n" +
@@ -1647,23 +1648,23 @@ const file_resources_documents_activity_activity_proto_rawDesc = "" +
 var file_resources_documents_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_documents_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_resources_documents_activity_activity_proto_goTypes = []any{
-	(DocActivityType)(0),              // 0: resources.documents.activity.DocActivityType
-	(*DocActivity)(nil),               // 1: resources.documents.activity.DocActivity
-	(*DocActivityData)(nil),           // 2: resources.documents.activity.DocActivityData
-	(*DocUpdated)(nil),                // 3: resources.documents.activity.DocUpdated
-	(*DocFilesChange)(nil),            // 4: resources.documents.activity.DocFilesChange
-	(*DocOwnerChanged)(nil),           // 5: resources.documents.activity.DocOwnerChanged
-	(*DocAccessRequested)(nil),        // 6: resources.documents.activity.DocAccessRequested
-	(*DocAccessUpdated)(nil),          // 7: resources.documents.activity.DocAccessUpdated
-	(*DocAccessJobsDiff)(nil),         // 8: resources.documents.activity.DocAccessJobsDiff
-	(*DocAccessUsersDiff)(nil),        // 9: resources.documents.activity.DocAccessUsersDiff
-	(*DocSigningRequested)(nil),       // 10: resources.documents.activity.DocSigningRequested
-	(*timestamp.Timestamp)(nil),       // 11: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),           // 12: resources.users.short.UserShort
-	(*content.ContentDiff)(nil),       // 13: resources.common.content.ContentDiff
-	(access.AccessLevel)(0),           // 14: resources.documents.access.AccessLevel
-	(*access.DocumentJobAccess)(nil),  // 15: resources.documents.access.DocumentJobAccess
-	(*access.DocumentUserAccess)(nil), // 16: resources.documents.access.DocumentUserAccess
+	(DocActivityType)(0),        // 0: resources.documents.activity.DocActivityType
+	(*DocActivity)(nil),         // 1: resources.documents.activity.DocActivity
+	(*DocActivityData)(nil),     // 2: resources.documents.activity.DocActivityData
+	(*DocUpdated)(nil),          // 3: resources.documents.activity.DocUpdated
+	(*DocFilesChange)(nil),      // 4: resources.documents.activity.DocFilesChange
+	(*DocOwnerChanged)(nil),     // 5: resources.documents.activity.DocOwnerChanged
+	(*DocAccessRequested)(nil),  // 6: resources.documents.activity.DocAccessRequested
+	(*DocAccessUpdated)(nil),    // 7: resources.documents.activity.DocAccessUpdated
+	(*DocAccessJobsDiff)(nil),   // 8: resources.documents.activity.DocAccessJobsDiff
+	(*DocAccessUsersDiff)(nil),  // 9: resources.documents.activity.DocAccessUsersDiff
+	(*DocSigningRequested)(nil), // 10: resources.documents.activity.DocSigningRequested
+	(*timestamp.Timestamp)(nil), // 11: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),     // 12: resources.users.short.UserShort
+	(*content.ContentDiff)(nil), // 13: resources.common.content.ContentDiff
+	(access.AccessLevel)(0),     // 14: resources.documents.access.AccessLevel
+	(*access1.JobAccess)(nil),   // 15: resources.access.JobAccess
+	(*access1.UserAccess)(nil),  // 16: resources.access.UserAccess
 }
 var file_resources_documents_activity_activity_proto_depIdxs = []int32{
 	11, // 0: resources.documents.activity.DocActivity.created_at:type_name -> resources.timestamp.Timestamp
@@ -1683,12 +1684,12 @@ var file_resources_documents_activity_activity_proto_depIdxs = []int32{
 	14, // 14: resources.documents.activity.DocAccessRequested.level:type_name -> resources.documents.access.AccessLevel
 	8,  // 15: resources.documents.activity.DocAccessUpdated.jobs:type_name -> resources.documents.activity.DocAccessJobsDiff
 	9,  // 16: resources.documents.activity.DocAccessUpdated.users:type_name -> resources.documents.activity.DocAccessUsersDiff
-	15, // 17: resources.documents.activity.DocAccessJobsDiff.to_create:type_name -> resources.documents.access.DocumentJobAccess
-	15, // 18: resources.documents.activity.DocAccessJobsDiff.to_update:type_name -> resources.documents.access.DocumentJobAccess
-	15, // 19: resources.documents.activity.DocAccessJobsDiff.to_delete:type_name -> resources.documents.access.DocumentJobAccess
-	16, // 20: resources.documents.activity.DocAccessUsersDiff.to_create:type_name -> resources.documents.access.DocumentUserAccess
-	16, // 21: resources.documents.activity.DocAccessUsersDiff.to_update:type_name -> resources.documents.access.DocumentUserAccess
-	16, // 22: resources.documents.activity.DocAccessUsersDiff.to_delete:type_name -> resources.documents.access.DocumentUserAccess
+	15, // 17: resources.documents.activity.DocAccessJobsDiff.to_create:type_name -> resources.access.JobAccess
+	15, // 18: resources.documents.activity.DocAccessJobsDiff.to_update:type_name -> resources.access.JobAccess
+	15, // 19: resources.documents.activity.DocAccessJobsDiff.to_delete:type_name -> resources.access.JobAccess
+	16, // 20: resources.documents.activity.DocAccessUsersDiff.to_create:type_name -> resources.access.UserAccess
+	16, // 21: resources.documents.activity.DocAccessUsersDiff.to_update:type_name -> resources.access.UserAccess
+	16, // 22: resources.documents.activity.DocAccessUsersDiff.to_delete:type_name -> resources.access.UserAccess
 	11, // 23: resources.documents.activity.DocSigningRequested.deadline:type_name -> resources.timestamp.Timestamp
 	12, // 24: resources.documents.activity.DocSigningRequested.approvers:type_name -> resources.users.short.UserShort
 	25, // [25:25] is the sub-list for method output_type

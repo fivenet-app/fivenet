@@ -25,7 +25,8 @@ const props = withDefaults(
         accessRoles: AccessLevelEnum[];
         defaultAccess?: number;
         disabled?: boolean;
-        showRequired?: boolean;
+        requiredMode?: 'badge' | 'checkbox' | 'none';
+        lockRequiredCheckbox?: boolean;
         defaultAccessType?: AccessEntryType;
         totalLimit?: number;
         hideGrade?: boolean;
@@ -40,11 +41,12 @@ const props = withDefaults(
         accessTypes: undefined,
         defaultAccess: 2, // All `AccessLevel` should have 0 = UNSPECIFIED, 1 = BLOCKED, 2 = VIEW levels
         disabled: false,
-        showRequired: false,
+        requiredMode: 'badge',
         defaultAccessType: 'job',
         totalLimit: undefined,
         hideGrade: false,
         hideJobs: () => [],
+        lockRequiredCheckbox: false,
         name: undefined,
         fullName: false,
     },
@@ -89,6 +91,7 @@ function isEqualArray(a: MixedAccessEntry[], b: MixedAccessEntry[]): boolean {
             entryA.type !== entryB.type ||
             entryA.access !== entryB.access ||
             entryA.required !== entryB.required ||
+            entryA.requiredAccess !== entryB.requiredAccess ||
             entryA.job !== entryB.job ||
             entryA.minimumGrade !== entryB.minimumGrade ||
             entryA.userId !== entryB.userId ||
@@ -169,6 +172,7 @@ function syncPropsFromAccess() {
             minimumGrade: e.minimumGrade ?? game.startJobGrade,
             access: e.access,
             required: e.required,
+            requiredAccess: e.requiredAccess,
         })) as JobsT[];
 
     const newUsers = access.value
@@ -179,6 +183,7 @@ function syncPropsFromAccess() {
             userId: e.userId,
             access: e.access,
             required: e.required,
+            requiredAccess: e.requiredAccess,
         })) as UsersT[];
 
     const newQualis = access.value
@@ -189,6 +194,7 @@ function syncPropsFromAccess() {
             qualificationId: e.qualificationId,
             access: e.access,
             required: e.required,
+            requiredAccess: e.requiredAccess,
             qualification: e.qualification,
         })) as QualiT[];
 
@@ -230,7 +236,8 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             :access-types="aTypes"
             :access-roles="accessRoles"
             :disabled="disabled"
-            :show-required="showRequired"
+            :required-mode="requiredMode"
+            :lock-required-checkbox="lockRequiredCheckbox"
             :jobs="jobsList"
             :hide-grade="hideGrade"
             :hide-jobs="hideJobs"
@@ -239,8 +246,8 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             @delete="access?.splice(idx, 1)"
         />
 
-        <div>
-            <UTooltip v-if="!disabled" :text="$t('components.access.add_entry')">
+        <div v-if="!disabled" :class="access.length ? 'mt-2' : ''">
+            <UTooltip :text="$t('components.access.add_entry')">
                 <UButton
                     class="w-full justify-center md:w-auto"
                     :disabled="access.length >= maxEntries"

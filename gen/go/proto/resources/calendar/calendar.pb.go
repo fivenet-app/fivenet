@@ -11,7 +11,7 @@ package calendar
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
-	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
@@ -87,7 +87,7 @@ type Calendar struct {
 	Creator         *short.UserShort         `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob      string                   `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	Subscription    *CalendarSub             `protobuf:"bytes,14,opt,name=subscription,proto3,oneof" json:"subscription,omitempty"`
-	Access          *access.CalendarAccess   `protobuf:"bytes,15,opt,name=access,proto3" json:"access,omitempty"`
+	Access          *access.Access           `protobuf:"bytes,15,opt,name=access,proto3" json:"access,omitempty"`
 	DiscordSettings *CalendarDiscordSettings `protobuf:"bytes,17,opt,name=discord_settings,json=discordSettings,proto3,oneof" json:"discord_settings,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -223,7 +223,7 @@ func (x *Calendar) GetSubscription() *CalendarSub {
 	return nil
 }
 
-func (x *Calendar) GetAccess() *access.CalendarAccess {
+func (x *Calendar) GetAccess() *access.Access {
 	if x != nil {
 		return x.Access
 	}
@@ -297,7 +297,7 @@ func (x *Calendar) SetSubscription(v *CalendarSub) {
 	x.Subscription = v
 }
 
-func (x *Calendar) SetAccess(v *access.CalendarAccess) {
+func (x *Calendar) SetAccess(v *access.Access) {
 	x.Access = v
 }
 
@@ -444,7 +444,7 @@ type Calendar_builder struct {
 	Creator         *short.UserShort
 	CreatorJob      string
 	Subscription    *CalendarSub
-	Access          *access.CalendarAccess
+	Access          *access.Access
 	DiscordSettings *CalendarDiscordSettings
 }
 
@@ -1173,7 +1173,7 @@ var File_resources_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/calendar/access/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xc2\b\n" +
+	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xb1\b\n" +
 	"\bCalendar\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1196,8 +1196,8 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\aR\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\r \x01(\tR\n" +
 	"creatorJob\x12H\n" +
-	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\bR\fsubscription\x88\x01\x01\x12A\n" +
-	"\x06access\x18\x0f \x01(\v2).resources.calendar.access.CalendarAccessR\x06access\x12[\n" +
+	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\bR\fsubscription\x88\x01\x01\x120\n" +
+	"\x06access\x18\x0f \x01(\v2\x18.resources.access.AccessR\x06access\x12[\n" +
 	"\x10discord_settings\x18\x11 \x01(\v2+.resources.calendar.CalendarDiscordSettingsH\tR\x0fdiscordSettings\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
@@ -1276,7 +1276,7 @@ var file_resources_calendar_calendar_proto_goTypes = []any{
 	(*timestamp.Timestamp)(nil),          // 7: resources.timestamp.Timestamp
 	(*content.Content)(nil),              // 8: resources.common.content.Content
 	(*short.UserShort)(nil),              // 9: resources.users.short.UserShort
-	(*access.CalendarAccess)(nil),        // 10: resources.calendar.access.CalendarAccess
+	(*access.Access)(nil),                // 10: resources.access.Access
 }
 var file_resources_calendar_calendar_proto_depIdxs = []int32{
 	7,  // 0: resources.calendar.Calendar.created_at:type_name -> resources.timestamp.Timestamp
@@ -1286,7 +1286,7 @@ var file_resources_calendar_calendar_proto_depIdxs = []int32{
 	8,  // 4: resources.calendar.Calendar.description:type_name -> resources.common.content.Content
 	9,  // 5: resources.calendar.Calendar.creator:type_name -> resources.users.short.UserShort
 	3,  // 6: resources.calendar.Calendar.subscription:type_name -> resources.calendar.CalendarSub
-	10, // 7: resources.calendar.Calendar.access:type_name -> resources.calendar.access.CalendarAccess
+	10, // 7: resources.calendar.Calendar.access:type_name -> resources.access.Access
 	4,  // 8: resources.calendar.Calendar.discord_settings:type_name -> resources.calendar.CalendarDiscordSettings
 	7,  // 9: resources.calendar.CalendarShort.created_at:type_name -> resources.timestamp.Timestamp
 	8,  // 10: resources.calendar.CalendarShort.description:type_name -> resources.common.content.Content

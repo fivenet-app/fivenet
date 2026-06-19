@@ -54,7 +54,7 @@ type Retriever struct {
 	ctx      context.Context //nolint:containedctx // Retriever uses lifecycle context for async notification fanout.
 	db       *sql.DB
 	js       *events.JSWrapper
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 	notifi   notifi.INotifi
 
 	superuserGroups []string
@@ -69,7 +69,7 @@ type Params struct {
 	Logger   *zap.Logger
 	DB       *sql.DB
 	JS       *events.JSWrapper
-	Enricher *mstlystcdata.Enricher
+	Enricher mstlystcdata.IEnricher
 	Config   *config.Config
 	Notifi   notifi.INotifi
 }

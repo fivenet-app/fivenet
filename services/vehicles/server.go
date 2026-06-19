@@ -7,6 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )
@@ -14,10 +15,9 @@ import (
 type Server struct {
 	pbvehicles.VehiclesServiceServer
 
-	db       *sql.DB
 	ps       perms.Permissions
-	enricher *mstlystcdata.Enricher
-	customDB config.CustomDB
+	enricher mstlystcdata.IEnricher
+	store    vehiclesstore.IStore
 }
 
 type Params struct {
@@ -25,16 +25,16 @@ type Params struct {
 
 	DB       *sql.DB
 	Ps       perms.Permissions
-	Enricher *mstlystcdata.Enricher
+	Enricher mstlystcdata.IEnricher
 	Config   *config.Config
+	Store    vehiclesstore.IStore
 }
 
 func NewServer(p Params) *Server {
 	return &Server{
-		db:       p.DB,
 		ps:       p.Ps,
 		enricher: p.Enricher,
-		customDB: p.Config.Database.Custom,
+		store:    p.Store,
 	}
 }
 

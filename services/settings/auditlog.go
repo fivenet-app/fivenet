@@ -2,171 +2,30 @@ package settings
 
 import (
 	"context"
-	"errors"
 
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
+	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 )
-
-const AuditLogPageSize = 30
-
-var tAuditLog = table.FivenetAuditLog.AS("audit_entry")
 
 func (s *Server) ViewAuditLog(
 	ctx context.Context,
 	req *pbsettings.ViewAuditLogRequest,
 ) (*pbsettings.ViewAuditLogResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	condition := mysql.Bool(true)
-	if !userInfo.GetSuperuser() {
-		condition = mysql.AND(
-			tAuditLog.UserJob.EQ(mysql.String(userInfo.GetJob())).
-				OR(tAuditLog.TargetUserJob.EQ(mysql.String(userInfo.GetJob()))),
-		)
-	}
-
-	if len(req.GetUserIds()) > 0 {
-		ids := make([]mysql.Expression, len(req.GetUserIds()))
-		for i := range req.GetUserIds() {
-			ids[i] = mysql.Int32(req.GetUserIds()[i])
-		}
-		condition = condition.AND(tAuditLog.UserID.IN(ids...))
-	}
-	if req.GetFrom() != nil {
-		condition = condition.AND(tAuditLog.CreatedAt.GT_EQ(
-			mysql.DateTimeT(req.GetFrom().AsTime()),
-		))
-	}
-	if req.GetTo() != nil {
-		condition = condition.AND(tAuditLog.CreatedAt.LT_EQ(
-			mysql.DateTimeT(req.GetTo().AsTime()),
-		))
-	}
-	if len(req.GetServices()) > 0 {
-		svcs := make([]mysql.Expression, len(req.GetServices()))
-		for i, svc := range req.GetServices() {
-			svcs[i] = mysql.String(svc)
-		}
-		condition = condition.AND(tAuditLog.Service.IN(svcs...))
-	}
-	if len(req.GetMethods()) > 0 {
-		methods := make([]mysql.Expression, len(req.GetMethods()))
-		for i := range req.GetMethods() {
-			methods[i] = mysql.String(req.GetMethods()[i])
-		}
-		condition = condition.AND(tAuditLog.Method.IN(methods...))
-	}
-	if len(req.GetActions()) > 0 {
-		actions := make([]mysql.Expression, len(req.GetActions()))
-		for i := range req.GetActions() {
-			actions[i] = mysql.Int32(int32(req.GetActions()[i]))
-		}
-		condition = condition.AND(tAuditLog.Action.IN(actions...))
-	}
-	if len(req.GetResults()) > 0 {
-		results := make([]mysql.Expression, len(req.GetResults()))
-		for i := range req.GetResults() {
-			results[i] = mysql.Int32(int32(req.GetResults()[i]))
-		}
-		condition = condition.AND(tAuditLog.Result.IN(results...))
-	}
-	if req.Search != nil && req.GetSearch() != "" {
-		condition = condition.AND(
-			dbutils.MATCH(tAuditLog.Data, mysql.String(req.GetSearch())),
-		)
-	}
-
-	countStmt := tAuditLog.
-		SELECT(
-			mysql.COUNT(tAuditLog.ID).AS("data_count.total"),
-		).
-		FROM(tAuditLog).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-		}
-	}
-
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, AuditLogPageSize)
-	resp := &pbsettings.ViewAuditLogResponse{
-		Pagination: pag,
-	}
-	if count.Total <= 0 {
-		return resp, nil
-	}
-
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "service":
-				column = tAuditLog.Service
-			case "action":
-				column = tAuditLog.Action
-			case "createdAt":
-				fallthrough
-			default:
-				column = tAuditLog.CreatedAt
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tAuditLog.CreatedAt.DESC())
-	}
-
-	tUser := table.FivenetUser.AS("user_short")
-
-	stmt := tAuditLog.
-		SELECT(
-			tAuditLog.ID,
-			tAuditLog.CreatedAt,
-			tAuditLog.UserID,
-			tAuditLog.UserJob,
-			tAuditLog.TargetUserID,
-			tAuditLog.Service,
-			tAuditLog.Method,
-			tAuditLog.Action,
-			tAuditLog.Result,
-			tAuditLog.Meta,
-			tAuditLog.Data,
-			tUser.ID,
-			tUser.Identifier,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-		).
-		FROM(
-			tAuditLog.
-				LEFT_JOIN(tUser,
-					tUser.ID.EQ(tAuditLog.UserID),
-				),
-		).
-		WHERE(condition).
-		ORDER_BY(orderBys...).
-		OFFSET(req.GetPagination().GetOffset()).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Logs); err != nil {
+	resp, err := s.store.ViewAuditLog(ctx, settingsstore.ViewAuditLogOptions{
+		Pagination: req.GetPagination(),
+		Sort:       req.GetSort(),
+		UserIDs:    req.GetUserIds(),
+		From:       req.GetFrom(),
+		To:         req.GetTo(),
+		Services:   req.GetServices(),
+		Methods:    req.GetMethods(),
+		Actions:    req.GetActions(),
+		Results:    req.GetResults(),
+		Search:     req.GetSearch(),
+	})
+	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 

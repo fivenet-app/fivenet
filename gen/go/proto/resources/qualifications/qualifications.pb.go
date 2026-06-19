@@ -11,9 +11,9 @@ package qualifications
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
-	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	exam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
@@ -152,7 +152,7 @@ type Qualification struct {
 	CreatorId          *int32                          `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator            *short.UserShort                `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob         string                          `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	Access             *access.QualificationAccess     `protobuf:"bytes,17,opt,name=access,proto3" json:"access,omitempty"`
+	Access             *access.Access                  `protobuf:"bytes,17,opt,name=access,proto3" json:"access,omitempty"`
 	Requirements       []*QualificationRequirement     `protobuf:"bytes,18,rep,name=requirements,proto3" json:"requirements,omitempty"`
 	DiscordSyncEnabled bool                            `protobuf:"varint,19,opt,name=discord_sync_enabled,json=discordSyncEnabled,proto3" json:"discord_sync_enabled,omitempty"`
 	DiscordSettings    *QualificationDiscordSettings   `protobuf:"bytes,20,opt,name=discord_settings,json=discordSettings,proto3,oneof" json:"discord_settings,omitempty"`
@@ -305,7 +305,7 @@ func (x *Qualification) GetCreatorJob() string {
 	return ""
 }
 
-func (x *Qualification) GetAccess() *access.QualificationAccess {
+func (x *Qualification) GetAccess() *access.Access {
 	if x != nil {
 		return x.Access
 	}
@@ -453,7 +453,7 @@ func (x *Qualification) SetCreatorJob(v string) {
 	x.CreatorJob = v
 }
 
-func (x *Qualification) SetAccess(v *access.QualificationAccess) {
+func (x *Qualification) SetAccess(v *access.Access) {
 	x.Access = v
 }
 
@@ -674,7 +674,7 @@ type Qualification_builder struct {
 	CreatorId          *int32
 	Creator            *short.UserShort
 	CreatorJob         string
-	Access             *access.QualificationAccess
+	Access             *access.Access
 	Requirements       []*QualificationRequirement
 	DiscordSyncEnabled bool
 	DiscordSettings    *QualificationDiscordSettings
@@ -1989,7 +1989,7 @@ var File_resources_qualifications_qualifications_proto protoreflect.FileDescript
 
 const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
-	"-resources/qualifications/qualifications.proto\x12\x18resources.qualifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a,resources/qualifications/access/access.proto\x1a(resources/qualifications/exam/exam.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x8b\x0e\n" +
+	"-resources/qualifications/qualifications.proto\x12\x18resources.qualifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a(resources/qualifications/exam/exam.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xef\r\n" +
 	"\rQualification\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -2012,8 +2012,8 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"creator_id\x18\x0e \x01(\x05H\x04R\tcreatorId\x88\x01\x01\x12U\n" +
 	"\acreator\x18\x0f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\x10 \x01(\tR\n" +
-	"creatorJob\x12L\n" +
-	"\x06access\x18\x11 \x01(\v24.resources.qualifications.access.QualificationAccessR\x06access\x12V\n" +
+	"creatorJob\x120\n" +
+	"\x06access\x18\x11 \x01(\v2\x18.resources.access.AccessR\x06access\x12V\n" +
 	"\frequirements\x18\x12 \x03(\v22.resources.qualifications.QualificationRequirementR\frequirements\x120\n" +
 	"\x14discord_sync_enabled\x18\x13 \x01(\bR\x12discordSyncEnabled\x12f\n" +
 	"\x10discord_settings\x18\x14 \x01(\v26.resources.qualifications.QualificationDiscordSettingsH\x06R\x0fdiscordSettings\x88\x01\x01\x12Q\n" +
@@ -2171,7 +2171,7 @@ var file_resources_qualifications_qualifications_proto_goTypes = []any{
 	(*timestamp.Timestamp)(nil),            // 8: resources.timestamp.Timestamp
 	(*content.Content)(nil),                // 9: resources.common.content.Content
 	(*short.UserShort)(nil),                // 10: resources.users.short.UserShort
-	(*access.QualificationAccess)(nil),     // 11: resources.qualifications.access.QualificationAccess
+	(*access.Access)(nil),                  // 11: resources.access.Access
 	(exam.QualificationExamMode)(0),        // 12: resources.qualifications.exam.QualificationExamMode
 	(*exam.QualificationExamSettings)(nil), // 13: resources.qualifications.exam.QualificationExamSettings
 	(*exam.ExamQuestions)(nil),             // 14: resources.qualifications.exam.ExamQuestions
@@ -2183,7 +2183,7 @@ var file_resources_qualifications_qualifications_proto_depIdxs = []int32{
 	8,  // 2: resources.qualifications.Qualification.deleted_at:type_name -> resources.timestamp.Timestamp
 	9,  // 3: resources.qualifications.Qualification.content:type_name -> resources.common.content.Content
 	10, // 4: resources.qualifications.Qualification.creator:type_name -> resources.users.short.UserShort
-	11, // 5: resources.qualifications.Qualification.access:type_name -> resources.qualifications.access.QualificationAccess
+	11, // 5: resources.qualifications.Qualification.access:type_name -> resources.access.Access
 	4,  // 6: resources.qualifications.Qualification.requirements:type_name -> resources.qualifications.QualificationRequirement
 	5,  // 7: resources.qualifications.Qualification.discord_settings:type_name -> resources.qualifications.QualificationDiscordSettings
 	12, // 8: resources.qualifications.Qualification.exam_mode:type_name -> resources.qualifications.exam.QualificationExamMode

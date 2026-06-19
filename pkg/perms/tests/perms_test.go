@@ -4,17 +4,23 @@ import (
 	"os"
 	"testing"
 
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/testdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/gosimple/slug"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxtest"
 )
+
+func guard(s string) string {
+	return slug.Make(s)
+}
 
 func TestMain(m *testing.M) {
 	code := m.Run()
@@ -43,6 +49,31 @@ func TestBasicPerms(t *testing.T) {
 	app.RequireStart()
 	defer app.RequireStop()
 	assert.NotNil(t, ps)
+
+	flattenRoleAttributes := func(roleAttrs []*permissionsattributes.RoleAttribute) []string {
+		attributes := make([]string, 0, len(roleAttrs))
+		for _, rAttr := range roleAttrs {
+			attrKey := guard(
+				rAttr.GetNamespace() + "." + rAttr.GetService() + "/" + rAttr.GetName() + "." + rAttr.GetKey(),
+			)
+			switch permissionsattributes.AttributeTypes(rAttr.GetType()) {
+			case permissionsattributes.StringListAttributeType:
+				for _, v := range rAttr.GetValue().GetStringList().GetStrings() {
+					attributes = append(attributes, guard(attrKey+"."+v))
+				}
+			case permissionsattributes.JobListAttributeType:
+				for _, v := range rAttr.GetValue().GetJobList().GetStrings() {
+					attributes = append(attributes, guard(attrKey+"."+v))
+				}
+			case permissionsattributes.JobGradeListAttributeType:
+				for v := range rAttr.GetValue().GetJobGradeList().GetJobs() {
+					attributes = append(attributes, guard(attrKey+"."+v))
+				}
+			}
+		}
+
+		return attributes
+	}
 
 	userInfo := &userinfo.UserInfo{
 		UserId:    testdata.Users[0].GetUserId(),
@@ -79,11 +110,12 @@ func TestBasicPerms(t *testing.T) {
 	can = ps.CanRaw(userInfo, "settings", "LawsService", "DeleteLawBook")
 	assert.False(t, can, "User should not have permission `settings.SettingsService/DeleteLawBook`")
 
-	attributes, err := ps.FlattenRoleAttributes(userInfo.GetJob(), userInfo.GetJobGrade())
-	require.NoError(t, err, "FlattenRoleAttributes should not return an error")
-	assert.NotEmpty(t, attributes, "FlattenRoleAttributes should return non-empty attributes")
+	roleAttrs, err := ps.GetEffectiveRoleAttributes(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
+	require.NoError(t, err, "GetEffectiveRoleAttributes should not return an error")
+	attributes := flattenRoleAttributes(roleAttrs)
+	assert.NotEmpty(t, attributes, "GetEffectiveRoleAttributes should return non-empty attributes")
 	// Check if the expected flattened role attributes are returned
-	assert.Len(t, attributes, 29, "FlattenRoleAttributes should return 29 attributes")
+	assert.Len(t, attributes, 29, "GetEffectiveRoleAttributes should return 29 attributes")
 	for _, attr := range []string{
 		"citizens-citizensservice-getuser-jobs-ambulance", "livemap-livemapservice-stream-players-ambulance", "mailer-mailerservice-createorupdateemail-fields-job",
 		"jobs-conductservice-listconductentries-access-own", "jobs-conductservice-listconductentries-access-all", "wiki-wikiservice-createpage-fields-public",
@@ -120,16 +152,17 @@ func TestBasicPerms(t *testing.T) {
 
 	rolePerms, err := ps.GetEffectiveRolePermissions(ctx, role.GetId())
 	require.NoError(t, err, "GetEffectiveRolePermissions should not return an error")
-	assert.Len(t, rolePerms, 43, "GetEffectiveRolePermissions should return 43 perms")
+	assert.Len(t, rolePerms, 44, "GetEffectiveRolePermissions should return 44 perms")
 
 	// 3. Non-superuser (ambulance, 20) - should have more attributes than ambulance, 17 (further player locations access)
 	userInfo = &userinfo.UserInfo{
 		Job:      testdata.Users[1].GetJob(),
 		JobGrade: testdata.Users[1].GetJobGrade(),
 	}
-	attributes, err = ps.FlattenRoleAttributes(userInfo.GetJob(), userInfo.GetJobGrade())
-	require.NoError(t, err, "FlattenRoleAttributes should not return an error")
-	assert.Len(t, attributes, 31, "FlattenRoleAttributes should now return 31 attributes")
+	roleAttrs, err = ps.GetEffectiveRoleAttributes(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
+	require.NoError(t, err, "GetEffectiveRoleAttributes should not return an error")
+	attributes = flattenRoleAttributes(roleAttrs)
+	assert.Len(t, attributes, 31, "GetEffectiveRoleAttributes should now return 31 attributes")
 	for _, attr := range []string{"livemap-livemapservice-stream-players-ambulance", "livemap-livemapservice-stream-players-doj", "livemap-livemapservice-stream-players-police"} {
 		assert.Contains(
 			t,
@@ -150,8 +183,9 @@ func TestBasicPerms(t *testing.T) {
 	require.NotNil(t, role, "GetRoleByJobAndGrade should return non-nil role")
 	rolePerms, err = ps.GetEffectiveRolePermissions(ctx, role.GetId())
 	require.NoError(t, err, "GetEffectiveRolePermissions should not return an error")
-	assert.Len(t, rolePerms, 4, "GetEffectiveRolePermissions should return 4 perms")
-	attributes, err = ps.FlattenRoleAttributes(userInfo.GetJob(), userInfo.GetJobGrade())
-	require.NoError(t, err, "FlattenRoleAttributes should not return an error")
-	assert.Empty(t, attributes, "FlattenRoleAttributes should now return 0 attributes")
+	assert.Len(t, rolePerms, 7, "GetEffectiveRolePermissions should return 7 perms")
+	roleAttrs, err = ps.GetEffectiveRoleAttributes(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
+	require.NoError(t, err, "GetEffectiveRoleAttributes should not return an error")
+	attributes = flattenRoleAttributes(roleAttrs)
+	assert.Empty(t, attributes, "GetEffectiveRoleAttributes should now return 0 attributes")
 }

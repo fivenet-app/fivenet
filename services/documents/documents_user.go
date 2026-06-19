@@ -2,10 +2,7 @@ package documents
 
 import (
 	context "context"
-	"errors"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
-	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsrelations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
@@ -13,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -27,93 +25,21 @@ func (s *Server) ListUserDocuments(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.user_id", req.GetUserId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	var userCondition mysql.BoolExpression
-	if !userInfo.GetSuperuser() {
-		userCondition = mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tDAccess).
-				WHERE(mysql.AND(
-					tDAccess.TargetID.EQ(tDocument.ID),
-					mysql.OR(
-						// Direct user access
-						tDAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						// or job + grade access
-						mysql.AND(
-							tDAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tDAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
-					),
-					tDAccess.Access.GT_EQ(
-						mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-					),
-				)),
-		)
-	} else {
-		userCondition = mysql.Bool(true)
+	count, relations, err := s.store.ListUserDocuments(ctx, documentsstore.ListUserDocumentsQuery{
+		UserID:         req.GetUserId(),
+		IncludeCreated: req.GetIncludeCreated(),
+		Closed:         req.Closed,
+		Relations:      req.GetRelations(),
+		Sort:           req.GetSort(),
+		Pagination:     req.GetPagination(),
+		UserInfo:       userInfo,
+	})
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	userCondiution := tDocRel.TargetUserID.EQ(mysql.Int32(req.GetUserId()))
-	if req.GetIncludeCreated() {
-		userCondiution = mysql.OR(userCondiution,
-			tDocRel.SourceUserID.EQ(mysql.Int32(req.GetUserId())),
-		)
-	}
+	pag, _ := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
 
-	condition := mysql.AND(
-		userCondiution,
-		tDocRel.DeletedAt.IS_NULL(),
-		tDocument.DeletedAt.IS_NULL(),
-		mysql.OR(
-			tDocument.Public.IS_TRUE(),
-			mysql.AND(
-				tDocument.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
-				tDocument.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			),
-			userCondition,
-		),
-	)
-
-	if req.Closed != nil {
-		condition = condition.AND(tDocument.Closed.EQ(
-			mysql.Bool(req.GetClosed()),
-		))
-	}
-	if len(req.GetRelations()) > 0 {
-		types := []mysql.Expression{}
-		for _, t := range req.GetRelations() {
-			types = append(types, mysql.Int32(int32(*t.Enum())))
-		}
-
-		condition = condition.AND(tDocRel.Relation.IN(types...))
-	} else {
-		return &pbdocuments.ListUserDocumentsResponse{
-			Pagination: &database.PaginationResponse{},
-			Relations:  []*documentsrelations.DocumentRelation{},
-		}, nil
-	}
-
-	countStmt := tDocRel.
-		SELECT(
-			mysql.COUNT(mysql.DISTINCT(tDocRel.DocumentID)).AS("data_count.total"),
-		).
-		FROM(
-			tDocRel.
-				INNER_JOIN(tDocument,
-					tDocument.ID.EQ(tDocRel.DocumentID),
-				),
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-	}
-
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
 	resp := &pbdocuments.ListUserDocumentsResponse{
 		Pagination: pag,
 		Relations:  []*documentsrelations.DocumentRelation{},
@@ -121,122 +47,7 @@ func (s *Server) ListUserDocuments(
 	if count.Total <= 0 {
 		return resp, nil
 	}
-
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "createdAt":
-				fallthrough
-			default:
-				column = tDocument.CreatedAt
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys,
-					column.DESC(),
-				)
-			} else {
-				orderBys = append(orderBys,
-					column.ASC(),
-				)
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tDocument.CreatedAt.DESC())
-	}
-
-	tCreator := table.FivenetUser.AS("creator")
-	tASource := tCreator.AS("source_user")
-
-	docRel := tDocRel.
-		SELECT(
-			tDocRel.ID.AS("id"),
-			tDocRel.DocumentID.AS("document_id"),
-		).
-		FROM(
-			tDocRel.
-				INNER_JOIN(tDocument,
-					tDocument.ID.EQ(tDocRel.DocumentID),
-				),
-		).
-		WHERE(condition).
-		OFFSET(req.GetPagination().GetOffset()).
-		ORDER_BY(orderBys...).
-		LIMIT(limit).AsTable("doc_rel")
-
-	stmt := docRel.
-		SELECT(
-			tDocRel.ID,
-			tDocRel.CreatedAt,
-			tDocRel.DeletedAt,
-			tDocRel.DocumentID,
-			tDocRel.SourceUserID,
-			tDocument.ID,
-			tDocument.CreatedAt,
-			tDocument.UpdatedAt,
-			tDocument.CategoryID,
-			tDocument.CreatorID,
-			tDocument.State.AS("meta.state"),
-			tDocument.Closed.AS("meta.closed"),
-			tDocument.Draft.AS("meta.draft"),
-			tDocument.Public.AS("meta.public"),
-			tDocument.Title,
-			tDCategory.ID,
-			tDCategory.Name,
-			tDCategory.Description,
-			tDCategory.Color,
-			tDCategory.Icon,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tDocRel.SourceUserID,
-			tASource.ID,
-			tASource.Job,
-			tASource.JobGrade,
-			tASource.Firstname,
-			tASource.Lastname,
-			tASource.Dateofbirth,
-			tDocRel.Relation,
-			tDocRel.TargetUserID,
-		).
-		FROM(
-			docRel.
-				INNER_JOIN(tDocRel,
-					tDocRel.ID.EQ(mysql.RawInt("doc_rel.id")),
-				).
-				INNER_JOIN(tDocument,
-					tDocument.ID.EQ(mysql.RawInt("doc_rel.document_id")),
-				).
-				LEFT_JOIN(tDCategory,
-					mysql.AND(
-						tDocument.CategoryID.EQ(tDCategory.ID),
-						tDCategory.DeletedAt.IS_NULL(),
-					),
-				).
-				LEFT_JOIN(tCreator,
-					tDocument.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tASource,
-					tASource.ID.EQ(tDocRel.SourceUserID),
-				),
-		).
-		WHERE(mysql.AND(
-			tDocument.DeletedAt.IS_NULL(),
-		)).
-		ORDER_BY(orderBys...).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-	}
+	resp.Relations = relations
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetRelations() {

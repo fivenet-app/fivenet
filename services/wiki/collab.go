@@ -28,13 +28,13 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 		return err
 	}
 
-	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", pageId})
+	logging.InjectFields(ctx, logging.Fields{pageIDLogFieldKey, pageId})
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
 		pageId,
 		userInfo,
-		wikiaccess.AccessLevel_ACCESS_LEVEL_ACCESS,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_ACCESS),
 	)
 	if err != nil {
 		return errswrap.NewError(err, errorswiki.ErrPageDenied)

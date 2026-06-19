@@ -76,7 +76,7 @@ async function deleteTemplate(id: number): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        await navigateTo({ name: 'documents-templates' });
+        await navigateTo('/documents/templates');
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -274,7 +274,7 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                                     :access-types="contentAccessTypes"
                                     :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
                                     disabled
-                                    show-required
+                                    required-mode="badge"
                                 />
                             </UFormField>
                         </UPageCard>

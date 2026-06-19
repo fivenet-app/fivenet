@@ -30,7 +30,7 @@ const job = useRoute('settings-limiter-job').params.job;
             v-else
             :job="job"
             @deleted="
-                navigateTo({ name: 'settings-limiter' });
+                navigateTo('/settings/limiter');
                 $emit('deleted');
             "
         />

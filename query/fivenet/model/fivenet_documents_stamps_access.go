@@ -7,10 +7,15 @@
 
 package model
 
+import (
+	"time"
+)
+
 type FivenetDocumentsStampsAccess struct {
-	ID           int64  `sql:"primary_key" json:"id"`
-	TargetID     int64  `json:"target_id"`
-	Job          string `json:"job"`
-	MinimumGrade int32  `json:"minimum_grade"`
-	Access       int16  `json:"access"`
+	ID        int64     `sql:"primary_key" json:"id"`
+	TargetID  int64     `json:"target_id"`
+	SubjectID int64     `json:"subject_id"`
+	Access    int16     `json:"access"`
+	Effect    bool      `json:"effect"`
+	CreatedAt time.Time `json:"created_at"`
 }

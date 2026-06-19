@@ -5,6 +5,7 @@ package resources.calendar;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/access/access.proto";
 import "resources/calendar/access/access.proto";
 import "resources/common/content/content.proto";
 import "resources/timestamp/timestamp.proto";
@@ -49,7 +50,7 @@ message Calendar {
   optional resources.users.short.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional CalendarSub subscription = 14;
-  resources.calendar.access.CalendarAccess access = 15;
+  resources.access.Access access = 15;
   optional CalendarDiscordSettings discord_settings = 17;
 }
 

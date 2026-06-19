@@ -23,7 +23,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
-	pbmailer "github.com/fivenet-app/fivenet/v2026/services/mailer"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/nats-io/nats.go/jetstream"
@@ -66,7 +65,7 @@ func (s *Server) buildSubjects(
 
 	// Clone user info and disable superuser
 	userInfo.Superuser = false
-	emails, err := pbmailer.ListUserEmails(ctx, s.db, userInfo, nil, false)
+	emails, err := s.mailerStore.ListUserEmails(ctx, s.db, userInfo, nil, false, false)
 	if err != nil {
 		return baseSubjects, nil, errswrap.NewError(err, ErrFailedStream)
 	}
@@ -80,6 +79,83 @@ func (s *Server) buildSubjects(
 	}
 
 	return baseSubjects, additionalSubjects, nil
+}
+
+func (s *Server) buildClientViewSubjects(
+	ctx context.Context,
+	userInfo *pbuserinfo.UserInfo,
+	clientView *notificationsclientview.ClientView,
+) ([]string, error) {
+	spec, ok := clientView.GetType().Spec()
+	if !ok || clientView.GetType() == notificationsclientview.ObjectType_OBJECT_TYPE_UNSPECIFIED {
+		return nil, nil
+	}
+
+	if clientView.Id == nil {
+		return nil, nil
+	}
+
+	switch spec.Visibility {
+	case notificationsclientview.VisibilityTargetAccess:
+		gAccess, ok := access.GetAccess(spec.AccessRegistryKey)
+		if !ok {
+			return nil, nil
+		}
+
+		check, err := gAccess.CanUserAccessTarget(
+			ctx,
+			clientView.GetId(),
+			userInfo,
+			2,
+		)
+		if err != nil && !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, ErrFailedStream)
+		}
+
+		if !check {
+			s.logger.Warn("user does not have access to the object",
+				zap.Int32("user_id", userInfo.GetUserId()),
+				zap.String("object_type", clientView.GetType().String()),
+				zap.Int64("object_id", clientView.GetId()),
+			)
+			return nil, nil
+		}
+
+	case notificationsclientview.VisibilityJobScoped:
+	}
+
+	return []string{
+		fmt.Sprintf(
+			"%s.%s.%s.%d",
+			notifi.BaseSubject,
+			notifi.ObjectTopic,
+			spec.NatsKey,
+			clientView.GetId(),
+		),
+	}, nil
+}
+
+func (s *Server) shouldDeliverObjectEvent(
+	dest *notificationsclientview.ObjectEvent,
+	currentUserInfo *pbuserinfo.UserInfo,
+	userInfo *pbuserinfo.UserInfo,
+) bool {
+	if dest.UserId != nil && dest.GetUserId() == currentUserInfo.GetUserId() {
+		return false
+	}
+
+	spec, ok := dest.GetType().Spec()
+	if !ok {
+		return false
+	}
+
+	if spec.Visibility == notificationsclientview.VisibilityJobScoped {
+		if dest.Job == nil || userInfo.GetJob() != dest.GetJob() {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) error {
@@ -107,7 +183,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	}
 	clientViewSubjects := []string{}
 
-	notificationCount, err := s.getNotificationCount(ctx, userInfo.GetUserId())
+	notificationCount, err := s.store.CountUnread(ctx, userInfo.GetUserId())
 	if err != nil {
 		return errswrap.NewError(err, ErrFailedStream)
 	}
@@ -170,43 +246,12 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				}
 				cfg := info.Config
 
-				// If client view is not "unspecified", add specific subject for it
-				if clientView.Id != nil &&
-					clientView.GetType() > notificationsclientview.ObjectType_OBJECT_TYPE_UNSPECIFIED {
-					gAccess := access.GetAccess(clientView.GetType().ToAccessKey())
-					if gAccess != nil {
-						check, err := gAccess.CanUserAccessTarget(
-							gctx,
-							clientView.GetId(),
-							userInfo,
-							2,
-						)
-						if err != nil {
-							if !errors.Is(err, qrm.ErrNoRows) {
-								return errswrap.NewError(err, ErrFailedStream)
-							}
-						}
-
-						if !check {
-							s.logger.Warn("user does not have access to the object",
-								zap.Int32("user_id", userInfo.GetUserId()),
-								zap.String("object_type", clientView.GetType().String()),
-								zap.Int64("object_id", clientView.GetId()),
-							)
-							continue
-						}
-					}
-
-					// Generate subject for the client view
-					clientViewSubjects = []string{
-						fmt.Sprintf(
-							"%s.%s.%s.%d",
-							notifi.BaseSubject,
-							notifi.ObjectTopic,
-							clientView.GetType().ToNatsKey(),
-							clientView.GetId(),
-						),
-					}
+				clientViewSubjects, err = s.buildClientViewSubjects(gctx, userInfo, clientView)
+				if err != nil {
+					return err
+				}
+				if len(clientViewSubjects) == 0 {
+					continue
 				}
 
 				subjectsMu.Lock()
@@ -390,19 +435,8 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					// Skip if the object event is from the current user
-					if dest.UserId != nil && dest.GetUserId() == currentUserInfo.GetUserId() {
+					if !s.shouldDeliverObjectEvent(&dest, currentUserInfo, userInfo) {
 						continue
-					}
-
-					// Check if the user has access to the object for job specific objects
-					if dest.GetType() != notificationsclientview.ObjectType_OBJECT_TYPE_UNSPECIFIED &&
-						dest.GetType() != notificationsclientview.ObjectType_OBJECT_TYPE_DOCUMENT &&
-						dest.GetType() != notificationsclientview.ObjectType_OBJECT_TYPE_WIKI_PAGE {
-						// No job specified or job doesn't match the user's job
-						if dest.Job == nil || userInfo.GetJob() != dest.GetJob() {
-							continue
-						}
 					}
 
 					outCh <- &pbnotifications.StreamResponse{

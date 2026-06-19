@@ -1,4 +1,5 @@
-import type { Access, AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
+import type { Access } from '~~/gen/ts/resources/access/access';
+import type { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 import type { Thread } from '~~/gen/ts/resources/mailer/threads/thread';
 
 export const defaultEmailDomain = 'fivenet.ls';

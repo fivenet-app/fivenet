@@ -330,6 +330,116 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+## resources/users/short/user.proto
+
+
+### resources.users.short.UserShort
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `job_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `firstname` | [string](#string) |  |  |
+| `lastname` | [string](#string) |  |  |
+| `dateofbirth` | [string](#string) |  |  |
+| `phone_number` | [string](#string) | optional |  |
+| `profile_picture_file_id` | [int64](#int64) | optional |  |
+| `profile_picture` | [string](#string) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/access/access.proto
+
+
+### resources.access.Access
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [JobAccess](#resourcesaccessJobAccess) | repeated |  |
+| `users` | [UserAccess](#resourcesaccessUserAccess) | repeated |  |
+| `qualifications` | [QualificationAccess](#resourcesaccessQualificationAccess) | repeated |  |
+
+
+
+
+
+### resources.access.JobAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [int32](#int32) |  |  |
+| `required` | [bool](#bool) | optional |  |
+| `required_access` | [int32](#int32) | optional |  |
+
+
+
+
+
+### resources.access.QualificationAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `access` | [int32](#int32) |  |  |
+| `required` | [bool](#bool) | optional |  |
+| `required_access` | [int32](#int32) | optional |  |
+
+
+
+
+
+### resources.access.UserAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `access` | [int32](#int32) |  |  |
+| `required` | [bool](#bool) | optional |  |
+| `required_access` | [int32](#int32) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/accounts/oauth2/oauth2.proto
 
 
@@ -409,57 +519,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-## resources/citizens/labels/access.proto
-
-
-### resources.citizens.labels.JobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resourcescitizenslabelsAccessLevel) |  |  |
-
-
-
-
-
-### resources.citizens.labels.LabelAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [JobAccess](#resourcescitizenslabelsJobAccess) | repeated |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.citizens.labels.AccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_VIEW` | 1 |  |
-| `ACCESS_LEVEL_GIVE` | 2 |  |
-| `ACCESS_LEVEL_REMOVE` | 3 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/citizens/labels/labels.proto
 
 
@@ -478,7 +537,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `color` | [string](#string) |  |  |
 | `icon` | [string](#string) | optional |  |
 | `settings` | [Settings](#resourcescitizenslabelsSettings) | optional |  |
-| `access` | [LabelAccess](#resourcescitizenslabelsLabelAccess) | optional |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) | optional |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Citizen label assignment data |
 
 
@@ -791,39 +850,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-## resources/users/short/user.proto
-
-
-### resources.users.short.UserShort
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `job_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `firstname` | [string](#string) |  |  |
-| `lastname` | [string](#string) |  |  |
-| `dateofbirth` | [string](#string) |  |  |
-| `phone_number` | [string](#string) | optional |  |
-| `profile_picture_file_id` | [int64](#int64) | optional |  |
-| `profile_picture` | [string](#string) | optional |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/audit/audit.proto
 
 
@@ -908,52 +934,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 ## resources/calendar/access/access.proto
-
-
-### resources.calendar.access.CalendarAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [CalendarJobAccess](#resourcescalendaraccessCalendarJobAccess) | repeated |  |
-| `users` | [CalendarUserAccess](#resourcescalendaraccessCalendarUserAccess) | repeated |  |
-
-
-
-
-
-### resources.calendar.access.CalendarJobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resourcescalendaraccessAccessLevel) |  |  |
-
-
-
-
-
-### resources.calendar.access.CalendarUserAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `access` | [AccessLevel](#resourcescalendaraccessAccessLevel) |  |  |
-
-
-
 
  <!-- end messages -->
 
@@ -1091,7 +1071,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
-| `access` | [access.CalendarAccess](#resourcescalendaraccessCalendarAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 | `discord_settings` | [CalendarDiscordSettings](#resourcescalendarCalendarDiscordSettings) | optional |  |
 
 
@@ -1562,599 +1542,7 @@ Dummy - DO NOT USE!
 
 
 
-## resources/qualifications/access/access.proto
-
-
-### resources.qualifications.access.QualificationAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [QualificationJobAccess](#resourcesqualificationsaccessQualificationJobAccess) | repeated |  |
-
-
-
-
-
-### resources.qualifications.access.QualificationJobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resourcesqualificationsaccessAccessLevel) |  |  |
-
-
-
-
-
-### resources.qualifications.access.QualificationUserAccess
-Dummy - DO NOT USE!
-
-
-
-
-
- <!-- end messages -->
-
-
-### resources.qualifications.access.AccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `ACCESS_LEVEL_VIEW` | 2 |  |
-| `ACCESS_LEVEL_REQUEST` | 3 |  |
-| `ACCESS_LEVEL_TAKE` | 4 |  |
-| `ACCESS_LEVEL_GRADE` | 5 |  |
-| `ACCESS_LEVEL_EDIT` | 6 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/qualifications/exam/exam.proto
-
-
-### resources.qualifications.exam.ExamGrading
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `responses` | [ExamGradingResponse](#resourcesqualificationsexamExamGradingResponse) | repeated |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamGradingResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `question_id` | [int64](#int64) |  |  |
-| `points` | [float](#float) |  |  |
-| `checked` | [bool](#bool) | optional |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestion
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `qualification_id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `title` | [string](#string) |  |  |
-| `description` | [string](#string) | optional |  |
-| `data` | [ExamQuestionData](#resourcesqualificationsexamExamQuestionData) |  |  |
-| `answer` | [ExamQuestionAnswerData](#resourcesqualificationsexamExamQuestionAnswerData) | optional |  |
-| `points` | [int32](#int32) | optional |  |
-| `order` | [int32](#int32) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionAnswerData
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `answer_key` | [string](#string) |  |  |
-| `yesno` | [ExamResponseYesNo](#resourcesqualificationsexamExamResponseYesNo) |  |  |
-| `free_text` | [ExamResponseText](#resourcesqualificationsexamExamResponseText) |  |  |
-| `single_choice` | [ExamResponseSingleChoice](#resourcesqualificationsexamExamResponseSingleChoice) |  |  |
-| `multiple_choice` | [ExamResponseMultipleChoice](#resourcesqualificationsexamExamResponseMultipleChoice) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionData
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `separator` | [ExamQuestionSeparator](#resourcesqualificationsexamExamQuestionSeparator) |  |  |
-| `image` | [ExamQuestionImage](#resourcesqualificationsexamExamQuestionImage) |  |  |
-| `yesno` | [ExamQuestionYesNo](#resourcesqualificationsexamExamQuestionYesNo) |  |  |
-| `free_text` | [ExamQuestionText](#resourcesqualificationsexamExamQuestionText) |  |  |
-| `single_choice` | [ExamQuestionSingleChoice](#resourcesqualificationsexamExamQuestionSingleChoice) |  |  |
-| `multiple_choice` | [ExamQuestionMultipleChoice](#resourcesqualificationsexamExamQuestionMultipleChoice) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionImage
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `image` | [resources.file.File](#resourcesfileFile) |  |  |
-| `alt` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionMultipleChoice
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `choices` | [string](#string) | repeated |  |
-| `limit` | [int32](#int32) | optional |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionSeparator
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionSingleChoice
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `choices` | [string](#string) | repeated |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionText
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `min_length` | [int32](#int32) |  |  |
-| `max_length` | [int32](#int32) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionYesNo
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestions
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `questions` | [ExamQuestion](#resourcesqualificationsexamExamQuestion) | repeated |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `question_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `question` | [ExamQuestion](#resourcesqualificationsexamExamQuestion) |  |  |
-| `response` | [ExamResponseData](#resourcesqualificationsexamExamResponseData) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseData
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `separator` | [ExamResponseSeparator](#resourcesqualificationsexamExamResponseSeparator) |  |  |
-| `yesno` | [ExamResponseYesNo](#resourcesqualificationsexamExamResponseYesNo) |  |  |
-| `free_text` | [ExamResponseText](#resourcesqualificationsexamExamResponseText) |  |  |
-| `single_choice` | [ExamResponseSingleChoice](#resourcesqualificationsexamExamResponseSingleChoice) |  |  |
-| `multiple_choice` | [ExamResponseMultipleChoice](#resourcesqualificationsexamExamResponseMultipleChoice) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseMultipleChoice
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `choices` | [string](#string) | repeated |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseSeparator
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseSingleChoice
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `choice` | [string](#string) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseText
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `text` | [string](#string) |  | 0.5 Megabyte |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseYesNo
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `value` | [bool](#bool) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponses
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `qualification_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `responses` | [ExamResponse](#resourcesqualificationsexamExamResponse) | repeated |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamUser
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `qualification_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `ends_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `ended_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-
-
-
-
-
-### resources.qualifications.exam.QualificationExamSettings
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `time` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
-| `auto_grade` | [bool](#bool) |  |  |
-| `auto_grade_mode` | [AutoGradeMode](#resourcesqualificationsexamAutoGradeMode) |  |  |
-| `minimum_points` | [int32](#int32) |  |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.qualifications.exam.AutoGradeMode
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `AUTO_GRADE_MODE_UNSPECIFIED` | 0 |  |
-| `AUTO_GRADE_MODE_STRICT` | 1 |  |
-| `AUTO_GRADE_MODE_PARTIAL_CREDIT` | 2 |  |
-
-
-
-### resources.qualifications.exam.QualificationExamMode
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `QUALIFICATION_EXAM_MODE_UNSPECIFIED` | 0 |  |
-| `QUALIFICATION_EXAM_MODE_DISABLED` | 1 |  |
-| `QUALIFICATION_EXAM_MODE_REQUEST_NEEDED` | 2 |  |
-| `QUALIFICATION_EXAM_MODE_ENABLED` | 3 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/qualifications/qualifications.proto
-
-
-### resources.qualifications.Qualification
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `job` | [string](#string) |  |  |
-| `weight` | [uint32](#uint32) |  |  |
-| `closed` | [bool](#bool) |  |  |
-| `draft` | [bool](#bool) |  |  |
-| `public` | [bool](#bool) |  |  |
-| `abbreviation` | [string](#string) |  |  |
-| `title` | [string](#string) |  |  |
-| `description` | [string](#string) | optional |  |
-| `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
-| `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `creator_job` | [string](#string) |  |  |
-| `access` | [access.QualificationAccess](#resourcesqualificationsaccessQualificationAccess) |  |  |
-| `requirements` | [QualificationRequirement](#resourcesqualificationsQualificationRequirement) | repeated |  |
-| `discord_sync_enabled` | [bool](#bool) |  |  |
-| `discord_settings` | [QualificationDiscordSettings](#resourcesqualificationsQualificationDiscordSettings) | optional |  |
-| `exam_mode` | [exam.QualificationExamMode](#resourcesqualificationsexamQualificationExamMode) |  |  |
-| `exam_settings` | [exam.QualificationExamSettings](#resourcesqualificationsexamQualificationExamSettings) | optional |  |
-| `exam` | [exam.ExamQuestions](#resourcesqualificationsexamExamQuestions) | optional |  |
-| `result` | [QualificationResult](#resourcesqualificationsQualificationResult) | optional |  |
-| `request` | [QualificationRequest](#resourcesqualificationsQualificationRequest) | optional |  |
-| `label_sync_enabled` | [bool](#bool) |  |  |
-| `label_sync_format` | [string](#string) | optional |  |
-| `files` | [resources.file.File](#resourcesfileFile) | repeated |  |
-
-
-
-
-
-### resources.qualifications.QualificationDiscordSettings
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `role_name` | [string](#string) | optional |  |
-| `role_format` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.qualifications.QualificationRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `qualification_id` | [int64](#int64) |  |  |
-| `qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
-| `user_comment` | [string](#string) | optional |  |
-| `status` | [RequestStatus](#resourcesqualificationsRequestStatus) | optional |  |
-| `approved_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `approver_comment` | [string](#string) | optional |  |
-| `approver_id` | [int32](#int32) | optional |  |
-| `approver` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `approver_job` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.qualifications.QualificationRequirement
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `qualification_id` | [int64](#int64) |  |  |
-| `target_qualification_id` | [int64](#int64) |  |  |
-| `target_qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
-
-
-
-
-
-### resources.qualifications.QualificationResult
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `qualification_id` | [int64](#int64) |  |  |
-| `qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
-| `status` | [ResultStatus](#resourcesqualificationsResultStatus) |  |  |
-| `score` | [float](#float) | optional |  |
-| `summary` | [string](#string) |  |  |
-| `creator_id` | [int32](#int32) |  |  |
-| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
-| `creator_job` | [string](#string) |  |  |
-
-
-
-
-
-### resources.qualifications.QualificationShort
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `job` | [string](#string) |  |  |
-| `weight` | [uint32](#uint32) |  |  |
-| `closed` | [bool](#bool) |  |  |
-| `draft` | [bool](#bool) |  |  |
-| `public` | [bool](#bool) |  |  |
-| `abbreviation` | [string](#string) |  |  |
-| `title` | [string](#string) |  |  |
-| `description` | [string](#string) | optional |  |
-| `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `creator_job` | [string](#string) |  |  |
-| `requirements` | [QualificationRequirement](#resourcesqualificationsQualificationRequirement) | repeated |  |
-| `exam_mode` | [exam.QualificationExamMode](#resourcesqualificationsexamQualificationExamMode) |  |  |
-| `exam_settings` | [exam.QualificationExamSettings](#resourcesqualificationsexamQualificationExamSettings) | optional |  |
-| `result` | [QualificationResult](#resourcesqualificationsQualificationResult) | optional |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.qualifications.RequestStatus
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `REQUEST_STATUS_UNSPECIFIED` | 0 |  |
-| `REQUEST_STATUS_PENDING` | 1 |  |
-| `REQUEST_STATUS_DENIED` | 2 |  |
-| `REQUEST_STATUS_ACCEPTED` | 3 |  |
-| `REQUEST_STATUS_EXAM_STARTED` | 4 |  |
-| `REQUEST_STATUS_EXAM_GRADING` | 5 |  |
-| `REQUEST_STATUS_COMPLETED` | 6 |  |
-
-
-
-### resources.qualifications.ResultStatus
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `RESULT_STATUS_UNSPECIFIED` | 0 |  |
-| `RESULT_STATUS_PENDING` | 1 |  |
-| `RESULT_STATUS_FAILED` | 2 |  |
-| `RESULT_STATUS_SUCCESSFUL` | 3 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/centrum/units/access/access.proto
-
-
-### resources.centrum.units.access.UnitAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [UnitJobAccess](#resourcescentrumunitsaccessUnitJobAccess) | repeated |  |
-| `qualifications` | [UnitQualificationAccess](#resourcescentrumunitsaccessUnitQualificationAccess) | repeated |  |
-
-
-
-
-
-### resources.centrum.units.access.UnitJobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [UnitAccessLevel](#resourcescentrumunitsaccessUnitAccessLevel) |  |  |
-
-
-
-
-
-### resources.centrum.units.access.UnitQualificationAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `qualification_id` | [int64](#int64) |  |  |
-| `qualification` | [resources.qualifications.QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
-| `access` | [UnitAccessLevel](#resourcescentrumunitsaccessUnitAccessLevel) |  |  |
-
-
-
-
-
-### resources.centrum.units.access.UnitUserAccess
-
-
-
 
  <!-- end messages -->
 
@@ -2199,7 +1587,7 @@ Dummy - DO NOT USE!
 | `users` | [UnitAssignment](#resourcescentrumunitsUnitAssignment) | repeated |  |
 | `attributes` | [UnitAttributes](#resourcescentrumunitsUnitAttributes) | optional |  |
 | `home_postal` | [string](#string) | optional |  |
-| `access` | [access.UnitAccess](#resourcescentrumunitsaccessUnitAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 
 
 
@@ -2601,6 +1989,29 @@ Dummy - DO NOT USE!
 | `CENTRUM_TYPE_UNSPECIFIED` | 0 |  |
 | `CENTRUM_TYPE_DISPATCH` | 1 |  |
 | `CENTRUM_TYPE_DELIVERY` | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/citizens/labels/access.proto
+
+ <!-- end messages -->
+
+
+### resources.citizens.labels.AccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_VIEW` | 1 |  |
+| `ACCESS_LEVEL_GIVE` | 2 |  |
+| `ACCESS_LEVEL_REMOVE` | 3 |  |
 
 
  <!-- end enums -->
@@ -3640,52 +3051,6 @@ States of Cronjbo
 
 ## resources/documents/access/access.proto
 
-
-### resources.documents.access.DocumentAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [DocumentJobAccess](#resourcesdocumentsaccessDocumentJobAccess) | repeated |  |
-| `users` | [DocumentUserAccess](#resourcesdocumentsaccessDocumentUserAccess) | repeated |  |
-
-
-
-
-
-### resources.documents.access.DocumentJobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resourcesdocumentsaccessAccessLevel) |  |  |
-| `required` | [bool](#bool) | optional |  |
-
-
-
-
-
-### resources.documents.access.DocumentUserAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `target_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `access` | [AccessLevel](#resourcesdocumentsaccessAccessLevel) |  |  |
-| `required` | [bool](#bool) | optional |  |
-
-
-
-
  <!-- end messages -->
 
 
@@ -3718,9 +3083,9 @@ States of Cronjbo
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `to_create` | [resources.documents.access.DocumentJobAccess](#resourcesdocumentsaccessDocumentJobAccess) | repeated |  |
-| `to_update` | [resources.documents.access.DocumentJobAccess](#resourcesdocumentsaccessDocumentJobAccess) | repeated |  |
-| `to_delete` | [resources.documents.access.DocumentJobAccess](#resourcesdocumentsaccessDocumentJobAccess) | repeated |  |
+| `to_create` | [resources.access.JobAccess](#resourcesaccessJobAccess) | repeated |  |
+| `to_update` | [resources.access.JobAccess](#resourcesaccessJobAccess) | repeated |  |
+| `to_delete` | [resources.access.JobAccess](#resourcesaccessJobAccess) | repeated |  |
 
 
 
@@ -3754,9 +3119,9 @@ States of Cronjbo
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `to_create` | [resources.documents.access.DocumentUserAccess](#resourcesdocumentsaccessDocumentUserAccess) | repeated |  |
-| `to_update` | [resources.documents.access.DocumentUserAccess](#resourcesdocumentsaccessDocumentUserAccess) | repeated |  |
-| `to_delete` | [resources.documents.access.DocumentUserAccess](#resourcesdocumentsaccessDocumentUserAccess) | repeated |  |
+| `to_create` | [resources.access.UserAccess](#resourcesaccessUserAccess) | repeated |  |
+| `to_update` | [resources.access.UserAccess](#resourcesaccessUserAccess) | repeated |  |
+| `to_delete` | [resources.access.UserAccess](#resourcesaccessUserAccess) | repeated |  |
 
 
 
@@ -4229,38 +3594,11 @@ States of Cronjbo
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `name` | [string](#string) |  |  |
 | `svg_template` | [string](#string) |  | Parameterized SVG with slots |
-| `access` | [StampAccess](#resourcesdocumentsstampsStampAccess) |  |  |
-
-
-
-
-
-### resources.documents.stamps.StampAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [StampJobAccess](#resourcesdocumentsstampsStampJobAccess) | repeated |  |
-
-
-
-
-
-### resources.documents.stamps.StampJobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [StampAccessLevel](#resourcesdocumentsstampsStampAccessLevel) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 
 
 
@@ -4701,6 +4039,7 @@ Policy snapshot applied to a specific version
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) |  |  |
 | `weight` | [uint32](#uint32) |  |  |
 | `title` | [string](#string) |  |  |
@@ -4713,8 +4052,8 @@ Policy snapshot applied to a specific version
 | `schema` | [TemplateSchema](#resourcesdocumentstemplatesTemplateSchema) |  |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
-| `job_access` | [TemplateJobAccess](#resourcesdocumentstemplatesTemplateJobAccess) | repeated |  |
-| `content_access` | [resources.documents.access.DocumentAccess](#resourcesdocumentsaccessDocumentAccess) |  |  |
+| `job_access` | [resources.access.JobAccess](#resourcesaccessJobAccess) | repeated |  |
+| `content_access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 | `workflow` | [resources.documents.workflow.Workflow](#resourcesdocumentsworkflowWorkflow) | optional |  |
 | `approval` | [TemplateApproval](#resourcesdocumentstemplatesTemplateApproval) | optional |  |
 
@@ -4782,24 +4121,6 @@ Policy snapshot applied to a specific version
 
 
 
-### resources.documents.templates.TemplateJobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [resources.documents.access.AccessLevel](#resourcesdocumentsaccessAccessLevel) |  |  |
-
-
-
-
-
 ### resources.documents.templates.TemplateRequirements
 
 
@@ -4832,6 +4153,7 @@ Policy snapshot applied to a specific version
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) |  |  |
 | `weight` | [uint32](#uint32) |  |  |
 | `title` | [string](#string) |  |  |
@@ -4842,14 +4164,6 @@ Policy snapshot applied to a specific version
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
 | `workflow` | [resources.documents.workflow.Workflow](#resourcesdocumentsworkflowWorkflow) | optional |  |
-
-
-
-
-
-### resources.documents.templates.TemplateUserAccess
-Dummy - DO NOT USE!
-
 
 
 
@@ -5779,69 +5093,6 @@ Dummy - DO NOT USE!
 
 ## resources/mailer/access/access.proto
 
-
-### resources.mailer.access.Access
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [JobAccess](#resourcesmaileraccessJobAccess) | repeated |  |
-| `users` | [UserAccess](#resourcesmaileraccessUserAccess) | repeated |  |
-| `qualifications` | [QualificationAccess](#resourcesmaileraccessQualificationAccess) | repeated |  |
-
-
-
-
-
-### resources.mailer.access.JobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resourcesmaileraccessAccessLevel) |  |  |
-
-
-
-
-
-### resources.mailer.access.QualificationAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `qualification_id` | [int64](#int64) |  |  |
-| `qualification` | [resources.qualifications.QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
-| `access` | [AccessLevel](#resourcesmaileraccessAccessLevel) |  |  |
-
-
-
-
-
-### resources.mailer.access.UserAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `access` | [AccessLevel](#resourcesmaileraccessAccessLevel) |  |  |
-
-
-
-
  <!-- end messages -->
 
 
@@ -5908,7 +5159,7 @@ Dummy - DO NOT USE!
 | `email` | [string](#string) |  |  |
 | `email_changed` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `label` | [string](#string) | optional |  |
-| `access` | [resources.mailer.access.Access](#resourcesmaileraccessAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 | `settings` | [resources.mailer.settings.EmailSettings](#resourcesmailersettingsEmailSettings) | optional |  |
 
 
@@ -6499,6 +5750,509 @@ User related events
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/qualifications/access/access.proto
+
+ <!-- end messages -->
+
+
+### resources.qualifications.access.AccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_REQUEST` | 3 |  |
+| `ACCESS_LEVEL_TAKE` | 4 |  |
+| `ACCESS_LEVEL_GRADE` | 5 |  |
+| `ACCESS_LEVEL_EDIT` | 6 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/qualifications/exam/exam.proto
+
+
+### resources.qualifications.exam.ExamGrading
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `responses` | [ExamGradingResponse](#resourcesqualificationsexamExamGradingResponse) | repeated |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamGradingResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `question_id` | [int64](#int64) |  |  |
+| `points` | [float](#float) |  |  |
+| `checked` | [bool](#bool) | optional |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestion
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `data` | [ExamQuestionData](#resourcesqualificationsexamExamQuestionData) |  |  |
+| `answer` | [ExamQuestionAnswerData](#resourcesqualificationsexamExamQuestionAnswerData) | optional |  |
+| `points` | [int32](#int32) | optional |  |
+| `order` | [int32](#int32) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionAnswerData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `answer_key` | [string](#string) |  |  |
+| `yesno` | [ExamResponseYesNo](#resourcesqualificationsexamExamResponseYesNo) |  |  |
+| `free_text` | [ExamResponseText](#resourcesqualificationsexamExamResponseText) |  |  |
+| `single_choice` | [ExamResponseSingleChoice](#resourcesqualificationsexamExamResponseSingleChoice) |  |  |
+| `multiple_choice` | [ExamResponseMultipleChoice](#resourcesqualificationsexamExamResponseMultipleChoice) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `separator` | [ExamQuestionSeparator](#resourcesqualificationsexamExamQuestionSeparator) |  |  |
+| `image` | [ExamQuestionImage](#resourcesqualificationsexamExamQuestionImage) |  |  |
+| `yesno` | [ExamQuestionYesNo](#resourcesqualificationsexamExamQuestionYesNo) |  |  |
+| `free_text` | [ExamQuestionText](#resourcesqualificationsexamExamQuestionText) |  |  |
+| `single_choice` | [ExamQuestionSingleChoice](#resourcesqualificationsexamExamQuestionSingleChoice) |  |  |
+| `multiple_choice` | [ExamQuestionMultipleChoice](#resourcesqualificationsexamExamQuestionMultipleChoice) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionImage
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `image` | [resources.file.File](#resourcesfileFile) |  |  |
+| `alt` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionMultipleChoice
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `choices` | [string](#string) | repeated |  |
+| `limit` | [int32](#int32) | optional |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionSeparator
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionSingleChoice
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `choices` | [string](#string) | repeated |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionText
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `min_length` | [int32](#int32) |  |  |
+| `max_length` | [int32](#int32) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionYesNo
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestions
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `questions` | [ExamQuestion](#resourcesqualificationsexamExamQuestion) | repeated |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `question_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `question` | [ExamQuestion](#resourcesqualificationsexamExamQuestion) |  |  |
+| `response` | [ExamResponseData](#resourcesqualificationsexamExamResponseData) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `separator` | [ExamResponseSeparator](#resourcesqualificationsexamExamResponseSeparator) |  |  |
+| `yesno` | [ExamResponseYesNo](#resourcesqualificationsexamExamResponseYesNo) |  |  |
+| `free_text` | [ExamResponseText](#resourcesqualificationsexamExamResponseText) |  |  |
+| `single_choice` | [ExamResponseSingleChoice](#resourcesqualificationsexamExamResponseSingleChoice) |  |  |
+| `multiple_choice` | [ExamResponseMultipleChoice](#resourcesqualificationsexamExamResponseMultipleChoice) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseMultipleChoice
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `choices` | [string](#string) | repeated |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseSeparator
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseSingleChoice
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `choice` | [string](#string) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseText
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `text` | [string](#string) |  | 0.5 Megabyte |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseYesNo
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `value` | [bool](#bool) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponses
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `qualification_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `responses` | [ExamResponse](#resourcesqualificationsexamExamResponse) | repeated |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamUser
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `qualification_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `ends_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `ended_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### resources.qualifications.exam.QualificationExamSettings
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `time` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
+| `auto_grade` | [bool](#bool) |  |  |
+| `auto_grade_mode` | [AutoGradeMode](#resourcesqualificationsexamAutoGradeMode) |  |  |
+| `minimum_points` | [int32](#int32) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.qualifications.exam.AutoGradeMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `AUTO_GRADE_MODE_UNSPECIFIED` | 0 |  |
+| `AUTO_GRADE_MODE_STRICT` | 1 |  |
+| `AUTO_GRADE_MODE_PARTIAL_CREDIT` | 2 |  |
+
+
+
+### resources.qualifications.exam.QualificationExamMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `QUALIFICATION_EXAM_MODE_UNSPECIFIED` | 0 |  |
+| `QUALIFICATION_EXAM_MODE_DISABLED` | 1 |  |
+| `QUALIFICATION_EXAM_MODE_REQUEST_NEEDED` | 2 |  |
+| `QUALIFICATION_EXAM_MODE_ENABLED` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/qualifications/qualifications.proto
+
+
+### resources.qualifications.Qualification
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `job` | [string](#string) |  |  |
+| `weight` | [uint32](#uint32) |  |  |
+| `closed` | [bool](#bool) |  |  |
+| `draft` | [bool](#bool) |  |  |
+| `public` | [bool](#bool) |  |  |
+| `abbreviation` | [string](#string) |  |  |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `creator_job` | [string](#string) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
+| `requirements` | [QualificationRequirement](#resourcesqualificationsQualificationRequirement) | repeated |  |
+| `discord_sync_enabled` | [bool](#bool) |  |  |
+| `discord_settings` | [QualificationDiscordSettings](#resourcesqualificationsQualificationDiscordSettings) | optional |  |
+| `exam_mode` | [exam.QualificationExamMode](#resourcesqualificationsexamQualificationExamMode) |  |  |
+| `exam_settings` | [exam.QualificationExamSettings](#resourcesqualificationsexamQualificationExamSettings) | optional |  |
+| `exam` | [exam.ExamQuestions](#resourcesqualificationsexamExamQuestions) | optional |  |
+| `result` | [QualificationResult](#resourcesqualificationsQualificationResult) | optional |  |
+| `request` | [QualificationRequest](#resourcesqualificationsQualificationRequest) | optional |  |
+| `label_sync_enabled` | [bool](#bool) |  |  |
+| `label_sync_format` | [string](#string) | optional |  |
+| `files` | [resources.file.File](#resourcesfileFile) | repeated |  |
+
+
+
+
+
+### resources.qualifications.QualificationDiscordSettings
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role_name` | [string](#string) | optional |  |
+| `role_format` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.qualifications.QualificationRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
+| `user_comment` | [string](#string) | optional |  |
+| `status` | [RequestStatus](#resourcesqualificationsRequestStatus) | optional |  |
+| `approved_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `approver_comment` | [string](#string) | optional |  |
+| `approver_id` | [int32](#int32) | optional |  |
+| `approver` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `approver_job` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.qualifications.QualificationRequirement
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `target_qualification_id` | [int64](#int64) |  |  |
+| `target_qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
+
+
+
+
+
+### resources.qualifications.QualificationResult
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
+| `status` | [ResultStatus](#resourcesqualificationsResultStatus) |  |  |
+| `score` | [float](#float) | optional |  |
+| `summary` | [string](#string) |  |  |
+| `creator_id` | [int32](#int32) |  |  |
+| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
+| `creator_job` | [string](#string) |  |  |
+
+
+
+
+
+### resources.qualifications.QualificationShort
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `job` | [string](#string) |  |  |
+| `weight` | [uint32](#uint32) |  |  |
+| `closed` | [bool](#bool) |  |  |
+| `draft` | [bool](#bool) |  |  |
+| `public` | [bool](#bool) |  |  |
+| `abbreviation` | [string](#string) |  |  |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `creator_job` | [string](#string) |  |  |
+| `requirements` | [QualificationRequirement](#resourcesqualificationsQualificationRequirement) | repeated |  |
+| `exam_mode` | [exam.QualificationExamMode](#resourcesqualificationsexamQualificationExamMode) |  |  |
+| `exam_settings` | [exam.QualificationExamSettings](#resourcesqualificationsexamQualificationExamSettings) | optional |  |
+| `result` | [QualificationResult](#resourcesqualificationsQualificationResult) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.qualifications.RequestStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `REQUEST_STATUS_UNSPECIFIED` | 0 |  |
+| `REQUEST_STATUS_PENDING` | 1 |  |
+| `REQUEST_STATUS_DENIED` | 2 |  |
+| `REQUEST_STATUS_ACCEPTED` | 3 |  |
+| `REQUEST_STATUS_EXAM_STARTED` | 4 |  |
+| `REQUEST_STATUS_EXAM_GRADING` | 5 |  |
+| `REQUEST_STATUS_COMPLETED` | 6 |  |
+
+
+
+### resources.qualifications.ResultStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `RESULT_STATUS_UNSPECIFIED` | 0 |  |
+| `RESULT_STATUS_PENDING` | 1 |  |
+| `RESULT_STATUS_FAILED` | 2 |  |
+| `RESULT_STATUS_SUCCESSFUL` | 3 |  |
+
 
  <!-- end enums -->
 
@@ -7290,52 +7044,6 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 ## resources/wiki/access/access.proto
 
-
-### resources.wiki.access.PageAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [PageJobAccess](#resourceswikiaccessPageJobAccess) | repeated |  |
-| `users` | [PageUserAccess](#resourceswikiaccessPageUserAccess) | repeated |  |
-
-
-
-
-
-### resources.wiki.access.PageJobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resourceswikiaccessAccessLevel) |  |  |
-
-
-
-
-
-### resources.wiki.access.PageUserAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `access` | [AccessLevel](#resourceswikiaccessAccessLevel) |  |  |
-
-
-
-
  <!-- end messages -->
 
 
@@ -7366,9 +7074,9 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `to_create` | [resources.wiki.access.PageJobAccess](#resourceswikiaccessPageJobAccess) | repeated |  |
-| `to_update` | [resources.wiki.access.PageJobAccess](#resourceswikiaccessPageJobAccess) | repeated |  |
-| `to_delete` | [resources.wiki.access.PageJobAccess](#resourceswikiaccessPageJobAccess) | repeated |  |
+| `to_create` | [resources.access.JobAccess](#resourcesaccessJobAccess) | repeated |  |
+| `to_update` | [resources.access.JobAccess](#resourcesaccessJobAccess) | repeated |  |
+| `to_delete` | [resources.access.JobAccess](#resourcesaccessJobAccess) | repeated |  |
 
 
 
@@ -7391,9 +7099,9 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `to_create` | [resources.wiki.access.PageUserAccess](#resourceswikiaccessPageUserAccess) | repeated |  |
-| `to_update` | [resources.wiki.access.PageUserAccess](#resourceswikiaccessPageUserAccess) | repeated |  |
-| `to_delete` | [resources.wiki.access.PageUserAccess](#resourceswikiaccessPageUserAccess) | repeated |  |
+| `to_create` | [resources.access.UserAccess](#resourcesaccessUserAccess) | repeated |  |
+| `to_update` | [resources.access.UserAccess](#resourcesaccessUserAccess) | repeated |  |
+| `to_delete` | [resources.access.UserAccess](#resourcesaccessUserAccess) | repeated |  |
 
 
 
@@ -7497,7 +7205,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `parent_id` | [int64](#int64) | optional |  |
 | `meta` | [PageMeta](#resourceswikiPageMeta) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
-| `access` | [access.PageAccess](#resourceswikiaccessPageAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 | `files` | [resources.file.File](#resourcesfileFile) | repeated |  |
 
 
@@ -9938,7 +9646,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `access` | [resources.documents.access.DocumentAccess](#resourcesdocumentsaccessDocumentAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 
 
 
@@ -10006,7 +9714,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document` | [resources.documents.Document](#resourcesdocumentsDocument) |  |  |
-| `access` | [resources.documents.access.DocumentAccess](#resourcesdocumentsaccessDocumentAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 
 
 
@@ -10185,7 +9893,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `access` | [resources.documents.access.DocumentAccess](#resourcesdocumentsaccessDocumentAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 
 
 
@@ -10297,7 +10005,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 | `data` | [resources.documents.data.DocumentData](#resourcesdocumentsdataDocumentData) | optional |  |
 | `meta` | [resources.documents.DocumentMeta](#resourcesdocumentsDocumentMeta) |  |  |
-| `access` | [resources.documents.access.DocumentAccess](#resourcesdocumentsaccessDocumentAccess) | optional |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) | optional |  |
 | `files` | [resources.file.File](#resourcesfileFile) | repeated |  |
 
 
@@ -11104,6 +10812,24 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `UpdateConductEntry` | [UpdateConductEntryRequest](#servicesjobsUpdateConductEntryRequest) | [UpdateConductEntryResponse](#servicesjobsUpdateConductEntryResponse) | |
 | `DeleteConductEntry` | [DeleteConductEntryRequest](#servicesjobsDeleteConductEntryRequest) | [DeleteConductEntryResponse](#servicesjobsDeleteConductEntryResponse) | |
 | `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/jobs/groups.proto
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.jobs.GroupsService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
 
  <!-- end services -->
 
@@ -12412,7 +12138,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `access` | [resources.qualifications.access.QualificationAccess](#resourcesqualificationsaccessQualificationAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 
 
 
@@ -12450,7 +12176,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `qualification_id` | [int64](#int64) | optional | Search params |
 | `status` | [resources.qualifications.RequestStatus](#resourcesqualificationsRequestStatus) | repeated |  |
-| `user_id` | [int32](#int32) | optional |  |
+| `user_ids` | [int32](#int32) | repeated |  |
 
 
 
@@ -12503,7 +12229,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `qualification_id` | [int64](#int64) | optional | Search params |
 | `status` | [resources.qualifications.ResultStatus](#resourcesqualificationsResultStatus) | repeated |  |
-| `user_id` | [int32](#int32) | optional |  |
+| `user_ids` | [int32](#int32) | repeated |  |
 
 
 
@@ -12527,7 +12253,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `qualification_id` | [int64](#int64) |  |  |
-| `access` | [resources.qualifications.access.QualificationAccess](#resourcesqualificationsaccessQualificationAccess) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
 
 
 

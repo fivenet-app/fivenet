@@ -2,17 +2,15 @@ package documentsaccess
 
 import (
 	"fmt"
+
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 )
 
-// pkg/access compatibility
-
-func (x *DocumentJobAccess) GetJobGrade() int32 {
-	return x.GetMinimumGrade()
-}
-
-func (x *DocumentJobAccess) SetJobGrade(grade int32) {
-	x.MinimumGrade = grade
-}
+type (
+	DocumentAccess     = resourcesaccess.Access
+	DocumentJobAccess  = resourcesaccess.JobAccess
+	DocumentUserAccess = resourcesaccess.UserAccess
+)
 
 func DocumentAccessHasDuplicates(access *DocumentAccess) bool {
 	jobKeys := map[string]any{}

@@ -10,13 +10,13 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
-	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
@@ -32,19 +32,13 @@ const (
 	birthdaySyncOffsetAttrKey = "job_offset"
 )
 
-type birthdayColleague struct {
-	UserID      int32  `alias:"user_id"`
-	Firstname   string `alias:"firstname"`
-	Lastname    string `alias:"lastname"`
-	Dateofbirth string `alias:"dateofbirth"`
-}
-
 type BirthdaySyncer struct {
 	logger   *zap.Logger
 	db       *sql.DB
 	i18n     i18n.Ii18n
 	appCfg   appconfig.IConfig
-	enricher *mstlystcdata.UserAwareEnricher
+	enricher mstlystcdata.IUserAwareEnricher
+	store    calendarstore.IStore
 }
 
 type BirthdaySyncerParams struct {
@@ -54,7 +48,8 @@ type BirthdaySyncerParams struct {
 	DB        *sql.DB
 	I18n      i18n.Ii18n
 	AppConfig appconfig.IConfig
-	Enricher  *mstlystcdata.UserAwareEnricher
+	Enricher  mstlystcdata.IUserAwareEnricher
+	Store     calendarstore.IStore
 }
 
 type BirthdaySyncerResult struct {
@@ -71,6 +66,7 @@ func NewBirthdaySyncer(p BirthdaySyncerParams) BirthdaySyncerResult {
 		i18n:     p.I18n,
 		appCfg:   p.AppConfig,
 		enricher: p.Enricher,
+		store:    p.Store,
 	}
 
 	return BirthdaySyncerResult{
@@ -208,7 +204,7 @@ func (s *BirthdaySyncer) syncBirthdayJob(ctx context.Context, job string) error 
 		return err
 	}
 
-	if err := ensureBirthdayCalendarAccess(ctx, tx, calendarID, job, jobInfo); err != nil {
+	if err := s.store.EnsureBirthdayCalendarAccess(ctx, tx, calendarID, job, jobInfo); err != nil {
 		return err
 	}
 
@@ -219,13 +215,13 @@ func (s *BirthdaySyncer) syncBirthdayJob(ctx context.Context, job string) error 
 		return err
 	}
 
-	colleagues, err := s.loadBirthdayColleagues(ctx, tx, job)
+	colleagues, err := s.store.LoadBirthdayColleagues(ctx, tx, job)
 	if err != nil {
 		return err
 	}
 
 	for i := range colleagues {
-		if err := s.insertBirthdayEntry(ctx, tx, calendarID, job, colleagues[i]); err != nil {
+		if err := s.store.InsertBirthdayEntry(ctx, tx, calendarID, job, colleagues[i]); err != nil {
 			return err
 		}
 	}
@@ -316,114 +312,4 @@ func (s *BirthdaySyncer) upsertBirthdayCalendar(
 	}
 
 	return calendarID.ID, nil
-}
-
-func (s *BirthdaySyncer) loadBirthdayColleagues(
-	ctx context.Context,
-	tx *sql.Tx,
-	job string,
-) ([]*birthdayColleague, error) {
-	tUsers := table.FivenetUser.AS("birthday_colleague")
-
-	stmt := tUsers.
-		SELECT(
-			tUsers.ID.AS("birthday_colleague.user_id"),
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
-		).
-		FROM(
-			tUsers.
-				INNER_JOIN(tUserJobs,
-					tUserJobs.UserID.EQ(tUsers.ID),
-				),
-		).
-		WHERE(mysql.AND(
-			tUserJobs.Job.EQ(mysql.String(job)),
-			tUsers.DeletedAt.IS_NULL(),
-			tUsers.Dateofbirth.IS_NOT_NULL(),
-			tUsers.Firstname.NOT_EQ(mysql.String("")),
-			tUsers.Lastname.NOT_EQ(mysql.String("")),
-		)).
-		ORDER_BY(tUsers.ID.ASC()).
-		// Sane limit
-		LIMIT(500)
-
-	colleagues := []*birthdayColleague{}
-	if err := stmt.QueryContext(ctx, tx, &colleagues); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return colleagues, nil
-}
-
-func (s *BirthdaySyncer) insertBirthdayEntry(
-	ctx context.Context,
-	tx *sql.Tx,
-	calendarID int64,
-	job string,
-	colleague *birthdayColleague,
-) error {
-	birthDate, err := time.Parse("02.01.2006", colleague.Dateofbirth)
-	if err != nil {
-		//nolint:nilerr // Ignore error of invalid dateofbirth values
-		return nil
-	}
-
-	startTime := birthdayForYear(birthDate.Year(), birthDate.Month(), birthDate.Day())
-	recurring := &calendarentries.CalendarEntryRecurring{
-		Every: calendarentries.CalendarEntryRecurringEvery_CALENDAR_ENTRY_RECURRING_EVERY_YEAR,
-		Count: 1,
-	}
-
-	tCalendarEntry := table.FivenetCalendarEntries
-
-	stmt := tCalendarEntry.
-		INSERT(
-			tCalendarEntry.CalendarID,
-			tCalendarEntry.Job,
-			tCalendarEntry.StartTime,
-			tCalendarEntry.EndTime,
-			tCalendarEntry.Title,
-			tCalendarEntry.Content,
-			tCalendarEntry.Closed,
-			tCalendarEntry.RsvpOpen,
-			tCalendarEntry.Recurring,
-			tCalendarEntry.CreatorID,
-			tCalendarEntry.CreatorJob,
-		).
-		VALUES(
-			calendarID,
-			job,
-			startTime,
-			mysql.NULL,
-			fmt.Sprintf("%s %s", colleague.Firstname, colleague.Lastname),
-			mysql.NULL,
-			true,
-			false,
-			recurring,
-			colleague.UserID,
-			job,
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func birthdayForYear(year int, month time.Month, day int) time.Time {
-	if day <= 0 {
-		day = 1
-	}
-
-	lastDay := time.Date(year, month+1, 0, 12, 0, 0, 0, time.UTC).Day()
-	if day > lastDay {
-		day = lastDay
-	}
-
-	return time.Date(year, month, day, 12, 0, 0, 0, time.UTC)
 }

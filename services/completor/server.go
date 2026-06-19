@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	completorstore "github.com/fivenet-app/fivenet/v2026/stores/completor"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )
@@ -15,14 +16,12 @@ import (
 type Server struct {
 	pbcompletor.CompletorServiceServer
 
-	db         *sql.DB
 	ps         perms.Permissions
-	jobsSearch *mstlystcdata.JobsSearch
-	laws       *mstlystcdata.Laws
+	jobsSearch mstlystcdata.IJobsSearch
+	laws       mstlystcdata.ILaws
 	tracker    tracker.ITracker
-	enricher   *mstlystcdata.UserAwareEnricher
-
-	customDB config.CustomDB
+	enricher   mstlystcdata.IUserAwareEnricher
+	store      completorstore.IStore
 }
 
 type Params struct {
@@ -30,23 +29,22 @@ type Params struct {
 
 	DB         *sql.DB
 	Perms      perms.Permissions
-	JobsSearch *mstlystcdata.JobsSearch
-	Laws       *mstlystcdata.Laws
+	JobsSearch mstlystcdata.IJobsSearch
+	Laws       mstlystcdata.ILaws
 	Tracker    tracker.ITracker
-	Enricher   *mstlystcdata.UserAwareEnricher
+	Enricher   mstlystcdata.IUserAwareEnricher
 	Config     *config.Config
+	Store      completorstore.IStore
 }
 
 func NewServer(p Params) *Server {
 	s := &Server{
-		db:         p.DB,
 		ps:         p.Perms,
 		jobsSearch: p.JobsSearch,
 		laws:       p.Laws,
 		tracker:    p.Tracker,
 		enricher:   p.Enricher,
-
-		customDB: p.Config.Database.Custom,
+		store:      p.Store,
 	}
 
 	return s

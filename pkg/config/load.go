@@ -31,6 +31,8 @@ type Result struct {
 	Config *Config
 	// DiscordConfig is a pointer to the Discord configuration
 	DiscordConfig *Discord
+	// CustomDB
+	CustomDB *CustomDB
 }
 
 // Load reads the application configuration from file and environment variables, sets defaults, and returns a Result.
@@ -65,6 +67,7 @@ func Load() (Result, error) {
 	}
 	res.Config = c
 	res.DiscordConfig = &c.Discord
+	res.CustomDB = &c.Database.Custom
 
 	if err := v.Unmarshal(c); err != nil {
 		return res, fmt.Errorf("failed to unmarshal config. %w", err)
@@ -122,7 +125,7 @@ func Load() (Result, error) {
 	// Validate config
 	validate := validator.New()
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("yaml"), ",", 2)[0]
+		name, _, _ := strings.Cut(fld.Tag.Get("yaml"), ",")
 		// Skip if tag key says it should be ignored
 		if name == "-" {
 			return ""
@@ -157,14 +160,18 @@ var TestModule = fx.Module("config_test",
 
 // LoadTestConfig returns a config with defaults set for testing.
 // Sets audit log retention days high so they won't run in "short" tests.
-func LoadTestConfig() (*Config, error) {
+func LoadTestConfig() (Result, error) {
+	res := Result{}
+
 	c := &Config{}
 	if err := defaults.Set(c); err != nil {
-		return nil, fmt.Errorf("failed to set config defaults. %w", err)
+		return res, fmt.Errorf("failed to set config defaults. %w", err)
 	}
+	res.Config = c
+	res.CustomDB = &c.Database.Custom
 
 	// Set audit log retention days high so they won't run in "short" tests
 	c.Audit.RetentionDays = 365
 
-	return c, nil
+	return res, nil
 }

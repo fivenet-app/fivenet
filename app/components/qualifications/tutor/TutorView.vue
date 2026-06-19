@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { Form } from '@nuxt/ui';
 import { z } from 'zod';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import RequestList from '~/components/qualifications/tutor/RequestList.vue';
@@ -28,6 +29,9 @@ const schema = z.object({
 
 const query = useSearchForm('qualifications_tutor', schema);
 
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
+
 const requests = ref<InstanceType<typeof RequestList> | null>(null);
 const results = ref<InstanceType<typeof ResultList> | null>(null);
 </script>
@@ -36,7 +40,7 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
     <UDashboardPanel :ui="{ root: 'h-full min-h-0' }">
         <template #header>
             <UDashboardToolbar>
-                <UForm class="mb-2 flex-1" :schema="schema" :state="query">
+                <UForm ref="formRef" class="mb-2 flex-1" :schema="schema" :state="query" @submit="commitValidatedQuery">
                     <UFormField class="flex-1" name="users" :label="$t('common.search')">
                         <SelectMenu
                             v-model="query.users"
@@ -78,8 +82,8 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
                         class="-mx-4 -mb-4 sm:-mx-6 sm:-mb-6"
                         :qualification="qualification"
                         :exam-mode="qualification.examMode"
-                        :search-query="query"
-                        @refresh="async () => results?.refresh()"
+                        :search-query="validatedQuery"
+                        @refresh="() => results?.refresh()"
                     />
                 </template>
             </UPageCard>
@@ -110,8 +114,8 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
                         class="-mx-4 -mb-4 sm:-mx-6 sm:-mb-6"
                         :qualification="qualification"
                         :exam-mode="qualification.examMode"
-                        :search-query="query"
-                        @refresh="async () => requests?.refresh()"
+                        :search-query="validatedQuery"
+                        @refresh="() => requests?.refresh()"
                     />
                 </template>
             </UPageCard>

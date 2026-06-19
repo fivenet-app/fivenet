@@ -2,7 +2,6 @@ package jobs
 
 import (
 	"context"
-	"errors"
 	"slices"
 	"strings"
 	"time"
@@ -12,14 +11,12 @@ import (
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
-	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -28,24 +25,18 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
-	colleaguesstore "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues"
+	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 const (
 	defaultPageSize = 20
-
-	nameColumn = "name"
-	rankColumn = "rank"
 )
 
 var (
 	tColleagueProps    = table.FivenetJobColleagueProps.AS("colleague_props")
 	tColleagueActivity = table.FivenetJobColleagueActivity
-
-	tAvatar = table.FivenetFiles.AS("profile_picture")
 )
 
 func (s *Server) ListColleagues(
@@ -61,257 +52,76 @@ func (s *Server) ListColleagues(
 	}
 
 	tColleague := table.FivenetUser.AS("colleague")
-
-	condition := mysql.AND(
-		tUserJobs.Job.EQ(mysql.String(userInfo.GetJob())),
-		s.customDB.Conditions.User.GetFilter(tColleague.Alias()),
-	)
-
-	userIds := []mysql.Expression{}
-	for _, v := range req.GetUserIds() {
-		userIds = append(userIds, mysql.Int32(v))
-	}
-	if len(userIds) > 0 && req.UserOnly != nil && req.GetUserOnly() {
-		condition = condition.AND(tColleague.ID.IN(userIds...))
-	} else {
-		if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
-			condition = condition.AND(
-				mysql.CONCAT(tColleague.Firstname, mysql.String(" "), tColleague.Lastname).
-					LIKE(mysql.String(search)),
-			)
-		}
-	}
-
-	if req.Absent != nil && req.GetAbsent() {
-		condition = condition.AND(
-			mysql.AND(
-				tColleagueProps.AbsenceBegin.IS_NOT_NULL(),
-				tColleagueProps.AbsenceEnd.IS_NOT_NULL(),
-				tColleagueProps.AbsenceBegin.LT_EQ(mysql.CURRENT_DATE()),
-				tColleagueProps.AbsenceEnd.GT_EQ(mysql.CURRENT_DATE()),
-			))
-	}
-
-	if req.GetNamePrefix() != "" {
-		namePrefix := dbutils.PrepareForLikeSearch(req.GetNamePrefix())
-		if namePrefix != "" {
-			condition = condition.AND(mysql.AND(
-				tColleagueProps.NamePrefix.IS_NOT_NULL(),
-				tColleagueProps.NamePrefix.LIKE(mysql.String(namePrefix)),
-			))
-		}
-	}
-
-	if req.GetNameSuffix() != "" {
-		nameSuffix := dbutils.PrepareForLikeSearch(req.GetNameSuffix())
-		if nameSuffix != "" {
-			condition = condition.AND(mysql.AND(
-				tColleagueProps.NameSuffix.IS_NOT_NULL(),
-				tColleagueProps.NameSuffix.LIKE(mysql.String(nameSuffix)),
-			))
-		}
+	q := jobsstore.ListColleaguesQuery{
+		Job:        userInfo.GetJob(),
+		Search:     req.GetSearch(),
+		UserIDs:    req.GetUserIds(),
+		UserOnly:   req.GetUserOnly(),
+		Absent:     req.GetAbsent(),
+		NamePrefix: req.GetNamePrefix(),
+		NameSuffix: req.GetNameSuffix(),
+		Sort:       req.GetSort(),
+		Offset:     req.GetPagination().GetOffset(),
+		Where:      s.customDB.Conditions.User.GetFilter(tColleague.Alias()),
 	}
 
 	if len(req.GetLabelIds()) > 0 &&
 		(types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetSuperuser()) {
-		labelIDExprs := []mysql.Expression{}
-		for _, labelId := range req.GetLabelIds() {
-			labelIDExprs = append(labelIDExprs, mysql.Int64(labelId))
-		}
-
-		labelsExists := mysql.EXISTS(
-			mysql.
-				SELECT(mysql.Int(1)).
-				FROM(tColleagueLabels).
-				WHERE(mysql.AND(
-					tColleagueLabels.UserID.EQ(tColleague.ID),
-					tColleagueLabels.Job.EQ(mysql.String(userInfo.GetJob())),
-					tColleagueLabels.LabelID.IN(labelIDExprs...),
-				)),
-		)
-
-		condition = condition.AND(labelsExists)
+		q.LabelIDs = req.GetLabelIds()
 	}
 
-	// Get total count of values
-	countStmt := tColleague.
-		SELECT(
-			mysql.COUNT(mysql.DISTINCT(tColleague.ID)).AS("data_count.total"),
-		).
-		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
-		FROM(
-			tColleague.
-				INNER_JOIN(tUserJobs,
-					tUserJobs.UserID.EQ(tColleague.ID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tColleague.ID),
-						tColleagueProps.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				),
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	count, err := s.store.CountColleagues(ctx, s.db, q)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().
-		GetResponseWithPageSize(count.Total, defaultPageSize)
-	resp := &pbjobs.ListColleaguesResponse{
-		Pagination: pag,
-	}
-	if count.Total <= 0 {
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
+	resp := &pbjobs.ListColleaguesResponse{Pagination: pag}
+	if count <= 0 {
 		return resp, nil
 	}
 
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if len(userIds) > 0 {
-		// Make sure to sort by the user ID if provided
-		orderBys = append(orderBys, tColleague.ID.IN(userIds...).DESC())
-	}
-
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var columns []mysql.Column
-			switch sc.GetId() {
-			case nameColumn:
-				columns = append(columns, tColleague.Firstname, tColleague.Lastname)
-			case rankColumn:
-				fallthrough
-			default:
-				columns = append(columns, tUserJobs.Grade)
-			}
-
-			for _, column := range columns {
-				if sc.GetDesc() {
-					orderBys = append(orderBys, column.DESC())
-				} else {
-					orderBys = append(orderBys, column.ASC())
-				}
-			}
-		}
-	} else {
-		orderBys = append(orderBys,
-			tUserJobs.Grade.ASC(),
-			tColleague.Firstname.ASC(),
-			tColleague.Lastname.ASC(),
-		)
-	}
-
-	stmt := tColleague.
-		SELECT(
-			tColleague.ID,
-			tUserJobs.Job.AS("colleague.job"),
-			tUserJobs.Grade.AS("colleague.job_grade"),
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-			tAvatar.FilePath.AS("colleague.profile_picture"),
-			tUserProps.Email.AS("colleague.email"),
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.AbsenceBegin,
-			tColleagueProps.AbsenceEnd,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-		).
-		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
-		FROM(
-			tColleague.
-				INNER_JOIN(tUserJobs,
-					tUserJobs.UserID.EQ(tColleague.ID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tColleague.ID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tColleague.ID),
-						tColleagueProps.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
-		WHERE(condition).
-		OFFSET(req.GetPagination().GetOffset()).
-		ORDER_BY(orderBys...).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Colleagues); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	q.Limit = limit
+	resp.Colleagues, err = s.store.ListColleagues(ctx, s.db, q)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	if len(resp.GetColleagues()) > 0 &&
 		(types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetSuperuser()) {
-		userIds := []mysql.Expression{}
+		userIds := make([]int32, 0, len(resp.GetColleagues()))
 		for _, colleague := range resp.GetColleagues() {
-			userIds = append(userIds, mysql.Int32(colleague.GetUserId()))
+			userIds = append(userIds, colleague.GetUserId())
 		}
 
-		labelsStmt := tColleagueLabels.
-			SELECT(
-				tColleagueLabels.UserID.AS("user_id"),
-				tJobLabels.ID,
-				tJobLabels.Job,
-				tJobLabels.Name,
-				tJobLabels.Color,
-				tJobLabels.Icon,
-			).
-			FROM(
-				tColleagueLabels.
-					LEFT_JOIN(tJobLabels,
-						tJobLabels.ID.EQ(tColleagueLabels.LabelID),
-					),
-			).
-			WHERE(mysql.AND(
-				tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
-				tJobLabels.DeletedAt.IS_NULL(),
-				tColleagueLabels.UserID.IN(userIds...),
-			)).
-			ORDER_BY(
-				tJobLabels.SortOrder.ASC(),
-				tJobLabels.SortKey.ASC(),
-			)
-
-		labels := []*struct {
-			UserId int32 `alias:"userId" sql:"primary_key"`
-			Labels *jobslabels.Labels
-		}{}
-		if err := labelsStmt.QueryContext(ctx, s.db, &labels); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-			}
+		labels, err := s.store.GetUsersLabels(
+			ctx,
+			s.db,
+			userInfo.GetJob(),
+			userIds,
+			userInfo.GetSuperuser(),
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 
+		labelsByUser := map[int32]*jobslabels.Labels{}
 		for _, props := range labels {
-			idx := slices.IndexFunc(resp.GetColleagues(), func(c *jobscolleagues.Colleague) bool {
-				return c.GetUserId() == props.UserId
-			})
-			if idx == -1 {
-				continue
-			}
+			labelsByUser[props.UserId] = props.Labels
+		}
 
-			colleague := resp.GetColleagues()[idx]
-			if colleague.GetProps() == nil {
-				colleague.Props = &jobscolleagues.ColleagueProps{
-					UserId: colleague.GetUserId(),
-					Job:    userInfo.GetJob(),
+		for i := range resp.GetColleagues() {
+			colleague := resp.GetColleagues()[i]
+			if colleagueLabels, ok := labelsByUser[colleague.GetUserId()]; ok {
+				if colleague.GetProps() == nil {
+					colleague.Props = &jobscolleagues.ColleagueProps{
+						UserId: colleague.GetUserId(),
+						Job:    userInfo.GetJob(),
+					}
 				}
-			}
 
-			colleague.Props.Labels = props.Labels
+				colleague.Props.Labels = colleagueLabels
+			}
 		}
 	}
 
@@ -329,82 +139,20 @@ func (s *Server) getColleague(
 	userId int32,
 	withColumns mysql.ProjectionList,
 ) (*jobscolleagues.Colleague, error) {
-	tUserJobs := table.FivenetUserJobs
-	tColleague := table.FivenetUser.AS("colleague")
-
-	columns := mysql.ProjectionList{
-		tColleague.Firstname,
-		tColleague.Lastname,
-		tUserJobs.Job.AS("colleague.job"),
-		tUserJobs.Grade.AS("colleague.job_grade"),
-		tColleague.Dateofbirth,
-		tColleague.PhoneNumber,
-		tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-		tAvatar.FilePath.AS("colleague.profile_picture"),
-		tUserProps.Email.AS("colleague.email"),
-		tColleagueProps.UserID,
-		tColleagueProps.Job,
-		tColleagueProps.AbsenceBegin,
-		tColleagueProps.AbsenceEnd,
-		tColleagueProps.NamePrefix,
-		tColleagueProps.NameSuffix,
-	}
-	columns = append(columns, withColumns...)
-
-	stmt := tColleague.
-		SELECT(
-			tColleague.ID,
-			columns...,
-		).
-		FROM(
-			tColleague.
-				INNER_JOIN(tUserJobs,
-					mysql.AND(
-						tUserJobs.UserID.EQ(tColleague.ID),
-						tUserJobs.Job.EQ(mysql.String(job)),
-					),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tColleague.ID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tColleague.ID),
-						tColleagueProps.Job.EQ(mysql.String(job)),
-					),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
-		WHERE(
-			tColleague.ID.EQ(mysql.Int32(userId)),
-		).
-		LIMIT(1)
-
-	dest := &jobscolleagues.Colleague{}
-	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	if dest.GetUserId() == 0 {
-		return nil, nil
-	}
-
-	if dest.GetProps() == nil {
-		dest.Props = &jobscolleagues.ColleagueProps{
-			UserId: dest.GetUserId(),
-			Job:    userInfo.GetJob(),
-		}
-	}
-
-	labels, err := s.getUserLabels(ctx, userInfo, userId)
+	dest, err := s.store.GetColleague(
+		ctx,
+		s.db,
+		job,
+		userId,
+		withColumns,
+		userInfo != nil && userInfo.GetSuperuser(),
+	)
 	if err != nil {
 		return nil, err
 	}
-	dest.Props.Labels = labels
+	if dest == nil {
+		return nil, nil
+	}
 
 	s.enricher.EnrichJobInfo(dest)
 
@@ -595,12 +343,13 @@ func (s *Server) SetColleagueProps(
 		)
 	}
 
-	props, err := colleaguesstore.GetColleagueProps(
+	props, err := s.store.GetColleagueProps(
 		ctx,
 		s.db,
 		targetUser.GetJob(),
 		targetUser.GetUserId(),
 		types.Strings(),
+		userInfo.GetSuperuser(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -618,7 +367,7 @@ func (s *Server) SetColleagueProps(
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
-		jobProps, err := jobsprops.GetJobProps(ctx, s.db, userInfo.GetJob())
+		jobProps, err := s.store.GetJobProps(ctx, s.db, userInfo.GetJob())
 		if err != nil {
 			return nil, err
 		}
@@ -663,7 +412,7 @@ func (s *Server) SetColleagueProps(
 			},
 		)
 
-		valid, err := s.validateLabels(ctx, userInfo, added)
+		valid, err := s.store.ValidateLabels(ctx, s.db, userInfo.GetJob(), added)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
@@ -687,7 +436,7 @@ func (s *Server) SetColleagueProps(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	activities, err := colleaguesstore.HandleColleaguesPropsChanges(
+	activities, err := s.store.HandleColleaguePropsChanges(
 		ctx,
 		tx,
 		props,
@@ -711,12 +460,13 @@ func (s *Server) SetColleagueProps(
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	props, err = colleaguesstore.GetColleagueProps(
+	props, err = s.store.GetColleagueProps(
 		ctx,
 		s.db,
 		targetUser.GetJob(),
 		targetUser.GetUserId(),
 		types.Strings(),
+		userInfo.GetSuperuser(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -785,10 +535,6 @@ func (s *Server) ListColleagueActivity(
 
 	tColleagueActivity := tColleagueActivity.AS("colleague_activity")
 	tTargetColleague := table.FivenetUser.AS("target_user")
-	tTargetUserJobs := table.FivenetUserJobs.AS("target_user_jobs")
-
-	tSourceUser := tTargetColleague.AS("source_user")
-	tSourceUserJobs := table.FivenetUserJobs.AS("source_user_jobs")
 
 	condition := tColleagueActivity.Job.EQ(mysql.String(userInfo.GetJob()))
 
@@ -897,146 +643,28 @@ func (s *Server) ListColleagueActivity(
 
 	condition = condition.AND(tColleagueActivity.ActivityType.IN(condTypes...))
 
-	// Get total count of values
-	countStmt := tColleagueActivity.
-		SELECT(
-			mysql.COUNT(tColleagueActivity.ID).AS("data_count.total"),
-		).
-		FROM(
-			tColleagueActivity.
-				INNER_JOIN(tTargetColleague,
-					tTargetColleague.ID.EQ(tColleagueActivity.TargetUserID),
-				),
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	query := jobsstore.ListQuery{
+		Job:   userInfo.GetJob(),
+		Where: condition,
+		Sort:  req.GetSort(),
+	}
+	count, err := s.store.CountColleagueActivity(ctx, s.db, query)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().
-		GetResponseWithPageSize(count.Total, defaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
 	resp.Pagination = pag
-	if count.Total <= 0 {
+	if count <= 0 {
 		return resp, nil
 	}
+	activityQuery := query
+	activityQuery.Offset = pag.GetOffset()
+	activityQuery.Limit = limit
 
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "createdAt":
-				fallthrough
-			default:
-				column = tColleagueActivity.CreatedAt
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tColleagueActivity.CreatedAt.DESC())
-	}
-
-	tTargetUserProps := tUserProps.AS("target_user_props")
-	tTargetUserAvatar := tAvatar.AS("target_user_profile_picture")
-	tTargetColleagueProps := tColleagueProps.AS("fivenet_colleague_props")
-	tSourceUserProps := tUserProps.AS("source_user_props")
-	tSourceUserAvatar := tAvatar.AS("source_user_profile_picture")
-
-	stmt := tColleagueActivity.
-		SELECT(
-			tColleagueActivity.ID,
-			tColleagueActivity.CreatedAt,
-			tColleagueActivity.Job,
-			tColleagueActivity.SourceUserID,
-			tColleagueActivity.TargetUserID,
-			tColleagueActivity.ActivityType,
-			tColleagueActivity.Reason,
-			tColleagueActivity.Data,
-			tTargetColleague.ID,
-			tTargetUserJobs.Job.AS("target_user.job"),
-			tTargetUserJobs.Grade.AS("target_user.job_grade"),
-			tTargetColleague.Job,
-			tTargetColleague.JobGrade,
-			tTargetColleague.Firstname,
-			tTargetColleague.Lastname,
-			tTargetColleague.Dateofbirth,
-			tTargetColleague.PhoneNumber,
-			tTargetUserProps.AvatarFileID.AS("target_user.profile_picture_file_id"),
-			tTargetUserAvatar.FilePath.AS("target_user.profile_picture"),
-			tTargetColleagueProps.UserID,
-			tTargetColleagueProps.Job,
-			tTargetColleagueProps.AbsenceBegin,
-			tTargetColleagueProps.AbsenceEnd,
-			tTargetColleagueProps.NamePrefix,
-			tTargetColleagueProps.NameSuffix,
-			tSourceUser.ID,
-			tSourceUserJobs.Job.AS("source_user.job"),
-			tSourceUserJobs.Grade.AS("source_user.job_grade"),
-			tSourceUser.Firstname,
-			tSourceUser.Lastname,
-			tSourceUser.Dateofbirth,
-			tSourceUser.PhoneNumber,
-			tSourceUserProps.AvatarFileID.AS("source_user.profile_picture_file_id"),
-			tSourceUserAvatar.FilePath.AS("source_user.profile_picture"),
-		).
-		FROM(
-			tColleagueActivity.
-				INNER_JOIN(tTargetColleague,
-					tTargetColleague.ID.EQ(tColleagueActivity.TargetUserID),
-				).
-				LEFT_JOIN(tTargetUserJobs,
-					mysql.AND(
-						tTargetUserJobs.UserID.EQ(tTargetColleague.ID),
-						tTargetUserJobs.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				).
-				LEFT_JOIN(tTargetUserProps,
-					tTargetUserProps.UserID.EQ(tTargetColleague.ID),
-				).
-				LEFT_JOIN(tTargetUserAvatar,
-					tTargetUserAvatar.ID.EQ(tTargetUserProps.AvatarFileID),
-				).
-				LEFT_JOIN(tTargetColleagueProps,
-					mysql.AND(
-						tTargetColleagueProps.UserID.EQ(tTargetColleague.ID),
-						tTargetColleague.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				).
-				LEFT_JOIN(tSourceUser,
-					tSourceUser.ID.EQ(tColleagueActivity.SourceUserID),
-				).
-				LEFT_JOIN(tSourceUserJobs,
-					mysql.AND(
-						tSourceUserJobs.UserID.EQ(tSourceUser.ID),
-						tSourceUserJobs.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				).
-				LEFT_JOIN(tSourceUserProps,
-					tSourceUserProps.UserID.EQ(tSourceUser.ID),
-				).
-				LEFT_JOIN(tSourceUserAvatar,
-					tSourceUserAvatar.ID.EQ(tSourceUserProps.AvatarFileID),
-				),
-		).
-		WHERE(condition).
-		OFFSET(pag.GetOffset()).
-		ORDER_BY(orderBys...).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
+	resp.Activity, err = s.store.ListColleagueActivity(ctx, s.db, activityQuery)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	pag.Update(len(resp.GetActivity()))

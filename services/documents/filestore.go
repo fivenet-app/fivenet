@@ -26,7 +26,7 @@ func (s *Server) UploadFile(
 	}
 	meta.Namespace = "documents"
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		meta.GetParentId(),
 		userInfo,

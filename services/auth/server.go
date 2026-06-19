@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	authstore "github.com/fivenet-app/fivenet/v2026/stores/auth"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
@@ -33,18 +34,17 @@ type Server struct {
 	pbauth.AuthServiceServer
 
 	logger   *zap.Logger
-	db       *sql.DB
 	auth     *auth.GRPCAuth
 	tm       *auth.TokenMgr
 	ps       perms.Permissions
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 	ui       userinfo.UserInfoRetriever
 	appCfg   appconfig.IConfig
 	js       *events.JSWrapper
+	store    authstore.IStore
 
 	domain          string
 	oauth2Providers []*config.OAuth2Provider
-	customDB        config.CustomDB
 	superuserGroups []string
 	superuserUsers  []string
 }
@@ -57,17 +57,17 @@ type Params struct {
 	Auth      *auth.GRPCAuth
 	TM        *auth.TokenMgr
 	Perms     perms.Permissions
-	Enricher  *mstlystcdata.Enricher
+	Enricher  mstlystcdata.IEnricher
 	UI        userinfo.UserInfoRetriever
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	JS        *events.JSWrapper
+	Store     authstore.IStore
 }
 
 func NewServer(p Params) *Server {
 	return &Server{
 		logger:   p.Logger.Named("grpc.auth"),
-		db:       p.DB,
 		auth:     p.Auth,
 		tm:       p.TM,
 		ps:       p.Perms,
@@ -75,10 +75,10 @@ func NewServer(p Params) *Server {
 		ui:       p.UI,
 		appCfg:   p.AppConfig,
 		js:       p.JS,
+		store:    p.Store,
 
 		domain:          p.Config.HTTP.Sessions.Domain,
 		oauth2Providers: p.Config.OAuth2.Providers,
-		customDB:        p.Config.Database.Custom,
 		superuserGroups: p.Config.Auth.SuperuserGroups,
 		superuserUsers:  p.Config.Auth.SuperuserUsers,
 	}

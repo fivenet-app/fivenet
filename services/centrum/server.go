@@ -36,6 +36,11 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
+const (
+	unitIDLogFieldKey     = "fivenet.centrum.unit_id"
+	dispatchIDLogFieldKey = "fivenet.centrum.dispatch_id"
+)
+
 func init() {
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetCentrumSettings,
@@ -99,8 +104,8 @@ type Server struct {
 	tracker  tracker.ITracker
 	postals  postals.Postals
 	appCfg   appconfig.IConfig
-	enricher *mstlystcdata.UserAwareEnricher
-	jobs     *mstlystcdata.Jobs
+	enricher mstlystcdata.IUserAwareEnricher
+	jobs     mstlystcdata.IJobs
 
 	helpers     *helpers.Helpers
 	settings    *settings.SettingsDB
@@ -123,8 +128,8 @@ type Params struct {
 	AppConfig appconfig.IConfig
 	Tracker   tracker.ITracker
 	Postals   postals.Postals
-	Enricher  *mstlystcdata.UserAwareEnricher
-	Jobs      *mstlystcdata.Jobs
+	Enricher  mstlystcdata.IUserAwareEnricher
+	Jobs      mstlystcdata.IJobs
 
 	Helpers     *helpers.Helpers
 	Settings    *settings.SettingsDB

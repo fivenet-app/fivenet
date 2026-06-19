@@ -12,7 +12,7 @@ import (
 func newTestDemo(seed uint64) *Demo {
 	cfg := &config.Config{}
 	cfg.Demo.Seed = seed
-	cfg.Demo.TargetJob = "police"
+	cfg.Demo.TargetJob = PoliceJob
 
 	d := &Demo{cfg: cfg}
 	d.initRandomizers()

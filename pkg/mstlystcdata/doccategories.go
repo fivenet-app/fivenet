@@ -19,6 +19,10 @@ import (
 	"go.uber.org/zap"
 )
 
+type IDocumentCategories interface {
+	Enrich(doc common.ICategory)
+}
+
 // DocumentCategories manages document category data, including caching and enrichment.
 type DocumentCategories struct {
 	// Cache provides a cache for document categories keyed by string.
@@ -39,7 +43,7 @@ type DocumentCategoriesResult struct {
 	fx.Out
 
 	// DocumentCategories is the main service for document category management.
-	DocumentCategories *DocumentCategories
+	DocumentCategories IDocumentCategories
 	// CronRegister registers cron jobs for document category refresh.
 	CronRegister croner.CronRegister `group:"cronjobregister"`
 }

@@ -38,6 +38,7 @@ const {
 } = useLazyAsyncData(`wiki-pages-${route.params.job}`, () => listPages());
 
 async function listPages(): Promise<PageShort[]> {
+    console.log('wiki job id slug listPages');
     const job = route.params.job ?? activeChar.value?.job ?? '';
     const response = await listWikiPages({
         pagination: {

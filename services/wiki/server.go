@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
 	pbwiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/collab"
@@ -17,13 +15,14 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	wikistore "github.com/fivenet-app/fivenet/v2026/stores/wiki"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
-const defaultWikiUpperLimit = 250
+const pageIDLogFieldKey = "fivenet.wiki.page_id"
 
 func init() {
 	housekeeper.AddTable(&housekeeper.Table{
@@ -54,13 +53,15 @@ type Server struct {
 	js     *events.JSWrapper
 
 	perms    perms.Permissions
-	enricher *mstlystcdata.UserAwareEnricher
+	enricher mstlystcdata.IUserAwareEnricher
 	notifi   notifi.INotifi
 
-	access *access.Grouped[wikiaccess.PageJobAccess, *wikiaccess.PageJobAccess, wikiaccess.PageUserAccess, *wikiaccess.PageUserAccess, access.DummyQualificationAccess[wikiaccess.AccessLevel], *access.DummyQualificationAccess[wikiaccess.AccessLevel], wikiaccess.AccessLevel]
+	access         *access.SubjectObjectAccess
+	accessResolver *access.SubjectResolver
 
 	collabServer *collab.CollabServer
 	fHandler     *filestore.Handler[int64]
+	store        wikistore.IStore
 }
 
 type Params struct {
@@ -71,10 +72,11 @@ type Params struct {
 	Logger   *zap.Logger
 	DB       *sql.DB
 	Perms    perms.Permissions
-	Enricher *mstlystcdata.UserAwareEnricher
+	Enricher mstlystcdata.IUserAwareEnricher
 	JS       *events.JSWrapper
 	Storage  storage.IStorage
 	Notifi   notifi.INotifi
+	Store    wikistore.IStore
 }
 
 func NewServer(p Params) *Server {
@@ -98,69 +100,8 @@ func NewServer(p Params) *Server {
 		false,
 	).WithUploadFilter(filestore.NewImageUploadFilter())
 
-	objAccess := access.NewGrouped[wikiaccess.PageJobAccess, *wikiaccess.PageJobAccess, wikiaccess.PageUserAccess, *wikiaccess.PageUserAccess, access.DummyQualificationAccess[wikiaccess.AccessLevel]](
-		p.DB,
-		table.FivenetWikiPages,
-		&access.TargetTableColumns{
-			ID:         table.FivenetWikiPages.ID,
-			DeletedAt:  table.FivenetWikiPages.DeletedAt,
-			CreatorID:  table.FivenetWikiPages.CreatorID,
-			CreatorJob: table.FivenetWikiPages.Job,
-		},
-		access.NewJobs[wikiaccess.PageJobAccess, *wikiaccess.PageJobAccess, wikiaccess.AccessLevel](
-			table.FivenetWikiPagesAccess,
-			&access.JobAccessColumns{
-				BaseAccessColumns: access.BaseAccessColumns{
-					ID:       table.FivenetWikiPagesAccess.ID,
-					TargetID: table.FivenetWikiPagesAccess.TargetID,
-					Access:   table.FivenetWikiPagesAccess.Access,
-				},
-				Job:          table.FivenetWikiPagesAccess.Job,
-				MinimumGrade: table.FivenetWikiPagesAccess.MinimumGrade,
-			},
-			table.FivenetWikiPagesAccess.AS("page_job_access"),
-			&access.JobAccessColumns{
-				BaseAccessColumns: access.BaseAccessColumns{
-					ID:       table.FivenetWikiPagesAccess.AS("page_job_access").ID,
-					TargetID: table.FivenetWikiPagesAccess.AS("page_job_access").TargetID,
-					Access:   table.FivenetWikiPagesAccess.AS("page_job_access").Access,
-				},
-				Job:          table.FivenetWikiPagesAccess.AS("page_job_access").Job,
-				MinimumGrade: table.FivenetWikiPagesAccess.AS("page_job_access").MinimumGrade,
-			},
-		),
-		access.NewUsers[wikiaccess.PageUserAccess, *wikiaccess.PageUserAccess, wikiaccess.AccessLevel](
-			table.FivenetWikiPagesAccess,
-			&access.UserAccessColumns{
-				BaseAccessColumns: access.BaseAccessColumns{
-					ID:       table.FivenetWikiPagesAccess.ID,
-					TargetID: table.FivenetWikiPagesAccess.TargetID,
-					Access:   table.FivenetWikiPagesAccess.Access,
-				},
-				UserID: table.FivenetWikiPagesAccess.UserID,
-			},
-			table.FivenetWikiPagesAccess.AS("page_user_access"),
-			&access.UserAccessColumns{
-				BaseAccessColumns: access.BaseAccessColumns{
-					ID:       table.FivenetWikiPagesAccess.AS("page_user_access").ID,
-					TargetID: table.FivenetWikiPagesAccess.AS("page_user_access").TargetID,
-					Access:   table.FivenetWikiPagesAccess.AS("page_user_access").Access,
-				},
-				UserID: table.FivenetWikiPagesAccess.AS("page_user_access").UserID,
-			},
-		),
-		nil,
-	)
-	access.RegisterAccess("wiki_page", &access.GroupedAccessAdapter{
-		CanUserAccessTargetFn: func(ctx context.Context, targetId int64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
-			return objAccess.CanUserAccessTarget(
-				ctx,
-				targetId,
-				userInfo,
-				wikiaccess.AccessLevel(access),
-			)
-		},
-	})
+	objAccess := access.NewWikiPageSubjectObjectAccess(p.DB)
+	access.RegisterAccess("wiki_page", objAccess)
 
 	s := &Server{
 		logger: p.Logger.Named("wiki"),
@@ -171,9 +112,11 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		notifi:   p.Notifi,
 
-		access:       objAccess,
-		collabServer: collabServer,
-		fHandler:     fHandler,
+		access:         objAccess,
+		accessResolver: access.NewSubjectResolver(p.DB),
+		collabServer:   collabServer,
+		fHandler:       fHandler,
+		store:          p.Store,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

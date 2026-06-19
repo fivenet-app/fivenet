@@ -3,87 +3,98 @@ package documents
 import (
 	"bytes"
 	context "context"
-	"errors"
 	"html/template"
 
 	"github.com/Masterminds/sprig/v3"
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-var tDTemplatesAccess = table.FivenetDocumentsTemplatesAccess.AS("template_job_access")
+var templateSubjectAccessOptions = access.SubjectAccessOptions{
+	BlockedAccess: int32(documentsaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
+	DeniedAccessLevels: []int32{
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_COMMENT),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_STATUS),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_ACCESS),
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+	},
+}
+
+func (s *Server) sanitizeTemplateAccess(
+	tmpl *documentstemplates.Template,
+	sanitizeJobAccess bool,
+	sanitizeContentAccess bool,
+) error {
+	if tmpl == nil {
+		return nil
+	}
+
+	if sanitizeJobAccess {
+		jobAccess, err := access.SanitizeJobAccessEntries(s.jobs, tmpl.GetJobAccess())
+		if err != nil {
+			return err
+		}
+		tmpl.JobAccess = access.NormalizeRequiredJobAccessFloors(jobAccess)
+	}
+
+	if sanitizeContentAccess {
+		contentAccess, err := access.SanitizeAccessJobs(s.jobs, tmpl.GetContentAccess())
+		if err != nil {
+			return err
+		}
+		tmpl.ContentAccess = access.NormalizeRequiredAccessFloors(contentAccess)
+	}
+
+	return nil
+}
+
+func templateJobAccess(jobs []*documentstemplates.TemplateJobAccess) *resourcesaccess.Access {
+	return &resourcesaccess.Access{Jobs: jobs}
+}
+
+func normalizeTemplateJobAccess(
+	userInfo *userinfo.UserInfo,
+	jobs []*documentstemplates.TemplateJobAccess,
+) (*resourcesaccess.Access, error) {
+	return access.NormalizeAccess(
+		templateJobAccess(jobs),
+		nil,
+		&resourcesaccess.Access{
+			Jobs: []*resourcesaccess.JobAccess{{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: userInfo.GetJobGrade(),
+				Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+			}},
+		},
+		15,
+	)
+}
 
 func (s *Server) ListTemplates(
 	ctx context.Context,
 	req *pbdocuments.ListTemplatesRequest,
 ) (*pbdocuments.ListTemplatesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	tDTemplates := table.FivenetDocumentsTemplates.AS("template_short")
-
-	stmt := tDTemplates.
-		SELECT(
-			tDTemplates.ID,
-			tDTemplates.Weight,
-			tDCategory.ID,
-			tDCategory.Name,
-			tDCategory.Description,
-			tDCategory.Job,
-			tDCategory.Color,
-			tDCategory.Icon,
-			tDTemplates.Title,
-			tDTemplates.Description,
-			tDTemplates.Color,
-			tDTemplates.Icon,
-			tDTemplates.Schema,
-			tDTemplates.Workflow,
-			tDTemplates.Approval,
-			tDTemplates.CreatorJob,
-		).
-		FROM(
-			tDTemplates.
-				LEFT_JOIN(tDTemplatesAccess,
-					mysql.AND(
-						tDTemplatesAccess.TargetID.EQ(tDTemplates.ID),
-						tDTemplatesAccess.Access.GT_EQ(
-							mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
-						),
-					),
-				).
-				LEFT_JOIN(tDCategory,
-					tDCategory.ID.EQ(tDTemplates.CategoryID),
-				),
-		).
-		WHERE(mysql.AND(
-			tDTemplates.DeletedAt.IS_NULL(),
-			mysql.AND(
-				tDTemplatesAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-				tDTemplatesAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-			),
-		)).
-		ORDER_BY(
-			tDTemplates.Weight.DESC(),
-			tDTemplates.ID.ASC(),
-		).
-		GROUP_BY(tDTemplates.ID)
-
-	resp := &pbdocuments.ListTemplatesResponse{}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
+	templates, err := s.store.ListTemplates(ctx, false, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	resp := &pbdocuments.ListTemplatesResponse{
+		Templates: templates,
 	}
 
 	for i := range resp.GetTemplates() {
@@ -97,7 +108,7 @@ func (s *Server) GetTemplate(
 	ctx context.Context,
 	req *pbdocuments.GetTemplateRequest,
 ) (*pbdocuments.GetTemplateResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.template_id", req.GetTemplateId()})
+	logging.InjectFields(ctx, logging.Fields{templateIDLogFieldKey, req.GetTemplateId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -105,7 +116,7 @@ func (s *Server) GetTemplate(
 		ctx,
 		req.GetTemplateId(),
 		userInfo,
-		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -115,7 +126,7 @@ func (s *Server) GetTemplate(
 	}
 
 	resp := &pbdocuments.GetTemplateResponse{}
-	resp.Template, err = s.getTemplate(ctx, req.GetTemplateId())
+	resp.Template, err = s.store.GetTemplate(ctx, req.GetTemplateId(), userInfo.GetSuperuser())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -125,8 +136,17 @@ func (s *Server) GetTemplate(
 	}
 
 	if req.Render == nil || !req.GetRender() {
-		resp.Template.JobAccess, err = s.templateAccess.Jobs.List(ctx, s.db, req.GetTemplateId())
+		templateAccess, err := s.templateAccess.ListTargetAccess(
+			ctx,
+			s.db,
+			req.GetTemplateId(),
+			templateSubjectAccessOptions,
+		)
 		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+		resp.Template.JobAccess = templateAccess.GetJobs()
+		if err := s.sanitizeTemplateAccess(resp.Template, true, true); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	} else if req.Render != nil && req.GetRender() && req.GetData() != nil {
@@ -151,61 +171,6 @@ func (s *Server) GetTemplate(
 	s.enricher.EnrichJobName(resp.GetTemplate())
 
 	return resp, nil
-}
-
-func (s *Server) getTemplate(
-	ctx context.Context,
-	templateId int64,
-) (*documentstemplates.Template, error) {
-	tDTemplates := table.FivenetDocumentsTemplates.AS("template")
-
-	stmt := tDTemplates.
-		SELECT(
-			tDTemplates.ID,
-			tDTemplates.Weight,
-			tDTemplates.CreatedAt,
-			tDTemplates.UpdatedAt,
-			tDCategory.ID,
-			tDCategory.Name,
-			tDCategory.Description,
-			tDCategory.Job,
-			tDCategory.Color,
-			tDCategory.Icon,
-			tDTemplates.Title,
-			tDTemplates.Description,
-			tDTemplates.Color,
-			tDTemplates.Icon,
-			tDTemplates.ContentTitle,
-			tDTemplates.Content,
-			tDTemplates.State,
-			tDTemplates.Access,
-			tDTemplates.Schema,
-			tDTemplates.Workflow,
-			tDTemplates.Approval,
-			tDTemplates.CreatorJob,
-		).
-		FROM(
-			tDTemplates.
-				LEFT_JOIN(tDCategory,
-					tDCategory.ID.EQ(tDTemplates.CategoryID),
-				),
-		).
-		WHERE(mysql.AND(
-			tDTemplates.DeletedAt.IS_NULL(),
-			tDTemplates.ID.EQ(mysql.Int64(templateId)),
-		)).
-		LIMIT(1)
-
-	var dest documentstemplates.Template
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
-	}
-
-	if dest.GetId() <= 0 {
-		return nil, nil
-	}
-
-	return &dest, nil
 }
 
 func (s *Server) renderTemplate(
@@ -268,19 +233,24 @@ func (s *Server) CreateTemplate(
 ) (*pbdocuments.CreateTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	if err := s.sanitizeTemplateAccess(req.GetTemplate(), true, true); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	if documentstemplates.TemplateAccessHasDuplicates(req.GetTemplate().GetJobAccess()) ||
 		documentsaccess.DocumentAccessHasDuplicates(req.GetTemplate().GetContentAccess()) {
 		return nil, errorsdocuments.ErrTemplateAccessDuplicate
 	}
 
-	categoryId := mysql.NULL
+	var categoryId *int64
 	if req.GetTemplate().GetCategory() != nil {
 		cat, err := s.getCategory(ctx, req.GetTemplate().GetCategory().GetId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		if cat != nil {
-			categoryId = mysql.Int64(cat.GetId())
+			id := cat.GetId()
+			categoryId = &id
 		}
 	}
 
@@ -292,58 +262,23 @@ func (s *Server) CreateTemplate(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tDTemplates := table.FivenetDocumentsTemplates
-	stmt := tDTemplates.
-		INSERT(
-			tDTemplates.Weight,
-			tDTemplates.CategoryID,
-			tDTemplates.Title,
-			tDTemplates.Description,
-			tDTemplates.Color,
-			tDTemplates.Icon,
-			tDTemplates.ContentTitle,
-			tDTemplates.Content,
-			tDTemplates.State,
-			tDTemplates.Access,
-			tDTemplates.Schema,
-			tDTemplates.Workflow,
-			tDTemplates.Approval,
-			tDTemplates.CreatorJob,
-		).
-		VALUES(
-			req.GetTemplate().GetWeight(),
-			categoryId,
-			req.GetTemplate().GetTitle(),
-			req.GetTemplate().GetDescription(),
-			req.GetTemplate().Color,
-			req.GetTemplate().Icon,
-			req.GetTemplate().GetContentTitle(),
-			req.GetTemplate().GetContent(),
-			req.GetTemplate().GetState(),
-			req.GetTemplate().GetContentAccess(),
-			req.GetTemplate().GetSchema(),
-			req.GetTemplate().GetWorkflow(),
-			req.GetTemplate().GetApproval(),
-			userInfo.GetJob(),
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
+	lastId, err := s.store.CreateTemplate(ctx, tx, req.GetTemplate(), userInfo.GetJob(), categoryId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	lastId, err := res.LastInsertId()
+	normalizedAccess, err := normalizeTemplateJobAccess(userInfo, req.GetTemplate().GetJobAccess())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := s.templateAccess.HandleAccessChanges(
+	if _, err := s.templateAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
+		s.subjectResolver,
 		lastId,
-		req.GetTemplate().GetJobAccess(),
-		nil,
-		nil,
+		normalizedAccess,
+		templateSubjectAccessOptions,
 	); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateAccessDuplicate)
@@ -369,7 +304,7 @@ func (s *Server) UpdateTemplate(
 ) (*pbdocuments.UpdateTemplateResponse, error) {
 	logging.InjectFields(
 		ctx,
-		logging.Fields{"fivenet.documents.template_id", req.GetTemplate().GetId()},
+		logging.Fields{templateIDLogFieldKey, req.GetTemplate().GetId()},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -378,7 +313,7 @@ func (s *Server) UpdateTemplate(
 		ctx,
 		req.GetTemplate().GetId(),
 		userInfo,
-		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -387,19 +322,24 @@ func (s *Server) UpdateTemplate(
 		return nil, errorsdocuments.ErrTemplateNoPerms
 	}
 
+	if err := s.sanitizeTemplateAccess(req.GetTemplate(), true, true); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	if documentstemplates.TemplateAccessHasDuplicates(req.GetTemplate().GetJobAccess()) ||
 		documentsaccess.DocumentAccessHasDuplicates(req.GetTemplate().GetContentAccess()) {
 		return nil, errorsdocuments.ErrTemplateAccessDuplicate
 	}
 
-	categoryId := mysql.NULL
+	var categoryId *int64
 	if req.GetTemplate().GetCategory() != nil {
 		cat, err := s.getCategory(ctx, req.GetTemplate().GetCategory().GetId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		if cat != nil {
-			categoryId = mysql.Int64(cat.GetId())
+			id := cat.GetId()
+			categoryId = &id
 		}
 	}
 
@@ -411,54 +351,22 @@ func (s *Server) UpdateTemplate(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tDTemplates := table.FivenetDocumentsTemplates
-	stmt := tDTemplates.
-		UPDATE(
-			tDTemplates.Weight,
-			tDTemplates.CategoryID,
-			tDTemplates.Title,
-			tDTemplates.Description,
-			tDTemplates.Color,
-			tDTemplates.Icon,
-			tDTemplates.ContentTitle,
-			tDTemplates.Content,
-			tDTemplates.State,
-			tDTemplates.Access,
-			tDTemplates.Schema,
-			tDTemplates.Workflow,
-			tDTemplates.Approval,
-		).
-		SET(
-			req.GetTemplate().GetWeight(),
-			categoryId,
-			req.GetTemplate().GetTitle(),
-			req.GetTemplate().GetDescription(),
-			req.GetTemplate().Color,
-			req.GetTemplate().Icon,
-			req.GetTemplate().GetContentTitle(),
-			req.GetTemplate().GetContent(),
-			req.GetTemplate().GetState(),
-			req.GetTemplate().GetContentAccess(),
-			req.GetTemplate().GetSchema(),
-			req.GetTemplate().GetWorkflow(),
-			req.GetTemplate().GetApproval(),
-		).
-		WHERE(
-			tDTemplates.ID.EQ(mysql.Int64(req.GetTemplate().GetId())),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	if err := s.store.UpdateTemplate(ctx, tx, req.GetTemplate(), categoryId); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := s.templateAccess.HandleAccessChanges(
+	normalizedAccess, err := normalizeTemplateJobAccess(userInfo, req.GetTemplate().GetJobAccess())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if _, err := s.templateAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
+		s.subjectResolver,
 		req.GetTemplate().GetId(),
-		req.GetTemplate().GetJobAccess(),
-		nil,
-		nil,
+		normalizedAccess,
+		templateSubjectAccessOptions,
 	); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateAccessDuplicate)
@@ -471,16 +379,24 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	tmpl, err := s.getTemplate(ctx, req.GetTemplate().GetId())
+	tmpl, err := s.store.GetTemplate(ctx, req.GetTemplate().GetId(), false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	tmpl.JobAccess, err = s.templateAccess.Jobs.List(ctx, s.db, req.GetTemplate().GetId())
+	templateAccess, err := s.templateAccess.ListTargetAccess(
+		ctx,
+		s.db,
+		req.GetTemplate().GetId(),
+		templateSubjectAccessOptions,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-
+	tmpl.JobAccess = templateAccess.GetJobs()
+	if err := s.sanitizeTemplateAccess(tmpl, true, true); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbdocuments.UpdateTemplateResponse{
@@ -492,7 +408,7 @@ func (s *Server) DeleteTemplate(
 	ctx context.Context,
 	req *pbdocuments.DeleteTemplateRequest,
 ) (*pbdocuments.DeleteTemplateResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.template_id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{templateIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -500,13 +416,13 @@ func (s *Server) DeleteTemplate(
 		ctx,
 		req.GetId(),
 		userInfo,
-		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	dTmpl, err := s.getTemplate(ctx, req.GetId())
+	dTmpl, err := s.store.GetTemplate(ctx, req.GetId(), true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -524,25 +440,24 @@ func (s *Server) DeleteTemplate(
 		}
 	}
 
-	tDTemplates := table.FivenetDocumentsTemplates
-	stmt := tDTemplates.
-		UPDATE(
-			tDTemplates.DeletedAt,
-		).
-		SET(
-			tDTemplates.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
-		).
-		WHERE(mysql.AND(
-			tDTemplates.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-			tDTemplates.ID.EQ(mysql.Int64(req.GetId())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	var deletedAtTime *timestamp.Timestamp
+	// Check if page has any un-deleted child pages
+	if dTmpl.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	if err := s.store.DeleteTemplate(
+		ctx,
+		s.db,
+		req.GetId(),
+		userInfo.GetJob(),
+		deletedAtTime,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 
 	return &pbdocuments.DeleteTemplateResponse{}, nil
 }

@@ -4,6 +4,7 @@ package resources.wiki.activity;
 
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
+import "resources/access/access.proto";
 import "resources/common/content/diff_activity.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";
@@ -71,13 +72,13 @@ message PageAccessUpdated {
 }
 
 message PageAccessJobsDiff {
-  repeated resources.wiki.access.PageJobAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
-  repeated resources.wiki.access.PageJobAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
-  repeated resources.wiki.access.PageJobAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.JobAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.JobAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.JobAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
 }
 
 message PageAccessUsersDiff {
-  repeated resources.wiki.access.PageUserAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
-  repeated resources.wiki.access.PageUserAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
-  repeated resources.wiki.access.PageUserAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.UserAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.UserAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.access.UserAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
 }

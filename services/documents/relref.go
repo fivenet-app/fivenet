@@ -2,7 +2,6 @@ package documents
 
 import (
 	context "context"
-	"errors"
 	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
@@ -11,35 +10,26 @@ import (
 	documentsreferences "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/references"
 	documentsrelations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-)
-
-var (
-	tDocRef = table.FivenetDocumentsReferences.AS("document_reference")
-	tDocRel = table.FivenetDocumentsRelations.AS("document_relation")
 )
 
 func (s *Server) GetDocumentReferences(
 	ctx context.Context,
 	req *pbdocuments.GetDocumentReferencesRequest,
 ) (*pbdocuments.GetDocumentReferencesResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -52,49 +42,22 @@ func (s *Server) GetDocumentReferences(
 		return nil, errorsdocuments.ErrFeedRefsViewDenied
 	}
 
-	resp := &pbdocuments.GetDocumentReferencesResponse{}
-
-	var docsIds []struct {
-		Source *int64
-		Target *int64
-	}
-	idStmt := tDocRef.
-		SELECT(
-			tDocRef.SourceDocumentID.AS("source"),
-			tDocRef.TargetDocumentID.AS("target"),
-		).
-		FROM(
-			tDocRef,
-		).
-		WHERE(mysql.AND(
-			tDocRef.DeletedAt.IS_NULL(),
-			mysql.OR(
-				tDocRef.SourceDocumentID.EQ(mysql.Int64(req.GetDocumentId())),
-				tDocRef.TargetDocumentID.EQ(mysql.Int64(req.GetDocumentId())),
-			),
-		))
-
-	if err := idStmt.QueryContext(ctx, s.db, &docsIds); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
+	dest, err := s.store.ListDocumentReferences(ctx, req.GetDocumentId(), userInfo.GetSuperuser())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if len(docsIds) == 0 {
+	resp := &pbdocuments.GetDocumentReferencesResponse{References: dest}
+	if len(dest) == 0 {
 		return resp, nil
 	}
 
 	var docIds []int64
-	for _, v := range docsIds {
-		if v.Source != nil {
-			docIds = append(docIds, *v.Source)
-		}
-		if v.Target != nil {
-			docIds = append(docIds, *v.Target)
-		}
+	for _, ref := range dest {
+		docIds = append(docIds, ref.GetSourceDocumentId(), ref.GetTargetDocumentId())
 	}
 
-	ids, err := s.access.CanUserAccessTargetIDs(
+	ids, err := s.canUserAccessDocumentIDs(
 		ctx,
 		userInfo,
 		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
@@ -102,90 +65,8 @@ func (s *Server) GetDocumentReferences(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-
 	if len(ids) == 0 {
-		return resp, nil
-	}
-
-	dIds := make([]mysql.Expression, len(ids))
-	for i := range ids {
-		dIds[i] = mysql.Int64(ids[i])
-	}
-
-	tSourceDoc := tDocument.AS("source_document")
-	tTargetDoc := tDocument.AS("target_document")
-	tCreator := table.FivenetUser.AS("creator")
-	tRefCreator := tCreator.AS("ref_creator")
-
-	stmt := tDocRef.
-		SELECT(
-			tDocRef.ID,
-			tDocRef.CreatedAt,
-			tDocRef.SourceDocumentID,
-			tDocRef.Reference,
-			tDocRef.TargetDocumentID,
-			tDocRef.CreatorID,
-			tSourceDoc.ID,
-			tSourceDoc.CreatedAt,
-			tSourceDoc.UpdatedAt,
-			tSourceDoc.CategoryID,
-			tSourceDoc.Title,
-			tSourceDoc.CreatorID,
-			tSourceDoc.State,
-			tSourceDoc.Closed,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tTargetDoc.ID,
-			tTargetDoc.CreatedAt,
-			tTargetDoc.UpdatedAt,
-			tTargetDoc.CategoryID,
-			tTargetDoc.Title,
-			tTargetDoc.CreatorID,
-			tTargetDoc.State,
-			tTargetDoc.Closed,
-			tRefCreator.ID,
-			tRefCreator.Job,
-			tRefCreator.JobGrade,
-			tRefCreator.Firstname,
-			tRefCreator.Lastname,
-			tRefCreator.Dateofbirth,
-		).
-		FROM(
-			tDocRef.
-				LEFT_JOIN(tSourceDoc,
-					tDocRef.SourceDocumentID.EQ(tSourceDoc.ID),
-				).
-				LEFT_JOIN(tTargetDoc,
-					tDocRef.TargetDocumentID.EQ(tTargetDoc.ID),
-				).
-				LEFT_JOIN(tCreator,
-					tSourceDoc.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tRefCreator,
-					tDocRef.CreatorID.EQ(tRefCreator.ID),
-				),
-		).
-		WHERE(mysql.AND(
-			tDocRef.DeletedAt.IS_NULL(),
-			mysql.OR(
-				tDocRef.SourceDocumentID.EQ(mysql.Int64(req.GetDocumentId())),
-				tDocRef.TargetDocumentID.EQ(mysql.Int64(req.GetDocumentId())),
-			),
-		)).
-		ORDER_BY(
-			tDocRef.CreatedAt.DESC(),
-		).
-		LIMIT(25)
-
-	var dest []*documentsreferences.DocumentReference
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
+		return &pbdocuments.GetDocumentReferencesResponse{}, nil
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
@@ -202,8 +83,6 @@ func (s *Server) GetDocumentReferences(
 		s.docCategories.Enrich(dest[i].GetTargetDocument())
 	}
 
-	resp.References = dest
-
 	return resp, nil
 }
 
@@ -211,11 +90,11 @@ func (s *Server) GetDocumentRelations(
 	ctx context.Context,
 	req *pbdocuments.GetDocumentRelationsRequest,
 ) (*pbdocuments.GetDocumentRelationsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -228,9 +107,23 @@ func (s *Server) GetDocumentRelations(
 		return nil, errorsdocuments.ErrFeedRelsViewDenied
 	}
 
-	relations, err := s.getDocumentRelations(ctx, userInfo, req.GetDocumentId())
+	relations, err := s.store.ListDocumentRelations(
+		ctx,
+		req.GetDocumentId(),
+		userInfo.GetSuperuser(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	for i := range relations {
+		if relations[i].GetSourceUser() != nil {
+			jobInfoFn(relations[i].GetSourceUser())
+		}
+		if relations[i].GetTargetUser() != nil {
+			jobInfoFn(relations[i].GetTargetUser())
+		}
 	}
 
 	return &pbdocuments.GetDocumentRelationsResponse{
@@ -254,7 +147,7 @@ func (s *Server) AddDocumentReference(
 	}
 
 	// Check if user has access to both documents
-	check, err := s.access.CanUserAccessTargets(
+	check, err := s.canUserAccessDocuments(
 		ctx,
 		userInfo,
 		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
@@ -270,54 +163,23 @@ func (s *Server) AddDocumentReference(
 
 	req.Reference.CreatorId = &userInfo.UserId
 
-	lastId, err := s.addDocumentReference(ctx, s.db, &documentsreferences.DocumentReference{
-		SourceDocumentId: req.GetReference().GetSourceDocumentId(),
-		TargetDocumentId: req.GetReference().GetTargetDocumentId(),
-		Reference:        req.GetReference().GetReference(),
-		CreatorId:        req.GetReference().CreatorId,
-	})
+	lastId, err := s.store.CreateDocumentReference(
+		ctx,
+		s.db,
+		&documentsreferences.DocumentReference{
+			SourceDocumentId: req.GetReference().GetSourceDocumentId(),
+			TargetDocumentId: req.GetReference().GetTargetDocumentId(),
+			Reference:        req.GetReference().GetReference(),
+			CreatorId:        req.GetReference().CreatorId,
+		},
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
-	return &pbdocuments.AddDocumentReferenceResponse{
-		Id: lastId,
-	}, nil
-}
-
-func (s *Server) addDocumentReference(
-	ctx context.Context,
-	db qrm.DB,
-	ref *documentsreferences.DocumentReference,
-) (int64, error) {
-	docRef := table.FivenetDocumentsReferences
-	stmt := docRef.
-		INSERT(
-			docRef.SourceDocumentID,
-			docRef.Reference,
-			docRef.TargetDocumentID,
-			docRef.CreatorID,
-		).
-		VALUES(
-			ref.GetSourceDocumentId(),
-			ref.GetReference(),
-			ref.GetTargetDocumentId(),
-			ref.GetCreatorId(),
-		)
-
-	result, err := stmt.ExecContext(ctx, db)
-	if err != nil {
-		return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	lastId, err := result.LastInsertId()
-	if err != nil {
-		return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	return lastId, nil
+	return &pbdocuments.AddDocumentReferenceResponse{Id: lastId}, nil
 }
 
 func (s *Server) RemoveDocumentReference(
@@ -328,31 +190,17 @@ func (s *Server) RemoveDocumentReference(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	var docIDs struct {
-		Source int64
-		Target int64
-	}
-
-	// Get document IDs of reference entry
-	docsStmt := tDocRef.
-		SELECT(
-			tDocRef.SourceDocumentID.AS("source"),
-			tDocRef.TargetDocumentID.AS("target"),
-		).
-		FROM(tDocRef).
-		WHERE(tDocRef.ID.EQ(mysql.Int64(req.GetId()))).
-		LIMIT(1)
-
-	if err := docsStmt.QueryContext(ctx, s.db, &docIDs); err != nil {
+	ref, err := s.store.GetDocumentReference(ctx, req.GetId(), userInfo.GetSuperuser())
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	check, err := s.access.CanUserAccessTargets(
+	check, err := s.canUserAccessDocuments(
 		ctx,
 		userInfo,
 		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
-		docIDs.Source,
-		docIDs.Target,
+		ref.GetSourceDocumentId(),
+		ref.GetTargetDocumentId(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -361,19 +209,7 @@ func (s *Server) RemoveDocumentReference(
 		return nil, errorsdocuments.ErrFeedRefRemoveDenied
 	}
 
-	stmt := tDocRef.
-		UPDATE(
-			tDocRef.DeletedAt,
-		).
-		SET(
-			tDocRef.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
-		).
-		WHERE(
-			tDocRef.ID.EQ(mysql.Int64(req.GetId())),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeleteDocumentReference(ctx, s.db, req.GetId()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -387,14 +223,14 @@ func (s *Server) AddDocumentRelation(
 	req *pbdocuments.AddDocumentRelationRequest,
 ) (*pbdocuments.AddDocumentRelationResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.documents.id", req.GetRelation().GetDocumentId(),
+		documentIDLogFieldKey, req.GetRelation().GetDocumentId(),
 		"fivenet.documents.source_user_id", req.GetRelation().GetSourceUserId(),
 		"fivenet.documents.target_user_id", req.GetRelation().GetTargetUserId(),
 	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetRelation().GetDocumentId(),
 		userInfo,
@@ -409,142 +245,76 @@ func (s *Server) AddDocumentRelation(
 
 	req.Relation.SourceUserId = userInfo.GetUserId()
 
-	lastId, err := s.addDocumentRelation(ctx, s.db, userInfo, &documentsrelations.DocumentRelation{
-		DocumentId:   req.GetRelation().GetDocumentId(),
-		SourceUserId: req.GetRelation().GetSourceUserId(),
-		Relation:     req.GetRelation().GetRelation(),
-		TargetUserId: req.GetRelation().GetTargetUserId(),
-	})
+	lastId, created, err := s.store.CreateDocumentRelation(
+		ctx,
+		s.db,
+		&documentsrelations.DocumentRelation{
+			DocumentId:   req.GetRelation().GetDocumentId(),
+			SourceUserId: req.GetRelation().GetSourceUserId(),
+			Relation:     req.GetRelation().GetRelation(),
+			TargetUserId: req.GetRelation().GetTargetUserId(),
+		},
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
-
-	return &pbdocuments.AddDocumentRelationResponse{
-		Id: lastId,
-	}, nil
-}
-
-func (s *Server) addDocumentRelation(
-	ctx context.Context,
-	tx qrm.DB,
-	userInfo *userinfo.UserInfo,
-	rel *documentsrelations.DocumentRelation,
-) (int64, error) {
-	tDocRel := table.FivenetDocumentsRelations
-	stmt := tDocRel.
-		INSERT(
-			tDocRel.DocumentID,
-			tDocRel.SourceUserID,
-			tDocRel.Relation,
-			tDocRel.TargetUserID,
-		).
-		VALUES(
-			rel.GetDocumentId(),
-			rel.GetSourceUserId(),
-			rel.GetRelation(),
-			rel.GetTargetUserId(),
-		)
-
-	var lastId int64
-
-	result, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-
-		stmt := tDocRel.
-			SELECT(
-				tDocRel.ID.AS("id"),
-			).
-			FROM(tDocRel).
-			WHERE(mysql.AND(
-				tDocRel.DocumentID.EQ(mysql.Int64(rel.GetDocumentId())),
-				tDocRel.Relation.EQ(mysql.Int32(int32(rel.GetRelation()))),
-				tDocRel.TargetUserID.EQ(mysql.Int32(rel.GetTargetUserId())),
-			)).
-			LIMIT(1)
-
-		var dest struct {
-			ID int64
-		}
-		if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
-			return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-
-		lastId = dest.ID
-	} else {
-		lastId, err = result.LastInsertId()
-		if err != nil {
-			return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-
-		// Only mention users when the relation has been created and not been "duplicated"
+	if created {
 		if err := s.addUserActivity(
 			ctx,
-			tx,
+			s.db,
 			userInfo.GetUserId(),
-			rel.GetTargetUserId(),
+			req.GetRelation().GetTargetUserId(),
 			usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT,
 			"",
 			&usersactivity.UserActivityData{
 				Data: &usersactivity.UserActivityData_DocumentRelation{
 					DocumentRelation: &usersactivity.CitizenDocumentRelation{
 						Added:      true,
-						DocumentId: rel.GetDocumentId(),
-						Relation:   rel.GetRelation(),
+						DocumentId: req.GetRelation().GetDocumentId(),
+						Relation:   req.GetRelation().GetRelation(),
 					},
 				},
 			},
 		); err != nil {
-			return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		if rel.GetRelation() == documentsrelations.DocRelation_DOC_RELATION_MENTIONED {
+		if req.GetRelation().
+			GetRelation() ==
+			documentsrelations.DocRelation_DOC_RELATION_MENTIONED {
 			if err := s.notifyMentionedUser(
 				ctx,
-				rel.GetDocumentId(),
+				req.GetRelation().GetDocumentId(),
 				userInfo.GetUserId(),
-				rel.GetTargetUserId(),
+				req.GetRelation().GetTargetUserId(),
 			); err != nil {
-				return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 		}
 	}
 
-	return lastId, nil
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
+
+	return &pbdocuments.AddDocumentRelationResponse{Id: lastId}, nil
 }
 
 func (s *Server) RemoveDocumentRelation(
 	ctx context.Context,
 	req *pbdocuments.RemoveDocumentRelationRequest,
 ) (*pbdocuments.RemoveDocumentRelationResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	var docID struct {
-		ID int64
-	}
-
-	// Get document IDs of reference entry
-	docsStmt := tDocRel.
-		SELECT(
-			tDocRel.DocumentID.AS("id"),
-		).
-		FROM(tDocRel).
-		WHERE(tDocRel.ID.EQ(mysql.Int64(req.GetId()))).
-		LIMIT(1)
-
-	if err := docsStmt.QueryContext(ctx, s.db, &docID); err != nil {
+	rel, err := s.store.GetDocumentRelation(ctx, req.GetId(), userInfo.GetSuperuser())
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
-		docID.ID,
+		rel.GetDocumentId(),
 		userInfo,
 		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
@@ -563,24 +333,7 @@ func (s *Server) RemoveDocumentRelation(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := tDocRel.
-		UPDATE(
-			tDocRel.DeletedAt,
-		).
-		SET(
-			tDocRel.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
-		).
-		WHERE(
-			tDocRel.ID.EQ(mysql.Int64(req.GetId())),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	rel, err := s.getDocumentRelation(ctx, req.GetId())
-	if err != nil {
+	if err := s.store.DeleteDocumentRelation(ctx, tx, req.GetId()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -595,7 +348,7 @@ func (s *Server) RemoveDocumentRelation(
 			Data: &usersactivity.UserActivityData_DocumentRelation{
 				DocumentRelation: &usersactivity.CitizenDocumentRelation{
 					Added:      false,
-					DocumentId: docID.ID,
+					DocumentId: rel.GetDocumentId(),
 					// Relation:   rel.Relation,
 				},
 			},
@@ -614,128 +367,6 @@ func (s *Server) RemoveDocumentRelation(
 	return &pbdocuments.RemoveDocumentRelationResponse{}, nil
 }
 
-func (s *Server) getDocumentRelation(
-	ctx context.Context,
-	id int64,
-) (*documentsrelations.DocumentRelation, error) {
-	stmt := tDocRel.
-		SELECT(
-			tDocRel.ID,
-			tDocRel.CreatedAt,
-			tDocRel.DocumentID,
-			tDocRel.SourceUserID,
-			tDocRel.Relation,
-			tDocRel.TargetUserID,
-		).
-		FROM(
-			tDocRel,
-		).
-		WHERE(
-			tDocRel.ID.EQ(mysql.Int64(id)),
-		).
-		LIMIT(1)
-
-	var dest documentsrelations.DocumentRelation
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return &dest, nil
-}
-
-func (s *Server) getDocumentRelations(
-	ctx context.Context,
-	userInfo *userinfo.UserInfo,
-	documentId int64,
-) ([]*documentsrelations.DocumentRelation, error) {
-	tSourceUser := table.FivenetUser.AS("source_user")
-	tTargetUser := tSourceUser.AS("target_user")
-
-	stmt := tDocRel.
-		SELECT(
-			tDocRel.ID,
-			tDocRel.CreatedAt,
-			tDocRel.DocumentID,
-			tDocRel.SourceUserID,
-			tDocRel.Relation,
-			tDocRel.TargetUserID,
-			tDocument.ID,
-			tDocument.CreatedAt,
-			tDocument.UpdatedAt,
-			tDocument.CategoryID,
-			tDocument.Title,
-			tDocument.CreatorID,
-			tDocument.State,
-			tDocument.Closed,
-			tDocument.Draft,
-			tDocument.Public,
-			tDCategory.ID,
-			tDCategory.Name,
-			tDCategory.Description,
-			tDCategory.Color,
-			tDCategory.Icon,
-			tSourceUser.ID,
-			tSourceUser.Job,
-			tSourceUser.JobGrade,
-			tSourceUser.Firstname,
-			tSourceUser.Lastname,
-			tSourceUser.Dateofbirth,
-			tTargetUser.ID,
-			tTargetUser.Job,
-			tTargetUser.JobGrade,
-			tTargetUser.Firstname,
-			tTargetUser.Lastname,
-			tTargetUser.Dateofbirth,
-		).
-		FROM(
-			tDocRel.
-				LEFT_JOIN(tDocument,
-					tDocument.ID.EQ(tDocRel.DocumentID),
-				).
-				LEFT_JOIN(tDCategory,
-					mysql.AND(
-						tDocument.CategoryID.EQ(tDCategory.ID),
-						tDCategory.DeletedAt.IS_NULL(),
-					),
-				).
-				LEFT_JOIN(tSourceUser,
-					tSourceUser.ID.EQ(tDocRel.SourceUserID),
-				).
-				LEFT_JOIN(tTargetUser,
-					tTargetUser.ID.EQ(tDocRel.TargetUserID),
-				),
-		).
-		WHERE(mysql.AND(
-			tDocRel.DocumentID.EQ(mysql.Int64(documentId)),
-			tDocRel.DeletedAt.IS_NULL(),
-		)).
-		ORDER_BY(
-			tDocRel.CreatedAt.DESC(),
-		).
-		LIMIT(25)
-
-	var dest []*documentsrelations.DocumentRelation
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range dest {
-		if dest[i].GetSourceUser() != nil {
-			jobInfoFn(dest[i].GetSourceUser())
-		}
-		if dest[i].GetTargetUser() != nil {
-			jobInfoFn(dest[i].GetTargetUser())
-		}
-	}
-
-	return dest, nil
-}
-
 func (s *Server) notifyMentionedUser(
 	ctx context.Context,
 	documentId int64,
@@ -748,7 +379,7 @@ func (s *Server) notifyMentionedUser(
 	}
 
 	// Make sure target user has access to document
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		documentId,
 		userInfo,

@@ -2,28 +2,21 @@ package jobs
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsconduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
+	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
-
-var tConduct = table.FivenetJobConduct.AS("conduct_entry")
 
 func (s *Server) ListConductEntries(
 	ctx context.Context,
@@ -31,203 +24,52 @@ func (s *Server) ListConductEntries(
 ) (*pbjobs.ListConductEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := tConduct.Job.EQ(mysql.String(userInfo.GetJob()))
-
-	if !userInfo.GetSuperuser() {
-		condition = condition.AND(
-			tConduct.DeletedAt.IS_NULL(),
-		)
-	}
-
 	// Field Permission Check
 	fields, err := permsjobs.ConductService.ListConductEntries.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	// "All" is a pass, but if no fields or "Own" is given, return user's created conduct entries
-	if fields.Contains(permsjobs.ConductServiceListConductEntriesAccessPermValueAll) {
-	} else if fields.Len() == 0 || fields.Contains(permsjobs.ConductServiceListConductEntriesAccessPermValueOwn) {
-		condition = condition.AND(tConduct.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())))
-	} else {
+	allAccess := fields.Contains(permsjobs.ConductServiceListConductEntriesAccessPermValueAll)
+	ownOnly := !allAccess &&
+		(fields.Len() == 0 || fields.Contains(permsjobs.ConductServiceListConductEntriesAccessPermValueOwn))
+	if !allAccess && !ownOnly {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if len(req.GetIds()) > 0 {
-		ids := make([]mysql.Expression, len(req.GetIds()))
-		for i := range req.GetIds() {
-			ids[i] = mysql.Int64(req.GetIds()[i])
-		}
-
-		condition = condition.AND(tConduct.ID.IN(ids...))
-	}
-	if len(req.GetTypes()) > 0 {
-		ts := make([]mysql.Expression, len(req.GetTypes()))
-		for i := range req.GetTypes() {
-			ts[i] = mysql.Int32(int32(req.GetTypes()[i].Number()))
-		}
-
-		condition = condition.AND(tConduct.Type.IN(ts...))
-	}
-	if len(req.GetIds()) == 0 && (req.ShowExpired == nil || !req.GetShowExpired()) {
-		condition = condition.AND(mysql.OR(
-			tConduct.ExpiresAt.IS_NULL(),
-			tConduct.ExpiresAt.GT_EQ(
-				mysql.CURRENT_DATE(),
-			),
-		))
-	}
-	if len(req.GetUserIds()) > 0 {
-		ids := make([]mysql.Expression, len(req.GetUserIds()))
-		for i := range req.GetUserIds() {
-			ids[i] = mysql.Int32(req.GetUserIds()[i])
-		}
-
-		condition = condition.AND(
-			tConduct.TargetUserID.IN(ids...),
-		)
-	}
-	if !req.GetShowDrafts() {
-		condition = condition.AND(
-			tConduct.Draft.EQ(mysql.Bool(false)),
-		)
+	q := jobsstore.ConductQuery{
+		Job:         userInfo.GetJob(),
+		Sort:        req.GetSort(),
+		Offset:      req.GetPagination().GetOffset(),
+		Limit:       0,
+		Types:       req.GetTypes(),
+		ShowExpired: req.GetShowExpired(),
+		ShowDrafts:  req.GetShowDrafts(),
+		UserIDs:     req.GetUserIds(),
+		IDs:         req.GetIds(),
+		CreatorID:   userInfo.GetUserId(),
+		OwnOnly:     ownOnly,
+		AllAccess:   allAccess,
 	}
 
-	countStmt := tConduct.
-		SELECT(mysql.COUNT(tConduct.ID).AS("data_count.total")).
-		FROM(tConduct).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	total, err := s.store.CountConductEntries(ctx, s.db, q)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponse(count.Total)
+	pag, limit := req.GetPagination().GetResponse(total)
 	resp := &pbjobs.ListConductEntriesResponse{
 		Pagination: pag,
 		Entries:    []*jobsconduct.ConductEntry{},
 	}
-	if count.Total <= 0 {
+	if total <= 0 {
 		return resp, nil
 	}
 
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var columns []mysql.Column
-			switch sc.GetId() {
-			case "type":
-				columns = append(columns, tConduct.Type, tConduct.ID)
-			case "id":
-				fallthrough
-			default:
-				columns = append(columns, tConduct.ID)
-			}
-
-			for _, column := range columns {
-				if sc.GetDesc() {
-					orderBys = append(orderBys, column.DESC())
-				} else {
-					orderBys = append(orderBys, column.ASC())
-				}
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tConduct.ID.DESC())
-	}
-
-	tColleague := table.FivenetUser.AS("target_user")
-	tUserUserProps := tUserProps.AS("target_user_props")
-	tColleagueAvatar := tAvatar.AS("target_user_profile_picture")
-	tCreator := tColleague.AS("creator")
-	tCreatorUserProps := tUserProps.AS("creator_props")
-	tCreatorAvatar := tAvatar.AS("creator_profile_picture")
-
-	columns := mysql.ProjectionList{
-		tConduct.CreatedAt,
-		tConduct.UpdatedAt,
-		tConduct.Job,
-		tConduct.Type,
-		tConduct.Draft,
-		tConduct.Message,
-		tConduct.ExpiresAt,
-		tConduct.TargetUserID,
-		tColleague.ID,
-		tColleague.Job,
-		tColleague.JobGrade,
-		tColleague.Firstname,
-		tColleague.Lastname,
-		tColleague.Dateofbirth,
-		tColleague.PhoneNumber,
-		tUserUserProps.AvatarFileID.AS("target_user.profile_picture_file_id"),
-		tColleagueAvatar.FilePath.AS("target_user.profile_picture"),
-		tColleagueProps.UserID,
-		tColleagueProps.Job,
-		tColleagueProps.AbsenceBegin,
-		tColleagueProps.AbsenceEnd,
-		tColleagueProps.NamePrefix,
-		tColleagueProps.NameSuffix,
-		tConduct.CreatorID,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
-		tCreator.PhoneNumber,
-		tCreatorUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-		tCreatorAvatar.FilePath.AS("creator.profile_picture"),
-	}
-
-	if userInfo.GetSuperuser() {
-		columns = append(columns, tConduct.DeletedAt)
-	}
-
-	stmt := tConduct.
-		SELECT(
-			tConduct.ID,
-			columns...,
-		).
-		FROM(
-			tConduct.
-				LEFT_JOIN(tColleague,
-					tColleague.ID.EQ(tConduct.TargetUserID),
-				).
-				LEFT_JOIN(tUserUserProps,
-					tUserUserProps.UserID.EQ(tConduct.TargetUserID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tConduct.TargetUserID),
-						tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				).
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tConduct.CreatorID),
-				).
-				LEFT_JOIN(tCreatorUserProps,
-					tCreatorUserProps.UserID.EQ(tConduct.CreatorID),
-				).
-				LEFT_JOIN(tColleagueAvatar,
-					tColleagueAvatar.ID.EQ(tUserUserProps.AvatarFileID),
-				).
-				LEFT_JOIN(tCreatorAvatar,
-					tCreatorAvatar.ID.EQ(tCreatorUserProps.AvatarFileID),
-				),
-		).
-		WHERE(condition).
-		OFFSET(req.GetPagination().GetOffset()).
-		ORDER_BY(orderBys...).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	q.Limit = limit
+	resp.Entries, err = s.store.ListConductEntries(ctx, s.db, q)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
@@ -245,15 +87,12 @@ func (s *Server) ListConductEntries(
 			if err != nil {
 				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 			}
-
-			// HTML is needed to display message preview on client-side for "legacy" (non-Tiptap JSON) entries
-			//nolint:staticcheck,nolintlint // SA1019: RawHtml is intentionally populated for legacy content previews
+			//nolint:staticcheck,nolintlint // legacy preview
 			resp.GetEntries()[i].GetMessage().RawHtml = &rawHtml
 		}
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
-
 	return resp, nil
 }
 
@@ -264,105 +103,13 @@ func (s *Server) GetConductEntry(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct.id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	resp := &pbjobs.GetConductEntryResponse{Entry: &jobsconduct.ConductEntry{}}
 
-	resp := &pbjobs.GetConductEntryResponse{
-		Entry: &jobsconduct.ConductEntry{},
+	entry, err := s.store.GetConductEntry(ctx, s.db, req.GetId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
-	condition := mysql.AND(
-		tConduct.Job.EQ(mysql.String(userInfo.GetJob())),
-		tConduct.ID.EQ(mysql.Int64(req.GetId())),
-	)
-
-	tColleague := table.FivenetUser.AS("target_user")
-	tUserUserProps := tUserProps.AS("target_user_props")
-	tColleagueAvatar := tAvatar.AS("target_user_profile_picture")
-	tCreator := tColleague.AS("creator")
-	tCreatorUserProps := tUserProps.AS("creator_props")
-	tCreatorAvatar := tAvatar.AS("creator_profile_picture")
-
-	columns := mysql.ProjectionList{
-		tConduct.CreatedAt,
-		tConduct.UpdatedAt,
-		tConduct.Job,
-		tConduct.Type,
-		tConduct.Draft,
-		tConduct.Message,
-		tConduct.ExpiresAt,
-		tConduct.TargetUserID,
-		tColleague.ID,
-		tColleague.Job,
-		tColleague.JobGrade,
-		tColleague.Firstname,
-		tColleague.Lastname,
-		tColleague.Dateofbirth,
-		tColleague.PhoneNumber,
-		tUserUserProps.AvatarFileID.AS("target_user.profile_picture_file_id"),
-		tColleagueAvatar.FilePath.AS("target_user.profile_picture"),
-		tColleagueProps.UserID,
-		tColleagueProps.Job,
-		tColleagueProps.AbsenceBegin,
-		tColleagueProps.AbsenceEnd,
-		tColleagueProps.NamePrefix,
-		tColleagueProps.NameSuffix,
-		tConduct.CreatorID,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
-		tCreator.PhoneNumber,
-		tCreatorUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-		tCreatorAvatar.FilePath.AS("creator.profile_picture"),
-	}
-
-	if userInfo.GetSuperuser() {
-		columns = append(columns, tConduct.DeletedAt)
-	}
-
-	stmt := tConduct.
-		SELECT(
-			tConduct.ID,
-			columns...,
-		).
-		FROM(
-			tConduct.
-				LEFT_JOIN(tColleague,
-					tColleague.ID.EQ(tConduct.TargetUserID),
-				).
-				LEFT_JOIN(tUserUserProps,
-					tUserUserProps.UserID.EQ(tConduct.TargetUserID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tConduct.TargetUserID),
-						tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				).
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tConduct.CreatorID),
-				).
-				LEFT_JOIN(tCreatorUserProps,
-					tCreatorUserProps.UserID.EQ(tConduct.CreatorID),
-				).
-				LEFT_JOIN(tColleagueAvatar,
-					tColleagueAvatar.ID.EQ(tUserUserProps.AvatarFileID),
-				).
-				LEFT_JOIN(tCreatorAvatar,
-					tCreatorAvatar.ID.EQ(tCreatorUserProps.AvatarFileID),
-				),
-		).
-		WHERE(condition).
-		LIMIT(1)
-
-	if err := stmt.QueryContext(ctx, s.db, resp.Entry); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-	}
-
-	if resp.GetEntry().GetId() == 0 {
+	if entry == nil {
 		return nil, errorsjobs.ErrFailedQuery
 	}
 
@@ -370,18 +117,18 @@ func (s *Server) GetConductEntry(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	resp.GetEntry().Files = files
+	entry.Files = files
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	if resp.GetEntry().GetTargetUser() != nil {
-		jobInfoFn(resp.GetEntry().GetTargetUser())
+	if entry.GetTargetUser() != nil {
+		jobInfoFn(entry.GetTargetUser())
 	}
-	if resp.GetEntry().GetCreator() != nil {
-		jobInfoFn(resp.GetEntry().GetCreator())
+	if entry.GetCreator() != nil {
+		jobInfoFn(entry.GetCreator())
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
-
+	resp.Entry = entry
 	return resp, nil
 }
 
@@ -390,42 +137,16 @@ func (s *Server) CreateConductEntry(
 	req *pbjobs.CreateConductEntryRequest,
 ) (*pbjobs.CreateConductEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
 	req.Entry.Job = userInfo.GetJob()
+	req.Entry.CreatorId = userInfo.GetUserId()
 
-	tConduct := table.FivenetJobConduct
-	stmt := tConduct.
-		INSERT(
-			tConduct.Job,
-			tConduct.Type,
-			tConduct.Draft,
-			tConduct.Message,
-			tConduct.ExpiresAt,
-			tConduct.TargetUserID,
-			tConduct.CreatorID,
-		).
-		VALUES(
-			userInfo.GetJob(),
-			req.GetEntry().GetType(),
-			req.GetEntry().GetDraft(),
-			req.GetEntry().GetMessage(),
-			req.GetEntry().GetExpiresAt(),
-			dbutils.Int32P(req.GetEntry().GetTargetUserId()),
-			userInfo.GetUserId(),
-		)
-
-	res, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
-
-	lastId, err := res.LastInsertId()
+	lastId, err := s.store.CreateConductEntry(ctx, s.db, req.GetEntry())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	req.Entry.Id = lastId
 
-	entry, err := s.getConductEntry(ctx, lastId, true)
+	entry, err := s.store.GetConductEntry(ctx, s.db, lastId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -433,9 +154,7 @@ func (s *Server) CreateConductEntry(
 	grpc_audit.AddMeta(ctx, "conduct.id", strconv.Itoa(int(lastId)))
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
-	return &pbjobs.CreateConductEntryResponse{
-		Entry: entry,
-	}, nil
+	return &pbjobs.CreateConductEntryResponse{Entry: entry}, nil
 }
 
 func (s *Server) UpdateConductEntry(
@@ -446,7 +165,7 @@ func (s *Server) UpdateConductEntry(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	entry, err := s.getConductEntry(ctx, req.GetEntry().GetId(), true)
+	entry, err := s.store.GetConductEntry(ctx, s.db, req.GetEntry().GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -454,13 +173,9 @@ func (s *Server) UpdateConductEntry(
 		return nil, errorsjobs.ErrFailedQuery
 	}
 
-	// Prevent changing published to draft
-	if req.GetEntry().GetDraft() && !entry.GetDraft() {
-		if !userInfo.GetSuperuser() {
-			req.GetEntry().Draft = entry.GetDraft()
-		}
+	if req.GetEntry().GetDraft() && !entry.GetDraft() && !userInfo.GetSuperuser() {
+		req.Entry.Draft = entry.GetDraft()
 	}
-
 	if req.GetEntry().GetType() <= 0 {
 		req.Entry.Type = entry.GetType()
 	}
@@ -469,37 +184,13 @@ func (s *Server) UpdateConductEntry(
 	}
 	req.Entry.Job = userInfo.GetJob()
 
-	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tConduct := table.FivenetJobConduct
-	stmt := tConduct.
-		UPDATE(
-			tConduct.Type,
-			tConduct.Draft,
-			tConduct.Message,
-			tConduct.ExpiresAt,
-			tConduct.TargetUserID,
-		).
-		SET(
-			req.GetEntry().GetType(),
-			req.GetEntry().GetDraft(),
-			req.GetEntry().GetMessage(),
-			req.GetEntry().GetExpiresAt(),
-			req.GetEntry().GetTargetUserId(),
-		).
-		WHERE(mysql.AND(
-			tConduct.Job.EQ(mysql.String(req.GetEntry().GetJob())),
-			tConduct.ID.EQ(mysql.Int64(req.GetEntry().GetId())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	if err := s.store.UpdateConductEntry(ctx, tx, req.GetEntry()); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
@@ -512,30 +203,25 @@ func (s *Server) UpdateConductEntry(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	entry, err = s.getConductEntry(ctx, entry.GetId(), false)
+	entry, err = s.store.GetConductEntry(ctx, s.db, entry.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
-
 	s.notifi.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
 		Type:      notificationsclientview.ObjectType_OBJECT_TYPE_JOBS_CONDUCT,
 		Id:        &entry.Id,
 		EventType: notificationsclientview.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
-
-		UserId: &userInfo.UserId,
-		Job:    &userInfo.Job,
+		UserId:    &userInfo.UserId,
+		Job:       &userInfo.Job,
 	})
 
-	return &pbjobs.UpdateConductEntryResponse{
-		Entry: entry,
-	}, nil
+	return &pbjobs.UpdateConductEntryResponse{Entry: entry}, nil
 }
 
 func (s *Server) DeleteConductEntry(
@@ -545,8 +231,7 @@ func (s *Server) DeleteConductEntry(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct_id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	entry, err := s.getConductEntry(ctx, req.GetId(), false)
+	entry, err := s.store.GetConductEntry(ctx, s.db, req.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -559,21 +244,13 @@ func (s *Server) DeleteConductEntry(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
-	tConduct := table.FivenetJobConduct
-	stmt := tConduct.
-		UPDATE(
-			tConduct.DeletedAt,
-		).
-		SET(
-			tConduct.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
-		).
-		WHERE(mysql.AND(
-			tConduct.Job.EQ(mysql.String(userInfo.GetJob())),
-			tConduct.ID.EQ(mysql.Int64(req.GetId())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeleteConductEntry(
+		ctx,
+		s.db,
+		userInfo.GetJob(),
+		req.GetId(),
+		deletedAtTime,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 

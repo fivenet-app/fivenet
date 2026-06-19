@@ -2,29 +2,23 @@ package qualifications
 
 import (
 	"context"
-	"errors"
-	"strings"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	permsqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
+	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
@@ -41,68 +35,22 @@ func (s *Server) ListQualifications(
 ) (*pbqualifications.ListQualificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := mysql.Bool(true)
-
-	if req.GetSearch() != "" {
-		search := dbutils.PrepareForLikeSearch(req.GetSearch())
-		condition = condition.AND(mysql.OR(
-			tQuali.Abbreviation.LIKE(mysql.String(search)),
-			tQuali.Title.LIKE(mysql.String(search)),
-		))
-	}
-
-	countStmt := s.listQualificationsQuery(
-		condition,
-		mysql.ProjectionList{mysql.COUNT(mysql.DISTINCT(tQuali.ID)).AS("data_count.total")},
+	includePhoneNumber := false
+	if fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(
+		s.perms,
 		userInfo,
-	)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
+	); err == nil {
+		includePhoneNumber = fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+		)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, QualificationsPageSize)
-	resp := &pbqualifications.ListQualificationsResponse{
-		Pagination:     pag,
-		Qualifications: []*qualifications.Qualification{},
-	}
-	if count.Total <= 0 {
-		return resp, nil
-	}
-
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{tQuali.Draft.ASC()}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "abbreviation":
-				column = tQuali.Abbreviation
-			case "id":
-				fallthrough
-			default:
-				column = tQualiResults.ID
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tQualiResults.ID.DESC())
-	}
-
-	stmt := s.listQualificationsQuery(condition, nil, userInfo).
-		OFFSET(req.GetPagination().GetOffset()).
-		ORDER_BY(orderBys...).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Qualifications); err != nil {
+	resp, err := s.store.ListQualifications(ctx, qualificationsstore.ListQualificationsOptions{
+		Pagination: req.GetPagination(),
+		Sort:       req.GetSort(),
+		Search:     req.GetSearch(),
+	}, userInfo, includePhoneNumber)
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -120,7 +68,7 @@ func (s *Server) GetQualification(
 	ctx context.Context,
 	req *pbqualifications.GetQualificationRequest,
 ) (*pbqualifications.GetQualificationResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -128,15 +76,18 @@ func (s *Server) GetQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	quali, err := s.getQualificationShort(ctx, req.GetQualificationId(), nil, userInfo)
+	quali, err := s.store.GetQualificationShort(ctx, req.GetQualificationId(), userInfo, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	if !userInfo.GetSuperuser() && quali.GetDeletedAt() != nil {
+		return nil, errorsqualifications.ErrQualiViewDenied
 	}
 
 	if !check && !userInfo.GetSuperuser() && !quali.GetPublic() {
@@ -165,7 +116,7 @@ func (s *Server) GetQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -179,7 +130,7 @@ func (s *Server) GetQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -190,8 +141,8 @@ func (s *Server) GetQualification(
 	}
 
 	resp := &pbqualifications.GetQualificationResponse{}
-	resp.Qualification, err = s.getQualification(ctx, req.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())), userInfo, canContent)
+	resp.Qualification, err = s.store.GetQualification(ctx, req.GetQualificationId(),
+		userInfo, canContent, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -216,17 +167,20 @@ func (s *Server) GetQualification(
 		s.enricher.EnrichJobInfoSafe(userInfo, resp.GetQualification().GetCreator())
 	}
 
-	qualiAccess, err := s.GetQualificationAccess(
+	qualiAccess, err := s.access.ListTargetAccess(
 		ctx,
-		&pbqualifications.GetQualificationAccessRequest{
-			QualificationId: req.GetQualificationId(),
-		},
+		s.db,
+		req.GetQualificationId(),
+		qualificationSubjectAccessOptions,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	for i := range qualiAccess.GetJobs() {
+		s.enricher.EnrichJobInfo(qualiAccess.GetJobs()[i])
+	}
 	if qualiAccess != nil {
-		resp.Qualification.Access = qualiAccess.GetAccess()
+		resp.Qualification.Access = qualiAccess
 	}
 
 	files, err := s.fHandler.ListFilesForParentID(ctx, req.GetQualificationId())
@@ -236,7 +190,7 @@ func (s *Server) GetQualification(
 	resp.Qualification.Files = files
 
 	if canGrade && req.WithExam != nil && req.GetWithExam() {
-		exam, err := s.getExamQuestions(ctx, s.db, req.GetQualificationId(), canGrade)
+		exam, err := s.store.GetExamQuestions(ctx, s.db, req.GetQualificationId(), canGrade)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -262,41 +216,7 @@ func (s *Server) CreateQualification(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tQuali := table.FivenetQualifications
-	stmt := tQuali.
-		INSERT(
-			tQuali.Job,
-			tQuali.Closed,
-			tQuali.Draft,
-			tQuali.Public,
-			tQuali.Abbreviation,
-			tQuali.Title,
-			tQuali.Description,
-			tQuali.ContentType,
-			tQuali.Content,
-			tQuali.CreatorID,
-			tQuali.CreatorJob,
-		).
-		VALUES(
-			userInfo.GetJob(),
-			false,
-			true,
-			false,
-			"",
-			"",
-			"",
-			int32(content.ContentType_CONTENT_TYPE_HTML),
-			"",
-			userInfo.GetUserId(),
-			userInfo.GetJob(),
-		)
-
-	result, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-	}
-
-	lastId, err := result.LastInsertId()
+	lastId, err := s.store.CreateQualification(ctx, tx, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -314,11 +234,23 @@ func (s *Server) CreateQualification(
 			TargetId:     lastId,
 			Job:          job.GetName(),
 			MinimumGrade: highestGrade,
-			Access:       qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+			Access:       int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 		})
 	}
 
-	if _, err := s.access.HandleAccessChanges(ctx, tx, lastId, jobAccess, nil, nil); err != nil {
+	normalizedAccess, err := normalizeQualificationJobAccess(userInfo, jobAccess)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	if _, err := s.access.ReplaceTargetAccess(
+		ctx,
+		tx,
+		s.accessResolver,
+		lastId,
+		normalizedAccess,
+		qualificationSubjectAccessOptions,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -340,7 +272,7 @@ func (s *Server) UpdateQualification(
 ) (*pbqualifications.UpdateQualificationResponse, error) {
 	logging.InjectFields(
 		ctx,
-		logging.Fields{"fivenet.qualifications.id", req.GetQualification().GetId()},
+		logging.Fields{qualificationIDLogFieldKey, req.GetQualification().GetId()},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -349,7 +281,7 @@ func (s *Server) UpdateQualification(
 		ctx,
 		req.GetQualification().GetId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -358,9 +290,8 @@ func (s *Server) UpdateQualification(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	oldQuali, err := s.getQualification(ctx, req.GetQualification().GetId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualification().GetId())),
-		userInfo, true)
+	oldQuali, err := s.store.GetQualification(ctx, req.GetQualification().GetId(),
+		userInfo, true, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -420,72 +351,32 @@ func (s *Server) UpdateQualification(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if req.Qualification.Description != nil {
-		*req.Qualification.Description = strings.TrimSuffix(
-			req.GetQualification().GetDescription(),
-			"<br>",
-		)
-	}
-
-	tQuali := table.FivenetQualifications
-	stmt := tQuali.
-		UPDATE(
-			tQuali.Weight,
-			tQuali.Closed,
-			tQuali.Draft,
-			tQuali.Public,
-			tQuali.Abbreviation,
-			tQuali.Title,
-			tQuali.Description,
-			tQuali.ContentType,
-			tQuali.Content,
-			tQuali.DiscordSyncEnabled,
-			tQuali.DiscordSettings,
-			tQuali.ExamMode,
-			tQuali.ExamSettings,
-			tQuali.LabelSyncEnabled,
-			tQuali.LabelSyncFormat,
-		).
-		SET(
-			req.GetQualification().GetWeight(),
-			req.GetQualification().GetClosed(),
-			req.GetQualification().GetDraft(),
-			req.GetQualification().GetPublic(),
-			req.GetQualification().GetAbbreviation(),
-			req.GetQualification().GetTitle(),
-			req.GetQualification().Description,
-			int32(req.GetQualification().GetContent().GetContentType()),
-			req.GetQualification().GetContent(),
-			req.GetQualification().GetDiscordSyncEnabled(),
-			req.GetQualification().GetDiscordSettings(),
-			req.GetQualification().GetExamMode(),
-			req.GetQualification().GetExamSettings(),
-			req.GetQualification().GetLabelSyncEnabled(),
-			req.GetQualification().LabelSyncFormat,
-		).
-		WHERE(
-			tQuali.ID.EQ(mysql.Int64(req.GetQualification().GetId())),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	if err := s.store.UpdateQualification(ctx, tx, req.GetQualification()); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	if req.GetQualification().GetAccess() != nil {
-		if _, err := s.access.HandleAccessChanges(
+		normalizedAccess, err := normalizeQualificationJobAccess(
+			userInfo,
+			req.GetQualification().GetAccess().GetJobs(),
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+
+		if _, err := s.access.ReplaceTargetAccess(
 			ctx,
 			tx,
+			s.accessResolver,
 			req.GetQualification().GetId(),
-			req.GetQualification().GetAccess().GetJobs(),
-			nil,
-			nil,
+			normalizedAccess,
+			qualificationSubjectAccessOptions,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
 
-	if err := s.handleQualificationRequirementsChanges(
+	if err := s.store.HandleQualificationRequirementsChanges(
 		ctx,
 		tx,
 		req.GetQualification().GetId(),
@@ -500,7 +391,7 @@ func (s *Server) UpdateQualification(
 	}
 
 	if req.GetQualification().GetExam() != nil {
-		questFiles, err := s.handleExamQuestionsChanges(
+		questFiles, err := s.store.HandleExamQuestionsChanges(
 			ctx,
 			tx,
 			req.GetQualification().GetId(),
@@ -537,7 +428,7 @@ func (s *Server) DeleteQualification(
 	ctx context.Context,
 	req *pbqualifications.DeleteQualificationRequest,
 ) (*pbqualifications.DeleteQualificationResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -545,7 +436,7 @@ func (s *Server) DeleteQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -556,8 +447,8 @@ func (s *Server) DeleteQualification(
 		}
 	}
 
-	quali, err := s.getQualification(ctx, req.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())), userInfo, true)
+	quali, err := s.store.GetQualification(ctx, req.GetQualificationId(),
+		userInfo, true, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -587,20 +478,22 @@ func (s *Server) DeleteQualification(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
-	tQuali := table.FivenetQualifications
-	stmt := tQuali.
-		UPDATE(
-			tQuali.DeletedAt,
-		).
-		SET(
-			tQuali.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
-		).
-		WHERE(
-			tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())),
-		).
-		LIMIT(1)
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	defer tx.Rollback()
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeleteQualification(
+		ctx,
+		tx,
+		req.GetQualificationId(),
+		deletedAtTime,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 

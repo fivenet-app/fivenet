@@ -8,7 +8,6 @@ import (
 	"time"
 
 	discordstate "github.com/diamondburned/arikawa/v3/state"
-	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
@@ -23,6 +22,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -32,19 +32,9 @@ import (
 )
 
 var (
-	tCalendar     = table.FivenetCalendar.AS("calendar")
-	tCalendarSubs = table.FivenetCalendarSubs.AS("calendar_sub")
+	tCalendar = table.FivenetCalendar.AS("calendar")
 
-	tCalendarEntry          = table.FivenetCalendarEntries.AS("calendar_entry")
-	tCalendarRSVP           = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")
-	tCalendarRSVPOccurrence = table.FivenetCalendarRsvpOccurrence.AS(
-		"calendar_entry_rsvp_occurrence",
-	)
-
-	tCAccess = table.FivenetCalendarAccess.AS("calendar_access")
-
-	tUserJobs  = table.FivenetUserJobs.AS("user_jobs")
-	tUserProps = table.FivenetUserProps
+	tCalendarEntry = table.FivenetCalendarEntries.AS("calendar_entry")
 )
 
 func init() {
@@ -105,14 +95,16 @@ type Server struct {
 	db       *sql.DB
 	cfg      *config.Config
 	ps       perms.Permissions
-	enricher *mstlystcdata.UserAwareEnricher
+	enricher mstlystcdata.IUserAwareEnricher
 	appCfg   appconfig.IConfig
 	i18n     i18n.Ii18n
 	notif    notifi.INotifi
 	js       *events.JSWrapper
 	dc       *discordstate.State
+	store    calendarstore.IStore
 
-	access *access.Grouped[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, access.DummyQualificationAccess[calendaraccess.AccessLevel], *access.DummyQualificationAccess[calendaraccess.AccessLevel], calendaraccess.AccessLevel]
+	access         *access.SubjectObjectAccess
+	accessResolver *access.SubjectResolver
 }
 
 type Params struct {
@@ -123,12 +115,13 @@ type Params struct {
 	DB        *sql.DB
 	Config    *config.Config
 	P         perms.Permissions
-	Enricher  *mstlystcdata.UserAwareEnricher
+	Enricher  mstlystcdata.IUserAwareEnricher
 	AppConfig appconfig.IConfig
 	I18n      i18n.Ii18n
 	Notif     notifi.INotifi
 	JS        *events.JSWrapper
 	Discord   *discordstate.State
+	Store     calendarstore.IStore
 }
 
 type Result struct {
@@ -152,62 +145,10 @@ func NewServer(p Params) Result {
 		notif:    p.Notif,
 		js:       p.JS,
 		dc:       p.Discord,
+		store:    p.Store,
 
-		access: access.NewGrouped[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, access.DummyQualificationAccess[calendaraccess.AccessLevel], *access.DummyQualificationAccess[calendaraccess.AccessLevel], calendaraccess.AccessLevel](
-			p.DB,
-			table.FivenetDocuments,
-			&access.TargetTableColumns{
-				ID:         table.FivenetDocuments.ID,
-				DeletedAt:  table.FivenetDocuments.DeletedAt,
-				CreatorJob: table.FivenetDocuments.CreatorJob,
-				CreatorID:  table.FivenetDocuments.CreatorID,
-			},
-			access.NewJobs[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.AccessLevel](
-				table.FivenetCalendarAccess,
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCalendarAccess.ID,
-						TargetID: table.FivenetCalendarAccess.TargetID,
-						Access:   table.FivenetCalendarAccess.Access,
-					},
-					Job:          table.FivenetCalendarAccess.Job,
-					MinimumGrade: table.FivenetCalendarAccess.MinimumGrade,
-				},
-				table.FivenetCalendarAccess.AS("calendar_job_access"),
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCalendarAccess.AS("calendar_job_access").ID,
-						TargetID: table.FivenetCalendarAccess.AS("calendar_job_access").TargetID,
-						Access:   table.FivenetCalendarAccess.AS("calendar_job_access").Access,
-					},
-					Job: table.FivenetCalendarAccess.AS("calendar_job_access").Job,
-					MinimumGrade: table.FivenetCalendarAccess.AS(
-						"calendar_job_access",
-					).MinimumGrade,
-				},
-			),
-			access.NewUsers[calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, calendaraccess.AccessLevel](
-				table.FivenetCalendarAccess,
-				&access.UserAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCalendarAccess.ID,
-						TargetID: table.FivenetCalendarAccess.TargetID,
-						Access:   table.FivenetCalendarAccess.Access,
-					},
-					UserID: table.FivenetCalendarAccess.UserID,
-				},
-				table.FivenetCalendarAccess.AS("calendar_user_access"),
-				&access.UserAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCalendarAccess.AS("calendar_user_access").ID,
-						TargetID: table.FivenetCalendarAccess.AS("calendar_user_access").TargetID,
-						Access:   table.FivenetCalendarAccess.AS("calendar_user_access").Access,
-					},
-					UserID: table.FivenetCalendarAccess.AS("calendar_user_access").UserID,
-				},
-			),
-			nil,
-		),
+		access:         access.NewCalendarSubjectObjectAccess(p.DB),
+		accessResolver: access.NewSubjectResolver(p.DB),
 	}
 
 	return Result{
@@ -248,7 +189,7 @@ func (s *Server) RegisterCronjobHandlers(hand *croner.Handlers) error {
 			)
 		}
 
-		rowsAffected, err := s.cleanupCalendarRSVPOccurrences(ctx)
+		rowsAffected, err := s.store.CleanupCalendarRSVPOccurrences(ctx)
 		if err != nil {
 			s.logger.Error(
 				"failed to generate calendar rsvp occurrences cleanup",

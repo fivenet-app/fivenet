@@ -2,18 +2,17 @@ package qualifications
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -21,247 +20,51 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
+	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-var (
-	tQualiResults = table.FivenetQualificationsResults.AS("qualification_result")
-
-	tJobLabels = table.FivenetJobLabels
-)
+var tJobLabels = table.FivenetJobLabels
 
 func (s *Server) ListQualificationsResults(
 	ctx context.Context,
 	req *pbqualifications.ListQualificationsResultsRequest,
 ) (*pbqualifications.ListQualificationsResultsResponse, error) {
-	if req.QualificationId != nil {
+	if req.GetQualificationId() > 0 {
 		logging.InjectFields(
 			ctx,
-			logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()},
+			logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()},
 		)
 	}
-	if req.UserId != nil {
-		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.user_id", req.GetUserId()})
-	}
-
-	tUser := table.FivenetUser.AS("user")
-	tCreator := tUser.AS("creator")
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tQuali := tQuali.AS("qualification_short")
-
-	condition := tQualiResults.DeletedAt.IS_NULL()
-
-	if req.QualificationId != nil {
-		check, err := s.access.CanUserAccessTarget(
-			ctx,
-			req.GetQualificationId(),
-			userInfo,
-			qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
+	includePhoneNumber := false
+	if fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(
+		s.perms,
+		userInfo,
+	); err == nil {
+		includePhoneNumber = fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
 		)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-		if !check {
-			return nil, errorsqualifications.ErrFailedQuery
-		}
-
-		condition = condition.AND(
-			tQualiResults.QualificationID.EQ(mysql.Int64(req.GetQualificationId())),
-		)
-	} else {
-		accessExists := mysql.EXISTS(
-			mysql.SELECT(mysql.Int(1)).
-				FROM(tQAccess).
-				WHERE(mysql.AND(
-					tQAccess.TargetID.EQ(tQualiResults.QualificationID),
-					tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-					tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-
-					mysql.OR(
-						tQAccess.Access.GT_EQ(
-							mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE)),
-						),
-						mysql.AND(
-							tQAccess.Access.GT_EQ(
-								mysql.Int32(
-									int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-								),
-							),
-							tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						),
-					),
-				)),
-		)
-
-		condition = condition.AND(mysql.AND(
-			tQuali.DeletedAt.IS_NULL(),
-			mysql.OR(
-				mysql.AND(
-					tQualiResults.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
-					tQualiResults.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
-				),
-				accessExists,
-			),
-		))
 	}
 
-	countColumn := mysql.Expression(tQualiResults.QualificationID)
-	if req.UserId != nil {
-		condition = condition.AND(mysql.AND(
-			tUser.Job.EQ(mysql.String(userInfo.GetJob())),
-			tQualiResults.UserID.EQ(mysql.Int32(req.GetUserId())),
-		))
-	} else {
-		if req.QualificationId == nil {
-			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).
-				AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
-			countColumn = mysql.DISTINCT(tQualiResults.QualificationID)
-		} else {
-			countColumn = mysql.DISTINCT(tQualiResults.UserID)
-		}
-	}
-
-	if len(req.GetStatus()) > 0 {
-		statuses := []mysql.Expression{}
-		for i := range req.GetStatus() {
-			statuses = append(statuses, mysql.Int32(int32(req.GetStatus()[i])))
-		}
-
-		condition = condition.AND(tQualiResults.Status.IN(statuses...))
-	}
-
-	countStmt := tQualiResults.
-		SELECT(
-			mysql.COUNT(countColumn).AS("data_count.total"),
-		).
-		FROM(
-			tQualiResults.
-				INNER_JOIN(tQuali,
-					tQuali.ID.EQ(tQualiResults.QualificationID),
-				).
-				LEFT_JOIN(tQAccess,
-					mysql.AND(
-						tQAccess.TargetID.EQ(tQuali.ID),
-						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-					),
-				).
-				LEFT_JOIN(tUser,
-					tQualiResults.UserID.EQ(tUser.ID),
-				),
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-	}
-
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, QualificationsPageSize)
-	resp := &pbqualifications.ListQualificationsResultsResponse{
-		Pagination: pag,
-		Results:    []*qualifications.QualificationResult{},
-	}
-	if count.Total <= 0 {
-		return resp, nil
-	}
-
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "status":
-				column = tQualiResults.Status
-			case "createdAt":
-				fallthrough
-			default:
-				column = tQualiResults.CreatedAt
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tQualiResults.CreatedAt.DESC())
-	}
-
-	stmt := tQualiResults.
-		SELECT(
-			tQualiResults.ID,
-			tQualiResults.CreatedAt,
-			tQualiResults.QualificationID,
-			tQualiResults.UserID,
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
-			tQualiResults.Status,
-			tQualiResults.Score,
-			tQualiResults.Summary,
-			tQualiResults.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
-			tQuali.ID,
-			tQuali.CreatedAt,
-			tQuali.UpdatedAt,
-			tQuali.Job,
-			tQuali.Closed,
-			tQuali.Draft,
-			tQuali.Public,
-			tQuali.Abbreviation,
-			tQuali.Title,
-			tQuali.Description,
-			tQuali.CreatorJob,
-			tQuali.CreatorID,
-		).
-		FROM(
-			tQualiResults.
-				INNER_JOIN(tQuali,
-					tQuali.ID.EQ(tQualiResults.QualificationID),
-				).
-				LEFT_JOIN(tUser,
-					tQualiResults.UserID.EQ(tUser.ID),
-				).
-				LEFT_JOIN(tCreator,
-					tQualiResults.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tQAccess,
-					mysql.AND(
-						tQAccess.TargetID.EQ(tQuali.ID),
-						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-					),
-				),
-		).
-		GROUP_BY(tQualiResults.Status, tQualiResults.CreatedAt, tQualiResults.ID).
-		ORDER_BY(orderBys...).
-		WHERE(condition).
-		OFFSET(req.GetPagination().GetOffset()).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Results); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
+	resp, err := s.store.ListQualificationsResults(
+		ctx,
+		qualificationsstore.ListQualificationsResultsOptions{
+			Pagination:      req.GetPagination(),
+			Sort:            req.GetSort(),
+			QualificationID: req.GetQualificationId(),
+			Status:          req.GetStatus(),
+			UserIDs:         req.GetUserIds(),
+		},
+		userInfo,
+		includePhoneNumber,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
@@ -288,7 +91,7 @@ func (s *Server) CreateOrUpdateQualificationResult(
 		ctx,
 		req.GetResult().GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -355,58 +158,33 @@ func (s *Server) createOrUpdateQualificationResult(
 		return 0, err
 	}
 
-	quali, err := s.getQualification(
+	quali, err := s.store.GetQualification(
 		ctx,
 		qualificationId,
-		tQuali.ID.EQ(mysql.Int64(qualificationId)),
 		userInfo,
+		false,
 		false,
 	)
 	if err != nil {
 		return 0, err
 	}
 
-	tQualiResults := table.FivenetQualificationsResults
 	// There is currently no result with status successful
 	if resultId <= 0 &&
 		(currentResult == nil || (currentResult.GetStatus() != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL && status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)) {
-		var creatorId mysql.Expression
-		if userInfo.GetUserId() <= 0 {
-			creatorId = mysql.NULL
-		} else {
-			creatorId = mysql.Int32(userInfo.GetUserId())
-		}
-
-		stmt := tQualiResults.
-			INSERT(
-				tQualiResults.QualificationID,
-				tQualiResults.UserID,
-				tQualiResults.Status,
-				tQualiResults.Score,
-				tQualiResults.Summary,
-				tQualiResults.CreatorID,
-				tQualiResults.CreatorJob,
-			).
-			VALUES(
-				quali.GetId(),
-				userId,
-				status,
-				score,
-				summary,
-				creatorId,
-				userInfo.GetJob(),
-			)
-
-		res, err := stmt.ExecContext(ctx, tx)
+		lastId, err := s.store.CreateQualificationResult(
+			ctx,
+			tx,
+			quali.GetId(),
+			userId,
+			status,
+			score,
+			summary,
+			userInfo,
+		)
 		if err != nil {
 			return 0, err
 		}
-
-		lastId, err := res.LastInsertId()
-		if err != nil {
-			return 0, err
-		}
-
 		resultId = lastId
 	} else {
 		result, err := s.getQualificationResult(ctx, quali.GetId(), resultId, nil, userInfo, userId)
@@ -415,50 +193,29 @@ func (s *Server) createOrUpdateQualificationResult(
 		}
 
 		userId = result.GetUserId()
-
-		stmt := tQualiResults.
-			UPDATE(
-				tQualiResults.QualificationID,
-				tQualiResults.UserID,
-				tQualiResults.Status,
-				tQualiResults.Score,
-				tQualiResults.Summary,
-			).
-			SET(
-				quali.GetId(),
-				userId,
-				status,
-				score,
-				summary,
-			).
-			WHERE(mysql.AND(
-				tQualiResults.ID.EQ(mysql.Int64(resultId)),
-				tQualiResults.DeletedAt.IS_NULL(),
-			)).
-			LIMIT(1)
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		if err := s.store.UpdateQualificationResult(
+			ctx,
+			tx,
+			quali.GetId(),
+			resultId,
+			userId,
+			status,
+			score,
+			summary,
+		); err != nil {
 			return 0, err
 		}
 	}
 
 	if quali.GetExamMode() > qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED &&
-		grading != nil { // Only update the exam grading info when
-		// Insert/update exam grading info from tutor
-		stmt := tExamResponses.
-			UPDATE(
-				tExamResponses.Grading,
-			).
-			SET(
-				grading,
-			).
-			WHERE(mysql.AND(
-				tExamResponses.QualificationID.EQ(mysql.Int64(quali.GetId())),
-				tExamResponses.UserID.EQ(mysql.Int32(userId)),
-			)).
-			LIMIT(1)
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		grading != nil {
+		if err := s.store.UpdateExamResponseGrading(
+			ctx,
+			tx,
+			quali.GetId(),
+			userId,
+			grading,
+		); err != nil {
 			return 0, err
 		}
 	}
@@ -479,7 +236,7 @@ func (s *Server) createOrUpdateQualificationResult(
 
 	// If the result is successful, complete the request status
 	if status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
-		if err := s.updateRequestStatus(
+		if err := s.store.UpdateRequestStatus(
 			ctx,
 			tx,
 			qualificationId,
@@ -489,12 +246,8 @@ func (s *Server) createOrUpdateQualificationResult(
 			return 0, err
 		}
 	} else {
-		// If failed or other status, delete the request
+		// If failed or other status, delete the request + exam user
 		if err := s.deleteQualificationRequest(ctx, tx, qualificationId, userId); err != nil {
-			return 0, err
-		}
-
-		if err := s.deleteExamUser(ctx, tx, qualificationId, userId); err != nil {
 			return 0, err
 		}
 	}
@@ -537,79 +290,19 @@ func (s *Server) getQualificationResult(
 	userInfo *userinfo.UserInfo,
 	userId int32,
 ) (*qualifications.QualificationResult, error) {
-	tUser := table.FivenetUser.AS("user")
-	tCreator := tUser.AS("creator")
-
-	condition := tQualiResults.DeletedAt.IS_NULL()
-
-	if resultId > 0 {
-		condition = condition.AND(tQualiResults.ID.EQ(mysql.Int64(resultId)))
-	} else if userId > 0 {
-		condition = condition.AND(tQualiResults.UserID.EQ(mysql.Int32(userId)))
-	} else {
-		condition = condition.AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
+	result, err := s.store.GetQualificationResult(
+		ctx,
+		qualificationId,
+		resultId,
+		status,
+		userInfo,
+		userId,
+		false,
+	)
+	if err != nil {
+		return nil, err
 	}
-	if qualificationId > 0 {
-		condition = condition.AND(tQualiResults.QualificationID.EQ(mysql.Int64(qualificationId)))
-	}
-
-	if len(status) > 0 {
-		statusConds := make([]mysql.Expression, len(status))
-		for i := range status {
-			statusConds[i] = mysql.Int32(int32(status[i]))
-		}
-
-		condition = condition.AND(tQualiResults.Status.IN(statusConds...))
-	}
-
-	stmt := tQualiResults.
-		SELECT(
-			tQualiResults.ID,
-			tQualiResults.CreatedAt,
-			tQualiResults.DeletedAt,
-			tQualiResults.QualificationID,
-			tQualiResults.UserID,
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
-			tQualiResults.Status,
-			tQualiResults.Score,
-			tQualiResults.Summary,
-			tQualiResults.CreatorID,
-			tQualiResults.CreatorJob,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
-		).
-		FROM(tQualiResults.
-			LEFT_JOIN(tUser,
-				tUser.ID.EQ(tQualiResults.UserID),
-			).
-			LEFT_JOIN(tCreator,
-				tCreator.ID.EQ(tQualiResults.CreatorID),
-			),
-		).
-		GROUP_BY(tQualiResults.ID).
-		ORDER_BY(tQualiResults.ID.DESC()).
-		WHERE(condition).
-		LIMIT(1)
-
-	var result qualifications.QualificationResult
-	if err := stmt.QueryContext(ctx, s.db, &result); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	if result.GetId() == 0 {
+	if result == nil {
 		return nil, nil
 	}
 
@@ -621,7 +314,11 @@ func (s *Server) getQualificationResult(
 		s.enricher.EnrichJobInfoSafe(userInfo, result.GetCreator())
 	}
 
-	return &result, nil
+	if !userInfo.GetSuperuser() && result.GetDeletedAt() != nil {
+		return nil, errorsqualifications.ErrQualiViewDenied
+	}
+
+	return result, nil
 }
 
 func (s *Server) DeleteQualificationResult(
@@ -642,7 +339,7 @@ func (s *Server) DeleteQualificationResult(
 		ctx,
 		result.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -651,18 +348,16 @@ func (s *Server) DeleteQualificationResult(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	quali, err := s.getQualification(
+	quali, err := s.store.GetQualification(
 		ctx,
 		result.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(result.GetQualificationId())),
 		userInfo,
+		false,
 		false,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-
-	tQualiResults := table.FivenetQualificationsResults
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -672,24 +367,11 @@ func (s *Server) DeleteQualificationResult(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := tQualiResults.
-		UPDATE(
-			tQualiResults.DeletedAt,
-		).
-		SET(
-			mysql.CURRENT_TIMESTAMP(),
-		).
-		WHERE(mysql.AND(
-			tQualiResults.ID.EQ(mysql.Int64(result.GetId())),
-			tQualiResults.ID.EQ(mysql.Int64(req.GetResultId())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	if err := s.store.DeleteQualificationResult(ctx, tx, result.GetId()); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if err := s.deleteExamUser(
+	if err := s.store.DeleteExamUser(
 		ctx,
 		tx,
 		result.GetQualificationId(),

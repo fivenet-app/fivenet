@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func TestBasicCentrumFlow(t *testing.T) {
+func TestBasicLivemapFlow(t *testing.T) {
 	t.Parallel()
 	dbServer := servers.NewDBServer(t, true)
 	natsServer := servers.NewNATSServer(t, true)

@@ -6,10 +6,16 @@ import type { CardElement } from '~/utils/types';
 import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import type { TemplateShort } from '~~/gen/ts/resources/documents/templates/templates';
 
-const props = defineProps<{
-    link?: boolean;
-    searchTitle?: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        link?: boolean;
+        searchTitle?: string;
+    }>(),
+    {
+        link: false,
+        searchTitle: undefined,
+    },
+);
 
 defineEmits<{
     (e: 'selected', t: TemplateShort | undefined): void;
@@ -19,7 +25,7 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const { data: templates, status, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
+const { data: templates, status, refresh, error } = useLazyAsyncData('documents-templates', () => listTemplates());
 
 defineExpose({
     status,
@@ -43,11 +49,12 @@ async function listTemplates(): Promise<TemplateShort[]> {
 const items = computed<CardElement[]>(
     () =>
         templates.value?.map((v) => ({
-            title: v?.title,
-            description: v?.description,
+            title: v.title,
+            description: v.description,
             icon: v.icon ?? 'i-mdi-file-outline',
             color: v.color ?? 'primary',
-            to: props.link ? { name: 'documents-templates-id', params: { id: v?.id } } : undefined,
+            to: props.link ? `/documents/templates/${v.id}` : undefined,
+            deletedAt: v.deletedAt,
         })) ?? [],
 );
 

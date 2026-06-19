@@ -17,12 +17,12 @@ type fivenetUserLabelsJobJobAccessTable struct {
 	mysql.Table
 
 	// Columns
-	ID           mysql.ColumnInteger
-	CreatedAt    mysql.ColumnTimestamp
-	TargetID     mysql.ColumnInteger
-	Job          mysql.ColumnString
-	MinimumGrade mysql.ColumnInteger
-	Access       mysql.ColumnInteger
+	ID        mysql.ColumnInteger
+	TargetID  mysql.ColumnInteger
+	SubjectID mysql.ColumnInteger
+	Access    mysql.ColumnInteger
+	Effect    mysql.ColumnBool
+	CreatedAt mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -64,27 +64,27 @@ func newFivenetUserLabelsJobJobAccessTable(schemaName, tableName, alias string) 
 
 func newFivenetUserLabelsJobJobAccessTableImpl(schemaName, tableName, alias string) fivenetUserLabelsJobJobAccessTable {
 	var (
-		IDColumn           = mysql.IntegerColumn("id")
-		CreatedAtColumn    = mysql.TimestampColumn("created_at")
-		TargetIDColumn     = mysql.IntegerColumn("target_id")
-		JobColumn          = mysql.StringColumn("job")
-		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
-		AccessColumn       = mysql.IntegerColumn("access")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, TargetIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, TargetIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
-		defaultColumns     = mysql.ColumnList{CreatedAtColumn, MinimumGradeColumn}
+		IDColumn        = mysql.IntegerColumn("id")
+		TargetIDColumn  = mysql.IntegerColumn("target_id")
+		SubjectIDColumn = mysql.IntegerColumn("subject_id")
+		AccessColumn    = mysql.IntegerColumn("access")
+		EffectColumn    = mysql.BoolColumn("effect")
+		CreatedAtColumn = mysql.TimestampColumn("created_at")
+		allColumns      = mysql.ColumnList{IDColumn, TargetIDColumn, SubjectIDColumn, AccessColumn, EffectColumn, CreatedAtColumn}
+		mutableColumns  = mysql.ColumnList{TargetIDColumn, SubjectIDColumn, AccessColumn, EffectColumn, CreatedAtColumn}
+		defaultColumns  = mysql.ColumnList{EffectColumn, CreatedAtColumn}
 	)
 
 	return fivenetUserLabelsJobJobAccessTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:           IDColumn,
-		CreatedAt:    CreatedAtColumn,
-		TargetID:     TargetIDColumn,
-		Job:          JobColumn,
-		MinimumGrade: MinimumGradeColumn,
-		Access:       AccessColumn,
+		ID:        IDColumn,
+		TargetID:  TargetIDColumn,
+		SubjectID: SubjectIDColumn,
+		Access:    AccessColumn,
+		Effect:    EffectColumn,
+		CreatedAt: CreatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

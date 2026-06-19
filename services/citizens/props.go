@@ -2,15 +2,12 @@ package citizens
 
 import (
 	context "context"
-	"errors"
 	"slices"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
@@ -19,14 +16,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
-
-var tUserProps = table.FivenetUserProps
 
 func (s *Server) SetUserProps(
 	ctx context.Context,
@@ -34,7 +26,7 @@ func (s *Server) SetUserProps(
 ) (*pbcitizens.SetUserPropsResponse, error) {
 	logging.InjectFields(
 		ctx,
-		logging.Fields{"fivenet.citizens.user_id", req.GetProps().GetUserId()},
+		logging.Fields{citizenIDLogFieldKey, req.GetProps().GetUserId()},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -46,7 +38,7 @@ func (s *Server) SetUserProps(
 	}
 
 	// Get current user props to be able to compare
-	props, err := s.getUserProps(ctx, userInfo, req.GetProps().GetUserId())
+	props, err := s.store.GetUserProps(ctx, s.db, req.GetProps().GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -93,28 +85,8 @@ func (s *Server) SetUserProps(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	tUser := table.FivenetUser.AS("user")
-
-	stmt := tUser.
-		SELECT(
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-		).
-		FROM(
-			tUser.
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUser.ID),
-				).
-				LEFT_JOIN(tFiles,
-					tFiles.ID.EQ(tUserProps.MugshotFileID),
-				),
-		).
-		WHERE(tUser.ID.EQ(mysql.Int32(req.GetProps().GetUserId()))).
-		LIMIT(1)
-
-	u := &users.User{}
-	if err := stmt.QueryContext(ctx, s.db, u); err != nil {
+	u, err := s.store.GetUserAccess(ctx, req.GetProps().GetUserId())
+	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
@@ -178,7 +150,7 @@ func (s *Server) SetUserProps(
 			return nil, errorscitizens.ErrPropsLabelsDenied
 		}
 
-		if req.Props.Labels.List == nil {
+		if req.GetProps().GetLabels().GetList() == nil {
 			req.Props.Labels.List = []*citizenslabels.Label{}
 		}
 
@@ -194,7 +166,7 @@ func (s *Server) SetUserProps(
 			},
 		)
 
-		valid, err := s.validateLabels(ctx, userInfo, added)
+		valid, err := s.store.ValidateLabels(ctx, userInfo.GetJob(), added)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
@@ -211,9 +183,10 @@ func (s *Server) SetUserProps(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	activities, err := props.HandleChanges(
+	activities, err := s.store.HandleUserPropsChanges(
 		ctx,
 		tx,
+		props,
 		req.GetProps(),
 		&userInfo.UserId,
 		req.GetReason(),
@@ -238,8 +211,6 @@ func (s *Server) SetUserProps(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-
-	s.getUserProps(ctx, userInfo, req.GetProps().GetUserId())
 
 	resp.Props = user.GetUser().GetProps()
 
@@ -269,54 +240,4 @@ func (s *Server) SetUserProps(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return resp, nil
-}
-
-func (s *Server) getUserProps(
-	ctx context.Context,
-	userInfo *userinfo.UserInfo,
-	userId int32,
-) (*usersprops.UserProps, error) {
-	tUserProps := tUserProps.AS("user_props")
-	tFiles := table.FivenetFiles.AS("mugshot")
-
-	stmt := tUserProps.
-		SELECT(
-			tUserProps.UserID,
-			tUserProps.UpdatedAt,
-			tUserProps.Wanted,
-			tUserProps.Job,
-			tUserProps.JobGrade,
-			tUserProps.TrafficInfractionPoints,
-			tUserProps.TrafficInfractionPointsUpdatedAt,
-			tUserProps.MugshotFileID,
-			tFiles.ID,
-			tFiles.FilePath,
-		).
-		FROM(
-			tUserProps.
-				LEFT_JOIN(tFiles,
-					tFiles.ID.EQ(tUserProps.MugshotFileID),
-				),
-		).
-		WHERE(
-			tUserProps.UserID.EQ(mysql.Int32(userId)),
-		).
-		LIMIT(1)
-
-	var dest usersprops.UserProps
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	dest.UserId = userId
-
-	attributes, err := s.getUserLabels(ctx, userInfo, userId)
-	if err != nil {
-		return nil, err
-	}
-	dest.Labels = attributes
-
-	return &dest, nil
 }

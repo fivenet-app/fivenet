@@ -26,6 +26,26 @@ import (
 	"go.uber.org/zap"
 )
 
+type IJobs interface {
+	Get(job string) (*jobs.Job, error)
+	List() []*jobs.Job
+	Range(func(key string, value *jobs.Job) bool)
+	Has(job string) bool
+	addUpdateCallback(fn updateCallbackFn)
+
+	GetHighestJobGrade(job string) *jobs.JobGrade
+}
+
+type IJobsSearch interface {
+	IJobs
+
+	Search(
+		ctx context.Context,
+		search string,
+		exactMatch bool,
+	) ([]*jobs.Job, error)
+}
+
 // Jobs provides methods for loading, caching, searching, and updating job data.
 type Jobs struct {
 	// Cache is the in-memory and NATS-backed cache for jobs
@@ -60,7 +80,7 @@ type JobsResult struct {
 	fx.Out
 
 	// Jobs is the main Jobs instance
-	Jobs *Jobs
+	Jobs IJobs
 	// CronRegister is used to register cronjobs for job updates
 	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
@@ -243,13 +263,13 @@ type JobsSearchParams struct {
 
 	Logger *zap.Logger
 
-	Jobs *Jobs
+	Jobs IJobs
 }
 
 // JobsSearch provides full-text search capabilities for jobs using Bleve.
 type JobsSearch struct {
 	// Jobs is the underlying Jobs instance
-	*Jobs
+	IJobs
 
 	// logger for logging
 	logger *zap.Logger
@@ -261,12 +281,12 @@ type JobsSearch struct {
 }
 
 // NewJobsSearch creates a new JobsSearch instance and sets up lifecycle hooks.
-func NewJobsSearch(p JobsSearchParams) (*JobsSearch, error) {
+func NewJobsSearch(p JobsSearchParams) (IJobsSearch, error) {
 	c := &JobsSearch{
 		logger: p.Logger,
 
-		mu:   sync.Mutex{},
-		Jobs: p.Jobs,
+		mu:    sync.Mutex{},
+		IJobs: p.Jobs,
 	}
 
 	index, err := c.newSearchIndex()
@@ -288,6 +308,28 @@ func NewJobsSearch(p JobsSearchParams) (*JobsSearch, error) {
 	}))
 
 	return c, nil
+}
+
+// List returns all jobs currently stored in the cache.
+func (c *JobsSearch) List() []*jobs.Job {
+	jobsList := make([]*jobs.Job, 0)
+	c.Range(func(_ string, value *jobs.Job) bool {
+		jobsList = append(jobsList, value)
+		return true
+	})
+
+	slices.SortFunc(jobsList, func(a, b *jobs.Job) int {
+		if cmp := strings.Compare(
+			strings.ToLower(a.GetLabel()),
+			strings.ToLower(b.GetLabel()),
+		); cmp != 0 {
+			return cmp
+		}
+
+		return strings.Compare(strings.ToLower(a.GetName()), strings.ToLower(b.GetName()))
+	})
+
+	return jobsList
 }
 
 // newSearchIndex creates a new in-memory Bleve index for jobs.

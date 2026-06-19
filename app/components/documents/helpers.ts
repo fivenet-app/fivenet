@@ -1,13 +1,14 @@
 import type { BadgeProps, ButtonProps } from '@nuxt/ui';
 import type { Perms } from '~~/gen/ts/perms';
-import type { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access/access';
+import type { Access } from '~~/gen/ts/resources/access/access';
+import type { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity/activity';
 import { DocReference } from '~~/gen/ts/resources/documents/references/references';
 import { DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 export function checkDocAccess(
-    docAccess: DocumentAccess | undefined,
+    docAccess: Access | undefined,
     creator: UserShort | undefined,
     level: AccessLevel,
     perm?: Perms,
@@ -35,7 +36,7 @@ export function checkDocAccess(
 
 function checkBaseDocAccess(
     activeChar: UserShort,
-    access: DocumentAccess | undefined,
+    access: Access | undefined,
     creator: UserShort | undefined,
     level: AccessLevel,
     creatorJob?: string,

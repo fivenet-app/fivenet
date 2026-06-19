@@ -209,9 +209,10 @@ func (ps *Perms) loadRolePermissions(ctx context.Context, roleId int64) error {
 		)
 
 	if roleId != 0 {
-		stmt = stmt.WHERE(
-			tRoles.ID.EQ(mysql.Int64(roleId)),
-		)
+		stmt = stmt.
+			WHERE(
+				tRoles.ID.EQ(mysql.Int64(roleId)),
+			)
 	}
 
 	var dest []struct {
@@ -280,9 +281,10 @@ func (ps *Perms) loadRoleAttributes(ctx context.Context, roleId int64) error {
 		)
 
 	if roleId != 0 {
-		stmt = stmt.WHERE(
-			tRoleAttrs.RoleID.EQ(mysql.Int64(roleId)),
-		)
+		stmt = stmt.
+			WHERE(
+				tRoleAttrs.RoleID.EQ(mysql.Int64(roleId)),
+			)
 	}
 
 	var dest []*permissionsattributes.RoleAttribute

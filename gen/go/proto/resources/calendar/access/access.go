@@ -1,9 +1,9 @@
 package calendaraccess
 
-func (x *CalendarJobAccess) GetJobGrade() int32 {
-	return x.GetMinimumGrade()
-}
+import resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 
-func (x *CalendarJobAccess) SetJobGrade(grade int32) {
-	x.MinimumGrade = grade
-}
+type (
+	CalendarAccess     = resourcesaccess.Access
+	CalendarJobAccess  = resourcesaccess.JobAccess
+	CalendarUserAccess = resourcesaccess.UserAccess
+)

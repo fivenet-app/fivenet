@@ -2,7 +2,6 @@ package mailer
 
 import (
 	"context"
-	"errors"
 	"slices"
 	"strings"
 
@@ -10,24 +9,15 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
-	mailersettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 )
 
 const SignatureMaxLength = 1024
-
-var (
-	tSettings       = table.FivenetMailerSettings
-	tSettingsBlocks = table.FivenetMailerSettingsBlocked
-)
 
 func (s *Server) GetEmailSettings(
 	ctx context.Context,
@@ -39,7 +29,7 @@ func (s *Server) GetEmailSettings(
 		ctx,
 		req.GetEmailId(),
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -48,7 +38,7 @@ func (s *Server) GetEmailSettings(
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	settings, err := s.getEmailSettings(ctx, s.db, req.GetEmailId())
+	settings, err := s.store.GetEmailSettings(ctx, s.db, req.GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -56,41 +46,6 @@ func (s *Server) GetEmailSettings(
 	return &pbmailer.GetEmailSettingsResponse{
 		Settings: settings,
 	}, nil
-}
-
-func (s *Server) getEmailSettings(
-	ctx context.Context,
-	tx qrm.DB,
-	emailId int64,
-) (*mailersettings.EmailSettings, error) {
-	tSettings := tSettings.AS("email_settings")
-	stmt := tSettings.
-		SELECT(
-			tSettings.EmailID,
-			tSettings.Signature,
-			tSettingsBlocks.TargetEmail.AS("email_settings.blocked_emails"),
-		).
-		FROM(
-			tSettings.
-				LEFT_JOIN(tSettingsBlocks,
-					tSettingsBlocks.EmailID.EQ(tSettings.EmailID),
-				),
-		).
-		WHERE(
-			tSettings.EmailID.EQ(mysql.Int64(emailId)),
-		).
-		LIMIT(25)
-
-	dest := &mailersettings.EmailSettings{
-		EmailId: emailId,
-	}
-	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return dest, nil
 }
 
 func (s *Server) SetEmailSettings(
@@ -103,7 +58,7 @@ func (s *Server) SetEmailSettings(
 		ctx,
 		req.GetSettings().GetEmailId(),
 		userInfo,
-		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		int32(maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -112,7 +67,7 @@ func (s *Server) SetEmailSettings(
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	email, err := s.getEmail(ctx, req.GetSettings().GetEmailId(), false, false)
+	email, err := s.getEmail(ctx, userInfo, req.GetSettings().GetEmailId(), false, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -131,16 +86,17 @@ func (s *Server) SetEmailSettings(
 	}
 
 	// Make all emails lowercase, remove own email, and remove duplicates
-	for idx := range req.GetSettings().GetBlockedEmails() {
-		req.Settings.BlockedEmails[idx] = strings.ToLower(req.GetSettings().GetBlockedEmails()[idx])
+	blockedEmails := make([]string, 0, len(req.GetSettings().GetBlockedEmails()))
+	for _, be := range req.GetSettings().GetBlockedEmails() {
+		blockedEmails = append(blockedEmails, strings.ToLower(be))
 	}
-	req.Settings.BlockedEmails = slices.DeleteFunc(
-		req.GetSettings().GetBlockedEmails(),
+	blockedEmails = slices.DeleteFunc(
+		blockedEmails,
 		func(e string) bool {
 			return e == email.GetEmail()
 		},
 	)
-	utils.RemoveSliceDuplicates(req.GetSettings().GetBlockedEmails())
+	blockedEmails = utils.RemoveSliceDuplicates(blockedEmails)
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -150,92 +106,53 @@ func (s *Server) SetEmailSettings(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := tSettings.
-		INSERT(
-			tSettings.EmailID,
-			tSettings.Signature,
-		).
-		VALUES(
-			req.GetSettings().GetEmailId(),
-			signature,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tSettings.Signature.SET(mysql.String("VALUES(`signature`)")),
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	if err := s.store.UpsertEmailSettingsSignature(
+		ctx,
+		tx,
+		req.GetSettings().GetEmailId(),
+		signature,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	settings, err := s.getEmailSettings(ctx, tx, req.GetSettings().GetEmailId())
+	settings, err := s.store.GetEmailSettings(ctx, tx, req.GetSettings().GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	// Handle blocked users changes
-	if len(req.GetSettings().GetBlockedEmails()) == 0 {
+	if len(blockedEmails) == 0 {
 		if len(settings.GetBlockedEmails()) > 0 {
-			stmt := tSettingsBlocks.
-				DELETE().
-				WHERE(tSettingsBlocks.EmailID.EQ(mysql.Int32(userInfo.GetUserId()))).
-				LIMIT(int64(len(settings.GetBlockedEmails())))
-
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			if err := s.store.DeleteBlockedEmails(
+				ctx,
+				tx,
+				req.GetSettings().GetEmailId(),
+				settings.GetBlockedEmails(),
+			); err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 			}
 		}
 	} else {
-		toCreate := []string{}
-		toDelete := []string{}
-
-		for _, be := range req.GetSettings().GetBlockedEmails() {
-			if !slices.ContainsFunc(settings.GetBlockedEmails(), func(a string) bool {
-				return a == be
-			}) {
-				toCreate = append(toCreate, be)
-			}
-		}
-
-		for _, be := range settings.GetBlockedEmails() {
-			if !slices.ContainsFunc(req.GetSettings().GetBlockedEmails(), func(a string) bool {
-				return a == be
-			}) {
-				toDelete = append(toDelete, be)
-			}
-		}
+		toCreate, toDelete := utils.SlicesDifference(blockedEmails, settings.GetBlockedEmails())
 
 		if len(toCreate) > 0 {
-			stmt := tSettingsBlocks.
-				INSERT(
-					tSettingsBlocks.EmailID,
-					tSettingsBlocks.TargetEmail,
-				)
-
-			for _, be := range toCreate {
-				stmt = stmt.
-					VALUES(
-						req.GetSettings().GetEmailId(),
-						be,
-					)
-			}
-
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			if err := s.store.AddBlockedEmails(
+				ctx,
+				tx,
+				req.GetSettings().GetEmailId(),
+				toCreate,
+			); err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 			}
 		}
 
 		if len(toDelete) > 0 {
-			targets := []mysql.Expression{}
-
-			stmt := tSettingsBlocks.
-				DELETE().
-				WHERE(mysql.AND(
-					tSettingsBlocks.EmailID.EQ(mysql.Int64(req.GetSettings().GetEmailId())),
-					tSettingsBlocks.TargetEmail.IN(targets...),
-				)).
-				LIMIT(int64(len(targets)))
-
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			if err := s.store.DeleteBlockedEmails(
+				ctx,
+				tx,
+				req.GetSettings().GetEmailId(),
+				toDelete,
+			); err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 			}
 		}
@@ -246,7 +163,7 @@ func (s *Server) SetEmailSettings(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	settings, err = s.getEmailSettings(ctx, s.db, req.GetSettings().GetEmailId())
+	settings, err = s.store.GetEmailSettings(ctx, s.db, req.GetSettings().GetEmailId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

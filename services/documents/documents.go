@@ -18,7 +18,9 @@ import (
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -28,6 +30,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -42,11 +45,11 @@ const (
 )
 
 var (
-	tUserProps     = table.FivenetUserProps
 	tDocument      = table.FivenetDocuments.AS("document")
 	tDocumentShort = table.FivenetDocuments.AS("document_short")
+	tDCategory     = table.FivenetDocumentsCategories.AS("category")
 	tDMeta         = table.FivenetDocumentsMeta.AS("meta")
-	tDAccess       = table.FivenetDocumentsAccess.AS("job_access")
+	tDPins         = table.FivenetDocumentsPins.AS("pin")
 )
 
 func (s *Server) ListDocuments(
@@ -54,101 +57,19 @@ func (s *Server) ListDocuments(
 	req *pbdocuments.ListDocumentsRequest,
 ) (*pbdocuments.ListDocumentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	logRequest := false
-
-	condition := mysql.Bool(true)
-	if req.Search != nil && req.GetSearch() != "" {
-		logRequest = true
-		condition = dbutils.MATCH(tDocumentShort.Title, mysql.String(req.GetSearch()))
-	}
-	if len(req.GetCategoryIds()) > 0 {
-		ids := make([]mysql.Expression, len(req.GetCategoryIds()))
-		for i := range req.GetCategoryIds() {
-			ids[i] = mysql.Int64(req.GetCategoryIds()[i])
-		}
-
-		condition = condition.AND(
-			tDocumentShort.CategoryID.IN(ids...),
-		)
-	}
+	logRequest := req.Search != nil && req.GetSearch() != ""
 
 	if len(req.GetCreatorIds()) > 0 {
 		logRequest = true
-		ids := make([]mysql.Expression, len(req.GetCreatorIds()))
-		for i := range req.GetCreatorIds() {
-			ids[i] = mysql.Int32(req.GetCreatorIds()[i])
-		}
-
-		condition = condition.AND(
-			tDocumentShort.CreatorID.IN(ids...),
-		)
-	}
-
-	if req.GetFrom() != nil {
-		condition = condition.AND(tDocumentShort.CreatedAt.GT_EQ(
-			mysql.TimestampT(req.GetFrom().AsTime()),
-		))
-	}
-	if req.GetTo() != nil {
-		condition = condition.AND(tDocumentShort.CreatedAt.LT_EQ(
-			mysql.TimestampT(req.GetTo().AsTime()),
-		))
-	}
-
-	if req.Closed != nil {
-		condition = condition.AND(tDocumentShort.Closed.EQ(
-			mysql.Bool(req.GetClosed()),
-		))
-	}
-
-	if len(req.GetDocumentIds()) > 0 {
-		ids := make([]mysql.Expression, len(req.GetDocumentIds()))
-		for i := range req.GetDocumentIds() {
-			ids[i] = mysql.Int64(req.GetDocumentIds()[i])
-		}
-
-		condition = condition.AND(
-			tDocumentShort.ID.IN(ids...),
-		)
-	}
-
-	if req.OnlyDrafts != nil {
-		condition = condition.AND(tDocumentShort.Draft.EQ(mysql.Bool(req.GetOnlyDrafts())))
 	}
 
 	if !logRequest {
 		grpc_audit.Skip(ctx)
 	}
 
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "title":
-				column = tDocumentShort.Title
-
-			case "createdAt":
-				fallthrough
-			default:
-				column = tDocumentShort.CreatedAt
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys,
-					column.DESC(),
-					tDocumentShort.UpdatedAt.DESC(),
-				)
-			} else {
-				orderBys = append(orderBys,
-					column.ASC(),
-					tDocumentShort.UpdatedAt.DESC(),
-				)
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tDocumentShort.UpdatedAt.DESC())
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	pag, limit := req.GetPagination().
@@ -157,24 +78,27 @@ func (s *Server) ListDocuments(
 		Pagination: pag,
 	}
 
-	stmt := s.listDocumentsQuery(
-		condition,
-		nil,
-		nil,
-		userInfo,
-		func(stmt mysql.SelectStatement) mysql.SelectStatement {
-			return stmt.
-				ORDER_BY(orderBys...).
-				OFFSET(req.GetPagination().GetOffset()).
-				LIMIT(limit)
-		},
-	)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
+	docs, err := s.store.List(ctx, documentsstore.ListQuery{
+		Search:      req.GetSearch(),
+		CategoryIDs: req.GetCategoryIds(),
+		CreatorIDs:  req.GetCreatorIds(),
+		From:        req.GetFrom(),
+		To:          req.GetTo(),
+		Closed:      req.Closed,
+		DocumentIDs: req.GetDocumentIds(),
+		OnlyDrafts:  req.OnlyDrafts,
+		Sort:        req.GetSort(),
+		Offset:      req.GetPagination().GetOffset(),
+		Limit:       limit,
+		IncludePhoneNumber: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+		),
+		UserInfo: userInfo,
+	})
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	resp.Documents = docs
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetDocuments() {
@@ -194,11 +118,15 @@ func (s *Server) GetDocument(
 	ctx context.Context,
 	req *pbdocuments.GetDocumentRequest,
 ) (*pbdocuments.GetDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -215,8 +143,14 @@ func (s *Server) GetDocument(
 	withContent := req.InfoOnly == nil || !req.GetInfoOnly()
 
 	resp := &pbdocuments.GetDocumentResponse{}
-	resp.Document, err = s.getDocument(ctx,
-		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())), userInfo, withContent)
+	resp.Document, err = s.store.Get(ctx, documentsstore.GetQuery{
+		DocumentID: req.GetDocumentId(),
+		IncludePhoneNumber: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+		),
+		WithContent: withContent,
+		UserInfo:    userInfo,
+	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -229,7 +163,7 @@ func (s *Server) GetDocument(
 		s.enricher.EnrichJobInfoSafe(userInfo, resp.GetDocument().GetCreator())
 	}
 
-	resp.Document.Pin, err = s.getDocumentPin(ctx, resp.GetDocument().GetId(), userInfo)
+	resp.Document.Pin, err = s.store.GetDocumentPin(ctx, resp.GetDocument().GetId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -278,6 +212,9 @@ func (s *Server) getDocument(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
+	if doc.GetId() == 0 {
+		return nil, nil
+	}
 
 	if doc.GetCreator() != nil {
 		s.enricher.EnrichJobInfo(doc.GetCreator())
@@ -312,7 +249,7 @@ func (s *Server) CreateDocument(
 	var tmpl *documentstemplates.Template
 	if req.GetTemplateId() > 0 {
 		var err error
-		tmpl, err = s.getTemplate(ctx, req.GetTemplateId())
+		tmpl, err = s.store.GetTemplate(ctx, req.GetTemplateId(), false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -335,10 +272,11 @@ func (s *Server) CreateDocument(
 		}
 
 		// Set access based on template
-		docAccess = &documentsaccess.DocumentAccess{
-			Jobs:  tmpl.GetContentAccess().GetJobs(),
-			Users: tmpl.GetContentAccess().GetUsers(),
+		docAccess, err = access.SanitizeAccessJobs(s.jobs, tmpl.GetContentAccess())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
+		docAccess = access.NormalizeRequiredAccessFloors(docAccess)
 
 		if tmpl.GetCategory() != nil {
 			categoryId = &tmpl.Category.Id
@@ -348,6 +286,10 @@ func (s *Server) CreateDocument(
 		if tmpl != nil && req.GetTemplateData() != nil {
 			if len(req.GetTemplateData().GetDocuments()) > 0 {
 				for _, doc := range req.GetTemplateData().GetDocuments() {
+					if doc == nil {
+						continue
+					}
+
 					exists := false
 					for _, reference := range docReferences {
 						if reference.GetTargetDocumentId() == doc.GetId() {
@@ -403,7 +345,7 @@ func (s *Server) CreateDocument(
 		docAccess.Jobs = append(docAccess.Jobs, &documentsaccess.DocumentJobAccess{
 			Job:          userInfo.GetJob(),
 			MinimumGrade: userInfo.GetJobGrade(),
-			Access:       documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+			Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 		})
 	}
 
@@ -483,21 +425,54 @@ func (s *Server) CreateDocument(
 	}
 
 	if tmpl != nil {
-		if err := s.createOrUpdateWorkflowState(ctx, tx, lastId, tmpl.GetWorkflow()); err != nil {
+		if err := s.store.UpsertWorkflowState(ctx, tx, lastId, tmpl.GetWorkflow()); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
 
 	for _, ref := range docReferences {
 		ref.SourceDocumentId = lastId
-		if _, err := s.addDocumentReference(ctx, tx, ref); err != nil {
+		if _, err := s.store.CreateDocumentReference(ctx, tx, ref); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
 	for _, rel := range docRelations {
 		rel.DocumentId = lastId
-		if _, err := s.addDocumentRelation(ctx, tx, userInfo, rel); err != nil {
+		_, created, err := s.store.CreateDocumentRelation(ctx, tx, rel)
+		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+		if created {
+			if err := s.addUserActivity(
+				ctx,
+				tx,
+				userInfo.GetUserId(),
+				rel.GetTargetUserId(),
+				usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT,
+				"",
+				&usersactivity.UserActivityData{
+					Data: &usersactivity.UserActivityData_DocumentRelation{
+						DocumentRelation: &usersactivity.CitizenDocumentRelation{
+							Added:      true,
+							DocumentId: rel.GetDocumentId(),
+							Relation:   rel.GetRelation(),
+						},
+					},
+				},
+			); err != nil {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			}
+
+			if rel.GetRelation() == documentsrelations.DocRelation_DOC_RELATION_MENTIONED {
+				if err := s.notifyMentionedUser(
+					ctx,
+					lastId,
+					userInfo.GetUserId(),
+					rel.GetTargetUserId(),
+				); err != nil {
+					return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+				}
+			}
 		}
 	}
 
@@ -517,11 +492,11 @@ func (s *Server) UpdateDocument(
 	ctx context.Context,
 	req *pbdocuments.UpdateDocumentRequest,
 ) (*pbdocuments.UpdateDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -533,7 +508,7 @@ func (s *Server) UpdateDocument(
 
 	var onlyUpdateAccess bool
 	if !check && !userInfo.GetSuperuser() {
-		onlyUpdateAccess, err = s.access.CanUserAccessTarget(
+		onlyUpdateAccess, err = s.canUserAccessDocument(
 			ctx,
 			req.GetDocumentId(),
 			userInfo,
@@ -552,6 +527,9 @@ func (s *Server) UpdateDocument(
 		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if oldDoc == nil {
+		return nil, errorsdocuments.ErrPermissionDenied
 	}
 
 	// Document is closed and the update request isn't re-opening the document
@@ -584,15 +562,11 @@ func (s *Server) UpdateDocument(
 	var tmpl *documentstemplates.Template
 	if oldDoc.GetTemplateId() > 0 {
 		var err error
-		tmpl, err = s.getTemplate(ctx, oldDoc.GetTemplateId())
+		tmpl, err = s.store.GetTemplate(ctx, oldDoc.GetTemplateId(), false)
 		if err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
-		}
-
-		if req != nil && !s.checkAccessAgainstTemplate(tmpl, req.GetAccess()) {
-			return nil, errorsdocuments.ErrDocRequiredAccessTemplate
 		}
 	}
 
@@ -601,6 +575,8 @@ func (s *Server) UpdateDocument(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
 	if !onlyUpdateAccess {
 		extracted := req.GetContent().Extract()
@@ -691,7 +667,7 @@ func (s *Server) UpdateDocument(
 		}
 
 		if tmpl != nil && tmpl.GetWorkflow() != nil {
-			if err := s.createOrUpdateWorkflowState(
+			if err := s.store.UpsertWorkflowState(
 				ctx,
 				tx,
 				oldDoc.GetId(),
@@ -786,7 +762,7 @@ func (s *Server) handleDocumentPublish(
 		return nil
 	}
 
-	pol, err := s.getApprovalPolicy(
+	pol, err := s.store.GetApprovalPolicy(
 		ctx,
 		tx,
 		table.FivenetDocumentsApprovalPolicies.AS(
@@ -836,7 +812,7 @@ func (s *Server) handleDocumentPublish(
 	}
 	newPol.Default()
 
-	if err = s.createApprovalPolicy(ctx, tx, doc.GetId(), newPol); err != nil {
+	if err = s.store.CreateApprovalPolicy(ctx, tx, doc.GetId(), newPol); err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -865,7 +841,7 @@ func (s *Server) handleDocumentPublish(
 		})
 	}
 
-	if _, _, err := s.createApprovalTasks(
+	if _, _, err := s.store.CreateApprovalTasks(
 		ctx,
 		tx,
 		userInfo,
@@ -883,11 +859,11 @@ func (s *Server) DeleteDocument(
 	ctx context.Context,
 	req *pbdocuments.DeleteDocumentRequest,
 ) (*pbdocuments.DeleteDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -910,6 +886,9 @@ func (s *Server) DeleteDocument(
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if doc == nil {
+		return nil, errorsdocuments.ErrFailedQuery
 	}
 
 	// Require a reason if the document is not already deleted
@@ -939,6 +918,12 @@ func (s *Server) DeleteDocument(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	defer tx.Rollback()
+
 	stmt := tDocument.
 		UPDATE(
 			tDocument.DeletedAt,
@@ -950,17 +935,25 @@ func (s *Server) DeleteDocument(
 			tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
 		).
 		LIMIT(1)
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, s.db, &documentsactivity.DocActivity{
+	if err := s.subjectAccess.RefreshTargetVisibility(ctx, tx, req.GetDocumentId()); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   req.GetDocumentId(),
 		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_DELETED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
 		Reason:       req.Reason,
 	}); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -971,11 +964,11 @@ func (s *Server) ToggleDocument(
 	ctx context.Context,
 	req *pbdocuments.ToggleDocumentRequest,
 ) (*pbdocuments.ToggleDocumentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -1000,15 +993,6 @@ func (s *Server) ToggleDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	var tmpl *documentstemplates.Template
-	if !req.GetClosed() && doc.GetTemplateId() > 0 {
-		// If the document is opened, get template so we can update the reminder/auto close times
-		tmpl, err = s.getTemplate(ctx, doc.GetTemplateId())
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-	}
-
 	// Field Permission Check
 	fields, err := permsdocuments.DocumentsService.ToggleDocument.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
@@ -1023,51 +1007,21 @@ func (s *Server) ToggleDocument(
 		return nil, errorsdocuments.ErrDocToggleDenied
 	}
 
-	activityType := documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
-	if !req.GetClosed() {
-		activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
-	}
-
-	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	defer tx.Rollback()
 
-	stmt := tDocument.
-		UPDATE(
-			tDocument.Closed,
-		).
-		SET(
-			req.GetClosed(),
-		).
-		WHERE(
-			tDocument.ID.EQ(mysql.Int64(doc.GetId())),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
-		DocumentId:   doc.GetId(),
-		ActivityType: activityType,
-		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.GetJob(),
-	}); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	if tmpl != nil {
-		if err := s.createOrUpdateWorkflowState(
-			ctx,
-			tx,
-			doc.GetId(),
-			tmpl.GetWorkflow(),
-		); err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
+	if err := s.store.ToggleDocument(
+		ctx,
+		tx,
+		req.GetDocumentId(),
+		doc.GetTemplateId(),
+		req.GetClosed(),
+		userInfo,
+	); err != nil {
+		return nil, err
 	}
 
 	// Commit the transaction
@@ -1093,11 +1047,11 @@ func (s *Server) ChangeDocumentOwner(
 	ctx context.Context,
 	req *pbdocuments.ChangeDocumentOwnerRequest,
 ) (*pbdocuments.ChangeDocumentOwnerResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -1118,6 +1072,9 @@ func (s *Server) ChangeDocumentOwner(
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if doc == nil {
+		return nil, errorsdocuments.ErrFailedQuery
 	}
 
 	// Document must be created by the same job
@@ -1189,7 +1146,13 @@ func (s *Server) ChangeDocumentOwner(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if err := s.updateDocumentOwner(ctx, tx, req.GetDocumentId(), userInfo, &newOwner); err != nil {
+	if err := s.store.UpdateDocumentOwner(
+		ctx,
+		tx,
+		req.GetDocumentId(),
+		userInfo,
+		&newOwner,
+	); err != nil {
 		return nil, err
 	}
 

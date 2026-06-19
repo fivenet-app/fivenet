@@ -11,7 +11,7 @@ package centrumunits
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
-	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units/access"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	colleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -148,7 +148,7 @@ type Unit struct {
 	xxx_hidden_Users       *[]*UnitAssignment     `protobuf:"bytes,11,rep,name=users,proto3"`
 	xxx_hidden_Attributes  *UnitAttributes        `protobuf:"bytes,12,opt,name=attributes,proto3,oneof"`
 	xxx_hidden_HomePostal  *string                `protobuf:"bytes,13,opt,name=home_postal,json=homePostal,proto3,oneof"`
-	xxx_hidden_Access      *access.UnitAccess     `protobuf:"bytes,14,opt,name=access,proto3"`
+	xxx_hidden_Access      *access.Access         `protobuf:"bytes,14,opt,name=access,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -299,7 +299,7 @@ func (x *Unit) GetHomePostal() string {
 	return ""
 }
 
-func (x *Unit) GetAccess() *access.UnitAccess {
+func (x *Unit) GetAccess() *access.Access {
 	if x != nil {
 		return x.xxx_hidden_Access
 	}
@@ -370,7 +370,7 @@ func (x *Unit) SetHomePostal(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 16)
 }
 
-func (x *Unit) SetAccess(v *access.UnitAccess) {
+func (x *Unit) SetAccess(v *access.Access) {
 	x.xxx_hidden_Access = v
 }
 
@@ -495,7 +495,7 @@ type Unit_builder struct {
 	Users       []*UnitAssignment
 	Attributes  *UnitAttributes
 	HomePostal  *string
-	Access      *access.UnitAccess
+	Access      *access.Access
 }
 
 func (b0 Unit_builder) Build() *Unit {
@@ -1216,7 +1216,7 @@ var File_resources_centrum_units_units_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_units_units_proto_rawDesc = "" +
 	"\n" +
-	"#resources/centrum/units/units.proto\x12\x17resources.centrum.units\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a+resources/centrum/units/access/access.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xee\x06\n" +
+	"#resources/centrum/units/units.proto\x12\x17resources.centrum.units\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xdc\x06\n" +
 	"\x04Unit\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1238,8 +1238,8 @@ const file_resources_centrum_units_units_proto_rawDesc = "" +
 	"attributes\x18\f \x01(\v2'.resources.centrum.units.UnitAttributesH\x06R\n" +
 	"attributes\x88\x01\x01\x12$\n" +
 	"\vhome_postal\x18\r \x01(\tH\aR\n" +
-	"homePostal\x88\x01\x01\x12B\n" +
-	"\x06access\x18\x0e \x01(\v2*.resources.centrum.units.access.UnitAccessR\x06accessB\r\n" +
+	"homePostal\x88\x01\x01\x120\n" +
+	"\x06access\x18\x0e \x01(\v2\x18.resources.access.AccessR\x06accessB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\f\n" +
 	"\n" +
@@ -1322,7 +1322,7 @@ var file_resources_centrum_units_units_proto_goTypes = []any{
 	(*UnitStatus)(nil),           // 5: resources.centrum.units.UnitStatus
 	(*UnitAttributes)(nil),       // 6: resources.centrum.units.UnitAttributes
 	(*timestamp.Timestamp)(nil),  // 7: resources.timestamp.Timestamp
-	(*access.UnitAccess)(nil),    // 8: resources.centrum.units.access.UnitAccess
+	(*access.Access)(nil),        // 8: resources.access.Access
 	(*colleagues.Colleague)(nil), // 9: resources.jobs.colleagues.Colleague
 }
 var file_resources_centrum_units_units_proto_depIdxs = []int32{
@@ -1331,7 +1331,7 @@ var file_resources_centrum_units_units_proto_depIdxs = []int32{
 	5,  // 2: resources.centrum.units.Unit.status:type_name -> resources.centrum.units.UnitStatus
 	4,  // 3: resources.centrum.units.Unit.users:type_name -> resources.centrum.units.UnitAssignment
 	6,  // 4: resources.centrum.units.Unit.attributes:type_name -> resources.centrum.units.UnitAttributes
-	8,  // 5: resources.centrum.units.Unit.access:type_name -> resources.centrum.units.access.UnitAccess
+	8,  // 5: resources.centrum.units.Unit.access:type_name -> resources.access.Access
 	4,  // 6: resources.centrum.units.UnitAssignments.users:type_name -> resources.centrum.units.UnitAssignment
 	9,  // 7: resources.centrum.units.UnitAssignment.user:type_name -> resources.jobs.colleagues.Colleague
 	7,  // 8: resources.centrum.units.UnitStatus.created_at:type_name -> resources.timestamp.Timestamp

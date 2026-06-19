@@ -6,9 +6,9 @@ import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/access/access.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
-import "resources/documents/access/access.proto";
 import "resources/documents/activity/activity.proto";
 import "resources/documents/data/data.proto";
 import "resources/documents/documents.proto";
@@ -56,7 +56,7 @@ message GetDocumentRequest {
 
 message GetDocumentResponse {
   resources.documents.Document document = 1;
-  resources.documents.access.DocumentAccess access = 2;
+  resources.access.Access access = 2;
 }
 
 message GetDocumentReferencesRequest {
@@ -165,7 +165,7 @@ message UpdateDocumentRequest {
   resources.common.content.ContentType content_type = 5 [(buf.validate.field).enum.defined_only = true];
   optional resources.documents.data.DocumentData data = 6;
   resources.documents.DocumentMeta meta = 7 [(buf.validate.field).required = true];
-  optional resources.documents.access.DocumentAccess access = 11;
+  optional resources.access.Access access = 11;
   repeated resources.file.File files = 12 [
     (tagger.tags) = "alias:\"files\"",
     (buf.validate.field).repeated.max_items = 5
@@ -263,12 +263,12 @@ message GetDocumentAccessRequest {
 }
 
 message GetDocumentAccessResponse {
-  resources.documents.access.DocumentAccess access = 1 [(buf.validate.field).required = true];
+  resources.access.Access access = 1 [(buf.validate.field).required = true];
 }
 
 message SetDocumentAccessRequest {
   int64 document_id = 1;
-  resources.documents.access.DocumentAccess access = 2 [(buf.validate.field).required = true];
+  resources.access.Access access = 2 [(buf.validate.field).required = true];
 }
 
 message SetDocumentAccessResponse {}

@@ -549,7 +549,8 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                                 :label="$t('components.documents.document_view.take_ownership')"
                                 @click="
                                     confirmModal.open({
-                                        confirm: async () => documentsDocuments.changeDocumentOwner(documentId),
+                                        confirm: async () =>
+                                            documentsDocuments.changeDocumentOwner(documentId).then(() => refresh()),
                                     })
                                 "
                             />

@@ -23,6 +23,27 @@ export function approvalTaskStatusToColor(status: ApprovalTaskStatus): BadgeProp
     }
 }
 
+export function approvalTaskStatusToIcon(status: ApprovalTaskStatus): string {
+    switch (status) {
+        case ApprovalTaskStatus.APPROVED:
+            return 'i-mdi-approve';
+
+        case ApprovalTaskStatus.CANCELLED:
+            return 'i-mdi-cancel';
+
+        case ApprovalTaskStatus.DECLINED:
+            return 'i-mdi-cross-circle-outline';
+
+        case ApprovalTaskStatus.EXPIRED:
+            return 'i-mdi-timer-alert';
+
+        case ApprovalTaskStatus.UNSPECIFIED:
+        case ApprovalTaskStatus.PENDING:
+        default:
+            return 'i-mdi-timer-sand';
+    }
+}
+
 export function approvalStatusToColor(status: ApprovalStatus): BadgeProps['color'] {
     switch (status) {
         case ApprovalStatus.APPROVED:

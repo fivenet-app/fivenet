@@ -95,7 +95,7 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 					return fmt.Errorf("failed to delete job %s. %w", jobName, err)
 				}
 			} else {
-				h.logger.Debug("dry run: delete job props", zap.String("query", delStmt.DebugSql()))
+				h.logger.Debug("dry run delete job props", zap.String("query", delStmt.DebugSql()))
 			}
 			// Clear progress
 			data.SetAttribute(lastJobName, "")

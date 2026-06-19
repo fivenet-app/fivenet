@@ -8,18 +8,15 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	documentscomment "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/comment"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -35,17 +32,15 @@ const (
 	CommentsMaxLength       = 2048
 )
 
-var tDComments = table.FivenetDocumentsComments
-
 func (s *Server) GetComments(
 	ctx context.Context,
 	req *pbdocuments.GetCommentsRequest,
 ) (*pbdocuments.GetCommentsResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -58,93 +53,27 @@ func (s *Server) GetComments(
 		return nil, errorsdocuments.ErrCommentViewDenied
 	}
 
-	tDComments := tDComments.AS("comment")
-	var condition mysql.BoolExpression
-	if userInfo.GetSuperuser() {
-		condition = mysql.AND(
-			tDComments.DocumentID.EQ(mysql.Int64(req.GetDocumentId())),
-		)
-	} else {
-		condition = mysql.AND(
-			tDComments.DocumentID.EQ(mysql.Int64(req.GetDocumentId())),
-			tDComments.DeletedAt.IS_NULL(),
-		)
+	count, err := s.store.CountComments(ctx, s.db, req.GetDocumentId(), userInfo.GetSuperuser())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	countStmt := tDComments.
-		SELECT(
-			mysql.COUNT(tDComments.ID).AS("data_count.total"),
-		).
-		FROM(
-			tDComments,
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-	}
-
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, CommentsDefaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(int64(count), CommentsDefaultPageSize)
 	resp := &pbdocuments.GetCommentsResponse{
 		Pagination: pag,
 		Comments:   []*documentscomment.Comment{},
 	}
-	if count.Total <= 0 {
+	if count <= 0 {
 		return resp, nil
 	}
-
-	tCreator := table.FivenetUser.AS("creator")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-
-	columns := mysql.ProjectionList{
-		tDComments.ID,
-		tDComments.DocumentID,
-		tDComments.CreatedAt,
-		tDComments.UpdatedAt,
-		tDComments.Content,
-		tDComments.CreatorID,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-		tAvatar.FilePath.AS("creator.profile_picture"),
-	}
-	if userInfo.GetSuperuser() {
-		columns = append(columns, tDComments.DeletedAt)
-	}
-
-	stmt := tDComments.
-		SELECT(
-			columns[0],
-			columns[1:]...,
-		).
-		FROM(
-			tDComments.
-				LEFT_JOIN(tCreator,
-					tDComments.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
-		WHERE(condition).
-		OFFSET(
-			req.GetPagination().GetOffset(),
-		).
-		ORDER_BY(
-			tDComments.CreatedAt.DESC(),
-		).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Comments); err != nil {
+	resp.Comments, err = s.store.ListComments(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		req.GetPagination().GetOffset(),
+		limit,
+	)
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -164,12 +93,12 @@ func (s *Server) PostComment(
 ) (*pbdocuments.PostCommentResponse, error) {
 	logging.InjectFields(
 		ctx,
-		logging.Fields{"fivenet.documents.id", req.GetComment().GetDocumentId()},
+		logging.Fields{documentIDLogFieldKey, req.GetComment().GetDocumentId()},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetComment().GetDocumentId(),
 		userInfo,
@@ -196,36 +125,8 @@ func (s *Server) PostComment(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := tDComments.
-		INSERT(
-			tDComments.DocumentID,
-			tDComments.Content,
-			tDComments.CreatorID,
-			tDComments.CreatorJob,
-		).
-		VALUES(
-			req.GetComment().GetDocumentId(),
-			req.GetComment().GetContent(),
-			userInfo.GetUserId(),
-			userInfo.GetJob(),
-		)
-
-	result, err := stmt.ExecContext(ctx, tx)
+	lastId, err := s.store.CreateComment(ctx, tx, req.GetComment(), userInfo)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	lastId, err := result.LastInsertId()
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
-		DocumentId:   req.GetComment().GetDocumentId(),
-		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_ADDED,
-		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.GetJob(),
-	}); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -238,7 +139,7 @@ func (s *Server) PostComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := s.updateCommentsCount(ctx, tx, req.GetComment().GetDocumentId()); err != nil {
+	if err := s.store.UpdateCommentsCount(ctx, tx, req.GetComment().GetDocumentId()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -249,7 +150,7 @@ func (s *Server) PostComment(
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
-	comment, err := s.getComment(ctx, lastId, userInfo)
+	comment, err := s.store.GetComment(ctx, lastId, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -267,14 +168,14 @@ func (s *Server) EditComment(
 	logging.InjectFields(
 		ctx,
 		logging.Fields{
-			"fivenet.documents.id", req.GetComment().GetDocumentId(),
+			documentIDLogFieldKey, req.GetComment().GetDocumentId(),
 			"fivenet.documents.comment_id", req.GetComment().GetId(),
 		},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetComment().GetDocumentId(),
 		userInfo,
@@ -287,7 +188,7 @@ func (s *Server) EditComment(
 		return nil, errorsdocuments.ErrCommentEditDenied
 	}
 
-	comment, err := s.getComment(ctx, req.GetComment().GetId(), userInfo)
+	comment, err := s.store.GetComment(ctx, req.GetComment().GetId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -309,35 +210,13 @@ func (s *Server) EditComment(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := tDComments.
-		UPDATE(
-			tDComments.Content,
-		).
-		SET(
-			req.GetComment().GetContent(),
-		).
-		WHERE(mysql.AND(
-			tDComments.ID.EQ(mysql.Int64(req.GetComment().GetId())),
-			tDComments.DeletedAt.IS_NULL(),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	if err := s.store.UpdateComment(ctx, tx, req.GetComment(), userInfo); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	comment.Content = req.GetComment().GetContent()
 
-	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
-		DocumentId:   req.GetComment().GetDocumentId(),
-		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_UPDATED,
-		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.GetJob(),
-	}); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	if err := s.updateCommentsCount(ctx, tx, comment.GetDocumentId()); err != nil {
+	if err := s.store.UpdateCommentsCount(ctx, tx, comment.GetDocumentId()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -353,71 +232,15 @@ func (s *Server) EditComment(
 	}, nil
 }
 
-func (s *Server) getComment(
-	ctx context.Context,
-	id int64,
-	userInfo *userinfo.UserInfo,
-) (*documentscomment.Comment, error) {
-	tDComments := tDComments.AS("comment")
-	tCreator := table.FivenetUser.AS("creator")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-
-	stmt := tDComments.
-		SELECT(
-			tDComments.ID,
-			tDComments.CreatedAt,
-			tDComments.UpdatedAt,
-			tDComments.DocumentID,
-			tDComments.Content,
-			tDComments.CreatorID,
-			tDComments.CreatorJob,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-			tAvatar.FilePath.AS("creator.profile_picture"),
-		).
-		FROM(
-			tDComments.
-				LEFT_JOIN(tCreator,
-					tDComments.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
-		WHERE(
-			tDComments.ID.EQ(mysql.Int64(id)),
-		).
-		LIMIT(1)
-
-	comment := &documentscomment.Comment{}
-	if err := stmt.QueryContext(ctx, s.db, comment); err != nil {
-		return nil, err
-	}
-
-	if comment.GetCreator() != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, comment.GetCreator())
-	}
-
-	return comment, nil
-}
-
 func (s *Server) DeleteComment(
 	ctx context.Context,
 	req *pbdocuments.DeleteCommentRequest,
 ) (*pbdocuments.DeleteCommentResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetCommentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetCommentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	comment, err := s.getComment(ctx, req.GetCommentId(), userInfo)
+	comment, err := s.store.GetComment(ctx, req.GetCommentId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -425,7 +248,7 @@ func (s *Server) DeleteComment(
 		comment.CreatorJob = userInfo.GetJob()
 	}
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		comment.GetDocumentId(),
 		userInfo,
@@ -470,30 +293,18 @@ func (s *Server) DeleteComment(
 		activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_RESTORED
 	}
 
-	stmt := tDComments.
-		UPDATE(
-			tDComments.DeletedAt,
-		).
-		SET(
-			tDComments.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
-		).
-		WHERE(tDComments.ID.EQ(mysql.Int64(req.GetCommentId()))).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	if err := s.store.DeleteComment(
+		ctx,
+		tx,
+		comment,
+		userInfo,
+		deletedAtTime,
+		activityType,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
-		DocumentId:   comment.GetDocumentId(),
-		ActivityType: activityType,
-		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.GetJob(),
-	}); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	if err := s.updateCommentsCount(ctx, tx, comment.GetDocumentId()); err != nil {
+	if err := s.store.UpdateCommentsCount(ctx, tx, comment.GetDocumentId()); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -501,8 +312,6 @@ func (s *Server) DeleteComment(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbdocuments.DeleteCommentResponse{}, nil
 }
@@ -526,17 +335,17 @@ func (s *Server) notifyUsersNewComment(
 		return nil
 	}
 
-	lastPerCreator := tDComments.
+	lastPerCreator := table.FivenetDocumentsComments.
 		SELECT(
-			tDComments.CreatorID.AS("creator_id"),
-			mysql.MAX(tDComments.CreatedAt).AS("last_at"),
+			table.FivenetDocumentsComments.CreatorID.AS("creator_id"),
+			mysql.MAX(table.FivenetDocumentsComments.CreatedAt).AS("last_at"),
 		).
-		FROM(tDComments).
+		FROM(table.FivenetDocumentsComments).
 		WHERE(mysql.AND(
-			tDComments.DocumentID.EQ(mysql.Int64(documentId)),
-			tDComments.CreatorID.NOT_EQ(mysql.Int32(sourceUserId)),
+			table.FivenetDocumentsComments.DocumentID.EQ(mysql.Int64(documentId)),
+			table.FivenetDocumentsComments.CreatorID.NOT_EQ(mysql.Int32(sourceUserId)),
 		)).
-		GROUP_BY(tDComments.CreatorID).
+		GROUP_BY(table.FivenetDocumentsComments.CreatorID).
 		AsTable("dc")
 
 	// Get the last 3 commentors to send them a notification
@@ -565,7 +374,7 @@ func (s *Server) notifyUsersNewComment(
 			return err
 		}
 
-		check, err := s.access.CanUserAccessTarget(
+		check, err := s.canUserAccessDocument(
 			ctx,
 			doc.GetId(),
 			userInfo,
@@ -591,7 +400,7 @@ func (s *Server) notifyUsersNewComment(
 			return err
 		}
 
-		check, err := s.access.CanUserAccessTarget(
+		check, err := s.canUserAccessDocument(
 			ctx,
 			doc.GetId(),
 			userInfo,
@@ -627,64 +436,6 @@ func (s *Server) notifyUsersNewComment(
 		if err := s.notifi.NotifyUser(ctx, not); err != nil {
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (s *Server) countComments(ctx context.Context, tx qrm.DB, documentId int64) (int32, error) {
-	tDComments := tDComments.AS("comments")
-	stmt := tDComments.
-		SELECT(
-			mysql.COUNT(tDComments.ID).AS(""),
-		).
-		FROM(
-			tDComments,
-		).
-		WHERE(
-			mysql.AND(
-				tDComments.DocumentID.EQ(mysql.Int64(documentId)),
-				tDComments.DeletedAt.IS_NULL(),
-			),
-		)
-
-	var result struct {
-		CommentCount int32 `alias:"comment_count"`
-	}
-	if err := stmt.QueryContext(ctx, tx, &result); err != nil {
-		return 0, err
-	}
-
-	return result.CommentCount, nil
-}
-
-func (s *Server) updateCommentsCount(
-	ctx context.Context,
-	tx qrm.DB,
-	documentId int64,
-) error {
-	commentCount, err := s.countComments(ctx, tx, documentId)
-	if err != nil {
-		return err
-	}
-
-	tDMeta := table.FivenetDocumentsMeta
-
-	updateStmt := tDMeta.
-		INSERT(
-			tDMeta.DocumentID,
-			tDMeta.CommentCount,
-		).
-		VALUES(
-			documentId,
-			commentCount,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tDMeta.CommentCount.SET(mysql.Int32(commentCount)),
-		)
-
-	if _, err := updateStmt.ExecContext(ctx, tx); err != nil {
-		return err
 	}
 
 	return nil

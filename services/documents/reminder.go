@@ -2,84 +2,25 @@ package documents
 
 import (
 	"context"
-	"time"
 
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsworkflow "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/workflow"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
-
-func (s *Server) createOrUpdateWorkflowState(
-	ctx context.Context,
-	tx qrm.DB,
-	documentId int64,
-	workflow *documentsworkflow.Workflow,
-) error {
-	if workflow == nil || (!workflow.GetAutoClose() && !workflow.GetReminder()) {
-		return nil
-	}
-
-	now := time.Now()
-
-	autoCloseTime := mysql.TimestampExp(mysql.NULL)
-	if workflow.GetAutoClose() && workflow.GetAutoCloseSettings() != nil &&
-		workflow.GetAutoCloseSettings().GetDuration() != nil {
-		autoCloseTime = mysql.TimestampT(
-			now.Add(workflow.GetAutoCloseSettings().GetDuration().AsDuration()),
-		)
-	}
-
-	nextReminderTime := mysql.TimestampExp(mysql.NULL)
-	if workflow.GetReminder() && workflow.GetReminderSettings() != nil &&
-		len(workflow.GetReminderSettings().GetReminders()) > 0 {
-		reminder := workflow.GetReminderSettings().GetReminders()[0]
-
-		nextReminderTime = mysql.TimestampT(now.Add(reminder.GetDuration().AsDuration()))
-	}
-
-	tWorkflowState := table.FivenetDocumentsWorkflowState
-	stmt := tWorkflowState.
-		INSERT(
-			tWorkflowState.DocumentID,
-			tWorkflowState.AutoCloseTime,
-			tWorkflowState.NextReminderTime,
-			tWorkflowState.NextReminderCount,
-		).
-		VALUES(
-			documentId,
-			autoCloseTime,
-			nextReminderTime,
-			mysql.NULL,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tWorkflowState.AutoCloseTime.SET(autoCloseTime),
-			tWorkflowState.NextReminderTime.SET(nextReminderTime),
-			tWorkflowState.NextReminderCount.SET(mysql.IntExp(mysql.NULL)),
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
-}
 
 func (s *Server) SetDocumentReminder(
 	ctx context.Context,
 	req *pbdocuments.SetDocumentReminderRequest,
 ) (*pbdocuments.SetDocumentReminderResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -93,7 +34,7 @@ func (s *Server) SetDocumentReminder(
 	}
 
 	if req.GetReminderTime() == nil {
-		if err := deleteWorkflowUserState(
+		if err := s.store.DeleteWorkflowUserState(
 			ctx,
 			s.db,
 			req.GetDocumentId(),
@@ -102,7 +43,7 @@ func (s *Server) SetDocumentReminder(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	} else {
-		if err := updateWorkflowUserState(ctx, s.db, &documentsworkflow.WorkflowUserState{
+		if err := s.store.UpsertWorkflowUserState(ctx, s.db, &documentsworkflow.WorkflowUserState{
 			DocumentId:            req.GetDocumentId(),
 			UserId:                userInfo.GetUserId(),
 			ManualReminderTime:    req.GetReminderTime(),

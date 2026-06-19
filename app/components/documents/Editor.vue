@@ -12,8 +12,9 @@ import { useCompletorStore } from '~/stores/completor';
 import type { HistoryContent } from '~/types/history';
 import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import type { JobAccess, UserAccess } from '~~/gen/ts/resources/access/access';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
-import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
 import { Category } from '~~/gen/ts/resources/documents/category/category';
 import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import type { DocumentReference } from '~~/gen/ts/resources/documents/references/references';
@@ -173,8 +174,9 @@ const schema = z.object({
         .object({
             jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
             users: userAccessEntries(t).max(maxAccessEntries).default([]),
+            qualifications: qualificationAccessEntries(t).max(0).default([]),
         })
-        .default({ jobs: [], users: [] }),
+        .default({ jobs: [], users: [], qualifications: [] }),
     files: z.custom<File>().array().max(5).default([]),
     data: z.custom<DocumentData>().optional().default({}),
     references: z.custom<DocumentReference>().array().max(15).default([]),
@@ -194,6 +196,7 @@ const state = reactive<Schema>({
     access: {
         jobs: [],
         users: [],
+        qualifications: [],
     },
     files: [],
     data: {},
@@ -449,13 +452,13 @@ useYStructure<Category>(
 );
 
 // Access
-useYArrayFiltered<DocumentJobAccess>(
+useYArrayFiltered<JobAccess>(
     ydoc.getArray('access_jobs'),
     toRef(state.access, 'jobs'),
     { omit: ['createdAt', 'user'] },
     { provider: provider },
 );
-useYArrayFiltered<DocumentUserAccess>(
+useYArrayFiltered<UserAccess>(
     ydoc.getArray('access_users'),
     toRef(state.access, 'users'),
     {
@@ -709,6 +712,7 @@ provide('yjsProvider', provider);
                                         :disabled="!canDo.access"
                                         :target-id="documentId ?? 0"
                                         :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
+                                        required-mode="badge"
                                         name="access"
                                     />
                                 </UFormField>

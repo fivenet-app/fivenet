@@ -48,7 +48,7 @@ type Poller struct {
 
 	db       *sql.DB
 	js       *events.JSWrapper
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 	notifi   notifi.INotifi
 	kv       jetstream.KeyValue
 
@@ -67,7 +67,7 @@ type PollerParams struct {
 
 	Logger   *zap.Logger
 	DB       *sql.DB
-	Enricher *mstlystcdata.Enricher
+	Enricher mstlystcdata.IEnricher
 	Notifi   notifi.INotifi
 	JS       *events.JSWrapper
 }

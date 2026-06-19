@@ -15,7 +15,7 @@ const { streamerMode } = storeToRefs(settingsStore);
 const completorStore = useCompletorStore();
 const { completeJobs } = completorStore;
 
-const { data: jobs, error, status, refresh } = useLazyAsyncData(`settings-appconfig-jobs`, () => completeJobs({}));
+const { data: jobs, error, status, refresh } = useLazyAsyncData(`settings-jobs`, () => completeJobs({}));
 
 const columns = computed(
     () =>

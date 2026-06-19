@@ -19,7 +19,7 @@ import { QualificationResult } from "../../resources/qualifications/qualificatio
 import { ResultStatus } from "../../resources/qualifications/qualifications";
 import { QualificationRequest } from "../../resources/qualifications/qualifications";
 import { RequestStatus } from "../../resources/qualifications/qualifications";
-import { QualificationAccess } from "../../resources/qualifications/access/access";
+import { Access } from "../../resources/access/access";
 import { ContentType } from "../../resources/common/content/content";
 import { Qualification } from "../../resources/qualifications/qualifications";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -149,9 +149,9 @@ export interface GetQualificationAccessRequest {
  */
 export interface GetQualificationAccessResponse {
     /**
-     * @generated from protobuf field: resources.qualifications.access.QualificationAccess access = 1
+     * @generated from protobuf field: resources.access.Access access = 1
      */
-    access?: QualificationAccess;
+    access?: Access;
 }
 /**
  * @generated from protobuf message services.qualifications.SetQualificationAccessRequest
@@ -162,9 +162,9 @@ export interface SetQualificationAccessRequest {
      */
     qualificationId: number;
     /**
-     * @generated from protobuf field: resources.qualifications.access.QualificationAccess access = 2
+     * @generated from protobuf field: resources.access.Access access = 2
      */
-    access?: QualificationAccess;
+    access?: Access;
 }
 /**
  * @generated from protobuf message services.qualifications.SetQualificationAccessResponse
@@ -196,9 +196,9 @@ export interface ListQualificationRequestsRequest {
      */
     status: RequestStatus[];
     /**
-     * @generated from protobuf field: optional int32 user_id = 5
+     * @generated from protobuf field: repeated int32 user_ids = 5
      */
-    userId?: number;
+    userIds: number[];
 }
 /**
  * @generated from protobuf message services.qualifications.ListQualificationRequestsResponse
@@ -274,9 +274,9 @@ export interface ListQualificationsResultsRequest {
      */
     status: ResultStatus[];
     /**
-     * @generated from protobuf field: optional int32 user_id = 5
+     * @generated from protobuf field: repeated int32 user_ids = 5
      */
-    userId?: number;
+    userIds: number[];
 }
 /**
  * @generated from protobuf message services.qualifications.ListQualificationsResultsResponse
@@ -871,7 +871,7 @@ export const GetQualificationAccessRequest = new GetQualificationAccessRequest$T
 class GetQualificationAccessResponse$Type extends MessageType<GetQualificationAccessResponse> {
     constructor() {
         super("services.qualifications.GetQualificationAccessResponse", [
-            { no: 1, name: "access", kind: "message", T: () => QualificationAccess, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "access", kind: "message", T: () => Access, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<GetQualificationAccessResponse>): GetQualificationAccessResponse {
@@ -885,8 +885,8 @@ class GetQualificationAccessResponse$Type extends MessageType<GetQualificationAc
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.qualifications.access.QualificationAccess access */ 1:
-                    message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* resources.access.Access access */ 1:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -900,9 +900,9 @@ class GetQualificationAccessResponse$Type extends MessageType<GetQualificationAc
         return message;
     }
     internalBinaryWrite(message: GetQualificationAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.qualifications.access.QualificationAccess access = 1; */
+        /* resources.access.Access access = 1; */
         if (message.access)
-            QualificationAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -918,7 +918,7 @@ class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAcc
     constructor() {
         super("services.qualifications.SetQualificationAccessRequest", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "access", kind: "message", T: () => QualificationAccess, options: { "buf.validate.field": { required: true } } }
+            { no: 2, name: "access", kind: "message", T: () => Access, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<SetQualificationAccessRequest>): SetQualificationAccessRequest {
@@ -936,8 +936,8 @@ class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAcc
                 case /* int64 qualification_id */ 1:
                     message.qualificationId = reader.int64().toNumber();
                     break;
-                case /* resources.qualifications.access.QualificationAccess access */ 2:
-                    message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* resources.access.Access access */ 2:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -954,9 +954,9 @@ class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAcc
         /* int64 qualification_id = 1; */
         if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).int64(message.qualificationId);
-        /* resources.qualifications.access.QualificationAccess access = 2; */
+        /* resources.access.Access access = 2; */
         if (message.access)
-            QualificationAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1013,12 +1013,13 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } }
+            { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "5", items: { int32: { gt: 0 } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListQualificationRequestsRequest>): ListQualificationRequestsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.status = [];
+        message.userIds = [];
         if (value !== undefined)
             reflectionMergePartial<ListQualificationRequestsRequest>(this, message, value);
         return message;
@@ -1044,8 +1045,12 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
                     else
                         message.status.push(reader.int32());
                     break;
-                case /* optional int32 user_id */ 5:
-                    message.userId = reader.int32();
+                case /* repeated int32 user_ids */ 5:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIds.push(reader.int32());
+                    else
+                        message.userIds.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1075,9 +1080,13 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
                 writer.int32(message.status[i]);
             writer.join();
         }
-        /* optional int32 user_id = 5; */
-        if (message.userId !== undefined)
-            writer.tag(5, WireType.Varint).int32(message.userId);
+        /* repeated int32 user_ids = 5; */
+        if (message.userIds.length) {
+            writer.tag(5, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIds.length; i++)
+                writer.int32(message.userIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1239,7 +1248,7 @@ class DeleteQualificationReqRequest$Type extends MessageType<DeleteQualification
     constructor() {
         super("services.qualifications.DeleteQualificationReqRequest", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } }
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteQualificationReqRequest>): DeleteQualificationReqRequest {
@@ -1335,12 +1344,13 @@ class ListQualificationsResultsRequest$Type extends MessageType<ListQualificatio
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } }
+            { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "5", items: { int32: { gt: 0 } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListQualificationsResultsRequest>): ListQualificationsResultsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.status = [];
+        message.userIds = [];
         if (value !== undefined)
             reflectionMergePartial<ListQualificationsResultsRequest>(this, message, value);
         return message;
@@ -1366,8 +1376,12 @@ class ListQualificationsResultsRequest$Type extends MessageType<ListQualificatio
                     else
                         message.status.push(reader.int32());
                     break;
-                case /* optional int32 user_id */ 5:
-                    message.userId = reader.int32();
+                case /* repeated int32 user_ids */ 5:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIds.push(reader.int32());
+                    else
+                        message.userIds.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1397,9 +1411,13 @@ class ListQualificationsResultsRequest$Type extends MessageType<ListQualificatio
                 writer.int32(message.status[i]);
             writer.join();
         }
-        /* optional int32 user_id = 5; */
-        if (message.userId !== undefined)
-            writer.tag(5, WireType.Varint).int32(message.userId);
+        /* repeated int32 user_ids = 5; */
+        if (message.userIds.length) {
+            writer.tag(5, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIds.length; i++)
+                writer.int32(message.userIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

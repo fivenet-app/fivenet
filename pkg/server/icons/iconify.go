@@ -23,12 +23,18 @@ const (
 	UserAgentPrefix = "FiveNet Icon Proxy "
 )
 
+const (
+	MDIIconSetName    = "mdi"
+	SimpleIconSetName = "simple-icons"
+	FlagpackSetName   = "flagpack"
+)
+
 var (
-	loadedIconSets      = []string{"mdi", "simple-icons", "flagpack"}
+	loadedIconSets      = []string{MDIIconSetName, SimpleIconSetName, FlagpackSetName}
 	loadedIconSetLookup = map[string]struct{}{
-		"mdi":          {},
-		"simple-icons": {},
-		"flagpack":     {},
+		MDIIconSetName:    {},
+		SimpleIconSetName: {},
+		FlagpackSetName:   {},
 	}
 
 	ErrUnknownIconSet         = errors.New("unknown icon set")

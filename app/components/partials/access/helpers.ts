@@ -9,6 +9,7 @@ export type JobAccessEntry = {
     minimumGrade?: number;
     access: number;
     required?: boolean;
+    requiredAccess?: number;
     jobLabel?: string;
     jobGradeLabel?: string;
 };
@@ -19,6 +20,7 @@ export type UserAccessEntry = {
     userId?: number;
     access: number;
     required?: boolean;
+    requiredAccess?: number;
     user?: UserShort;
 };
 
@@ -28,6 +30,7 @@ export type QualificationAccessEntry = {
     qualificationId?: number;
     access: number;
     required?: boolean;
+    requiredAccess?: number;
     qualification?: QualificationShort;
 };
 
@@ -48,6 +51,7 @@ export type MixedAccessEntry = {
 
     access: number;
     required?: boolean;
+    requiredAccess?: number;
 };
 
 export type AccessType = {

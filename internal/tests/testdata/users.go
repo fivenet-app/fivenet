@@ -2,14 +2,6 @@ package testdata
 
 import "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 
-func ptr(s string) *string {
-	return &s
-}
-
-func ptrFloat(f float32) *float32 {
-	return &f
-}
-
 var Users = []*users.User{
 	{
 		UserId:      1,
@@ -18,9 +10,9 @@ var Users = []*users.User{
 		JobGrade:    17,
 		Firstname:   "Dr. Amy",
 		Lastname:    "Clockwork",
-		Sex:         ptr("f"),
+		Sex:         new("f"),
 		Dateofbirth: "08.04.2003",
-		Height:      ptrFloat(182),
+		Height:      new(float32(182)),
 	},
 	{
 		UserId:      2,
@@ -29,9 +21,9 @@ var Users = []*users.User{
 		JobGrade:    20,
 		Firstname:   "Philipp",
 		Lastname:    "Scott",
-		Sex:         ptr("m"),
+		Sex:         new("m"),
 		Dateofbirth: "01.08.1982",
-		Height:      ptrFloat(185),
+		Height:      new(float32(185)),
 	},
 	{
 		UserId:      3,
@@ -40,9 +32,9 @@ var Users = []*users.User{
 		JobGrade:    16,
 		Firstname:   "Jonas",
 		Lastname:    "Striker",
-		Sex:         ptr("m"),
+		Sex:         new("m"),
 		Dateofbirth: "28.10.1990",
-		Height:      ptrFloat(186),
+		Height:      new(float32(186)),
 	},
 	{
 		UserId:      4,
@@ -51,9 +43,9 @@ var Users = []*users.User{
 		JobGrade:    2,
 		Firstname:   "Hannibal",
 		Lastname:    "Scott",
-		Sex:         ptr("m"),
+		Sex:         new("m"),
 		Dateofbirth: "15.06.1990",
-		Height:      ptrFloat(180),
+		Height:      new(float32(180)),
 	},
 	{
 		UserId:      5,
@@ -62,8 +54,8 @@ var Users = []*users.User{
 		JobGrade:    1,
 		Firstname:   "Peter",
 		Lastname:    "Hans",
-		Sex:         ptr("m"),
+		Sex:         new("m"),
 		Dateofbirth: "10.02.1991",
-		Height:      ptrFloat(178),
+		Height:      new(float32(178)),
 	},
 }

@@ -27,7 +27,7 @@ type DispatchersDB struct {
 
 	db       *sql.DB
 	js       *events.JSWrapper
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 	tracker  tracker.ITracker
 
 	store *store.Store[centrumdispatchers.Dispatchers, *centrumdispatchers.Dispatchers]
@@ -41,7 +41,7 @@ type Params struct {
 	Logger   *zap.Logger
 	DB       *sql.DB
 	JS       *events.JSWrapper
-	Enricher *mstlystcdata.Enricher
+	Enricher mstlystcdata.IEnricher
 	Tracker  tracker.ITracker
 }
 
@@ -129,9 +129,10 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 		)
 
 	if job != "" {
-		stmt = stmt.WHERE(
-			tCentrumDispatchers.Job.EQ(mysql.String(job)),
-		)
+		stmt = stmt.
+			WHERE(
+				tCentrumDispatchers.Job.EQ(mysql.String(job)),
+			)
 	}
 
 	var dest []*jobscolleagues.Colleague

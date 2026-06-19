@@ -8,12 +8,9 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
-	"github.com/go-jet/jet/v2/mysql"
 )
 
 const defaultDomain = "fivenet.ls"
@@ -88,22 +85,8 @@ func (s *Server) generateEmailProposals(
 		}
 	} else {
 		// User's private email
-		tUsers := table.FivenetUser.AS("user_short")
-
-		stmt := tUsers.
-			SELECT(
-				tUsers.Firstname,
-				tUsers.Lastname,
-				tUsers.Dateofbirth,
-			).
-			FROM(tUsers).
-			WHERE(
-				tUsers.ID.EQ(mysql.Int32(userInfo.GetUserId())),
-			).
-			LIMIT(1)
-
-		user := &usershort.UserShort{}
-		if err := stmt.QueryContext(ctx, s.db, user); err != nil {
+		user, err := s.store.GetUserShort(ctx, s.db, userInfo.GetUserId())
+		if err != nil {
 			return nil, nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 

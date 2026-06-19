@@ -28,7 +28,7 @@ import { TemplateData } from "../../resources/documents/templates/templates";
 import { ContentType } from "../../resources/common/content/content";
 import { DocumentRelation } from "../../resources/documents/relations/relations";
 import { DocumentReference } from "../../resources/documents/references/references";
-import { DocumentAccess } from "../../resources/documents/access/access";
+import { Access } from "../../resources/access/access";
 import { Document } from "../../resources/documents/documents";
 import { DocumentShort } from "../../resources/documents/documents";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -124,9 +124,9 @@ export interface GetDocumentResponse {
      */
     document?: Document;
     /**
-     * @generated from protobuf field: resources.documents.access.DocumentAccess access = 2
+     * @generated from protobuf field: resources.access.Access access = 2
      */
-    access?: DocumentAccess;
+    access?: Access;
 }
 /**
  * @generated from protobuf message services.documents.GetDocumentReferencesRequest
@@ -350,9 +350,9 @@ export interface UpdateDocumentRequest {
      */
     meta?: DocumentMeta;
     /**
-     * @generated from protobuf field: optional resources.documents.access.DocumentAccess access = 11
+     * @generated from protobuf field: optional resources.access.Access access = 11
      */
-    access?: DocumentAccess;
+    access?: Access;
     /**
      * @generated from protobuf field: repeated resources.file.File files = 12
      */
@@ -512,9 +512,9 @@ export interface GetDocumentAccessRequest {
  */
 export interface GetDocumentAccessResponse {
     /**
-     * @generated from protobuf field: resources.documents.access.DocumentAccess access = 1
+     * @generated from protobuf field: resources.access.Access access = 1
      */
-    access?: DocumentAccess;
+    access?: Access;
 }
 /**
  * @generated from protobuf message services.documents.SetDocumentAccessRequest
@@ -525,9 +525,9 @@ export interface SetDocumentAccessRequest {
      */
     documentId: number;
     /**
-     * @generated from protobuf field: resources.documents.access.DocumentAccess access = 2
+     * @generated from protobuf field: resources.access.Access access = 2
      */
-    access?: DocumentAccess;
+    access?: Access;
 }
 /**
  * @generated from protobuf message services.documents.SetDocumentAccessResponse
@@ -914,7 +914,7 @@ class GetDocumentResponse$Type extends MessageType<GetDocumentResponse> {
     constructor() {
         super("services.documents.GetDocumentResponse", [
             { no: 1, name: "document", kind: "message", T: () => Document },
-            { no: 2, name: "access", kind: "message", T: () => DocumentAccess }
+            { no: 2, name: "access", kind: "message", T: () => Access }
         ]);
     }
     create(value?: PartialMessage<GetDocumentResponse>): GetDocumentResponse {
@@ -931,8 +931,8 @@ class GetDocumentResponse$Type extends MessageType<GetDocumentResponse> {
                 case /* resources.documents.Document document */ 1:
                     message.document = Document.internalBinaryRead(reader, reader.uint32(), options, message.document);
                     break;
-                case /* resources.documents.access.DocumentAccess access */ 2:
-                    message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* resources.access.Access access */ 2:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -949,9 +949,9 @@ class GetDocumentResponse$Type extends MessageType<GetDocumentResponse> {
         /* resources.documents.Document document = 1; */
         if (message.document)
             Document.internalBinaryWrite(message.document, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.access.DocumentAccess access = 2; */
+        /* resources.access.Access access = 2; */
         if (message.access)
-            DocumentAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1948,7 +1948,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
             { no: 5, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 6, name: "data", kind: "message", T: () => DocumentData },
             { no: 7, name: "meta", kind: "message", T: () => DocumentMeta, options: { "buf.validate.field": { required: true } } },
-            { no: 11, name: "access", kind: "message", T: () => DocumentAccess },
+            { no: 11, name: "access", kind: "message", T: () => Access },
             { no: 12, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "buf.validate.field": { repeated: { maxItems: "5" } }, "tagger.tags": "alias:\"files\"" } }
         ]);
     }
@@ -1988,8 +1988,8 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
                 case /* resources.documents.DocumentMeta meta */ 7:
                     message.meta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
                     break;
-                case /* optional resources.documents.access.DocumentAccess access */ 11:
-                    message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* optional resources.access.Access access */ 11:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 case /* repeated resources.file.File files */ 12:
                     message.files.push(File.internalBinaryRead(reader, reader.uint32(), options));
@@ -2027,9 +2027,9 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         /* resources.documents.DocumentMeta meta = 7; */
         if (message.meta)
             DocumentMeta.internalBinaryWrite(message.meta, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.access.DocumentAccess access = 11; */
+        /* optional resources.access.Access access = 11; */
         if (message.access)
-            DocumentAccess.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.file.File files = 12; */
         for (let i = 0; i < message.files.length; i++)
             File.internalBinaryWrite(message.files[i], writer.tag(12, WireType.LengthDelimited).fork(), options).join();
@@ -2649,7 +2649,7 @@ export const GetDocumentAccessRequest = new GetDocumentAccessRequest$Type();
 class GetDocumentAccessResponse$Type extends MessageType<GetDocumentAccessResponse> {
     constructor() {
         super("services.documents.GetDocumentAccessResponse", [
-            { no: 1, name: "access", kind: "message", T: () => DocumentAccess, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "access", kind: "message", T: () => Access, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<GetDocumentAccessResponse>): GetDocumentAccessResponse {
@@ -2663,8 +2663,8 @@ class GetDocumentAccessResponse$Type extends MessageType<GetDocumentAccessRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.access.DocumentAccess access */ 1:
-                    message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* resources.access.Access access */ 1:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2678,9 +2678,9 @@ class GetDocumentAccessResponse$Type extends MessageType<GetDocumentAccessRespon
         return message;
     }
     internalBinaryWrite(message: GetDocumentAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.access.DocumentAccess access = 1; */
+        /* resources.access.Access access = 1; */
         if (message.access)
-            DocumentAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2696,7 +2696,7 @@ class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest
     constructor() {
         super("services.documents.SetDocumentAccessRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "access", kind: "message", T: () => DocumentAccess, options: { "buf.validate.field": { required: true } } }
+            { no: 2, name: "access", kind: "message", T: () => Access, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<SetDocumentAccessRequest>): SetDocumentAccessRequest {
@@ -2714,8 +2714,8 @@ class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest
                 case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* resources.documents.access.DocumentAccess access */ 2:
-                    message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* resources.access.Access access */ 2:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2732,9 +2732,9 @@ class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest
         /* int64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* resources.documents.access.DocumentAccess access = 2; */
+        /* resources.access.Access access = 2; */
         if (message.access)
-            DocumentAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

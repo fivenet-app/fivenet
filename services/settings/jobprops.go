@@ -16,14 +16,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
-	"github.com/go-jet/jet/v2/mysql"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 )
-
-var tJobProps = table.FivenetJobProps
 
 func (s *Server) GetJobProps(
 	ctx context.Context,
@@ -42,7 +38,7 @@ func (s *Server) GetJobProps(
 }
 
 func (s *Server) getJobProps(ctx context.Context, job string) (*jobsprops.JobProps, error) {
-	props, err := jobsprops.GetJobProps(ctx, s.db, job)
+	props, err := s.jobsStore.GetJobProps(ctx, s.db, job)
 	if err != nil {
 		return nil, err
 	}
@@ -67,35 +63,7 @@ func (s *Server) SetJobProps(
 	req.JobProps.Job = userInfo.GetJob()
 	req.JobProps.LivemapMarkerColor = strings.ToLower(req.GetJobProps().GetLivemapMarkerColor())
 
-	stmt := tJobProps.
-		INSERT(
-			tJobProps.Job,
-			tJobProps.LivemapMarkerColor,
-			tJobProps.RadioFrequency,
-			tJobProps.QuickButtons,
-			tJobProps.DiscordGuildID,
-			tJobProps.DiscordSyncSettings,
-			tJobProps.Settings,
-		).
-		VALUES(
-			req.GetJobProps().GetJob(),
-			req.GetJobProps().GetLivemapMarkerColor(),
-			req.GetJobProps().RadioFrequency,
-			req.GetJobProps().GetQuickButtons(),
-			req.GetJobProps().DiscordGuildId,
-			req.GetJobProps().GetDiscordSyncSettings(),
-			req.GetJobProps().GetSettings(),
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tJobProps.LivemapMarkerColor.SET(mysql.String(req.GetJobProps().GetLivemapMarkerColor())),
-			tJobProps.RadioFrequency.SET(mysql.RawString("VALUES(`radio_frequency`)")),
-			tJobProps.QuickButtons.SET(mysql.RawString("VALUES(`quick_buttons`)")),
-			tJobProps.DiscordGuildID.SET(mysql.RawString("VALUES(`discord_guild_id`)")),
-			tJobProps.DiscordSyncSettings.SET(mysql.RawString("VALUES(`discord_sync_settings`)")),
-			tJobProps.Settings.SET(mysql.RawString("VALUES(`settings`)")),
-		)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.SetJobProps(ctx, req.GetJobProps()); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 

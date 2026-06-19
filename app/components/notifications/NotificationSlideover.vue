@@ -26,7 +26,7 @@ const { isNotificationSlideoverOpen } = useDashboard();
                     block
                     :label="$t('components.partials.sidebar_notifications')"
                     @click="
-                        navigateTo({ name: 'notifications' });
+                        navigateTo('/notifications');
                         isNotificationSlideoverOpen = false;
                     "
                 />

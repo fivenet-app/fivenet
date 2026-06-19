@@ -57,7 +57,7 @@ func sniff(userCType, name string) string {
 	if typ := mime.TypeByExtension(filepath.Ext(name)); typ != "" {
 		return typ
 	}
-	return "application/octet-stream"
+	return ApplicationOctetStreamMIMEType
 }
 
 // buildKey generates a unique storage key for a file using the namespace, current UTC date,

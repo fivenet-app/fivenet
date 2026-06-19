@@ -6,7 +6,7 @@ import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "google/protobuf/duration.proto";
-import "resources/citizens/labels/access.proto";
+import "resources/access/access.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
@@ -52,7 +52,7 @@ message Label {
   ];
 
   optional Settings settings = 9;
-  optional LabelAccess access = 10 [(buf.validate.field).required = true];
+  optional resources.access.Access access = 10 [(buf.validate.field).required = true];
 
   // Citizen label assignment data
   optional resources.timestamp.Timestamp expires_at = 11;

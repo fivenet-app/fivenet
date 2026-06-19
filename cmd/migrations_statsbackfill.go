@@ -23,6 +23,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 type MigrationsStatsBackfillCmd struct {
@@ -199,12 +200,12 @@ func (c *MigrationsStatsBackfillCmd) rebuildDocumentMetricsBatch(
 		LIMIT(int64(c.BatchSize))
 
 	var rows []struct {
-		DocID      int64          `alias:"id"`
-		CreatorJob string         `alias:"creator_job"`
-		CreatedAt  time.Time      `alias:"created_at"`
-		DeletedAt  sql.NullTime   `alias:"deleted_at"`
-		Draft      bool           `alias:"draft"`
-		DataRaw    sql.NullString `alias:"data"`
+		DocID      int64                `alias:"id"`
+		CreatorJob string               `alias:"creator_job"`
+		CreatedAt  time.Time            `alias:"created_at"`
+		DeletedAt  *timestamp.Timestamp `alias:"deleted_at"`
+		Draft      bool                 `alias:"draft"`
+		DataRaw    *string              `alias:"data"`
 	}
 	if err := stmt.QueryContext(ctx, c.db, &rows); err != nil {
 		return nextLastID, 0, fmt.Errorf("failed querying documents for stats backfill. %w", err)
@@ -212,9 +213,9 @@ func (c *MigrationsStatsBackfillCmd) rebuildDocumentMetricsBatch(
 
 	for _, row := range rows {
 		var data *documentsdata.DocumentData
-		if row.DataRaw.Valid && strings.TrimSpace(row.DataRaw.String) != "" {
+		if row.DataRaw != nil && strings.TrimSpace(*row.DataRaw) != "" {
 			data = &documentsdata.DocumentData{}
-			if err := protojson.Unmarshal([]byte(row.DataRaw.String), data); err != nil {
+			if err := protojson.Unmarshal([]byte(*row.DataRaw), data); err != nil {
 				return nextLastID, batchCount, fmt.Errorf(
 					"failed to decode document.data for document %d. %w",
 					row.DocID,
@@ -227,13 +228,11 @@ func (c *MigrationsStatsBackfillCmd) rebuildDocumentMetricsBatch(
 			Id:         row.DocID,
 			CreatorJob: row.CreatorJob,
 			CreatedAt:  timestamp.New(row.CreatedAt),
+			DeletedAt:  proto.Clone(row.DeletedAt).(*timestamp.Timestamp),
 			Meta: &documents.DocumentMeta{
 				Draft: row.Draft,
 			},
 			Data: data,
-		}
-		if row.DeletedAt.Valid {
-			doc.DeletedAt = timestamp.New(row.DeletedAt.Time)
 		}
 
 		if err := c.stats.RebuildDocumentMetrics(ctx, doc); err != nil {

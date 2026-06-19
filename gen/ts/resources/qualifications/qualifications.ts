@@ -15,7 +15,7 @@ import { File } from "../file/file";
 import { ExamQuestions } from "./exam/exam";
 import { QualificationExamSettings } from "./exam/exam";
 import { QualificationExamMode } from "./exam/exam";
-import { QualificationAccess } from "./access/access";
+import { Access } from "../access/access";
 import { UserShort } from "../users/short/user";
 import { Content } from "../common/content/content";
 import { Timestamp } from "../timestamp/timestamp";
@@ -88,9 +88,9 @@ export interface Qualification {
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: resources.qualifications.access.QualificationAccess access = 17
+     * @generated from protobuf field: resources.access.Access access = 17
      */
-    access?: QualificationAccess;
+    access?: Access;
     /**
      * @generated from protobuf field: repeated resources.qualifications.QualificationRequirement requirements = 18
      */
@@ -443,7 +443,7 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 15, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 16, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 17, name: "access", kind: "message", T: () => QualificationAccess },
+            { no: 17, name: "access", kind: "message", T: () => Access },
             { no: 18, name: "requirements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationRequirement },
             { no: 19, name: "discord_sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 20, name: "discord_settings", kind: "message", T: () => QualificationDiscordSettings },
@@ -530,8 +530,8 @@ class Qualification$Type extends MessageType<Qualification> {
                 case /* string creator_job */ 16:
                     message.creatorJob = reader.string();
                     break;
-                case /* resources.qualifications.access.QualificationAccess access */ 17:
-                    message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* resources.access.Access access */ 17:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 case /* repeated resources.qualifications.QualificationRequirement requirements */ 18:
                     message.requirements.push(QualificationRequirement.internalBinaryRead(reader, reader.uint32(), options));
@@ -626,9 +626,9 @@ class Qualification$Type extends MessageType<Qualification> {
         /* string creator_job = 16; */
         if (message.creatorJob !== "")
             writer.tag(16, WireType.LengthDelimited).string(message.creatorJob);
-        /* resources.qualifications.access.QualificationAccess access = 17; */
+        /* resources.access.Access access = 17; */
         if (message.access)
-            QualificationAccess.internalBinaryWrite(message.access, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.qualifications.QualificationRequirement requirements = 18; */
         for (let i = 0; i < message.requirements.length; i++)
             QualificationRequirement.internalBinaryWrite(message.requirements[i], writer.tag(18, WireType.LengthDelimited).fork(), options).join();

@@ -93,7 +93,7 @@ const columns = computed(
                 cell: ({ row }) =>
                     h(UTooltip, { text: $t('common.show') }, [
                         h(UButton, {
-                            to: { name: 'settings-roles-id', params: { id: row.original.id } },
+                            to: `/settings/roles/${row.original.id}`,
                             variant: 'link',
                             icon: 'i-mdi-eye',
                         }),

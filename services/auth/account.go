@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"errors"
 	"slices"
 
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
@@ -11,10 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Server) GetAccountInfo(
@@ -32,8 +28,8 @@ func (s *Server) GetAccountInfo(
 	}
 
 	// Load account
-	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(mysql.Int64(claims.AccID)), false)
-	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
+	acc, err := s.store.GetAccountByID(ctx, claims.AccID, false)
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
 	if acc == nil || acc.ID == 0 {
@@ -51,35 +47,13 @@ func (s *Server) GetAccountInfo(
 		}
 	}
 
-	tOAuth2Accounts := table.FivenetAccountsOauth2.AS("oauth2_account")
-
-	stmt := tOAuth2Accounts.
-		SELECT(
-			tOAuth2Accounts.AccountID,
-			tOAuth2Accounts.CreatedAt,
-			tOAuth2Accounts.Provider.AS("oauth2_account.providername"),
-			tOAuth2Accounts.ExternalID,
-			tOAuth2Accounts.Username,
-			tOAuth2Accounts.Avatar,
-		).
-		FROM(
-			tOAuth2Accounts,
-		).
-		WHERE(
-			tOAuth2Accounts.AccountID.EQ(mysql.Int64(acc.ID)),
-		).
-		LIMIT(5)
-
-	oauth2Conns := []*accountsoauth2.OAuth2Account{}
-	if err := stmt.QueryContext(ctx, s.db, &oauth2Conns); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
-		}
+	oauth2Conns, err := s.store.ListOAuth2Connections(ctx, acc.ID)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
-	for
 
 	// Set provider in the connections
-	i := range oauth2Conns {
+	for i := range oauth2Conns {
 		idx := slices.IndexFunc(oauth2Providers, func(p *accountsoauth2.OAuth2Provider) bool {
 			return p.GetName() == oauth2Conns[i].GetProviderName()
 		})

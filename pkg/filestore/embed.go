@@ -22,6 +22,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const ApplicationOctetStreamMIMEType = "application/octet-stream"
+
 var tFiles = table.FivenetFiles
 
 // ParentID is a type constraint that matches any type that can be a parent ID.
@@ -320,7 +322,7 @@ func detectContentType(data []byte) string {
 	}
 
 	detected := normalizeContentType(http.DetectContentType(data))
-	if detected == "application/octet-stream" {
+	if detected == ApplicationOctetStreamMIMEType {
 		return ""
 	}
 

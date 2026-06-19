@@ -1,8 +1,9 @@
 import type { BadgeProps, ButtonProps } from '@nuxt/ui';
+import type { Access } from '~~/gen/ts/resources/access/access';
 import type { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access/access';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import type { JobList } from '~~/gen/ts/resources/centrum/joblist';
-import type { UnitAccess, UnitAccessLevel } from '~~/gen/ts/resources/centrum/units/access/access';
+import type { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units/access/access';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
@@ -300,7 +301,7 @@ export function dispatchTimeToTextColorSidebar(
     return steps[idx] ?? steps[steps.length - 1]!;
 }
 
-export function checkUnitAccess(unitAccess: UnitAccess | undefined, level: UnitAccessLevel): boolean {
+export function checkUnitAccess(unitAccess: Access | undefined, level: UnitAccessLevel): boolean {
     if (unitAccess === undefined || (unitAccess.jobs.length === 0 && unitAccess.qualifications.length === 0)) {
         return true;
     }

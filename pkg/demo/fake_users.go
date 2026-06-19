@@ -15,7 +15,7 @@ import (
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
-	"github.com/fivenet-app/fivenet/v2026/services/sync"
+	syncstore "github.com/fivenet-app/fivenet/v2026/stores/sync"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -708,14 +708,14 @@ func (d *Demo) buildDemoAccountCharProfiles(accountID int64, license string) []*
 		{Job: targetJob, Grade: first.PrimaryJobGrade, IsPrimary: true},
 	}
 
-	secondJob := d.pickNonTargetJob(targetJob, nil, "ambulance", "doj")
+	secondJob := d.pickNonTargetJob(targetJob, nil, ambulanceJob, dojJob)
 	second := d.newAccountCharProfile(accountID, license, 2, secondJob)
 
 	exclude := map[string]struct{}{
 		targetJob: {},
 		secondJob: {},
 	}
-	thirdJob := d.pickNonTargetJob(targetJob, exclude, "doj", "mechanic", "ambulance", "cafe")
+	thirdJob := d.pickNonTargetJob(targetJob, exclude, dojJob, mechanicJob, ambulanceJob, cafeJob)
 	third := d.newAccountCharProfile(accountID, license, 3, thirdJob)
 
 	return []*fakeUserProfile{first, second, third}
@@ -772,7 +772,7 @@ func (d *Demo) newAccountCharProfile(
 		PrimaryJobGrade: primary.Grade,
 		Jobs:            jobs,
 		Licenses:        nil,
-		BloodType:       sync.BloodTypes[d.randIntN(len(sync.BloodTypes))],
+		BloodType:       syncstore.BloodTypes[d.randIntN(len(syncstore.BloodTypes))],
 	}
 }
 
@@ -817,7 +817,7 @@ func (d *Demo) pickNonTargetJob(
 		}
 	}
 
-	return "unemployed"
+	return unemployedJob
 }
 
 func (d *Demo) buildFakeUserProfile(
@@ -863,7 +863,7 @@ func (d *Demo) buildFakeUserProfile(
 		PrimaryJobGrade: primaryJob.Grade,
 		Jobs:            jobs,
 		Licenses:        d.pickUserLicenses(availableLicenses),
-		BloodType:       sync.BloodTypes[d.randIntN(len(sync.BloodTypes))],
+		BloodType:       syncstore.BloodTypes[d.randIntN(len(syncstore.BloodTypes))],
 	}
 }
 
@@ -890,7 +890,7 @@ func (d *Demo) buildTargetJobUserProfile(index int, availableLicenses []string) 
 func (d *Demo) targetJobName() string {
 	targetJob := strings.TrimSpace(d.cfg.Demo.TargetJob)
 	if targetJob == "" {
-		return "police"
+		return PoliceJob
 	}
 	return targetJob
 }
@@ -930,7 +930,7 @@ func (d *Demo) fakePhoneNumber(index int) string {
 
 func (d *Demo) pickUserJobs() []fakeUserJob {
 	if len(d.demoJobNames) == 0 {
-		return []fakeUserJob{{Job: "unemployed", Grade: 1, IsPrimary: true}}
+		return []fakeUserJob{{Job: unemployedJob, Grade: 1, IsPrimary: true}}
 	}
 
 	primaryJob := d.demoJobNames[d.randIntN(len(d.demoJobNames))]
@@ -1156,12 +1156,13 @@ func (d *Demo) upsertFakeUserJobs(
 		return nil
 	}
 
-	insertStmt := tUserJobs.INSERT(
-		tUserJobs.UserID,
-		tUserJobs.Job,
-		tUserJobs.Grade,
-		tUserJobs.IsPrimary,
-	)
+	insertStmt := tUserJobs.
+		INSERT(
+			tUserJobs.UserID,
+			tUserJobs.Job,
+			tUserJobs.Grade,
+			tUserJobs.IsPrimary,
+		)
 
 	jobNames := make([]mysql.Expression, 0, len(jobs))
 	for _, job := range jobs {
@@ -1169,10 +1170,11 @@ func (d *Demo) upsertFakeUserJobs(
 		insertStmt = insertStmt.VALUES(userID, job.Job, job.Grade, job.IsPrimary)
 	}
 
-	insertStmt = insertStmt.ON_DUPLICATE_KEY_UPDATE(
-		tUserJobs.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
-		tUserJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
-	)
+	insertStmt = insertStmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tUserJobs.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
+			tUserJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
+		)
 
 	if _, err := insertStmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert fake user jobs. %w", err)
@@ -1258,9 +1260,10 @@ func (d *Demo) upsertFakeUserLicenses(
 		insertStmt = insertStmt.VALUES(userID, licenseType)
 	}
 
-	insertStmt = insertStmt.ON_DUPLICATE_KEY_UPDATE(
-		tUserLicenses.Type.SET(mysql.RawString("VALUES(`type`)")),
-	)
+	insertStmt = insertStmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tUserLicenses.Type.SET(mysql.RawString("VALUES(`type`)")),
+		)
 
 	if _, err := insertStmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert fake user licenses. %w", err)
@@ -1289,7 +1292,7 @@ func (d *Demo) upsertFakeUserProps(
 ) error {
 	var job *string
 	var jobGrade *int32
-	if d.randIntN(2) == 0 && profile.PrimaryJob != demoUnemployedJobName {
+	if d.randIntN(2) == 0 && profile.PrimaryJob != unemployedJobName {
 		job = &profile.PrimaryJob
 		jobGrade = &profile.PrimaryJobGrade
 	}

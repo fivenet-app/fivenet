@@ -32,6 +32,7 @@ import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import FormatBuilder from '../partials/FormatBuilder.vue';
 import ExamEditor, { examSettingsSchema } from './exam/ExamEditor.vue';
+import type { QualificationAccess, UserAccess } from '~~/gen/ts/resources/access/access';
 
 const props = defineProps<{
     qualificationId: number;
@@ -166,6 +167,8 @@ const schema = z.object({
     }),
     access: z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
+        users: z.custom<UserAccess>().array().default([]),
+        qualifications: z.custom<QualificationAccess>().array().default([]),
     }),
     labelSyncEnabled: z.coerce.boolean(),
     labelSyncFormat: z.string().max(128).optional(),
@@ -201,6 +204,8 @@ const state = reactive<Schema>({
     },
     access: {
         jobs: [],
+        users: [],
+        qualifications: [],
     },
     labelSyncEnabled: false,
     labelSyncFormat: '%abbr%: %name%',
@@ -277,7 +282,7 @@ async function getQualification(qualificationId: number): Promise<Qualification>
     } catch (e) {
         handleGRPCError(e as RpcError);
 
-        await navigateTo({ name: 'qualifications' });
+        await navigateTo('/qualifications');
         throw e;
     }
 }

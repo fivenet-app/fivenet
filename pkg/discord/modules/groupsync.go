@@ -315,10 +315,11 @@ func (g *GroupSync) checkIfUserIsPartOfJob(
 	userId int32,
 	job string,
 ) (bool, error) {
-	tUserJobs := table.FivenetUserJobs
+	tUserJobs := table.FivenetUserJobs.AS("user_job")
 
 	stmt := tUserJobs.
 		SELECT(
+			tUserJobs.UserID,
 			tUserJobs.Job,
 			tUserJobs.Grade,
 		).

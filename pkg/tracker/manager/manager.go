@@ -46,7 +46,7 @@ type Manager struct {
 	tracer   trace.Tracer
 	js       *events.JSWrapper
 	db       *sql.DB
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 	postals  postals.Postals
 	appCfg   appconfig.IConfig
 
@@ -70,7 +70,7 @@ type Params struct {
 	JS        *events.JSWrapper
 	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
-	Enricher  *mstlystcdata.Enricher
+	Enricher  mstlystcdata.IEnricher
 	Postals   postals.Postals
 	Cfg       *config.Config
 	AppConfig appconfig.IConfig

@@ -171,13 +171,10 @@ async function findSurroundingPages(
                 continue;
             }
 
-            if (level > 0) {
-                flatPages.push({ ...page, level: level });
-            }
+            if (level > 0)
+                flatPages.push({ ...page, title: page.title === '' ? t('common.untitled') : page.title, level: level });
 
-            if (page.children) {
-                flattenPages(page.children, level + 1);
-            }
+            if (page.children) flattenPages(page.children, level + 1);
         }
     }
 
@@ -423,7 +420,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
                             <UAccordion class="print:hidden" :items="accordionItems" type="multiple" :unmount-on-hide="false">
                                 <template #access>
-                                    <UContainer class="mb-2">
+                                    <UContainer class="mb-4">
                                         <DataNoDataBlock
                                             v-if="
                                                 !page.access ||
@@ -444,7 +441,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 </template>
 
                                 <template v-if="canDo.activity" #activity>
-                                    <UContainer class="mb-2">
+                                    <UContainer class="mb-4">
                                         <List :page-id="page.id" />
                                     </UContainer>
                                 </template>

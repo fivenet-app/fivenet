@@ -2,7 +2,6 @@ package qualifications
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
@@ -15,25 +14,17 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
-	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/protobuf/types/known/durationpb"
-)
-
-var (
-	tExamQuestions = table.FivenetQualificationsExamQuestions.AS("exam_question")
-	tExamResponses = table.FivenetQualificationsExamResponses.AS("exam_response")
-	tExamUser      = table.FivenetQualificationsExamUsers.AS("exam_user")
 )
 
 func (s *Server) GetExamInfo(
 	ctx context.Context,
 	req *pbqualifications.GetExamInfoRequest,
 ) (*pbqualifications.GetExamInfoResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -41,7 +32,7 @@ func (s *Server) GetExamInfo(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -50,11 +41,11 @@ func (s *Server) GetExamInfo(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	quali, err := s.getQualificationShort(
+	quali, err := s.store.GetQualificationShort(
 		ctx,
 		req.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())),
 		userInfo,
+		false,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -68,12 +59,12 @@ func (s *Server) GetExamInfo(
 		return nil, errorsqualifications.ErrExamDisabled
 	}
 
-	questionCount, err := s.countExamQuestions(ctx, req.GetQualificationId())
+	questionCount, err := s.store.CountExamQuestions(ctx, req.GetQualificationId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	examUser, err := s.getExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -112,46 +103,11 @@ func (s *Server) checkIfUserCanTakeExam(
 	return true, nil
 }
 
-func (s *Server) getExamUser(
-	ctx context.Context,
-	qualificationId int64,
-	userId int32,
-) (*qualificationsexam.ExamUser, error) {
-	stmt := tExamUser.
-		SELECT(
-			tExamUser.QualificationID,
-			tExamUser.UserID,
-			tExamUser.CreatedAt,
-			tExamUser.StartedAt,
-			tExamUser.EndsAt,
-			tExamUser.EndedAt,
-		).
-		FROM(tExamUser).
-		WHERE(mysql.AND(
-			tExamUser.QualificationID.EQ(mysql.Int64(qualificationId)),
-			tExamUser.UserID.EQ(mysql.Int32(userId)),
-		)).
-		LIMIT(1)
-
-	var dest qualificationsexam.ExamUser
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	if dest.GetQualificationId() == 0 || dest.GetUserId() == 0 {
-		return nil, nil
-	}
-
-	return &dest, nil
-}
-
 func (s *Server) TakeExam(
 	ctx context.Context,
 	req *pbqualifications.TakeExamRequest,
 ) (*pbqualifications.TakeExamResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -159,7 +115,7 @@ func (s *Server) TakeExam(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -168,11 +124,11 @@ func (s *Server) TakeExam(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	quali, err := s.getQualificationShort(
+	quali, err := s.store.GetQualificationShort(
 		ctx,
 		req.GetQualificationId(),
-		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())),
 		userInfo,
+		false,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -186,7 +142,7 @@ func (s *Server) TakeExam(
 		return nil, errorsqualifications.ErrExamDisabled
 	}
 
-	examUser, err := s.getExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -196,7 +152,7 @@ func (s *Server) TakeExam(
 
 	var exam *qualificationsexam.ExamQuestions
 	if examUser == nil || !timesUp {
-		exam, err = s.getExamQuestions(ctx, s.db, req.GetQualificationId(), false)
+		exam, err = s.store.GetExamQuestions(ctx, s.db, req.GetQualificationId(), false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -204,13 +160,17 @@ func (s *Server) TakeExam(
 
 	var responses *qualificationsexam.ExamResponses
 	if examUser != nil && !timesUp {
-		responses, _, err = s.getExamResponses(ctx, req.GetQualificationId(), userInfo.GetUserId())
+		responses, _, err = s.store.GetExamResponses(
+			ctx,
+			req.GetQualificationId(),
+			userInfo.GetUserId(),
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
 
-	if err := s.updateRequestStatus(
+	if err := s.store.UpdateRequestStatus(
 		ctx,
 		s.db,
 		req.GetQualificationId(),
@@ -223,32 +183,20 @@ func (s *Server) TakeExam(
 	// No end time for the exam? Need to create an entry
 	if examUser == nil || examUser.GetEndsAt() == nil {
 		examTime := quali.GetExamSettings().GetTime().AsDuration()
-
-		tExamUser := table.FivenetQualificationsExamUsers
-		stmt := tExamUser.
-			INSERT(
-				tExamUser.QualificationID,
-				tExamUser.UserID,
-				tExamUser.StartedAt,
-				tExamUser.EndsAt,
-				tExamUser.EndedAt,
-			).
-			VALUES(
-				req.GetQualificationId(),
-				userInfo.GetUserId(),
-				mysql.CURRENT_TIMESTAMP(),
-				mysql.CURRENT_TIMESTAMP().ADD(mysql.INTERVALd(examTime)),
-				mysql.NULL,
-			)
-
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if err := s.store.CreateExamUser(
+			ctx,
+			s.db,
+			req.GetQualificationId(),
+			userInfo.GetUserId(),
+			time.Now().Add(examTime),
+		); err != nil {
 			if !dbutils.IsDuplicateError(err) {
 				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 			}
 		}
 	}
 
-	examUser, err = s.getExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err = s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -268,7 +216,7 @@ func (s *Server) SubmitExam(
 	ctx context.Context,
 	req *pbqualifications.SubmitExamRequest,
 ) (*pbqualifications.SubmitExamResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -276,7 +224,7 @@ func (s *Server) SubmitExam(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -285,14 +233,20 @@ func (s *Server) SubmitExam(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	quali, err := s.getQualification(ctx, req.GetQualificationId(), nil, userInfo, false)
+	quali, err := s.store.GetQualification(
+		ctx,
+		req.GetQualificationId(),
+		userInfo,
+		false,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	var duration time.Duration
 	endedAt := time.Now()
-	examUser, err := s.getExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -309,47 +263,25 @@ func (s *Server) SubmitExam(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tExamResponses := table.FivenetQualificationsExamResponses
-	respStmt := tExamResponses.
-		INSERT(
-			tExamResponses.QualificationID,
-			tExamResponses.UserID,
-			tExamResponses.Responses,
-			tExamResponses.Grading,
-		).
-		VALUES(
-			req.GetQualificationId(),
-			userInfo.GetUserId(),
-			req.GetResponses(),
-			mysql.NULL,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tExamResponses.Responses.SET(mysql.RawString("VALUES(`responses`)")),
-		)
-
-	if _, err := respStmt.ExecContext(ctx, tx); err != nil {
+	if err := s.store.UpsertExamResponses(
+		ctx,
+		tx,
+		req.GetQualificationId(),
+		userInfo.GetUserId(),
+		req.GetResponses(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	// Only update the exam user if this is not a partial update, otherwise we might "end" the exam prematurely when the user is still working on it
 	if !req.GetPartial() {
-		tExamUser := table.FivenetQualificationsExamUsers
-		stmt := tExamUser.
-			INSERT(
-				tExamUser.QualificationID,
-				tExamUser.UserID,
-				tExamUser.EndedAt,
-			).
-			VALUES(
-				req.GetQualificationId(),
-				userInfo.GetUserId(),
-				mysql.DateTimeT(endedAt),
-			).
-			ON_DUPLICATE_KEY_UPDATE(
-				tExamUser.EndedAt.SET(mysql.TimestampT(endedAt)),
-			)
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		if err := s.store.UpsertExamUserEndedAt(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			userInfo.GetUserId(),
+			endedAt,
+		); err != nil {
 			if !dbutils.IsDuplicateError(err) {
 				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 			}
@@ -390,7 +322,7 @@ func (s *Server) gradeExam(
 	responses *qualificationsexam.ExamResponses,
 ) error {
 	if quali.GetExamSettings() != nil && quali.GetExamSettings().GetAutoGrade() {
-		exam, err := s.getExamQuestions(ctx, tx, qualificationId, true)
+		exam, err := s.store.GetExamQuestions(ctx, tx, qualificationId, true)
 		if err != nil {
 			return err
 		}
@@ -427,7 +359,7 @@ func (s *Server) gradeExam(
 			}
 		}
 
-		if err := s.updateRequestStatus(
+		if err := s.store.UpdateRequestStatus(
 			ctx,
 			tx,
 			qualificationId,
@@ -437,7 +369,7 @@ func (s *Server) gradeExam(
 			return err
 		}
 	} else {
-		if err := s.updateRequestStatus(
+		if err := s.store.UpdateRequestStatus(
 			ctx,
 			tx,
 			qualificationId,
@@ -456,7 +388,7 @@ func (s *Server) GetUserExam(
 	req *pbqualifications.GetUserExamRequest,
 ) (*pbqualifications.GetUserExamResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.qualifications.id", req.GetQualificationId(),
+		qualificationIDLogFieldKey, req.GetQualificationId(),
 		"fivenet.user_id", req.GetUserId(),
 	})
 
@@ -466,7 +398,7 @@ func (s *Server) GetUserExam(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -477,13 +409,13 @@ func (s *Server) GetUserExam(
 
 	resp := &pbqualifications.GetUserExamResponse{}
 
-	exam, err := s.getExamQuestions(ctx, s.db, req.GetQualificationId(), true)
+	exam, err := s.store.GetExamQuestions(ctx, s.db, req.GetQualificationId(), true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	resp.Exam = exam
 
-	resp.Responses, resp.Grading, err = s.getExamResponses(
+	resp.Responses, resp.Grading, err = s.store.GetExamResponses(
 		ctx,
 		req.GetQualificationId(),
 		req.GetUserId(),
@@ -492,34 +424,11 @@ func (s *Server) GetUserExam(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	examUser, err := s.getExamUser(ctx, req.GetQualificationId(), req.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), req.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	resp.ExamUser = examUser
 
 	return resp, nil
-}
-
-func (s *Server) deleteExamUser(
-	ctx context.Context,
-	tx qrm.DB,
-	qualificationId int64,
-	userId int32,
-) error {
-	tExamUser := table.FivenetQualificationsExamUsers
-
-	stmt := tExamUser.
-		DELETE().
-		WHERE(mysql.AND(
-			tExamUser.QualificationID.EQ(mysql.Int64(qualificationId)),
-			tExamUser.UserID.EQ(mysql.Int32(userId)),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
 }

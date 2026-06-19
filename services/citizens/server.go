@@ -6,7 +6,6 @@ import (
 	"math"
 	"slices"
 
-	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
@@ -20,10 +19,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )
+
+const citizenIDLogFieldKey = "fivenet.citizens.user_id"
 
 type Server struct {
 	pbcitizens.CitizensServiceServer
@@ -31,17 +33,19 @@ type Server struct {
 
 	db       *sql.DB
 	ps       perms.Permissions
-	enricher *mstlystcdata.UserAwareEnricher
+	enricher mstlystcdata.IUserAwareEnricher
 	st       storage.IStorage
 	appCfg   appconfig.IConfig
 	cfg      *config.Config
-	customDB config.CustomDB
+	customDB *config.CustomDB
 	notifi   notifi.INotifi
+	store    citizensstore.IStore
 
 	profilePictureHandler *filestore.Handler[int32]
 	mugshotHandler        *filestore.Handler[int32]
 
-	labelsAccess *access.Grouped[citizenslabels.JobAccess, *citizenslabels.JobAccess, access.DummyUserAccess[citizenslabels.AccessLevel], *access.DummyUserAccess[citizenslabels.AccessLevel], access.DummyQualificationAccess[citizenslabels.AccessLevel], *access.DummyQualificationAccess[citizenslabels.AccessLevel], citizenslabels.AccessLevel]
+	labelsAccess         *access.SubjectObjectAccess
+	labelsAccessResolver *access.SubjectResolver
 }
 
 type Params struct {
@@ -49,11 +53,12 @@ type Params struct {
 
 	DB        *sql.DB
 	P         perms.Permissions
-	Enricher  *mstlystcdata.UserAwareEnricher
+	Enricher  mstlystcdata.IUserAwareEnricher
 	Config    *config.Config
 	Storage   storage.IStorage
 	AppConfig appconfig.IConfig
 	Notifi    notifi.INotifi
+	Store     citizensstore.IStore
 }
 
 func NewServer(p Params) *Server {
@@ -95,50 +100,15 @@ func NewServer(p Params) *Server {
 		st:       p.Storage,
 		appCfg:   p.AppConfig,
 		cfg:      p.Config,
-		customDB: p.Config.Database.Custom,
+		customDB: &p.Config.Database.Custom,
 		notifi:   p.Notifi,
+		store:    p.Store,
 
 		profilePictureHandler: profilePictureHandler,
 		mugshotHandler:        mugshotHandler,
 
-		labelsAccess: access.NewGrouped[citizenslabels.JobAccess, *citizenslabels.JobAccess, access.DummyUserAccess[citizenslabels.AccessLevel], *access.DummyUserAccess[citizenslabels.AccessLevel], access.DummyQualificationAccess[citizenslabels.AccessLevel], *access.DummyQualificationAccess[citizenslabels.AccessLevel], citizenslabels.AccessLevel](
-			p.DB,
-			table.FivenetUserLabelsJob,
-			&access.TargetTableColumns{
-				ID:         table.FivenetUserLabelsJob.ID,
-				DeletedAt:  table.FivenetUserLabelsJob.DeletedAt,
-				CreatorID:  nil,
-				CreatorJob: table.FivenetUserLabelsJob.Job,
-			},
-			access.NewJobs[citizenslabels.JobAccess, *citizenslabels.JobAccess, citizenslabels.AccessLevel](
-				table.FivenetUserLabelsJobJobAccess,
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetUserLabelsJobJobAccess.ID,
-						TargetID: table.FivenetUserLabelsJobJobAccess.TargetID,
-						Access:   table.FivenetUserLabelsJobJobAccess.Access,
-					},
-					Job:          table.FivenetUserLabelsJobJobAccess.Job,
-					MinimumGrade: table.FivenetUserLabelsJobJobAccess.MinimumGrade,
-				},
-				table.FivenetUserLabelsJobJobAccess.AS("job_access"),
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID: table.FivenetUserLabelsJobJobAccess.AS("job_access").ID,
-						TargetID: table.FivenetUserLabelsJobJobAccess.AS(
-							"job_access",
-						).TargetID,
-						Access: table.FivenetUserLabelsJobJobAccess.AS("job_access").Access,
-					},
-					Job: table.FivenetUserLabelsJobJobAccess.AS("job_access").Job,
-					MinimumGrade: table.FivenetUserLabelsJobJobAccess.AS(
-						"job_access",
-					).MinimumGrade,
-				},
-			),
-			nil,
-			nil,
-		),
+		labelsAccess:         access.NewCitizenLabelsSubjectObjectAccess(p.DB),
+		labelsAccessResolver: access.NewSubjectResolver(p.DB),
 	}
 
 	access.RegisterAccess("citizen", &access.GroupedAccessAdapter{

@@ -86,6 +86,7 @@ const schema = z.object({
     access: z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
         users: userAccessEntries(t).max(maxAccessEntries).default([]),
+        qualifications: qualificationAccessEntries(t).max(0).default([]),
     }),
     discordSettings: z.object({
         enabled: z.coerce.boolean(),
@@ -118,6 +119,7 @@ const state = reactive<Schema>({
     access: {
         jobs: [],
         users: [],
+        qualifications: [],
     },
     discordSettings: emptyDiscordSettings(),
 });

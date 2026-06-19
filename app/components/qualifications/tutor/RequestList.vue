@@ -84,18 +84,11 @@ const query = reactive<Schema>({
 });
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `qualifications-requests-${JSON.stringify(query.sorting)}-${query.page}-${props.qualification.id}-${JSON.stringify(props.searchQuery)}`,
+    `qualifications-requests:${query.page}-${JSON.stringify(query)}-${props.qualification.id}-${JSON.stringify(props.searchQuery)}`,
     () => listQualificationRequests(props.qualification.id),
-    {
-        watch: [query],
-    },
 );
 
-watchDebounced(
-    () => props.searchQuery,
-    async () => refresh(),
-    { deep: true, debounce: 250, maxWait: 1250 },
-);
+useDebouncedRefresh([query, () => props.searchQuery], refresh, { debounce: 250, maxWait: 1250 });
 
 defineExpose({
     refresh,
@@ -115,6 +108,7 @@ async function listQualificationRequests(
             sort: query.sorting,
             qualificationId: qualificationId,
             status: status ?? [],
+            userIds: props.searchQuery.users,
         });
         const { response } = await call;
 

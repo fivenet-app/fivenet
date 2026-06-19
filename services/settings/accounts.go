@@ -2,269 +2,56 @@ package settings
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
-)
-
-var (
-	tAccounts = table.FivenetAccounts.AS("account")
-	tOauth2   = table.FivenetAccountsOauth2.AS("oauth2account")
+	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 )
 
 func (s *Server) ListAccounts(
 	ctx context.Context,
 	req *pbsettings.ListAccountsRequest,
 ) (*pbsettings.ListAccountsResponse, error) {
-	var t mysql.ReadableTable = tAccounts
-
-	condition := mysql.Bool(true)
-	if req.License != nil && req.GetLicense() != "" {
-		condition = condition.AND(
-			tAccounts.License.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetLicense()))),
-		)
-	}
-	if req.GetOnlyDisabled() {
-		condition = condition.AND(tAccounts.Enabled.EQ(mysql.Bool(false)))
-	}
-	if req.Username != nil && req.GetUsername() != "" {
-		condition = condition.AND(
-			tAccounts.Username.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetUsername()))),
-		)
-	}
-	if req.ExternalId != nil && req.GetExternalId() != "" {
-		condition = condition.AND(
-			tOauth2.ExternalID.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetExternalId()))),
-		)
-		t = t.
-			INNER_JOIN(tOauth2,
-				tOauth2.AccountID.EQ(tAccounts.ID),
-			)
-	}
-	if req.Group != nil && req.GetGroup() != "" {
-		condition = condition.AND(
-			dbutils.JSON_CONTAINS(tAccounts.Groups, mysql.String(req.GetGroup())),
-		)
-	}
-
-	countStmt := tAccounts.
-		SELECT(
-			mysql.COUNT(tAccounts.ID).AS("data_count.total"),
-		).
-		FROM(t).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-		}
-	}
-
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 30)
-	resp := &pbsettings.ListAccountsResponse{
-		Pagination: pag,
-	}
-	if count.Total <= 0 {
-		return resp, nil
-	}
-
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "license":
-				column = tAccounts.License
-			case "username":
-				fallthrough
-			case "id":
-				fallthrough
-			default:
-				column = tAccounts.ID
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tAccounts.CreatedAt.DESC())
-	}
-
-	// First, fetch the distinct account IDs for the current page
-	var accountIDs []int64
-	idStmt := tAccounts.
-		SELECT(
-			tAccounts.ID,
-		).
-		FROM(t).
-		WHERE(condition).
-		ORDER_BY(orderBys...).
-		OFFSET(req.GetPagination().GetOffset()).
-		LIMIT(limit)
-
-	if err := idStmt.QueryContext(ctx, s.db, &accountIDs); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-		}
-	}
-	if len(accountIDs) == 0 {
-		return resp, nil
-	}
-
-	ids := make([]mysql.Expression, len(accountIDs))
-	for i, id := range accountIDs {
-		ids[i] = mysql.Int64(id)
-	}
-
-	// Now, fetch all accounts and their oauth2 connections for these IDs
-	stmt := tAccounts.
-		SELECT(
-			tAccounts.ID,
-			tAccounts.CreatedAt,
-			tAccounts.UpdatedAt,
-			tAccounts.DeletedAt,
-			tAccounts.Enabled,
-			tAccounts.Username,
-			tAccounts.License,
-			tAccounts.Groups,
-			tAccounts.LastChar,
-			tOauth2.AccountID,
-			tOauth2.CreatedAt,
-			tOauth2.Provider.AS("oauth2account.providername"),
-			tOauth2.ExternalID,
-			tOauth2.Username,
-			tOauth2.Avatar,
-		).
-		FROM(
-			tAccounts.
-				LEFT_JOIN(tOauth2,
-					tOauth2.AccountID.EQ(tAccounts.ID),
-				),
-		).
-		WHERE(tAccounts.ID.IN(ids...))
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Accounts); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-		}
+	resp, err := s.store.ListAccounts(ctx, settingsstore.ListAccountsOptions{
+		Pagination:   req.GetPagination(),
+		Sort:         req.GetSort(),
+		License:      req.GetLicense(),
+		OnlyDisabled: req.GetOnlyDisabled(),
+		Username:     req.GetUsername(),
+		ExternalID:   req.GetExternalId(),
+		Group:        req.GetGroup(),
+	})
+	if err != nil {
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
 	return resp, nil
-}
-
-func (s *Server) getAccount(ctx context.Context, id int64) (*accounts.Account, error) {
-	stmt := tAccounts.
-		SELECT(
-			tAccounts.ID,
-			tAccounts.CreatedAt,
-			tAccounts.UpdatedAt,
-			tAccounts.DeletedAt,
-			tAccounts.Enabled,
-			tAccounts.Username,
-			tAccounts.License,
-			tAccounts.Groups,
-			tAccounts.LastChar,
-		).
-		FROM(tAccounts).
-		WHERE(
-			tAccounts.ID.EQ(mysql.Int64(id)),
-		).
-		LIMIT(1)
-
-	var account accounts.Account
-	if err := stmt.QueryContext(ctx, s.db, &account); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-		}
-	}
-
-	if account.GetId() == 0 {
-		return nil, nil
-	}
-
-	return &account, nil
 }
 
 func (s *Server) UpdateAccount(
 	ctx context.Context,
 	req *pbsettings.UpdateAccountRequest,
 ) (*pbsettings.UpdateAccountResponse, error) {
-	tAccounts := table.FivenetAccounts
-
-	updateSets := []interface{}{}
-
-	if req.Enabled != nil {
-		updateSets = append(updateSets, tAccounts.Enabled.SET(mysql.Bool(req.GetEnabled())))
-	}
-
-	if req.LastChar != nil && req.GetLastChar() > 0 {
-		updateSets = append(updateSets, tAccounts.LastChar.SET(mysql.Int32(req.GetLastChar())))
-	}
-
-	if len(updateSets) > 0 {
-		stmt := tAccounts.
-			UPDATE()
-		if len(updateSets) == 1 {
-			stmt = stmt.SET(updateSets[0])
-		} else {
-			stmt = stmt.SET(updateSets[0], updateSets[1:]...)
-		}
-
-		stmt = stmt.
-			WHERE(
-				tAccounts.ID.EQ(mysql.Int64(req.GetId())),
-			).
-			LIMIT(1)
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-		}
-	}
-
-	acc, err := s.getAccount(ctx, req.GetId())
+	resp, err := s.store.UpdateAccount(ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	return &pbsettings.UpdateAccountResponse{
-		Account: acc,
-	}, nil
+	return resp, nil
 }
 
 func (s *Server) DisconnectSocialLogin(
 	ctx context.Context,
 	req *pbsettings.DisconnectSocialLoginRequest,
 ) (*pbsettings.DisconnectSocialLoginResponse, error) {
-	tOauth2 := table.FivenetAccountsOauth2
-
-	stmt := tOauth2.
-		DELETE().
-		WHERE(mysql.AND(
-			tOauth2.AccountID.EQ(mysql.Int64(req.GetId())),
-			tOauth2.Provider.EQ(mysql.String(req.GetProviderName())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DisconnectSocialLogin(ctx, req.GetId(), req.GetProviderName()); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
@@ -283,9 +70,9 @@ func (s *Server) DeleteAccount(
 		return nil, errorssettings.ErrCannotDeleteOwnAccount
 	}
 
-	account, err := s.getAccount(ctx, req.GetId())
+	account, err := s.store.GetAccountByID(ctx, req.GetId(), userInfo.GetSuperuser())
 	if err != nil {
-		return nil, errorssettings.ErrFailedQuery
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 	if account == nil {
 		return &pbsettings.DeleteAccountResponse{}, nil
@@ -299,20 +86,10 @@ func (s *Server) DeleteAccount(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
-	tAccounts := table.FivenetAccounts
-	stmt := tAccounts.
-		UPDATE().
-		SET(
-			tAccounts.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
-		).
-		WHERE(tAccounts.ID.EQ(mysql.Int64(req.GetId()))).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	resp, err := s.store.DeleteAccount(ctx, req.GetId(), deletedAtTime)
+	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	return &pbsettings.DeleteAccountResponse{
-		DeletedAt: deletedAtTime,
-	}, nil
+	return resp, nil
 }

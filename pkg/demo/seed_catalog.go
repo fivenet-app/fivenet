@@ -130,14 +130,15 @@ func (d *Demo) upsertDemoCentrumUnits(ctx context.Context) error {
 		)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tCentrumUnits.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-		tCentrumUnits.Name.SET(mysql.RawString("VALUES(`name`)")),
-		tCentrumUnits.Initials.SET(mysql.RawString("VALUES(`initials`)")),
-		tCentrumUnits.Color.SET(mysql.RawString("VALUES(`color`)")),
-		tCentrumUnits.Icon.SET(mysql.RawString("VALUES(`icon`)")),
-		tCentrumUnits.Description.SET(mysql.RawString("VALUES(`description`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tCentrumUnits.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
+			tCentrumUnits.Name.SET(mysql.RawString("VALUES(`name`)")),
+			tCentrumUnits.Initials.SET(mysql.RawString("VALUES(`initials`)")),
+			tCentrumUnits.Color.SET(mysql.RawString("VALUES(`color`)")),
+			tCentrumUnits.Icon.SET(mysql.RawString("VALUES(`icon`)")),
+			tCentrumUnits.Description.SET(mysql.RawString("VALUES(`description`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
 		return fmt.Errorf("failed to upsert demo centrum units. %w", err)
@@ -181,10 +182,11 @@ func (d *Demo) upsertDemoJobs(ctx context.Context) error {
 		stmt = stmt.VALUES(job.Name, job.Label)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tJobs.Label.SET(mysql.RawString("VALUES(`label`)")),
-		tJobs.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tJobs.Label.SET(mysql.RawString("VALUES(`label`)")),
+			tJobs.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
+		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
 		return fmt.Errorf("failed to upsert demo jobs. %w", err)
@@ -209,9 +211,10 @@ func (d *Demo) upsertDemoJobGrades(ctx context.Context) error {
 		stmt = stmt.VALUES(grade.JobName, grade.Grade, grade.Label)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tJobsGrades.Label.SET(mysql.RawString("VALUES(`label`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tJobsGrades.Label.SET(mysql.RawString("VALUES(`label`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
 		return fmt.Errorf("failed to upsert demo job grades. %w", err)
@@ -235,9 +238,10 @@ func (d *Demo) upsertDemoLicenses(ctx context.Context) error {
 		stmt = stmt.VALUES(license.Type, license.Label)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tLicenses.Label.SET(mysql.RawString("VALUES(`label`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tLicenses.Label.SET(mysql.RawString("VALUES(`label`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
 		return fmt.Errorf("failed to upsert demo licenses. %w", err)
@@ -266,10 +270,11 @@ func (d *Demo) upsertDemoLawbooks(ctx context.Context) error {
 		)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tLawbooks.Name.SET(mysql.RawString("VALUES(`name`)")),
-		tLawbooks.Description.SET(mysql.RawString("VALUES(`description`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tLawbooks.Name.SET(mysql.RawString("VALUES(`name`)")),
+			tLawbooks.Description.SET(mysql.RawString("VALUES(`description`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
 		return fmt.Errorf("failed to upsert demo lawbooks. %w", err)
@@ -308,15 +313,16 @@ func (d *Demo) upsertDemoLaws(ctx context.Context) error {
 		)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tLawbooksLaws.LawbookID.SET(mysql.RawInt("VALUES(`lawbook_id`)")),
-		tLawbooksLaws.Name.SET(mysql.RawString("VALUES(`name`)")),
-		tLawbooksLaws.Description.SET(mysql.RawString("VALUES(`description`)")),
-		tLawbooksLaws.Hint.SET(mysql.RawString("VALUES(`hint`)")),
-		tLawbooksLaws.Fine.SET(mysql.RawInt("VALUES(`fine`)")),
-		tLawbooksLaws.DetentionTime.SET(mysql.RawInt("VALUES(`detention_time`)")),
-		tLawbooksLaws.StvoPoints.SET(mysql.RawInt("VALUES(`stvo_points`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tLawbooksLaws.LawbookID.SET(mysql.RawInt("VALUES(`lawbook_id`)")),
+			tLawbooksLaws.Name.SET(mysql.RawString("VALUES(`name`)")),
+			tLawbooksLaws.Description.SET(mysql.RawString("VALUES(`description`)")),
+			tLawbooksLaws.Hint.SET(mysql.RawString("VALUES(`hint`)")),
+			tLawbooksLaws.Fine.SET(mysql.RawInt("VALUES(`fine`)")),
+			tLawbooksLaws.DetentionTime.SET(mysql.RawInt("VALUES(`detention_time`)")),
+			tLawbooksLaws.StvoPoints.SET(mysql.RawInt("VALUES(`stvo_points`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
 		return fmt.Errorf("failed to upsert demo laws. %w", err)

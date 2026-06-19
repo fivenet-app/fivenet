@@ -4,16 +4,14 @@ import (
 	"context"
 	"database/sql"
 
-	stats "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats"
 	pbstats "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/stats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	statsstore "github.com/fivenet-app/fivenet/v2026/stores/stats"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
-
-type Stats = map[string]*stats.Stat
 
 type Server struct {
 	pbstats.StatsServiceServer
@@ -33,6 +31,7 @@ type Params struct {
 	DB        *sql.DB
 	JS        *events.JSWrapper
 	AppConfig appconfig.IConfig
+	Store     statsstore.IStore
 }
 
 func NewServer(p Params) *Server {
@@ -40,7 +39,7 @@ func NewServer(p Params) *Server {
 		logger: p.Logger.Named("stats.worker"),
 		js:     p.JS,
 
-		worker: newWorker(p.Logger, p.DB),
+		worker: newWorker(p.Logger, p.Store),
 	}
 
 	ctxCancel, cancel := context.WithCancel(context.Background())

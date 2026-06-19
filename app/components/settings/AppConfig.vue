@@ -562,11 +562,12 @@ const formRef = useTemplateRef('formRef');
                                                 <USelectMenu
                                                     v-model="state.perms.default[idx]!.category"
                                                     class="w-full"
-                                                    value-key="value"
-                                                    :placeholder="$t('common.service')"
+                                                    :filter-fields="['label', 'value']"
                                                     :items="
                                                         GRPCServices.map((s) => ({ label: $t(`perms.${s}.service`), value: s }))
                                                     "
+                                                    :placeholder="$t('common.service')"
+                                                    value-key="value"
                                                 >
                                                     <template v-if="state.perms.default[idx]!.category" #default>
                                                         {{ $t(`perms.${state.perms.default[idx]!.category}.service`) }}
@@ -583,13 +584,17 @@ const formRef = useTemplateRef('formRef');
                                             <USelectMenu
                                                 v-model="state.perms.default[idx]!.name"
                                                 class="w-full"
-                                                :placeholder="$t('common.method')"
+                                                :disabled="!state.perms.default[idx]?.category"
+                                                :filter-fields="['label', 'value']"
                                                 :items="
                                                     GRPCServiceMethods.filter((m) =>
                                                         m.startsWith(state.perms.default[idx]!.category + '/'),
-                                                    ).map((m) => m.split('/').at(1) ?? m)
+                                                    )
+                                                        .map((m) => m.split('/').at(1) ?? m)
+                                                        .map((s) => ({ label: $t(`perms.${s}.service`), value: s }))
                                                 "
-                                                :disabled="!state.perms.default[idx]?.category"
+                                                :placeholder="$t('common.method')"
+                                                value-key="value"
                                             >
                                                 <template v-if="state.perms.default[idx]!.name" #default>
                                                     {{
@@ -1132,7 +1137,9 @@ const formRef = useTemplateRef('formRef');
                                                 v-model="state.quickButtons.penaltyCalculator.warnSettings!.fine"
                                                 class="w-full"
                                                 :min="0"
-                                                :step="1000"
+                                                :step="1"
+                                                :max="999_999_999_999"
+                                                :step-snapping="false"
                                                 :format-options="{
                                                     style: 'currency',
                                                     currency: display.currencyName,
@@ -1153,6 +1160,7 @@ const formRef = useTemplateRef('formRef');
                                                 class="w-full"
                                                 :min="0"
                                                 :step="1"
+                                                :max="999_999_999"
                                             />
                                         </UFormField>
 
@@ -1166,6 +1174,7 @@ const formRef = useTemplateRef('formRef');
                                                 class="w-full"
                                                 :min="0"
                                                 :step="1"
+                                                :max="999_999_999"
                                             />
                                         </UFormField>
                                     </div>

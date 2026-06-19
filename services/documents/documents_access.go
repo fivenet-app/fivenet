@@ -2,13 +2,14 @@ package documents
 
 import (
 	context "context"
+	"errors"
 
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
-	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -17,14 +18,77 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
+const documentAccessEntryLimit = 15
+
+func canUserAccessDocument(
+	ctx context.Context,
+	access *access.SubjectObjectAccess,
+	targetID int64,
+	userInfo *userinfo.UserInfo,
+	level documentsaccess.AccessLevel,
+) (bool, error) {
+	if userInfo.GetSuperuser() {
+		return true, nil
+	}
+
+	allowed, err := access.CanUserAccessTarget(ctx, targetID, userInfo, int32(level))
+	if err != nil {
+		return false, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if allowed {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (s *Server) canUserAccessDocument(
+	ctx context.Context,
+	targetID int64,
+	userInfo *userinfo.UserInfo,
+	level documentsaccess.AccessLevel,
+) (bool, error) {
+	return canUserAccessDocument(ctx, s.subjectAccess, targetID, userInfo, level)
+}
+
+func (s *Server) canUserAccessDocumentIDs(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	level documentsaccess.AccessLevel,
+	targetIDs ...int64,
+) ([]int64, error) {
+	out := make([]int64, 0, len(targetIDs))
+	for _, targetID := range targetIDs {
+		allowed, err := s.canUserAccessDocument(ctx, targetID, userInfo, level)
+		if err != nil {
+			return nil, err
+		}
+		if allowed {
+			out = append(out, targetID)
+		}
+	}
+
+	return out, nil
+}
+
+func (s *Server) canUserAccessDocuments(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	level documentsaccess.AccessLevel,
+	targetIDs ...int64,
+) (bool, error) {
+	out, err := s.canUserAccessDocumentIDs(ctx, userInfo, level, targetIDs...)
+	return len(out) == len(targetIDs), err
+}
+
 func (s *Server) GetDocumentAccess(
 	ctx context.Context,
 	req *pbdocuments.GetDocumentAccessRequest,
 ) (*pbdocuments.GetDocumentAccessResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -37,38 +101,82 @@ func (s *Server) GetDocumentAccess(
 		return nil, errorsdocuments.ErrDocAccessViewDenied
 	}
 
-	access, err := s.getDocumentAccess(ctx, req.GetDocumentId())
+	docAccess, err := s.store.GetDocumentAccess(ctx, req.GetDocumentId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	for i := range access.GetJobs() {
-		s.enricher.EnrichJobInfo(access.GetJobs()[i])
+	docAccess, err = s.normalizeDocumentAccess(ctx, req.GetDocumentId(), userInfo, docAccess, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range docAccess.GetJobs() {
+		s.enricher.EnrichJobInfo(docAccess.GetJobs()[i])
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range access.GetUsers() {
-		if access.GetUsers()[i].GetUser() != nil {
-			jobInfoFn(access.GetUsers()[i].GetUser())
+	for i := range docAccess.GetUsers() {
+		if docAccess.GetUsers()[i].GetUser() != nil {
+			jobInfoFn(docAccess.GetUsers()[i].GetUser())
 		}
 	}
 
 	resp := &pbdocuments.GetDocumentAccessResponse{
-		Access: access,
+		Access: docAccess,
 	}
 
 	return resp, nil
+}
+
+func (s *Server) normalizeDocumentAccess(
+	ctx context.Context,
+	documentID int64,
+	userInfo *userinfo.UserInfo,
+	docAccess *documentsaccess.DocumentAccess,
+	fallback *resourcesaccess.Access,
+) (*documentsaccess.DocumentAccess, error) {
+	sanitizedDocAccess, err := access.SanitizeAccessJobs(s.jobs, docAccess)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	requiredAccess, err := s.store.GetDocumentRequiredAccess(ctx, documentID, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	sanitizedRequiredAccess, err := access.SanitizeAccessJobs(s.jobs, requiredAccess)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	sanitizedRequiredAccess = access.NormalizeRequiredAccessFloors(sanitizedRequiredAccess)
+
+	normalizedAccess, err := access.NormalizeAccess(
+		sanitizedDocAccess,
+		sanitizedRequiredAccess,
+		fallback,
+		documentAccessEntryLimit,
+	)
+	if err != nil {
+		if _, ok := errors.AsType[access.AccessEntryLimitError](err); ok {
+			return nil, errorsdocuments.ErrDocRequiredAccessTemplate
+		}
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	return normalizedAccess, nil
 }
 
 func (s *Server) SetDocumentAccess(
 	ctx context.Context,
 	req *pbdocuments.SetDocumentAccessRequest,
 ) (*pbdocuments.SetDocumentAccessResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	check, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -110,83 +218,52 @@ func (s *Server) SetDocumentAccess(
 	return &pbdocuments.SetDocumentAccessResponse{}, nil
 }
 
-func (s *Server) getDocumentAccess(
-	ctx context.Context,
-	documentId int64,
-) (*documentsaccess.DocumentAccess, error) {
-	jobAccess, err := s.access.Jobs.List(ctx, s.db, documentId)
-	if err != nil {
-		return nil, err
-	}
-
-	userAccess, err := s.access.Users.List(ctx, s.db, documentId)
-	if err != nil {
-		return nil, err
-	}
-
-	return &documentsaccess.DocumentAccess{
-		Jobs:  jobAccess,
-		Users: userAccess,
-	}, nil
-}
-
 func (s *Server) handleDocumentAccessChange(
 	ctx context.Context,
 	tx qrm.DB,
 	documentId int64,
 	userInfo *userinfo.UserInfo,
-	access *documentsaccess.DocumentAccess,
+	docAccess *documentsaccess.DocumentAccess,
 	addActivity bool,
 ) error {
-	// Validate job access entries
-	valid, err := s.access.Jobs.Validate(s.jobs, &access.Jobs, true)
-	if err != nil {
-		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-	if !valid {
-		return errorsdocuments.ErrDocAccessInvalid
+	if docAccess == nil {
+		docAccess = &documentsaccess.DocumentAccess{}
 	}
 
-	changes, err := s.access.HandleAccessChanges(
+	fallbackAccess := &resourcesaccess.Access{
+		Jobs: []*resourcesaccess.JobAccess{
+			{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: userInfo.GetJobGrade(),
+				Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+			},
+		},
+	}
+
+	normalizedAccess, err := s.normalizeDocumentAccess(
+		ctx,
+		documentId,
+		userInfo,
+		docAccess,
+		fallbackAccess,
+	)
+	if err != nil {
+		return err
+	}
+
+	if err := s.store.UpdateDocumentAccess(
 		ctx,
 		tx,
 		documentId,
-		access.GetJobs(),
-		access.GetUsers(),
-		nil,
-	)
-	if err != nil {
-		if dbutils.IsDuplicateError(err) {
-			return errswrap.NewError(err, errorsdocuments.ErrDocAccessDuplicate)
-		}
+		userInfo,
+		normalizedAccess,
+		addActivity,
+	); err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if addActivity && !changes.IsEmpty() {
-		if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
-			DocumentId:   documentId,
-			ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED,
-			CreatorId:    &userInfo.UserId,
-			CreatorJob:   userInfo.GetJob(),
-			Data: &documentsactivity.DocActivityData{
-				Data: &documentsactivity.DocActivityData_AccessUpdated{
-					AccessUpdated: &documentsactivity.DocAccessUpdated{
-						Jobs: &documentsactivity.DocAccessJobsDiff{
-							ToCreate: changes.Jobs.ToCreate,
-							ToUpdate: changes.Jobs.ToUpdate,
-							ToDelete: changes.Jobs.ToDelete,
-						},
-						Users: &documentsactivity.DocAccessUsersDiff{
-							ToCreate: changes.Users.ToCreate,
-							ToUpdate: changes.Users.ToUpdate,
-							ToDelete: changes.Users.ToDelete,
-						},
-					},
-				},
-			},
-		}); err != nil {
-			return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
+	if err := s.subjectAccess.RefreshTargetVisibility(ctx, tx, documentId); err != nil {
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	return nil

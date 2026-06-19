@@ -17,16 +17,16 @@ const hints = computed(() =>
             },
             {
                 key: 'startpage',
-                to: { name: 'user-settings', query: { tab: 'settings' }, hash: '#' },
+                to: '/user-settings?tab=settings#',
             },
             {
                 key: 'sociallogin_discord',
-                to: { name: 'auth-account-info', query: { tab: 'oauth2Connections' }, hash: '#' },
+                to: '/auth/account-info?tab=oauth2Connections#',
                 hide: discord.botEnabled,
             },
             {
                 key: 'toggle_event_effect',
-                to: { name: 'user-settings' },
+                to: '/user-settings',
                 hide: !eventsShowSnowflakes.value,
             },
         ].flatMap((h) => (!h.hide ? [h] : [])) as Hint[],

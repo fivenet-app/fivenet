@@ -27,10 +27,10 @@ func TestPenaltyCalculatorExtractor_WithTotals(t *testing.T) {
 					{LawId: 7, Count: 1},
 				},
 				Total: &documentsdata.PenaltyCalculatorTotal{
-					Count:         ptrUint32(9),
-					Fine:          ptrUint32(2000),
-					DetentionTime: ptrUint32(60),
-					StvoPoints:    ptrUint32(4),
+					Count:         new(uint32(9)),
+					Fine:          new(uint32(2000)),
+					DetentionTime: new(uint32(60)),
+					StvoPoints:    new(uint32(4)),
 				},
 			},
 		},
@@ -99,10 +99,6 @@ func TestPenaltyCalculatorExtractor_Supports(t *testing.T) {
 			},
 		),
 	)
-}
-
-func ptrUint32(v uint32) *uint32 {
-	return &v
 }
 
 func toMetricMap(items []*DocumentMetric) map[string]int64 {

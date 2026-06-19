@@ -25,7 +25,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
-	"github.com/fivenet-app/fivenet/v2026/stores/users"
+	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
@@ -39,6 +39,17 @@ const (
 	EmptyTTL = 30 * time.Second // No crew -> delete
 )
 
+var unitSubjectAccessOptions = access.SubjectAccessOptions{
+	BlockedAccess: int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_BLOCKED),
+	DeniedAccessLevels: []int32{
+		int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN),
+	},
+}
+
+func UnitSubjectAccessOptions() access.SubjectAccessOptions {
+	return unitSubjectAccessOptions
+}
+
 type sortOrderResult struct {
 	SortOrder int32 `alias:"sort_order"`
 }
@@ -48,14 +59,15 @@ type UnitDB struct {
 
 	db       *sql.DB
 	js       *events.JSWrapper
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 	tracker  tracker.ITracker
 	postals  postals.Postals
 
 	store      *store.Store[centrumunits.Unit, *centrumunits.Unit]
 	jobMapping *store.Store[common.IDMapping, *common.IDMapping]
 
-	unitAccess *access.Grouped[unitsaccess.UnitJobAccess, *unitsaccess.UnitJobAccess, unitsaccess.UnitUserAccess, *unitsaccess.UnitUserAccess, unitsaccess.UnitQualificationAccess, *unitsaccess.UnitQualificationAccess, unitsaccess.UnitAccessLevel]
+	unitAccess         *access.SubjectObjectAccess
+	unitAccessResolver *access.SubjectResolver
 
 	KVPing jetstream.KeyValue
 }
@@ -69,7 +81,7 @@ type Params struct {
 	JS       *events.JSWrapper
 	DB       *sql.DB
 	Cfg      *config.Config
-	Enricher *mstlystcdata.Enricher
+	Enricher mstlystcdata.IEnricher
 	Tracker  tracker.ITracker
 	Postals  postals.Postals
 }
@@ -87,67 +99,8 @@ func New(p Params) *UnitDB {
 		tracker:  p.Tracker,
 		postals:  p.Postals,
 
-		unitAccess: access.NewGrouped[unitsaccess.UnitJobAccess, *unitsaccess.UnitJobAccess, unitsaccess.UnitUserAccess](
-			p.DB,
-			table.FivenetCentrumUnits,
-			&access.TargetTableColumns{
-				ID:        table.FivenetCentrumUnits.ID,
-				DeletedAt: table.FivenetCentrumUnits.DeletedAt,
-			},
-			access.NewJobs[unitsaccess.UnitJobAccess, *unitsaccess.UnitJobAccess, unitsaccess.UnitAccessLevel](
-				table.FivenetCentrumUnitsAccess,
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCentrumUnitsAccess.ID,
-						TargetID: table.FivenetCentrumUnitsAccess.TargetID,
-						Access:   table.FivenetCentrumUnitsAccess.Access,
-					},
-					Job:          table.FivenetCentrumUnitsAccess.Job,
-					MinimumGrade: table.FivenetCentrumUnitsAccess.MinimumGrade,
-				},
-				table.FivenetCentrumUnitsAccess.AS("unit_job_access"),
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCentrumUnitsAccess.AS("unit_job_access").ID,
-						TargetID: table.FivenetCentrumUnitsAccess.AS("unit_job_access").TargetID,
-						Access:   table.FivenetCentrumUnitsAccess.AS("unit_job_access").Access,
-					},
-					Job: table.FivenetCentrumUnitsAccess.AS("unit_job_access").Job,
-					MinimumGrade: table.FivenetCentrumUnitsAccess.AS(
-						"unit_job_access",
-					).MinimumGrade,
-				},
-			),
-			nil,
-			access.NewQualifications[unitsaccess.UnitQualificationAccess, *unitsaccess.UnitQualificationAccess, unitsaccess.UnitAccessLevel](
-				table.FivenetCentrumUnitsAccess,
-				&access.QualificationAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetCentrumUnitsAccess.ID,
-						TargetID: table.FivenetCentrumUnitsAccess.TargetID,
-						Access:   table.FivenetCentrumUnitsAccess.Access,
-					},
-					QualificationID: table.FivenetCentrumUnitsAccess.QualificationID,
-				},
-				table.FivenetCentrumUnitsAccess.AS("unit_qualification_access"),
-				&access.QualificationAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID: table.FivenetCentrumUnitsAccess.AS(
-							"unit_qualification_access",
-						).ID,
-						TargetID: table.FivenetCentrumUnitsAccess.AS(
-							"unit_qualification_access",
-						).TargetID,
-						Access: table.FivenetCentrumUnitsAccess.AS(
-							"unit_qualification_access",
-						).Access,
-					},
-					QualificationID: table.FivenetCentrumUnitsAccess.AS(
-						"unit_qualification_access",
-					).QualificationID,
-				},
-			),
-		),
+		unitAccess:         access.NewCentrumUnitsSubjectObjectAccess(p.DB),
+		unitAccessResolver: access.NewSubjectResolver(p.DB),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -344,7 +297,12 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 		}
 		units[i].Status = status
 
-		if err := users.RetrieveUsersForUnit(ctx, s.db, s.enricher, &units[i].Users); err != nil {
+		if err := usersstore.RetrieveUsersForUnit(
+			ctx,
+			s.db,
+			s.enricher,
+			&units[i].Users,
+		); err != nil {
 			return err
 		}
 
@@ -465,7 +423,7 @@ func (s *UnitDB) UpdateStatus(
 
 	if in.UserId != nil {
 		var err error
-		in.User, err = users.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetUserId())
+		in.User, err = usersstore.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetUserId())
 		if err != nil {
 			return nil, err
 		}
@@ -482,7 +440,12 @@ func (s *UnitDB) UpdateStatus(
 			in.Creator = in.GetUser()
 		} else {
 			var err error
-			in.Creator, err = users.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetCreatorId())
+			in.Creator, err = usersstore.RetrieveUserShortById(
+				ctx,
+				s.db,
+				s.enricher,
+				in.GetCreatorId(),
+			)
 			if err != nil {
 				return nil, err
 			}
@@ -651,7 +614,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 			}
 
 			var err error
-			toAddUsers, err = users.RetrieveColleagueById(ctx, s.db, s.enricher, addIds...)
+			toAddUsers, err = usersstore.RetrieveColleagueById(ctx, s.db, s.enricher, addIds...)
 			if err != nil {
 				return err
 			}
@@ -780,7 +743,6 @@ func (s *UnitDB) CreateUnit(
 	if unit.GetAccess() == nil {
 		unit.Access = &unitsaccess.UnitAccess{}
 	}
-	unit.GetAccess().ClearQualificationResults()
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -843,13 +805,18 @@ func (s *UnitDB) CreateUnit(
 		return nil, err
 	}
 
-	if _, err := s.unitAccess.HandleAccessChanges(
+	normalizedAccess, err := access.NormalizeAccess(unit.GetAccess(), nil, nil, 15)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := s.unitAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
+		s.unitAccessResolver,
 		unit.GetId(),
-		unit.GetAccess().GetJobs(),
-		nil,
-		unit.GetAccess().GetQualifications(),
+		normalizedAccess,
+		unitSubjectAccessOptions,
 	); err != nil {
 		return nil, err
 	}
@@ -871,7 +838,6 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrumunits.Unit) (*centrumu
 	if unit.GetAccess() == nil {
 		unit.Access = &unitsaccess.UnitAccess{}
 	}
-	unit.GetAccess().ClearQualificationResults()
 
 	tUnits := table.FivenetCentrumUnits
 
@@ -911,13 +877,18 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrumunits.Unit) (*centrumu
 		return nil, err
 	}
 
-	if _, err := s.unitAccess.HandleAccessChanges(
+	normalizedAccess, err := access.NormalizeAccess(unit.GetAccess(), nil, nil, 15)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := s.unitAccess.ReplaceTargetAccess(
 		ctx,
 		tx,
+		s.unitAccessResolver,
 		unit.GetId(),
-		unit.GetAccess().GetJobs(),
-		nil,
-		unit.GetAccess().GetQualifications(),
+		normalizedAccess,
+		unitSubjectAccessOptions,
 	); err != nil {
 		return nil, err
 	}
@@ -1188,27 +1159,18 @@ func (s *UnitDB) Delete(ctx context.Context, id int64) error {
 }
 
 func (s *UnitDB) ListAccess(ctx context.Context, id int64) (*unitsaccess.UnitAccess, error) {
-	access := &unitsaccess.UnitAccess{}
-
-	jobsAccess, err := s.unitAccess.Jobs.List(ctx, s.db, id)
+	access, err := s.unitAccess.ListTargetAccess(ctx, s.db, id, unitSubjectAccessOptions)
 	if err != nil {
 		return nil, err
 	}
-	access.Jobs = jobsAccess
 
 	for i := range access.GetJobs() {
 		s.enricher.EnrichJobInfo(access.GetJobs()[i])
 	}
 
-	qualificationsccess, err := s.unitAccess.Qualifications.List(ctx, s.db, id)
-	if err != nil {
-		return nil, err
-	}
-	access.Qualifications = qualificationsccess
-
 	return access, nil
 }
 
-func (s *UnitDB) GetAccess() *access.Grouped[unitsaccess.UnitJobAccess, *unitsaccess.UnitJobAccess, unitsaccess.UnitUserAccess, *unitsaccess.UnitUserAccess, unitsaccess.UnitQualificationAccess, *unitsaccess.UnitQualificationAccess, unitsaccess.UnitAccessLevel] {
+func (s *UnitDB) GetAccess() *access.SubjectObjectAccess {
 	return s.unitAccess
 }

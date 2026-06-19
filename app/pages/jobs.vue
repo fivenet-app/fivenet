@@ -10,7 +10,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.title',
     requiresAuth: true,
-    redirect: { name: 'jobs-overview' },
+    redirect: '/jobs/overview',
 });
 
 const { t } = useI18n();
@@ -25,12 +25,12 @@ const items = computed<NavigationMenuItem[]>(
             {
                 label: t('common.overview'),
                 icon: 'i-mdi-briefcase-outline',
-                to: { name: 'jobs-overview' },
+                to: '/jobs/overview',
             },
             {
                 label: t('pages.jobs.colleagues.title'),
                 icon: 'i-mdi-account-group',
-                to: { name: 'jobs-colleagues' },
+                to: '/jobs/colleagues',
                 permission: 'jobs.ColleaguesService/ListColleagues' as Perms,
                 active: route.name?.startsWith('jobs-colleagues'),
                 children: [
@@ -51,13 +51,13 @@ const items = computed<NavigationMenuItem[]>(
             {
                 label: t('common.activity'),
                 icon: 'i-mdi-pulse',
-                to: { name: 'jobs-activity' },
+                to: '/jobs/activity',
                 permission: 'jobs.ColleaguesService/ListColleagueActivity' as Perms,
             },
             {
                 label: t('pages.jobs.timeclock.title'),
                 icon: 'i-mdi-timeline-clock',
-                to: { name: 'jobs-timeclock' },
+                to: '/jobs/timeclock',
                 permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
                 active: route.name?.startsWith('jobs-timeclock'),
                 children: [
@@ -72,8 +72,14 @@ const items = computed<NavigationMenuItem[]>(
             {
                 label: t('pages.jobs.conduct.title'),
                 icon: 'i-mdi-list-status',
-                to: { name: 'jobs-conduct' },
+                to: '/jobs/conduct',
                 permission: 'jobs.ConductService/ListConductEntries' as Perms,
+            },
+            {
+                label: t('common.group', 2),
+                icon: 'i-mdi-users-group-outline',
+                to: '/jobs/groups',
+                permission: 'TODOService/TODOMethod' as Perms,
             },
         ].filter((t) => t.permission === undefined || can(t.permission).value) as (NavigationMenuItem & {
             permission?: Perms;

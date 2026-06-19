@@ -117,7 +117,8 @@ func (ps *Perms) GetRoles(
 		)
 
 	if excludeSystem {
-		stmt = stmt.WHERE(tRoles.Job.NOT_EQ(mysql.String(DefaultRoleJob)))
+		stmt = stmt.
+			WHERE(tRoles.Job.NOT_EQ(mysql.String(DefaultRoleJob)))
 	}
 
 	var dest []*permissionspermissions.Role
@@ -300,7 +301,8 @@ func (ps *Perms) DeleteRole(ctx context.Context, id int64) error {
 		DELETE().
 		WHERE(
 			tRoles.ID.EQ(mysql.Int64(id)),
-		).LIMIT(1)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to delete role with ID %d. %w", id, err)

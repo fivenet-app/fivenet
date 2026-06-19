@@ -1,7 +1,8 @@
 import type { ButtonProps } from '@nuxt/ui';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
 import type { UserLike } from '~/utils/strings';
-import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access/access';
+import type { Access } from '~~/gen/ts/resources/access/access';
+import type { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import { CalendarSystemKind, type Calendar } from '~~/gen/ts/resources/calendar/calendar';
 import {
     CalendarEntryOccurrenceKind,
@@ -32,7 +33,7 @@ export function isCalendarCreator(activeChar: UserLike, creator?: UserShort, cal
 }
 
 export function checkCalendarAccess(
-    access: CalendarAccess | undefined,
+    access: Access | undefined,
     creator: UserShort | undefined,
     level: AccessLevel,
     calendarJob?: string,

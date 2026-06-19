@@ -21,6 +21,7 @@ import (
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/timeutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -104,7 +105,7 @@ func (c *AbsentCommand) getBaseResponse() *api.InteractionResponseData {
 				Type:  discord.LinkEmbed,
 				Color: embeds.ColorError,
 				Provider: &discord.EmbedProvider{
-					Name: "FiveNet",
+					Name: version.Project,
 				},
 				Thumbnail: embeds.EmbedThumbnailLogo,
 				Footer:    embeds.EmbedFooterFiveNet,

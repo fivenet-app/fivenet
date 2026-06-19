@@ -929,7 +929,7 @@ export const useMailerStore = defineStore(
             return [
                 {
                     label: { key: 'common.click_here' },
-                    to: threadId ? { name: 'mail-thread', query: { thread: threadId }, hash: '#' } : { name: 'mail-thread' },
+                    to: threadId ? `/mail?thread=${threadId}#` : '/mail',
                 },
             ];
         };

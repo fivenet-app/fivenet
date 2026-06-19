@@ -9,13 +9,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
-	"github.com/go-jet/jet/v2/mysql"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
-
-var tOAuth2Accounts = table.FivenetAccountsOauth2
 
 func (s *Server) DeleteSocialLogin(
 	ctx context.Context,
@@ -37,15 +33,7 @@ func (s *Server) DeleteSocialLogin(
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
 
-	stmt := tOAuth2Accounts.
-		DELETE().
-		WHERE(mysql.AND(
-			tOAuth2Accounts.AccountID.EQ(mysql.Int64(claims.AccID)),
-			tOAuth2Accounts.Provider.EQ(mysql.String(req.GetProvider())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.DeleteSocialLogin(ctx, claims.AccID, req.GetProvider()); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
 

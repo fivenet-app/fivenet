@@ -61,6 +61,7 @@ const schema = z.object({
     contentAccess: z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
         users: userAccessEntries(t).max(maxAccessEntries).default([]),
+        qualifications: qualificationAccessEntries(t).max(0).default([]),
     }),
     workflow: zWorkflow,
     approval: z
@@ -132,6 +133,7 @@ const state = reactive<Schema>({
     contentAccess: {
         jobs: [],
         users: [],
+        qualifications: [],
     },
     workflow: {
         autoClose: {
@@ -343,6 +345,7 @@ function setValuesFromTemplate(tpl: Template): void {
     state.contentAccess = tpl.contentAccess ?? {
         jobs: [],
         users: [],
+        qualifications: [],
     };
 
     const autoCloseDuration = fromDuration(tpl.workflow?.autoCloseSettings?.duration);
@@ -499,11 +502,7 @@ const formRef = useTemplateRef('formRef');
                 </template>
 
                 <template #right>
-                    <PartialsBackButton
-                        :to="
-                            templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`
-                        "
-                    />
+                    <PartialsBackButton :to="templateId ? `/documents/templates/${templateId}` : `/documents/templates`" />
 
                     <UButton
                         trailing-icon="i-mdi-content-save"
@@ -547,7 +546,7 @@ const formRef = useTemplateRef('formRef');
                                         v-model="state.weight"
                                         name="weight"
                                         :min="0"
-                                        :max="999999"
+                                        :max="999_999"
                                         :step="1"
                                         :placeholder="$t('common.weight')"
                                     />
@@ -616,6 +615,7 @@ const formRef = useTemplateRef('formRef');
                                             (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
                                         )
                                     "
+                                    required-mode="checkbox"
                                     name="jobAccess"
                                     full-name
                                 />
@@ -745,7 +745,7 @@ const formRef = useTemplateRef('formRef');
                                     :target-id="templateId ?? 0"
                                     :access-types="contentAccessTypes"
                                     :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                    show-required
+                                    required-mode="checkbox"
                                     name="contentAccess"
                                 />
                             </UPageCard>

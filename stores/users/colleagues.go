@@ -1,4 +1,4 @@
-package users
+package usersstore
 
 import (
 	"context"
@@ -18,7 +18,7 @@ import (
 func RetrieveColleagueById(
 	ctx context.Context,
 	db *sql.DB,
-	enricher *mstlystcdata.Enricher,
+	enricher mstlystcdata.IEnricher,
 	u ...int32,
 ) ([]*jobscolleagues.Colleague, error) {
 	if len(u) == 0 {
@@ -88,7 +88,7 @@ func RetrieveColleagueById(
 func RetrieveUserShortById(
 	ctx context.Context,
 	db *sql.DB,
-	enricher *mstlystcdata.Enricher,
+	enricher mstlystcdata.IEnricher,
 	u int32,
 ) (*jobscolleagues.Colleague, error) {
 	us, err := RetrieveColleagueById(ctx, db, enricher, u)
@@ -102,7 +102,7 @@ func RetrieveUserShortById(
 func RetrieveUsersForUnit(
 	ctx context.Context,
 	db *sql.DB,
-	enricher *mstlystcdata.Enricher,
+	enricher mstlystcdata.IEnricher,
 	u *[]*centrumunits.UnitAssignment,
 ) error {
 	userIds := make([]int32, len(*u))

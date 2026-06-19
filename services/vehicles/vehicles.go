@@ -2,22 +2,16 @@ package vehicles
 
 import (
 	"context"
-	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
-	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
 	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsvehicles "github.com/fivenet-app/fivenet/v2026/services/vehicles/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
+	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -28,135 +22,38 @@ func (s *Server) ListVehicles(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	logRequest := false
 
-	tVehicles := table.FivenetOwnedVehicles.AS("vehicle")
-	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
-	tUsers := table.FivenetUser.AS("user_short")
-
 	// Field Permission Check
 	fields, err := permsvehicles.VehiclesService.SetVehicleProps.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	condition := mysql.Bool(true)
-	userCondition := tUsers.ID.EQ(tVehicles.UserID)
 	if req.GetLicensePlate() != "" {
 		logRequest = true
-
-		if search := dbutils.PrepareForLikeSearch(req.GetLicensePlate()); search != "" {
-			condition = mysql.AND(condition, tVehicles.Plate.LIKE(mysql.String(search)))
-		}
 	}
 
-	// Make sure the model column is available
-	modelColumn := s.customDB.Columns.Vehicle.GetModel(tVehicles.Alias())
-	if modelColumn != nil && req.Model != nil && req.GetModel() != "" {
+	if req.Model != nil && req.GetModel() != "" {
 		logRequest = true
-
-		if search := dbutils.PrepareForLikeSearch(req.GetModel()); search != "" {
-			condition = mysql.AND(condition, tVehicles.Model.LIKE(mysql.String(search)))
-		}
 	}
 
 	if len(req.GetUserIds()) > 0 {
 		logRequest = true
-		userIds := []mysql.Expression{}
-		for _, v := range req.GetUserIds() {
-			userIds = append(userIds, mysql.Int32(v))
-		}
-
-		condition = mysql.AND(condition,
-			tUsers.ID.EQ(tVehicles.UserID),
-			tUsers.ID.IN(userIds...),
-		)
-		userCondition = mysql.AND(userCondition, tUsers.ID.IN(userIds...))
 	} else if req.Job != nil && req.GetJob() != "" {
 		logRequest = true
-		condition = mysql.AND(condition,
-			tVehicles.Job.EQ(mysql.String(req.GetJob())),
-		)
 	}
 
-	if fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) ||
-		userInfo.GetSuperuser() {
+	canAccessWanted := fields.Contains(
+		permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted,
+	) ||
+		userInfo.GetSuperuser()
+	if canAccessWanted {
 		if req.Wanted != nil && req.GetWanted() {
 			logRequest = true
-			condition = mysql.AND(condition,
-				tVehicleProps.Wanted.EQ(mysql.Bool(req.GetWanted())),
-			)
 		}
 	}
 
 	if !logRequest {
 		grpc_audit.Skip(ctx)
-	}
-
-	countStmt := tVehicles.
-		SELECT(
-			mysql.COUNT(tVehicles.Plate).AS("data_count.total"),
-		).
-		FROM(
-			tVehicles.
-				LEFT_JOIN(tUsers,
-					userCondition,
-				).
-				LEFT_JOIN(tVehicleProps,
-					tVehicleProps.Plate.EQ(tVehicles.Plate),
-				),
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
-		}
-	}
-
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
-	resp := &pbvehicles.ListVehiclesResponse{
-		Pagination: pag,
-	}
-	if count.Total <= 0 {
-		return resp, nil
-	}
-
-	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
-		for _, sc := range req.GetSort().GetColumns() {
-			var column mysql.Column
-			switch sc.GetId() {
-			case "model":
-				column = tVehicles.Model
-			case "plate":
-				fallthrough
-			default:
-				column = tVehicles.Plate
-			}
-
-			if sc.GetDesc() {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
-		}
-	} else {
-		orderBys = append(orderBys, tVehicles.Plate.ASC())
-	}
-	orderBys = append(orderBys, tVehicles.Type.ASC())
-
-	columns := dbutils.Columns{
-		modelColumn,
-		mysql.REPLACE(tVehicles.Type, mysql.String("_"), mysql.String(" ")).AS("vehicle.type"),
-		tUsers.ID.AS("vehicle.owner_id"),
-		tUsers.ID,
-		tUsers.Firstname,
-		tUsers.Lastname,
-		tUsers.Dateofbirth,
-		tVehicleProps.Plate,
-		tVehicles.Job,
-		tVehicles.Data,
 	}
 
 	// Field Permission Check
@@ -165,41 +62,38 @@ func (s *Server) ListVehicles(
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	if userFields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber) {
-		columns = append(columns, tUsers.PhoneNumber)
+	query := vehiclesstore.ListQuery{
+		LicensePlate:    req.GetLicensePlate(),
+		Model:           req.GetModel(),
+		UserIDs:         req.GetUserIds(),
+		Job:             req.GetJob(),
+		Wanted:          req.Wanted,
+		CanFilterWanted: canAccessWanted,
+		IncludePhoneNumber: userFields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+		),
+		IncludePropsUpdated: fields.Len() > 0,
+		IncludeWantedFields: canAccessWanted,
+		Sort:                req.GetSort(),
 	}
 
-	if fields.Len() > 0 {
-		columns = append(columns, tVehicleProps.UpdatedAt)
-	}
-	if fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) ||
-		userInfo.GetSuperuser() {
-		columns = append(columns,
-			tVehicleProps.Wanted,
-			tVehicleProps.WantedReason,
-		)
+	total, err := s.store.Count(ctx, query)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	stmt := tVehicles.
-		SELECT(
-			tVehicles.Plate,
-			columns.Get()...,
-		).
-		FROM(
-			tVehicles.
-				LEFT_JOIN(tUsers,
-					userCondition,
-				).
-				LEFT_JOIN(tVehicleProps,
-					tVehicleProps.Plate.EQ(tVehicles.Plate),
-				),
-		).
-		WHERE(condition).
-		OFFSET(req.GetPagination().GetOffset()).
-		ORDER_BY(orderBys...).
-		LIMIT(limit)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(total, 20)
+	resp := &pbvehicles.ListVehiclesResponse{
+		Pagination: pag,
+	}
+	if total <= 0 {
+		return resp, nil
+	}
 
-	if err := stmt.QueryContext(ctx, s.db, &resp.Vehicles); err != nil {
+	query.Offset = req.GetPagination().GetOffset()
+	query.Limit = limit
+	resp.Vehicles, err = s.store.List(ctx, query)
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
@@ -220,21 +114,6 @@ func (s *Server) SetVehicleProps(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// Get current vehicle props to be able to compare
-	props, err := s.getVehicleProps(ctx, req.GetProps().GetPlate())
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
-	}
-
-	if props.Wanted == nil {
-		wanted := false
-		props.Wanted = &wanted
-	}
-
-	resp := &pbvehicles.SetVehiclePropsResponse{
-		Props: &vehiclesprops.VehicleProps{},
-	}
-
 	// Field Permission Check
 	fields, err := permsvehicles.VehiclesService.SetVehicleProps.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
@@ -242,70 +121,19 @@ func (s *Server) SetVehicleProps(
 	}
 
 	// Generate the update sets
-	if req.Props.Wanted != nil {
+	if req.GetProps() != nil && req.GetProps().Wanted != nil {
 		if !fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) &&
 			!userInfo.GetSuperuser() {
 			return nil, errorsvehicles.ErrPropsWantedDenied
 		}
 	}
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
-	if err := props.HandleChanges(ctx, tx, req.GetProps()); err != nil {
-		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
-	}
-
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
-	}
-
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	resp.Props, err = s.getVehicleProps(ctx, req.GetProps().GetPlate())
+	props, err := s.store.UpdateProps(ctx, req.GetProps())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	return resp, nil
-}
-
-func (s *Server) getVehicleProps(
-	ctx context.Context,
-	plate string,
-) (*vehiclesprops.VehicleProps, error) {
-	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
-
-	stmt := tVehicleProps.
-		SELECT(
-			tVehicleProps.Plate,
-			tVehicleProps.UpdatedAt,
-			tVehicleProps.Wanted,
-			tVehicleProps.WantedReason,
-			tVehicleProps.WantedAt,
-		).
-		FROM(tVehicleProps).
-		WHERE(
-			tVehicleProps.Plate.EQ(mysql.String(plate)),
-		).
-		LIMIT(1)
-
-	var dest vehiclesprops.VehicleProps
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	if dest.GetPlate() == "" {
-		dest.Plate = plate
-	}
-
-	return &dest, nil
+	return &pbvehicles.SetVehiclePropsResponse{Props: props}, nil
 }

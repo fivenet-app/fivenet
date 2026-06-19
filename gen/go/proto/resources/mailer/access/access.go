@@ -1,5 +1,10 @@
 package maileraccess
 
-func (x *Access) IsEmpty() bool {
-	return len(x.GetJobs()) == 0 && len(x.GetUsers()) == 0 && len(x.GetQualifications()) == 0
-}
+import resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
+
+type (
+	Access              = resourcesaccess.Access
+	JobAccess           = resourcesaccess.JobAccess
+	UserAccess          = resourcesaccess.UserAccess
+	QualificationAccess = resourcesaccess.QualificationAccess
+)

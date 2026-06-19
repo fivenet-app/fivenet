@@ -61,7 +61,7 @@ message DeleteConductEntryResponse {}
 
 service ConductService {
   option (codegen.perms.perms_svc) = {
-    order: 67
+    order: 65
     icon: "i-mdi-list-status"
   };
 

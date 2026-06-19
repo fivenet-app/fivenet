@@ -99,6 +99,9 @@
             },
             "activity": {
                 "title": "Activity"
+            },
+            "groups": {
+                "title": "Groups"
             }
         },
         "vehicles": {
@@ -1645,7 +1648,8 @@
         },
         "access": {
             "add_entry": "Add Access",
-            "remove_entry": "Remove Access"
+            "remove_entry": "Remove Access",
+            "required_notice": "This access is required and can't be changed!"
         },
         "settings": {
             "job_props": {

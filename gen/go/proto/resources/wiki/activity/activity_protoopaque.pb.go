@@ -10,10 +10,10 @@ package wikiactivity
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
-	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -937,10 +937,10 @@ func (b0 PageAccessUpdated_builder) Build() *PageAccessUpdated {
 }
 
 type PageAccessJobsDiff struct {
-	state               protoimpl.MessageState   `protogen:"opaque.v1"`
-	xxx_hidden_ToCreate *[]*access.PageJobAccess `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3"`
-	xxx_hidden_ToUpdate *[]*access.PageJobAccess `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3"`
-	xxx_hidden_ToDelete *[]*access.PageJobAccess `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3"`
+	state               protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_ToCreate *[]*access.JobAccess   `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3"`
+	xxx_hidden_ToUpdate *[]*access.JobAccess   `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3"`
+	xxx_hidden_ToDelete *[]*access.JobAccess   `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -970,7 +970,7 @@ func (x *PageAccessJobsDiff) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *PageAccessJobsDiff) GetToCreate() []*access.PageJobAccess {
+func (x *PageAccessJobsDiff) GetToCreate() []*access.JobAccess {
 	if x != nil {
 		if x.xxx_hidden_ToCreate != nil {
 			return *x.xxx_hidden_ToCreate
@@ -979,7 +979,7 @@ func (x *PageAccessJobsDiff) GetToCreate() []*access.PageJobAccess {
 	return nil
 }
 
-func (x *PageAccessJobsDiff) GetToUpdate() []*access.PageJobAccess {
+func (x *PageAccessJobsDiff) GetToUpdate() []*access.JobAccess {
 	if x != nil {
 		if x.xxx_hidden_ToUpdate != nil {
 			return *x.xxx_hidden_ToUpdate
@@ -988,7 +988,7 @@ func (x *PageAccessJobsDiff) GetToUpdate() []*access.PageJobAccess {
 	return nil
 }
 
-func (x *PageAccessJobsDiff) GetToDelete() []*access.PageJobAccess {
+func (x *PageAccessJobsDiff) GetToDelete() []*access.JobAccess {
 	if x != nil {
 		if x.xxx_hidden_ToDelete != nil {
 			return *x.xxx_hidden_ToDelete
@@ -997,24 +997,24 @@ func (x *PageAccessJobsDiff) GetToDelete() []*access.PageJobAccess {
 	return nil
 }
 
-func (x *PageAccessJobsDiff) SetToCreate(v []*access.PageJobAccess) {
+func (x *PageAccessJobsDiff) SetToCreate(v []*access.JobAccess) {
 	x.xxx_hidden_ToCreate = &v
 }
 
-func (x *PageAccessJobsDiff) SetToUpdate(v []*access.PageJobAccess) {
+func (x *PageAccessJobsDiff) SetToUpdate(v []*access.JobAccess) {
 	x.xxx_hidden_ToUpdate = &v
 }
 
-func (x *PageAccessJobsDiff) SetToDelete(v []*access.PageJobAccess) {
+func (x *PageAccessJobsDiff) SetToDelete(v []*access.JobAccess) {
 	x.xxx_hidden_ToDelete = &v
 }
 
 type PageAccessJobsDiff_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	ToCreate []*access.PageJobAccess
-	ToUpdate []*access.PageJobAccess
-	ToDelete []*access.PageJobAccess
+	ToCreate []*access.JobAccess
+	ToUpdate []*access.JobAccess
+	ToDelete []*access.JobAccess
 }
 
 func (b0 PageAccessJobsDiff_builder) Build() *PageAccessJobsDiff {
@@ -1028,10 +1028,10 @@ func (b0 PageAccessJobsDiff_builder) Build() *PageAccessJobsDiff {
 }
 
 type PageAccessUsersDiff struct {
-	state               protoimpl.MessageState    `protogen:"opaque.v1"`
-	xxx_hidden_ToCreate *[]*access.PageUserAccess `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3"`
-	xxx_hidden_ToUpdate *[]*access.PageUserAccess `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3"`
-	xxx_hidden_ToDelete *[]*access.PageUserAccess `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3"`
+	state               protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_ToCreate *[]*access.UserAccess  `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3"`
+	xxx_hidden_ToUpdate *[]*access.UserAccess  `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3"`
+	xxx_hidden_ToDelete *[]*access.UserAccess  `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -1061,7 +1061,7 @@ func (x *PageAccessUsersDiff) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *PageAccessUsersDiff) GetToCreate() []*access.PageUserAccess {
+func (x *PageAccessUsersDiff) GetToCreate() []*access.UserAccess {
 	if x != nil {
 		if x.xxx_hidden_ToCreate != nil {
 			return *x.xxx_hidden_ToCreate
@@ -1070,7 +1070,7 @@ func (x *PageAccessUsersDiff) GetToCreate() []*access.PageUserAccess {
 	return nil
 }
 
-func (x *PageAccessUsersDiff) GetToUpdate() []*access.PageUserAccess {
+func (x *PageAccessUsersDiff) GetToUpdate() []*access.UserAccess {
 	if x != nil {
 		if x.xxx_hidden_ToUpdate != nil {
 			return *x.xxx_hidden_ToUpdate
@@ -1079,7 +1079,7 @@ func (x *PageAccessUsersDiff) GetToUpdate() []*access.PageUserAccess {
 	return nil
 }
 
-func (x *PageAccessUsersDiff) GetToDelete() []*access.PageUserAccess {
+func (x *PageAccessUsersDiff) GetToDelete() []*access.UserAccess {
 	if x != nil {
 		if x.xxx_hidden_ToDelete != nil {
 			return *x.xxx_hidden_ToDelete
@@ -1088,24 +1088,24 @@ func (x *PageAccessUsersDiff) GetToDelete() []*access.PageUserAccess {
 	return nil
 }
 
-func (x *PageAccessUsersDiff) SetToCreate(v []*access.PageUserAccess) {
+func (x *PageAccessUsersDiff) SetToCreate(v []*access.UserAccess) {
 	x.xxx_hidden_ToCreate = &v
 }
 
-func (x *PageAccessUsersDiff) SetToUpdate(v []*access.PageUserAccess) {
+func (x *PageAccessUsersDiff) SetToUpdate(v []*access.UserAccess) {
 	x.xxx_hidden_ToUpdate = &v
 }
 
-func (x *PageAccessUsersDiff) SetToDelete(v []*access.PageUserAccess) {
+func (x *PageAccessUsersDiff) SetToDelete(v []*access.UserAccess) {
 	x.xxx_hidden_ToDelete = &v
 }
 
 type PageAccessUsersDiff_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	ToCreate []*access.PageUserAccess
-	ToUpdate []*access.PageUserAccess
-	ToDelete []*access.PageUserAccess
+	ToCreate []*access.UserAccess
+	ToUpdate []*access.UserAccess
+	ToDelete []*access.UserAccess
 }
 
 func (b0 PageAccessUsersDiff_builder) Build() *PageAccessUsersDiff {
@@ -1122,7 +1122,7 @@ var File_resources_wiki_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_wiki_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"&resources/wiki/activity/activity.proto\x12\x17resources.wiki.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a,resources/common/content/diff_activity.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\"resources/wiki/access/access.proto\x1a\x13tagger/tagger.proto\"\xab\x04\n" +
+	"&resources/wiki/activity/activity.proto\x12\x17resources.wiki.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a\x1dresources/access/access.proto\x1a,resources/common/content/diff_activity.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xab\x04\n" +
 	"\fPageActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -1169,15 +1169,15 @@ const file_resources_wiki_activity_activity_proto_rawDesc = "" +
 	"\adeleted\x18\x02 \x01(\x03R\adeleted\"\x98\x01\n" +
 	"\x11PageAccessUpdated\x12?\n" +
 	"\x04jobs\x18\x01 \x01(\v2+.resources.wiki.activity.PageAccessJobsDiffR\x04jobs\x12B\n" +
-	"\x05users\x18\x02 \x01(\v2,.resources.wiki.activity.PageAccessUsersDiffR\x05users\"\xdd\x01\n" +
-	"\x12PageAccessJobsDiff\x12A\n" +
-	"\tto_create\x18\x01 \x03(\v2$.resources.wiki.access.PageJobAccessR\btoCreate\x12A\n" +
-	"\tto_update\x18\x02 \x03(\v2$.resources.wiki.access.PageJobAccessR\btoUpdate\x12A\n" +
-	"\tto_delete\x18\x03 \x03(\v2$.resources.wiki.access.PageJobAccessR\btoDelete\"\xe1\x01\n" +
-	"\x13PageAccessUsersDiff\x12B\n" +
-	"\tto_create\x18\x01 \x03(\v2%.resources.wiki.access.PageUserAccessR\btoCreate\x12B\n" +
-	"\tto_update\x18\x02 \x03(\v2%.resources.wiki.access.PageUserAccessR\btoUpdate\x12B\n" +
-	"\tto_delete\x18\x03 \x03(\v2%.resources.wiki.access.PageUserAccessR\btoDelete*\x89\x02\n" +
+	"\x05users\x18\x02 \x01(\v2,.resources.wiki.activity.PageAccessUsersDiffR\x05users\"\xc2\x01\n" +
+	"\x12PageAccessJobsDiff\x128\n" +
+	"\tto_create\x18\x01 \x03(\v2\x1b.resources.access.JobAccessR\btoCreate\x128\n" +
+	"\tto_update\x18\x02 \x03(\v2\x1b.resources.access.JobAccessR\btoUpdate\x128\n" +
+	"\tto_delete\x18\x03 \x03(\v2\x1b.resources.access.JobAccessR\btoDelete\"\xc6\x01\n" +
+	"\x13PageAccessUsersDiff\x129\n" +
+	"\tto_create\x18\x01 \x03(\v2\x1c.resources.access.UserAccessR\btoCreate\x129\n" +
+	"\tto_update\x18\x02 \x03(\v2\x1c.resources.access.UserAccessR\btoUpdate\x129\n" +
+	"\tto_delete\x18\x03 \x03(\v2\x1c.resources.access.UserAccessR\btoDelete*\x89\x02\n" +
 	"\x10PageActivityType\x12\"\n" +
 	"\x1ePAGE_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aPAGE_ACTIVITY_TYPE_CREATED\x10\x01\x12\x1e\n" +
@@ -1190,19 +1190,19 @@ const file_resources_wiki_activity_activity_proto_rawDesc = "" +
 var file_resources_wiki_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_wiki_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_wiki_activity_activity_proto_goTypes = []any{
-	(PageActivityType)(0),         // 0: resources.wiki.activity.PageActivityType
-	(*PageActivity)(nil),          // 1: resources.wiki.activity.PageActivity
-	(*PageActivityData)(nil),      // 2: resources.wiki.activity.PageActivityData
-	(*PageUpdated)(nil),           // 3: resources.wiki.activity.PageUpdated
-	(*PageFilesChange)(nil),       // 4: resources.wiki.activity.PageFilesChange
-	(*PageAccessUpdated)(nil),     // 5: resources.wiki.activity.PageAccessUpdated
-	(*PageAccessJobsDiff)(nil),    // 6: resources.wiki.activity.PageAccessJobsDiff
-	(*PageAccessUsersDiff)(nil),   // 7: resources.wiki.activity.PageAccessUsersDiff
-	(*timestamp.Timestamp)(nil),   // 8: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),       // 9: resources.users.short.UserShort
-	(*content.ContentDiff)(nil),   // 10: resources.common.content.ContentDiff
-	(*access.PageJobAccess)(nil),  // 11: resources.wiki.access.PageJobAccess
-	(*access.PageUserAccess)(nil), // 12: resources.wiki.access.PageUserAccess
+	(PageActivityType)(0),       // 0: resources.wiki.activity.PageActivityType
+	(*PageActivity)(nil),        // 1: resources.wiki.activity.PageActivity
+	(*PageActivityData)(nil),    // 2: resources.wiki.activity.PageActivityData
+	(*PageUpdated)(nil),         // 3: resources.wiki.activity.PageUpdated
+	(*PageFilesChange)(nil),     // 4: resources.wiki.activity.PageFilesChange
+	(*PageAccessUpdated)(nil),   // 5: resources.wiki.activity.PageAccessUpdated
+	(*PageAccessJobsDiff)(nil),  // 6: resources.wiki.activity.PageAccessJobsDiff
+	(*PageAccessUsersDiff)(nil), // 7: resources.wiki.activity.PageAccessUsersDiff
+	(*timestamp.Timestamp)(nil), // 8: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),     // 9: resources.users.short.UserShort
+	(*content.ContentDiff)(nil), // 10: resources.common.content.ContentDiff
+	(*access.JobAccess)(nil),    // 11: resources.access.JobAccess
+	(*access.UserAccess)(nil),   // 12: resources.access.UserAccess
 }
 var file_resources_wiki_activity_activity_proto_depIdxs = []int32{
 	8,  // 0: resources.wiki.activity.PageActivity.created_at:type_name -> resources.timestamp.Timestamp
@@ -1217,12 +1217,12 @@ var file_resources_wiki_activity_activity_proto_depIdxs = []int32{
 	4,  // 9: resources.wiki.activity.PageUpdated.files_change:type_name -> resources.wiki.activity.PageFilesChange
 	6,  // 10: resources.wiki.activity.PageAccessUpdated.jobs:type_name -> resources.wiki.activity.PageAccessJobsDiff
 	7,  // 11: resources.wiki.activity.PageAccessUpdated.users:type_name -> resources.wiki.activity.PageAccessUsersDiff
-	11, // 12: resources.wiki.activity.PageAccessJobsDiff.to_create:type_name -> resources.wiki.access.PageJobAccess
-	11, // 13: resources.wiki.activity.PageAccessJobsDiff.to_update:type_name -> resources.wiki.access.PageJobAccess
-	11, // 14: resources.wiki.activity.PageAccessJobsDiff.to_delete:type_name -> resources.wiki.access.PageJobAccess
-	12, // 15: resources.wiki.activity.PageAccessUsersDiff.to_create:type_name -> resources.wiki.access.PageUserAccess
-	12, // 16: resources.wiki.activity.PageAccessUsersDiff.to_update:type_name -> resources.wiki.access.PageUserAccess
-	12, // 17: resources.wiki.activity.PageAccessUsersDiff.to_delete:type_name -> resources.wiki.access.PageUserAccess
+	11, // 12: resources.wiki.activity.PageAccessJobsDiff.to_create:type_name -> resources.access.JobAccess
+	11, // 13: resources.wiki.activity.PageAccessJobsDiff.to_update:type_name -> resources.access.JobAccess
+	11, // 14: resources.wiki.activity.PageAccessJobsDiff.to_delete:type_name -> resources.access.JobAccess
+	12, // 15: resources.wiki.activity.PageAccessUsersDiff.to_create:type_name -> resources.access.UserAccess
+	12, // 16: resources.wiki.activity.PageAccessUsersDiff.to_update:type_name -> resources.access.UserAccess
+	12, // 17: resources.wiki.activity.PageAccessUsersDiff.to_delete:type_name -> resources.access.UserAccess
 	18, // [18:18] is the sub-list for method output_type
 	18, // [18:18] is the sub-list for method input_type
 	18, // [18:18] is the sub-list for extension type_name

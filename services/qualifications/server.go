@@ -3,7 +3,6 @@ package qualifications
 import (
 	"database/sql"
 
-	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -14,11 +13,14 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
+
+const qualificationIDLogFieldKey = "fivenet.qualifications.id"
 
 func init() {
 	housekeeper.AddTable(&housekeeper.Table{
@@ -56,10 +58,7 @@ func init() {
 	})
 }
 
-var (
-	tQuali      = table.FivenetQualifications.AS("qualification")
-	tQualiFiles = table.FivenetQualificationsFiles
-)
+var tQualiFiles = table.FivenetQualificationsFiles
 
 type Server struct {
 	pbqualifications.QualificationsServiceServer
@@ -68,13 +67,15 @@ type Server struct {
 	logger   *zap.Logger
 	db       *sql.DB
 	perms    perms.Permissions
-	enricher *mstlystcdata.UserAwareEnricher
+	enricher mstlystcdata.IUserAwareEnricher
 	notif    notifi.INotifi
-	st       storage.IStorage
+	storage  storage.IStorage
 
-	access *access.Grouped[qualificationsaccess.QualificationJobAccess, *qualificationsaccess.QualificationJobAccess, qualificationsaccess.QualificationUserAccess, *qualificationsaccess.QualificationUserAccess, access.DummyQualificationAccess[qualificationsaccess.AccessLevel], *access.DummyQualificationAccess[qualificationsaccess.AccessLevel], qualificationsaccess.AccessLevel]
+	access         *access.SubjectObjectAccess
+	accessResolver *access.SubjectResolver
 
 	fHandler *filestore.Handler[int64]
+	store    qualificationsstore.IStore
 }
 
 type Params struct {
@@ -85,10 +86,11 @@ type Params struct {
 	Logger            *zap.Logger
 	DB                *sql.DB
 	Perms             perms.Permissions
-	UserAwareEnricher *mstlystcdata.UserAwareEnricher
+	UserAwareEnricher mstlystcdata.IUserAwareEnricher
 	Config            *config.Config
 	Notif             notifi.INotifi
 	Storage           storage.IStorage
+	Store             qualificationsstore.IStore
 }
 
 func NewServer(p Params) *Server {
@@ -115,54 +117,13 @@ func NewServer(p Params) *Server {
 		perms:    p.Perms,
 		enricher: p.UserAwareEnricher,
 		notif:    p.Notif,
-		st:       p.Storage,
+		storage:  p.Storage,
 
-		access: access.NewGrouped[qualificationsaccess.QualificationJobAccess, *qualificationsaccess.QualificationJobAccess, qualificationsaccess.QualificationUserAccess, *qualificationsaccess.QualificationUserAccess, access.DummyQualificationAccess[qualificationsaccess.AccessLevel], *access.DummyQualificationAccess[qualificationsaccess.AccessLevel], qualificationsaccess.AccessLevel](
-			p.DB,
-			table.FivenetQualifications,
-			&access.TargetTableColumns{
-				ID:         table.FivenetQualifications.ID,
-				DeletedAt:  table.FivenetQualifications.DeletedAt,
-				CreatorID:  table.FivenetQualifications.CreatorID,
-				CreatorJob: table.FivenetQualifications.CreatorJob,
-			},
-			access.NewJobs[qualificationsaccess.QualificationJobAccess, *qualificationsaccess.QualificationJobAccess, qualificationsaccess.AccessLevel](
-				table.FivenetQualificationsAccess,
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetQualificationsAccess.ID,
-						TargetID: table.FivenetQualificationsAccess.TargetID,
-						Access:   table.FivenetQualificationsAccess.Access,
-					},
-					Job:          table.FivenetQualificationsAccess.Job,
-					MinimumGrade: table.FivenetQualificationsAccess.MinimumGrade,
-				},
-				table.FivenetQualificationsAccess.AS("qualification_job_access"),
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID: table.FivenetQualificationsAccess.AS(
-							"qualification_job_access",
-						).ID,
-						TargetID: table.FivenetQualificationsAccess.AS(
-							"qualification_job_access",
-						).TargetID,
-						Access: table.FivenetQualificationsAccess.AS(
-							"qualification_job_access",
-						).Access,
-					},
-					Job: table.FivenetQualificationsAccess.AS(
-						"qualification_job_access",
-					).Job,
-					MinimumGrade: table.FivenetQualificationsAccess.AS(
-						"qualification_job_access",
-					).MinimumGrade,
-				},
-			),
-			nil,
-			nil,
-		),
+		access:         access.NewQualificationsSubjectObjectAccess(p.DB),
+		accessResolver: access.NewSubjectResolver(p.DB),
 
 		fHandler: qualiFileHandler,
+		store:    p.Store,
 	}
 
 	return s

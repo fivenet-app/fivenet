@@ -7,16 +7,14 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
-	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
-	"github.com/go-jet/jet/v2/mysql"
+	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 var HousekeeperModule = fx.Module(
@@ -32,7 +30,7 @@ type Housekeeper struct {
 	logger *zap.Logger
 	tracer trace.Tracer
 
-	db     *sql.DB
+	store  vehiclesstore.IStore
 	appCfg appconfig.IConfig
 }
 
@@ -57,7 +55,7 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 		logger: p.Logger.Named("vehicles.housekeeper"),
 		tracer: p.TP.Tracer("vehicles.housekeeper"),
 
-		db:     p.DB,
+		store:  vehiclesstore.New(p.DB, &config.CustomDB{}),
 		appCfg: p.AppConfig,
 	}
 
@@ -128,49 +126,13 @@ func (s *Housekeeper) maxWantedDurationHandling(ctx context.Context) (int, error
 
 	maxDays := game.GetMaxWantedDurationVehicle().GetSeconds() / 24 / 3600
 
-	tVehicleProps := table.FivenetVehiclesProps
-	stmt := tVehicleProps.
-		SELECT(
-			tVehicleProps.Plate,
-		).
-		FROM(tVehicleProps).
-		WHERE(mysql.AND(
-			tVehicleProps.Wanted.IS_TRUE(),
-			mysql.OR(
-				tVehicleProps.WantedAt.LT(
-					mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(maxDays, "DAY")),
-				),
-				tVehicleProps.WantedTill.LT(mysql.CURRENT_TIMESTAMP()),
-			),
-		)).
-		LIMIT(100)
-
-	var dest []string
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	dest, err := s.store.ListExpiredWanted(ctx, maxDays, 100)
+	if err != nil {
 		return 0, err
 	}
 
 	for _, plate := range dest {
-		props := &vehiclesprops.VehicleProps{}
-		if err := props.LoadFromDB(ctx, s.db, plate); err != nil {
-			s.logger.Error(
-				"error loading vehicle props for cleanup",
-				zap.String("plate", plate),
-				zap.Error(err),
-			)
-			continue
-		}
-
-		// Create a copy of the original props and modify the wanted status
-		in := proto.Clone(props).(*vehiclesprops.VehicleProps)
-
-		wanted := false
-		in.Wanted = &wanted
-		in.WantedReason = nil
-		in.WantedAt = nil
-
-		// Update vehicle props
-		if err := props.HandleChanges(ctx, s.db, in); err != nil {
+		if err := s.store.ClearWanted(ctx, plate); err != nil {
 			s.logger.Error(
 				"error handling vehicle props changes during cleanup",
 				zap.String("plate", plate),

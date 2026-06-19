@@ -13,13 +13,13 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { OnEditBehavior } from "../approval/approval";
 import { ApprovalRuleKind } from "../approval/approval";
-import { AccessLevel } from "../access/access";
 import { Vehicle } from "../../vehicles/vehicles";
 import { UserShort } from "../../users/short/user";
 import { DocumentShort } from "../documents";
 import { User } from "../../users/user";
 import { Workflow } from "../workflow/workflow";
-import { DocumentAccess } from "../access/access";
+import { Access } from "../../access/access";
+import { JobAccess } from "../../access/access";
 import { Category } from "../category/category";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
@@ -39,67 +39,71 @@ export interface Template {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: resources.documents.category.Category category = 4
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.documents.category.Category category = 5
      */
     category?: Category;
     /**
-     * @generated from protobuf field: uint32 weight = 5
+     * @generated from protobuf field: uint32 weight = 6
      */
     weight: number;
     /**
-     * @generated from protobuf field: string title = 6
+     * @generated from protobuf field: string title = 7
      */
     title: string;
     /**
-     * @generated from protobuf field: string description = 7
+     * @generated from protobuf field: string description = 8
      */
     description: string;
     /**
-     * @generated from protobuf field: optional string color = 8
+     * @generated from protobuf field: optional string color = 9
      */
     color?: string;
     /**
-     * @generated from protobuf field: optional string icon = 9
+     * @generated from protobuf field: optional string icon = 10
      */
     icon?: string;
     /**
-     * @generated from protobuf field: string content_title = 10
+     * @generated from protobuf field: string content_title = 11
      */
     contentTitle: string;
     /**
-     * @generated from protobuf field: string content = 11
+     * @generated from protobuf field: string content = 12
      */
     content: string;
     /**
-     * @generated from protobuf field: string state = 12
+     * @generated from protobuf field: string state = 13
      */
     state: string;
     /**
-     * @generated from protobuf field: resources.documents.templates.TemplateSchema schema = 13
+     * @generated from protobuf field: resources.documents.templates.TemplateSchema schema = 14
      */
     schema?: TemplateSchema;
     /**
-     * @generated from protobuf field: string creator_job = 14
+     * @generated from protobuf field: string creator_job = 15
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: optional string creator_job_label = 15
+     * @generated from protobuf field: optional string creator_job_label = 16
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: repeated resources.documents.templates.TemplateJobAccess job_access = 16
+     * @generated from protobuf field: repeated resources.access.JobAccess job_access = 17
      */
-    jobAccess: TemplateJobAccess[];
+    jobAccess: JobAccess[];
     /**
-     * @generated from protobuf field: resources.documents.access.DocumentAccess content_access = 17
+     * @generated from protobuf field: resources.access.Access content_access = 18
      */
-    contentAccess?: DocumentAccess;
+    contentAccess?: Access;
     /**
-     * @generated from protobuf field: optional resources.documents.workflow.Workflow workflow = 18
+     * @generated from protobuf field: optional resources.documents.workflow.Workflow workflow = 19
      */
     workflow?: Workflow;
     /**
-     * @generated from protobuf field: optional resources.documents.templates.TemplateApproval approval = 19
+     * @generated from protobuf field: optional resources.documents.templates.TemplateApproval approval = 20
      */
     approval?: TemplateApproval;
 }
@@ -120,43 +124,47 @@ export interface TemplateShort {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: resources.documents.category.Category category = 4
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.documents.category.Category category = 5
      */
     category?: Category;
     /**
-     * @generated from protobuf field: uint32 weight = 5
+     * @generated from protobuf field: uint32 weight = 6
      */
     weight: number;
     /**
-     * @generated from protobuf field: string title = 6
+     * @generated from protobuf field: string title = 7
      */
     title: string;
     /**
-     * @generated from protobuf field: string description = 7
+     * @generated from protobuf field: string description = 8
      */
     description: string;
     /**
-     * @generated from protobuf field: optional string color = 8
+     * @generated from protobuf field: optional string color = 9
      */
     color?: string;
     /**
-     * @generated from protobuf field: optional string icon = 9
+     * @generated from protobuf field: optional string icon = 10
      */
     icon?: string;
     /**
-     * @generated from protobuf field: resources.documents.templates.TemplateSchema schema = 10
+     * @generated from protobuf field: resources.documents.templates.TemplateSchema schema = 14
      */
     schema?: TemplateSchema;
     /**
-     * @generated from protobuf field: string creator_job = 11
+     * @generated from protobuf field: string creator_job = 15
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: optional string creator_job_label = 12
+     * @generated from protobuf field: optional string creator_job_label = 16
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: optional resources.documents.workflow.Workflow workflow = 18
+     * @generated from protobuf field: optional resources.documents.workflow.Workflow workflow = 19
      */
     workflow?: Workflow;
 }
@@ -223,50 +231,6 @@ export interface TemplateData {
      * @generated from protobuf field: repeated resources.vehicles.Vehicle vehicles = 4
      */
     vehicles: Vehicle[];
-}
-/**
- * @generated from protobuf message resources.documents.templates.TemplateJobAccess
- */
-export interface TemplateJobAccess {
-    /**
-     * @generated from protobuf field: int64 id = 1
-     */
-    id: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: int64 target_id = 3
-     */
-    targetId: number;
-    /**
-     * @generated from protobuf field: string job = 4
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: optional string job_label = 5
-     */
-    jobLabel?: string;
-    /**
-     * @generated from protobuf field: int32 minimum_grade = 6
-     */
-    minimumGrade: number;
-    /**
-     * @generated from protobuf field: optional string job_grade_label = 7
-     */
-    jobGradeLabel?: string;
-    /**
-     * @generated from protobuf field: resources.documents.access.AccessLevel access = 8
-     */
-    access: AccessLevel;
-}
-/**
- * Dummy - DO NOT USE!
- *
- * @generated from protobuf message resources.documents.templates.TemplateUserAccess
- */
-export interface TemplateUserAccess {
 }
 /**
  * @generated from protobuf message resources.documents.templates.TemplateApproval
@@ -364,22 +328,23 @@ class Template$Type extends MessageType<Template> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
-            { no: 5, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 4294967295 } } } },
-            { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 8, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 10, name: "content_title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxBytes: "10240" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"content_title\"" } },
-            { no: 11, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "0", maxBytes: "2000000" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"content\"" } },
-            { no: 12, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "tagger.tags": "alias:\"state\"" } },
-            { no: 13, name: "schema", kind: "message", T: () => TemplateSchema, options: { "tagger.tags": "alias:\"schema\"" } },
-            { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 15, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 16, name: "job_access", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => TemplateJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
-            { no: 17, name: "content_access", kind: "message", T: () => DocumentAccess, options: { "tagger.tags": "alias:\"access\"" } },
-            { no: 18, name: "workflow", kind: "message", T: () => Workflow },
-            { no: 19, name: "approval", kind: "message", T: () => TemplateApproval }
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
+            { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 4294967295 } } } },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 9, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 10, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 11, name: "content_title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxBytes: "10240" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"content_title\"" } },
+            { no: 12, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "0", maxBytes: "2000000" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"content\"" } },
+            { no: 13, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "tagger.tags": "alias:\"state\"" } },
+            { no: 14, name: "schema", kind: "message", T: () => TemplateSchema, options: { "tagger.tags": "alias:\"schema\"" } },
+            { no: 15, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 16, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 17, name: "job_access", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
+            { no: 18, name: "content_access", kind: "message", T: () => Access, options: { "tagger.tags": "alias:\"access\"" } },
+            { no: 19, name: "workflow", kind: "message", T: () => Workflow },
+            { no: 20, name: "approval", kind: "message", T: () => TemplateApproval }
         ]);
     }
     create(value?: PartialMessage<Template>): Template {
@@ -411,52 +376,55 @@ class Template$Type extends MessageType<Template> {
                 case /* optional resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* resources.documents.category.Category category */ 4:
+                case /* optional resources.timestamp.Timestamp deleted_at */ 4:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* resources.documents.category.Category category */ 5:
                     message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
                     break;
-                case /* uint32 weight */ 5:
+                case /* uint32 weight */ 6:
                     message.weight = reader.uint32();
                     break;
-                case /* string title */ 6:
+                case /* string title */ 7:
                     message.title = reader.string();
                     break;
-                case /* string description */ 7:
+                case /* string description */ 8:
                     message.description = reader.string();
                     break;
-                case /* optional string color */ 8:
+                case /* optional string color */ 9:
                     message.color = reader.string();
                     break;
-                case /* optional string icon */ 9:
+                case /* optional string icon */ 10:
                     message.icon = reader.string();
                     break;
-                case /* string content_title */ 10:
+                case /* string content_title */ 11:
                     message.contentTitle = reader.string();
                     break;
-                case /* string content */ 11:
+                case /* string content */ 12:
                     message.content = reader.string();
                     break;
-                case /* string state */ 12:
+                case /* string state */ 13:
                     message.state = reader.string();
                     break;
-                case /* resources.documents.templates.TemplateSchema schema */ 13:
+                case /* resources.documents.templates.TemplateSchema schema */ 14:
                     message.schema = TemplateSchema.internalBinaryRead(reader, reader.uint32(), options, message.schema);
                     break;
-                case /* string creator_job */ 14:
+                case /* string creator_job */ 15:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional string creator_job_label */ 15:
+                case /* optional string creator_job_label */ 16:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* repeated resources.documents.templates.TemplateJobAccess job_access */ 16:
-                    message.jobAccess.push(TemplateJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.access.JobAccess job_access */ 17:
+                    message.jobAccess.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* resources.documents.access.DocumentAccess content_access */ 17:
-                    message.contentAccess = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.contentAccess);
+                case /* resources.access.Access content_access */ 18:
+                    message.contentAccess = Access.internalBinaryRead(reader, reader.uint32(), options, message.contentAccess);
                     break;
-                case /* optional resources.documents.workflow.Workflow workflow */ 18:
+                case /* optional resources.documents.workflow.Workflow workflow */ 19:
                     message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
                     break;
-                case /* optional resources.documents.templates.TemplateApproval approval */ 19:
+                case /* optional resources.documents.templates.TemplateApproval approval */ 20:
                     message.approval = TemplateApproval.internalBinaryRead(reader, reader.uint32(), options, message.approval);
                     break;
                 default:
@@ -480,54 +448,57 @@ class Template$Type extends MessageType<Template> {
         /* optional resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
             Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.category.Category category = 4; */
+        /* optional resources.timestamp.Timestamp deleted_at = 4; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.category.Category category = 5; */
         if (message.category)
-            Category.internalBinaryWrite(message.category, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* uint32 weight = 5; */
+            Category.internalBinaryWrite(message.category, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* uint32 weight = 6; */
         if (message.weight !== 0)
-            writer.tag(5, WireType.Varint).uint32(message.weight);
-        /* string title = 6; */
+            writer.tag(6, WireType.Varint).uint32(message.weight);
+        /* string title = 7; */
         if (message.title !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.title);
-        /* string description = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.title);
+        /* string description = 8; */
         if (message.description !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.description);
-        /* optional string color = 8; */
+            writer.tag(8, WireType.LengthDelimited).string(message.description);
+        /* optional string color = 9; */
         if (message.color !== undefined)
-            writer.tag(8, WireType.LengthDelimited).string(message.color);
-        /* optional string icon = 9; */
+            writer.tag(9, WireType.LengthDelimited).string(message.color);
+        /* optional string icon = 10; */
         if (message.icon !== undefined)
-            writer.tag(9, WireType.LengthDelimited).string(message.icon);
-        /* string content_title = 10; */
+            writer.tag(10, WireType.LengthDelimited).string(message.icon);
+        /* string content_title = 11; */
         if (message.contentTitle !== "")
-            writer.tag(10, WireType.LengthDelimited).string(message.contentTitle);
-        /* string content = 11; */
+            writer.tag(11, WireType.LengthDelimited).string(message.contentTitle);
+        /* string content = 12; */
         if (message.content !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.content);
-        /* string state = 12; */
+            writer.tag(12, WireType.LengthDelimited).string(message.content);
+        /* string state = 13; */
         if (message.state !== "")
-            writer.tag(12, WireType.LengthDelimited).string(message.state);
-        /* resources.documents.templates.TemplateSchema schema = 13; */
+            writer.tag(13, WireType.LengthDelimited).string(message.state);
+        /* resources.documents.templates.TemplateSchema schema = 14; */
         if (message.schema)
-            TemplateSchema.internalBinaryWrite(message.schema, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 14; */
+            TemplateSchema.internalBinaryWrite(message.schema, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 15; */
         if (message.creatorJob !== "")
-            writer.tag(14, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional string creator_job_label = 15; */
+            writer.tag(15, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional string creator_job_label = 16; */
         if (message.creatorJobLabel !== undefined)
-            writer.tag(15, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* repeated resources.documents.templates.TemplateJobAccess job_access = 16; */
+            writer.tag(16, WireType.LengthDelimited).string(message.creatorJobLabel);
+        /* repeated resources.access.JobAccess job_access = 17; */
         for (let i = 0; i < message.jobAccess.length; i++)
-            TemplateJobAccess.internalBinaryWrite(message.jobAccess[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.access.DocumentAccess content_access = 17; */
+            JobAccess.internalBinaryWrite(message.jobAccess[i], writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* resources.access.Access content_access = 18; */
         if (message.contentAccess)
-            DocumentAccess.internalBinaryWrite(message.contentAccess, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.workflow.Workflow workflow = 18; */
+            Access.internalBinaryWrite(message.contentAccess, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.workflow.Workflow workflow = 19; */
         if (message.workflow)
-            Workflow.internalBinaryWrite(message.workflow, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.templates.TemplateApproval approval = 19; */
+            Workflow.internalBinaryWrite(message.workflow, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.templates.TemplateApproval approval = 20; */
         if (message.approval)
-            TemplateApproval.internalBinaryWrite(message.approval, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
+            TemplateApproval.internalBinaryWrite(message.approval, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -545,16 +516,17 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
-            { no: 5, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 4294967295 } } } },
-            { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 8, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 10, name: "schema", kind: "message", T: () => TemplateSchema, options: { "tagger.tags": "alias:\"schema\"" } },
-            { no: 11, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 12, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 18, name: "workflow", kind: "message", T: () => Workflow }
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
+            { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 4294967295 } } } },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 9, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 10, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 14, name: "schema", kind: "message", T: () => TemplateSchema, options: { "tagger.tags": "alias:\"schema\"" } },
+            { no: 15, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 16, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 19, name: "workflow", kind: "message", T: () => Workflow }
         ]);
     }
     create(value?: PartialMessage<TemplateShort>): TemplateShort {
@@ -582,34 +554,37 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
                 case /* optional resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* resources.documents.category.Category category */ 4:
+                case /* optional resources.timestamp.Timestamp deleted_at */ 4:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* resources.documents.category.Category category */ 5:
                     message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
                     break;
-                case /* uint32 weight */ 5:
+                case /* uint32 weight */ 6:
                     message.weight = reader.uint32();
                     break;
-                case /* string title */ 6:
+                case /* string title */ 7:
                     message.title = reader.string();
                     break;
-                case /* string description */ 7:
+                case /* string description */ 8:
                     message.description = reader.string();
                     break;
-                case /* optional string color */ 8:
+                case /* optional string color */ 9:
                     message.color = reader.string();
                     break;
-                case /* optional string icon */ 9:
+                case /* optional string icon */ 10:
                     message.icon = reader.string();
                     break;
-                case /* resources.documents.templates.TemplateSchema schema */ 10:
+                case /* resources.documents.templates.TemplateSchema schema */ 14:
                     message.schema = TemplateSchema.internalBinaryRead(reader, reader.uint32(), options, message.schema);
                     break;
-                case /* string creator_job */ 11:
+                case /* string creator_job */ 15:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional string creator_job_label */ 12:
+                case /* optional string creator_job_label */ 16:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* optional resources.documents.workflow.Workflow workflow */ 18:
+                case /* optional resources.documents.workflow.Workflow workflow */ 19:
                     message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
                     break;
                 default:
@@ -633,36 +608,39 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
         /* optional resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
             Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.category.Category category = 4; */
+        /* optional resources.timestamp.Timestamp deleted_at = 4; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.category.Category category = 5; */
         if (message.category)
-            Category.internalBinaryWrite(message.category, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* uint32 weight = 5; */
+            Category.internalBinaryWrite(message.category, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* uint32 weight = 6; */
         if (message.weight !== 0)
-            writer.tag(5, WireType.Varint).uint32(message.weight);
-        /* string title = 6; */
+            writer.tag(6, WireType.Varint).uint32(message.weight);
+        /* string title = 7; */
         if (message.title !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.title);
-        /* string description = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.title);
+        /* string description = 8; */
         if (message.description !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.description);
-        /* optional string color = 8; */
+            writer.tag(8, WireType.LengthDelimited).string(message.description);
+        /* optional string color = 9; */
         if (message.color !== undefined)
-            writer.tag(8, WireType.LengthDelimited).string(message.color);
-        /* optional string icon = 9; */
+            writer.tag(9, WireType.LengthDelimited).string(message.color);
+        /* optional string icon = 10; */
         if (message.icon !== undefined)
-            writer.tag(9, WireType.LengthDelimited).string(message.icon);
-        /* resources.documents.templates.TemplateSchema schema = 10; */
+            writer.tag(10, WireType.LengthDelimited).string(message.icon);
+        /* resources.documents.templates.TemplateSchema schema = 14; */
         if (message.schema)
-            TemplateSchema.internalBinaryWrite(message.schema, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 11; */
+            TemplateSchema.internalBinaryWrite(message.schema, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 15; */
         if (message.creatorJob !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional string creator_job_label = 12; */
+            writer.tag(15, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional string creator_job_label = 16; */
         if (message.creatorJobLabel !== undefined)
-            writer.tag(12, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* optional resources.documents.workflow.Workflow workflow = 18; */
+            writer.tag(16, WireType.LengthDelimited).string(message.creatorJobLabel);
+        /* optional resources.documents.workflow.Workflow workflow = 19; */
         if (message.workflow)
-            Workflow.internalBinaryWrite(message.workflow, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+            Workflow.internalBinaryWrite(message.workflow, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -909,144 +887,6 @@ class TemplateData$Type extends MessageType<TemplateData> {
  * @generated MessageType for protobuf message resources.documents.templates.TemplateData
  */
 export const TemplateData = new TemplateData$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
-    constructor() {
-        super("resources.documents.templates.TemplateJobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"id\"" } },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"template_id\"" } },
-            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 8, name: "access", kind: "enum", T: () => ["resources.documents.access.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<TemplateJobAccess>): TemplateJobAccess {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        message.targetId = 0;
-        message.job = "";
-        message.minimumGrade = 0;
-        message.access = 0;
-        if (value !== undefined)
-            reflectionMergePartial<TemplateJobAccess>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TemplateJobAccess): TemplateJobAccess {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 id */ 1:
-                    message.id = reader.int64().toNumber();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* int64 target_id */ 3:
-                    message.targetId = reader.int64().toNumber();
-                    break;
-                case /* string job */ 4:
-                    message.job = reader.string();
-                    break;
-                case /* optional string job_label */ 5:
-                    message.jobLabel = reader.string();
-                    break;
-                case /* int32 minimum_grade */ 6:
-                    message.minimumGrade = reader.int32();
-                    break;
-                case /* optional string job_grade_label */ 7:
-                    message.jobGradeLabel = reader.string();
-                    break;
-                case /* resources.documents.access.AccessLevel access */ 8:
-                    message.access = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: TemplateJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).int64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int64 target_id = 3; */
-        if (message.targetId !== 0)
-            writer.tag(3, WireType.Varint).int64(message.targetId);
-        /* string job = 4; */
-        if (message.job !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.job);
-        /* optional string job_label = 5; */
-        if (message.jobLabel !== undefined)
-            writer.tag(5, WireType.LengthDelimited).string(message.jobLabel);
-        /* int32 minimum_grade = 6; */
-        if (message.minimumGrade !== 0)
-            writer.tag(6, WireType.Varint).int32(message.minimumGrade);
-        /* optional string job_grade_label = 7; */
-        if (message.jobGradeLabel !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.jobGradeLabel);
-        /* resources.documents.access.AccessLevel access = 8; */
-        if (message.access !== 0)
-            writer.tag(8, WireType.Varint).int32(message.access);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.templates.TemplateJobAccess
- */
-export const TemplateJobAccess = new TemplateJobAccess$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class TemplateUserAccess$Type extends MessageType<TemplateUserAccess> {
-    constructor() {
-        super("resources.documents.templates.TemplateUserAccess", []);
-    }
-    create(value?: PartialMessage<TemplateUserAccess>): TemplateUserAccess {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<TemplateUserAccess>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TemplateUserAccess): TemplateUserAccess {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: TemplateUserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.templates.TemplateUserAccess
- */
-export const TemplateUserAccess = new TemplateUserAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TemplateApproval$Type extends MessageType<TemplateApproval> {
     constructor() {

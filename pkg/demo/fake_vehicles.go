@@ -105,23 +105,25 @@ func (d *Demo) seedFakeVehicles(ctx context.Context) error {
 		}
 	}
 
-	insertVehicles = insertVehicles.ON_DUPLICATE_KEY_UPDATE(
-		tOwnedVehicles.UserID.SET(mysql.RawInt("VALUES(`user_id`)")),
-		tOwnedVehicles.Model.SET(mysql.RawString("VALUES(`model`)")),
-		tOwnedVehicles.Type.SET(mysql.RawString("VALUES(`type`)")),
-		tOwnedVehicles.Data.SET(mysql.RawString("VALUES(`data`)")),
-	)
+	insertVehicles = insertVehicles.
+		ON_DUPLICATE_KEY_UPDATE(
+			tOwnedVehicles.UserID.SET(mysql.RawInt("VALUES(`user_id`)")),
+			tOwnedVehicles.Model.SET(mysql.RawString("VALUES(`model`)")),
+			tOwnedVehicles.Type.SET(mysql.RawString("VALUES(`type`)")),
+			tOwnedVehicles.Data.SET(mysql.RawString("VALUES(`data`)")),
+		)
 
 	if _, err := insertVehicles.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert demo vehicles. %w", err)
 	}
 
-	insertProps = insertProps.ON_DUPLICATE_KEY_UPDATE(
-		tVehicleProps.Wanted.SET(mysql.RawBool("VALUES(`wanted`)")),
-		tVehicleProps.WantedAt.SET(mysql.RawTimestamp("VALUES(`wanted_at`)")),
-		tVehicleProps.WantedTill.SET(mysql.RawTimestamp("VALUES(`wanted_till`)")),
-		tVehicleProps.WantedReason.SET(mysql.RawString("VALUES(`wanted_reason`)")),
-	)
+	insertProps = insertProps.
+		ON_DUPLICATE_KEY_UPDATE(
+			tVehicleProps.Wanted.SET(mysql.RawBool("VALUES(`wanted`)")),
+			tVehicleProps.WantedAt.SET(mysql.RawTimestamp("VALUES(`wanted_at`)")),
+			tVehicleProps.WantedTill.SET(mysql.RawTimestamp("VALUES(`wanted_till`)")),
+			tVehicleProps.WantedReason.SET(mysql.RawString("VALUES(`wanted_reason`)")),
+		)
 
 	if _, err := insertProps.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert demo vehicle props. %w", err)
@@ -200,21 +202,21 @@ func (d *Demo) clearDemoVehicles(ctx context.Context, tx *sql.Tx) error {
 	return nil
 }
 
-func (d *Demo) demoVehicleCountForOwner(owner demoVehicleOwner) int {
+func (d *Demo) demoVehicleCountForOwner(_ demoVehicleOwner) int {
 	return d.fake.Number(1, 2)
 }
 
-func (d *Demo) demoVehiclePlate(owner demoVehicleOwner, slot int) string {
+func (d *Demo) demoVehiclePlate(_ demoVehicleOwner, _ int) string {
 	token := strings.ToUpper(d.fake.Lexify("????"))
 	nr := d.fake.Numerify("###")
 	return fmt.Sprintf("%s%s-%s", demoVehiclePlatePrefix, nr, token)
 }
 
-func (d *Demo) demoVehicleModel(owner demoVehicleOwner, slot int) string {
+func (d *Demo) demoVehicleModel(_ demoVehicleOwner, _ int) string {
 	return strings.ToLower(strings.ReplaceAll(d.fake.CarModel(), " ", "_"))
 }
 
-func (d *Demo) demoVehicleType(owner demoVehicleOwner, slot int) string {
+func (d *Demo) demoVehicleType(_ demoVehicleOwner, _ int) string {
 	return d.fake.RandomString(demoVehicleTypes)
 }
 

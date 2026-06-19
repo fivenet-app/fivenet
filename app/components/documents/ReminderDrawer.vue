@@ -109,7 +109,7 @@ async function closeDrawer(): Promise<void> {
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
                 <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                    <UFormField name="reminderTime" :label="$t('common.time')">
+                    <UFormField name="reminderTime" :label="$t('common.time')" required>
                         <InputDatePicker
                             v-model="state.reminderTime"
                             time
@@ -120,7 +120,7 @@ async function closeDrawer(): Promise<void> {
                         />
                     </UFormField>
 
-                    <UFormField name="message" :label="$t('common.message')">
+                    <UFormField name="message" :label="$t('common.message')" required>
                         <UInput v-model="state.message" class="w-full" type="text" :placeholder="$t('common.message')" />
                     </UFormField>
 

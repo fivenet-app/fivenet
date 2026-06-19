@@ -20,7 +20,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
-	"github.com/fivenet-app/fivenet/v2026/stores/users"
+	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -195,7 +195,7 @@ func (s *Server) ListDispatches(
 		}
 
 		if resp.Dispatches[i].CreatorId != nil {
-			resp.Dispatches[i].Creator, err = users.RetrieveUserById(
+			resp.Dispatches[i].Creator, err = usersstore.RetrieveUserById(
 				ctx,
 				s.db,
 				dsps[i].GetCreatorId(),
@@ -241,7 +241,7 @@ func (s *Server) GetDispatch(
 	ctx context.Context,
 	req *pbcentrum.GetDispatchRequest,
 ) (*pbcentrum.GetDispatchResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.dispatch_id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{dispatchIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -334,7 +334,7 @@ func (s *Server) GetDispatch(
 	}
 
 	if resp.Dispatch.CreatorId != nil && resp.GetDispatch().GetCreatorId() > 0 {
-		creator, err := users.RetrieveUserById(ctx, s.db, resp.GetDispatch().GetCreatorId())
+		creator, err := usersstore.RetrieveUserById(ctx, s.db, resp.GetDispatch().GetCreatorId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
@@ -397,7 +397,7 @@ func (s *Server) UpdateDispatch(
 ) (*pbcentrum.UpdateDispatchResponse, error) {
 	logging.InjectFields(
 		ctx,
-		logging.Fields{"fivenet.centrum.dispatch_id", req.GetDispatch().GetId()},
+		logging.Fields{dispatchIDLogFieldKey, req.GetDispatch().GetId()},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -517,7 +517,7 @@ func (s *Server) AssignDispatch(
 	req *pbcentrum.AssignDispatchRequest,
 ) (*pbcentrum.AssignDispatchResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.centrum.dispatch_id", req.GetDispatchId(),
+		dispatchIDLogFieldKey, req.GetDispatchId(),
 		"fivenet.centrum.units.to_add", req.GetToAdd(),
 		"fivenet.centrum.units.to_remove", req.GetToRemove(),
 	})

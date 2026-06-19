@@ -19,11 +19,11 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 	cfg, err := config.LoadTestConfig()
 	require.NoError(t, err)
 	url := "https://example.fivenet.app/"
-	cfg.HTTP.PublicURL = url
+	cfg.Config.HTTP.PublicURL = url
 
 	router := cmdroute.NewRouter()
 	cmd, err := NewFivenetCommand(CommandParams{
-		Cfg:  cfg,
+		Cfg:  cfg.Config,
 		I18n: l,
 	})
 	require.NoError(t, err)

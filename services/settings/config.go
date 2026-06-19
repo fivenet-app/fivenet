@@ -12,11 +12,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
-	"github.com/go-jet/jet/v2/mysql"
 )
-
-var tConfig = table.FivenetConfig
 
 func (s *Server) GetAppConfig(
 	ctx context.Context,
@@ -50,20 +46,7 @@ func (s *Server) UpdateAppConfig(
 		)
 	}
 
-	stmt := tConfig.
-		INSERT(
-			tConfig.Key,
-			tConfig.AppConfig,
-		).
-		VALUES(
-			1,
-			req.GetConfig(),
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tConfig.AppConfig.SET(mysql.RawString("VALUES(`app_config`)")),
-		)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.UpdateAppConfig(ctx, req.GetConfig()); err != nil {
 		return nil, err
 	}
 

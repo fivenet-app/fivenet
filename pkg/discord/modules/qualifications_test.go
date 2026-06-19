@@ -77,7 +77,7 @@ func TestQualificationsPlanUsersMergesRolesForSameUser(t *testing.T) {
 	}()
 
 	for range 2 {
-		mock.ExpectQuery("SELECT .*fivenet_qualifications_results.*").
+		mock.ExpectQuery("SELECT .*fivenet_qualifications_result_success_map.*").
 			WillReturnRows(sqlmock.NewRows([]string{
 				"qualification_user_mapping.external_id",
 				"qualification_user_mapping.user_id",
@@ -115,7 +115,7 @@ func TestQualificationsQueryAndPlanUsersForQualificationSkipsInvalidExternalID(t
 		_ = db.Close()
 	}()
 
-	mock.ExpectQuery("SELECT .*fivenet_qualifications_results.*").
+	mock.ExpectQuery("SELECT .*fivenet_qualifications_result_success_map.*").
 		WillReturnRows(sqlmock.NewRows([]string{
 			"qualification_user_mapping.external_id",
 			"qualification_user_mapping.user_id",

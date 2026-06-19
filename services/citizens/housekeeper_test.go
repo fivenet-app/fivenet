@@ -8,7 +8,9 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
@@ -61,6 +63,7 @@ func TestHousekeeperMaxWantedDurationHandling_Disabled(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
+		store:  citizensstore.New(db, &config.CustomDB{}),
 	}
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
@@ -88,6 +91,7 @@ func TestHousekeeperMaxWantedDurationHandling_NoDuration(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
+		store:  citizensstore.New(db, &config.CustomDB{}),
 	}
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
@@ -115,6 +119,7 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
+		store:  citizensstore.New(db, &config.CustomDB{}),
 	}
 
 	// Assert the key eligibility condition:
@@ -130,12 +135,37 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(int32(42)))
 
 	// Retrieve user props for matched user
-	mock.ExpectQuery(`(?s)FROM .*fivenet_user_props.*LEFT JOIN .*fivenet_files.*WHERE .*user_id.*LIMIT \?`).
-		WithArgs(int32(42), sqlmock.AnyArg()).
-		WillReturnRows(
-			sqlmock.NewRows([]string{"user_id", "wanted"}).
-				AddRow(int32(42), true),
-		)
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_props AS user_props`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_files AS mugshot ON`)).
+		WithArgs(int32(42), int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"user_props.user_id",
+			"user_props.updated_at",
+			"user_props.wanted",
+			"user_props.job",
+			"user_props.job_grade",
+			"user_props.traffic_infraction_points",
+			"user_props.traffic_infraction_points_updated_at",
+			"user_props.open_fines",
+			"user_props.mugshot_file_id",
+			"mugshot.mugshot_file_id",
+			"file_path",
+		}).AddRow(
+			int32(42),
+			nil,
+			true,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+		))
+
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_labels INNER JOIN fivenet_user_labels_job AS label ON`)+`(?s).*`).
+		WithArgs(int32(42), int64(25)).
+		WillReturnRows(sqlmock.NewRows([]string{"fivenet_user_labels_job.id", "fivenet_user_labels_job.job", "fivenet_user_labels_job.name", "fivenet_user_labels_job.color"}))
 
 	// Make sure the query flips wanted to false for matched user.
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
@@ -170,6 +200,7 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
+		store:  citizensstore.New(db, &config.CustomDB{}),
 	}
 
 	// Two eligible users are returned by the selection query
@@ -181,17 +212,73 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 				AddRow(int32(43)),
 		)
 
-	mock.ExpectQuery(`(?s)FROM .*fivenet_user_props.*LEFT JOIN .*fivenet_files.*WHERE .*user_id.*LIMIT \?`).
-		WithArgs(int32(42), sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "wanted"}).AddRow(int32(42), true))
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_props AS user_props`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_files AS mugshot ON`)).
+		WithArgs(int32(42), int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"user_props.user_id",
+			"user_props.updated_at",
+			"user_props.wanted",
+			"user_props.job",
+			"user_props.job_grade",
+			"user_props.traffic_infraction_points",
+			"user_props.traffic_infraction_points_updated_at",
+			"user_props.open_fines",
+			"user_props.mugshot_file_id",
+			"mugshot.mugshot_file_id",
+			"file_path",
+		}).AddRow(
+			int32(42),
+			nil,
+			true,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+		))
+
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_labels INNER JOIN fivenet_user_labels_job AS label ON`)+`(?s).*`).
+		WithArgs(int32(42), int64(25)).
+		WillReturnRows(sqlmock.NewRows([]string{"fivenet_user_labels_job.id", "fivenet_user_labels_job.job", "fivenet_user_labels_job.name", "fivenet_user_labels_job.color"}))
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_activity`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
-	mock.ExpectQuery(`(?s)FROM .*fivenet_user_props.*LEFT JOIN .*fivenet_files.*WHERE .*user_id.*LIMIT \?`).
-		WithArgs(int32(43), sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "wanted"}).AddRow(int32(43), true))
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_props AS user_props`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_files AS mugshot ON`)).
+		WithArgs(int32(43), int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"user_props.user_id",
+			"user_props.updated_at",
+			"user_props.wanted",
+			"user_props.job",
+			"user_props.job_grade",
+			"user_props.traffic_infraction_points",
+			"user_props.traffic_infraction_points_updated_at",
+			"user_props.open_fines",
+			"user_props.mugshot_file_id",
+			"mugshot.mugshot_file_id",
+			"file_path",
+		}).AddRow(
+			int32(43),
+			nil,
+			true,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+		))
+
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_labels INNER JOIN fivenet_user_labels_job AS label ON`)+`(?s).*`).
+		WithArgs(int32(43), int64(25)).
+		WillReturnRows(sqlmock.NewRows([]string{"fivenet_user_labels_job.id", "fivenet_user_labels_job.job", "fivenet_user_labels_job.name", "fivenet_user_labels_job.color"}))
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_activity`).

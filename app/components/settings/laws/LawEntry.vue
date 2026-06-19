@@ -26,7 +26,7 @@ const schema = z.object({
     name: z.string().min(3).max(128),
     description: z.union([z.string().min(3).max(1024), z.string().length(0).optional()]),
     hint: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
-    fine: z.coerce.number().nonnegative().max(999_999_999),
+    fine: z.coerce.number().nonnegative().max(999_999_999_999),
     detentionTime: z.coerce.number().nonnegative().max(999_999_999),
     stvoPoints: z.coerce.number().nonnegative().max(999_999_999),
 });
@@ -157,6 +157,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     name="fine"
                     :min="0"
                     :step="1000"
+                    :step-snapping="false"
+                    :max="999_999_999_999"
                     :format-options="{
                         style: 'currency',
                         currency: display.currencyName,

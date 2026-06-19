@@ -128,6 +128,12 @@ export async function getJobsConductClient() {
     return new ConductServiceClient(useGRPCTransport());
 }
 
+// Factory for jobs.groups client.
+export async function getJobsGroupsClient() {
+    const { GroupsServiceClient } = await import('~~/gen/ts/services/jobs/groups.client');
+    return new GroupsServiceClient(useGRPCTransport());
+}
+
 // Factory for jobs.jobs client.
 export async function getJobsJobsClient() {
     const { JobsServiceClient } = await import('~~/gen/ts/services/jobs/jobs.client');

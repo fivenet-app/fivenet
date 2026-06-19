@@ -2,32 +2,25 @@ package wiki
 
 import (
 	"context"
-	"errors"
 	"strings"
 
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
 	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
 	wikiactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
 	pbwiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/textdiff"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorswiki "github.com/fivenet-app/fivenet/v2026/services/wiki/errors"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
+	wikistore "github.com/fivenet-app/fivenet/v2026/stores/wiki"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
-
-var tPActivity = table.FivenetWikiPagesActivity
 
 func (s *Server) ListPageActivity(
 	ctx context.Context,
 	req *pbwiki.ListPageActivityRequest,
 ) (*pbwiki.ListPageActivityResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.GetPageId()})
+	logging.InjectFields(ctx, logging.Fields{pageIDLogFieldKey, req.GetPageId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -35,7 +28,7 @@ func (s *Server) ListPageActivity(
 		ctx,
 		req.GetPageId(),
 		userInfo,
-		wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -44,72 +37,32 @@ func (s *Server) ListPageActivity(
 		return nil, errorswiki.ErrPageDenied
 	}
 
-	tPActivity := table.FivenetWikiPagesActivity.AS("page_activity")
-	condition := tPActivity.PageID.EQ(mysql.Int64(req.GetPageId()))
-
-	countStmt := tPActivity.
-		SELECT(
-			mysql.COUNT(tPActivity.ID).AS("data_count.total"),
-		).
-		FROM(
-			tPActivity,
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-			}
-		}
+	count, err := s.store.CountPageActivity(
+		ctx,
+		wikistore.PageActivityQuery{PageID: req.GetPageId()},
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 10)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, 10)
 	resp := &pbwiki.ListPageActivityResponse{
 		Pagination: pag,
 		Activity:   []*wikiactivity.PageActivity{},
 	}
-	if count.Total <= 0 {
+	if count <= 0 {
 		return resp, nil
 	}
 
-	tCreator := table.FivenetUser.AS("creator")
-
-	stmt := tPActivity.
-		SELECT(
-			tPActivity.ID,
-			tPActivity.CreatedAt,
-			tPActivity.PageID,
-			tPActivity.ActivityType,
-			tPActivity.CreatorID,
-			tPActivity.CreatorJob,
-			tPActivity.Reason,
-			tPActivity.Data,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-		).
-		FROM(
-			tPActivity.
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tPActivity.CreatorID),
-				),
-		).
-		WHERE(condition).
-		OFFSET(
-			req.GetPagination().GetOffset(),
-		).
-		ORDER_BY(
-			tPActivity.ID.DESC(),
-		).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
+	activity, err := s.store.ListPageActivity(ctx, wikistore.PageActivityQuery{
+		PageID: req.GetPageId(),
+		Offset: req.GetPagination().GetOffset(),
+		Limit:  limit,
+	})
+	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
+	resp.Activity = activity
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetActivity() {
@@ -119,44 +72,6 @@ func (s *Server) ListPageActivity(
 	}
 
 	return resp, nil
-}
-
-func (s *Server) addPageActivity(
-	ctx context.Context,
-	tx qrm.DB,
-	activitiy *wikiactivity.PageActivity,
-) (int64, error) {
-	stmt := tPActivity.
-		INSERT(
-			tPActivity.PageID,
-			tPActivity.ActivityType,
-			tPActivity.CreatorID,
-			tPActivity.CreatorJob,
-			tPActivity.Reason,
-			tPActivity.Data,
-		).
-		VALUES(
-			activitiy.GetPageId(),
-			activitiy.GetActivityType(),
-			activitiy.CreatorId,
-			activitiy.CreatorJob,
-			activitiy.Reason,
-			activitiy.GetData(),
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return 0, err
-		}
-	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	return lastId, nil
 }
 
 // generatePageDiff Generates diff if the old and new contents are not equal, using a simple "string comparison".

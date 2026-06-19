@@ -20,6 +20,11 @@ import (
 	"go.uber.org/zap"
 )
 
+type ILaws interface {
+	GetLawBooks() []*laws.LawBook
+	Refresh(ctx context.Context, lawBookId int64) error
+}
+
 // Laws provides methods for loading, caching, and refreshing law books from the database.
 type Laws struct {
 	// logger for logging
@@ -39,7 +44,7 @@ type LawsResult struct {
 	fx.Out
 
 	// Laws is the main Laws instance
-	Laws *Laws
+	Laws ILaws
 	// CronRegister is used to register cronjobs for law updates
 	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
@@ -146,9 +151,10 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 		LIMIT(1000)
 
 	if lawBookId > 0 {
-		stmt = stmt.WHERE(
-			tLawBooks.ID.EQ(mysql.Int64(lawBookId)),
-		)
+		stmt = stmt.
+			WHERE(
+				tLawBooks.ID.EQ(mysql.Int64(lawBookId)),
+			)
 	}
 
 	var dest []*laws.LawBook

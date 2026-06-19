@@ -9,7 +9,7 @@ import { getCitizensLabelsClient } from '~~/gen/ts/clients';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import DataErrorBlock from '../../partials/data/DataErrorBlock.vue';
-import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
+import CreateOrUpdateDrawer from './CreateOrUpdateDrawer.vue';
 import { useDraggable } from 'vue-draggable-plus';
 import ReorderButtons from '~/components/partials/ReorderButtons.vue';
 import DraggableHandle from '~/components/partials/DraggableHandle.vue';
@@ -49,7 +49,7 @@ async function listLabels(): Promise<Label[]> {
     }
 }
 
-const createOrUpdateModal = overlay.create(CreateOrUpdateModal);
+const createOrUpdateDrawer = overlay.create(CreateOrUpdateDrawer);
 const deleteConfirmModal = overlay.create(ConfirmModal);
 
 async function deleteLabel(labelId: number): Promise<void> {
@@ -152,7 +152,7 @@ const columns = computed<TableColumn<Label>[]>(() => [
                               variant: 'link',
                               icon: 'i-mdi-pencil',
                               onClick: () => {
-                                  createOrUpdateModal.open({
+                                  createOrUpdateDrawer.open({
                                       labelId: row.original.id,
                                       onRefresh: () => refresh(),
                                   });
@@ -259,7 +259,7 @@ const columns = computed<TableColumn<Label>[]>(() => [
                             variant="outline"
                             trailing-icon="i-mdi-plus"
                             @click="
-                                createOrUpdateModal.open({
+                                createOrUpdateDrawer.open({
                                     onRefresh: () => refresh(),
                                 })
                             "

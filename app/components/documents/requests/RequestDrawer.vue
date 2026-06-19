@@ -5,7 +5,8 @@ import { checkDocAccess } from '~/components/documents/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import { AccessLevel, type DocumentAccess } from '~~/gen/ts/resources/documents/access/access';
+import type { Access } from '~~/gen/ts/resources/access/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity/activity';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -14,7 +15,7 @@ import RequestListEntry from './RequestListEntry.vue';
 
 const props = defineProps<{
     doc: DocumentShort;
-    access: DocumentAccess;
+    access: Access;
 }>();
 
 const emit = defineEmits<{

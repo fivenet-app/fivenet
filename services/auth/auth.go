@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
@@ -24,62 +23,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
-	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"go.uber.org/zap"
 )
-
-var (
-	tAccounts  = table.FivenetAccounts
-	tUserProps = table.FivenetUserProps.AS("user_props")
-	tJobProps  = table.FivenetJobProps.AS("job_props")
-)
-
-func (s *Server) getAccountFromDB(
-	ctx context.Context,
-	condition mysql.BoolExpression,
-	withPass bool,
-) (*model.FivenetAccounts, error) {
-	columns := mysql.ProjectionList{
-		tAccounts.ID,
-		tAccounts.CreatedAt,
-		tAccounts.UpdatedAt,
-		tAccounts.DeletedAt,
-		tAccounts.Enabled,
-		tAccounts.Username,
-		tAccounts.License,
-		tAccounts.RegToken,
-		tAccounts.Groups,
-		tAccounts.LastChar,
-	}
-	if withPass {
-		columns = append(columns, tAccounts.Password)
-	}
-
-	stmt := tAccounts.
-		SELECT(
-			columns[0],
-			columns[1:]...,
-		).
-		FROM(tAccounts).
-		WHERE(mysql.AND(
-			tAccounts.Enabled.IS_TRUE(),
-			tAccounts.DeletedAt.IS_NULL(),
-			condition,
-		)).
-		LIMIT(1)
-
-	acc := &model.FivenetAccounts{}
-	if err := stmt.QueryContext(ctx, s.db, acc); err != nil {
-		return nil, err
-	}
-
-	return acc, nil
-}
 
 func (s *Server) Login(
 	ctx context.Context,
@@ -89,11 +37,7 @@ func (s *Server) Login(
 
 	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.username", req.GetUsername()})
 
-	account, err := s.getAccountFromDB(ctx, mysql.AND(
-		tAccounts.Username.EQ(mysql.String(req.GetUsername())),
-		tAccounts.RegToken.IS_NULL(),
-		tAccounts.Password.IS_NOT_NULL(),
-	), true)
+	account, err := s.store.GetLoginAccountByUsername(ctx, req.GetUsername())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
@@ -166,11 +110,7 @@ func (s *Server) CreateAccount(
 		return nil, errorsauth.ErrSignupDisabled
 	}
 
-	acc, err := s.getAccountFromDB(
-		ctx,
-		tAccounts.RegToken.EQ(mysql.String(req.GetRegToken())),
-		true,
-	)
+	acc, err := s.store.GetPasswordResetAccountByRegToken(ctx, req.GetRegToken())
 	if err != nil {
 		s.logger.Error(
 			"failed to get account from database by registration token",
@@ -197,24 +137,13 @@ func (s *Server) CreateAccount(
 		)
 	}
 
-	stmt := tAccounts.
-		UPDATE(
-			tAccounts.Username,
-			tAccounts.Password,
-			tAccounts.RegToken,
-		).
-		SET(
-			tAccounts.Username.SET(mysql.String(req.GetUsername())),
-			tAccounts.Password.SET(mysql.String(hashedPassword)),
-			tAccounts.RegToken.SET(mysql.StringExp(mysql.NULL)),
-		).
-		WHERE(mysql.AND(
-			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
-			tAccounts.RegToken.EQ(mysql.String(req.GetRegToken())),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.ActivateAccount(
+		ctx,
+		acc.ID,
+		req.GetRegToken(),
+		req.GetUsername(),
+		hashedPassword,
+	); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsauth.ErrAccountDuplicate)
 		}
@@ -250,7 +179,7 @@ func (s *Server) ChangePassword(
 		)
 	}
 
-	acc, err := s.getAccountFromIDAndUsername(ctx, claims.AccID, claims.Username, true)
+	acc, err := s.store.GetAccountByIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
@@ -285,19 +214,7 @@ func (s *Server) ChangePassword(
 	pass := hashedPassword
 	acc.Password = &pass
 
-	stmt := tAccounts.
-		UPDATE(
-			tAccounts.Password,
-		).
-		SET(
-			tAccounts.Password.SET(mysql.String(pass)),
-		).
-		WHERE(
-			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.UpdatePassword(ctx, acc.ID, pass); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrUpdateAccount)
 	}
 
@@ -331,7 +248,7 @@ func (s *Server) ChangeUsername(
 	}
 
 	// Retrieve account from db using account ID and username
-	acc, err := s.getAccountFromIDAndUsername(ctx, claims.AccID, claims.Username, true)
+	acc, err := s.store.GetAccountByIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
@@ -356,7 +273,7 @@ func (s *Server) ChangeUsername(
 	}
 
 	// If there is an account with the new username, fail
-	newAcc, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(mysql.String(newUsername)), false)
+	newAcc, err := s.store.GetAccountByUsername(ctx, newUsername, false)
 	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		// Other database error
 		return nil, errswrap.NewError(err, errorsauth.ErrBadUsername)
@@ -368,19 +285,7 @@ func (s *Server) ChangeUsername(
 
 	acc.Username = &newUsername
 
-	stmt := tAccounts.
-		UPDATE(
-			tAccounts.Username,
-		).
-		SET(
-			tAccounts.Username.SET(mysql.String(newUsername)),
-		).
-		WHERE(
-			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.UpdateUsername(ctx, acc.ID, newUsername); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrUpdateAccount)
 	}
 
@@ -396,11 +301,7 @@ func (s *Server) ForgotPassword(
 	ctx context.Context,
 	req *pbauth.ForgotPasswordRequest,
 ) (*pbauth.ForgotPasswordResponse, error) {
-	acc, err := s.getAccountFromDB(ctx, mysql.AND(
-		tAccounts.RegToken.EQ(mysql.String(req.GetRegToken())),
-		tAccounts.Username.IS_NOT_NULL(),
-		tAccounts.Password.IS_NULL(),
-	), true)
+	acc, err := s.store.GetAccountByRegToken(ctx, req.GetRegToken(), true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
@@ -418,21 +319,7 @@ func (s *Server) ForgotPassword(
 	pass := hashedPassword
 	acc.Password = &pass
 
-	stmt := tAccounts.
-		UPDATE(
-			tAccounts.Password,
-			tAccounts.RegToken,
-		).
-		SET(
-			tAccounts.Password.SET(mysql.String(pass)),
-			tAccounts.RegToken.SET(mysql.StringExp(mysql.NULL)),
-		).
-		WHERE(
-			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if err := s.store.ForgotPassword(ctx, acc.ID, pass); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
 
@@ -458,7 +345,7 @@ func (s *Server) GetCharacters(
 	}
 
 	// Load account to make sure it (still) exists
-	acc, err := s.getAccountFromIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
+	acc, err := s.store.GetAccountByIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
@@ -469,49 +356,9 @@ func (s *Server) GetCharacters(
 		return nil, errorsauth.ErrGenericLogin
 	}
 
-	// Load chars from database
-	tUsers := table.FivenetUser.AS("user")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-
-	stmt := tUsers.
-		SELECT(
-			tUsers.ID,
-			dbutils.Columns{
-				tUsers.ID.AS("user.user_id"),
-				tUsers.AccountID,
-				tUsers.Identifier,
-				tUsers.Job,
-				tUsers.JobGrade,
-				tUsers.Firstname,
-				tUsers.Lastname,
-				tUsers.Dateofbirth,
-				tUsers.Sex,
-				tUsers.Height,
-				tUsers.PhoneNumber,
-				tUserProps.AvatarFileID.AS("user.profile_picture_file_id"),
-				tAvatar.FilePath.AS("user.profile_picture"),
-				tUsers.Group.AS("character.group"),
-				s.customDB.Columns.User.GetVisum(tUsers.Alias()),
-				s.customDB.Columns.User.GetPlaytime(tUsers.Alias()),
-			}.Get()...,
-		).
-		FROM(tUsers.
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUsers.ID),
-			).
-			LEFT_JOIN(tAvatar,
-				tAvatar.ID.EQ(tUserProps.AvatarFileID),
-			),
-		).
-		WHERE(mysql.OR(
-			tUsers.AccountID.EQ(mysql.Int64(accClaims.AccID)),
-			tUsers.License.EQ(mysql.String(acc.License)),
-		)).
-		ORDER_BY(tUsers.ID).
-		LIMIT(10)
-
 	resp := &pbauth.GetCharactersResponse{}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Chars); err != nil {
+	resp.Chars, err = s.store.ListCharacters(ctx, accClaims.AccID, acc.License)
+	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 		}
@@ -556,71 +403,6 @@ func (s *Server) GetCharacters(
 	return resp, nil
 }
 
-func (s *Server) getCharacter(
-	ctx context.Context,
-	charId int32,
-) (*users.User, *jobsprops.JobProps, error) {
-	tUsers := table.FivenetUser.AS("user")
-	tLogo := table.FivenetFiles.AS("logo_file")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-
-	stmt := tUsers.
-		SELECT(
-			tUsers.ID,
-			tUsers.ID.AS("user.user_id"),
-			tUsers.Identifier,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
-			tUserProps.AvatarFileID.AS("user.profile_picture_file_id"),
-			tAvatar.FilePath.AS("user.profile_picture"),
-			tJobProps.Job,
-			tJobProps.DeletedAt,
-			tJobProps.LivemapMarkerColor,
-			tJobProps.QuickButtons,
-			tJobProps.RadioFrequency,
-			tJobProps.LogoFileID,
-			tLogo.ID,
-			tLogo.FilePath,
-		).
-		FROM(
-			tUsers.
-				LEFT_JOIN(tJobProps,
-					tJobProps.Job.EQ(tUsers.Job),
-				).
-				LEFT_JOIN(tLogo,
-					tLogo.ID.EQ(tJobProps.LogoFileID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUsers.ID),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
-		WHERE(tUsers.ID.EQ(mysql.Int32(charId))).
-		LIMIT(1)
-
-	var dest struct {
-		*users.User
-
-		JobProps *jobsprops.JobProps
-	}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, nil, err
-	}
-
-	if dest.JobProps != nil {
-		s.enricher.EnrichJobName(dest.JobProps)
-	}
-
-	s.enricher.EnrichJobInfo(dest.User)
-
-	return dest.User, dest.JobProps, nil
-}
-
 func (s *Server) ChooseCharacter(
 	ctx context.Context,
 	req *pbauth.ChooseCharacterRequest,
@@ -646,7 +428,7 @@ func (s *Server) ChooseCharacter(
 	}
 
 	// Load account data for token creation
-	acc, err := s.getAccountFromIDAndUsername(
+	acc, err := s.store.GetAccountByIDAndUsername(
 		ctx,
 		currentAccClaims.AccID,
 		currentAccClaims.Username,
@@ -835,7 +617,7 @@ func (s *Server) ImpersonateJob(
 	}
 
 	// Load user's account data for token creation
-	acc, err := s.getAccountFromIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
+	acc, err := s.store.GetAccountByIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
@@ -976,12 +758,10 @@ func (s *Server) SetSuperuserMode(
 	}
 
 	// Load account data for token creation
-	account, err := s.getAccountFromDB(
+	account, err := s.store.GetAccountByIDAndUsername(
 		ctx,
-		mysql.AND(
-			tAccounts.ID.EQ(mysql.Int64(accClaims.AccID)),
-			tAccounts.Username.EQ(mysql.String(accClaims.Username)),
-		),
+		accClaims.AccID,
+		accClaims.Username,
 		false,
 	)
 	if err != nil {
@@ -1025,73 +805,4 @@ func (s *Server) SetSuperuserMode(
 		Permissions: ps,
 		Attributes:  attrs,
 	}, nil
-}
-
-func (s *Server) getJobWithProps(
-	ctx context.Context,
-	jobName string,
-) (*jobs.Job, int32, *jobsprops.JobProps, error) {
-	tJobs := table.FivenetJobs.AS("job")
-	tJobsGrades := table.FivenetJobsGrades
-	tFiles := table.FivenetFiles.AS("logo_file")
-
-	stmt := tJobs.
-		SELECT(
-			tJobs.Name,
-			tJobs.Label,
-			tJobsGrades.Grade.AS("job_grade"),
-			tJobProps.Job,
-			tJobProps.UpdatedAt,
-			tJobProps.LivemapMarkerColor,
-			tJobProps.RadioFrequency,
-			tJobProps.QuickButtons,
-			tJobProps.LogoFileID,
-			tFiles.ID,
-			tFiles.FilePath,
-		).
-		FROM(
-			tJobs.
-				INNER_JOIN(tJobsGrades,
-					tJobsGrades.JobName.EQ(tJobs.Name),
-				).
-				LEFT_JOIN(tJobProps,
-					tJobProps.Job.EQ(tJobs.Name),
-				).
-				LEFT_JOIN(tFiles,
-					tFiles.ID.EQ(tJobProps.LogoFileID),
-				),
-		).
-		WHERE(
-			tJobs.Name.EQ(mysql.String(jobName)),
-		).
-		ORDER_BY(tJobsGrades.Grade.DESC()).
-		LIMIT(1)
-
-	var dest struct {
-		Job      *jobs.Job
-		JobGrade int32 `alias:"job_grade"`
-		JobProps *jobsprops.JobProps
-	}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, 0, nil, err
-		}
-
-		// Create empty dummy job if not found in DB
-		dest.Job = &jobs.Job{
-			Name:  jobName,
-			Label: jobName,
-		}
-		dest.JobProps = &jobsprops.JobProps{
-			Job:      jobName,
-			JobLabel: &jobName,
-		}
-		dest.JobProps.Default(jobName)
-	}
-
-	if dest.JobProps != nil {
-		s.enricher.EnrichJobName(dest.JobProps)
-	}
-
-	return dest.Job, dest.JobGrade, dest.JobProps, nil
 }

@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
+	centrumunitsdb "github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -50,15 +51,12 @@ func (s *Server) ListUnits(
 	// Resolve qualifications access for the user
 	for _, unit := range resp.GetUnits() {
 		if unit.GetAccess() != nil && len(unit.GetAccess().GetQualifications()) > 0 {
-			qualificationsAccess, err := s.units.GetAccess().Qualifications.List(
-				ctx,
-				s.db,
-				unit.GetId(),
-			)
+			access, err := s.units.GetAccess().
+				ListTargetAccess(ctx, s.db, unit.GetId(), centrumunitsdb.UnitSubjectAccessOptions())
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
-			unit.Access.Qualifications = qualificationsAccess
+			unit.Access.Qualifications = access.GetQualifications()
 		}
 	}
 
@@ -195,7 +193,7 @@ func (s *Server) DeleteUnit(
 	ctx context.Context,
 	req *pbcentrum.DeleteUnitRequest,
 ) (*pbcentrum.DeleteUnitResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", req.GetUnitId()})
+	logging.InjectFields(ctx, logging.Fields{unitIDLogFieldKey, req.GetUnitId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -223,7 +221,7 @@ func (s *Server) UpdateUnitStatus(
 	ctx context.Context,
 	req *pbcentrum.UpdateUnitStatusRequest,
 ) (*pbcentrum.UpdateUnitStatusResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", req.GetUnitId()})
+	logging.InjectFields(ctx, logging.Fields{unitIDLogFieldKey, req.GetUnitId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -238,7 +236,7 @@ func (s *Server) UpdateUnitStatus(
 		// Make sure requestor is not a dispatcher
 		if !s.helpers.CheckIfUserIsDispatcher(ctx, userInfo.GetJob(), userInfo.GetUserId()) {
 			check, err := s.units.GetAccess().
-				CanUserAccessTarget(ctx, unit.GetId(), userInfo, unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
+				CanUserAccessTarget(ctx, unit.GetId(), userInfo, int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN))
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
@@ -277,7 +275,7 @@ func (s *Server) AssignUnit(
 	req *pbcentrum.AssignUnitRequest,
 ) (*pbcentrum.AssignUnitResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.centrum.unit_id", req.GetUnitId(),
+		unitIDLogFieldKey, req.GetUnitId(),
 		"fivenet.centrum.users.to_add", req.GetToAdd(),
 		"fivenet.centrum.users.to_remove", req.GetToRemove(),
 	})
@@ -297,7 +295,7 @@ func (s *Server) AssignUnit(
 		// Make sure requestor is not a dispatcher
 		if !s.helpers.CheckIfUserIsDispatcher(ctx, userInfo.GetJob(), userInfo.GetUserId()) {
 			check, err := s.units.GetAccess().
-				CanUserAccessTarget(ctx, unit.GetId(), userInfo, unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
+				CanUserAccessTarget(ctx, unit.GetId(), userInfo, int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN))
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
@@ -331,7 +329,7 @@ func (s *Server) JoinUnit(
 	defer cancel()
 
 	if req.UnitId != nil {
-		logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", req.GetUnitId()})
+		logging.InjectFields(ctx, logging.Fields{unitIDLogFieldKey, req.GetUnitId()})
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -403,7 +401,7 @@ func (s *Server) JoinUnit(
 			// Make sure requestor is not a dispatcher
 			if !s.helpers.CheckIfUserIsDispatcher(ctx, userInfo.GetJob(), userInfo.GetUserId()) {
 				check, err := s.units.GetAccess().
-					CanUserAccessTarget(ctx, newUnit.GetId(), userInfo, unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
+					CanUserAccessTarget(ctx, newUnit.GetId(), userInfo, int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN))
 				if err != nil {
 					return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 				}
@@ -453,7 +451,7 @@ func (s *Server) ListUnitActivity(
 	ctx context.Context,
 	req *pbcentrum.ListUnitActivityRequest,
 ) (*pbcentrum.ListUnitActivityResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.unit_id", req.GetId()})
+	logging.InjectFields(ctx, logging.Fields{unitIDLogFieldKey, req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

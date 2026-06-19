@@ -31,8 +31,8 @@ async function listCategories(): Promise<Category[]> {
 const items = computed<CardElement[]>(
     () =>
         categories.value?.map((v) => ({
-            title: v?.name,
-            description: v?.description,
+            title: v.name,
+            description: v.description,
             icon: v.deletedAt ? 'i-mdi-delete' : (v.icon ?? 'i-mdi-shape'),
             color: v.deletedAt ? 'error' : (v.color ?? 'primary'),
         })) ?? [],

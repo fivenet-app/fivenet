@@ -9,8 +9,6 @@
 package citizenslabels
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
-	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -71,264 +69,11 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-type LabelAccess struct {
-	state           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Jobs *[]*JobAccess          `protobuf:"bytes,1,rep,name=jobs,proto3"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *LabelAccess) Reset() {
-	*x = LabelAccess{}
-	mi := &file_resources_citizens_labels_access_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *LabelAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*LabelAccess) ProtoMessage() {}
-
-func (x *LabelAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_citizens_labels_access_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *LabelAccess) GetJobs() []*JobAccess {
-	if x != nil {
-		if x.xxx_hidden_Jobs != nil {
-			return *x.xxx_hidden_Jobs
-		}
-	}
-	return nil
-}
-
-func (x *LabelAccess) SetJobs(v []*JobAccess) {
-	x.xxx_hidden_Jobs = &v
-}
-
-type LabelAccess_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Jobs []*JobAccess
-}
-
-func (b0 LabelAccess_builder) Build() *LabelAccess {
-	m0 := &LabelAccess{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Jobs = &b.Jobs
-	return m0
-}
-
-type JobAccess struct {
-	state                    protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id            int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	xxx_hidden_TargetId      int64                  `protobuf:"varint,2,opt,name=target_id,json=targetId,proto3"`
-	xxx_hidden_Job           string                 `protobuf:"bytes,3,opt,name=job,proto3"`
-	xxx_hidden_JobLabel      *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof"`
-	xxx_hidden_MinimumGrade  int32                  `protobuf:"varint,5,opt,name=minimum_grade,json=minimumGrade,proto3"`
-	xxx_hidden_JobGradeLabel *string                `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof"`
-	xxx_hidden_Access        AccessLevel            `protobuf:"varint,7,opt,name=access,proto3,enum=resources.citizens.labels.AccessLevel"`
-	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
-	XXX_presence             [1]uint32
-	unknownFields            protoimpl.UnknownFields
-	sizeCache                protoimpl.SizeCache
-}
-
-func (x *JobAccess) Reset() {
-	*x = JobAccess{}
-	mi := &file_resources_citizens_labels_access_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *JobAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*JobAccess) ProtoMessage() {}
-
-func (x *JobAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_citizens_labels_access_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *JobAccess) GetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_Id
-	}
-	return 0
-}
-
-func (x *JobAccess) GetTargetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_TargetId
-	}
-	return 0
-}
-
-func (x *JobAccess) GetJob() string {
-	if x != nil {
-		return x.xxx_hidden_Job
-	}
-	return ""
-}
-
-func (x *JobAccess) GetJobLabel() string {
-	if x != nil {
-		if x.xxx_hidden_JobLabel != nil {
-			return *x.xxx_hidden_JobLabel
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *JobAccess) GetMinimumGrade() int32 {
-	if x != nil {
-		return x.xxx_hidden_MinimumGrade
-	}
-	return 0
-}
-
-func (x *JobAccess) GetJobGradeLabel() string {
-	if x != nil {
-		if x.xxx_hidden_JobGradeLabel != nil {
-			return *x.xxx_hidden_JobGradeLabel
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *JobAccess) GetAccess() AccessLevel {
-	if x != nil {
-		return x.xxx_hidden_Access
-	}
-	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
-}
-
-func (x *JobAccess) SetId(v int64) {
-	x.xxx_hidden_Id = v
-}
-
-func (x *JobAccess) SetTargetId(v int64) {
-	x.xxx_hidden_TargetId = v
-}
-
-func (x *JobAccess) SetJob(v string) {
-	x.xxx_hidden_Job = v
-}
-
-func (x *JobAccess) SetJobLabel(v string) {
-	x.xxx_hidden_JobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 7)
-}
-
-func (x *JobAccess) SetMinimumGrade(v int32) {
-	x.xxx_hidden_MinimumGrade = v
-}
-
-func (x *JobAccess) SetJobGradeLabel(v string) {
-	x.xxx_hidden_JobGradeLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 7)
-}
-
-func (x *JobAccess) SetAccess(v AccessLevel) {
-	x.xxx_hidden_Access = v
-}
-
-func (x *JobAccess) HasJobLabel() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
-}
-
-func (x *JobAccess) HasJobGradeLabel() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
-}
-
-func (x *JobAccess) ClearJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_JobLabel = nil
-}
-
-func (x *JobAccess) ClearJobGradeLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
-	x.xxx_hidden_JobGradeLabel = nil
-}
-
-type JobAccess_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id            int64
-	TargetId      int64
-	Job           string
-	JobLabel      *string
-	MinimumGrade  int32
-	JobGradeLabel *string
-	Access        AccessLevel
-}
-
-func (b0 JobAccess_builder) Build() *JobAccess {
-	m0 := &JobAccess{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Id = b.Id
-	x.xxx_hidden_TargetId = b.TargetId
-	x.xxx_hidden_Job = b.Job
-	if b.JobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 7)
-		x.xxx_hidden_JobLabel = b.JobLabel
-	}
-	x.xxx_hidden_MinimumGrade = b.MinimumGrade
-	if b.JobGradeLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 7)
-		x.xxx_hidden_JobGradeLabel = b.JobGradeLabel
-	}
-	x.xxx_hidden_Access = b.Access
-	return m0
-}
-
 var File_resources_citizens_labels_access_proto protoreflect.FileDescriptor
 
 const file_resources_citizens_labels_access_proto_rawDesc = "" +
 	"\n" +
-	"&resources/citizens/labels/access.proto\x12\x19resources.citizens.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a\x13tagger/tagger.proto\"h\n" +
-	"\vLabelAccess\x12Q\n" +
-	"\x04jobs\x18\x01 \x03(\v2$.resources.citizens.labels.JobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs:\x06\xe2\xf3\x18\x02\b\x01\"\xb8\x02\n" +
-	"\tJobAccess\x12&\n" +
-	"\x02id\x18\x01 \x01(\x03B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x02id\x12\x1b\n" +
-	"\ttarget_id\x18\x02 \x01(\x03R\btargetId\x12\x10\n" +
-	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12#\n" +
-	"\rminimum_grade\x18\x05 \x01(\x05R\fminimumGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12>\n" +
-	"\x06access\x18\a \x01(\x0e2&.resources.citizens.labels.AccessLevelR\x06accessB\f\n" +
-	"\n" +
-	"_job_labelB\x12\n" +
-	"\x10_job_grade_label*r\n" +
+	"&resources/citizens/labels/access.proto\x12\x19resources.citizens.labels*r\n" +
 	"\vAccessLevel\x12\x1c\n" +
 	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11ACCESS_LEVEL_VIEW\x10\x01\x12\x15\n" +
@@ -336,20 +81,15 @@ const file_resources_citizens_labels_access_proto_rawDesc = "" +
 	"\x13ACCESS_LEVEL_REMOVE\x10\x03B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels;citizenslabelsb\x06proto3"
 
 var file_resources_citizens_labels_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_citizens_labels_access_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_citizens_labels_access_proto_goTypes = []any{
-	(AccessLevel)(0),    // 0: resources.citizens.labels.AccessLevel
-	(*LabelAccess)(nil), // 1: resources.citizens.labels.LabelAccess
-	(*JobAccess)(nil),   // 2: resources.citizens.labels.JobAccess
+	(AccessLevel)(0), // 0: resources.citizens.labels.AccessLevel
 }
 var file_resources_citizens_labels_access_proto_depIdxs = []int32{
-	2, // 0: resources.citizens.labels.LabelAccess.jobs:type_name -> resources.citizens.labels.JobAccess
-	0, // 1: resources.citizens.labels.JobAccess.access:type_name -> resources.citizens.labels.AccessLevel
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_resources_citizens_labels_access_proto_init() }
@@ -357,21 +97,19 @@ func file_resources_citizens_labels_access_proto_init() {
 	if File_resources_citizens_labels_access_proto != nil {
 		return
 	}
-	file_resources_citizens_labels_access_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_citizens_labels_access_proto_rawDesc), len(file_resources_citizens_labels_access_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   2,
+			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_resources_citizens_labels_access_proto_goTypes,
 		DependencyIndexes: file_resources_citizens_labels_access_proto_depIdxs,
 		EnumInfos:         file_resources_citizens_labels_access_proto_enumTypes,
-		MessageInfos:      file_resources_citizens_labels_access_proto_msgTypes,
 	}.Build()
 	File_resources_citizens_labels_access_proto = out.File
 	file_resources_citizens_labels_access_proto_goTypes = nil

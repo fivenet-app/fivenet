@@ -11,8 +11,8 @@ package documentstemplates
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	documents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
-	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	approval "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/approval"
 	category "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
 	workflow "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/workflow"
@@ -39,22 +39,23 @@ type Template struct {
 	xxx_hidden_Id              int64                  `protobuf:"varint,1,opt,name=id,proto3"`
 	xxx_hidden_CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
 	xxx_hidden_UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
-	xxx_hidden_Category        *category.Category     `protobuf:"bytes,4,opt,name=category,proto3"`
-	xxx_hidden_Weight          uint32                 `protobuf:"varint,5,opt,name=weight,proto3"`
-	xxx_hidden_Title           string                 `protobuf:"bytes,6,opt,name=title,proto3"`
-	xxx_hidden_Description     string                 `protobuf:"bytes,7,opt,name=description,proto3"`
-	xxx_hidden_Color           *string                `protobuf:"bytes,8,opt,name=color,proto3,oneof"`
-	xxx_hidden_Icon            *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof"`
-	xxx_hidden_ContentTitle    string                 `protobuf:"bytes,10,opt,name=content_title,json=contentTitle,proto3"`
-	xxx_hidden_Content         string                 `protobuf:"bytes,11,opt,name=content,proto3"`
-	xxx_hidden_State           string                 `protobuf:"bytes,12,opt,name=state,proto3"`
-	xxx_hidden_Schema          *TemplateSchema        `protobuf:"bytes,13,opt,name=schema,proto3"`
-	xxx_hidden_CreatorJob      string                 `protobuf:"bytes,14,opt,name=creator_job,json=creatorJob,proto3"`
-	xxx_hidden_CreatorJobLabel *string                `protobuf:"bytes,15,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof"`
-	xxx_hidden_JobAccess       *[]*TemplateJobAccess  `protobuf:"bytes,16,rep,name=job_access,json=jobAccess,proto3"`
-	xxx_hidden_ContentAccess   *access.DocumentAccess `protobuf:"bytes,17,opt,name=content_access,json=contentAccess,proto3"`
-	xxx_hidden_Workflow        *workflow.Workflow     `protobuf:"bytes,18,opt,name=workflow,proto3,oneof"`
-	xxx_hidden_Approval        *TemplateApproval      `protobuf:"bytes,19,opt,name=approval,proto3,oneof"`
+	xxx_hidden_DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
+	xxx_hidden_Category        *category.Category     `protobuf:"bytes,5,opt,name=category,proto3"`
+	xxx_hidden_Weight          uint32                 `protobuf:"varint,6,opt,name=weight,proto3"`
+	xxx_hidden_Title           string                 `protobuf:"bytes,7,opt,name=title,proto3"`
+	xxx_hidden_Description     string                 `protobuf:"bytes,8,opt,name=description,proto3"`
+	xxx_hidden_Color           *string                `protobuf:"bytes,9,opt,name=color,proto3,oneof"`
+	xxx_hidden_Icon            *string                `protobuf:"bytes,10,opt,name=icon,proto3,oneof"`
+	xxx_hidden_ContentTitle    string                 `protobuf:"bytes,11,opt,name=content_title,json=contentTitle,proto3"`
+	xxx_hidden_Content         string                 `protobuf:"bytes,12,opt,name=content,proto3"`
+	xxx_hidden_State           string                 `protobuf:"bytes,13,opt,name=state,proto3"`
+	xxx_hidden_Schema          *TemplateSchema        `protobuf:"bytes,14,opt,name=schema,proto3"`
+	xxx_hidden_CreatorJob      string                 `protobuf:"bytes,15,opt,name=creator_job,json=creatorJob,proto3"`
+	xxx_hidden_CreatorJobLabel *string                `protobuf:"bytes,16,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof"`
+	xxx_hidden_JobAccess       *[]*access.JobAccess   `protobuf:"bytes,17,rep,name=job_access,json=jobAccess,proto3"`
+	xxx_hidden_ContentAccess   *access.Access         `protobuf:"bytes,18,opt,name=content_access,json=contentAccess,proto3"`
+	xxx_hidden_Workflow        *workflow.Workflow     `protobuf:"bytes,19,opt,name=workflow,proto3,oneof"`
+	xxx_hidden_Approval        *TemplateApproval      `protobuf:"bytes,20,opt,name=approval,proto3,oneof"`
 	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
 	XXX_presence               [1]uint32
 	unknownFields              protoimpl.UnknownFields
@@ -103,6 +104,13 @@ func (x *Template) GetCreatedAt() *timestamp.Timestamp {
 func (x *Template) GetUpdatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.xxx_hidden_UpdatedAt
+	}
+	return nil
+}
+
+func (x *Template) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_DeletedAt
 	}
 	return nil
 }
@@ -200,7 +208,7 @@ func (x *Template) GetCreatorJobLabel() string {
 	return ""
 }
 
-func (x *Template) GetJobAccess() []*TemplateJobAccess {
+func (x *Template) GetJobAccess() []*access.JobAccess {
 	if x != nil {
 		if x.xxx_hidden_JobAccess != nil {
 			return *x.xxx_hidden_JobAccess
@@ -209,7 +217,7 @@ func (x *Template) GetJobAccess() []*TemplateJobAccess {
 	return nil
 }
 
-func (x *Template) GetContentAccess() *access.DocumentAccess {
+func (x *Template) GetContentAccess() *access.Access {
 	if x != nil {
 		return x.xxx_hidden_ContentAccess
 	}
@@ -242,6 +250,10 @@ func (x *Template) SetUpdatedAt(v *timestamp.Timestamp) {
 	x.xxx_hidden_UpdatedAt = v
 }
 
+func (x *Template) SetDeletedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_DeletedAt = v
+}
+
 func (x *Template) SetCategory(v *category.Category) {
 	x.xxx_hidden_Category = v
 }
@@ -260,12 +272,12 @@ func (x *Template) SetDescription(v string) {
 
 func (x *Template) SetColor(v string) {
 	x.xxx_hidden_Color = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 19)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 20)
 }
 
 func (x *Template) SetIcon(v string) {
 	x.xxx_hidden_Icon = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 19)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 20)
 }
 
 func (x *Template) SetContentTitle(v string) {
@@ -290,14 +302,14 @@ func (x *Template) SetCreatorJob(v string) {
 
 func (x *Template) SetCreatorJobLabel(v string) {
 	x.xxx_hidden_CreatorJobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 19)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 15, 20)
 }
 
-func (x *Template) SetJobAccess(v []*TemplateJobAccess) {
+func (x *Template) SetJobAccess(v []*access.JobAccess) {
 	x.xxx_hidden_JobAccess = &v
 }
 
-func (x *Template) SetContentAccess(v *access.DocumentAccess) {
+func (x *Template) SetContentAccess(v *access.Access) {
 	x.xxx_hidden_ContentAccess = v
 }
 
@@ -323,6 +335,13 @@ func (x *Template) HasUpdatedAt() bool {
 	return x.xxx_hidden_UpdatedAt != nil
 }
 
+func (x *Template) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_DeletedAt != nil
+}
+
 func (x *Template) HasCategory() bool {
 	if x == nil {
 		return false
@@ -334,14 +353,14 @@ func (x *Template) HasColor() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *Template) HasIcon() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
 }
 
 func (x *Template) HasSchema() bool {
@@ -355,7 +374,7 @@ func (x *Template) HasCreatorJobLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 14)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 15)
 }
 
 func (x *Template) HasContentAccess() bool {
@@ -387,17 +406,21 @@ func (x *Template) ClearUpdatedAt() {
 	x.xxx_hidden_UpdatedAt = nil
 }
 
+func (x *Template) ClearDeletedAt() {
+	x.xxx_hidden_DeletedAt = nil
+}
+
 func (x *Template) ClearCategory() {
 	x.xxx_hidden_Category = nil
 }
 
 func (x *Template) ClearColor() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
 	x.xxx_hidden_Color = nil
 }
 
 func (x *Template) ClearIcon() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
 	x.xxx_hidden_Icon = nil
 }
 
@@ -406,7 +429,7 @@ func (x *Template) ClearSchema() {
 }
 
 func (x *Template) ClearCreatorJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 14)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 15)
 	x.xxx_hidden_CreatorJobLabel = nil
 }
 
@@ -428,6 +451,7 @@ type Template_builder struct {
 	Id              int64
 	CreatedAt       *timestamp.Timestamp
 	UpdatedAt       *timestamp.Timestamp
+	DeletedAt       *timestamp.Timestamp
 	Category        *category.Category
 	Weight          uint32
 	Title           string
@@ -440,8 +464,8 @@ type Template_builder struct {
 	Schema          *TemplateSchema
 	CreatorJob      string
 	CreatorJobLabel *string
-	JobAccess       []*TemplateJobAccess
-	ContentAccess   *access.DocumentAccess
+	JobAccess       []*access.JobAccess
+	ContentAccess   *access.Access
 	Workflow        *workflow.Workflow
 	Approval        *TemplateApproval
 }
@@ -453,16 +477,17 @@ func (b0 Template_builder) Build() *Template {
 	x.xxx_hidden_Id = b.Id
 	x.xxx_hidden_CreatedAt = b.CreatedAt
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
+	x.xxx_hidden_DeletedAt = b.DeletedAt
 	x.xxx_hidden_Category = b.Category
 	x.xxx_hidden_Weight = b.Weight
 	x.xxx_hidden_Title = b.Title
 	x.xxx_hidden_Description = b.Description
 	if b.Color != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 19)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 20)
 		x.xxx_hidden_Color = b.Color
 	}
 	if b.Icon != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 19)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 20)
 		x.xxx_hidden_Icon = b.Icon
 	}
 	x.xxx_hidden_ContentTitle = b.ContentTitle
@@ -471,7 +496,7 @@ func (b0 Template_builder) Build() *Template {
 	x.xxx_hidden_Schema = b.Schema
 	x.xxx_hidden_CreatorJob = b.CreatorJob
 	if b.CreatorJobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 19)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 15, 20)
 		x.xxx_hidden_CreatorJobLabel = b.CreatorJobLabel
 	}
 	x.xxx_hidden_JobAccess = &b.JobAccess
@@ -486,16 +511,17 @@ type TemplateShort struct {
 	xxx_hidden_Id              int64                  `protobuf:"varint,1,opt,name=id,proto3"`
 	xxx_hidden_CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
 	xxx_hidden_UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
-	xxx_hidden_Category        *category.Category     `protobuf:"bytes,4,opt,name=category,proto3"`
-	xxx_hidden_Weight          uint32                 `protobuf:"varint,5,opt,name=weight,proto3"`
-	xxx_hidden_Title           string                 `protobuf:"bytes,6,opt,name=title,proto3"`
-	xxx_hidden_Description     string                 `protobuf:"bytes,7,opt,name=description,proto3"`
-	xxx_hidden_Color           *string                `protobuf:"bytes,8,opt,name=color,proto3,oneof"`
-	xxx_hidden_Icon            *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof"`
-	xxx_hidden_Schema          *TemplateSchema        `protobuf:"bytes,10,opt,name=schema,proto3"`
-	xxx_hidden_CreatorJob      string                 `protobuf:"bytes,11,opt,name=creator_job,json=creatorJob,proto3"`
-	xxx_hidden_CreatorJobLabel *string                `protobuf:"bytes,12,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof"`
-	xxx_hidden_Workflow        *workflow.Workflow     `protobuf:"bytes,18,opt,name=workflow,proto3,oneof"`
+	xxx_hidden_DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
+	xxx_hidden_Category        *category.Category     `protobuf:"bytes,5,opt,name=category,proto3"`
+	xxx_hidden_Weight          uint32                 `protobuf:"varint,6,opt,name=weight,proto3"`
+	xxx_hidden_Title           string                 `protobuf:"bytes,7,opt,name=title,proto3"`
+	xxx_hidden_Description     string                 `protobuf:"bytes,8,opt,name=description,proto3"`
+	xxx_hidden_Color           *string                `protobuf:"bytes,9,opt,name=color,proto3,oneof"`
+	xxx_hidden_Icon            *string                `protobuf:"bytes,10,opt,name=icon,proto3,oneof"`
+	xxx_hidden_Schema          *TemplateSchema        `protobuf:"bytes,14,opt,name=schema,proto3"`
+	xxx_hidden_CreatorJob      string                 `protobuf:"bytes,15,opt,name=creator_job,json=creatorJob,proto3"`
+	xxx_hidden_CreatorJobLabel *string                `protobuf:"bytes,16,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof"`
+	xxx_hidden_Workflow        *workflow.Workflow     `protobuf:"bytes,19,opt,name=workflow,proto3,oneof"`
 	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
 	XXX_presence               [1]uint32
 	unknownFields              protoimpl.UnknownFields
@@ -544,6 +570,13 @@ func (x *TemplateShort) GetCreatedAt() *timestamp.Timestamp {
 func (x *TemplateShort) GetUpdatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.xxx_hidden_UpdatedAt
+	}
+	return nil
+}
+
+func (x *TemplateShort) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_DeletedAt
 	}
 	return nil
 }
@@ -639,6 +672,10 @@ func (x *TemplateShort) SetUpdatedAt(v *timestamp.Timestamp) {
 	x.xxx_hidden_UpdatedAt = v
 }
 
+func (x *TemplateShort) SetDeletedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_DeletedAt = v
+}
+
 func (x *TemplateShort) SetCategory(v *category.Category) {
 	x.xxx_hidden_Category = v
 }
@@ -657,12 +694,12 @@ func (x *TemplateShort) SetDescription(v string) {
 
 func (x *TemplateShort) SetColor(v string) {
 	x.xxx_hidden_Color = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 13)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 14)
 }
 
 func (x *TemplateShort) SetIcon(v string) {
 	x.xxx_hidden_Icon = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 13)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 14)
 }
 
 func (x *TemplateShort) SetSchema(v *TemplateSchema) {
@@ -675,7 +712,7 @@ func (x *TemplateShort) SetCreatorJob(v string) {
 
 func (x *TemplateShort) SetCreatorJobLabel(v string) {
 	x.xxx_hidden_CreatorJobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 13)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 14)
 }
 
 func (x *TemplateShort) SetWorkflow(v *workflow.Workflow) {
@@ -696,6 +733,13 @@ func (x *TemplateShort) HasUpdatedAt() bool {
 	return x.xxx_hidden_UpdatedAt != nil
 }
 
+func (x *TemplateShort) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_DeletedAt != nil
+}
+
 func (x *TemplateShort) HasCategory() bool {
 	if x == nil {
 		return false
@@ -707,14 +751,14 @@ func (x *TemplateShort) HasColor() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *TemplateShort) HasIcon() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
 }
 
 func (x *TemplateShort) HasSchema() bool {
@@ -728,7 +772,7 @@ func (x *TemplateShort) HasCreatorJobLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 12)
 }
 
 func (x *TemplateShort) HasWorkflow() bool {
@@ -746,17 +790,21 @@ func (x *TemplateShort) ClearUpdatedAt() {
 	x.xxx_hidden_UpdatedAt = nil
 }
 
+func (x *TemplateShort) ClearDeletedAt() {
+	x.xxx_hidden_DeletedAt = nil
+}
+
 func (x *TemplateShort) ClearCategory() {
 	x.xxx_hidden_Category = nil
 }
 
 func (x *TemplateShort) ClearColor() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
 	x.xxx_hidden_Color = nil
 }
 
 func (x *TemplateShort) ClearIcon() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
 	x.xxx_hidden_Icon = nil
 }
 
@@ -765,7 +813,7 @@ func (x *TemplateShort) ClearSchema() {
 }
 
 func (x *TemplateShort) ClearCreatorJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 12)
 	x.xxx_hidden_CreatorJobLabel = nil
 }
 
@@ -779,6 +827,7 @@ type TemplateShort_builder struct {
 	Id              int64
 	CreatedAt       *timestamp.Timestamp
 	UpdatedAt       *timestamp.Timestamp
+	DeletedAt       *timestamp.Timestamp
 	Category        *category.Category
 	Weight          uint32
 	Title           string
@@ -798,22 +847,23 @@ func (b0 TemplateShort_builder) Build() *TemplateShort {
 	x.xxx_hidden_Id = b.Id
 	x.xxx_hidden_CreatedAt = b.CreatedAt
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
+	x.xxx_hidden_DeletedAt = b.DeletedAt
 	x.xxx_hidden_Category = b.Category
 	x.xxx_hidden_Weight = b.Weight
 	x.xxx_hidden_Title = b.Title
 	x.xxx_hidden_Description = b.Description
 	if b.Color != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 13)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 14)
 		x.xxx_hidden_Color = b.Color
 	}
 	if b.Icon != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 13)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 14)
 		x.xxx_hidden_Icon = b.Icon
 	}
 	x.xxx_hidden_Schema = b.Schema
 	x.xxx_hidden_CreatorJob = b.CreatorJob
 	if b.CreatorJobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 13)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 14)
 		x.xxx_hidden_CreatorJobLabel = b.CreatorJobLabel
 	}
 	x.xxx_hidden_Workflow = b.Workflow
@@ -1257,256 +1307,6 @@ func (b0 TemplateData_builder) Build() *TemplateData {
 	return m0
 }
 
-type TemplateJobAccess struct {
-	state                    protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id            int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	xxx_hidden_CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
-	xxx_hidden_TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3"`
-	xxx_hidden_Job           string                 `protobuf:"bytes,4,opt,name=job,proto3"`
-	xxx_hidden_JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof"`
-	xxx_hidden_MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3"`
-	xxx_hidden_JobGradeLabel *string                `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof"`
-	xxx_hidden_Access        access.AccessLevel     `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.access.AccessLevel"`
-	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
-	XXX_presence             [1]uint32
-	unknownFields            protoimpl.UnknownFields
-	sizeCache                protoimpl.SizeCache
-}
-
-func (x *TemplateJobAccess) Reset() {
-	*x = TemplateJobAccess{}
-	mi := &file_resources_documents_templates_templates_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TemplateJobAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TemplateJobAccess) ProtoMessage() {}
-
-func (x *TemplateJobAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_templates_templates_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *TemplateJobAccess) GetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_Id
-	}
-	return 0
-}
-
-func (x *TemplateJobAccess) GetCreatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.xxx_hidden_CreatedAt
-	}
-	return nil
-}
-
-func (x *TemplateJobAccess) GetTargetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_TargetId
-	}
-	return 0
-}
-
-func (x *TemplateJobAccess) GetJob() string {
-	if x != nil {
-		return x.xxx_hidden_Job
-	}
-	return ""
-}
-
-func (x *TemplateJobAccess) GetJobLabel() string {
-	if x != nil {
-		if x.xxx_hidden_JobLabel != nil {
-			return *x.xxx_hidden_JobLabel
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *TemplateJobAccess) GetMinimumGrade() int32 {
-	if x != nil {
-		return x.xxx_hidden_MinimumGrade
-	}
-	return 0
-}
-
-func (x *TemplateJobAccess) GetJobGradeLabel() string {
-	if x != nil {
-		if x.xxx_hidden_JobGradeLabel != nil {
-			return *x.xxx_hidden_JobGradeLabel
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *TemplateJobAccess) GetAccess() access.AccessLevel {
-	if x != nil {
-		return x.xxx_hidden_Access
-	}
-	return access.AccessLevel(0)
-}
-
-func (x *TemplateJobAccess) SetId(v int64) {
-	x.xxx_hidden_Id = v
-}
-
-func (x *TemplateJobAccess) SetCreatedAt(v *timestamp.Timestamp) {
-	x.xxx_hidden_CreatedAt = v
-}
-
-func (x *TemplateJobAccess) SetTargetId(v int64) {
-	x.xxx_hidden_TargetId = v
-}
-
-func (x *TemplateJobAccess) SetJob(v string) {
-	x.xxx_hidden_Job = v
-}
-
-func (x *TemplateJobAccess) SetJobLabel(v string) {
-	x.xxx_hidden_JobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 8)
-}
-
-func (x *TemplateJobAccess) SetMinimumGrade(v int32) {
-	x.xxx_hidden_MinimumGrade = v
-}
-
-func (x *TemplateJobAccess) SetJobGradeLabel(v string) {
-	x.xxx_hidden_JobGradeLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 8)
-}
-
-func (x *TemplateJobAccess) SetAccess(v access.AccessLevel) {
-	x.xxx_hidden_Access = v
-}
-
-func (x *TemplateJobAccess) HasCreatedAt() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_CreatedAt != nil
-}
-
-func (x *TemplateJobAccess) HasJobLabel() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
-}
-
-func (x *TemplateJobAccess) HasJobGradeLabel() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
-}
-
-func (x *TemplateJobAccess) ClearCreatedAt() {
-	x.xxx_hidden_CreatedAt = nil
-}
-
-func (x *TemplateJobAccess) ClearJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
-	x.xxx_hidden_JobLabel = nil
-}
-
-func (x *TemplateJobAccess) ClearJobGradeLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
-	x.xxx_hidden_JobGradeLabel = nil
-}
-
-type TemplateJobAccess_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id            int64
-	CreatedAt     *timestamp.Timestamp
-	TargetId      int64
-	Job           string
-	JobLabel      *string
-	MinimumGrade  int32
-	JobGradeLabel *string
-	Access        access.AccessLevel
-}
-
-func (b0 TemplateJobAccess_builder) Build() *TemplateJobAccess {
-	m0 := &TemplateJobAccess{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Id = b.Id
-	x.xxx_hidden_CreatedAt = b.CreatedAt
-	x.xxx_hidden_TargetId = b.TargetId
-	x.xxx_hidden_Job = b.Job
-	if b.JobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 8)
-		x.xxx_hidden_JobLabel = b.JobLabel
-	}
-	x.xxx_hidden_MinimumGrade = b.MinimumGrade
-	if b.JobGradeLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 8)
-		x.xxx_hidden_JobGradeLabel = b.JobGradeLabel
-	}
-	x.xxx_hidden_Access = b.Access
-	return m0
-}
-
-// Dummy - DO NOT USE!
-type TemplateUserAccess struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TemplateUserAccess) Reset() {
-	*x = TemplateUserAccess{}
-	mi := &file_resources_documents_templates_templates_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TemplateUserAccess) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TemplateUserAccess) ProtoMessage() {}
-
-func (x *TemplateUserAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_templates_templates_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type TemplateUserAccess_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 TemplateUserAccess_builder) Build() *TemplateUserAccess {
-	m0 := &TemplateUserAccess{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
 type TemplateApproval struct {
 	state              protoimpl.MessageState       `protogen:"opaque.v1"`
 	xxx_hidden_Enabled bool                         `protobuf:"varint,1,opt,name=enabled,proto3"`
@@ -1518,7 +1318,7 @@ type TemplateApproval struct {
 
 func (x *TemplateApproval) Reset() {
 	*x = TemplateApproval{}
-	mi := &file_resources_documents_templates_templates_proto_msgTypes[8]
+	mi := &file_resources_documents_templates_templates_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1530,7 +1330,7 @@ func (x *TemplateApproval) String() string {
 func (*TemplateApproval) ProtoMessage() {}
 
 func (x *TemplateApproval) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_templates_templates_proto_msgTypes[8]
+	mi := &file_resources_documents_templates_templates_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1620,7 +1420,7 @@ type TemplateApprovalPolicy struct {
 
 func (x *TemplateApprovalPolicy) Reset() {
 	*x = TemplateApprovalPolicy{}
-	mi := &file_resources_documents_templates_templates_proto_msgTypes[9]
+	mi := &file_resources_documents_templates_templates_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1632,7 +1432,7 @@ func (x *TemplateApprovalPolicy) String() string {
 func (*TemplateApprovalPolicy) ProtoMessage() {}
 
 func (x *TemplateApprovalPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_templates_templates_proto_msgTypes[9]
+	mi := &file_resources_documents_templates_templates_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1754,7 +1554,7 @@ type TemplateApprovalTaskSeed struct {
 
 func (x *TemplateApprovalTaskSeed) Reset() {
 	*x = TemplateApprovalTaskSeed{}
-	mi := &file_resources_documents_templates_templates_proto_msgTypes[10]
+	mi := &file_resources_documents_templates_templates_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1766,7 +1566,7 @@ func (x *TemplateApprovalTaskSeed) String() string {
 func (*TemplateApprovalTaskSeed) ProtoMessage() {}
 
 func (x *TemplateApprovalTaskSeed) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_templates_templates_proto_msgTypes[10]
+	mi := &file_resources_documents_templates_templates_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1956,61 +1756,67 @@ var File_resources_documents_templates_templates_proto protoreflect.FileDescript
 
 const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\n" +
-	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a'resources/documents/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xc0\t\n" +
+	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xec\t\n" +
 	"\bTemplate\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12Y\n" +
-	"\bcategory\x18\x04 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
-	"\x06weight\x18\x05 \x01(\rR\x06weight\x12\x1c\n" +
-	"\x05title\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
-	"\vdescription\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
-	"\x05color\x18\b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\x05color\x88\x01\x01\x12!\n" +
-	"\x04icon\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04icon\x88\x01\x01\x12E\n" +
-	"\rcontent_title\x18\n" +
-	" \x01(\tB \xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x15alias:\"content_title\"R\fcontentTitle\x124\n" +
-	"\acontent\x18\v \x01(\tB\x1a\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x0falias:\"content\"R\acontent\x12(\n" +
-	"\x05state\x18\f \x01(\tB\x12\x9a\x84\x9e\x03\ralias:\"state\"R\x05state\x12Z\n" +
-	"\x06schema\x18\r \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
-	"\vcreator_job\x18\x0e \x01(\tR\n" +
-	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x0f \x01(\tH\x04R\x0fcreatorJobLabel\x88\x01\x01\x12O\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"job_access\x18\x10 \x03(\v20.resources.documents.templates.TemplateJobAccessR\tjobAccess\x12f\n" +
-	"\x0econtent_access\x18\x11 \x01(\v2*.resources.documents.access.DocumentAccessB\x13\x9a\x84\x9e\x03\x0ealias:\"access\"R\rcontentAccess\x12G\n" +
-	"\bworkflow\x18\x12 \x01(\v2&.resources.documents.workflow.WorkflowH\x05R\bworkflow\x88\x01\x01\x12P\n" +
-	"\bapproval\x18\x13 \x01(\v2/.resources.documents.templates.TemplateApprovalH\x06R\bapproval\x88\x01\x01B\r\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12Y\n" +
+	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
+	"\x06weight\x18\x06 \x01(\rR\x06weight\x12\x1c\n" +
+	"\x05title\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
+	"\vdescription\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
+	"\x05color\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x05color\x88\x01\x01\x12!\n" +
+	"\x04icon\x18\n" +
+	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x04R\x04icon\x88\x01\x01\x12E\n" +
+	"\rcontent_title\x18\v \x01(\tB \xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x15alias:\"content_title\"R\fcontentTitle\x124\n" +
+	"\acontent\x18\f \x01(\tB\x1a\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x0falias:\"content\"R\acontent\x12(\n" +
+	"\x05state\x18\r \x01(\tB\x12\x9a\x84\x9e\x03\ralias:\"state\"R\x05state\x12Z\n" +
+	"\x06schema\x18\x0e \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
+	"\vcreator_job\x18\x0f \x01(\tR\n" +
+	"creatorJob\x12/\n" +
+	"\x11creator_job_label\x18\x10 \x01(\tH\x05R\x0fcreatorJobLabel\x88\x01\x01\x12:\n" +
+	"\n" +
+	"job_access\x18\x11 \x03(\v2\x1b.resources.access.JobAccessR\tjobAccess\x12T\n" +
+	"\x0econtent_access\x18\x12 \x01(\v2\x18.resources.access.AccessB\x13\x9a\x84\x9e\x03\x0ealias:\"access\"R\rcontentAccess\x12G\n" +
+	"\bworkflow\x18\x13 \x01(\v2&.resources.documents.workflow.WorkflowH\x06R\bworkflow\x88\x01\x01\x12P\n" +
+	"\bapproval\x18\x14 \x01(\v2/.resources.documents.templates.TemplateApprovalH\aR\bapproval\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_updated_atB\b\n" +
+	"\v_updated_atB\r\n" +
+	"\v_deleted_atB\b\n" +
 	"\x06_colorB\a\n" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
 	"\t_workflowB\v\n" +
-	"\t_approval\"\x86\x06\n" +
+	"\t_approval\"\xd9\x06\n" +
 	"\rTemplateShort\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12Y\n" +
-	"\bcategory\x18\x04 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
-	"\x06weight\x18\x05 \x01(\rR\x06weight\x12\x1c\n" +
-	"\x05title\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
-	"\vdescription\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
-	"\x05color\x18\b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\x05color\x88\x01\x01\x12!\n" +
-	"\x04icon\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04icon\x88\x01\x01\x12Z\n" +
-	"\x06schema\x18\n" +
-	" \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
-	"\vcreator_job\x18\v \x01(\tR\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12Y\n" +
+	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
+	"\x06weight\x18\x06 \x01(\rR\x06weight\x12\x1c\n" +
+	"\x05title\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
+	"\vdescription\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
+	"\x05color\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x05color\x88\x01\x01\x12!\n" +
+	"\x04icon\x18\n" +
+	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x04R\x04icon\x88\x01\x01\x12Z\n" +
+	"\x06schema\x18\x0e \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
+	"\vcreator_job\x18\x0f \x01(\tR\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\f \x01(\tH\x04R\x0fcreatorJobLabel\x88\x01\x01\x12G\n" +
-	"\bworkflow\x18\x12 \x01(\v2&.resources.documents.workflow.WorkflowH\x05R\bworkflow\x88\x01\x01B\r\n" +
+	"\x11creator_job_label\x18\x10 \x01(\tH\x05R\x0fcreatorJobLabel\x88\x01\x01\x12G\n" +
+	"\bworkflow\x18\x13 \x01(\v2&.resources.documents.workflow.WorkflowH\x06R\bworkflow\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_updated_atB\b\n" +
+	"\v_updated_atB\r\n" +
+	"\v_deleted_atB\b\n" +
 	"\x06_colorB\a\n" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
@@ -2037,23 +1843,7 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"activeChar\x12@\n" +
 	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortR\tdocuments\x126\n" +
 	"\x05users\x18\x03 \x03(\v2 .resources.users.short.UserShortR\x05users\x127\n" +
-	"\bvehicles\x18\x04 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"\xa7\x03\n" +
-	"\x11TemplateJobAccess\x12\x1f\n" +
-	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"R\x02id\x12B\n" +
-	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x125\n" +
-	"\ttarget_id\x18\x03 \x01(\x03B\x18\x9a\x84\x9e\x03\x13alias:\"template_id\"R\btargetId\x12\x10\n" +
-	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x05 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12#\n" +
-	"\rminimum_grade\x18\x06 \x01(\x05R\fminimumGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\a \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12?\n" +
-	"\x06access\x18\b \x01(\x0e2'.resources.documents.access.AccessLevelR\x06accessB\r\n" +
-	"\v_created_atB\f\n" +
-	"\n" +
-	"_job_labelB\x12\n" +
-	"\x10_job_grade_label\"\x14\n" +
-	"\x12TemplateUserAccess\"\xe2\x01\n" +
+	"\bvehicles\x18\x04 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"\xe2\x01\n" +
 	"\x10TemplateApproval\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12R\n" +
 	"\x06policy\x18\x02 \x01(\v25.resources.documents.templates.TemplateApprovalPolicyH\x00R\x06policy\x88\x01\x01\x12M\n" +
@@ -2080,7 +1870,7 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\n" +
 	"\b_commentBdZbgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates;documentstemplatesb\x06proto3"
 
-var file_resources_documents_templates_templates_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_resources_documents_templates_templates_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_resources_documents_templates_templates_proto_goTypes = []any{
 	(*Template)(nil),                 // 0: resources.documents.templates.Template
 	(*TemplateShort)(nil),            // 1: resources.documents.templates.TemplateShort
@@ -2088,51 +1878,49 @@ var file_resources_documents_templates_templates_proto_goTypes = []any{
 	(*TemplateRequirements)(nil),     // 3: resources.documents.templates.TemplateRequirements
 	(*ObjectSpecs)(nil),              // 4: resources.documents.templates.ObjectSpecs
 	(*TemplateData)(nil),             // 5: resources.documents.templates.TemplateData
-	(*TemplateJobAccess)(nil),        // 6: resources.documents.templates.TemplateJobAccess
-	(*TemplateUserAccess)(nil),       // 7: resources.documents.templates.TemplateUserAccess
-	(*TemplateApproval)(nil),         // 8: resources.documents.templates.TemplateApproval
-	(*TemplateApprovalPolicy)(nil),   // 9: resources.documents.templates.TemplateApprovalPolicy
-	(*TemplateApprovalTaskSeed)(nil), // 10: resources.documents.templates.TemplateApprovalTaskSeed
-	(*timestamp.Timestamp)(nil),      // 11: resources.timestamp.Timestamp
-	(*category.Category)(nil),        // 12: resources.documents.category.Category
-	(*access.DocumentAccess)(nil),    // 13: resources.documents.access.DocumentAccess
-	(*workflow.Workflow)(nil),        // 14: resources.documents.workflow.Workflow
-	(*users.User)(nil),               // 15: resources.users.User
-	(*documents.DocumentShort)(nil),  // 16: resources.documents.DocumentShort
-	(*short.UserShort)(nil),          // 17: resources.users.short.UserShort
-	(*vehicles.Vehicle)(nil),         // 18: resources.vehicles.Vehicle
-	(access.AccessLevel)(0),          // 19: resources.documents.access.AccessLevel
-	(approval.ApprovalRuleKind)(0),   // 20: resources.documents.approval.ApprovalRuleKind
-	(approval.OnEditBehavior)(0),     // 21: resources.documents.approval.OnEditBehavior
+	(*TemplateApproval)(nil),         // 6: resources.documents.templates.TemplateApproval
+	(*TemplateApprovalPolicy)(nil),   // 7: resources.documents.templates.TemplateApprovalPolicy
+	(*TemplateApprovalTaskSeed)(nil), // 8: resources.documents.templates.TemplateApprovalTaskSeed
+	(*timestamp.Timestamp)(nil),      // 9: resources.timestamp.Timestamp
+	(*category.Category)(nil),        // 10: resources.documents.category.Category
+	(*access.JobAccess)(nil),         // 11: resources.access.JobAccess
+	(*access.Access)(nil),            // 12: resources.access.Access
+	(*workflow.Workflow)(nil),        // 13: resources.documents.workflow.Workflow
+	(*users.User)(nil),               // 14: resources.users.User
+	(*documents.DocumentShort)(nil),  // 15: resources.documents.DocumentShort
+	(*short.UserShort)(nil),          // 16: resources.users.short.UserShort
+	(*vehicles.Vehicle)(nil),         // 17: resources.vehicles.Vehicle
+	(approval.ApprovalRuleKind)(0),   // 18: resources.documents.approval.ApprovalRuleKind
+	(approval.OnEditBehavior)(0),     // 19: resources.documents.approval.OnEditBehavior
 }
 var file_resources_documents_templates_templates_proto_depIdxs = []int32{
-	11, // 0: resources.documents.templates.Template.created_at:type_name -> resources.timestamp.Timestamp
-	11, // 1: resources.documents.templates.Template.updated_at:type_name -> resources.timestamp.Timestamp
-	12, // 2: resources.documents.templates.Template.category:type_name -> resources.documents.category.Category
-	2,  // 3: resources.documents.templates.Template.schema:type_name -> resources.documents.templates.TemplateSchema
-	6,  // 4: resources.documents.templates.Template.job_access:type_name -> resources.documents.templates.TemplateJobAccess
-	13, // 5: resources.documents.templates.Template.content_access:type_name -> resources.documents.access.DocumentAccess
-	14, // 6: resources.documents.templates.Template.workflow:type_name -> resources.documents.workflow.Workflow
-	8,  // 7: resources.documents.templates.Template.approval:type_name -> resources.documents.templates.TemplateApproval
-	11, // 8: resources.documents.templates.TemplateShort.created_at:type_name -> resources.timestamp.Timestamp
-	11, // 9: resources.documents.templates.TemplateShort.updated_at:type_name -> resources.timestamp.Timestamp
-	12, // 10: resources.documents.templates.TemplateShort.category:type_name -> resources.documents.category.Category
-	2,  // 11: resources.documents.templates.TemplateShort.schema:type_name -> resources.documents.templates.TemplateSchema
-	14, // 12: resources.documents.templates.TemplateShort.workflow:type_name -> resources.documents.workflow.Workflow
-	3,  // 13: resources.documents.templates.TemplateSchema.requirements:type_name -> resources.documents.templates.TemplateRequirements
-	4,  // 14: resources.documents.templates.TemplateRequirements.documents:type_name -> resources.documents.templates.ObjectSpecs
-	4,  // 15: resources.documents.templates.TemplateRequirements.users:type_name -> resources.documents.templates.ObjectSpecs
-	4,  // 16: resources.documents.templates.TemplateRequirements.vehicles:type_name -> resources.documents.templates.ObjectSpecs
-	15, // 17: resources.documents.templates.TemplateData.active_char:type_name -> resources.users.User
-	16, // 18: resources.documents.templates.TemplateData.documents:type_name -> resources.documents.DocumentShort
-	17, // 19: resources.documents.templates.TemplateData.users:type_name -> resources.users.short.UserShort
-	18, // 20: resources.documents.templates.TemplateData.vehicles:type_name -> resources.vehicles.Vehicle
-	11, // 21: resources.documents.templates.TemplateJobAccess.created_at:type_name -> resources.timestamp.Timestamp
-	19, // 22: resources.documents.templates.TemplateJobAccess.access:type_name -> resources.documents.access.AccessLevel
-	9,  // 23: resources.documents.templates.TemplateApproval.policy:type_name -> resources.documents.templates.TemplateApprovalPolicy
-	10, // 24: resources.documents.templates.TemplateApproval.tasks:type_name -> resources.documents.templates.TemplateApprovalTaskSeed
-	20, // 25: resources.documents.templates.TemplateApprovalPolicy.rule_kind:type_name -> resources.documents.approval.ApprovalRuleKind
-	21, // 26: resources.documents.templates.TemplateApprovalPolicy.on_edit_behavior:type_name -> resources.documents.approval.OnEditBehavior
+	9,  // 0: resources.documents.templates.Template.created_at:type_name -> resources.timestamp.Timestamp
+	9,  // 1: resources.documents.templates.Template.updated_at:type_name -> resources.timestamp.Timestamp
+	9,  // 2: resources.documents.templates.Template.deleted_at:type_name -> resources.timestamp.Timestamp
+	10, // 3: resources.documents.templates.Template.category:type_name -> resources.documents.category.Category
+	2,  // 4: resources.documents.templates.Template.schema:type_name -> resources.documents.templates.TemplateSchema
+	11, // 5: resources.documents.templates.Template.job_access:type_name -> resources.access.JobAccess
+	12, // 6: resources.documents.templates.Template.content_access:type_name -> resources.access.Access
+	13, // 7: resources.documents.templates.Template.workflow:type_name -> resources.documents.workflow.Workflow
+	6,  // 8: resources.documents.templates.Template.approval:type_name -> resources.documents.templates.TemplateApproval
+	9,  // 9: resources.documents.templates.TemplateShort.created_at:type_name -> resources.timestamp.Timestamp
+	9,  // 10: resources.documents.templates.TemplateShort.updated_at:type_name -> resources.timestamp.Timestamp
+	9,  // 11: resources.documents.templates.TemplateShort.deleted_at:type_name -> resources.timestamp.Timestamp
+	10, // 12: resources.documents.templates.TemplateShort.category:type_name -> resources.documents.category.Category
+	2,  // 13: resources.documents.templates.TemplateShort.schema:type_name -> resources.documents.templates.TemplateSchema
+	13, // 14: resources.documents.templates.TemplateShort.workflow:type_name -> resources.documents.workflow.Workflow
+	3,  // 15: resources.documents.templates.TemplateSchema.requirements:type_name -> resources.documents.templates.TemplateRequirements
+	4,  // 16: resources.documents.templates.TemplateRequirements.documents:type_name -> resources.documents.templates.ObjectSpecs
+	4,  // 17: resources.documents.templates.TemplateRequirements.users:type_name -> resources.documents.templates.ObjectSpecs
+	4,  // 18: resources.documents.templates.TemplateRequirements.vehicles:type_name -> resources.documents.templates.ObjectSpecs
+	14, // 19: resources.documents.templates.TemplateData.active_char:type_name -> resources.users.User
+	15, // 20: resources.documents.templates.TemplateData.documents:type_name -> resources.documents.DocumentShort
+	16, // 21: resources.documents.templates.TemplateData.users:type_name -> resources.users.short.UserShort
+	17, // 22: resources.documents.templates.TemplateData.vehicles:type_name -> resources.vehicles.Vehicle
+	7,  // 23: resources.documents.templates.TemplateApproval.policy:type_name -> resources.documents.templates.TemplateApprovalPolicy
+	8,  // 24: resources.documents.templates.TemplateApproval.tasks:type_name -> resources.documents.templates.TemplateApprovalTaskSeed
+	18, // 25: resources.documents.templates.TemplateApprovalPolicy.rule_kind:type_name -> resources.documents.approval.ApprovalRuleKind
+	19, // 26: resources.documents.templates.TemplateApprovalPolicy.on_edit_behavior:type_name -> resources.documents.approval.OnEditBehavior
 	27, // [27:27] is the sub-list for method output_type
 	27, // [27:27] is the sub-list for method input_type
 	27, // [27:27] is the sub-list for extension type_name
@@ -2150,16 +1938,15 @@ func file_resources_documents_templates_templates_proto_init() {
 	file_resources_documents_templates_templates_proto_msgTypes[3].OneofWrappers = []any{}
 	file_resources_documents_templates_templates_proto_msgTypes[4].OneofWrappers = []any{}
 	file_resources_documents_templates_templates_proto_msgTypes[6].OneofWrappers = []any{}
+	file_resources_documents_templates_templates_proto_msgTypes[7].OneofWrappers = []any{}
 	file_resources_documents_templates_templates_proto_msgTypes[8].OneofWrappers = []any{}
-	file_resources_documents_templates_templates_proto_msgTypes[9].OneofWrappers = []any{}
-	file_resources_documents_templates_templates_proto_msgTypes[10].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_templates_templates_proto_rawDesc), len(file_resources_documents_templates_templates_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

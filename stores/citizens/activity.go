@@ -1,54 +1,43 @@
-package citizens
+package citizensstore
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
-	pb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-type UserActivityStore struct {
-	db     *sql.DB
-	sorter *database.Builder
-}
-
-func New(db *sql.DB) *UserActivityStore {
-	return &UserActivityStore{
-		db:     db,
-		sorter: newUserActivitySorter(),
+func buildUserActivityCondition(
+	tUserActivity *table.FivenetUserActivityTable,
+	opts UserActivityOptions,
+) mysql.BoolExpression {
+	condition := tUserActivity.TargetUserID.EQ(mysql.Int32(opts.UserID))
+	if len(opts.Types) > 0 {
+		types := make([]mysql.Expression, 0, len(opts.Types))
+		for _, t := range opts.Types {
+			types = append(types, mysql.Int32(int32(*t.Enum())))
+		}
+		condition = condition.AND(tUserActivity.Type.IN(types...))
 	}
+
+	return condition
 }
 
-func newUserActivitySorter() *database.Builder {
-	tUserActivity := table.FivenetUserActivity.AS("user_activity")
-
-	return database.New(
-		database.SpecMap{
-			"createdAt": database.Column{Col: tUserActivity.CreatedAt, NullsLast: true},
-		},
-		[]mysql.OrderByClause{
-			tUserActivity.CreatedAt.DESC().NULLS_LAST(),
-		},
-		[]mysql.OrderByClause{
-			tUserActivity.ID.DESC(),
-		},
-		3,
-	)
-}
-
-func (s *UserActivityStore) List(
+func (s *Store) ListUserActivity(
 	ctx context.Context,
-	req *pb.ListUserActivityRequest,
+	opts ListUserActivityOptions,
 ) ([]*usersactivity.UserActivity, error) {
 	tUserActivity := table.FivenetUserActivity.AS("user_activity")
+	tUTarget := table.FivenetUser.AS("target_user")
+	tUSource := tUTarget.AS("source_user")
 
-	orderBys := s.sorter.Build(req.GetSort())
+	condition := buildUserActivityCondition(tUserActivity, opts.UserActivityOptions)
+
+	orderBys := s.userActivitySorter.Build(opts.Sort)
 
 	stmt := mysql.
 		SELECT(
@@ -59,9 +48,30 @@ func (s *UserActivityStore) List(
 			tUserActivity.Type,
 			tUserActivity.Reason,
 			tUserActivity.Data,
+			tUTarget.ID,
+			tUTarget.Job,
+			tUTarget.JobGrade,
+			tUTarget.Firstname,
+			tUTarget.Lastname,
+			tUSource.ID,
+			tUSource.Job,
+			tUSource.JobGrade,
+			tUSource.Firstname,
+			tUSource.Lastname,
 		).
-		FROM(tUserActivity).
-		ORDER_BY(orderBys...)
+		FROM(
+			tUserActivity.
+				INNER_JOIN(tUTarget,
+					tUTarget.ID.EQ(tUserActivity.TargetUserID),
+				).
+				LEFT_JOIN(tUSource,
+					tUSource.ID.EQ(tUserActivity.SourceUserID),
+				),
+		).
+		WHERE(condition).
+		OFFSET(opts.Offset).
+		ORDER_BY(orderBys...).
+		LIMIT(opts.Limit)
 
 	var activities []*usersactivity.UserActivity
 	if err := stmt.QueryContext(ctx, s.db, &activities); err != nil {
@@ -71,4 +81,29 @@ func (s *UserActivityStore) List(
 	}
 
 	return activities, nil
+}
+
+func (s *Store) CountUserActivity(
+	ctx context.Context,
+	opts CountUserActivityOptions,
+) (int64, error) {
+	tUserActivity := table.FivenetUserActivity.AS("user_activity")
+
+	condition := buildUserActivityCondition(tUserActivity, opts.UserActivityOptions)
+
+	countStmt := tUserActivity.
+		SELECT(
+			mysql.COUNT(tUserActivity.ID).AS("data_count.total"),
+		).
+		FROM(tUserActivity).
+		WHERE(condition)
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return 0, err
+		}
+	}
+
+	return count.Total, nil
 }

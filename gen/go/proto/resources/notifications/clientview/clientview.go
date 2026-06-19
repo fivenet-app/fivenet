@@ -1,23 +1,46 @@
 package notificationsclientview
 
-import "strings"
+type VisibilityMode int
 
-func (x ObjectType) ToNatsKey() string {
-	return strings.ToLower(x.String()[12:])
+const (
+	VisibilityUnsupported VisibilityMode = iota
+	VisibilityTargetAccess
+	VisibilityJobScoped
+)
+
+type TypeSpec struct {
+	NatsKey           string
+	AccessRegistryKey string
+	Visibility        VisibilityMode
 }
 
-func (x ObjectType) ToAccessKey() string {
-	switch x {
-	case ObjectType_OBJECT_TYPE_DOCUMENT:
-		return "documents"
+var objectTypeSpecs = map[ObjectType]TypeSpec{
+	ObjectType_OBJECT_TYPE_CITIZEN: {
+		NatsKey:           "citizen",
+		AccessRegistryKey: "citizen",
+		Visibility:        VisibilityTargetAccess,
+	},
+	ObjectType_OBJECT_TYPE_DOCUMENT: {
+		NatsKey:           "document",
+		AccessRegistryKey: "documents",
+		Visibility:        VisibilityTargetAccess,
+	},
+	ObjectType_OBJECT_TYPE_WIKI_PAGE: {
+		NatsKey:           "wiki_page",
+		AccessRegistryKey: "wiki_page",
+		Visibility:        VisibilityTargetAccess,
+	},
+	ObjectType_OBJECT_TYPE_JOBS_COLLEAGUE: {
+		NatsKey:    "jobs_colleague",
+		Visibility: VisibilityJobScoped,
+	},
+	ObjectType_OBJECT_TYPE_JOBS_CONDUCT: {
+		NatsKey:    "jobs_conduct",
+		Visibility: VisibilityJobScoped,
+	},
+}
 
-	case ObjectType_OBJECT_TYPE_WIKI_PAGE:
-		return "wiki_page"
-
-	case ObjectType_OBJECT_TYPE_CITIZEN:
-		return "citizen"
-
-	default:
-		return ""
-	}
+func (x ObjectType) Spec() (TypeSpec, bool) {
+	spec, ok := objectTypeSpecs[x]
+	return spec, ok
 }

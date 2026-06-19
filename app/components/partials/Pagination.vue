@@ -12,6 +12,7 @@ const props = withDefaults(
         status?: AsyncDataRequestStatus;
         hideText?: boolean;
         hideButtons?: boolean;
+        hideRefresh?: boolean;
         compact?: boolean;
     }>(),
     {
@@ -21,6 +22,7 @@ const props = withDefaults(
         status: 'pending',
         hideText: false,
         hideButtons: false,
+        hideRefresh: false,
         compact: false,
     },
 );
@@ -136,7 +138,7 @@ function onClickNext() {
             <div v-else></div>
 
             <RefreshButton
-                v-if="refresh"
+                v-if="refresh && !hideRefresh"
                 :disabled="loadingState || isRequestPending(status)"
                 :loading="loadingState || isRequestPending(status)"
                 label-class="hidden @md/pagination:block"

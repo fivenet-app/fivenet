@@ -59,19 +59,26 @@ UNLOCK TABLES;
 -- Dumping data for table `fivenet_documents_access`
 --
 
-LOCK TABLES `fivenet_documents_access` WRITE;
+LOCK TABLES `fivenet_acl_subjects` WRITE, `fivenet_acl_subject_job_grade_scopes` WRITE, `fivenet_acl_subject_users` WRITE, `fivenet_documents_access` WRITE;
 /*!40000 ALTER TABLE `fivenet_documents_access` DISABLE KEYS */;
-INSERT INTO `fivenet_documents_access` (`id`, `target_id`, `job`, `minimum_grade`, `access`) VALUES (1,3,'ambulance',0,3),
-(2,4,'ambulance',0,3),
-(3,4,'doj',0,3),
-(4,5,'ambulance',0,3),
-(5,5,'doj',0,3),
-(6,6,'police',0,3),
-(7,7,'doj',0,3),
-(8,7,'ambulance',0,2),
-(9,8,'ambulance',0,3),
-(10,9,'ambulance',17,3);
-INSERT INTO `fivenet_documents_access` (`id`, `target_id`, `user_id`, `access`) VALUES (11,4,5,1);
+INSERT INTO `fivenet_acl_subjects` (`id`, `subject_type`) VALUES (10001,3),(10002,3),(10003,3),(10004,3),(10005,1);
+INSERT INTO `fivenet_acl_subject_job_grade_scopes` (`subject_id`, `job`, `minimum_grade`) VALUES (10001,'ambulance',0),(10002,'doj',0),(10003,'police',0),(10004,'ambulance',17);
+INSERT INTO `fivenet_acl_subject_users` (`subject_id`, `user_id`) VALUES (10005,5);
+INSERT INTO `fivenet_documents_access` (`id`, `target_id`, `subject_id`, `access`, `effect`) VALUES (1,3,10001,3,1),
+(2,4,10001,3,1),
+(3,4,10002,3,1),
+(4,5,10001,3,1),
+(5,5,10002,3,1),
+(6,6,10003,3,1),
+(7,7,10002,3,1),
+(8,7,10001,2,1),
+(9,8,10001,3,1),
+(10,9,10004,3,1),
+(11,4,10005,2,0),
+(12,4,10005,3,0),
+(13,4,10005,4,0),
+(14,4,10005,5,0),
+(15,4,10005,6,0);
 /*!40000 ALTER TABLE `fivenet_documents_access` ENABLE KEYS */;
 UNLOCK TABLES;
 

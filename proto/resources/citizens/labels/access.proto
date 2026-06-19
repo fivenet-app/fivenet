@@ -4,7 +4,7 @@ package resources.citizens.labels;
 
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
-import "tagger/tagger.proto";
+import "resources/access/access.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels;citizenslabels";
 
@@ -13,23 +13,4 @@ enum AccessLevel {
   ACCESS_LEVEL_VIEW = 1;
   ACCESS_LEVEL_GIVE = 2;
   ACCESS_LEVEL_REMOVE = 3;
-}
-
-message LabelAccess {
-  option (codegen.dbscanner.dbscanner) = {enabled: true};
-
-  repeated JobAccess jobs = 1 [
-    (buf.validate.field).repeated.max_items = 20,
-    (tagger.tags) = "alias:\"job_access\""
-  ];
-}
-
-message JobAccess {
-  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\""];
-  int64 target_id = 2;
-  string job = 3 [(buf.validate.field).string.max_len = 20];
-  optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
-  int32 minimum_grade = 5 [(buf.validate.field).int32.gte = 0];
-  optional string job_grade_label = 6 [(buf.validate.field).string.max_len = 50];
-  AccessLevel access = 7 [(buf.validate.field).enum.defined_only = true];
 }

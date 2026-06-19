@@ -1,6 +1,7 @@
 // Pageument Activity
 
-import type { AccessLevel, PageAccess } from '~~/gen/ts/resources/wiki/access/access';
+import type { Access } from '~~/gen/ts/resources/access/access';
+import type { AccessLevel } from '~~/gen/ts/resources/wiki/access/access';
 import { PageActivityType } from '~~/gen/ts/resources/wiki/activity/activity';
 import { type Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 
@@ -26,7 +27,7 @@ export function getPageAtivityIcon(activityType: PageActivityType): string {
 }
 
 export function checkPageAccess(
-    access: PageAccess | undefined,
+    access: Access | undefined,
     creator: UserLike | undefined,
     level: AccessLevel,
     creatorJob?: string,

@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 )
 
 type SyncCommand struct {
@@ -53,7 +54,7 @@ func (c *SyncCommand) getBaseResponse() *api.InteractionResponseData {
 				Type:  discord.LinkEmbed,
 				Color: embeds.ColorError,
 				Provider: &discord.EmbedProvider{
-					Name: "FiveNet",
+					Name: version.Project,
 				},
 				Thumbnail: embeds.EmbedThumbnailLogo,
 				Footer:    embeds.EmbedFooterMadeBy,

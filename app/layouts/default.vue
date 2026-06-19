@@ -168,6 +168,12 @@ const links = computed<NavigationMenuItem[]>(() =>
                     to: '/jobs/conduct',
                     permission: 'jobs.ConductService/ListConductEntries' as Perms,
                 },
+                {
+                    label: t('common.group', 2),
+                    icon: 'i-mdi-users-group-outline',
+                    to: '/jobs/groups',
+                    permission: 'TODOService/TODOMethod' as Perms,
+                },
             ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             permission: 'jobs.ColleaguesService/ListColleagues' as Perms,
             active: route.name.startsWith('jobs'),
@@ -216,7 +222,7 @@ const links = computed<NavigationMenuItem[]>(() =>
             },
             kbds: ['G', 'W'],
             permission: 'centrum.CentrumService/TakeControl' as Perms,
-            active: route.name.startsWith('centrum'),
+            active: route.name.startsWith('dispatch') || route.name.startsWith('centrum'),
         },
         {
             label: t('common.wiki'),

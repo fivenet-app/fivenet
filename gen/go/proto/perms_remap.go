@@ -20,6 +20,7 @@
 // source: services/filestore/filestore.proto
 // source: services/jobs/colleagues.proto
 // source: services/jobs/conduct.proto
+// source: services/jobs/groups.proto
 // source: services/jobs/jobs.proto
 // source: services/jobs/stats.proto
 // source: services/jobs/timeclock.proto

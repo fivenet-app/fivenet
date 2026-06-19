@@ -96,7 +96,7 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		CreatorJobColumn   = mysql.StringColumn("creator_job")
 		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, ApprovalColumn, CreatorJobColumn}
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, ApprovalColumn, CreatorJobColumn}
-		defaultColumns     = mysql.ColumnList{CreatedAtColumn, WeightColumn, ColorColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn, WeightColumn}
 	)
 
 	return fivenetDocumentsTemplatesTable{

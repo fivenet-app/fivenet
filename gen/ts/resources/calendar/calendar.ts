@@ -11,7 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { CalendarAccess } from "./access/access";
+import { Access } from "../access/access";
 import { UserShort } from "../users/short/user";
 import { Content } from "../common/content/content";
 import { Timestamp } from "../timestamp/timestamp";
@@ -80,9 +80,9 @@ export interface Calendar {
      */
     subscription?: CalendarSub;
     /**
-     * @generated from protobuf field: resources.calendar.access.CalendarAccess access = 15
+     * @generated from protobuf field: resources.access.Access access = 15
      */
-    access?: CalendarAccess;
+    access?: Access;
     /**
      * @generated from protobuf field: optional resources.calendar.CalendarDiscordSettings discord_settings = 17
      */
@@ -245,7 +245,7 @@ class Calendar$Type extends MessageType<Calendar> {
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 14, name: "subscription", kind: "message", T: () => CalendarSub },
-            { no: 15, name: "access", kind: "message", T: () => CalendarAccess },
+            { no: 15, name: "access", kind: "message", T: () => Access },
             { no: 17, name: "discord_settings", kind: "message", T: () => CalendarDiscordSettings }
         ]);
     }
@@ -311,8 +311,8 @@ class Calendar$Type extends MessageType<Calendar> {
                 case /* optional resources.calendar.CalendarSub subscription */ 14:
                     message.subscription = CalendarSub.internalBinaryRead(reader, reader.uint32(), options, message.subscription);
                     break;
-                case /* resources.calendar.access.CalendarAccess access */ 15:
-                    message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* resources.access.Access access */ 15:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 case /* optional resources.calendar.CalendarDiscordSettings discord_settings */ 17:
                     message.discordSettings = CalendarDiscordSettings.internalBinaryRead(reader, reader.uint32(), options, message.discordSettings);
@@ -371,9 +371,9 @@ class Calendar$Type extends MessageType<Calendar> {
         /* optional resources.calendar.CalendarSub subscription = 14; */
         if (message.subscription)
             CalendarSub.internalBinaryWrite(message.subscription, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
-        /* resources.calendar.access.CalendarAccess access = 15; */
+        /* resources.access.Access access = 15; */
         if (message.access)
-            CalendarAccess.internalBinaryWrite(message.access, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.calendar.CalendarSystemKind system_kind = 16; */
         if (message.systemKind !== undefined)
             writer.tag(16, WireType.Varint).int32(message.systemKind);

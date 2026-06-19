@@ -65,7 +65,7 @@ type BaseModule struct {
 	job      string
 	cfg      *config.Discord
 	appCfg   appconfig.IConfig
-	enricher *mstlystcdata.Enricher
+	enricher mstlystcdata.IEnricher
 
 	oauth2ProviderName string
 
@@ -81,7 +81,7 @@ func NewBaseModule(
 	job string,
 	cfg *config.Discord,
 	appCfg appconfig.IConfig,
-	enricher *mstlystcdata.Enricher,
+	enricher mstlystcdata.IEnricher,
 	oauth2ProviderName string,
 	settings *atomic.Pointer[jobssettings.DiscordSyncSettings],
 ) *BaseModule {

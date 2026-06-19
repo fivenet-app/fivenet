@@ -2,43 +2,30 @@ package stats
 
 import (
 	"context"
-	"database/sql"
-	"errors"
-	"fmt"
 	sync "sync"
 	"sync/atomic"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
-	"github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
-	"go.uber.org/multierr"
+	statsstore "github.com/fivenet-app/fivenet/v2026/stores/stats"
 	"go.uber.org/zap"
 )
 
-var (
-	tAccounts         = table.FivenetAccounts
-	tDocuments        = table.FivenetDocuments
-	tDispatches       = table.FivenetCentrumDispatches
-	tCitizenActivity  = table.FivenetUserActivity
-	tJobUserTimeclock = table.FivenetJobTimeclock
-)
+type Stats = statsstore.Stats
 
 type worker struct {
 	mu sync.Mutex
 
 	logger *zap.Logger
-	db     *sql.DB
+	store  statsstore.IStore
 
 	active atomic.Bool
-	stats  atomic.Pointer[map[string]*stats.Stat]
+	stats  atomic.Pointer[Stats]
 }
 
-func newWorker(logger *zap.Logger, db *sql.DB) *worker {
+func newWorker(logger *zap.Logger, store statsstore.IStore) *worker {
 	return &worker{
 		logger: logger,
-		db:     db,
+		store:  store,
 		active: atomic.Bool{},
 	}
 }
@@ -85,52 +72,24 @@ func (s *worker) calculateStats(ctx context.Context) {
 }
 
 func (s *worker) loadStats(ctx context.Context) error {
-	data := Stats{}
-
-	tUsers := table.FivenetUser
-	queries := map[string]mysql.Statement{
-		"users_registered": tAccounts.SELECT(mysql.COUNT(tAccounts.ID).AS("value")).
-			WHERE(tAccounts.DeletedAt.IS_NULL()),
-		"documents_created": tDocuments.SELECT(mysql.COUNT(tDocuments.ID).AS("value")).
-			WHERE(tDocuments.DeletedAt.IS_NULL()),
-		"dispatches_created": tDispatches.SELECT(mysql.MAX(tDispatches.ID).AS("value")),
-		"citizen_activity":   tCitizenActivity.SELECT(mysql.COUNT(tCitizenActivity.ID).AS("value")),
-		"timeclock_tracked": tJobUserTimeclock.SELECT(
-			mysql.CAST(mysql.SUM(tJobUserTimeclock.SpentTime)).AS_SIGNED().AS("value"),
-		),
-		"citizens_total": tUsers.SELECT(mysql.COUNT(tUsers.ID).AS("value")),
+	data, err := s.store.LoadPublicStats(ctx)
+	if data == nil {
+		data = Stats{}
 	}
 
-	errs := multierr.Combine()
-
-	zero := int32(0)
-	for key, query := range queries {
-		dest := &struct {
-			Value *int32 `alias:"value"`
-		}{
-			Value: &zero,
-		}
-		if err := query.QueryContext(ctx, s.db, dest); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				errs = multierr.Append(
-					errs,
-					fmt.Errorf("error during %q stats query. %w", key, err),
-				)
-				continue
-			}
-		}
-		if (*dest.Value % 10) != 0 {
-			*dest.Value = (10 - *dest.Value%10) + *dest.Value
+	for _, stat := range data {
+		if stat == nil || stat.Value == nil {
+			continue
 		}
 
-		data[key] = &stats.Stat{
-			Value: dest.Value,
+		if *stat.Value%10 != 0 {
+			*stat.Value = (10 - *stat.Value%10) + *stat.Value
 		}
 	}
 
 	s.stats.Store(&data)
 
-	return errs
+	return err
 }
 
 func (s *worker) GetStats() *Stats {

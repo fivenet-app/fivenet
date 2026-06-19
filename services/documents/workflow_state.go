@@ -22,6 +22,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -44,10 +45,11 @@ type Workflow struct {
 	tracer trace.Tracer
 
 	db    *sql.DB
+	store documentsstore.IStore
 	ui    userinfo.UserInfoRetriever
 	notif notifi.INotifi
 
-	access *access.Grouped[documentsaccess.DocumentJobAccess, *documentsaccess.DocumentJobAccess, documentsaccess.DocumentUserAccess, *documentsaccess.DocumentUserAccess, access.DummyQualificationAccess[documentsaccess.AccessLevel], *access.DummyQualificationAccess[documentsaccess.AccessLevel], documentsaccess.AccessLevel]
+	access *access.SubjectObjectAccess
 }
 
 type WorkflowParams struct {
@@ -57,6 +59,7 @@ type WorkflowParams struct {
 
 	Logger *zap.Logger
 	DB     *sql.DB
+	Store  documentsstore.IStore
 	TP     *tracesdk.TracerProvider
 	Notif  notifi.INotifi
 	Ui     userinfo.UserInfoRetriever
@@ -74,10 +77,11 @@ func NewWorkflow(p WorkflowParams) WorkflowResult {
 		logger: p.Logger.Named("documents.workflow"),
 		tracer: p.TP.Tracer("documents.workflow"),
 		db:     p.DB,
+		store:  p.Store,
 		notif:  p.Notif,
 		ui:     p.Ui,
 
-		access: newAccess(p.DB),
+		access: access.NewDocumentsSubjectObjectAccess(p.DB),
 	}
 
 	return WorkflowResult{
@@ -502,7 +506,7 @@ func (w *Workflow) autoCloseDocument(
 		ctx,
 		state.GetDocumentId(),
 		userInfo,
-		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 	)
 	if err != nil {
 		return err
@@ -564,7 +568,7 @@ func (w *Workflow) sendDocumentReminder(
 		ctx,
 		documentId,
 		userInfo,
-		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
 	)
 	if err != nil {
 		return err

@@ -13,7 +13,8 @@ import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { type PageJobAccess, type PageUserAccess, AccessLevel } from '~~/gen/ts/resources/wiki/access/access';
+import type { JobAccess, UserAccess } from '~~/gen/ts/resources/access/access';
+import { AccessLevel } from '~~/gen/ts/resources/wiki/access/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
@@ -96,6 +97,7 @@ const schema = z.object({
     access: z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
         users: userAccessEntries(t).max(maxAccessEntries).default([]),
+        qualifications: qualificationAccessEntries(t).max(0).default([]),
     }),
     files: z.custom<File>().array().max(5).default([]),
 });
@@ -116,6 +118,7 @@ const state = reactive<Schema>({
     access: {
         jobs: [],
         users: [],
+        qualifications: [],
     },
     files: [],
 });
@@ -193,19 +196,18 @@ watchDebounced(
 function setFromProps(): void {
     if (!page.value) return;
 
-    state.parentId = page.value?.parentId ?? 0;
-    state.meta.title = page.value.meta?.title ?? '';
-    state.meta.description = page.value.meta?.description ?? '';
-    state.content = contentToTiptapValue(page.value.content);
-    state.meta.toc = page.value.meta?.toc ?? true;
-    state.meta.draft = page.value.meta?.draft ?? true;
-    state.meta.public = page.value.meta?.public ?? false;
-    state.meta.startpage = page.value.meta?.startpage ?? false;
-    if (page.value.access) {
-        state.access.jobs = page.value.access.jobs;
-        state.access.users = page.value.access.users;
-    }
-    state.files = page.value.files;
+    const input = JSON.parse(JSON.stringify(page.value)) as Page;
+
+    state.parentId = input?.parentId ?? 0;
+    state.meta.title = input.meta?.title ?? '';
+    state.meta.description = input.meta?.description ?? '';
+    state.content = contentToTiptapValue(input.content);
+    state.meta.toc = input.meta?.toc ?? true;
+    state.meta.draft = input.meta?.draft ?? true;
+    state.meta.public = input.meta?.public ?? false;
+    state.meta.startpage = input.meta?.startpage ?? false;
+    state.access = input.access ?? { jobs: [], qualifications: [], users: [] };
+    state.files = input.files;
 
     syncSnapshot();
 }
@@ -374,13 +376,13 @@ useYBoolean(detailsYdoc, 'toc', toRef(state.meta, 'toc'), { provider: provider }
 useYBoolean(detailsYdoc, 'draft', toRef(state.meta, 'draft'), { provider: provider });
 
 // Access
-useYArrayFiltered<PageJobAccess>(
+useYArrayFiltered<JobAccess>(
     ydoc.getArray('access_jobs'),
     toRef(state.access, 'jobs'),
     { omit: ['createdAt', 'user'] },
     { provider: provider },
 );
-useYArrayFiltered<PageUserAccess>(
+useYArrayFiltered<UserAccess>(
     ydoc.getArray('access_users'),
     toRef(state.access, 'users'),
     {

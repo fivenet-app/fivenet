@@ -3,6 +3,7 @@ import type { Form, NavigationMenuItem } from '@nuxt/ui';
 import { computed } from 'vue';
 import { z } from 'zod';
 import ApprovalBadge from '~/components/documents/approval/ApprovalBadge.vue';
+import { approvalTaskStatusToColor, approvalTaskStatusToIcon } from '~/components/documents/approval/helpers';
 import TaskStatusBadge from '~/components/documents/approval/TaskStatusBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -39,11 +40,26 @@ const { t } = useI18n();
 const approvalClient = await getDocumentsApprovalClient();
 
 const statuses = computed(() => [
-    { label: t('enums.documents.ApprovalTaskStatus.PENDING'), value: ApprovalTaskStatus.PENDING },
-    { label: t('enums.documents.ApprovalTaskStatus.APPROVED'), value: ApprovalTaskStatus.APPROVED },
-    { label: t('enums.documents.ApprovalTaskStatus.DECLINED'), value: ApprovalTaskStatus.DECLINED },
-    { label: t('enums.documents.ApprovalTaskStatus.EXPIRED'), value: ApprovalTaskStatus.EXPIRED },
-    { label: t('enums.documents.ApprovalTaskStatus.CANCELLED'), value: ApprovalTaskStatus.CANCELLED },
+    {
+        label: t('enums.documents.ApprovalTaskStatus.PENDING'),
+        value: ApprovalTaskStatus.PENDING,
+    },
+    {
+        label: t('enums.documents.ApprovalTaskStatus.APPROVED'),
+        value: ApprovalTaskStatus.APPROVED,
+    },
+    {
+        label: t('enums.documents.ApprovalTaskStatus.DECLINED'),
+        value: ApprovalTaskStatus.DECLINED,
+    },
+    {
+        label: t('enums.documents.ApprovalTaskStatus.EXPIRED'),
+        value: ApprovalTaskStatus.EXPIRED,
+    },
+    {
+        label: t('enums.documents.ApprovalTaskStatus.CANCELLED'),
+        value: ApprovalTaskStatus.CANCELLED,
+    },
 ]);
 
 const onlyDrafts: ToggleItem<boolean | undefined>[] = [
@@ -134,6 +150,14 @@ async function listApprovalTasksInbox(values: Schema): Promise<ListApprovalTasks
                                     value-key="value"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                 >
+                                    <template #item-leading="{ item }">
+                                        <UIcon
+                                            class="size-4"
+                                            :class="`text-${approvalTaskStatusToColor(item.value)}-400`"
+                                            :name="approvalTaskStatusToIcon(item.value)"
+                                        />
+                                    </template>
+
                                     <template #default>
                                         {{ $t('common.selected', query.statuses.length) }}
                                     </template>
