@@ -78,6 +78,12 @@ async function listCalendars(page: number): Promise<ListCalendarsResponse> {
     return response;
 }
 
+const enablePagination = computed<boolean>(() =>
+    calendarsData.value?.pagination
+        ? calendarsData.value.pagination.totalCount > calendarsData.value.pagination.pageSize
+        : false,
+);
+
 const { refresh, status, error } = useLazyAsyncData(
     `calendar-entries-${currentDate.value.year}-${currentDate.value.month}-${activeCalendarIds.value.join(':')}`,
     () =>
@@ -652,9 +658,8 @@ const viewOptions = [
                 <div class="flex-1" />
             </div>
 
-            <!-- TODO Implement pagination for users with more than pageSize total calendar
             <Pagination
-                v-if="calendarsData?.pagination && calendarsData.pagination.totalCount > calendarsData.pagination.pageSize"
+                v-if="enablePagination"
                 v-model="page"
                 :compact="true"
                 :status="calendarsStatus"
@@ -663,7 +668,6 @@ const viewOptions = [
                 hide-text
                 hide-refresh
             />
-            -->
         </template>
 
         <template #footer>
