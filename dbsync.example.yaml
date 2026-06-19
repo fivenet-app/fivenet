@@ -406,6 +406,8 @@ tables:
     #  $whereCondition
     #  ORDER BY `license`
     #  LIMIT $limit;
+    # If enabled, the accounts table `groups` column will be "wiped" and filled only with the new data
+    clearBeforeInsert: true
 
 tableManager:
   # By default enabled, used to create missing `updated_at` columns (`updatedTimeColumn`) on tables that have it configured.

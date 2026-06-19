@@ -145,6 +145,10 @@ export interface DataAccounts {
      * @generated from protobuf field: repeated resources.sync.activity.AccountUpdate account_updates = 1
      */
     accountUpdates: AccountUpdate[];
+    /**
+     * @generated from protobuf field: bool clear = 2
+     */
+    clear: boolean;
 }
 /**
  * Detailed user information for sync purposes
@@ -768,12 +772,14 @@ export const LastCharID = new LastCharID$Type();
 class DataAccounts$Type extends MessageType<DataAccounts> {
     constructor() {
         super("resources.sync.data.DataAccounts", [
-            { no: 1, name: "account_updates", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AccountUpdate, options: { "buf.validate.field": { repeated: { maxItems: "200" } } } }
+            { no: 1, name: "account_updates", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AccountUpdate, options: { "buf.validate.field": { repeated: { maxItems: "200" } } } },
+            { no: 2, name: "clear", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<DataAccounts>): DataAccounts {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.accountUpdates = [];
+        message.clear = false;
         if (value !== undefined)
             reflectionMergePartial<DataAccounts>(this, message, value);
         return message;
@@ -785,6 +791,9 @@ class DataAccounts$Type extends MessageType<DataAccounts> {
             switch (fieldNo) {
                 case /* repeated resources.sync.activity.AccountUpdate account_updates */ 1:
                     message.accountUpdates.push(AccountUpdate.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* bool clear */ 2:
+                    message.clear = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -801,6 +810,9 @@ class DataAccounts$Type extends MessageType<DataAccounts> {
         /* repeated resources.sync.activity.AccountUpdate account_updates = 1; */
         for (let i = 0; i < message.accountUpdates.length; i++)
             AccountUpdate.internalBinaryWrite(message.accountUpdates[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool clear = 2; */
+        if (message.clear !== false)
+            writer.tag(2, WireType.Varint).bool(message.clear);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

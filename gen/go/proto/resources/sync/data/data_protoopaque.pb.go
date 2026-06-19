@@ -776,6 +776,7 @@ func (b0 LastCharID_builder) Build() *LastCharID {
 type DataAccounts struct {
 	state                     protoimpl.MessageState     `protogen:"opaque.v1"`
 	xxx_hidden_AccountUpdates *[]*activity.AccountUpdate `protobuf:"bytes,1,rep,name=account_updates,json=accountUpdates,proto3"`
+	xxx_hidden_Clear          bool                       `protobuf:"varint,2,opt,name=clear,proto3"`
 	unknownFields             protoimpl.UnknownFields
 	sizeCache                 protoimpl.SizeCache
 }
@@ -814,14 +815,26 @@ func (x *DataAccounts) GetAccountUpdates() []*activity.AccountUpdate {
 	return nil
 }
 
+func (x *DataAccounts) GetClear() bool {
+	if x != nil {
+		return x.xxx_hidden_Clear
+	}
+	return false
+}
+
 func (x *DataAccounts) SetAccountUpdates(v []*activity.AccountUpdate) {
 	x.xxx_hidden_AccountUpdates = &v
+}
+
+func (x *DataAccounts) SetClear(v bool) {
+	x.xxx_hidden_Clear = v
 }
 
 type DataAccounts_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	AccountUpdates []*activity.AccountUpdate
+	Clear          bool
 }
 
 func (b0 DataAccounts_builder) Build() *DataAccounts {
@@ -829,6 +842,7 @@ func (b0 DataAccounts_builder) Build() *DataAccounts {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_AccountUpdates = &b.AccountUpdates
+	x.xxx_hidden_Clear = b.Clear
 	return m0
 }
 
@@ -1393,9 +1407,10 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\alicense\x18\x01 \x01(\tR\alicense\x12%\n" +
 	"\flast_char_id\x18\x02 \x01(\x05H\x00R\n" +
 	"lastCharId\x88\x01\x01B\x0f\n" +
-	"\r_last_char_id\"_\n" +
+	"\r_last_char_id\"u\n" +
 	"\fDataAccounts\x12O\n" +
-	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"\x91\f\n" +
+	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\x12\x14\n" +
+	"\x05clear\x18\x02 \x01(\bR\x05clear\"\x91\f\n" +
 	"\bDataUser\x12-\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x14\x9a\x84\x9e\x03\x0falias:\"user.id\"R\x06userId\x12<\n" +
 	"\n" +

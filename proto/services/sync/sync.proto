@@ -101,6 +101,7 @@ message SendLicensesRequest {
 
 message SendAccountsRequest {
   repeated resources.sync.activity.AccountUpdate account_updates = 1 [(buf.validate.field).repeated.max_items = 200];
+  bool clear = 2;
 }
 
 message SendUsersRequest {

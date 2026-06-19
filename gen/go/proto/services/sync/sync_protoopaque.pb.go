@@ -1428,6 +1428,7 @@ func (b0 SendLicensesRequest_builder) Build() *SendLicensesRequest {
 type SendAccountsRequest struct {
 	state                     protoimpl.MessageState     `protogen:"opaque.v1"`
 	xxx_hidden_AccountUpdates *[]*activity.AccountUpdate `protobuf:"bytes,1,rep,name=account_updates,json=accountUpdates,proto3"`
+	xxx_hidden_Clear          bool                       `protobuf:"varint,2,opt,name=clear,proto3"`
 	unknownFields             protoimpl.UnknownFields
 	sizeCache                 protoimpl.SizeCache
 }
@@ -1466,14 +1467,26 @@ func (x *SendAccountsRequest) GetAccountUpdates() []*activity.AccountUpdate {
 	return nil
 }
 
+func (x *SendAccountsRequest) GetClear() bool {
+	if x != nil {
+		return x.xxx_hidden_Clear
+	}
+	return false
+}
+
 func (x *SendAccountsRequest) SetAccountUpdates(v []*activity.AccountUpdate) {
 	x.xxx_hidden_AccountUpdates = &v
+}
+
+func (x *SendAccountsRequest) SetClear(v bool) {
+	x.xxx_hidden_Clear = v
 }
 
 type SendAccountsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	AccountUpdates []*activity.AccountUpdate
+	Clear          bool
 }
 
 func (b0 SendAccountsRequest_builder) Build() *SendAccountsRequest {
@@ -1481,6 +1494,7 @@ func (b0 SendAccountsRequest_builder) Build() *SendAccountsRequest {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_AccountUpdates = &b.AccountUpdates
+	x.xxx_hidden_Clear = b.Clear
 	return m0
 }
 
@@ -3311,9 +3325,10 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\x0fSendJobsRequest\x12'\n" +
 	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x04jobs\"W\n" +
 	"\x13SendLicensesRequest\x12@\n" +
-	"\blicenses\x18\x01 \x03(\v2$.resources.citizens.licenses.LicenseR\blicenses\"f\n" +
+	"\blicenses\x18\x01 \x03(\v2$.resources.citizens.licenses.LicenseR\blicenses\"|\n" +
 	"\x13SendAccountsRequest\x12O\n" +
-	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"G\n" +
+	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\x12\x14\n" +
+	"\x05clear\x18\x02 \x01(\bR\x05clear\"G\n" +
 	"\x10SendUsersRequest\x123\n" +
 	"\x05users\x18\x01 \x03(\v2\x1d.resources.sync.data.DataUserR\x05users\"N\n" +
 	"\x13SendVehiclesRequest\x127\n" +

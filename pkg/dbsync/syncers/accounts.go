@@ -16,6 +16,8 @@ type AccountsSync struct {
 	*Syncer
 
 	state *dbsyncconfig.TableSyncState
+
+	clear bool
 }
 
 func NewAccountsSync(
@@ -25,6 +27,7 @@ func NewAccountsSync(
 	return &AccountsSync{
 		Syncer: s,
 		state:  state,
+		clear:  s.cfg.Tables.Accounts.ClearBeforeInsert,
 	}
 }
 
@@ -50,6 +53,7 @@ func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
 			end := min(start+pbsync.MaxAccountsPerRequest, len(accounts))
 			req := &pbsync.SendAccountsRequest{
 				AccountUpdates: accounts[start:end],
+				Clear:          s.clear,
 			}
 			if err := s.send(
 				ctx,

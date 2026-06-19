@@ -689,6 +689,8 @@ type VehiclesColumns struct {
 
 type AccountsTable struct {
 	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+
+	ClearBeforeInsert bool `yaml:"clearBeforeInsert" default:"true"`
 }
 
 func (c *AccountsTable) GetQuery(

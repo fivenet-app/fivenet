@@ -243,6 +243,10 @@ export interface SendAccountsRequest {
      * @generated from protobuf field: repeated resources.sync.activity.AccountUpdate account_updates = 1
      */
     accountUpdates: AccountUpdate[];
+    /**
+     * @generated from protobuf field: bool clear = 2
+     */
+    clear: boolean;
 }
 /**
  * @generated from protobuf message services.sync.SendUsersRequest
@@ -1394,12 +1398,14 @@ export const SendLicensesRequest = new SendLicensesRequest$Type();
 class SendAccountsRequest$Type extends MessageType<SendAccountsRequest> {
     constructor() {
         super("services.sync.SendAccountsRequest", [
-            { no: 1, name: "account_updates", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AccountUpdate, options: { "buf.validate.field": { repeated: { maxItems: "200" } } } }
+            { no: 1, name: "account_updates", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AccountUpdate, options: { "buf.validate.field": { repeated: { maxItems: "200" } } } },
+            { no: 2, name: "clear", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<SendAccountsRequest>): SendAccountsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.accountUpdates = [];
+        message.clear = false;
         if (value !== undefined)
             reflectionMergePartial<SendAccountsRequest>(this, message, value);
         return message;
@@ -1411,6 +1417,9 @@ class SendAccountsRequest$Type extends MessageType<SendAccountsRequest> {
             switch (fieldNo) {
                 case /* repeated resources.sync.activity.AccountUpdate account_updates */ 1:
                     message.accountUpdates.push(AccountUpdate.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* bool clear */ 2:
+                    message.clear = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1427,6 +1436,9 @@ class SendAccountsRequest$Type extends MessageType<SendAccountsRequest> {
         /* repeated resources.sync.activity.AccountUpdate account_updates = 1; */
         for (let i = 0; i < message.accountUpdates.length; i++)
             AccountUpdate.internalBinaryWrite(message.accountUpdates[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool clear = 2; */
+        if (message.clear !== false)
+            writer.tag(2, WireType.Varint).bool(message.clear);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

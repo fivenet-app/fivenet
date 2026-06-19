@@ -49,6 +49,7 @@ func (s *Store) SendData(
 		if resp.RowsAffected, err = s.handleAccountsData(
 			ctx,
 			d.Accounts.GetAccountUpdates(),
+			d.Accounts.GetClear(),
 		); err != nil {
 			return nil, fmt.Errorf("failed to handle accounts data. %w", err)
 		}
@@ -85,7 +86,7 @@ func (s *Store) SendAccounts(
 	ctx context.Context,
 	req *pbsync.SendAccountsRequest,
 ) (*pbsync.SendDataResponse, error) {
-	rowsAffected, err := s.handleAccountsData(ctx, req.GetAccountUpdates())
+	rowsAffected, err := s.handleAccountsData(ctx, req.GetAccountUpdates(), req.GetClear())
 	if err != nil {
 		return nil, fmt.Errorf("failed to handle accounts data. %w", err)
 	}
@@ -156,14 +157,28 @@ func (s *Store) handleLicensesData(
 func (s *Store) handleAccountsData(
 	ctx context.Context,
 	data []*syncactivity.AccountUpdate,
+	clear bool,
 ) (int64, error) {
-	if len(data) == 0 {
+	if len(data) == 0 && !clear {
 		return 0, nil
 	}
 
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	defer tx.Rollback()
+
 	tAccounts := table.FivenetAccounts
 	rowsAffected := int64(0)
+	accountLicenses := make([]mysql.Expression, 0, len(data))
 	for _, account := range data {
+		license := account.GetLicense()
+		if license == "" {
+			continue
+		}
+		accountLicenses = append(accountLicenses, mysql.String(license))
+
 		var groups *accounts.AccountGroups
 		if account.GetGroups() != nil && len(account.GetGroups().GetGroups()) > 0 {
 			groups = account.GetGroups()
@@ -172,12 +187,18 @@ func (s *Store) handleAccountsData(
 		}
 
 		stmt := tAccounts.
-			UPDATE(tAccounts.License, tAccounts.Groups).
-			SET(account.GetLicense(), groups).
-			WHERE(tAccounts.License.EQ(mysql.String(account.License))).
+			UPDATE(
+				tAccounts.License,
+				tAccounts.Groups,
+			).
+			SET(
+				account.GetLicense(),
+				groups,
+			).
+			WHERE(tAccounts.License.EQ(mysql.String(license))).
 			LIMIT(1)
 
-		res, err := stmt.ExecContext(ctx, s.db)
+		res, err := stmt.ExecContext(ctx, tx)
 		if err != nil {
 			return 0, fmt.Errorf("failed to execute accounts insert statement. %w", err)
 		}
@@ -186,6 +207,39 @@ func (s *Store) handleAccountsData(
 			return 0, fmt.Errorf("failed to retrieve rows affected for accounts insert. %w", err)
 		}
 		rowsAffected += rows
+	}
+
+	if clear && len(data) > 0 && len(accountLicenses) == 0 {
+		if err := tx.Commit(); err != nil {
+			return 0, err
+		}
+
+		return rowsAffected, nil
+	}
+
+	if clear {
+		clearStmt := tAccounts.
+			UPDATE(tAccounts.Groups).
+			SET(mysql.StringExp(mysql.NULL))
+
+		if len(accountLicenses) > 0 {
+			clearStmt = clearStmt.
+				WHERE(tAccounts.License.NOT_IN(accountLicenses...))
+		}
+
+		res, err := clearStmt.ExecContext(ctx, tx)
+		if err != nil {
+			return 0, fmt.Errorf("failed to execute accounts clear statement. %w", err)
+		}
+		rows, err := res.RowsAffected()
+		if err != nil {
+			return 0, fmt.Errorf("failed to retrieve rows affected for accounts clear. %w", err)
+		}
+		rowsAffected += rows
+	}
+
+	if err := tx.Commit(); err != nil {
+		return 0, err
 	}
 
 	return rowsAffected, nil

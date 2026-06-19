@@ -6612,6 +6612,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `account_updates` | [resources.sync.activity.AccountUpdate](#resourcessyncactivityAccountUpdate) | repeated |  |
+| `clear` | [bool](#bool) |  |  |
 
 
 
@@ -13458,6 +13459,7 @@ Individual DeleteData request messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `account_updates` | [resources.sync.activity.AccountUpdate](#resourcessyncactivityAccountUpdate) | repeated |  |
+| `clear` | [bool](#bool) |  |  |
 
 
 
