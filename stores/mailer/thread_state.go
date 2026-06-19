@@ -88,17 +88,17 @@ func (s *Store) SetThreadState(
 		return nil
 	}
 
-	tThreadsStateTbl := table.FivenetMailerThreadsState
-	stmt := tThreadsStateTbl.
+	tThreadsState := table.FivenetMailerThreadsState
+	stmt := tThreadsState.
 		INSERT(
-			tThreadsStateTbl.ThreadID,
-			tThreadsStateTbl.EmailID,
-			tThreadsStateTbl.Unread,
-			tThreadsStateTbl.LastRead,
-			tThreadsStateTbl.Important,
-			tThreadsStateTbl.Favorite,
-			tThreadsStateTbl.Muted,
-			tThreadsStateTbl.Archived,
+			tThreadsState.ThreadID,
+			tThreadsState.EmailID,
+			tThreadsState.Unread,
+			tThreadsState.LastRead,
+			tThreadsState.Important,
+			tThreadsState.Favorite,
+			tThreadsState.Muted,
+			tThreadsState.Archived,
 		).
 		VALUES(
 			state.GetThreadId(),
@@ -130,11 +130,12 @@ func (s *Store) SetUnreadState(
 		return nil
 	}
 
-	stmt := table.FivenetMailerThreadsState.
+	tThreadsState := table.FivenetMailerThreadsState
+	stmt := tThreadsState.
 		INSERT(
-			table.FivenetMailerThreadsState.ThreadID,
-			table.FivenetMailerThreadsState.EmailID,
-			table.FivenetMailerThreadsState.Unread,
+			tThreadsState.ThreadID,
+			tThreadsState.EmailID,
+			tThreadsState.Unread,
 		)
 
 	for _, emailID := range emailIDs {
@@ -143,7 +144,7 @@ func (s *Store) SetUnreadState(
 
 	stmt = stmt.
 		ON_DUPLICATE_KEY_UPDATE(
-			table.FivenetMailerThreadsState.Unread.SET(mysql.RawBool("VALUES(`unread`)")),
+			tThreadsState.Unread.SET(mysql.RawBool("VALUES(`unread`)")),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.dbOr(q)); err != nil {

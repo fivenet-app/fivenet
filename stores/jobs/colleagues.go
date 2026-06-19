@@ -27,6 +27,7 @@ func (s *Store) CreateColleagueActivity(
 		return nil
 	}
 
+	tColleagueActivity := table.FivenetJobColleagueActivity
 	stmt := tColleagueActivity.
 		INSERT(
 			tColleagueActivity.Job,
@@ -538,6 +539,8 @@ func (s *Store) HandleColleaguePropsChanges(
 	sourceUserId *int32,
 	reason string,
 ) ([]*colleaguesactivity.ColleagueActivity, error) {
+	tColleagueProps := table.FivenetJobColleagueProps
+
 	updateSets := []mysql.ColumnAssigment{}
 
 	absenceBegin := mysql.DateExp(mysql.NULL)
@@ -714,6 +717,7 @@ func updateColleaguesLabels(
 	added []*jobslabels.Label,
 	removed []*jobslabels.Label,
 ) error {
+	tColleagueLabels := table.FivenetJobColleagueLabels
 	if len(added) > 0 {
 		addedLabels := make([]*model.FivenetJobColleagueLabels, len(added))
 		for i, label := range added {

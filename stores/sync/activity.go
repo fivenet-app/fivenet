@@ -353,8 +353,16 @@ func (s *Store) startTimeclockEntry(ctx context.Context, data *activity.Timecloc
 	}
 
 	updateStmt := tTimeClock.
-		INSERT(tTimeClock.Job, tTimeClock.UserID, tTimeClock.Date).
-		VALUES(data.GetJob(), data.GetUserId(), mysql.CURRENT_DATE())
+		INSERT(
+			tTimeClock.Job,
+			tTimeClock.UserID,
+			tTimeClock.Date,
+		).
+		VALUES(
+			data.GetJob(),
+			data.GetUserId(),
+			mysql.CURRENT_DATE(),
+		)
 	if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
 		if !dbutils.IsDuplicateError(err) {
 			return fmt.Errorf("failed to insert timeclock entry. %w", err)

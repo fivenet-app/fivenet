@@ -350,6 +350,7 @@ func (s *Store) DeleteQualificationRequest(
 	qualificationId int64,
 	userId int32,
 ) error {
+	tQualiReq := table.FivenetQualificationsRequests
 	stmt := tQualiReq.
 		UPDATE(tQualiReq.DeletedAt).
 		SET(mysql.CURRENT_TIMESTAMP()).
@@ -370,6 +371,7 @@ func (s *Store) UpdateRequestStatus(
 	userId int32,
 	status resqualifications.RequestStatus,
 ) error {
+	tQualiReq := table.FivenetQualificationsRequests
 	stmt := tQualiReq.
 		INSERT(
 			tQualiReq.QualificationID,
@@ -395,6 +397,7 @@ func (s *Store) ApproveQualificationRequest(
 	req *resqualifications.QualificationRequest,
 	userInfo *userinfo.UserInfo,
 ) error {
+	tQualiReq := table.FivenetQualificationsRequests
 	stmt := tQualiReq.
 		UPDATE(
 			tQualiReq.Status,
@@ -425,6 +428,7 @@ func (s *Store) UpsertQualificationRequest(
 	tx qrm.DB,
 	req *resqualifications.QualificationRequest,
 ) error {
+	tQualiReq := table.FivenetQualificationsRequests
 	stmt := tQualiReq.
 		INSERT(
 			tQualiReq.QualificationID,

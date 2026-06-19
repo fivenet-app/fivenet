@@ -165,15 +165,15 @@ func (s *Store) listConditions(
 		tCalendar.Job.IS_NULL(),
 		tCalendar.CreatorID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
 	)
-		condition = mysql.AND(
-			condition,
-			mysql.OR(
-				subsCondition,
-				creatorPrivateCondition,
-				accessExists,
-				s.birthdayCalendarVisible(tCalendar.ID, minAccessLevel, q.UserInfo),
-			),
-		)
+	condition = mysql.AND(
+		condition,
+		mysql.OR(
+			subsCondition,
+			creatorPrivateCondition,
+			accessExists,
+			s.birthdayCalendarVisible(tCalendar.ID, minAccessLevel, q.UserInfo),
+		),
+	)
 
 	if q.After != nil {
 		condition = condition.AND(
@@ -352,6 +352,7 @@ func (s *Store) CreateCalendar(
 	userInfo *userinfo.UserInfo,
 	discordSettingsJSON *string,
 ) (int64, error) {
+	tCalendar := table.FivenetCalendar
 	stmt := tCalendar.
 		INSERT(
 			tCalendar.Job,
@@ -411,6 +412,7 @@ func (s *Store) UpdateCalendar(
 		discordSettingsValue = mysql.String(*discordSettingsJSON)
 	}
 
+	tCalendar := table.FivenetCalendar
 	stmt := tCalendar.
 		UPDATE(
 			tCalendar.DiscordSettings,
@@ -443,6 +445,7 @@ func (s *Store) DeleteCalendar(
 	calendarID int64,
 	deletedAt *timestamp.Timestamp,
 ) error {
+	tCalendar := table.FivenetCalendar
 	stmt := tCalendar.
 		UPDATE(
 			tCalendar.DeletedAt,

@@ -11,10 +11,10 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var notificationsTable = table.FivenetNotifications
+var tNotifications = table.FivenetNotifications
 
 func (s *Store) Count(ctx context.Context, q ListQuery) (int64, error) {
-	tNotifications := notificationsTable.AS("notification")
+	tNotifications := tNotifications.AS("notification")
 	condition := buildListCondition(q, tNotifications)
 
 	stmt := tNotifications.
@@ -38,7 +38,7 @@ func (s *Store) List(
 	ctx context.Context,
 	q ListQuery,
 ) ([]*resourcesnotifications.Notification, error) {
-	tNotifications := notificationsTable.AS("notification")
+	tNotifications := tNotifications.AS("notification")
 	condition := buildListCondition(q, tNotifications)
 
 	stmt := tNotifications.
@@ -70,7 +70,7 @@ func (s *Store) List(
 }
 
 func (s *Store) MarkNotifications(ctx context.Context, q MarkQuery) (int64, error) {
-	tNotifications := notificationsTable
+	tNotifications := tNotifications
 	condition := tNotifications.UserID.EQ(mysql.Int32(q.UserID)).AND(
 		tNotifications.ReadAt.IS_NULL(),
 	)

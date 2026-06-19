@@ -158,6 +158,7 @@ func (s *Store) RecomputeApprovalPolicyTx(
 		return err
 	}
 
+	tApprovalPolicy = table.FivenetDocumentsApprovalPolicies
 	if _, err := tApprovalPolicy.
 		UPDATE().
 		SET(

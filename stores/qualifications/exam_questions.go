@@ -7,6 +7,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -18,6 +19,7 @@ func (s *Store) HandleExamQuestionsChanges(
 ) ([]*file.File, error) {
 	files := []*file.File{}
 
+	tExamQuestion := table.FivenetQualificationsExamQuestions
 	if len(questions.GetQuestions()) == 0 {
 		stmt := tExamQuestion.
 			DELETE().

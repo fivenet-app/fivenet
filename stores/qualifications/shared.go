@@ -15,8 +15,8 @@ var (
 	tQualiResultSuccess = table.FivenetQualificationsResultSuccessMap.AS(
 		"qualification_result_success_map",
 	)
-	tQualiReq     = table.FivenetQualificationsRequests.AS("qualification_request")
-	tExamQuestion = table.FivenetQualificationsExamQuestions.AS("exam_question")
-	tExamResponse = table.FivenetQualificationsExamResponses.AS("exam_response")
-	tExamUser     = table.FivenetQualificationsExamUsers.AS("exam_user")
+	tQualiReq      = table.FivenetQualificationsRequests.AS("qualification_request")
+	tExamQuestion  = table.FivenetQualificationsExamQuestions.AS("exam_question")
+	tExamResponses = table.FivenetQualificationsExamResponses.AS("exam_response")
+	tExamUser      = table.FivenetQualificationsExamUsers.AS("exam_user")
 )

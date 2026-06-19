@@ -60,6 +60,7 @@ func (s *Store) DeleteUsers(
 		userExprs = append(userExprs, mysql.Int32(userID))
 	}
 
+	tUsers := table.FivenetUser
 	delStmt := tUsers.
 		DELETE().
 		WHERE(tUsers.ID.IN(userExprs...)).

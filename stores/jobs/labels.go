@@ -125,6 +125,7 @@ func (s *Store) ManageLabels(
 		i++
 	}
 
+	tJobLabels := table.FivenetJobLabels.AS("label")
 	if len(labels) > 0 {
 		toCreate := []*jobslabels.Label{}
 		toUpdate := []*jobslabels.Label{}

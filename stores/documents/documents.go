@@ -541,14 +541,15 @@ func addDocumentActivity(
 	tx qrm.DB,
 	activity *documentsactivity.DocActivity,
 ) (int64, error) {
-	stmt := table.FivenetDocumentsActivity.
+	tDocActivity := table.FivenetDocumentsActivity
+	stmt := tDocActivity.
 		INSERT(
-			table.FivenetDocumentsActivity.DocumentID,
-			table.FivenetDocumentsActivity.ActivityType,
-			table.FivenetDocumentsActivity.CreatorID,
-			table.FivenetDocumentsActivity.CreatorJob,
-			table.FivenetDocumentsActivity.Reason,
-			table.FivenetDocumentsActivity.Data,
+			tDocActivity.DocumentID,
+			tDocActivity.ActivityType,
+			tDocActivity.CreatorID,
+			tDocActivity.CreatorJob,
+			tDocActivity.Reason,
+			tDocActivity.Data,
 		).
 		VALUES(
 			activity.GetDocumentId(),
@@ -608,11 +609,12 @@ func (s *Store) UpdateDocumentOwner(
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	creatorVisibilityStmt := table.FivenetDocumentsVisibilityCreator.
+	tDocumentVisibilityCreator := table.FivenetDocumentsVisibilityCreator
+	creatorVisibilityStmt := tDocumentVisibilityCreator.
 		INSERT(
-			table.FivenetDocumentsVisibilityCreator.TargetID,
-			table.FivenetDocumentsVisibilityCreator.CreatorID,
-			table.FivenetDocumentsVisibilityCreator.CreatorJob,
+			tDocumentVisibilityCreator.TargetID,
+			tDocumentVisibilityCreator.CreatorID,
+			tDocumentVisibilityCreator.CreatorJob,
 		).
 		VALUES(
 			documentID,
@@ -620,13 +622,13 @@ func (s *Store) UpdateDocumentOwner(
 			newOwner.GetJob(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			table.FivenetDocumentsVisibilityCreator.TargetID.SET(
+			tDocumentVisibilityCreator.TargetID.SET(
 				mysql.RawInt("VALUES(`target_id`)"),
 			),
-			table.FivenetDocumentsVisibilityCreator.CreatorID.SET(
+			tDocumentVisibilityCreator.CreatorID.SET(
 				mysql.RawInt("VALUES(`creator_id`)"),
 			),
-			table.FivenetDocumentsVisibilityCreator.CreatorJob.SET(
+			tDocumentVisibilityCreator.CreatorJob.SET(
 				mysql.RawString("VALUES(`creator_job`)"),
 			),
 		)

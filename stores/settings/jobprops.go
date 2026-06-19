@@ -9,9 +9,8 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var tJobProps = table.FivenetJobProps
-
 func (s *Store) SetJobProps(ctx context.Context, props *jobsprops.JobProps) error {
+	tJobProps := table.FivenetJobProps
 	stmt := tJobProps.
 		INSERT(
 			tJobProps.Job,
@@ -45,6 +44,7 @@ func (s *Store) SetJobProps(ctx context.Context, props *jobsprops.JobProps) erro
 }
 
 func (s *Store) DeleteJobProps(ctx context.Context, job string) error {
+	tJobProps := table.FivenetJobProps
 	stmt := tJobProps.
 		UPDATE().
 		SET(

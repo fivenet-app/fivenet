@@ -330,7 +330,6 @@ func (s *Store) updateUserLabels(
 	removed []*citizenslabels.Label,
 ) error {
 	tUserLabels := table.FivenetUserLabels
-
 	if len(added) > 0 {
 		stmt := tUserLabels.
 			INSERT(

@@ -20,6 +20,7 @@ import (
 const TimeclockMaxDays = (365 / 2) * 24 * time.Hour
 
 func (s *Store) CleanupTimeclock(ctx context.Context, db qrm.DB) error {
+	tTimeClock := table.FivenetJobTimeclock
 	stmt := tTimeClock.
 		UPDATE().
 		SET(

@@ -238,9 +238,10 @@ func (s *Store) DeleteBirthdayEntries(
 	tx qrm.DB,
 	calendarID int64,
 ) error {
-	stmt := table.FivenetCalendarEntries.
+	tCalendarEntry := table.FivenetCalendarEntries
+	stmt := tCalendarEntry.
 		DELETE().
-		WHERE(table.FivenetCalendarEntries.CalendarID.EQ(mysql.Int64(calendarID)))
+		WHERE(tCalendarEntry.CalendarID.EQ(mysql.Int64(calendarID)))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
@@ -308,19 +309,20 @@ func (s *Store) InsertBirthdayEntry(
 		Count: 1,
 	}
 
-	stmt := table.FivenetCalendarEntries.
+	tCalendarEntry := table.FivenetCalendarEntries
+	stmt := tCalendarEntry.
 		INSERT(
-			table.FivenetCalendarEntries.CalendarID,
-			table.FivenetCalendarEntries.Job,
-			table.FivenetCalendarEntries.StartTime,
-			table.FivenetCalendarEntries.EndTime,
-			table.FivenetCalendarEntries.Title,
-			table.FivenetCalendarEntries.Content,
-			table.FivenetCalendarEntries.Closed,
-			table.FivenetCalendarEntries.RsvpOpen,
-			table.FivenetCalendarEntries.Recurring,
-			table.FivenetCalendarEntries.CreatorID,
-			table.FivenetCalendarEntries.CreatorJob,
+			tCalendarEntry.CalendarID,
+			tCalendarEntry.Job,
+			tCalendarEntry.StartTime,
+			tCalendarEntry.EndTime,
+			tCalendarEntry.Title,
+			tCalendarEntry.Content,
+			tCalendarEntry.Closed,
+			tCalendarEntry.RsvpOpen,
+			tCalendarEntry.Recurring,
+			tCalendarEntry.CreatorID,
+			tCalendarEntry.CreatorJob,
 		).
 		VALUES(
 			calendarID,

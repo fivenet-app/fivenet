@@ -92,14 +92,15 @@ func (s *Store) AddPageActivity(
 	tx qrm.DB,
 	activity *wikiactivity.PageActivity,
 ) (int64, error) {
-	stmt := table.FivenetWikiPagesActivity.
+	tPageActivity := table.FivenetWikiPagesActivity
+	stmt := tPageActivity.
 		INSERT(
-			table.FivenetWikiPagesActivity.PageID,
-			table.FivenetWikiPagesActivity.ActivityType,
-			table.FivenetWikiPagesActivity.CreatorID,
-			table.FivenetWikiPagesActivity.CreatorJob,
-			table.FivenetWikiPagesActivity.Reason,
-			table.FivenetWikiPagesActivity.Data,
+			tPageActivity.PageID,
+			tPageActivity.ActivityType,
+			tPageActivity.CreatorID,
+			tPageActivity.CreatorJob,
+			tPageActivity.Reason,
+			tPageActivity.Data,
 		).
 		VALUES(
 			activity.GetPageId(),

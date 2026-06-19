@@ -24,6 +24,7 @@ func (s *Store) ShareCalendarEntry(
 		userIds[i] = mysql.Int32(inUserIds[i])
 	}
 
+	tCalendarRSVP := table.FivenetCalendarRsvp
 	stmt := tCalendarRSVP.
 		SELECT(
 			tCalendarRSVP.UserID,
@@ -52,7 +53,6 @@ func (s *Store) ShareCalendarEntry(
 		}
 	}
 
-	tCalendarRSVP := tCalendarRSVP
 	insertStmt := tCalendarRSVP.
 		INSERT(
 			tCalendarRSVP.EntryID,

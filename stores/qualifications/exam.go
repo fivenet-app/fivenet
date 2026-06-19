@@ -7,6 +7,7 @@ import (
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -71,7 +72,10 @@ func (s *Store) GetExamQuestions(
 	}
 
 	stmt := tExamQuestion.
-		SELECT(tExamQuestion.ID, columns...).
+		SELECT(
+			tExamQuestion.ID,
+			columns...,
+		).
 		FROM(tExamQuestion).
 		WHERE(tExamQuestion.QualificationID.EQ(mysql.Int64(qualificationId))).
 		ORDER_BY(tExamQuestion.Order.ASC()).
@@ -90,7 +94,9 @@ func (s *Store) GetExamQuestions(
 func (s *Store) CountExamQuestions(ctx context.Context, qualificationId int64) (int64, error) {
 	tExamQuestion := tExamQuestion.AS("exam_question")
 	stmt := tExamQuestion.
-		SELECT(mysql.COUNT(mysql.DISTINCT(tExamQuestion.ID)).AS("data_count.total")).
+		SELECT(
+			mysql.COUNT(mysql.DISTINCT(tExamQuestion.ID)).AS("data_count.total"),
+		).
 		FROM(tExamQuestion).
 		WHERE(tExamQuestion.QualificationID.EQ(mysql.Int64(qualificationId)))
 
@@ -107,7 +113,7 @@ func (s *Store) GetExamResponses(
 	qualificationId int64,
 	userId int32,
 ) (*qualificationsexam.ExamResponses, *qualificationsexam.ExamGrading, error) {
-	tExamResponses := tExamResponse.AS("examresponses")
+	tExamResponses := tExamResponses.AS("examresponses")
 	stmt := tExamResponses.
 		SELECT(
 			tExamResponses.QualificationID,
@@ -138,12 +144,42 @@ func (s *Store) GetExamResponses(
 	return dest.ExamResponses, dest.ExamGrading, nil
 }
 
+func (s *Store) UpsertExamResponses(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId int64,
+	userId int32,
+	responses *qualificationsexam.ExamResponses,
+) error {
+	tExamResponses := table.FivenetQualificationsExamResponses
+	stmt := tExamResponses.
+		INSERT(
+			tExamResponses.QualificationID,
+			tExamResponses.UserID,
+			tExamResponses.Responses,
+			tExamResponses.Grading,
+		).
+		VALUES(
+			qualificationId,
+			userId,
+			responses,
+			mysql.NULL,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tExamResponses.Responses.SET(mysql.RawString("VALUES(`responses`)")),
+		)
+
+	_, err := stmt.ExecContext(ctx, tx)
+	return err
+}
+
 func (s *Store) DeleteExamUser(
 	ctx context.Context,
 	tx qrm.DB,
 	qualificationId int64,
 	userId int32,
 ) error {
+	tExamUser := table.FivenetQualificationsExamUsers
 	stmt := tExamUser.
 		DELETE().
 		WHERE(mysql.AND(
@@ -163,6 +199,7 @@ func (s *Store) CreateExamUser(
 	userId int32,
 	endsAt time.Time,
 ) error {
+	tExamUser := table.FivenetQualificationsExamUsers
 	stmt := tExamUser.
 		INSERT(
 			tExamUser.QualificationID,
@@ -183,34 +220,6 @@ func (s *Store) CreateExamUser(
 	return err
 }
 
-func (s *Store) UpsertExamResponses(
-	ctx context.Context,
-	tx qrm.DB,
-	qualificationId int64,
-	userId int32,
-	responses *qualificationsexam.ExamResponses,
-) error {
-	stmt := tExamResponse.
-		INSERT(
-			tExamResponse.QualificationID,
-			tExamResponse.UserID,
-			tExamResponse.Responses,
-			tExamResponse.Grading,
-		).
-		VALUES(
-			qualificationId,
-			userId,
-			responses,
-			mysql.NULL,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tExamResponse.Responses.SET(mysql.RawString("VALUES(`responses`)")),
-		)
-
-	_, err := stmt.ExecContext(ctx, tx)
-	return err
-}
-
 func (s *Store) UpsertExamUserEndedAt(
 	ctx context.Context,
 	tx qrm.DB,
@@ -218,6 +227,7 @@ func (s *Store) UpsertExamUserEndedAt(
 	userId int32,
 	endedAt time.Time,
 ) error {
+	tExamUser := table.FivenetQualificationsExamUsers
 	stmt := tExamUser.
 		INSERT(
 			tExamUser.QualificationID,

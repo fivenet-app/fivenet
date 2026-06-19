@@ -15,7 +15,6 @@ func (s *Store) ListOAuth2Connections(
 	accountID int64,
 ) ([]*accountsoauth2.OAuth2Account, error) {
 	tOAuth2Accounts := table.FivenetAccountsOauth2.AS("oauth2_account")
-
 	stmt := tOAuth2Accounts.
 		SELECT(
 			tOAuth2Accounts.AccountID,
@@ -45,7 +44,6 @@ func (s *Store) ListOAuth2Connections(
 
 func (s *Store) DeleteSocialLogin(ctx context.Context, accountID int64, provider string) error {
 	tOAuth2Accounts := table.FivenetAccountsOauth2
-
 	stmt := tOAuth2Accounts.
 		DELETE().
 		WHERE(mysql.AND(

@@ -158,8 +158,12 @@ func (s *Store) DeleteCategory(
 ) error {
 	tCategory := table.FivenetDocumentsCategories
 	stmt := tCategory.
-		UPDATE(tCategory.DeletedAt).
-		SET(tCategory.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAt))).
+		UPDATE(
+			tCategory.DeletedAt,
+		).
+		SET(
+			tCategory.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAt)),
+		).
 		WHERE(mysql.AND(
 			tCategory.Job.EQ(mysql.String(userInfo.GetJob())),
 			tCategory.ID.EQ(mysql.Int64(id)),

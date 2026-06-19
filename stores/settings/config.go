@@ -8,9 +8,8 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var tConfig = table.FivenetConfig
-
 func (s *Store) UpdateAppConfig(ctx context.Context, cfg *settings.AppConfig) error {
+	tConfig := table.FivenetConfig
 	stmt := tConfig.
 		INSERT(
 			tConfig.Key,

@@ -169,8 +169,16 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 	if len(toUpdate) > 0 {
 		for _, grade := range toUpdate {
 			stmt := tJobsGrades.
-				UPDATE(tJobsGrades.JobName, tJobsGrades.Grade, tJobsGrades.Label).
-				SET(grade.GetJobName(), grade.GetGrade(), grade.GetLabel()).
+				UPDATE(
+					tJobsGrades.JobName,
+					tJobsGrades.Grade,
+					tJobsGrades.Label,
+				).
+				SET(
+					grade.GetJobName(),
+					grade.GetGrade(),
+					grade.GetLabel(),
+				).
 				WHERE(mysql.AND(
 					tJobsGrades.JobName.EQ(mysql.String(job.GetName())),
 					tJobsGrades.Grade.EQ(mysql.Int32(grade.GetGrade())),

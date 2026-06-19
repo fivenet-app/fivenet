@@ -14,9 +14,8 @@ import (
 )
 
 var (
-	tThreads           = table.FivenetMailerThreads.AS("thread")
-	tThreadsState      = table.FivenetMailerThreadsState.AS("thread_state")
-	tThreadsRecipients = table.FivenetMailerThreadsRecipients
+	tThreads      = table.FivenetMailerThreads.AS("thread")
+	tThreadsState = table.FivenetMailerThreadsState.AS("thread_state")
 )
 
 type ThreadListQuery struct {
@@ -199,6 +198,7 @@ func (s *Store) GetThread(
 }
 
 func (s *Store) UpdateThreadTime(ctx context.Context, q qrm.DB, threadID int64) error {
+	tThreads := table.FivenetMailerThreads
 	stmt := tThreads.
 		UPDATE(
 			tThreads.UpdatedAt,
@@ -222,6 +222,7 @@ func (s *Store) DeleteThread(
 	threadID int64,
 	deletedAt *timestamp.Timestamp,
 ) error {
+	tThreads := table.FivenetMailerThreads
 	stmt := tThreads.
 		UPDATE(
 			tThreads.DeletedAt,
@@ -249,6 +250,7 @@ func (s *Store) AddThreadRecipients(
 		return nil
 	}
 
+	tThreadsRecipients := table.FivenetMailerThreadsRecipients
 	stmt := tThreadsRecipients.
 		INSERT(
 			tThreadsRecipients.ThreadID,
@@ -275,7 +277,7 @@ func (s *Store) ListThreadRecipients(
 	threadID int64,
 	includeDeleted bool,
 ) ([]*mailerthreads.ThreadRecipientEmail, error) {
-	tRecipients := tThreadsRecipients.AS("thread_recipient_email")
+	tRecipients := table.FivenetMailerThreadsRecipients.AS("thread_recipient_email")
 	stmt := tRecipients.
 		SELECT(
 			tRecipients.ID,
@@ -347,6 +349,7 @@ func buildThreadFilters(in ThreadListQuery) (mysql.BoolExpression, mysql.BoolExp
 		emailIDExprs = append(emailIDExprs, mysql.Int64(emailID))
 	}
 
+	tThreadsRecipients := table.FivenetMailerThreadsRecipients
 	recipientExists := mysql.EXISTS(
 		mysql.
 			SELECT(mysql.Int(1)).

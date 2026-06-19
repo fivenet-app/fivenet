@@ -33,6 +33,7 @@ func (s *Store) GetMOTD(ctx context.Context, db qrm.DB, job string) (string, err
 }
 
 func (s *Store) SetMOTD(ctx context.Context, db qrm.DB, job string, motd string) error {
+	tJobProps := table.FivenetJobProps
 	stmt := tJobProps.
 		INSERT(
 			tJobProps.Job,

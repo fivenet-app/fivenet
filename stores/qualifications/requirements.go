@@ -36,8 +36,14 @@ func (s *Store) HandleQualificationRequirementsChanges(
 
 	for _, req := range toCreate {
 		stmt := tQReqs.
-			INSERT(tQReqs.QualificationID, tQReqs.TargetQualificationID).
-			VALUES(qualificationId, req.GetTargetQualificationId())
+			INSERT(
+				tQReqs.QualificationID,
+				tQReqs.TargetQualificationID,
+			).
+			VALUES(
+				qualificationId,
+				req.GetTargetQualificationId(),
+			)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return err
 		}

@@ -351,6 +351,7 @@ func (s *Store) GetQualificationResult(
 }
 
 func (s *Store) DeleteQualificationResult(ctx context.Context, tx qrm.DB, resultId int64) error {
+	tQualiResult := table.FivenetQualificationsResults
 	stmt := tQualiResult.
 		UPDATE(tQualiResult.DeletedAt).
 		SET(mysql.CURRENT_TIMESTAMP()).
@@ -390,6 +391,7 @@ func (s *Store) CreateQualificationResult(
 		creatorId = mysql.Int32(creator.GetUserId())
 	}
 
+	tQualiResult := table.FivenetQualificationsResults
 	stmt := tQualiResult.
 		INSERT(
 			tQualiResult.QualificationID,
@@ -446,6 +448,7 @@ func (s *Store) UpdateQualificationResult(
 	score *float32,
 	summary string,
 ) error {
+	tQualiResult := table.FivenetQualificationsResults
 	stmt := tQualiResult.
 		UPDATE(
 			tQualiResult.QualificationID,
@@ -497,6 +500,7 @@ func (s *Store) UpdateExamResponseGrading(
 	userId int32,
 	grading *qualificationsexam.ExamGrading,
 ) error {
+	tExamResponse := table.FivenetQualificationsExamResponses
 	stmt := tExamResponse.
 		UPDATE(tExamResponse.Grading).
 		SET(grading).

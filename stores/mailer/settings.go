@@ -15,17 +15,18 @@ func (s *Store) UpsertEmailSettingsSignature(
 	emailID int64,
 	signature *content.Content,
 ) error {
-	stmt := table.FivenetMailerSettings.
+	tEmailSettings := table.FivenetMailerSettings
+	stmt := tEmailSettings.
 		INSERT(
-			table.FivenetMailerSettings.EmailID,
-			table.FivenetMailerSettings.Signature,
+			tEmailSettings.EmailID,
+			tEmailSettings.Signature,
 		).
 		VALUES(
 			emailID,
 			signature,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			table.FivenetMailerSettings.Signature.SET(mysql.String("VALUES(`signature`)")),
+			tEmailSettings.Signature.SET(mysql.String("VALUES(`signature`)")),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.dbOr(q)); err != nil {
@@ -45,10 +46,11 @@ func (s *Store) AddBlockedEmails(
 		return nil
 	}
 
-	stmt := table.FivenetMailerSettingsBlocked.
+	tEmailSettingsBlocked := table.FivenetMailerSettingsBlocked
+	stmt := tEmailSettingsBlocked.
 		INSERT(
-			table.FivenetMailerSettingsBlocked.EmailID,
-			table.FivenetMailerSettingsBlocked.TargetEmail,
+			tEmailSettingsBlocked.EmailID,
+			tEmailSettingsBlocked.TargetEmail,
 		)
 
 	for _, be := range blockedEmails {
@@ -77,11 +79,12 @@ func (s *Store) DeleteBlockedEmails(
 		targets = append(targets, mysql.String(be))
 	}
 
-	stmt := table.FivenetMailerSettingsBlocked.
+	tEmailSettingsBlocked := table.FivenetMailerSettingsBlocked
+	stmt := tEmailSettingsBlocked.
 		DELETE().
 		WHERE(mysql.AND(
-			table.FivenetMailerSettingsBlocked.EmailID.EQ(mysql.Int64(emailID)),
-			table.FivenetMailerSettingsBlocked.TargetEmail.IN(targets...),
+			tEmailSettingsBlocked.EmailID.EQ(mysql.Int64(emailID)),
+			tEmailSettingsBlocked.TargetEmail.IN(targets...),
 		)).
 		LIMIT(int64(len(blockedEmails)))
 

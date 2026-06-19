@@ -67,12 +67,25 @@ func (s *Store) RegisterAccount(
 	var stmt mysql.Statement
 	if acc.GetId() == 0 {
 		stmt = tAccounts.
-			INSERT(tAccounts.Enabled, tAccounts.License, tAccounts.RegToken, tAccounts.LastChar).
-			VALUES(true, req.GetIdentifier(), regToken, req.LastCharId)
+			INSERT(
+				tAccounts.Enabled,
+				tAccounts.License,
+				tAccounts.RegToken,
+				tAccounts.LastChar,
+			).
+			VALUES(
+				true,
+				req.GetIdentifier(),
+				regToken,
+				req.LastCharId,
+			)
 	} else {
 		stmt = tAccounts.
 			UPDATE().
-			SET(tAccounts.Password.SET(mysql.StringExp(mysql.NULL)), tAccounts.RegToken.SET(mysql.String(regToken))).
+			SET(
+				tAccounts.Password.SET(mysql.StringExp(mysql.NULL)),
+				tAccounts.RegToken.SET(mysql.String(regToken)),
+			).
 			WHERE(mysql.AND(
 				tAccounts.ID.EQ(mysql.Int64(acc.GetId())),
 				tAccounts.License.EQ(mysql.String(req.GetIdentifier())),
@@ -212,8 +225,20 @@ func (s *Store) handleUserOauth2(ctx context.Context, data *activity.UserOAuth2C
 
 	tOAuth2Accs := table.FivenetAccountsOauth2
 	insertStmt := tOAuth2Accs.
-		INSERT(tOAuth2Accs.AccountID, tOAuth2Accs.Provider, tOAuth2Accs.ExternalID, tOAuth2Accs.Username, tOAuth2Accs.Avatar).
-		VALUES(account.ID, provider.Name, data.GetExternalId(), data.GetUsername(), provider.DefaultAvatar)
+		INSERT(
+			tOAuth2Accs.AccountID,
+			tOAuth2Accs.Provider,
+			tOAuth2Accs.ExternalID,
+			tOAuth2Accs.Username,
+			tOAuth2Accs.Avatar,
+		).
+		VALUES(
+			account.ID,
+			provider.Name,
+			data.GetExternalId(),
+			data.GetUsername(),
+			provider.DefaultAvatar,
+		)
 	if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
 		if !dbutils.IsDuplicateError(err) {
 			return fmt.Errorf("failed to insert OAuth2 account. %w", err)

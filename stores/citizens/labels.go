@@ -214,6 +214,7 @@ func (s *Store) UpdateLabel(
 	label *citizenslabels.Label,
 	job string,
 ) error {
+	tCitizensLabelsJob := table.FivenetUserLabelsJob
 	stmt := tCitizensLabelsJob.
 		UPDATE(
 			tCitizensLabelsJob.Name,
@@ -242,6 +243,7 @@ func (s *Store) InsertLabel(
 	tx qrm.DB,
 	label *citizenslabels.Label,
 ) (int64, error) {
+	tCitizensLabelsJob := table.FivenetUserLabelsJob
 	stmt := tCitizensLabelsJob.
 		INSERT(
 			tCitizensLabelsJob.Job,
@@ -280,6 +282,7 @@ func (s *Store) DeleteLabel(
 	labelId int64,
 	deletedAt *timestamp.Timestamp,
 ) error {
+	tCitizensLabelsJob := table.FivenetUserLabelsJob
 	stmt := tCitizensLabelsJob.
 		UPDATE(
 			tCitizensLabelsJob.DeletedAt,
@@ -302,6 +305,7 @@ func (s *Store) ReorderLabels(
 	job string,
 	labelIds []int64,
 ) error {
+	tCitizensLabelsJob := table.FivenetUserLabelsJob
 	stmt := tCitizensLabelsJob.
 		SELECT(tCitizensLabelsJob.ID).
 		FROM(tCitizensLabelsJob).
