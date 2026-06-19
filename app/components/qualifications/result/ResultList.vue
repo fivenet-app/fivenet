@@ -59,7 +59,7 @@ const query = reactive<Schema>({
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `qualifications-results-${JSON.stringify(query)}-${query.page}-${props.qualificationId}-${props.userId}`,
+    () => `qualifications-results-${JSON.stringify(query.sorting)}-${query.page}-${props.qualificationId}-${props.userId}`,
     () => listQualificationResults(props.qualificationId, props.userId, props.status),
     {
         watch: [query],

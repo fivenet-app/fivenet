@@ -37,9 +37,6 @@ export default defineNuxtConfig({
         },
 
         granularCachedData: false,
-
-        // Due to https://github.com/nuxt/nuxt/issues/34957 in Nuxt v4.4.4
-        viteEnvironmentApi: true,
     },
 
     site: {

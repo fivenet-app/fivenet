@@ -41,6 +41,21 @@ func (s *Server) ListQualificationsResults(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	if req.GetQualificationId() > 0 {
+		check, err := s.access.CanUserAccessTarget(
+			ctx,
+			req.GetQualificationId(),
+			userInfo,
+			int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE),
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		if !check {
+			return nil, errorsqualifications.ErrFailedQuery
+		}
+	}
+
 	includePhoneNumber := false
 	if fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(
 		s.perms,

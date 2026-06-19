@@ -37,6 +37,9 @@ func (s *Store) ListQualificationRequests(
 	if !userInfo.GetSuperuser() {
 		condition = condition.AND(tQualiReq.DeletedAt.IS_NULL())
 	}
+	if opts.QualificationID > 0 {
+		condition = condition.AND(tQualiReq.QualificationID.EQ(mysql.Int64(opts.QualificationID)))
+	}
 
 	countColumn := mysql.Expression(tQualiReq.QualificationID)
 	if len(opts.UserIDs) > 0 {
