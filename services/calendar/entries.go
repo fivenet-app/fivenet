@@ -23,6 +23,7 @@ func (s *Server) ListCalendarEntries(
 	req *pbcalendar.ListCalendarEntriesRequest,
 ) (*pbcalendar.ListCalendarEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
 	entries, err := s.store.ListCalendarEntries(
 		ctx,
 		userInfo,

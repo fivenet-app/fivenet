@@ -73,6 +73,10 @@ func calendarEntryVisibility(
 	rsvpResponse calendarentries.RsvpResponses,
 ) mysql.BoolExpression {
 	return mysql.OR(
+		mysql.AND(
+			tCalendar.Job.IS_NULL(),
+			tCalendar.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+		),
 		acl.ACLAccessExistsCondition(tCalendarEntry.CalendarID, userInfo, int32(accessLevel)),
 		calendarEntryRSVPVisible(userInfo, rsvpResponse),
 	)

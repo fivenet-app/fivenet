@@ -74,6 +74,25 @@ func TestCalendarEntriesQueryUsesAliasedCalendarEntryColumnForBirthdayVisibility
 	assert.NotContains(t, sql, "fivenet_calendar_entries.calendar_id")
 }
 
+func TestCalendarEntryVisibilityAllowsCreatorOwnedPrivateCalendars(t *testing.T) {
+	t.Parallel()
+
+	store := New(new(sql.DB)).(*Store)
+	stmt := mysql.
+		SELECT(mysql.Int(1)).
+		FROM(tCalendar).
+		WHERE(calendarEntryVisibility(
+			store.access,
+			&userinfo.UserInfo{UserId: 1},
+			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+			calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN,
+		))
+
+	sql, _ := stmt.Sql()
+	assert.Contains(t, sql, "job IS NULL")
+	assert.Contains(t, sql, "creator_id = ?")
+}
+
 func TestNextRecurringOccurrence(t *testing.T) {
 	t.Parallel()
 
