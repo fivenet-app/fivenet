@@ -49,7 +49,7 @@ func TestCheckIfUserHasAccessToCalendarIDsAllowsSuperuserBirthdayCalendar(t *tes
 			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
 			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
 			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
-			sqlmock.AnyArg(),
+			sqlmock.AnyArg(), sqlmock.AnyArg(),
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"calendar.id"}).AddRow(int64(99)))
 

@@ -251,10 +251,7 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 				actorSubjectID.EQ(columns.SubjectID),
 			),
 		).
-		WHERE(mysql.AND(
-			columns.TargetID.EQ(targetID),
-			columns.Access.GT_EQ(mysql.Int32(access)),
-		)).
+		WHERE(columns.Access.GT_EQ(mysql.Int32(access))).
 		DISTINCT()
 
 	matchingACLTable := matchingACLSelect.AsTable("acl_access_matching")

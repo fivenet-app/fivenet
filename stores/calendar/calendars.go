@@ -204,7 +204,10 @@ func (s *Store) birthdayCalendarVisible(
 				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
 			),
 		),
-		tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
+		mysql.OR(
+			mysql.Bool(userInfo.GetSuperuser()),
+			tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
+		),
 		s.access.ACLAccessExistsCondition(calendarID, userInfo, int32(accessLevel)),
 	)
 }

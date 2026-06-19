@@ -72,12 +72,14 @@ func calendarEntryVisibility(
 	accessLevel calendaraccess.AccessLevel,
 	rsvpResponse calendarentries.RsvpResponses,
 ) mysql.BoolExpression {
+	_ = acl
+	_ = accessLevel
+
 	return mysql.OR(
 		mysql.AND(
 			tCalendar.Job.IS_NULL(),
 			tCalendar.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 		),
-		acl.ACLAccessExistsCondition(tCalendarEntry.CalendarID, userInfo, int32(accessLevel)),
 		calendarEntryRSVPVisible(userInfo, rsvpResponse),
 	)
 }
@@ -86,9 +88,10 @@ func calendarEntriesQuery(
 	userInfo *userinfo.UserInfo,
 	condition mysql.BoolExpression,
 	visibility mysql.BoolExpression,
+	ctes []mysql.CommonTableExpression,
 	includeDeleted bool,
 	limit *int64,
-) mysql.SelectStatement {
+) mysql.Statement {
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
@@ -176,7 +179,67 @@ func calendarEntriesQuery(
 			LIMIT(*limit)
 	}
 
+	if len(ctes) > 0 {
+		return mysql.WITH(ctes...)(stmt)
+	}
+
 	return stmt
+}
+
+func visibilityIDsSelect(query access.VisibilityQuery) mysql.SelectStatement {
+	id := mysql.IntegerColumn("id").From(query.Table)
+	return mysql.SELECT(id).FROM(query.Table)
+}
+
+func (s *Store) listCalendarEntriesVisibility(
+	userInfo *userinfo.UserInfo,
+	includeDeleted bool,
+	accessLevel calendaraccess.AccessLevel,
+	rsvpResponse calendarentries.RsvpResponses,
+) (mysql.BoolExpression, mysql.BoolExpression, []mysql.CommonTableExpression) {
+	visibleIDs := s.access.VisibleIDsByConditionQuery(
+		userInfo,
+		int32(accessLevel),
+		includeDeleted,
+		mysql.OR(
+			tCalendar.SystemKind.IS_NULL(),
+			tCalendar.SystemKind.NOT_EQ(
+				mysql.Int32(
+					int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+				),
+			),
+			mysql.AND(
+				tCalendar.SystemKind.EQ(
+					mysql.Int32(
+						int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+					),
+				),
+				mysql.OR(
+					mysql.Bool(userInfo.GetSuperuser()),
+					tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
+				),
+			),
+		),
+	)
+	visibleIDStmt := visibilityIDsSelect(visibleIDs)
+	visibleCalendarCondition := tCalendar.ID.IN(visibleIDStmt)
+
+	visibility := mysql.OR(
+		tCalendar.ID.IN(
+			tCalendarSubs.
+				SELECT(tCalendarSubs.CalendarID).
+				FROM(tCalendarSubs).
+				WHERE(mysql.AND(tCalendarSubs.UserID.EQ(mysql.Int32(userInfo.GetUserId())))),
+		),
+		mysql.AND(
+			tCalendar.Job.IS_NULL(),
+			tCalendar.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+		),
+		visibleCalendarCondition,
+		calendarEntryRSVPVisible(userInfo, rsvpResponse),
+	)
+
+	return visibility, visibleCalendarCondition, visibleIDs.CTEs
 }
 
 func (s *Store) ListCalendarEntries(
@@ -189,6 +252,12 @@ func (s *Store) ListCalendarEntries(
 		rsvpResponse = calendarentries.RsvpResponses_RSVP_RESPONSES_UNSPECIFIED
 	}
 	includeDeleted := userInfo.GetSuperuser()
+	visibility, visibleCalendarCondition, ctes := s.listCalendarEntriesVisibility(
+		userInfo,
+		includeDeleted,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		rsvpResponse,
+	)
 
 	condition := mysql.AND(
 		mysql.OR(
@@ -219,17 +288,12 @@ func (s *Store) ListCalendarEntries(
 						),
 					)),
 			),
-			s.birthdayCalendarVisible(
-				tCalendarEntry.CalendarID,
-				calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
-				userInfo,
+			mysql.AND(
+				tCalendar.Job.IS_NULL(),
+				tCalendar.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 			),
-			calendarEntryVisibility(
-				s.access,
-				userInfo,
-				calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
-				rsvpResponse,
-			),
+			visibleCalendarCondition,
+			calendarEntryRSVPVisible(userInfo, rsvpResponse),
 		),
 	)
 
@@ -274,11 +338,16 @@ func (s *Store) ListCalendarEntries(
 		),
 	))
 
-	birthdayCondition := condition.AND(
+	birthdayCondition := mysql.AND(
+		condition,
 		tCalendar.SystemKind.EQ(
 			mysql.Int32(
 				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
 			),
+		),
+		mysql.OR(
+			mysql.Bool(userInfo.GetSuperuser()),
+			tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
 		),
 	)
 
@@ -299,12 +368,8 @@ func (s *Store) ListCalendarEntries(
 		ctx,
 		userInfo,
 		regularCondition,
-		calendarEntryVisibility(
-			s.access,
-			userInfo,
-			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
-			rsvpResponse,
-		),
+		visibility,
+		ctes,
 		startDate,
 		endDate,
 		new(maxCalendarEntriesLimit),
@@ -318,11 +383,8 @@ func (s *Store) ListCalendarEntries(
 		ctx,
 		userInfo,
 		birthdayCondition,
-		s.birthdayCalendarVisible(
-			tCalendarEntry.CalendarID,
-			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
-			userInfo,
-		),
+		visibility,
+		ctes,
 		startDate,
 		endDate,
 		nil,
@@ -343,6 +405,12 @@ func (s *Store) GetUpcomingEntries(
 	rangeStart := time.Now().Add(-1 * time.Minute)
 	rangeEnd := time.Now().Add(time.Duration(opts.Seconds) * time.Second)
 	includeDeleted := userInfo.GetSuperuser()
+	visibility, visibleCalendarCondition, ctes := s.listCalendarEntriesVisibility(
+		userInfo,
+		includeDeleted,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN,
+	)
 
 	condition := mysql.AND(
 		mysql.OR(
@@ -371,6 +439,7 @@ func (s *Store) GetUpcomingEntries(
 						),
 					)),
 			),
+			visibleCalendarCondition,
 			tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 		),
 		tCalendarEntry.StartTime.LT_EQ(mysql.TimestampT(rangeEnd)),
@@ -384,11 +453,16 @@ func (s *Store) GetUpcomingEntries(
 			),
 		),
 	))
-	birthdayCondition := condition.AND(
+	birthdayCondition := mysql.AND(
+		condition,
 		tCalendar.SystemKind.EQ(
 			mysql.Int32(
 				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
 			),
+		),
+		mysql.OR(
+			mysql.Bool(userInfo.GetSuperuser()),
+			tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
 		),
 	)
 
@@ -396,12 +470,8 @@ func (s *Store) GetUpcomingEntries(
 		ctx,
 		userInfo,
 		regularCondition,
-		calendarEntryVisibility(
-			s.access,
-			userInfo,
-			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
-			calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN,
-		),
+		visibility,
+		ctes,
 		rangeStart,
 		rangeEnd,
 		new(maxCalendarEntriesLimit),
@@ -415,11 +485,8 @@ func (s *Store) GetUpcomingEntries(
 		ctx,
 		userInfo,
 		birthdayCondition,
-		s.birthdayCalendarVisible(
-			tCalendarEntry.CalendarID,
-			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
-			userInfo,
-		),
+		visibility,
+		ctes,
 		rangeStart,
 		rangeEnd,
 		nil,
@@ -658,11 +725,12 @@ func (s *Store) loadExpandedCalendarEntries(
 	userInfo *userinfo.UserInfo,
 	condition mysql.BoolExpression,
 	visibility mysql.BoolExpression,
+	ctes []mysql.CommonTableExpression,
 	rangeStart, rangeEnd time.Time,
 	limit *int64,
 	includeDeleted bool,
 ) ([]*calendarentries.CalendarEntry, error) {
-	stmt := calendarEntriesQuery(userInfo, condition, visibility, includeDeleted, limit)
+	stmt := calendarEntriesQuery(userInfo, condition, visibility, ctes, includeDeleted, limit)
 
 	entries := []*calendarentries.CalendarEntry{}
 	if err := stmt.QueryContext(ctx, s.db, &entries); err != nil {

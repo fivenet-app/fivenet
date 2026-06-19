@@ -65,6 +65,7 @@ func (s *Store) GetUserProps(
 		ctx,
 		tx,
 		mysql.AND(tCitizenLabels.UserID.EQ(mysql.Int32(userId))),
+		nil,
 	)
 	if err != nil {
 		return nil, err

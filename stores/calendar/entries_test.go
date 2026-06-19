@@ -21,6 +21,7 @@ func TestCalendarEntriesQueryOmitLimitWhenNil(t *testing.T) {
 		&userinfo.UserInfo{UserId: 1},
 		mysql.Bool(true),
 		mysql.Bool(true),
+		nil,
 		false,
 		nil,
 	)
@@ -36,6 +37,7 @@ func TestCalendarEntriesQueryUsesExplicitLimit(t *testing.T) {
 		&userinfo.UserInfo{UserId: 1},
 		mysql.Bool(true),
 		mysql.Bool(true),
+		nil,
 		false,
 		new(maxCalendarEntriesLimit),
 	)
@@ -65,6 +67,7 @@ func TestCalendarEntriesQueryUsesAliasedCalendarEntryColumnForBirthdayVisibility
 			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
 			&userinfo.UserInfo{UserId: 1, Job: "police", Superuser: true},
 		),
+		nil,
 		false,
 		nil,
 	)

@@ -113,6 +113,37 @@ func TestStoreListLabelsUsesVisibilityForNonSuperuser(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestGetUserLabelsForUserUsesVisibleIDsSubquery(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(db, &config.CustomDB{})
+
+	expectedQuery := `(?s).*WITH user_subjects AS.*fivenet_user_labels_job AS label.*`
+	mock.ExpectQuery(expectedQuery).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"label.id",
+			"label.job",
+			"label.name",
+			"label.color",
+			"label.icon",
+			"label.settings",
+			"label.expiresAt",
+		}))
+
+	labels, err := store.GetUserLabelsForUser(
+		t.Context(),
+		&userinfo.UserInfo{UserId: 3, Job: "police"},
+		3,
+	)
+	require.NoError(t, err)
+	require.Empty(t, labels.GetList())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreInsertLabel(t *testing.T) {
 	t.Parallel()
 

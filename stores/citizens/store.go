@@ -68,6 +68,7 @@ type IStore interface {
 		ctx context.Context,
 		q qrm.Queryable,
 		condition mysql.BoolExpression,
+		ctes []mysql.CommonTableExpression,
 	) (*citizenslabels.Labels, error)
 	ValidateLabels(
 		ctx context.Context,

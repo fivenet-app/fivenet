@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -19,6 +20,11 @@ var (
 	tCitizensLabelsJob = table.FivenetUserLabelsJob
 	tCitizenLabels     = table.FivenetUserLabels
 )
+
+func visibilityIDsSelect(query access.VisibilityQuery) mysql.SelectStatement {
+	id := mysql.IntegerColumn("id").From(query.Table)
+	return mysql.SELECT(id).FROM(query.Table)
+}
 
 func (s *Store) ListLabels(
 	ctx context.Context,
@@ -371,6 +377,7 @@ func (s *Store) GetUserLabels(
 	ctx context.Context,
 	q qrm.Queryable,
 	condition mysql.BoolExpression,
+	ctes []mysql.CommonTableExpression,
 ) (*citizenslabels.Labels, error) {
 	tCitizensLabelsJob := tCitizensLabelsJob.AS("label")
 
@@ -397,11 +404,15 @@ func (s *Store) GetUserLabels(
 			tCitizensLabelsJob.ID.DESC(),
 		).
 		LIMIT(25)
+	var qstmt mysql.Statement = stmt
+	if len(ctes) > 0 {
+		qstmt = mysql.WITH(ctes...)(stmt)
+	}
 
 	list := &citizenslabels.Labels{
 		List: []*citizenslabels.Label{},
 	}
-	if err := stmt.QueryContext(ctx, q, &list.List); err != nil {
+	if err := qstmt.QueryContext(ctx, q, &list.List); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
@@ -426,16 +437,18 @@ func (s *Store) GetUserLabelsForUser(
 		tCitizenLabels.UserID.EQ(mysql.Int32(userId)),
 	)
 	if !userInfo.GetSuperuser() {
-		jobAccessExists := s.labelsAccess.ACLAccessExistsCondition(
-			tCitizensLabelsJob.ID,
+		visibleIDs := s.labelsAccess.VisibleIDsByConditionQuery(
 			userInfo,
 			int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW),
+			includeDeleted,
+			tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
 		)
-
-		condition = condition.AND(jobAccessExists)
+		visibleIDStmt := visibilityIDsSelect(visibleIDs)
+		condition = condition.AND(tCitizensLabelsJob.ID.IN(visibleIDStmt))
+		return s.GetUserLabels(ctx, s.db, condition, visibleIDs.CTEs)
 	}
 
-	return s.GetUserLabels(ctx, s.db, condition)
+	return s.GetUserLabels(ctx, s.db, condition, nil)
 }
 
 func (s *Store) ValidateLabels(
