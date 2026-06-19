@@ -5,10 +5,10 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
@@ -18,6 +18,7 @@ import { Timestamp } from "../../resources/timestamp/timestamp";
 import { TimeclockWeeklyStats } from "../../resources/jobs/timeclock/timeclock";
 import { TimeclockStats } from "../../resources/jobs/timeclock/timeclock";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { UserSelector } from "../../resources/jobs/user_selector";
 import { DateRange } from "../../resources/common/database/database";
 import { TimeclockMode } from "../../resources/jobs/timeclock/timeclock";
 import { TimeclockViewMode } from "../../resources/jobs/timeclock/timeclock";
@@ -56,9 +57,9 @@ export interface ListTimeclockRequest {
      */
     perDay: boolean;
     /**
-     * @generated from protobuf field: repeated int32 user_ids = 7
+     * @generated from protobuf field: resources.jobs.UserSelector users = 7
      */
-    userIds: number[];
+    users?: UserSelector;
 }
 /**
  * @generated from protobuf message services.jobs.ListTimeclockResponse
@@ -216,7 +217,7 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
             { no: 4, name: "mode", kind: "enum", T: () => ["resources.jobs.timeclock.TimeclockMode", TimeclockMode, "TIMECLOCK_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 5, name: "date", kind: "message", T: () => DateRange },
             { no: 6, name: "per_day", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "15" } } } }
+            { no: 7, name: "users", kind: "message", T: () => UserSelector }
         ]);
     }
     create(value?: PartialMessage<ListTimeclockRequest>): ListTimeclockRequest {
@@ -224,7 +225,6 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
         message.userMode = 0;
         message.mode = 0;
         message.perDay = false;
-        message.userIds = [];
         if (value !== undefined)
             reflectionMergePartial<ListTimeclockRequest>(this, message, value);
         return message;
@@ -252,12 +252,8 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
                 case /* bool per_day */ 6:
                     message.perDay = reader.bool();
                     break;
-                case /* repeated int32 user_ids */ 7:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.userIds.push(reader.int32());
-                    else
-                        message.userIds.push(reader.int32());
+                case /* resources.jobs.UserSelector users */ 7:
+                    message.users = UserSelector.internalBinaryRead(reader, reader.uint32(), options, message.users);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -289,13 +285,9 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
         /* bool per_day = 6; */
         if (message.perDay !== false)
             writer.tag(6, WireType.Varint).bool(message.perDay);
-        /* repeated int32 user_ids = 7; */
-        if (message.userIds.length) {
-            writer.tag(7, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.userIds.length; i++)
-                writer.int32(message.userIds[i]);
-            writer.join();
-        }
+        /* resources.jobs.UserSelector users = 7; */
+        if (message.users)
+            UserSelector.internalBinaryWrite(message.users, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

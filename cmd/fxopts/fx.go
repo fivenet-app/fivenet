@@ -60,6 +60,8 @@ import (
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/services/documents"
 	pbfilestore "github.com/fivenet-app/fivenet/v2026/services/filestore"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/services/jobs"
+	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
+	"github.com/fivenet-app/fivenet/v2026/services/jobs/usersel"
 	pblivemap "github.com/fivenet-app/fivenet/v2026/services/livemap"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/services/mailer"
 	pbnotifications "github.com/fivenet-app/fivenet/v2026/services/notifications"
@@ -178,6 +180,7 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			notifi.New,
 			postals.New,
 			tracker.New,
+			colleaguehydrator.New,
 
 			// HTTP Services
 			server.AsService(api.New),
@@ -195,6 +198,7 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			citizensstore.New,
 			completorstore.New,
 			jobsstore.New,
+			usersel.New,
 			livemapstore.New,
 			mailerstore.New,
 			notificationsstore.New,

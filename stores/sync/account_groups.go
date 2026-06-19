@@ -13,6 +13,7 @@ import (
 	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
 
@@ -84,11 +85,9 @@ func (s *Store) loadAccountGroupState(
 		LIMIT(1)
 
 	dest := &accountGroupState{}
-	sqlStmt, args := stmt.Sql()
-	row := tx.QueryRowContext(ctx, sqlStmt, args...)
-	var groups sql.NullString
-	if err := row.Scan(&dest.ID, &dest.License, &groups); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+
+	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil
 		}
 		return nil, fmt.Errorf("failed to query account groups for license %s. %w", license, err)
@@ -97,11 +96,8 @@ func (s *Store) loadAccountGroupState(
 	if dest.ID == 0 {
 		return nil, nil
 	}
-	if groups.Valid {
+	if dest.Groups == nil {
 		dest.Groups = &accounts.AccountGroups{}
-		if err := dest.Groups.Scan(groups.String); err != nil {
-			return nil, fmt.Errorf("failed to scan account groups for license %s. %w", license, err)
-		}
 	}
 
 	return dest, nil

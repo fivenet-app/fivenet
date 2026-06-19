@@ -489,7 +489,7 @@ func (s *Server) SetColleagueProps(
 
 func (s *Server) getConditionForColleagueAccess(
 	actTable *table.FivenetJobColleagueActivityTable,
-	usersTable *table.FivenetUserTable,
+	userJobsTable *table.FivenetUserJobsTable,
 	levels []permsjobs.ColleaguesServiceGetColleagueAccessPermValue,
 	userInfo *userinfo.UserInfo,
 ) mysql.BoolExpression {
@@ -507,13 +507,13 @@ func (s *Server) getConditionForColleagueAccess(
 		return condition
 	}
 	if slices.Contains(levels, permsjobs.ColleaguesServiceGetColleagueAccessPermValueLowerRank) {
-		return usersTable.ID.LT(mysql.Int32(userInfo.GetJobGrade()))
+		return userJobsTable.Grade.LT(mysql.Int32(userInfo.GetJobGrade()))
 	}
 	if slices.Contains(levels, permsjobs.ColleaguesServiceGetColleagueAccessPermValueSameRank) {
-		return usersTable.ID.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))
+		return userJobsTable.Grade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))
 	}
 	if slices.Contains(levels, permsjobs.ColleaguesServiceGetColleagueAccessPermValueOwn) {
-		return usersTable.ID.EQ(mysql.Int32(userInfo.GetUserId()))
+		return actTable.TargetUserID.EQ(mysql.Int32(userInfo.GetUserId()))
 	}
 
 	return mysql.Bool(false)
@@ -535,6 +535,7 @@ func (s *Server) ListColleagueActivity(
 
 	tColleagueActivity := tColleagueActivity.AS("colleague_activity")
 	tTargetColleague := table.FivenetUser.AS("target_user")
+	tTargetUserJobs := table.FivenetUserJobs.AS("target_user_jobs")
 
 	condition := tColleagueActivity.Job.EQ(mysql.String(userInfo.GetJob()))
 
@@ -554,7 +555,7 @@ func (s *Server) ListColleagueActivity(
 		condition = condition.AND(
 			s.getConditionForColleagueAccess(
 				tColleagueActivity,
-				tTargetColleague,
+				tTargetUserJobs,
 				colleagueAccess.Values(),
 				userInfo,
 			),

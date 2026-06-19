@@ -14,6 +14,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/stats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
+	"github.com/fivenet-app/fivenet/v2026/services/jobs/usersel"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
@@ -65,6 +67,15 @@ func init() {
 
 		MinDays: 365, // One year retention
 	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetJobGroups,
+		IDColumn:        table.FivenetJobGroups.ID,
+		JobColumn:       table.FivenetJobGroups.Job,
+		DeletedAtColumn: table.FivenetJobGroups.DeletedAt,
+
+		MinDays: 60,
+	})
 }
 
 type Server struct {
@@ -73,6 +84,7 @@ type Server struct {
 	pbjobs.JobsServiceServer
 	pbjobs.TimeclockServiceServer
 	pbjobs.StatsServiceServer
+	pbjobs.UnimplementedGroupsServiceServer
 
 	logger *zap.Logger
 	wg     sync.WaitGroup
@@ -86,7 +98,12 @@ type Server struct {
 	customDB *config.CustomDB
 	store    jobsstore.IStore
 
-	fHandler *filestore.Handler[int64]
+	colleagueHydrator colleaguehydrator.IHydrator
+
+	fHandler             *filestore.Handler[int64]
+	groupLogoFileHandler *filestore.Handler[int64]
+
+	userSel *usersel.Resolver
 }
 
 type Params struct {
@@ -103,6 +120,8 @@ type Params struct {
 	Storage           storage.IStorage
 	Stats             *stats.Service
 	Store             jobsstore.IStore
+	ColleagueHydrator colleaguehydrator.IHydrator
+	UserSel           *usersel.Resolver
 }
 
 func NewServer(p Params) *Server {
@@ -121,6 +140,22 @@ func NewServer(p Params) *Server {
 		false,
 	).WithUploadFilter(filestore.NewImageUploadFilter())
 
+	tJobGroups := table.FivenetJobGroups
+	groupLogoFileHandler := filestore.NewHandler(
+		p.Storage,
+		p.DB,
+		tJobGroups,
+		tJobGroups.ID,
+		tJobGroups.LogoFileID,
+		2<<20,
+		1,
+		func(parentID int64) mysql.BoolExpression {
+			return tJobGroups.ID.EQ(mysql.Int64(parentID))
+		},
+		filestore.UpdateJoinRow,
+		true,
+	).WithUploadFilter(filestore.NewImageUploadFilter())
+
 	s := &Server{
 		logger: p.Logger.Named("jobs"),
 		wg:     sync.WaitGroup{},
@@ -134,7 +169,12 @@ func NewServer(p Params) *Server {
 		customDB: &p.Config.Database.Custom,
 		store:    p.Store,
 
-		fHandler: conductFileHandler,
+		colleagueHydrator: p.ColleagueHydrator,
+
+		fHandler:             conductFileHandler,
+		groupLogoFileHandler: groupLogoFileHandler,
+
+		userSel: p.UserSel,
 	}
 	if s.store == nil {
 		s.store = jobsstore.New(p.DB, &p.Config.Database.Custom)
@@ -149,4 +189,5 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbjobs.RegisterJobsServiceServer(srv, s)
 	pbjobs.RegisterStatsServiceServer(srv, s)
 	pbjobs.RegisterTimeclockServiceServer(srv, s)
+	pbjobs.RegisterGroupsServiceServer(srv, s)
 }

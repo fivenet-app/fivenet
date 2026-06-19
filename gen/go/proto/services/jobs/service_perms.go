@@ -136,6 +136,40 @@ func init() {
 			Icon:      "i-mdi-list-status",
 		},
 
+		// Service: jobs.GroupsService
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.GroupsServicePerm,
+			Name:      permkeys.GroupsServiceAddGroupLeaderPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6600,
+			Icon:      "i-mdi-account-group-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.GroupsServicePerm,
+			Name:      permkeys.GroupsServiceArchiveGroupPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6600,
+			Icon:      "i-mdi-account-group-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.GroupsServicePerm,
+			Name:      permkeys.GroupsServiceCreateGroupPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6600,
+			Icon:      "i-mdi-account-group-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.GroupsServicePerm,
+			Name:      permkeys.GroupsServiceListGroupsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6600,
+			Icon:      "i-mdi-account-group-outline",
+		},
+
 		// Service: jobs.JobsService
 		{
 			Namespace: permkeys.Namespace,

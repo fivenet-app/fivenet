@@ -14,8 +14,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
+	"github.com/fivenet-app/fivenet/v2026/services/jobs/usersel"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 const TimeclockMaxDays = (365 / 2) * 24 * time.Hour // Half a year
@@ -26,8 +26,6 @@ func (s *Server) ListTimeclock(
 	ctx context.Context,
 	req *pbjobs.ListTimeclockRequest,
 ) (*pbjobs.ListTimeclockResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.timeclock.user_ids", req.GetUserIds()})
-
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Field Permission Check
@@ -55,13 +53,24 @@ func (s *Server) ListTimeclock(
 		}
 	}
 
+	resolvedUserIDs, err := s.userSel.Resolve(
+		ctx,
+		s.db,
+		userInfo,
+		req.GetUsers(),
+		usersel.ResolveOpts{},
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
 	countQuery := jobsstore.TimeclockQuery{
 		Job:      userInfo.GetJob(),
 		UserMode: req.GetUserMode(),
 		Mode:     req.GetMode(),
 		Date:     req.GetDate(),
 		PerDay:   req.GetPerDay(),
-		UserIDs:  req.GetUserIds(),
+		UserIDs:  resolvedUserIDs,
 		UserID:   userInfo.GetUserId(),
 		Sort:     req.GetSort(),
 	}

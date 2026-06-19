@@ -1337,6 +1337,66 @@
                 "title": "Eigenverwaltung",
                 "set_absence_date": "Urlaub eintragen",
                 "set_profile_picture": "Profilbild aktualisieren"
+            },
+            "groups": {
+                "subtitle": "Verwalte berufsinterne Gruppen, ihren Status und die Metadaten, die andere Berufsansichten verwenden.",
+                "index_title": "Gruppenübersicht",
+                "index_description": "Durchsuche Gruppen, prüfe ihre zwischengespeicherten Mitgliederzahlen und aktualisiere Metadaten.",
+                "search_placeholder": "Gruppen suchen...",
+                "visible_groups": "Sichtbare Gruppen",
+                "leaders": "Leiter",
+                "rules": "Regeln",
+                "manual_members": "Manuelle Mitglieder",
+                "exclusions": "Ausschlüsse",
+                "membership_mode": "Mitgliedschaftsmodus",
+                "short_name": "Kurzname",
+                "sort": "Sortierung",
+                "sort_rank": "Sortierrang",
+                "no_description": "Keine Beschreibung",
+                "types": {
+                    "all": "Alle Typen"
+                },
+                "membership_modes": {
+                    "title": "Mitgliedschaftsmodi"
+                },
+                "actions": {
+                    "label": "Gruppenaktionen",
+                    "new": "Neue Gruppe",
+                    "details": "Gruppendetails",
+                    "edit": "Gruppe bearbeiten",
+                    "archive": "Gruppe archivieren",
+                    "restore": "Gruppe wiederherstellen"
+                },
+                "confirm": {
+                    "archive": "\"{name}\" archivieren?",
+                    "restore": "\"{name}\" wiederherstellen?"
+                },
+                "editor": {
+                    "create_title": "Gruppe erstellen",
+                    "update_title": "Gruppe aktualisieren"
+                },
+                "details": {
+                    "member": "Mitglied",
+                    "leader": "Leitung",
+                    "manual": "Manuell",
+                    "excluded": "Ausgeschlossen",
+                    "rule": "Regel",
+                    "rule_type": "Regeltyp",
+                    "qualification_id": "Qualifikation #{id}",
+                    "require_completed": "Abgeschlossen voraussetzen",
+                    "add_manual_member": "Manuelles Mitglied hinzufügen",
+                    "add_exclusion": "Ausschluss hinzufügen",
+                    "rules": {
+                        "grade_minimum": "Mindestens Rang {grade}",
+                        "grade_exact": "Genau Rang {grade}",
+                        "grade_range": "Rang {min} bis {max}",
+                        "qualifications": "{mode} Qualifikationen ({count})",
+                        "unknown": "Unbekannte Regel"
+                    }
+                }
+            },
+            "user_group_selector": {
+                "search_placeholder": "Nutzer suchen... {'@'} für Gruppen"
             }
         },
         "hints": {
@@ -2703,6 +2763,7 @@
             "JobsService": {
                 "ErrFailedQuery": "Fehler beim laden der Berufsdaten!",
                 "ErrReasonRequired": "Ein Grund muss gegeben sein!",
+                "ErrGroupMemberRulesRequired": "Dieser Kollege erfüllt die strengen Mitgliedschaftsregeln der Gruppe nicht.",
                 "ErrPropsNoteDenied": "Sie haben keine Berechtigung die Notiz des Kollegen zusetzen!",
                 "ErrPropsAbsenceDenied": "Sie haben keine Berechtigung die Abwesenheit des Kollegen einzutragen!",
                 "ErrNotFoundOrNoPerms": "Kollege nicht gefunden!",
@@ -3038,6 +3099,78 @@
             }
         },
         "jobs": {
+            "groups": {
+                "GroupState": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "ACTIVE": "Aktiv",
+                    "INACTIVE": "Inaktiv",
+                    "ARCHIVED": "Archiviert"
+                },
+                "GroupType": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "MANUAL": "Manuell",
+                    "SMART": "Smart",
+                    "MIXED": "Gemischt"
+                },
+                "GroupMembershipMode": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "FLEXIBLE": "Flexibel",
+                    "STRICT": "Strikt"
+                },
+                "GroupExclusionReason": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "MANUAL": "Manuell",
+                    "TEMPORARY": "Temporär",
+                    "NOT_ELIGIBLE": "Nicht berechtigt",
+                    "OTHER": "Sonstiges"
+                },
+                "GroupRuleType": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "GRADE": "Dienstgrad",
+                    "QUALIFICATION": "Qualifikation"
+                },
+                "GroupGradeRuleType": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "MINIMUM": "Minimum",
+                    "EXACT": "Exakt",
+                    "RANGE": "Bereich"
+                },
+                "GroupQualificationRuleType": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "ALL": "Alle",
+                    "ANY": "Eine beliebige"
+                },
+                "GroupMemberSource": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "MANUAL": "Manuell",
+                    "RULE": "Regel",
+                    "LEADER": "Leitung"
+                },
+                "GroupMembershipReasonType": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "MANUAL": "Manuelles Mitglied",
+                    "RULE": "Regel erfüllt",
+                    "EXCLUSION": "Ausgeschlossen",
+                    "LEADER": "Leitung"
+                },
+                "GroupActivityType": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "CREATED": "Erstellt",
+                    "UPDATED": "Aktualisiert",
+                    "ARCHIVED": "Archiviert",
+                    "RESTORED": "Wiederhergestellt",
+                    "MEMBER_ADDED": "Mitglied hinzugefügt",
+                    "MEMBER_REMOVED": "Mitglied entfernt",
+                    "MEMBER_EXCLUDED": "Mitglied ausgeschlossen",
+                    "MEMBER_EXCLUSION_REMOVED": "Mitgliedsausschluss entfernt",
+                    "LEADER_ADDED": "Leitung hinzugefügt",
+                    "LEADER_REMOVED": "Leitung entfernt",
+                    "RULE_ADDED": "Regel hinzugefügt",
+                    "RULE_UPDATED": "Regel aktualisiert",
+                    "RULE_REMOVED": "Regel entfernt",
+                    "LOGO_UPDATED": "Logo aktualisiert"
+                }
+            },
             "ConductType": {
                 "UNSPECIFIED": "Unbestimmt",
                 "NEUTRAL": "Neutral",

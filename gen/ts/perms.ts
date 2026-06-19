@@ -106,6 +106,10 @@ export type GRPCServicePerms =
 	| 'jobs.ConductService/ListConductEntries'
 	| 'jobs.ConductService/RestoreConductEntry'
 	| 'jobs.ConductService/UpdateConductEntry'
+	| 'jobs.GroupsService/AddGroupLeader'
+	| 'jobs.GroupsService/ArchiveGroup'
+	| 'jobs.GroupsService/CreateGroup'
+	| 'jobs.GroupsService/ListGroups'
 	| 'jobs.JobsService/SetMOTD'
 	| 'jobs.StatsService/GetStats'
 	| 'jobs.TimeclockService/ListInactiveEmployees'
@@ -155,6 +159,7 @@ export const GRPCServices = [
 	'documents.TemplatesService',
 	'jobs.ColleaguesService',
 	'jobs.ConductService',
+	'jobs.GroupsService',
 	'jobs.JobsService',
 	'jobs.StatsService',
 	'jobs.TimeclockService',
@@ -226,6 +231,10 @@ export const GRPCServiceMethods = [
 	'jobs.ConductService/ListConductEntries',
 	'jobs.ConductService/RestoreConductEntry',
 	'jobs.ConductService/UpdateConductEntry',
+	'jobs.GroupsService/AddGroupLeader',
+	'jobs.GroupsService/ArchiveGroup',
+	'jobs.GroupsService/CreateGroup',
+	'jobs.GroupsService/ListGroups',
 	'jobs.JobsService/SetMOTD',
 	'jobs.StatsService/GetStats',
 	'jobs.TimeclockService/ListInactiveEmployees',
@@ -460,6 +469,14 @@ export const PermAttributes = {
 	'jobs.ConductService/RestoreConductEntry': {
 	},
 	'jobs.ConductService/UpdateConductEntry': {
+	},
+	'jobs.GroupsService/AddGroupLeader': {
+	},
+	'jobs.GroupsService/ArchiveGroup': {
+	},
+	'jobs.GroupsService/CreateGroup': {
+	},
+	'jobs.GroupsService/ListGroups': {
 	},
 	'jobs.JobsService/SetMOTD': {
 	},

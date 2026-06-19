@@ -1337,6 +1337,66 @@
                 "title": "Self Service",
                 "set_absence_date": "Set Absence Date",
                 "set_profile_picture": "Update Profile Picture"
+            },
+            "groups": {
+                "subtitle": "Manage job-local groups, their lifecycle state and the metadata used by other job views.",
+                "index_title": "Group index",
+                "index_description": "Search groups, inspect their cached membership counts and update metadata.",
+                "search_placeholder": "Search groups...",
+                "visible_groups": "Visible groups",
+                "leaders": "Leaders",
+                "rules": "Rules",
+                "manual_members": "Manual members",
+                "exclusions": "Exclusions",
+                "membership_mode": "Membership mode",
+                "short_name": "Short name",
+                "sort": "Sort",
+                "sort_rank": "Sort rank",
+                "no_description": "No description",
+                "types": {
+                    "all": "All types"
+                },
+                "membership_modes": {
+                    "title": "membership modes"
+                },
+                "actions": {
+                    "label": "Group actions",
+                    "new": "New group",
+                    "details": "Group details",
+                    "edit": "Edit group",
+                    "archive": "Archive group",
+                    "restore": "Restore group"
+                },
+                "confirm": {
+                    "archive": "Archive \"{name}\"?",
+                    "restore": "Restore \"{name}\"?"
+                },
+                "editor": {
+                    "create_title": "Create group",
+                    "update_title": "Update group"
+                },
+                "details": {
+                    "member": "Member",
+                    "leader": "Leader",
+                    "manual": "Manual",
+                    "excluded": "Excluded",
+                    "rule": "Rule",
+                    "rule_type": "Rule type",
+                    "qualification_id": "Qualification #{id}",
+                    "require_completed": "Require completed",
+                    "add_manual_member": "Add manual member",
+                    "add_exclusion": "Add exclusion",
+                    "rules": {
+                        "grade_minimum": "Grade at least {grade}",
+                        "grade_exact": "Grade exactly {grade}",
+                        "grade_range": "Grade {min} to {max}",
+                        "qualifications": "{mode} qualifications ({count})",
+                        "unknown": "Unknown rule"
+                    }
+                 }
+            },
+            "user_group_selector": {
+                "search_placeholder": "Search users... Type {'@'} for groups"
             }
         },
         "hints": {
@@ -2703,6 +2763,7 @@
             "JobsService": {
                 "ErrFailedQuery": "Failed to get job data!",
                 "ErrReasonRequired": "A reason must be provided!",
+                "ErrGroupMemberRulesRequired": "This colleague does not satisfy the group's strict membership rules.",
                 "ErrPropsNoteDenied": "You are not allowed to set your colleague's note!",
                 "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!",
                 "ErrNotFoundOrNoPerms": "Colleague not found!",
@@ -3038,6 +3099,78 @@
             }
         },
         "jobs": {
+            "groups": {
+                "GroupState": {
+                    "UNSPECIFIED": "Unspecified",
+                    "ACTIVE": "Active",
+                    "INACTIVE": "Inactive",
+                    "ARCHIVED": "Archived"
+                },
+                "GroupType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "MANUAL": "Manual",
+                    "SMART": "Smart",
+                    "MIXED": "Mixed"
+                },
+                "GroupMembershipMode": {
+                    "UNSPECIFIED": "Unspecified",
+                    "FLEXIBLE": "Flexible",
+                    "STRICT": "Strict"
+                },
+                "GroupExclusionReason": {
+                    "UNSPECIFIED": "Unspecified",
+                    "MANUAL": "Manual",
+                    "TEMPORARY": "Temporary",
+                    "NOT_ELIGIBLE": "Not eligible",
+                    "OTHER": "Other"
+                },
+                "GroupRuleType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "GRADE": "Grade",
+                    "QUALIFICATION": "Qualification"
+                },
+                "GroupGradeRuleType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "MINIMUM": "Minimum",
+                    "EXACT": "Exact",
+                    "RANGE": "Range"
+                },
+                "GroupQualificationRuleType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "ALL": "All",
+                    "ANY": "Any"
+                },
+                "GroupMemberSource": {
+                    "UNSPECIFIED": "Unspecified",
+                    "MANUAL": "Manual",
+                    "RULE": "Rule",
+                    "LEADER": "Leader"
+                },
+                "GroupMembershipReasonType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "MANUAL": "Manual member",
+                    "RULE": "Matched rule",
+                    "EXCLUSION": "Excluded",
+                    "LEADER": "Leader"
+                },
+                "GroupActivityType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "CREATED": "Created",
+                    "UPDATED": "Updated",
+                    "ARCHIVED": "Archived",
+                    "RESTORED": "Restored",
+                    "MEMBER_ADDED": "Member added",
+                    "MEMBER_REMOVED": "Member removed",
+                    "MEMBER_EXCLUDED": "Member excluded",
+                    "MEMBER_EXCLUSION_REMOVED": "Member exclusion removed",
+                    "LEADER_ADDED": "Leader added",
+                    "LEADER_REMOVED": "Leader removed",
+                    "RULE_ADDED": "Rule added",
+                    "RULE_UPDATED": "Rule updated",
+                    "RULE_REMOVED": "Rule removed",
+                    "LOGO_UPDATED": "Logo updated"
+                }
+            },
             "ConductType": {
                 "UNSPECIFIED": "Unspecified",
                 "NEUTRAL": "Neutral",

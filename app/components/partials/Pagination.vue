@@ -8,7 +8,7 @@ const props = withDefaults(
     defineProps<{
         pagination?: PaginationResponse | undefined | null;
         disableBorder?: boolean;
-        refresh?: () => Promise<void>;
+        refresh?: (() => Promise<void>) | (() => Promise<unknown>);
         status?: AsyncDataRequestStatus;
         hideText?: boolean;
         hideButtons?: boolean;

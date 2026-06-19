@@ -179,6 +179,19 @@ export function zodDurationMinMaxPair(options?: DurationMinMaxPairOptions) {
         });
 }
 
+export const userSelectorSchema = z
+    .object({
+        userIds: z.coerce.number().int().positive().array().max(50).default([]),
+        groups: z
+            .object({
+                groupIds: z.coerce.number().int().positive().array().max(5).default([]),
+                includeLeaders: z.coerce.boolean().default(false),
+                includeExcluded: z.coerce.boolean().default(false),
+            })
+            .optional(),
+    })
+    .default({ userIds: [] });
+
 export const userAccessEntry = z.object({
     id: z.coerce.number(),
     targetId: z.coerce.number(),

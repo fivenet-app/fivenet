@@ -50,7 +50,7 @@ func TestStoreCountColleagueActivityJoinsTargetUserForAccessFilters(t *testing.T
 				`WHERE (colleague_activity.job = ?) AND (target_user.id = ?);`,
 			),
 	).
-		WithArgs("police", int32(113031)).
+		WithArgs("police", "police", int32(113031)).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
 
 	count, err := store.CountColleagueActivity(

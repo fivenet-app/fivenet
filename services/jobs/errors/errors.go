@@ -41,6 +41,11 @@ var (
 		&common.I18NItem{Key: "errors.jobs.JobsService.ErrNotFoundOrNoPerms"},
 		nil,
 	)
+	ErrGroupMemberRulesRequired = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrGroupMemberRulesRequired"},
+		nil,
+	)
 
 	ErrAbsenceBeginOutOfRange = common.NewI18nErr(
 		codes.InvalidArgument,

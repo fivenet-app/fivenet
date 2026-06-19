@@ -301,6 +301,87 @@ func (s *Store) ListColleagues(
 	return colleagues, nil
 }
 
+func (s *Store) ListColleaguesByUserIDs(
+	ctx context.Context,
+	db qrm.DB,
+	q ListColleaguesByUserIDsQuery,
+) ([]*jobscolleagues.Colleague, error) {
+	if len(q.UserIDs) == 0 {
+		return []*jobscolleagues.Colleague{}, nil
+	}
+
+	userIDs := make([]mysql.Expression, len(q.UserIDs))
+	for i := range q.UserIDs {
+		userIDs[i] = mysql.Int32(q.UserIDs[i])
+	}
+
+	tColleague := table.FivenetUser.AS("colleague")
+	columns := mysql.ProjectionList{
+		tColleague.ID,
+		tUserJobs.Job.AS("colleague.job"),
+		tUserJobs.Grade.AS("colleague.job_grade"),
+		tColleague.Firstname,
+		tColleague.Lastname,
+		tColleague.Dateofbirth,
+		tColleague.PhoneNumber,
+		tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+		tAvatar.FilePath.AS("colleague.profile_picture"),
+		tUserProps.Email.AS("colleague.email"),
+		tColleagueProps.UserID,
+		tColleagueProps.Job,
+		tColleagueProps.AbsenceBegin,
+		tColleagueProps.AbsenceEnd,
+		tColleagueProps.NamePrefix,
+		tColleagueProps.NameSuffix,
+	}
+	columns = append(columns, q.WithColumns...)
+
+	stmt := tColleague.
+		SELECT(columns[0], columns[1:]...).
+		FROM(
+			tColleague.
+				INNER_JOIN(tUserJobs,
+					mysql.AND(
+						tUserJobs.UserID.EQ(tColleague.ID),
+						tUserJobs.Job.EQ(mysql.String(q.Job)),
+					),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tColleague.ID),
+				).
+				LEFT_JOIN(tColleagueProps,
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleagueProps.Job.EQ(mysql.String(q.Job)),
+					),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
+				),
+		).
+		WHERE(tColleague.ID.IN(userIDs...)).
+		ORDER_BY(tColleague.ID.ASC()).
+		LIMIT(int64(len(userIDs)))
+
+	colleagues := []*jobscolleagues.Colleague{}
+	if err := stmt.QueryContext(ctx, db, &colleagues); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	for _, colleague := range colleagues {
+		if colleague.GetProps() == nil {
+			colleague.Props = &jobscolleagues.ColleagueProps{
+				UserId: colleague.GetUserId(),
+				Job:    q.Job,
+			}
+		}
+	}
+
+	return colleagues, nil
+}
+
 func (s *Store) GetColleague(
 	ctx context.Context,
 	db qrm.DB,
@@ -383,6 +464,7 @@ func (s *Store) GetColleague(
 func (s *Store) CountColleagueActivity(ctx context.Context, db qrm.DB, q ListQuery) (int64, error) {
 	tActivity := tColleagueActivity.AS("colleague_activity")
 	tTargetColleague := table.FivenetUser.AS("target_user")
+	tTargetUserJobs := table.FivenetUserJobs.AS("target_user_jobs")
 
 	condition := mysql.AND(tActivity.Job.EQ(mysql.String(q.Job)))
 	if q.Where != nil {
@@ -393,7 +475,11 @@ func (s *Store) CountColleagueActivity(ctx context.Context, db qrm.DB, q ListQue
 		SELECT(mysql.COUNT(mysql.DISTINCT(tActivity.ID)).AS("data_count.total")).
 		FROM(
 			tActivity.
-				INNER_JOIN(tTargetColleague, tTargetColleague.ID.EQ(tActivity.TargetUserID)),
+				INNER_JOIN(tTargetColleague, tTargetColleague.ID.EQ(tActivity.TargetUserID)).
+				LEFT_JOIN(tTargetUserJobs, mysql.AND(
+					tTargetUserJobs.UserID.EQ(tTargetColleague.ID),
+					tTargetUserJobs.Job.EQ(mysql.String(q.Job)),
+				)),
 		).
 		WHERE(condition)
 

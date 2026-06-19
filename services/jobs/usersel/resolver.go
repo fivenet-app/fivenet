@@ -1,0 +1,177 @@
+package usersel
+
+import (
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
+
+	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
+)
+
+const MaxResolvedUsers = 5000
+
+type Resolver struct {
+	store jobsstore.IStore
+}
+
+type Params struct {
+	fx.In
+
+	Store jobsstore.IStore
+}
+
+func New(p Params) *Resolver {
+	return &Resolver{
+		store: p.Store,
+	}
+}
+
+type ResolveOpts struct {
+	DeprecatedUserIDs []int32
+	MaxResolvedUsers  int
+}
+
+func (r *Resolver) Resolve(
+	ctx context.Context,
+	db qrm.DB,
+	userInfo *pbuserinfo.UserInfo,
+	selector *jobs.UserSelector,
+	opts ResolveOpts,
+) ([]int32, error) {
+	if selector == nil {
+		selector = &jobs.UserSelector{}
+	}
+	if opts.MaxResolvedUsers <= 0 {
+		opts.MaxResolvedUsers = MaxResolvedUsers
+	}
+
+	hasExplicit := len(selector.GetUserIds()) > 0
+	hasDeprecated := len(opts.DeprecatedUserIDs) > 0
+	hasGroups := selector.GetGroups() != nil && len(selector.GetGroups().GetGroupIds()) > 0
+
+	if !hasExplicit && !hasDeprecated && !hasGroups {
+		return nil, nil
+	}
+
+	job := userInfo.GetJob()
+	seen := map[int32]struct{}{}
+
+	for _, uid := range selector.GetUserIds() {
+		seen[uid] = struct{}{}
+	}
+
+	for _, uid := range opts.DeprecatedUserIDs {
+		seen[uid] = struct{}{}
+	}
+
+	groupSel := selector.GetGroups()
+	if groupSel != nil && len(groupSel.GetGroupIds()) > 0 {
+		groupQuery := jobsstore.GroupQuery{
+			Job:             job,
+			IncludeArchived: false,
+		}
+
+		for _, gid := range groupSel.GetGroupIds() {
+			group, err := r.store.GetGroup(ctx, db, groupQuery, gid)
+			if err != nil {
+				if errors.Is(err, sql.ErrNoRows) {
+					continue
+				}
+				return nil, fmt.Errorf("resolving group %d: %w", gid, err)
+			}
+
+			members, err := r.resolveGroupMembers(ctx, db, group, groupSel)
+			if err != nil {
+				return nil, fmt.Errorf("resolving group %d members: %w", gid, err)
+			}
+			for _, uid := range members {
+				seen[uid] = struct{}{}
+			}
+		}
+	}
+
+	result := make([]int32, 0, len(seen))
+	for uid := range seen {
+		result = append(result, uid)
+	}
+
+	if opts.MaxResolvedUsers > 0 && len(result) > opts.MaxResolvedUsers {
+		return nil, fmt.Errorf(
+			"too many resolved users: %d (max %d)",
+			len(result),
+			opts.MaxResolvedUsers,
+		)
+	}
+
+	return result, nil
+}
+
+func (r *Resolver) resolveGroupMembers(
+	ctx context.Context,
+	db qrm.DB,
+	group *jobsgroups.Group,
+	groupSel *jobs.GroupUserSelector,
+) ([]int32, error) {
+	manualMembers, err := r.store.ListGroupManualMembers(ctx, db, group.GetId(), "")
+	if err != nil {
+		return nil, err
+	}
+	ruleMatches, err := r.store.ListGroupRuleMemberMatches(ctx, db, group, "")
+	if err != nil {
+		return nil, err
+	}
+
+	excluded := map[int32]struct{}{}
+	if !groupSel.GetIncludeExcluded() {
+		exclusions, err := r.store.ListGroupMemberExclusions(ctx, db, group.GetId(), "")
+		if err != nil {
+			return nil, err
+		}
+		for _, exclusion := range exclusions {
+			excluded[exclusion.GetUserId()] = struct{}{}
+		}
+	}
+
+	members := map[int32]struct{}{}
+	ruleMemberIDs := map[int32]struct{}{}
+	for _, match := range ruleMatches {
+		ruleMemberIDs[match.UserID] = struct{}{}
+		if _, ok := excluded[match.UserID]; !ok {
+			members[match.UserID] = struct{}{}
+		}
+	}
+	for _, member := range manualMembers {
+		if _, ok := excluded[member.GetUserId()]; ok {
+			continue
+		}
+		if group.GetMembershipMode() == jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_STRICT {
+			if _, ok := ruleMemberIDs[member.GetUserId()]; !ok {
+				continue
+			}
+		}
+		members[member.GetUserId()] = struct{}{}
+	}
+
+	if groupSel.GetIncludeLeaders() {
+		leaders, err := r.store.ListGroupLeaders(ctx, db, group.GetId(), "")
+		if err != nil {
+			return nil, err
+		}
+		for _, leader := range leaders {
+			members[leader.GetUserId()] = struct{}{}
+		}
+	}
+
+	result := make([]int32, 0, len(members))
+	for uid := range members {
+		result = append(result, uid)
+	}
+
+	return result, nil
+}
