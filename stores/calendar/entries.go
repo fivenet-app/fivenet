@@ -527,7 +527,7 @@ func (s *Store) UpsertCalendarEntry(
 	oldEntry *calendarentries.CalendarEntry,
 	userInfo *userinfo.UserInfo,
 ) (int64, error) {
-	tCalendarEntry := tCalendarEntry
+	tCalendarEntry := table.FivenetCalendarEntries
 
 	if entry.GetId() > 0 {
 		values := []interface{}{
@@ -630,6 +630,8 @@ func (s *Store) DeleteCalendarEntry(
 	calendarID int64,
 	deletedAt *timestamp.Timestamp,
 ) error {
+	tCalendarEntry := table.FivenetCalendarEntries
+
 	stmt := tCalendarEntry.
 		UPDATE(
 			tCalendarEntry.DeletedAt,
