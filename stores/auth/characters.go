@@ -45,7 +45,7 @@ func (s *Store) ListCharacters(
 			}.Get()...,
 		).
 		FROM(tUsers.
-			LEFT_JOIN(tUserAccounts,
+			INNER_JOIN(tUserAccounts,
 				tUserAccounts.UserID.EQ(tUsers.ID),
 			).
 			LEFT_JOIN(tUserProps,
@@ -55,10 +55,7 @@ func (s *Store) ListCharacters(
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
-		WHERE(mysql.OR(
-			tUserAccounts.AccountID.EQ(mysql.Int64(accountID)),
-			tUsers.License.EQ(mysql.String(license)),
-		)).
+		WHERE(tUserAccounts.AccountID.EQ(mysql.Int64(accountID))).
 		ORDER_BY(tUsers.ID).
 		LIMIT(10)
 

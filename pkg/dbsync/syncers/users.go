@@ -26,7 +26,6 @@ const (
 	userHashCacheTTL       = 6 * time.Hour
 	maxDrainBatchesPerSync = 10
 	maxNoopBatchesPerSync  = 3
-	maxUsersPerSendRequest = 150
 )
 
 type UsersSync struct {

@@ -99,13 +99,13 @@ func (s *Store) GetAccountByRegToken(
 	return s.getAccount(ctx, tAccounts.RegToken.EQ(mysql.String(regToken)), withPassword)
 }
 
-func (s *Store) GetPasswordResetAccountByRegToken(
+func (s *Store) GetNewAccountByRegToken(
 	ctx context.Context,
 	regToken string,
 ) (*model.FivenetAccounts, error) {
 	return s.getAccount(ctx, mysql.AND(
 		tAccounts.RegToken.EQ(mysql.String(regToken)),
-		tAccounts.Username.IS_NOT_NULL(),
+		tAccounts.Username.IS_NULL(),
 		tAccounts.Password.IS_NULL(),
 	), true)
 }
@@ -116,6 +116,7 @@ func (s *Store) ActivateAccount(
 	regToken string,
 	username string,
 	hashedPassword string,
+	license string,
 ) error {
 	stmt := tAccounts.
 		UPDATE(
@@ -134,7 +135,44 @@ func (s *Store) ActivateAccount(
 		)).
 		LIMIT(1)
 
-	_, err := stmt.ExecContext(ctx, s.db)
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	if err := s.bindUsersToAccount(ctx, accountID, license); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Store) bindUsersToAccount(ctx context.Context, accountID int64, license string) error {
+	if license == "" {
+		return nil
+	}
+
+	tUsers := table.FivenetUser.AS("u")
+	tUserAccounts := table.FivenetUserAccounts
+
+	insertStmt := tUserAccounts.
+		INSERT(
+			tUserAccounts.UserID,
+			tUserAccounts.AccountID,
+		).
+		QUERY(
+			tUsers.
+				SELECT(
+					tUsers.ID,
+					mysql.Int64(accountID),
+				).
+				FROM(tUsers).
+				WHERE(tUsers.License.EQ(mysql.String(license))),
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tUserAccounts.AccountID.SET(mysql.RawInt("VALUES(`account_id`)")),
+		)
+
+	_, err := insertStmt.ExecContext(ctx, s.db)
 	return err
 }
 

@@ -367,12 +367,14 @@ func (s *Store) CountColleagueActivity(ctx context.Context, db qrm.DB, q ListQue
 		SELECT(mysql.COUNT(tActivity.ID).AS("data_count.total")).
 		FROM(tActivity).
 		WHERE(condition)
+
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return 0, err
 		}
 	}
+
 	return count.Total, nil
 }
 

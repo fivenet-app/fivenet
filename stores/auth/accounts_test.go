@@ -60,7 +60,7 @@ func TestStoreGetPasswordResetAccountByRegToken(t *testing.T) {
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_accounts`) +
 		`(?s).*` + regexp.QuoteMeta(`fivenet_accounts.reg_token = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`fivenet_accounts.username IS NOT NULL`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_accounts.username IS NULL`) +
 		`(?s).*` + regexp.QuoteMeta(`fivenet_accounts.password IS NULL`) +
 		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
 
@@ -72,7 +72,7 @@ func TestStoreGetPasswordResetAccountByRegToken(t *testing.T) {
 			"fivenet_accounts.license",
 		}).AddRow(int64(4), nil, "user-4", "license-4"))
 
-	acc, err := store.GetPasswordResetAccountByRegToken(t.Context(), "reg-token")
+	acc, err := store.GetNewAccountByRegToken(t.Context(), "reg-token")
 	require.NoError(t, err)
 	require.NotNil(t, acc)
 	assert.Equal(t, int64(4), acc.ID)
@@ -97,7 +97,19 @@ func TestStoreActivateAndUpdatePassword(t *testing.T) {
 	mock.ExpectExec(activateQuery).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	require.NoError(t, store.ActivateAccount(t.Context(), 9, "reg-token", "new-user", "hashed"))
+	bindQuery := regexp.QuoteMeta(`INSERT INTO fivenet_user_accounts (user_id, account_id)`) +
+		`(?s).*` + regexp.QuoteMeta(`SELECT u.id AS "u.id", ?`) +
+		`(?s).*` + regexp.QuoteMeta(`FROM fivenet_user AS u`) +
+		`(?s).*` + regexp.QuoteMeta(`u.license = ?`) +
+		`(?s).*` + regexp.QuoteMeta("ON DUPLICATE KEY UPDATE account_id = (VALUES(`account_id`));")
+	mock.ExpectExec(bindQuery).
+		WithArgs(int64(9), "license-123").
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	require.NoError(
+		t,
+		store.ActivateAccount(t.Context(), 9, "reg-token", "new-user", "hashed", "license-123"),
+	)
 
 	updateQuery := regexp.QuoteMeta(`UPDATE fivenet_accounts SET`) +
 		`(?s).*` + regexp.QuoteMeta(`password = ?`) +

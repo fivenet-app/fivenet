@@ -36,14 +36,17 @@ type IStore interface {
 		regToken string,
 		withPassword bool,
 	) (*model.FivenetAccounts, error)
-	GetPasswordResetAccountByRegToken(
+	GetNewAccountByRegToken(
 		ctx context.Context,
 		regToken string,
 	) (*model.FivenetAccounts, error)
 	ActivateAccount(
 		ctx context.Context,
 		accountID int64,
-		regToken, username, hashedPassword string,
+		regToken string,
+		username string,
+		hashedPassword string,
+		license string,
 	) error
 	UpdatePassword(ctx context.Context, accountID int64, hashedPassword string) error
 	UpdateUsername(ctx context.Context, accountID int64, username string) error

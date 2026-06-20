@@ -408,7 +408,9 @@ func (s *Store) resolveUserAccountID(
 	}
 
 	stmt := tAccounts.
-		SELECT(tAccounts.ID.AS("id")).
+		SELECT(
+			tAccounts.ID.AS("id"),
+		).
 		FROM(tAccounts).
 		WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(identifier)))).
 		LIMIT(1)

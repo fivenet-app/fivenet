@@ -110,7 +110,7 @@ func (s *Server) CreateAccount(
 		return nil, errorsauth.ErrSignupDisabled
 	}
 
-	acc, err := s.store.GetPasswordResetAccountByRegToken(ctx, req.GetRegToken())
+	acc, err := s.store.GetNewAccountByRegToken(ctx, req.GetRegToken())
 	if err != nil {
 		s.logger.Error(
 			"failed to get account from database by registration token",
@@ -143,6 +143,7 @@ func (s *Server) CreateAccount(
 		req.GetRegToken(),
 		req.GetUsername(),
 		hashedPassword,
+		acc.License,
 	); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsauth.ErrAccountDuplicate)

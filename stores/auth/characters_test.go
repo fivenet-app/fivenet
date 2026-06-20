@@ -22,11 +22,10 @@ func TestStoreListCharacters(t *testing.T) {
 	store := New(db, &config.CustomDB{})
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user AS user`) +
-		`(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_user_accounts AS user_accounts ON`) +
+		`(?s).*` + regexp.QuoteMeta(`INNER JOIN fivenet_user_accounts AS user_accounts ON`) +
 		`(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_user_props AS user_props ON`) +
 		`(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_files AS profile_picture ON`) +
 		`(?s).*` + regexp.QuoteMeta(`user_accounts.account_id = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`user.license = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`ORDER BY user.id LIMIT ?;`)
 
 	mock.ExpectQuery(expectedQuery).

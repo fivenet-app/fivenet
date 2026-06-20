@@ -11,6 +11,7 @@ import (
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
+	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
@@ -66,6 +67,11 @@ func (s *Housekeeper) unitKVPing(ctx context.Context) error {
 func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error {
 	unit, err := s.units.Get(ctx, unitId)
 	if err != nil {
+		if errors.Is(err, nats.ErrKeyNotFound) {
+			if err := s.units.KVPing.Delete(ctx, fmt.Sprintf("ping.%d", unit.GetId())); err != nil {
+				return fmt.Errorf("failed to delete ghost unit %d ping from kv ping store. %w", err)
+			}
+		}
 		return fmt.Errorf("failed to get unit %d from store. %w", unitId, err)
 	}
 
