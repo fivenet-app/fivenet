@@ -100,6 +100,13 @@ func (s *Server) CreateOrUpdateQualificationResult(
 	ctx context.Context,
 	req *pbqualifications.CreateOrUpdateQualificationResultRequest,
 ) (*pbqualifications.CreateOrUpdateQualificationResultResponse, error) {
+	logging.InjectFields(
+		ctx,
+		logging.Fields{
+			qualificationIDLogFieldKey, req.GetResult().GetQualificationId(),
+			qualificationIDLogFieldKey, req.GetResult().GetUserId(),
+		},
+	)
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	check, err := s.access.CanUserAccessTarget(

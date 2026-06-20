@@ -216,9 +216,8 @@ func (s *Server) SubmitExam(
 	ctx context.Context,
 	req *pbqualifications.SubmitExamRequest,
 ) (*pbqualifications.SubmitExamResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
-
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	logging.InjectFields(ctx, logging.Fields{qualificationIDLogFieldKey, req.GetQualificationId()})
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -389,7 +388,7 @@ func (s *Server) GetUserExam(
 ) (*pbqualifications.GetUserExamResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{
 		qualificationIDLogFieldKey, req.GetQualificationId(),
-		"fivenet.user_id", req.GetUserId(),
+		userIDLogFieldKey, req.GetUserId(),
 	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

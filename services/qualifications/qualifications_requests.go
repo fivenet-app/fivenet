@@ -93,6 +93,14 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 	ctx context.Context,
 	req *pbqualifications.CreateOrUpdateQualificationRequestRequest,
 ) (*pbqualifications.CreateOrUpdateQualificationRequestResponse, error) {
+	logging.InjectFields(
+		ctx,
+		logging.Fields{
+			qualificationIDLogFieldKey, req.GetRequest().GetQualificationId(),
+			qualificationIDLogFieldKey, req.GetRequest().GetUserId(),
+		},
+	)
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	canGrade, err := s.access.CanUserAccessTarget(

@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -246,10 +247,10 @@ func (r *SubjectResolver) CleanupOrphanSubjects(ctx context.Context, tx qrm.DB) 
 }
 
 func (r *SubjectResolver) cleanupOrphanSubjectsStmt() mysql.DeleteStatement {
-	tSubjects := table.FivenetACLSubjects.AS("orphan_subject")
-	tSubjectUsers := table.FivenetACLSubjectUsers.AS("orphan_subject_user")
-	tSubjectQuals := table.FivenetACLSubjectQualifications.AS("orphan_subject_qual")
-	tSubjectJobGrades := table.FivenetACLSubjectJobGradeScopes.AS("orphan_subject_job_grade")
+	tSubjects := table.FivenetACLSubjects
+	tSubjectUsers := table.FivenetACLSubjectUsers
+	tSubjectQuals := table.FivenetACLSubjectQualifications
+	tSubjectJobGrades := table.FivenetACLSubjectJobGradeScopes
 
 	return tSubjects.
 		DELETE().
@@ -282,9 +283,9 @@ func (r *SubjectResolver) CleanupStaleJobGradeSubjects(ctx context.Context, tx q
 }
 
 func (r *SubjectResolver) cleanupStaleJobGradeSubjectsStmt() mysql.DeleteStatement {
-	tSubjects := table.FivenetACLSubjects.AS("stale_job_grade_subject")
-	tSubjectJobGrades := table.FivenetACLSubjectJobGradeScopes.AS("stale_job_grade_scope")
-	tJobGrades := table.FivenetJobsGrades.AS("stale_job_grade")
+	tSubjects := table.FivenetACLSubjects
+	tSubjectJobGrades := table.FivenetACLSubjectJobGradeScopes
+	tJobGrades := table.FivenetJobsGrades
 
 	return tSubjects.
 		DELETE().
@@ -352,7 +353,7 @@ func upsertUserSubject(
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			table.FivenetACLSubjectUsers.SubjectID.SET(
-				mysql.RawInt("LAST_INSERT_ID(`subject_id`)"),
+				dbutils.LAST_INSERT_ID(table.FivenetACLSubjectUsers.SubjectID),
 			),
 		)
 
@@ -376,7 +377,7 @@ func upsertQualificationSubject(
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			table.FivenetACLSubjectQualifications.SubjectID.SET(
-				mysql.RawInt("LAST_INSERT_ID(`subject_id`)"),
+				dbutils.LAST_INSERT_ID(table.FivenetACLSubjectQualifications.SubjectID),
 			),
 		)
 
@@ -403,7 +404,7 @@ func upsertJobGradeSubject(
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			table.FivenetACLSubjectJobGradeScopes.SubjectID.SET(
-				mysql.RawInt("LAST_INSERT_ID(`subject_id`)"),
+				dbutils.LAST_INSERT_ID(table.FivenetACLSubjectJobGradeScopes.SubjectID),
 			),
 		)
 

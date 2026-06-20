@@ -214,9 +214,9 @@ func (s *Store) CreateOrUpdateLawBook(
 				mysql.Int32(sortOrder),
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tLawBooks.ID.SET(mysql.RawInt("LAST_INSERT_ID(`id`)")),
 				tLawBooks.Name.SET(mysql.RawString("VALUES(`name`)")),
 				tLawBooks.Description.SET(mysql.RawString("VALUES(`description`)")),
+				tLawBooks.Description.SET(mysql.RawString("VALUES(`sort_order`)")),
 				tLawBooks.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 			)
 
@@ -435,8 +435,8 @@ func (s *Store) CreateOrUpdateLaw(
 				req.GetLaw().StvoPoints,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tLaws.ID.SET(mysql.RawInt("LAST_INSERT_ID(`id`)")),
 				tLaws.LawbookID.SET(mysql.RawInt("VALUES(`lawbook_id`)")),
+				tLaws.SortOrder.SET(mysql.RawInt("VALUES(`sort_order`)")),
 				tLaws.Name.SET(mysql.RawString("VALUES(`name`)")),
 				tLaws.Description.SET(mysql.RawString("VALUES(`description`)")),
 				tLaws.Hint.SET(mysql.RawString("VALUES(`hint`)")),
