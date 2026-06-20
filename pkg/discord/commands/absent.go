@@ -295,14 +295,11 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(
 				INNER_JOIN(tAccs,
 					tAccs.ID.EQ(tAccsOauth2.AccountID),
 				).
-				LEFT_JOIN(tUserAccounts,
+				INNER_JOIN(tUserAccounts,
 					tUserAccounts.AccountID.EQ(tAccsOauth2.AccountID),
 				).
 				INNER_JOIN(tUsers,
-					mysql.OR(
-						tUserAccounts.UserID.EQ(tUsers.ID),
-						tUsers.License.EQ(tAccs.License),
-					),
+					tUserAccounts.UserID.EQ(tUsers.ID),
 				).
 				INNER_JOIN(tUserJobs,
 					mysql.AND(
@@ -312,6 +309,7 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(
 				),
 		).
 		WHERE(mysql.AND(
+			tAccs.DeletedAt.IS_NULL(),
 			tAccsOauth2.Provider.EQ(mysql.String("discord")),
 			tAccsOauth2.ExternalID.EQ(mysql.String(discordId.String())),
 		)).

@@ -227,6 +227,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 				request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)) {
 			return nil, errorsqualifications.ErrFailedQuery
 		}
+		req.Request.UserId = userInfo.GetUserId()
 		if err := s.store.UpsertQualificationRequest(ctx, tx, req.GetRequest()); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}

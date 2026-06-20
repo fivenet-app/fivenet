@@ -31,9 +31,9 @@ type GroupSync struct {
 }
 
 type groupSyncUser struct {
+	AccountID  int64                   `alias:"account_id"`
 	ExternalID string                  `alias:"external_id"`
 	Groups     *accounts.AccountGroups `alias:"groups"`
-	UserID     int32                   `alias:"user_id"`
 
 	JobChecked bool
 	SameJob    bool
@@ -167,38 +167,36 @@ func (g *GroupSync) planUsers(
 	users := discordtypes.Users{}
 	logs := []discord.Embed{}
 
-	tAccount := table.FivenetAccounts.AS("accounts")
-	tUsers := table.FivenetUser.AS("users")
+	tAccs := table.FivenetAccounts.AS("accounts")
+	tUserAccounts := table.FivenetUserAccounts
 
 	groupsConditions := []mysql.BoolExpression{}
 	for sGroup := range groupMapping {
 		groupsConditions = append(groupsConditions,
-			dbutils.JSON_CONTAINS(tAccount.Groups, mysql.String("\""+sGroup+"\"")),
+			dbutils.JSON_CONTAINS(tAccs.Groups, mysql.String("\""+sGroup+"\"")),
 		)
 	}
 
 	condition := mysql.AND(
+		tAccs.DeletedAt.IS_NULL(),
 		tAccsOauth2.Provider.EQ(mysql.String("discord")),
-		tAccount.Groups.IS_NOT_NULL(),
+		tAccs.Groups.IS_NOT_NULL(),
 		mysql.OR(groupsConditions...),
 	)
 
 	stmt := tAccsOauth2.
 		SELECT(
 			tAccsOauth2.ExternalID.AS("groupsyncuser.external_id"),
-			tAccount.Groups.AS("groupsyncuser.groups"),
-			tUsers.ID.AS("groupsyncuser.user_id"),
+			tAccsOauth2.AccountID.AS("groupsyncuser.account_id"),
+			tAccs.Groups.AS("groupsyncuser.groups"),
 		).
 		FROM(
 			tAccsOauth2.
-				INNER_JOIN(tAccount,
-					tAccount.ID.EQ(tAccsOauth2.AccountID),
+				INNER_JOIN(tAccs,
+					tAccs.ID.EQ(tAccsOauth2.AccountID),
 				).
-				INNER_JOIN(tUsers,
-					mysql.OR(
-						tUsers.ID.EQ(tAccsOauth2.AccountID),
-						tUsers.License.EQ(tAccount.License),
-					),
+				INNER_JOIN(tUserAccounts,
+					tUserAccounts.AccountID.EQ(tAccsOauth2.AccountID),
 				),
 		).
 		WHERE(condition)
@@ -247,7 +245,7 @@ func (g *GroupSync) planUser(
 		if groupCfg.NotSameJob {
 			// Only check user's job once per user if any of the groupshave `NotSameJob` set to true
 			if !user.JobChecked {
-				has, err := g.checkIfUserIsPartOfJob(ctx, user.UserID, g.job)
+				has, err := g.checkIfAccountHasUsersPartOfJob(ctx, user.AccountID, g.job)
 				if err != nil {
 					g.logger.Error(
 						fmt.Sprintf("failed to check if user has char in job %s", user.ExternalID),
@@ -310,11 +308,12 @@ func (g *GroupSync) planUser(
 	return u, nil, nil
 }
 
-func (g *GroupSync) checkIfUserIsPartOfJob(
+func (g *GroupSync) checkIfAccountHasUsersPartOfJob(
 	ctx context.Context,
-	userId int32,
+	accountId int64,
 	job string,
 ) (bool, error) {
+	tUserAccounts := table.FivenetUserAccounts
 	tUserJobs := table.FivenetUserJobs.AS("user_job")
 
 	stmt := tUserJobs.
@@ -323,9 +322,17 @@ func (g *GroupSync) checkIfUserIsPartOfJob(
 			tUserJobs.Job,
 			tUserJobs.Grade,
 		).
-		FROM(tUserJobs).
+		FROM(
+			tUserAccounts.
+				INNER_JOIN(tUserJobs,
+					mysql.AND(
+						tUserJobs.UserID.EQ(tUserAccounts.UserID),
+						tUserJobs.Job.EQ(mysql.String(job)),
+					),
+				),
+		).
 		WHERE(mysql.AND(
-			tUserJobs.UserID.EQ(mysql.Int32(userId)),
+			tUserAccounts.AccountID.EQ(mysql.Int64(accountId)),
 			tUserJobs.Job.EQ(mysql.String(job)),
 		)).
 		LIMIT(10)

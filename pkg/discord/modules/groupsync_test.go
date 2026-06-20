@@ -197,8 +197,8 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					db, mock, err := sqlmock.New()
 					require.NoError(t, err)
 					mock.ExpectQuery("SELECT .*fivenet_user_jobs.*").
-						// Third argument is the query limit.
-						WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), 10).
+						// Fourth argument is the query limit.
+						WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), 10).
 						WillReturnRows(sqlmock.NewRows([]string{"job", "grade"}))
 
 					cleanup := func() {
@@ -211,7 +211,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 			args: args{
 				user: &groupSyncUser{
 					ExternalID: "12345",
-					UserID:     42,
+					AccountID:  int64(42),
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
 				roles: map[string]*discordtypes.Role{"supporter": {ID: 1, Name: "Supporter"}},
@@ -238,8 +238,8 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					db, mock, err := sqlmock.New()
 					require.NoError(t, err)
 					mock.ExpectQuery("SELECT .*fivenet_user_jobs.*").
-						// Third argument is the query limit.
-						WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), 10).
+						// Fourth argument is the query limit.
+						WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), 10).
 						WillReturnError(errors.New("db error"))
 
 					cleanup := func() {
@@ -252,7 +252,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 			args: args{
 				user: &groupSyncUser{
 					ExternalID: "12345",
-					UserID:     42,
+					AccountID:  int64(42),
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
 				roles: map[string]*discordtypes.Role{"supporter": {ID: 1, Name: "Supporter"}},

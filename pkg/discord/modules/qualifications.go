@@ -256,17 +256,14 @@ func (g *QualificationsSync) queryUsers(
 				INNER_JOIN(tUsers,
 					tUsers.ID.EQ(tSuccessMap.UserID),
 				).
-				LEFT_JOIN(tUserAccounts,
+				INNER_JOIN(tUserAccounts,
 					tUserAccounts.UserID.EQ(tUsers.ID),
 				).
 				INNER_JOIN(tAccs,
-					mysql.OR(
-						tAccs.ID.EQ(tUserAccounts.AccountID),
-						tAccs.License.EQ(tUsers.License),
-					),
+					tAccs.ID.EQ(tUserAccounts.AccountID),
 				).
 				INNER_JOIN(tAccsOauth2,
-					tAccsOauth2.AccountID.EQ(tAccs.ID),
+					tAccsOauth2.AccountID.EQ(tUserAccounts.AccountID),
 				).
 				INNER_JOIN(tUserJobs,
 					mysql.AND(

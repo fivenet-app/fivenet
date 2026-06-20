@@ -278,17 +278,17 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 				INNER_JOIN(tAccs,
 					tAccs.ID.EQ(tAccsOauth2.AccountID),
 				).
-				LEFT_JOIN(tUserAccounts,
+				INNER_JOIN(tUserAccounts,
 					tUserAccounts.AccountID.EQ(tAccs.ID),
 				).
 				INNER_JOIN(tUsers,
-					mysql.OR(
-						tUsers.ID.EQ(tUserAccounts.UserID),
-						tUsers.License.EQ(tAccs.License),
-					),
+					tUsers.ID.EQ(tUserAccounts.UserID),
 				).
 				INNER_JOIN(tUserJobs,
-					tUserJobs.UserID.EQ(tUsers.ID),
+					mysql.AND(
+						tUserJobs.UserID.EQ(tUsers.ID),
+						tUserJobs.Job.EQ(mysql.String(g.job)),
+					),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
@@ -298,8 +298,8 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 				),
 		).
 		WHERE(mysql.AND(
+			tAccs.DeletedAt.IS_NULL(),
 			tAccsOauth2.Provider.EQ(mysql.String("discord")),
-			tUserJobs.Job.EQ(mysql.String(g.job)),
 		)).
 		ORDER_BY(tUsers.ID.ASC())
 
