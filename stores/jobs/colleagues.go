@@ -357,6 +357,7 @@ func (s *Store) GetColleague(
 
 func (s *Store) CountColleagueActivity(ctx context.Context, db qrm.DB, q ListQuery) (int64, error) {
 	tActivity := tColleagueActivity.AS("colleague_activity")
+	tTargetColleague := table.FivenetUser.AS("target_user")
 
 	condition := mysql.AND(tActivity.Job.EQ(mysql.String(q.Job)))
 	if q.Where != nil {
@@ -364,8 +365,11 @@ func (s *Store) CountColleagueActivity(ctx context.Context, db qrm.DB, q ListQue
 	}
 
 	countStmt := tActivity.
-		SELECT(mysql.COUNT(tActivity.ID).AS("data_count.total")).
-		FROM(tActivity).
+		SELECT(mysql.COUNT(mysql.DISTINCT(tActivity.ID)).AS("data_count.total")).
+		FROM(
+			tActivity.
+				INNER_JOIN(tTargetColleague, tTargetColleague.ID.EQ(tActivity.TargetUserID)),
+		).
 		WHERE(condition)
 
 	var count database.DataCount

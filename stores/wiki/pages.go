@@ -171,6 +171,7 @@ func (s *Store) listVisiblePages(
 	if q.Pagination != nil {
 		paginationReq = q.Pagination
 	}
+	paginationReq.SetPageSize(defaultWikiUpperLimit)
 	pagination, limit := paginationReq.GetResponseWithPageSize(count.Total, defaultWikiUpperLimit)
 	result := &ListPagesResult{Pagination: pagination, Pages: []*reswiki.PageShort{}}
 	if count.Total <= 0 {
@@ -314,6 +315,7 @@ func (s *Store) listRootPages(
 	if q.Pagination != nil {
 		paginationReq = q.Pagination
 	}
+	paginationReq.SetPageSize(defaultWikiUpperLimit)
 	pagination, limit := paginationReq.GetResponseWithPageSize(count.Total, defaultWikiUpperLimit)
 	result := &ListPagesResult{Pagination: pagination, Pages: []*reswiki.PageShort{}}
 	if count.Total <= 0 {
@@ -391,6 +393,7 @@ func (s *Store) listPagesSuperuser(
 	if q.Pagination != nil {
 		paginationReq = q.Pagination
 	}
+	paginationReq.SetPageSize(defaultWikiUpperLimit)
 	pagination, limit := paginationReq.GetResponseWithPageSize(count.Total, defaultWikiUpperLimit)
 	result := &ListPagesResult{Pagination: pagination, Pages: []*reswiki.PageShort{}}
 	if count.Total <= 0 {

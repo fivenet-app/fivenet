@@ -211,6 +211,54 @@ func TestStoreGetEmail(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestStoreGetEmailByUserID(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(db)
+	now := time.Unix(0, 0).UTC()
+
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_emails AS email`) +
+		`(?s).*` + regexp.QuoteMeta(`email.user_id = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
+	mock.ExpectQuery(expectedQuery).
+		WithArgs(int32(3), int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"email.id",
+			"email.created_at",
+			"email.updated_at",
+			"email.deleted_at",
+			"email.deactivated",
+			"email.job",
+			"email.user_id",
+			"email.email",
+			"email.email_changed",
+			"email.label",
+		}).AddRow(
+			int64(43),
+			now,
+			now,
+			nil,
+			false,
+			nil,
+			int32(3),
+			"private@example.com",
+			nil,
+			nil,
+		))
+
+	email, err := store.GetEmailByUserID(t.Context(), db, 3)
+	require.NoError(t, err)
+	require.NotNil(t, email)
+	assert.Equal(t, int64(43), email.GetId())
+	assert.Equal(t, int32(3), email.GetUserId())
+	assert.Equal(t, "private@example.com", email.GetEmail())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreGetUserShort(t *testing.T) {
 	t.Parallel()
 

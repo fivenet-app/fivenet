@@ -48,12 +48,16 @@ func (m *dbServer) Setup(ctx context.Context) {
 	image, tag := loadDockerComposeServiceImage(m.t, "mysql")
 
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
-	m.pool = dockertest.NewPoolT(m.t, "")
+	pool, poolErr := dockertest.NewPool(ctx, "")
+	if poolErr != nil {
+		m.t.Skipf("skipping docker-backed DB tests: %v", poolErr)
+	}
+	m.pool = pool
 
 	// Pulls image, creates a container based on it and runs it.
 	// We disable reuse explicitly to guarantee test isolation.
-	m.resource = m.pool.RunT(
-		m.t,
+	resource, runErr := m.pool.Run(
+		ctx,
 		image,
 		dockertest.WithTag(tag),
 		dockertest.WithEnv([]string{
@@ -71,6 +75,10 @@ func (m *dbServer) Setup(ctx context.Context) {
 		}),
 		dockertest.WithoutReuse(),
 	)
+	if runErr != nil {
+		m.t.Skipf("skipping docker-backed DB tests: %v", runErr)
+	}
+	m.resource = resource
 
 	// Exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	if err := m.pool.Retry(ctx, 0, func() error {

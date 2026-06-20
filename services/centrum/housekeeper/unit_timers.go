@@ -68,8 +68,12 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error 
 	unit, err := s.units.Get(ctx, unitId)
 	if err != nil {
 		if errors.Is(err, nats.ErrKeyNotFound) {
-			if err := s.units.KVPing.Delete(ctx, fmt.Sprintf("ping.%d", unit.GetId())); err != nil {
-				return fmt.Errorf("failed to delete ghost unit %d ping from kv ping store. %w", err)
+			if err := s.units.KVPing.Delete(ctx, fmt.Sprintf("ping.%d", unitId)); err != nil {
+				return fmt.Errorf(
+					"failed to delete ghost unit %d ping from kv ping store. %w",
+					unitId,
+					err,
+				)
 			}
 		}
 		return fmt.Errorf("failed to get unit %d from store. %w", unitId, err)

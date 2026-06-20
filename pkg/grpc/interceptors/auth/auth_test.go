@@ -6,6 +6,7 @@ package grpc_auth
 import (
 	"context"
 	"fmt"
+	"net"
 	"testing"
 	"time"
 
@@ -83,6 +84,11 @@ func ctxWithToken(ctx context.Context, scheme string, token string) context.Cont
 
 func TestAuthTestSuite(t *testing.T) {
 	t.Parallel()
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Skipf("skipping grpc auth interceptor tests: %v", err)
+	}
+	_ = listener.Close()
 	authFunc := buildDummyAuthFunction("Bearer", commonAuthToken)
 	s := &AuthTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
@@ -192,6 +198,11 @@ func (s *authOverrideTestService) AuthFuncOverride(
 
 func TestAuthOverrideTestSuite(t *testing.T) {
 	t.Parallel()
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Skipf("skipping grpc auth interceptor tests: %v", err)
+	}
+	_ = listener.Close()
 	authFunc := buildDummyAuthFunction("Bearer", commonAuthToken)
 	s := &AuthOverrideTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{

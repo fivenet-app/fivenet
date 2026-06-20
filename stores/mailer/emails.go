@@ -223,6 +223,14 @@ func (s *Store) GetEmailByCondition(
 	return dest, nil
 }
 
+func (s *Store) GetEmailByUserID(
+	ctx context.Context,
+	q qrm.DB,
+	userID int32,
+) (*maileremails.Email, error) {
+	return s.GetEmailByCondition(ctx, q, tEmails.UserID.EQ(mysql.Int32(userID)))
+}
+
 func (s *Store) GetEmail(
 	ctx context.Context,
 	q qrm.DB,

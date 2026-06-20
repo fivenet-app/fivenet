@@ -109,6 +109,11 @@ type IStore interface {
 		db qrm.DB,
 		condition mysql.BoolExpression,
 	) (*maileremails.Email, error)
+	GetEmailByUserID(
+		ctx context.Context,
+		db qrm.DB,
+		userID int32,
+	) (*maileremails.Email, error)
 	GetEmail(
 		ctx context.Context,
 		db qrm.DB,

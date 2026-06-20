@@ -2,6 +2,7 @@ package grpc_permission
 
 import (
 	"context"
+	"net"
 	"strconv"
 	"testing"
 
@@ -91,6 +92,11 @@ func (s *assertingPingService) PingList(
 
 func TestPermsTestSuite(t *testing.T) {
 	t.Parallel()
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Skipf("skipping grpc permission interceptor tests: %v", err)
+	}
+	_ = listener.Close()
 	s := &PermissionTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
 			TestService: &assertingPingService{&testpb.TestPingService{}, t},
@@ -185,6 +191,11 @@ func (s *permsOverrideTestService) AuthFuncOverride(
 
 func TestPermsOverrideTestSuite(t *testing.T) {
 	t.Parallel()
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Skipf("skipping grpc permission interceptor tests: %v", err)
+	}
+	_ = listener.Close()
 	s := &PermsOverrideTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
 			TestService: &permsOverrideTestService{
@@ -231,6 +242,11 @@ type permsRemapTestService struct {
 
 func TestPermsRemapTestSuite(t *testing.T) {
 	t.Parallel()
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Skipf("skipping grpc permission interceptor tests: %v", err)
+	}
+	_ = listener.Close()
 	s := &PermsRemapTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
 			TestService: &permsRemapTestService{

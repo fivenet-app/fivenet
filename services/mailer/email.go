@@ -195,10 +195,10 @@ func (s *Server) CreateOrUpdateEmail(
 	if req.GetEmail().GetId() <= 0 {
 		// Check if user already has a personal email
 		if req.Email.UserId != nil {
-			email, err := s.store.GetEmailByCondition(
+			email, err := s.store.GetEmailByUserID(
 				ctx,
 				tx,
-				tEmails.UserID.EQ(mysql.Int32(req.GetEmail().GetUserId())),
+				req.GetEmail().GetUserId(),
 			)
 			if err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
