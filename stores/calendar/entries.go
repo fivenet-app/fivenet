@@ -92,6 +92,7 @@ func calendarEntriesQuery(
 	includeDeleted bool,
 	limit *int64,
 ) mysql.Statement {
+	tCalendarEntry := table.FivenetCalendarEntries.AS("calendar_entry")
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
@@ -486,6 +487,7 @@ func (s *Store) GetEntry(
 	userInfo *userinfo.UserInfo,
 	condition mysql.BoolExpression,
 ) (*calendarentries.CalendarEntry, error) {
+	tCalendarEntry := table.FivenetCalendarEntries.AS("calendar_entry")
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 	includeDeleted := userInfo.GetSuperuser()

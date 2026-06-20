@@ -114,8 +114,8 @@ func (s *Server) CreateAccount(
 	if err != nil {
 		s.logger.Error(
 			"failed to get account from database by registration token",
-			zap.Error(err),
 			zap.String("reg_token", req.GetRegToken()),
+			zap.Error(err),
 		)
 		return nil, errswrap.NewError(
 			err,

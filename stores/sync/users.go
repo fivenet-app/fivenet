@@ -279,7 +279,9 @@ func (s *Store) createUser(
 	var accountIdStmt mysql.SelectStatement = nil
 	if user.GetIdentifier() != "" {
 		accountIdStmt = tAccounts.
-			SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).
+			SELECT(
+				mysql.COALESCE(tAccounts.ID, mysql.NULL),
+			).
 			FROM(tAccounts).
 			WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).
 			LIMIT(1)
@@ -292,8 +294,38 @@ func (s *Store) createUser(
 	defer tx.Rollback()
 
 	stmt := tUsers.
-		INSERT(tUsers.ID, tUsers.AccountID, tUsers.License, tUsers.Identifier, tUsers.Firstname, tUsers.Lastname, tUsers.Dateofbirth, tUsers.Job, tUsers.JobGrade, tUsers.Sex, tUsers.PhoneNumber, tUsers.Height, tUsers.Visum, tUsers.Playtime).
-		VALUES(user.GetUserId(), accountIdStmt, utils.GetLicenseFromIdentifier(user.Identifier), user.Identifier, user.Firstname, user.Lastname, user.GetDateofbirth(), user.GetJob(), user.GetJobGrade(), user.Sex, user.PhoneNumber, user.Height, user.Visum, user.Playtime).
+		INSERT(
+			tUsers.ID,
+			tUsers.AccountID,
+			tUsers.License,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Sex,
+			tUsers.PhoneNumber,
+			tUsers.Height,
+			tUsers.Visum,
+			tUsers.Playtime,
+		).
+		VALUES(
+			user.GetUserId(),
+			accountIdStmt,
+			utils.GetLicenseFromIdentifier(user.Identifier),
+			user.Identifier,
+			user.Firstname,
+			user.Lastname,
+			user.GetDateofbirth(),
+			user.GetJob(),
+			user.GetJobGrade(),
+			user.Sex,
+			user.PhoneNumber,
+			user.Height,
+			user.Visum,
+			user.Playtime,
+		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tUsers.ID.SET(mysql.RawInt("VALUES(`id`)")),
 			tUsers.AccountID.SET(mysql.RawInt("VALUES(`account_id`)")),

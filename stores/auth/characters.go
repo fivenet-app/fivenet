@@ -12,17 +12,13 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var (
-	tUserProps = table.FivenetUserProps.AS("user_props")
-	tJobProps  = table.FivenetJobProps.AS("job_props")
-)
-
 func (s *Store) ListCharacters(
 	ctx context.Context,
 	accountID int64,
 	license string,
 ) ([]*accounts.Character, error) {
 	tUsers := table.FivenetUser.AS("user")
+	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUsers.
@@ -75,8 +71,10 @@ func (s *Store) GetCharacter(
 	charID int32,
 ) (*users.User, *jobsprops.JobProps, error) {
 	tUsers := table.FivenetUser.AS("user")
-	tLogo := table.FivenetFiles.AS("logo_file")
+	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
+	tJobProps := table.FivenetJobProps.AS("job_props")
+	tLogo := table.FivenetFiles.AS("logo_file")
 
 	stmt := tUsers.
 		SELECT(
@@ -137,6 +135,7 @@ func (s *Store) GetJobWithProps(
 ) (*jobs.Job, int32, *jobsprops.JobProps, error) {
 	tJobs := table.FivenetJobs.AS("job")
 	tJobsGrades := table.FivenetJobsGrades.AS("jg")
+	tJobProps := table.FivenetJobProps.AS("job_props")
 	tFiles := table.FivenetFiles.AS("logo_file")
 
 	stmt := tJobs.

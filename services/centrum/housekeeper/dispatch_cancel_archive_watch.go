@@ -59,37 +59,41 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 				continue // Already handled elsewhere
 			}
 
-			if _, err := s.dispatches.UpdateStatus(ctx, id, &centrumdispatches.DispatchStatus{
-				CreatedAt:  timestamp.Now(),
-				DispatchId: id,
-				Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-			}); err != nil {
-				s.logger.Error(
-					"failed to update dispatch status to cancelled",
-					zap.Int64("dispatch_id", id),
-					zap.Error(err),
-				)
-			}
-			if err := s.dispatches.AddAttributeToDispatch(
-				ctx,
-				dsp,
-				centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD,
-			); err != nil {
-				s.logger.Error(
-					"failed to add too old attribute to cancelled dispatch",
-					zap.Int64("dispatch_id", id),
-					zap.Error(err),
-				)
-			}
-
-			// Remove from kv so the UI gets the event
-			if err := s.dispatches.Delete(ctx, id, false); err != nil {
-				s.logger.Error(
-					"failed to delete idle dispatch",
-					zap.Int64("dispatch_id", id),
-					zap.Error(err),
-				)
-			}
+			s.cancelDispatch(ctx, dsp)
 		}
+	}
+}
+
+func (s *Housekeeper) cancelDispatch(ctx context.Context, dsp *centrumdispatches.Dispatch) {
+	if _, err := s.dispatches.UpdateStatus(ctx, dsp.GetId(), &centrumdispatches.DispatchStatus{
+		CreatedAt:  timestamp.Now(),
+		DispatchId: dsp.GetId(),
+		Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+	}); err != nil {
+		s.logger.Error(
+			"failed to update dispatch status to cancelled",
+			zap.Int64("dispatch_id", dsp.GetId()),
+			zap.Error(err),
+		)
+	}
+	if err := s.dispatches.AddAttributeToDispatch(
+		ctx,
+		dsp,
+		centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD,
+	); err != nil {
+		s.logger.Error(
+			"failed to add too old attribute to cancelled dispatch",
+			zap.Int64("dispatch_id", dsp.GetId()),
+			zap.Error(err),
+		)
+	}
+
+	// Remove from kv so the UI gets the event
+	if err := s.dispatches.Delete(ctx, dsp.GetId(), false); err != nil {
+		s.logger.Error(
+			"failed to delete idle dispatch",
+			zap.Int64("dispatch_id", dsp.GetId()),
+			zap.Error(err),
+		)
 	}
 }

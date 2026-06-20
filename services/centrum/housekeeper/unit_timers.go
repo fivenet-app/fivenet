@@ -54,8 +54,8 @@ func (s *Housekeeper) unitKVPing(ctx context.Context) error {
 			if err := s.handleUnitKVPing(ctx, id); err != nil {
 				s.logger.Error(
 					"failed to handle TTL event",
-					zap.Error(err),
 					zap.Int64("unit_id", id),
+					zap.Error(err),
 				)
 			}
 		}
@@ -63,10 +63,10 @@ func (s *Housekeeper) unitKVPing(ctx context.Context) error {
 }
 
 // handleUnitKVPing checks if a unit is empty or has the static attribute and sets its status to unavailable if so.
-func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id int64) error {
-	unit, err := s.units.Get(ctx, id)
+func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error {
+	unit, err := s.units.Get(ctx, unitId)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get unit %d from store. %w", unitId, err)
 	}
 
 	// Fast check if unit is already unavailable and empty
@@ -98,7 +98,7 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id int64) error {
 
 	if stillAvailable {
 		// Reset the ping timer
-		return s.resetUnitPing(ctx, id)
+		return s.resetUnitPing(ctx, unitId)
 	}
 
 	var userId *int32
