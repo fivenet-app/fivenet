@@ -96,7 +96,7 @@ func New(db *sql.DB) IStore {
 		accountSorter: database.New(
 			database.SpecMap{
 				"license":  database.Column{Col: tAccounts.License},
-				"username": database.Column{Col: tAccounts.Username},
+				"username": database.Column{Col: tAccounts.Username, NullsLast: true},
 				"id":       database.Column{Col: tAccounts.ID},
 			},
 			[]mysql.OrderByClause{tAccounts.CreatedAt.DESC()},

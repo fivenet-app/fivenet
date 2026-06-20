@@ -118,6 +118,7 @@ func UseSchema(schema string) {
 	FivenetStatsDailyRollup = FivenetStatsDailyRollup.FromSchema(schema)
 	FivenetSyncUser = FivenetSyncUser.FromSchema(schema)
 	FivenetUser = FivenetUser.FromSchema(schema)
+	FivenetUserAccounts = FivenetUserAccounts.FromSchema(schema)
 	FivenetUserActivity = FivenetUserActivity.FromSchema(schema)
 	FivenetUserJobs = FivenetUserJobs.FromSchema(schema)
 	FivenetUserLabels = FivenetUserLabels.FromSchema(schema)

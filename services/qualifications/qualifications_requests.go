@@ -97,7 +97,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		ctx,
 		logging.Fields{
 			qualificationIDLogFieldKey, req.GetRequest().GetQualificationId(),
-			qualificationIDLogFieldKey, req.GetRequest().GetUserId(),
+			userIDLogFieldKey, req.GetRequest().GetUserId(),
 		},
 	)
 

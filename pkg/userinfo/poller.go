@@ -205,6 +205,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 	}
 
 	tUser := table.FivenetUser
+	tUserAccounts := table.FivenetUserAccounts
 	tAccount := table.FivenetAccounts
 
 	stmt := tUser.
@@ -218,10 +219,14 @@ func (p *Poller) doBatch(ctx context.Context) error {
 		).
 		FROM(
 			tUser.
+				LEFT_JOIN(
+					tUserAccounts,
+					tUserAccounts.UserID.EQ(tUser.ID),
+				).
 				INNER_JOIN(
 					tAccount,
 					mysql.OR(
-						tAccount.ID.EQ(tUser.AccountID),
+						tAccount.ID.EQ(tUserAccounts.AccountID),
 						tAccount.License.EQ(tUser.License),
 					),
 				),

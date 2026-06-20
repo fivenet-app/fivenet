@@ -1009,6 +1009,9 @@ func (d *Demo) upsertFakeUserTx(
 	if err != nil {
 		return 0, err
 	}
+	if err := d.upsertFakeUserAccountMapping(ctx, tx, userID, profile.AccountID); err != nil {
+		return 0, err
+	}
 
 	if err := d.upsertFakeUserJobs(ctx, tx, userID, profile.Jobs); err != nil {
 		return 0, err
@@ -1049,7 +1052,6 @@ func (d *Demo) upsertFakeUserCore(
 	if errors.Is(err, qrm.ErrNoRows) {
 		insertStmt := tUsers.
 			INSERT(
-				tUsers.AccountID,
 				tUsers.License,
 				tUsers.Identifier,
 				tUsers.Group,
@@ -1065,7 +1067,6 @@ func (d *Demo) upsertFakeUserCore(
 				tUsers.Playtime,
 			).
 			VALUES(
-				profile.AccountID,
 				profile.License,
 				profile.Identifier,
 				"user",
@@ -1101,7 +1102,6 @@ func (d *Demo) upsertFakeUserCore(
 
 	updateStmt := tUsers.
 		UPDATE(
-			tUsers.AccountID,
 			tUsers.License,
 			tUsers.Identifier,
 			tUsers.Group,
@@ -1119,7 +1119,6 @@ func (d *Demo) upsertFakeUserCore(
 			tUsers.DeletedReason,
 		).
 		SET(
-			profile.AccountID,
 			profile.License,
 			profile.Identifier,
 			"user",
@@ -1144,6 +1143,42 @@ func (d *Demo) upsertFakeUserCore(
 	}
 
 	return existing.ID, nil
+}
+
+func (d *Demo) upsertFakeUserAccountMapping(
+	ctx context.Context,
+	tx *sql.Tx,
+	userID int32,
+	accountID *int64,
+) error {
+	if accountID == nil {
+		deleteStmt := tUserAccounts.
+			DELETE().
+			WHERE(tUserAccounts.UserID.EQ(mysql.Int32(userID))).
+			LIMIT(1)
+		if _, err := deleteStmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to delete fake user account mapping. %w", err)
+		}
+		return nil
+	}
+
+	insertStmt := tUserAccounts.
+		INSERT(
+			tUserAccounts.UserID,
+			tUserAccounts.AccountID,
+		).
+		VALUES(
+			userID,
+			*accountID,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tUserAccounts.AccountID.SET(mysql.RawInt("VALUES(`account_id`)")),
+		)
+	if _, err := insertStmt.ExecContext(ctx, tx); err != nil {
+		return fmt.Errorf("failed to upsert fake user account mapping. %w", err)
+	}
+
+	return nil
 }
 
 func (d *Demo) upsertFakeUserJobs(

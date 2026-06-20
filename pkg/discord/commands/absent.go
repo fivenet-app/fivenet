@@ -281,6 +281,7 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(
 	discordId discord.UserID,
 ) (int32, int32, error) {
 	tAccs := table.FivenetAccounts
+	tUserAccounts := table.FivenetUserAccounts
 	tUsers := table.FivenetUser.AS("user")
 	tUserJobs := table.FivenetUserJobs.AS("user_jobs")
 
@@ -294,9 +295,12 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(
 				INNER_JOIN(tAccs,
 					tAccs.ID.EQ(tAccsOauth2.AccountID),
 				).
+				LEFT_JOIN(tUserAccounts,
+					tUserAccounts.AccountID.EQ(tAccsOauth2.AccountID),
+				).
 				INNER_JOIN(tUsers,
 					mysql.OR(
-						tUsers.AccountID.EQ(tAccsOauth2.AccountID),
+						tUserAccounts.UserID.EQ(tUsers.ID),
 						tUsers.License.EQ(tAccs.License),
 					),
 				).

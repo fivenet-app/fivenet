@@ -70,7 +70,9 @@ func (s *Store) ListAccounts(
 	}
 
 	pag, limit := opts.Pagination.GetResponseWithPageSize(count.Total, 30)
-	resp := &pbsettings.ListAccountsResponse{Pagination: pag}
+	resp := &pbsettings.ListAccountsResponse{
+		Pagination: pag,
+	}
 	if count.Total <= 0 {
 		return resp, nil
 	}
@@ -194,6 +196,7 @@ func (s *Store) GetAccountByID(
 	accountID int64,
 	includeDeleted bool,
 ) (*accounts.Account, error) {
+	tAccounts := table.FivenetAccounts.AS("account")
 	return s.getAccount(ctx, tAccounts.ID.EQ(mysql.Int64(accountID)), false, includeDeleted)
 }
 

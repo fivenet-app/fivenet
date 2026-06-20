@@ -18,6 +18,7 @@ func (s *Store) ListCharacters(
 	license string,
 ) ([]*accounts.Character, error) {
 	tUsers := table.FivenetUser.AS("user")
+	tUserAccounts := table.FivenetUserAccounts.AS("user_accounts")
 	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
@@ -26,7 +27,7 @@ func (s *Store) ListCharacters(
 			tUsers.ID,
 			dbutils.Columns{
 				tUsers.ID.AS("user.user_id"),
-				tUsers.AccountID,
+				tUserAccounts.AccountID,
 				tUsers.Identifier,
 				tUsers.Job,
 				tUsers.JobGrade,
@@ -44,6 +45,9 @@ func (s *Store) ListCharacters(
 			}.Get()...,
 		).
 		FROM(tUsers.
+			LEFT_JOIN(tUserAccounts,
+				tUserAccounts.UserID.EQ(tUsers.ID),
+			).
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tUsers.ID),
 			).
@@ -52,7 +56,7 @@ func (s *Store) ListCharacters(
 			),
 		).
 		WHERE(mysql.OR(
-			tUsers.AccountID.EQ(mysql.Int64(accountID)),
+			tUserAccounts.AccountID.EQ(mysql.Int64(accountID)),
 			tUsers.License.EQ(mysql.String(license)),
 		)).
 		ORDER_BY(tUsers.ID).

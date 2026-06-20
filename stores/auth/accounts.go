@@ -15,7 +15,6 @@ func (s *Store) getAccount(
 	condition mysql.BoolExpression,
 	withPass bool,
 ) (*model.FivenetAccounts, error) {
-	tAccounts := table.FivenetAccounts.AS("account")
 	columns := mysql.ProjectionList{
 		tAccounts.ID,
 		tAccounts.CreatedAt,
@@ -114,7 +113,9 @@ func (s *Store) GetPasswordResetAccountByRegToken(
 func (s *Store) ActivateAccount(
 	ctx context.Context,
 	accountID int64,
-	regToken, username, hashedPassword string,
+	regToken string,
+	username string,
+	hashedPassword string,
 ) error {
 	stmt := tAccounts.
 		UPDATE(

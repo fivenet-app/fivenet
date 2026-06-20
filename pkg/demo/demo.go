@@ -42,6 +42,7 @@ var (
 	tLocs                 = table.FivenetCentrumUserLocations
 	tTimeClock            = table.FivenetJobTimeclock
 	tUsers                = table.FivenetUser
+	tUserAccounts         = table.FivenetUserAccounts
 	tUserJobs             = table.FivenetUserJobs
 	tUserLicenses         = table.FivenetUserLicenses
 	tUserPhoneNumbers     = table.FivenetUserPhoneNumbers

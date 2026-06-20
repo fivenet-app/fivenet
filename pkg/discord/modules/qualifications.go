@@ -235,6 +235,7 @@ func (g *QualificationsSync) queryUsers(
 	offset int64,
 ) ([]*qualificationUserMapping, error) {
 	tAccs := table.FivenetAccounts
+	tUserAccounts := table.FivenetUserAccounts
 	tUsers := table.FivenetUser.AS("users")
 	tUserJobs := table.FivenetUserJobs.AS("user_jobs")
 	tSuccessMap := table.FivenetQualificationsResultSuccessMap.AS("qualification_success_map")
@@ -255,9 +256,12 @@ func (g *QualificationsSync) queryUsers(
 				INNER_JOIN(tUsers,
 					tUsers.ID.EQ(tSuccessMap.UserID),
 				).
+				LEFT_JOIN(tUserAccounts,
+					tUserAccounts.UserID.EQ(tUsers.ID),
+				).
 				INNER_JOIN(tAccs,
 					mysql.OR(
-						tAccs.ID.EQ(tUsers.AccountID),
+						tAccs.ID.EQ(tUserAccounts.AccountID),
 						tAccs.License.EQ(tUsers.License),
 					),
 				).

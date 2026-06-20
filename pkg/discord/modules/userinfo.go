@@ -252,8 +252,11 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 	logs := []discord.Embed{}
 	settings := g.settings.Load()
 
+	tAccs := table.FivenetAccounts
+	tUserAccounts := table.FivenetUserAccounts
 	tUsers := table.FivenetUser.AS("users")
 	tUserJobs := table.FivenetUserJobs.AS("user_jobs")
+	tSuccessMap := table.FivenetQualificationsResultSuccessMap.AS("qualification_success_map")
 
 	stmt := tAccsOauth2.
 		SELECT(
@@ -272,9 +275,24 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 			tColleagueProps.AbsenceEnd.AS("userrolemapping.absence_end"),
 		).
 		FROM(
-			tAccsOauth2.
+			tSuccessMap.
+				INNER_JOIN(tQualifications,
+					tQualifications.ID.EQ(tSuccessMap.QualificationID),
+				).
 				INNER_JOIN(tUsers,
-					tUsers.AccountID.EQ(tAccsOauth2.AccountID),
+					tUsers.ID.EQ(tSuccessMap.UserID),
+				).
+				LEFT_JOIN(tUserAccounts,
+					tUserAccounts.UserID.EQ(tUsers.ID),
+				).
+				INNER_JOIN(tAccs,
+					mysql.OR(
+						tAccs.ID.EQ(tUserAccounts.AccountID),
+						tAccs.License.EQ(tUsers.License),
+					),
+				).
+				INNER_JOIN(tAccsOauth2,
+					tAccsOauth2.AccountID.EQ(tAccs.ID),
 				).
 				INNER_JOIN(tUserJobs,
 					tUserJobs.UserID.EQ(tUsers.ID),

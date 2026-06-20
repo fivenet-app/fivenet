@@ -1,10 +1,15 @@
 package syncstore
 
 import (
+	"regexp"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
 )
 
 func TestCompareJobs(t *testing.T) {
@@ -237,4 +242,63 @@ func TestComparePhoneNumbers(t *testing.T) {
 			"old primary must be marked non-primary after compare",
 		)
 	})
+}
+
+func newTestStore(t *testing.T) (*Store, sqlmock.Sqlmock) {
+	t.Helper()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+
+	store := New(db, zap.NewNop(), &config.Config{}, nil, nil, nil).(*Store)
+	t.Cleanup(func() {
+		_ = db.Close()
+	})
+
+	return store, mock
+}
+
+func TestSyncUserAccountUpsertsMapping(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+
+	mock.ExpectBegin()
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT fivenet_accounts.id AS "id" FROM fivenet_accounts WHERE fivenet_accounts.license = ? LIMIT ?;`)).
+		WithArgs("license-42", int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(int64(42)))
+	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_accounts.*ON DUPLICATE KEY UPDATE.*account_id = .*VALUES.*`).
+		WithArgs(int32(11), int64(42)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	tx, err := store.db.Begin()
+	require.NoError(t, err)
+	require.NoError(t, store.syncUserAccount(t.Context(), tx, 11, "char1:license-42"))
+	require.NoError(t, tx.Commit())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestSyncUserAccountDeletesMappingWhenUnresolved(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+
+	mock.ExpectBegin()
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT fivenet_accounts.id AS "id" FROM fivenet_accounts WHERE fivenet_accounts.license = ? LIMIT ?;`)).
+		WithArgs("license-42", int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+	mock.ExpectExec(
+		`(?s)DELETE FROM .*fivenet_user_accounts.*user_id = \?.*`+
+			`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`),
+	).
+		WithArgs(int32(11), int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	tx, err := store.db.Begin()
+	require.NoError(t, err)
+	require.NoError(t, store.syncUserAccount(t.Context(), tx, 11, "char1:license-42"))
+	require.NoError(t, tx.Commit())
+	require.NoError(t, mock.ExpectationsWereMet())
 }

@@ -43,7 +43,7 @@ const schema = z.object({
         .default({
             columns: [
                 {
-                    id: 'username',
+                    id: 'id',
                     desc: false,
                 },
             ],
@@ -157,7 +157,12 @@ const columns = computed(
             },
             {
                 accessorKey: 'id',
-                header: t('common.id'),
+                header: ({ column }) => {
+                    return h(TableSortButton, {
+                        column,
+                        label: t('common.id'),
+                    });
+                },
                 cell: ({ row }) => h(IDCopyBadge, { id: row.original.id, icon: 'i-mdi-content-copy', variant: 'link' }),
             },
             {

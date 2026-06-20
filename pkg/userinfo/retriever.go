@@ -201,6 +201,7 @@ func (r *Retriever) getUserInfoFromDB(
 	userId int32,
 ) (*pbuserinfo.UserInfo, error) {
 	tAccount := table.FivenetAccounts
+	tUserAccounts := table.FivenetUserAccounts
 	tUsers := table.FivenetUser.AS("user_info")
 
 	stmt := tUsers.
@@ -216,8 +217,11 @@ func (r *Retriever) getUserInfoFromDB(
 		).
 		FROM(
 			tAccount.
+				INNER_JOIN(tUserAccounts,
+					tAccount.ID.EQ(tUserAccounts.AccountID),
+				).
 				INNER_JOIN(tUsers,
-					tAccount.ID.EQ(tUsers.AccountID),
+					tUsers.ID.EQ(tUserAccounts.UserID),
 				),
 		).
 		WHERE(tUsers.ID.EQ(mysql.Int32(userId))).

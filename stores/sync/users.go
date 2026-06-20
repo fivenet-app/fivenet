@@ -29,6 +29,7 @@ var BloodTypes = []string{"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"}
 var (
 	tAccounts             = table.FivenetAccounts
 	tUsers                = table.FivenetUser
+	tUserAccounts         = table.FivenetUserAccounts
 	tUserProps            = table.FivenetUserProps
 	tCitizensPhoneNumbers = table.FivenetUserPhoneNumbers
 	tLicenses             = table.FivenetUserLicenses
@@ -276,17 +277,6 @@ func (s *Store) createUser(
 	syncedAt time.Time,
 	user *syncdata.DataUser,
 ) (int64, error) {
-	var accountIdStmt mysql.SelectStatement = nil
-	if user.GetIdentifier() != "" {
-		accountIdStmt = tAccounts.
-			SELECT(
-				mysql.COALESCE(tAccounts.ID, mysql.NULL),
-			).
-			FROM(tAccounts).
-			WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).
-			LIMIT(1)
-	}
-
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return 0, err
@@ -296,7 +286,6 @@ func (s *Store) createUser(
 	stmt := tUsers.
 		INSERT(
 			tUsers.ID,
-			tUsers.AccountID,
 			tUsers.License,
 			tUsers.Identifier,
 			tUsers.Firstname,
@@ -312,7 +301,6 @@ func (s *Store) createUser(
 		).
 		VALUES(
 			user.GetUserId(),
-			accountIdStmt,
 			utils.GetLicenseFromIdentifier(user.Identifier),
 			user.Identifier,
 			user.Firstname,
@@ -328,7 +316,6 @@ func (s *Store) createUser(
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tUsers.ID.SET(mysql.RawInt("VALUES(`id`)")),
-			tUsers.AccountID.SET(mysql.RawInt("VALUES(`account_id`)")),
 			tUsers.License.SET(mysql.RawString("VALUES(`license`)")),
 			tUsers.Identifier.SET(mysql.RawString("VALUES(`identifier`)")),
 			tUsers.Firstname.SET(mysql.RawString("VALUES(`firstname`)")),
@@ -357,6 +344,14 @@ func (s *Store) createUser(
 
 	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {
 		return 0, err
+	}
+	if err := s.syncUserAccount(ctx, tx, user.GetUserId(), user.GetIdentifier()); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user account mapping for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
 	}
 	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
 		return 0, fmt.Errorf(
@@ -401,6 +396,83 @@ func (s *Store) createUser(
 	}
 
 	return rows, nil
+}
+
+func (s *Store) resolveUserAccountID(
+	ctx context.Context,
+	tx *sql.Tx,
+	identifier string,
+) (*int64, error) {
+	if identifier == "" {
+		return nil, nil
+	}
+
+	stmt := tAccounts.
+		SELECT(tAccounts.ID.AS("id")).
+		FROM(tAccounts).
+		WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(identifier)))).
+		LIMIT(1)
+	dest := struct {
+		ID int64 `alias:"id"`
+	}{}
+
+	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf(
+			"failed to resolve account for user identifier %s. %w",
+			identifier,
+			err,
+		)
+	}
+
+	if dest.ID == 0 {
+		return nil, nil
+	}
+
+	return &dest.ID, nil
+}
+
+func (s *Store) syncUserAccount(
+	ctx context.Context,
+	tx *sql.Tx,
+	userID int32,
+	identifier string,
+) error {
+	accountID, err := s.resolveUserAccountID(ctx, tx, identifier)
+	if err != nil {
+		return err
+	}
+
+	if accountID == nil {
+		stmt := tUserAccounts.
+			DELETE().
+			WHERE(tUserAccounts.UserID.EQ(mysql.Int32(userID))).
+			LIMIT(1)
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to delete user account mapping for user %d. %w", userID, err)
+		}
+		return nil
+	}
+
+	stmt := tUserAccounts.
+		INSERT(
+			tUserAccounts.UserID,
+			tUserAccounts.AccountID,
+		).
+		VALUES(
+			userID,
+			*accountID,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tUserAccounts.AccountID.SET(mysql.RawInt("VALUES(`account_id`)")),
+		)
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return fmt.Errorf("failed to upsert user account mapping for user %d. %w", userID, err)
+	}
+
+	return nil
 }
 
 func (s *Store) createOrUpdateSyncUserEntry(
@@ -465,15 +537,9 @@ func (s *Store) updateUser(
 	}
 	defer tx.Rollback()
 
-	accountIdStmt := tAccounts.
-		SELECT(mysql.COALESCE(tAccounts.ID, mysql.NULL)).
-		FROM(tAccounts).
-		WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).
-		LIMIT(1)
-
 	stmt := tUsers.
-		UPDATE(tUsers.ID, tUsers.AccountID, tUsers.License, tUsers.Identifier, tUsers.Firstname, tUsers.Lastname, tUsers.Dateofbirth, tUsers.Job, tUsers.JobGrade, tUsers.Sex, tUsers.PhoneNumber, tUsers.Height, tUsers.Visum, tUsers.Playtime).
-		SET(user.GetUserId(), accountIdStmt, utils.GetLicenseFromIdentifier(user.Identifier), user.Identifier, user.Firstname, user.Lastname, user.Dateofbirth, user.Job, user.JobGrade, user.Sex, user.PhoneNumber, user.Height, user.Visum, user.Playtime).
+		UPDATE(tUsers.ID, tUsers.License, tUsers.Identifier, tUsers.Firstname, tUsers.Lastname, tUsers.Dateofbirth, tUsers.Job, tUsers.JobGrade, tUsers.Sex, tUsers.PhoneNumber, tUsers.Height, tUsers.Visum, tUsers.Playtime).
+		SET(user.GetUserId(), utils.GetLicenseFromIdentifier(user.Identifier), user.Identifier, user.Firstname, user.Lastname, user.Dateofbirth, user.Job, user.JobGrade, user.Sex, user.PhoneNumber, user.Height, user.Visum, user.Playtime).
 		WHERE(mysql.OR(tUsers.ID.EQ(mysql.Int32(user.GetUserId())), tUsers.Identifier.EQ(mysql.String(user.GetIdentifier())))).
 		LIMIT(1)
 
@@ -491,6 +557,14 @@ func (s *Store) updateUser(
 
 	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {
 		return 0, err
+	}
+	if err := s.syncUserAccount(ctx, tx, user.GetUserId(), user.GetIdentifier()); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user account mapping for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
 	}
 	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
 		return 0, fmt.Errorf(
