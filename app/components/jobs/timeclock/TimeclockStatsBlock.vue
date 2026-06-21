@@ -88,7 +88,7 @@ onBeforeMount(async () => updateStats());
             <DataErrorBlock v-if="error" :error="error" :retry="async () => $emit('refresh')" />
 
             <ClientOnly v-else>
-                <TimeclockStatsChart :stats="weekly" :loading="loading" />
+                <TimeclockStatsChart :stats="weekly" :loading="!weekly" />
             </ClientOnly>
         </div>
     </div>

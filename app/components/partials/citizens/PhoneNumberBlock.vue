@@ -51,6 +51,8 @@ async function doCall(): Promise<void> {
         return copyToClipboardWrapper(props.number);
     }
 }
+
+const blurChar = '*';
 </script>
 
 <template>
@@ -61,15 +63,17 @@ async function doCall(): Promise<void> {
                     class="shrink-0 cursor-pointer"
                     variant="link"
                     icon="i-mdi-phone"
-                    :label="showLabel ? $t('common.call') : undefined"
+                    :label="showLabel ? (nuiEnabled ? $t('common.call') : $t('common.copy')) : undefined"
                     :ui="{ base: 'py-0 sm:py-0 px-0 sm:px-0' }"
                     v-bind="$attrs"
                     @click="doCall"
                 />
             </UTooltip>
 
-            <span v-if="!hideNumber" class="inline-flex gap-1" :class="[streamerMode ? 'blur' : '']">
-                <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx">{{ part }}</span>
+            <span v-if="!hideNumber" class="inline-flex gap-1">
+                <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx">{{
+                    streamerMode && idx > 0 ? blurChar.repeat(part.length) : part
+                }}</span>
             </span>
         </template>
 

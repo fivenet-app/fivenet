@@ -59,7 +59,7 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(dr.max, 'decimal')} h`;
                 <p class="mb-1.5 text-xs text-muted uppercase">
                     {{ $t('components.jobs.timeclock.Stats.sum') }}
                 </p>
-                <USkeleton v-if="loading" class="h-9 w-[275px]" />
+                <USkeleton v-if="loading" class="h-9 w-[175px]" />
                 <p v-else class="text-3xl font-semibold text-highlighted">
                     {{ fromSecondsToFormattedDuration(Math.ceil(total * 60 * 60), { seconds: false }) }}
                 </p>
