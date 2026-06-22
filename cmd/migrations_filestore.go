@@ -83,13 +83,15 @@ func (c *MigrationsFilestoreCmd) migrateJobLogos(ctx context.Context) error {
 	tJobProps := table.FivenetJobProps
 	tFiles := table.FivenetFiles
 
+	logoUrlColumn := mysql.StringColumn("logo_url")
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.Job.AS("job"),
-			tJobProps.LogoURL.AS("logo_url"),
+			logoUrlColumn,
 		).
+		FROM(tJobProps).
 		WHERE(
-			tJobProps.LogoURL.IS_NOT_NULL(),
+			logoUrlColumn.IS_NOT_NULL(),
 		)
 
 	var rows []struct {
@@ -158,16 +160,15 @@ func (c *MigrationsFilestoreCmd) migrateJobLogos(ctx context.Context) error {
 
 		updateStmt := tJobProps.
 			UPDATE(
-				tJobProps.LogoURL,
 				tJobProps.LogoFileID,
 			).
 			SET(
-				mysql.NULL,
 				lastInsertID,
 			).
 			WHERE(
 				tJobProps.Job.EQ(mysql.String(row.Job)),
-			)
+			).
+			LIMIT(1)
 
 		if _, err := updateStmt.ExecContext(ctx, c.db); err != nil {
 			errs = multierr.Append(

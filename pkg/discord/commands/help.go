@@ -147,7 +147,7 @@ func (c *HelpCommand) getHelpTopicResponse(
 				Title:       title,
 				Description: desc,
 				Provider: &discord.EmbedProvider{
-					Name: version.Project,
+					Name: version.ProjectName,
 					URL:  c.url,
 				},
 				Color:  embeds.ColorInfo,

@@ -3272,6 +3272,7 @@
             }
         },
         "calendar": {
+            "custom_embed_author": "FiveNet Kalendar",
             "calendar_name": "**Kalender:** {name}",
             "start_time": "**Beginnt um:** <t:{ts}:F>",
             "end_time": "**Endet um:** <t:{ts}:F>",

@@ -23,7 +23,6 @@ type FivenetJobProps struct {
 	DiscordSyncSettings *string    `json:"discord_sync_settings"`
 	DiscordSyncChanges  *string    `json:"discord_sync_changes"`
 	Motd                *string    `json:"motd"`
-	LogoURL             *string    `json:"logo_url"`
 	LogoFileID          *int64     `json:"logo_file_id"`
 	Settings            *string    `json:"settings"`
 }

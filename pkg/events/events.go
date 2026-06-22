@@ -61,7 +61,7 @@ func New(p Params) (Result, error) {
 	logger := p.Logger.Named("events")
 
 	connOpts := []nats.Option{
-		nats.Name(version.Project),
+		nats.Name(version.ProjectName),
 		nats.DisconnectErrHandler(func(nc *nats.Conn, err error) {
 			if !nc.IsClosed() {
 				logger.Error("nats: disconnected", zap.Error(err))

@@ -54,7 +54,7 @@ func (c *SyncCommand) getBaseResponse() *api.InteractionResponseData {
 				Type:  discord.LinkEmbed,
 				Color: embeds.ColorError,
 				Provider: &discord.EmbedProvider{
-					Name: version.Project,
+					Name: version.ProjectName,
 				},
 				Thumbnail: embeds.EmbedThumbnailLogo,
 				Footer:    embeds.EmbedFooterMadeBy,

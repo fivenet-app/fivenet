@@ -17,6 +17,7 @@ import (
 	discordstate "github.com/diamondburned/arikawa/v3/state"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
+	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -128,10 +129,16 @@ func (w *Worker) run(ctx context.Context) error {
 	rangeEnd := now.Add(time.Duration(maxStepMinutes) * time.Minute)
 
 	for i := range calendars {
-		if err := w.processCalendar(ctx, calendars[i], now, rangeEnd); err != nil {
+		if err := w.processCalendar(
+			ctx,
+			calendars[i].Calendar,
+			calendars[i].JobProps,
+			now,
+			rangeEnd,
+		); err != nil {
 			w.logger.Error(
 				"failed to process discord reminder calendar",
-				zap.Int64("calendar_id", calendars[i].GetId()),
+				zap.Int64("calendar_id", calendars[i].Calendar.GetId()),
 				zap.Error(err),
 			)
 		}
@@ -140,10 +147,17 @@ func (w *Worker) run(ctx context.Context) error {
 	return nil
 }
 
+type reminderCalendar struct {
+	Calendar *pbcalendar.Calendar `alias:"calendar"`
+	JobProps *jobsprops.JobProps  `alias:"job_props"`
+}
+
 func (w *Worker) loadReminderCalendars(
 	ctx context.Context,
-) ([]*pbcalendar.Calendar, error) {
+) ([]*reminderCalendar, error) {
 	tCalendar := table.FivenetCalendar.AS("calendar")
+	tJobProps := table.FivenetJobProps.AS("job_props")
+	tFiles := table.FivenetFiles.AS("logo_file")
 
 	stmt := tCalendar.
 		SELECT(
@@ -152,8 +166,19 @@ func (w *Worker) loadReminderCalendars(
 			tCalendar.SystemKind,
 			tCalendar.Name,
 			tCalendar.DiscordSettings,
+			tJobProps.LogoFileID,
+			tJobProps.LogoFileID,
+			tFiles.ID,
+			tFiles.FilePath,
 		).
-		FROM(tCalendar).
+		FROM(tCalendar.
+			LEFT_JOIN(tJobProps,
+				tJobProps.Job.EQ(tCalendar.Job),
+			).
+			LEFT_JOIN(tFiles,
+				tFiles.ID.EQ(tJobProps.LogoFileID),
+			),
+		).
 		WHERE(mysql.AND(
 			tCalendar.DeletedAt.IS_NULL(),
 			tCalendar.Job.IS_NOT_NULL(),
@@ -169,7 +194,7 @@ func (w *Worker) loadReminderCalendars(
 		)).
 		ORDER_BY(tCalendar.ID.ASC())
 
-	calendars := []*pbcalendar.Calendar{}
+	calendars := []*reminderCalendar{}
 	if err := stmt.QueryContext(ctx, w.db, &calendars); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil
@@ -177,18 +202,18 @@ func (w *Worker) loadReminderCalendars(
 		return nil, err
 	}
 
-	filtered := make([]*pbcalendar.Calendar, 0, len(calendars))
+	filtered := make([]*reminderCalendar, 0, len(calendars))
 	for i := range calendars {
-		if calendars[i] == nil || calendars[i].GetDiscordSettings() == nil {
+		if calendars[i] == nil || calendars[i].Calendar.GetDiscordSettings() == nil {
 			continue
 		}
-		if !calendars[i].GetDiscordSettings().GetEnabled() {
+		if !calendars[i].Calendar.GetDiscordSettings().GetEnabled() {
 			continue
 		}
-		if strings.TrimSpace(calendars[i].GetDiscordSettings().GetChannelId()) == "" {
+		if strings.TrimSpace(calendars[i].Calendar.GetDiscordSettings().GetChannelId()) == "" {
 			continue
 		}
-		if len(calendars[i].GetDiscordSettings().GetReminderSteps()) == 0 {
+		if len(calendars[i].Calendar.GetDiscordSettings().GetReminderSteps()) == 0 {
 			continue
 		}
 		filtered = append(filtered, calendars[i])
@@ -197,10 +222,10 @@ func (w *Worker) loadReminderCalendars(
 	return filtered, nil
 }
 
-func reminderMaxStepMinutes(calendars []*pbcalendar.Calendar) int32 {
+func reminderMaxStepMinutes(calendars []*reminderCalendar) int32 {
 	var maxMinutes int32
 	for i := range calendars {
-		settings := calendars[i].GetDiscordSettings()
+		settings := calendars[i].Calendar.GetDiscordSettings()
 		for j := range settings.GetReminderSteps() {
 			maxMinutes = max(maxMinutes, settings.GetReminderSteps()[j].GetAtMinute())
 		}
@@ -211,6 +236,7 @@ func reminderMaxStepMinutes(calendars []*pbcalendar.Calendar) int32 {
 func (w *Worker) processCalendar(
 	ctx context.Context,
 	cal *pbcalendar.Calendar,
+	jps *jobsprops.JobProps,
 	now time.Time,
 	rangeEnd time.Time,
 ) error {
@@ -236,6 +262,7 @@ func (w *Worker) processCalendar(
 			if err := w.processOccurrence(
 				ctx,
 				cal,
+				jps,
 				occurrences[j],
 				discord.ChannelID(channelIDNum),
 				now,
@@ -302,6 +329,7 @@ func (w *Worker) loadReminderEntries(
 func (w *Worker) processOccurrence(
 	ctx context.Context,
 	cal *pbcalendar.Calendar,
+	jps *jobsprops.JobProps,
 	occurrence *calendarentries.CalendarEntry,
 	channelID discord.ChannelID,
 	now time.Time,
@@ -328,7 +356,13 @@ func (w *Worker) processOccurrence(
 			continue
 		}
 
-		data := buildReminderSendMessage(reminderTranslator(w.i18n), step, occurrence, w.publicURL)
+		data := buildReminderSendMessage(
+			reminderTranslator(w.i18n),
+			jps,
+			step,
+			occurrence,
+			w.publicURL,
+		)
 		if err := w.sendFn(channelID, data); err != nil {
 			return err
 		}
@@ -371,6 +405,7 @@ func reminderStepDue(
 
 func buildReminderSendMessage(
 	i18n i18n.TFunc,
+	jps *jobsprops.JobProps,
 	step *pbcalendar.CalendarDiscordReminderStep,
 	entry *calendarentries.CalendarEntry,
 	publicURL string,
@@ -379,7 +414,7 @@ func buildReminderSendMessage(
 
 	embed := step.GetEmbed()
 
-	if custom := buildCustomReminderEmbed(embed); custom != nil {
+	if custom := buildCustomReminderEmbed(i18n, embed, jps, publicURL); custom != nil {
 		embeds = append(embeds, *custom)
 	}
 	if summary := buildReminderSummaryEmbed(i18n, entry, embed, publicURL); summary != nil {
@@ -398,18 +433,30 @@ func buildReminderSendMessage(
 }
 
 func buildCustomReminderEmbed(
+	i18n i18n.TFunc,
 	embed *pbcalendar.CalendarDiscordReminderEmbed,
+	jps *jobsprops.JobProps,
+	publicURL string,
 ) *discord.Embed {
 	if !calendarDiscordEmbedHasContent(embed) {
 		return nil
+	}
+	footer := &discord.EmbedFooter{
+		Text: i18n("discord.calendar.custom_embed_author", nil),
+		Icon: discordembeds.EmbedFooterFiveNet.Icon,
+	}
+	if jps != nil {
+		iconURL, err := url.JoinPath(publicURL, jps.GetLogoFile().GetFilePath())
+		if err == nil {
+			footer.Icon = iconURL
+		}
 	}
 
 	out := &discord.Embed{
 		Type:        discord.NormalEmbed,
 		Title:       embed.GetTitle(),
 		Description: embed.GetDescription(),
-		Author:      discordembeds.EmbedAuthor,
-		Footer:      discordembeds.EmbedFooterFiveNet,
+		Footer:      footer,
 	}
 	if color := parseDiscordHexColor(embed.GetColor()); color != 0 {
 		out.Color = color
@@ -469,7 +516,10 @@ func buildReminderSummaryEmbed(
 		Description: strings.Join(lines, "\n"),
 		URL:         link,
 		Color:       color,
-		Footer:      discordembeds.EmbedFooterFiveNet,
+		Footer: &discord.EmbedFooter{
+			Text: i18n("discord.calendar.custom_embed_author", nil),
+			Icon: discordembeds.EmbedAuthor.Icon,
+		},
 	}
 }
 

@@ -49,12 +49,12 @@ func (c *FivenetCommand) HandleCommand(
 		Embeds: &[]discord.Embed{
 			{
 				Type:        discord.LinkEmbed,
-				Title:       version.Project,
+				Title:       version.ProjectName,
 				Description: t("discord.commands.fivenet.summary", nil),
 				URL:         c.url,
 				Thumbnail:   embeds.EmbedThumbnailLogo,
 				Provider: &discord.EmbedProvider{
-					Name: version.Project,
+					Name: version.ProjectName,
 					URL:  c.url,
 				},
 				Color:  embeds.ColorInfo,
