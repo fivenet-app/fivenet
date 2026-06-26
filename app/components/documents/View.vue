@@ -93,15 +93,20 @@ const canDo = computed(() => ({
             'documents.DocumentsService/ToggleDocument',
             doc.value?.document?.creatorJob,
         ),
-    edit:
-        can('documents.DocumentsService/UpdateDocument').value &&
-        checkDocAccess(
-            doc.value?.access,
-            doc.value?.document?.creator,
-            AccessLevel.ACCESS,
-            'documents.DocumentsService/UpdateDocument',
-            doc.value?.document?.creatorJob,
-        ),
+    accessUpdate: checkDocAccess(
+        doc.value?.access,
+        doc.value?.document?.creator,
+        AccessLevel.ACCESS,
+        undefined,
+        doc.value?.document?.creatorJob,
+    ),
+    contentUpdate: checkDocAccess(
+        doc.value?.access,
+        doc.value?.document?.creator,
+        AccessLevel.EDIT,
+        undefined,
+        doc.value?.document?.creatorJob,
+    ),
     pin: can('documents.DocumentsService/ToggleDocumentPin').value,
     requests: can('documents.DocumentsService/ListDocumentReqs').value,
     approve: can('documents.DocumentsService/ListDocuments').value,
@@ -152,7 +157,7 @@ async function openApprovalDrawer(): Promise<void> {
             documentId: props.documentId,
             docCreatorId: doc.value?.document?.creatorId,
             docMeta: doc.value!.document!.meta,
-            canEdit: canDo.value.edit,
+            canEdit: canDo.value.contentUpdate,
             'onUpdate:docMeta': ($event) => {
                 if (doc.value?.document) doc.value.document.meta = $event;
             },
@@ -268,18 +273,16 @@ defineShortcuts({
     'd-e': () => {
         if (
             !doc.value ||
-            !(
-                can('documents.DocumentsService/UpdateDocument').value &&
-                checkDocAccess(
-                    doc.value.access,
-                    doc.value.document?.creator,
-                    AccessLevel.EDIT,
-                    'documents.DocumentsService/ToggleDocument',
-                    doc.value?.document?.creatorJob,
-                )
+            !checkDocAccess(
+                doc.value.access,
+                doc.value.document?.creator,
+                AccessLevel.ACCESS,
+                undefined,
+                doc.value?.document?.creatorJob,
             )
-        )
+        ) {
             return;
+        }
 
         navigateTo({
             name: 'documents-id-edit',
@@ -394,7 +397,8 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                 v-if="
                     doc &&
                     (canDo.status ||
-                        canDo.edit ||
+                        canDo.accessUpdate ||
+                        canDo.contentUpdate ||
                         canDo.pin ||
                         canDo.requests ||
                         canDo.approve ||
@@ -424,7 +428,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                             />
                         </UTooltip>
 
-                        <UTooltip v-if="canDo.edit" class="flex-1" :text="$t('common.edit')" :kbds="['D', 'E']">
+                        <UTooltip v-if="canDo.accessUpdate" class="flex-1" :text="$t('common.edit')" :kbds="['D', 'E']">
                             <UButton
                                 block
                                 :to="{

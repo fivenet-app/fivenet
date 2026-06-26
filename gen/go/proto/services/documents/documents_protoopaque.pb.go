@@ -4251,12 +4251,12 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x0e_reminder_timeB\n" +
 	"\n" +
 	"\b_message\"\x1d\n" +
-	"\x1bSetDocumentReminderResponse2\xf1\x1b\n" +
+	"\x1bSetDocumentReminderResponse2\x90\x1c\n" +
 	"\x10DocumentsService\x12l\n" +
 	"\rListDocuments\x12(.services.documents.ListDocumentsRequest\x1a).services.documents.ListDocumentsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
 	"\vGetDocument\x12&.services.documents.GetDocumentRequest\x1a'.services.documents.GetDocumentResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rListDocuments\x12\x7f\n" +
-	"\x0eCreateDocument\x12).services.documents.CreateDocumentRequest\x1a*.services.documents.CreateDocumentResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eUpdateDocument\x12\x9c\x01\n" +
-	"\x0eUpdateDocument\x12).services.documents.UpdateDocumentRequest\x1a*.services.documents.UpdateDocumentResponse\"3\xd2\xf3\x18/\b\x01:+\n" +
+	"\x0eCreateDocument\x12).services.documents.CreateDocumentRequest\x1a*.services.documents.CreateDocumentResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eUpdateDocument\x12\xbb\x01\n" +
+	"\x0eUpdateDocument\x12).services.documents.UpdateDocumentRequest\x1a*.services.documents.UpdateDocumentResponse\"R\xd2\xf3\x18N\b\x01*\x0eUpdateDocument*\rListDocuments:+\n" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
 	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\x9c\x01\n" +
 	"\x0eDeleteDocument\x12).services.documents.DeleteDocumentRequest\x1a*.services.documents.DeleteDocumentResponse\"3\xd2\xf3\x18/\b\x01:+\n" +

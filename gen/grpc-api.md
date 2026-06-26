@@ -293,6 +293,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `names` | [string](#string) | repeated |  |
 | `order` | [int32](#int32) |  |  |
 | `attrs` | [Attr](#codegenpermsAttr) | repeated |  |
+| `internal` | [bool](#bool) |  |  |
 
 
 

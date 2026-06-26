@@ -15,6 +15,7 @@ import (
 	documentsreferences "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/references"
 	documentsrelations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -37,6 +38,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -51,6 +53,58 @@ var (
 	tDMeta         = table.FivenetDocumentsMeta.AS("meta")
 	tDPins         = table.FivenetDocumentsPins.AS("pin")
 )
+
+func documentFilesEqual(left, right []*file.File) bool {
+	if len(left) != len(right) {
+		return false
+	}
+
+	for i := range left {
+		if !proto.Equal(left[i], right[i]) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func documentUpdateContentChanged(oldDoc *documents.Document, req *pbdocuments.UpdateDocumentRequest) bool {
+	if oldDoc.GetTitle() != req.GetTitle() {
+		return true
+	}
+
+	if oldDoc.GetCategoryId() != req.GetCategoryId() {
+		return true
+	}
+
+	if !proto.Equal(oldDoc.GetContent(), req.GetContent()) {
+		return true
+	}
+
+	if !proto.Equal(oldDoc.GetData(), req.GetData()) {
+		return true
+	}
+
+	return !documentFilesEqual(oldDoc.GetFiles(), req.GetFiles())
+}
+
+func documentUpdateStatusChanged(oldDoc *documents.Document, req *pbdocuments.UpdateDocumentRequest) bool {
+	oldMeta := oldDoc.GetMeta()
+	newMeta := req.GetMeta()
+
+	return oldMeta.GetState() != newMeta.GetState() ||
+		oldMeta.GetClosed() != newMeta.GetClosed() ||
+		oldMeta.GetDraft() != newMeta.GetDraft() ||
+		oldMeta.GetPublic() != newMeta.GetPublic()
+}
+
+func documentUpdateAccessChanged(oldAccess *documentsaccess.DocumentAccess, req *pbdocuments.UpdateDocumentRequest) bool {
+	if req.GetAccess() == nil {
+		return false
+	}
+
+	return !proto.Equal(oldAccess, req.GetAccess())
+}
 
 func (s *Server) ListDocuments(
 	ctx context.Context,
@@ -496,7 +550,30 @@ func (s *Server) UpdateDocument(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.canUserAccessDocument(
+	canAccessUpdate, err := s.canUserAccessDocument(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_ACCESS,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
+	}
+	if !canAccessUpdate {
+		return nil, errorsdocuments.ErrDocUpdateDenied
+	}
+
+	canStatusUpdate, err := s.canUserAccessDocument(
+		ctx,
+		req.GetDocumentId(),
+		userInfo,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_STATUS,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
+	}
+
+	canEditUpdate, err := s.canUserAccessDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
@@ -504,22 +581,6 @@ func (s *Server) UpdateDocument(
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
-	}
-
-	var onlyUpdateAccess bool
-	if !check && !userInfo.GetSuperuser() {
-		onlyUpdateAccess, err = s.canUserAccessDocument(
-			ctx,
-			req.GetDocumentId(),
-			userInfo,
-			documentsaccess.AccessLevel_ACCESS_LEVEL_ACCESS,
-		)
-		if err != nil {
-			return nil, errorsdocuments.ErrPermissionDenied
-		}
-		if !onlyUpdateAccess {
-			return nil, errorsdocuments.ErrPermissionDenied
-		}
 	}
 
 	oldDoc, err := s.getDocument(ctx,
@@ -545,17 +606,25 @@ func (s *Server) UpdateDocument(
 		}
 	}
 
-	// Field Permission Check
-	fields, err := permsdocuments.DocumentsService.UpdateDocument.AccessTyped.Get(s.ps, userInfo)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	var oldAccess *documentsaccess.DocumentAccess
+	if req.GetAccess() != nil {
+		oldAccess, err = s.store.GetDocumentAccess(ctx, oldDoc.GetId())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
 	}
-	if !access.CheckIfHasOwnJobAccess(
-		fields.StringList(),
-		userInfo,
-		oldDoc.GetCreatorJob(),
-		oldDoc.GetCreator(),
-	) {
+
+	accessChanged := documentUpdateAccessChanged(oldAccess, req)
+	statusChanged := documentUpdateStatusChanged(oldDoc, req)
+	contentChanged := documentUpdateContentChanged(oldDoc, req)
+
+	if accessChanged && !canAccessUpdate {
+		return nil, errorsdocuments.ErrDocUpdateDenied
+	}
+	if statusChanged && !canStatusUpdate && !canEditUpdate {
+		return nil, errorsdocuments.ErrDocUpdateDenied
+	}
+	if contentChanged && !canEditUpdate {
 		return nil, errorsdocuments.ErrDocUpdateDenied
 	}
 
@@ -578,7 +647,7 @@ func (s *Server) UpdateDocument(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if !onlyUpdateAccess {
+	if contentChanged {
 		extracted := req.GetContent().Extract()
 
 		tDocument := table.FivenetDocuments
@@ -593,10 +662,6 @@ func (s *Server) UpdateDocument(
 				tDocument.ContentJSON,
 				tDocument.ContentText,
 				tDocument.Data,
-				tDocument.State,
-				tDocument.Closed,
-				tDocument.Draft,
-				tDocument.Public,
 			).
 			SET(
 				req.CategoryId,
@@ -608,6 +673,38 @@ func (s *Server) UpdateDocument(
 				req.GetContent(),
 				extracted.Text,
 				req.GetData(),
+			).
+			WHERE(
+				tDocument.ID.EQ(mysql.Int64(oldDoc.GetId())),
+			).
+			LIMIT(1)
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+
+		if tmpl != nil && tmpl.GetWorkflow() != nil {
+			if err := s.store.UpsertWorkflowState(
+				ctx,
+				tx,
+				oldDoc.GetId(),
+				tmpl.GetWorkflow(),
+			); err != nil {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			}
+		}
+	}
+
+	if statusChanged {
+		tDocument := table.FivenetDocuments
+		stmt := tDocument.
+			UPDATE(
+				tDocument.State,
+				tDocument.Closed,
+				tDocument.Draft,
+				tDocument.Public,
+			).
+			SET(
 				req.GetMeta().GetState(),
 				req.GetMeta().GetClosed(),
 				req.GetMeta().GetDraft(),
@@ -621,7 +718,22 @@ func (s *Server) UpdateDocument(
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
+	}
 
+	if accessChanged {
+		if err := s.handleDocumentAccessChange(
+			ctx,
+			tx,
+			oldDoc.GetId(),
+			userInfo,
+			req.GetAccess(),
+			true,
+		); err != nil {
+			return nil, err
+		}
+	}
+
+	if contentChanged || statusChanged {
 		diff, err := s.generateDocumentDiff(oldDoc, &documents.Document{
 			Title:   req.GetTitle(),
 			Content: req.GetContent(),
@@ -633,23 +745,24 @@ func (s *Server) UpdateDocument(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		added, deleted, err := s.fHandler.HandleFileChangesForParent(
-			ctx,
-			tx,
-			oldDoc.GetId(),
-			req.GetFiles(),
-		)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-		if added > 0 || deleted > 0 {
-			diff.FilesChange = &documentsactivity.DocFilesChange{
-				Added:   added,
-				Deleted: deleted,
+		if contentChanged {
+			added, deleted, err := s.fHandler.HandleFileChangesForParent(
+				ctx,
+				tx,
+				oldDoc.GetId(),
+				req.GetFiles(),
+			)
+			if err != nil {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			}
+			if added > 0 || deleted > 0 {
+				diff.FilesChange = &documentsactivity.DocFilesChange{
+					Added:   added,
+					Deleted: deleted,
+				}
 			}
 		}
 
-		// Only store activity if there are actual changes
 		if diff.HasChanges() {
 			if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 				DocumentId:   oldDoc.GetId(),
@@ -666,30 +779,6 @@ func (s *Server) UpdateDocument(
 			}
 		}
 
-		if tmpl != nil && tmpl.GetWorkflow() != nil {
-			if err := s.store.UpsertWorkflowState(
-				ctx,
-				tx,
-				oldDoc.GetId(),
-				tmpl.GetWorkflow(),
-			); err != nil {
-				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-			}
-		}
-	}
-
-	if err := s.handleDocumentAccessChange(
-		ctx,
-		tx,
-		oldDoc.GetId(),
-		userInfo,
-		req.GetAccess(),
-		true,
-	); err != nil {
-		return nil, err
-	}
-
-	if !onlyUpdateAccess {
 		if oldDoc.GetMeta().GetDraft() != req.GetMeta().GetDraft() {
 			if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 				DocumentId:   oldDoc.GetId(),

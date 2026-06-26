@@ -402,14 +402,20 @@ const canDo = computed(() => ({
         state.access,
         document.value?.document?.creator,
         AccessLevel.EDIT,
-        'documents.DocumentsService/UpdateDocument',
         document.value?.document?.creatorJob,
     ),
     access: checkDocAccess(
         state.access,
         document.value?.document?.creator,
         AccessLevel.ACCESS,
-        'documents.DocumentsService/UpdateDocument',
+        undefined,
+        document.value?.document?.creatorJob,
+    ),
+    status: checkDocAccess(
+        state.access,
+        document.value?.document?.creator,
+        AccessLevel.STATUS,
+        undefined,
         document.value?.document?.creatorJob,
     ),
     references: can('documents.DocumentsService/AddDocumentReference').value,
@@ -541,7 +547,7 @@ provide('yjsProvider', provider);
                     </UButton>
 
                     <UButton
-                        v-if="state.draft"
+                        v-if="state.draft && canDo.status"
                         color="info"
                         trailing-icon="i-mdi-publish"
                         :disabled="!canSubmit"
@@ -672,12 +678,12 @@ provide('yjsProvider', provider);
                                                 class="w-full"
                                                 type="text"
                                                 :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
-                                                :disabled="!canDo.edit"
+                                                :disabled="!canDo.status"
                                             />
                                         </UFormField>
 
                                         <UFormField class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
-                                            <USwitch v-model="state.closed" :disabled="!canDo.edit" />
+                                            <USwitch v-model="state.closed" :disabled="!canDo.status" />
                                         </UFormField>
                                     </div>
                                 </div>

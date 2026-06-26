@@ -22,36 +22,39 @@ const { format: formatNumber } = useDisplayNumberFormatWithOptions({
     currency: undefined,
 });
 
-const categoryColumns = computed<TableColumn<CategoryValue>[]>(() => [
-    {
-        header: t('common.name'),
-        cell: ({ row }) =>
-            row.original.id
-                ? h(ULink, { to: `/documents?categories=[${row.original.id}]` }, [
-                      h(CategoryBadge, {
-                          category: {
-                              id: row.original.id,
-                              name: row.original.name,
-                              color: row.original.color,
-                              icon: row.original.icon,
-                          },
-                      }),
-                  ])
-                : row.original.name,
-    },
-    {
-        id: 'value',
-        accessorKey: 'value',
-        header: ({ column }) => {
-            return h(TableSortButton, {
-                column: column,
-                label: t('common.count'),
-            });
-        },
-        sortingFn: (rowA, rowB) => rowA.original.value - rowB.original.value,
-        cell: ({ row }) => formatNumber(row.original.value),
-    },
-]);
+const categoryColumns = computed(
+    () =>
+        [
+            {
+                header: t('common.name'),
+                cell: ({ row }) =>
+                    row.original.id
+                        ? h(ULink, { to: `/documents?categories=[${row.original.id}]` }, [
+                              h(CategoryBadge, {
+                                  category: {
+                                      id: row.original.id,
+                                      name: row.original.name,
+                                      color: row.original.color,
+                                      icon: row.original.icon,
+                                  },
+                              }),
+                          ])
+                        : row.original.name,
+            },
+            {
+                id: 'value',
+                accessorKey: 'value',
+                header: ({ column }) => {
+                    return h(TableSortButton, {
+                        column: column,
+                        label: t('common.count'),
+                    });
+                },
+                sortingFn: (rowA, rowB) => rowA.original.value - rowB.original.value,
+                cell: ({ row }) => formatNumber(row.original.value),
+            },
+        ] as TableColumn<CategoryValue>[],
+);
 
 const categoryData = computed(() => props.stats?.documentsByCategory ?? []);
 
@@ -77,41 +80,44 @@ const splitTopLawKey = (key: string): { lawBook: string; law: string } => {
     };
 };
 
-const topLawColumns = computed<TableColumn<TopLawRow>[]>(() => [
-    {
-        accessorKey: 'lawBook',
-        header: t('common.law_book', 1),
-    },
-    {
-        accessorKey: 'law',
-        header: t('common.law', 1),
-        meta: {
-            class: {
-                td: 'text-highlighted',
+const topLawColumns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'lawBook',
+                header: t('common.law_book', 1),
             },
-        },
-    },
-    {
-        id: 'value',
-        accessorKey: 'value',
-        header: ({ column }) => {
-            return h(TableSortButton, {
-                column: column,
-                label: t('common.count'),
-            });
-        },
-        sortingFn: (rowA, rowB) => rowA.original.value - rowB.original.value,
-        aggregateFn: 'sum',
-        aggregatedCell: ({ getValue }) => formatNumber(getValue<number>()),
-        cell: ({ row, getValue }) => {
-            if (row.getIsGrouped()) {
-                return h(UBadge, { color: 'neutral', variant: 'subtle' }, () => formatNumber(getValue<number>() ?? 0));
-            }
+            {
+                accessorKey: 'law',
+                header: t('common.law', 1),
+                meta: {
+                    class: {
+                        td: 'text-highlighted',
+                    },
+                },
+            },
+            {
+                id: 'value',
+                accessorKey: 'value',
+                header: ({ column }) => {
+                    return h(TableSortButton, {
+                        column: column,
+                        label: t('common.count'),
+                    });
+                },
+                sortingFn: (rowA, rowB) => rowA.original.value - rowB.original.value,
+                aggregateFn: 'sum',
+                aggregatedCell: ({ getValue }) => formatNumber(getValue<number>()),
+                cell: ({ row, getValue }) => {
+                    if (row.getIsGrouped()) {
+                        return h(UBadge, { color: 'neutral', variant: 'subtle' }, () => formatNumber(getValue<number>() ?? 0));
+                    }
 
-            return formatNumber(getValue<number>());
-        },
-    },
-]);
+                    return formatNumber(getValue<number>());
+                },
+            },
+        ] as TableColumn<TopLawRow>[],
+);
 
 const topLawData = computed<TopLawRow[]>(() =>
     (props.stats?.topLaws ?? []).map((item) => {

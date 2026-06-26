@@ -363,6 +363,10 @@ service DocumentsService {
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      names: [
+        "UpdateDocument",
+        "ListDocuments"
+      ]
       attrs: [
         {
           key: "Access"
