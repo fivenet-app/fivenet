@@ -191,80 +191,83 @@ const totalTimeSum = computed(() => {
     return sum;
 });
 
-const columns = computed<TableColumn<TimeclockEntry>[]>(() => [
-    {
-        accessorKey: 'date',
-        header: ({ column }) => {
-            return h(TableSortButton, {
-                column,
-                label: t('common.date'),
-            });
-        },
-        meta: {
-            class: {
-                td:
-                    query.viewMode === TimeclockViewMode.SELF || (query.mode !== TimeclockMode.DAILY && query.perDay)
-                        ? ''
-                        : 'hidden',
-                th:
-                    query.viewMode === TimeclockViewMode.SELF || (query.mode !== TimeclockMode.DAILY && query.perDay)
-                        ? ''
-                        : 'hidden',
+const columns = computed(
+    () =>
+        [
+            {
+                accessorKey: 'date',
+                header: ({ column }) => {
+                    return h(TableSortButton, {
+                        column,
+                        label: t('common.date'),
+                    });
+                },
+                meta: {
+                    class: {
+                        td:
+                            query.viewMode === TimeclockViewMode.SELF || (query.mode !== TimeclockMode.DAILY && query.perDay)
+                                ? ''
+                                : 'hidden',
+                        th:
+                            query.viewMode === TimeclockViewMode.SELF || (query.mode !== TimeclockMode.DAILY && query.perDay)
+                                ? ''
+                                : 'hidden',
+                    },
+                },
             },
-        },
-    },
-    {
-        accessorKey: 'name',
-        header: ({ column }) => {
-            return h(TableSortButton, {
-                column,
-                label: t('common.name'),
-            });
-        },
-        meta: {
-            class: {
-                td: props.userId === undefined && query.viewMode === TimeclockViewMode.ALL ? '' : 'hidden',
-                th: props.userId === undefined && query.viewMode === TimeclockViewMode.ALL ? '' : 'hidden',
+            {
+                accessorKey: 'name',
+                header: ({ column }) => {
+                    return h(TableSortButton, {
+                        column,
+                        label: t('common.name'),
+                    });
+                },
+                meta: {
+                    class: {
+                        td: props.userId === undefined && query.viewMode === TimeclockViewMode.ALL ? '' : 'hidden',
+                        th: props.userId === undefined && query.viewMode === TimeclockViewMode.ALL ? '' : 'hidden',
+                    },
+                },
             },
-        },
-    },
-    {
-        accessorKey: 'rank',
-        header: ({ column }) => {
-            return h(TableSortButton, {
-                column,
-                label: t('common.rank'),
-            });
-        },
-        meta: {
-            class: {
-                td:
-                    canAccessAll.value &&
-                    query.viewMode === TimeclockViewMode.ALL &&
-                    (query.users === undefined || query.users?.length === 0) &&
-                    props.userId === undefined
-                        ? ''
-                        : 'hidden',
-                th:
-                    canAccessAll.value &&
-                    query.viewMode === TimeclockViewMode.ALL &&
-                    (query.users === undefined || query.users?.length === 0) &&
-                    props.userId === undefined
-                        ? ''
-                        : 'hidden',
+            {
+                accessorKey: 'rank',
+                header: ({ column }) => {
+                    return h(TableSortButton, {
+                        column,
+                        label: t('common.rank'),
+                    });
+                },
+                meta: {
+                    class: {
+                        td:
+                            canAccessAll.value &&
+                            query.viewMode === TimeclockViewMode.ALL &&
+                            (query.users === undefined || query.users?.length === 0) &&
+                            props.userId === undefined
+                                ? ''
+                                : 'hidden',
+                        th:
+                            canAccessAll.value &&
+                            query.viewMode === TimeclockViewMode.ALL &&
+                            (query.users === undefined || query.users?.length === 0) &&
+                            props.userId === undefined
+                                ? ''
+                                : 'hidden',
+                    },
+                },
             },
-        },
-    },
-    {
-        accessorKey: 'time',
-        header: ({ column }) => {
-            return h(TableSortButton, {
-                column,
-                label: t('common.time'),
-            });
-        },
-    },
-]);
+            {
+                accessorKey: 'time',
+                header: ({ column }) => {
+                    return h(TableSortButton, {
+                        column,
+                        label: t('common.time'),
+                    });
+                },
+            },
+        ] as TableColumn<TimeclockEntry>[],
+);
 
 const tabItems = computed<TabsItem[]>(() =>
     [

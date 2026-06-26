@@ -120,117 +120,120 @@ watch(
     { immediate: true },
 );
 
-const columns = computed<TableColumn<Label>[]>(() => [
-    {
-        id: 'actions',
-        cell: ({ row }) =>
-            h('div', [
-                can('citizens.LabelsService/CreateOrUpdateLabel').value
-                    ? h(
-                          'div',
-                          {
-                              class: 'inline-flex items-center gap-1',
-                          },
-                          [
-                              h(DraggableHandle, {
-                                  handleClass: 'handle-choice',
-                              }),
-                              h(ReorderButtons, {
-                                  idx: row.index,
-                                  moveUp: moveUp,
-                                  moveDown: moveDown,
-                              }),
-                          ],
-                      )
-                    : undefined,
-                can('citizens.LabelsService/CreateOrUpdateLabel').value
-                    ? h(
-                          UTooltip,
-                          { text: t('common.edit') },
-                          h(UButton, {
-                              color: 'primary',
-                              variant: 'link',
-                              icon: 'i-mdi-pencil',
-                              onClick: () => {
-                                  createOrUpdateDrawer.open({
-                                      labelId: row.original.id,
-                                      onRefresh: () => refresh(),
-                                  });
-                              },
-                          }),
-                      )
-                    : undefined,
-                can('citizens.LabelsService/DeleteLabel').value
-                    ? h(
-                          UTooltip,
-                          { text: row.original.deletedAt ? t('common.restore') : t('common.delete') },
-                          h(UButton, {
-                              color: !row.original.deletedAt ? 'error' : 'success',
-                              variant: 'link',
-                              icon: !row.original.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
-                              onClick: () => {
-                                  deleteConfirmModal.open({
-                                      confirm: () => row.original.id && deleteLabel(row.original.id),
-                                  });
-                              },
-                          }),
-                      )
-                    : undefined,
-            ]),
-    },
-    {
-        accessorKey: 'name',
-        header: ({ column }) => {
-            return h(TableSortButton, {
-                column,
-                label: t('common.name'),
-            });
-        },
-        meta: {
-            class: {
-                td: 'text-highlighted',
+const columns = computed(
+    () =>
+        [
+            {
+                id: 'actions',
+                cell: ({ row }) =>
+                    h('div', [
+                        can('citizens.LabelsService/CreateOrUpdateLabel').value
+                            ? h(
+                                  'div',
+                                  {
+                                      class: 'inline-flex items-center gap-1',
+                                  },
+                                  [
+                                      h(DraggableHandle, {
+                                          handleClass: 'handle-choice',
+                                      }),
+                                      h(ReorderButtons, {
+                                          idx: row.index,
+                                          moveUp: moveUp,
+                                          moveDown: moveDown,
+                                      }),
+                                  ],
+                              )
+                            : undefined,
+                        can('citizens.LabelsService/CreateOrUpdateLabel').value
+                            ? h(
+                                  UTooltip,
+                                  { text: t('common.edit') },
+                                  h(UButton, {
+                                      color: 'primary',
+                                      variant: 'link',
+                                      icon: 'i-mdi-pencil',
+                                      onClick: () => {
+                                          createOrUpdateDrawer.open({
+                                              labelId: row.original.id,
+                                              onRefresh: () => refresh(),
+                                          });
+                                      },
+                                  }),
+                              )
+                            : undefined,
+                        can('citizens.LabelsService/DeleteLabel').value
+                            ? h(
+                                  UTooltip,
+                                  { text: row.original.deletedAt ? t('common.restore') : t('common.delete') },
+                                  h(UButton, {
+                                      color: !row.original.deletedAt ? 'error' : 'success',
+                                      variant: 'link',
+                                      icon: !row.original.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
+                                      onClick: () => {
+                                          deleteConfirmModal.open({
+                                              confirm: () => row.original.id && deleteLabel(row.original.id),
+                                          });
+                                      },
+                                  }),
+                              )
+                            : undefined,
+                    ]),
             },
-        },
-    },
-    {
-        accessorKey: 'color',
-        header: t('common.color'),
-        cell: ({ row }) =>
-            h(ColorPicker, {
-                modelValue: row.original.color,
-                disabled: true,
-                hideLabel: true,
-            }),
-    },
-    {
-        accessorKey: 'icon',
-        header: t('common.icon'),
-        cell: ({ row }) =>
-            row.original.icon
-                ? h(UIcon, {
-                      class: 'size-5',
-                      name: convertComponentIconNameToDynamic(row.original.icon),
-                      style: {
-                          color: row.original.color ?? 'currentColor',
-                      },
-                  })
-                : undefined,
-    },
-    {
-        accessorKey: 'expiration',
-        header: t('common.expiration'),
-        cell: ({ row }) =>
-            h(
-                'span',
-                !row.original.settings?.requiresExpiration
-                    ? t('common.no')
-                    : h(
-                          'span',
-                          `${t('common.yes')} (${t('common.min')}: ${row.original.settings.minDuration ? formatDuration(row.original.settings.minDuration) : t('common.na')}, ${t('common.max')}: ${row.original.settings.maxDuration ? formatDuration(row.original.settings.maxDuration) : t('common.na')})`,
-                      ),
-            ),
-    },
-]);
+            {
+                accessorKey: 'name',
+                header: ({ column }) => {
+                    return h(TableSortButton, {
+                        column,
+                        label: t('common.name'),
+                    });
+                },
+                meta: {
+                    class: {
+                        td: 'text-highlighted',
+                    },
+                },
+            },
+            {
+                accessorKey: 'color',
+                header: t('common.color'),
+                cell: ({ row }) =>
+                    h(ColorPicker, {
+                        modelValue: row.original.color,
+                        disabled: true,
+                        hideLabel: true,
+                    }),
+            },
+            {
+                accessorKey: 'icon',
+                header: t('common.icon'),
+                cell: ({ row }) =>
+                    row.original.icon
+                        ? h(UIcon, {
+                              class: 'size-5',
+                              name: convertComponentIconNameToDynamic(row.original.icon),
+                              style: {
+                                  color: row.original.color ?? 'currentColor',
+                              },
+                          })
+                        : undefined,
+            },
+            {
+                accessorKey: 'expiration',
+                header: t('common.expiration'),
+                cell: ({ row }) =>
+                    h(
+                        'span',
+                        !row.original.settings?.requiresExpiration
+                            ? t('common.no')
+                            : h(
+                                  'span',
+                                  `${t('common.yes')} (${t('common.min')}: ${row.original.settings.minDuration ? formatDuration(row.original.settings.minDuration) : t('common.na')}, ${t('common.max')}: ${row.original.settings.maxDuration ? formatDuration(row.original.settings.maxDuration) : t('common.na')})`,
+                              ),
+                    ),
+            },
+        ] as TableColumn<Label>[],
+);
 </script>
 
 <template>

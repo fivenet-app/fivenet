@@ -21,6 +21,7 @@ message PermsOptions {
 
   int32 order = 6;
   repeated Attr attrs = 7;
+  bool internal = 8;
 }
 
 message Attr {

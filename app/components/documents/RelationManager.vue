@@ -6,10 +6,9 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useAuthStore } from '~/stores/auth';
 import { getUser, useClipboardStore } from '~/stores/clipboard';
-import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { type DocumentRelation, DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
-import type { User } from '~~/gen/ts/resources/users/user';
 import { docRelationToBadge, docRelationToIcon } from './helpers';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 const props = defineProps<{
     documentId?: number;
@@ -24,9 +23,9 @@ const { t } = useI18n();
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
-const clipboardStore = useClipboardStore();
+const completorStore = useCompletorStore();
 
-const citizensCitizensClient = await getCitizensCitizensClient();
+const clipboardStore = useClipboardStore();
 
 const items = ref<TabsItem[]>([
     {
@@ -52,7 +51,7 @@ const items = ref<TabsItem[]>([
 const queryCitizens = ref('');
 
 const {
-    data: citizens,
+    data: users,
     status,
     refresh,
     error,
@@ -63,18 +62,14 @@ useDebouncedRefresh(queryCitizens, refresh, {
     maxWait: 1750,
 });
 
-async function listCitizens(): Promise<User[]> {
+async function listCitizens(): Promise<UserShort[]> {
     try {
-        const call = citizensCitizensClient.listCitizens({
-            pagination: {
-                offset: 0,
-                pageSize: 8,
-            },
+        const users = await completorStore.completeCitizens({
             search: queryCitizens.value,
+            userIds: [],
         });
-        const { response } = await call;
 
-        return response.users.filter((user) => !modelValue.value.find((r) => r.targetUserId === user.userId));
+        return users.filter((user) => !modelValue.value.find((r) => r.targetUserId === user.userId));
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -83,7 +78,7 @@ async function listCitizens(): Promise<User[]> {
 
 let lastId = 0;
 
-async function addRelation(user: User, relation: DocRelation): Promise<void> {
+async function addRelation(user: UserShort, relation: DocRelation): Promise<void> {
     modelValue.value.push({
         id: lastId--,
         documentId: props.documentId ?? 0,
@@ -322,7 +317,7 @@ const columnsNew = computed(
                         },
                     ),
             },
-        ] as TableColumn<User>[],
+        ] as TableColumn<UserShort>[],
 );
 </script>
 
@@ -364,7 +359,7 @@ const columnsNew = computed(
                     v-else
                     :columns="columnsNew"
                     :loading="isRequestPending(status)"
-                    :data="citizens"
+                    :data="users ?? []"
                     :empty="$t('common.not_found', [$t('common.citizen', 2)])"
                 />
             </div>

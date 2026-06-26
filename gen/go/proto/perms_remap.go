@@ -221,7 +221,7 @@ var PermsRemap = map[string][]perms.PermissionRef{
 
 	// Service: documents.CollabService
 	"documents.CollabService/JoinRoom": {
-		permsdocuments.DocumentsService.UpdateDocument.Perm,
+		permsdocuments.DocumentsService.UpdateDocument.Perm, permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
 
 	// Service: documents.CommentsService
@@ -262,6 +262,9 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	},
 	"documents.DocumentsService/SetDocumentAccess": {
 		permsdocuments.DocumentsService.UpdateDocument.Perm,
+	},
+	"documents.DocumentsService/UpdateDocument": {
+		permsdocuments.DocumentsService.UpdateDocument.Perm, permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
 	"documents.DocumentsService/UpdateDocumentReq": {
 		permsdocuments.DocumentsService.CreateDocumentReq.Perm,

@@ -33,6 +33,7 @@ type PermsOptions struct {
 	Names         []string               `protobuf:"bytes,5,rep,name=names,proto3" json:"names,omitempty"`
 	Order         int32                  `protobuf:"varint,6,opt,name=order,proto3" json:"order,omitempty"`
 	Attrs         []*Attr                `protobuf:"bytes,7,rep,name=attrs,proto3" json:"attrs,omitempty"`
+	Internal      bool                   `protobuf:"varint,8,opt,name=internal,proto3" json:"internal,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -111,6 +112,13 @@ func (x *PermsOptions) GetAttrs() []*Attr {
 	return nil
 }
 
+func (x *PermsOptions) GetInternal() bool {
+	if x != nil {
+		return x.Internal
+	}
+	return false
+}
+
 func (x *PermsOptions) SetEnabled(v bool) {
 	x.Enabled = v
 }
@@ -137,6 +145,10 @@ func (x *PermsOptions) SetOrder(v int32) {
 
 func (x *PermsOptions) SetAttrs(v []*Attr) {
 	x.Attrs = v
+}
+
+func (x *PermsOptions) SetInternal(v bool) {
+	x.Internal = v
 }
 
 func (x *PermsOptions) HasNamespace() bool {
@@ -182,6 +194,7 @@ type PermsOptions_builder struct {
 	Names     []string
 	Order     int32
 	Attrs     []*Attr
+	Internal  bool
 }
 
 func (b0 PermsOptions_builder) Build() *PermsOptions {
@@ -195,6 +208,7 @@ func (b0 PermsOptions_builder) Build() *PermsOptions {
 	x.Names = b.Names
 	x.Order = b.Order
 	x.Attrs = b.Attrs
+	x.Internal = b.Internal
 	return m0
 }
 
@@ -563,7 +577,7 @@ var File_codegen_perms_perms_proto protoreflect.FileDescriptor
 
 const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\n" +
-	"\x19codegen/perms/perms.proto\x12\rcodegen.perms\x1a google/protobuf/descriptor.proto\x1a1resources/permissions/attributes/attributes.proto\"\xfd\x01\n" +
+	"\x19codegen/perms/perms.proto\x12\rcodegen.perms\x1a google/protobuf/descriptor.proto\x1a1resources/permissions/attributes/attributes.proto\"\x99\x02\n" +
 	"\fPermsOptions\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12!\n" +
 	"\tnamespace\x18\x02 \x01(\tH\x00R\tnamespace\x88\x01\x01\x12\x1d\n" +
@@ -571,7 +585,8 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x04name\x18\x04 \x01(\tH\x02R\x04name\x88\x01\x01\x12\x14\n" +
 	"\x05names\x18\x05 \x03(\tR\x05names\x12\x14\n" +
 	"\x05order\x18\x06 \x01(\x05R\x05order\x12)\n" +
-	"\x05attrs\x18\a \x03(\v2\x13.codegen.perms.AttrR\x05attrsB\f\n" +
+	"\x05attrs\x18\a \x03(\v2\x13.codegen.perms.AttrR\x05attrs\x12\x1a\n" +
+	"\binternal\x18\b \x01(\bR\binternalB\f\n" +
 	"\n" +
 	"_namespaceB\n" +
 	"\n" +

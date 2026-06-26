@@ -147,6 +147,9 @@ func (p *PermifyModule) Execute(
 						p.Fail("perms option not enabled for method:", sName, mName)
 						continue
 					}
+					if val.GetInternal() {
+						continue
+					}
 
 					perm = &Perm{
 						Name: mName,

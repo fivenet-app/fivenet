@@ -9,5 +9,5 @@ import { ServiceType } from "@protobuf-ts/runtime-rpc";
  * @generated ServiceType for protobuf service services.documents.CollabService
  */
 export const CollabService = new ServiceType("services.documents.CollabService", [
-    { name: "JoinRoom", serverStreaming: true, clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, namespace: "documents", service: "DocumentsService", name: "UpdateDocument" } }, I: ClientPacket, O: ServerPacket }
+    { name: "JoinRoom", serverStreaming: true, clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, namespace: "documents", service: "DocumentsService", names: ["UpdateDocument", "ListDocuments"], internal: true } }, I: ClientPacket, O: ServerPacket }
 ]);

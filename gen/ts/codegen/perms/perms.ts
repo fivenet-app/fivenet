@@ -44,6 +44,10 @@ export interface PermsOptions {
      * @generated from protobuf field: repeated codegen.perms.Attr attrs = 7
      */
     attrs: Attr[];
+    /**
+     * @generated from protobuf field: bool internal = 8
+     */
+    internal: boolean;
 }
 /**
  * @generated from protobuf message codegen.perms.Attr
@@ -118,7 +122,8 @@ class PermsOptions$Type extends MessageType<PermsOptions> {
             { no: 4, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "names", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 7, name: "attrs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Attr }
+            { no: 7, name: "attrs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Attr },
+            { no: 8, name: "internal", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<PermsOptions>): PermsOptions {
@@ -127,6 +132,7 @@ class PermsOptions$Type extends MessageType<PermsOptions> {
         message.names = [];
         message.order = 0;
         message.attrs = [];
+        message.internal = false;
         if (value !== undefined)
             reflectionMergePartial<PermsOptions>(this, message, value);
         return message;
@@ -156,6 +162,9 @@ class PermsOptions$Type extends MessageType<PermsOptions> {
                     break;
                 case /* repeated codegen.perms.Attr attrs */ 7:
                     message.attrs.push(Attr.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* bool internal */ 8:
+                    message.internal = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -190,6 +199,9 @@ class PermsOptions$Type extends MessageType<PermsOptions> {
         /* repeated codegen.perms.Attr attrs = 7; */
         for (let i = 0; i < message.attrs.length; i++)
             Attr.internalBinaryWrite(message.attrs[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* bool internal = 8; */
+        if (message.internal !== false)
+            writer.tag(8, WireType.Varint).bool(message.internal);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

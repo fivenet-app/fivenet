@@ -117,123 +117,126 @@ watch(
     { immediate: true },
 );
 
-const columns = computed<TableColumn<Unit>[]>(() => [
-    {
-        id: 'actions',
-        cell: ({ row }) =>
-            h('div', [
-                h(
-                    'div',
-                    {
-                        class: 'inline-flex items-center gap-1',
-                    },
-                    [
-                        h(DraggableHandle, {
-                            handleClass: 'handle-choice',
-                        }),
-                        h(ReorderButtons, { idx: row.index, moveUp: moveUp, moveDown: moveDown }),
-                    ],
-                ),
-                h(
-                    UTooltip,
-                    {
-                        text: t('common.update'),
-                        vIf: can('centrum.UnitsService/CreateOrUpdateUnit').value,
-                    },
-                    [
-                        h(UButton, {
-                            variant: 'link',
-                            icon: 'i-mdi-pencil',
-                            onClick: () => {
-                                unitCreateOrUpdate.open({
-                                    unit: row.original,
-                                    onUpdated: async () => refresh(),
-                                });
+const columns = computed(
+    () =>
+        [
+            {
+                id: 'actions',
+                cell: ({ row }) =>
+                    h('div', [
+                        h(
+                            'div',
+                            {
+                                class: 'inline-flex items-center gap-1',
                             },
-                        }),
-                    ],
-                ),
-                h(
-                    UTooltip,
-                    {
-                        text: t('common.delete'),
-                        vIf: can('centrum.UnitsService/DeleteUnit').value,
-                    },
-                    [
-                        h(UButton, {
-                            variant: 'link',
-                            icon: 'i-mdi-delete',
-                            color: 'error',
-                            onClick: () => {
-                                confirmModal.open({
-                                    confirm: async () => deleteUnit(row.original.id),
-                                });
+                            [
+                                h(DraggableHandle, {
+                                    handleClass: 'handle-choice',
+                                }),
+                                h(ReorderButtons, { idx: row.index, moveUp: moveUp, moveDown: moveDown }),
+                            ],
+                        ),
+                        h(
+                            UTooltip,
+                            {
+                                text: t('common.update'),
+                                vIf: can('centrum.UnitsService/CreateOrUpdateUnit').value,
                             },
-                        }),
-                    ],
-                ),
-            ]),
-    },
-    {
-        accessorKey: 'name',
-        header: ({ column }) => {
-            return h(TableSortButton, {
-                column: column,
-                label: t('common.name'),
-            });
-        },
-        cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.name),
-    },
-    {
-        accessorKey: 'initials',
-        header: ({ column }) => {
-            return h(TableSortButton, {
-                column: column,
-                label: t('common.initials'),
-            });
-        },
-        cell: ({ row }) => h('span', {}, row.original.initials),
-    },
-    {
-        accessorKey: 'description',
-        header: t('common.description'),
-        cell: ({ row }) => h('span', {}, row.original.description),
-    },
-    {
-        accessorKey: 'color',
-        header: t('common.color'),
-        cell: ({ row }) =>
-            h(ColorPicker, {
-                modelValue: row.original.color,
-                disabled: true,
-                hideLabel: true,
-            }),
-    },
-    {
-        accessorKey: 'icon',
-        header: t('common.icon'),
-        cell: ({ row }) =>
-            row.original.icon
-                ? h(UIcon, {
-                      class: 'size-5',
-                      name: convertComponentIconNameToDynamic(row.original.icon),
-                      style: {
-                          color: row.original.color ?? 'currentColor',
-                      },
-                  })
-                : undefined,
-    },
-    {
-        accessorKey: 'attributes',
-        header: t('common.attributes', 2),
-        cell: ({ row }) => h(UnitAttributes, { attributes: row.original.attributes }),
-    },
-    {
-        accessorKey: 'homePostal',
-        header: t('common.department_postal'),
-        cell: ({ row }) => h('span', {}, row.original.homePostal ?? t('common.na')),
-    },
-]);
+                            [
+                                h(UButton, {
+                                    variant: 'link',
+                                    icon: 'i-mdi-pencil',
+                                    onClick: () => {
+                                        unitCreateOrUpdate.open({
+                                            unit: row.original,
+                                            onUpdated: async () => refresh(),
+                                        });
+                                    },
+                                }),
+                            ],
+                        ),
+                        h(
+                            UTooltip,
+                            {
+                                text: t('common.delete'),
+                                vIf: can('centrum.UnitsService/DeleteUnit').value,
+                            },
+                            [
+                                h(UButton, {
+                                    variant: 'link',
+                                    icon: 'i-mdi-delete',
+                                    color: 'error',
+                                    onClick: () => {
+                                        confirmModal.open({
+                                            confirm: async () => deleteUnit(row.original.id),
+                                        });
+                                    },
+                                }),
+                            ],
+                        ),
+                    ]),
+            },
+            {
+                accessorKey: 'name',
+                header: ({ column }) => {
+                    return h(TableSortButton, {
+                        column: column,
+                        label: t('common.name'),
+                    });
+                },
+                cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.name),
+            },
+            {
+                accessorKey: 'initials',
+                header: ({ column }) => {
+                    return h(TableSortButton, {
+                        column: column,
+                        label: t('common.initials'),
+                    });
+                },
+                cell: ({ row }) => h('span', {}, row.original.initials),
+            },
+            {
+                accessorKey: 'description',
+                header: t('common.description'),
+                cell: ({ row }) => h('span', {}, row.original.description),
+            },
+            {
+                accessorKey: 'color',
+                header: t('common.color'),
+                cell: ({ row }) =>
+                    h(ColorPicker, {
+                        modelValue: row.original.color,
+                        disabled: true,
+                        hideLabel: true,
+                    }),
+            },
+            {
+                accessorKey: 'icon',
+                header: t('common.icon'),
+                cell: ({ row }) =>
+                    row.original.icon
+                        ? h(UIcon, {
+                              class: 'size-5',
+                              name: convertComponentIconNameToDynamic(row.original.icon),
+                              style: {
+                                  color: row.original.color ?? 'currentColor',
+                              },
+                          })
+                        : undefined,
+            },
+            {
+                accessorKey: 'attributes',
+                header: t('common.attributes', 2),
+                cell: ({ row }) => h(UnitAttributes, { attributes: row.original.attributes }),
+            },
+            {
+                accessorKey: 'homePostal',
+                header: t('common.department_postal'),
+                cell: ({ row }) => h('span', {}, row.original.homePostal ?? t('common.na')),
+            },
+        ] as TableColumn<Unit>[],
+);
 
 const unitCreateOrUpdate = overlay.create(UnitCreateOrUpdateModal);
 const confirmModal = overlay.create(ConfirmModal);
