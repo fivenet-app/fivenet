@@ -17,6 +17,7 @@ type fivenetJobsGradesTable struct {
 	mysql.Table
 
 	// Columns
+	JobID   mysql.ColumnInteger
 	JobName mysql.ColumnString
 	Grade   mysql.ColumnInteger
 	Label   mysql.ColumnString
@@ -61,11 +62,12 @@ func newFivenetJobsGradesTable(schemaName, tableName, alias string) *FivenetJobs
 
 func newFivenetJobsGradesTableImpl(schemaName, tableName, alias string) fivenetJobsGradesTable {
 	var (
+		JobIDColumn    = mysql.IntegerColumn("job_id")
 		JobNameColumn  = mysql.StringColumn("job_name")
 		GradeColumn    = mysql.IntegerColumn("grade")
 		LabelColumn    = mysql.StringColumn("label")
-		allColumns     = mysql.ColumnList{JobNameColumn, GradeColumn, LabelColumn}
-		mutableColumns = mysql.ColumnList{LabelColumn}
+		allColumns     = mysql.ColumnList{JobIDColumn, JobNameColumn, GradeColumn, LabelColumn}
+		mutableColumns = mysql.ColumnList{JobIDColumn, LabelColumn}
 		defaultColumns = mysql.ColumnList{}
 	)
 
@@ -73,6 +75,7 @@ func newFivenetJobsGradesTableImpl(schemaName, tableName, alias string) fivenetJ
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
+		JobID:   JobIDColumn,
 		JobName: JobNameColumn,
 		Grade:   GradeColumn,
 		Label:   LabelColumn,

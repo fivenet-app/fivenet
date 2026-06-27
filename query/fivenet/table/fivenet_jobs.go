@@ -17,6 +17,7 @@ type fivenetJobsTable struct {
 	mysql.Table
 
 	// Columns
+	ID        mysql.ColumnInteger
 	Name      mysql.ColumnString
 	Label     mysql.ColumnString
 	CreatedAt mysql.ColumnTimestamp
@@ -62,12 +63,13 @@ func newFivenetJobsTable(schemaName, tableName, alias string) *FivenetJobsTable 
 
 func newFivenetJobsTableImpl(schemaName, tableName, alias string) fivenetJobsTable {
 	var (
+		IDColumn        = mysql.IntegerColumn("id")
 		NameColumn      = mysql.StringColumn("name")
 		LabelColumn     = mysql.StringColumn("label")
 		CreatedAtColumn = mysql.TimestampColumn("created_at")
 		DeletedAtColumn = mysql.TimestampColumn("deleted_at")
-		allColumns      = mysql.ColumnList{NameColumn, LabelColumn, CreatedAtColumn, DeletedAtColumn}
-		mutableColumns  = mysql.ColumnList{LabelColumn, CreatedAtColumn, DeletedAtColumn}
+		allColumns      = mysql.ColumnList{IDColumn, NameColumn, LabelColumn, CreatedAtColumn, DeletedAtColumn}
+		mutableColumns  = mysql.ColumnList{IDColumn, LabelColumn, CreatedAtColumn, DeletedAtColumn}
 		defaultColumns  = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -75,6 +77,7 @@ func newFivenetJobsTableImpl(schemaName, tableName, alias string) fivenetJobsTab
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
+		ID:        IDColumn,
 		Name:      NameColumn,
 		Label:     LabelColumn,
 		CreatedAt: CreatedAtColumn,

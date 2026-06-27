@@ -25,6 +25,7 @@ const (
 
 type Job struct {
 	state             protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id     int64                  `protobuf:"varint,4,opt,name=id,proto3"`
 	xxx_hidden_Name   string                 `protobuf:"bytes,1,opt,name=name,proto3"`
 	xxx_hidden_Label  string                 `protobuf:"bytes,2,opt,name=label,proto3"`
 	xxx_hidden_Grades *[]*JobGrade           `protobuf:"bytes,3,rep,name=grades,proto3"`
@@ -57,6 +58,13 @@ func (x *Job) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *Job) GetId() int64 {
+	if x != nil {
+		return x.xxx_hidden_Id
+	}
+	return 0
+}
+
 func (x *Job) GetName() string {
 	if x != nil {
 		return x.xxx_hidden_Name
@@ -80,6 +88,10 @@ func (x *Job) GetGrades() []*JobGrade {
 	return nil
 }
 
+func (x *Job) SetId(v int64) {
+	x.xxx_hidden_Id = v
+}
+
 func (x *Job) SetName(v string) {
 	x.xxx_hidden_Name = v
 }
@@ -95,6 +107,7 @@ func (x *Job) SetGrades(v []*JobGrade) {
 type Job_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	Id     int64
 	Name   string
 	Label  string
 	Grades []*JobGrade
@@ -104,6 +117,7 @@ func (b0 Job_builder) Build() *Job {
 	m0 := &Job{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.xxx_hidden_Id = b.Id
 	x.xxx_hidden_Name = b.Name
 	x.xxx_hidden_Label = b.Label
 	x.xxx_hidden_Grades = &b.Grades
@@ -112,6 +126,7 @@ func (b0 Job_builder) Build() *Job {
 
 type JobGrade struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_JobId       int64                  `protobuf:"varint,4,opt,name=job_id,json=jobId,proto3"`
 	xxx_hidden_JobName     *string                `protobuf:"bytes,1,opt,name=job_name,json=jobName,proto3,oneof"`
 	xxx_hidden_Grade       int32                  `protobuf:"varint,2,opt,name=grade,proto3"`
 	xxx_hidden_Label       string                 `protobuf:"bytes,3,opt,name=label,proto3"`
@@ -146,6 +161,13 @@ func (x *JobGrade) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *JobGrade) GetJobId() int64 {
+	if x != nil {
+		return x.xxx_hidden_JobId
+	}
+	return 0
+}
+
 func (x *JobGrade) GetJobName() string {
 	if x != nil {
 		if x.xxx_hidden_JobName != nil {
@@ -170,9 +192,13 @@ func (x *JobGrade) GetLabel() string {
 	return ""
 }
 
+func (x *JobGrade) SetJobId(v int64) {
+	x.xxx_hidden_JobId = v
+}
+
 func (x *JobGrade) SetJobName(v string) {
 	x.xxx_hidden_JobName = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
 }
 
 func (x *JobGrade) SetGrade(v int32) {
@@ -187,17 +213,18 @@ func (x *JobGrade) HasJobName() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *JobGrade) ClearJobName() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
 	x.xxx_hidden_JobName = nil
 }
 
 type JobGrade_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	JobId   int64
 	JobName *string
 	Grade   int32
 	Label   string
@@ -207,8 +234,9 @@ func (b0 JobGrade_builder) Build() *JobGrade {
 	m0 := &JobGrade{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.xxx_hidden_JobId = b.JobId
 	if b.JobName != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
 		x.xxx_hidden_JobName = b.JobName
 	}
 	x.xxx_hidden_Grade = b.Grade
@@ -220,12 +248,14 @@ var File_resources_jobs_jobs_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_jobs_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/jobs/jobs.proto\x12\x0eresources.jobs\x1a\x13tagger/tagger.proto\"\x86\x01\n" +
-	"\x03Job\x127\n" +
+	"\x19resources/jobs/jobs.proto\x12\x0eresources.jobs\x1a\x13tagger/tagger.proto\"\x96\x01\n" +
+	"\x03Job\x12\x0e\n" +
+	"\x02id\x18\x04 \x01(\x03R\x02id\x127\n" +
 	"\x04name\x18\x01 \x01(\tB#\x9a\x84\x9e\x03\x1esql:\"primary_key\" alias:\"name\"R\x04name\x12\x14\n" +
 	"\x05label\x18\x02 \x01(\tR\x05label\x120\n" +
-	"\x06grades\x18\x03 \x03(\v2\x18.resources.jobs.JobGradeR\x06grades\"c\n" +
-	"\bJobGrade\x12\x1e\n" +
+	"\x06grades\x18\x03 \x03(\v2\x18.resources.jobs.JobGradeR\x06grades\"z\n" +
+	"\bJobGrade\x12\x15\n" +
+	"\x06job_id\x18\x04 \x01(\x03R\x05jobId\x12\x1e\n" +
 	"\bjob_name\x18\x01 \x01(\tH\x00R\ajobName\x88\x01\x01\x12\x14\n" +
 	"\x05grade\x18\x02 \x01(\x05R\x05grade\x12\x14\n" +
 	"\x05label\x18\x03 \x01(\tR\x05labelB\v\n" +

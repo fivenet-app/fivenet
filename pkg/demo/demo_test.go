@@ -145,6 +145,51 @@ func TestPickUserJobsFromConfiguredPool(t *testing.T) {
 	}
 }
 
+func TestDemoSeedJobIDsAreConsistent(t *testing.T) {
+	t.Parallel()
+
+	expectedJobIDs := map[string]int64{
+		ambulanceJob:  1,
+		dojJob:        2,
+		PoliceJob:     3,
+		unemployedJob: 4,
+		cafeJob:       5,
+		fibJob:        6,
+		mechanicJob:   7,
+		"prisoner":    8,
+		yardiesJob:    9,
+	}
+
+	jobIDs := map[int64]string{}
+	for _, job := range demoSeedJobs {
+		require.NotZero(t, job.ID, "job %q has no id", job.Name)
+		require.Equal(
+			t,
+			expectedJobIDs[job.Name],
+			job.ID,
+			"job %q has unexpected id",
+			job.Name,
+		)
+		if prev, ok := jobIDs[job.ID]; ok {
+			t.Fatalf("job id %d reused by %q and %q", job.ID, prev, job.Name)
+		}
+		jobIDs[job.ID] = job.Name
+	}
+
+	for _, grade := range demoSeedJobGrades {
+		require.NotZero(t, grade.JobID, "job grade %q/%d has no job_id", grade.JobName, grade.Grade)
+		require.Equal(
+			t,
+			jobIDs[grade.JobID],
+			grade.JobName,
+			"job grade %q/%d points at mismatched job id %d",
+			grade.JobName,
+			grade.Grade,
+			grade.JobID,
+		)
+	}
+}
+
 func TestBuildTargetJobUserProfileUsesTargetJob(t *testing.T) {
 	t.Parallel()
 	d := newTestDemo(99)

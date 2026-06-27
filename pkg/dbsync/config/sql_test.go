@@ -231,6 +231,28 @@ func TestUsersTableGetQueryWithCustomQueryReplacesWhereCondition(t *testing.T) {
 	assert.Equal(t, "SELECT * FROM `users` WHERE `id` = ?\n LIMIT 1", query)
 }
 
+func TestJobsTableGetQuery(t *testing.T) {
+	t.Parallel()
+
+	jobsTable := JobsTable{
+		DBSyncTable: DBSyncTable{
+			TableName: "jobs",
+		},
+		Columns: JobsColumns{
+			Name:  "name",
+			Label: "label",
+		},
+	}
+
+	query := jobsTable.GetQuery(25)
+
+	assert.Equal(
+		t,
+		"SELECT `label` AS `job.label`, `name` AS `job.name`\nFROM `jobs`\nORDER BY name\nLIMIT 25;",
+		query,
+	)
+}
+
 func parseTime(value string) *time.Time {
 	t, _ := time.Parse("2006-01-02 15:04:05", value)
 	return &t

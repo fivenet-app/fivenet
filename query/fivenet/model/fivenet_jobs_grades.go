@@ -8,6 +8,7 @@
 package model
 
 type FivenetJobsGrades struct {
+	JobID   int64  `json:"job_id"`
 	JobName string `sql:"primary_key" json:"job_name"`
 	Grade   int32  `sql:"primary_key" json:"grade"`
 	Label   string `json:"label"`

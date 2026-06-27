@@ -28,10 +28,7 @@ const (
 	emailLastChangedInterval = 14 * 24 * time.Hour
 )
 
-var (
-	tEmails    = table.FivenetMailerEmails
-	tUserProps = table.FivenetUserProps
-)
+var tUserProps = table.FivenetUserProps
 
 var mailerSubjectAccessOptions = access.SubjectAccessOptions{
 	BlockedAccess: int32(maileraccess.AccessLevel_ACCESS_LEVEL_BLOCKED),

@@ -54,6 +54,10 @@ func (s *Store) handleJobsData(ctx context.Context, jobsData []*jobs.Job) (int64
 		return 0, fmt.Errorf("failed to retrieve rows affected for job insert. %w", err)
 	}
 
+	if err := s.resolveJobIDs(ctx, jobsData); err != nil {
+		return 0, err
+	}
+
 	for _, job := range jobsData {
 		rowCounts, err := s.handleJobGrades(ctx, job)
 		if err != nil {
@@ -65,6 +69,35 @@ func (s *Store) handleJobsData(ctx context.Context, jobsData []*jobs.Job) (int64
 	return rowsAffected, nil
 }
 
+func (s *Store) resolveJobIDs(ctx context.Context, jobsData []*jobs.Job) error {
+	tJobs := table.FivenetJobs
+
+	for _, job := range jobsData {
+		var id int64
+		stmt := tJobs.
+			SELECT(
+				tJobs.ID.AS("id"),
+			).
+			WHERE(tJobs.Name.EQ(mysql.String(job.GetName()))).
+			LIMIT(1)
+
+		var dest struct {
+			ID int64
+		}
+		if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+			return fmt.Errorf("failed to resolve job id for job %q. %w", job.GetName(), err)
+		}
+
+		if dest.ID == 0 {
+			return fmt.Errorf("empty id for job %q in query", job.GetName())
+		}
+
+		job.Id = id
+	}
+
+	return nil
+}
+
 func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, error) {
 	if len(job.GetGrades()) == 0 {
 		return 0, nil
@@ -72,16 +105,28 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 
 	rowsAffectedCount := int64(0)
 	tJobsGrades := table.FivenetJobsGrades.AS("job_grade")
+	grades := job.GetGrades()
+	jobID := job.GetId()
+
+	for _, grade := range grades {
+		grade.JobId = jobID
+		grade.SetJobName(job.GetName())
+	}
 
 	selectStmt := tJobsGrades.
 		SELECT(
-			tJobsGrades.JobName.AS("job_grade.job_name"),
+			tJobsGrades.JobID,
+			tJobsGrades.JobName,
 			tJobsGrades.Grade,
 			tJobsGrades.Label,
 		).
 		FROM(tJobsGrades).
-		ORDER_BY(tJobsGrades.Grade.ASC()).
-		WHERE(tJobsGrades.JobName.EQ(mysql.String(job.GetName())))
+		ORDER_BY(tJobsGrades.Grade.ASC())
+	if job.GetId() > 0 {
+		selectStmt = selectStmt.WHERE(tJobsGrades.JobID.EQ(mysql.Int64(job.GetId())))
+	} else {
+		selectStmt = selectStmt.WHERE(tJobsGrades.JobName.EQ(mysql.String(job.GetName())))
+	}
 
 	currentGrades := []*jobs.JobGrade{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentGrades); err != nil {
@@ -96,14 +141,14 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 
 	toCreate, toUpdate, toDelete := []*jobs.JobGrade{}, []*jobs.JobGrade{}, []*jobs.JobGrade{}
 	if len(currentGrades) == 0 {
-		toCreate = job.GetGrades()
+		toCreate = grades
 	} else {
 		foundTracker := []int{}
 		for _, cg := range currentGrades {
 			var found *jobs.JobGrade
 			var foundIdx int
 
-			for i, ug := range job.GetGrades() {
+			for i, ug := range grades {
 				if cg.GetGrade() != ug.GetGrade() {
 					continue
 				}
@@ -119,6 +164,10 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 			foundTracker = append(foundTracker, foundIdx)
 
 			changed := false
+			if cg.GetJobName() != found.GetJobName() {
+				cg.SetJobName(found.GetJobName())
+				changed = true
+			}
 			if cg.GetLabel() != found.GetLabel() {
 				cg.Label = found.GetLabel()
 				changed = true
@@ -129,7 +178,7 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 			}
 		}
 
-		for i, uj := range job.GetGrades() {
+		for i, uj := range grades {
 			idx := slices.Index(foundTracker, i)
 			if idx == -1 {
 				toCreate = append(toCreate, uj)
@@ -141,18 +190,25 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 	if len(toCreate) > 0 {
 		stmt := tJobsGrades.
 			INSERT(
+				tJobsGrades.JobID,
 				tJobsGrades.JobName,
 				tJobsGrades.Grade,
 				tJobsGrades.Label,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
+				tJobsGrades.JobID.SET(mysql.RawInt("IF(VALUES(`job_id`) = 0, `job_id`, VALUES(`job_id`))")),
 				tJobsGrades.JobName.SET(mysql.RawString("VALUES(`job_name`)")),
 				tJobsGrades.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
 				tJobsGrades.Label.SET(mysql.RawString("VALUES(`label`)")),
 			)
 
 		for _, grade := range toCreate {
-			stmt = stmt.VALUES(grade.GetJobName(), grade.GetGrade(), grade.GetLabel())
+			stmt = stmt.VALUES(
+				grade.GetJobId(),
+				grade.GetJobName(),
+				grade.GetGrade(),
+				grade.GetLabel(),
+			)
 		}
 
 		res, err := stmt.ExecContext(ctx, s.db)
@@ -168,19 +224,28 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 
 	if len(toUpdate) > 0 {
 		for _, grade := range toUpdate {
+			var jobIdNameCondition mysql.BoolExpression
+			if job.GetId() > 0 {
+				jobIdNameCondition = tJobsGrades.JobID.EQ(mysql.Int64(job.GetId()))
+			} else {
+				jobIdNameCondition = tJobsGrades.JobName.EQ(mysql.String(job.GetName()))
+			}
+
 			stmt := tJobsGrades.
 				UPDATE(
+					tJobsGrades.JobID,
 					tJobsGrades.JobName,
 					tJobsGrades.Grade,
 					tJobsGrades.Label,
 				).
 				SET(
+					grade.GetJobId(),
 					grade.GetJobName(),
 					grade.GetGrade(),
 					grade.GetLabel(),
 				).
 				WHERE(mysql.AND(
-					tJobsGrades.JobName.EQ(mysql.String(job.GetName())),
+					jobIdNameCondition,
 					tJobsGrades.Grade.EQ(mysql.Int32(grade.GetGrade())),
 				)).
 				LIMIT(1)
@@ -210,10 +275,17 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 			grades = append(grades, mysql.Int32(grade.GetGrade()))
 		}
 
+		var jobIdNameCondition mysql.BoolExpression
+		if job.GetId() > 0 {
+			jobIdNameCondition = tJobsGrades.JobID.EQ(mysql.Int64(job.GetId()))
+		} else {
+			jobIdNameCondition = tJobsGrades.JobName.EQ(mysql.String(job.GetName()))
+		}
+
 		stmt := tJobsGrades.
 			DELETE().
 			WHERE(mysql.AND(
-				tJobsGrades.JobName.EQ(mysql.String(job.GetName())),
+				jobIdNameCondition,
 				tJobsGrades.Grade.IN(grades...),
 			)).
 			LIMIT(int64(len(grades)))
