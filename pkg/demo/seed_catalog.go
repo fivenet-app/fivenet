@@ -2,6 +2,7 @@ package demo
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strconv"
 
@@ -10,10 +11,7 @@ import (
 )
 
 func (d *Demo) seedDemoCatalog(ctx context.Context) error {
-	if err := d.upsertDemoJobs(ctx); err != nil {
-		return err
-	}
-	if err := d.upsertDemoJobGrades(ctx); err != nil {
+	if err := d.upsertDemoJobsAndGrades(ctx); err != nil {
 		return err
 	}
 
@@ -167,56 +165,66 @@ func (d *Demo) randomDemoMotd() string {
 	return motds[d.randIntN(len(motds))]
 }
 
-func (d *Demo) upsertDemoJobs(ctx context.Context) error {
+func (d *Demo) upsertDemoJobsAndGrades(ctx context.Context) error {
 	if len(demoSeedJobs) == 0 {
 		return nil
 	}
 
+	tx, err := d.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	delStmt := tJobs.DELETE()
+	if _, err := delStmt.ExecContext(ctx, tx); err != nil {
+		return fmt.Errorf("failed to remove jobs before demo jobs upsert. %w", err)
+	}
+
 	stmt := tJobs.
 		INSERT(
+			tJobs.ID,
 			tJobs.Name,
 			tJobs.Label,
 		)
 
 	for _, job := range demoSeedJobs {
-		stmt = stmt.VALUES(job.Name, job.Label)
+		stmt = stmt.VALUES(job.ID, job.Name, job.Label)
 	}
 
-	stmt = stmt.
-		ON_DUPLICATE_KEY_UPDATE(
-			tJobs.Label.SET(mysql.RawString("VALUES(`label`)")),
-			tJobs.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-		)
-
-	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert demo jobs. %w", err)
+	}
+
+	if err := d.upsertDemoJobGrades(ctx, tx); err != nil {
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit upsert jobs transaction. %w", err)
 	}
 
 	return nil
 }
 
-func (d *Demo) upsertDemoJobGrades(ctx context.Context) error {
+func (d *Demo) upsertDemoJobGrades(ctx context.Context, tx *sql.Tx) error {
 	if len(demoSeedJobGrades) == 0 {
 		return nil
 	}
 
 	stmt := tJobsGrades.
 		INSERT(
+			tJobsGrades.JobID,
 			tJobsGrades.JobName,
 			tJobsGrades.Grade,
 			tJobsGrades.Label,
 		)
 
 	for _, grade := range demoSeedJobGrades {
-		stmt = stmt.VALUES(grade.JobName, grade.Grade, grade.Label)
+		stmt = stmt.VALUES(grade.JobID, grade.JobName, grade.Grade, grade.Label)
 	}
 
-	stmt = stmt.
-		ON_DUPLICATE_KEY_UPDATE(
-			tJobsGrades.Label.SET(mysql.RawString("VALUES(`label`)")),
-		)
-
-	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert demo job grades. %w", err)
 	}
 
@@ -274,6 +282,7 @@ func (d *Demo) upsertDemoLawbooks(ctx context.Context) error {
 		ON_DUPLICATE_KEY_UPDATE(
 			tLawbooks.Name.SET(mysql.RawString("VALUES(`name`)")),
 			tLawbooks.Description.SET(mysql.RawString("VALUES(`description`)")),
+			tLawbooks.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
@@ -322,6 +331,7 @@ func (d *Demo) upsertDemoLaws(ctx context.Context) error {
 			tLawbooksLaws.Fine.SET(mysql.RawInt("VALUES(`fine`)")),
 			tLawbooksLaws.DetentionTime.SET(mysql.RawInt("VALUES(`detention_time`)")),
 			tLawbooksLaws.StvoPoints.SET(mysql.RawInt("VALUES(`stvo_points`)")),
+			tLawbooksLaws.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {

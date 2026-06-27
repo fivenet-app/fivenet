@@ -38,11 +38,17 @@ func TestStoreCountColleagueActivityJoinsTargetUserForAccessFilters(t *testing.T
 	tTargetUser := table.FivenetUser.AS("target_user")
 
 	mock.ExpectQuery(
-		regexp.QuoteMeta(`SELECT COUNT(DISTINCT colleague_activity.id) AS "data_count.total" FROM fivenet_job_colleague_activity AS colleague_activity INNER JOIN fivenet_user AS target_user ON`) +
-			`(?s).*` +
-			regexp.QuoteMeta(`target_user.id = colleague_activity.target_user_id`) +
-			`(?s).*` +
-			regexp.QuoteMeta(`WHERE (colleague_activity.job = ?) AND (target_user.id = ?);`),
+		regexp.QuoteMeta(
+			`SELECT COUNT(DISTINCT colleague_activity.id) AS "data_count.total" FROM fivenet_job_colleague_activity AS colleague_activity INNER JOIN fivenet_user AS target_user ON`,
+		)+
+			`(?s).*`+
+			regexp.QuoteMeta(
+				`target_user.id = colleague_activity.target_user_id`,
+			)+
+			`(?s).*`+
+			regexp.QuoteMeta(
+				`WHERE (colleague_activity.job = ?) AND (target_user.id = ?);`,
+			),
 	).
 		WithArgs("police", int32(113031)).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
@@ -51,7 +57,7 @@ func TestStoreCountColleagueActivityJoinsTargetUserForAccessFilters(t *testing.T
 		t.Context(),
 		store.db,
 		ListQuery{
-			Job: "police",
+			Job:   "police",
 			Where: tTargetUser.ID.EQ(mysql.Int32(113031)),
 		},
 	)

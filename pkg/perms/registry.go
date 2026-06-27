@@ -328,7 +328,7 @@ func (ps *Perms) cleanupRoles(ctx context.Context) error {
 		FROM(
 			tJobs.
 				INNER_JOIN(tJobsGrades,
-					tJobsGrades.JobName.EQ(tJobs.Name),
+					tJobsGrades.JobID.EQ(tJobs.ID),
 				),
 		)
 

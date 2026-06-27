@@ -68,7 +68,10 @@ func documentFilesEqual(left, right []*file.File) bool {
 	return true
 }
 
-func documentUpdateContentChanged(oldDoc *documents.Document, req *pbdocuments.UpdateDocumentRequest) bool {
+func documentUpdateContentChanged(
+	oldDoc *documents.Document,
+	req *pbdocuments.UpdateDocumentRequest,
+) bool {
 	if oldDoc.GetTitle() != req.GetTitle() {
 		return true
 	}
@@ -88,7 +91,10 @@ func documentUpdateContentChanged(oldDoc *documents.Document, req *pbdocuments.U
 	return !documentFilesEqual(oldDoc.GetFiles(), req.GetFiles())
 }
 
-func documentUpdateStatusChanged(oldDoc *documents.Document, req *pbdocuments.UpdateDocumentRequest) bool {
+func documentUpdateStatusChanged(
+	oldDoc *documents.Document,
+	req *pbdocuments.UpdateDocumentRequest,
+) bool {
 	oldMeta := oldDoc.GetMeta()
 	newMeta := req.GetMeta()
 
@@ -98,7 +104,10 @@ func documentUpdateStatusChanged(oldDoc *documents.Document, req *pbdocuments.Up
 		oldMeta.GetPublic() != newMeta.GetPublic()
 }
 
-func documentUpdateAccessChanged(oldAccess *documentsaccess.DocumentAccess, req *pbdocuments.UpdateDocumentRequest) bool {
+func documentUpdateAccessChanged(
+	oldAccess *documentsaccess.DocumentAccess,
+	req *pbdocuments.UpdateDocumentRequest,
+) bool {
 	if req.GetAccess() == nil {
 		return false
 	}
