@@ -42,7 +42,7 @@ interface Slots<
     T extends NestedItem<A> = NestedItem<A>,
 > extends /* @vue-ignore */ SelectMenuSlots<A, VK, M, Mod, C> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    'default'(props: SelectMenuDefaultSlotProps<A, VK, M, Mod, C> & { items?: T[] }): any;
+    default(props: SelectMenuDefaultSlotProps<A, VK, M, Mod, C> & { items?: T[] }): any;
 }
 
 const props = defineProps<Props<T, VK, M, Mod, C>>();

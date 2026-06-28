@@ -25,8 +25,7 @@ type UploadImagesOptions<TResponse> = {
 };
 
 type UploadImagesResult<TResponse> =
-    | { ok: true; uploaded: TResponse[] }
-    | { ok: false; reason: 'file_limit' | 'invalid_file_type' };
+    { ok: true; uploaded: TResponse[] } | { ok: false; reason: 'file_limit' | 'invalid_file_type' };
 
 function matchesAcceptedType(file: File, acceptedType: string): boolean {
     if (!acceptedType) return false;
