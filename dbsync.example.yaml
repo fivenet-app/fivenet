@@ -383,7 +383,9 @@ tables:
   # Accounts - Used to, e.g., sync group(s) by license, to accounts.
   accounts:
     enabled: false
-    tableName: "admin_accounts"
+    # Name of the table for this data (in case you are using a custom query or are joining
+    # multiple tables this should be the primary one)
+    tableName: "users"
     # Sync all accounts every X interval, to ensure eventual consistency of the data when an update has been missed for whatever reason.
     syncInterval: "1m"
     # By default the dbsync will attempt to add the column if it does not exist, but you can
@@ -396,16 +398,26 @@ tables:
     # Must return result columns named: `account_update.license`, `account_update.group` (primary group)
     # Optional columns: `account_update.groups` (comma-separated list of groups, if `account_update.group` is
     # empty `account_update.group` is used)
-    query: "" # Query to retrieve all accounts
-    #  SELECT
-    #    `license` AS `account_update.license`,
-    #    `group` AS `account_update.group`,
-    #    JSON_KEYS(NULLIF(`sub_groups`, '')) AS `account_update.groups`
-    #  FROM
-    #    `admin_accounts`
-    #  $whereCondition
-    #  ORDER BY `license`
-    #  LIMIT $limit;
+    # Query to retrieve all users that are not in the `user` group. It is recommended to add common non-superuser
+    # groups to the `NOT IN ('user')` condition (comma separated, e.g., `('user', 'group1', 'group2')`).
+    query: |
+      SELECT
+        `license` AS `account_update.license`,
+        `group` AS `account_update.group`,
+        CASE
+          WHEN `group` IS NULL OR `group` = '' THEN JSON_ARRAY()
+          ELSE JSON_ARRAY(`group`)
+        END AS `account_update.groups`
+      FROM (
+        SELECT
+          SUBSTRING_INDEX(`identifier`, ':', -1) AS `license`,
+          `group`
+        FROM `users`
+        WHERE `group` NOT IN ('user')
+      ) AS `src`
+      $whereCondition
+      ORDER BY `license`
+      LIMIT $limit;
     # If enabled, the accounts table `groups` column will be "wiped" and filled only with the new data
     clearBeforeInsert: true
 
