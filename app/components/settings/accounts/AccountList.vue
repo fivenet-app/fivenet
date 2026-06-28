@@ -231,10 +231,10 @@ const columns = computed(
         ] as TableColumn<Account>[],
 );
 
-const input = useTemplateRef('input');
+const inputRef = useTemplateRef('inputRef');
 
 defineShortcuts({
-    '/': () => input.value?.inputRef?.focus(),
+    '/': () => inputRef.value?.inputRef?.focus(),
 });
 </script>
 
@@ -263,7 +263,7 @@ defineShortcuts({
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" :label="$t('common.search')" name="license">
                             <UInput
-                                ref="input"
+                                ref="inputRef"
                                 v-model="query.license"
                                 class="w-full"
                                 type="text"

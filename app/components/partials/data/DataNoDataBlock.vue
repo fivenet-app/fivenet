@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { AlertProps } from '@nuxt/ui';
+import type { EmptyProps } from '@nuxt/ui';
 
 type DataNoDataBlockProps = {
-    title?: AlertProps['title'];
-    message?: AlertProps['description'];
-    icon?: AlertProps['icon'];
+    title?: EmptyProps['title'];
+    message?: EmptyProps['description'];
+    icon?: EmptyProps['icon'];
     type?: string;
-    actions?: NonNullable<AlertProps['actions']>;
+    actions?: NonNullable<EmptyProps['actions']>;
     focus?: () => void | Promise<void>;
     retry?: () => Promise<unknown>;
     padded?: boolean;
@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<DataNoDataBlockProps>(), {
 
 const { t } = useI18n();
 
-const actions = computed<NonNullable<AlertProps['actions']>>(() =>
+const actions = computed<NonNullable<EmptyProps['actions']>>(() =>
     props.actions.length > 0
         ? props.actions
         : [
@@ -50,6 +50,11 @@ const actions = computed<NonNullable<AlertProps['actions']>>(() =>
           ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
+const message = computed(() => props.message ?? $t('common.not_found', [props.type ?? $t('common.data')]));
+
+const description = computed(() => (props.title ? message.value : undefined));
+const title = computed(() => (props.title ? props.title : message.value));
+
 async function click() {
     if (props.retry) {
         props.retry();
@@ -61,11 +66,11 @@ async function click() {
 
 <template>
     <div :class="padded ? 'm-2' : ''">
-        <UAlert
+        <UEmpty
             :icon="icon"
             variant="outline"
             :title="title"
-            :description="message ?? $t('common.not_found', [type ?? $t('common.data')])"
+            :description="description"
             :actions="actions"
             v-bind="$attrs"
             @click="click()"
@@ -77,6 +82,6 @@ async function click() {
             <template v-if="$slots.description" #description>
                 <slot name="description" />
             </template>
-        </UAlert>
+        </UEmpty>
     </div>
 </template>

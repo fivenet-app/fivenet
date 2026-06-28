@@ -241,10 +241,10 @@ const columns = computed(() =>
     ).flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const input = useTemplateRef('input');
+const inputRef = useTemplateRef('inputRef');
 
 defineShortcuts({
-    '/': () => input.value?.inputRef?.focus(),
+    '/': () => inputRef.value?.inputRef?.focus(),
 });
 </script>
 
@@ -260,7 +260,7 @@ defineShortcuts({
             >
                 <UFormField class="flex-1" name="licensePlate" :label="$t('common.license_plate')">
                     <UInput
-                        ref="input"
+                        ref="inputRef"
                         v-model="query.licensePlate"
                         class="w-full"
                         type="text"

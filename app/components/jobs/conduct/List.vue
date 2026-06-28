@@ -279,7 +279,6 @@ const columns = computed(
                         <div class="flex flex-row gap-2">
                             <UFormField v-if="hideUserSearch !== true" class="flex-1" name="user" :label="$t('common.search')">
                                 <SelectMenu
-                                    ref="input"
                                     v-model="query.user"
                                     class="w-full"
                                     :searchable="

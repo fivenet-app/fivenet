@@ -95,10 +95,10 @@ onUnmounted(() => {
     nuiEvents.off('openTablet', mapResizeFn);
 });
 
-const input = useTemplateRef('input');
+const inputRef = useTemplateRef('inputRef');
 
 defineShortcuts({
-    '/': () => input.value?.inputRef?.focus(),
+    '/': () => inputRef.value?.inputRef?.focus(),
 });
 
 const mount = ref<boolean>(false);
@@ -147,7 +147,7 @@ const mount = ref<boolean>(false);
                                 >
                                     <UFormField class="flex-1" name="postal" :label="$t('common.postal')">
                                         <UInput
-                                            ref="input"
+                                            ref="inputRef"
                                             v-model="query.postal"
                                             class="w-full"
                                             type="text"

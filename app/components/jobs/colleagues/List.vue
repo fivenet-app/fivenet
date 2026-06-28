@@ -24,6 +24,7 @@ import type { GetColleagueLabelsResponse, ListColleaguesResponse } from '~~/gen/
 import StatsModalClient from './labels/StatsModal.client.vue';
 import ColleagueName from './ColleagueName.vue';
 import SelfServiceAbsenceDateModal from './SelfServiceAbsenceDateModal.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 
 const { t } = useI18n();
 
@@ -246,10 +247,10 @@ const { game } = useAppConfig();
 const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateModal);
 const labelsStatsModal = overlay.create(StatsModalClient);
 
-const input = useTemplateRef('input');
+const inputRef = useTemplateRef('inputRef');
 
 defineShortcuts({
-    '/': () => input.value?.inputRef?.focus(),
+    '/': () => inputRef.value?.inputRef?.focus(),
 });
 </script>
 
@@ -267,7 +268,7 @@ defineShortcuts({
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" name="name" :label="$t('common.search')">
                             <UInput
-                                ref="input"
+                                ref="inputRef"
                                 v-model="query.name"
                                 class="w-full"
                                 type="text"
@@ -490,6 +491,8 @@ defineShortcuts({
                 </UTable>
 
                 <div v-else class="relative flex-1 overflow-x-hidden">
+                    <DataNoDataBlock v-if="!data || data.colleagues.length === 0" :type="$t('common.colleague', 2)" />
+
                     <UPageGrid
                         class="grid-cols-1 p-4 sm:grid-cols-2 sm:p-4 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-5"
                     >
