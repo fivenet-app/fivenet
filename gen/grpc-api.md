@@ -651,7 +651,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
+| `id` | [int64](#int64) | optional |  |
 | `name` | [string](#string) |  |  |
 | `label` | [string](#string) |  |  |
 | `grades` | [JobGrade](#resourcesjobsJobGrade) | repeated |  |
@@ -665,7 +665,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `job_id` | [int64](#int64) |  |  |
+| `job_id` | [int64](#int64) | optional |  |
 | `job_name` | [string](#string) | optional |  |
 | `grade` | [int32](#int32) |  |  |
 | `label` | [string](#string) |  |  |

@@ -25,7 +25,7 @@ const (
 
 type Job struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,4,opt,name=id,proto3" json:"id,omitempty"`
+	Id            *int64                 `protobuf:"varint,4,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty" alias:"name" sql:"primary_key"`
 	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
 	Grades        []*JobGrade            `protobuf:"bytes,3,rep,name=grades,proto3" json:"grades,omitempty"`
@@ -59,8 +59,8 @@ func (x *Job) ProtoReflect() protoreflect.Message {
 }
 
 func (x *Job) GetId() int64 {
-	if x != nil {
-		return x.Id
+	if x != nil && x.Id != nil {
+		return *x.Id
 	}
 	return 0
 }
@@ -87,7 +87,7 @@ func (x *Job) GetGrades() []*JobGrade {
 }
 
 func (x *Job) SetId(v int64) {
-	x.Id = v
+	x.Id = &v
 }
 
 func (x *Job) SetName(v string) {
@@ -102,10 +102,21 @@ func (x *Job) SetGrades(v []*JobGrade) {
 	x.Grades = v
 }
 
+func (x *Job) HasId() bool {
+	if x == nil {
+		return false
+	}
+	return x.Id != nil
+}
+
+func (x *Job) ClearId() {
+	x.Id = nil
+}
+
 type Job_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id     int64
+	Id     *int64
 	Name   string
 	Label  string
 	Grades []*JobGrade
@@ -124,7 +135,7 @@ func (b0 Job_builder) Build() *Job {
 
 type JobGrade struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	JobId         int64                  `protobuf:"varint,4,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	JobId         *int64                 `protobuf:"varint,4,opt,name=job_id,json=jobId,proto3,oneof" json:"job_id,omitempty"`
 	JobName       *string                `protobuf:"bytes,1,opt,name=job_name,json=jobName,proto3,oneof" json:"job_name,omitempty"`
 	Grade         int32                  `protobuf:"varint,2,opt,name=grade,proto3" json:"grade,omitempty"`
 	Label         string                 `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
@@ -158,8 +169,8 @@ func (x *JobGrade) ProtoReflect() protoreflect.Message {
 }
 
 func (x *JobGrade) GetJobId() int64 {
-	if x != nil {
-		return x.JobId
+	if x != nil && x.JobId != nil {
+		return *x.JobId
 	}
 	return 0
 }
@@ -186,7 +197,7 @@ func (x *JobGrade) GetLabel() string {
 }
 
 func (x *JobGrade) SetJobId(v int64) {
-	x.JobId = v
+	x.JobId = &v
 }
 
 func (x *JobGrade) SetJobName(v string) {
@@ -201,11 +212,22 @@ func (x *JobGrade) SetLabel(v string) {
 	x.Label = v
 }
 
+func (x *JobGrade) HasJobId() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobId != nil
+}
+
 func (x *JobGrade) HasJobName() bool {
 	if x == nil {
 		return false
 	}
 	return x.JobName != nil
+}
+
+func (x *JobGrade) ClearJobId() {
+	x.JobId = nil
 }
 
 func (x *JobGrade) ClearJobName() {
@@ -215,7 +237,7 @@ func (x *JobGrade) ClearJobName() {
 type JobGrade_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	JobId   int64
+	JobId   *int64
 	JobName *string
 	Grade   int32
 	Label   string
@@ -236,17 +258,19 @@ var File_resources_jobs_jobs_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_jobs_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/jobs/jobs.proto\x12\x0eresources.jobs\x1a\x13tagger/tagger.proto\"\x96\x01\n" +
-	"\x03Job\x12\x0e\n" +
-	"\x02id\x18\x04 \x01(\x03R\x02id\x127\n" +
+	"\x19resources/jobs/jobs.proto\x12\x0eresources.jobs\x1a\x13tagger/tagger.proto\"\xa2\x01\n" +
+	"\x03Job\x12\x13\n" +
+	"\x02id\x18\x04 \x01(\x03H\x00R\x02id\x88\x01\x01\x127\n" +
 	"\x04name\x18\x01 \x01(\tB#\x9a\x84\x9e\x03\x1esql:\"primary_key\" alias:\"name\"R\x04name\x12\x14\n" +
 	"\x05label\x18\x02 \x01(\tR\x05label\x120\n" +
-	"\x06grades\x18\x03 \x03(\v2\x18.resources.jobs.JobGradeR\x06grades\"z\n" +
-	"\bJobGrade\x12\x15\n" +
-	"\x06job_id\x18\x04 \x01(\x03R\x05jobId\x12\x1e\n" +
-	"\bjob_name\x18\x01 \x01(\tH\x00R\ajobName\x88\x01\x01\x12\x14\n" +
+	"\x06grades\x18\x03 \x03(\v2\x18.resources.jobs.JobGradeR\x06gradesB\x05\n" +
+	"\x03_id\"\x8a\x01\n" +
+	"\bJobGrade\x12\x1a\n" +
+	"\x06job_id\x18\x04 \x01(\x03H\x00R\x05jobId\x88\x01\x01\x12\x1e\n" +
+	"\bjob_name\x18\x01 \x01(\tH\x01R\ajobName\x88\x01\x01\x12\x14\n" +
 	"\x05grade\x18\x02 \x01(\x05R\x05grade\x12\x14\n" +
-	"\x05label\x18\x03 \x01(\tR\x05labelB\v\n" +
+	"\x05label\x18\x03 \x01(\tR\x05labelB\t\n" +
+	"\a_job_idB\v\n" +
 	"\t_job_nameBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var file_resources_jobs_jobs_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
@@ -268,6 +292,7 @@ func file_resources_jobs_jobs_proto_init() {
 	if File_resources_jobs_jobs_proto != nil {
 		return
 	}
+	file_resources_jobs_jobs_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_jobs_jobs_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

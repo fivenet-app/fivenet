@@ -8,7 +8,7 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs;jobs";
 
 message Job {
-  int64 id = 4;
+  optional int64 id = 4 [(buf.validate.field).int64.gt = 0];
   string name = 1 [
     (buf.validate.field).string.max_len = 50,
     (tagger.tags) = "sql:\"primary_key\" alias:\"name\""
@@ -18,7 +18,7 @@ message Job {
 }
 
 message JobGrade {
-  int64 job_id = 4;
+  optional int64 job_id = 4 [(buf.validate.field).int64.gt = 0];
   optional string job_name = 1 [(buf.validate.field).string.max_len = 50];
   int32 grade = 2 [(buf.validate.field).int32.gte = 0];
   string label = 3 [(buf.validate.field).string.max_len = 50];

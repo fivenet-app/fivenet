@@ -402,6 +402,7 @@ const canDo = computed(() => ({
         state.access,
         document.value?.document?.creator,
         AccessLevel.EDIT,
+        undefined,
         document.value?.document?.creatorJob,
     ),
     access: checkDocAccess(

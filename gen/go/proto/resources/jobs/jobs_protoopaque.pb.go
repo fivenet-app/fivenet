@@ -24,13 +24,15 @@ const (
 )
 
 type Job struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id     int64                  `protobuf:"varint,4,opt,name=id,proto3"`
-	xxx_hidden_Name   string                 `protobuf:"bytes,1,opt,name=name,proto3"`
-	xxx_hidden_Label  string                 `protobuf:"bytes,2,opt,name=label,proto3"`
-	xxx_hidden_Grades *[]*JobGrade           `protobuf:"bytes,3,rep,name=grades,proto3"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          int64                  `protobuf:"varint,4,opt,name=id,proto3,oneof"`
+	xxx_hidden_Name        string                 `protobuf:"bytes,1,opt,name=name,proto3"`
+	xxx_hidden_Label       string                 `protobuf:"bytes,2,opt,name=label,proto3"`
+	xxx_hidden_Grades      *[]*JobGrade           `protobuf:"bytes,3,rep,name=grades,proto3"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *Job) Reset() {
@@ -90,6 +92,7 @@ func (x *Job) GetGrades() []*JobGrade {
 
 func (x *Job) SetId(v int64) {
 	x.xxx_hidden_Id = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
 }
 
 func (x *Job) SetName(v string) {
@@ -104,10 +107,22 @@ func (x *Job) SetGrades(v []*JobGrade) {
 	x.xxx_hidden_Grades = &v
 }
 
+func (x *Job) HasId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *Job) ClearId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = 0
+}
+
 type Job_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id     int64
+	Id     *int64
 	Name   string
 	Label  string
 	Grades []*JobGrade
@@ -117,7 +132,10 @@ func (b0 Job_builder) Build() *Job {
 	m0 := &Job{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Id = b.Id
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_Id = *b.Id
+	}
 	x.xxx_hidden_Name = b.Name
 	x.xxx_hidden_Label = b.Label
 	x.xxx_hidden_Grades = &b.Grades
@@ -126,7 +144,7 @@ func (b0 Job_builder) Build() *Job {
 
 type JobGrade struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_JobId       int64                  `protobuf:"varint,4,opt,name=job_id,json=jobId,proto3"`
+	xxx_hidden_JobId       int64                  `protobuf:"varint,4,opt,name=job_id,json=jobId,proto3,oneof"`
 	xxx_hidden_JobName     *string                `protobuf:"bytes,1,opt,name=job_name,json=jobName,proto3,oneof"`
 	xxx_hidden_Grade       int32                  `protobuf:"varint,2,opt,name=grade,proto3"`
 	xxx_hidden_Label       string                 `protobuf:"bytes,3,opt,name=label,proto3"`
@@ -194,6 +212,7 @@ func (x *JobGrade) GetLabel() string {
 
 func (x *JobGrade) SetJobId(v int64) {
 	x.xxx_hidden_JobId = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
 }
 
 func (x *JobGrade) SetJobName(v string) {
@@ -209,11 +228,23 @@ func (x *JobGrade) SetLabel(v string) {
 	x.xxx_hidden_Label = v
 }
 
+func (x *JobGrade) HasJobId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
 func (x *JobGrade) HasJobName() bool {
 	if x == nil {
 		return false
 	}
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *JobGrade) ClearJobId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_JobId = 0
 }
 
 func (x *JobGrade) ClearJobName() {
@@ -224,7 +255,7 @@ func (x *JobGrade) ClearJobName() {
 type JobGrade_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	JobId   int64
+	JobId   *int64
 	JobName *string
 	Grade   int32
 	Label   string
@@ -234,7 +265,10 @@ func (b0 JobGrade_builder) Build() *JobGrade {
 	m0 := &JobGrade{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_JobId = b.JobId
+	if b.JobId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_JobId = *b.JobId
+	}
 	if b.JobName != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
 		x.xxx_hidden_JobName = b.JobName
@@ -248,17 +282,19 @@ var File_resources_jobs_jobs_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_jobs_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/jobs/jobs.proto\x12\x0eresources.jobs\x1a\x13tagger/tagger.proto\"\x96\x01\n" +
-	"\x03Job\x12\x0e\n" +
-	"\x02id\x18\x04 \x01(\x03R\x02id\x127\n" +
+	"\x19resources/jobs/jobs.proto\x12\x0eresources.jobs\x1a\x13tagger/tagger.proto\"\xa2\x01\n" +
+	"\x03Job\x12\x13\n" +
+	"\x02id\x18\x04 \x01(\x03H\x00R\x02id\x88\x01\x01\x127\n" +
 	"\x04name\x18\x01 \x01(\tB#\x9a\x84\x9e\x03\x1esql:\"primary_key\" alias:\"name\"R\x04name\x12\x14\n" +
 	"\x05label\x18\x02 \x01(\tR\x05label\x120\n" +
-	"\x06grades\x18\x03 \x03(\v2\x18.resources.jobs.JobGradeR\x06grades\"z\n" +
-	"\bJobGrade\x12\x15\n" +
-	"\x06job_id\x18\x04 \x01(\x03R\x05jobId\x12\x1e\n" +
-	"\bjob_name\x18\x01 \x01(\tH\x00R\ajobName\x88\x01\x01\x12\x14\n" +
+	"\x06grades\x18\x03 \x03(\v2\x18.resources.jobs.JobGradeR\x06gradesB\x05\n" +
+	"\x03_id\"\x8a\x01\n" +
+	"\bJobGrade\x12\x1a\n" +
+	"\x06job_id\x18\x04 \x01(\x03H\x00R\x05jobId\x88\x01\x01\x12\x1e\n" +
+	"\bjob_name\x18\x01 \x01(\tH\x01R\ajobName\x88\x01\x01\x12\x14\n" +
 	"\x05grade\x18\x02 \x01(\x05R\x05grade\x12\x14\n" +
-	"\x05label\x18\x03 \x01(\tR\x05labelB\v\n" +
+	"\x05label\x18\x03 \x01(\tR\x05labelB\t\n" +
+	"\a_job_idB\v\n" +
 	"\t_job_nameBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var file_resources_jobs_jobs_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
@@ -280,6 +316,7 @@ func file_resources_jobs_jobs_proto_init() {
 	if File_resources_jobs_jobs_proto != nil {
 		return
 	}
+	file_resources_jobs_jobs_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_jobs_jobs_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

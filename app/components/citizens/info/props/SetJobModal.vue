@@ -12,7 +12,7 @@ const props = defineProps<{
     user: User;
 }>();
 
-const emit = defineEmits<{
+const emits = defineEmits<{
     (e: 'close', v: boolean): void;
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
 }>();
@@ -66,7 +66,7 @@ async function setJobProp(values: Schema): Promise<void> {
         });
         const { response } = await call;
 
-        emit('update:job', {
+        emits('update:job', {
             job: response.props?.job ?? { name: '', label: '', grades: [] },
             grade: response.props?.jobGrade ?? { grade: game.startJobGrade, label: '' },
         });
@@ -77,7 +77,7 @@ async function setJobProp(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        emit('close', false);
+        emits('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -97,7 +97,7 @@ async function closeModal(): Promise<void> {
 
     if (hasUnsavedChanges.value && !(await confirmLeave())) return;
 
-    emit('close', false);
+    emits('close', false);
 }
 
 onBeforeMount(async () => listJobs());

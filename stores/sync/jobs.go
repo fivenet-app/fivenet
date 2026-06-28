@@ -92,7 +92,7 @@ func (s *Store) resolveJobIDs(ctx context.Context, jobsData []*jobs.Job) error {
 			return fmt.Errorf("empty id for job %q in query", job.GetName())
 		}
 
-		job.Id = id
+		job.Id = &id
 	}
 
 	return nil
@@ -109,7 +109,7 @@ func (s *Store) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, erro
 	jobID := job.GetId()
 
 	for _, grade := range grades {
-		grade.JobId = jobID
+		grade.JobId = &jobID
 		grade.SetJobName(job.GetName())
 	}
 

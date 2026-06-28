@@ -16,9 +16,9 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface Job {
     /**
-     * @generated from protobuf field: int64 id = 4
+     * @generated from protobuf field: optional int64 id = 4
      */
-    id: number;
+    id?: number;
     /**
      * @generated from protobuf field: string name = 1
      */
@@ -37,9 +37,9 @@ export interface Job {
  */
 export interface JobGrade {
     /**
-     * @generated from protobuf field: int64 job_id = 4
+     * @generated from protobuf field: optional int64 job_id = 4
      */
-    jobId: number;
+    jobId?: number;
     /**
      * @generated from protobuf field: optional string job_name = 1
      */
@@ -57,7 +57,7 @@ export interface JobGrade {
 class Job$Type extends MessageType<Job> {
     constructor() {
         super("resources.jobs.Job", [
-            { no: 4, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } }, "tagger.tags": "sql:\"primary_key\" alias:\"name\"" } },
             { no: 2, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 3, name: "grades", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobGrade }
@@ -65,7 +65,6 @@ class Job$Type extends MessageType<Job> {
     }
     create(value?: PartialMessage<Job>): Job {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
         message.name = "";
         message.label = "";
         message.grades = [];
@@ -78,7 +77,7 @@ class Job$Type extends MessageType<Job> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 id */ 4:
+                case /* optional int64 id */ 4:
                     message.id = reader.int64().toNumber();
                     break;
                 case /* string name */ 1:
@@ -111,8 +110,8 @@ class Job$Type extends MessageType<Job> {
         /* repeated resources.jobs.JobGrade grades = 3; */
         for (let i = 0; i < message.grades.length; i++)
             JobGrade.internalBinaryWrite(message.grades[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* int64 id = 4; */
-        if (message.id !== 0)
+        /* optional int64 id = 4; */
+        if (message.id !== undefined)
             writer.tag(4, WireType.Varint).int64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -128,7 +127,7 @@ export const Job = new Job$Type();
 class JobGrade$Type extends MessageType<JobGrade> {
     constructor() {
         super("resources.jobs.JobGrade", [
-            { no: 4, name: "job_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "job_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 1, name: "job_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 2, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 3, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } }
@@ -136,7 +135,6 @@ class JobGrade$Type extends MessageType<JobGrade> {
     }
     create(value?: PartialMessage<JobGrade>): JobGrade {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.jobId = 0;
         message.grade = 0;
         message.label = "";
         if (value !== undefined)
@@ -148,7 +146,7 @@ class JobGrade$Type extends MessageType<JobGrade> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 job_id */ 4:
+                case /* optional int64 job_id */ 4:
                     message.jobId = reader.int64().toNumber();
                     break;
                 case /* optional string job_name */ 1:
@@ -181,8 +179,8 @@ class JobGrade$Type extends MessageType<JobGrade> {
         /* string label = 3; */
         if (message.label !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.label);
-        /* int64 job_id = 4; */
-        if (message.jobId !== 0)
+        /* optional int64 job_id = 4; */
+        if (message.jobId !== undefined)
             writer.tag(4, WireType.Varint).int64(message.jobId);
         let u = options.writeUnknownFields;
         if (u !== false)
