@@ -2,6 +2,74 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.6.3] - 2026-06-28
+
+### 🚀 Features
+
+- Switch to subject based access control
+- *(documents)* Add required access helper
+- *(wiki)* Add drag'n'drop to page reorder list
+- Switch to UEmpty for DataNoDataBlock component
+
+### 🐛 Bug Fixes
+
+- *(calendar)* Issues with access control to entries
+- *(calendar)* Max length of calendar and entry description fields
+- *(sanitizer)* Unescpae sanitized strings by default
+- *(cookies)* Go back to same site none header
+- *(livemap)* Issues with async/dynamic icons not showing on hide
+- *(livemap)* User icon missing
+- *(livemap)* User marker icon issue with sizing
+- *(wki)* Index page containing debug output
+- *(ui)* Cleanup and deduplicate code
+- *(calendar)* Improve discord reminders code
+- Notifications issues and fx DI opts
+- Some query table alias issues
+- *(editor)* Required access ui changes
+- *(access)* Cleanup and fix subject-based access control
+- *(sql)* Make gen-sql
+- New access type not used everywhere yet
+- Documents update issue caused by get query using wrong condition
+- Continue cleanup and acl fixes
+- Tests and add more methods to stores
+- Cleanup documents store and nil issues
+- Required missing from input fields of document request drawer
+- *(calendar)* Discord reminder setting test issue
+- *(document)* Transfer relations + references on owner change
+- *(acl)* Deny condition in sql based visibility backend
+- *(citizens)* Get user label condition issue
+- *(documents)* Add soft-delete to stamps
+- *(calendar)* Add pagination to sidebar calendar list
+- Job props retrieval issues
+- General table alias issues
+- Switch German Lexikon to Wiki
+- *(queries)* Table alias issues for sql INSERT, UPDATE and DELETE
+- Add clear accounts groups for accounts sync
+- *(calendar)* Query table aliases issue
+- *(calendar)* Update query using wrong table alias
+- More queries using wrong table alias
+- Doc approval task decidedTask var not correctly assigned for given
+- *(calendar)* List calendar entries private entries missing
+- *(calendar)* Correct entry access filtering
+- *(calendar)* Show deleted icon for deleted entries
+- Visibility CTE handling in calendar and qualification queries
+- *(qualifications)* Requests and results issues
+- *(citizens)* Labels job column cte alias issue
+- Timeclock query
+- *(timeclock)* Column naming issues
+- More insert/update/delete queries using aliased tables
+- Cleanup centrum housekeeper code and fix accounts retrieval for
+- *(accounts)* User accounts mapping issues
+- Phone number blur when streamer mode is enabled
+- Cleanup discord calendar reminder embed and use job logo if
+- *(documents)* Allow edit if user has access but no permission
+- *(jobs)* Add id to jobs and job_id to job_grades
+- Update accounts sync example for groups in esx
+
+### 🏭 Refactor
+
+- Extract store query methods from services
+
 ## [2026.6.2] - 2026-06-12
 
 ### 🚀 Features
