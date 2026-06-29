@@ -478,11 +478,7 @@ defineShortcuts({
                 :error="error"
                 :retry="refresh"
             />
-            <DataNoDataBlock
-                v-else-if="data?.documents.length === 0"
-                :type="$t('common.document', 2)"
-                :focus="focusInput"
-            />
+            <DataNoDataBlock v-else-if="data?.documents.length === 0" :type="$t('common.document', 2)" :focus="focusInput" />
 
             <ul
                 v-else-if="data?.documents || isRequestPending(status)"

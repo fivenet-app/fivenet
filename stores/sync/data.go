@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	citizenslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	syncactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
@@ -178,6 +177,7 @@ func (s *Store) handleAccountsData(
 	tAccounts := table.FivenetAccounts
 	rowsAffected := int64(0)
 	accountLicenses := make([]mysql.Expression, 0, len(data))
+	pendingGroupChanges := make([]accountGroupChange, 0, len(data))
 	for _, account := range data {
 		license := account.GetLicense()
 		if license == "" {
@@ -185,11 +185,19 @@ func (s *Store) handleAccountsData(
 		}
 		accountLicenses = append(accountLicenses, mysql.String(license))
 
-		var groups *accounts.AccountGroups
-		if account.GetGroups() != nil && len(account.GetGroups().GetGroups()) > 0 {
-			groups = account.GetGroups()
-		} else if account.GetGroup() != "" {
-			groups = &accounts.AccountGroups{Groups: []string{account.GetGroup()}}
+		groups := accountGroupsFromSyncUpdate(account)
+
+		current, err := s.loadAccountGroupState(ctx, tx, license)
+		if err != nil {
+			return 0, err
+		}
+		currentGroups := accountGroupsFromState(current)
+		if current != nil && !accountGroupsEqual(currentGroups, groups) {
+			pendingGroupChanges = append(pendingGroupChanges, accountGroupChange{
+				accountID: current.ID,
+				license:   current.License,
+				groups:    groups,
+			})
 		}
 
 		stmt := tAccounts.
@@ -215,25 +223,44 @@ func (s *Store) handleAccountsData(
 		rowsAffected += rows
 	}
 
-	if clearGroups && len(data) > 0 && len(accountLicenses) == 0 {
-		if err := tx.Commit(); err != nil {
-			return 0, err
+	if clearGroups {
+		clearCandidates := []*accountGroupState{}
+		clearQuery := tAccounts.
+			SELECT(
+				tAccounts.ID.AS("id"),
+				tAccounts.License.AS("license"),
+				tAccounts.Groups.AS("groups"),
+			).
+			FROM(tAccounts)
+		clearConditions := []mysql.BoolExpression{tAccounts.Groups.IS_NOT_NULL()}
+		if len(accountLicenses) > 0 {
+			clearConditions = append(clearConditions, tAccounts.License.NOT_IN(accountLicenses...))
+		}
+		clearQuery = clearQuery.WHERE(mysql.AND(clearConditions...))
+		if err := clearQuery.QueryContext(ctx, tx, &clearCandidates); err != nil {
+			return 0, fmt.Errorf("failed to query account groups to clear. %w", err)
+		}
+		for _, acc := range clearCandidates {
+			if len(acc.Groups.GetGroups()) == 0 {
+				continue
+			}
+			pendingGroupChanges = append(pendingGroupChanges, accountGroupChange{
+				accountID: acc.ID,
+				license:   acc.License,
+				groups:    nil,
+			})
 		}
 
-		return rowsAffected, nil
-	}
-
-	if clearGroups {
-		clearStmt := tAccounts.
+		clearUpdate := tAccounts.
 			UPDATE(tAccounts.Groups).
 			SET(mysql.StringExp(mysql.NULL))
 
 		if len(accountLicenses) > 0 {
-			clearStmt = clearStmt.
+			clearUpdate = clearUpdate.
 				WHERE(tAccounts.License.NOT_IN(accountLicenses...))
 		}
 
-		res, err := clearStmt.ExecContext(ctx, tx)
+		res, err := clearUpdate.ExecContext(ctx, tx)
 		if err != nil {
 			return 0, fmt.Errorf("failed to execute accounts clear statement. %w", err)
 		}
@@ -246,6 +273,10 @@ func (s *Store) handleAccountsData(
 
 	if err := tx.Commit(); err != nil {
 		return 0, err
+	}
+
+	for _, change := range pendingGroupChanges {
+		s.publishAccountGroupsChanged(ctx, change.accountID, change.license, change.groups)
 	}
 
 	return rowsAffected, nil

@@ -10,7 +10,8 @@ export type canMode = 'oneof' | 'all';
 // Wrapper around auth store to make live easier
 const _useAuth = () => {
     const authStore = useAuthStore();
-    const { username, accountId, activeChar, isSuperuser, jobProps, permissions, attributes } = storeToRefs(authStore);
+    const { username, accountId, activeChar, isSuperuser, jobProps, permissions, attributes, canBeSuperuser } =
+        storeToRefs(authStore);
 
     function checkPerm(permissions: Permission[], perm: string | string[], mode: canMode = 'oneof'): boolean {
         if (mode === undefined) mode = 'oneof';
@@ -162,6 +163,7 @@ const _useAuth = () => {
         // Getters
         accountId,
         activeChar,
+        canBeSuperuser,
         isSuperuser,
         jobProps,
         username,

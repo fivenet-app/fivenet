@@ -1,16 +1,78 @@
 package syncstore
 
 import (
+	"context"
+	"fmt"
 	"regexp"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
+
+type labelEnricher struct{}
+
+func (labelEnricher) EnrichJobInfo(user common.IJobInfo) {
+	user.SetJobLabel(user.GetJob())
+	user.SetJobGradeLabel(fmt.Sprintf("Rank %d", user.GetJobGrade()))
+}
+
+func (labelEnricher) EnrichJobInfoNoFallback(common.IJobInfo) {}
+
+func (labelEnricher) EnrichJobName(common.IJobName) {}
+
+func (labelEnricher) GetJobByName(string) *jobs.Job { return nil }
+
+func (labelEnricher) GetJobGrade(string, int32) (*jobs.Job, *jobs.JobGrade) {
+	return nil, nil
+}
+
+type recordingNotifi struct {
+	events []*notificationsevents.UserEvent
+}
+
+func (n *recordingNotifi) NotifyUser(context.Context, *notifications.Notification) error {
+	return nil
+}
+
+func (n *recordingNotifi) SendObjectEvent(
+	context.Context,
+	*notificationsclientview.ObjectEvent,
+) error {
+	return nil
+}
+
+func (n *recordingNotifi) SendAccountEvent(
+	_ context.Context,
+	_ int64,
+	event *notificationsevents.UserEvent,
+) error {
+	n.events = append(n.events, event)
+	return nil
+}
+
+func (n *recordingNotifi) SendUserEvent(
+	_ context.Context,
+	_ int32,
+	event *notificationsevents.UserEvent,
+) error {
+	n.events = append(n.events, event)
+	return nil
+}
+
+func (n *recordingNotifi) SendSystemEvent(context.Context, *notificationsevents.SystemEvent) error {
+	return nil
+}
 
 func TestCompareJobs(t *testing.T) {
 	t.Parallel()
@@ -250,12 +312,196 @@ func newTestStore(t *testing.T) (*Store, sqlmock.Sqlmock) {
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 
-	store := New(db, zap.NewNop(), &config.Config{}, nil, nil, nil).(*Store)
+	store := New(db, zap.NewNop(), &config.Config{}, nil, nil, nil, nil, nil).(*Store)
 	t.Cleanup(func() {
 		_ = db.Close()
 	})
 
 	return store, mock
+}
+
+func TestHandleUserJobsPublishesPrimaryJobChange(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+	rec := &recordingNotifi{}
+	store.notifi = rec
+	store.enricher = labelEnricher{}
+	accountID := int64(42)
+
+	mock.ExpectBegin()
+	mock.ExpectQuery(`(?s)SELECT .*fivenet_user_jobs.*WHERE .*user_id = \?.*ORDER BY .*`).
+		WithArgs(int64(11)).
+		WillReturnRows(sqlmock.NewRows([]string{"user_job.job", "user_job.grade", "user_job.is_primary"}).
+			AddRow("police", int32(1), true).
+			AddRow("ems", int32(1), false))
+	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_jobs.*ON DUPLICATE KEY UPDATE.*`).
+		WithArgs(int64(11), "sheriff", int32(1), true).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)DELETE FROM .*fivenet_user_jobs.*job IN \(\?\).*LIMIT \?.*`).
+		WithArgs(int64(11), "police", int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	user := &syncdata.DataUser{
+		UserId:   11,
+		Job:      "sheriff",
+		JobGrade: 1,
+		Jobs: []*users.UserJob{
+			{Job: "sheriff", Grade: 1, IsPrimary: true},
+			{Job: "ems", Grade: 1, IsPrimary: false},
+		},
+		Firstname: "Test",
+	}
+
+	tx, err := store.db.Begin()
+	require.NoError(t, err)
+
+	jobChange, err := store.handleUserJobs(t.Context(), tx, user)
+	require.NoError(t, err)
+	require.NoError(t, tx.Commit())
+
+	store.publishUserInfoChanged(t.Context(), &accountID, user.GetUserId(), jobChange)
+
+	require.Len(t, rec.events, 1)
+	evt := rec.events[0].GetUserInfoChanged()
+	require.NotNil(t, evt)
+	assert.Equal(t, int64(42), evt.GetAccountId())
+	assert.Equal(t, int32(11), evt.GetUserId())
+	assert.Equal(t, "sheriff", evt.GetNewJob())
+	assert.Equal(t, "sheriff", evt.GetNewJobLabel())
+	assert.Equal(t, int32(1), evt.GetNewJobGrade())
+	assert.Equal(t, "Rank 1", evt.GetNewJobGradeLabel())
+	require.NotNil(t, evt.GetChangedAt())
+
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestHandleUserJobsPublishesPrimaryGradeChange(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+	rec := &recordingNotifi{}
+	store.notifi = rec
+	store.enricher = labelEnricher{}
+	accountID := int64(42)
+
+	mock.ExpectBegin()
+	mock.ExpectQuery(`(?s)SELECT .*fivenet_user_jobs.*WHERE .*user_id = \?.*ORDER BY .*`).
+		WithArgs(int64(11)).
+		WillReturnRows(sqlmock.NewRows([]string{"user_job.job", "user_job.grade", "user_job.is_primary"}).
+			AddRow("police", int32(1), true))
+	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_jobs.*ON DUPLICATE KEY UPDATE.*`).
+		WithArgs(int64(11), "police", int32(2), true).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	user := &syncdata.DataUser{
+		UserId:   11,
+		Job:      "police",
+		JobGrade: 2,
+		Jobs:     []*users.UserJob{{Job: "police", Grade: 2, IsPrimary: true}},
+	}
+
+	tx, err := store.db.Begin()
+	require.NoError(t, err)
+
+	jobChange, err := store.handleUserJobs(t.Context(), tx, user)
+	require.NoError(t, err)
+	require.NoError(t, tx.Commit())
+
+	store.publishUserInfoChanged(t.Context(), &accountID, user.GetUserId(), jobChange)
+
+	require.Len(t, rec.events, 1)
+	evt := rec.events[0].GetUserInfoChanged()
+	require.NotNil(t, evt)
+	assert.Equal(t, "police", evt.GetNewJob())
+	assert.Equal(t, int32(2), evt.GetNewJobGrade())
+	assert.Equal(t, "Rank 2", evt.GetNewJobGradeLabel())
+
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestHandleUserJobsIgnoresSecondaryJobChurn(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+	rec := &recordingNotifi{}
+	store.notifi = rec
+	store.enricher = labelEnricher{}
+	accountID := int64(42)
+
+	mock.ExpectBegin()
+	mock.ExpectQuery(`(?s)SELECT .*fivenet_user_jobs.*WHERE .*user_id = \?.*ORDER BY .*`).
+		WithArgs(int64(11)).
+		WillReturnRows(sqlmock.NewRows([]string{"user_job.job", "user_job.grade", "user_job.is_primary"}).
+			AddRow("ems", int32(1), false).
+			AddRow("police", int32(1), true))
+	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_jobs.*ON DUPLICATE KEY UPDATE.*`).
+		WithArgs(int64(11), "medic", int32(1), false).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)DELETE FROM .*fivenet_user_jobs.*job IN \(\?\).*LIMIT \?.*`).
+		WithArgs(int64(11), "ems", int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	user := &syncdata.DataUser{
+		UserId:   11,
+		Job:      "police",
+		JobGrade: 1,
+		Jobs: []*users.UserJob{
+			{Job: "police", Grade: 1, IsPrimary: true},
+			{Job: "medic", Grade: 1, IsPrimary: false},
+		},
+	}
+
+	tx, err := store.db.Begin()
+	require.NoError(t, err)
+
+	jobChange, err := store.handleUserJobs(t.Context(), tx, user)
+	require.NoError(t, err)
+	require.NoError(t, tx.Commit())
+
+	store.publishUserInfoChanged(t.Context(), &accountID, user.GetUserId(), jobChange)
+
+	assert.Empty(t, rec.events)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestHandleUserJobsNoopDoesNotPublish(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+	rec := &recordingNotifi{}
+	store.notifi = rec
+	store.enricher = labelEnricher{}
+	accountID := int64(42)
+
+	mock.ExpectBegin()
+	mock.ExpectQuery(`(?s)SELECT .*fivenet_user_jobs.*WHERE .*user_id = \?.*ORDER BY .*`).
+		WithArgs(int64(11)).
+		WillReturnRows(sqlmock.NewRows([]string{"user_job.job", "user_job.grade", "user_job.is_primary"}).
+			AddRow("police", int32(1), true))
+	mock.ExpectCommit()
+
+	user := &syncdata.DataUser{
+		UserId:   11,
+		Job:      "police",
+		JobGrade: 1,
+		Jobs:     []*users.UserJob{{Job: "police", Grade: 1, IsPrimary: true}},
+	}
+
+	tx, err := store.db.Begin()
+	require.NoError(t, err)
+
+	jobChange, err := store.handleUserJobs(t.Context(), tx, user)
+	require.NoError(t, err)
+	require.NoError(t, tx.Commit())
+
+	store.publishUserInfoChanged(t.Context(), &accountID, user.GetUserId(), jobChange)
+
+	assert.Empty(t, rec.events)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestSyncUserAccountUpsertsMapping(t *testing.T) {
@@ -274,7 +520,10 @@ func TestSyncUserAccountUpsertsMapping(t *testing.T) {
 
 	tx, err := store.db.Begin()
 	require.NoError(t, err)
-	require.NoError(t, store.syncUserAccount(t.Context(), tx, 11, "char1:license-42"))
+	accountID, err := store.syncUserAccount(t.Context(), tx, 11, "char1:license-42")
+	require.NoError(t, err)
+	require.NotNil(t, accountID)
+	require.Equal(t, int64(42), *accountID)
 	require.NoError(t, tx.Commit())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
@@ -298,7 +547,9 @@ func TestSyncUserAccountDeletesMappingWhenUnresolved(t *testing.T) {
 
 	tx, err := store.db.Begin()
 	require.NoError(t, err)
-	require.NoError(t, store.syncUserAccount(t.Context(), tx, 11, "char1:license-42"))
+	accountID, err := store.syncUserAccount(t.Context(), tx, 11, "char1:license-42")
+	require.NoError(t, err)
+	require.Nil(t, accountID)
 	require.NoError(t, tx.Commit())
 	require.NoError(t, mock.ExpectationsWereMet())
 }

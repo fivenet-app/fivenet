@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"slices"
 	"strconv"
 	"sync"
 	"time"
 
+	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
@@ -156,6 +158,40 @@ func (s *Server) shouldDeliverObjectEvent(
 	}
 
 	return true
+}
+
+func applyUserInfoChanged(currentUserInfo *pbuserinfo.UserInfo, event *pbuserinfo.UserInfoChanged) {
+	if currentUserInfo == nil || event == nil {
+		return
+	}
+
+	currentUserInfo.Job = event.GetNewJob()
+	currentUserInfo.JobGrade = event.GetNewJobGrade()
+}
+
+func applyUserGroupsChanged(
+	currentUserInfo *pbuserinfo.UserInfo,
+	event *pbuserinfo.UserGroupsChanged,
+) {
+	if currentUserInfo == nil || event == nil {
+		return
+	}
+
+	currentUserInfo.CanBeSuperuser = event.GetCanBeSuperuser()
+	if event.GetNewGroups() == nil {
+		currentUserInfo.Groups = nil
+		if !currentUserInfo.GetCanBeSuperuser() {
+			currentUserInfo.Superuser = false
+		}
+		return
+	}
+
+	currentUserInfo.Groups = &accounts.AccountGroups{
+		Groups: slices.Clone(event.GetNewGroups().GetGroups()),
+	}
+	if !currentUserInfo.GetCanBeSuperuser() {
+		currentUserInfo.Superuser = false
+	}
 }
 
 func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) error {
@@ -323,27 +359,40 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 				topic, parts := notifi.SplitSubject(m.Subject())
 				switch topic {
-				case notifi.UserTopic:
+				case notifi.UserTopic, notifi.AccountTopic:
 					var dest notificationsevents.UserEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
+					needsSubjectRefresh := false
 					switch d := dest.GetData().(type) {
 					case *notificationsevents.UserEvent_Notification:
-						notificationCount++
+						if topic == notifi.UserTopic {
+							notificationCount++
+						}
 
 					case *notificationsevents.UserEvent_NotificationsReadCount:
-						if notificationCount-d.NotificationsReadCount <= 0 {
-							notificationCount = 0
-						} else {
-							notificationCount -= d.NotificationsReadCount
+						if topic == notifi.UserTopic {
+							if notificationCount-d.NotificationsReadCount <= 0 {
+								notificationCount = 0
+							} else {
+								notificationCount -= d.NotificationsReadCount
+							}
 						}
 
 					case *notificationsevents.UserEvent_UserInfoChanged:
-						currentUserInfo.Job = d.UserInfoChanged.GetNewJob()
-						currentUserInfo.JobGrade = d.UserInfoChanged.GetNewJobGrade()
+						if topic == notifi.UserTopic {
+							applyUserInfoChanged(currentUserInfo, d.UserInfoChanged)
+							needsSubjectRefresh = true
+						}
 
+					case *notificationsevents.UserEvent_UserGroupsChanged:
+						applyUserGroupsChanged(currentUserInfo, d.UserGroupsChanged)
+						needsSubjectRefresh = true
+					}
+
+					if needsSubjectRefresh {
 						baseSubjects, additionalSubjects, err = s.buildSubjects(
 							gctx,
 							currentUserInfo,

@@ -305,7 +305,7 @@ func (b0 PollReq_builder) Build() *PollReq {
 	return m0
 }
 
-// UserInfoChanged used to signal Job or JobGrade changes.
+// UserInfoChanged used to signal live primary job or job grade changes.
 type UserInfoChanged struct {
 	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// The account the user belongs to
@@ -314,23 +314,15 @@ type UserInfoChanged struct {
 	UserId int32 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// Timestamp of when the change was detected
 	ChangedAt *timestamp.Timestamp `protobuf:"bytes,3,opt,name=changed_at,json=changedAt,proto3" json:"changed_at,omitempty"`
-	// Previous job title
-	OldJob string `protobuf:"bytes,4,opt,name=old_job,json=oldJob,proto3" json:"old_job,omitempty"`
 	// New job title
 	NewJob      *string `protobuf:"bytes,5,opt,name=new_job,json=newJob,proto3,oneof" json:"new_job,omitempty"`
 	NewJobLabel *string `protobuf:"bytes,6,opt,name=new_job_label,json=newJobLabel,proto3,oneof" json:"new_job_label,omitempty"`
-	// Previous job grade
-	OldJobGrade int32 `protobuf:"varint,7,opt,name=old_job_grade,json=oldJobGrade,proto3" json:"old_job_grade,omitempty"`
 	// New job grade
 	NewJobGrade *int32 `protobuf:"varint,8,opt,name=new_job_grade,json=newJobGrade,proto3,oneof" json:"new_job_grade,omitempty"`
 	// New job grade label
 	NewJobGradeLabel *string `protobuf:"bytes,9,opt,name=new_job_grade_label,json=newJobGradeLabel,proto3,oneof" json:"new_job_grade_label,omitempty"`
-	// Can the user be superuser (by group or license)
-	CanBeSuperuser *bool `protobuf:"varint,10,opt,name=can_be_superuser,json=canBeSuperuser,proto3,oneof" json:"can_be_superuser,omitempty"`
-	// Superuser state
-	Superuser     *bool `protobuf:"varint,11,opt,name=superuser,proto3,oneof" json:"superuser,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *UserInfoChanged) Reset() {
@@ -379,13 +371,6 @@ func (x *UserInfoChanged) GetChangedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *UserInfoChanged) GetOldJob() string {
-	if x != nil {
-		return x.OldJob
-	}
-	return ""
-}
-
 func (x *UserInfoChanged) GetNewJob() string {
 	if x != nil && x.NewJob != nil {
 		return *x.NewJob
@@ -398,13 +383,6 @@ func (x *UserInfoChanged) GetNewJobLabel() string {
 		return *x.NewJobLabel
 	}
 	return ""
-}
-
-func (x *UserInfoChanged) GetOldJobGrade() int32 {
-	if x != nil {
-		return x.OldJobGrade
-	}
-	return 0
 }
 
 func (x *UserInfoChanged) GetNewJobGrade() int32 {
@@ -421,20 +399,6 @@ func (x *UserInfoChanged) GetNewJobGradeLabel() string {
 	return ""
 }
 
-func (x *UserInfoChanged) GetCanBeSuperuser() bool {
-	if x != nil && x.CanBeSuperuser != nil {
-		return *x.CanBeSuperuser
-	}
-	return false
-}
-
-func (x *UserInfoChanged) GetSuperuser() bool {
-	if x != nil && x.Superuser != nil {
-		return *x.Superuser
-	}
-	return false
-}
-
 func (x *UserInfoChanged) SetAccountId(v int64) {
 	x.AccountId = v
 }
@@ -447,10 +411,6 @@ func (x *UserInfoChanged) SetChangedAt(v *timestamp.Timestamp) {
 	x.ChangedAt = v
 }
 
-func (x *UserInfoChanged) SetOldJob(v string) {
-	x.OldJob = v
-}
-
 func (x *UserInfoChanged) SetNewJob(v string) {
 	x.NewJob = &v
 }
@@ -459,24 +419,12 @@ func (x *UserInfoChanged) SetNewJobLabel(v string) {
 	x.NewJobLabel = &v
 }
 
-func (x *UserInfoChanged) SetOldJobGrade(v int32) {
-	x.OldJobGrade = v
-}
-
 func (x *UserInfoChanged) SetNewJobGrade(v int32) {
 	x.NewJobGrade = &v
 }
 
 func (x *UserInfoChanged) SetNewJobGradeLabel(v string) {
 	x.NewJobGradeLabel = &v
-}
-
-func (x *UserInfoChanged) SetCanBeSuperuser(v bool) {
-	x.CanBeSuperuser = &v
-}
-
-func (x *UserInfoChanged) SetSuperuser(v bool) {
-	x.Superuser = &v
 }
 
 func (x *UserInfoChanged) HasChangedAt() bool {
@@ -514,20 +462,6 @@ func (x *UserInfoChanged) HasNewJobGradeLabel() bool {
 	return x.NewJobGradeLabel != nil
 }
 
-func (x *UserInfoChanged) HasCanBeSuperuser() bool {
-	if x == nil {
-		return false
-	}
-	return x.CanBeSuperuser != nil
-}
-
-func (x *UserInfoChanged) HasSuperuser() bool {
-	if x == nil {
-		return false
-	}
-	return x.Superuser != nil
-}
-
 func (x *UserInfoChanged) ClearChangedAt() {
 	x.ChangedAt = nil
 }
@@ -548,14 +482,6 @@ func (x *UserInfoChanged) ClearNewJobGradeLabel() {
 	x.NewJobGradeLabel = nil
 }
 
-func (x *UserInfoChanged) ClearCanBeSuperuser() {
-	x.CanBeSuperuser = nil
-}
-
-func (x *UserInfoChanged) ClearSuperuser() {
-	x.Superuser = nil
-}
-
 type UserInfoChanged_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -565,21 +491,13 @@ type UserInfoChanged_builder struct {
 	UserId int32
 	// Timestamp of when the change was detected
 	ChangedAt *timestamp.Timestamp
-	// Previous job title
-	OldJob string
 	// New job title
 	NewJob      *string
 	NewJobLabel *string
-	// Previous job grade
-	OldJobGrade int32
 	// New job grade
 	NewJobGrade *int32
 	// New job grade label
 	NewJobGradeLabel *string
-	// Can the user be superuser (by group or license)
-	CanBeSuperuser *bool
-	// Superuser state
-	Superuser *bool
 }
 
 func (b0 UserInfoChanged_builder) Build() *UserInfoChanged {
@@ -589,14 +507,140 @@ func (b0 UserInfoChanged_builder) Build() *UserInfoChanged {
 	x.AccountId = b.AccountId
 	x.UserId = b.UserId
 	x.ChangedAt = b.ChangedAt
-	x.OldJob = b.OldJob
 	x.NewJob = b.NewJob
 	x.NewJobLabel = b.NewJobLabel
-	x.OldJobGrade = b.OldJobGrade
 	x.NewJobGrade = b.NewJobGrade
 	x.NewJobGradeLabel = b.NewJobGradeLabel
+	return m0
+}
+
+// UserGroupsChanged used to signal live account group changes.
+type UserGroupsChanged struct {
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The account the user belongs to
+	AccountId int64 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	// Timestamp of when the change was detected
+	ChangedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=changed_at,json=changedAt,proto3" json:"changed_at,omitempty"`
+	// New account groups
+	NewGroups *accounts.AccountGroups `protobuf:"bytes,3,opt,name=new_groups,json=newGroups,proto3" json:"new_groups,omitempty"`
+	// Whether the account can enter superuser mode after the change
+	CanBeSuperuser bool `protobuf:"varint,4,opt,name=can_be_superuser,json=canBeSuperuser,proto3" json:"can_be_superuser,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *UserGroupsChanged) Reset() {
+	*x = UserGroupsChanged{}
+	mi := &file_resources_userinfo_userinfo_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserGroupsChanged) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserGroupsChanged) ProtoMessage() {}
+
+func (x *UserGroupsChanged) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_userinfo_userinfo_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *UserGroupsChanged) GetAccountId() int64 {
+	if x != nil {
+		return x.AccountId
+	}
+	return 0
+}
+
+func (x *UserGroupsChanged) GetChangedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.ChangedAt
+	}
+	return nil
+}
+
+func (x *UserGroupsChanged) GetNewGroups() *accounts.AccountGroups {
+	if x != nil {
+		return x.NewGroups
+	}
+	return nil
+}
+
+func (x *UserGroupsChanged) GetCanBeSuperuser() bool {
+	if x != nil {
+		return x.CanBeSuperuser
+	}
+	return false
+}
+
+func (x *UserGroupsChanged) SetAccountId(v int64) {
+	x.AccountId = v
+}
+
+func (x *UserGroupsChanged) SetChangedAt(v *timestamp.Timestamp) {
+	x.ChangedAt = v
+}
+
+func (x *UserGroupsChanged) SetNewGroups(v *accounts.AccountGroups) {
+	x.NewGroups = v
+}
+
+func (x *UserGroupsChanged) SetCanBeSuperuser(v bool) {
+	x.CanBeSuperuser = v
+}
+
+func (x *UserGroupsChanged) HasChangedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.ChangedAt != nil
+}
+
+func (x *UserGroupsChanged) HasNewGroups() bool {
+	if x == nil {
+		return false
+	}
+	return x.NewGroups != nil
+}
+
+func (x *UserGroupsChanged) ClearChangedAt() {
+	x.ChangedAt = nil
+}
+
+func (x *UserGroupsChanged) ClearNewGroups() {
+	x.NewGroups = nil
+}
+
+type UserGroupsChanged_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// The account the user belongs to
+	AccountId int64
+	// Timestamp of when the change was detected
+	ChangedAt *timestamp.Timestamp
+	// New account groups
+	NewGroups *accounts.AccountGroups
+	// Whether the account can enter superuser mode after the change
+	CanBeSuperuser bool
+}
+
+func (b0 UserGroupsChanged_builder) Build() *UserGroupsChanged {
+	m0 := &UserGroupsChanged{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.AccountId = b.AccountId
+	x.ChangedAt = b.ChangedAt
+	x.NewGroups = b.NewGroups
 	x.CanBeSuperuser = b.CanBeSuperuser
-	x.Superuser = b.Superuser
 	return m0
 }
 
@@ -624,47 +668,50 @@ const file_resources_userinfo_userinfo_proto_rawDesc = "" +
 	"\aPollReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\"\xa6\x04\n" +
+	"\auser_id\x18\x02 \x01(\x05R\x06userId\"\xf4\x02\n" +
 	"\x0fUserInfoChanged\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12=\n" +
 	"\n" +
-	"changed_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tchangedAt\x12\x17\n" +
-	"\aold_job\x18\x04 \x01(\tR\x06oldJob\x12\x1c\n" +
+	"changed_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tchangedAt\x12\x1c\n" +
 	"\anew_job\x18\x05 \x01(\tH\x00R\x06newJob\x88\x01\x01\x12'\n" +
-	"\rnew_job_label\x18\x06 \x01(\tH\x01R\vnewJobLabel\x88\x01\x01\x12\"\n" +
-	"\rold_job_grade\x18\a \x01(\x05R\voldJobGrade\x12'\n" +
+	"\rnew_job_label\x18\x06 \x01(\tH\x01R\vnewJobLabel\x88\x01\x01\x12'\n" +
 	"\rnew_job_grade\x18\b \x01(\x05H\x02R\vnewJobGrade\x88\x01\x01\x122\n" +
-	"\x13new_job_grade_label\x18\t \x01(\tH\x03R\x10newJobGradeLabel\x88\x01\x01\x12-\n" +
-	"\x10can_be_superuser\x18\n" +
-	" \x01(\bH\x04R\x0ecanBeSuperuser\x88\x01\x01\x12!\n" +
-	"\tsuperuser\x18\v \x01(\bH\x05R\tsuperuser\x88\x01\x01B\n" +
+	"\x13new_job_grade_label\x18\t \x01(\tH\x03R\x10newJobGradeLabel\x88\x01\x01B\n" +
 	"\n" +
 	"\b_new_jobB\x10\n" +
 	"\x0e_new_job_labelB\x10\n" +
 	"\x0e_new_job_gradeB\x16\n" +
-	"\x14_new_job_grade_labelB\x13\n" +
-	"\x11_can_be_superuserB\f\n" +
+	"\x14_new_job_grade_label\"\xdd\x01\n" +
+	"\x11UserGroupsChanged\x12\x1d\n" +
 	"\n" +
-	"_superuserBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo;userinfob\x06proto3"
+	"account_id\x18\x01 \x01(\x03R\taccountId\x12=\n" +
+	"\n" +
+	"changed_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tchangedAt\x12@\n" +
+	"\n" +
+	"new_groups\x18\x03 \x01(\v2!.resources.accounts.AccountGroupsR\tnewGroups\x12(\n" +
+	"\x10can_be_superuser\x18\x04 \x01(\bR\x0ecanBeSuperuserBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo;userinfob\x06proto3"
 
-var file_resources_userinfo_userinfo_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_resources_userinfo_userinfo_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_userinfo_userinfo_proto_goTypes = []any{
 	(*UserInfo)(nil),               // 0: resources.userinfo.UserInfo
 	(*PollReq)(nil),                // 1: resources.userinfo.PollReq
 	(*UserInfoChanged)(nil),        // 2: resources.userinfo.UserInfoChanged
-	(*accounts.AccountGroups)(nil), // 3: resources.accounts.AccountGroups
-	(*timestamp.Timestamp)(nil),    // 4: resources.timestamp.Timestamp
+	(*UserGroupsChanged)(nil),      // 3: resources.userinfo.UserGroupsChanged
+	(*accounts.AccountGroups)(nil), // 4: resources.accounts.AccountGroups
+	(*timestamp.Timestamp)(nil),    // 5: resources.timestamp.Timestamp
 }
 var file_resources_userinfo_userinfo_proto_depIdxs = []int32{
-	3, // 0: resources.userinfo.UserInfo.groups:type_name -> resources.accounts.AccountGroups
-	4, // 1: resources.userinfo.UserInfoChanged.changed_at:type_name -> resources.timestamp.Timestamp
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	4, // 0: resources.userinfo.UserInfo.groups:type_name -> resources.accounts.AccountGroups
+	5, // 1: resources.userinfo.UserInfoChanged.changed_at:type_name -> resources.timestamp.Timestamp
+	5, // 2: resources.userinfo.UserGroupsChanged.changed_at:type_name -> resources.timestamp.Timestamp
+	4, // 3: resources.userinfo.UserGroupsChanged.new_groups:type_name -> resources.accounts.AccountGroups
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_resources_userinfo_userinfo_proto_init() }
@@ -680,7 +727,7 @@ func file_resources_userinfo_userinfo_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_userinfo_userinfo_proto_rawDesc), len(file_resources_userinfo_userinfo_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

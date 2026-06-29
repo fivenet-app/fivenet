@@ -7,6 +7,8 @@ import (
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
@@ -107,6 +109,9 @@ type Store struct {
 	logger *zap.Logger
 	cfg    *config.Config
 
+	enricher mstlystcdata.IEnricher
+	notifi   notifi.INotifi
+
 	dispatches    *dispatches.DispatchDB
 	citizensStore citizensstore.IStore
 	jobsStore     jobsstore.IStore
@@ -119,11 +124,15 @@ func New(
 	dispatches *dispatches.DispatchDB,
 	citizensStore citizensstore.IStore,
 	jobsStore jobsstore.IStore,
+	enricher mstlystcdata.IEnricher,
+	notifi notifi.INotifi,
 ) IStore {
 	return &Store{
 		db:            db,
 		logger:        logger,
 		cfg:           cfg,
+		enricher:      enricher,
+		notifi:        notifi,
 		dispatches:    dispatches,
 		citizensStore: citizensStore,
 		jobsStore:     jobsStore,

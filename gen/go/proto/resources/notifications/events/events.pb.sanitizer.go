@@ -64,6 +64,14 @@ func (m *UserEvent) Sanitize() error {
 			}
 		}
 
+		// Field: UserGroupsChanged
+	case *UserEvent_UserGroupsChanged:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 		// Field: UserInfoChanged
 	case *UserEvent_UserInfoChanged:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {

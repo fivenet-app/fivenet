@@ -11,11 +11,13 @@ import (
 	"time"
 
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
+	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -42,6 +44,11 @@ type existingUser struct {
 	UserID     int32  `alias:"user_id"`
 	Identifier string `alias:"identifier"`
 	DataHash   uint64 `alias:"data_hash"`
+}
+
+type userJobChange struct {
+	job   string
+	grade int32
 }
 
 func (s *Store) SendUsers(ctx context.Context, data []*syncdata.DataUser) (int64, error) {
@@ -233,8 +240,6 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 
 	if len(toUpdate) > 0 {
 		for _, user := range toUpdate {
-			// TODO compare user's primary job and notify user via stream userInfoChanged event
-
 			affected, err := s.updateUser(ctx, syncedAt, user)
 			if err != nil {
 				return 0, fmt.Errorf(
@@ -347,7 +352,7 @@ func (s *Store) createUser(
 	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {
 		return 0, err
 	}
-	if err := s.syncUserAccount(ctx, tx, user.GetUserId(), user.GetIdentifier()); err != nil {
+	if _, err := s.syncUserAccount(ctx, tx, user.GetUserId(), user.GetIdentifier()); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user account mapping for user %d (%s). %w",
 			user.GetUserId(),
@@ -355,7 +360,7 @@ func (s *Store) createUser(
 			err,
 		)
 	}
-	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
+	if _, err := s.handleUserJobs(ctx, tx, user); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user jobs for user %d (%s). %w",
 			user.GetUserId(),
@@ -443,10 +448,10 @@ func (s *Store) syncUserAccount(
 	tx *sql.Tx,
 	userID int32,
 	identifier string,
-) error {
+) (*int64, error) {
 	accountID, err := s.resolveUserAccountID(ctx, tx, identifier)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if accountID == nil {
@@ -455,9 +460,13 @@ func (s *Store) syncUserAccount(
 			WHERE(tUserAccounts.UserID.EQ(mysql.Int32(userID))).
 			LIMIT(1)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return fmt.Errorf("failed to delete user account mapping for user %d. %w", userID, err)
+			return nil, fmt.Errorf(
+				"failed to delete user account mapping for user %d. %w",
+				userID,
+				err,
+			)
 		}
-		return nil
+		return nil, nil
 	}
 
 	stmt := tUserAccounts.
@@ -473,10 +482,10 @@ func (s *Store) syncUserAccount(
 			tUserAccounts.AccountID.SET(mysql.RawInt("VALUES(`account_id`)")),
 		)
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return fmt.Errorf("failed to upsert user account mapping for user %d. %w", userID, err)
+		return nil, fmt.Errorf("failed to upsert user account mapping for user %d. %w", userID, err)
 	}
 
-	return nil
+	return accountID, nil
 }
 
 func (s *Store) createOrUpdateSyncUserEntry(
@@ -610,7 +619,8 @@ func (s *Store) updateUser(
 	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {
 		return 0, err
 	}
-	if err := s.syncUserAccount(ctx, tx, user.GetUserId(), user.GetIdentifier()); err != nil {
+	accountID, err := s.syncUserAccount(ctx, tx, user.GetUserId(), user.GetIdentifier())
+	if err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user account mapping for user %d (%s). %w",
 			user.GetUserId(),
@@ -618,7 +628,8 @@ func (s *Store) updateUser(
 			err,
 		)
 	}
-	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
+	jobChange, err := s.handleUserJobs(ctx, tx, user)
+	if err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user jobs for user %d (%s). %w",
 			user.GetUserId(),
@@ -651,6 +662,8 @@ func (s *Store) updateUser(
 	if err := tx.Commit(); err != nil {
 		return 0, err
 	}
+
+	s.publishUserInfoChanged(ctx, accountID, user.GetUserId(), jobChange)
 
 	return rows, nil
 }
@@ -727,9 +740,9 @@ func (s *Store) handleUserLicenses(
 func (s *Store) handleUserJobs(
 	ctx context.Context,
 	tx *sql.Tx,
-	userId int32,
-	jobs []*users.UserJob,
-) error {
+	user *syncdata.DataUser,
+) (*userJobChange, error) {
+	jobs := user.GetJobs()
 	slices.SortFunc(jobs, func(a, b *users.UserJob) int {
 		if a.GetIsPrimary() && !b.GetIsPrimary() {
 			return -1
@@ -743,12 +756,12 @@ func (s *Store) handleUserJobs(
 	if len(jobs) == 0 {
 		stmt := tCitizensJobs.
 			DELETE().
-			WHERE(tCitizensJobs.UserID.EQ(mysql.Int32(userId))).
+			WHERE(tCitizensJobs.UserID.EQ(mysql.Int32(user.GetUserId()))).
 			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return fmt.Errorf("failed to execute user jobs delete statement. %w", err)
+			return nil, fmt.Errorf("failed to execute user jobs delete statement. %w", err)
 		}
-		return nil
+		return nil, nil
 	}
 
 	tJobs := tCitizensJobs.AS("user_job")
@@ -759,13 +772,28 @@ func (s *Store) handleUserJobs(
 			tJobs.IsPrimary,
 		).
 		FROM(tJobs).
-		WHERE(tJobs.UserID.EQ(mysql.Int32(userId))).
+		WHERE(tJobs.UserID.EQ(mysql.Int32(user.GetUserId()))).
 		ORDER_BY(tJobs.IsPrimary, tJobs.Job, tJobs.Grade)
 
 	currentJobs := []*users.UserJob{}
 	if err := selectStmt.QueryContext(ctx, tx, &currentJobs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return fmt.Errorf("failed to query current user jobs for user ID %d. %w", userId, err)
+			return nil, fmt.Errorf(
+				"failed to query current user jobs for user ID %d. %w",
+				user.GetUserId(),
+				err,
+			)
+		}
+	}
+
+	var jobChange *userJobChange
+	if currentPrimary := primaryJob(currentJobs); currentPrimary != nil {
+		if currentPrimary.GetJob() != user.GetJob() ||
+			currentPrimary.GetGrade() != user.GetJobGrade() {
+			jobChange = &userJobChange{
+				job:   user.GetJob(),
+				grade: user.GetJobGrade(),
+			}
 		}
 	}
 
@@ -779,7 +807,7 @@ func (s *Store) handleUserJobs(
 				tCitizensJobs.IsPrimary,
 			)
 		for _, t := range append(toAdd, toUpdate...) {
-			stmt = stmt.VALUES(userId, t.GetJob(), t.GetGrade(), t.GetIsPrimary())
+			stmt = stmt.VALUES(user.GetUserId(), t.GetJob(), t.GetGrade(), t.GetIsPrimary())
 		}
 		stmt = stmt.
 			ON_DUPLICATE_KEY_UPDATE(
@@ -788,10 +816,8 @@ func (s *Store) handleUserJobs(
 				tCitizensJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
 			)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return fmt.Errorf("failed to execute user jobs insert statement. %w", err)
+			return nil, fmt.Errorf("failed to execute user jobs insert statement. %w", err)
 		}
-
-		// TODO send event to user stream on (primary) job change and/or trigger userinfo refresh
 	}
 
 	if len(toRemove) > 0 {
@@ -801,14 +827,60 @@ func (s *Store) handleUserJobs(
 		}
 		stmt := tCitizensJobs.
 			DELETE().
-			WHERE(mysql.AND(tCitizensJobs.UserID.EQ(mysql.Int32(userId)), tCitizensJobs.Job.IN(jobExprs...))).
+			WHERE(mysql.AND(tCitizensJobs.UserID.EQ(mysql.Int32(user.GetUserId())), tCitizensJobs.Job.IN(jobExprs...))).
 			LIMIT(int64(len(toRemove)))
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return fmt.Errorf("failed to execute user jobs delete statement. %w", err)
+			return nil, fmt.Errorf("failed to execute user jobs delete statement. %w", err)
 		}
 	}
 
+	return jobChange, nil
+}
+
+func primaryJob(jobs []*users.UserJob) *users.UserJob {
+	for _, job := range jobs {
+		if job.GetIsPrimary() {
+			return job
+		}
+	}
+	if len(jobs) > 0 {
+		return jobs[0]
+	}
 	return nil
+}
+
+func (s *Store) publishUserInfoChanged(
+	ctx context.Context,
+	accountID *int64,
+	userID int32,
+	jobChange *userJobChange,
+) {
+	if jobChange == nil || accountID == nil || s.notifi == nil {
+		return
+	}
+
+	event := pkguserinfo.BuildUserInfoChangedEvent(
+		*accountID,
+		userID,
+		nil,
+		jobChange.job,
+		jobChange.grade,
+		s.enricher,
+	)
+
+	if err := s.notifi.SendUserEvent(ctx, userID, &notificationsevents.UserEvent{
+		Data: &notificationsevents.UserEvent_UserInfoChanged{
+			UserInfoChanged: event,
+		},
+	}); err != nil {
+		s.logger.Warn(
+			"failed to publish user info change event",
+			zap.Int32("user_id", userID),
+			zap.String("job", jobChange.job),
+			zap.Int32("job_grade", jobChange.grade),
+			zap.Error(err),
+		)
+	}
 }
 
 func compareJobs(

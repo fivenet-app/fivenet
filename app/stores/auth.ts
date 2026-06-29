@@ -73,6 +73,10 @@ export const useAuthStore = defineStore(
          * The list of role attributes assigned to the user.
          */
         const attributes = ref<RoleAttribute[]>([]);
+        /**
+         * Whether the current account can enter superuser mode.
+         */
+        const canBeSuperuser = ref<boolean>(false);
 
         /**
          * Set or unset the username.
@@ -143,6 +147,15 @@ export const useAuthStore = defineStore(
         const setPermissions = (perms: Permission[], attrs: RoleAttribute[]): void => {
             permissions.value = [...perms.sort()];
             attributes.value = [...attrs.sort()];
+            canBeSuperuser.value = perms.some((p) => p.guardName === 'internal-superuser-canbesuperuser');
+        };
+
+        /**
+         * Updates whether the current account can enter superuser mode.
+         * @param val - Whether superuser mode is available.
+         */
+        const setCanBeSuperuser = (val: boolean): void => {
+            canBeSuperuser.value = val;
         };
 
         /**
@@ -387,6 +400,7 @@ export const useAuthStore = defineStore(
             setUsername(null);
             setActiveChar(null);
             setPermissions([], []);
+            setCanBeSuperuser(false);
             setJobProps(undefined);
             setUserToken();
 
@@ -438,6 +452,7 @@ export const useAuthStore = defineStore(
 
             permissions,
             attributes,
+            canBeSuperuser,
 
             // Actions
             setUsername,
@@ -450,6 +465,7 @@ export const useAuthStore = defineStore(
             setUserToken,
             setActiveChar,
             setPermissions,
+            setCanBeSuperuser,
             setJobProps,
 
             chooseCharacter,

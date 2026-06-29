@@ -5546,6 +5546,22 @@ PollReq: published to `userinfo.poll.request` when an active user connects or re
 
 
 
+### resources.userinfo.UserGroupsChanged
+UserGroupsChanged used to signal live account group changes.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `account_id` | [int64](#int64) |  | The account the user belongs to |
+| `changed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Timestamp of when the change was detected |
+| `new_groups` | [resources.accounts.AccountGroups](#resourcesaccountsAccountGroups) |  | New account groups |
+| `can_be_superuser` | [bool](#bool) |  | Whether the account can enter superuser mode after the change |
+
+
+
+
+
 ### resources.userinfo.UserInfo
 
 
@@ -5567,7 +5583,7 @@ PollReq: published to `userinfo.poll.request` when an active user connects or re
 
 
 ### resources.userinfo.UserInfoChanged
-UserInfoChanged used to signal Job or JobGrade changes.
+UserInfoChanged used to signal live primary job or job grade changes.
 
 
 
@@ -5576,14 +5592,10 @@ UserInfoChanged used to signal Job or JobGrade changes.
 | `account_id` | [int64](#int64) |  | The account the user belongs to |
 | `user_id` | [int32](#int32) |  | The unique user identifier within the account |
 | `changed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Timestamp of when the change was detected |
-| `old_job` | [string](#string) |  | Previous job title |
 | `new_job` | [string](#string) | optional | New job title |
 | `new_job_label` | [string](#string) | optional |  |
-| `old_job_grade` | [int32](#int32) |  | Previous job grade |
 | `new_job_grade` | [int32](#int32) | optional | New job grade |
 | `new_job_grade_label` | [string](#string) | optional | New job grade label |
-| `can_be_superuser` | [bool](#bool) | optional | Can the user be superuser (by group or license) |
-| `superuser` | [bool](#bool) | optional | Superuser state |
 
 
 
@@ -5651,6 +5663,7 @@ User related events
 | `notification` | [resources.notifications.Notification](#resourcesnotificationsNotification) |  | Notifications |
 | `notifications_read_count` | [int64](#int64) |  |  |
 | `user_info_changed` | [resources.userinfo.UserInfoChanged](#resourcesuserinfoUserInfoChanged) |  |  |
+| `user_groups_changed` | [resources.userinfo.UserGroupsChanged](#resourcesuserinfoUserGroupsChanged) |  |  |
 
 
 

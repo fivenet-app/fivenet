@@ -19,7 +19,7 @@ func TestSendVehicles(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, zap.NewNop(), &config.Config{}, nil, nil, nil)
+	store := New(db, zap.NewNop(), &config.Config{}, nil, nil, nil, nil, nil)
 
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_owned_vehicles.*ON DUPLICATE KEY UPDATE.*`).
 		WithArgs(int32(3), "police", "ABC DEF1", "adder", "car").
@@ -47,7 +47,7 @@ func TestDeleteVehicles(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, zap.NewNop(), &config.Config{}, nil, nil, nil)
+	store := New(db, zap.NewNop(), &config.Config{}, nil, nil, nil, nil, nil)
 
 	mock.ExpectExec(`(?s)DELETE FROM .*fivenet_owned_vehicles.*plate IN \(\?, \?\).*LIMIT \?.*`).
 		WithArgs("ABC DEF1", "XYZ 123", int64(2)).

@@ -9,6 +9,34 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *UserGroupsChanged) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ChangedAt
+	if m.ChangedAt != nil {
+		if v, ok := any(m.GetChangedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: NewGroups
+	if m.NewGroups != nil {
+		if v, ok := any(m.GetNewGroups()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserInfo) Sanitize() error {
 	if m == nil {
 		return nil
@@ -62,9 +90,6 @@ func (m *UserInfoChanged) Sanitize() error {
 	if m.NewJobLabel != nil {
 		*m.NewJobLabel = htmlsanitizer.SanitizeAndUnescape(*m.NewJobLabel)
 	}
-
-	// Field: OldJob
-	m.OldJob = htmlsanitizer.SanitizeAndUnescape(m.OldJob)
 
 	return nil
 }

@@ -166,16 +166,20 @@ func (s *Store) AddUserOAuth2Conn(
 }
 
 func (s *Store) handleAccountUpdate(ctx context.Context, data *activity.AccountUpdate) error {
-	tAccounts := table.FivenetAccounts
-
-	var groups *accounts.AccountGroups
-	if data.GetGroups() != nil {
-		if data.GetGroups() != nil && len(data.GetGroups().GetGroups()) > 0 {
-			groups = data.GetGroups()
-		} else if data.GetGroup() != "" {
-			groups = &accounts.AccountGroups{Groups: []string{data.GetGroup()}}
-		}
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
 	}
+	defer tx.Rollback()
+
+	tAccounts := table.FivenetAccounts
+	groups := accountGroupsFromSyncUpdate(data)
+
+	current, err := s.loadAccountGroupState(ctx, tx, data.GetLicense())
+	if err != nil {
+		return err
+	}
+	changed := current != nil && !accountGroupsEqual(accountGroupsFromState(current), groups)
 
 	stmt := tAccounts.
 		UPDATE(tAccounts.Groups).
@@ -183,8 +187,16 @@ func (s *Store) handleAccountUpdate(ctx context.Context, data *activity.AccountU
 		WHERE(tAccounts.License.EQ(mysql.String(data.GetLicense()))).
 		LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to update account. %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	if changed {
+		s.publishAccountGroupsChanged(ctx, current.ID, current.License, groups)
 	}
 
 	return nil

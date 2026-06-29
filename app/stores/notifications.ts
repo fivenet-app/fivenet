@@ -10,7 +10,7 @@ import {
     NotificationType,
     type Notification as ProtoNotification,
 } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserInfoChanged } from '~~/gen/ts/resources/userinfo/userinfo';
+import type { UserGroupsChanged, UserInfoChanged } from '~~/gen/ts/resources/userinfo/userinfo';
 import type { MarkNotificationsRequest, StreamRequest, StreamResponse } from '~~/gen/ts/services/notifications/notifications';
 import { useCalendarStore } from './calendar';
 import { useMailerStore } from './mailer';
@@ -174,6 +174,17 @@ export const useNotificationsStore = defineStore(
         };
 
         /**
+         * Handles the user groups changed event by updating the current account capabilities.
+         * @param userGroupsChanged - The user groups change data from the server.
+         */
+        const handleUserGroupsChangedEvent = (
+            userGroupsChanged: UserGroupsChanged,
+            authStore: ReturnType<typeof useAuthStore>,
+        ): void => {
+            authStore.setCanBeSuperuser(userGroupsChanged.canBeSuperuser);
+        };
+
+        /**
          * Handles a user event by delegating to the appropriate handler based on the event type.
          * @param resp - The stream response containing the user event data.
          * @param authStore - The authentication store instance.
@@ -192,6 +203,8 @@ export const useNotificationsStore = defineStore(
                 notificationsCount.value = userEvent.data.notificationsReadCount;
             } else if (userEvent.data.oneofKind === 'userInfoChanged') {
                 handleUserInfoChangedEvent(userEvent.data.userInfoChanged);
+            } else if (userEvent.data.oneofKind === 'userGroupsChanged') {
+                handleUserGroupsChangedEvent(userEvent.data.userGroupsChanged, authStore);
             } else {
                 logger.warn('Unknown userEvent data received - oneofKind:', userEvent.data.oneofKind, userEvent.data);
             }
