@@ -604,7 +604,7 @@ func (s *Store) UpsertCalendarEntry(
 				),
 			)
 		} else {
-			values = append(values, oldEntry.RecurrenceVersion)
+			values = append(values, oldEntry.GetRecurrenceVersion())
 		}
 
 		stmt := tCalendarEntry.

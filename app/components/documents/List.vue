@@ -161,9 +161,10 @@ const isPinnedDocumentsVisible = ref<boolean>(false);
 const templateDrawer = overlay.create(TemplateDrawer);
 
 const inputRef = useTemplateRef('inputRef');
+const focusInput = () => inputRef.value?.inputRef?.focus();
 
 defineShortcuts({
-    '/': () => inputRef.value?.inputRef?.focus(),
+    '/': focusInput,
 });
 </script>
 
@@ -477,7 +478,11 @@ defineShortcuts({
                 :error="error"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="data?.documents.length === 0" :type="$t('common.document', 2)" />
+            <DataNoDataBlock
+                v-else-if="data?.documents.length === 0"
+                :type="$t('common.document', 2)"
+                :focus="focusInput"
+            />
 
             <ul
                 v-else-if="data?.documents || isRequestPending(status)"

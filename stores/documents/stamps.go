@@ -125,7 +125,7 @@ func (s *Store) GetStamp(ctx context.Context, stampID int64) (*documentsstamps.S
 		return nil, err
 	}
 
-	if stamp.Id == 0 {
+	if stamp.GetId() == 0 {
 		return nil, nil
 	}
 

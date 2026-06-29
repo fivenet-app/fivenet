@@ -30,7 +30,7 @@ func CreateUserActivities(ctx context.Context, tx qrm.DB, activities ...*UserAct
 				activity.GetTargetUserId(),
 				activity.GetType(),
 				activity.GetReason(),
-				activity.Data,
+				activity.GetData(),
 			)
 	}
 

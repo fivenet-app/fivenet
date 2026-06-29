@@ -126,7 +126,7 @@ func (s *Store) GetApprovalTask(
 		}
 	}
 
-	if task.Id == 0 {
+	if task.GetId() == 0 {
 		return nil, nil
 	}
 

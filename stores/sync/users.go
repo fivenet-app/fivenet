@@ -89,7 +89,7 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 	for i := range us {
 		userIds = append(userIds, mysql.Int32(us[i].GetUserId()))
 
-		if len(us[i].Jobs) == 0 {
+		if len(us[i].GetJobs()) == 0 {
 			us[i].Jobs = []*users.UserJob{
 				{Job: us[i].GetJob(), Grade: us[i].GetJobGrade(), IsPrimary: true},
 			}
@@ -119,7 +119,7 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 			}
 		}
 
-		if len(us[i].PhoneNumbers) == 0 {
+		if len(us[i].GetPhoneNumbers()) == 0 {
 			if us[i].GetPhoneNumber() != "" {
 				us[i].PhoneNumbers = []*users.PhoneNumber{
 					{Number: us[i].GetPhoneNumber(), IsPrimary: true},
@@ -233,6 +233,8 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 
 	if len(toUpdate) > 0 {
 		for _, user := range toUpdate {
+			// TODO compare user's primary job and notify user via stream userInfoChanged event
+
 			affected, err := s.updateUser(ctx, syncedAt, user)
 			if err != nil {
 				return 0, fmt.Errorf(
@@ -301,9 +303,9 @@ func (s *Store) createUser(
 		).
 		VALUES(
 			user.GetUserId(),
-			utils.GetLicenseFromIdentifier(user.Identifier),
-			user.Identifier,
-			user.Firstname,
+			utils.GetLicenseFromIdentifier(user.GetIdentifier()),
+			user.GetIdentifier(),
+			user.GetFirstname(),
 			user.Lastname,
 			user.GetDateofbirth(),
 			user.GetJob(),
@@ -494,8 +496,22 @@ func (s *Store) createOrUpdateSyncUserEntry(
 	}
 
 	syncStmt := tSyncUser.
-		INSERT(tSyncUser.UserID, tSyncUser.Identifier, tSyncUser.SourceUpdatedAt, tSyncUser.LastSyncedAt, tSyncUser.DataJSON, tSyncUser.DataHash).
-		VALUES(user.GetUserId(), user.GetIdentifier(), mysql.NULL, timestamp.New(syncedAt), out, hash).
+		INSERT(
+			tSyncUser.UserID,
+			tSyncUser.Identifier,
+			tSyncUser.SourceUpdatedAt,
+			tSyncUser.LastSyncedAt,
+			tSyncUser.DataJSON,
+			tSyncUser.DataHash,
+		).
+		VALUES(
+			user.GetUserId(),
+			user.GetIdentifier(),
+			mysql.NULL,
+			timestamp.New(syncedAt),
+			out,
+			hash,
+		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tSyncUser.Identifier.SET(mysql.RawString("VALUES(`identifier`)")),
 			tSyncUser.SourceUpdatedAt.SET(mysql.RawTimestamp("VALUES(`source_updated_at`)")),
@@ -517,7 +533,10 @@ func (s *Store) setUserBloodType(ctx context.Context, tx *sql.Tx, userId int32) 
 	bloodType := BloodTypes[idx]
 
 	stmt := tUserProps.
-		INSERT(tUserProps.UserID, tUserProps.BloodType).
+		INSERT(
+			tUserProps.UserID,
+			tUserProps.BloodType,
+		).
 		VALUES(userId, bloodType)
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		if !dbutils.IsDuplicateError(err) {
@@ -540,9 +559,40 @@ func (s *Store) updateUser(
 	defer tx.Rollback()
 
 	stmt := tUsers.
-		UPDATE(tUsers.ID, tUsers.License, tUsers.Identifier, tUsers.Firstname, tUsers.Lastname, tUsers.Dateofbirth, tUsers.Job, tUsers.JobGrade, tUsers.Sex, tUsers.PhoneNumber, tUsers.Height, tUsers.Visum, tUsers.Playtime).
-		SET(user.GetUserId(), utils.GetLicenseFromIdentifier(user.Identifier), user.Identifier, user.Firstname, user.Lastname, user.Dateofbirth, user.Job, user.JobGrade, user.Sex, user.PhoneNumber, user.Height, user.Visum, user.Playtime).
-		WHERE(mysql.OR(tUsers.ID.EQ(mysql.Int32(user.GetUserId())), tUsers.Identifier.EQ(mysql.String(user.GetIdentifier())))).
+		UPDATE(
+			tUsers.ID,
+			tUsers.License,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Sex,
+			tUsers.PhoneNumber,
+			tUsers.Height,
+			tUsers.Visum,
+			tUsers.Playtime,
+		).
+		SET(
+			user.GetUserId(),
+			utils.GetLicenseFromIdentifier(user.GetIdentifier()),
+			user.GetIdentifier(),
+			user.GetFirstname(),
+			user.Lastname,
+			user.GetDateofbirth(),
+			user.GetJob(),
+			user.GetJobGrade(),
+			user.Sex,
+			user.PhoneNumber,
+			user.Height,
+			user.Visum,
+			user.Playtime,
+		).
+		WHERE(mysql.OR(
+			tUsers.ID.EQ(mysql.Int32(user.GetUserId())),
+			tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))),
+		).
 		LIMIT(1)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -703,10 +753,15 @@ func (s *Store) handleUserJobs(
 
 	tJobs := tCitizensJobs.AS("user_job")
 	selectStmt := tJobs.
-		SELECT(tJobs.Job, tJobs.Grade, tJobs.IsPrimary).
+		SELECT(
+			tJobs.Job,
+			tJobs.Grade,
+			tJobs.IsPrimary,
+		).
 		FROM(tJobs).
 		WHERE(tJobs.UserID.EQ(mysql.Int32(userId))).
 		ORDER_BY(tJobs.IsPrimary, tJobs.Job, tJobs.Grade)
+
 	currentJobs := []*users.UserJob{}
 	if err := selectStmt.QueryContext(ctx, tx, &currentJobs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -735,6 +790,8 @@ func (s *Store) handleUserJobs(
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user jobs insert statement. %w", err)
 		}
+
+		// TODO send event to user stream on (primary) job change and/or trigger userinfo refresh
 	}
 
 	if len(toRemove) > 0 {
@@ -745,7 +802,7 @@ func (s *Store) handleUserJobs(
 		stmt := tCitizensJobs.
 			DELETE().
 			WHERE(mysql.AND(tCitizensJobs.UserID.EQ(mysql.Int32(userId)), tCitizensJobs.Job.IN(jobExprs...))).
-			LIMIT(25)
+			LIMIT(int64(len(toRemove)))
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user jobs delete statement. %w", err)
 		}
@@ -813,7 +870,11 @@ func (s *Store) handleUserPhoneNumbers(
 
 	tPhoneNumbers := tCitizensPhoneNumbers.AS("phone_number")
 	selectStmt := tPhoneNumbers.
-		SELECT(tPhoneNumbers.UserID, tPhoneNumbers.PhoneNumber, tPhoneNumbers.IsPrimary).
+		SELECT(
+			tPhoneNumbers.UserID,
+			tPhoneNumbers.PhoneNumber,
+			tPhoneNumbers.IsPrimary,
+		).
 		FROM(tPhoneNumbers).
 		WHERE(tPhoneNumbers.UserID.EQ(mysql.Int32(userId))).
 		ORDER_BY(tPhoneNumbers.IsPrimary, tPhoneNumbers.PhoneNumber)

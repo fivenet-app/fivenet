@@ -78,7 +78,7 @@ func (s *Server) GetQualificationAccess(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-		if quali == nil || !quali.Public {
+		if quali == nil || !quali.GetPublic() {
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 	}

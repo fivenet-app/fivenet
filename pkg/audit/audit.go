@@ -195,7 +195,7 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 			tAudit.Data,
 		).
 		VALUES(
-			in.UserId,
+			in.GetUserId(),
 			in.GetUserJob(),
 			in.TargetUserId,
 			in.TargetUserJob,

@@ -168,8 +168,8 @@ func (x *AppConfig) Migrate() {
 	if x.GetPerms() != nil && len(x.GetPerms().GetDefault()) > 0 {
 		// Remove the `completor.CompletorService/CompleteJobs` permission
 		x.GetPerms().SetDefault(slices.DeleteFunc(x.GetPerms().GetDefault(), func(v *Perm) bool {
-			return (v.Category == "CompletorService" || v.Category == "completor.CompletorService") &&
-				v.Name == "CompleteJobs"
+			return (v.GetCategory() == "CompletorService" || v.GetCategory() == "completor.CompletorService") &&
+				v.GetName() == "CompleteJobs"
 		}))
 	}
 }

@@ -46,8 +46,13 @@ func (s *Housekeeper) unitKVPing(ctx context.Context) error {
 			return nil
 
 		case e := <-watch.Updates():
-			if e == nil || (e.Operation() != jetstream.KeyValueDelete &&
-				e.Operation() != jetstream.KeyValuePurge) {
+			// Ignore nil event
+			if e == nil {
+				continue
+			}
+			// We only care about expiry events
+			if e.Operation() != jetstream.KeyValueDelete &&
+				e.Operation() != jetstream.KeyValuePurge {
 				continue
 			}
 

@@ -458,7 +458,7 @@ func (s *Server) ChooseCharacter(
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
-	canBeSuperuser := account.Groups.ContainsAnyGroup(s.superuserGroups) ||
+	canBeSuperuser := account.GetGroups().ContainsAnyGroup(s.superuserGroups) ||
 		slices.Contains(s.superuserUsers, currentAccClaims.Subject)
 
 	if err := s.ui.RefreshUserInfo(ctx, char.GetUserId()); err != nil {
@@ -473,8 +473,8 @@ func (s *Server) ChooseCharacter(
 	// If char lock is active, make sure that the user is choosing the active char
 	if !canBeSuperuser &&
 		s.appCfg.Get().Auth.GetLastCharLock() &&
-		account.LastChar != nil &&
-		*account.LastChar != req.GetCharId() {
+		account.GetLastChar() > 0 &&
+		account.GetLastChar() != req.GetCharId() {
 		return nil, errorsgrpcauth.ErrCharLock
 	}
 
@@ -498,7 +498,7 @@ func (s *Server) ChooseCharacter(
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
-	grpc_audit.SetUser(ctx, char.UserId, char.Job)
+	grpc_audit.SetUser(ctx, char.GetUserId(), char.GetJob())
 
 	// Ensure can be superuser is set on account claims
 	accClaims := auth.MapAccountToClaims(account)
@@ -507,7 +507,7 @@ func (s *Server) ChooseCharacter(
 	}
 
 	// Ensure superuser is set on user claims
-	userClaims := auth.MapUserToClaims(account.Id, char)
+	userClaims := auth.MapUserToClaims(account.GetId(), char)
 	if canBeSuperuser && currentUserClaims != nil && currentUserClaims.Superuser != nil &&
 		*currentUserClaims.Superuser {
 		userClaims.Superuser = currentUserClaims.Superuser
@@ -549,7 +549,7 @@ func (s *Server) ChooseCharacter(
 	return &pbauth.ChooseCharacterResponse{
 		Token:       userToken,
 		Expires:     timestamp.New(currentAccClaims.ExpiresAt.Time),
-		Username:    account.Username,
+		Username:    account.GetUsername(),
 		JobProps:    jProps,
 		Char:        char,
 		Permissions: ps,
@@ -653,10 +653,10 @@ func (s *Server) ImpersonateJob(
 		userClaims.OriginalJob = nil
 	}
 
-	canBeSuperuser := account.Groups.ContainsAnyGroup(s.superuserGroups) ||
+	canBeSuperuser := account.GetGroups().ContainsAnyGroup(s.superuserGroups) ||
 		slices.Contains(s.superuserUsers, accClaims.Subject)
 
-	ps, attrs, err := s.listUserPerms(ctx, char, canBeSuperuser, userInfo.Superuser)
+	ps, attrs, err := s.listUserPerms(ctx, char, canBeSuperuser, userInfo.GetSuperuser())
 	if err != nil {
 		return nil, err
 	}
@@ -712,10 +712,10 @@ func (s *Server) SetSuperuserMode(
 		req.Job = &job
 	}
 
-	char, _, err := s.getCharacter(ctx, userInfo.UserId)
+	char, _, err := s.getCharacter(ctx, userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(
-			fmt.Errorf("failed to get char by id %d. %w", userInfo.UserId, err),
+			fmt.Errorf("failed to get char by id %d. %w", userInfo.GetUserId(), err),
 			errorsauth.ErrNoCharFound,
 		)
 	}

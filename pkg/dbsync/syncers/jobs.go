@@ -89,14 +89,14 @@ func (s *JobsSync) applyFiltersAndRetrieveGrades(
 			// Apply filters
 			filtered := false
 			for _, filter := range sQuery.Filters {
-				if filter.CompiledPattern.MatchString(job.Name) {
+				if filter.CompiledPattern.MatchString(job.GetName()) {
 					switch filter.Action {
 					case dbsyncconfig.FilterActionDrop:
 						filtered = true
 
 					case dbsyncconfig.FilterActionReplace:
 						job.Name = filter.CompiledPattern.ReplaceAllString(
-							job.Name,
+							job.GetName(),
 							filter.Replacement,
 						)
 

@@ -464,7 +464,7 @@ func (w *Workflow) autoCloseDocument(
 			tDocument.Closed.SET(mysql.Bool(true)),
 		).
 		WHERE(mysql.AND(
-			tDocument.ID.EQ(mysql.Int64(state.DocumentId)),
+			tDocument.ID.EQ(mysql.Int64(state.GetDocumentId())),
 		)).
 		LIMIT(1)
 
@@ -473,7 +473,7 @@ func (w *Workflow) autoCloseDocument(
 	}
 
 	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
-		DocumentId:   state.DocumentId,
+		DocumentId:   state.GetDocumentId(),
 		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED,
 		Reason:       &message,
 		CreatorId:    doc.CreatorId,

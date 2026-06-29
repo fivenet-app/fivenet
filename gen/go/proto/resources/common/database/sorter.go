@@ -85,14 +85,14 @@ func (b *SorterBuilder) Build(s *Sort) []mysql.OrderByClause {
 	out := make([]mysql.OrderByClause, 0, 4)
 	fallbackApplied := false
 
-	if s != nil && len(s.Columns) > 0 {
+	if s != nil && len(s.GetColumns()) > 0 {
 		count := 0
 		// apply in given order; unknown ids use unknownDefaultID fallback if set
-		for _, c := range s.Columns {
+		for _, c := range s.GetColumns() {
 			if b.maxColumns > 0 && count >= b.maxColumns {
 				break
 			}
-			spec, ok := b.allowed[c.Id]
+			spec, ok := b.allowed[c.GetId()]
 			if !ok && b.unknownDefaultID != "" && !fallbackApplied {
 				spec, ok = b.allowed[b.unknownDefaultID]
 				fallbackApplied = true
@@ -100,7 +100,7 @@ func (b *SorterBuilder) Build(s *Sort) []mysql.OrderByClause {
 			if !ok {
 				continue
 			}
-			order := spec.Order(c.Desc)
+			order := spec.Order(c.GetDesc())
 			out = append(out, order...)
 			count++
 		}

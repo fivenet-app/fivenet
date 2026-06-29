@@ -195,11 +195,15 @@ func (s *Server) DeleteMugshot(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if props.MugshotFileId == nil || *props.MugshotFileId == 0 {
+	if props.MugshotFileId == nil || props.GetMugshotFileId() == 0 {
 		return &pbcitizens.DeleteMugshotResponse{}, nil
 	}
 
-	if err := s.mugshotHandler.Delete(ctx, userInfo.GetUserId(), *props.MugshotFileId); err != nil {
+	if err := s.mugshotHandler.Delete(
+		ctx,
+		userInfo.GetUserId(),
+		props.GetMugshotFileId(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 

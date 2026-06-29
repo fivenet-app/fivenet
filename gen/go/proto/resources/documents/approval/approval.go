@@ -11,7 +11,7 @@ func (x *ApprovalTask) SetJobGrade(grade int32) {
 }
 
 func (x *Approval) GetJob() string {
-	return *x.UserJob
+	return x.GetUserJob()
 }
 
 func (x *Approval) GetJobGrade() int32 {
@@ -35,20 +35,21 @@ func (x *Approval) SetJobGradeLabel(label string) {
 }
 
 func (x *ApprovalPolicy) Default() {
-	if x.SnapshotDate == nil {
+	if x.GetSnapshotDate() == nil {
 		x.SnapshotDate = timestamp.Now()
 	}
 
-	if x.RuleKind == ApprovalRuleKind_APPROVAL_RULE_KIND_UNSPECIFIED {
+	if x.GetRuleKind() == ApprovalRuleKind_APPROVAL_RULE_KIND_UNSPECIFIED {
 		x.RuleKind = ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL
 	}
 
-	if x.RuleKind == ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY && x.GetRequiredCount() == 0 {
+	if x.GetRuleKind() == ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY &&
+		x.GetRequiredCount() == 0 {
 		requiredCount := int32(0)
 		x.RequiredCount = &requiredCount
 	}
 
-	if x.OnEditBehavior == OnEditBehavior_ON_EDIT_BEHAVIOR_UNSPECIFIED {
+	if x.GetOnEditBehavior() == OnEditBehavior_ON_EDIT_BEHAVIOR_UNSPECIFIED {
 		x.OnEditBehavior = OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS
 	}
 }

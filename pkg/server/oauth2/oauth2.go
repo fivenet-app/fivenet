@@ -417,7 +417,7 @@ func (o *OAuth2) handleLoginCallback(
 			LoginRedirBase+"?oauth2Login=failed&reason=unconnected",
 		)
 		return
-	} else if account.Id == 0 {
+	} else if account.GetId() == 0 {
 		o.logger.Error(
 			"invalid account id from userinfo",
 			zap.String("provider", provider.GetName()),
@@ -429,13 +429,13 @@ func (o *OAuth2) handleLoginCallback(
 
 	if err := o.userInfoStore.updateUserInfo(
 		c.Request.Context(),
-		account.Id,
+		account.GetId(),
 		provider.GetName(),
 		uInfo,
 	); err != nil {
 		o.logger.Error(
 			"failed to update oauth2 user info for account id",
-			zap.Int64("account_id", account.Id),
+			zap.Int64("account_id", account.GetId()),
 			zap.String("provider", provider.GetName()),
 			zap.Error(err),
 		)
@@ -461,7 +461,7 @@ func (o *OAuth2) handleLoginCallback(
 	c.Redirect(
 		http.StatusTemporaryRedirect,
 		fmt.Sprintf(LoginRedirBase+"?oauth2Login=success&u=%s",
-			url.QueryEscape(account.Username),
+			url.QueryEscape(account.GetUsername()),
 		),
 	)
 }

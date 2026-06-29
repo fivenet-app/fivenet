@@ -120,7 +120,7 @@ func (x *ExtractedContent) GetSummary(length int) string {
 		return ""
 	}
 
-	return utils.SummaryFromText(x.Text, length)
+	return utils.SummaryFromText(x.GetText(), length)
 }
 
 func Empty() *Content {

@@ -131,7 +131,7 @@ func (s *Store) GetApproval(
 		}
 	}
 
-	if approval.Id == 0 {
+	if approval.GetId() == 0 {
 		return nil, nil
 	}
 

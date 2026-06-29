@@ -40,8 +40,7 @@ func (s *Store) CheckIfUserHasAccessToCalendarIDs(
 		return dest, nil
 	}
 
-	// TODO what?
-	tCreator := tCalendar.AS("creator")
+	tCalCreator := tCalendar.AS("creator")
 
 	ids := make([]mysql.Expression, len(calendarIDs))
 	for i := range calendarIDs {
@@ -79,8 +78,8 @@ func (s *Store) CheckIfUserHasAccessToCalendarIDs(
 			tCalendar.ID,
 		).
 		FROM(tCalendar.
-			LEFT_JOIN(tCreator,
-				tCalendar.CreatorID.EQ(tCreator.ID),
+			LEFT_JOIN(tCalCreator,
+				tCalendar.CreatorID.EQ(tCalCreator.ID),
 			),
 		).
 		WHERE(mysql.AND(

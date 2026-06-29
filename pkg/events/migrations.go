@@ -38,7 +38,7 @@ type Migration struct {
 // runMigrations executes any pending migrations.  On a fresh install (no version recorded),
 // it records the latest migration ID and does nothing else.
 func runMigrations(ctx context.Context, logger *zap.Logger, js *JSWrapper) error {
-	// 1) Ensure the migration tracking bucket exists
+	// Ensure the migration tracking bucket exists
 	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      migrationBucket,
 		Description: "Tracks applied migrations",

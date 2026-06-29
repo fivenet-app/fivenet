@@ -109,10 +109,10 @@ func (s *Server) UpsertStamp(
 	st := req.GetStamp()
 
 	// Stamps are job only and are currently limited to 5!
-	if st.Access == nil {
+	if st.GetAccess() == nil {
 		st.Access = &documentsstamps.StampAccess{}
 	}
-	if len(st.Access.Jobs) == 0 {
+	if len(st.GetAccess().GetJobs()) == 0 {
 		st.Access.Jobs = append(st.Access.Jobs, &documentsstamps.StampJobAccess{
 			Job:          userInfo.GetJob(),
 			MinimumGrade: userInfo.GetJobGrade(),

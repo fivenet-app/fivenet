@@ -273,9 +273,9 @@ func (s *Server) UpdateCalendar(
 
 	if req.GetCalendar().GetColor() == "" {
 		if isBirthdayCalendar && currentCalendar.GetColor() != "" {
-			req.Calendar.Color = currentCalendar.GetColor()
+			req.Calendar.SetColor(currentCalendar.GetColor())
 		} else {
-			req.Calendar.Color = "blue"
+			req.Calendar.SetColor("blue")
 		}
 	}
 
@@ -291,12 +291,12 @@ func (s *Server) UpdateCalendar(
 
 	if isBirthdayCalendar {
 		req.Calendar.Job = currentCalendar.Job
-		req.Calendar.Name = currentCalendar.Name
-		req.Calendar.Description = currentCalendar.Description
-		req.Calendar.Public = currentCalendar.Public
-		req.Calendar.Closed = currentCalendar.Closed
-		if currentCalendar.Color != "" && req.GetCalendar().GetColor() == "" {
-			req.Calendar.Color = currentCalendar.Color
+		req.Calendar.SetName(currentCalendar.GetName())
+		req.Calendar.SetDescription(currentCalendar.GetDescription())
+		req.Calendar.SetPublic(currentCalendar.GetPublic())
+		req.Calendar.SetClosed(currentCalendar.GetClosed())
+		if currentCalendar.GetColor() != "" && req.GetCalendar().GetColor() == "" {
+			req.Calendar.SetColor(currentCalendar.GetColor())
 		}
 	}
 
@@ -304,7 +304,7 @@ func (s *Server) UpdateCalendar(
 		!fields.Contains(permscalendar.CalendarServiceCreateCalendarFieldsPermValuePublic) &&
 		currentCalendar.GetPublic() &&
 		req.GetCalendar().GetPublic() {
-		req.Calendar.Public = false
+		req.Calendar.SetPublic(false)
 	}
 
 	if !s.canEditCalendarDiscordSettings(userInfo) {

@@ -168,9 +168,10 @@ const columnFilters = computed<ColumnFiltersState>(() => [
 ]);
 
 const inputRef = useTemplateRef('inputRef');
+const focusInput = () => inputRef.value?.inputRef?.focus();
 
 defineShortcuts({
-    '/': () => inputRef.value?.inputRef?.focus(),
+    '/': focusInput,
 });
 </script>
 

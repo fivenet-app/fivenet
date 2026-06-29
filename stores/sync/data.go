@@ -27,6 +27,7 @@ func (s *Store) SendData(
 		if resp.RowsAffected, err = s.handleJobsData(ctx, d.Jobs.GetJobs()); err != nil {
 			return nil, fmt.Errorf("failed to handle jobs data. %w", err)
 		}
+
 	case *pbsync.SendDataRequest_Licenses:
 		if resp.RowsAffected, err = s.handleLicensesData(
 			ctx,
@@ -34,10 +35,12 @@ func (s *Store) SendData(
 		); err != nil {
 			return nil, fmt.Errorf("failed to handle licenses data. %w", err)
 		}
+
 	case *pbsync.SendDataRequest_Users:
 		if resp.RowsAffected, err = s.handleUsersData(ctx, d.Users.GetUsers()); err != nil {
 			return nil, fmt.Errorf("failed to handle users data. %w", err)
 		}
+
 	case *pbsync.SendDataRequest_Vehicles:
 		if resp.RowsAffected, err = s.handleVehiclesData(
 			ctx,
@@ -45,6 +48,7 @@ func (s *Store) SendData(
 		); err != nil {
 			return nil, fmt.Errorf("failed to handle vehicles data. %w", err)
 		}
+
 	case *pbsync.SendDataRequest_Accounts:
 		if resp.RowsAffected, err = s.handleAccountsData(
 			ctx,
@@ -53,6 +57,7 @@ func (s *Store) SendData(
 		); err != nil {
 			return nil, fmt.Errorf("failed to handle accounts data. %w", err)
 		}
+
 	case *pbsync.SendDataRequest_UserLocations:
 		if resp.RowsAffected, err = s.handleUserLocations(
 			ctx,
@@ -61,6 +66,7 @@ func (s *Store) SendData(
 		); err != nil {
 			return nil, fmt.Errorf("failed to handle user locations data. %w", err)
 		}
+
 	case *pbsync.SendDataRequest_LastCharId:
 		if resp.RowsAffected, err = s.handleLastCharId(ctx, d.LastCharId); err != nil {
 			return nil, fmt.Errorf("failed to handle last char ID data. %w", err)

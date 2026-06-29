@@ -694,7 +694,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 						X:          x,
 						Y:          y,
 						Postal:     postal,
-						CreatorJob: new(user.Job),
+						CreatorJob: new(user.GetJob()),
 					}, true, unit.GetJob()); err != nil {
 						return nil, false, err
 					}

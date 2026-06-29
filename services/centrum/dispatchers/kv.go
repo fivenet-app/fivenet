@@ -45,3 +45,7 @@ func (s *DispatchersDB) Get(
 
 	return dispatchers, nil
 }
+
+func (s *DispatchersDB) Range(fn func(key string, value *centrumdispatchers.Dispatchers) bool) {
+	s.store.Range(fn)
+}

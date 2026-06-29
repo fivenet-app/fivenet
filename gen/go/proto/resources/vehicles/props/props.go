@@ -34,12 +34,12 @@ func (x *VehicleProps) HandleChanges(
 		}
 		updateSets = append(
 			updateSets,
-			tVehicleProps.WantedAt.SET(dbutils.TimestampToMySQL(in.WantedAt)),
+			tVehicleProps.WantedAt.SET(dbutils.TimestampToMySQL(in.GetWantedAt())),
 		)
 	} else {
 		in.Wanted = x.Wanted
 		in.WantedReason = x.WantedReason
-		in.WantedAt = x.WantedAt
+		in.WantedAt = x.GetWantedAt()
 	}
 
 	if len(updateSets) > 0 {
@@ -56,7 +56,7 @@ func (x *VehicleProps) HandleChanges(
 				mysql.CURRENT_TIMESTAMP(),
 				in.Wanted,
 				in.WantedReason,
-				in.WantedAt,
+				in.GetWantedAt(),
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				updateSets...,

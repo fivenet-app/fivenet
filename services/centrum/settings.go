@@ -26,7 +26,7 @@ func (s *Server) GetSettings(
 	if settings.GetAccess() != nil && settings.GetAccess().GetJobs() != nil {
 		for _, ja := range settings.GetAccess().GetJobs() {
 			// Lookup job info by using SourceJob field
-			j := s.enricher.GetJobByName(ja.SourceJob)
+			j := s.enricher.GetJobByName(ja.GetSourceJob())
 			if j != nil {
 				ja.JobLabel = &j.Label
 			} else {
@@ -38,7 +38,7 @@ func (s *Server) GetSettings(
 	if settings.GetOfferedAccess() != nil && settings.GetOfferedAccess().GetJobs() != nil {
 		for _, ja := range settings.GetOfferedAccess().GetJobs() {
 			// Lookup job info by using SourceJob field
-			j := s.enricher.GetJobByName(ja.SourceJob)
+			j := s.enricher.GetJobByName(ja.GetSourceJob())
 			if j != nil {
 				ja.JobLabel = &j.Label
 			} else {

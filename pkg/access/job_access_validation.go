@@ -49,17 +49,18 @@ func ValidateJobAccessEntries(
 			jobMap[ja.GetJob()] = j
 		}
 
-		if int(ja.GetMinimumGrade()) >= len(j.Grades) {
-			if !slices.ContainsFunc(j.Grades, func(g *jobs.JobGrade) bool {
+		jgs := j.GetGrades()
+		if int(ja.GetMinimumGrade()) >= len(jgs) {
+			if !slices.ContainsFunc(jgs, func(g *jobs.JobGrade) bool {
 				return g.GetGrade() == ja.GetMinimumGrade()
 			}) {
 				if fixEntries {
-					if len(j.Grades) == 0 {
+					if len(jgs) == 0 {
 						return true
 					}
 
-					jg := j.Grades[len(j.Grades)-1]
-					ja.SetMinimumGrade(jg.Grade)
+					jg := jgs[len(jgs)-1]
+					ja.SetMinimumGrade(jg.GetGrade())
 					return false
 				}
 

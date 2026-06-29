@@ -106,7 +106,7 @@ func (s *Store) AddPageActivity(
 			activity.GetPageId(),
 			activity.GetActivityType(),
 			activity.CreatorId,
-			activity.CreatorJob,
+			activity.GetCreatorJob(),
 			activity.Reason,
 			activity.GetData(),
 		)

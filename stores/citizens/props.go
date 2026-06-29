@@ -184,7 +184,7 @@ func (s *Store) HandleUserPropsChanges(
 				in.JobName,
 				in.JobGradeNumber,
 				in.TrafficInfractionPoints,
-				in.TrafficInfractionPointsUpdatedAt,
+				in.GetTrafficInfractionPointsUpdatedAt(),
 				in.OpenFines,
 				in.MugshotFileId,
 			).

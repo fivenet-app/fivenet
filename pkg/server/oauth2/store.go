@@ -78,7 +78,7 @@ func (o *oauth2UserInfo) getAccountInfo(
 		}
 	}
 
-	if dest.Id == 0 {
+	if dest.GetId() == 0 {
 		return nil, nil
 	}
 

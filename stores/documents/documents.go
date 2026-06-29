@@ -335,7 +335,7 @@ func (s *Store) Get(ctx context.Context, q GetQuery) (*resourcesdocuments.Docume
 	if doc.GetId() <= 0 {
 		return nil, nil
 	}
-	if doc.Meta == nil {
+	if doc.GetMeta() == nil {
 		doc.Meta = &resourcesdocuments.DocumentMeta{DocumentId: doc.GetId()}
 	}
 
@@ -380,7 +380,7 @@ func (s *Store) GetDocumentMeta(
 		}
 	}
 
-	if dest.DocumentId == 0 {
+	if dest.GetDocumentId() == 0 {
 		dest.DocumentId = documentID
 	}
 
@@ -667,7 +667,7 @@ func (s *Store) UpdateDocumentOwner(
 		ctx,
 		tx,
 		documentID,
-		userInfo.UserId,
+		userInfo.GetUserId(),
 		newOwner.GetUserId(),
 	); err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

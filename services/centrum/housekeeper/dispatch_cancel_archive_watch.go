@@ -44,9 +44,14 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 			return ctx.Err()
 
 		case e := <-watch.Updates():
-			if e == nil || (e.Operation() != jetstream.KeyValueDelete &&
-				e.Operation() != jetstream.KeyValuePurge) {
-				continue // we only care about expiry events
+			// Ignore nil event
+			if e == nil {
+				continue
+			}
+			// We only care about expiry events
+			if e.Operation() != jetstream.KeyValueDelete &&
+				e.Operation() != jetstream.KeyValuePurge {
+				continue
 			}
 
 			idStr := strings.TrimPrefix(e.Key(), "idle.")

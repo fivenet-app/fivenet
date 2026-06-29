@@ -78,16 +78,17 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 			code := status.Code(err)
 			duration := opts.Now().Sub(start)
 			handle.set(func(a *audit.AuditEntry) {
-				a.Meta.Set("grpc_code", code.String())
-				a.Meta.Set("duration_ms", strconv.FormatInt(int64(duration/time.Millisecond), 10))
+				a.GetMeta().Set("grpc_code", code.String())
+				a.GetMeta().
+					Set("duration_ms", strconv.FormatInt(int64(duration/time.Millisecond), 10))
 
-				if err != nil && a.Result != audit.EventResult_EVENT_RESULT_SUCCEEDED {
+				if err != nil && a.GetResult() != audit.EventResult_EVENT_RESULT_SUCCEEDED {
 					a.Result = audit.EventResult_EVENT_RESULT_ERRORED
 				}
-				if a.Result == audit.EventResult_EVENT_RESULT_UNSPECIFIED {
+				if a.GetResult() == audit.EventResult_EVENT_RESULT_UNSPECIFIED {
 					a.Result = audit.EventResult_EVENT_RESULT_SUCCEEDED
 				}
-				if a.Action == audit.EventAction_EVENT_ACTION_UNSPECIFIED {
+				if a.GetAction() == audit.EventAction_EVENT_ACTION_UNSPECIFIED {
 					a.Action = audit.EventAction_EVENT_ACTION_VIEWED
 				}
 			})
@@ -159,20 +160,21 @@ func NewStream(opts Options) grpc.StreamServerInterceptor {
 			code := status.Code(err)
 			duration := opts.Now().Sub(start)
 			handle.set(func(a *audit.AuditEntry) {
-				if a.Meta == nil {
+				if a.GetMeta() == nil {
 					a.Meta = &audit.AuditEntryMeta{
 						Meta: make(map[string]string),
 					}
 				}
-				a.Meta.Set("grpc_code", code.String())
-				a.Meta.Set("duration_ms", strconv.FormatInt(int64(duration/time.Millisecond), 10))
-				a.Meta.Set("stream_recv_count", strconv.FormatInt(wrapped.recvCount, 10))
-				a.Meta.Set("stream_send_count", strconv.FormatInt(wrapped.sendCount, 10))
+				a.GetMeta().Set("grpc_code", code.String())
+				a.GetMeta().
+					Set("duration_ms", strconv.FormatInt(int64(duration/time.Millisecond), 10))
+				a.GetMeta().Set("stream_recv_count", strconv.FormatInt(wrapped.recvCount, 10))
+				a.GetMeta().Set("stream_send_count", strconv.FormatInt(wrapped.sendCount, 10))
 
-				if err != nil && a.Result != audit.EventResult_EVENT_RESULT_SUCCEEDED {
+				if err != nil && a.GetResult() != audit.EventResult_EVENT_RESULT_SUCCEEDED {
 					a.Result = audit.EventResult_EVENT_RESULT_ERRORED
 				}
-				if a.Result == audit.EventResult_EVENT_RESULT_UNSPECIFIED {
+				if a.GetResult() == audit.EventResult_EVENT_RESULT_UNSPECIFIED {
 					a.Result = audit.EventResult_EVENT_RESULT_SUCCEEDED
 				}
 			})

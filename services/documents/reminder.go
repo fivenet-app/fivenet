@@ -49,7 +49,7 @@ func (s *Server) SetDocumentReminder(
 			ManualReminderTime:    req.GetReminderTime(),
 			ManualReminderMessage: req.Message,
 			ReminderCount:         0,
-			MaxReminderCount:      req.MaxReminderCount,
+			MaxReminderCount:      req.GetMaxReminderCount(),
 		}); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}

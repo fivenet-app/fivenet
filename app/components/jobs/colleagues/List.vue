@@ -248,9 +248,10 @@ const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateMo
 const labelsStatsModal = overlay.create(StatsModalClient);
 
 const inputRef = useTemplateRef('inputRef');
+const focusInput = () => inputRef.value?.inputRef?.focus();
 
 defineShortcuts({
-    '/': () => inputRef.value?.inputRef?.focus(),
+    '/': focusInput,
 });
 </script>
 

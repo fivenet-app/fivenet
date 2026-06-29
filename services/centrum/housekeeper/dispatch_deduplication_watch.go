@@ -49,28 +49,29 @@ func (s *Housekeeper) watchDispatches(ctx context.Context) error {
 				continue
 			}
 
-			switch e.Operation() {
-			case jetstream.KeyValuePut:
-				dsp, err := e.Value()
-				if err != nil {
-					s.logger.Warn("cannot read dispatch value", zap.Error(err))
-					continue
-				}
+			if e.Operation() != jetstream.KeyValuePut {
+				continue
+			}
 
-				if err := s.tryDeduplicate(ctx, dsp); err != nil {
-					s.logger.Error(
-						"dispatch deduplication failed",
-						zap.Int64("dispatch_id", dsp.GetId()),
-						zap.Error(err),
-					)
-				}
+			dsp, err := e.Value()
+			if err != nil {
+				s.logger.Warn("cannot read dispatch value", zap.Error(err))
+				continue
+			}
+
+			if err := s.tryDispatchDeduplicate(ctx, dsp); err != nil {
+				s.logger.Error(
+					"dispatch deduplication failed",
+					zap.Int64("dispatch_id", dsp.GetId()),
+					zap.Error(err),
+				)
 			}
 		}
 	}
 }
 
-// tryDeduplicate single-dispatch dedup logic.
-func (s *Housekeeper) tryDeduplicate(
+// tryDispatchDeduplicate single-dispatch dedup logic.
+func (s *Housekeeper) tryDispatchDeduplicate(
 	ctx context.Context,
 	mainDsp *centrumdispatches.Dispatch,
 ) error {

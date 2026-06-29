@@ -631,7 +631,7 @@ func subjectAccessRowsToProto(
 					out.Jobs[idx].Id = row.ID
 					continue
 				}
-				blockedJobIndexes[key] = len(out.Jobs)
+				blockedJobIndexes[key] = len(out.GetJobs())
 				blockedJobAccesses[key] = row.Access
 				entry.Access = opts.BlockedAccess
 				entry.RequiredAccess = requiredAccessPtr(deniedAccessFloor(opts, row.Access))
@@ -664,7 +664,7 @@ func subjectAccessRowsToProto(
 					out.Users[idx].Id = row.ID
 					continue
 				}
-				blockedUserIndexes[entry.GetUserId()] = len(out.Users)
+				blockedUserIndexes[entry.GetUserId()] = len(out.GetUsers())
 				blockedUserAccesses[entry.GetUserId()] = row.Access
 				entry.Access = opts.BlockedAccess
 				entry.RequiredAccess = requiredAccessPtr(deniedAccessFloor(opts, row.Access))
@@ -695,7 +695,9 @@ func subjectAccessRowsToProto(
 					out.Qualifications[idx].Id = row.ID
 					continue
 				}
-				blockedQualificationIndexes[entry.GetQualificationId()] = len(out.Qualifications)
+				blockedQualificationIndexes[entry.GetQualificationId()] = len(
+					out.GetQualifications(),
+				)
 				blockedQualificationAccesses[entry.GetQualificationId()] = row.Access
 				entry.Access = opts.BlockedAccess
 				entry.RequiredAccess = requiredAccessPtr(deniedAccessFloor(opts, row.Access))

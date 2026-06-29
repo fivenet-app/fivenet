@@ -65,9 +65,9 @@ func (j *DummyJobs) Has(job string) bool {
 
 func (j *DummyJobs) GetHighestJobGrade(job string) *jobs.JobGrade {
 	out, err := j.Get(job)
-	if err != nil || out == nil || len(out.Grades) == 0 {
+	if err != nil || out == nil || len(out.GetGrades()) == 0 {
 		return nil
 	}
 
-	return out.Grades[len(out.Grades)-1]
+	return out.GetGrades()[len(out.GetGrades())-1]
 }

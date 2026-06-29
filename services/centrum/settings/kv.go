@@ -80,9 +80,9 @@ func (s *SettingsDB) GetAccessList(
 			settings.GetJob(),
 			settings.GetOfferedAccess(),
 		)
-		access = settings.EffectiveAccess
+		access = settings.GetEffectiveAccess()
 	}
-	if access.Dispatches == nil {
+	if access.GetDispatches() == nil {
 		access.Dispatches = &centrumsettings.EffectiveDispatchAccess{
 			Jobs: []*centrumsettings.JobAccessEntry{},
 		}

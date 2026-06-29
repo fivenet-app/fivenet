@@ -33,8 +33,6 @@ func (s *Server) TakeControl(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	}
 
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
-
 	return &pbcentrum.TakeControlResponse{}, nil
 }
 

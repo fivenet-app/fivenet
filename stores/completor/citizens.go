@@ -74,7 +74,7 @@ func (s *Store) CompleteCitizens(
 		FROM(tUsers).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
-		LIMIT(15)
+		LIMIT(20)
 
 	var dest []*usershort.UserShort
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {

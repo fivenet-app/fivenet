@@ -146,7 +146,7 @@ func (s *Server) GetTemplate(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		resp.Template.JobAccess = templateAccess.GetJobs()
-		if err := s.sanitizeTemplateAccess(resp.Template, true, true); err != nil {
+		if err := s.sanitizeTemplateAccess(resp.GetTemplate(), true, true); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	} else if req.Render != nil && req.GetRender() && req.GetData() != nil {

@@ -166,7 +166,7 @@ func (s *Store) createUserActivities(
 			activity.GetTargetUserId(),
 			activity.GetType(),
 			activity.GetReason(),
-			activity.Data,
+			activity.GetData(),
 		)
 	}
 
@@ -197,10 +197,10 @@ func (s *Store) createColleagueActivity(
 		stmt = stmt.VALUES(
 			activity.GetJob(),
 			activity.SourceUserId,
-			activity.TargetUserId,
+			activity.GetTargetUserId(),
 			activity.GetActivityType(),
 			activity.GetReason(),
-			activity.Data,
+			activity.GetData(),
 		)
 	}
 

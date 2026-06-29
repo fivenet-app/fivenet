@@ -216,8 +216,8 @@ func TestFullAuthFlow(t *testing.T) {
 	require.NoError(err)
 	assert.NotNil(chooseCharRes)
 	if chooseCharRes != nil {
-		assert.NotEmpty(chooseCharRes.Token)
-		assert.Equal("user-1", chooseCharRes.Username)
+		assert.NotEmpty(chooseCharRes.GetToken())
+		assert.Equal("user-1", chooseCharRes.GetUsername())
 	}
 
 	// user-1: Choose valid character, now we allow "choose char" perm for the job role
@@ -232,8 +232,8 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NotNil(chooseCharRes)
 	if chooseCharRes != nil {
 		assert.NotNil(chooseCharRes.GetChar())
-		assert.NotEmpty(chooseCharRes.Token)
-		assert.Equal("user-1", chooseCharRes.Username)
+		assert.NotEmpty(chooseCharRes.GetToken())
+		assert.Equal("user-1", chooseCharRes.GetUsername())
 	}
 
 	accInfoResp, err := client.GetAccountInfo(ctx, &pbauth.GetAccountInfoRequest{})

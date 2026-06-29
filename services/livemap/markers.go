@@ -24,25 +24,30 @@ func (s *Server) CreateOrUpdateMarker(
 	ctx context.Context,
 	req *pblivemap.CreateOrUpdateMarkerRequest,
 ) (*pblivemap.CreateOrUpdateMarkerResponse, error) {
-	if req.GetMarker() != nil && req.GetMarker().GetId() > 0 {
+	marker := req.GetMarker()
+	if marker != nil && marker.GetId() > 0 {
 		logging.InjectFields(
 			ctx,
-			logging.Fields{"fivenet.livemap.marker_id", req.GetMarker().GetId()},
+			logging.Fields{"fivenet.livemap.marker_id", marker.GetId()},
 		)
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if req.Marker.Postal == nil || *req.Marker.Postal == "" {
-		if postal, ok := s.postals.Closest(req.Marker.X, req.Marker.Y); postal != nil && ok {
+	if req.Marker.Postal == nil || marker.GetPostal() == "" {
+		if postal, ok := s.postals.Closest(
+			marker.GetX(),
+			marker.GetY(),
+		); postal != nil &&
+			ok {
 			req.Marker.Postal = postal.Code
 		}
 	}
 
-	if req.GetMarker().GetId() <= 0 {
+	if marker.GetId() <= 0 {
 		id, err := s.store.CreateMarker(
 			ctx,
-			req.GetMarker(),
+			marker,
 			userInfo.GetUserId(),
 			userInfo.GetJob(),
 		)
@@ -61,7 +66,7 @@ func (s *Server) CreateOrUpdateMarker(
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 
-		marker, err := s.store.GetMarker(ctx, req.GetMarker().GetId())
+		marker, err := s.store.GetMarker(ctx, marker.GetId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
@@ -75,14 +80,14 @@ func (s *Server) CreateOrUpdateMarker(
 			return nil, errorslivemap.ErrMarkerDenied
 		}
 
-		if err := s.store.UpdateMarker(ctx, req.GetMarker(), marker.GetJob()); err != nil {
+		if err := s.store.UpdateMarker(ctx, marker, marker.GetJob()); err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	}
 
-	marker, err := s.store.GetMarker(ctx, req.GetMarker().GetId())
+	marker, err := s.store.GetMarker(ctx, marker.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}

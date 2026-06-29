@@ -20,9 +20,9 @@ func TestExtractFromTiptapNil(t *testing.T) {
 	t.Parallel()
 	got := ExtractFromTiptap(nil)
 	require.NotNil(t, got)
-	assert.Empty(t, got.Text)
-	assert.Equal(t, uint32(0), got.WordCount)
-	assert.Empty(t, got.FirstHeading)
+	assert.Empty(t, got.GetText())
+	assert.Equal(t, uint32(0), got.GetWordCount())
+	assert.Empty(t, got.GetFirstHeading())
 }
 
 func TestExtractFromTiptapComplexGolden(t *testing.T) {
@@ -176,9 +176,9 @@ func TestExtractFromTiptapComplexGolden(t *testing.T) {
 		"| 1 | 2 |\n" +
 		"[/Table]"
 
-	assert.Equal(t, expected, got.Text)
-	assert.Equal(t, "Main Title", got.FirstHeading)
-	assert.NotZero(t, got.WordCount)
+	assert.Equal(t, expected, got.GetText())
+	assert.Equal(t, "Main Title", got.GetFirstHeading())
+	assert.NotZero(t, got.GetWordCount())
 }
 
 func TestExtractFromTiptapInlineNodesInParagraph(t *testing.T) {
@@ -215,8 +215,8 @@ func TestExtractFromTiptapInlineNodesInParagraph(t *testing.T) {
 	got := ExtractFromTiptap(doc)
 	require.NotNil(t, got)
 
-	assert.Equal(t, "Ada @user-42 @mention\n[Image alt=\"diagram\"]\n[Image]", got.Text)
-	assert.Empty(t, got.FirstHeading)
+	assert.Equal(t, "Ada @user-42 @mention\n[Image alt=\"diagram\"]\n[Image]", got.GetText())
+	assert.Empty(t, got.GetFirstHeading())
 }
 
 func TestExtractFromTiptapUnknownAndMalformedNodes(t *testing.T) {
@@ -242,8 +242,8 @@ func TestExtractFromTiptapUnknownAndMalformedNodes(t *testing.T) {
 
 	got := ExtractFromTiptap(doc)
 	require.NotNil(t, got)
-	assert.Equal(t, "reachable", got.Text)
-	assert.Equal(t, uint32(1), got.WordCount)
+	assert.Equal(t, "reachable", got.GetText())
+	assert.Equal(t, uint32(1), got.GetWordCount())
 }
 
 func TestExtractFromTiptapWhitespaceNormalization(t *testing.T) {
@@ -269,6 +269,6 @@ func TestExtractFromTiptapWhitespaceNormalization(t *testing.T) {
 	got := ExtractFromTiptap(doc)
 	require.NotNil(t, got)
 
-	assert.Equal(t, "alpha beta\ngamma\n\ndelta", got.Text)
-	assert.Equal(t, uint32(4), got.WordCount)
+	assert.Equal(t, "alpha beta\ngamma\n\ndelta", got.GetText())
+	assert.Equal(t, uint32(4), got.GetWordCount())
 }

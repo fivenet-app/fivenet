@@ -20,7 +20,7 @@ func (s *Server) ListDispatchTargetJobs(
 	}
 
 	// Add user's job to the job list if dispatch center is enabled (and it's not already in the list)
-	if slices.IndexFunc(resp.Jobs, func(j *jobs.Job) bool {
+	if slices.IndexFunc(resp.GetJobs(), func(j *jobs.Job) bool {
 		return j.GetName() == userInfo.GetJob()
 	}) == -1 {
 		settings, err := s.settings.Get(ctx, userInfo.GetJob())
@@ -28,7 +28,7 @@ func (s *Server) ListDispatchTargetJobs(
 			return nil, err
 		}
 
-		if settings.Enabled {
+		if settings.GetEnabled() {
 			if j := s.enricher.GetJobByName(userInfo.GetJob()); j != nil {
 				resp.Jobs = append(resp.Jobs, j)
 			}

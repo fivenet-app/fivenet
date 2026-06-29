@@ -40,13 +40,13 @@ func TestCachePutGetAndDelete(t *testing.T) {
 
 	got, err := c.Get("foo/bar")
 	require.NoError(t, err)
-	require.Equal(t, original.Value, got.Value)
+	require.Equal(t, original.GetValue(), got.GetValue())
 	require.NotSame(t, original, got, "cached value should be cloned on read")
 
 	got.Value = "changed"
 	latest, err := c.Get("foo/bar")
 	require.NoError(t, err)
-	require.Equal(t, "hello", latest.Value, "mutating returned value must not mutate cache")
+	require.Equal(t, "hello", latest.GetValue(), "mutating returned value must not mutate cache")
 
 	require.NoError(t, c.Delete(ctx, "foo/bar"))
 	require.Eventually(

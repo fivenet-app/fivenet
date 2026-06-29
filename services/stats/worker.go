@@ -82,8 +82,8 @@ func (s *worker) loadStats(ctx context.Context) error {
 			continue
 		}
 
-		if *stat.Value%10 != 0 {
-			*stat.Value = (10 - *stat.Value%10) + *stat.Value
+		if stat.GetValue()%10 != 0 {
+			*stat.Value = (10 - stat.GetValue()%10) + stat.GetValue()
 		}
 	}
 

@@ -226,15 +226,20 @@ func (s *SettingsDB) updateDB(
 		return fmt.Errorf("failed to get current settings for job %s. %w", job, err)
 	}
 
-	if err := s.handleAccessChanges(ctx, job, current.Access, settings.Access); err != nil {
+	if err := s.handleAccessChanges(
+		ctx,
+		job,
+		current.GetAccess(),
+		settings.GetAccess(),
+	); err != nil {
 		return fmt.Errorf("failed to handle access changes for job %s. %w", job, err)
 	}
 
 	if err := s.handleAccessChanges(
 		ctx,
 		job,
-		current.OfferedAccess,
-		settings.OfferedAccess,
+		current.GetOfferedAccess(),
+		settings.GetOfferedAccess(),
 	); err != nil {
 		return fmt.Errorf("failed to handle offered access changes for job %s. %w", job, err)
 	}
@@ -456,8 +461,8 @@ func (s *SettingsDB) compareAccess(
 					(current.GetAcceptedAt() != nil && offered.GetAcceptedAt() != nil && current.GetAcceptedAt().AsTime() != offered.GetAcceptedAt().AsTime()) {
 					// If the job is different, make sure to "reset" the accepted at dates
 					if current.GetJob() != offered.GetJob() {
-						if current.AcceptedAt != nil {
-							offered.AcceptedAt = timestamp.New(current.AcceptedAt.AsTime())
+						if current.GetAcceptedAt() != nil {
+							offered.AcceptedAt = timestamp.New(current.GetAcceptedAt().AsTime())
 						} else {
 							offered.AcceptedAt = nil // Reset if no accepted at date is currently set
 						}
@@ -504,7 +509,7 @@ func (s *SettingsDB) calculateEffectiveAccess(
 				continue // Skip self-references
 			}
 
-			if offered.AcceptedAt == nil {
+			if offered.GetAcceptedAt() == nil {
 				continue // Skip unaccepted accesses
 			}
 
@@ -532,7 +537,7 @@ func (s *SettingsDB) Update(
 	}
 
 	// Ensure job is set in the settings
-	if in.Job == "" {
+	if in.GetJob() == "" {
 		in.Job = job
 	}
 

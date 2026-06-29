@@ -260,7 +260,7 @@ func (r *Retriever) GetUserInfoFromClaims(
 	// Set superuser status and override job/grade if applicable
 	r.checkAndSetSuperuser(userInfo)
 
-	if userInfo.CanBeSuperuser && userClaims.Superuser != nil && *userClaims.Superuser {
+	if userInfo.GetCanBeSuperuser() && userClaims.Superuser != nil && *userClaims.Superuser {
 		userInfo.Superuser = true
 	}
 
@@ -268,7 +268,7 @@ func (r *Retriever) GetUserInfoFromClaims(
 	if userClaims.OriginalJob != nil {
 		// Check that the current user's info from the database matches the original job and grade in the claims.
 		// If not, it means the user's job has changed since the token was issued.
-		if !userInfo.Superuser && (userInfo.GetJob() != userClaims.OriginalJob.Job ||
+		if !userInfo.GetSuperuser() && (userInfo.GetJob() != userClaims.OriginalJob.Job ||
 			userInfo.GetJobGrade() != userClaims.OriginalJob.JobGrade) {
 			userInfo.Job = userClaims.OriginalJob.Job
 			userInfo.JobGrade = userClaims.OriginalJob.JobGrade

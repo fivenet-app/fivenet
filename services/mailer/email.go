@@ -242,7 +242,7 @@ func (s *Server) CreateOrUpdateEmail(
 		tEmails := table.FivenetMailerEmails
 
 		label := mysql.NULL
-		if req.Email.Label != nil && *req.Email.Label != "" {
+		if req.GetEmail().GetLabel() != "" {
 			label = mysql.String(req.GetEmail().GetLabel())
 		}
 

@@ -229,10 +229,10 @@ func (s *Store) UpdateLabel(
 			tCitizensLabelsJob.Settings,
 		).
 		SET(
-			label.Name,
-			label.Color,
+			label.GetName(),
+			label.GetColor(),
 			label.Icon,
-			label.Settings,
+			label.GetSettings(),
 		).
 		WHERE(mysql.AND(
 			tCitizensLabelsJob.ID.EQ(mysql.Int64(label.GetId())),
@@ -261,11 +261,11 @@ func (s *Store) InsertLabel(
 		).
 		VALUES(
 			label.Job,
-			label.SortOrder,
-			label.Name,
-			label.Color,
+			label.GetSortOrder(),
+			label.GetName(),
+			label.GetColor(),
 			label.Icon,
-			label.Settings,
+			label.GetSettings(),
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)

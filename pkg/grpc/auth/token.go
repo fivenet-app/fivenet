@@ -139,14 +139,14 @@ func (t *TokenMgr) ParseCombinedToken(tokenString string) (*authclaims.CombinedC
 
 func MapAccountToClaims(account *accounts.Account) *authclaims.AccountInfoClaims {
 	accClaims := &authclaims.AccountInfoClaims{
-		AccID:    account.Id,
-		Username: account.Username,
+		AccID:    account.GetId(),
+		Username: account.GetUsername(),
 		Groups:   account.GetGroups().GetGroups(),
 
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:   "fivenet",
-			Subject:  account.License,
-			ID:       strconv.FormatInt(account.Id, 10),
+			Subject:  account.GetLicense(),
+			ID:       strconv.FormatInt(account.GetId(), 10),
 			Audience: []string{"fivenet"},
 		},
 	}
@@ -164,8 +164,8 @@ func MapUserToClaims(accId int64, user *users.User) *authclaims.UserInfoClaims {
 
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:   "fivenet",
-			Subject:  utils.GetLicenseFromIdentifier(user.Identifier),
-			ID:       strconv.FormatInt(int64(user.UserId), 10),
+			Subject:  utils.GetLicenseFromIdentifier(user.GetIdentifier()),
+			ID:       strconv.FormatInt(int64(user.GetUserId()), 10),
 			Audience: []string{"fivenet"},
 		},
 	}

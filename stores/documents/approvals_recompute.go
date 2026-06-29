@@ -32,7 +32,7 @@ func (s *Store) RecomputeApprovalPolicyTx(
 	pol.Default()
 
 	var docCreatorId int32
-	if !pol.SelfApproveAllowed {
+	if !pol.GetSelfApproveAllowed() {
 		var docCreator struct {
 			CreatorId int32 `alias:"creator_id"`
 		}
@@ -51,7 +51,7 @@ func (s *Store) RecomputeApprovalPolicyTx(
 	}
 
 	approvalCondition := tApprovals.DocumentID.EQ(mysql.Int64(documentID))
-	if !pol.SelfApproveAllowed && docCreatorId > 0 {
+	if !pol.GetSelfApproveAllowed() && docCreatorId > 0 {
 		approvalCondition = mysql.AND(
 			approvalCondition,
 			tApprovals.UserID.NOT_EQ(mysql.Int32(docCreatorId)),
@@ -114,7 +114,7 @@ func (s *Store) RecomputeApprovalPolicyTx(
 	}
 
 	var apPoliciesActive int32
-	if pol.DocumentId > 0 {
+	if pol.GetDocumentId() > 0 {
 		apPoliciesActive = 1
 	}
 

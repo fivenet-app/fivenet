@@ -347,12 +347,12 @@ func (s *Server) ListApprovalTasks(
 		}
 	}
 
-	for i := range resp.Tasks {
-		if resp.Tasks[i].GetJob() == "" {
+	for _, t := range resp.GetTasks() {
+		if t.GetJob() == "" {
 			continue
 		}
 
-		s.enricher.EnrichJobInfo(resp.Tasks[i])
+		s.enricher.EnrichJobInfo(t)
 	}
 
 	return resp, nil
@@ -501,7 +501,7 @@ func (s *Server) DeleteApprovalTasks(
 	if err := s.recomputeApprovalPolicyTx(
 		ctx,
 		tx,
-		pol.DocumentId,
+		pol.GetDocumentId(),
 		pol.GetSnapshotDate(),
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -527,7 +527,7 @@ func (s *Server) canUserAccessApprovalTask(
 
 	check, err := s.canUserAccessDocument(
 		ctx,
-		task.DocumentId,
+		task.GetDocumentId(),
 		userInfo,
 		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
@@ -821,7 +821,7 @@ func (s *Server) DecideApproval(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		if decidedTask.DocumentId == 0 {
+		if decidedTask.GetDocumentId() == 0 {
 			return nil, errorsdocuments.ErrNotFoundOrNoPerms
 		}
 
@@ -926,7 +926,7 @@ func (s *Server) DecideApproval(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		useCandidate := (err == nil && candidate.Id > 0)
+		useCandidate := (err == nil && candidate.GetId() > 0)
 
 		// If no USER task, try JOB target where user is eligible
 		if !useCandidate {
@@ -991,7 +991,7 @@ func (s *Server) DecideApproval(
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 
-			useCandidate = (err == nil && candidate.Id > 0)
+			useCandidate = (err == nil && candidate.GetId() > 0)
 		}
 
 		// If a task matched, decide it; otherwise proceed as true ad-hoc (no task)
@@ -1160,7 +1160,7 @@ func (s *Server) DecideApproval(
 	}
 
 	// If we decided a task, set its approval_id backlink
-	if decidedTask != nil && artifact.Id > 0 {
+	if decidedTask != nil && artifact.GetId() > 0 {
 		if _, err := tApprovalTasks.
 			UPDATE(tApprovalTasks.ApprovalID).
 			SET(artifact.GetId()).
@@ -1387,7 +1387,7 @@ func (s *Server) handleApprovalOnEditBehaviors(
 	}
 
 	if pol == nil ||
-		pol.OnEditBehavior <= documentsapproval.OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS {
+		pol.GetOnEditBehavior() <= documentsapproval.OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS {
 		// Nothing to do
 		return nil
 	}

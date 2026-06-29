@@ -228,6 +228,14 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 		return err
 	}
 
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.housekeeper.cleanup_dispatchers",
+		Schedule: "@always", // Every minute
+		Timeout:  durationpb.New(30 * time.Second),
+	}); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -241,6 +249,7 @@ func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 	h.Add("centrum.housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
 	h.Add("centrum.housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
 	h.Add("centrum.housekeeper.delete_old_dispatches_from_kv", s.runDeleteOldDispatchesFromKV)
+	h.Add("centrum.housekeeper.cleanup_dispatchers", s.runCleanupDispatchers)
 
 	return nil
 }

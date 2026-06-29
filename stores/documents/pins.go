@@ -89,7 +89,7 @@ func (s *Store) ListDocumentPins(
 			return doc.GetId() == pin.GetDocumentId()
 		})
 		if idx >= 0 {
-			if docs[idx].Pin != nil {
+			if docs[idx].GetPin() != nil {
 				if pin.Job != nil {
 					docs[idx].Pin.Job = pin.Job
 				}

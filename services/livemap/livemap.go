@@ -215,14 +215,14 @@ func (s *Server) Stream(
 			case <-gctx.Done():
 				return nil
 
-			case event := <-markerUpdateCh:
-				if event == nil {
+			case e := <-markerUpdateCh:
+				if e == nil {
 					continue
 				}
 
 				switch {
-				case event.MarkerUpdate != nil:
-					if event.MarkerUpdate.GetJob() != userInfo.GetJob() &&
+				case e.MarkerUpdate != nil:
+					if e.MarkerUpdate.GetJob() != userInfo.GetJob() &&
 						!userInfo.GetSuperuser() {
 						continue // Ignore updates for other jobs
 					}
@@ -231,18 +231,18 @@ func (s *Server) Stream(
 					outCh <- &pblivemap.StreamResponse{
 						Data: &pblivemap.StreamResponse_Markers{
 							Markers: &pblivemap.MarkerMarkersUpdates{
-								Updated: []*livemapmarkers.MarkerMarker{event.MarkerUpdate},
+								Updated: []*livemapmarkers.MarkerMarker{e.MarkerUpdate},
 								Partial: true,
 							},
 						},
 					}
 
-				case event.MarkerDelete != nil:
+				case e.MarkerDelete != nil:
 					// Send delete marker event to client
 					outCh <- &pblivemap.StreamResponse{
 						Data: &pblivemap.StreamResponse_Markers{
 							Markers: &pblivemap.MarkerMarkersUpdates{
-								Deleted: []int64{*event.MarkerDelete},
+								Deleted: []int64{*e.MarkerDelete},
 								Partial: true,
 							},
 						},
@@ -251,7 +251,7 @@ func (s *Server) Stream(
 				default:
 					s.logger.Warn(
 						"received unknown event type in livemap stream",
-						zap.Any("event", event),
+						zap.Any("event", e),
 					)
 				}
 			}

@@ -62,7 +62,7 @@ func (g *GRPCPerm) checkPermission(
 	}
 
 	// Short circuit for superusers, they have access to everything
-	if userInfo.Superuser {
+	if userInfo.GetSuperuser() {
 		return ctx, nil
 	}
 

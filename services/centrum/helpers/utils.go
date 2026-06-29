@@ -68,7 +68,6 @@ func (s *Helpers) CheckIfBotNeeded(ctx context.Context, job string) bool {
 	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 		return false
 	}
-
 	if dispatchers.IsEmpty() &&
 		settings.GetFallbackMode() == centrumsettings.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
 		return true
@@ -103,7 +102,7 @@ func (s *Helpers) CheckIfUserIsPartOfDispatch(
 ) bool {
 	// Check if user is allowed to access the dispatch if the job is not the same as the user's job, need to check the
 	// job's dispatch center settings access
-	if !dsp.Jobs.ContainsJob(userInfo.GetJob()) {
+	if !dsp.GetJobs().ContainsJob(userInfo.GetJob()) {
 		ok, err := s.settings.HasAccessToJob(
 			ctx,
 			userInfo.GetJob(),

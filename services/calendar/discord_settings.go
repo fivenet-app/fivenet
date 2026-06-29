@@ -25,7 +25,7 @@ func (s *Server) prepareCalendarDiscordSettings(
 		return nil, nil, nil
 	}
 
-	settings := normalizeCalendarDiscordSettings(cal.DiscordSettings)
+	settings := normalizeCalendarDiscordSettings(cal.GetDiscordSettings())
 	if err := s.validateCalendarDiscordSettings(
 		ctx,
 		cal.GetJob(),

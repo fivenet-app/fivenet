@@ -76,7 +76,7 @@ func (s *Store) CreateApprovalTasks(
 					int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER),
 					seed.GetUserId(),
 					seed.GetLabel(),
-					seed.SignatureRequired,
+					seed.GetSignatureRequired(),
 					1,
 					int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING),
 					seed.GetComment(),

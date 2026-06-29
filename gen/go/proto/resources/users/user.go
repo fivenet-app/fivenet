@@ -8,12 +8,12 @@ import (
 func (x *User) UserShort() *usershort.UserShort {
 	var profilePicture *string
 	if x.ProfilePicture != nil {
-		p := *x.ProfilePicture
+		p := x.GetProfilePicture()
 		profilePicture = &p
 	}
 	var profilePictureFileId *int64
 	if x.ProfilePictureFileId != nil {
-		p := *x.ProfilePictureFileId
+		p := x.GetProfilePictureFileId()
 		profilePictureFileId = &p
 	}
 
@@ -35,12 +35,12 @@ func (x *User) UserShort() *usershort.UserShort {
 func (x *User) Colleague() *jobscolleagues.Colleague {
 	var profilePicture *string
 	if x.ProfilePicture != nil {
-		p := *x.ProfilePicture
+		p := x.GetProfilePicture()
 		profilePicture = &p
 	}
 	var profilePictureFileId *int64
 	if x.ProfilePictureFileId != nil {
-		p := *x.ProfilePictureFileId
+		p := x.GetProfilePictureFileId()
 		profilePictureFileId = &p
 	}
 

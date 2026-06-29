@@ -158,7 +158,7 @@ func (s *Store) AddUserOAuth2Conn(
 	ctx context.Context,
 	req *pbsync.AddUserOAuth2ConnRequest,
 ) (*pbsync.AddActivityResponse, error) {
-	if err := s.handleUserOauth2(ctx, req.UserOauth2); err != nil {
+	if err := s.handleUserOauth2(ctx, req.GetUserOauth2()); err != nil {
 		return nil, fmt.Errorf("failed to handle UserOauth2 activity. %w", err)
 	}
 
@@ -169,7 +169,7 @@ func (s *Store) handleAccountUpdate(ctx context.Context, data *activity.AccountU
 	tAccounts := table.FivenetAccounts
 
 	var groups *accounts.AccountGroups
-	if data.Groups != nil {
+	if data.GetGroups() != nil {
 		if data.GetGroups() != nil && len(data.GetGroups().GetGroups()) > 0 {
 			groups = data.GetGroups()
 		} else if data.GetGroup() != "" {
@@ -180,7 +180,7 @@ func (s *Store) handleAccountUpdate(ctx context.Context, data *activity.AccountU
 	stmt := tAccounts.
 		UPDATE(tAccounts.Groups).
 		SET(groups).
-		WHERE(tAccounts.License.EQ(mysql.String(data.License))).
+		WHERE(tAccounts.License.EQ(mysql.String(data.GetLicense()))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

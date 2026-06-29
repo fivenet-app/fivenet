@@ -647,7 +647,7 @@ func (h *Handler[P]) ListFilesForParentID(ctx context.Context, parentID P) ([]*f
 				),
 		).
 		WHERE(h.parentColBoolExp(parentID)).
-		LIMIT(15)
+		LIMIT(20)
 
 	var files []*file.File
 	if err := stmt.QueryContext(ctx, h.db, &files); err != nil {

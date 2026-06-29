@@ -282,7 +282,7 @@ func (s *Server) getDocument(
 	if doc.GetCreator() != nil {
 		s.enricher.EnrichJobInfo(doc.GetCreator())
 	}
-	if doc.Meta == nil {
+	if doc.GetMeta() == nil {
 		doc.Meta = &documents.DocumentMeta{
 			DocumentId: doc.GetId(),
 		}
@@ -676,11 +676,11 @@ func (s *Server) UpdateDocument(
 				req.CategoryId,
 				req.GetTitle(),
 				extracted.GetSummary(DocSummaryLength),
-				extracted.WordCount,
-				extracted.FirstHeading,
+				extracted.GetWordCount(),
+				extracted.GetFirstHeading(),
 				int32(content.ContentType_CONTENT_TYPE_TIPTAP_JSON),
 				req.GetContent(),
-				extracted.Text,
+				extracted.GetText(),
 				req.GetData(),
 			).
 			WHERE(
@@ -888,7 +888,7 @@ func (s *Server) handleDocumentPublish(
 		newPol.OnEditBehavior = apr.GetPolicy().GetOnEditBehavior()
 		requiredCount := apr.GetPolicy().GetRequiredCount()
 
-		switch newPol.RuleKind {
+		switch newPol.GetRuleKind() {
 		case documentsapproval.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL:
 			requiredCount = 0
 		case documentsapproval.ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY:

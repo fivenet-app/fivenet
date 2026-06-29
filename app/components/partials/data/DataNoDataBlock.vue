@@ -72,6 +72,7 @@ async function click() {
             :title="title"
             :description="description"
             :actions="actions"
+            :ui="{ header: 'max-w-lg' }"
             v-bind="$attrs"
             @click="click()"
         >
