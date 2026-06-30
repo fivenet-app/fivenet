@@ -173,7 +173,7 @@ export const useNotificationsStore = defineStore(
             const { activeChar } = useAuth();
 
             const jobChanged = activeChar.value!.job != userInfoChanged.newJob;
-            const jobGradeChanged = activeChar.value!.jobGrade != userInfoChanged.newJobGrade;
+            const jobGradeChanged = activeChar.value!.jobGrade !== userInfoChanged.newJobGrade;
 
             if (jobChanged || jobGradeChanged) {
                 const nextJob =
@@ -201,7 +201,7 @@ export const useNotificationsStore = defineStore(
 
             if (userInfoChanged.newJob) activeChar.value!.job = userInfoChanged.newJob;
             if (userInfoChanged.newJobLabel) activeChar.value!.jobLabel = userInfoChanged.newJobLabel;
-            if (userInfoChanged.newJobGrade) activeChar.value!.jobGrade = userInfoChanged.newJobGrade;
+            if (userInfoChanged.newJobGrade !== undefined) activeChar.value!.jobGrade = userInfoChanged.newJobGrade;
             if (userInfoChanged.newJobGradeLabel) activeChar.value!.jobGradeLabel = userInfoChanged.newJobGradeLabel;
 
             await authStore.chooseCharacter(undefined);

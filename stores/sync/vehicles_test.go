@@ -7,6 +7,7 @@ import (
 	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
@@ -19,7 +20,17 @@ func TestSendVehicles(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, zap.NewNop(), &config.Config{}, nil, nil, nil, nil, nil)
+	store := New(
+		db,
+		zap.NewNop(),
+		&config.Config{},
+		&appconfig.TestConfig{},
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+	)
 
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_owned_vehicles.*ON DUPLICATE KEY UPDATE.*`).
 		WithArgs(int32(3), "police", "ABC DEF1", "adder", "car").
@@ -47,7 +58,17 @@ func TestDeleteVehicles(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, zap.NewNop(), &config.Config{}, nil, nil, nil, nil, nil)
+	store := New(
+		db,
+		zap.NewNop(),
+		&config.Config{},
+		&appconfig.TestConfig{},
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+	)
 
 	mock.ExpectExec(`(?s)DELETE FROM .*fivenet_owned_vehicles.*plate IN \(\?, \?\).*LIMIT \?.*`).
 		WithArgs("ABC DEF1", "XYZ 123", int64(2)).

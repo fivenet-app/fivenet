@@ -12,10 +12,12 @@ import (
 
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
@@ -743,6 +745,25 @@ func (s *Store) handleUserJobs(
 	user *syncdata.DataUser,
 ) (*userJobChange, error) {
 	jobs := user.GetJobs()
+	// Fallback to unemployed job when user has no jobs
+	if len(jobs) == 0 {
+		unemployedJob := unemployedJobFromAppConfig(s.appCfg)
+		jobs = []*users.UserJob{
+			{
+				UserId:    user.GetUserId(),
+				Job:       unemployedJob.GetName(),
+				Grade:     unemployedJob.GetGrade(),
+				IsPrimary: true,
+			},
+		}
+		user.Jobs = jobs
+		if user.GetJob() == "" {
+			user.Job = jobs[0].Job
+		}
+		if user.GetJobGrade() == 0 {
+			user.JobGrade = jobs[0].Grade
+		}
+	}
 	slices.SortFunc(jobs, func(a, b *users.UserJob) int {
 		if a.GetIsPrimary() && !b.GetIsPrimary() {
 			return -1
@@ -752,17 +773,6 @@ func (s *Store) handleUserJobs(
 		}
 		return strings.Compare(a.GetJob(), b.GetJob())
 	})
-
-	if len(jobs) == 0 {
-		stmt := tCitizensJobs.
-			DELETE().
-			WHERE(tCitizensJobs.UserID.EQ(mysql.Int32(user.GetUserId()))).
-			LIMIT(25)
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, fmt.Errorf("failed to execute user jobs delete statement. %w", err)
-		}
-		return nil, nil
-	}
 
 	tJobs := tCitizensJobs.AS("user_job")
 	selectStmt := tJobs.
@@ -787,13 +797,16 @@ func (s *Store) handleUserJobs(
 	}
 
 	var jobChange *userJobChange
-	if currentPrimary := primaryJob(currentJobs); currentPrimary != nil {
-		if currentPrimary.GetJob() != user.GetJob() ||
-			currentPrimary.GetGrade() != user.GetJobGrade() {
-			jobChange = &userJobChange{
-				job:   user.GetJob(),
-				grade: user.GetJobGrade(),
-			}
+	if currentPrimary := primaryJob(currentJobs); currentPrimary == nil {
+		jobChange = &userJobChange{
+			job:   user.GetJob(),
+			grade: user.GetJobGrade(),
+		}
+	} else if currentPrimary.GetJob() != user.GetJob() ||
+		currentPrimary.GetGrade() != user.GetJobGrade() {
+		jobChange = &userJobChange{
+			job:   user.GetJob(),
+			grade: user.GetJobGrade(),
 		}
 	}
 
@@ -835,6 +848,25 @@ func (s *Store) handleUserJobs(
 	}
 
 	return jobChange, nil
+}
+
+func unemployedJobFromAppConfig(appCfg appconfig.IConfig) *settings.UnemployedJob {
+	spec := &settings.UnemployedJob{
+		Name:  "unemployed",
+		Grade: 1,
+	}
+	if appCfg == nil || appCfg.Get() == nil || appCfg.Get().GetJobInfo() == nil {
+		return spec
+	}
+
+	unemployedJob := appCfg.Get().GetJobInfo().GetUnemployedJob()
+	if unemployedJob == nil {
+		return spec
+	}
+
+	spec.SetName(unemployedJob.GetName())
+	spec.SetGrade(unemployedJob.GetGrade())
+	return spec
 }
 
 func primaryJob(jobs []*users.UserJob) *users.UserJob {

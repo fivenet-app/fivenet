@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	pkggrpc "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -59,6 +60,7 @@ type Params struct {
 	JS            *events.JSWrapper
 	Auth          *auth.GRPCAuth
 	Config        *config.Config
+	AppConfig     appconfig.IConfig
 	DispatchDB    *dispatches.DispatchDB
 	CitizensStore citizensstore.IStore
 	JobsStore     jobsstore.IStore
@@ -84,6 +86,7 @@ func NewServer(p Params) Result {
 			p.DB,
 			p.Logger,
 			p.Config,
+			p.AppConfig,
 			p.DispatchDB,
 			p.CitizensStore,
 			p.JobsStore,

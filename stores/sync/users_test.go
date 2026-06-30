@@ -12,9 +12,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
@@ -312,7 +314,7 @@ func newTestStore(t *testing.T) (*Store, sqlmock.Sqlmock) {
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 
-	store := New(db, zap.NewNop(), &config.Config{}, nil, nil, nil, nil, nil).(*Store)
+	store := New(db, zap.NewNop(), &config.Config{}, &appconfig.TestConfig{}, nil, nil, nil, nil, nil).(*Store)
 	t.Cleanup(func() {
 		_ = db.Close()
 	})
@@ -501,6 +503,54 @@ func TestHandleUserJobsNoopDoesNotPublish(t *testing.T) {
 	store.publishUserInfoChanged(t.Context(), &accountID, user.GetUserId(), jobChange)
 
 	assert.Empty(t, rec.events)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestHandleUserJobsDefaultsToUnemployedWhenNoJobs(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+	rec := &recordingNotifi{}
+	store.notifi = rec
+	store.enricher = labelEnricher{}
+	accountID := int64(42)
+
+	cfg := &appconfig.Cfg{}
+	cfg.Default()
+	cfg.JobInfo.UnemployedJob = &settings.UnemployedJob{
+		Name:  "civilian",
+		Grade: 7,
+	}
+	store.appCfg.Set(cfg)
+
+	mock.ExpectBegin()
+	mock.ExpectQuery(`(?s)SELECT .*fivenet_user_jobs.*WHERE .*user_id = \?.*ORDER BY .*`).
+		WithArgs(int64(11)).
+		WillReturnRows(sqlmock.NewRows([]string{"user_job.job", "user_job.grade", "user_job.is_primary"}))
+	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_jobs.*ON DUPLICATE KEY UPDATE.*`).
+		WithArgs(int64(11), "civilian", int32(7), true).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	user := &syncdata.DataUser{
+		UserId: 11,
+		Jobs:   []*users.UserJob{},
+	}
+
+	tx, err := store.db.Begin()
+	require.NoError(t, err)
+
+	jobChange, err := store.handleUserJobs(t.Context(), tx, user)
+	require.NoError(t, err)
+	require.NoError(t, tx.Commit())
+
+	store.publishUserInfoChanged(t.Context(), &accountID, user.GetUserId(), jobChange)
+
+	require.Len(t, rec.events, 1)
+	evt := rec.events[0].GetUserInfoChanged()
+	require.NotNil(t, evt)
+	assert.Equal(t, "civilian", evt.GetNewJob())
+	assert.Equal(t, int32(7), evt.GetNewJobGrade())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

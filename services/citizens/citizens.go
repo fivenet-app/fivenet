@@ -191,14 +191,14 @@ func (s *Server) checkIfUserCanAccess(
 	targetUserGrade int32,
 ) (bool, error) {
 	// Skip if user is job unemployed
-	unemployedJob := s.appCfg.Get().JobInfo.GetUnemployedJob()
+	unemployedJob := s.appCfg.Get().GetJobInfo().GetUnemployedJob()
 	if unemployedJob.GetName() == targetUserJob {
 		return true, nil
 	}
 
 	// If the user is not part of public or hidden jobs (e.g., police, medics), allow access
-	if !slices.Contains(s.appCfg.Get().JobInfo.GetPublicJobs(), targetUserJob) &&
-		!slices.Contains(s.appCfg.Get().JobInfo.GetHiddenJobs(), targetUserJob) {
+	if !slices.Contains(s.appCfg.Get().GetJobInfo().GetPublicJobs(), targetUserJob) &&
+		!slices.Contains(s.appCfg.Get().GetJobInfo().GetHiddenJobs(), targetUserJob) {
 		return true, nil
 	}
 
