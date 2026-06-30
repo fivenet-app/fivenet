@@ -166,13 +166,36 @@ export const useNotificationsStore = defineStore(
          * Handles the user info changed event by updating the active character's job information.
          * @param userInfoChanged - The user info change data from the server.
          */
-        const handleUserInfoChangedEvent = (userInfoChanged: UserInfoChanged): void => {
+        const handleUserInfoChangedEvent = async (
+            userInfoChanged: UserInfoChanged,
+            authStore: ReturnType<typeof useAuthStore>,
+        ): Promise<void> => {
             const { activeChar } = useAuth();
 
-            if (activeChar.value!.job != userInfoChanged.newJob || activeChar.value!.jobGrade != userInfoChanged.newJobGrade) {
+            const jobChanged = activeChar.value!.job != userInfoChanged.newJob;
+            const jobGradeChanged = activeChar.value!.jobGrade != userInfoChanged.newJobGrade;
+
+            if (jobChanged || jobGradeChanged) {
+                const nextJob =
+                    userInfoChanged.newJobLabel ??
+                    userInfoChanged.newJob ??
+                    activeChar.value!.jobLabel ??
+                    activeChar.value!.job;
+                const nextJobGrade =
+                    userInfoChanged.newJobGradeLabel ??
+                    (userInfoChanged.newJobGrade !== undefined
+                        ? `${userInfoChanged.newJobGrade}`
+                        : (activeChar.value!.jobGradeLabel ?? `${activeChar.value!.jobGrade ?? ''}`));
+
                 add({
-                    title: 'Job switched',
-                    description: `Switched to ${userInfoChanged.newJob}: ${userInfoChanged.newJobGrade}`,
+                    title: { key: 'notifications.system.user_job_changed.title', parameters: {} },
+                    description: {
+                        key: 'notifications.system.user_job_changed.content',
+                        parameters: {
+                            job: nextJob ?? '',
+                            grade: nextJobGrade,
+                        },
+                    },
                 });
             }
 
@@ -180,6 +203,8 @@ export const useNotificationsStore = defineStore(
             if (userInfoChanged.newJobLabel) activeChar.value!.jobLabel = userInfoChanged.newJobLabel;
             if (userInfoChanged.newJobGrade) activeChar.value!.jobGrade = userInfoChanged.newJobGrade;
             if (userInfoChanged.newJobGradeLabel) activeChar.value!.jobGradeLabel = userInfoChanged.newJobGradeLabel;
+
+            await authStore.chooseCharacter(undefined);
         };
 
         /**
@@ -211,7 +236,7 @@ export const useNotificationsStore = defineStore(
             } else if (userEvent.data.oneofKind === 'notificationsReadCount') {
                 notificationsCount.value = userEvent.data.notificationsReadCount;
             } else if (userEvent.data.oneofKind === 'userInfoChanged') {
-                handleUserInfoChangedEvent(userEvent.data.userInfoChanged);
+                await handleUserInfoChangedEvent(userEvent.data.userInfoChanged, authStore);
             } else if (userEvent.data.oneofKind === 'userGroupsChanged') {
                 handleUserGroupsChangedEvent(userEvent.data.userGroupsChanged, authStore);
             } else {

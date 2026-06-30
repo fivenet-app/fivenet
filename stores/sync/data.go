@@ -223,21 +223,23 @@ func (s *Store) handleAccountsData(
 		rowsAffected += rows
 	}
 
-	if clearGroups {
+	// Skip clearing when the request has entries, but none of them carry a license.
+	skipClearGroups := clearGroups && len(data) > 0 && len(accountLicenses) == 0
+	if clearGroups && !skipClearGroups {
 		clearCandidates := []*accountGroupState{}
-		clearQuery := tAccounts.
+		clearQueryStmt := tAccounts.
 			SELECT(
-				tAccounts.ID.AS("id"),
-				tAccounts.License.AS("license"),
-				tAccounts.Groups.AS("groups"),
+				tAccounts.ID.AS("account_group_state.id"),
+				tAccounts.License.AS("account_group_state.license"),
+				tAccounts.Groups.AS("account_group_state.groups"),
 			).
 			FROM(tAccounts)
 		clearConditions := []mysql.BoolExpression{tAccounts.Groups.IS_NOT_NULL()}
 		if len(accountLicenses) > 0 {
 			clearConditions = append(clearConditions, tAccounts.License.NOT_IN(accountLicenses...))
 		}
-		clearQuery = clearQuery.WHERE(mysql.AND(clearConditions...))
-		if err := clearQuery.QueryContext(ctx, tx, &clearCandidates); err != nil {
+		clearQueryStmt = clearQueryStmt.WHERE(mysql.AND(clearConditions...))
+		if err := clearQueryStmt.QueryContext(ctx, tx, &clearCandidates); err != nil {
 			return 0, fmt.Errorf("failed to query account groups to clear. %w", err)
 		}
 		for _, acc := range clearCandidates {
@@ -251,16 +253,16 @@ func (s *Store) handleAccountsData(
 			})
 		}
 
-		clearUpdate := tAccounts.
+		clearUpdateStmt := tAccounts.
 			UPDATE(tAccounts.Groups).
 			SET(mysql.StringExp(mysql.NULL))
 
 		if len(accountLicenses) > 0 {
-			clearUpdate = clearUpdate.
+			clearUpdateStmt = clearUpdateStmt.
 				WHERE(tAccounts.License.NOT_IN(accountLicenses...))
 		}
 
-		res, err := clearUpdate.ExecContext(ctx, tx)
+		res, err := clearUpdateStmt.ExecContext(ctx, tx)
 		if err != nil {
 			return 0, fmt.Errorf("failed to execute accounts clear statement. %w", err)
 		}
