@@ -2,6 +2,7 @@ import type { DuplexStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { notificationsEvents } from '~/composables/useClientUpdate';
+import { notificationToastEvents } from '~/composables/useNotificationToasts';
 import type { Notification } from '~/types/notifications';
 import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
 import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
@@ -90,6 +91,7 @@ export const useNotificationsStore = defineStore(
             if (notification.actions === undefined) notification.actions = [];
 
             notifications.value.push(notification);
+            notificationToastEvents.emit('add', notification);
         };
 
         /**
@@ -166,6 +168,13 @@ export const useNotificationsStore = defineStore(
          */
         const handleUserInfoChangedEvent = (userInfoChanged: UserInfoChanged): void => {
             const { activeChar } = useAuth();
+
+            if (activeChar.value!.job != userInfoChanged.newJob || activeChar.value!.jobGrade != userInfoChanged.newJobGrade) {
+                add({
+                    title: 'Job switched',
+                    description: `Switched to ${userInfoChanged.newJob}: ${userInfoChanged.newJobGrade}`,
+                });
+            }
 
             if (userInfoChanged.newJob) activeChar.value!.job = userInfoChanged.newJob;
             if (userInfoChanged.newJobLabel) activeChar.value!.jobLabel = userInfoChanged.newJobLabel;

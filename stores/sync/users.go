@@ -150,9 +150,9 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 
 	checkStmt := tSyncUser.
 		SELECT(
-			tSyncUser.UserID.AS("user_id"),
-			tSyncUser.Identifier.AS("identifier"),
-			tSyncUser.DataHash.AS("data_hash"),
+			tSyncUser.UserID.AS("existing_user.user_id"),
+			tSyncUser.Identifier.AS("existing_user.identifier"),
+			tSyncUser.DataHash.AS("existing_user.data_hash"),
 		).
 		FROM(tSyncUser).
 		WHERE(tSyncUser.UserID.IN(userIds...)).

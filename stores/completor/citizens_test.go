@@ -34,7 +34,7 @@ func TestStoreCompleteCitizensAppliesSearchAndCustomFilter(t *testing.T) {
 		`(?s).*` + regexp.QuoteMeta(`ORDER BY user_short.lastname ASC LIMIT ?;`)
 
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(true, "", "", " ", "%John%", int64(15)).
+		WithArgs(true, "", "", " ", "%John%", int64(20)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"user_short.id",
 			"user_short.firstname",
@@ -74,7 +74,7 @@ func TestStoreCompleteCitizensAddsCurrentJobColumnsAndOrdering(t *testing.T) {
 		`(?s).*` + regexp.QuoteMeta(`ORDER BY user_short.id IN (?, ?) DESC, user_short.lastname ASC LIMIT ?;`)
 
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(true, "", "", "police", int32(7), int32(9), int32(7), int32(9), int64(15)).
+		WithArgs(true, "", "", "police", int32(7), int32(9), int32(7), int32(9), int64(20)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"user_short.id",
 			"user_short.firstname",
