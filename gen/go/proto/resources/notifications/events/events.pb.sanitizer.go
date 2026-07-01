@@ -54,9 +54,17 @@ func (m *UserEvent) Sanitize() error {
 		return nil
 	}
 
-	// Field: Notification
+	// Field: AccountGroupsChanged
 	switch v := m.Data.(type) {
 
+	case *UserEvent_AccountGroupsChanged:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Notification
 	case *UserEvent_Notification:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {

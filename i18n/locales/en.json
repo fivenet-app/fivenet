@@ -2264,6 +2264,10 @@
             "test_notification": {
                 "title": "Test Notification {index}",
                 "content": "This is a test notification of type {type}."
+            },
+            "user_job_changed": {
+                "title": "Job updated",
+                "content": "Your job has been updated to {job} ({grade})."
             }
         },
         "qualifications": {

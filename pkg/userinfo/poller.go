@@ -11,9 +11,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -47,9 +47,9 @@ type Poller struct {
 	jsCons jetstream.ConsumeContext
 
 	db       *sql.DB
+	cfg      *config.Config
 	js       *events.JSWrapper
 	enricher mstlystcdata.IEnricher
-	notifi   notifi.INotifi
 	kv       jetstream.KeyValue
 
 	pendingMu sync.Mutex
@@ -67,8 +67,8 @@ type PollerParams struct {
 
 	Logger   *zap.Logger
 	DB       *sql.DB
+	Cfg      *config.Config
 	Enricher mstlystcdata.IEnricher
-	Notifi   notifi.INotifi
 	JS       *events.JSWrapper
 }
 
@@ -80,8 +80,8 @@ func NewPoller(p PollerParams) *Poller {
 
 		ctx:      ctxCancel,
 		db:       p.DB,
+		cfg:      p.Cfg,
 		enricher: p.Enricher,
-		notifi:   p.Notifi,
 		js:       p.JS,
 
 		pending:  make(map[string]*pb.PollReq),
@@ -211,6 +211,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 	stmt := tUser.
 		SELECT(
 			tAccount.ID.AS("account_id"),
+			tAccount.License.AS("license"),
 			tUser.ID.AS("user_id"),
 			tUser.Job.AS("job"),
 			tUser.JobGrade.AS("job_grade"),
@@ -236,6 +237,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 
 	var dest []*struct {
 		AccountId int64
+		License   string
 		UserId    int32
 		Job       string
 		JobGrade  int32
@@ -252,6 +254,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 		if err := p.checkDiffAndPublish(
 			ctx,
 			row.AccountId,
+			row.License,
 			row.UserId,
 			row.Job,
 			row.JobGrade,
@@ -269,6 +272,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 func (p *Poller) checkDiffAndPublish(
 	ctx context.Context,
 	acct int64,
+	license string,
 	uid int32,
 	job string,
 	grade int32,
@@ -286,23 +290,20 @@ func (p *Poller) checkDiffAndPublish(
 	old, exists := userMap[uid]
 	if !exists {
 		// First-seen: record snapshot, no event
-		userMap[uid] = &userSnapshot{Job: job, JobGrade: grade}
+		userMap[uid] = &userSnapshot{
+			Job:      job,
+			JobGrade: grade,
+			Groups:   groupsSlice(groups),
+		}
 		return nil
 	}
 
-	if old.Job != job || old.JobGrade != grade || !slices.Equal(old.Groups, groups.GetGroups()) {
-		evt := &pb.UserInfoChanged{
-			AccountId: acct,
-			UserId:    uid,
-			ChangedAt: updatedAt,
+	newGroups := groupsSlice(groups)
+	jobChanged := old.Job != job || old.JobGrade != grade
+	groupsChanged := !slices.Equal(old.Groups, newGroups)
 
-			OldJob: old.Job,
-			NewJob: &job,
-
-			OldJobGrade: old.JobGrade,
-			NewJobGrade: &grade,
-		}
-		p.enricher.EnrichJobInfo(evt)
+	if jobChanged {
+		evt := BuildUserInfoChangedEvent(acct, uid, updatedAt, job, grade, p.enricher)
 
 		if _, err := p.js.PublishAsyncProto(
 			ctx,
@@ -314,16 +315,53 @@ func (p *Poller) checkDiffAndPublish(
 				zap.Int32("userId", uid),
 				zap.String("job", job),
 				zap.Int32("jobGrade", grade),
-				zap.Strings("groups", groups.GetGroups()),
+				zap.Strings("groups", newGroups),
 				zap.Error(err),
 			)
 		}
+	}
+
+	if groupsChanged {
+		superuserGroups, superuserUsers := []string(nil), []string(nil)
+		if p.cfg != nil {
+			superuserGroups = p.cfg.Auth.SuperuserGroups
+			superuserUsers = p.cfg.Auth.SuperuserUsers
+		}
+		evt := BuildAccountGroupsChangedEvent(
+			acct,
+			updatedAt,
+			groups,
+			CanBeSuperuser(groups, license, superuserGroups, superuserUsers),
+		)
+
+		if _, err := p.js.PublishAsyncProto(
+			ctx,
+			fmt.Sprintf("userinfo.%d.groups", acct),
+			evt,
+		); err != nil {
+			p.logger.Error("failed to publish user groups change event",
+				zap.Int64("accountId", acct),
+				zap.Int32("userId", uid),
+				zap.Strings("groups", newGroups),
+				zap.Error(err),
+			)
+		}
+	}
+
+	if jobChanged || groupsChanged {
 		userMap[uid] = &userSnapshot{
 			Job:      job,
 			JobGrade: grade,
-			Groups:   groups.GetGroups(),
+			Groups:   newGroups,
 		}
 	}
 
 	return nil
+}
+
+func groupsSlice(groups *accounts.AccountGroups) []string {
+	if groups == nil {
+		return nil
+	}
+	return slices.Clone(groups.GetGroups())
 }

@@ -35,6 +35,7 @@ type UserEvent struct {
 	//	*UserEvent_Notification
 	//	*UserEvent_NotificationsReadCount
 	//	*UserEvent_UserInfoChanged
+	//	*UserEvent_AccountGroupsChanged
 	Data          isUserEvent_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -108,6 +109,15 @@ func (x *UserEvent) GetUserInfoChanged() *userinfo.UserInfoChanged {
 	return nil
 }
 
+func (x *UserEvent) GetAccountGroupsChanged() *userinfo.AccountGroupsChanged {
+	if x != nil {
+		if x, ok := x.Data.(*UserEvent_AccountGroupsChanged); ok {
+			return x.AccountGroupsChanged
+		}
+	}
+	return nil
+}
+
 func (x *UserEvent) SetRefreshToken(v bool) {
 	x.Data = &UserEvent_RefreshToken{v}
 }
@@ -130,6 +140,14 @@ func (x *UserEvent) SetUserInfoChanged(v *userinfo.UserInfoChanged) {
 		return
 	}
 	x.Data = &UserEvent_UserInfoChanged{v}
+}
+
+func (x *UserEvent) SetAccountGroupsChanged(v *userinfo.AccountGroupsChanged) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserEvent_AccountGroupsChanged{v}
 }
 
 func (x *UserEvent) HasData() bool {
@@ -171,6 +189,14 @@ func (x *UserEvent) HasUserInfoChanged() bool {
 	return ok
 }
 
+func (x *UserEvent) HasAccountGroupsChanged() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserEvent_AccountGroupsChanged)
+	return ok
+}
+
 func (x *UserEvent) ClearData() {
 	x.Data = nil
 }
@@ -199,11 +225,18 @@ func (x *UserEvent) ClearUserInfoChanged() {
 	}
 }
 
+func (x *UserEvent) ClearAccountGroupsChanged() {
+	if _, ok := x.Data.(*UserEvent_AccountGroupsChanged); ok {
+		x.Data = nil
+	}
+}
+
 const UserEvent_Data_not_set_case case_UserEvent_Data = 0
 const UserEvent_RefreshToken_case case_UserEvent_Data = 1
 const UserEvent_Notification_case case_UserEvent_Data = 2
 const UserEvent_NotificationsReadCount_case case_UserEvent_Data = 3
 const UserEvent_UserInfoChanged_case case_UserEvent_Data = 4
+const UserEvent_AccountGroupsChanged_case case_UserEvent_Data = 5
 
 func (x *UserEvent) WhichData() case_UserEvent_Data {
 	if x == nil {
@@ -218,6 +251,8 @@ func (x *UserEvent) WhichData() case_UserEvent_Data {
 		return UserEvent_NotificationsReadCount_case
 	case *UserEvent_UserInfoChanged:
 		return UserEvent_UserInfoChanged_case
+	case *UserEvent_AccountGroupsChanged:
+		return UserEvent_AccountGroupsChanged_case
 	default:
 		return UserEvent_Data_not_set_case
 	}
@@ -232,6 +267,7 @@ type UserEvent_builder struct {
 	Notification           *notifications.Notification
 	NotificationsReadCount *int64
 	UserInfoChanged        *userinfo.UserInfoChanged
+	AccountGroupsChanged   *userinfo.AccountGroupsChanged
 	// -- end of Data
 }
 
@@ -250,6 +286,9 @@ func (b0 UserEvent_builder) Build() *UserEvent {
 	}
 	if b.UserInfoChanged != nil {
 		x.Data = &UserEvent_UserInfoChanged{b.UserInfoChanged}
+	}
+	if b.AccountGroupsChanged != nil {
+		x.Data = &UserEvent_AccountGroupsChanged{b.AccountGroupsChanged}
 	}
 	return m0
 }
@@ -285,6 +324,10 @@ type UserEvent_UserInfoChanged struct {
 	UserInfoChanged *userinfo.UserInfoChanged `protobuf:"bytes,4,opt,name=user_info_changed,json=userInfoChanged,proto3,oneof"`
 }
 
+type UserEvent_AccountGroupsChanged struct {
+	AccountGroupsChanged *userinfo.AccountGroupsChanged `protobuf:"bytes,5,opt,name=account_groups_changed,json=accountGroupsChanged,proto3,oneof"`
+}
+
 func (*UserEvent_RefreshToken) isUserEvent_Data() {}
 
 func (*UserEvent_Notification) isUserEvent_Data() {}
@@ -292,6 +335,8 @@ func (*UserEvent_Notification) isUserEvent_Data() {}
 func (*UserEvent_NotificationsReadCount) isUserEvent_Data() {}
 
 func (*UserEvent_UserInfoChanged) isUserEvent_Data() {}
+
+func (*UserEvent_AccountGroupsChanged) isUserEvent_Data() {}
 
 // Job related events
 type JobEvent struct {
@@ -709,12 +754,13 @@ var File_resources_notifications_events_events_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_events_events_proto_rawDesc = "" +
 	"\n" +
-	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a!resources/userinfo/userinfo.proto\"\x96\x02\n" +
+	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a!resources/userinfo/userinfo.proto\"\xf8\x02\n" +
 	"\tUserEvent\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshToken\x12K\n" +
 	"\fnotification\x18\x02 \x01(\v2%.resources.notifications.NotificationH\x00R\fnotification\x12:\n" +
 	"\x18notifications_read_count\x18\x03 \x01(\x03H\x00R\x16notificationsReadCount\x12Q\n" +
-	"\x11user_info_changed\x18\x04 \x01(\v2#.resources.userinfo.UserInfoChangedH\x00R\x0fuserInfoChangedB\x06\n" +
+	"\x11user_info_changed\x18\x04 \x01(\v2#.resources.userinfo.UserInfoChangedH\x00R\x0fuserInfoChanged\x12`\n" +
+	"\x16account_groups_changed\x18\x05 \x01(\v2(.resources.userinfo.AccountGroupsChangedH\x00R\x14accountGroupsChangedB\x06\n" +
 	"\x04data\"Q\n" +
 	"\bJobEvent\x12=\n" +
 	"\tjob_props\x18\x01 \x01(\v2\x1e.resources.jobs.props.JobPropsH\x00R\bjobPropsB\x06\n" +
@@ -728,25 +774,27 @@ const file_resources_notifications_events_events_proto_rawDesc = "" +
 
 var file_resources_notifications_events_events_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_notifications_events_events_proto_goTypes = []any{
-	(*UserEvent)(nil),                  // 0: resources.notifications.events.UserEvent
-	(*JobEvent)(nil),                   // 1: resources.notifications.events.JobEvent
-	(*JobGradeEvent)(nil),              // 2: resources.notifications.events.JobGradeEvent
-	(*SystemEvent)(nil),                // 3: resources.notifications.events.SystemEvent
-	(*notifications.Notification)(nil), // 4: resources.notifications.Notification
-	(*userinfo.UserInfoChanged)(nil),   // 5: resources.userinfo.UserInfoChanged
-	(*props.JobProps)(nil),             // 6: resources.jobs.props.JobProps
-	(*clientconfig.ClientConfig)(nil),  // 7: resources.clientconfig.ClientConfig
+	(*UserEvent)(nil),                     // 0: resources.notifications.events.UserEvent
+	(*JobEvent)(nil),                      // 1: resources.notifications.events.JobEvent
+	(*JobGradeEvent)(nil),                 // 2: resources.notifications.events.JobGradeEvent
+	(*SystemEvent)(nil),                   // 3: resources.notifications.events.SystemEvent
+	(*notifications.Notification)(nil),    // 4: resources.notifications.Notification
+	(*userinfo.UserInfoChanged)(nil),      // 5: resources.userinfo.UserInfoChanged
+	(*userinfo.AccountGroupsChanged)(nil), // 6: resources.userinfo.AccountGroupsChanged
+	(*props.JobProps)(nil),                // 7: resources.jobs.props.JobProps
+	(*clientconfig.ClientConfig)(nil),     // 8: resources.clientconfig.ClientConfig
 }
 var file_resources_notifications_events_events_proto_depIdxs = []int32{
 	4, // 0: resources.notifications.events.UserEvent.notification:type_name -> resources.notifications.Notification
 	5, // 1: resources.notifications.events.UserEvent.user_info_changed:type_name -> resources.userinfo.UserInfoChanged
-	6, // 2: resources.notifications.events.JobEvent.job_props:type_name -> resources.jobs.props.JobProps
-	7, // 3: resources.notifications.events.SystemEvent.client_config:type_name -> resources.clientconfig.ClientConfig
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	6, // 2: resources.notifications.events.UserEvent.account_groups_changed:type_name -> resources.userinfo.AccountGroupsChanged
+	7, // 3: resources.notifications.events.JobEvent.job_props:type_name -> resources.jobs.props.JobProps
+	8, // 4: resources.notifications.events.SystemEvent.client_config:type_name -> resources.clientconfig.ClientConfig
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_resources_notifications_events_events_proto_init() }
@@ -759,6 +807,7 @@ func file_resources_notifications_events_events_proto_init() {
 		(*UserEvent_Notification)(nil),
 		(*UserEvent_NotificationsReadCount)(nil),
 		(*UserEvent_UserInfoChanged)(nil),
+		(*UserEvent_AccountGroupsChanged)(nil),
 	}
 	file_resources_notifications_events_events_proto_msgTypes[1].OneofWrappers = []any{
 		(*JobEvent_JobProps)(nil),

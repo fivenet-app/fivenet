@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"slices"
 	"strconv"
 	"sync"
 	"time"
 
+	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
@@ -63,9 +65,10 @@ func (s *Server) buildSubjects(
 		fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic),
 	}
 
-	// Clone user info and disable superuser
-	userInfo.Superuser = false
-	emails, err := s.mailerStore.ListUserEmails(ctx, s.db, userInfo, nil, false, false)
+	// Clone user info and disable superuser (so a superuser doesn't receive notifications for "all" emails..)
+	clonedUserInfo := userInfo.Clone()
+	clonedUserInfo.Superuser = false
+	emails, err := s.mailerStore.ListUserEmails(ctx, s.db, clonedUserInfo, nil, false, false)
 	if err != nil {
 		return baseSubjects, nil, errswrap.NewError(err, ErrFailedStream)
 	}
@@ -137,10 +140,9 @@ func (s *Server) buildClientViewSubjects(
 
 func (s *Server) shouldDeliverObjectEvent(
 	dest *notificationsclientview.ObjectEvent,
-	currentUserInfo *pbuserinfo.UserInfo,
 	userInfo *pbuserinfo.UserInfo,
 ) bool {
-	if dest.UserId != nil && dest.GetUserId() == currentUserInfo.GetUserId() {
+	if dest.UserId != nil && dest.GetUserId() == userInfo.GetUserId() {
 		return false
 	}
 
@@ -156,6 +158,44 @@ func (s *Server) shouldDeliverObjectEvent(
 	}
 
 	return true
+}
+
+func applyUserInfoChanged(currentUserInfo *pbuserinfo.UserInfo, event *pbuserinfo.UserInfoChanged) {
+	if currentUserInfo == nil || event == nil {
+		return
+	}
+
+	currentUserInfo.Job = event.GetNewJob()
+	currentUserInfo.JobGrade = event.GetNewJobGrade()
+}
+
+func applyAccountGroupsChanged(
+	currentUserInfo *pbuserinfo.UserInfo,
+	event *pbuserinfo.AccountGroupsChanged,
+) {
+	if currentUserInfo == nil || event == nil {
+		return
+	}
+
+	wasSuperuser := currentUserInfo.GetSuperuser()
+	currentUserInfo.CanBeSuperuser = event.GetCanBeSuperuser()
+	if event.GetNewGroups() == nil {
+		currentUserInfo.Groups = nil
+	} else {
+		currentUserInfo.Groups = &accounts.AccountGroups{
+			Groups: slices.Clone(event.GetNewGroups().GetGroups()),
+		}
+	}
+
+	if !currentUserInfo.GetCanBeSuperuser() {
+		currentUserInfo.Superuser = false
+	}
+
+	if wasSuperuser && !currentUserInfo.GetCanBeSuperuser() &&
+		currentUserInfo.GetOriginalJob() != nil {
+		currentUserInfo.Job = currentUserInfo.GetOriginalJob().GetJob()
+		currentUserInfo.JobGrade = currentUserInfo.GetOriginalJob().GetJobGrade()
+	}
 }
 
 func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) error {
@@ -182,6 +222,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 		return errswrap.NewError(err, ErrFailedStream)
 	}
 	clientViewSubjects := []string{}
+	var currentClientView *notificationsclientview.ClientView
 
 	notificationCount, err := s.store.CountUnread(ctx, userInfo.GetUserId())
 	if err != nil {
@@ -215,6 +256,65 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	defer close(outCh)
 	g, gctx := errgroup.WithContext(ctx)
 
+	refreshConsumerSubjects := func() error {
+		info, err := consumer.Info(gctx)
+		if err != nil {
+			return errswrap.NewError(err, ErrFailedStream)
+		}
+
+		cfg := info.Config
+		subjectsMu.Lock()
+		filterSubjects := make(
+			[]string,
+			0,
+			len(baseSubjects)+len(additionalSubjects)+len(clientViewSubjects),
+		)
+		filterSubjects = append(filterSubjects, baseSubjects...)
+		filterSubjects = append(filterSubjects, additionalSubjects...)
+		filterSubjects = append(filterSubjects, clientViewSubjects...)
+		subjectsMu.Unlock()
+
+		cfg.FilterSubjects = filterSubjects
+
+		if _, err := s.js.UpdateConsumer(gctx, notifi.StreamName, cfg); err != nil {
+			return errswrap.NewError(
+				fmt.Errorf("failed to update consumer. %w", err),
+				ErrFailedStream,
+			)
+		}
+
+		return nil
+	}
+
+	rebuildAndRefreshSubjects := func() error {
+		newBaseSubjects, newAdditionalSubjects, err := s.buildSubjects(gctx, currentUserInfo)
+		if err != nil {
+			return errswrap.NewError(err, ErrFailedStream)
+		}
+
+		subjectsMu.Lock()
+		baseSubjects = newBaseSubjects
+		additionalSubjects = newAdditionalSubjects
+		clientView := currentClientView
+		subjectsMu.Unlock()
+
+		if clientView != nil {
+			newClientViewSubjects, err := s.buildClientViewSubjects(
+				gctx,
+				currentUserInfo,
+				clientView,
+			)
+			if err != nil {
+				return err
+			}
+			subjectsMu.Lock()
+			clientViewSubjects = newClientViewSubjects
+			subjectsMu.Unlock()
+		}
+
+		return refreshConsumerSubjects()
+	}
+
 	g.Go(func() error {
 		// Update metrics for active user sessions in first goroutine
 		metricLastUserSession.SetToCurrentTime()
@@ -240,30 +340,22 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					continue // Skip nil client view
 				}
 
-				info, err := consumer.Info(gctx)
-				if err != nil {
-					return errswrap.NewError(err, ErrFailedStream)
-				}
-				cfg := info.Config
-
-				clientViewSubjects, err = s.buildClientViewSubjects(gctx, userInfo, clientView)
+				newClientViewSubjects, err := s.buildClientViewSubjects(
+					gctx,
+					currentUserInfo,
+					clientView,
+				)
 				if err != nil {
 					return err
 				}
-				if len(clientViewSubjects) == 0 {
-					continue
-				}
 
 				subjectsMu.Lock()
-				cfg.FilterSubjects = []string{}
-				cfg.FilterSubjects = append(cfg.FilterSubjects, baseSubjects...)
-				cfg.FilterSubjects = append(cfg.FilterSubjects, additionalSubjects...)
-				cfg.FilterSubjects = append(cfg.FilterSubjects, clientViewSubjects...)
+				currentClientView = clientView
+				clientViewSubjects = newClientViewSubjects
 				subjectsMu.Unlock()
 
-				// Update consumer
-				if _, err := s.js.UpdateConsumer(gctx, notifi.StreamName, cfg); err != nil {
-					return fmt.Errorf("failed to update consumer. %w", err)
+				if err := refreshConsumerSubjects(); err != nil {
+					return err
 				}
 			}
 		}
@@ -323,52 +415,42 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 				topic, parts := notifi.SplitSubject(m.Subject())
 				switch topic {
-				case notifi.UserTopic:
+				case notifi.UserTopic, notifi.AccountTopic:
 					var dest notificationsevents.UserEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
+					needsSubjectRefresh := false
 					switch d := dest.GetData().(type) {
 					case *notificationsevents.UserEvent_Notification:
-						notificationCount++
+						if topic == notifi.UserTopic {
+							notificationCount++
+						}
 
 					case *notificationsevents.UserEvent_NotificationsReadCount:
-						if notificationCount-d.NotificationsReadCount <= 0 {
-							notificationCount = 0
-						} else {
-							notificationCount -= d.NotificationsReadCount
+						if topic == notifi.UserTopic {
+							if notificationCount-d.NotificationsReadCount <= 0 {
+								notificationCount = 0
+							} else {
+								notificationCount -= d.NotificationsReadCount
+							}
 						}
 
 					case *notificationsevents.UserEvent_UserInfoChanged:
-						currentUserInfo.Job = d.UserInfoChanged.GetNewJob()
-						currentUserInfo.JobGrade = d.UserInfoChanged.GetNewJobGrade()
-
-						baseSubjects, additionalSubjects, err = s.buildSubjects(
-							gctx,
-							currentUserInfo,
-						)
-						if err != nil {
-							return errswrap.NewError(err, ErrFailedStream)
+						if topic == notifi.UserTopic {
+							applyUserInfoChanged(currentUserInfo, d.UserInfoChanged)
+							needsSubjectRefresh = true
 						}
 
-						info, err := consumer.Info(gctx)
-						if err != nil {
-							return errswrap.NewError(err, ErrFailedStream)
-						}
+					case *notificationsevents.UserEvent_AccountGroupsChanged:
+						applyAccountGroupsChanged(currentUserInfo, d.AccountGroupsChanged)
+						needsSubjectRefresh = true
+					}
 
-						cfg := info.Config
-						subjectsMu.Lock()
-						cfg.FilterSubjects = []string{}
-						// Rebuild filter subjects with the new user info
-						cfg.FilterSubjects = append(cfg.FilterSubjects, baseSubjects...)
-						cfg.FilterSubjects = append(cfg.FilterSubjects, additionalSubjects...)
-						cfg.FilterSubjects = append(cfg.FilterSubjects, clientViewSubjects...)
-						subjectsMu.Unlock()
-
-						// Update consumer subjects
-						if _, err := s.js.UpdateConsumer(gctx, notifi.StreamName, cfg); err != nil {
-							return fmt.Errorf("failed to update consumer. %w", err)
+					if needsSubjectRefresh {
+						if err := rebuildAndRefreshSubjects(); err != nil {
+							return err
 						}
 					}
 
@@ -435,7 +517,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					if !s.shouldDeliverObjectEvent(&dest, currentUserInfo, userInfo) {
+					if !s.shouldDeliverObjectEvent(&dest, currentUserInfo) {
 						continue
 					}
 

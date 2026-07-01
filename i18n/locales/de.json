@@ -2264,6 +2264,10 @@
             "test_notification": {
                 "title": "Test-Benachrichtigung {index}",
                 "content": "Dies ist eine Test-Benachrichtigung der {type} Art."
+            },
+            "user_job_changed": {
+                "title": "Beruf aktualisiert",
+                "content": "Dein Beruf wurde zu {job} ({grade}) aktualisiert."
             }
         },
         "qualifications": {

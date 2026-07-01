@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strings"
 	"time"
 
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
@@ -122,7 +123,7 @@ func (r *Retriever) registerSubscriptions(
 		jetstream.ConsumerConfig{
 			Durable:           instance.ID() + "_ui_retriever",
 			AckPolicy:         jetstream.AckExplicitPolicy,
-			FilterSubjects:    []string{UserInfoSubject},
+			FilterSubjects:    []string{UserInfoSubject, UserGroupsSubject},
 			InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
 		},
 	)
@@ -152,27 +153,73 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 		r.logger.Error("failed to ack message", zap.Error(err), zap.String("subject", m.Subject()))
 	}
 
-	var evt pbuserinfo.UserInfoChanged
-	if err := protoutils.UnmarshalPartialJSON(m.Data(), &evt); err != nil {
-		r.logger.Error("failed to unmarshal user info changed event",
-			zap.Error(err),
+	parts := strings.Split(m.Subject(), ".")
+	if len(parts) < 3 {
+		r.logger.Error("failed to parse userinfo subject",
 			zap.String("subject", m.Subject()),
 		)
 		return
 	}
 
-	// Notify UI about the user info change
-	r.logger.Debug(
-		"User info changed, notifying user",
-		zap.Int32("userId", evt.GetUserId()),
-		zap.Int64("accountId", evt.GetAccountId()),
-	)
+	switch parts[2] {
+	case "changes":
+		var evt pbuserinfo.UserInfoChanged
+		if err := protoutils.UnmarshalPartialJSON(m.Data(), &evt); err != nil {
+			r.logger.Error("failed to unmarshal user info changed event",
+				zap.Error(err),
+				zap.String("subject", m.Subject()),
+			)
+			return
+		}
 
-	r.notifi.SendUserEvent(r.ctx, evt.GetUserId(), &notificationsevents.UserEvent{
-		Data: &notificationsevents.UserEvent_UserInfoChanged{
-			UserInfoChanged: &evt,
-		},
-	})
+		r.logger.Debug(
+			"User info changed, notifying user",
+			zap.Int32("userId", evt.GetUserId()),
+			zap.Int64("accountId", evt.GetAccountId()),
+		)
+
+		if err := r.notifi.SendUserEvent(r.ctx, evt.GetUserId(), &notificationsevents.UserEvent{
+			Data: &notificationsevents.UserEvent_UserInfoChanged{
+				UserInfoChanged: &evt,
+			},
+		}); err != nil {
+			r.logger.Error("failed to send user info change event",
+				zap.Error(err),
+				zap.Int32("userId", evt.GetUserId()),
+				zap.Int64("accountId", evt.GetAccountId()),
+			)
+		}
+
+	case "groups":
+		var evt pbuserinfo.AccountGroupsChanged
+		if err := protoutils.UnmarshalPartialJSON(m.Data(), &evt); err != nil {
+			r.logger.Error("failed to unmarshal user groups changed event",
+				zap.Error(err),
+				zap.String("subject", m.Subject()),
+			)
+			return
+		}
+
+		r.logger.Debug(
+			"User groups changed, notifying account",
+			zap.Int64("accountId", evt.GetAccountId()),
+		)
+
+		if err := r.notifi.SendAccountEvent(
+			r.ctx,
+			evt.GetAccountId(),
+			&notificationsevents.UserEvent{
+				Data: &notificationsevents.UserEvent_AccountGroupsChanged{
+					AccountGroupsChanged: &evt,
+				},
+			},
+		); err != nil {
+			r.logger.Error("failed to send user groups change event",
+				zap.Error(err),
+				zap.Int64("accountId", evt.GetAccountId()),
+			)
+		}
+	}
 }
 
 // GetUserInfo retrieves user info for a given userId and accountId, using cache for performance.
@@ -266,6 +313,11 @@ func (r *Retriever) GetUserInfoFromClaims(
 
 	// If the user has an original job in their claims, check if the userInfo matches that job + grade.
 	if userClaims.OriginalJob != nil {
+		userInfo.OriginalJob = &pbuserinfo.OriginalJob{
+			Job:      userClaims.OriginalJob.Job,
+			JobGrade: userClaims.OriginalJob.JobGrade,
+		}
+
 		// Check that the current user's info from the database matches the original job and grade in the claims.
 		// If not, it means the user's job has changed since the token was issued.
 		if !userInfo.GetSuperuser() && (userInfo.GetJob() != userClaims.OriginalJob.Job ||

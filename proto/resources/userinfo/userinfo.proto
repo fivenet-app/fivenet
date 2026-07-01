@@ -21,6 +21,13 @@ message UserInfo {
 
   bool can_be_superuser = 9;
   bool superuser = 10;
+
+  optional OriginalJob original_job = 11;
+}
+
+message OriginalJob {
+  string job = 1;
+  int32 job_grade = 2;
 }
 
 // PollReq: published to `userinfo.poll.request` when an active user connects or requests a refresh.
@@ -32,7 +39,7 @@ message PollReq {
   int32 user_id = 2;
 }
 
-// UserInfoChanged used to signal Job or JobGrade changes.
+// UserInfoChanged used to signal live primary job or job grade changes.
 message UserInfoChanged {
   // The account the user belongs to
   int64 account_id = 1;
@@ -42,21 +49,27 @@ message UserInfoChanged {
   // Timestamp of when the change was detected
   resources.timestamp.Timestamp changed_at = 3;
 
-  // Previous job title
-  string old_job = 4;
   // New job title
   optional string new_job = 5;
   optional string new_job_label = 6;
 
-  // Previous job grade
-  int32 old_job_grade = 7;
   // New job grade
   optional int32 new_job_grade = 8;
   // New job grade label
   optional string new_job_grade_label = 9;
+}
 
-  // Can the user be superuser (by group or license)
-  optional bool can_be_superuser = 10;
-  // Superuser state
-  optional bool superuser = 11;
+// AccountGroupsChanged used to signal live account group changes.
+message AccountGroupsChanged {
+  // The account the user belongs to
+  int64 account_id = 1;
+
+  // Timestamp of when the change was detected
+  resources.timestamp.Timestamp changed_at = 2;
+
+  // New account groups
+  resources.accounts.AccountGroups new_groups = 3;
+
+  // Whether the account can enter superuser mode after the change
+  bool can_be_superuser = 4;
 }

@@ -2,6 +2,7 @@ import type { DuplexStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { notificationsEvents } from '~/composables/useClientUpdate';
+import { notificationToastEvents } from '~/composables/useNotificationToasts';
 import type { Notification } from '~/types/notifications';
 import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
 import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
@@ -10,7 +11,7 @@ import {
     NotificationType,
     type Notification as ProtoNotification,
 } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserInfoChanged } from '~~/gen/ts/resources/userinfo/userinfo';
+import type { AccountGroupsChanged, UserInfoChanged } from '~~/gen/ts/resources/userinfo/userinfo';
 import type { MarkNotificationsRequest, StreamRequest, StreamResponse } from '~~/gen/ts/services/notifications/notifications';
 import { useCalendarStore } from './calendar';
 import { useMailerStore } from './mailer';
@@ -90,6 +91,7 @@ export const useNotificationsStore = defineStore(
             if (notification.actions === undefined) notification.actions = [];
 
             notifications.value.push(notification);
+            notificationToastEvents.emit('add', notification);
         };
 
         /**
@@ -164,13 +166,63 @@ export const useNotificationsStore = defineStore(
          * Handles the user info changed event by updating the active character's job information.
          * @param userInfoChanged - The user info change data from the server.
          */
-        const handleUserInfoChangedEvent = (userInfoChanged: UserInfoChanged): void => {
+        const handleUserInfoChangedEvent = async (
+            userInfoChanged: UserInfoChanged,
+            authStore: ReturnType<typeof useAuthStore>,
+        ): Promise<void> => {
             const { activeChar } = useAuth();
+
+            const jobChanged = activeChar.value!.job != userInfoChanged.newJob;
+            const jobGradeChanged = activeChar.value!.jobGrade !== userInfoChanged.newJobGrade;
+
+            if (jobChanged || jobGradeChanged) {
+                const nextJob =
+                    userInfoChanged.newJobLabel ??
+                    userInfoChanged.newJob ??
+                    activeChar.value!.jobLabel ??
+                    activeChar.value!.job;
+                const nextJobGrade =
+                    userInfoChanged.newJobGradeLabel ??
+                    (userInfoChanged.newJobGrade !== undefined
+                        ? `${userInfoChanged.newJobGrade}`
+                        : (activeChar.value!.jobGradeLabel ?? `${activeChar.value!.jobGrade ?? ''}`));
+
+                add({
+                    title: { key: 'notifications.system.user_job_changed.title', parameters: {} },
+                    description: {
+                        key: 'notifications.system.user_job_changed.content',
+                        parameters: {
+                            job: nextJob ?? '',
+                            grade: nextJobGrade,
+                        },
+                    },
+                });
+            }
 
             if (userInfoChanged.newJob) activeChar.value!.job = userInfoChanged.newJob;
             if (userInfoChanged.newJobLabel) activeChar.value!.jobLabel = userInfoChanged.newJobLabel;
-            if (userInfoChanged.newJobGrade) activeChar.value!.jobGrade = userInfoChanged.newJobGrade;
+            if (userInfoChanged.newJobGrade !== undefined) activeChar.value!.jobGrade = userInfoChanged.newJobGrade;
             if (userInfoChanged.newJobGradeLabel) activeChar.value!.jobGradeLabel = userInfoChanged.newJobGradeLabel;
+
+            await authStore.chooseCharacter(undefined);
+        };
+
+        /**
+         * Handles the user groups changed event by updating the current account capabilities.
+         * @param accountGroupsChanged - The user groups change data from the server.
+         */
+        const handleAccountGroupsChangedEvent = async (
+            accountGroupsChanged: AccountGroupsChanged,
+            authStore: ReturnType<typeof useAuthStore>,
+        ): Promise<void> => {
+            const previousIsSuperuser = authStore.isSuperuser;
+            authStore.setCanBeSuperuser(accountGroupsChanged.canBeSuperuser);
+
+            // If user is currently a superuser and can't be superuser anymore, force a choose character to refresh their capabilities
+            if (previousIsSuperuser && !accountGroupsChanged.canBeSuperuser) {
+                logger.info('User can no longer be superuser, forcing a choose character refresh');
+                await authStore.chooseCharacter(undefined, false);
+            }
         };
 
         /**
@@ -191,7 +243,9 @@ export const useNotificationsStore = defineStore(
             } else if (userEvent.data.oneofKind === 'notificationsReadCount') {
                 notificationsCount.value = userEvent.data.notificationsReadCount;
             } else if (userEvent.data.oneofKind === 'userInfoChanged') {
-                handleUserInfoChangedEvent(userEvent.data.userInfoChanged);
+                await handleUserInfoChangedEvent(userEvent.data.userInfoChanged, authStore);
+            } else if (userEvent.data.oneofKind === 'accountGroupsChanged') {
+                await handleAccountGroupsChangedEvent(userEvent.data.accountGroupsChanged, authStore);
             } else {
                 logger.warn('Unknown userEvent data received - oneofKind:', userEvent.data.oneofKind, userEvent.data);
             }

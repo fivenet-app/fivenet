@@ -13,7 +13,7 @@ import type { Perms } from '~~/gen/ts/perms';
 
 const { t } = useI18n();
 
-const { can, activeChar, jobProps, isSuperuser } = useAuth();
+const { can, activeChar, jobProps, isSuperuser, canBeSuperuser } = useAuth();
 const authSessionStore = useAuthSessionStore();
 const { userInfo } = storeToRefs(authSessionStore);
 
@@ -412,7 +412,7 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
 
                 <div class="flex-1" />
 
-                <template v-if="can(['internal.Superuser/CanBeSuperuser', 'internal.Superuser/Superuser']).value">
+                <template v-if="canBeSuperuser || isSuperuser">
                     <SuperuserJobToggle :collapsed="collapsed" />
 
                     <USeparator />

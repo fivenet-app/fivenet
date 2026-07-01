@@ -60,6 +60,7 @@ func (c *CombinedClaims) GetAccountInfoClaims() *AccountInfoClaims {
 
 func (c *CombinedClaims) GetUserInfoClaims() *UserInfoClaims {
 	return &UserInfoClaims{
+		AccID:            c.AccID,
 		RegisteredClaims: c.RegisteredClaims,
 		UserID:           c.UserID,
 		Job:              c.Job,

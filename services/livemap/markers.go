@@ -24,30 +24,30 @@ func (s *Server) CreateOrUpdateMarker(
 	ctx context.Context,
 	req *pblivemap.CreateOrUpdateMarkerRequest,
 ) (*pblivemap.CreateOrUpdateMarkerResponse, error) {
-	marker := req.GetMarker()
-	if marker != nil && marker.GetId() > 0 {
+	reqMarker := req.GetMarker()
+	if reqMarker != nil && reqMarker.GetId() > 0 {
 		logging.InjectFields(
 			ctx,
-			logging.Fields{"fivenet.livemap.marker_id", marker.GetId()},
+			logging.Fields{"fivenet.livemap.marker_id", reqMarker.GetId()},
 		)
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if req.Marker.Postal == nil || marker.GetPostal() == "" {
+	if reqMarker.Postal == nil || reqMarker.GetPostal() == "" {
 		if postal, ok := s.postals.Closest(
-			marker.GetX(),
-			marker.GetY(),
+			reqMarker.GetX(),
+			reqMarker.GetY(),
 		); postal != nil &&
 			ok {
-			req.Marker.Postal = postal.Code
+			reqMarker.Postal = postal.Code
 		}
 	}
 
-	if marker.GetId() <= 0 {
+	if reqMarker.GetId() <= 0 {
 		id, err := s.store.CreateMarker(
 			ctx,
-			marker,
+			reqMarker,
 			userInfo.GetUserId(),
 			userInfo.GetJob(),
 		)
@@ -55,7 +55,7 @@ func (s *Server) CreateOrUpdateMarker(
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 
-		req.Marker.Id = id
+		reqMarker.SetId(id)
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
 		fields, err := permslivemap.LivemapService.CreateOrUpdateMarker.AccessTyped.Get(
@@ -66,7 +66,7 @@ func (s *Server) CreateOrUpdateMarker(
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 
-		marker, err := s.store.GetMarker(ctx, marker.GetId())
+		checkMarker, err := s.store.GetMarker(ctx, reqMarker.GetId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
@@ -74,36 +74,36 @@ func (s *Server) CreateOrUpdateMarker(
 		if !access.CheckIfHasOwnJobAccess(
 			fields.StringList(),
 			userInfo,
-			marker.GetCreator().GetJob(),
-			marker.GetCreator(),
+			checkMarker.GetCreator().GetJob(),
+			checkMarker.GetCreator(),
 		) {
 			return nil, errorslivemap.ErrMarkerDenied
 		}
 
-		if err := s.store.UpdateMarker(ctx, marker, marker.GetJob()); err != nil {
+		if err := s.store.UpdateMarker(ctx, reqMarker, reqMarker.GetJob()); err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	}
 
-	marker, err := s.store.GetMarker(ctx, marker.GetId())
+	reqMarker, err := s.store.GetMarker(ctx, reqMarker.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
-	s.enricher.EnrichJobName(marker)
+	s.enricher.EnrichJobName(reqMarker)
 
 	if err := s.sendUpdateEvent(
 		ctx,
 		MarkerTopic,
 		MarkerUpdate,
-		marker.GetJob(),
-		marker,
+		reqMarker.GetJob(),
+		reqMarker,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
 
-	return &pblivemap.CreateOrUpdateMarkerResponse{Marker: marker}, nil
+	return &pblivemap.CreateOrUpdateMarkerResponse{Marker: reqMarker}, nil
 }
 
 func (s *Server) DeleteMarker(

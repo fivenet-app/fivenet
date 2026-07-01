@@ -14,6 +14,9 @@ import type { ImpersonateJobResponse } from '~~/gen/ts/services/auth/auth';
 
 const logger = useLogger('🔑 Auth');
 
+const superuserPermGuard = 'internal-superuser-superuser' as const;
+const superuserCanBePermGuard = 'internal-superuser-canbesuperuser' as const;
+
 /**
  * Pinia store for managing user sessions, permissions, and state.
  */
@@ -73,6 +76,10 @@ export const useAuthStore = defineStore(
          * The list of role attributes assigned to the user.
          */
         const attributes = ref<RoleAttribute[]>([]);
+        /**
+         * Whether the current account can enter superuser mode.
+         */
+        const canBeSuperuser = ref<boolean>(false);
 
         /**
          * Set or unset the username.
@@ -143,6 +150,24 @@ export const useAuthStore = defineStore(
         const setPermissions = (perms: Permission[], attrs: RoleAttribute[]): void => {
             permissions.value = [...perms.sort()];
             attributes.value = [...attrs.sort()];
+            canBeSuperuser.value = perms.some((p) => p.guardName === superuserCanBePermGuard);
+        };
+
+        /**
+         * Updates whether the current account can enter superuser mode.
+         * @param val - Whether superuser mode is available.
+         */
+        const setCanBeSuperuser = (val: boolean): boolean => {
+            const previousValue = canBeSuperuser.value;
+            canBeSuperuser.value = val;
+            if (!canBeSuperuser.value) {
+                // Remove can be- and superuser permission if user can't be superuser anymore
+                permissions.value = permissions.value.filter(
+                    (p) => p.guardName !== superuserPermGuard && p.guardName !== superuserCanBePermGuard,
+                );
+            }
+
+            return previousValue;
         };
 
         /**
@@ -343,7 +368,7 @@ export const useAuthStore = defineStore(
                     job: job?.name,
                 });
                 const { response } = await call;
-                setUserToken(response.token, true);
+                setUserToken(response.token);
                 setPermissions(response.permissions, response.attributes);
                 await navigateTo('/overview');
 
@@ -387,6 +412,7 @@ export const useAuthStore = defineStore(
             setUsername(null);
             setActiveChar(null);
             setPermissions([], []);
+            setCanBeSuperuser(false);
             setJobProps(undefined);
             setUserToken();
 
@@ -398,7 +424,7 @@ export const useAuthStore = defineStore(
          * Set user token in session storage.
          * @param token - The user token to set. If undefined, the token is removed.
          */
-        const setUserToken = async (token?: string, restartWS = false): Promise<void> => {
+        const setUserToken = async (token?: string): Promise<void> => {
             if (!token) {
                 authSessionStore.setUserToken(null);
                 return;
@@ -413,16 +439,14 @@ export const useAuthStore = defineStore(
             logger.debug('Setting user token in session storage');
             authSessionStore.setUserToken(token);
 
-            if (activeChar.value !== null && restartWS) {
+            if (activeChar.value !== null) {
                 logger.info('User token updated, send WebSocket re-auth message');
                 useGRPCWebsocketTransport().updateUserToken(token);
             }
         };
 
         // Getters
-        const isSuperuser = computed<boolean>(
-            () => !!permissions.value.find((p) => p.guardName === 'internal-superuser-superuser'),
-        );
+        const isSuperuser = computed<boolean>(() => !!permissions.value.find((p) => p.guardName === superuserPermGuard));
 
         return {
             // State
@@ -438,6 +462,7 @@ export const useAuthStore = defineStore(
 
             permissions,
             attributes,
+            canBeSuperuser,
 
             // Actions
             setUsername,
@@ -450,6 +475,7 @@ export const useAuthStore = defineStore(
             setUserToken,
             setActiveChar,
             setPermissions,
+            setCanBeSuperuser,
             setJobProps,
 
             chooseCharacter,

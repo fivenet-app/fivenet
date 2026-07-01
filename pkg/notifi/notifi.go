@@ -22,6 +22,12 @@ type INotifi interface {
 	NotifyUser(ctx context.Context, not *notifications.Notification) error
 	// SendObjectEvent publishes an object event notification to the event system.
 	SendObjectEvent(ctx context.Context, event *notificationsclientview.ObjectEvent) error
+	// SendAccountEvent publishes an account event notification to the event system.
+	SendAccountEvent(
+		ctx context.Context,
+		accountId int64,
+		event *notificationsevents.UserEvent,
+	) error
 	// SendUserEvent publishes a user event notification to the event system.
 	SendUserEvent(ctx context.Context, userId int32, event *notificationsevents.UserEvent) error
 	// SendSystemEvent publishes a system-wide event notification to the event system.
@@ -167,6 +173,26 @@ func (n *Notifi) SendObjectEvent(
 			event.GetType().String(),
 			err,
 		)
+	}
+
+	return nil
+}
+
+func (n *Notifi) SendAccountEvent(
+	ctx context.Context,
+	accountId int64,
+	event *notificationsevents.UserEvent,
+) error {
+	if event == nil || event.Data == nil {
+		return errors.New("account event data is required")
+	}
+
+	if _, err := n.js.PublishAsyncProto(
+		ctx,
+		fmt.Sprintf("%s.%s.%d", BaseSubject, AccountTopic, accountId),
+		event,
+	); err != nil {
+		return fmt.Errorf("failed to publish account %d event message. %w", accountId, err)
 	}
 
 	return nil

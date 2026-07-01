@@ -11,11 +11,15 @@ import (
 	"time"
 
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
+	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -42,6 +46,11 @@ type existingUser struct {
 	UserID     int32  `alias:"user_id"`
 	Identifier string `alias:"identifier"`
 	DataHash   uint64 `alias:"data_hash"`
+}
+
+type userJobChange struct {
+	job   string
+	grade int32
 }
 
 func (s *Store) SendUsers(ctx context.Context, data []*syncdata.DataUser) (int64, error) {
@@ -89,63 +98,16 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 	for i := range us {
 		userIds = append(userIds, mysql.Int32(us[i].GetUserId()))
 
-		if len(us[i].GetJobs()) == 0 {
-			us[i].Jobs = []*users.UserJob{
-				{Job: us[i].GetJob(), Grade: us[i].GetJobGrade(), IsPrimary: true},
-			}
-		} else {
-			slices.SortFunc(us[i].GetJobs(), func(a, b *users.UserJob) int {
-				if a.GetIsPrimary() && !b.GetIsPrimary() {
-					return -1
-				}
-				if !a.GetIsPrimary() && b.GetIsPrimary() {
-					return 1
-				}
-				return strings.Compare(a.GetJob(), b.GetJob())
-			})
+		s.cleanupUserJobs(us[i])
 
-			foundPrimary := false
-			primaryJob := us[i].GetJob()
-			for _, job := range us[i].GetJobs() {
-				if job.GetJob() == primaryJob {
-					foundPrimary = true
-					job.IsPrimary = true
-				} else {
-					job.IsPrimary = false
-				}
-			}
-			if !foundPrimary {
-				us[i].Jobs[0].IsPrimary = true
-			}
-		}
-
-		if len(us[i].GetPhoneNumbers()) == 0 {
-			if us[i].GetPhoneNumber() != "" {
-				us[i].PhoneNumbers = []*users.PhoneNumber{
-					{Number: us[i].GetPhoneNumber(), IsPrimary: true},
-				}
-			} else {
-				foundPrimary := false
-				for _, phoneNumber := range us[i].GetPhoneNumbers() {
-					if phoneNumber.GetNumber() == us[i].GetPhoneNumber() {
-						foundPrimary = true
-						phoneNumber.IsPrimary = true
-					} else {
-						phoneNumber.IsPrimary = false
-					}
-				}
-				if !foundPrimary && len(us[i].GetPhoneNumbers()) > 0 {
-					us[i].PhoneNumbers[0].IsPrimary = true
-				}
-			}
-		}
+		s.cleanupUserPhoneNumbers(us[i])
 	}
 
 	checkStmt := tSyncUser.
 		SELECT(
-			tSyncUser.UserID.AS("user_id"),
-			tSyncUser.Identifier.AS("identifier"),
-			tSyncUser.DataHash.AS("data_hash"),
+			tSyncUser.UserID.AS("existing_user.user_id"),
+			tSyncUser.Identifier.AS("existing_user.identifier"),
+			tSyncUser.DataHash.AS("existing_user.data_hash"),
 		).
 		FROM(tSyncUser).
 		WHERE(tSyncUser.UserID.IN(userIds...)).
@@ -233,8 +195,6 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 
 	if len(toUpdate) > 0 {
 		for _, user := range toUpdate {
-			// TODO compare user's primary job and notify user via stream userInfoChanged event
-
 			affected, err := s.updateUser(ctx, syncedAt, user)
 			if err != nil {
 				return 0, fmt.Errorf(
@@ -347,7 +307,7 @@ func (s *Store) createUser(
 	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {
 		return 0, err
 	}
-	if err := s.syncUserAccount(ctx, tx, user.GetUserId(), user.GetIdentifier()); err != nil {
+	if _, err := s.syncUserAccount(ctx, tx, user.GetUserId(), user.GetIdentifier()); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user account mapping for user %d (%s). %w",
 			user.GetUserId(),
@@ -355,7 +315,7 @@ func (s *Store) createUser(
 			err,
 		)
 	}
-	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
+	if _, err := s.handleUserJobs(ctx, tx, user); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user jobs for user %d (%s). %w",
 			user.GetUserId(),
@@ -443,10 +403,10 @@ func (s *Store) syncUserAccount(
 	tx *sql.Tx,
 	userID int32,
 	identifier string,
-) error {
+) (*int64, error) {
 	accountID, err := s.resolveUserAccountID(ctx, tx, identifier)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if accountID == nil {
@@ -455,9 +415,13 @@ func (s *Store) syncUserAccount(
 			WHERE(tUserAccounts.UserID.EQ(mysql.Int32(userID))).
 			LIMIT(1)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return fmt.Errorf("failed to delete user account mapping for user %d. %w", userID, err)
+			return nil, fmt.Errorf(
+				"failed to delete user account mapping for user %d. %w",
+				userID,
+				err,
+			)
 		}
-		return nil
+		return nil, nil
 	}
 
 	stmt := tUserAccounts.
@@ -473,10 +437,10 @@ func (s *Store) syncUserAccount(
 			tUserAccounts.AccountID.SET(mysql.RawInt("VALUES(`account_id`)")),
 		)
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return fmt.Errorf("failed to upsert user account mapping for user %d. %w", userID, err)
+		return nil, fmt.Errorf("failed to upsert user account mapping for user %d. %w", userID, err)
 	}
 
-	return nil
+	return accountID, nil
 }
 
 func (s *Store) createOrUpdateSyncUserEntry(
@@ -610,7 +574,8 @@ func (s *Store) updateUser(
 	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {
 		return 0, err
 	}
-	if err := s.syncUserAccount(ctx, tx, user.GetUserId(), user.GetIdentifier()); err != nil {
+	accountID, err := s.syncUserAccount(ctx, tx, user.GetUserId(), user.GetIdentifier())
+	if err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user account mapping for user %d (%s). %w",
 			user.GetUserId(),
@@ -618,7 +583,8 @@ func (s *Store) updateUser(
 			err,
 		)
 	}
-	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
+	jobChange, err := s.handleUserJobs(ctx, tx, user)
+	if err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user jobs for user %d (%s). %w",
 			user.GetUserId(),
@@ -652,7 +618,128 @@ func (s *Store) updateUser(
 		return 0, err
 	}
 
+	s.publishUserInfoChanged(ctx, accountID, user.GetUserId(), jobChange)
+
 	return rows, nil
+}
+
+func (s *Store) cleanupUserJobs(user *syncdata.DataUser) {
+	jobs := user.GetJobs()
+	// Fallback to unemployed job when user has no jobs.
+	if len(jobs) == 0 {
+		if user.GetJob() == "" {
+			unemployedJob := unemployedJobFromAppConfig(s.appCfg)
+			jobs = []*users.UserJob{
+				{
+					UserId:    user.GetUserId(),
+					Job:       unemployedJob.GetName(),
+					Grade:     unemployedJob.GetGrade(),
+					IsPrimary: true,
+				},
+			}
+			user.SetJobs(jobs)
+			if user.GetJob() == "" {
+				user.SetJob(jobs[0].GetJob())
+			}
+			if user.GetJobGrade() == 0 {
+				user.SetJobGrade(jobs[0].GetGrade())
+			}
+		} else {
+			// Ensure user's job is set in the jobs list
+			user.SetJobs([]*users.UserJob{
+				{
+					Job:       user.GetJob(),
+					Grade:     user.GetJobGrade(),
+					IsPrimary: true,
+				},
+			})
+		}
+	} else {
+		slices.SortFunc(user.GetJobs(), func(a, b *users.UserJob) int {
+			if a.GetIsPrimary() && !b.GetIsPrimary() {
+				return -1
+			}
+			if !a.GetIsPrimary() && b.GetIsPrimary() {
+				return 1
+			}
+			return strings.Compare(a.GetJob(), b.GetJob())
+		})
+
+		foundPrimary := false
+		primaryJob := user.GetJob()
+		for _, job := range user.GetJobs() {
+			if job.GetJob() == primaryJob {
+				foundPrimary = true
+				job.IsPrimary = true
+			} else {
+				job.IsPrimary = false
+			}
+		}
+		if !foundPrimary {
+			user.Jobs[0].IsPrimary = true
+		}
+	}
+}
+
+func (s *Store) cleanupUserPhoneNumbers(user *syncdata.DataUser) {
+	phoneNumbers := user.GetPhoneNumbers()
+	if len(phoneNumbers) == 0 {
+		if user.GetPhoneNumber() == "" {
+			return
+		}
+
+		// Add the single phone number as the primary entry when the user has no phone-number list.
+		user.SetPhoneNumbers([]*users.PhoneNumber{
+			{
+				Number:    user.GetPhoneNumber(),
+				IsPrimary: true,
+			},
+		})
+		return
+	}
+
+	primaryPhoneNumber := ""
+	foundPrimary := false
+	// Prefer an explicitly marked primary number from the phone numbers list over the user object phone number (fallback).
+	for _, phoneNumber := range phoneNumbers {
+		if phoneNumber.GetIsPrimary() {
+			primaryPhoneNumber = phoneNumber.GetNumber()
+			foundPrimary = true
+			break
+		}
+	}
+	if primaryPhoneNumber == "" {
+		primaryPhoneNumber = user.GetPhoneNumber()
+	}
+	if primaryPhoneNumber == "" {
+		primaryPhoneNumber = phoneNumbers[0].GetNumber()
+	}
+	user.SetPhoneNumber(primaryPhoneNumber)
+
+	// Sort phone numbers
+	slices.SortFunc(phoneNumbers, func(a, b *users.PhoneNumber) int {
+		if a.GetIsPrimary() && !b.GetIsPrimary() {
+			return -1
+		}
+		if !a.GetIsPrimary() && b.GetIsPrimary() {
+			return 1
+		}
+		return strings.Compare(a.GetNumber(), b.GetNumber())
+	})
+
+	// Ensure exactly one phone number is primary.
+	primaryIndex := -1
+	for i, phoneNumber := range phoneNumbers {
+		phoneNumber.IsPrimary = false
+		if primaryIndex == -1 && primaryPhoneNumber == phoneNumber.GetNumber() {
+			primaryIndex = i
+			continue
+		}
+	}
+	if primaryIndex == -1 && !foundPrimary {
+		primaryIndex = 0
+	}
+	phoneNumbers[primaryIndex].IsPrimary = true
 }
 
 func (s *Store) handleUserLicenses(
@@ -727,29 +814,9 @@ func (s *Store) handleUserLicenses(
 func (s *Store) handleUserJobs(
 	ctx context.Context,
 	tx *sql.Tx,
-	userId int32,
-	jobs []*users.UserJob,
-) error {
-	slices.SortFunc(jobs, func(a, b *users.UserJob) int {
-		if a.GetIsPrimary() && !b.GetIsPrimary() {
-			return -1
-		}
-		if !a.GetIsPrimary() && b.GetIsPrimary() {
-			return 1
-		}
-		return strings.Compare(a.GetJob(), b.GetJob())
-	})
-
-	if len(jobs) == 0 {
-		stmt := tCitizensJobs.
-			DELETE().
-			WHERE(tCitizensJobs.UserID.EQ(mysql.Int32(userId))).
-			LIMIT(25)
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return fmt.Errorf("failed to execute user jobs delete statement. %w", err)
-		}
-		return nil
-	}
+	user *syncdata.DataUser,
+) (*userJobChange, error) {
+	jobs := user.GetJobs()
 
 	tJobs := tCitizensJobs.AS("user_job")
 	selectStmt := tJobs.
@@ -759,13 +826,31 @@ func (s *Store) handleUserJobs(
 			tJobs.IsPrimary,
 		).
 		FROM(tJobs).
-		WHERE(tJobs.UserID.EQ(mysql.Int32(userId))).
+		WHERE(tJobs.UserID.EQ(mysql.Int32(user.GetUserId()))).
 		ORDER_BY(tJobs.IsPrimary, tJobs.Job, tJobs.Grade)
 
 	currentJobs := []*users.UserJob{}
 	if err := selectStmt.QueryContext(ctx, tx, &currentJobs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return fmt.Errorf("failed to query current user jobs for user ID %d. %w", userId, err)
+			return nil, fmt.Errorf(
+				"failed to query current user jobs for user ID %d. %w",
+				user.GetUserId(),
+				err,
+			)
+		}
+	}
+
+	var jobChange *userJobChange
+	if currentPrimary := primaryJob(currentJobs); currentPrimary == nil {
+		jobChange = &userJobChange{
+			job:   user.GetJob(),
+			grade: user.GetJobGrade(),
+		}
+	} else if currentPrimary.GetJob() != user.GetJob() ||
+		currentPrimary.GetGrade() != user.GetJobGrade() {
+		jobChange = &userJobChange{
+			job:   user.GetJob(),
+			grade: user.GetJobGrade(),
 		}
 	}
 
@@ -779,7 +864,7 @@ func (s *Store) handleUserJobs(
 				tCitizensJobs.IsPrimary,
 			)
 		for _, t := range append(toAdd, toUpdate...) {
-			stmt = stmt.VALUES(userId, t.GetJob(), t.GetGrade(), t.GetIsPrimary())
+			stmt = stmt.VALUES(user.GetUserId(), t.GetJob(), t.GetGrade(), t.GetIsPrimary())
 		}
 		stmt = stmt.
 			ON_DUPLICATE_KEY_UPDATE(
@@ -788,10 +873,8 @@ func (s *Store) handleUserJobs(
 				tCitizensJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
 			)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return fmt.Errorf("failed to execute user jobs insert statement. %w", err)
+			return nil, fmt.Errorf("failed to execute user jobs insert statement. %w", err)
 		}
-
-		// TODO send event to user stream on (primary) job change and/or trigger userinfo refresh
 	}
 
 	if len(toRemove) > 0 {
@@ -801,14 +884,84 @@ func (s *Store) handleUserJobs(
 		}
 		stmt := tCitizensJobs.
 			DELETE().
-			WHERE(mysql.AND(tCitizensJobs.UserID.EQ(mysql.Int32(userId)), tCitizensJobs.Job.IN(jobExprs...))).
+			WHERE(mysql.AND(tCitizensJobs.UserID.EQ(mysql.Int32(user.GetUserId())), tCitizensJobs.Job.IN(jobExprs...))).
 			LIMIT(int64(len(toRemove)))
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return fmt.Errorf("failed to execute user jobs delete statement. %w", err)
+			return nil, fmt.Errorf("failed to execute user jobs delete statement. %w", err)
 		}
 	}
 
+	return jobChange, nil
+}
+
+func unemployedJobFromAppConfig(appCfg appconfig.IConfig) *settings.UnemployedJob {
+	spec := &settings.UnemployedJob{
+		Name:  "unemployed",
+		Grade: 1,
+	}
+	if appCfg == nil {
+		return spec
+	}
+
+	cfg := appCfg.Get()
+	if cfg == nil || cfg.GetJobInfo() == nil {
+		return spec
+	}
+
+	unemployedJob := cfg.GetJobInfo().GetUnemployedJob()
+	if unemployedJob == nil {
+		return spec
+	}
+
+	spec.SetName(unemployedJob.GetName())
+	spec.SetGrade(unemployedJob.GetGrade())
+	return spec
+}
+
+func primaryJob(jobs []*users.UserJob) *users.UserJob {
+	for _, job := range jobs {
+		if job.GetIsPrimary() {
+			return job
+		}
+	}
+	if len(jobs) > 0 {
+		return jobs[0]
+	}
 	return nil
+}
+
+func (s *Store) publishUserInfoChanged(
+	ctx context.Context,
+	accountID *int64,
+	userID int32,
+	jobChange *userJobChange,
+) {
+	if jobChange == nil || accountID == nil || s.notifi == nil {
+		return
+	}
+
+	event := pkguserinfo.BuildUserInfoChangedEvent(
+		*accountID,
+		userID,
+		nil,
+		jobChange.job,
+		jobChange.grade,
+		s.enricher,
+	)
+
+	if err := s.notifi.SendUserEvent(ctx, userID, &notificationsevents.UserEvent{
+		Data: &notificationsevents.UserEvent_UserInfoChanged{
+			UserInfoChanged: event,
+		},
+	}); err != nil {
+		s.logger.Warn(
+			"failed to publish user info change event",
+			zap.Int32("user_id", userID),
+			zap.String("job", jobChange.job),
+			zap.Int32("job_grade", jobChange.grade),
+			zap.Error(err),
+		)
+	}
 }
 
 func compareJobs(
@@ -847,21 +1000,11 @@ func (s *Store) handleUserPhoneNumbers(
 	userId int32,
 	phoneNumbers []*users.PhoneNumber,
 ) error {
-	slices.SortFunc(phoneNumbers, func(a, b *users.PhoneNumber) int {
-		if a.GetIsPrimary() && !b.GetIsPrimary() {
-			return -1
-		}
-		if !a.GetIsPrimary() && b.GetIsPrimary() {
-			return 1
-		}
-		return strings.Compare(a.GetNumber(), b.GetNumber())
-	})
-
 	if len(phoneNumbers) == 0 {
 		stmt := tCitizensPhoneNumbers.
 			DELETE().
 			WHERE(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId))).
-			LIMIT(25)
+			LIMIT(10)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user phone numbers delete statement. %w", err)
 		}

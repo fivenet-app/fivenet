@@ -5532,6 +5532,34 @@ Policy snapshot applied to a specific version
 ## resources/userinfo/userinfo.proto
 
 
+### resources.userinfo.AccountGroupsChanged
+AccountGroupsChanged used to signal live account group changes.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `account_id` | [int64](#int64) |  | The account the user belongs to |
+| `changed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Timestamp of when the change was detected |
+| `new_groups` | [resources.accounts.AccountGroups](#resourcesaccountsAccountGroups) |  | New account groups |
+| `can_be_superuser` | [bool](#bool) |  | Whether the account can enter superuser mode after the change |
+
+
+
+
+
+### resources.userinfo.OriginalJob
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `job_grade` | [int32](#int32) |  |  |
+
+
+
+
+
 ### resources.userinfo.PollReq
 PollReq: published to `userinfo.poll.request` when an active user connects or requests a refresh.
 
@@ -5561,13 +5589,14 @@ PollReq: published to `userinfo.poll.request` when an active user connects or re
 | `groups` | [resources.accounts.AccountGroups](#resourcesaccountsAccountGroups) | optional |  |
 | `can_be_superuser` | [bool](#bool) |  |  |
 | `superuser` | [bool](#bool) |  |  |
+| `original_job` | [OriginalJob](#resourcesuserinfoOriginalJob) | optional |  |
 
 
 
 
 
 ### resources.userinfo.UserInfoChanged
-UserInfoChanged used to signal Job or JobGrade changes.
+UserInfoChanged used to signal live primary job or job grade changes.
 
 
 
@@ -5576,14 +5605,10 @@ UserInfoChanged used to signal Job or JobGrade changes.
 | `account_id` | [int64](#int64) |  | The account the user belongs to |
 | `user_id` | [int32](#int32) |  | The unique user identifier within the account |
 | `changed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Timestamp of when the change was detected |
-| `old_job` | [string](#string) |  | Previous job title |
 | `new_job` | [string](#string) | optional | New job title |
 | `new_job_label` | [string](#string) | optional |  |
-| `old_job_grade` | [int32](#int32) |  | Previous job grade |
 | `new_job_grade` | [int32](#int32) | optional | New job grade |
 | `new_job_grade_label` | [string](#string) | optional | New job grade label |
-| `can_be_superuser` | [bool](#bool) | optional | Can the user be superuser (by group or license) |
-| `superuser` | [bool](#bool) | optional | Superuser state |
 
 
 
@@ -5651,6 +5676,7 @@ User related events
 | `notification` | [resources.notifications.Notification](#resourcesnotificationsNotification) |  | Notifications |
 | `notifications_read_count` | [int64](#int64) |  |  |
 | `user_info_changed` | [resources.userinfo.UserInfoChanged](#resourcesuserinfoUserInfoChanged) |  |  |
+| `account_groups_changed` | [resources.userinfo.AccountGroupsChanged](#resourcesuserinfoAccountGroupsChanged) |  |  |
 
 
 
