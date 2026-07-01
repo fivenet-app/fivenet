@@ -13,7 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { ClientConfig } from "../../clientconfig/clientconfig";
 import { JobProps } from "../../jobs/props/props";
-import { UserGroupsChanged } from "../../userinfo/userinfo";
+import { AccountGroupsChanged } from "../../userinfo/userinfo";
 import { UserInfoChanged } from "../../userinfo/userinfo";
 import { Notification } from "../notifications";
 /**
@@ -52,11 +52,11 @@ export interface UserEvent {
          */
         userInfoChanged: UserInfoChanged;
     } | {
-        oneofKind: "userGroupsChanged";
+        oneofKind: "accountGroupsChanged";
         /**
-         * @generated from protobuf field: resources.userinfo.UserGroupsChanged user_groups_changed = 5
+         * @generated from protobuf field: resources.userinfo.AccountGroupsChanged account_groups_changed = 5
          */
-        userGroupsChanged: UserGroupsChanged;
+        accountGroupsChanged: AccountGroupsChanged;
     } | {
         oneofKind: undefined;
     };
@@ -128,7 +128,7 @@ class UserEvent$Type extends MessageType<UserEvent> {
             { no: 2, name: "notification", kind: "message", oneof: "data", T: () => Notification },
             { no: 3, name: "notifications_read_count", kind: "scalar", oneof: "data", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "user_info_changed", kind: "message", oneof: "data", T: () => UserInfoChanged },
-            { no: 5, name: "user_groups_changed", kind: "message", oneof: "data", T: () => UserGroupsChanged }
+            { no: 5, name: "account_groups_changed", kind: "message", oneof: "data", T: () => AccountGroupsChanged }
         ]);
     }
     create(value?: PartialMessage<UserEvent>): UserEvent {
@@ -167,10 +167,10 @@ class UserEvent$Type extends MessageType<UserEvent> {
                         userInfoChanged: UserInfoChanged.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userInfoChanged)
                     };
                     break;
-                case /* resources.userinfo.UserGroupsChanged user_groups_changed */ 5:
+                case /* resources.userinfo.AccountGroupsChanged account_groups_changed */ 5:
                     message.data = {
-                        oneofKind: "userGroupsChanged",
-                        userGroupsChanged: UserGroupsChanged.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userGroupsChanged)
+                        oneofKind: "accountGroupsChanged",
+                        accountGroupsChanged: AccountGroupsChanged.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).accountGroupsChanged)
                     };
                     break;
                 default:
@@ -197,9 +197,9 @@ class UserEvent$Type extends MessageType<UserEvent> {
         /* resources.userinfo.UserInfoChanged user_info_changed = 4; */
         if (message.data.oneofKind === "userInfoChanged")
             UserInfoChanged.internalBinaryWrite(message.data.userInfoChanged, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.userinfo.UserGroupsChanged user_groups_changed = 5; */
-        if (message.data.oneofKind === "userGroupsChanged")
-            UserGroupsChanged.internalBinaryWrite(message.data.userGroupsChanged, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.userinfo.AccountGroupsChanged account_groups_changed = 5; */
+        if (message.data.oneofKind === "accountGroupsChanged")
+            AccountGroupsChanged.internalBinaryWrite(message.data.accountGroupsChanged, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

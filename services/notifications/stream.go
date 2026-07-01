@@ -168,28 +168,32 @@ func applyUserInfoChanged(currentUserInfo *pbuserinfo.UserInfo, event *pbuserinf
 	currentUserInfo.JobGrade = event.GetNewJobGrade()
 }
 
-func applyUserGroupsChanged(
+func applyAccountGroupsChanged(
 	currentUserInfo *pbuserinfo.UserInfo,
-	event *pbuserinfo.UserGroupsChanged,
+	event *pbuserinfo.AccountGroupsChanged,
 ) {
 	if currentUserInfo == nil || event == nil {
 		return
 	}
 
+	wasSuperuser := currentUserInfo.GetSuperuser()
 	currentUserInfo.CanBeSuperuser = event.GetCanBeSuperuser()
 	if event.GetNewGroups() == nil {
 		currentUserInfo.Groups = nil
-		if !currentUserInfo.GetCanBeSuperuser() {
-			currentUserInfo.Superuser = false
+	} else {
+		currentUserInfo.Groups = &accounts.AccountGroups{
+			Groups: slices.Clone(event.GetNewGroups().GetGroups()),
 		}
-		return
 	}
 
-	currentUserInfo.Groups = &accounts.AccountGroups{
-		Groups: slices.Clone(event.GetNewGroups().GetGroups()),
-	}
 	if !currentUserInfo.GetCanBeSuperuser() {
 		currentUserInfo.Superuser = false
+	}
+
+	if wasSuperuser && !currentUserInfo.GetCanBeSuperuser() &&
+		currentUserInfo.GetOriginalJob() != nil {
+		currentUserInfo.Job = currentUserInfo.GetOriginalJob().GetJob()
+		currentUserInfo.JobGrade = currentUserInfo.GetOriginalJob().GetJobGrade()
 	}
 }
 
@@ -279,6 +283,35 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 		}
 
 		return nil
+	}
+
+	rebuildAndRefreshSubjects := func() error {
+		newBaseSubjects, newAdditionalSubjects, err := s.buildSubjects(gctx, currentUserInfo)
+		if err != nil {
+			return errswrap.NewError(err, ErrFailedStream)
+		}
+
+		subjectsMu.Lock()
+		baseSubjects = newBaseSubjects
+		additionalSubjects = newAdditionalSubjects
+		clientView := currentClientView
+		subjectsMu.Unlock()
+
+		if clientView != nil {
+			newClientViewSubjects, err := s.buildClientViewSubjects(
+				gctx,
+				currentUserInfo,
+				clientView,
+			)
+			if err != nil {
+				return err
+			}
+			subjectsMu.Lock()
+			clientViewSubjects = newClientViewSubjects
+			subjectsMu.Unlock()
+		}
+
+		return refreshConsumerSubjects()
 	}
 
 	g.Go(func() error {
@@ -409,41 +442,13 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 							needsSubjectRefresh = true
 						}
 
-					case *notificationsevents.UserEvent_UserGroupsChanged:
-						applyUserGroupsChanged(currentUserInfo, d.UserGroupsChanged)
+					case *notificationsevents.UserEvent_AccountGroupsChanged:
+						applyAccountGroupsChanged(currentUserInfo, d.AccountGroupsChanged)
 						needsSubjectRefresh = true
 					}
 
 					if needsSubjectRefresh {
-						newBaseSubjects, newAdditionalSubjects, err := s.buildSubjects(
-							gctx,
-							currentUserInfo,
-						)
-						if err != nil {
-							return errswrap.NewError(err, ErrFailedStream)
-						}
-
-						subjectsMu.Lock()
-						baseSubjects = newBaseSubjects
-						additionalSubjects = newAdditionalSubjects
-						clientView := currentClientView
-						subjectsMu.Unlock()
-
-						if clientView != nil {
-							newClientViewSubjects, err := s.buildClientViewSubjects(
-								gctx,
-								currentUserInfo,
-								clientView,
-							)
-							if err != nil {
-								return err
-							}
-							subjectsMu.Lock()
-							clientViewSubjects = newClientViewSubjects
-							subjectsMu.Unlock()
-						}
-
-						if err := refreshConsumerSubjects(); err != nil {
+						if err := rebuildAndRefreshSubjects(); err != nil {
 							return err
 						}
 					}

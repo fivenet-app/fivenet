@@ -327,7 +327,7 @@ func (p *Poller) checkDiffAndPublish(
 			superuserGroups = p.cfg.Auth.SuperuserGroups
 			superuserUsers = p.cfg.Auth.SuperuserUsers
 		}
-		evt := BuildUserGroupsChangedEvent(
+		evt := BuildAccountGroupsChangedEvent(
 			acct,
 			updatedAt,
 			groups,

@@ -57,6 +57,23 @@ export interface UserInfo {
      * @generated from protobuf field: bool superuser = 10
      */
     superuser: boolean;
+    /**
+     * @generated from protobuf field: optional resources.userinfo.OriginalJob original_job = 11
+     */
+    originalJob?: OriginalJob;
+}
+/**
+ * @generated from protobuf message resources.userinfo.OriginalJob
+ */
+export interface OriginalJob {
+    /**
+     * @generated from protobuf field: string job = 1
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: int32 job_grade = 2
+     */
+    jobGrade: number;
 }
 /**
  * PollReq: published to `userinfo.poll.request` when an active user connects or requests a refresh.
@@ -125,11 +142,11 @@ export interface UserInfoChanged {
     newJobGradeLabel?: string;
 }
 /**
- * UserGroupsChanged used to signal live account group changes.
+ * AccountGroupsChanged used to signal live account group changes.
  *
- * @generated from protobuf message resources.userinfo.UserGroupsChanged
+ * @generated from protobuf message resources.userinfo.AccountGroupsChanged
  */
-export interface UserGroupsChanged {
+export interface AccountGroupsChanged {
     /**
      * The account the user belongs to
      *
@@ -168,7 +185,8 @@ class UserInfo$Type extends MessageType<UserInfo> {
             { no: 7, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 8, name: "groups", kind: "message", T: () => AccountGroups },
             { no: 9, name: "can_be_superuser", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 10, name: "superuser", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 10, name: "superuser", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 11, name: "original_job", kind: "message", T: () => OriginalJob }
         ]);
     }
     create(value?: PartialMessage<UserInfo>): UserInfo {
@@ -220,6 +238,9 @@ class UserInfo$Type extends MessageType<UserInfo> {
                 case /* bool superuser */ 10:
                     message.superuser = reader.bool();
                     break;
+                case /* optional resources.userinfo.OriginalJob original_job */ 11:
+                    message.originalJob = OriginalJob.internalBinaryRead(reader, reader.uint32(), options, message.originalJob);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -262,6 +283,9 @@ class UserInfo$Type extends MessageType<UserInfo> {
         /* bool superuser = 10; */
         if (message.superuser !== false)
             writer.tag(10, WireType.Varint).bool(message.superuser);
+        /* optional resources.userinfo.OriginalJob original_job = 11; */
+        if (message.originalJob)
+            OriginalJob.internalBinaryWrite(message.originalJob, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -272,6 +296,61 @@ class UserInfo$Type extends MessageType<UserInfo> {
  * @generated MessageType for protobuf message resources.userinfo.UserInfo
  */
 export const UserInfo = new UserInfo$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class OriginalJob$Type extends MessageType<OriginalJob> {
+    constructor() {
+        super("resources.userinfo.OriginalJob", [
+            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<OriginalJob>): OriginalJob {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.job = "";
+        message.jobGrade = 0;
+        if (value !== undefined)
+            reflectionMergePartial<OriginalJob>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OriginalJob): OriginalJob {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string job */ 1:
+                    message.job = reader.string();
+                    break;
+                case /* int32 job_grade */ 2:
+                    message.jobGrade = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: OriginalJob, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string job = 1; */
+        if (message.job !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.job);
+        /* int32 job_grade = 2; */
+        if (message.jobGrade !== 0)
+            writer.tag(2, WireType.Varint).int32(message.jobGrade);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.userinfo.OriginalJob
+ */
+export const OriginalJob = new OriginalJob$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PollReq$Type extends MessageType<PollReq> {
     constructor() {
@@ -418,24 +497,24 @@ class UserInfoChanged$Type extends MessageType<UserInfoChanged> {
  */
 export const UserInfoChanged = new UserInfoChanged$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserGroupsChanged$Type extends MessageType<UserGroupsChanged> {
+class AccountGroupsChanged$Type extends MessageType<AccountGroupsChanged> {
     constructor() {
-        super("resources.userinfo.UserGroupsChanged", [
+        super("resources.userinfo.AccountGroupsChanged", [
             { no: 1, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "changed_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "new_groups", kind: "message", T: () => AccountGroups },
             { no: 4, name: "can_be_superuser", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
-    create(value?: PartialMessage<UserGroupsChanged>): UserGroupsChanged {
+    create(value?: PartialMessage<AccountGroupsChanged>): AccountGroupsChanged {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.accountId = 0;
         message.canBeSuperuser = false;
         if (value !== undefined)
-            reflectionMergePartial<UserGroupsChanged>(this, message, value);
+            reflectionMergePartial<AccountGroupsChanged>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserGroupsChanged): UserGroupsChanged {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AccountGroupsChanged): AccountGroupsChanged {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -463,7 +542,7 @@ class UserGroupsChanged$Type extends MessageType<UserGroupsChanged> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserGroupsChanged, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: AccountGroupsChanged, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int64 account_id = 1; */
         if (message.accountId !== 0)
             writer.tag(1, WireType.Varint).int64(message.accountId);
@@ -483,6 +562,6 @@ class UserGroupsChanged$Type extends MessageType<UserGroupsChanged> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.userinfo.UserGroupsChanged
+ * @generated MessageType for protobuf message resources.userinfo.AccountGroupsChanged
  */
-export const UserGroupsChanged = new UserGroupsChanged$Type();
+export const AccountGroupsChanged = new AccountGroupsChanged$Type();

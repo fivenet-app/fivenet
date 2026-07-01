@@ -11,7 +11,7 @@ import {
     NotificationType,
     type Notification as ProtoNotification,
 } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserGroupsChanged, UserInfoChanged } from '~~/gen/ts/resources/userinfo/userinfo';
+import type { AccountGroupsChanged, UserInfoChanged } from '~~/gen/ts/resources/userinfo/userinfo';
 import type { MarkNotificationsRequest, StreamRequest, StreamResponse } from '~~/gen/ts/services/notifications/notifications';
 import { useCalendarStore } from './calendar';
 import { useMailerStore } from './mailer';
@@ -209,13 +209,20 @@ export const useNotificationsStore = defineStore(
 
         /**
          * Handles the user groups changed event by updating the current account capabilities.
-         * @param userGroupsChanged - The user groups change data from the server.
+         * @param accountGroupsChanged - The user groups change data from the server.
          */
-        const handleUserGroupsChangedEvent = (
-            userGroupsChanged: UserGroupsChanged,
+        const handleAccountGroupsChangedEvent = async (
+            accountGroupsChanged: AccountGroupsChanged,
             authStore: ReturnType<typeof useAuthStore>,
-        ): void => {
-            authStore.setCanBeSuperuser(userGroupsChanged.canBeSuperuser);
+        ): Promise<void> => {
+            const previousIsSuperuser = authStore.isSuperuser;
+            const hadCanBeSuperuser = authStore.setCanBeSuperuser(accountGroupsChanged.canBeSuperuser);
+
+            // If user is currently a superuser and can't be superuser anymore, force a choose character to refresh their capabilities
+            if (!hadCanBeSuperuser && previousIsSuperuser) {
+                logger.info('User can no longer be superuser, forcing a choose character refresh');
+                await authStore.chooseCharacter(undefined, false);
+            }
         };
 
         /**
@@ -237,8 +244,8 @@ export const useNotificationsStore = defineStore(
                 notificationsCount.value = userEvent.data.notificationsReadCount;
             } else if (userEvent.data.oneofKind === 'userInfoChanged') {
                 await handleUserInfoChangedEvent(userEvent.data.userInfoChanged, authStore);
-            } else if (userEvent.data.oneofKind === 'userGroupsChanged') {
-                handleUserGroupsChangedEvent(userEvent.data.userGroupsChanged, authStore);
+            } else if (userEvent.data.oneofKind === 'accountGroupsChanged') {
+                await handleAccountGroupsChangedEvent(userEvent.data.accountGroupsChanged, authStore);
             } else {
                 logger.warn('Unknown userEvent data received - oneofKind:', userEvent.data.oneofKind, userEvent.data);
             }

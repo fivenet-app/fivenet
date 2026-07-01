@@ -5532,22 +5532,8 @@ Policy snapshot applied to a specific version
 ## resources/userinfo/userinfo.proto
 
 
-### resources.userinfo.PollReq
-PollReq: published to `userinfo.poll.request` when an active user connects or requests a refresh.
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `account_id` | [int64](#int64) |  | The account the user belongs to |
-| `user_id` | [int32](#int32) |  | The unique user identifier within the account |
-
-
-
-
-
-### resources.userinfo.UserGroupsChanged
-UserGroupsChanged used to signal live account group changes.
+### resources.userinfo.AccountGroupsChanged
+AccountGroupsChanged used to signal live account group changes.
 
 
 
@@ -5557,6 +5543,32 @@ UserGroupsChanged used to signal live account group changes.
 | `changed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Timestamp of when the change was detected |
 | `new_groups` | [resources.accounts.AccountGroups](#resourcesaccountsAccountGroups) |  | New account groups |
 | `can_be_superuser` | [bool](#bool) |  | Whether the account can enter superuser mode after the change |
+
+
+
+
+
+### resources.userinfo.OriginalJob
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `job_grade` | [int32](#int32) |  |  |
+
+
+
+
+
+### resources.userinfo.PollReq
+PollReq: published to `userinfo.poll.request` when an active user connects or requests a refresh.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `account_id` | [int64](#int64) |  | The account the user belongs to |
+| `user_id` | [int32](#int32) |  | The unique user identifier within the account |
 
 
 
@@ -5577,6 +5589,7 @@ UserGroupsChanged used to signal live account group changes.
 | `groups` | [resources.accounts.AccountGroups](#resourcesaccountsAccountGroups) | optional |  |
 | `can_be_superuser` | [bool](#bool) |  |  |
 | `superuser` | [bool](#bool) |  |  |
+| `original_job` | [OriginalJob](#resourcesuserinfoOriginalJob) | optional |  |
 
 
 
@@ -5663,7 +5676,7 @@ User related events
 | `notification` | [resources.notifications.Notification](#resourcesnotificationsNotification) |  | Notifications |
 | `notifications_read_count` | [int64](#int64) |  |  |
 | `user_info_changed` | [resources.userinfo.UserInfoChanged](#resourcesuserinfoUserInfoChanged) |  |  |
-| `user_groups_changed` | [resources.userinfo.UserGroupsChanged](#resourcesuserinfoUserGroupsChanged) |  |  |
+| `account_groups_changed` | [resources.userinfo.AccountGroupsChanged](#resourcesuserinfoAccountGroupsChanged) |  |  |
 
 
 

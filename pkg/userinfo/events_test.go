@@ -66,11 +66,11 @@ func TestBuildUserInfoChangedEventUsesProvidedTimestamp(t *testing.T) {
 	assert.Equal(t, int32(4), evt.GetNewJobGrade())
 }
 
-func TestBuildUserGroupsChangedEvent(t *testing.T) {
+func TestBuildAccountGroupsChangedEvent(t *testing.T) {
 	t.Parallel()
 
 	groups := &accounts.AccountGroups{Groups: []string{"supporter", "donator"}}
-	evt := BuildUserGroupsChangedEvent(42, nil, groups, true)
+	evt := BuildAccountGroupsChangedEvent(42, nil, groups, true)
 
 	require.NotNil(t, evt)
 	require.NotNil(t, evt.GetChangedAt())

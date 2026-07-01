@@ -191,7 +191,7 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 		}
 
 	case "groups":
-		var evt pbuserinfo.UserGroupsChanged
+		var evt pbuserinfo.AccountGroupsChanged
 		if err := protoutils.UnmarshalPartialJSON(m.Data(), &evt); err != nil {
 			r.logger.Error("failed to unmarshal user groups changed event",
 				zap.Error(err),
@@ -209,8 +209,8 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 			r.ctx,
 			evt.GetAccountId(),
 			&notificationsevents.UserEvent{
-				Data: &notificationsevents.UserEvent_UserGroupsChanged{
-					UserGroupsChanged: &evt,
+				Data: &notificationsevents.UserEvent_AccountGroupsChanged{
+					AccountGroupsChanged: &evt,
 				},
 			},
 		); err != nil {
@@ -313,6 +313,11 @@ func (r *Retriever) GetUserInfoFromClaims(
 
 	// If the user has an original job in their claims, check if the userInfo matches that job + grade.
 	if userClaims.OriginalJob != nil {
+		userInfo.OriginalJob = &pbuserinfo.OriginalJob{
+			Job:      userClaims.OriginalJob.Job,
+			JobGrade: userClaims.OriginalJob.JobGrade,
+		}
+
 		// Check that the current user's info from the database matches the original job and grade in the claims.
 		// If not, it means the user's job has changed since the token was issued.
 		if !userInfo.GetSuperuser() && (userInfo.GetJob() != userClaims.OriginalJob.Job ||

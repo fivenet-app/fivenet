@@ -39,14 +39,14 @@ func TestApplyUserInfoChangedIgnoresNil(t *testing.T) {
 	assert.Equal(t, int32(1), current.GetJobGrade())
 }
 
-func TestApplyUserGroupsChanged(t *testing.T) {
+func TestApplyAccountGroupsChanged(t *testing.T) {
 	t.Parallel()
 
 	current := &pbuserinfo.UserInfo{
 		Groups: &accounts.AccountGroups{Groups: []string{"old"}},
 	}
 
-	applyUserGroupsChanged(current, &pbuserinfo.UserGroupsChanged{
+	applyAccountGroupsChanged(current, &pbuserinfo.AccountGroupsChanged{
 		NewGroups:      &accounts.AccountGroups{Groups: []string{"supporter", "donator"}},
 		CanBeSuperuser: true,
 	})
@@ -55,16 +55,39 @@ func TestApplyUserGroupsChanged(t *testing.T) {
 	assert.True(t, current.GetCanBeSuperuser())
 }
 
-func TestApplyUserGroupsChangedClearsNil(t *testing.T) {
+func TestApplyAccountGroupsChangedClearsNil(t *testing.T) {
 	t.Parallel()
 
 	current := &pbuserinfo.UserInfo{
 		Groups: &accounts.AccountGroups{Groups: []string{"old"}},
 	}
 
-	applyUserGroupsChanged(current, &pbuserinfo.UserGroupsChanged{})
+	applyAccountGroupsChanged(current, &pbuserinfo.AccountGroupsChanged{})
 
 	assert.Nil(t, current.GetGroups())
 	assert.False(t, current.GetCanBeSuperuser())
 	assert.False(t, current.GetSuperuser())
+}
+
+func TestApplyAccountGroupsChangedRestoresOriginalJobWhenRevokingSuperuser(t *testing.T) {
+	t.Parallel()
+
+	current := &pbuserinfo.UserInfo{
+		Job:       "ems-super",
+		JobGrade:  7,
+		Superuser: true,
+		OriginalJob: &pbuserinfo.OriginalJob{
+			Job:      "ems",
+			JobGrade: 2,
+		},
+	}
+
+	applyAccountGroupsChanged(current, &pbuserinfo.AccountGroupsChanged{
+		CanBeSuperuser: false,
+	})
+
+	assert.False(t, current.GetCanBeSuperuser())
+	assert.False(t, current.GetSuperuser())
+	assert.Equal(t, "ems", current.GetJob())
+	assert.Equal(t, int32(2), current.GetJobGrade())
 }

@@ -39,7 +39,7 @@ func TestHandleAccountUpdatePublishesGroupChange(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Len(t, rec.events, 1)
-	evt := rec.events[0].GetUserGroupsChanged()
+	evt := rec.events[0].GetAccountGroupsChanged()
 	require.NotNil(t, evt)
 	assert.Equal(t, int64(42), evt.GetAccountId())
 	require.NotNil(t, evt.GetNewGroups())

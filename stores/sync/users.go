@@ -99,8 +99,29 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 		userIds = append(userIds, mysql.Int32(us[i].GetUserId()))
 
 		if len(us[i].GetJobs()) == 0 {
-			us[i].Jobs = []*users.UserJob{
-				{Job: us[i].GetJob(), Grade: us[i].GetJobGrade(), IsPrimary: true},
+			if us[i].GetJob() == "" {
+				// Fallback to unemployed job when user has no job(s)
+				unemployedJob := unemployedJobFromAppConfig(s.appCfg)
+				jobs := []*users.UserJob{
+					{
+						UserId:    us[i].GetUserId(),
+						Job:       unemployedJob.GetName(),
+						Grade:     unemployedJob.GetGrade(),
+						IsPrimary: true,
+					},
+				}
+				us[i].SetJobs(jobs)
+				us[i].SetJob(jobs[0].Job)
+				us[i].SetJobGrade(jobs[0].Grade)
+			} else {
+				// Ensure user's job is set in the jobs list
+				us[i].SetJobs([]*users.UserJob{
+					{
+						Job:       us[i].GetJob(),
+						Grade:     us[i].GetJobGrade(),
+						IsPrimary: true,
+					},
+				})
 			}
 		} else {
 			slices.SortFunc(us[i].GetJobs(), func(a, b *users.UserJob) int {
@@ -745,25 +766,6 @@ func (s *Store) handleUserJobs(
 	user *syncdata.DataUser,
 ) (*userJobChange, error) {
 	jobs := user.GetJobs()
-	// Fallback to unemployed job when user has no jobs
-	if len(jobs) == 0 {
-		unemployedJob := unemployedJobFromAppConfig(s.appCfg)
-		jobs = []*users.UserJob{
-			{
-				UserId:    user.GetUserId(),
-				Job:       unemployedJob.GetName(),
-				Grade:     unemployedJob.GetGrade(),
-				IsPrimary: true,
-			},
-		}
-		user.Jobs = jobs
-		if user.GetJob() == "" {
-			user.Job = jobs[0].Job
-		}
-		if user.GetJobGrade() == 0 {
-			user.JobGrade = jobs[0].Grade
-		}
-	}
 	slices.SortFunc(jobs, func(a, b *users.UserJob) int {
 		if a.GetIsPrimary() && !b.GetIsPrimary() {
 			return -1
@@ -855,11 +857,16 @@ func unemployedJobFromAppConfig(appCfg appconfig.IConfig) *settings.UnemployedJo
 		Name:  "unemployed",
 		Grade: 1,
 	}
-	if appCfg == nil || appCfg.Get() == nil || appCfg.Get().GetJobInfo() == nil {
+	if appCfg == nil {
 		return spec
 	}
 
-	unemployedJob := appCfg.Get().GetJobInfo().GetUnemployedJob()
+	cfg := appCfg.Get()
+	if cfg == nil || cfg.GetJobInfo() == nil {
+		return spec
+	}
+
+	unemployedJob := cfg.GetJobInfo().GetUnemployedJob()
 	if unemployedJob == nil {
 		return spec
 	}

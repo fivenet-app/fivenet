@@ -157,7 +157,8 @@ export const useAuthStore = defineStore(
          * Updates whether the current account can enter superuser mode.
          * @param val - Whether superuser mode is available.
          */
-        const setCanBeSuperuser = (val: boolean): void => {
+        const setCanBeSuperuser = (val: boolean): boolean => {
+            const previousValue = canBeSuperuser.value;
             canBeSuperuser.value = val;
             if (!canBeSuperuser.value) {
                 // Remove can be- and superuser permission if user can't be superuser anymore
@@ -165,6 +166,8 @@ export const useAuthStore = defineStore(
                     (p) => p.guardName !== superuserPermGuard && p.guardName !== superuserCanBePermGuard,
                 );
             }
+
+            return previousValue;
         };
 
         /**
@@ -365,7 +368,7 @@ export const useAuthStore = defineStore(
                     job: job?.name,
                 });
                 const { response } = await call;
-                setUserToken(response.token, true);
+                setUserToken(response.token);
                 setPermissions(response.permissions, response.attributes);
                 await navigateTo('/overview');
 
@@ -421,7 +424,7 @@ export const useAuthStore = defineStore(
          * Set user token in session storage.
          * @param token - The user token to set. If undefined, the token is removed.
          */
-        const setUserToken = async (token?: string, restartWS = false): Promise<void> => {
+        const setUserToken = async (token?: string): Promise<void> => {
             if (!token) {
                 authSessionStore.setUserToken(null);
                 return;
@@ -436,7 +439,7 @@ export const useAuthStore = defineStore(
             logger.debug('Setting user token in session storage');
             authSessionStore.setUserToken(token);
 
-            if (activeChar.value !== null && restartWS) {
+            if (activeChar.value !== null) {
                 logger.info('User token updated, send WebSocket re-auth message');
                 useGRPCWebsocketTransport().updateUserToken(token);
             }

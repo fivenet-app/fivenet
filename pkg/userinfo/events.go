@@ -81,18 +81,18 @@ func BuildUserInfoChangedEvent(
 	return event
 }
 
-// BuildUserGroupsChangedEvent constructs the live account group change payload.
-func BuildUserGroupsChangedEvent(
+// BuildAccountGroupsChangedEvent constructs the live account group change payload.
+func BuildAccountGroupsChangedEvent(
 	accountID int64,
 	changedAt *pbtimestamp.Timestamp,
 	groups *accounts.AccountGroups,
 	canBeSuperuser bool,
-) *pbuserinfo.UserGroupsChanged {
+) *pbuserinfo.AccountGroupsChanged {
 	if changedAt == nil {
 		changedAt = pbtimestamp.Now()
 	}
 
-	event := &pbuserinfo.UserGroupsChanged{
+	event := &pbuserinfo.AccountGroupsChanged{
 		AccountId:      accountID,
 		ChangedAt:      changedAt,
 		CanBeSuperuser: canBeSuperuser,

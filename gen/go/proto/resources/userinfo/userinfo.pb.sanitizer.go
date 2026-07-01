@@ -9,7 +9,7 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *UserGroupsChanged) Sanitize() error {
+func (m *AccountGroupsChanged) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -37,6 +37,19 @@ func (m *UserGroupsChanged) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *OriginalJob) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserInfo) Sanitize() error {
 	if m == nil {
 		return nil
@@ -56,6 +69,15 @@ func (m *UserInfo) Sanitize() error {
 
 	// Field: License
 	m.License = htmlsanitizer.SanitizeAndUnescape(m.License)
+
+	// Field: OriginalJob
+	if m.OriginalJob != nil {
+		if v, ok := any(m.GetOriginalJob()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }

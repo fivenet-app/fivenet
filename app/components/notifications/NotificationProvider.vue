@@ -89,53 +89,65 @@ async function toggleStream(): Promise<void> {
 watch([username, activeChar, webSocket.status], async () => toggleStream());
 
 const toast = useToast();
+const seenNotificationIds = new Set<number>();
 
-function createNotifications(notifications: Notification[]): void {
-    notifications.forEach((notification) => {
-        toast.add({
-            id: notification.id?.toString() ?? uuidv4(),
-            title:
-                typeof notification.title === 'string'
-                    ? notification.title
-                    : t(notification.title.key, notification.title.parameters ?? {}),
-            description:
-                typeof notification.description === 'string'
-                    ? notification.description
-                    : t(notification.description.key, notification.description.parameters ?? {}),
-            icon: notificationTypeToIcon(notification.type),
-            color: notificationTypeToColor(notification.type),
-            duration: notification.duration ?? timeouts.notification,
-            actions: notification.actions?.map((action) => ({
-                label: t(action.label.key, action.label.parameters ?? {}),
-                to: action.to,
-                external: action.external,
-                onClick: action.onClick,
-            })),
-            'onUpdate:open': () => {
-                if (notification.id) {
-                    notificationsStore.remove(notification.id);
-                }
-                if (notification.callback) {
-                    notification.callback();
-                }
-            },
-        });
+function markNotificationSeen(notification: Notification): void {
+    if (notification.id !== undefined) seenNotificationIds.add(notification.id);
+}
+
+function createNotification(notification: Notification): void {
+    if (notification.id !== undefined && seenNotificationIds.has(notification.id)) return;
+
+    markNotificationSeen(notification);
+    toast.add({
+        id: notification.id?.toString() ?? uuidv4(),
+        title:
+            typeof notification.title === 'string'
+                ? notification.title
+                : t(notification.title.key, notification.title.parameters ?? {}),
+        description:
+            typeof notification.description === 'string'
+                ? notification.description
+                : t(notification.description.key, notification.description.parameters ?? {}),
+        icon: notificationTypeToIcon(notification.type),
+        color: notificationTypeToColor(notification.type),
+        duration: notification.duration ?? timeouts.notification,
+        actions: notification.actions?.map((action) => ({
+            label: t(action.label.key, action.label.parameters ?? {}),
+            to: action.to,
+            external: action.external,
+            onClick: action.onClick,
+        })),
+        'onUpdate:open': () => {
+            if (notification.id) {
+                notificationsStore.remove(notification.id);
+                seenNotificationIds.delete(notification.id);
+            }
+            if (notification.callback) {
+                notification.callback();
+            }
+        },
     });
 }
 
-const handleNotificationAdded = (notification: Notification): void => createNotifications([notification]);
+function createNotifications(notifications: Notification[]): void {
+    notifications.forEach((notification) => createNotification(notification));
+}
+
+const handleNotificationAdded = (notification: Notification): void => createNotification(notification);
 
 onMounted(async () => await toggleStream());
 
 onUnmounted(async () => await stopStream(true));
 
 onMounted(() => {
-    createNotifications(notifications.value);
     notificationToastEvents.on('add', handleNotificationAdded);
+    createNotifications(notifications.value);
 });
 
 onUnmounted(() => {
     notificationToastEvents.off('add', handleNotificationAdded);
+    seenNotificationIds.clear();
 });
 </script>
 

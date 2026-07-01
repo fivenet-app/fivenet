@@ -123,15 +123,15 @@ func (s *Store) publishAccountGroupsChanged(
 		superuserUsers = s.cfg.Auth.SuperuserUsers
 	}
 
-	event := pkguserinfo.BuildUserGroupsChangedEvent(
+	event := pkguserinfo.BuildAccountGroupsChangedEvent(
 		accountID,
 		nil,
 		groups,
 		pkguserinfo.CanBeSuperuser(groups, license, superuserGroups, superuserUsers),
 	)
 	if err := s.notifi.SendAccountEvent(ctx, accountID, &notificationsevents.UserEvent{
-		Data: &notificationsevents.UserEvent_UserGroupsChanged{
-			UserGroupsChanged: event,
+		Data: &notificationsevents.UserEvent_AccountGroupsChanged{
+			AccountGroupsChanged: event,
 		},
 	}); err != nil {
 		groupNames := []string(nil)

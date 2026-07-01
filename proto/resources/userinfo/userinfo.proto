@@ -21,6 +21,13 @@ message UserInfo {
 
   bool can_be_superuser = 9;
   bool superuser = 10;
+
+  optional OriginalJob original_job = 11;
+}
+
+message OriginalJob {
+  string job = 1;
+  int32 job_grade = 2;
 }
 
 // PollReq: published to `userinfo.poll.request` when an active user connects or requests a refresh.
@@ -52,8 +59,8 @@ message UserInfoChanged {
   optional string new_job_grade_label = 9;
 }
 
-// UserGroupsChanged used to signal live account group changes.
-message UserGroupsChanged {
+// AccountGroupsChanged used to signal live account group changes.
+message AccountGroupsChanged {
   // The account the user belongs to
   int64 account_id = 1;
 

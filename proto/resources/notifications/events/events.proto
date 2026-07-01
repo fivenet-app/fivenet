@@ -20,7 +20,7 @@ message UserEvent {
     resources.notifications.Notification notification = 2;
     int64 notifications_read_count = 3;
     resources.userinfo.UserInfoChanged user_info_changed = 4;
-    resources.userinfo.UserGroupsChanged user_groups_changed = 5;
+    resources.userinfo.AccountGroupsChanged account_groups_changed = 5;
   }
 }
 
