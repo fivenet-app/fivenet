@@ -65,9 +65,10 @@ func (s *Server) buildSubjects(
 		fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic),
 	}
 
-	// Clone user info and disable superuser
-	userInfo.Superuser = false
-	emails, err := s.mailerStore.ListUserEmails(ctx, s.db, userInfo, nil, false, false)
+	// Clone user info and disable superuser (so a superuser doesn't receive notifications for "all" emails..)
+	clonedUserInfo := userInfo.Clone()
+	clonedUserInfo.Superuser = false
+	emails, err := s.mailerStore.ListUserEmails(ctx, s.db, clonedUserInfo, nil, false, false)
 	if err != nil {
 		return baseSubjects, nil, errswrap.NewError(err, ErrFailedStream)
 	}

@@ -98,77 +98,9 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 	for i := range us {
 		userIds = append(userIds, mysql.Int32(us[i].GetUserId()))
 
-		if len(us[i].GetJobs()) == 0 {
-			if us[i].GetJob() == "" {
-				// Fallback to unemployed job when user has no job(s)
-				unemployedJob := unemployedJobFromAppConfig(s.appCfg)
-				jobs := []*users.UserJob{
-					{
-						UserId:    us[i].GetUserId(),
-						Job:       unemployedJob.GetName(),
-						Grade:     unemployedJob.GetGrade(),
-						IsPrimary: true,
-					},
-				}
-				us[i].SetJobs(jobs)
-				us[i].SetJob(jobs[0].Job)
-				us[i].SetJobGrade(jobs[0].Grade)
-			} else {
-				// Ensure user's job is set in the jobs list
-				us[i].SetJobs([]*users.UserJob{
-					{
-						Job:       us[i].GetJob(),
-						Grade:     us[i].GetJobGrade(),
-						IsPrimary: true,
-					},
-				})
-			}
-		} else {
-			slices.SortFunc(us[i].GetJobs(), func(a, b *users.UserJob) int {
-				if a.GetIsPrimary() && !b.GetIsPrimary() {
-					return -1
-				}
-				if !a.GetIsPrimary() && b.GetIsPrimary() {
-					return 1
-				}
-				return strings.Compare(a.GetJob(), b.GetJob())
-			})
+		s.cleanupUserJobs(us[i])
 
-			foundPrimary := false
-			primaryJob := us[i].GetJob()
-			for _, job := range us[i].GetJobs() {
-				if job.GetJob() == primaryJob {
-					foundPrimary = true
-					job.IsPrimary = true
-				} else {
-					job.IsPrimary = false
-				}
-			}
-			if !foundPrimary {
-				us[i].Jobs[0].IsPrimary = true
-			}
-		}
-
-		if len(us[i].GetPhoneNumbers()) == 0 {
-			if us[i].GetPhoneNumber() != "" {
-				us[i].PhoneNumbers = []*users.PhoneNumber{
-					{Number: us[i].GetPhoneNumber(), IsPrimary: true},
-				}
-			} else {
-				foundPrimary := false
-				for _, phoneNumber := range us[i].GetPhoneNumbers() {
-					if phoneNumber.GetNumber() == us[i].GetPhoneNumber() {
-						foundPrimary = true
-						phoneNumber.IsPrimary = true
-					} else {
-						phoneNumber.IsPrimary = false
-					}
-				}
-				if !foundPrimary && len(us[i].GetPhoneNumbers()) > 0 {
-					us[i].PhoneNumbers[0].IsPrimary = true
-				}
-			}
-		}
+		s.cleanupUserPhoneNumbers(us[i])
 	}
 
 	checkStmt := tSyncUser.
@@ -691,6 +623,125 @@ func (s *Store) updateUser(
 	return rows, nil
 }
 
+func (s *Store) cleanupUserJobs(user *syncdata.DataUser) {
+	jobs := user.GetJobs()
+	// Fallback to unemployed job when user has no jobs.
+	if len(jobs) == 0 {
+		if user.GetJob() == "" {
+			unemployedJob := unemployedJobFromAppConfig(s.appCfg)
+			jobs = []*users.UserJob{
+				{
+					UserId:    user.GetUserId(),
+					Job:       unemployedJob.GetName(),
+					Grade:     unemployedJob.GetGrade(),
+					IsPrimary: true,
+				},
+			}
+			user.SetJobs(jobs)
+			if user.GetJob() == "" {
+				user.SetJob(jobs[0].GetJob())
+			}
+			if user.GetJobGrade() == 0 {
+				user.SetJobGrade(jobs[0].GetGrade())
+			}
+		} else {
+			// Ensure user's job is set in the jobs list
+			user.SetJobs([]*users.UserJob{
+				{
+					Job:       user.GetJob(),
+					Grade:     user.GetJobGrade(),
+					IsPrimary: true,
+				},
+			})
+		}
+	} else {
+		slices.SortFunc(user.GetJobs(), func(a, b *users.UserJob) int {
+			if a.GetIsPrimary() && !b.GetIsPrimary() {
+				return -1
+			}
+			if !a.GetIsPrimary() && b.GetIsPrimary() {
+				return 1
+			}
+			return strings.Compare(a.GetJob(), b.GetJob())
+		})
+
+		foundPrimary := false
+		primaryJob := user.GetJob()
+		for _, job := range user.GetJobs() {
+			if job.GetJob() == primaryJob {
+				foundPrimary = true
+				job.IsPrimary = true
+			} else {
+				job.IsPrimary = false
+			}
+		}
+		if !foundPrimary {
+			user.Jobs[0].IsPrimary = true
+		}
+	}
+}
+
+func (s *Store) cleanupUserPhoneNumbers(user *syncdata.DataUser) {
+	phoneNumbers := user.GetPhoneNumbers()
+	if len(phoneNumbers) == 0 {
+		if user.GetPhoneNumber() == "" {
+			return
+		}
+
+		// Add the single phone number as the primary entry when the user has no phone-number list.
+		user.SetPhoneNumbers([]*users.PhoneNumber{
+			{
+				Number:    user.GetPhoneNumber(),
+				IsPrimary: true,
+			},
+		})
+		return
+	}
+
+	primaryPhoneNumber := ""
+	foundPrimary := false
+	// Prefer an explicitly marked primary number from the phone numbers list over the user object phone number (fallback).
+	for _, phoneNumber := range phoneNumbers {
+		if phoneNumber.GetIsPrimary() {
+			primaryPhoneNumber = phoneNumber.GetNumber()
+			foundPrimary = true
+			break
+		}
+	}
+	if primaryPhoneNumber == "" {
+		primaryPhoneNumber = user.GetPhoneNumber()
+	}
+	if primaryPhoneNumber == "" {
+		primaryPhoneNumber = phoneNumbers[0].GetNumber()
+	}
+	user.SetPhoneNumber(primaryPhoneNumber)
+
+	// Sort phone numbers
+	slices.SortFunc(phoneNumbers, func(a, b *users.PhoneNumber) int {
+		if a.GetIsPrimary() && !b.GetIsPrimary() {
+			return -1
+		}
+		if !a.GetIsPrimary() && b.GetIsPrimary() {
+			return 1
+		}
+		return strings.Compare(a.GetNumber(), b.GetNumber())
+	})
+
+	// Ensure exactly one phone number is primary.
+	primaryIndex := -1
+	for i, phoneNumber := range phoneNumbers {
+		phoneNumber.IsPrimary = false
+		if primaryIndex == -1 && primaryPhoneNumber == phoneNumber.GetNumber() {
+			primaryIndex = i
+			continue
+		}
+	}
+	if primaryIndex == -1 && !foundPrimary {
+		primaryIndex = 0
+	}
+	phoneNumbers[primaryIndex].IsPrimary = true
+}
+
 func (s *Store) handleUserLicenses(
 	ctx context.Context,
 	tx *sql.Tx,
@@ -766,15 +817,6 @@ func (s *Store) handleUserJobs(
 	user *syncdata.DataUser,
 ) (*userJobChange, error) {
 	jobs := user.GetJobs()
-	slices.SortFunc(jobs, func(a, b *users.UserJob) int {
-		if a.GetIsPrimary() && !b.GetIsPrimary() {
-			return -1
-		}
-		if !a.GetIsPrimary() && b.GetIsPrimary() {
-			return 1
-		}
-		return strings.Compare(a.GetJob(), b.GetJob())
-	})
 
 	tJobs := tCitizensJobs.AS("user_job")
 	selectStmt := tJobs.
@@ -958,21 +1000,11 @@ func (s *Store) handleUserPhoneNumbers(
 	userId int32,
 	phoneNumbers []*users.PhoneNumber,
 ) error {
-	slices.SortFunc(phoneNumbers, func(a, b *users.PhoneNumber) int {
-		if a.GetIsPrimary() && !b.GetIsPrimary() {
-			return -1
-		}
-		if !a.GetIsPrimary() && b.GetIsPrimary() {
-			return 1
-		}
-		return strings.Compare(a.GetNumber(), b.GetNumber())
-	})
-
 	if len(phoneNumbers) == 0 {
 		stmt := tCitizensPhoneNumbers.
 			DELETE().
 			WHERE(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId))).
-			LIMIT(25)
+			LIMIT(10)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user phone numbers delete statement. %w", err)
 		}

@@ -308,6 +308,106 @@ func TestComparePhoneNumbers(t *testing.T) {
 	})
 }
 
+func TestCleanupUserPhoneNumbersDefaultsToSinglePrimaryPhone(t *testing.T) {
+	t.Parallel()
+
+	store, _ := newTestStore(t)
+
+	user := &syncdata.DataUser{
+		PhoneNumber: func() *string { v := "111"; return &v }(),
+	}
+
+	store.cleanupUserPhoneNumbers(user)
+
+	require.Len(t, user.GetPhoneNumbers(), 1)
+	assert.Equal(t, "111", user.GetPhoneNumbers()[0].GetNumber())
+	assert.True(t, user.GetPhoneNumbers()[0].GetIsPrimary())
+}
+
+func TestCleanupUserPhoneNumbersPrefersIncomingPrimaryFlag(t *testing.T) {
+	t.Parallel()
+
+	store, _ := newTestStore(t)
+
+	user := &syncdata.DataUser{
+		PhoneNumber: func() *string { v := "222"; return &v }(),
+		PhoneNumbers: []*users.PhoneNumber{
+			{Number: "222", IsPrimary: false},
+			{Number: "111", IsPrimary: true},
+		},
+	}
+
+	store.cleanupUserPhoneNumbers(user)
+
+	require.Len(t, user.GetPhoneNumbers(), 2)
+	assert.Equal(t, "111", user.GetPhoneNumber())
+	assert.True(t, user.GetPhoneNumbers()[0].GetIsPrimary())
+	assert.False(t, user.GetPhoneNumbers()[1].GetIsPrimary())
+}
+
+func TestCleanupUserPhoneNumbersPrefersIncomingPrimaryOverLegacy(t *testing.T) {
+	t.Parallel()
+
+	store, _ := newTestStore(t)
+
+	user := &syncdata.DataUser{
+		PhoneNumbers: []*users.PhoneNumber{
+			{Number: "111", IsPrimary: false},
+			{Number: "222", IsPrimary: true},
+		},
+	}
+
+	store.cleanupUserPhoneNumbers(user)
+
+	require.Len(t, user.GetPhoneNumbers(), 2)
+	assert.Equal(t, "222", user.GetPhoneNumber())
+	assert.True(t, user.GetPhoneNumbers()[0].GetIsPrimary())
+	assert.False(t, user.GetPhoneNumbers()[1].GetIsPrimary())
+}
+
+func TestCleanupUserPhoneNumbersFallsBackToLegacyWhenNoPrimary(t *testing.T) {
+	t.Parallel()
+
+	store, _ := newTestStore(t)
+
+	user := &syncdata.DataUser{
+		PhoneNumber: func() *string { v := "222"; return &v }(),
+		PhoneNumbers: []*users.PhoneNumber{
+			{Number: "111", IsPrimary: false},
+			{Number: "222", IsPrimary: false},
+		},
+	}
+
+	store.cleanupUserPhoneNumbers(user)
+
+	require.Len(t, user.GetPhoneNumbers(), 2)
+	assert.Equal(t, "222", user.GetPhoneNumber())
+	assert.False(t, user.GetPhoneNumbers()[0].GetIsPrimary())
+	assert.True(t, user.GetPhoneNumbers()[1].GetIsPrimary())
+}
+
+func TestCleanupUserPhoneNumbersKeepsOnlyOnePrimary(t *testing.T) {
+	t.Parallel()
+
+	store, _ := newTestStore(t)
+
+	user := &syncdata.DataUser{
+		PhoneNumber: func() *string { v := "111"; return &v }(),
+		PhoneNumbers: []*users.PhoneNumber{
+			{Number: "111", IsPrimary: true},
+			{Number: "222", IsPrimary: true},
+			{Number: "333", IsPrimary: false},
+		},
+	}
+
+	store.cleanupUserPhoneNumbers(user)
+
+	require.Len(t, user.GetPhoneNumbers(), 3)
+	assert.True(t, user.GetPhoneNumbers()[0].GetIsPrimary())
+	assert.False(t, user.GetPhoneNumbers()[1].GetIsPrimary())
+	assert.False(t, user.GetPhoneNumbers()[2].GetIsPrimary())
+}
+
 func newTestStore(t *testing.T) (*Store, sqlmock.Sqlmock) {
 	t.Helper()
 
@@ -533,8 +633,16 @@ func TestHandleUserJobsDefaultsToUnemployedWhenNoJobs(t *testing.T) {
 	mock.ExpectCommit()
 
 	user := &syncdata.DataUser{
-		UserId: 11,
-		Jobs:   []*users.UserJob{},
+		UserId:   11,
+		Job:      "civilian",
+		JobGrade: 7,
+		Jobs: []*users.UserJob{
+			{
+				Job:       "civilian",
+				Grade:     7,
+				IsPrimary: true,
+			},
+		},
 	}
 
 	tx, err := store.db.Begin()

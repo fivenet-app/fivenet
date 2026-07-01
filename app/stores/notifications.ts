@@ -216,10 +216,10 @@ export const useNotificationsStore = defineStore(
             authStore: ReturnType<typeof useAuthStore>,
         ): Promise<void> => {
             const previousIsSuperuser = authStore.isSuperuser;
-            const hadCanBeSuperuser = authStore.setCanBeSuperuser(accountGroupsChanged.canBeSuperuser);
+            authStore.setCanBeSuperuser(accountGroupsChanged.canBeSuperuser);
 
             // If user is currently a superuser and can't be superuser anymore, force a choose character to refresh their capabilities
-            if (!hadCanBeSuperuser && previousIsSuperuser) {
+            if (previousIsSuperuser && !accountGroupsChanged.canBeSuperuser) {
                 logger.info('User can no longer be superuser, forcing a choose character refresh');
                 await authStore.chooseCharacter(undefined, false);
             }
