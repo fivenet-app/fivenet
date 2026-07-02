@@ -245,7 +245,7 @@ defineShortcuts({
                                 <div class="flex items-center justify-between gap-2">
                                     <div class="flex gap-2">
                                         <UBadge
-                                            v-if="row.original.lastCompletedEvent.success"
+                                            v-if="row.original.lastCompletedEvent!.success"
                                             icon="i-mdi-check-bold"
                                             color="success"
                                         />
@@ -253,13 +253,13 @@ defineShortcuts({
 
                                         <div class="font-semibold text-highlighted">
                                             {{ $t('common.end_date') }}:
-                                            <GenericTime :value="row.original.lastCompletedEvent.endDate" /> ({{
+                                            <GenericTime :value="row.original.lastCompletedEvent!.endDate" /> ({{
                                                 $t('common.duration')
-                                            }}: {{ fromDuration(row.original.lastCompletedEvent.elapsed) }}s)
+                                            }}: {{ fromDuration(row.original.lastCompletedEvent!.elapsed) }}s)
                                         </div>
                                     </div>
 
-                                    <UTooltip v-if="row.original.lastCompletedEvent.data?.data" :text="$t('common.copy')">
+                                    <UTooltip v-if="row.original.lastCompletedEvent!.data?.data" :text="$t('common.copy')">
                                         <UButton
                                             variant="link"
                                             icon="mdi-content-copy"
@@ -267,14 +267,15 @@ defineShortcuts({
                                                 copyLinkToClipboard(
                                                     `Cronjob ${row.original.name} Data:\n` +
                                                         JSON.stringify(
-                                                            row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
-                                                                '/resources.cron.GenericCronData',
-                                                            )
+                                                            row.original.lastCompletedEvent?.data?.data?.typeUrl &&
+                                                                row.original.lastCompletedEvent?.data?.data?.typeUrl?.includes(
+                                                                    '/resources.cron.GenericCronData',
+                                                                )
                                                                 ? Any.unpack(
-                                                                      row.original.lastCompletedEvent.data.data,
+                                                                      row.original.lastCompletedEvent!.data!.data!,
                                                                       GenericCronData,
                                                                   )
-                                                                : row.original.lastCompletedEvent.data,
+                                                                : row.original.lastCompletedEvent!.data,
                                                         ),
                                                 )
                                             "
@@ -286,11 +287,11 @@ defineShortcuts({
                             <pre
                                 class="line-clamp-9 hover:line-clamp-none"
                                 v-text="
-                                    row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
+                                    row.original.lastCompletedEvent!.data?.data?.typeUrl?.includes(
                                         '/resources.cron.GenericCronData',
                                     )
-                                        ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
-                                        : row.original.lastCompletedEvent.data
+                                        ? Any.unpack(row.original.lastCompletedEvent!.data!.data, GenericCronData)
+                                        : row.original.lastCompletedEvent!.data
                                 "
                             />
 
@@ -301,8 +302,8 @@ defineShortcuts({
                                     <pre
                                         class="line-clamp-4 whitespace-break-spaces hover:line-clamp-none"
                                         v-text="
-                                            row.original.lastCompletedEvent.errorMessage
-                                                ? row.original.lastCompletedEvent.errorMessage
+                                            row.original.lastCompletedEvent!.errorMessage
+                                                ? row.original.lastCompletedEvent!.errorMessage
                                                 : $t('common.none')
                                         "
                                     />
