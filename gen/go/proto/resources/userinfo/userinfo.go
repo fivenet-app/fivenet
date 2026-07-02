@@ -72,6 +72,9 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 	if u.GetCanBeSuperuser() != in.GetCanBeSuperuser() {
 		return false
 	}
+	if u.GetCanBeConfigAdmin() != in.GetCanBeConfigAdmin() {
+		return false
+	}
 	if u.GetSuperuser() != in.GetSuperuser() {
 		return false
 	}

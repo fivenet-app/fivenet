@@ -25,20 +25,21 @@ const (
 )
 
 type UserInfo struct {
-	state          protoimpl.MessageState  `protogen:"hybrid.v1"`
-	AccountId      int64                   `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
-	Enabled        bool                    `protobuf:"varint,2,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	License        string                  `protobuf:"bytes,3,opt,name=license,proto3" json:"license,omitempty"`
-	LastChar       *int32                  `protobuf:"varint,4,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
-	UserId         int32                   `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Job            string                  `protobuf:"bytes,6,opt,name=job,proto3" json:"job,omitempty"`
-	JobGrade       int32                   `protobuf:"varint,7,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
-	Groups         *accounts.AccountGroups `protobuf:"bytes,8,opt,name=groups,proto3,oneof" json:"groups,omitempty"`
-	CanBeSuperuser bool                    `protobuf:"varint,9,opt,name=can_be_superuser,json=canBeSuperuser,proto3" json:"can_be_superuser,omitempty"`
-	Superuser      bool                    `protobuf:"varint,10,opt,name=superuser,proto3" json:"superuser,omitempty"`
-	OriginalJob    *OriginalJob            `protobuf:"bytes,11,opt,name=original_job,json=originalJob,proto3,oneof" json:"original_job,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state            protoimpl.MessageState  `protogen:"hybrid.v1"`
+	AccountId        int64                   `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Enabled          bool                    `protobuf:"varint,2,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	License          string                  `protobuf:"bytes,3,opt,name=license,proto3" json:"license,omitempty"`
+	LastChar         *int32                  `protobuf:"varint,4,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
+	UserId           int32                   `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Job              string                  `protobuf:"bytes,6,opt,name=job,proto3" json:"job,omitempty"`
+	JobGrade         int32                   `protobuf:"varint,7,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
+	Groups           *accounts.AccountGroups `protobuf:"bytes,8,opt,name=groups,proto3,oneof" json:"groups,omitempty"`
+	CanBeSuperuser   bool                    `protobuf:"varint,9,opt,name=can_be_superuser,json=canBeSuperuser,proto3" json:"can_be_superuser,omitempty"`
+	Superuser        bool                    `protobuf:"varint,10,opt,name=superuser,proto3" json:"superuser,omitempty"`
+	CanBeConfigAdmin bool                    `protobuf:"varint,12,opt,name=can_be_config_admin,json=canBeConfigAdmin,proto3" json:"can_be_config_admin,omitempty"`
+	OriginalJob      *OriginalJob            `protobuf:"bytes,11,opt,name=original_job,json=originalJob,proto3,oneof" json:"original_job,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *UserInfo) Reset() {
@@ -136,6 +137,13 @@ func (x *UserInfo) GetSuperuser() bool {
 	return false
 }
 
+func (x *UserInfo) GetCanBeConfigAdmin() bool {
+	if x != nil {
+		return x.CanBeConfigAdmin
+	}
+	return false
+}
+
 func (x *UserInfo) GetOriginalJob() *OriginalJob {
 	if x != nil {
 		return x.OriginalJob
@@ -183,6 +191,10 @@ func (x *UserInfo) SetSuperuser(v bool) {
 	x.Superuser = v
 }
 
+func (x *UserInfo) SetCanBeConfigAdmin(v bool) {
+	x.CanBeConfigAdmin = v
+}
+
 func (x *UserInfo) SetOriginalJob(v *OriginalJob) {
 	x.OriginalJob = v
 }
@@ -223,17 +235,18 @@ func (x *UserInfo) ClearOriginalJob() {
 type UserInfo_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	AccountId      int64
-	Enabled        bool
-	License        string
-	LastChar       *int32
-	UserId         int32
-	Job            string
-	JobGrade       int32
-	Groups         *accounts.AccountGroups
-	CanBeSuperuser bool
-	Superuser      bool
-	OriginalJob    *OriginalJob
+	AccountId        int64
+	Enabled          bool
+	License          string
+	LastChar         *int32
+	UserId           int32
+	Job              string
+	JobGrade         int32
+	Groups           *accounts.AccountGroups
+	CanBeSuperuser   bool
+	Superuser        bool
+	CanBeConfigAdmin bool
+	OriginalJob      *OriginalJob
 }
 
 func (b0 UserInfo_builder) Build() *UserInfo {
@@ -250,6 +263,7 @@ func (b0 UserInfo_builder) Build() *UserInfo {
 	x.Groups = b.Groups
 	x.CanBeSuperuser = b.CanBeSuperuser
 	x.Superuser = b.Superuser
+	x.CanBeConfigAdmin = b.CanBeConfigAdmin
 	x.OriginalJob = b.OriginalJob
 	return m0
 }
@@ -621,8 +635,10 @@ type AccountGroupsChanged struct {
 	NewGroups *accounts.AccountGroups `protobuf:"bytes,3,opt,name=new_groups,json=newGroups,proto3" json:"new_groups,omitempty"`
 	// Whether the account can enter superuser mode after the change
 	CanBeSuperuser bool `protobuf:"varint,4,opt,name=can_be_superuser,json=canBeSuperuser,proto3" json:"can_be_superuser,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Whether the account can access config-admin gated screens and RPCs after the change
+	CanBeConfigAdmin bool `protobuf:"varint,5,opt,name=can_be_config_admin,json=canBeConfigAdmin,proto3" json:"can_be_config_admin,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *AccountGroupsChanged) Reset() {
@@ -678,6 +694,13 @@ func (x *AccountGroupsChanged) GetCanBeSuperuser() bool {
 	return false
 }
 
+func (x *AccountGroupsChanged) GetCanBeConfigAdmin() bool {
+	if x != nil {
+		return x.CanBeConfigAdmin
+	}
+	return false
+}
+
 func (x *AccountGroupsChanged) SetAccountId(v int64) {
 	x.AccountId = v
 }
@@ -692,6 +715,10 @@ func (x *AccountGroupsChanged) SetNewGroups(v *accounts.AccountGroups) {
 
 func (x *AccountGroupsChanged) SetCanBeSuperuser(v bool) {
 	x.CanBeSuperuser = v
+}
+
+func (x *AccountGroupsChanged) SetCanBeConfigAdmin(v bool) {
+	x.CanBeConfigAdmin = v
 }
 
 func (x *AccountGroupsChanged) HasChangedAt() bool {
@@ -727,6 +754,8 @@ type AccountGroupsChanged_builder struct {
 	NewGroups *accounts.AccountGroups
 	// Whether the account can enter superuser mode after the change
 	CanBeSuperuser bool
+	// Whether the account can access config-admin gated screens and RPCs after the change
+	CanBeConfigAdmin bool
 }
 
 func (b0 AccountGroupsChanged_builder) Build() *AccountGroupsChanged {
@@ -737,6 +766,7 @@ func (b0 AccountGroupsChanged_builder) Build() *AccountGroupsChanged {
 	x.ChangedAt = b.ChangedAt
 	x.NewGroups = b.NewGroups
 	x.CanBeSuperuser = b.CanBeSuperuser
+	x.CanBeConfigAdmin = b.CanBeConfigAdmin
 	return m0
 }
 
@@ -744,7 +774,7 @@ var File_resources_userinfo_userinfo_proto protoreflect.FileDescriptor
 
 const file_resources_userinfo_userinfo_proto_rawDesc = "" +
 	"\n" +
-	"!resources/userinfo/userinfo.proto\x12\x12resources.userinfo\x1a!resources/accounts/accounts.proto\x1a#resources/timestamp/timestamp.proto\"\xc2\x03\n" +
+	"!resources/userinfo/userinfo.proto\x12\x12resources.userinfo\x1a!resources/accounts/accounts.proto\x1a#resources/timestamp/timestamp.proto\"\xf1\x03\n" +
 	"\bUserInfo\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x18\n" +
@@ -757,7 +787,8 @@ const file_resources_userinfo_userinfo_proto_rawDesc = "" +
 	"\x06groups\x18\b \x01(\v2!.resources.accounts.AccountGroupsH\x01R\x06groups\x88\x01\x01\x12(\n" +
 	"\x10can_be_superuser\x18\t \x01(\bR\x0ecanBeSuperuser\x12\x1c\n" +
 	"\tsuperuser\x18\n" +
-	" \x01(\bR\tsuperuser\x12G\n" +
+	" \x01(\bR\tsuperuser\x12-\n" +
+	"\x13can_be_config_admin\x18\f \x01(\bR\x10canBeConfigAdmin\x12G\n" +
 	"\foriginal_job\x18\v \x01(\v2\x1f.resources.userinfo.OriginalJobH\x02R\voriginalJob\x88\x01\x01B\f\n" +
 	"\n" +
 	"_last_charB\t\n" +
@@ -784,7 +815,7 @@ const file_resources_userinfo_userinfo_proto_rawDesc = "" +
 	"\b_new_jobB\x10\n" +
 	"\x0e_new_job_labelB\x10\n" +
 	"\x0e_new_job_gradeB\x16\n" +
-	"\x14_new_job_grade_label\"\xe0\x01\n" +
+	"\x14_new_job_grade_label\"\x8f\x02\n" +
 	"\x14AccountGroupsChanged\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12=\n" +
@@ -792,7 +823,8 @@ const file_resources_userinfo_userinfo_proto_rawDesc = "" +
 	"changed_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tchangedAt\x12@\n" +
 	"\n" +
 	"new_groups\x18\x03 \x01(\v2!.resources.accounts.AccountGroupsR\tnewGroups\x12(\n" +
-	"\x10can_be_superuser\x18\x04 \x01(\bR\x0ecanBeSuperuserBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo;userinfob\x06proto3"
+	"\x10can_be_superuser\x18\x04 \x01(\bR\x0ecanBeSuperuser\x12-\n" +
+	"\x13can_be_config_admin\x18\x05 \x01(\bR\x10canBeConfigAdminBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo;userinfob\x06proto3"
 
 var file_resources_userinfo_userinfo_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_resources_userinfo_userinfo_proto_goTypes = []any{

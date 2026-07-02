@@ -14,9 +14,6 @@ import type { ImpersonateJobResponse } from '~~/gen/ts/services/auth/auth';
 
 const logger = useLogger('🔑 Auth');
 
-const jobAdminPermGuard = 'internal-superuser-jobadmin' as const;
-const superuserCanBePermGuard = 'internal-superuser-canbesuperuser' as const;
-
 /**
  * Pinia store for managing user sessions, permissions, and state.
  */
@@ -446,7 +443,14 @@ export const useAuthStore = defineStore(
         };
 
         // Getters
+        /**
+         * Whether the current account is currently in superuser (job admin mode) access.
+         */
         const isSuperuser = computed<boolean>(() => !!permissions.value.find((p) => p.guardName === jobAdminPermGuard));
+        /**
+         * Whether the current account can access config-admin gated screens and RPCs.
+         */
+        const canBeConfigAdmin = computed<boolean>(() => permissions.value.some((p) => p.guardName === configAdminPermGuard));
 
         return {
             // State
@@ -463,6 +467,7 @@ export const useAuthStore = defineStore(
             permissions,
             attributes,
             canBeSuperuser,
+            canBeConfigAdmin,
 
             // Actions
             setUsername,

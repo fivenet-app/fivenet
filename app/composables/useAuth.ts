@@ -3,47 +3,54 @@ import { useAuthStore } from '~/stores/auth';
 import slug from '~/utils/slugify';
 import type { PermAttrKey, PermAttrKeysByType, PermAttrValue, Perms } from '~~/gen/ts/perms';
 import type { JobGrades, RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
-import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 
 export type canMode = 'oneof' | 'all';
+
+export const superuserCanBePermGuard = 'internal-superuser-canbesuperuser' as const;
+export const jobAdminPermGuard = 'internal-superuser-jobadmin' as const;
+export const configAdminPermGuard = 'internal-superuser-configadmin' as const;
 
 // Wrapper around auth store to make live easier
 const _useAuth = () => {
     const authStore = useAuthStore();
-    const { username, accountId, activeChar, isSuperuser, jobProps, permissions, attributes, canBeSuperuser } =
-        storeToRefs(authStore);
+    const {
+        username,
+        accountId,
+        activeChar,
+        isSuperuser,
+        jobProps,
+        permissions,
+        attributes,
+        canBeSuperuser,
+        canBeConfigAdmin,
+    } = storeToRefs(authStore);
 
-    function checkPerm(permissions: Permission[], perm: string | string[], mode: canMode = 'oneof'): boolean {
-        if (mode === undefined) mode = 'oneof';
+    function toGuardName(perm: string): string {
+        return slug(perm.replaceAll('/', '.'));
+    }
 
-        if (permissions.find((p) => p.guardName === 'superuser')) return true;
+    function hasGuard(guardName: string): boolean {
+        return permissions.value.some((p) => p.guardName === guardName);
+    }
 
-        const input: string[] = [];
-        if (typeof perm === 'string') {
-            input.push(perm.replaceAll('/', '.'));
-        } else {
-            const vals = perm as string[];
-            input.push(...vals.map((v) => v.replaceAll('/', '.')));
+    function canOne(perm: string): boolean {
+        const guardName = toGuardName(perm);
+
+        if (guardName === jobAdminPermGuard) {
+            return isSuperuser.value || hasGuard(jobAdminPermGuard);
         }
 
-        let ok = false;
-        // Iterate over permissions and check in "OR" condition manner
-        for (let idx = 0; idx < input.length; idx++) {
-            const val = slug(input[idx] as string);
-            if (permissions.find((p) => p.guardName === val) || val === '') {
-                // Permission found
-                if (mode === 'oneof') {
-                    return true;
-                }
-
-                ok = true;
-            } else if (mode === 'all') {
-                // Permission not found and mode requires all to be found
-                return false;
-            }
+        if (guardName === configAdminPermGuard) {
+            return canBeConfigAdmin.value || hasGuard(configAdminPermGuard);
         }
 
-        return ok;
+        if (guardName === superuserCanBePermGuard) {
+            return canBeSuperuser.value || hasGuard(superuserCanBePermGuard);
+        }
+
+        if (isSuperuser.value) return true;
+
+        return hasGuard(guardName);
     }
 
     type JobGradeListValue = {
@@ -76,9 +83,8 @@ const _useAuth = () => {
      */
     const can = (perm: Perms | Perms[], mode: canMode = 'oneof') => {
         return computed(() => {
-            if (isSuperuser.value === true) return true;
-
-            return checkPerm(permissions.value, perm, mode);
+            const input = typeof perm === 'string' ? [perm] : perm;
+            return mode === 'all' ? input.every(canOne) : input.some(canOne);
         });
     };
 
@@ -164,6 +170,7 @@ const _useAuth = () => {
         accountId,
         activeChar,
         canBeSuperuser,
+        canBeConfigAdmin,
         isSuperuser,
         jobProps,
         username,

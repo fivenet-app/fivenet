@@ -5547,6 +5547,7 @@ AccountGroupsChanged used to signal live account group changes.
 | `changed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Timestamp of when the change was detected |
 | `new_groups` | [resources.accounts.AccountGroups](#resourcesaccountsAccountGroups) |  | New account groups |
 | `can_be_superuser` | [bool](#bool) |  | Whether the account can enter superuser mode after the change |
+| `can_be_config_admin` | [bool](#bool) |  | Whether the account can access config-admin gated screens and RPCs after the change |
 
 
 
@@ -5593,6 +5594,7 @@ PollReq: published to `userinfo.poll.request` when an active user connects or re
 | `groups` | [resources.accounts.AccountGroups](#resourcesaccountsAccountGroups) | optional |  |
 | `can_be_superuser` | [bool](#bool) |  |  |
 | `superuser` | [bool](#bool) |  |  |
+| `can_be_config_admin` | [bool](#bool) |  |  |
 | `original_job` | [OriginalJob](#resourcesuserinfoOriginalJob) | optional |  |
 
 

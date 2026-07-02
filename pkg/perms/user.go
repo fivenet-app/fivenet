@@ -83,6 +83,19 @@ func (ps *Perms) can(
 	service Service,
 	name Name,
 ) bool {
+	if namespace == PermInternalNamespace && service == PermSuperuserService {
+		switch name {
+		case PermJobAdminRef.name:
+			return userInfo.GetJobAdmin()
+
+		case PermConfigAdminRef.name:
+			return userInfo.GetCanBeConfigAdmin()
+
+		default:
+			return false
+		}
+	}
+
 	permId, ok := ps.lookupPermIDByGuard(BuildGuard(namespace, service, name))
 	if !ok {
 		return false

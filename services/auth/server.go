@@ -81,10 +81,10 @@ func NewServer(p Params) *Server {
 
 		domain:            p.Config.HTTP.Sessions.Domain,
 		oauth2Providers:   p.Config.OAuth2.Providers,
-		jobAdminGroups:    p.Config.Auth.GetJobAdminGroups(),
-		jobAdminUsers:     p.Config.Auth.GetJobAdminUsers(),
-		configAdminGroups: p.Config.Auth.GetConfigAdminGroups(),
-		configAdminUsers:  p.Config.Auth.GetConfigAdminUsers(),
+		jobAdminGroups:    p.Config.Auth.JobAdminGroups,
+		jobAdminUsers:     p.Config.Auth.JobAdminUsers,
+		configAdminGroups: p.Config.Auth.ConfigAdminGroups,
+		configAdminUsers:  p.Config.Auth.ConfigAdminUsers,
 	}
 }
 

@@ -87,15 +87,17 @@ func BuildAccountGroupsChangedEvent(
 	changedAt *pbtimestamp.Timestamp,
 	groups *accounts.AccountGroups,
 	canBeSuperuser bool,
+	canBeConfigAdmin bool,
 ) *pbuserinfo.AccountGroupsChanged {
 	if changedAt == nil {
 		changedAt = pbtimestamp.Now()
 	}
 
 	event := &pbuserinfo.AccountGroupsChanged{
-		AccountId:      accountID,
-		ChangedAt:      changedAt,
-		CanBeSuperuser: canBeSuperuser,
+		AccountId:        accountID,
+		ChangedAt:        changedAt,
+		CanBeSuperuser:   canBeSuperuser,
+		CanBeConfigAdmin: canBeConfigAdmin,
 	}
 	if groups != nil {
 		event.NewGroups = &accounts.AccountGroups{

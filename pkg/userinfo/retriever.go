@@ -93,10 +93,10 @@ func NewRetriever(p Params) UserInfoRetriever {
 		notifi:   p.Notifi,
 		appCfg:   p.AppConfig,
 
-		jobAdminGroups:    p.Config.Auth.GetJobAdminGroups(),
-		jobAdminUsers:     p.Config.Auth.GetJobAdminUsers(),
-		configAdminGroups: p.Config.Auth.GetConfigAdminGroups(),
-		configAdminUsers:  p.Config.Auth.GetConfigAdminUsers(),
+		jobAdminGroups:    p.Config.Auth.JobAdminGroups,
+		jobAdminUsers:     p.Config.Auth.JobAdminUsers,
+		configAdminGroups: p.Config.Auth.ConfigAdminGroups,
+		configAdminUsers:  p.Config.Auth.ConfigAdminUsers,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -299,12 +299,20 @@ func (r *Retriever) checkAndSetSuperuser(userInfo *pbuserinfo.UserInfo) {
 		r.configAdminUsers,
 		r.appCfg,
 	)
+	_, _, configAdminGroups, configAdminUsers := EffectiveAdminLists(
+		r.jobAdminGroups,
+		r.jobAdminUsers,
+		r.configAdminGroups,
+		r.configAdminUsers,
+		r.appCfg,
+	)
 
-	if userInfo.GetGroups().ContainsAnyGroup(jobAdminGroups) ||
-		slices.Contains(jobAdminUsers, userInfo.GetLicense()) {
-		userInfo.CanBeSuperuser = true
-	} else {
-		userInfo.CanBeSuperuser = false
+	userInfo.CanBeSuperuser = userInfo.GetGroups().ContainsAnyGroup(jobAdminGroups) ||
+		slices.Contains(jobAdminUsers, userInfo.GetLicense())
+	userInfo.CanBeConfigAdmin = userInfo.GetGroups().ContainsAnyGroup(configAdminGroups) ||
+		slices.Contains(configAdminUsers, userInfo.GetLicense())
+
+	if !userInfo.GetCanBeSuperuser() {
 		userInfo.Superuser = false
 	}
 }

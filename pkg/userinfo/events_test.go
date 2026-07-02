@@ -70,7 +70,7 @@ func TestBuildAccountGroupsChangedEvent(t *testing.T) {
 	t.Parallel()
 
 	groups := &accounts.AccountGroups{Groups: []string{"supporter", "donator"}}
-	evt := BuildAccountGroupsChangedEvent(42, nil, groups, true)
+	evt := BuildAccountGroupsChangedEvent(42, nil, groups, true, false)
 
 	require.NotNil(t, evt)
 	require.NotNil(t, evt.GetChangedAt())
@@ -79,6 +79,7 @@ func TestBuildAccountGroupsChangedEvent(t *testing.T) {
 	assert.Equal(t, int64(42), evt.GetAccountId())
 	assert.Equal(t, []string{"supporter", "donator"}, evt.GetNewGroups().GetGroups())
 	assert.True(t, evt.GetCanBeSuperuser())
+	assert.False(t, evt.GetCanBeConfigAdmin())
 
 	groups.Groups[0] = "modified"
 	assert.Equal(t, []string{"supporter", "donator"}, evt.GetNewGroups().GetGroups())

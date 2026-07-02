@@ -328,12 +328,19 @@ func (p *Poller) checkDiffAndPublish(
 	if groupsChanged {
 		var jobAdminGroups, jobAdminUsers, configAdminGroups, configAdminUsers []string
 		if p.cfg != nil {
-			jobAdminGroups = p.cfg.Auth.GetJobAdminGroups()
-			jobAdminUsers = p.cfg.Auth.GetJobAdminUsers()
-			configAdminGroups = p.cfg.Auth.GetConfigAdminGroups()
-			configAdminUsers = p.cfg.Auth.GetConfigAdminUsers()
+			jobAdminGroups = p.cfg.Auth.JobAdminGroups
+			jobAdminUsers = p.cfg.Auth.JobAdminUsers
+			configAdminGroups = p.cfg.Auth.ConfigAdminGroups
+			configAdminUsers = p.cfg.Auth.ConfigAdminUsers
 		}
 		jobAdminGroups, jobAdminUsers = EffectiveJobAdminLists(
+			jobAdminGroups,
+			jobAdminUsers,
+			configAdminGroups,
+			configAdminUsers,
+			p.appCfg,
+		)
+		_, _, configAdminGroups, configAdminUsers = EffectiveAdminLists(
 			jobAdminGroups,
 			jobAdminUsers,
 			configAdminGroups,
@@ -345,6 +352,7 @@ func (p *Poller) checkDiffAndPublish(
 			updatedAt,
 			groups,
 			CanBeSuperuser(groups, license, jobAdminGroups, jobAdminUsers),
+			CanBeConfigAdmin(groups, license, configAdminGroups, configAdminUsers),
 		)
 
 		if _, err := p.js.PublishAsyncProto(

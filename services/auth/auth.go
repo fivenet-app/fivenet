@@ -467,7 +467,14 @@ func (s *Server) ChooseCharacter(
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
-	jobAdminGroups, jobAdminUsers, configAdminGroups, configAdminUsers := pkguserinfo.EffectiveAdminLists(
+	combinedJobAdminGroups, combinedJobAdminUsers := pkguserinfo.EffectiveJobAdminLists(
+		s.jobAdminGroups,
+		s.jobAdminUsers,
+		s.configAdminGroups,
+		s.configAdminUsers,
+		s.appCfg,
+	)
+	_, _, configAdminGroups, configAdminUsers := pkguserinfo.EffectiveAdminLists(
 		s.jobAdminGroups,
 		s.jobAdminUsers,
 		s.configAdminGroups,
@@ -478,8 +485,8 @@ func (s *Server) ChooseCharacter(
 	canBeSuperuser := pkguserinfo.CanBeSuperuser(
 		account.GetGroups(),
 		currentAccClaims.Subject,
-		jobAdminGroups,
-		jobAdminUsers,
+		combinedJobAdminGroups,
+		combinedJobAdminUsers,
 	)
 	canBeConfigAdmin := pkguserinfo.CanBeConfigAdmin(
 		account.GetGroups(),
@@ -685,7 +692,14 @@ func (s *Server) ImpersonateJob(
 		userClaims.OriginalJob = nil
 	}
 
-	jobAdminGroups, jobAdminUsers, configAdminGroups, configAdminUsers := pkguserinfo.EffectiveAdminLists(
+	combinedJobAdminGroups, combinedJobAdminUsers := pkguserinfo.EffectiveJobAdminLists(
+		s.jobAdminGroups,
+		s.jobAdminUsers,
+		s.configAdminGroups,
+		s.configAdminUsers,
+		s.appCfg,
+	)
+	_, _, configAdminGroups, configAdminUsers := pkguserinfo.EffectiveAdminLists(
 		s.jobAdminGroups,
 		s.jobAdminUsers,
 		s.configAdminGroups,
@@ -696,8 +710,8 @@ func (s *Server) ImpersonateJob(
 	canBeSuperuser := pkguserinfo.CanBeSuperuser(
 		account.GetGroups(),
 		accClaims.Subject,
-		jobAdminGroups,
-		jobAdminUsers,
+		combinedJobAdminGroups,
+		combinedJobAdminUsers,
 	)
 	canBeConfigAdmin := pkguserinfo.CanBeConfigAdmin(
 		account.GetGroups(),

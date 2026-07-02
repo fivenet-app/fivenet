@@ -58,6 +58,10 @@ export interface UserInfo {
      */
     superuser: boolean;
     /**
+     * @generated from protobuf field: bool can_be_config_admin = 12
+     */
+    canBeConfigAdmin: boolean;
+    /**
      * @generated from protobuf field: optional resources.userinfo.OriginalJob original_job = 11
      */
     originalJob?: OriginalJob;
@@ -171,6 +175,12 @@ export interface AccountGroupsChanged {
      * @generated from protobuf field: bool can_be_superuser = 4
      */
     canBeSuperuser: boolean;
+    /**
+     * Whether the account can access config-admin gated screens and RPCs after the change
+     *
+     * @generated from protobuf field: bool can_be_config_admin = 5
+     */
+    canBeConfigAdmin: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserInfo$Type extends MessageType<UserInfo> {
@@ -186,6 +196,7 @@ class UserInfo$Type extends MessageType<UserInfo> {
             { no: 8, name: "groups", kind: "message", T: () => AccountGroups },
             { no: 9, name: "can_be_superuser", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 10, name: "superuser", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 12, name: "can_be_config_admin", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 11, name: "original_job", kind: "message", T: () => OriginalJob }
         ]);
     }
@@ -199,6 +210,7 @@ class UserInfo$Type extends MessageType<UserInfo> {
         message.jobGrade = 0;
         message.canBeSuperuser = false;
         message.superuser = false;
+        message.canBeConfigAdmin = false;
         if (value !== undefined)
             reflectionMergePartial<UserInfo>(this, message, value);
         return message;
@@ -237,6 +249,9 @@ class UserInfo$Type extends MessageType<UserInfo> {
                     break;
                 case /* bool superuser */ 10:
                     message.superuser = reader.bool();
+                    break;
+                case /* bool can_be_config_admin */ 12:
+                    message.canBeConfigAdmin = reader.bool();
                     break;
                 case /* optional resources.userinfo.OriginalJob original_job */ 11:
                     message.originalJob = OriginalJob.internalBinaryRead(reader, reader.uint32(), options, message.originalJob);
@@ -286,6 +301,9 @@ class UserInfo$Type extends MessageType<UserInfo> {
         /* optional resources.userinfo.OriginalJob original_job = 11; */
         if (message.originalJob)
             OriginalJob.internalBinaryWrite(message.originalJob, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* bool can_be_config_admin = 12; */
+        if (message.canBeConfigAdmin !== false)
+            writer.tag(12, WireType.Varint).bool(message.canBeConfigAdmin);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -503,13 +521,15 @@ class AccountGroupsChanged$Type extends MessageType<AccountGroupsChanged> {
             { no: 1, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "changed_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "new_groups", kind: "message", T: () => AccountGroups },
-            { no: 4, name: "can_be_superuser", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "can_be_superuser", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "can_be_config_admin", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<AccountGroupsChanged>): AccountGroupsChanged {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.accountId = 0;
         message.canBeSuperuser = false;
+        message.canBeConfigAdmin = false;
         if (value !== undefined)
             reflectionMergePartial<AccountGroupsChanged>(this, message, value);
         return message;
@@ -530,6 +550,9 @@ class AccountGroupsChanged$Type extends MessageType<AccountGroupsChanged> {
                     break;
                 case /* bool can_be_superuser */ 4:
                     message.canBeSuperuser = reader.bool();
+                    break;
+                case /* bool can_be_config_admin */ 5:
+                    message.canBeConfigAdmin = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -555,6 +578,9 @@ class AccountGroupsChanged$Type extends MessageType<AccountGroupsChanged> {
         /* bool can_be_superuser = 4; */
         if (message.canBeSuperuser !== false)
             writer.tag(4, WireType.Varint).bool(message.canBeSuperuser);
+        /* bool can_be_config_admin = 5; */
+        if (message.canBeConfigAdmin !== false)
+            writer.tag(5, WireType.Varint).bool(message.canBeConfigAdmin);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

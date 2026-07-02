@@ -190,10 +190,17 @@ oauth2:
 postalsFile: ".output/public/data/postals.json"
 
 auth:
-  superuserGroups:
+  # List of groups that will have access to superuser mode with job admin permissions.
+  jobAdminGroups: []
+  # List of users that will have access to superuser mode with job admin permissions.
+  jobAdminUsers: []
+
+  # List of groups that will have access to superuser mode with config admin permissions.
+  configAdminGroups:
     - projektleiter
     - teamleitung
-  superuserUsers: []
+  # List of users that will have access to superuser mode with config admin permissions.
+  configAdminUsers: []
   #permsCacheSize: 1024
   #permsCacheTTL: 30s
 

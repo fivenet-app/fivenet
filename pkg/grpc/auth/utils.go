@@ -99,3 +99,8 @@ func MustGetUserInfoFromContext(ctx context.Context) *pbuserinfo.UserInfo {
 	}
 	return userInfo
 }
+
+// ContextWithUserInfo stores user info in the gRPC auth context.
+func ContextWithUserInfo(ctx context.Context, userInfo *pbuserinfo.UserInfo) context.Context {
+	return context.WithValue(ctx, userInfoCtxMarkerKey, userInfo)
+}

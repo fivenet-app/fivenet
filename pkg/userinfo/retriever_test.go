@@ -25,5 +25,6 @@ func TestCheckAndSetSuperuserAcceptsConfigAdminMembership(t *testing.T) {
 	retriever.checkAndSetSuperuser(userInfo)
 
 	assert.True(t, userInfo.GetCanBeSuperuser())
+	assert.True(t, userInfo.GetCanBeConfigAdmin())
 	assert.False(t, userInfo.GetSuperuser())
 }
