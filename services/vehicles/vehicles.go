@@ -45,7 +45,7 @@ func (s *Server) ListVehicles(
 	canAccessWanted := fields.Contains(
 		permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted,
 	) ||
-		userInfo.GetSuperuser()
+		userInfo.GetJobAdmin()
 	if canAccessWanted {
 		if req.Wanted != nil && req.GetWanted() {
 			logRequest = true
@@ -123,7 +123,7 @@ func (s *Server) SetVehicleProps(
 	// Generate the update sets
 	if req.GetProps() != nil && req.GetProps().Wanted != nil {
 		if !fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) &&
-			!userInfo.GetSuperuser() {
+			!userInfo.GetJobAdmin() {
 			return nil, errorsvehicles.ErrPropsWantedDenied
 		}
 	}

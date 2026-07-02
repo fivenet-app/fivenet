@@ -89,7 +89,7 @@ func (s *Server) getEmail(
 	withAccess bool,
 	withSettings bool,
 ) (*maileremails.Email, error) {
-	email, err := s.store.GetEmail(ctx, s.db, emailId, userInfo != nil && userInfo.GetSuperuser())
+	email, err := s.store.GetEmail(ctx, s.db, emailId, userInfo != nil && userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, err
 	}
@@ -235,7 +235,7 @@ func (s *Server) CreateOrUpdateEmail(
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
-		if !userInfo.GetSuperuser() && email.GetDeactivated() {
+		if !userInfo.GetJobAdmin() && email.GetDeactivated() {
 			return nil, errorsmailer.ErrEmailDisabled
 		}
 
@@ -267,7 +267,7 @@ func (s *Server) CreateOrUpdateEmail(
 			)
 		}
 
-		if userInfo.GetSuperuser() {
+		if userInfo.GetJobAdmin() {
 			sets = append(sets,
 				tEmails.Deactivated.SET(mysql.Bool(req.GetEmail().GetDeactivated())),
 			)
@@ -452,7 +452,7 @@ func (s *Server) DeleteEmail(
 	)
 
 	var deletedAtTime *timestamp.Timestamp
-	if email == nil || email.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if email == nil || email.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {
@@ -472,7 +472,7 @@ func (s *Server) GetEmailProposals(
 ) (*pbmailer.GetEmailProposalsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if req.UserId != nil && userInfo.GetSuperuser() {
+	if req.UserId != nil && userInfo.GetJobAdmin() {
 		userInfo.UserId = req.GetUserId()
 	}
 

@@ -288,16 +288,16 @@ var PermsRemap = map[string][]perms.PermissionRef{
 
 	// Service: filestore.FilestoreService
 	"filestore.FilestoreService/DeleteFile": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 	"filestore.FilestoreService/DeleteFileByPath": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 	"filestore.FilestoreService/ListFiles": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 	"filestore.FilestoreService/Upload": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 
 	// Service: jobs.ColleaguesService
@@ -362,10 +362,10 @@ var PermsRemap = map[string][]perms.PermissionRef{
 		permsmailer.MailerService.ListEmails.Perm,
 	},
 	"mailer.ThreadService/DeleteMessage": {
-		perms.PermSuperuserRef,
+		perms.PermJobAdminRef,
 	},
 	"mailer.ThreadService/DeleteThread": {
-		perms.PermSuperuserRef,
+		perms.PermJobAdminRef,
 	},
 	"mailer.ThreadService/GetThread": {
 		permsmailer.MailerService.ListEmails.Perm,
@@ -445,35 +445,35 @@ var PermsRemap = map[string][]perms.PermissionRef{
 
 	// Service: settings.AccountsService
 	"settings.AccountsService/CreateAccount": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 	"settings.AccountsService/DeleteAccount": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 	"settings.AccountsService/DisconnectSocialLogin": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 	"settings.AccountsService/ListAccounts": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 	"settings.AccountsService/UpdateAccount": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 
 	// Service: settings.ConfigService
 	"settings.ConfigService/GetAppConfig": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 	"settings.ConfigService/UpdateAppConfig": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 
 	// Service: settings.CronService
 	"settings.CronService/ListCronjobs": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 	"settings.CronService/RunCronjob": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 
 	// Service: settings.LawsService
@@ -518,22 +518,22 @@ var PermsRemap = map[string][]perms.PermissionRef{
 
 	// Service: settings.SystemService
 	"settings.SystemService/DeleteFaction": {
-		perms.PermSuperuserRef,
+		perms.PermJobAdminRef,
 	},
 	"settings.SystemService/GetAllPermissions": {
-		perms.PermSuperuserRef,
+		perms.PermJobAdminRef,
 	},
 	"settings.SystemService/GetJobLimits": {
-		perms.PermSuperuserRef,
+		perms.PermJobAdminRef,
 	},
 	"settings.SystemService/GetStatus": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 	"settings.SystemService/TriggerUserSync": {
-		perms.PermSuperuserRef,
+		perms.PermConfigAdminRef,
 	},
 	"settings.SystemService/UpdateJobLimits": {
-		perms.PermSuperuserRef,
+		perms.PermJobAdminRef,
 	},
 
 	// Service: wiki.CollabService

@@ -331,13 +331,13 @@ const file_services_filestore_filestore_proto_rawDesc = "" +
 	"\x05files\x18\x02 \x03(\v2\x14.resources.file.FileB\x04\xc8\xf3\x18\x01R\x05files\"-\n" +
 	"\x17DeleteFileByPathRequest\x12\x12\n" +
 	"\x04path\x18\x01 \x01(\tR\x04path\"\x1a\n" +
-	"\x18DeleteFileByPathResponse2\xd0\x03\n" +
-	"\x10FilestoreService\x12d\n" +
-	"\x06Upload\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser(\x01\x12k\n" +
-	"\tListFiles\x12$.services.filestore.ListFilesRequest\x1a%.services.filestore.ListFilesResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12f\n" +
+	"\x18DeleteFileByPathResponse2\xd8\x03\n" +
+	"\x10FilestoreService\x12f\n" +
+	"\x06Upload\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin(\x01\x12m\n" +
+	"\tListFiles\x12$.services.filestore.ListFilesRequest\x1a%.services.filestore.ListFilesResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12h\n" +
 	"\n" +
-	"DeleteFile\x12!.resources.file.DeleteFileRequest\x1a\".resources.file.DeleteFileResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12\x80\x01\n" +
-	"\x10DeleteFileByPath\x12+.services.filestore.DeleteFileByPathRequest\x1a,.services.filestore.DeleteFileByPathResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuserBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/filestore;filestoreb\x06proto3"
+	"DeleteFile\x12!.resources.file.DeleteFileRequest\x1a\".resources.file.DeleteFileResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12\x82\x01\n" +
+	"\x10DeleteFileByPath\x12+.services.filestore.DeleteFileByPathRequest\x1a,.services.filestore.DeleteFileByPathResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdminBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/filestore;filestoreb\x06proto3"
 
 var file_services_filestore_filestore_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_services_filestore_filestore_proto_goTypes = []any{

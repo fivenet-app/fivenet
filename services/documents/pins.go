@@ -62,7 +62,7 @@ func (s *Server) ToggleDocumentPin(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 		}
-		if !check && !userInfo.GetSuperuser() {
+		if !check && !userInfo.GetJobAdmin() {
 			return nil, errorsdocuments.ErrDocViewDenied
 		}
 	}

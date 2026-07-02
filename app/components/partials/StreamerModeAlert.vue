@@ -6,7 +6,13 @@
         color="warning"
         variant="subtle"
         :actions="[
-            { label: $t('common.settings'), to: '/settings', variant: 'outline', color: 'neutral', icon: 'i-mdi-cog-outline' },
+            {
+                label: $t('components.auth.user_settings.title'),
+                to: '/user-settings',
+                variant: 'outline',
+                color: 'neutral',
+                icon: 'i-mdi-account-cog-outline',
+            },
         ]"
     />
 </template>

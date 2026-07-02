@@ -26,13 +26,13 @@ service ConfigService {
   rpc GetAppConfig(GetAppConfigRequest) returns (GetAppConfigResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
   rpc UpdateAppConfig(UpdateAppConfigRequest) returns (UpdateAppConfigResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
 }

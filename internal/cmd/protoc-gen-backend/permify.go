@@ -112,8 +112,11 @@ func remapRef(defaultNamespace string, defaultService string, perm *Perm) string
 	switch perm.Name {
 	case "Any":
 		return "perms.PermAnyRef"
-	case "Superuser":
-		return "perms.PermSuperuserRef"
+	case "JobAdmin":
+		return "perms.PermJobAdminRef"
+	case "ConfigAdmin":
+		return "perms.PermConfigAdminRef"
+
 	default:
 		namespace := remapTargetNamespace(defaultNamespace, perm)
 		service := shortServiceName(remapTargetService(defaultService, perm))
@@ -199,7 +202,8 @@ func collectRemapImports(remaps map[string]map[string]map[string][]*Perm) []Rema
 		for _, remap := range remapNs {
 			for _, targets := range remap {
 				for _, target := range targets {
-					if target.Name == "Any" || target.Name == "Superuser" {
+					if target.Name == "Any" || target.Name == "Superuser" ||
+						target.Name == "JobAdmin" {
 						continue
 					}
 
@@ -514,7 +518,8 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 					}
 				}
 
-				if slices.Contains(names, "Superuser") || slices.Contains(names, "Any") ||
+				if slices.Contains(names, "JobAdmin") || slices.Contains(names, "ConfigAdmin") ||
+					slices.Contains(names, "Any") ||
 					methodTargetOverridden {
 					continue
 				}

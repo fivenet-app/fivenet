@@ -19,7 +19,7 @@ func (s *Server) ListLawBooks(
 ) (*pbsettings.ListLawBooksResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	resp, err := s.store.ListLawBooks(ctx, userInfo.GetSuperuser())
+	resp, err := s.store.ListLawBooks(ctx, userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -33,7 +33,7 @@ func (s *Server) CreateOrUpdateLawBook(
 ) (*pbsettings.CreateOrUpdateLawBookResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	lawBook, err := s.store.CreateOrUpdateLawBook(ctx, req, userInfo.GetSuperuser())
+	lawBook, err := s.store.CreateOrUpdateLawBook(ctx, req, userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -61,13 +61,13 @@ func (s *Server) DeleteLawBook(
 ) (*pbsettings.DeleteLawBookResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	lawBook, err := s.store.GetLawBook(ctx, req.GetId(), userInfo.GetSuperuser())
+	lawBook, err := s.store.GetLawBook(ctx, req.GetId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
 	var deletedAtTime *timestamp.Timestamp
-	if lawBook.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if lawBook.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 	}
 
@@ -108,7 +108,7 @@ func (s *Server) CreateOrUpdateLaw(
 ) (*pbsettings.CreateOrUpdateLawResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	law, refreshLawBookIDs, err := s.store.CreateOrUpdateLaw(ctx, req, userInfo.GetSuperuser())
+	law, refreshLawBookIDs, err := s.store.CreateOrUpdateLaw(ctx, req, userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -138,13 +138,13 @@ func (s *Server) DeleteLaw(
 ) (*pbsettings.DeleteLawResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	law, err := s.store.GetLaw(ctx, req.GetId(), userInfo.GetSuperuser())
+	law, err := s.store.GetLaw(ctx, req.GetId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
 	var deletedAtTime *timestamp.Timestamp
-	if law.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if law.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 	}
 

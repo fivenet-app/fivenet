@@ -41,7 +41,7 @@ func (s *Store) ListUsableStamps(
 	tStamp := table.FivenetDocumentsStamps.AS("stamp")
 
 	condition := mysql.Bool(true)
-	includeDeleted := q.UserInfo != nil && q.UserInfo.GetSuperuser()
+	includeDeleted := q.UserInfo != nil && q.UserInfo.GetJobAdmin()
 
 	visibleIDs := s.stampAccess.VisibleIDsByConditionQuery(
 		q.UserInfo,

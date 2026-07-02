@@ -105,7 +105,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, _ string) (context.Context,
 
 	if userInfo.LastChar != nil && userInfo.GetLastChar() != userInfo.GetUserId() &&
 		g.appCfg.Get().Auth.GetLastCharLock() {
-		if !userInfo.GetCanBeSuperuser() && !userInfo.GetSuperuser() {
+		if !userInfo.GetCanBeSuperuser() && !userInfo.GetJobAdmin() {
 			return nil, errorsgrpcauth.ErrCharLock
 		}
 	}

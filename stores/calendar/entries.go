@@ -234,7 +234,7 @@ func (s *Store) ListCalendarEntries(
 	if opts.ShowHidden {
 		rsvpResponse = calendarentries.RsvpResponses_RSVP_RESPONSES_UNSPECIFIED
 	}
-	includeDeleted := userInfo.GetSuperuser()
+	includeDeleted := userInfo.GetJobAdmin()
 	visibility, visibleCalendarCondition, ctes := s.listCalendarEntriesVisibility(
 		userInfo,
 		includeDeleted,
@@ -329,7 +329,7 @@ func (s *Store) ListCalendarEntries(
 			),
 		),
 		mysql.OR(
-			mysql.Bool(userInfo.GetSuperuser()),
+			mysql.Bool(userInfo.GetJobAdmin()),
 			tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
 		),
 	)
@@ -387,7 +387,7 @@ func (s *Store) GetUpcomingEntries(
 ) ([]*calendarentries.CalendarEntry, error) {
 	rangeStart := time.Now().Add(-1 * time.Minute)
 	rangeEnd := time.Now().Add(time.Duration(opts.Seconds) * time.Second)
-	includeDeleted := userInfo.GetSuperuser()
+	includeDeleted := userInfo.GetJobAdmin()
 	visibility, visibleCalendarCondition, ctes := s.listCalendarEntriesVisibility(
 		userInfo,
 		includeDeleted,
@@ -444,7 +444,7 @@ func (s *Store) GetUpcomingEntries(
 			),
 		),
 		mysql.OR(
-			mysql.Bool(userInfo.GetSuperuser()),
+			mysql.Bool(userInfo.GetJobAdmin()),
 			tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
 		),
 	)
@@ -490,7 +490,7 @@ func (s *Store) GetEntry(
 	tCalendarEntry := table.FivenetCalendarEntries.AS("calendar_entry")
 	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
-	includeDeleted := userInfo.GetSuperuser()
+	includeDeleted := userInfo.GetJobAdmin()
 
 	stmt := tCalendarEntry.
 		SELECT(

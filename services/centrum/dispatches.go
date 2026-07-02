@@ -459,7 +459,7 @@ func (s *Server) UpdateDispatchStatus(
 	}
 
 	if !s.helpers.CheckIfUserIsPartOfDispatch(ctx, userInfo, dsp, true) &&
-		!userInfo.GetSuperuser() {
+		!userInfo.GetJobAdmin() {
 		return nil, errorscentrum.ErrNotPartOfDispatch
 	}
 
@@ -686,7 +686,7 @@ func (s *Server) DeleteDispatch(
 		}
 	}
 
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		if dsp == nil || !slices.Contains(dsp.GetJobs().GetJobStrings(), userInfo.GetJob()) {
 			return nil, errorscentrum.ErrNotPartOfDispatch
 		}

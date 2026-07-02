@@ -38,11 +38,11 @@ func (s *Server) GetDocumentReferences(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrFeedRefsViewDenied
 	}
 
-	dest, err := s.store.ListDocumentReferences(ctx, req.GetDocumentId(), userInfo.GetSuperuser())
+	dest, err := s.store.ListDocumentReferences(ctx, req.GetDocumentId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -103,14 +103,14 @@ func (s *Server) GetDocumentRelations(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrFeedRelsViewDenied
 	}
 
 	relations, err := s.store.ListDocumentRelations(
 		ctx,
 		req.GetDocumentId(),
-		userInfo.GetSuperuser(),
+		userInfo.GetJobAdmin(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -157,7 +157,7 @@ func (s *Server) AddDocumentReference(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrFeedRefAddDenied
 	}
 
@@ -190,7 +190,7 @@ func (s *Server) RemoveDocumentReference(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	ref, err := s.store.GetDocumentReference(ctx, req.GetId(), userInfo.GetSuperuser())
+	ref, err := s.store.GetDocumentReference(ctx, req.GetId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -205,7 +205,7 @@ func (s *Server) RemoveDocumentReference(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrFeedRefRemoveDenied
 	}
 
@@ -239,7 +239,7 @@ func (s *Server) AddDocumentRelation(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrFeedRelAddDenied
 	}
 
@@ -307,7 +307,7 @@ func (s *Server) RemoveDocumentRelation(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	rel, err := s.store.GetDocumentRelation(ctx, req.GetId(), userInfo.GetSuperuser())
+	rel, err := s.store.GetDocumentRelation(ctx, req.GetId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -321,7 +321,7 @@ func (s *Server) RemoveDocumentRelation(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrFeedRelRemoveDenied
 	}
 

@@ -173,7 +173,7 @@ func (s *Server) UpdateConductEntry(
 		return nil, errorsjobs.ErrFailedQuery
 	}
 
-	if req.GetEntry().GetDraft() && !entry.GetDraft() && !userInfo.GetSuperuser() {
+	if req.GetEntry().GetDraft() && !entry.GetDraft() && !userInfo.GetJobAdmin() {
 		req.Entry.Draft = entry.GetDraft()
 	}
 	if req.GetEntry().GetType() <= 0 {
@@ -237,7 +237,7 @@ func (s *Server) DeleteConductEntry(
 	}
 
 	var deletedAtTime *timestamp.Timestamp
-	if entry == nil || entry.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if entry == nil || entry.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {

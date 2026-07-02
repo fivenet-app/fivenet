@@ -32,7 +32,7 @@ func (s *Store) ListQualifications(
 		))
 	}
 
-	includeDeleted := userInfo != nil && userInfo.GetSuperuser()
+	includeDeleted := userInfo != nil && userInfo.GetJobAdmin()
 	userID := int32(0)
 	if userInfo != nil {
 		userID = userInfo.GetUserId()

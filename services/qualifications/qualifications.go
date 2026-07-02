@@ -86,11 +86,11 @@ func (s *Server) GetQualification(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !userInfo.GetSuperuser() && quali.GetDeletedAt() != nil {
+	if !userInfo.GetJobAdmin() && quali.GetDeletedAt() != nil {
 		return nil, errorsqualifications.ErrQualiViewDenied
 	}
 
-	if !check && !userInfo.GetSuperuser() && !quali.GetPublic() {
+	if !check && !userInfo.GetJobAdmin() && !quali.GetPublic() {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -286,7 +286,7 @@ func (s *Server) UpdateQualification(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -338,7 +338,7 @@ func (s *Server) UpdateQualification(
 	// A qualification can only be switched to published once
 	if !oldQuali.GetDraft() && oldQuali.GetDraft() != req.GetQualification().GetDraft() {
 		// Allow a super user to change the draft state
-		if !userInfo.GetSuperuser() {
+		if !userInfo.GetJobAdmin() {
 			req.Qualification.Draft = oldQuali.GetDraft()
 		}
 	}
@@ -441,8 +441,8 @@ func (s *Server) DeleteQualification(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
-		if !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
+		if !userInfo.GetJobAdmin() {
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 	}
@@ -471,7 +471,7 @@ func (s *Server) DeleteQualification(
 	}
 
 	var deletedAtTime *timestamp.Timestamp
-	if quali.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if quali.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {

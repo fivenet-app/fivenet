@@ -111,7 +111,7 @@ func (s *Store) countCalendarsStmt(
 func (s *Store) listConditions(
 	q ListQuery,
 ) (mysql.BoolExpression, []mysql.OrderByClause) {
-	includeDeleted := q.UserInfo != nil && q.UserInfo.GetSuperuser()
+	includeDeleted := q.UserInfo != nil && q.UserInfo.GetJobAdmin()
 	condition := mysql.Bool(includeDeleted).OR(tCalendar.DeletedAt.IS_NULL())
 	if q.OnlyPublic {
 		return condition.AND(
@@ -142,7 +142,7 @@ func (s *Store) listConditions(
 	}
 
 	var accessExists mysql.BoolExpression
-	if !q.UserInfo.GetSuperuser() {
+	if !q.UserInfo.GetJobAdmin() {
 		accessExists = s.access.ACLAccessExistsCondition(
 			tCalendar.ID,
 			q.UserInfo,
@@ -205,7 +205,7 @@ func (s *Store) birthdayCalendarVisible(
 			),
 		),
 		mysql.OR(
-			mysql.Bool(userInfo.GetSuperuser()),
+			mysql.Bool(userInfo.GetJobAdmin()),
 			tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
 		),
 		s.access.ACLAccessExistsCondition(calendarID, userInfo, int32(accessLevel)),
@@ -286,7 +286,7 @@ func (s *Store) getCalendarStmt(
 	if userInfo != nil {
 		userID = userInfo.GetUserId()
 	}
-	includeDeleted := userInfo != nil && userInfo.GetSuperuser()
+	includeDeleted := userInfo != nil && userInfo.GetJobAdmin()
 
 	columns := []mysql.Projection{
 		tCalendar.ID,

@@ -448,11 +448,15 @@ func (b0 AppConfig_builder) Build() *AppConfig {
 }
 
 type Auth struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	SignupEnabled bool                   `protobuf:"varint,1,opt,name=signup_enabled,json=signupEnabled,proto3" json:"signup_enabled,omitempty"`
-	LastCharLock  bool                   `protobuf:"varint,2,opt,name=last_char_lock,json=lastCharLock,proto3" json:"last_char_lock,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"hybrid.v1"`
+	SignupEnabled     bool                   `protobuf:"varint,1,opt,name=signup_enabled,json=signupEnabled,proto3" json:"signup_enabled,omitempty"`
+	LastCharLock      bool                   `protobuf:"varint,2,opt,name=last_char_lock,json=lastCharLock,proto3" json:"last_char_lock,omitempty"`
+	JobAdminGroups    []string               `protobuf:"bytes,3,rep,name=job_admin_groups,json=jobAdminGroups,proto3" json:"job_admin_groups,omitempty"`
+	JobAdminUsers     []string               `protobuf:"bytes,4,rep,name=job_admin_users,json=jobAdminUsers,proto3" json:"job_admin_users,omitempty"`
+	ConfigAdminGroups []string               `protobuf:"bytes,5,rep,name=config_admin_groups,json=configAdminGroups,proto3" json:"config_admin_groups,omitempty"`
+	ConfigAdminUsers  []string               `protobuf:"bytes,6,rep,name=config_admin_users,json=configAdminUsers,proto3" json:"config_admin_users,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *Auth) Reset() {
@@ -494,6 +498,34 @@ func (x *Auth) GetLastCharLock() bool {
 	return false
 }
 
+func (x *Auth) GetJobAdminGroups() []string {
+	if x != nil {
+		return x.JobAdminGroups
+	}
+	return nil
+}
+
+func (x *Auth) GetJobAdminUsers() []string {
+	if x != nil {
+		return x.JobAdminUsers
+	}
+	return nil
+}
+
+func (x *Auth) GetConfigAdminGroups() []string {
+	if x != nil {
+		return x.ConfigAdminGroups
+	}
+	return nil
+}
+
+func (x *Auth) GetConfigAdminUsers() []string {
+	if x != nil {
+		return x.ConfigAdminUsers
+	}
+	return nil
+}
+
 func (x *Auth) SetSignupEnabled(v bool) {
 	x.SignupEnabled = v
 }
@@ -502,11 +534,31 @@ func (x *Auth) SetLastCharLock(v bool) {
 	x.LastCharLock = v
 }
 
+func (x *Auth) SetJobAdminGroups(v []string) {
+	x.JobAdminGroups = v
+}
+
+func (x *Auth) SetJobAdminUsers(v []string) {
+	x.JobAdminUsers = v
+}
+
+func (x *Auth) SetConfigAdminGroups(v []string) {
+	x.ConfigAdminGroups = v
+}
+
+func (x *Auth) SetConfigAdminUsers(v []string) {
+	x.ConfigAdminUsers = v
+}
+
 type Auth_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	SignupEnabled bool
-	LastCharLock  bool
+	SignupEnabled     bool
+	LastCharLock      bool
+	JobAdminGroups    []string
+	JobAdminUsers     []string
+	ConfigAdminGroups []string
+	ConfigAdminUsers  []string
 }
 
 func (b0 Auth_builder) Build() *Auth {
@@ -515,6 +567,10 @@ func (b0 Auth_builder) Build() *Auth {
 	_, _ = b, x
 	x.SignupEnabled = b.SignupEnabled
 	x.LastCharLock = b.LastCharLock
+	x.JobAdminGroups = b.JobAdminGroups
+	x.JobAdminUsers = b.JobAdminUsers
+	x.ConfigAdminGroups = b.ConfigAdminGroups
+	x.ConfigAdminUsers = b.ConfigAdminUsers
 	return m0
 }
 
@@ -2189,10 +2245,14 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsR\fquickButtons\x12,\n" +
 	"\x04data\x18\f \x01(\v2\x18.resources.settings.DataR\x04data\x125\n" +
 	"\alivemap\x18\r \x01(\v2\x1b.resources.settings.LivemapR\alivemap\x12,\n" +
-	"\x04game\x18\x0e \x01(\v2\x18.resources.settings.GameR\x04game:\b\xe2\xf3\x18\x04\b\x01\x18\x01\"S\n" +
+	"\x04game\x18\x0e \x01(\v2\x18.resources.settings.GameR\x04game:\b\xe2\xf3\x18\x04\b\x01\x18\x01\"\x83\x02\n" +
 	"\x04Auth\x12%\n" +
 	"\x0esignup_enabled\x18\x01 \x01(\bR\rsignupEnabled\x12$\n" +
-	"\x0elast_char_lock\x18\x02 \x01(\bR\flastCharLock\";\n" +
+	"\x0elast_char_lock\x18\x02 \x01(\bR\flastCharLock\x12(\n" +
+	"\x10job_admin_groups\x18\x03 \x03(\tR\x0ejobAdminGroups\x12&\n" +
+	"\x0fjob_admin_users\x18\x04 \x03(\tR\rjobAdminUsers\x12.\n" +
+	"\x13config_admin_groups\x18\x05 \x03(\tR\x11configAdminGroups\x12,\n" +
+	"\x12config_admin_users\x18\x06 \x03(\tR\x10configAdminUsers\";\n" +
 	"\x05Perms\x122\n" +
 	"\adefault\x18\x01 \x03(\v2\x18.resources.settings.PermR\adefault\"J\n" +
 	"\x04Perm\x12$\n" +

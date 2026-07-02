@@ -116,16 +116,17 @@ const timeState = computed<{ start: Time; end: Time }>({
         <UInputDate ref="inputDate" v-model="internalModelValue" v-bind="inputDateAttrs">
             <template #trailing>
                 <div class="flex items-center gap-1">
-                    <UButton
-                        v-if="clearable && modelValue"
-                        class="px-0"
-                        color="error"
-                        variant="link"
-                        size="sm"
-                        icon="i-mdi-clear"
-                        :aria-label="$t('common.clear')"
-                        @click.stop="emits('update:modelValue', undefined)"
-                    />
+                    <UTooltip v-if="clearable && modelValue" :text="$t('common.clear')">
+                        <UButton
+                            class="px-0"
+                            color="error"
+                            variant="link"
+                            size="sm"
+                            icon="i-mdi-clear"
+                            :aria-label="$t('common.clear')"
+                            @click.stop="emits('update:modelValue', undefined)"
+                        />
+                    </UTooltip>
 
                     <UPopover :reference="inputDate?.inputsRef[0]?.$el">
                         <UTooltip :text="$t('common.pick_date')">

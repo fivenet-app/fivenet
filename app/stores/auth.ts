@@ -14,7 +14,7 @@ import type { ImpersonateJobResponse } from '~~/gen/ts/services/auth/auth';
 
 const logger = useLogger('🔑 Auth');
 
-const superuserPermGuard = 'internal-superuser-superuser' as const;
+const jobAdminPermGuard = 'internal-superuser-jobadmin' as const;
 const superuserCanBePermGuard = 'internal-superuser-canbesuperuser' as const;
 
 /**
@@ -163,7 +163,7 @@ export const useAuthStore = defineStore(
             if (!canBeSuperuser.value) {
                 // Remove can be- and superuser permission if user can't be superuser anymore
                 permissions.value = permissions.value.filter(
-                    (p) => p.guardName !== superuserPermGuard && p.guardName !== superuserCanBePermGuard,
+                    (p) => p.guardName !== jobAdminPermGuard && p.guardName !== superuserCanBePermGuard,
                 );
             }
 
@@ -446,7 +446,7 @@ export const useAuthStore = defineStore(
         };
 
         // Getters
-        const isSuperuser = computed<boolean>(() => !!permissions.value.find((p) => p.guardName === superuserPermGuard));
+        const isSuperuser = computed<boolean>(() => !!permissions.value.find((p) => p.guardName === jobAdminPermGuard));
 
         return {
             // State

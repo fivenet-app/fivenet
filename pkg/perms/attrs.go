@@ -388,7 +388,7 @@ func (ps *Perms) Attr(
 	}
 
 	rAttr := ps.getClosestRoleAttr(userInfo.GetJob(), userInfo.GetJobGrade(), permId, key)
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		attr, ok := ps.lookupAttributeByPermID(permId, key)
 		if !ok {
 			return nil, nil

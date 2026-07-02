@@ -296,7 +296,7 @@ func (s *Server) UpdateDocumentReq(
 	}
 
 	if (doc.GetCreatorId() > 0 && doc.GetCreatorId() != userInfo.GetUserId()) &&
-		!userInfo.GetSuperuser() {
+		!userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrDocUpdateDenied
 	}
 

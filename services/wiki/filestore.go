@@ -35,7 +35,7 @@ func (s *Server) UploadFile(
 	if err != nil {
 		return errswrap.NewError(err, errorswiki.ErrPageDenied)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return errorswiki.ErrPageDenied
 	}
 

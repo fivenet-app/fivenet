@@ -32,7 +32,8 @@ func (s *Store) List(
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
 	tWorkflowState := table.FivenetDocumentsWorkflowState.AS("workflow_state")
 	tDMeta := table.FivenetDocumentsMeta.AS("meta")
-	superuser := q.UserInfo != nil && q.UserInfo.GetSuperuser()
+
+	superuser := q.UserInfo != nil && q.UserInfo.GetJobAdmin()
 
 	columns := dbutils.Columns{
 		tDocumentShort.ID,
@@ -204,7 +205,7 @@ func (s *Store) Get(ctx context.Context, q GetQuery) (*resourcesdocuments.Docume
 	tUserWorkflow := table.FivenetDocumentsWorkflowUsers.AS("workflow_user_state")
 	tDMeta := table.FivenetDocumentsMeta.AS("meta")
 
-	if !q.UserInfo.GetSuperuser() {
+	if !q.UserInfo.GetJobAdmin() {
 		visible, err := s.subjectAccess.CanUserAccessTarget(
 			ctx,
 			q.DocumentID,
@@ -222,7 +223,7 @@ func (s *Store) Get(ctx context.Context, q GetQuery) (*resourcesdocuments.Docume
 	wheres := []mysql.BoolExpression{
 		tDocument.ID.EQ(mysql.Int64(q.DocumentID)),
 	}
-	if !q.UserInfo.GetSuperuser() {
+	if !q.UserInfo.GetJobAdmin() {
 		wheres = append(wheres, tDocument.DeletedAt.IS_NULL())
 	}
 
@@ -280,7 +281,7 @@ func (s *Store) Get(ctx context.Context, q GetQuery) (*resourcesdocuments.Docume
 			tDocument.ContentJSON,
 		)
 	}
-	if q.UserInfo.GetSuperuser() {
+	if q.UserInfo.GetJobAdmin() {
 		columns = append(columns, tDocument.DeletedAt)
 	}
 	if q.IncludePhoneNumber {

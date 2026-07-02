@@ -89,7 +89,7 @@ func (ps *Perms) can(
 	}
 
 	// Don't check permissions for superusers and don't cache the result
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		return true
 	}
 

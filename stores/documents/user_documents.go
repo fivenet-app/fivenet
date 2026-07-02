@@ -42,7 +42,7 @@ func (s *Store) ListUserDocuments(
 	condition = condition.AND(tDocRel.Relation.IN(types...))
 
 	visibleCondition := mysql.Bool(true)
-	includeDeleted := q.UserInfo != nil && q.UserInfo.GetSuperuser()
+	includeDeleted := q.UserInfo != nil && q.UserInfo.GetJobAdmin()
 
 	visibleIDs := s.subjectAccess.VisibleIDsByConditionQuery(
 		q.UserInfo,

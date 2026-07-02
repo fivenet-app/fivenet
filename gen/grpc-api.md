@@ -2121,6 +2121,10 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `signup_enabled` | [bool](#bool) |  |  |
 | `last_char_lock` | [bool](#bool) |  |  |
+| `job_admin_groups` | [string](#string) | repeated |  |
+| `job_admin_users` | [string](#string) | repeated |  |
+| `config_admin_groups` | [string](#string) | repeated |  |
+| `config_admin_users` | [string](#string) | repeated |  |
 
 
 

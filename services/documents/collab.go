@@ -59,7 +59,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return errorsdocuments.ErrNotFoundOrNoPerms
 	}
 

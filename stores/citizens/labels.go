@@ -57,7 +57,7 @@ func (s *Store) ListLabels(
 		ctes []mysql.CommonTableExpression
 	)
 
-	if userInfo.GetSuperuser() || (ownJobOnly && canCreateLabel) {
+	if userInfo.GetJobAdmin() || (ownJobOnly && canCreateLabel) {
 		visibilityCondition = visibilityCondition.AND(
 			tLabel.Job.EQ(mysql.String(userInfo.GetJob())),
 		)
@@ -429,7 +429,7 @@ func (s *Store) GetUserLabelsForUser(
 	tCitizensLabelsJob := table.FivenetUserLabelsJob.AS("label")
 	tCitizensLabelsJobBase := table.FivenetUserLabelsJob
 
-	includeDeleted := userInfo.GetSuperuser()
+	includeDeleted := userInfo.GetJobAdmin()
 	condition := mysql.AND(
 		mysql.OR(
 			mysql.Bool(includeDeleted),
@@ -437,7 +437,7 @@ func (s *Store) GetUserLabelsForUser(
 		),
 		tCitizenLabels.UserID.EQ(mysql.Int32(userId)),
 	)
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		visibleIDs := s.labelsAccess.VisibleIDsByConditionQuery(
 			userInfo,
 			int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW),

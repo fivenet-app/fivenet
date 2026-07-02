@@ -49,11 +49,11 @@ func (s *Server) GetComments(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrCommentViewDenied
 	}
 
-	count, err := s.store.CountComments(ctx, s.db, req.GetDocumentId(), userInfo.GetSuperuser())
+	count, err := s.store.CountComments(ctx, s.db, req.GetDocumentId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -107,7 +107,7 @@ func (s *Server) PostComment(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrCommentPostDenied
 	}
 
@@ -184,7 +184,7 @@ func (s *Server) EditComment(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrCommentEditDenied
 	}
 
@@ -192,7 +192,7 @@ func (s *Server) EditComment(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !userInfo.GetSuperuser() && comment.GetCreatorId() != userInfo.GetUserId() {
+	if !userInfo.GetJobAdmin() && comment.GetCreatorId() != userInfo.GetUserId() {
 		return nil, errorsdocuments.ErrCommentEditDenied
 	}
 
@@ -257,7 +257,7 @@ func (s *Server) DeleteComment(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrCommentDeleteDenied
 	}
 
@@ -285,7 +285,7 @@ func (s *Server) DeleteComment(
 
 	activityType := documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_DELETED
 	var deletedAtTime *timestamp.Timestamp
-	if comment.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if comment.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {

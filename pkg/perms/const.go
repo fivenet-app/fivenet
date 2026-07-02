@@ -25,12 +25,32 @@ var (
 		Name:      "CanBeSuperuser",
 		GuardName: BuildGuard(PermInternalNamespace, PermSuperuserService, "CanBeSuperuser"),
 	}
+	PermCanBeSuperuserRef = NewPermissionRef(
+		PermInternalNamespace,
+		PermSuperuserService,
+		"CanBeSuperuser",
+	)
 
-	PermSuperuserRef = NewPermissionRef(PermInternalNamespace, PermSuperuserService, "Superuser")
+	PermConfigAdminRef = NewPermissionRef(
+		PermInternalNamespace,
+		PermSuperuserService,
+		"ConfigAdmin",
+	)
+	PermConfigAdmin = &permissionspermissions.Permission{
+		Namespace: string(PermInternalNamespace),
+		Service:   string(PermSuperuserService),
+		Name:      "ConfigAdmin",
+		GuardName: BuildGuard(PermInternalNamespace, PermSuperuserService, "ConfigAdmin"),
+	}
+
+	PermSuperuserRef = NewPermissionRef(PermInternalNamespace, PermSuperuserService, "JobAdmin")
 	PermSuperuser    = &permissionspermissions.Permission{
 		Namespace: string(PermInternalNamespace),
 		Service:   string(PermSuperuserService),
-		Name:      "Superuser",
-		GuardName: BuildGuard(PermInternalNamespace, PermSuperuserService, "Superuser"),
+		Name:      "JobAdmin",
+		GuardName: BuildGuard(PermInternalNamespace, PermSuperuserService, "JobAdmin"),
 	}
+
+	PermJobAdminRef = PermSuperuserRef
+	PermJobAdmin    = PermSuperuser
 )

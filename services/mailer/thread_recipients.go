@@ -26,14 +26,14 @@ func (s *Server) checkIfEmailPartOfThread(
 	if err != nil {
 		return errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return errorsmailer.ErrThreadAccessDenied
 	}
 	check, err = s.checkIfEmailIdPartOfThread(ctx, threadId, emailId)
 	if err != nil {
 		return errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return errorsmailer.ErrThreadAccessDenied
 	}
 

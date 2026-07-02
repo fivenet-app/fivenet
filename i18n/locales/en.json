@@ -1746,6 +1746,18 @@
                     "social_login_providers": {
                         "title": "Social Login Providers",
                         "description": "List of configured social login providers."
+                    },
+                    "admin_groups": {
+                        "title": "Admin Groups",
+                        "description": "Configure the groups and licenses that are allowed to use Superuser mode or access app configuration. Config admin groups and licenses also grant job-admin access. Runtime overrides take precedence over the groups configured here.",
+                        "job_admin_groups": "Job admin groups",
+                        "job_admin_groups_description": "Add one group at a time and press Enter after each entry to add it to the list.",
+                        "job_admin_users": "Job admin users",
+                        "job_admin_users_description": "Add one license at a time and press Enter after each entry to add it to the list.",
+                        "config_admin_groups": "Config admin groups",
+                        "config_admin_groups_description": "Add one group at a time and press Enter after each entry to add it to the list.",
+                        "config_admin_users": "Config admin users",
+                        "config_admin_users_description": "Add one license at a time and press Enter after each entry to add it to the list."
                     }
                 },
                 "perms": {
@@ -3994,16 +4006,20 @@
             }
         },
         "internal": {
-            "namespace": "Internal & Superuser",
+            "namespace": "Internal & Job Admin",
             "Superuser": {
-                "service": "Superuser",
+                "service": "Administration",
                 "CanBeSuperuser": {
                     "key": "Can be Superuser",
-                    "description": "This permission allows you to become a superuser, which grants access to all FiveNet features and permissions."
+                    "description": "This permission allows you to enter superuser mode. It is the eligibility gate for job-admin access and the active elevated mode."
                 },
-                "Superuser": {
-                    "key": "Superuser",
-                    "description": "This permission allows you to access all FiveNet features and permissions, regardless of your job or role."
+                "JobAdmin": {
+                    "key": "Job Admin",
+                    "description": "This permission allows you to access job-admin gated features and actions."
+                },
+                "ConfigAdmin": {
+                    "key": "Config Admin",
+                    "description": "This permission allows you to manage app and system configuration, separate from job-admin access."
                 }
             }
         }

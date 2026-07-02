@@ -42,7 +42,7 @@ func (s *Store) ListTemplates(
 		tTemplates.CreatorJob,
 	}
 
-	if userInfo != nil && userInfo.GetSuperuser() {
+	if userInfo != nil && userInfo.GetJobAdmin() {
 		columns = append(columns, tTemplates.DeletedAt)
 	}
 
@@ -58,7 +58,7 @@ func (s *Store) ListTemplates(
 	}
 
 	var stmt mysql.Statement
-	if userInfo != nil && userInfo.GetSuperuser() {
+	if userInfo != nil && userInfo.GetJobAdmin() {
 		stmt = selectStmt.
 			FROM(tTemplates.
 				LEFT_JOIN(tCategory,

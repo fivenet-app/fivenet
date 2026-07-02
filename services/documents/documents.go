@@ -198,7 +198,7 @@ func (s *Server) GetDocument(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
@@ -603,14 +603,14 @@ func (s *Server) UpdateDocument(
 	}
 
 	// Document is closed and the update request isn't re-opening the document
-	if oldDoc.GetMeta().GetClosed() && req.GetMeta().GetClosed() && !userInfo.GetSuperuser() {
+	if oldDoc.GetMeta().GetClosed() && req.GetMeta().GetClosed() && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrClosedDoc
 	}
 
 	// A document can only be switched to published once
 	if !oldDoc.GetMeta().GetDraft() && oldDoc.GetMeta().GetDraft() != req.GetMeta().GetDraft() {
 		// Allow a super user to change the draft state
-		if !userInfo.GetSuperuser() {
+		if !userInfo.GetJobAdmin() {
 			req.GetMeta().Draft = oldDoc.GetMeta().GetDraft()
 		}
 	}
@@ -970,8 +970,8 @@ func (s *Server) DeleteDocument(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
-	if !check && !userInfo.GetSuperuser() {
-		if !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
+		if !userInfo.GetJobAdmin() {
 			return nil, errorsdocuments.ErrDocDeleteDenied
 		}
 	}
@@ -1009,7 +1009,7 @@ func (s *Server) DeleteDocument(
 	}
 
 	var deletedAtTime *timestamp.Timestamp
-	if doc.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if doc.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {
@@ -1076,8 +1076,8 @@ func (s *Server) ToggleDocument(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
-	if !check && !userInfo.GetSuperuser() {
-		if !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
+		if !userInfo.GetJobAdmin() {
 			return nil, errorsdocuments.ErrDocToggleDenied
 		}
 	}
@@ -1159,7 +1159,7 @@ func (s *Server) ChangeDocumentOwner(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrDocOwnerFailed
 	}
 
@@ -1182,7 +1182,7 @@ func (s *Server) ChangeDocumentOwner(
 	}
 
 	// If user is not a super user make sure they can only change owner to themselves
-	if req.NewUserId == nil || !userInfo.GetSuperuser() {
+	if req.NewUserId == nil || !userInfo.GetJobAdmin() {
 		req.NewUserId = &userInfo.UserId
 	}
 
@@ -1227,7 +1227,7 @@ func (s *Server) ChangeDocumentOwner(
 	}
 
 	// Allow super users to transfer documents cross jobs
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		if newOwner.GetJob() != doc.GetCreatorJob() {
 			return nil, errorsdocuments.ErrDocOwnerWrongJob
 		}

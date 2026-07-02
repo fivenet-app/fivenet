@@ -1333,11 +1333,11 @@ export const ThreadService = new ServiceType("services.mailer.ThreadService", [
     { name: "ListThreads", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: ListThreadsRequest, O: ListThreadsResponse },
     { name: "GetThread", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: GetThreadRequest, O: GetThreadResponse },
     { name: "CreateThread", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: CreateThreadRequest, O: CreateThreadResponse },
-    { name: "DeleteThread", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteThreadRequest, O: DeleteThreadResponse },
+    { name: "DeleteThread", options: { "codegen.perms.perms": { enabled: true, name: "JobAdmin" } }, I: DeleteThreadRequest, O: DeleteThreadResponse },
     { name: "GetThreadState", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: GetThreadStateRequest, O: GetThreadStateResponse },
     { name: "SetThreadState", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: SetThreadStateRequest, O: SetThreadStateResponse },
     { name: "SearchThreads", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: SearchThreadsRequest, O: SearchThreadsResponse },
     { name: "ListThreadMessages", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: ListThreadMessagesRequest, O: ListThreadMessagesResponse },
     { name: "PostMessage", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: PostMessageRequest, O: PostMessageResponse },
-    { name: "DeleteMessage", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteMessageRequest, O: DeleteMessageResponse }
+    { name: "DeleteMessage", options: { "codegen.perms.perms": { enabled: true, name: "JobAdmin" } }, I: DeleteMessageRequest, O: DeleteMessageResponse }
 ], { "codegen.perms.perms_svc": { namespace: "mailer", service: "MailerService" } });

@@ -39,7 +39,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 	if err != nil {
 		return errswrap.NewError(err, errorswiki.ErrPageDenied)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return errorswiki.ErrPageDenied
 	}
 

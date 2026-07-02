@@ -39,7 +39,7 @@ func (s *Server) ensureUserCanAccessRole(
 		)
 	}
 
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		return role, true, nil
 	}
 
@@ -129,7 +129,7 @@ func (s *Server) GetRoles(
 	var roles []*permissionspermissions.Role
 	var err error
 
-	if userInfo.GetSuperuser() && req.LowestRank != nil && req.GetLowestRank() {
+	if userInfo.GetJobAdmin() && req.LowestRank != nil && req.GetLowestRank() {
 		rs, err := s.ps.GetRoles(ctx, true)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
@@ -181,7 +181,7 @@ func (s *Server) GetRole(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorssettings.ErrNoPermission
 	}
 
@@ -227,7 +227,7 @@ func (s *Server) CreateRole(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Make sure the user is from the job or is a super user
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		if req.GetJob() != userInfo.GetJob() {
 			return nil, errorssettings.ErrInvalidRequest
 		}
@@ -275,7 +275,7 @@ func (s *Server) DeleteRole(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorssettings.ErrNoPermission
 	}
 
@@ -315,7 +315,7 @@ func (s *Server) UpdateRolePerms(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errswrap.NewError(err, errorssettings.ErrNoPermission)
 	}
 
@@ -476,7 +476,7 @@ func (s *Server) GetPermissions(
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
 
-	if role.GetJob() != userInfo.GetJob() && !userInfo.GetSuperuser() {
+	if role.GetJob() != userInfo.GetJob() && !userInfo.GetJobAdmin() {
 		return nil, errorssettings.ErrInvalidRequest
 	}
 
@@ -501,7 +501,7 @@ func (s *Server) GetEffectivePermissions(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errswrap.NewError(err, errorssettings.ErrNoPermission)
 	}
 

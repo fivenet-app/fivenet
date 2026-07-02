@@ -60,11 +60,11 @@ func (s *Store) ListEmails(
 		pag = &database.PaginationRequest{}
 	}
 
-	if userInfo != nil && userInfo.GetSuperuser() && all {
+	if userInfo != nil && userInfo.GetJobAdmin() && all {
 		return s.listAllEmails(ctx, db, pag)
 	}
 
-	includeDeleted := userInfo != nil && userInfo.GetSuperuser()
+	includeDeleted := userInfo != nil && userInfo.GetJobAdmin()
 
 	visibleIDs := s.subjectAccess.VisibleIDsByConditionQuery(
 		userInfo,

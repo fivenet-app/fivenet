@@ -27,7 +27,7 @@ func canUserAccessDocument(
 	userInfo *userinfo.UserInfo,
 	level documentsaccess.AccessLevel,
 ) (bool, error) {
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		return true, nil
 	}
 

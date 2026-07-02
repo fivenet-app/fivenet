@@ -373,11 +373,42 @@ type OAuth2Mapping struct {
 }
 
 type Auth struct {
+	// SuperuserGroups/SuperuserUsers are kept as a legacy bootstrap path.
+	// When the split admin lists below are empty, they are used as the default.
 	SuperuserGroups []string `yaml:"superuserGroups"`
 	SuperuserUsers  []string `yaml:"superuserUsers"`
 
+	JobAdminGroups    []string `yaml:"jobAdminGroups"`
+	JobAdminUsers     []string `yaml:"jobAdminUsers"`
+	ConfigAdminGroups []string `yaml:"configAdminGroups"`
+	ConfigAdminUsers  []string `yaml:"configAdminUsers"`
+
 	PermsCacheSize int           `default:"1024" yaml:"permsCacheSize"`
 	PermsCacheTTL  time.Duration `default:"30s"  yaml:"permsCacheTTL"`
+}
+
+func effectiveAuthList(primary []string, legacy []string) []string {
+	if len(primary) > 0 {
+		return append([]string(nil), primary...)
+	}
+
+	return append([]string(nil), legacy...)
+}
+
+func (a Auth) GetJobAdminGroups() []string {
+	return effectiveAuthList(a.JobAdminGroups, a.SuperuserGroups)
+}
+
+func (a Auth) GetJobAdminUsers() []string {
+	return effectiveAuthList(a.JobAdminUsers, a.SuperuserUsers)
+}
+
+func (a Auth) GetConfigAdminGroups() []string {
+	return effectiveAuthList(a.ConfigAdminGroups, a.SuperuserGroups)
+}
+
+func (a Auth) GetConfigAdminUsers() []string {
+	return effectiveAuthList(a.ConfigAdminUsers, a.SuperuserUsers)
 }
 
 type DispatchCenter struct {

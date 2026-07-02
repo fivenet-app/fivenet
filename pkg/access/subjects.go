@@ -331,7 +331,7 @@ func (a *SubjectObjectAccess) CanUserAccessTargetIDs(
 	if len(targetIDs) == 0 {
 		return nil, nil
 	}
-	if userInfo != nil && userInfo.GetSuperuser() {
+	if userInfo != nil && userInfo.GetJobAdmin() {
 		return targetIDs, nil
 	}
 	stmt := a.backend().VisibleIDsStatement(userInfo, access, false, targetIDs...)

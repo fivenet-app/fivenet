@@ -715,9 +715,9 @@ export const DeleteAccountResponse = new DeleteAccountResponse$Type();
  * @generated ServiceType for protobuf service services.settings.AccountsService
  */
 export const AccountsService = new ServiceType("services.settings.AccountsService", [
-    { name: "ListAccounts", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: ListAccountsRequest, O: ListAccountsResponse },
-    { name: "CreateAccount", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: CreateAccountRequest, O: CreateAccountResponse },
-    { name: "UpdateAccount", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: UpdateAccountRequest, O: UpdateAccountResponse },
-    { name: "DisconnectSocialLogin", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DisconnectSocialLoginRequest, O: DisconnectSocialLoginResponse },
-    { name: "DeleteAccount", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteAccountRequest, O: DeleteAccountResponse }
+    { name: "ListAccounts", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: ListAccountsRequest, O: ListAccountsResponse },
+    { name: "CreateAccount", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: CreateAccountRequest, O: CreateAccountResponse },
+    { name: "UpdateAccount", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: UpdateAccountRequest, O: UpdateAccountResponse },
+    { name: "DisconnectSocialLogin", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: DisconnectSocialLoginRequest, O: DisconnectSocialLoginResponse },
+    { name: "DeleteAccount", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: DeleteAccountRequest, O: DeleteAccountResponse }
 ]);

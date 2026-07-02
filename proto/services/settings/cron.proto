@@ -25,14 +25,14 @@ service CronService {
   rpc ListCronjobs(ListCronjobsRequest) returns (ListCronjobsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
 
   rpc RunCronjob(RunCronjobRequest) returns (RunCronjobResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
 }

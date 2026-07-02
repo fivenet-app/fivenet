@@ -29,7 +29,7 @@ func (s *Server) GetColleagueLabels(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		fields.Set(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels)
 	}
 	if !fields.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) {
@@ -47,7 +47,7 @@ func (s *Server) GetColleagueLabels(
 		s.db,
 		userInfo.GetJob(),
 		req.GetSearch(),
-		userInfo.GetSuperuser(),
+		userInfo.GetJobAdmin(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -85,7 +85,7 @@ func (s *Server) GetColleagueLabelsStats(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		fields.Set(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels)
 	}
 	if !fields.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) {

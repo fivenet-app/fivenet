@@ -62,7 +62,7 @@ func (g *GRPCPerm) checkPermission(
 	}
 
 	// Short circuit for superusers, they have access to everything
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		return ctx, nil
 	}
 
@@ -71,7 +71,7 @@ func (g *GRPCPerm) checkPermission(
 			if p == pkgperms.PermAnyRef {
 				return ctx, nil
 			}
-			if p == pkgperms.PermSuperuserRef {
+			if p == pkgperms.PermJobAdminRef {
 				continue
 			}
 			if g.ps.Can(userInfo, p) {

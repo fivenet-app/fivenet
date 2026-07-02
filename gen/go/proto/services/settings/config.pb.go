@@ -282,10 +282,10 @@ const file_services_settings_config_proto_rawDesc = "" +
 	"\x16UpdateAppConfigRequest\x125\n" +
 	"\x06config\x18\x01 \x01(\v2\x1d.resources.settings.AppConfigR\x06config\"P\n" +
 	"\x17UpdateAppConfigResponse\x125\n" +
-	"\x06config\x18\x01 \x01(\v2\x1d.resources.settings.AppConfigR\x06config2\x80\x02\n" +
-	"\rConfigService\x12r\n" +
-	"\fGetAppConfig\x12&.services.settings.GetAppConfigRequest\x1a'.services.settings.GetAppConfigResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12{\n" +
-	"\x0fUpdateAppConfig\x12).services.settings.UpdateAppConfigRequest\x1a*.services.settings.UpdateAppConfigResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\x06config\x18\x01 \x01(\v2\x1d.resources.settings.AppConfigR\x06config2\x84\x02\n" +
+	"\rConfigService\x12t\n" +
+	"\fGetAppConfig\x12&.services.settings.GetAppConfigRequest\x1a'.services.settings.GetAppConfigResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12}\n" +
+	"\x0fUpdateAppConfig\x12).services.settings.UpdateAppConfigRequest\x1a*.services.settings.UpdateAppConfigResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdminBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var file_services_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_services_settings_config_proto_goTypes = []any{

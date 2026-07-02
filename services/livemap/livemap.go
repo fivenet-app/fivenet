@@ -50,7 +50,7 @@ func (s *Server) getAndSendACL(
 		return nil, nil, false, errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 	}
 
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		for job := range s.markersCache.AllRelaxed() {
 			markerJobs.Strings = append(markerJobs.Strings, job)
 		}
@@ -91,7 +91,7 @@ func (s *Server) getAndSendACL(
 
 	// Check if the user is on duty (superuser is always on duty)
 	userOnDuty := false
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		userOnDuty = true
 	} else if um, ok := s.tracker.GetUserMarkerById(userInfo.GetUserId()); ok && !um.GetHidden() {
 		userOnDuty = true
@@ -223,7 +223,7 @@ func (s *Server) Stream(
 				switch {
 				case e.MarkerUpdate != nil:
 					if e.MarkerUpdate.GetJob() != userInfo.GetJob() &&
-						!userInfo.GetSuperuser() {
+						!userInfo.GetJobAdmin() {
 						continue // Ignore updates for other jobs
 					}
 
@@ -324,7 +324,7 @@ func (s *Server) processMessage(
 	}
 
 	if op == "DEL" || op == "PURGE" {
-		if !*userOnDuty && !userInfo.GetSuperuser() {
+		if !*userOnDuty && !userInfo.GetJobAdmin() {
 			return nil // Ignore if not on duty and not superuser
 		}
 
@@ -335,7 +335,7 @@ func (s *Server) processMessage(
 		}
 
 		if userId == userInfo.GetUserId() && job == userInfo.GetJob() &&
-			jobGrade == userInfo.GetJobGrade() && !userInfo.GetSuperuser() {
+			jobGrade == userInfo.GetJobGrade() && !userInfo.GetJobAdmin() {
 			*userOnDuty = false
 		}
 
@@ -358,7 +358,7 @@ func (s *Server) processMessage(
 		return nil // Ignore invalid messages
 	}
 
-	if um.GetHidden() && !userInfo.GetSuperuser() {
+	if um.GetHidden() && !userInfo.GetJobAdmin() {
 		if um.GetUserId() == userInfo.GetUserId() && um.GetJob() == userInfo.GetJob() &&
 			(um.JobGrade == nil || um.GetJobGrade() == userInfo.GetJobGrade()) {
 			*userOnDuty = false
@@ -383,7 +383,7 @@ func (s *Server) processMessage(
 			if err := s.sendUserMarkers(srv, usersJobs, userInfo, true); err != nil {
 				return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 			}
-		} else if !userInfo.GetSuperuser() {
+		} else if !userInfo.GetJobAdmin() {
 			return nil // Skip updates for non-superusers not on duty
 		}
 	}
@@ -397,7 +397,7 @@ func (s *Server) processMessage(
 		jg = um.GetJobGrade()
 	}
 
-	if !userInfo.GetSuperuser() && !usersJobs.HasJobGrade(job, jg) {
+	if !userInfo.GetJobAdmin() && !usersJobs.HasJobGrade(job, jg) {
 		return nil
 	}
 
