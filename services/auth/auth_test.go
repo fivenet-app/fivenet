@@ -16,7 +16,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
 	grpcserver "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -50,7 +52,8 @@ func TestFullAuthFlow(t *testing.T) {
 		modules.GetFxTestOpts(
 			dbServer.FxProvide(),
 			natsServer.FxProvide(),
-			fx.Provide(modules.TestUserInfoRetriever),
+			userinfo.RetrieverModule,
+			fx.Provide(notifi.New),
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) *Server {
 				srv = NewServer(p)
@@ -268,7 +271,8 @@ func TestChooseCharacterConfigAdminEligibility(t *testing.T) {
 		modules.GetFxTestOpts(
 			dbServer.FxProvide(),
 			natsServer.FxProvide(),
-			fx.Provide(modules.TestUserInfoRetriever),
+			userinfo.RetrieverModule,
+			fx.Provide(notifi.New),
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) *Server {
 				srv = NewServer(p)

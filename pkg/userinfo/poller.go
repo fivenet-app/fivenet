@@ -149,6 +149,7 @@ func (p *Poller) registerSubscriptions(
 
 	if p.jsCons != nil {
 		p.jsCons.Stop()
+		p.jsCons = nil
 	}
 
 	p.jsCons, err = consumer.Consume(p.handleMsg,

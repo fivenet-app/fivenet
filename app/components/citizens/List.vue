@@ -20,7 +20,7 @@ import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/servic
 const { t } = useI18n();
 
 const { attr, can } = useAuth();
-const canTriggerUserSync = can(['internal.Superuser/CanBeSuperuser', 'internal.Superuser/ConfigAdmin']);
+const canTriggerUserSync = can('internal.Superuser/ConfigAdmin');
 
 const { display } = useAppConfig();
 

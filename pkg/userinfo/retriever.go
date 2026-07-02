@@ -84,7 +84,7 @@ type Params struct {
 func NewRetriever(p Params) UserInfoRetriever {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
-	retriever := &Retriever{
+	r := &Retriever{
 		logger:   p.Logger.Named("userinfo.retriever"),
 		ctx:      ctxCancel,
 		db:       p.DB,
@@ -104,7 +104,7 @@ func NewRetriever(p Params) UserInfoRetriever {
 			return fmt.Errorf("failed to register user info stream. %w", err)
 		}
 
-		if err := retriever.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
+		if err := r.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return fmt.Errorf("failed to register subscriptions for user info retriever. %w", err)
 		}
 
@@ -114,10 +114,15 @@ func NewRetriever(p Params) UserInfoRetriever {
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 
+		if r.jsCons != nil {
+			r.jsCons.Stop()
+			r.jsCons = nil
+		}
+
 		return nil
 	}))
 
-	return retriever
+	return r
 }
 
 func (r *Retriever) registerSubscriptions(
@@ -145,6 +150,7 @@ func (r *Retriever) registerSubscriptions(
 
 	if r.jsCons != nil {
 		r.jsCons.Stop()
+		r.jsCons = nil
 	}
 
 	r.jsCons, err = consumer.Consume(r.handleMsg,

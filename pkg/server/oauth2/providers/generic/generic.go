@@ -97,7 +97,7 @@ func (p *Generic) decodeUserInfo(data io.Reader) (*types.UserInfo, error) {
 	}
 
 	return &types.UserInfo{
-		ID:       strconv.FormatInt(int64(subId), 10),
+		ID:       strconv.FormatInt(subId, 10),
 		Username: username,
 		Avatar:   profilePicture,
 	}, nil

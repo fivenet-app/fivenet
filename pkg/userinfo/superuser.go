@@ -48,16 +48,11 @@ func EffectiveAdminLists(
 	baseConfigAdminGroups []string,
 	baseConfigAdminUsers []string,
 	appCfg appconfig.IConfig,
-) (
-	jobAdminGroups []string,
-	jobAdminUsers []string,
-	configAdminGroups []string,
-	configAdminUsers []string,
-) {
-	jobAdminGroups = utils.MergeUniqueStrings(baseJobAdminGroups)
-	jobAdminUsers = utils.MergeUniqueStrings(baseJobAdminUsers)
-	configAdminGroups = utils.MergeUniqueStrings(baseConfigAdminGroups)
-	configAdminUsers = utils.MergeUniqueStrings(baseConfigAdminUsers)
+) ([]string, []string, []string, []string) {
+	jobAdminGroups := utils.MergeUniqueStrings(baseJobAdminGroups)
+	jobAdminUsers := utils.MergeUniqueStrings(baseJobAdminUsers)
+	configAdminGroups := utils.MergeUniqueStrings(baseConfigAdminGroups)
+	configAdminUsers := utils.MergeUniqueStrings(baseConfigAdminUsers)
 
 	if appCfg == nil || appCfg.Get() == nil || appCfg.Get().GetAuth() == nil {
 		return jobAdminGroups, jobAdminUsers, configAdminGroups, configAdminUsers
@@ -79,7 +74,7 @@ func EffectiveJobAdminLists(
 	baseConfigAdminGroups []string,
 	baseConfigAdminUsers []string,
 	appCfg appconfig.IConfig,
-) (jobAdminGroups []string, jobAdminUsers []string) {
+) ([]string, []string) {
 	jobAdminGroups, jobAdminUsers, configAdminGroups, configAdminUsers := EffectiveAdminLists(
 		baseJobAdminGroups,
 		baseJobAdminUsers,

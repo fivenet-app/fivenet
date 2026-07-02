@@ -32,7 +32,7 @@ func TestGRPCPermissionUnaryFuncSplitsConfigAdminAndJobAdmin(t *testing.T) {
 	t.Run("job-admin cannot bypass config-admin rpc", func(t *testing.T) {
 		t.Parallel()
 
-		ctx := context.WithValue(context.Background(), userInfoCtxMarkerKey, &pbuserinfo.UserInfo{
+		ctx := context.WithValue(t.Context(), userInfoCtxMarkerKey, &pbuserinfo.UserInfo{
 			Superuser: true,
 		})
 
@@ -47,7 +47,7 @@ func TestGRPCPermissionUnaryFuncSplitsConfigAdminAndJobAdmin(t *testing.T) {
 	t.Run("config-admin can access config-admin rpc", func(t *testing.T) {
 		t.Parallel()
 
-		ctx := context.WithValue(context.Background(), userInfoCtxMarkerKey, &pbuserinfo.UserInfo{
+		ctx := context.WithValue(t.Context(), userInfoCtxMarkerKey, &pbuserinfo.UserInfo{
 			CanBeConfigAdmin: true,
 		})
 
@@ -62,7 +62,7 @@ func TestGRPCPermissionUnaryFuncSplitsConfigAdminAndJobAdmin(t *testing.T) {
 	t.Run("job-admin still accesses job-admin rpc", func(t *testing.T) {
 		t.Parallel()
 
-		ctx := context.WithValue(context.Background(), userInfoCtxMarkerKey, &pbuserinfo.UserInfo{
+		ctx := context.WithValue(t.Context(), userInfoCtxMarkerKey, &pbuserinfo.UserInfo{
 			Superuser: true,
 		})
 

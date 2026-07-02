@@ -1,7 +1,6 @@
 package settings
 
 import (
-	"context"
 	"testing"
 
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -39,7 +38,7 @@ func TestGetAppConfigRequiresConfigAdmin(t *testing.T) {
 		},
 	})
 
-	jobAdminCtx := grpcauth.ContextWithUserInfo(context.Background(), &pbuserinfo.UserInfo{
+	jobAdminCtx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
 		Superuser: true,
 	})
 	outCtx, err := grpcPerm.GRPCPermissionUnaryFunc(
@@ -49,7 +48,7 @@ func TestGetAppConfigRequiresConfigAdmin(t *testing.T) {
 	require.ErrorIs(t, err, errorsgrpcauth.ErrPermissionDenied)
 	assert.Nil(t, outCtx)
 
-	configAdminCtx := grpcauth.ContextWithUserInfo(context.Background(), &pbuserinfo.UserInfo{
+	configAdminCtx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
 		CanBeConfigAdmin: true,
 	})
 	outCtx, err = grpcPerm.GRPCPermissionUnaryFunc(

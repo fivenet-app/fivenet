@@ -18,7 +18,9 @@ var _ perms.Permissions = (*Permissions)(nil)
 
 func (p *Permissions) SetDefaultRolePerms(context.Context, []string) error { return nil }
 
-func (p *Permissions) GetAllPermissions(context.Context) ([]*permissionspermissions.Permission, error) {
+func (p *Permissions) GetAllPermissions(
+	context.Context,
+) ([]*permissionspermissions.Permission, error) {
 	return nil, nil
 }
 
@@ -38,11 +40,15 @@ func (p *Permissions) GetPermission(
 	return nil, nil
 }
 
-func (p *Permissions) GetPermissionsOfUser(*pbuserinfo.UserInfo) ([]*permissionspermissions.Permission, error) {
+func (p *Permissions) GetPermissionsOfUser(
+	*pbuserinfo.UserInfo,
+) ([]*permissionspermissions.Permission, error) {
 	return nil, nil
 }
 
-func (p *Permissions) GetAllAttributes(context.Context) ([]*permissionsattributes.RoleAttribute, error) {
+func (p *Permissions) GetAllAttributes(
+	context.Context,
+) ([]*permissionsattributes.RoleAttribute, error) {
 	return nil, nil
 }
 
@@ -84,7 +90,11 @@ func (p *Permissions) GetClosestJobRole(
 
 func (p *Permissions) CountRolesForJob(context.Context, string) (int64, error) { return 0, nil }
 
-func (p *Permissions) CreateRole(context.Context, string, int32) (*permissionspermissions.Role, error) {
+func (p *Permissions) CreateRole(
+	context.Context,
+	string,
+	int32,
+) (*permissionspermissions.Role, error) {
 	return nil, nil
 }
 
@@ -108,7 +118,13 @@ func (p *Permissions) UpdateRolePermissions(context.Context, int64, ...perms.Add
 	return nil
 }
 
-func (p *Permissions) RemovePermissionsFromRole(context.Context, int64, ...int64) error { return nil }
+func (p *Permissions) RemovePermissionsFromRole(
+	context.Context,
+	int64,
+	...int64,
+) error {
+	return nil
+}
 
 func (p *Permissions) GetRoleAttributes(
 	context.Context,
@@ -147,7 +163,10 @@ func (p *Permissions) RemoveAttributesFromRoleByPermission(context.Context, int6
 	return nil
 }
 
-func (p *Permissions) GetJobPermissions(context.Context, string) ([]*permissionspermissions.Permission, error) {
+func (p *Permissions) GetJobPermissions(
+	context.Context,
+	string,
+) ([]*permissionspermissions.Permission, error) {
 	return nil, nil
 }
 
@@ -231,14 +250,23 @@ func (p *Permissions) Attr(
 	return nil, nil
 }
 
-func (p *Permissions) AttrStringList(*pbuserinfo.UserInfo, perms.AttrRef[perms.StringListAttr]) (*permissionsattributes.StringList, error) {
+func (p *Permissions) AttrStringList(
+	*pbuserinfo.UserInfo,
+	perms.AttrRef[perms.StringListAttr],
+) (*permissionsattributes.StringList, error) {
 	return nil, nil
 }
 
-func (p *Permissions) AttrJobList(*pbuserinfo.UserInfo, perms.AttrRef[perms.JobListAttr]) (*permissionsattributes.StringList, error) {
+func (p *Permissions) AttrJobList(
+	*pbuserinfo.UserInfo,
+	perms.AttrRef[perms.JobListAttr],
+) (*permissionsattributes.StringList, error) {
 	return nil, nil
 }
 
-func (p *Permissions) AttrJobGradeList(*pbuserinfo.UserInfo, perms.AttrRef[perms.JobGradeListAttr]) (*permissionsattributes.JobGradeList, error) {
+func (p *Permissions) AttrJobGradeList(
+	*pbuserinfo.UserInfo,
+	perms.AttrRef[perms.JobGradeListAttr],
+) (*permissionsattributes.JobGradeList, error) {
 	return nil, nil
 }

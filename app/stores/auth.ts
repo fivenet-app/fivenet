@@ -145,8 +145,8 @@ export const useAuthStore = defineStore(
          * @param attrs - The list of role attributes to set.
          */
         const setPermissions = (perms: Permission[], attrs: RoleAttribute[]): void => {
-            permissions.value = [...perms.sort()];
-            attributes.value = [...attrs.sort()];
+            permissions.value = [...perms].sort();
+            attributes.value = [...attrs].sort();
             canBeSuperuser.value = perms.some((p) => p.guardName === superuserCanBePermGuard);
         };
 

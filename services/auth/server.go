@@ -109,7 +109,9 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 		return ctx, nil
 	}
 
-	if fullMethod == "/services.auth.AuthService/SetSuperuserMode" {
+	// Superuser mode and impersonation endpoints require user token
+	if fullMethod == "/services.auth.AuthService/SetSuperuserMode" ||
+		fullMethod == "/services.auth.AuthService/ImpersonateJob" {
 		return s.auth.GRPCAuthFunc(ctx, fullMethod)
 	}
 

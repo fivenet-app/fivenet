@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"net"
 
+	"buf.build/go/protovalidate"
 	grpcsvc "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	grpc_auth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/auth"
 	grpc_permission "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/permission"
 	grpc_sanitizer "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/sanitizer"
+	protovalidate_middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/validator"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -48,19 +49,26 @@ func TestGRPCServer(
 		return nil, nil, fmt.Errorf("error connecting to test grpc server. %w", err)
 	}
 
+	// Create a Protovalidate Validator
+	validator, err := protovalidate.New()
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create protovalidate validator. %w", err)
+	}
+
 	return conn, func(p GRPCServerParams) (*grpc.Server, error) {
 		srv := grpc.NewServer(
 			grpc.ChainUnaryInterceptor(
 				grpc_auth.UnaryServerInterceptor(p.GRPCAuth.GRPCAuthFunc),
 				grpc_permission.UnaryServerInterceptor(p.GRPCPerm.GRPCPermissionUnaryFunc),
-				validator.UnaryServerInterceptor(),
+				protovalidate_middleware.UnaryServerInterceptor(validator),
 				grpc_sanitizer.UnaryServerInterceptor(),
 				recovery.UnaryServerInterceptor(),
 			),
 			grpc.ChainStreamInterceptor(
 				grpc_auth.StreamServerInterceptor(p.GRPCAuth.GRPCAuthFunc),
 				grpc_permission.StreamServerInterceptor(p.GRPCPerm.GRPCPermissionStreamFunc),
-				validator.StreamServerInterceptor(),
+				protovalidate_middleware.StreamServerInterceptor(validator),
+				grpc_sanitizer.StreamServerInterceptor(),
 				recovery.StreamServerInterceptor(),
 			),
 		)

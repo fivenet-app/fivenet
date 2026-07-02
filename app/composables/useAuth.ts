@@ -37,15 +37,15 @@ const _useAuth = () => {
         const guardName = toGuardName(perm);
 
         if (guardName === jobAdminPermGuard) {
-            return isSuperuser.value || hasGuard(jobAdminPermGuard);
+            return isSuperuser.value;
         }
 
         if (guardName === configAdminPermGuard) {
-            return canBeConfigAdmin.value || hasGuard(configAdminPermGuard);
+            return canBeConfigAdmin.value;
         }
 
         if (guardName === superuserCanBePermGuard) {
-            return canBeSuperuser.value || hasGuard(superuserCanBePermGuard);
+            return canBeSuperuser.value;
         }
 
         if (isSuperuser.value) return true;

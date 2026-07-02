@@ -84,6 +84,11 @@ func NewExecutor(p ExecutorParams) (*Executor, error) {
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 
+		if ag.jsCons != nil {
+			ag.jsCons.Stop()
+			ag.jsCons = nil
+		}
+
 		return nil
 	}))
 
