@@ -1,3 +1,7 @@
+#
+# Be sure to checkout the example DBSync config file: <https://github.com/fivenet-app/fivenet/blob/main/dbsync.example.yaml>
+#
+
 # Debug or release mode (affects performance)
 mode: "release"
 
@@ -12,6 +16,7 @@ log:
   file:
     # Path to the log file.
     path: "dbsync.log"
+    # Contains the configuration for log rotation.
     rotation:
       # MaxSize is the maximum size in megabytes of the log file before it gets rotated.
       maxSize: 100 # MB
@@ -24,12 +29,14 @@ log:
       # Rotation interval for log rotation (e.g., daily rotation).
       rotationInterval: 24h
 
+# Watch the config file for changes and restart dbsync after reload.
 watchConfig: true
 
+# Stores incremental sync cursors and last-processed timestamps per table.
 stateFile: "dbsync.state.yaml"
 
-# Admin Server for metrics and health checks (if empty the admin server is disabled)
-adminListen: "" # Sane default for ":7073"
+# Admin server for metrics and health checks. Leave empty to disable it; otherwise keep it local-only if possible.
+adminListen: "" # Common local-only default for ":7073"
 
 # Your **gameservers' database** details
 # Changes to the source require a restart of the dbsync!
@@ -40,7 +47,7 @@ source:
   # Example for a locally hosted database
   #dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
   #
-  # Or use individual parameters (make sure to comment out the `dsn:` line above if you use these).
+  # Or use individual parameters instead. Comment out `dsn:` if you use these.
   # Hint: you can set these via environment variables as well, e.g., FIVENET_DATABASE_HOST, FIVENET_DATABASE_PORT,
   # FIVENET_DATABASE_USERNAME, FIVENET_DATABASE_PASSWORD, FIVENET_DATABASE_DATABASE
   #host: "localhost"
@@ -56,56 +63,53 @@ source:
   connMaxLifetime: 45m
   disableLocking: false
 
-  # Interval in which base data (jobs, job grades, licenses) is re-synced fully
+  # Full resync interval for base data such as jobs, job grades, and licenses.
   baseDataResyncInterval: 5m
 
 # The target FiveNet instance to sync data to (the instance must have the sync API enabled
 # and you need a valid token)
 destination:
-  # Sync method to use, currently only `api` is supported, which uses the FiveNet Sync API to sync data to FiveNet.
+  # Sync method to use. `api` is the supported method and sends data through the FiveNet Sync API.
   method: "api"
   # Your FiveNet Sync API details.
   api:
-    # Your FiveNet Hostname, with port if your port is not 443 (HTTPS),
-    # requires the FiveNet instance to **use HTTPS**.
-    # ! Make sure to not include the protocol (http:// or https://) here!
-    # ! Don't include a trailing slash!
+    # FiveNet hostname only, with port if needed. Do not include the protocol or a trailing slash.
+    # The target FiveNet instance must be reachable over HTTPS.
+    # Do not include the protocol (http:// or https://) here!
+    # Do not include a trailing slash!
     #
     # Example:
     # 'https://demo.fivenet.app'   -> 'demo.fivenet.app:443'
     # 'https://fivenet.example.com' -> 'fivenet.example.com:443'
     url: "fivenet.example.com"
+    # Sync API token issued by the target FiveNet instance.
     token: "YOUR_SYNC_API_TOKEN"
-    # Timeout for API requests
+    # Timeout for API requests.
     timeout: 5s
 
-    # Disable TLS verification (not recommended)
+    # Disable TLS verification. Only use this for testing or self-signed setups.
     insecure: false
-    # Advanced: Only disable if you know what you are doing!
+    # Disable transport security entirely. Keep this enabled unless you have a very specific reason not to.
     transportSecurity: true
 
-  # Sync Interval can also be specified per table in the `tables:` section
+  # Default sync interval. Individual tables can override this in the `tables:` section.
   syncInterval: 3s
-  # If you want to test your configuration without actually syncing data to FiveNet
-  # you can enable the `dryRun` mode,
-  # which will log the data that would be synced instead of sending it to FiveNet.
-  # This is useful for testing and debugging your configuration.
+  # Log the data that would be synced instead of sending it to FiveNet.
   dryRun: false
 
 # A query for each "piece of data" FiveNet needs to function
 # The example table names + columns and queries are for the ESX framework
 tables:
-  # Jobs of your game server (e.g., police, ambulance, taxi, etc., with their name and label/display name)
+  # Jobs of your game server (e.g., police, ambulance, taxi) with name and display label.
   jobs:
     enabled: true
-    # Name of the table for this data (in case you are using a custom query or are joining
-    # multiple tables this should be the primary one)
+    # Primary table for this dataset when using the default column mapping or a custom join.
     tableName: "jobs"
-    # Jobs table column names (only used when no custom `query` is specified)
+    # Column mapping used only when no custom `query` is specified.
     columns:
       name: "name"
       label: "label"
-    # Custom query to retrieve the jobs (you must return the required columns)
+    # Custom query to retrieve the jobs. It must return the aliased columns below.
     #
     # Must return result columns named: `job.name`, `job.label`
     #query: |
@@ -117,26 +121,22 @@ tables:
     #  ORDER BY `name`
     #  LIMIT $limit;
     filters: []
-      # Example filter to drop jobs starting with "off_", to enable uncomment this section
-      # This is useful in combination with the `users:` jobs filters below if you
-      # have "off-duty" jobs that need to be rewritten to their "actual" job name
+      # Example filter to drop jobs starting with "off_". Useful if off-duty jobs should be rewritten elsewhere.
       #- pattern: '^off_'
       #  action: drop
 
-  # Job grades for the jobs, e.g., "police" job has the grades "0", "1", "2", etc. with different
-  # labels and names.
+  # Job grades for the jobs, e.g., "police" job has grades "0", "1", "2", etc.
   jobGrades:
     enabled: true
-    # Name of the table for this data (in case you are using a custom query or are joining
-    # multiple tables this should be the primary one)
+    # Primary table for this dataset when using the default column mapping or a custom join.
     tableName: "job_grades"
-    # Job grades table column names (only used when no custom `query` is specified)
+    # Column mapping used only when no custom `query` is specified.
     columns:
       jobName: "job_name"
       grade: "grade"
       name: "name"
       label: "label"
-    # Custom query to retrieve the job grades data (you must return the required columns)
+    # Custom query to retrieve the job grades data. It must return the aliased columns below.
     #
     # Must return result columns named: `job_grade.job_name`, `job_grade.grade`, `job_grade.name`, `job_grade.label`
     # (With a `WHERE`-condition for the `job_name` column using the `$jobName` parameter)
@@ -156,14 +156,13 @@ tables:
   # Licenses available on your server, e.g., driver's license, weapon license, etc.
   licenses:
     enabled: true
-    # Name of the table for this data (in case you are using a custom query or are joining
-    # multiple tables this should be the primary one)
+    # Primary table for this dataset when using the default column mapping or a custom join.
     tableName: "licenses"
-    # Licenses table column names (only used when no custom `query` is specified)
+    # Column mapping used only when no custom `query` is specified.
     columns:
       type: "type"
       label: "label"
-    # Custom query to retrieve the available licenses (not per user, see `userLicenses:` below)
+    # Custom query to retrieve the available licenses. It must return the aliased columns below.
     #
     # Must return result columns named: `license.type`, `license.label`
     #query: |
@@ -179,15 +178,13 @@ tables:
   # which is used to link to other data to (e.g., vehicles, users' licenses)
   users:
     enabled: true
-    # Name of the table for this data (in case you are using a custom query or are joining
-    # multiple tables this should be the primary one)
+    # Primary table for this dataset when using the default column mapping or a custom join.
     tableName: "users"
     # If your "players"/"users" data has a timestamp/datetime column that is updated on update,
     # configure it here so that after the initial sync only the changed data is synced again.
     updatedTimeColumn: "last_seen"
-    # Users table column names (used to build the default query if no custom `query` is specified)
-    # **NOTE**: The `id` and `identifier` columns are required to be set, even when a custom query is used.
-    # They are used to build the where condition for incremental syncs.
+    # Column mapping used to build the default query if no custom `query` is specified.
+    # `id` and `identifier` are required even with a custom query because they drive incremental syncs.
     columns:
       id: "id"
       identifier: "identifier"
@@ -203,7 +200,7 @@ tables:
       # Optional columns
       visum: "-" # Indicates that this column is not available
       playtime: "-" # Indicates that this column is not available
-    # Custom query to retrieve users data.
+    # Custom query to retrieve users data. It must return the aliased columns below.
     # The identifier column should be a smart combination of values when using a multichar system.
     # E.g., it is prefered to use a ESX like identifier layout for that case `charX:LICENSE`
     #
@@ -238,7 +235,7 @@ tables:
     #  $whereCondition
     #  ORDER BY `user.updated_at` ASC, `user.id` ASC
     #  LIMIT $limit;
-    # If a lastname is not returned by the query, attempt to split the firstname into "two" parts
+    # If a lastname is not returned by the query, attempt to split the firstname into two parts.
     splitName: true
     # Normalize date of birth value to the output format if possible
     # Please see the Go `time` pkg documentation on potential date format layouts: https://pkg.go.dev/time#Layout
@@ -259,9 +256,9 @@ tables:
           # E.g., if your server uses `male` and `female` instead of `m` and `f`, you can map them like this:
           #'female': 'f'
           #'male': 'm'
-    # If the firstname or lastname is empty or null, do not sync the user at all
+    # Drop the user entirely if firstname or lastname is empty/null.
     ignoreEmptyNames: true
-    # Filters allow to modify certain values before they are sent to FiveNet
+    # Filters rewrite selected values before they are sent to FiveNet.
     filters:
       jobs: []
         # Example: `off_police` -> `police`
@@ -272,21 +269,19 @@ tables:
         #- pattern: '^ambulance$'
         #  action: replace
         #  replacement: 'ems'
-    # Interval in which a batch of the user data is "re-synced". A "step" is a single batch of users that is re-synced,
-    # to ensure eventual consistency of the data when an update has been missed for whatever reason.
+    # Batch resync interval for users. This helps reconcile missed updates over time.
     resyncInterval: 12s
 
   # Licenses of a user
   userLicenses:
     enabled: true
-    # Name of the table for this data (in case you are using a custom query or are joining
-    # multiple tables this should be the primary one)
+    # Primary table for this dataset when using the default column mapping or a custom join.
     tableName: "user_licenses"
-    # User licenses table column names (only used when no custom `query` is specified)
+    # Column mapping used only when no custom `query` is specified.
     columns:
       type: "type"
       ownerIdentifier: "owner"
-    # Custom query to retrieve the licenses for a **specific** user, the `$identifier` parameter is the placeholder for the user's identifier
+    # Custom query to retrieve licenses for a specific user. `$identifier` is the user identifier placeholder.
     #
     # Must return result columns named: `user_license.type`, `user_license.owner`
     #query: |
@@ -305,8 +300,7 @@ tables:
   # otherwise you can also return the job data in the main users query)
   userJobs:
     enabled: false
-    # Custom query to retrieve the jobs for a **specific** user, the `$userId` and `$identifier`
-    # parameters are the placeholder for the user's user id/identifier.
+    # Custom query to retrieve jobs for a specific user. `$userId` and `$identifier` are the user placeholders.
     #
     # Must return result columns named: `user_job.job`, `user_job.grade`
     # Optional but recommended: `user_job.is_primary` (boolean column to indicate if it is the primary job,
@@ -327,8 +321,7 @@ tables:
   # it is recommended to enable and use this
   userPhoneNumbers:
     enabled: false
-    # Custom query to retrieve the phone numbers for a **specific** user, the `$userId` and `$identifier`
-    # parameters are the placeholder for the user's user id/identifier.
+    # Custom query to retrieve phone numbers for a specific user. `$identifier` is the user identifier placeholder.
     #
     # Must return result columns named: `user_phone_number.number`, `user_phone_number.is_primary`
     query: |
@@ -342,22 +335,19 @@ tables:
   # Vehicles owned by users
   vehicles:
     enabled: true
-    # Name of the table for this data (in case you are using a custom query or are joining
-    # multiple tables this should be the primary one)
+    # Primary table for this dataset when using the default column mapping or a custom join.
     tableName: "owned_vehicles"
-    # By default the dbsync will attempt to add the column if it does not exist, but you can
-    # disable that by commenting this out. It is recommended to leave it enabled, for
-    # performance reasons.
+    # Updated timestamp column used for incremental syncs. Keep it enabled unless you have a reason not to.
     updatedTimeColumn: "updated_at"
-    # Vehicles table column names (only used when no custom `query` is specified)
+    # Column mapping used only when no custom `query` is specified.
     columns:
       ownerIdentifier: "owner"
-      # Use this if vehicles are linked by user DB ID instead of identifier
+      # Use this if vehicles are linked by user DB ID instead of identifier.
       #ownerId: "owner"
       plate: "plate"
       type: "type"
       model: "-" # Indicates that this column is not available
-    # Custom query to retrieve all vehicles
+    # Custom query to retrieve all vehicles. It must return the aliased columns below.
     #
     # Must return result columns named: `vehicle.owner_id` (the user's DB ID) or `vehicle.owner_identifier`,
     # `vehicle.plate`, `vehicle.type`
@@ -383,23 +373,18 @@ tables:
   # Accounts - Used to, e.g., sync group(s) by license, to accounts.
   accounts:
     enabled: false
-    # Name of the table for this data (in case you are using a custom query or are joining
-    # multiple tables this should be the primary one)
+    # Primary table for this dataset when using the default column mapping or a custom join.
     tableName: "users"
-    # Sync all accounts every X interval, to ensure eventual consistency of the data when an update has been missed for whatever reason.
+    # Full account reconciliation interval. Use this to recover from missed updates.
     syncInterval: "1m"
-    # By default the dbsync will attempt to add the column if it does not exist, but you can
-    # disable that by commenting this out. It is recommended to leave it enabled, for
-    # performance reasons.
+    # Updated timestamp column used for incremental syncs. Keep it enabled unless you have a reason not to.
     updatedTimeColumn: "updated_at"
-    # Query to retrieve account data (example query to show how to retrieve
-    # account primary group and sub groups (using `JSON_*` funcs)).
+    # Query to retrieve account data, including primary and secondary groups.
     #
     # Must return result columns named: `account_update.license`, `account_update.group` (primary group)
     # Optional columns: `account_update.groups` (comma-separated list of groups, if `account_update.group` is
     # empty `account_update.group` is used)
-    # Query to retrieve all users that are not in the `user` group. It is recommended to add common non-superuser
-    # groups to the `NOT IN ('user')` condition (comma separated, e.g., `('user', 'group1', 'group2')`).
+    # Query to retrieve all users that are not in the `user` group. Add any other non-superuser groups here too.
     query: |
       SELECT
         `license` AS `account_update.license`,
@@ -418,20 +403,19 @@ tables:
       $whereCondition
       ORDER BY `license`
       LIMIT $limit;
-    # If enabled, the accounts table `groups` column will be "wiped" and filled only with the new data
+    # If enabled, the accounts table `groups` column will be cleared and replaced with the newly synced data.
     clearBeforeInsert: true
 
 tableManager:
-  # By default enabled, used to create missing `updated_at` columns (`updatedTimeColumn`) on tables that have it configured.
+  # Automatically create missing `updated_at` columns for tables that configure `updatedTimeColumn`.
   enabled: true
 
-# Limit the amount of data to sync per query, this is useful to prevent syncing too much data at once which can cause performance issues or timeouts.
-# The default numbers are the maximum allowed by the sync API, you can lower them if you experience performance issues or timeouts, but you cannot increase them above these values.
+# Per-query sync limits. Lower these if you hit performance issues or timeouts; do not raise them above the sync API maximums.
 limits:
-  # Base data
+  # Base data limits.
   jobs: 200
   licenses: 200
-  # Main data
+  # Main data limits.
   accounts: 200
   users: 150
   vehicles: 400
