@@ -210,13 +210,13 @@ func (s *Server) checkIfUserCanAccess(
 		return false, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if jobGrades.Len() == 0 && !userInfo.GetSuperuser() {
+	if jobGrades.Len() == 0 && !userInfo.GetJobAdmin() {
 		return false, errorscitizens.ErrJobGradeNoPermission
 	}
 
 	// Make sure user has permission to see that job's grade, otherwise deny access to the user
 	if ok := jobGrades.HasJobGrade(targetUserJob, targetUserGrade); !ok &&
-		!userInfo.GetSuperuser() {
+		!userInfo.GetJobAdmin() {
 		return false, errorscitizens.ErrJobGradeNoPermission
 	}
 

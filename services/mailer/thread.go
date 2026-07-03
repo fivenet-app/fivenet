@@ -49,7 +49,7 @@ func (s *Server) ListThreads(
 		EmailIDs:  emailIds,
 		Unread:    req.Unread,
 		Archived:  req.Archived,
-		Superuser: userInfo.GetSuperuser(),
+		Superuser: userInfo.GetJobAdmin(),
 	}
 
 	count, err := s.store.CountThreads(ctx, s.db, query)
@@ -94,7 +94,7 @@ func (s *Server) getThread(
 		s.db,
 		threadId,
 		emailId,
-		userInfo != nil && userInfo.GetSuperuser(),
+		userInfo != nil && userInfo.GetJobAdmin(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -111,7 +111,7 @@ func (s *Server) getThread(
 		ctx,
 		s.db,
 		threadId,
-		userInfo != nil && userInfo.GetSuperuser(),
+		userInfo != nil && userInfo.GetJobAdmin(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -174,7 +174,7 @@ func (s *Server) CreateThread(
 	}
 
 	// Prevent disabled emails from creating threads
-	if !userInfo.GetSuperuser() && senderEmail.GetDeactivated() {
+	if !userInfo.GetJobAdmin() && senderEmail.GetDeactivated() {
 		return nil, errorsmailer.ErrEmailDisabled
 	}
 
@@ -307,7 +307,7 @@ func (s *Server) DeleteThread(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
@@ -317,7 +317,7 @@ func (s *Server) DeleteThread(
 	}
 
 	var deletedAtTime *timestamp.Timestamp
-	if thread == nil || thread.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if thread == nil || thread.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {

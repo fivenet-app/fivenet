@@ -16,7 +16,7 @@ func (s *Server) getDocumentQuery(
 	tCreator := table.FivenetUser.AS("creator")
 
 	var wheres []mysql.BoolExpression
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		wheres = append(wheres, tDocument.DeletedAt.IS_NULL())
 	}
 
@@ -84,7 +84,7 @@ func (s *Server) getDocumentQuery(
 			)
 		}
 
-		if userInfo.GetSuperuser() {
+		if userInfo.GetJobAdmin() {
 			columns = append(columns, tDocument.DeletedAt)
 		}
 

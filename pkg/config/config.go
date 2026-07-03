@@ -373,8 +373,16 @@ type OAuth2Mapping struct {
 }
 
 type Auth struct {
+	// SuperuserGroups is used as a legacy fallback if the ConfigAdminGroups is empty.
 	SuperuserGroups []string `yaml:"superuserGroups"`
-	SuperuserUsers  []string `yaml:"superuserUsers"`
+	// SuperuserUsers is used as a legacy fallback if the ConfigAdminUsers is empty.
+	SuperuserUsers []string `yaml:"superuserUsers"`
+
+	JobAdminGroups []string `yaml:"jobAdminGroups"`
+	JobAdminUsers  []string `yaml:"jobAdminUsers"`
+
+	ConfigAdminGroups []string `yaml:"configAdminGroups"`
+	ConfigAdminUsers  []string `yaml:"configAdminUsers"`
 
 	PermsCacheSize int           `default:"1024" yaml:"permsCacheSize"`
 	PermsCacheTTL  time.Duration `default:"30s"  yaml:"permsCacheTTL"`

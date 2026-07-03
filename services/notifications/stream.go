@@ -179,6 +179,7 @@ func applyAccountGroupsChanged(
 
 	wasSuperuser := currentUserInfo.GetSuperuser()
 	currentUserInfo.CanBeSuperuser = event.GetCanBeSuperuser()
+	currentUserInfo.CanBeConfigAdmin = event.GetCanBeConfigAdmin()
 	if event.GetNewGroups() == nil {
 		currentUserInfo.Groups = nil
 	} else {

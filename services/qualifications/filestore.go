@@ -38,7 +38,7 @@ func (s *Server) UploadFile(
 	if err != nil {
 		return errswrap.NewError(err, errorsqualifications.ErrQualiViewDenied)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return errorsqualifications.ErrQualiViewDenied
 	}
 

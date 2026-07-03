@@ -98,3 +98,21 @@ func SlicesDifferenceFunc[T comparable, S comparable](
 
 	return added, removed
 }
+
+// MergeUniqueStrings merges multiple slices of strings into a single slice, removing duplicates while preserving order.
+func MergeUniqueStrings(lists ...[]string) []string {
+	merged := make([]string, 0)
+	seen := make(map[string]struct{})
+
+	for _, list := range lists {
+		for _, v := range list {
+			if _, ok := seen[v]; ok {
+				continue
+			}
+			seen[v] = struct{}{}
+			merged = append(merged, v)
+		}
+	}
+
+	return merged
+}

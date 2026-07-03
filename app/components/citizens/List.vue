@@ -19,7 +19,8 @@ import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/servic
 
 const { t } = useI18n();
 
-const { attr, can, isSuperuser } = useAuth();
+const { attr, can } = useAuth();
+const canTriggerUserSync = can('internal.Superuser/ConfigAdmin');
 
 const { display } = useAppConfig();
 
@@ -220,7 +221,7 @@ const columns = computed(() =>
                       id: 'actions',
                       cell: ({ row }) =>
                           h('div', {}, [
-                              isSuperuser.value
+                              canTriggerUserSync.value
                                   ? h(UTooltip, { text: t('common.request_sync') }, [
                                         h(UButton, {
                                             variant: 'link',

@@ -195,7 +195,7 @@ func (t *Tracker) GetFilteredUserMarkers(
 			jg = um.GetJobGrade()
 		}
 
-		if !userInfo.GetSuperuser() && !acl.HasJobGrade(um.GetJob(), jg) {
+		if !userInfo.GetJobAdmin() && !acl.HasJobGrade(um.GetJob(), jg) {
 			return false
 		}
 

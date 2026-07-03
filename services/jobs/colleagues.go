@@ -66,7 +66,7 @@ func (s *Server) ListColleagues(
 	}
 
 	if len(req.GetLabelIds()) > 0 &&
-		(types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetSuperuser()) {
+		(types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetJobAdmin()) {
 		q.LabelIDs = req.GetLabelIds()
 	}
 
@@ -88,7 +88,7 @@ func (s *Server) ListColleagues(
 	}
 
 	if len(resp.GetColleagues()) > 0 &&
-		(types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetSuperuser()) {
+		(types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetJobAdmin()) {
 		userIds := make([]int32, 0, len(resp.GetColleagues()))
 		for _, colleague := range resp.GetColleagues() {
 			userIds = append(userIds, colleague.GetUserId())
@@ -99,7 +99,7 @@ func (s *Server) ListColleagues(
 			s.db,
 			userInfo.GetJob(),
 			userIds,
-			userInfo.GetSuperuser(),
+			userInfo.GetJobAdmin(),
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -145,7 +145,7 @@ func (s *Server) getColleague(
 		job,
 		userId,
 		withColumns,
-		userInfo != nil && userInfo.GetSuperuser(),
+		userInfo != nil && userInfo.GetJobAdmin(),
 	)
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func (s *Server) GetColleague(
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		fields.Set(permsjobs.ColleaguesServiceGetColleagueTypesPermValueNote)
 	}
 
@@ -248,7 +248,7 @@ func (s *Server) GetSelf(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		types.Append(
 			permsjobs.ColleaguesServiceGetColleagueTypesPermValueNote,
 		)
@@ -334,7 +334,7 @@ func (s *Server) SetColleagueProps(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		types.Set(
 			permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueAbsenceDate,
 			permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueNote,
@@ -349,7 +349,7 @@ func (s *Server) SetColleagueProps(
 		targetUser.GetJob(),
 		targetUser.GetUserId(),
 		types.Strings(),
-		userInfo.GetSuperuser(),
+		userInfo.GetJobAdmin(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -363,7 +363,7 @@ func (s *Server) SetColleagueProps(
 			!types.Contains(
 				permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueAbsenceDate,
 			) &&
-			!userInfo.GetSuperuser() {
+			!userInfo.GetJobAdmin() {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
@@ -392,7 +392,7 @@ func (s *Server) SetColleagueProps(
 	// Generate the update sets
 	if reqProps.Note != nil {
 		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueNote) &&
-			!userInfo.GetSuperuser() {
+			!userInfo.GetJobAdmin() {
 			return nil, errorsjobs.ErrPropsNoteDenied
 		}
 	}
@@ -400,7 +400,7 @@ func (s *Server) SetColleagueProps(
 	if reqProps.GetLabels() != nil {
 		// Check if user is allowed to update labels
 		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueLabels) &&
-			!userInfo.GetSuperuser() {
+			!userInfo.GetJobAdmin() {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
@@ -423,7 +423,7 @@ func (s *Server) SetColleagueProps(
 
 	if reqProps.NamePrefix != nil || reqProps.NameSuffix != nil {
 		if !types.Contains(permsjobs.ColleaguesServiceSetColleaguePropsTypesPermValueName) &&
-			!userInfo.GetSuperuser() {
+			!userInfo.GetJobAdmin() {
 			return nil, errorsjobs.ErrPropsNameDenied
 		}
 	}
@@ -466,7 +466,7 @@ func (s *Server) SetColleagueProps(
 		targetUser.GetJob(),
 		targetUser.GetUserId(),
 		types.Strings(),
-		userInfo.GetSuperuser(),
+		userInfo.GetJobAdmin(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -494,7 +494,7 @@ func (s *Server) getConditionForColleagueAccess(
 	userInfo *userinfo.UserInfo,
 ) mysql.BoolExpression {
 	condition := mysql.Bool(true)
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		return condition
 	}
 
@@ -602,7 +602,7 @@ func (s *Server) ListColleagueActivity(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	if types.Len() == 0 {
-		if !userInfo.GetSuperuser() {
+		if !userInfo.GetJobAdmin() {
 			return resp, nil
 		} else {
 			types.Set(

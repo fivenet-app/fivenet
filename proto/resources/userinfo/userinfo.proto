@@ -21,6 +21,7 @@ message UserInfo {
 
   bool can_be_superuser = 9;
   bool superuser = 10;
+  bool can_be_config_admin = 12;
 
   optional OriginalJob original_job = 11;
 }
@@ -72,4 +73,6 @@ message AccountGroupsChanged {
 
   // Whether the account can enter superuser mode after the change
   bool can_be_superuser = 4;
+  // Whether the account can access config-admin gated screens and RPCs after the change
+  bool can_be_config_admin = 5;
 }

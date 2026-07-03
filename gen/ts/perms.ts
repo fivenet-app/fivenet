@@ -45,7 +45,7 @@
 
 export type Perms = SystemPerms | GRPCServicePerms;
 
-export type SystemPerms = 'internal.Superuser/CanBeSuperuser' | 'internal.Superuser/Superuser' | 'TODOService/TODOMethod';
+export type SystemPerms = 'internal.Superuser/CanBeSuperuser' | 'internal.Superuser/JobAdmin' | 'internal.Superuser/ConfigAdmin' | 'TODOService/TODOMethod';
 
 export type GRPCServicePerms =
 	| 'auth.AuthService/ChooseCharacter'

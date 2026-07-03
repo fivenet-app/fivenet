@@ -34,26 +34,26 @@ service FilestoreService {
   rpc Upload(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
 
   rpc ListFiles(ListFilesRequest) returns (ListFilesResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
   rpc DeleteFile(resources.file.DeleteFileRequest) returns (resources.file.DeleteFileResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
   rpc DeleteFileByPath(DeleteFileByPathRequest) returns (DeleteFileByPathResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
 }

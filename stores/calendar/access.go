@@ -56,12 +56,12 @@ func (s *Store) CheckIfUserHasAccessToCalendarIDs(
 	}
 
 	var accessExists mysql.BoolExpression
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		accessExists = s.access.ACLAccessExistsCondition(tCalendar.ID, userInfo, int32(accessLevel))
 	}
 
 	visibleCondition := mysql.OR(accessExists, condition)
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		visibleCondition = mysql.OR(
 			tCalendar.SystemKind.IS_NULL(),
 			tCalendar.SystemKind.NOT_EQ(
@@ -85,7 +85,7 @@ func (s *Store) CheckIfUserHasAccessToCalendarIDs(
 		WHERE(mysql.AND(
 			tCalendar.ID.IN(ids...),
 			mysql.OR(
-				mysql.Bool(userInfo.GetSuperuser()),
+				mysql.Bool(userInfo.GetJobAdmin()),
 				tCalendar.DeletedAt.IS_NULL(),
 			),
 			visibleCondition,
@@ -137,7 +137,7 @@ func (s *Store) CheckIfUserHasAccessToCalendarEntryIDs(
 		return dest, nil
 	}
 
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		dest = append(dest, entryIDs...)
 		return dest, nil
 	}
@@ -170,7 +170,7 @@ func (s *Store) CheckIfUserHasAccessToCalendarEntryIDs(
 		).
 		WHERE(mysql.AND(
 			mysql.OR(
-				mysql.Bool(userInfo.GetSuperuser()),
+				mysql.Bool(userInfo.GetJobAdmin()),
 				tCalendarEntry.DeletedAt.IS_NULL(),
 			),
 			tCalendarEntry.ID.IN(ids...),

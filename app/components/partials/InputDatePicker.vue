@@ -104,17 +104,6 @@ const internalTimeValue = computed<Time | undefined>({
         <UInputDate ref="inputDate" v-model="internalModelValue" v-bind="inputDateAttrs">
             <template #trailing>
                 <div class="flex items-center gap-1">
-                    <UButton
-                        v-if="clearable && modelValue"
-                        class="px-0"
-                        color="error"
-                        variant="link"
-                        size="sm"
-                        icon="i-mdi-clear"
-                        :aria-label="$t('common.clear')"
-                        @click.stop="emits('update:modelValue', undefined)"
-                    />
-
                     <UPopover :reference="inputDate?.inputsRef[0]?.$el">
                         <UButton
                             class="px-0"
@@ -154,5 +143,15 @@ const internalTimeValue = computed<Time | undefined>({
             :variant="attrs.variant"
             :hour-cycle="24"
         />
+
+        <UTooltip v-if="clearable && modelValue" :text="$t('common.clear')">
+            <UButton
+                color="error"
+                size="sm"
+                icon="i-mdi-clear"
+                :aria-label="$t('common.clear')"
+                @click.stop="emits('update:modelValue', undefined)"
+            />
+        </UTooltip>
     </UFieldGroup>
 </template>

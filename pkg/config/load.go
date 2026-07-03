@@ -102,6 +102,14 @@ func Load() (Result, error) {
 		}
 	}
 
+	// Handle legacy auth superuser groups/users lists
+	if len(c.Auth.ConfigAdminGroups) == 0 {
+		c.Auth.ConfigAdminGroups = c.Auth.SuperuserGroups
+	}
+	if len(c.Auth.ConfigAdminUsers) == 0 {
+		c.Auth.ConfigAdminUsers = c.Auth.SuperuserUsers
+	}
+
 	// Handle special environment variables
 	if val := os.Getenv(envs.SkipDBMigrationsEnv); val != "" {
 		skip, err := strconv.ParseBool(val)

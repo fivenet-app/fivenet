@@ -1746,6 +1746,18 @@
                     "social_login_providers": {
                         "title": "Social Login Anbieter",
                         "description": "Liste der konfigurierten Social Login Anbieter."
+                    },
+                    "admin_groups": {
+                        "title": "Admin-Gruppen",
+                        "description": "Lege fest, welche Gruppen und Lizenzen den Superuser-Modus oder Zugriff auf die App-Konfiguration erhalten. Config-Admin-Gruppen und -Lizenzen gewähren auch Job-Admin-Zugriff. Laufzeit-Overrides haben Vorrang vor den hier konfigurierten Gruppen.",
+                        "job_admin_groups": "Job-Admin-Gruppen",
+                        "job_admin_groups_description": "Füge jeweils eine Gruppe hinzu und drücke nach jedem Eintrag Enter, damit er zur Liste hinzugefügt wird.",
+                        "job_admin_users": "Job-Admin-Benutzer",
+                        "job_admin_users_description": "Füge jeweils eine Lizenz hinzu und drücke nach jedem Eintrag Enter, damit er zur Liste hinzugefügt wird.",
+                        "config_admin_groups": "Config-Admin-Gruppen",
+                        "config_admin_groups_description": "Füge jeweils eine Gruppe hinzu und drücke nach jedem Eintrag Enter, damit er zur Liste hinzugefügt wird.",
+                        "config_admin_users": "Config-Admin-Benutzer",
+                        "config_admin_users_description": "Füge jeweils eine Lizenz hinzu und drücke nach jedem Eintrag Enter, damit er zur Liste hinzugefügt wird."
                     }
                 },
                 "perms": {
@@ -3994,16 +4006,20 @@
             }
         },
         "internal": {
-            "namespace": "Internes & Superuser",
+            "namespace": "Internes & Job-Admin",
             "Superuser": {
-                "service": "Superuser",
+                "service": "Administration",
                 "CanBeSuperuser": {
                     "key": "Kann Superuser sein",
-                    "description": "Diese Berechtigung erlaubt es Ihnen, Superuser zu werden, wodurch Sie Zugriff auf alle FiveNet-Funktionen und -Berechtigungen erhalten."
+                    "description": "Diese Berechtigung erlaubt es Ihnen, in den Superuser-Modus zu wechseln. Sie ist die Berechtigung für Job-Admin-Zugriff und den aktiven erhöhten Modus."
                 },
-                "Superuser": {
-                    "key": "Superuser",
-                    "description": "Diese Berechtigung erlaubt Ihnen den Zugriff auf alle FiveNet-Funktionen und -Berechtigungen, unabhängig von Ihrem Beruf oder Ihrer Rolle."
+                "JobAdmin": {
+                    "key": "Job-Admin",
+                    "description": "Diese Berechtigung erlaubt Ihnen den Zugriff auf Job-Admin-Funktionen und -Aktionen."
+                },
+                "ConfigAdmin": {
+                    "key": "Config-Admin",
+                    "description": "Diese Berechtigung erlaubt Ihnen, die App- und Systemkonfiguration zu verwalten, getrennt vom Job-Admin-Zugriff."
                 }
             }
         }

@@ -60,7 +60,7 @@ func (b *sqlVisibilityBackend) VisibleIDsByConditionQuery(
 	condition mysql.BoolExpression,
 ) VisibilityQuery {
 	condition = b.access.normalizeTargetCondition(condition, includeDeleted)
-	if userInfo != nil && userInfo.GetSuperuser() {
+	if userInfo != nil && userInfo.GetJobAdmin() {
 		return VisibilityQuery{
 			Table:     b.access.visibleTargetIDsStatement(condition).AsTable("doc_ids"),
 			Statement: b.access.visibleTargetIDsStatement(condition),
@@ -92,7 +92,7 @@ func (b *sqlVisibilityBackend) ACLVisibleIDsByConditionQuery(
 	condition mysql.BoolExpression,
 ) VisibilityQuery {
 	condition = b.access.normalizeTargetCondition(condition, includeDeleted)
-	if userInfo != nil && userInfo.GetSuperuser() {
+	if userInfo != nil && userInfo.GetJobAdmin() {
 		return VisibilityQuery{
 			Table:     b.access.visibleTargetIDsStatement(condition).AsTable("doc_ids"),
 			Statement: b.access.visibleTargetIDsStatement(condition),
@@ -127,7 +127,7 @@ func (b *sqlVisibilityBackend) CountVisibleByConditionStatement(
 	condition mysql.BoolExpression,
 ) mysql.Statement {
 	condition = b.access.normalizeTargetCondition(condition, includeDeleted)
-	if userInfo != nil && userInfo.GetSuperuser() {
+	if userInfo != nil && userInfo.GetJobAdmin() {
 		return b.access.countTargetIDsStatement(condition)
 	}
 

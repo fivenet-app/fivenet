@@ -47,7 +47,7 @@ func (s *Server) ListThreadMessages(
 		return nil, err
 	}
 
-	count, err := s.store.CountThreadMessages(ctx, s.db, req.GetThreadId(), userInfo.GetSuperuser())
+	count, err := s.store.CountThreadMessages(ctx, s.db, req.GetThreadId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -64,7 +64,7 @@ func (s *Server) ListThreadMessages(
 		ThreadID: req.GetThreadId(),
 		Offset:   req.GetPagination().GetOffset(),
 		Limit:    limit,
-	}, userInfo.GetSuperuser())
+	}, userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -102,7 +102,7 @@ func (s *Server) PostMessage(
 	}
 
 	// Prevent disabled emails from sending messages
-	if !userInfo.GetSuperuser() && senderEmail.GetDeactivated() {
+	if !userInfo.GetJobAdmin() && senderEmail.GetDeactivated() {
 		return nil, errorsmailer.ErrEmailDisabled
 	}
 
@@ -158,7 +158,7 @@ func (s *Server) PostMessage(
 		ctx,
 		tx,
 		req.GetMessage().GetThreadId(),
-		userInfo.GetSuperuser(),
+		userInfo.GetJobAdmin(),
 	)
 	if err != nil {
 		return nil, errorsmailer.ErrFailedQuery
@@ -189,7 +189,7 @@ func (s *Server) PostMessage(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	message, err := s.store.GetMessage(ctx, s.db, req.GetMessage().GetId(), userInfo.GetSuperuser())
+	message, err := s.store.GetMessage(ctx, s.db, req.GetMessage().GetId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -215,17 +215,17 @@ func (s *Server) DeleteMessage(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	message, err := s.store.GetMessage(ctx, s.db, req.GetMessageId(), userInfo.GetSuperuser())
+	message, err := s.store.GetMessage(ctx, s.db, req.GetMessageId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	var deletedAtTime *timestamp.Timestamp
-	if message == nil || message.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if message == nil || message.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {
@@ -297,7 +297,7 @@ func (s *Server) SearchThreads(
 	for _, email := range listEmailsResp.GetEmails() {
 		ids = append(ids, mysql.Int64(email.GetId()))
 	}
-	includeDeleted := userInfo.GetSuperuser()
+	includeDeleted := userInfo.GetJobAdmin()
 
 	// Get Thread ids via threads recipients list
 	condition := mysql.AND(

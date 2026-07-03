@@ -411,7 +411,7 @@ func (s *Server) DeleteCalendar(
 	}
 
 	var deletedAtTime *timestamp.Timestamp
-	if cal.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if cal.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {

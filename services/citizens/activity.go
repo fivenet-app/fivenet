@@ -33,7 +33,7 @@ func (s *Server) ListUserActivity(
 
 	if userInfo.GetUserId() == req.GetUserId() {
 		// If isn't superuser or doesn't have 'Own' activity feed access
-		if !userInfo.GetSuperuser() &&
+		if !userInfo.GetJobAdmin() &&
 			!fields.Contains(permscitizens.CitizensServiceListUserActivityFieldsPermValueOwn) {
 			return resp, nil
 		}

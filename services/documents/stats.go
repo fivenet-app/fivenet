@@ -80,7 +80,7 @@ func (s *Server) GetStats(
 				continue
 			}
 			// Allow superuser access to any job even if not "in allowed" list
-			if _, ok := allowedJobsSet[job]; !ok && !userInfo.GetSuperuser() {
+			if _, ok := allowedJobsSet[job]; !ok && !userInfo.GetJobAdmin() {
 				continue
 			}
 			if _, ok := seen[job]; ok {

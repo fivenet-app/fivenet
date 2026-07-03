@@ -87,6 +87,22 @@ export interface Auth {
      * @generated from protobuf field: bool last_char_lock = 2
      */
     lastCharLock: boolean;
+    /**
+     * @generated from protobuf field: repeated string job_admin_groups = 3
+     */
+    jobAdminGroups: string[];
+    /**
+     * @generated from protobuf field: repeated string job_admin_users = 4
+     */
+    jobAdminUsers: string[];
+    /**
+     * @generated from protobuf field: repeated string config_admin_groups = 5
+     */
+    configAdminGroups: string[];
+    /**
+     * @generated from protobuf field: repeated string config_admin_users = 6
+     */
+    configAdminUsers: string[];
 }
 /**
  * @generated from protobuf message resources.settings.Perms
@@ -386,7 +402,7 @@ export enum DiscordBotPresenceType {
 class AppConfig$Type extends MessageType<AppConfig> {
     constructor() {
         super("resources.settings.AppConfig", [
-            { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "100" } } } },
             { no: 8, name: "default_locale", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 2, name: "auth", kind: "message", T: () => Auth },
             { no: 3, name: "perms", kind: "message", T: () => Perms },
@@ -526,13 +542,21 @@ class Auth$Type extends MessageType<Auth> {
     constructor() {
         super("resources.settings.Auth", [
             { no: 1, name: "signup_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "last_char_lock", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "last_char_lock", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "job_admin_groups", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } },
+            { no: 4, name: "job_admin_users", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } },
+            { no: 5, name: "config_admin_groups", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } },
+            { no: 6, name: "config_admin_users", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } }
         ]);
     }
     create(value?: PartialMessage<Auth>): Auth {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.signupEnabled = false;
         message.lastCharLock = false;
+        message.jobAdminGroups = [];
+        message.jobAdminUsers = [];
+        message.configAdminGroups = [];
+        message.configAdminUsers = [];
         if (value !== undefined)
             reflectionMergePartial<Auth>(this, message, value);
         return message;
@@ -547,6 +571,18 @@ class Auth$Type extends MessageType<Auth> {
                     break;
                 case /* bool last_char_lock */ 2:
                     message.lastCharLock = reader.bool();
+                    break;
+                case /* repeated string job_admin_groups */ 3:
+                    message.jobAdminGroups.push(reader.string());
+                    break;
+                case /* repeated string job_admin_users */ 4:
+                    message.jobAdminUsers.push(reader.string());
+                    break;
+                case /* repeated string config_admin_groups */ 5:
+                    message.configAdminGroups.push(reader.string());
+                    break;
+                case /* repeated string config_admin_users */ 6:
+                    message.configAdminUsers.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -566,6 +602,18 @@ class Auth$Type extends MessageType<Auth> {
         /* bool last_char_lock = 2; */
         if (message.lastCharLock !== false)
             writer.tag(2, WireType.Varint).bool(message.lastCharLock);
+        /* repeated string job_admin_groups = 3; */
+        for (let i = 0; i < message.jobAdminGroups.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.jobAdminGroups[i]);
+        /* repeated string job_admin_users = 4; */
+        for (let i = 0; i < message.jobAdminUsers.length; i++)
+            writer.tag(4, WireType.LengthDelimited).string(message.jobAdminUsers[i]);
+        /* repeated string config_admin_groups = 5; */
+        for (let i = 0; i < message.configAdminGroups.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.configAdminGroups[i]);
+        /* repeated string config_admin_users = 6; */
+        for (let i = 0; i < message.configAdminUsers.length; i++)
+            writer.tag(6, WireType.LengthDelimited).string(message.configAdminUsers[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -580,7 +628,7 @@ export const Auth = new Auth$Type();
 class Perms$Type extends MessageType<Perms> {
     constructor() {
         super("resources.settings.Perms", [
-            { no: 1, name: "default", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Perm, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+            { no: 1, name: "default", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Perm, options: { "buf.validate.field": { repeated: { maxItems: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<Perms>): Perms {

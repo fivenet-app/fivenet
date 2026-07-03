@@ -124,7 +124,7 @@ func (s *Store) ListApprovalTasksInbox(
 	var stmt mysql.Statement
 	var ctes []mysql.CommonTableExpression
 
-	if q.UserInfo.GetSuperuser() {
+	if q.UserInfo.GetJobAdmin() {
 		baseFrom := tApprovalTasks.
 			INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(tApprovalTasks.DocumentID))
 		countStmt = tApprovalTasks.

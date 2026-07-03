@@ -69,31 +69,31 @@ service AccountsService {
   rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
   rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
   rpc UpdateAccount(UpdateAccountRequest) returns (UpdateAccountResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
   rpc DisconnectSocialLogin(DisconnectSocialLoginRequest) returns (DisconnectSocialLoginResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
   rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
 }

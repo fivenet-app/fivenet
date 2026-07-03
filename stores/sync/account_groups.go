@@ -117,17 +117,27 @@ func (s *Store) publishAccountGroupsChanged(
 		return
 	}
 
-	superuserGroups, superuserUsers := []string(nil), []string(nil)
-	if s.cfg != nil {
-		superuserGroups = s.cfg.Auth.SuperuserGroups
-		superuserUsers = s.cfg.Auth.SuperuserUsers
-	}
+	jobAdminGroups, jobAdminUsers := pkguserinfo.EffectiveJobAdminLists(
+		s.cfg.Auth.JobAdminGroups,
+		s.cfg.Auth.JobAdminUsers,
+		s.cfg.Auth.ConfigAdminGroups,
+		s.cfg.Auth.ConfigAdminUsers,
+		s.appCfg,
+	)
+	_, _, configAdminGroups, configAdminUsers := pkguserinfo.EffectiveAdminLists(
+		s.cfg.Auth.JobAdminGroups,
+		s.cfg.Auth.JobAdminUsers,
+		s.cfg.Auth.ConfigAdminGroups,
+		s.cfg.Auth.ConfigAdminUsers,
+		s.appCfg,
+	)
 
 	event := pkguserinfo.BuildAccountGroupsChangedEvent(
 		accountID,
 		nil,
 		groups,
-		pkguserinfo.CanBeSuperuser(groups, license, superuserGroups, superuserUsers),
+		pkguserinfo.CanBeSuperuser(groups, license, jobAdminGroups, jobAdminUsers),
+		pkguserinfo.CanBeConfigAdmin(groups, license, configAdminGroups, configAdminUsers),
 	)
 	if err := s.notifi.SendAccountEvent(ctx, accountID, &notificationsevents.UserEvent{
 		Data: &notificationsevents.UserEvent_AccountGroupsChanged{

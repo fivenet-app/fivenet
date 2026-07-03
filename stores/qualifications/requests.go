@@ -34,7 +34,7 @@ func (s *Store) ListQualificationRequests(
 			mysql.Int32(int32(resqualifications.RequestStatus_REQUEST_STATUS_COMPLETED)),
 		),
 	)
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		condition = condition.AND(tQualiReq.DeletedAt.IS_NULL())
 	}
 	if opts.QualificationID > 0 {
@@ -83,7 +83,7 @@ func (s *Store) ListQualificationRequests(
 		visibleIDs objectaccess.VisibilityQuery
 	)
 
-	if userInfo != nil && !userInfo.GetSuperuser() {
+	if userInfo != nil && !userInfo.GetJobAdmin() {
 		visibleQualificationCondition := mysql.Bool(true)
 		if opts.QualificationID > 0 {
 			visibleQualificationCondition = visibleQualificationCondition.AND(
@@ -179,7 +179,7 @@ func (s *Store) ListQualificationRequests(
 	}
 
 	var stmt mysql.Statement
-	if userInfo != nil && !userInfo.GetSuperuser() {
+	if userInfo != nil && !userInfo.GetJobAdmin() {
 		visibleQualiID := mysql.IntegerColumn("id").From(visibleIDs.Table)
 
 		stmt = tQualiReq.
@@ -277,7 +277,7 @@ func (s *Store) GetQualificationRequest(
 		tQualiReq.QualificationID.EQ(mysql.Int64(qualificationId)),
 		tQualiReq.UserID.EQ(mysql.Int32(userId)),
 	)
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		condition = condition.AND(tQualiReq.DeletedAt.IS_NULL())
 	}
 

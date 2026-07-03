@@ -48,7 +48,7 @@ func (s *Server) ListPages(
 		Search:     req.GetSearch(),
 		Job:        req.GetJob(),
 		RootOnly:   req.GetRootOnly(),
-		Superuser:  userInfo.GetSuperuser(),
+		Superuser:  userInfo.GetJobAdmin(),
 		UserInfo:   userInfo,
 		Pagination: req.GetPagination(),
 	})
@@ -163,7 +163,7 @@ func (s *Server) getPage(
 		return nil, err
 	}
 
-	if !userInfo.GetSuperuser() && (dest.GetMeta() == nil || dest.GetMeta().GetDeletedAt() != nil) {
+	if !userInfo.GetJobAdmin() && (dest.GetMeta() == nil || dest.GetMeta().GetDeletedAt() != nil) {
 		return nil, errorswiki.ErrPageNotFound
 	}
 
@@ -310,7 +310,7 @@ func (s *Server) UpdatePage(
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
 
-		if p.GetJob() != userInfo.GetJob() && !userInfo.GetSuperuser() {
+		if p.GetJob() != userInfo.GetJob() && !userInfo.GetJobAdmin() {
 			return nil, errorswiki.ErrPageDenied
 		}
 
@@ -357,7 +357,7 @@ func (s *Server) UpdatePage(
 	if !oldPage.GetMeta().GetDraft() &&
 		oldPage.GetMeta().GetDraft() != req.GetPage().GetMeta().GetDraft() {
 		// Allow a super user to change the draft state
-		if !userInfo.GetSuperuser() {
+		if !userInfo.GetJobAdmin() {
 			req.Page.Meta.Draft = oldPage.GetMeta().GetDraft()
 		}
 	}
@@ -625,7 +625,7 @@ func (s *Server) DeletePage(
 
 	var deletedAtTime *timestamp.Timestamp
 	// Check if page has any un-deleted child pages
-	if page.GetMeta() == nil || page.GetMeta().GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if page.GetMeta() == nil || page.GetMeta().GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {

@@ -29,6 +29,16 @@ func (x *UserInfoChanged) SetJobGradeLabel(label string) {
 	x.NewJobGradeLabel = &label
 }
 
+// GetJobAdmin returns whether the user currently has elevated job-admin mode enabled.
+func (x *UserInfo) GetJobAdmin() bool {
+	return x.GetSuperuser()
+}
+
+// SetJobAdmin toggles the active elevated job-admin mode.
+func (x *UserInfo) SetJobAdmin(v bool) {
+	x.SetSuperuser(v)
+}
+
 // Equal returns true if all fields of u and in are equal.
 func (u *UserInfo) Equal(in *UserInfo) bool {
 	if u == nil || in == nil {
@@ -60,6 +70,9 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 		return false
 	}
 	if u.GetCanBeSuperuser() != in.GetCanBeSuperuser() {
+		return false
+	}
+	if u.GetCanBeConfigAdmin() != in.GetCanBeConfigAdmin() {
 		return false
 	}
 	if u.GetSuperuser() != in.GetSuperuser() {

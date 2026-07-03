@@ -133,6 +133,48 @@ func (m *AppConfig) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *Auth) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ConfigAdminGroups
+	for idx, item := range m.ConfigAdminGroups {
+		_, _ = idx, item
+
+		m.ConfigAdminGroups[idx] = htmlsanitizer.SanitizeAndUnescape(m.ConfigAdminGroups[idx])
+
+	}
+
+	// Field: ConfigAdminUsers
+	for idx, item := range m.ConfigAdminUsers {
+		_, _ = idx, item
+
+		m.ConfigAdminUsers[idx] = htmlsanitizer.SanitizeAndUnescape(m.ConfigAdminUsers[idx])
+
+	}
+
+	// Field: JobAdminGroups
+	for idx, item := range m.JobAdminGroups {
+		_, _ = idx, item
+
+		m.JobAdminGroups[idx] = htmlsanitizer.SanitizeAndUnescape(m.JobAdminGroups[idx])
+
+	}
+
+	// Field: JobAdminUsers
+	for idx, item := range m.JobAdminUsers {
+		_, _ = idx, item
+
+		m.JobAdminUsers[idx] = htmlsanitizer.SanitizeAndUnescape(m.JobAdminUsers[idx])
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Discord) Sanitize() error {
 	if m == nil {
 		return nil

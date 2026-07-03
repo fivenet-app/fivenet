@@ -37,7 +37,7 @@ func (s *Server) GetExamInfo(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -120,7 +120,7 @@ func (s *Server) TakeExam(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -228,7 +228,7 @@ func (s *Server) SubmitExam(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -402,7 +402,7 @@ func (s *Server) GetUserExam(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 

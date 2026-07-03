@@ -61,18 +61,10 @@ func (g *GRPCPerm) checkPermission(
 		return nil, errorsgrpcauth.ErrPermissionDenied
 	}
 
-	// Short circuit for superusers, they have access to everything
-	if userInfo.GetSuperuser() {
-		return ctx, nil
-	}
-
 	if ps, ok := goproto.PermsRemap[perm]; ok {
 		for _, p := range ps {
 			if p == pkgperms.PermAnyRef {
 				return ctx, nil
-			}
-			if p == pkgperms.PermSuperuserRef {
-				continue
 			}
 			if g.ps.Can(userInfo, p) {
 				return ctx, nil
@@ -80,6 +72,12 @@ func (g *GRPCPerm) checkPermission(
 		}
 
 		return nil, errorsgrpcauth.ErrPermissionDenied
+	}
+
+	// Keep the fast path for non-remapped RPCs, but let remapped config-admin gates
+	// evaluate through the permission system instead of bypassing them here.
+	if userInfo.GetJobAdmin() {
+		return ctx, nil
 	}
 
 	if g.ps.CanServiceMethod(userInfo, perm) {

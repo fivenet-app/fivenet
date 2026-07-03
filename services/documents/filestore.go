@@ -35,7 +35,7 @@ func (s *Server) UploadFile(
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return errorsdocuments.ErrDocViewDenied
 	}
 

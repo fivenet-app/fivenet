@@ -18,7 +18,7 @@ message AppConfig {
     partial: true
   };
 
-  string version = 1;
+  string version = 1 [(buf.validate.field).string.max_len = 100];
 
   string default_locale = 8 [(buf.validate.field).string.max_len = 20];
 
@@ -39,10 +39,35 @@ message AppConfig {
 message Auth {
   bool signup_enabled = 1;
   bool last_char_lock = 2;
+
+  repeated string job_admin_groups = 3 [(buf.validate.field).repeated = {
+    max_items: 10
+    items: {
+      string: {max_len: 64}
+    }
+  }];
+  repeated string job_admin_users = 4 [(buf.validate.field).repeated = {
+    max_items: 10
+    items: {
+      string: {max_len: 64}
+    }
+  }];
+  repeated string config_admin_groups = 5 [(buf.validate.field).repeated = {
+    max_items: 10
+    items: {
+      string: {max_len: 64}
+    }
+  }];
+  repeated string config_admin_users = 6 [(buf.validate.field).repeated = {
+    max_items: 10
+    items: {
+      string: {max_len: 64}
+    }
+  }];
 }
 
 message Perms {
-  repeated Perm default = 1 [(buf.validate.field).repeated.max_items = 100];
+  repeated Perm default = 1 [(buf.validate.field).repeated.max_items = 50];
 }
 
 message Perm {

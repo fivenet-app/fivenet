@@ -31,7 +31,7 @@ func (s *Store) ListQualificationsResults(
 	}
 
 	condition := mysql.Bool(true)
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		condition = condition.AND(tQualiResult.DeletedAt.IS_NULL())
 	}
 	if opts.QualificationID > 0 {
@@ -115,7 +115,7 @@ func (s *Store) ListQualificationsResults(
 		visibleQualiID mysql.IntegerExpression
 	)
 
-	if userInfo != nil && !userInfo.GetSuperuser() {
+	if userInfo != nil && !userInfo.GetJobAdmin() {
 		visibleQualificationCondition := mysql.Bool(true)
 		if opts.QualificationID > 0 {
 			visibleQualificationCondition = visibleQualificationCondition.AND(
@@ -172,7 +172,7 @@ func (s *Store) ListQualificationsResults(
 	}
 
 	var stmt mysql.Statement
-	if userInfo != nil && !userInfo.GetSuperuser() {
+	if userInfo != nil && !userInfo.GetJobAdmin() {
 		stmt = tQualiResult.
 			SELECT(columns[0], columns[1:]...).
 			FROM(
@@ -228,7 +228,7 @@ func (s *Store) GetQualificationResult(
 	tCreator := tUser.AS("creator")
 
 	condition := mysql.Bool(true)
-	if userInfo == nil || !userInfo.GetSuperuser() {
+	if userInfo == nil || !userInfo.GetJobAdmin() {
 		condition = condition.AND(tQualiResult.DeletedAt.IS_NULL())
 	}
 	if resultId > 0 {

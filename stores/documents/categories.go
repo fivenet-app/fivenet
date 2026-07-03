@@ -19,7 +19,7 @@ func (s *Store) ListCategories(
 ) ([]*documentscategory.Category, error) {
 	tCategory := table.FivenetDocumentsCategories.AS("category")
 	condition := tCategory.Job.EQ(mysql.String(userInfo.GetJob()))
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		condition = mysql.AND(
 			tCategory.DeletedAt.IS_NULL(),
 			tCategory.Job.EQ(mysql.String(userInfo.GetJob())),

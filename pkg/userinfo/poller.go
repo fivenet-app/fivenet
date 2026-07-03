@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
@@ -48,6 +49,7 @@ type Poller struct {
 
 	db       *sql.DB
 	cfg      *config.Config
+	appCfg   appconfig.IConfig
 	js       *events.JSWrapper
 	enricher mstlystcdata.IEnricher
 	kv       jetstream.KeyValue
@@ -65,11 +67,12 @@ type PollerParams struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	DB       *sql.DB
-	Cfg      *config.Config
-	Enricher mstlystcdata.IEnricher
-	JS       *events.JSWrapper
+	Logger    *zap.Logger
+	DB        *sql.DB
+	Cfg       *config.Config
+	Enricher  mstlystcdata.IEnricher
+	JS        *events.JSWrapper
+	AppConfig appconfig.IConfig
 }
 
 func NewPoller(p PollerParams) *Poller {
@@ -81,6 +84,7 @@ func NewPoller(p PollerParams) *Poller {
 		ctx:      ctxCancel,
 		db:       p.DB,
 		cfg:      p.Cfg,
+		appCfg:   p.AppConfig,
 		enricher: p.Enricher,
 		js:       p.JS,
 
@@ -145,6 +149,7 @@ func (p *Poller) registerSubscriptions(
 
 	if p.jsCons != nil {
 		p.jsCons.Stop()
+		p.jsCons = nil
 	}
 
 	p.jsCons, err = consumer.Consume(p.handleMsg,
@@ -322,16 +327,33 @@ func (p *Poller) checkDiffAndPublish(
 	}
 
 	if groupsChanged {
-		superuserGroups, superuserUsers := []string(nil), []string(nil)
+		var jobAdminGroups, jobAdminUsers, configAdminGroups, configAdminUsers []string
 		if p.cfg != nil {
-			superuserGroups = p.cfg.Auth.SuperuserGroups
-			superuserUsers = p.cfg.Auth.SuperuserUsers
+			jobAdminGroups = p.cfg.Auth.JobAdminGroups
+			jobAdminUsers = p.cfg.Auth.JobAdminUsers
+			configAdminGroups = p.cfg.Auth.ConfigAdminGroups
+			configAdminUsers = p.cfg.Auth.ConfigAdminUsers
 		}
+		jobAdminGroups, jobAdminUsers = EffectiveJobAdminLists(
+			jobAdminGroups,
+			jobAdminUsers,
+			configAdminGroups,
+			configAdminUsers,
+			p.appCfg,
+		)
+		_, _, configAdminGroups, configAdminUsers = EffectiveAdminLists(
+			jobAdminGroups,
+			jobAdminUsers,
+			configAdminGroups,
+			configAdminUsers,
+			p.appCfg,
+		)
 		evt := BuildAccountGroupsChangedEvent(
 			acct,
 			updatedAt,
 			groups,
-			CanBeSuperuser(groups, license, superuserGroups, superuserUsers),
+			CanBeSuperuser(groups, license, jobAdminGroups, jobAdminUsers),
+			CanBeConfigAdmin(groups, license, configAdminGroups, configAdminUsers),
 		)
 
 		if _, err := p.js.PublishAsyncProto(

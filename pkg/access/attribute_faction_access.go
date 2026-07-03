@@ -20,7 +20,7 @@ func CheckIfHasOwnJobAccess(
 	creator *usershort.UserShort, // Short info about the creator (may be nil)
 ) bool {
 	// Superusers always have access
-	if userInfo.GetSuperuser() {
+	if userInfo.GetJobAdmin() {
 		return true
 	}
 

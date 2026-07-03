@@ -13,6 +13,7 @@ definePageMeta({
     title: 'common.control_panel',
     requiresAuth: true,
     permission: [
+        'internal.Superuser/ConfigAdmin',
         'settings.SettingsService/GetJobProps',
         'settings.SettingsService/GetRoles',
         'settings.SettingsService/ViewAuditLog',
@@ -20,7 +21,8 @@ definePageMeta({
     ],
 });
 
-const { isSuperuser } = useAuth();
+const { can } = useAuth();
+const canConfigAdmin = can('internal.Superuser/ConfigAdmin');
 
 const items = computed<CardElement[]>(() => [
     {
@@ -62,7 +64,7 @@ const items = computed<CardElement[]>(() => [
         title: t('pages.settings.jobs.title'),
         description: t('pages.settings.features.jobs'),
         to: '/settings/jobs',
-        permission: 'internal.Superuser/Superuser',
+        permission: 'internal.Superuser/JobAdmin',
         icon: 'i-mdi-briefcase',
     },
 ]);
@@ -72,35 +74,35 @@ const superuserItems = computed<CardElement[]>(() => [
         title: t('pages.settings.limiter.title'),
         description: t('pages.settings.features.limiter'),
         to: '/settings/limiter',
-        permission: 'internal.Superuser/Superuser',
+        permission: 'internal.Superuser/JobAdmin',
         icon: 'i-mdi-car-speed-limiter',
     },
     {
         title: t('pages.settings.filestore.title'),
         description: t('pages.settings.features.filestore'),
         to: '/settings/filestore',
-        permission: 'internal.Superuser/Superuser',
+        permission: 'internal.Superuser/ConfigAdmin',
         icon: 'i-mdi-file-multiple',
     },
     {
         title: t('pages.settings.accounts.title'),
         description: t('pages.settings.features.accounts'),
         to: '/settings/accounts',
-        permission: 'internal.Superuser/Superuser',
+        permission: 'internal.Superuser/ConfigAdmin',
         icon: 'i-mdi-account-multiple',
     },
     {
         title: t('pages.settings.settings.title'),
         description: t('pages.settings.features.settings'),
         to: '/settings/settings',
-        permission: 'internal.Superuser/Superuser',
+        permission: 'internal.Superuser/ConfigAdmin',
         icon: 'i-mdi-office-building-cog',
     },
     {
         title: t('pages.settings.cron.title'),
         description: t('pages.settings.features.cron'),
         to: '/settings/cron',
-        permission: 'internal.Superuser/Superuser',
+        permission: 'internal.Superuser/ConfigAdmin',
         icon: 'i-mdi-calendar-task',
     },
 ]);
@@ -122,9 +124,9 @@ const superuserItems = computed<CardElement[]>(() => [
                     <CardsList :items="items" />
                 </div>
 
-                <SystemStatus v-if="isSuperuser" />
+                <SystemStatus v-if="canConfigAdmin" />
 
-                <template v-if="isSuperuser">
+                <template v-if="canConfigAdmin">
                     <UCard :title="$t('components.settings.system_settings')" icon="i-mdi-administrator" variant="subtle">
                         <template #header>
                             <div class="flex items-center gap-2">

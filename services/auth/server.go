@@ -43,10 +43,12 @@ type Server struct {
 	js       *events.JSWrapper
 	store    authstore.IStore
 
-	domain          string
-	oauth2Providers []*config.OAuth2Provider
-	superuserGroups []string
-	superuserUsers  []string
+	domain            string
+	oauth2Providers   []*config.OAuth2Provider
+	jobAdminGroups    []string
+	jobAdminUsers     []string
+	configAdminGroups []string
+	configAdminUsers  []string
 }
 
 type Params struct {
@@ -77,10 +79,12 @@ func NewServer(p Params) *Server {
 		js:       p.JS,
 		store:    p.Store,
 
-		domain:          p.Config.HTTP.Sessions.Domain,
-		oauth2Providers: p.Config.OAuth2.Providers,
-		superuserGroups: p.Config.Auth.SuperuserGroups,
-		superuserUsers:  p.Config.Auth.SuperuserUsers,
+		domain:            p.Config.HTTP.Sessions.Domain,
+		oauth2Providers:   p.Config.OAuth2.Providers,
+		jobAdminGroups:    p.Config.Auth.JobAdminGroups,
+		jobAdminUsers:     p.Config.Auth.JobAdminUsers,
+		configAdminGroups: p.Config.Auth.ConfigAdminGroups,
+		configAdminUsers:  p.Config.Auth.ConfigAdminUsers,
 	}
 }
 
@@ -105,7 +109,9 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 		return ctx, nil
 	}
 
-	if fullMethod == "/services.auth.AuthService/SetSuperuserMode" {
+	// Superuser mode and impersonation endpoints require user token
+	if fullMethod == "/services.auth.AuthService/SetSuperuserMode" ||
+		fullMethod == "/services.auth.AuthService/ImpersonateJob" {
 		return s.auth.GRPCAuthFunc(ctx, fullMethod)
 	}
 

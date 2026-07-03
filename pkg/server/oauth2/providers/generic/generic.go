@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -61,9 +62,9 @@ func (p *Generic) decodeUserInfo(data io.Reader) (*types.UserInfo, error) {
 	if !ok {
 		return nil, errors.New("failed to get id from user info")
 	}
-	subId, ok := sub.(float64)
+	subId, ok := anyToInt64(sub)
 	if !ok {
-		return nil, errors.New("failed to convert id to float64")
+		return nil, errors.New("failed to convert id to int64")
 	}
 	if subId <= 0 {
 		return nil, errors.New("invalid external user id given")
@@ -96,8 +97,67 @@ func (p *Generic) decodeUserInfo(data io.Reader) (*types.UserInfo, error) {
 	}
 
 	return &types.UserInfo{
-		ID:       strconv.FormatInt(int64(subId), 10),
+		ID:       strconv.FormatInt(subId, 10),
 		Username: username,
 		Avatar:   profilePicture,
 	}, nil
+}
+
+func anyToInt64(v any) (int64, bool) {
+	switch x := v.(type) {
+	case int:
+		return int64(x), true
+	case int8:
+		return int64(x), true
+	case int16:
+		return int64(x), true
+	case int32:
+		return int64(x), true
+	case int64:
+		return x, true
+
+	case uint:
+		if uint64(x) > math.MaxInt64 {
+			return 0, false
+		}
+		return int64(x), true
+	case uint8:
+		return int64(x), true
+	case uint16:
+		return int64(x), true
+	case uint32:
+		return int64(x), true
+	case uint64:
+		if x > math.MaxInt64 {
+			return 0, false
+		}
+		return int64(x), true
+
+	case float64:
+		if x != math.Trunc(x) || x < math.MinInt64 || x > math.MaxInt64 {
+			return 0, false
+		}
+		return int64(x), true
+
+	case float32:
+		f := float64(x)
+		if f != math.Trunc(f) || f < math.MinInt64 || f > math.MaxInt64 {
+			return 0, false
+		}
+		return int64(x), true
+
+	case string:
+		if x == "" {
+			return 0, false
+		}
+		i, err := strconv.ParseInt(x, 10, 64)
+		return i, err == nil
+
+	case json.Number:
+		i, err := x.Int64()
+		return i, err == nil
+
+	default:
+		return 0, false
+	}
 }

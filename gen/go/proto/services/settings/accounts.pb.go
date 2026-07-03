@@ -981,13 +981,13 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\x15DeleteAccountResponse\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01B\r\n" +
-	"\v_deleted_at2\xfa\x04\n" +
-	"\x0fAccountsService\x12r\n" +
-	"\fListAccounts\x12&.services.settings.ListAccountsRequest\x1a'.services.settings.ListAccountsResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12u\n" +
-	"\rCreateAccount\x12'.services.settings.CreateAccountRequest\x1a(.services.settings.CreateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12u\n" +
-	"\rUpdateAccount\x12'.services.settings.UpdateAccountRequest\x1a(.services.settings.UpdateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12\x8d\x01\n" +
-	"\x15DisconnectSocialLogin\x12/.services.settings.DisconnectSocialLoginRequest\x1a0.services.settings.DisconnectSocialLoginResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12u\n" +
-	"\rDeleteAccount\x12'.services.settings.DeleteAccountRequest\x1a(.services.settings.DeleteAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\v_deleted_at2\x84\x05\n" +
+	"\x0fAccountsService\x12t\n" +
+	"\fListAccounts\x12&.services.settings.ListAccountsRequest\x1a'.services.settings.ListAccountsResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12w\n" +
+	"\rCreateAccount\x12'.services.settings.CreateAccountRequest\x1a(.services.settings.CreateAccountResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12w\n" +
+	"\rUpdateAccount\x12'.services.settings.UpdateAccountRequest\x1a(.services.settings.UpdateAccountResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12\x8f\x01\n" +
+	"\x15DisconnectSocialLogin\x12/.services.settings.DisconnectSocialLoginRequest\x1a0.services.settings.DisconnectSocialLoginResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12w\n" +
+	"\rDeleteAccount\x12'.services.settings.DeleteAccountRequest\x1a(.services.settings.DeleteAccountResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdminBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var file_services_settings_accounts_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_settings_accounts_proto_goTypes = []any{

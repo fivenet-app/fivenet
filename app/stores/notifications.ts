@@ -22,6 +22,29 @@ export const logger = useLogger('📣 Notificator');
 const maxBackoffTime = 20;
 const initialReconnectBackoffTime = 2;
 
+export type AccountCapabilityAuthStore = Pick<
+    ReturnType<typeof useAuthStore>,
+    'isSuperuser' | 'canBeConfigAdmin' | 'setCanBeSuperuser' | 'chooseCharacter'
+>;
+
+export const handleAccountGroupsChangedEvent = async (
+    accountGroupsChanged: AccountGroupsChanged,
+    authStore: AccountCapabilityAuthStore,
+): Promise<void> => {
+    const previousCanBeSuperuser = authStore.isSuperuser;
+    const previousCanBeConfigAdmin = authStore.canBeConfigAdmin;
+
+    authStore.setCanBeSuperuser(accountGroupsChanged.canBeSuperuser);
+
+    if (
+        previousCanBeSuperuser !== accountGroupsChanged.canBeSuperuser ||
+        previousCanBeConfigAdmin !== accountGroupsChanged.canBeConfigAdmin
+    ) {
+        logger.info('User capabilities changed, forcing a choose character refresh');
+        await authStore.chooseCharacter(undefined, false);
+    }
+};
+
 export const useNotificationsStore = defineStore(
     'notifications',
     () => {
@@ -205,24 +228,6 @@ export const useNotificationsStore = defineStore(
             if (userInfoChanged.newJobGradeLabel) activeChar.value!.jobGradeLabel = userInfoChanged.newJobGradeLabel;
 
             await authStore.chooseCharacter(undefined);
-        };
-
-        /**
-         * Handles the user groups changed event by updating the current account capabilities.
-         * @param accountGroupsChanged - The user groups change data from the server.
-         */
-        const handleAccountGroupsChangedEvent = async (
-            accountGroupsChanged: AccountGroupsChanged,
-            authStore: ReturnType<typeof useAuthStore>,
-        ): Promise<void> => {
-            const previousIsSuperuser = authStore.isSuperuser;
-            authStore.setCanBeSuperuser(accountGroupsChanged.canBeSuperuser);
-
-            // If user is currently a superuser and can't be superuser anymore, force a choose character to refresh their capabilities
-            if (previousIsSuperuser && !accountGroupsChanged.canBeSuperuser) {
-                logger.info('User can no longer be superuser, forcing a choose character refresh');
-                await authStore.chooseCharacter(undefined, false);
-            }
         };
 
         /**

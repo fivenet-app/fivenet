@@ -108,7 +108,7 @@ func (s *Server) ListApprovalPolicies(
 	tApprovalPolicy := table.FivenetDocumentsApprovalPolicies.AS("approval_policy")
 
 	condition := tApprovalPolicy.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		condition = condition.AND(tApprovalPolicy.DeletedAt.IS_NULL())
 	}
 

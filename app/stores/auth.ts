@@ -14,9 +14,6 @@ import type { ImpersonateJobResponse } from '~~/gen/ts/services/auth/auth';
 
 const logger = useLogger('🔑 Auth');
 
-const superuserPermGuard = 'internal-superuser-superuser' as const;
-const superuserCanBePermGuard = 'internal-superuser-canbesuperuser' as const;
-
 /**
  * Pinia store for managing user sessions, permissions, and state.
  */
@@ -148,8 +145,8 @@ export const useAuthStore = defineStore(
          * @param attrs - The list of role attributes to set.
          */
         const setPermissions = (perms: Permission[], attrs: RoleAttribute[]): void => {
-            permissions.value = [...perms.sort()];
-            attributes.value = [...attrs.sort()];
+            permissions.value = [...perms].sort();
+            attributes.value = [...attrs].sort();
             canBeSuperuser.value = perms.some((p) => p.guardName === superuserCanBePermGuard);
         };
 
@@ -163,7 +160,7 @@ export const useAuthStore = defineStore(
             if (!canBeSuperuser.value) {
                 // Remove can be- and superuser permission if user can't be superuser anymore
                 permissions.value = permissions.value.filter(
-                    (p) => p.guardName !== superuserPermGuard && p.guardName !== superuserCanBePermGuard,
+                    (p) => p.guardName !== jobAdminPermGuard && p.guardName !== superuserCanBePermGuard,
                 );
             }
 
@@ -446,7 +443,14 @@ export const useAuthStore = defineStore(
         };
 
         // Getters
-        const isSuperuser = computed<boolean>(() => !!permissions.value.find((p) => p.guardName === superuserPermGuard));
+        /**
+         * Whether the current account is currently in superuser (job admin mode) access.
+         */
+        const isSuperuser = computed<boolean>(() => !!permissions.value.find((p) => p.guardName === jobAdminPermGuard));
+        /**
+         * Whether the current account can access config-admin gated screens and RPCs.
+         */
+        const canBeConfigAdmin = computed<boolean>(() => permissions.value.some((p) => p.guardName === configAdminPermGuard));
 
         return {
             // State
@@ -463,6 +467,7 @@ export const useAuthStore = defineStore(
             permissions,
             attributes,
             canBeSuperuser,
+            canBeConfigAdmin,
 
             // Actions
             setUsername,

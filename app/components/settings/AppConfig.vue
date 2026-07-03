@@ -65,6 +65,11 @@ const schema = z.object({
     auth: z.object({
         signupEnabled: z.coerce.boolean(),
         lastCharLock: z.coerce.boolean(),
+
+        jobAdminGroups: z.coerce.string().array().max(10).default([]),
+        jobAdminUsers: z.coerce.string().array().max(10).default([]),
+        configAdminGroups: z.coerce.string().array().max(10).default([]),
+        configAdminUsers: z.coerce.string().array().max(10).default([]),
     }),
     perms: z.object({
         default: z
@@ -195,6 +200,10 @@ const state = reactive<Schema>({
     auth: {
         signupEnabled: true,
         lastCharLock: false,
+        jobAdminGroups: [],
+        jobAdminUsers: [],
+        configAdminGroups: [],
+        configAdminUsers: [],
     },
     perms: {
         default: [],
@@ -547,6 +556,51 @@ const formRef = useTemplateRef('formRef');
                         </UPageCard>
 
                         <UPageCard
+                            :title="$t('components.settings.app_config.auth.admin_groups.title')"
+                            :description="$t('components.settings.app_config.auth.admin_groups.description')"
+                        >
+                            <UFormField
+                                name="auth.jobAdminGroups"
+                                :label="$t('components.settings.app_config.auth.admin_groups.job_admin_groups')"
+                                :description="
+                                    $t('components.settings.app_config.auth.admin_groups.job_admin_groups_description')
+                                "
+                            >
+                                <UInputTags v-model="state.auth.jobAdminGroups" class="w-full" />
+                            </UFormField>
+
+                            <UFormField
+                                name="auth.jobAdminUsers"
+                                :label="$t('components.settings.app_config.auth.admin_groups.job_admin_users')"
+                                :description="
+                                    $t('components.settings.app_config.auth.admin_groups.job_admin_users_description')
+                                "
+                            >
+                                <UInputTags v-model="state.auth.jobAdminUsers" class="w-full" />
+                            </UFormField>
+
+                            <UFormField
+                                name="auth.configAdminGroups"
+                                :label="$t('components.settings.app_config.auth.admin_groups.config_admin_groups')"
+                                :description="
+                                    $t('components.settings.app_config.auth.admin_groups.config_admin_groups_description')
+                                "
+                            >
+                                <UInputTags v-model="state.auth.configAdminGroups" class="w-full" />
+                            </UFormField>
+
+                            <UFormField
+                                name="auth.configAdminUsers"
+                                :label="$t('components.settings.app_config.auth.admin_groups.config_admin_users')"
+                                :description="
+                                    $t('components.settings.app_config.auth.admin_groups.config_admin_users_description')
+                                "
+                            >
+                                <UInputTags v-model="state.auth.configAdminUsers" class="w-full" />
+                            </UFormField>
+                        </UPageCard>
+
+                        <UPageCard
                             :title="$t('components.settings.app_config.perms.default_perms.title')"
                             :description="$t('components.settings.app_config.perms.default_perms.description')"
                         >
@@ -619,7 +673,11 @@ const formRef = useTemplateRef('formRef');
                                                 <UButton
                                                     color="red"
                                                     icon="i-mdi-close"
-                                                    @click="state.perms.default.splice(idx, 1)"
+                                                    @click="
+                                                        () => {
+                                                            state.perms.default.splice(idx, 1);
+                                                        }
+                                                    "
                                                 />
                                             </UTooltip>
                                         </div>
@@ -630,7 +688,11 @@ const formRef = useTemplateRef('formRef');
                                     :class="state.perms.default.length ? 'mt-2' : ''"
                                     :disabled="!canSubmit"
                                     icon="i-mdi-plus"
-                                    @click="state.perms.default.push({ category: '', name: '' })"
+                                    @click="
+                                        () => {
+                                            state.perms.default.push({ category: '', name: '' });
+                                        }
+                                    "
                                 />
                             </UFormField>
                         </UPageCard>

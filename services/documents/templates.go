@@ -121,12 +121,12 @@ func (s *Server) GetTemplate(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrTemplateNoPerms
 	}
 
 	resp := &pbdocuments.GetTemplateResponse{}
-	resp.Template, err = s.store.GetTemplate(ctx, req.GetTemplateId(), userInfo.GetSuperuser())
+	resp.Template, err = s.store.GetTemplate(ctx, req.GetTemplateId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -318,7 +318,7 @@ func (s *Server) UpdateTemplate(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		return nil, errorsdocuments.ErrTemplateNoPerms
 	}
 
@@ -427,7 +427,7 @@ func (s *Server) DeleteTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if !check && !userInfo.GetSuperuser() {
+	if !check && !userInfo.GetJobAdmin() {
 		if dTmpl.GetCreatorJob() == "" {
 			return nil, errorsdocuments.ErrTemplateNoPerms
 		}
@@ -442,7 +442,7 @@ func (s *Server) DeleteTemplate(
 
 	var deletedAtTime *timestamp.Timestamp
 	// Check if page has any un-deleted child pages
-	if dTmpl.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if dTmpl.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {

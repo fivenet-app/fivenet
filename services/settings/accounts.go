@@ -70,7 +70,7 @@ func (s *Server) DeleteAccount(
 		return nil, errorssettings.ErrCannotDeleteOwnAccount
 	}
 
-	account, err := s.store.GetAccountByID(ctx, req.GetId(), userInfo.GetSuperuser())
+	account, err := s.store.GetAccountByID(ctx, req.GetId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -79,7 +79,7 @@ func (s *Server) DeleteAccount(
 	}
 
 	var deletedAtTime *timestamp.Timestamp
-	if account.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if account.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {

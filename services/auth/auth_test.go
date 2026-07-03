@@ -1,11 +1,14 @@
 package auth
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"strings"
 	"testing"
 
+	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	pbauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth"
 	permsauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth/perms"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
@@ -13,7 +16,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
 	grpcserver "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -47,7 +52,8 @@ func TestFullAuthFlow(t *testing.T) {
 		modules.GetFxTestOpts(
 			dbServer.FxProvide(),
 			natsServer.FxProvide(),
-			fx.Provide(modules.TestUserInfoRetriever),
+			userinfo.RetrieverModule,
+			fx.Provide(notifi.New),
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) *Server {
 				srv = NewServer(p)
@@ -246,4 +252,167 @@ func TestFullAuthFlow(t *testing.T) {
 			assert.Equal("user-1", acc.GetUsername())
 		}
 	}
+}
+
+func TestChooseCharacterConfigAdminEligibility(t *testing.T) {
+	t.Parallel()
+	dbServer := servers.NewDBServer(t, true)
+	natsServer := servers.NewNATSServer(t, true)
+
+	ctx := t.Context()
+	assert := assert.New(t)
+	require := require.New(t)
+
+	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
+	require.NoError(err)
+
+	var srv *Server
+	app := fxtest.New(t,
+		modules.GetFxTestOpts(
+			dbServer.FxProvide(),
+			natsServer.FxProvide(),
+			userinfo.RetrieverModule,
+			fx.Provide(notifi.New),
+			fx.Provide(grpcSrvModule),
+			fx.Provide(grpcserver.AsService(func(p Params) *Server {
+				srv = NewServer(p)
+				return srv
+			})),
+
+			fx.Invoke(func(*grpc.Server) {}),
+		)...,
+	)
+	assert.NotNil(app)
+
+	app.RequireStart()
+	defer app.RequireStop()
+	assert.NotNil(srv)
+
+	db, err := dbServer.DB()
+	require.NoError(err)
+
+	_, err = db.ExecContext(ctx, "UPDATE fivenet_accounts SET last_char = ? WHERE id = ?", 5, 1)
+	require.NoError(err)
+
+	client := pbauth.NewAuthServiceClient(clientConn)
+	accountToken := loginAndGetAccountToken(t, client, ctx, "user-1")
+
+	srv.jobAdminGroups = nil
+	srv.jobAdminUsers = nil
+	srv.configAdminGroups = nil
+	srv.configAdminUsers = nil
+
+	currentCfg := srv.appCfg.Get()
+	require.NotNil(currentCfg)
+	if currentCfg.GetAuth() == nil {
+		currentCfg.Auth = &settings.Auth{}
+	}
+	currentCfg.GetAuth().SetLastCharLock(true)
+	currentCfg.GetAuth().SetJobAdminGroups(nil)
+	currentCfg.GetAuth().SetJobAdminUsers(nil)
+	currentCfg.GetAuth().SetConfigAdminGroups(nil)
+	currentCfg.GetAuth().SetConfigAdminUsers([]string{"3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4"})
+	srv.appCfg.Set(currentCfg)
+
+	chooseCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie": auth.AccCookieName + "=" + accountToken,
+		}),
+	)
+	chooseHeaders := metadata.New(nil)
+	chooseCharRes, err := client.ChooseCharacter(chooseCtx, &pbauth.ChooseCharacterRequest{
+		CharId: 1,
+	}, grpc.Header(&chooseHeaders))
+	require.NoError(err)
+	require.NotNil(chooseCharRes)
+	require.NotNil(chooseCharRes.GetChar())
+	assert.Equal(int32(1), chooseCharRes.GetChar().GetUserId())
+	assert.Equal("user-1", chooseCharRes.GetUsername())
+	assert.True(hasPermission(chooseCharRes.GetPermissions(), perms.PermCanBeSuperuser))
+
+	updatedAccountToken := accountToken
+	for _, cookieHeader := range chooseHeaders.Get("set-cookie") {
+		cookie, err := http.ParseSetCookie(cookieHeader)
+		require.NoError(err)
+		if cookie.Name == auth.AccCookieName {
+			updatedAccountToken = cookie.Value
+			break
+		}
+	}
+
+	parsedAccClaims, err := srv.tm.ParseAccToken(updatedAccountToken)
+	require.NoError(err)
+	assert.Equal(int64(1), parsedAccClaims.AccID)
+
+	parsedUserClaims, err := srv.tm.ParseUserToken(chooseCharRes.GetToken())
+	require.NoError(err)
+	assert.Equal(int32(1), parsedUserClaims.UserID)
+
+	impersonateCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie":        auth.AccCookieName + "=" + updatedAccountToken,
+			"Authorization": "Bearer " + chooseCharRes.GetToken(),
+		}),
+	)
+	impersonateRes, err := client.ImpersonateJob(impersonateCtx, &pbauth.ImpersonateJobRequest{
+		JobGrade: 1,
+	})
+	require.NoError(err)
+	require.NotNil(impersonateRes)
+	assert.True(impersonateRes.GetState())
+	assert.True(hasPermission(impersonateRes.GetPermissions(), perms.PermCanBeSuperuser))
+}
+
+func loginAndGetAccountToken(
+	t *testing.T,
+	client pbauth.AuthServiceClient,
+	ctx context.Context,
+	username string,
+) string {
+	t.Helper()
+
+	loginReq := &pbauth.LoginRequest{
+		Username: username,
+		Password: "password",
+	}
+	md := metadata.New(map[string]string{})
+	res, err := client.Login(ctx, loginReq, grpc.Header(&md))
+	require.NoError(t, err)
+	require.NotNil(t, res)
+
+	cookies := md.Get("set-cookie")
+	require.Len(t, cookies, 2, "Expected 2 cookies to be set")
+
+	foundToken := -1
+	for i, c := range cookies {
+		if strings.HasPrefix(c, auth.AccCookieName+"=") {
+			foundToken = i
+			break
+		}
+	}
+	require.NotEqual(t, -1, foundToken, "Expected a cookie starting with '"+auth.AccCookieName+"='")
+
+	cookie, err := http.ParseSetCookie(cookies[foundToken])
+	require.NoError(t, err)
+	return cookie.Value
+}
+
+func hasPermission(
+	perms []*permissionspermissions.Permission,
+	want *permissionspermissions.Permission,
+) bool {
+	for _, perm := range perms {
+		if perm == nil {
+			continue
+		}
+		if perm.GetNamespace() == want.GetNamespace() &&
+			perm.GetService() == want.GetService() &&
+			perm.GetName() == want.GetName() {
+			return true
+		}
+	}
+
+	return false
 }

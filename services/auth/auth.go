@@ -12,7 +12,7 @@ import (
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	pbauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth"
 	permsauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth/perms"
@@ -23,6 +23,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -369,14 +370,22 @@ func (s *Server) GetCharacters(
 
 	// If last char lock is enabled ensure to mark the one char as available only
 	if s.appCfg.Get().Auth.GetLastCharLock() && acc.LastChar != nil {
+		combinedJobAdminGroups, combinedJobAdminUsers := pkguserinfo.EffectiveJobAdminLists(
+			s.jobAdminGroups,
+			s.jobAdminUsers,
+			s.configAdminGroups,
+			s.configAdminUsers,
+			s.appCfg,
+		)
+
 		for i := range resp.GetChars() {
 			s.enricher.EnrichJobInfo(resp.GetChars()[i].GetChar())
 
 			if resp.GetChars()[i].GetChar().GetUserId() == *acc.LastChar ||
 				slices.Contains(
-					s.superuserGroups,
+					combinedJobAdminGroups,
 					resp.GetChars()[i].GetGroup(),
-				) || slices.Contains(s.superuserUsers, accClaims.Subject) {
+				) || slices.Contains(combinedJobAdminUsers, accClaims.Subject) {
 				resp.Chars[i].Available = true
 				continue
 			}
@@ -458,8 +467,33 @@ func (s *Server) ChooseCharacter(
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
-	canBeSuperuser := account.GetGroups().ContainsAnyGroup(s.superuserGroups) ||
-		slices.Contains(s.superuserUsers, currentAccClaims.Subject)
+	combinedJobAdminGroups, combinedJobAdminUsers := pkguserinfo.EffectiveJobAdminLists(
+		s.jobAdminGroups,
+		s.jobAdminUsers,
+		s.configAdminGroups,
+		s.configAdminUsers,
+		s.appCfg,
+	)
+	_, _, configAdminGroups, configAdminUsers := pkguserinfo.EffectiveAdminLists(
+		s.jobAdminGroups,
+		s.jobAdminUsers,
+		s.configAdminGroups,
+		s.configAdminUsers,
+		s.appCfg,
+	)
+
+	canBeSuperuser := pkguserinfo.CanBeSuperuser(
+		account.GetGroups(),
+		currentAccClaims.Subject,
+		combinedJobAdminGroups,
+		combinedJobAdminUsers,
+	)
+	canBeConfigAdmin := pkguserinfo.CanBeConfigAdmin(
+		account.GetGroups(),
+		currentAccClaims.Subject,
+		configAdminGroups,
+		configAdminUsers,
+	)
 
 	if err := s.ui.RefreshUserInfo(ctx, char.GetUserId()); err != nil {
 		s.logger.Error(
@@ -482,6 +516,7 @@ func (s *Server) ChooseCharacter(
 		ctx,
 		char,
 		canBeSuperuser,
+		canBeConfigAdmin,
 		currentUserClaims != nil && currentUserClaims.Superuser != nil &&
 			*currentUserClaims.Superuser,
 	)
@@ -561,10 +596,11 @@ func (s *Server) listUserPerms(
 	ctx context.Context,
 	char *users.User,
 	canBeSuperuser bool,
+	canBeConfigAdmin bool,
 	isSuperuserActive bool,
 ) ([]*permissionspermissions.Permission, []*permissionsattributes.RoleAttribute, error) {
 	// Load permissions of user
-	userPs, err := s.ps.GetPermissionsOfUser(&userinfo.UserInfo{
+	userPs, err := s.ps.GetPermissionsOfUser(&pbuserinfo.UserInfo{
 		UserId:   char.GetUserId(),
 		Job:      char.GetJob(),
 		JobGrade: char.GetJobGrade(),
@@ -577,8 +613,11 @@ func (s *Server) listUserPerms(
 		userPs = append(userPs, perms.PermCanBeSuperuser)
 
 		if isSuperuserActive {
-			userPs = append(userPs, perms.PermSuperuser)
+			userPs = append(userPs, perms.PermJobAdmin)
 		}
+	}
+	if canBeConfigAdmin {
+		userPs = append(userPs, perms.PermConfigAdmin)
 	}
 
 	attrs, err := s.ps.GetEffectiveRoleAttributes(ctx, char.GetJob(), char.GetJobGrade())
@@ -653,10 +692,41 @@ func (s *Server) ImpersonateJob(
 		userClaims.OriginalJob = nil
 	}
 
-	canBeSuperuser := account.GetGroups().ContainsAnyGroup(s.superuserGroups) ||
-		slices.Contains(s.superuserUsers, accClaims.Subject)
+	combinedJobAdminGroups, combinedJobAdminUsers := pkguserinfo.EffectiveJobAdminLists(
+		s.jobAdminGroups,
+		s.jobAdminUsers,
+		s.configAdminGroups,
+		s.configAdminUsers,
+		s.appCfg,
+	)
+	_, _, configAdminGroups, configAdminUsers := pkguserinfo.EffectiveAdminLists(
+		s.jobAdminGroups,
+		s.jobAdminUsers,
+		s.configAdminGroups,
+		s.configAdminUsers,
+		s.appCfg,
+	)
 
-	ps, attrs, err := s.listUserPerms(ctx, char, canBeSuperuser, userInfo.GetSuperuser())
+	canBeSuperuser := pkguserinfo.CanBeSuperuser(
+		account.GetGroups(),
+		accClaims.Subject,
+		combinedJobAdminGroups,
+		combinedJobAdminUsers,
+	)
+	canBeConfigAdmin := pkguserinfo.CanBeConfigAdmin(
+		account.GetGroups(),
+		accClaims.Subject,
+		configAdminGroups,
+		configAdminUsers,
+	)
+
+	ps, attrs, err := s.listUserPerms(
+		ctx,
+		char,
+		canBeSuperuser,
+		canBeConfigAdmin,
+		userInfo.GetSuperuser(),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -691,6 +761,21 @@ func (s *Server) SetSuperuserMode(
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	_, _, configAdminGroups, configAdminUsers := pkguserinfo.EffectiveAdminLists(
+		s.jobAdminGroups,
+		s.jobAdminUsers,
+		s.configAdminGroups,
+		s.configAdminUsers,
+		s.appCfg,
+	)
+
+	canBeConfigAdmin := pkguserinfo.CanBeConfigAdmin(
+		userInfo.GetGroups(),
+		userInfo.GetLicense(),
+		configAdminGroups,
+		configAdminUsers,
+	)
 
 	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.superuser", req.GetSuperuser()})
 	if req.Job != nil {
@@ -745,12 +830,12 @@ func (s *Server) SetSuperuserMode(
 		char.JobGrade = jobGrade
 		s.enricher.EnrichJobInfo(char)
 
-		ps = []*permissionspermissions.Permission{
-			perms.PermCanBeSuperuser,
-			perms.PermSuperuser,
+		ps, attrs, err = s.listUserPerms(ctx, char, true, canBeConfigAdmin, true)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get user perms. %w", err)
 		}
 	} else {
-		ps, attrs, err = s.listUserPerms(ctx, char, true, false)
+		ps, attrs, err = s.listUserPerms(ctx, char, true, canBeConfigAdmin, false)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get user perms. %w", err)
 		}

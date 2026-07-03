@@ -35,11 +35,11 @@ func (s *Server) UploadFile(
 		return errswrap.NewError(err, errorsjobs.ErrNotFoundOrNoPerms)
 	}
 
-	if entry.GetDeletedAt() != nil && !userInfo.GetSuperuser() {
+	if entry.GetDeletedAt() != nil && !userInfo.GetJobAdmin() {
 		return errorsjobs.ErrNotFoundOrNoPerms
 	}
 
-	if entry.GetJob() != userInfo.GetJob() && !userInfo.GetSuperuser() {
+	if entry.GetJob() != userInfo.GetJob() && !userInfo.GetJobAdmin() {
 		return errorsjobs.ErrNotFoundOrNoPerms
 	}
 

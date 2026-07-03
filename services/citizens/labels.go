@@ -55,7 +55,7 @@ func (s *Server) ListLabels(
 		req.GetOwnJobOnly(),
 		canCreateLabel,
 		int32(min(req.GetMinAccess(), citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW)),
-		userInfo.GetSuperuser(),
+		userInfo.GetJobAdmin(),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -92,7 +92,7 @@ func (s *Server) GetLabel(
 		s.db,
 		userInfo.GetJob(),
 		req.GetId(),
-		userInfo.GetSuperuser(),
+		userInfo.GetJobAdmin(),
 	)
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func (s *Server) GetLabel(
 		return nil, errorscitizens.ErrLabelNotFound
 	}
 
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		if label.GetDeletedAt() != nil {
 			return nil, errorscitizens.ErrLabelNotFound
 		}
@@ -192,11 +192,11 @@ func (s *Server) CreateOrUpdateLabel(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	label, err = s.store.GetLabel(ctx, s.db, label.GetJob(), label.GetId(), userInfo.GetSuperuser())
+	label, err = s.store.GetLabel(ctx, s.db, label.GetJob(), label.GetId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, err
 	}
-	if !userInfo.GetSuperuser() {
+	if !userInfo.GetJobAdmin() {
 		label.DeletedAt = nil
 	}
 
@@ -221,7 +221,7 @@ func (s *Server) DeleteLabel(
 		s.db,
 		userInfo.GetJob(),
 		req.GetId(),
-		userInfo.GetSuperuser(),
+		userInfo.GetJobAdmin(),
 	)
 	if err != nil {
 		return nil, err
@@ -231,7 +231,7 @@ func (s *Server) DeleteLabel(
 	}
 
 	var deletedAtTime *timestamp.Timestamp
-	if label.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+	if label.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {

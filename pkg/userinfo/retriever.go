@@ -12,6 +12,7 @@ import (
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -57,9 +58,12 @@ type Retriever struct {
 	js       *events.JSWrapper
 	enricher mstlystcdata.IEnricher
 	notifi   notifi.INotifi
+	appCfg   appconfig.IConfig
 
-	superuserGroups []string
-	superuserUsers  []string
+	jobAdminGroups    []string
+	jobAdminUsers     []string
+	configAdminGroups []string
+	configAdminUsers  []string
 }
 
 type Params struct {
@@ -67,28 +71,32 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	DB       *sql.DB
-	JS       *events.JSWrapper
-	Enricher mstlystcdata.IEnricher
-	Config   *config.Config
-	Notifi   notifi.INotifi
+	Logger    *zap.Logger
+	DB        *sql.DB
+	JS        *events.JSWrapper
+	Enricher  mstlystcdata.IEnricher
+	Config    *config.Config
+	AppConfig appconfig.IConfig
+	Notifi    notifi.INotifi
 }
 
 // NewRetriever creates a new Retriever with LRU cache and configures lifecycle hooks.
 func NewRetriever(p Params) UserInfoRetriever {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
-	retriever := &Retriever{
+	r := &Retriever{
 		logger:   p.Logger.Named("userinfo.retriever"),
 		ctx:      ctxCancel,
 		db:       p.DB,
 		js:       p.JS,
 		enricher: p.Enricher,
 		notifi:   p.Notifi,
+		appCfg:   p.AppConfig,
 
-		superuserGroups: p.Config.Auth.SuperuserGroups,
-		superuserUsers:  p.Config.Auth.SuperuserUsers,
+		jobAdminGroups:    p.Config.Auth.JobAdminGroups,
+		jobAdminUsers:     p.Config.Auth.JobAdminUsers,
+		configAdminGroups: p.Config.Auth.ConfigAdminGroups,
+		configAdminUsers:  p.Config.Auth.ConfigAdminUsers,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -96,7 +104,7 @@ func NewRetriever(p Params) UserInfoRetriever {
 			return fmt.Errorf("failed to register user info stream. %w", err)
 		}
 
-		if err := retriever.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
+		if err := r.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return fmt.Errorf("failed to register subscriptions for user info retriever. %w", err)
 		}
 
@@ -106,10 +114,15 @@ func NewRetriever(p Params) UserInfoRetriever {
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 
+		if r.jsCons != nil {
+			r.jsCons.Stop()
+			r.jsCons = nil
+		}
+
 		return nil
 	}))
 
-	return retriever
+	return r
 }
 
 func (r *Retriever) registerSubscriptions(
@@ -137,6 +150,7 @@ func (r *Retriever) registerSubscriptions(
 
 	if r.jsCons != nil {
 		r.jsCons.Stop()
+		r.jsCons = nil
 	}
 
 	r.jsCons, err = consumer.Consume(r.handleMsg,
@@ -282,13 +296,29 @@ func (r *Retriever) getUserInfoFromDB(
 	return user, nil
 }
 
-// checkAndSetSuperuser check if user is superuser by group or license.
+// checkAndSetSuperuser checks whether the user qualifies for elevated job-admin mode.
 func (r *Retriever) checkAndSetSuperuser(userInfo *pbuserinfo.UserInfo) {
-	if userInfo.GetGroups().ContainsAnyGroup(r.superuserGroups) ||
-		slices.Contains(r.superuserUsers, userInfo.GetLicense()) {
-		userInfo.CanBeSuperuser = true
-	} else {
-		userInfo.CanBeSuperuser = false
+	jobAdminGroups, jobAdminUsers := EffectiveJobAdminLists(
+		r.jobAdminGroups,
+		r.jobAdminUsers,
+		r.configAdminGroups,
+		r.configAdminUsers,
+		r.appCfg,
+	)
+	_, _, configAdminGroups, configAdminUsers := EffectiveAdminLists(
+		r.jobAdminGroups,
+		r.jobAdminUsers,
+		r.configAdminGroups,
+		r.configAdminUsers,
+		r.appCfg,
+	)
+
+	userInfo.CanBeSuperuser = userInfo.GetGroups().ContainsAnyGroup(jobAdminGroups) ||
+		slices.Contains(jobAdminUsers, userInfo.GetLicense())
+	userInfo.CanBeConfigAdmin = userInfo.GetGroups().ContainsAnyGroup(configAdminGroups) ||
+		slices.Contains(configAdminUsers, userInfo.GetLicense())
+
+	if !userInfo.GetCanBeSuperuser() {
 		userInfo.Superuser = false
 	}
 }

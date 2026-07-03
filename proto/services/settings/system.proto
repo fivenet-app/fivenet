@@ -61,39 +61,39 @@ service SystemService {
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
 
   rpc GetAllPermissions(GetAllPermissionsRequest) returns (GetAllPermissionsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "JobAdmin"
     };
   }
   rpc GetJobLimits(GetJobLimitsRequest) returns (GetJobLimitsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "JobAdmin"
     };
   }
   rpc UpdateJobLimits(UpdateJobLimitsRequest) returns (UpdateJobLimitsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "JobAdmin"
     };
   }
   rpc DeleteFaction(DeleteFactionRequest) returns (DeleteFactionResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "JobAdmin"
     };
   }
 
   rpc TriggerUserSync(TriggerUserSyncRequest) returns (TriggerUserSyncResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "ConfigAdmin"
     };
   }
 }

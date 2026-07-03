@@ -53,6 +53,7 @@ func TestApplyAccountGroupsChanged(t *testing.T) {
 
 	assert.Equal(t, []string{"supporter", "donator"}, current.GetGroups().GetGroups())
 	assert.True(t, current.GetCanBeSuperuser())
+	assert.False(t, current.GetCanBeConfigAdmin())
 }
 
 func TestApplyAccountGroupsChangedClearsNil(t *testing.T) {
@@ -66,6 +67,7 @@ func TestApplyAccountGroupsChangedClearsNil(t *testing.T) {
 
 	assert.Nil(t, current.GetGroups())
 	assert.False(t, current.GetCanBeSuperuser())
+	assert.False(t, current.GetCanBeConfigAdmin())
 	assert.False(t, current.GetSuperuser())
 }
 
@@ -87,6 +89,7 @@ func TestApplyAccountGroupsChangedRestoresOriginalJobWhenRevokingSuperuser(t *te
 	})
 
 	assert.False(t, current.GetCanBeSuperuser())
+	assert.False(t, current.GetCanBeConfigAdmin())
 	assert.False(t, current.GetSuperuser())
 	assert.Equal(t, "ems", current.GetJob())
 	assert.Equal(t, int32(2), current.GetJobGrade())

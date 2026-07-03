@@ -709,10 +709,10 @@ export const TriggerUserSyncResponse = new TriggerUserSyncResponse$Type();
  * @generated ServiceType for protobuf service services.settings.SystemService
  */
 export const SystemService = new ServiceType("services.settings.SystemService", [
-    { name: "GetStatus", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: GetStatusRequest, O: GetStatusResponse },
-    { name: "GetAllPermissions", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: GetAllPermissionsRequest, O: GetAllPermissionsResponse },
-    { name: "GetJobLimits", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: GetJobLimitsRequest, O: GetJobLimitsResponse },
-    { name: "UpdateJobLimits", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: UpdateJobLimitsRequest, O: UpdateJobLimitsResponse },
-    { name: "DeleteFaction", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteFactionRequest, O: DeleteFactionResponse },
-    { name: "TriggerUserSync", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: TriggerUserSyncRequest, O: TriggerUserSyncResponse }
+    { name: "GetStatus", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: GetStatusRequest, O: GetStatusResponse },
+    { name: "GetAllPermissions", options: { "codegen.perms.perms": { enabled: true, name: "JobAdmin" } }, I: GetAllPermissionsRequest, O: GetAllPermissionsResponse },
+    { name: "GetJobLimits", options: { "codegen.perms.perms": { enabled: true, name: "JobAdmin" } }, I: GetJobLimitsRequest, O: GetJobLimitsResponse },
+    { name: "UpdateJobLimits", options: { "codegen.perms.perms": { enabled: true, name: "JobAdmin" } }, I: UpdateJobLimitsRequest, O: UpdateJobLimitsResponse },
+    { name: "DeleteFaction", options: { "codegen.perms.perms": { enabled: true, name: "JobAdmin" } }, I: DeleteFactionRequest, O: DeleteFactionResponse },
+    { name: "TriggerUserSync", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: TriggerUserSyncRequest, O: TriggerUserSyncResponse }
 ]);

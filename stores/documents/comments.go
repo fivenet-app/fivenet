@@ -80,7 +80,7 @@ func (s *Store) ListComments(
 	tUserProps := table.FivenetUserProps.AS("user_props")
 
 	condition := tComments.DocumentID.EQ(mysql.Int64(documentID))
-	if userInfo == nil || !userInfo.GetSuperuser() {
+	if userInfo == nil || !userInfo.GetJobAdmin() {
 		condition = mysql.AND(condition, tComments.DeletedAt.IS_NULL())
 	}
 

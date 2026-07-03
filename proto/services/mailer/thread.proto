@@ -175,7 +175,7 @@ service ThreadService {
   rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "JobAdmin"
     };
   }
   rpc GetThreadState(GetThreadStateRequest) returns (GetThreadStateResponse) {
@@ -212,7 +212,7 @@ service ThreadService {
   rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "Superuser"
+      name: "JobAdmin"
     };
   }
 }
