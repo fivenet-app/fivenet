@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.7.0] - 2026-07-03
+
+### 🚀 Features
+
+- Handle and notify on user primary job and groups changes
+- Split superuser access into two based on account groups
+- Switch logout page design to use auth card design
+
+### 🐛 Bug Fixes
+
+- Make jobs id and job_id for grades optional
+- Centrum dispatchers cleanup and protogetter linter
+- Notification provider reliability and lint issues
+- Display notification when user job/grade changed
+- Add missing fallback to unemployed job when user has no jobs
+- *(notifications)* Restore original job on superuser revocation
+- Only clean up user data once
+- Cron list template type issues
+- Improve config admin access separation
+- *(auth)* Refresh config-admin state on account group changes
+- Update helm chart in channels.json
+- Demo delete jobs query on start
+
 ## [2026.6.3] - 2026-06-28
 
 ### 🚀 Features
