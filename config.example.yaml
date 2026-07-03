@@ -1,12 +1,15 @@
 #
-# Be sure to checkout the Config file reference: https://fivenet.app/getting-started/configuration/config-reference
+# Be sure to checkout the Config file reference: <https://fivenet.app/getting-started/configuration/config-reference>
 #
+
 # Debug or release mode (affects performance)
 mode: "release"
 
 # Can be "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
 logLevel: "INFO"
 log:
+  # If enabled logs are sent to stderr instead of stdout.
+  logToStderr: true
   # Indicates whether to log to a file instead of stdout.
   logToFile: false
   # Contains the configuration for file logging (if LogToFile is true, make sure to configure this).
@@ -32,42 +35,46 @@ log:
     cron: "INFO"
     perms: "INFO"
 
-# Must be exactly 32 chars (bytes) long
+# App-wide secret used to encrypt/decrypt stored data. Must be exactly 32 chars (bytes) long and separate from `jwt.secret`.
 secret: "your_generated_db_secret_32_char"
 
-# Indicates whether to ignore database and nats requirements on startup
+# Skips startup checks for database and NATS connectivity. Use only when those services are intentionally unavailable at boot.
 ignoreRequirements: false
 
 jwt:
-  # JWT secret used for signing tokens. Must be at least 32 characters long for security reasons.
+  # JWT signing secret. Keep this separate from the root `secret` value and make it at least 32 characters long.
   secret: "your_generated_jwt_secret"
 
 http:
   listen: ":8080"
-  # It is recommended to use localhost for the admin port (metrics and go debug access). If empty, the admin server will be disabled.
+  # Admin port for metrics and Go debug endpoints. Keep it bound to localhost or leave it empty to disable the admin server.
   adminListen: ":7070"
+  # Canonical public base URL for the FiveNet instance, including the scheme and host.
   publicURL: "https://fivenet.example.com"
   origins:
+    # Allowed browser origins for the frontend and API. Add each origin explicitly.
     - "https://fivenet.example.com"
     #- "http://localhost:3000" # Only for development
-  # In case of a reverse proxy, this should be set to the IPs of the reverse proxy servers.
-  # In Kubernetes based on your cluster, it is easier to specify the cluster's IP range, e.g., `10.0.0.0/8`.
+  # Reverse-proxy IPs or CIDRs that are allowed to forward client IP and protocol headers.
+  # In Kubernetes, it is often easier to allow the cluster range, e.g. `10.0.0.0/8`.
   trustedProxies: []
     #- "10.0.0.0/8" # Common Kubernetes cluster IP range
     #- "127.0.0.1" # For development
   sessions:
+    # Secret used to sign and encrypt session cookies. Keep it random and unique to this deployment.
     cookieSecret: "your_generated_cookie_secret"
+    # Cookie domain used for session cookies. Set this to your app's root domain when sharing across subdomains.
     domain: "fivenet.example.com"
 
 database:
-  # You can either use a DSN connection string or individual parameters below.
-  # DSN connection string, refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-  # Please note that the `parseTime` parameter is always set to true
+  # Use either a DSN string or the individual host/port/username/password fields below.
+  # DSN reference: https://github.com/go-sql-driver/mysql#dsn-data-source-name
+  # `parseTime` is always enabled by the application.
   dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
   # Example for a locally hosted database
   #dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
   #
-  # Or use individual parameters (make sure to comment out the `dsn:` line above if you use these).
+  # Or use individual parameters instead. Comment out `dsn:` if you set these.
   # Hint: you can set these via environment variables as well, e.g., FIVENET_DATABASE_HOST, FIVENET_DATABASE_PORT,
   # FIVENET_DATABASE_USERNAME, FIVENET_DATABASE_PASSWORD, FIVENET_DATABASE_DATABASE
   #host: "localhost"
@@ -82,9 +89,7 @@ database:
   connMaxIdleTime: 15m
   connMaxLifetime: 60m
   disableLocking: false
-  # ESX Compat mode has been removed.
-  #
-  # Indicates whether to skip database migrations on startup
+  # Skip database migrations on startup. Only enable this if migrations are managed externally.
   skipMigrations: false
   custom:
     # To disable a column, set it to `"-"`
@@ -99,20 +104,23 @@ database:
         filterEmptyName: false
 
 nats:
-  # This NATS url is for using the NATS server from the `docker-compose.yaml`
-  # If you change the NATS username or password, below `nats:` config section
+  # Default URL for the NATS server used by the bundled docker-compose setup.
+  # Replace this when connecting to an external NATS instance.
   url: "nats://fivenet:fivenet_topsecret@nats:4222"
   replicas: 1
-  # Other NATS authentication options:
+  # Prefer these over embedding credentials in the URL when using external auth:
   #nKey: null
   #creds: null
 
 storage:
+  # Select one storage backend. Only the matching subsection is used.
   type: "filesystem"
   filesystem:
+    # Local filesystem root and optional key prefix.
     path: "/data"
     prefix: ""
   s3:
+    # S3-compatible object storage settings.
     endpoint: ""
     region: "us-east-1"
     accessKeyID: ""
@@ -127,11 +135,14 @@ storage:
 
 imageProxy:
   options:
+    # Hosts allowed or denied by the image proxy. Deny rules take precedence.
     allowHosts: []
     denyHosts: []
+    # Minimum time an image response should stay cached.
     minimumCacheDuration: 30m
 
 audit:
+  # Number of days to keep audit entries before cleanup.
   retentionDays: 90
 
 oauth2:
@@ -139,15 +150,23 @@ oauth2:
   providers:
     # Example for Discord OAuth2 provider configuration
     - name: "discord"
+      # Internal provider type used in config and callback routes.
       type: "discord"
+      # Display label shown to users on the login button.
       label: "Discord"
+      # Provider homepage shown for reference in the UI.
       homepage: "https://discord.com"
-      # Iconify icon or image URL (used in the frontend, e.g., for the login button)
+      # Iconify icon name or image URL shown on the login button.
       icon: "i-simple-icons-discord"
+      # Optional fallback avatar URL for users without a provider avatar.
       #defaultAvatar: ""
+      # Redirect/callback URL registered with Discord. This must point back to this FiveNet instance.
       redirectURL: "https://localhost:3000/api/oauth2/callback/discord"
+      # OAuth2 client ID issued by Discord for this application.
       clientID: "your_discord_oauth2_client_id"
+      # OAuth2 client secret issued by Discord for this application.
       clientSecret: "your_discord_oauth2_client_secret"
+      # Scopes requested from Discord. Keep these aligned with the data you need.
       scopes:
         - guilds
         - identify
@@ -160,31 +179,42 @@ oauth2:
       #  userInfoURL: "https://discord.com/api/users/@me"
     # Example for generic OAuth2 provider configuration
     - name: "my_generic_provider"
+      # Internal provider name used in config and callback routes.
       type: "generic"
+      # Display label shown to users on the login button.
       label: "Generic OAuth2 Provider"
+      # Provider homepage shown for reference in the UI.
       homepage: "https://example.com"
-      # Iconify icon or image URL (used in the frontend, e.g., for the login button)
+      # Iconify icon name or image URL shown on the login button.
       icon: "i-simple-icons-openid"
+      # Optional fallback avatar URL for users without a provider avatar.
       defaultAvatar: "https://example.com/images/avatar-default.svg"
-      # Redirect URL must point to your FiveNet server and match the redirect URL configured in your OAuth2 provider settings.
+      # Redirect/callback URL registered with the OAuth2 provider. This must point back to this FiveNet instance.
       # Example: https://YOUR_FIVENET_DOMAIN_NAME/api/oauth2/callback/OAUTH_PROVIDER_NAME
       redirectURL: "http://example.com/api/oauth2/callback/my_generic_provider"
+      # OAuth2 client ID issued by the provider for this application.
       clientID: "your_generic_oauth2_client_id"
+      # OAuth2 client secret issued by the provider for this application.
       clientSecret: "your_generic_oauth2_client_secret"
+      # Scopes requested from the provider. Keep these aligned with the data you need.
       scopes:
         - openid
         - nickname
         - profile
       endpoints:
-        # The authURL and tokenURL of your OAuth2 provider.
+        # Authorization endpoint used to start the OAuth2 flow.
         authURL: "https://example.com/oauth2/authorize"
+        # Token endpoint used to exchange the auth code for a token.
         tokenURL: "https://example.com/oauth2/token"
-        # User information URL to fetch user info after obtaining the access token.
+        # User information endpoint used to fetch profile data after login.
         userInfoURL: "https://example.com/oauth2/user-info"
-      # The mapping section defines how to extract user information from the OAuth2 provider's response.
+      # Mapping fields tell FiveNet which claims/fields to read from the provider response.
       mapping:
+        # Unique user identifier claim.
         id: "sub"
+        # Username/display-name claim.
         username: "nickname"
+        # Avatar URL claim.
         avatar: "picture"
 
 postalsFile: ".output/public/data/postals.json"
@@ -211,10 +241,14 @@ dispatchCenter:
 
 discord:
   enabled: true
+  # If true, the bot will not make any changes to Discord roles or send messages. Useful for testing.
   dryRun: false
+  # Discord bot token. Keep this secret and do not share it publicly.
   token: "your_discord_bot_token"
+  # If any sync activity is performed at all.
   sync: true
 
+  # Sync server groups to Discord roles.
   groupSync:
     enabled: true
     mapping:
@@ -227,60 +261,41 @@ discord:
         roleName: "Teamleitung"
         #permissions: 0
         #color: "#9B59B6"
+  # Sync job, grade, and qualification data to Discord roles.
   userInfoSync:
     enabled: true
     gradeRoleFormat: "[%grade%] %grade_label%"
     employeeRoleFormat: "%s Employees"
     unemployedRoleName: "Citizen"
     jobsAbsceneRoleName: "Absent"
+  # Sync qualifications to Discord roles.
   qualifications:
     enabled: true
+  # Enable or disable Discord command registration.
   commands:
     enabled: true
 
-    # Toggle the availability of individual commands.
+    # Toggle individual commands.
     absent: true
     fivenet: true
     help: true
     sync: true
 
-  # Enable discord calendar reminders
+  # Send calendar reminders in Discord.
   calendarReminders: true
 
 game:
-  # First grade "number/id", some servers start at 0, but I have seen some start at 1
+  # First grade number/id. Some servers start at 0, others at 1.
   startJobGrade: 0
-  # If enabled it will automatically delete roles which no jobs/grades are found for
+  # Automatically delete roles for jobs that no longer exist.
   cleanupRolesForMissingJobs: false
 
 sync:
+  # Enable or disable the sync API endpoint. Required for the FiveNet plugin and DBSync function.
   enabled: false
+  # API tokens accepted for sync requests. Keep each token separate and secret.
   apiTokens: []
     #- LONG_RANDOM_API_TOKEN_FOR_DBSYNC
-
-otlp:
-  enabled: false
-  # Can be "stdout", "grpc", "http"
-  type: "stdout"
-  # OTLP endpoint URL (must include `http(s)://`)
-  url: "http://localhost:4317"
-  insecure: false
-  timeout: 10s
-  environment: "dev"
-  ratio: 0.1
-  attributes: []
-  # - service.name=fivenet-server
-  # - k8s.namespace.name=${POD_NAMESPACE}
-  headers: {}
-    # Example to authenticate with an API key
-    #authorization: "OTEL_API_KEY_HERE"
-  # Can be "none" or "gzip"
-  compression: "none"
-  frontend:
-    url: ""
-    headers: {}
-      # Example to authenticate with an API key
-      #authorization: "OTEL_API_KEY_HERE"
 
 updateCheck:
   # If enabled, it will check for updates every interval.
@@ -290,10 +305,37 @@ updateCheck:
 
 # Config options for the Iconify API (served from the backend)
 icons:
-  # If true, the backend server will act as a proxy for the Iconify API (URL specified via `APIURL` setting).
+  # If true, the backend server proxies Iconify requests instead of serving local icon sets.
   proxy: false
   # If you are using the proxy mode, make sure to support the Iconify project: https://iconify.design/sponsors/
   apiUrl: "https://api.iconify.design"
-  # Path to the directory containing icon sets (used when proxy is disabled)
+  # Directory containing local icon sets when proxy mode is disabled.
   # The `./icons` path works with the official FiveNet container images.
   path: ./icons
+
+otlp:
+  # Enable OTLP tracing.
+  enabled: false
+  # Export mode: stdout for local debugging, grpc/http for an OTLP collector.
+  type: "stdout"
+  # OTLP collector endpoint URL. Usually a full `http://` or `https://` URL.
+  url: "http://localhost:4317"
+  insecure: false
+  timeout: 10s
+  environment: "dev"
+  ratio: 0.1
+  # Additional span/resource attributes.
+  attributes: []
+  # - service.name=fivenet-server
+  # - k8s.namespace.name=${POD_NAMESPACE}
+  headers: {}
+    # Example to authenticate with an API key
+    #authorization: "OTEL_API_KEY_HERE"
+  # Compression for OTLP exporters (`none` or `gzip`).
+  compression: "none"
+  frontend:
+    # Frontend trace endpoint; leave empty to disable frontend instrumentation.
+    url: ""
+    headers: {}
+      # Example to authenticate with an API key
+      #authorization: "OTEL_API_KEY_HERE"
