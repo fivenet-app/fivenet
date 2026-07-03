@@ -176,7 +176,12 @@ func (d *Demo) upsertDemoJobsAndGrades(ctx context.Context) error {
 	}
 	defer tx.Rollback()
 
-	delStmt := tJobs.DELETE()
+	delStmt := tJobs.
+		DELETE().
+		WHERE(mysql.AND(
+			tJobs.DeletedAt.IS_NOT_NULL(),
+			tJobs.DeletedAt.IS_NULL(),
+		))
 	if _, err := delStmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to remove jobs before demo jobs upsert. %w", err)
 	}
