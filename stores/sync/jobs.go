@@ -73,7 +73,6 @@ func (s *Store) resolveJobIDs(ctx context.Context, jobsData []*jobs.Job) error {
 	tJobs := table.FivenetJobs
 
 	for _, job := range jobsData {
-		var id int64
 		stmt := tJobs.
 			SELECT(
 				tJobs.ID.AS("id"),
@@ -92,7 +91,7 @@ func (s *Store) resolveJobIDs(ctx context.Context, jobsData []*jobs.Job) error {
 			return fmt.Errorf("empty id for job %q in query", job.GetName())
 		}
 
-		job.Id = &id
+		job.Id = &dest.ID
 	}
 
 	return nil
