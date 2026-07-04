@@ -4,7 +4,7 @@ go 1.26.4
 
 require (
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/fivenet-app/fivenet/v2026 v2026.6.3
+	github.com/fivenet-app/fivenet/v2026 v2026.7.0
 	github.com/lyft/protoc-gen-star/v2 v2.0.4
 	google.golang.org/protobuf v1.36.11
 )
