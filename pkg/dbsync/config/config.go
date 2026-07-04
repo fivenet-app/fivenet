@@ -517,7 +517,6 @@ func (c *UsersTable) GetSyncQuery(
 type UsersColumns struct {
 	ID          string `yaml:"id"          default:"id"`
 	Identifier  string `yaml:"identifier"  default:"identifier"`
-	Group       string `yaml:"group"       default:"group"`
 	FirstName   string `yaml:"firstName"   default:"firstname"`
 	Lastname    string `yaml:"lastname"    default:"lastname"`
 	DateOfBirth string `yaml:"dateOfBirth" default:"dateofbirth"`

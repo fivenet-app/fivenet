@@ -103,8 +103,6 @@ func New(
 	}, nil
 }
 
-// Lifecycle
-
 // Start launches background loops - call once.
 func (le *LeaderElector) Start() {
 	le.tryAcquire()     // quick attempt
