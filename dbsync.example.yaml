@@ -188,7 +188,6 @@ tables:
     columns:
       id: "id"
       identifier: "identifier"
-      group: "group"
       firstname: "firstname"
       lastname: "lastname"
       dateOfBirth: "dateofbirth"
