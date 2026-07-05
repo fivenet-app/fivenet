@@ -4131,7 +4131,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x0e_reminder_timeB\n" +
 	"\n" +
 	"\b_message\"\x1d\n" +
-	"\x1bSetDocumentReminderResponse2\x90\x1c\n" +
+	"\x1bSetDocumentReminderResponse2\xcd\x1c\n" +
 	"\x10DocumentsService\x12l\n" +
 	"\rListDocuments\x12(.services.documents.ListDocumentsRequest\x1a).services.documents.ListDocumentsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
 	"\vGetDocument\x12&.services.documents.GetDocumentRequest\x1a'.services.documents.GetDocumentResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rListDocuments\x12\x7f\n" +
@@ -4149,11 +4149,11 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
 	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\x93\x01\n" +
 	"\x15GetDocumentReferences\x120.services.documents.GetDocumentReferencesRequest\x1a1.services.documents.GetDocumentReferencesResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rListDocuments\x12\x90\x01\n" +
-	"\x14GetDocumentRelations\x12/.services.documents.GetDocumentRelationsRequest\x1a0.services.documents.GetDocumentRelationsResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rListDocuments\x12\x81\x01\n" +
-	"\x14AddDocumentReference\x12/.services.documents.AddDocumentReferenceRequest\x1a0.services.documents.AddDocumentReferenceResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\xa0\x01\n" +
-	"\x17RemoveDocumentReference\x122.services.documents.RemoveDocumentReferenceRequest\x1a3.services.documents.RemoveDocumentReferenceResponse\"\x1c\xd2\xf3\x18\x18\b\x01\"\x14AddDocumentReference\x12~\n" +
-	"\x13AddDocumentRelation\x12..services.documents.AddDocumentRelationRequest\x1a/.services.documents.AddDocumentRelationResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x9c\x01\n" +
-	"\x16RemoveDocumentRelation\x121.services.documents.RemoveDocumentRelationRequest\x1a2.services.documents.RemoveDocumentRelationResponse\"\x1b\xd2\xf3\x18\x17\b\x01\"\x13AddDocumentRelation\x12\x87\x01\n" +
+	"\x14GetDocumentRelations\x12/.services.documents.GetDocumentRelationsRequest\x1a0.services.documents.GetDocumentRelationsResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rListDocuments\x12\xa6\x01\n" +
+	"\x14AddDocumentReference\x12/.services.documents.AddDocumentReferenceRequest\x1a0.services.documents.AddDocumentReferenceResponse\"+\xd2\xf3\x18'\b\x01*\x14AddDocumentReference*\rListDocuments\x12\x99\x01\n" +
+	"\x17RemoveDocumentReference\x122.services.documents.RemoveDocumentReferenceRequest\x1a3.services.documents.RemoveDocumentReferenceResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rListDocuments\x12\xa2\x01\n" +
+	"\x13AddDocumentRelation\x12..services.documents.AddDocumentRelationRequest\x1a/.services.documents.AddDocumentRelationResponse\"*\xd2\xf3\x18&\b\x01*\x13AddDocumentRelation*\rListDocuments\x12\x96\x01\n" +
+	"\x16RemoveDocumentRelation\x121.services.documents.RemoveDocumentRelationRequest\x1a2.services.documents.RemoveDocumentRelationResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rListDocuments\x12\x87\x01\n" +
 	"\x11GetDocumentAccess\x12,.services.documents.GetDocumentAccessRequest\x1a-.services.documents.GetDocumentAccessResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rListDocuments\x12\x88\x01\n" +
 	"\x11SetDocumentAccess\x12,.services.documents.SetDocumentAccessRequest\x1a-.services.documents.SetDocumentAccessResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eUpdateDocument\x12\x81\x01\n" +
 	"\x14ListDocumentActivity\x12/.services.documents.ListDocumentActivityRequest\x1a0.services.documents.ListDocumentActivityResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +

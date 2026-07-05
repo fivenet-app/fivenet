@@ -12,6 +12,7 @@ import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 const props = defineProps<{
     documentId?: number;
+    disabled?: boolean;
 }>();
 
 const modelValue = defineModel<DocumentRelation[]>({
@@ -79,6 +80,8 @@ async function listCitizens(): Promise<UserShort[]> {
 let lastId = 0;
 
 async function addRelation(user: UserShort, relation: DocRelation): Promise<void> {
+    if (props.disabled) return;
+
     modelValue.value.push({
         id: lastId--,
         documentId: props.documentId ?? 0,
@@ -93,6 +96,8 @@ async function addRelation(user: UserShort, relation: DocRelation): Promise<void
 }
 
 async function removeRelation(id: number): Promise<void> {
+    if (props.disabled) return;
+
     const idx = modelValue.value.findIndex((r) => r.id === id);
     if (idx > -1) {
         modelValue.value.splice(idx, 1);
@@ -171,6 +176,7 @@ const columnsCurrent = computed(
                                                 variant: 'link',
                                                 icon: 'i-mdi-account-minus',
                                                 color: 'error',
+                                                disabled: props.disabled,
                                                 onClick: () => removeRelation(row.original.id!),
                                             }),
                                     },
@@ -216,6 +222,7 @@ const columnsClipboard = computed(
                                             h(UButton, {
                                                 color: 'blue',
                                                 icon: 'i-mdi-at',
+                                                disabled: props.disabled,
                                                 onClick: () => addRelation(getUser(row.original), DocRelation.MENTIONED),
                                             }),
                                     },
@@ -228,6 +235,7 @@ const columnsClipboard = computed(
                                             h(UButton, {
                                                 color: 'warning',
                                                 icon: 'i-mdi-target',
+                                                disabled: props.disabled,
                                                 onClick: () => addRelation(getUser(row.original), DocRelation.TARGETS),
                                             }),
                                     },
@@ -240,6 +248,7 @@ const columnsClipboard = computed(
                                             h(UButton, {
                                                 color: 'error',
                                                 icon: 'i-mdi-source-commit-start',
+                                                disabled: props.disabled,
                                                 onClick: () => addRelation(getUser(row.original), DocRelation.CAUSED),
                                             }),
                                     },
@@ -285,6 +294,7 @@ const columnsNew = computed(
                                             h(UButton, {
                                                 color: 'blue',
                                                 icon: 'i-mdi-at',
+                                                disabled: props.disabled,
                                                 onClick: () => addRelation(row.original, DocRelation.MENTIONED),
                                             }),
                                     },
@@ -297,6 +307,7 @@ const columnsNew = computed(
                                             h(UButton, {
                                                 color: 'warning',
                                                 icon: 'i-mdi-target',
+                                                disabled: props.disabled,
                                                 onClick: () => addRelation(row.original, DocRelation.TARGETS),
                                             }),
                                     },
@@ -309,6 +320,7 @@ const columnsNew = computed(
                                             h(UButton, {
                                                 color: 'error',
                                                 icon: 'i-mdi-source-commit-start',
+                                                disabled: props.disabled,
                                                 onClick: () => addRelation(row.original, DocRelation.CAUSED),
                                             }),
                                     },

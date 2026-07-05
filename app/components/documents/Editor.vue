@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { UForm } from '#components';
-import type { FormSubmitEvent } from '@nuxt/ui';
+import type { FormSubmitEvent, TabsItem } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import { checkDocAccess } from '~/components/documents/helpers';
@@ -37,8 +37,6 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
-
-const { can } = useAuth();
 
 const overlay = useOverlay();
 
@@ -295,7 +293,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         const call = documentsDocumentsClient.updateDocument(req);
         const { response } = await call;
 
-        if (canDo.value.references) {
+        if (canDo.value.edit) {
             // Remove references that are no longer present
             const currentReferenceIds = state.references.filter((r) => r.id !== undefined && r.id > 0).map((ref) => ref.id!);
             const referencesToRemove = docReferenceIds.value.filter((id) => !currentReferenceIds.includes(id));
@@ -316,9 +314,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                         reference: ref,
                     });
                 });
-        }
 
-        if (canDo.value.relations) {
             // Remove relations that are no longer present
             const currentRelationIds = state.relations.filter((r) => r.id !== undefined && r.id > 0).map((rel) => rel.id!);
             const relationsToRemove = docRelationIds.value.filter((id) => !currentRelationIds.includes(id));
@@ -358,7 +354,35 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
     }
 }
 
-const items = computed(() => [
+const router = useRouter();
+
+const canDo = computed(() => ({
+    edit: checkDocAccess(
+        state.access,
+        document.value?.document?.creator,
+        AccessLevel.EDIT,
+        undefined,
+        document.value?.document?.creatorJob,
+    ),
+    access: checkDocAccess(
+        state.access,
+        document.value?.document?.creator,
+        AccessLevel.ACCESS,
+        undefined,
+        document.value?.document?.creatorJob,
+    ),
+    status: checkDocAccess(
+        state.access,
+        document.value?.document?.creator,
+        AccessLevel.STATUS,
+        undefined,
+        document.value?.document?.creatorJob,
+    ),
+}));
+
+const canEditDocument = computed(() => canDo.value.edit);
+
+const items = computed<TabsItem[]>(() => [
     {
         slot: 'content' as const,
         label: t('common.content'),
@@ -385,8 +409,6 @@ const items = computed(() => [
     },
 ]);
 
-const router = useRouter();
-
 const selectedTab = computed({
     get() {
         return (route.query.tab as string) || 'content';
@@ -396,32 +418,6 @@ const selectedTab = computed({
         router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
-
-const canDo = computed(() => ({
-    edit: checkDocAccess(
-        state.access,
-        document.value?.document?.creator,
-        AccessLevel.EDIT,
-        undefined,
-        document.value?.document?.creatorJob,
-    ),
-    access: checkDocAccess(
-        state.access,
-        document.value?.document?.creator,
-        AccessLevel.ACCESS,
-        undefined,
-        document.value?.document?.creatorJob,
-    ),
-    status: checkDocAccess(
-        state.access,
-        document.value?.document?.creator,
-        AccessLevel.STATUS,
-        undefined,
-        document.value?.document?.creatorJob,
-    ),
-    references: can('documents.DocumentsService/AddDocumentReference').value,
-    relations: can('documents.DocumentsService/AddDocumentRelation').value,
-}));
 
 // Handle the client update event
 const { sendClientView } = useClientUpdate(ObjectType.DOCUMENT, () =>
@@ -505,16 +501,7 @@ useYArrayFiltered<DocumentRelation>(
     { provider: provider },
 );
 
-logger.info(
-    'Editor - Can Do: Edit',
-    canDo.value.edit,
-    'Access',
-    canDo.value.access,
-    'References',
-    canDo.value.references,
-    'Relations',
-    canDo.value.relations,
-);
+logger.info('Editor - Can Do: Edit', canDo.value.edit, 'Access', canDo.value.access);
 
 const confirmModal = overlay.create(ConfirmModal);
 
@@ -741,7 +728,12 @@ provide('yjsProvider', provider);
                                     :retry="refreshReferences"
                                 />
 
-                                <ReferenceManager v-else v-model="state.references" :document-id="documentId" />
+                                <ReferenceManager
+                                    v-else
+                                    v-model="state.references"
+                                    :document-id="documentId"
+                                    :disabled="!canEditDocument"
+                                />
                             </UPageCard>
                         </UContainer>
                     </template>
@@ -760,7 +752,12 @@ provide('yjsProvider', provider);
                                     :retry="refreshRelations"
                                 />
 
-                                <RelationManager v-else v-model="state.relations" :document-id="documentId" />
+                                <RelationManager
+                                    v-else
+                                    v-model="state.relations"
+                                    :document-id="documentId"
+                                    :disabled="!canEditDocument"
+                                />
                             </UPageCard>
                         </UContainer>
                     </template>

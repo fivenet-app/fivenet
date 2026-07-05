@@ -448,21 +448,41 @@ service DocumentsService {
     };
   }
   rpc AddDocumentReference(AddDocumentReferenceRequest) returns (AddDocumentReferenceResponse) {
-    option (codegen.perms.perms) = {enabled: true};
-  }
-  rpc RemoveDocumentReference(RemoveDocumentReferenceRequest) returns (RemoveDocumentReferenceResponse) {
+    // Keep the ListDocuments remap so the gRPC interceptor lets the request
+    // reach the service-level document access check for edit-capable users.
     option (codegen.perms.perms) = {
       enabled: true
-      name: "AddDocumentReference"
+      names: [
+        "AddDocumentReference",
+        "ListDocuments"
+      ]
+    };
+  }
+  rpc RemoveDocumentReference(RemoveDocumentReferenceRequest) returns (RemoveDocumentReferenceResponse) {
+    // Keep the ListDocuments remap so the gRPC interceptor lets the request
+    // reach the service-level document access check for edit-capable users.
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
     };
   }
   rpc AddDocumentRelation(AddDocumentRelationRequest) returns (AddDocumentRelationResponse) {
-    option (codegen.perms.perms) = {enabled: true};
-  }
-  rpc RemoveDocumentRelation(RemoveDocumentRelationRequest) returns (RemoveDocumentRelationResponse) {
+    // Keep the ListDocuments remap so the gRPC interceptor lets the request
+    // reach the service-level document access check for edit-capable users.
     option (codegen.perms.perms) = {
       enabled: true
-      name: "AddDocumentRelation"
+      names: [
+        "AddDocumentRelation",
+        "ListDocuments"
+      ]
+    };
+  }
+  rpc RemoveDocumentRelation(RemoveDocumentRelationRequest) returns (RemoveDocumentRelationResponse) {
+    // Keep the ListDocuments remap so the gRPC interceptor lets the request
+    // reach the service-level document access check for edit-capable users.
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
     };
   }
 

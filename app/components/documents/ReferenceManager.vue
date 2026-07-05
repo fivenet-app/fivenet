@@ -14,6 +14,7 @@ import { docReferenceToBadge, docReferenceToIcon } from './helpers';
 
 const props = defineProps<{
     documentId?: number;
+    disabled?: boolean;
 }>();
 
 const modelValue = defineModel<DocumentReference[]>({
@@ -87,6 +88,8 @@ async function listDocuments(): Promise<DocumentShort[]> {
 let lastId = 0;
 
 async function addReference(doc: DocumentShort, reference: DocReference): Promise<void> {
+    if (props.disabled) return;
+
     modelValue.value.push({
         id: lastId--,
         sourceDocumentId: props.documentId ?? 0,
@@ -103,6 +106,8 @@ function addReferenceClipboard(doc: ClipboardDocument, reference: DocReference):
 }
 
 async function removeReference(id: number): Promise<void> {
+    if (props.disabled) return;
+
     const idx = modelValue.value.findIndex((r) => r.id === id);
     if (idx > -1) {
         modelValue.value.splice(idx, 1);
@@ -176,6 +181,7 @@ const columnsCurrent = computed(
                                         icon: 'i-mdi-file-document-minus',
                                         variant: 'link',
                                         color: 'error',
+                                        disabled: props.disabled,
                                         onClick: () => removeReference(row.original.id!),
                                     }),
                             },
@@ -220,6 +226,7 @@ const columnsClipboard = computed(
                                             h(UButton, {
                                                 color: 'blue',
                                                 icon: 'i-mdi-link',
+                                                disabled: props.disabled,
                                                 onClick: () => addReferenceClipboard(row.original, DocReference.LINKED),
                                             }),
                                     },
@@ -232,6 +239,7 @@ const columnsClipboard = computed(
                                             h(UButton, {
                                                 color: 'success',
                                                 icon: 'i-mdi-check',
+                                                disabled: props.disabled,
                                                 onClick: () => addReferenceClipboard(row.original, DocReference.SOLVES),
                                             }),
                                     },
@@ -244,6 +252,7 @@ const columnsClipboard = computed(
                                             h(UButton, {
                                                 color: 'error',
                                                 icon: 'i-mdi-close-box',
+                                                disabled: props.disabled,
                                                 onClick: () => addReferenceClipboard(row.original, DocReference.CLOSES),
                                             }),
                                     },
@@ -256,6 +265,7 @@ const columnsClipboard = computed(
                                             h(UButton, {
                                                 color: 'warning',
                                                 icon: 'i-mdi-lock-clock',
+                                                disabled: props.disabled,
                                                 onClick: () => addReferenceClipboard(row.original, DocReference.DEPRECATES),
                                             }),
                                     },
@@ -302,6 +312,7 @@ const columnsNew = computed(
                                             h(UButton, {
                                                 color: 'blue',
                                                 icon: 'i-mdi-link',
+                                                disabled: props.disabled,
                                                 onClick: () => addReference(row.original, DocReference.LINKED),
                                             }),
                                     },
@@ -314,6 +325,7 @@ const columnsNew = computed(
                                             h(UButton, {
                                                 color: 'success',
                                                 icon: 'i-mdi-check',
+                                                disabled: props.disabled,
                                                 onClick: () => addReference(row.original, DocReference.SOLVES),
                                             }),
                                     },
@@ -326,6 +338,7 @@ const columnsNew = computed(
                                             h(UButton, {
                                                 color: 'error',
                                                 icon: 'i-mdi-close-box',
+                                                disabled: props.disabled,
                                                 onClick: () => addReference(row.original, DocReference.CLOSES),
                                             }),
                                     },
@@ -338,6 +351,7 @@ const columnsNew = computed(
                                             h(UButton, {
                                                 color: 'warning',
                                                 icon: 'i-mdi-lock-clock',
+                                                disabled: props.disabled,
                                                 onClick: () => addReference(row.original, DocReference.DEPRECATES),
                                             }),
                                     },

@@ -236,6 +236,12 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	},
 
 	// Service: documents.DocumentsService
+	"documents.DocumentsService/AddDocumentReference": {
+		permsdocuments.DocumentsService.AddDocumentReference.Perm, permsdocuments.DocumentsService.ListDocuments.Perm,
+	},
+	"documents.DocumentsService/AddDocumentRelation": {
+		permsdocuments.DocumentsService.AddDocumentRelation.Perm, permsdocuments.DocumentsService.ListDocuments.Perm,
+	},
 	"documents.DocumentsService/CreateDocument": {
 		permsdocuments.DocumentsService.UpdateDocument.Perm,
 	},
@@ -255,10 +261,10 @@ var PermsRemap = map[string][]perms.PermissionRef{
 		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
 	"documents.DocumentsService/RemoveDocumentReference": {
-		permsdocuments.DocumentsService.AddDocumentReference.Perm,
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
 	"documents.DocumentsService/RemoveDocumentRelation": {
-		permsdocuments.DocumentsService.AddDocumentRelation.Perm,
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
 	"documents.DocumentsService/SetDocumentAccess": {
 		permsdocuments.DocumentsService.UpdateDocument.Perm,

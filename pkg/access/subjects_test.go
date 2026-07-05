@@ -1,12 +1,16 @@
 package access
 
 import (
+	"context"
 	"database/sql"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -202,4 +206,126 @@ func TestSubjectConstants(t *testing.T) {
 	assert.Equal(t, SubjectTypeJobGrade, SubjectType(3))
 	assert.Equal(t, AccessEffectDeny, AccessEffect(0))
 	assert.Equal(t, AccessEffectAllow, AccessEffect(1))
+}
+
+type editOnlyVisibilityBackend struct{}
+
+func (b *editOnlyVisibilityBackend) VisibleIDsQuery(
+	_ *userinfo.UserInfo,
+	access int32,
+	_ bool,
+	targetIDs ...int64,
+) VisibilityQuery {
+	stmt := mysql.
+		SELECT(mysql.Int64(targetIDs[0]).AS("id")).
+		WHERE(mysql.Bool(access >= int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT)))
+
+	return VisibilityQuery{
+		Table:     stmt.AsTable("doc_ids"),
+		Statement: stmt,
+	}
+}
+
+func (b *editOnlyVisibilityBackend) VisibleIDsByConditionQuery(
+	_ *userinfo.UserInfo,
+	access int32,
+	_ bool,
+	_ mysql.BoolExpression,
+) VisibilityQuery {
+	stmt := mysql.
+		SELECT(mysql.Int64(1).AS("id")).
+		WHERE(mysql.Bool(access >= int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT)))
+
+	return VisibilityQuery{
+		Table:     stmt.AsTable("doc_ids"),
+		Statement: stmt,
+	}
+}
+
+func (b *editOnlyVisibilityBackend) ACLVisibleIDsByConditionQuery(
+	_ *userinfo.UserInfo,
+	access int32,
+	_ bool,
+	_ mysql.BoolExpression,
+) VisibilityQuery {
+	return b.VisibleIDsByConditionQuery(nil, access, false, nil)
+}
+
+func (b *editOnlyVisibilityBackend) VisibleIDsStatement(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	includeDeleted bool,
+	targetIDs ...int64,
+) mysql.Statement {
+	return b.VisibleIDsQuery(userInfo, access, includeDeleted, targetIDs...).Statement
+}
+
+func (b *editOnlyVisibilityBackend) VisibleIDsByConditionStatement(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	includeDeleted bool,
+	condition mysql.BoolExpression,
+) mysql.Statement {
+	return b.VisibleIDsByConditionQuery(userInfo, access, includeDeleted, condition).Statement
+}
+
+func (b *editOnlyVisibilityBackend) ACLVisibleIDsByConditionStatement(
+	userInfo *userinfo.UserInfo,
+	access int32,
+	includeDeleted bool,
+	condition mysql.BoolExpression,
+) mysql.Statement {
+	return b.ACLVisibleIDsByConditionQuery(userInfo, access, includeDeleted, condition).Statement
+}
+
+func (b *editOnlyVisibilityBackend) CountVisibleByConditionStatement(
+	_ *userinfo.UserInfo,
+	access int32,
+	_ bool,
+	_ mysql.BoolExpression,
+) mysql.Statement {
+	return mysql.
+		SELECT(mysql.Int64(int64(access)).AS("exact_total")).
+		WHERE(mysql.Bool(access >= int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT)))
+}
+
+func (b *editOnlyVisibilityBackend) RefreshTargetVisibility(
+	_ context.Context,
+	_ qrm.DB,
+	_ int64,
+) error {
+	return nil
+}
+
+func TestSubjectObjectAccessHonorsRequestedAccessLevel(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = db.Close()
+	})
+
+	access := &SubjectObjectAccess{
+		db:                db,
+		visibilityBackend: &editOnlyVisibilityBackend{},
+	}
+
+	user := &userinfo.UserInfo{
+		UserId:   7,
+		Job:      "police",
+		JobGrade: 4,
+	}
+
+	mock.ExpectQuery("SELECT").WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(int64(42)))
+	editAllowed, err := access.CanUserAccessTarget(t.Context(), 42, user, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT))
+	require.NoError(t, err)
+	assert.True(t, editAllowed)
+
+	mock.ExpectQuery("SELECT").WillReturnRows(sqlmock.NewRows([]string{"id"}))
+	statusAllowed, err := access.CanUserAccessTarget(t.Context(), 42, user, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_STATUS))
+	require.NoError(t, err)
+	assert.False(t, statusAllowed)
+
+	require.NoError(t, mock.ExpectationsWereMet())
 }
