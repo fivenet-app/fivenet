@@ -82,7 +82,7 @@
         "@tiptap/extensions": "3.27.1",
         "@tiptap/html": "3.27.1",
         "@tiptap/static-renderer": "3.27.1",
-        "@tiptap/y-tiptap": "3.0.5",
+        "@tiptap/y-tiptap": "3.0.6",
         "@unovis/ts": "1.6.7",
         "@unovis/vue": "1.6.7",
         "@zxcvbn-ts/core": "4.1.2",
