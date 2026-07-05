@@ -178,13 +178,13 @@ func (s *Server) CreateCalendar(
 			"missing permission to configure calendar discord reminders",
 		)
 	}
-	req.Calendar.DiscordSettings = discordSettings
+	req.Calendar.SetDiscordSettings(discordSettings)
 
 	lastID, err := s.store.CreateCalendar(ctx, tx, req.GetCalendar(), userInfo, discordSettingsJSON)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	req.Calendar.Id = lastID
+	req.Calendar.SetId(lastID)
 
 	calendarAccess := req.GetCalendar().GetAccess()
 	if calendarAccess == nil || len(calendarAccess.GetJobs()) == 0 {

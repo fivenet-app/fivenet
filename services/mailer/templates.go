@@ -107,7 +107,7 @@ func (s *Server) CreateOrUpdateTemplate(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
-		req.Template.Id = lastID
+		req.Template.SetId(lastID)
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {

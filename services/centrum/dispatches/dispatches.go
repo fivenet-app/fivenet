@@ -736,7 +736,7 @@ func (s *DispatchDB) UpdateStatus(
 	if err != nil {
 		return nil, err
 	}
-	in.Id = lastId
+	in.SetId(lastId)
 
 	if err := s.updateStatusInKV(ctx, in.GetDispatchId(), in); err != nil {
 		return nil, err
@@ -1136,7 +1136,7 @@ func (s *DispatchDB) Create(
 	if err != nil {
 		return nil, err
 	}
-	dsp.Id = lastId
+	dsp.SetId(lastId)
 
 	var userId *int32
 	if !dsp.GetAnon() && dsp.CreatorId != nil {

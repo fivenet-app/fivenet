@@ -494,13 +494,13 @@ func (s *Server) CreateDocument(
 	}
 
 	for _, ref := range docReferences {
-		ref.SourceDocumentId = lastId
+		ref.SetSourceDocumentId(lastId)
 		if _, err := s.store.CreateDocumentReference(ctx, tx, ref); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
 	for _, rel := range docRelations {
-		rel.DocumentId = lastId
+		rel.SetDocumentId(lastId)
 		_, created, err := s.store.CreateDocumentRelation(ctx, tx, rel)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

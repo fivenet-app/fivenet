@@ -568,7 +568,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                                 :label="!doc.document?.deletedAt ? $t('common.delete') : $t('common.restore')"
                                 variant="ghost"
                                 @click="
-                                    (doc.document?.deletedAt === undefined ? confirmModalWithReason : confirmModal).open({
+                                    (doc?.document?.deletedAt === undefined ? confirmModalWithReason : confirmModal).open({
                                         confirm: async (reason?: string) =>
                                             (await documentsDocuments.deleteDocument(
                                                 documentId,
@@ -713,7 +713,11 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                                         leadingIcon: 'transition-transform duration-200 group-data-[state=open]:rotate-180',
                                     }"
                                     :data-state="design.documents.viewCollapsedTitle ? 'open' : 'closed'"
-                                    @click="design.documents.viewCollapsedTitle = !design.documents.viewCollapsedTitle"
+                                    @click="
+                                        () => {
+                                            design.documents.viewCollapsedTitle = !design.documents.viewCollapsedTitle;
+                                        }
+                                    "
                                 />
                             </UTooltip>
                         </div>
@@ -802,7 +806,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                                     @counted="($event) => setCommentCount($event)"
                                     @new-comment="doc.document?.meta?.commentCount && doc.document.meta.commentCount++"
                                     @deleted-comment="
-                                        doc.document?.meta?.commentCount &&
+                                        doc?.document?.meta?.commentCount &&
                                         doc.document?.meta?.commentCount > 0 &&
                                         doc.document.meta.commentCount--
                                     "

@@ -494,7 +494,7 @@ func (s *UnitDB) UpdateStatus(
 	if err != nil {
 		return nil, err
 	}
-	in.Id = lastId
+	in.SetId(lastId)
 
 	if err := s.updateStatusInKV(ctx, in.GetUnitId(), in); err != nil {
 		return nil, err
@@ -793,8 +793,8 @@ func (s *UnitDB) CreateUnit(
 	if err != nil {
 		return nil, err
 	}
-	unit.Job = creatorJob
-	unit.Id = lastId
+	unit.SetJob(creatorJob)
+	unit.SetId(lastId)
 
 	// A new unit should have a status, so we make sure we add one
 	if unit.Status, err = s.AddStatus(ctx, tx, &centrumunits.UnitStatus{

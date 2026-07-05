@@ -64,9 +64,8 @@ func (s *Store) RegisterAccount(
 	}
 
 	tAccounts := table.FivenetAccounts
-	var stmt mysql.Statement
 	if acc.GetId() == 0 {
-		stmt = tAccounts.
+		stmt := tAccounts.
 			INSERT(
 				tAccounts.Enabled,
 				tAccounts.License,
@@ -79,8 +78,19 @@ func (s *Store) RegisterAccount(
 				regToken,
 				req.LastCharId,
 			)
+
+		res, err := stmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return nil, fmt.Errorf("failed to execute statement. %w", err)
+		}
+
+		lastId, err := res.LastInsertId()
+		if err != nil {
+			return nil, fmt.Errorf("failed to get last insert id. %w", err)
+		}
+		acc.SetId(lastId)
 	} else {
-		stmt = tAccounts.
+		stmt := tAccounts.
 			UPDATE().
 			SET(
 				tAccounts.Password.SET(mysql.StringExp(mysql.NULL)),
@@ -91,13 +101,15 @@ func (s *Store) RegisterAccount(
 				tAccounts.License.EQ(mysql.String(req.GetIdentifier())),
 			)).
 			LIMIT(1)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return nil, fmt.Errorf("failed to execute statement. %w", err)
+		}
 	}
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, fmt.Errorf("failed to execute statement. %w", err)
+	resp := &pbsync.RegisterAccountResponse{
+		RegToken: &regToken,
 	}
-
-	resp := &pbsync.RegisterAccountResponse{RegToken: &regToken}
 	if acc.GetId() != 0 {
 		resp.AccountId = &acc.Id
 	}

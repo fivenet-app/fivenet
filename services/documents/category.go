@@ -45,7 +45,7 @@ func (s *Server) CreateOrUpdateCategory(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		req.Category.Id = lastId
+		req.Category.SetId(lastId)
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {

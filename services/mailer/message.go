@@ -137,7 +137,7 @@ func (s *Server) PostMessage(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-	req.Message.Id = lastId
+	req.Message.SetId(lastId)
 
 	if len(emails) > 0 {
 		if err := s.store.AddThreadRecipients(

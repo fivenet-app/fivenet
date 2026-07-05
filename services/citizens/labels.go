@@ -147,12 +147,12 @@ func (s *Server) CreateOrUpdateLabel(
 		}
 		label.SortOrder = sortOrder
 
-		lastInsertId, err := s.store.InsertLabel(ctx, tx, label)
+		lastId, err := s.store.InsertLabel(ctx, tx, label)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
 
-		label.Id = lastInsertId
+		label.SetId(lastId)
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	}

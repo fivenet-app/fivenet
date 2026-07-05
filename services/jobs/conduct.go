@@ -144,7 +144,7 @@ func (s *Server) CreateConductEntry(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	req.Entry.Id = lastId
+	req.Entry.SetId(lastId)
 
 	entry, err := s.store.GetConductEntry(ctx, s.db, lastId)
 	if err != nil {

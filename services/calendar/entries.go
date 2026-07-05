@@ -182,16 +182,16 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
-		req.Entry.Id = lastID
+		req.Entry.SetId(lastID)
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	} else {
-		req.GetEntry().CreatorId = &userInfo.UserId
+		req.GetEntry().SetCreatorId(userInfo.UserId)
 		lastID, err := s.store.UpsertCalendarEntry(ctx, tx, req.GetEntry(), nil, userInfo)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
-		req.Entry.Id = lastID
+		req.Entry.SetId(lastID)
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	}

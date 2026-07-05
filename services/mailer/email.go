@@ -215,7 +215,7 @@ func (s *Server) CreateOrUpdateEmail(
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
-		req.Email.Id = lastId
+		req.Email.SetId(lastId)
 	} else {
 		check, err := s.access.CanUserAccessTarget(
 			ctx,

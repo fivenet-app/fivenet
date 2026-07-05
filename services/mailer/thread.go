@@ -216,7 +216,7 @@ func (s *Server) CreateThread(
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	req.Thread.Id = lastId
+	req.Thread.SetId(lastId)
 
 	req.Message.ThreadId = req.GetThread().GetId()
 	req.Message.Sender = senderEmail
