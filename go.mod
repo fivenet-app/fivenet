@@ -40,7 +40,7 @@ require (
 	github.com/h2non/filetype v1.1.3
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/jinzhu/now v1.1.5
-	github.com/kardianos/service v1.2.4
+	github.com/kardianos/service v1.3.0
 	github.com/markusmobius/go-dateparser v1.2.4
 	github.com/maruel/natural v1.3.0
 	github.com/microcosm-cc/bluemonday v1.0.27
