@@ -134,7 +134,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-bold"
-                    @click="ed?.chain().focus().toggleBold().run()"
+                    @click="() => ed?.chain().focus().toggleBold().run()"
                 />
             </UTooltip>
 
@@ -145,7 +145,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-italic"
-                    @click="ed?.chain().focus().toggleItalic().run()"
+                    @click="() => ed?.chain().focus().toggleItalic().run()"
                 />
             </UTooltip>
 
@@ -156,7 +156,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-underline"
-                    @click="ed?.chain().focus().toggleUnderline().run()"
+                    @click="() => ed?.chain().focus().toggleUnderline().run()"
                 />
             </UTooltip>
 
@@ -167,7 +167,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-strikethrough"
-                    @click="ed?.chain().focus().toggleStrike().run()"
+                    @click="() => ed?.chain().focus().toggleStrike().run()"
                 />
             </UTooltip>
 
@@ -177,7 +177,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-clear"
-                    @click="ed?.chain().focus().unsetAllMarks().run()"
+                    @click="() => ed?.chain().focus().unsetAllMarks().run()"
                 />
             </UTooltip>
 
@@ -188,7 +188,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-superscript"
-                    @click="ed?.chain().focus().toggleSuperscript().run()"
+                    @click="() => ed?.chain().focus().toggleSuperscript().run()"
                 />
             </UTooltip>
 
@@ -199,7 +199,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-subscript"
-                    @click="ed?.chain().focus().toggleSubscript().run()"
+                    @click="() => ed?.chain().focus().toggleSubscript().run()"
                 />
             </UTooltip>
 
@@ -210,7 +210,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-code-braces"
-                    @click="ed?.chain().focus().toggleCode().run()"
+                    @click="() => ed?.chain().focus().toggleCode().run()"
                 />
             </UTooltip>
 
@@ -237,7 +237,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-align-left"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().setTextAlign('left').run()"
+                    @click="() => ed?.chain().focus().setTextAlign('left').run()"
                 />
             </UTooltip>
 
@@ -248,7 +248,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-align-center"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().setTextAlign('center').run()"
+                    @click="() => ed?.chain().focus().setTextAlign('center').run()"
                 />
             </UTooltip>
 
@@ -259,7 +259,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-align-right"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().setTextAlign('right').run()"
+                    @click="() => ed?.chain().focus().setTextAlign('right').run()"
                 />
             </UTooltip>
 
@@ -270,7 +270,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-align-justify"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().setTextAlign('justify').run()"
+                    @click="() => ed?.chain().focus().setTextAlign('justify').run()"
                 />
             </UTooltip>
         </UFieldGroup>
@@ -363,7 +363,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-paragraph"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().setParagraph().run()"
+                    @click="() => ed?.chain().focus().setParagraph().run()"
                 />
             </UTooltip>
 
@@ -374,7 +374,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-header-1"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().toggleHeading({ level: 1 }).run()"
+                    @click="() => ed?.chain().focus().toggleHeading({ level: 1 }).run()"
                 />
             </UTooltip>
 
@@ -385,7 +385,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-header-2"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().toggleHeading({ level: 2 }).run()"
+                    @click="() => ed?.chain().focus().toggleHeading({ level: 2 }).run()"
                 />
             </UTooltip>
 
@@ -396,7 +396,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-header-3"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().toggleHeading({ level: 3 }).run()"
+                    @click="() => ed?.chain().focus().toggleHeading({ level: 3 }).run()"
                 />
             </UTooltip>
 
@@ -407,7 +407,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-header-4"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().toggleHeading({ level: 4 }).run()"
+                    @click="() => ed?.chain().focus().toggleHeading({ level: 4 }).run()"
                 />
             </UTooltip>
 
@@ -418,18 +418,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-header-5"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().toggleHeading({ level: 5 }).run()"
-                />
-            </UTooltip>
-
-            <UTooltip :text="$t('components.partials.tiptap_editor.heading_6')">
-                <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 6 }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-format-header-6"
-                    :disabled="disabled"
-                    @click="ed?.chain().focus().toggleHeading({ level: 6 }).run()"
+                    @click="() => ed?.chain().focus().toggleHeading({ level: 5 }).run()"
                 />
             </UTooltip>
         </UFieldGroup>
@@ -444,7 +433,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-color-highlight"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().toggleHighlight().run()"
+                    @click="() => ed?.chain().focus().toggleHighlight().run()"
                 />
             </UTooltip>
 
@@ -503,7 +492,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-list-bulleted"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().toggleBulletList().run()"
+                    @click="() => ed?.chain().focus().toggleBulletList().run()"
                 />
             </UTooltip>
 
@@ -514,7 +503,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-list-numbered"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().toggleOrderedList().run()"
+                    @click="() => ed?.chain().focus().toggleOrderedList().run()"
                 />
             </UTooltip>
 
@@ -525,7 +514,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().toggleTaskList().run()"
+                    @click="() => ed?.chain().focus().toggleTaskList().run()"
                 />
             </UTooltip>
 
@@ -536,7 +525,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().addCheckboxStandalone().run()"
+                    @click="() => ed?.chain().focus().addCheckboxStandalone().run()"
                 />
             </UTooltip>
         </UFieldGroup>
@@ -619,7 +608,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-quote-open"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().toggleBlockquote().run()"
+                    @click="() => ed?.chain().focus().toggleBlockquote().run()"
                 />
             </UTooltip>
 
@@ -630,7 +619,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-code-block-braces"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().toggleCodeBlock().run()"
+                    @click="() => ed?.chain().focus().toggleCodeBlock().run()"
                 />
             </UTooltip>
 
@@ -640,7 +629,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-minus"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().setHorizontalRule().run()"
+                    @click="() => ed?.chain().focus().setHorizontalRule().run()"
                 />
             </UTooltip>
 
@@ -650,7 +639,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-gavel"
                     :disabled="disabled"
-                    @click="ed?.chain().insertPenaltyCalculator().run()"
+                    @click="() => ed?.chain().insertPenaltyCalculator().run()"
                 />
             </UTooltip>
 
@@ -660,7 +649,7 @@ const isLinkOpen = ref<boolean>(false);
                     variant="ghost"
                     icon="i-mdi-format-page-break"
                     :disabled="disabled"
-                    @click="ed?.chain().focus().setHardBreak().run()"
+                    @click="() => ed?.chain().focus().setHardBreak().run()"
                 />
             -->
         </UFieldGroup>
@@ -691,7 +680,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-undo"
-                    @click="ed?.chain().focus().undo().run()"
+                    @click="() => ed?.chain().focus().undo().run()"
                 />
             </UTooltip>
 
@@ -701,7 +690,7 @@ const isLinkOpen = ref<boolean>(false);
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-redo"
-                    @click="ed?.chain().focus().redo().run()"
+                    @click="() => ed?.chain().focus().redo().run()"
                 />
             </UTooltip>
         </UFieldGroup>
@@ -716,11 +705,12 @@ const isLinkOpen = ref<boolean>(false);
                     icon="i-mdi-file-code"
                     :disabled="disabled"
                     @click="
-                        sourceCodeModal.open({
-                            content: ed?.getHTML() || '',
-                            disabled: disabled,
-                            'onUpdate:content': ($event) => setContent($event),
-                        })
+                        () =>
+                            sourceCodeModal.open({
+                                content: ed?.getHTML() || '',
+                                disabled: disabled,
+                                'onUpdate:content': ($event) => setContent($event),
+                            })
                     "
                 />
             </UTooltip>
@@ -747,11 +737,13 @@ const isLinkOpen = ref<boolean>(false);
                     icon="i-mdi-history"
                     :disabled="disabled"
                     @click="
-                        versionHistoryModal.open({
-                            historyType: historyType,
-                            currentContent: { content: ed?.getJSON(), files: files ?? [] },
-                            onApply: applyVersion,
-                        })
+                        () =>
+                            historyType &&
+                            versionHistoryModal.open({
+                                historyType: historyType,
+                                currentContent: { content: ed?.getJSON(), files: files ?? [] },
+                                onApply: applyVersion,
+                            })
                     "
                 />
             </UTooltip>

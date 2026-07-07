@@ -311,7 +311,7 @@ type Audit struct {
 }
 
 type OAuth2 struct {
-	Providers []*OAuth2Provider
+	Providers []*OAuth2Provider `validate:"dive"`
 }
 
 func (c *OAuth2) GetProviderByType(t OAuth2ProviderType) *OAuth2Provider {
@@ -323,6 +323,10 @@ func (c *OAuth2) GetProviderByType(t OAuth2ProviderType) *OAuth2Provider {
 	return nil
 }
 
+// OAuth2ProviderNameMaxLen is the maximum allowed length for OAuth2 provider names.
+// Provider name and OAuth2 requests use struct tags to validate the name length, so this constant is used in tests.
+const OAuth2ProviderNameMaxLen = 64
+
 type OAuth2ProviderType string
 
 const (
@@ -332,7 +336,7 @@ const (
 )
 
 type OAuth2Provider struct {
-	Name          string             `yaml:"name"`
+	Name          string             `yaml:"name"              validate:"required,min=1,max=64"`
 	Label         string             `yaml:"label"`
 	Homepage      string             `yaml:"homepage"`
 	Type          OAuth2ProviderType `yaml:"type"`

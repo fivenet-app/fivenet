@@ -247,6 +247,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 v-else-if="!data?.comments || data?.comments.length === 0"
                 :message="$t('components.documents.document_comments.no_comments')"
                 icon="i-mdi-comment-text-multiple"
+                :padded="false"
             />
 
             <ul v-else class="divide-y divide-default" role="list">

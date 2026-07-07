@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
@@ -44,6 +45,81 @@ func createMockProvider() *MockProvider {
 	mockProvider := new(MockProvider)
 	mockProvider.SetName("test-provider")
 	return mockProvider
+}
+
+func TestSanitizeLogValue(t *testing.T) {
+	t.Parallel()
+
+	assert.Equal(t, `"evil\nprovider\r\t"`, sanitizeLogValue("evil\nprovider\r\t"))
+}
+
+func TestGetProvider_NotConfiguredDoesNotLeakInput(t *testing.T) {
+	t.Parallel()
+
+	oauth := &OAuth2{
+		oauthConfigs: map[string]types.IProvider{},
+	}
+
+	_, err := oauth.GetProvider("evil\nprovider")
+	require.Error(t, err)
+	assert.Equal(t, "provider not configured", err.Error())
+}
+
+func TestLogin_ProviderNameTooLong(t *testing.T) {
+	t.Parallel()
+	gin.SetMode(gin.TestMode)
+	w := httptest.NewRecorder()
+	c, router := gin.CreateTestContext(w)
+
+	oauth := &OAuth2{
+		logger: zaptest.NewLogger(t),
+	}
+	oauth.RegisterHTTP(router)
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/api/oauth2/login/"+strings.Repeat("a", 65),
+		nil,
+	)
+	c.Request = req
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusTemporaryRedirect, w.Code)
+	assert.Contains(t, w.Header().Get("Location"), "reason=invalid_provider")
+}
+
+func TestCallback_ProviderNameTooLong(t *testing.T) {
+	t.Parallel()
+	gin.SetMode(gin.TestMode)
+	w := httptest.NewRecorder()
+	c, router := gin.CreateTestContext(w)
+
+	store := cookie.NewStore([]byte("secret"))
+	sess := sessions.SessionsMany([]string{"fivenet_oauth2_state"}, store)
+	router.Use(sess)
+
+	oauth := &OAuth2{
+		logger: zaptest.NewLogger(t),
+	}
+	oauth.RegisterHTTP(router)
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/api/oauth2/callback/"+strings.Repeat("a", 65)+"?state=valid",
+		nil,
+	)
+	c.Request = req
+
+	sess(c)
+	session := sessions.DefaultMany(c, "fivenet_oauth2_state")
+	session.Set("state", "valid")
+	session.Save()
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusTemporaryRedirect, w.Code)
+	assert.Contains(t, w.Header().Get("Location"), "reason=invalid_provider")
 }
 
 type MockUserInfoStore struct {
