@@ -7,6 +7,7 @@ import "resources/centrum/dispatches/dispatches.proto";
 import "resources/citizens/licenses/licenses.proto";
 import "resources/jobs/colleagues/activity/activity.proto";
 import "resources/jobs/jobs.proto";
+import "resources/livemap/markers/marker_marker.proto";
 import "resources/sync/activity/activity.proto";
 import "resources/sync/data/data.proto";
 import "resources/timestamp/timestamp.proto";
@@ -60,6 +61,10 @@ message AddDispatchRequest {
   resources.centrum.dispatches.Dispatch dispatch = 1;
 }
 
+message AddMarkerRequest {
+  resources.livemap.markers.MarkerMarker marker = 1;
+}
+
 message AddUserActivityRequest {
   resources.users.activity.UserActivity user_activity = 1;
 }
@@ -88,7 +93,10 @@ message AddUserUpdateRequest {
   resources.sync.activity.UserUpdate user_update = 1;
 }
 
-message AddActivityResponse {}
+message AddActivityResponse {
+  optional int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+}
 
 // Individual SendData request messages
 message SendJobsRequest {
@@ -224,6 +232,8 @@ service SyncService {
   rpc AddColleagueProps(AddColleaguePropsRequest) returns (AddActivityResponse);
   rpc AddJobTimeclock(AddJobTimeclockRequest) returns (AddActivityResponse);
   rpc AddDispatch(AddDispatchRequest) returns (AddActivityResponse);
+  // AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours).
+  rpc AddMarker(AddMarkerRequest) returns (AddActivityResponse);
 
   // Individual SendData methods
   rpc SendJobs(SendJobsRequest) returns (SendDataResponse);

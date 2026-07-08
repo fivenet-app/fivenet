@@ -114,6 +114,25 @@ func (m *AddActivityRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *AddActivityResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AddColleagueActivityRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -179,6 +198,25 @@ func (m *AddJobTimeclockRequest) Sanitize() error {
 	// Field: JobTimeclock
 	if m.JobTimeclock != nil {
 		if v, ok := any(m.GetJobTimeclock()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AddMarkerRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Marker
+	if m.Marker != nil {
+		if v, ok := any(m.GetMarker()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

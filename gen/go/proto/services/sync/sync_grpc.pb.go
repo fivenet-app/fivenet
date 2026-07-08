@@ -31,6 +31,7 @@ const (
 	SyncService_AddColleagueProps_FullMethodName    = "/services.sync.SyncService/AddColleagueProps"
 	SyncService_AddJobTimeclock_FullMethodName      = "/services.sync.SyncService/AddJobTimeclock"
 	SyncService_AddDispatch_FullMethodName          = "/services.sync.SyncService/AddDispatch"
+	SyncService_AddMarker_FullMethodName            = "/services.sync.SyncService/AddMarker"
 	SyncService_SendJobs_FullMethodName             = "/services.sync.SyncService/SendJobs"
 	SyncService_SendLicenses_FullMethodName         = "/services.sync.SyncService/SendLicenses"
 	SyncService_SendAccounts_FullMethodName         = "/services.sync.SyncService/SendAccounts"
@@ -69,6 +70,8 @@ type SyncServiceClient interface {
 	AddColleagueProps(ctx context.Context, in *AddColleaguePropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	AddJobTimeclock(ctx context.Context, in *AddJobTimeclockRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	AddDispatch(ctx context.Context, in *AddDispatchRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours).
+	AddMarker(ctx context.Context, in *AddMarkerRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// Individual SendData methods
 	SendJobs(ctx context.Context, in *SendJobsRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
 	SendLicenses(ctx context.Context, in *SendLicensesRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
@@ -215,6 +218,16 @@ func (c *syncServiceClient) AddDispatch(ctx context.Context, in *AddDispatchRequ
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddActivityResponse)
 	err := c.cc.Invoke(ctx, SyncService_AddDispatch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) AddMarker(ctx context.Context, in *AddMarkerRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddMarker_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -386,6 +399,8 @@ type SyncServiceServer interface {
 	AddColleagueProps(context.Context, *AddColleaguePropsRequest) (*AddActivityResponse, error)
 	AddJobTimeclock(context.Context, *AddJobTimeclockRequest) (*AddActivityResponse, error)
 	AddDispatch(context.Context, *AddDispatchRequest) (*AddActivityResponse, error)
+	// AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours).
+	AddMarker(context.Context, *AddMarkerRequest) (*AddActivityResponse, error)
 	// Individual SendData methods
 	SendJobs(context.Context, *SendJobsRequest) (*SendDataResponse, error)
 	SendLicenses(context.Context, *SendLicensesRequest) (*SendDataResponse, error)
@@ -453,6 +468,9 @@ func (UnimplementedSyncServiceServer) AddJobTimeclock(context.Context, *AddJobTi
 }
 func (UnimplementedSyncServiceServer) AddDispatch(context.Context, *AddDispatchRequest) (*AddActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddDispatch not implemented")
+}
+func (UnimplementedSyncServiceServer) AddMarker(context.Context, *AddMarkerRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddMarker not implemented")
 }
 func (UnimplementedSyncServiceServer) SendJobs(context.Context, *SendJobsRequest) (*SendDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendJobs not implemented")
@@ -726,6 +744,24 @@ func _SyncService_AddDispatch_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SyncServiceServer).AddDispatch(ctx, req.(*AddDispatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_AddMarker_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddMarkerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddMarker(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddMarker_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddMarker(ctx, req.(*AddMarkerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1011,6 +1047,10 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddDispatch",
 			Handler:    _SyncService_AddDispatch_Handler,
+		},
+		{
+			MethodName: "AddMarker",
+			Handler:    _SyncService_AddMarker_Handler,
 		},
 		{
 			MethodName: "SendJobs",

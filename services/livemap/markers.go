@@ -80,7 +80,7 @@ func (s *Server) CreateOrUpdateMarker(
 			return nil, errorslivemap.ErrMarkerDenied
 		}
 
-		if err := s.store.UpdateMarker(ctx, reqMarker, reqMarker.GetJob()); err != nil {
+		if err := s.store.UpdateMarker(ctx, reqMarker, checkMarker.GetJob()); err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 

@@ -33,6 +33,7 @@ import { ColleagueProps } from "../../resources/sync/activity/activity";
 import { ColleagueActivity } from "../../resources/jobs/colleagues/activity/activity";
 import { UserProps } from "../../resources/sync/activity/activity";
 import { UserActivity } from "../../resources/users/activity/activity";
+import { MarkerMarker } from "../../resources/livemap/markers/marker_marker";
 import { Dispatch } from "../../resources/centrum/dispatches/dispatches";
 import { UserOAuth2Conn } from "../../resources/sync/activity/activity";
 import { DataStatus } from "../../resources/sync/data/data";
@@ -148,6 +149,15 @@ export interface AddDispatchRequest {
     dispatch?: Dispatch;
 }
 /**
+ * @generated from protobuf message services.sync.AddMarkerRequest
+ */
+export interface AddMarkerRequest {
+    /**
+     * @generated from protobuf field: resources.livemap.markers.MarkerMarker marker = 1
+     */
+    marker?: MarkerMarker;
+}
+/**
  * @generated from protobuf message services.sync.AddUserActivityRequest
  */
 export interface AddUserActivityRequest {
@@ -214,6 +224,14 @@ export interface AddUserUpdateRequest {
  * @generated from protobuf message services.sync.AddActivityResponse
  */
 export interface AddActivityResponse {
+    /**
+     * @generated from protobuf field: optional int64 id = 1
+     */
+    id?: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
+     */
+    createdAt?: Timestamp;
 }
 /**
  * Individual SendData request messages
@@ -941,6 +959,52 @@ class AddDispatchRequest$Type extends MessageType<AddDispatchRequest> {
  */
 export const AddDispatchRequest = new AddDispatchRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class AddMarkerRequest$Type extends MessageType<AddMarkerRequest> {
+    constructor() {
+        super("services.sync.AddMarkerRequest", [
+            { no: 1, name: "marker", kind: "message", T: () => MarkerMarker }
+        ]);
+    }
+    create(value?: PartialMessage<AddMarkerRequest>): AddMarkerRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddMarkerRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddMarkerRequest): AddMarkerRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.livemap.markers.MarkerMarker marker */ 1:
+                    message.marker = MarkerMarker.internalBinaryRead(reader, reader.uint32(), options, message.marker);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddMarkerRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.livemap.markers.MarkerMarker marker = 1; */
+        if (message.marker)
+            MarkerMarker.internalBinaryWrite(message.marker, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddMarkerRequest
+ */
+export const AddMarkerRequest = new AddMarkerRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class AddUserActivityRequest$Type extends MessageType<AddUserActivityRequest> {
     constructor() {
         super("services.sync.AddUserActivityRequest", [
@@ -1265,7 +1329,10 @@ export const AddUserUpdateRequest = new AddUserUpdateRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
     constructor() {
-        super("services.sync.AddActivityResponse", []);
+        super("services.sync.AddActivityResponse", [
+            { no: 1, name: "id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp }
+        ]);
     }
     create(value?: PartialMessage<AddActivityResponse>): AddActivityResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -1278,6 +1345,12 @@ class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1290,6 +1363,12 @@ class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
         return message;
     }
     internalBinaryWrite(message: AddActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional int64 id = 1; */
+        if (message.id !== undefined)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2251,6 +2330,7 @@ export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "AddColleagueProps", options: {}, I: AddColleaguePropsRequest, O: AddActivityResponse },
     { name: "AddJobTimeclock", options: {}, I: AddJobTimeclockRequest, O: AddActivityResponse },
     { name: "AddDispatch", options: {}, I: AddDispatchRequest, O: AddActivityResponse },
+    { name: "AddMarker", options: {}, I: AddMarkerRequest, O: AddActivityResponse },
     { name: "SendJobs", options: {}, I: SendJobsRequest, O: SendDataResponse },
     { name: "SendLicenses", options: {}, I: SendLicensesRequest, O: SendDataResponse },
     { name: "SendAccounts", options: {}, I: SendAccountsRequest, O: SendDataResponse },

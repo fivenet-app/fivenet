@@ -813,6 +813,9 @@ type CircleMarker struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Radius      int32                  `protobuf:"varint,1,opt,name=radius,proto3"`
 	xxx_hidden_Opacity     float32                `protobuf:"fixed32,2,opt,name=opacity,proto3,oneof"`
+	xxx_hidden_Stroke      bool                   `protobuf:"varint,3,opt,name=stroke,proto3,oneof"`
+	xxx_hidden_StrokeWidth int32                  `protobuf:"varint,4,opt,name=stroke_width,json=strokeWidth,proto3,oneof"`
+	xxx_hidden_Blink       bool                   `protobuf:"varint,5,opt,name=blink,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -858,13 +861,49 @@ func (x *CircleMarker) GetOpacity() float32 {
 	return 0
 }
 
+func (x *CircleMarker) GetStroke() bool {
+	if x != nil {
+		return x.xxx_hidden_Stroke
+	}
+	return false
+}
+
+func (x *CircleMarker) GetStrokeWidth() int32 {
+	if x != nil {
+		return x.xxx_hidden_StrokeWidth
+	}
+	return 0
+}
+
+func (x *CircleMarker) GetBlink() bool {
+	if x != nil {
+		return x.xxx_hidden_Blink
+	}
+	return false
+}
+
 func (x *CircleMarker) SetRadius(v int32) {
 	x.xxx_hidden_Radius = v
 }
 
 func (x *CircleMarker) SetOpacity(v float32) {
 	x.xxx_hidden_Opacity = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
+}
+
+func (x *CircleMarker) SetStroke(v bool) {
+	x.xxx_hidden_Stroke = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
+}
+
+func (x *CircleMarker) SetStrokeWidth(v int32) {
+	x.xxx_hidden_StrokeWidth = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
+}
+
+func (x *CircleMarker) SetBlink(v bool) {
+	x.xxx_hidden_Blink = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
 }
 
 func (x *CircleMarker) HasOpacity() bool {
@@ -874,16 +913,55 @@ func (x *CircleMarker) HasOpacity() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
+func (x *CircleMarker) HasStroke() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *CircleMarker) HasStrokeWidth() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *CircleMarker) HasBlink() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
 func (x *CircleMarker) ClearOpacity() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
 	x.xxx_hidden_Opacity = 0
 }
 
+func (x *CircleMarker) ClearStroke() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Stroke = false
+}
+
+func (x *CircleMarker) ClearStrokeWidth() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_StrokeWidth = 0
+}
+
+func (x *CircleMarker) ClearBlink() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Blink = false
+}
+
 type CircleMarker_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Radius  int32
-	Opacity *float32
+	Radius      int32
+	Opacity     *float32
+	Stroke      *bool
+	StrokeWidth *int32
+	Blink       *bool
 }
 
 func (b0 CircleMarker_builder) Build() *CircleMarker {
@@ -892,8 +970,20 @@ func (b0 CircleMarker_builder) Build() *CircleMarker {
 	_, _ = b, x
 	x.xxx_hidden_Radius = b.Radius
 	if b.Opacity != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
 		x.xxx_hidden_Opacity = *b.Opacity
+	}
+	if b.Stroke != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		x.xxx_hidden_Stroke = *b.Stroke
+	}
+	if b.StrokeWidth != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		x.xxx_hidden_StrokeWidth = *b.StrokeWidth
+	}
+	if b.Blink != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
+		x.xxx_hidden_Blink = *b.Blink
 	}
 	return m0
 }
@@ -1254,12 +1344,18 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\trectangle\x18\x05 \x01(\v2*.resources.livemap.markers.RectangleMarkerH\x00R\trectangle\x12D\n" +
 	"\apolygon\x18\x06 \x01(\v2(.resources.livemap.markers.PolygonMarkerH\x00R\apolygon\x12G\n" +
 	"\bpolyline\x18\a \x01(\v2).resources.livemap.markers.PolylineMarkerH\x00R\bpolyline:\b\xe2\xf3\x18\x04\b\x01\x10\x01B\x06\n" +
-	"\x04data\"Q\n" +
+	"\x04data\"\xd7\x01\n" +
 	"\fCircleMarker\x12\x16\n" +
 	"\x06radius\x18\x01 \x01(\x05R\x06radius\x12\x1d\n" +
-	"\aopacity\x18\x02 \x01(\x02H\x00R\aopacity\x88\x01\x01B\n" +
+	"\aopacity\x18\x02 \x01(\x02H\x00R\aopacity\x88\x01\x01\x12\x1b\n" +
+	"\x06stroke\x18\x03 \x01(\bH\x01R\x06stroke\x88\x01\x01\x12&\n" +
+	"\fstroke_width\x18\x04 \x01(\x05H\x02R\vstrokeWidth\x88\x01\x01\x12\x19\n" +
+	"\x05blink\x18\x05 \x01(\bH\x03R\x05blink\x88\x01\x01B\n" +
 	"\n" +
-	"\b_opacity\"*\n" +
+	"\b_opacityB\t\n" +
+	"\a_strokeB\x0f\n" +
+	"\r_stroke_widthB\b\n" +
+	"\x06_blink\"*\n" +
 	"\n" +
 	"IconMarker\x12\x1c\n" +
 	"\x04icon\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04icon\"f\n" +

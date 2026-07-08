@@ -62,3 +62,11 @@ func (s *Server) AddDispatch(
 	s.lastSyncedActivity.Store(time.Now().Unix())
 	return s.store.AddDispatch(ctx, req)
 }
+
+func (s *Server) AddMarker(
+	ctx context.Context,
+	req *pbsync.AddMarkerRequest,
+) (*pbsync.AddActivityResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
+	return s.store.AddMarker(ctx, req)
+}

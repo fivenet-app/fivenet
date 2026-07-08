@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
@@ -135,10 +137,47 @@ func (s *Store) AddDispatch(
 	req *pbsync.AddDispatchRequest,
 ) (*pbsync.AddActivityResponse, error) {
 	if s.dispatches != nil {
-		if _, err := s.dispatches.Create(ctx, req.GetDispatch()); err != nil {
+		dsp, err := s.dispatches.Create(ctx, req.GetDispatch())
+		if err != nil {
 			return nil, fmt.Errorf("failed to create dispatch. %w", err)
 		}
+
+		return &pbsync.AddActivityResponse{
+			Id:        new(dsp.GetId()),
+			CreatedAt: dsp.GetCreatedAt(),
+		}, nil
 	}
+	return &pbsync.AddActivityResponse{}, nil
+}
+
+func (s *Store) AddMarker(
+	ctx context.Context,
+	req *pbsync.AddMarkerRequest,
+) (*pbsync.AddActivityResponse, error) {
+	if s.livemapStore != nil {
+		marker := req.GetMarker()
+		// Markers are temporary by default, so we set an expiration time of 24 hours if not provided.
+		if marker.GetExpiresAt() == nil {
+			marker.ExpiresAt = timestamp.New(time.Now().Add(24 * time.Hour))
+		}
+
+		markerId, err := s.livemapStore.CreateMarker(
+			ctx,
+			req.GetMarker(),
+			req.GetMarker().GetCreatorId(),
+			req.GetMarker().GetJob(),
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create marker. %w", err)
+		}
+
+		return &pbsync.AddActivityResponse{
+			Id: new(markerId),
+			// FIXME use marker createdAt timestamp instead in the future
+			CreatedAt: timestamp.Now(),
+		}, nil
+	}
+
 	return &pbsync.AddActivityResponse{}, nil
 }
 

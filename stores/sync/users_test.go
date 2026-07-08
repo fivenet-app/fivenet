@@ -414,7 +414,7 @@ func newTestStore(t *testing.T) (*Store, sqlmock.Sqlmock) {
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 
-	store := New(db, zap.NewNop(), &config.Config{}, &appconfig.TestConfig{}, nil, nil, nil, nil, nil).(*Store)
+	store := New(db, zap.NewNop(), &config.Config{}, &appconfig.TestConfig{}, nil, nil, nil, nil, nil, nil).(*Store)
 	t.Cleanup(func() {
 		_ = db.Close()
 	})

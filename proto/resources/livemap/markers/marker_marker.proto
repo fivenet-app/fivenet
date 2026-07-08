@@ -94,6 +94,12 @@ message CircleMarker {
     gte: 1
     lte: 75
   }];
+  optional bool stroke = 3;
+  optional int32 stroke_width = 4 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 12
+  }];
+  optional bool blink = 5;
 }
 
 message IconMarker {
