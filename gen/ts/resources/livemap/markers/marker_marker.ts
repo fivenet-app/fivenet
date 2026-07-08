@@ -140,6 +140,18 @@ export interface CircleMarker {
      * @generated from protobuf field: optional float opacity = 2
      */
     opacity?: number;
+    /**
+     * @generated from protobuf field: optional bool stroke = 3
+     */
+    stroke?: boolean;
+    /**
+     * @generated from protobuf field: optional int32 stroke_width = 4
+     */
+    strokeWidth?: number;
+    /**
+     * @generated from protobuf field: optional bool blink = 5
+     */
+    blink?: boolean;
 }
 /**
  * @generated from protobuf message resources.livemap.markers.IconMarker
@@ -482,7 +494,10 @@ class CircleMarker$Type extends MessageType<CircleMarker> {
     constructor() {
         super("resources.livemap.markers.CircleMarker", [
             { no: 1, name: "radius", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "opacity", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.field": { float: { lte: 75, gte: 1 } } } }
+            { no: 2, name: "opacity", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.field": { float: { lte: 75, gte: 1 } } } },
+            { no: 3, name: "stroke", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "stroke_width", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 12, gte: 0 } } } },
+            { no: 5, name: "blink", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<CircleMarker>): CircleMarker {
@@ -503,6 +518,15 @@ class CircleMarker$Type extends MessageType<CircleMarker> {
                 case /* optional float opacity */ 2:
                     message.opacity = reader.float();
                     break;
+                case /* optional bool stroke */ 3:
+                    message.stroke = reader.bool();
+                    break;
+                case /* optional int32 stroke_width */ 4:
+                    message.strokeWidth = reader.int32();
+                    break;
+                case /* optional bool blink */ 5:
+                    message.blink = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -521,6 +545,15 @@ class CircleMarker$Type extends MessageType<CircleMarker> {
         /* optional float opacity = 2; */
         if (message.opacity !== undefined)
             writer.tag(2, WireType.Bit32).float(message.opacity);
+        /* optional bool stroke = 3; */
+        if (message.stroke !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.stroke);
+        /* optional int32 stroke_width = 4; */
+        if (message.strokeWidth !== undefined)
+            writer.tag(4, WireType.Varint).int32(message.strokeWidth);
+        /* optional bool blink = 5; */
+        if (message.blink !== undefined)
+            writer.tag(5, WireType.Varint).bool(message.blink);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
