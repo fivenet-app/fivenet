@@ -180,6 +180,8 @@ const columns = computed(
                                 'div',
                                 { class: 'flex justify-center items-center' },
                                 h(GenericImg, {
+                                    // Force re-render on file path change
+                                    key: row.original.filePath,
                                     src: `/api/filestore/${row.original.filePath.replace(/^\//, '')}`,
                                     srcFallback: true,
                                     alt: row.original.filePath,
@@ -234,7 +236,7 @@ defineShortcuts({
                         v-if="!streamerMode"
                         :label="$t('common.upload')"
                         trailing-icon="i-mdi-upload"
-                        @click="fileUploadModal.open()"
+                        @click="() => fileUploadModal.open()"
                     />
                 </template>
             </UDashboardNavbar>
@@ -263,6 +265,7 @@ defineShortcuts({
                                         <UKbd value="/" />
                                     </template>
                                 </UInput>
+
                                 <UButton icon="i-mdi-subdirectory-arrow-left" variant="subtle" @click="goBackDirectory" />
                             </UFieldGroup>
                         </UFormField>
