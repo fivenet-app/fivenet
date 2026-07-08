@@ -142,7 +142,7 @@ func (r *Retriever) registerSubscriptions(
 	)
 	if err != nil {
 		return fmt.Errorf(
-			"failed to create/update consumer for stream %q. %w",
+			"failed to create/update consumer for stream %s. %w",
 			UserInfoStreamName,
 			err,
 		)
@@ -156,7 +156,7 @@ func (r *Retriever) registerSubscriptions(
 	r.jsCons, err = consumer.Consume(r.handleMsg,
 		r.js.ConsumeErrHandlerWithRestart(ctxCancel, r.logger, r.registerSubscriptions))
 	if err != nil {
-		return fmt.Errorf("failed to start message consumer for %s. %w", PollStreamName, err)
+		return fmt.Errorf("failed to start message consumer for %s. %w", UserInfoStreamName, err)
 	}
 
 	return nil

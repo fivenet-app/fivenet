@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
@@ -86,12 +87,12 @@ func (m *natsServer) Stop() {
 }
 
 func (m *natsServer) FxProvide() fx.Option {
-	return fx.Provide(func() events.Result {
-		return events.Result{
-			NC: m.GetConn(),
-			JS: &events.JSWrapper{
-				JetStream: m.GetJS(),
-			},
-		}
-	})
+	return fx.Provide(
+		func(cfg *config.Config, shutdowner fx.Shutdowner) events.Result {
+			return events.Result{
+				NC: m.GetConn(),
+				JS: events.NewJSWrapper(m.GetJS(), cfg.NATS, shutdowner),
+			}
+		},
+	)
 }
