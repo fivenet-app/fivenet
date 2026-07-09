@@ -4,6 +4,7 @@ import { useSettingsStore } from '~/stores/settings';
 import { groupByJob } from '~/utils/livemap/groupByJob';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import MarkerSearchDrawer from './markers/MarkerSearchDrawer.vue';
+import PublicMarkersLayer from '~/components/livemap/PublicMarkersLayer.vue';
 import MarkersJobLayer from '~/components/livemap/MarkersJobLayer.vue';
 
 defineEmits<{
@@ -36,7 +37,19 @@ watch(jobsMarkers, (val) =>
     ),
 );
 
-const markersByJob = computed(() => groupByJob<MarkerMarker>(markersMarkers.value.values()));
+onBeforeMount(() =>
+    addOrUpdateLivemapLayer({
+        key: 'markers_public',
+        category: 'markers',
+        label: t('common.public'),
+        perm: 'livemap.LivemapService/Stream',
+    }),
+);
+
+const publicMarkers = computed(() => [...markersMarkers.value.values()].filter((marker) => marker.public === true));
+const markersByJob = computed(() =>
+    groupByJob<MarkerMarker>(markersMarkers.value.values(), (marker) => marker.public !== true),
+);
 
 onBeforeMount(async () =>
     addOrUpdateLivemapCategory({
@@ -56,6 +69,12 @@ const markerSearchDrawer = overlay.create(MarkerSearchDrawer);
         :job="job"
         :markers="markersByJob.get(job.name) ?? []"
         :visible="livemapLayers.find((l) => l.key === `markers_${job.name}`)?.visible === true"
+        @marker-selected="$emit('markerSelected', $event)"
+    />
+
+    <PublicMarkersLayer
+        :markers="publicMarkers"
+        :visible="livemapLayers.find((l) => l.key === 'markers_public')?.visible === true"
         @marker-selected="$emit('markerSelected', $event)"
     />
 

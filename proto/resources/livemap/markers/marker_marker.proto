@@ -60,6 +60,7 @@ message MarkerMarker {
   ];
   string job = 12 [(buf.validate.field).string.max_len = 20];
   string job_label = 13;
+  optional bool public = 18;
 
   MarkerType type = 14 [
     (buf.validate.field).enum.defined_only = true,

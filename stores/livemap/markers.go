@@ -23,6 +23,7 @@ func (s *Store) CreateMarker(
 		INSERT(
 			tMarkers.ExpiresAt,
 			tMarkers.Job,
+			tMarkers.Public,
 			tMarkers.Name,
 			tMarkers.Description,
 			tMarkers.X,
@@ -36,6 +37,7 @@ func (s *Store) CreateMarker(
 		VALUES(
 			marker.GetExpiresAt(),
 			job,
+			marker.GetPublic(),
 			marker.GetName(),
 			marker.Description,
 			marker.GetX(),
@@ -85,6 +87,7 @@ func (s *Store) UpdateMarker(
 			tMarkers.Y,
 			tMarkers.Postal,
 			tMarkers.Color,
+			tMarkers.Public,
 			tMarkers.MarkerType,
 			tMarkers.MarkerData,
 		).
@@ -96,6 +99,7 @@ func (s *Store) UpdateMarker(
 			marker.GetY(),
 			marker.Postal,
 			marker.Color,
+			marker.GetPublic(),
 			marker.GetType(),
 			marker.GetData(),
 		).
@@ -166,6 +170,7 @@ func (s *Store) GetMarker(ctx context.Context, id int64) (*livemapmarkers.Marker
 			tMarkers.DeletedAt,
 			tMarkers.ExpiresAt,
 			tMarkers.Job,
+			tMarkers.Public,
 			tMarkers.Name,
 			tMarkers.Description,
 			tMarkers.X,
@@ -214,6 +219,7 @@ func (s *Store) ListActiveMarkers(ctx context.Context) ([]*livemapmarkers.Marker
 			tMarkers.DeletedAt,
 			tMarkers.ExpiresAt,
 			tMarkers.Job,
+			tMarkers.Public,
 			tMarkers.Name,
 			tMarkers.Description,
 			tMarkers.X,
@@ -267,6 +273,7 @@ func (s *Store) ListDeletedMarkers(ctx context.Context) ([]*livemapmarkers.Marke
 		SELECT(
 			tMarkers.ID,
 			tMarkers.Job,
+			tMarkers.Public,
 		).
 		FROM(
 			tMarkers,

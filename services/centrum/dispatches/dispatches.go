@@ -1052,16 +1052,16 @@ func (s *DispatchDB) Create(
 
 	// If the deprecated Job field is used, convert it to Jobs but only if the jobs list is empty
 	if dsp.GetJobs() == nil || len(dsp.GetJobs().GetJobs()) == 0 {
-		dsp.Jobs = &centrum.JobList{
+		dsp.SetJobs(&centrum.JobList{
 			Jobs: []*centrum.JobListEntry{
 				{
 					//nolint:staticcheck // This is a fallback for old dispatches.
 					Name: dsp.GetJob(),
 				},
 			},
-		}
+		})
 		//nolint:staticcheck // Clear old job info. This is a fallback for old dispatches.
-		dsp.Job = ""
+		dsp.SetJob("")
 	}
 
 	for _, job := range dsp.GetJobs().GetJobs() {

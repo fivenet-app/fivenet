@@ -318,12 +318,22 @@ func TestSubjectObjectAccessHonorsRequestedAccessLevel(t *testing.T) {
 	}
 
 	mock.ExpectQuery("SELECT").WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(int64(42)))
-	editAllowed, err := access.CanUserAccessTarget(t.Context(), 42, user, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT))
+	editAllowed, err := access.CanUserAccessTarget(
+		t.Context(),
+		42,
+		user,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+	)
 	require.NoError(t, err)
 	assert.True(t, editAllowed)
 
 	mock.ExpectQuery("SELECT").WillReturnRows(sqlmock.NewRows([]string{"id"}))
-	statusAllowed, err := access.CanUserAccessTarget(t.Context(), 42, user, int32(documentsaccess.AccessLevel_ACCESS_LEVEL_STATUS))
+	statusAllowed, err := access.CanUserAccessTarget(
+		t.Context(),
+		42,
+		user,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_STATUS),
+	)
 	require.NoError(t, err)
 	assert.False(t, statusAllowed)
 

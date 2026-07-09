@@ -23,6 +23,7 @@ type fivenetCentrumMarkersTable struct {
 	DeletedAt   mysql.ColumnTimestamp
 	ExpiresAt   mysql.ColumnTimestamp
 	Job         mysql.ColumnString
+	Public      mysql.ColumnBool
 	Name        mysql.ColumnString
 	Description mysql.ColumnString
 	X           mysql.ColumnFloat
@@ -80,6 +81,7 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
 		ExpiresAtColumn   = mysql.TimestampColumn("expires_at")
 		JobColumn         = mysql.StringColumn("job")
+		PublicColumn      = mysql.BoolColumn("public")
 		NameColumn        = mysql.StringColumn("name")
 		DescriptionColumn = mysql.StringColumn("description")
 		XColumn           = mysql.FloatColumn("x")
@@ -90,8 +92,8 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 		MarkerTypeColumn  = mysql.IntegerColumn("marker_type")
 		MarkerDataColumn  = mysql.BlobColumn("marker_data")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, ExpiresAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, ExpiresAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, ExpiresAtColumn, JobColumn, PublicColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, ExpiresAtColumn, JobColumn, PublicColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
 		defaultColumns    = mysql.ColumnList{CreatedAtColumn, ColorColumn}
 	)
 
@@ -105,6 +107,7 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 		DeletedAt:   DeletedAtColumn,
 		ExpiresAt:   ExpiresAtColumn,
 		Job:         JobColumn,
+		Public:      PublicColumn,
 		Name:        NameColumn,
 		Description: DescriptionColumn,
 		X:           XColumn,

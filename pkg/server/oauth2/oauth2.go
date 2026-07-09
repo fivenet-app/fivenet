@@ -282,7 +282,7 @@ func (o *OAuth2) GetProvider(providerName string) (types.IProvider, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("provider not configured")
+	return nil, errors.New("provider not configured")
 }
 
 // Callback handles the OAuth2 callback, processes user info, and issues tokens or connects accounts.

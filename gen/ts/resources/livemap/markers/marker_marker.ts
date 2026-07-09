@@ -71,6 +71,10 @@ export interface MarkerMarker {
      */
     jobLabel: string;
     /**
+     * @generated from protobuf field: optional bool public = 18
+     */
+    public?: boolean;
+    /**
      * @generated from protobuf field: resources.livemap.markers.MarkerType type = 14
      */
     type: MarkerType;
@@ -251,6 +255,7 @@ class MarkerMarker$Type extends MessageType<MarkerMarker> {
             { no: 11, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 12, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 13, name: "job_label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 18, name: "public", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 14, name: "type", kind: "enum", T: () => ["resources.livemap.markers.MarkerType", MarkerType, "MARKER_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } }, "tagger.tags": "alias:\"markerType\"" } },
             { no: 15, name: "data", kind: "message", T: () => MarkerData, options: { "tagger.tags": "alias:\"markerData\"" } },
             { no: 16, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
@@ -313,6 +318,9 @@ class MarkerMarker$Type extends MessageType<MarkerMarker> {
                     break;
                 case /* string job_label */ 13:
                     message.jobLabel = reader.string();
+                    break;
+                case /* optional bool public */ 18:
+                    message.public = reader.bool();
                     break;
                 case /* resources.livemap.markers.MarkerType type */ 14:
                     message.type = reader.int32();
@@ -389,6 +397,9 @@ class MarkerMarker$Type extends MessageType<MarkerMarker> {
         /* optional resources.users.short.UserShort creator = 17; */
         if (message.creator)
             UserShort.internalBinaryWrite(message.creator, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool public = 18; */
+        if (message.public !== undefined)
+            writer.tag(18, WireType.Varint).bool(message.public);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

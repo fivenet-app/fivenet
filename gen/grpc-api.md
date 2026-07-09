@@ -4971,6 +4971,7 @@ Policy snapshot applied to a specific version
 | `color` | [string](#string) | optional |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) |  |  |
+| `public` | [bool](#bool) | optional |  |
 | `type` | [MarkerType](#resourceslivemapmarkersMarkerType) |  |  |
 | `data` | [MarkerData](#resourceslivemapmarkersMarkerData) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |

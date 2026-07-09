@@ -99,6 +99,7 @@ type MarkerMarker struct {
 	Color         *string                `protobuf:"bytes,11,opt,name=color,proto3,oneof" json:"color,omitempty"`
 	Job           string                 `protobuf:"bytes,12,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      string                 `protobuf:"bytes,13,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty"`
+	Public        *bool                  `protobuf:"varint,18,opt,name=public,proto3,oneof" json:"public,omitempty"`
 	Type          MarkerType             `protobuf:"varint,14,opt,name=type,proto3,enum=resources.livemap.markers.MarkerType" json:"type,omitempty" alias:"markerType"`
 	Data          *MarkerData            `protobuf:"bytes,15,opt,name=data,proto3" json:"data,omitempty" alias:"markerData"`
 	CreatorId     *int32                 `protobuf:"varint,16,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
@@ -223,6 +224,13 @@ func (x *MarkerMarker) GetJobLabel() string {
 	return ""
 }
 
+func (x *MarkerMarker) GetPublic() bool {
+	if x != nil && x.Public != nil {
+		return *x.Public
+	}
+	return false
+}
+
 func (x *MarkerMarker) GetType() MarkerType {
 	if x != nil {
 		return x.Type
@@ -303,6 +311,10 @@ func (x *MarkerMarker) SetJobLabel(v string) {
 	x.JobLabel = v
 }
 
+func (x *MarkerMarker) SetPublic(v bool) {
+	x.Public = &v
+}
+
 func (x *MarkerMarker) SetType(v MarkerType) {
 	x.Type = v
 }
@@ -368,6 +380,13 @@ func (x *MarkerMarker) HasColor() bool {
 	return x.Color != nil
 }
 
+func (x *MarkerMarker) HasPublic() bool {
+	if x == nil {
+		return false
+	}
+	return x.Public != nil
+}
+
 func (x *MarkerMarker) HasData() bool {
 	if x == nil {
 		return false
@@ -417,6 +436,10 @@ func (x *MarkerMarker) ClearColor() {
 	x.Color = nil
 }
 
+func (x *MarkerMarker) ClearPublic() {
+	x.Public = nil
+}
+
 func (x *MarkerMarker) ClearData() {
 	x.Data = nil
 }
@@ -445,6 +468,7 @@ type MarkerMarker_builder struct {
 	Color       *string
 	Job         string
 	JobLabel    string
+	Public      *bool
 	Type        MarkerType
 	Data        *MarkerData
 	CreatorId   *int32
@@ -468,6 +492,7 @@ func (b0 MarkerMarker_builder) Build() *MarkerMarker {
 	x.Color = b.Color
 	x.Job = b.Job
 	x.JobLabel = b.JobLabel
+	x.Public = b.Public
 	x.Type = b.Type
 	x.Data = b.Data
 	x.CreatorId = b.CreatorId
@@ -1245,7 +1270,7 @@ var File_resources_livemap_markers_marker_marker_proto protoreflect.FileDescript
 
 const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\n" +
-	"-resources/livemap/markers/marker_marker.proto\x12\x19resources.livemap.markers\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1eresources/livemap/coords.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x99\a\n" +
+	"-resources/livemap/markers/marker_marker.proto\x12\x19resources.livemap.markers\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1eresources/livemap/coords.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xc1\a\n" +
 	"\fMarkerMarker\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\f\n" +
 	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
@@ -1264,19 +1289,21 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x05R\x06postal\x88\x01\x01\x12#\n" +
 	"\x05color\x18\v \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x05color\x88\x01\x01\x12\x10\n" +
 	"\x03job\x18\f \x01(\tR\x03job\x12\x1b\n" +
-	"\tjob_label\x18\r \x01(\tR\bjobLabel\x12R\n" +
+	"\tjob_label\x18\r \x01(\tR\bjobLabel\x12\x1b\n" +
+	"\x06public\x18\x12 \x01(\bH\aR\x06public\x88\x01\x01\x12R\n" +
 	"\x04type\x18\x0e \x01(\x0e2%.resources.livemap.markers.MarkerTypeB\x17\x9a\x84\x9e\x03\x12alias:\"markerType\"R\x04type\x12R\n" +
 	"\x04data\x18\x0f \x01(\v2%.resources.livemap.markers.MarkerDataB\x17\x9a\x84\x9e\x03\x12alias:\"markerData\"R\x04data\x12\"\n" +
 	"\n" +
-	"creator_id\x18\x10 \x01(\x05H\aR\tcreatorId\x88\x01\x01\x12?\n" +
-	"\acreator\x18\x11 \x01(\v2 .resources.users.short.UserShortH\bR\acreator\x88\x01\x01B\r\n" +
+	"creator_id\x18\x10 \x01(\x05H\bR\tcreatorId\x88\x01\x01\x12?\n" +
+	"\acreator\x18\x11 \x01(\v2 .resources.users.short.UserShortH\tR\acreator\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_expires_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_descriptionB\t\n" +
 	"\a_postalB\b\n" +
-	"\x06_colorB\r\n" +
+	"\x06_colorB\t\n" +
+	"\a_publicB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creator\"\xf9\x02\n" +

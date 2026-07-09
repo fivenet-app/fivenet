@@ -50,7 +50,7 @@ func TestStoreCreateMarker(t *testing.T) {
 		`creator_id`,
 	)
 	mock.ExpectExec(expectedQuery).
-		WithArgs(marker.GetExpiresAt(), "police", marker.GetName(), marker.Description, marker.GetX(), marker.GetY(), marker.Postal, marker.Color, marker.GetType(), marker.GetData(), int32(3)).
+		WithArgs(marker.GetExpiresAt(), "police", marker.GetPublic(), marker.GetName(), marker.Description, marker.GetX(), marker.GetY(), marker.Postal, marker.Color, marker.GetType(), marker.GetData(), int32(3)).
 		WillReturnResult(sqlmock.NewResult(55, 1))
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_user AS user_short ON`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
 		WithArgs(int64(55), int64(1)).
@@ -61,6 +61,7 @@ func TestStoreCreateMarker(t *testing.T) {
 			"marker_marker.deleted_at",
 			"marker_marker.expires_at",
 			"marker_marker.job",
+			"marker_marker.public",
 			"marker_marker.name",
 			"marker_marker.description",
 			"marker_marker.x",
@@ -84,6 +85,7 @@ func TestStoreCreateMarker(t *testing.T) {
 			nil,
 			now.Add(24*time.Hour),
 			"police",
+			false,
 			"Marker",
 			"desc",
 			1.25,
@@ -134,7 +136,7 @@ func TestStoreUpdateMarker(t *testing.T) {
 		`LIMIT ?;`,
 	)
 	mock.ExpectExec(expectedQuery).
-		WithArgs(nil, marker.GetName(), marker.Description, marker.GetX(), marker.GetY(), marker.Postal, marker.Color, marker.GetType(), marker.GetData(), "police", int64(42), int64(1)).
+		WithArgs(nil, marker.GetName(), marker.Description, marker.GetX(), marker.GetY(), marker.Postal, marker.Color, marker.GetPublic(), marker.GetType(), marker.GetData(), "police", int64(42), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_user AS user_short ON`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
 		WithArgs(int64(42), int64(1)).
@@ -145,6 +147,7 @@ func TestStoreUpdateMarker(t *testing.T) {
 			"marker_marker.deleted_at",
 			"marker_marker.expires_at",
 			"marker_marker.job",
+			"marker_marker.public",
 			"marker_marker.name",
 			"marker_marker.description",
 			"marker_marker.x",
@@ -168,6 +171,7 @@ func TestStoreUpdateMarker(t *testing.T) {
 			nil,
 			now.Add(24*time.Hour),
 			"police",
+			false,
 			"Updated",
 			nil,
 			8.1,
@@ -222,6 +226,7 @@ func TestStoreDeleteMarker(t *testing.T) {
 			"marker_marker.deleted_at",
 			"marker_marker.expires_at",
 			"marker_marker.job",
+			"marker_marker.public",
 			"marker_marker.name",
 			"marker_marker.description",
 			"marker_marker.x",
@@ -245,6 +250,7 @@ func TestStoreDeleteMarker(t *testing.T) {
 			deletedAt,
 			now.Add(24*time.Hour),
 			"police",
+			false,
 			"Marker",
 			"desc",
 			1.25,
@@ -286,6 +292,7 @@ func TestStoreDeleteMarker(t *testing.T) {
 			"marker_marker.deleted_at",
 			"marker_marker.expires_at",
 			"marker_marker.job",
+			"marker_marker.public",
 			"marker_marker.name",
 			"marker_marker.description",
 			"marker_marker.x",
@@ -309,6 +316,7 @@ func TestStoreDeleteMarker(t *testing.T) {
 			nil,
 			now.Add(24*time.Hour),
 			"police",
+			false,
 			"Marker",
 			"desc",
 			1.25,
@@ -349,6 +357,7 @@ func TestStoreGetMarker(t *testing.T) {
 			"marker_marker.deleted_at",
 			"marker_marker.expires_at",
 			"marker_marker.job",
+			"marker_marker.public",
 			"marker_marker.name",
 			"marker_marker.description",
 			"marker_marker.x",
@@ -372,6 +381,7 @@ func TestStoreGetMarker(t *testing.T) {
 			nil,
 			now.Add(24*time.Hour),
 			"police",
+			false,
 			"Marker",
 			"desc",
 			1.25,
@@ -417,6 +427,7 @@ func TestStoreListActiveMarkers(t *testing.T) {
 			"marker_marker.deleted_at",
 			"marker_marker.expires_at",
 			"marker_marker.job",
+			"marker_marker.public",
 			"marker_marker.name",
 			"marker_marker.description",
 			"marker_marker.x",
@@ -440,6 +451,7 @@ func TestStoreListActiveMarkers(t *testing.T) {
 			nil,
 			now.Add(24*time.Hour),
 			"police",
+			false,
 			"Marker",
 			"desc",
 			1.25,
@@ -477,7 +489,8 @@ func TestStoreListDeletedMarkers(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{
 			"marker_marker.id",
 			"marker_marker.job",
-		}).AddRow(int64(99), "police").AddRow(int64(100), "ems"))
+			"marker_marker.public",
+		}).AddRow(int64(99), "police", false).AddRow(int64(100), "ems", true))
 
 	markers, err := store.ListDeletedMarkers(t.Context())
 	require.NoError(t, err)

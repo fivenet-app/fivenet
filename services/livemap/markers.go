@@ -10,6 +10,7 @@ import (
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pblivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap"
 	permslivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -46,6 +47,10 @@ func (s *Server) CreateOrUpdateMarker(
 	}
 
 	if reqMarker.GetId() <= 0 {
+		if err := s.resolveMarkerPublic(nil, reqMarker, userInfo); err != nil {
+			return nil, err
+		}
+
 		id, err := s.store.CreateMarker(
 			ctx,
 			reqMarker,
@@ -72,6 +77,10 @@ func (s *Server) CreateOrUpdateMarker(
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 
+		if err := s.resolveMarkerPublic(checkMarker, reqMarker, userInfo); err != nil {
+			return nil, err
+		}
+
 		if !access.CheckIfHasOwnJobAccess(
 			fields.StringList(),
 			userInfo,
@@ -93,6 +102,7 @@ func (s *Server) CreateOrUpdateMarker(
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
 	s.enricher.EnrichJobName(reqMarker)
+	s.applyMarkerCache(reqMarker)
 
 	return &pblivemap.CreateOrUpdateMarkerResponse{
 		Marker: reqMarker,
@@ -142,29 +152,8 @@ func (s *Server) DeleteMarker(
 	if err := s.store.DeleteMarker(ctx, req.GetId(), deletedAtTime); err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
-
-	if markers, ok := s.markersDeletedCache.Load(marker.GetJob()); ok {
-		if deletedAtTime == nil {
-			// Remove restored marker from deleted cache
-			s.markersDeletedCache.Store(
-				marker.GetJob(),
-				slices.DeleteFunc(markers, func(id int64) bool {
-					return marker.GetId() == id
-				}),
-			)
-		} else {
-			s.markersDeletedCache.Store(marker.GetJob(), append(markers, marker.GetId()))
-		}
-	}
-
-	if markers, ok := s.markersCache.Load(marker.GetJob()); ok {
-		s.markersCache.Store(
-			marker.GetJob(),
-			slices.DeleteFunc(markers, func(m *livemapmarkers.MarkerMarker) bool {
-				return m.GetId() == marker.GetId()
-			}),
-		)
-	}
+	marker.SetDeletedAt(deletedAtTime)
+	s.applyMarkerCache(marker)
 
 	return &pblivemap.DeleteMarkerResponse{}, nil
 }
@@ -190,6 +179,17 @@ func (s *Server) getMarkerMarkers(
 		deleted = append(deleted, deletedMarkers...)
 	}
 
+	publicMarkers, publicDeletedMarkers := s.markersPublicCache.Snapshot()
+	for _, marker := range publicMarkers {
+		if marker.GetExpiresAt() == nil || time.Since(marker.GetExpiresAt().AsTime()) < 0 {
+			updated = append(updated, marker)
+		} else {
+			deleted = append(deleted, marker.GetId())
+		}
+	}
+
+	deleted = append(deleted, publicDeletedMarkers...)
+
 	return updated, deleted
 }
 
@@ -200,8 +200,14 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 	}
 
 	markers := map[string][]*livemapmarkers.MarkerMarker{}
+	publicMarkers := []*livemapmarkers.MarkerMarker{}
 	for _, m := range dest {
 		s.enricher.EnrichJobName(m)
+
+		if m.GetPublic() {
+			publicMarkers = append(publicMarkers, m)
+			continue
+		}
 
 		if _, ok := markers[m.GetJob()]; !ok {
 			markers[m.GetJob()] = []*livemapmarkers.MarkerMarker{}
@@ -224,18 +230,31 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 		}
 	}
 
-	return s.refreshDeletedMarkers(ctx)
-}
-
-func (s *Server) refreshDeletedMarkers(ctx context.Context) error {
-	deletedMarkers := map[string][]int64{}
-
-	dest, err := s.store.ListDeletedMarkers(ctx)
+	publicDeletedMarkers, err := s.refreshDeletedMarkers(ctx)
 	if err != nil {
 		return err
 	}
 
+	s.markersPublicCache.Replace(publicMarkers, publicDeletedMarkers)
+
+	return nil
+}
+
+func (s *Server) refreshDeletedMarkers(ctx context.Context) ([]int64, error) {
+	deletedMarkers := map[string][]int64{}
+	publicDeletedMarkers := []int64{}
+
+	dest, err := s.store.ListDeletedMarkers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, m := range dest {
+		if m.GetPublic() {
+			publicDeletedMarkers = append(publicDeletedMarkers, m.GetId())
+			continue
+		}
+
 		if _, ok := deletedMarkers[m.GetJob()]; !ok {
 			deletedMarkers[m.GetJob()] = []int64{}
 		}
@@ -257,5 +276,105 @@ func (s *Server) refreshDeletedMarkers(ctx context.Context) error {
 		}
 	}
 
+	return publicDeletedMarkers, nil
+}
+
+func (s *Server) resolveMarkerPublic(
+	existing *livemapmarkers.MarkerMarker,
+	marker *livemapmarkers.MarkerMarker,
+	userInfo *pbuserinfo.UserInfo,
+) error {
+	if existing == nil {
+		if marker.GetPublic() && !userInfo.GetJobAdmin() {
+			return errorslivemap.ErrMarkerDenied
+		}
+
+		return nil
+	}
+
+	if !marker.HasPublic() {
+		marker.SetPublic(existing.GetPublic())
+		return nil
+	}
+
+	if !userInfo.GetJobAdmin() && marker.GetPublic() != existing.GetPublic() {
+		return errorslivemap.ErrMarkerDenied
+	}
+
 	return nil
+}
+
+func (s *Server) applyMarkerCache(marker *livemapmarkers.MarkerMarker) {
+	s.markersPublicCache.Apply(marker)
+
+	if marker.GetPublic() {
+		s.removeMarkerFromJobCache(marker.GetJob(), marker.GetId())
+		s.removeMarkerFromDeletedCache(marker.GetJob(), marker.GetId())
+		return
+	}
+
+	if marker.GetDeletedAt() == nil {
+		s.upsertMarkerInJobCache(marker.GetJob(), marker)
+		s.removeMarkerFromDeletedCache(marker.GetJob(), marker.GetId())
+		return
+	}
+
+	s.removeMarkerFromJobCache(marker.GetJob(), marker.GetId())
+	s.upsertMarkerInDeletedCache(marker.GetJob(), marker.GetId())
+}
+
+func (s *Server) upsertMarkerInJobCache(job string, marker *livemapmarkers.MarkerMarker) {
+	markers, _ := s.markersCache.Load(job)
+	markers = slices.Clone(markers)
+	markers = slices.DeleteFunc(markers, func(existing *livemapmarkers.MarkerMarker) bool {
+		return existing.GetId() == marker.GetId()
+	})
+	markers = append(markers, marker)
+	s.markersCache.Store(job, markers)
+}
+
+func (s *Server) removeMarkerFromJobCache(job string, markerID int64) {
+	markers, ok := s.markersCache.Load(job)
+	if !ok {
+		return
+	}
+
+	markers = slices.Clone(markers)
+	markers = slices.DeleteFunc(markers, func(existing *livemapmarkers.MarkerMarker) bool {
+		return existing.GetId() == markerID
+	})
+	if len(markers) == 0 {
+		s.markersCache.Delete(job)
+		return
+	}
+
+	s.markersCache.Store(job, markers)
+}
+
+func (s *Server) upsertMarkerInDeletedCache(job string, markerID int64) {
+	markers, _ := s.markersDeletedCache.Load(job)
+	markers = slices.Clone(markers)
+	markers = slices.DeleteFunc(markers, func(existing int64) bool {
+		return existing == markerID
+	})
+	markers = append(markers, markerID)
+	s.markersDeletedCache.Store(job, markers)
+}
+
+func (s *Server) removeMarkerFromDeletedCache(job string, markerID int64) {
+	markers, ok := s.markersDeletedCache.Load(job)
+	if !ok {
+		return
+	}
+
+	markers = slices.Clone(markers)
+	markers = slices.DeleteFunc(markers, func(existing int64) bool {
+		return existing == markerID
+	})
+	if len(markers) == 0 {
+		s.markersDeletedCache.Delete(job)
+		return
+	}
+
+	s.markersDeletedCache.Store(job, markers)
 }

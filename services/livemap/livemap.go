@@ -222,7 +222,8 @@ func (s *Server) Stream(
 
 				switch {
 				case e.MarkerUpdate != nil:
-					if e.MarkerUpdate.GetJob() != userInfo.GetJob() &&
+					if !e.MarkerUpdate.GetPublic() &&
+						e.MarkerUpdate.GetJob() != userInfo.GetJob() &&
 						!userInfo.GetJobAdmin() {
 						continue // Ignore updates for other jobs
 					}
