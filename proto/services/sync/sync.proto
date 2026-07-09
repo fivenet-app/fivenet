@@ -65,6 +65,10 @@ message AddMarkerRequest {
   resources.livemap.markers.MarkerMarker marker = 1;
 }
 
+message DeleteMarkerRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
 message AddUserActivityRequest {
   resources.users.activity.UserActivity user_activity = 1;
 }
@@ -146,7 +150,7 @@ message StreamResponse {
   oneof payload {
     option (buf.validate.oneof).required = true;
 
-    int32 user_id = 1;
+    int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
   }
 }
 
@@ -234,6 +238,7 @@ service SyncService {
   rpc AddDispatch(AddDispatchRequest) returns (AddActivityResponse);
   // AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours).
   rpc AddMarker(AddMarkerRequest) returns (AddActivityResponse);
+  rpc DeleteMarker(DeleteMarkerRequest) returns (DeleteDataResponse);
 
   // Individual SendData methods
   rpc SendJobs(SendJobsRequest) returns (SendDataResponse);

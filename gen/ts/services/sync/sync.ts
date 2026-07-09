@@ -158,6 +158,15 @@ export interface AddMarkerRequest {
     marker?: MarkerMarker;
 }
 /**
+ * @generated from protobuf message services.sync.DeleteMarkerRequest
+ */
+export interface DeleteMarkerRequest {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+}
+/**
  * @generated from protobuf message services.sync.AddUserActivityRequest
  */
 export interface AddUserActivityRequest {
@@ -1004,6 +1013,53 @@ class AddMarkerRequest$Type extends MessageType<AddMarkerRequest> {
  * @generated MessageType for protobuf message services.sync.AddMarkerRequest
  */
 export const AddMarkerRequest = new AddMarkerRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
+    constructor() {
+        super("services.sync.DeleteMarkerRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteMarkerRequest>): DeleteMarkerRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<DeleteMarkerRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteMarkerRequest): DeleteMarkerRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteMarkerRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.DeleteMarkerRequest
+ */
+export const DeleteMarkerRequest = new DeleteMarkerRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AddUserActivityRequest$Type extends MessageType<AddUserActivityRequest> {
     constructor() {
@@ -1875,7 +1931,7 @@ export const DeleteVehiclesRequest = new DeleteVehiclesRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.sync.StreamResponse", [
-            { no: 1, name: "user_id", kind: "scalar", oneof: "payload", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "user_id", kind: "scalar", oneof: "payload", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -2331,6 +2387,7 @@ export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "AddJobTimeclock", options: {}, I: AddJobTimeclockRequest, O: AddActivityResponse },
     { name: "AddDispatch", options: {}, I: AddDispatchRequest, O: AddActivityResponse },
     { name: "AddMarker", options: {}, I: AddMarkerRequest, O: AddActivityResponse },
+    { name: "DeleteMarker", options: {}, I: DeleteMarkerRequest, O: DeleteDataResponse },
     { name: "SendJobs", options: {}, I: SendJobsRequest, O: SendDataResponse },
     { name: "SendLicenses", options: {}, I: SendLicensesRequest, O: SendDataResponse },
     { name: "SendAccounts", options: {}, I: SendAccountsRequest, O: SendDataResponse },

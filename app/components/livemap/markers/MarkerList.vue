@@ -30,7 +30,7 @@ const livemapLivemapClient = await getLivemapLivemapClient();
 async function deleteMarker(id: number): Promise<void> {
     try {
         const call = livemapLivemapClient.deleteMarker({
-            id,
+            id: id,
         });
         await call;
 
@@ -75,11 +75,11 @@ const columns = computed(
                               )
                             : null,
                         can('livemap.LivemapService/DeleteMarker').value
-                            ? h(UTooltip, { text: t('common.delete') }, () =>
+                            ? h(UTooltip, { text: !row.original.deletedAt ? t('common.delete') : t('common.restore') }, () =>
                                   h(UButton, {
+                                      color: !row.original.deletedAt ? 'error' : 'success',
+                                      icon: !row.original.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
                                       variant: 'link',
-                                      icon: 'i-mdi-delete',
-                                      color: 'error',
                                       onClick: () => {
                                           confirmModal.open({
                                               confirm: async () => deleteMarker(row.original.id),
@@ -162,7 +162,7 @@ const filteredMarkers = computed(() =>
                         variant="link"
                         icon="i-mdi-clear"
                         aria-controls="search"
-                        @click="querySearchRaw = ''"
+                        @click="() => (querySearchRaw = '')"
                     />
                 </template>
             </UInput>

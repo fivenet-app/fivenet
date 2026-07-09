@@ -13435,6 +13435,17 @@ Individual AddActivity request messages
 
 
 
+### services.sync.DeleteMarkerRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
 ### services.sync.DeleteUsersRequest
 Individual DeleteData request messages
 
@@ -13682,6 +13693,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `AddJobTimeclock` | [AddJobTimeclockRequest](#servicessyncAddJobTimeclockRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
 | `AddDispatch` | [AddDispatchRequest](#servicessyncAddDispatchRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
 | `AddMarker` | [AddMarkerRequest](#servicessyncAddMarkerRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours). |
+| `DeleteMarker` | [DeleteMarkerRequest](#servicessyncDeleteMarkerRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) | |
 | `SendJobs` | [SendJobsRequest](#servicessyncSendJobsRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Individual SendData methods |
 | `SendLicenses` | [SendLicensesRequest](#servicessyncSendLicensesRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
 | `SendAccounts` | [SendAccountsRequest](#servicessyncSendAccountsRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |

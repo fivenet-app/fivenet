@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pblivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap"
 	permslivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -93,17 +94,9 @@ func (s *Server) CreateOrUpdateMarker(
 	}
 	s.enricher.EnrichJobName(reqMarker)
 
-	if err := s.sendUpdateEvent(
-		ctx,
-		MarkerTopic,
-		MarkerUpdate,
-		reqMarker.GetJob(),
-		reqMarker,
-	); err != nil {
-		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
-	}
-
-	return &pblivemap.CreateOrUpdateMarkerResponse{Marker: reqMarker}, nil
+	return &pblivemap.CreateOrUpdateMarkerResponse{
+		Marker: reqMarker,
+	}, nil
 }
 
 func (s *Server) DeleteMarker(
@@ -138,22 +131,30 @@ func (s *Server) DeleteMarker(
 		return nil, errorslivemap.ErrMarkerDenied
 	}
 
-	if err := s.store.SoftDeleteMarker(ctx, req.GetId()); err != nil {
-		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
+	var deletedAtTime *timestamp.Timestamp
+	if marker == nil || marker.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
-	if err := s.sendUpdateEvent(
-		ctx,
-		MarkerTopic,
-		MarkerDelete,
-		marker.GetJob(),
-		marker,
-	); err != nil {
+	if err := s.store.DeleteMarker(ctx, req.GetId(), deletedAtTime); err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
 
 	if markers, ok := s.markersDeletedCache.Load(marker.GetJob()); ok {
-		s.markersDeletedCache.Store(marker.GetJob(), append(markers, marker.GetId()))
+		if deletedAtTime == nil {
+			// Remove restored marker from deleted cache
+			s.markersDeletedCache.Store(
+				marker.GetJob(),
+				slices.DeleteFunc(markers, func(id int64) bool {
+					return marker.GetId() == id
+				}),
+			)
+		} else {
+			s.markersDeletedCache.Store(marker.GetJob(), append(markers, marker.GetId()))
+		}
 	}
 
 	if markers, ok := s.markersCache.Load(marker.GetJob()); ok {

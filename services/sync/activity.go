@@ -70,3 +70,11 @@ func (s *Server) AddMarker(
 	s.lastSyncedActivity.Store(time.Now().Unix())
 	return s.store.AddMarker(ctx, req)
 }
+
+func (s *Server) DeleteMarker(
+	ctx context.Context,
+	req *pbsync.DeleteMarkerRequest,
+) (*pbsync.DeleteDataResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
+	return s.store.DeleteMarker(ctx, req)
+}

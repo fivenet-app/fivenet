@@ -142,7 +142,7 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 					)
 				}
 				if existingUser.DataHash == hash {
-					s.logger.Info(
+					s.logger.Debug(
 						"user data hash is the same as existing entry, skipping update for user",
 						zap.Int32("user_id", user.GetUserId()),
 						zap.String("identifier", user.GetIdentifier()),

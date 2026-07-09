@@ -5,6 +5,8 @@ import (
 	"errors"
 
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -55,6 +57,16 @@ func (s *Store) CreateMarker(
 		return 0, err
 	}
 
+	marker.Id = lastID
+	marker.Job = job
+	persistedMarker, err := s.GetMarker(ctx, lastID)
+	if err != nil {
+		return 0, err
+	}
+	if err := s.publishMarkerEvent(ctx, markerEventUpdate, persistedMarker); err != nil {
+		return 0, err
+	}
+
 	return lastID, nil
 }
 
@@ -94,17 +106,30 @@ func (s *Store) UpdateMarker(
 		LIMIT(1)
 
 	_, err := stmt.ExecContext(ctx, s.db)
-	return err
+	if err != nil {
+		return err
+	}
+
+	persistedMarker, err := s.GetMarker(ctx, marker.GetId())
+	if err != nil {
+		return err
+	}
+
+	return s.publishMarkerEvent(ctx, markerEventUpdate, persistedMarker)
 }
 
-func (s *Store) SoftDeleteMarker(ctx context.Context, id int64) error {
+func (s *Store) DeleteMarker(
+	ctx context.Context,
+	id int64,
+	deletedAt *timestamp.Timestamp,
+) error {
 	tMarkers := table.FivenetCentrumMarkers
 	stmt := tMarkers.
 		UPDATE(
 			tMarkers.DeletedAt,
 		).
 		SET(
-			tMarkers.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
+			tMarkers.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAt)),
 		).
 		WHERE(
 			tMarkers.ID.EQ(mysql.Int64(id)),
@@ -112,7 +137,21 @@ func (s *Store) SoftDeleteMarker(ctx context.Context, id int64) error {
 		LIMIT(1)
 
 	_, err := stmt.ExecContext(ctx, s.db)
-	return err
+	if err != nil {
+		return err
+	}
+
+	persistedMarker, err := s.GetMarker(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	eventType := markerEventDelete
+	if deletedAt == nil {
+		eventType = markerEventUpdate
+	}
+
+	return s.publishMarkerEvent(ctx, eventType, persistedMarker)
 }
 
 func (s *Store) GetMarker(ctx context.Context, id int64) (*livemapmarkers.MarkerMarker, error) {

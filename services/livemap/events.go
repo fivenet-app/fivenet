@@ -12,7 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -58,24 +57,6 @@ func (s *Server) registerStreamAndConsumer(
 	s.jsCons, err = consumer.Consume(s.watchForEventsFunc,
 		s.js.ConsumeErrHandlerWithRestart(ctxCancel, s.logger, s.registerStreamAndConsumer))
 	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *Server) sendUpdateEvent(
-	ctx context.Context,
-	topic events.Topic,
-	tType events.Type,
-	job string,
-	msg proto.Message,
-) error {
-	if _, err := s.js.PublishProto(
-		ctx,
-		fmt.Sprintf("%s.%s.%s.%s", BaseSubject, topic, tType, job),
-		msg,
-	); err != nil {
 		return err
 	}
 
