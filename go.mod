@@ -16,7 +16,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.15
 	github.com/creasty/defaults v1.8.0
-	github.com/creativeprojects/go-selfupdate v1.5.2
+	github.com/creativeprojects/go-selfupdate v1.6.0
 	github.com/desertbit/timer v1.0.1
 	github.com/diamondburned/arikawa/v3 v3.6.0
 	github.com/fsnotify/fsnotify v1.10.1
@@ -80,8 +80,8 @@ require (
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.28.0
 	golang.org/x/crypto v0.54.0
-	golang.org/x/image v0.43.0
-	golang.org/x/net v0.56.0
+	golang.org/x/image v0.44.0
+	golang.org/x/net v0.57.0
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/sync v0.22.0
 	google.golang.org/grpc v1.82.0
@@ -154,7 +154,7 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/google/cel-go v0.28.0 // indirect
-	github.com/google/go-github/v74 v74.0.0 // indirect
+	github.com/google/go-github/v86 v86.0.0 // indirect
 	github.com/google/go-querystring v1.2.0 // indirect
 	github.com/google/go-tpm v0.9.8 // indirect
 	github.com/gorilla/context v1.1.2 // indirect
