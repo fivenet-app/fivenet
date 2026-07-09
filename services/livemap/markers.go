@@ -54,7 +54,10 @@ func (s *Server) CreateOrUpdateMarker(
 		id, err := s.store.CreateMarker(
 			ctx,
 			reqMarker,
-			userInfo.GetUserId(),
+			func() *int32 {
+				creatorID := userInfo.GetUserId()
+				return &creatorID
+			}(),
 			userInfo.GetJob(),
 		)
 		if err != nil {
@@ -75,6 +78,10 @@ func (s *Server) CreateOrUpdateMarker(
 		checkMarker, err := s.store.GetMarker(ctx, reqMarker.GetId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
+		}
+
+		if err := s.requirePublicMarkerMutationAccess(checkMarker, userInfo); err != nil {
+			return nil, err
 		}
 
 		if err := s.resolveMarkerPublic(checkMarker, reqMarker, userInfo); err != nil {
@@ -131,6 +138,10 @@ func (s *Server) DeleteMarker(
 		return &pblivemap.DeleteMarkerResponse{}, nil
 	}
 	s.enricher.EnrichJobName(marker)
+
+	if err := s.requirePublicMarkerMutationAccess(marker, userInfo); err != nil {
+		return nil, err
+	}
 
 	if !access.CheckIfHasOwnJobAccess(
 		fields.StringList(),
@@ -298,6 +309,17 @@ func (s *Server) resolveMarkerPublic(
 	}
 
 	if !userInfo.GetJobAdmin() && marker.GetPublic() != existing.GetPublic() {
+		return errorslivemap.ErrMarkerDenied
+	}
+
+	return nil
+}
+
+func (s *Server) requirePublicMarkerMutationAccess(
+	marker *livemapmarkers.MarkerMarker,
+	userInfo *pbuserinfo.UserInfo,
+) error {
+	if marker.GetPublic() && !userInfo.GetJobAdmin() && marker.GetJob() != userInfo.GetJob() {
 		return errorslivemap.ErrMarkerDenied
 	}
 

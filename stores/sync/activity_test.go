@@ -21,7 +21,7 @@ type roundTripMarkerStore struct {
 func (s *roundTripMarkerStore) CreateMarker(
 	_ context.Context,
 	marker *livemapmarkers.MarkerMarker,
-	_ int32,
+	_ *int32,
 	_ string,
 ) (int64, error) {
 	s.createCalls++
@@ -104,4 +104,26 @@ func TestAddMarkerPreservesPublicFlag(t *testing.T) {
 	require.True(t, store.marker.GetPublic())
 	require.NotNil(t, store.marker.GetExpiresAt())
 	require.True(t, store.marker.GetPublic())
+}
+
+func TestAddMarkerAllowsNilCreatorID(t *testing.T) {
+	store := &roundTripMarkerStore{}
+	srv := &Store{livemapStore: store}
+
+	marker := &livemapmarkers.MarkerMarker{}
+	marker.SetName("Sperrzone")
+	marker.SetJob("police")
+	marker.SetJobLabel("Police")
+	marker.SetX(10)
+	marker.SetY(20)
+
+	resp, err := srv.AddMarker(t.Context(), &pbsync.AddMarkerRequest{
+		Marker: marker,
+	})
+
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.Equal(t, 1, store.createCalls)
+	require.NotNil(t, store.marker)
+	require.Nil(t, store.marker.CreatorId)
 }

@@ -14,7 +14,7 @@ type IStore interface {
 	CreateMarker(
 		ctx context.Context,
 		marker *livemapmarkers.MarkerMarker,
-		creatorID int32,
+		creatorID *int32,
 		job string,
 	) (int64, error)
 	UpdateMarker(ctx context.Context, marker *livemapmarkers.MarkerMarker, job string) error

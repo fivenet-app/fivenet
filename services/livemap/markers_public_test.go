@@ -50,7 +50,7 @@ func newMarkerTestStore(markers ...*livemapmarkers.MarkerMarker) *markerTestStor
 func (s *markerTestStore) CreateMarker(
 	_ context.Context,
 	marker *livemapmarkers.MarkerMarker,
-	creatorID int32,
+	creatorID *int32,
 	job string,
 ) (int64, error) {
 	s.createCalls++
@@ -60,8 +60,10 @@ func (s *markerTestStore) CreateMarker(
 		marker.SetId(s.nextID)
 	}
 	marker.SetJob(job)
-	marker.SetCreatorId(creatorID)
-	marker.SetCreator(newCreator(creatorID, job, 0))
+	if creatorID != nil {
+		marker.SetCreatorId(*creatorID)
+		marker.SetCreator(newCreator(*creatorID, job, 0))
+	}
 	s.markers[marker.GetId()] = cloneMarker(marker)
 
 	return marker.GetId(), nil
@@ -202,6 +204,10 @@ func newMarkerRequest(id int64, public *bool) *livemapmarkers.MarkerMarker {
 
 func cloneMarker(marker *livemapmarkers.MarkerMarker) *livemapmarkers.MarkerMarker {
 	return proto.Clone(marker).(*livemapmarkers.MarkerMarker)
+}
+
+func ptrBool(v bool) *bool {
+	return &v
 }
 
 func TestCreateOrUpdateMarkerPublicAccess(t *testing.T) {
@@ -377,6 +383,98 @@ func TestMarkerCacheMutationKeepsPublicBuckets(t *testing.T) {
 	require.Empty(t, deleted)
 	require.Equal(t, resp.Marker.GetId(), active[0].GetId())
 	require.Equal(t, "Updated Marker", active[0].GetName())
+}
+
+func TestPublicMarkerMutationRequiresSameJobOrAdmin(t *testing.T) {
+	t.Parallel()
+
+	existing := newMarkerRequest(42, ptrBool(true))
+	existing.SetCreatorId(10)
+	existing.SetCreator(newCreator(10, "police", 3))
+	existing.SetJob("police")
+	existing.SetJobLabel("Police")
+
+	t.Run("different job non-admin cannot update", func(t *testing.T) {
+		t.Parallel()
+
+		store := newMarkerTestStore(existing)
+		srv := newMarkerServer(store, &testLivemapPerms{})
+		ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(20, "ems", 3, false))
+
+		req := newMarkerRequest(42, nil)
+		req.SetName("Updated")
+
+		_, err := srv.CreateOrUpdateMarker(ctx, &pblivemap.CreateOrUpdateMarkerRequest{
+			Marker: req,
+		})
+
+		require.ErrorIs(t, err, errorslivemap.ErrMarkerDenied)
+		require.Zero(t, store.updateCalls)
+	})
+
+	t.Run("different job non-admin cannot delete", func(t *testing.T) {
+		t.Parallel()
+
+		store := newMarkerTestStore(existing)
+		srv := newMarkerServer(store, &testLivemapPerms{})
+		ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(20, "ems", 3, false))
+
+		_, err := srv.DeleteMarker(ctx, &pblivemap.DeleteMarkerRequest{Id: 42})
+
+		require.ErrorIs(t, err, errorslivemap.ErrMarkerDenied)
+		require.Zero(t, store.deleteCalls)
+	})
+
+	t.Run("different job admin can update", func(t *testing.T) {
+		t.Parallel()
+
+		store := newMarkerTestStore(existing)
+		srv := newMarkerServer(store, &testLivemapPerms{})
+		ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(20, "ems", 3, true))
+
+		req := newMarkerRequest(42, nil)
+		req.SetName("Updated By Admin")
+
+		resp, err := srv.CreateOrUpdateMarker(ctx, &pblivemap.CreateOrUpdateMarkerRequest{
+			Marker: req,
+		})
+
+		require.NoError(t, err)
+		require.NotNil(t, resp)
+		require.NotNil(t, resp.Marker)
+		require.Equal(t, "Updated By Admin", resp.Marker.GetName())
+		require.Equal(t, int32(10), resp.Marker.GetCreatorId())
+		require.Equal(t, 1, store.updateCalls)
+	})
+
+	t.Run("different job admin can delete", func(t *testing.T) {
+		t.Parallel()
+
+		store := newMarkerTestStore(existing)
+		srv := newMarkerServer(store, &testLivemapPerms{})
+		ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(20, "ems", 3, true))
+
+		_, err := srv.DeleteMarker(ctx, &pblivemap.DeleteMarkerRequest{Id: 42})
+
+		require.NoError(t, err)
+		require.Equal(t, 1, store.deleteCalls)
+	})
+}
+
+func TestMarkerUpdateShouldDeleteForUser(t *testing.T) {
+	t.Parallel()
+
+	publicMarker := newMarkerRequest(42, ptrBool(true))
+	privateMarker := newMarkerRequest(43, ptrBool(false))
+
+	owner := newUserInfo(10, "police", 3, false)
+	otherJob := newUserInfo(20, "ems", 3, false)
+	admin := newUserInfo(30, "ems", 3, true)
+
+	require.False(t, markerUpdateShouldDeleteForUser(publicMarker, owner))
+	require.False(t, markerUpdateShouldDeleteForUser(publicMarker, otherJob))
+	require.True(t, markerUpdateShouldDeleteForUser(privateMarker, otherJob))
+	require.False(t, markerUpdateShouldDeleteForUser(privateMarker, admin))
 }
 
 func TestGetMarkerMarkersIncludesPublicMarkers(t *testing.T) {
