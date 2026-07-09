@@ -72,8 +72,8 @@ const cssVars = computed(() => ({
 
 <template>
     <!-- Center pulsing marker -->
-    <LMarker :lat-lng="latLng" :z-index-offset="100">
-        <LIcon class-name="" :icon-size="iconSize" :icon-anchor="iconAnchor">
+    <LMarker :lat-lng="latLng" :z-index-offset="100" :options="{ interactive: false }">
+        <LIcon class-name="pointer-events-none!" :icon-size="iconSize" :icon-anchor="iconAnchor">
             <div class="zone-radar-marker" :style="cssVars">
                 <div class="zone-radar-scale">
                     <span class="zone-radar-ring ring-1" />
