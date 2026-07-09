@@ -81,14 +81,16 @@ func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
 	case MarkerTopic:
 		switch tType {
 		case MarkerUpdate:
-			// Send marker update when there is at least one subscriber
-			if s.broker.SubCount() <= 0 {
-				return
-			}
-
 			marker := &livemapmarkers.MarkerMarker{}
 			if err := protoutils.UnmarshalPartialJSON(msg.Data(), marker); err != nil {
 				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
+				return
+			}
+
+			s.applyMarkerCache(marker)
+
+			// Send marker update when there is at least one subscriber
+			if s.broker.SubCount() <= 0 {
 				return
 			}
 
@@ -97,14 +99,16 @@ func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
 			})
 
 		case MarkerDelete:
-			// Send marker deletion when there is at least one subscriber
-			if s.broker.SubCount() <= 0 {
-				return
-			}
-
 			marker := &livemapmarkers.MarkerMarker{}
 			if err := protoutils.UnmarshalPartialJSON(msg.Data(), marker); err != nil {
 				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
+				return
+			}
+
+			s.applyMarkerCache(marker)
+
+			// Send marker deletion when there is at least one subscriber
+			if s.broker.SubCount() <= 0 {
 				return
 			}
 

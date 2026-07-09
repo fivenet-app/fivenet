@@ -385,6 +385,31 @@ func TestMarkerCacheMutationKeepsPublicBuckets(t *testing.T) {
 	require.Equal(t, "Updated Marker", active[0].GetName())
 }
 
+func TestApplyMarkerCacheAddsSyncCreatedMarkerToInitialSnapshot(t *testing.T) {
+	t.Parallel()
+
+	srv := newMarkerServer(newMarkerTestStore(), &testLivemapPerms{})
+
+	public := true
+	marker := newMarkerRequest(99, &public)
+	marker.SetName("Sync Marker")
+	marker.SetJob("police")
+	marker.SetJobLabel("Police")
+
+	srv.applyMarkerCache(marker)
+
+	active, deleted := srv.markersPublicCache.Snapshot()
+	require.Len(t, active, 1)
+	require.Empty(t, deleted)
+	require.Equal(t, int64(99), active[0].GetId())
+	require.Equal(t, "Sync Marker", active[0].GetName())
+
+	updated, removed := srv.getMarkerMarkers(&permissionsattributes.StringList{Strings: []string{"police"}})
+	require.Len(t, updated, 1)
+	require.Equal(t, int64(99), updated[0].GetId())
+	require.Empty(t, removed)
+}
+
 func TestPublicMarkerMutationRequiresSameJobOrAdmin(t *testing.T) {
 	t.Parallel()
 
