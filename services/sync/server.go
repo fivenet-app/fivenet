@@ -22,6 +22,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	syncstore "github.com/fivenet-app/fivenet/v2026/stores/sync"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -64,6 +65,7 @@ type Params struct {
 	DispatchDB    *dispatches.DispatchDB
 	CitizensStore citizensstore.IStore
 	JobsStore     jobsstore.IStore
+	LivemapStore  livemapstore.IStore
 	Enricher      mstlystcdata.IEnricher
 	Notifi        notifi.INotifi
 }
@@ -90,6 +92,7 @@ func NewServer(p Params) Result {
 			p.DispatchDB,
 			p.CitizensStore,
 			p.JobsStore,
+			p.LivemapStore,
 			p.Enricher,
 			p.Notifi,
 		),

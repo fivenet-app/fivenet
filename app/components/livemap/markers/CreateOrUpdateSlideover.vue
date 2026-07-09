@@ -66,6 +66,27 @@ function getInitialCircleOpacity(marker?: MarkerMarker): number {
     return 15;
 }
 
+function getInitialCircleStroke(marker?: MarkerMarker): boolean {
+    if (marker?.data?.data.oneofKind === 'circle' && marker.data.data.circle.stroke !== undefined) {
+        return marker.data.data.circle.stroke;
+    }
+    return true;
+}
+
+function getInitialCircleStrokeWidth(marker?: MarkerMarker): number {
+    if (marker?.data?.data.oneofKind === 'circle' && marker.data.data.circle.strokeWidth !== undefined) {
+        return marker.data.data.circle.strokeWidth;
+    }
+    return 3;
+}
+
+function getInitialCircleBlink(marker?: MarkerMarker): boolean {
+    if (marker?.data?.data.oneofKind === 'circle' && marker.data.data.circle.blink !== undefined) {
+        return marker.data.data.circle.blink;
+    }
+    return false;
+}
+
 function getInitialRectangleEndX(marker?: MarkerMarker, initialX = 0): number {
     if (marker?.data?.data.oneofKind === 'rectangle' && marker.data.data.rectangle.endX !== undefined) {
         return marker.data.data.rectangle.endX;
@@ -132,6 +153,9 @@ const schema = z.object({
     markerType: z.enum(MarkerType),
     circleRadius: z.coerce.number().gte(5).lte(250),
     circleOpacity: z.coerce.number().gte(1).lte(75).optional(),
+    circleStroke: z.boolean(),
+    circleStrokeWidth: z.coerce.number().gte(0).lte(12),
+    circleBlink: z.boolean().default(false),
     rectangleEndX: z.coerce.number(),
     rectangleEndY: z.coerce.number(),
     shapeOpacity: z.coerce.number().gte(1).lte(75).optional(),
@@ -158,6 +182,9 @@ const state = reactive<Schema>({
     markerType: resolveInitialMarkerType(props.marker),
     circleRadius: getInitialCircleRadius(props.marker),
     circleOpacity: getInitialCircleOpacity(props.marker),
+    circleStroke: getInitialCircleStroke(props.marker),
+    circleStrokeWidth: getInitialCircleStrokeWidth(props.marker),
+    circleBlink: getInitialCircleBlink(props.marker),
     rectangleEndX: getInitialRectangleEndX(props.marker, initialX),
     rectangleEndY: getInitialRectangleEndY(props.marker, initialY),
     shapeOpacity: getInitialShapeOpacity(props.marker),
@@ -186,6 +213,9 @@ const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state, {
             markerType: value.markerType,
             circleRadius: value.circleRadius,
             circleOpacity: value.circleOpacity ?? null,
+            circleStroke: value.circleStroke,
+            circleStrokeWidth: value.circleStrokeWidth,
+            circleBlink: value.circleBlink,
             rectangleEndX: value.rectangleEndX,
             rectangleEndY: value.rectangleEndY,
             shapeOpacity: value.shapeOpacity ?? null,
@@ -214,6 +244,7 @@ const originalPreviewState =
         : {
               x: previewTarget.value.x,
               y: previewTarget.value.y,
+              color: previewTarget.value.color,
               type: previewTarget.value.type,
               data: previewTarget.value.data ? cloneDataPlain(previewTarget.value.data) : undefined,
           };
@@ -254,12 +285,36 @@ watch([() => state.x, () => state.y], ([x, y]) => {
     previewTarget.value.y = y;
 });
 
-watch([() => state.circleRadius, () => state.circleOpacity], ([radius, opacity]) => {
-    if (!previewTarget.value || state.markerType !== MarkerType.CIRCLE || previewTarget.value.data?.data.oneofKind !== 'circle')
-        return;
-    previewTarget.value.data.data.circle.radius = radius;
-    previewTarget.value.data.data.circle.opacity = opacity;
-});
+watch(
+    () => state.color,
+    (color) => {
+        if (!previewTarget.value) return;
+        previewTarget.value.color = color;
+    },
+);
+
+watch(
+    [
+        () => state.circleRadius,
+        () => state.circleOpacity,
+        () => state.circleStroke,
+        () => state.circleStrokeWidth,
+        () => state.circleBlink,
+    ],
+    ([radius, opacity, stroke, strokeWidth, blink]) => {
+        if (
+            !previewTarget.value ||
+            state.markerType !== MarkerType.CIRCLE ||
+            previewTarget.value.data?.data.oneofKind !== 'circle'
+        )
+            return;
+        previewTarget.value.data.data.circle.radius = radius;
+        previewTarget.value.data.data.circle.opacity = opacity;
+        previewTarget.value.data.data.circle.stroke = stroke;
+        previewTarget.value.data.data.circle.strokeWidth = strokeWidth;
+        previewTarget.value.data.data.circle.blink = blink;
+    },
+);
 
 watch([() => state.rectangleEndX, () => state.rectangleEndY, () => state.shapeOpacity], ([endX, endY, opacity]) => {
     if (
@@ -435,6 +490,9 @@ function createMarkerData(values: Schema): MarkerMarker['data'] | undefined {
                     circle: {
                         radius: values.circleRadius,
                         opacity: values.circleOpacity ?? 3,
+                        stroke: values.circleStroke,
+                        strokeWidth: values.circleStrokeWidth,
+                        blink: values.circleBlink,
                     },
                 },
             };
@@ -537,6 +595,7 @@ onBeforeUnmount(() => {
     if (!saved.value && previewTarget.value && originalPreviewState) {
         previewTarget.value.x = originalPreviewState.x;
         previewTarget.value.y = originalPreviewState.y;
+        previewTarget.value.color = originalPreviewState.color;
         previewTarget.value.type = originalPreviewState.type;
         previewTarget.value.data = originalPreviewState.data;
     }
@@ -714,6 +773,61 @@ onBeforeUnmount(() => {
                                     :max="250"
                                     :placeholder="$t('common.radius')"
                                 />
+                            </UFormField>
+                        </dd>
+                    </div>
+
+                    <div
+                        v-if="state.markerType === MarkerType.CIRCLE"
+                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                    >
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="circleStroke">
+                                {{ $t('common.stroke') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="circleStroke">
+                                <USwitch v-model="state.circleStroke" name="circleStroke" />
+                            </UFormField>
+                        </dd>
+                    </div>
+
+                    <div
+                        v-if="state.markerType === MarkerType.CIRCLE"
+                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                    >
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="circleStrokeWidth">
+                                {{ $t('common.stroke_width') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="circleStrokeWidth">
+                                <UInputNumber
+                                    v-model="state.circleStrokeWidth"
+                                    class="w-full"
+                                    name="circleStrokeWidth"
+                                    :min="0"
+                                    :max="12"
+                                    :placeholder="$t('common.stroke_width')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
+
+                    <div
+                        v-if="state.markerType === MarkerType.CIRCLE"
+                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                    >
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="circleBlink">
+                                {{ $t('common.blink') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="circleBlink">
+                                <USwitch v-model="state.circleBlink" name="circleBlink" />
                             </UFormField>
                         </dd>
                     </div>

@@ -76,7 +76,9 @@ func TestGRPCPermissionUnaryFuncSplitsConfigAdminAndJobAdmin(t *testing.T) {
 	})
 }
 
-func TestGRPCPermissionUnaryFuncAllowsDocumentReferenceAndRelationWritesWithListDocuments(t *testing.T) {
+func TestGRPCPermissionUnaryFuncAllowsDocumentReferenceAndRelationWritesWithListDocuments(
+	t *testing.T,
+) {
 	t.Parallel()
 
 	grpcPerm := NewGRPCPerms(&permsstub.Permissions{
@@ -101,7 +103,10 @@ func TestGRPCPermissionUnaryFuncAllowsDocumentReferenceAndRelationWritesWithList
 		t.Run(method, func(t *testing.T) {
 			t.Parallel()
 
-			out, err := grpcPerm.GRPCPermissionUnaryFunc(ctx, &grpc.UnaryServerInfo{FullMethod: method})
+			out, err := grpcPerm.GRPCPermissionUnaryFunc(
+				ctx,
+				&grpc.UnaryServerInfo{FullMethod: method},
+			)
 			require.NoError(t, err)
 			assert.NotNil(t, out)
 		})

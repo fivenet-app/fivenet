@@ -99,6 +99,7 @@ type MarkerMarker struct {
 	xxx_hidden_Color       *string                `protobuf:"bytes,11,opt,name=color,proto3,oneof"`
 	xxx_hidden_Job         string                 `protobuf:"bytes,12,opt,name=job,proto3"`
 	xxx_hidden_JobLabel    string                 `protobuf:"bytes,13,opt,name=job_label,json=jobLabel,proto3"`
+	xxx_hidden_Public      bool                   `protobuf:"varint,18,opt,name=public,proto3,oneof"`
 	xxx_hidden_Type        MarkerType             `protobuf:"varint,14,opt,name=type,proto3,enum=resources.livemap.markers.MarkerType"`
 	xxx_hidden_Data        *MarkerData            `protobuf:"bytes,15,opt,name=data,proto3"`
 	xxx_hidden_CreatorId   int32                  `protobuf:"varint,16,opt,name=creator_id,json=creatorId,proto3,oneof"`
@@ -234,6 +235,13 @@ func (x *MarkerMarker) GetJobLabel() string {
 	return ""
 }
 
+func (x *MarkerMarker) GetPublic() bool {
+	if x != nil {
+		return x.xxx_hidden_Public
+	}
+	return false
+}
+
 func (x *MarkerMarker) GetType() MarkerType {
 	if x != nil {
 		return x.xxx_hidden_Type
@@ -296,17 +304,17 @@ func (x *MarkerMarker) SetName(v string) {
 
 func (x *MarkerMarker) SetDescription(v string) {
 	x.xxx_hidden_Description = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 17)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 18)
 }
 
 func (x *MarkerMarker) SetPostal(v string) {
 	x.xxx_hidden_Postal = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 17)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 18)
 }
 
 func (x *MarkerMarker) SetColor(v string) {
 	x.xxx_hidden_Color = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 17)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 18)
 }
 
 func (x *MarkerMarker) SetJob(v string) {
@@ -315,6 +323,11 @@ func (x *MarkerMarker) SetJob(v string) {
 
 func (x *MarkerMarker) SetJobLabel(v string) {
 	x.xxx_hidden_JobLabel = v
+}
+
+func (x *MarkerMarker) SetPublic(v bool) {
+	x.xxx_hidden_Public = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 18)
 }
 
 func (x *MarkerMarker) SetType(v MarkerType) {
@@ -327,7 +340,7 @@ func (x *MarkerMarker) SetData(v *MarkerData) {
 
 func (x *MarkerMarker) SetCreatorId(v int32) {
 	x.xxx_hidden_CreatorId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 15, 17)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 16, 18)
 }
 
 func (x *MarkerMarker) SetCreator(v *short.UserShort) {
@@ -383,6 +396,13 @@ func (x *MarkerMarker) HasColor() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
 }
 
+func (x *MarkerMarker) HasPublic() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 13)
+}
+
 func (x *MarkerMarker) HasData() bool {
 	if x == nil {
 		return false
@@ -394,7 +414,7 @@ func (x *MarkerMarker) HasCreatorId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 15)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 16)
 }
 
 func (x *MarkerMarker) HasCreator() bool {
@@ -435,12 +455,17 @@ func (x *MarkerMarker) ClearColor() {
 	x.xxx_hidden_Color = nil
 }
 
+func (x *MarkerMarker) ClearPublic() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 13)
+	x.xxx_hidden_Public = false
+}
+
 func (x *MarkerMarker) ClearData() {
 	x.xxx_hidden_Data = nil
 }
 
 func (x *MarkerMarker) ClearCreatorId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 15)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 16)
 	x.xxx_hidden_CreatorId = 0
 }
 
@@ -464,6 +489,7 @@ type MarkerMarker_builder struct {
 	Color       *string
 	Job         string
 	JobLabel    string
+	Public      *bool
 	Type        MarkerType
 	Data        *MarkerData
 	CreatorId   *int32
@@ -483,23 +509,27 @@ func (b0 MarkerMarker_builder) Build() *MarkerMarker {
 	x.xxx_hidden_DeletedAt = b.DeletedAt
 	x.xxx_hidden_Name = b.Name
 	if b.Description != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 17)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 18)
 		x.xxx_hidden_Description = b.Description
 	}
 	if b.Postal != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 17)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 18)
 		x.xxx_hidden_Postal = b.Postal
 	}
 	if b.Color != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 17)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 18)
 		x.xxx_hidden_Color = b.Color
 	}
 	x.xxx_hidden_Job = b.Job
 	x.xxx_hidden_JobLabel = b.JobLabel
+	if b.Public != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 18)
+		x.xxx_hidden_Public = *b.Public
+	}
 	x.xxx_hidden_Type = b.Type
 	x.xxx_hidden_Data = b.Data
 	if b.CreatorId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 15, 17)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 16, 18)
 		x.xxx_hidden_CreatorId = *b.CreatorId
 	}
 	x.xxx_hidden_Creator = b.Creator
@@ -813,6 +843,9 @@ type CircleMarker struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Radius      int32                  `protobuf:"varint,1,opt,name=radius,proto3"`
 	xxx_hidden_Opacity     float32                `protobuf:"fixed32,2,opt,name=opacity,proto3,oneof"`
+	xxx_hidden_Stroke      bool                   `protobuf:"varint,3,opt,name=stroke,proto3,oneof"`
+	xxx_hidden_StrokeWidth int32                  `protobuf:"varint,4,opt,name=stroke_width,json=strokeWidth,proto3,oneof"`
+	xxx_hidden_Blink       bool                   `protobuf:"varint,5,opt,name=blink,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -858,13 +891,49 @@ func (x *CircleMarker) GetOpacity() float32 {
 	return 0
 }
 
+func (x *CircleMarker) GetStroke() bool {
+	if x != nil {
+		return x.xxx_hidden_Stroke
+	}
+	return false
+}
+
+func (x *CircleMarker) GetStrokeWidth() int32 {
+	if x != nil {
+		return x.xxx_hidden_StrokeWidth
+	}
+	return 0
+}
+
+func (x *CircleMarker) GetBlink() bool {
+	if x != nil {
+		return x.xxx_hidden_Blink
+	}
+	return false
+}
+
 func (x *CircleMarker) SetRadius(v int32) {
 	x.xxx_hidden_Radius = v
 }
 
 func (x *CircleMarker) SetOpacity(v float32) {
 	x.xxx_hidden_Opacity = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
+}
+
+func (x *CircleMarker) SetStroke(v bool) {
+	x.xxx_hidden_Stroke = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
+}
+
+func (x *CircleMarker) SetStrokeWidth(v int32) {
+	x.xxx_hidden_StrokeWidth = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
+}
+
+func (x *CircleMarker) SetBlink(v bool) {
+	x.xxx_hidden_Blink = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
 }
 
 func (x *CircleMarker) HasOpacity() bool {
@@ -874,16 +943,55 @@ func (x *CircleMarker) HasOpacity() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
+func (x *CircleMarker) HasStroke() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *CircleMarker) HasStrokeWidth() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *CircleMarker) HasBlink() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
 func (x *CircleMarker) ClearOpacity() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
 	x.xxx_hidden_Opacity = 0
 }
 
+func (x *CircleMarker) ClearStroke() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Stroke = false
+}
+
+func (x *CircleMarker) ClearStrokeWidth() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_StrokeWidth = 0
+}
+
+func (x *CircleMarker) ClearBlink() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Blink = false
+}
+
 type CircleMarker_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Radius  int32
-	Opacity *float32
+	Radius      int32
+	Opacity     *float32
+	Stroke      *bool
+	StrokeWidth *int32
+	Blink       *bool
 }
 
 func (b0 CircleMarker_builder) Build() *CircleMarker {
@@ -892,8 +1000,20 @@ func (b0 CircleMarker_builder) Build() *CircleMarker {
 	_, _ = b, x
 	x.xxx_hidden_Radius = b.Radius
 	if b.Opacity != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
 		x.xxx_hidden_Opacity = *b.Opacity
+	}
+	if b.Stroke != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		x.xxx_hidden_Stroke = *b.Stroke
+	}
+	if b.StrokeWidth != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		x.xxx_hidden_StrokeWidth = *b.StrokeWidth
+	}
+	if b.Blink != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
+		x.xxx_hidden_Blink = *b.Blink
 	}
 	return m0
 }
@@ -1212,7 +1332,7 @@ var File_resources_livemap_markers_marker_marker_proto protoreflect.FileDescript
 
 const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\n" +
-	"-resources/livemap/markers/marker_marker.proto\x12\x19resources.livemap.markers\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1eresources/livemap/coords.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x99\a\n" +
+	"-resources/livemap/markers/marker_marker.proto\x12\x19resources.livemap.markers\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1eresources/livemap/coords.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xc1\a\n" +
 	"\fMarkerMarker\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\f\n" +
 	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
@@ -1231,19 +1351,21 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x05R\x06postal\x88\x01\x01\x12#\n" +
 	"\x05color\x18\v \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x05color\x88\x01\x01\x12\x10\n" +
 	"\x03job\x18\f \x01(\tR\x03job\x12\x1b\n" +
-	"\tjob_label\x18\r \x01(\tR\bjobLabel\x12R\n" +
+	"\tjob_label\x18\r \x01(\tR\bjobLabel\x12\x1b\n" +
+	"\x06public\x18\x12 \x01(\bH\aR\x06public\x88\x01\x01\x12R\n" +
 	"\x04type\x18\x0e \x01(\x0e2%.resources.livemap.markers.MarkerTypeB\x17\x9a\x84\x9e\x03\x12alias:\"markerType\"R\x04type\x12R\n" +
 	"\x04data\x18\x0f \x01(\v2%.resources.livemap.markers.MarkerDataB\x17\x9a\x84\x9e\x03\x12alias:\"markerData\"R\x04data\x12\"\n" +
 	"\n" +
-	"creator_id\x18\x10 \x01(\x05H\aR\tcreatorId\x88\x01\x01\x12?\n" +
-	"\acreator\x18\x11 \x01(\v2 .resources.users.short.UserShortH\bR\acreator\x88\x01\x01B\r\n" +
+	"creator_id\x18\x10 \x01(\x05H\bR\tcreatorId\x88\x01\x01\x12?\n" +
+	"\acreator\x18\x11 \x01(\v2 .resources.users.short.UserShortH\tR\acreator\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_expires_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_descriptionB\t\n" +
 	"\a_postalB\b\n" +
-	"\x06_colorB\r\n" +
+	"\x06_colorB\t\n" +
+	"\a_publicB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creator\"\xf9\x02\n" +
@@ -1254,12 +1376,18 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\trectangle\x18\x05 \x01(\v2*.resources.livemap.markers.RectangleMarkerH\x00R\trectangle\x12D\n" +
 	"\apolygon\x18\x06 \x01(\v2(.resources.livemap.markers.PolygonMarkerH\x00R\apolygon\x12G\n" +
 	"\bpolyline\x18\a \x01(\v2).resources.livemap.markers.PolylineMarkerH\x00R\bpolyline:\b\xe2\xf3\x18\x04\b\x01\x10\x01B\x06\n" +
-	"\x04data\"Q\n" +
+	"\x04data\"\xd7\x01\n" +
 	"\fCircleMarker\x12\x16\n" +
 	"\x06radius\x18\x01 \x01(\x05R\x06radius\x12\x1d\n" +
-	"\aopacity\x18\x02 \x01(\x02H\x00R\aopacity\x88\x01\x01B\n" +
+	"\aopacity\x18\x02 \x01(\x02H\x00R\aopacity\x88\x01\x01\x12\x1b\n" +
+	"\x06stroke\x18\x03 \x01(\bH\x01R\x06stroke\x88\x01\x01\x12&\n" +
+	"\fstroke_width\x18\x04 \x01(\x05H\x02R\vstrokeWidth\x88\x01\x01\x12\x19\n" +
+	"\x05blink\x18\x05 \x01(\bH\x03R\x05blink\x88\x01\x01B\n" +
 	"\n" +
-	"\b_opacity\"*\n" +
+	"\b_opacityB\t\n" +
+	"\a_strokeB\x0f\n" +
+	"\r_stroke_widthB\b\n" +
+	"\x06_blink\"*\n" +
 	"\n" +
 	"IconMarker\x12\x1c\n" +
 	"\x04icon\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04icon\"f\n" +

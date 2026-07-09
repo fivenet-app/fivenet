@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	"go.uber.org/zap"
 )
 
@@ -49,6 +50,14 @@ type IStore interface {
 		ctx context.Context,
 		req *pbsync.AddDispatchRequest,
 	) (*pbsync.AddActivityResponse, error)
+	AddMarker(
+		ctx context.Context,
+		req *pbsync.AddMarkerRequest,
+	) (*pbsync.AddActivityResponse, error)
+	DeleteMarker(
+		ctx context.Context,
+		req *pbsync.DeleteMarkerRequest,
+	) (*pbsync.DeleteDataResponse, error)
 
 	SendUsers(ctx context.Context, data []*syncdata.DataUser) (int64, error)
 	DeleteUsers(ctx context.Context, userIDs []int32) (*pbsync.DeleteDataResponse, error)
@@ -117,6 +126,7 @@ type Store struct {
 	dispatches    *dispatches.DispatchDB
 	citizensStore citizensstore.IStore
 	jobsStore     jobsstore.IStore
+	livemapStore  livemapstore.IStore
 }
 
 func New(
@@ -127,6 +137,7 @@ func New(
 	dispatches *dispatches.DispatchDB,
 	citizensStore citizensstore.IStore,
 	jobsStore jobsstore.IStore,
+	livemapStore livemapstore.IStore,
 	enricher mstlystcdata.IEnricher,
 	notifi notifi.INotifi,
 ) IStore {
@@ -140,5 +151,6 @@ func New(
 		dispatches:    dispatches,
 		citizensStore: citizensStore,
 		jobsStore:     jobsStore,
+		livemapStore:  livemapStore,
 	}
 }

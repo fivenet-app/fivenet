@@ -392,7 +392,7 @@ defineShortcuts({
                                         size="xs"
                                         :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
                                         :color="!getOwnUnit ? 'primary' : 'neutral'"
-                                        @click="open = !open"
+                                        @click="() => (open = !open)"
                                     >
                                         <span v-if="!open" class="inline-flex items-center justify-center">
                                             {{ !getOwnUnit ? $t('common.unit', 2) : $t('common.your_dispatches') }}
@@ -469,9 +469,11 @@ defineShortcuts({
                         block
                         :ui="{ label: '' }"
                         @click="
-                            unitDetailsSlideover.open({
-                                unit: getOwnUnit,
-                            })
+                            () =>
+                                getOwnUnit &&
+                                unitDetailsSlideover.open({
+                                    unit: getOwnUnit,
+                                })
                         "
                     >
                         <span class="line-clamp-2">
@@ -492,7 +494,7 @@ defineShortcuts({
                             size="xs"
                             block
                             :icon="getOwnUnit === undefined ? 'i-mdi-information-outline' : undefined"
-                            @click="joinUnitSlideover.open({})"
+                            @click="() => joinUnitSlideover.open({})"
                         >
                             <span v-if="getOwnUnit === undefined" class="truncate">{{ $t('common.no_own_unit') }}</span>
                             <span v-else class="truncate">{{ $t('common.leave_unit') }}</span>
@@ -506,7 +508,7 @@ defineShortcuts({
                             block
                             icon="i-mdi-account-plus"
                             :label="$t('common.join_unit')"
-                            @click="joinUnitSlideover.open({})"
+                            @click="() => joinUnitSlideover.open({})"
                         />
                     </UFieldGroup>
                 </div>

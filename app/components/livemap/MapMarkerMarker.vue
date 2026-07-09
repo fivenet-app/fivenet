@@ -6,6 +6,7 @@ import { fallbackIconName } from '~/components/partials/icons';
 import { useLivemapStore } from '~/stores/livemap';
 import { MarkerType, type MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import type { Coords } from '~~/gen/ts/resources/livemap/coords';
+import MarkerBlinkBlip from '~/components/livemap/markers/MarkerBlinkBlip.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -30,7 +31,8 @@ const overlay = useOverlay();
 
 const livemapStore = useLivemapStore();
 const { suppressMapPreclick } = livemapStore;
-const { markerDragEnabled, markersMarkers } = storeToRefs(livemapStore);
+const { markerDragEnabled, markersMarkers, zoom } = storeToRefs(livemapStore);
+
 const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideover);
 
 const iconAnchor = computed<PointExpression>(() => [props.size / 2, props.size]);
@@ -218,19 +220,30 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
         <MarkerMarkerPopup :marker="marker" />
     </LMarker>
 
-    <LCircle
-        v-if="marker.data?.data.oneofKind === 'circle'"
-        :key="marker.id"
-        :name="marker.name"
-        :lat-lng="[marker.y, marker.x]"
-        :radius="marker.data?.data.circle.radius / 0.6931471805599453"
-        :color="marker.color ?? livemap.markerMarkers.fallbackColor"
-        :fill-color="marker.color ?? livemap.markerMarkers.fallbackColor"
-        :fill-opacity="(marker.data.data.circle.opacity ?? 15) / 100"
-        :options="{ markerMarker: marker }"
-    >
-        <MarkerMarkerPopup :marker="marker" />
-    </LCircle>
+    <template v-if="marker.data?.data.oneofKind === 'circle'">
+        <LCircle
+            :key="marker.id"
+            :name="marker.name"
+            :lat-lng="[marker.y, marker.x]"
+            :radius="marker.data?.data.circle.radius / 0.6931471805599453"
+            :color="marker.color ?? livemap.markerMarkers.fallbackColor"
+            :fill-color="marker.color ?? livemap.markerMarkers.fallbackColor"
+            :fill-opacity="(marker.data.data.circle.opacity ?? 15) / 100"
+            :stroke="marker.data.data.circle.stroke === undefined ? true : marker.data.data.circle.stroke"
+            :weight="marker.data.data.circle.strokeWidth ?? 3"
+            :options="{ markerMarker: marker }"
+        >
+            <MarkerMarkerPopup :marker="marker" />
+        </LCircle>
+
+        <MarkerBlinkBlip
+            v-if="marker.data.data.circle.blink"
+            :key="`${marker.id}-circle-blink`"
+            :lat-lng="[marker.y, marker.x]"
+            :color="marker.color ?? livemap.markerMarkers.fallbackColor"
+            :zoom="zoom"
+        />
+    </template>
     <LMarker
         v-if="marker.data?.data.oneofKind === 'circle' && canMoveMarker(marker)"
         :lat-lng="[marker.y, marker.x]"

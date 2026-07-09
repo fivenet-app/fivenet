@@ -4919,6 +4919,9 @@ Policy snapshot applied to a specific version
 | ----- | ---- | ----- | ----------- |
 | `radius` | [int32](#int32) |  |  |
 | `opacity` | [float](#float) | optional |  |
+| `stroke` | [bool](#bool) | optional |  |
+| `stroke_width` | [int32](#int32) | optional |  |
+| `blink` | [bool](#bool) | optional |  |
 
 
 
@@ -4968,6 +4971,7 @@ Policy snapshot applied to a specific version
 | `color` | [string](#string) | optional |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) |  |  |
+| `public` | [bool](#bool) | optional |  |
 | `type` | [MarkerType](#resourceslivemapmarkersMarkerType) |  |  |
 | `data` | [MarkerData](#resourceslivemapmarkersMarkerData) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
@@ -13299,6 +13303,12 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ### services.sync.AddActivityResponse
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) | optional |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
 
 
 
@@ -13341,6 +13351,17 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `job_timeclock` | [resources.sync.activity.TimeclockUpdate](#resourcessyncactivityTimeclockUpdate) |  |  |
+
+
+
+
+
+### services.sync.AddMarkerRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `marker` | [resources.livemap.markers.MarkerMarker](#resourceslivemapmarkersMarkerMarker) |  |  |
 
 
 
@@ -13410,6 +13431,17 @@ Individual AddActivity request messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `rows_affected` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.sync.DeleteMarkerRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
 
 
 
@@ -13661,6 +13693,8 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `AddColleagueProps` | [AddColleaguePropsRequest](#servicessyncAddColleaguePropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
 | `AddJobTimeclock` | [AddJobTimeclockRequest](#servicessyncAddJobTimeclockRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
 | `AddDispatch` | [AddDispatchRequest](#servicessyncAddDispatchRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
+| `AddMarker` | [AddMarkerRequest](#servicessyncAddMarkerRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours). |
+| `DeleteMarker` | [DeleteMarkerRequest](#servicessyncDeleteMarkerRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) | |
 | `SendJobs` | [SendJobsRequest](#servicessyncSendJobsRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Individual SendData methods |
 | `SendLicenses` | [SendLicensesRequest](#servicessyncSendLicensesRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
 | `SendAccounts` | [SendAccountsRequest](#servicessyncSendAccountsRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |

@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
@@ -31,36 +33,44 @@ func (s *Store) AddActivity(
 		if err := s.handleUserOauth2(ctx, d.UserOauth2); err != nil {
 			return nil, fmt.Errorf("failed to handle UserOauth2 activity. %w", err)
 		}
+
 	case *pbsync.AddActivityRequest_Dispatch:
 		if s.dispatches != nil {
 			if _, err := s.dispatches.Create(ctx, d.Dispatch); err != nil {
 				return nil, fmt.Errorf("failed to create dispatch. %w", err)
 			}
 		}
+
 	case *pbsync.AddActivityRequest_UserActivity:
 		if err := s.createUserActivities(ctx, s.db, d.UserActivity); err != nil {
 			return nil, fmt.Errorf("failed to create user activities. %w", err)
 		}
+
 	case *pbsync.AddActivityRequest_UserProps:
 		if err := s.handleUserProps(ctx, d.UserProps); err != nil {
 			return nil, fmt.Errorf("failed to handle UserProps activity. %w", err)
 		}
+
 	case *pbsync.AddActivityRequest_ColleagueActivity:
 		if err := s.createColleagueActivity(ctx, s.db, d.ColleagueActivity); err != nil {
 			return nil, fmt.Errorf("failed to create jobs user activities. %w", err)
 		}
+
 	case *pbsync.AddActivityRequest_ColleagueProps:
 		if err := s.handleColleagueProps(ctx, d.ColleagueProps); err != nil {
 			return nil, fmt.Errorf("failed to handle ColleagueProps activity. %w", err)
 		}
+
 	case *pbsync.AddActivityRequest_JobTimeclock:
 		if err := s.handleTimeclockEntry(ctx, d.JobTimeclock); err != nil {
 			return nil, fmt.Errorf("failed to handle JobTimeclock activity. %w", err)
 		}
+
 	case *pbsync.AddActivityRequest_UserUpdate:
 		if err := s.handleUserUpdate(ctx, d.UserUpdate); err != nil {
 			return nil, fmt.Errorf("failed to handle UserUpdate activity. %w", err)
 		}
+
 	case *pbsync.AddActivityRequest_AccountUpdate:
 		if err := s.handleAccountUpdate(ctx, d.AccountUpdate); err != nil {
 			return nil, fmt.Errorf("failed to handle AccountUpdate activity. %w", err)
@@ -134,12 +144,62 @@ func (s *Store) AddDispatch(
 	ctx context.Context,
 	req *pbsync.AddDispatchRequest,
 ) (*pbsync.AddActivityResponse, error) {
-	if s.dispatches != nil {
-		if _, err := s.dispatches.Create(ctx, req.GetDispatch()); err != nil {
-			return nil, fmt.Errorf("failed to create dispatch. %w", err)
-		}
+	if s.dispatches == nil {
+		return &pbsync.AddActivityResponse{}, nil
 	}
-	return &pbsync.AddActivityResponse{}, nil
+
+	dsp, err := s.dispatches.Create(ctx, req.GetDispatch())
+	if err != nil {
+		return nil, fmt.Errorf("failed to create dispatch. %w", err)
+	}
+
+	return &pbsync.AddActivityResponse{
+		Id:        new(dsp.GetId()),
+		CreatedAt: dsp.GetCreatedAt(),
+	}, nil
+}
+
+func (s *Store) AddMarker(
+	ctx context.Context,
+	req *pbsync.AddMarkerRequest,
+) (*pbsync.AddActivityResponse, error) {
+	if s.livemapStore == nil {
+		return &pbsync.AddActivityResponse{}, nil
+	}
+
+	marker := req.GetMarker()
+	// Markers are temporary by default, so we set an expiration time of 24 hours if not provided.
+	if marker.GetExpiresAt() == nil {
+		marker.ExpiresAt = timestamp.New(time.Now().Add(24 * time.Hour))
+	}
+
+	markerId, err := s.livemapStore.CreateMarker(ctx, req.GetMarker(), req.GetMarker().CreatorId, req.GetMarker().GetJob())
+	if err != nil {
+		return nil, fmt.Errorf("failed to create marker. %w", err)
+	}
+
+	return &pbsync.AddActivityResponse{
+		Id: new(markerId),
+		// FIXME use marker createdAt timestamp instead in the future
+		CreatedAt: timestamp.Now(),
+	}, nil
+}
+
+func (s *Store) DeleteMarker(
+	ctx context.Context,
+	req *pbsync.DeleteMarkerRequest,
+) (*pbsync.DeleteDataResponse, error) {
+	if s.livemapStore == nil {
+		return &pbsync.DeleteDataResponse{}, nil
+	}
+
+	if err := s.livemapStore.DeleteMarker(ctx, req.GetId(), timestamp.Now()); err != nil {
+		return nil, fmt.Errorf("failed to delete marker. %w", err)
+	}
+
+	return &pbsync.DeleteDataResponse{
+		RowsAffected: 1,
+	}, nil
 }
 
 func (s *Store) createUserActivities(

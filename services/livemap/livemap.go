@@ -222,12 +222,18 @@ func (s *Server) Stream(
 
 				switch {
 				case e.MarkerUpdate != nil:
-					if e.MarkerUpdate.GetJob() != userInfo.GetJob() &&
-						!userInfo.GetJobAdmin() {
-						continue // Ignore updates for other jobs
+					if markerUpdateShouldDeleteForUser(e.MarkerUpdate, markerJobs, userInfo) {
+						outCh <- &pblivemap.StreamResponse{
+							Data: &pblivemap.StreamResponse_Markers{
+								Markers: &pblivemap.MarkerMarkersUpdates{
+									Deleted: []int64{e.MarkerUpdate.GetId()},
+									Partial: true,
+								},
+							},
+						}
+						continue
 					}
 
-					// Send delete marker event to client
 					outCh <- &pblivemap.StreamResponse{
 						Data: &pblivemap.StreamResponse_Markers{
 							Markers: &pblivemap.MarkerMarkersUpdates{
@@ -306,6 +312,30 @@ func (s *Server) Stream(
 	})
 
 	return g.Wait()
+}
+
+func markerUpdateShouldDeleteForUser(
+	marker *livemapmarkers.MarkerMarker,
+	markerJobs *permissionsattributes.StringList,
+	userInfo *userinfo.UserInfo,
+) bool {
+	if marker == nil {
+		return false
+	}
+
+	if userInfo.GetJobAdmin() {
+		return false
+	}
+
+	if marker.GetJob() == userInfo.GetJob() {
+		return false
+	}
+
+	if marker.GetPublic() {
+		return false
+	}
+
+	return markerJobs == nil || !markerJobs.Contains(marker.GetJob())
 }
 
 // Helper function to process a single message.

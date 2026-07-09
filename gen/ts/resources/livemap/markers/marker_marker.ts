@@ -71,6 +71,10 @@ export interface MarkerMarker {
      */
     jobLabel: string;
     /**
+     * @generated from protobuf field: optional bool public = 18
+     */
+    public?: boolean;
+    /**
      * @generated from protobuf field: resources.livemap.markers.MarkerType type = 14
      */
     type: MarkerType;
@@ -140,6 +144,18 @@ export interface CircleMarker {
      * @generated from protobuf field: optional float opacity = 2
      */
     opacity?: number;
+    /**
+     * @generated from protobuf field: optional bool stroke = 3
+     */
+    stroke?: boolean;
+    /**
+     * @generated from protobuf field: optional int32 stroke_width = 4
+     */
+    strokeWidth?: number;
+    /**
+     * @generated from protobuf field: optional bool blink = 5
+     */
+    blink?: boolean;
 }
 /**
  * @generated from protobuf message resources.livemap.markers.IconMarker
@@ -239,6 +255,7 @@ class MarkerMarker$Type extends MessageType<MarkerMarker> {
             { no: 11, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 12, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 13, name: "job_label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 18, name: "public", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 14, name: "type", kind: "enum", T: () => ["resources.livemap.markers.MarkerType", MarkerType, "MARKER_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } }, "tagger.tags": "alias:\"markerType\"" } },
             { no: 15, name: "data", kind: "message", T: () => MarkerData, options: { "tagger.tags": "alias:\"markerData\"" } },
             { no: 16, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
@@ -301,6 +318,9 @@ class MarkerMarker$Type extends MessageType<MarkerMarker> {
                     break;
                 case /* string job_label */ 13:
                     message.jobLabel = reader.string();
+                    break;
+                case /* optional bool public */ 18:
+                    message.public = reader.bool();
                     break;
                 case /* resources.livemap.markers.MarkerType type */ 14:
                     message.type = reader.int32();
@@ -377,6 +397,9 @@ class MarkerMarker$Type extends MessageType<MarkerMarker> {
         /* optional resources.users.short.UserShort creator = 17; */
         if (message.creator)
             UserShort.internalBinaryWrite(message.creator, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool public = 18; */
+        if (message.public !== undefined)
+            writer.tag(18, WireType.Varint).bool(message.public);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -482,7 +505,10 @@ class CircleMarker$Type extends MessageType<CircleMarker> {
     constructor() {
         super("resources.livemap.markers.CircleMarker", [
             { no: 1, name: "radius", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "opacity", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.field": { float: { lte: 75, gte: 1 } } } }
+            { no: 2, name: "opacity", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.field": { float: { lte: 75, gte: 1 } } } },
+            { no: 3, name: "stroke", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "stroke_width", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 12, gte: 0 } } } },
+            { no: 5, name: "blink", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<CircleMarker>): CircleMarker {
@@ -503,6 +529,15 @@ class CircleMarker$Type extends MessageType<CircleMarker> {
                 case /* optional float opacity */ 2:
                     message.opacity = reader.float();
                     break;
+                case /* optional bool stroke */ 3:
+                    message.stroke = reader.bool();
+                    break;
+                case /* optional int32 stroke_width */ 4:
+                    message.strokeWidth = reader.int32();
+                    break;
+                case /* optional bool blink */ 5:
+                    message.blink = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -521,6 +556,15 @@ class CircleMarker$Type extends MessageType<CircleMarker> {
         /* optional float opacity = 2; */
         if (message.opacity !== undefined)
             writer.tag(2, WireType.Bit32).float(message.opacity);
+        /* optional bool stroke = 3; */
+        if (message.stroke !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.stroke);
+        /* optional int32 stroke_width = 4; */
+        if (message.strokeWidth !== undefined)
+            writer.tag(4, WireType.Varint).int32(message.strokeWidth);
+        /* optional bool blink = 5; */
+        if (message.blink !== undefined)
+            writer.tag(5, WireType.Varint).bool(message.blink);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

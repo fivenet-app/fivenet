@@ -7,6 +7,7 @@ import "resources/centrum/dispatches/dispatches.proto";
 import "resources/citizens/licenses/licenses.proto";
 import "resources/jobs/colleagues/activity/activity.proto";
 import "resources/jobs/jobs.proto";
+import "resources/livemap/markers/marker_marker.proto";
 import "resources/sync/activity/activity.proto";
 import "resources/sync/data/data.proto";
 import "resources/timestamp/timestamp.proto";
@@ -53,42 +54,53 @@ message TransferAccountResponse {}
 
 // Individual AddActivity request messages
 message AddUserOAuth2ConnRequest {
-  resources.sync.activity.UserOAuth2Conn user_oauth2 = 1;
+  resources.sync.activity.UserOAuth2Conn user_oauth2 = 1 [(buf.validate.field).required = true];
 }
 
 message AddDispatchRequest {
-  resources.centrum.dispatches.Dispatch dispatch = 1;
+  resources.centrum.dispatches.Dispatch dispatch = 1 [(buf.validate.field).required = true];
+}
+
+message AddMarkerRequest {
+  resources.livemap.markers.MarkerMarker marker = 1 [(buf.validate.field).required = true];
+}
+
+message DeleteMarkerRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
 message AddUserActivityRequest {
-  resources.users.activity.UserActivity user_activity = 1;
+  resources.users.activity.UserActivity user_activity = 1 [(buf.validate.field).required = true];
 }
 
 message AddUserPropsRequest {
-  resources.sync.activity.UserProps user_props = 1;
+  resources.sync.activity.UserProps user_props = 1 [(buf.validate.field).required = true];
 }
 
 message AddColleagueActivityRequest {
-  resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 1;
+  resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 1 [(buf.validate.field).required = true];
 }
 
 message AddColleaguePropsRequest {
-  resources.sync.activity.ColleagueProps colleague_props = 1;
+  resources.sync.activity.ColleagueProps colleague_props = 1 [(buf.validate.field).required = true];
 }
 
 message AddJobTimeclockRequest {
-  resources.sync.activity.TimeclockUpdate job_timeclock = 1;
+  resources.sync.activity.TimeclockUpdate job_timeclock = 1 [(buf.validate.field).required = true];
 }
 
 message AddAccountUpdateRequest {
-  resources.sync.activity.AccountUpdate account_update = 1;
+  resources.sync.activity.AccountUpdate account_update = 1 [(buf.validate.field).required = true];
 }
 
 message AddUserUpdateRequest {
-  resources.sync.activity.UserUpdate user_update = 1;
+  resources.sync.activity.UserUpdate user_update = 1 [(buf.validate.field).required = true];
 }
 
-message AddActivityResponse {}
+message AddActivityResponse {
+  optional int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+}
 
 // Individual SendData request messages
 message SendJobsRequest {
@@ -118,7 +130,7 @@ message SendUserLocationsRequest {
 }
 
 message SetLastCharIDRequest {
-  resources.sync.data.LastCharID last_char_id = 1;
+  resources.sync.data.LastCharID last_char_id = 1 [(buf.validate.field).required = true];
 }
 
 message SendDataResponse {
@@ -138,7 +150,7 @@ message StreamResponse {
   oneof payload {
     option (buf.validate.oneof).required = true;
 
-    int32 user_id = 1;
+    int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
   }
 }
 
@@ -224,6 +236,9 @@ service SyncService {
   rpc AddColleagueProps(AddColleaguePropsRequest) returns (AddActivityResponse);
   rpc AddJobTimeclock(AddJobTimeclockRequest) returns (AddActivityResponse);
   rpc AddDispatch(AddDispatchRequest) returns (AddActivityResponse);
+  // AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours).
+  rpc AddMarker(AddMarkerRequest) returns (AddActivityResponse);
+  rpc DeleteMarker(DeleteMarkerRequest) returns (DeleteDataResponse);
 
   // Individual SendData methods
   rpc SendJobs(SendJobsRequest) returns (SendDataResponse);

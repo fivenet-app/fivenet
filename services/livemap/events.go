@@ -12,7 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -64,24 +63,6 @@ func (s *Server) registerStreamAndConsumer(
 	return nil
 }
 
-func (s *Server) sendUpdateEvent(
-	ctx context.Context,
-	topic events.Topic,
-	tType events.Type,
-	job string,
-	msg proto.Message,
-) error {
-	if _, err := s.js.PublishProto(
-		ctx,
-		fmt.Sprintf("%s.%s.%s.%s", BaseSubject, topic, tType, job),
-		msg,
-	); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
 	if err := msg.Ack(); err != nil {
 		s.logger.Error("failed to ack message", zap.Error(err))
@@ -100,14 +81,16 @@ func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
 	case MarkerTopic:
 		switch tType {
 		case MarkerUpdate:
-			// Send marker update when there is at least one subscriber
-			if s.broker.SubCount() <= 0 {
-				return
-			}
-
 			marker := &livemapmarkers.MarkerMarker{}
 			if err := protoutils.UnmarshalPartialJSON(msg.Data(), marker); err != nil {
 				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
+				return
+			}
+
+			s.applyMarkerCache(marker)
+
+			// Send marker update when there is at least one subscriber
+			if s.broker.SubCount() <= 0 {
 				return
 			}
 
@@ -116,14 +99,16 @@ func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
 			})
 
 		case MarkerDelete:
-			// Send marker deletion when there is at least one subscriber
-			if s.broker.SubCount() <= 0 {
-				return
-			}
-
 			marker := &livemapmarkers.MarkerMarker{}
 			if err := protoutils.UnmarshalPartialJSON(msg.Data(), marker); err != nil {
 				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
+				return
+			}
+
+			s.applyMarkerCache(marker)
+
+			// Send marker deletion when there is at least one subscriber
+			if s.broker.SubCount() <= 0 {
 				return
 			}
 

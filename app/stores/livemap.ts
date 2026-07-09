@@ -103,6 +103,7 @@ export const useLivemapStore = defineStore(
             if (dest.color !== src.color) dest.color = src.color;
             if (dest.job !== src.job) dest.job = src.job;
             if (dest.jobLabel !== src.jobLabel) dest.jobLabel = src.jobLabel;
+            if (dest.public !== src.public) dest.public = src.public;
             if (dest.type !== src.type) dest.type = src.type;
             if (dest.data !== src.data) dest.data = src.data;
             dest.creatorId = src.creatorId;
@@ -261,7 +262,7 @@ export const useLivemapStore = defineStore(
                 addOrUpdateMarkerMarker(v);
 
                 // Ensure the job of the marker marker is in the markers jobs list
-                if (!jobsMarkers.value.find((j) => j.name === v.job)) {
+                if (v.public !== true && !jobsMarkers.value.find((j) => j.name === v.job)) {
                     jobsMarkers.value.push({
                         name: v.job,
                         label: v.jobLabel,

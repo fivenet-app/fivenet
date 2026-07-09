@@ -33,6 +33,7 @@ import { ColleagueProps } from "../../resources/sync/activity/activity";
 import { ColleagueActivity } from "../../resources/jobs/colleagues/activity/activity";
 import { UserProps } from "../../resources/sync/activity/activity";
 import { UserActivity } from "../../resources/users/activity/activity";
+import { MarkerMarker } from "../../resources/livemap/markers/marker_marker";
 import { Dispatch } from "../../resources/centrum/dispatches/dispatches";
 import { UserOAuth2Conn } from "../../resources/sync/activity/activity";
 import { DataStatus } from "../../resources/sync/data/data";
@@ -148,6 +149,24 @@ export interface AddDispatchRequest {
     dispatch?: Dispatch;
 }
 /**
+ * @generated from protobuf message services.sync.AddMarkerRequest
+ */
+export interface AddMarkerRequest {
+    /**
+     * @generated from protobuf field: resources.livemap.markers.MarkerMarker marker = 1
+     */
+    marker?: MarkerMarker;
+}
+/**
+ * @generated from protobuf message services.sync.DeleteMarkerRequest
+ */
+export interface DeleteMarkerRequest {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+}
+/**
  * @generated from protobuf message services.sync.AddUserActivityRequest
  */
 export interface AddUserActivityRequest {
@@ -214,6 +233,14 @@ export interface AddUserUpdateRequest {
  * @generated from protobuf message services.sync.AddActivityResponse
  */
 export interface AddActivityResponse {
+    /**
+     * @generated from protobuf field: optional int64 id = 1
+     */
+    id?: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
+     */
+    createdAt?: Timestamp;
 }
 /**
  * Individual SendData request messages
@@ -852,7 +879,7 @@ export const TransferAccountResponse = new TransferAccountResponse$Type();
 class AddUserOAuth2ConnRequest$Type extends MessageType<AddUserOAuth2ConnRequest> {
     constructor() {
         super("services.sync.AddUserOAuth2ConnRequest", [
-            { no: 1, name: "user_oauth2", kind: "message", T: () => UserOAuth2Conn }
+            { no: 1, name: "user_oauth2", kind: "message", T: () => UserOAuth2Conn, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddUserOAuth2ConnRequest>): AddUserOAuth2ConnRequest {
@@ -898,7 +925,7 @@ export const AddUserOAuth2ConnRequest = new AddUserOAuth2ConnRequest$Type();
 class AddDispatchRequest$Type extends MessageType<AddDispatchRequest> {
     constructor() {
         super("services.sync.AddDispatchRequest", [
-            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch }
+            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddDispatchRequest>): AddDispatchRequest {
@@ -941,10 +968,103 @@ class AddDispatchRequest$Type extends MessageType<AddDispatchRequest> {
  */
 export const AddDispatchRequest = new AddDispatchRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class AddMarkerRequest$Type extends MessageType<AddMarkerRequest> {
+    constructor() {
+        super("services.sync.AddMarkerRequest", [
+            { no: 1, name: "marker", kind: "message", T: () => MarkerMarker, options: { "buf.validate.field": { required: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<AddMarkerRequest>): AddMarkerRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddMarkerRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddMarkerRequest): AddMarkerRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.livemap.markers.MarkerMarker marker */ 1:
+                    message.marker = MarkerMarker.internalBinaryRead(reader, reader.uint32(), options, message.marker);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddMarkerRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.livemap.markers.MarkerMarker marker = 1; */
+        if (message.marker)
+            MarkerMarker.internalBinaryWrite(message.marker, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddMarkerRequest
+ */
+export const AddMarkerRequest = new AddMarkerRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
+    constructor() {
+        super("services.sync.DeleteMarkerRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteMarkerRequest>): DeleteMarkerRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<DeleteMarkerRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteMarkerRequest): DeleteMarkerRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteMarkerRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.DeleteMarkerRequest
+ */
+export const DeleteMarkerRequest = new DeleteMarkerRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class AddUserActivityRequest$Type extends MessageType<AddUserActivityRequest> {
     constructor() {
         super("services.sync.AddUserActivityRequest", [
-            { no: 1, name: "user_activity", kind: "message", T: () => UserActivity }
+            { no: 1, name: "user_activity", kind: "message", T: () => UserActivity, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddUserActivityRequest>): AddUserActivityRequest {
@@ -990,7 +1110,7 @@ export const AddUserActivityRequest = new AddUserActivityRequest$Type();
 class AddUserPropsRequest$Type extends MessageType<AddUserPropsRequest> {
     constructor() {
         super("services.sync.AddUserPropsRequest", [
-            { no: 1, name: "user_props", kind: "message", T: () => UserProps }
+            { no: 1, name: "user_props", kind: "message", T: () => UserProps, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddUserPropsRequest>): AddUserPropsRequest {
@@ -1036,7 +1156,7 @@ export const AddUserPropsRequest = new AddUserPropsRequest$Type();
 class AddColleagueActivityRequest$Type extends MessageType<AddColleagueActivityRequest> {
     constructor() {
         super("services.sync.AddColleagueActivityRequest", [
-            { no: 1, name: "colleague_activity", kind: "message", T: () => ColleagueActivity }
+            { no: 1, name: "colleague_activity", kind: "message", T: () => ColleagueActivity, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddColleagueActivityRequest>): AddColleagueActivityRequest {
@@ -1082,7 +1202,7 @@ export const AddColleagueActivityRequest = new AddColleagueActivityRequest$Type(
 class AddColleaguePropsRequest$Type extends MessageType<AddColleaguePropsRequest> {
     constructor() {
         super("services.sync.AddColleaguePropsRequest", [
-            { no: 1, name: "colleague_props", kind: "message", T: () => ColleagueProps }
+            { no: 1, name: "colleague_props", kind: "message", T: () => ColleagueProps, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddColleaguePropsRequest>): AddColleaguePropsRequest {
@@ -1128,7 +1248,7 @@ export const AddColleaguePropsRequest = new AddColleaguePropsRequest$Type();
 class AddJobTimeclockRequest$Type extends MessageType<AddJobTimeclockRequest> {
     constructor() {
         super("services.sync.AddJobTimeclockRequest", [
-            { no: 1, name: "job_timeclock", kind: "message", T: () => TimeclockUpdate }
+            { no: 1, name: "job_timeclock", kind: "message", T: () => TimeclockUpdate, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddJobTimeclockRequest>): AddJobTimeclockRequest {
@@ -1174,7 +1294,7 @@ export const AddJobTimeclockRequest = new AddJobTimeclockRequest$Type();
 class AddAccountUpdateRequest$Type extends MessageType<AddAccountUpdateRequest> {
     constructor() {
         super("services.sync.AddAccountUpdateRequest", [
-            { no: 1, name: "account_update", kind: "message", T: () => AccountUpdate }
+            { no: 1, name: "account_update", kind: "message", T: () => AccountUpdate, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddAccountUpdateRequest>): AddAccountUpdateRequest {
@@ -1220,7 +1340,7 @@ export const AddAccountUpdateRequest = new AddAccountUpdateRequest$Type();
 class AddUserUpdateRequest$Type extends MessageType<AddUserUpdateRequest> {
     constructor() {
         super("services.sync.AddUserUpdateRequest", [
-            { no: 1, name: "user_update", kind: "message", T: () => UserUpdate }
+            { no: 1, name: "user_update", kind: "message", T: () => UserUpdate, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddUserUpdateRequest>): AddUserUpdateRequest {
@@ -1265,7 +1385,10 @@ export const AddUserUpdateRequest = new AddUserUpdateRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
     constructor() {
-        super("services.sync.AddActivityResponse", []);
+        super("services.sync.AddActivityResponse", [
+            { no: 1, name: "id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp }
+        ]);
     }
     create(value?: PartialMessage<AddActivityResponse>): AddActivityResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -1278,6 +1401,12 @@ class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1290,6 +1419,12 @@ class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
         return message;
     }
     internalBinaryWrite(message: AddActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional int64 id = 1; */
+        if (message.id !== undefined)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1601,7 +1736,7 @@ export const SendUserLocationsRequest = new SendUserLocationsRequest$Type();
 class SetLastCharIDRequest$Type extends MessageType<SetLastCharIDRequest> {
     constructor() {
         super("services.sync.SetLastCharIDRequest", [
-            { no: 1, name: "last_char_id", kind: "message", T: () => LastCharID }
+            { no: 1, name: "last_char_id", kind: "message", T: () => LastCharID, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<SetLastCharIDRequest>): SetLastCharIDRequest {
@@ -1796,7 +1931,7 @@ export const DeleteVehiclesRequest = new DeleteVehiclesRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.sync.StreamResponse", [
-            { no: 1, name: "user_id", kind: "scalar", oneof: "payload", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "user_id", kind: "scalar", oneof: "payload", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -2251,6 +2386,8 @@ export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "AddColleagueProps", options: {}, I: AddColleaguePropsRequest, O: AddActivityResponse },
     { name: "AddJobTimeclock", options: {}, I: AddJobTimeclockRequest, O: AddActivityResponse },
     { name: "AddDispatch", options: {}, I: AddDispatchRequest, O: AddActivityResponse },
+    { name: "AddMarker", options: {}, I: AddMarkerRequest, O: AddActivityResponse },
+    { name: "DeleteMarker", options: {}, I: DeleteMarkerRequest, O: DeleteDataResponse },
     { name: "SendJobs", options: {}, I: SendJobsRequest, O: SendDataResponse },
     { name: "SendLicenses", options: {}, I: SendLicensesRequest, O: SendDataResponse },
     { name: "SendAccounts", options: {}, I: SendAccountsRequest, O: SendDataResponse },
