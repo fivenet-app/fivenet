@@ -11,6 +11,8 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources
 
 message UploadFileRequest {
   oneof payload {
+    option (buf.validate.oneof).required = true;
+
     UploadMeta meta = 1;
     // Raw bytes <= 128 KiB each, browsers should only read 64 KiB at a time, but this is a buffer just in case
     bytes data = 2 [

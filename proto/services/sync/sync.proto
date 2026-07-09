@@ -54,15 +54,15 @@ message TransferAccountResponse {}
 
 // Individual AddActivity request messages
 message AddUserOAuth2ConnRequest {
-  resources.sync.activity.UserOAuth2Conn user_oauth2 = 1;
+  resources.sync.activity.UserOAuth2Conn user_oauth2 = 1 [(buf.validate.field).required = true];
 }
 
 message AddDispatchRequest {
-  resources.centrum.dispatches.Dispatch dispatch = 1;
+  resources.centrum.dispatches.Dispatch dispatch = 1 [(buf.validate.field).required = true];
 }
 
 message AddMarkerRequest {
-  resources.livemap.markers.MarkerMarker marker = 1;
+  resources.livemap.markers.MarkerMarker marker = 1 [(buf.validate.field).required = true];
 }
 
 message DeleteMarkerRequest {
@@ -70,31 +70,31 @@ message DeleteMarkerRequest {
 }
 
 message AddUserActivityRequest {
-  resources.users.activity.UserActivity user_activity = 1;
+  resources.users.activity.UserActivity user_activity = 1 [(buf.validate.field).required = true];
 }
 
 message AddUserPropsRequest {
-  resources.sync.activity.UserProps user_props = 1;
+  resources.sync.activity.UserProps user_props = 1 [(buf.validate.field).required = true];
 }
 
 message AddColleagueActivityRequest {
-  resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 1;
+  resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 1 [(buf.validate.field).required = true];
 }
 
 message AddColleaguePropsRequest {
-  resources.sync.activity.ColleagueProps colleague_props = 1;
+  resources.sync.activity.ColleagueProps colleague_props = 1 [(buf.validate.field).required = true];
 }
 
 message AddJobTimeclockRequest {
-  resources.sync.activity.TimeclockUpdate job_timeclock = 1;
+  resources.sync.activity.TimeclockUpdate job_timeclock = 1 [(buf.validate.field).required = true];
 }
 
 message AddAccountUpdateRequest {
-  resources.sync.activity.AccountUpdate account_update = 1;
+  resources.sync.activity.AccountUpdate account_update = 1 [(buf.validate.field).required = true];
 }
 
 message AddUserUpdateRequest {
-  resources.sync.activity.UserUpdate user_update = 1;
+  resources.sync.activity.UserUpdate user_update = 1 [(buf.validate.field).required = true];
 }
 
 message AddActivityResponse {
@@ -130,7 +130,7 @@ message SendUserLocationsRequest {
 }
 
 message SetLastCharIDRequest {
-  resources.sync.data.LastCharID last_char_id = 1;
+  resources.sync.data.LastCharID last_char_id = 1 [(buf.validate.field).required = true];
 }
 
 message SendDataResponse {

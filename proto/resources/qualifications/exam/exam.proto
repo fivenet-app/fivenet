@@ -130,6 +130,8 @@ message ExamQuestionAnswerData {
   string answer_key = 1 [(buf.validate.field).string.max_len = 1024];
 
   oneof answer {
+    option (buf.validate.oneof).required = true;
+
     ExamResponseYesNo yesno = 4;
     ExamResponseText free_text = 5;
     ExamResponseSingleChoice single_choice = 6;

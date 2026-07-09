@@ -879,7 +879,7 @@ export const TransferAccountResponse = new TransferAccountResponse$Type();
 class AddUserOAuth2ConnRequest$Type extends MessageType<AddUserOAuth2ConnRequest> {
     constructor() {
         super("services.sync.AddUserOAuth2ConnRequest", [
-            { no: 1, name: "user_oauth2", kind: "message", T: () => UserOAuth2Conn }
+            { no: 1, name: "user_oauth2", kind: "message", T: () => UserOAuth2Conn, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddUserOAuth2ConnRequest>): AddUserOAuth2ConnRequest {
@@ -925,7 +925,7 @@ export const AddUserOAuth2ConnRequest = new AddUserOAuth2ConnRequest$Type();
 class AddDispatchRequest$Type extends MessageType<AddDispatchRequest> {
     constructor() {
         super("services.sync.AddDispatchRequest", [
-            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch }
+            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddDispatchRequest>): AddDispatchRequest {
@@ -971,7 +971,7 @@ export const AddDispatchRequest = new AddDispatchRequest$Type();
 class AddMarkerRequest$Type extends MessageType<AddMarkerRequest> {
     constructor() {
         super("services.sync.AddMarkerRequest", [
-            { no: 1, name: "marker", kind: "message", T: () => MarkerMarker }
+            { no: 1, name: "marker", kind: "message", T: () => MarkerMarker, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddMarkerRequest>): AddMarkerRequest {
@@ -1064,7 +1064,7 @@ export const DeleteMarkerRequest = new DeleteMarkerRequest$Type();
 class AddUserActivityRequest$Type extends MessageType<AddUserActivityRequest> {
     constructor() {
         super("services.sync.AddUserActivityRequest", [
-            { no: 1, name: "user_activity", kind: "message", T: () => UserActivity }
+            { no: 1, name: "user_activity", kind: "message", T: () => UserActivity, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddUserActivityRequest>): AddUserActivityRequest {
@@ -1110,7 +1110,7 @@ export const AddUserActivityRequest = new AddUserActivityRequest$Type();
 class AddUserPropsRequest$Type extends MessageType<AddUserPropsRequest> {
     constructor() {
         super("services.sync.AddUserPropsRequest", [
-            { no: 1, name: "user_props", kind: "message", T: () => UserProps }
+            { no: 1, name: "user_props", kind: "message", T: () => UserProps, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddUserPropsRequest>): AddUserPropsRequest {
@@ -1156,7 +1156,7 @@ export const AddUserPropsRequest = new AddUserPropsRequest$Type();
 class AddColleagueActivityRequest$Type extends MessageType<AddColleagueActivityRequest> {
     constructor() {
         super("services.sync.AddColleagueActivityRequest", [
-            { no: 1, name: "colleague_activity", kind: "message", T: () => ColleagueActivity }
+            { no: 1, name: "colleague_activity", kind: "message", T: () => ColleagueActivity, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddColleagueActivityRequest>): AddColleagueActivityRequest {
@@ -1202,7 +1202,7 @@ export const AddColleagueActivityRequest = new AddColleagueActivityRequest$Type(
 class AddColleaguePropsRequest$Type extends MessageType<AddColleaguePropsRequest> {
     constructor() {
         super("services.sync.AddColleaguePropsRequest", [
-            { no: 1, name: "colleague_props", kind: "message", T: () => ColleagueProps }
+            { no: 1, name: "colleague_props", kind: "message", T: () => ColleagueProps, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddColleaguePropsRequest>): AddColleaguePropsRequest {
@@ -1248,7 +1248,7 @@ export const AddColleaguePropsRequest = new AddColleaguePropsRequest$Type();
 class AddJobTimeclockRequest$Type extends MessageType<AddJobTimeclockRequest> {
     constructor() {
         super("services.sync.AddJobTimeclockRequest", [
-            { no: 1, name: "job_timeclock", kind: "message", T: () => TimeclockUpdate }
+            { no: 1, name: "job_timeclock", kind: "message", T: () => TimeclockUpdate, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddJobTimeclockRequest>): AddJobTimeclockRequest {
@@ -1294,7 +1294,7 @@ export const AddJobTimeclockRequest = new AddJobTimeclockRequest$Type();
 class AddAccountUpdateRequest$Type extends MessageType<AddAccountUpdateRequest> {
     constructor() {
         super("services.sync.AddAccountUpdateRequest", [
-            { no: 1, name: "account_update", kind: "message", T: () => AccountUpdate }
+            { no: 1, name: "account_update", kind: "message", T: () => AccountUpdate, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddAccountUpdateRequest>): AddAccountUpdateRequest {
@@ -1340,7 +1340,7 @@ export const AddAccountUpdateRequest = new AddAccountUpdateRequest$Type();
 class AddUserUpdateRequest$Type extends MessageType<AddUserUpdateRequest> {
     constructor() {
         super("services.sync.AddUserUpdateRequest", [
-            { no: 1, name: "user_update", kind: "message", T: () => UserUpdate }
+            { no: 1, name: "user_update", kind: "message", T: () => UserUpdate, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<AddUserUpdateRequest>): AddUserUpdateRequest {
@@ -1736,7 +1736,7 @@ export const SendUserLocationsRequest = new SendUserLocationsRequest$Type();
 class SetLastCharIDRequest$Type extends MessageType<SetLastCharIDRequest> {
     constructor() {
         super("services.sync.SetLastCharIDRequest", [
-            { no: 1, name: "last_char_id", kind: "message", T: () => LastCharID }
+            { no: 1, name: "last_char_id", kind: "message", T: () => LastCharID, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<SetLastCharIDRequest>): SetLastCharIDRequest {
