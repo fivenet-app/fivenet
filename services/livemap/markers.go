@@ -215,7 +215,8 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 	for _, m := range dest {
 		s.enricher.EnrichJobName(m)
 
-		if m.GetPublic() {
+		state := markerCacheStateFrom(m)
+		if state.public {
 			publicMarkers = append(publicMarkers, m)
 			continue
 		}
@@ -261,7 +262,8 @@ func (s *Server) refreshDeletedMarkers(ctx context.Context) ([]int64, error) {
 	}
 
 	for _, m := range dest {
-		if m.GetPublic() {
+		state := markerCacheStateFrom(m)
+		if state.public {
 			publicDeletedMarkers = append(publicDeletedMarkers, m.GetId())
 			continue
 		}
@@ -327,15 +329,16 @@ func (s *Server) requirePublicMarkerMutationAccess(
 }
 
 func (s *Server) applyMarkerCache(marker *livemapmarkers.MarkerMarker) {
+	state := markerCacheStateFrom(marker)
 	s.markersPublicCache.Apply(marker)
 
-	if marker.GetPublic() {
+	if state.public {
 		s.removeMarkerFromJobCache(marker.GetJob(), marker.GetId())
 		s.removeMarkerFromDeletedCache(marker.GetJob(), marker.GetId())
 		return
 	}
 
-	if marker.GetDeletedAt() == nil {
+	if !state.deleted {
 		s.upsertMarkerInJobCache(marker.GetJob(), marker)
 		s.removeMarkerFromDeletedCache(marker.GetJob(), marker.GetId())
 		return
@@ -353,6 +356,22 @@ func (s *Server) upsertMarkerInJobCache(job string, marker *livemapmarkers.Marke
 	})
 	markers = append(markers, marker)
 	s.markersCache.Store(job, markers)
+}
+
+type markerCacheState struct {
+	public  bool
+	deleted bool
+}
+
+func markerCacheStateFrom(marker *livemapmarkers.MarkerMarker) markerCacheState {
+	if marker == nil {
+		return markerCacheState{}
+	}
+
+	return markerCacheState{
+		public:  marker.GetPublic(),
+		deleted: marker.GetDeletedAt() != nil,
+	}
 }
 
 func (s *Server) removeMarkerFromJobCache(job string, markerID int64) {

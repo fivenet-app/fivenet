@@ -491,15 +491,20 @@ func TestMarkerUpdateShouldDeleteForUser(t *testing.T) {
 
 	publicMarker := newMarkerRequest(42, ptrBool(true))
 	privateMarker := newMarkerRequest(43, ptrBool(false))
+	allowedMarkerJobs := &permissionsattributes.StringList{Strings: []string{"police", "ems"}}
+	policeOnlyJobs := &permissionsattributes.StringList{Strings: []string{"police"}}
+	emsOnlyJobs := &permissionsattributes.StringList{Strings: []string{"ems"}}
 
 	owner := newUserInfo(10, "police", 3, false)
 	otherJob := newUserInfo(20, "ems", 3, false)
 	admin := newUserInfo(30, "ems", 3, true)
 
-	require.False(t, markerUpdateShouldDeleteForUser(publicMarker, owner))
-	require.False(t, markerUpdateShouldDeleteForUser(publicMarker, otherJob))
-	require.True(t, markerUpdateShouldDeleteForUser(privateMarker, otherJob))
-	require.False(t, markerUpdateShouldDeleteForUser(privateMarker, admin))
+	require.False(t, markerUpdateShouldDeleteForUser(publicMarker, allowedMarkerJobs, owner))
+	require.False(t, markerUpdateShouldDeleteForUser(publicMarker, allowedMarkerJobs, otherJob))
+	require.False(t, markerUpdateShouldDeleteForUser(privateMarker, allowedMarkerJobs, otherJob))
+	require.False(t, markerUpdateShouldDeleteForUser(privateMarker, policeOnlyJobs, otherJob))
+	require.True(t, markerUpdateShouldDeleteForUser(privateMarker, emsOnlyJobs, otherJob))
+	require.False(t, markerUpdateShouldDeleteForUser(privateMarker, policeOnlyJobs, admin))
 }
 
 func TestGetMarkerMarkersIncludesPublicMarkers(t *testing.T) {
