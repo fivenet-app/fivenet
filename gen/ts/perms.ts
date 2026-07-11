@@ -383,6 +383,10 @@ export const PermAttributes = {
 		},
 	},
 	'documents.DocumentsService/UpdateDocument': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
 	},
 	'documents.StampsService/DeleteStamp': {
 	},
@@ -498,6 +502,14 @@ export const PermAttributes = {
 	'qualifications.QualificationsService/ListQualifications': {
 	},
 	'qualifications.QualificationsService/UpdateQualification': {
+		'Access': {
+			type: 'stringList',
+			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
+		},
+		'Fields': {
+			type: 'stringList',
+			values: ['Public',] as const,
+		},
 	},
 	'settings.LawsService/CreateOrUpdateLawBook': {
 	},
@@ -540,6 +552,10 @@ export const PermAttributes = {
 	'wiki.WikiService/MovePage': {
 	},
 	'wiki.WikiService/UpdatePage': {
+		'Fields': {
+			type: 'stringList',
+			values: ['Public',] as const,
+		},
 	},
 } as const;
 
