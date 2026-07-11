@@ -10,7 +10,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 import type { User } from '~~/gen/ts/resources/users/user';
-import type { ImpersonateJobResponse } from '~~/gen/ts/services/auth/auth';
+import type { ImpersonateJobResponse, RefreshAccountSessionResponse } from '~~/gen/ts/services/auth/auth';
 
 const logger = useLogger('🔑 Auth');
 
@@ -77,16 +77,20 @@ export const useAuthStore = defineStore(
          * Whether the current account can enter superuser mode.
          */
         const canBeSuperuser = ref<boolean>(false);
+        /**
+         * Whether the current account can access config-admin setup without a character token.
+         */
+        const accountCanBeConfigAdmin = ref<boolean>(false);
 
         /**
          * Set or unset the username.
          * @param val - The username of the user.
          */
-        const setUsername = (val: string | null) => {
+        const setUsername = (val: string | null, openSocket = true) => {
             // Connect to the WebSocket if the user is logged in
             if (val) {
                 username.value = val;
-                if (webSocket.status.value !== 'OPEN' && webSocket.status.value !== 'CONNECTING') {
+                if (openSocket && webSocket.status.value !== 'OPEN' && webSocket.status.value !== 'CONNECTING') {
                     logger.info('Username set, opening WebSocket connection, current status:', webSocket.status.value);
                     webSocket.open();
                 }
@@ -148,6 +152,10 @@ export const useAuthStore = defineStore(
             permissions.value = [...perms].sort();
             attributes.value = [...attrs].sort();
             canBeSuperuser.value = perms.some((p) => p.guardName === superuserCanBePermGuard);
+        };
+
+        const setAccountCanBeConfigAdmin = (val: boolean): void => {
+            accountCanBeConfigAdmin.value = val;
         };
 
         /**
@@ -272,9 +280,32 @@ export const useAuthStore = defineStore(
                     }
 
                     const route = useRoute();
-                    // Clear user token and unset login-block to avoid issues
+                    const appConfig = useAppConfig();
+
+                    // Clear the user token because no character token can be restored.
                     setUserToken();
+
+                    let refreshResp: RefreshAccountSessionResponse | null = null;
+                    try {
+                        refreshResp = await refreshAccountSession();
+                    } catch (_) {
+                        // Ignore refresh errors here; the selector fallback is still valid.
+                    }
+
                     loginStop();
+
+                    if (
+                        appConfig.setupComplete === false &&
+                        refreshResp?.canBeConfigAdmin &&
+                        route.path !== '/settings/setup'
+                    ) {
+                        await navigateTo({
+                            path: '/settings/setup',
+                            query: route.query,
+                        });
+                        return;
+                    }
+
                     await navigateTo({
                         name: 'auth-character-selector',
                         query: route.query,
@@ -410,6 +441,7 @@ export const useAuthStore = defineStore(
             setActiveChar(null);
             setPermissions([], []);
             setCanBeSuperuser(false);
+            setAccountCanBeConfigAdmin(false);
             setJobProps(undefined);
             setUserToken();
 
@@ -442,6 +474,25 @@ export const useAuthStore = defineStore(
             }
         };
 
+        const refreshAccountSession = async (): Promise<RefreshAccountSessionResponse | null> => {
+            const authAuthClient = await getAuthAuthClient();
+
+            try {
+                const call = authAuthClient.refreshAccountSession({});
+                const { response } = await call;
+
+                accountId.value = response.accountId;
+                setAccountCanBeConfigAdmin(response.canBeConfigAdmin);
+                if (username.value === null && response.username) {
+                    setUsername(response.username, false);
+                }
+
+                return response;
+            } catch (e) {
+                throw e;
+            }
+        };
+
         // Getters
         /**
          * Whether the current account is currently in superuser (job admin mode) access.
@@ -451,6 +502,7 @@ export const useAuthStore = defineStore(
          * Whether the current account can access config-admin gated screens and RPCs.
          */
         const canBeConfigAdmin = computed<boolean>(() => permissions.value.some((p) => p.guardName === configAdminPermGuard));
+        const canBeConfigAdminEffective = computed<boolean>(() => canBeConfigAdmin.value || accountCanBeConfigAdmin.value);
 
         return {
             // State
@@ -467,7 +519,7 @@ export const useAuthStore = defineStore(
             permissions,
             attributes,
             canBeSuperuser,
-            canBeConfigAdmin,
+            canBeConfigAdmin: canBeConfigAdminEffective,
 
             // Actions
             setUsername,
@@ -481,7 +533,9 @@ export const useAuthStore = defineStore(
             setActiveChar,
             setPermissions,
             setCanBeSuperuser,
+            setAccountCanBeConfigAdmin,
             setJobProps,
+            refreshAccountSession,
 
             chooseCharacter,
             impersonateJob,

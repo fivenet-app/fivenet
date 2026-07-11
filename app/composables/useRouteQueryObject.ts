@@ -27,7 +27,13 @@ const _useRouteQueryObject = <T extends object>(key: string, def: T): Ref<T> => 
 export const useRouteQueryObject = _useRouteQueryObject;
 
 // List of excluded redirect urls
-export const redirectExcludedPages = ['/auth/login', '/auth/logout', '/dereferer', '/auth/character-selector'];
+export const redirectExcludedPages = [
+    '/auth/login',
+    '/auth/logout',
+    '/dereferer',
+    '/auth/character-selector',
+    '/settings/setup',
+];
 
 export function getRedirect(route: RouteLocationNormalized): URL {
     const settingsStore = useSettingsStore();

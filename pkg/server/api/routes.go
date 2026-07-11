@@ -18,6 +18,7 @@ type Routes struct {
 	logger *zap.Logger
 
 	cfg              *config.Config
+	providers        []*clientconfig.ProviderConfig
 	clientCfg        *atomic.Pointer[clientconfig.ClientConfig]
 	discordInviteUrl *atomic.Pointer[string]
 }
@@ -36,16 +37,15 @@ func New(p Params) *Routes {
 	r := &Routes{
 		logger:           p.Logger,
 		cfg:              p.Config,
+		providers:        clientconfig.BuildProviderList(p.Config),
 		clientCfg:        &atomic.Pointer[clientconfig.ClientConfig]{},
 		discordInviteUrl: &atomic.Pointer[string]{},
 	}
 
-	providers := clientconfig.BuildProviderList(p.Config)
-
 	ctx, cancel := context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		r.handleAppConfigUpdate(providers, p.AppConfig.Get())
+		r.handleAppConfigUpdate(p.AppConfig.Get())
 
 		// Handle app config updates
 		go func() {
@@ -61,7 +61,7 @@ func New(p Params) *Routes {
 						continue
 					}
 
-					r.handleAppConfigUpdate(providers, cfg)
+					r.handleAppConfigUpdate(cfg)
 				}
 			}
 		}()

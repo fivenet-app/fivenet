@@ -20,6 +20,7 @@ type fivenetConfigTable struct {
 	Key          mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
 	UpdatedAt    mysql.ColumnTimestamp
+	SetupComplete mysql.ColumnBool
 	AppConfig    mysql.ColumnString
 	PluginConfig mysql.ColumnString
 
@@ -66,10 +67,11 @@ func newFivenetConfigTableImpl(schemaName, tableName, alias string) fivenetConfi
 		KeyColumn          = mysql.IntegerColumn("key")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
+		SetupCompleteColumn = mysql.BoolColumn("setup_complete")
 		AppConfigColumn    = mysql.StringColumn("app_config")
 		PluginConfigColumn = mysql.StringColumn("plugin_config")
-		allColumns         = mysql.ColumnList{KeyColumn, CreatedAtColumn, UpdatedAtColumn, AppConfigColumn, PluginConfigColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, AppConfigColumn, PluginConfigColumn}
+		allColumns         = mysql.ColumnList{KeyColumn, CreatedAtColumn, UpdatedAtColumn, SetupCompleteColumn, AppConfigColumn, PluginConfigColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, SetupCompleteColumn, AppConfigColumn, PluginConfigColumn}
 		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -80,6 +82,7 @@ func newFivenetConfigTableImpl(schemaName, tableName, alias string) fivenetConfi
 		Key:          KeyColumn,
 		CreatedAt:    CreatedAtColumn,
 		UpdatedAt:    UpdatedAtColumn,
+		SetupComplete: SetupCompleteColumn,
 		AppConfig:    AppConfigColumn,
 		PluginConfig: PluginConfigColumn,
 

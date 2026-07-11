@@ -149,6 +149,7 @@ const isDev = import.meta.dev;
                                     size="lg"
                                     color="success"
                                     :disabled="buttonDisabled"
+                                    icon="i-mdi-refresh"
                                     :label="$t !== undefined ? $t('common.retry') : 'Retry'"
                                     @click="() => handleError(route.fullPath)"
                                 />

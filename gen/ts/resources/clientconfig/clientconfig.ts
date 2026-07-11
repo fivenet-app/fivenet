@@ -27,6 +27,10 @@ export interface ClientConfig {
      */
     version: string;
     /**
+     * @generated from protobuf field: optional bool setup_complete = 13
+     */
+    setupComplete?: boolean;
+    /**
      * @generated from protobuf field: string default_locale = 2
      */
     defaultLocale: string;
@@ -193,6 +197,7 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
     constructor() {
         super("resources.clientconfig.ClientConfig", [
             { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"version\"" } },
+            { no: 13, name: "setup_complete", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"setupComplete\"" } },
             { no: 2, name: "default_locale", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"defaultLocale\"" } },
             { no: 3, name: "auth", kind: "message", T: () => Auth, options: { "tagger.tags": "json:\"auth\"" } },
             { no: 4, name: "discord", kind: "message", T: () => Discord, options: { "tagger.tags": "json:\"discord\"" } },
@@ -220,6 +225,9 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
             switch (fieldNo) {
                 case /* string version */ 1:
                     message.version = reader.string();
+                    break;
+                case /* optional bool setup_complete */ 13:
+                    message.setupComplete = reader.bool();
                     break;
                 case /* string default_locale */ 2:
                     message.defaultLocale = reader.string();
@@ -296,6 +304,9 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
         /* resources.settings.Data data = 12; */
         if (message.data)
             Data.internalBinaryWrite(message.data, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool setup_complete = 13; */
+        if (message.setupComplete !== undefined)
+            writer.tag(13, WireType.Varint).bool(message.setupComplete);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

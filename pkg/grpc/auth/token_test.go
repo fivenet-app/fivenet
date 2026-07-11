@@ -3,6 +3,7 @@ package auth
 import (
 	"testing"
 
+	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
@@ -51,4 +52,24 @@ func TestToken(t *testing.T) {
 	parsedAccClaims, err = tm.ParseAccToken(randomToken)
 	require.Error(t, err)
 	assert.Nil(t, parsedAccClaims)
+}
+
+func TestMapAccountToClaims(t *testing.T) {
+	t.Parallel()
+
+	account := &accounts.Account{
+		Id:       123,
+		Username: "example-user",
+		License:  "license-123",
+		Groups: &accounts.AccountGroups{
+			Groups: []string{"bootstrap-admin"},
+		},
+	}
+
+	claims := MapAccountToClaims(account, true)
+	require.NotNil(t, claims)
+	assert.True(t, claims.CanBeSuperuser)
+	assert.Equal(t, account.GetGroups().GetGroups(), claims.Groups)
+	assert.Equal(t, account.GetUsername(), claims.Username)
+	assert.Equal(t, account.GetLicense(), claims.Subject)
 }

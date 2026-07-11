@@ -9,6 +9,8 @@ import type { SetSuperuserModeResponse } from "./auth";
 import type { SetSuperuserModeRequest } from "./auth";
 import type { DeleteSocialLoginResponse } from "./auth";
 import type { DeleteSocialLoginRequest } from "./auth";
+import type { RefreshAccountSessionResponse } from "./auth";
+import type { RefreshAccountSessionRequest } from "./auth";
 import type { GetAccountInfoResponse } from "./auth";
 import type { GetAccountInfoRequest } from "./auth";
 import type { ImpersonateJobResponse } from "./auth";
@@ -79,6 +81,10 @@ export interface IAuthServiceClient {
      * @generated from protobuf rpc: GetAccountInfo
      */
     getAccountInfo(input: GetAccountInfoRequest, options?: RpcOptions): UnaryCall<GetAccountInfoRequest, GetAccountInfoResponse>;
+    /**
+     * @generated from protobuf rpc: RefreshAccountSession
+     */
+    refreshAccountSession(input: RefreshAccountSessionRequest, options?: RpcOptions): UnaryCall<RefreshAccountSessionRequest, RefreshAccountSessionResponse>;
     /**
      * @generated from protobuf rpc: DeleteSocialLogin
      */
@@ -171,17 +177,24 @@ export class AuthServiceClient implements IAuthServiceClient, ServiceInfo {
         return stackIntercept<GetAccountInfoRequest, GetAccountInfoResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: RefreshAccountSession
+     */
+    refreshAccountSession(input: RefreshAccountSessionRequest, options?: RpcOptions): UnaryCall<RefreshAccountSessionRequest, RefreshAccountSessionResponse> {
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RefreshAccountSessionRequest, RefreshAccountSessionResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: DeleteSocialLogin
      */
     deleteSocialLogin(input: DeleteSocialLoginRequest, options?: RpcOptions): UnaryCall<DeleteSocialLoginRequest, DeleteSocialLoginResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteSocialLoginRequest, DeleteSocialLoginResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: SetSuperuserMode
      */
     setSuperuserMode(input: SetSuperuserModeRequest, options?: RpcOptions): UnaryCall<SetSuperuserModeRequest, SetSuperuserModeResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetSuperuserModeRequest, SetSuperuserModeResponse>("unary", this._transport, method, opt, input);
     }
 }

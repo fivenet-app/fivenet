@@ -79,6 +79,7 @@ func (x DiscordBotPresenceType) Number() protoreflect.EnumNumber {
 type AppConfig struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	SetupComplete *bool                  `protobuf:"varint,15,opt,name=setup_complete,json=setupComplete,proto3,oneof" json:"setup_complete,omitempty"`
 	DefaultLocale string                 `protobuf:"bytes,8,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
 	Auth          *Auth                  `protobuf:"bytes,2,opt,name=auth,proto3" json:"auth,omitempty"`
 	Perms         *Perms                 `protobuf:"bytes,3,opt,name=perms,proto3" json:"perms,omitempty"`
@@ -126,6 +127,13 @@ func (x *AppConfig) GetVersion() string {
 		return x.Version
 	}
 	return ""
+}
+
+func (x *AppConfig) GetSetupComplete() bool {
+	if x != nil && x.SetupComplete != nil {
+		return *x.SetupComplete
+	}
+	return false
 }
 
 func (x *AppConfig) GetDefaultLocale() string {
@@ -223,6 +231,10 @@ func (x *AppConfig) SetVersion(v string) {
 	x.Version = v
 }
 
+func (x *AppConfig) SetSetupComplete(v bool) {
+	x.SetupComplete = &v
+}
+
 func (x *AppConfig) SetDefaultLocale(v string) {
 	x.DefaultLocale = v
 }
@@ -273,6 +285,13 @@ func (x *AppConfig) SetLivemap(v *Livemap) {
 
 func (x *AppConfig) SetGame(v *Game) {
 	x.Game = v
+}
+
+func (x *AppConfig) HasSetupComplete() bool {
+	if x == nil {
+		return false
+	}
+	return x.SetupComplete != nil
 }
 
 func (x *AppConfig) HasAuth() bool {
@@ -359,6 +378,10 @@ func (x *AppConfig) HasGame() bool {
 	return x.Game != nil
 }
 
+func (x *AppConfig) ClearSetupComplete() {
+	x.SetupComplete = nil
+}
+
 func (x *AppConfig) ClearAuth() {
 	x.Auth = nil
 }
@@ -411,6 +434,7 @@ type AppConfig_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Version       string
+	SetupComplete *bool
 	DefaultLocale string
 	Auth          *Auth
 	Perms         *Perms
@@ -431,6 +455,7 @@ func (b0 AppConfig_builder) Build() *AppConfig {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.Version = b.Version
+	x.SetupComplete = b.SetupComplete
 	x.DefaultLocale = b.DefaultLocale
 	x.Auth = b.Auth
 	x.Perms = b.Perms
@@ -2229,9 +2254,10 @@ var File_resources_settings_config_proto protoreflect.FileDescriptor
 
 const file_resources_settings_config_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xe4\x05\n" +
+	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xa3\x06\n" +
 	"\tAppConfig\x12\x18\n" +
-	"\aversion\x18\x01 \x01(\tR\aversion\x12%\n" +
+	"\aversion\x18\x01 \x01(\tR\aversion\x12*\n" +
+	"\x0esetup_complete\x18\x0f \x01(\bH\x00R\rsetupComplete\x88\x01\x01\x12%\n" +
 	"\x0edefault_locale\x18\b \x01(\tR\rdefaultLocale\x12,\n" +
 	"\x04auth\x18\x02 \x01(\v2\x18.resources.settings.AuthR\x04auth\x12/\n" +
 	"\x05perms\x18\x03 \x01(\v2\x19.resources.settings.PermsR\x05perms\x125\n" +
@@ -2245,7 +2271,8 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsR\fquickButtons\x12,\n" +
 	"\x04data\x18\f \x01(\v2\x18.resources.settings.DataR\x04data\x125\n" +
 	"\alivemap\x18\r \x01(\v2\x1b.resources.settings.LivemapR\alivemap\x12,\n" +
-	"\x04game\x18\x0e \x01(\v2\x18.resources.settings.GameR\x04game:\b\xe2\xf3\x18\x04\b\x01\x18\x01\"\x83\x02\n" +
+	"\x04game\x18\x0e \x01(\v2\x18.resources.settings.GameR\x04game:\b\xe2\xf3\x18\x04\b\x01\x18\x01B\x11\n" +
+	"\x0f_setup_complete\"\x83\x02\n" +
 	"\x04Auth\x12%\n" +
 	"\x0esignup_enabled\x18\x01 \x01(\bR\rsignupEnabled\x12$\n" +
 	"\x0elast_char_lock\x18\x02 \x01(\bR\flastCharLock\x12(\n" +
@@ -2418,6 +2445,7 @@ func file_resources_settings_config_proto_init() {
 	}
 	file_resources_settings_banner_proto_init()
 	file_resources_settings_data_proto_init()
+	file_resources_settings_config_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[5].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[9].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[10].OneofWrappers = []any{}

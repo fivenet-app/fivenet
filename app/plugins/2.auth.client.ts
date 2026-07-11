@@ -12,8 +12,23 @@ export default defineNuxtPlugin({
             const result = await $appConfigPromise;
             if (result === undefined) return;
 
+            const appConfig = useAppConfig();
             const authStore = useAuthStore();
             const { can, activeChar, username } = useAuth();
+            const isSetupRoute = to.path.startsWith('/settings/setup');
+            const wantsSetupRedirect = async (): Promise<boolean> => {
+                if (isSetupRoute || appConfig.setupComplete !== false) return false;
+
+                if (can('internal.Superuser/ConfigAdmin').value) return true;
+
+                try {
+                    await authStore.refreshAccountSession();
+                } catch (_) {
+                    // Ignore refresh failures here; the caller decides the fallback route.
+                }
+
+                return can('internal.Superuser/ConfigAdmin').value;
+            };
 
             // Default is that a page requires authentication, but if it doesn't exit quickly
             if (to.meta.requiresAuth === false) {
@@ -34,13 +49,20 @@ export default defineNuxtPlugin({
             // Auth token is not null and only needed by route
             if (to.meta.authTokenOnly && username.value !== null) {
                 if (activeChar.value === null) {
-                    (async () => {
+                    if (authStore.lastCharID !== undefined && authStore.lastCharID > 0) {
                         try {
                             await authStore.chooseCharacter(authStore.lastCharID, false);
                         } catch (_) {
-                            // Ignore errors here, as we just want to try and choose the last char of the user if possible
+                            // Ignore errors here; we only want to restore the last known character if possible.
                         }
-                    })();
+                    }
+                }
+
+                if (await wantsSetupRedirect()) {
+                    return navigateTo({
+                        path: '/settings/setup',
+                        query: { redirect: getRedirectPath((to.query.redirect ?? to.fullPath) as string) },
+                    });
                 }
 
                 return true;
@@ -58,6 +80,13 @@ export default defineNuxtPlugin({
                         try {
                             await authStore.chooseCharacter(authStore.lastCharID);
 
+                            if (await wantsSetupRedirect()) {
+                                return navigateTo({
+                                    path: '/settings/setup',
+                                    query: { redirect },
+                                });
+                            }
+
                             const url = parseRedirectURL(redirect);
                             // @ts-expect-error route should be valid, as we test it against a valid list of URLs
                             return await navigateTo({
@@ -70,6 +99,13 @@ export default defineNuxtPlugin({
                             setPermissions([], []);
                             setJobProps(undefined);
 
+                            if (await wantsSetupRedirect()) {
+                                return navigateTo({
+                                    path: '/settings/setup',
+                                    query: { redirect },
+                                });
+                            }
+
                             return navigateTo({
                                 name: 'auth-character-selector',
                                 query: { redirect: redirect },
@@ -78,12 +114,25 @@ export default defineNuxtPlugin({
                     }
 
                     if (activeChar.value === null) {
-                        // Only update the redirect query param if it isn't set already
+                        if (await wantsSetupRedirect()) {
+                            return navigateTo({
+                                path: '/settings/setup',
+                                query: { redirect },
+                            });
+                        }
+
                         return navigateTo({
                             name: 'auth-character-selector',
                             query: { redirect: redirect },
                         });
                     }
+                }
+
+                if (await wantsSetupRedirect()) {
+                    return navigateTo({
+                        path: '/settings/setup',
+                        query: { redirect },
+                    });
                 }
 
                 // No route permission check needed, so we can go ahead and return true

@@ -83,7 +83,7 @@ func (s *Server) UpdateAppConfig(
 	clientCfg := clientconfig.BuildClientConfig(
 		s.cfg,
 		clientconfig.BuildProviderList(s.cfg),
-		s.appCfg.Get(),
+		config,
 	)
 
 	s.notifi.SendSystemEvent(ctx, &notificationsevents.SystemEvent{

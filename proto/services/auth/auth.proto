@@ -143,6 +143,15 @@ message GetAccountInfoResponse {
   repeated resources.accounts.oauth2.OAuth2Account oauth2_connections = 3;
 }
 
+message RefreshAccountSessionRequest {}
+
+message RefreshAccountSessionResponse {
+  resources.timestamp.Timestamp expires = 1;
+  int64 account_id = 2;
+  string username = 3;
+  bool can_be_config_admin = 4;
+}
+
 message GetCharactersRequest {}
 
 message GetCharactersResponse {
@@ -242,6 +251,7 @@ service AuthService {
   }
 
   rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);
+  rpc RefreshAccountSession(RefreshAccountSessionRequest) returns (RefreshAccountSessionResponse);
 
   rpc DeleteSocialLogin(DeleteSocialLoginRequest) returns (DeleteSocialLoginResponse);
 

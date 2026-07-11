@@ -57,6 +57,7 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
                           {
                               variant: 'solid',
                               color: 'neutral',
+                              icon: 'i-mdi-refresh',
                               label: retryMessage ?? $t('common.retry'),
                               disabled: disabled,
                               onClick: async () => {

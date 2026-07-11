@@ -23,6 +23,10 @@ export interface AppConfig {
      */
     version: string;
     /**
+     * @generated from protobuf field: optional bool setup_complete = 15
+     */
+    setupComplete?: boolean;
+    /**
      * @generated from protobuf field: string default_locale = 8
      */
     defaultLocale: string;
@@ -403,6 +407,7 @@ class AppConfig$Type extends MessageType<AppConfig> {
     constructor() {
         super("resources.settings.AppConfig", [
             { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "100" } } } },
+            { no: 15, name: "setup_complete", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "default_locale", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 2, name: "auth", kind: "message", T: () => Auth },
             { no: 3, name: "perms", kind: "message", T: () => Perms },
@@ -433,6 +438,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
             switch (fieldNo) {
                 case /* string version */ 1:
                     message.version = reader.string();
+                    break;
+                case /* optional bool setup_complete */ 15:
+                    message.setupComplete = reader.bool();
                     break;
                 case /* string default_locale */ 8:
                     message.defaultLocale = reader.string();
@@ -527,6 +535,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.settings.Game game = 14; */
         if (message.game)
             Game.internalBinaryWrite(message.game, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool setup_complete = 15; */
+        if (message.setupComplete !== undefined)
+            writer.tag(15, WireType.Varint).bool(message.setupComplete);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
