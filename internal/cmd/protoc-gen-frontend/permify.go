@@ -38,6 +38,19 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 // Name satisfies the generator.Plugin interface.
 func (p *PermifyModule) Name() string { return "permify" }
 
+func qualifyService(namespace string, service string) string {
+	if namespace == "" || service == "" || strings.Contains(service, ".") {
+		return service
+	}
+
+	return namespace + "." + service
+}
+
+func shortServiceName(service string) string {
+	split := strings.Split(service, ".")
+	return split[len(split)-1]
+}
+
 func (p *PermifyModule) Execute(
 	targets map[string]pgs.File,
 	pkgs map[string]pgs.Package,
@@ -73,7 +86,10 @@ func (p *PermifyModule) Execute(
 			data.FS = append(data.FS, f)
 
 			for _, s := range f.Services() {
-				svcName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
+				actualSvcKey := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
+				actualSvcSplit := strings.Split(actualSvcKey, ".")
+				actualNamespace := strings.Join(actualSvcSplit[:len(actualSvcSplit)-1], ".")
+				actualSvcName := actualSvcSplit[len(actualSvcSplit)-1]
 
 				var serviceOpts permspb.ServiceOptions
 				_, err := s.Extension(permspb.E_PermsSvc, &serviceOpts)
@@ -81,14 +97,26 @@ func (p *PermifyModule) Execute(
 					p.Fail("error reading perms option:", err)
 				}
 
+				permNamespace := actualNamespace
+				if serviceOpts.GetNamespace() != "" {
+					permNamespace = *serviceOpts.Namespace
+				}
+
+				permSvcKey := actualSvcKey
+				permSvcName := actualSvcName
+				if serviceOpts.GetService() != "" {
+					permSvcKey = qualifyService(permNamespace, *serviceOpts.Service)
+					permSvcName = shortServiceName(permSvcKey)
+				}
+
 				for _, v := range serviceOpts.AdditionalPerms {
-					if _, ok := data.Permissions[svcName]; !ok {
-						data.Permissions[svcName] = map[string]*Perm{}
+					if _, ok := data.Permissions[permSvcKey]; !ok {
+						data.Permissions[permSvcKey] = map[string]*Perm{}
 					}
 
 					perm := &Perm{
 						Name:    v.Name,
-						Service: &svcName,
+						Service: &permSvcName,
 						Attrs:   make([]Attr, len(v.Attrs)),
 					}
 
@@ -112,12 +140,15 @@ func (p *PermifyModule) Execute(
 						}
 					}
 
-					data.Permissions[svcName][perm.Name] = perm
+					data.Permissions[permSvcKey][perm.Name] = perm
 				}
 			}
 
 			for _, s := range f.Services() {
-				sName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
+				actualSvcKey := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
+				actualSvcSplit := strings.Split(actualSvcKey, ".")
+				actualNamespace := strings.Join(actualSvcSplit[:len(actualSvcSplit)-1], ".")
+				actualSvcName := actualSvcSplit[len(actualSvcSplit)-1]
 
 				var serviceOpts permspb.ServiceOptions
 				_, err := s.Extension(permspb.E_PermsSvc, &serviceOpts)
@@ -125,7 +156,19 @@ func (p *PermifyModule) Execute(
 					p.Fail("error reading perms option:", err)
 				}
 
-				p.Debugf("Service: %s", sName)
+				p.Debugf("Service: %s", actualSvcName)
+
+				permNamespace := actualNamespace
+				if serviceOpts.GetNamespace() != "" {
+					permNamespace = *serviceOpts.Namespace
+				}
+
+				permSvcKey := actualSvcKey
+				permSvcName := actualSvcName
+				if serviceOpts.GetService() != "" {
+					permSvcKey = qualifyService(permNamespace, *serviceOpts.Service)
+					permSvcName = shortServiceName(permSvcKey)
+				}
 
 				for _, m := range s.Methods() {
 					mName := string(m.Name())
@@ -138,30 +181,26 @@ func (p *PermifyModule) Execute(
 						p.Fail("error reading perms option:", err)
 					}
 
-					var perm *Perm
 					if !ok {
 						continue
 					}
 
 					if !val.Enabled {
-						p.Fail("perms option not enabled for method:", sName, mName)
+						p.Fail("perms option not enabled for method:", actualSvcKey, mName)
 						continue
 					}
 					if val.GetInternal() {
 						continue
 					}
 
-					perm = &Perm{
-						Name: mName,
-					}
-					if val.Name != nil && *val.Name != "" {
-						perm.Name = *val.Name
-					}
-					if val.Service != nil && *val.Service != "" {
-						perm.Service = val.Service
+					permName := mName
+					if len(val.Names) > 0 {
+						permName = val.Names[0]
+					} else if val.Name != nil && *val.Name != "" {
+						permName = *val.Name
 					}
 
-					perm.Attrs = make([]Attr, len(val.Attrs))
+					attrs := make([]Attr, len(val.Attrs))
 					for i, a := range val.Attrs {
 						atype := "StringList"
 						kind := "stringList"
@@ -174,7 +213,7 @@ func (p *PermifyModule) Execute(
 							kind = "jobGradeList"
 						}
 
-						perm.Attrs[i] = Attr{
+						attrs[i] = Attr{
 							Key:    a.Key,
 							Type:   atype,
 							Kind:   kind,
@@ -182,19 +221,30 @@ func (p *PermifyModule) Execute(
 						}
 					}
 
-					if perm.Name != mName {
+					if permName == "ConfigAdmin" || permName == "JobAdmin" || permName == "Any" {
 						continue
 					}
 
-					if perm.Name == "ConfigAdmin" || perm.Name == "JobAdmin" || perm.Name == "Any" {
-						continue
+					perm := &Perm{
+						Name:  permName,
+						Attrs: slices.Clone(attrs),
 					}
+					methodNamespace := permNamespace
+					methodServiceName := permSvcName
+					if val.GetNamespace() != "" {
+						methodNamespace = *val.Namespace
+					}
+					if val.GetService() != "" {
+						methodServiceName = shortServiceName(qualifyService(methodNamespace, *val.Service))
+					}
+					methodServiceKey := qualifyService(methodNamespace, methodServiceName)
+					perm.Service = &methodServiceName
 
-					if _, ok := data.Permissions[sName]; !ok {
-						data.Permissions[sName] = map[string]*Perm{}
+					if _, ok := data.Permissions[methodServiceKey]; !ok {
+						data.Permissions[methodServiceKey] = map[string]*Perm{}
 					}
-					if _, ok := data.Permissions[sName][perm.Name]; !ok {
-						data.Permissions[sName][perm.Name] = perm
+					if _, ok := data.Permissions[methodServiceKey][perm.Name]; !ok {
+						data.Permissions[methodServiceKey][perm.Name] = perm
 						p.Debugf("Permission added: %q - %+v\n", mName, perm)
 					} else {
 						p.Debugf("Permission already in list: %q - %+v\n", mName, perm)

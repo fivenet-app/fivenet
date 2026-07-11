@@ -104,7 +104,6 @@ export type GRPCServicePerms =
 	| 'jobs.ConductService/DeleteConductEntry'
 	| 'jobs.ConductService/ListConductEntries'
 	| 'jobs.ConductService/UpdateConductEntry'
-	| 'jobs.ConductService/UploadFile'
 	| 'jobs.JobsService/SetMOTD'
 	| 'jobs.StatsService/GetStats'
 	| 'jobs.TimeclockService/ListInactiveEmployees'
@@ -134,8 +133,7 @@ export type GRPCServicePerms =
 	| 'wiki.WikiService/ListPageActivity'
 	| 'wiki.WikiService/ListPages'
 	| 'wiki.WikiService/MovePage'
-	| 'wiki.WikiService/UpdatePage'
-	| 'wiki.WikiService/UploadFile';
+	| 'wiki.WikiService/UpdatePage';
 
 export const GRPCServices = [
 	'auth.AuthService',
@@ -223,7 +221,6 @@ export const GRPCServiceMethods = [
 	'jobs.ConductService/DeleteConductEntry',
 	'jobs.ConductService/ListConductEntries',
 	'jobs.ConductService/UpdateConductEntry',
-	'jobs.ConductService/UploadFile',
 	'jobs.JobsService/SetMOTD',
 	'jobs.StatsService/GetStats',
 	'jobs.TimeclockService/ListInactiveEmployees',
@@ -254,7 +251,6 @@ export const GRPCServiceMethods = [
 	'wiki.WikiService/ListPages',
 	'wiki.WikiService/MovePage',
 	'wiki.WikiService/UpdatePage',
-	'wiki.WikiService/UploadFile',
 ];
 
 export const PermAttributes = {
@@ -387,10 +383,6 @@ export const PermAttributes = {
 		},
 	},
 	'documents.DocumentsService/UpdateDocument': {
-		'Access': {
-			type: 'stringList',
-			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
-		},
 	},
 	'documents.StampsService/DeleteStamp': {
 	},
@@ -455,8 +447,6 @@ export const PermAttributes = {
 	},
 	'jobs.ConductService/UpdateConductEntry': {
 	},
-	'jobs.ConductService/UploadFile': {
-	},
 	'jobs.JobsService/SetMOTD': {
 	},
 	'jobs.StatsService/GetStats': {
@@ -508,14 +498,6 @@ export const PermAttributes = {
 	'qualifications.QualificationsService/ListQualifications': {
 	},
 	'qualifications.QualificationsService/UpdateQualification': {
-		'Access': {
-			type: 'stringList',
-			values: ['Own','Lower_Rank','Same_Rank','Any',] as const,
-		},
-		'Fields': {
-			type: 'stringList',
-			values: ['Public',] as const,
-		},
 	},
 	'settings.LawsService/CreateOrUpdateLawBook': {
 	},
@@ -558,12 +540,6 @@ export const PermAttributes = {
 	'wiki.WikiService/MovePage': {
 	},
 	'wiki.WikiService/UpdatePage': {
-		'Fields': {
-			type: 'stringList',
-			values: ['Public',] as const,
-		},
-	},
-	'wiki.WikiService/UploadFile': {
 	},
 } as const;
 

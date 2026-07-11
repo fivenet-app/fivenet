@@ -17,7 +17,6 @@ definePageMeta({
         'jobs.ConductService/DeleteConductEntry',
         'jobs.ConductService/ListConductEntries',
         'jobs.ConductService/UpdateConductEntry',
-        'jobs.ConductService/UploadFile',
         'jobs.ColleaguesService/GetColleague',
         'jobs.ColleaguesService/ListColleagueActivity',
         'jobs.ColleaguesService/ListColleagues',
