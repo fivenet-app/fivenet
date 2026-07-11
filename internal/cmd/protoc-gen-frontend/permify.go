@@ -51,6 +51,28 @@ func shortServiceName(service string) string {
 	return split[len(split)-1]
 }
 
+func mergeAttrsUnique(existing []Attr, extra []Attr) []Attr {
+	if len(extra) == 0 {
+		return existing
+	}
+
+	out := slices.Clone(existing)
+	for _, candidate := range extra {
+		dup := false
+		for i := range out {
+			if out[i].Key == candidate.Key && out[i].Type == candidate.Type {
+				dup = true
+				break
+			}
+		}
+		if !dup {
+			out = append(out, candidate)
+		}
+	}
+
+	return out
+}
+
 func (p *PermifyModule) Execute(
 	targets map[string]pgs.File,
 	pkgs map[string]pgs.Package,
@@ -140,7 +162,11 @@ func (p *PermifyModule) Execute(
 						}
 					}
 
-					data.Permissions[permSvcKey][perm.Name] = perm
+					if existing, ok := data.Permissions[permSvcKey][perm.Name]; !ok {
+						data.Permissions[permSvcKey][perm.Name] = perm
+					} else {
+						existing.Attrs = mergeAttrsUnique(existing.Attrs, perm.Attrs)
+					}
 				}
 			}
 
@@ -248,6 +274,12 @@ func (p *PermifyModule) Execute(
 						p.Debugf("Permission added: %q - %+v\n", mName, perm)
 					} else {
 						p.Debugf("Permission already in list: %q - %+v\n", mName, perm)
+						if len(perm.Attrs) > 0 {
+							data.Permissions[methodServiceKey][perm.Name].Attrs = mergeAttrsUnique(
+								data.Permissions[methodServiceKey][perm.Name].Attrs,
+								perm.Attrs,
+							)
+						}
 					}
 				}
 			}
