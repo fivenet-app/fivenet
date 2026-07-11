@@ -327,8 +327,12 @@ async function saveAppConfig(values: Schema): Promise<void> {
             await refresh();
         }
 
-        const clientConfig = await $reloadConfigFromServer();
-        $applyClientConfig(clientConfig);
+        useAppConfig().setupComplete = config.value?.config?.setupComplete ?? true;
+        void $reloadConfigFromServer()
+            .then($applyClientConfig)
+            .catch((err) => {
+                console.warn('Failed to refresh client config after setup', err);
+            });
 
         await navigateTo(redirectTarget.value);
     } catch (e) {

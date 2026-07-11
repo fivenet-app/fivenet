@@ -319,7 +319,8 @@ export const useNotificationsStore = defineStore(
                     } else if (resp.data.oneofKind === 'systemEvent') {
                         if (resp.data.systemEvent.data.oneofKind === 'clientConfig') {
                             logger.info('Client config update received');
-                            updateAppConfig({ ...resp.data.systemEvent.data.clientConfig });
+                            const { $applyClientConfig } = useNuxtApp();
+                            $applyClientConfig(resp.data.systemEvent.data.clientConfig);
                         } else {
                             logger.warn('Unknown systemEvent event data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }
