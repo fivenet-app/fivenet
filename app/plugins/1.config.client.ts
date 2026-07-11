@@ -43,6 +43,7 @@ export default defineNuxtPlugin({
         return {
             provide: {
                 appConfigPromise: appConfigPromise,
+                reloadConfigFromServer: loadConfig,
             },
         };
     },

@@ -30,6 +30,8 @@ const { t, locales } = useI18n();
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
+const { $reloadConfigFromServer } = useNuxtApp();
+
 type SetupStep = 'access' | 'locale' | 'site' | 'review';
 
 const setupStepValues: SetupStep[] = ['locale', 'access', 'site', 'review'];
@@ -258,7 +260,7 @@ function setSettingsValues(): void {
 
 watch(config, () => setSettingsValues(), { immediate: true });
 
-async function updateAppConfig(values: Schema): Promise<void> {
+async function saveAppConfig(values: Schema): Promise<void> {
     if (!config.value?.config) return;
 
     config.value.config.setupComplete = true;
@@ -322,6 +324,9 @@ async function updateAppConfig(values: Schema): Promise<void> {
             await refresh();
         }
 
+        await $reloadConfigFromServer();
+        useAppConfig().setupComplete = true;
+
         await navigateTo(redirectTarget.value);
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -334,7 +339,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     isSubmitting.value = true;
 
-    await updateAppConfig(event.data).finally(() =>
+    await saveAppConfig(event.data).finally(() =>
         useTimeoutFn(() => {
             canSubmit.value = true;
             isSubmitting.value = false;

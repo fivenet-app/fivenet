@@ -115,10 +115,6 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 		return s.auth.GRPCAuthFunc(ctx, fullMethod)
 	}
 
-	if fullMethod == "/services.auth.AuthService/RefreshAccountSession" {
-		return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
-	}
-
 	return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
 }
 
