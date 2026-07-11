@@ -137,7 +137,10 @@ func (t *TokenMgr) ParseCombinedToken(tokenString string) (*authclaims.CombinedC
 	return nil, errors.New("failed to parse user token claims")
 }
 
-func MapAccountToClaims(account *accounts.Account, canBeSuperuser bool) *authclaims.AccountInfoClaims {
+func MapAccountToClaims(
+	account *accounts.Account,
+	canBeSuperuser bool,
+) *authclaims.AccountInfoClaims {
 	accClaims := &authclaims.AccountInfoClaims{
 		AccID:          account.GetId(),
 		Username:       account.GetUsername(),

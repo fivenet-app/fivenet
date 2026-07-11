@@ -28,31 +28,61 @@ type refreshAccountSessionStore struct {
 	account *model.FivenetAccounts
 }
 
-func (s *refreshAccountSessionStore) GetAccountByID(_ context.Context, _ int64, _ bool) (*model.FivenetAccounts, error) {
+func (s *refreshAccountSessionStore) GetAccountByID(
+	_ context.Context,
+	_ int64,
+	_ bool,
+) (*model.FivenetAccounts, error) {
 	return s.account, nil
 }
 
-func (s *refreshAccountSessionStore) GetAccountByUsername(_ context.Context, _ string, _ bool) (*model.FivenetAccounts, error) {
+func (s *refreshAccountSessionStore) GetAccountByUsername(
+	_ context.Context,
+	_ string,
+	_ bool,
+) (*model.FivenetAccounts, error) {
 	return nil, errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) GetLoginAccountByUsername(_ context.Context, _ string) (*model.FivenetAccounts, error) {
+func (s *refreshAccountSessionStore) GetLoginAccountByUsername(
+	_ context.Context,
+	_ string,
+) (*model.FivenetAccounts, error) {
 	return nil, errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) GetAccountByIDAndUsername(_ context.Context, _ int64, _ string, _ bool) (*model.FivenetAccounts, error) {
+func (s *refreshAccountSessionStore) GetAccountByIDAndUsername(
+	_ context.Context,
+	_ int64,
+	_ string,
+	_ bool,
+) (*model.FivenetAccounts, error) {
 	return nil, errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) GetAccountByRegToken(_ context.Context, _ string, _ bool) (*model.FivenetAccounts, error) {
+func (s *refreshAccountSessionStore) GetAccountByRegToken(
+	_ context.Context,
+	_ string,
+	_ bool,
+) (*model.FivenetAccounts, error) {
 	return nil, errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) GetNewAccountByRegToken(_ context.Context, _ string) (*model.FivenetAccounts, error) {
+func (s *refreshAccountSessionStore) GetNewAccountByRegToken(
+	_ context.Context,
+	_ string,
+) (*model.FivenetAccounts, error) {
 	return nil, errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) ActivateAccount(_ context.Context, _ int64, _ string, _ string, _ string, _ string) error {
+func (s *refreshAccountSessionStore) ActivateAccount(
+	_ context.Context,
+	_ int64,
+	_ string,
+	_ string,
+	_ string,
+	_ string,
+) error {
 	return errors.New("unexpected call")
 }
 
@@ -68,19 +98,32 @@ func (s *refreshAccountSessionStore) ForgotPassword(_ context.Context, _ int64, 
 	return errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) ListCharacters(_ context.Context, _ int64, _ string) ([]*accounts.Character, error) {
+func (s *refreshAccountSessionStore) ListCharacters(
+	_ context.Context,
+	_ int64,
+	_ string,
+) ([]*accounts.Character, error) {
 	return nil, errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) GetCharacter(_ context.Context, _ int32) (*users.User, *jobsprops.JobProps, error) {
+func (s *refreshAccountSessionStore) GetCharacter(
+	_ context.Context,
+	_ int32,
+) (*users.User, *jobsprops.JobProps, error) {
 	return nil, nil, errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) GetJobWithProps(_ context.Context, _ string) (*jobs.Job, int32, *jobsprops.JobProps, error) {
+func (s *refreshAccountSessionStore) GetJobWithProps(
+	_ context.Context,
+	_ string,
+) (*jobs.Job, int32, *jobsprops.JobProps, error) {
 	return nil, 0, nil, errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) ListOAuth2Connections(_ context.Context, _ int64) ([]*accountsoauth2.OAuth2Account, error) {
+func (s *refreshAccountSessionStore) ListOAuth2Connections(
+	_ context.Context,
+	_ int64,
+) ([]*accountsoauth2.OAuth2Account, error) {
 	return nil, errors.New("unexpected call")
 }
 
@@ -147,7 +190,6 @@ func TestRefreshAccountSession(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
@@ -160,9 +202,11 @@ func TestRefreshAccountSession(t *testing.T) {
 			}
 
 			srv := &Server{
-				tm:                auth.NewTokenMgr("test-secret"),
-				store:             store,
-				appCfg:            appconfig.NewTest(appconfig.TestParams{LC: fxtest.NewLifecycle(t)}),
+				tm:    auth.NewTokenMgr("test-secret"),
+				store: store,
+				appCfg: appconfig.NewTest(
+					appconfig.TestParams{LC: fxtest.NewLifecycle(t)},
+				),
 				configAdminUsers:  []string{tt.configAdminUser},
 				configAdminGroups: nil,
 				jobAdminGroups:    nil,
@@ -178,7 +222,8 @@ func TestRefreshAccountSession(t *testing.T) {
 			token, err := srv.tm.FromAccClaims(claims)
 			require.NoError(t, err)
 
-			incoming := grpcmd.MD(metadata.Pairs("cookie", auth.AccCookieName+"="+token)).ToIncoming(t.Context())
+			incoming := grpcmd.MD(metadata.Pairs("cookie", auth.AccCookieName+"="+token)).
+				ToIncoming(t.Context())
 			stream := &fakeTransportStream{}
 			ctx := grpc.NewContextWithServerTransportStream(incoming, stream)
 

@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { webSocket } from '~/composables/grpcws/bridge';
+import { isSetupBypassRoute } from '~/composables/setup';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { JobProps } from '~~/gen/ts/resources/jobs/props/props';
@@ -297,7 +298,8 @@ export const useAuthStore = defineStore(
                     if (
                         appConfig.setupComplete === false &&
                         refreshResp?.canBeConfigAdmin &&
-                        route.path !== '/settings/setup'
+                        route.path !== '/settings/setup' &&
+                        !isSetupBypassRoute(route.path)
                     ) {
                         await navigateTo({
                             path: '/settings/setup',
@@ -477,20 +479,16 @@ export const useAuthStore = defineStore(
         const refreshAccountSession = async (): Promise<RefreshAccountSessionResponse | null> => {
             const authAuthClient = await getAuthAuthClient();
 
-            try {
-                const call = authAuthClient.refreshAccountSession({});
-                const { response } = await call;
+            const call = authAuthClient.refreshAccountSession({});
+            const { response } = await call;
 
-                accountId.value = response.accountId;
-                setAccountCanBeConfigAdmin(response.canBeConfigAdmin);
-                if (username.value === null && response.username) {
-                    setUsername(response.username, false);
-                }
-
-                return response;
-            } catch (e) {
-                throw e;
+            accountId.value = response.accountId;
+            setAccountCanBeConfigAdmin(response.canBeConfigAdmin);
+            if (username.value === null && response.username) {
+                setUsername(response.username, false);
             }
+
+            return response;
         };
 
         // Getters

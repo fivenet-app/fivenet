@@ -13,13 +13,16 @@ func (s *Store) UpdateAppConfig(ctx context.Context, cfg *settings.AppConfig) er
 	stmt := tConfig.
 		INSERT(
 			tConfig.Key,
+			tConfig.SetupComplete,
 			tConfig.AppConfig,
 		).
 		VALUES(
 			1,
+			1,
 			cfg,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
+			tConfig.SetupComplete.SET(mysql.Bool(true)),
 			tConfig.AppConfig.SET(mysql.RawString("VALUES(`app_config`)")),
 		)
 

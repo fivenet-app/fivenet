@@ -81,6 +81,8 @@ func cloneRoundTripMarker(marker *livemapmarkers.MarkerMarker) *livemapmarkers.M
 }
 
 func TestAddMarkerPreservesPublicFlag(t *testing.T) {
+	t.Parallel()
+
 	store := &roundTripMarkerStore{}
 	srv := &Store{livemapStore: store}
 
@@ -107,6 +109,8 @@ func TestAddMarkerPreservesPublicFlag(t *testing.T) {
 }
 
 func TestAddMarkerAllowsNilCreatorID(t *testing.T) {
+	t.Parallel()
+
 	store := &roundTripMarkerStore{}
 	srv := &Store{livemapStore: store}
 

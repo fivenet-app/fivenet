@@ -96,7 +96,10 @@ func (s *Server) RefreshAccountSession(
 
 	responseClaims := claims
 	if claims.ExpiresAt != nil && time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
-		responseClaims = auth.MapAccountToClaims(account, s.canAccountBeSuperuser(account.GetGroups(), account.GetLicense()))
+		responseClaims = auth.MapAccountToClaims(
+			account,
+			s.canAccountBeSuperuser(account.GetGroups(), account.GetLicense()),
+		)
 		if err := s.setCookies(ctx, responseClaims); err != nil {
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 		}

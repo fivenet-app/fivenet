@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 defineProps<{
     collapsed?: boolean;
+    hideNotifications?: boolean;
 }>();
 
 const { isNotificationSlideoverOpen } = useDashboard();
@@ -43,7 +44,7 @@ const version = APP_VERSION;
         </UButton>
     </UTooltip>
 
-    <UTooltip v-if="!collapsed" :text="$t('components.partials.sidebar_notifications')" :kbds="['B']">
+    <UTooltip v-if="!collapsed && !hideNotifications" :text="$t('components.partials.sidebar_notifications')" :kbds="['B']">
         <UChip
             :show="notificationsCount > 0"
             color="error"
@@ -62,7 +63,7 @@ const version = APP_VERSION;
                           ? 'i-mdi-notifications-none'
                           : 'i-mdi-notifications'
                 "
-                @click="isNotificationSlideoverOpen = true"
+                @click="() => (isNotificationSlideoverOpen = true)"
             />
         </UChip>
     </UTooltip>

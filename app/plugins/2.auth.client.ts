@@ -1,5 +1,6 @@
 import { titleCase } from 'scule';
 import { parseQuery, type RouteLocationNormalized } from 'vue-router';
+import { isSetupBypassRoute } from '~/composables/setup';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export default defineNuxtPlugin({
@@ -16,18 +17,31 @@ export default defineNuxtPlugin({
             const authStore = useAuthStore();
             const { can, activeChar, username } = useAuth();
             const isSetupRoute = to.path.startsWith('/settings/setup');
-            const wantsSetupRedirect = async (): Promise<boolean> => {
-                if (isSetupRoute || appConfig.setupComplete !== false) return false;
 
+            const hasConfigAdminAccess = async (): Promise<boolean> => {
                 if (can('internal.Superuser/ConfigAdmin').value) return true;
 
                 try {
                     await authStore.refreshAccountSession();
                 } catch (_) {
-                    // Ignore refresh failures here; the caller decides the fallback route.
+                    // Ignore refresh failures here; we only need the latest permission state if possible.
                 }
 
                 return can('internal.Superuser/ConfigAdmin').value;
+            };
+
+            if (isSetupRoute && appConfig.setupComplete !== false) {
+                if (await hasConfigAdminAccess()) return true;
+
+                return navigateTo({
+                    name: 'overview',
+                });
+            }
+
+            const wantsSetupRedirect = async (): Promise<boolean> => {
+                if (isSetupRoute || isSetupBypassRoute(to.path) || appConfig.setupComplete !== false) return false;
+
+                return hasConfigAdminAccess();
             };
 
             // Default is that a page requires authentication, but if it doesn't exit quickly

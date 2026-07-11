@@ -2,8 +2,9 @@
 import type { DropdownMenuItem } from '@nuxt/ui';
 import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
 
-defineProps<{
+const props = defineProps<{
     collapsed?: boolean;
+    hideUserMenus?: boolean;
 }>();
 
 const { activeChar, username } = useAuth();
@@ -30,17 +31,21 @@ const items = computed<DropdownMenuItem[][]>(() => [
             icon: 'i-mdi-account-details-outline',
             to: '/auth/account-info',
         },
-        {
-            label: t('components.auth.user_settings.title'),
-            icon: 'i-mdi-account-cog-outline',
-            to: '/user-settings',
-        },
-        {
-            label: t('common.commandpalette'),
-            icon: 'i-mdi-terminal',
-            kbds: ['CTRL', 'K'],
-            onClick: () => (isCommandSearchOpen.value = true),
-        },
+        !props.hideUserMenus
+            ? {
+                  label: t('components.auth.user_settings.title'),
+                  icon: 'i-mdi-account-cog-outline',
+                  to: '/user-settings',
+              }
+            : undefined,
+        !props.hideUserMenus
+            ? {
+                  label: t('common.commandpalette'),
+                  icon: 'i-mdi-terminal',
+                  kbds: ['CTRL', 'K'],
+                  onClick: () => (isCommandSearchOpen.value = true),
+              }
+            : undefined,
         {
             label: t('components.language_switcher.title'),
             icon: 'i-mdi-translate',

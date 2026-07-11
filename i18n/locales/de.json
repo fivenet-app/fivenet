@@ -252,6 +252,88 @@
             },
             "jobs": {
                 "title": "Berufe"
+            },
+            "setup": {
+                "eyebrow": "Ersteinrichtung",
+                "title": "FiveNet für die erste Nutzung vorbereiten",
+                "subtitle": "Nutze diesen Assistenten, um die wichtigen Grundeinstellungen festzulegen, bevor die Instanz stark genutzt wird.",
+                "step_indicator": "Schritt {0} von {1}",
+                "footer": "Dieser Ablauf konzentriert sich auf die wichtigsten Punkte vor Beginn der regulären Nutzung. Erweiterte Feineinstellungen können nach Abschluss des Setups vorgenommen werden.",
+                "steps": {
+                    "access": {
+                        "title": "Zugriff",
+                        "description": "Lege fest, wer die Instanz verwalten darf, Standard-Berechtigungen und ob sich neue Benutzer registrieren dürfen."
+                    },
+                    "locale": {
+                        "title": "Sprache",
+                        "description": "Setze die Standards für Sprache und Formatierung, die neue Benutzer zuerst sehen."
+                    },
+                    "site": {
+                        "title": "Berufe und Seite",
+                        "description": "Ordne die zentralen Job-Daten und die öffentlichen Seiten zu."
+                    },
+                    "review": {
+                        "title": "Prüfen",
+                        "description": "Kontrolliere die Basis noch einmal, bevor die reguläre Nutzung beginnt."
+                    }
+                },
+                "cards": {
+                    "access": {
+                        "admins": {
+                            "title": "Konfigurations-Admins",
+                            "description": "Wähle die Benutzer und Gruppen aus, die die erste Konfiguration fortsetzen und später die Einstellungen verwalten dürfen."
+                        },
+                        "policy": {
+                            "title": "Registrierungsrichtlinie",
+                            "description": "Lege fest, ob neue Konten sich sofort registrieren dürfen oder ob der Zugriff kontrolliert bleiben soll."
+                        },
+                        "perms": {
+                            "title": "Standard-Berechtigungen",
+                            "description": "Prüfe die initialen Berechtigungen, bevor das Setup abgeschlossen ist."
+                        }
+                    },
+                    "locale": {
+                        "language": {
+                            "title": "Standardsprache",
+                            "description": "Wähle die Fallback-Sprache der Anwendung, die neue Benutzer begrüßen soll."
+                        },
+                        "formatting": {
+                            "title": "Datums- und Zahlenformat",
+                            "description": "Lege das Gebietsschema fest, die Datums-, Zahlen- und Zeitformatierung steuern soll."
+                        },
+                        "currency": {
+                            "title": "Währung",
+                            "description": "Wähle den Währungscode, den geldbezogene Widgets und Strafen verwenden."
+                        }
+                    },
+                    "site": {
+                        "jobs": {
+                            "title": "Job-Zuordnung",
+                            "description": "Wähle den Arbeitslosen-Job aus."
+                        },
+                        "website": {
+                            "title": "Öffentliche Seiten",
+                            "description": "Hinterlege Datenschutz- und Impressums-Links und entscheide, ob die Statistikseite sichtbar sein soll."
+                        }
+                    },
+                    "review": {
+                        "summary": {
+                            "title": "Kern-Checkliste",
+                            "description": "Zugriff, Sprache und die öffentlichen Seiten sind die Mindestpunkte, die vor Beginn der regulären Nutzung geprüft werden sollten."
+                        },
+                        "discord": {
+                            "title": "Discord später einrichten",
+                            "description": "Bot-Setup, Rollen-Synchronisierung und Präsenz können nach Abschluss des Setups ergänzt werden."
+                        }
+                    }
+                },
+                "review": {
+                    "notice": {
+                        "title": "Discord wird absichtlich später eingerichtet",
+                        "description": "Discord wird noch nicht in die Ersteinrichtung eingebunden. Lass es für den nächsten Durchgang offen, sobald der Kernablauf steht."
+                    },
+                    "finish_action": "Einrichtung abschließen"
+                }
             }
         },
         "wiki": {
@@ -807,7 +889,8 @@
         "zoom_to_fit": "An Bildschirm anpassen",
         "rotate_left": "Nach links rotieren",
         "rotate_right": "Nach rechts rotieren",
-        "change_order": "Reihenfolge ändern"
+        "change_order": "Reihenfolge ändern",
+        "hidden": "Versteckt"
     },
     "components": {
         "partials": {
@@ -1743,7 +1826,10 @@
                 "auth": {
                     "title": "Authentifizierung",
                     "description": "Authentifizierung Einstellungen",
-                    "sign_up": "Registrierung",
+                    "sign_up": {
+                        "title": "Registrierung",
+                        "description": "Aktiviere die Registrierung neuer Benutzer."
+                    },
                     "last_char_lock": "Spieler auf ihren letzten aktiven Charakter sperren",
                     "social_login_providers": {
                         "title": "Social Login Anbieter",
@@ -1821,7 +1907,7 @@
                 "display": {
                     "title": "Anzeige",
                     "description": "Anzeigeeinstellungen, wie Sprache und Währung.",
-                    "intl_locale": "Internationale Lokalisierung"
+                    "intl_locale": "Datums- und Zahlenformat"
                 },
                 "game": {
                     "tab": "Spiel",
