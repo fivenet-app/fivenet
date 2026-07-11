@@ -1,9 +1,13 @@
 package settings
 
 import (
+	"context"
 	"database/sql"
+	"errors"
 
 	discordapi "github.com/diamondburned/arikawa/v3/api"
+	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
@@ -11,6 +15,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
+	grpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
@@ -18,11 +24,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/reqs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/pkg/updatecheck"
+	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	syncservice "github.com/fivenet-app/fivenet/v2026/services/sync"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 	"github.com/go-jet/jet/v2/mysql"
+	grpcmetadata "github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
@@ -53,6 +61,8 @@ type Server struct {
 
 	logger       *zap.Logger
 	db           *sql.DB
+	auth         *grpcauth.GRPCAuth
+	tm           *grpcauth.TokenMgr
 	ps           perms.Permissions
 	enricher     mstlystcdata.IUserAwareEnricher
 	laws         mstlystcdata.ILaws
@@ -83,6 +93,8 @@ type Params struct {
 
 	Logger       *zap.Logger
 	DB           *sql.DB
+	Auth         *grpcauth.GRPCAuth
+	TM           *grpcauth.TokenMgr
 	PS           perms.Permissions
 	Enricher     mstlystcdata.IUserAwareEnricher
 	Laws         mstlystcdata.ILaws
@@ -137,6 +149,8 @@ func NewServer(p Params) *Server {
 	s := &Server{
 		logger:       p.Logger,
 		db:           p.DB,
+		auth:         p.Auth,
+		tm:           p.TM,
 		ps:           p.PS,
 		enricher:     p.Enricher,
 		laws:         p.Laws,
@@ -172,4 +186,73 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbsettings.RegisterLawsServiceServer(srv, s)
 	pbsettings.RegisterAccountsServiceServer(srv, s)
 	pbsettings.RegisterSystemServiceServer(srv, s)
+}
+
+// AuthFuncOverride is called instead of the global auth func for settings services.
+func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (context.Context, error) {
+	switch fullMethod {
+	case pbsettings.ConfigService_GetAppConfig_FullMethodName,
+		pbsettings.ConfigService_UpdateAppConfig_FullMethodName:
+		if hasUserTokenInContext(ctx) {
+			if s.auth == nil {
+				return nil, errors.New("settings auth is not configured")
+			}
+
+			if userCtx, err := s.auth.GRPCAuthFunc(ctx, fullMethod); err == nil {
+				return userCtx, nil
+			} else {
+				return nil, err
+			}
+		}
+
+		accToken, err := grpcauth.GetAccTokenFromGRPCContext(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		if s.tm == nil {
+			return nil, errorsgrpcauth.ErrInvalidToken
+		}
+
+		accClaims, err := s.tm.ParseAccToken(accToken)
+		if err != nil {
+			return nil, errorsgrpcauth.ErrInvalidToken
+		}
+
+		_, _, configAdminGroups, configAdminUsers := pkguserinfo.EffectiveAdminLists(
+			s.cfg.Auth.JobAdminGroups,
+			s.cfg.Auth.JobAdminUsers,
+			s.cfg.Auth.ConfigAdminGroups,
+			s.cfg.Auth.ConfigAdminUsers,
+			s.appCfg,
+		)
+
+		userInfo := &pbuserinfo.UserInfo{
+			AccountId: accClaims.AccID,
+			License:   accClaims.Subject,
+			Groups: &accounts.AccountGroups{
+				Groups: append([]string(nil), accClaims.Groups...),
+			},
+			CanBeSuperuser: accClaims.CanBeSuperuser,
+			CanBeConfigAdmin: pkguserinfo.CanBeConfigAdmin(
+				&accounts.AccountGroups{Groups: accClaims.Groups},
+				accClaims.Subject,
+				configAdminGroups,
+				configAdminUsers,
+			),
+		}
+
+		return grpcauth.ContextWithUserInfo(ctx, userInfo), nil
+
+	default:
+		if s.auth == nil {
+			return nil, errors.New("settings auth is not configured")
+		}
+		return s.auth.GRPCAuthFunc(ctx, fullMethod)
+	}
+}
+
+func hasUserTokenInContext(ctx context.Context) bool {
+	md := grpcmetadata.ExtractIncoming(ctx)
+	return len(md.Get("authorization")) > 0 && len(md.Get("cookie")) > 0
 }

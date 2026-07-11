@@ -7,10 +7,12 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { useSettingsStore } from '~/stores/settings';
+import { deepToRaw } from '~/utils/deepToRaw';
 import { currencies, intlLocales } from '~/components/settings/helpers';
 import { getSettingsConfigClient } from '~~/gen/ts/clients';
 import { GRPCServiceMethods, GRPCServices } from '~~/gen/ts/perms';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { AppConfig as SettingsAppConfig } from '~~/gen/ts/resources/settings/config';
 import type { GetAppConfigResponse } from '~~/gen/ts/services/settings/config';
 import UserMenu from '~/components/UserMenu.vue';
 import type { RoutePathSchema } from '@typed-router';
@@ -30,7 +32,7 @@ const { t, locales } = useI18n();
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
-const { $reloadConfigFromServer } = useNuxtApp();
+const { $reloadConfigFromServer, $applyClientConfig } = useNuxtApp();
 
 type SetupStep = 'access' | 'locale' | 'site' | 'review';
 
@@ -263,10 +265,11 @@ watch(config, () => setSettingsValues(), { immediate: true });
 async function saveAppConfig(values: Schema): Promise<void> {
     if (!config.value?.config) return;
 
-    config.value.config.setupComplete = true;
-    config.value.config.defaultLocale = values.defaultLocale.code;
-    config.value.config.auth = {
-        ...(config.value.config.auth ?? {
+    const payload = structuredClone(deepToRaw(config.value.config)) as SettingsAppConfig;
+    payload.setupComplete = true;
+    payload.defaultLocale = values.defaultLocale.code;
+    payload.auth = {
+        ...(payload.auth ?? {
             signupEnabled: true,
             lastCharLock: false,
             jobAdminGroups: [],
@@ -279,10 +282,10 @@ async function saveAppConfig(values: Schema): Promise<void> {
         configAdminGroups: values.auth.configAdminGroups,
         configAdminUsers: values.auth.configAdminUsers,
     };
-    config.value.config.perms = values.perms;
-    config.value.config.display = values.display;
-    config.value.config.jobInfo = {
-        ...(config.value.config.jobInfo ?? {
+    payload.perms = values.perms;
+    payload.display = values.display;
+    payload.jobInfo = {
+        ...(payload.jobInfo ?? {
             publicJobs: [],
             hiddenJobs: [],
             unemployedJob: {
@@ -294,13 +297,13 @@ async function saveAppConfig(values: Schema): Promise<void> {
         publicJobs: values.jobInfo.publicJobs,
         hiddenJobs: values.jobInfo.hiddenJobs,
     };
-    config.value.config.website = {
-        ...(config.value.config.website ?? {
+    payload.website = {
+        ...(payload.website ?? {
             links: {},
             statsPage: false,
         }),
         links: {
-            ...(config.value.config.website?.links ?? {}),
+            ...(payload.website?.links ?? {}),
             privacyPolicy: values.website.links.privacyPolicy?.length ? values.website.links.privacyPolicy : undefined,
             imprint: values.website.links.imprint?.length ? values.website.links.imprint : undefined,
         },
@@ -309,7 +312,7 @@ async function saveAppConfig(values: Schema): Promise<void> {
 
     try {
         const { response } = await settingsConfigClient.updateAppConfig({
-            config: config.value.config,
+            config: payload,
         });
 
         notifications.add({
@@ -324,8 +327,8 @@ async function saveAppConfig(values: Schema): Promise<void> {
             await refresh();
         }
 
-        await $reloadConfigFromServer();
-        useAppConfig().setupComplete = true;
+        const clientConfig = await $reloadConfigFromServer();
+        $applyClientConfig(clientConfig);
 
         await navigateTo(redirectTarget.value);
     } catch (e) {
