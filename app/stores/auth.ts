@@ -499,8 +499,9 @@ export const useAuthStore = defineStore(
         /**
          * Whether the current account can access config-admin gated screens and RPCs.
          */
-        const canBeConfigAdmin = computed<boolean>(() => permissions.value.some((p) => p.guardName === configAdminPermGuard));
-        const canBeConfigAdminEffective = computed<boolean>(() => canBeConfigAdmin.value || accountCanBeConfigAdmin.value);
+        const canBeConfigAdmin = computed<boolean>(
+            () => permissions.value.some((p) => p.guardName === configAdminPermGuard) || accountCanBeConfigAdmin.value,
+        );
 
         return {
             // State
@@ -517,7 +518,7 @@ export const useAuthStore = defineStore(
             permissions,
             attributes,
             canBeSuperuser,
-            canBeConfigAdmin: canBeConfigAdminEffective,
+            canBeConfigAdmin,
 
             // Actions
             setUsername,

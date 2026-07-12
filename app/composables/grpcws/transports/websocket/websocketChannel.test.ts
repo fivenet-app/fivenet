@@ -77,4 +77,67 @@ describe('WebsocketChannelImpl', () => {
         expect(channel.activeStreams.has(1)).toBe(false);
         expect(channel.getNextStreamId()).toBe(1);
     });
+
+    it('authenticates with account-only auth first and upgrades when the token changes', async () => {
+        const sentFrames: GrpcFrame[] = [];
+        const webSocket = {
+            data: ref<ArrayBuffer | null>(null),
+            status: ref<WebSocketStatus>('OPEN'),
+            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+                sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
+                return true;
+            }),
+            open: vi.fn(),
+        };
+
+        let token: string | null = null;
+        const channel = new WebsocketChannelImpl(createLogger(), webSocket, () => token);
+
+        const accountAuth = channel.ensureAuthenticated();
+        expect(sentFrames).toHaveLength(1);
+        expect(sentFrames[0].streamId).toBe(0);
+        expect(sentFrames[0].payload.oneofKind).toBe('header');
+        expect(sentFrames[0].payload.header.operation).toBe('auth');
+        expect(sentFrames[0].payload.header.headers.Authorization).toBeUndefined();
+
+        await channel.onMessage(
+            GrpcFrame.toBinary(
+                GrpcFrame.create({
+                    streamId: 0,
+                    payload: {
+                        oneofKind: 'header',
+                        header: {
+                            operation: 'auth_ok',
+                            status: 200,
+                        },
+                    },
+                }),
+            ).buffer.slice(0),
+        );
+        await accountAuth;
+
+        token = 'char-token';
+        const charAuth = channel.ensureAuthenticated();
+        expect(sentFrames).toHaveLength(2);
+        expect(sentFrames[1].streamId).toBe(0);
+        expect(sentFrames[1].payload.oneofKind).toBe('header');
+        expect(sentFrames[1].payload.header.operation).toBe('reauth');
+        expect(sentFrames[1].payload.header.headers.Authorization.value).toEqual(['Bearer char-token']);
+
+        await channel.onMessage(
+            GrpcFrame.toBinary(
+                GrpcFrame.create({
+                    streamId: 0,
+                    payload: {
+                        oneofKind: 'header',
+                        header: {
+                            operation: 'auth_ok',
+                            status: 200,
+                        },
+                    },
+                }),
+            ).buffer.slice(0),
+        );
+        await charAuth;
+    });
 });

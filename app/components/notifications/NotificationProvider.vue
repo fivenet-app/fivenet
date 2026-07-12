@@ -19,7 +19,7 @@ const { webSocket } = useGRPCWebsocketTransport();
 
 const notificationsStore = useNotificationsStore();
 const { startStream, stopStream } = notificationsStore;
-const { notifications } = storeToRefs(notificationsStore);
+const { notifications, abort, ready } = storeToRefs(notificationsStore);
 
 const settingsStore = useSettingsStore();
 const { calendar } = storeToRefs(settingsStore);
@@ -67,26 +67,48 @@ const { start, stop } = useTimeoutFn(
     },
 );
 
-async function toggleStream(): Promise<void> {
-    // Only stream notifications when a user is logged in and has a character selected
-    if (username.value !== null && activeChar.value !== null && webSocket.status.value === 'OPEN') {
-        start();
+async function syncStream(previousActiveChar: typeof activeChar.value): Promise<void> {
+    const sessionReady = username.value !== null && webSocket.status.value === 'OPEN';
 
-        try {
-            startStream();
-        } catch (e) {
-            logger.error('exception during notification stream', e);
-        }
-    } else {
+    if (!sessionReady) {
         pause();
         stop();
         await stopStream(true);
-
         notificationsStore.reset();
+        return;
+    }
+
+    const shouldRestart = ready.value && previousActiveChar !== activeChar.value;
+    if (shouldRestart) {
+        pause();
+        stop();
+        await stopStream(true);
+    }
+
+    if (!ready.value && abort.value !== undefined) {
+        await stopStream(true);
+    }
+
+    if (activeChar.value !== null) {
+        start();
+    } else {
+        pause();
+        stop();
+    }
+
+    if (!ready.value) {
+        try {
+            await startStream();
+        } catch (e) {
+            logger.error('exception during notification stream', e);
+        }
     }
 }
 
-watch([username, activeChar, webSocket.status], async () => toggleStream());
+watch([username, activeChar, webSocket.status], async (_values, oldValues) => {
+    const [, oldActiveChar] = oldValues;
+    await syncStream(oldActiveChar);
+});
 
 const toast = useToast();
 const seenNotificationIds = new Set<number>();
@@ -136,7 +158,7 @@ function createNotifications(notifications: Notification[]): void {
 
 const handleNotificationAdded = (notification: Notification): void => createNotification(notification);
 
-onMounted(async () => await toggleStream());
+onMounted(async () => await syncStream(activeChar.value));
 
 onUnmounted(async () => await stopStream(true));
 

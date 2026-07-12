@@ -59,11 +59,18 @@ func (s *Server) buildSubjects(
 ) ([]string, []string, error) {
 	baseSubjects := []string{
 		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.AccountTopic, userInfo.GetAccountId()),
+		fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic),
+	}
+
+	if userInfo.GetUserId() == 0 {
+		return baseSubjects, nil, nil
+	}
+
+	baseSubjects = append(baseSubjects,
 		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.GetUserId()),
 		fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.GetJob()),
 		fmt.Sprintf("%s.%s.%s.>", notifi.BaseSubject, notifi.JobGradeTopic, userInfo.GetJob()),
-		fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic),
-	}
+	)
 
 	// Clone user info and disable superuser (so a superuser doesn't receive notifications for "all" emails..)
 	clonedUserInfo := userInfo.Clone()
@@ -205,16 +212,19 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 	// Track changes to user info, so we can send an updated user info to the user
 	currentUserInfo := userInfo.Clone()
+	accountOnly := currentUserInfo.GetUserId() == 0
 
-	if _, err := s.js.PublishAsyncProto(ctx, userinfo.PollSubject, &pbuserinfo.PollReq{
-		AccountId: currentUserInfo.GetAccountId(),
-		UserId:    currentUserInfo.GetUserId(),
-	}); err != nil {
-		s.logger.Error(
-			"failed to publish userinfo.poll.request",
-			zap.Int32("user_id", currentUserInfo.GetUserId()),
-			zap.Error(err),
-		)
+	if !accountOnly {
+		if _, err := s.js.PublishAsyncProto(ctx, userinfo.PollSubject, &pbuserinfo.PollReq{
+			AccountId: currentUserInfo.GetAccountId(),
+			UserId:    currentUserInfo.GetUserId(),
+		}); err != nil {
+			s.logger.Error(
+				"failed to publish userinfo.poll.request",
+				zap.Int32("user_id", currentUserInfo.GetUserId()),
+				zap.Error(err),
+			)
+		}
 	}
 
 	subjectsMu := &sync.Mutex{}
@@ -225,9 +235,12 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	clientViewSubjects := []string{}
 	var currentClientView *notificationsclientview.ClientView
 
-	notificationCount, err := s.store.CountUnread(ctx, userInfo.GetUserId())
-	if err != nil {
-		return errswrap.NewError(err, ErrFailedStream)
+	var notificationCount int64
+	if !accountOnly {
+		notificationCount, err = s.store.CountUnread(ctx, userInfo.GetUserId())
+		if err != nil {
+			return errswrap.NewError(err, ErrFailedStream)
+		}
 	}
 
 	meta := metadata.ExtractIncoming(ctx)
@@ -336,6 +349,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 			switch d := msg.GetData().(type) {
 			case *pbnotifications.StreamRequest_Clientview:
+				if accountOnly {
+					continue
+				}
+
 				clientView := d.Clientview
 				if clientView == nil {
 					continue // Skip nil client view
@@ -417,6 +434,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				topic, parts := notifi.SplitSubject(m.Subject())
 				switch topic {
 				case notifi.UserTopic, notifi.AccountTopic:
+					if accountOnly && topic == notifi.UserTopic {
+						continue
+					}
+
 					var dest notificationsevents.UserEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
@@ -463,6 +484,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					}
 
 				case notifi.JobTopic:
+					if accountOnly {
+						continue
+					}
+
 					var dest notificationsevents.JobEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
@@ -476,6 +501,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					}
 
 				case notifi.JobGradeTopic:
+					if accountOnly {
+						continue
+					}
+
 					// Make sure the job grade is included
 					if len(parts) < 2 {
 						continue
@@ -513,6 +542,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					}
 
 				case notifi.ObjectTopic:
+					if accountOnly {
+						continue
+					}
+
 					var dest notificationsclientview.ObjectEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
@@ -530,6 +563,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					}
 
 				case notifi.MailerTopic:
+					if accountOnly {
+						continue
+					}
+
 					var dest mailerevents.MailerEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)

@@ -14,6 +14,7 @@ import (
 	"github.com/coder/websocket"
 	"github.com/desertbit/timer"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/grpcws"
+	grpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -27,6 +28,7 @@ type WebsocketChannel struct {
 	validateTokenFunc func(token string) (bool, error)
 
 	authMu    sync.RWMutex
+	authOk    bool
 	authToken string
 
 	activeStreams   map[uint32]*GrpcStream
@@ -69,12 +71,13 @@ func NewWebsocketChannel(
 func (ws *WebsocketChannel) isAuthenticated() bool {
 	ws.authMu.RLock()
 	defer ws.authMu.RUnlock()
-	return ws.authToken != ""
+	return ws.authOk
 }
 
 func (ws *WebsocketChannel) setAuthToken(token string) {
 	ws.authMu.Lock()
 	defer ws.authMu.Unlock()
+	ws.authOk = true
 	ws.authToken = token
 }
 
@@ -192,8 +195,12 @@ func (ws *WebsocketChannel) poll() error {
 		for key, element := range frame.GetHeader().GetHeaders() {
 			req.Header[key] = element.GetValue()
 		}
-		// Ensure the authorization header is set with the current auth token
-		req.Header.Set("Authorization", "Bearer "+ws.getAuthToken())
+		if token := ws.getAuthToken(); token != "" {
+			// Ensure the authorization header is set with the current auth token.
+			req.Header.Set("Authorization", "Bearer "+token)
+		} else {
+			req.Header.Del("Authorization")
+		}
 
 		interceptedReq := makeGrpcRequest(req.WithContext(newStream.ctx))
 		// Forward the request to the grpcHandler
@@ -281,11 +288,36 @@ func (ws *WebsocketChannel) handleControlHeader(h *grpcws.Header) error {
 	switch h.GetOperation() {
 	case "auth", "reauth":
 		authz := h.GetHeaders()["Authorization"]
-		if len(authz.GetValue()) == 0 {
-			return ws.writeAuthFailure("missing authorization")
+		token := ""
+		if authz != nil && len(authz.GetValue()) > 0 {
+			token = strings.TrimSpace(strings.TrimPrefix(authz.GetValue()[0], "Bearer "))
+		}
+		if token == "" {
+			if ws.isAuthenticated() {
+				return ws.writeAuthFailure("missing authorization")
+			}
+
+			// Allow account-only websocket sessions to authenticate without a user token.
+			if _, err := ws.req.Cookie(grpcauth.AccCookieName); err != nil {
+				return ws.writeAuthFailure("missing authorization")
+			}
+
+			ws.authMu.Lock()
+			ws.authOk = true
+			ws.authToken = ""
+			ws.authMu.Unlock()
+
+			return ws.write(&grpcws.GrpcFrame{
+				StreamId: 0,
+				Payload: &grpcws.GrpcFrame_Header{
+					Header: &grpcws.Header{
+						Operation: "auth_ok",
+						Status:    http.StatusOK,
+					},
+				},
+			})
 		}
 
-		token := strings.TrimPrefix(authz.GetValue()[0], "Bearer ")
 		valid, err := ws.validateTokenFunc(token)
 		if err != nil {
 			return ws.writeAuthFailure(err.Error())

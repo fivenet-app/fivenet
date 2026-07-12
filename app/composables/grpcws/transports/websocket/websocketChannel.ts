@@ -21,9 +21,9 @@ type WebSocketLike = Pick<UseWebSocketReturn<ArrayBuffer>, 'data' | 'status' | '
 
 type AuthState =
     | { kind: 'none' }
-    | { kind: 'pending'; promise: Promise<void>; resolve: () => void; reject: (err: Error) => void }
-    | { kind: 'ok' }
-    | { kind: 'failed'; err: Error };
+    | { kind: 'pending'; token: string | null; promise: Promise<void>; resolve: () => void; reject: (err: Error) => void }
+    | { kind: 'ok'; token: string | null }
+    | { kind: 'failed'; token: string | null; err: Error };
 
 // Default token provider
 function defaultTokenProvider(): string | null {
@@ -232,15 +232,22 @@ export class WebsocketChannelImpl implements WebsocketChannel {
 
                 if (h.operation === CONTROL_OP_AUTH_OK) {
                     this.logger.debug('WS auth operation: ok');
+                    const pendingToken = this.authState.kind === 'pending' ? this.authState.token : null;
                     if (this.authState.kind === 'pending') this.authState.resolve();
-                    this.authState = { kind: 'ok' };
+                    this.authState = { kind: 'ok', token: pendingToken };
                     return;
                 }
 
                 // If server responds with something else on control stream, treat as failure.
                 const err = new Error(`WS control header unexpected operation: ${h.operation}`);
+                const failedToken =
+                    this.authState.kind === 'pending'
+                        ? this.authState.token
+                        : this.authState.kind === 'ok'
+                          ? this.authState.token
+                          : null;
                 if (this.authState.kind === 'pending') this.authState.reject(err);
-                this.authState = { kind: 'failed', err };
+                this.authState = { kind: 'failed', token: failedToken, err };
                 return;
             }
 
@@ -250,8 +257,14 @@ export class WebsocketChannelImpl implements WebsocketChannel {
                 const err = new Error(`WS auth failed: ${msg}`);
                 this.logger.warn(err.message);
 
+                const failedToken =
+                    this.authState.kind === 'pending'
+                        ? this.authState.token
+                        : this.authState.kind === 'ok'
+                          ? this.authState.token
+                          : null;
                 if (this.authState.kind === 'pending') this.authState.reject(err);
-                this.authState = { kind: 'failed', err };
+                this.authState = { kind: 'failed', token: failedToken, err };
                 return;
             }
 
@@ -299,13 +312,12 @@ export class WebsocketChannelImpl implements WebsocketChannel {
             // Let caller open first; once open, auth will be attempted.
             throw new Error('WebSocket not open');
 
-        if (this.authState.kind === 'ok') return;
-        if (this.authState.kind === 'failed') throw this.authState.err;
-        if (this.authState.kind === 'pending') return this.authState.promise;
-
         const token = this.tokenProvider();
-        if (!token) throw new Error('Missing character token (sessionStorage)');
+        if (this.authState.kind === 'ok' && this.authState.token === token) return;
+        if (this.authState.kind === 'failed' && this.authState.token === token) throw this.authState.err;
+        if (this.authState.kind === 'pending' && this.authState.token === token) return this.authState.promise;
 
+        const operation = this.authState.kind === 'none' ? CONTROL_OP_AUTH : CONTROL_OP_REAUTH;
         let resolve!: () => void;
         let reject!: (err: Error) => void;
         const promise = new Promise<void>((res, rej) => {
@@ -313,11 +325,14 @@ export class WebsocketChannelImpl implements WebsocketChannel {
             reject = rej;
         });
 
-        this.authState = { kind: 'pending', promise, resolve, reject };
+        this.authState = { kind: 'pending', token, promise, resolve, reject };
 
-        await this.sendControlHeader(CONTROL_OP_AUTH, {
-            Authorization: [`Bearer ${token}`],
-        });
+        const headers: Record<string, string[]> = {};
+        if (token) {
+            headers.Authorization = [`Bearer ${token}`];
+        }
+
+        await this.sendControlHeader(operation, headers);
 
         return promise;
     }
@@ -328,10 +343,22 @@ export class WebsocketChannelImpl implements WebsocketChannel {
         const token = this.tokenProvider();
         if (!token) throw new Error('Missing character token (sessionStorage)');
 
-        // If you want to force reauth to await auth_ok, set authState pending here too.
+        if (this.authState.kind === 'pending' && this.authState.token === token) return this.authState.promise;
+
+        let resolve!: () => void;
+        let reject!: (err: Error) => void;
+        const promise = new Promise<void>((res, rej) => {
+            resolve = res;
+            reject = rej;
+        });
+
+        this.authState = { kind: 'pending', token, promise, resolve, reject };
+
         await this.sendControlHeader(CONTROL_OP_REAUTH, {
             Authorization: [`Bearer ${token}`],
         });
+
+        return promise;
     }
 
     public getNextStreamId(): number {
@@ -392,7 +419,7 @@ class WebsocketChannelStream {
         this.opts.debug && this.logger.debug('Stream start', this.streamId, `${this.service}/${this.method}`);
 
         // Ensure control-plane auth succeeded before creating a real stream.
-        this.wsChannel.ensureAuthenticated();
+        await this.wsChannel.ensureAuthenticated();
 
         this.wsChannel.activeStreams.set(this.streamId, [this.opts, this]);
 

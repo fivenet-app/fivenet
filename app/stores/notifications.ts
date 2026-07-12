@@ -27,6 +27,22 @@ export type AccountCapabilityAuthStore = Pick<
     'isSuperuser' | 'canBeConfigAdmin' | 'setCanBeSuperuser' | 'chooseCharacter'
 >;
 
+type StreamActiveChar = ReturnType<typeof useAuth>['activeChar']['value'];
+
+type StreamScope = {
+    accountOnly: boolean;
+    activeChar: StreamActiveChar;
+    canListEmails: boolean;
+};
+
+type StreamCharScope = {
+    accountOnly: false;
+    activeChar: NonNullable<StreamActiveChar>;
+    canListEmails: boolean;
+};
+
+const hasCharScope = (scope: StreamScope): scope is StreamCharScope => !scope.accountOnly && scope.activeChar !== null;
+
 export const handleAccountGroupsChangedEvent = async (
     accountGroupsChanged: AccountGroupsChanged,
     authStore: AccountCapabilityAuthStore,
@@ -132,7 +148,12 @@ export const useNotificationsStore = defineStore(
          * Handles the refresh token event by refreshing the user's token.
          * @param authStore - The authentication store instance.
          */
-        const handleRefreshTokenEvent = async (authStore: ReturnType<typeof useAuthStore>): Promise<void> => {
+        const handleRefreshTokenEvent = async (
+            authStore: ReturnType<typeof useAuthStore>,
+            scope: StreamScope,
+        ): Promise<void> => {
+            if (!hasCharScope(scope)) return;
+
             logger.info('Refreshing token...');
             await authStore.chooseCharacter(undefined);
         };
@@ -192,23 +213,22 @@ export const useNotificationsStore = defineStore(
         const handleUserInfoChangedEvent = async (
             userInfoChanged: UserInfoChanged,
             authStore: ReturnType<typeof useAuthStore>,
+            scope: StreamScope,
         ): Promise<void> => {
-            const { activeChar } = useAuth();
+            if (!hasCharScope(scope)) return;
 
-            const jobChanged = activeChar.value!.job != userInfoChanged.newJob;
-            const jobGradeChanged = activeChar.value!.jobGrade !== userInfoChanged.newJobGrade;
+            const streamActiveChar = scope.activeChar;
+
+            const jobChanged = streamActiveChar.job != userInfoChanged.newJob;
+            const jobGradeChanged = streamActiveChar.jobGrade !== userInfoChanged.newJobGrade;
 
             if (jobChanged || jobGradeChanged) {
-                const nextJob =
-                    userInfoChanged.newJobLabel ??
-                    userInfoChanged.newJob ??
-                    activeChar.value!.jobLabel ??
-                    activeChar.value!.job;
+                const fallbackJobLabel = streamActiveChar.jobLabel ?? streamActiveChar.job;
+                const nextJob = userInfoChanged.newJobLabel ?? userInfoChanged.newJob ?? fallbackJobLabel;
+                const fallbackJobGrade = streamActiveChar.jobGradeLabel ?? `${streamActiveChar.jobGrade ?? ''}`;
                 const nextJobGrade =
                     userInfoChanged.newJobGradeLabel ??
-                    (userInfoChanged.newJobGrade !== undefined
-                        ? `${userInfoChanged.newJobGrade}`
-                        : (activeChar.value!.jobGradeLabel ?? `${activeChar.value!.jobGrade ?? ''}`));
+                    (userInfoChanged.newJobGrade !== undefined ? `${userInfoChanged.newJobGrade}` : fallbackJobGrade);
 
                 add({
                     title: { key: 'notifications.system.user_job_changed.title', parameters: {} },
@@ -222,12 +242,12 @@ export const useNotificationsStore = defineStore(
                 });
             }
 
-            if (userInfoChanged.newJob) activeChar.value!.job = userInfoChanged.newJob;
-            if (userInfoChanged.newJobLabel) activeChar.value!.jobLabel = userInfoChanged.newJobLabel;
-            if (userInfoChanged.newJobGrade !== undefined) activeChar.value!.jobGrade = userInfoChanged.newJobGrade;
-            if (userInfoChanged.newJobGradeLabel) activeChar.value!.jobGradeLabel = userInfoChanged.newJobGradeLabel;
+            if (userInfoChanged.newJob) streamActiveChar.job = userInfoChanged.newJob;
+            if (userInfoChanged.newJobLabel) streamActiveChar.jobLabel = userInfoChanged.newJobLabel;
+            if (userInfoChanged.newJobGrade !== undefined) streamActiveChar.jobGrade = userInfoChanged.newJobGrade;
+            if (userInfoChanged.newJobGradeLabel) streamActiveChar.jobGradeLabel = userInfoChanged.newJobGradeLabel;
 
-            await handleRefreshTokenEvent(authStore);
+            await handleRefreshTokenEvent(authStore, scope);
         };
 
         /**
@@ -235,20 +255,24 @@ export const useNotificationsStore = defineStore(
          * @param resp - The stream response containing the user event data.
          * @param authStore - The authentication store instance.
          */
-        const handleUserEvent = async (resp: StreamResponse, authStore: ReturnType<typeof useAuthStore>): Promise<void> => {
+        const handleUserEvent = async (
+            resp: StreamResponse,
+            authStore: ReturnType<typeof useAuthStore>,
+            scope: StreamScope,
+        ): Promise<void> => {
             if (resp.data.oneofKind !== 'userEvent') return;
 
             const userEvent = resp.data.userEvent;
 
             if (userEvent.data.oneofKind === 'refreshToken') {
-                await handleRefreshTokenEvent(authStore);
+                await handleRefreshTokenEvent(authStore, scope);
             } else if (userEvent.data.oneofKind === 'notification') {
                 const calendarStore = useCalendarStore();
                 handleNotificationEvent(userEvent.data.notification, calendarStore);
             } else if (userEvent.data.oneofKind === 'notificationsReadCount') {
                 notificationsCount.value = userEvent.data.notificationsReadCount;
             } else if (userEvent.data.oneofKind === 'userInfoChanged') {
-                await handleUserInfoChangedEvent(userEvent.data.userInfoChanged, authStore);
+                await handleUserInfoChangedEvent(userEvent.data.userInfoChanged, authStore, scope);
             } else if (userEvent.data.oneofKind === 'accountGroupsChanged') {
                 await handleAccountGroupsChangedEvent(userEvent.data.accountGroupsChanged, authStore);
             } else {
@@ -278,6 +302,11 @@ export const useNotificationsStore = defineStore(
 
             const authStore = useAuthStore();
             const { activeChar, can } = useAuth();
+            const scope: StreamScope = {
+                activeChar: activeChar.value,
+                accountOnly: activeChar.value === null,
+                canListEmails: can('mailer.MailerService/ListEmails').value,
+            };
 
             const mailerStore = useMailerStore();
 
@@ -292,13 +321,15 @@ export const useNotificationsStore = defineStore(
                     if (!resp || !resp.data || resp.data.oneofKind === undefined) continue;
 
                     if (resp.data.oneofKind === 'userEvent') {
-                        await handleUserEvent(resp, authStore);
+                        await handleUserEvent(resp, authStore, scope);
                     } else if (resp.data.oneofKind === 'jobEvent') {
+                        if (!hasCharScope(scope)) continue;
+
                         if (resp.data.jobEvent.data.oneofKind === 'jobProps') {
                             // Check that the job props are for the active character's job
                             if (
                                 !resp.data.jobEvent.data.jobProps ||
-                                (activeChar.value?.job && resp.data.jobEvent.data.jobProps.job !== activeChar.value?.job)
+                                (scope.activeChar.job && resp.data.jobEvent.data.jobProps.job !== scope.activeChar.job)
                             )
                                 continue;
 
@@ -307,8 +338,10 @@ export const useNotificationsStore = defineStore(
                             logger.warn('Unknown jobEvent data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }
                     } else if (resp.data.oneofKind === 'jobGradeEvent') {
+                        if (!hasCharScope(scope)) continue;
+
                         if (resp.data.jobGradeEvent.data.oneofKind === 'refreshToken') {
-                            await handleRefreshTokenEvent(authStore);
+                            await handleRefreshTokenEvent(authStore, scope);
                         } else {
                             logger.warn(
                                 'Unknown jobGradeEvent event data received - oneofKind:',
@@ -325,11 +358,15 @@ export const useNotificationsStore = defineStore(
                             logger.warn('Unknown systemEvent event data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }
                     } else if (resp.data.oneofKind === 'objectEvent') {
+                        if (!hasCharScope(scope)) continue;
+
                         const event = resp.data.objectEvent;
 
                         notificationsEvents.emit(event.type, event);
                     } else if (resp.data.oneofKind === 'mailerEvent') {
-                        if (can('mailer.MailerService/ListEmails').value) mailerStore.handleEvent(resp.data.mailerEvent);
+                        if (!hasCharScope(scope)) continue;
+
+                        if (scope.canListEmails) mailerStore.handleEvent(resp.data.mailerEvent);
                     }
 
                     if (resp.restart) {
@@ -433,6 +470,9 @@ export const useNotificationsStore = defineStore(
          * @param id - The ID of the object (optional).
          */
         const sendClientView = async (viewType: ObjectType, id?: number): Promise<void> => {
+            const { activeChar } = useAuth();
+            if (!activeChar.value) return;
+
             logger.debug('Sending client view', viewType, id, currentStream !== undefined);
             try {
                 await currentStream?.requests.send({
