@@ -1,7 +1,9 @@
 package settings
 
 import (
+	"context"
 	"database/sql"
+	"errors"
 
 	discordapi "github.com/diamondburned/arikawa/v3/api"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
@@ -11,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
+	grpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
@@ -23,6 +26,7 @@ import (
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 	"github.com/go-jet/jet/v2/mysql"
+	grpcmetadata "github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
@@ -53,10 +57,10 @@ type Server struct {
 
 	logger       *zap.Logger
 	db           *sql.DB
+	auth         *grpcauth.GRPCAuth
 	ps           perms.Permissions
 	enricher     mstlystcdata.IUserAwareEnricher
 	laws         mstlystcdata.ILaws
-	st           storage.IStorage
 	cfg          *config.Config
 	appCfg       appconfig.IConfig
 	js           *events.JSWrapper
@@ -83,6 +87,7 @@ type Params struct {
 
 	Logger       *zap.Logger
 	DB           *sql.DB
+	Auth         *grpcauth.GRPCAuth
 	PS           perms.Permissions
 	Enricher     mstlystcdata.IUserAwareEnricher
 	Laws         mstlystcdata.ILaws
@@ -137,10 +142,10 @@ func NewServer(p Params) *Server {
 	s := &Server{
 		logger:       p.Logger,
 		db:           p.DB,
+		auth:         p.Auth,
 		ps:           p.PS,
 		enricher:     p.Enricher,
 		laws:         p.Laws,
-		st:           p.Storage,
 		cfg:          p.Config,
 		appCfg:       p.AppConfig,
 		js:           p.JS,
@@ -172,4 +177,30 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbsettings.RegisterLawsServiceServer(srv, s)
 	pbsettings.RegisterAccountsServiceServer(srv, s)
 	pbsettings.RegisterSystemServiceServer(srv, s)
+}
+
+// AuthFuncOverride is called instead of the global auth func for settings services.
+func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (context.Context, error) {
+	switch fullMethod {
+	case pbsettings.ConfigService_GetAppConfig_FullMethodName,
+		pbsettings.ConfigService_UpdateAppConfig_FullMethodName:
+		if s.auth == nil {
+			return nil, errors.New("settings auth is not configured")
+		}
+		if hasUserTokenInContext(ctx) {
+			return s.auth.GRPCAuthFunc(ctx, fullMethod)
+		}
+		return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
+
+	default:
+		if s.auth == nil {
+			return nil, errors.New("settings auth is not configured")
+		}
+		return s.auth.GRPCAuthFunc(ctx, fullMethod)
+	}
+}
+
+func hasUserTokenInContext(ctx context.Context) bool {
+	md := grpcmetadata.ExtractIncoming(ctx)
+	return len(md.Get("authorization")) > 0 && len(md.Get("cookie")) > 0
 }

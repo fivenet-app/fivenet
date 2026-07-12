@@ -34,15 +34,10 @@ type Server struct {
 
 	logger *zap.Logger
 
-	db    *sql.DB
 	js    *events.JSWrapper
 	auth  *auth.GRPCAuth
 	cfg   *config.Config
 	store syncstore.IStore
-
-	dispatches    *dispatches.DispatchDB
-	citizensStore citizensstore.IStore
-	jobsStore     jobsstore.IStore
 
 	tokens []string
 
@@ -80,7 +75,6 @@ type Result struct {
 func NewServer(p Params) Result {
 	s := &Server{
 		logger: p.Logger.Named("sync"),
-		db:     p.DB,
 		js:     p.JS,
 		auth:   p.Auth,
 		cfg:    p.Config,
@@ -97,19 +91,9 @@ func NewServer(p Params) Result {
 			p.Notifi,
 		),
 
-		dispatches:    p.DispatchDB,
-		citizensStore: p.CitizensStore,
-		jobsStore:     p.JobsStore,
-
 		tokens: p.Config.Sync.APITokens,
 
 		lastDBSyncVersion: atomic.Pointer[string]{},
-	}
-	if s.citizensStore == nil {
-		s.citizensStore = citizensstore.New(p.DB, &config.CustomDB{})
-	}
-	if s.jobsStore == nil {
-		s.jobsStore = jobsstore.New(p.DB, &config.CustomDB{})
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

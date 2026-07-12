@@ -135,8 +135,8 @@ func (s *Server) GetUser(
 
 	grpc_audit.SetTargetUser(ctx, resp.GetUser().GetUserId(), resp.GetUser().GetJob())
 
-	if slices.Contains(s.appCfg.Get().JobInfo.GetPublicJobs(), resp.GetUser().GetJob()) ||
-		slices.Contains(s.appCfg.Get().JobInfo.GetHiddenJobs(), resp.GetUser().GetJob()) {
+	if slices.Contains(s.appCfg.Get().GetJobInfo().GetPublicJobs(), resp.GetUser().GetJob()) ||
+		slices.Contains(s.appCfg.Get().GetJobInfo().GetHiddenJobs(), resp.GetUser().GetJob()) {
 		// Make sure user has permission to see that grade
 		check, err := s.checkIfUserCanAccess(
 			userInfo,
@@ -153,7 +153,7 @@ func (s *Server) GetUser(
 
 	// Only let user props override the job if the person isn't in a public job
 	if resp.GetUser().GetProps() != nil && resp.User.Props.JobName != nil &&
-		!slices.Contains(s.appCfg.Get().JobInfo.GetPublicJobs(), resp.GetUser().GetJob()) {
+		!slices.Contains(s.appCfg.Get().GetJobInfo().GetPublicJobs(), resp.GetUser().GetJob()) {
 		resp.User.Job = resp.GetUser().GetProps().GetJobName()
 		if resp.User.Props.JobGradeNumber != nil {
 			resp.User.JobGrade = resp.GetUser().GetProps().GetJobGradeNumber()

@@ -227,7 +227,7 @@ export const useNotificationsStore = defineStore(
             if (userInfoChanged.newJobGrade !== undefined) activeChar.value!.jobGrade = userInfoChanged.newJobGrade;
             if (userInfoChanged.newJobGradeLabel) activeChar.value!.jobGradeLabel = userInfoChanged.newJobGradeLabel;
 
-            await authStore.chooseCharacter(undefined);
+            await handleRefreshTokenEvent(authStore);
         };
 
         /**
@@ -308,7 +308,7 @@ export const useNotificationsStore = defineStore(
                         }
                     } else if (resp.data.oneofKind === 'jobGradeEvent') {
                         if (resp.data.jobGradeEvent.data.oneofKind === 'refreshToken') {
-                            await authStore.chooseCharacter(undefined);
+                            await handleRefreshTokenEvent(authStore);
                         } else {
                             logger.warn(
                                 'Unknown jobGradeEvent event data received - oneofKind:',
@@ -319,7 +319,8 @@ export const useNotificationsStore = defineStore(
                     } else if (resp.data.oneofKind === 'systemEvent') {
                         if (resp.data.systemEvent.data.oneofKind === 'clientConfig') {
                             logger.info('Client config update received');
-                            updateAppConfig({ ...resp.data.systemEvent.data.clientConfig });
+                            const { $applyClientConfig } = useNuxtApp();
+                            $applyClientConfig(resp.data.systemEvent.data.clientConfig);
                         } else {
                             logger.warn('Unknown systemEvent event data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }

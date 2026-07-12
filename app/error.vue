@@ -138,6 +138,7 @@ const isDev = import.meta.dev;
                                 <UButton
                                     class="flex-1"
                                     color="primary"
+                                    icon="i-mdi-home"
                                     size="lg"
                                     :disabled="buttonDisabled"
                                     :label="$t !== undefined ? $t('common.home') : 'Home'"
@@ -146,8 +147,9 @@ const isDev = import.meta.dev;
 
                                 <UButton
                                     class="flex-1 truncate"
-                                    size="lg"
                                     color="success"
+                                    icon="i-mdi-refresh"
+                                    size="lg"
                                     :disabled="buttonDisabled"
                                     :label="$t !== undefined ? $t('common.retry') : 'Retry'"
                                     @click="() => handleError(route.fullPath)"
@@ -158,8 +160,9 @@ const isDev = import.meta.dev;
                             <UButton
                                 v-if="error && (error.statusMessage || error.message)"
                                 class="col-span-2 truncate"
-                                size="lg"
                                 color="warning"
+                                icon="i-mdi-content-copy"
+                                size="lg"
                                 :label="$t !== undefined ? $t('pages.error.copy_error') : 'Copy Error message'"
                                 @click="() => copyError()"
                             />

@@ -3,6 +3,10 @@ import type { ClientConfig } from '~~/gen/ts/resources/clientconfig/clientconfig
 
 const appConfigPromise = loadConfig();
 
+function applyClientConfig(clientConfig: ClientConfig): void {
+    updateAppConfig({ ...clientConfig });
+}
+
 async function loadConfig(): Promise<ClientConfig> {
     // If running in Vitest, return empty config
     if (import.meta.env.VITEST) return {} as ClientConfig;
@@ -11,12 +15,10 @@ async function loadConfig(): Promise<ClientConfig> {
     const tId = setTimeout(() => abort.abort(), 7_500);
 
     try {
-        const resp = await $fetch<ClientConfig>('/api/config', {
+        return await $fetch<ClientConfig>('/api/config', {
             method: 'POST',
             signal: abort.signal,
         });
-        updateAppConfig({ ...resp });
-        return resp;
     } catch (e) {
         console.error('Failed to get FiveNet config from backend', e);
         const err = e as Error;
@@ -38,11 +40,13 @@ export default defineNuxtPlugin({
     enforce: 'post',
 
     async setup() {
-        await appConfigPromise;
+        applyClientConfig(await appConfigPromise);
 
         return {
             provide: {
                 appConfigPromise: appConfigPromise,
+                reloadConfigFromServer: loadConfig,
+                applyClientConfig,
             },
         };
     },

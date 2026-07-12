@@ -28,6 +28,7 @@ const (
 type ClientConfig struct {
 	state                    protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Version       string                 `protobuf:"bytes,1,opt,name=version,proto3"`
+	xxx_hidden_SetupComplete bool                   `protobuf:"varint,13,opt,name=setup_complete,json=setupComplete,proto3,oneof"`
 	xxx_hidden_DefaultLocale string                 `protobuf:"bytes,2,opt,name=default_locale,json=defaultLocale,proto3"`
 	xxx_hidden_Auth          *Auth                  `protobuf:"bytes,3,opt,name=auth,proto3"`
 	xxx_hidden_Discord       *Discord               `protobuf:"bytes,4,opt,name=discord,proto3"`
@@ -38,6 +39,8 @@ type ClientConfig struct {
 	xxx_hidden_Display       *settings.Display      `protobuf:"bytes,9,opt,name=display,proto3"`
 	xxx_hidden_QuickButtons  *settings.QuickButtons `protobuf:"bytes,11,opt,name=quick_buttons,json=quickButtons,proto3"`
 	xxx_hidden_Data          *settings.Data         `protobuf:"bytes,12,opt,name=data,proto3"`
+	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
+	XXX_presence             [1]uint32
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
 }
@@ -72,6 +75,13 @@ func (x *ClientConfig) GetVersion() string {
 		return x.xxx_hidden_Version
 	}
 	return ""
+}
+
+func (x *ClientConfig) GetSetupComplete() bool {
+	if x != nil {
+		return x.xxx_hidden_SetupComplete
+	}
+	return false
 }
 
 func (x *ClientConfig) GetDefaultLocale() string {
@@ -148,6 +158,11 @@ func (x *ClientConfig) SetVersion(v string) {
 	x.xxx_hidden_Version = v
 }
 
+func (x *ClientConfig) SetSetupComplete(v bool) {
+	x.xxx_hidden_SetupComplete = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 12)
+}
+
 func (x *ClientConfig) SetDefaultLocale(v string) {
 	x.xxx_hidden_DefaultLocale = v
 }
@@ -186,6 +201,13 @@ func (x *ClientConfig) SetQuickButtons(v *settings.QuickButtons) {
 
 func (x *ClientConfig) SetData(v *settings.Data) {
 	x.xxx_hidden_Data = v
+}
+
+func (x *ClientConfig) HasSetupComplete() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *ClientConfig) HasAuth() bool {
@@ -251,6 +273,11 @@ func (x *ClientConfig) HasData() bool {
 	return x.xxx_hidden_Data != nil
 }
 
+func (x *ClientConfig) ClearSetupComplete() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_SetupComplete = false
+}
+
 func (x *ClientConfig) ClearAuth() {
 	x.xxx_hidden_Auth = nil
 }
@@ -291,6 +318,7 @@ type ClientConfig_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Version       string
+	SetupComplete *bool
 	DefaultLocale string
 	Auth          *Auth
 	Discord       *Discord
@@ -308,6 +336,10 @@ func (b0 ClientConfig_builder) Build() *ClientConfig {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Version = b.Version
+	if b.SetupComplete != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 12)
+		x.xxx_hidden_SetupComplete = *b.SetupComplete
+	}
 	x.xxx_hidden_DefaultLocale = b.DefaultLocale
 	x.xxx_hidden_Auth = b.Auth
 	x.xxx_hidden_Discord = b.Discord
@@ -998,9 +1030,10 @@ var File_resources_clientconfig_clientconfig_proto protoreflect.FileDescriptor
 
 const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\n" +
-	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1fresources/settings/config.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xc1\x06\n" +
+	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1fresources/settings/config.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\x9b\a\n" +
 	"\fClientConfig\x12-\n" +
-	"\aversion\x18\x01 \x01(\tB\x13\x9a\x84\x9e\x03\x0ejson:\"version\"R\aversion\x12@\n" +
+	"\aversion\x18\x01 \x01(\tB\x13\x9a\x84\x9e\x03\x0ejson:\"version\"R\aversion\x12E\n" +
+	"\x0esetup_complete\x18\r \x01(\bB\x19\x9a\x84\x9e\x03\x14json:\"setupComplete\"H\x00R\rsetupComplete\x88\x01\x01\x12@\n" +
 	"\x0edefault_locale\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"defaultLocale\"R\rdefaultLocale\x12B\n" +
 	"\x04auth\x18\x03 \x01(\v2\x1c.resources.clientconfig.AuthB\x10\x9a\x84\x9e\x03\vjson:\"auth\"R\x04auth\x12N\n" +
 	"\adiscord\x18\x04 \x01(\v2\x1f.resources.clientconfig.DiscordB\x13\x9a\x84\x9e\x03\x0ejson:\"discord\"R\adiscord\x12J\n" +
@@ -1010,7 +1043,8 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\x06system\x18\b \x01(\v2\x1e.resources.clientconfig.SystemB\x12\x9a\x84\x9e\x03\rjson:\"system\"R\x06system\x12J\n" +
 	"\adisplay\x18\t \x01(\v2\x1b.resources.settings.DisplayB\x13\x9a\x84\x9e\x03\x0ejson:\"display\"R\adisplay\x12_\n" +
 	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsB\x18\x9a\x84\x9e\x03\x13json:\"quickButtons\"R\fquickButtons\x12>\n" +
-	"\x04data\x18\f \x01(\v2\x18.resources.settings.DataB\x10\x9a\x84\x9e\x03\vjson:\"data\"R\x04data\"\xe5\x01\n" +
+	"\x04data\x18\f \x01(\v2\x18.resources.settings.DataB\x10\x9a\x84\x9e\x03\vjson:\"data\"R\x04dataB\x11\n" +
+	"\x0f_setup_complete\"\xe5\x01\n" +
 	"\x04Auth\x12@\n" +
 	"\x0esignup_enabled\x18\x01 \x01(\bB\x19\x9a\x84\x9e\x03\x14json:\"signupEnabled\"R\rsignupEnabled\x12>\n" +
 	"\x0elast_char_lock\x18\x02 \x01(\bB\x18\x9a\x84\x9e\x03\x13json:\"lastCharLock\"R\flastCharLock\x12[\n" +
@@ -1097,6 +1131,7 @@ func file_resources_clientconfig_clientconfig_proto_init() {
 	if File_resources_clientconfig_clientconfig_proto != nil {
 		return
 	}
+	file_resources_clientconfig_clientconfig_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[5].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[6].OneofWrappers = []any{}

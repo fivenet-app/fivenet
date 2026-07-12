@@ -541,7 +541,8 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="auth.signupEnabled"
-                                :label="$t('components.settings.app_config.auth.sign_up')"
+                                :label="$t('components.settings.app_config.auth.sign_up.title')"
+                                :description="$t('components.settings.app_config.auth.sign_up.description')"
                             >
                                 <USwitch v-model="state.auth.signupEnabled" />
                             </UFormField>
@@ -1377,7 +1378,8 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="website.statsPage"
-                                :label="$t('common.enabled')"
+                                :label="$t('components.settings.app_config.website.stats.title')"
+                                :description="$t('components.settings.app_config.website.stats.description')"
                             >
                                 <USwitch v-model="state.website.statsPage" />
                             </UFormField>

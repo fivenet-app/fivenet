@@ -181,7 +181,7 @@ func (s *Server) ListDispatches(
 		}
 	}
 
-	publicJobs := s.appCfg.Get().JobInfo.GetPublicJobs()
+	publicJobs := s.appCfg.Get().GetJobInfo().GetPublicJobs()
 
 	dsps := resp.GetDispatches()
 	for i := range dsps {
@@ -342,7 +342,7 @@ func (s *Server) GetDispatch(
 		if creator != nil {
 			resp.Dispatch.Creator = creator
 			// Clear dispatch creator's job info if not a visible job
-			if !slices.Contains(s.appCfg.Get().JobInfo.GetPublicJobs(), creator.GetJob()) {
+			if !slices.Contains(s.appCfg.Get().GetJobInfo().GetPublicJobs(), creator.GetJob()) {
 				resp.Dispatch.Creator.Job = ""
 			}
 			resp.Dispatch.Creator.JobGrade = 0

@@ -14,6 +14,8 @@ type MockUserInfoRetriever struct {
 
 	// UserInfo maps user IDs to their corresponding UserInfo.
 	UserInfo map[int32]*pbuserinfo.UserInfo
+	// AccountInfo maps account IDs to their corresponding UserInfo.
+	AccountInfo map[int64]*pbuserinfo.UserInfo
 }
 
 // NewMockUserInfoRetriever creates a new MockUserInfoRetriever with the provided user info map.
@@ -33,6 +35,20 @@ func (ui *MockUserInfoRetriever) GetUserInfo(
 	}
 
 	return nil, errors.New("no user info found")
+}
+
+// GetAccountInfo retrieves the UserInfo for a given accountId.
+func (ui *MockUserInfoRetriever) GetAccountInfo(
+	_ context.Context,
+	accountId int64,
+) (*pbuserinfo.UserInfo, error) {
+	if ui.AccountInfo != nil {
+		if accountInfo, ok := ui.AccountInfo[accountId]; ok {
+			return accountInfo, nil
+		}
+	}
+
+	return nil, errors.New("no account info found")
 }
 
 // GetUserInfoFromClaims retrieves the UserInfo based on user and account claims.

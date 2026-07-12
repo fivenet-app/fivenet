@@ -5,13 +5,8 @@ import (
 	"database/sql"
 
 	pbnotifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/notifications"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
-	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	notificationsstore "github.com/fivenet-app/fivenet/v2026/stores/notifications"
@@ -36,12 +31,7 @@ type Server struct {
 	logger      *zap.Logger
 	ctx         context.Context //nolint:containedctx // Server keeps lifecycle context for stream consumer cleanup.
 	db          *sql.DB
-	ps          perms.Permissions
-	tm          *auth.TokenMgr
-	ui          userinfo.UserInfoRetriever
 	js          *events.JSWrapper
-	enricher    mstlystcdata.IEnricher
-	appCfg      appconfig.IConfig
 	store       notificationsstore.IStore
 	mailerStore mailerstore.IStore
 }
@@ -53,12 +43,7 @@ type Params struct {
 
 	Logger      *zap.Logger
 	DB          *sql.DB
-	Perms       perms.Permissions
-	TM          *auth.TokenMgr
-	UI          userinfo.UserInfoRetriever
 	JS          *events.JSWrapper
-	Enricher    mstlystcdata.IEnricher
-	AppConfig   appconfig.IConfig
 	Store       notificationsstore.IStore
 	MailerStore mailerstore.IStore
 }
@@ -70,12 +55,7 @@ func NewServer(p Params) *Server {
 		logger:      p.Logger,
 		ctx:         ctxCancel,
 		db:          p.DB,
-		ps:          p.Perms,
-		tm:          p.TM,
-		ui:          p.UI,
 		js:          p.JS,
-		enricher:    p.Enricher,
-		appCfg:      p.AppConfig,
 		store:       p.Store,
 		mailerStore: p.MailerStore,
 	}

@@ -173,7 +173,12 @@ func (s *Store) AddMarker(
 		marker.ExpiresAt = timestamp.New(time.Now().Add(24 * time.Hour))
 	}
 
-	markerId, err := s.livemapStore.CreateMarker(ctx, req.GetMarker(), req.GetMarker().CreatorId, req.GetMarker().GetJob())
+	markerId, err := s.livemapStore.CreateMarker(
+		ctx,
+		req.GetMarker(),
+		req.GetMarker().CreatorId,
+		req.GetMarker().GetJob(),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create marker. %w", err)
 	}

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
@@ -131,11 +132,30 @@ func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(
 		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
-	ctx = logging.InjectFields(ctx, logging.Fields{
-		AuthSubCtxTag, accClaims.Subject,
-		AuthAccIDCtxTag, accClaims.AccID,
+	accountInfo, err := g.ui.GetAccountInfo(ctx, accClaims.AccID)
+	if err != nil {
+		if accClaims != nil {
+			logging.InjectFields(ctx, logging.Fields{
+				AuthSubCtxTag, accClaims.Subject,
+				AuthAccIDCtxTag, accClaims.AccID,
+				AuthActiveCharIDCtxTag, 0,
+			})
+		}
+
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
+	}
+	if !accountInfo.GetEnabled() {
+		return nil, errswrap.NewError(
+			errors.New("account is disabled"),
+			errorsgrpcauth.ErrNoUserInfo,
+		)
+	}
+
+	newCtx := logging.InjectFields(ctx, logging.Fields{
+		AuthSubCtxTag, accountInfo.GetLicense(),
+		AuthAccIDCtxTag, accountInfo.GetAccountId(),
 		AuthActiveCharIDCtxTag, 0,
 	})
 
-	return ctx, nil
+	return context.WithValue(newCtx, userInfoCtxMarkerKey, accountInfo), nil
 }

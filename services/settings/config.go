@@ -2,6 +2,7 @@ package settings
 
 import (
 	"context"
+	"strconv"
 	"strings"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig"
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	grpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
@@ -18,6 +20,8 @@ func (s *Server) GetAppConfig(
 	ctx context.Context,
 	req *pbsettings.GetAppConfigRequest,
 ) (*pbsettings.GetAppConfigResponse, error) {
+	setAuditAccountMeta(ctx)
+
 	cfg, err := s.appCfg.Reload(ctx)
 	if err != nil {
 		return nil, err
@@ -34,6 +38,8 @@ func (s *Server) UpdateAppConfig(
 	ctx context.Context,
 	req *pbsettings.UpdateAppConfigRequest,
 ) (*pbsettings.UpdateAppConfigResponse, error) {
+	setAuditAccountMeta(ctx)
+
 	req.GetConfig().Default()
 	if req.GetConfig().GetSystem().GetBannerMessage() != nil {
 		var expiresAt time.Time
@@ -83,7 +89,7 @@ func (s *Server) UpdateAppConfig(
 	clientCfg := clientconfig.BuildClientConfig(
 		s.cfg,
 		clientconfig.BuildProviderList(s.cfg),
-		s.appCfg.Get(),
+		config,
 	)
 
 	s.notifi.SendSystemEvent(ctx, &notificationsevents.SystemEvent{
@@ -95,4 +101,10 @@ func (s *Server) UpdateAppConfig(
 	return &pbsettings.UpdateAppConfigResponse{
 		Config: config,
 	}, nil
+}
+
+func setAuditAccountMeta(ctx context.Context) {
+	if userInfo, ok := grpcauth.GetUserInfoFromContext(ctx); ok && userInfo.GetAccountId() > 0 {
+		grpc_audit.AddMeta(ctx, "account_id", strconv.FormatInt(userInfo.GetAccountId(), 10))
+	}
 }

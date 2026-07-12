@@ -9,11 +9,8 @@ import (
 	"go.uber.org/zap"
 )
 
-func (r *Routes) handleAppConfigUpdate(
-	providers []*clientconfig.ProviderConfig,
-	appCfg *appconfig.Cfg,
-) {
-	clientCfg := clientconfig.BuildClientConfig(r.cfg, providers, appCfg)
+func (r *Routes) handleAppConfigUpdate(appCfg *appconfig.Cfg) {
+	clientCfg := clientconfig.BuildClientConfig(r.cfg, r.providers, appCfg)
 	r.clientCfg.Store(clientCfg)
 
 	if appCfg.Discord.BotId == nil || appCfg.Discord.GetBotId() == "" {

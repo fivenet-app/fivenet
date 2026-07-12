@@ -7,15 +7,12 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"go.uber.org/fx"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
 type Server struct {
 	pbfilestore.FilestoreServiceServer
 
-	logger   *zap.Logger
-	db       *sql.DB
 	st       storage.IStorage
 	fHandler *filestore.Handler[int64]
 }
@@ -23,7 +20,6 @@ type Server struct {
 type Params struct {
 	fx.In
 
-	Logger  *zap.Logger
 	DB      *sql.DB
 	Storage storage.IStorage
 }
@@ -43,8 +39,6 @@ func NewServer(p Params) *Server {
 	)
 
 	return &Server{
-		logger:   p.Logger,
-		db:       p.DB,
 		st:       p.Storage,
 		fHandler: fHandler,
 	}

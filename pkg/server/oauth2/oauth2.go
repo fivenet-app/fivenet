@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -16,6 +17,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/providers/discord"
 	_ "github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/providers/generic"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/types"
+	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/gin-contrib/sessions"
@@ -62,6 +64,8 @@ type Params struct {
 	TM *auth.TokenMgr
 	// Config is the application configuration.
 	Config *config.Config
+	// AppConfig is the live application configuration.
+	AppConfig appconfig.IConfig
 	// Crypt is the cryptographic utility for secure operations.
 	Crypt *crypt.Crypt
 }
@@ -81,6 +85,12 @@ type OAuth2 struct {
 	oauthConfigs map[string]types.IProvider
 	// userInfoStore handles user info storage and retrieval.
 	userInfoStore userInfoStore
+	appCfg        appconfig.IConfig
+
+	jobAdminGroups    []string
+	jobAdminUsers     []string
+	configAdminGroups []string
+	configAdminUsers  []string
 }
 
 // New creates a new OAuth2 handler with all configured types.
@@ -100,6 +110,12 @@ func New(p Params) (*OAuth2, error) {
 			db:    p.DB,
 			crypt: p.Crypt,
 		},
+		appCfg: p.AppConfig,
+
+		jobAdminGroups:    p.Config.Auth.JobAdminGroups,
+		jobAdminUsers:     p.Config.Auth.JobAdminUsers,
+		configAdminGroups: p.Config.Auth.ConfigAdminGroups,
+		configAdminUsers:  p.Config.Auth.ConfigAdminUsers,
 	}
 
 	for _, p := range p.Config.OAuth2.Providers {
@@ -473,7 +489,22 @@ func (o *OAuth2) handleLoginCallback(
 		return
 	}
 
-	accClaims := auth.MapAccountToClaims(account)
+	combinedJobAdminGroups, combinedJobAdminUsers := pkguserinfo.EffectiveJobAdminLists(
+		o.jobAdminGroups,
+		o.jobAdminUsers,
+		o.configAdminGroups,
+		o.configAdminUsers,
+		o.appCfg,
+	)
+	accClaims := auth.MapAccountToClaims(
+		account,
+		pkguserinfo.CanBeSuperuser(
+			account.GetGroups(),
+			account.GetLicense(),
+			combinedJobAdminGroups,
+			combinedJobAdminUsers,
+		),
+	)
 	newToken, err := o.tm.FromAccClaims(accClaims)
 	if err != nil {
 		o.logger.Error(

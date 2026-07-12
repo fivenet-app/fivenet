@@ -7,7 +7,6 @@ import (
 
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	pblivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
@@ -66,7 +65,6 @@ type Server struct {
 	ps       perms.Permissions
 	enricher mstlystcdata.IEnricher
 	tracker  tracker.ITracker
-	appCfg   appconfig.IConfig
 	postals  postals.Postals
 	store    livemapstore.IStore
 
@@ -82,15 +80,14 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger    *zap.Logger
-	TP        *tracesdk.TracerProvider
-	JS        *events.JSWrapper
-	Perms     perms.Permissions
-	Enricher  mstlystcdata.IEnricher
-	Tracker   tracker.ITracker
-	AppConfig appconfig.IConfig
-	Postals   postals.Postals
-	Store     livemapstore.IStore
+	Logger   *zap.Logger
+	TP       *tracesdk.TracerProvider
+	JS       *events.JSWrapper
+	Perms    perms.Permissions
+	Enricher mstlystcdata.IEnricher
+	Tracker  tracker.ITracker
+	Postals  postals.Postals
+	Store    livemapstore.IStore
 }
 
 type brokerEvent struct {
@@ -109,7 +106,6 @@ func NewServer(p Params) *Server {
 		ps:       p.Perms,
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
-		appCfg:   p.AppConfig,
 		postals:  p.Postals,
 		store:    p.Store,
 

@@ -2,12 +2,10 @@ package auth
 
 import (
 	"context"
-	"database/sql"
 
 	pbauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
@@ -40,7 +38,6 @@ type Server struct {
 	enricher mstlystcdata.IEnricher
 	ui       userinfo.UserInfoRetriever
 	appCfg   appconfig.IConfig
-	js       *events.JSWrapper
 	store    authstore.IStore
 
 	domain            string
@@ -55,7 +52,6 @@ type Params struct {
 	fx.In
 
 	Logger    *zap.Logger
-	DB        *sql.DB
 	Auth      *auth.GRPCAuth
 	TM        *auth.TokenMgr
 	Perms     perms.Permissions
@@ -63,7 +59,6 @@ type Params struct {
 	UI        userinfo.UserInfoRetriever
 	Config    *config.Config
 	AppConfig appconfig.IConfig
-	JS        *events.JSWrapper
 	Store     authstore.IStore
 }
 
@@ -76,7 +71,6 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		ui:       p.UI,
 		appCfg:   p.AppConfig,
-		js:       p.JS,
 		store:    p.Store,
 
 		domain:            p.Config.HTTP.Sessions.Domain,
@@ -95,27 +89,26 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 // AuthFuncOverride is called instead of the original auth func.
 func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (context.Context, error) {
 	// Skip authentication for the anon accessible endpoints
-	if fullMethod == "/services.auth.AuthService/CreateAccount" ||
-		fullMethod == "/services.auth.AuthService/Login" ||
-		fullMethod == "/services.auth.AuthService/ForgotPassword" {
+	switch fullMethod {
+	case "/services.auth.AuthService/CreateAccount",
+		"/services.auth.AuthService/Login",
+		"/services.auth.AuthService/ForgotPassword":
 		return ctx, nil
-	}
 
-	if fullMethod == "/services.auth.AuthService/Logout" {
+	case "/services.auth.AuthService/Logout":
 		c, _ := s.auth.GRPCAuthFunc(ctx, fullMethod)
 		if c != nil {
 			return c, nil
 		}
 		return ctx, nil
-	}
 
-	// Superuser mode and impersonation endpoints require user token
-	if fullMethod == "/services.auth.AuthService/SetSuperuserMode" ||
-		fullMethod == "/services.auth.AuthService/ImpersonateJob" {
+	case "/services.auth.AuthService/SetSuperuserMode", "/services.auth.AuthService/ImpersonateJob":
+		// Superuser mode and impersonation endpoints require user token
 		return s.auth.GRPCAuthFunc(ctx, fullMethod)
-	}
 
-	return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
+	default:
+		return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
+	}
 }
 
 func (s *Server) PermissionUnaryFuncOverride(

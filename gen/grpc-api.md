@@ -2096,6 +2096,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `version` | [string](#string) |  |  |
+| `setup_complete` | [bool](#bool) | optional |  |
 | `default_locale` | [string](#string) |  |  |
 | `auth` | [Auth](#resourcessettingsAuth) |  |  |
 | `perms` | [Perms](#resourcessettingsPerms) |  |  |
@@ -2388,6 +2389,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `version` | [string](#string) |  |  |
+| `setup_complete` | [bool](#bool) | optional |  |
 | `default_locale` | [string](#string) |  |  |
 | `auth` | [Auth](#resourcesclientconfigAuth) |  |  |
 | `discord` | [Discord](#resourcesclientconfigDiscord) |  |  |
@@ -7556,6 +7558,26 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 
 
+### services.auth.RefreshAccountSessionRequest
+
+
+
+
+
+### services.auth.RefreshAccountSessionResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `expires` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `account_id` | [int64](#int64) |  |  |
+| `username` | [string](#string) |  |  |
+| `can_be_config_admin` | [bool](#bool) |  |  |
+
+
+
+
+
 ### services.auth.SetSuperuserModeRequest
 
 
@@ -7606,6 +7628,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `ChooseCharacter` | [ChooseCharacterRequest](#servicesauthChooseCharacterRequest) | [ChooseCharacterResponse](#servicesauthChooseCharacterResponse) | |
 | `ImpersonateJob` | [ImpersonateJobRequest](#servicesauthImpersonateJobRequest) | [ImpersonateJobResponse](#servicesauthImpersonateJobResponse) | |
 | `GetAccountInfo` | [GetAccountInfoRequest](#servicesauthGetAccountInfoRequest) | [GetAccountInfoResponse](#servicesauthGetAccountInfoResponse) | |
+| `RefreshAccountSession` | [RefreshAccountSessionRequest](#servicesauthRefreshAccountSessionRequest) | [RefreshAccountSessionResponse](#servicesauthRefreshAccountSessionResponse) | |
 | `DeleteSocialLogin` | [DeleteSocialLoginRequest](#servicesauthDeleteSocialLoginRequest) | [DeleteSocialLoginResponse](#servicesauthDeleteSocialLoginResponse) | |
 | `SetSuperuserMode` | [SetSuperuserModeRequest](#servicesauthSetSuperuserModeRequest) | [SetSuperuserModeResponse](#servicesauthSetSuperuserModeResponse) | |
 

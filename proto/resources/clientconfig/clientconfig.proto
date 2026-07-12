@@ -14,6 +14,8 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources
 message ClientConfig {
   string version = 1 [(tagger.tags) = "json:\"version\""];
 
+  optional bool setup_complete = 13 [(tagger.tags) = "json:\"setupComplete\""];
+
   string default_locale = 2 [(tagger.tags) = "json:\"defaultLocale\""];
 
   Auth auth = 3 [(tagger.tags) = "json:\"auth\""];

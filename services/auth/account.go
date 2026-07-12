@@ -3,37 +3,51 @@ package auth
 import (
 	"context"
 	"slices"
+	"time"
 
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	accountsoauth2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 )
 
-func (s *Server) GetAccountInfo(
+func (s *Server) getAccountFromAccToken(
 	ctx context.Context,
-	req *pbauth.GetAccountInfoRequest,
-) (*pbauth.GetAccountInfoResponse, error) {
+) (*accounts.Account, *authclaims.AccountInfoClaims, error) {
 	token, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
+		return nil, nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
+		return nil, nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
 
-	// Load account
 	acc, err := s.store.GetAccountByID(ctx, claims.AccID, false)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
+		return nil, nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
 	if acc == nil || acc.ID == 0 {
-		return nil, errorsauth.ErrGenericAccount
+		return nil, nil, errorsauth.ErrGenericAccount
+	}
+
+	account := accounts.ConvertFromModelAcc(acc)
+	return account, claims, nil
+}
+
+func (s *Server) GetAccountInfo(
+	ctx context.Context,
+	req *pbauth.GetAccountInfoRequest,
+) (*pbauth.GetAccountInfoResponse, error) {
+	account, _, err := s.getAccountFromAccToken(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	oauth2Providers := make([]*accountsoauth2.OAuth2Provider, len(s.oauth2Providers))
@@ -47,7 +61,7 @@ func (s *Server) GetAccountInfo(
 		}
 	}
 
-	oauth2Conns, err := s.store.ListOAuth2Connections(ctx, acc.ID)
+	oauth2Conns, err := s.store.ListOAuth2Connections(ctx, account.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
@@ -63,8 +77,38 @@ func (s *Server) GetAccountInfo(
 	}
 
 	return &pbauth.GetAccountInfoResponse{
-		Account:           accounts.ConvertFromModelAcc(acc),
+		Account:           account,
 		Oauth2Providers:   oauth2Providers,
 		Oauth2Connections: oauth2Conns,
+	}, nil
+}
+
+func (s *Server) RefreshAccountSession(
+	ctx context.Context,
+	req *pbauth.RefreshAccountSessionRequest,
+) (*pbauth.RefreshAccountSessionResponse, error) {
+	account, claims, err := s.getAccountFromAccToken(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	canBeConfigAdmin := s.canAccountBeConfigAdmin(account.GetGroups(), account.GetLicense())
+
+	responseClaims := claims
+	if claims.ExpiresAt != nil && time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
+		responseClaims = auth.MapAccountToClaims(
+			account,
+			s.canAccountBeSuperuser(account.GetGroups(), account.GetLicense()),
+		)
+		if err := s.setCookies(ctx, responseClaims); err != nil {
+			return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
+		}
+	}
+
+	return &pbauth.RefreshAccountSessionResponse{
+		Expires:          timestamp.New(responseClaims.ExpiresAt.Time),
+		AccountId:        account.GetId(),
+		Username:         account.GetUsername(),
+		CanBeConfigAdmin: canBeConfigAdmin,
 	}, nil
 }

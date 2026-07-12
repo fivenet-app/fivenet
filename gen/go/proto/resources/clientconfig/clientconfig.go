@@ -14,13 +14,9 @@ func BuildClientConfig(
 	providers []*ProviderConfig,
 	appCfg *appconfig.Cfg,
 ) *ClientConfig {
-	var quickButtons *settings.QuickButtons
-	if appCfg.GetQuickButtons() != nil {
-		quickButtons = proto.Clone(appCfg.GetQuickButtons()).(*settings.QuickButtons)
-	}
-
 	clientCfg := &ClientConfig{
-		Version: version.Version,
+		Version:       version.Version,
+		SetupComplete: new(appCfg.GetSetupComplete()),
 
 		DefaultLocale: appCfg.GetDefaultLocale(),
 
@@ -55,6 +51,7 @@ func BuildClientConfig(
 		},
 		System: &System{
 			BannerMessageEnabled: appCfg.GetSystem().GetBannerMessageEnabled(),
+			BannerMessage:        proto.Clone(appCfg.GetSystem().GetBannerMessage()).(*settings.BannerMessage),
 			Otlp: &OTLPFrontend{
 				Enabled: cfg.OTLP.Enabled,
 				Url:     cfg.OTLP.Frontend.URL,
@@ -65,14 +62,10 @@ func BuildClientConfig(
 			IntlLocale:   appCfg.GetDisplay().GetIntlLocale(),
 			CurrencyName: appCfg.GetDisplay().GetCurrencyName(),
 		},
-		QuickButtons: quickButtons,
+		QuickButtons: proto.Clone(appCfg.GetQuickButtons()).(*settings.QuickButtons),
 		Data: &settings.Data{
 			Mode: appCfg.GetData().GetMode(),
 		},
-	}
-
-	if appCfg.GetSystem().GetBannerMessage() != nil {
-		clientCfg.System.BannerMessage = proto.Clone(appCfg.GetSystem().GetBannerMessage()).(*settings.BannerMessage)
 	}
 
 	return clientCfg

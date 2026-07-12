@@ -326,6 +326,8 @@ func TestCreateOrUpdateMarkerPublicAccess(t *testing.T) {
 }
 
 func TestMarkerCacheMutationKeepsPublicBuckets(t *testing.T) {
+	t.Parallel()
+
 	store := newMarkerTestStore()
 	srv := newMarkerServer(store, &testLivemapPerms{})
 	ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(10, "police", 3, true))
@@ -404,7 +406,9 @@ func TestApplyMarkerCacheAddsSyncCreatedMarkerToInitialSnapshot(t *testing.T) {
 	require.Equal(t, int64(99), active[0].GetId())
 	require.Equal(t, "Sync Marker", active[0].GetName())
 
-	updated, removed := srv.getMarkerMarkers(&permissionsattributes.StringList{Strings: []string{"police"}})
+	updated, removed := srv.getMarkerMarkers(
+		&permissionsattributes.StringList{Strings: []string{"police"}},
+	)
 	require.Len(t, updated, 1)
 	require.Equal(t, int64(99), updated[0].GetId())
 	require.Empty(t, removed)
@@ -545,6 +549,8 @@ func TestGetMarkerMarkersIncludesPublicMarkers(t *testing.T) {
 }
 
 func TestRefreshMarkersRebuildsPublicAndJobCaches(t *testing.T) {
+	t.Parallel()
+
 	store := newMarkerTestStore(
 		func() *livemapmarkers.MarkerMarker {
 			marker := newMarkerRequest(100, new(false))

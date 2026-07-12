@@ -53,10 +53,14 @@ func (s *Server) Login(
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
 
-	accClaims := auth.MapAccountToClaims(accounts.ConvertFromModelAcc(account))
+	accountProto := accounts.ConvertFromModelAcc(account)
+	accClaims := auth.MapAccountToClaims(
+		accountProto,
+		s.canAccountBeSuperuser(accountProto.GetGroups(), accountProto.GetLicense()),
+	)
 
 	var chooseCharResp *pbauth.ChooseCharacterResponse
-	if s.appCfg.Get().Auth.GetLastCharLock() && account.LastChar != nil {
+	if s.appCfg.Get().GetAuth().GetLastCharLock() && account.LastChar != nil {
 		token, err := s.tm.FromAccClaims(accClaims)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
@@ -107,7 +111,7 @@ func (s *Server) CreateAccount(
 	ctx context.Context,
 	req *pbauth.CreateAccountRequest,
 ) (*pbauth.CreateAccountResponse, error) {
-	if !s.appCfg.Get().Auth.GetSignupEnabled() {
+	if !s.appCfg.Get().GetAuth().GetSignupEnabled() {
 		return nil, errorsauth.ErrSignupDisabled
 	}
 
@@ -369,7 +373,7 @@ func (s *Server) GetCharacters(
 	}
 
 	// If last char lock is enabled ensure to mark the one char as available only
-	if s.appCfg.Get().Auth.GetLastCharLock() && acc.LastChar != nil {
+	if s.appCfg.Get().GetAuth().GetLastCharLock() && acc.LastChar != nil {
 		combinedJobAdminGroups, combinedJobAdminUsers := pkguserinfo.EffectiveJobAdminLists(
 			s.jobAdminGroups,
 			s.jobAdminUsers,
@@ -536,10 +540,10 @@ func (s *Server) ChooseCharacter(
 	grpc_audit.SetUser(ctx, char.GetUserId(), char.GetJob())
 
 	// Ensure can be superuser is set on account claims
-	accClaims := auth.MapAccountToClaims(account)
-	if canBeSuperuser && currentAccClaims.CanBeSuperuser {
-		accClaims.CanBeSuperuser = currentAccClaims.CanBeSuperuser
-	}
+	accClaims := auth.MapAccountToClaims(
+		account,
+		s.canAccountBeSuperuser(account.GetGroups(), account.GetLicense()),
+	)
 
 	// Ensure superuser is set on user claims
 	userClaims := auth.MapUserToClaims(account.GetId(), char)
@@ -626,6 +630,40 @@ func (s *Server) listUserPerms(
 	}
 
 	return userPs, attrs, nil
+}
+
+func (s *Server) canAccountBeSuperuser(groups *accounts.AccountGroups, license string) bool {
+	combinedJobAdminGroups, combinedJobAdminUsers := pkguserinfo.EffectiveJobAdminLists(
+		s.jobAdminGroups,
+		s.jobAdminUsers,
+		s.configAdminGroups,
+		s.configAdminUsers,
+		s.appCfg,
+	)
+
+	return pkguserinfo.CanBeSuperuser(
+		groups,
+		license,
+		combinedJobAdminGroups,
+		combinedJobAdminUsers,
+	)
+}
+
+func (s *Server) canAccountBeConfigAdmin(groups *accounts.AccountGroups, license string) bool {
+	_, _, configAdminGroups, configAdminUsers := pkguserinfo.EffectiveAdminLists(
+		s.jobAdminGroups,
+		s.jobAdminUsers,
+		s.configAdminGroups,
+		s.configAdminUsers,
+		s.appCfg,
+	)
+
+	return pkguserinfo.CanBeConfigAdmin(
+		groups,
+		license,
+		configAdminGroups,
+		configAdminUsers,
+	)
 }
 
 func (s *Server) ImpersonateJob(
@@ -857,8 +895,11 @@ func (s *Server) SetSuperuserMode(
 		)
 	}
 
-	accClaims = auth.MapAccountToClaims(accounts.ConvertFromModelAcc(account))
-	accClaims.CanBeSuperuser = userInfo.GetCanBeSuperuser()
+	accountProto := accounts.ConvertFromModelAcc(account)
+	accClaims = auth.MapAccountToClaims(
+		accountProto,
+		s.canAccountBeSuperuser(accountProto.GetGroups(), accountProto.GetLicense()),
+	)
 
 	userClaims := auth.MapUserToClaims(account.ID, char)
 	superuser := userInfo.GetSuperuser()

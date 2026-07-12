@@ -252,6 +252,88 @@
             },
             "jobs": {
                 "title": "Jobs"
+            },
+            "setup": {
+                "eyebrow": "First-time setup",
+                "title": "Prepare FiveNet for first-time use",
+                "subtitle": "Use this wizard to lock in the important defaults before the instance sees a lot of usage.",
+                "step_indicator": "Step {0} of {1}",
+                "footer": "This flow focuses on the pieces that matter most before regular usage begins. Advanced tuning can be done after setup is complete.",
+                "steps": {
+                    "access": {
+                        "title": "Access",
+                        "description": "Decide who can manage the instance, default permissions and user registration."
+                    },
+                    "locale": {
+                        "title": "Language",
+                        "description": "Set the language and formatting defaults users will see first."
+                    },
+                    "site": {
+                        "title": "Jobs and site",
+                        "description": "Map the core job data and the public-facing pages."
+                    },
+                    "review": {
+                        "title": "Review",
+                        "description": "Check the baseline once before regular usage begins."
+                    }
+                },
+                "cards": {
+                    "access": {
+                        "admins": {
+                            "title": "Config admins",
+                            "description": "Pick the users and groups that should be able to continue first-time configuration and manage settings later."
+                        },
+                        "policy": {
+                            "title": "Signup policy",
+                            "description": "Choose whether new accounts can register immediately or if access should stay controlled."
+                        },
+                        "perms": {
+                            "title": "Default permissions",
+                            "description": "Review the initial permission grants before setup is complete."
+                        }
+                    },
+                    "locale": {
+                        "language": {
+                            "title": "Default language",
+                            "description": "Choose the fallback application language that should greet new users."
+                        },
+                        "formatting": {
+                            "title": "Date and number formatting",
+                            "description": "Set the locale that should drive dates, numbers, and time formatting."
+                        },
+                        "currency": {
+                            "title": "Currency",
+                            "description": "Choose the currency code used by money-aware widgets and penalties."
+                        }
+                    },
+                    "site": {
+                        "jobs": {
+                            "title": "Job mapping",
+                            "description": "Select the unemployed job."
+                        },
+                        "website": {
+                            "title": "Public pages",
+                            "description": "Add privacy and imprint links, and decide whether the statistics page should be visible."
+                        }
+                    },
+                    "review": {
+                        "summary": {
+                            "title": "Core checklist",
+                            "description": "Access, locale, and public site basics are the minimum pieces worth confirming before regular usage begins."
+                        },
+                        "discord": {
+                            "title": "Discord integration later",
+                            "description": "Discord bot setup, role sync, and presence configuration can be added after setup is complete."
+                        }
+                    }
+                },
+                "review": {
+                    "notice": {
+                        "title": "Discord is intentionally deferred",
+                        "description": "We are not wiring Discord into first-time setup yet. Keep it for the next pass once the core flow is in place."
+                    },
+                    "finish_action": "Finish setup"
+                }
             }
         },
         "wiki": {
@@ -807,7 +889,8 @@
         "zoom_to_fit": "Zoom to Fit",
         "rotate_left": "Rotate Left",
         "rotate_right": "Rotate Right",
-        "change_order": "Change Order"
+        "change_order": "Change Order",
+        "hidden": "Hidden"
     },
     "components": {
         "partials": {
@@ -1743,7 +1826,10 @@
                 "auth": {
                     "title": "Auth",
                     "description": "Authentication settings",
-                    "sign_up": "Sign-up",
+                    "sign_up": {
+                        "title": "Sign-up",
+                        "description": "Enable user sign-up for new users."
+                    },
                     "last_char_lock": "Lock players into their last active character",
                     "social_login_providers": {
                         "title": "Social Login Providers",
@@ -1775,6 +1861,10 @@
                     "description": "Website settings, such as the footer links.",
                     "links": {
                         "title": "Links"
+                    },
+                    "stats": {
+                        "title": "Statistics",
+                        "description": "Enable instance statistics page."
                     }
                 },
                 "jobs_users": {

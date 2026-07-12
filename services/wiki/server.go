@@ -48,16 +48,13 @@ type Server struct {
 	pbwiki.WikiServiceServer
 	pbwiki.CollabServiceServer
 
-	logger *zap.Logger
-	db     *sql.DB
-	js     *events.JSWrapper
+	db *sql.DB
 
 	perms    perms.Permissions
 	enricher mstlystcdata.IUserAwareEnricher
 	notifi   notifi.INotifi
 
-	access         *access.SubjectObjectAccess
-	accessResolver *access.SubjectResolver
+	access *access.SubjectObjectAccess
 
 	collabServer *collab.CollabServer
 	fHandler     *filestore.Handler[int64]
@@ -104,19 +101,16 @@ func NewServer(p Params) *Server {
 	access.RegisterAccess("wiki_page", objAccess)
 
 	s := &Server{
-		logger: p.Logger.Named("wiki"),
-		db:     p.DB,
-		js:     p.JS,
+		db: p.DB,
 
 		perms:    p.Perms,
 		enricher: p.Enricher,
 		notifi:   p.Notifi,
 
-		access:         objAccess,
-		accessResolver: access.NewSubjectResolver(p.DB),
-		collabServer:   collabServer,
-		fHandler:       fHandler,
-		store:          p.Store,
+		access:       objAccess,
+		collabServer: collabServer,
+		fHandler:     fHandler,
+		store:        p.Store,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

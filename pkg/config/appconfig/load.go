@@ -115,6 +115,10 @@ func (c *Config) Set(val *Cfg) {
 }
 
 func (c *Config) Update(ctx context.Context, val *Cfg) error {
+	if current := c.Get(); current != nil && !val.HasSetupComplete() && current.HasSetupComplete() {
+		val.SetSetupComplete(current.GetSetupComplete())
+	}
+
 	c.Set(val)
 
 	// Send update message to inform components
@@ -176,12 +180,14 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 	stmt := tConfig.
 		SELECT(
 			tConfig.AppConfig.AS("app_config"),
+			tConfig.SetupComplete.AS("setup_complete"),
 		).
 		FROM(tConfig).
 		LIMIT(1)
 
 	dest := struct {
-		AppConfig *Cfg
+		AppConfig     *Cfg
+		SetupComplete bool
 	}{
 		AppConfig: &Cfg{},
 	}
@@ -195,10 +201,12 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 			if err := c.updateConfigInDB(ctx, dest.AppConfig); err != nil {
 				return nil, err
 			}
+			dest.SetupComplete = false
 		}
 	}
 	dest.AppConfig.Default()
 	dest.AppConfig.Migrate()
+	dest.AppConfig.SetSetupComplete(dest.SetupComplete)
 
 	if slices.ContainsFunc(dest.AppConfig.Perms.GetDefault(), func(p *settings.Perm) bool {
 		return !strings.Contains(p.GetCategory(), ".")

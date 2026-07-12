@@ -320,6 +320,28 @@ func (m *LoginResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *RefreshAccountSessionResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Expires
+	if m.Expires != nil {
+		if v, ok := any(m.GetExpires()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Username
+	m.Username = htmlsanitizer.SanitizeAndUnescape(m.Username)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SetSuperuserModeRequest) Sanitize() error {
 	if m == nil {
 		return nil
