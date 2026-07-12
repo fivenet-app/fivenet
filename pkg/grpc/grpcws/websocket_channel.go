@@ -287,46 +287,9 @@ func (ws *WebsocketChannel) readFrame() (*grpcws.GrpcFrame, error) {
 func (ws *WebsocketChannel) handleControlHeader(h *grpcws.Header) error {
 	switch h.GetOperation() {
 	case "auth", "reauth":
-		authz := h.GetHeaders()["Authorization"]
-		token := ""
-		if authz != nil && len(authz.GetValue()) > 0 {
-			token = strings.TrimSpace(strings.TrimPrefix(authz.GetValue()[0], "Bearer "))
-		}
-		if token == "" {
-			if ws.isAuthenticated() {
-				return ws.writeAuthFailure("missing authorization")
-			}
-
-			// Allow account-only websocket sessions to authenticate without a user token.
-			if _, err := ws.req.Cookie(grpcauth.AccCookieName); err != nil {
-				return ws.writeAuthFailure("missing authorization")
-			}
-
-			ws.authMu.Lock()
-			ws.authOk = true
-			ws.authToken = ""
-			ws.authMu.Unlock()
-
-			return ws.write(&grpcws.GrpcFrame{
-				StreamId: 0,
-				Payload: &grpcws.GrpcFrame_Header{
-					Header: &grpcws.Header{
-						Operation: "auth_ok",
-						Status:    http.StatusOK,
-					},
-				},
-			})
-		}
-
-		valid, err := ws.validateTokenFunc(token)
-		if err != nil {
+		if err := ws.applyControlAuth(h); err != nil {
 			return ws.writeAuthFailure(err.Error())
 		}
-		if !valid {
-			return ws.writeAuthFailure("invalid token")
-		}
-
-		ws.setAuthToken(token)
 
 		return ws.write(&grpcws.GrpcFrame{
 			StreamId: 0,
@@ -341,6 +304,38 @@ func (ws *WebsocketChannel) handleControlHeader(h *grpcws.Header) error {
 	default:
 		return ws.writeAuthFailure("unknown control operation")
 	}
+}
+
+func (ws *WebsocketChannel) applyControlAuth(h *grpcws.Header) error {
+	authz := h.GetHeaders()["Authorization"]
+	token := ""
+	if authz != nil && len(authz.GetValue()) > 0 {
+		token = strings.TrimSpace(strings.TrimPrefix(authz.GetValue()[0], "Bearer "))
+	}
+	if token == "" {
+		// Allow account-only websocket sessions to authenticate without a user token.
+		if _, err := ws.req.Cookie(grpcauth.AccCookieName); err != nil {
+			return fmt.Errorf("missing authorization")
+		}
+
+		ws.authMu.Lock()
+		ws.authOk = true
+		ws.authToken = ""
+		ws.authMu.Unlock()
+
+		return nil
+	}
+
+	valid, err := ws.validateTokenFunc(token)
+	if err != nil {
+		return err
+	}
+	if !valid {
+		return fmt.Errorf("invalid token")
+	}
+
+	ws.setAuthToken(token)
+	return nil
 }
 
 func (ws *WebsocketChannel) writeAuthFailure(msg string) error {
