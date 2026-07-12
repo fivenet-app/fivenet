@@ -6,8 +6,6 @@ import (
 	"errors"
 
 	discordapi "github.com/diamondburned/arikawa/v3/api"
-	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
-	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
@@ -16,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
 	grpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
-	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
@@ -24,7 +21,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/reqs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/pkg/updatecheck"
-	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	syncservice "github.com/fivenet-app/fivenet/v2026/services/sync"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
@@ -62,11 +58,9 @@ type Server struct {
 	logger       *zap.Logger
 	db           *sql.DB
 	auth         *grpcauth.GRPCAuth
-	tm           *grpcauth.TokenMgr
 	ps           perms.Permissions
 	enricher     mstlystcdata.IUserAwareEnricher
 	laws         mstlystcdata.ILaws
-	st           storage.IStorage
 	cfg          *config.Config
 	appCfg       appconfig.IConfig
 	js           *events.JSWrapper
@@ -94,7 +88,6 @@ type Params struct {
 	Logger       *zap.Logger
 	DB           *sql.DB
 	Auth         *grpcauth.GRPCAuth
-	TM           *grpcauth.TokenMgr
 	PS           perms.Permissions
 	Enricher     mstlystcdata.IUserAwareEnricher
 	Laws         mstlystcdata.ILaws
@@ -150,11 +143,9 @@ func NewServer(p Params) *Server {
 		logger:       p.Logger,
 		db:           p.DB,
 		auth:         p.Auth,
-		tm:           p.TM,
 		ps:           p.PS,
 		enricher:     p.Enricher,
 		laws:         p.Laws,
-		st:           p.Storage,
 		cfg:          p.Config,
 		appCfg:       p.AppConfig,
 		js:           p.JS,
@@ -193,56 +184,13 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 	switch fullMethod {
 	case pbsettings.ConfigService_GetAppConfig_FullMethodName,
 		pbsettings.ConfigService_UpdateAppConfig_FullMethodName:
+		if s.auth == nil {
+			return nil, errors.New("settings auth is not configured")
+		}
 		if hasUserTokenInContext(ctx) {
-			if s.auth == nil {
-				return nil, errors.New("settings auth is not configured")
-			}
-
-			if userCtx, err := s.auth.GRPCAuthFunc(ctx, fullMethod); err == nil {
-				return userCtx, nil
-			} else {
-				return nil, err
-			}
+			return s.auth.GRPCAuthFunc(ctx, fullMethod)
 		}
-
-		accToken, err := grpcauth.GetAccTokenFromGRPCContext(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		if s.tm == nil {
-			return nil, errorsgrpcauth.ErrInvalidToken
-		}
-
-		accClaims, err := s.tm.ParseAccToken(accToken)
-		if err != nil {
-			return nil, errorsgrpcauth.ErrInvalidToken
-		}
-
-		_, _, configAdminGroups, configAdminUsers := pkguserinfo.EffectiveAdminLists(
-			s.cfg.Auth.JobAdminGroups,
-			s.cfg.Auth.JobAdminUsers,
-			s.cfg.Auth.ConfigAdminGroups,
-			s.cfg.Auth.ConfigAdminUsers,
-			s.appCfg,
-		)
-
-		userInfo := &pbuserinfo.UserInfo{
-			AccountId: accClaims.AccID,
-			License:   accClaims.Subject,
-			Groups: &accounts.AccountGroups{
-				Groups: append([]string(nil), accClaims.Groups...),
-			},
-			CanBeSuperuser: accClaims.CanBeSuperuser,
-			CanBeConfigAdmin: pkguserinfo.CanBeConfigAdmin(
-				&accounts.AccountGroups{Groups: accClaims.Groups},
-				accClaims.Subject,
-				configAdminGroups,
-				configAdminUsers,
-			),
-		}
-
-		return grpcauth.ContextWithUserInfo(ctx, userInfo), nil
+		return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
 
 	default:
 		if s.auth == nil {

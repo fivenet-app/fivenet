@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/permsstub"
@@ -86,11 +87,31 @@ func TestConfigAuthFuncOverrideRespectsAdminLevels(t *testing.T) {
 		},
 		appCfg: appCfg,
 		auth: grpcauth.NewGRPCAuth(
-			userinfo.NewMockUserInfoRetriever(map[int32]*pbuserinfo.UserInfo{}),
+			&userinfo.MockUserInfoRetriever{
+				AccountInfo: map[int64]*pbuserinfo.UserInfo{
+					42: {
+						AccountId: 42,
+						Enabled:   true,
+						License:   "license-1",
+						Groups: &accounts.AccountGroups{
+							Groups: []string{"config-admin"},
+						},
+						CanBeConfigAdmin: true,
+					},
+					43: {
+						AccountId: 43,
+						Enabled:   true,
+						License:   "license-1",
+						Groups: &accounts.AccountGroups{
+							Groups: []string{"job-admin"},
+						},
+						CanBeConfigAdmin: false,
+					},
+				},
+			},
 			tm,
 			appCfg,
 		),
-		tm: tm,
 	}
 
 	grpcPerm := grpcauth.NewGRPCPerms(&permsstub.Permissions{
@@ -125,10 +146,10 @@ func TestConfigAuthFuncOverrideRespectsAdminLevels(t *testing.T) {
 		)
 	}
 
-	t.Run("config-admin account can access both config rpc methods", func(t *testing.T) {
+	t.Run("live config-admin account can access both config rpc methods", func(t *testing.T) {
 		t.Parallel()
 
-		ctx := makeCtx(t, 42, "config-admin", []string{"config-admin"})
+		ctx := makeCtx(t, 42, "config-admin", []string{"stale-config-admin"})
 
 		for _, method := range []string{
 			pbsettings.ConfigService_GetAppConfig_FullMethodName,
@@ -155,10 +176,10 @@ func TestConfigAuthFuncOverrideRespectsAdminLevels(t *testing.T) {
 		}
 	})
 
-	t.Run("job-admin-only account cannot access config rpc methods", func(t *testing.T) {
+	t.Run("stale config-admin claims do not bypass live account groups", func(t *testing.T) {
 		t.Parallel()
 
-		ctx := makeCtx(t, 43, "job-admin", []string{"job-admin"})
+		ctx := makeCtx(t, 43, "job-admin", []string{"config-admin"})
 
 		for _, method := range []string{
 			pbsettings.ConfigService_GetAppConfig_FullMethodName,

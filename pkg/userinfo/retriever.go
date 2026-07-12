@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -20,6 +21,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go/jetstream"
@@ -38,6 +40,7 @@ var RetrieverModule = fx.Module(
 
 type UserInfoRetriever interface {
 	GetUserInfo(ctx context.Context, userId int32) (*pbuserinfo.UserInfo, error)
+	GetAccountInfo(ctx context.Context, accountId int64) (*pbuserinfo.UserInfo, error)
 	GetUserInfoFromClaims(
 		ctx context.Context,
 		userClaims *authclaims.UserInfoClaims,
@@ -296,6 +299,44 @@ func (r *Retriever) getUserInfoFromDB(
 	return user, nil
 }
 
+func (r *Retriever) getAccountInfoFromDB(
+	ctx context.Context,
+	accountId int64,
+) (*model.FivenetAccounts, error) {
+	tAccount := table.FivenetAccounts
+
+	stmt := tAccount.
+		SELECT(
+			tAccount.ID,
+			tAccount.CreatedAt,
+			tAccount.UpdatedAt,
+			tAccount.DeletedAt,
+			tAccount.Enabled,
+			tAccount.Username,
+			tAccount.License,
+			tAccount.Groups,
+			tAccount.LastChar,
+		).
+		FROM(tAccount).
+		WHERE(mysql.AND(
+			tAccount.ID.EQ(mysql.Int64(accountId)),
+			tAccount.Enabled.IS_TRUE(),
+			tAccount.DeletedAt.IS_NULL(),
+		)).
+		LIMIT(1)
+
+	account := &model.FivenetAccounts{}
+	if err := stmt.QueryContext(ctx, r.db, account); err != nil {
+		return nil, err
+	}
+
+	if account.ID == 0 || account.Username == nil {
+		return nil, ErrAccountError
+	}
+
+	return account, nil
+}
+
 // checkAndSetSuperuser checks whether the user qualifies for elevated job-admin mode.
 func (r *Retriever) checkAndSetSuperuser(userInfo *pbuserinfo.UserInfo) {
 	jobAdminGroups, jobAdminUsers := EffectiveJobAdminLists(
@@ -321,6 +362,33 @@ func (r *Retriever) checkAndSetSuperuser(userInfo *pbuserinfo.UserInfo) {
 	if !userInfo.GetCanBeSuperuser() {
 		userInfo.Superuser = false
 	}
+}
+
+// GetAccountInfo retrieves account info for a given accountId and ensures the current database
+// state is used for authorization decisions.
+func (r *Retriever) GetAccountInfo(
+	ctx context.Context,
+	accountId int64,
+) (*pbuserinfo.UserInfo, error) {
+	dbAccount, err := r.getAccountInfoFromDB(ctx, accountId)
+	if err != nil {
+		return nil, errswrap.NewError(
+			fmt.Errorf("failed to get account info from db. %w", err),
+			ErrAccountError,
+		)
+	}
+
+	accountProto := accounts.ConvertFromModelAcc(dbAccount)
+	userInfo := &pbuserinfo.UserInfo{
+		AccountId: accountProto.GetId(),
+		Enabled:   accountProto.GetEnabled(),
+		License:   accountProto.GetLicense(),
+		Groups:    accountProto.GetGroups(),
+	}
+
+	r.checkAndSetSuperuser(userInfo)
+
+	return userInfo, nil
 }
 
 // GetUserInfoFromClaims retrieves user info based on the claims.
