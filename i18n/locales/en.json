@@ -1861,6 +1861,10 @@
                     "description": "Website settings, such as the footer links.",
                     "links": {
                         "title": "Links"
+                    },
+                    "stats": {
+                        "title": "Statistics",
+                        "description": "Enable instance statistics page."
                     }
                 },
                 "jobs_users": {

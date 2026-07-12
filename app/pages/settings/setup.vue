@@ -194,7 +194,7 @@ const { data: config, status, refresh, error } = useLazyAsyncData(`settings-setu
 
 const completorStore = useCompletorStore();
 const { listJobs } = completorStore;
-const { data: jobs } = useLazyAsyncData(`settings-setup-jobs`, () => listJobs());
+const { data: jobs, refresh: refreshJobs } = useLazyAsyncData(`settings-setup-jobs`, () => listJobs());
 
 const notifications = useNotificationsStore();
 const isSubmitting = ref(false);
@@ -826,15 +826,26 @@ const open = ref<boolean>(false);
                                                                 name="jobInfo.unemployedJob.name"
                                                                 :label="`${$t('common.job')} ${$t('common.name')}`"
                                                             >
-                                                                <USelectMenu
-                                                                    v-model="state.jobInfo.unemployedJob.name"
-                                                                    class="w-full"
-                                                                    :placeholder="$t('common.job')"
-                                                                    :items="jobs ?? []"
-                                                                    value-key="name"
-                                                                    :search-input="{ placeholder: $t('common.search_field') }"
-                                                                    :filter-fields="['label', 'name']"
-                                                                />
+                                                                <UFieldGroup class="w-full">
+                                                                    <USelectMenu
+                                                                        v-model="state.jobInfo.unemployedJob.name"
+                                                                        class="w-full"
+                                                                        :placeholder="$t('common.job')"
+                                                                        :items="jobs ?? []"
+                                                                        value-key="name"
+                                                                        :search-input="{
+                                                                            placeholder: $t('common.search_field'),
+                                                                        }"
+                                                                        :filter-fields="['label', 'name']"
+                                                                    />
+
+                                                                    <UTooltip :text="$t('common.refresh')">
+                                                                        <UButton
+                                                                            icon="i-mdi-refresh"
+                                                                            @click="() => refreshJobs()"
+                                                                        />
+                                                                    </UTooltip>
+                                                                </UFieldGroup>
                                                             </UFormField>
 
                                                             <UFormField
@@ -878,31 +889,46 @@ const open = ref<boolean>(false);
                                                                     $t('components.settings.app_config.jobs_users.public_jobs')
                                                                 "
                                                             >
-                                                                <USelectMenu
-                                                                    v-model="state.jobInfo.publicJobs"
-                                                                    class="w-full"
-                                                                    multiple
-                                                                    :items="jobs ?? []"
-                                                                    value-key="name"
-                                                                    :search-input="{ placeholder: $t('common.search_field') }"
-                                                                    :filter-fields="['label', 'name']"
-                                                                >
-                                                                    <template #default>
-                                                                        <span
-                                                                            v-if="state.jobInfo.publicJobs.length"
-                                                                            class="truncate"
-                                                                        >
-                                                                            {{ state.jobInfo.publicJobs.join(', ') }}
-                                                                        </span>
-                                                                        <span v-else class="truncate">
-                                                                            {{ $t('common.none_selected', [$t('common.job')]) }}
-                                                                        </span>
-                                                                    </template>
+                                                                <UFieldGroup class="w-full">
+                                                                    <USelectMenu
+                                                                        v-model="state.jobInfo.publicJobs"
+                                                                        class="w-full"
+                                                                        multiple
+                                                                        :items="jobs ?? []"
+                                                                        value-key="name"
+                                                                        :search-input="{
+                                                                            placeholder: $t('common.search_field'),
+                                                                        }"
+                                                                        :filter-fields="['label', 'name']"
+                                                                    >
+                                                                        <template #default>
+                                                                            <span
+                                                                                v-if="state.jobInfo.publicJobs.length"
+                                                                                class="truncate"
+                                                                            >
+                                                                                {{ state.jobInfo.publicJobs.join(', ') }}
+                                                                            </span>
+                                                                            <span v-else class="truncate">
+                                                                                {{
+                                                                                    $t('common.none_selected', [
+                                                                                        $t('common.job'),
+                                                                                    ])
+                                                                                }}
+                                                                            </span>
+                                                                        </template>
 
-                                                                    <template #item-label="{ item }">
-                                                                        {{ item.label }} ({{ item.name }})
-                                                                    </template>
-                                                                </USelectMenu>
+                                                                        <template #item-label="{ item }">
+                                                                            {{ item.label }} ({{ item.name }})
+                                                                        </template>
+                                                                    </USelectMenu>
+
+                                                                    <UTooltip :text="$t('common.refresh')">
+                                                                        <UButton
+                                                                            icon="i-mdi-refresh"
+                                                                            @click="() => refreshJobs()"
+                                                                        />
+                                                                    </UTooltip>
+                                                                </UFieldGroup>
                                                             </UFormField>
 
                                                             <UFormField
@@ -912,31 +938,46 @@ const open = ref<boolean>(false);
                                                                     $t('components.settings.app_config.jobs_users.hidden_jobs')
                                                                 "
                                                             >
-                                                                <USelectMenu
-                                                                    v-model="state.jobInfo.hiddenJobs"
-                                                                    class="w-full"
-                                                                    multiple
-                                                                    :items="jobs ?? []"
-                                                                    value-key="name"
-                                                                    :search-input="{ placeholder: $t('common.search_field') }"
-                                                                    :filter-fields="['label', 'name']"
-                                                                >
-                                                                    <template #default>
-                                                                        <span
-                                                                            v-if="state.jobInfo.hiddenJobs.length"
-                                                                            class="truncate"
-                                                                        >
-                                                                            {{ state.jobInfo.hiddenJobs.join(', ') }}
-                                                                        </span>
-                                                                        <span v-else class="truncate">
-                                                                            {{ $t('common.none_selected', [$t('common.job')]) }}
-                                                                        </span>
-                                                                    </template>
+                                                                <UFieldGroup class="w-full">
+                                                                    <USelectMenu
+                                                                        v-model="state.jobInfo.hiddenJobs"
+                                                                        class="w-full"
+                                                                        multiple
+                                                                        :items="jobs ?? []"
+                                                                        value-key="name"
+                                                                        :search-input="{
+                                                                            placeholder: $t('common.search_field'),
+                                                                        }"
+                                                                        :filter-fields="['label', 'name']"
+                                                                    >
+                                                                        <template #default>
+                                                                            <span
+                                                                                v-if="state.jobInfo.hiddenJobs.length"
+                                                                                class="truncate"
+                                                                            >
+                                                                                {{ state.jobInfo.hiddenJobs.join(', ') }}
+                                                                            </span>
+                                                                            <span v-else class="truncate">
+                                                                                {{
+                                                                                    $t('common.none_selected', [
+                                                                                        $t('common.job'),
+                                                                                    ])
+                                                                                }}
+                                                                            </span>
+                                                                        </template>
 
-                                                                    <template #item-label="{ item }">
-                                                                        {{ item.label }} ({{ item.name }})
-                                                                    </template>
-                                                                </USelectMenu>
+                                                                        <template #item-label="{ item }">
+                                                                            {{ item.label }} ({{ item.name }})
+                                                                        </template>
+                                                                    </USelectMenu>
+
+                                                                    <UTooltip :text="$t('common.refresh')">
+                                                                        <UButton
+                                                                            icon="i-mdi-refresh"
+                                                                            @click="() => refreshJobs()"
+                                                                        />
+                                                                    </UTooltip>
+                                                                </UFieldGroup>
                                                             </UFormField>
                                                         </UPageCard>
 
@@ -978,7 +1019,14 @@ const open = ref<boolean>(false);
                                                             <UFormField
                                                                 class="grid grid-cols-2 items-center gap-2"
                                                                 name="website.statsPage"
-                                                                :label="$t('pages.stats.title')"
+                                                                :label="
+                                                                    $t('components.settings.app_config.website.stats.title')
+                                                                "
+                                                                :description="
+                                                                    $t(
+                                                                        'components.settings.app_config.website.stats.description',
+                                                                    )
+                                                                "
                                                             >
                                                                 <USwitch v-model="state.website.statsPage" />
                                                             </UFormField>

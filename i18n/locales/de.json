@@ -1861,6 +1861,10 @@
                     "description": "Website Einstellunge, wie zum Beispiel die Fußzeilen Verlinkungen.",
                     "links": {
                         "title": "Verlinkungen"
+                    },
+                    "stats": {
+                        "title": "Statistik",
+                        "description": "Aktivieren der Instanzstatistik-Seite."
                     }
                 },
                 "jobs_users": {
