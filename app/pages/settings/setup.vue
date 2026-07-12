@@ -769,14 +769,6 @@ const open = ref<boolean>(false);
                                                                                     }}
                                                                                 </template>
 
-                                                                                <template #item-label="{ item }">
-                                                                                    {{
-                                                                                        $t(
-                                                                                            `perms.${state.perms.default[idx]!.category}.${item}.key`,
-                                                                                        )
-                                                                                    }}
-                                                                                </template>
-
                                                                                 <template #empty>
                                                                                     {{
                                                                                         $t('common.not_found', [
