@@ -1,10 +1,7 @@
 package vehicles
 
 import (
-	"database/sql"
-
 	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
@@ -23,10 +20,8 @@ type Server struct {
 type Params struct {
 	fx.In
 
-	DB       *sql.DB
 	Ps       perms.Permissions
 	Enricher mstlystcdata.IEnricher
-	Config   *config.Config
 	Store    vehiclesstore.IStore
 }
 

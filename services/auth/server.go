@@ -2,12 +2,10 @@ package auth
 
 import (
 	"context"
-	"database/sql"
 
 	pbauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
@@ -40,7 +38,6 @@ type Server struct {
 	enricher mstlystcdata.IEnricher
 	ui       userinfo.UserInfoRetriever
 	appCfg   appconfig.IConfig
-	js       *events.JSWrapper
 	store    authstore.IStore
 
 	domain            string
@@ -55,7 +52,6 @@ type Params struct {
 	fx.In
 
 	Logger    *zap.Logger
-	DB        *sql.DB
 	Auth      *auth.GRPCAuth
 	TM        *auth.TokenMgr
 	Perms     perms.Permissions
@@ -63,7 +59,6 @@ type Params struct {
 	UI        userinfo.UserInfoRetriever
 	Config    *config.Config
 	AppConfig appconfig.IConfig
-	JS        *events.JSWrapper
 	Store     authstore.IStore
 }
 
@@ -76,7 +71,6 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		ui:       p.UI,
 		appCfg:   p.AppConfig,
-		js:       p.JS,
 		store:    p.Store,
 
 		domain:            p.Config.HTTP.Sessions.Domain,

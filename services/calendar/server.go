@@ -12,10 +12,8 @@ import (
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	pkggrpc "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
@@ -93,13 +91,11 @@ type Server struct {
 	logger   *zap.Logger
 	tracer   trace.Tracer
 	db       *sql.DB
-	cfg      *config.Config
 	ps       perms.Permissions
 	enricher mstlystcdata.IUserAwareEnricher
 	appCfg   appconfig.IConfig
 	i18n     i18n.Ii18n
 	notif    notifi.INotifi
-	js       *events.JSWrapper
 	dc       *discordsession.Session
 	store    calendarstore.IStore
 
@@ -113,13 +109,11 @@ type Params struct {
 	Logger    *zap.Logger
 	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
-	Config    *config.Config
 	P         perms.Permissions
 	Enricher  mstlystcdata.IUserAwareEnricher
 	AppConfig appconfig.IConfig
 	I18n      i18n.Ii18n
 	Notif     notifi.INotifi
-	JS        *events.JSWrapper
 	Discord   *discordsession.Session
 	Store     calendarstore.IStore
 }
@@ -137,13 +131,11 @@ func NewServer(p Params) Result {
 		logger:   p.Logger.Named("calendar"),
 		tracer:   p.TP.Tracer("calendar"),
 		db:       p.DB,
-		cfg:      p.Config,
 		ps:       p.P,
 		enricher: p.Enricher,
 		appCfg:   p.AppConfig,
 		i18n:     p.I18n,
 		notif:    p.Notif,
-		js:       p.JS,
 		dc:       p.Discord,
 		store:    p.Store,
 

@@ -1,10 +1,7 @@
 package completor
 
 import (
-	"database/sql"
-
 	pbcompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
@@ -27,13 +24,11 @@ type Server struct {
 type Params struct {
 	fx.In
 
-	DB         *sql.DB
 	Perms      perms.Permissions
 	JobsSearch mstlystcdata.IJobsSearch
 	Laws       mstlystcdata.ILaws
 	Tracker    tracker.ITracker
 	Enricher   mstlystcdata.IUserAwareEnricher
-	Config     *config.Config
 	Store      completorstore.IStore
 }
 

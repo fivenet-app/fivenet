@@ -2,11 +2,9 @@ package stats
 
 import (
 	"context"
-	"database/sql"
 
 	pbstats "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/stats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	statsstore "github.com/fivenet-app/fivenet/v2026/stores/stats"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -15,9 +13,6 @@ import (
 
 type Server struct {
 	pbstats.StatsServiceServer
-
-	logger *zap.Logger
-	js     *events.JSWrapper
 
 	worker *worker
 }
@@ -28,17 +23,12 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger    *zap.Logger
-	DB        *sql.DB
-	JS        *events.JSWrapper
 	AppConfig appconfig.IConfig
 	Store     statsstore.IStore
 }
 
 func NewServer(p Params) *Server {
 	s := &Server{
-		logger: p.Logger.Named("stats.worker"),
-		js:     p.JS,
-
 		worker: newWorker(p.Logger, p.Store),
 	}
 
