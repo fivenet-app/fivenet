@@ -89,27 +89,26 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 // AuthFuncOverride is called instead of the original auth func.
 func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (context.Context, error) {
 	// Skip authentication for the anon accessible endpoints
-	if fullMethod == "/services.auth.AuthService/CreateAccount" ||
-		fullMethod == "/services.auth.AuthService/Login" ||
-		fullMethod == "/services.auth.AuthService/ForgotPassword" {
+	switch fullMethod {
+	case "/services.auth.AuthService/CreateAccount",
+		"/services.auth.AuthService/Login",
+		"/services.auth.AuthService/ForgotPassword":
 		return ctx, nil
-	}
 
-	if fullMethod == "/services.auth.AuthService/Logout" {
+	case "/services.auth.AuthService/Logout":
 		c, _ := s.auth.GRPCAuthFunc(ctx, fullMethod)
 		if c != nil {
 			return c, nil
 		}
 		return ctx, nil
-	}
 
-	// Superuser mode and impersonation endpoints require user token
-	if fullMethod == "/services.auth.AuthService/SetSuperuserMode" ||
-		fullMethod == "/services.auth.AuthService/ImpersonateJob" {
+	case "/services.auth.AuthService/SetSuperuserMode", "/services.auth.AuthService/ImpersonateJob":
+		// Superuser mode and impersonation endpoints require user token
 		return s.auth.GRPCAuthFunc(ctx, fullMethod)
-	}
 
-	return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
+	default:
+		return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
+	}
 }
 
 func (s *Server) PermissionUnaryFuncOverride(
