@@ -1,6 +1,7 @@
 import type { WebSocketStatus } from '@vueuse/core';
 import { describe, expect, it, vi } from 'vitest';
 import { ref } from 'vue';
+import { Metadata } from '~/composables/grpcws/metadata';
 import type { ILogger } from '~/utils/logger';
 import { GrpcFrame } from '~~/gen/ts/resources/grpcws/grpcws';
 import type { TransportOptions } from '../transport';
@@ -37,6 +38,28 @@ function createGrpcStreamMock(): GrpcStream {
         finishSend: vi.fn().mockResolvedValue(undefined),
         cancel: vi.fn().mockResolvedValue(undefined),
     };
+}
+
+function createAuthOkBuffer(): ArrayBuffer {
+    return GrpcFrame.toBinary(
+        GrpcFrame.create({
+            streamId: 0,
+            payload: {
+                oneofKind: 'header',
+                header: {
+                    operation: 'auth_ok',
+                    headers: {},
+                    status: 200,
+                },
+            },
+        }),
+    ).buffer.slice(0) as ArrayBuffer;
+}
+
+function expectFrame(sentFrames: GrpcFrame[], index: number): GrpcFrame {
+    const frame = sentFrames.at(index);
+    expect(frame).toBeDefined();
+    return frame!;
 }
 
 describe('WebsocketChannelImpl', () => {
@@ -95,49 +118,83 @@ describe('WebsocketChannelImpl', () => {
 
         const accountAuth = channel.ensureAuthenticated();
         expect(sentFrames).toHaveLength(1);
-        expect(sentFrames[0].streamId).toBe(0);
-        expect(sentFrames[0].payload.oneofKind).toBe('header');
-        expect(sentFrames[0].payload.header.operation).toBe('auth');
-        expect(sentFrames[0].payload.header.headers.Authorization).toBeUndefined();
+        const authFrame = expectFrame(sentFrames, 0);
+        expect(authFrame.streamId).toBe(0);
+        expect(authFrame.payload.oneofKind).toBe('header');
+        if (authFrame.payload.oneofKind !== 'header') throw new Error('Expected auth header frame');
+        expect(authFrame.payload.header.operation).toBe('auth');
+        expect(authFrame.payload.header.headers.Authorization).toBeUndefined();
 
-        await channel.onMessage(
-            GrpcFrame.toBinary(
-                GrpcFrame.create({
-                    streamId: 0,
-                    payload: {
-                        oneofKind: 'header',
-                        header: {
-                            operation: 'auth_ok',
-                            status: 200,
-                        },
-                    },
-                }),
-            ).buffer.slice(0),
-        );
+        await channel.onMessage(createAuthOkBuffer());
         await accountAuth;
 
         token = 'char-token';
         const charAuth = channel.ensureAuthenticated();
         expect(sentFrames).toHaveLength(2);
-        expect(sentFrames[1].streamId).toBe(0);
-        expect(sentFrames[1].payload.oneofKind).toBe('header');
-        expect(sentFrames[1].payload.header.operation).toBe('reauth');
-        expect(sentFrames[1].payload.header.headers.Authorization.value).toEqual(['Bearer char-token']);
+        const reauthFrame = expectFrame(sentFrames, 1);
+        expect(reauthFrame.streamId).toBe(0);
+        expect(reauthFrame.payload.oneofKind).toBe('header');
+        if (reauthFrame.payload.oneofKind !== 'header') throw new Error('Expected reauth header frame');
+        expect(reauthFrame.payload.header.operation).toBe('reauth');
+        const authorization = reauthFrame.payload.header.headers.Authorization;
+        expect(authorization).toBeDefined();
+        expect(authorization?.value).toEqual(['Bearer char-token']);
 
-        await channel.onMessage(
-            GrpcFrame.toBinary(
-                GrpcFrame.create({
-                    streamId: 0,
-                    payload: {
-                        oneofKind: 'header',
-                        header: {
-                            operation: 'auth_ok',
-                            status: 200,
-                        },
-                    },
-                }),
-            ).buffer.slice(0),
-        );
+        await channel.onMessage(createAuthOkBuffer());
         await charAuth;
+    });
+
+    it('waits for websocket auth before sending the first stream body frame', async () => {
+        const sentFrames: GrpcFrame[] = [];
+        const webSocket = {
+            data: ref<ArrayBuffer | null>(null),
+            status: ref<WebSocketStatus>('OPEN'),
+            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+                sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
+                return true;
+            }),
+            open: vi.fn(),
+        };
+
+        const channel = new WebsocketChannelImpl(createLogger(), webSocket, () => null);
+        const stream = channel.getStream({
+            debug: false,
+            methodDefinition: {
+                service: { typeName: 'test.Service' },
+                name: 'TestMethod',
+                serverStreaming: true,
+                clientStreaming: false,
+            } as never,
+            url: '',
+            onChunk: vi.fn(),
+            onEnd: vi.fn(),
+            onHeaders: vi.fn(),
+        });
+
+        const startPromise = stream.start(new Metadata());
+        expect(sentFrames).toHaveLength(1);
+        const authFrame = expectFrame(sentFrames, 0);
+        expect(authFrame.streamId).toBe(0);
+        expect(authFrame.payload.oneofKind).toBe('header');
+        if (authFrame.payload.oneofKind !== 'header') throw new Error('Expected auth header frame');
+        expect(authFrame.payload.header.operation).toBe('auth');
+
+        const sendPromise = stream.sendMessage(new Uint8Array([1, 2, 3]), true);
+        expect(sentFrames).toHaveLength(1);
+
+        await channel.onMessage(createAuthOkBuffer());
+        await startPromise;
+        await sendPromise;
+
+        expect(sentFrames).toHaveLength(3);
+        const streamHeaderFrame = expectFrame(sentFrames, 1);
+        expect(streamHeaderFrame.streamId).toBe(1);
+        expect(streamHeaderFrame.payload.oneofKind).toBe('header');
+        if (streamHeaderFrame.payload.oneofKind !== 'header') throw new Error('Expected stream header frame');
+        expect(streamHeaderFrame.payload.header.operation).toBe('test.Service/TestMethod');
+
+        const bodyFrame = expectFrame(sentFrames, 2);
+        expect(bodyFrame.streamId).toBe(1);
+        expect(bodyFrame.payload.oneofKind).toBe('body');
     });
 });

@@ -1,5 +1,6 @@
 import type { UseWebSocketReturn } from '@vueuse/core';
 import { Body, Cancel, GrpcFrame, Header, HeaderValue } from '~~/gen/ts/resources/grpcws/grpcws';
+import { getGrpcAuthToken } from '../../auth';
 import { headersToMetadata } from '../../bridge/utils';
 import { errCancelled, errInternal } from '../../errors';
 import type { Metadata } from '../../metadata';
@@ -27,7 +28,7 @@ type AuthState =
 
 // Default token provider
 function defaultTokenProvider(): string | null {
-    return sessionStorage.getItem(authUserTokenKey);
+    return getGrpcAuthToken();
 }
 
 export function WebsocketChannelTransport(
@@ -402,6 +403,9 @@ class WebsocketChannelStream {
     service: string;
     method: string;
     isStream: boolean;
+    private startPromise: Promise<void> | undefined = undefined;
+    private started = false;
+    private startFailed = false;
 
     closed: boolean = false;
 
@@ -418,41 +422,57 @@ class WebsocketChannelStream {
     async start(metadata: Metadata) {
         this.opts.debug && this.logger.debug('Stream start', this.streamId, `${this.service}/${this.method}`);
 
-        // Ensure control-plane auth succeeded before creating a real stream.
-        await this.wsChannel.ensureAuthenticated();
+        this.startPromise = (async () => {
+            try {
+                // Ensure control-plane auth succeeded before creating a real stream.
+                await this.wsChannel.ensureAuthenticated();
+                if (this.closed) return;
 
-        this.wsChannel.activeStreams.set(this.streamId, [this.opts, this]);
+                this.wsChannel.activeStreams.set(this.streamId, [this.opts, this]);
+                this.started = true;
 
-        const header = Header.create();
-        /**
-         * Header.operation multiplexing:
-         * - For RPC streams (streamId > 0): operation is "Service/Method"
-         * - For control stream (streamId == 0): operation is one of "auth", "reauth", "auth_ok"
-         */
-        header.operation = `${this.service}/${this.method}`;
+                const header = Header.create();
+                /**
+                 * Header.operation multiplexing:
+                 * - For RPC streams (streamId > 0): operation is "Service/Method"
+                 * - For control stream (streamId == 0): operation is one of "auth", "reauth", "auth_ok"
+                 */
+                header.operation = `${this.service}/${this.method}`;
 
-        const headerMap = header.headers;
-        // Only accept Metadata for metadata
-        metadata.forEach((key, values) => {
-            const headerValue = HeaderValue.create();
-            headerValue.value = values;
-            headerMap[key] = headerValue;
-        });
+                const headerMap = header.headers;
+                // Only accept Metadata for metadata
+                metadata.forEach((key, values) => {
+                    const headerValue = HeaderValue.create();
+                    headerValue.value = values;
+                    headerMap[key] = headerValue;
+                });
 
-        this.wsChannel.sendToWebsocket(
-            this.opts,
-            GrpcFrame.create({
-                streamId: this.streamId,
-                payload: {
-                    oneofKind: 'header',
-                    header: header,
-                },
-            }),
-        );
+                await this.wsChannel.sendToWebsocket(
+                    this.opts,
+                    GrpcFrame.create({
+                        streamId: this.streamId,
+                        payload: {
+                            oneofKind: 'header',
+                            header: header,
+                        },
+                    }),
+                );
+            } catch (err) {
+                this.startFailed = true;
+                if (!this.closed) {
+                    this.closed = true;
+                    this.opts.onEnd(err instanceof Error ? err : new Error(String(err)));
+                }
+            }
+        })();
+
+        await this.startPromise;
     }
 
     async sendMessage(msgBytes: Uint8Array, complete?: boolean) {
         this.opts.debug && this.logger.debug('Stream send', this.streamId, `${this.service}/${this.method}`);
+
+        if (!(await this.waitForStart())) return;
 
         const output = new Uint8Array(msgBytes.length + 5);
         output[0] = 0; // Compression none
@@ -479,6 +499,8 @@ class WebsocketChannelStream {
     async finishSend() {
         this.opts.debug && this.logger.debug('Stream complete', this.streamId, `${this.service}/${this.method}`);
 
+        if (!(await this.waitForStart())) return;
+
         await this.wsChannel.sendToWebsocket(
             this.opts,
             GrpcFrame.create({
@@ -498,6 +520,9 @@ class WebsocketChannelStream {
 
         this.opts.onEnd(err ?? errCancelled);
 
+        if (!(await this.waitForStart())) return;
+        if (!this.started) return;
+
         await this.wsChannel.sendToWebsocket(
             this.opts,
             GrpcFrame.create({
@@ -508,5 +533,12 @@ class WebsocketChannelStream {
                 },
             }),
         );
+    }
+
+    private async waitForStart(): Promise<boolean> {
+        if (this.startPromise === undefined) return true;
+
+        await this.startPromise;
+        return this.started && !this.closed && !this.startFailed;
     }
 }
