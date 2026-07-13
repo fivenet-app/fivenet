@@ -90,7 +90,7 @@ export const useNotificationsStore = defineStore(
         /**
          * Count of unread notifications.
          */
-        const notificationsCount = ref<number>(0);
+        const notificationCount = ref<number>(0);
 
         /**
          * Controller to manage the abort signal for the notification stream.
@@ -149,7 +149,7 @@ export const useNotificationsStore = defineStore(
          * Resets the notification data, clearing the list and count.
          */
         const reset = (): void => {
-            notificationsCount.value = 0;
+            notificationCount.value = 0;
             notifications.value = [];
         };
 
@@ -282,7 +282,7 @@ export const useNotificationsStore = defineStore(
                 const calendarStore = useCalendarStore();
                 handleNotificationEvent(userEvent.data.notification, calendarStore);
             } else if (userEvent.data.oneofKind === 'notificationsReadCount') {
-                notificationsCount.value = userEvent.data.notificationsReadCount;
+                notificationCount.value = userEvent.data.notificationsReadCount;
             } else if (userEvent.data.oneofKind === 'userInfoChanged') {
                 await handleUserInfoChangedEvent(userEvent.data.userInfoChanged, authStore, scope);
             } else if (userEvent.data.oneofKind === 'accountGroupsChanged') {
@@ -329,7 +329,7 @@ export const useNotificationsStore = defineStore(
                 setStreamReadyState(true);
 
                 for await (const resp of currentStream.responses) {
-                    notificationsCount.value = resp.notificationCount;
+                    notificationCount.value = resp.notificationCount;
 
                     if (!resp || !resp.data || resp.data.oneofKind === undefined) continue;
 
@@ -473,10 +473,10 @@ export const useNotificationsStore = defineStore(
                 throw e;
             }
 
-            if (req.all === true || req.ids.length >= notificationsCount.value) {
-                notificationsCount.value = 0;
+            if (req.all === true || req.ids.length >= notificationCount.value) {
+                notificationCount.value = 0;
             } else {
-                notificationsCount.value -= req.ids.length;
+                notificationCount.value -= req.ids.length;
             }
         };
 
@@ -528,7 +528,7 @@ export const useNotificationsStore = defineStore(
             // State
             doNotDisturb,
             notifications,
-            notificationsCount,
+            notificationCount,
             abort,
             ready,
             reconnecting,

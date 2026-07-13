@@ -541,17 +541,18 @@ provide('yjsProvider', provider);
                         :disabled="!canSubmit"
                         :loading="!canSubmit"
                         @click="
-                            confirmModal.open({
-                                title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
-                                description: $t('common.publish_confirm.description'),
-                                color: 'info',
-                                iconClass: 'text-info-500 dark:text-info-400',
-                                icon: 'i-mdi-publish',
-                                confirm: () => {
-                                    state.draft = false;
-                                    formRef?.submit();
-                                },
-                            })
+                            () =>
+                                confirmModal.open({
+                                    title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
+                                    description: $t('common.publish_confirm.description'),
+                                    color: 'info',
+                                    iconClass: 'text-info-500 dark:text-info-400',
+                                    icon: 'i-mdi-publish',
+                                    confirm: () => {
+                                        state.draft = false;
+                                        formRef?.submit();
+                                    },
+                                })
                         "
                     >
                         <span class="hidden truncate sm:block">

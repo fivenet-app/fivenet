@@ -7,7 +7,7 @@ defineProps<{
 const { isNotificationSlideoverOpen } = useDashboard();
 
 const notifications = useNotificationsStore();
-const { notificationsCount, doNotDisturb } = storeToRefs(notifications);
+const { notificationCount, doNotDisturb } = storeToRefs(notifications);
 
 const newNotification = ref<boolean>(false);
 
@@ -16,13 +16,13 @@ const { start } = useTimeoutFn(() => (newNotification.value = false), 1000, {
 });
 
 const currentCount = ref(0);
-watch(notificationsCount, () => {
-    if (notificationsCount.value > currentCount.value) {
+watch(notificationCount, () => {
+    if (notificationCount.value > currentCount.value) {
         newNotification.value = true;
         start();
     }
 
-    currentCount.value = notificationsCount.value;
+    currentCount.value = notificationCount.value;
 });
 
 const version = APP_VERSION;
@@ -46,10 +46,10 @@ const version = APP_VERSION;
 
     <UTooltip v-if="!collapsed && !hideNotifications" :text="$t('components.partials.sidebar_notifications')" :kbds="['B']">
         <UChip
-            :show="notificationsCount > 0"
+            :show="notificationCount > 0"
             color="error"
             inset
-            :text="notificationsCount <= 9 ? notificationsCount : '9+'"
+            :text="notificationCount <= 9 ? notificationCount : '9+'"
             size="xl"
         >
             <UButton
@@ -59,7 +59,7 @@ const version = APP_VERSION;
                 :icon="
                     doNotDisturb
                         ? 'i-mdi-bell-off-outline'
-                        : notificationsCount === 0
+                        : notificationCount === 0
                           ? 'i-mdi-notifications-none'
                           : 'i-mdi-notifications'
                 "

@@ -80,7 +80,7 @@ const wikiService = await useWikiWiki();
                             variant="outline"
                             trailing-icon="i-mdi-plus"
                             :label="$t('common.page')"
-                            @click="wikiService.createPage()"
+                            @click="() => wikiService.createPage()"
                         />
                     </UTooltip>
                 </template>
