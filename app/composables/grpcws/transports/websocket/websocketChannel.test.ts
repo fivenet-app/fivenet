@@ -56,6 +56,22 @@ function createAuthOkBuffer(): ArrayBuffer {
     ).buffer.slice(0) as ArrayBuffer;
 }
 
+function createFailureBuffer(streamId: number, message: string): ArrayBuffer {
+    return GrpcFrame.toBinary(
+        GrpcFrame.create({
+            streamId,
+            payload: {
+                oneofKind: 'failure',
+                failure: {
+                    errorStatus: '1',
+                    errorMessage: message,
+                    headers: {},
+                },
+            },
+        }),
+    ).buffer.slice(0) as ArrayBuffer;
+}
+
 function expectFrame(sentFrames: GrpcFrame[], index: number): GrpcFrame {
     const frame = sentFrames.at(index);
     expect(frame).toBeDefined();
@@ -319,6 +335,50 @@ describe('WebsocketChannelImpl', () => {
 
         expect(sentFrames).toHaveLength(1);
         expect(channel.activeStreams.has(1)).toBe(false);
+    });
+
+    it('releases a cancelled stream before its failure frame arrives', async () => {
+        const sentFrames: GrpcFrame[] = [];
+        const webSocket = {
+            data: ref<ArrayBuffer | null>(null),
+            status: ref<WebSocketStatus>('OPEN'),
+            send: vi.fn().mockImplementation((payload: ArrayBuffer) => {
+                sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
+                return true;
+            }),
+            open: vi.fn(),
+        };
+
+        const channel = new WebsocketChannelImpl(createLogger(), webSocket, () => null);
+        const onEnd = vi.fn();
+        const stream = channel.getStream({
+            debug: false,
+            methodDefinition: {
+                service: { typeName: 'test.Service' },
+                name: 'TestMethod',
+                serverStreaming: true,
+                clientStreaming: false,
+            } as never,
+            url: '',
+            onChunk: vi.fn(),
+            onEnd,
+            onHeaders: vi.fn(),
+        });
+
+        const startPromise = stream.start(new Metadata());
+        await channel.onMessage(createAuthOkBuffer());
+        await startPromise;
+
+        await stream.cancel();
+        expect(onEnd).toHaveBeenCalledTimes(1);
+        expect(channel.activeStreams.has(1)).toBe(true);
+
+        await channel.onMessage(createFailureBuffer(1, 'context canceled'));
+        expect(onEnd).toHaveBeenCalledTimes(1);
+        expect(channel.activeStreams.has(1)).toBe(false);
+        expect(Array.from({ length: 6 }, () => channel.getNextStreamId())).toEqual([2, 3, 4, 5, 6, 7]);
+        expect(channel.getNextStreamId()).toBe(1);
+        expect(sentFrames.some((frame) => frame.payload.oneofKind === 'cancel')).toBe(true);
     });
 
     it('does not buffer stream frames across a websocket reconnect', async () => {

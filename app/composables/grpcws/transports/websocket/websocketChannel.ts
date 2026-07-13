@@ -137,6 +137,12 @@ export class WebsocketChannelImpl implements WebsocketChannel {
         }
 
         const wsStream: GrpcStream = stream[1];
+        if (wsStream.closed) {
+            this.activeStreams.delete(streamId);
+            this.releaseStreamId(streamId);
+            return;
+        }
+
         switch (frame.payload.oneofKind) {
             case 'header': {
                 stream[0].debug &&
@@ -598,6 +604,7 @@ class WebsocketChannelStream {
         if (!this.started) return;
 
         try {
+            this.closed = true;
             await this.wsChannel.sendToWebsocket(
                 this.opts,
                 GrpcFrame.create({
