@@ -446,7 +446,8 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					needsSubjectRefresh := false
 					switch d := dest.GetData().(type) {
 					case *notificationsevents.UserEvent_Notification:
-						if topic == notifi.UserTopic {
+						// Only increment notification count for "database stored" notifications
+						if topic == notifi.UserTopic && d.Notification.GetId() > 0 {
 							notificationCount++
 						}
 

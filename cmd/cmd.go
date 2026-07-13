@@ -41,9 +41,9 @@ func (c *VersionCmd) Run() error {
 }
 
 type ToolsCmd struct {
-	DB ToolsDBCmd `cmd:""`
-
-	Sync ToolsSyncCmd `cmd:""`
+	DB            ToolsDBCmd            `cmd:""`
+	Notifications ToolsNotificationsCmd `cmd:""`
+	Sync          ToolsSyncCmd          `cmd:""`
 }
 
 type MigrationsCmd struct {
