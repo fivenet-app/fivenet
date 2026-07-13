@@ -44,6 +44,7 @@ localhost.*
 .cache
 .output
 .env
+/analyze/
 
 # Nuxt Content - Isn't used like that in the project
 /content/
