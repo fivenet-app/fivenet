@@ -1,6 +1,6 @@
 import type { WebSocketStatus } from '@vueuse/core';
 import { describe, expect, it, vi } from 'vitest';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { Metadata } from '~/composables/grpcws/metadata';
 import type { ILogger } from '~/utils/logger';
 import { GrpcFrame } from '~~/gen/ts/resources/grpcws/grpcws';
@@ -149,7 +149,7 @@ describe('WebsocketChannelImpl', () => {
         const webSocket = {
             data: ref<ArrayBuffer | null>(null),
             status: ref<WebSocketStatus>('OPEN'),
-            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+            send: vi.fn().mockImplementation((payload: ArrayBuffer) => {
                 sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
                 return true;
             }),
@@ -207,7 +207,7 @@ describe('WebsocketChannelImpl', () => {
         const webSocket = {
             data: ref<ArrayBuffer | null>(null),
             status: ref<WebSocketStatus>('OPEN'),
-            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+            send: vi.fn().mockImplementation((payload: ArrayBuffer) => {
                 sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
                 return true;
             }),
@@ -245,7 +245,7 @@ describe('WebsocketChannelImpl', () => {
         const webSocket = {
             data: ref<ArrayBuffer | null>(null),
             status: ref<WebSocketStatus>('OPEN'),
-            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+            send: vi.fn().mockImplementation((payload: ArrayBuffer) => {
                 sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
                 return true;
             }),
@@ -283,7 +283,7 @@ describe('WebsocketChannelImpl', () => {
         const webSocket = {
             data: ref<ArrayBuffer | null>(null),
             status: ref<WebSocketStatus>('OPEN'),
-            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+            send: vi.fn().mockImplementation((payload: ArrayBuffer) => {
                 sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
                 return true;
             }),
@@ -321,12 +321,81 @@ describe('WebsocketChannelImpl', () => {
         expect(channel.activeStreams.has(1)).toBe(false);
     });
 
+    it('does not buffer stream frames across a websocket reconnect', async () => {
+        const sentFrames: GrpcFrame[] = [];
+        const bufferedFrames: ArrayBuffer[] = [];
+        const status = ref<WebSocketStatus>('OPEN');
+        const webSocket = {
+            data: ref<ArrayBuffer | null>(null),
+            status,
+            send: vi.fn().mockImplementation((payload: ArrayBuffer, useBuffer = true) => {
+                if (status.value !== 'OPEN') {
+                    if (useBuffer) bufferedFrames.push(payload);
+                    return false;
+                }
+
+                while (bufferedFrames.length > 0) {
+                    const buffered = bufferedFrames.shift();
+                    if (buffered) {
+                        sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(buffered)));
+                    }
+                }
+
+                sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
+                return true;
+            }),
+            open: vi.fn(),
+        };
+
+        watch(status, (value) => {
+            if (value !== 'OPEN') return;
+
+            while (bufferedFrames.length > 0) {
+                const buffered = bufferedFrames.shift();
+                if (buffered) {
+                    sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(buffered)));
+                }
+            }
+        });
+
+        let token: string | null = null;
+        const channel = new WebsocketChannelImpl(createLogger(), webSocket, () => token);
+        const stream = channel.getStream({
+            debug: false,
+            methodDefinition: {
+                service: { typeName: 'test.Service' },
+                name: 'TestMethod',
+                serverStreaming: true,
+                clientStreaming: false,
+            } as never,
+            url: '',
+            onChunk: vi.fn(),
+            onEnd: vi.fn(),
+            onHeaders: vi.fn(),
+        });
+
+        const startPromise = stream.start(new Metadata());
+        expect(sentFrames).toHaveLength(1);
+
+        await channel.onMessage(createAuthOkBuffer());
+        await startPromise;
+        expect(sentFrames).toHaveLength(2);
+
+        status.value = 'CLOSED';
+
+        await expect(stream.sendMessage(new Uint8Array([1, 2, 3]), true)).rejects.toThrow('WebSocket not open');
+        expect(bufferedFrames).toHaveLength(0);
+
+        status.value = 'OPEN';
+        expect(sentFrames).toHaveLength(2);
+    });
+
     it('keeps the tracked token when an auth_ok arrives outside a pending handshake', async () => {
         const sentFrames: GrpcFrame[] = [];
         const webSocket = {
             data: ref<ArrayBuffer | null>(null),
             status: ref<WebSocketStatus>('OPEN'),
-            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+            send: vi.fn().mockImplementation((payload: ArrayBuffer) => {
                 sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
                 return true;
             }),
@@ -363,7 +432,7 @@ describe('WebsocketChannelImpl', () => {
         const webSocket = {
             data: ref<ArrayBuffer | null>(null),
             status: ref<WebSocketStatus>('OPEN'),
-            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+            send: vi.fn().mockImplementation((payload: ArrayBuffer) => {
                 sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
                 return true;
             }),
@@ -407,7 +476,7 @@ describe('WebsocketChannelImpl', () => {
         const webSocket = {
             data: ref<ArrayBuffer | null>(null),
             status: ref<WebSocketStatus>('OPEN'),
-            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+            send: vi.fn().mockImplementation((payload: ArrayBuffer) => {
                 sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
                 return true;
             }),

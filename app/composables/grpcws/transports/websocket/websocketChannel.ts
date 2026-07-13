@@ -299,13 +299,16 @@ export class WebsocketChannelImpl implements WebsocketChannel {
         }
     }
 
-    async sendToWebsocket(opts: TransportOptions, toSend: GrpcFrame, usingBuffer: boolean = true): Promise<boolean> {
+    async sendToWebsocket(opts: TransportOptions, toSend: GrpcFrame): Promise<void> {
         if (toSend.streamId !== CONTROL_STREAM_ID && !this.activeStreams.has(toSend.streamId)) {
             opts.debug && this.logger.debug('sendToWs: Stream does not exist', toSend.streamId);
-            return false;
+            throw new Error('WebSocket stream does not exist');
         }
 
-        return this.ws.send(GrpcFrame.toBinary(toSend).buffer as ArrayBuffer, usingBuffer);
+        const sent = this.ws.send(GrpcFrame.toBinary(toSend).buffer as ArrayBuffer, false);
+        if (!sent) {
+            throw new Error('WebSocket not open');
+        }
     }
 
     private async sendControlHeader(operation: string, headers: Record<string, string[]>) {
@@ -321,15 +324,18 @@ export class WebsocketChannelImpl implements WebsocketChannel {
 
         // Control sends don't belong to a normal stream in activeStreams,
         // so use a dummy TransportOptions for logging only.
-        this.ws.send(
+        const sent = this.ws.send(
             GrpcFrame.toBinary(
                 GrpcFrame.create({
                     streamId: CONTROL_STREAM_ID,
                     payload: { oneofKind: 'header', header },
                 }),
             ).buffer as ArrayBuffer,
-            true,
+            false,
         );
+        if (!sent) {
+            throw new Error('WebSocket not open');
+        }
     }
 
     async ensureAuthenticated(): Promise<void> {
@@ -360,7 +366,15 @@ export class WebsocketChannelImpl implements WebsocketChannel {
             headers.Authorization = [`Bearer ${token}`];
         }
 
-        await this.sendControlHeader(operation, headers);
+        try {
+            await this.sendControlHeader(operation, headers);
+        } catch (err) {
+            if (this.authState.kind === 'pending') {
+                this.authState.reject(err instanceof Error ? err : new Error(String(err)));
+                this.authState = { kind: 'none' };
+            }
+            throw err;
+        }
 
         return promise;
     }
@@ -385,9 +399,17 @@ export class WebsocketChannelImpl implements WebsocketChannel {
 
         this.authState = { kind: 'pending', token, promise, resolve, reject };
 
-        await this.sendControlHeader(CONTROL_OP_REAUTH, {
-            Authorization: [`Bearer ${token}`],
-        });
+        try {
+            await this.sendControlHeader(CONTROL_OP_REAUTH, {
+                Authorization: [`Bearer ${token}`],
+            });
+        } catch (err) {
+            if (this.authState.kind === 'pending') {
+                this.authState.reject(err instanceof Error ? err : new Error(String(err)));
+                this.authState = { kind: 'none' };
+            }
+            throw err;
+        }
 
         return promise;
     }
@@ -575,16 +597,22 @@ class WebsocketChannelStream {
         if (!(await this.waitForStart())) return;
         if (!this.started) return;
 
-        await this.wsChannel.sendToWebsocket(
-            this.opts,
-            GrpcFrame.create({
-                streamId: this.streamId,
-                payload: {
-                    oneofKind: 'cancel',
-                    cancel: Cancel.create(),
-                },
-            }),
-        );
+        try {
+            await this.wsChannel.sendToWebsocket(
+                this.opts,
+                GrpcFrame.create({
+                    streamId: this.streamId,
+                    payload: {
+                        oneofKind: 'cancel',
+                        cancel: Cancel.create(),
+                    },
+                }),
+            );
+        } catch (sendErr) {
+            if (sendErr instanceof Error && sendErr.message === 'WebSocket not open') return;
+            if (sendErr instanceof Error && sendErr.message === 'WebSocket stream does not exist') return;
+            throw sendErr;
+        }
     }
 
     private async waitForStart(): Promise<boolean> {
