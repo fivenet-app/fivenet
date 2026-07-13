@@ -45,6 +45,11 @@ var framePingResponse = &grpcws.GrpcFrame{
 	},
 }
 
+var (
+	errMissingAuthorization = errors.New("missing authorization")
+	errInvalidToken         = errors.New("invalid token")
+)
+
 func NewWebsocketChannel(
 	ctx context.Context,
 	validateTokenFunc func(token string) (bool, error),
@@ -315,7 +320,7 @@ func (ws *WebsocketChannel) applyControlAuth(h *grpcws.Header) error {
 	if token == "" {
 		// Allow account-only websocket sessions to authenticate without a user token.
 		if _, err := ws.req.Cookie(grpcauth.AccCookieName); err != nil {
-			return errors.New("missing authorization")
+			return errMissingAuthorization
 		}
 
 		ws.authMu.Lock()
@@ -331,7 +336,7 @@ func (ws *WebsocketChannel) applyControlAuth(h *grpcws.Header) error {
 		return err
 	}
 	if !valid {
-		return errors.New("invalid token")
+		return errInvalidToken
 	}
 
 	ws.setAuthToken(token)

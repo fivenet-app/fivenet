@@ -358,7 +358,7 @@ describe('WebsocketChannelImpl', () => {
             }
         });
 
-        let token: string | null = null;
+        const token: string | null = null;
         const channel = new WebsocketChannelImpl(createLogger(), webSocket, () => token);
         const stream = channel.getStream({
             debug: false,
