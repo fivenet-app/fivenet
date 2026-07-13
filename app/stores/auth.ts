@@ -333,6 +333,7 @@ export const useAuthStore = defineStore(
                 setUserToken(response.token);
                 setActiveChar(response.char);
                 setPermissions(response.permissions, response.attributes);
+                setAccountCanBeConfigAdmin(false);
                 setJobProps(response.jobProps);
 
                 if (redirect) {

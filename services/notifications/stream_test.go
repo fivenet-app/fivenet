@@ -1,7 +1,6 @@
 package notifications
 
 import (
-	"context"
 	"testing"
 
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
@@ -102,7 +101,7 @@ func TestBuildSubjectsAccountOnly(t *testing.T) {
 
 	s := &Server{}
 
-	baseSubjects, additionalSubjects, err := s.buildSubjects(context.Background(), &pbuserinfo.UserInfo{
+	baseSubjects, additionalSubjects, err := s.buildSubjects(t.Context(), &pbuserinfo.UserInfo{
 		AccountId: 42,
 	})
 	require.NoError(t, err)

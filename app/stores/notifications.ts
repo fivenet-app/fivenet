@@ -24,7 +24,7 @@ const initialReconnectBackoffTime = 2;
 
 export type AccountCapabilityAuthStore = Pick<
     ReturnType<typeof useAuthStore>,
-    'isSuperuser' | 'canBeConfigAdmin' | 'setCanBeSuperuser' | 'chooseCharacter'
+    'isSuperuser' | 'canBeConfigAdmin' | 'setCanBeSuperuser' | 'setAccountCanBeConfigAdmin' | 'chooseCharacter'
 >;
 
 type StreamActiveChar = ReturnType<typeof useAuth>['activeChar']['value'];
@@ -43,19 +43,31 @@ type StreamCharScope = {
 
 const hasCharScope = (scope: StreamScope): scope is StreamCharScope => !scope.accountOnly && scope.activeChar !== null;
 
+export const shouldRestartNotificationStream = (
+    currentAbort: AbortController | undefined,
+    streamAbort: AbortController,
+): boolean => currentAbort === streamAbort && !streamAbort.signal.aborted;
+
 export const handleAccountGroupsChangedEvent = async (
     accountGroupsChanged: AccountGroupsChanged,
     authStore: AccountCapabilityAuthStore,
+    scope: { accountOnly: boolean },
 ): Promise<void> => {
     const previousCanBeSuperuser = authStore.isSuperuser;
     const previousCanBeConfigAdmin = authStore.canBeConfigAdmin;
 
     authStore.setCanBeSuperuser(accountGroupsChanged.canBeSuperuser);
 
+    if (scope.accountOnly) {
+        authStore.setAccountCanBeConfigAdmin(accountGroupsChanged.canBeConfigAdmin);
+        return;
+    }
+
     if (
         previousCanBeSuperuser !== accountGroupsChanged.canBeSuperuser ||
         previousCanBeConfigAdmin !== accountGroupsChanged.canBeConfigAdmin
     ) {
+        authStore.setAccountCanBeConfigAdmin(accountGroupsChanged.canBeConfigAdmin);
         logger.info('User capabilities changed, forcing a choose character refresh');
         await authStore.chooseCharacter(undefined, false);
     }
@@ -274,7 +286,7 @@ export const useNotificationsStore = defineStore(
             } else if (userEvent.data.oneofKind === 'userInfoChanged') {
                 await handleUserInfoChangedEvent(userEvent.data.userInfoChanged, authStore, scope);
             } else if (userEvent.data.oneofKind === 'accountGroupsChanged') {
-                await handleAccountGroupsChangedEvent(userEvent.data.accountGroupsChanged, authStore);
+                await handleAccountGroupsChangedEvent(userEvent.data.accountGroupsChanged, authStore, scope);
             } else {
                 logger.warn('Unknown userEvent data received - oneofKind:', userEvent.data.oneofKind, userEvent.data);
             }
@@ -309,10 +321,11 @@ export const useNotificationsStore = defineStore(
             };
 
             const mailerStore = useMailerStore();
+            const streamAbort = new AbortController();
 
             try {
-                abort.value = new AbortController();
-                currentStream = notificationsNotificationsClient.stream({ abort: abort.value.signal });
+                abort.value = streamAbort;
+                currentStream = notificationsNotificationsClient.stream({ abort: streamAbort.signal });
                 setStreamReadyState(true);
 
                 for await (const resp of currentStream.responses) {
@@ -387,11 +400,14 @@ export const useNotificationsStore = defineStore(
                     }
                 }
 
-                if (!abort.value?.signal.aborted) {
+                if (shouldRestartNotificationStream(abort.value, streamAbort)) {
                     await restartStream();
                 }
             } finally {
-                setStreamReadyState(false);
+                if (abort.value === streamAbort) {
+                    setStreamReadyState(false);
+                    abort.value = undefined;
+                }
                 logger.debug('Stream ended');
             }
         };

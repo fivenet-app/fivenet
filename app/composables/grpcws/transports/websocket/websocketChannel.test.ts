@@ -106,7 +106,7 @@ describe('WebsocketChannelImpl', () => {
         const webSocket = {
             data: ref<ArrayBuffer | null>(null),
             status: ref<WebSocketStatus>('OPEN'),
-            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+            send: vi.fn().mockImplementation((payload: ArrayBuffer) => {
                 sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
                 return true;
             }),
@@ -142,6 +142,264 @@ describe('WebsocketChannelImpl', () => {
 
         await channel.onMessage(createAuthOkBuffer());
         await charAuth;
+    });
+
+    it('rejects a superseded pending auth handshake before starting a new one', async () => {
+        const sentFrames: GrpcFrame[] = [];
+        const webSocket = {
+            data: ref<ArrayBuffer | null>(null),
+            status: ref<WebSocketStatus>('OPEN'),
+            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+                sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
+                return true;
+            }),
+            open: vi.fn(),
+        };
+
+        let token: string | null = null;
+        const channel = new WebsocketChannelImpl(createLogger(), webSocket, () => token);
+        const onEnd = vi.fn();
+        const stream = channel.getStream({
+            debug: false,
+            methodDefinition: {
+                service: { typeName: 'test.Service' },
+                name: 'TestMethod',
+                serverStreaming: true,
+                clientStreaming: false,
+            } as never,
+            url: '',
+            onChunk: vi.fn(),
+            onEnd,
+            onHeaders: vi.fn(),
+        });
+
+        const startPromise = stream.start(new Metadata());
+        expect(sentFrames).toHaveLength(1);
+        const authFrame = expectFrame(sentFrames, 0);
+        expect(authFrame.streamId).toBe(0);
+        expect(authFrame.payload.oneofKind).toBe('header');
+        if (authFrame.payload.oneofKind !== 'header') throw new Error('Expected auth header frame');
+        expect(authFrame.payload.header.operation).toBe('auth');
+
+        token = 'char-token';
+        const authPromise = channel.ensureAuthenticated();
+        expect(sentFrames).toHaveLength(2);
+        const reauthFrame = expectFrame(sentFrames, 1);
+        expect(reauthFrame.streamId).toBe(0);
+        expect(reauthFrame.payload.oneofKind).toBe('header');
+        if (reauthFrame.payload.oneofKind !== 'header') throw new Error('Expected reauth header frame');
+        expect(reauthFrame.payload.header.operation).toBe('reauth');
+
+        await channel.onMessage(createAuthOkBuffer());
+        await Promise.resolve();
+
+        await startPromise;
+        expect(onEnd).toHaveBeenCalledTimes(1);
+        expect(Array.from({ length: 6 }, () => channel.getNextStreamId())).toEqual([2, 3, 4, 5, 6, 7]);
+        expect(channel.getNextStreamId()).toBe(1);
+
+        await channel.onMessage(createAuthOkBuffer());
+        await authPromise;
+    });
+
+    it('rejects a pending auth handshake when the websocket closes', async () => {
+        const sentFrames: GrpcFrame[] = [];
+        const webSocket = {
+            data: ref<ArrayBuffer | null>(null),
+            status: ref<WebSocketStatus>('OPEN'),
+            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+                sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
+                return true;
+            }),
+            open: vi.fn(),
+        };
+
+        const channel = new WebsocketChannelImpl(createLogger(), webSocket, () => null);
+        const stream = channel.getStream({
+            debug: false,
+            methodDefinition: {
+                service: { typeName: 'test.Service' },
+                name: 'TestMethod',
+                serverStreaming: true,
+                clientStreaming: false,
+            } as never,
+            url: '',
+            onChunk: vi.fn(),
+            onEnd: vi.fn(),
+            onHeaders: vi.fn(),
+        });
+
+        const startPromise = stream.start(new Metadata());
+        expect(sentFrames).toHaveLength(1);
+        expect(sentFrames[0]?.payload.oneofKind).toBe('header');
+
+        webSocket.status.value = 'CLOSED';
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        await expect(startPromise).resolves.toBeUndefined();
+        expect(channel.getNextStreamId()).toBe(1);
+    });
+
+    it('clears ignored auth replies immediately when the websocket reconnects', async () => {
+        const sentFrames: GrpcFrame[] = [];
+        const webSocket = {
+            data: ref<ArrayBuffer | null>(null),
+            status: ref<WebSocketStatus>('OPEN'),
+            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+                sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
+                return true;
+            }),
+            open: vi.fn(),
+        };
+
+        let token: string | null = null;
+        const channel = new WebsocketChannelImpl(createLogger(), webSocket, () => token);
+
+        const firstAuth = channel.ensureAuthenticated();
+        firstAuth.catch(() => undefined);
+        expect(sentFrames).toHaveLength(1);
+
+        token = 'char-token';
+        const supersedingAuth = channel.ensureAuthenticated();
+        supersedingAuth.catch(() => undefined);
+        expect(sentFrames).toHaveLength(2);
+
+        webSocket.status.value = 'CLOSED';
+        await Promise.resolve();
+        webSocket.status.value = 'OPEN';
+
+        const reconnectAuth = channel.ensureAuthenticated();
+        expect(sentFrames).toHaveLength(3);
+
+        await channel.onMessage(createAuthOkBuffer());
+        await expect(reconnectAuth).resolves.toBeUndefined();
+
+        await expect(firstAuth).rejects.toThrow('Superseded websocket auth handshake');
+        await expect(supersedingAuth).rejects.toThrow('WebSocket closed');
+    });
+
+    it('marks a stream closed before auth completes so it does not send its RPC header', async () => {
+        const sentFrames: GrpcFrame[] = [];
+        const webSocket = {
+            data: ref<ArrayBuffer | null>(null),
+            status: ref<WebSocketStatus>('OPEN'),
+            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+                sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
+                return true;
+            }),
+            open: vi.fn(),
+        };
+
+        const channel = new WebsocketChannelImpl(createLogger(), webSocket, () => null);
+        const onEnd = vi.fn();
+        const stream = channel.getStream({
+            debug: false,
+            methodDefinition: {
+                service: { typeName: 'test.Service' },
+                name: 'TestMethod',
+                serverStreaming: true,
+                clientStreaming: false,
+            } as never,
+            url: '',
+            onChunk: vi.fn(),
+            onEnd,
+            onHeaders: vi.fn(),
+        });
+
+        const startPromise = stream.start(new Metadata());
+        expect(sentFrames).toHaveLength(1);
+        expect(sentFrames[0]?.streamId).toBe(0);
+
+        const cancelPromise = stream.cancel();
+        expect(onEnd).toHaveBeenCalledTimes(1);
+
+        await channel.onMessage(createAuthOkBuffer());
+        await expect(startPromise).resolves.toBeUndefined();
+        await expect(cancelPromise).resolves.toBeUndefined();
+
+        expect(sentFrames).toHaveLength(1);
+        expect(channel.activeStreams.has(1)).toBe(false);
+    });
+
+    it('keeps the tracked token when an auth_ok arrives outside a pending handshake', async () => {
+        const sentFrames: GrpcFrame[] = [];
+        const webSocket = {
+            data: ref<ArrayBuffer | null>(null),
+            status: ref<WebSocketStatus>('OPEN'),
+            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+                sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
+                return true;
+            }),
+            open: vi.fn(),
+        };
+
+        let token: string | null = 'char-token';
+        const channel = new WebsocketChannelImpl(createLogger(), webSocket, () => token);
+
+        const authPromise = channel.ensureAuthenticated();
+        expect(sentFrames).toHaveLength(1);
+        await channel.onMessage(createAuthOkBuffer());
+        await authPromise;
+
+        await channel.onMessage(createAuthOkBuffer());
+
+        // The tracked token should remain the character token, not get clobbered to null.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect((channel as any).authState).toMatchObject({ kind: 'ok', token: 'char-token' });
+
+        token = null;
+        const accountAuth = channel.ensureAuthenticated();
+        expect(sentFrames).toHaveLength(2);
+        expect(sentFrames[1]?.payload.oneofKind).toBe('header');
+        if (sentFrames[1]?.payload.oneofKind !== 'header') throw new Error('Expected auth header frame');
+        expect(sentFrames[1].payload.header.headers.Authorization).toBeUndefined();
+
+        await channel.onMessage(createAuthOkBuffer());
+        await accountAuth;
+    });
+
+    it('clears ignored auth replies after reconnecting from a superseded handshake', async () => {
+        const sentFrames: GrpcFrame[] = [];
+        const webSocket = {
+            data: ref<ArrayBuffer | null>(null),
+            status: ref<WebSocketStatus>('OPEN'),
+            send: vi.fn().mockImplementation(async (payload: ArrayBuffer) => {
+                sentFrames.push(GrpcFrame.fromBinary(new Uint8Array(payload)));
+                return true;
+            }),
+            open: vi.fn(),
+        };
+
+        let token: string | null = null;
+        const channel = new WebsocketChannelImpl(createLogger(), webSocket, () => token);
+
+        const firstAuth = channel.ensureAuthenticated();
+        firstAuth.catch(() => undefined);
+        expect(sentFrames).toHaveLength(1);
+
+        token = 'char-token';
+        const supersedingAuth = channel.ensureAuthenticated();
+        supersedingAuth.catch(() => undefined);
+        expect(sentFrames).toHaveLength(2);
+
+        webSocket.status.value = 'CLOSED';
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        await expect(firstAuth).rejects.toThrow('Superseded websocket auth handshake');
+        await expect(supersedingAuth).rejects.toThrow('WebSocket closed');
+
+        webSocket.status.value = 'OPEN';
+        const reconnectAuth = channel.ensureAuthenticated();
+        expect(sentFrames).toHaveLength(3);
+        const reconnectFrame = expectFrame(sentFrames, 2);
+        expect(reconnectFrame.streamId).toBe(0);
+        expect(reconnectFrame.payload.oneofKind).toBe('header');
+        if (reconnectFrame.payload.oneofKind !== 'header') throw new Error('Expected reconnect auth header frame');
+        expect(reconnectFrame.payload.header.operation).toBe('auth');
+        expect(reconnectFrame.payload.header.headers.Authorization?.value).toEqual(['Bearer char-token']);
+
+        await channel.onMessage(createAuthOkBuffer());
+        await expect(reconnectAuth).resolves.toBeUndefined();
     });
 
     it('waits for websocket auth before sending the first stream body frame', async () => {

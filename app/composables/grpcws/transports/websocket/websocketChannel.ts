@@ -71,6 +71,7 @@ export class WebsocketChannelImpl implements WebsocketChannel {
     private readonly availableStreamIds = new Set<number>();
 
     private authState: AuthState = { kind: 'none' };
+    private ignoredControlResponses = 0;
 
     constructor(logger: ILogger, ws: WebSocketLike, tokenProvider: TokenProvider) {
         this.logger = logger;
@@ -79,10 +80,19 @@ export class WebsocketChannelImpl implements WebsocketChannel {
         this.resetAvailableStreamIds();
 
         watch(ws.data, async (val) => this.onMessage(val));
+        watch(ws.status, (val) => {
+            if (val === 'OPEN') return;
+
+            this.rejectPendingAuth(new Error('WebSocket closed'));
+            this.authState = { kind: 'none' };
+            this.ignoredControlResponses = 0;
+        });
         watchThrottled(
             ws.status,
             (val) => {
                 if (val === 'OPEN') return;
+
+                this.rejectPendingAuth(new Error('WebSocket closed'));
 
                 // Close all streams when the websocket connection is lost/closed
                 this.activeStreams.forEach((as) => {
@@ -92,7 +102,6 @@ export class WebsocketChannelImpl implements WebsocketChannel {
                 });
 
                 this.resetAvailableStreamIds();
-                this.authState = { kind: 'none' };
             },
             {
                 immediate: true,
@@ -228,12 +237,22 @@ export class WebsocketChannelImpl implements WebsocketChannel {
         // Control frames use Header + Failure
         switch (frame.payload.oneofKind) {
             case 'header': {
+                if (this.ignoredControlResponses > 0) {
+                    this.ignoredControlResponses--;
+                    return;
+                }
+
                 const h = frame.payload.header;
                 if (!h) return;
 
                 if (h.operation === CONTROL_OP_AUTH_OK) {
                     this.logger.debug('WS auth operation: ok');
-                    const pendingToken = this.authState.kind === 'pending' ? this.authState.token : null;
+                    const pendingToken =
+                        this.authState.kind === 'pending'
+                            ? this.authState.token
+                            : this.authState.kind === 'ok'
+                              ? this.authState.token
+                              : null;
                     if (this.authState.kind === 'pending') this.authState.resolve();
                     this.authState = { kind: 'ok', token: pendingToken };
                     return;
@@ -253,6 +272,11 @@ export class WebsocketChannelImpl implements WebsocketChannel {
             }
 
             case 'failure': {
+                if (this.ignoredControlResponses > 0) {
+                    this.ignoredControlResponses--;
+                    return;
+                }
+
                 const f = frame.payload.failure;
                 const msg = f?.errorMessage || 'Unauthenticated';
                 const err = new Error(`WS auth failed: ${msg}`);
@@ -317,6 +341,9 @@ export class WebsocketChannelImpl implements WebsocketChannel {
         if (this.authState.kind === 'ok' && this.authState.token === token) return;
         if (this.authState.kind === 'failed' && this.authState.token === token) throw this.authState.err;
         if (this.authState.kind === 'pending' && this.authState.token === token) return this.authState.promise;
+        if (this.authState.kind === 'pending' && this.authState.token !== token) {
+            this.rejectSupersededAuth();
+        }
 
         const operation = this.authState.kind === 'none' ? CONTROL_OP_AUTH : CONTROL_OP_REAUTH;
         let resolve!: () => void;
@@ -345,6 +372,9 @@ export class WebsocketChannelImpl implements WebsocketChannel {
         if (!token) throw new Error('Missing character token (sessionStorage)');
 
         if (this.authState.kind === 'pending' && this.authState.token === token) return this.authState.promise;
+        if (this.authState.kind === 'pending' && this.authState.token !== token) {
+            this.rejectSupersededAuth();
+        }
 
         let resolve!: () => void;
         let reject!: (err: Error) => void;
@@ -362,6 +392,19 @@ export class WebsocketChannelImpl implements WebsocketChannel {
         return promise;
     }
 
+    private rejectPendingAuth(err: Error) {
+        if (this.authState.kind !== 'pending') return;
+
+        this.authState.reject(err);
+    }
+
+    private rejectSupersededAuth() {
+        if (this.authState.kind !== 'pending') return;
+
+        this.authState.reject(new Error('Superseded websocket auth handshake'));
+        this.ignoredControlResponses++;
+    }
+
     public getNextStreamId(): number {
         const nextStreamId = this.availableStreamIds.values().next();
         if (nextStreamId.done) {
@@ -372,7 +415,7 @@ export class WebsocketChannelImpl implements WebsocketChannel {
         return nextStreamId.value;
     }
 
-    private releaseStreamId(streamId: number) {
+    releaseStreamId(streamId: number) {
         if (streamId <= 0 || streamId > websocketChannelMaxStreamCount) return;
         this.availableStreamIds.add(streamId);
     }
@@ -459,6 +502,8 @@ class WebsocketChannelStream {
                 );
             } catch (err) {
                 this.startFailed = true;
+                this.wsChannel.activeStreams.delete(this.streamId);
+                this.wsChannel.releaseStreamId(this.streamId);
                 if (!this.closed) {
                     this.closed = true;
                     this.opts.onEnd(err instanceof Error ? err : new Error(String(err)));
@@ -519,6 +564,13 @@ class WebsocketChannelStream {
         this.opts.debug && this.logger.debug('Stream cancel', this.streamId, `${this.service}/${this.method}`, 'Error:', err);
 
         this.opts.onEnd(err ?? errCancelled);
+
+        if (!this.started) {
+            this.closed = true;
+            this.startFailed = true;
+            this.wsChannel.activeStreams.delete(this.streamId);
+            this.wsChannel.releaseStreamId(this.streamId);
+        }
 
         if (!(await this.waitForStart())) return;
         if (!this.started) return;

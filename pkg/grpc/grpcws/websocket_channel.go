@@ -315,7 +315,7 @@ func (ws *WebsocketChannel) applyControlAuth(h *grpcws.Header) error {
 	if token == "" {
 		// Allow account-only websocket sessions to authenticate without a user token.
 		if _, err := ws.req.Cookie(grpcauth.AccCookieName); err != nil {
-			return fmt.Errorf("missing authorization")
+			return errors.New("missing authorization")
 		}
 
 		ws.authMu.Lock()
@@ -331,7 +331,7 @@ func (ws *WebsocketChannel) applyControlAuth(h *grpcws.Header) error {
 		return err
 	}
 	if !valid {
-		return fmt.Errorf("invalid token")
+		return errors.New("invalid token")
 	}
 
 	ws.setAuthToken(token)
