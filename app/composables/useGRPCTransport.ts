@@ -9,6 +9,7 @@ import type {
     UnaryCall,
 } from '@protobuf-ts/runtime-rpc';
 import { useGRPCWebsocketTransport } from './grpcws';
+import { getGrpcAuthToken } from './grpcws/auth';
 
 // Lazy singleton instance
 let _transport: GrpcCombinedTransport | null = null;
@@ -32,7 +33,7 @@ function authInterceptor(options: RpcOptions): RpcOptions {
     if (!options) options = {};
     if (!options.meta) options.meta = {};
 
-    const userToken = sessionStorage.getItem(authUserTokenKey);
+    const userToken = getGrpcAuthToken();
     if (userToken) {
         options.meta['Authorization'] = `Bearer ${userToken}`;
     }

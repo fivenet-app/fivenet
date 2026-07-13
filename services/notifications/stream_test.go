@@ -6,6 +6,7 @@ import (
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestApplyUserInfoChanged(t *testing.T) {
@@ -93,4 +94,21 @@ func TestApplyAccountGroupsChangedRestoresOriginalJobWhenRevokingSuperuser(t *te
 	assert.False(t, current.GetSuperuser())
 	assert.Equal(t, "ems", current.GetJob())
 	assert.Equal(t, int32(2), current.GetJobGrade())
+}
+
+func TestBuildSubjectsAccountOnly(t *testing.T) {
+	t.Parallel()
+
+	s := &Server{}
+
+	baseSubjects, additionalSubjects, err := s.buildSubjects(t.Context(), &pbuserinfo.UserInfo{
+		AccountId: 42,
+	})
+	require.NoError(t, err)
+
+	assert.Equal(t, []string{
+		"notifi.account.42",
+		"notifi.sys",
+	}, baseSubjects)
+	assert.Empty(t, additionalSubjects)
 }

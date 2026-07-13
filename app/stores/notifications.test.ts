@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { AccountGroupsChanged } from '~~/gen/ts/resources/userinfo/userinfo';
-import { handleAccountGroupsChangedEvent } from './notifications';
+import { handleAccountGroupsChangedEvent, shouldRestartNotificationStream } from './notifications';
 
 describe('handleAccountGroupsChangedEvent', () => {
     function createAuthStore(
@@ -13,6 +13,7 @@ describe('handleAccountGroupsChangedEvent', () => {
             isSuperuser: overrides.isSuperuser ?? false,
             canBeConfigAdmin: overrides.canBeConfigAdmin ?? false,
             setCanBeSuperuser: vi.fn().mockReturnValue(overrides.isSuperuser ?? false),
+            setAccountCanBeConfigAdmin: vi.fn(),
             chooseCharacter: vi.fn().mockResolvedValue(undefined),
         };
     }
@@ -40,6 +41,7 @@ describe('handleAccountGroupsChangedEvent', () => {
                 canBeConfigAdmin: true,
             }),
             authStore,
+            { accountOnly: false },
         );
 
         expect(authStore.setCanBeSuperuser).toHaveBeenCalledWith(false);
@@ -59,6 +61,7 @@ describe('handleAccountGroupsChangedEvent', () => {
                 canBeConfigAdmin: false,
             }),
             authStore,
+            { accountOnly: false },
         );
 
         expect(authStore.setCanBeSuperuser).toHaveBeenCalledWith(true);
@@ -78,6 +81,7 @@ describe('handleAccountGroupsChangedEvent', () => {
                 canBeConfigAdmin: true,
             }),
             authStore,
+            { accountOnly: false },
         );
 
         expect(authStore.setCanBeSuperuser).toHaveBeenCalledWith(false);
@@ -97,9 +101,58 @@ describe('handleAccountGroupsChangedEvent', () => {
                 canBeConfigAdmin: false,
             }),
             authStore,
+            { accountOnly: false },
         );
 
         expect(authStore.setCanBeSuperuser).toHaveBeenCalledWith(false);
         expect(authStore.chooseCharacter).not.toHaveBeenCalled();
+    });
+
+    it('updates account-level capabilities without reselecting a character in account-only scope', async () => {
+        const authStore = createAuthStore({
+            isSuperuser: false,
+            canBeConfigAdmin: false,
+        });
+
+        await handleAccountGroupsChangedEvent(
+            createEvent({
+                canBeSuperuser: true,
+                canBeConfigAdmin: true,
+            }),
+            authStore,
+            { accountOnly: true },
+        );
+
+        expect(authStore.setCanBeSuperuser).toHaveBeenCalledWith(true);
+        expect(authStore.setAccountCanBeConfigAdmin).toHaveBeenCalledWith(true);
+        expect(authStore.chooseCharacter).not.toHaveBeenCalled();
+    });
+
+    it('clears account-level config-admin state before refreshing character-scoped revocations', async () => {
+        const authStore = createAuthStore({
+            isSuperuser: false,
+            canBeConfigAdmin: true,
+        });
+
+        await handleAccountGroupsChangedEvent(
+            createEvent({
+                canBeSuperuser: false,
+                canBeConfigAdmin: false,
+            }),
+            authStore,
+            { accountOnly: false },
+        );
+
+        expect(authStore.setAccountCanBeConfigAdmin).toHaveBeenCalledWith(false);
+        expect(authStore.chooseCharacter).toHaveBeenCalledWith(undefined, false);
+    });
+
+    it('does not restart when the live stream controller has already changed', () => {
+        const staleAbort = new AbortController();
+        const liveAbort = new AbortController();
+
+        staleAbort.abort();
+
+        expect(shouldRestartNotificationStream(liveAbort, staleAbort)).toBe(false);
     });
 });

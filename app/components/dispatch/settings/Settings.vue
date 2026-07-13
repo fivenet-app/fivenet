@@ -440,7 +440,7 @@ const formRef = useTemplateRef('formRef');
                                                 icon="i-mdi-remove"
                                                 color="red"
                                                 :disabled="!canSubmit"
-                                                @click="state.predefinedStatus.unitStatus.splice(idx, 1)"
+                                                @click="() => state.predefinedStatus.unitStatus.splice(idx, 1)"
                                             />
                                         </UTooltip>
                                     </div>
@@ -451,7 +451,7 @@ const formRef = useTemplateRef('formRef');
                                         :class="state.predefinedStatus.unitStatus.length ? 'mt-2' : ''"
                                         icon="i-mdi-plus"
                                         :disabled="!canSubmit || state.predefinedStatus.unitStatus.length >= 8"
-                                        @click="state.predefinedStatus.unitStatus.push('')"
+                                        @click="() => state.predefinedStatus.unitStatus.push('')"
                                     />
                                 </UTooltip>
                             </UFormField>
@@ -483,7 +483,7 @@ const formRef = useTemplateRef('formRef');
                                                 icon="i-mdi-remove"
                                                 color="red"
                                                 :disabled="!canSubmit"
-                                                @click="state.predefinedStatus.dispatchStatus.splice(idx, 1)"
+                                                @click="() => state.predefinedStatus.dispatchStatus.splice(idx, 1)"
                                             />
                                         </UTooltip>
                                     </div>
@@ -494,7 +494,7 @@ const formRef = useTemplateRef('formRef');
                                         :class="state.predefinedStatus.dispatchStatus.length ? 'mt-2' : ''"
                                         icon="i-mdi-plus"
                                         :disabled="!canSubmit || state.predefinedStatus.dispatchStatus.length >= 8"
-                                        @click="state.predefinedStatus.dispatchStatus.push('')"
+                                        @click="() => state.predefinedStatus.dispatchStatus.push('')"
                                     />
                                 </UTooltip>
                             </UFormField>

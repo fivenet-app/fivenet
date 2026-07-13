@@ -142,7 +142,7 @@ async function closeModal(): Promise<void> {
                                                 ? $t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)
                                                 : $t(item.name)
                                         "
-                                        @click="state.status = item.status ?? StatusDispatch.NEW"
+                                        @click="() => (state.status = item.status ?? StatusDispatch.NEW)"
                                     />
                                 </div>
                             </UFormField>
