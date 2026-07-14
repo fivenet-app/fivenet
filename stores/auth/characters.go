@@ -106,7 +106,10 @@ func (s *Store) GetCharacter(
 					tJobProps.Job.EQ(tUsers.Job),
 				).
 				LEFT_JOIN(tLogo,
-					tLogo.ID.EQ(tJobProps.LogoFileID),
+					mysql.AND(
+						tLogo.ID.EQ(tJobProps.LogoFileID),
+						tLogo.DeletedAt.IS_NULL(),
+					),
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUsers.ID),
@@ -164,7 +167,10 @@ func (s *Store) GetJobWithProps(
 					tJobProps.Job.EQ(tJobs.Name),
 				).
 				LEFT_JOIN(tFiles,
-					tFiles.ID.EQ(tJobProps.LogoFileID),
+					mysql.AND(
+						tFiles.ID.EQ(tJobProps.LogoFileID),
+						tFiles.DeletedAt.IS_NULL(),
+					),
 				),
 		).
 		WHERE(

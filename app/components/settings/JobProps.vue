@@ -1037,10 +1037,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                                     color="red"
                                                     icon="i-mdi-remove"
                                                     @click="
-                                                        state.discordSyncSettings?.userInfoSyncSettings.groupMapping.splice(
-                                                            idx,
-                                                            1,
-                                                        )
+                                                        () =>
+                                                            state.discordSyncSettings?.userInfoSyncSettings.groupMapping.splice(
+                                                                idx,
+                                                                1,
+                                                            )
                                                     "
                                                 />
                                             </div>
@@ -1056,11 +1057,12 @@ const confirmModal = overlay.create(ConfirmModal);
                                             :disabled="!canSubmit"
                                             icon="i-mdi-plus"
                                             @click="
-                                                state.discordSyncSettings?.userInfoSyncSettings.groupMapping.push({
-                                                    name: '',
-                                                    fromGrade: appConfig.game.startJobGrade,
-                                                    toGrade: appConfig.game.startJobGrade,
-                                                })
+                                                () =>
+                                                    state.discordSyncSettings?.userInfoSyncSettings.groupMapping.push({
+                                                        name: '',
+                                                        fromGrade: appConfig.game.startJobGrade,
+                                                        toGrade: appConfig.game.startJobGrade,
+                                                    })
                                             "
                                         />
                                     </UFormField>
@@ -1233,7 +1235,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 icon="i-mdi-remove"
                                                 color="red"
                                                 @click="
-                                                    state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.splice(idx, 1)
+                                                    () =>
+                                                        state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.splice(
+                                                            idx,
+                                                            1,
+                                                        )
                                                 "
                                             />
                                         </div>
@@ -1246,7 +1252,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                         "
                                         :disabled="!canSubmit"
                                         icon="i-mdi-plus"
-                                        @click="state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.push('')"
+                                        @click="() => state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.push('')"
                                     />
                                 </UFormField>
                             </UPageCard>

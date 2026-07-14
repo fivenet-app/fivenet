@@ -65,8 +65,6 @@ async function createOrUpsertStamp(values: Schema) {
     }
 }
 
-const formRef = useTemplateRef('formRef');
-
 const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
@@ -116,8 +114,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <template #header>
                                 {{ $t('pages.documents.stamps.create') }}
                             </template>
-
-                            {{ formRef?.errors }}
 
                             <UFormField name="name" :label="$t('common.name')" required>
                                 <UInput v-model="state.name" class="w-full" type="text" />

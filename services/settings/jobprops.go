@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
-	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
@@ -60,8 +59,7 @@ func (s *Server) SetJobProps(
 	}
 
 	// Ensure that the job is the user's job
-	req.JobProps.Job = userInfo.GetJob()
-	req.JobProps.LivemapMarkerColor = strings.ToLower(req.GetJobProps().GetLivemapMarkerColor())
+	req.GetJobProps().SetJob(userInfo.GetJob())
 
 	if err := s.store.SetJobProps(ctx, req.GetJobProps()); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)

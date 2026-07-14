@@ -57,6 +57,7 @@ func (s *Store) GetJobProps(
 	job string,
 ) (*jobsprops.JobProps, error) {
 	tJobProps := table.FivenetJobProps.AS("job_props")
+	tFiles := table.FivenetFiles.AS("logo_file")
 
 	stmt := tJobProps.
 		SELECT(
@@ -71,9 +72,19 @@ func (s *Store) GetJobProps(
 			tJobProps.DiscordSyncSettings,
 			tJobProps.DiscordSyncChanges,
 			tJobProps.LogoFileID,
+			tFiles.ID,
+			tFiles.FilePath,
 			tJobProps.Settings,
 		).
-		FROM(tJobProps).
+		FROM(
+			tJobProps.
+				LEFT_JOIN(tFiles,
+					mysql.AND(
+						tFiles.ID.EQ(tJobProps.LogoFileID),
+						tFiles.DeletedAt.IS_NULL(),
+					),
+				),
+		).
 		WHERE(
 			tJobProps.Job.EQ(mysql.String(job)),
 		).

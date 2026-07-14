@@ -143,52 +143,52 @@ func (r *Registry) GetCronjob(ctx context.Context, name string) (*cron.Cronjob, 
 	return r.store.Get(name)
 }
 
-func (r *Registry) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
-	if job.GetName() == "" {
-		return fmt.Errorf("cron job name is required or uses reserved name: %s", job.GetName())
+func (r *Registry) RegisterCronjob(ctx context.Context, cronjob *cron.Cronjob) error {
+	if cronjob.GetName() == "" {
+		return fmt.Errorf("cron job name is required or uses reserved name: %s", cronjob.GetName())
 	}
 
 	// Validate the cron schedule
-	if !gronx.IsValid(job.GetSchedule()) {
+	if !gronx.IsValid(cronjob.GetSchedule()) {
 		return ErrInvalidCronSyntax
 	}
 
-	r.logger.Debug("registering cronjob", zap.String("name", job.GetName()))
+	r.logger.Debug("registering cronjob", zap.String("name", cronjob.GetName()))
 
-	if job.GetTimeout() == nil {
-		job.Timeout = durationpb.New(DefaultCronjobTimeout)
-	} else if job.GetTimeout().AsDuration() < 0 || job.GetTimeout().AsDuration() > 30*time.Minute {
+	if cronjob.GetTimeout() == nil {
+		cronjob.Timeout = durationpb.New(DefaultCronjobTimeout)
+	} else if cronjob.GetTimeout().AsDuration() < 0 || cronjob.GetTimeout().AsDuration() > 30*time.Minute {
 		// Ensure the timeout is not negative and not bigger than 30 minutes
-		return fmt.Errorf("cron job %s has negative timeout", job.GetName())
+		return fmt.Errorf("cron job %s has negative timeout", cronjob.GetName())
 	}
 
-	if job.GetState() == cron.CronjobState_CRONJOB_STATE_UNSPECIFIED {
-		job.State = cron.CronjobState_CRONJOB_STATE_WAITING
+	if cronjob.GetState() == cron.CronjobState_CRONJOB_STATE_UNSPECIFIED {
+		cronjob.State = cron.CronjobState_CRONJOB_STATE_WAITING
 	}
 
-	nextTime, err := gronx.NextTick(job.GetSchedule(), false)
+	nextTime, err := gronx.NextTick(cronjob.GetSchedule(), false)
 	if err != nil {
 		return err
 	}
 
-	if job.GetNextScheduleTime() == nil || job.GetNextScheduleTime().AsTime() != nextTime {
-		job.NextScheduleTime = timestamp.New(nextTime)
+	if cronjob.GetNextScheduleTime() == nil || cronjob.GetNextScheduleTime().AsTime() != nextTime {
+		cronjob.NextScheduleTime = timestamp.New(nextTime)
 	}
 
 	if err := r.store.ComputeUpdate(
 		ctx,
-		strings.ToLower(job.GetName()),
+		strings.ToLower(cronjob.GetName()),
 		func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 			if existing == nil {
-				return job, true, nil
+				return cronjob, true, nil
 			}
 
-			existing.Merge(job)
+			existing.Merge(cronjob)
 
 			return existing, true, nil
 		},
 	); err != nil {
-		return fmt.Errorf("failed to register cron job %s in store. %w", job.GetName(), err)
+		return fmt.Errorf("failed to register cron job %s in store. %w", cronjob.GetName(), err)
 	}
 
 	return nil

@@ -176,7 +176,10 @@ func (w *Worker) loadReminderCalendars(
 				tJobProps.Job.EQ(tCalendar.Job),
 			).
 			LEFT_JOIN(tFiles,
-				tFiles.ID.EQ(tJobProps.LogoFileID),
+				mysql.AND(
+					tFiles.ID.EQ(tJobProps.LogoFileID),
+					tFiles.DeletedAt.IS_NULL(),
+				),
 			),
 		).
 		WHERE(mysql.AND(
