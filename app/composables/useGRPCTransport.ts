@@ -8,8 +8,10 @@ import type {
     ServerStreamingCall,
     UnaryCall,
 } from '@protobuf-ts/runtime-rpc';
+import { useAuthSessionStore } from '~/stores/auth_session';
 import { useGRPCWebsocketTransport } from './grpcws';
-import { getGrpcAuthToken } from './grpcws/auth';
+import { getGrpcCharacterAuthToken } from './grpcws/auth';
+import { useAuth } from './useAuth';
 
 // Lazy singleton instance
 let _transport: GrpcCombinedTransport | null = null;
@@ -26,19 +28,6 @@ export function useGRPCTransport() {
         _transport = new GrpcCombinedTransport(grpcWebTransport, grpcWebsocketTransport);
     }
     return _transport;
-}
-
-function authInterceptor(options: RpcOptions): RpcOptions {
-    // Interceptros don't seem to work 100% of the time.. probably because of the "Frankenstein" transport setup.
-    if (!options) options = {};
-    if (!options.meta) options.meta = {};
-
-    const userToken = getGrpcAuthToken();
-    if (userToken) {
-        options.meta['Authorization'] = `Bearer ${userToken}`;
-    }
-
-    return options;
 }
 
 export class GrpcCombinedTransport {
@@ -82,4 +71,31 @@ export class GrpcCombinedTransport {
         options = authInterceptor(options);
         return this.streamClient.duplex<I, O>(method, options);
     }
+}
+
+function authInterceptor(options: RpcOptions): RpcOptions {
+    if (!options) options = {};
+    if (!options.meta) options.meta = {};
+
+    const userToken = getGrpcCharacterAuthToken();
+    if (!userToken) return options;
+
+    const { activeChar, accountId } = useAuth();
+    const authSessionStore = useAuthSessionStore();
+    const tokenAccountId = authSessionStore.userInfo?.accountId;
+    const tokenUserId = authSessionStore.userInfo?.userId;
+    if (
+        tokenAccountId === undefined ||
+        tokenUserId === undefined ||
+        accountId.value === null ||
+        tokenAccountId !== accountId.value ||
+        activeChar.value === null ||
+        tokenUserId !== activeChar.value.userId
+    ) {
+        return options;
+    }
+
+    options.meta['Authorization'] = `Bearer ${userToken}`;
+
+    return options;
 }

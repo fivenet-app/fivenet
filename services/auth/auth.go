@@ -26,6 +26,7 @@ import (
 	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"go.uber.org/zap"
 )
@@ -437,8 +438,18 @@ func (s *Server) ChooseCharacter(
 	if err == nil {
 		currentUserClaims, err = s.tm.ParseUserToken(userToken)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
+			if !errors.Is(err, jwt.ErrTokenExpired) {
+				s.logger.Warn(
+					"ignoring invalid user token while choosing character",
+					zap.Error(err),
+				)
+			}
+			currentUserClaims = nil
 		}
+	}
+	if currentUserClaims != nil &&
+		(currentUserClaims.AccID != currentAccClaims.AccID || currentUserClaims.UserID != req.GetCharId()) {
+		currentUserClaims = nil
 	}
 
 	// Load account data for token creation

@@ -365,6 +365,160 @@ func TestChooseCharacterConfigAdminEligibility(t *testing.T) {
 	assert.True(hasPermission(impersonateRes.GetPermissions(), perms.PermCanBeSuperuser))
 }
 
+func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid(t *testing.T) {
+	t.Parallel()
+	dbServer := servers.NewDBServer(t, true)
+	natsServer := servers.NewNATSServer(t, true)
+
+	ctx := t.Context()
+	assert := assert.New(t)
+	require := require.New(t)
+
+	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
+	require.NoError(err)
+
+	var srv *Server
+	app := fxtest.New(t,
+		modules.GetFxTestOpts(
+			dbServer.FxProvide(),
+			natsServer.FxProvide(),
+			userinfo.RetrieverModule,
+			fx.Provide(notifi.New),
+			fx.Provide(grpcSrvModule),
+			fx.Provide(grpcserver.AsService(func(p Params) *Server {
+				srv = NewServer(p)
+				return srv
+			})),
+
+			fx.Invoke(func(*grpc.Server) {}),
+		)...,
+	)
+	assert.NotNil(app)
+
+	app.RequireStart()
+	defer app.RequireStop()
+	assert.NotNil(srv)
+
+	client := pbauth.NewAuthServiceClient(clientConn)
+	accountToken := loginAndGetAccountToken(t, client, ctx, "user-1")
+
+	srv.jobAdminGroups = nil
+	srv.jobAdminUsers = nil
+	srv.configAdminGroups = nil
+	srv.configAdminUsers = nil
+
+	currentCfg := srv.appCfg.Get()
+	require.NotNil(currentCfg)
+	if currentCfg.GetAuth() == nil {
+		currentCfg.Auth = &settings.Auth{}
+	}
+	currentCfg.GetAuth().SetLastCharLock(true)
+	currentCfg.GetAuth().SetJobAdminGroups(nil)
+	currentCfg.GetAuth().SetJobAdminUsers(nil)
+	currentCfg.GetAuth().SetConfigAdminGroups(nil)
+	currentCfg.GetAuth().SetConfigAdminUsers([]string{"3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4"})
+	srv.appCfg.Set(currentCfg)
+
+	baseCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie": auth.AccCookieName + "=" + accountToken,
+		}),
+	)
+	baseHeaders := metadata.New(nil)
+	baseRes, err := client.ChooseCharacter(baseCtx, &pbauth.ChooseCharacterRequest{
+		CharId: 1,
+	}, grpc.Header(&baseHeaders))
+	require.NoError(err)
+	require.NotNil(baseRes)
+	assert.False(hasPermission(baseRes.GetPermissions(), perms.PermJobAdmin))
+
+	updatedAccountToken := accountToken
+	for _, cookieHeader := range baseHeaders.Get("set-cookie") {
+		cookie, err := http.ParseSetCookie(cookieHeader)
+		require.NoError(err)
+		if cookie.Name == auth.AccCookieName {
+			updatedAccountToken = cookie.Value
+			break
+		}
+	}
+
+	superuserCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie":        auth.AccCookieName + "=" + updatedAccountToken,
+			"Authorization": "Bearer " + baseRes.GetToken(),
+		}),
+	)
+	superuserRes, err := client.SetSuperuserMode(superuserCtx, &pbauth.SetSuperuserModeRequest{
+		Superuser: true,
+	})
+	require.NoError(err)
+	require.NotNil(superuserRes)
+	assert.True(hasPermission(superuserRes.GetPermissions(), perms.PermCanBeSuperuser))
+
+	parsedSuperuserClaims, err := srv.tm.ParseUserToken(superuserRes.GetToken())
+	require.NoError(err)
+	require.NotNil(parsedSuperuserClaims)
+	require.NotNil(parsedSuperuserClaims.Superuser)
+	assert.True(*parsedSuperuserClaims.Superuser)
+
+	validRestoreCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie":        auth.AccCookieName + "=" + updatedAccountToken,
+			"Authorization": "Bearer " + superuserRes.GetToken(),
+		}),
+	)
+	validRestoreHeaders := metadata.New(nil)
+	validRestoreRes, err := client.ChooseCharacter(validRestoreCtx, &pbauth.ChooseCharacterRequest{
+		CharId: 1,
+	}, grpc.Header(&validRestoreHeaders))
+	require.NoError(err)
+	require.NotNil(validRestoreRes)
+	assert.True(hasPermission(validRestoreRes.GetPermissions(), perms.PermJobAdmin))
+
+	parsedValidRestoreClaims, err := srv.tm.ParseUserToken(validRestoreRes.GetToken())
+	require.NoError(err)
+	require.NotNil(parsedValidRestoreClaims)
+	require.NotNil(parsedValidRestoreClaims.Superuser)
+	assert.True(*parsedValidRestoreClaims.Superuser)
+
+	mismatchedRestoreCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie":        auth.AccCookieName + "=" + updatedAccountToken,
+			"Authorization": "Bearer " + superuserRes.GetToken(),
+		}),
+	)
+	mismatchedRestoreRes, err := client.ChooseCharacter(mismatchedRestoreCtx, &pbauth.ChooseCharacterRequest{
+		CharId: 5,
+	})
+	require.NoError(err)
+	require.NotNil(mismatchedRestoreRes)
+	assert.False(hasPermission(mismatchedRestoreRes.GetPermissions(), perms.PermJobAdmin))
+
+	parsedMismatchedRestoreClaims, err := srv.tm.ParseUserToken(mismatchedRestoreRes.GetToken())
+	require.NoError(err)
+	require.NotNil(parsedMismatchedRestoreClaims)
+	assert.Nil(parsedMismatchedRestoreClaims.Superuser)
+
+	invalidRestoreCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie":        auth.AccCookieName + "=" + updatedAccountToken,
+			"Authorization": "Bearer definitely-invalid-user-token",
+		}),
+	)
+	invalidRestoreHeaders := metadata.New(nil)
+	invalidRestoreRes, err := client.ChooseCharacter(invalidRestoreCtx, &pbauth.ChooseCharacterRequest{
+		CharId: 1,
+	}, grpc.Header(&invalidRestoreHeaders))
+	require.NoError(err)
+	require.NotNil(invalidRestoreRes)
+	assert.False(hasPermission(invalidRestoreRes.GetPermissions(), perms.PermJobAdmin))
+}
+
 func loginAndGetAccountToken(
 	t *testing.T,
 	client pbauth.AuthServiceClient,

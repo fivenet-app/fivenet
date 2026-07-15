@@ -1,7 +1,9 @@
 package auth
 
 import (
+	"errors"
 	"testing"
+	"time"
 
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
@@ -72,4 +74,30 @@ func TestMapAccountToClaims(t *testing.T) {
 	assert.Equal(t, account.GetGroups().GetGroups(), claims.Groups)
 	assert.Equal(t, account.GetUsername(), claims.Username)
 	assert.Equal(t, account.GetLicense(), claims.Subject)
+}
+
+func TestParseUserTokenReturnsWrappedExpiryError(t *testing.T) {
+	t.Parallel()
+
+	tm := NewTokenMgr(jwtTokenTestSecret)
+	expiredClaims := &authclaims.UserInfoClaims{
+		AccID:  1,
+		UserID: 2,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(-time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now().Add(-2 * time.Hour)),
+			Subject:   "license",
+			Audience:  []string{"fivenet"},
+			Issuer:    "fivenet",
+		},
+	}
+
+	token, err := tm.FromUserClaims(expiredClaims)
+	require.NoError(t, err)
+
+	parsed, err := tm.ParseUserToken(token)
+	require.Error(t, err)
+	assert.Nil(t, parsed)
+	assert.True(t, errors.Is(err, jwt.ErrTokenExpired))
 }
