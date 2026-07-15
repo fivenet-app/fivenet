@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
     authSessionStore: {
         getUserToken: vi.fn(),
         setUserToken: vi.fn(),
+        userInfo: { accountId: null as number | null },
     },
     notificationsStore: {
         add: vi.fn(),
@@ -66,10 +67,12 @@ describe('useAuthStore', () => {
         setActivePinia(createPinia());
         vi.clearAllMocks();
         mocks.authSessionStore.getUserToken.mockReturnValue(null);
+        mocks.authSessionStore.userInfo.accountId = null;
     });
 
     it('clears account-level config-admin when selecting a character', async () => {
         mocks.authSessionStore.getUserToken.mockReturnValue('char-token');
+        mocks.authSessionStore.userInfo.accountId = 123;
         mocks.chooseCharacter.mockResolvedValueOnce({
             response: {
                 username: 'tester',
@@ -82,10 +85,12 @@ describe('useAuthStore', () => {
         });
 
         const authStore = useAuthStore();
+        authStore.accountId = 123;
         authStore.setAccountCanBeConfigAdmin(true);
 
         await authStore.chooseCharacter(123, false);
 
+        expect(authStore.accountId).toBe(123);
         expect(authStore.canBeConfigAdmin).toBe(false);
         expect(mocks.chooseCharacter).toHaveBeenCalledWith(
             { charId: 123 },
@@ -95,5 +100,28 @@ describe('useAuthStore', () => {
                 },
             },
         );
+    });
+
+    it('does not reuse a character token from another account when selecting a character', async () => {
+        mocks.authSessionStore.getUserToken.mockReturnValue('stale-char-token');
+        mocks.authSessionStore.userInfo.accountId = 123;
+        mocks.chooseCharacter.mockResolvedValueOnce({
+            response: {
+                username: 'tester',
+                token: 'fresh-token',
+                char: { userId: 123 } as never,
+                permissions: [],
+                attributes: [],
+                jobProps: undefined,
+            },
+        });
+
+        const authStore = useAuthStore();
+        authStore.accountId = 456;
+
+        await authStore.chooseCharacter(123, false);
+
+        expect(authStore.accountId).toBe(123);
+        expect(mocks.chooseCharacter).toHaveBeenCalledWith({ charId: 123 }, undefined);
     });
 });

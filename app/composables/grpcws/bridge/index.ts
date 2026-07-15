@@ -318,7 +318,7 @@ export class GrpcWSTransport implements RpcTransport {
 
     updateUserToken(token: string): void {
         if (this.webSocket.status.value !== 'OPEN') {
-            logger.error("Websocket isn't connected, cannot update user token");
+            logger.debug("Websocket isn't connected yet, skipping user token update");
             return;
         }
 

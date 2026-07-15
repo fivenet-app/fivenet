@@ -8,6 +8,7 @@ import type {
     ServerStreamingCall,
     UnaryCall,
 } from '@protobuf-ts/runtime-rpc';
+import { useAuthSessionStore } from '~/stores/auth_session';
 import { useGRPCWebsocketTransport } from './grpcws';
 import { getGrpcCharacterAuthToken } from './grpcws/auth';
 import { useAuth } from './useAuth';
@@ -79,7 +80,13 @@ function authInterceptor<I extends object, O extends object>(method: MethodInfo<
     const userToken = getGrpcCharacterAuthToken();
     if (!userToken) return options;
 
-    const { activeChar } = useAuth();
+    const { activeChar, accountId } = useAuth();
+    const authSessionStore = useAuthSessionStore();
+    const tokenAccountId = authSessionStore.userInfo?.accountId;
+    if (tokenAccountId === undefined || accountId.value === null || tokenAccountId !== accountId.value) {
+        return options;
+    }
+
     const isCharacterRestore =
         activeChar.value === null &&
         method.service.typeName === 'services.auth.AuthService' &&

@@ -27,7 +27,9 @@ export const useAuthStore = defineStore(
 
         const characterAuthOptions = (): RpcOptions | undefined => {
             const token = authSessionStore.getUserToken();
-            if (!token) return undefined;
+            const tokenAccountId = authSessionStore.userInfo?.accountId;
+            if (!token || tokenAccountId === undefined) return undefined;
+            if (accountId.value === null || tokenAccountId !== accountId.value) return undefined;
 
             return {
                 meta: {
@@ -197,6 +199,7 @@ export const useAuthStore = defineStore(
             if (loggingIn.value) return;
 
             loginStart();
+            accountId.value = null;
             setActiveChar();
             setPermissions([], []);
 
@@ -461,6 +464,7 @@ export const useAuthStore = defineStore(
         const clearAuthInfo = (): void => {
             logger.info('Clearing auth info');
             setUsername(null);
+            accountId.value = null;
             setActiveChar(null);
             setPermissions([], []);
             setCanBeSuperuser(false);
@@ -485,11 +489,17 @@ export const useAuthStore = defineStore(
             const currentToken = authSessionStore.getUserToken();
             if (currentToken === token) {
                 logger.debug('User token is the same as the current one, skipping update');
+                if (authSessionStore.userInfo?.accountId !== undefined) {
+                    accountId.value = authSessionStore.userInfo.accountId;
+                }
                 return;
             }
 
             logger.debug('Setting user token in session storage');
             authSessionStore.setUserToken(token);
+            if (authSessionStore.userInfo?.accountId !== undefined) {
+                accountId.value = authSessionStore.userInfo.accountId;
+            }
 
             if (activeChar.value !== null) {
                 logger.info('User token updated, send WebSocket re-auth message');
@@ -567,7 +577,7 @@ export const useAuthStore = defineStore(
     },
     {
         persist: {
-            pick: ['username', 'lastCharID'],
+            pick: ['username', 'accountId', 'lastCharID'],
         },
     },
 );
