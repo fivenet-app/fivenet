@@ -402,6 +402,23 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 	client := pbauth.NewAuthServiceClient(clientConn)
 	accountToken := loginAndGetAccountToken(t, client, ctx, "user-1")
 
+	srv.jobAdminGroups = nil
+	srv.jobAdminUsers = nil
+	srv.configAdminGroups = nil
+	srv.configAdminUsers = nil
+
+	currentCfg := srv.appCfg.Get()
+	require.NotNil(currentCfg)
+	if currentCfg.GetAuth() == nil {
+		currentCfg.Auth = &settings.Auth{}
+	}
+	currentCfg.GetAuth().SetLastCharLock(true)
+	currentCfg.GetAuth().SetJobAdminGroups(nil)
+	currentCfg.GetAuth().SetJobAdminUsers(nil)
+	currentCfg.GetAuth().SetConfigAdminGroups(nil)
+	currentCfg.GetAuth().SetConfigAdminUsers([]string{"3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4"})
+	srv.appCfg.Set(currentCfg)
+
 	baseCtx := metadata.NewOutgoingContext(
 		ctx,
 		metadata.New(map[string]string{
@@ -438,6 +455,7 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 	})
 	require.NoError(err)
 	require.NotNil(superuserRes)
+	assert.True(hasPermission(superuserRes.GetPermissions(), perms.PermCanBeSuperuser))
 
 	parsedSuperuserClaims, err := srv.tm.ParseUserToken(superuserRes.GetToken())
 	require.NoError(err)
