@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { authUserTokenKey } from '~/stores/auth_session';
-import { getGrpcAuthToken } from './auth';
+import { getGrpcRpcAuthToken, getGrpcWebsocketAuthToken } from './auth';
 
 const activeChar = { value: null as unknown | null };
 
@@ -10,22 +10,29 @@ vi.mock('~/composables/useAuth', () => ({
     }),
 }));
 
-describe('getGrpcAuthToken', () => {
+describe('grpc auth token accessors', () => {
     beforeEach(() => {
         activeChar.value = null;
         sessionStorage.clear();
     });
 
-    it('returns null when no character is selected even if a token is stored', () => {
+    it('returns the stored token for RPC auth even when no character is selected', () => {
         sessionStorage.setItem(authUserTokenKey, 'stale-char-token');
 
-        expect(getGrpcAuthToken()).toBeNull();
+        expect(getGrpcRpcAuthToken()).toBe('stale-char-token');
     });
 
-    it('returns the stored token when a character is selected', () => {
+    it('keeps websocket control auth tokenless in account-only mode', () => {
+        sessionStorage.setItem(authUserTokenKey, 'stale-char-token');
+
+        expect(getGrpcWebsocketAuthToken()).toBeNull();
+    });
+
+    it('returns the stored websocket token when a character is selected', () => {
         activeChar.value = { userId: 123 } as never;
         sessionStorage.setItem(authUserTokenKey, 'char-token');
 
-        expect(getGrpcAuthToken()).toBe('char-token');
+        expect(getGrpcWebsocketAuthToken()).toBe('char-token');
+        expect(getGrpcRpcAuthToken()).toBe('char-token');
     });
 });

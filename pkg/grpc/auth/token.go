@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -97,7 +98,7 @@ func (t *TokenMgr) ParseUserToken(tokenString string) (*authclaims.UserInfoClaim
 		},
 	)
 	if err != nil {
-		return nil, errors.New("failed to parse jwt user token")
+		return nil, fmt.Errorf("failed to parse jwt user token: %w", err)
 	}
 
 	claims, ok := token.Claims.(*authclaims.UserInfoClaims)

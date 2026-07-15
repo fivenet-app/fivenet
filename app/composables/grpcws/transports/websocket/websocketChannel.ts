@@ -1,6 +1,6 @@
 import type { UseWebSocketReturn } from '@vueuse/core';
 import { Body, Cancel, GrpcFrame, Header, HeaderValue } from '~~/gen/ts/resources/grpcws/grpcws';
-import { getGrpcAuthToken } from '../../auth';
+import { getGrpcWebsocketAuthToken } from '../../auth';
 import { headersToMetadata } from '../../bridge/utils';
 import { errCancelled, errInternal } from '../../errors';
 import type { Metadata } from '../../metadata';
@@ -28,7 +28,7 @@ type AuthState =
 
 // Default token provider
 function defaultTokenProvider(): string | null {
-    return getGrpcAuthToken();
+    return getGrpcWebsocketAuthToken();
 }
 
 export function WebsocketChannelTransport(
