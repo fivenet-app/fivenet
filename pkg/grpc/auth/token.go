@@ -72,7 +72,7 @@ func (t *TokenMgr) ParseAccToken(tokenString string) (*authclaims.AccountInfoCla
 		},
 	)
 	if err != nil {
-		return nil, errors.New("failed to parse jwt acc token")
+		return nil, fmt.Errorf("failed to parse jwt acc token: %w", err)
 	}
 
 	claims, ok := token.Claims.(*authclaims.AccountInfoClaims)
@@ -124,7 +124,7 @@ func (t *TokenMgr) ParseCombinedToken(tokenString string) (*authclaims.CombinedC
 		},
 	)
 	if err != nil {
-		return nil, errors.New("failed to parse jwt user token")
+		return nil, fmt.Errorf("failed to parse jwt user token: %w", err)
 	}
 
 	claims, ok := token.Claims.(*authclaims.CombinedClaims)

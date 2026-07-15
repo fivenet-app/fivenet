@@ -26,6 +26,11 @@ type Error struct {
 	e error
 }
 
+// Unwrap returns the original wrapped error.
+func (e *Error) Unwrap() error {
+	return e.e
+}
+
 // OrigErr returns the original error wrapped by this Error.
 func (e *Error) OrigErr() error {
 	return e.e
