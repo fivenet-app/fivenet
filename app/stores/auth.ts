@@ -330,8 +330,8 @@ export const useAuthStore = defineStore(
                 }
 
                 setUsername(response.username);
-                setUserToken(response.token);
                 setActiveChar(response.char);
+                setUserToken(response.token);
                 setPermissions(response.permissions, response.attributes);
                 setAccountCanBeConfigAdmin(false);
                 setJobProps(response.jobProps);
@@ -399,12 +399,12 @@ export const useAuthStore = defineStore(
                     job: job?.name,
                 });
                 const { response } = await call;
+                // Update state with response data first so websocket reauth can pick up the active character.
+                setActiveChar(response.char!);
                 setUserToken(response.token);
                 setPermissions(response.permissions, response.attributes);
                 await navigateTo('/overview');
 
-                // Update state with response data
-                setActiveChar(response.char!);
                 setJobProps(response.jobProps);
 
                 // Notify user about the change
