@@ -7,12 +7,14 @@ const props = withDefaults(
         maxWidth?: number;
         backgroundColor?: string;
         disabled?: boolean;
+        disableShapeInput?: boolean;
     }>(),
     {
         maxHeight: 350,
         maxWidth: 900,
         backgroundColor: undefined,
         disabled: false,
+        disableShapeInput: false,
     },
 );
 
@@ -78,7 +80,10 @@ onMounted(async () => {
             </div>
 
             <!-- Sidebar on the right with fixed width -->
-            <EditorSidebar class="w-full shrink-0 border-l border-l-default bg-default lg:max-w-sm lg:min-w-64">
+            <EditorSidebar
+                class="w-full shrink-0 border-l border-l-default bg-default lg:max-w-sm lg:min-w-64"
+                :disable-shape-input="disableShapeInput"
+            >
                 <template #sidebar-top>
                     <slot name="sidebar-top" />
                 </template>

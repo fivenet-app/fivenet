@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Textbox } from 'fabric';
+import type { Polyline, Textbox } from 'fabric';
 import type { FabricCurvedText } from '~/composables/fabric/FabricCurvedText';
 import type { FabricHtmlInput } from '~/composables/fabric/FabricHtmlInput';
 import { svgPatterns, useFabricEditor } from '~/composables/useFabricEditor';
@@ -9,7 +9,18 @@ import EditorSettings from './EditorSettings.vue';
 import EditorShapes from './EditorShapes.vue';
 import { titleCase } from 'scule';
 
-const { activeObject, canvas, applyPatternFill } = useFabricEditor();
+defineProps<{
+    disableShapeInput?: boolean;
+}>();
+
+const { activeObject, canvas, applyPatternFill, addPolylinePoint, removePolylinePoint } = useFabricEditor();
+
+const polylinePointCount = computed(() => {
+    const object = activeObject.value;
+    if (!object || !object.isType('polyline', 'polygon')) return 0;
+
+    return (object as Polyline).points.length;
+});
 
 // Update functions to modify the selected object's properties
 const updateText = (val: string) => {
@@ -316,6 +327,95 @@ const updateCurvedTextFillColor = (val: string) => {
                     </UFormField>
                 </div>
 
+                <div v-else-if="activeObject.isType('polyline')" class="flex flex-col gap-3">
+                    <UFormField name="fill" label="Fill Color">
+                        <ColorPicker
+                            class="w-full"
+                            :model-value="
+                                typeof activeObject.fill === 'string' && !activeObject.fill.includes('url(')
+                                    ? activeObject.fill
+                                    : '#000000'
+                            "
+                            @update:model-value="updateFillColor($event ?? '#000000')"
+                        />
+                    </UFormField>
+
+                    <UFormField name="stroke" label="Stroke Color">
+                        <ColorPicker
+                            class="w-full"
+                            :model-value="
+                                typeof activeObject.stroke === 'string' && !activeObject.stroke.includes('url(')
+                                    ? activeObject.stroke
+                                    : '#000000'
+                            "
+                            @update:model-value="updateStrokeColor($event ?? '#000000')"
+                        />
+                    </UFormField>
+
+                    <UFormField name="strokeWidth" label="Stroke Width">
+                        <USlider
+                            class="w-full"
+                            :model-value="activeObject.strokeWidth"
+                            :min="0"
+                            :step="1"
+                            :max="24"
+                            @update:model-value="updateStrokeWidth($event ?? 0)"
+                        />
+                    </UFormField>
+
+                    <UFormField name="strokeDashArray" label="Stroke Pattern">
+                        <USelectMenu
+                            class="w-full"
+                            :model-value="activeObject.strokeDashArray"
+                            :items="strokeDashes"
+                            label-key="name"
+                            value-key="value"
+                            @update:model-value="updateStrokeDash($event)"
+                        />
+                    </UFormField>
+
+                    <UFormField name="opacity" label="Opacity">
+                        <USlider
+                            class="w-full"
+                            :min="0"
+                            :max="1"
+                            :step="0.1"
+                            :model-value="activeObject.opacity ?? 1"
+                            @update:model-value="updateOpacity($event ?? 1)"
+                        />
+                    </UFormField>
+
+                    <UFormField name="selectedPattern" label="Pattern">
+                        <USelectMenu
+                            v-model="selectedPattern"
+                            class="w-full"
+                            :items="svgPatterns"
+                            label-key="name"
+                            value-key="value"
+                        />
+                    </UFormField>
+
+                    <UFormField name="selectedPatternColor" label="Pattern Color">
+                        <ColorPicker v-model="selectedPatternColor" class="w-full" />
+                    </UFormField>
+
+                    <div class="flex gap-2">
+                        <UButton
+                            size="xs"
+                            icon="i-mdi-plus"
+                            :label="$t('components.fabric_editor.add_point')"
+                            @click="addPolylinePoint"
+                        />
+                        <UButton
+                            size="xs"
+                            icon="i-mdi-minus"
+                            :disabled="polylinePointCount <= 2"
+                            :label="$t('components.fabric_editor.remove_point')"
+                            @click="removePolylinePoint"
+                        />
+                    </div>
+                </div>
+
                 <div v-else-if="activeObject.isType('image')" class="flex flex-col gap-2">
                     <UFormField name="opacity" label="Opacity">
                         <USlider
@@ -472,6 +572,6 @@ const updateCurvedTextFillColor = (val: string) => {
             <div v-else class="text-sm text-muted">{{ $t('components.fabric_editor.no_object_selected') }}</div>
         </UCard>
 
-        <EditorShapes />
+        <EditorShapes :disable-shape-input="disableShapeInput" />
     </div>
 </template>

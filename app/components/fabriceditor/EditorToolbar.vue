@@ -158,7 +158,7 @@ const fileMenuItems = computed<DropdownMenuItem[][]>(() => [
                 variant="ghost"
                 icon="i-mdi-select-color"
                 :style="{ backgroundColor: pickedColor }"
-                @click="pickingColor = !pickingColor"
+                @click="() => (pickingColor = !pickingColor)"
             />
         </UTooltip>
 

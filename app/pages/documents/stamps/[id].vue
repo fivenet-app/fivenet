@@ -154,7 +154,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
                 <DataNoDataBlock v-else-if="!stamp" :type="$t('common.stamp', 1)" icon="i-mdi-stamper" />
 
-                <EditorWrapper v-else v-model="state.svgData" :max-width="900" :max-height="350" background-color="#ffffff">
+                <EditorWrapper
+                    v-else
+                    v-model="state.svgData"
+                    :max-width="900"
+                    :max-height="350"
+                    background-color="#ffffff"
+                    disable-shape-input
+                >
                     <template #sidebar-top>
                         <UCard>
                             <template #header>

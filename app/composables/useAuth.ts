@@ -9,6 +9,7 @@ export type canMode = 'oneof' | 'all';
 export const superuserCanBePermGuard = 'internal-superuser-canbesuperuser' as const;
 export const jobAdminPermGuard = 'internal-superuser-jobadmin' as const;
 export const configAdminPermGuard = 'internal-superuser-configadmin' as const;
+export const todoPermGuard = 'todoservice-todomethod' as const;
 
 // Wrapper around auth store to make live easier
 const _useAuth = () => {

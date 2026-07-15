@@ -108,7 +108,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
 
             <template #body>
-                <EditorWrapper v-model="state.svgData" :max-width="900" :max-height="350" background-color="#ffffff">
+                <EditorWrapper
+                    v-model="state.svgData"
+                    :max-width="900"
+                    :max-height="350"
+                    background-color="#ffffff"
+                    disable-shape-input
+                >
                     <template #sidebar-top>
                         <UCard :ui="{ header: 'font-bold' }">
                             <template #header>

@@ -4,14 +4,19 @@ import {
     type CanvasEvents,
     type CanvasOptions,
     Circle,
+    controlsUtils,
+    Ellipse,
     FabricImage,
     type FabricObject,
     Group,
     loadSVGFromString,
     Pattern,
     Point,
+    Polygon,
+    Polyline,
     Rect,
     Textbox,
+    Triangle,
     util,
 } from 'fabric';
 import { AligningGuidelines } from 'fabric/extensions';
@@ -106,6 +111,7 @@ function createFabricEditor() {
 
     const history = ref<string[]>([]);
     const redoStack = ref<string[]>([]);
+    const isRestoringState = ref(false);
 
     // Alignment guide snapping threshold (in pixels)
     const snapThreshold = ref(5);
@@ -136,7 +142,7 @@ function createFabricEditor() {
             height: documentSize.value.height,
             stroke: '#999',
             strokeWidth: 1,
-            fill: '',
+            fill: documentSize.value.fill,
             strokeDashOffset: 4,
             selectable: false,
             evented: false,
@@ -148,6 +154,56 @@ function createFabricEditor() {
         canvas.value?.sendObjectToBack(box);
 
         borderBox.value = box;
+    };
+
+    const restoreBorder = () => {
+        if (!canvas.value) return;
+
+        borderBox.value = null;
+        createBorder();
+    };
+
+    const applyPolylineControls = (object: FabricObject) => {
+        if (!object.isType('polyline', 'polygon')) return;
+
+        const polyline = object as Polyline;
+        polyline.controls = controlsUtils.createPolyControls(polyline);
+        polyline.setCoords();
+    };
+
+    const refreshPolyline = (polyline: Polyline) => {
+        applyPolylineControls(polyline);
+        polyline.setDimensions();
+        polyline.setCoords();
+        canvas.value?.requestRenderAll();
+        saveHistory();
+    };
+
+    const getActivePolyline = () => {
+        if (!canvas.value) return null;
+
+        const active = canvas.value.getActiveObject();
+        if (!active || !active.isType('polyline', 'polygon')) return null;
+
+        return active as Polyline;
+    };
+
+    const restorePolylineControls = () => {
+        canvas.value?.getObjects().forEach((object) => applyPolylineControls(object));
+    };
+
+    const loadState = async (json: string) => {
+        if (!canvas.value) return;
+
+        isRestoringState.value = true;
+        try {
+            await canvas.value.loadFromJSON(json);
+            restorePolylineControls();
+            restoreBorder();
+            canvas.value.requestRenderAll();
+        } finally {
+            isRestoringState.value = false;
+        }
     };
 
     const initCanvas = (
@@ -520,7 +576,7 @@ function createFabricEditor() {
     };
 
     const saveHistory = () => {
-        if (canvas.value) {
+        if (canvas.value && !isRestoringState.value) {
             const json = canvas.value.toJSON();
             history.value.push(JSON.stringify(json));
             redoStack.value = [];
@@ -533,8 +589,7 @@ function createFabricEditor() {
         if (current) redoStack.value.push(current);
         const previous = history.value[history.value.length - 1];
         if (previous) {
-            await canvas.value.loadFromJSON(previous);
-            canvas.value.requestRenderAll();
+            await loadState(previous);
         }
     };
 
@@ -543,8 +598,7 @@ function createFabricEditor() {
         const json = redoStack.value.pop();
         if (json) {
             history.value.push(json);
-            await canvas.value.loadFromJSON(json);
-            canvas.value.requestRenderAll();
+            await loadState(json);
         }
     };
 
@@ -571,8 +625,110 @@ function createFabricEditor() {
         canvas.value.setActiveObject(curved);
     };
 
+    const addPolyline = () => {
+        if (!canvas.value) return;
+
+        const line = new Polyline(
+            [
+                { x: 10, y: 10 },
+                { x: 30, y: 30 },
+            ],
+            {
+                left: 50,
+                top: 100,
+                stroke: '#f87171',
+                fill: 'transparent',
+            },
+        );
+        applyPolylineControls(line);
+        canvas.value.add(line);
+        canvas.value.setActiveObject(line);
+        canvas.value.requestRenderAll();
+    };
+
+    const addPolygon = () => {
+        if (!canvas.value) return;
+
+        const polygon = new Polygon(
+            [
+                { x: 10, y: 10 },
+                { x: 40, y: 10 },
+                { x: 30, y: 40 },
+            ],
+            {
+                left: 80,
+                top: 100,
+                fill: '#93c5fd',
+                stroke: '#3b82f6',
+                strokeWidth: 1,
+            },
+        );
+        applyPolylineControls(polygon);
+        canvas.value.add(polygon);
+        canvas.value.setActiveObject(polygon);
+        canvas.value.requestRenderAll();
+    };
+
+    const addTriangle = () => {
+        if (!canvas.value) return;
+
+        const triangle = new Triangle({
+            left: 200,
+            top: 80,
+            width: 100,
+            height: 100,
+            fill: '#a7f3d0',
+            stroke: '#10b981',
+            strokeWidth: 1,
+        });
+        canvas.value.add(triangle);
+        canvas.value.setActiveObject(triangle);
+        canvas.value.requestRenderAll();
+    };
+
+    const addEllipse = () => {
+        if (!canvas.value) return;
+
+        const ellipse = new Ellipse({
+            left: 320,
+            top: 80,
+            rx: 50,
+            ry: 35,
+            fill: '#fde68a',
+            stroke: '#f59e0b',
+            strokeWidth: 1,
+        });
+        canvas.value.add(ellipse);
+        canvas.value.setActiveObject(ellipse);
+        canvas.value.requestRenderAll();
+    };
+
+    const addPolylinePoint = () => {
+        const polyline = getActivePolyline();
+        if (!polyline) return;
+
+        const points = [...polyline.points];
+        const lastPoint = points[points.length - 1] ?? { x: 0, y: 0 };
+        points.push({
+            x: lastPoint.x + 20,
+            y: lastPoint.y + 20,
+        });
+
+        polyline.set('points', points);
+        refreshPolyline(polyline);
+    };
+
+    const removePolylinePoint = () => {
+        const polyline = getActivePolyline();
+        if (!polyline || polyline.points.length <= 2) return;
+
+        polyline.set('points', polyline.points.slice(0, -1));
+        refreshPolyline(polyline);
+    };
+
     const addPlaceholder = () => {
         if (!canvas.value) return;
+
         const placeholderText = new Textbox('{{placeholder}}', {
             left: 50,
             top: 100,
@@ -590,6 +746,7 @@ function createFabricEditor() {
 
     const addRectangle = () => {
         if (!canvas.value) return;
+
         const rect = new Rect({
             left: 80,
             top: 80,
@@ -635,9 +792,7 @@ function createFabricEditor() {
     const importJSON = async (jsonStr: string) => {
         if (!canvas.value) return;
         try {
-            await canvas.value.loadFromJSON(jsonStr);
-
-            canvas.value.requestRenderAll();
+            await loadState(jsonStr);
         } catch (error) {
             console.error('Failed to import JSON:', error);
         }
@@ -647,7 +802,9 @@ function createFabricEditor() {
         if (!canvas.value) return;
         try {
             const loadedSvg = await loadSVGFromString(svgStr);
-            canvas.value.add(...loadedSvg.objects.filter((obj): obj is FabricObject => !!obj));
+            const objects = loadedSvg.objects.filter((obj): obj is FabricObject => !!obj);
+            objects.forEach((obj) => applyPolylineControls(obj));
+            canvas.value.add(...objects);
 
             if (loadedSvg.options['width'] && loadedSvg.options['height']) {
                 documentSize.value.width = parseInt(loadedSvg.options['width']);
@@ -824,9 +981,15 @@ function createFabricEditor() {
 
         addText,
         addCurvedText,
-        addPlaceholder,
+        addPolyline,
+        addPolygon,
+        addTriangle,
+        addEllipse,
+        addPolylinePoint,
+        removePolylinePoint,
         addRectangle,
         addCircle,
+        addPlaceholder,
         addImage,
         importJSON,
         importSVG,
