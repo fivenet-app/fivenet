@@ -46,7 +46,7 @@ export class GrpcCombinedTransport {
     unary<I extends object, O extends object>(method: MethodInfo<I, O>, input: I, options: RpcOptions): UnaryCall<I, O> {
         // Interceptors don't seem to work 100% of the time (at least for unary calls)..
         // probably because of the "Frankenstein" transport setup.
-        options = authInterceptor(method, options);
+        options = authInterceptor(options);
         return this.unaryClient.unary<I, O>(method, input, this.unaryClient.mergeOptions(options));
     }
 
@@ -55,7 +55,7 @@ export class GrpcCombinedTransport {
         input: I,
         options: RpcOptions,
     ): ServerStreamingCall<I, O> {
-        options = authInterceptor(method, options);
+        options = authInterceptor(options);
         return this.streamClient.serverStreaming<I, O>(method, input, options);
     }
 
@@ -63,17 +63,17 @@ export class GrpcCombinedTransport {
         method: MethodInfo<I, O>,
         options: RpcOptions,
     ): ClientStreamingCall<I, O> {
-        options = authInterceptor(method, options);
+        options = authInterceptor(options);
         return this.streamClient.clientStreaming<I, O>(method, options);
     }
 
     duplex<I extends object, O extends object>(method: MethodInfo<I, O>, options: RpcOptions): DuplexStreamingCall<I, O> {
-        options = authInterceptor(method, options);
+        options = authInterceptor(options);
         return this.streamClient.duplex<I, O>(method, options);
     }
 }
 
-function authInterceptor<I extends object, O extends object>(method: MethodInfo<I, O>, options: RpcOptions): RpcOptions {
+function authInterceptor(options: RpcOptions): RpcOptions {
     if (!options) options = {};
     if (!options.meta) options.meta = {};
 
@@ -83,18 +83,19 @@ function authInterceptor<I extends object, O extends object>(method: MethodInfo<
     const { activeChar, accountId } = useAuth();
     const authSessionStore = useAuthSessionStore();
     const tokenAccountId = authSessionStore.userInfo?.accountId;
-    if (tokenAccountId === undefined || accountId.value === null || tokenAccountId !== accountId.value) {
+    const tokenUserId = authSessionStore.userInfo?.userId;
+    if (
+        tokenAccountId === undefined ||
+        tokenUserId === undefined ||
+        accountId.value === null ||
+        tokenAccountId !== accountId.value ||
+        activeChar.value === null ||
+        tokenUserId !== activeChar.value.userId
+    ) {
         return options;
     }
 
-    const isCharacterRestore =
-        activeChar.value === null &&
-        method.service.typeName === 'services.auth.AuthService' &&
-        method.name === 'ChooseCharacter';
-
-    if (activeChar.value !== null || isCharacterRestore) {
-        options.meta['Authorization'] = `Bearer ${userToken}`;
-    }
+    options.meta['Authorization'] = `Bearer ${userToken}`;
 
     return options;
 }

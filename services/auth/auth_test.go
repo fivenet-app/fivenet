@@ -484,6 +484,25 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 	require.NotNil(parsedValidRestoreClaims.Superuser)
 	assert.True(*parsedValidRestoreClaims.Superuser)
 
+	mismatchedRestoreCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie":        auth.AccCookieName + "=" + updatedAccountToken,
+			"Authorization": "Bearer " + superuserRes.GetToken(),
+		}),
+	)
+	mismatchedRestoreRes, err := client.ChooseCharacter(mismatchedRestoreCtx, &pbauth.ChooseCharacterRequest{
+		CharId: 5,
+	})
+	require.NoError(err)
+	require.NotNil(mismatchedRestoreRes)
+	assert.False(hasPermission(mismatchedRestoreRes.GetPermissions(), perms.PermJobAdmin))
+
+	parsedMismatchedRestoreClaims, err := srv.tm.ParseUserToken(mismatchedRestoreRes.GetToken())
+	require.NoError(err)
+	require.NotNil(parsedMismatchedRestoreClaims)
+	assert.Nil(parsedMismatchedRestoreClaims.Superuser)
+
 	invalidRestoreCtx := metadata.NewOutgoingContext(
 		ctx,
 		metadata.New(map[string]string{

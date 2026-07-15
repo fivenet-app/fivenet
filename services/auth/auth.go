@@ -447,6 +447,10 @@ func (s *Server) ChooseCharacter(
 			currentUserClaims = nil
 		}
 	}
+	if currentUserClaims != nil &&
+		(currentUserClaims.AccID != currentAccClaims.AccID || currentUserClaims.UserID != req.GetCharId()) {
+		currentUserClaims = nil
+	}
 
 	// Load account data for token creation
 	acc, err := s.store.GetAccountByIDAndUsername(

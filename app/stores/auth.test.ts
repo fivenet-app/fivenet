@@ -4,10 +4,11 @@ import { useAuthStore } from './auth';
 
 const mocks = vi.hoisted(() => ({
     chooseCharacter: vi.fn(),
+    refreshAccountSession: vi.fn(),
     authSessionStore: {
         getUserToken: vi.fn(),
         setUserToken: vi.fn(),
-        userInfo: { accountId: null as number | null },
+        userInfo: { accountId: null as number | null, userId: null as number | null },
     },
     notificationsStore: {
         add: vi.fn(),
@@ -38,6 +39,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock('~~/gen/ts/clients', () => ({
     getAuthAuthClient: vi.fn(async () => ({
         chooseCharacter: mocks.chooseCharacter,
+        refreshAccountSession: mocks.refreshAccountSession,
     })),
 }));
 
@@ -68,11 +70,20 @@ describe('useAuthStore', () => {
         vi.clearAllMocks();
         mocks.authSessionStore.getUserToken.mockReturnValue(null);
         mocks.authSessionStore.userInfo.accountId = null;
+        mocks.authSessionStore.userInfo.userId = null;
+        mocks.refreshAccountSession.mockResolvedValue({
+            response: {
+                accountId: 123,
+                canBeConfigAdmin: false,
+                username: 'tester',
+            },
+        });
     });
 
     it('clears account-level config-admin when selecting a character', async () => {
         mocks.authSessionStore.getUserToken.mockReturnValue('char-token');
         mocks.authSessionStore.userInfo.accountId = 123;
+        mocks.authSessionStore.userInfo.userId = 123;
         mocks.chooseCharacter.mockResolvedValueOnce({
             response: {
                 username: 'tester',
@@ -105,6 +116,7 @@ describe('useAuthStore', () => {
     it('does not reuse a character token from another account when selecting a character', async () => {
         mocks.authSessionStore.getUserToken.mockReturnValue('stale-char-token');
         mocks.authSessionStore.userInfo.accountId = 123;
+        mocks.authSessionStore.userInfo.userId = 999;
         mocks.chooseCharacter.mockResolvedValueOnce({
             response: {
                 username: 'tester',
@@ -123,5 +135,36 @@ describe('useAuthStore', () => {
 
         expect(authStore.accountId).toBe(123);
         expect(mocks.chooseCharacter).toHaveBeenCalledWith({ charId: 123 }, undefined);
+    });
+
+    it('refreshes the account session before restoring a character when accountId is missing', async () => {
+        mocks.authSessionStore.getUserToken.mockReturnValue('char-token');
+        mocks.authSessionStore.userInfo.accountId = 123;
+        mocks.authSessionStore.userInfo.userId = 123;
+        mocks.chooseCharacter.mockResolvedValueOnce({
+            response: {
+                username: 'tester',
+                token: 'char-token',
+                char: { userId: 123 } as never,
+                permissions: [],
+                attributes: [],
+                jobProps: undefined,
+            },
+        });
+
+        const authStore = useAuthStore();
+        authStore.accountId = null;
+
+        await authStore.chooseCharacter(123, false);
+
+        expect(mocks.refreshAccountSession).toHaveBeenCalled();
+        expect(mocks.chooseCharacter).toHaveBeenCalledWith(
+            { charId: 123 },
+            {
+                meta: {
+                    Authorization: 'Bearer char-token',
+                },
+            },
+        );
     });
 });

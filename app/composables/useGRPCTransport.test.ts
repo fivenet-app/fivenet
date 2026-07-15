@@ -3,7 +3,7 @@ import { GrpcCombinedTransport } from './useGRPCTransport';
 
 const activeChar = { value: null as unknown | null };
 const accountId = { value: null as unknown | null };
-const userInfo = { accountId: null as number | null };
+const userInfo = { accountId: null as number | null, userId: null as number | null };
 
 type MockUnaryClient = {
     mock: {
@@ -49,6 +49,7 @@ describe('GrpcCombinedTransport auth headers', () => {
         activeChar.value = null;
         accountId.value = null;
         userInfo.accountId = null;
+        userInfo.userId = null;
         sessionStorage.clear();
     });
 
@@ -70,10 +71,11 @@ describe('GrpcCombinedTransport auth headers', () => {
         expect(firstCall[2].meta.Authorization).toBeUndefined();
     });
 
-    it('does not reuse a stale token for choose-character restore when the account does not match', () => {
+    it('does not attach a token for choose-character restore when the character does not match', () => {
         sessionStorage.setItem(authUserTokenKey, 'char-token');
-        accountId.value = 456;
+        accountId.value = 123;
         userInfo.accountId = 123;
+        userInfo.userId = 456;
         const { transport, unaryClient } = createTransport();
 
         transport.unary(
@@ -87,26 +89,11 @@ describe('GrpcCombinedTransport auth headers', () => {
         expect(firstCall[2].meta.Authorization).toBeUndefined();
     });
 
-    it('sends the stored token for choose-character restore even when no character is active', () => {
-        sessionStorage.setItem(authUserTokenKey, 'char-token');
-        accountId.value = 123;
-        userInfo.accountId = 123;
-        const { transport, unaryClient } = createTransport();
-
-        transport.unary(
-            { name: 'ChooseCharacter', service: { typeName: 'services.auth.AuthService' } } as never,
-            {} as never,
-            {},
-        );
-
-        const firstCall = (unaryClient.unary as MockUnaryClient).mock.calls[0];
-        expect(firstCall[2].meta.Authorization).toBe('Bearer char-token');
-    });
-
     it('sends the stored token for unary calls when a character is active', () => {
         activeChar.value = { userId: 123 } as never;
         accountId.value = 123;
         userInfo.accountId = 123;
+        userInfo.userId = 123;
         sessionStorage.setItem(authUserTokenKey, 'char-token');
         const { transport, unaryClient } = createTransport();
 

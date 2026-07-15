@@ -25,11 +25,14 @@ export const useAuthStore = defineStore(
         const notifications = useNotificationsStore();
         const authSessionStore = useAuthSessionStore();
 
-        const characterAuthOptions = (): RpcOptions | undefined => {
+        const characterAuthOptions = (charId?: number): RpcOptions | undefined => {
             const token = authSessionStore.getUserToken();
             const tokenAccountId = authSessionStore.userInfo?.accountId;
-            if (!token || tokenAccountId === undefined) return undefined;
+            const tokenUserId = authSessionStore.userInfo?.userId;
+            if (!token || tokenAccountId === undefined || tokenUserId === undefined) return undefined;
             if (accountId.value === null || tokenAccountId !== accountId.value) return undefined;
+            const expectedCharId = charId ?? activeChar.value?.userId;
+            if (expectedCharId === undefined || tokenUserId !== expectedCharId) return undefined;
 
             return {
                 meta: {
@@ -333,13 +336,21 @@ export const useAuthStore = defineStore(
             }
 
             try {
+                if (accountId.value === null) {
+                    try {
+                        await refreshAccountSession();
+                    } catch (_) {
+                        // Ignore refresh errors here; chooseCharacter can still proceed with the current session state.
+                    }
+                }
+
                 const authAuthClient = await getAuthAuthClient();
 
                 const call = authAuthClient.chooseCharacter(
                     {
                         charId: charId,
                     },
-                    characterAuthOptions(),
+                    characterAuthOptions(charId),
                 );
                 const { response } = await call;
                 if (!response.char) {
