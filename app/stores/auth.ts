@@ -1,4 +1,4 @@
-import type { RpcError } from '@protobuf-ts/runtime-rpc';
+import type { RpcError, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
@@ -24,6 +24,17 @@ export const useAuthStore = defineStore(
         const settingsStore = useSettingsStore();
         const notifications = useNotificationsStore();
         const authSessionStore = useAuthSessionStore();
+
+        const characterAuthOptions = (): RpcOptions | undefined => {
+            const token = authSessionStore.getUserToken();
+            if (!token) return undefined;
+
+            return {
+                meta: {
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+        };
 
         // State
         /**
@@ -321,9 +332,12 @@ export const useAuthStore = defineStore(
             try {
                 const authAuthClient = await getAuthAuthClient();
 
-                const call = authAuthClient.chooseCharacter({
-                    charId: charId,
-                });
+                const call = authAuthClient.chooseCharacter(
+                    {
+                        charId: charId,
+                    },
+                    characterAuthOptions(),
+                );
                 const { response } = await call;
                 if (!response.char) {
                     throw new Error('Server Error! No character in choose character response.');
@@ -369,9 +383,12 @@ export const useAuthStore = defineStore(
         const impersonateJob = async (grade: number): Promise<ImpersonateJobResponse> => {
             const authAuthClient = await getAuthAuthClient();
 
-            const call = authAuthClient.impersonateJob({
-                jobGrade: grade,
-            });
+            const call = authAuthClient.impersonateJob(
+                {
+                    jobGrade: grade,
+                },
+                characterAuthOptions(),
+            );
             const { response } = await call;
             if (!response.char) {
                 throw new Error('Server Error! No character in impersonate job response.');
@@ -394,10 +411,13 @@ export const useAuthStore = defineStore(
             const authAuthClient = await getAuthAuthClient();
 
             try {
-                const call = authAuthClient.setSuperuserMode({
-                    superuser,
-                    job: job?.name,
-                });
+                const call = authAuthClient.setSuperuserMode(
+                    {
+                        superuser,
+                        job: job?.name,
+                    },
+                    characterAuthOptions(),
+                );
                 const { response } = await call;
                 // Update state with response data first so websocket reauth can pick up the active character.
                 setActiveChar(response.char!);

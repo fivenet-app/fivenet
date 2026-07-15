@@ -1,6 +1,6 @@
 import { authUserTokenKey } from '~/stores/auth_session';
 
-export function getGrpcRpcAuthToken(): string | null {
+export function getGrpcCharacterAuthToken(): string | null {
     return sessionStorage.getItem(authUserTokenKey);
 }
 

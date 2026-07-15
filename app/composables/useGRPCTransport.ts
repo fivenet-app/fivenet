@@ -9,7 +9,8 @@ import type {
     UnaryCall,
 } from '@protobuf-ts/runtime-rpc';
 import { useGRPCWebsocketTransport } from './grpcws';
-import { getGrpcRpcAuthToken } from './grpcws/auth';
+import { getGrpcCharacterAuthToken } from './grpcws/auth';
+import { useAuth } from './useAuth';
 
 // Lazy singleton instance
 let _transport: GrpcCombinedTransport | null = null;
@@ -28,19 +29,6 @@ export function useGRPCTransport() {
     return _transport;
 }
 
-function authInterceptor(options: RpcOptions): RpcOptions {
-    // Interceptros don't seem to work 100% of the time.. probably because of the "Frankenstein" transport setup.
-    if (!options) options = {};
-    if (!options.meta) options.meta = {};
-
-    const userToken = getGrpcRpcAuthToken();
-    if (userToken) {
-        options.meta['Authorization'] = `Bearer ${userToken}`;
-    }
-
-    return options;
-}
-
 export class GrpcCombinedTransport {
     private unaryClient: RpcTransport;
     private streamClient: RpcTransport;
@@ -57,7 +45,7 @@ export class GrpcCombinedTransport {
     unary<I extends object, O extends object>(method: MethodInfo<I, O>, input: I, options: RpcOptions): UnaryCall<I, O> {
         // Interceptors don't seem to work 100% of the time (at least for unary calls)..
         // probably because of the "Frankenstein" transport setup.
-        options = authInterceptor(options);
+        options = authInterceptor(method, options);
         return this.unaryClient.unary<I, O>(method, input, this.unaryClient.mergeOptions(options));
     }
 
@@ -66,7 +54,7 @@ export class GrpcCombinedTransport {
         input: I,
         options: RpcOptions,
     ): ServerStreamingCall<I, O> {
-        options = authInterceptor(options);
+        options = authInterceptor(method, options);
         return this.streamClient.serverStreaming<I, O>(method, input, options);
     }
 
@@ -74,12 +62,32 @@ export class GrpcCombinedTransport {
         method: MethodInfo<I, O>,
         options: RpcOptions,
     ): ClientStreamingCall<I, O> {
-        options = authInterceptor(options);
+        options = authInterceptor(method, options);
         return this.streamClient.clientStreaming<I, O>(method, options);
     }
 
     duplex<I extends object, O extends object>(method: MethodInfo<I, O>, options: RpcOptions): DuplexStreamingCall<I, O> {
-        options = authInterceptor(options);
+        options = authInterceptor(method, options);
         return this.streamClient.duplex<I, O>(method, options);
     }
+}
+
+function authInterceptor<I extends object, O extends object>(method: MethodInfo<I, O>, options: RpcOptions): RpcOptions {
+    if (!options) options = {};
+    if (!options.meta) options.meta = {};
+
+    const userToken = getGrpcCharacterAuthToken();
+    if (!userToken) return options;
+
+    const { activeChar } = useAuth();
+    const isCharacterRestore =
+        activeChar.value === null &&
+        method.service.typeName === 'services.auth.AuthService' &&
+        method.name === 'ChooseCharacter';
+
+    if (activeChar.value !== null || isCharacterRestore) {
+        options.meta['Authorization'] = `Bearer ${userToken}`;
+    }
+
+    return options;
 }

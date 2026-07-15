@@ -69,6 +69,7 @@ describe('useAuthStore', () => {
     });
 
     it('clears account-level config-admin when selecting a character', async () => {
+        mocks.authSessionStore.getUserToken.mockReturnValue('char-token');
         mocks.chooseCharacter.mockResolvedValueOnce({
             response: {
                 username: 'tester',
@@ -86,6 +87,13 @@ describe('useAuthStore', () => {
         await authStore.chooseCharacter(123, false);
 
         expect(authStore.canBeConfigAdmin).toBe(false);
-        expect(mocks.chooseCharacter).toHaveBeenCalledWith({ charId: 123 });
+        expect(mocks.chooseCharacter).toHaveBeenCalledWith(
+            { charId: 123 },
+            {
+                meta: {
+                    Authorization: 'Bearer char-token',
+                },
+            },
+        );
     });
 });
