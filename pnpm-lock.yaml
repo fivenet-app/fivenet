@@ -430,8 +430,8 @@ importers:
         specifier: 4.3.0
         version: 4.3.0(prettier@3.9.5)(typescript@6.0.3)(vue-tsc@3.3.7(typescript@6.0.3))
       prettier-plugin-tailwindcss:
-        specifier: 0.8.0
-        version: 0.8.0(prettier-plugin-organize-attributes@1.0.0(prettier@3.9.5))(prettier-plugin-organize-imports@4.3.0(prettier@3.9.5)(typescript@6.0.3)(vue-tsc@3.3.7(typescript@6.0.3)))(prettier@3.9.5)
+        specifier: 0.8.1
+        version: 0.8.1(prettier-plugin-organize-attributes@1.0.0(prettier@3.9.5))(prettier-plugin-organize-imports@4.3.0(prettier@3.9.5)(typescript@6.0.3)(vue-tsc@3.3.7(typescript@6.0.3)))(prettier@3.9.5)
       release-it:
         specifier: 20.2.1
         version: 20.2.1(@types/node@25.9.5)(magicast@0.5.2)
@@ -8569,8 +8569,8 @@ packages:
       vue-tsc:
         optional: true
 
-  prettier-plugin-tailwindcss@0.8.0:
-    resolution: {integrity: sha512-V8ITGH87yuBDF6JpEZTOVlUz/saAwqb8f3HRgUj8Lh+tGCcrmorhsLpYqzygwFwK0PE2Ib6Mv3M7T/uE2tZV1g==}
+  prettier-plugin-tailwindcss@0.8.1:
+    resolution: {integrity: sha512-iaFMYqDsE4ffdDkn5qup0j5f2aCEBFZrdrZnvu9QKTlWx/iGPeQ4HHu7b7fCPMxeo9nwQBiOAh2nSypdFYWJkw==}
     engines: {node: '>=20.19'}
     peerDependencies:
       '@ianvs/prettier-plugin-sort-imports': '*'
@@ -19604,7 +19604,7 @@ snapshots:
     optionalDependencies:
       vue-tsc: 3.3.7(typescript@6.0.3)
 
-  prettier-plugin-tailwindcss@0.8.0(prettier-plugin-organize-attributes@1.0.0(prettier@3.9.5))(prettier-plugin-organize-imports@4.3.0(prettier@3.9.5)(typescript@6.0.3)(vue-tsc@3.3.7(typescript@6.0.3)))(prettier@3.9.5):
+  prettier-plugin-tailwindcss@0.8.1(prettier-plugin-organize-attributes@1.0.0(prettier@3.9.5))(prettier-plugin-organize-imports@4.3.0(prettier@3.9.5)(typescript@6.0.3)(vue-tsc@3.3.7(typescript@6.0.3)))(prettier@3.9.5):
     dependencies:
       prettier: 3.9.5
     optionalDependencies:
