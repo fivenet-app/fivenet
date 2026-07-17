@@ -47,6 +47,7 @@
             protobuf
 
             # Utilities
+            commitlint
             ripgrep
             sd
           ];
