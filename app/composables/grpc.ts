@@ -1,6 +1,7 @@
+import type { RpcError } from '#imports';
 import { useAuthStore } from '~/stores/auth';
 import type { Notification } from '~/types/notifications';
-import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
+import { isTranslatedError, parseErrorMessage } from '~/utils/errors';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const logger = useLogger('📡 GRPC');
@@ -12,7 +13,68 @@ const lastError: { receivedAt: undefined | Date; code: undefined | string } = {
     code: undefined,
 };
 
-function addCopyActionToNotification(notification: Notification, err: RpcError, traceId: number): void {
+function isErrorLike(err: unknown): err is Error {
+    return (
+        err instanceof Error ||
+        (typeof err === 'object' && err !== null && typeof (err as { message?: unknown }).message === 'string')
+    );
+}
+
+function toError(err: unknown): Error {
+    if (isErrorLike(err)) {
+        return err;
+    }
+
+    return new Error(typeof err === 'string' ? err : 'Unknown error');
+}
+
+function isRpcError(err: unknown): err is RpcError {
+    return (
+        isErrorLike(err) &&
+        typeof (err as { code?: unknown }).code === 'string' &&
+        typeof (err as { meta?: unknown }).meta === 'object' &&
+        (err as { meta?: unknown }).meta !== null
+    );
+}
+
+function extractTraceId(err: RpcError): string {
+    const traceId = err.meta['trailer+x-trace-id'];
+
+    if (typeof traceId === 'string') {
+        return traceId;
+    }
+
+    if (Array.isArray(traceId)) {
+        return traceId.join(',');
+    }
+
+    return 'N/A';
+}
+
+function isThrottledCode(code: string): boolean {
+    return throttledErrorCodes.includes(code);
+}
+
+function shouldSkipThrottledError(code: string): boolean {
+    if (lastError.code !== code) {
+        lastError.code = code;
+        lastError.receivedAt = new Date();
+        return false;
+    }
+
+    if (lastError.receivedAt === undefined) {
+        lastError.receivedAt = new Date();
+        return false;
+    }
+
+    const elapsedMs = Date.now() - lastError.receivedAt.getTime();
+    if (elapsedMs < 12_500) return true;
+
+    lastError.receivedAt = new Date();
+    return false;
+}
+
+function addCopyActionToNotification(notification: Notification, err: RpcError, traceId: string): void {
     notification.actions?.push({
         label: { key: 'pages.error.copy_error' },
         onClick: async () => {
@@ -34,9 +96,26 @@ function addCopyActionToNotification(notification: Notification, err: RpcError, 
     });
 }
 
+function applyTranslatedError(notification: Notification, message: string): void {
+    if (!isTranslatedError(message)) {
+        return;
+    }
+
+    const parsed = parseErrorMessage(message);
+    if (parsed?.title) {
+        notification.title = parsed.title;
+    }
+    if (parsed?.content) {
+        notification.description = parsed.content;
+    }
+}
+
 // Handle GRPC errors
-export async function handleGRPCError(err: RpcError | undefined): Promise<boolean> {
+export async function handleGRPCError(err: unknown): Promise<boolean> {
     if (err === undefined) return true;
+
+    const error = toError(err);
+    const rpcErr = isRpcError(err) ? err : undefined;
 
     const notification: Notification = {
         id: 0,
@@ -44,36 +123,28 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         title: { key: 'notifications.grpc_errors.internal.title', parameters: {} },
         description: {
             key: 'notifications.grpc_errors.internal.content',
-            parameters: { msg: err?.message ?? 'Unknown error' },
+            parameters: { msg: error.message },
         },
         actions: [],
     };
 
-    const traceId =
-        (err?.meta &&
-            err.meta['trailer+x-trace-id'] &&
-            (typeof err.meta['trailer+x-trace-id'] === 'string'
-                ? err.meta['trailer+x-trace-id']
-                : (err.meta['trailer+x-trace-id'] as string[]).join(','))) ??
-        'N/A';
+    if (rpcErr === undefined) {
+        logger.error(`Error: ${error.name} - ${error.message}`);
+        applyTranslatedError(notification, error.message);
+    } else {
+        const code = rpcErr.code.toUpperCase();
+        const traceId = extractTraceId(rpcErr);
 
-    const code = err.code?.toUpperCase();
-    if (code !== undefined) {
-        // If the error code has already been "handled", skip "handling" them for now
-        // Only do this for internal, deadline_exceeded, cancelled, permission_denied, unauthenticated codes
+        // If the error code has already been "handled", skip "handling" them for now.
+        // Only do this for internal, deadline_exceeded, cancelled, permission_denied, unauthenticated codes.
         logger.error(
-            `GRPC Error: ${code} - ${err.message}`,
-            throttledErrorCodes.includes(code),
-            `(Call: ${err.serviceName ?? 'N/A'}/${err.methodName ?? 'N/A'})`,
+            `GRPC Error: ${code} - ${error.message} (Trace ID: '${extractTraceId(rpcErr)}')`,
+            isThrottledCode(code),
+            `(Call: ${rpcErr.serviceName ?? 'N/A'}/${rpcErr.methodName ?? 'N/A'})`,
         );
-        if (throttledErrorCodes.includes(code)) {
-            if (lastError.code === code) {
-                if (lastError.receivedAt !== undefined && lastError.receivedAt.getTime() - new Date().getTime() < 15_000) {
-                    return true;
-                }
-            }
-            lastError.code = code;
-            lastError.receivedAt = new Date();
+
+        if (isThrottledCode(code) && shouldSkipThrottledError(code)) {
+            return true;
         }
 
         const route = useRoute();
@@ -85,7 +156,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
             case 'DEADLINE_EXCEEDED':
                 notification.title = { key: 'notifications.grpc_errors.deadline_exceeded.title', parameters: {} };
                 notification.description = { key: 'notifications.grpc_errors.deadline_exceeded.content', parameters: {} };
-                addCopyActionToNotification(notification, err, traceId);
+                addCopyActionToNotification(notification, rpcErr, traceId);
                 break;
 
             case 'CANCELLED':
@@ -109,20 +180,18 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
                 await navigateTo({
                     name: 'auth-login',
                     query: { redirect: route.query.redirect ?? route.fullPath },
-                    replace: true,
                     force: true,
                 });
                 break;
 
             case 'PERMISSION_DENIED':
-                if (!err.message.includes('ErrCharLock')) {
+                if (!error.message.includes('ErrCharLock')) {
                     notification.title = { key: 'notifications.grpc_errors.permission_denied.title', parameters: {} };
                 } else {
                     // In case of a permission denied char lock error, user must re-select their char
                     await navigateTo({
                         name: 'auth-character-selector',
                         query: { redirect: route.query.redirect ?? route.fullPath },
-                        replace: true,
                     });
                 }
                 break;
@@ -135,26 +204,12 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
                 notification.title = { key: 'notifications.grpc_errors.default.title', parameters: {} };
                 notification.description = {
                     key: 'notifications.grpc_errors.default.content',
-                    parameters: { msg: err.message, code: err.code.valueOf() },
+                    parameters: { msg: error.message, code: rpcErr?.code.valueOf() ?? 'N/A' },
                 };
-                addCopyActionToNotification(notification, err, traceId);
+                addCopyActionToNotification(notification, rpcErr, traceId);
                 break;
         }
-    }
-
-    logger.error(
-        `Failed request ${err.serviceName}/${err.methodName} (Trace ID: '${traceId}', Code: ${err.code}, Message: ${err.message}`,
-    );
-
-    if (err?.message && isTranslatedError(err.message as string)) {
-        const parsed = JSON.parse(err.message) as CommonError;
-
-        if (parsed.title) {
-            notification.title = parsed.title;
-        }
-        if (parsed.content) {
-            notification.description = parsed.content;
-        }
+        applyTranslatedError(notification, error.message);
     }
 
     const notifications = useNotificationsStore();

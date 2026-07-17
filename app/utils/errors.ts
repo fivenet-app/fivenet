@@ -2,7 +2,7 @@ import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 
 export function getErrorMessage(err: RpcError): I18NItem {
     if (isTranslatedError(err.message)) {
-        const parsed = parseError(err.message);
+        const parsed = parseErrorMessage(err.message);
         if (parsed?.content) {
             return parsed.content;
         }
@@ -12,8 +12,12 @@ export function getErrorMessage(err: RpcError): I18NItem {
 }
 
 export function parseError(err: RpcError): CommonError | undefined {
+    return parseErrorMessage(err.message);
+}
+
+export function parseErrorMessage(message: string): CommonError | undefined {
     try {
-        return JSON.parse(err.message) as CommonError;
+        return JSON.parse(message) as CommonError;
     } catch (_) {
         return undefined;
     }
