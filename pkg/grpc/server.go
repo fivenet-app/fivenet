@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"buf.build/go/protovalidate"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2026/pkg/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -34,17 +33,10 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapgrpc"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	oteltracing "google.golang.org/grpc/experimental/opentelemetry"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/stats/opentelemetry"
-)
-
-var ErrInternalServer = common.NewI18nErr(
-	codes.Internal,
-	&common.I18NItem{Key: "errors.general.internal_error.content"},
-	&common.I18NItem{Key: "errors.general.internal_error.title"},
 )
 
 // Setup metric for panic recoveries.
@@ -206,12 +198,12 @@ func grpcPanicRecoveryHandler(logger *zap.Logger) recovery.RecoveryHandlerFunc {
 
 		if e, ok := pa.(error); ok {
 			logger.Error("recovered from panic", zap.Error(e))
-			return errswrap.NewError(e, ErrInternalServer)
+			return errswrap.NewError(e, errswrap.ErrInternalServer)
 		} else {
 			logger.Error("recovered from panic", zap.Any("err", pa), zap.Stack("stacktrace"))
 		}
 
-		return ErrInternalServer
+		return errswrap.ErrInternalServer
 	}
 }
 

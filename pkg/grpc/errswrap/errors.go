@@ -2,11 +2,21 @@
 package errswrap
 
 import (
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 // GRPCOrigErrorTag is the key used to tag the original error in gRPC metadata.
 const GRPCOrigErrorTag = "grpc.error_orig"
+
+var ErrInternalServer = common.NewI18nErr(
+	codes.Internal,
+	&common.I18NItem{Key: "errors.general.internal_error.content"},
+	&common.I18NItem{Key: "errors.general.internal_error.title"},
+)
+
+var errInternalServerStatus = status.Convert(ErrInternalServer)
 
 // IWrappedError defines an interface for errors that wrap a gRPC status and an original error.
 type IWrappedError interface {
@@ -46,15 +56,20 @@ func (e *Error) GRPCStatus() *status.Status {
 	return e.s
 }
 
-// NewError creates a new Error that wraps an original error and a gRPC status error.
-// If the original error is nil, it returns the status error as is.
-func NewError(e error, s error) error {
-	if e == nil {
-		return s
+// NewError returns the public status unchanged when original is nil; otherwise it wraps
+// the original cause together with the sanitized gRPC status.
+func NewError(original error, public error) error {
+	if original == nil {
+		return public
+	}
+
+	publicStatus := status.Convert(public)
+	if public == nil || publicStatus.Code() == codes.OK {
+		publicStatus = errInternalServerStatus
 	}
 
 	return &Error{
-		s: status.Convert(s),
-		e: e,
+		s: publicStatus,
+		e: original,
 	}
 }
