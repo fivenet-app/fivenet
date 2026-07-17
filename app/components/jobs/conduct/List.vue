@@ -81,7 +81,7 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
-        `jobs-conduct-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.types.join(',')}-${validatedQuery.value.showExpired}-${validatedQuery.value.id}`,
+        `jobs-conduct-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.types.join(',')}-${validatedQuery.value.showExpired}-${validatedQuery.value.showDrafts}-${validatedQuery.value.id}`,
     () => listConductEntries(validatedQuery.value),
 );
 
@@ -383,10 +383,11 @@ const columns = computed(
                                     truncate
                                     :label="$t('common.create')"
                                     @click="
-                                        conductEditorModal.open({
-                                            onCreated: ($event) => data?.entries.unshift($event),
-                                            onUpdated: ($event) => updateEntryInPlace($event),
-                                        })
+                                        () =>
+                                            conductEditorModal.open({
+                                                onCreated: ($event) => data?.entries.unshift($event),
+                                                onUpdated: ($event) => updateEntryInPlace($event),
+                                            })
                                     "
                                 />
                             </UFormField>
