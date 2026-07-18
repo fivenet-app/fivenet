@@ -40,11 +40,11 @@ const items = computed<CardElement[]>(() => [
         icon: 'i-mdi-account-group',
     },
     {
-        title: t('common.audit_log', 1),
-        description: t('pages.settings.features.audit_log'),
-        to: '/settings/audit',
-        permission: 'settings.SettingsService/ViewAuditLog',
-        icon: 'i-mdi-math-log',
+        title: t('pages.settings.limiter.title'),
+        description: t('pages.settings.features.limiter'),
+        to: '/settings/limiter',
+        permission: 'internal.Superuser/JobAdmin',
+        icon: 'i-mdi-car-speed-limiter',
     },
     {
         title: t('common.dispatch_center_settings'),
@@ -61,6 +61,13 @@ const items = computed<CardElement[]>(() => [
         icon: 'i-mdi-scale-balance',
     },
     {
+        title: t('common.audit_log', 1),
+        description: t('pages.settings.features.audit_log'),
+        to: '/settings/audit',
+        permission: 'settings.SettingsService/ViewAuditLog',
+        icon: 'i-mdi-math-log',
+    },
+    {
         title: t('pages.settings.jobs.title'),
         description: t('pages.settings.features.jobs'),
         to: '/settings/jobs',
@@ -71,18 +78,11 @@ const items = computed<CardElement[]>(() => [
 
 const superuserItems = computed<CardElement[]>(() => [
     {
-        title: t('pages.settings.limiter.title'),
-        description: t('pages.settings.features.limiter'),
-        to: '/settings/limiter',
-        permission: 'internal.Superuser/JobAdmin',
-        icon: 'i-mdi-car-speed-limiter',
-    },
-    {
-        title: t('pages.settings.filestore.title'),
-        description: t('pages.settings.features.filestore'),
-        to: '/settings/filestore',
+        title: t('pages.settings.settings.title'),
+        description: t('pages.settings.features.settings'),
+        to: '/settings/settings',
         permission: 'internal.Superuser/ConfigAdmin',
-        icon: 'i-mdi-file-multiple',
+        icon: 'i-mdi-office-building-cog',
     },
     {
         title: t('pages.settings.accounts.title'),
@@ -92,11 +92,11 @@ const superuserItems = computed<CardElement[]>(() => [
         icon: 'i-mdi-account-multiple',
     },
     {
-        title: t('pages.settings.settings.title'),
-        description: t('pages.settings.features.settings'),
-        to: '/settings/settings',
+        title: t('pages.settings.filestore.title'),
+        description: t('pages.settings.features.filestore'),
+        to: '/settings/filestore',
         permission: 'internal.Superuser/ConfigAdmin',
-        icon: 'i-mdi-office-building-cog',
+        icon: 'i-mdi-file-multiple',
     },
     {
         title: t('pages.settings.cron.title'),
