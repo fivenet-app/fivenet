@@ -77,7 +77,7 @@ const user = computed(() =>
 const opened = ref<boolean>(false);
 
 watchOnce(opened, async () => {
-    if (props.user) useTimeoutFn(async () => refresh(), popover.waitTime);
+    if (props.user) useTimeoutFn(async () => refresh(), popover.loadWaitTime);
 });
 </script>
 

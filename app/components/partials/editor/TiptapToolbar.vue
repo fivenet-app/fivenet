@@ -589,9 +589,11 @@ const isLinkOpen = ref<boolean>(false);
                                 icon="i-mdi-link-off"
                                 :label="$t('components.partials.tiptap_editor.unlink')"
                                 @click="
-                                    isLinkOpen = false;
-                                    ed?.chain().focus().unsetLink().run();
-                                    linkState.url = '';
+                                    () => {
+                                        isLinkOpen = false;
+                                        ed?.chain().focus().unsetLink().run();
+                                        linkState.url = '';
+                                    }
                                 "
                             />
                         </UFieldGroup>
@@ -633,6 +635,8 @@ const isLinkOpen = ref<boolean>(false);
                 />
             </UTooltip>
 
+            <!-- TODO Add buttons for Details block -->
+
             <UTooltip v-if="showPenaltyCalculatorButton" :text="$t('components.partials.tiptap_editor.penalty_calculator')">
                 <UButton
                     color="neutral"
@@ -667,7 +671,7 @@ const isLinkOpen = ref<boolean>(false);
                 color="neutral"
                 variant="ghost"
                 icon="i-mdi-border-radius"
-                @click="editorSettings.focusMode = !editorSettings.focusMode"
+                @click="() => (editorSettings.focusMode = !editorSettings.focusMode)"
             />
         </UTooltip>
 
@@ -722,10 +726,11 @@ const isLinkOpen = ref<boolean>(false);
                     icon="i-mdi-file-multiple"
                     :disabled="disabled"
                     @click="
-                        fileListModal.open({
-                            editor: unref(editor)!,
-                            files: files ?? [],
-                        })
+                        () =>
+                            fileListModal.open({
+                                editor: unref(editor)!,
+                                files: files ?? [],
+                            })
                     "
                 />
             </UTooltip>
