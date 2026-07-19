@@ -55,7 +55,7 @@ require (
 	github.com/puzpuzpuz/xsync/v4 v4.5.0
 	github.com/rs/cors v1.11.1
 	github.com/sergi/go-diff v1.4.0
-	github.com/sethvargo/go-retry v0.3.0
+	github.com/sethvargo/go-retry v0.4.0
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/viper v1.21.0
 	github.com/srikrsna/protoc-gen-gotag v1.0.2
