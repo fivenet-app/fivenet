@@ -36,20 +36,23 @@ func (s *Server) ListConductEntries(
 	if !allAccess && !ownOnly {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
+	canRestore := s.ps.Can(userInfo, permsjobs.ConductService.RestoreConductEntry.Perm)
+	includeDeleted := canRestore && req.GetShowDeleted()
 
 	q := jobsstore.ConductQuery{
-		Job:         userInfo.GetJob(),
-		Sort:        req.GetSort(),
-		Offset:      req.GetPagination().GetOffset(),
-		Limit:       0,
-		Types:       req.GetTypes(),
-		ShowExpired: req.GetShowExpired(),
-		ShowDrafts:  req.GetShowDrafts(),
-		UserIDs:     req.GetUserIds(),
-		IDs:         req.GetIds(),
-		CreatorID:   userInfo.GetUserId(),
-		OwnOnly:     ownOnly,
-		AllAccess:   allAccess,
+		Job:            userInfo.GetJob(),
+		Sort:           req.GetSort(),
+		Offset:         req.GetPagination().GetOffset(),
+		Limit:          0,
+		Types:          req.GetTypes(),
+		ShowExpired:    req.GetShowExpired(),
+		ShowDrafts:     req.GetShowDrafts(),
+		UserIDs:        req.GetUserIds(),
+		IDs:            req.GetIds(),
+		CreatorID:      userInfo.GetUserId(),
+		OwnOnly:        ownOnly,
+		AllAccess:      allAccess,
+		IncludeDeleted: includeDeleted,
 	}
 
 	total, err := s.store.CountConductEntries(ctx, s.db, q)
@@ -103,13 +106,30 @@ func (s *Server) GetConductEntry(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct.id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	resp := &pbjobs.GetConductEntryResponse{Entry: &jobsconduct.ConductEntry{}}
-
-	entry, err := s.store.GetConductEntry(ctx, s.db, req.GetId())
+	fields, err := permsjobs.ConductService.ListConductEntries.AccessTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if entry == nil {
+
+	allAccess := fields.Contains(permsjobs.ConductServiceListConductEntriesAccessPermValueAll)
+	ownOnly := !allAccess &&
+		(fields.Len() == 0 || fields.Contains(permsjobs.ConductServiceListConductEntriesAccessPermValueOwn))
+	if !allAccess && !ownOnly {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
+	canRestore := s.ps.Can(userInfo, permsjobs.ConductService.RestoreConductEntry.Perm)
+	includeDeleted := canRestore
+	resp := &pbjobs.GetConductEntryResponse{Entry: &jobsconduct.ConductEntry{}}
+
+	entry, err := s.store.GetConductEntry(ctx, s.db, req.GetId(), includeDeleted)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if entry == nil || entry.GetJob() != userInfo.GetJob() {
+		return nil, errorsjobs.ErrFailedQuery
+	}
+	if !allAccess && entry.GetCreatorId() != userInfo.GetUserId() {
 		return nil, errorsjobs.ErrFailedQuery
 	}
 
@@ -146,7 +166,7 @@ func (s *Server) CreateConductEntry(
 	}
 	req.Entry.SetId(lastId)
 
-	entry, err := s.store.GetConductEntry(ctx, s.db, lastId)
+	entry, err := s.store.GetConductEntry(ctx, s.db, lastId, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -165,7 +185,7 @@ func (s *Server) UpdateConductEntry(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	entry, err := s.store.GetConductEntry(ctx, s.db, req.GetEntry().GetId())
+	entry, err := s.store.GetConductEntry(ctx, s.db, req.GetEntry().GetId(), false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -207,7 +227,7 @@ func (s *Server) UpdateConductEntry(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	entry, err = s.store.GetConductEntry(ctx, s.db, entry.GetId())
+	entry, err = s.store.GetConductEntry(ctx, s.db, entry.GetId(), false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -231,16 +251,28 @@ func (s *Server) DeleteConductEntry(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct_id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	entry, err := s.store.GetConductEntry(ctx, s.db, req.GetId())
+	entry, err := s.store.GetConductEntry(ctx, s.db, req.GetId(), true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
+	if entry == nil || entry.GetJob() != userInfo.GetJob() {
+		return nil, errorsjobs.ErrFailedQuery
+	}
+
+	canDelete := s.ps.Can(userInfo, permsjobs.ConductService.DeleteConductEntry.Perm)
+	canRestore := s.ps.Can(userInfo, permsjobs.ConductService.RestoreConductEntry.Perm)
 
 	var deletedAtTime *timestamp.Timestamp
-	if entry == nil || entry.GetDeletedAt() == nil || !userInfo.GetJobAdmin() {
+	if entry.GetDeletedAt() == nil {
+		if !canDelete {
+			return nil, errorsjobs.ErrFailedQuery
+		}
 		deletedAtTime = timestamp.Now()
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 	} else {
+		if !canRestore {
+			return nil, errorsjobs.ErrFailedQuery
+		}
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 

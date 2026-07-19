@@ -30,12 +30,11 @@ func (s *Server) UploadFile(
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
 
-	entry, err := s.store.GetConductEntry(ctx, s.db, meta.GetParentId())
+	entry, err := s.store.GetConductEntry(ctx, s.db, meta.GetParentId(), false)
 	if err != nil {
 		return errswrap.NewError(err, errorsjobs.ErrNotFoundOrNoPerms)
 	}
-
-	if entry.GetDeletedAt() != nil && !userInfo.GetJobAdmin() {
+	if entry == nil {
 		return errorsjobs.ErrNotFoundOrNoPerms
 	}
 

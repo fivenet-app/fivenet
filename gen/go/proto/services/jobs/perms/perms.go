@@ -39,6 +39,7 @@ const (
 	ConductServiceDeleteConductEntryPerm            perms.Name = "DeleteConductEntry"
 	ConductServiceListConductEntriesPerm            perms.Name = "ListConductEntries"
 	ConductServiceListConductEntriesAccessPermField perms.Key  = "Access"
+	ConductServiceRestoreConductEntryPerm           perms.Name = "RestoreConductEntry"
 	ConductServiceUpdateConductEntryPerm            perms.Name = "UpdateConductEntry"
 
 	// Service: jobs.JobsService
@@ -205,10 +206,11 @@ var ColleaguesService = ColleaguesServicePerms{
 }
 
 type ConductServicePerms struct {
-	CreateConductEntry ConductServiceCreateConductEntryPermRef
-	DeleteConductEntry ConductServiceDeleteConductEntryPermRef
-	ListConductEntries ConductServiceListConductEntriesPermRef
-	UpdateConductEntry ConductServiceUpdateConductEntryPermRef
+	CreateConductEntry  ConductServiceCreateConductEntryPermRef
+	DeleteConductEntry  ConductServiceDeleteConductEntryPermRef
+	ListConductEntries  ConductServiceListConductEntriesPermRef
+	RestoreConductEntry ConductServiceRestoreConductEntryPermRef
+	UpdateConductEntry  ConductServiceUpdateConductEntryPermRef
 }
 type ConductServiceCreateConductEntryPermRef struct {
 	Perm perms.PermissionRef
@@ -220,6 +222,9 @@ type ConductServiceListConductEntriesPermRef struct {
 	Perm        perms.PermissionRef
 	Access      perms.AttrRef[perms.StringListAttr]
 	AccessTyped perms.StringListAttrRef[ConductServiceListConductEntriesAccessPermValue]
+}
+type ConductServiceRestoreConductEntryPermRef struct {
+	Perm perms.PermissionRef
 }
 type ConductServiceUpdateConductEntryPermRef struct {
 	Perm perms.PermissionRef
@@ -242,6 +247,9 @@ var ConductService = ConductServicePerms{
 			perms.NewPermissionRef(Namespace, ConductServicePerm, ConductServiceListConductEntriesPerm),
 			ConductServiceListConductEntriesAccessPermField,
 		),
+	},
+	RestoreConductEntry: ConductServiceRestoreConductEntryPermRef{
+		Perm: perms.NewPermissionRef(Namespace, ConductServicePerm, ConductServiceRestoreConductEntryPerm),
 	},
 	UpdateConductEntry: ConductServiceUpdateConductEntryPermRef{
 		Perm: perms.NewPermissionRef(Namespace, ConductServicePerm, ConductServiceUpdateConductEntryPerm),

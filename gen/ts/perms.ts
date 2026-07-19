@@ -103,6 +103,7 @@ export type GRPCServicePerms =
 	| 'jobs.ConductService/CreateConductEntry'
 	| 'jobs.ConductService/DeleteConductEntry'
 	| 'jobs.ConductService/ListConductEntries'
+	| 'jobs.ConductService/RestoreConductEntry'
 	| 'jobs.ConductService/UpdateConductEntry'
 	| 'jobs.JobsService/SetMOTD'
 	| 'jobs.StatsService/GetStats'
@@ -220,6 +221,7 @@ export const GRPCServiceMethods = [
 	'jobs.ConductService/CreateConductEntry',
 	'jobs.ConductService/DeleteConductEntry',
 	'jobs.ConductService/ListConductEntries',
+	'jobs.ConductService/RestoreConductEntry',
 	'jobs.ConductService/UpdateConductEntry',
 	'jobs.JobsService/SetMOTD',
 	'jobs.StatsService/GetStats',
@@ -448,6 +450,8 @@ export const PermAttributes = {
 			type: 'stringList',
 			values: ['Own','All',] as const,
 		},
+	},
+	'jobs.ConductService/RestoreConductEntry': {
 	},
 	'jobs.ConductService/UpdateConductEntry': {
 	},

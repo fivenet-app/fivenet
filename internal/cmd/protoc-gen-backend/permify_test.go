@@ -91,6 +91,9 @@ service DocumentsService {
             valid_string_list: "Any"
           }
         ]
+      },
+      {
+        name: "RestoreDocument"
       }
     ]
   };
@@ -143,6 +146,14 @@ service DocumentsService {
       enabled: true
       names: "ArchiveDocument"
       names: "FindDocument"
+    };
+  }
+
+  rpc DeleteDocument(Empty) returns (Empty) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      names: "DeleteDocument"
+      names: "RestoreDocument"
     };
   }
 
@@ -292,6 +303,9 @@ func TestPermifyModule_Execute_RendersAliasAndSpecialRemaps(t *testing.T) {
 	mustContainBackend(t, remapOut, "\"documents.DocumentsService/SearchDocument\": {")
 	mustContainBackend(t, remapOut, "permsdocuments.DocumentsService.ArchiveDocument.Perm")
 	mustContainBackend(t, remapOut, "permsdocuments.DocumentsService.FindDocument.Perm")
+	mustContainBackend(t, remapOut, "\"documents.DocumentsService/DeleteDocument\": {")
+	mustContainBackend(t, remapOut, "permsdocuments.DocumentsService.DeleteDocument.Perm")
+	mustContainBackend(t, remapOut, "permsdocuments.DocumentsService.RestoreDocument.Perm")
 	mustContainBackend(t, remapOut, "\"documents.DocumentsService/ViewAnyDocument\": {")
 	mustContainBackend(t, remapOut, "perms.PermAnyRef")
 	mustContainBackend(t, remapOut, "\"documents.DocumentsService/ManageJobAdmins\": {")

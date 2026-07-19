@@ -1300,6 +1300,7 @@
         "jobs": {
             "conduct": {
                 "List": {
+                    "show_deleted": "Zeige Gelöschte",
                     "show_expired": "Zeige Abgelaufene"
                 },
                 "CreateOrUpdateModal": {
@@ -3889,6 +3890,10 @@
                 "DeleteConductEntry": {
                     "key": "Führungsregister: Einträge löschen",
                     "description": "Löschen von Führungsregister Einträgen."
+                },
+                "RestoreConductEntry": {
+                    "key": "Führungsregister: Einträge wiederherstellen",
+                    "description": "Wiederherstellen gelöschter Führungsregister Einträge."
                 },
                 "ListConductEntries": {
                     "key": "Führungsregister: Einträge anzeigen",

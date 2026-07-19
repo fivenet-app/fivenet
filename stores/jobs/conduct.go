@@ -47,6 +47,9 @@ func (s *Store) CountConductEntries(ctx context.Context, db qrm.DB, q ConductQue
 		}
 		condition = condition.AND(tConduct.TargetUserID.IN(ids...))
 	}
+	if !q.IncludeDeleted {
+		condition = condition.AND(tConduct.DeletedAt.IS_NULL())
+	}
 
 	countStmt := tConduct.
 		SELECT(mysql.COUNT(tConduct.ID).AS("data_count.total")).
@@ -98,6 +101,9 @@ func (s *Store) ListConductEntries(
 			ids[i] = mysql.Int32(q.UserIDs[i])
 		}
 		condition = condition.AND(tConduct.TargetUserID.IN(ids...))
+	}
+	if !q.IncludeDeleted {
+		condition = condition.AND(tConduct.DeletedAt.IS_NULL())
 	}
 
 	orderBys := []mysql.OrderByClause{}
@@ -200,9 +206,15 @@ func (s *Store) GetConductEntry(
 	ctx context.Context,
 	db qrm.DB,
 	id int64,
+	includeDeleted bool,
 ) (*jobsconduct.ConductEntry, error) {
 	tColleague := table.FivenetUser.AS("target_user")
 	tCreator := tColleague.AS("creator")
+
+	condition := mysql.AND(tConduct.ID.EQ(mysql.Int64(id)))
+	if !includeDeleted {
+		condition = condition.AND(tConduct.DeletedAt.IS_NULL())
+	}
 
 	stmt := tConduct.
 		SELECT(
@@ -232,7 +244,7 @@ func (s *Store) GetConductEntry(
 			LEFT_JOIN(tColleague, tColleague.ID.EQ(tConduct.TargetUserID)).
 			LEFT_JOIN(tCreator, tCreator.ID.EQ(tConduct.CreatorID)),
 		).
-		WHERE(tConduct.ID.EQ(mysql.Int64(id))).
+		WHERE(condition).
 		LIMIT(1)
 
 	dest := &jobsconduct.ConductEntry{}

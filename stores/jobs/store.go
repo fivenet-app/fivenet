@@ -65,18 +65,19 @@ type InactiveEmployeesQuery struct {
 }
 
 type ConductQuery struct {
-	Sort        *database.Sort
-	Offset      int64
-	Limit       int64
-	Job         string
-	Types       []jobsconduct.ConductType
-	ShowExpired bool
-	ShowDrafts  bool
-	UserIDs     []int32
-	IDs         []int64
-	CreatorID   int32
-	OwnOnly     bool
-	AllAccess   bool
+	Sort           *database.Sort
+	Offset         int64
+	Limit          int64
+	Job            string
+	Types          []jobsconduct.ConductType
+	ShowExpired    bool
+	ShowDrafts     bool
+	UserIDs        []int32
+	IDs            []int64
+	CreatorID      int32
+	OwnOnly        bool
+	AllAccess      bool
+	IncludeDeleted bool
 }
 
 type IStore interface {
@@ -201,7 +202,12 @@ type IStore interface {
 		db qrm.DB,
 		q ConductQuery,
 	) ([]*jobsconduct.ConductEntry, error)
-	GetConductEntry(ctx context.Context, db qrm.DB, id int64) (*jobsconduct.ConductEntry, error)
+	GetConductEntry(
+		ctx context.Context,
+		db qrm.DB,
+		id int64,
+		includeDeleted bool,
+	) (*jobsconduct.ConductEntry, error)
 	CreateConductEntry(
 		ctx context.Context,
 		db qrm.DB,

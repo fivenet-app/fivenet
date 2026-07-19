@@ -1300,6 +1300,7 @@
         "jobs": {
             "conduct": {
                 "List": {
+                    "show_deleted": "Show Deleted",
                     "show_expired": "Show Expired"
                 },
                 "CreateOrUpdateModal": {
@@ -3889,6 +3890,10 @@
                 "DeleteConductEntry": {
                     "key": "Delete Conduct Register Entries",
                     "description": "Delete Conduct Register entries."
+                },
+                "RestoreConductEntry": {
+                    "key": "Restore Conduct Register Entries",
+                    "description": "Restore deleted Conduct Register entries."
                 },
                 "ListConductEntries": {
                     "key": "List Conduct Register Entries",

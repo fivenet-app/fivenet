@@ -119,6 +119,25 @@ service DocumentsService {
 }
 `
 
+const testConductProto = `syntax = "proto3";
+
+package services.jobs;
+
+import "codegen/perms/perms.proto";
+
+message Empty {}
+
+service ConductService {
+  option (codegen.perms.perms_svc) = {
+    additional_perms: [
+      {
+        name: "RestoreConductEntry"
+      }
+    ]
+  };
+}
+`
+
 const testQualificationsProto = `syntax = "proto3";
 
 package services.qualifications;
@@ -188,6 +207,17 @@ func TestPermifyModule_Execute_RendersQualificationAttrs(t *testing.T) {
 	mustContain(t, out, "'Fields': {")
 	mustContain(t, out, "values: ['Own','Lower_Rank','Same_Rank','Any',] as const,")
 	mustContain(t, out, "values: ['Public',] as const,")
+}
+
+func TestPermifyModule_Execute_RendersServiceAdditionalPerms(t *testing.T) {
+	ast, targets := loadFrontendFixture(t)
+	out := renderGeneratorOutput(t, Permify(), ast, targets)
+
+	mustContain(t, out, "'jobs.ConductService/RestoreConductEntry': {")
+
+	if got := strings.Count(out, "'jobs.ConductService/RestoreConductEntry': {"); got != 1 {
+		t.Fatalf("expected one RestoreConductEntry block, got %d", got)
+	}
 }
 
 func TestListSvcMethodsModule_Execute_RendersServicesAndMethods(t *testing.T) {

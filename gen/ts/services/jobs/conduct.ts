@@ -55,6 +55,10 @@ export interface ListConductEntriesRequest {
      * @generated from protobuf field: repeated int64 ids = 7
      */
     ids: number[];
+    /**
+     * @generated from protobuf field: optional bool show_deleted = 8
+     */
+    showDeleted?: boolean;
 }
 /**
  * @generated from protobuf message services.jobs.ListConductEntriesResponse
@@ -147,7 +151,8 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
             { no: 4, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "show_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 7, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 7, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 8, name: "show_deleted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListConductEntriesRequest>): ListConductEntriesRequest {
@@ -197,6 +202,9 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
                     else
                         message.ids.push(reader.int64().toNumber());
                     break;
+                case /* optional bool show_deleted */ 8:
+                    message.showDeleted = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -242,6 +250,9 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
                 writer.int64(message.ids[i]);
             writer.join();
         }
+        /* optional bool show_deleted = 8; */
+        if (message.showDeleted !== undefined)
+            writer.tag(8, WireType.Varint).bool(message.showDeleted);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -676,6 +687,6 @@ export const ConductService = new ServiceType("services.jobs.ConductService", [
     { name: "GetConductEntry", options: { "codegen.perms.perms": { enabled: true, name: "ListConductEntries" } }, I: GetConductEntryRequest, O: GetConductEntryResponse },
     { name: "CreateConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: CreateConductEntryRequest, O: CreateConductEntryResponse },
     { name: "UpdateConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: UpdateConductEntryRequest, O: UpdateConductEntryResponse },
-    { name: "DeleteConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteConductEntryRequest, O: DeleteConductEntryResponse },
+    { name: "DeleteConductEntry", options: { "codegen.perms.perms": { enabled: true, names: ["DeleteConductEntry", "RestoreConductEntry"] } }, I: DeleteConductEntryRequest, O: DeleteConductEntryResponse },
     { name: "UploadFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, names: ["CreateConductEntry", "UpdateConductEntry"] } }, I: UploadFileRequest, O: UploadFileResponse }
-], { "codegen.perms.perms_svc": { order: 65, icon: "i-mdi-list-status" } });
+], { "codegen.perms.perms_svc": { order: 65, icon: "i-mdi-list-status", additionalPerms: [{ name: "RestoreConductEntry" }] } });

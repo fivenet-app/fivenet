@@ -122,6 +122,14 @@ func init() {
 		{
 			Namespace: permkeys.Namespace,
 			Service:   permkeys.ConductServicePerm,
+			Name:      permkeys.ConductServiceRestoreConductEntryPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6500,
+			Icon:      "i-mdi-list-status",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ConductServicePerm,
 			Name:      permkeys.ConductServiceUpdateConductEntryPerm,
 			Attrs:     []perms.Attr{},
 			Order:     6500,

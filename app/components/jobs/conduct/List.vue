@@ -55,6 +55,7 @@ const schema = z.object({
     types: z.enum(ConductType).array().max(10).default([]),
     showExpired: z.coerce.boolean().default(false),
     showDrafts: z.coerce.boolean().default(true),
+    showDeleted: z.coerce.boolean().default(false),
     user: z.coerce.number().min(1).optional(),
     sorting: z
         .object({
@@ -81,7 +82,7 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
-        `jobs-conduct-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.types.join(',')}-${validatedQuery.value.showExpired}-${validatedQuery.value.showDrafts}-${validatedQuery.value.id}`,
+        `jobs-conduct-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.types.join(',')}-${validatedQuery.value.showExpired}-${validatedQuery.value.showDrafts}-${validatedQuery.value.showDeleted}-${validatedQuery.value.id}`,
     () => listConductEntries(validatedQuery.value),
 );
 
@@ -101,6 +102,7 @@ async function listConductEntries(values: Schema): Promise<ListConductEntriesRes
             types: values.types,
             showExpired: values.showExpired,
             showDrafts: values.showDrafts,
+            showDeleted: values.showDeleted,
             userIds: userIds,
             ids: entryIds,
         });
@@ -251,11 +253,26 @@ const columns = computed(
                                     },
                                 }),
                             ),
-                        can('jobs.ConductService/DeleteConductEntry').value &&
-                            h(UTooltip, { text: !row.original.deletedAt ? t('common.delete') : t('common.restore') }, () =>
+                        !row.original.deletedAt &&
+                            can('jobs.ConductService/DeleteConductEntry').value &&
+                            h(UTooltip, { text: t('common.delete') }, () =>
                                 h(UButton, {
-                                    color: !row.original.deletedAt ? 'error' : 'success',
-                                    icon: !row.original.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
+                                    color: 'error',
+                                    icon: 'i-mdi-delete',
+                                    variant: 'link',
+                                    onClick: () => {
+                                        confirmModal.open({
+                                            confirm: async () => deleteConductEntry(row.original.id),
+                                        });
+                                    },
+                                }),
+                            ),
+                        row.original.deletedAt &&
+                            can('jobs.ConductService/RestoreConductEntry').value &&
+                            h(UTooltip, { text: t('common.restore') }, () =>
+                                h(UButton, {
+                                    color: 'success',
+                                    icon: 'i-mdi-restore',
                                     variant: 'link',
                                     onClick: () => {
                                         confirmModal.open({
@@ -368,6 +385,18 @@ const columns = computed(
                             >
                                 <div class="flex flex-1 items-center">
                                     <USwitch v-model="query.showExpired" />
+                                </div>
+                            </UFormField>
+
+                            <UFormField
+                                v-if="can('jobs.ConductService/RestoreConductEntry').value"
+                                class="flex flex-initial flex-col"
+                                name="showDeleted"
+                                :label="$t('components.jobs.conduct.List.show_deleted')"
+                                :ui="{ container: 'flex-1 flex' }"
+                            >
+                                <div class="flex flex-1 items-center">
+                                    <USwitch v-model="query.showDeleted" />
                                 </div>
                             </UFormField>
 

@@ -1,19 +1,3 @@
--- MariaDB dump 10.19  Distrib 10.11.3-MariaDB, for Linux (x86_64)
---
--- Host: 127.0.0.1    Database: fivenet
--- ------------------------------------------------------
--- Server version	10.11.3-MariaDB-1:10.11.3+maria~ubu2204
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
 --
 -- Dumping data for table `fivenet_rbac_attrs`
 --
@@ -104,6 +88,7 @@ INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, na
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(44, '2025-05-19 20:32:18.212', 'jobs', 'ConductService', 'DeleteConductEntry', 'jobs-conductservice-deleteconductentry', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(45, '2025-05-19 20:32:18.224', 'jobs', 'ConductService', 'ListConductEntries', 'jobs-conductservice-listconductentries', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(46, '2025-05-19 20:32:18.252', 'jobs', 'ConductService', 'UpdateConductEntry', 'jobs-conductservice-updateconductentry', 0);
+INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(78, '2025-05-19 20:32:18.265', 'jobs', 'ConductService', 'RestoreConductEntry', 'jobs-conductservice-restoreconductentry', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(47, '2025-05-19 20:32:18.270', 'jobs', 'ColleaguesService', 'GetColleague', 'jobs-colleaguesservice-getcolleague', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(48, '2025-05-19 20:32:18.320', 'jobs', 'ColleaguesService', 'ListColleagueActivity', 'jobs-colleaguesservice-listcolleagueactivity', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(49, '2025-05-19 20:32:18.349', 'jobs', 'ColleaguesService', 'ListColleagues', 'jobs-colleaguesservice-listcolleagues', 0);
@@ -548,14 +533,3 @@ INSERT INTO fivenet_rbac_job_attrs (job, attr_id, max_values) VALUES('police', 2
 INSERT INTO fivenet_rbac_job_attrs (job, attr_id, max_values) VALUES('police', 24, '{"jobGradeList":{"jobs":{"ambulance":20, "doj":22, "police":27}}}');
 /*!40000 ALTER TABLE `fivenet_rbac_job_attrs` ENABLE KEYS */;
 UNLOCK TABLES;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2023-06-16 18:56:18

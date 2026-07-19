@@ -36,6 +36,7 @@ type ListConductEntriesRequest struct {
 	xxx_hidden_ShowDrafts  bool                        `protobuf:"varint,5,opt,name=show_drafts,json=showDrafts,proto3,oneof"`
 	xxx_hidden_UserIds     []int32                     `protobuf:"varint,6,rep,packed,name=user_ids,json=userIds,proto3"`
 	xxx_hidden_Ids         []int64                     `protobuf:"varint,7,rep,packed,name=ids,proto3"`
+	xxx_hidden_ShowDeleted bool                        `protobuf:"varint,8,opt,name=show_deleted,json=showDeleted,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -116,6 +117,13 @@ func (x *ListConductEntriesRequest) GetIds() []int64 {
 	return nil
 }
 
+func (x *ListConductEntriesRequest) GetShowDeleted() bool {
+	if x != nil {
+		return x.xxx_hidden_ShowDeleted
+	}
+	return false
+}
+
 func (x *ListConductEntriesRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -130,12 +138,12 @@ func (x *ListConductEntriesRequest) SetTypes(v []conduct.ConductType) {
 
 func (x *ListConductEntriesRequest) SetShowExpired(v bool) {
 	x.xxx_hidden_ShowExpired = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 7)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 8)
 }
 
 func (x *ListConductEntriesRequest) SetShowDrafts(v bool) {
 	x.xxx_hidden_ShowDrafts = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 7)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 8)
 }
 
 func (x *ListConductEntriesRequest) SetUserIds(v []int32) {
@@ -144,6 +152,11 @@ func (x *ListConductEntriesRequest) SetUserIds(v []int32) {
 
 func (x *ListConductEntriesRequest) SetIds(v []int64) {
 	x.xxx_hidden_Ids = v
+}
+
+func (x *ListConductEntriesRequest) SetShowDeleted(v bool) {
+	x.xxx_hidden_ShowDeleted = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 8)
 }
 
 func (x *ListConductEntriesRequest) HasPagination() bool {
@@ -174,6 +187,13 @@ func (x *ListConductEntriesRequest) HasShowDrafts() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
+func (x *ListConductEntriesRequest) HasShowDeleted() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+}
+
 func (x *ListConductEntriesRequest) ClearPagination() {
 	x.xxx_hidden_Pagination = nil
 }
@@ -192,6 +212,11 @@ func (x *ListConductEntriesRequest) ClearShowDrafts() {
 	x.xxx_hidden_ShowDrafts = false
 }
 
+func (x *ListConductEntriesRequest) ClearShowDeleted() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	x.xxx_hidden_ShowDeleted = false
+}
+
 type ListConductEntriesRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -203,6 +228,7 @@ type ListConductEntriesRequest_builder struct {
 	ShowDrafts  *bool
 	UserIds     []int32
 	Ids         []int64
+	ShowDeleted *bool
 }
 
 func (b0 ListConductEntriesRequest_builder) Build() *ListConductEntriesRequest {
@@ -213,15 +239,19 @@ func (b0 ListConductEntriesRequest_builder) Build() *ListConductEntriesRequest {
 	x.xxx_hidden_Sort = b.Sort
 	x.xxx_hidden_Types = b.Types
 	if b.ShowExpired != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 7)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 8)
 		x.xxx_hidden_ShowExpired = *b.ShowExpired
 	}
 	if b.ShowDrafts != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 7)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 8)
 		x.xxx_hidden_ShowDrafts = *b.ShowDrafts
 	}
 	x.xxx_hidden_UserIds = b.UserIds
 	x.xxx_hidden_Ids = b.Ids
+	if b.ShowDeleted != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 8)
+		x.xxx_hidden_ShowDeleted = *b.ShowDeleted
+	}
 	return m0
 }
 
@@ -810,7 +840,7 @@ var File_services_jobs_conduct_proto protoreflect.FileDescriptor
 
 const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
-	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a$resources/jobs/conduct/conduct.proto\"\x83\x03\n" +
+	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a$resources/jobs/conduct/conduct.proto\"\xbc\x03\n" +
 	"\x19ListConductEntriesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -821,10 +851,12 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\vshow_drafts\x18\x05 \x01(\bH\x02R\n" +
 	"showDrafts\x88\x01\x01\x12\x19\n" +
 	"\buser_ids\x18\x06 \x03(\x05R\auserIds\x12\x10\n" +
-	"\x03ids\x18\a \x03(\x03R\x03idsB\a\n" +
+	"\x03ids\x18\a \x03(\x03R\x03ids\x12&\n" +
+	"\fshow_deleted\x18\b \x01(\bH\x03R\vshowDeleted\x88\x01\x01B\a\n" +
 	"\x05_sortB\x0f\n" +
 	"\r_show_expiredB\x0e\n" +
-	"\f_show_drafts\"\xb1\x01\n" +
+	"\f_show_draftsB\x0f\n" +
+	"\r_show_deleted\"\xb1\x01\n" +
 	"\x1aListConductEntriesResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -844,16 +876,16 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"+\n" +
 	"\x19DeleteConductEntryRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1c\n" +
-	"\x1aDeleteConductEntryResponse2\x94\x06\n" +
+	"\x1aDeleteConductEntryResponse2\xd5\x06\n" +
 	"\x0eConductService\x12\x87\x01\n" +
 	"\x12ListConductEntries\x12(.services.jobs.ListConductEntriesRequest\x1a).services.jobs.ListConductEntriesResponse\"\x1c\xd2\xf3\x18\x18\b\x01:\x14\n" +
 	"\x06Access\x18\x01\"\x03Own\"\x03All\x12|\n" +
 	"\x0fGetConductEntry\x12%.services.jobs.GetConductEntryRequest\x1a&.services.jobs.GetConductEntryResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListConductEntries\x12q\n" +
 	"\x12CreateConductEntry\x12(.services.jobs.CreateConductEntryRequest\x1a).services.jobs.CreateConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12q\n" +
-	"\x12UpdateConductEntry\x12(.services.jobs.UpdateConductEntryRequest\x1a).services.jobs.UpdateConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12q\n" +
-	"\x12DeleteConductEntry\x12(.services.jobs.DeleteConductEntryRequest\x1a).services.jobs.DeleteConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x85\x01\n" +
+	"\x12UpdateConductEntry\x12(.services.jobs.UpdateConductEntryRequest\x1a).services.jobs.UpdateConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x9a\x01\n" +
+	"\x12DeleteConductEntry\x12(.services.jobs.DeleteConductEntryRequest\x1a).services.jobs.DeleteConductEntryResponse\"/\xd2\xf3\x18+\b\x01*\x12DeleteConductEntry*\x13RestoreConductEntry\x12\x85\x01\n" +
 	"\n" +
-	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\".\xd2\xf3\x18*\b\x01*\x12CreateConductEntry*\x12UpdateConductEntry(\x01\x1a\x19\xea\xf3\x18\x15\bA\x12\x11i-mdi-list-statusBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\".\xd2\xf3\x18*\b\x01*\x12CreateConductEntry*\x12UpdateConductEntry(\x01\x1a0\xea\xf3\x18,\bA\x12\x11i-mdi-list-status*\x15\x1a\x13RestoreConductEntryBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var file_services_jobs_conduct_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_jobs_conduct_proto_goTypes = []any{

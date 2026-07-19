@@ -51,18 +51,21 @@ func loadFrontendFixture(t *testing.T) (pgs.AST, map[string]pgs.File) {
 	writeTestProto(t, root, "resources/permissions/attributes/attributes.proto", testAttributesProto)
 	writeTestProto(t, root, "codegen/perms/perms.proto", testPermissionsProto)
 	writeTestProto(t, root, "services/documents/documents.proto", testDocumentsProto)
+	writeTestProto(t, root, "services/jobs/conduct.proto", testConductProto)
 	writeTestProto(t, root, "services/qualifications/qualifications.proto", testQualificationsProto)
 
 	loader := testutils.Loader{ImportPaths: []string{"."}}
 	ast := loader.LoadProtos(
 		t,
 		"services/documents/documents.proto",
+		"services/jobs/conduct.proto",
 		"services/qualifications/qualifications.proto",
 	)
 
 	targets := map[string]pgs.File{}
 	for _, name := range []string{
 		"services/documents/documents.proto",
+		"services/jobs/conduct.proto",
 		"services/qualifications/qualifications.proto",
 	} {
 		ent, ok := ast.Lookup(name)

@@ -318,6 +318,9 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	},
 
 	// Service: jobs.ConductService
+	"jobs.ConductService/DeleteConductEntry": {
+		permsjobs.ConductService.DeleteConductEntry.Perm, permsjobs.ConductService.RestoreConductEntry.Perm,
+	},
 	"jobs.ConductService/GetConductEntry": {
 		permsjobs.ConductService.ListConductEntries.Perm,
 	},
