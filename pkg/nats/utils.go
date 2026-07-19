@@ -3,11 +3,11 @@ package natsutils
 import "strconv"
 
 func GenerateConsumerName(accountId int64, userId int32, connId string) string {
-	return "acc_" + strconv.FormatInt(
+	return "a" + strconv.FormatInt(
 		accountId,
 		10,
-	) + "_usr_" + strconv.FormatInt(
+	) + "_u" + strconv.FormatInt(
 		int64(userId),
 		10,
-	) + "_sess_" + connId
+	) + "_s" + connId
 }

@@ -263,7 +263,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	if err != nil {
 		return fmt.Errorf("failed to create consumer. %w", err)
 	}
-	defer s.js.DeleteConsumer(s.ctx, notifi.StreamName, consCfg.Durable)
+	// Keep the durable consumer alive across websocket stream restarts on the
+	// same connection. The consumer will expire via InactiveThreshold once the
+	// connection is truly idle, which avoids an old handler deleting the fresh
+	// consumer created by a restarted stream.
 
 	// Central pipe: all feeds push messages into outCh
 	outCh := make(chan *pbnotifications.StreamResponse, 256)
