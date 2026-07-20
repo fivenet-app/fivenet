@@ -410,6 +410,58 @@ html.polyfills:root {
     --color-stone-950-rgb: 12, 10, 9;
     --color-stone-rgb: var(--color-stone-500-rgb);
 
+    --color-taupe-50-rgb: 251, 250, 249;
+    --color-taupe-100-rgb: 243, 241, 241;
+    --color-taupe-200-rgb: 232, 228, 227;
+    --color-taupe-300-rgb: 216, 210, 208;
+    --color-taupe-400-rgb: 171, 160, 156;
+    --color-taupe-500-rgb: 124, 109, 103;
+    --color-taupe-600-rgb: 91, 79, 75;
+    --color-taupe-700-rgb: 71, 60, 57;
+    --color-taupe-800-rgb: 43, 36, 34;
+    --color-taupe-900-rgb: 29, 24, 22;
+    --color-taupe-950-rgb: 12, 10, 9;
+    --color-taupe-rgb: var(--color-taupe-500-rgb);
+
+    --color-mauve-50-rgb: 250, 250, 250;
+    --color-mauve-100-rgb: 243, 241, 243;
+    --color-mauve-200-rgb: 231, 228, 231;
+    --color-mauve-300-rgb: 215, 208, 215;
+    --color-mauve-400-rgb: 168, 158, 169;
+    --color-mauve-500-rgb: 121, 105, 123;
+    --color-mauve-600-rgb: 89, 76, 91;
+    --color-mauve-700-rgb: 70, 57, 71;
+    --color-mauve-800-rgb: 42, 33, 44;
+    --color-mauve-900-rgb: 29, 22, 30;
+    --color-mauve-950-rgb: 12, 9, 12;
+    --color-mauve-rgb: var(--color-mauve-500-rgb);
+
+    --color-mist-50-rgb: 249, 251, 251;
+    --color-mist-100-rgb: 241, 243, 243;
+    --color-mist-200-rgb: 227, 231, 232;
+    --color-mist-300-rgb: 208, 214, 216;
+    --color-mist-400-rgb: 156, 168, 171;
+    --color-mist-500-rgb: 103, 120, 124;
+    --color-mist-600-rgb: 75, 88, 91;
+    --color-mist-700-rgb: 57, 68, 71;
+    --color-mist-800-rgb: 34, 41, 43;
+    --color-mist-900-rgb: 22, 27, 29;
+    --color-mist-950-rgb: 9, 11, 12;
+    --color-mist-rgb: var(--color-mist-500-rgb);
+
+    --color-olive-50-rgb: 251, 251, 249;
+    --color-olive-100-rgb: 244, 244, 240;
+    --color-olive-200-rgb: 232, 232, 227;
+    --color-olive-300-rgb: 216, 216, 208;
+    --color-olive-400-rgb: 171, 171, 156;
+    --color-olive-500-rgb: 124, 124, 103;
+    --color-olive-600-rgb: 91, 91, 75;
+    --color-olive-700-rgb: 71, 71, 57;
+    --color-olive-800-rgb: 43, 43, 34;
+    --color-olive-900-rgb: 29, 29, 22;
+    --color-olive-950-rgb: 12, 12, 9;
+    --color-olive-rgb: var(--color-olive-500-rgb);
+
     --color-black-rgb: 0, 0, 0;
     --color-white-rgb: 255, 255, 255;
 
