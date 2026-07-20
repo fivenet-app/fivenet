@@ -5,12 +5,6 @@ const activeChar = { value: null as unknown | null };
 const accountId = { value: null as unknown | null };
 const userInfo = { accountId: null as number | null, userId: null as number | null };
 
-type MockUnaryClient = {
-    mock: {
-        calls: Array<[unknown, unknown, { meta: Record<string, string | undefined> }]>;
-    };
-};
-
 vi.mock('~/composables/useAuth', () => ({
     useAuth: () => ({
         activeChar,
@@ -44,6 +38,15 @@ function createTransport() {
     };
 }
 
+function getFirstUnaryOptions(unaryClient: ReturnType<typeof createTransport>['unaryClient']) {
+    const firstCall = unaryClient.unary.mock.calls[0] as
+        | [unknown, unknown, { meta: Record<string, string | undefined> }]
+        | undefined;
+
+    expect(firstCall).toBeDefined();
+    return firstCall![2];
+}
+
 describe('GrpcCombinedTransport auth headers', () => {
     beforeEach(() => {
         activeChar.value = null;
@@ -67,8 +70,8 @@ describe('GrpcCombinedTransport auth headers', () => {
 
         expect(unaryClient.unary).toHaveBeenCalled();
         expect(unaryClient.mergeOptions).toHaveBeenCalledWith({ meta: {} });
-        const firstCall = (unaryClient.unary as MockUnaryClient).mock.calls[0];
-        expect(firstCall[2].meta.Authorization).toBeUndefined();
+        const options = getFirstUnaryOptions(unaryClient);
+        expect(options.meta.Authorization).toBeUndefined();
     });
 
     it('does not attach a token for choose-character restore when the character does not match', () => {
@@ -85,8 +88,8 @@ describe('GrpcCombinedTransport auth headers', () => {
         );
 
         expect(unaryClient.unary).toHaveBeenCalled();
-        const firstCall = (unaryClient.unary as MockUnaryClient).mock.calls[0];
-        expect(firstCall[2].meta.Authorization).toBeUndefined();
+        const options = getFirstUnaryOptions(unaryClient);
+        expect(options.meta.Authorization).toBeUndefined();
     });
 
     it('sends the stored token for unary calls when a character is active', () => {
@@ -103,7 +106,7 @@ describe('GrpcCombinedTransport auth headers', () => {
             {},
         );
 
-        const firstCall = (unaryClient.unary as MockUnaryClient).mock.calls[0];
-        expect(firstCall[2].meta.Authorization).toBe('Bearer char-token');
+        const options = getFirstUnaryOptions(unaryClient);
+        expect(options.meta.Authorization).toBe('Bearer char-token');
     });
 });

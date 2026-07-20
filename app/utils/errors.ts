@@ -11,7 +11,7 @@ export function getErrorMessage(err: RpcError): I18NItem {
     return { key: err.message, parameters: {} };
 }
 
-export function parseError(err: RpcError): CommonError | undefined {
+export function parseError(err: Error): CommonError | undefined {
     return parseErrorMessage(err.message);
 }
 
