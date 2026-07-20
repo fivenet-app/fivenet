@@ -386,9 +386,6 @@ importers:
       cssnano:
         specifier: 8.0.2
         version: 8.0.2(postcss@8.5.20)
-      culori:
-        specifier: 4.0.2
-        version: 4.0.2
       eslint:
         specifier: 10.7.0
         version: 10.7.0(jiti@2.7.0)
@@ -5994,10 +5991,6 @@ packages:
 
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
-
-  culori@4.0.2:
-    resolution: {integrity: sha512-1+BhOB8ahCn4O0cep0Sh2l9KCOfOdY+BXJnKMHFFzDEouSr/el18QwXEMRlOj9UY5nCeA8UN3a/82rUWRBeyBw==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   d3-array@2.12.1:
     resolution: {integrity: sha512-B0ErZK/66mHtEsR1TkPEEkwdy+WDesimkM5gpZr5Dsg54BiTA5RXtYW5qTLIAcekaS9xfZrzBLF/OAkB3Qn1YQ==}
@@ -16895,8 +16888,6 @@ snapshots:
     optional: true
 
   csstype@3.2.3: {}
-
-  culori@4.0.2: {}
 
   d3-array@2.12.1:
     dependencies:
