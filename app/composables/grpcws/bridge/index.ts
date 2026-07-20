@@ -102,7 +102,7 @@ export class GrpcWSTransport implements RpcTransport {
         options: RpcOptions,
     ): ServerStreamingCall<I, O> {
         if (this.webSocket.status.value !== 'OPEN') {
-            logger.error("Websocket isn't connected, cannot create server streaming call");
+            logger.error("Websocket isn't connected, cannot create server streaming call", this.webSocket.status.value);
             throw errUnavailable;
         }
 
@@ -178,7 +178,7 @@ export class GrpcWSTransport implements RpcTransport {
         options: RpcOptions,
     ): ClientStreamingCall<I, O> {
         if (this.webSocket.status.value !== 'OPEN') {
-            logger.error("Websocket isn't connected, cannot create client streaming call");
+            logger.error("Websocket isn't connected, cannot create client streaming call", this.webSocket.status.value);
             throw errUnavailable;
         }
 
@@ -243,7 +243,7 @@ export class GrpcWSTransport implements RpcTransport {
 
     duplex<I extends object, O extends object>(method: MethodInfo<I, O>, options: RpcOptions): DuplexStreamingCall<I, O> {
         if (this.webSocket.status.value !== 'OPEN') {
-            logger.error("Websocket isn't connected, cannot create duplex streaming call");
+            logger.error("Websocket isn't connected, cannot create duplex streaming call", this.webSocket.status.value);
             throw errUnavailable;
         }
 
@@ -318,7 +318,7 @@ export class GrpcWSTransport implements RpcTransport {
 
     updateUserToken(token: string): void {
         if (this.webSocket.status.value !== 'OPEN') {
-            logger.debug("Websocket isn't connected yet, skipping user token update");
+            logger.debug("Websocket isn't connected yet, skipping user token update", this.webSocket.status.value);
             return;
         }
 
