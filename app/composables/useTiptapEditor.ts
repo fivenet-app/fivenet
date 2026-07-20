@@ -35,6 +35,7 @@ import { EnhancedImage } from './tiptap/extensions/EnhancedImage';
 import { PenaltyCalculator } from './tiptap/extensions/PenaltyCalculator';
 
 export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<string>): Extensions {
+    const { t } = useI18n();
     const settingsStore = useSettingsStore();
     const { editor: editorSettings } = storeToRefs(settingsStore);
 
@@ -52,6 +53,17 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
         CodeBlock,
         Details.configure({
             persist: true,
+            renderToggleButton: ({ element, isOpen, node }) => {
+                const label = node.textContent || t('components.partials.tiptap_editor.details');
+                const action = isOpen ? 'collapse' : 'expand';
+
+                element.classList.add('details-toggle');
+                element.setAttribute(
+                    'aria-label',
+                    t(`components.partials.tiptap_editor.details_toggle_${action}_label`, { label }),
+                );
+                element.setAttribute('title', t(`components.partials.tiptap_editor.details_toggle_${action}_title`));
+            },
             HTMLAttributes: {
                 class: 'details',
             },

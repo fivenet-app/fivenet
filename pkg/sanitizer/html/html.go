@@ -50,6 +50,10 @@ var (
 	exportedMapEmbed = regexp.MustCompile(`^map$`)
 	// exportedPenaltyCalculatorType matches the exported penalty calculator markers.
 	exportedPenaltyCalculatorType = regexp.MustCompile(`^penalty-calculator$`)
+	// detailsClassRegex matches the Tiptap details block class.
+	detailsClassRegex = regexp.MustCompile(`^details$`)
+	// detailsContentType matches the Tiptap details content wrapper marker.
+	detailsContentType = regexp.MustCompile(`^detailsContent$`)
 )
 
 // Module provides the Fx module for the HTML sanitizer, wiring up dependency injection.
@@ -118,7 +122,7 @@ func setupSanitizer() {
 	sanitizer.AllowAttrs("cite").OnElements("blockquote", "q")
 	sanitizer.AllowAttrs("href").OnElements("a", "area")
 	sanitizer.AllowAttrs("src").OnElements("img")
-	sanitizer.AllowElements("hr", "sup", "sub", "h1", "h2", "h3", "h4", "h5", "code", "em", "pre")
+	sanitizer.AllowElements("hr", "sup", "sub", "h1", "h2", "h3", "h4", "h5", "code", "em", "pre", "details", "summary")
 	sanitizer.AllowTables()
 	sanitizer.AllowLists()
 
@@ -130,6 +134,9 @@ func setupSanitizer() {
 
 	// # ProseMirror / Tiptap Editor
 	sanitizer.AllowAttrs("class").Matching(prosemirrorClassRegex).OnElements("br")
+	sanitizer.AllowAttrs("class").Matching(detailsClassRegex).OnElements("details")
+	sanitizer.AllowAttrs("open").OnElements("details")
+	sanitizer.AllowAttrs("data-type").Matching(detailsContentType).OnElements("div")
 	// ## Checkboxes
 	sanitizer.AllowAttrs("data-checked").OnElements("li", "span")
 	sanitizer.AllowAttrs("data-type").OnElements("ul", "ol", "li", "span")

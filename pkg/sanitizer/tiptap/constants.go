@@ -25,6 +25,9 @@ const (
 	NodeTypePenaltyCalculator  = "penaltyCalculator"
 	NodeTypeTemplateVar        = "templateVar"
 	NodeTypeTemplateBlock      = "templateBlock"
+	NodeTypeDetails            = "details"
+	NodeTypeDetailsSummary     = "detailsSummary"
+	NodeTypeDetailsContent     = "detailsContent"
 )
 
 const (

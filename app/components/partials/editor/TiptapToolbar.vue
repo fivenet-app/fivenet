@@ -635,7 +635,18 @@ const isLinkOpen = ref<boolean>(false);
                 />
             </UTooltip>
 
-            <!-- TODO Add buttons for Details block -->
+            <UTooltip :text="$t('components.partials.tiptap_editor.details')">
+                <UButton
+                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.details }"
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-details"
+                    :disabled="disabled"
+                    @click="
+                        () => (!ui.details ? ed?.chain().focus().setDetails().run() : ed?.chain().focus().unsetDetails().run())
+                    "
+                />
+            </UTooltip>
 
             <UTooltip v-if="showPenaltyCalculatorButton" :text="$t('components.partials.tiptap_editor.penalty_calculator')">
                 <UButton

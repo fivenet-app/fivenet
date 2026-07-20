@@ -457,6 +457,19 @@ func buildAllowed() *Sanitizer {
 		NodeTypePenaltyCalculator: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
+		NodeTypeDetails: {Validate: func(a map[string]any) (bool, map[string]any) {
+			out := map[string]any{}
+			if open, ok := a["open"].(bool); ok {
+				out["open"] = open
+			}
+			return true, out
+		}},
+		NodeTypeDetailsSummary: {
+			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
+		},
+		NodeTypeDetailsContent: {
+			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
+		},
 		NodeTypeTemplateVar: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 

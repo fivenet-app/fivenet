@@ -116,6 +116,19 @@ func TestSanitizePreservesMapBlockAndPenaltyCalculator(t *testing.T) {
 	assert.Contains(t, penaltyOut, `data-embed="penalty-calculator"`)
 }
 
+func TestSanitizePreservesDetails(t *testing.T) {
+	t.Parallel()
+
+	out := Sanitize(`<details class="details" open onclick="alert(1)"><summary>Spoiler</summary><div data-type="detailsContent"><p>Hidden text</p></div></details>`)
+
+	assert.Contains(t, out, `<details`)
+	assert.Contains(t, out, `class="details"`)
+	assert.Contains(t, out, `open=""`)
+	assert.Contains(t, out, `<summary>Spoiler</summary>`)
+	assert.Contains(t, out, `data-type="detailsContent"`)
+	assert.NotContains(t, out, `onclick`)
+}
+
 func TestSanitizeRejectsNonExportedMapBlockAndPenaltyCalculatorValues(t *testing.T) {
 	t.Parallel()
 
