@@ -1,18 +1,20 @@
+SET foreign_key_checks = 0;
+
 --
 -- Dumping data for table `fivenet_documents`
 --
 
 LOCK TABLES `fivenet_documents` WRITE;
 /*!40000 ALTER TABLE `fivenet_documents` DISABLE KEYS */;
-INSERT INTO `fivenet_documents` (`id`, `created_at`, `updated_at`, `deleted_at`, `category_id`, `title`, `content_type`, `content_json`, `data`, `creator_id`, `creator_job`, `state`, `closed`, `public`) VALUES (1,'2023-03-17 19:57:09.898','2023-03-17 18:57:16.587',NULL,NULL,'Public Document without category',0,'I\'m a public Document without a category.',NULL,1,'ambulance','Open',NULL,1),
-(2,'2023-03-17 19:57:13.244','2023-03-17 18:57:16.596',NULL,4,'Public Document with category (Closed State)',0,'I\'m a public Document with a category that is closed.',NULL,1,'ambulance','Closed',1,1),
-(3,'2023-03-17 18:54:44.115','2023-03-17 18:57:04.438',NULL,1,'Patientenakte Thomas G.',0,'Only for Ambulance.',NULL,2,'ambulance','Open',0,0),
-(4,'2023-03-17 18:57:04.391',NULL,NULL,1,'Bloodresults for DOJ Case',0,'Only for DOJ, Ambulance and the patient.',NULL,2,'ambulance','Open',0,0),
-(5,'2023-03-17 18:57:04.413',NULL,NULL,1,'Drugtest for DOJ Case',0,'Only for PD, DOJ and Ambulance.',NULL,2,'ambulance','Open',0,0),
-(6,'2023-03-17 18:57:55.203',NULL,NULL,2,'Police document about a criminal investigation',0,'Only for PD.',NULL,3,'police','Open',0,0),
-(7,'2023-03-17 18:58:53.956','2023-03-17 18:59:51.616',NULL,NULL,'DOJ Request for medical bloodtests',0,'Only for DOJ and Ambulance.',NULL,3,'doj','Closed',0,0),
-(8,'2023-03-17 19:28:38.145',NULL,NULL,4,'Internal Ambulance Doc',0,'Internal Ambulance Doc',NULL,2,'ambulance','Open',0,0),
-(9,'2023-03-17 19:28:38.155',NULL,NULL,4,'Internal Ambulance Doc only grade 17 and higher',0,'Internal Ambulance Doc only grade 17 and higher',NULL,1,'ambulance','Open',0,0);
+INSERT INTO `fivenet_documents` (`id`, `created_at`, `updated_at`, `deleted_at`, `category_id`, `title`, `content_type`, `content_json`, `content_text`, `summary`, `data`, `creator_id`, `creator_job`, `state`, `closed`, `public`) VALUES (1,'2023-03-17 19:57:09.898','2023-03-17 18:57:16.587',NULL,NULL,'Public Document without category',0,'I\'m a public Document without a category.','','',NULL,1,'ambulance','Open',NULL,1),
+(2,'2023-03-17 19:57:13.244','2023-03-17 18:57:16.596',NULL,4,'Public Document with category (Closed State)',0,'I\'m a public Document with a category that is closed.','','',NULL,1,'ambulance','Closed',1,1),
+(3,'2023-03-17 18:54:44.115','2023-03-17 18:57:04.438',NULL,1,'Patientenakte Thomas G.',0,'Only for Ambulance.','','',NULL,2,'ambulance','Open',0,0),
+(4,'2023-03-17 18:57:04.391',NULL,NULL,1,'Bloodresults for DOJ Case',0,'Only for DOJ, Ambulance and the patient.','','',NULL,2,'ambulance','Open',0,0),
+(5,'2023-03-17 18:57:04.413',NULL,NULL,1,'Drugtest for DOJ Case',0,'Only for PD, DOJ and Ambulance.','','',NULL,2,'ambulance','Open',0,0),
+(6,'2023-03-17 18:57:55.203',NULL,NULL,2,'Police document about a criminal investigation',0,'Only for PD.','','',NULL,3,'police','Open',0,0),
+(7,'2023-03-17 18:58:53.956','2023-03-17 18:59:51.616',NULL,NULL,'DOJ Request for medical bloodtests',0,'Only for DOJ and Ambulance.','','',NULL,3,'doj','Closed',0,0),
+(8,'2023-03-17 19:28:38.145',NULL,NULL,4,'Internal Ambulance Doc',0,'Internal Ambulance Doc','','',NULL,2,'ambulance','Open',0,0),
+(9,'2023-03-17 19:28:38.155',NULL,NULL,4,'Internal Ambulance Doc only grade 17 and higher',0,'Internal Ambulance Doc only grade 17 and higher','','',NULL,1,'ambulance','Open',0,0);
 /*!40000 ALTER TABLE `fivenet_documents` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -35,7 +37,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `fivenet_documents_comments` WRITE;
 /*!40000 ALTER TABLE `fivenet_documents_comments` DISABLE KEYS */;
-INSERT INTO `fivenet_documents_comments` (`id`, `created_at`, `updated_at`, `deleted_at`, `document_id`, `content`, `creator_id`) VALUES (1,'2023-03-17 19:34:30.052',NULL,NULL,1,'Hello World!',2);
+INSERT INTO `fivenet_documents_comments` (`id`, `created_at`, `updated_at`, `deleted_at`, `document_id`, `content`, `creator_id`, `creator_job`) VALUES (1,'2023-03-17 19:34:30.052',NULL,NULL,1,'Hello World!',2,'ambulance');
 /*!40000 ALTER TABLE `fivenet_documents_comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -94,6 +96,8 @@ UNLOCK TABLES;
 
 LOCK TABLES `fivenet_documents_templates` WRITE;
 /*!40000 ALTER TABLE `fivenet_documents_templates` DISABLE KEYS */;
-INSERT INTO `fivenet_documents_templates` (`id`, `created_at`, `updated_at`, `deleted_at`, `weight`, `category_id`, `title`, `description`, `content_title`, `content`, `access`, `schema`, `creator_job`) VALUES (1,'2023-03-17 19:31:28.661','2023-03-17 19:31:35.698',NULL,10,1,'Patientenakte','LSMD Patientenakten Template','Patientenakte NAME','Patientenakte für Name','{}',NULL,'ambulance');
+INSERT INTO `fivenet_documents_templates` (`id`, `created_at`, `updated_at`, `deleted_at`, `weight`, `category_id`, `title`, `description`, `content_title`, `content`, `state`, `access`, `schema`, `creator_job`) VALUES (1,'2023-03-17 19:31:28.661','2023-03-17 19:31:35.698',NULL,10,1,'Patientenakte','LSMD Patientenakten Template','Patientenakte NAME','Patientenakte für Name','','{}',NULL,'ambulance');
 /*!40000 ALTER TABLE `fivenet_documents_templates` ENABLE KEYS */;
 UNLOCK TABLES;
+
+SET foreign_key_checks = 1;

@@ -1,3 +1,5 @@
+SET foreign_key_checks = 0;
+
 --
 -- Dumping data for table `fivenet_rbac_attrs`
 --
@@ -88,7 +90,6 @@ INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, na
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(44, '2025-05-19 20:32:18.212', 'jobs', 'ConductService', 'DeleteConductEntry', 'jobs-conductservice-deleteconductentry', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(45, '2025-05-19 20:32:18.224', 'jobs', 'ConductService', 'ListConductEntries', 'jobs-conductservice-listconductentries', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(46, '2025-05-19 20:32:18.252', 'jobs', 'ConductService', 'UpdateConductEntry', 'jobs-conductservice-updateconductentry', 0);
-INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(78, '2025-05-19 20:32:18.265', 'jobs', 'ConductService', 'RestoreConductEntry', 'jobs-conductservice-restoreconductentry', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(47, '2025-05-19 20:32:18.270', 'jobs', 'ColleaguesService', 'GetColleague', 'jobs-colleaguesservice-getcolleague', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(48, '2025-05-19 20:32:18.320', 'jobs', 'ColleaguesService', 'ListColleagueActivity', 'jobs-colleaguesservice-listcolleagueactivity', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(49, '2025-05-19 20:32:18.349', 'jobs', 'ColleaguesService', 'ListColleagues', 'jobs-colleaguesservice-listcolleagues', 0);
@@ -120,6 +121,7 @@ INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, na
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(75, '2025-05-19 20:32:18.939', 'wiki', 'WikiService', 'DeletePage', 'wiki-wikiservice-deletepage', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(76, '2025-05-19 20:32:18.951', 'wiki', 'WikiService', 'ListPageActivity', 'wiki-wikiservice-listpageactivity', 0);
 INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(77, '2025-05-19 20:32:18.969', 'wiki', 'WikiService', 'ListPages', 'wiki-wikiservice-listpages', 0);
+INSERT INTO fivenet_rbac_permissions (id, created_at, `namespace`, `service`, name, guard_name, `order`) VALUES(78, '2025-05-19 20:32:18.265', 'jobs', 'ConductService', 'RestoreConductEntry', 'jobs-conductservice-restoreconductentry', 0);
 /*!40000 ALTER TABLE `fivenet_rbac_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -533,3 +535,5 @@ INSERT INTO fivenet_rbac_job_attrs (job, attr_id, max_values) VALUES('police', 2
 INSERT INTO fivenet_rbac_job_attrs (job, attr_id, max_values) VALUES('police', 24, '{"jobGradeList":{"jobs":{"ambulance":20, "doj":22, "police":27}}}');
 /*!40000 ALTER TABLE `fivenet_rbac_job_attrs` ENABLE KEYS */;
 UNLOCK TABLES;
+
+SET foreign_key_checks = 1;
