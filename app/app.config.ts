@@ -131,6 +131,10 @@ export default defineAppConfig({
             slate: 'slate',
             stone: 'stone',
             zinc: 'zinc',
+            taupe: 'taupe',
+            mauve: 'mauve',
+            mist: 'mist',
+            olive: 'olive',
         },
 
         icons: {

@@ -26,6 +26,10 @@ export const backgroundColors = [
     { label: 'zinc', chip: { color: 'zinc' }, class: 'bg-zinc-500 dark:bg-zinc-400' },
     { label: 'neutral', chip: { color: 'neutral' }, class: 'bg-old-neutral-500 dark:bg-old-neutral-400' },
     { label: 'stone', chip: { color: 'stone' }, class: 'bg-stone-500 dark:bg-stone-400' },
+    { label: 'taupe', chip: { color: 'taupe' }, class: 'bg-taupe-500 dark:bg-taupe-400' },
+    { label: 'mauve', chip: { color: 'mauve' }, class: 'bg-mauve-500 dark:bg-mauve-400' },
+    { label: 'mist', chip: { color: 'mist' }, class: 'bg-mist-500 dark:bg-mist-400' },
+    { label: 'olive', chip: { color: 'olive' }, class: 'bg-olive-500 dark:bg-olive-400' },
 ] as const satisfies readonly Color[];
 
 export type PaletteColor = (typeof primaryColors)[number]['label'] | (typeof backgroundColors)[number]['label'];
