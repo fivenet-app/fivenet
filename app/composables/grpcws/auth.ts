@@ -1,5 +1,5 @@
-import { useAuth } from '../useAuth';
 import { authUserTokenKey } from '../../stores/auth_session/constants';
+import { useAuth } from '../useAuth';
 
 export function getGrpcCharacterAuthToken(): string | null {
     return sessionStorage.getItem(authUserTokenKey);
