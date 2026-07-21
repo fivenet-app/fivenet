@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
+import { authUserTokenKey } from './auth_session/constants';
 
-export const authUserTokenKey = 'fivenet:user_token_v1';
+export { authUserTokenKey };
 
 /**
  * Pinia store for managing user sessions.
