@@ -98,14 +98,14 @@ const { data: thread, status } = useLazyAsyncData(
     },
 );
 
-const page = useRouteQuery('page', '1', { transform: Number });
+const messagePage = useRouteQuery('messagePage', '1', { transform: Number });
 
 const { status: messagesStatus, refresh: refreshMessages } = useLazyAsyncData(
-    `mailer-thread:${props.threadId}-messages:${page.value}`,
+    () => `mailer-thread:${props.threadId}-messages:${messagePage.value}`,
     async () => {
         const response = await mailerStore.listThreadMessages({
             pagination: {
-                offset: calculateOffset(page.value, messages.value?.pagination),
+                offset: calculateOffset(messagePage.value, messages.value?.pagination),
             },
             emailId: selectedEmail.value!.id,
             threadId: props.threadId,
@@ -115,8 +115,19 @@ const { status: messagesStatus, refresh: refreshMessages } = useLazyAsyncData(
 
         return response;
     },
-    { watch: [() => props.threadId] },
 );
+
+async function refreshFirstMessagePage(): Promise<void> {
+    if (messagePage.value !== 1) {
+        messagePage.value = 1;
+        return;
+    }
+
+    await refreshMessages();
+}
+
+watch(messagePage, async () => await refreshMessages());
+watch(() => props.threadId, refreshFirstMessagePage);
 
 watchDebounced(
     () => props.threadId,
@@ -510,7 +521,7 @@ async function closeThread(): Promise<void> {
         <template #footer>
             <Pagination
                 v-if="messages?.pagination"
-                v-model="page"
+                v-model="messagePage"
                 :pagination="messages?.pagination"
                 :status="messagesStatus"
                 :refresh="refreshMessages"

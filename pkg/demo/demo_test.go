@@ -154,7 +154,14 @@ func TestDemoSeedJobGradesReferenceExistingJobs(t *testing.T) {
 	}
 
 	for _, grade := range demoSeedJobGrades {
-		require.Contains(t, jobNames, grade.JobName, "job grade %q/%d points at unknown job", grade.JobName, grade.Grade)
+		require.Contains(
+			t,
+			jobNames,
+			grade.JobName,
+			"job grade %q/%d points at unknown job",
+			grade.JobName,
+			grade.Grade,
+		)
 	}
 }
 

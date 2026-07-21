@@ -66,11 +66,15 @@ const selectedTab = computed({
     },
 });
 
-const page = useRouteQuery('page', '1', { transform: Number });
+const threadPage = useRouteQuery('threadPage', '1', { transform: Number });
 
-const { status, refresh } = useLazyAsyncData(`mailer-thread:${page.value}`, () => loadThreads(), {
-    immediate: false,
-});
+const { status, refresh } = useLazyAsyncData(
+    () => `mailer-threads:${selectedEmail.value?.id ?? 0}:${selectedTab.value}:${threadPage.value}`,
+    () => loadThreads(),
+    {
+        immediate: false,
+    },
+);
 
 async function loadThreads(): Promise<ListThreadsResponse | undefined> {
     if (!selectedEmail.value?.id) return;
@@ -82,7 +86,7 @@ async function loadThreads(): Promise<ListThreadsResponse | undefined> {
 
     const resp = await mailerStore.listThreads({
         pagination: {
-            offset: calculateOffset(page.value, threads.value?.pagination),
+            offset: calculateOffset(threadPage.value, threads.value?.pagination),
         },
         emailIds: [selectedEmail.value.id],
         unread: selectedTab.value === 'unread' ? true : undefined,
@@ -92,7 +96,17 @@ async function loadThreads(): Promise<ListThreadsResponse | undefined> {
     return resp;
 }
 
-watch(selectedEmail, async () => await refresh());
+async function refreshFirstThreadPage(): Promise<void> {
+    if (threadPage.value !== 1) {
+        threadPage.value = 1;
+        return;
+    }
+
+    await refresh();
+}
+
+watch(threadPage, async () => await refresh());
+watch(selectedEmail, refreshFirstThreadPage);
 
 // Reset selected thread if it's not in the filtered mails
 watch(threads, () => {
@@ -114,8 +128,8 @@ watch(selectedThreadId, async () => {
     selectedThread.value = thread;
 });
 
-// Refresh threads when unread tab is selected
-watch(selectedTab, async () => await refresh());
+// Refresh threads when the selected mailbox filter changes.
+watch(selectedTab, refreshFirstThreadPage);
 
 // Set thread as query param for persistence between reloads
 function updateQuery(): void {
@@ -298,7 +312,13 @@ const isMobile = breakpoints.smaller('lg');
             <template v-else>
                 <ThreadList v-model="selectedThread" :threads="threads?.threads ?? []" loaded />
 
-                <Pagination v-model="page" :pagination="threads?.pagination" :status="status" :refresh="refresh" hide-text />
+                <Pagination
+                    v-model="threadPage"
+                    :pagination="threads?.pagination"
+                    :status="status"
+                    :refresh="refresh"
+                    hide-text
+                />
             </template>
         </template>
 
