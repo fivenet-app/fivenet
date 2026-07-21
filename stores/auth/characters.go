@@ -161,7 +161,7 @@ func (s *Store) GetJobWithProps(
 		FROM(
 			tJobs.
 				INNER_JOIN(tJobsGrades,
-					tJobsGrades.JobID.EQ(tJobs.ID),
+					tJobsGrades.JobName.EQ(tJobs.Name),
 				).
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tJobs.Name),

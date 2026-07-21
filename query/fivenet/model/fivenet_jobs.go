@@ -12,7 +12,6 @@ import (
 )
 
 type FivenetJobs struct {
-	ID        int64      `json:"id"`
 	Name      string     `sql:"primary_key" json:"name"`
 	Label     *string    `json:"label"`
 	CreatedAt *time.Time `json:"created_at"`

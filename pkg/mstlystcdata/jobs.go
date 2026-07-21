@@ -171,10 +171,8 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 
 	stmt := tJobs.
 		SELECT(
-			tJobs.ID,
 			tJobs.Name,
 			tJobs.Label,
-			tJobsGrades.JobID,
 			tJobsGrades.JobName,
 			tJobsGrades.Grade,
 			tJobsGrades.Label,
@@ -182,7 +180,7 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 		FROM(
 			tJobs.
 				INNER_JOIN(tJobsGrades,
-					tJobsGrades.JobID.EQ(tJobs.ID),
+					tJobsGrades.JobName.EQ(tJobs.Name),
 				),
 		).
 		ORDER_BY(

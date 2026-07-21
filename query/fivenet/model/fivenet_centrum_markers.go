@@ -19,6 +19,7 @@ type FivenetCentrumMarkers struct {
 	DeletedAt   *time.Time       `json:"deleted_at"`
 	ExpiresAt   *time.Time       `json:"expires_at"`
 	Job         string           `json:"job"`
+	Public      bool             `json:"public"`
 	Name        string           `json:"name"`
 	Description *string          `json:"description"`
 	X           *decimal.Decimal `json:"x"`

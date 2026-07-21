@@ -12,10 +12,10 @@ import (
 )
 
 type FivenetConfig struct {
-	Key          int64      `sql:"primary_key" json:"key"`
-	CreatedAt    *time.Time `json:"created_at"`
-	UpdatedAt    *time.Time `json:"updated_at"`
+	Key           int64      `sql:"primary_key" json:"key"`
+	CreatedAt     *time.Time `json:"created_at"`
+	UpdatedAt     *time.Time `json:"updated_at"`
 	SetupComplete bool       `json:"setup_complete"`
-	AppConfig    *string    `json:"app_config"`
-	PluginConfig *string    `json:"plugin_config"`
+	AppConfig     *string    `json:"app_config"`
+	PluginConfig  *string    `json:"plugin_config"`
 }

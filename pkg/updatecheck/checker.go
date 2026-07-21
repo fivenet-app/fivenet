@@ -26,6 +26,10 @@ const minInterval = 30 * time.Minute // Minimum interval for update checks
 
 var ErrNoVersionInfo = errors.New("no version info available")
 
+type IChecker interface {
+	GetNewVersionInfo() (string, string, string, time.Time)
+}
+
 // Checker periodically checks for updates to the application by querying the GitHub Releases API.
 type Checker struct {
 	mu sync.Mutex
@@ -50,9 +54,14 @@ type Params struct {
 	Logger *zap.Logger
 }
 
-func New(p Params) *Checker {
+func New(p Params) IChecker {
 	if !p.Config.UpdateCheck.Enabled {
 		p.Logger.Info("update checker is disabled")
+		return nil
+	}
+
+	if version.Version == version.UnknownVersion {
+		p.Logger.Warn("no version info in binary found, unable to check for updates")
 		return nil
 	}
 
@@ -78,7 +87,7 @@ func New(p Params) *Checker {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		c.wg.Go(func() {
-			c.Start(ctxCancel)
+			c.start(ctxCancel)
 		})
 		return nil
 	}))
@@ -92,13 +101,8 @@ func New(p Params) *Checker {
 	return c
 }
 
-// Start launches the update loop and blocks until ctx is done.
-func (c *Checker) Start(ctx context.Context) {
-	if version.Version == version.UnknownVersion {
-		c.logger.Warn("no version info found, unable to check for updates")
-		return
-	}
-
+// start launches the update loop and blocks until ctx is done.
+func (c *Checker) start(ctx context.Context) {
 	ticker := time.NewTicker(c.interval)
 	defer ticker.Stop()
 
@@ -157,6 +161,14 @@ func (c *Checker) Start(ctx context.Context) {
 	}
 }
 
+type gitHubRelease struct {
+	TagName    string `json:"tag_name"`
+	HTMLURL    string `json:"html_url"`
+	Prerelease bool   `json:"prerelease"`
+	Draft      bool   `json:"draft"`
+	CreatedAt  string `json:"created_at"`
+}
+
 // retrieveLatestTag hits the GitHub Releases API and returns the tag + url.
 // It treats API/transport issues as errors but never panics.
 func (c *Checker) retrieveLatestTag(
@@ -192,13 +204,7 @@ func (c *Checker) retrieveLatestTag(
 	if err != nil {
 		return "", "", false, time.Time{}, fmt.Errorf("failed to read response body. %w", err)
 	}
-	var payload struct {
-		TagName    string `json:"tag_name"`
-		HTMLURL    string `json:"html_url"`
-		Prerelease bool   `json:"prerelease"`
-		Draft      bool   `json:"draft"`
-		CreatedAt  string `json:"created_at"`
-	}
+	var payload gitHubRelease
 	if err = json.Unmarshal(body, &payload); err != nil {
 		return "", "", false, time.Time{}, fmt.Errorf("failed to unmarshal response body. %w", err)
 	}

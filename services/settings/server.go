@@ -77,7 +77,7 @@ type Server struct {
 	syncServer    *syncservice.Server
 	dbReq         *reqs.DBReqs
 	natsReq       *reqs.NatsReqs
-	updateChecker *updatecheck.Checker
+	updateChecker updatecheck.IChecker
 	store         settingsstore.IStore
 	jobsStore     jobsstore.IStore
 }
@@ -103,7 +103,7 @@ type Params struct {
 	SyncServer    *syncservice.Server
 	DBReq         *reqs.DBReqs
 	NatsReq       *reqs.NatsReqs
-	UpdateChecker *updatecheck.Checker
+	UpdateChecker updatecheck.IChecker
 	Store         settingsstore.IStore
 	JobsStore     jobsstore.IStore
 }

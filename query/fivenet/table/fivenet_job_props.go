@@ -86,7 +86,7 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		SettingsColumn            = mysql.StringColumn("settings")
 		allColumns                = mysql.ColumnList{JobColumn, UpdatedAtColumn, DeletedAtColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, DiscordSyncChangesColumn, MotdColumn, LogoFileIDColumn, SettingsColumn}
 		mutableColumns            = mysql.ColumnList{JobColumn, UpdatedAtColumn, DeletedAtColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, DiscordSyncChangesColumn, MotdColumn, LogoFileIDColumn, SettingsColumn}
-		defaultColumns            = mysql.ColumnList{}
+		defaultColumns            = mysql.ColumnList{LivemapMarkerColorColumn}
 	)
 
 	return fivenetJobPropsTable{

@@ -17,12 +17,12 @@ type fivenetConfigTable struct {
 	mysql.Table
 
 	// Columns
-	Key          mysql.ColumnInteger
-	CreatedAt    mysql.ColumnTimestamp
-	UpdatedAt    mysql.ColumnTimestamp
+	Key           mysql.ColumnInteger
+	CreatedAt     mysql.ColumnTimestamp
+	UpdatedAt     mysql.ColumnTimestamp
 	SetupComplete mysql.ColumnBool
-	AppConfig    mysql.ColumnString
-	PluginConfig mysql.ColumnString
+	AppConfig     mysql.ColumnString
+	PluginConfig  mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -64,27 +64,27 @@ func newFivenetConfigTable(schemaName, tableName, alias string) *FivenetConfigTa
 
 func newFivenetConfigTableImpl(schemaName, tableName, alias string) fivenetConfigTable {
 	var (
-		KeyColumn          = mysql.IntegerColumn("key")
-		CreatedAtColumn    = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
+		KeyColumn           = mysql.IntegerColumn("key")
+		CreatedAtColumn     = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn     = mysql.TimestampColumn("updated_at")
 		SetupCompleteColumn = mysql.BoolColumn("setup_complete")
-		AppConfigColumn    = mysql.StringColumn("app_config")
-		PluginConfigColumn = mysql.StringColumn("plugin_config")
-		allColumns         = mysql.ColumnList{KeyColumn, CreatedAtColumn, UpdatedAtColumn, SetupCompleteColumn, AppConfigColumn, PluginConfigColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, SetupCompleteColumn, AppConfigColumn, PluginConfigColumn}
-		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
+		AppConfigColumn     = mysql.StringColumn("app_config")
+		PluginConfigColumn  = mysql.StringColumn("plugin_config")
+		allColumns          = mysql.ColumnList{KeyColumn, CreatedAtColumn, UpdatedAtColumn, SetupCompleteColumn, AppConfigColumn, PluginConfigColumn}
+		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, SetupCompleteColumn, AppConfigColumn, PluginConfigColumn}
+		defaultColumns      = mysql.ColumnList{CreatedAtColumn, SetupCompleteColumn}
 	)
 
 	return fivenetConfigTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		Key:          KeyColumn,
-		CreatedAt:    CreatedAtColumn,
-		UpdatedAt:    UpdatedAtColumn,
+		Key:           KeyColumn,
+		CreatedAt:     CreatedAtColumn,
+		UpdatedAt:     UpdatedAtColumn,
 		SetupComplete: SetupCompleteColumn,
-		AppConfig:    AppConfigColumn,
-		PluginConfig: PluginConfigColumn,
+		AppConfig:     AppConfigColumn,
+		PluginConfig:  PluginConfigColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

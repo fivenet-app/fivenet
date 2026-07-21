@@ -2,7 +2,6 @@ package jobs
 
 func (x *Job) Merge(in *Job) *Job {
 	if in != nil {
-		x.SetId(in.GetId())
 		x.Name = in.GetName()
 		x.Label = in.GetLabel()
 		x.Grades = in.GetGrades()

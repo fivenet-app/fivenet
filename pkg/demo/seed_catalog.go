@@ -188,13 +188,12 @@ func (d *Demo) upsertDemoJobsAndGrades(ctx context.Context) error {
 
 	stmt := tJobs.
 		INSERT(
-			tJobs.ID,
 			tJobs.Name,
 			tJobs.Label,
 		)
 
 	for _, job := range demoSeedJobs {
-		stmt = stmt.VALUES(job.ID, job.Name, job.Label)
+		stmt = stmt.VALUES(job.Name, job.Label)
 	}
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -219,14 +218,13 @@ func (d *Demo) upsertDemoJobGrades(ctx context.Context, tx *sql.Tx) error {
 
 	stmt := tJobsGrades.
 		INSERT(
-			tJobsGrades.JobID,
 			tJobsGrades.JobName,
 			tJobsGrades.Grade,
 			tJobsGrades.Label,
 		)
 
 	for _, grade := range demoSeedJobGrades {
-		stmt = stmt.VALUES(grade.JobID, grade.JobName, grade.Grade, grade.Label)
+		stmt = stmt.VALUES(grade.JobName, grade.Grade, grade.Label)
 	}
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

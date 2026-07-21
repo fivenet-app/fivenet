@@ -86,7 +86,7 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		HomePostalColumn  = mysql.StringColumn("home_postal")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SortOrderColumn, NameColumn, InitialsColumn, ColorColumn, IconColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SortOrderColumn, NameColumn, InitialsColumn, ColorColumn, IconColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
-		defaultColumns    = mysql.ColumnList{CreatedAtColumn, SortOrderColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn, SortOrderColumn, IconColumn}
 	)
 
 	return fivenetCentrumUnitsTable{

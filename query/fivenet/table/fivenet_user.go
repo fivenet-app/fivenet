@@ -98,7 +98,7 @@ func newFivenetUserTableImpl(schemaName, tableName, alias string) fivenetUserTab
 		DeletedReasonColumn = mysql.StringColumn("deleted_reason")
 		allColumns          = mysql.ColumnList{IDColumn, LicenseColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeletedReasonColumn}
 		mutableColumns      = mysql.ColumnList{LicenseColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeletedReasonColumn}
-		defaultColumns      = mysql.ColumnList{JobGradeColumn, DisabledColumn, CreatedAtColumn, UpdatedAtColumn}
+		defaultColumns      = mysql.ColumnList{JobColumn, JobGradeColumn, DisabledColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return fivenetUserTable{

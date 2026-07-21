@@ -121,11 +121,7 @@ func (s *JobsSync) applyFiltersAndRetrieveGrades(
 		if err != nil {
 			return nil, err
 		}
-		jobId := job.GetId()
 		for _, grade := range grades {
-			if grade.GetJobId() == 0 {
-				grade.JobId = &jobId
-			}
 			if !grade.HasJobName() || grade.GetJobName() == "" {
 				grade.SetJobName(job.GetName())
 			}
