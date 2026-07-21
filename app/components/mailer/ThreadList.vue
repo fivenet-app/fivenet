@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { isToday } from 'date-fns';
+import { computed, ref, watch } from 'vue';
 import type { Thread } from '~~/gen/ts/resources/mailer/threads/thread';
 
 const props = withDefaults(
@@ -61,6 +62,14 @@ defineShortcuts({
         }
     },
 });
+
+function setThreadRef(threadId: number, el: Element | null): void {
+    if (el) {
+        threadRefs.value.set(threadId, el);
+    } else {
+        threadRefs.value.delete(threadId);
+    }
+}
 </script>
 
 <template>
@@ -74,7 +83,7 @@ defineShortcuts({
 
         <template v-else>
             <div class="divide-y divide-default overflow-y-auto">
-                <div v-for="(thread, index) in threads" :key="index" :ref="(el) => threadRefs.set(thread.id, el as Element)">
+                <div v-for="thread in threads" :key="thread.id" :ref="(el) => setThreadRef(thread.id, el as Element | null)">
                     <div
                         class="cursor-pointer border-l-2 p-4 text-sm transition-colors sm:px-6"
                         :class="[
