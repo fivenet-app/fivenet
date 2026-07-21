@@ -40,8 +40,7 @@ function createTransport() {
 
 function getFirstUnaryOptions(unaryClient: ReturnType<typeof createTransport>['unaryClient']) {
     const firstCall = unaryClient.unary.mock.calls[0] as
-        | [unknown, unknown, { meta: Record<string, string | undefined> }]
-        | undefined;
+        [unknown, unknown, { meta: Record<string, string | undefined> }] | undefined;
 
     expect(firstCall).toBeDefined();
     return firstCall![2];

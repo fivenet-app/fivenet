@@ -9,6 +9,8 @@ import (
 )
 
 func TestNewI18nErrFuncMergesParamsIntoTitleAndContent(t *testing.T) {
+	t.Parallel()
+
 	fn := NewI18nErrFunc(
 		codes.InvalidArgument,
 		&I18NItem{
@@ -30,7 +32,10 @@ func TestNewI18nErrFuncMergesParamsIntoTitleAndContent(t *testing.T) {
 	})
 
 	got := &Error{}
-	if unmarshalErr := json.Unmarshal([]byte(status.Convert(err).Message()), got); unmarshalErr != nil {
+	if unmarshalErr := json.Unmarshal(
+		[]byte(status.Convert(err).Message()),
+		got,
+	); unmarshalErr != nil {
 		t.Fatalf("unmarshal error payload: %v", unmarshalErr)
 	}
 

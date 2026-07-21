@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"testing"
 	"time"
 
@@ -99,5 +98,5 @@ func TestParseUserTokenReturnsWrappedExpiryError(t *testing.T) {
 	parsed, err := tm.ParseUserToken(token)
 	require.Error(t, err)
 	assert.Nil(t, parsed)
-	assert.True(t, errors.Is(err, jwt.ErrTokenExpired))
+	assert.ErrorIs(t, err, jwt.ErrTokenExpired)
 }

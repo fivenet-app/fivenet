@@ -119,7 +119,9 @@ func TestSanitizePreservesMapBlockAndPenaltyCalculator(t *testing.T) {
 func TestSanitizePreservesDetails(t *testing.T) {
 	t.Parallel()
 
-	out := Sanitize(`<details class="details" open onclick="alert(1)"><summary>Spoiler</summary><div data-type="detailsContent"><p>Hidden text</p></div></details>`)
+	out := Sanitize(
+		`<details class="details" open onclick="alert(1)"><summary>Spoiler</summary><div data-type="detailsContent"><p>Hidden text</p></div></details>`,
+	)
 
 	assert.Contains(t, out, `<details`)
 	assert.Contains(t, out, `class="details"`)

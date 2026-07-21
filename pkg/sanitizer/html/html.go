@@ -122,7 +122,21 @@ func setupSanitizer() {
 	sanitizer.AllowAttrs("cite").OnElements("blockquote", "q")
 	sanitizer.AllowAttrs("href").OnElements("a", "area")
 	sanitizer.AllowAttrs("src").OnElements("img")
-	sanitizer.AllowElements("hr", "sup", "sub", "h1", "h2", "h3", "h4", "h5", "code", "em", "pre", "details", "summary")
+	sanitizer.AllowElements(
+		"hr",
+		"sup",
+		"sub",
+		"h1",
+		"h2",
+		"h3",
+		"h4",
+		"h5",
+		"code",
+		"em",
+		"pre",
+		"details",
+		"summary",
+	)
 	sanitizer.AllowTables()
 	sanitizer.AllowLists()
 

@@ -176,8 +176,18 @@ func TestNodePoliciesBasicValidation(t *testing.T) {
 			attrs: map[string]any{"open": true},
 			ok:    true,
 		},
-		{name: "detailsSummary-valid", typ: NodeTypeDetailsSummary, attrs: map[string]any{}, ok: true},
-		{name: "detailsContent-valid", typ: NodeTypeDetailsContent, attrs: map[string]any{}, ok: true},
+		{
+			name:  "detailsSummary-valid",
+			typ:   NodeTypeDetailsSummary,
+			attrs: map[string]any{},
+			ok:    true,
+		},
+		{
+			name:  "detailsContent-valid",
+			typ:   NodeTypeDetailsContent,
+			attrs: map[string]any{},
+			ok:    true,
+		},
 		{
 			name:  "templateVar-valid",
 			typ:   NodeTypeTemplateVar,
@@ -448,7 +458,14 @@ func TestSanitizeDetailsNode(t *testing.T) {
 	require.Len(t, content, 1, "root content length = %d, want 1", len(content))
 
 	details, _ := content[0].(map[string]any)
-	assert.Equal(t, NodeTypeDetails, details["type"], "details type = %v, want %q", details["type"], NodeTypeDetails)
+	assert.Equal(
+		t,
+		NodeTypeDetails,
+		details["type"],
+		"details type = %v, want %q",
+		details["type"],
+		NodeTypeDetails,
+	)
 
 	attrs, _ := details["attrs"].(map[string]any)
 	assert.Equal(t, true, attrs["open"], "details open attr = %v, want true", attrs["open"])
@@ -458,10 +475,24 @@ func TestSanitizeDetailsNode(t *testing.T) {
 	require.Len(t, detailsContent, 2, "details content length = %d, want 2", len(detailsContent))
 
 	summary, _ := detailsContent[0].(map[string]any)
-	assert.Equal(t, NodeTypeDetailsSummary, summary["type"], "summary type = %v, want %q", summary["type"], NodeTypeDetailsSummary)
+	assert.Equal(
+		t,
+		NodeTypeDetailsSummary,
+		summary["type"],
+		"summary type = %v, want %q",
+		summary["type"],
+		NodeTypeDetailsSummary,
+	)
 
 	body, _ := detailsContent[1].(map[string]any)
-	assert.Equal(t, NodeTypeDetailsContent, body["type"], "content type = %v, want %q", body["type"], NodeTypeDetailsContent)
+	assert.Equal(
+		t,
+		NodeTypeDetailsContent,
+		body["type"],
+		"content type = %v, want %q",
+		body["type"],
+		NodeTypeDetailsContent,
+	)
 }
 
 func TestSanitizeStructNormalizesMapBlockLayer(t *testing.T) {

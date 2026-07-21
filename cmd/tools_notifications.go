@@ -4,6 +4,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,11 +27,11 @@ type ToolsNotificationsCmd struct {
 type NotificationSendCmd struct {
 	UserID int32 `help:"Target user ID." required:""`
 
-	Type     string `help:"Notification type." default:"info" enum:"error,warning,info,success"`
+	Type     string `help:"Notification type."     default:"info"    enum:"error,warning,info,success"`
 	Category string `help:"Notification category." default:"general" enum:"general,document,calendar"`
 
-	TitleKey   string `help:"Translation key for the title." default:"notifications.system.test_notification.title"`
-	ContentKey string `help:"Translation key for the content." default:"notifications.system.test_notification.content"`
+	TitleKey   string `help:"Translation key for the title."                 default:"notifications.system.test_notification.title"`
+	ContentKey string `help:"Translation key for the content."               default:"notifications.system.test_notification.content"`
 	Index      int    `help:"Index parameter used by the default title key." default:"1"`
 }
 
@@ -95,10 +96,16 @@ func (c *NotificationSendCmd) buildNotification() (*resourcesnotifications.Notif
 	}
 
 	return &resourcesnotifications.Notification{
-		UserId:   c.UserID,
-		Title:    resourcescommon.NewI18nItemWithParams(c.TitleKey, map[string]string{"index": fmt.Sprint(c.Index)}),
-		Type:     typ,
-		Content:  resourcescommon.NewI18nItemWithParams(c.ContentKey, map[string]string{"type": typ.String()}),
+		UserId: c.UserID,
+		Title: resourcescommon.NewI18nItemWithParams(
+			c.TitleKey,
+			map[string]string{"index": strconv.Itoa(c.Index)},
+		),
+		Type: typ,
+		Content: resourcescommon.NewI18nItemWithParams(
+			c.ContentKey,
+			map[string]string{"type": typ.String()},
+		),
 		Category: category,
 	}, nil
 }

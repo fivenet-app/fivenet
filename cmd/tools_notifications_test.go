@@ -25,11 +25,19 @@ func TestParseNotificationCategory(t *testing.T) {
 
 	category, err := parseNotificationCategory("general")
 	require.NoError(t, err)
-	assert.Equal(t, resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL, category)
+	assert.Equal(
+		t,
+		resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
+		category,
+	)
 
 	category, err = parseNotificationCategory("CALENDAR")
 	require.NoError(t, err)
-	assert.Equal(t, resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_CALENDAR, category)
+	assert.Equal(
+		t,
+		resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_CALENDAR,
+		category,
+	)
 }
 
 func TestBuildNotification(t *testing.T) {
@@ -46,8 +54,16 @@ func TestBuildNotification(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.Equal(t, int32(42), not.GetUserId())
-	assert.Equal(t, resourcesnotifications.NotificationType_NOTIFICATION_TYPE_WARNING, not.GetType())
-	assert.Equal(t, resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT, not.GetCategory())
+	assert.Equal(
+		t,
+		resourcesnotifications.NotificationType_NOTIFICATION_TYPE_WARNING,
+		not.GetType(),
+	)
+	assert.Equal(
+		t,
+		resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		not.GetCategory(),
+	)
 	require.NotNil(t, not.GetTitle())
 	assert.Equal(t, "notifications.system.test_notification.title", not.GetTitle().GetKey())
 	assert.Equal(t, "3", not.GetTitle().GetParameters()["index"])

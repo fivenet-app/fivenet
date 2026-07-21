@@ -25,7 +25,7 @@ func TestNewErrorReturnsPublicStatusWhenOriginalIsNil(t *testing.T) {
 	public := status.Error(codes.InvalidArgument, "bad request")
 	err := NewError(nil, public)
 
-	if err != public {
+	if !errors.Is(err, public) {
 		t.Fatalf("expected nil original to return the public error unchanged")
 	}
 

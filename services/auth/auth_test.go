@@ -491,9 +491,12 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 			"Authorization": "Bearer " + superuserRes.GetToken(),
 		}),
 	)
-	mismatchedRestoreRes, err := client.ChooseCharacter(mismatchedRestoreCtx, &pbauth.ChooseCharacterRequest{
-		CharId: 5,
-	})
+	mismatchedRestoreRes, err := client.ChooseCharacter(
+		mismatchedRestoreCtx,
+		&pbauth.ChooseCharacterRequest{
+			CharId: 5,
+		},
+	)
 	require.NoError(err)
 	require.NotNil(mismatchedRestoreRes)
 	assert.False(hasPermission(mismatchedRestoreRes.GetPermissions(), perms.PermJobAdmin))
@@ -511,9 +514,13 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 		}),
 	)
 	invalidRestoreHeaders := metadata.New(nil)
-	invalidRestoreRes, err := client.ChooseCharacter(invalidRestoreCtx, &pbauth.ChooseCharacterRequest{
-		CharId: 1,
-	}, grpc.Header(&invalidRestoreHeaders))
+	invalidRestoreRes, err := client.ChooseCharacter(
+		invalidRestoreCtx,
+		&pbauth.ChooseCharacterRequest{
+			CharId: 1,
+		},
+		grpc.Header(&invalidRestoreHeaders),
+	)
 	require.NoError(err)
 	require.NotNil(invalidRestoreRes)
 	assert.False(hasPermission(invalidRestoreRes.GetPermissions(), perms.PermJobAdmin))
