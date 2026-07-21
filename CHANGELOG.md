@@ -2,6 +2,77 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.7.1] - 2026-07-21
+
+### 🚀 Features
+
+- *(livemap)* Add circle blink controls
+- *(sync)* Add marker activity sync
+- Support public livemap markers
+- *(config)* Add setup_complete bootstrap state and setup redirect flow
+- *(config)* Introduce first-time setup wizard
+- *(setup)* Centralize client config sync after setup
+- *(notifications)* Account-first stream with char-scope upgrade
+- *(notifications)* Add send test notification sub command
+- *(fabric)* Add more shapes to editor
+- *(jobs)* Add conduct entry restore permission
+- *(editor)* Add spoiler details support
+- Add new tailwindcss 4.2 colors
+
+### 🐛 Bug Fixes
+
+- Jobs id resolver
+- Remove group field from users select
+- Storage metrics ttl timeout and log messages
+- Use more proto setters
+- *(documents)* Reference and relation creation handling for edit access
+- *(oauth2)* Add oauth2 provider name limit and cleanup logs
+- File list preview image not re-rendering on changes
+- Nats store/stream registration issue in userinfo usage in tests
+- *(livemap)* Move events logic to store and add DeleteMarker sync api
+- *(livemap)* Improve marker public cleanup and creator handling
+- *(sync)* Add missing protovalidate required field flags for sync api
+- *(livemap)* Update cache for sync-created markers
+- *(livemap)* Keep public marker updates visible for allowed jobs
+- *(livemap)* Make circle blink overlay non-interactive
+- *(perms)* Frontend generating aliased permissions
+- *(config)* Properly reload app config on first-time setup
+- *(protoc)* Add tests to frontend permify generator
+- Change app config update order in first-time setup
+- *(auth)* Validate config-admin with live account state
+- Add icons to error page buttons
+- Add description text to stats page app config toggle
+- *(completor)* Allow CompleteJobs with account token only
+- Use label for default perm entries
+- *(grpcws)* Clear stale char auth for account-only notifications
+- *(grpcws)* Clear char token on account-only reauth
+- *(grpcws)* Auth scope for account-only switches
+- *(websocket)* Prevent stale auth and stream frame replay
+- *(grpcws)* Keep tokenless reauth and clean up websocket tests
+- *(grpcws)* Improve handling of cancel frames in the current system
+- *(notifications)* Unread count var name on client side
+- Add analyze dir to .gitignore
+- Cleanup jobprops logo sql condition and click event handlers
+- *(auth)* Restore char session state on reload
+- Add Unwrap to errswrap pkg
+- Correct set user token + activeChar order
+- Auth superuser test issue
+- Keep account-only RPCs tokenless while preserving character restore
+- Skip websocket token reauth until connected
+- *(auth)* Bind restored character tokens to selected character
+- Refine backend error wrapping
+- Refine frontend gRPC error handling
+- Conduct list auto refresh not working
+- Re-order settings page items
+- *(app)* Configure bundled Nuxt UI icons
+- *(notifications)* Preserve durable stream consumers
+- *(testdata)* Sql foreign key import issues and missing doc fields
+- *(grpcws)* Add websocket status to error logs
+- Add new colors as rgb to css polyfills
+- Remove unused culori js package
+- Pin vue to 3.5.40 to fix nuxt vitest issue
+- Js linter complaint
+
 ## [2026.7.0] - 2026-07-03
 
 ### 🚀 Features
