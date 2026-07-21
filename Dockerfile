@@ -9,7 +9,7 @@ COPY --exclude=public/images/livemap/ . ./
 
 RUN apk add --no-cache git && \
     corepack enable && \
-    corepack prepare pnpm@10.15.1 --activate && \
+    corepack prepare pnpm@10.34.5 --activate && \
     pnpm install && \
     NODE_OPTIONS="--max-old-space-size=8192" \
         pnpm generate
