@@ -180,52 +180,51 @@ func (s *Store) CountInactiveEmployees(
 ) (int64, error) {
 	tColleague := table.FivenetUser.AS("colleague")
 	tUserJobs := table.FivenetUserJobs
-	tUserProps := table.FivenetUserProps
 	tTimeClock := table.FivenetJobTimeclock
+	jobExpr := mysql.String(q.Job)
+	cutoffDate := mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY)))
 
-	condition := mysql.AND(
-		tTimeClock.Job.EQ(mysql.String(q.Job)),
-		tUserJobs.Job.EQ(mysql.String(q.Job)),
-		mysql.OR(
-			mysql.AND(tColleagueProps.AbsenceBegin.IS_NULL(), tColleagueProps.AbsenceEnd.IS_NULL()),
-			tColleagueProps.AbsenceBegin.LT_EQ(
-				mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY))),
-			),
-			tColleagueProps.AbsenceEnd.LT_EQ(
-				mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY))),
-			),
-		),
-		tTimeClock.UserID.NOT_IN(
-			tTimeClock.
-				SELECT(tTimeClock.UserID).
-				FROM(tTimeClock).
-				WHERE(mysql.AND(
-					tTimeClock.Job.EQ(mysql.String(q.Job)),
-					tTimeClock.Date.GT_EQ(
-						mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY))),
-					),
-				)).
-				GROUP_BY(tTimeClock.UserID),
-		),
+	anyTimeclockExists := mysql.EXISTS(
+		tTimeClock.
+			SELECT(mysql.RawString("1")).
+			FROM(tTimeClock).
+			WHERE(mysql.AND(
+				tTimeClock.Job.EQ(jobExpr),
+				tTimeClock.UserID.EQ(tUserJobs.UserID),
+			)),
+	)
+	recentTimeclockExists := mysql.EXISTS(
+		tTimeClock.
+			SELECT(mysql.RawString("1")).
+			FROM(tTimeClock).
+			WHERE(mysql.AND(
+				tTimeClock.Job.EQ(jobExpr),
+				tTimeClock.UserID.EQ(tUserJobs.UserID),
+				tTimeClock.Date.GT_EQ(cutoffDate),
+			)),
 	)
 
-	countStmt := tTimeClock.
-		SELECT(mysql.COUNT(mysql.DISTINCT(tTimeClock.UserID)).AS("data_count.total")).
-		FROM(tTimeClock.
-			INNER_JOIN(tColleague, tColleague.ID.EQ(tTimeClock.UserID)).
-			INNER_JOIN(tUserJobs,
-				mysql.AND(
-					tUserJobs.UserID.EQ(tColleague.ID),
-					tUserJobs.Job.EQ(mysql.String(q.Job)),
-				),
-			).
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tTimeClock.UserID),
+	condition := mysql.AND(
+		tUserJobs.Job.EQ(jobExpr),
+		mysql.OR(
+			mysql.AND(tColleagueProps.AbsenceBegin.IS_NULL(), tColleagueProps.AbsenceEnd.IS_NULL()),
+			tColleagueProps.AbsenceBegin.LT_EQ(cutoffDate),
+			tColleagueProps.AbsenceEnd.LT_EQ(cutoffDate),
+		),
+		anyTimeclockExists,
+		mysql.NOT(recentTimeclockExists),
+	)
+
+	countStmt := tUserJobs.
+		SELECT(mysql.COUNT(tUserJobs.UserID).AS("data_count.total")).
+		FROM(tUserJobs.
+			INNER_JOIN(tColleague,
+				tColleague.ID.EQ(tUserJobs.UserID),
 			).
 			LEFT_JOIN(tColleagueProps,
 				mysql.AND(
-					tColleagueProps.UserID.EQ(tTimeClock.UserID),
-					tColleagueProps.Job.EQ(mysql.String(q.Job)),
+					tColleagueProps.UserID.EQ(tUserJobs.UserID),
+					tColleagueProps.Job.EQ(jobExpr),
 				),
 			),
 		).
@@ -641,30 +640,39 @@ func (s *Store) ListInactiveEmployees(
 	tUserJobs := table.FivenetUserJobs
 	tUserProps := table.FivenetUserProps
 	tAvatar := table.FivenetFiles.AS("profile_picture")
+	tTimeClock := table.FivenetJobTimeclock
+	jobExpr := mysql.String(q.Job)
+	cutoffDate := mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY)))
+
+	anyTimeclockExists := mysql.EXISTS(
+		tTimeClock.
+			SELECT(mysql.RawString("1")).
+			FROM(tTimeClock).
+			WHERE(mysql.AND(
+				tTimeClock.Job.EQ(jobExpr),
+				tTimeClock.UserID.EQ(tUserJobs.UserID),
+			)),
+	)
+	recentTimeclockExists := mysql.EXISTS(
+		tTimeClock.
+			SELECT(mysql.RawString("1")).
+			FROM(tTimeClock).
+			WHERE(mysql.AND(
+				tTimeClock.Job.EQ(jobExpr),
+				tTimeClock.UserID.EQ(tUserJobs.UserID),
+				tTimeClock.Date.GT_EQ(cutoffDate),
+			)),
+	)
 
 	condition := mysql.AND(
-		tTimeClock.Job.EQ(mysql.String(q.Job)),
-		tUserJobs.Job.EQ(mysql.String(q.Job)),
+		tUserJobs.Job.EQ(jobExpr),
 		mysql.OR(
 			mysql.AND(tColleagueProps.AbsenceBegin.IS_NULL(), tColleagueProps.AbsenceEnd.IS_NULL()),
-			tColleagueProps.AbsenceBegin.LT_EQ(
-				mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY))),
-			),
-			tColleagueProps.AbsenceEnd.LT_EQ(
-				mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY))),
-			),
+			tColleagueProps.AbsenceBegin.LT_EQ(cutoffDate),
+			tColleagueProps.AbsenceEnd.LT_EQ(cutoffDate),
 		),
-		tTimeClock.UserID.NOT_IN(
-			tTimeClock.
-				SELECT(tTimeClock.UserID).FROM(tTimeClock).
-				WHERE(mysql.AND(
-					tTimeClock.Job.EQ(mysql.String(q.Job)),
-					tTimeClock.Date.GT_EQ(
-						mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY))),
-					),
-				)).
-				GROUP_BY(tTimeClock.UserID),
-		),
+		anyTimeclockExists,
+		mysql.NOT(recentTimeclockExists),
 	)
 
 	orderBys := []mysql.OrderByClause{}
@@ -692,9 +700,9 @@ func (s *Store) ListInactiveEmployees(
 		orderBys = append(orderBys, tColleague.JobGrade.ASC())
 	}
 
-	stmt := tTimeClock.
+	stmt := tUserJobs.
 		SELECT(
-			tTimeClock.UserID,
+			tUserJobs.UserID,
 			tColleague.ID,
 			tUserJobs.Job.AS("colleague.job"),
 			tUserJobs.Grade.AS("colleague.job_grade"),
@@ -711,23 +719,17 @@ func (s *Store) ListInactiveEmployees(
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
 		).
-		FROM(tTimeClock.
+		FROM(tUserJobs.
 			INNER_JOIN(tColleague,
-				tColleague.ID.EQ(tTimeClock.UserID),
-			).
-			INNER_JOIN(tUserJobs,
-				mysql.AND(
-					tUserJobs.UserID.EQ(tColleague.ID),
-					tUserJobs.Job.EQ(mysql.String(q.Job)),
-				),
+				tColleague.ID.EQ(tUserJobs.UserID),
 			).
 			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tTimeClock.UserID),
+				tUserProps.UserID.EQ(tUserJobs.UserID),
 			).
 			LEFT_JOIN(tColleagueProps,
 				mysql.AND(
-					tColleagueProps.UserID.EQ(tTimeClock.UserID),
-					tColleagueProps.Job.EQ(mysql.String(q.Job)),
+					tColleagueProps.UserID.EQ(tUserJobs.UserID),
+					tColleagueProps.Job.EQ(jobExpr),
 				),
 			).
 			LEFT_JOIN(tAvatar,
@@ -736,24 +738,6 @@ func (s *Store) ListInactiveEmployees(
 		).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
-		GROUP_BY(
-			tTimeClock.UserID,
-			tColleague.ID,
-			tUserJobs.Job,
-			tUserJobs.Grade,
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID,
-			tAvatar.FilePath,
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.AbsenceBegin,
-			tColleagueProps.AbsenceEnd,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-		).
 		OFFSET(q.Offset).
 		LIMIT(q.Limit)
 
