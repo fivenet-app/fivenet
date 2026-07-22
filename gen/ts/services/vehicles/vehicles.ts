@@ -12,6 +12,8 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { VehicleActivity } from "../../resources/vehicles/activity/activity";
+import { VehicleActivityType } from "../../resources/vehicles/activity/activity";
 import { VehicleProps } from "../../resources/vehicles/props/props";
 import { Vehicle } from "../../resources/vehicles/vehicles";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -73,6 +75,10 @@ export interface SetVehiclePropsRequest {
      * @generated from protobuf field: resources.vehicles.props.VehicleProps props = 1
      */
     props?: VehicleProps;
+    /**
+     * @generated from protobuf field: string reason = 2
+     */
+    reason: string;
 }
 /**
  * @generated from protobuf message services.vehicles.SetVehiclePropsResponse
@@ -82,10 +88,40 @@ export interface SetVehiclePropsResponse {
      * @generated from protobuf field: resources.vehicles.props.VehicleProps props = 1
      */
     props?: VehicleProps;
+}
+/**
+ * @generated from protobuf message services.vehicles.ListVehicleActivityRequest
+ */
+export interface ListVehicleActivityRequest {
     /**
-     * @generated from protobuf field: string reason = 2
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
      */
-    reason: string;
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2
+     */
+    sort?: Sort;
+    /**
+     * @generated from protobuf field: string plate = 3
+     */
+    plate: string;
+    /**
+     * @generated from protobuf field: repeated resources.vehicles.activity.VehicleActivityType types = 4
+     */
+    types: VehicleActivityType[];
+}
+/**
+ * @generated from protobuf message services.vehicles.ListVehicleActivityResponse
+ */
+export interface ListVehicleActivityResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.vehicles.activity.VehicleActivity activity = 2
+     */
+    activity: VehicleActivity[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
@@ -242,64 +278,18 @@ export const ListVehiclesResponse = new ListVehiclesResponse$Type();
 class SetVehiclePropsRequest$Type extends MessageType<SetVehiclePropsRequest> {
     constructor() {
         super("services.vehicles.SetVehiclePropsRequest", [
-            { no: 1, name: "props", kind: "message", T: () => VehicleProps, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "props", kind: "message", T: () => VehicleProps, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
     }
     create(value?: PartialMessage<SetVehiclePropsRequest>): SetVehiclePropsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.reason = "";
         if (value !== undefined)
             reflectionMergePartial<SetVehiclePropsRequest>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetVehiclePropsRequest): SetVehiclePropsRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.vehicles.props.VehicleProps props */ 1:
-                    message.props = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: SetVehiclePropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.vehicles.props.VehicleProps props = 1; */
-        if (message.props)
-            VehicleProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.vehicles.SetVehiclePropsRequest
- */
-export const SetVehiclePropsRequest = new SetVehiclePropsRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> {
-    constructor() {
-        super("services.vehicles.SetVehiclePropsResponse", [
-            { no: 1, name: "props", kind: "message", T: () => VehicleProps },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
-        ]);
-    }
-    create(value?: PartialMessage<SetVehiclePropsResponse>): SetVehiclePropsResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.reason = "";
-        if (value !== undefined)
-            reflectionMergePartial<SetVehiclePropsResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetVehiclePropsResponse): SetVehiclePropsResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -321,7 +311,7 @@ class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> 
         }
         return message;
     }
-    internalBinaryWrite(message: SetVehiclePropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: SetVehiclePropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.vehicles.props.VehicleProps props = 1; */
         if (message.props)
             VehicleProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -335,13 +325,191 @@ class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> 
     }
 }
 /**
+ * @generated MessageType for protobuf message services.vehicles.SetVehiclePropsRequest
+ */
+export const SetVehiclePropsRequest = new SetVehiclePropsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> {
+    constructor() {
+        super("services.vehicles.SetVehiclePropsResponse", [
+            { no: 1, name: "props", kind: "message", T: () => VehicleProps }
+        ]);
+    }
+    create(value?: PartialMessage<SetVehiclePropsResponse>): SetVehiclePropsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetVehiclePropsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetVehiclePropsResponse): SetVehiclePropsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.vehicles.props.VehicleProps props */ 1:
+                    message.props = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetVehiclePropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.vehicles.props.VehicleProps props = 1; */
+        if (message.props)
+            VehicleProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
  * @generated MessageType for protobuf message services.vehicles.SetVehiclePropsResponse
  */
 export const SetVehiclePropsResponse = new SetVehiclePropsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListVehicleActivityRequest$Type extends MessageType<ListVehicleActivityRequest> {
+    constructor() {
+        super("services.vehicles.ListVehicleActivityRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "32" } } } },
+            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.vehicles.activity.VehicleActivityType", VehicleActivityType, "VEHICLE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "20", items: { enum: { definedOnly: true } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ListVehicleActivityRequest>): ListVehicleActivityRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.plate = "";
+        message.types = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListVehicleActivityRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListVehicleActivityRequest): ListVehicleActivityRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* string plate */ 3:
+                    message.plate = reader.string();
+                    break;
+                case /* repeated resources.vehicles.activity.VehicleActivityType types */ 4:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.types.push(reader.int32());
+                    else
+                        message.types.push(reader.int32());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListVehicleActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string plate = 3; */
+        if (message.plate !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.plate);
+        /* repeated resources.vehicles.activity.VehicleActivityType types = 4; */
+        if (message.types.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.types.length; i++)
+                writer.int32(message.types[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.vehicles.ListVehicleActivityRequest
+ */
+export const ListVehicleActivityRequest = new ListVehicleActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListVehicleActivityResponse$Type extends MessageType<ListVehicleActivityResponse> {
+    constructor() {
+        super("services.vehicles.ListVehicleActivityResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => VehicleActivity, options: { "codegen.itemslen.enabled": true } }
+        ]);
+    }
+    create(value?: PartialMessage<ListVehicleActivityResponse>): ListVehicleActivityResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.activity = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListVehicleActivityResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListVehicleActivityResponse): ListVehicleActivityResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.vehicles.activity.VehicleActivity activity */ 2:
+                    message.activity.push(VehicleActivity.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListVehicleActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.vehicles.activity.VehicleActivity activity = 2; */
+        for (let i = 0; i < message.activity.length; i++)
+            VehicleActivity.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.vehicles.ListVehicleActivityResponse
+ */
+export const ListVehicleActivityResponse = new ListVehicleActivityResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.vehicles.VehiclesService
  */
 export const VehiclesService = new ServiceType("services.vehicles.VehiclesService", [
     { name: "ListVehicles", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Wanted"] }] } }, I: ListVehiclesRequest, O: ListVehiclesResponse },
-    { name: "SetVehicleProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Wanted"] }] } }, I: SetVehiclePropsRequest, O: SetVehiclePropsResponse }
+    { name: "SetVehicleProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Wanted"] }] } }, I: SetVehiclePropsRequest, O: SetVehiclePropsResponse },
+    { name: "ListVehicleActivity", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Creator"] }] } }, I: ListVehicleActivityRequest, O: ListVehicleActivityResponse }
 ], { "codegen.perms.perms_svc": { order: 40, icon: "i-mdi-car-outline" } });

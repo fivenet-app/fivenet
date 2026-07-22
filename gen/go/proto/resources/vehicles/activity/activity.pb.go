@@ -72,15 +72,15 @@ func (x VehicleActivityType) Number() protoreflect.EnumNumber {
 type VehicleActivity struct {
 	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"vehicle_activity.id"`
-	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"user_activity.created_at"`
-	Plate           string                 `protobuf:"bytes,3,opt,name=plate,proto3" json:"plate,omitempty"`
+	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"vehicle_activity.created_at"`
+	Plate           string                 `protobuf:"bytes,3,opt,name=plate,proto3" json:"plate,omitempty" alias:"vehicle_activity.plate"`
 	ActivityType    VehicleActivityType    `protobuf:"varint,4,opt,name=activity_type,json=activityType,proto3,enum=resources.vehicles.activity.VehicleActivityType" json:"activity_type,omitempty" alias:"vehicle_activity.type"`
-	CreatorId       *int32                 `protobuf:"varint,5,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	CreatorId       *int32                 `protobuf:"varint,5,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"vehicle_activity.creator_id"`
 	Creator         *short.UserShort       `protobuf:"bytes,6,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
-	CreatorJob      string                 `protobuf:"bytes,7,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJob      string                 `protobuf:"bytes,7,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty" alias:"vehicle_activity.creator_job"`
 	CreatorJobLabel *string                `protobuf:"bytes,8,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Reason          *string                `protobuf:"bytes,9,opt,name=reason,proto3,oneof" json:"reason,omitempty" alias:"user_activity.reason"`
-	Data            *VehicleActivityData   `protobuf:"bytes,10,opt,name=data,proto3" json:"data,omitempty"`
+	Reason          *string                `protobuf:"bytes,9,opt,name=reason,proto3,oneof" json:"reason,omitempty" alias:"vehicle_activity.reason"`
+	Data            *VehicleActivityData   `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"vehicle_activity.data"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -319,7 +319,11 @@ func (b0 VehicleActivity_builder) Build() *VehicleActivity {
 }
 
 type VehicleActivityData struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// Types that are valid to be assigned to Data:
+	//
+	//	*VehicleActivityData_WantedChange
+	Data          isVehicleActivityData_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -349,15 +353,276 @@ func (x *VehicleActivityData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *VehicleActivityData) GetData() isVehicleActivityData_Data {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *VehicleActivityData) GetWantedChange() *WantedChange {
+	if x != nil {
+		if x, ok := x.Data.(*VehicleActivityData_WantedChange); ok {
+			return x.WantedChange
+		}
+	}
+	return nil
+}
+
+func (x *VehicleActivityData) SetWantedChange(v *WantedChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &VehicleActivityData_WantedChange{v}
+}
+
+func (x *VehicleActivityData) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *VehicleActivityData) HasWantedChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*VehicleActivityData_WantedChange)
+	return ok
+}
+
+func (x *VehicleActivityData) ClearData() {
+	x.Data = nil
+}
+
+func (x *VehicleActivityData) ClearWantedChange() {
+	if _, ok := x.Data.(*VehicleActivityData_WantedChange); ok {
+		x.Data = nil
+	}
+}
+
+const VehicleActivityData_Data_not_set_case case_VehicleActivityData_Data = 0
+const VehicleActivityData_WantedChange_case case_VehicleActivityData_Data = 1
+
+func (x *VehicleActivityData) WhichData() case_VehicleActivityData_Data {
+	if x == nil {
+		return VehicleActivityData_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *VehicleActivityData_WantedChange:
+		return VehicleActivityData_WantedChange_case
+	default:
+		return VehicleActivityData_Data_not_set_case
+	}
+}
+
 type VehicleActivityData_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	// Fields of oneof Data:
+	WantedChange *WantedChange
+	// -- end of Data
 }
 
 func (b0 VehicleActivityData_builder) Build() *VehicleActivityData {
 	m0 := &VehicleActivityData{}
 	b, x := &b0, m0
 	_, _ = b, x
+	if b.WantedChange != nil {
+		x.Data = &VehicleActivityData_WantedChange{b.WantedChange}
+	}
+	return m0
+}
+
+type case_VehicleActivityData_Data protoreflect.FieldNumber
+
+func (x case_VehicleActivityData_Data) String() string {
+	md := file_resources_vehicles_activity_activity_proto_msgTypes[1].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
+type isVehicleActivityData_Data interface {
+	isVehicleActivityData_Data()
+}
+
+type VehicleActivityData_WantedChange struct {
+	WantedChange *WantedChange `protobuf:"bytes,1,opt,name=wanted_change,json=wantedChange,proto3,oneof"`
+}
+
+func (*VehicleActivityData_WantedChange) isVehicleActivityData_Data() {}
+
+type WantedChange struct {
+	state          protoimpl.MessageState `protogen:"hybrid.v1"`
+	Wanted         bool                   `protobuf:"varint,1,opt,name=wanted,proto3" json:"wanted,omitempty"`
+	PreviousWanted *bool                  `protobuf:"varint,2,opt,name=previous_wanted,json=previousWanted,proto3,oneof" json:"previous_wanted,omitempty"`
+	WantedReason   *string                `protobuf:"bytes,3,opt,name=wanted_reason,json=wantedReason,proto3,oneof" json:"wanted_reason,omitempty"`
+	WantedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=wanted_at,json=wantedAt,proto3,oneof" json:"wanted_at,omitempty"`
+	WantedTill     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=wanted_till,json=wantedTill,proto3,oneof" json:"wanted_till,omitempty"`
+	Auto           bool                   `protobuf:"varint,6,opt,name=auto,proto3" json:"auto,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *WantedChange) Reset() {
+	*x = WantedChange{}
+	mi := &file_resources_vehicles_activity_activity_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WantedChange) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WantedChange) ProtoMessage() {}
+
+func (x *WantedChange) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_vehicles_activity_activity_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *WantedChange) GetWanted() bool {
+	if x != nil {
+		return x.Wanted
+	}
+	return false
+}
+
+func (x *WantedChange) GetPreviousWanted() bool {
+	if x != nil && x.PreviousWanted != nil {
+		return *x.PreviousWanted
+	}
+	return false
+}
+
+func (x *WantedChange) GetWantedReason() string {
+	if x != nil && x.WantedReason != nil {
+		return *x.WantedReason
+	}
+	return ""
+}
+
+func (x *WantedChange) GetWantedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.WantedAt
+	}
+	return nil
+}
+
+func (x *WantedChange) GetWantedTill() *timestamp.Timestamp {
+	if x != nil {
+		return x.WantedTill
+	}
+	return nil
+}
+
+func (x *WantedChange) GetAuto() bool {
+	if x != nil {
+		return x.Auto
+	}
+	return false
+}
+
+func (x *WantedChange) SetWanted(v bool) {
+	x.Wanted = v
+}
+
+func (x *WantedChange) SetPreviousWanted(v bool) {
+	x.PreviousWanted = &v
+}
+
+func (x *WantedChange) SetWantedReason(v string) {
+	x.WantedReason = &v
+}
+
+func (x *WantedChange) SetWantedAt(v *timestamp.Timestamp) {
+	x.WantedAt = v
+}
+
+func (x *WantedChange) SetWantedTill(v *timestamp.Timestamp) {
+	x.WantedTill = v
+}
+
+func (x *WantedChange) SetAuto(v bool) {
+	x.Auto = v
+}
+
+func (x *WantedChange) HasPreviousWanted() bool {
+	if x == nil {
+		return false
+	}
+	return x.PreviousWanted != nil
+}
+
+func (x *WantedChange) HasWantedReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.WantedReason != nil
+}
+
+func (x *WantedChange) HasWantedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.WantedAt != nil
+}
+
+func (x *WantedChange) HasWantedTill() bool {
+	if x == nil {
+		return false
+	}
+	return x.WantedTill != nil
+}
+
+func (x *WantedChange) ClearPreviousWanted() {
+	x.PreviousWanted = nil
+}
+
+func (x *WantedChange) ClearWantedReason() {
+	x.WantedReason = nil
+}
+
+func (x *WantedChange) ClearWantedAt() {
+	x.WantedAt = nil
+}
+
+func (x *WantedChange) ClearWantedTill() {
+	x.WantedTill = nil
+}
+
+type WantedChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Wanted         bool
+	PreviousWanted *bool
+	WantedReason   *string
+	WantedAt       *timestamp.Timestamp
+	WantedTill     *timestamp.Timestamp
+	Auto           bool
+}
+
+func (b0 WantedChange_builder) Build() *WantedChange {
+	m0 := &WantedChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Wanted = b.Wanted
+	x.PreviousWanted = b.PreviousWanted
+	x.WantedReason = b.WantedReason
+	x.WantedAt = b.WantedAt
+	x.WantedTill = b.WantedTill
+	x.Auto = b.Auto
 	return m0
 }
 
@@ -365,52 +630,72 @@ var File_resources_vehicles_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"*resources/vehicles/activity/activity.proto\x12\x1bresources.vehicles.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xe3\x05\n" +
+	"*resources/vehicles/activity/activity.proto\x12\x1bresources.vehicles.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x95\a\n" +
 	"\x0fVehicleActivity\x120\n" +
-	"\x02id\x18\x01 \x01(\x03B \x9a\x84\x9e\x03\x1balias:\"vehicle_activity.id\"R\x02id\x12i\n" +
+	"\x02id\x18\x01 \x01(\x03B \x9a\x84\x9e\x03\x1balias:\"vehicle_activity.id\"R\x02id\x12l\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampB%\x9a\x84\x9e\x03 alias:\"user_activity.created_at\"H\x00R\tcreatedAt\x88\x01\x01\x12\x14\n" +
-	"\x05plate\x18\x03 \x01(\tR\x05plate\x12y\n" +
-	"\ractivity_type\x18\x04 \x01(\x0e20.resources.vehicles.activity.VehicleActivityTypeB\"\x9a\x84\x9e\x03\x1dalias:\"vehicle_activity.type\"R\factivityType\x12\"\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampB(\x9a\x84\x9e\x03#alias:\"vehicle_activity.created_at\"H\x00R\tcreatedAt\x88\x01\x01\x129\n" +
+	"\x05plate\x18\x03 \x01(\tB#\x9a\x84\x9e\x03\x1ealias:\"vehicle_activity.plate\"R\x05plate\x12y\n" +
+	"\ractivity_type\x18\x04 \x01(\x0e20.resources.vehicles.activity.VehicleActivityTypeB\"\x9a\x84\x9e\x03\x1dalias:\"vehicle_activity.type\"R\factivityType\x12L\n" +
 	"\n" +
-	"creator_id\x18\x05 \x01(\x05H\x01R\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\x06 \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x02R\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\a \x01(\tR\n" +
+	"creator_id\x18\x05 \x01(\x05B(\x9a\x84\x9e\x03#alias:\"vehicle_activity.creator_id\"H\x01R\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\x06 \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x02R\acreator\x88\x01\x01\x12J\n" +
+	"\vcreator_job\x18\a \x01(\tB)\x9a\x84\x9e\x03$alias:\"vehicle_activity.creator_job\"R\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\b \x01(\tH\x03R\x0fcreatorJobLabel\x88\x01\x01\x12D\n" +
-	"\x06reason\x18\t \x01(\tB'\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x1calias:\"user_activity.reason\"H\x04R\x06reason\x88\x01\x01\x12D\n" +
+	"\x11creator_job_label\x18\b \x01(\tH\x03R\x0fcreatorJobLabel\x88\x01\x01\x12G\n" +
+	"\x06reason\x18\t \x01(\tB*\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x1falias:\"vehicle_activity.reason\"H\x04R\x06reason\x88\x01\x01\x12m\n" +
 	"\x04data\x18\n" +
-	" \x01(\v20.resources.vehicles.activity.VehicleActivityDataR\x04dataB\r\n" +
+	" \x01(\v20.resources.vehicles.activity.VehicleActivityDataB\"\x9a\x84\x9e\x03\x1dalias:\"vehicle_activity.data\"H\x05R\x04data\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\t\n" +
-	"\a_reason\"\x1d\n" +
-	"\x13VehicleActivityData:\x06\xe2\xf3\x18\x02\b\x01*^\n" +
+	"\a_reasonB\a\n" +
+	"\x05_data\"w\n" +
+	"\x13VehicleActivityData\x12P\n" +
+	"\rwanted_change\x18\x01 \x01(\v2).resources.vehicles.activity.WantedChangeH\x00R\fwantedChange:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
+	"\x04data\"\xde\x02\n" +
+	"\fWantedChange\x12\x16\n" +
+	"\x06wanted\x18\x01 \x01(\bR\x06wanted\x12,\n" +
+	"\x0fprevious_wanted\x18\x02 \x01(\bH\x00R\x0epreviousWanted\x88\x01\x01\x12(\n" +
+	"\rwanted_reason\x18\x03 \x01(\tH\x01R\fwantedReason\x88\x01\x01\x12@\n" +
+	"\twanted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\bwantedAt\x88\x01\x01\x12D\n" +
+	"\vwanted_till\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\n" +
+	"wantedTill\x88\x01\x01\x12\x12\n" +
+	"\x04auto\x18\x06 \x01(\bR\x04autoB\x12\n" +
+	"\x10_previous_wantedB\x10\n" +
+	"\x0e_wanted_reasonB\f\n" +
+	"\n" +
+	"_wanted_atB\x0e\n" +
+	"\f_wanted_till*^\n" +
 	"\x13VehicleActivityType\x12%\n" +
 	"!VEHICLE_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cVEHICLE_ACTIVITY_TYPE_WANTED\x10\x01B`Z^github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity;vehiclesactivityb\x06proto3"
 
 var file_resources_vehicles_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_vehicles_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_resources_vehicles_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_vehicles_activity_activity_proto_goTypes = []any{
 	(VehicleActivityType)(0),    // 0: resources.vehicles.activity.VehicleActivityType
 	(*VehicleActivity)(nil),     // 1: resources.vehicles.activity.VehicleActivity
 	(*VehicleActivityData)(nil), // 2: resources.vehicles.activity.VehicleActivityData
-	(*timestamp.Timestamp)(nil), // 3: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),     // 4: resources.users.short.UserShort
+	(*WantedChange)(nil),        // 3: resources.vehicles.activity.WantedChange
+	(*timestamp.Timestamp)(nil), // 4: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),     // 5: resources.users.short.UserShort
 }
 var file_resources_vehicles_activity_activity_proto_depIdxs = []int32{
-	3, // 0: resources.vehicles.activity.VehicleActivity.created_at:type_name -> resources.timestamp.Timestamp
+	4, // 0: resources.vehicles.activity.VehicleActivity.created_at:type_name -> resources.timestamp.Timestamp
 	0, // 1: resources.vehicles.activity.VehicleActivity.activity_type:type_name -> resources.vehicles.activity.VehicleActivityType
-	4, // 2: resources.vehicles.activity.VehicleActivity.creator:type_name -> resources.users.short.UserShort
+	5, // 2: resources.vehicles.activity.VehicleActivity.creator:type_name -> resources.users.short.UserShort
 	2, // 3: resources.vehicles.activity.VehicleActivity.data:type_name -> resources.vehicles.activity.VehicleActivityData
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	3, // 4: resources.vehicles.activity.VehicleActivityData.wanted_change:type_name -> resources.vehicles.activity.WantedChange
+	4, // 5: resources.vehicles.activity.WantedChange.wanted_at:type_name -> resources.timestamp.Timestamp
+	4, // 6: resources.vehicles.activity.WantedChange.wanted_till:type_name -> resources.timestamp.Timestamp
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_resources_vehicles_activity_activity_proto_init() }
@@ -419,13 +704,17 @@ func file_resources_vehicles_activity_activity_proto_init() {
 		return
 	}
 	file_resources_vehicles_activity_activity_proto_msgTypes[0].OneofWrappers = []any{}
+	file_resources_vehicles_activity_activity_proto_msgTypes[1].OneofWrappers = []any{
+		(*VehicleActivityData_WantedChange)(nil),
+	}
+	file_resources_vehicles_activity_activity_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_vehicles_activity_activity_proto_rawDesc), len(file_resources_vehicles_activity_activity_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

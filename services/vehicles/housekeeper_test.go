@@ -135,13 +135,17 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*plate.*LIMIT \?`).
 		WithArgs("ABC DEF1", sqlmock.AnyArg()).
 		WillReturnRows(
-			sqlmock.NewRows([]string{"plate", "wanted"}).
+			sqlmock.NewRows([]string{"vehicle_props.plate", "vehicle_props.wanted"}).
 				AddRow("ABC DEF1", true),
 		)
 
 	// Make sure the query flips wanted to false for matched user.
+	mock.ExpectBegin()
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_vehicles_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicles_activity`).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
 	require.NoError(t, err)
@@ -181,15 +185,23 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleVehicles(t *testing.T
 
 	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*plate.*LIMIT \?`).
 		WithArgs("ABC DEF1", sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"plate", "wanted"}).AddRow("ABC DEF1", true))
+		WillReturnRows(sqlmock.NewRows([]string{"vehicle_props.plate", "vehicle_props.wanted"}).AddRow("ABC DEF1", true))
+	mock.ExpectBegin()
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_vehicles_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicles_activity`).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
 
 	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*plate.*LIMIT \?`).
 		WithArgs("ABC XYZ2", sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"plate", "wanted"}).AddRow("ABC XYZ2", true))
+		WillReturnRows(sqlmock.NewRows([]string{"vehicle_props.plate", "vehicle_props.wanted"}).AddRow("ABC XYZ2", true))
+	mock.ExpectBegin()
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_vehicles_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicles_activity`).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
 	require.NoError(t, err)

@@ -130,7 +130,14 @@ func (s *Server) SetVehicleProps(
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	props, err := s.store.UpdateProps(ctx, req.GetProps())
+	creatorID := userInfo.GetUserId()
+	props, err := s.store.UpdateProps(
+		ctx,
+		req.GetProps(),
+		&creatorID,
+		userInfo.GetJob(),
+		req.GetReason(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}

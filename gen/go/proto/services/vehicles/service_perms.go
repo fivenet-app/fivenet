@@ -17,6 +17,20 @@ func init() {
 		{
 			Namespace: permkeys.Namespace,
 			Service:   permkeys.VehiclesServicePerm,
+			Name:      permkeys.VehiclesServiceListVehicleActivityPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.VehiclesServiceListVehicleActivityFieldsPermField,
+					Type:        permissionsattributes.StringListAttributeType,
+					ValidValues: []string{"Creator"},
+				},
+			},
+			Order: 4000,
+			Icon:  "i-mdi-car-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.VehiclesServicePerm,
 			Name:      permkeys.VehiclesServiceListVehiclesPerm,
 			Attrs: []perms.Attr{
 				{

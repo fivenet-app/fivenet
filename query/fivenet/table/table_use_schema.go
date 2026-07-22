@@ -128,6 +128,7 @@ func UseSchema(schema string) {
 	FivenetUserLicenses = FivenetUserLicenses.FromSchema(schema)
 	FivenetUserPhoneNumbers = FivenetUserPhoneNumbers.FromSchema(schema)
 	FivenetUserProps = FivenetUserProps.FromSchema(schema)
+	FivenetVehiclesActivity = FivenetVehiclesActivity.FromSchema(schema)
 	FivenetVehiclesProps = FivenetVehiclesProps.FromSchema(schema)
 	FivenetWikiPages = FivenetWikiPages.FromSchema(schema)
 	FivenetWikiPagesAccess = FivenetWikiPagesAccess.FromSchema(schema)

@@ -7052,13 +7052,34 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
 | `reason` | [string](#string) | optional |  |
-| `data` | [VehicleActivityData](#resourcesvehiclesactivityVehicleActivityData) |  |  |
+| `data` | [VehicleActivityData](#resourcesvehiclesactivityVehicleActivityData) | optional |  |
 
 
 
 
 
 ### resources.vehicles.activity.VehicleActivityData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `wanted_change` | [WantedChange](#resourcesvehiclesactivityWantedChange) |  |  |
+
+
+
+
+
+### resources.vehicles.activity.WantedChange
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `wanted` | [bool](#bool) |  |  |
+| `previous_wanted` | [bool](#bool) | optional |  |
+| `wanted_reason` | [string](#string) | optional |  |
+| `wanted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `wanted_till` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `auto` | [bool](#bool) |  |  |
 
 
 
@@ -13738,6 +13759,32 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 ## services/vehicles/vehicles.proto
 
 
+### services.vehicles.ListVehicleActivityRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
+| `plate` | [string](#string) |  |  |
+| `types` | [resources.vehicles.activity.VehicleActivityType](#resourcesvehiclesactivityVehicleActivityType) | repeated |  |
+
+
+
+
+
+### services.vehicles.ListVehicleActivityResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `activity` | [resources.vehicles.activity.VehicleActivity](#resourcesvehiclesactivityVehicleActivity) | repeated |  |
+
+
+
+
+
 ### services.vehicles.ListVehiclesRequest
 
 
@@ -13773,6 +13820,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  |  |
+| `reason` | [string](#string) |  |  |
 
 
 
@@ -13784,7 +13832,6 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  |  |
-| `reason` | [string](#string) |  |  |
 
 
 
@@ -13802,6 +13849,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | ----------- | ------------ | ------------- | ------------|
 | `ListVehicles` | [ListVehiclesRequest](#servicesvehiclesListVehiclesRequest) | [ListVehiclesResponse](#servicesvehiclesListVehiclesResponse) | |
 | `SetVehicleProps` | [SetVehiclePropsRequest](#servicesvehiclesSetVehiclePropsRequest) | [SetVehiclePropsResponse](#servicesvehiclesSetVehiclePropsResponse) | |
+| `ListVehicleActivity` | [ListVehicleActivityRequest](#servicesvehiclesListVehicleActivityRequest) | [ListVehicleActivityResponse](#servicesvehiclesListVehicleActivityResponse) | |
 
  <!-- end services -->
 

@@ -5,6 +5,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { VehiclesService } from "./vehicles";
+import type { ListVehicleActivityResponse } from "./vehicles";
+import type { ListVehicleActivityRequest } from "./vehicles";
 import type { SetVehiclePropsResponse } from "./vehicles";
 import type { SetVehiclePropsRequest } from "./vehicles";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
@@ -24,6 +26,10 @@ export interface IVehiclesServiceClient {
      * @generated from protobuf rpc: SetVehicleProps
      */
     setVehicleProps(input: SetVehiclePropsRequest, options?: RpcOptions): UnaryCall<SetVehiclePropsRequest, SetVehiclePropsResponse>;
+    /**
+     * @generated from protobuf rpc: ListVehicleActivity
+     */
+    listVehicleActivity(input: ListVehicleActivityRequest, options?: RpcOptions): UnaryCall<ListVehicleActivityRequest, ListVehicleActivityResponse>;
 }
 /**
  * @generated from protobuf service services.vehicles.VehiclesService
@@ -47,5 +53,12 @@ export class VehiclesServiceClient implements IVehiclesServiceClient, ServiceInf
     setVehicleProps(input: SetVehiclePropsRequest, options?: RpcOptions): UnaryCall<SetVehiclePropsRequest, SetVehiclePropsResponse> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetVehiclePropsRequest, SetVehiclePropsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: ListVehicleActivity
+     */
+    listVehicleActivity(input: ListVehicleActivityRequest, options?: RpcOptions): UnaryCall<ListVehicleActivityRequest, ListVehicleActivityResponse> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListVehicleActivityRequest, ListVehicleActivityResponse>("unary", this._transport, method, opt, input);
     }
 }

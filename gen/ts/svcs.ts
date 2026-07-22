@@ -499,6 +499,7 @@ export const grpcMethods = [
 	'sync.SyncService/DeleteData',
 	'vehicles.VehiclesService/ListVehicles',
 	'vehicles.VehiclesService/SetVehicleProps',
+	'vehicles.VehiclesService/ListVehicleActivity',
 	'wiki.CollabService/JoinRoom',
 	'wiki.WikiService/ListPages',
 	'wiki.WikiService/GetPage',

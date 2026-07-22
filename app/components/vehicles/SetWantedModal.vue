@@ -35,12 +35,15 @@ async function setWantedState(values: Schema): Promise<void> {
     const vProps: VehicleProps = {
         plate: props.plate,
         wanted: vehicleProps.value ? !vehicleProps.value.wanted : true,
-        wantedReason: values.reason,
     };
+    if (vProps.wanted) {
+        vProps.wantedReason = values.reason;
+    }
 
     try {
         const call = vehiclesVehiclesClient.setVehicleProps({
             props: vProps,
+            reason: values.reason,
         });
         const { response } = await call;
 

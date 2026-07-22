@@ -3,6 +3,14 @@
 
 package vehicles
 
+// ItemsLen returns the length of Activity.
+func (m *ListVehicleActivityResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetActivity())
+}
+
 // ItemsLen returns the length of Vehicles.
 func (m *ListVehiclesResponse) ItemsLen() int {
 	if m == nil {
