@@ -1,13 +1,13 @@
 # syntax=docker/dockerfile:1.25-labs
 
 # Frontend Build
-FROM docker.io/library/node:24.16.0-alpine3.22 AS nodebuilder
+FROM docker.io/library/node:24.18.0-alpine3.24 AS nodebuilder
 
 WORKDIR /app
 
 COPY --exclude=public/images/livemap/ . ./
 
-RUN apk add --no-cache git && \
+RUN apk add --no-cache git python3 make gcc g++ && \
     corepack enable && \
     corepack prepare pnpm@10.34.5 --activate && \
     pnpm install && \

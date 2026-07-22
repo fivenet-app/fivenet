@@ -4,7 +4,6 @@ package jobsstore
 import (
 	"context"
 	"errors"
-	"fmt"
 	"slices"
 	"time"
 
@@ -500,7 +499,6 @@ func (s *Store) ListTimeclock(
 		}
 	}
 
-	fmt.Println(stmt.DebugSql())
 	return entries, nil
 }
 
@@ -596,16 +594,16 @@ func (s *Store) ListTimeclockTimeline(
 				).
 				INNER_JOIN(tUserJobs,
 					mysql.AND(
-						tUserJobs.UserID.EQ(tColleague.ID),
+						tUserJobs.UserID.EQ(tTimeClock.UserID),
 						tUserJobs.Job.EQ(mysql.String(q.Job)),
 					),
 				).
 				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tColleague.ID),
+					tUserProps.UserID.EQ(tTimeClock.UserID),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
-						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleagueProps.UserID.EQ(tTimeClock.UserID),
 						tColleagueProps.Job.EQ(mysql.String(q.Job)),
 					),
 				).
@@ -714,14 +712,27 @@ func (s *Store) ListInactiveEmployees(
 			tColleagueProps.NameSuffix,
 		).
 		FROM(tTimeClock.
-			INNER_JOIN(tColleague, tColleague.ID.EQ(tTimeClock.UserID)).
-			INNER_JOIN(tUserJobs, mysql.AND(
-				tUserJobs.UserID.EQ(tColleague.ID),
-				tUserJobs.Job.EQ(mysql.String(q.Job))),
+			INNER_JOIN(tColleague,
+				tColleague.ID.EQ(tTimeClock.UserID),
 			).
-			LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tTimeClock.UserID)).
-			LEFT_JOIN(tColleagueProps, mysql.AND(tColleagueProps.UserID.EQ(tTimeClock.UserID), tColleagueProps.Job.EQ(mysql.String(q.Job)))).
-			LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tUserProps.AvatarFileID)),
+			INNER_JOIN(tUserJobs,
+				mysql.AND(
+					tUserJobs.UserID.EQ(tColleague.ID),
+					tUserJobs.Job.EQ(mysql.String(q.Job)),
+				),
+			).
+			LEFT_JOIN(tUserProps,
+				tUserProps.UserID.EQ(tTimeClock.UserID),
+			).
+			LEFT_JOIN(tColleagueProps,
+				mysql.AND(
+					tColleagueProps.UserID.EQ(tTimeClock.UserID),
+					tColleagueProps.Job.EQ(mysql.String(q.Job)),
+				),
+			).
+			LEFT_JOIN(tAvatar,
+				tAvatar.ID.EQ(tUserProps.AvatarFileID),
+			),
 		).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
