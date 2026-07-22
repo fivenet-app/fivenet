@@ -359,9 +359,9 @@ func (h *Handler[P]) GetFileByPath(ctx context.Context, path string) (int64, str
 		LIMIT(1)
 
 	f := &struct {
-		ID       int64  `jet:"id"`
-		ParentID P      `jet:"parent_id"`
-		FilePath string `jet:"file_path"`
+		ID       int64  `alias:"id"`
+		ParentID P      `alias:"parent_id"`
+		FilePath string `alias:"file_path"`
 	}{}
 	if err := stmt.QueryContext(ctx, h.db, f); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -495,7 +495,7 @@ func (h *Handler[P]) DeleteFileByPath(ctx context.Context, parentId P, path stri
 func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int64) (int64, error) {
 	// 1. Try to lock an existing row via the UNIQUE(file_path) index
 	var fileId struct {
-		ID int64 `jet:"id"`
+		ID int64 `alias:"id"`
 	}
 	err := tFiles.
 		SELECT(tFiles.ID.AS("id")).
