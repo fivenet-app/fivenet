@@ -261,7 +261,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	}
 	consumer, err := s.js.CreateOrUpdateConsumer(ctx, notifi.StreamName, consCfg)
 	if err != nil {
-		return fmt.Errorf("failed to create consumer. %w", err)
+		return fmt.Errorf("failed to create consumer (%v). %w", consCfg.FilterSubjects, err)
 	}
 	// Keep the durable consumer alive across websocket stream restarts on the
 	// same connection. The consumer will expire via InactiveThreshold once the

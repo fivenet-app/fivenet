@@ -4,6 +4,7 @@ package jobsstore
 import (
 	"context"
 	"errors"
+	"fmt"
 	"slices"
 	"time"
 
@@ -471,17 +472,17 @@ func (s *Store) ListTimeclock(
 				).
 				INNER_JOIN(tUserJobs,
 					mysql.AND(
-						tUserJobs.UserID.EQ(tColleague.ID),
+						tUserJobs.UserID.EQ(aggUserID),
 						tUserJobs.Job.EQ(mysql.String(userInfoJob)),
 					),
 				).
 				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tColleague.ID),
+					tUserProps.UserID.EQ(aggUserID),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
-						tColleagueProps.UserID.EQ(tColleague.ID),
-						tColleague.Job.EQ(mysql.String(userInfoJob)),
+						tColleagueProps.UserID.EQ(aggUserID),
+						tColleagueProps.Job.EQ(mysql.String(userInfoJob)),
 					),
 				).
 				LEFT_JOIN(tAvatar,
@@ -499,6 +500,7 @@ func (s *Store) ListTimeclock(
 		}
 	}
 
+	fmt.Println(stmt.DebugSql())
 	return entries, nil
 }
 

@@ -4,7 +4,6 @@ import { CalendarDate } from '@internationalized/date';
 import type { Form, TableColumn, TabsItem } from '@nuxt/ui';
 import { addDays, addWeeks, isBefore, isFuture, nextSaturday, subDays, subMonths, subWeeks } from 'date-fns';
 import { z } from 'zod';
-import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
@@ -118,12 +117,11 @@ watch(props, setFromProps);
 const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-const timeclockKey = computed(
+const { data, status, refresh, error } = useLazyAsyncData(
     () =>
-        `jobs-timeclock-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.date.start.toDateString()}-${validatedQuery.value.date.end.toDateString()}-${validatedQuery.value.perDay}-${validatedQuery.value.users.join(',')}-${validatedQuery.value.page}`,
+        `jobs-timeclock-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.date.start.toDateString()}-${validatedQuery.value.date.end.toDateString()}-${validatedQuery.value.perDay}-${validatedQuery.value.mode}-${validatedQuery.value.viewMode}-${validatedQuery.value.users.join(',')}-${validatedQuery.value.page}`,
+    () => listTimeclockEntries(validatedQuery.value),
 );
-
-const { data, status, refresh, error } = useLazyAsyncData(timeclockKey, () => listTimeclockEntries(validatedQuery.value));
 
 async function listTimeclockEntries(values: Schema): Promise<ListTimeclockResponse> {
     try {
@@ -577,15 +575,7 @@ const { game } = useAppConfig();
                 </template>
 
                 <template #name-cell="{ row }">
-                    <div class="inline-flex items-center gap-1">
-                        <ProfilePictureImg
-                            :src="row.original.user?.profilePicture"
-                            :name="`${row.original.user?.firstname} ${row.original.user?.lastname}`"
-                            size="xs"
-                        />
-
-                        <ColleagueInfoPopover :user="row.original.user" />
-                    </div>
+                    <ColleagueInfoPopover :user="row.original.user" show-avatar />
                 </template>
 
                 <template #rank-cell="{ row }">
