@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import LicensePlate from '~/components/partials/LicensePlate.vue';
 import { VehicleActivityType, type VehicleActivity } from '~~/gen/ts/resources/vehicles/activity/activity';
 import { vehicleActivityIconColor, vehicleActivityTypeIcon } from './helpers';
 
@@ -21,11 +20,13 @@ const reasonHtml = computed(() => {
 </script>
 
 <template>
-    <li class="px-4 py-4 sm:px-6">
+    <li
+        class="flex-initial border-default p-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
+    >
         <template
             v-if="activity.activityType === VehicleActivityType.WANTED && activity.data?.data.oneofKind === 'wantedChange'"
         >
-            <div class="flex gap-3">
+            <div class="flex space-x-3">
                 <div class="my-auto flex size-10 shrink-0 items-center justify-center rounded-full">
                     <UIcon
                         :class="[vehicleActivityIconColor(activity), 'size-full']"
@@ -46,8 +47,6 @@ const reasonHtml = computed(() => {
                                     }}
                                 </span>
                             </h3>
-
-                            <LicensePlate :plate="activity.plate" />
                         </div>
 
                         <p class="shrink-0 text-sm text-dimmed">
@@ -74,7 +73,7 @@ const reasonHtml = computed(() => {
                             }}</span>
                         </p>
 
-                        <p v-if="activity.creator" class="inline-flex min-w-0 text-sm">
+                        <p v-if="activity.creator" class="inline-flex min-w-0 justify-end text-sm md:justify-self-end">
                             {{ $t('common.created_by') }}
                             <CitizenInfoPopover class="ml-1" :user="activity.creator" />
                         </p>

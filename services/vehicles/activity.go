@@ -75,10 +75,11 @@ func (s *Server) ListVehicleActivity(
 	canViewCreator := fields.Contains(
 		permsvehicles.VehiclesServiceListVehicleActivityFieldsPermValueCreator,
 	) || userInfo.GetJobAdmin()
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetActivity() {
 		if canViewCreator {
 			if resp.GetActivity()[i].GetCreator() != nil {
-				s.enricher.EnrichJobInfo(resp.GetActivity()[i].GetCreator())
+				jobInfoFn(resp.GetActivity()[i].GetCreator())
 			}
 		} else {
 			resp.Activity[i].CreatorId = nil
