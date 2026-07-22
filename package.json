@@ -163,7 +163,7 @@
         "release-it": "20.2.1",
         "sass": "1.101.3",
         "tailwindcss": "4.3.3",
-        "typescript": "6.0.3",
+        "typescript": "7.0.2",
         "vite": "8.1.5",
         "vitest": "4.1.10",
         "vue-router": "5.2.0",
