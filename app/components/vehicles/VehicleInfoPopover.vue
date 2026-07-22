@@ -9,7 +9,15 @@ const overlay = useOverlay();
 
 const setWantedModal = overlay.create(SetWantedModal);
 
-const { can } = useAuth();
+const { attr, can } = useAuth();
+
+const canViewWanted = computed(() => attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value);
+const canSetWanted = computed(
+    () =>
+        canViewWanted.value &&
+        can('vehicles.VehiclesService/SetVehicleProps').value &&
+        attr('vehicles.VehiclesService/SetVehicleProps', 'Fields', 'Wanted').value,
+);
 </script>
 
 <template>
@@ -20,7 +28,7 @@ const { can } = useAuth();
             <div class="p-4">
                 <div class="grid grid-cols-1 gap-2">
                     <UTooltip
-                        v-if="can('vehicles.VehiclesService/SetVehicleProps').value"
+                        v-if="canSetWanted"
                         :text="vehicle?.props?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
                     >
                         <UButton
@@ -49,7 +57,7 @@ const { can } = useAuth();
                         <GenericTime class="ml-1" :value="vehicle.props?.updatedAt" />
                     </li>
 
-                    <li v-if="vehicle.props?.wanted" class="inline-flex items-center gap-2">
+                    <li v-if="canViewWanted && vehicle.props?.wanted" class="inline-flex items-center gap-2">
                         <UBadge color="error" :label="$t('common.wanted').toUpperCase()" />
 
                         <span class="line-clamp-3 font-semibold">{{ $t('common.reason') }}:</span>

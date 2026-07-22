@@ -29,6 +29,16 @@ func (s *Server) ListVehicleActivity(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
+	if !userInfo.GetJobAdmin() &&
+		!fields.Contains(permsvehicles.VehiclesServiceListVehicleActivityFieldsPermValueOwn) {
+		isOwner, err := s.store.IsVehicleOwner(ctx, req.GetPlate(), userInfo.GetUserId())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
+		}
+		if isOwner {
+			return resp, nil
+		}
+	}
 
 	queryOpts := vehiclesstore.CountVehicleActivityOptions{
 		VehicleActivityOptions: vehiclesstore.VehicleActivityOptions{

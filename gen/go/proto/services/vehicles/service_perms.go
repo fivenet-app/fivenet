@@ -22,7 +22,7 @@ func init() {
 				{
 					Key:         permkeys.VehiclesServiceListVehicleActivityFieldsPermField,
 					Type:        permissionsattributes.StringListAttributeType,
-					ValidValues: []string{"Creator"},
+					ValidValues: []string{"Creator", "Own"},
 				},
 			},
 			Order: 4000,

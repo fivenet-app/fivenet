@@ -137,6 +137,7 @@ const policePermissions = [
     'settings.SettingsService/SetJobProps',
     'settings.SettingsService/UpdateRolePerms',
     'settings.SettingsService/ViewAuditLog',
+    'vehicles.VehiclesService/ListVehicleActivity',
     'vehicles.VehiclesService/ListVehicles',
     'vehicles.VehiclesService/SetVehicleProps',
     'wiki.WikiService/CreatePage',
@@ -253,6 +254,7 @@ const policeAttributes = [
     templateAttribute('qualifications.QualificationsService/UpdateQualification', 'Fields'),
     templateAttribute('centrum.CentrumService/UpdateSettings', 'Access'),
     templateAttribute('vehicles.VehiclesService/ListVehicles', 'Fields'),
+    templateAttribute('vehicles.VehiclesService/ListVehicleActivity', 'Fields'),
     templateAttribute('vehicles.VehiclesService/SetVehicleProps', 'Fields'),
 ] as const satisfies readonly TemplateAttribute[];
 

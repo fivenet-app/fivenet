@@ -25,6 +25,7 @@ type VehiclesServiceListVehicleActivityFieldsPermValue string
 
 const (
 	VehiclesServiceListVehicleActivityFieldsPermValueCreator VehiclesServiceListVehicleActivityFieldsPermValue = "Creator"
+	VehiclesServiceListVehicleActivityFieldsPermValueOwn     VehiclesServiceListVehicleActivityFieldsPermValue = "Own"
 )
 
 type VehiclesServiceListVehiclesFieldsPermValue string

@@ -16,6 +16,7 @@ import (
 type IStore interface {
 	Count(ctx context.Context, q ListQuery) (int64, error)
 	List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Vehicle, error)
+	IsVehicleOwner(ctx context.Context, plate string, userID int32) (bool, error)
 	GetProps(ctx context.Context, plate string) (*vehiclesprops.VehicleProps, error)
 	UpdateProps(
 		ctx context.Context,

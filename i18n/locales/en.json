@@ -1616,6 +1616,21 @@
                 }
             }
         },
+        "vehicles": {
+            "VehicleInfoSlideover": {
+                "title": "Vehicle Info"
+            },
+            "VehicleActivityFeedEntry": {
+                "wanted_set": "Set the vehicle as",
+                "automatic": "Automatic update"
+            },
+            "VehicleActivityFeed": {
+                "own": {
+                    "title": "You aren't able to see your own vehicle activity feed",
+                    "message": "Because you don't have permissions to see your own vehicle activity feed."
+                }
+            }
+        },
         "CookieControl": {
             "title": "We use cookies!",
             "subtitle": "The main purpose of our cookies is to enable you to log in with our social login providers.",
@@ -3121,6 +3136,12 @@
                 "FINE": "Fines"
             }
         },
+        "vehicles": {
+            "VehicleActivityType": {
+                "UNSPECIFIED": "Unspecified",
+                "WANTED": "Wanted"
+            }
+        },
         "documents": {
             "AccessLevel": {
                 "UNSPECIFIED": "Unspecified",
@@ -3491,6 +3512,17 @@
                     },
                     "attrs_types": {
                         "Fields": "Vehicle Properties Fields"
+                    }
+                },
+                "ListVehicleActivity": {
+                    "key": "List Vehicle Activity",
+                    "description": "Vehicle activity feed.",
+                    "attrs": {
+                        "Creator": "Creator",
+                        "Own": "Own Vehicle Activity Feed"
+                    },
+                    "attrs_types": {
+                        "Fields": "Fields"
                     }
                 },
                 "SetVehicleProps": {

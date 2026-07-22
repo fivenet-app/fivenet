@@ -538,7 +538,7 @@ export const PermAttributes = {
 	'vehicles.VehiclesService/ListVehicleActivity': {
 		'Fields': {
 			type: 'stringList',
-			values: ['Creator',] as const,
+			values: ['Creator','Own',] as const,
 		},
 	},
 	'vehicles.VehiclesService/ListVehicles': {

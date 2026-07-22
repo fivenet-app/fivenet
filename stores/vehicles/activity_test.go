@@ -100,6 +100,52 @@ func TestStoreListVehicleActivityAppliesSortAndCreatorJoin(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestStoreIsVehicleOwner(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(db, &config.CustomDB{})
+
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_owned_vehicles AS vehicle`) +
+		`(?s).*` + regexp.QuoteMeta(`INNER JOIN fivenet_user AS user_short ON`) +
+		`(?s).*` + regexp.QuoteMeta(`vehicle.plate = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`user_short.id = ?`)
+	mock.ExpectQuery(expectedQuery).
+		WithArgs("ABC DEF1", int32(7), int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{"plate"}).AddRow("ABC DEF1"))
+
+	owner, err := store.IsVehicleOwner(t.Context(), "ABC DEF1", 7)
+	require.NoError(t, err)
+	assert.True(t, owner)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreIsVehicleOwnerReturnsFalseWhenNoPersonalOwner(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(db, &config.CustomDB{})
+
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_owned_vehicles AS vehicle`) +
+		`(?s).*` + regexp.QuoteMeta(`INNER JOIN fivenet_user AS user_short ON`) +
+		`(?s).*` + regexp.QuoteMeta(`vehicle.plate = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`user_short.id = ?`)
+	mock.ExpectQuery(expectedQuery).
+		WithArgs("JOB CAR1", int32(7), int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{"plate"}))
+
+	owner, err := store.IsVehicleOwner(t.Context(), "JOB CAR1", 7)
+	require.NoError(t, err)
+	assert.False(t, owner)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreUpdatePropsWritesWantedActivity(t *testing.T) {
 	t.Parallel()
 

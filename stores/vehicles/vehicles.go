@@ -125,6 +125,34 @@ func (s *Store) List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Veh
 	return vehicles, nil
 }
 
+func (s *Store) IsVehicleOwner(ctx context.Context, plate string, userID int32) (bool, error) {
+	tVehicles := table.FivenetOwnedVehicles.AS("vehicle")
+	tUsers := table.FivenetUser.AS("user_short")
+
+	var owner struct {
+		Plate string `alias:"plate"`
+	}
+	stmt := tVehicles.
+		SELECT(tVehicles.Plate.AS("plate")).
+		FROM(tVehicles.
+			INNER_JOIN(tUsers, tUsers.ID.EQ(tVehicles.UserID)),
+		).
+		WHERE(mysql.AND(
+			tVehicles.Plate.EQ(mysql.String(plate)),
+			tUsers.ID.EQ(mysql.Int32(userID)),
+		)).
+		LIMIT(1)
+
+	if err := stmt.QueryContext(ctx, s.db, &owner); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return owner.Plate != "", nil
+}
+
 func (s *Store) GetProps(ctx context.Context, plate string) (*vehiclesprops.VehicleProps, error) {
 	props := &vehiclesprops.VehicleProps{}
 	if err := props.LoadFromDB(ctx, s.db, plate); err != nil {

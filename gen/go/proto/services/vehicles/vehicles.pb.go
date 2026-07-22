@@ -715,14 +715,14 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12N\n" +
-	"\bactivity\x18\x02 \x03(\v2,.resources.vehicles.activity.VehicleActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xc4\x03\n" +
+	"\bactivity\x18\x02 \x03(\v2,.resources.vehicles.activity.VehicleActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xc9\x03\n" +
 	"\x0fVehiclesService\x12{\n" +
 	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\"\x1a\xd2\xf3\x18\x16\b\x01:\x12\n" +
 	"\x06Fields\x18\x01\"\x06Wanted\x12\x84\x01\n" +
 	"\x0fSetVehicleProps\x12).services.vehicles.SetVehiclePropsRequest\x1a*.services.vehicles.SetVehiclePropsResponse\"\x1a\xd2\xf3\x18\x16\b\x01:\x12\n" +
-	"\x06Fields\x18\x01\"\x06Wanted\x12\x91\x01\n" +
-	"\x13ListVehicleActivity\x12-.services.vehicles.ListVehicleActivityRequest\x1a..services.vehicles.ListVehicleActivityResponse\"\x1b\xd2\xf3\x18\x17\b\x01:\x13\n" +
-	"\x06Fields\x18\x01\"\aCreator\x1a\x19\xea\xf3\x18\x15\b(\x12\x11i-mdi-car-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
+	"\x06Fields\x18\x01\"\x06Wanted\x12\x96\x01\n" +
+	"\x13ListVehicleActivity\x12-.services.vehicles.ListVehicleActivityRequest\x1a..services.vehicles.ListVehicleActivityResponse\" \xd2\xf3\x18\x1c\b\x01:\x18\n" +
+	"\x06Fields\x18\x01\"\aCreator\"\x03Own\x1a\x19\xea\xf3\x18\x15\b(\x12\x11i-mdi-car-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
 
 var file_services_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_services_vehicles_vehicles_proto_goTypes = []any{
