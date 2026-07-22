@@ -19,24 +19,48 @@ enum VehicleActivityType {
 
 message VehicleActivity {
   int64 id = 1 [(tagger.tags) = "alias:\"vehicle_activity.id\""];
-  optional resources.timestamp.Timestamp created_at = 2 [(tagger.tags) = "alias:\"user_activity.created_at\""];
-  string plate = 3 [(buf.validate.field).string.max_len = 32];
+  optional resources.timestamp.Timestamp created_at = 2 [(tagger.tags) = "alias:\"vehicle_activity.created_at\""];
+  string plate = 3 [
+    (buf.validate.field).string.max_len = 32,
+    (tagger.tags) = "alias:\"vehicle_activity.plate\""
+  ];
   VehicleActivityType activity_type = 4 [
     (buf.validate.field).enum.defined_only = true,
     (tagger.tags) = "alias:\"vehicle_activity.type\""
   ];
-  optional int32 creator_id = 5 [(buf.validate.field).int32.gt = 0];
+  optional int32 creator_id = 5 [
+    (buf.validate.field).int32.gt = 0,
+    (tagger.tags) = "alias:\"vehicle_activity.creator_id\""
+  ];
   optional resources.users.short.UserShort creator = 6 [(tagger.tags) = "alias:\"creator\""];
-  string creator_job = 7 [(buf.validate.field).string.max_len = 20];
+  string creator_job = 7 [
+    (buf.validate.field).string.max_len = 20,
+    (tagger.tags) = "alias:\"vehicle_activity.creator_job\""
+  ];
   optional string creator_job_label = 8 [(buf.validate.field).string.max_len = 50];
   optional string reason = 9 [
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {enabled: true},
-    (tagger.tags) = "alias:\"user_activity.reason\""
+    (tagger.tags) = "alias:\"vehicle_activity.reason\""
   ];
-  VehicleActivityData data = 10;
+  optional VehicleActivityData data = 10 [(tagger.tags) = "alias:\"vehicle_activity.data\""];
 }
 
 message VehicleActivityData {
   option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  oneof data {
+    option (buf.validate.oneof).required = true;
+
+    WantedChange wanted_change = 1;
+  }
+}
+
+message WantedChange {
+  bool wanted = 1;
+  optional bool previous_wanted = 2;
+  optional string wanted_reason = 3 [(buf.validate.field).string.max_len = 255];
+  optional resources.timestamp.Timestamp wanted_at = 4;
+  optional resources.timestamp.Timestamp wanted_till = 5;
+  bool auto = 6;
 }

@@ -13,10 +13,19 @@ const (
 	VehiclesServicePerm perms.Service = "VehiclesService"
 
 	// Service: vehicles.VehiclesService
-	VehiclesServiceListVehiclesPerm               perms.Name = "ListVehicles"
-	VehiclesServiceListVehiclesFieldsPermField    perms.Key  = "Fields"
-	VehiclesServiceSetVehiclePropsPerm            perms.Name = "SetVehicleProps"
-	VehiclesServiceSetVehiclePropsFieldsPermField perms.Key  = "Fields"
+	VehiclesServiceListVehicleActivityPerm            perms.Name = "ListVehicleActivity"
+	VehiclesServiceListVehicleActivityFieldsPermField perms.Key  = "Fields"
+	VehiclesServiceListVehiclesPerm                   perms.Name = "ListVehicles"
+	VehiclesServiceListVehiclesFieldsPermField        perms.Key  = "Fields"
+	VehiclesServiceSetVehiclePropsPerm                perms.Name = "SetVehicleProps"
+	VehiclesServiceSetVehiclePropsFieldsPermField     perms.Key  = "Fields"
+)
+
+type VehiclesServiceListVehicleActivityFieldsPermValue string
+
+const (
+	VehiclesServiceListVehicleActivityFieldsPermValueCreator VehiclesServiceListVehicleActivityFieldsPermValue = "Creator"
+	VehiclesServiceListVehicleActivityFieldsPermValueOwn     VehiclesServiceListVehicleActivityFieldsPermValue = "Own"
 )
 
 type VehiclesServiceListVehiclesFieldsPermValue string
@@ -32,8 +41,14 @@ const (
 )
 
 type VehiclesServicePerms struct {
-	ListVehicles    VehiclesServiceListVehiclesPermRef
-	SetVehicleProps VehiclesServiceSetVehiclePropsPermRef
+	ListVehicleActivity VehiclesServiceListVehicleActivityPermRef
+	ListVehicles        VehiclesServiceListVehiclesPermRef
+	SetVehicleProps     VehiclesServiceSetVehiclePropsPermRef
+}
+type VehiclesServiceListVehicleActivityPermRef struct {
+	Perm        perms.PermissionRef
+	Fields      perms.AttrRef[perms.StringListAttr]
+	FieldsTyped perms.StringListAttrRef[VehiclesServiceListVehicleActivityFieldsPermValue]
 }
 type VehiclesServiceListVehiclesPermRef struct {
 	Perm        perms.PermissionRef
@@ -47,6 +62,17 @@ type VehiclesServiceSetVehiclePropsPermRef struct {
 }
 
 var VehiclesService = VehiclesServicePerms{
+	ListVehicleActivity: VehiclesServiceListVehicleActivityPermRef{
+		Perm: perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceListVehicleActivityPerm),
+		Fields: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceListVehicleActivityPerm),
+			VehiclesServiceListVehicleActivityFieldsPermField,
+		),
+		FieldsTyped: perms.NewTypedStringListAttrRef[VehiclesServiceListVehicleActivityFieldsPermValue](
+			perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceListVehicleActivityPerm),
+			VehiclesServiceListVehicleActivityFieldsPermField,
+		),
+	},
 	ListVehicles: VehiclesServiceListVehiclesPermRef{
 		Perm: perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceListVehiclesPerm),
 		Fields: perms.NewStringListAttrRef(

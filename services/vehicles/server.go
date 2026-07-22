@@ -13,7 +13,7 @@ type Server struct {
 	pbvehicles.VehiclesServiceServer
 
 	ps       perms.Permissions
-	enricher mstlystcdata.IEnricher
+	enricher mstlystcdata.IUserAwareEnricher
 	store    vehiclesstore.IStore
 }
 
@@ -21,7 +21,7 @@ type Params struct {
 	fx.In
 
 	Ps       perms.Permissions
-	Enricher mstlystcdata.IEnricher
+	Enricher mstlystcdata.IUserAwareEnricher
 	Store    vehiclesstore.IStore
 }
 

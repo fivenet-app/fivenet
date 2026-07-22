@@ -54,7 +54,7 @@ export interface VehicleActivity {
      */
     reason?: string;
     /**
-     * @generated from protobuf field: resources.vehicles.activity.VehicleActivityData data = 10
+     * @generated from protobuf field: optional resources.vehicles.activity.VehicleActivityData data = 10
      */
     data?: VehicleActivityData;
 }
@@ -62,6 +62,47 @@ export interface VehicleActivity {
  * @generated from protobuf message resources.vehicles.activity.VehicleActivityData
  */
 export interface VehicleActivityData {
+    /**
+     * @generated from protobuf oneof: data
+     */
+    data: {
+        oneofKind: "wantedChange";
+        /**
+         * @generated from protobuf field: resources.vehicles.activity.WantedChange wanted_change = 1
+         */
+        wantedChange: WantedChange;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message resources.vehicles.activity.WantedChange
+ */
+export interface WantedChange {
+    /**
+     * @generated from protobuf field: bool wanted = 1
+     */
+    wanted: boolean;
+    /**
+     * @generated from protobuf field: optional bool previous_wanted = 2
+     */
+    previousWanted?: boolean;
+    /**
+     * @generated from protobuf field: optional string wanted_reason = 3
+     */
+    wantedReason?: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp wanted_at = 4
+     */
+    wantedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp wanted_till = 5
+     */
+    wantedTill?: Timestamp;
+    /**
+     * @generated from protobuf field: bool auto = 6
+     */
+    auto: boolean;
 }
 /**
  * @generated from protobuf enum resources.vehicles.activity.VehicleActivityType
@@ -83,15 +124,15 @@ class VehicleActivity$Type extends MessageType<VehicleActivity> {
     constructor() {
         super("resources.vehicles.activity.VehicleActivity", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"vehicle_activity.id\"" } },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp, options: { "tagger.tags": "alias:\"user_activity.created_at\"" } },
-            { no: 3, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp, options: { "tagger.tags": "alias:\"vehicle_activity.created_at\"" } },
+            { no: 3, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "tagger.tags": "alias:\"vehicle_activity.plate\"" } },
             { no: 4, name: "activity_type", kind: "enum", T: () => ["resources.vehicles.activity.VehicleActivityType", VehicleActivityType, "VEHICLE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } }, "tagger.tags": "alias:\"vehicle_activity.type\"" } },
-            { no: 5, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 5, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } }, "tagger.tags": "alias:\"vehicle_activity.creator_id\"" } },
             { no: 6, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
-            { no: 7, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 7, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "tagger.tags": "alias:\"vehicle_activity.creator_job\"" } },
             { no: 8, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 9, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"user_activity.reason\"" } },
-            { no: 10, name: "data", kind: "message", T: () => VehicleActivityData }
+            { no: 9, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"vehicle_activity.reason\"" } },
+            { no: 10, name: "data", kind: "message", T: () => VehicleActivityData, options: { "tagger.tags": "alias:\"vehicle_activity.data\"" } }
         ]);
     }
     create(value?: PartialMessage<VehicleActivity>): VehicleActivity {
@@ -136,7 +177,7 @@ class VehicleActivity$Type extends MessageType<VehicleActivity> {
                 case /* optional string reason */ 9:
                     message.reason = reader.string();
                     break;
-                case /* resources.vehicles.activity.VehicleActivityData data */ 10:
+                case /* optional resources.vehicles.activity.VehicleActivityData data */ 10:
                     message.data = VehicleActivityData.internalBinaryRead(reader, reader.uint32(), options, message.data);
                     break;
                 default:
@@ -178,7 +219,7 @@ class VehicleActivity$Type extends MessageType<VehicleActivity> {
         /* optional string reason = 9; */
         if (message.reason !== undefined)
             writer.tag(9, WireType.LengthDelimited).string(message.reason);
-        /* resources.vehicles.activity.VehicleActivityData data = 10; */
+        /* optional resources.vehicles.activity.VehicleActivityData data = 10; */
         if (message.data)
             VehicleActivityData.internalBinaryWrite(message.data, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -194,10 +235,13 @@ export const VehicleActivity = new VehicleActivity$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class VehicleActivityData$Type extends MessageType<VehicleActivityData> {
     constructor() {
-        super("resources.vehicles.activity.VehicleActivityData", [], { "codegen.dbscanner.dbscanner": { enabled: true } });
+        super("resources.vehicles.activity.VehicleActivityData", [
+            { no: 1, name: "wanted_change", kind: "message", oneof: "data", T: () => WantedChange }
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<VehicleActivityData>): VehicleActivityData {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.data = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<VehicleActivityData>(this, message, value);
         return message;
@@ -207,6 +251,12 @@ class VehicleActivityData$Type extends MessageType<VehicleActivityData> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* resources.vehicles.activity.WantedChange wanted_change */ 1:
+                    message.data = {
+                        oneofKind: "wantedChange",
+                        wantedChange: WantedChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).wantedChange)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -219,6 +269,9 @@ class VehicleActivityData$Type extends MessageType<VehicleActivityData> {
         return message;
     }
     internalBinaryWrite(message: VehicleActivityData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.vehicles.activity.WantedChange wanted_change = 1; */
+        if (message.data.oneofKind === "wantedChange")
+            WantedChange.internalBinaryWrite(message.data.wantedChange, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -229,3 +282,86 @@ class VehicleActivityData$Type extends MessageType<VehicleActivityData> {
  * @generated MessageType for protobuf message resources.vehicles.activity.VehicleActivityData
  */
 export const VehicleActivityData = new VehicleActivityData$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class WantedChange$Type extends MessageType<WantedChange> {
+    constructor() {
+        super("resources.vehicles.activity.WantedChange", [
+            { no: 1, name: "wanted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "previous_wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "wanted_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 4, name: "wanted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "wanted_till", kind: "message", T: () => Timestamp },
+            { no: 6, name: "auto", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<WantedChange>): WantedChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.wanted = false;
+        message.auto = false;
+        if (value !== undefined)
+            reflectionMergePartial<WantedChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WantedChange): WantedChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool wanted */ 1:
+                    message.wanted = reader.bool();
+                    break;
+                case /* optional bool previous_wanted */ 2:
+                    message.previousWanted = reader.bool();
+                    break;
+                case /* optional string wanted_reason */ 3:
+                    message.wantedReason = reader.string();
+                    break;
+                case /* optional resources.timestamp.Timestamp wanted_at */ 4:
+                    message.wantedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.wantedAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp wanted_till */ 5:
+                    message.wantedTill = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.wantedTill);
+                    break;
+                case /* bool auto */ 6:
+                    message.auto = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: WantedChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool wanted = 1; */
+        if (message.wanted !== false)
+            writer.tag(1, WireType.Varint).bool(message.wanted);
+        /* optional bool previous_wanted = 2; */
+        if (message.previousWanted !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.previousWanted);
+        /* optional string wanted_reason = 3; */
+        if (message.wantedReason !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.wantedReason);
+        /* optional resources.timestamp.Timestamp wanted_at = 4; */
+        if (message.wantedAt)
+            Timestamp.internalBinaryWrite(message.wantedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp wanted_till = 5; */
+        if (message.wantedTill)
+            Timestamp.internalBinaryWrite(message.wantedTill, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* bool auto = 6; */
+        if (message.auto !== false)
+            writer.tag(6, WireType.Varint).bool(message.auto);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.vehicles.activity.WantedChange
+ */
+export const WantedChange = new WantedChange$Type();

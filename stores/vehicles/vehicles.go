@@ -6,6 +6,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
+	vehiclesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity"
 	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -124,6 +125,34 @@ func (s *Store) List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Veh
 	return vehicles, nil
 }
 
+func (s *Store) IsVehicleOwner(ctx context.Context, plate string, userID int32) (bool, error) {
+	tVehicles := table.FivenetOwnedVehicles.AS("vehicle")
+	tUsers := table.FivenetUser.AS("user_short")
+
+	var owner struct {
+		Plate string `alias:"plate"`
+	}
+	stmt := tVehicles.
+		SELECT(tVehicles.Plate.AS("plate")).
+		FROM(tVehicles.
+			INNER_JOIN(tUsers, tUsers.ID.EQ(tVehicles.UserID)),
+		).
+		WHERE(mysql.AND(
+			tVehicles.Plate.EQ(mysql.String(plate)),
+			tUsers.ID.EQ(mysql.Int32(userID)),
+		)).
+		LIMIT(1)
+
+	if err := stmt.QueryContext(ctx, s.db, &owner); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return owner.Plate != "", nil
+}
+
 func (s *Store) GetProps(ctx context.Context, plate string) (*vehiclesprops.VehicleProps, error) {
 	props := &vehiclesprops.VehicleProps{}
 	if err := props.LoadFromDB(ctx, s.db, plate); err != nil {
@@ -136,6 +165,9 @@ func (s *Store) GetProps(ctx context.Context, plate string) (*vehiclesprops.Vehi
 func (s *Store) UpdateProps(
 	ctx context.Context,
 	in *vehiclesprops.VehicleProps,
+	creatorID *int32,
+	creatorJob string,
+	reason string,
 ) (*vehiclesprops.VehicleProps, error) {
 	props, err := s.GetProps(ctx, in.GetPlate())
 	if err != nil {
@@ -146,6 +178,8 @@ func (s *Store) UpdateProps(
 		wanted := false
 		props.Wanted = &wanted
 	}
+	props.NormalizeWantedChange(in, reason)
+	activity := buildWantedActivity(props, in, creatorID, creatorJob, reason, false)
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -155,6 +189,11 @@ func (s *Store) UpdateProps(
 
 	if err := props.HandleChanges(ctx, tx, in); err != nil {
 		return nil, err
+	}
+	if activity != nil {
+		if _, err := s.addVehicleActivity(ctx, tx, activity); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -199,14 +238,86 @@ func (s *Store) ClearWanted(ctx context.Context, plate string) error {
 	if err := props.LoadFromDB(ctx, s.db, plate); err != nil {
 		return err
 	}
+	if props.Wanted == nil || !props.GetWanted() {
+		return nil
+	}
 
 	in := proto.Clone(props).(*vehiclesprops.VehicleProps)
 	wanted := false
 	in.Wanted = &wanted
 	in.WantedReason = nil
 	in.WantedAt = nil
+	in.WantedTill = nil
+	props.NormalizeWantedChange(in, "wanted_expired")
 
-	return props.HandleChanges(ctx, s.db, in)
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if err := props.HandleChanges(ctx, tx, in); err != nil {
+		return err
+	}
+	if activity := buildWantedActivity(
+		props,
+		in,
+		nil,
+		"",
+		"wanted_expired",
+		true,
+	); activity != nil {
+		if _, err := s.addVehicleActivity(ctx, tx, activity); err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit()
+}
+
+func buildWantedActivity(
+	props *vehiclesprops.VehicleProps,
+	in *vehiclesprops.VehicleProps,
+	creatorID *int32,
+	creatorJob string,
+	reason string,
+	auto bool,
+) *vehiclesactivity.VehicleActivity {
+	if in.Wanted == nil {
+		return nil
+	}
+
+	changed := props.GetWanted() != in.GetWanted() ||
+		props.GetWantedReason() != in.GetWantedReason() ||
+		!proto.Equal(props.GetWantedTill(), in.GetWantedTill())
+	if !changed {
+		return nil
+	}
+
+	previousWanted := props.GetWanted()
+	activity := &vehiclesactivity.VehicleActivity{
+		Plate:        in.GetPlate(),
+		ActivityType: vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED,
+		CreatorId:    creatorID,
+		CreatorJob:   creatorJob,
+		Data: &vehiclesactivity.VehicleActivityData{
+			Data: &vehiclesactivity.VehicleActivityData_WantedChange{
+				WantedChange: &vehiclesactivity.WantedChange{
+					Wanted:         in.GetWanted(),
+					PreviousWanted: &previousWanted,
+					WantedReason:   in.WantedReason,
+					WantedAt:       in.GetWantedAt(),
+					WantedTill:     in.GetWantedTill(),
+					Auto:           auto,
+				},
+			},
+		},
+	}
+	if reason != "" {
+		activity.Reason = &reason
+	}
+
+	return activity
 }
 
 func (s *Store) listConditions(

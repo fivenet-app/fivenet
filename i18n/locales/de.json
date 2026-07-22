@@ -1616,6 +1616,21 @@
                 }
             }
         },
+        "vehicles": {
+            "VehicleInfoSlideover": {
+                "title": "Fahrzeuginfo"
+            },
+            "VehicleActivityFeedEntry": {
+                "wanted_set": "Setzte das Fahrzeug auf",
+                "automatic": "Automatische Aktualisierung"
+            },
+            "VehicleActivityFeed": {
+                "own": {
+                    "title": "Sie können Ihren eigenen Fahrzeug-Aktivitätsfeed nicht sehen",
+                    "message": "Ihnen fehlen die Berechtigungen, um Ihren eigenen Fahrzeug-Aktivitätsfeed sehen zu können."
+                }
+            }
+        },
         "CookieControl": {
             "title": "Wir nutzen Cookies!",
             "subtitle": "Der Hauptzweck unserer Cookies besteht darin, Ihnen die Anmeldung über unsere Social-Login-Anbieter zu ermöglichen. Weitere Informationen zu Cookies und Ihren Daten finden Sie in unserer Datenschutzerklärung.",
@@ -3121,6 +3136,12 @@
                 "FINE": "Geldstrafen"
             }
         },
+        "vehicles": {
+            "VehicleActivityType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "WANTED": "Gesucht"
+            }
+        },
         "documents": {
             "AccessLevel": {
                 "UNSPECIFIED": "Unbestimmt",
@@ -3491,6 +3512,17 @@
                     },
                     "attrs_types": {
                         "Fields": "Felder für Fahrzeugeigenschaften"
+                    }
+                },
+                "ListVehicleActivity": {
+                    "key": "Fahrzeugaktivität auflisten",
+                    "description": "Aktivitäten-Feed für Fahrzeuge.",
+                    "attrs": {
+                        "Creator": "Ersteller",
+                        "Own": "Eigene Fahrzeugaktivitäten"
+                    },
+                    "attrs_types": {
+                        "Fields": "Felder"
                     }
                 },
                 "SetVehicleProps": {

@@ -17,6 +17,7 @@ import type { ListVehiclesResponse } from '~~/gen/ts/services/vehicles/vehicles'
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
 import VehicleInfoPopover from './VehicleInfoPopover.vue';
+import VehicleInfoSlideover from './VehicleInfoSlideover.vue';
 import { titleCase } from 'scule';
 
 const { t } = useI18n();
@@ -47,6 +48,8 @@ const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
 const { attr, attrStringList, can, isSuperuser } = useAuth();
+const overlay = useOverlay();
+const vehicleInfoSlideover = overlay.create(VehicleInfoSlideover);
 
 const schema = z.object({
     licensePlate: z.coerce.string().max(32).default(''),
@@ -187,7 +190,28 @@ const columns = computed(() =>
                         'div',
                         { class: 'flex flex-col justify-end md:flex-row' },
                         [
-                            attrStringList('vehicles.VehiclesService/ListVehicles', 'Fields').value.length > 0 || isSuperuser
+                            can('vehicles.VehiclesService/ListVehicleActivity').value
+                                ? h(
+                                      UTooltip,
+                                      { text: t('components.vehicles.VehicleInfoSlideover.title') },
+                                      {
+                                          default: () =>
+                                              h(UButton, {
+                                                  variant: 'link',
+                                                  icon: 'i-mdi-car-info',
+                                                  onClick: () =>
+                                                      vehicleInfoSlideover.open({
+                                                          modelValue: row.original,
+                                                          'onUpdate:modelValue': (val: Vehicle) =>
+                                                              updateVehicle(row.original.plate, val),
+                                                      }),
+                                              }),
+                                      },
+                                  )
+                                : null,
+                            !can('vehicles.VehiclesService/ListVehicleActivity').value &&
+                            (attrStringList('vehicles.VehiclesService/ListVehicles', 'Fields').value.length > 0 ||
+                                isSuperuser.value)
                                 ? h(
                                       UTooltip,
                                       { text: t('common.propertie', 2) },

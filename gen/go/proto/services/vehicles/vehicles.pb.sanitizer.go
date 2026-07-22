@@ -9,6 +9,74 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *ListVehicleActivityRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Plate
+	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
+
+	// Field: Sort
+	if m.Sort != nil {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Types
+	for idx, item := range m.Types {
+		_, _ = idx, item
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ListVehicleActivityResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Activity
+	for idx, item := range m.Activity {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListVehiclesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -97,6 +165,9 @@ func (m *SetVehiclePropsRequest) Sanitize() error {
 		}
 	}
 
+	// Field: Reason
+	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
+
 	return nil
 }
 
@@ -115,9 +186,6 @@ func (m *SetVehiclePropsResponse) Sanitize() error {
 			}
 		}
 	}
-
-	// Field: Reason
-	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
 
 	return nil
 }

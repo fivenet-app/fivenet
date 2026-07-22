@@ -22,24 +22,19 @@ func (x *VehicleProps) HandleChanges(
 
 	// Generate the update sets
 	if in.Wanted != nil {
-		updateSets = append(updateSets, tVehicleProps.Wanted.SET(mysql.Bool(in.GetWanted())))
+		x.NormalizeWantedChange(in, "")
 		updateSets = append(
 			updateSets,
-			tVehicleProps.WantedReason.SET(mysql.String(in.GetWantedReason())),
-		)
-		if in.GetWanted() {
-			in.WantedAt = timestamp.Now()
-		} else {
-			in.WantedAt = nil
-		}
-		updateSets = append(
-			updateSets,
+			tVehicleProps.Wanted.SET(mysql.Bool(in.GetWanted())),
+			tVehicleProps.WantedReason.SET(dbutils.StringPP(in.WantedReason)),
 			tVehicleProps.WantedAt.SET(dbutils.TimestampToMySQL(in.GetWantedAt())),
+			tVehicleProps.WantedTill.SET(dbutils.TimestampToMySQL(in.GetWantedTill())),
 		)
 	} else {
 		in.Wanted = x.Wanted
 		in.WantedReason = x.WantedReason
 		in.WantedAt = x.GetWantedAt()
+		in.WantedTill = x.GetWantedTill()
 	}
 
 	if len(updateSets) > 0 {
@@ -50,6 +45,7 @@ func (x *VehicleProps) HandleChanges(
 				tVehicleProps.Wanted,
 				tVehicleProps.WantedReason,
 				tVehicleProps.WantedAt,
+				tVehicleProps.WantedTill,
 			).
 			VALUES(
 				in.GetPlate(),
@@ -57,6 +53,7 @@ func (x *VehicleProps) HandleChanges(
 				in.Wanted,
 				in.WantedReason,
 				in.GetWantedAt(),
+				in.GetWantedTill(),
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				updateSets...,
@@ -68,6 +65,43 @@ func (x *VehicleProps) HandleChanges(
 	}
 
 	return nil
+}
+
+func (x *VehicleProps) NormalizeWantedChange(in *VehicleProps, reason string) {
+	if in == nil {
+		return
+	}
+
+	if in.Wanted == nil {
+		in.Wanted = x.Wanted
+		in.WantedReason = x.WantedReason
+		in.WantedAt = x.GetWantedAt()
+		in.WantedTill = x.GetWantedTill()
+		return
+	}
+
+	if !in.GetWanted() {
+		in.WantedAt = nil
+		in.WantedTill = nil
+		in.WantedReason = nil
+		return
+	}
+
+	if reason != "" {
+		in.WantedReason = &reason
+	} else if in.WantedReason == nil {
+		in.WantedReason = x.WantedReason
+	}
+
+	if !x.GetWanted() {
+		in.WantedAt = timestamp.Now()
+	} else {
+		in.WantedAt = x.GetWantedAt()
+	}
+
+	if in.WantedTill == nil {
+		in.WantedTill = x.GetWantedTill()
+	}
 }
 
 func (x *VehicleProps) LoadFromDB(
@@ -84,6 +118,7 @@ func (x *VehicleProps) LoadFromDB(
 			tVehicleProps.Wanted,
 			tVehicleProps.WantedReason,
 			tVehicleProps.WantedAt,
+			tVehicleProps.WantedTill,
 		).
 		FROM(tVehicleProps).
 		WHERE(

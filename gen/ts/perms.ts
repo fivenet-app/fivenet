@@ -127,6 +127,7 @@ export type GRPCServicePerms =
 	| 'settings.SettingsService/SetJobProps'
 	| 'settings.SettingsService/UpdateRolePerms'
 	| 'settings.SettingsService/ViewAuditLog'
+	| 'vehicles.VehiclesService/ListVehicleActivity'
 	| 'vehicles.VehiclesService/ListVehicles'
 	| 'vehicles.VehiclesService/SetVehicleProps'
 	| 'wiki.WikiService/CreatePage'
@@ -245,6 +246,7 @@ export const GRPCServiceMethods = [
 	'settings.SettingsService/SetJobProps',
 	'settings.SettingsService/UpdateRolePerms',
 	'settings.SettingsService/ViewAuditLog',
+	'vehicles.VehiclesService/ListVehicleActivity',
 	'vehicles.VehiclesService/ListVehicles',
 	'vehicles.VehiclesService/SetVehicleProps',
 	'wiki.WikiService/CreatePage',
@@ -532,6 +534,12 @@ export const PermAttributes = {
 	'settings.SettingsService/UpdateRolePerms': {
 	},
 	'settings.SettingsService/ViewAuditLog': {
+	},
+	'vehicles.VehiclesService/ListVehicleActivity': {
+		'Fields': {
+			type: 'stringList',
+			values: ['Creator','Own',] as const,
+		},
 	},
 	'vehicles.VehiclesService/ListVehicles': {
 		'Fields': {

@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	VehiclesService_ListVehicles_FullMethodName    = "/services.vehicles.VehiclesService/ListVehicles"
-	VehiclesService_SetVehicleProps_FullMethodName = "/services.vehicles.VehiclesService/SetVehicleProps"
+	VehiclesService_ListVehicles_FullMethodName        = "/services.vehicles.VehiclesService/ListVehicles"
+	VehiclesService_SetVehicleProps_FullMethodName     = "/services.vehicles.VehiclesService/SetVehicleProps"
+	VehiclesService_ListVehicleActivity_FullMethodName = "/services.vehicles.VehiclesService/ListVehicleActivity"
 )
 
 // VehiclesServiceClient is the client API for VehiclesService service.
@@ -29,6 +30,7 @@ const (
 type VehiclesServiceClient interface {
 	ListVehicles(ctx context.Context, in *ListVehiclesRequest, opts ...grpc.CallOption) (*ListVehiclesResponse, error)
 	SetVehicleProps(ctx context.Context, in *SetVehiclePropsRequest, opts ...grpc.CallOption) (*SetVehiclePropsResponse, error)
+	ListVehicleActivity(ctx context.Context, in *ListVehicleActivityRequest, opts ...grpc.CallOption) (*ListVehicleActivityResponse, error)
 }
 
 type vehiclesServiceClient struct {
@@ -59,12 +61,23 @@ func (c *vehiclesServiceClient) SetVehicleProps(ctx context.Context, in *SetVehi
 	return out, nil
 }
 
+func (c *vehiclesServiceClient) ListVehicleActivity(ctx context.Context, in *ListVehicleActivityRequest, opts ...grpc.CallOption) (*ListVehicleActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListVehicleActivityResponse)
+	err := c.cc.Invoke(ctx, VehiclesService_ListVehicleActivity_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VehiclesServiceServer is the server API for VehiclesService service.
 // All implementations must embed UnimplementedVehiclesServiceServer
 // for forward compatibility.
 type VehiclesServiceServer interface {
 	ListVehicles(context.Context, *ListVehiclesRequest) (*ListVehiclesResponse, error)
 	SetVehicleProps(context.Context, *SetVehiclePropsRequest) (*SetVehiclePropsResponse, error)
+	ListVehicleActivity(context.Context, *ListVehicleActivityRequest) (*ListVehicleActivityResponse, error)
 	mustEmbedUnimplementedVehiclesServiceServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedVehiclesServiceServer) ListVehicles(context.Context, *ListVeh
 }
 func (UnimplementedVehiclesServiceServer) SetVehicleProps(context.Context, *SetVehiclePropsRequest) (*SetVehiclePropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetVehicleProps not implemented")
+}
+func (UnimplementedVehiclesServiceServer) ListVehicleActivity(context.Context, *ListVehicleActivityRequest) (*ListVehicleActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListVehicleActivity not implemented")
 }
 func (UnimplementedVehiclesServiceServer) mustEmbedUnimplementedVehiclesServiceServer() {}
 func (UnimplementedVehiclesServiceServer) testEmbeddedByValue()                         {}
@@ -138,6 +154,24 @@ func _VehiclesService_SetVehicleProps_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VehiclesService_ListVehicleActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListVehicleActivityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VehiclesServiceServer).ListVehicleActivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VehiclesService_ListVehicleActivity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VehiclesServiceServer).ListVehicleActivity(ctx, req.(*ListVehicleActivityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VehiclesService_ServiceDesc is the grpc.ServiceDesc for VehiclesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var VehiclesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetVehicleProps",
 			Handler:    _VehiclesService_SetVehicleProps_Handler,
+		},
+		{
+			MethodName: "ListVehicleActivity",
+			Handler:    _VehiclesService_ListVehicleActivity_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

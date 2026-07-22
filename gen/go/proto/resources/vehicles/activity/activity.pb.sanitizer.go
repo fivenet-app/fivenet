@@ -59,3 +59,58 @@ func (m *VehicleActivity) Sanitize() error {
 
 	return nil
 }
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *VehicleActivityData) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: WantedChange
+	switch v := m.Data.(type) {
+
+	case *VehicleActivityData_WantedChange:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *WantedChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: WantedAt
+	if m.WantedAt != nil {
+		if v, ok := any(m.GetWantedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: WantedReason
+	if m.WantedReason != nil {
+		*m.WantedReason = htmlsanitizer.SanitizeAndUnescape(*m.WantedReason)
+	}
+
+	// Field: WantedTill
+	if m.WantedTill != nil {
+		if v, ok := any(m.GetWantedTill()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
