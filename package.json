@@ -86,7 +86,7 @@
         "@unovis/ts": "1.6.7",
         "@unovis/vue": "1.6.7",
         "@zxcvbn-ts/core": "4.1.2",
-        "better-sqlite3": "12.11.1",
+        "better-sqlite3": "13.0.1",
         "big.js": "7.0.1",
         "browser-headers": "0.4.1",
         "consola": "3.4.2",
