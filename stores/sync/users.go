@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	dbsyncutils "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/utils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
@@ -624,61 +625,8 @@ func (s *Store) updateUser(
 }
 
 func (s *Store) cleanupUserJobs(user *syncdata.DataUser) {
-	jobs := user.GetJobs()
-	// Fallback to unemployed job when user has no jobs.
-	if len(jobs) == 0 {
-		if user.GetJob() == "" {
-			unemployedJob := unemployedJobFromAppConfig(s.appCfg)
-			jobs = []*users.UserJob{
-				{
-					UserId:    user.GetUserId(),
-					Job:       unemployedJob.GetName(),
-					Grade:     unemployedJob.GetGrade(),
-					IsPrimary: true,
-				},
-			}
-			user.SetJobs(jobs)
-			if user.GetJob() == "" {
-				user.SetJob(jobs[0].GetJob())
-			}
-			if user.GetJobGrade() == 0 {
-				user.SetJobGrade(jobs[0].GetGrade())
-			}
-		} else {
-			// Ensure user's job is set in the jobs list
-			user.SetJobs([]*users.UserJob{
-				{
-					Job:       user.GetJob(),
-					Grade:     user.GetJobGrade(),
-					IsPrimary: true,
-				},
-			})
-		}
-	} else {
-		slices.SortFunc(user.GetJobs(), func(a, b *users.UserJob) int {
-			if a.GetIsPrimary() && !b.GetIsPrimary() {
-				return -1
-			}
-			if !a.GetIsPrimary() && b.GetIsPrimary() {
-				return 1
-			}
-			return strings.Compare(a.GetJob(), b.GetJob())
-		})
-
-		foundPrimary := false
-		primaryJob := user.GetJob()
-		for _, job := range user.GetJobs() {
-			if job.GetJob() == primaryJob {
-				foundPrimary = true
-				job.IsPrimary = true
-			} else {
-				job.IsPrimary = false
-			}
-		}
-		if !foundPrimary {
-			user.Jobs[0].IsPrimary = true
-		}
-	}
+	unemployedJob := unemployedJobFromAppConfig(s.appCfg)
+	dbsyncutils.NormalizeUserJobs(user, unemployedJob.GetName(), unemployedJob.GetGrade())
 }
 
 func (s *Store) cleanupUserPhoneNumbers(user *syncdata.DataUser) {

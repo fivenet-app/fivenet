@@ -170,6 +170,10 @@ export interface DataUser {
      */
     updatedAt?: Timestamp;
     /**
+     * Primary job name.
+     * When `jobs` contains entries and `job` is empty, sync API derive this value
+     * from the primary entry in `jobs`.
+     *
      * @generated from protobuf field: string job = 3
      */
     job: string;
@@ -178,6 +182,10 @@ export interface DataUser {
      */
     jobLabel?: string;
     /**
+     * Primary job grade.
+     * When `jobs` contains entries and `job_grade` is empty, sync API derive this
+     * value from the primary entry in `jobs`.
+     *
      * @generated from protobuf field: int32 job_grade = 5
      */
     jobGrade: number;
@@ -186,6 +194,11 @@ export interface DataUser {
      */
     jobGradeLabel?: string;
     /**
+     * Full job list for the user.
+     * This is the preferred source of truth when present; sync API use the
+     * primary job entry to populate `job` / `job_grade` if those scalar fields
+     * are empty.
+     *
      * @generated from protobuf field: repeated resources.users.UserJob jobs = 20
      */
     jobs: UserJob[];

@@ -816,27 +816,37 @@ func (b0 DataAccounts_builder) Build() *DataAccounts {
 // Detailed user information for sync purposes
 // Should be kept inline with `resources.users.User`.
 type DataUser struct {
-	state                protoimpl.MessageState `protogen:"hybrid.v1"`
-	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user.id"`
-	Identifier           string                 `protobuf:"bytes,2,opt,name=identifier,proto3" json:"identifier,omitempty" alias:"user.identifier"`
-	UpdatedAt            *timestamp.Timestamp   `protobuf:"bytes,21,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty" alias:"user.updated_at"`
-	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty" alias:"user.job"`
-	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty" alias:"user.job_label"`
-	JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty" alias:"user.job_grade"`
-	JobGradeLabel        *string                `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty" alias:"user.job_grade_label"`
-	Jobs                 []*users.UserJob       `protobuf:"bytes,20,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"user.jobs"`
-	Firstname            string                 `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty" alias:"user.firstname"`
-	Lastname             *string                `protobuf:"bytes,8,opt,name=lastname,proto3,oneof" json:"lastname,omitempty" alias:"user.lastname"`
-	Dateofbirth          string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty" alias:"user.dateofbirth"`
-	Sex                  *string                `protobuf:"bytes,10,opt,name=sex,proto3,oneof" json:"sex,omitempty" alias:"user.sex"`
-	Height               *float32               `protobuf:"fixed32,11,opt,name=height,proto3,oneof" json:"height,omitempty" alias:"user.height"`
-	PhoneNumber          *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty" alias:"user.phone_number"`
-	PhoneNumbers         []*users.PhoneNumber   `protobuf:"bytes,19,rep,name=phone_numbers,json=phoneNumbers,proto3" json:"phone_numbers,omitempty" alias:"user.phone_numbers"`
-	Visum                *int32                 `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty" alias:"user.visum"`
-	Playtime             *int32                 `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty" alias:"user.playtime"`
-	Licenses             []*licenses.License    `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user.licenses"`
-	ProfilePictureFileId *int64                 `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof" json:"profile_picture_file_id,omitempty" alias:"user.profile_picture_file_id"`
-	ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty" alias:"user.profile_picture"`
+	state      protoimpl.MessageState `protogen:"hybrid.v1"`
+	UserId     int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user.id"`
+	Identifier string                 `protobuf:"bytes,2,opt,name=identifier,proto3" json:"identifier,omitempty" alias:"user.identifier"`
+	UpdatedAt  *timestamp.Timestamp   `protobuf:"bytes,21,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty" alias:"user.updated_at"`
+	// Primary job name.
+	// When `jobs` contains entries and `job` is empty, sync API derive this value
+	// from the primary entry in `jobs`.
+	Job      string  `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty" alias:"user.job"`
+	JobLabel *string `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty" alias:"user.job_label"`
+	// Primary job grade.
+	// When `jobs` contains entries and `job_grade` is empty, sync API derive this
+	// value from the primary entry in `jobs`.
+	JobGrade      int32   `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty" alias:"user.job_grade"`
+	JobGradeLabel *string `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty" alias:"user.job_grade_label"`
+	// Full job list for the user.
+	// This is the preferred source of truth when present; sync API use the
+	// primary job entry to populate `job` / `job_grade` if those scalar fields
+	// are empty.
+	Jobs                 []*users.UserJob     `protobuf:"bytes,20,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"user.jobs"`
+	Firstname            string               `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty" alias:"user.firstname"`
+	Lastname             *string              `protobuf:"bytes,8,opt,name=lastname,proto3,oneof" json:"lastname,omitempty" alias:"user.lastname"`
+	Dateofbirth          string               `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty" alias:"user.dateofbirth"`
+	Sex                  *string              `protobuf:"bytes,10,opt,name=sex,proto3,oneof" json:"sex,omitempty" alias:"user.sex"`
+	Height               *float32             `protobuf:"fixed32,11,opt,name=height,proto3,oneof" json:"height,omitempty" alias:"user.height"`
+	PhoneNumber          *string              `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty" alias:"user.phone_number"`
+	PhoneNumbers         []*users.PhoneNumber `protobuf:"bytes,19,rep,name=phone_numbers,json=phoneNumbers,proto3" json:"phone_numbers,omitempty" alias:"user.phone_numbers"`
+	Visum                *int32               `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty" alias:"user.visum"`
+	Playtime             *int32               `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty" alias:"user.playtime"`
+	Licenses             []*licenses.License  `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user.licenses"`
+	ProfilePictureFileId *int64               `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof" json:"profile_picture_file_id,omitempty" alias:"user.profile_picture_file_id"`
+	ProfilePicture       *string              `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty" alias:"user.profile_picture"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -1210,13 +1220,23 @@ func (x *DataUser) ClearProfilePicture() {
 type DataUser_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	UserId               int32
-	Identifier           string
-	UpdatedAt            *timestamp.Timestamp
-	Job                  string
-	JobLabel             *string
-	JobGrade             int32
-	JobGradeLabel        *string
+	UserId     int32
+	Identifier string
+	UpdatedAt  *timestamp.Timestamp
+	// Primary job name.
+	// When `jobs` contains entries and `job` is empty, sync API derive this value
+	// from the primary entry in `jobs`.
+	Job      string
+	JobLabel *string
+	// Primary job grade.
+	// When `jobs` contains entries and `job_grade` is empty, sync API derive this
+	// value from the primary entry in `jobs`.
+	JobGrade      int32
+	JobGradeLabel *string
+	// Full job list for the user.
+	// This is the preferred source of truth when present; sync API use the
+	// primary job entry to populate `job` / `job_grade` if those scalar fields
+	// are empty.
 	Jobs                 []*users.UserJob
 	Firstname            string
 	Lastname             *string

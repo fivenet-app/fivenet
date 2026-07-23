@@ -408,6 +408,73 @@ func TestCleanupUserPhoneNumbersKeepsOnlyOnePrimary(t *testing.T) {
 	assert.False(t, user.GetPhoneNumbers()[2].GetIsPrimary())
 }
 
+func TestCleanupUserJobsUsesJobsWhenPrimaryJobEmpty(t *testing.T) {
+	t.Parallel()
+
+	store, _ := newTestStore(t)
+
+	cfg := &appconfig.Cfg{}
+	cfg.Default()
+	cfg.JobInfo.UnemployedJob = &settings.UnemployedJob{
+		Name:  "civilian",
+		Grade: 7,
+	}
+	store.appCfg.Set(cfg)
+
+	user := &syncdata.DataUser{
+		UserId:   11,
+		Job:      "",
+		JobGrade: 0,
+		Jobs: []*users.UserJob{
+			{Job: "", Grade: 0, IsPrimary: false},
+			{Job: "", Grade: 0, IsPrimary: false},
+			{Job: "police", Grade: 3, IsPrimary: true},
+		},
+	}
+
+	store.cleanupUserJobs(user)
+
+	assert.Equal(t, "police", user.GetJob())
+	assert.Equal(t, int32(3), user.GetJobGrade())
+	require.Len(t, user.GetJobs(), 1)
+	assert.Equal(t, []string{"police"}, []string{
+		user.GetJobs()[0].GetJob(),
+	})
+	assert.True(t, user.GetJobs()[0].GetIsPrimary())
+}
+
+func TestCleanupUserJobsDefaultsEmptyJobToUnemployedWhenNoUsableJobs(t *testing.T) {
+	t.Parallel()
+
+	store, _ := newTestStore(t)
+
+	cfg := &appconfig.Cfg{}
+	cfg.Default()
+	cfg.JobInfo.UnemployedJob = &settings.UnemployedJob{
+		Name:  "civilian",
+		Grade: 7,
+	}
+	store.appCfg.Set(cfg)
+
+	user := &syncdata.DataUser{
+		UserId:   11,
+		Job:      "",
+		JobGrade: 0,
+		Jobs: []*users.UserJob{
+			{Job: "", Grade: 0, IsPrimary: false},
+			{Job: "", Grade: 0, IsPrimary: false},
+		},
+	}
+
+	store.cleanupUserJobs(user)
+
+	assert.Equal(t, "civilian", user.GetJob())
+	assert.Equal(t, int32(7), user.GetJobGrade())
+	require.Len(t, user.GetJobs(), 1)
+	assert.Equal(t, "civilian", user.GetJobs()[0].GetJob())
+	assert.True(t, user.GetJobs()[0].GetIsPrimary())
+}
+
 func newTestStore(t *testing.T) (*Store, sqlmock.Sqlmock) {
 	t.Helper()
 

@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
+	dbsyncutils "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/utils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/cache"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/go-jet/jet/v2/qrm"
@@ -375,54 +376,7 @@ func (s *UsersSync) applyFiltersAndTransformations(
 }
 
 func (s *UsersSync) cleanupUserJob(user *syncdata.DataUser) {
-	if len(user.GetJobs()) == 0 {
-		// If no jobs are set, create one from the user job field (hopefully it's set)..
-		user.Jobs = []*users.UserJob{
-			{
-				UserId:    user.GetUserId(),
-				Job:       user.GetJob(),
-				Grade:     user.GetJobGrade(),
-				IsPrimary: true,
-			},
-		}
-		return
-	} else if len(user.GetJobs()) == 1 && user.GetJob() != "" {
-		// If only one job is set but the user's job field is not empty, ensure the job field info is copied to the job entry for consistency
-		user.Jobs[0].UserId = user.GetUserId()
-		user.Jobs[0].Job = user.GetJob()
-		user.Jobs[0].Grade = user.GetJobGrade()
-		user.Jobs[0].IsPrimary = true
-		return
-	}
-
-	// Sort the user's jobs by is primary and then alphabetically to ensure consistent order
-	slices.SortFunc(user.GetJobs(), func(a *users.UserJob, b *users.UserJob) int {
-		if a.GetIsPrimary() && !b.GetIsPrimary() {
-			return -1
-		}
-		if !a.GetIsPrimary() && b.GetIsPrimary() {
-			return 1
-		}
-		return strings.Compare(a.GetJob(), b.GetJob())
-	})
-
-	foundPrimary := false
-	primaryJob := user.GetJob()
-	for _, job := range user.GetJobs() {
-		if job.GetJob() == primaryJob {
-			// Make sure the "primary" job (user's job field if set) is marked as primary
-			foundPrimary = true
-			job.IsPrimary = true
-		} else {
-			job.IsPrimary = false
-		}
-		job.UpdatedAt = nil
-	}
-
-	// If not ensure user has at least one primary job set
-	if !foundPrimary {
-		user.Jobs[0].IsPrimary = true
-	}
+	dbsyncutils.NormalizeUserJobs(user, "", 0)
 }
 
 func (s *UsersSync) cleanupUserPhoneNumbers(user *syncdata.DataUser) {

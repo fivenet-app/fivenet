@@ -1289,13 +1289,23 @@ func (x *DataUser) ClearProfilePicture() {
 type DataUser_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	UserId               int32
-	Identifier           string
-	UpdatedAt            *timestamp.Timestamp
-	Job                  string
-	JobLabel             *string
-	JobGrade             int32
-	JobGradeLabel        *string
+	UserId     int32
+	Identifier string
+	UpdatedAt  *timestamp.Timestamp
+	// Primary job name.
+	// When `jobs` contains entries and `job` is empty, sync API derive this value
+	// from the primary entry in `jobs`.
+	Job      string
+	JobLabel *string
+	// Primary job grade.
+	// When `jobs` contains entries and `job_grade` is empty, sync API derive this
+	// value from the primary entry in `jobs`.
+	JobGrade      int32
+	JobGradeLabel *string
+	// Full job list for the user.
+	// This is the preferred source of truth when present; sync API use the
+	// primary job entry to populate `job` / `job_grade` if those scalar fields
+	// are empty.
 	Jobs                 []*users.UserJob
 	Firstname            string
 	Lastname             *string

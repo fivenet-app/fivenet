@@ -79,6 +79,9 @@ message DataUser {
   ];
   optional resources.timestamp.Timestamp updated_at = 21 [(tagger.tags) = "alias:\"user.updated_at\""];
 
+  // Primary job name.
+  // When `jobs` contains entries and `job` is empty, sync API derive this value
+  // from the primary entry in `jobs`.
   string job = 3 [
     (buf.validate.field).string.max_len = 20,
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
@@ -88,6 +91,9 @@ message DataUser {
     (buf.validate.field).string.max_len = 50,
     (tagger.tags) = "alias:\"user.job_label\""
   ];
+  // Primary job grade.
+  // When `jobs` contains entries and `job_grade` is empty, sync API derive this
+  // value from the primary entry in `jobs`.
   int32 job_grade = 5 [
     (buf.validate.field).int32.gte = 0,
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
@@ -97,6 +103,10 @@ message DataUser {
     (buf.validate.field).string.max_len = 50,
     (tagger.tags) = "alias:\"user.job_grade_label\""
   ];
+  // Full job list for the user.
+  // This is the preferred source of truth when present; sync API use the
+  // primary job entry to populate `job` / `job_grade` if those scalar fields
+  // are empty.
   repeated resources.users.UserJob jobs = 20 [
     (buf.validate.field).repeated.max_items = 3,
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,

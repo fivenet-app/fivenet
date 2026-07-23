@@ -6700,11 +6700,11 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `user_id` | [int32](#int32) |  |  |
 | `identifier` | [string](#string) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `job` | [string](#string) |  |  |
+| `job` | [string](#string) |  | Primary job name. When `jobs` contains entries and `job` is empty, sync API derive this value from the primary entry in `jobs`. |
 | `job_label` | [string](#string) | optional |  |
-| `job_grade` | [int32](#int32) |  |  |
+| `job_grade` | [int32](#int32) |  | Primary job grade. When `jobs` contains entries and `job_grade` is empty, sync API derive this value from the primary entry in `jobs`. |
 | `job_grade_label` | [string](#string) | optional |  |
-| `jobs` | [resources.users.UserJob](#resourcesusersUserJob) | repeated |  |
+| `jobs` | [resources.users.UserJob](#resourcesusersUserJob) | repeated | Full job list for the user. This is the preferred source of truth when present; sync API use the primary job entry to populate `job` / `job_grade` if those scalar fields are empty. |
 | `firstname` | [string](#string) |  |  |
 | `lastname` | [string](#string) | optional |  |
 | `dateofbirth` | [string](#string) |  |  |
