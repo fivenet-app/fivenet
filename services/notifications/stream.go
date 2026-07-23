@@ -66,11 +66,18 @@ func (s *Server) buildSubjects(
 		return baseSubjects, nil, nil
 	}
 
-	baseSubjects = append(baseSubjects,
-		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.GetUserId()),
-		fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.GetJob()),
-		fmt.Sprintf("%s.%s.%s.>", notifi.BaseSubject, notifi.JobGradeTopic, userInfo.GetJob()),
-	)
+	if userInfo.GetUserId() > 0 {
+		baseSubjects = append(
+			baseSubjects,
+			fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.GetUserId()),
+		)
+	}
+	if userInfo.GetJob() != "" {
+		baseSubjects = append(baseSubjects,
+			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.GetJob()),
+			fmt.Sprintf("%s.%s.%s.>", notifi.BaseSubject, notifi.JobGradeTopic, userInfo.GetJob()),
+		)
+	}
 
 	// Clone user info and disable superuser (so a superuser doesn't receive notifications for "all" emails..)
 	clonedUserInfo := userInfo.Clone()
