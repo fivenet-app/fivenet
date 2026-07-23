@@ -27,11 +27,8 @@ func TestStoreListTimeclockDefaultOrderByUsesAggregatedColumns(t *testing.T) {
 
 	store, mock := newTestStore(t)
 
-	mock.ExpectQuery(`(?s)SELECT COUNT\(DISTINCT .*timeclock_entry\.user_id.* AS .*data_count\.total.*FROM .*fivenet_job_timeclock.*INNER JOIN .*fivenet_user.*ON .*colleague\.id = timeclock_entry\.user_id.*WHERE .*timeclock_entry\.job = \?.*;`).
-		WithArgs("police").
-		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(1)))
-
 	mock.ExpectQuery(`(?s)SELECT .*ORDER BY .*agg\.date DESC, agg\.spent_time DESC.*`).
+		WithArgs("police", "police", "police", int64(0), int64(0)).
 		WillReturnRows(sqlmock.NewRows(nil))
 
 	_, err := store.ListTimeclock(t.Context(), store.db, TimeclockQuery{
