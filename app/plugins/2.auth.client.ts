@@ -1,5 +1,6 @@
 import { titleCase } from 'scule';
 import { parseQuery, type RouteLocationNormalized } from 'vue-router';
+import { restoreAuthTokenOnlySession } from '~/composables/auth/sessionRestore';
 import { isSetupBypassRoute } from '~/composables/setup';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -62,15 +63,12 @@ export default defineNuxtPlugin({
 
             // Auth token is not null and only needed by route
             if (to.meta.authTokenOnly && username.value !== null) {
-                if (activeChar.value === null) {
-                    if (authStore.lastCharID !== undefined && authStore.lastCharID > 0) {
-                        try {
-                            await authStore.chooseCharacter(authStore.lastCharID, false);
-                        } catch (_) {
-                            // Ignore errors here; we only want to restore the last known character if possible.
-                        }
-                    }
-                }
+                await restoreAuthTokenOnlySession({
+                    activeChar,
+                    lastCharID: authStore.lastCharID,
+                    chooseCharacter: authStore.chooseCharacter,
+                    restoreAccountSession: authStore.restoreAccountSession,
+                });
 
                 if (await wantsSetupRedirect()) {
                     return navigateTo({

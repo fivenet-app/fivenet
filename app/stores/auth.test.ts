@@ -68,6 +68,7 @@ describe('useAuthStore', () => {
     beforeEach(() => {
         setActivePinia(createPinia());
         vi.clearAllMocks();
+        mocks.webSocket.status.value = 'OPEN';
         mocks.authSessionStore.getUserToken.mockReturnValue(null);
         mocks.authSessionStore.userInfo.accountId = null;
         mocks.authSessionStore.userInfo.userId = null;
@@ -166,5 +167,29 @@ describe('useAuthStore', () => {
                 },
             },
         );
+    });
+
+    it('does not open the websocket when refreshing account session metadata', async () => {
+        mocks.webSocket.status.value = 'CLOSED';
+
+        const authStore = useAuthStore();
+        authStore.setUsername('persisted-user', false);
+
+        await authStore.refreshAccountSession();
+
+        expect(authStore.username).toBe('tester');
+        expect(mocks.webSocket.open).not.toHaveBeenCalled();
+    });
+
+    it('opens the websocket when restoring an account-only session', async () => {
+        mocks.webSocket.status.value = 'CLOSED';
+
+        const authStore = useAuthStore();
+        authStore.setUsername('persisted-user', false);
+
+        await authStore.restoreAccountSession();
+
+        expect(authStore.username).toBe('tester');
+        expect(mocks.webSocket.open).toHaveBeenCalledTimes(1);
     });
 });

@@ -518,17 +518,32 @@ export const useAuthStore = defineStore(
             }
         };
 
-        const refreshAccountSession = async (): Promise<RefreshAccountSessionResponse | null> => {
+        const fetchAccountSession = async (): Promise<RefreshAccountSessionResponse> => {
             const authAuthClient = await getAuthAuthClient();
 
             const call = authAuthClient.refreshAccountSession({});
             const { response } = await call;
+            return response;
+        };
 
+        const applyAccountSession = (response: RefreshAccountSessionResponse, openSocket: boolean): void => {
             accountId.value = response.accountId;
             setAccountCanBeConfigAdmin(response.canBeConfigAdmin);
-            if (username.value === null && response.username) {
-                setUsername(response.username, false);
+            if (response.username) {
+                setUsername(response.username, openSocket);
             }
+        };
+
+        const refreshAccountSession = async (): Promise<RefreshAccountSessionResponse | null> => {
+            const response = await fetchAccountSession();
+            applyAccountSession(response, false);
+
+            return response;
+        };
+
+        const restoreAccountSession = async (): Promise<RefreshAccountSessionResponse | null> => {
+            const response = await fetchAccountSession();
+            applyAccountSession(response, true);
 
             return response;
         };
@@ -577,6 +592,7 @@ export const useAuthStore = defineStore(
             setAccountCanBeConfigAdmin,
             setJobProps,
             refreshAccountSession,
+            restoreAccountSession,
 
             chooseCharacter,
             impersonateJob,
