@@ -294,7 +294,15 @@ func (s *Store) CountTimeclock(ctx context.Context, db qrm.DB, q TimeclockQuery)
 
 	countStmt := tTimeClock.
 		SELECT(countExpr.AS("data_count.total")).
-		FROM(tTimeClock).
+		FROM(
+			tTimeClock.
+				INNER_JOIN(tUserJobs,
+					mysql.AND(
+						tUserJobs.UserID.EQ(tTimeClock.UserID),
+						tUserJobs.Job.EQ(mysql.String(q.Job)),
+					),
+				),
+		).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -356,36 +364,12 @@ func (s *Store) ListTimeclock(
 	}
 
 	groupBys := []mysql.GroupByClause{}
-	countExpr := mysql.COUNT(mysql.DISTINCT(tTimeClock.UserID))
 	dateSelectExpr := mysql.Expression(tTimeClock.Date)
 	if q.PerDay {
 		groupBys = append(groupBys, tTimeClock.Date, tTimeClock.UserID)
-		countExpr = mysql.COUNT(
-			mysql.RawString("DISTINCT `timeclock_entry`.`date`, `timeclock_entry`.`user_id`"),
-		)
 	} else {
 		groupBys = append(groupBys, tTimeClock.UserID)
 		dateSelectExpr = mysql.MAX(tTimeClock.Date)
-	}
-
-	countStmt := tTimeClock.
-		SELECT(countExpr.AS("data_count.total")).
-		FROM(tTimeClock.
-			INNER_JOIN(tColleague,
-				tColleague.ID.EQ(tTimeClock.UserID),
-			),
-		).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	if count.Total <= 0 {
-		return []*jobstimeclock.TimeclockEntry{}, nil
 	}
 
 	agg := tTimeClock.
@@ -407,28 +391,36 @@ func (s *Store) ListTimeclock(
 	aggEndTime := mysql.DateTimeColumn("end_time").From(agg)
 	aggSpentTime := mysql.FloatColumn("spent_time").From(agg)
 
-	orderBys := []mysql.OrderByClause{aggDate.DESC(), aggSpentTime.DESC()}
+	orderBys := []mysql.OrderByClause{aggDate.DESC()}
 	if q.Sort != nil && len(q.Sort.GetColumns()) > 0 {
 		orderBys = []mysql.OrderByClause{}
 		for _, sc := range q.Sort.GetColumns() {
 			switch sc.GetId() {
-			case "date":
+			case dateColumn:
 				if sc.GetDesc() {
 					orderBys = append(orderBys, aggDate.DESC())
 				} else {
 					orderBys = append(orderBys, aggDate.ASC())
 				}
-			case rankColumn:
+			case jobGradeColumn:
 				if sc.GetDesc() {
-					orderBys = append(orderBys, tColleagueProps.NamePrefix.DESC())
+					orderBys = append(orderBys, tUserJobs.Grade.DESC())
 				} else {
-					orderBys = append(orderBys, tColleagueProps.NamePrefix.ASC())
+					orderBys = append(orderBys, tUserJobs.Grade.ASC())
 				}
 			case nameColumn:
 				if sc.GetDesc() {
-					orderBys = append(orderBys, tColleague.Firstname.DESC())
+					orderBys = append(
+						orderBys,
+						tColleague.Firstname.DESC(),
+						tColleague.Lastname.DESC(),
+					)
 				} else {
-					orderBys = append(orderBys, tColleague.Firstname.ASC())
+					orderBys = append(
+						orderBys,
+						tColleague.Firstname.ASC(),
+						tColleague.Lastname.DESC(),
+					)
 				}
 			default:
 				if sc.GetDesc() {
@@ -439,6 +431,7 @@ func (s *Store) ListTimeclock(
 			}
 		}
 	}
+	orderBys = append(orderBys, aggSpentTime.DESC())
 
 	stmt := agg.
 		SELECT(
@@ -448,10 +441,10 @@ func (s *Store) ListTimeclock(
 			aggEndTime.AS("timeclock_entry.end_time"),
 			aggSpentTime.AS("timeclock_entry.spent_time"),
 			tColleague.ID,
-			tUserJobs.Job.AS("colleague.job"),
-			tUserJobs.Grade.AS("colleague.job_grade"),
 			tColleague.Firstname,
 			tColleague.Lastname,
+			tUserJobs.Job.AS("colleague.job"),
+			tUserJobs.Grade.AS("colleague.job_grade"),
 			tColleague.Dateofbirth,
 			tColleague.PhoneNumber,
 			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
@@ -535,13 +528,13 @@ func (s *Store) ListTimeclockTimeline(
 		orderBys = []mysql.OrderByClause{}
 		for _, sc := range q.Sort.GetColumns() {
 			switch sc.GetId() {
-			case "date":
+			case dateColumn:
 				if sc.GetDesc() {
 					orderBys = append(orderBys, tTimeClock.Date.DESC())
 				} else {
 					orderBys = append(orderBys, tTimeClock.Date.ASC())
 				}
-			case rankColumn:
+			case jobGradeColumn:
 				if sc.GetDesc() {
 					orderBys = append(orderBys, tColleagueProps.NamePrefix.DESC())
 				} else {
@@ -680,9 +673,9 @@ func (s *Store) ListInactiveEmployees(
 		for _, sc := range q.Sort.GetColumns() {
 			var columns []mysql.Column
 			switch sc.GetId() {
-			case "name":
+			case nameColumn:
 				columns = append(columns, tColleague.Firstname, tColleague.Lastname)
-			case "rank":
+			case jobGradeColumn:
 				fallthrough
 			default:
 				columns = append(columns, tColleague.JobGrade)

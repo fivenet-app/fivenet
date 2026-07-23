@@ -70,8 +70,8 @@ func TestStoreListInactiveEmployeesUsesUserJobsBase(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows(nil))
 
 	_, err := store.ListInactiveEmployees(t.Context(), store.db, InactiveEmployeesQuery{
-		Job:  "police",
-		Days: 14,
+		Job:   "police",
+		Days:  14,
 		Limit: 20,
 	})
 	require.NoError(t, err)

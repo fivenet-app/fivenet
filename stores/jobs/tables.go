@@ -16,7 +16,8 @@ var (
 )
 
 const (
-	nameColumn = "name"
-	rankColumn = "rank"
-	timeColumn = "time"
+	dateColumn     = "date"
+	nameColumn     = "name"
+	jobGradeColumn = "jobGrade"
+	timeColumn     = "time"
 )

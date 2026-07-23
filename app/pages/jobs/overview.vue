@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import JobMotd from '~/components/jobs/JobMotd.vue';
 import JobSelfService from '~/components/jobs/JobSelfService.vue';
-import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
+import OverviewBlock from '~/components/jobs/timeclock/OverviewBlock.vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import { useSettingsStore } from '~/stores/settings';
 
@@ -99,7 +99,7 @@ const showRadioFrequency = ref<boolean>(false);
                 :user-id="activeChar.userId"
             />
 
-            <TimeclockOverviewBlock v-if="can('jobs.TimeclockService/ListTimeclock').value" />
+            <OverviewBlock v-if="can('jobs.TimeclockService/ListTimeclock').value" />
         </div>
     </div>
 </template>

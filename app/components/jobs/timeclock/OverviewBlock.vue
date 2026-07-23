@@ -18,9 +18,9 @@ const props = withDefaults(
 
 const jobsTimeclockClient = await getJobsTimeclockClient();
 
-const { data, error, status, refresh } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
+const { data, error, status, refresh } = useLazyAsyncData(`jobs-timeclock-stats`, () => getStats());
 
-async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
+async function getStats(): Promise<GetTimeclockStatsResponse> {
     try {
         const call = jobsTimeclockClient.getTimeclockStats({
             userId: props.userId,

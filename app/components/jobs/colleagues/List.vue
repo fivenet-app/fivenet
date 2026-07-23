@@ -48,12 +48,12 @@ const schema = z.object({
                 .max(3)
                 .default([
                     {
-                        id: 'rank',
+                        id: 'jobGrade',
                         desc: false,
                     },
                 ]),
         })
-        .default({ columns: [{ id: 'rank', desc: false }] }),
+        .default({ columns: [{ id: 'jobGrade', desc: false }] }),
     page: pageNumberSchema,
 });
 
@@ -299,7 +299,7 @@ defineShortcuts({
                             <SortButton
                                 v-model="query.sorting"
                                 :fields="[
-                                    { label: $t('common.rank'), value: 'rank' },
+                                    { label: $t('common.rank', 1), value: 'jobGrade' },
                                     { label: $t('common.name'), value: 'name' },
                                 ]"
                             />

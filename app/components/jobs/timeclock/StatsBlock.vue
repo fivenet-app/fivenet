@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import TimeclockStatsChart from '~/components/jobs/timeclock/TimeclockStatsChart.vue';
+import StatsChart from '~/components/jobs/timeclock/StatsChart.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { TimeclockStats, TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock/timeclock';
 
@@ -88,7 +88,7 @@ onBeforeMount(async () => updateStats());
             <DataErrorBlock v-if="error" :error="error" :retry="async () => $emit('refresh')" />
 
             <ClientOnly v-else>
-                <TimeclockStatsChart :stats="weekly" :loading="!weekly" />
+                <StatsChart :stats="weekly" :loading="!weekly" />
             </ClientOnly>
         </div>
     </div>

@@ -19,8 +19,8 @@ import { type TimeclockEntry, TimeclockMode, TimeclockViewMode } from '~~/gen/ts
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 import ColleagueName from '../colleagues/ColleagueName.vue';
-import TimeclockStatsDrawer from './TimeclockStatsDrawer.vue';
-import TimeclockTimeline from './TimeclockTimeline.vue';
+import StatsDrawer from './StatsDrawer.vue';
+import Timeline from './Timeline.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -41,7 +41,7 @@ const props = withDefaults(
     },
 );
 
-const { t } = useI18n();
+const { d, t } = useI18n();
 
 const { attr } = useAuth();
 
@@ -165,28 +165,29 @@ async function listTimeclockEntries(values: Schema): Promise<ListTimeclockRespon
 }
 
 const entries = computed(() => {
-    if (data.value?.entries.oneofKind === 'daily') {
-        return data.value.entries.daily.entries;
-    } else if (data.value?.entries.oneofKind === 'weekly') {
-        return data.value.entries.weekly.entries;
-    } else if (data.value?.entries.oneofKind === 'range') {
-        return data.value.entries.range.entries;
+    switch (data.value?.entries.oneofKind) {
+        case 'daily':
+            return data.value.entries.daily.entries;
+        case 'weekly':
+            return data.value.entries.weekly.entries;
+        case 'range':
+            return data.value.entries.range.entries;
+        default:
+            return [];
     }
-
-    return [];
 });
 
 const totalTimeSum = computed(() => {
-    let sum = 0;
-    if (data.value?.entries.oneofKind === 'daily') {
-        sum = data.value.entries.daily.sum;
-    } else if (data.value?.entries.oneofKind === 'weekly') {
-        sum = data.value.entries.weekly.sum;
-    } else if (data.value?.entries.oneofKind === 'range') {
-        sum = data.value.entries.range.sum;
+    switch (data.value?.entries.oneofKind) {
+        case 'daily':
+            return data.value.entries.daily.sum;
+        case 'weekly':
+            return data.value.entries.weekly.sum;
+        case 'range':
+            return data.value.entries.range.sum;
+        default:
+            return 0;
     }
-
-    return sum;
 });
 
 const columns = computed(
@@ -212,6 +213,7 @@ const columns = computed(
                                 : 'hidden',
                     },
                 },
+                cell: ({ row }) => h('div', { class: 'text-highlighted' }, () => d(toDate(row.original.date), 'date')),
             },
             {
                 accessorKey: 'name',
@@ -227,13 +229,20 @@ const columns = computed(
                         th: props.userId === undefined && query.viewMode === TimeclockViewMode.ALL ? '' : 'hidden',
                     },
                 },
+                cell: ({ row }) =>
+                    h(ColleagueInfoPopover, {
+                        key: row.original.userId,
+                        user: row.original.user,
+                        userId: row.original.userId,
+                        showAvatar: true,
+                    }),
             },
             {
-                accessorKey: 'rank',
+                accessorKey: 'jobGrade',
                 header: ({ column }) => {
                     return h(TableSortButton, {
                         column,
-                        label: t('common.rank'),
+                        label: t('common.rank', 1),
                     });
                 },
                 meta: {
@@ -556,6 +565,7 @@ const { game } = useAppConfig();
                 :data="entries"
                 :empty="$t('common.not_found', [$t('common.entry', 2)])"
                 :sorting-options="{ manualSorting: true }"
+                :pagination-options="{ manualPagination: true }"
                 sticky
             >
                 <template #caption>
@@ -568,17 +578,7 @@ const { game } = useAppConfig();
                     </caption>
                 </template>
 
-                <template #date-cell="{ row }">
-                    <div class="text-highlighted">
-                        {{ $d(toDate(row.original.date), 'date') }}
-                    </div>
-                </template>
-
-                <template #name-cell="{ row }">
-                    <ColleagueInfoPopover :user="row.original.user" show-avatar />
-                </template>
-
-                <template #rank-cell="{ row }">
+                <template #jobGrade-cell="{ row }">
                     {{ row.original.user?.jobGradeLabel }}
                     <template v-if="row.original.user?.job !== game.unemployedJobName">
                         ({{ row.original.user?.jobGrade }})</template
@@ -607,7 +607,7 @@ const { game } = useAppConfig();
                     <DataNoDataBlock :description="$t('components.jobs.timeclock.timeline.select_users')" />
                 </div>
 
-                <TimeclockTimeline v-else :data="entries" :from="query.date.start" :to="query.date.end">
+                <Timeline v-else :data="entries" :from="query.date.start" :to="query.date.end">
                     <template #caption>
                         <p class="shrink-0 text-right">
                             <span class="font-semibold">{{ $t('common.sum') }}:</span>
@@ -619,7 +619,7 @@ const { game } = useAppConfig();
                             }}
                         </p>
                     </template>
-                </TimeclockTimeline>
+                </Timeline>
             </template>
         </template>
 
@@ -645,7 +645,7 @@ const { game } = useAppConfig();
                                     :ui="{ leadingIcon: 'hidden sm:block' }"
                                 />
 
-                                <TimeclockStatsDrawer
+                                <StatsDrawer
                                     :stats="data?.stats"
                                     :weekly="data?.statsWeekly"
                                     hide-header

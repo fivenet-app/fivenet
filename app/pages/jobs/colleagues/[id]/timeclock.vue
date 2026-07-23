@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import TimeclockList from '~/components/jobs/timeclock/TimeclockList.vue';
+import List from '~/components/jobs/timeclock/List.vue';
 
 useHead({
     title: 'pages.jobs.colleagues.id.timeclock',
@@ -24,7 +24,7 @@ const route = useRoute('jobs-colleagues-id-timeclock');
 </script>
 
 <template>
-    <TimeclockList
+    <List
         :user-id="parseInt(route.params.id as string)"
         :show-stats="false"
         force-historic-view

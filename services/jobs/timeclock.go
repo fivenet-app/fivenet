@@ -63,6 +63,7 @@ func (s *Server) ListTimeclock(
 		PerDay:   req.GetPerDay(),
 		UserIDs:  req.GetUserIds(),
 		UserID:   userInfo.GetUserId(),
+		Sort:     req.GetSort(),
 	}
 
 	count, err := s.store.CountTimeclock(ctx, s.db, countQuery)
@@ -182,7 +183,10 @@ func (s *Server) GetTimeclockStats(
 		}
 	}
 
-	statsQuery := jobsstore.TimeclockQuery{Job: userInfo.GetJob(), UserID: userId}
+	statsQuery := jobsstore.TimeclockQuery{
+		Job:    userInfo.GetJob(),
+		UserID: userId,
+	}
 	stats, err := s.store.GetTimeclockStats(ctx, s.db, statsQuery)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)

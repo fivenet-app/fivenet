@@ -30,12 +30,12 @@ const schema = z.object({
                 .max(3)
                 .default([
                     {
-                        id: 'rank',
+                        id: 'jobGrade',
                         desc: false,
                     },
                 ]),
         })
-        .default({ columns: [{ id: 'rank', desc: false }] }),
+        .default({ columns: [{ id: 'jobGrade', desc: false }] }),
     page: pageNumberSchema,
 });
 

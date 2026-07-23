@@ -234,7 +234,7 @@ func (s *Store) ListColleagues(
 			switch sc.GetId() {
 			case nameColumn:
 				columns = append(columns, tColleague.Firstname, tColleague.Lastname)
-			case rankColumn:
+			case jobGradeColumn:
 				fallthrough
 			default:
 				columns = append(columns, tUserJobs.Grade)
@@ -270,10 +270,21 @@ func (s *Store) ListColleagues(
 		).
 		FROM(
 			tColleague.
-				INNER_JOIN(tUserJobs, tUserJobs.UserID.EQ(tColleague.ID)).
-				LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tColleague.ID)).
-				LEFT_JOIN(tColleagueProps, mysql.AND(tColleagueProps.UserID.EQ(tColleague.ID), tColleagueProps.Job.EQ(mysql.String(q.Job)))).
-				LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tUserProps.AvatarFileID)),
+				INNER_JOIN(tUserJobs,
+					tUserJobs.UserID.EQ(tColleague.ID),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tColleague.ID),
+				).
+				LEFT_JOIN(tColleagueProps,
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleagueProps.Job.EQ(mysql.String(q.Job)),
+					),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
+				),
 		).
 		WHERE(condition).
 		OFFSET(q.Offset).
@@ -322,10 +333,24 @@ func (s *Store) GetColleague(
 		SELECT(tColleague.ID, columns...).
 		FROM(
 			tColleague.
-				INNER_JOIN(tUserJobs, mysql.AND(tUserJobs.UserID.EQ(tColleague.ID), tUserJobs.Job.EQ(mysql.String(job)))).
-				LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tColleague.ID)).
-				LEFT_JOIN(tColleagueProps, mysql.AND(tColleagueProps.UserID.EQ(tColleague.ID), tColleagueProps.Job.EQ(mysql.String(job)))).
-				LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tUserProps.AvatarFileID)),
+				INNER_JOIN(tUserJobs,
+					mysql.AND(
+						tUserJobs.UserID.EQ(tColleague.ID),
+						tUserJobs.Job.EQ(mysql.String(job)),
+					),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tColleague.ID),
+				).
+				LEFT_JOIN(tColleagueProps,
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleagueProps.Job.EQ(mysql.String(job)),
+					),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
+				),
 		).
 		WHERE(tColleague.ID.EQ(mysql.Int32(userId))).
 		LIMIT(1)
@@ -457,14 +482,35 @@ func (s *Store) ListColleagueActivity(
 		FROM(
 			tActivity.
 				INNER_JOIN(tTargetColleague, tTargetColleague.ID.EQ(tActivity.TargetUserID)).
-				LEFT_JOIN(tTargetUserJobs, mysql.AND(tTargetUserJobs.UserID.EQ(tTargetColleague.ID), tTargetUserJobs.Job.EQ(mysql.String(q.Job)))).
-				LEFT_JOIN(tTargetUserProps, tTargetUserProps.UserID.EQ(tTargetColleague.ID)).
-				LEFT_JOIN(tTargetUserAvatar, tTargetUserAvatar.ID.EQ(tTargetUserProps.AvatarFileID)).
-				LEFT_JOIN(tTargetColleagueProps, mysql.AND(tTargetColleagueProps.UserID.EQ(tTargetColleague.ID), tTargetColleague.Job.EQ(mysql.String(q.Job)))).
+				LEFT_JOIN(tTargetUserJobs, mysql.AND(
+					tTargetUserJobs.UserID.EQ(tTargetColleague.ID),
+					tTargetUserJobs.Job.EQ(mysql.String(q.Job)),
+				),
+				).
+				LEFT_JOIN(tTargetUserProps,
+					tTargetUserProps.UserID.EQ(tTargetColleague.ID),
+				).
+				LEFT_JOIN(tTargetUserAvatar,
+					tTargetUserAvatar.ID.EQ(tTargetUserProps.AvatarFileID),
+				).
+				LEFT_JOIN(tTargetColleagueProps,
+					mysql.AND(
+						tTargetColleagueProps.UserID.EQ(tTargetColleague.ID),
+						tTargetColleague.Job.EQ(mysql.String(q.Job)),
+					),
+				).
 				LEFT_JOIN(tSourceUser, tSourceUser.ID.EQ(tActivity.SourceUserID)).
-				LEFT_JOIN(tSourceUserJobs, mysql.AND(tSourceUserJobs.UserID.EQ(tSourceUser.ID), tSourceUserJobs.Job.EQ(mysql.String(q.Job)))).
-				LEFT_JOIN(tSourceUserProps, tSourceUserProps.UserID.EQ(tSourceUser.ID)).
-				LEFT_JOIN(tSourceUserAvatar, tSourceUserAvatar.ID.EQ(tSourceUserProps.AvatarFileID)),
+				LEFT_JOIN(tSourceUserJobs,
+					mysql.AND(
+						tSourceUserJobs.UserID.EQ(tSourceUser.ID),
+						tSourceUserJobs.Job.EQ(mysql.String(q.Job))),
+				).
+				LEFT_JOIN(tSourceUserProps,
+					tSourceUserProps.UserID.EQ(tSourceUser.ID),
+				).
+				LEFT_JOIN(tSourceUserAvatar,
+					tSourceUserAvatar.ID.EQ(tSourceUserProps.AvatarFileID),
+				),
 		).
 		WHERE(condition).
 		OFFSET(q.Offset).
