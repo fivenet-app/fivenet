@@ -136,6 +136,7 @@ onBeforeMount(async () => listJobs());
                     <ClientOnly>
                         <USelectMenu
                             v-model="state.job"
+                            class="w-full"
                             :items="jobs"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['label', 'name']"
@@ -155,6 +156,7 @@ onBeforeMount(async () => listJobs());
                     <ClientOnly>
                         <USelectMenu
                             v-model="state.grade"
+                            class="w-full"
                             :items="state.job?.grades"
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >
