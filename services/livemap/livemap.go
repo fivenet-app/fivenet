@@ -15,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	errorslivemap "github.com/fivenet-app/fivenet/v2026/services/livemap/errors"
 	"github.com/nats-io/nats.go/jetstream"
@@ -54,7 +53,6 @@ func (s *Server) getAndSendACL(
 		for job := range s.markersCache.AllRelaxed() {
 			markerJobs.Strings = append(markerJobs.Strings, job)
 		}
-		markerJobs.Strings = utils.RemoveSliceDuplicates(markerJobs.GetStrings())
 
 		if usersJobs.Jobs == nil {
 			usersJobs.Jobs = make(map[string]int32)

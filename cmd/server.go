@@ -15,6 +15,7 @@ func (c *ServerCmd) Run(cli *CLI) error {
 
 	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, true, true)
 	fxOpts = append(fxOpts, fxopts.FxServerOpts()...)
+	fxOpts = append(fxOpts, fxopts.FxDemoOpts()...)
 
 	if c.ModuleCronAgent {
 		fxOpts = append(fxOpts, fxopts.FxCronerOpts()...)

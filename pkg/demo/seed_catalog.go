@@ -191,10 +191,12 @@ func (d *Demo) upsertDemoJobsAndGrades(ctx context.Context) error {
 			tJobs.Name,
 			tJobs.Label,
 		)
-
 	for _, job := range demoSeedJobs {
 		stmt = stmt.VALUES(job.Name, job.Label)
 	}
+	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
+		tJobs.Label.SET(mysql.RawString("VALUES(`label`)")),
+	)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert demo jobs. %w", err)
@@ -222,10 +224,13 @@ func (d *Demo) upsertDemoJobGrades(ctx context.Context, tx *sql.Tx) error {
 			tJobsGrades.Grade,
 			tJobsGrades.Label,
 		)
-
 	for _, grade := range demoSeedJobGrades {
 		stmt = stmt.VALUES(grade.JobName, grade.Grade, grade.Label)
 	}
+	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
+		tJobsGrades.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
+		tJobsGrades.Label.SET(mysql.RawString("VALUES(`label`)")),
+	)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert demo job grades. %w", err)

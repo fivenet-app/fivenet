@@ -102,6 +102,7 @@ type Demo struct {
 	db         *sql.DB
 	dispatches *dispatches.DispatchDB
 	cfg        *config.Config
+	wg         sync.WaitGroup
 
 	randMu sync.Mutex
 	rng    *rand.Rand
@@ -138,18 +139,20 @@ func New(p Params) *Demo {
 		db:         p.DB,
 		dispatches: p.Dispatches,
 		cfg:        p.Cfg,
+		wg:         sync.WaitGroup{},
 	}
 	d.initRandomizers()
 
 	d.logger.Warn("Demo mode is enabled. This will generate demo data and user locations.")
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		go d.Start(ctxCancel)
-		return nil
+		return d.Start(ctxCancel)
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+		d.wg.Wait()
+
 		return nil
 	}))
 
@@ -244,30 +247,35 @@ func (d *Demo) Start(ctx context.Context) error {
 	}
 
 	if d.cfg.Demo.Features.Locations {
-		go d.moveUserMarkers(ctx)
+		d.wg.Go(func() {
+			d.moveUserMarkers(ctx)
+		})
 	}
 
 	if !d.cfg.Demo.Features.Dispatches {
-		<-ctx.Done()
 		return nil
 	}
 
-	for {
-		d.logger.Info("running demo dispatch generation cycle")
-		if err := d.updateDispatches(ctx); err != nil {
-			d.logger.Error("failed to update dispatches", zap.Error(err))
+	d.wg.Go(func() {
+		for {
+			d.logger.Info("running demo dispatch generation cycle")
+			if err := d.updateDispatches(ctx); err != nil {
+				d.logger.Error("failed to update dispatches", zap.Error(err))
+			}
+
+			d.generateDispatches(ctx)
+
+			randWait := d.randIntN(300) + 30 // 30-329 seconds
+
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.After(time.Duration(randWait) * time.Second):
+			}
 		}
+	})
 
-		d.generateDispatches(ctx)
-
-		randWait := d.randIntN(300) + 30 // 30-329 seconds
-
-		select {
-		case <-ctx.Done():
-			return nil
-		case <-time.After(time.Duration(randWait) * time.Second):
-		}
-	}
+	return nil
 }
 
 func (d *Demo) buildRuntimeUsers(ctx context.Context) ([]*user, error) {

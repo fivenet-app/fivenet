@@ -348,7 +348,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 			tLocs.X,
 			tLocs.Y,
 			tLocs.UpdatedAt,
-			tLocs.Hidden.AS("user_marker.hidden"),
+			tLocs.Hidden,
 			tUsers.ID.AS("user_marker.userid"),
 			tUsers.ID,
 			tUsers.Job,

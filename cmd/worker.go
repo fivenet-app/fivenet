@@ -18,7 +18,6 @@ func (c *WorkerCmd) Run(cli *CLI) error {
 	instance.SetComponent("worker")
 
 	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, true, true)
-	fxOpts = append(fxOpts, fxopts.FxDemoOpts()...)
 	fxOpts = append(fxOpts, fxopts.FxCronerOpts()...)
 
 	if c.ModuleCentrum {
