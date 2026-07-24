@@ -26,7 +26,7 @@ func (s *Server) getCookieBase(name string, value string) http.Cookie {
 	return http.Cookie{
 		Name:     name,
 		Value:    value,
-		Expires:  time.Now().Add(auth.TokenExpireTime),
+		Expires:  time.Now().UTC().Add(auth.TokenExpireTime),
 		MaxAge:   int(auth.TokenExpireTime.Seconds()),
 		Domain:   s.domain,
 		Path:     "/",
@@ -64,7 +64,7 @@ func (s *Server) destroyCookies(ctx context.Context) error {
 
 	//nolint:gosec // getCookieBase returns a secure pre-configured cookie "base"
 	accCookie := s.getCookieBase(auth.AccCookieName, "")
-	accCookie.Expires = time.Time{}
+	accCookie.Expires = time.Unix(0, 0).UTC()
 	accCookie.MaxAge = -1
 
 	// Send the cookies back to the client

@@ -543,12 +543,8 @@ func TestCallback_ConnectFlow(t *testing.T) {
 	state := session.Get("state")
 	assert.NotEmpty(t, state)
 	require.NotNil(t, state)
+	assert.Equal(t, token, session.Get("token"))
 	require.NoError(t, session.Save())
-
-	req.AddCookie(&http.Cookie{
-		Name:  "fivenet_token",
-		Value: token,
-	})
 
 	stateVal := state.(string)
 	req.URL, err = url.Parse(

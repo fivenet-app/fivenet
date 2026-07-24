@@ -4,10 +4,13 @@ import (
 	"context"
 	"net/http"
 	"sync/atomic"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	serveroauth2 "github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2"
 	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
@@ -82,6 +85,15 @@ var versionInfo = &Version{
 	Version: version.Version,
 }
 
+var cookiesToExpire = []string{
+	auth.AccCookieName,
+	auth.AuthedCookieName,
+	serveroauth2.SessionKeyOAuth2State,
+	// Legacy cookies
+	"fivenet_token",
+	"fivenet_usr",
+}
+
 func (r *Routes) RegisterHTTP(e *gin.Engine) {
 	// API Base
 	g := e.Group("/api")
@@ -100,6 +112,19 @@ func (r *Routes) RegisterHTTP(e *gin.Engine) {
 
 		g.GET("/clear-site-data", func(c *gin.Context) {
 			c.Header("Clear-Site-Data", "\"cache\", \"cookies\", \"storage\"")
+			for _, name := range cookiesToExpire {
+				c.SetCookieData(&http.Cookie{
+					Name:     name,
+					Value:    "",
+					Expires:  time.Unix(0, 0).UTC(),
+					MaxAge:   -1,
+					Domain:   r.cfg.HTTP.Sessions.Domain,
+					Path:     "/",
+					HttpOnly: true,
+					Secure:   true,
+					SameSite: http.SameSiteNoneMode,
+				})
+			}
 			c.String(
 				http.StatusOK,
 				"Your local site data should be cleared now, please go back to the FiveNet homepage yourself.",

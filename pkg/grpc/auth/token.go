@@ -17,10 +17,10 @@ import (
 )
 
 const (
-	// 4 days.
-	TokenExpireTime = 96 * time.Hour
-	// 2 days.
-	TokenRenewalTime = 48 * time.Hour
+	// TokenExpireTime 4 days.
+	TokenExpireTime = 4 * 24 * time.Hour
+	// TokenRenewalTime 2 days.
+	TokenRenewalTime = 2 * 24 * time.Hour
 )
 
 var ErrFailedJWTVerify = errors.New("failed to verify jwt token method")
