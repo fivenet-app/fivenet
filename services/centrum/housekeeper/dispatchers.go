@@ -43,8 +43,8 @@ func (s *Housekeeper) cleanupDispatchers(ctx context.Context) error {
 				}
 			}
 
-			// If user mapping is not nil and not hidden, dispatcher should still be valid.
-			if um != nil && !um.Hidden {
+			// Dispatcher is still valid when the user's job matches the dispatchers list job and the mapping is visible.
+			if user.GetJob() == job && um != nil && !um.Hidden {
 				continue
 			}
 
