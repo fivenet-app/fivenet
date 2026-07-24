@@ -34,6 +34,8 @@ type IJobs interface {
 	addUpdateCallback(fn updateCallbackFn)
 
 	GetHighestJobGrade(job string) *jobs.JobGrade
+
+	Refresh(ctx context.Context) error
 }
 
 type IJobsSearch interface {
@@ -106,11 +108,11 @@ func NewJobs(p Params) JobsResult {
 		}
 		c.Cache = jobs
 
-		if err := jobs.Start(ctxCancel, true); err != nil {
+		if err := c.Cache.Start(ctxCancel, true); err != nil {
 			return err
 		}
 
-		if err := c.loadJobs(ctxStartup); err != nil {
+		if err := c.Refresh(ctxStartup); err != nil {
 			return err
 		}
 
@@ -147,7 +149,7 @@ func (c *Jobs) RegisterCronjobHandlers(h *croner.Handlers) error {
 		ctx, span := c.tracer.Start(ctx, "mstlystcdata-jobs")
 		defer span.End()
 
-		if err := c.loadJobs(ctx); err != nil {
+		if err := c.Refresh(ctx); err != nil {
 			c.logger.Error("failed to refresh jobs cache", zap.Error(err))
 			return err
 		}
@@ -164,8 +166,8 @@ func (c *Jobs) RegisterCronjobHandlers(h *croner.Handlers) error {
 	return nil
 }
 
-// loadJobs loads jobs and their grades from the database into the cache.
-func (c *Jobs) loadJobs(ctx context.Context) error {
+// Refresh reloads jobs and their grades from the database into the cache.
+func (c *Jobs) Refresh(ctx context.Context) error {
 	tJobs := table.FivenetJobs.AS("job")
 	tJobsGrades := table.FivenetJobsGrades.AS("job_grade")
 

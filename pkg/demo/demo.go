@@ -15,6 +15,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	"github.com/go-jet/jet/v2/mysql"
@@ -124,6 +125,7 @@ type Params struct {
 	Cfg        *config.Config
 	DB         *sql.DB
 	Dispatches *dispatches.DispatchDB
+	Jobs       mstlystcdata.IJobs
 }
 
 // New creates a new Demo instance if demo mode is enabled in the config.
@@ -132,10 +134,11 @@ func New(p Params) *Demo {
 		return nil
 	}
 
-	ctxCancel, cancel := context.WithCancel(context.Background())
+	logger := p.Logger.Named("demo")
+	logger.Warn("Demo mode is enabled. This will generate demo data and user locations.")
 
 	d := &Demo{
-		logger:     p.Logger.Named("demo"),
+		logger:     logger,
 		db:         p.DB,
 		dispatches: p.Dispatches,
 		cfg:        p.Cfg,
@@ -143,10 +146,14 @@ func New(p Params) *Demo {
 	}
 	d.initRandomizers()
 
-	d.logger.Warn("Demo mode is enabled. This will generate demo data and user locations.")
+	ctxCancel, cancel := context.WithCancel(context.Background())
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		if err := d.start(ctxStartup, ctxCancel); err != nil {
+			return err
+		}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		return d.Start(ctxCancel)
+		// Refresh jobs after demo data has been loaded
+		return p.Jobs.Refresh(ctxStartup)
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
@@ -188,6 +195,58 @@ func (d *Demo) runStartupGenerators(ctx context.Context) error {
 	return nil
 }
 
+// start runs the demo runtime loops based on enabled feature toggles.
+func (d *Demo) start(ctxStartup context.Context, ctxCancel context.Context) error {
+	if err := d.runStartupGenerators(ctxStartup); err != nil {
+		d.logger.Error("failed to run startup demo generators", zap.Error(err))
+		return err
+	}
+
+	if d.cfg.Demo.Features.Locations || d.cfg.Demo.Features.Timeclock {
+		users, err := d.buildRuntimeUsers(ctxStartup)
+		if err != nil {
+			d.logger.Error("failed to build runtime user list", zap.Error(err))
+			return err
+		}
+		d.users = users
+	}
+
+	if d.cfg.Demo.Features.Timeclock {
+		d.createTimeclockEntries(ctxStartup)
+	}
+
+	if d.cfg.Demo.Features.Locations {
+		d.wg.Go(func() {
+			d.moveUserMarkers(ctxCancel)
+		})
+	}
+
+	if !d.cfg.Demo.Features.Dispatches {
+		return nil
+	}
+
+	d.wg.Go(func() {
+		for {
+			d.logger.Info("running demo dispatch generation cycle")
+			if err := d.updateDispatches(ctxCancel); err != nil {
+				d.logger.Error("failed to update dispatches", zap.Error(err))
+			}
+
+			d.generateDispatches(ctxCancel)
+
+			randWait := d.randIntN(300) + 30 // 30-329 seconds
+
+			select {
+			case <-ctxCancel.Done():
+				return
+			case <-time.After(time.Duration(randWait) * time.Second):
+			}
+		}
+	})
+
+	return nil
+}
+
 func (d *Demo) lookupUsers(
 	ctx context.Context,
 	identifiers []string,
@@ -224,58 +283,6 @@ func (d *Demo) lookupUsers(
 	}
 
 	return users, nil
-}
-
-// Start runs the demo runtime loops based on enabled feature toggles.
-func (d *Demo) Start(ctx context.Context) error {
-	if err := d.runStartupGenerators(ctx); err != nil {
-		d.logger.Error("failed to run startup demo generators", zap.Error(err))
-		return err
-	}
-
-	if d.cfg.Demo.Features.Locations || d.cfg.Demo.Features.Timeclock {
-		users, err := d.buildRuntimeUsers(ctx)
-		if err != nil {
-			d.logger.Error("failed to build runtime user list", zap.Error(err))
-			return err
-		}
-		d.users = users
-	}
-
-	if d.cfg.Demo.Features.Timeclock {
-		d.createTimeclockEntries(ctx)
-	}
-
-	if d.cfg.Demo.Features.Locations {
-		d.wg.Go(func() {
-			d.moveUserMarkers(ctx)
-		})
-	}
-
-	if !d.cfg.Demo.Features.Dispatches {
-		return nil
-	}
-
-	d.wg.Go(func() {
-		for {
-			d.logger.Info("running demo dispatch generation cycle")
-			if err := d.updateDispatches(ctx); err != nil {
-				d.logger.Error("failed to update dispatches", zap.Error(err))
-			}
-
-			d.generateDispatches(ctx)
-
-			randWait := d.randIntN(300) + 30 // 30-329 seconds
-
-			select {
-			case <-ctx.Done():
-				return
-			case <-time.After(time.Duration(randWait) * time.Second):
-			}
-		}
-	})
-
-	return nil
 }
 
 func (d *Demo) buildRuntimeUsers(ctx context.Context) ([]*user, error) {
