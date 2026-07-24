@@ -347,8 +347,8 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 		for {
 			msg, err := srv.Recv()
-			if errors.Is(err, io.EOF) {
-				return err
+			if errors.Is(err, io.EOF) || protoutils.IsContextCanceled(err) {
+				return nil
 			}
 			if err != nil {
 				return err
@@ -402,6 +402,9 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				}
 
 				if err := srv.Send(msg); err != nil {
+					if protoutils.IsContextCanceled(err) {
+						return nil
+					}
 					return err
 				}
 			}
@@ -423,6 +426,9 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				if errors.Is(err, context.DeadlineExceeded) ||
 					errors.Is(err, jetstream.ErrNoMessages) {
 					continue // keep polling
+				}
+				if protoutils.IsContextCanceled(err) {
+					return nil
 				}
 				return err
 			}
@@ -487,11 +493,16 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						}
 					}
 
-					outCh <- &pbnotifications.StreamResponse{
+					select {
+					case <-gctx.Done():
+						return nil
+
+					case outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_UserEvent{
 							UserEvent: &dest,
 						},
+					}:
 					}
 
 				case notifi.JobTopic:
@@ -504,11 +515,16 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					outCh <- &pbnotifications.StreamResponse{
+					select {
+					case <-gctx.Done():
+						return nil
+
+					case outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_JobEvent{
 							JobEvent: &dest,
 						},
+					}:
 					}
 
 				case notifi.JobGradeTopic:
@@ -532,11 +548,15 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					outCh <- &pbnotifications.StreamResponse{
+					select {
+					case <-gctx.Done():
+						return nil
+					case outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_JobGradeEvent{
 							JobGradeEvent: &dest,
 						},
+					}:
 					}
 
 				case notifi.SystemTopic:
@@ -545,11 +565,16 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					outCh <- &pbnotifications.StreamResponse{
+					select {
+					case <-gctx.Done():
+						return nil
+
+					case outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_SystemEvent{
 							SystemEvent: &dest,
 						},
+					}:
 					}
 
 				case notifi.ObjectTopic:
@@ -566,11 +591,16 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						continue
 					}
 
-					outCh <- &pbnotifications.StreamResponse{
+					select {
+					case <-gctx.Done():
+						return nil
+
+					case outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_ObjectEvent{
 							ObjectEvent: &dest,
 						},
+					}:
 					}
 
 				case notifi.MailerTopic:
@@ -583,11 +613,16 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					outCh <- &pbnotifications.StreamResponse{
+					select {
+					case <-gctx.Done():
+						return nil
+
+					case outCh <- &pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_MailerEvent{
 							MailerEvent: &dest,
 						},
+					}:
 					}
 				}
 			}

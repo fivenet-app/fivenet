@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	errorslivemap "github.com/fivenet-app/fivenet/v2026/services/livemap/errors"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
@@ -159,15 +160,24 @@ func (s *Server) Stream(
 
 	markerJobs, usersJobs, userOnDuty, err := s.getAndSendACL(srv, userInfo)
 	if err != nil {
+		if protoutils.IsContextCanceled(err) {
+			return nil
+		}
 		return err
 	}
 
 	if end, err := s.sendMarkerMarkers(srv, markerJobs); end || err != nil {
+		if protoutils.IsContextCanceled(err) {
+			return nil
+		}
 		return err
 	}
 
 	if userOnDuty {
 		if err := s.sendUserMarkers(srv, usersJobs, userInfo, userOnDuty); err != nil {
+			if protoutils.IsContextCanceled(err) {
+				return nil
+			}
 			return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 		}
 	} else {
@@ -177,6 +187,9 @@ func (s *Server) Stream(
 				Snapshot: &pblivemap.Snapshot{},
 			},
 		}); err != nil {
+			if protoutils.IsContextCanceled(err) {
+				return nil
+			}
 			return err
 		}
 	}
@@ -185,6 +198,14 @@ func (s *Server) Stream(
 	outCh := make(chan *pblivemap.StreamResponse, 256)
 	defer close(outCh)
 	g, gctx := errgroup.WithContext(ctx)
+	sendOut := func(resp *pblivemap.StreamResponse) error {
+		select {
+		case <-gctx.Done():
+			return nil
+		case outCh <- resp:
+			return nil
+		}
+	}
 
 	// Writer goroutine - single gRPC send loop
 	g.Go(func() error {
@@ -199,6 +220,9 @@ func (s *Server) Stream(
 				}
 
 				if err := srv.Send(msg); err != nil {
+					if protoutils.IsContextCanceled(err) {
+						return nil
+					}
 					return err
 				}
 			}
@@ -223,35 +247,41 @@ func (s *Server) Stream(
 				switch {
 				case e.MarkerUpdate != nil:
 					if markerUpdateShouldDeleteForUser(e.MarkerUpdate, markerJobs, userInfo) {
-						outCh <- &pblivemap.StreamResponse{
+						if err := sendOut(&pblivemap.StreamResponse{
 							Data: &pblivemap.StreamResponse_Markers{
 								Markers: &pblivemap.MarkerMarkersUpdates{
 									Deleted: []int64{e.MarkerUpdate.GetId()},
 									Partial: true,
 								},
 							},
+						}); err != nil {
+							return err
 						}
 						continue
 					}
 
-					outCh <- &pblivemap.StreamResponse{
+					if err := sendOut(&pblivemap.StreamResponse{
 						Data: &pblivemap.StreamResponse_Markers{
 							Markers: &pblivemap.MarkerMarkersUpdates{
 								Updated: []*livemapmarkers.MarkerMarker{e.MarkerUpdate},
 								Partial: true,
 							},
 						},
+					}); err != nil {
+						return err
 					}
 
 				case e.MarkerDelete != nil:
 					// Send delete marker event to client
-					outCh <- &pblivemap.StreamResponse{
+					if err := sendOut(&pblivemap.StreamResponse{
 						Data: &pblivemap.StreamResponse_Markers{
 							Markers: &pblivemap.MarkerMarkersUpdates{
 								Deleted: []int64{*e.MarkerDelete},
 								Partial: true,
 							},
 						},
+					}); err != nil {
+						return err
 					}
 
 				default:
@@ -281,7 +311,7 @@ func (s *Server) Stream(
 		for {
 			select {
 			case <-gctx.Done():
-				return gctx.Err()
+				return nil
 
 			default:
 			}
@@ -293,6 +323,9 @@ func (s *Server) Stream(
 					errors.Is(err, jetstream.ErrNoMessages) {
 					continue // keep polling
 				}
+				if protoutils.IsContextCanceled(err) {
+					return nil
+				}
 				return err
 			}
 
@@ -303,7 +336,7 @@ func (s *Server) Stream(
 					userInfo,
 					&userOnDuty,
 					usersJobs,
-					outCh,
+					sendOut,
 				); err != nil {
 					return err
 				}
@@ -345,7 +378,7 @@ func (s *Server) processMessage(
 	userInfo *userinfo.UserInfo,
 	userOnDuty *bool,
 	usersJobs *permissionsattributes.JobGradeList,
-	outCh chan<- *pblivemap.StreamResponse,
+	sendOut func(*pblivemap.StreamResponse) error,
 ) error {
 	op := m.Headers().Get("KV-Operation")
 	if err := m.Ack(); err != nil {
@@ -369,7 +402,7 @@ func (s *Server) processMessage(
 			*userOnDuty = false
 		}
 
-		outCh <- &pblivemap.StreamResponse{
+		if err := sendOut(&pblivemap.StreamResponse{
 			UserOnDuty: userOnDuty,
 			Data: &pblivemap.StreamResponse_UserDeletes{
 				UserDeletes: &pblivemap.UserDeletes{
@@ -378,6 +411,8 @@ func (s *Server) processMessage(
 					},
 				},
 			},
+		}); err != nil {
+			return err
 		}
 		return nil
 	}
@@ -394,7 +429,7 @@ func (s *Server) processMessage(
 			*userOnDuty = false
 		}
 
-		outCh <- &pblivemap.StreamResponse{
+		if err := sendOut(&pblivemap.StreamResponse{
 			UserOnDuty: userOnDuty,
 			Data: &pblivemap.StreamResponse_UserDeletes{
 				UserDeletes: &pblivemap.UserDeletes{
@@ -403,6 +438,8 @@ func (s *Server) processMessage(
 					},
 				},
 			},
+		}); err != nil {
+			return err
 		}
 		return nil
 	}
@@ -411,6 +448,9 @@ func (s *Server) processMessage(
 		if um.GetUserId() == userInfo.GetUserId() {
 			*userOnDuty = true
 			if err := s.sendUserMarkers(srv, usersJobs, userInfo, true); err != nil {
+				if protoutils.IsContextCanceled(err) {
+					return nil
+				}
 				return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 			}
 		} else if !userInfo.GetJobAdmin() {
@@ -431,13 +471,15 @@ func (s *Server) processMessage(
 		return nil
 	}
 
-	outCh <- &pblivemap.StreamResponse{
+	if err := sendOut(&pblivemap.StreamResponse{
 		UserOnDuty: userOnDuty,
 		Data: &pblivemap.StreamResponse_UserUpdates{
 			UserUpdates: &pblivemap.UserUpdates{
 				Updates: []*livemapmarkers.UserMarker{um},
 			},
 		},
+	}); err != nil {
+		return err
 	}
 
 	return nil

@@ -19,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
@@ -125,10 +126,16 @@ func (s *Server) Stream(
 
 	for {
 		if err := s.sendHandshakre(srv.Context(), srv, userInfo.GetJob(), acls); err != nil {
+			if protoutils.IsContextCanceled(err) {
+				return nil
+			}
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		if err := s.sendLatestState(srv.Context(), srv, userInfo, acls, jobList); err != nil {
+			if protoutils.IsContextCanceled(err) {
+				return nil
+			}
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
@@ -282,7 +289,7 @@ func (s *Server) stream(
 		for {
 			select {
 			case <-gctx.Done():
-				return gctx.Err()
+				return nil
 
 			default:
 			}
@@ -293,6 +300,9 @@ func (s *Server) stream(
 				if errors.Is(err, context.DeadlineExceeded) ||
 					errors.Is(err, jetstream.ErrNoMessages) {
 					continue // idle
+				}
+				if protoutils.IsContextCanceled(err) {
+					return nil
 				}
 				return err
 			}
@@ -356,7 +366,7 @@ func (s *Server) stream(
 				case out <- r:
 
 				case <-gctx.Done():
-					return gctx.Err()
+					return nil
 				}
 			}
 		}
@@ -381,7 +391,7 @@ func (s *Server) stream(
 			for {
 				select {
 				case <-gctx.Done():
-					return gctx.Err()
+					return nil
 
 				default:
 				}
@@ -392,6 +402,9 @@ func (s *Server) stream(
 					if errors.Is(err, context.DeadlineExceeded) ||
 						errors.Is(err, jetstream.ErrNoMessages) {
 						continue // idle
+					}
+					if protoutils.IsContextCanceled(err) {
+						return nil
 					}
 					return err
 				}
@@ -408,7 +421,7 @@ func (s *Server) stream(
 						case out <- r:
 
 						case <-gctx.Done():
-							return gctx.Err()
+							return nil
 						}
 						continue
 					}
@@ -427,7 +440,7 @@ func (s *Server) stream(
 					case out <- r:
 
 					case <-gctx.Done():
-						return gctx.Err()
+						return nil
 					}
 				}
 			}
@@ -439,10 +452,13 @@ func (s *Server) stream(
 		for {
 			select {
 			case <-gctx.Done():
-				return gctx.Err()
+				return nil
 
 			case resp := <-out:
 				if err := srv.Send(resp); err != nil {
+					if protoutils.IsContextCanceled(err) {
+						return nil
+					}
 					return err
 				}
 			}

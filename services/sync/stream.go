@@ -9,6 +9,7 @@ import (
 
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -68,13 +69,13 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 		for {
 			// Fast exit before starting another blocking call
 			if err := gctx.Err(); err != nil {
-				return err
+				return nil
 			}
 
 			msg, err := iter.Next() // Blocks until message/expiry/Stop()
 			if err != nil {
 				if gctx.Err() != nil {
-					return gctx.Err()
+					return nil
 				}
 				if errors.Is(err, context.DeadlineExceeded) {
 					continue
@@ -122,6 +123,9 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 					}
 
 					if err := srv.Send(dest); err != nil {
+						if protoutils.IsContextCanceled(err) {
+							return nil
+						}
 						return fmt.Errorf("failed to send stream response. %w", err)
 					}
 

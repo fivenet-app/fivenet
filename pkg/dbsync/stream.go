@@ -8,6 +8,7 @@ import (
 	"time"
 
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -48,7 +49,7 @@ func (s *Sync) runStream(ctx context.Context) error {
 
 	for {
 		msg, err := stream.Recv()
-		if errors.Is(err, io.EOF) {
+		if errors.Is(err, io.EOF) || protoutils.IsContextCanceled(err) {
 			return nil
 		}
 		if err != nil {
@@ -82,7 +83,12 @@ func (s *Sync) runStream(ctx context.Context) error {
 			return err
 		}
 
-		s.streamCh <- msg
+		select {
+		case <-ctx.Done():
+			return nil
+
+		case s.streamCh <- msg:
+		}
 	}
 }
 

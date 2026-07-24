@@ -113,6 +113,7 @@ func (r *Routes) RegisterHTTP(e *gin.Engine) {
 		g.GET("/clear-site-data", func(c *gin.Context) {
 			c.Header("Clear-Site-Data", "\"cache\", \"cookies\", \"storage\"")
 			for _, name := range cookiesToExpire {
+				//nolint:gosec // `Same-Site: None` is required because otherwise users can't login in the in-game tablet (iframe).
 				c.SetCookieData(&http.Cookie{
 					Name:     name,
 					Value:    "",
