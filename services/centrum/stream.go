@@ -285,89 +285,84 @@ func (s *Server) stream(
 			return fmt.Errorf("failed to create consumer. %w", err)
 		}
 
-		// Pull loop
+		msgs, err := consumer.Messages(
+			jetstream.PullMaxMessages(feedFetch),
+			jetstream.WithMessagesErrOnMissingHeartbeat(false),
+		)
+		if err != nil {
+			return err
+		}
+		defer msgs.Stop()
+
 		for {
-			select {
-			case <-gctx.Done():
-				return nil
-
-			default:
-			}
-
-			batch, err := consumer.Fetch(feedFetch,
-				jetstream.FetchMaxWait(3*time.Second))
+			m, err := msgs.Next(jetstream.NextContext(gctx))
 			if err != nil {
-				if errors.Is(err, context.DeadlineExceeded) ||
-					errors.Is(err, jetstream.ErrNoMessages) {
-					continue // idle
-				}
-				if protoutils.IsContextCanceled(err) {
+				if protoutils.IsContextCanceled(err) ||
+					errors.Is(err, jetstream.ErrMsgIteratorClosed) {
 					return nil
 				}
 				return err
 			}
 
-			for m := range batch.Messages() {
-				_, topic, tType := eventscentrum.SplitSubject(m.Subject())
+			_, topic, tType := eventscentrum.SplitSubject(m.Subject())
 
-				var r *pbcentrum.StreamResponse
+			var r *pbcentrum.StreamResponse
 
-				switch topic {
-				case eventscentrum.TopicDispatch:
-					if tType != eventscentrum.TypeDispatchStatus {
-						continue
-					}
-
-					var d centrumdispatches.DispatchStatus
-					if err := proto.Unmarshal(m.Data(), &d); err != nil {
-						s.logger.Error(
-							"failed to unmarshal dispatch status",
-							zap.Error(err),
-							zap.String("subject", m.Subject()),
-						)
-					}
-
-					r = &pbcentrum.StreamResponse{
-						Change: &pbcentrum.StreamResponse_DispatchStatus{
-							DispatchStatus: &d,
-						},
-					}
-
-				case eventscentrum.TopicUnit:
-					if tType != eventscentrum.TypeUnitStatus {
-						continue
-					}
-					var u centrumunits.UnitStatus
-					if err := proto.Unmarshal(m.Data(), &u); err != nil {
-						s.logger.Error(
-							"failed to unmarshal unit status",
-							zap.Error(err),
-							zap.String("subject", m.Subject()),
-						)
-					}
-
-					r = &pbcentrum.StreamResponse{
-						Change: &pbcentrum.StreamResponse_UnitStatus{
-							UnitStatus: &u,
-						},
-					}
-				}
-
-				if r == nil {
-					s.logger.Warn(
-						"received unknown centrum event",
-						zap.String("subject", m.Subject()),
-						zap.String("type", string(tType)),
-					)
+			switch topic {
+			case eventscentrum.TopicDispatch:
+				if tType != eventscentrum.TypeDispatchStatus {
 					continue
 				}
 
-				select {
-				case out <- r:
-
-				case <-gctx.Done():
-					return nil
+				var d centrumdispatches.DispatchStatus
+				if err := proto.Unmarshal(m.Data(), &d); err != nil {
+					s.logger.Error(
+						"failed to unmarshal dispatch status",
+						zap.Error(err),
+						zap.String("subject", m.Subject()),
+					)
 				}
+
+				r = &pbcentrum.StreamResponse{
+					Change: &pbcentrum.StreamResponse_DispatchStatus{
+						DispatchStatus: &d,
+					},
+				}
+
+			case eventscentrum.TopicUnit:
+				if tType != eventscentrum.TypeUnitStatus {
+					continue
+				}
+				var u centrumunits.UnitStatus
+				if err := proto.Unmarshal(m.Data(), &u); err != nil {
+					s.logger.Error(
+						"failed to unmarshal unit status",
+						zap.Error(err),
+						zap.String("subject", m.Subject()),
+					)
+				}
+
+				r = &pbcentrum.StreamResponse{
+					Change: &pbcentrum.StreamResponse_UnitStatus{
+						UnitStatus: &u,
+					},
+				}
+			}
+
+			if r == nil {
+				s.logger.Warn(
+					"received unknown centrum event",
+					zap.String("subject", m.Subject()),
+					zap.String("type", string(tType)),
+				)
+				continue
+			}
+
+			select {
+			case out <- r:
+
+			case <-gctx.Done():
+				return nil
 			}
 		}
 	})
@@ -387,52 +382,29 @@ func (s *Server) stream(
 				return fmt.Errorf("failed to create consumer. %w", err)
 			}
 
-			// Pull loop
+			msgs, err := consumer.Messages(
+				jetstream.PullMaxMessages(feedFetch),
+				jetstream.WithMessagesErrOnMissingHeartbeat(false),
+			)
+			if err != nil {
+				return err
+			}
+			defer msgs.Stop()
+
 			for {
-				select {
-				case <-gctx.Done():
-					return nil
-
-				default:
-				}
-
-				batch, err := consumer.Fetch(feedFetch,
-					jetstream.FetchMaxWait(3*time.Second))
+				m, err := msgs.Next(jetstream.NextContext(gctx))
 				if err != nil {
-					if errors.Is(err, context.DeadlineExceeded) ||
-						errors.Is(err, jetstream.ErrNoMessages) {
-						continue // idle
-					}
-					if protoutils.IsContextCanceled(err) {
+					if protoutils.IsContextCanceled(err) ||
+						errors.Is(err, jetstream.ErrMsgIteratorClosed) {
 						return nil
 					}
 					return err
 				}
 
-				for m := range batch.Messages() {
-					if op := m.Headers().Get("KV-Operation"); op == "DEL" || op == "PURGE" {
-						key := strings.TrimPrefix(m.Subject(), "$KV."+f.Bucket+".")
+				if op := m.Headers().Get("KV-Operation"); op == "DEL" || op == "PURGE" {
+					key := strings.TrimPrefix(m.Subject(), "$KV."+f.Bucket+".")
 
-						r := f.WrapDelete(key)
-						if r == nil {
-							continue
-						}
-						select {
-						case out <- r:
-
-						case <-gctx.Done():
-							return nil
-						}
-						continue
-					}
-
-					obj, err := f.Unmarshal(gctx, s, m.Data())
-					if err != nil {
-						// Bad payload - skip
-						continue
-					}
-
-					r := f.WrapPut(obj)
+					r := f.WrapDelete(key)
 					if r == nil {
 						continue
 					}
@@ -442,6 +414,24 @@ func (s *Server) stream(
 					case <-gctx.Done():
 						return nil
 					}
+					continue
+				}
+
+				obj, err := f.Unmarshal(gctx, s, m.Data())
+				if err != nil {
+					// Bad payload - skip
+					continue
+				}
+
+				r := f.WrapPut(obj)
+				if r == nil {
+					continue
+				}
+				select {
+				case out <- r:
+
+				case <-gctx.Done():
+					return nil
 				}
 			}
 		})
@@ -454,7 +444,13 @@ func (s *Server) stream(
 			case <-gctx.Done():
 				return nil
 
-			case resp := <-out:
+			case resp, ok := <-out:
+				if !ok {
+					return nil
+				}
+				if resp == nil {
+					continue
+				}
 				if err := srv.Send(resp); err != nil {
 					if protoutils.IsContextCanceled(err) {
 						return nil

@@ -1,7 +1,6 @@
 package livemap
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -214,9 +213,12 @@ func (s *Server) Stream(
 			case <-gctx.Done():
 				return nil
 
-			case msg := <-outCh:
-				if msg == nil {
+			case msg, ok := <-outCh:
+				if !ok {
 					return nil
+				}
+				if msg == nil {
+					continue
 				}
 
 				if err := srv.Send(msg); err != nil {
@@ -239,7 +241,10 @@ func (s *Server) Stream(
 			case <-gctx.Done():
 				return nil
 
-			case e := <-markerUpdateCh:
+			case e, ok := <-markerUpdateCh:
+				if !ok {
+					return nil
+				}
 				if e == nil {
 					continue
 				}
@@ -308,38 +313,34 @@ func (s *Server) Stream(
 			return fmt.Errorf("failed to create consumer. %w", err)
 		}
 
+		msgs, err := consumer.Messages(
+			jetstream.PullMaxMessages(feedFetch),
+			jetstream.WithMessagesErrOnMissingHeartbeat(false),
+		)
+		if err != nil {
+			return err
+		}
+		defer msgs.Stop()
+
 		for {
-			select {
-			case <-gctx.Done():
-				return nil
-
-			default:
-			}
-
-			batch, err := consumer.Fetch(feedFetch,
-				jetstream.FetchMaxWait(3*time.Second))
+			m, err := msgs.Next(jetstream.NextContext(gctx))
 			if err != nil {
-				if errors.Is(err, context.DeadlineExceeded) ||
-					errors.Is(err, jetstream.ErrNoMessages) {
-					continue // keep polling
-				}
-				if protoutils.IsContextCanceled(err) {
+				if protoutils.IsContextCanceled(err) ||
+					errors.Is(err, jetstream.ErrMsgIteratorClosed) {
 					return nil
 				}
 				return err
 			}
 
-			for m := range batch.Messages() {
-				if err := s.processMessage(
-					srv,
-					m,
-					userInfo,
-					&userOnDuty,
-					usersJobs,
-					sendOut,
-				); err != nil {
-					return err
-				}
+			if err := s.processMessage(
+				srv,
+				m,
+				userInfo,
+				&userOnDuty,
+				usersJobs,
+				sendOut,
+			); err != nil {
+				return err
 			}
 		}
 	})
@@ -381,10 +382,6 @@ func (s *Server) processMessage(
 	sendOut func(*pblivemap.StreamResponse) error,
 ) error {
 	op := m.Headers().Get("KV-Operation")
-	if err := m.Ack(); err != nil {
-		s.logger.Error("failed to ack message", zap.Error(err))
-		return nil // Log and continue processing other messages
-	}
 
 	if op == "DEL" || op == "PURGE" {
 		if !*userOnDuty && !userInfo.GetJobAdmin() {

@@ -396,7 +396,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 			case <-gctx.Done():
 				return nil
 
-			case msg := <-outCh:
+			case msg, ok := <-outCh:
+				if !ok {
+					return nil
+				}
 				if msg == nil {
 					continue
 				}
@@ -412,218 +415,210 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	})
 
 	g.Go(func() error {
+		msgs, err := consumer.Messages(
+			jetstream.PullMaxMessages(feedFetch),
+			jetstream.WithMessagesErrOnMissingHeartbeat(false),
+		)
+		if err != nil {
+			return err
+		}
+		defer msgs.Stop()
+
 		for {
-			select {
-			case <-gctx.Done():
-				return nil
-
-			default:
-			}
-
-			batch, err := consumer.Fetch(feedFetch,
-				jetstream.FetchMaxWait(3*time.Second))
+			m, err := msgs.Next(jetstream.NextContext(gctx))
 			if err != nil {
-				if errors.Is(err, context.DeadlineExceeded) ||
-					errors.Is(err, jetstream.ErrNoMessages) {
-					continue // keep polling
-				}
-				if protoutils.IsContextCanceled(err) {
+				if protoutils.IsContextCanceled(err) ||
+					errors.Is(err, jetstream.ErrMsgIteratorClosed) {
 					return nil
 				}
 				return err
 			}
 
-			for m := range batch.Messages() {
-				// Publish notifications sent directly to user via the message queue
-				if m == nil {
-					s.logger.Warn(
-						"nil notification message received via message queue",
-						zap.Int32("user_id", currentUserInfo.GetUserId()),
-					)
+			// Publish notifications sent directly to user via the message queue
+			if m == nil {
+				s.logger.Warn(
+					"nil notification message received via message queue",
+					zap.Int32("user_id", currentUserInfo.GetUserId()),
+				)
+				continue
+			}
+
+			topic, parts := notifi.SplitSubject(m.Subject())
+			switch topic {
+			case notifi.UserTopic, notifi.AccountTopic:
+				if accountOnly && topic == notifi.UserTopic {
 					continue
 				}
 
-				if err := m.Ack(); err != nil {
-					s.logger.Error("failed to ack notification message", zap.Error(err))
+				var dest notificationsevents.UserEvent
+				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+					return errswrap.NewError(err, ErrFailedStream)
 				}
 
-				topic, parts := notifi.SplitSubject(m.Subject())
-				switch topic {
-				case notifi.UserTopic, notifi.AccountTopic:
-					if accountOnly && topic == notifi.UserTopic {
-						continue
+				needsSubjectRefresh := false
+				switch d := dest.GetData().(type) {
+				case *notificationsevents.UserEvent_Notification:
+					// Only increment notification count for "database stored" notifications
+					if topic == notifi.UserTopic && d.Notification.GetId() > 0 {
+						notificationCount++
 					}
 
-					var dest notificationsevents.UserEvent
-					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
+				case *notificationsevents.UserEvent_NotificationsReadCount:
+					if topic == notifi.UserTopic {
+						if notificationCount-d.NotificationsReadCount <= 0 {
+							notificationCount = 0
+						} else {
+							notificationCount -= d.NotificationsReadCount
+						}
 					}
 
-					needsSubjectRefresh := false
-					switch d := dest.GetData().(type) {
-					case *notificationsevents.UserEvent_Notification:
-						// Only increment notification count for "database stored" notifications
-						if topic == notifi.UserTopic && d.Notification.GetId() > 0 {
-							notificationCount++
-						}
-
-					case *notificationsevents.UserEvent_NotificationsReadCount:
-						if topic == notifi.UserTopic {
-							if notificationCount-d.NotificationsReadCount <= 0 {
-								notificationCount = 0
-							} else {
-								notificationCount -= d.NotificationsReadCount
-							}
-						}
-
-					case *notificationsevents.UserEvent_UserInfoChanged:
-						if topic == notifi.UserTopic {
-							applyUserInfoChanged(currentUserInfo, d.UserInfoChanged)
-							needsSubjectRefresh = true
-						}
-
-					case *notificationsevents.UserEvent_AccountGroupsChanged:
-						applyAccountGroupsChanged(currentUserInfo, d.AccountGroupsChanged)
+				case *notificationsevents.UserEvent_UserInfoChanged:
+					if topic == notifi.UserTopic {
+						applyUserInfoChanged(currentUserInfo, d.UserInfoChanged)
 						needsSubjectRefresh = true
 					}
 
-					if needsSubjectRefresh {
-						if err := rebuildAndRefreshSubjects(); err != nil {
-							return err
-						}
+				case *notificationsevents.UserEvent_AccountGroupsChanged:
+					applyAccountGroupsChanged(currentUserInfo, d.AccountGroupsChanged)
+					needsSubjectRefresh = true
+				}
+
+				if needsSubjectRefresh {
+					if err := rebuildAndRefreshSubjects(); err != nil {
+						return err
 					}
+				}
 
-					select {
-					case <-gctx.Done():
-						return nil
+				select {
+				case <-gctx.Done():
+					return nil
 
-					case outCh <- &pbnotifications.StreamResponse{
-						NotificationCount: notificationCount,
-						Data: &pbnotifications.StreamResponse_UserEvent{
-							UserEvent: &dest,
-						},
-					}:
-					}
+				case outCh <- &pbnotifications.StreamResponse{
+					NotificationCount: notificationCount,
+					Data: &pbnotifications.StreamResponse_UserEvent{
+						UserEvent: &dest,
+					},
+				}:
+				}
 
-				case notifi.JobTopic:
-					if accountOnly {
-						continue
-					}
+			case notifi.JobTopic:
+				if accountOnly {
+					continue
+				}
 
-					var dest notificationsevents.JobEvent
-					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
-					}
+				var dest notificationsevents.JobEvent
+				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+					return errswrap.NewError(err, ErrFailedStream)
+				}
 
-					select {
-					case <-gctx.Done():
-						return nil
+				select {
+				case <-gctx.Done():
+					return nil
 
-					case outCh <- &pbnotifications.StreamResponse{
-						NotificationCount: notificationCount,
-						Data: &pbnotifications.StreamResponse_JobEvent{
-							JobEvent: &dest,
-						},
-					}:
-					}
+				case outCh <- &pbnotifications.StreamResponse{
+					NotificationCount: notificationCount,
+					Data: &pbnotifications.StreamResponse_JobEvent{
+						JobEvent: &dest,
+					},
+				}:
+				}
 
-				case notifi.JobGradeTopic:
-					if accountOnly {
-						continue
-					}
+			case notifi.JobGradeTopic:
+				if accountOnly {
+					continue
+				}
 
-					// Make sure the job grade is included
-					if len(parts) < 2 {
-						continue
-					}
-					grade, err := strconv.ParseInt(parts[1], 10, 32)
-					if err != nil {
-						continue
-					}
-					if currentUserInfo.GetJobGrade() < int32(grade) {
-						continue
-					}
-					var dest notificationsevents.JobGradeEvent
-					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
-					}
+				// Make sure the job grade is included
+				if len(parts) < 2 {
+					continue
+				}
+				grade, err := strconv.ParseInt(parts[1], 10, 32)
+				if err != nil {
+					continue
+				}
+				if currentUserInfo.GetJobGrade() < int32(grade) {
+					continue
+				}
+				var dest notificationsevents.JobGradeEvent
+				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+					return errswrap.NewError(err, ErrFailedStream)
+				}
 
-					select {
-					case <-gctx.Done():
-						return nil
-					case outCh <- &pbnotifications.StreamResponse{
-						NotificationCount: notificationCount,
-						Data: &pbnotifications.StreamResponse_JobGradeEvent{
-							JobGradeEvent: &dest,
-						},
-					}:
-					}
+				select {
+				case <-gctx.Done():
+					return nil
+				case outCh <- &pbnotifications.StreamResponse{
+					NotificationCount: notificationCount,
+					Data: &pbnotifications.StreamResponse_JobGradeEvent{
+						JobGradeEvent: &dest,
+					},
+				}:
+				}
 
-				case notifi.SystemTopic:
-					var dest notificationsevents.SystemEvent
-					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
-					}
+			case notifi.SystemTopic:
+				var dest notificationsevents.SystemEvent
+				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+					return errswrap.NewError(err, ErrFailedStream)
+				}
 
-					select {
-					case <-gctx.Done():
-						return nil
+				select {
+				case <-gctx.Done():
+					return nil
 
-					case outCh <- &pbnotifications.StreamResponse{
-						NotificationCount: notificationCount,
-						Data: &pbnotifications.StreamResponse_SystemEvent{
-							SystemEvent: &dest,
-						},
-					}:
-					}
+				case outCh <- &pbnotifications.StreamResponse{
+					NotificationCount: notificationCount,
+					Data: &pbnotifications.StreamResponse_SystemEvent{
+						SystemEvent: &dest,
+					},
+				}:
+				}
 
-				case notifi.ObjectTopic:
-					if accountOnly {
-						continue
-					}
+			case notifi.ObjectTopic:
+				if accountOnly {
+					continue
+				}
 
-					var dest notificationsclientview.ObjectEvent
-					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
-					}
+				var dest notificationsclientview.ObjectEvent
+				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+					return errswrap.NewError(err, ErrFailedStream)
+				}
 
-					if !s.shouldDeliverObjectEvent(&dest, currentUserInfo) {
-						continue
-					}
+				if !s.shouldDeliverObjectEvent(&dest, currentUserInfo) {
+					continue
+				}
 
-					select {
-					case <-gctx.Done():
-						return nil
+				select {
+				case <-gctx.Done():
+					return nil
 
-					case outCh <- &pbnotifications.StreamResponse{
-						NotificationCount: notificationCount,
-						Data: &pbnotifications.StreamResponse_ObjectEvent{
-							ObjectEvent: &dest,
-						},
-					}:
-					}
+				case outCh <- &pbnotifications.StreamResponse{
+					NotificationCount: notificationCount,
+					Data: &pbnotifications.StreamResponse_ObjectEvent{
+						ObjectEvent: &dest,
+					},
+				}:
+				}
 
-				case notifi.MailerTopic:
-					if accountOnly {
-						continue
-					}
+			case notifi.MailerTopic:
+				if accountOnly {
+					continue
+				}
 
-					var dest mailerevents.MailerEvent
-					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
-					}
+				var dest mailerevents.MailerEvent
+				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+					return errswrap.NewError(err, ErrFailedStream)
+				}
 
-					select {
-					case <-gctx.Done():
-						return nil
+				select {
+				case <-gctx.Done():
+					return nil
 
-					case outCh <- &pbnotifications.StreamResponse{
-						NotificationCount: notificationCount,
-						Data: &pbnotifications.StreamResponse_MailerEvent{
-							MailerEvent: &dest,
-						},
-					}:
-					}
+				case outCh <- &pbnotifications.StreamResponse{
+					NotificationCount: notificationCount,
+					Data: &pbnotifications.StreamResponse_MailerEvent{
+						MailerEvent: &dest,
+					},
+				}:
 				}
 			}
 		}

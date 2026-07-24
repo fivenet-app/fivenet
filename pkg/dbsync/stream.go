@@ -98,16 +98,37 @@ func (s *Sync) streamWorker(ctx context.Context) {
 		case <-ctx.Done():
 			return
 
-		case in := <-s.streamCh:
-			s.logger.Info(
-				"received sync stream message",
-				zap.Int32("user_id", in.GetUserId()),
-			)
-			if err := s.users.SyncUser(ctx, in.GetUserId()); err != nil {
-				s.logger.Error(
-					"error during single user sync",
-					zap.Int32("user_id", in.GetUserId()),
-					zap.Error(err),
+		case msg, ok := <-s.streamCh:
+			if !ok {
+				return
+			}
+			if msg == nil {
+				s.logger.Warn("received nil dbsync stream response")
+				continue
+			}
+
+			switch data := msg.GetPayload().(type) {
+			case nil:
+				s.logger.Warn("received dbsync stream response without payload (nil)")
+				continue
+
+			case *pbsync.StreamResponse_UserId:
+				s.logger.Info(
+					"received single user sync request",
+					zap.Int32("user_id", data.UserId),
+				)
+				if err := s.users.SyncUser(ctx, data.UserId); err != nil {
+					s.logger.Error(
+						"error during single user sync",
+						zap.Int32("user_id", data.UserId),
+						zap.Error(err),
+					)
+				}
+
+			default:
+				s.logger.Warn(
+					"received unknown dbsync stream response payload",
+					zap.Any("payload", data),
 				)
 			}
 		}

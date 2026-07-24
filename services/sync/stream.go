@@ -1,7 +1,6 @@
 package sync
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -40,101 +39,62 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 		return fmt.Errorf("failed to create consumer. %w", err)
 	}
 
-	iter, err := consumer.Messages()
-	if err != nil {
-		return fmt.Errorf("failed to fetch messages consumer. %w", err)
-	}
-	defer iter.Stop()
-
 	g, gctx := errgroup.WithContext(ctx)
 
-	msgCh := make(chan jetstream.Msg, 8)
-
 	g.Go(func() error {
-		// Create the iterator with short expiry so Next() wakes periodically.
-		iter, err := consumer.Messages(
+		msgs, err := consumer.Messages(
 			jetstream.PullMaxMessages(1),
-			jetstream.PullExpiry(1*time.Second),
+			jetstream.WithMessagesErrOnMissingHeartbeat(false),
 		)
 		if err != nil {
-			close(msgCh)
 			return err
 		}
-		defer iter.Stop()
-		defer close(msgCh)
-
-		stopIter := context.AfterFunc(gctx, iter.Stop)
-		defer stopIter()
+		defer msgs.Stop()
 
 		for {
-			// Fast exit before starting another blocking call
-			if err := gctx.Err(); err != nil {
-				return nil
-			}
-
-			msg, err := iter.Next() // Blocks until message/expiry/Stop()
+			msg, err := msgs.Next(jetstream.NextContext(gctx))
 			if err != nil {
-				if gctx.Err() != nil {
+				if protoutils.IsContextCanceled(err) ||
+					errors.Is(err, jetstream.ErrMsgIteratorClosed) {
 					return nil
 				}
-				if errors.Is(err, context.DeadlineExceeded) {
-					continue
-				}
-
 				return err
+			}
+
+			// "Forward" dbsync event via this stream
+			if msg == nil {
+				s.logger.Warn("nil dbsync event received via message queue")
+				return nil
 			}
 			if err := msg.Ack(); err != nil {
 				s.logger.Error("failed to ack dbsync event", zap.Error(err))
 				continue
 			}
 
-			select {
-			case <-gctx.Done():
-				return nil
-
-			case msgCh <- msg:
-			}
-		}
-	})
-
-	g.Go(func() error {
-		for {
-			select {
-			case <-gctx.Done():
-				return nil
-
-			case msg := <-msgCh:
-				// "Forward" dbsync event via this stream
-				if msg == nil {
-					s.logger.Warn("nil dbsync event received via message queue")
-					return nil
+			_, topic := splitSubject(msg.Subject())
+			switch topic {
+			case TopicUser:
+				dest := &pbsync.StreamResponse{}
+				if err := protojson.Unmarshal(msg.Data(), dest); err != nil {
+					return fmt.Errorf("failed to unmarshal dbsync event data. %w", err)
 				}
 
-				_, topic := splitSubject(msg.Subject())
-				switch topic {
-				case TopicUser:
-					dest := &pbsync.StreamResponse{}
-					if err := protojson.Unmarshal(msg.Data(), dest); err != nil {
-						return fmt.Errorf("failed to unmarshal dbsync event data. %w", err)
-					}
-
-					if dest.GetUserId() == 0 {
-						continue
-					}
-
-					if err := srv.Send(dest); err != nil {
-						if protoutils.IsContextCanceled(err) {
-							return nil
-						}
-						return fmt.Errorf("failed to send stream response. %w", err)
-					}
-
-				default:
-					s.logger.Warn(
-						"received dbsync event with unknown topic",
-						zap.String("topic", string(topic)),
-					)
+				if dest.GetUserId() == 0 {
+					continue
 				}
+
+				if err := srv.Send(dest); err != nil {
+					if protoutils.IsContextCanceled(err) {
+						return nil
+					}
+					return fmt.Errorf("failed to send stream response. %w", err)
+				}
+
+			default:
+				s.logger.Warn(
+					"received dbsync event with unknown topic",
+					zap.String("topic", string(topic)),
+				)
 			}
 		}
 	})
