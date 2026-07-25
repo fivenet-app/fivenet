@@ -30,8 +30,6 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                 color="neutral"
                 :label="`${$t('common.mode')}: ${$t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`)}`"
             />
-
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>
 
         <template #body>

@@ -59,8 +59,6 @@ const { notepadFullscreen } = storeToRefs(settingsStore);
                     @click="notepadFullscreen = !notepadFullscreen"
                 />
             </UTooltip>
-
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>
 
         <template #body>

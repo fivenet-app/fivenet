@@ -162,12 +162,13 @@ async function closeDrawer(): Promise<void> {
         :title="$t('common.request', 2)"
         :overlay="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
-        :close="{ onClick: closeDrawer }"
+        :close="false"
         :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <template #title>
             <span class="flex-1">{{ $t('common.request', 2) }}</span>
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="closeDrawer" />
+
+            <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="closeDrawer" />
         </template>
 
         <template #body>

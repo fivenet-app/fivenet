@@ -130,8 +130,6 @@ const taskFormDrawer = overlay.create(TaskForm);
                     />
                 </div>
             </div>
-
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>
 
         <template #body>

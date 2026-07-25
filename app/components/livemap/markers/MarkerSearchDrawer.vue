@@ -25,8 +25,6 @@ const isDismissible = ref<boolean>(true);
     >
         <template #title>
             <span class="flex-1">{{ $t('common.marker', 2) }}</span>
-
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>
 
         <template #body>

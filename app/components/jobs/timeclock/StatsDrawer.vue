@@ -24,6 +24,7 @@ const isOpen = ref<boolean>(false);
 <template>
     <UDrawer
         v-model:open="isOpen"
+        :close="false"
         :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <UButton
@@ -40,7 +41,8 @@ const isOpen = ref<boolean>(false);
 
         <template #title>
             <span class="flex-1">{{ $t('common.stats') }}</span>
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="isOpen = false" />
+
+            <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="isOpen = false" />
         </template>
 
         <template #body>

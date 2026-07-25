@@ -97,13 +97,13 @@ async function closeDrawer(): Promise<void> {
     <UDrawer
         :overlay="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
-        :close="{ onClick: closeDrawer }"
+        :close="false"
         :ui="{ container: 'flex-1', content: 'min-h-[275px]', title: 'flex flex-row gap-2 justify-between', body: 'h-full' }"
     >
         <template #title>
             <span>{{ $t('common.reminder', 2) }}</span>
 
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="closeDrawer" />
+            <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="closeDrawer" />
         </template>
 
         <template #body>

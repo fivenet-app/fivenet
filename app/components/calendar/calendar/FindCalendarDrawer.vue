@@ -79,8 +79,6 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
     >
         <template #title>
             <span class="flex-1">{{ $t('components.calendar.calendar.FindCalendarDrawer.title') }}</span>
-
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>
 
         <template #body>

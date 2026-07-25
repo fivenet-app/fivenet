@@ -90,13 +90,15 @@ async function closeDrawer(): Promise<void> {
         :title="$t('common.approve')"
         handle-only
         :dismissible="!hasUnsavedChanges"
+        close
         :ui="{ container: 'flex-1', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <slot />
 
         <template #title>
             <span class="flex-1">{{ $t(approve ? 'common.approve' : 'common.decline') }}</span>
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="closeDrawer" />
+
+            <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="closeDrawer" />
         </template>
 
         <template #body>

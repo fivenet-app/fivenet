@@ -118,7 +118,7 @@ async function closeDrawer(): Promise<void> {
         :title="$t('common.approve')"
         handle-only
         :dismissible="!hasUnsavedChanges && canSubmit"
-        :close="{ onClick: closeDrawer }"
+        :close="false"
         :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <template #title>
@@ -127,7 +127,8 @@ async function closeDrawer(): Promise<void> {
                 <UIcon name="i-mdi-slash-forward" />
                 <span>{{ $t('common.policy') }}</span>
             </div>
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="closeDrawer" />
+
+            <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="closeDrawer" />
         </template>
 
         <template #body>
