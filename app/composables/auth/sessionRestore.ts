@@ -1,7 +1,7 @@
 type AuthTokenOnlyRestoreStore = {
     activeChar: { value: unknown | null };
     lastCharID: number | undefined;
-    chooseCharacter: (charId?: number, redirect?: boolean) => Promise<unknown>;
+    chooseCharacter: (charId?: number, redirect?: boolean, hideError?: boolean) => Promise<unknown>;
     restoreAccountSession: () => Promise<unknown>;
 };
 
@@ -14,7 +14,7 @@ export async function restoreAuthTokenOnlySession(authStore: AuthTokenOnlyRestor
 
     if (authStore.lastCharID !== undefined && authStore.lastCharID > 0) {
         try {
-            await authStore.chooseCharacter(authStore.lastCharID, false);
+            await authStore.chooseCharacter(authStore.lastCharID, false, true);
             return;
         } catch (e) {
             console.warn('Failed to restore last selected character, falling back to account session refresh.', e);

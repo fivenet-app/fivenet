@@ -2,13 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { restoreAuthTokenOnlySession } from './sessionRestore';
 
 describe('restoreAuthTokenOnlySession', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-    });
+    beforeEach(() => vi.clearAllMocks());
 
-    afterEach(() => {
-        vi.restoreAllMocks();
-    });
+    afterEach(() => vi.restoreAllMocks());
 
     it('prefers character restoration when a usable last character exists', async () => {
         const chooseCharacter = vi.fn().mockResolvedValue(undefined);
@@ -21,7 +17,7 @@ describe('restoreAuthTokenOnlySession', () => {
             restoreAccountSession,
         });
 
-        expect(chooseCharacter).toHaveBeenCalledWith(42, false);
+        expect(chooseCharacter).toHaveBeenCalledWith(42, false, true);
         expect(restoreAccountSession).not.toHaveBeenCalled();
     });
 
@@ -53,7 +49,7 @@ describe('restoreAuthTokenOnlySession', () => {
             restoreAccountSession,
         });
 
-        expect(chooseCharacter).toHaveBeenCalledWith(42, false);
+        expect(chooseCharacter).toHaveBeenCalledWith(42, false, true);
         expect(warn).toHaveBeenCalledWith(
             'Failed to restore last selected character, falling back to account session refresh.',
             error,

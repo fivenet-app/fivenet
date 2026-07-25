@@ -191,7 +191,6 @@ export const EnhancedImage = Node.create<EnhancedImageOptions>({
             align: {
                 default: DEFAULT_IMAGE_ALIGN,
                 parseHTML: (element) => {
-                    console.log('parsed from html', element);
                     return (
                         element.getAttribute('data-align') ||
                         getAlignFromStyle(element.getAttribute('style')) ||

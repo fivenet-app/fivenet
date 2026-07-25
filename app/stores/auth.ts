@@ -284,7 +284,7 @@ export const useAuthStore = defineStore(
          * @param charId - The ID of the character to select. If undefined, the last character ID is used.
          * @param redirect - Whether to redirect the user after selecting the character.
          */
-        const chooseCharacter = async (charId?: number, redirect?: boolean): Promise<void> => {
+        const chooseCharacter = async (charId?: number, redirect?: boolean, hideError: boolean = false): Promise<void> => {
             // Prevent multiple simultaneous login attempts
             if (loggingIn.value) return;
 
@@ -382,7 +382,7 @@ export const useAuthStore = defineStore(
                     });
                 }
             } catch (e) {
-                handleGRPCError(e as RpcError);
+                if (!hideError) handleGRPCError(e as RpcError);
                 throw e;
             } finally {
                 loginStop();
