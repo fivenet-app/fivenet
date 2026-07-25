@@ -10,11 +10,11 @@
         "url": "git+https://github.com/fivenet-app/fivenet.git"
     },
     "scripts": {
-        "build": "COMMIT_REF=$(git describe --tags) nuxt build",
-        "dev": "COMMIT_REF=$(git describe --tags) nuxt dev",
-        "generate": "COMMIT_REF=$(git describe --tags) nuxt generate",
-        "preview": "COMMIT_REF=$(git describe --tags) nuxt preview",
-        "postinstall": "COMMIT_REF=$(git describe --tags) nuxt prepare",
+        "build": "COMMIT_REF=${COMMIT_REF:-$(sh ./internal/scripts/get-version.sh)} nuxt build",
+        "dev": "COMMIT_REF=${COMMIT_REF:-$(sh ./internal/scripts/get-version.sh)} nuxt dev",
+        "generate": "COMMIT_REF=${COMMIT_REF:-$(sh ./internal/scripts/get-version.sh)} nuxt generate",
+        "preview": "COMMIT_REF=${COMMIT_REF:-$(sh ./internal/scripts/get-version.sh)} nuxt preview",
+        "postinstall": "COMMIT_REF=${COMMIT_REF:-$(sh ./internal/scripts/get-version.sh)} nuxt prepare",
         "analyze": "nuxt analyze",
         "typecheck": "nuxt typecheck",
         "format": "pnpm prettier --write ./app/",

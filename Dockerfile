@@ -1,18 +1,16 @@
 # syntax=docker/dockerfile:1.25-labs
 
-# Frontend Build
-FROM docker.io/library/node:24.18.0-alpine3.24 AS nodebuilder
+# Version helper, computed once for the whole image build.
+FROM docker.io/library/alpine:3.24.1 AS version
 
 WORKDIR /app
 
-COPY --exclude=public/images/livemap/ . ./
+RUN apk --no-cache add git
 
-RUN apk add --no-cache git python3 make gcc g++ && \
-    corepack enable && \
-    corepack prepare pnpm@10.34.5 --activate && \
-    pnpm install && \
-    NODE_OPTIONS="--max-old-space-size=8192" \
-        pnpm generate
+COPY .git .git
+COPY internal/scripts/get-version.sh ./internal/scripts/get-version.sh
+
+RUN sh ./internal/scripts/get-version.sh > /version
 
 # Livemap Tiles Layer for improved caching
 FROM docker.io/library/alpine:3.24.1 AS livemaptiles
@@ -44,16 +42,34 @@ RUN apk add --no-cache git && \
     rm -rf json && \
     find . -type f ! -name '*.json' -delete
 
+# Frontend Build
+FROM docker.io/library/node:24.18.0-alpine3.24 AS frontendbuild
+
+WORKDIR /app
+
+COPY --from=version /version /version
+COPY --exclude=public/images/livemap/ . ./
+
+RUN apk add --no-cache git python3 make gcc g++ && \
+    corepack enable && \
+    corepack prepare pnpm@10.34.5 --activate && \
+    version="$(cat /version)" && \
+    COMMIT_REF="$version" pnpm install && \
+    NODE_OPTIONS="--max-old-space-size=8192" \
+        COMMIT_REF="$version" pnpm generate
+
 # Backend Build
-FROM docker.io/library/golang:1.26.5 AS gobuilder
+FROM docker.io/library/golang:1.26.5 AS backendbuild
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/v2026/
 
+COPY --from=version /version /version
 COPY --exclude=public/images/livemap/ . ./
 
 RUN apt-get update && \
     apt-get install -y git && \
-    make build-go
+    version="$(cat /version)" && \
+    make build-go GIT_VERSION="$version"
 
 # Final Image
 FROM docker.io/library/alpine:3.24.1
@@ -80,8 +96,8 @@ RUN apk --no-cache add ca-certificates tini tzdata && \
 ## Copy built files from the builder stages
 COPY --from=livemaptiles /app/public/images/livemap/ ./.output/public/images/livemap/
 COPY --from=iconsets /app/icons/ ./icons/
-COPY --from=nodebuilder /app/.output/public/ ./.output/public/
-COPY --from=gobuilder /go/src/github.com/fivenet-app/fivenet/v2026/fivenet /usr/local/bin
+COPY --from=frontendbuild /app/.output/public/ ./.output/public/
+COPY --from=backendbuild /go/src/github.com/fivenet-app/fivenet/v2026/fivenet /usr/local/bin
 
 USER 2000
 

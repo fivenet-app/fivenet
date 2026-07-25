@@ -1,5 +1,5 @@
 VERSION := $(shell cat VERSION)
-GIT_VERSION := $(shell git describe --tags)
+GIT_VERSION ?= $(shell sh ./internal/scripts/get-version.sh)
 
 VALIDATE_VERSION ?= v1.0.2
 BUILD_DIR := .build/
