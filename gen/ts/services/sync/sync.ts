@@ -129,8 +129,6 @@ export interface TransferAccountRequest {
 export interface TransferAccountResponse {
 }
 /**
- * Individual AddActivity request messages
- *
  * @generated from protobuf message services.sync.AddUserOAuth2ConnRequest
  */
 export interface AddUserOAuth2ConnRequest {
@@ -165,6 +163,20 @@ export interface DeleteMarkerRequest {
      * @generated from protobuf field: int64 id = 1
      */
     id: number;
+}
+/**
+ * @generated from protobuf message services.sync.EndActiveJobTimeclocksRequest
+ */
+export interface EndActiveJobTimeclocksRequest {
+}
+/**
+ * @generated from protobuf message services.sync.EndActiveJobTimeclocksResponse
+ */
+export interface EndActiveJobTimeclocksResponse {
+    /**
+     * @generated from protobuf field: int64 rows_affected = 1
+     */
+    rowsAffected: number;
 }
 /**
  * @generated from protobuf message services.sync.AddUserActivityRequest
@@ -243,8 +255,6 @@ export interface AddActivityResponse {
     createdAt?: Timestamp;
 }
 /**
- * Individual SendData request messages
- *
  * @generated from protobuf message services.sync.SendJobsRequest
  */
 export interface SendJobsRequest {
@@ -325,8 +335,6 @@ export interface SendDataResponse {
     rowsAffected: number;
 }
 /**
- * Individual DeleteData request messages
- *
  * @generated from protobuf message services.sync.DeleteUsersRequest
  */
 export interface DeleteUsersRequest {
@@ -1060,6 +1068,91 @@ class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
  * @generated MessageType for protobuf message services.sync.DeleteMarkerRequest
  */
 export const DeleteMarkerRequest = new DeleteMarkerRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class EndActiveJobTimeclocksRequest$Type extends MessageType<EndActiveJobTimeclocksRequest> {
+    constructor() {
+        super("services.sync.EndActiveJobTimeclocksRequest", []);
+    }
+    create(value?: PartialMessage<EndActiveJobTimeclocksRequest>): EndActiveJobTimeclocksRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<EndActiveJobTimeclocksRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EndActiveJobTimeclocksRequest): EndActiveJobTimeclocksRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: EndActiveJobTimeclocksRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.EndActiveJobTimeclocksRequest
+ */
+export const EndActiveJobTimeclocksRequest = new EndActiveJobTimeclocksRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class EndActiveJobTimeclocksResponse$Type extends MessageType<EndActiveJobTimeclocksResponse> {
+    constructor() {
+        super("services.sync.EndActiveJobTimeclocksResponse", [
+            { no: 1, name: "rows_affected", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<EndActiveJobTimeclocksResponse>): EndActiveJobTimeclocksResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.rowsAffected = 0;
+        if (value !== undefined)
+            reflectionMergePartial<EndActiveJobTimeclocksResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EndActiveJobTimeclocksResponse): EndActiveJobTimeclocksResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 rows_affected */ 1:
+                    message.rowsAffected = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: EndActiveJobTimeclocksResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 rows_affected = 1; */
+        if (message.rowsAffected !== 0)
+            writer.tag(1, WireType.Varint).int64(message.rowsAffected);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.EndActiveJobTimeclocksResponse
+ */
+export const EndActiveJobTimeclocksResponse = new EndActiveJobTimeclocksResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AddUserActivityRequest$Type extends MessageType<AddUserActivityRequest> {
     constructor() {
@@ -2388,6 +2481,7 @@ export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "AddDispatch", options: {}, I: AddDispatchRequest, O: AddActivityResponse },
     { name: "AddMarker", options: {}, I: AddMarkerRequest, O: AddActivityResponse },
     { name: "DeleteMarker", options: {}, I: DeleteMarkerRequest, O: DeleteDataResponse },
+    { name: "EndActiveJobTimeclocks", options: {}, I: EndActiveJobTimeclocksRequest, O: EndActiveJobTimeclocksResponse },
     { name: "SendJobs", options: {}, I: SendJobsRequest, O: SendDataResponse },
     { name: "SendLicenses", options: {}, I: SendLicensesRequest, O: SendDataResponse },
     { name: "SendAccounts", options: {}, I: SendAccountsRequest, O: SendDataResponse },

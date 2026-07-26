@@ -310,3 +310,32 @@ func (s *Store) handleLastCharId(ctx context.Context, data *syncdata.LastCharID)
 
 	return rowsAffected, nil
 }
+
+func (s *Store) EndActiveJobTimeclocks(
+	ctx context.Context,
+	req *pbsync.EndActiveJobTimeclocksRequest,
+) (*pbsync.EndActiveJobTimeclocksResponse, error) {
+	tTimeclock := table.FivenetJobTimeclock
+
+	stmt := tTimeclock.
+		UPDATE().
+		SET(
+			tTimeclock.SpentTime.SET(mysql.RawFloat("COALESCE(`spent_time`, 0) + CAST((TIMESTAMPDIFF(SECOND, `start_time`, CURRENT_TIMESTAMP) / 3600) AS DECIMAL(10,2))")),
+			tTimeclock.EndTime.SET(mysql.CURRENT_TIMESTAMP()),
+		).
+		WHERE(mysql.AND(
+			tTimeclock.StartTime.IS_NOT_NULL(),
+			tTimeclock.EndTime.IS_NULL(),
+		))
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute end active job timeclocks statement. %w", err)
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve rows affected for end active job timeclocks. %w", err)
+	}
+
+	return &pbsync.EndActiveJobTimeclocksResponse{RowsAffected: rowsAffected}, nil
+}

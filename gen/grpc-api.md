@@ -13422,8 +13422,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 ### services.sync.AddUserOAuth2ConnRequest
-Individual AddActivity request messages
-
 
 
 | Field | Type | Label | Description |
@@ -13491,8 +13489,6 @@ Individual AddActivity request messages
 
 
 ### services.sync.DeleteUsersRequest
-Individual DeleteData request messages
-
 
 
 | Field | Type | Label | Description |
@@ -13509,6 +13505,23 @@ Individual DeleteData request messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `plates` | [string](#string) | repeated |  |
+
+
+
+
+
+### services.sync.EndActiveJobTimeclocksRequest
+
+
+
+
+
+### services.sync.EndActiveJobTimeclocksResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `rows_affected` | [int64](#int64) |  |  |
 
 
 
@@ -13604,8 +13617,6 @@ Individual DeleteData request messages
 
 
 ### services.sync.SendJobsRequest
-Individual SendData request messages
-
 
 
 | Field | Type | Label | Description |
@@ -13727,26 +13738,27 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `GetStatus` | [GetStatusRequest](#servicessyncGetStatusRequest) | [GetStatusResponse](#servicessyncGetStatusResponse) |Get basic "sync state" from server side (currently simply the count of records on the server side). |
 | `RegisterAccount` | [RegisterAccountRequest](#servicessyncRegisterAccountRequest) | [RegisterAccountResponse](#servicessyncRegisterAccountResponse) |Get registration token for a new user account or return the account id and username, for a given identifier/license. |
 | `TransferAccount` | [TransferAccountRequest](#servicessyncTransferAccountRequest) | [TransferAccountResponse](#servicessyncTransferAccountResponse) |Transfer account from one license to another |
-| `AddUserOAuth2Conn` | [AddUserOAuth2ConnRequest](#servicessyncAddUserOAuth2ConnRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Individual AddActivity methods |
-| `AddAccountUpdate` | [AddAccountUpdateRequest](#servicessyncAddAccountUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
-| `AddUserUpdate` | [AddUserUpdateRequest](#servicessyncAddUserUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
-| `AddUserActivity` | [AddUserActivityRequest](#servicessyncAddUserActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
-| `AddUserProps` | [AddUserPropsRequest](#servicessyncAddUserPropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
-| `AddColleagueActivity` | [AddColleagueActivityRequest](#servicessyncAddColleagueActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
-| `AddColleagueProps` | [AddColleaguePropsRequest](#servicessyncAddColleaguePropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
-| `AddJobTimeclock` | [AddJobTimeclockRequest](#servicessyncAddJobTimeclockRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
-| `AddDispatch` | [AddDispatchRequest](#servicessyncAddDispatchRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
+| `AddUserOAuth2Conn` | [AddUserOAuth2ConnRequest](#servicessyncAddUserOAuth2ConnRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Add Discord OAuth2/social login connection for a user's account. |
+| `AddAccountUpdate` | [AddAccountUpdateRequest](#servicessyncAddAccountUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record an account update activity. |
+| `AddUserUpdate` | [AddUserUpdateRequest](#servicessyncAddUserUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a user update activity. |
+| `AddUserActivity` | [AddUserActivityRequest](#servicessyncAddUserActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a user activity entry. |
+| `AddUserProps` | [AddUserPropsRequest](#servicessyncAddUserPropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record user property changes. |
+| `AddColleagueActivity` | [AddColleagueActivityRequest](#servicessyncAddColleagueActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a colleague activity entry. |
+| `AddColleagueProps` | [AddColleaguePropsRequest](#servicessyncAddColleaguePropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record colleague property changes. |
+| `AddJobTimeclock` | [AddJobTimeclockRequest](#servicessyncAddJobTimeclockRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a job timeclock entry. |
+| `AddDispatch` | [AddDispatchRequest](#servicessyncAddDispatchRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a dispatch activity entry. |
 | `AddMarker` | [AddMarkerRequest](#servicessyncAddMarkerRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours). |
-| `DeleteMarker` | [DeleteMarkerRequest](#servicessyncDeleteMarkerRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) | |
-| `SendJobs` | [SendJobsRequest](#servicessyncSendJobsRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Individual SendData methods |
-| `SendLicenses` | [SendLicensesRequest](#servicessyncSendLicensesRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
-| `SendAccounts` | [SendAccountsRequest](#servicessyncSendAccountsRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
-| `SendUsers` | [SendUsersRequest](#servicessyncSendUsersRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
-| `SendVehicles` | [SendVehiclesRequest](#servicessyncSendVehiclesRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
-| `SendUserLocations` | [SendUserLocationsRequest](#servicessyncSendUserLocationsRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
-| `SetLastCharID` | [SetLastCharIDRequest](#servicessyncSetLastCharIDRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
-| `DeleteUsers` | [DeleteUsersRequest](#servicessyncDeleteUsersRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Individual DeleteData methods |
-| `DeleteVehicles` | [DeleteVehiclesRequest](#servicessyncDeleteVehiclesRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) | |
+| `DeleteMarker` | [DeleteMarkerRequest](#servicessyncDeleteMarkerRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Remove a temporary map marker. |
+| `EndActiveJobTimeclocks` | [EndActiveJobTimeclocksRequest](#servicessyncEndActiveJobTimeclocksRequest) | [EndActiveJobTimeclocksResponse](#servicessyncEndActiveJobTimeclocksResponse) |End all active job timeclock entries, typically during server shutdown. |
+| `SendJobs` | [SendJobsRequest](#servicessyncSendJobsRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Sync job data to the server. |
+| `SendLicenses` | [SendLicensesRequest](#servicessyncSendLicensesRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Sync license data to the server. |
+| `SendAccounts` | [SendAccountsRequest](#servicessyncSendAccountsRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Sync account data to the server. |
+| `SendUsers` | [SendUsersRequest](#servicessyncSendUsersRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Sync user data to the server. |
+| `SendVehicles` | [SendVehiclesRequest](#servicessyncSendVehiclesRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Sync vehicle data to the server. |
+| `SendUserLocations` | [SendUserLocationsRequest](#servicessyncSendUserLocationsRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Sync user location data to the server. |
+| `SetLastCharID` | [SetLastCharIDRequest](#servicessyncSetLastCharIDRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Sync the last character ID for a user. |
+| `DeleteUsers` | [DeleteUsersRequest](#servicessyncDeleteUsersRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Delete users from the sync store. |
+| `DeleteVehicles` | [DeleteVehiclesRequest](#servicessyncDeleteVehiclesRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Delete vehicles from the sync store. |
 | `Stream` | [StreamRequest](#servicessyncStreamRequest) | [StreamResponse](#servicessyncStreamResponse) stream |Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data) |
 | `AddActivity` | [AddActivityRequest](#servicessyncAddActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc. |
 | `SendData` | [SendDataRequest](#servicessyncSendDataRequest) | [SendDataResponse](#servicessyncSendDataResponse) |DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing. |

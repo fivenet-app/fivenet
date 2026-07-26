@@ -17,7 +17,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp as Timestamp$ } from "../../google/protobuf/timestamp";
 /**
- * Timestamp for storage messages.  We've defined a new local type wrapper
+ * Timestamp for storage messages. We've defined a new local type wrapper
  * of google.protobuf.Timestamp so we can implement sql.Scanner and sql.Valuer
  * interfaces.  See:
  * https://golang.org/pkg/database/sql/#Scanner

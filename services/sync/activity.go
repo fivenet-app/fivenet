@@ -78,3 +78,10 @@ func (s *Server) DeleteMarker(
 	s.lastSyncedActivity.Store(time.Now().Unix())
 	return s.store.DeleteMarker(ctx, req)
 }
+
+func (s *Server) EndActiveJobTimeclocks(
+	ctx context.Context,
+	req *pbsync.EndActiveJobTimeclocksRequest,
+) (*pbsync.EndActiveJobTimeclocksResponse, error) {
+	return s.store.EndActiveJobTimeclocks(ctx, req)
+}

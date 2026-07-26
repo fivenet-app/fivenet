@@ -61,5 +61,6 @@ CREATE TABLE IF NOT EXISTS `phone_services_messages` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `channel_id` (`channel_id`),
-  CONSTRAINT `phone_services_messages_ibfk_1` FOREIGN KEY (`channel_id`) REFERENCES `phone_services_channels` (`id`) ON DELETE CASCADE
+  CONSTRAINT `phone_services_messages_ibfk_1` FOREIGN KEY (`channel_id`) REFERENCES `phone_services_channels` (`id`)
+    ON DELETE CASCADE
 ) ENGINE=InnoDB;

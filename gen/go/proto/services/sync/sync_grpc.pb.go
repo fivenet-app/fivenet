@@ -19,33 +19,34 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SyncService_GetStatus_FullMethodName            = "/services.sync.SyncService/GetStatus"
-	SyncService_RegisterAccount_FullMethodName      = "/services.sync.SyncService/RegisterAccount"
-	SyncService_TransferAccount_FullMethodName      = "/services.sync.SyncService/TransferAccount"
-	SyncService_AddUserOAuth2Conn_FullMethodName    = "/services.sync.SyncService/AddUserOAuth2Conn"
-	SyncService_AddAccountUpdate_FullMethodName     = "/services.sync.SyncService/AddAccountUpdate"
-	SyncService_AddUserUpdate_FullMethodName        = "/services.sync.SyncService/AddUserUpdate"
-	SyncService_AddUserActivity_FullMethodName      = "/services.sync.SyncService/AddUserActivity"
-	SyncService_AddUserProps_FullMethodName         = "/services.sync.SyncService/AddUserProps"
-	SyncService_AddColleagueActivity_FullMethodName = "/services.sync.SyncService/AddColleagueActivity"
-	SyncService_AddColleagueProps_FullMethodName    = "/services.sync.SyncService/AddColleagueProps"
-	SyncService_AddJobTimeclock_FullMethodName      = "/services.sync.SyncService/AddJobTimeclock"
-	SyncService_AddDispatch_FullMethodName          = "/services.sync.SyncService/AddDispatch"
-	SyncService_AddMarker_FullMethodName            = "/services.sync.SyncService/AddMarker"
-	SyncService_DeleteMarker_FullMethodName         = "/services.sync.SyncService/DeleteMarker"
-	SyncService_SendJobs_FullMethodName             = "/services.sync.SyncService/SendJobs"
-	SyncService_SendLicenses_FullMethodName         = "/services.sync.SyncService/SendLicenses"
-	SyncService_SendAccounts_FullMethodName         = "/services.sync.SyncService/SendAccounts"
-	SyncService_SendUsers_FullMethodName            = "/services.sync.SyncService/SendUsers"
-	SyncService_SendVehicles_FullMethodName         = "/services.sync.SyncService/SendVehicles"
-	SyncService_SendUserLocations_FullMethodName    = "/services.sync.SyncService/SendUserLocations"
-	SyncService_SetLastCharID_FullMethodName        = "/services.sync.SyncService/SetLastCharID"
-	SyncService_DeleteUsers_FullMethodName          = "/services.sync.SyncService/DeleteUsers"
-	SyncService_DeleteVehicles_FullMethodName       = "/services.sync.SyncService/DeleteVehicles"
-	SyncService_Stream_FullMethodName               = "/services.sync.SyncService/Stream"
-	SyncService_AddActivity_FullMethodName          = "/services.sync.SyncService/AddActivity"
-	SyncService_SendData_FullMethodName             = "/services.sync.SyncService/SendData"
-	SyncService_DeleteData_FullMethodName           = "/services.sync.SyncService/DeleteData"
+	SyncService_GetStatus_FullMethodName              = "/services.sync.SyncService/GetStatus"
+	SyncService_RegisterAccount_FullMethodName        = "/services.sync.SyncService/RegisterAccount"
+	SyncService_TransferAccount_FullMethodName        = "/services.sync.SyncService/TransferAccount"
+	SyncService_AddUserOAuth2Conn_FullMethodName      = "/services.sync.SyncService/AddUserOAuth2Conn"
+	SyncService_AddAccountUpdate_FullMethodName       = "/services.sync.SyncService/AddAccountUpdate"
+	SyncService_AddUserUpdate_FullMethodName          = "/services.sync.SyncService/AddUserUpdate"
+	SyncService_AddUserActivity_FullMethodName        = "/services.sync.SyncService/AddUserActivity"
+	SyncService_AddUserProps_FullMethodName           = "/services.sync.SyncService/AddUserProps"
+	SyncService_AddColleagueActivity_FullMethodName   = "/services.sync.SyncService/AddColleagueActivity"
+	SyncService_AddColleagueProps_FullMethodName      = "/services.sync.SyncService/AddColleagueProps"
+	SyncService_AddJobTimeclock_FullMethodName        = "/services.sync.SyncService/AddJobTimeclock"
+	SyncService_AddDispatch_FullMethodName            = "/services.sync.SyncService/AddDispatch"
+	SyncService_AddMarker_FullMethodName              = "/services.sync.SyncService/AddMarker"
+	SyncService_DeleteMarker_FullMethodName           = "/services.sync.SyncService/DeleteMarker"
+	SyncService_EndActiveJobTimeclocks_FullMethodName = "/services.sync.SyncService/EndActiveJobTimeclocks"
+	SyncService_SendJobs_FullMethodName               = "/services.sync.SyncService/SendJobs"
+	SyncService_SendLicenses_FullMethodName           = "/services.sync.SyncService/SendLicenses"
+	SyncService_SendAccounts_FullMethodName           = "/services.sync.SyncService/SendAccounts"
+	SyncService_SendUsers_FullMethodName              = "/services.sync.SyncService/SendUsers"
+	SyncService_SendVehicles_FullMethodName           = "/services.sync.SyncService/SendVehicles"
+	SyncService_SendUserLocations_FullMethodName      = "/services.sync.SyncService/SendUserLocations"
+	SyncService_SetLastCharID_FullMethodName          = "/services.sync.SyncService/SetLastCharID"
+	SyncService_DeleteUsers_FullMethodName            = "/services.sync.SyncService/DeleteUsers"
+	SyncService_DeleteVehicles_FullMethodName         = "/services.sync.SyncService/DeleteVehicles"
+	SyncService_Stream_FullMethodName                 = "/services.sync.SyncService/Stream"
+	SyncService_AddActivity_FullMethodName            = "/services.sync.SyncService/AddActivity"
+	SyncService_SendData_FullMethodName               = "/services.sync.SyncService/SendData"
+	SyncService_DeleteData_FullMethodName             = "/services.sync.SyncService/DeleteData"
 )
 
 // SyncServiceClient is the client API for SyncService service.
@@ -61,29 +62,47 @@ type SyncServiceClient interface {
 	RegisterAccount(ctx context.Context, in *RegisterAccountRequest, opts ...grpc.CallOption) (*RegisterAccountResponse, error)
 	// Transfer account from one license to another
 	TransferAccount(ctx context.Context, in *TransferAccountRequest, opts ...grpc.CallOption) (*TransferAccountResponse, error)
-	// Individual AddActivity methods
+	// Add Discord OAuth2/social login connection for a user's account.
 	AddUserOAuth2Conn(ctx context.Context, in *AddUserOAuth2ConnRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Record an account update activity.
 	AddAccountUpdate(ctx context.Context, in *AddAccountUpdateRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Record a user update activity.
 	AddUserUpdate(ctx context.Context, in *AddUserUpdateRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Record a user activity entry.
 	AddUserActivity(ctx context.Context, in *AddUserActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Record user property changes.
 	AddUserProps(ctx context.Context, in *AddUserPropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Record a colleague activity entry.
 	AddColleagueActivity(ctx context.Context, in *AddColleagueActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Record colleague property changes.
 	AddColleagueProps(ctx context.Context, in *AddColleaguePropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Record a job timeclock entry.
 	AddJobTimeclock(ctx context.Context, in *AddJobTimeclockRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Record a dispatch activity entry.
 	AddDispatch(ctx context.Context, in *AddDispatchRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours).
 	AddMarker(ctx context.Context, in *AddMarkerRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Remove a temporary map marker.
 	DeleteMarker(ctx context.Context, in *DeleteMarkerRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
-	// Individual SendData methods
+	// End all active job timeclock entries, typically during server shutdown.
+	EndActiveJobTimeclocks(ctx context.Context, in *EndActiveJobTimeclocksRequest, opts ...grpc.CallOption) (*EndActiveJobTimeclocksResponse, error)
+	// Sync job data to the server.
 	SendJobs(ctx context.Context, in *SendJobsRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	// Sync license data to the server.
 	SendLicenses(ctx context.Context, in *SendLicensesRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	// Sync account data to the server.
 	SendAccounts(ctx context.Context, in *SendAccountsRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	// Sync user data to the server.
 	SendUsers(ctx context.Context, in *SendUsersRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	// Sync vehicle data to the server.
 	SendVehicles(ctx context.Context, in *SendVehiclesRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	// Sync user location data to the server.
 	SendUserLocations(ctx context.Context, in *SendUserLocationsRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	// Sync the last character ID for a user.
 	SetLastCharID(ctx context.Context, in *SetLastCharIDRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
-	// Individual DeleteData methods
+	// Delete users from the sync store.
 	DeleteUsers(ctx context.Context, in *DeleteUsersRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
+	// Delete vehicles from the sync store.
 	DeleteVehicles(ctx context.Context, in *DeleteVehiclesRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
 	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error)
@@ -246,6 +265,16 @@ func (c *syncServiceClient) DeleteMarker(ctx context.Context, in *DeleteMarkerRe
 	return out, nil
 }
 
+func (c *syncServiceClient) EndActiveJobTimeclocks(ctx context.Context, in *EndActiveJobTimeclocksRequest, opts ...grpc.CallOption) (*EndActiveJobTimeclocksResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EndActiveJobTimeclocksResponse)
+	err := c.cc.Invoke(ctx, SyncService_EndActiveJobTimeclocks_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *syncServiceClient) SendJobs(ctx context.Context, in *SendJobsRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SendDataResponse)
@@ -401,29 +430,47 @@ type SyncServiceServer interface {
 	RegisterAccount(context.Context, *RegisterAccountRequest) (*RegisterAccountResponse, error)
 	// Transfer account from one license to another
 	TransferAccount(context.Context, *TransferAccountRequest) (*TransferAccountResponse, error)
-	// Individual AddActivity methods
+	// Add Discord OAuth2/social login connection for a user's account.
 	AddUserOAuth2Conn(context.Context, *AddUserOAuth2ConnRequest) (*AddActivityResponse, error)
+	// Record an account update activity.
 	AddAccountUpdate(context.Context, *AddAccountUpdateRequest) (*AddActivityResponse, error)
+	// Record a user update activity.
 	AddUserUpdate(context.Context, *AddUserUpdateRequest) (*AddActivityResponse, error)
+	// Record a user activity entry.
 	AddUserActivity(context.Context, *AddUserActivityRequest) (*AddActivityResponse, error)
+	// Record user property changes.
 	AddUserProps(context.Context, *AddUserPropsRequest) (*AddActivityResponse, error)
+	// Record a colleague activity entry.
 	AddColleagueActivity(context.Context, *AddColleagueActivityRequest) (*AddActivityResponse, error)
+	// Record colleague property changes.
 	AddColleagueProps(context.Context, *AddColleaguePropsRequest) (*AddActivityResponse, error)
+	// Record a job timeclock entry.
 	AddJobTimeclock(context.Context, *AddJobTimeclockRequest) (*AddActivityResponse, error)
+	// Record a dispatch activity entry.
 	AddDispatch(context.Context, *AddDispatchRequest) (*AddActivityResponse, error)
 	// AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours).
 	AddMarker(context.Context, *AddMarkerRequest) (*AddActivityResponse, error)
+	// Remove a temporary map marker.
 	DeleteMarker(context.Context, *DeleteMarkerRequest) (*DeleteDataResponse, error)
-	// Individual SendData methods
+	// End all active job timeclock entries, typically during server shutdown.
+	EndActiveJobTimeclocks(context.Context, *EndActiveJobTimeclocksRequest) (*EndActiveJobTimeclocksResponse, error)
+	// Sync job data to the server.
 	SendJobs(context.Context, *SendJobsRequest) (*SendDataResponse, error)
+	// Sync license data to the server.
 	SendLicenses(context.Context, *SendLicensesRequest) (*SendDataResponse, error)
+	// Sync account data to the server.
 	SendAccounts(context.Context, *SendAccountsRequest) (*SendDataResponse, error)
+	// Sync user data to the server.
 	SendUsers(context.Context, *SendUsersRequest) (*SendDataResponse, error)
+	// Sync vehicle data to the server.
 	SendVehicles(context.Context, *SendVehiclesRequest) (*SendDataResponse, error)
+	// Sync user location data to the server.
 	SendUserLocations(context.Context, *SendUserLocationsRequest) (*SendDataResponse, error)
+	// Sync the last character ID for a user.
 	SetLastCharID(context.Context, *SetLastCharIDRequest) (*SendDataResponse, error)
-	// Individual DeleteData methods
+	// Delete users from the sync store.
 	DeleteUsers(context.Context, *DeleteUsersRequest) (*DeleteDataResponse, error)
+	// Delete vehicles from the sync store.
 	DeleteVehicles(context.Context, *DeleteVehiclesRequest) (*DeleteDataResponse, error)
 	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
 	Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error
@@ -487,6 +534,9 @@ func (UnimplementedSyncServiceServer) AddMarker(context.Context, *AddMarkerReque
 }
 func (UnimplementedSyncServiceServer) DeleteMarker(context.Context, *DeleteMarkerRequest) (*DeleteDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMarker not implemented")
+}
+func (UnimplementedSyncServiceServer) EndActiveJobTimeclocks(context.Context, *EndActiveJobTimeclocksRequest) (*EndActiveJobTimeclocksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EndActiveJobTimeclocks not implemented")
 }
 func (UnimplementedSyncServiceServer) SendJobs(context.Context, *SendJobsRequest) (*SendDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendJobs not implemented")
@@ -800,6 +850,24 @@ func _SyncService_DeleteMarker_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SyncService_EndActiveJobTimeclocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EndActiveJobTimeclocksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).EndActiveJobTimeclocks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_EndActiveJobTimeclocks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).EndActiveJobTimeclocks(ctx, req.(*EndActiveJobTimeclocksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SyncService_SendJobs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SendJobsRequest)
 	if err := dec(in); err != nil {
@@ -1089,6 +1157,10 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteMarker",
 			Handler:    _SyncService_DeleteMarker_Handler,
+		},
+		{
+			MethodName: "EndActiveJobTimeclocks",
+			Handler:    _SyncService_EndActiveJobTimeclocks_Handler,
 		},
 		{
 			MethodName: "SendJobs",

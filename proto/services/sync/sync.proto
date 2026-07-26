@@ -52,7 +52,6 @@ message TransferAccountRequest {
 
 message TransferAccountResponse {}
 
-// Individual AddActivity request messages
 message AddUserOAuth2ConnRequest {
   resources.sync.activity.UserOAuth2Conn user_oauth2 = 1 [(buf.validate.field).required = true];
 }
@@ -67,6 +66,12 @@ message AddMarkerRequest {
 
 message DeleteMarkerRequest {
   int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message EndActiveJobTimeclocksRequest {}
+
+message EndActiveJobTimeclocksResponse {
+  int64 rows_affected = 1;
 }
 
 message AddUserActivityRequest {
@@ -102,7 +107,6 @@ message AddActivityResponse {
   optional resources.timestamp.Timestamp created_at = 2;
 }
 
-// Individual SendData request messages
 message SendJobsRequest {
   repeated resources.jobs.Job jobs = 1 [(buf.validate.field).repeated.max_items = 200];
 }
@@ -137,7 +141,6 @@ message SendDataResponse {
   int64 rows_affected = 1;
 }
 
-// Individual DeleteData request messages
 message DeleteUsersRequest {
   repeated int32 user_ids = 1 [(buf.validate.field).repeated.max_items = 300];
 }
@@ -226,31 +229,49 @@ service SyncService {
   // Transfer account from one license to another
   rpc TransferAccount(TransferAccountRequest) returns (TransferAccountResponse);
 
-  // Individual AddActivity methods
+  // Add Discord OAuth2/social login connection for a user's account.
   rpc AddUserOAuth2Conn(AddUserOAuth2ConnRequest) returns (AddActivityResponse);
+  // Record an account update activity.
   rpc AddAccountUpdate(AddAccountUpdateRequest) returns (AddActivityResponse);
+  // Record a user update activity.
   rpc AddUserUpdate(AddUserUpdateRequest) returns (AddActivityResponse);
+  // Record a user activity entry.
   rpc AddUserActivity(AddUserActivityRequest) returns (AddActivityResponse);
+  // Record user property changes.
   rpc AddUserProps(AddUserPropsRequest) returns (AddActivityResponse);
+  // Record a colleague activity entry.
   rpc AddColleagueActivity(AddColleagueActivityRequest) returns (AddActivityResponse);
+  // Record colleague property changes.
   rpc AddColleagueProps(AddColleaguePropsRequest) returns (AddActivityResponse);
+  // Record a job timeclock entry.
   rpc AddJobTimeclock(AddJobTimeclockRequest) returns (AddActivityResponse);
+  // Record a dispatch activity entry.
   rpc AddDispatch(AddDispatchRequest) returns (AddActivityResponse);
   // AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours).
   rpc AddMarker(AddMarkerRequest) returns (AddActivityResponse);
+  // Remove a temporary map marker.
   rpc DeleteMarker(DeleteMarkerRequest) returns (DeleteDataResponse);
+  // End all active job timeclock entries, typically during server shutdown.
+  rpc EndActiveJobTimeclocks(EndActiveJobTimeclocksRequest) returns (EndActiveJobTimeclocksResponse);
 
-  // Individual SendData methods
+  // Sync job data to the server.
   rpc SendJobs(SendJobsRequest) returns (SendDataResponse);
+  // Sync license data to the server.
   rpc SendLicenses(SendLicensesRequest) returns (SendDataResponse);
+  // Sync account data to the server.
   rpc SendAccounts(SendAccountsRequest) returns (SendDataResponse);
+  // Sync user data to the server.
   rpc SendUsers(SendUsersRequest) returns (SendDataResponse);
+  // Sync vehicle data to the server.
   rpc SendVehicles(SendVehiclesRequest) returns (SendDataResponse);
+  // Sync user location data to the server.
   rpc SendUserLocations(SendUserLocationsRequest) returns (SendDataResponse);
+  // Sync the last character ID for a user.
   rpc SetLastCharID(SetLastCharIDRequest) returns (SendDataResponse);
 
-  // Individual DeleteData methods
+  // Delete users from the sync store.
   rpc DeleteUsers(DeleteUsersRequest) returns (DeleteDataResponse);
+  // Delete vehicles from the sync store.
   rpc DeleteVehicles(DeleteVehiclesRequest) returns (DeleteDataResponse);
   // Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
   rpc Stream(StreamRequest) returns (stream StreamResponse);
