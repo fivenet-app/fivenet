@@ -160,7 +160,7 @@
         "prettier-plugin-organize-attributes": "1.0.0",
         "prettier-plugin-organize-imports": "4.3.0",
         "prettier-plugin-tailwindcss": "0.8.1",
-        "release-it": "20.2.1",
+        "release-it": "21.0.0",
         "sass": "1.102.0",
         "tailwindcss": "4.3.3",
         "typescript": "6.0.3",
