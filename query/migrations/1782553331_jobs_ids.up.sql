@@ -18,6 +18,7 @@ WHERE `jg`.`job_id` IS NULL;
 
 ALTER TABLE `fivenet_jobs_grades`
   MODIFY COLUMN `job_id` bigint(20) unsigned NOT NULL,
-  ADD CONSTRAINT `fk_fivenet_jobs_grades_job_id` FOREIGN KEY (`job_id`) REFERENCES `fivenet_jobs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_jobs_grades_job_id` FOREIGN KEY (`job_id`) REFERENCES `fivenet_jobs` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 COMMIT;

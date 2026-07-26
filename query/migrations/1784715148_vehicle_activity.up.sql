@@ -15,8 +15,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_vehicles_activity` (
   KEY `idx_fivenet_vehicles_activity_plate` (`plate`),
   KEY `idx_fivenet_vehicles_activity_created_at` (`created_at`),
   KEY `idx_fivenet_vehicles_activity_type` (`type`),
-  CONSTRAINT `fk_fivenet_vehicles_activity_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_fivenet_vehicles_activity_plate` FOREIGN KEY (`plate`) REFERENCES `{{- if .ESXCompat }}owned_vehicles{{ else }}fivenet_owned_vehicles{{ end -}}` (`plate`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_vehicles_activity_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `fk_fivenet_vehicles_activity_plate` FOREIGN KEY (`plate`) REFERENCES `{{- if .ESXCompat }}owned_vehicles{{ else }}fivenet_owned_vehicles{{ end -}}` (`plate`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

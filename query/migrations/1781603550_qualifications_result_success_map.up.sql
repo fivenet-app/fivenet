@@ -8,9 +8,12 @@ CREATE TABLE IF NOT EXISTS `fivenet_qualifications_result_success_map` (
   UNIQUE KEY `idx_fivenet_qualifications_result_success_map_result_id` (`result_id`),
   KEY `idx_fivenet_qualifications_result_success_map_qualification_id` (`qualification_id`),
   KEY `idx_fivenet_qualifications_result_success_map_user_id` (`user_id`),
-  CONSTRAINT `fk_fivenet_qualifications_result_success_map_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_qualifications_result_success_map_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_qualifications_result_success_map_result_id` FOREIGN KEY (`result_id`) REFERENCES `fivenet_qualifications_results` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_qualifications_result_success_map_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_qualifications_result_success_map_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_qualifications_result_success_map_result_id` FOREIGN KEY (`result_id`) REFERENCES `fivenet_qualifications_results` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 INSERT INTO `fivenet_qualifications_result_success_map` (`qualification_id`, `user_id`, `result_id`)

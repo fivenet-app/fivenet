@@ -15,8 +15,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_calendar_discord_reminder_sends` (
     KEY `idx_fivenet_calendar_discord_reminder_sends_created_at` (`created_at`),
     KEY `idx_fivenet_calendar_discord_reminder_sends_calendar_id` (`calendar_id`),
     KEY `idx_fivenet_calendar_discord_reminder_sends_entry_id` (`entry_id`),
-    CONSTRAINT `fk_fivenet_calendar_discord_reminder_sends_calendar_id` FOREIGN KEY (`calendar_id`) REFERENCES `fivenet_calendar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_fivenet_calendar_discord_reminder_sends_entry_id` FOREIGN KEY (`entry_id`) REFERENCES `fivenet_calendar_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT `fk_fivenet_calendar_discord_reminder_sends_calendar_id` FOREIGN KEY (`calendar_id`) REFERENCES `fivenet_calendar` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_fivenet_calendar_discord_reminder_sends_entry_id` FOREIGN KEY (`entry_id`) REFERENCES `fivenet_calendar_entries` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 COMMIT;

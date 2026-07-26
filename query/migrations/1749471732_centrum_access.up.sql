@@ -2,7 +2,8 @@ BEGIN;
 
 RENAME TABLE `fivenet_centrum_disponents` TO `fivenet_centrum_dispatchers`;
 ALTER TABLE `fivenet_centrum_dispatchers` DROP FOREIGN KEY `fk_fivenet_centrum_disponents_user_id`;
-ALTER TABLE `fivenet_centrum_dispatchers` ADD CONSTRAINT `fk_fivenet_centrum_dispatchers_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `fivenet_centrum_dispatchers` ADD CONSTRAINT `fk_fivenet_centrum_dispatchers_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Table: `fivenet_centrum_settings`
 ALTER TABLE `fivenet_centrum_settings` ADD COLUMN `type` mediumint(2) DEFAULT 0 NULL AFTER `enabled`;
@@ -19,7 +20,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_job_access` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_centrum_job_access` (`unit_id`, `job`, `minimum_grade`),
   KEY `idx_fivenet_centrum_job_access_unit_id` (`unit_id`),
-  CONSTRAINT `fk_fivenet_centrum_job_access_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_centrum_job_access_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_centrum_qualifications_access
@@ -33,8 +35,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_qualifications_access` (
   UNIQUE KEY `idx_fivenet_centrum_qualifications_access` (`unit_id`, `qualification_id`),
   KEY `idx_fivenet_centrum_qualifications_access_unit_id` (`unit_id`),
   KEY `idx_fivenet_centrum_qualifications_access_qualification_id` (`qualification_id`),
-  CONSTRAINT `fk_fivenet_centrum_qualifications_access_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_centrum_qualifications_access_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_centrum_qualifications_access_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_centrum_qualifications_access_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_centrum_user_locations
@@ -49,7 +53,8 @@ ALTER TABLE `fivenet_centrum_dispatches` MODIFY COLUMN `y` decimal(24,14) NOT NU
 -- Remove any dispatches with "invalid" creator_ids and allow creator_id to be null
 ALTER TABLE `fivenet_centrum_dispatches` MODIFY COLUMN `creator_id` int NULL;
 DELETE FROM `fivenet_centrum_dispatches` WHERE `creator_id` NOT IN (SELECT id FROM `{{.UsersTableName}}`);
-ALTER TABLE `fivenet_centrum_dispatches` ADD CONSTRAINT `fk_fivenet_centrum_dispatches_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `fivenet_centrum_dispatches` ADD CONSTRAINT `fk_fivenet_centrum_dispatches_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Add index on postal column
 ALTER TABLE `fivenet_centrum_dispatches` ADD KEY `idx_fivenet_centrum_dispatches_postal` (`postal`);

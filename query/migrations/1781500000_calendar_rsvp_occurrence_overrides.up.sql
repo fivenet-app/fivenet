@@ -11,8 +11,10 @@ CREATE TABLE
         PRIMARY KEY (`entry_id`, `occurrence_key`, `user_id`),
         KEY `idx_fivenet_calendar_rsvp_occurrence_response` (`entry_id`, `response`),
         KEY `idx_fivenet_calendar_rsvp_occurrence_user` (`user_id`),
-        CONSTRAINT `fk_fivenet_calendar_rsvp_occurrence_entry_id` FOREIGN KEY (`entry_id`) REFERENCES `fivenet_calendar_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_calendar_rsvp_occurrence_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_calendar_rsvp_occurrence_entry_id` FOREIGN KEY (`entry_id`) REFERENCES `fivenet_calendar_entries` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_calendar_rsvp_occurrence_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 COMMIT;

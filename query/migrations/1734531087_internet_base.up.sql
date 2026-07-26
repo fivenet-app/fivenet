@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_internet_tlds` (
   `creator_id`int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_internet_tlds_name` (`name`),
-  CONSTRAINT `fk_fivenet_internet_tlds_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_internet_tlds_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_internet_domains
@@ -29,8 +30,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_internet_domains` (
   `creator_id`int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_internet_domains_name` (`name`),
-  CONSTRAINT `fk_fivenet_internet_domains_tld_id` FOREIGN KEY (`tld_id`) REFERENCES `fivenet_internet_tlds` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_internet_domains_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_internet_domains_tld_id` FOREIGN KEY (`tld_id`) REFERENCES `fivenet_internet_tlds` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_internet_domains_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_internet_domains_job_access
@@ -44,7 +47,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_internet_domains_job_access` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_internet_domains_job_access` (`domain_id`, `job`, `minimum_grade`),
   KEY `idx_fivenet_internet_domains_job_access_domain_id` (`domain_id`),
-  CONSTRAINT `fk_fivenet_internet_domains_job_access_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `fivenet_internet_domains` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_internet_domains_job_access_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `fivenet_internet_domains` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_internet_domains_user_access
@@ -57,8 +61,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_internet_domains_user_access` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_internet_domains_user_access` (`domain_id`, `user_id`),
   KEY `idx_fivenet_internet_domains_user_access_domain_id` (`domain_id`),
-  CONSTRAINT `fk_fivenet_internet_domains_user_access_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `fivenet_internet_domains` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_internet_domains_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_internet_domains_user_access_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `fivenet_internet_domains` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_internet_domains_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_internet_pages
@@ -78,8 +84,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_internet_pages` (
   UNIQUE KEY `idx_fivenet_internet_pages_domain_id_path` (`domain_id`, `path`),
   FULLTEXT KEY `idx_fivenet_internet_pages_title` (`title`),
   FULLTEXT KEY `idx_fivenet_internet_pages_description` (`description`),
-  CONSTRAINT `fk_fivenet_internet_pages_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `fivenet_internet_domains` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_internet_pages_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_internet_pages_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `fivenet_internet_domains` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_internet_pages_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_internet_ads
@@ -101,8 +109,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_internet_ads` (
   `creator_id`int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_internet_ads_starts_at_ends_at` (`starts_at`, `ends_at`),
-  CONSTRAINT `fk_fivenet_internet_ads_approver_id` FOREIGN KEY (`approver_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_internet_ads_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_internet_ads_approver_id` FOREIGN KEY (`approver_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_internet_ads_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 BEGIN;

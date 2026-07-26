@@ -34,7 +34,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_policies` (
   KEY `idx_fivenet_doc_approval_pol_completed_at` (`completed_at`),
   KEY `idx_fivenet_doc_approval_pol_deleted_at` (`deleted_at`),
 
-  CONSTRAINT `fk_fivenet_documents_approval_policies_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_documents_approval_policies_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_tasks` (
@@ -78,10 +79,14 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_tasks` (
   KEY `idx_fivenet_doc_apptsk_user_status_created` (`user_id`, `status`, `created_at`),
   KEY `idx_fivenet_doc_apptsk_access_check` (`document_id`, `snapshot_date`, `assignee_kind`, `job`, `minimum_grade`, `status`),
 
-  CONSTRAINT `fk_fivenet_doc_apptsk_task_doc_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_apptsk_task_policy_id` FOREIGN KEY (`policy_id`) REFERENCES `fivenet_documents_approval_policies` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_apptsk_task_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_apptsk_task_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_doc_apptsk_task_doc_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_apptsk_task_policy_id` FOREIGN KEY (`policy_id`) REFERENCES `fivenet_documents_approval_policies` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_apptsk_task_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_apptsk_task_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `fivenet_documents_approvals` (
@@ -112,13 +117,18 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approvals` (
   KEY `idx_fivenet_doc_approval_policy_status` (`policy_id`,`status`),
   KEY `idx_fivenet_doc_approval_doc_snap_status` (`document_id`, `snapshot_date`, `status`),
 
-  CONSTRAINT `fk_fivenet_doc_approvals_doc_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_approvals_policy_id` FOREIGN KEY (`policy_id`) REFERENCES `fivenet_documents_approval_policies`(`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_approvals_task_id` FOREIGN KEY (`task_id`) REFERENCES `fivenet_documents_approval_tasks` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_approvals_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_doc_approvals_doc_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_approvals_policy_id` FOREIGN KEY (`policy_id`) REFERENCES `fivenet_documents_approval_policies`(`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_approvals_task_id` FOREIGN KEY (`task_id`) REFERENCES `fivenet_documents_approval_tasks` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_approvals_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 ALTER TABLE `fivenet_documents_approval_tasks`
-  ADD CONSTRAINT `fk_fivenet_doc_apptsk_task_approval_id` FOREIGN KEY (`approval_id`) REFERENCES `fivenet_documents_approvals` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_doc_apptsk_task_approval_id` FOREIGN KEY (`approval_id`) REFERENCES `fivenet_documents_approvals` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE;
 
 COMMIT;

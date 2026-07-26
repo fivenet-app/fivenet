@@ -20,8 +20,10 @@ CREATE TABLE
         `identifier` varchar(64) NOT NULL,
         PRIMARY KEY (`user_id`),
         KEY `idx_fivenet_centrum_users_job` (`job`),
-        CONSTRAINT `fk_fivenet_centrum_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_centrum_users_identifier` FOREIGN KEY (`identifier`) REFERENCES `fivenet_user_locations` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_centrum_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_centrum_users_identifier` FOREIGN KEY (`identifier`) REFERENCES `fivenet_user_locations` (`identifier`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_centrum_units
@@ -49,8 +51,10 @@ CREATE TABLE
         PRIMARY KEY (`unit_id`, `user_id`),
         KEY `idx_fivenet_centrum_units_users_unit_id` (`unit_id`),
         UNIQUE KEY `idx_fivenet_centrum_units_users_user_id` (`user_id`),
-        CONSTRAINT `fk_fivenet_centrum_units_users_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_centrum_units_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_centrum_units_users_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_centrum_units_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_centrum_units_status
@@ -70,9 +74,12 @@ CREATE TABLE
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_centrum_units_status_unit_id` (`unit_id`),
         KEY `idx_fivenet_centrum_units_status_user_id` (`user_id`),
-        CONSTRAINT `fk_fivenet_centrum_units_status_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_centrum_units_status_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_centrum_units_status_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_centrum_units_status_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_centrum_units_status_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_centrum_units_status_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 -- Table: fivenet_centrum_dispatches
@@ -106,8 +113,10 @@ CREATE TABLE
         PRIMARY KEY (`dispatch_id`, `unit_id`),
         KEY `idx_fivenet_centrum_dispatches_asgmts_dispatch_id` (`dispatch_id`),
         KEY `idx_fivenet_centrum_dispatches_asgmts_unit_id` (`unit_id`),
-        CONSTRAINT `fk_fivenet_centrum_dispatches_asgmts_dispatch_id` FOREIGN KEY (`dispatch_id`) REFERENCES `fivenet_centrum_dispatches` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_centrum_dispatches_asgmts_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_centrum_dispatches_asgmts_dispatch_id` FOREIGN KEY (`dispatch_id`) REFERENCES `fivenet_centrum_dispatches` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_centrum_dispatches_asgmts_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_centrum_dispatches_status
@@ -127,9 +136,12 @@ CREATE TABLE
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_centrum_dispatches_status_dispatch_id` (`dispatch_id`),
         KEY `idx_fivenet_centrum_dispatches_status_status` (`status`),
-        CONSTRAINT `fk_fivenet_centrum_dispatches_status_dispatch_id` FOREIGN KEY (`dispatch_id`) REFERENCES `fivenet_centrum_dispatches` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_centrum_dispatches_status_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_centrum_dispatches_status_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_centrum_dispatches_status_dispatch_id` FOREIGN KEY (`dispatch_id`) REFERENCES `fivenet_centrum_dispatches` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_centrum_dispatches_status_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_centrum_dispatches_status_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_centrum_markers
@@ -152,7 +164,8 @@ CREATE TABLE
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_centrum_markers_expires_at` (`expires_at`),
         KEY `idx_fivenet_centrum_markers_job` (`job`),
-        CONSTRAINT `fk_fivenet_centrum_markers_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_centrum_markers_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 COMMIT;

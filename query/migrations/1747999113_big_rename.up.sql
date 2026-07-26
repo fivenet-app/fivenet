@@ -84,69 +84,101 @@ ALTER TABLE `fivenet_user` RENAME INDEX `idx_fivenet_users_firstname_lastname_fu
 SET FOREIGN_KEY_CHECKS=0;
 
 ALTER TABLE `fivenet_accounts_oauth2` DROP FOREIGN KEY `fk_fivenet_oauth2_accounts_account_id`,
-  ADD CONSTRAINT `fk_fivenet_accounts_oauth2_account_id` FOREIGN KEY (`account_id`) REFERENCES `fivenet_accounts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_accounts_oauth2_account_id` FOREIGN KEY (`account_id`) REFERENCES `fivenet_accounts` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_centrum_disponents` DROP FOREIGN KEY `fk_fivenet_centrum_users_user_id`,
-  ADD CONSTRAINT `fk_fivenet_centrum_disponents_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_centrum_disponents_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_centrum_user_locations` DROP FOREIGN KEY `fk_fivenet_user_locations_identifier`,
-  ADD CONSTRAINT `fk_fivenet_centrum_user_locations_identifier` FOREIGN KEY (`identifier`) REFERENCES `users` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_centrum_user_locations_identifier` FOREIGN KEY (`identifier`) REFERENCES `users` (`identifier`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_user_labels` DROP FOREIGN KEY `fk_fivenet_user_citizen_attributes_attribute_id`,
-  ADD CONSTRAINT `fk_fivenet_user_labels_label_id` FOREIGN KEY (`label_id`) REFERENCES `fivenet_user_labels_job` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_user_labels_label_id` FOREIGN KEY (`label_id`) REFERENCES `fivenet_user_labels_job` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_user_labels` DROP FOREIGN KEY `fk_fivenet_user_citizen_labels_user_id`,
-  ADD CONSTRAINT `fk_fivenet_user_labels_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_user_labels_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_documents` DROP FOREIGN KEY `fk_fivenet_documents_categories`,
-  ADD CONSTRAINT `fk_fivenet_documents_category_id` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+  ADD CONSTRAINT `fk_fivenet_documents_category_id` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`)
+    ON DELETE SET NULL ON UPDATE SET NULL;
 ALTER TABLE `fivenet_documents_templates` DROP FOREIGN KEY `fk_fivenet_documents_templates_categories`,
-  ADD CONSTRAINT `fk_fivenet_documents_templates_category_id` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+  ADD CONSTRAINT `fk_fivenet_documents_templates_category_id` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`)
+    ON DELETE SET NULL ON UPDATE SET NULL;
 ALTER TABLE `fivenet_job_colleague_activity` DROP FOREIGN KEY `fk_fivenet_jobs_user_activity_source_user_id`,
-  ADD CONSTRAINT `fk_fivenet_job_colleague_activity_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+  ADD CONSTRAINT `fk_fivenet_job_colleague_activity_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`)
+    ON DELETE SET NULL ON UPDATE SET NULL;
 ALTER TABLE `fivenet_job_colleague_activity` DROP FOREIGN KEY `fk_fivenet_jobs_user_activity_target_user_id`,
-  ADD CONSTRAINT `fk_fivenet_job_colleague_activity_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_job_colleague_activity_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_job_colleague_labels` DROP FOREIGN KEY `fk_fivenet_jobs_labels_users_label_id`,
-  ADD CONSTRAINT `fk_fivenet_job_colleague_labels_label_id` FOREIGN KEY (`label_id`) REFERENCES `fivenet_job_labels` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_job_colleague_labels_label_id` FOREIGN KEY (`label_id`) REFERENCES `fivenet_job_labels` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_job_colleague_labels` DROP FOREIGN KEY `fk_fivenet_jobs_labels_users_user_id`,
-  ADD CONSTRAINT `fk_fivenet_job_colleague_labels_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_job_colleague_labels_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_job_colleague_props` DROP FOREIGN KEY `fk_fivenet_jobs_user_props_user_id`,
-  ADD CONSTRAINT `fk_fivenet_job_colleague_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_job_colleague_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_job_conduct` DROP FOREIGN KEY `fk_fivenet_jobs_conduct_creator_id`,
-  ADD CONSTRAINT `fk_fivenet_job_conduct_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_job_conduct_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE `fivenet_job_conduct` DROP FOREIGN KEY `fk_fivenet_jobs_conduct_target_user_id`,
-  ADD CONSTRAINT `fk_fivenet_job_conduct_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_job_conduct_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_job_timeclock` DROP FOREIGN KEY `fk_fivenet_jobs_timeclock_user_id`,
-  ADD CONSTRAINT `fk_fivenet_job_timeclock_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_job_timeclock_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_mailer_threads_recipients` DROP FOREIGN KEY `fk_fivenet_mailer_threads_recipients_emails_email_id`,
-  ADD CONSTRAINT `fk_fivenet_mailer_threads_recipients_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_mailer_threads_recipients_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_mailer_threads_recipients` DROP FOREIGN KEY `fk_fivenet_mailer_threads_recipients_emails_thread_id`,
-  ADD CONSTRAINT `fk_fivenet_mailer_threads_recipients_thread_id` FOREIGN KEY (`thread_id`) REFERENCES `fivenet_mailer_threads` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_mailer_threads_recipients_thread_id` FOREIGN KEY (`thread_id`) REFERENCES `fivenet_mailer_threads` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_qualifications_exam_questions` DROP FOREIGN KEY `fk_fivenet_qualifications_exam_questions_quali_id`,
-  ADD CONSTRAINT `fk_fivenet_qualifications_exam_questions_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_qualifications_exam_questions_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_qualifications_exam_responses` DROP FOREIGN KEY `fk_fivenet_qualifications_exam_responses_quali_user_id`,
-  ADD CONSTRAINT `fk_fivenet_qualifications_exam_responses_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_qualifications_exam_responses_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_qualifications_exam_users` DROP FOREIGN KEY `fk_fivenet_qualifications_exam_users_quali_id`,
-  ADD CONSTRAINT `fk_fivenet_qualifications_exam_users_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_qualifications_exam_users_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_qualifications_requirements` DROP FOREIGN KEY `fk_fivenet_qualifications_requirements_quali_id`,
-  ADD CONSTRAINT `fk_fivenet_qualifications_requirements_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_qualifications_requirements_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_qualifications_requirements` DROP FOREIGN KEY `fk_fivenet_qualifications_requirements_target_quali_id`,
-  ADD CONSTRAINT `fk_fivenet_qualifications_requirements_target_qualification_id` FOREIGN KEY (`target_qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_qualifications_requirements_target_qualification_id` FOREIGN KEY (`target_qualification_id`) REFERENCES `fivenet_qualifications` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_rbac_attrs` DROP FOREIGN KEY `fk_fivenet_attrs_permissions_permission_id`,
-  ADD CONSTRAINT `fk_fivenet_rbac_attrs_permission_id` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_rbac_permissions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_rbac_attrs_permission_id` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_rbac_permissions` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_rbac_job_attrs` DROP FOREIGN KEY `fk_fivenet_job_attrs_attr_id`,
-  ADD CONSTRAINT `fk_fivenet_rbac_job_attrs_attr_id` FOREIGN KEY (`attr_id`) REFERENCES `fivenet_rbac_attrs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_rbac_job_attrs_attr_id` FOREIGN KEY (`attr_id`) REFERENCES `fivenet_rbac_attrs` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_rbac_job_permissions` DROP FOREIGN KEY `fk_fivenet_job_permissions_permission`,
-  ADD CONSTRAINT `fk_fivenet_rbac_job_permissions_permission_id` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_rbac_permissions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_rbac_job_permissions_permission_id` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_rbac_permissions` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_rbac_roles_attrs` DROP FOREIGN KEY `fk_fivenet_role_attrs_attr_id`,
-  ADD CONSTRAINT `fk_fivenet_rbac_roles_attrs_attr_id` FOREIGN KEY (`attr_id`) REFERENCES `fivenet_rbac_attrs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_rbac_roles_attrs_attr_id` FOREIGN KEY (`attr_id`) REFERENCES `fivenet_rbac_attrs` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_rbac_roles_attrs` DROP FOREIGN KEY `fk_fivenet_role_attrs_role_id`,
-  ADD CONSTRAINT `fk_fivenet_rbac_roles_attrs_role_id` FOREIGN KEY (`role_id`) REFERENCES `fivenet_rbac_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_rbac_roles_attrs_role_id` FOREIGN KEY (`role_id`) REFERENCES `fivenet_rbac_roles` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_rbac_roles_permissions` DROP FOREIGN KEY `fk_fivenet_role_permissions_permission`,
-  ADD CONSTRAINT `fk_fivenet_rbac_roles_permissions_permission_id` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_rbac_permissions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_rbac_roles_permissions_permission_id` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_rbac_permissions` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_rbac_roles_permissions` DROP FOREIGN KEY `fk_fivenet_role_permissions_role`,
-  ADD CONSTRAINT `fk_fivenet_rbac_roles_permissions_role_id` FOREIGN KEY (`role_id`) REFERENCES `fivenet_rbac_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_rbac_roles_permissions_role_id` FOREIGN KEY (`role_id`) REFERENCES `fivenet_rbac_roles` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_wiki_pages_activity` DROP FOREIGN KEY `fk_fivenet_wiki_page_activity_creator_id`,
-  ADD CONSTRAINT `fk_fivenet_wiki_pages_activity_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+  ADD CONSTRAINT `fk_fivenet_wiki_pages_activity_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`)
+    ON DELETE SET NULL ON UPDATE SET NULL;
 ALTER TABLE `fivenet_wiki_pages_activity` DROP FOREIGN KEY `fk_fivenet_wiki_page_activity_page_id`,
-  ADD CONSTRAINT `fk_fivenet_wiki_pages_activity_page_id` FOREIGN KEY (`page_id`) REFERENCES `fivenet_wiki_pages` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_wiki_pages_activity_page_id` FOREIGN KEY (`page_id`) REFERENCES `fivenet_wiki_pages` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `fivenet_jobs_grades` DROP FOREIGN KEY `fk_fivenet_job_grades_job_name`,
-  ADD CONSTRAINT `fk_fivenet_jobs_grades_job_name` FOREIGN KEY (`job_name`) REFERENCES `fivenet_jobs` (`name`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_jobs_grades_job_name` FOREIGN KEY (`job_name`) REFERENCES `fivenet_jobs` (`name`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 SET FOREIGN_KEY_CHECKS=1;
 

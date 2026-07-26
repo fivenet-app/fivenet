@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails` (
   UNIQUE KEY `idx_fivenet_mailer_emails_email` (`email`),
   UNIQUE KEY `idx_fivenet_mailer_emails_job_user_id` (`job`, `user_id`),
   UNIQUE KEY `fk_fivenet_mailer_emails_user_id` (`user_id`),
-  CONSTRAINT `fk_fivenet_mailer_emails_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_emails_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_emails_job_access
@@ -42,7 +43,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails_job_access` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_mailer_emails_job_access` (`email_id`, `job`, `minimum_grade`),
   KEY `idx_fivenet_mailer_emails_job_access_email_id` (`email_id`),
-  CONSTRAINT `fk_fivenet_mailer_emails_job_access_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_emails_job_access_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_emails_user_access
@@ -56,8 +58,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails_user_access` (
   UNIQUE KEY `idx_fivenet_mailer_emails_user_access` (`email_id`, `user_id`),
   KEY `idx_fivenet_mailer_emails_user_access_email_id` (`email_id`),
   KEY `idx_fivenet_mailer_emails_user_access_user_id` (`user_id`),
-  CONSTRAINT `fk_fivenet_mailer_emails_user_access_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_mailer_emails_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_emails_user_access_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_mailer_emails_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_emails_qualifications_access
@@ -71,8 +75,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails_qualifications_access` (
   UNIQUE KEY `idx_fivenet_mailer_emails_qualifications_access` (`email_id`, `qualification_id`),
   KEY `idx_fivenet_mailer_emails_qualifications_access_email_id` (`email_id`),
   KEY `idx_fivenet_mailer_emails_qualifications_access_qualification_id` (`qualification_id`),
-  CONSTRAINT `fk_fivenet_mailer_emails_qualifications_access_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_mailer_emails_qualifications_access_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_emails_qualifications_access_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_mailer_emails_qualifications_access_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_templates
@@ -88,8 +94,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_templates` (
   `creator_id`int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_mailer_templates_creator_id_creator_job` (`email_id`, `creator_id`, `creator_job`),
-  CONSTRAINT `fk_fivenet_mailer_templates_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_mailer_templates_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_templates_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_mailer_templates_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_threads
@@ -105,7 +113,8 @@ CREATE TABLE
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_mailer_threads_updated_at` (`updated_at`),
         KEY `idx_fivenet_mailer_threads_deleted_at` (`deleted_at`),
-        CONSTRAINT `fk_fivenet_mailer_threads_creator_email_id` FOREIGN KEY (`creator_email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_mailer_threads_creator_email_id` FOREIGN KEY (`creator_email_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_mailer_threads_recipients_emails
@@ -118,8 +127,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_threads_recipients` (
   UNIQUE KEY `idx_fivenet_mailer_threads_recipients` (`thread_id`, `email_id`),
   KEY `idx_fivenet_mailer_threads_recipients_thread_id` (`thread_id`),
   KEY `idx_fivenet_mailer_threads_recipients_email_id` (`email_id`),
-  CONSTRAINT `fk_fivenet_mailer_threads_recipients_emails_thread_id` FOREIGN KEY (`thread_id`) REFERENCES `fivenet_mailer_threads` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_mailer_threads_recipients_emails_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_threads_recipients_emails_thread_id` FOREIGN KEY (`thread_id`) REFERENCES `fivenet_mailer_threads` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_mailer_threads_recipients_emails_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_threads_state
@@ -134,8 +145,10 @@ CREATE TABLE
         `muted` tinyint(1) DEFAULT 0,
         `archived` tinyint(1) DEFAULT 0,
         PRIMARY KEY (`thread_id`, `email_id`),
-        CONSTRAINT `fk_fivenet_mailer_threads_state_thread_id` FOREIGN KEY (`thread_id`) REFERENCES `fivenet_mailer_threads` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_mailer_threads_state_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_mailer_threads_state_thread_id` FOREIGN KEY (`thread_id`) REFERENCES `fivenet_mailer_threads` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_mailer_threads_state_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_messages
@@ -159,8 +172,10 @@ CREATE TABLE
         KEY `idx_fivenet_mailer_messages_creator_id` (`creator_id`),
         FULLTEXT KEY `idx_fivenet_mailer_messages_title` (`title`),
         FULLTEXT KEY `idx_fivenet_mailer_messages_content` (`content`),
-        CONSTRAINT `fk_fivenet_mailer_messages_thread_id` FOREIGN KEY (`thread_id`) REFERENCES `fivenet_mailer_threads` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_mailer_messages_sender_id` FOREIGN KEY (`sender_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_mailer_messages_thread_id` FOREIGN KEY (`thread_id`) REFERENCES `fivenet_mailer_threads` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_mailer_messages_sender_id` FOREIGN KEY (`sender_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_settings
@@ -168,7 +183,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_settings` (
   `email_id` bigint(20) unsigned NOT NULL,
   `signature` varchar(1024) DEFAULT NULL,
   PRIMARY KEY (`email_id`),
-  CONSTRAINT `fk_fivenet_mailer_settings_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_settings_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_settings_blocked
@@ -178,7 +194,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_settings_blocked` (
   PRIMARY KEY (`email_id`, `target_email`),
   UNIQUE KEY `idx_fivenet_mailer_settings_blocked` (`email_id`, `target_email`),
   KEY `idx_fivenet_mailer_settings_blocked_email_id` (`email_id`),
-  CONSTRAINT `fk_fivenet_mailer_settings_blocked_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_settings_blocked_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

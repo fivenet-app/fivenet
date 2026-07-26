@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_oauth2_accounts` (
   `avatar` varchar(255) NOT NULL,
   UNIQUE KEY `idx_fivenet_oauth2_accounts_unique` (`account_id`,`provider`),
   UNIQUE KEY `idx_fivenet_oauth2_accounts_provider_external_id` (`provider`,`external_id`),
-  CONSTRAINT `fk_fivenet_oauth2_accounts_account_id` FOREIGN KEY (`account_id`) REFERENCES `fivenet_accounts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_oauth2_accounts_account_id` FOREIGN KEY (`account_id`) REFERENCES `fivenet_accounts` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

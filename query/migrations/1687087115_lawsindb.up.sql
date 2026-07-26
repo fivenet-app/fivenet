@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_lawbooks_laws` (
   `stvo_points` bigint(20) unsigned DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY (`lawbook_id`, `name`),
-  CONSTRAINT `fk_fivenet_lawbooks_laws_lawbook_id` FOREIGN KEY (`lawbook_id`) REFERENCES `fivenet_lawbooks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_lawbooks_laws_lawbook_id` FOREIGN KEY (`lawbook_id`) REFERENCES `fivenet_lawbooks` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

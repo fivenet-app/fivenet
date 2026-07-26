@@ -18,7 +18,8 @@ CREATE TABLE
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_calendar_deleted_at` (`deleted_at`),
         KEY `idx_fivenet_calendar_job` (`job`),
-        CONSTRAINT `fk_fivenet_calendar_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_calendar_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_calendar_entries
@@ -44,8 +45,10 @@ CREATE TABLE
         KEY `idx_fivenet_calendar_entries_calendar_id` (`calendar_id`),
         KEY `idx_fivenet_calendar_entries_times` (`start_time`, `end_time`),
         KEY `idx_fivenet_calendar_entries_job` (`job`),
-        CONSTRAINT `fk_fivenet_calendar_entries_calendar_id` FOREIGN KEY (`calendar_id`) REFERENCES `fivenet_calendar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_calendar_entries_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_calendar_entries_calendar_id` FOREIGN KEY (`calendar_id`) REFERENCES `fivenet_calendar` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_calendar_entries_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_calendar_job_access
@@ -59,7 +62,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_calendar_job_access` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_calendar_job_access` (`calendar_id`, `job`, `minimum_grade`),
   KEY `idx_fivenet_calendar_job_access_calendar_id` (`calendar_id`),
-  CONSTRAINT `fk_fivenet_calendar_job_access_calendar_id` FOREIGN KEY (`calendar_id`) REFERENCES `fivenet_calendar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_calendar_job_access_calendar_id` FOREIGN KEY (`calendar_id`) REFERENCES `fivenet_calendar` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_calendar_user_access
@@ -73,8 +77,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_calendar_user_access` (
   UNIQUE KEY `idx_fivenet_calendar_user_access` (`calendar_id`, `user_id`),
   KEY `idx_fivenet_calendar_user_access_calendar_id` (`calendar_id`),
   KEY `idx_fivenet_calendar_user_access_user_id` (`user_id`),
-  CONSTRAINT `fk_fivenet_calendar_user_access_calendar_id` FOREIGN KEY (`calendar_id`) REFERENCES `fivenet_calendar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_calendar_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_calendar_user_access_calendar_id` FOREIGN KEY (`calendar_id`) REFERENCES `fivenet_calendar` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_calendar_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_calendar_rsvp
@@ -86,8 +92,10 @@ CREATE TABLE
         `response` smallint(2) DEFAULT 0,
         PRIMARY KEY (`entry_id`, `user_id`),
         KEY `idx_fivenet_calendar_rsvp_response` (`entry_id`, `response`),
-        CONSTRAINT `fk_fivenet_calendar_rsvp_entry_id` FOREIGN KEY (`entry_id`) REFERENCES `fivenet_calendar_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_calendar_rsvp_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_calendar_rsvp_entry_id` FOREIGN KEY (`entry_id`) REFERENCES `fivenet_calendar_entries` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_calendar_rsvp_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_calendar_subs
@@ -100,8 +108,10 @@ CREATE TABLE
         `muted` tinyint(1) NOT NULL,
         UNIQUE KEY `idx_fivenet_calendar_subs_unique` (`calendar_id`, `user_id`),
         KEY `idx_fivenet_calendar_subs_confirmed` (`calendar_id`, `confirmed`),
-        CONSTRAINT `fk_fivenet_calendar_subs_calendar_id` FOREIGN KEY (`calendar_id`) REFERENCES `fivenet_calendar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_calendar_subs_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_calendar_subs_calendar_id` FOREIGN KEY (`calendar_id`) REFERENCES `fivenet_calendar` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_calendar_subs_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 COMMIT;

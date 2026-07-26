@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_calendar_visibility_public` (
   `target_id` bigint unsigned NOT NULL,
   `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`target_id`),
-  CONSTRAINT `fk_fivenet_calendar_visibility_public_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_calendar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_calendar_visibility_public_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_calendar` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `fivenet_calendar_visibility_creator` (
@@ -15,7 +16,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_calendar_visibility_creator` (
   PRIMARY KEY (`target_id`),
   KEY `idx_fivenet_calendar_visibility_creator_lookup` (`creator_id`, `creator_job`, `target_id`),
   KEY `idx_fivenet_calendar_visibility_creator_calendar` (`target_id`, `creator_id`, `creator_job`),
-  CONSTRAINT `fk_fivenet_calendar_visibility_creator_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_calendar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_calendar_visibility_creator_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_calendar` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `fivenet_calendar_visibility_subject` (
@@ -27,8 +29,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_calendar_visibility_subject` (
   PRIMARY KEY (`target_id`, `subject_id`, `access`, `effect`),
   KEY `idx_fivenet_calendar_visibility_subject_lookup` (`subject_id`, `access`, `target_id`, `effect`),
   KEY `idx_fivenet_calendar_visibility_subject_calendar` (`target_id`, `access`, `subject_id`, `effect`),
-  CONSTRAINT `fk_fivenet_calendar_visibility_subject_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_calendar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_calendar_visibility_subject_subject_id` FOREIGN KEY (`subject_id`) REFERENCES `fivenet_acl_subjects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_calendar_visibility_subject_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_calendar` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_calendar_visibility_subject_subject_id` FOREIGN KEY (`subject_id`) REFERENCES `fivenet_acl_subjects` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `chk_fivenet_calendar_visibility_subject_effect` CHECK (`effect` IN (0, 1))
 ) ENGINE=InnoDB;
 

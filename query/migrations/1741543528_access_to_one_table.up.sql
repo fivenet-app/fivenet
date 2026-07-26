@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_calendar_access` (
   INDEX `fk_fivenet_calendar_access_user_id` (`user_id`),
   INDEX `fk_fivenet_calendar_access_job_grade` (`job`, `minimum_grade`),
   INDEX `fk_fivenet_calendar_access_access` (`access`),
-  CONSTRAINT `fk_fivenet_calendar_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_calendar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_calendar_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_calendar` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `fivenet_calendar_access` (`target_id`, `user_id`, `access`)
@@ -37,7 +38,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_units_access` (
   INDEX `fk_fivenet_centrum_units_access_job_grade` (`job`, `minimum_grade`),
   INDEX `fk_fivenet_centrum_units_access_qualification_id` (`qualification_id`),
   INDEX `fk_fivenet_centrum_units_access_access` (`access`),
-  CONSTRAINT `fk_fivenet_centrum_units_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_centrum_units_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_centrum_units` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `fivenet_centrum_units_access` (`target_id`, `qualification_id`, `access`)
@@ -60,7 +62,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_access` (
   INDEX `fk_fivenet_documents_access_user_id` (`user_id`),
   INDEX `fk_fivenet_documents_access_job_grade` (`job`, `minimum_grade`),
   INDEX `fk_fivenet_documents_access_access` (`access`),
-  CONSTRAINT `fk_fivenet_documents_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_documents_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_documents` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `fivenet_documents_access` (`target_id`, `user_id`, `access`)
@@ -81,7 +84,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_templates_access` (
   UNIQUE KEY `idx_fivenet_documents_templates_access_unique_access` (`target_id`, `job`, `minimum_grade`, `access`),
   INDEX `fk_fivenet_documents_templates_access_job_grade` (`job`, `minimum_grade`),
   INDEX `fk_fivenet_documents_templates_access_access` (`access`),
-  CONSTRAINT `fk_fivenet_documents_templates_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_documents_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_documents_templates_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_documents_templates` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `fivenet_documents_templates_access` (`target_id`, `job`, `minimum_grade`, `access`)
@@ -101,7 +105,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_internet_domains_access` (
   INDEX `fk_fivenet_internet_domains_access_user_id` (`user_id`),
   INDEX `fk_fivenet_internet_domains_access_job_grade` (`job`, `minimum_grade`),
   INDEX `fk_fivenet_internet_domains_access_access` (`access`),
-  CONSTRAINT `fk_fivenet_internet_domains_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_internet_domains` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_internet_domains_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_internet_domains` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `fivenet_internet_domains_access` (`target_id`, `user_id`, `access`)
@@ -125,7 +130,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails_access` (
   INDEX `fk_fivenet_mailer_emails_access_user_id` (`user_id`),
   INDEX `fk_fivenet_mailer_emails_access_job_grade` (`job`, `minimum_grade`),
   INDEX `fk_fivenet_mailer_emails_access_access` (`access`),
-  CONSTRAINT `fk_fivenet_mailer_emails_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_emails_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `fivenet_mailer_emails_access` (`target_id`, `user_id`, `access`)
@@ -149,7 +155,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_qualifications_access` (
   UNIQUE KEY `idx_fivenet_qualifications_access_unique_access` (`target_id`, `job`, `minimum_grade`, `access`),
   INDEX `fk_fivenet_qualifications_access_job_grade` (`job`, `minimum_grade`),
   INDEX `fk_fivenet_qualifications_access_access` (`access`),
-  CONSTRAINT `fk_fivenet_qualifications_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_qualifications_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_qualifications` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `fivenet_qualifications_access` (`target_id`, `job`, `minimum_grade`, `access`)
@@ -169,7 +176,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_wiki_pages_access` (
   INDEX `fk_fivenet_wiki_pages_access_user_id` (`user_id`),
   INDEX `fk_fivenet_wiki_pages_access_job_grade` (`job`, `minimum_grade`),
   INDEX `fk_fivenet_wiki_pages_access_access` (`access`),
-  CONSTRAINT `fk_fivenet_wiki_pages_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_wiki_pages` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_wiki_pages_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_wiki_pages` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `fivenet_wiki_pages_access` (`target_id`, `user_id`, `access`)

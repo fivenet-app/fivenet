@@ -13,7 +13,8 @@ CREATE TABLE `fivenet_sync_user` (
 
   UNIQUE KEY `ux_user_external_identifier` (`identifier`),
 
-  CONSTRAINT `fk_user_external_user_id` FOREIGN KEY (`user_id`) REFERENCES `fivenet_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_user_external_user_id` FOREIGN KEY (`user_id`) REFERENCES `fivenet_user` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

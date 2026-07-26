@@ -14,7 +14,8 @@ ALTER TABLE `fivenet_documents_approval_policies` ADD `signature_required` tinyi
 
 ALTER TABLE `fivenet_documents_approvals` ADD COLUMN `payload_svg` longtext NOT NULL AFTER `user_job_grade`;
 ALTER TABLE `fivenet_documents_approvals` ADD COLUMN `stamp_id` bigint(20) unsigned DEFAULT NULL AFTER `payload_svg`;
-ALTER TABLE `fivenet_documents_approvals` ADD CONSTRAINT `fk_fivenet_doc_signatures_stamp_id` FOREIGN KEY (`stamp_id`) REFERENCES `fivenet_documents_stamps` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `fivenet_documents_approvals` ADD CONSTRAINT `fk_fivenet_doc_signatures_stamp_id` FOREIGN KEY (`stamp_id`) REFERENCES `fivenet_documents_stamps` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- Rename SigningService to StampsService: Only for stamp methods
 UPDATE `fivenet_rbac_permissions` SET `category` = 'documents.StampsService' WHERE `category` = 'documents.SigningService' AND `name` IN ('UpsertStamp', 'DeleteStamp', 'ListUsableStamps');

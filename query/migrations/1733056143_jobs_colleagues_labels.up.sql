@@ -18,8 +18,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_labels_users` (
   `label_id` bigint unsigned NOT NULL,
   UNIQUE KEY `idx_fivenet_jobs_labels_users_unique` (`user_id`, `job`, `label_id`),
   KEY `fk_fivenet_jobs_labels_users_label_id` (`label_id`),
-  CONSTRAINT `fk_fivenet_jobs_labels_users_label_id` FOREIGN KEY (`label_id`) REFERENCES `fivenet_jobs_labels` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_jobs_labels_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_jobs_labels_users_label_id` FOREIGN KEY (`label_id`) REFERENCES `fivenet_jobs_labels` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_jobs_labels_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

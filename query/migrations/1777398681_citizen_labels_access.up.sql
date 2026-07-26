@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_labels_job_job_access` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_user_labels_job_job_access` (`label_id`, `job`, `minimum_grade`),
   KEY `idx_fivenet_user_labels_job_job_access_label_id` (`label_id`),
-  CONSTRAINT `fk_fivenet_user_labels_job_job_access_label_id` FOREIGN KEY (`label_id`) REFERENCES `fivenet_user_labels_job` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_user_labels_job_job_access_label_id` FOREIGN KEY (`label_id`) REFERENCES `fivenet_user_labels_job` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

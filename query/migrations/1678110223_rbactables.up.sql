@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_attrs` (
   `valid_values` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_attrs_permission_id_key_unque` (`permission_id`,`key`),
-  CONSTRAINT `fk_fivenet_attrs_permissions_permission_id` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_permissions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_attrs_permissions_permission_id` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_permissions` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_roles
@@ -44,8 +45,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_role_attrs` (
   `attr_id` bigint(20) unsigned NOT NULL,
   `value` longtext NOT NULL,
   PRIMARY KEY (`role_id`,`attr_id`),
-  CONSTRAINT `fk_fivenet_role_attrs_role_id` FOREIGN KEY (`role_id`) REFERENCES `fivenet_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_role_attrs_attr_id` FOREIGN KEY (`attr_id`) REFERENCES `fivenet_attrs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_role_attrs_role_id` FOREIGN KEY (`role_id`) REFERENCES `fivenet_roles` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_role_attrs_attr_id` FOREIGN KEY (`attr_id`) REFERENCES `fivenet_attrs` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_role_permissions
@@ -54,8 +57,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_role_permissions` (
   `permission_id` bigint(20) unsigned NOT NULL,
   `val` tinyint(1) NOT NULL,
   PRIMARY KEY (`role_id`,`permission_id`),
-  CONSTRAINT `fk_fivenet_role_permissions_permission` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_permissions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_role_permissions_role` FOREIGN KEY (`role_id`) REFERENCES `fivenet_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_role_permissions_permission` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_permissions` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_role_permissions_role` FOREIGN KEY (`role_id`) REFERENCES `fivenet_roles` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_job_permissions
@@ -64,7 +69,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_job_permissions` (
   `permission_id` bigint(20) unsigned NOT NULL,
   `val` tinyint(1) NOT NULL,
   PRIMARY KEY (`job`,`permission_id`),
-  CONSTRAINT `fk_fivenet_job_permissions_permission` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_permissions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_job_permissions_permission` FOREIGN KEY (`permission_id`) REFERENCES `fivenet_permissions` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_job_attrs
@@ -73,7 +79,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_job_attrs` (
   `attr_id` bigint(20) unsigned NOT NULL,
   `max_values` text DEFAULT NULL,
   PRIMARY KEY (`job`,`attr_id`),
-  CONSTRAINT `fk_fivenet_job_attrs_attr_id` FOREIGN KEY (`attr_id`) REFERENCES `fivenet_attrs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_job_attrs_attr_id` FOREIGN KEY (`attr_id`) REFERENCES `fivenet_attrs` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

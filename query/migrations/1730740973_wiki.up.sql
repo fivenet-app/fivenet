@@ -23,8 +23,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_wiki_pages` (
   FULLTEXT KEY `idx_fivenet_wiki_pages_title` (`title`),
   FULLTEXT KEY `idx_fivenet_wiki_pages_content` (`content`),
   KEY `idx_fivenet_wiki_pages_creator_id` (`creator_id`),
-  CONSTRAINT `fk_fivenet_wiki_pages_parent_id` FOREIGN KEY (`parent_id`) REFERENCES `fivenet_wiki_pages` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_wiki_pages_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_wiki_pages_parent_id` FOREIGN KEY (`parent_id`) REFERENCES `fivenet_wiki_pages` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_wiki_pages_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_wiki_page_user_access
@@ -38,7 +40,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_wiki_page_job_access` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_wiki_page_job_access` (`page_id`, `job`, `minimum_grade`),
   KEY `idx_fivenet_wiki_page_job_access_page_id` (`page_id`),
-  CONSTRAINT `fk_fivenet_wiki_page_job_access_page_id` FOREIGN KEY (`page_id`) REFERENCES `fivenet_wiki_pages` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_wiki_page_job_access_page_id` FOREIGN KEY (`page_id`) REFERENCES `fivenet_wiki_pages` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_wiki_page_user_access
@@ -52,8 +55,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_wiki_page_user_access` (
   UNIQUE KEY `idx_fivenet_wiki_page_user_access` (`page_id`, `user_id`),
   KEY `idx_fivenet_wiki_page_user_access_page_id` (`page_id`),
   KEY `idx_fivenet_wiki_page_user_access_user_id` (`user_id`),
-  CONSTRAINT `fk_fivenet_wiki_page_user_access_page_id` FOREIGN KEY (`page_id`) REFERENCES `fivenet_wiki_pages` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_wiki_page_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_wiki_page_user_access_page_id` FOREIGN KEY (`page_id`) REFERENCES `fivenet_wiki_pages` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_wiki_page_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_wiki_page_activity
@@ -70,8 +75,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_wiki_page_activity` (
   KEY `idx_fivenet_wiki_page_activity_page_id` (`page_id`),
   KEY `idx_fivenet_wiki_page_activity_creator_id` (`creator_id`),
   KEY `idx_fivenet_wiki_page_activity_activity_type` (`activity_type`),
-  CONSTRAINT `fk_fivenet_wiki_page_activity_page_id` FOREIGN KEY (`page_id`) REFERENCES `fivenet_wiki_pages` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_wiki_page_activity_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+  CONSTRAINT `fk_fivenet_wiki_page_activity_page_id` FOREIGN KEY (`page_id`) REFERENCES `fivenet_wiki_pages` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_wiki_page_activity_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`)
+    ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB;
 
 COMMIT;

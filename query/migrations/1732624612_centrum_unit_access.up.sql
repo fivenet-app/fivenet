@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_units_job_access` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_centrum_units_job_access` (`unit_id`, `job`, `minimum_grade`),
   KEY `idx_fivenet_centrum_units_job_access_unit_id` (`unit_id`),
-  CONSTRAINT `fk_fivenet_centrum_units_job_access_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_centrum_units_job_access_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_centrum_units_qualifications_access
@@ -25,8 +26,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_units_qualifications_access` (
   UNIQUE KEY `idx_fivenet_centrum_units_qualifications_access` (`unit_id`, `qualification_id`),
   KEY `idx_fivenet_centrum_units_qualifications_access_unit_id` (`unit_id`),
   KEY `idx_fivenet_centrum_units_qualifications_access_qualification_id` (`qualification_id`),
-  CONSTRAINT `fk_fivenet_centrum_units_qualifications_access_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_centrum_units_qualifications_access_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_centrum_units_qualifications_access_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_centrum_units_qualifications_access_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 ALTER TABLE `fivenet_centrum_units` ADD COLUMN `deleted_at` datetime(3) DEFAULT NULL;

@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_job_grades` (
   `grade` int NOT NULL,
   `label` varchar(50) NOT NULL,
   PRIMARY KEY (`job_name`, `grade`),
-  CONSTRAINT `fk_fivenet_job_grades_job_name` FOREIGN KEY (`job_name`) REFERENCES `fivenet_jobs` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_job_grades_job_name` FOREIGN KEY (`job_name`) REFERENCES `fivenet_jobs` (`name`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_licenses
@@ -54,8 +55,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_licenses` (
   `owner` varchar(64) NOT NULL,
   PRIMARY KEY (`type`,`owner`),
   KEY `fivenet_user_licenses_owner_IDX` (`owner`),
-  CONSTRAINT `fk_fivenet_user_licenses_type` FOREIGN KEY (`type`) REFERENCES `fivenet_licenses` (`type`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_user_licenses_owner` FOREIGN KEY (`owner`) REFERENCES `{{.UsersTableName}}` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_user_licenses_type` FOREIGN KEY (`type`) REFERENCES `fivenet_licenses` (`type`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_user_licenses_owner` FOREIGN KEY (`owner`) REFERENCES `{{.UsersTableName}}` (`identifier`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_owned_vehicles

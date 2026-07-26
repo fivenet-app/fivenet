@@ -6,8 +6,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_job_conduct_files` (
     `file_id` bigint unsigned NOT NULL,
     PRIMARY KEY (`conduct_id`, `file_id`),
     KEY `idx_file_id` (`file_id`),
-    CONSTRAINT `fk_fivenet_job_conduct_files_conduct_id` FOREIGN KEY (`conduct_id`) REFERENCES `fivenet_job_conduct` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `fk_fivenet_job_conduct_files_file_id` FOREIGN KEY (`file_id`) REFERENCES `fivenet_files` (`id`) ON DELETE RESTRICT
+    CONSTRAINT `fk_fivenet_job_conduct_files_conduct_id` FOREIGN KEY (`conduct_id`) REFERENCES `fivenet_job_conduct` (`id`)
+    ON DELETE CASCADE,
+    CONSTRAINT `fk_fivenet_job_conduct_files_file_id` FOREIGN KEY (`file_id`) REFERENCES `fivenet_files` (`id`)
+    ON DELETE RESTRICT
 );
 
 ALTER TABLE `fivenet_job_conduct` ADD COLUMN `draft` tinyint(1) DEFAULT '0';

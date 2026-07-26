@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_meta` (
   KEY `idx_documents_meta_ap_required_remaining` (`ap_required_remaining`),
   KEY `idx_documents_meta_sig_required_remaining` (`sig_required_remaining`),
 
-  CONSTRAINT `fk_fivenet_documents_meta_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_documents_meta_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

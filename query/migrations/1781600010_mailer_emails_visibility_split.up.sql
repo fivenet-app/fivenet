@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails_visibility_creator` (
   PRIMARY KEY (`target_id`),
   KEY `idx_fivenet_mailer_emails_visibility_creator_lookup` (`creator_id`, `creator_job`, `target_id`),
   KEY `idx_fivenet_mailer_emails_visibility_creator_target` (`target_id`, `creator_id`, `creator_job`),
-  CONSTRAINT `fk_fivenet_mailer_emails_visibility_creator_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_emails_visibility_creator_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails_visibility_subject` (
@@ -20,8 +21,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails_visibility_subject` (
   PRIMARY KEY (`target_id`, `subject_id`, `access`, `effect`),
   KEY `idx_fivenet_mailer_emails_visibility_subject_lookup` (`subject_id`, `access`, `target_id`, `effect`),
   KEY `idx_fivenet_mailer_emails_visibility_subject_target` (`target_id`, `access`, `subject_id`, `effect`),
-  CONSTRAINT `fk_fivenet_mailer_emails_visibility_subject_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_mailer_emails_visibility_subject_subject_id` FOREIGN KEY (`subject_id`) REFERENCES `fivenet_acl_subjects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_mailer_emails_visibility_subject_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_mailer_emails` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_mailer_emails_visibility_subject_subject_id` FOREIGN KEY (`subject_id`) REFERENCES `fivenet_acl_subjects` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `chk_fivenet_mailer_emails_visibility_subject_effect` CHECK (`effect` IN (0, 1))
 ) ENGINE=InnoDB;
 
