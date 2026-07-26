@@ -114,7 +114,7 @@ func (s *Store) ManageLabels(
 		}
 	}
 
-	_, removed := utils.SlicesDifferenceFunc(current, labels, func(in *jobslabels.Label) int64 {
+	_, removed := utils.SliceDiffFunc(current, labels, func(in *jobslabels.Label) int64 {
 		return in.GetId()
 	})
 

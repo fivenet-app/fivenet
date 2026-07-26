@@ -39,3 +39,18 @@ func TestRichTextHtmlNodeFromHTMLNode(t *testing.T) {
 		assert.Equal(t, v.Expected, hout)
 	}
 }
+
+func TestIsHeaderTag(t *testing.T) {
+	t.Parallel()
+	for actual, expected := range map[string]bool{
+		"div":   false,
+		"s pan": false,
+		"h3":    true,
+		"h7":    false,
+		"h6":    true,
+		"h1":    true,
+		"h0":    false,
+	} {
+		assert.Equal(t, expected, isHeaderTag(actual), actual)
+	}
+}

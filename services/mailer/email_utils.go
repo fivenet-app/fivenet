@@ -113,10 +113,10 @@ func (s *Server) generateEmailProposals(
 	}
 
 	slices.Sort(emails)
-	utils.RemoveSliceDuplicates(emails)
+	utils.SliceDedup(emails)
 
 	slices.Sort(domains)
-	utils.RemoveSliceDuplicates(domains)
+	utils.SliceDedup(domains)
 
 	return emails, domains, nil
 }

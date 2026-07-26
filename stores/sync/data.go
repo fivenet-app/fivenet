@@ -334,7 +334,10 @@ func (s *Store) EndActiveJobTimeclocks(
 	}
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve rows affected for end active job timeclocks. %w", err)
+		return nil, fmt.Errorf(
+			"failed to retrieve rows affected for end active job timeclocks. %w",
+			err,
+		)
 	}
 
 	return &pbsync.EndActiveJobTimeclocksResponse{RowsAffected: rowsAffected}, nil

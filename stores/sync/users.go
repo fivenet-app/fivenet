@@ -728,7 +728,7 @@ func (s *Store) handleUserLicenses(
 		licensesList = append(licensesList, license.GetType())
 	}
 
-	toAdd, toRemove := utils.SlicesDifference(currentLicenses, licensesList)
+	toAdd, toRemove := utils.SliceDiff(currentLicenses, licensesList)
 	if len(toAdd) > 0 {
 		stmt := tLicenses.
 			INSERT(tLicenses.UserID, tLicenses.Type)

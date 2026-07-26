@@ -54,6 +54,7 @@ func RankBetween(lower, upper string) (string, bool) {
 	switch {
 	case lower == "" && upper == "":
 		return FormatRank(RankStep), true
+
 	case lower == "":
 		u, err := ParseRank(upper)
 		if err != nil {
@@ -71,6 +72,7 @@ func RankBetween(lower, upper string) (string, bool) {
 		}
 
 		return "", false
+
 	case upper == "":
 		l, err := ParseRank(lower)
 		if err != nil {
@@ -87,6 +89,7 @@ func RankBetween(lower, upper string) (string, bool) {
 		}
 
 		return "", false
+
 	default:
 		l, err := ParseRank(lower)
 		if err != nil {

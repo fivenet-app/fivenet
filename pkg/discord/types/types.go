@@ -118,6 +118,6 @@ func (u *User) Merge(user *User) {
 	}
 	if len(user.Roles.Sum) > 0 {
 		u.Roles.Sum = append(u.Roles.Sum, user.Roles.Sum...)
-		u.Roles.Sum = utils.RemoveSliceDuplicates(u.Roles.Sum)
+		u.Roles.Sum = utils.SliceDedup(u.Roles.Sum)
 	}
 }

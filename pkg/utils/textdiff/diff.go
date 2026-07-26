@@ -34,9 +34,11 @@ func DiffText(oldText string, newText string) *content.ContentDiff {
 		switch d.Type {
 		case diffmatchpatch.DiffEqual:
 			kind = content.Kind_KIND_EQUAL
+
 		case diffmatchpatch.DiffInsert:
 			kind = content.Kind_KIND_INSERT
 			ins = utils.SaturatingAddUint32(ins, utf8.RuneCountInString(d.Text))
+
 		case diffmatchpatch.DiffDelete:
 			kind = content.Kind_KIND_DELETE
 			del = utils.SaturatingAddUint32(del, utf8.RuneCountInString(d.Text))

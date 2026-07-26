@@ -278,7 +278,7 @@ func (s *Server) ReorderLabels(
 ) (*pbcitizens.ReorderLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	labelIds := utils.RemoveSliceDuplicates(req.GetLabelIds())
+	labelIds := utils.SliceDedup(req.GetLabelIds())
 	if err := s.store.ReorderLabels(ctx, userInfo.GetJob(), labelIds); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}

@@ -113,7 +113,7 @@ func (s *Server) ReorderUnits(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Remove any duplicate unit ids from the request
-	unitIds := utils.RemoveSliceDuplicates(req.GetUnitIds())
+	unitIds := utils.SliceDedup(req.GetUnitIds())
 
 	stmt := tUnits.
 		SELECT(tUnits.ID).

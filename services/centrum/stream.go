@@ -267,7 +267,7 @@ func (s *Server) stream(
 
 	jobs := []string{userInfo.GetJob()}
 	jobs = append(jobs, additionalJobs...)
-	jobs = utils.RemoveSliceDuplicates(jobs)
+	jobs = utils.SliceDedup(jobs)
 
 	out := make(chan *pbcentrum.StreamResponse, 256)
 	g, gctx := errgroup.WithContext(ctx)

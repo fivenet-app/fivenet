@@ -404,7 +404,7 @@ func (s *Server) SetColleagueProps(
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
-		added, _ := utils.SlicesDifferenceFunc(
+		added, _ := utils.SliceDiffFunc(
 			props.GetLabels().GetList(),
 			reqProps.GetLabels().GetList(),
 			func(in *jobslabels.Label) int64 {

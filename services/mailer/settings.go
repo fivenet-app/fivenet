@@ -96,7 +96,7 @@ func (s *Server) SetEmailSettings(
 			return e == email.GetEmail()
 		},
 	)
-	blockedEmails = utils.RemoveSliceDuplicates(blockedEmails)
+	blockedEmails = utils.SliceDedup(blockedEmails)
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -133,7 +133,7 @@ func (s *Server) SetEmailSettings(
 			}
 		}
 	} else {
-		toCreate, toDelete := utils.SlicesDifference(blockedEmails, settings.GetBlockedEmails())
+		toCreate, toDelete := utils.SliceDiff(blockedEmails, settings.GetBlockedEmails())
 
 		if len(toCreate) > 0 {
 			if err := s.store.AddBlockedEmails(

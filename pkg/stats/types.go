@@ -1,6 +1,11 @@
 package stats
 
-import "time"
+import (
+	"context"
+	"time"
+
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
+)
 
 type DocumentMetric struct {
 	DocumentID int64
@@ -41,4 +46,10 @@ type PeriodSeriesValue struct {
 	Key   string    `alias:"key"`
 	Label string    `alias:"label"`
 	Value int64     `alias:"value"`
+}
+
+type DocumentMetricExtractor interface {
+	SourceKey() string
+	Supports(doc *documents.Document) bool
+	Extract(ctx context.Context, doc *documents.Document) ([]*DocumentMetric, error)
 }

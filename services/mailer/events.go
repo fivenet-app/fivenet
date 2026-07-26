@@ -14,7 +14,7 @@ func (s *Server) sendUpdate(
 	event *mailerevents.MailerEvent,
 	emailIds ...int64,
 ) error {
-	emailIds = utils.RemoveSliceDuplicates(emailIds)
+	emailIds = utils.SliceDedup(emailIds)
 
 	for _, emailId := range emailIds {
 		if _, err := s.js.PublishAsyncProto(

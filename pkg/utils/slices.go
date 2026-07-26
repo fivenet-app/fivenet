@@ -1,13 +1,16 @@
 package utils
 
-// RemoveSliceDuplicates returns a new slice with duplicate values removed, preserving order.
-func RemoveSliceDuplicates[T comparable](in []T) []T {
-	allKeys := make(map[T]struct{}, len(in))
+// SliceDedup removes duplicate values while preserving order.
+//
+// The returned slice reuses the backing array of in and may overwrite its
+// elements. Callers must not rely on in remaining unchanged.
+func SliceDedup[T comparable](in []T) []T {
+	seen := make(map[T]struct{}, len(in))
 	list := make([]T, 0, len(in))
 
 	for _, item := range in {
-		if _, value := allKeys[item]; !value {
-			allKeys[item] = struct{}{}
+		if _, value := seen[item]; !value {
+			seen[item] = struct{}{}
 			list = append(list, item)
 		}
 	}
@@ -15,16 +18,16 @@ func RemoveSliceDuplicates[T comparable](in []T) []T {
 	return list
 }
 
-// RemoveSliceDuplicatesFn returns a new slice with duplicate values removed determined by a function, preserving order.
+// SliceDedupFn returns a new slice with duplicate values removed determined by a function, preserving order.
 // keyFn should return true for items that are considered duplicates.
-func RemoveSliceDuplicatesFn[T comparable, V comparable](in []T, keyFn func(T) V) []T {
-	allKeys := make(map[V]struct{}, len(in))
+func SliceDedupFn[T comparable, V comparable](in []T, keyFn func(T) V) []T {
+	seen := make(map[V]struct{}, len(in))
 	list := make([]T, 0, len(in))
 
 	for _, item := range in {
 		key := keyFn(item)
-		if _, value := allKeys[key]; !value {
-			allKeys[key] = struct{}{}
+		if _, value := seen[key]; !value {
+			seen[key] = struct{}{}
 			list = append(list, item)
 		}
 	}
@@ -32,85 +35,127 @@ func RemoveSliceDuplicatesFn[T comparable, V comparable](in []T, keyFn func(T) V
 	return list
 }
 
-// SlicesDifference returns the values added and removed between two slices, ignoring duplicates.
-// Duplicates of values are ignored.
-func SlicesDifference[T comparable](a, b []T) ([]T, []T) {
-	temp := map[T]int{}
-	for _, s := range a {
-		if _, ok := temp[s]; !ok {
-			temp[s] = 0
-		}
-	}
-	for _, s := range b {
-		if _, ok := temp[s]; !ok {
-			temp[s] = -1
-		} else {
-			temp[s] = 1
-		}
+// SliceDiff returns values added to b and removed from a.
+//
+// Duplicate values are ignored. Result ordering follows the order in which
+// values appear in b for added values and a for removed values.
+func SliceDiff[T comparable](a, b []T) ([]T, []T) {
+	aSet := make(map[T]struct{}, len(a))
+	bSet := make(map[T]struct{}, len(b))
+
+	for _, value := range a {
+		aSet[value] = struct{}{}
 	}
 
-	added, removed := []T{}, []T{}
-	for s, v := range temp {
-		if v == 0 {
-			removed = append(removed, s)
-		} else if v < 0 {
-			added = append(added, s)
+	for _, value := range b {
+		bSet[value] = struct{}{}
+	}
+
+	added := make([]T, 0)
+	addedSeen := make(map[T]struct{})
+
+	for _, value := range b {
+		if _, exists := aSet[value]; exists {
+			continue
 		}
+		if _, exists := addedSeen[value]; exists {
+			continue
+		}
+
+		addedSeen[value] = struct{}{}
+		added = append(added, value)
+	}
+
+	removed := make([]T, 0)
+	removedSeen := make(map[T]struct{})
+
+	for _, value := range a {
+		if _, exists := bSet[value]; exists {
+			continue
+		}
+		if _, exists := removedSeen[value]; exists {
+			continue
+		}
+
+		removedSeen[value] = struct{}{}
+		removed = append(removed, value)
 	}
 
 	return added, removed
 }
 
-// SlicesDifferenceFunc returns the values added and removed between two slices, using a key function for comparison.
-// Does not handle multiple additions of the same value as values are de-duplicated.
-func SlicesDifferenceFunc[T comparable, S comparable](
+// SliceDiffFunc returns values added to b and removed from a,
+// comparing values using keyFn.
+//
+// The first value encountered for each key is retained. Duplicate keys are
+// ignored. Result ordering follows b for added values and a for removed values.
+func SliceDiffFunc[T comparable, S comparable](
 	a, b []T,
 	keyFn func(in T) S,
 ) ([]T, []T) {
-	temp := map[S]int{}
-	vals := map[S]T{}
-	for _, i := range a {
-		s := keyFn(i)
-		if _, ok := temp[s]; !ok {
-			temp[s] = 0
-			vals[s] = i
-		}
-	}
-	for _, i := range b {
-		s := keyFn(i)
-		if _, ok := temp[s]; !ok {
-			temp[s] = -1
-			vals[s] = i
-		} else {
-			temp[s] = 1
-		}
+	aSet := make(map[T]struct{}, len(a))
+	bSet := make(map[T]struct{}, len(b))
+
+	for _, value := range a {
+		aSet[value] = struct{}{}
 	}
 
-	added := []T{}
-	removed := []T{}
-	for s, v := range temp {
-		if v == 0 {
-			removed = append(removed, vals[s])
-		} else if v < 0 {
-			added = append(added, vals[s])
+	for _, value := range b {
+		bSet[value] = struct{}{}
+	}
+
+	added := make([]T, 0)
+	addedSeen := make(map[T]struct{})
+
+	for _, value := range b {
+		if _, exists := aSet[value]; exists {
+			continue
 		}
+		if _, exists := addedSeen[value]; exists {
+			continue
+		}
+
+		addedSeen[value] = struct{}{}
+		added = append(added, value)
+	}
+
+	removed := make([]T, 0)
+	removedSeen := make(map[T]struct{})
+
+	for _, value := range a {
+		if _, exists := bSet[value]; exists {
+			continue
+		}
+		if _, exists := removedSeen[value]; exists {
+			continue
+		}
+
+		removedSeen[value] = struct{}{}
+		removed = append(removed, value)
 	}
 
 	return added, removed
 }
 
-// MergeUniqueStrings merges multiple slices of strings into a single slice, removing duplicates while preserving order.
+// MergeUniqueStrings merges multiple slices of strings into a single slice,
+// removing duplicates while preserving order.
 func MergeUniqueStrings(lists ...[]string) []string {
-	merged := make([]string, 0)
-	seen := make(map[string]struct{})
+	totalLen := 0
+	for _, list := range lists {
+		totalLen += len(list)
+	}
+
+	merged := make([]string, 0, totalLen)
+	seen := make(map[string]struct{}, totalLen)
 
 	for _, list := range lists {
-		for _, v := range list {
-			if _, ok := seen[v]; ok {
+		for _, value := range list {
+			if _, exists := seen[value]; exists {
 				continue
 			}
-			seen[v] = struct{}{}
-			merged = append(merged, v)
+
+			seen[value] = struct{}{}
+			merged = append(merged, value)
 		}
 	}
 

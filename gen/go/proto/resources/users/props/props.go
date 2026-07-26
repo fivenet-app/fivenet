@@ -369,7 +369,7 @@ func (x *UserProps) HandleChanges(
 			in.Labels = &citizenslabels.Labels{}
 		}
 
-		added, removed := utils.SlicesDifferenceFunc(
+		added, removed := utils.SliceDiffFunc(
 			x.GetLabels().GetList(),
 			in.GetLabels().GetList(),
 			func(in *citizenslabels.Label) int64 {

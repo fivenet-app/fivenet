@@ -103,9 +103,9 @@ func (n *RichTextHtmlNode) populateFrom(htmlNode *html.Node) error {
 		e = e.NextSibling
 	}
 
-	if len(n.GetTag()) == 2 && utils.IsHeaderTag(n.GetTag()) {
+	if len(n.GetTag()) == 2 && isHeaderTag(n.GetTag()) {
 		// Either empty id or "broken" id tag
-		if n.Id == nil || n.GetId() == "" || utils.IsHeaderTag(n.GetId()) {
+		if n.Id == nil || n.GetId() == "" || isHeaderTag(n.GetId()) {
 			if n.Text != nil && n.GetText() != "" {
 				id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), n.GetText()))
 				n.Id = &id
@@ -148,9 +148,9 @@ func (n *RichTextHtmlNode) populateTo(htmlNode *html.Node) {
 
 	if n.Id != nil && n.GetId() != "" {
 		// Make sure that headers have id
-		if len(n.GetTag()) == 2 && utils.IsHeaderTag(n.GetTag()) {
+		if len(n.GetTag()) == 2 && isHeaderTag(n.GetTag()) {
 			// Either empty id or "broken" id tag
-			if n.GetId() == "" || utils.IsHeaderTag(n.GetId()) {
+			if n.GetId() == "" || isHeaderTag(n.GetId()) {
 				if n.Text != nil && n.GetText() != "" {
 					id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), n.GetText()))
 					n.Id = &id
@@ -301,7 +301,7 @@ func ExtractFromHTML(doc *RichTextHtmlNode) *ExtractedContent {
 	var crawler func(*html.Node)
 	firstHeading := ""
 	crawler = func(node *html.Node) {
-		if node.Type == html.ElementNode && utils.IsHeaderTag(node.Data) && firstHeading == "" {
+		if node.Type == html.ElementNode && isHeaderTag(node.Data) && firstHeading == "" {
 			// Extract heading text
 			for child := node.FirstChild; child != nil; child = child.NextSibling {
 				if child.Type == html.TextNode {
@@ -314,7 +314,8 @@ func ExtractFromHTML(doc *RichTextHtmlNode) *ExtractedContent {
 		if node.Type == html.TextNode {
 			text := strings.TrimSpace(node.Data)
 			if text != "" {
-				textBuff.WriteString(text + " ")
+				textBuff.WriteString(text)
+				textBuff.WriteString(" ")
 				wordCount = utils.SaturatingAddUint32(wordCount, len(strings.Fields(text)))
 			}
 		}
@@ -333,4 +334,9 @@ func ExtractFromHTML(doc *RichTextHtmlNode) *ExtractedContent {
 		WordCount:    wordCount,
 		FirstHeading: firstHeading,
 	}
+}
+
+// isHeaderTag returns true if the given tag is a valid HTML header tag (h1-h6).
+func isHeaderTag(tag string) bool {
+	return len(tag) == 2 && tag[0] == 'h' && tag[1] >= '1' && tag[1] <= '6'
 }

@@ -10,14 +10,3 @@ func EqualInt32Ptr(a, b *int32) bool {
 	}
 	return *a == *b
 }
-
-// EqualStringPtr compares two *string pointers for equality.
-func EqualStringPtr(a, b *string) bool {
-	if a == nil && b == nil {
-		return true
-	}
-	if a == nil || b == nil {
-		return false
-	}
-	return *a == *b
-}

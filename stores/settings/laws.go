@@ -293,7 +293,7 @@ func (s *Store) ReorderLawBooks(
 	ctx context.Context,
 	req *pbsettings.ReorderLawBooksRequest,
 ) error {
-	lawBookIds := utils.RemoveSliceDuplicates(req.GetLawBookIds())
+	lawBookIds := utils.SliceDedup(req.GetLawBookIds())
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -557,7 +557,7 @@ func (s *Store) ReorderLaws(
 	ctx context.Context,
 	req *pbsettings.ReorderLawsRequest,
 ) error {
-	lawIds := utils.RemoveSliceDuplicates(req.GetLawIds())
+	lawIds := utils.SliceDedup(req.GetLawIds())
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {

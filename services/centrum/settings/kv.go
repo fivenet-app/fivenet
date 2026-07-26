@@ -113,7 +113,7 @@ func (s *SettingsDB) GetAccessList(
 		}
 	}
 
-	jobs = utils.RemoveSliceDuplicates(jobs)
+	jobs = utils.SliceDedup(jobs)
 
 	return jobs, access, nil
 }

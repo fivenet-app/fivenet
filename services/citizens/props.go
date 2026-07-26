@@ -158,7 +158,7 @@ func (s *Server) SetUserProps(
 			return strings.Compare(a.GetName(), b.GetName())
 		})
 
-		added, _ := utils.SlicesDifferenceFunc(
+		added, _ := utils.SliceDiffFunc(
 			props.GetLabels().GetList(),
 			req.GetProps().GetLabels().GetList(),
 			func(in *citizenslabels.Label) int64 {

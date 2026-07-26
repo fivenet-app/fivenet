@@ -62,7 +62,7 @@ func (s *Server) ShareCalendarEntry(
 		return nil, errorscalendar.ErrEntryClosed
 	}
 
-	req.UserIds = utils.RemoveSliceDuplicates(req.GetUserIds())
+	req.UserIds = utils.SliceDedup(req.GetUserIds())
 
 	resp := &pbcalendar.ShareCalendarEntryResponse{}
 	if len(req.GetUserIds()) == 0 {

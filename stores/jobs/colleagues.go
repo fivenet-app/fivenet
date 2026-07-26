@@ -685,7 +685,7 @@ func (s *Store) HandleColleaguePropsChanges(
 	activities := []*colleaguesactivity.ColleagueActivity{}
 
 	if in.GetLabels() != nil && !proto.Equal(in.GetLabels(), x.GetLabels()) {
-		added, removed := utils.SlicesDifferenceFunc(
+		added, removed := utils.SliceDiffFunc(
 			x.GetLabels().GetList(),
 			in.GetLabels().GetList(),
 			func(in *jobslabels.Label) int64 { return in.GetId() },
