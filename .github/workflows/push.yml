@@ -4,6 +4,8 @@ on:
     branches:
       - main
       - develop
+    paths-ignore:
+      - channels.json
   pull_request:
     branches:
       - main
@@ -145,6 +147,9 @@ jobs:
   update-dev-channel:
     name: Update Dev Channel
     if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/develop' }}
+    concurrency:
+      group: update-dev-channel-develop
+      cancel-in-progress: true
     needs:
       - binary-build
       - build-image
@@ -152,3 +157,4 @@ jobs:
     with:
       channel: dev
       image_tag: ${{ needs.build-image.outputs.image_tag }}
+      source_sha: ${{ github.sha }}
