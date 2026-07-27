@@ -212,15 +212,19 @@ func (s *UsersSync) syncOnce(
 
 	us = s.applyFiltersAndTransformations(us, sQuery)
 
+	pendingHashes := map[int32]uint64{}
 	if s.hashes != nil {
 		skippedUserIDs := make([]int32, 0, len(us))
 		for i, user := range slices.Backward(us) {
-			user.UpdatedAt = nil
-
 			// Remove "skipped" user
-			if s.setOrUpdateUserHash(user) {
+			skip, hash, ok := s.shouldSkipUserByHash(user)
+			if skip {
 				skippedUserIDs = append(skippedUserIDs, user.GetUserId())
 				us = slices.Delete(us, i, i+1)
+				continue
+			}
+			if ok {
+				pendingHashes[user.GetUserId()] = hash
 			}
 		}
 		if len(skippedUserIDs) > 0 {
@@ -234,7 +238,7 @@ func (s *UsersSync) syncOnce(
 
 	// Sync users to FiveNet server (if there are any left after hash check)
 	if len(us) > 0 {
-		if err := s.sendUsersDataInChunks(ctx, us); err != nil {
+		if err := s.sendUsersDataInChunks(ctx, us, pendingHashes); err != nil {
 			return 0, 0, "", nil, err
 		}
 	}
@@ -244,11 +248,11 @@ func (s *UsersSync) syncOnce(
 	return fetchedCount, int64(len(us)), cursorIDValue, cursorTime, nil
 }
 
-// setOrUpdateUserHash computes the hash of the given user and compares it with the existing hash in the cache (if any).
+// shouldSkipUserByHash computes the hash of the given user and compares it with the existing hash in the cache (if any).
 // Returns true to indicate that the user data has not changed and can be skipped.
-func (s *UsersSync) setOrUpdateUserHash(user *syncdata.DataUser) bool {
+func (s *UsersSync) shouldSkipUserByHash(user *syncdata.DataUser) (bool, uint64, bool) {
 	if s.hashes == nil {
-		return false
+		return false, 0, false
 	}
 
 	// Get hash of user data to compare with existing hash and skip sending if data is the same (treat as not updated)
@@ -260,16 +264,16 @@ func (s *UsersSync) setOrUpdateUserHash(user *syncdata.DataUser) bool {
 			zap.String("identifier", user.GetIdentifier()),
 			zap.Error(err),
 		)
+		return false, 0, false
 	}
 
 	if existingHash, ok := s.hashes.Get(user.GetUserId()); ok {
 		if existingHash == hash {
-			return true
+			return true, 0, false
 		}
 	}
-	s.hashes.Put(user.GetUserId(), hash, userHashCacheTTL)
 
-	return false
+	return false, hash, true
 }
 
 func (s *UsersSync) cursorFromUsersResults(
@@ -339,6 +343,8 @@ func (s *UsersSync) applyFiltersAndTransformations(
 
 	foundNullUserId := false
 	for idx, user := range slices.Backward(us) {
+		user.SetUpdatedAt(nil)
+
 		if user.GetUserId() <= 0 {
 			foundNullUserId = true
 			s.logger.Debug(
@@ -686,7 +692,7 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 	us = s.applyFiltersAndTransformations(us, s.cfg.Tables.Users)
 
 	if len(us) > 0 {
-		if err := s.sendUsersDataInChunks(ctx, us); err != nil {
+		if err := s.sendUsersDataInChunks(ctx, us, nil); err != nil {
 			return fmt.Errorf("failed to send user data for user %d. %w", userId, err)
 		}
 	}
@@ -702,15 +708,20 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 	return nil
 }
 
-func (s *UsersSync) sendUsersDataInChunks(ctx context.Context, us []*syncdata.DataUser) error {
+func (s *UsersSync) sendUsersDataInChunks(
+	ctx context.Context,
+	us []*syncdata.DataUser,
+	pendingHashes map[int32]uint64,
+) error {
 	if len(us) == 0 {
 		return nil
 	}
 
 	for start := 0; start < len(us); start += pbsync.MaxUserLocationsPerRequest {
 		end := min(start+pbsync.MaxUserLocationsPerRequest, len(us))
+		chunk := us[start:end]
 		req := &pbsync.SendUsersRequest{
-			Users: us[start:end],
+			Users: chunk,
 		}
 
 		if err := s.send(ctx, req, func(ctx context.Context, cli pbsync.SyncServiceClient) error {
@@ -718,6 +729,12 @@ func (s *UsersSync) sendUsersDataInChunks(ctx context.Context, us []*syncdata.Da
 			return err
 		}); err != nil {
 			return err
+		}
+
+		for _, user := range chunk {
+			if hash, ok := pendingHashes[user.GetUserId()]; ok {
+				s.hashes.Put(user.GetUserId(), hash, userHashCacheTTL)
+			}
 		}
 	}
 

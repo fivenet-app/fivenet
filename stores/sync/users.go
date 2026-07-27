@@ -820,6 +820,7 @@ func (s *Store) handleUserJobs(
 				tCitizensJobs.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
 				tCitizensJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
 			)
+
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, fmt.Errorf("failed to execute user jobs insert statement. %w", err)
 		}

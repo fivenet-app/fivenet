@@ -208,30 +208,22 @@ func (s *VehiclesSync) syncOnce(
 		)
 	}
 
+	pendingHashes := map[string]uint64{}
 	if s.hashes != nil {
 		skippedPlates := make([]string, 0, len(vehicles))
 		for i, vehicle := range slices.Backward(vehicles) {
-			vehicle.UpdatedAt = nil
+			vehicle.SetUpdatedAt(nil)
 
-			// Get hash of user data to compare with existing hash and skip sending if data is the same (treat as not updated)
-			_, hash, err := protoutils.JSONAndHash(vehicle)
-			if err != nil {
-				s.logger.Warn(
-					"failed to compute vehicle data hash, skipping hash check and treating as new/updated vehicle",
-					zap.String("plate", vehicle.GetPlate()),
-					zap.Error(err),
-				)
+			skip, hash, ok := s.shouldSkipVehicleByHash(vehicle)
+			if skip {
+				skippedPlates = append(skippedPlates, vehicle.GetPlate())
+				// Remove "skipped" vehicle
+				vehicles = slices.Delete(vehicles, i, i+1)
+				continue
 			}
-
-			if existingHash, ok := s.hashes.Get(vehicle.GetPlate()); ok {
-				if existingHash == hash {
-					skippedPlates = append(skippedPlates, vehicle.GetPlate())
-					// Remove "skipped" vehicle
-					vehicles = slices.Delete(vehicles, i, i+1)
-					continue
-				}
+			if ok {
+				pendingHashes[vehicle.GetPlate()] = hash
 			}
-			s.hashes.Put(vehicle.GetPlate(), hash, vehicleHashCacheTTL)
 		}
 		if len(skippedPlates) > 0 {
 			s.logger.Debug(
@@ -244,24 +236,11 @@ func (s *VehiclesSync) syncOnce(
 
 	// Sync vehicles to FiveNet server (if there are any left after hash check)
 	if len(vehicles) > 0 {
-		for start := 0; start < len(vehicles); start += pbsync.MaxVehiclesPerRequest {
-			end := min(start+pbsync.MaxVehiclesPerRequest, len(vehicles))
-			req := &pbsync.SendVehiclesRequest{
-				Vehicles: vehicles[start:end],
-			}
-			if err := s.send(
-				ctx,
-				req,
-				func(ctx context.Context, cli pbsync.SyncServiceClient) error {
-					_, err := cli.SendVehicles(ctx, req)
-					return err
-				},
-			); err != nil {
-				return 0, 0, "", nil, fmt.Errorf(
-					"failed to send vehicles data to FiveNet server. %w",
-					err,
-				)
-			}
+		if err := s.sendVehiclesDataInChunks(ctx, vehicles, pendingHashes); err != nil {
+			return 0, 0, "", nil, fmt.Errorf(
+				"failed to send vehicles data to FiveNet server. %w",
+				err,
+			)
 		}
 	}
 
@@ -273,6 +252,69 @@ func (s *VehiclesSync) syncOnce(
 	}
 
 	return fetchedCount, int64(len(vehicles)), lastPlate, cursorTime, nil
+}
+
+// shouldSkipVehicleByHash computes the hash of the given vehicle and compares it with the existing hash in the cache (if any).
+// Returns true to indicate that the vehicle data has not changed and can be skipped.
+func (s *VehiclesSync) shouldSkipVehicleByHash(vehicle *vehicles.Vehicle) (bool, uint64, bool) {
+	if s.hashes == nil {
+		return false, 0, false
+	}
+
+	// Get hash of vehicle data to compare with existing hash and skip sending if data is the same (treat as not updated)
+	_, hash, err := protoutils.JSONAndHash(vehicle)
+	if err != nil {
+		s.logger.Warn(
+			"failed to compute vehicle data hash, skipping hash check and treating as new/updated vehicle",
+			zap.String("plate", vehicle.GetPlate()),
+			zap.Error(err),
+		)
+		return false, 0, false
+	}
+
+	if existingHash, ok := s.hashes.Get(vehicle.GetPlate()); ok {
+		if existingHash == hash {
+			return true, 0, false
+		}
+	}
+
+	return false, hash, true
+}
+
+func (s *VehiclesSync) sendVehiclesDataInChunks(
+	ctx context.Context,
+	vs []*vehicles.Vehicle,
+	pendingHashes map[string]uint64,
+) error {
+	if len(vs) == 0 {
+		return nil
+	}
+
+	for start := 0; start < len(vs); start += pbsync.MaxVehiclesPerRequest {
+		end := min(start+pbsync.MaxVehiclesPerRequest, len(vs))
+		chunk := vs[start:end]
+		req := &pbsync.SendVehiclesRequest{
+			Vehicles: chunk,
+		}
+		if err := s.send(
+			ctx,
+			req,
+			func(ctx context.Context, cli pbsync.SyncServiceClient) error {
+				_, err := cli.SendVehicles(ctx, req)
+				return err
+			},
+		); err != nil {
+			return err
+		}
+
+		for _, vehicle := range chunk {
+			if hash, ok := pendingHashes[vehicle.GetPlate()]; ok {
+				s.hashes.Put(vehicle.GetPlate(), hash, vehicleHashCacheTTL)
+			}
+		}
+	}
+
+	return nil
 }
 
 func (s *VehiclesSync) cursorFromVehiclesResults(
