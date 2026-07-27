@@ -12,6 +12,19 @@
     --ui-white: rgba(255, 255, 255, 1);
 }
 
+.bg-taupe {
+    background-color: var(--color-taupe-400);
+}
+.bg-mauve {
+    background-color: var(--color-mauve-400);
+}
+.bg-mist {
+    background-color: var(--color-mist-400);
+}
+.bg-olive {
+    background-color: var(--color-olive-400);
+}
+
 @theme static {
     --color-black: rgb(0, 0, 0);
     --color-white: rgb(255, 255, 255);

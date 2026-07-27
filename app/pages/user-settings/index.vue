@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { RoutePathSchema } from '@typed-router';
-import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
+import ThemePickerButton from '~/components/partials/ThemePickerButton.vue';
 import type { Perms } from '~~/gen/ts/perms';
 
 const { t } = useI18n();
@@ -53,7 +53,16 @@ watch(designDocumentListStyle, async () => {
         </UFormField>
 
         <UFormField class="grid grid-cols-2 items-center gap-2" name="primaryColor" :label="$t('common.color', 1)">
-            <ColorPickerTW v-model="design.ui.primary" class="w-full" name="primaryColor" />
+            <div class="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-4">
+                <ThemePickerButton
+                    v-for="color in [...primaryColors, ...backgroundColors]"
+                    :key="color.label"
+                    :label="color.label"
+                    :chip="color.chip.color"
+                    :selected="design.ui.primary === color.label"
+                    @click="design.ui.primary = color.label"
+                />
+            </div>
         </UFormField>
 
         <UFormField
@@ -61,7 +70,16 @@ watch(designDocumentListStyle, async () => {
             name="grayColor"
             :label="$t('components.auth.user_settings.background_color')"
         >
-            <ColorPickerTW v-model="design.ui.gray" class="w-full" name="grayColor" />
+            <div class="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-4">
+                <ThemePickerButton
+                    v-for="color in [...primaryColors, ...backgroundColors]"
+                    :key="color.label"
+                    :label="color.label"
+                    :chip="color.chip.color"
+                    :selected="design.ui.gray === color.label"
+                    @click="design.ui.gray = color.label"
+                />
+            </div>
         </UFormField>
 
         <UFormField
