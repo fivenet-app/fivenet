@@ -364,7 +364,7 @@ const columns = computed(
                     h('span', { class: 'line-clamp-2 truncate hover:line-clamp-4' }, [
                         row.original.description,
                         row.original.hint !== undefined && row.original.hint !== ''
-                            ? h('span', { class: 'font-semibold' }, `${t('common.hint')}: ${row.original.hint}`)
+                            ? h('span', { class: 'font-semibold' }, ` (${t('common.hint')}: ${row.original.hint})`)
                             : null,
                     ]),
             },
