@@ -7,11 +7,12 @@ import (
 	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
-	accountsoauth2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2"
 	"github.com/fivenet-app/fivenet/v2026/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/types"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/oauth2utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -51,7 +52,8 @@ func (o *oauth2UserInfo) getAccountInfo(
 	provider string,
 	userInfo *types.UserInfo,
 ) (*accounts.Account, error) {
-	tAccs := tAccs.AS("account")
+	tAccs := table.FivenetAccounts.AS("account")
+	tAccOauth2 := table.FivenetAccountsOauth2
 	stmt := tAccOauth2.
 		SELECT(
 			tAccs.ID,
@@ -102,6 +104,7 @@ func (o *oauth2UserInfo) storeUserInfo(
 		return err
 	}
 
+	tAccOauth2 := table.FivenetAccountsOauth2
 	stmt := tAccOauth2.
 		INSERT(
 			tAccOauth2.AccountID,
@@ -136,7 +139,7 @@ func (o *oauth2UserInfo) storeUserInfo(
 		}
 
 		// Retrieve oauth2 connection to make sure the external ID matches before updating the user info
-		acc, err := accountsoauth2.RetrieveOAuth2Account(ctx, o.db, o.crypt, accountId, provider)
+		acc, err := oauth2utils.RetrieveOAuth2Account(ctx, o.db, o.crypt, accountId, provider)
 		if err != nil {
 			return err
 		}
@@ -168,7 +171,7 @@ func (o *oauth2UserInfo) updateUserInfo(
 		expiresIn = *userInfo.ExpiresIn
 	}
 
-	if err := accountsoauth2.UpdateOAuth2Account(
+	if err := oauth2utils.UpdateOAuth2Account(
 		ctx,
 		o.db,
 		o.crypt,

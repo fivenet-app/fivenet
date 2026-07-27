@@ -1,4 +1,4 @@
-package accountsoauth2
+package oauth2utils
 
 import (
 	"context"
@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/crypt"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils/oauth2utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -134,14 +133,13 @@ func GetAccessToken(
 	clientSecret string,
 	redirectURI string,
 ) (string, error) {
-	if acc == nil || acc.RefreshToken == nil {
+	if acc == nil || acc.RefreshToken == nil || *acc.RefreshToken == "" {
 		return "", nil
 	}
 
 	// Check expiry (if you store obtained_at + expires_in)
 	if time.Now().After(acc.ObtainedAt.Add(time.Duration(*acc.ExpiresIn) * time.Second)) {
-		// Token expired, refresh
-		newAT, newRT, expiresIn, err := oauth2utils.RefreshDiscordAccessToken(
+		newAT, newRT, expiresIn, err := RefreshDiscordAccessToken(
 			ctx,
 			clientID,
 			clientSecret,
@@ -161,6 +159,10 @@ func GetAccessToken(
 		if err := UpdateOAuth2Account(ctx, tx, cryp, acc.AccountID, acc); err != nil {
 			return "", err
 		}
+	}
+
+	if acc.AccessToken == nil {
+		return "", nil
 	}
 
 	return *acc.AccessToken, nil

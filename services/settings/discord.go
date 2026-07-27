@@ -11,7 +11,6 @@ import (
 	discordapi "github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/utils/httputil"
-	accountsoauth2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2"
 	pbdiscord "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/discord"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
@@ -92,7 +91,7 @@ func (s *Server) ListUserGuilds(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	acc, err := accountsoauth2.RetrieveOAuth2Account(
+	acc, err := oauth2utils.RetrieveOAuth2Account(
 		ctx,
 		s.db,
 		s.crypt,
@@ -103,7 +102,7 @@ func (s *Server) ListUserGuilds(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	accessToken, err := accountsoauth2.GetAccessToken(
+	accessToken, err := oauth2utils.GetAccessToken(
 		ctx,
 		s.db,
 		s.crypt,
@@ -113,6 +112,9 @@ func (s *Server) ListUserGuilds(
 		s.dcOAuth2Provider.RedirectURL,
 	)
 	if err != nil {
+		if oauth2utils.IsDiscordTokenExpired(err) {
+			return nil, errorssettings.ErrDiscordTokenExpired
+		}
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 	if accessToken == "" {

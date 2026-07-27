@@ -19,7 +19,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/types"
 	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
@@ -41,11 +40,6 @@ const (
 	SessionKeyState       = "state"
 	SessionKeyToken       = "token"
 	SessionKeyRedirect    = "redirect"
-)
-
-var (
-	tAccs      = table.FivenetAccounts
-	tAccOauth2 = table.FivenetAccountsOauth2
 )
 
 type providerParam struct {
