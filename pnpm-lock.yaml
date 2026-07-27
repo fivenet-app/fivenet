@@ -331,8 +331,8 @@ importers:
         specifier: 'catalog:'
         version: 2.11.1
       '@release-it/bumper':
-        specifier: 7.0.6
-        version: 7.0.6(release-it@21.0.0(@types/node@26.1.1)(magicast@0.5.2))
+        specifier: 8.0.0
+        version: 8.0.0(release-it@21.0.0(@types/node@26.1.1)(magicast@0.5.2))
       '@total-typescript/ts-reset':
         specifier: 0.6.1
         version: 0.6.1
@@ -1037,9 +1037,9 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
-  '@decimalturn/toml-patch@1.3.0':
-    resolution: {integrity: sha512-lnnGHUF8RhnPq0XiOenQCv0O6TO840bofShFrIr+Xu87x1Rm3bozgaCDQz6eTErO9rYf7YXCuK7ZHz65BtBwsA==}
-    engines: {node: '>=12'}
+  '@decimalturn/toml-patch@2.1.0':
+    resolution: {integrity: sha512-IICXlX7hcD9lGN7k+vDXcVnOfcbOEqMpeQHRnrhnmm7tZ8HluFrSgBKLNC72fQpNXynbJTC7pjtfNCaKrKlGyA==}
+    engines: {node: '>=14'}
 
   '@devframes/hub@0.7.11':
     resolution: {integrity: sha512-r+qyGg0Hu1w1q7mNDCmuZUryeZAi2sUC8FTwEbwjqPT5SGjWnIoj1rMmRbJIOIBaC+2ofOejTGel4jklmzHc3w==}
@@ -3182,11 +3182,11 @@ packages:
   '@protobuf-ts/runtime@2.11.1':
     resolution: {integrity: sha512-KuDaT1IfHkugM2pyz+FwiY80ejWrkH1pAtOBOZFuR6SXEFTsnb/jiQWQ1rCIrcKx2BtyxnxW6BWwsVSA/Ie+WQ==}
 
-  '@release-it/bumper@7.0.6':
-    resolution: {integrity: sha512-vzKrEGPac/yim5WUjMmIQ9k+n3NlWHYraUIlLkHna2Ka0+zmmB1peW8POMjA6Fb7TwcIsNMuoXj2wLc8NFzgRg==}
-    engines: {node: ^20.19.0 || ^22.13.0 || >=24.0.0}
+  '@release-it/bumper@8.0.0':
+    resolution: {integrity: sha512-qTDTcSJzwvycZx9oMFdiiV1a7rR0Qdw0j/USSDA+ly6JyiTPSaJ+wpZ+cS8x8jTDeQuObZKf7TN9eYOxDn+JwA==}
+    engines: {node: ^22.21.0 || >=24.0.0}
     peerDependencies:
-      release-it: ^18.0.0 || ^19.0.0 || ^20.0.0
+      release-it: ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0
 
   '@rolldown/binding-android-arm64@1.1.5':
     resolution: {integrity: sha512-lZg8fqIv2v7FF237bwMgzGZEJvGL79/s5knJ/i6FmsGF4XXlzccZ4jb+TrFIxtSSxFtIpdsgrPZeMk1I9AFcyQ==}
@@ -7172,6 +7172,10 @@ packages:
     resolution: {integrity: sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA==}
     hasBin: true
 
+  js-yaml@5.2.2:
+    resolution: {integrity: sha512-dayzUzKkJ1MkuUtZglSebU43utNXH0OWQByK9rKOOuYIO8M5TV1y+n8ALMdG0rdzBnfNkOmZEqrURepb0ejqBw==}
+    hasBin: true
+
   jsdoc-type-pratt-parser@7.2.0:
     resolution: {integrity: sha512-dh140MMgjyg3JhJZY/+iEzW+NO5xR2gpbDFKHqotCmexElVntw7GjWjt511+C/Ef02RU5TKYrJo/Xlzk+OLaTw==}
     engines: {node: '>=20.0.0'}
@@ -11038,7 +11042,7 @@ snapshots:
     dependencies:
       postcss: 8.5.23
 
-  '@decimalturn/toml-patch@1.3.0': {}
+  '@decimalturn/toml-patch@2.1.0': {}
 
   '@devframes/hub@0.7.11(devframe@0.7.11(cac@7.0.0)(srvx@0.11.22)(typescript@6.0.3))':
     dependencies:
@@ -13588,15 +13592,15 @@ snapshots:
 
   '@protobuf-ts/runtime@2.11.1': {}
 
-  '@release-it/bumper@7.0.6(release-it@21.0.0(@types/node@26.1.1)(magicast@0.5.2))':
+  '@release-it/bumper@8.0.0(release-it@21.0.0(@types/node@26.1.1)(magicast@0.5.2))':
     dependencies:
-      '@decimalturn/toml-patch': 1.3.0
+      '@decimalturn/toml-patch': 2.1.0
       '@iarna/toml': 3.0.0
       cheerio: 1.2.0
       detect-indent: 7.0.2
       fast-glob: 3.3.3
       ini: 6.0.0
-      js-yaml: 4.1.1
+      js-yaml: 5.2.2
       lodash-es: 4.18.1
       release-it: 21.0.0(@types/node@26.1.1)(magicast@0.5.2)
       semver: 7.8.5
@@ -17846,6 +17850,10 @@ snapshots:
   js-tokens@9.0.1: {}
 
   js-yaml@4.1.1:
+    dependencies:
+      argparse: 2.0.1
+
+  js-yaml@5.2.2:
     dependencies:
       argparse: 2.0.1
 
