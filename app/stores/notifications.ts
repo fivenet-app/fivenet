@@ -367,6 +367,9 @@ export const useNotificationsStore = defineStore(
                             logger.info('Client config update received');
                             const { $applyClientConfig } = useNuxtApp();
                             $applyClientConfig(resp.data.systemEvent.data.clientConfig);
+                        } else if (resp.data.systemEvent.data.oneofKind === 'lawsChanged') {
+                            logger.info('Law books/Laws changed, invalidating cache');
+                            useCompletorStore().invalidateLawBooksCache();
                         } else {
                             logger.warn('Unknown systemEvent event data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }

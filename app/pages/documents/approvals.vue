@@ -200,13 +200,13 @@ async function listApprovalTasksInbox(values: Schema): Promise<ListApprovalTasks
         </template>
 
         <template #body>
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.task', 2)])" />
             <DataErrorBlock
-                v-if="error"
+                v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.task', 2)])"
                 :error="error"
                 :retry="refresh"
             />
-            <DataPendingBlock v-else-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.task', 2)])" />
             <DataNoDataBlock v-else-if="data?.tasks.length === 0" :type="$t('common.task', 2)" icon="i-mdi-approval" />
 
             <ul

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -52,6 +53,13 @@ func (s *Server) CreateOrUpdateLawBook(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	}
 
+	// Send laws changed event to clients
+	s.notifi.SendSystemEvent(ctx, &notificationsevents.SystemEvent{
+		Data: &notificationsevents.SystemEvent_LawsChanged{
+			LawsChanged: true,
+		},
+	})
+
 	return &pbsettings.CreateOrUpdateLawBookResponse{LawBook: lawBook}, nil
 }
 
@@ -79,6 +87,13 @@ func (s *Server) DeleteLawBook(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
+	// Send laws changed event to clients
+	s.notifi.SendSystemEvent(ctx, &notificationsevents.SystemEvent{
+		Data: &notificationsevents.SystemEvent_LawsChanged{
+			LawsChanged: true,
+		},
+	})
+
 	return &pbsettings.DeleteLawBookResponse{DeletedAt: deletedAtTime}, nil
 }
 
@@ -98,6 +113,13 @@ func (s *Server) ReorderLawBooks(
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+
+	// Send laws changed event to clients
+	s.notifi.SendSystemEvent(ctx, &notificationsevents.SystemEvent{
+		Data: &notificationsevents.SystemEvent_LawsChanged{
+			LawsChanged: true,
+		},
+	})
 
 	return &pbsettings.ReorderLawBooksResponse{}, nil
 }
@@ -129,6 +151,13 @@ func (s *Server) CreateOrUpdateLaw(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	}
 
+	// Send laws changed event to clients
+	s.notifi.SendSystemEvent(ctx, &notificationsevents.SystemEvent{
+		Data: &notificationsevents.SystemEvent_LawsChanged{
+			LawsChanged: true,
+		},
+	})
+
 	return &pbsettings.CreateOrUpdateLawResponse{Law: law}, nil
 }
 
@@ -156,6 +185,13 @@ func (s *Server) DeleteLaw(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
+	// Send laws changed event to clients
+	s.notifi.SendSystemEvent(ctx, &notificationsevents.SystemEvent{
+		Data: &notificationsevents.SystemEvent_LawsChanged{
+			LawsChanged: true,
+		},
+	})
+
 	return &pbsettings.DeleteLawResponse{DeletedAt: deletedAtTime}, nil
 }
 
@@ -176,6 +212,13 @@ func (s *Server) ReorderLaws(
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+
+	// Send laws changed event to clients
+	s.notifi.SendSystemEvent(ctx, &notificationsevents.SystemEvent{
+		Data: &notificationsevents.SystemEvent_LawsChanged{
+			LawsChanged: true,
+		},
+	})
 
 	return &pbsettings.ReorderLawsResponse{}, nil
 }

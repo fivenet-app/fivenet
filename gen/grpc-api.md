@@ -5670,6 +5670,7 @@ System related events
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `client_config` | [resources.clientconfig.ClientConfig](#resourcesclientconfigClientConfig) |  | Client configuration update (e.g., feature gates, game settings, banner message) |
+| `laws_changed` | [bool](#bool) |  | Law book/Laws changes to have the client invalidate the locally cached data. |
 
 
 

@@ -117,6 +117,14 @@ export interface SystemEvent {
          */
         clientConfig: ClientConfig;
     } | {
+        oneofKind: "lawsChanged";
+        /**
+         * Law book/Laws changes to have the client invalidate the locally cached data.
+         *
+         * @generated from protobuf field: bool laws_changed = 2
+         */
+        lawsChanged: boolean;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -314,7 +322,8 @@ export const JobGradeEvent = new JobGradeEvent$Type();
 class SystemEvent$Type extends MessageType<SystemEvent> {
     constructor() {
         super("resources.notifications.events.SystemEvent", [
-            { no: 1, name: "client_config", kind: "message", oneof: "data", T: () => ClientConfig }
+            { no: 1, name: "client_config", kind: "message", oneof: "data", T: () => ClientConfig },
+            { no: 2, name: "laws_changed", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<SystemEvent>): SystemEvent {
@@ -335,6 +344,12 @@ class SystemEvent$Type extends MessageType<SystemEvent> {
                         clientConfig: ClientConfig.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).clientConfig)
                     };
                     break;
+                case /* bool laws_changed */ 2:
+                    message.data = {
+                        oneofKind: "lawsChanged",
+                        lawsChanged: reader.bool()
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -350,6 +365,9 @@ class SystemEvent$Type extends MessageType<SystemEvent> {
         /* resources.clientconfig.ClientConfig client_config = 1; */
         if (message.data.oneofKind === "clientConfig")
             ClientConfig.internalBinaryWrite(message.data.clientConfig, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool laws_changed = 2; */
+        if (message.data.oneofKind === "lawsChanged")
+            writer.tag(2, WireType.Varint).bool(message.data.lawsChanged);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

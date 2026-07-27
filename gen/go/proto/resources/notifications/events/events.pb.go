@@ -616,6 +616,7 @@ type SystemEvent struct {
 	// Types that are valid to be assigned to Data:
 	//
 	//	*SystemEvent_ClientConfig
+	//	*SystemEvent_LawsChanged
 	Data          isSystemEvent_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -662,12 +663,25 @@ func (x *SystemEvent) GetClientConfig() *clientconfig.ClientConfig {
 	return nil
 }
 
+func (x *SystemEvent) GetLawsChanged() bool {
+	if x != nil {
+		if x, ok := x.Data.(*SystemEvent_LawsChanged); ok {
+			return x.LawsChanged
+		}
+	}
+	return false
+}
+
 func (x *SystemEvent) SetClientConfig(v *clientconfig.ClientConfig) {
 	if v == nil {
 		x.Data = nil
 		return
 	}
 	x.Data = &SystemEvent_ClientConfig{v}
+}
+
+func (x *SystemEvent) SetLawsChanged(v bool) {
+	x.Data = &SystemEvent_LawsChanged{v}
 }
 
 func (x *SystemEvent) HasData() bool {
@@ -685,6 +699,14 @@ func (x *SystemEvent) HasClientConfig() bool {
 	return ok
 }
 
+func (x *SystemEvent) HasLawsChanged() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*SystemEvent_LawsChanged)
+	return ok
+}
+
 func (x *SystemEvent) ClearData() {
 	x.Data = nil
 }
@@ -695,8 +717,15 @@ func (x *SystemEvent) ClearClientConfig() {
 	}
 }
 
+func (x *SystemEvent) ClearLawsChanged() {
+	if _, ok := x.Data.(*SystemEvent_LawsChanged); ok {
+		x.Data = nil
+	}
+}
+
 const SystemEvent_Data_not_set_case case_SystemEvent_Data = 0
 const SystemEvent_ClientConfig_case case_SystemEvent_Data = 1
+const SystemEvent_LawsChanged_case case_SystemEvent_Data = 2
 
 func (x *SystemEvent) WhichData() case_SystemEvent_Data {
 	if x == nil {
@@ -705,6 +734,8 @@ func (x *SystemEvent) WhichData() case_SystemEvent_Data {
 	switch x.Data.(type) {
 	case *SystemEvent_ClientConfig:
 		return SystemEvent_ClientConfig_case
+	case *SystemEvent_LawsChanged:
+		return SystemEvent_LawsChanged_case
 	default:
 		return SystemEvent_Data_not_set_case
 	}
@@ -716,6 +747,8 @@ type SystemEvent_builder struct {
 	// Fields of oneof Data:
 	// Client configuration update (e.g., feature gates, game settings, banner message)
 	ClientConfig *clientconfig.ClientConfig
+	// Law book/Laws changes to have the client invalidate the locally cached data.
+	LawsChanged *bool
 	// -- end of Data
 }
 
@@ -725,6 +758,9 @@ func (b0 SystemEvent_builder) Build() *SystemEvent {
 	_, _ = b, x
 	if b.ClientConfig != nil {
 		x.Data = &SystemEvent_ClientConfig{b.ClientConfig}
+	}
+	if b.LawsChanged != nil {
+		x.Data = &SystemEvent_LawsChanged{*b.LawsChanged}
 	}
 	return m0
 }
@@ -748,7 +784,14 @@ type SystemEvent_ClientConfig struct {
 	ClientConfig *clientconfig.ClientConfig `protobuf:"bytes,1,opt,name=client_config,json=clientConfig,proto3,oneof"`
 }
 
+type SystemEvent_LawsChanged struct {
+	// Law book/Laws changes to have the client invalidate the locally cached data.
+	LawsChanged bool `protobuf:"varint,2,opt,name=laws_changed,json=lawsChanged,proto3,oneof"`
+}
+
 func (*SystemEvent_ClientConfig) isSystemEvent_Data() {}
+
+func (*SystemEvent_LawsChanged) isSystemEvent_Data() {}
 
 var File_resources_notifications_events_events_proto protoreflect.FileDescriptor
 
@@ -767,9 +810,10 @@ const file_resources_notifications_events_events_proto_rawDesc = "" +
 	"\x04data\">\n" +
 	"\rJobGradeEvent\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshTokenB\x06\n" +
-	"\x04data\"b\n" +
+	"\x04data\"\x87\x01\n" +
 	"\vSystemEvent\x12K\n" +
-	"\rclient_config\x18\x01 \x01(\v2$.resources.clientconfig.ClientConfigH\x00R\fclientConfigB\x06\n" +
+	"\rclient_config\x18\x01 \x01(\v2$.resources.clientconfig.ClientConfigH\x00R\fclientConfig\x12#\n" +
+	"\flaws_changed\x18\x02 \x01(\bH\x00R\vlawsChangedB\x06\n" +
 	"\x04dataBfZdgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events;notificationseventsb\x06proto3"
 
 var file_resources_notifications_events_events_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
@@ -817,6 +861,7 @@ func file_resources_notifications_events_events_proto_init() {
 	}
 	file_resources_notifications_events_events_proto_msgTypes[3].OneofWrappers = []any{
 		(*SystemEvent_ClientConfig)(nil),
+		(*SystemEvent_LawsChanged)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

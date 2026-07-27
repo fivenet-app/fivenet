@@ -227,6 +227,15 @@ export const useCompletorStore = defineStore(
         };
 
         /**
+         * Invalidate law books cache (if any data is cached).
+         */
+        const invalidateLawBooksCache = (): void => {
+            if (!lawBooks.value) return;
+
+            lawBooks.value = undefined;
+        };
+
+        /**
          * Complete citizen labels.
          * @param {string} search - The search term for completing citizen labels.
          * @returns {Promise<Label[]>} - The completed citizen labels.
@@ -276,6 +285,7 @@ export const useCompletorStore = defineStore(
             completeColleagues,
             completeDocumentCategories,
             listLawBooks,
+            invalidateLawBooksCache,
             completeCitizenLabels,
         };
     },

@@ -49,5 +49,7 @@ message SystemEvent {
 
     // Client configuration update (e.g., feature gates, game settings, banner message)
     resources.clientconfig.ClientConfig client_config = 1;
+    // Law book/Laws changes to have the client invalidate the locally cached data.
+    bool laws_changed = 2;
   }
 }
