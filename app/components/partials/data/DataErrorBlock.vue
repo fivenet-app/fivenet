@@ -33,10 +33,14 @@ const err = computed<CommonError | undefined>({
 const disabled = ref<boolean>(true);
 
 const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
+
+defineOptions({
+    inheritAttrs: false,
+});
 </script>
 
 <template>
-    <div class="m-2">
+    <div class="p-2">
         <UAlert
             class="relative w-full min-w-50"
             color="error"
@@ -77,6 +81,7 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
                       }
                     : undefined
             "
+            v-bind="$attrs"
             @close="close?.()"
         />
     </div>

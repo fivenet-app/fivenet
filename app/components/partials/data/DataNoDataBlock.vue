@@ -62,10 +62,14 @@ async function click() {
         props.focus();
     }
 }
+
+defineOptions({
+    inheritAttrs: false,
+});
 </script>
 
 <template>
-    <div :class="padded ? 'm-2' : ''">
+    <div :class="padded ? 'p-2' : ''">
         <UEmpty
             :icon="icon"
             variant="outline"
