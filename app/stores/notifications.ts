@@ -1,5 +1,6 @@
 import type { DuplexStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
+import { revalidateCurrentRoutePermission } from '~/composables/auth/routePermission';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { notificationsEvents } from '~/composables/useClientUpdate';
 import { notificationToastEvents } from '~/composables/useNotificationToasts';
@@ -52,6 +53,7 @@ export const handleAccountGroupsChangedEvent = async (
     accountGroupsChanged: AccountGroupsChanged,
     authStore: AccountCapabilityAuthStore,
     scope: { accountOnly: boolean },
+    addNotification?: (notification: Notification) => void,
 ): Promise<void> => {
     const previousCanBeSuperuser = authStore.isSuperuser;
     const previousCanBeConfigAdmin = authStore.canBeConfigAdmin;
@@ -60,6 +62,7 @@ export const handleAccountGroupsChangedEvent = async (
 
     if (scope.accountOnly) {
         authStore.setAccountCanBeConfigAdmin(accountGroupsChanged.canBeConfigAdmin);
+        if (addNotification) await revalidateCurrentRoutePermission(addNotification);
         return;
     }
 
@@ -70,6 +73,7 @@ export const handleAccountGroupsChangedEvent = async (
         authStore.setAccountCanBeConfigAdmin(accountGroupsChanged.canBeConfigAdmin);
         logger.info('User capabilities changed, forcing a choose character refresh');
         await authStore.chooseCharacter(undefined, false);
+        if (addNotification) await revalidateCurrentRoutePermission(addNotification);
     }
 };
 
@@ -168,6 +172,7 @@ export const useNotificationsStore = defineStore(
 
             logger.info('Refreshing token...');
             await authStore.chooseCharacter(undefined);
+            await revalidateCurrentRoutePermission(add);
         };
 
         /**
@@ -286,7 +291,7 @@ export const useNotificationsStore = defineStore(
             } else if (userEvent.data.oneofKind === 'userInfoChanged') {
                 await handleUserInfoChangedEvent(userEvent.data.userInfoChanged, authStore, scope);
             } else if (userEvent.data.oneofKind === 'accountGroupsChanged') {
-                await handleAccountGroupsChangedEvent(userEvent.data.accountGroupsChanged, authStore, scope);
+                await handleAccountGroupsChangedEvent(userEvent.data.accountGroupsChanged, authStore, scope, add);
             } else {
                 logger.warn('Unknown userEvent data received - oneofKind:', userEvent.data.oneofKind, userEvent.data);
             }

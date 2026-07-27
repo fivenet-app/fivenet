@@ -1,8 +1,7 @@
-import { titleCase } from 'scule';
 import { parseQuery, type RouteLocationNormalized } from 'vue-router';
+import { canAccessRoute, getRoutePermissionDeniedNotification } from '~/composables/auth/routePermission';
 import { restoreAuthTokenOnlySession } from '~/composables/auth/sessionRestore';
 import { isSetupBypassRoute } from '~/composables/setup';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export default defineNuxtPlugin({
     name: 'auth',
@@ -151,21 +150,12 @@ export default defineNuxtPlugin({
                 if (!to.meta.permission) return true;
 
                 // Route has permission attached to it, check if user "can" go there
-                if (can(to.meta.permission).value) {
+                if (canAccessRoute(to)) {
                     // User has permission
                     return true;
                 } else {
                     const notifications = useNotificationsStore();
-                    notifications.add({
-                        title: { key: 'notifications.auth.no_permission.title', parameters: {} },
-                        description: {
-                            key: 'notifications.auth.no_permission.content',
-                            parameters: {
-                                path: to.name ? titleCase(to.name?.toString().replaceAll('-', ' ')) + ` (${to.path})` : to.path,
-                            },
-                        },
-                        type: NotificationType.WARNING,
-                    });
+                    notifications.add(getRoutePermissionDeniedNotification(to));
 
                     if (username.value !== null) {
                         return navigateTo({
