@@ -44,8 +44,6 @@ const overlay = useOverlay();
 
 const numberFormatter = useDisplayNumberFormat();
 
-const settingsLawsClient = await getSettingsLawsClient();
-
 const { changed: orderChanged, markChanged: markOrderChanged, resetChanged: resetOrderChanged } = useUnsavedChanges();
 const tableRef = useTemplateRef('tableRef');
 const tableBodyRef = computed<HTMLElement | null>(() => {
@@ -86,6 +84,8 @@ const canSaveOrder = computed(
         laws.value.some((law) => law.deletedAt === undefined),
 );
 
+const settingsLawsClient = await getSettingsLawsClient();
+
 async function deleteLawBook(id: number): Promise<void> {
     if (id < 0) {
         emit('deleted', { id: id });
@@ -106,8 +106,8 @@ async function deleteLawBook(id: number): Promise<void> {
 }
 
 async function saveLawBook(id: number, values: Schema): Promise<LawBook> {
+    const previousId = id;
     try {
-        const previousId = id;
         const call = settingsLawsClient.createOrUpdateLawBook({
             lawBook: {
                 id: id < 0 ? 0 : id,
@@ -188,9 +188,9 @@ function deletedLaw(id: number, deletedAt?: Timestamp): void {
     }
 }
 
-const lastNewId = ref(-1);
+const lastNewId = ref<number>(-1);
 
-const lawEntriesRefs = ref(new Map<number, Element>());
+const lawEntriesRefs = ref<Map<number, Element>>(new Map<number, Element>());
 
 function addLaw(): void {
     if (!lawBook.value) return;
