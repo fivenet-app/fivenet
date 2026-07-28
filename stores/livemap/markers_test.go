@@ -119,7 +119,7 @@ func TestStoreCreateMarkerAllowsNilCreatorID(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(Params{DB: db})
+	store := New(Params{DB: db, Enricher: mstlystcdata.NewDummyEnricher()})
 	now := time.Unix(100, 0).UTC()
 	marker := &livemapmarkers.MarkerMarker{
 		ExpiresAt: timestamp.New(now.Add(24 * time.Hour)),
@@ -202,7 +202,7 @@ func TestStoreUpdateMarker(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(Params{DB: db})
+	store := New(Params{DB: db, Enricher: mstlystcdata.NewDummyEnricher()})
 	now := time.Unix(100, 0).UTC()
 	marker := &livemapmarkers.MarkerMarker{
 		Id:   42,
@@ -286,7 +286,7 @@ func TestStoreDeleteMarker(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(Params{DB: db})
+	store := New(Params{DB: db, Enricher: mstlystcdata.NewDummyEnricher()})
 	now := time.Unix(100, 0).UTC()
 	deletedAt := time.Unix(0, 0).UTC()
 
@@ -431,7 +431,7 @@ func TestStoreGetMarker(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(Params{DB: db})
+	store := New(Params{DB: db, Enricher: mstlystcdata.NewDummyEnricher()})
 	now := time.Unix(100, 0).UTC()
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_user AS user_short ON`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
 		WithArgs(int64(42), int64(1)).
@@ -502,7 +502,7 @@ func TestStoreListActiveMarkers(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(Params{DB: db})
+	store := New(Params{DB: db, Enricher: mstlystcdata.NewDummyEnricher()})
 	now := time.Unix(100, 0).UTC()
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`) + `(?s).*` + regexp.QuoteMeta(`marker_marker.deleted_at IS NULL`) + `(?s).*` + regexp.QuoteMeta(`ORDER BY marker_marker.job ASC, marker_marker.id ASC`)).
 		WillReturnRows(sqlmock.NewRows([]string{
@@ -569,7 +569,7 @@ func TestStoreListDeletedMarkers(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(Params{DB: db})
+	store := New(Params{DB: db, Enricher: mstlystcdata.NewDummyEnricher()})
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`) + `(?s).*` + regexp.QuoteMeta(`marker_marker.deleted_at IS NOT NULL`) + `(?s).*` + regexp.QuoteMeta(`ORDER BY marker_marker.id ASC`)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"marker_marker.id",
