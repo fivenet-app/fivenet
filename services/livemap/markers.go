@@ -108,7 +108,6 @@ func (s *Server) CreateOrUpdateMarker(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
-	s.enricher.EnrichJobName(reqMarker)
 	s.applyMarkerCache(reqMarker)
 
 	return &pblivemap.CreateOrUpdateMarkerResponse{
@@ -137,19 +136,20 @@ func (s *Server) DeleteMarker(
 
 		return &pblivemap.DeleteMarkerResponse{}, nil
 	}
-	s.enricher.EnrichJobName(marker)
 
-	if err := s.requirePublicMarkerMutationAccess(marker, userInfo); err != nil {
-		return nil, err
-	}
-
-	if !access.CheckIfHasOwnJobAccess(
-		fields.StringList(),
-		userInfo,
-		marker.GetCreator().GetJob(),
-		marker.GetCreator(),
-	) {
-		return nil, errorslivemap.ErrMarkerDenied
+	if marker.GetPublic() {
+		if !checkPublicMarkerDeleteAccess(fields.StringList(), userInfo, marker) {
+			return nil, errorslivemap.ErrMarkerDenied
+		}
+	} else {
+		if !access.CheckIfHasOwnJobAccess(
+			fields.StringList(),
+			userInfo,
+			marker.GetCreator().GetJob(),
+			marker.GetCreator(),
+		) {
+			return nil, errorslivemap.ErrMarkerDenied
+		}
 	}
 
 	var deletedAtTime *timestamp.Timestamp
@@ -326,6 +326,30 @@ func (s *Server) requirePublicMarkerMutationAccess(
 	}
 
 	return nil
+}
+
+func checkPublicMarkerDeleteAccess(
+	fields *permissionsattributes.StringList,
+	userInfo *pbuserinfo.UserInfo,
+	marker *livemapmarkers.MarkerMarker,
+) bool {
+	if userInfo.GetJobAdmin() {
+		return true
+	}
+
+	hasOwnAccess := fields.Contains("Own")
+
+	if hasOwnAccess {
+		if marker.HasCreatorId() && marker.GetCreatorId() == userInfo.GetUserId() {
+			return true
+		}
+
+		if marker.GetCreator() != nil && marker.GetCreator().GetUserId() == userInfo.GetUserId() {
+			return true
+		}
+	}
+
+	return marker.GetJob() == userInfo.GetJob() && fields.Contains("Any")
 }
 
 func (s *Server) applyMarkerCache(marker *livemapmarkers.MarkerMarker) {

@@ -61,6 +61,7 @@ func (s *Store) CreateMarker(
 
 	marker.Id = lastID
 	marker.Job = job
+
 	persistedMarker, err := s.GetMarker(ctx, lastID)
 	if err != nil {
 		return 0, err
@@ -203,6 +204,8 @@ func (s *Store) GetMarker(ctx context.Context, id int64) (*livemapmarkers.Marker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, err
 	}
+
+	s.enricher.EnrichJobName(&dest)
 
 	return &dest, nil
 }

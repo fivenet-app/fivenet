@@ -148,14 +148,20 @@ var _ livemapstore.IStore = (*markerTestStore)(nil)
 
 type testLivemapPerms struct {
 	permsstub.Permissions
+	access []string
 }
 
 func (p *testLivemapPerms) AttrStringList(
 	_ *pbuserinfo.UserInfo,
 	_ perms.AttrRef[perms.StringListAttr],
 ) (*permissionsattributes.StringList, error) {
+	access := p.access
+	if access == nil {
+		access = []string{"Any"}
+	}
+
 	return &permissionsattributes.StringList{
-		Strings: []string{"Any"},
+		Strings: access,
 	}, nil
 }
 
@@ -447,6 +453,74 @@ func TestPublicMarkerMutationRequiresSameJobOrAdmin(t *testing.T) {
 		store := newMarkerTestStore(existing)
 		srv := newMarkerServer(store, &testLivemapPerms{})
 		ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(20, "ems", 3, false))
+
+		_, err := srv.DeleteMarker(ctx, &pblivemap.DeleteMarkerRequest{Id: 42})
+
+		require.ErrorIs(t, err, errorslivemap.ErrMarkerDenied)
+		require.Zero(t, store.deleteCalls)
+	})
+
+	t.Run("creator can delete public marker from different job", func(t *testing.T) {
+		t.Parallel()
+
+		store := newMarkerTestStore(existing)
+		srv := newMarkerServer(store, &testLivemapPerms{access: []string{"Own"}})
+		ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(10, "ems", 3, false))
+
+		_, err := srv.DeleteMarker(ctx, &pblivemap.DeleteMarkerRequest{Id: 42})
+
+		require.NoError(t, err)
+		require.Equal(t, 1, store.deleteCalls)
+	})
+
+	t.Run("creator id can delete public marker without creator object", func(t *testing.T) {
+		t.Parallel()
+
+		existing := newMarkerRequest(42, ptrBool(true))
+		existing.SetCreatorId(10)
+
+		store := newMarkerTestStore(existing)
+		srv := newMarkerServer(store, &testLivemapPerms{access: []string{"Own"}})
+		ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(10, "ems", 3, false))
+
+		_, err := srv.DeleteMarker(ctx, &pblivemap.DeleteMarkerRequest{Id: 42})
+
+		require.NoError(t, err)
+		require.Equal(t, 1, store.deleteCalls)
+	})
+
+	t.Run("creator without own access cannot delete public marker", func(t *testing.T) {
+		t.Parallel()
+
+		store := newMarkerTestStore(existing)
+		srv := newMarkerServer(store, &testLivemapPerms{access: []string{"Same_Rank"}})
+		ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(10, "ems", 3, false))
+
+		_, err := srv.DeleteMarker(ctx, &pblivemap.DeleteMarkerRequest{Id: 42})
+
+		require.ErrorIs(t, err, errorslivemap.ErrMarkerDenied)
+		require.Zero(t, store.deleteCalls)
+	})
+
+	t.Run("same marker job any access can delete public marker", func(t *testing.T) {
+		t.Parallel()
+
+		store := newMarkerTestStore(existing)
+		srv := newMarkerServer(store, &testLivemapPerms{access: []string{"Any"}})
+		ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(20, "police", 3, false))
+
+		_, err := srv.DeleteMarker(ctx, &pblivemap.DeleteMarkerRequest{Id: 42})
+
+		require.NoError(t, err)
+		require.Equal(t, 1, store.deleteCalls)
+	})
+
+	t.Run("same marker job non-any access cannot delete public marker", func(t *testing.T) {
+		t.Parallel()
+
+		store := newMarkerTestStore(existing)
+		srv := newMarkerServer(store, &testLivemapPerms{access: []string{"Same_Rank"}})
+		ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(20, "police", 3, false))
 
 		_, err := srv.DeleteMarker(ctx, &pblivemap.DeleteMarkerRequest{Id: 42})
 

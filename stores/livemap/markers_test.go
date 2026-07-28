@@ -8,6 +8,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -19,7 +20,7 @@ func TestStoreCreateMarker(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(Params{DB: db})
+	store := New(Params{DB: db, Enricher: mstlystcdata.NewDummyEnricher()})
 	now := time.Unix(100, 0).UTC()
 	expiresAt := timestamp.New(now.Add(24 * time.Hour))
 	marker := &livemapmarkers.MarkerMarker{

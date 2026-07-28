@@ -13,7 +13,7 @@ defineProps<{
     marker: MarkerMarker;
 }>();
 
-const { activeChar, can, isSuperuser } = useAuth();
+const { activeChar, attrStringList, can, isSuperuser } = useAuth();
 
 const overlay = useOverlay();
 
@@ -21,6 +21,7 @@ const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, gotoCoords } = livemapStore;
 
 const livemapLivemapClient = await getLivemapLivemapClient();
+const deleteMarkerAccess = attrStringList('livemap.LivemapService/DeleteMarker', 'Access');
 
 async function deleteMarker(id: number): Promise<void> {
     try {
@@ -52,6 +53,17 @@ function canMutatePublicMarker(marker: MarkerMarker): boolean {
     if (isSuperuser.value) return true;
 
     return !!activeChar.value?.job && marker.job === activeChar.value.job;
+}
+
+function canDeletePublicMarker(marker: MarkerMarker): boolean {
+    if (!marker.public) return true;
+    if (isSuperuser.value) return true;
+    if (deleteMarkerAccess.value.includes('Own')) {
+        if (marker.creatorId === activeChar.value?.userId) return true;
+        if (marker.creator && marker.creator.userId === activeChar.value?.userId) return true;
+    }
+
+    return !!activeChar.value?.job && marker.job === activeChar.value.job && deleteMarkerAccess.value.includes('Any');
 }
 </script>
 
@@ -93,7 +105,7 @@ function canMutatePublicMarker(marker: MarkerMarker): boolean {
                         </UTooltip>
 
                         <UTooltip
-                            v-if="can('livemap.LivemapService/DeleteMarker').value && canMutatePublicMarker(marker)"
+                            v-if="can('livemap.LivemapService/DeleteMarker').value && canDeletePublicMarker(marker)"
                             :text="$t('common.delete')"
                         >
                             <UButton

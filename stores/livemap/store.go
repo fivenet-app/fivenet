@@ -7,6 +7,7 @@ import (
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"go.uber.org/fx"
 )
 
@@ -34,19 +35,22 @@ const (
 type Params struct {
 	fx.In
 
-	DB *sql.DB
-	JS *events.JSWrapper `optional:"true"`
+	DB       *sql.DB
+	JS       *events.JSWrapper `optional:"true"`
+	Enricher mstlystcdata.IEnricher
 }
 
 type Store struct {
-	db *sql.DB
-	js *events.JSWrapper
+	db       *sql.DB
+	js       *events.JSWrapper
+	enricher mstlystcdata.IEnricher
 }
 
 func New(p Params) IStore {
 	return &Store{
-		db: p.DB,
-		js: p.JS,
+		db:       p.DB,
+		js:       p.JS,
+		enricher: p.Enricher,
 	}
 }
 
