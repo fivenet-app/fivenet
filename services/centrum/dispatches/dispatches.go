@@ -694,6 +694,13 @@ func (s *DispatchDB) UpdateStatus(
 		}
 	}
 
+	// Set postal code using coordinates if empty
+	if !in.HasPostal() && in.HasX() && in.HasY() {
+		if postal, exists := s.postals.Closest(in.GetX(), in.GetY()); exists {
+			in.SetPostal(*postal.Code)
+		}
+	}
+
 	if in.GetCreatedAt() == nil {
 		in.CreatedAt = timestamp.Now()
 	}

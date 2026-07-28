@@ -204,7 +204,7 @@ export const UserOAuth2Conn = new UserOAuth2Conn$Type();
 class UserProps$Type extends MessageType<UserProps> {
     constructor() {
         super("resources.sync.activity.UserProps", [
-            { no: 1, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 1, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 2, name: "props", kind: "message", T: () => UserProps$, options: { "buf.validate.field": { required: true } } }
         ]);
     }
@@ -257,7 +257,7 @@ export const UserProps = new UserProps$Type();
 class ColleagueProps$Type extends MessageType<ColleagueProps> {
     constructor() {
         super("resources.sync.activity.ColleagueProps", [
-            { no: 1, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 1, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 2, name: "props", kind: "message", T: () => ColleagueProps$, options: { "buf.validate.field": { required: true } } }
         ]);
     }

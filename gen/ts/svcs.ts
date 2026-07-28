@@ -485,6 +485,7 @@ export const grpcMethods = [
 	'sync.SyncService/AddMarker',
 	'sync.SyncService/DeleteMarker',
 	'sync.SyncService/EndActiveJobTimeclocks',
+	'sync.SyncService/CloseUserDispatches',
 	'sync.SyncService/SendJobs',
 	'sync.SyncService/SendLicenses',
 	'sync.SyncService/SendAccounts',

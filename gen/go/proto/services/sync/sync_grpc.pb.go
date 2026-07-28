@@ -34,6 +34,7 @@ const (
 	SyncService_AddMarker_FullMethodName              = "/services.sync.SyncService/AddMarker"
 	SyncService_DeleteMarker_FullMethodName           = "/services.sync.SyncService/DeleteMarker"
 	SyncService_EndActiveJobTimeclocks_FullMethodName = "/services.sync.SyncService/EndActiveJobTimeclocks"
+	SyncService_CloseUserDispatches_FullMethodName    = "/services.sync.SyncService/CloseUserDispatches"
 	SyncService_SendJobs_FullMethodName               = "/services.sync.SyncService/SendJobs"
 	SyncService_SendLicenses_FullMethodName           = "/services.sync.SyncService/SendLicenses"
 	SyncService_SendAccounts_FullMethodName           = "/services.sync.SyncService/SendAccounts"
@@ -86,6 +87,8 @@ type SyncServiceClient interface {
 	DeleteMarker(ctx context.Context, in *DeleteMarkerRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
 	// End all active job timeclock entries, typically during server shutdown.
 	EndActiveJobTimeclocks(ctx context.Context, in *EndActiveJobTimeclocksRequest, opts ...grpc.CallOption) (*EndActiveJobTimeclocksResponse, error)
+	// Close dispatch(es) that match a certain user, optionally limited to the given jobs.
+	CloseUserDispatches(ctx context.Context, in *CloseUserDispatchesRequest, opts ...grpc.CallOption) (*CloseUserDispatchesResponse, error)
 	// Sync job data to the server.
 	SendJobs(ctx context.Context, in *SendJobsRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
 	// Sync license data to the server.
@@ -275,6 +278,16 @@ func (c *syncServiceClient) EndActiveJobTimeclocks(ctx context.Context, in *EndA
 	return out, nil
 }
 
+func (c *syncServiceClient) CloseUserDispatches(ctx context.Context, in *CloseUserDispatchesRequest, opts ...grpc.CallOption) (*CloseUserDispatchesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CloseUserDispatchesResponse)
+	err := c.cc.Invoke(ctx, SyncService_CloseUserDispatches_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *syncServiceClient) SendJobs(ctx context.Context, in *SendJobsRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SendDataResponse)
@@ -454,6 +467,8 @@ type SyncServiceServer interface {
 	DeleteMarker(context.Context, *DeleteMarkerRequest) (*DeleteDataResponse, error)
 	// End all active job timeclock entries, typically during server shutdown.
 	EndActiveJobTimeclocks(context.Context, *EndActiveJobTimeclocksRequest) (*EndActiveJobTimeclocksResponse, error)
+	// Close dispatch(es) that match a certain user, optionally limited to the given jobs.
+	CloseUserDispatches(context.Context, *CloseUserDispatchesRequest) (*CloseUserDispatchesResponse, error)
 	// Sync job data to the server.
 	SendJobs(context.Context, *SendJobsRequest) (*SendDataResponse, error)
 	// Sync license data to the server.
@@ -537,6 +552,9 @@ func (UnimplementedSyncServiceServer) DeleteMarker(context.Context, *DeleteMarke
 }
 func (UnimplementedSyncServiceServer) EndActiveJobTimeclocks(context.Context, *EndActiveJobTimeclocksRequest) (*EndActiveJobTimeclocksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EndActiveJobTimeclocks not implemented")
+}
+func (UnimplementedSyncServiceServer) CloseUserDispatches(context.Context, *CloseUserDispatchesRequest) (*CloseUserDispatchesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CloseUserDispatches not implemented")
 }
 func (UnimplementedSyncServiceServer) SendJobs(context.Context, *SendJobsRequest) (*SendDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendJobs not implemented")
@@ -868,6 +886,24 @@ func _SyncService_EndActiveJobTimeclocks_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SyncService_CloseUserDispatches_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CloseUserDispatchesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).CloseUserDispatches(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_CloseUserDispatches_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).CloseUserDispatches(ctx, req.(*CloseUserDispatchesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SyncService_SendJobs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SendJobsRequest)
 	if err := dec(in); err != nil {
@@ -1161,6 +1197,10 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EndActiveJobTimeclocks",
 			Handler:    _SyncService_EndActiveJobTimeclocks_Handler,
+		},
+		{
+			MethodName: "CloseUserDispatches",
+			Handler:    _SyncService_CloseUserDispatches_Handler,
 		},
 		{
 			MethodName: "SendJobs",

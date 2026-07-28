@@ -3,10 +3,12 @@ syntax = "proto3";
 package services.sync;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/centrum/dispatches/dispatches.proto";
 import "resources/citizens/licenses/licenses.proto";
 import "resources/jobs/colleagues/activity/activity.proto";
 import "resources/jobs/jobs.proto";
+import "resources/livemap/coords.proto";
 import "resources/livemap/markers/marker_marker.proto";
 import "resources/sync/activity/activity.proto";
 import "resources/sync/data/data.proto";
@@ -71,6 +73,32 @@ message DeleteMarkerRequest {
 message EndActiveJobTimeclocksRequest {}
 
 message EndActiveJobTimeclocksResponse {
+  int64 rows_affected = 1;
+}
+
+// Request to close active dispatches created for a specific user.
+message CloseUserDispatchesRequest {
+  // User ID whose active dispatches should be closed.
+  int32 target_user_id = 1 [(buf.validate.field).int32.gt = 0];
+
+  // Optional job list limiting which dispatch jobs are considered.
+  repeated string limit_jobs = 2 [(buf.validate.field).repeated = {
+    max_items: 10
+    items: {string: {max_len: 20}}
+  }];
+
+  // Optional coordinates to attach to the closing dispatch status.
+  optional resources.livemap.Coords coords = 3;
+  // Optional reason to attach to the closing dispatch status.
+  optional string reason = 4 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+}
+
+// Response containing the number of dispatches closed for the user.
+message CloseUserDispatchesResponse {
+  // Number of dispatches whose status was updated to completed.
   int64 rows_affected = 1;
 }
 
@@ -253,6 +281,9 @@ service SyncService {
   rpc DeleteMarker(DeleteMarkerRequest) returns (DeleteDataResponse);
   // End all active job timeclock entries, typically during server shutdown.
   rpc EndActiveJobTimeclocks(EndActiveJobTimeclocksRequest) returns (EndActiveJobTimeclocksResponse);
+
+  // Close dispatch(es) that match a certain user, optionally limited to the given jobs.
+  rpc CloseUserDispatches(CloseUserDispatchesRequest) returns (CloseUserDispatchesResponse);
 
   // Sync job data to the server.
   rpc SendJobs(SendJobsRequest) returns (SendDataResponse);

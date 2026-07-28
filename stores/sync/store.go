@@ -62,6 +62,10 @@ type IStore interface {
 		ctx context.Context,
 		req *pbsync.EndActiveJobTimeclocksRequest,
 	) (*pbsync.EndActiveJobTimeclocksResponse, error)
+	CloseUserDispatches(
+		ctx context.Context,
+		req *pbsync.CloseUserDispatchesRequest,
+	) (*pbsync.CloseUserDispatchesResponse, error)
 
 	SendUsers(ctx context.Context, data []*syncdata.DataUser) (int64, error)
 	DeleteUsers(ctx context.Context, userIDs []int32) (*pbsync.DeleteDataResponse, error)

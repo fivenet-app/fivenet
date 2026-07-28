@@ -85,3 +85,10 @@ func (s *Server) EndActiveJobTimeclocks(
 ) (*pbsync.EndActiveJobTimeclocksResponse, error) {
 	return s.store.EndActiveJobTimeclocks(ctx, req)
 }
+
+func (s *Server) CloseUserDispatches(
+	ctx context.Context,
+	req *pbsync.CloseUserDispatchesRequest,
+) (*pbsync.CloseUserDispatchesResponse, error) {
+	return s.store.CloseUserDispatches(ctx, req)
+}

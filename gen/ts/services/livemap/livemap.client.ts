@@ -28,6 +28,16 @@ export interface ILivemapServiceClient {
      */
     createOrUpdateMarker(input: CreateOrUpdateMarkerRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateMarkerRequest, CreateOrUpdateMarkerResponse>;
     /**
+     * Deletes or restores a marker.
+     *
+     * Private markers use the DeleteMarker Access attribute in the usual creator job/rank scope:
+     * Own allows the creator, Lower_Rank allows higher ranks, Same_Rank allows same-or-higher ranks,
+     * and Any allows any member in the creator's job.
+     *
+     * Public markers have stricter delete access because they can be visible across jobs:
+     * job admins can delete them; the marker creator can delete them only when Access includes Own;
+     * otherwise, only members of the marker's owning job with Access=Any can delete them.
+     *
      * @generated from protobuf rpc: DeleteMarker
      */
     deleteMarker(input: DeleteMarkerRequest, options?: RpcOptions): UnaryCall<DeleteMarkerRequest, DeleteMarkerResponse>;
@@ -56,6 +66,16 @@ export class LivemapServiceClient implements ILivemapServiceClient, ServiceInfo 
         return stackIntercept<CreateOrUpdateMarkerRequest, CreateOrUpdateMarkerResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Deletes or restores a marker.
+     *
+     * Private markers use the DeleteMarker Access attribute in the usual creator job/rank scope:
+     * Own allows the creator, Lower_Rank allows higher ranks, Same_Rank allows same-or-higher ranks,
+     * and Any allows any member in the creator's job.
+     *
+     * Public markers have stricter delete access because they can be visible across jobs:
+     * job admins can delete them; the marker creator can delete them only when Access includes Own;
+     * otherwise, only members of the marker's owning job with Access=Any can delete them.
+     *
      * @generated from protobuf rpc: DeleteMarker
      */
     deleteMarker(input: DeleteMarkerRequest, options?: RpcOptions): UnaryCall<DeleteMarkerRequest, DeleteMarkerResponse> {

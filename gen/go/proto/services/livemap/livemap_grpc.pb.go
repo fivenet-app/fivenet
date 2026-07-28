@@ -30,6 +30,15 @@ const (
 type LivemapServiceClient interface {
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error)
 	CreateOrUpdateMarker(ctx context.Context, in *CreateOrUpdateMarkerRequest, opts ...grpc.CallOption) (*CreateOrUpdateMarkerResponse, error)
+	// Deletes or restores a marker.
+	//
+	// Private markers use the DeleteMarker Access attribute in the usual creator job/rank scope:
+	// Own allows the creator, Lower_Rank allows higher ranks, Same_Rank allows same-or-higher ranks,
+	// and Any allows any member in the creator's job.
+	//
+	// Public markers have stricter delete access because they can be visible across jobs:
+	// job admins can delete them; the marker creator can delete them only when Access includes Own;
+	// otherwise, only members of the marker's owning job with Access=Any can delete them.
 	DeleteMarker(ctx context.Context, in *DeleteMarkerRequest, opts ...grpc.CallOption) (*DeleteMarkerResponse, error)
 }
 
@@ -86,6 +95,15 @@ func (c *livemapServiceClient) DeleteMarker(ctx context.Context, in *DeleteMarke
 type LivemapServiceServer interface {
 	Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error
 	CreateOrUpdateMarker(context.Context, *CreateOrUpdateMarkerRequest) (*CreateOrUpdateMarkerResponse, error)
+	// Deletes or restores a marker.
+	//
+	// Private markers use the DeleteMarker Access attribute in the usual creator job/rank scope:
+	// Own allows the creator, Lower_Rank allows higher ranks, Same_Rank allows same-or-higher ranks,
+	// and Any allows any member in the creator's job.
+	//
+	// Public markers have stricter delete access because they can be visible across jobs:
+	// job admins can delete them; the marker creator can delete them only when Access includes Own;
+	// otherwise, only members of the marker's owning job with Access=Any can delete them.
 	DeleteMarker(context.Context, *DeleteMarkerRequest) (*DeleteMarkerResponse, error)
 	mustEmbedUnimplementedLivemapServiceServer()
 }

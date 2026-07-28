@@ -4,14 +4,17 @@ import (
 	"context"
 	"fmt"
 
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	citizenslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	syncactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 func (s *Store) SendData(
@@ -341,4 +344,56 @@ func (s *Store) EndActiveJobTimeclocks(
 	}
 
 	return &pbsync.EndActiveJobTimeclocksResponse{RowsAffected: rowsAffected}, nil
+}
+
+func (s *Store) CloseUserDispatches(
+	ctx context.Context,
+	req *pbsync.CloseUserDispatchesRequest,
+) (*pbsync.CloseUserDispatchesResponse, error) {
+	rowsAffected := int64(0)
+	targetUserID := req.GetTargetUserId()
+
+	dispatches := s.dispatches.Filter(
+		ctx,
+		req.GetLimitJobs(),
+		nil,
+		[]centrumdispatches.StatusDispatch{
+			centrumdispatches.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+			centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+			centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+			centrumdispatches.StatusDispatch_STATUS_DISPATCH_DELETED,
+		},
+	)
+
+	statusTpl := &centrumdispatches.DispatchStatus{
+		Status: centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+	}
+	if req.GetReason() != "" {
+		statusTpl.SetReason(req.GetReason())
+	}
+	if req.GetCoords() != nil {
+		statusTpl.SetX(req.GetCoords().GetX())
+		statusTpl.SetY(req.GetCoords().GetY())
+	}
+
+	for _, dsp := range dispatches {
+		if dsp.GetCreatorId() != targetUserID {
+			continue
+		}
+		if dsp.GetStatus() != nil &&
+			centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) {
+			continue
+		}
+
+		status := proto.Clone(statusTpl).(*centrumdispatches.DispatchStatus)
+		status.SetDispatchId(dsp.GetId())
+
+		if _, err := s.dispatches.UpdateStatus(ctx, dsp.GetId(), status); err != nil {
+			return nil, fmt.Errorf("failed to close user dispatch %d. %w", dsp.GetId(), err)
+		}
+
+		rowsAffected++
+	}
+
+	return &pbsync.CloseUserDispatchesResponse{RowsAffected: rowsAffected}, nil
 }

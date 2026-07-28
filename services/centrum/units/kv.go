@@ -42,7 +42,7 @@ func (s *UnitDB) Get(ctx context.Context, id int64) (*centrumunits.Unit, error) 
 }
 
 func (s *UnitDB) List(_ context.Context, jobs []string) []*centrumunits.Unit {
-	if jobs == nil {
+	if len(jobs) == 0 {
 		jobs = []string{""}
 	}
 

@@ -304,6 +304,38 @@ func (m *AddUserUpdateRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *CloseUserDispatchesRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Coords
+	if m.Coords != nil {
+		if v, ok := any(m.GetCoords()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: LimitJobs
+	for idx, item := range m.LimitJobs {
+		_, _ = idx, item
+
+		m.LimitJobs[idx] = htmlsanitizer.SanitizeAndUnescape(m.LimitJobs[idx])
+
+	}
+
+	// Field: Reason
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteDataRequest) Sanitize() error {
 	if m == nil {
 		return nil

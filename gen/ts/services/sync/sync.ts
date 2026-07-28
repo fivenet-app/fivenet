@@ -33,6 +33,7 @@ import { ColleagueProps } from "../../resources/sync/activity/activity";
 import { ColleagueActivity } from "../../resources/jobs/colleagues/activity/activity";
 import { UserProps } from "../../resources/sync/activity/activity";
 import { UserActivity } from "../../resources/users/activity/activity";
+import { Coords } from "../../resources/livemap/coords";
 import { MarkerMarker } from "../../resources/livemap/markers/marker_marker";
 import { Dispatch } from "../../resources/centrum/dispatches/dispatches";
 import { UserOAuth2Conn } from "../../resources/sync/activity/activity";
@@ -174,6 +175,50 @@ export interface EndActiveJobTimeclocksRequest {
  */
 export interface EndActiveJobTimeclocksResponse {
     /**
+     * @generated from protobuf field: int64 rows_affected = 1
+     */
+    rowsAffected: number;
+}
+/**
+ * Request to close active dispatches created for a specific user.
+ *
+ * @generated from protobuf message services.sync.CloseUserDispatchesRequest
+ */
+export interface CloseUserDispatchesRequest {
+    /**
+     * User ID whose active dispatches should be closed.
+     *
+     * @generated from protobuf field: int32 target_user_id = 1
+     */
+    targetUserId: number;
+    /**
+     * Optional job list limiting which dispatch jobs are considered.
+     *
+     * @generated from protobuf field: repeated string limit_jobs = 2
+     */
+    limitJobs: string[];
+    /**
+     * Optional coordinates to attach to the closing dispatch status.
+     *
+     * @generated from protobuf field: optional resources.livemap.Coords coords = 3
+     */
+    coords?: Coords;
+    /**
+     * Optional reason to attach to the closing dispatch status.
+     *
+     * @generated from protobuf field: optional string reason = 4
+     */
+    reason?: string;
+}
+/**
+ * Response containing the number of dispatches closed for the user.
+ *
+ * @generated from protobuf message services.sync.CloseUserDispatchesResponse
+ */
+export interface CloseUserDispatchesResponse {
+    /**
+     * Number of dispatches whose status was updated to completed.
+     *
      * @generated from protobuf field: int64 rows_affected = 1
      */
     rowsAffected: number;
@@ -1153,6 +1198,122 @@ class EndActiveJobTimeclocksResponse$Type extends MessageType<EndActiveJobTimecl
  * @generated MessageType for protobuf message services.sync.EndActiveJobTimeclocksResponse
  */
 export const EndActiveJobTimeclocksResponse = new EndActiveJobTimeclocksResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CloseUserDispatchesRequest$Type extends MessageType<CloseUserDispatchesRequest> {
+    constructor() {
+        super("services.sync.CloseUserDispatchesRequest", [
+            { no: 1, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 2, name: "limit_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "20" } } } } } },
+            { no: 3, name: "coords", kind: "message", T: () => Coords },
+            { no: 4, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<CloseUserDispatchesRequest>): CloseUserDispatchesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.targetUserId = 0;
+        message.limitJobs = [];
+        if (value !== undefined)
+            reflectionMergePartial<CloseUserDispatchesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CloseUserDispatchesRequest): CloseUserDispatchesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 target_user_id */ 1:
+                    message.targetUserId = reader.int32();
+                    break;
+                case /* repeated string limit_jobs */ 2:
+                    message.limitJobs.push(reader.string());
+                    break;
+                case /* optional resources.livemap.Coords coords */ 3:
+                    message.coords = Coords.internalBinaryRead(reader, reader.uint32(), options, message.coords);
+                    break;
+                case /* optional string reason */ 4:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CloseUserDispatchesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 target_user_id = 1; */
+        if (message.targetUserId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.targetUserId);
+        /* repeated string limit_jobs = 2; */
+        for (let i = 0; i < message.limitJobs.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.limitJobs[i]);
+        /* optional resources.livemap.Coords coords = 3; */
+        if (message.coords)
+            Coords.internalBinaryWrite(message.coords, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional string reason = 4; */
+        if (message.reason !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.CloseUserDispatchesRequest
+ */
+export const CloseUserDispatchesRequest = new CloseUserDispatchesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CloseUserDispatchesResponse$Type extends MessageType<CloseUserDispatchesResponse> {
+    constructor() {
+        super("services.sync.CloseUserDispatchesResponse", [
+            { no: 1, name: "rows_affected", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CloseUserDispatchesResponse>): CloseUserDispatchesResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.rowsAffected = 0;
+        if (value !== undefined)
+            reflectionMergePartial<CloseUserDispatchesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CloseUserDispatchesResponse): CloseUserDispatchesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 rows_affected */ 1:
+                    message.rowsAffected = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CloseUserDispatchesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 rows_affected = 1; */
+        if (message.rowsAffected !== 0)
+            writer.tag(1, WireType.Varint).int64(message.rowsAffected);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.CloseUserDispatchesResponse
+ */
+export const CloseUserDispatchesResponse = new CloseUserDispatchesResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AddUserActivityRequest$Type extends MessageType<AddUserActivityRequest> {
     constructor() {
@@ -2482,6 +2643,7 @@ export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "AddMarker", options: {}, I: AddMarkerRequest, O: AddActivityResponse },
     { name: "DeleteMarker", options: {}, I: DeleteMarkerRequest, O: DeleteDataResponse },
     { name: "EndActiveJobTimeclocks", options: {}, I: EndActiveJobTimeclocksRequest, O: EndActiveJobTimeclocksResponse },
+    { name: "CloseUserDispatches", options: {}, I: CloseUserDispatchesRequest, O: CloseUserDispatchesResponse },
     { name: "SendJobs", options: {}, I: SendJobsRequest, O: SendDataResponse },
     { name: "SendLicenses", options: {}, I: SendLicensesRequest, O: SendDataResponse },
     { name: "SendAccounts", options: {}, I: SendAccountsRequest, O: SendDataResponse },

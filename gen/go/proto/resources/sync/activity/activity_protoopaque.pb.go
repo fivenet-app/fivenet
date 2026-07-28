@@ -9,6 +9,7 @@
 package syncactivity
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	colleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
@@ -761,7 +762,7 @@ var File_resources_sync_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_sync_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"&resources/sync/activity/activity.proto\x12\x17resources.sync.activity\x1a!resources/accounts/accounts.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\x92\x01\n" +
+	"&resources/sync/activity/activity.proto\x12\x17resources.sync.activity\x1a!codegen/sanitizer/sanitizer.proto\x1a!resources/accounts/accounts.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\x92\x01\n" +
 	"\x0eUserOAuth2Conn\x12#\n" +
 	"\rprovider_name\x18\x01 \x01(\tR\fproviderName\x12\x1e\n" +
 	"\n" +
@@ -769,13 +770,13 @@ const file_resources_sync_activity_activity_proto_rawDesc = "" +
 	"identifier\x12\x1f\n" +
 	"\vexternal_id\x18\x03 \x01(\tR\n" +
 	"externalId\x12\x1a\n" +
-	"\busername\x18\x04 \x01(\tR\busername\"k\n" +
-	"\tUserProps\x12\x1b\n" +
-	"\x06reason\x18\x01 \x01(\tH\x00R\x06reason\x88\x01\x01\x126\n" +
+	"\busername\x18\x04 \x01(\tR\busername\"s\n" +
+	"\tUserProps\x12#\n" +
+	"\x06reason\x18\x01 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x126\n" +
 	"\x05props\x18\x02 \x01(\v2 .resources.users.props.UserPropsR\x05propsB\t\n" +
-	"\a_reason\"y\n" +
-	"\x0eColleagueProps\x12\x1b\n" +
-	"\x06reason\x18\x01 \x01(\tH\x00R\x06reason\x88\x01\x01\x12?\n" +
+	"\a_reason\"\x81\x01\n" +
+	"\x0eColleagueProps\x12#\n" +
+	"\x06reason\x18\x01 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12?\n" +
 	"\x05props\x18\x02 \x01(\v2).resources.jobs.colleagues.ColleaguePropsR\x05propsB\t\n" +
 	"\a_reason\"\xf8\x01\n" +
 	"\n" +

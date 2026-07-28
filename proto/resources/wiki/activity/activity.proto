@@ -4,6 +4,7 @@ package resources.wiki.activity;
 
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/access/access.proto";
 import "resources/common/content/diff_activity.proto";
 import "resources/timestamp/timestamp.proto";
@@ -33,7 +34,10 @@ message PageActivity {
   optional resources.users.short.UserShort creator = 6 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 7 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 8 [(buf.validate.field).string.max_len = 50];
-  optional string reason = 9 [(buf.validate.field).string.max_len = 255];
+  optional string reason = 9 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
   PageActivityData data = 10;
 }
 

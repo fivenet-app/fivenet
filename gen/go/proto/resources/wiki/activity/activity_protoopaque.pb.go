@@ -10,6 +10,7 @@ package wikiactivity
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -1122,7 +1123,7 @@ var File_resources_wiki_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_wiki_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"&resources/wiki/activity/activity.proto\x12\x17resources.wiki.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a\x1dresources/access/access.proto\x1a,resources/common/content/diff_activity.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xab\x04\n" +
+	"&resources/wiki/activity/activity.proto\x12\x17resources.wiki.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a,resources/common/content/diff_activity.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xb3\x04\n" +
 	"\fPageActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -1134,8 +1135,8 @@ const file_resources_wiki_activity_activity_proto_rawDesc = "" +
 	"\acreator\x18\x06 \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x01R\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\a \x01(\tR\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\b \x01(\tH\x02R\x0fcreatorJobLabel\x88\x01\x01\x12\x1b\n" +
-	"\x06reason\x18\t \x01(\tH\x03R\x06reason\x88\x01\x01\x12=\n" +
+	"\x11creator_job_label\x18\b \x01(\tH\x02R\x0fcreatorJobLabel\x88\x01\x01\x12#\n" +
+	"\x06reason\x18\t \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x03R\x06reason\x88\x01\x01\x12=\n" +
 	"\x04data\x18\n" +
 	" \x01(\v2).resources.wiki.activity.PageActivityDataR\x04dataB\r\n" +
 	"\v_creator_idB\n" +

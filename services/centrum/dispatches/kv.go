@@ -65,7 +65,7 @@ func (s *DispatchDB) Get(ctx context.Context, id int64) (*centrumdispatches.Disp
 // List returns all dispatches that match the given job prefixes.
 // If jobs is nil, it returns all dispatches.
 func (s *DispatchDB) List(ctx context.Context, jobs []string) []*centrumdispatches.Dispatch {
-	if jobs == nil {
+	if len(jobs) == 0 {
 		jobs = []string{""}
 	}
 

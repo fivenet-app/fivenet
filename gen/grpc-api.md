@@ -11315,7 +11315,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | ----------- | ------------ | ------------- | ------------|
 | `Stream` | [StreamRequest](#serviceslivemapStreamRequest) | [StreamResponse](#serviceslivemapStreamResponse) stream | |
 | `CreateOrUpdateMarker` | [CreateOrUpdateMarkerRequest](#serviceslivemapCreateOrUpdateMarkerRequest) | [CreateOrUpdateMarkerResponse](#serviceslivemapCreateOrUpdateMarkerResponse) | |
-| `DeleteMarker` | [DeleteMarkerRequest](#serviceslivemapDeleteMarkerRequest) | [DeleteMarkerResponse](#serviceslivemapDeleteMarkerResponse) | |
+| `DeleteMarker` | [DeleteMarkerRequest](#serviceslivemapDeleteMarkerRequest) | [DeleteMarkerResponse](#serviceslivemapDeleteMarkerResponse) |Deletes or restores a marker.<br/><br/>Private markers use the DeleteMarker Access attribute in the usual creator job/rank scope: Own allows the creator, Lower_Rank allows higher ranks, Same_Rank allows same-or-higher ranks, and Any allows any member in the creator's job.<br/><br/>Public markers have stricter delete access because they can be visible across jobs: job admins can delete them; the marker creator can delete them only when Access includes Own; otherwise, only members of the marker's owning job with Access=Any can delete them. |
 
  <!-- end services -->
 
@@ -13455,6 +13455,35 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
+### services.sync.CloseUserDispatchesRequest
+Request to close active dispatches created for a specific user.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `target_user_id` | [int32](#int32) |  | User ID whose active dispatches should be closed. |
+| `limit_jobs` | [string](#string) | repeated | Optional job list limiting which dispatch jobs are considered. |
+| `coords` | [resources.livemap.Coords](#resourceslivemapCoords) | optional | Optional coordinates to attach to the closing dispatch status. |
+| `reason` | [string](#string) | optional | Optional reason to attach to the closing dispatch status. |
+
+
+
+
+
+### services.sync.CloseUserDispatchesResponse
+Response containing the number of dispatches closed for the user.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `rows_affected` | [int64](#int64) |  | Number of dispatches whose status was updated to completed. |
+
+
+
+
+
 ### services.sync.DeleteDataRequest
 
 
@@ -13751,6 +13780,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `AddMarker` | [AddMarkerRequest](#servicessyncAddMarkerRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours). |
 | `DeleteMarker` | [DeleteMarkerRequest](#servicessyncDeleteMarkerRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Remove a temporary map marker. |
 | `EndActiveJobTimeclocks` | [EndActiveJobTimeclocksRequest](#servicessyncEndActiveJobTimeclocksRequest) | [EndActiveJobTimeclocksResponse](#servicessyncEndActiveJobTimeclocksResponse) |End all active job timeclock entries, typically during server shutdown. |
+| `CloseUserDispatches` | [CloseUserDispatchesRequest](#servicessyncCloseUserDispatchesRequest) | [CloseUserDispatchesResponse](#servicessyncCloseUserDispatchesResponse) |Close dispatch(es) that match a certain user, optionally limited to the given jobs. |
 | `SendJobs` | [SendJobsRequest](#servicessyncSendJobsRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Sync job data to the server. |
 | `SendLicenses` | [SendLicensesRequest](#servicessyncSendLicensesRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Sync license data to the server. |
 | `SendAccounts` | [SendAccountsRequest](#servicessyncSendAccountsRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Sync account data to the server. |
