@@ -58,8 +58,8 @@ const licenses = [
             </div>
 
             <UContainer class="px-2">
-                <div class="divide-neutral/10 mx-auto max-w-7xl divide-y">
-                    <dl class="divide-neutral/10 mt-10 space-y-6 divide-y">
+                <div class="mx-auto max-w-7xl divide-y divide-neutral/10">
+                    <dl class="mt-10 space-y-6 divide-y divide-neutral/10">
                         <UAccordion :items="licenses" type="multiple">
                             <template #content="{ item: license }">
                                 <ExternalFileHolder :path="license.path" />

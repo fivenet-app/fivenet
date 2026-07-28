@@ -92,25 +92,25 @@ function onClickNext() {
                     tag="p"
                 >
                     <template #current>
-                        <span class="text-neutral font-medium">
+                        <span class="font-medium text-neutral">
                             {{ currentPage }}
                         </span>
                     </template>
 
                     <template #total>
-                        <span class="text-neutral font-medium">
+                        <span class="font-medium text-neutral">
                             {{ total === -1 ? '∞' : total }}
                         </span>
                     </template>
 
                     <template #maxPage>
-                        <span class="text-neutral font-medium">
+                        <span class="font-medium text-neutral">
                             {{ totalPages === 0 ? 1 : totalPages }}
                         </span>
                     </template>
 
                     <template #size>
-                        <span class="text-neutral font-medium">
+                        <span class="font-medium text-neutral">
                             {{ pageSize }}
                         </span>
                     </template>
@@ -123,13 +123,13 @@ function onClickNext() {
                     tag="p"
                 >
                     <template #current>
-                        <span class="text-neutral font-medium">
+                        <span class="font-medium text-neutral">
                             {{ currentPage }}
                         </span>
                     </template>
 
                     <template #size>
-                        <span class="text-neutral font-medium">
+                        <span class="font-medium text-neutral">
                             {{ pageSize }}
                         </span>
                     </template>

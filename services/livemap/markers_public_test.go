@@ -148,6 +148,7 @@ var _ livemapstore.IStore = (*markerTestStore)(nil)
 
 type testLivemapPerms struct {
 	permsstub.Permissions
+
 	access []string
 }
 
