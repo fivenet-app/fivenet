@@ -225,7 +225,7 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
             :key="marker.id"
             :name="marker.name"
             :lat-lng="[marker.y, marker.x]"
-            :radius="marker.data?.data.circle.radius / 0.6931471805599453"
+            :radius="marker.data?.data.circle.radius"
             :color="marker.color ?? livemap.markerMarkers.fallbackColor"
             :fill-color="marker.color ?? livemap.markerMarkers.fallbackColor"
             :fill-opacity="(marker.data.data.circle.opacity ?? 15) / 100"

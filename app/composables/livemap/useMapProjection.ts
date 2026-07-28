@@ -21,18 +21,31 @@ export function getMapBackgroundColor(layer: string): string {
 }
 
 export const customMapCRS = extend({}, CRS.Simple, {
+    // GTA/FiveM coordinates are plain Cartesian coordinates, not geographic
+    // latitude/longitude. We still use Leaflet's LonLat projection because it
+    // preserves the values as x=lng and y=lat before the transformation below.
     projection: Projection.LonLat,
     scale: function (zoom: number): number {
+        // Keep normal Leaflet zoom behavior: each zoom level doubles map pixels.
         return Math.pow(2, zoom);
     },
     zoom: function (sc: number): number {
+        // Inverse of scale(). Leaflet passes an arbitrary scale value here.
         return Math.log(sc) / 0.6931471805599453;
     },
     distance: function (pos1: LatLng, pos2: LatLng): number {
+        // Distance is measured in in-game units, so calculate Euclidean distance
+        // directly from the unprojected CRS coordinates.
         const xDiff = pos2.lng - pos1.lng;
         const yDiff = pos2.lat - pos1.lat;
         return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
     },
+    // Affine transform from in-game coordinates to map pixels at zoom 0:
+    //   mapX = x * scaleX + centerX
+    //   mapY = y * -scaleY + centerY
+    //
+    // The negative Y scale flips GTA/FiveM's Y axis to match image tile space.
+    // Leaflet multiplies both values by 2^zoom after this transform.
     transformation: new Transformation(scaleX, centerX, -scaleY, centerY),
     infinite: true,
 });
