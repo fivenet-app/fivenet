@@ -2880,7 +2880,8 @@
         "livemap": {
             "LivemapService": {
                 "ErrStreamFailed": "Failed to stream Map data!",
-                "ErrMarkerFailed": "Failed to create/ update/ delete marker!"
+                "ErrMarkerFailed": "Failed to create/ update/ delete marker!",
+                "ErrMarkerDenied": "You are not allowed to access this map marker!"
             }
         },
         "settings": {

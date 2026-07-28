@@ -2880,7 +2880,8 @@
         "livemap": {
             "LivemapService": {
                 "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",
-                "ErrMarkerFailed": "Fehler beim Erstellen/ Aktualisieren/ Löschen der Markierung!"
+                "ErrMarkerFailed": "Fehler beim Erstellen/ Aktualisieren/ Löschen der Markierung!",
+                "ErrMarkerDenied": "Du hast keinen Zugriff auf diese Kartenmarkierung!"
             }
         },
         "settings": {

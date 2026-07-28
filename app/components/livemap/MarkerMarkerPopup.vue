@@ -13,7 +13,7 @@ defineProps<{
     marker: MarkerMarker;
 }>();
 
-const { can } = useAuth();
+const { activeChar, can, isSuperuser } = useAuth();
 
 const overlay = useOverlay();
 
@@ -46,6 +46,13 @@ function openMarkerEditor(marker: MarkerMarker, closePopup: () => void): void {
         marker: toRaw(marker),
     });
 }
+
+function canMutatePublicMarker(marker: MarkerMarker): boolean {
+    if (!marker.public) return true;
+    if (isSuperuser.value) return true;
+
+    return !!activeChar.value?.job && marker.job === activeChar.value.job;
+}
 </script>
 
 <template>
@@ -70,7 +77,9 @@ function openMarkerEditor(marker: MarkerMarker, closePopup: () => void): void {
 
                         <UTooltip
                             v-if="
-                                can('livemap.LivemapService/CreateOrUpdateMarker').value && checkIfCanEditMarker(marker.creator)
+                                can('livemap.LivemapService/CreateOrUpdateMarker').value &&
+                                checkIfCanEditMarker(marker.creator) &&
+                                canMutatePublicMarker(marker)
                             "
                             :text="$t('common.edit')"
                         >
@@ -83,7 +92,10 @@ function openMarkerEditor(marker: MarkerMarker, closePopup: () => void): void {
                             />
                         </UTooltip>
 
-                        <UTooltip v-if="can('livemap.LivemapService/DeleteMarker').value" :text="$t('common.delete')">
+                        <UTooltip
+                            v-if="can('livemap.LivemapService/DeleteMarker').value && canMutatePublicMarker(marker)"
+                            :text="$t('common.delete')"
+                        >
                             <UButton
                                 variant="link"
                                 icon="i-mdi-delete"
