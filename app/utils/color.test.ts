@@ -6,7 +6,6 @@ describe('primaryColors', () => {
         expect(primaryColors).toContainEqual({
             label: 'green',
             chip: { color: 'green' },
-            class: 'bg-green-500 dark:bg-green-400',
         });
     });
 });
@@ -16,7 +15,6 @@ describe('backgroundColors', () => {
         expect(backgroundColors).toContainEqual({
             label: 'slate',
             chip: { color: 'slate' },
-            class: 'bg-slate-500 dark:bg-slate-400',
         });
     });
 });
