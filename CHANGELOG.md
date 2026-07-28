@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.7.2] - 2026-07-28
+
+### 🚀 Features
+
+- *(vehicles)* Add wanted activity backend
+- *(vehicles)* Add activity feed UI
+- *(sync)* Add EndActiveJobTimeclocks api method
+- *(laws)* Notify clients on laws changes
+
+### 🐛 Bug Fixes
+
+- *(sync)* Use job names for job grade syncing
+- *(mailer)* Thread list refs issue
+- *(mailer)* Thread list and page param issue
+- *(filestore)* Use alias tags for Jet scans
+- *(vehicles)* Cleanup activity feed style and safe job info enrich entries
+- Timeclock query issues
+- Better-sqlite3 build issues
+- *(timeclock)* Cleanup sorting and list
+- *(dbsync)* Normalize user jobs from jobs list
+- *(auth)* Restore account session without reopening websocket on refresh
+- *(notifications)* Avoid empty job subjects
+- *(auth)* Add session restore regression test
+- *(jobs)* Align timeclock test with query shape
+- *(cookies)* Use 1970 expires time value and use utc time
+- Job select menu not being full width
+- *(sync)* Phone_number and more correctly set to null on insert
+- *(centrum)* Dispatchers job not checked in cleanup logic
+- *(grpc)* Gracefully handle context canceled in streams
+- *(streams)* Treat canceled NATS-backed streams as clean shutdowns
+- *(demo)* Block until base data has been seeded
+- *(demo)* Refresh jobs when demo data generation is done
+- *(auth)* Hide chooseCharacter error on restore by account token only
+- Drawers having 2 close buttons due to nuxt ui changes
+- Version info being different between backend and frontend
+- *(query)* Reduce line length of fk constraints
+- Cleanup utils package
+- Law page ref undefined issue by updating nuxt
+- *(laws)* Law hint not spaced properly with the description
+- *(sync)* Updating hashes before data send was successful
+- *(oauth2)* Move account token helpers out of generated package
+- *(auth)* Revalidate current route after permission refresh
+- Cleanup padding/margin for Data*Block components
+- *(colors)* Improve polyfill colors and use buttons for design color
+- App utils color tests
+
 ## [2026.7.1] - 2026-07-21
 
 ### 🚀 Features
