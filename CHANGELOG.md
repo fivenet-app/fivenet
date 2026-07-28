@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.7.3] - 2026-07-28
+
+### 🚀 Features
+
+- *(sync)* Add user dispatch auto-close RPC
+
+### 🐛 Bug Fixes
+
+- Css color var issue and circle radius sizing
+- *(marker)* Perms check for editing public markers
+- Sync api marker creation missing job label and improve public
+- Run linters and formatters
+- *(livemap)* Store markers tests
+
 ## [2026.7.2] - 2026-07-28
 
 ### 🚀 Features
