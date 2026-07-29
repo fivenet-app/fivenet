@@ -35,7 +35,7 @@ const { getCurrentMode, getOwnUnit, dispatches, getSortedOwnDispatches, pendingD
     storeToRefs(centrumStore);
 
 const livemapStore = useLivemapStore();
-const { userOnDuty } = storeToRefs(livemapStore);
+const { userOnDuty, ownMarker } = storeToRefs(livemapStore);
 
 const notifications = useNotificationsStore();
 
@@ -331,7 +331,7 @@ async function checkup(): Promise<void> {
 }
 
 function sendRequireUnitNotification(): void {
-    if (!userOnDuty.value) return;
+    if (!userOnDuty.value || !ownMarker.value) return;
 
     notifications.add({
         title: { key: 'notifications.centrum.unitUpdated.require_unit.title', parameters: {} },

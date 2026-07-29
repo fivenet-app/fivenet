@@ -2,7 +2,6 @@ VERSION := $(shell cat VERSION)
 GIT_VERSION ?= $(shell sh ./internal/scripts/get-version.sh)
 
 VALIDATE_VERSION ?= v1.0.2
-BUILD_DIR := .build/
 
 GO ?= go
 PROTOC ?= protoc
@@ -14,9 +13,6 @@ ifneq (,$(wildcard ./.env))
     include .env
 endif
 export
-
-build_dir:
-	mkdir -p $(BUILD_DIR)
 
 # Build, Format, etc., Tools, Dependency checkouts
 

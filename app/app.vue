@@ -73,32 +73,18 @@ async function setThemeColors(): Promise<void> {
     // Only set CSS variables for Chrome 103+ due to lack of support in earlier versions
     const root = document.documentElement;
     if (!root.classList.contains('polyfills')) return;
+    setPaletteVars(root, 'primary', primary);
+    setPaletteVars(root, 'neutral', gray);
+}
 
-    root.style.setProperty('--ui-color-primary-50-rgb', `var(--color-${primary}-50-rgb)`);
-    root.style.setProperty('--ui-color-primary-100-rgb', `var(--color-${primary}-100-rgb)`);
-    root.style.setProperty('--ui-color-primary-200-rgb', `var(--color-${primary}-200-rgb)`);
-    root.style.setProperty('--ui-color-primary-300-rgb', `var(--color-${primary}-300-rgb)`);
-    root.style.setProperty('--ui-color-primary-400-rgb', `var(--color-${primary}-400-rgb)`);
-    root.style.setProperty('--ui-color-primary-500-rgb', `var(--color-${primary}-500-rgb)`);
-    root.style.setProperty('--ui-color-primary-600-rgb', `var(--color-${primary}-600-rgb)`);
-    root.style.setProperty('--ui-color-primary-700-rgb', `var(--color-${primary}-700-rgb)`);
-    root.style.setProperty('--ui-color-primary-800-rgb', `var(--color-${primary}-800-rgb)`);
-    root.style.setProperty('--ui-color-primary-900-rgb', `var(--color-${primary}-900-rgb)`);
-    root.style.setProperty('--ui-color-primary-950-rgb', `var(--color-${primary}-950-rgb)`);
-    root.style.setProperty('--ui-color-primary-rgb', `var(--color-${primary}-500-rgb)`);
+function setPaletteVars(root: HTMLElement, uiColor: 'primary' | 'neutral', colorName: string): void {
+    for (const shade of [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]) {
+        root.style.setProperty(`--ui-color-${uiColor}-${shade}`, `var(--color-${colorName}-${shade})`);
+        root.style.setProperty(`--ui-color-${uiColor}-${shade}-rgb`, `var(--color-${colorName}-${shade}-rgb)`);
+    }
 
-    root.style.setProperty('--ui-color-neutral-50-rgb', `var(--color-${gray}-50-rgb)`);
-    root.style.setProperty('--ui-color-neutral-100-rgb', `var(--color-${gray}-100-rgb)`);
-    root.style.setProperty('--ui-color-neutral-200-rgb', `var(--color-${gray}-200-rgb)`);
-    root.style.setProperty('--ui-color-neutral-300-rgb', `var(--color-${gray}-300-rgb)`);
-    root.style.setProperty('--ui-color-neutral-400-rgb', `var(--color-${gray}-400-rgb)`);
-    root.style.setProperty('--ui-color-neutral-500-rgb', `var(--color-${gray}-500-rgb)`);
-    root.style.setProperty('--ui-color-neutral-600-rgb', `var(--color-${gray}-600-rgb)`);
-    root.style.setProperty('--ui-color-neutral-700-rgb', `var(--color-${gray}-700-rgb)`);
-    root.style.setProperty('--ui-color-neutral-800-rgb', `var(--color-${gray}-800-rgb)`);
-    root.style.setProperty('--ui-color-neutral-900-rgb', `var(--color-${gray}-900-rgb)`);
-    root.style.setProperty('--ui-color-neutral-950-rgb', `var(--color-${gray}-950-rgb)`);
-    root.style.setProperty('--ui-color-neutral-rgb', `var(--color-${gray}-500-rgb)`);
+    root.style.setProperty(`--ui-color-${uiColor}`, `var(--color-${colorName}-500)`);
+    root.style.setProperty(`--ui-color-${uiColor}-rgb`, `var(--color-${colorName}-500-rgb)`);
 }
 
 watch(design.value, () => setThemeColors());
