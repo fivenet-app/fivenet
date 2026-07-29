@@ -36,7 +36,7 @@ const { can } = useAuth();
             <template #title>
                 <span>{{ module.title }}</span>
 
-                <UBadge v-if="module.deletedAt" icon="i-mdi-delete" :label="$t('common.deleted')" color="amber" />
+                <UBadge v-if="module.deletedAt" icon="i-mdi-delete" :label="$t('common.deleted')" color="warning" />
             </template>
 
             <template v-if="showIcon && module.icon" #leading>

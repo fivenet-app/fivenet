@@ -166,7 +166,7 @@ watch(
             <div class="flex flex-initial flex-row items-center gap-2">
                 <UFormField v-if="requiredMode === 'badge' && entry.required" :name="`${$props.name}.required`">
                     <UTooltip :text="$t('components.access.required_notice')">
-                        <UBadge color="amber" variant="soft" :label="$t('common.required')" />
+                        <UBadge color="warning" variant="soft" :label="$t('common.required')" />
                     </UTooltip>
                 </UFormField>
 
