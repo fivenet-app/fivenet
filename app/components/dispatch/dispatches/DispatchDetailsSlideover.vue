@@ -37,7 +37,7 @@ const { canDo, selfAssign } = centrumStore;
 
 const centrumDispatchesClient = await getCentrumDispatchesClient();
 
-const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)!));
+const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)));
 
 async function deleteDispatch(id: number): Promise<void> {
     try {
@@ -71,10 +71,10 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
     <USlideover :overlay="false">
         <template #title>
             <div class="inline-flex items-center">
-                <IDCopyBadge :id="dispatch.id" class="mx-2" prefix="DSP" />
+                <IDCopyBadge :id="dispatch?.id ?? 0" class="mx-2" prefix="DSP" />
 
                 <p class="max-w-80 flex-1 truncate">
-                    {{ dispatch.message }}
+                    {{ dispatch?.message ?? $t('common.na') }}
                 </p>
             </div>
         </template>
@@ -89,7 +89,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <span>
-                                    {{ dispatch.jobs?.jobs.map((j) => j.label ?? j.name).join(', ') }}
+                                    {{ dispatch?.jobs?.jobs.map((j) => j.label ?? j.name).join(', ') }}
                                 </span>
                             </dd>
                         </div>
@@ -99,7 +99,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 {{ $t('common.sent_at') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <GenericTime :value="dispatch.createdAt" />
+                                <GenericTime v-if="dispatch?.createdAt" :value="dispatch.createdAt" />
                             </dd>
                         </div>
 
@@ -108,10 +108,10 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 {{ $t('common.sent_by') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <span v-if="dispatch.anon">
+                                <span v-if="dispatch?.anon">
                                     {{ $t('common.anon') }}
                                 </span>
-                                <CitizenInfoPopover v-else-if="dispatch.creator" :user="dispatch.creator" />
+                                <CitizenInfoPopover v-else-if="dispatch?.creator" :user="dispatch.creator" />
                                 <span v-else>
                                     {{ $t('common.unknown') }}
                                 </span>
@@ -126,9 +126,10 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 <div class="sm:inline-flex sm:flex-row sm:gap-2">
                                     <span class="block">
                                         {{ $t('common.postal') }}:
-                                        {{ dispatch.postal ?? $t('common.na') }}
+                                        {{ dispatch?.postal ?? $t('common.na') }}
                                     </span>
                                     <UButton
+                                        v-if="dispatch !== undefined"
                                         size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"
@@ -145,7 +146,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                             </dt>
                             <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
                                 <p class="max-h-14 overflow-y-scroll break-words">
-                                    {{ dispatch.description ?? $t('common.na') }}
+                                    {{ dispatch?.description ?? $t('common.na') }}
                                 </p>
                             </dd>
                         </div>
@@ -155,7 +156,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 {{ $t('common.attributes', 2) }}
                             </dt>
                             <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
-                                <DispatchAttributes :attributes="dispatch.attributes" />
+                                <DispatchAttributes :attributes="dispatch?.attributes" />
                             </dd>
                         </div>
 
@@ -164,7 +165,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 {{ $t('common.reference', 2) }}
                             </dt>
                             <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
-                                <DispatchReferences :references="dispatch.references" />
+                                <DispatchReferences :references="dispatch?.references" />
                             </dd>
                         </div>
 
@@ -173,8 +174,8 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 {{ $t('common.unit', 2) }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <span v-if="dispatch.units.length === 0" class="block">
-                                    {{ $t('common.units', dispatch.units.length) }}
+                                <span v-if="!dispatch?.units || dispatch.units.length === 0" class="block">
+                                    {{ $t('common.units', dispatch?.units.length ?? 0) }}
                                 </span>
                                 <div v-else class="mb-1 rounded-md bg-neutral-100 dark:bg-neutral-900">
                                     <ul class="divide-y divide-default text-sm font-medium" role="list">
@@ -226,7 +227,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                         icon="i-mdi-plus"
                                         truncate
                                         :label="$t('common.self_assign')"
-                                        @click="selfAssign(dispatch.id)"
+                                        @click="() => dispatch && selfAssign(dispatch.id)"
                                     />
                                 </UFieldGroup>
                             </dd>
@@ -241,7 +242,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 {{ $t('common.last_update') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <GenericTime :value="dispatch.status?.createdAt" />
+                                <GenericTime v-if="dispatch?.status?.createdAt" :value="dispatch.status.createdAt" />
                             </dd>
                         </div>
 
@@ -253,10 +254,10 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 <div class="sm:inline-flex sm:flex-row sm:gap-2">
                                     <span class="block">
                                         {{ $t('common.postal') }}:
-                                        {{ dispatch.status?.postal ?? $t('common.na') }}
+                                        {{ dispatch?.status?.postal ?? $t('common.na') }}
                                     </span>
                                     <UButton
-                                        v-if="dispatch.status?.x !== undefined && dispatch.status?.y !== undefined"
+                                        v-if="dispatch?.status?.x !== undefined && dispatch?.status?.y !== undefined"
                                         size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"
@@ -281,10 +282,10 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 <UButton
                                     class="rounded-sm px-2 py-1 text-sm font-semibold"
                                     :color="dispatchStatusColor"
-                                    :icon="dispatchStatusToIcon(dispatch.status?.status)"
+                                    :icon="dispatchStatusToIcon(dispatch?.status?.status)"
                                     :disabled="!canAccessDispatch.participate"
-                                    :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)"
-                                    @click="dispatchStatusUpdateModal.open({ dispatchId: dispatch.id })"
+                                    :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch?.status?.status ?? 0]}`)"
+                                    @click="() => dispatch && dispatchStatusUpdateModal.open({ dispatchId: dispatch.id })"
                                 />
                             </dd>
                         </div>
@@ -294,7 +295,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 {{ $t('common.code') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                {{ dispatch.status?.code ?? $t('common.na') }}
+                                {{ dispatch?.status?.code ?? $t('common.na') }}
                             </dd>
                         </div>
 
@@ -303,14 +304,14 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                 {{ $t('common.reason') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                {{ dispatch.status?.reason ?? $t('common.na') }}
+                                {{ dispatch?.status?.reason ?? $t('common.na') }}
                             </dd>
                         </div>
                     </dl>
                 </div>
 
                 <div>
-                    <DispatchFeed :dispatch-id="dispatch.id" />
+                    <DispatchFeed :dispatch-id="dispatch?.id" />
                 </div>
             </div>
         </template>
@@ -327,9 +328,10 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                         icon="i-mdi-delete"
                         color="error"
                         @click="
-                            confirmModal.open({
-                                confirm: async () => dispatch && deleteDispatch(dispatch.id),
-                            })
+                            () =>
+                                confirmModal.open({
+                                    confirm: async () => dispatch && deleteDispatch(dispatch.id),
+                                })
                         "
                     />
                 </UTooltip>

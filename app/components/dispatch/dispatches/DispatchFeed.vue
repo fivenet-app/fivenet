@@ -4,24 +4,33 @@ import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import type { ListDispatchActivityResponse } from '~~/gen/ts/services/centrum/dispatches';
 
 const props = defineProps<{
-    dispatchId?: number;
+    dispatchId?: number | undefined;
 }>();
 
 const centrumDispatchesClient = await getCentrumDispatchesClient();
 
 const offset = ref(0);
+const dispatchId = computed(() => props.dispatchId ?? 0);
+const hasDispatchId = computed(() => dispatchId.value > 0);
 
-const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId ?? 0}-activity-${offset.value}`, () =>
-    listDispatchActivity(),
-);
+const activityKey = computed(() => `centrum-dispatch-${dispatchId.value}-activity-${offset.value}`);
+
+const { data, refresh } = useLazyAsyncData(activityKey, () => listDispatchActivity(), {
+    default: () => ({ activity: [] }),
+    immediate: false,
+});
 
 async function listDispatchActivity(): Promise<ListDispatchActivityResponse> {
+    if (!hasDispatchId.value) {
+        return { activity: [] };
+    }
+
     try {
         const call = centrumDispatchesClient.listDispatchActivity({
             pagination: {
                 offset: offset.value,
             },
-            id: props.dispatchId ?? 0,
+            id: dispatchId.value,
         });
         const { response } = await call;
 
@@ -32,11 +41,40 @@ async function listDispatchActivity(): Promise<ListDispatchActivityResponse> {
     }
 }
 
-const { pause, resume } = useIntervalFn(async () => {
-    pause();
-    await refresh();
-    resume();
-}, 3500);
+const { pause, resume } = useIntervalFn(
+    async () => {
+        if (!hasDispatchId.value) {
+            pause();
+            return;
+        }
+
+        pause();
+        try {
+            await refresh();
+        } finally {
+            if (hasDispatchId.value) {
+                resume();
+            }
+        }
+    },
+    3500,
+    { immediate: false },
+);
+
+watch(
+    dispatchId,
+    async (id) => {
+        pause();
+
+        if (id <= 0) {
+            return;
+        }
+
+        await refresh();
+        resume();
+    },
+    { immediate: true },
+);
 </script>
 
 <template>

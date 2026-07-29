@@ -389,6 +389,19 @@
     --color-olive-900: #1d1d16;
     --color-olive-950: #0c0c09;
     --color-olive: var(--color-olive-500);
+
+    --color-old-neutral-50: #fafafa;
+    --color-old-neutral-100: #f5f5f5;
+    --color-old-neutral-200: #e5e5e5;
+    --color-old-neutral-300: #d4d4d4;
+    --color-old-neutral-400: #a1a1a1;
+    --color-old-neutral-500: #737373;
+    --color-old-neutral-600: #525252;
+    --color-old-neutral-700: #404040;
+    --color-old-neutral-800: #262626;
+    --color-old-neutral-900: #171717;
+    --color-old-neutral-950: #0a0a0a;
+    --color-old-neutral: var(--color-old-neutral-500);
 }
 
 @layer components {
