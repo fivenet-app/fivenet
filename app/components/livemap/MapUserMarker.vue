@@ -95,7 +95,7 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                 <span
                     v-if="showUnitNames && unit"
                     class="inset-0 rounded-md border border-black/20 bg-clip-padding whitespace-nowrap"
-                    :class="isColorBright(unitInverseColor) ? 'text-black' : 'text-neutral'"
+                    :class="isColorBright(unitInverseColor) ? 'text-black' : 'text-white'"
                     :style="{ backgroundColor: unit?.color ?? livemap.userMarkers.fallbackColor }"
                 >
                     {{ unit?.initials }}

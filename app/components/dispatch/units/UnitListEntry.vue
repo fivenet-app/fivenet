@@ -24,7 +24,7 @@ const isBright = computed(() => isColorBright(unitColorHex.value));
     <li class="col-span-1 flex rounded-md shadow-xs" @click="unitDetailsSlideover.open()">
         <div
             class="flex w-12 shrink-0 items-center justify-center rounded-l-md border-y border-l text-sm font-medium"
-            :class="isBright ? 'text-black' : 'text-neutral'"
+            :class="isBright ? 'text-black' : 'text-white'"
             :style="'background-color: ' + unit.color"
         >
             {{ unit.initials }}

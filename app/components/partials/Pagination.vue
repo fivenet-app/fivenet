@@ -78,7 +78,7 @@ function onClickNext() {
 <template>
     <div class="@container/pagination" :class="compact ? 'min-h-[45px]' : 'min-h-[30px]'">
         <div
-            class="flex justify-between gap-1 @md/pagination:flex-row @md/pagination:items-center"
+            class="flex justify-between gap-1 text-muted @md/pagination:flex-row @md/pagination:items-center"
             :class="[
                 !disableBorder ? 'border-t border-neutral-200 dark:border-neutral-700' : '',
                 compact ? 'px-1 py-1.5' : 'px-3 py-1.5',
@@ -92,25 +92,25 @@ function onClickNext() {
                     tag="p"
                 >
                     <template #current>
-                        <span class="font-medium text-neutral">
+                        <span class="font-medium text-white">
                             {{ currentPage }}
                         </span>
                     </template>
 
                     <template #total>
-                        <span class="font-medium text-neutral">
+                        <span class="font-medium text-white">
                             {{ total === -1 ? '∞' : total }}
                         </span>
                     </template>
 
                     <template #maxPage>
-                        <span class="font-medium text-neutral">
+                        <span class="font-medium text-white">
                             {{ totalPages === 0 ? 1 : totalPages }}
                         </span>
                     </template>
 
                     <template #size>
-                        <span class="font-medium text-neutral">
+                        <span class="font-medium text-white">
                             {{ pageSize }}
                         </span>
                     </template>
@@ -123,13 +123,13 @@ function onClickNext() {
                     tag="p"
                 >
                     <template #current>
-                        <span class="font-medium text-neutral">
+                        <span class="font-medium text-white">
                             {{ currentPage }}
                         </span>
                     </template>
 
                     <template #size>
-                        <span class="font-medium text-neutral">
+                        <span class="font-medium text-white">
                             {{ pageSize }}
                         </span>
                     </template>
