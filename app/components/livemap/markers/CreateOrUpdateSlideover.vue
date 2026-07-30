@@ -126,9 +126,6 @@ function getInitialIcon(marker?: MarkerMarker): string {
     return HelpIcon.name ?? 'i-mdi-help';
 }
 
-const defaultExpiresAt = ref<Date>(new Date());
-defaultExpiresAt.value.setTime(defaultExpiresAt.value.getTime() + 1 * 60 * 60 * 1000);
-
 const initialX = props.marker?.x ?? props.location?.x ?? storeLocation.value?.x ?? 0;
 const initialY = props.marker?.y ?? props.location?.y ?? storeLocation.value?.y ?? 0;
 
@@ -175,7 +172,7 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     name: props.marker?.name ?? '',
     description: props.marker?.description,
-    expiresAt: props.marker?.expiresAt ? toDate(props.marker?.expiresAt) : defaultExpiresAt.value,
+    expiresAt: props.marker?.expiresAt ? toDate(props.marker?.expiresAt) : undefined,
     color: props.marker?.color ?? '#ee4b2b',
     x: initialX,
     y: initialY,
@@ -583,6 +580,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+const initialDismissGuard = ref<boolean>(true);
+const { start: startInitialDismissGuardTimeout, stop: stopInitialDismissGuardTimeout } = useTimeoutFn(
+    () => {
+        initialDismissGuard.value = false;
+    },
+    250,
+    { immediate: false },
+);
 
 async function closeSlideover(): Promise<void> {
     if (hasUnsavedChanges.value && !(await confirmLeave())) return;
@@ -590,7 +595,13 @@ async function closeSlideover(): Promise<void> {
     emit('close', false);
 }
 
+onMounted(() => {
+    startInitialDismissGuardTimeout();
+});
+
 onBeforeUnmount(() => {
+    stopInitialDismissGuardTimeout();
+
     stopCoordinatePicking();
     if (!saved.value && previewTarget.value && originalPreviewState) {
         previewTarget.value.x = originalPreviewState.x;
@@ -607,10 +618,26 @@ onBeforeUnmount(() => {
         :title="!marker ? $t('components.livemap.create_marker.title') : $t('components.livemap.update_marker.title')"
         :overlay="false"
         :modal="false"
-        :close="{ onClick: closeSlideover }"
-        :dismissible="!isPickingCoordinates && !hasUnsavedChanges"
+        :close="false"
+        :dismissible="!initialDismissGuard && !isPickingCoordinates && !hasUnsavedChanges"
         :ui="{ content: isPickingCoordinates ? 'max-w-sm' : 'max-w-xl' }"
     >
+        <template #header>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h3 class="font-semibold text-highlighted">
+                    {{ !marker ? $t('components.livemap.create_marker.title') : $t('components.livemap.update_marker.title') }}
+                </h3>
+
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :aria-label="$t('common.close', 1)"
+                    @click="closeSlideover"
+                />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-y divide-default">

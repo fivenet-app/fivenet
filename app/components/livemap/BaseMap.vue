@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ContextMenuItem } from '@nuxt/ui';
 import { breakpointsTailwind } from '@vueuse/core';
 import {
     type HeatLayer,
@@ -14,14 +15,13 @@ import {
     type PointExpression,
     stamp,
 } from 'leaflet';
-import 'leaflet-contextmenu';
 import 'leaflet.heat';
 import LivemapMapShell from '~/components/livemap/LivemapMapShell.vue';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 import { simpleGraticule } from '~/composables/leaflet/L.SimpleGraticule';
 import { getZoomOffset } from '~/composables/livemap/useMapProjection';
 import { useLivemapStore } from '~/stores/livemap';
-import { overlayCayoPericoBounds, tileLayers } from '~/types/livemap';
+import { overlayCayoPericoBounds, tileLayers, type LivemapContextMenuItem } from '~/types/livemap';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
@@ -29,10 +29,17 @@ import ClusterPickerCard from './ClusterPickerCard.vue';
 import LayerControls from './controls/LayerControls.vue';
 import HeatmapLayer from './HeatmapLayer.vue';
 
-defineProps<{
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    mapOptions?: Record<string, any>;
-}>();
+const props = withDefaults(
+    defineProps<{
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        mapOptions?: Record<string, any>;
+        contextMenuItems?: LivemapContextMenuItem[];
+    }>(),
+    {
+        mapOptions: () => ({}),
+        contextMenuItems: () => [],
+    },
+);
 
 const emit = defineEmits<{
     (e: 'mapReady', map: Map): void;
@@ -62,6 +69,46 @@ const center = ref<PointExpression>([0, 0]);
 
 const mouseLat = ref<number>(0);
 const mouseLong = ref<number>(0);
+const latestContextMenuLatLng = ref<LatLng>();
+const contextMenuTriggerRef = useTemplateRef<HTMLElement>('contextMenuTriggerRef');
+const contextMenuPosition = reactive({ x: 0, y: 0 });
+let dispatchingSyntheticContextMenu = false;
+
+const uiContextMenuItems = computed<ContextMenuItem[]>(() =>
+    props.contextMenuItems.map(({ onSelect, ...item }) => ({
+        ...item,
+        onSelect: () => {
+            if (!onSelect || !latestContextMenuLatLng.value) return;
+
+            const latlng = latestContextMenuLatLng.value;
+            onSelect(latlng);
+        },
+    })),
+);
+
+function onMapContextMenuCapture(event: MouseEvent): void {
+    if (dispatchingSyntheticContextMenu) return;
+    if (!map || uiContextMenuItems.value.length === 0) return;
+
+    latestContextMenuLatLng.value = map.mouseEventToLatLng(event);
+    contextMenuPosition.x = event.clientX;
+    contextMenuPosition.y = event.clientY;
+
+    requestAnimationFrame(() => {
+        const EventConstructor = window.PointerEvent ?? MouseEvent;
+        dispatchingSyntheticContextMenu = true;
+        contextMenuTriggerRef.value?.dispatchEvent(
+            new EventConstructor('contextmenu', {
+                bubbles: true,
+                cancelable: true,
+                clientX: event.clientX,
+                clientY: event.clientY,
+                button: 2,
+            }),
+        );
+        dispatchingSyntheticContextMenu = false;
+    });
+}
 
 const currentLocationQuery = useRouteQuery<string>('loc', '');
 
@@ -236,6 +283,7 @@ async function onMapReady(m: Map): Promise<void> {
 
     map.on('overlayadd', (event) => emit('overlayadd', event));
     map.on('overlayremove', (event) => emit('overlayremove', event));
+    map.on('contextmenu', (event: LeafletMouseEvent) => (latestContextMenuLatLng.value = event.latlng));
 
     map.addEventListener('mousemove', async (event: LeafletMouseEvent) => {
         if (!event.latlng) return;
@@ -343,72 +391,83 @@ onBeforeUnmount(() => (map = undefined));
 </script>
 
 <template>
-    <LivemapMapShell
-        ref="mapShellRef"
-        v-model:center="center"
-        v-model:zoom="zoom"
-        container-class="mapContainer flex h-full flex-row"
-        map-class="block h-full w-full"
-        :background-layer="livemapTileLayer"
-        :map-options="mapOptions"
-        :show-cayo-perico="game.livemap?.enableCayoPerico"
-        :cayo-tile-layer="livemapTileLayer"
-        :cayo-bounds="overlayCayoPericoBounds"
-        @click="selectedMarker = undefined"
-        @ready="onMapReady($event)"
-        @movestart="isMoving = true"
-        @moveend="isMoving = false"
-    >
-        <template #layers>
-            <LTileLayer
-                v-for="layer in tileLayers"
-                :key="layer.key"
-                :url="layer.url"
-                layer-type="base"
-                :name="$t(layer.label)"
-                no-wrap
-                tms
-                :visible="livemapTileLayer === layer.key"
-                :min-zoom="1"
-                :max-zoom="layer.options?.maxZoom || 7"
-                :attribution="layer.options?.attribution || undefined"
-            />
-        </template>
+    <div class="relative size-full" @contextmenu.capture="onMapContextMenuCapture">
+        <LivemapMapShell
+            ref="mapShellRef"
+            v-model:center="center"
+            v-model:zoom="zoom"
+            container-class="mapContainer flex h-full flex-row"
+            map-class="block h-full w-full"
+            :background-layer="livemapTileLayer"
+            :map-options="props.mapOptions"
+            :show-cayo-perico="game.livemap?.enableCayoPerico"
+            :cayo-tile-layer="livemapTileLayer"
+            :cayo-bounds="overlayCayoPericoBounds"
+            @click="selectedMarker = undefined"
+            @ready="onMapReady($event)"
+            @movestart="isMoving = true"
+            @moveend="isMoving = false"
+        >
+            <template #layers>
+                <LTileLayer
+                    v-for="layer in tileLayers"
+                    :key="layer.key"
+                    :url="layer.url"
+                    layer-type="base"
+                    :name="$t(layer.label)"
+                    no-wrap
+                    tms
+                    :visible="livemapTileLayer === layer.key"
+                    :min-zoom="1"
+                    :max-zoom="layer.options?.maxZoom || 7"
+                    :attribution="layer.options?.attribution || undefined"
+                />
+            </template>
 
-        <ZoomControls />
+            <ZoomControls />
 
-        <LayerControls>
-            <div v-if="can('centrum.CentrumService/TakeControl').value">
-                <div class="mt-1 overflow-y-hidden px-1">
-                    <USwitch
-                        v-model="livemapSettings.showHeatmap"
-                        :label="$t('common.heatmap')"
-                        :ui="{ label: 'truncate text-sm hover:line-clamp-2' }"
-                    />
+            <LayerControls>
+                <div v-if="can('centrum.CentrumService/TakeControl').value">
+                    <div class="mt-1 overflow-y-hidden px-1">
+                        <USwitch
+                            v-model="livemapSettings.showHeatmap"
+                            :label="$t('common.heatmap')"
+                            :ui="{ label: 'truncate text-sm hover:line-clamp-2' }"
+                        />
+                    </div>
                 </div>
-            </div>
 
-            <slot name="layerControls" />
-        </LayerControls>
+                <slot name="layerControls" />
+            </LayerControls>
 
-        <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-        <LControl class="leaflet-control-attribution !rounded-tl-none rounded-tr-sm" position="bottomleft">
-            <span class="font-semibold">{{ isMobile ? $t('common.longitude_short') : $t('common.longitude') }}:</span>
-            {{ mouseLat.toFixed(3) }} |
-            <span class="font-semibold">{{ isMobile ? $t('common.latitude_short') : $t('common.latitude') }}:</span>
-            {{ mouseLong.toFixed(3) }}
-        </LControl>
+            <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
+            <LControl class="leaflet-control-attribution !rounded-tl-none rounded-tr-sm" position="bottomleft">
+                <span class="font-semibold">{{ isMobile ? $t('common.longitude_short') : $t('common.longitude') }}:</span>
+                {{ mouseLat.toFixed(3) }} |
+                <span class="font-semibold">{{ isMobile ? $t('common.latitude_short') : $t('common.latitude') }}:</span>
+                {{ mouseLong.toFixed(3) }}
+            </LControl>
 
-        <slot />
+            <slot />
 
-        <HeatmapLayer :show="livemapSettings.showHeatmap" />
+            <HeatmapLayer :show="livemapSettings.showHeatmap" />
 
-        <LMarker v-if="chooser" ref="chooserRef" :lat-lng="chooser.latlng" :options="{ opacity: 0 }">
-            <LPopup class="min-w-[110px] md:min-w-[200px]" :options="{ closeButton: false }">
-                <ClusterPickerCard :hits="chooser.hits" :hidden-count="chooser.hiddenCount" />
-            </LPopup>
-        </LMarker>
-    </LivemapMapShell>
+            <LMarker v-if="chooser" ref="chooserRef" :lat-lng="chooser.latlng" :options="{ opacity: 0 }">
+                <LPopup class="min-w-[110px] md:min-w-[200px]" :options="{ closeButton: false }">
+                    <ClusterPickerCard :hits="chooser.hits" :hidden-count="chooser.hiddenCount" />
+                </LPopup>
+            </LMarker>
+        </LivemapMapShell>
+
+        <UContextMenu :items="uiContextMenuItems" :disabled="uiContextMenuItems.length === 0" size="sm">
+            <span
+                ref="contextMenuTriggerRef"
+                class="fixed size-px opacity-0"
+                aria-hidden="true"
+                :style="{ left: `${contextMenuPosition.x}px`, top: `${contextMenuPosition.y}px` }"
+            />
+        </UContextMenu>
+    </div>
     <slot name="afterMap" />
 </template>
 
@@ -483,58 +542,6 @@ onBeforeUnmount(() => (map = undefined));
     }
     .leaflet-control-attribution a:hover {
         color: var(--color-primary-400);
-    }
-
-    /* Leaflet Contextmenu */
-    .leaflet-contextmenu {
-        display: none;
-        box-shadow: 0 1px 7px rgba(0, 0, 0, 0.4);
-        -webkit-border-radius: 2px;
-        border-radius: 2px;
-        padding: 4px 0;
-        background-color: var(--ui-bg);
-        cursor: default;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-    }
-
-    .leaflet-contextmenu a.leaflet-contextmenu-item {
-        display: block;
-        color: var(--color-primary-500);
-        font-size: 12px;
-        line-height: 20px;
-        text-decoration: none;
-        padding: 0 12px;
-        cursor: default;
-        outline: none;
-    }
-
-    .leaflet-contextmenu a.leaflet-contextmenu-item-disabled {
-        opacity: 0.5;
-    }
-
-    .leaflet-contextmenu a.leaflet-contextmenu-item.over {
-        background-color: var(--color-primary-100);
-    }
-
-    .leaflet-contextmenu a.leaflet-contextmenu-item-disabled.over {
-        background-color: inherit;
-        border-top: 1px solid transparent;
-        border-bottom: 1px solid transparent;
-    }
-
-    .leaflet-contextmenu-icon {
-        margin: 2px 8px 0 0;
-        width: 16px;
-        height: 16px;
-        float: left;
-        border: 0;
-    }
-
-    .leaflet-contextmenu-separator {
-        border-bottom: 1px solid #ccc;
-        margin: 5px 0;
     }
 
     /* Graticle */

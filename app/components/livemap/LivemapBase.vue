@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ContextMenuItemClickEvent, MapOptions } from 'leaflet';
+import type { MapOptions } from 'leaflet';
 import DispatchCreateOrUpdateSlideover from '~/components/dispatch/dispatches/DispatchCreateOrUpdateSlideover.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
 import MarkerCreateOrUpdateSlideover from '~/components/livemap/markers/CreateOrUpdateSlideover.vue';
@@ -14,6 +14,8 @@ import { setWaypoint } from '~/composables/nui';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
+import type { LivemapContextMenuItem } from '~/types/livemap';
+import type { Perms } from '~~/gen/ts/perms';
 
 defineProps<{
     showUnitNames?: boolean;
@@ -38,55 +40,109 @@ const { stopping: stoppingCentrum } = storeToRefs(centrumStore);
 
 const mapOptions = {
     zoomControl: false,
-    contextmenu: true,
-    contextmenuWidth: 150,
-    contextmenuItems: [],
     scrollWheelZoom: 'center',
     markerZoomAnimation: true,
 } as MapOptions;
 
-if (can('centrum.DispatchesService/CreateDispatch').value) {
-    const dispatchCreateOrUpdateSlideover = overlay.create(DispatchCreateOrUpdateSlideover);
+const dispatchCreateOrUpdateSlideover = overlay.create(DispatchCreateOrUpdateSlideover);
+const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideover);
+const activeCreateOverlay = ref<'dispatch' | 'marker'>();
+const pendingMarkerCreateLocation = ref<{ x: number; y: number }>();
 
-    mapOptions.contextmenuItems.push({
-        text: t('components.dispatch.create_dispatch.title'),
-        callback: (e: ContextMenuItemClickEvent) => {
-            location.value = { x: e.latlng.lng, y: e.latlng.lat };
-            showLocationMarker.value = true;
+const { start: startMarkerCreateOrUpdateOpenTimeout, stop: stopMarkerCreateOrUpdateOpenTimeout } = useTimeoutFn(
+    () => {
+        if (activeCreateOverlay.value !== 'marker' || !pendingMarkerCreateLocation.value) return;
 
-            dispatchCreateOrUpdateSlideover.open({
-                location: { x: e.latlng.lng, y: e.latlng.lat },
+        markerCreateOrUpdateSlideover
+            .open({
+                location: pendingMarkerCreateLocation.value,
                 onClose: () => (showLocationMarker.value = false),
-            });
-        },
-    });
-}
-if (can('livemap.LivemapService/CreateOrUpdateMarker').value) {
-    const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideover);
+            })
+            .finally(() => {
+                pendingMarkerCreateLocation.value = undefined;
 
-    mapOptions.contextmenuItems.push({
-        text: t('components.livemap.create_marker.title'),
-        callback: (e: ContextMenuItemClickEvent) => {
-            location.value = { x: e.latlng.lng, y: e.latlng.lat };
-            showLocationMarker.value = true;
-
-            markerCreateOrUpdateSlideover.open({
-                location: { x: e.latlng.lng, y: e.latlng.lat },
-                onClose: () => (showLocationMarker.value = false),
+                if (activeCreateOverlay.value === 'marker') {
+                    activeCreateOverlay.value = undefined;
+                }
             });
-        },
-    });
+    },
+    0,
+    { immediate: false },
+);
+
+function isCreateOverlayActive(): boolean {
+    return (
+        activeCreateOverlay.value !== undefined ||
+        overlay.isOpen(dispatchCreateOrUpdateSlideover.id) ||
+        overlay.isOpen(markerCreateOrUpdateSlideover.id)
+    );
 }
-if (nuiEnabled.value) {
-    mapOptions.contextmenuItems.push({
-        text: t('components.dispatch.livemap.mark_on_gps'),
-        callback: (e: ContextMenuItemClickEvent) => setWaypoint(e.latlng.lng, e.latlng.lat),
-    });
-}
+
+const contextMenuItems = computed<LivemapContextMenuItem[]>(() =>
+    (
+        [
+            {
+                label: t('components.dispatch.create_dispatch.title'),
+                icon: 'i-mdi-car-emergency',
+                permission: 'centrum.DispatchesService/CreateDispatch' as Perms,
+                disabled: isCreateOverlayActive(),
+                onSelect: (latlng) => {
+                    if (isCreateOverlayActive()) return;
+
+                    activeCreateOverlay.value = 'dispatch';
+                    location.value = { x: latlng.lng, y: latlng.lat };
+                    showLocationMarker.value = true;
+
+                    dispatchCreateOrUpdateSlideover
+                        .open({
+                            location: { x: latlng.lng, y: latlng.lat },
+                            onClose: () => (showLocationMarker.value = false),
+                        })
+                        .finally(() => {
+                            if (activeCreateOverlay.value === 'dispatch') {
+                                activeCreateOverlay.value = undefined;
+                            }
+                        });
+                },
+            },
+            {
+                label: t('components.livemap.create_marker.title'),
+                icon: 'i-mdi-map-marker-outline',
+                permission: 'livemap.LivemapService/CreateOrUpdateMarker' as Perms,
+                disabled: isCreateOverlayActive(),
+                onSelect: (latlng) => {
+                    if (isCreateOverlayActive()) return;
+
+                    const markerLocation = { x: latlng.lng, y: latlng.lat };
+                    activeCreateOverlay.value = 'marker';
+                    pendingMarkerCreateLocation.value = markerLocation;
+                    location.value = markerLocation;
+                    showLocationMarker.value = true;
+
+                    startMarkerCreateOrUpdateOpenTimeout();
+                },
+            },
+            ...((nuiEnabled.value
+                ? [
+                      {
+                          type: 'separator' as const,
+                      },
+                      {
+                          label: t('components.dispatch.livemap.mark_on_gps'),
+                          icon: 'i-mdi-crosshairs-gps',
+                          onSelect: (latlng) => setWaypoint(latlng.lng, latlng.lat),
+                      },
+                  ]
+                : []) satisfies LivemapContextMenuItem[]),
+        ] satisfies LivemapContextMenuItem[]
+    ).filter((item) => item.permission === undefined || can(item.permission).value),
+);
 
 const inititedDebounced = useDebounce(initiated, 750);
 const stoppingLivemapDebounced = useDebounce(stoppingLivemap, 500);
 const stoppingCentrumDebounced = useDebounce(stoppingCentrum, 500);
+
+onBeforeUnmount(() => stopMarkerCreateOrUpdateOpenTimeout());
 </script>
 
 <template>
@@ -95,7 +151,7 @@ const stoppingCentrumDebounced = useDebounce(stoppingCentrum, 500);
             <DataErrorBlock :title="$t('components.livemap.failed_datastream')" :error="error" :retry="startStream" />
         </div>
 
-        <BaseMap ref="baseMapRef" :map-options="mapOptions">
+        <BaseMap ref="baseMapRef" :map-options="mapOptions" :context-menu-items="contextMenuItems">
             <template #default>
                 <SettingsButton />
 

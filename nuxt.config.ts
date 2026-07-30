@@ -307,7 +307,6 @@ export default defineNuxtConfig({
                 'fabric/extensions',
                 'howler', // CJS
                 'leaflet', // CJS
-                'leaflet-contextmenu', // CJS
                 'leaflet.heat', // CJS
                 'lib0/observable',
                 'maska/vue',

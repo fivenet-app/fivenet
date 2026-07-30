@@ -152,8 +152,6 @@ export class SimpleGraticule extends LayerGroup {
 
         return marker(latLng, {
             interactive: false,
-            contextmenu: false,
-            contextmenuItems: [],
             icon: divIcon({
                 iconSize: [0, 0],
                 className: 'leaflet-grid-label',
@@ -165,8 +163,6 @@ export class SimpleGraticule extends LayerGroup {
     addOriginLabel(): L.Marker {
         return marker([0, 0], {
             interactive: false,
-            contextmenu: false,
-            contextmenuItems: [],
             icon: divIcon({
                 iconSize: [0, 0],
                 className: 'leaflet-grid-label',

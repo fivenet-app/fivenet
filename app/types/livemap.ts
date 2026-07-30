@@ -1,4 +1,6 @@
-import type { LatLngBoundsExpression } from 'leaflet';
+import type { ContextMenuItem } from '@nuxt/ui';
+import type { LatLng, LatLngBoundsExpression } from 'leaflet';
+import type { Perms } from '~~/gen/ts/perms';
 
 export const tileLayers = [
     {
@@ -29,6 +31,11 @@ export type Postal = {
     x: number;
     y: number;
     code: string;
+};
+
+export type LivemapContextMenuItem = Omit<ContextMenuItem, 'onSelect'> & {
+    onSelect?: (latlng: LatLng) => Promise<void> | void;
+    permission?: Perms;
 };
 
 export const overlayCayoPericoBounds: LatLngBoundsExpression = [
