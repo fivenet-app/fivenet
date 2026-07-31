@@ -42,6 +42,27 @@ type IStore interface {
 		templateID int64,
 		includeDeleted bool,
 	) (*documentstemplates.Template, error)
+	GetTemplateOrderInfo(ctx context.Context, q qrm.DB, templateID int64) (*TemplateOrderInfo, error)
+	NextTemplateGroupRank(
+		ctx context.Context,
+		q qrm.DB,
+		creatorJob string,
+		excludeID int64,
+	) (string, error)
+	InsertTemplateGroupRank(
+		ctx context.Context,
+		q qrm.DB,
+		creatorJob string,
+		excludeID int64,
+		beforeID, afterID *int64,
+	) (string, error)
+	UpdateTemplateSortRank(
+		ctx context.Context,
+		q qrm.DB,
+		templateID int64,
+		creatorJob string,
+		sortRank string,
+	) error
 	GetDocumentAccess(
 		ctx context.Context,
 		documentID int64,
@@ -296,6 +317,7 @@ type IStore interface {
 		tmpl *documentstemplates.Template,
 		creatorJob string,
 		categoryID *int64,
+		sortRank string,
 	) (int64, error)
 	UpdateTemplate(
 		ctx context.Context,

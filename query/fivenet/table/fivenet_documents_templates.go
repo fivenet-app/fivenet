@@ -21,7 +21,7 @@ type fivenetDocumentsTemplatesTable struct {
 	CreatedAt    mysql.ColumnTimestamp
 	UpdatedAt    mysql.ColumnTimestamp
 	DeletedAt    mysql.ColumnTimestamp
-	Weight       mysql.ColumnInteger
+	SortRank     mysql.ColumnString
 	CategoryID   mysql.ColumnInteger
 	Title        mysql.ColumnString
 	Description  mysql.ColumnString
@@ -80,7 +80,7 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
-		WeightColumn       = mysql.IntegerColumn("weight")
+		SortRankColumn     = mysql.StringColumn("sort_rank")
 		CategoryIDColumn   = mysql.IntegerColumn("category_id")
 		TitleColumn        = mysql.StringColumn("title")
 		DescriptionColumn  = mysql.StringColumn("description")
@@ -94,9 +94,9 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		WorkflowColumn     = mysql.StringColumn("workflow")
 		ApprovalColumn     = mysql.StringColumn("approval")
 		CreatorJobColumn   = mysql.StringColumn("creator_job")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, ApprovalColumn, CreatorJobColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, ApprovalColumn, CreatorJobColumn}
-		defaultColumns     = mysql.ColumnList{CreatedAtColumn, WeightColumn, ColorColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, SortRankColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, ApprovalColumn, CreatorJobColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, SortRankColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, ApprovalColumn, CreatorJobColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn, SortRankColumn, ColorColumn}
 	)
 
 	return fivenetDocumentsTemplatesTable{
@@ -107,7 +107,7 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		CreatedAt:    CreatedAtColumn,
 		UpdatedAt:    UpdatedAtColumn,
 		DeletedAt:    DeletedAtColumn,
-		Weight:       WeightColumn,
+		SortRank:     SortRankColumn,
 		CategoryID:   CategoryIDColumn,
 		Title:        TitleColumn,
 		Description:  DescriptionColumn,

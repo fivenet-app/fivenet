@@ -25,7 +25,8 @@ message Template {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   resources.documents.category.Category category = 5 [(tagger.tags) = "alias:\"category\""];
-  uint32 weight = 6 [(buf.validate.field).uint32.lt = 4294967295];
+  // Previously template weight for ordering
+  reserved 6;
   string title = 7 [
     (buf.validate.field).string.min_len = 3,
     (codegen.sanitizer.sanitizer) = {enabled: true}
@@ -86,7 +87,8 @@ message TemplateShort {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   resources.documents.category.Category category = 5 [(tagger.tags) = "alias:\"category\""];
-  uint32 weight = 6 [(buf.validate.field).uint32.lt = 4294967295];
+  // Previously template weight for ordering
+  reserved 6;
   string title = 7 [
     (buf.validate.field).string.min_len = 3,
     (codegen.sanitizer.sanitizer) = {enabled: true}

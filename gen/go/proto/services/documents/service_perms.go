@@ -323,5 +323,13 @@ func init() {
 			Order:     5500,
 			Icon:      "i-mdi-file-code",
 		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.TemplatesServicePerm,
+			Name:      permkeys.TemplatesServiceMoveTemplatePerm,
+			Attrs:     []perms.Attr{},
+			Order:     5500,
+			Icon:      "i-mdi-file-code",
+		},
 	})
 }

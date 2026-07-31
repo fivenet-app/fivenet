@@ -48,6 +48,14 @@ message DeleteTemplateRequest {
 
 message DeleteTemplateResponse {}
 
+message MoveTemplateRequest {
+  int64 template_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 before_id = 2 [(buf.validate.field).int64.gt = 0];
+  optional int64 after_id = 3 [(buf.validate.field).int64.gt = 0];
+}
+
+message MoveTemplateResponse {}
+
 service TemplatesService {
   option (codegen.perms.perms_svc) = {
     order: 55
@@ -73,6 +81,10 @@ service TemplatesService {
     };
   }
   rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+
+  rpc MoveTemplate(MoveTemplateRequest) returns (MoveTemplateResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }
 }

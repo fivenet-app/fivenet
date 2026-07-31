@@ -3664,6 +3664,10 @@
                 "DeleteTemplate": {
                     "key": "Delete Template",
                     "description": "Delete document templates."
+                },
+                "MoveTemplate": {
+                    "key": "Change Template Order",
+                    "description": "Changing the order of user visible templates."
                 }
             },
             "CategoriesService": {

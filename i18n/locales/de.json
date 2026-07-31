@@ -3664,6 +3664,10 @@
                 "DeleteTemplate": {
                     "key": "Vorlage löschen",
                     "description": "Dokumentenvorlagen löschen."
+                },
+                "MoveTemplate": {
+                    "key": "Vorlagen-Reihenfolge ändern",
+                    "description": "Die Reihenfolge der User sichtbaren Vorlagen verändern."
                 }
             },
             "CategoriesService": {

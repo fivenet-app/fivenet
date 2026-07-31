@@ -48,7 +48,6 @@ const { maxAccessEntries } = useAppConfig();
 const documentsTemplatesClient = await getDocumentsTemplatesClient();
 
 const schema = z.object({
-    weight: z.coerce.number().min(0).max(999_999),
     title: z.coerce.string().min(3).max(255),
     description: z.coerce.string().max(255),
     color: z.coerce.string().max(7),
@@ -121,7 +120,6 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    weight: 0,
     title: '',
     description: '',
     color: 'primary',
@@ -220,7 +218,6 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
     const req: CreateTemplateRequest | UpdateTemplateRequest = {
         template: {
             id: templateId ?? 0,
-            weight: values.weight,
             title: values.title,
             description: values.description,
             color: values.color,
@@ -332,7 +329,6 @@ async function findCategories(): Promise<void> {
 }
 
 function setValuesFromTemplate(tpl: Template): void {
-    state.weight = tpl.weight;
     state.title = tpl.title;
     state.description = tpl.description;
     state.color = tpl.color ?? 'primary';
@@ -435,8 +431,6 @@ onBeforeMount(async () => {
             handleGRPCError(e as RpcError);
         }
     } else {
-        state.weight = 0;
-
         state.jobAccess.push({
             id: 0,
             targetId: props.templateId ?? 0,
@@ -537,21 +531,6 @@ const formRef = useTemplateRef('formRef');
                     <template #details>
                         <UContainer class="flex flex-col gap-4 p-4 sm:p-4">
                             <UPageCard :title="$t('common.detail', 2)">
-                                <UFormField
-                                    class="grid grid-cols-2 items-center gap-2"
-                                    name="weight"
-                                    :label="`${$t('common.template', 1)} ${$t('common.weight')}`"
-                                >
-                                    <UInputNumber
-                                        v-model="state.weight"
-                                        name="weight"
-                                        :min="0"
-                                        :max="999_999"
-                                        :step="1"
-                                        :placeholder="$t('common.weight')"
-                                    />
-                                </UFormField>
-
                                 <UFormField
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="title"

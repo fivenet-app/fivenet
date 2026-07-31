@@ -5,6 +5,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { TemplatesService } from "./templates";
+import type { MoveTemplateResponse } from "./templates";
+import type { MoveTemplateRequest } from "./templates";
 import type { DeleteTemplateResponse } from "./templates";
 import type { DeleteTemplateRequest } from "./templates";
 import type { UpdateTemplateResponse } from "./templates";
@@ -42,6 +44,10 @@ export interface ITemplatesServiceClient {
      * @generated from protobuf rpc: DeleteTemplate
      */
     deleteTemplate(input: DeleteTemplateRequest, options?: RpcOptions): UnaryCall<DeleteTemplateRequest, DeleteTemplateResponse>;
+    /**
+     * @generated from protobuf rpc: MoveTemplate
+     */
+    moveTemplate(input: MoveTemplateRequest, options?: RpcOptions): UnaryCall<MoveTemplateRequest, MoveTemplateResponse>;
 }
 /**
  * @generated from protobuf service services.documents.TemplatesService
@@ -86,5 +92,12 @@ export class TemplatesServiceClient implements ITemplatesServiceClient, ServiceI
     deleteTemplate(input: DeleteTemplateRequest, options?: RpcOptions): UnaryCall<DeleteTemplateRequest, DeleteTemplateResponse> {
         const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteTemplateRequest, DeleteTemplateResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: MoveTemplate
+     */
+    moveTemplate(input: MoveTemplateRequest, options?: RpcOptions): UnaryCall<MoveTemplateRequest, MoveTemplateResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<MoveTemplateRequest, MoveTemplateResponse>("unary", this._transport, method, opt, input);
     }
 }

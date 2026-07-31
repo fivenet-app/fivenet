@@ -3,6 +3,7 @@ package documents
 import (
 	"bytes"
 	context "context"
+	"errors"
 	"html/template"
 
 	"github.com/Masterminds/sprig/v3"
@@ -20,6 +21,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -262,7 +264,19 @@ func (s *Server) CreateTemplate(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	lastId, err := s.store.CreateTemplate(ctx, tx, req.GetTemplate(), userInfo.GetJob(), categoryId)
+	sortRank, err := s.store.NextTemplateGroupRank(ctx, tx, userInfo.GetJob(), 0)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	lastId, err := s.store.CreateTemplate(
+		ctx,
+		tx,
+		req.GetTemplate(),
+		userInfo.GetJob(),
+		categoryId,
+		sortRank,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -460,4 +474,80 @@ func (s *Server) DeleteTemplate(
 	}
 
 	return &pbdocuments.DeleteTemplateResponse{}, nil
+}
+
+func (s *Server) MoveTemplate(
+	ctx context.Context,
+	req *pbdocuments.MoveTemplateRequest,
+) (*pbdocuments.MoveTemplateResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{templateIDLogFieldKey, req.GetTemplateId()})
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	check, err := s.templateAccess.CanUserAccessTarget(
+		ctx,
+		req.GetTemplateId(),
+		userInfo,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if !check && !userInfo.GetJobAdmin() {
+		return nil, errorsdocuments.ErrTemplateNoPerms
+	}
+
+	if req.GetBeforeId() > 0 && req.GetAfterId() > 0 {
+		return nil, errorsdocuments.ErrFailedQuery
+	}
+
+	templateOrder, err := s.store.GetTemplateOrderInfo(ctx, s.db, req.GetTemplateId())
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errorsdocuments.ErrTemplateNoPerms
+		}
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if templateOrder.CreatorJob != userInfo.GetJob() && !userInfo.GetJobAdmin() {
+		return nil, errorsdocuments.ErrTemplateNoPerms
+	}
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	defer tx.Rollback()
+
+	sortRank, err := s.store.InsertTemplateGroupRank(
+		ctx,
+		tx,
+		templateOrder.CreatorJob,
+		req.GetTemplateId(),
+		req.BeforeId,
+		req.AfterId,
+	)
+	if err != nil {
+		if errors.Is(err, errorsdocuments.ErrTemplateNoPerms) {
+			return nil, err
+		}
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if err := s.store.UpdateTemplateSortRank(
+		ctx,
+		tx,
+		req.GetTemplateId(),
+		templateOrder.CreatorJob,
+		sortRank,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+
+	return &pbdocuments.MoveTemplateResponse{}, nil
 }

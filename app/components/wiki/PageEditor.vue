@@ -272,13 +272,14 @@ type PageItem = { id: number; title: string; draft: boolean };
 function pageChildrenToList(p: PageShort, prefix?: string): PageItem[] {
     const list = [];
 
+    const title = p.title === '' ? t('common.untitled') : p.title;
     list.push({
         id: p.id,
-        title: (prefix !== undefined ? `${prefix} > ` : '') + p.title,
+        title: (prefix !== undefined ? `${prefix} > ` : '') + title,
         draft: p.draft,
     });
     if (p.children.length > 0) {
-        p.children.filter((c) => c.id !== p.id).forEach((c) => list.push(...pageChildrenToList(c, p.title)));
+        p.children.filter((c) => c.id !== p.id).forEach((c) => list.push(...pageChildrenToList(c, title)));
     }
 
     return list;

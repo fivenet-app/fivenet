@@ -80,6 +80,7 @@ const (
 	TemplatesServiceCreateTemplatePerm perms.Name = "CreateTemplate"
 	TemplatesServiceDeleteTemplatePerm perms.Name = "DeleteTemplate"
 	TemplatesServiceListTemplatesPerm  perms.Name = "ListTemplates"
+	TemplatesServiceMoveTemplatePerm   perms.Name = "MoveTemplate"
 )
 
 type CommentsServiceDeleteCommentAccessPermValue string
@@ -461,6 +462,7 @@ type TemplatesServicePerms struct {
 	CreateTemplate TemplatesServiceCreateTemplatePermRef
 	DeleteTemplate TemplatesServiceDeleteTemplatePermRef
 	ListTemplates  TemplatesServiceListTemplatesPermRef
+	MoveTemplate   TemplatesServiceMoveTemplatePermRef
 }
 type TemplatesServiceCreateTemplatePermRef struct {
 	Perm perms.PermissionRef
@@ -469,6 +471,9 @@ type TemplatesServiceDeleteTemplatePermRef struct {
 	Perm perms.PermissionRef
 }
 type TemplatesServiceListTemplatesPermRef struct {
+	Perm perms.PermissionRef
+}
+type TemplatesServiceMoveTemplatePermRef struct {
 	Perm perms.PermissionRef
 }
 
@@ -481,5 +486,8 @@ var TemplatesService = TemplatesServicePerms{
 	},
 	ListTemplates: TemplatesServiceListTemplatesPermRef{
 		Perm: perms.NewPermissionRef(Namespace, TemplatesServicePerm, TemplatesServiceListTemplatesPerm),
+	},
+	MoveTemplate: TemplatesServiceMoveTemplatePermRef{
+		Perm: perms.NewPermissionRef(Namespace, TemplatesServicePerm, TemplatesServiceMoveTemplatePerm),
 	},
 }

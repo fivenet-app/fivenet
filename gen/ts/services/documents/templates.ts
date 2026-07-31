@@ -109,6 +109,28 @@ export interface DeleteTemplateRequest {
  */
 export interface DeleteTemplateResponse {
 }
+/**
+ * @generated from protobuf message services.documents.MoveTemplateRequest
+ */
+export interface MoveTemplateRequest {
+    /**
+     * @generated from protobuf field: int64 template_id = 1
+     */
+    templateId: number;
+    /**
+     * @generated from protobuf field: optional int64 before_id = 2
+     */
+    beforeId?: number;
+    /**
+     * @generated from protobuf field: optional int64 after_id = 3
+     */
+    afterId?: number;
+}
+/**
+ * @generated from protobuf message services.documents.MoveTemplateResponse
+ */
+export interface MoveTemplateResponse {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class ListTemplatesRequest$Type extends MessageType<ListTemplatesRequest> {
     constructor() {
@@ -579,6 +601,105 @@ class DeleteTemplateResponse$Type extends MessageType<DeleteTemplateResponse> {
  * @generated MessageType for protobuf message services.documents.DeleteTemplateResponse
  */
 export const DeleteTemplateResponse = new DeleteTemplateResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class MoveTemplateRequest$Type extends MessageType<MoveTemplateRequest> {
+    constructor() {
+        super("services.documents.MoveTemplateRequest", [
+            { no: 1, name: "template_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "before_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 3, name: "after_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<MoveTemplateRequest>): MoveTemplateRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.templateId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<MoveTemplateRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MoveTemplateRequest): MoveTemplateRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 template_id */ 1:
+                    message.templateId = reader.int64().toNumber();
+                    break;
+                case /* optional int64 before_id */ 2:
+                    message.beforeId = reader.int64().toNumber();
+                    break;
+                case /* optional int64 after_id */ 3:
+                    message.afterId = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: MoveTemplateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 template_id = 1; */
+        if (message.templateId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.templateId);
+        /* optional int64 before_id = 2; */
+        if (message.beforeId !== undefined)
+            writer.tag(2, WireType.Varint).int64(message.beforeId);
+        /* optional int64 after_id = 3; */
+        if (message.afterId !== undefined)
+            writer.tag(3, WireType.Varint).int64(message.afterId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.MoveTemplateRequest
+ */
+export const MoveTemplateRequest = new MoveTemplateRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class MoveTemplateResponse$Type extends MessageType<MoveTemplateResponse> {
+    constructor() {
+        super("services.documents.MoveTemplateResponse", []);
+    }
+    create(value?: PartialMessage<MoveTemplateResponse>): MoveTemplateResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<MoveTemplateResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MoveTemplateResponse): MoveTemplateResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: MoveTemplateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.MoveTemplateResponse
+ */
+export const MoveTemplateResponse = new MoveTemplateResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.documents.TemplatesService
  */
@@ -587,5 +708,6 @@ export const TemplatesService = new ServiceType("services.documents.TemplatesSer
     { name: "GetTemplate", options: { "codegen.perms.perms": { enabled: true, name: "ListTemplates" } }, I: GetTemplateRequest, O: GetTemplateResponse },
     { name: "CreateTemplate", options: { "codegen.perms.perms": { enabled: true } }, I: CreateTemplateRequest, O: CreateTemplateResponse },
     { name: "UpdateTemplate", options: { "codegen.perms.perms": { enabled: true, name: "CreateTemplate" } }, I: UpdateTemplateRequest, O: UpdateTemplateResponse },
-    { name: "DeleteTemplate", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteTemplateRequest, O: DeleteTemplateResponse }
+    { name: "DeleteTemplate", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteTemplateRequest, O: DeleteTemplateResponse },
+    { name: "MoveTemplate", options: { "codegen.perms.perms": { enabled: true } }, I: MoveTemplateRequest, O: MoveTemplateResponse }
 ], { "codegen.perms.perms_svc": { order: 55, icon: "i-mdi-file-code" } });

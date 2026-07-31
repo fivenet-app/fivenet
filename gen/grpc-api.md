@@ -4048,7 +4048,6 @@ Policy snapshot applied to a specific version
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) |  |  |
-| `weight` | [uint32](#uint32) |  |  |
 | `title` | [string](#string) |  |  |
 | `description` | [string](#string) |  |  |
 | `color` | [string](#string) | optional |  |
@@ -4162,7 +4161,6 @@ Policy snapshot applied to a specific version
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) |  |  |
-| `weight` | [uint32](#uint32) |  |  |
 | `title` | [string](#string) |  |  |
 | `description` | [string](#string) |  |  |
 | `color` | [string](#string) | optional |  |
@@ -10447,6 +10445,25 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
+### services.documents.MoveTemplateRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template_id` | [int64](#int64) |  |  |
+| `before_id` | [int64](#int64) | optional |  |
+| `after_id` | [int64](#int64) | optional |  |
+
+
+
+
+
+### services.documents.MoveTemplateResponse
+
+
+
+
+
 ### services.documents.UpdateTemplateRequest
 
 
@@ -10484,6 +10501,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `CreateTemplate` | [CreateTemplateRequest](#servicesdocumentsCreateTemplateRequest) | [CreateTemplateResponse](#servicesdocumentsCreateTemplateResponse) | |
 | `UpdateTemplate` | [UpdateTemplateRequest](#servicesdocumentsUpdateTemplateRequest) | [UpdateTemplateResponse](#servicesdocumentsUpdateTemplateResponse) | |
 | `DeleteTemplate` | [DeleteTemplateRequest](#servicesdocumentsDeleteTemplateRequest) | [DeleteTemplateResponse](#servicesdocumentsDeleteTemplateResponse) | |
+| `MoveTemplate` | [MoveTemplateRequest](#servicesdocumentsMoveTemplateRequest) | [MoveTemplateResponse](#servicesdocumentsMoveTemplateResponse) | |
 
  <!-- end services -->
 

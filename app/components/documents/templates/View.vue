@@ -209,10 +209,6 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                 <template v-else>
                     <div class="flex flex-col gap-4">
                         <UPageCard :title="$t('common.detail', 2)">
-                            <UFormField :label="`${$t('common.template', 2)} ${$t('common.weight')}`">
-                                <UInputNumber class="w-full" type="text" name="weight" disabled :value="template.weight" />
-                            </UFormField>
-
                             <UFormField v-if="template.jobAccess" :label="`${$t('common.template', 2)} ${$t('common.access')}`">
                                 <AccessManager
                                     v-model:jobs="template.jobAccess"

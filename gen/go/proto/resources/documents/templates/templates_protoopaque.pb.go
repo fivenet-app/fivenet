@@ -41,7 +41,6 @@ type Template struct {
 	xxx_hidden_UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
 	xxx_hidden_DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
 	xxx_hidden_Category        *category.Category     `protobuf:"bytes,5,opt,name=category,proto3"`
-	xxx_hidden_Weight          uint32                 `protobuf:"varint,6,opt,name=weight,proto3"`
 	xxx_hidden_Title           string                 `protobuf:"bytes,7,opt,name=title,proto3"`
 	xxx_hidden_Description     string                 `protobuf:"bytes,8,opt,name=description,proto3"`
 	xxx_hidden_Color           *string                `protobuf:"bytes,9,opt,name=color,proto3,oneof"`
@@ -120,13 +119,6 @@ func (x *Template) GetCategory() *category.Category {
 		return x.xxx_hidden_Category
 	}
 	return nil
-}
-
-func (x *Template) GetWeight() uint32 {
-	if x != nil {
-		return x.xxx_hidden_Weight
-	}
-	return 0
 }
 
 func (x *Template) GetTitle() string {
@@ -258,10 +250,6 @@ func (x *Template) SetCategory(v *category.Category) {
 	x.xxx_hidden_Category = v
 }
 
-func (x *Template) SetWeight(v uint32) {
-	x.xxx_hidden_Weight = v
-}
-
 func (x *Template) SetTitle(v string) {
 	x.xxx_hidden_Title = v
 }
@@ -272,12 +260,12 @@ func (x *Template) SetDescription(v string) {
 
 func (x *Template) SetColor(v string) {
 	x.xxx_hidden_Color = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 20)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 19)
 }
 
 func (x *Template) SetIcon(v string) {
 	x.xxx_hidden_Icon = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 20)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 19)
 }
 
 func (x *Template) SetContentTitle(v string) {
@@ -302,7 +290,7 @@ func (x *Template) SetCreatorJob(v string) {
 
 func (x *Template) SetCreatorJobLabel(v string) {
 	x.xxx_hidden_CreatorJobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 15, 20)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 19)
 }
 
 func (x *Template) SetJobAccess(v []*access.JobAccess) {
@@ -353,14 +341,14 @@ func (x *Template) HasColor() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
 }
 
 func (x *Template) HasIcon() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *Template) HasSchema() bool {
@@ -374,7 +362,7 @@ func (x *Template) HasCreatorJobLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 15)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 14)
 }
 
 func (x *Template) HasContentAccess() bool {
@@ -415,12 +403,12 @@ func (x *Template) ClearCategory() {
 }
 
 func (x *Template) ClearColor() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
 	x.xxx_hidden_Color = nil
 }
 
 func (x *Template) ClearIcon() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
 	x.xxx_hidden_Icon = nil
 }
 
@@ -429,7 +417,7 @@ func (x *Template) ClearSchema() {
 }
 
 func (x *Template) ClearCreatorJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 15)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 14)
 	x.xxx_hidden_CreatorJobLabel = nil
 }
 
@@ -453,7 +441,6 @@ type Template_builder struct {
 	UpdatedAt       *timestamp.Timestamp
 	DeletedAt       *timestamp.Timestamp
 	Category        *category.Category
-	Weight          uint32
 	Title           string
 	Description     string
 	Color           *string
@@ -479,15 +466,14 @@ func (b0 Template_builder) Build() *Template {
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	x.xxx_hidden_DeletedAt = b.DeletedAt
 	x.xxx_hidden_Category = b.Category
-	x.xxx_hidden_Weight = b.Weight
 	x.xxx_hidden_Title = b.Title
 	x.xxx_hidden_Description = b.Description
 	if b.Color != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 20)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 19)
 		x.xxx_hidden_Color = b.Color
 	}
 	if b.Icon != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 20)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 19)
 		x.xxx_hidden_Icon = b.Icon
 	}
 	x.xxx_hidden_ContentTitle = b.ContentTitle
@@ -496,7 +482,7 @@ func (b0 Template_builder) Build() *Template {
 	x.xxx_hidden_Schema = b.Schema
 	x.xxx_hidden_CreatorJob = b.CreatorJob
 	if b.CreatorJobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 15, 20)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 19)
 		x.xxx_hidden_CreatorJobLabel = b.CreatorJobLabel
 	}
 	x.xxx_hidden_JobAccess = &b.JobAccess
@@ -513,7 +499,6 @@ type TemplateShort struct {
 	xxx_hidden_UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
 	xxx_hidden_DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
 	xxx_hidden_Category        *category.Category     `protobuf:"bytes,5,opt,name=category,proto3"`
-	xxx_hidden_Weight          uint32                 `protobuf:"varint,6,opt,name=weight,proto3"`
 	xxx_hidden_Title           string                 `protobuf:"bytes,7,opt,name=title,proto3"`
 	xxx_hidden_Description     string                 `protobuf:"bytes,8,opt,name=description,proto3"`
 	xxx_hidden_Color           *string                `protobuf:"bytes,9,opt,name=color,proto3,oneof"`
@@ -586,13 +571,6 @@ func (x *TemplateShort) GetCategory() *category.Category {
 		return x.xxx_hidden_Category
 	}
 	return nil
-}
-
-func (x *TemplateShort) GetWeight() uint32 {
-	if x != nil {
-		return x.xxx_hidden_Weight
-	}
-	return 0
 }
 
 func (x *TemplateShort) GetTitle() string {
@@ -680,10 +658,6 @@ func (x *TemplateShort) SetCategory(v *category.Category) {
 	x.xxx_hidden_Category = v
 }
 
-func (x *TemplateShort) SetWeight(v uint32) {
-	x.xxx_hidden_Weight = v
-}
-
 func (x *TemplateShort) SetTitle(v string) {
 	x.xxx_hidden_Title = v
 }
@@ -694,12 +668,12 @@ func (x *TemplateShort) SetDescription(v string) {
 
 func (x *TemplateShort) SetColor(v string) {
 	x.xxx_hidden_Color = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 13)
 }
 
 func (x *TemplateShort) SetIcon(v string) {
 	x.xxx_hidden_Icon = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 13)
 }
 
 func (x *TemplateShort) SetSchema(v *TemplateSchema) {
@@ -712,7 +686,7 @@ func (x *TemplateShort) SetCreatorJob(v string) {
 
 func (x *TemplateShort) SetCreatorJobLabel(v string) {
 	x.xxx_hidden_CreatorJobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 13)
 }
 
 func (x *TemplateShort) SetWorkflow(v *workflow.Workflow) {
@@ -751,14 +725,14 @@ func (x *TemplateShort) HasColor() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
 }
 
 func (x *TemplateShort) HasIcon() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *TemplateShort) HasSchema() bool {
@@ -772,7 +746,7 @@ func (x *TemplateShort) HasCreatorJobLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 12)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
 }
 
 func (x *TemplateShort) HasWorkflow() bool {
@@ -799,12 +773,12 @@ func (x *TemplateShort) ClearCategory() {
 }
 
 func (x *TemplateShort) ClearColor() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
 	x.xxx_hidden_Color = nil
 }
 
 func (x *TemplateShort) ClearIcon() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
 	x.xxx_hidden_Icon = nil
 }
 
@@ -813,7 +787,7 @@ func (x *TemplateShort) ClearSchema() {
 }
 
 func (x *TemplateShort) ClearCreatorJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 12)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
 	x.xxx_hidden_CreatorJobLabel = nil
 }
 
@@ -829,7 +803,6 @@ type TemplateShort_builder struct {
 	UpdatedAt       *timestamp.Timestamp
 	DeletedAt       *timestamp.Timestamp
 	Category        *category.Category
-	Weight          uint32
 	Title           string
 	Description     string
 	Color           *string
@@ -849,21 +822,20 @@ func (b0 TemplateShort_builder) Build() *TemplateShort {
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	x.xxx_hidden_DeletedAt = b.DeletedAt
 	x.xxx_hidden_Category = b.Category
-	x.xxx_hidden_Weight = b.Weight
 	x.xxx_hidden_Title = b.Title
 	x.xxx_hidden_Description = b.Description
 	if b.Color != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 13)
 		x.xxx_hidden_Color = b.Color
 	}
 	if b.Icon != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 13)
 		x.xxx_hidden_Icon = b.Icon
 	}
 	x.xxx_hidden_Schema = b.Schema
 	x.xxx_hidden_CreatorJob = b.CreatorJob
 	if b.CreatorJobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 13)
 		x.xxx_hidden_CreatorJobLabel = b.CreatorJobLabel
 	}
 	x.xxx_hidden_Workflow = b.Workflow
@@ -1756,7 +1728,7 @@ var File_resources_documents_templates_templates_proto protoreflect.FileDescript
 
 const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\n" +
-	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xec\t\n" +
+	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xda\t\n" +
 	"\bTemplate\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -1766,8 +1738,7 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12Y\n" +
-	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
-	"\x06weight\x18\x06 \x01(\rR\x06weight\x12\x1c\n" +
+	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x1c\n" +
 	"\x05title\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
 	"\vdescription\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
 	"\x05color\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x05color\x88\x01\x01\x12!\n" +
@@ -1792,7 +1763,7 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
 	"\t_workflowB\v\n" +
-	"\t_approval\"\xd9\x06\n" +
+	"\t_approvalJ\x04\b\x06\x10\a\"\xc7\x06\n" +
 	"\rTemplateShort\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -1802,8 +1773,7 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12Y\n" +
-	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
-	"\x06weight\x18\x06 \x01(\rR\x06weight\x12\x1c\n" +
+	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x1c\n" +
 	"\x05title\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
 	"\vdescription\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
 	"\x05color\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x05color\x88\x01\x01\x12!\n" +
@@ -1820,7 +1790,7 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\x06_colorB\a\n" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
-	"\t_workflow\"q\n" +
+	"\t_workflowJ\x04\b\x06\x10\a\"q\n" +
 	"\x0eTemplateSchema\x12W\n" +
 	"\frequirements\x18\x01 \x01(\v23.resources.documents.templates.TemplateRequirementsR\frequirements:\x06\xe2\xf3\x18\x02\b\x01\"\x9e\x02\n" +
 	"\x14TemplateRequirements\x12M\n" +

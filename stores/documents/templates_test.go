@@ -24,7 +24,7 @@ func TestStoreListTemplates(t *testing.T) {
 
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT template_short.id AS "template_short.id"`) +
 		`(?s).*` + regexp.QuoteMeta(`FROM fivenet_documents_templates AS template_short LEFT JOIN fivenet_documents_categories AS category ON (category.id = template_short.category_id)`) +
-		`(?s).*` + regexp.QuoteMeta(`WHERE template_short.creator_job = ? ORDER BY template_short.weight DESC, template_short.id ASC;`)).
+		`(?s).*` + regexp.QuoteMeta(`WHERE template_short.creator_job = ? ORDER BY template_short.sort_rank ASC, template_short.id ASC;`)).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 	templates, err := store.ListTemplates(t.Context(), false, &userinfo.UserInfo{Superuser: true})
@@ -46,7 +46,7 @@ func TestStoreListTemplatesUsesAclBranchesForNonSuperuser(t *testing.T) {
 
 	mock.ExpectQuery(`(?s).*fivenet_documents_templates_access.*` +
 		regexp.QuoteMeta(`SELECT template_short.id AS "template_short.id"`) +
-		`.*ORDER BY template_short.weight DESC, template_short.id ASC;`).
+		`.*ORDER BY template_short.sort_rank ASC, template_short.id ASC;`).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 	templates, err := store.ListTemplates(
@@ -97,7 +97,7 @@ func TestStoreTemplateWrites(t *testing.T) {
 
 	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_documents_templates`)).
 		WillReturnResult(sqlmock.NewResult(7, 1))
-	_, err = store.CreateTemplate(t.Context(), db, tmpl, "doj", nil)
+	_, err = store.CreateTemplate(t.Context(), db, tmpl, "doj", nil, "000000001000")
 	require.NoError(t, err)
 
 	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_documents_templates SET`)).

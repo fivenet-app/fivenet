@@ -684,6 +684,168 @@ func (b0 DeleteTemplateResponse_builder) Build() *DeleteTemplateResponse {
 	return m0
 }
 
+type MoveTemplateRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_TemplateId  int64                  `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3"`
+	xxx_hidden_BeforeId    int64                  `protobuf:"varint,2,opt,name=before_id,json=beforeId,proto3,oneof"`
+	xxx_hidden_AfterId     int64                  `protobuf:"varint,3,opt,name=after_id,json=afterId,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *MoveTemplateRequest) Reset() {
+	*x = MoveTemplateRequest{}
+	mi := &file_services_documents_templates_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MoveTemplateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MoveTemplateRequest) ProtoMessage() {}
+
+func (x *MoveTemplateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_documents_templates_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *MoveTemplateRequest) GetTemplateId() int64 {
+	if x != nil {
+		return x.xxx_hidden_TemplateId
+	}
+	return 0
+}
+
+func (x *MoveTemplateRequest) GetBeforeId() int64 {
+	if x != nil {
+		return x.xxx_hidden_BeforeId
+	}
+	return 0
+}
+
+func (x *MoveTemplateRequest) GetAfterId() int64 {
+	if x != nil {
+		return x.xxx_hidden_AfterId
+	}
+	return 0
+}
+
+func (x *MoveTemplateRequest) SetTemplateId(v int64) {
+	x.xxx_hidden_TemplateId = v
+}
+
+func (x *MoveTemplateRequest) SetBeforeId(v int64) {
+	x.xxx_hidden_BeforeId = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+}
+
+func (x *MoveTemplateRequest) SetAfterId(v int64) {
+	x.xxx_hidden_AfterId = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *MoveTemplateRequest) HasBeforeId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *MoveTemplateRequest) HasAfterId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *MoveTemplateRequest) ClearBeforeId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_BeforeId = 0
+}
+
+func (x *MoveTemplateRequest) ClearAfterId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_AfterId = 0
+}
+
+type MoveTemplateRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	TemplateId int64
+	BeforeId   *int64
+	AfterId    *int64
+}
+
+func (b0 MoveTemplateRequest_builder) Build() *MoveTemplateRequest {
+	m0 := &MoveTemplateRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_TemplateId = b.TemplateId
+	if b.BeforeId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_BeforeId = *b.BeforeId
+	}
+	if b.AfterId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_AfterId = *b.AfterId
+	}
+	return m0
+}
+
+type MoveTemplateResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MoveTemplateResponse) Reset() {
+	*x = MoveTemplateResponse{}
+	mi := &file_services_documents_templates_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MoveTemplateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MoveTemplateResponse) ProtoMessage() {}
+
+func (x *MoveTemplateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_documents_templates_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type MoveTemplateResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 MoveTemplateResponse_builder) Build() *MoveTemplateResponse {
+	m0 := &MoveTemplateResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 var File_services_documents_templates_proto protoreflect.FileDescriptor
 
 const file_services_documents_templates_proto_rawDesc = "" +
@@ -712,15 +874,25 @@ const file_services_documents_templates_proto_rawDesc = "" +
 	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"'\n" +
 	"\x15DeleteTemplateRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
-	"\x16DeleteTemplateResponse2\xf3\x04\n" +
+	"\x16DeleteTemplateResponse\"\x93\x01\n" +
+	"\x13MoveTemplateRequest\x12\x1f\n" +
+	"\vtemplate_id\x18\x01 \x01(\x03R\n" +
+	"templateId\x12 \n" +
+	"\tbefore_id\x18\x02 \x01(\x03H\x00R\bbeforeId\x88\x01\x01\x12\x1e\n" +
+	"\bafter_id\x18\x03 \x01(\x03H\x01R\aafterId\x88\x01\x01B\f\n" +
+	"\n" +
+	"_before_idB\v\n" +
+	"\t_after_id\"\x16\n" +
+	"\x14MoveTemplateResponse2\xde\x05\n" +
 	"\x10TemplatesService\x12l\n" +
 	"\rListTemplates\x12(.services.documents.ListTemplatesRequest\x1a).services.documents.ListTemplatesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
 	"\vGetTemplate\x12&.services.documents.GetTemplateRequest\x1a'.services.documents.GetTemplateResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rListTemplates\x12o\n" +
 	"\x0eCreateTemplate\x12).services.documents.CreateTemplateRequest\x1a*.services.documents.CreateTemplateResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x7f\n" +
 	"\x0eUpdateTemplate\x12).services.documents.UpdateTemplateRequest\x1a*.services.documents.UpdateTemplateResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eCreateTemplate\x12o\n" +
-	"\x0eDeleteTemplate\x12).services.documents.DeleteTemplateRequest\x1a*.services.documents.DeleteTemplateResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x17\xea\xf3\x18\x13\b7\x12\x0fi-mdi-file-codeBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\x0eDeleteTemplate\x12).services.documents.DeleteTemplateRequest\x1a*.services.documents.DeleteTemplateResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12i\n" +
+	"\fMoveTemplate\x12'.services.documents.MoveTemplateRequest\x1a(.services.documents.MoveTemplateResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x17\xea\xf3\x18\x13\b7\x12\x0fi-mdi-file-codeBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
-var file_services_documents_templates_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_services_documents_templates_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_services_documents_templates_proto_goTypes = []any{
 	(*ListTemplatesRequest)(nil),    // 0: services.documents.ListTemplatesRequest
 	(*ListTemplatesResponse)(nil),   // 1: services.documents.ListTemplatesResponse
@@ -732,29 +904,33 @@ var file_services_documents_templates_proto_goTypes = []any{
 	(*UpdateTemplateResponse)(nil),  // 7: services.documents.UpdateTemplateResponse
 	(*DeleteTemplateRequest)(nil),   // 8: services.documents.DeleteTemplateRequest
 	(*DeleteTemplateResponse)(nil),  // 9: services.documents.DeleteTemplateResponse
-	(*templates.TemplateShort)(nil), // 10: resources.documents.templates.TemplateShort
-	(*templates.TemplateData)(nil),  // 11: resources.documents.templates.TemplateData
-	(*templates.Template)(nil),      // 12: resources.documents.templates.Template
+	(*MoveTemplateRequest)(nil),     // 10: services.documents.MoveTemplateRequest
+	(*MoveTemplateResponse)(nil),    // 11: services.documents.MoveTemplateResponse
+	(*templates.TemplateShort)(nil), // 12: resources.documents.templates.TemplateShort
+	(*templates.TemplateData)(nil),  // 13: resources.documents.templates.TemplateData
+	(*templates.Template)(nil),      // 14: resources.documents.templates.Template
 }
 var file_services_documents_templates_proto_depIdxs = []int32{
-	10, // 0: services.documents.ListTemplatesResponse.templates:type_name -> resources.documents.templates.TemplateShort
-	11, // 1: services.documents.GetTemplateRequest.data:type_name -> resources.documents.templates.TemplateData
-	12, // 2: services.documents.GetTemplateResponse.template:type_name -> resources.documents.templates.Template
-	12, // 3: services.documents.CreateTemplateRequest.template:type_name -> resources.documents.templates.Template
-	12, // 4: services.documents.UpdateTemplateRequest.template:type_name -> resources.documents.templates.Template
-	12, // 5: services.documents.UpdateTemplateResponse.template:type_name -> resources.documents.templates.Template
+	12, // 0: services.documents.ListTemplatesResponse.templates:type_name -> resources.documents.templates.TemplateShort
+	13, // 1: services.documents.GetTemplateRequest.data:type_name -> resources.documents.templates.TemplateData
+	14, // 2: services.documents.GetTemplateResponse.template:type_name -> resources.documents.templates.Template
+	14, // 3: services.documents.CreateTemplateRequest.template:type_name -> resources.documents.templates.Template
+	14, // 4: services.documents.UpdateTemplateRequest.template:type_name -> resources.documents.templates.Template
+	14, // 5: services.documents.UpdateTemplateResponse.template:type_name -> resources.documents.templates.Template
 	0,  // 6: services.documents.TemplatesService.ListTemplates:input_type -> services.documents.ListTemplatesRequest
 	2,  // 7: services.documents.TemplatesService.GetTemplate:input_type -> services.documents.GetTemplateRequest
 	4,  // 8: services.documents.TemplatesService.CreateTemplate:input_type -> services.documents.CreateTemplateRequest
 	6,  // 9: services.documents.TemplatesService.UpdateTemplate:input_type -> services.documents.UpdateTemplateRequest
 	8,  // 10: services.documents.TemplatesService.DeleteTemplate:input_type -> services.documents.DeleteTemplateRequest
-	1,  // 11: services.documents.TemplatesService.ListTemplates:output_type -> services.documents.ListTemplatesResponse
-	3,  // 12: services.documents.TemplatesService.GetTemplate:output_type -> services.documents.GetTemplateResponse
-	5,  // 13: services.documents.TemplatesService.CreateTemplate:output_type -> services.documents.CreateTemplateResponse
-	7,  // 14: services.documents.TemplatesService.UpdateTemplate:output_type -> services.documents.UpdateTemplateResponse
-	9,  // 15: services.documents.TemplatesService.DeleteTemplate:output_type -> services.documents.DeleteTemplateResponse
-	11, // [11:16] is the sub-list for method output_type
-	6,  // [6:11] is the sub-list for method input_type
+	10, // 11: services.documents.TemplatesService.MoveTemplate:input_type -> services.documents.MoveTemplateRequest
+	1,  // 12: services.documents.TemplatesService.ListTemplates:output_type -> services.documents.ListTemplatesResponse
+	3,  // 13: services.documents.TemplatesService.GetTemplate:output_type -> services.documents.GetTemplateResponse
+	5,  // 14: services.documents.TemplatesService.CreateTemplate:output_type -> services.documents.CreateTemplateResponse
+	7,  // 15: services.documents.TemplatesService.UpdateTemplate:output_type -> services.documents.UpdateTemplateResponse
+	9,  // 16: services.documents.TemplatesService.DeleteTemplate:output_type -> services.documents.DeleteTemplateResponse
+	11, // 17: services.documents.TemplatesService.MoveTemplate:output_type -> services.documents.MoveTemplateResponse
+	12, // [12:18] is the sub-list for method output_type
+	6,  // [6:12] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
 	6,  // [6:6] is the sub-list for extension extendee
 	0,  // [0:6] is the sub-list for field type_name
@@ -766,13 +942,14 @@ func file_services_documents_templates_proto_init() {
 		return
 	}
 	file_services_documents_templates_proto_msgTypes[2].OneofWrappers = []any{}
+	file_services_documents_templates_proto_msgTypes[10].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_documents_templates_proto_rawDesc), len(file_services_documents_templates_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

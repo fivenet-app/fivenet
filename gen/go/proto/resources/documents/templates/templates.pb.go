@@ -41,7 +41,6 @@ type Template struct {
 	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	Category        *category.Category     `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
-	Weight          uint32                 `protobuf:"varint,6,opt,name=weight,proto3" json:"weight,omitempty"`
 	Title           string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
 	Description     string                 `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
 	Color           *string                `protobuf:"bytes,9,opt,name=color,proto3,oneof" json:"color,omitempty"`
@@ -118,13 +117,6 @@ func (x *Template) GetCategory() *category.Category {
 		return x.Category
 	}
 	return nil
-}
-
-func (x *Template) GetWeight() uint32 {
-	if x != nil {
-		return x.Weight
-	}
-	return 0
 }
 
 func (x *Template) GetTitle() string {
@@ -243,10 +235,6 @@ func (x *Template) SetDeletedAt(v *timestamp.Timestamp) {
 
 func (x *Template) SetCategory(v *category.Category) {
 	x.Category = v
-}
-
-func (x *Template) SetWeight(v uint32) {
-	x.Weight = v
 }
 
 func (x *Template) SetTitle(v string) {
@@ -434,7 +422,6 @@ type Template_builder struct {
 	UpdatedAt       *timestamp.Timestamp
 	DeletedAt       *timestamp.Timestamp
 	Category        *category.Category
-	Weight          uint32
 	Title           string
 	Description     string
 	Color           *string
@@ -460,7 +447,6 @@ func (b0 Template_builder) Build() *Template {
 	x.UpdatedAt = b.UpdatedAt
 	x.DeletedAt = b.DeletedAt
 	x.Category = b.Category
-	x.Weight = b.Weight
 	x.Title = b.Title
 	x.Description = b.Description
 	x.Color = b.Color
@@ -485,7 +471,6 @@ type TemplateShort struct {
 	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	Category        *category.Category     `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
-	Weight          uint32                 `protobuf:"varint,6,opt,name=weight,proto3" json:"weight,omitempty"`
 	Title           string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
 	Description     string                 `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
 	Color           *string                `protobuf:"bytes,9,opt,name=color,proto3,oneof" json:"color,omitempty"`
@@ -556,13 +541,6 @@ func (x *TemplateShort) GetCategory() *category.Category {
 		return x.Category
 	}
 	return nil
-}
-
-func (x *TemplateShort) GetWeight() uint32 {
-	if x != nil {
-		return x.Weight
-	}
-	return 0
 }
 
 func (x *TemplateShort) GetTitle() string {
@@ -639,10 +617,6 @@ func (x *TemplateShort) SetDeletedAt(v *timestamp.Timestamp) {
 
 func (x *TemplateShort) SetCategory(v *category.Category) {
 	x.Category = v
-}
-
-func (x *TemplateShort) SetWeight(v uint32) {
-	x.Weight = v
 }
 
 func (x *TemplateShort) SetTitle(v string) {
@@ -784,7 +758,6 @@ type TemplateShort_builder struct {
 	UpdatedAt       *timestamp.Timestamp
 	DeletedAt       *timestamp.Timestamp
 	Category        *category.Category
-	Weight          uint32
 	Title           string
 	Description     string
 	Color           *string
@@ -804,7 +777,6 @@ func (b0 TemplateShort_builder) Build() *TemplateShort {
 	x.UpdatedAt = b.UpdatedAt
 	x.DeletedAt = b.DeletedAt
 	x.Category = b.Category
-	x.Weight = b.Weight
 	x.Title = b.Title
 	x.Description = b.Description
 	x.Color = b.Color
@@ -1652,7 +1624,7 @@ var File_resources_documents_templates_templates_proto protoreflect.FileDescript
 
 const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\n" +
-	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xec\t\n" +
+	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xda\t\n" +
 	"\bTemplate\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -1662,8 +1634,7 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12Y\n" +
-	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
-	"\x06weight\x18\x06 \x01(\rR\x06weight\x12\x1c\n" +
+	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x1c\n" +
 	"\x05title\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
 	"\vdescription\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
 	"\x05color\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x05color\x88\x01\x01\x12!\n" +
@@ -1688,7 +1659,7 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
 	"\t_workflowB\v\n" +
-	"\t_approval\"\xd9\x06\n" +
+	"\t_approvalJ\x04\b\x06\x10\a\"\xc7\x06\n" +
 	"\rTemplateShort\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -1698,8 +1669,7 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12Y\n" +
-	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x16\n" +
-	"\x06weight\x18\x06 \x01(\rR\x06weight\x12\x1c\n" +
+	"\bcategory\x18\x05 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12\x1c\n" +
 	"\x05title\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12(\n" +
 	"\vdescription\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
 	"\x05color\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x05color\x88\x01\x01\x12!\n" +
@@ -1716,7 +1686,7 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\x06_colorB\a\n" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
-	"\t_workflow\"q\n" +
+	"\t_workflowJ\x04\b\x06\x10\a\"q\n" +
 	"\x0eTemplateSchema\x12W\n" +
 	"\frequirements\x18\x01 \x01(\v23.resources.documents.templates.TemplateRequirementsR\frequirements:\x06\xe2\xf3\x18\x02\b\x01\"\x9e\x02\n" +
 	"\x14TemplateRequirements\x12M\n" +

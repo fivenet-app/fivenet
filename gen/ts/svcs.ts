@@ -366,6 +366,7 @@ export const grpcMethods = [
 	'documents.TemplatesService/CreateTemplate',
 	'documents.TemplatesService/UpdateTemplate',
 	'documents.TemplatesService/DeleteTemplate',
+	'documents.TemplatesService/MoveTemplate',
 	'filestore.FilestoreService/Upload',
 	'filestore.FilestoreService/ListFiles',
 	'filestore.FilestoreService/DeleteFile',

@@ -31,9 +31,20 @@ async function selected(t: TemplateShort | undefined): Promise<void> {
 const templatesListRef = useTemplateRef('templatesListRef');
 
 const inputRef = useTemplateRef('inputRef');
+const sortMode = ref(false);
+
+watch(sortMode, (enabled) => {
+    if (enabled) {
+        query.title = undefined;
+    }
+});
 
 defineShortcuts({
-    '/': () => inputRef.value?.inputRef?.focus(),
+    '/': () => {
+        if (!sortMode.value) {
+            inputRef.value?.inputRef?.focus();
+        }
+    },
 });
 </script>
 
@@ -47,6 +58,15 @@ defineShortcuts({
 
                 <template #right>
                     <PartialsBackButton to="/documents" />
+
+                    <UTooltip v-if="can('documents.TemplatesService/MoveTemplate').value" :text="$t('common.change_order')">
+                        <UButton
+                            color="neutral"
+                            variant="outline"
+                            :icon="sortMode ? 'i-mdi-check' : 'i-mdi-sort'"
+                            @click="sortMode = !sortMode"
+                        />
+                    </UTooltip>
 
                     <UButton
                         v-if="can('TODOService/TODOMethod').value"
@@ -69,7 +89,7 @@ defineShortcuts({
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar>
+            <UDashboardToolbar v-if="!sortMode">
                 <UForm ref="formRef" class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query">
                     <UFormField class="flex-1" name="title" :label="$t('common.search')">
                         <UInput
@@ -91,7 +111,14 @@ defineShortcuts({
         </template>
 
         <template #body>
-            <List ref="templatesListRef" link :search-title="query.title" @selected="selected($event)" />
+            <List
+                ref="templatesListRef"
+                link
+                reorderable
+                :sort-mode="sortMode"
+                :search-title="query.title"
+                @selected="selected($event)"
+            />
         </template>
 
         <template #footer>

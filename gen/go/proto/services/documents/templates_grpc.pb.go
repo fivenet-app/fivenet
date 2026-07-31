@@ -24,6 +24,7 @@ const (
 	TemplatesService_CreateTemplate_FullMethodName = "/services.documents.TemplatesService/CreateTemplate"
 	TemplatesService_UpdateTemplate_FullMethodName = "/services.documents.TemplatesService/UpdateTemplate"
 	TemplatesService_DeleteTemplate_FullMethodName = "/services.documents.TemplatesService/DeleteTemplate"
+	TemplatesService_MoveTemplate_FullMethodName   = "/services.documents.TemplatesService/MoveTemplate"
 )
 
 // TemplatesServiceClient is the client API for TemplatesService service.
@@ -35,6 +36,7 @@ type TemplatesServiceClient interface {
 	CreateTemplate(ctx context.Context, in *CreateTemplateRequest, opts ...grpc.CallOption) (*CreateTemplateResponse, error)
 	UpdateTemplate(ctx context.Context, in *UpdateTemplateRequest, opts ...grpc.CallOption) (*UpdateTemplateResponse, error)
 	DeleteTemplate(ctx context.Context, in *DeleteTemplateRequest, opts ...grpc.CallOption) (*DeleteTemplateResponse, error)
+	MoveTemplate(ctx context.Context, in *MoveTemplateRequest, opts ...grpc.CallOption) (*MoveTemplateResponse, error)
 }
 
 type templatesServiceClient struct {
@@ -95,6 +97,16 @@ func (c *templatesServiceClient) DeleteTemplate(ctx context.Context, in *DeleteT
 	return out, nil
 }
 
+func (c *templatesServiceClient) MoveTemplate(ctx context.Context, in *MoveTemplateRequest, opts ...grpc.CallOption) (*MoveTemplateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MoveTemplateResponse)
+	err := c.cc.Invoke(ctx, TemplatesService_MoveTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TemplatesServiceServer is the server API for TemplatesService service.
 // All implementations must embed UnimplementedTemplatesServiceServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type TemplatesServiceServer interface {
 	CreateTemplate(context.Context, *CreateTemplateRequest) (*CreateTemplateResponse, error)
 	UpdateTemplate(context.Context, *UpdateTemplateRequest) (*UpdateTemplateResponse, error)
 	DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error)
+	MoveTemplate(context.Context, *MoveTemplateRequest) (*MoveTemplateResponse, error)
 	mustEmbedUnimplementedTemplatesServiceServer()
 }
 
@@ -128,6 +141,9 @@ func (UnimplementedTemplatesServiceServer) UpdateTemplate(context.Context, *Upda
 }
 func (UnimplementedTemplatesServiceServer) DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTemplate not implemented")
+}
+func (UnimplementedTemplatesServiceServer) MoveTemplate(context.Context, *MoveTemplateRequest) (*MoveTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MoveTemplate not implemented")
 }
 func (UnimplementedTemplatesServiceServer) mustEmbedUnimplementedTemplatesServiceServer() {}
 func (UnimplementedTemplatesServiceServer) testEmbeddedByValue()                          {}
@@ -240,6 +256,24 @@ func _TemplatesService_DeleteTemplate_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TemplatesService_MoveTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MoveTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplatesServiceServer).MoveTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplatesService_MoveTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplatesServiceServer).MoveTemplate(ctx, req.(*MoveTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TemplatesService_ServiceDesc is the grpc.ServiceDesc for TemplatesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +300,10 @@ var TemplatesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteTemplate",
 			Handler:    _TemplatesService_DeleteTemplate_Handler,
+		},
+		{
+			MethodName: "MoveTemplate",
+			Handler:    _TemplatesService_MoveTemplate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -47,10 +47,6 @@ export interface Template {
      */
     category?: Category;
     /**
-     * @generated from protobuf field: uint32 weight = 6
-     */
-    weight: number;
-    /**
      * @generated from protobuf field: string title = 7
      */
     title: string;
@@ -131,10 +127,6 @@ export interface TemplateShort {
      * @generated from protobuf field: resources.documents.category.Category category = 5
      */
     category?: Category;
-    /**
-     * @generated from protobuf field: uint32 weight = 6
-     */
-    weight: number;
     /**
      * @generated from protobuf field: string title = 7
      */
@@ -330,7 +322,6 @@ class Template$Type extends MessageType<Template> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
-            { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 4294967295 } } } },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 9, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
@@ -350,7 +341,6 @@ class Template$Type extends MessageType<Template> {
     create(value?: PartialMessage<Template>): Template {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
-        message.weight = 0;
         message.title = "";
         message.description = "";
         message.contentTitle = "";
@@ -381,9 +371,6 @@ class Template$Type extends MessageType<Template> {
                     break;
                 case /* resources.documents.category.Category category */ 5:
                     message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
-                    break;
-                case /* uint32 weight */ 6:
-                    message.weight = reader.uint32();
                     break;
                 case /* string title */ 7:
                     message.title = reader.string();
@@ -454,9 +441,6 @@ class Template$Type extends MessageType<Template> {
         /* resources.documents.category.Category category = 5; */
         if (message.category)
             Category.internalBinaryWrite(message.category, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* uint32 weight = 6; */
-        if (message.weight !== 0)
-            writer.tag(6, WireType.Varint).uint32(message.weight);
         /* string title = 7; */
         if (message.title !== "")
             writer.tag(7, WireType.LengthDelimited).string(message.title);
@@ -518,7 +502,6 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
-            { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 4294967295 } } } },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 9, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
@@ -532,7 +515,6 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
     create(value?: PartialMessage<TemplateShort>): TemplateShort {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
-        message.weight = 0;
         message.title = "";
         message.description = "";
         message.creatorJob = "";
@@ -559,9 +541,6 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
                     break;
                 case /* resources.documents.category.Category category */ 5:
                     message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
-                    break;
-                case /* uint32 weight */ 6:
-                    message.weight = reader.uint32();
                     break;
                 case /* string title */ 7:
                     message.title = reader.string();
@@ -614,9 +593,6 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
         /* resources.documents.category.Category category = 5; */
         if (message.category)
             Category.internalBinaryWrite(message.category, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* uint32 weight = 6; */
-        if (message.weight !== 0)
-            writer.tag(6, WireType.Varint).uint32(message.weight);
         /* string title = 7; */
         if (message.title !== "")
             writer.tag(7, WireType.LengthDelimited).string(message.title);

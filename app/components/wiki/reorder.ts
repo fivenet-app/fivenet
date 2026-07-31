@@ -1,3 +1,4 @@
+import { resolveNeighborMovePayload } from '~/utils/reorder';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 import { sameWikiMoveGroup } from './helpers';
 
@@ -45,18 +46,12 @@ export function resolveWikiPageMovePayload(
     oldIndex: number | undefined,
     newIndex: number | undefined,
 ): WikiPageMovePayload | undefined {
-    if (oldIndex === undefined || newIndex === undefined || oldIndex === newIndex) return undefined;
+    const payload = resolveNeighborMovePayload(siblings, oldIndex, newIndex);
+    if (!payload) return undefined;
 
-    const page = siblings[newIndex];
-    if (!page) return undefined;
-
-    if (newIndex < oldIndex) {
-        const beforeId = siblings[newIndex + 1]?.id;
-        return beforeId ? { pageId: page.id, beforeId } : undefined;
-    }
-
-    const afterId = siblings[newIndex - 1]?.id;
-    if (!afterId) return undefined;
-
-    return { pageId: page.id, afterId };
+    return {
+        pageId: payload.id,
+        beforeId: payload.beforeId,
+        afterId: payload.afterId,
+    };
 }

@@ -24,7 +24,6 @@ func (s *Store) ListTemplates(
 
 	columns := []mysql.Projection{
 		tTemplates.ID,
-		tTemplates.Weight,
 		tCategory.ID,
 		tCategory.CreatedAt,
 		tCategory.Name,
@@ -53,7 +52,7 @@ func (s *Store) ListTemplates(
 		)
 
 	orderBys := []mysql.OrderByClause{
-		tTemplates.Weight.DESC(),
+		tTemplates.SortRank.ASC(),
 		tTemplates.ID.ASC(),
 	}
 
@@ -124,7 +123,6 @@ func (s *Store) GetTemplate(
 	stmt := tDTemplates.
 		SELECT(
 			tDTemplates.ID,
-			tDTemplates.Weight,
 			tDTemplates.CreatedAt,
 			tDTemplates.UpdatedAt,
 			tDCategory.ID,
@@ -175,11 +173,12 @@ func (s *Store) CreateTemplate(
 	tmpl *documentstemplates.Template,
 	creatorJob string,
 	categoryID *int64,
+	sortRank string,
 ) (int64, error) {
 	tDTemplates := table.FivenetDocumentsTemplates
 	stmt := tDTemplates.
 		INSERT(
-			tDTemplates.Weight,
+			tDTemplates.SortRank,
 			tDTemplates.CategoryID,
 			tDTemplates.Title,
 			tDTemplates.Description,
@@ -195,7 +194,7 @@ func (s *Store) CreateTemplate(
 			tDTemplates.CreatorJob,
 		).
 		VALUES(
-			tmpl.GetWeight(),
+			sortRank,
 			categoryID,
 			tmpl.GetTitle(),
 			tmpl.GetDescription(),
@@ -233,7 +232,6 @@ func (s *Store) UpdateTemplate(
 	tDTemplates := table.FivenetDocumentsTemplates
 	stmt := tDTemplates.
 		UPDATE(
-			tDTemplates.Weight,
 			tDTemplates.CategoryID,
 			tDTemplates.Title,
 			tDTemplates.Description,
@@ -248,7 +246,6 @@ func (s *Store) UpdateTemplate(
 			tDTemplates.Approval,
 		).
 		SET(
-			tmpl.GetWeight(),
 			categoryID,
 			tmpl.GetTitle(),
 			tmpl.GetDescription(),
