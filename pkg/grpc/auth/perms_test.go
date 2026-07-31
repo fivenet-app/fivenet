@@ -4,14 +4,17 @@ import (
 	"context"
 	"testing"
 
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/permsstub"
-	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
 	pkgperms "github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func TestGRPCPermissionUnaryFuncSplitsConfigAdminAndJobAdmin(t *testing.T) {
@@ -41,7 +44,12 @@ func TestGRPCPermissionUnaryFuncSplitsConfigAdminAndJobAdmin(t *testing.T) {
 			ctx,
 			&grpc.UnaryServerInfo{FullMethod: "/services.settings.ConfigService/UpdateAppConfig"},
 		)
-		require.ErrorIs(t, err, errorsgrpcauth.ErrPermissionDenied)
+		requirePermissionDeniedFor(
+			t,
+			err,
+			"services.settings.ConfigService",
+			"UpdateAppConfig",
+		)
 		assert.Nil(t, out)
 	})
 
@@ -111,4 +119,22 @@ func TestGRPCPermissionUnaryFuncAllowsDocumentReferenceAndRelationWritesWithList
 			assert.NotNil(t, out)
 		})
 	}
+}
+
+func requirePermissionDeniedFor(t *testing.T, err error, service string, method string) {
+	t.Helper()
+
+	require.Error(t, err)
+	require.Equal(t, codes.PermissionDenied, status.Code(err))
+
+	errPayload := &common.Error{}
+	require.NoError(
+		t,
+		protoutils.UnmarshalPartialJSON([]byte(status.Convert(err).Message()), errPayload),
+	)
+
+	params := errPayload.GetContent().GetParameters()
+	assert.Equal(t, "errors.pkg-auth.ErrPermissionDenied.content", errPayload.GetContent().GetKey())
+	assert.Equal(t, service, params["service"])
+	assert.Equal(t, method, params["method"])
 }

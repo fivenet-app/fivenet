@@ -48,17 +48,17 @@ func (g *GRPCPerm) checkPermission(
 ) (context.Context, error) {
 	// Check if the method is from a service otherwise the request must be invalid
 	if !strings.HasPrefix(svcAndMethod, "/services.") {
-		return nil, errorsgrpcauth.ErrPermissionDenied
+		return nil, permissionDeniedErr(svcAndMethod)
 	}
 
 	userInfo, ok := FromContext(ctx)
 	if !ok {
-		return nil, errorsgrpcauth.ErrPermissionDenied
+		return nil, permissionDeniedErr(svcAndMethod)
 	}
 
 	perm, found := strings.CutPrefix(svcAndMethod, "/services.")
 	if !found {
-		return nil, errorsgrpcauth.ErrPermissionDenied
+		return nil, permissionDeniedErr(svcAndMethod)
 	}
 
 	if ps, ok := goproto.PermsRemap[perm]; ok {
@@ -71,7 +71,7 @@ func (g *GRPCPerm) checkPermission(
 			}
 		}
 
-		return nil, errorsgrpcauth.ErrPermissionDenied
+		return nil, permissionDeniedErr(svcAndMethod)
 	}
 
 	// Keep the fast path for non-remapped RPCs, but let remapped config-admin gates
@@ -84,5 +84,25 @@ func (g *GRPCPerm) checkPermission(
 		return ctx, nil
 	}
 
-	return nil, errorsgrpcauth.ErrPermissionDenied
+	return nil, permissionDeniedErr(svcAndMethod)
+}
+
+func permissionDeniedErr(fullMethod string) error {
+	service, method := splitFullMethod(fullMethod)
+
+	return errorsgrpcauth.ErrPermissionDenied(map[string]any{
+		"service": service,
+		"method":  method,
+	})
+}
+
+func splitFullMethod(fullMethod string) (string, string) {
+	serviceAndMethod := strings.TrimPrefix(fullMethod, "/")
+
+	service, method, found := strings.Cut(serviceAndMethod, "/")
+	if !found {
+		return serviceAndMethod, ""
+	}
+
+	return service, method
 }

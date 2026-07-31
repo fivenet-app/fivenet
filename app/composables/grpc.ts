@@ -194,6 +194,7 @@ export async function handleGRPCError(err: unknown): Promise<boolean> {
                         query: { redirect: route.query.redirect ?? route.fullPath },
                     });
                 }
+                addCopyActionToNotification(notification, rpcErr, traceId);
                 break;
 
             case 'NOT_FOUND':

@@ -2585,12 +2585,30 @@
     },
     "errors": {
         "pkg-auth": {
-            "ErrNoToken": "\"Authorization\" header must not be empty! Please login again.",
-            "ErrInvalidToken": "Token invalid/ expired!",
-            "ErrCheckToken": "Token check failed!",
-            "ErrUserNoPerms": "No permissions associated with your user!",
-            "ErrNoUserInfo": "Something went wrong, please logout and login again!",
-            "ErrPermissionDenied": "You don't have permission to do that!"
+            "ErrNoToken": {
+                "title": "Login required",
+                "content": "No authorization token was provided. Please log in again."
+            },
+            "ErrInvalidToken": {
+                "title": "Session expired",
+                "content": "Your login token is invalid or expired. Please log in again."
+            },
+            "ErrCheckToken": {
+                "title": "Session check failed",
+                "content": "Your login token could not be verified. Please log in again."
+            },
+            "ErrUserNoPerms": {
+                "title": "No permissions assigned",
+                "content": "Your user has no permissions assigned. Contact an administrator if this is unexpected."
+            },
+            "ErrNoUserInfo": {
+                "title": "User information unavailable",
+                "content": "Your user information could not be loaded. Please log out and log in again."
+            },
+            "ErrPermissionDenied": {
+                "title": "You don't have permission to do that!",
+                "content": "Access denied for {service}/{method}."
+            }
         },
         "auth": {
             "AuthService": {

@@ -452,7 +452,7 @@ onBeforeUnmount(() => (map = undefined));
 
             <slot />
 
-            <HeatmapLayer :show="livemapSettings.showHeatmap" />
+            <HeatmapLayer v-if="canTakeControl" :show="livemapSettings.showHeatmap" />
 
             <LMarker v-if="chooser" ref="chooserRef" :lat-lng="chooser.latlng" :options="{ opacity: 0 }">
                 <LPopup class="min-w-[110px] md:min-w-[200px]" :options="{ closeButton: false }">

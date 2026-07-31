@@ -12,7 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	grpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
-	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
 	pkgperms "github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/golang-jwt/jwt/v5"
@@ -20,7 +19,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx/fxtest"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 func TestGetAppConfigRequiresConfigAdmin(t *testing.T) {
@@ -52,7 +53,7 @@ func TestGetAppConfigRequiresConfigAdmin(t *testing.T) {
 		jobAdminCtx,
 		&grpc.UnaryServerInfo{FullMethod: "/services.settings.ConfigService/GetAppConfig"},
 	)
-	require.ErrorIs(t, err, errorsgrpcauth.ErrPermissionDenied)
+	require.Equal(t, codes.PermissionDenied, status.Code(err))
 	assert.Nil(t, outCtx)
 
 	configAdminCtx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
@@ -201,7 +202,7 @@ func TestConfigAuthFuncOverrideRespectsAdminLevels(t *testing.T) {
 				outCtx,
 				&grpc.UnaryServerInfo{FullMethod: method},
 			)
-			require.ErrorIs(t, err, errorsgrpcauth.ErrPermissionDenied)
+			require.Equal(t, codes.PermissionDenied, status.Code(err))
 			assert.Nil(t, permCtx)
 		}
 	})
