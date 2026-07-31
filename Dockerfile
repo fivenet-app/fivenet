@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.25-labs
+# syntax=docker/dockerfile:1.26-labs
 
 # Version helper, computed once for the whole image build.
 FROM docker.io/library/alpine:3.24.1 AS version
