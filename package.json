@@ -152,7 +152,7 @@
         "nuxt-tiptap-editor": "3.4.0",
         "nuxt-typed-router": "4.0.10",
         "pinia-plugin-persistedstate": "4.7.1",
-        "playwright-core": "1.62.0",
+        "playwright-core": "1.62.1",
         "postcss": "8.5.25",
         "postcss-preset-env": "11.3.2",
         "prettier": "3.9.6",
