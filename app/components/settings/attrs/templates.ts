@@ -109,6 +109,7 @@ const policePermissions = [
     'documents.TemplatesService/CreateTemplate',
     'documents.TemplatesService/DeleteTemplate',
     'documents.TemplatesService/ListTemplates',
+    'documents.TemplatesService/MoveTemplate',
     'jobs.ColleaguesService/GetColleague',
     'jobs.ColleaguesService/ListColleagueActivity',
     'jobs.ColleaguesService/ListColleagues',

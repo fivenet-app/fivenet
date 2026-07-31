@@ -385,6 +385,8 @@ watch(
     },
 );
 
+const canTakeControl = computed(() => can('centrum.CentrumService/TakeControl').value);
+
 defineExpose({ mapResize });
 
 onBeforeUnmount(() => (map = undefined));
@@ -427,7 +429,7 @@ onBeforeUnmount(() => (map = undefined));
             <ZoomControls />
 
             <LayerControls>
-                <div v-if="can('centrum.CentrumService/TakeControl').value">
+                <div v-if="canTakeControl">
                     <div class="mt-1 overflow-y-hidden px-1">
                         <USwitch
                             v-model="livemapSettings.showHeatmap"
