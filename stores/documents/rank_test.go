@@ -48,14 +48,14 @@ func TestStoreInsertTemplateGroupRankUsesGapWhenAvailable(t *testing.T) {
 
 	store := New(db)
 
-	expectedQuery := regexp.QuoteMeta(`FROM fivenet_documents_templates AS template_rank_row`) +
-		`(?s).*` + regexp.QuoteMeta(`template_rank_row.creator_job = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`ORDER BY template_rank_row.sort_rank ASC, template_rank_row.id ASC`) +
+	expectedQuery := regexp.QuoteMeta("FROM fivenet_documents_templates AS `row`") +
+		`(?s).*` + regexp.QuoteMeta("`row`.creator_job = ?") +
+		`(?s).*` + regexp.QuoteMeta("ORDER BY `row`.sort_rank ASC, `row`.id ASC") +
 		`(?s).*` + regexp.QuoteMeta(`FOR UPDATE`)
 
 	mock.ExpectQuery(expectedQuery).
 		WithArgs("doj").
-		WillReturnRows(sqlmock.NewRows([]string{"template_rank_row.id", "template_rank_row.sort_rank"}).
+		WillReturnRows(sqlmock.NewRows([]string{"row.id", "row.sort_rank"}).
 			AddRow(int64(1), "000000001000").
 			AddRow(int64(2), "000000003000"))
 
@@ -75,19 +75,19 @@ func TestStoreInsertTemplateGroupRankRebalancesWhenNoGap(t *testing.T) {
 
 	store := New(db)
 
-	rankQuery := regexp.QuoteMeta(`FROM fivenet_documents_templates AS template_rank_row`) +
-		`(?s).*` + regexp.QuoteMeta(`template_rank_row.creator_job = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`ORDER BY template_rank_row.sort_rank ASC, template_rank_row.id ASC`) +
+	rankQuery := regexp.QuoteMeta("FROM fivenet_documents_templates AS `row`") +
+		`(?s).*` + regexp.QuoteMeta("`row`.creator_job = ?") +
+		`(?s).*` + regexp.QuoteMeta("ORDER BY `row`.sort_rank ASC, `row`.id ASC") +
 		`(?s).*` + regexp.QuoteMeta(`FOR UPDATE`)
 
 	mock.ExpectQuery(rankQuery).
 		WithArgs("doj").
-		WillReturnRows(sqlmock.NewRows([]string{"template_rank_row.id", "template_rank_row.sort_rank"}).
+		WillReturnRows(sqlmock.NewRows([]string{"row.id", "row.sort_rank"}).
 			AddRow(int64(1), "000000001000").
 			AddRow(int64(2), "000000001001"))
 	mock.ExpectQuery(rankQuery).
 		WithArgs("doj").
-		WillReturnRows(sqlmock.NewRows([]string{"template_rank_row.id", "template_rank_row.sort_rank"}).
+		WillReturnRows(sqlmock.NewRows([]string{"row.id", "row.sort_rank"}).
 			AddRow(int64(1), "000000001000").
 			AddRow(int64(2), "000000001001"))
 
@@ -108,7 +108,7 @@ func TestStoreInsertTemplateGroupRankRebalancesWhenNoGap(t *testing.T) {
 
 	mock.ExpectQuery(rankQuery).
 		WithArgs("doj").
-		WillReturnRows(sqlmock.NewRows([]string{"template_rank_row.id", "template_rank_row.sort_rank"}).
+		WillReturnRows(sqlmock.NewRows([]string{"row.id", "row.sort_rank"}).
 			AddRow(int64(1), "000000001000").
 			AddRow(int64(2), "000000002000"))
 

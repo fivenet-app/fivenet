@@ -4,14 +4,12 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	storesrank "github.com/fivenet-app/fivenet/v2026/stores/internal/rank"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
-
-const documentsTemplateRankKeyStep = utils.RankStep
 
 type TemplateOrderInfo struct {
 	ID         int64
@@ -19,57 +17,8 @@ type TemplateOrderInfo struct {
 	SortRank   string
 }
 
-type TemplateRankRow struct {
-	ID       int64
-	SortRank string
-}
-
-func getTemplateRankBounds(
-	rows []TemplateRankRow,
-	beforeID, afterID *int64,
-) (string, string, error) {
-	if beforeID != nil && afterID != nil {
-		return "", "", errors.New("before_id and after_id are mutually exclusive")
-	}
-	if len(rows) == 0 {
-		return "", "", nil
-	}
-
-	findIndex := func(id int64) int {
-		for idx, row := range rows {
-			if row.ID == id {
-				return idx
-			}
-		}
-		return -1
-	}
-
-	switch {
-	case beforeID != nil:
-		idx := findIndex(*beforeID)
-		if idx < 0 {
-			return "", "", errorsdocuments.ErrTemplateNoPerms
-		}
-		lower := ""
-		if idx > 0 {
-			lower = rows[idx-1].SortRank
-		}
-		return lower, rows[idx].SortRank, nil
-
-	case afterID != nil:
-		idx := findIndex(*afterID)
-		if idx < 0 {
-			return "", "", errorsdocuments.ErrTemplateNoPerms
-		}
-		upper := ""
-		if idx < len(rows)-1 {
-			upper = rows[idx+1].SortRank
-		}
-		return rows[idx].SortRank, upper, nil
-
-	default:
-		return rows[len(rows)-1].SortRank, "", nil
-	}
+type templateRankGroup struct {
+	creatorJob string
 }
 
 func (s *Store) GetTemplateOrderInfo(
@@ -100,16 +49,15 @@ func (s *Store) GetTemplateOrderInfo(
 	return dest, nil
 }
 
-func (s *Store) listTemplateGroupRanks(
+func (g templateRankGroup) ListRanks(
 	ctx context.Context,
 	q qrm.DB,
-	creatorJob string,
 	excludeID int64,
-) ([]TemplateRankRow, error) {
-	tTemplate := table.FivenetDocumentsTemplates.AS("template_rank_row")
+) ([]storesrank.Row, error) {
+	tTemplate := table.FivenetDocumentsTemplates.AS("row")
 
 	condition := mysql.AND(
-		tTemplate.CreatorJob.EQ(mysql.String(creatorJob)),
+		tTemplate.CreatorJob.EQ(mysql.String(g.creatorJob)),
 		tTemplate.DeletedAt.IS_NULL(),
 	)
 	if excludeID > 0 {
@@ -129,7 +77,7 @@ func (s *Store) listTemplateGroupRanks(
 		).
 		FOR(mysql.UPDATE())
 
-	rows := []TemplateRankRow{}
+	rows := []storesrank.Row{}
 	if err := stmt.QueryContext(ctx, q, &rows); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -139,35 +87,26 @@ func (s *Store) listTemplateGroupRanks(
 	return rows, nil
 }
 
-func (s *Store) rebalanceTemplateGroupRanks(
+func (g templateRankGroup) UpdateRank(
 	ctx context.Context,
 	q qrm.DB,
-	creatorJob string,
-	excludeID int64,
+	templateID int64,
+	sortRank string,
 ) error {
-	rows, err := s.listTemplateGroupRanks(ctx, q, creatorJob, excludeID)
-	if err != nil {
-		return err
-	}
-
 	tTemplate := table.FivenetDocumentsTemplates
-	for idx, row := range rows {
-		rank := utils.FormatRank(int64(idx+1) * documentsTemplateRankKeyStep)
-		if _, err := tTemplate.
-			UPDATE().
-			SET(tTemplate.SortRank.SET(mysql.String(rank))).
-			WHERE(mysql.AND(
-				tTemplate.ID.EQ(mysql.Int64(row.ID)),
-				tTemplate.CreatorJob.EQ(mysql.String(creatorJob)),
-				tTemplate.DeletedAt.IS_NULL(),
-			)).
-			LIMIT(1).
-			ExecContext(ctx, q); err != nil {
-			return err
-		}
-	}
 
-	return nil
+	_, err := tTemplate.
+		UPDATE().
+		SET(tTemplate.SortRank.SET(mysql.String(sortRank))).
+		WHERE(mysql.AND(
+			tTemplate.ID.EQ(mysql.Int64(templateID)),
+			tTemplate.CreatorJob.EQ(mysql.String(g.creatorJob)),
+			tTemplate.DeletedAt.IS_NULL(),
+		)).
+		LIMIT(1).
+		ExecContext(ctx, q)
+
+	return err
 }
 
 func (s *Store) NextTemplateGroupRank(
@@ -176,15 +115,7 @@ func (s *Store) NextTemplateGroupRank(
 	creatorJob string,
 	excludeID int64,
 ) (string, error) {
-	rows, err := s.listTemplateGroupRanks(ctx, q, creatorJob, excludeID)
-	if err != nil {
-		return "", err
-	}
-	if len(rows) == 0 {
-		return utils.FormatRank(documentsTemplateRankKeyStep), nil
-	}
-
-	return utils.NextRank(rows[len(rows)-1].SortRank)
+	return storesrank.Next(ctx, q, templateRankGroup{creatorJob: creatorJob}, excludeID)
 }
 
 func (s *Store) InsertTemplateGroupRank(
@@ -194,55 +125,16 @@ func (s *Store) InsertTemplateGroupRank(
 	excludeID int64,
 	beforeID, afterID *int64,
 ) (string, error) {
-	rows, err := s.listTemplateGroupRanks(ctx, q, creatorJob, excludeID)
-	if err != nil {
-		return "", err
-	}
-
-	if beforeID != nil && afterID != nil {
-		return "", errors.New("before_id and after_id are mutually exclusive")
-	}
-
-	if len(rows) == 0 {
-		if beforeID != nil || afterID != nil {
-			return "", errorsdocuments.ErrTemplateNoPerms
-		}
-		return utils.FormatRank(documentsTemplateRankKeyStep), nil
-	}
-
-	lower, upper, err := getTemplateRankBounds(rows, beforeID, afterID)
-	if err != nil {
-		return "", err
-	}
-
-	rank, ok := utils.RankBetween(lower, upper)
-	if ok {
-		return rank, nil
-	}
-
-	if err := s.rebalanceTemplateGroupRanks(ctx, q, creatorJob, excludeID); err != nil {
-		return "", err
-	}
-
-	rows, err = s.listTemplateGroupRanks(ctx, q, creatorJob, excludeID)
-	if err != nil {
-		return "", err
-	}
-	if len(rows) == 0 {
-		return utils.FormatRank(documentsTemplateRankKeyStep), nil
-	}
-
-	lower, upper, err = getTemplateRankBounds(rows, beforeID, afterID)
-	if err != nil {
-		return "", err
-	}
-
-	rank, ok = utils.RankBetween(lower, upper)
-	if !ok {
-		return "", errorsdocuments.ErrFailedQuery
-	}
-
-	return rank, nil
+	return storesrank.Insert(
+		ctx,
+		q,
+		templateRankGroup{creatorJob: creatorJob},
+		excludeID,
+		beforeID,
+		afterID,
+		errorsdocuments.ErrTemplateNoPerms,
+		errorsdocuments.ErrFailedQuery,
+	)
 }
 
 func (s *Store) UpdateTemplateSortRank(
@@ -252,22 +144,5 @@ func (s *Store) UpdateTemplateSortRank(
 	creatorJob string,
 	sortRank string,
 ) error {
-	tTemplate := table.FivenetDocumentsTemplates
-
-	_, err := tTemplate.
-		UPDATE(
-			tTemplate.SortRank,
-		).
-		SET(
-			tTemplate.SortRank.SET(mysql.String(sortRank)),
-		).
-		WHERE(mysql.AND(
-			tTemplate.ID.EQ(mysql.Int64(templateID)),
-			tTemplate.CreatorJob.EQ(mysql.String(creatorJob)),
-			tTemplate.DeletedAt.IS_NULL(),
-		)).
-		LIMIT(1).
-		ExecContext(ctx, q)
-
-	return err
+	return templateRankGroup{creatorJob: creatorJob}.UpdateRank(ctx, q, templateID, sortRank)
 }

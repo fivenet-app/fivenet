@@ -53,16 +53,16 @@ func TestStoreInsertPageGroupRankUsesGapWhenAvailable(t *testing.T) {
 
 	store := New(db)
 
-	expectedQuery := regexp.QuoteMeta(`FROM fivenet_wiki_pages AS page_rank_row`) +
-		`(?s).*` + regexp.QuoteMeta(`page_rank_row.job = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`page_rank_row.parent_id IS NULL`) +
-		`(?s).*` + regexp.QuoteMeta(`page_rank_row.startpage = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`ORDER BY page_rank_row.sort_rank ASC, page_rank_row.id ASC`) +
+	expectedQuery := regexp.QuoteMeta("FROM fivenet_wiki_pages AS `row`") +
+		`(?s).*` + regexp.QuoteMeta("`row`.job = ?") +
+		`(?s).*` + regexp.QuoteMeta("`row`.parent_id IS NULL") +
+		`(?s).*` + regexp.QuoteMeta("`row`.startpage = ?") +
+		`(?s).*` + regexp.QuoteMeta("ORDER BY `row`.sort_rank ASC, `row`.id ASC") +
 		`(?s).*` + regexp.QuoteMeta(`FOR UPDATE`)
 
 	mock.ExpectQuery(expectedQuery).
 		WithArgs("police", false).
-		WillReturnRows(sqlmock.NewRows([]string{"page_rank_row.id", "page_rank_row.sort_rank"}).
+		WillReturnRows(sqlmock.NewRows([]string{"row.id", "row.sort_rank"}).
 			AddRow(int64(1), "1000").
 			AddRow(int64(2), "3000"))
 
@@ -82,21 +82,21 @@ func TestStoreInsertPageGroupRankRebalancesWhenNoGap(t *testing.T) {
 
 	store := New(db)
 
-	rankQuery := regexp.QuoteMeta(`FROM fivenet_wiki_pages AS page_rank_row`) +
-		`(?s).*` + regexp.QuoteMeta(`page_rank_row.job = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`page_rank_row.parent_id IS NULL`) +
-		`(?s).*` + regexp.QuoteMeta(`page_rank_row.startpage = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`ORDER BY page_rank_row.sort_rank ASC, page_rank_row.id ASC`) +
+	rankQuery := regexp.QuoteMeta("FROM fivenet_wiki_pages AS `row`") +
+		`(?s).*` + regexp.QuoteMeta("`row`.job = ?") +
+		`(?s).*` + regexp.QuoteMeta("`row`.parent_id IS NULL") +
+		`(?s).*` + regexp.QuoteMeta("`row`.startpage = ?") +
+		`(?s).*` + regexp.QuoteMeta("ORDER BY `row`.sort_rank ASC, `row`.id ASC") +
 		`(?s).*` + regexp.QuoteMeta(`FOR UPDATE`)
 
 	mock.ExpectQuery(rankQuery).
 		WithArgs("police", false).
-		WillReturnRows(sqlmock.NewRows([]string{"page_rank_row.id", "page_rank_row.sort_rank"}).
+		WillReturnRows(sqlmock.NewRows([]string{"row.id", "row.sort_rank"}).
 			AddRow(int64(1), "1000").
 			AddRow(int64(2), "1001"))
 	mock.ExpectQuery(rankQuery).
 		WithArgs("police", false).
-		WillReturnRows(sqlmock.NewRows([]string{"page_rank_row.id", "page_rank_row.sort_rank"}).
+		WillReturnRows(sqlmock.NewRows([]string{"row.id", "row.sort_rank"}).
 			AddRow(int64(1), "1000").
 			AddRow(int64(2), "1001"))
 
@@ -117,7 +117,7 @@ func TestStoreInsertPageGroupRankRebalancesWhenNoGap(t *testing.T) {
 
 	mock.ExpectQuery(rankQuery).
 		WithArgs("police", false).
-		WillReturnRows(sqlmock.NewRows([]string{"page_rank_row.id", "page_rank_row.sort_rank"}).
+		WillReturnRows(sqlmock.NewRows([]string{"row.id", "row.sort_rank"}).
 			AddRow(int64(1), "1000").
 			AddRow(int64(2), "2000"))
 
