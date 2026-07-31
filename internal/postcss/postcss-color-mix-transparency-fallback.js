@@ -43,20 +43,20 @@ function findTopmostSupports(node) {
     return { top: topSupports, container: topSupports.parent };
 }
 
-function ensureRuleBefore(at, rule, prop, value) {
+function ensureRuleBefore(at, rule, decl, value) {
     // Avoid dupes: if an identical selector+prop exists just before, skip
     const parent = at.parent || at; // usually at.parent exists
     let hasSame = false;
 
     // Build a minimal clone of the rule with just the fallback decl
     const clone = rule.clone({ nodes: [] });
-    clone.append({ prop, value });
+    clone.append(decl.clone({ value }));
 
     // Optional light duplicate check among previous siblings
     let prev = at.prev();
     while (prev && prev.type === 'comment') prev = prev.prev(); // skip comments
     if (prev && prev.type === 'rule' && prev.selector === clone.selector) {
-        prev.walkDecls(prop, (d) => {
+        prev.walkDecls(decl.prop, (d) => {
             if (d.value === value) hasSame = true;
         });
     }
@@ -98,7 +98,7 @@ export default function colorMixTransparencyFallback(opts = {}) {
             if (sup && sup.container) {
                 // Insert a sibling rule (with same selector) before the topmost @supports
                 if (decl.parent.type !== 'rule') return; // safety: we need a rule to copy
-                ensureRuleBefore(sup.top, decl.parent, decl.prop, fallbackVal);
+                ensureRuleBefore(sup.top, decl.parent, decl, fallbackVal);
 
                 if (!preserve) {
                     // If not preserving, also replace the original value inside @supports
