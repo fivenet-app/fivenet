@@ -231,7 +231,7 @@ onBeforeMount(async () => listJobs());
             </UFormField>
         </div>
 
-        <div>
+        <div v-if="!disabled">
             <UTooltip :text="$t('common.add')">
                 <UButton
                     class="w-full justify-center md:w-auto"
