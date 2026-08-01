@@ -295,7 +295,7 @@ func (s *Server) stream(
 		defer msgs.Stop()
 
 		for {
-			m, err := msgs.Next(jetstream.NextContext(gctx))
+			msg, err := msgs.Next(jetstream.NextContext(gctx))
 			if err != nil {
 				if protoutils.IsContextCanceled(err) ||
 					errors.Is(err, jetstream.ErrMsgIteratorClosed) {
@@ -304,7 +304,7 @@ func (s *Server) stream(
 				return err
 			}
 
-			_, topic, tType := eventscentrum.SplitSubject(m.Subject())
+			_, topic, tType := eventscentrum.SplitSubject(msg.Subject())
 
 			var r *pbcentrum.StreamResponse
 
@@ -315,11 +315,11 @@ func (s *Server) stream(
 				}
 
 				var d centrumdispatches.DispatchStatus
-				if err := proto.Unmarshal(m.Data(), &d); err != nil {
+				if err := proto.Unmarshal(msg.Data(), &d); err != nil {
 					s.logger.Error(
 						"failed to unmarshal dispatch status",
 						zap.Error(err),
-						zap.String("subject", m.Subject()),
+						zap.String("subject", msg.Subject()),
 					)
 				}
 
@@ -334,11 +334,11 @@ func (s *Server) stream(
 					continue
 				}
 				var u centrumunits.UnitStatus
-				if err := proto.Unmarshal(m.Data(), &u); err != nil {
+				if err := proto.Unmarshal(msg.Data(), &u); err != nil {
 					s.logger.Error(
 						"failed to unmarshal unit status",
 						zap.Error(err),
-						zap.String("subject", m.Subject()),
+						zap.String("subject", msg.Subject()),
 					)
 				}
 
@@ -352,7 +352,7 @@ func (s *Server) stream(
 			if r == nil {
 				s.logger.Warn(
 					"received unknown centrum event",
-					zap.String("subject", m.Subject()),
+					zap.String("subject", msg.Subject()),
 					zap.String("type", string(tType)),
 				)
 				continue
@@ -392,7 +392,7 @@ func (s *Server) stream(
 			defer msgs.Stop()
 
 			for {
-				m, err := msgs.Next(jetstream.NextContext(gctx))
+				msg, err := msgs.Next(jetstream.NextContext(gctx))
 				if err != nil {
 					if protoutils.IsContextCanceled(err) ||
 						errors.Is(err, jetstream.ErrMsgIteratorClosed) {
@@ -401,8 +401,8 @@ func (s *Server) stream(
 					return err
 				}
 
-				if op := m.Headers().Get("KV-Operation"); op == "DEL" || op == "PURGE" {
-					key := strings.TrimPrefix(m.Subject(), "$KV."+f.Bucket+".")
+				if op := msg.Headers().Get("KV-Operation"); op == "DEL" || op == "PURGE" {
+					key := strings.TrimPrefix(msg.Subject(), "$KV."+f.Bucket+".")
 
 					r := f.WrapDelete(key)
 					if r == nil {
@@ -417,7 +417,7 @@ func (s *Server) stream(
 					continue
 				}
 
-				obj, err := f.Unmarshal(gctx, s, m.Data())
+				obj, err := f.Unmarshal(gctx, s, msg.Data())
 				if err != nil {
 					// Bad payload - skip
 					continue

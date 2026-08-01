@@ -170,7 +170,8 @@ func (s *Server) Stream(
 		return err
 	}
 
-	if userOnDuty {
+	// Send user markers if the user is on duty and can see at least one job (superuser can see all jobs, so this is always true for them)
+	if userOnDuty && len(usersJobs.GetJobs()) > 0 {
 		if err := s.sendUserMarkers(srv, usersJobs, userInfo, userOnDuty); err != nil {
 			if protoutils.IsContextCanceled(err) {
 				return nil
@@ -297,51 +298,53 @@ func (s *Server) Stream(
 		}
 	})
 
-	// User markers goroutine - listens for user marker updates and sends them to outCh
-	g.Go(func() error {
-		// Upsert pull consumer with multi-filter
-		consCfg := jetstream.ConsumerConfig{
-			FilterSubjects: buildFilters(usersJobs),
-			DeliverPolicy:  jetstream.DeliverNewPolicy,
-			AckPolicy:      jetstream.AckNonePolicy,
-			MaxWaiting:     16,
-		}
-		consumer, err := s.js.CreateConsumer(gctx, "KV_"+tracker.BucketUserLoc, consCfg)
-		if err != nil {
-			return fmt.Errorf("failed to create consumer. %w", err)
-		}
-
-		msgs, err := consumer.Messages(
-			jetstream.PullMaxMessages(feedFetch),
-			jetstream.WithMessagesErrOnMissingHeartbeat(false),
-		)
-		if err != nil {
-			return err
-		}
-		defer msgs.Stop()
-
-		for {
-			m, err := msgs.Next(jetstream.NextContext(gctx))
+	if len(usersJobs.GetJobs()) > 0 {
+		// User markers goroutine - listens for user marker updates and sends them to outCh
+		g.Go(func() error {
+			// Upsert pull consumer with multi-filter
+			consCfg := jetstream.ConsumerConfig{
+				FilterSubjects: buildFilters(usersJobs),
+				DeliverPolicy:  jetstream.DeliverNewPolicy,
+				AckPolicy:      jetstream.AckNonePolicy,
+				MaxWaiting:     16,
+			}
+			consumer, err := s.js.CreateConsumer(gctx, "KV_"+tracker.BucketUserLoc, consCfg)
 			if err != nil {
-				if protoutils.IsContextCanceled(err) ||
-					errors.Is(err, jetstream.ErrMsgIteratorClosed) {
-					return nil
-				}
-				return err
+				return fmt.Errorf("failed to create consumer. %w", err)
 			}
 
-			if err := s.processMessage(
-				srv,
-				m,
-				userInfo,
-				&userOnDuty,
-				usersJobs,
-				sendOut,
-			); err != nil {
+			msgs, err := consumer.Messages(
+				jetstream.PullMaxMessages(feedFetch),
+				jetstream.WithMessagesErrOnMissingHeartbeat(false),
+			)
+			if err != nil {
 				return err
 			}
-		}
-	})
+			defer msgs.Stop()
+
+			for {
+				msg, err := msgs.Next(jetstream.NextContext(gctx))
+				if err != nil {
+					if protoutils.IsContextCanceled(err) ||
+						errors.Is(err, jetstream.ErrMsgIteratorClosed) {
+						return nil
+					}
+					return err
+				}
+
+				if err := s.processMessage(
+					srv,
+					msg,
+					userInfo,
+					&userOnDuty,
+					usersJobs,
+					sendOut,
+				); err != nil {
+					return err
+				}
+			}
+		})
+	}
 
 	return g.Wait()
 }

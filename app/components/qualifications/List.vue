@@ -40,7 +40,8 @@ const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    () => `qualifications-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
+    () =>
+        `qualifications-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.search}`,
     () => listQualifications(validatedQuery.value),
 );
 

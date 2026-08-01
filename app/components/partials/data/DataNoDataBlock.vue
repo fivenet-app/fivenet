@@ -33,18 +33,14 @@ const actions = computed<NonNullable<EmptyProps['actions']>>(() =>
                   ? {
                         label: t('common.search'),
                         icon: 'i-mdi-search',
-                        onClick: () => {
-                            props.focus!();
-                        },
+                        onClick: async () => props.focus!(),
                     }
                   : undefined,
               props.retry
                   ? {
                         label: t('common.refresh'),
                         icon: 'i-mdi-refresh',
-                        onClick: () => {
-                            props.retry!();
-                        },
+                        onClick: async () => props.retry!(),
                     }
                   : undefined,
           ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -54,14 +50,6 @@ const message = computed(() => props.message ?? $t('common.not_found', [props.ty
 
 const description = computed(() => (props.title ? message.value : undefined));
 const title = computed(() => (props.title ? props.title : message.value));
-
-async function click() {
-    if (props.retry) {
-        props.retry();
-    } else if (props.focus) {
-        props.focus();
-    }
-}
 
 defineOptions({
     inheritAttrs: false,
@@ -78,7 +66,6 @@ defineOptions({
             :actions="actions"
             :ui="{ header: 'max-w-lg' }"
             v-bind="$attrs"
-            @click="click()"
         >
             <template v-if="$slots.title" #title>
                 <slot name="title" />

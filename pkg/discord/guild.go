@@ -116,13 +116,13 @@ func NewGuild(
 	g.logger.Debug("getting discord guild modules", zap.Strings("dc_modules", ms))
 	errs := multierr.Combine()
 	for _, module := range ms {
-		m, err := modules.GetModule(module, base, g.events)
+		msg, err := modules.GetModule(module, base, g.events)
 		if err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("%s. %w", module, err))
 			continue
 		}
 
-		g.modules = append(g.modules, m)
+		g.modules = append(g.modules, msg)
 	}
 
 	return g, errs

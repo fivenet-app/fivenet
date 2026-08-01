@@ -215,7 +215,7 @@ const columns = computed(
                         label: t('common.created_at'),
                     });
                 },
-                cell: ({ row }) => h(GenericTime, { value: row.original.createdAt, type: 'long' }),
+                cell: ({ row }) => h(GenericTime, { value: row.original.createdAt, type: 'short' }),
             },
             {
                 accessorKey: 'user',

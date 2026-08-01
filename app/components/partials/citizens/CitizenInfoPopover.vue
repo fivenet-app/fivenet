@@ -131,6 +131,7 @@ watchOnce(opened, async () => {
                         :title="{ key: 'notifications.citizens.copy_citizen_id.title', parameters: {} }"
                         :content="{ key: 'notifications.citizens.copy_citizen_id.content', parameters: {} }"
                         size="xs"
+                        variant="link"
                     />
 
                     <UButton

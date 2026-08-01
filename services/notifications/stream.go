@@ -425,7 +425,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 		defer msgs.Stop()
 
 		for {
-			m, err := msgs.Next(jetstream.NextContext(gctx))
+			msg, err := msgs.Next(jetstream.NextContext(gctx))
 			if err != nil {
 				if protoutils.IsContextCanceled(err) ||
 					errors.Is(err, jetstream.ErrMsgIteratorClosed) {
@@ -435,7 +435,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 			}
 
 			// Publish notifications sent directly to user via the message queue
-			if m == nil {
+			if msg == nil {
 				s.logger.Warn(
 					"nil notification message received via message queue",
 					zap.Int32("user_id", currentUserInfo.GetUserId()),
@@ -443,7 +443,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				continue
 			}
 
-			topic, parts := notifi.SplitSubject(m.Subject())
+			topic, parts := notifi.SplitSubject(msg.Subject())
 			switch topic {
 			case notifi.UserTopic, notifi.AccountTopic:
 				if accountOnly && topic == notifi.UserTopic {
@@ -451,7 +451,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				}
 
 				var dest notificationsevents.UserEvent
-				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+				if err := protoutils.UnmarshalPartialJSON(msg.Data(), &dest); err != nil {
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
@@ -507,7 +507,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				}
 
 				var dest notificationsevents.JobEvent
-				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+				if err := protoutils.UnmarshalPartialJSON(msg.Data(), &dest); err != nil {
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
@@ -540,7 +540,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					continue
 				}
 				var dest notificationsevents.JobGradeEvent
-				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+				if err := protoutils.UnmarshalPartialJSON(msg.Data(), &dest); err != nil {
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
@@ -557,7 +557,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 			case notifi.SystemTopic:
 				var dest notificationsevents.SystemEvent
-				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+				if err := protoutils.UnmarshalPartialJSON(msg.Data(), &dest); err != nil {
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
@@ -579,7 +579,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				}
 
 				var dest notificationsclientview.ObjectEvent
-				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+				if err := protoutils.UnmarshalPartialJSON(msg.Data(), &dest); err != nil {
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
@@ -605,7 +605,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				}
 
 				var dest mailerevents.MailerEvent
-				if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
+				if err := protoutils.UnmarshalPartialJSON(msg.Data(), &dest); err != nil {
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
