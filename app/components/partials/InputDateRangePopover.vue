@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CalendarDate, Time } from '@internationalized/date';
+import type { DateValue, Time } from '@internationalized/date';
 import type { CalendarProps, InputDateProps } from '@nuxt/ui';
 import InputTimePicker from './InputTimePicker.vue';
 
@@ -8,7 +8,7 @@ export type DateRange = { start: Date; end: Date };
 export type TimeSplit = { hours: number; minutes: number };
 
 type InputDateRangePickerAttrs = Partial<InputDateProps<true> & CalendarProps<true, false>>;
-type CalendarDateRangeValue = { start: CalendarDate | undefined; end: CalendarDate | undefined } | null | undefined;
+type CalendarDateRangeValue = { start: DateValue | undefined; end: DateValue | undefined } | null | undefined;
 
 export interface Props {
     modelValue: DateRange | undefined;
@@ -60,7 +60,9 @@ const inputDateAttrs = computed(() => {
 
     return {
         ...forwardedAttrs,
-        class: 'w-full',
+        class: props.time ? 'date-range-input w-full' : 'w-full',
+        granularity: props.time ? 'minute' : forwardedAttrs.granularity,
+        hourCycle: props.time ? (forwardedAttrs.hourCycle ?? 24) : forwardedAttrs.hourCycle,
         range: true,
     };
 });
@@ -70,18 +72,20 @@ const internalModelValue = computed<CalendarDateRangeValue>({
         if (!props.modelValue) return undefined;
 
         return {
-            start: dateToCalendarDate(props.modelValue.start),
-            end: dateToCalendarDate(props.modelValue.end),
+            start: props.time ? dateToCalendarDateTime(props.modelValue.start) : dateToCalendarDate(props.modelValue.start),
+            end: props.time ? dateToCalendarDateTime(props.modelValue.end) : dateToCalendarDate(props.modelValue.end),
         };
     },
     set(value) {
         if (value?.start && value.end) {
             const startDate = calendarDateToDate(value.start)!;
             const endDate = calendarDateToDate(value.end)!;
+            const startTime = props.time && 'hour' in value.start ? dateToTime(startDate)! : timeState.value.start;
+            const endTime = props.time && 'hour' in value.end ? dateToTime(endDate)! : timeState.value.end;
 
-            // Apply the time state to the dates
-            startDate.setHours(timeState.value.start.hour, timeState.value.start.minute);
-            endDate.setHours(timeState.value.end.hour, timeState.value.end.minute);
+            // Calendar selection returns date-only values; typed time segments return date-time values.
+            startDate.setHours(startTime.hour, startTime.minute);
+            endDate.setHours(endTime.hour, endTime.minute);
 
             emits('update:modelValue', { start: startDate, end: endDate });
         } else {
@@ -185,3 +189,29 @@ const timeState = computed<{ start: Time; end: Time }>({
         </span>
     </div>
 </template>
+
+<style scoped>
+:deep(.date-range-input) {
+    container-type: inline-size;
+}
+
+:deep(
+    .date-range-input
+        :is(
+            [data-segment='hour'],
+            [data-segment='minute'],
+            [data-segment='dayPeriod'],
+            [data-segment='year'] + [data-segment='literal'],
+            [data-segment='hour'] + [data-segment='literal'],
+            [data-segment='minute'] + [data-segment='literal']
+        )
+) {
+    display: var(--date-range-time-display, none);
+}
+
+@container (min-width: 22rem) {
+    :deep(.date-range-input [data-slot='segment']) {
+        --date-range-time-display: inline;
+    }
+}
+</style>

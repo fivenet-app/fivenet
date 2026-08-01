@@ -224,6 +224,7 @@ const policeAttributes = [
     templateAttribute('citizens.CitizensService/ListUserActivity', 'Fields'),
     templateAttribute('citizens.CitizensService/SetUserProps', 'Fields'),
     templateAttribute('livemap.LivemapService/Stream', 'Players'),
+    templateAttribute('livemap.LivemapService/Stream', 'Markers'),
     templateAttribute('documents.DocumentsService/DeleteDocument', 'Access'),
     templateAttribute('documents.CommentsService/DeleteComment', 'Access'),
     templateAttribute('documents.CategoriesService/ListCategories', 'Jobs'),

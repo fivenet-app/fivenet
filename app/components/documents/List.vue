@@ -451,7 +451,6 @@ defineShortcuts({
                                         :max-value="fromDate(addDays(new Date(), 1), getLocalTimeZone())"
                                         clearable
                                         time
-                                        :range="false"
                                     />
                                 </UFormField>
 
