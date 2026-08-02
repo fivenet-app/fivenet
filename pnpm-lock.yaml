@@ -349,8 +349,8 @@ importers:
         specifier: 2.2.13
         version: 2.2.13
       '@types/leaflet':
-        specifier: 1.9.21
-        version: 1.9.21
+        specifier: 1.9.22
+        version: 1.9.22
       '@types/leaflet.heat':
         specifier: 0.2.5
         version: 0.2.5
@@ -4462,8 +4462,8 @@ packages:
   '@types/leaflet@1.7.6':
     resolution: {integrity: sha512-Emkz3V08QnlelSbpT46OEAx+TBZYTOX2r1yM7W+hWg5+djHtQ1GbEXBDRLaqQDOYcDI51Ss0ayoqoKD4CtLUDA==}
 
-  '@types/leaflet@1.9.21':
-    resolution: {integrity: sha512-TbAd9DaPGSnzp6QvtYngntMZgcRk+igFELwR2N99XZn7RXUdKgsXMR+28bUO0rPsWp8MIu/f47luLIQuSLYv/w==}
+  '@types/leaflet@1.9.22':
+    resolution: {integrity: sha512-h3lhECYEKDasG7LFHu+GiHqAvsgLuQvlJvVZzJDGONo3sEL+wUOqSFLnwkZlK0qVxnxbuGFW8iBlJNYs5wgndA==}
 
   '@types/lodash@4.17.24':
     resolution: {integrity: sha512-gIW7lQLZbue7lRSWEFql49QJJWThrTFFeIMJdp3eH4tKoxm1OvEPg02rm4wCCSHS0cL3/Fizimb35b7k8atwsQ==}
@@ -13144,8 +13144,8 @@ snapshots:
 
   '@nuxtjs/leaflet@1.3.2(typescript@6.0.3)':
     dependencies:
-      '@types/leaflet': 1.9.21
-      '@vue-leaflet/vue-leaflet': 0.10.1(@types/leaflet@1.9.21)(leaflet@1.9.4)(typescript@6.0.3)
+      '@types/leaflet': 1.9.22
+      '@vue-leaflet/vue-leaflet': 0.10.1(@types/leaflet@1.9.22)(leaflet@1.9.4)(typescript@6.0.3)
       leaflet: 1.9.4
     transitivePeerDependencies:
       - typescript
@@ -14759,13 +14759,13 @@ snapshots:
 
   '@types/leaflet.heat@0.2.5':
     dependencies:
-      '@types/leaflet': 1.9.21
+      '@types/leaflet': 1.9.22
 
   '@types/leaflet@1.7.6':
     dependencies:
       '@types/geojson': 7946.0.16
 
-  '@types/leaflet@1.9.21':
+  '@types/leaflet@1.9.22':
     dependencies:
       '@types/geojson': 7946.0.16
 
@@ -15268,12 +15268,12 @@ snapshots:
       path-browserify: 1.0.1
       vscode-uri: 3.1.0
 
-  '@vue-leaflet/vue-leaflet@0.10.1(@types/leaflet@1.9.21)(leaflet@1.9.4)(typescript@6.0.3)':
+  '@vue-leaflet/vue-leaflet@0.10.1(@types/leaflet@1.9.22)(leaflet@1.9.4)(typescript@6.0.3)':
     dependencies:
       leaflet: 1.9.4
       vue: 3.5.40(typescript@6.0.3)
     optionalDependencies:
-      '@types/leaflet': 1.9.21
+      '@types/leaflet': 1.9.22
     transitivePeerDependencies:
       - typescript
 
