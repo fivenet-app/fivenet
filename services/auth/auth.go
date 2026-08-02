@@ -323,10 +323,9 @@ func (s *Server) ForgotPassword(
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
 
-	pass := hashedPassword
-	acc.Password = &pass
+	acc.Password = &hashedPassword
 
-	if err := s.store.ForgotPassword(ctx, acc.ID, pass); err != nil {
+	if err := s.store.ForgotPassword(ctx, acc.ID, hashedPassword); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
 

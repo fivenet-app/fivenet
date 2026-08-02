@@ -9,7 +9,8 @@ export const usernameSchema = z
     .string()
     .min(3)
     .max(24)
-    .regex(/^[0-9A-Za-zÄÖÜß_-]{3,24}$/);
+    .regex(/^[0-9A-Za-zÄÖÜß_-]{3,24}$/)
+    .trim();
 
 export const passwordSchema = z.coerce.string().min(6).max(70);
 

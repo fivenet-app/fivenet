@@ -96,7 +96,9 @@ func (s *Store) GetAccountByRegToken(
 	regToken string,
 	withPassword bool,
 ) (*model.FivenetAccounts, error) {
-	return s.getAccount(ctx, tAccounts.RegToken.EQ(mysql.String(regToken)), withPassword)
+	return s.getAccount(ctx,
+		tAccounts.RegToken.EQ(mysql.String(regToken)),
+		withPassword)
 }
 
 func (s *Store) GetNewAccountByRegToken(

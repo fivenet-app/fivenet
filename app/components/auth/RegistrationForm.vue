@@ -19,7 +19,10 @@ const authAuthClient = await getAuthAuthClient();
 const accountError = ref<RpcError | undefined>();
 
 const schema = z.object({
-    registrationToken: z.coerce.string().length(6).trim(),
+    registrationToken: z.coerce
+        .string()
+        .length(6)
+        .regex(/^[0-9]+$/),
     username: usernameSchema,
     password: passwordSchema,
 });
@@ -37,7 +40,7 @@ const state = reactive<Schema>({
 async function createAccount(values: Schema): Promise<void> {
     try {
         await authAuthClient.createAccount({
-            regToken: values.registrationToken,
+            regToken: values.registrationToken.trim(),
             username: values.username,
             password: values.password,
         });
@@ -102,17 +105,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
             </UAlert>
 
-            <UFormField name="registrationToken" :label="$t('components.auth.forgot_password.registration_token')">
-                <UInput
-                    v-model="state.registrationToken"
-                    type="text"
-                    inputmode="numeric"
-                    aria-describedby="hint"
-                    pattern="[0-9]*"
-                    autocomplete="registrationToken"
-                    :placeholder="$t('components.auth.forgot_password.registration_token')"
-                    :ui="{ root: 'w-full' }"
-                />
+            <UFormField
+                name="registrationToken"
+                :label="$t('components.auth.forgot_password.registration_token')"
+                :ui="{
+                    root: 'w-full',
+                }"
+            >
+                <div class="inline-flex w-full items-center justify-center">
+                    <UPinInput
+                        :model-value="state.registrationToken.split('').map(Number)"
+                        type="number"
+                        :length="6"
+                        :separator="3"
+                        autocomplete="registrationToken"
+                        size="xl"
+                        @update:model-value="($event) => (state.registrationToken = $event.map(String).join(''))"
+                    />
+                </div>
             </UFormField>
 
             <UFormField name="username" :label="$t('common.username')">
