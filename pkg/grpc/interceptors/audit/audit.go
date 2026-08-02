@@ -40,12 +40,6 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 
 	//nolint:nonamedreturns // Using named returns for error return in defer func.
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
-		// Only log authenticated requests
-		userInfo, ok := auth.GetUserInfoFromContext(ctx)
-		if !ok {
-			return handler(ctx, req)
-		}
-
 		svc, method := splitFullMethod(info.FullMethod)
 		start := opts.Now()
 
@@ -53,10 +47,9 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 			Service: svc,
 			Method:  method,
 			Action:  audit.EventAction_EVENT_ACTION_UNSPECIFIED,
-			UserId:  userInfo.GetUserId(),
-			UserJob: userInfo.GetJob(),
 			Meta:    &audit.AuditEntryMeta{},
 		}
+		applyUserInfo(ctx, ae)
 
 		// Store Entry handle in context so handlers can mutate it.
 		handle := &Entry{entry: ae}
@@ -114,10 +107,6 @@ func NewStream(opts Options) grpc.StreamServerInterceptor {
 
 	return func(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) (err error) {
 		ctx := ss.Context()
-		userInfo, ok := auth.GetUserInfoFromContext(ctx)
-		if !ok {
-			return handler(srv, ss)
-		}
 
 		svc, method := splitFullMethod(info.FullMethod)
 		start := opts.Now()
@@ -126,10 +115,9 @@ func NewStream(opts Options) grpc.StreamServerInterceptor {
 			Service: svc,
 			Method:  method,
 			Action:  audit.EventAction_EVENT_ACTION_UNSPECIFIED,
-			UserId:  userInfo.GetUserId(),
-			UserJob: userInfo.GetJob(),
 			Meta:    &audit.AuditEntryMeta{},
 		}
+		applyUserInfo(ctx, ae)
 
 		handle := &Entry{entry: ae}
 		wrapped := &auditStream{
@@ -138,11 +126,6 @@ func NewStream(opts Options) grpc.StreamServerInterceptor {
 			opts:         opts,
 			firstInOnce:  sync.Once{},
 			firstIn:      nil,
-		}
-
-		if userInfo, ok := auth.GetUserInfoFromContext(wrapped.ctx); ok {
-			ae.UserId = userInfo.GetUserId()
-			ae.UserJob = userInfo.GetJob()
 		}
 
 		defer func() {
@@ -266,7 +249,7 @@ func SetResult(ctx context.Context, st audit.EventResult) {
 func SetUser(ctx context.Context, userId int32, job string) {
 	if e := FromContext(ctx); e != nil {
 		e.set(func(a *audit.AuditEntry) {
-			a.UserId = userId
+			a.UserId = &userId
 			a.UserJob = job
 		})
 	}
@@ -281,6 +264,19 @@ func SetTargetUser(ctx context.Context, userId int32, job string) {
 			}
 		})
 	}
+}
+
+func SetAccountID(ctx context.Context, accountID int64) {
+	if accountID <= 0 {
+		return
+	}
+
+	if e := FromContext(ctx); e != nil {
+		e.set(func(a *audit.AuditEntry) {
+			a.AccountId = &accountID
+		})
+	}
+	AddMeta(ctx, "account_id", strconv.FormatInt(accountID, 10))
 }
 
 func AddMeta(ctx context.Context, key, val string) {
@@ -298,6 +294,24 @@ func AddMeta(ctx context.Context, key, val string) {
 			a.Meta.Meta[key] = val
 		})
 	}
+}
+
+func applyUserInfo(ctx context.Context, ae *audit.AuditEntry) {
+	userInfo, ok := auth.GetUserInfoFromContext(ctx)
+	if !ok {
+		return
+	}
+
+	ae.UserId = ptr(userInfo.GetUserId())
+	ae.UserJob = userInfo.GetJob()
+	if userInfo.GetAccountId() > 0 {
+		ae.AccountId = ptr(userInfo.GetAccountId())
+		ae.GetMeta().Set("account_id", strconv.FormatInt(userInfo.GetAccountId(), 10))
+	}
+}
+
+func ptr[T any](v T) *T {
+	return &v
 }
 
 func splitFullMethod(full string) (string, string) {

@@ -861,7 +861,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `user_id` | [int32](#int32) |  |  |
+| `user_id` | [int32](#int32) | optional |  |
 | `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `user_job` | [string](#string) |  |  |
 | `target_user_id` | [int32](#int32) | optional |  |
@@ -873,6 +873,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `result` | [EventResult](#resourcesauditEventResult) |  |  |
 | `meta` | [AuditEntryMeta](#resourcesauditAuditEntryMeta) | optional |  |
 | `data` | [string](#string) | optional |  |
+| `account_id` | [int64](#int64) | optional |  |
 
 
 

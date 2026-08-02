@@ -185,6 +185,7 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 		INSERT(
 			tAudit.UserID,
 			tAudit.UserJob,
+			tAudit.AccountID,
 			tAudit.TargetUserID,
 			tAudit.TargetUserJob,
 			tAudit.Service,
@@ -195,8 +196,9 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 			tAudit.Data,
 		).
 		VALUES(
-			in.GetUserId(),
+			in.UserId,
 			in.GetUserJob(),
+			in.AccountId,
 			in.TargetUserId,
 			in.TargetUserJob,
 			in.GetService(),

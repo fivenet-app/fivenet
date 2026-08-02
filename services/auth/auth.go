@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
@@ -112,6 +113,8 @@ func (s *Server) CreateAccount(
 	ctx context.Context,
 	req *pbauth.CreateAccountRequest,
 ) (*pbauth.CreateAccountResponse, error) {
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
+
 	if !s.appCfg.Get().GetAuth().GetSignupEnabled() {
 		return nil, errorsauth.ErrSignupDisabled
 	}
@@ -128,6 +131,7 @@ func (s *Server) CreateAccount(
 			errorsauth.ErrAccountCreateFailed(map[string]any{"code": "404"}),
 		)
 	}
+	grpc_audit.SetAccountID(ctx, acc.ID)
 
 	if acc.Username != nil || acc.Password != nil {
 		return nil, errorsauth.ErrAccountExistsFailed
@@ -174,6 +178,8 @@ func (s *Server) ChangePassword(
 	ctx context.Context,
 	req *pbauth.ChangePasswordRequest,
 ) (*pbauth.ChangePasswordResponse, error) {
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+
 	token, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
@@ -196,6 +202,7 @@ func (s *Server) ChangePassword(
 			errorsauth.ErrChangePassword(map[string]any{"code": "500"}),
 		)
 	}
+	grpc_audit.SetAccountID(ctx, acc.ID)
 
 	// Account has no password set
 	if acc.Password == nil {
@@ -237,6 +244,8 @@ func (s *Server) ChangeUsername(
 	ctx context.Context,
 	req *pbauth.ChangeUsernameRequest,
 ) (*pbauth.ChangeUsernameResponse, error) {
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+
 	token, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
@@ -262,6 +271,7 @@ func (s *Server) ChangeUsername(
 		}
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
+	grpc_audit.SetAccountID(ctx, acc.ID)
 
 	// No username nor password set on account, fail
 	if acc.Username == nil || acc.Password == nil {
@@ -308,9 +318,14 @@ func (s *Server) ForgotPassword(
 	ctx context.Context,
 	req *pbauth.ForgotPasswordRequest,
 ) (*pbauth.ForgotPasswordResponse, error) {
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+
 	acc, err := s.store.GetAccountByRegToken(ctx, req.GetRegToken(), true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
+	}
+	if acc != nil {
+		grpc_audit.SetAccountID(ctx, acc.ID)
 	}
 
 	// We expect the account to not have a password for a "forgot password" request via token

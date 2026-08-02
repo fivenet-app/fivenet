@@ -129,7 +129,7 @@ type AuditEntry struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UserId        int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        *int32                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	User          *short.UserShort       `protobuf:"bytes,4,opt,name=user,proto3,oneof" json:"user,omitempty"`
 	UserJob       string                 `protobuf:"bytes,5,opt,name=user_job,json=userJob,proto3" json:"user_job,omitempty"`
 	TargetUserId  *int32                 `protobuf:"varint,6,opt,name=target_user_id,json=targetUserId,proto3,oneof" json:"target_user_id,omitempty"`
@@ -143,6 +143,7 @@ type AuditEntry struct {
 	Result        EventResult     `protobuf:"varint,12,opt,name=result,proto3,enum=resources.audit.EventResult" json:"result,omitempty"`
 	Meta          *AuditEntryMeta `protobuf:"bytes,13,opt,name=meta,proto3,oneof" json:"meta,omitempty"`
 	Data          *string         `protobuf:"bytes,14,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	AccountId     *int64          `protobuf:"varint,15,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -187,8 +188,8 @@ func (x *AuditEntry) GetCreatedAt() *timestamp.Timestamp {
 }
 
 func (x *AuditEntry) GetUserId() int32 {
-	if x != nil {
-		return x.UserId
+	if x != nil && x.UserId != nil {
+		return *x.UserId
 	}
 	return 0
 }
@@ -270,6 +271,13 @@ func (x *AuditEntry) GetData() string {
 	return ""
 }
 
+func (x *AuditEntry) GetAccountId() int64 {
+	if x != nil && x.AccountId != nil {
+		return *x.AccountId
+	}
+	return 0
+}
+
 func (x *AuditEntry) SetId(v int64) {
 	x.Id = v
 }
@@ -279,7 +287,7 @@ func (x *AuditEntry) SetCreatedAt(v *timestamp.Timestamp) {
 }
 
 func (x *AuditEntry) SetUserId(v int32) {
-	x.UserId = v
+	x.UserId = &v
 }
 
 func (x *AuditEntry) SetUser(v *short.UserShort) {
@@ -326,11 +334,22 @@ func (x *AuditEntry) SetData(v string) {
 	x.Data = &v
 }
 
+func (x *AuditEntry) SetAccountId(v int64) {
+	x.AccountId = &v
+}
+
 func (x *AuditEntry) HasCreatedAt() bool {
 	if x == nil {
 		return false
 	}
 	return x.CreatedAt != nil
+}
+
+func (x *AuditEntry) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
 }
 
 func (x *AuditEntry) HasUser() bool {
@@ -375,8 +394,19 @@ func (x *AuditEntry) HasData() bool {
 	return x.Data != nil
 }
 
+func (x *AuditEntry) HasAccountId() bool {
+	if x == nil {
+		return false
+	}
+	return x.AccountId != nil
+}
+
 func (x *AuditEntry) ClearCreatedAt() {
 	x.CreatedAt = nil
+}
+
+func (x *AuditEntry) ClearUserId() {
+	x.UserId = nil
 }
 
 func (x *AuditEntry) ClearUser() {
@@ -403,12 +433,16 @@ func (x *AuditEntry) ClearData() {
 	x.Data = nil
 }
 
+func (x *AuditEntry) ClearAccountId() {
+	x.AccountId = nil
+}
+
 type AuditEntry_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Id            int64
 	CreatedAt     *timestamp.Timestamp
-	UserId        int32
+	UserId        *int32
 	User          *short.UserShort
 	UserJob       string
 	TargetUserId  *int32
@@ -417,11 +451,12 @@ type AuditEntry_builder struct {
 	// GRPC Service name
 	Service string
 	// GRPC Method name
-	Method string
-	Action EventAction
-	Result EventResult
-	Meta   *AuditEntryMeta
-	Data   *string
+	Method    string
+	Action    EventAction
+	Result    EventResult
+	Meta      *AuditEntryMeta
+	Data      *string
+	AccountId *int64
 }
 
 func (b0 AuditEntry_builder) Build() *AuditEntry {
@@ -442,6 +477,7 @@ func (b0 AuditEntry_builder) Build() *AuditEntry {
 	x.Result = b.Result
 	x.Meta = b.Meta
 	x.Data = b.Data
+	x.AccountId = b.AccountId
 	return m0
 }
 
@@ -506,32 +542,37 @@ var File_resources_audit_audit_proto protoreflect.FileDescriptor
 
 const file_resources_audit_audit_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/audit/audit.proto\x12\x0fresources.audit\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\xad\x05\n" +
+	"\x1bresources/audit/audit.proto\x12\x0fresources.audit\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\xf1\x05\n" +
 	"\n" +
 	"AuditEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x05R\x06userId\x129\n" +
-	"\x04user\x18\x04 \x01(\v2 .resources.users.short.UserShortH\x00R\x04user\x88\x01\x01\x12\x19\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x1c\n" +
+	"\auser_id\x18\x03 \x01(\x05H\x00R\x06userId\x88\x01\x01\x129\n" +
+	"\x04user\x18\x04 \x01(\v2 .resources.users.short.UserShortH\x01R\x04user\x88\x01\x01\x12\x19\n" +
 	"\buser_job\x18\x05 \x01(\tR\auserJob\x12)\n" +
-	"\x0etarget_user_id\x18\x06 \x01(\x05H\x01R\ftargetUserId\x88\x01\x01\x12F\n" +
-	"\vtarget_user\x18\a \x01(\v2 .resources.users.short.UserShortH\x02R\n" +
+	"\x0etarget_user_id\x18\x06 \x01(\x05H\x02R\ftargetUserId\x88\x01\x01\x12F\n" +
+	"\vtarget_user\x18\a \x01(\v2 .resources.users.short.UserShortH\x03R\n" +
 	"targetUser\x88\x01\x01\x12+\n" +
-	"\x0ftarget_user_job\x18\b \x01(\tH\x03R\rtargetUserJob\x88\x01\x01\x12\x18\n" +
+	"\x0ftarget_user_job\x18\b \x01(\tH\x04R\rtargetUserJob\x88\x01\x01\x12\x18\n" +
 	"\aservice\x18\t \x01(\tR\aservice\x12\x16\n" +
 	"\x06method\x18\n" +
 	" \x01(\tR\x06method\x124\n" +
 	"\x06action\x18\v \x01(\x0e2\x1c.resources.audit.EventActionR\x06action\x124\n" +
 	"\x06result\x18\f \x01(\x0e2\x1c.resources.audit.EventResultR\x06result\x128\n" +
-	"\x04meta\x18\r \x01(\v2\x1f.resources.audit.AuditEntryMetaH\x04R\x04meta\x88\x01\x01\x12\x17\n" +
-	"\x04data\x18\x0e \x01(\tH\x05R\x04data\x88\x01\x01B\a\n" +
+	"\x04meta\x18\r \x01(\v2\x1f.resources.audit.AuditEntryMetaH\x05R\x04meta\x88\x01\x01\x12\x17\n" +
+	"\x04data\x18\x0e \x01(\tH\x06R\x04data\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"account_id\x18\x0f \x01(\x03H\aR\taccountId\x88\x01\x01B\n" +
+	"\n" +
+	"\b_user_idB\a\n" +
 	"\x05_userB\x11\n" +
 	"\x0f_target_user_idB\x0e\n" +
 	"\f_target_userB\x12\n" +
 	"\x10_target_user_jobB\a\n" +
 	"\x05_metaB\a\n" +
-	"\x05_data\"\x90\x01\n" +
+	"\x05_dataB\r\n" +
+	"\v_account_id\"\x90\x01\n" +
 	"\x0eAuditEntryMeta\x12=\n" +
 	"\x04meta\x18\x01 \x03(\v2).resources.audit.AuditEntryMeta.MetaEntryR\x04meta\x1a7\n" +
 	"\tMetaEntry\x12\x10\n" +

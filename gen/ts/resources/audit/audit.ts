@@ -26,9 +26,9 @@ export interface AuditEntry {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: int32 user_id = 3
+     * @generated from protobuf field: optional int32 user_id = 3
      */
-    userId: number;
+    userId?: number;
     /**
      * @generated from protobuf field: optional resources.users.short.UserShort user = 4
      */
@@ -77,6 +77,10 @@ export interface AuditEntry {
      * @generated from protobuf field: optional string data = 14
      */
     data?: string;
+    /**
+     * @generated from protobuf field: optional int64 account_id = 15
+     */
+    accountId?: number;
 }
 /**
  * @generated from protobuf message resources.audit.AuditEntryMeta
@@ -145,7 +149,7 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
         super("resources.audit.AuditEntry", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "user", kind: "message", T: () => UserShort },
             { no: 5, name: "user_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "target_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
@@ -156,13 +160,13 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
             { no: 11, name: "action", kind: "enum", T: () => ["resources.audit.EventAction", EventAction, "EVENT_ACTION_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 12, name: "result", kind: "enum", T: () => ["resources.audit.EventResult", EventResult, "EVENT_RESULT_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 13, name: "meta", kind: "message", T: () => AuditEntryMeta },
-            { no: 14, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 14, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 15, name: "account_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<AuditEntry>): AuditEntry {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
-        message.userId = 0;
         message.userJob = "";
         message.service = "";
         message.method = "";
@@ -183,7 +187,7 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* int32 user_id */ 3:
+                case /* optional int32 user_id */ 3:
                     message.userId = reader.int32();
                     break;
                 case /* optional resources.users.short.UserShort user */ 4:
@@ -219,6 +223,9 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
                 case /* optional string data */ 14:
                     message.data = reader.string();
                     break;
+                case /* optional int64 account_id */ 15:
+                    message.accountId = reader.int64().toNumber();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -237,8 +244,8 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int32 user_id = 3; */
-        if (message.userId !== 0)
+        /* optional int32 user_id = 3; */
+        if (message.userId !== undefined)
             writer.tag(3, WireType.Varint).int32(message.userId);
         /* optional resources.users.short.UserShort user = 4; */
         if (message.user)
@@ -273,6 +280,9 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
         /* optional string data = 14; */
         if (message.data !== undefined)
             writer.tag(14, WireType.LengthDelimited).string(message.data);
+        /* optional int64 account_id = 15; */
+        if (message.accountId !== undefined)
+            writer.tag(15, WireType.Varint).int64(message.accountId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

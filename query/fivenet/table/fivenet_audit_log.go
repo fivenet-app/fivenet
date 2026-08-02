@@ -21,6 +21,7 @@ type fivenetAuditLogTable struct {
 	CreatedAt     mysql.ColumnTimestamp
 	UserID        mysql.ColumnInteger
 	UserJob       mysql.ColumnString
+	AccountID     mysql.ColumnInteger
 	TargetUserID  mysql.ColumnInteger
 	TargetUserJob mysql.ColumnString
 	Service       mysql.ColumnString
@@ -74,6 +75,7 @@ func newFivenetAuditLogTableImpl(schemaName, tableName, alias string) fivenetAud
 		CreatedAtColumn     = mysql.TimestampColumn("created_at")
 		UserIDColumn        = mysql.IntegerColumn("user_id")
 		UserJobColumn       = mysql.StringColumn("user_job")
+		AccountIDColumn     = mysql.IntegerColumn("account_id")
 		TargetUserIDColumn  = mysql.IntegerColumn("target_user_id")
 		TargetUserJobColumn = mysql.StringColumn("target_user_job")
 		ServiceColumn       = mysql.StringColumn("service")
@@ -82,8 +84,8 @@ func newFivenetAuditLogTableImpl(schemaName, tableName, alias string) fivenetAud
 		ResultColumn        = mysql.IntegerColumn("result")
 		MetaColumn          = mysql.StringColumn("meta")
 		DataColumn          = mysql.StringColumn("data")
-		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, ActionColumn, ResultColumn, MetaColumn, DataColumn}
-		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, ActionColumn, ResultColumn, MetaColumn, DataColumn}
+		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UserIDColumn, UserJobColumn, AccountIDColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, ActionColumn, ResultColumn, MetaColumn, DataColumn}
+		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UserIDColumn, UserJobColumn, AccountIDColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, ActionColumn, ResultColumn, MetaColumn, DataColumn}
 		defaultColumns      = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -95,6 +97,7 @@ func newFivenetAuditLogTableImpl(schemaName, tableName, alias string) fivenetAud
 		CreatedAt:     CreatedAtColumn,
 		UserID:        UserIDColumn,
 		UserJob:       UserJobColumn,
+		AccountID:     AccountIDColumn,
 		TargetUserID:  TargetUserIDColumn,
 		TargetUserJob: TargetUserJobColumn,
 		Service:       ServiceColumn,

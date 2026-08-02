@@ -95,6 +95,7 @@ func (s *Store) ViewAuditLog(
 			tAuditLog.CreatedAt,
 			tAuditLog.UserID,
 			tAuditLog.UserJob,
+			tAuditLog.AccountID,
 			tAuditLog.TargetUserID,
 			tAuditLog.Service,
 			tAuditLog.Method,

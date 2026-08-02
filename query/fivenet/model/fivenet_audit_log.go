@@ -14,8 +14,9 @@ import (
 type FivenetAuditLog struct {
 	ID            int64      `sql:"primary_key" json:"id"`
 	CreatedAt     *time.Time `json:"created_at"`
-	UserID        int32      `json:"user_id"`
+	UserID        *int32     `json:"user_id"`
 	UserJob       string     `json:"user_job"`
+	AccountID     *int64     `json:"account_id"`
 	TargetUserID  *int32     `json:"target_user_id"`
 	TargetUserJob *string    `json:"target_user_job"`
 	Service       string     `json:"service"`
