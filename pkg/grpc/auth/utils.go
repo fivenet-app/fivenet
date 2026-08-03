@@ -38,8 +38,8 @@ func getTokenFromGRPCContext(ctx context.Context, cookieName string) (string, er
 	return "", nil
 }
 
-// GetAccTokenFromGRPCContext extracts the account token from gRPC context.
-func GetAccTokenFromGRPCContext(ctx context.Context) (string, error) {
+// GetTokenFromAuthHeaderGRPCContext extracts the account token from gRPC context.
+func GetTokenFromAuthHeaderGRPCContext(ctx context.Context) (string, error) {
 	token, err := getTokenFromGRPCContext(ctx, AccCookieName)
 	if err != nil {
 		return "", err
@@ -70,7 +70,7 @@ func GetUserTokenFromGRPCContext(ctx context.Context) (string, error) {
 
 // GetTokensFromGRPCContext extracts both account and user tokens from gRPC context.
 func GetTokensFromGRPCContext(ctx context.Context) (string, string, error) {
-	accToken, err := GetAccTokenFromGRPCContext(ctx)
+	accToken, err := GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		return "", "", err
 	}

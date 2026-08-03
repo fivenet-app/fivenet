@@ -180,7 +180,7 @@ func (s *Server) ChangePassword(
 ) (*pbauth.ChangePasswordResponse, error) {
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	token, err := auth.GetAccTokenFromGRPCContext(ctx)
+	token, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
@@ -246,7 +246,7 @@ func (s *Server) ChangeUsername(
 ) (*pbauth.ChangeUsernameResponse, error) {
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	token, err := auth.GetAccTokenFromGRPCContext(ctx)
+	token, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
@@ -356,7 +356,7 @@ func (s *Server) GetCharacters(
 	ctx context.Context,
 	req *pbauth.GetCharactersRequest,
 ) (*pbauth.GetCharactersResponse, error) {
-	accToken, err := auth.GetAccTokenFromGRPCContext(ctx)
+	accToken, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
@@ -438,7 +438,7 @@ func (s *Server) ChooseCharacter(
 ) (*pbauth.ChooseCharacterResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.char_id", req.GetCharId()})
 
-	accToken, err := auth.GetAccTokenFromGRPCContext(ctx)
+	accToken, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
@@ -710,7 +710,7 @@ func (s *Server) ImpersonateJob(
 		return nil, errorsauth.ErrImpersonateJobInvalid
 	}
 
-	accToken, err := auth.GetAccTokenFromGRPCContext(ctx)
+	accToken, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
@@ -813,7 +813,7 @@ func (s *Server) SetSuperuserMode(
 	ctx context.Context,
 	req *pbauth.SetSuperuserModeRequest,
 ) (*pbauth.SetSuperuserModeResponse, error) {
-	accToken, err := auth.GetAccTokenFromGRPCContext(ctx)
+	accToken, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		return nil, errorsgrpcauth.ErrInvalidToken
 	}

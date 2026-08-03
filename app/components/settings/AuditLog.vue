@@ -270,7 +270,10 @@ watch(
     () => query.services,
     () => {
         // If the selected methods are not part of the selected services, remove them
-        query.methods = query.methods.filter((m) => query.services.some((s) => m.includes(s + '/')));
+        query.methods =
+            query.services.length > 0
+                ? query.methods.filter((m) => query.services.some((s) => m.includes(s + '/')))
+                : query.methods;
     },
 );
 

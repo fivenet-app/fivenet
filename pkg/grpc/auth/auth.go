@@ -118,7 +118,7 @@ func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(
 	ctx context.Context,
 	_ string,
 ) (context.Context, error) {
-	t, err := GetAccTokenFromGRPCContext(ctx)
+	t, err := GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		return nil, err
 	}

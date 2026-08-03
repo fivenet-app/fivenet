@@ -19,7 +19,7 @@ import (
 func (s *Server) getAccountFromAccToken(
 	ctx context.Context,
 ) (*accounts.Account, *authclaims.AccountInfoClaims, error) {
-	token, err := auth.GetAccTokenFromGRPCContext(ctx)
+	token, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		return nil, nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}

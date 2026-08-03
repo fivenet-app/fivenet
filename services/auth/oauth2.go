@@ -23,7 +23,7 @@ func (s *Server) DeleteSocialLogin(
 
 	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.oauth2_provider", req.GetProvider()})
 
-	token, err := auth.GetAccTokenFromGRPCContext(ctx)
+	token, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		return nil, errorsgrpcauth.ErrInvalidToken
 	}
