@@ -64,7 +64,16 @@ func TestInsertUsesGapWhenAvailable(t *testing.T) {
 	}
 
 	afterID := int64(1)
-	got, err := Insert(t.Context(), nil, group, 0, nil, &afterID, errors.New("not found"), errors.New("failed"))
+	got, err := Insert(
+		t.Context(),
+		nil,
+		group,
+		0,
+		nil,
+		&afterID,
+		errors.New("not found"),
+		errors.New("failed"),
+	)
 	require.NoError(t, err)
 	assert.Equal(t, utils.FormatRank(2000), got)
 }
@@ -80,7 +89,16 @@ func TestInsertRebalancesWhenNoGap(t *testing.T) {
 	}
 
 	afterID := int64(1)
-	got, err := Insert(t.Context(), nil, group, 0, nil, &afterID, errors.New("not found"), errors.New("failed"))
+	got, err := Insert(
+		t.Context(),
+		nil,
+		group,
+		0,
+		nil,
+		&afterID,
+		errors.New("not found"),
+		errors.New("failed"),
+	)
 	require.NoError(t, err)
 	assert.Equal(t, utils.FormatRank(1500), got)
 	assert.Equal(t, utils.FormatRank(1000), group.rows[0].SortRank)

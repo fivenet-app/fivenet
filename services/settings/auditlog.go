@@ -4,6 +4,7 @@ import (
 	"context"
 
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
 	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
@@ -13,9 +14,18 @@ func (s *Server) ViewAuditLog(
 	ctx context.Context,
 	req *pbsettings.ViewAuditLogRequest,
 ) (*pbsettings.ViewAuditLogResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	// Force the job filter to the user's job unless they are a job admin, in which case they can view all jobs.
+	job := userInfo.GetJob()
+	if userInfo.GetJobAdmin() {
+		job = ""
+	}
+
 	resp, err := s.store.ViewAuditLog(ctx, settingsstore.ViewAuditLogOptions{
 		Pagination: req.GetPagination(),
 		Sort:       req.GetSort(),
+		Job:        job,
 		UserIDs:    req.GetUserIds(),
 		From:       req.GetFrom(),
 		To:         req.GetTo(),

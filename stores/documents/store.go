@@ -42,7 +42,11 @@ type IStore interface {
 		templateID int64,
 		includeDeleted bool,
 	) (*documentstemplates.Template, error)
-	GetTemplateOrderInfo(ctx context.Context, q qrm.DB, templateID int64) (*TemplateOrderInfo, error)
+	GetTemplateOrderInfo(
+		ctx context.Context,
+		q qrm.DB,
+		templateID int64,
+	) (*TemplateOrderInfo, error)
 	NextTemplateGroupRank(
 		ctx context.Context,
 		q qrm.DB,

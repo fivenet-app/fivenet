@@ -10,6 +10,7 @@ import (
 	codegenaudit "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -196,11 +197,11 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 			tAudit.Data,
 		).
 		VALUES(
-			in.UserId,
+			dbutils.Int32P(in.GetUserId()),
 			in.GetUserJob(),
-			in.AccountId,
-			in.TargetUserId,
-			in.TargetUserJob,
+			dbutils.Int64P(in.GetAccountId()),
+			dbutils.Int32P(in.GetTargetUserId()),
+			dbutils.StringEmpty(in.GetTargetUserJob()),
 			in.GetService(),
 			in.GetMethod(),
 			in.GetAction(),

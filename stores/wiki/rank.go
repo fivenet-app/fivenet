@@ -129,7 +129,12 @@ func (s *Store) NextPageGroupRank(
 	startpage bool,
 	excludeID int64,
 ) (string, error) {
-	return storesrank.Next(ctx, q, pageRankGroup{job: job, parentID: parentID, startpage: startpage}, excludeID)
+	return storesrank.Next(
+		ctx,
+		q,
+		pageRankGroup{job: job, parentID: parentID, startpage: startpage},
+		excludeID,
+	)
 }
 
 func (s *Store) InsertPageGroupRank(

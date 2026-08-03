@@ -302,16 +302,14 @@ func applyUserInfo(ctx context.Context, ae *audit.AuditEntry) {
 		return
 	}
 
-	ae.UserId = ptr(userInfo.GetUserId())
-	ae.UserJob = userInfo.GetJob()
+	if userInfo.GetUserId() > 0 {
+		ae.SetUserId(userInfo.GetUserId())
+		ae.SetUserJob(userInfo.GetJob())
+	}
 	if userInfo.GetAccountId() > 0 {
-		ae.AccountId = ptr(userInfo.GetAccountId())
+		ae.SetAccountId(userInfo.GetAccountId())
 		ae.GetMeta().Set("account_id", strconv.FormatInt(userInfo.GetAccountId(), 10))
 	}
-}
-
-func ptr[T any](v T) *T {
-	return &v
 }
 
 func splitFullMethod(full string) (string, string) {

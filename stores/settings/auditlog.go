@@ -21,6 +21,9 @@ func (s *Store) ViewAuditLog(
 	opts ViewAuditLogOptions,
 ) (*pbsettings.ViewAuditLogResponse, error) {
 	condition := mysql.Bool(true)
+	if opts.Job != "" {
+		condition = condition.AND(tAuditLog.UserJob.EQ(mysql.String(opts.Job)))
+	}
 	if len(opts.UserIDs) > 0 {
 		ids := make([]mysql.Expression, len(opts.UserIDs))
 		for i := range opts.UserIDs {
