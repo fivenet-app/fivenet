@@ -586,7 +586,7 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIds map[int32]any
 				continue
 			}
 
-			if err := m.userLocStore.Delete(ctx, oldKey); err != nil {
+			if err := m.userLocStore.Delete(ctx, key); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}

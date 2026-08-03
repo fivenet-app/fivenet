@@ -114,6 +114,7 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 				INNER_JOIN(tColleague,
 					tColleague.ID.EQ(tCentrumDispatchers.UserID),
 				).
+				// TODO require fivenet_user_jobs is_primary as well!
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tCentrumDispatchers.UserID),
 				).

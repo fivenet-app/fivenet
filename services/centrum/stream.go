@@ -31,7 +31,7 @@ import (
 
 const feedFetch = 16
 
-func (s *Server) sendHandshakre(
+func (s *Server) sendHandshake(
 	ctx context.Context,
 	srv pbcentrum.CentrumService_StreamServer,
 	userJob string,
@@ -125,7 +125,7 @@ func (s *Server) Stream(
 	}
 
 	for {
-		if err := s.sendHandshakre(srv.Context(), srv, userInfo.GetJob(), acls); err != nil {
+		if err := s.sendHandshake(srv.Context(), srv, userInfo.GetJob(), acls); err != nil {
 			if protoutils.IsContextCanceled(err) {
 				return nil
 			}

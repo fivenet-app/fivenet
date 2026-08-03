@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
@@ -22,6 +23,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxtest"
+	"google.golang.org/protobuf/proto"
 )
 
 func TestMain(m *testing.M) {
@@ -157,6 +159,26 @@ func TestRefreshUserLocations(t *testing.T) {
 	list = manager.userLocStore.List()
 	assert.Len(t, list, 2)
 
+	staleUser1 := proto.Clone(user1).(*livemapmarkers.UserMarker)
+	staleUser1.Job = "police"
+	staleUser1.JobGrade = ptrInt32(4)
+	require.NoError(t, manager.userLocStore.Put(ctx, userMarkerKey(int32(1), "police", 4), staleUser1))
+
+	removed, err := manager.cleanupUserIDs(ctx, map[int32]any{
+		1: nil,
+		2: nil,
+	})
+	require.NoError(t, err)
+	assert.Equal(t, 1, removed)
+
+	user1, err = manager.userLocStore.Get(userMarkerKey(int32(1), "ambulance", 3))
+	require.NoError(t, err)
+	assert.NotNil(t, user1)
+
+	staleUser1, err = manager.userLocStore.Get(userMarkerKey(int32(1), "police", 4))
+	require.Error(t, err)
+	assert.Nil(t, staleUser1)
+
 	// Update user location (no event is sent for updates)
 	require.NoError(
 		t,
@@ -284,6 +306,10 @@ func insertCitizenLocations(
 	_, err := stmt.ExecContext(ctx, db)
 
 	return err
+}
+
+func ptrInt32(v int32) *int32 {
+	return &v
 }
 
 func removeUserLocations(ctx context.Context, db *sql.DB) error {

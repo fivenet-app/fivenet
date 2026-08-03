@@ -127,22 +127,29 @@ func (s *Server) sendUserMarkers(
 	userInfo *userinfo.UserInfo,
 	userOnDuty bool,
 ) error {
-	// Get user markers
+	// Send initial payload
+	if err := srv.Send(s.userMarkersResponse(usersJobs, userInfo, userOnDuty)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Server) userMarkersResponse(
+	usersJobs *permissionsattributes.JobGradeList,
+	userInfo *userinfo.UserInfo,
+	userOnDuty bool,
+) *pblivemap.StreamResponse {
 	markers := s.tracker.GetFilteredUserMarkers(usersJobs, userInfo)
 
-	// Send initial payload
-	if err := srv.Send(&pblivemap.StreamResponse{
+	return &pblivemap.StreamResponse{
 		UserOnDuty: &userOnDuty,
 		Data: &pblivemap.StreamResponse_Snapshot{
 			Snapshot: &pblivemap.Snapshot{
 				Markers: markers,
 			},
 		},
-	}); err != nil {
-		return err
 	}
-
-	return nil
 }
 
 func (s *Server) Stream(
@@ -333,7 +340,6 @@ func (s *Server) Stream(
 				}
 
 				if err := s.processMessage(
-					srv,
 					msg,
 					userInfo,
 					&userOnDuty,
@@ -375,7 +381,6 @@ func markerUpdateShouldDeleteForUser(
 
 // Helper function to process a single message.
 func (s *Server) processMessage(
-	srv pblivemap.LivemapService_StreamServer,
 	m jetstream.Msg,
 	userInfo *userinfo.UserInfo,
 	userOnDuty *bool,
@@ -445,11 +450,8 @@ func (s *Server) processMessage(
 	if !*userOnDuty {
 		if um.GetUserId() == userInfo.GetUserId() {
 			*userOnDuty = true
-			if err := s.sendUserMarkers(srv, usersJobs, userInfo, true); err != nil {
-				if protoutils.IsContextCanceled(err) {
-					return nil
-				}
-				return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
+			if err := sendOut(s.userMarkersResponse(usersJobs, userInfo, true)); err != nil {
+				return err
 			}
 		} else if !userInfo.GetJobAdmin() {
 			return nil // Skip updates for non-superusers not on duty
