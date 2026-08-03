@@ -178,7 +178,7 @@ func TestProcessMessageOnDutyTransitionEnqueuesSnapshot(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, userOnDuty)
 	require.Len(t, sent, 2)
-	require.Equal(t, true, sent[0].GetUserOnDuty())
+	require.True(t, sent[0].GetUserOnDuty())
 	_, ok := sent[0].Data.(*pblivemap.StreamResponse_Snapshot)
 	require.True(t, ok)
 	require.Len(t, sent[0].GetSnapshot().GetMarkers(), 1)
