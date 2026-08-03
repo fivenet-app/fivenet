@@ -57,26 +57,25 @@ const blurChar = '*';
 
 <template>
     <div class="inline-flex items-center gap-1">
-        <template v-if="number">
-            <UTooltip v-if="showIcon" :text="$t('common.call')">
-                <UButton
-                    class="shrink-0 cursor-pointer"
-                    variant="link"
-                    icon="i-mdi-phone"
-                    :label="showLabel ? $t('common.call') : undefined"
-                    :ui="{ base: 'py-0 sm:py-0 px-0 sm:px-0' }"
-                    v-bind="$attrs"
-                    @click="doCall"
-                />
-            </UTooltip>
+        <UTooltip v-if="showIcon" :text="$t('common.call')" :disabled="!number">
+            <UButton
+                class="shrink-0 cursor-pointer"
+                :disabled="!number"
+                :color="!number ? 'neutral' : 'primary'"
+                icon="i-mdi-phone"
+                :label="showLabel ? $t('common.call') : undefined"
+                variant="link"
+                :ui="{ base: 'py-0 sm:py-0 px-0 sm:px-0' }"
+                v-bind="$attrs"
+                @click="doCall"
+            />
+        </UTooltip>
 
-            <span v-if="!hideNumber" class="inline-flex gap-1">
-                <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx">{{
-                    streamerMode && idx > 0 ? blurChar.repeat(part.length) : part
-                }}</span>
-            </span>
-        </template>
-
-        <span v-else-if="!hideNaText">{{ $t('common.na') }}</span>
+        <span v-if="!hideNaText && !number">{{ $t('common.na') }}</span>
+        <span v-else-if="!hideNumber" class="inline-flex gap-1">
+            <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx">{{
+                streamerMode && idx > 0 ? blurChar.repeat(part.length) : part
+            }}</span>
+        </span>
     </div>
 </template>

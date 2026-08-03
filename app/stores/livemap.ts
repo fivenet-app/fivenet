@@ -127,7 +127,7 @@ export const useLivemapStore = defineStore(
          *
          * @param {UserMarker} marker - The user marker object containing the data to add or update.
          */
-        const addOrUpdateUserMarker = (marker: UserMarker): void => {
+        const addOrUpdateUserMarker = (marker: UserMarker, activeUserId?: number): void => {
             const m = markersUsers.value.get(marker.userId);
             if (!m) {
                 markersUsers.value.set(marker.userId, marker);
@@ -142,6 +142,11 @@ export const useLivemapStore = defineStore(
                 }
             } else {
                 updateUserMarker(m, marker);
+            }
+
+            // Update own marker if the active user ID matches the marker's user ID
+            if (activeUserId && activeUserId === marker?.userId) {
+                ownMarker.value = marker;
             }
         };
 
@@ -217,7 +222,7 @@ export const useLivemapStore = defineStore(
                     handleMarkersUpdate(resp.data.markers, foundMarkers);
                     break;
                 case 'snapshot':
-                    handleSnapshotUpdate(resp.data.snapshot);
+                    handleSnapshotUpdate(resp.data.snapshot, activeChar);
                     break;
                 case 'userDeletes':
                     handleUserDeletes(resp.data.userDeletes);
@@ -290,9 +295,9 @@ export const useLivemapStore = defineStore(
          *
          * @param {Snapshot} snapshot - The snapshot data containing the current state of markers.
          */
-        const handleSnapshotUpdate = (snapshot: Snapshot): void => {
+        const handleSnapshotUpdate = (snapshot: Snapshot, activeChar: UserLike | null): void => {
             markersUsers.value.clear();
-            snapshot.markers.forEach((marker: UserMarker) => addOrUpdateUserMarker(marker));
+            snapshot.markers.forEach((marker: UserMarker) => addOrUpdateUserMarker(marker, activeChar?.userId));
             initiated.value = true;
         };
 
@@ -327,12 +332,9 @@ export const useLivemapStore = defineStore(
          */
         const handleUserUpdates = (updates: UserUpdates, livemap: LivemapSettings, activeChar: UserLike | null): void => {
             for (const userUpdate of updates.updates) {
-                addOrUpdateUserMarker(userUpdate);
+                addOrUpdateUserMarker(userUpdate, activeChar?.userId);
                 if (livemap.centerSelectedMarker && userUpdate.userId === selectedMarker.value?.userId) {
                     selectedMarker.value = userUpdate;
-                }
-                if (activeChar?.userId === userUpdate.userId) {
-                    ownMarker.value = userUpdate;
                 }
             }
         };

@@ -31,7 +31,7 @@ function saveDrawer(): void {
     <UDrawer
         :title="$t('components.penaltycalculator.title')"
         :overlay="false"
-        :close="{ onClick: () => closeDrawer() }"
+        :close="false"
         side="bottom"
         handle-only
         :ui="{ title: 'flex gap-2' }"
