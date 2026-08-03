@@ -50,6 +50,7 @@
             commitlint
             ripgrep
             sd
+            shellcheck
           ];
         };
       });
