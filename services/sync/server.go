@@ -17,7 +17,6 @@ import (
 	pkggrpc "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
-	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
@@ -124,9 +123,6 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 		}
 	}
 
-	// Skip sync service calls (authenticated via token)
-	grpc_audit.Skip(ctx)
-
 	t, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		return nil, err
@@ -136,7 +132,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
-	return ctx, nil
+	return auth.ContextWithAuthKind(ctx, auth.AuthKindAPIToken), nil
 }
 
 func (s *Server) PermissionUnaryFuncOverride(

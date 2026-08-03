@@ -35,6 +35,18 @@ type userInfoCtxMarker struct{}
 
 var userInfoCtxMarkerKey = &userInfoCtxMarker{}
 
+type authKindCtxMarker struct{}
+
+var authKindCtxMarkerKey = &authKindCtxMarker{}
+
+type AuthKind string
+
+const (
+	AuthKindUserAccount AuthKind = "user_account"
+	AuthKindAccount     AuthKind = "account"
+	AuthKindAPIToken    AuthKind = "api_token"
+)
+
 type GRPCAuth struct {
 	ui     userinfo.UserInfoRetriever
 	tm     *TokenMgr
@@ -111,7 +123,10 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, _ string) (context.Context,
 		}
 	}
 
-	return context.WithValue(newCtx, userInfoCtxMarkerKey, userInfo), nil
+	return ContextWithAuthKind(
+		context.WithValue(newCtx, userInfoCtxMarkerKey, userInfo),
+		AuthKindUserAccount,
+	), nil
 }
 
 func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(
@@ -157,5 +172,8 @@ func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(
 		AuthActiveCharIDCtxTag, 0,
 	})
 
-	return context.WithValue(newCtx, userInfoCtxMarkerKey, accountInfo), nil
+	return ContextWithAuthKind(
+		context.WithValue(newCtx, userInfoCtxMarkerKey, accountInfo),
+		AuthKindAccount,
+	), nil
 }

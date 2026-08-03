@@ -88,6 +88,15 @@ func SetTokenInGRPCContext(ctx context.Context, token string) context.Context {
 	return md.Set("Authorization", "Bearer "+token).ToIncoming(ctx)
 }
 
+func GetAuthKindFromContext(ctx context.Context) (AuthKind, bool) {
+	kind, ok := ctx.Value(authKindCtxMarkerKey).(AuthKind)
+	return kind, ok
+}
+
+func ContextWithAuthKind(ctx context.Context, kind AuthKind) context.Context {
+	return context.WithValue(ctx, authKindCtxMarkerKey, kind)
+}
+
 func GetUserInfoFromContext(ctx context.Context) (*pbuserinfo.UserInfo, bool) {
 	return FromContext(ctx)
 }

@@ -52,7 +52,7 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 		applyUserInfo(ctx, ae)
 
 		// Store Entry handle in context so handlers can mutate it.
-		handle := &Entry{entry: ae}
+		handle := newEntry(ctx, ae)
 		ctx = withEntry(ctx, handle)
 
 		// Panic safety and finalize logging.
@@ -119,7 +119,7 @@ func NewStream(opts Options) grpc.StreamServerInterceptor {
 		}
 		applyUserInfo(ctx, ae)
 
-		handle := &Entry{entry: ae}
+		handle := newEntry(ctx, ae)
 		wrapped := &auditStream{
 			ServerStream: ss,
 			ctx:          withEntry(ss.Context(), handle),
@@ -188,6 +188,22 @@ type Entry struct {
 	mu    sync.Mutex
 	entry *audit.AuditEntry
 	skip  bool
+}
+
+func newEntry(ctx context.Context, ae *audit.AuditEntry) *Entry {
+	return &Entry{
+		entry: ae,
+		skip:  shouldSkipByDefault(ctx, ae),
+	}
+}
+
+func shouldSkipByDefault(ctx context.Context, ae *audit.AuditEntry) bool {
+	kind, ok := auth.GetAuthKindFromContext(ctx)
+	return ok && kind == auth.AuthKindAPIToken && !hasAuditIdentity(ae)
+}
+
+func hasAuditIdentity(ae *audit.AuditEntry) bool {
+	return ae.GetUserId() > 0 || ae.GetAccountId() > 0
 }
 
 type ctxKey struct{}

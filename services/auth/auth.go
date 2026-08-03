@@ -55,6 +55,8 @@ func (s *Server) Login(
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
 
+	grpc_audit.SetAccountID(ctx, account.ID)
+
 	accountProto := accounts.ConvertFromModelAcc(account)
 	accClaims := auth.MapAccountToClaims(
 		accountProto,
@@ -96,7 +98,7 @@ func (s *Server) Logout(
 	ctx context.Context,
 	req *pbauth.LogoutRequest,
 ) (*pbauth.LogoutResponse, error) {
-	// No need to audit logout actions
+	// No need to audit logout calls
 	grpc_audit.Skip(ctx)
 
 	err := s.destroyCookies(ctx)
