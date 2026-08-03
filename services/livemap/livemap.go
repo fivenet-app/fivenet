@@ -178,7 +178,7 @@ func (s *Server) Stream(
 	}
 
 	// Send user markers if the user is on duty and can see at least one job (superuser can see all jobs, so this is always true for them)
-	if userOnDuty && len(usersJobs.GetJobs()) > 0 {
+	if userOnDuty && usersJobs.Len() > 0 {
 		if err := s.sendUserMarkers(srv, usersJobs, userInfo, userOnDuty); err != nil {
 			if protoutils.IsContextCanceled(err) {
 				return nil
@@ -200,7 +200,7 @@ func (s *Server) Stream(
 	}
 
 	// Central pipe: all feeds push messages into outCh
-	outCh := make(chan *pblivemap.StreamResponse, 256)
+	outCh := make(chan *pblivemap.StreamResponse, 128)
 	defer close(outCh)
 	g, gctx := errgroup.WithContext(ctx)
 	sendOut := func(resp *pblivemap.StreamResponse) error {
@@ -305,7 +305,7 @@ func (s *Server) Stream(
 		}
 	})
 
-	if len(usersJobs.GetJobs()) > 0 {
+	if usersJobs.Len() > 0 {
 		// User markers goroutine - listens for user marker updates and sends them to outCh
 		g.Go(func() error {
 			// Upsert pull consumer with multi-filter

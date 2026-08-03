@@ -21,6 +21,7 @@ const {
     stopping: livemapStopping,
     reconnectBackoffTime: livemapReconnectBackoffTime,
     error: livemapError,
+    userOnDuty,
     jobsUsers,
     jobsMarkers,
 } = storeToRefs(livemapStore);
@@ -69,6 +70,7 @@ const collectLivemapDebugInfo = (): string =>
                 signalAborted: livemapAbort.value?.signal.aborted ?? false,
                 stopping: livemapStopping.value,
                 reconnectBackoffTime: livemapReconnectBackoffTime.value,
+                userOnDuty: userOnDuty.value,
                 jobsUsers: jobsUsers.value.length,
                 jobsMarkers: jobsMarkers.value.length,
                 error: livemapErrorText.value,
@@ -208,6 +210,8 @@ const schema = z.object({
                                     <dd class="font-mono">{{ livemapStopping }}</dd>
                                     <dt class="text-muted">Reconnect Backoff</dt>
                                     <dd class="font-mono">{{ livemapReconnectBackoffTime }}s</dd>
+                                    <dt class="text-muted">User On Duty</dt>
+                                    <dd class="font-mono">{{ userOnDuty }}</dd>
                                     <dt class="text-muted">Jobs Users</dt>
                                     <dd class="font-mono">{{ jobsUsers.length }}</dd>
                                     <dt class="text-muted">Jobs Markers</dt>

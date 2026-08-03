@@ -591,6 +591,7 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIds map[int32]any
 				continue
 			}
 
+			removed = append(removed, key)
 			continue
 		}
 
