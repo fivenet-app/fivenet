@@ -6,6 +6,7 @@ import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit;audit";
 
@@ -28,7 +29,7 @@ enum EventResult {
 }
 
 message AuditEntry {
-  int64 id = 1;
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\""];
   resources.timestamp.Timestamp created_at = 2;
 
   optional int32 user_id = 3;

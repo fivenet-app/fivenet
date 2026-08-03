@@ -193,6 +193,7 @@ func (s *Server) ChangePassword(
 			errorsauth.ErrChangePassword(map[string]any{"code": "401"}),
 		)
 	}
+	grpc_audit.SetAccountID(ctx, claims.AccID)
 
 	acc, err := s.store.GetAccountByIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
@@ -204,7 +205,6 @@ func (s *Server) ChangePassword(
 			errorsauth.ErrChangePassword(map[string]any{"code": "500"}),
 		)
 	}
-	grpc_audit.SetAccountID(ctx, acc.ID)
 
 	// Account has no password set
 	if acc.Password == nil {
@@ -252,11 +252,11 @@ func (s *Server) ChangeUsername(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
-
 	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
+	grpc_audit.SetAccountID(ctx, claims.AccID)
 
 	// Make sure current and new username aren't the same
 	currentUsername := req.GetCurrentUsername()
@@ -366,6 +366,7 @@ func (s *Server) GetCharacters(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
+	grpc_audit.SetAccountID(ctx, accClaims.AccID)
 
 	// Load account to make sure it (still) exists
 	acc, err := s.store.GetAccountByIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
@@ -448,6 +449,7 @@ func (s *Server) ChooseCharacter(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
+	grpc_audit.SetAccountID(ctx, currentAccClaims.AccID)
 
 	var currentUserClaims *authclaims.UserInfoClaims
 	userToken, err := auth.GetUserTokenFromGRPCContext(ctx)

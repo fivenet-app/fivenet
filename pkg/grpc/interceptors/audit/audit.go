@@ -291,8 +291,10 @@ func SetAccountID(ctx context.Context, accountID int64) {
 		e.set(func(a *audit.AuditEntry) {
 			a.AccountId = &accountID
 		})
+	} else {
+		// Fallback to add account_id to Meta if Entry is not present in context
+		AddMeta(ctx, "account_id", strconv.FormatInt(accountID, 10))
 	}
-	AddMeta(ctx, "account_id", strconv.FormatInt(accountID, 10))
 }
 
 func AddMeta(ctx context.Context, key, val string) {
@@ -318,13 +320,12 @@ func applyUserInfo(ctx context.Context, ae *audit.AuditEntry) {
 		return
 	}
 
+	if userInfo.GetAccountId() > 0 {
+		ae.SetAccountId(userInfo.GetAccountId())
+	}
 	if userInfo.GetUserId() > 0 {
 		ae.SetUserId(userInfo.GetUserId())
 		ae.SetUserJob(userInfo.GetJob())
-	}
-	if userInfo.GetAccountId() > 0 {
-		ae.SetAccountId(userInfo.GetAccountId())
-		ae.GetMeta().Set("account_id", strconv.FormatInt(userInfo.GetAccountId(), 10))
 	}
 }
 

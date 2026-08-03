@@ -147,7 +147,7 @@ export enum EventResult {
 class AuditEntry$Type extends MessageType<AuditEntry> {
     constructor() {
         super("resources.audit.AuditEntry", [
-            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "user", kind: "message", T: () => UserShort },

@@ -2,7 +2,6 @@ package settings
 
 import (
 	"context"
-	"strconv"
 	"strings"
 	"time"
 
@@ -105,6 +104,6 @@ func (s *Server) UpdateAppConfig(
 
 func setAuditAccountMeta(ctx context.Context) {
 	if userInfo, ok := grpcauth.GetUserInfoFromContext(ctx); ok && userInfo.GetAccountId() > 0 {
-		grpc_audit.AddMeta(ctx, "account_id", strconv.FormatInt(userInfo.GetAccountId(), 10))
+		grpc_audit.SetAccountID(ctx, userInfo.GetAccountId())
 	}
 }

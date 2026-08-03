@@ -59,7 +59,6 @@ func TestUnaryLogsAllowedCallWithoutUserInfo(t *testing.T) {
 	require.Equal(t, int64(42), logger.entry.GetAccountId())
 	require.Equal(t, audit.EventAction_EVENT_ACTION_CREATED, logger.entry.GetAction())
 	require.Equal(t, audit.EventResult_EVENT_RESULT_SUCCEEDED, logger.entry.GetResult())
-	require.Equal(t, "42", logger.entry.GetMeta().GetMeta()["account_id"])
 	require.Same(t, req, logger.req)
 }
 
@@ -120,5 +119,4 @@ func TestUnaryLogsAPITokenCallWithAccountUserInfo(t *testing.T) {
 	require.Equal(t, "services.example.ExampleService", logger.entry.GetService())
 	require.Equal(t, "Sync", logger.entry.GetMethod())
 	require.Equal(t, int64(42), logger.entry.GetAccountId())
-	require.Equal(t, "42", logger.entry.GetMeta().GetMeta()["account_id"])
 }

@@ -220,7 +220,10 @@ const columns = computed(
             {
                 accessorKey: 'user',
                 header: t('common.user'),
-                cell: ({ row }) => h(CitizenInfoPopover, { user: row.original.user }),
+                cell: ({ row }) =>
+                    row.original.user
+                        ? h(CitizenInfoPopover, { user: row.original.user })
+                        : `${t('common.account')} ${row.original.accountId ?? t('common.unknown')}`,
             },
             {
                 accessorKey: 'service',

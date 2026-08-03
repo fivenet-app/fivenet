@@ -198,7 +198,7 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 		).
 		VALUES(
 			dbutils.Int32P(in.GetUserId()),
-			in.GetUserJob(),
+			dbutils.StringEmpty(in.GetUserJob()),
 			dbutils.Int64P(in.GetAccountId()),
 			dbutils.Int32P(in.GetTargetUserId()),
 			dbutils.StringEmpty(in.GetTargetUserJob()),
