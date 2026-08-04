@@ -420,9 +420,6 @@ importers:
       prettier:
         specifier: 3.9.6
         version: 3.9.6
-      prettier-plugin-organize-attributes:
-        specifier: 1.0.0
-        version: 1.0.0(prettier@3.9.6)
       prettier-plugin-organize-imports:
         specifier: 4.3.0
         version: 4.3.0(prettier@3.9.6)(typescript@6.0.3)(vue-tsc@3.3.9(typescript@6.0.3))
@@ -20092,6 +20089,7 @@ snapshots:
   prettier-plugin-organize-attributes@1.0.0(prettier@3.9.6):
     dependencies:
       prettier: 3.9.6
+    optional: true
 
   prettier-plugin-organize-imports@4.3.0(prettier@3.9.6)(typescript@6.0.3)(vue-tsc@3.3.9(typescript@6.0.3)):
     dependencies:

@@ -5,7 +5,7 @@ module.exports = {
     semi: true,
     singleQuote: true,
     printWidth: 128,
-    plugins: ['prettier-plugin-organize-imports', 'prettier-plugin-organize-attributes', 'prettier-plugin-tailwindcss'],
+    plugins: ['prettier-plugin-organize-imports', 'prettier-plugin-tailwindcss'],
     attributeGroups: [
         '^((v-bind)?:?|v-)is$',
         '^v-for$',
