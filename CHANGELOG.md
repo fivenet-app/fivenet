@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.8.0] - 2026-08-04
+
+### 🚀 Features
+
+- Use nuxt ui for livemap context menu
+- Add drag'n'drop document template ordering
+- Use genric rank logic to reduce duplicated code
+- *(auth)* Use PinInput for registration token input
+- *(audit)* Add account id column
+- *(livemap)* Add debug info to settings drawer
+- Add get user props sync api endpoint
+
+### 🐛 Bug Fixes
+
+- Centrum dispatch activity feed and improve color polyfills
+- Amber color usage and polyfills colors
+- Improve color palette change funcs
+- Marker unit text color
+- *(templates)* Hide approval task add button in view when disabled
+- Testdata base data issue caused by templates ordering change
+- Documents base test data
+- *(livemap)* Heatmap perms check missing causing perm denied
+- Heatmap livemap error for good and improve server auth errors
+- Postcss plugin imported assets warning
+- Small ui/ux cleanups and improve stream msg var naming
+- *(input)* Show/hide hours:minutes in input date range based on width
+- *(audit)* Skip sync service calls authed by api token
+- Audit log correct user_job column as well
+- *(audit)* Use auth kind as consideration for skipping log
+- Add shellcheck to flake.nix
+- *(audit)* Null user job in audit if empty
+- Livemap own marker and empty phone number handling
+- *(livemap)* Prevent user marker stream stalls
+- *(livemap)* Using wrong jobs list for visibility checks
+- *(lint)* Assert equal vs true usage
+
 ## [2026.7.3] - 2026-07-28
 
 ### 🚀 Features
