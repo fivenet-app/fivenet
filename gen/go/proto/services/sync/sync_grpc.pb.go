@@ -27,6 +27,7 @@ const (
 	SyncService_AddUserUpdate_FullMethodName          = "/services.sync.SyncService/AddUserUpdate"
 	SyncService_AddUserActivity_FullMethodName        = "/services.sync.SyncService/AddUserActivity"
 	SyncService_AddUserProps_FullMethodName           = "/services.sync.SyncService/AddUserProps"
+	SyncService_GetUserProps_FullMethodName           = "/services.sync.SyncService/GetUserProps"
 	SyncService_AddColleagueActivity_FullMethodName   = "/services.sync.SyncService/AddColleagueActivity"
 	SyncService_AddColleagueProps_FullMethodName      = "/services.sync.SyncService/AddColleagueProps"
 	SyncService_AddJobTimeclock_FullMethodName        = "/services.sync.SyncService/AddJobTimeclock"
@@ -71,11 +72,13 @@ type SyncServiceClient interface {
 	AddUserUpdate(ctx context.Context, in *AddUserUpdateRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// Record a user activity entry.
 	AddUserActivity(ctx context.Context, in *AddUserActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
-	// Record user property changes.
+	// Record user props changes.
 	AddUserProps(ctx context.Context, in *AddUserPropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Retrieve user props.
+	GetUserProps(ctx context.Context, in *GetUserPropsRequest, opts ...grpc.CallOption) (*GetUserPropsResponse, error)
 	// Record a colleague activity entry.
 	AddColleagueActivity(ctx context.Context, in *AddColleagueActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
-	// Record colleague property changes.
+	// Record colleague props changes.
 	AddColleagueProps(ctx context.Context, in *AddColleaguePropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// Record a job timeclock entry.
 	AddJobTimeclock(ctx context.Context, in *AddJobTimeclockRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
@@ -202,6 +205,16 @@ func (c *syncServiceClient) AddUserProps(ctx context.Context, in *AddUserPropsRe
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddActivityResponse)
 	err := c.cc.Invoke(ctx, SyncService_AddUserProps_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) GetUserProps(ctx context.Context, in *GetUserPropsRequest, opts ...grpc.CallOption) (*GetUserPropsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserPropsResponse)
+	err := c.cc.Invoke(ctx, SyncService_GetUserProps_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -451,11 +464,13 @@ type SyncServiceServer interface {
 	AddUserUpdate(context.Context, *AddUserUpdateRequest) (*AddActivityResponse, error)
 	// Record a user activity entry.
 	AddUserActivity(context.Context, *AddUserActivityRequest) (*AddActivityResponse, error)
-	// Record user property changes.
+	// Record user props changes.
 	AddUserProps(context.Context, *AddUserPropsRequest) (*AddActivityResponse, error)
+	// Retrieve user props.
+	GetUserProps(context.Context, *GetUserPropsRequest) (*GetUserPropsResponse, error)
 	// Record a colleague activity entry.
 	AddColleagueActivity(context.Context, *AddColleagueActivityRequest) (*AddActivityResponse, error)
-	// Record colleague property changes.
+	// Record colleague props changes.
 	AddColleagueProps(context.Context, *AddColleaguePropsRequest) (*AddActivityResponse, error)
 	// Record a job timeclock entry.
 	AddJobTimeclock(context.Context, *AddJobTimeclockRequest) (*AddActivityResponse, error)
@@ -531,6 +546,9 @@ func (UnimplementedSyncServiceServer) AddUserActivity(context.Context, *AddUserA
 }
 func (UnimplementedSyncServiceServer) AddUserProps(context.Context, *AddUserPropsRequest) (*AddActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddUserProps not implemented")
+}
+func (UnimplementedSyncServiceServer) GetUserProps(context.Context, *GetUserPropsRequest) (*GetUserPropsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserProps not implemented")
 }
 func (UnimplementedSyncServiceServer) AddColleagueActivity(context.Context, *AddColleagueActivityRequest) (*AddActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddColleagueActivity not implemented")
@@ -756,6 +774,24 @@ func _SyncService_AddUserProps_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SyncServiceServer).AddUserProps(ctx, req.(*AddUserPropsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_GetUserProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserPropsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).GetUserProps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_GetUserProps_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).GetUserProps(ctx, req.(*GetUserPropsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1169,6 +1205,10 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddUserProps",
 			Handler:    _SyncService_AddUserProps_Handler,
+		},
+		{
+			MethodName: "GetUserProps",
+			Handler:    _SyncService_GetUserProps_Handler,
 		},
 		{
 			MethodName: "AddColleagueActivity",

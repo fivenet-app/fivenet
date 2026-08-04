@@ -14,6 +14,7 @@ import "resources/sync/activity/activity.proto";
 import "resources/sync/data/data.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/activity/activity.proto";
+import "resources/users/props/props.proto";
 import "resources/vehicles/vehicles.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync;sync";
@@ -108,6 +109,14 @@ message AddUserActivityRequest {
 
 message AddUserPropsRequest {
   resources.sync.activity.UserProps user_props = 1 [(buf.validate.field).required = true];
+}
+
+message GetUserPropsRequest {
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+}
+
+message GetUserPropsResponse {
+  resources.users.props.UserProps user_props = 1;
 }
 
 message AddColleagueActivityRequest {
@@ -265,11 +274,13 @@ service SyncService {
   rpc AddUserUpdate(AddUserUpdateRequest) returns (AddActivityResponse);
   // Record a user activity entry.
   rpc AddUserActivity(AddUserActivityRequest) returns (AddActivityResponse);
-  // Record user property changes.
+  // Record user props changes.
   rpc AddUserProps(AddUserPropsRequest) returns (AddActivityResponse);
+  // Retrieve user props.
+  rpc GetUserProps(GetUserPropsRequest) returns (GetUserPropsResponse);
   // Record a colleague activity entry.
   rpc AddColleagueActivity(AddColleagueActivityRequest) returns (AddActivityResponse);
-  // Record colleague property changes.
+  // Record colleague props changes.
   rpc AddColleagueProps(AddColleaguePropsRequest) returns (AddActivityResponse);
   // Record a job timeclock entry.
   rpc AddJobTimeclock(AddJobTimeclockRequest) returns (AddActivityResponse);

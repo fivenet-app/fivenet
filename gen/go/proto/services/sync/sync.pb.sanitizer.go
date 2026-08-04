@@ -457,6 +457,25 @@ func (m *GetStatusResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *GetUserPropsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: UserProps
+	if m.UserProps != nil {
+		if v, ok := any(m.GetUserProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *RegisterAccountRequest) Sanitize() error {
 	if m == nil {
 		return nil

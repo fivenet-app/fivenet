@@ -110,6 +110,19 @@ func (s *Store) AddUserProps(
 	return &pbsync.AddActivityResponse{}, nil
 }
 
+func (s *Store) GetUserProps(
+	ctx context.Context,
+	req *pbsync.GetUserPropsRequest,
+) (*pbsync.GetUserPropsResponse, error) {
+	props, err := s.citizensStore.GetUserProps(ctx, s.db, req.GetUserId())
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user props. %w", err)
+	}
+	return &pbsync.GetUserPropsResponse{
+		UserProps: props,
+	}, nil
+}
+
 func (s *Store) AddColleagueActivity(
 	ctx context.Context,
 	req *pbsync.AddColleagueActivityRequest,

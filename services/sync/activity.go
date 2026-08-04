@@ -31,6 +31,13 @@ func (s *Server) AddUserProps(
 	return s.store.AddUserProps(ctx, req)
 }
 
+func (s *Server) GetUserProps(
+	ctx context.Context,
+	req *pbsync.GetUserPropsRequest,
+) (*pbsync.GetUserPropsResponse, error) {
+	return s.store.GetUserProps(ctx, req)
+}
+
 func (s *Server) AddColleagueActivity(
 	ctx context.Context,
 	req *pbsync.AddColleagueActivityRequest,

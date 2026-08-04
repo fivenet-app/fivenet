@@ -31,6 +31,7 @@ import { AccountUpdate } from "../../resources/sync/activity/activity";
 import { TimeclockUpdate } from "../../resources/sync/activity/activity";
 import { ColleagueProps } from "../../resources/sync/activity/activity";
 import { ColleagueActivity } from "../../resources/jobs/colleagues/activity/activity";
+import { UserProps as UserProps$ } from "../../resources/users/props/props";
 import { UserProps } from "../../resources/sync/activity/activity";
 import { UserActivity } from "../../resources/users/activity/activity";
 import { Coords } from "../../resources/livemap/coords";
@@ -240,6 +241,24 @@ export interface AddUserPropsRequest {
      * @generated from protobuf field: resources.sync.activity.UserProps user_props = 1
      */
     userProps?: UserProps;
+}
+/**
+ * @generated from protobuf message services.sync.GetUserPropsRequest
+ */
+export interface GetUserPropsRequest {
+    /**
+     * @generated from protobuf field: int32 user_id = 1
+     */
+    userId: number;
+}
+/**
+ * @generated from protobuf message services.sync.GetUserPropsResponse
+ */
+export interface GetUserPropsResponse {
+    /**
+     * @generated from protobuf field: resources.users.props.UserProps user_props = 1
+     */
+    userProps?: UserProps$;
 }
 /**
  * @generated from protobuf message services.sync.AddColleagueActivityRequest
@@ -1406,6 +1425,99 @@ class AddUserPropsRequest$Type extends MessageType<AddUserPropsRequest> {
  * @generated MessageType for protobuf message services.sync.AddUserPropsRequest
  */
 export const AddUserPropsRequest = new AddUserPropsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetUserPropsRequest$Type extends MessageType<GetUserPropsRequest> {
+    constructor() {
+        super("services.sync.GetUserPropsRequest", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
+        ]);
+    }
+    create(value?: PartialMessage<GetUserPropsRequest>): GetUserPropsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<GetUserPropsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetUserPropsRequest): GetUserPropsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetUserPropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.GetUserPropsRequest
+ */
+export const GetUserPropsRequest = new GetUserPropsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetUserPropsResponse$Type extends MessageType<GetUserPropsResponse> {
+    constructor() {
+        super("services.sync.GetUserPropsResponse", [
+            { no: 1, name: "user_props", kind: "message", T: () => UserProps$ }
+        ]);
+    }
+    create(value?: PartialMessage<GetUserPropsResponse>): GetUserPropsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetUserPropsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetUserPropsResponse): GetUserPropsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.users.props.UserProps user_props */ 1:
+                    message.userProps = UserProps$.internalBinaryRead(reader, reader.uint32(), options, message.userProps);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetUserPropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.users.props.UserProps user_props = 1; */
+        if (message.userProps)
+            UserProps$.internalBinaryWrite(message.userProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.GetUserPropsResponse
+ */
+export const GetUserPropsResponse = new GetUserPropsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AddColleagueActivityRequest$Type extends MessageType<AddColleagueActivityRequest> {
     constructor() {
@@ -2636,6 +2748,7 @@ export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "AddUserUpdate", options: {}, I: AddUserUpdateRequest, O: AddActivityResponse },
     { name: "AddUserActivity", options: {}, I: AddUserActivityRequest, O: AddActivityResponse },
     { name: "AddUserProps", options: {}, I: AddUserPropsRequest, O: AddActivityResponse },
+    { name: "GetUserProps", options: {}, I: GetUserPropsRequest, O: GetUserPropsResponse },
     { name: "AddColleagueActivity", options: {}, I: AddColleagueActivityRequest, O: AddActivityResponse },
     { name: "AddColleagueProps", options: {}, I: AddColleaguePropsRequest, O: AddActivityResponse },
     { name: "AddJobTimeclock", options: {}, I: AddJobTimeclockRequest, O: AddActivityResponse },

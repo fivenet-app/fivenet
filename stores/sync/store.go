@@ -34,6 +34,10 @@ type IStore interface {
 		ctx context.Context,
 		req *pbsync.AddUserPropsRequest,
 	) (*pbsync.AddActivityResponse, error)
+	GetUserProps(
+		ctx context.Context,
+		req *pbsync.GetUserPropsRequest,
+	) (*pbsync.GetUserPropsResponse, error)
 	AddColleagueActivity(
 		ctx context.Context,
 		req *pbsync.AddColleagueActivityRequest,

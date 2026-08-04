@@ -13599,6 +13599,28 @@ Response containing the number of dispatches closed for the user.
 
 
 
+### services.sync.GetUserPropsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+
+
+
+
+
+### services.sync.GetUserPropsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_props` | [resources.users.props.UserProps](#resourcesuserspropsUserProps) |  |  |
+
+
+
+
+
 ### services.sync.RegisterAccountRequest
 
 
@@ -13791,9 +13813,10 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `AddAccountUpdate` | [AddAccountUpdateRequest](#servicessyncAddAccountUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record an account update activity. |
 | `AddUserUpdate` | [AddUserUpdateRequest](#servicessyncAddUserUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a user update activity. |
 | `AddUserActivity` | [AddUserActivityRequest](#servicessyncAddUserActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a user activity entry. |
-| `AddUserProps` | [AddUserPropsRequest](#servicessyncAddUserPropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record user property changes. |
+| `AddUserProps` | [AddUserPropsRequest](#servicessyncAddUserPropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record user props changes. |
+| `GetUserProps` | [GetUserPropsRequest](#servicessyncGetUserPropsRequest) | [GetUserPropsResponse](#servicessyncGetUserPropsResponse) |Retrieve user props. |
 | `AddColleagueActivity` | [AddColleagueActivityRequest](#servicessyncAddColleagueActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a colleague activity entry. |
-| `AddColleagueProps` | [AddColleaguePropsRequest](#servicessyncAddColleaguePropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record colleague property changes. |
+| `AddColleagueProps` | [AddColleaguePropsRequest](#servicessyncAddColleaguePropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record colleague props changes. |
 | `AddJobTimeclock` | [AddJobTimeclockRequest](#servicessyncAddJobTimeclockRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a job timeclock entry. |
 | `AddDispatch` | [AddDispatchRequest](#servicessyncAddDispatchRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a dispatch activity entry. |
 | `AddMarker` | [AddMarkerRequest](#servicessyncAddMarkerRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |AddMarker Create a temporary marker on the live map (if no expiration time is provided, it will default to 24 hours). |
