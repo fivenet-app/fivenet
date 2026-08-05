@@ -946,7 +946,7 @@ func (s *DispatchDB) UpdateAssignments(
 				for _, unitId := range toAnnounce {
 					if _, err := s.AddDispatchStatus(ctx, s.db, &centrumdispatches.DispatchStatus{
 						CreatedAt:  timestamp.Now(),
-						DispatchId: dsp.GetId(),
+						DispatchId: dspId,
 						UnitId:     &unitId,
 						Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
 						UserId:     creatorId,
@@ -989,7 +989,7 @@ func (s *DispatchDB) UpdateAssignments(
 
 				for unitId, unit := range resolvedUnits {
 					dsp.Units = append(dsp.Units, &centrumdispatches.DispatchAssignment{
-						DispatchId: dsp.GetId(),
+						DispatchId: dspId,
 						UnitId:     unitId,
 						Unit:       unit,
 						ExpiresAt:  expiresAtTS,
@@ -999,7 +999,7 @@ func (s *DispatchDB) UpdateAssignments(
 				for unitId := range resolvedUnits {
 					if _, err := s.AddDispatchStatus(ctx, s.db, &centrumdispatches.DispatchStatus{
 						CreatedAt:  timestamp.Now(),
-						DispatchId: dsp.GetId(),
+						DispatchId: dspId,
 						UnitId:     &unitId,
 						UserId:     creatorId,
 						Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
@@ -1013,35 +1013,39 @@ func (s *DispatchDB) UpdateAssignments(
 				}
 			}
 
+			// Dispatch has no units assigned anymore
+			if len(dsp.GetUnits()) == 0 {
+				// Check dispatch status to not be completed/archived, etc.
+				if dsp.GetStatus() != nil &&
+					!centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) {
+					status, err := s.AddDispatchStatus(
+						ctx,
+						s.db,
+						&centrumdispatches.DispatchStatus{
+							CreatedAt:  timestamp.Now(),
+							DispatchId: dspId,
+							Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
+							UserId:     creatorId,
+							X:          x,
+							Y:          y,
+							Postal:     postal,
+							CreatorJob: creatorJob,
+						},
+						true,
+						dsp.GetJobs().GetJobStrings(),
+					)
+					if err != nil {
+						return nil, false, err
+					}
+
+					dsp.SetStatus(status)
+				}
+			}
+
 			return dsp, len(toRemove) > 0 || len(toAdd) > 0, nil
 		},
 	); err != nil {
 		return err
-	}
-
-	dsp, err := s.Get(ctx, dspId)
-	if err != nil {
-		return err
-	}
-
-	// Dispatch has no units assigned anymore
-	if len(dsp.GetUnits()) == 0 {
-		// Check dispatch status to not be completed/archived, etc.
-		if dsp.GetStatus() != nil &&
-			!centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) {
-			if _, err := s.UpdateStatus(ctx, dspId, &centrumdispatches.DispatchStatus{
-				CreatedAt:  timestamp.Now(),
-				DispatchId: dspId,
-				Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
-				UserId:     creatorId,
-				X:          x,
-				Y:          y,
-				Postal:     postal,
-				CreatorJob: creatorJob,
-			}); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil

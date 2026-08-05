@@ -82,6 +82,10 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        const isTransientDispatchUnitStatus = (status?: StatusDispatch): boolean => {
+            return status === StatusDispatch.UNIT_ASSIGNED || status === StatusDispatch.UNIT_UNASSIGNED;
+        };
+
         // Getters
         /**
          * Gets the current mode of the centrum.
@@ -348,6 +352,18 @@ export const useCentrumStore = defineStore(
                 return;
             }
             status.unit = undefined;
+
+            // Unit assignment events stay in feed, but do not become dispatch's current status.
+            if (isTransientDispatchUnitStatus(status.status)) {
+                if (status.status === StatusDispatch.UNIT_UNASSIGNED) {
+                    const idx = disp.units.findIndex((ua) => ua.unitId === status.unitId);
+                    if (idx > -1) {
+                        disp.units.splice(idx, 1);
+                    }
+                }
+                return;
+            }
+
             if (!disp.status) {
                 disp.status = status;
             } else {
@@ -364,14 +380,6 @@ export const useCentrumStore = defineStore(
                 disp.status.y = status.y;
                 disp.status.postal = status.postal;
                 disp.status.creatorJob = status.creatorJob;
-
-                // If unit got unassigned, remove it from the dispatch's units
-                if (disp.status.status === StatusDispatch.UNIT_UNASSIGNED) {
-                    const idx = disp.units.findIndex((ua) => ua.unitId === status.unitId);
-                    if (idx > -1) {
-                        disp.units.splice(idx, 1);
-                    }
-                }
             }
         };
 
@@ -672,11 +680,10 @@ export const useCentrumStore = defineStore(
                         }
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         const ds = resp.change.dispatchStatus;
-                        updateDispatchStatus(ds);
 
-                        if (isCenter.value) {
-                            addFeedItem(ds);
-                        }
+                        if (isCenter.value) addFeedItem(ds);
+
+                        updateDispatchStatus(ds);
 
                         if (ds.status === StatusDispatch.COMPLETED) {
                             // Play sound if one of the user's own dispatches got completed
