@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
+import StatsModalClient from '~/components/jobs/colleagues/labels/StatsModal.client.vue';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -16,6 +17,10 @@ import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts
 const notifications = useNotificationsStore();
 
 const { t } = useI18n();
+
+const overlay = useOverlay();
+
+const { attr } = useAuth();
 
 const jobsColleaguesClient = await getJobsColleaguesClient();
 
@@ -91,11 +96,13 @@ const breadcrumbs = computed(() => [
     },
     {
         label: t('pages.jobs.colleagues.labels.title'),
-        icon: 'i-mdi-label',
+        icon: 'i-mdi-label-multiple',
     },
 ]);
 
 const formRef = useTemplateRef('formRef');
+
+const labelsStatsModal = overlay.create(StatsModalClient);
 </script>
 
 <template>
@@ -121,6 +128,18 @@ const formRef = useTemplateRef('formRef');
 
                 <template #right>
                     <RefreshButton @click="() => refresh()" />
+
+                    <UTooltip
+                        v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
+                        :text="$t('common.stats')"
+                    >
+                        <UButton
+                            icon="i-mdi-chart-donut"
+                            color="neutral"
+                            :label="$t('common.stats')"
+                            @click="labelsStatsModal.open({})"
+                        />
+                    </UTooltip>
                 </template>
             </UDashboardToolbar>
         </template>

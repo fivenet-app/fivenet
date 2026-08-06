@@ -244,6 +244,12 @@ func (s *Store) GetColleagueLabelsStats(
 				).
 				INNER_JOIN(tColleague,
 					tColleague.ID.EQ(tColleagueLabels.UserID),
+				).
+				INNER_JOIN(tUserJobs,
+					mysql.AND(
+						tUserJobs.UserID.EQ(tColleagueLabels.UserID),
+						tUserJobs.Job.EQ(mysql.String(job)),
+					),
 				),
 		).
 		WHERE(mysql.AND(

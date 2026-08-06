@@ -42,7 +42,7 @@ const items = computed<NavigationMenuItem[]>(
                     },
                     {
                         label: t('pages.jobs.colleagues.labels.title'),
-                        icon: 'i-mdi-label',
+                        icon: 'i-mdi-label-multiple',
                         to: '/jobs/colleagues/labels',
                         permission: 'jobs.ColleaguesService/ManageLabels' as Perms,
                     },

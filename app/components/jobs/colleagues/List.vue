@@ -317,7 +317,7 @@ defineShortcuts({
                                 <UButton
                                     v-if="can('jobs.ColleaguesService/ManageLabels').value"
                                     :label="$t('common.label', 2)"
-                                    icon="i-mdi-tag"
+                                    icon="i-mdi-label-multiple"
                                     to="/jobs/colleagues/labels"
                                 />
 
@@ -555,7 +555,7 @@ defineShortcuts({
                                     v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
                                     class="flex min-w-0 items-start gap-1 overflow-x-hidden"
                                 >
-                                    <UIcon class="h-5 w-5 shrink-0 self-start" name="i-mdi-tag" />
+                                    <UIcon class="h-5 w-5 shrink-0 self-start" name="i-mdi-label" />
 
                                     <span v-if="!colleague.props?.labels?.list.length">
                                         {{ $t('common.none', [$t('common.label', 2)]) }}
