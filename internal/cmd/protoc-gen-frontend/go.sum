@@ -26,8 +26,8 @@ github.com/disintegration/imaging v1.6.2 h1:w1LecBlG2Lnp8B3jk5zSuNqd7b4DXhcjwek1
 github.com/disintegration/imaging v1.6.2/go.mod h1:44/5580QXChDfwIclfc/PCwrr44amcmDAg8hxG0Ewe4=
 github.com/fcjr/aia-transport-go v1.2.2 h1:sIZqXcM+YhTd2BDtkV2OJaqbcIVcPv1oKru3VJPIPc8=
 github.com/fcjr/aia-transport-go v1.2.2/go.mod h1:onSqSq3tGkM14WusDx7q9FTheS9R1KBtD+QBWI6zG/w=
-github.com/fivenet-app/fivenet/v2026 v2026.7.3 h1:edc4liA8DnN5K/l24O8R7iR23CVl09rzd9TnSZfSUz0=
-github.com/fivenet-app/fivenet/v2026 v2026.7.3/go.mod h1:dUgtzji1Eptrs2Z281rfnti0AvM7JShOywcmlMFDTa8=
+github.com/fivenet-app/fivenet/v2026 v2026.8.0 h1:BOlcZpih4bqFkdsOFzUpvpD2smac3PV12V0gp9tRXvg=
+github.com/fivenet-app/fivenet/v2026 v2026.8.0/go.mod h1:hIuHlX/U4zpr8m4lN4SHYN7HF+sOdDwTpDWnP6WCJUE=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
 github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx59Ho=
