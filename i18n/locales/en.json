@@ -890,7 +890,8 @@
         "rotate_left": "Rotate Left",
         "rotate_right": "Rotate Right",
         "change_order": "Change Order",
-        "hidden": "Hidden"
+        "hidden": "Hidden",
+        "treemap": "Tree map"
     },
     "components": {
         "partials": {

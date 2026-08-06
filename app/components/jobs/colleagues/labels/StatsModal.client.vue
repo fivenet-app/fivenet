@@ -1,7 +1,8 @@
 <script lang="ts" setup>
+import type { HierarchyNode } from 'd3-hierarchy';
 import { StackedBar } from '@unovis/ts';
 import type { StackedBarDataRecord } from '@unovis/ts/components/stacked-bar/types';
-import { VisAxis, VisCrosshair, VisStackedBar, VisTooltip, VisXYContainer } from '@unovis/vue';
+import { VisAxis, VisSingleContainer, VisStackedBar, VisTooltip, VisTreemap, VisXYContainer } from '@unovis/vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
@@ -48,6 +49,8 @@ const {
     getColleagueLabelsStats().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 
+const showTreeMap = ref(false);
+
 const totalCount = computed(() => stats.value?.count.reduce((stat, sum) => sum.count + stat, 0));
 
 const x = (_: LabelCount, i: number) => i;
@@ -56,6 +59,12 @@ const color = (d: LabelCount) => d.label?.color ?? 'neutral';
 
 const tooltipTemplate = (d: StackedBarDataRecord<{ count: number; label?: { name?: string; color?: string } }>): string =>
     `${d.datum.label?.name ?? t('common.na')}: ${d.datum.count}`;
+
+// Treemap
+const layers: Array<(d: LabelCount) => string> = [(d) => d.label?.name ?? t('common.na')];
+const value = (d: LabelCount) => d.count;
+
+const tileSort = (a: HierarchyNode<LabelCount>, b: HierarchyNode<LabelCount>) => (a.value ?? 0) - (b.value ?? 0);
 </script>
 
 <template>
@@ -83,8 +92,9 @@ const tooltipTemplate = (d: StackedBarDataRecord<{ count: number; label?: { name
                         v-else-if="isRequestPending(status)"
                         :message="$t('common.loading', [$t('common.stats', 2)])"
                     />
+
                     <VisXYContainer
-                        v-else
+                        v-else-if="!showTreeMap"
                         :data="stats?.count ?? []"
                         :padding="{ top: 40 }"
                         :width="width"
@@ -92,7 +102,6 @@ const tooltipTemplate = (d: StackedBarDataRecord<{ count: number; label?: { name
                     >
                         <VisStackedBar orientation="horizontal" :x="x" :y="y" :color="color" />
 
-                        <VisCrosshair color="var(--ui-primary)" />
                         <VisTooltip :triggers="{ [StackedBar.selectors.bar]: tooltipTemplate }" />
 
                         <VisAxis type="x" :grid-line="true" />
@@ -104,6 +113,22 @@ const tooltipTemplate = (d: StackedBarDataRecord<{ count: number; label?: { name
                             :tick-format="(i: number) => stats?.count[i]?.label?.name ?? i.toString()"
                         />
                     </VisXYContainer>
+
+                    <VisSingleContainer
+                        v-else
+                        :data="stats?.count ?? []"
+                        :padding="{ top: 40 }"
+                        :width="width"
+                        :height="bodyHeight - 110"
+                    >
+                        <VisTreemap
+                            :layers="layers"
+                            :value="value"
+                            :tile-sort="tileSort"
+                            :min-tile-size-for-label="0"
+                            :tile-label-small-font-size="8"
+                        />
+                    </VisSingleContainer>
                 </UCard>
             </div>
         </template>
@@ -111,6 +136,15 @@ const tooltipTemplate = (d: StackedBarDataRecord<{ count: number; label?: { name
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+
+                <UTooltip :text="$t('common.treemap')">
+                    <UButton
+                        :label="$t('common.treemap')"
+                        trailing-icon="i-mdi-chart-tree"
+                        :variant="showTreeMap ? 'solid' : 'outline'"
+                        @click="showTreeMap = !showTreeMap"
+                    />
+                </UTooltip>
 
                 <RefreshButton
                     variant="solid"

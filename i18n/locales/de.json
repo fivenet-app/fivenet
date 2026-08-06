@@ -890,7 +890,8 @@
         "rotate_left": "Nach links rotieren",
         "rotate_right": "Nach rechts rotieren",
         "change_order": "Reihenfolge ändern",
-        "hidden": "Versteckt"
+        "hidden": "Versteckt",
+        "treemap": "Kachelkarte"
     },
     "components": {
         "partials": {
