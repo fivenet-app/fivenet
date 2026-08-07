@@ -22,6 +22,14 @@ func init() {
 		{
 			Namespace: permkeys.Namespace,
 			Service:   permkeys.ColleaguesServicePerm,
+			Name:      permkeys.ColleaguesServiceCreateOrUpdateLabelPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6100,
+			Icon:      "i-mdi-account-group",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ColleaguesServicePerm,
 			Name:      permkeys.ColleaguesServiceGetColleaguePerm,
 			Attrs: []perms.Attr{
 				{
@@ -56,14 +64,6 @@ func init() {
 			Namespace: permkeys.Namespace,
 			Service:   permkeys.ColleaguesServicePerm,
 			Name:      permkeys.ColleaguesServiceListColleaguesPerm,
-			Attrs:     []perms.Attr{},
-			Order:     6100,
-			Icon:      "i-mdi-account-group",
-		},
-		{
-			Namespace: permkeys.Namespace,
-			Service:   permkeys.ColleaguesServicePerm,
-			Name:      permkeys.ColleaguesServiceManageLabelsPerm,
 			Attrs:     []perms.Attr{},
 			Order:     6100,
 			Icon:      "i-mdi-account-group",

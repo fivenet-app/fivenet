@@ -2710,7 +2710,8 @@
                 "ErrTimeclockOutOfRange": "Only the last 6 months are available to view in the timeclock!",
                 "ErrAbsenceBeginOutOfRange": "Absence begin date is outside the allowed range.",
                 "ErrAbsenceEndOutOfRange": "Absence end date is outside the allowed range.",
-                "ErrLabelsNoPerms": "You don't have permissions to list the colleagues labels!"
+                "ErrLabelsNoPerms": "You don't have permissions to list the colleagues labels!",
+                "ErrLabelNotFound": "Requested label not found!"
             }
         },
         "qualifications": {
@@ -3938,9 +3939,9 @@
                         "Types": "Types"
                     }
                 },
-                "ManageLabels": {
+                "CreateOrUpdateLabel": {
                     "key": "Manage labels",
-                    "description": "Manage labels to be added/removed on colleagues."
+                    "description": "Create or edit colleague labels."
                 }
             },
             "ConductService": {

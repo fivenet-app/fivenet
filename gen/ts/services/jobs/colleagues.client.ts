@@ -7,8 +7,12 @@ import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { ColleaguesService } from "./colleagues";
 import type { GetColleagueLabelsStatsResponse } from "./colleagues";
 import type { GetColleagueLabelsStatsRequest } from "./colleagues";
-import type { ManageLabelsResponse } from "./colleagues";
-import type { ManageLabelsRequest } from "./colleagues";
+import type { ReorderLabelsResponse } from "./colleagues";
+import type { ReorderLabelsRequest } from "./colleagues";
+import type { DeleteLabelResponse } from "./colleagues";
+import type { DeleteLabelRequest } from "./colleagues";
+import type { CreateOrUpdateLabelResponse } from "./colleagues";
+import type { CreateOrUpdateLabelRequest } from "./colleagues";
 import type { GetColleagueLabelsResponse } from "./colleagues";
 import type { GetColleagueLabelsRequest } from "./colleagues";
 import type { SetColleaguePropsResponse } from "./colleagues";
@@ -53,9 +57,17 @@ export interface IColleaguesServiceClient {
      */
     getColleagueLabels(input: GetColleagueLabelsRequest, options?: RpcOptions): UnaryCall<GetColleagueLabelsRequest, GetColleagueLabelsResponse>;
     /**
-     * @generated from protobuf rpc: ManageLabels
+     * @generated from protobuf rpc: CreateOrUpdateLabel
      */
-    manageLabels(input: ManageLabelsRequest, options?: RpcOptions): UnaryCall<ManageLabelsRequest, ManageLabelsResponse>;
+    createOrUpdateLabel(input: CreateOrUpdateLabelRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLabelRequest, CreateOrUpdateLabelResponse>;
+    /**
+     * @generated from protobuf rpc: DeleteLabel
+     */
+    deleteLabel(input: DeleteLabelRequest, options?: RpcOptions): UnaryCall<DeleteLabelRequest, DeleteLabelResponse>;
+    /**
+     * @generated from protobuf rpc: ReorderLabels
+     */
+    reorderLabels(input: ReorderLabelsRequest, options?: RpcOptions): UnaryCall<ReorderLabelsRequest, ReorderLabelsResponse>;
     /**
      * @generated from protobuf rpc: GetColleagueLabelsStats
      */
@@ -113,17 +125,31 @@ export class ColleaguesServiceClient implements IColleaguesServiceClient, Servic
         return stackIntercept<GetColleagueLabelsRequest, GetColleagueLabelsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: ManageLabels
+     * @generated from protobuf rpc: CreateOrUpdateLabel
      */
-    manageLabels(input: ManageLabelsRequest, options?: RpcOptions): UnaryCall<ManageLabelsRequest, ManageLabelsResponse> {
+    createOrUpdateLabel(input: CreateOrUpdateLabelRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLabelRequest, CreateOrUpdateLabelResponse> {
         const method = this.methods[6], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ManageLabelsRequest, ManageLabelsResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<CreateOrUpdateLabelRequest, CreateOrUpdateLabelResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: DeleteLabel
+     */
+    deleteLabel(input: DeleteLabelRequest, options?: RpcOptions): UnaryCall<DeleteLabelRequest, DeleteLabelResponse> {
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteLabelRequest, DeleteLabelResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: ReorderLabels
+     */
+    reorderLabels(input: ReorderLabelsRequest, options?: RpcOptions): UnaryCall<ReorderLabelsRequest, ReorderLabelsResponse> {
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ReorderLabelsRequest, ReorderLabelsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: GetColleagueLabelsStats
      */
     getColleagueLabelsStats(input: GetColleagueLabelsStatsRequest, options?: RpcOptions): UnaryCall<GetColleagueLabelsStatsRequest, GetColleagueLabelsStatsResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetColleagueLabelsStatsRequest, GetColleagueLabelsStatsResponse>("unary", this._transport, method, opt, input);
     }
 }

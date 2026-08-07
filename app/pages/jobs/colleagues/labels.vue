@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.colleagues.labels.title',
     requiresAuth: true,
-    permission: 'jobs.ColleaguesService/ManageLabels',
+    permission: 'jobs.ColleaguesService/CreateOrUpdateLabel',
 });
 </script>
 

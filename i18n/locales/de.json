@@ -2710,7 +2710,8 @@
                 "ErrTimeclockOutOfRange": "In der Stempeluhr sind nur die letzten 6 Monate abrufbar!",
                 "ErrAbsenceBeginOutOfRange": "Begin der Abwesenheit ist außerhalb der erlaubten Datumsspanne.",
                 "ErrAbsenceEndOutOfRange": "Ende der Abwesenheit ist außerhalb der erlaubten Datumsspanne.",
-                "ErrLabelsNoPerms": "Sie haben keine Berechtigung die Kollegen-Labels zusehen!"
+                "ErrLabelsNoPerms": "Sie haben keine Berechtigung die Kollegen-Labels zusehen!",
+                "ErrLabelNotFound": "Das angeforderte Label wurde nicht gefunden."
             }
         },
         "qualifications": {
@@ -3938,9 +3939,9 @@
                         "Types": "Aktivitäts-Arten"
                     }
                 },
-                "ManageLabels": {
-                    "key": "Labels verwalten",
-                    "description": "Verwalten von Labels für Kollegen."
+                "CreateOrUpdateLabel": {
+                    "key": "Labels bearbeiten",
+                    "description": "Labels für Kollegen erstellen oder bearbeiten."
                 }
             },
             "ConductService": {

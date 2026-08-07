@@ -307,6 +307,9 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	},
 
 	// Service: jobs.ColleaguesService
+	"jobs.ColleaguesService/DeleteLabel": {
+		permsjobs.ColleaguesService.CreateOrUpdateLabel.Perm,
+	},
 	"jobs.ColleaguesService/GetColleagueLabels": {
 		permsjobs.ColleaguesService.GetColleague.Perm,
 	},
@@ -315,6 +318,9 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	},
 	"jobs.ColleaguesService/GetSelf": {
 		permsjobs.ColleaguesService.ListColleagues.Perm,
+	},
+	"jobs.ColleaguesService/ReorderLabels": {
+		permsjobs.ColleaguesService.CreateOrUpdateLabel.Perm,
 	},
 
 	// Service: jobs.ConductService

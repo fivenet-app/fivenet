@@ -3,14 +3,15 @@ package jobsstore
 import (
 	"context"
 	"errors"
+	"math"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 )
 
 func (s *Store) GetColleagueLabels(
@@ -86,12 +87,13 @@ func (s *Store) GetUsersLabels(
 	return labels, nil
 }
 
-func (s *Store) ManageLabels(
+func (s *Store) GetLabel(
 	ctx context.Context,
 	db qrm.DB,
 	job string,
-	labels []*jobslabels.Label,
-) ([]*jobslabels.Label, error) {
+	labelId int64,
+	includeDeleted bool,
+) (*jobslabels.Label, error) {
 	stmt := tJobLabels.
 		SELECT(
 			tJobLabels.ID,
@@ -104,121 +106,207 @@ func (s *Store) ManageLabels(
 		).
 		FROM(tJobLabels).
 		WHERE(mysql.AND(
+			tJobLabels.ID.EQ(mysql.Int64(labelId)),
+			tJobLabels.Job.EQ(mysql.String(job)),
+			mysql.OR(
+				mysql.Bool(includeDeleted),
+				tJobLabels.DeletedAt.IS_NULL(),
+			),
+		)).
+		LIMIT(1)
+
+	label := &jobslabels.Label{}
+	if err := stmt.QueryContext(ctx, db, label); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	if label.GetId() == 0 {
+		return nil, nil
+	}
+
+	return label, nil
+}
+
+func (s *Store) NextLabelSortOrder(
+	ctx context.Context,
+	db qrm.Queryable,
+	job string,
+) (int32, error) {
+	stmt := tJobLabels.
+		SELECT(
+			mysql.COALESCE(mysql.MAX(tJobLabels.SortOrder), mysql.Int32(-1)).
+				AS("sort_order"),
+		).
+		FROM(tJobLabels).
+		WHERE(mysql.AND(
+			tJobLabels.Job.EQ(mysql.String(job)),
+			tJobLabels.DeletedAt.IS_NULL(),
+		))
+
+	var dest struct {
+		SortOrder int32 `alias:"sort_order"`
+	}
+	if err := stmt.QueryContext(ctx, db, &dest); err != nil {
+		return 0, err
+	}
+
+	return dest.SortOrder + 1, nil
+}
+
+func (s *Store) UpdateLabel(
+	ctx context.Context,
+	db qrm.DB,
+	label *jobslabels.Label,
+	job string,
+) error {
+	tJobLabels := table.FivenetJobLabels
+	stmt := tJobLabels.
+		UPDATE(
+			tJobLabels.Name,
+			tJobLabels.Color,
+			tJobLabels.Icon,
+		).
+		SET(
+			tJobLabels.Name.SET(mysql.String(label.GetName())),
+			tJobLabels.Color.SET(mysql.String(label.GetColor())),
+			tJobLabels.Icon.SET(dbutils.StringEmpty(label.GetIcon())),
+		).
+		WHERE(mysql.AND(
+			tJobLabels.ID.EQ(mysql.Int64(label.GetId())),
 			tJobLabels.Job.EQ(mysql.String(job)),
 		))
 
-	current := []*jobslabels.Label{}
-	if err := stmt.QueryContext(ctx, db, &current); err != nil {
+	_, err := stmt.ExecContext(ctx, db)
+	return err
+}
+
+func (s *Store) InsertLabel(
+	ctx context.Context,
+	db qrm.DB,
+	label *jobslabels.Label,
+) (int64, error) {
+	tJobLabels := table.FivenetJobLabels
+	stmt := tJobLabels.
+		INSERT(
+			tJobLabels.Job,
+			tJobLabels.SortOrder,
+			tJobLabels.Name,
+			tJobLabels.Color,
+			tJobLabels.Icon,
+		).
+		VALUES(
+			label.Job,
+			label.GetSortOrder(),
+			label.GetName(),
+			label.GetColor(),
+			dbutils.StringEmpty(label.GetIcon()),
+		)
+
+	result, err := stmt.ExecContext(ctx, db)
+	if err != nil {
+		return 0, err
+	}
+
+	lastInsertId, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return lastInsertId, nil
+}
+
+func (s *Store) DeleteLabel(
+	ctx context.Context,
+	db qrm.DB,
+	job string,
+	labelId int64,
+	deletedAt *timestamp.Timestamp,
+) error {
+	tJobLabels := table.FivenetJobLabels
+	stmt := tJobLabels.
+		UPDATE(
+			tJobLabels.DeletedAt,
+		).
+		SET(
+			tJobLabels.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAt)),
+		).
+		WHERE(mysql.AND(
+			tJobLabels.ID.EQ(mysql.Int64(labelId)),
+			tJobLabels.Job.EQ(mysql.String(job)),
+		)).
+		LIMIT(1)
+
+	_, err := stmt.ExecContext(ctx, db)
+	return err
+}
+
+func (s *Store) ReorderLabels(
+	ctx context.Context,
+	job string,
+	labelIds []int64,
+) error {
+	tJobLabels := table.FivenetJobLabels
+	stmt := tJobLabels.
+		SELECT(tJobLabels.ID).
+		FROM(tJobLabels).
+		WHERE(mysql.AND(
+			tJobLabels.Job.EQ(mysql.String(job)),
+			tJobLabels.DeletedAt.IS_NULL(),
+		)).
+		LIMIT(int64(len(labelIds)))
+
+	var dest []int64
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return err
 		}
 	}
 
-	_, removed := utils.SliceDiffFunc(current, labels, func(in *jobslabels.Label) int64 {
-		return in.GetId()
-	})
-
-	var i int32
-	for _, label := range labels {
-		label.Job = &job
-		label.SortOrder = i
-		i++
+	existing := make(map[int64]struct{}, len(labelIds))
+	for _, labelID := range dest {
+		existing[labelID] = struct{}{}
 	}
 
-	tJobLabels := table.FivenetJobLabels.AS("label")
-	if len(labels) > 0 {
-		toCreate := []*jobslabels.Label{}
-		toUpdate := []*jobslabels.Label{}
-		for _, label := range labels {
-			if label.GetId() == 0 {
-				toCreate = append(toCreate, label)
-			} else {
-				toUpdate = append(toUpdate, label)
-			}
-		}
+	if len(existing) != len(labelIds) {
+		return errors.New("invalid labels")
+	}
 
-		if len(toCreate) > 0 {
-			insertStmt := tJobLabels.
-				INSERT(
-					tJobLabels.Job,
-					tJobLabels.Name,
-					tJobLabels.Color,
-					tJobLabels.Icon,
-					tJobLabels.SortOrder,
-					tJobLabels.DeletedAt,
-				).
-				MODELS(toCreate).
-				ON_DUPLICATE_KEY_UPDATE(
-					tJobLabels.Name.SET(mysql.RawString("VALUES(`name`)")),
-					tJobLabels.Color.SET(mysql.RawString("VALUES(`color`)")),
-					tJobLabels.Icon.SET(mysql.RawString("VALUES(`icon`)")),
-					tJobLabels.SortOrder.SET(mysql.RawInt("VALUES(`sort_order`)")),
-					tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-				)
-
-			if _, err := insertStmt.ExecContext(ctx, db); err != nil {
-				return nil, err
-			}
-		}
-
-		if len(toUpdate) > 0 {
-			for _, label := range toUpdate {
-				updateStmt := tJobLabels.
-					UPDATE(
-						tJobLabels.Name,
-						tJobLabels.Color,
-						tJobLabels.Icon,
-						tJobLabels.SortOrder,
-						tJobLabels.DeletedAt,
-					).
-					SET(
-						tJobLabels.Name.SET(mysql.String(label.GetName())),
-						tJobLabels.Color.SET(mysql.String(label.GetColor())),
-						tJobLabels.Icon.SET(dbutils.StringEmpty(label.GetIcon())),
-						tJobLabels.SortOrder.SET(mysql.Int32(label.GetSortOrder())),
-						tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-					).
-					WHERE(mysql.AND(
-						tJobLabels.ID.EQ(mysql.Int64(label.GetId())),
-						tJobLabels.Job.EQ(mysql.String(label.GetJob())),
-					)).
-					LIMIT(1)
-
-				if _, err := updateStmt.ExecContext(ctx, db); err != nil {
-					return nil, err
-				}
-			}
+	for _, labelID := range labelIds {
+		if _, ok := existing[labelID]; !ok {
+			return errors.New("invalid labels")
 		}
 	}
 
-	if len(removed) > 0 {
-		ids := make([]mysql.Expression, len(removed))
-		for i := range removed {
-			ids[i] = mysql.Int64(removed[i].GetId())
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	for idx, labelID := range labelIds {
+		if idx > math.MaxInt32 {
+			return errors.New("invalid labels")
 		}
 
-		deleteStmt := tJobLabels.
+		if _, err := tJobLabels.
 			UPDATE().
-			SET(tJobLabels.DeletedAt.SET(mysql.CURRENT_TIMESTAMP())).
+			SET(
+				tJobLabels.SortOrder.SET(mysql.Int32(int32(idx))),
+			).
 			WHERE(mysql.AND(
-				tJobLabels.ID.IN(ids...),
+				tJobLabels.ID.EQ(mysql.Int64(labelID)),
 				tJobLabels.Job.EQ(mysql.String(job)),
+				tJobLabels.DeletedAt.IS_NULL(),
 			)).
-			LIMIT(int64(len(removed)))
-
-		if _, err := deleteStmt.ExecContext(ctx, db); err != nil {
-			return nil, err
+			LIMIT(1).
+			ExecContext(ctx, tx); err != nil {
+			return err
 		}
 	}
 
-	updated := []*jobslabels.Label{}
-	if err := stmt.QueryContext(ctx, db, &updated); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return updated, nil
+	return tx.Commit()
 }
 
 func (s *Store) GetColleagueLabelsStats(

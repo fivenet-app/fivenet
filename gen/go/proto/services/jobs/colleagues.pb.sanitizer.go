@@ -9,6 +9,44 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *CreateOrUpdateLabelRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Label
+	if m.Label != nil {
+		if v, ok := any(m.GetLabel()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *CreateOrUpdateLabelResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Label
+	if m.Label != nil {
+		if v, ok := any(m.GetLabel()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetColleagueLabelsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -236,50 +274,6 @@ func (m *ListColleaguesResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ManageLabelsRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Labels
-	for idx, item := range m.Labels {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ManageLabelsResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Labels
-	for idx, item := range m.Labels {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	return nil

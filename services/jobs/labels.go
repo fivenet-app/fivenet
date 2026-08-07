@@ -5,11 +5,13 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 )
@@ -34,10 +36,7 @@ func (s *Server) GetColleagueLabels(
 	}
 	if !fields.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) {
 		// Fallback to checking if user has manage colleague labels permission
-		if !s.ps.Can(
-			userInfo,
-			permsjobs.ColleaguesService.ManageLabels.Perm,
-		) {
+		if !s.ps.Can(userInfo, permsjobs.ColleaguesService.CreateOrUpdateLabel.Perm) {
 			return nil, errorsjobs.ErrLabelsNoPerms
 		}
 	}
@@ -57,21 +56,105 @@ func (s *Server) GetColleagueLabels(
 	return resp, nil
 }
 
-func (s *Server) ManageLabels(
+func (s *Server) CreateOrUpdateLabel(
 	ctx context.Context,
-	req *pbjobs.ManageLabelsRequest,
-) (*pbjobs.ManageLabelsResponse, error) {
+	req *pbjobs.CreateOrUpdateLabelRequest,
+) (*pbjobs.CreateOrUpdateLabelResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	labels, err := s.store.ManageLabels(ctx, s.db, userInfo.GetJob(), req.GetLabels())
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	label := req.GetLabel()
+	if label == nil {
+		return nil, errorsjobs.ErrFailedQuery
 	}
-	resp := &pbjobs.ManageLabelsResponse{Labels: labels}
+	label.Job = &userInfo.Job
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	defer tx.Rollback()
+
+	if label.GetId() > 0 {
+		existing, err := s.store.GetLabel(ctx, tx, userInfo.GetJob(), label.GetId(), false)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+		if existing == nil {
+			return nil, errorsjobs.ErrLabelNotFound
+		}
+
+		if err := s.store.UpdateLabel(ctx, tx, label, userInfo.GetJob()); err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+	} else {
+		sortOrder, err := s.store.NextLabelSortOrder(ctx, tx, userInfo.GetJob())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+		label.SortOrder = sortOrder
+
+		lastId, err := s.store.InsertLabel(ctx, tx, label)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+
+		label.SetId(lastId)
+
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
+	return &pbjobs.CreateOrUpdateLabelResponse{Label: label}, nil
+}
+
+func (s *Server) DeleteLabel(
+	ctx context.Context,
+	req *pbjobs.DeleteLabelRequest,
+) (*pbjobs.DeleteLabelResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	label, err := s.store.GetLabel(ctx, s.db, userInfo.GetJob(), req.GetId(), false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if label == nil || label.GetJob() != userInfo.GetJob() {
+		return nil, errorsjobs.ErrLabelNotFound
+	}
+
+	if err := s.store.DeleteLabel(
+		ctx,
+		s.db,
+		userInfo.GetJob(),
+		req.GetId(),
+		timestamp.Now(),
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+
+	return &pbjobs.DeleteLabelResponse{}, nil
+}
+
+func (s *Server) ReorderLabels(
+	ctx context.Context,
+	req *pbjobs.ReorderLabelsRequest,
+) (*pbjobs.ReorderLabelsResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	labelIds := utils.SliceDedup(req.GetLabelIds())
+	if err := s.store.ReorderLabels(ctx, userInfo.GetJob(), labelIds); err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	return resp, nil
+	return &pbjobs.ReorderLabelsResponse{}, nil
 }
 
 func (s *Server) GetColleagueLabelsStats(

@@ -20,7 +20,7 @@ definePageMeta({
         'jobs.ColleaguesService/GetColleague',
         'jobs.ColleaguesService/ListColleagueActivity',
         'jobs.ColleaguesService/ListColleagues',
-        'jobs.ColleaguesService/ManageLabels',
+        'jobs.ColleaguesService/CreateOrUpdateLabel',
         'jobs.ColleaguesService/SetColleagueProps',
         'jobs.JobsService/SetMOTD',
         'jobs.TimeclockService/ListInactiveEmployees',

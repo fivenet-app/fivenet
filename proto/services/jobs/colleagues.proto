@@ -21,9 +21,7 @@ message ListColleaguesRequest {
   // Search params
   string search = 3 [(buf.validate.field).string.max_len = 64];
   repeated int32 user_ids = 4 [(buf.validate.field).repeated = {
-    items: {
-      int32: {gte: 0}
-    }
+    items: {int32: {gte: 0}}
     max_items: 10
   }];
   optional bool user_only = 5;
@@ -60,9 +58,7 @@ message ListColleagueActivityRequest {
   repeated int32 user_ids = 3;
   repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4 [(buf.validate.field).repeated = {
     max_items: 10
-    items: {
-      enum: {defined_only: true}
-    }
+    items: {enum: {defined_only: true}}
   }];
 }
 
@@ -95,13 +91,29 @@ message GetColleagueLabelsResponse {
   repeated resources.jobs.labels.Label labels = 1;
 }
 
-message ManageLabelsRequest {
-  repeated resources.jobs.labels.Label labels = 1 [(buf.validate.field).repeated.max_items = 50];
+message CreateOrUpdateLabelRequest {
+  resources.jobs.labels.Label label = 1 [(buf.validate.field).required = true];
 }
 
-message ManageLabelsResponse {
-  repeated resources.jobs.labels.Label labels = 1;
+message CreateOrUpdateLabelResponse {
+  resources.jobs.labels.Label label = 1;
 }
+
+message DeleteLabelRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteLabelResponse {}
+
+message ReorderLabelsRequest {
+  repeated int64 label_ids = 1 [(buf.validate.field).repeated = {
+    items: {int64: {gt: 0}}
+    min_items: 1
+    max_items: 50
+  }];
+}
+
+message ReorderLabelsResponse {}
 
 message GetColleagueLabelsStatsRequest {
   repeated int64 label_ids = 1;
@@ -207,8 +219,23 @@ service ColleaguesService {
       name: "GetColleague"
     };
   }
-  rpc ManageLabels(ManageLabelsRequest) returns (ManageLabelsResponse) {
+
+  rpc CreateOrUpdateLabel(CreateOrUpdateLabelRequest) returns (CreateOrUpdateLabelResponse) {
     option (codegen.perms.perms) = {enabled: true};
+  }
+
+  rpc DeleteLabel(DeleteLabelRequest) returns (DeleteLabelResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateOrUpdateLabel"
+    };
+  }
+
+  rpc ReorderLabels(ReorderLabelsRequest) returns (ReorderLabelsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateOrUpdateLabel"
+    };
   }
 
   rpc GetColleagueLabelsStats(GetColleagueLabelsStatsRequest) returns (GetColleagueLabelsStatsResponse) {

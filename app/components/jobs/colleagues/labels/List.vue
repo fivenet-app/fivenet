@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '@nuxt/ui';
-import { VueDraggable } from 'vue-draggable-plus';
-import { z } from 'zod';
-import StatsModalClient from '~/components/jobs/colleagues/labels/StatsModal.client.vue';
+import { UButton, UIcon, UTooltip } from '#components';
+import type { TableColumn } from '@nuxt/ui';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DraggableHandle from '~/components/partials/DraggableHandle.vue';
-import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
 import ReorderButtons from '~/components/partials/ReorderButtons.vue';
+import StatsModalClient from '~/components/jobs/colleagues/labels/StatsModal.client.vue';
 import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts/services/jobs/colleagues';
+import type { Label } from '~~/gen/ts/resources/jobs/labels/labels';
+import CreateOrUpdateDrawer from './CreateOrUpdateDrawer.vue';
+import { useDraggable } from 'vue-draggable-plus';
 
 const notifications = useNotificationsStore();
 
@@ -20,50 +20,42 @@ const { t } = useI18n();
 
 const overlay = useOverlay();
 
-const { attr } = useAuth();
+const { attr, can } = useAuth();
 
 const jobsColleaguesClient = await getJobsColleaguesClient();
 
-const schema = z.object({
-    labels: z
-        .object({
-            id: z.coerce.number(),
-            name: z.coerce.string().min(1).max(64),
-            color: z.coerce.string().length(7),
-            icon: z.coerce.string().max(128).optional(),
-            sortOrder: z.coerce.number().nonnegative().default(0),
-        })
-        .array()
-        .max(50)
-        .default([]),
+const canCreateOrUpdateLabel = computed(() => can('jobs.ColleaguesService/CreateOrUpdateLabel').value);
+
+const {
+    data: labels,
+    status,
+    error,
+    refresh,
+} = useLazyAsyncData('jobs-colleagues-labels', () => getColleagueLabels(), {
+    default: () => [] as Label[],
 });
 
-type Schema = z.output<typeof schema>;
-
-const state = reactive<Schema>({
-    labels: [],
-});
-
-async function getColleagueLabels(): Promise<GetColleagueLabelsResponse> {
+async function getColleagueLabels(): Promise<Label[]> {
     try {
         const { response } = await jobsColleaguesClient.getColleagueLabels({});
 
-        return response;
+        return response?.labels ?? [];
     } catch (e) {
         handleGRPCError(e as RpcError);
-        throw e;
+
+        return [];
     }
 }
 
-const { data: labels, status, error, refresh } = useLazyAsyncData('jobs-colleagues-labels', () => getColleagueLabels());
+const createOrUpdateDrawer = overlay.create(CreateOrUpdateDrawer);
+const deleteConfirmModal = overlay.create(ConfirmModal);
+const statsModal = overlay.create(StatsModalClient);
 
-async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
+async function deleteLabel(labelId: number): Promise<void> {
     try {
-        const { response } = await jobsColleaguesClient.manageLabels({
-            labels: values.labels,
+        await jobsColleaguesClient.deleteLabel({
+            id: labelId,
         });
-
-        state.labels = response.labels;
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -71,22 +63,155 @@ async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
             type: NotificationType.SUCCESS,
         });
 
-        return response;
+        refresh();
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+    }
+}
+
+async function reorderLabels(currentLabels: Label[]) {
+    if (!currentLabels.length || !canCreateOrUpdateLabel.value) return;
+
+    try {
+        await jobsColleaguesClient.reorderLabels({
+            labelIds: currentLabels.map((item) => item.id),
+        });
+
+        syncSnapshot();
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await manageLabels(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { snapshotDirty: orderChanged, syncSnapshot } = useSnapshotChanges(() => labels.value?.map((label) => label.id) ?? []);
+const tableRef = useTemplateRef('tableRef');
+const tableBodyRef = computed<HTMLElement | null>(() => {
+    const rootEl = tableRef.value?.$el as HTMLElement | undefined;
+    return rootEl?.querySelector('tbody.jobs-label-list-table') ?? null;
+});
 
-watch(labels, () => (state.labels = labels.value?.labels ?? []));
+const { moveUp, moveDown } = useListReorder(labels, {
+    onMove: () => undefined,
+});
 
-const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
+useDraggable(tableBodyRef, labels, {
+    animation: 150,
+    handle: '.handle',
+    draggable: 'tr',
+    disabled: !canCreateOrUpdateLabel.value,
+    onUpdate: () => undefined,
+});
+
+watch(
+    status,
+    (newStatus) => {
+        if (!isRequestPending(newStatus)) {
+            syncSnapshot();
+        }
+    },
+    { immediate: true },
+);
+
+const columns = computed(
+    () =>
+        [
+            {
+                id: 'actions',
+                cell: ({ row }) =>
+                    h(
+                        'div',
+                        canCreateOrUpdateLabel.value
+                            ? [
+                                  h(
+                                      'div',
+                                      {
+                                          class: 'inline-flex items-center gap-1',
+                                      },
+                                      [
+                                          h(DraggableHandle),
+                                          h(ReorderButtons, {
+                                              idx: row.index,
+                                              moveUp: moveUp,
+                                              moveDown: moveDown,
+                                          }),
+                                      ],
+                                  ),
+                                  h(
+                                      UTooltip,
+                                      { text: t('common.edit') },
+                                      h(UButton, {
+                                          color: 'primary',
+                                          variant: 'link',
+                                          icon: 'i-mdi-pencil',
+                                          onClick: () => {
+                                              createOrUpdateDrawer.open({
+                                                  label: row.original,
+                                                  onRefresh: () => refresh(),
+                                              });
+                                          },
+                                      }),
+                                  ),
+
+                                  h(
+                                      UTooltip,
+                                      { text: t('common.delete') },
+                                      h(UButton, {
+                                          color: 'error',
+                                          variant: 'link',
+                                          icon: 'i-mdi-delete',
+                                          onClick: () => {
+                                              deleteConfirmModal.open({
+                                                  confirm: () => row.original.id && deleteLabel(row.original.id),
+                                              });
+                                          },
+                                      }),
+                                  ),
+                              ]
+                            : [],
+                    ),
+            },
+            {
+                accessorKey: 'name',
+                header: t('common.name'),
+                meta: {
+                    class: {
+                        td: 'text-highlighted',
+                    },
+                },
+            },
+            {
+                accessorKey: 'color',
+                header: t('common.color'),
+                cell: ({ row }) =>
+                    h(ColorPicker, {
+                        modelValue: row.original.color,
+                        disabled: true,
+                        hideLabel: true,
+                    }),
+            },
+            {
+                accessorKey: 'icon',
+                header: t('common.icon'),
+                cell: ({ row }) =>
+                    row.original.icon
+                        ? h(UIcon, {
+                              class: 'size-5',
+                              name: convertComponentIconNameToDynamic(row.original.icon),
+                              style: {
+                                  color: row.original.color ?? 'currentColor',
+                              },
+                          })
+                        : undefined,
+            },
+        ] as TableColumn<Label>[],
+);
 
 const breadcrumbs = computed(() => [
     {
@@ -96,127 +221,76 @@ const breadcrumbs = computed(() => [
     },
     {
         label: t('pages.jobs.colleagues.labels.title'),
-        icon: 'i-mdi-label-multiple',
+        icon: 'i-mdi-tag',
     },
 ]);
-
-const formRef = useTemplateRef('formRef');
-
-const labelsStatsModal = overlay.create(StatsModalClient);
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'min-h-0' }">
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardToolbar>
                 <template #left>
                     <UBreadcrumb :items="breadcrumbs" />
                 </template>
+
+                <template #right>
+                    <UTooltip v-if="orderChanged && canCreateOrUpdateLabel" :text="$t('common.save', 1)">
+                        <UButton
+                            color="primary"
+                            variant="outline"
+                            icon="i-mdi-content-save"
+                            @click="() => reorderLabels(labels ?? [])"
+                        />
+                    </UTooltip>
+
+                    <UTooltip v-if="canCreateOrUpdateLabel" :text="$t('common.create')">
+                        <UButton
+                            color="neutral"
+                            variant="outline"
+                            trailing-icon="i-mdi-plus"
+                            @click="
+                                createOrUpdateDrawer.open({
+                                    onRefresh: () => refresh(),
+                                })
+                            "
+                        >
+                            <span class="hidden truncate sm:block">
+                                {{ $t('common.label', 1) }}
+                            </span>
+                        </UButton>
+                    </UTooltip>
+                </template>
             </UDashboardToolbar>
 
             <UDashboardToolbar>
-                <template #left>
-                    <UButton
-                        block
-                        :disabled="!canSubmit || !!error"
-                        icon="i-mdi-content-save"
-                        :loading="isRequestPending(status) || !canSubmit"
-                        :label="$t('common.save')"
-                        @click="formRef?.submit()"
-                    />
-                </template>
-
                 <template #right>
-                    <RefreshButton @click="() => refresh()" />
-
                     <UTooltip
                         v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
                         :text="$t('common.stats')"
                     >
-                        <UButton
-                            icon="i-mdi-chart-donut"
-                            color="neutral"
-                            :label="$t('common.stats')"
-                            @click="labelsStatsModal.open({})"
-                        />
+                        <UButton icon="i-mdi-chart-donut" color="neutral" @click="statsModal.open({})" />
                     </UTooltip>
+
+                    <RefreshButton @click="() => refresh()" />
                 </template>
             </UDashboardToolbar>
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
-                <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
+            <DataErrorBlock v-if="error" :error="error" :retry="refresh" />
 
-                <UFormField v-else class="grid items-center gap-2" name="labels">
-                    <div class="flex flex-col gap-1">
-                        <VueDraggable
-                            v-model="state.labels"
-                            class="flex flex-col gap-2 divide-y divide-default"
-                            :disabled="!canSubmit"
-                            handle=".handle"
-                        >
-                            <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1 pb-2">
-                                <div class="inline-flex items-center gap-1">
-                                    <DraggableHandle :disabled="!canSubmit" />
-
-                                    <ReorderButtons :idx="idx" :move-up="moveUp" :move-down="moveDown" />
-                                </div>
-
-                                <div class="flex flex-1 flex-col gap-1">
-                                    <UFormField class="flex-1" :name="`labels.${idx}.name`" :label="$t('common.label', 1)">
-                                        <UInput
-                                            v-model="state.labels[idx]!.name"
-                                            class="w-full flex-1"
-                                            :name="`labels.${idx}.name`"
-                                            type="text"
-                                            :placeholder="$t('common.label', 1)"
-                                            :disabled="!canSubmit"
-                                        />
-                                    </UFormField>
-
-                                    <div class="flex flex-1 flex-row gap-2">
-                                        <UFormField class="flex-1" :name="`labels.${idx}.color`" :label="$t('common.color')">
-                                            <ColorPicker
-                                                v-model="state.labels[idx]!.color"
-                                                class="w-full"
-                                                :name="`labels.${idx}.color`"
-                                                :disabled="!canSubmit"
-                                            />
-                                        </UFormField>
-
-                                        <UFormField class="flex-1" :name="`labels.${idx}.icon`" :label="$t('common.icon')">
-                                            <IconSelectMenu
-                                                v-model="state.labels[idx]!.icon"
-                                                class="w-full"
-                                                :name="`labels.${idx}.icon`"
-                                                :hex-color="state.labels[idx]!.color"
-                                                clear
-                                                :disabled="!canSubmit"
-                                            />
-                                        </UFormField>
-                                    </div>
-                                </div>
-
-                                <UButton
-                                    color="red"
-                                    :disabled="!canSubmit"
-                                    icon="i-mdi-remove"
-                                    @click="state.labels.splice(idx, 1)"
-                                />
-                            </div>
-                        </VueDraggable>
-                    </div>
-
-                    <UButton
-                        :class="state.labels.length ? 'mt-2' : ''"
-                        :disabled="!canSubmit"
-                        icon="i-mdi-plus"
-                        @click="state.labels.push({ id: 0, name: '', color: '#5c7aff', sortOrder: 0 })"
-                    />
-                </UFormField>
-            </UForm>
+            <UTable
+                v-else
+                ref="tableRef"
+                class="flex-1"
+                :columns="columns"
+                :data="labels"
+                :empty="$t('common.not_found', [$t('pages.jobs.colleagues.labels.title')])"
+                :pagination-options="{ manualPagination: true }"
+                sticky
+                :ui="{ tbody: 'jobs-label-list-table' }"
+            />
         </template>
     </UDashboardPanel>
 </template>

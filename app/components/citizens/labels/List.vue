@@ -96,7 +96,7 @@ const { snapshotDirty: orderChanged, syncSnapshot } = useSnapshotChanges(() => l
 const tableRef = useTemplateRef('tableRef');
 const tableBodyRef = computed<HTMLElement | null>(() => {
     const rootEl = tableRef.value?.$el as HTMLElement | undefined;
-    return rootEl?.querySelector('tbody.unit-list-table') ?? null;
+    return rootEl?.querySelector('tbody.citizen-labels-list-table') ?? null;
 });
 
 const { moveUp, moveDown } = useListReorder(labels, {
@@ -105,7 +105,7 @@ const { moveUp, moveDown } = useListReorder(labels, {
 
 useDraggable(tableBodyRef, labels, {
     animation: 150,
-    handle: '.handle-choice',
+    handle: '.handle',
     draggable: 'tr',
     onUpdate: () => undefined,
 });
@@ -134,9 +134,7 @@ const columns = computed(
                                       class: 'inline-flex items-center gap-1',
                                   },
                                   [
-                                      h(DraggableHandle, {
-                                          handleClass: 'handle-choice',
-                                      }),
+                                      h(DraggableHandle),
                                       h(ReorderButtons, {
                                           idx: row.index,
                                           moveUp: moveUp,
@@ -294,7 +292,7 @@ const columns = computed(
                 :empty="$t('common.not_found', [$t('components.citizens.citizen_labels.title')])"
                 :pagination-options="{ manualPagination: true }"
                 sticky
-                :ui="{ tbody: 'unit-list-table' }"
+                :ui="{ tbody: 'citizen-labels-list-table' }"
             />
         </template>
 

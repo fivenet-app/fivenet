@@ -23,13 +23,13 @@ const (
 	TimeclockServicePerm  perms.Service = "TimeclockService"
 
 	// Service: jobs.ColleaguesService
+	ColleaguesServiceCreateOrUpdateLabelPerm             perms.Name = "CreateOrUpdateLabel"
 	ColleaguesServiceGetColleaguePerm                    perms.Name = "GetColleague"
 	ColleaguesServiceGetColleagueAccessPermField         perms.Key  = "Access"
 	ColleaguesServiceGetColleagueTypesPermField          perms.Key  = "Types"
 	ColleaguesServiceListColleagueActivityPerm           perms.Name = "ListColleagueActivity"
 	ColleaguesServiceListColleagueActivityTypesPermField perms.Key  = "Types"
 	ColleaguesServiceListColleaguesPerm                  perms.Name = "ListColleagues"
-	ColleaguesServiceManageLabelsPerm                    perms.Name = "ManageLabels"
 	ColleaguesServiceSetColleaguePropsPerm               perms.Name = "SetColleagueProps"
 	ColleaguesServiceSetColleaguePropsAccessPermField    perms.Key  = "Access"
 	ColleaguesServiceSetColleaguePropsTypesPermField     perms.Key  = "Types"
@@ -115,11 +115,14 @@ const (
 )
 
 type ColleaguesServicePerms struct {
+	CreateOrUpdateLabel   ColleaguesServiceCreateOrUpdateLabelPermRef
 	GetColleague          ColleaguesServiceGetColleaguePermRef
 	ListColleagueActivity ColleaguesServiceListColleagueActivityPermRef
 	ListColleagues        ColleaguesServiceListColleaguesPermRef
-	ManageLabels          ColleaguesServiceManageLabelsPermRef
 	SetColleagueProps     ColleaguesServiceSetColleaguePropsPermRef
+}
+type ColleaguesServiceCreateOrUpdateLabelPermRef struct {
+	Perm perms.PermissionRef
 }
 type ColleaguesServiceGetColleaguePermRef struct {
 	Perm        perms.PermissionRef
@@ -136,9 +139,6 @@ type ColleaguesServiceListColleagueActivityPermRef struct {
 type ColleaguesServiceListColleaguesPermRef struct {
 	Perm perms.PermissionRef
 }
-type ColleaguesServiceManageLabelsPermRef struct {
-	Perm perms.PermissionRef
-}
 type ColleaguesServiceSetColleaguePropsPermRef struct {
 	Perm        perms.PermissionRef
 	Access      perms.AttrRef[perms.StringListAttr]
@@ -148,6 +148,9 @@ type ColleaguesServiceSetColleaguePropsPermRef struct {
 }
 
 var ColleaguesService = ColleaguesServicePerms{
+	CreateOrUpdateLabel: ColleaguesServiceCreateOrUpdateLabelPermRef{
+		Perm: perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceCreateOrUpdateLabelPerm),
+	},
 	GetColleague: ColleaguesServiceGetColleaguePermRef{
 		Perm: perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceGetColleaguePerm),
 		Access: perms.NewStringListAttrRef(
@@ -180,9 +183,6 @@ var ColleaguesService = ColleaguesServicePerms{
 	},
 	ListColleagues: ColleaguesServiceListColleaguesPermRef{
 		Perm: perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceListColleaguesPerm),
-	},
-	ManageLabels: ColleaguesServiceManageLabelsPermRef{
-		Perm: perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceManageLabelsPerm),
 	},
 	SetColleagueProps: ColleaguesServiceSetColleaguePropsPermRef{
 		Perm: perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceSetColleaguePropsPerm),

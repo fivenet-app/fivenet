@@ -25,7 +25,9 @@ const (
 	ColleaguesService_ListColleagueActivity_FullMethodName   = "/services.jobs.ColleaguesService/ListColleagueActivity"
 	ColleaguesService_SetColleagueProps_FullMethodName       = "/services.jobs.ColleaguesService/SetColleagueProps"
 	ColleaguesService_GetColleagueLabels_FullMethodName      = "/services.jobs.ColleaguesService/GetColleagueLabels"
-	ColleaguesService_ManageLabels_FullMethodName            = "/services.jobs.ColleaguesService/ManageLabels"
+	ColleaguesService_CreateOrUpdateLabel_FullMethodName     = "/services.jobs.ColleaguesService/CreateOrUpdateLabel"
+	ColleaguesService_DeleteLabel_FullMethodName             = "/services.jobs.ColleaguesService/DeleteLabel"
+	ColleaguesService_ReorderLabels_FullMethodName           = "/services.jobs.ColleaguesService/ReorderLabels"
 	ColleaguesService_GetColleagueLabelsStats_FullMethodName = "/services.jobs.ColleaguesService/GetColleagueLabelsStats"
 )
 
@@ -39,7 +41,9 @@ type ColleaguesServiceClient interface {
 	ListColleagueActivity(ctx context.Context, in *ListColleagueActivityRequest, opts ...grpc.CallOption) (*ListColleagueActivityResponse, error)
 	SetColleagueProps(ctx context.Context, in *SetColleaguePropsRequest, opts ...grpc.CallOption) (*SetColleaguePropsResponse, error)
 	GetColleagueLabels(ctx context.Context, in *GetColleagueLabelsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsResponse, error)
-	ManageLabels(ctx context.Context, in *ManageLabelsRequest, opts ...grpc.CallOption) (*ManageLabelsResponse, error)
+	CreateOrUpdateLabel(ctx context.Context, in *CreateOrUpdateLabelRequest, opts ...grpc.CallOption) (*CreateOrUpdateLabelResponse, error)
+	DeleteLabel(ctx context.Context, in *DeleteLabelRequest, opts ...grpc.CallOption) (*DeleteLabelResponse, error)
+	ReorderLabels(ctx context.Context, in *ReorderLabelsRequest, opts ...grpc.CallOption) (*ReorderLabelsResponse, error)
 	GetColleagueLabelsStats(ctx context.Context, in *GetColleagueLabelsStatsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsStatsResponse, error)
 }
 
@@ -111,10 +115,30 @@ func (c *colleaguesServiceClient) GetColleagueLabels(ctx context.Context, in *Ge
 	return out, nil
 }
 
-func (c *colleaguesServiceClient) ManageLabels(ctx context.Context, in *ManageLabelsRequest, opts ...grpc.CallOption) (*ManageLabelsResponse, error) {
+func (c *colleaguesServiceClient) CreateOrUpdateLabel(ctx context.Context, in *CreateOrUpdateLabelRequest, opts ...grpc.CallOption) (*CreateOrUpdateLabelResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ManageLabelsResponse)
-	err := c.cc.Invoke(ctx, ColleaguesService_ManageLabels_FullMethodName, in, out, cOpts...)
+	out := new(CreateOrUpdateLabelResponse)
+	err := c.cc.Invoke(ctx, ColleaguesService_CreateOrUpdateLabel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *colleaguesServiceClient) DeleteLabel(ctx context.Context, in *DeleteLabelRequest, opts ...grpc.CallOption) (*DeleteLabelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteLabelResponse)
+	err := c.cc.Invoke(ctx, ColleaguesService_DeleteLabel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *colleaguesServiceClient) ReorderLabels(ctx context.Context, in *ReorderLabelsRequest, opts ...grpc.CallOption) (*ReorderLabelsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReorderLabelsResponse)
+	err := c.cc.Invoke(ctx, ColleaguesService_ReorderLabels_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +165,9 @@ type ColleaguesServiceServer interface {
 	ListColleagueActivity(context.Context, *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error)
 	SetColleagueProps(context.Context, *SetColleaguePropsRequest) (*SetColleaguePropsResponse, error)
 	GetColleagueLabels(context.Context, *GetColleagueLabelsRequest) (*GetColleagueLabelsResponse, error)
-	ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error)
+	CreateOrUpdateLabel(context.Context, *CreateOrUpdateLabelRequest) (*CreateOrUpdateLabelResponse, error)
+	DeleteLabel(context.Context, *DeleteLabelRequest) (*DeleteLabelResponse, error)
+	ReorderLabels(context.Context, *ReorderLabelsRequest) (*ReorderLabelsResponse, error)
 	GetColleagueLabelsStats(context.Context, *GetColleagueLabelsStatsRequest) (*GetColleagueLabelsStatsResponse, error)
 	mustEmbedUnimplementedColleaguesServiceServer()
 }
@@ -171,8 +197,14 @@ func (UnimplementedColleaguesServiceServer) SetColleagueProps(context.Context, *
 func (UnimplementedColleaguesServiceServer) GetColleagueLabels(context.Context, *GetColleagueLabelsRequest) (*GetColleagueLabelsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetColleagueLabels not implemented")
 }
-func (UnimplementedColleaguesServiceServer) ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ManageLabels not implemented")
+func (UnimplementedColleaguesServiceServer) CreateOrUpdateLabel(context.Context, *CreateOrUpdateLabelRequest) (*CreateOrUpdateLabelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateLabel not implemented")
+}
+func (UnimplementedColleaguesServiceServer) DeleteLabel(context.Context, *DeleteLabelRequest) (*DeleteLabelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteLabel not implemented")
+}
+func (UnimplementedColleaguesServiceServer) ReorderLabels(context.Context, *ReorderLabelsRequest) (*ReorderLabelsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReorderLabels not implemented")
 }
 func (UnimplementedColleaguesServiceServer) GetColleagueLabelsStats(context.Context, *GetColleagueLabelsStatsRequest) (*GetColleagueLabelsStatsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetColleagueLabelsStats not implemented")
@@ -306,20 +338,56 @@ func _ColleaguesService_GetColleagueLabels_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ColleaguesService_ManageLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ManageLabelsRequest)
+func _ColleaguesService_CreateOrUpdateLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateLabelRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ColleaguesServiceServer).ManageLabels(ctx, in)
+		return srv.(ColleaguesServiceServer).CreateOrUpdateLabel(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ColleaguesService_ManageLabels_FullMethodName,
+		FullMethod: ColleaguesService_CreateOrUpdateLabel_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ColleaguesServiceServer).ManageLabels(ctx, req.(*ManageLabelsRequest))
+		return srv.(ColleaguesServiceServer).CreateOrUpdateLabel(ctx, req.(*CreateOrUpdateLabelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ColleaguesService_DeleteLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteLabelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ColleaguesServiceServer).DeleteLabel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ColleaguesService_DeleteLabel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ColleaguesServiceServer).DeleteLabel(ctx, req.(*DeleteLabelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ColleaguesService_ReorderLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReorderLabelsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ColleaguesServiceServer).ReorderLabels(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ColleaguesService_ReorderLabels_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ColleaguesServiceServer).ReorderLabels(ctx, req.(*ReorderLabelsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -374,8 +442,16 @@ var ColleaguesService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ColleaguesService_GetColleagueLabels_Handler,
 		},
 		{
-			MethodName: "ManageLabels",
-			Handler:    _ColleaguesService_ManageLabels_Handler,
+			MethodName: "CreateOrUpdateLabel",
+			Handler:    _ColleaguesService_CreateOrUpdateLabel_Handler,
+		},
+		{
+			MethodName: "DeleteLabel",
+			Handler:    _ColleaguesService_DeleteLabel_Handler,
+		},
+		{
+			MethodName: "ReorderLabels",
+			Handler:    _ColleaguesService_ReorderLabels_Handler,
 		},
 		{
 			MethodName: "GetColleagueLabelsStats",

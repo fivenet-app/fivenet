@@ -307,7 +307,7 @@ defineShortcuts({
 
                         <UFormField
                             v-if="
-                                can('jobs.ColleaguesService/ManageLabels').value ||
+                                can(['jobs.ColleaguesService/CreateOrUpdateLabel']).value ||
                                 attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value
                             "
                             label="&nbsp"
@@ -315,7 +315,7 @@ defineShortcuts({
                         >
                             <UFieldGroup>
                                 <UButton
-                                    v-if="can('jobs.ColleaguesService/ManageLabels').value"
+                                    v-if="can(['jobs.ColleaguesService/CreateOrUpdateLabel']).value"
                                     :label="$t('common.label', 2)"
                                     icon="i-mdi-label-multiple"
                                     to="/jobs/colleagues/labels"

@@ -155,12 +155,26 @@ type IStore interface {
 		search string,
 		includeDeleted bool,
 	) ([]*jobslabels.Label, error)
-	ManageLabels(
+	GetLabel(
 		ctx context.Context,
 		db qrm.DB,
 		job string,
-		labels []*jobslabels.Label,
-	) ([]*jobslabels.Label, error)
+		labelId int64,
+		includeDeleted bool,
+	) (*jobslabels.Label, error)
+	NextLabelSortOrder(
+		ctx context.Context,
+		db qrm.Queryable,
+		job string,
+	) (int32, error)
+	UpdateLabel(ctx context.Context, db qrm.DB, label *jobslabels.Label, job string) error
+	InsertLabel(ctx context.Context, db qrm.DB, label *jobslabels.Label) (int64, error)
+	DeleteLabel(ctx context.Context, db qrm.DB, job string, labelId int64, deletedAt *timestamp.Timestamp) error
+	ReorderLabels(
+		ctx context.Context,
+		job string,
+		labelIds []int64,
+	) error
 	GetColleagueLabelsStats(
 		ctx context.Context,
 		db qrm.DB,

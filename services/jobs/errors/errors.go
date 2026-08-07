@@ -64,4 +64,9 @@ var (
 		&common.I18NItem{Key: "errors.jobs.JobsService.ErrLabelsNoPerms.content"},
 		&common.I18NItem{Key: "errors.jobs.JobsService.ErrLabelsNoPerms.title"},
 	)
+	ErrLabelNotFound = common.NewI18nErr(
+		codes.NotFound,
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrLabelNotFound"},
+		nil,
+	)
 )

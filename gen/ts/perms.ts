@@ -96,10 +96,10 @@ export type GRPCServicePerms =
 	| 'documents.TemplatesService/DeleteTemplate'
 	| 'documents.TemplatesService/ListTemplates'
 	| 'documents.TemplatesService/MoveTemplate'
+	| 'jobs.ColleaguesService/CreateOrUpdateLabel'
 	| 'jobs.ColleaguesService/GetColleague'
 	| 'jobs.ColleaguesService/ListColleagueActivity'
 	| 'jobs.ColleaguesService/ListColleagues'
-	| 'jobs.ColleaguesService/ManageLabels'
 	| 'jobs.ColleaguesService/SetColleagueProps'
 	| 'jobs.ConductService/CreateConductEntry'
 	| 'jobs.ConductService/DeleteConductEntry'
@@ -216,10 +216,10 @@ export const GRPCServiceMethods = [
 	'documents.TemplatesService/DeleteTemplate',
 	'documents.TemplatesService/ListTemplates',
 	'documents.TemplatesService/MoveTemplate',
+	'jobs.ColleaguesService/CreateOrUpdateLabel',
 	'jobs.ColleaguesService/GetColleague',
 	'jobs.ColleaguesService/ListColleagueActivity',
 	'jobs.ColleaguesService/ListColleagues',
-	'jobs.ColleaguesService/ManageLabels',
 	'jobs.ColleaguesService/SetColleagueProps',
 	'jobs.ConductService/CreateConductEntry',
 	'jobs.ConductService/DeleteConductEntry',
@@ -417,6 +417,8 @@ export const PermAttributes = {
 	},
 	'documents.TemplatesService/MoveTemplate': {
 	},
+	'jobs.ColleaguesService/CreateOrUpdateLabel': {
+	},
 	'jobs.ColleaguesService/GetColleague': {
 		'Access': {
 			type: 'stringList',
@@ -434,8 +436,6 @@ export const PermAttributes = {
 		},
 	},
 	'jobs.ColleaguesService/ListColleagues': {
-	},
-	'jobs.ColleaguesService/ManageLabels': {
 	},
 	'jobs.ColleaguesService/SetColleagueProps': {
 		'Access': {

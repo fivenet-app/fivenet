@@ -10574,6 +10574,45 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 ## services/jobs/colleagues.proto
 
 
+### services.jobs.CreateOrUpdateLabelRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `label` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) |  |  |
+
+
+
+
+
+### services.jobs.CreateOrUpdateLabelResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `label` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) |  |  |
+
+
+
+
+
+### services.jobs.DeleteLabelRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.jobs.DeleteLabelResponse
+
+
+
+
+
 ### services.jobs.GetColleagueLabelsRequest
 
 
@@ -10715,23 +10754,18 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
-### services.jobs.ManageLabelsRequest
+### services.jobs.ReorderLabelsRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `labels` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
+| `label_ids` | [int64](#int64) | repeated |  |
 
 
 
 
 
-### services.jobs.ManageLabelsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `labels` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
+### services.jobs.ReorderLabelsResponse
 
 
 
@@ -10776,7 +10810,9 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `ListColleagueActivity` | [ListColleagueActivityRequest](#servicesjobsListColleagueActivityRequest) | [ListColleagueActivityResponse](#servicesjobsListColleagueActivityResponse) | |
 | `SetColleagueProps` | [SetColleaguePropsRequest](#servicesjobsSetColleaguePropsRequest) | [SetColleaguePropsResponse](#servicesjobsSetColleaguePropsResponse) | |
 | `GetColleagueLabels` | [GetColleagueLabelsRequest](#servicesjobsGetColleagueLabelsRequest) | [GetColleagueLabelsResponse](#servicesjobsGetColleagueLabelsResponse) | |
-| `ManageLabels` | [ManageLabelsRequest](#servicesjobsManageLabelsRequest) | [ManageLabelsResponse](#servicesjobsManageLabelsResponse) | |
+| `CreateOrUpdateLabel` | [CreateOrUpdateLabelRequest](#servicesjobsCreateOrUpdateLabelRequest) | [CreateOrUpdateLabelResponse](#servicesjobsCreateOrUpdateLabelResponse) | |
+| `DeleteLabel` | [DeleteLabelRequest](#servicesjobsDeleteLabelRequest) | [DeleteLabelResponse](#servicesjobsDeleteLabelResponse) | |
+| `ReorderLabels` | [ReorderLabelsRequest](#servicesjobsReorderLabelsRequest) | [ReorderLabelsResponse](#servicesjobsReorderLabelsResponse) | |
 | `GetColleagueLabelsStats` | [GetColleagueLabelsStatsRequest](#servicesjobsGetColleagueLabelsStatsRequest) | [GetColleagueLabelsStatsResponse](#servicesjobsGetColleagueLabelsStatsResponse) | |
 
  <!-- end services -->

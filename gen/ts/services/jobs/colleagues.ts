@@ -192,22 +192,50 @@ export interface GetColleagueLabelsResponse {
     labels: Label[];
 }
 /**
- * @generated from protobuf message services.jobs.ManageLabelsRequest
+ * @generated from protobuf message services.jobs.CreateOrUpdateLabelRequest
  */
-export interface ManageLabelsRequest {
+export interface CreateOrUpdateLabelRequest {
     /**
-     * @generated from protobuf field: repeated resources.jobs.labels.Label labels = 1
+     * @generated from protobuf field: resources.jobs.labels.Label label = 1
      */
-    labels: Label[];
+    label?: Label;
 }
 /**
- * @generated from protobuf message services.jobs.ManageLabelsResponse
+ * @generated from protobuf message services.jobs.CreateOrUpdateLabelResponse
  */
-export interface ManageLabelsResponse {
+export interface CreateOrUpdateLabelResponse {
     /**
-     * @generated from protobuf field: repeated resources.jobs.labels.Label labels = 1
+     * @generated from protobuf field: resources.jobs.labels.Label label = 1
      */
-    labels: Label[];
+    label?: Label;
+}
+/**
+ * @generated from protobuf message services.jobs.DeleteLabelRequest
+ */
+export interface DeleteLabelRequest {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+}
+/**
+ * @generated from protobuf message services.jobs.DeleteLabelResponse
+ */
+export interface DeleteLabelResponse {
+}
+/**
+ * @generated from protobuf message services.jobs.ReorderLabelsRequest
+ */
+export interface ReorderLabelsRequest {
+    /**
+     * @generated from protobuf field: repeated int64 label_ids = 1
+     */
+    labelIds: number[];
+}
+/**
+ * @generated from protobuf message services.jobs.ReorderLabelsResponse
+ */
+export interface ReorderLabelsResponse {
 }
 /**
  * @generated from protobuf message services.jobs.GetColleagueLabelsStatsRequest
@@ -919,26 +947,25 @@ class GetColleagueLabelsResponse$Type extends MessageType<GetColleagueLabelsResp
  */
 export const GetColleagueLabelsResponse = new GetColleagueLabelsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ManageLabelsRequest$Type extends MessageType<ManageLabelsRequest> {
+class CreateOrUpdateLabelRequest$Type extends MessageType<CreateOrUpdateLabelRequest> {
     constructor() {
-        super("services.jobs.ManageLabelsRequest", [
-            { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label, options: { "buf.validate.field": { repeated: { maxItems: "50" } } } }
+        super("services.jobs.CreateOrUpdateLabelRequest", [
+            { no: 1, name: "label", kind: "message", T: () => Label, options: { "buf.validate.field": { required: true } } }
         ]);
     }
-    create(value?: PartialMessage<ManageLabelsRequest>): ManageLabelsRequest {
+    create(value?: PartialMessage<CreateOrUpdateLabelRequest>): CreateOrUpdateLabelRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.labels = [];
         if (value !== undefined)
-            reflectionMergePartial<ManageLabelsRequest>(this, message, value);
+            reflectionMergePartial<CreateOrUpdateLabelRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ManageLabelsRequest): ManageLabelsRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateLabelRequest): CreateOrUpdateLabelRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.jobs.labels.Label labels */ 1:
-                    message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
+                case /* resources.jobs.labels.Label label */ 1:
+                    message.label = Label.internalBinaryRead(reader, reader.uint32(), options, message.label);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -951,10 +978,10 @@ class ManageLabelsRequest$Type extends MessageType<ManageLabelsRequest> {
         }
         return message;
     }
-    internalBinaryWrite(message: ManageLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.jobs.labels.Label labels = 1; */
-        for (let i = 0; i < message.labels.length; i++)
-            Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: CreateOrUpdateLabelRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.labels.Label label = 1; */
+        if (message.label)
+            Label.internalBinaryWrite(message.label, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -962,30 +989,29 @@ class ManageLabelsRequest$Type extends MessageType<ManageLabelsRequest> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.jobs.ManageLabelsRequest
+ * @generated MessageType for protobuf message services.jobs.CreateOrUpdateLabelRequest
  */
-export const ManageLabelsRequest = new ManageLabelsRequest$Type();
+export const CreateOrUpdateLabelRequest = new CreateOrUpdateLabelRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ManageLabelsResponse$Type extends MessageType<ManageLabelsResponse> {
+class CreateOrUpdateLabelResponse$Type extends MessageType<CreateOrUpdateLabelResponse> {
     constructor() {
-        super("services.jobs.ManageLabelsResponse", [
-            { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
+        super("services.jobs.CreateOrUpdateLabelResponse", [
+            { no: 1, name: "label", kind: "message", T: () => Label }
         ]);
     }
-    create(value?: PartialMessage<ManageLabelsResponse>): ManageLabelsResponse {
+    create(value?: PartialMessage<CreateOrUpdateLabelResponse>): CreateOrUpdateLabelResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.labels = [];
         if (value !== undefined)
-            reflectionMergePartial<ManageLabelsResponse>(this, message, value);
+            reflectionMergePartial<CreateOrUpdateLabelResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ManageLabelsResponse): ManageLabelsResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateLabelResponse): CreateOrUpdateLabelResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.jobs.labels.Label labels */ 1:
-                    message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
+                case /* resources.jobs.labels.Label label */ 1:
+                    message.label = Label.internalBinaryRead(reader, reader.uint32(), options, message.label);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -998,10 +1024,10 @@ class ManageLabelsResponse$Type extends MessageType<ManageLabelsResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: ManageLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.jobs.labels.Label labels = 1; */
-        for (let i = 0; i < message.labels.length; i++)
-            Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: CreateOrUpdateLabelResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.labels.Label label = 1; */
+        if (message.label)
+            Label.internalBinaryWrite(message.label, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1009,9 +1035,187 @@ class ManageLabelsResponse$Type extends MessageType<ManageLabelsResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.jobs.ManageLabelsResponse
+ * @generated MessageType for protobuf message services.jobs.CreateOrUpdateLabelResponse
  */
-export const ManageLabelsResponse = new ManageLabelsResponse$Type();
+export const CreateOrUpdateLabelResponse = new CreateOrUpdateLabelResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteLabelRequest$Type extends MessageType<DeleteLabelRequest> {
+    constructor() {
+        super("services.jobs.DeleteLabelRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteLabelRequest>): DeleteLabelRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<DeleteLabelRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteLabelRequest): DeleteLabelRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteLabelRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.DeleteLabelRequest
+ */
+export const DeleteLabelRequest = new DeleteLabelRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteLabelResponse$Type extends MessageType<DeleteLabelResponse> {
+    constructor() {
+        super("services.jobs.DeleteLabelResponse", []);
+    }
+    create(value?: PartialMessage<DeleteLabelResponse>): DeleteLabelResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteLabelResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteLabelResponse): DeleteLabelResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteLabelResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.DeleteLabelResponse
+ */
+export const DeleteLabelResponse = new DeleteLabelResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReorderLabelsRequest$Type extends MessageType<ReorderLabelsRequest> {
+    constructor() {
+        super("services.jobs.ReorderLabelsRequest", [
+            { no: 1, name: "label_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "50", items: { int64: { gt: "0" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReorderLabelsRequest>): ReorderLabelsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.labelIds = [];
+        if (value !== undefined)
+            reflectionMergePartial<ReorderLabelsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReorderLabelsRequest): ReorderLabelsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated int64 label_ids */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.labelIds.push(reader.int64().toNumber());
+                    else
+                        message.labelIds.push(reader.int64().toNumber());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReorderLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int64 label_ids = 1; */
+        if (message.labelIds.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.labelIds.length; i++)
+                writer.int64(message.labelIds[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ReorderLabelsRequest
+ */
+export const ReorderLabelsRequest = new ReorderLabelsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReorderLabelsResponse$Type extends MessageType<ReorderLabelsResponse> {
+    constructor() {
+        super("services.jobs.ReorderLabelsResponse", []);
+    }
+    create(value?: PartialMessage<ReorderLabelsResponse>): ReorderLabelsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ReorderLabelsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReorderLabelsResponse): ReorderLabelsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReorderLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ReorderLabelsResponse
+ */
+export const ReorderLabelsResponse = new ReorderLabelsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetColleagueLabelsStatsRequest$Type extends MessageType<GetColleagueLabelsStatsRequest> {
     constructor() {
@@ -1124,6 +1328,8 @@ export const ColleaguesService = new ServiceType("services.jobs.ColleaguesServic
     { name: "ListColleagueActivity", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Types", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"] }] } }, I: ListColleagueActivityRequest, O: ListColleagueActivityResponse },
     { name: "SetColleagueProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }, { key: "Types", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["AbsenceDate", "Note", "Labels", "Name"] }] } }, I: SetColleaguePropsRequest, O: SetColleaguePropsResponse },
     { name: "GetColleagueLabels", options: { "codegen.perms.perms": { enabled: true, name: "GetColleague" } }, I: GetColleagueLabelsRequest, O: GetColleagueLabelsResponse },
-    { name: "ManageLabels", options: { "codegen.perms.perms": { enabled: true } }, I: ManageLabelsRequest, O: ManageLabelsResponse },
+    { name: "CreateOrUpdateLabel", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateLabelRequest, O: CreateOrUpdateLabelResponse },
+    { name: "DeleteLabel", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateLabel" } }, I: DeleteLabelRequest, O: DeleteLabelResponse },
+    { name: "ReorderLabels", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateLabel" } }, I: ReorderLabelsRequest, O: ReorderLabelsResponse },
     { name: "GetColleagueLabelsStats", options: { "codegen.perms.perms": { enabled: true, name: "GetColleague" } }, I: GetColleagueLabelsStatsRequest, O: GetColleagueLabelsStatsResponse }
 ], { "codegen.perms.perms_svc": { order: 61, icon: "i-mdi-account-group" } });

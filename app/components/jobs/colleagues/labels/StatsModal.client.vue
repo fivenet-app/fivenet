@@ -126,7 +126,7 @@ const tileSort = (a: HierarchyNode<LabelCount>, b: HierarchyNode<LabelCount>) =>
                             :value="value"
                             :tile-sort="tileSort"
                             :min-tile-size-for-label="0"
-                            :tile-label-small-font-size="8"
+                            :tile-label-small-font-size="10"
                         />
                     </VisSingleContainer>
                 </UCard>

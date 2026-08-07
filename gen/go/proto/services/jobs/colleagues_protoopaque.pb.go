@@ -1138,27 +1138,27 @@ func (b0 GetColleagueLabelsResponse_builder) Build() *GetColleagueLabelsResponse
 	return m0
 }
 
-type ManageLabelsRequest struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Labels *[]*labels.Label       `protobuf:"bytes,1,rep,name=labels,proto3"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+type CreateOrUpdateLabelRequest struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Label *labels.Label          `protobuf:"bytes,1,opt,name=label,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
-func (x *ManageLabelsRequest) Reset() {
-	*x = ManageLabelsRequest{}
+func (x *CreateOrUpdateLabelRequest) Reset() {
+	*x = CreateOrUpdateLabelRequest{}
 	mi := &file_services_jobs_colleagues_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ManageLabelsRequest) String() string {
+func (x *CreateOrUpdateLabelRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ManageLabelsRequest) ProtoMessage() {}
+func (*CreateOrUpdateLabelRequest) ProtoMessage() {}
 
-func (x *ManageLabelsRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateOrUpdateLabelRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_jobs_colleagues_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1170,54 +1170,63 @@ func (x *ManageLabelsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *ManageLabelsRequest) GetLabels() []*labels.Label {
+func (x *CreateOrUpdateLabelRequest) GetLabel() *labels.Label {
 	if x != nil {
-		if x.xxx_hidden_Labels != nil {
-			return *x.xxx_hidden_Labels
-		}
+		return x.xxx_hidden_Label
 	}
 	return nil
 }
 
-func (x *ManageLabelsRequest) SetLabels(v []*labels.Label) {
-	x.xxx_hidden_Labels = &v
+func (x *CreateOrUpdateLabelRequest) SetLabel(v *labels.Label) {
+	x.xxx_hidden_Label = v
 }
 
-type ManageLabelsRequest_builder struct {
+func (x *CreateOrUpdateLabelRequest) HasLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Label != nil
+}
+
+func (x *CreateOrUpdateLabelRequest) ClearLabel() {
+	x.xxx_hidden_Label = nil
+}
+
+type CreateOrUpdateLabelRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Labels []*labels.Label
+	Label *labels.Label
 }
 
-func (b0 ManageLabelsRequest_builder) Build() *ManageLabelsRequest {
-	m0 := &ManageLabelsRequest{}
+func (b0 CreateOrUpdateLabelRequest_builder) Build() *CreateOrUpdateLabelRequest {
+	m0 := &CreateOrUpdateLabelRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Labels = &b.Labels
+	x.xxx_hidden_Label = b.Label
 	return m0
 }
 
-type ManageLabelsResponse struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Labels *[]*labels.Label       `protobuf:"bytes,1,rep,name=labels,proto3"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+type CreateOrUpdateLabelResponse struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Label *labels.Label          `protobuf:"bytes,1,opt,name=label,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
-func (x *ManageLabelsResponse) Reset() {
-	*x = ManageLabelsResponse{}
+func (x *CreateOrUpdateLabelResponse) Reset() {
+	*x = CreateOrUpdateLabelResponse{}
 	mi := &file_services_jobs_colleagues_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ManageLabelsResponse) String() string {
+func (x *CreateOrUpdateLabelResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ManageLabelsResponse) ProtoMessage() {}
+func (*CreateOrUpdateLabelResponse) ProtoMessage() {}
 
-func (x *ManageLabelsResponse) ProtoReflect() protoreflect.Message {
+func (x *CreateOrUpdateLabelResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_jobs_colleagues_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1229,30 +1238,239 @@ func (x *ManageLabelsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *ManageLabelsResponse) GetLabels() []*labels.Label {
+func (x *CreateOrUpdateLabelResponse) GetLabel() *labels.Label {
 	if x != nil {
-		if x.xxx_hidden_Labels != nil {
-			return *x.xxx_hidden_Labels
-		}
+		return x.xxx_hidden_Label
 	}
 	return nil
 }
 
-func (x *ManageLabelsResponse) SetLabels(v []*labels.Label) {
-	x.xxx_hidden_Labels = &v
+func (x *CreateOrUpdateLabelResponse) SetLabel(v *labels.Label) {
+	x.xxx_hidden_Label = v
 }
 
-type ManageLabelsResponse_builder struct {
+func (x *CreateOrUpdateLabelResponse) HasLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Label != nil
+}
+
+func (x *CreateOrUpdateLabelResponse) ClearLabel() {
+	x.xxx_hidden_Label = nil
+}
+
+type CreateOrUpdateLabelResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Labels []*labels.Label
+	Label *labels.Label
 }
 
-func (b0 ManageLabelsResponse_builder) Build() *ManageLabelsResponse {
-	m0 := &ManageLabelsResponse{}
+func (b0 CreateOrUpdateLabelResponse_builder) Build() *CreateOrUpdateLabelResponse {
+	m0 := &CreateOrUpdateLabelResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Labels = &b.Labels
+	x.xxx_hidden_Label = b.Label
+	return m0
+}
+
+type DeleteLabelRequest struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id int64                  `protobuf:"varint,1,opt,name=id,proto3"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteLabelRequest) Reset() {
+	*x = DeleteLabelRequest{}
+	mi := &file_services_jobs_colleagues_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteLabelRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteLabelRequest) ProtoMessage() {}
+
+func (x *DeleteLabelRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_colleagues_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *DeleteLabelRequest) GetId() int64 {
+	if x != nil {
+		return x.xxx_hidden_Id
+	}
+	return 0
+}
+
+func (x *DeleteLabelRequest) SetId(v int64) {
+	x.xxx_hidden_Id = v
+}
+
+type DeleteLabelRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 DeleteLabelRequest_builder) Build() *DeleteLabelRequest {
+	m0 := &DeleteLabelRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Id = b.Id
+	return m0
+}
+
+type DeleteLabelResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteLabelResponse) Reset() {
+	*x = DeleteLabelResponse{}
+	mi := &file_services_jobs_colleagues_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteLabelResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteLabelResponse) ProtoMessage() {}
+
+func (x *DeleteLabelResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_colleagues_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type DeleteLabelResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteLabelResponse_builder) Build() *DeleteLabelResponse {
+	m0 := &DeleteLabelResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
+type ReorderLabelsRequest struct {
+	state               protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_LabelIds []int64                `protobuf:"varint,1,rep,packed,name=label_ids,json=labelIds,proto3"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *ReorderLabelsRequest) Reset() {
+	*x = ReorderLabelsRequest{}
+	mi := &file_services_jobs_colleagues_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReorderLabelsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReorderLabelsRequest) ProtoMessage() {}
+
+func (x *ReorderLabelsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_colleagues_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ReorderLabelsRequest) GetLabelIds() []int64 {
+	if x != nil {
+		return x.xxx_hidden_LabelIds
+	}
+	return nil
+}
+
+func (x *ReorderLabelsRequest) SetLabelIds(v []int64) {
+	x.xxx_hidden_LabelIds = v
+}
+
+type ReorderLabelsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	LabelIds []int64
+}
+
+func (b0 ReorderLabelsRequest_builder) Build() *ReorderLabelsRequest {
+	m0 := &ReorderLabelsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_LabelIds = b.LabelIds
+	return m0
+}
+
+type ReorderLabelsResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReorderLabelsResponse) Reset() {
+	*x = ReorderLabelsResponse{}
+	mi := &file_services_jobs_colleagues_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReorderLabelsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReorderLabelsResponse) ProtoMessage() {}
+
+func (x *ReorderLabelsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_colleagues_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type ReorderLabelsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ReorderLabelsResponse_builder) Build() *ReorderLabelsResponse {
+	m0 := &ReorderLabelsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
 	return m0
 }
 
@@ -1265,7 +1483,7 @@ type GetColleagueLabelsStatsRequest struct {
 
 func (x *GetColleagueLabelsStatsRequest) Reset() {
 	*x = GetColleagueLabelsStatsRequest{}
-	mi := &file_services_jobs_colleagues_proto_msgTypes[14]
+	mi := &file_services_jobs_colleagues_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1277,7 +1495,7 @@ func (x *GetColleagueLabelsStatsRequest) String() string {
 func (*GetColleagueLabelsStatsRequest) ProtoMessage() {}
 
 func (x *GetColleagueLabelsStatsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_jobs_colleagues_proto_msgTypes[14]
+	mi := &file_services_jobs_colleagues_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1322,7 +1540,7 @@ type GetColleagueLabelsStatsResponse struct {
 
 func (x *GetColleagueLabelsStatsResponse) Reset() {
 	*x = GetColleagueLabelsStatsResponse{}
-	mi := &file_services_jobs_colleagues_proto_msgTypes[15]
+	mi := &file_services_jobs_colleagues_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1334,7 +1552,7 @@ func (x *GetColleagueLabelsStatsResponse) String() string {
 func (*GetColleagueLabelsStatsResponse) ProtoMessage() {}
 
 func (x *GetColleagueLabelsStatsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_jobs_colleagues_proto_msgTypes[15]
+	mi := &file_services_jobs_colleagues_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1436,15 +1654,21 @@ const file_services_jobs_colleagues_proto_rawDesc = "" +
 	"\x06search\x18\x01 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +
 	"\a_search\"R\n" +
 	"\x1aGetColleagueLabelsResponse\x124\n" +
-	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"K\n" +
-	"\x13ManageLabelsRequest\x124\n" +
-	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"L\n" +
-	"\x14ManageLabelsResponse\x124\n" +
-	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"=\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"P\n" +
+	"\x1aCreateOrUpdateLabelRequest\x122\n" +
+	"\x05label\x18\x01 \x01(\v2\x1c.resources.jobs.labels.LabelR\x05label\"Q\n" +
+	"\x1bCreateOrUpdateLabelResponse\x122\n" +
+	"\x05label\x18\x01 \x01(\v2\x1c.resources.jobs.labels.LabelR\x05label\"$\n" +
+	"\x12DeleteLabelRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x15\n" +
+	"\x13DeleteLabelResponse\"3\n" +
+	"\x14ReorderLabelsRequest\x12\x1b\n" +
+	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"\x17\n" +
+	"\x15ReorderLabelsResponse\"=\n" +
 	"\x1eGetColleagueLabelsStatsRequest\x12\x1b\n" +
 	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"Z\n" +
 	"\x1fGetColleagueLabelsStatsResponse\x127\n" +
-	"\x05count\x18\x01 \x03(\v2!.resources.jobs.labels.LabelCountR\x05count2\xa9\t\n" +
+	"\x05count\x18\x01 \x03(\v2!.resources.jobs.labels.LabelCountR\x05count2\xaa\v\n" +
 	"\x11ColleaguesService\x12e\n" +
 	"\x0eListColleagues\x12$.services.jobs.ListColleaguesRequest\x1a%.services.jobs.ListColleaguesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12`\n" +
 	"\aGetSelf\x12\x1d.services.jobs.GetSelfRequest\x1a\x1e.services.jobs.GetSelfResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eListColleagues\x12\xa5\x01\n" +
@@ -1458,11 +1682,13 @@ const file_services_jobs_colleagues_proto_rawDesc = "" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
 	"Lower_Rank\"\tSame_Rank\"\x03Any:*\n" +
 	"\x05Types\x18\x01\"\vAbsenceDate\"\x04Note\"\x06Labels\"\x04Name\x12\x7f\n" +
-	"\x12GetColleagueLabels\x12(.services.jobs.GetColleagueLabelsRequest\x1a).services.jobs.GetColleagueLabelsResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fGetColleague\x12_\n" +
-	"\fManageLabels\x12\".services.jobs.ManageLabelsRequest\x1a#.services.jobs.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8e\x01\n" +
+	"\x12GetColleagueLabels\x12(.services.jobs.GetColleagueLabelsRequest\x1a).services.jobs.GetColleagueLabelsResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fGetColleague\x12t\n" +
+	"\x13CreateOrUpdateLabel\x12).services.jobs.CreateOrUpdateLabelRequest\x1a*.services.jobs.CreateOrUpdateLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12q\n" +
+	"\vDeleteLabel\x12!.services.jobs.DeleteLabelRequest\x1a\".services.jobs.DeleteLabelResponse\"\x1b\xd2\xf3\x18\x17\b\x01\"\x13CreateOrUpdateLabel\x12w\n" +
+	"\rReorderLabels\x12#.services.jobs.ReorderLabelsRequest\x1a$.services.jobs.ReorderLabelsResponse\"\x1b\xd2\xf3\x18\x17\b\x01\"\x13CreateOrUpdateLabel\x12\x8e\x01\n" +
 	"\x17GetColleagueLabelsStats\x12-.services.jobs.GetColleagueLabelsStatsRequest\x1a..services.jobs.GetColleagueLabelsStatsResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fGetColleague\x1a\x1b\xea\xf3\x18\x17\b=\x12\x13i-mdi-account-groupBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
-var file_services_jobs_colleagues_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_services_jobs_colleagues_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_services_jobs_colleagues_proto_goTypes = []any{
 	(*ListColleaguesRequest)(nil),           // 0: services.jobs.ListColleaguesRequest
 	(*ListColleaguesResponse)(nil),          // 1: services.jobs.ListColleaguesResponse
@@ -1476,56 +1702,64 @@ var file_services_jobs_colleagues_proto_goTypes = []any{
 	(*SetColleaguePropsResponse)(nil),       // 9: services.jobs.SetColleaguePropsResponse
 	(*GetColleagueLabelsRequest)(nil),       // 10: services.jobs.GetColleagueLabelsRequest
 	(*GetColleagueLabelsResponse)(nil),      // 11: services.jobs.GetColleagueLabelsResponse
-	(*ManageLabelsRequest)(nil),             // 12: services.jobs.ManageLabelsRequest
-	(*ManageLabelsResponse)(nil),            // 13: services.jobs.ManageLabelsResponse
-	(*GetColleagueLabelsStatsRequest)(nil),  // 14: services.jobs.GetColleagueLabelsStatsRequest
-	(*GetColleagueLabelsStatsResponse)(nil), // 15: services.jobs.GetColleagueLabelsStatsResponse
-	(*database.PaginationRequest)(nil),      // 16: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),                   // 17: resources.common.database.Sort
-	(*database.PaginationResponse)(nil),     // 18: resources.common.database.PaginationResponse
-	(*colleagues.Colleague)(nil),            // 19: resources.jobs.colleagues.Colleague
-	(activity.ColleagueActivityType)(0),     // 20: resources.jobs.colleagues.activity.ColleagueActivityType
-	(*activity.ColleagueActivity)(nil),      // 21: resources.jobs.colleagues.activity.ColleagueActivity
-	(*colleagues.ColleagueProps)(nil),       // 22: resources.jobs.colleagues.ColleagueProps
-	(*labels.Label)(nil),                    // 23: resources.jobs.labels.Label
-	(*labels.LabelCount)(nil),               // 24: resources.jobs.labels.LabelCount
+	(*CreateOrUpdateLabelRequest)(nil),      // 12: services.jobs.CreateOrUpdateLabelRequest
+	(*CreateOrUpdateLabelResponse)(nil),     // 13: services.jobs.CreateOrUpdateLabelResponse
+	(*DeleteLabelRequest)(nil),              // 14: services.jobs.DeleteLabelRequest
+	(*DeleteLabelResponse)(nil),             // 15: services.jobs.DeleteLabelResponse
+	(*ReorderLabelsRequest)(nil),            // 16: services.jobs.ReorderLabelsRequest
+	(*ReorderLabelsResponse)(nil),           // 17: services.jobs.ReorderLabelsResponse
+	(*GetColleagueLabelsStatsRequest)(nil),  // 18: services.jobs.GetColleagueLabelsStatsRequest
+	(*GetColleagueLabelsStatsResponse)(nil), // 19: services.jobs.GetColleagueLabelsStatsResponse
+	(*database.PaginationRequest)(nil),      // 20: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),                   // 21: resources.common.database.Sort
+	(*database.PaginationResponse)(nil),     // 22: resources.common.database.PaginationResponse
+	(*colleagues.Colleague)(nil),            // 23: resources.jobs.colleagues.Colleague
+	(activity.ColleagueActivityType)(0),     // 24: resources.jobs.colleagues.activity.ColleagueActivityType
+	(*activity.ColleagueActivity)(nil),      // 25: resources.jobs.colleagues.activity.ColleagueActivity
+	(*colleagues.ColleagueProps)(nil),       // 26: resources.jobs.colleagues.ColleagueProps
+	(*labels.Label)(nil),                    // 27: resources.jobs.labels.Label
+	(*labels.LabelCount)(nil),               // 28: resources.jobs.labels.LabelCount
 }
 var file_services_jobs_colleagues_proto_depIdxs = []int32{
-	16, // 0: services.jobs.ListColleaguesRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	17, // 1: services.jobs.ListColleaguesRequest.sort:type_name -> resources.common.database.Sort
-	18, // 2: services.jobs.ListColleaguesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	19, // 3: services.jobs.ListColleaguesResponse.colleagues:type_name -> resources.jobs.colleagues.Colleague
-	19, // 4: services.jobs.GetSelfResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
-	19, // 5: services.jobs.GetColleagueResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
-	16, // 6: services.jobs.ListColleagueActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	17, // 7: services.jobs.ListColleagueActivityRequest.sort:type_name -> resources.common.database.Sort
-	20, // 8: services.jobs.ListColleagueActivityRequest.activity_types:type_name -> resources.jobs.colleagues.activity.ColleagueActivityType
-	18, // 9: services.jobs.ListColleagueActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	21, // 10: services.jobs.ListColleagueActivityResponse.activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
-	22, // 11: services.jobs.SetColleaguePropsRequest.props:type_name -> resources.jobs.colleagues.ColleagueProps
-	22, // 12: services.jobs.SetColleaguePropsResponse.props:type_name -> resources.jobs.colleagues.ColleagueProps
-	23, // 13: services.jobs.GetColleagueLabelsResponse.labels:type_name -> resources.jobs.labels.Label
-	23, // 14: services.jobs.ManageLabelsRequest.labels:type_name -> resources.jobs.labels.Label
-	23, // 15: services.jobs.ManageLabelsResponse.labels:type_name -> resources.jobs.labels.Label
-	24, // 16: services.jobs.GetColleagueLabelsStatsResponse.count:type_name -> resources.jobs.labels.LabelCount
+	20, // 0: services.jobs.ListColleaguesRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	21, // 1: services.jobs.ListColleaguesRequest.sort:type_name -> resources.common.database.Sort
+	22, // 2: services.jobs.ListColleaguesResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	23, // 3: services.jobs.ListColleaguesResponse.colleagues:type_name -> resources.jobs.colleagues.Colleague
+	23, // 4: services.jobs.GetSelfResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
+	23, // 5: services.jobs.GetColleagueResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
+	20, // 6: services.jobs.ListColleagueActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	21, // 7: services.jobs.ListColleagueActivityRequest.sort:type_name -> resources.common.database.Sort
+	24, // 8: services.jobs.ListColleagueActivityRequest.activity_types:type_name -> resources.jobs.colleagues.activity.ColleagueActivityType
+	22, // 9: services.jobs.ListColleagueActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	25, // 10: services.jobs.ListColleagueActivityResponse.activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
+	26, // 11: services.jobs.SetColleaguePropsRequest.props:type_name -> resources.jobs.colleagues.ColleagueProps
+	26, // 12: services.jobs.SetColleaguePropsResponse.props:type_name -> resources.jobs.colleagues.ColleagueProps
+	27, // 13: services.jobs.GetColleagueLabelsResponse.labels:type_name -> resources.jobs.labels.Label
+	27, // 14: services.jobs.CreateOrUpdateLabelRequest.label:type_name -> resources.jobs.labels.Label
+	27, // 15: services.jobs.CreateOrUpdateLabelResponse.label:type_name -> resources.jobs.labels.Label
+	28, // 16: services.jobs.GetColleagueLabelsStatsResponse.count:type_name -> resources.jobs.labels.LabelCount
 	0,  // 17: services.jobs.ColleaguesService.ListColleagues:input_type -> services.jobs.ListColleaguesRequest
 	2,  // 18: services.jobs.ColleaguesService.GetSelf:input_type -> services.jobs.GetSelfRequest
 	4,  // 19: services.jobs.ColleaguesService.GetColleague:input_type -> services.jobs.GetColleagueRequest
 	6,  // 20: services.jobs.ColleaguesService.ListColleagueActivity:input_type -> services.jobs.ListColleagueActivityRequest
 	8,  // 21: services.jobs.ColleaguesService.SetColleagueProps:input_type -> services.jobs.SetColleaguePropsRequest
 	10, // 22: services.jobs.ColleaguesService.GetColleagueLabels:input_type -> services.jobs.GetColleagueLabelsRequest
-	12, // 23: services.jobs.ColleaguesService.ManageLabels:input_type -> services.jobs.ManageLabelsRequest
-	14, // 24: services.jobs.ColleaguesService.GetColleagueLabelsStats:input_type -> services.jobs.GetColleagueLabelsStatsRequest
-	1,  // 25: services.jobs.ColleaguesService.ListColleagues:output_type -> services.jobs.ListColleaguesResponse
-	3,  // 26: services.jobs.ColleaguesService.GetSelf:output_type -> services.jobs.GetSelfResponse
-	5,  // 27: services.jobs.ColleaguesService.GetColleague:output_type -> services.jobs.GetColleagueResponse
-	7,  // 28: services.jobs.ColleaguesService.ListColleagueActivity:output_type -> services.jobs.ListColleagueActivityResponse
-	9,  // 29: services.jobs.ColleaguesService.SetColleagueProps:output_type -> services.jobs.SetColleaguePropsResponse
-	11, // 30: services.jobs.ColleaguesService.GetColleagueLabels:output_type -> services.jobs.GetColleagueLabelsResponse
-	13, // 31: services.jobs.ColleaguesService.ManageLabels:output_type -> services.jobs.ManageLabelsResponse
-	15, // 32: services.jobs.ColleaguesService.GetColleagueLabelsStats:output_type -> services.jobs.GetColleagueLabelsStatsResponse
-	25, // [25:33] is the sub-list for method output_type
-	17, // [17:25] is the sub-list for method input_type
+	12, // 23: services.jobs.ColleaguesService.CreateOrUpdateLabel:input_type -> services.jobs.CreateOrUpdateLabelRequest
+	14, // 24: services.jobs.ColleaguesService.DeleteLabel:input_type -> services.jobs.DeleteLabelRequest
+	16, // 25: services.jobs.ColleaguesService.ReorderLabels:input_type -> services.jobs.ReorderLabelsRequest
+	18, // 26: services.jobs.ColleaguesService.GetColleagueLabelsStats:input_type -> services.jobs.GetColleagueLabelsStatsRequest
+	1,  // 27: services.jobs.ColleaguesService.ListColleagues:output_type -> services.jobs.ListColleaguesResponse
+	3,  // 28: services.jobs.ColleaguesService.GetSelf:output_type -> services.jobs.GetSelfResponse
+	5,  // 29: services.jobs.ColleaguesService.GetColleague:output_type -> services.jobs.GetColleagueResponse
+	7,  // 30: services.jobs.ColleaguesService.ListColleagueActivity:output_type -> services.jobs.ListColleagueActivityResponse
+	9,  // 31: services.jobs.ColleaguesService.SetColleagueProps:output_type -> services.jobs.SetColleaguePropsResponse
+	11, // 32: services.jobs.ColleaguesService.GetColleagueLabels:output_type -> services.jobs.GetColleagueLabelsResponse
+	13, // 33: services.jobs.ColleaguesService.CreateOrUpdateLabel:output_type -> services.jobs.CreateOrUpdateLabelResponse
+	15, // 34: services.jobs.ColleaguesService.DeleteLabel:output_type -> services.jobs.DeleteLabelResponse
+	17, // 35: services.jobs.ColleaguesService.ReorderLabels:output_type -> services.jobs.ReorderLabelsResponse
+	19, // 36: services.jobs.ColleaguesService.GetColleagueLabelsStats:output_type -> services.jobs.GetColleagueLabelsStatsResponse
+	27, // [27:37] is the sub-list for method output_type
+	17, // [17:27] is the sub-list for method input_type
 	17, // [17:17] is the sub-list for extension type_name
 	17, // [17:17] is the sub-list for extension extendee
 	0,  // [0:17] is the sub-list for field type_name
@@ -1546,7 +1780,7 @@ func file_services_jobs_colleagues_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_jobs_colleagues_proto_rawDesc), len(file_services_jobs_colleagues_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
