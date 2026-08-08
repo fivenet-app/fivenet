@@ -2685,6 +2685,7 @@
                 "ErrNotPartOfUnit": "You are not part of this unit!",
                 "ErrStaticUnit": "Can't update a static unit's status to be available!",
                 "ErrUnitPermDenied": "You can't access this unit!",
+                "ErrDispatchJobPermDenied": "You can't access this dispatch job!",
                 "ErrDisabled": {
                     "title": "Dispatch Center is disabled!",
                     "content": "Please contact your leader to enable the dispatch center."

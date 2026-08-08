@@ -169,7 +169,13 @@ type IStore interface {
 	) (int32, error)
 	UpdateLabel(ctx context.Context, db qrm.DB, label *jobslabels.Label, job string) error
 	InsertLabel(ctx context.Context, db qrm.DB, label *jobslabels.Label) (int64, error)
-	DeleteLabel(ctx context.Context, db qrm.DB, job string, labelId int64, deletedAt *timestamp.Timestamp) error
+	DeleteLabel(
+		ctx context.Context,
+		db qrm.DB,
+		job string,
+		labelId int64,
+		deletedAt *timestamp.Timestamp,
+	) error
 	ReorderLabels(
 		ctx context.Context,
 		job string,

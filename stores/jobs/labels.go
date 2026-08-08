@@ -7,11 +7,11 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 )
 
 func (s *Store) GetColleagueLabels(

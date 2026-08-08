@@ -420,6 +420,8 @@ func (s *Server) stream(
 				obj, err := f.Unmarshal(gctx, s, msg.Data())
 				if err != nil {
 					// Bad payload - skip
+					s.logger.Warn("failed to unmarshal feed message", zap.Error(err),
+						zap.String("bucket", f.Bucket), zap.String("subject", msg.Subject()))
 					continue
 				}
 

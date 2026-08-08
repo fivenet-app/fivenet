@@ -374,20 +374,6 @@ func (s *Server) JoinUnit(
 			zap.Int64("unit_id", req.GetUnitId()),
 		)
 
-		// Remove user from his current unit
-		if currentUnit != nil {
-			if err := s.units.UpdateUnitAssignments(
-				ctx,
-				userInfo.GetJob(),
-				&userInfo.UserId,
-				currentUnit.GetId(),
-				nil,
-				[]int32{userInfo.GetUserId()},
-			); err != nil {
-				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-			}
-		}
-
 		newUnit, err := s.units.Get(ctx, req.GetUnitId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
@@ -409,6 +395,22 @@ func (s *Server) JoinUnit(
 				if !check {
 					return nil, errorscentrum.ErrUnitPermDenied
 				}
+			}
+		}
+
+		// Remove user from his current unit only after the target unit has
+		// been fully validated. This avoids leaving the user unit-less when
+		// the join request fails after target lookup.
+		if currentUnit != nil {
+			if err := s.units.UpdateUnitAssignments(
+				ctx,
+				userInfo.GetJob(),
+				&userInfo.UserId,
+				currentUnit.GetId(),
+				nil,
+				[]int32{userInfo.GetUserId()},
+			); err != nil {
+				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
 		}
 

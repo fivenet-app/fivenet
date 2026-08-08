@@ -26,6 +26,11 @@ var (
 		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrUnitPermDenied"},
 		nil,
 	)
+	ErrDispatchJobPermDenied = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrDispatchJobPermDenied"},
+		nil,
+	)
 	ErrNotOnDuty = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrNotOnDuty.content"},

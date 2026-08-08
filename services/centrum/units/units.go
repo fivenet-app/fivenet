@@ -147,7 +147,7 @@ func New(p Params) *UnitDB {
 			"centrum_units",
 			store.WithKVPrefix[centrumunits.Unit, *centrumunits.Unit]("id"),
 			store.WithOnUpdateFn[centrumunits.Unit, *centrumunits.Unit](
-				func(ctx context.Context, _ *centrumunits.Unit, unit *centrumunits.Unit) (*centrumunits.Unit, error) {
+				func(ctx context.Context, old *centrumunits.Unit, unit *centrumunits.Unit) (*centrumunits.Unit, error) {
 					if unit == nil {
 						return nil, nil
 					}
@@ -167,6 +167,20 @@ func New(p Params) *UnitDB {
 						)
 					}
 
+					if old != nil && old.GetJob() != "" && old.GetJob() != unit.GetJob() {
+						if err := jobSt.Delete(
+							ctx,
+							centrumutils.JobIdKey(old.GetJob(), unit.GetId()),
+						); err != nil {
+							return nil, fmt.Errorf(
+								"failed to delete stale job %s mapping for unit %d. %w",
+								old.GetJob(),
+								unit.GetId(),
+								err,
+							)
+						}
+					}
+
 					// Reset unit ping timer
 					if err := d.UpsertWithTTL(
 						ctx,
@@ -175,6 +189,44 @@ func New(p Params) *UnitDB {
 						PingTTL,
 					); err != nil {
 						return nil, fmt.Errorf("failed to upsert ping unit timer. %w", err)
+					}
+
+					return unit, nil
+				},
+			),
+			store.WithOnRemoteUpdatedFn[centrumunits.Unit, *centrumunits.Unit](
+				func(ctx context.Context, old *centrumunits.Unit, unit *centrumunits.Unit) (*centrumunits.Unit, error) {
+					if unit == nil {
+						return nil, nil
+					}
+
+					if err := jobSt.Put(
+						ctx,
+						centrumutils.JobIdKey(unit.GetJob(), unit.GetId()),
+						&common.IDMapping{
+							Id: unit.GetId(),
+						},
+					); err != nil {
+						return nil, fmt.Errorf(
+							"failed to update job %s mapping for unit %d. %w",
+							unit.GetJob(),
+							unit.GetId(),
+							err,
+						)
+					}
+
+					if old != nil && old.GetJob() != "" && old.GetJob() != unit.GetJob() {
+						if err := jobSt.Delete(
+							ctx,
+							centrumutils.JobIdKey(old.GetJob(), unit.GetId()),
+						); err != nil {
+							return nil, fmt.Errorf(
+								"failed to delete stale job %s mapping for unit %d. %w",
+								old.GetJob(),
+								unit.GetId(),
+								err,
+							)
+						}
 					}
 
 					return unit, nil
@@ -210,6 +262,37 @@ func New(p Params) *UnitDB {
 					}
 
 					return nil
+				},
+			),
+			store.WithOnRemoteDeletedFn(
+				func(ctx context.Context, key string, unit *centrumunits.Unit) error {
+					if unit != nil {
+						return jobSt.Delete(
+							ctx,
+							centrumutils.JobIdKey(unit.GetJob(), unit.GetId()),
+						)
+					}
+
+					idKey, err := centrumutils.ExtractIDString(key)
+					if err != nil {
+						return fmt.Errorf("failed to parse unit id from key %s. %w", key, err)
+					}
+
+					var errs error
+					for _, jobKey := range jobSt.KeysFiltered("", func(jobKey string) bool {
+						uid, err := centrumutils.ExtractIDString(jobKey)
+						return err == nil && uid == idKey
+					}) {
+						if err := jobSt.Delete(ctx, jobKey); err != nil {
+							errs = fmt.Errorf(
+								"failed to delete unit job mapping %s: %w",
+								jobKey,
+								err,
+							)
+						}
+					}
+
+					return errs
 				},
 			),
 		)
@@ -621,11 +704,6 @@ func (s *UnitDB) UpdateUnitAssignments(
 		}
 	}
 
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
 	key := centrumutils.IdKey(unitId)
 	if err := s.store.ComputeUpdate(
 		ctx,
@@ -729,6 +807,11 @@ func (s *UnitDB) UpdateUnitAssignments(
 			return unit, true, nil
 		},
 	); err != nil {
+		return err
+	}
+
+	// Commit the transaction after KV/status side effects succeed.
+	if err := tx.Commit(); err != nil {
 		return err
 	}
 

@@ -160,7 +160,7 @@ func New(p Params) *DispatchDB {
 				jetstream.KeyValueConfig{TTL: 7 * 24 * time.Hour},
 			),
 			store.WithOnUpdateFn[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
-				func(ctx context.Context, _ *centrumdispatches.Dispatch, dispatch *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, error) {
+				func(ctx context.Context, old *centrumdispatches.Dispatch, dispatch *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, error) {
 					if dispatch == nil {
 						return nil, nil
 					}
@@ -177,7 +177,9 @@ func New(p Params) *DispatchDB {
 						)
 					}
 
+					newJobSet := make(map[string]struct{}, len(dispatch.GetJobs().GetJobStrings()))
 					for _, job := range dispatch.GetJobs().GetJobStrings() {
+						newJobSet[job] = struct{}{}
 						if err := jobSt.Put(
 							ctx,
 							centrumutils.JobIdKey(job, dispatch.GetId()),
@@ -195,6 +197,29 @@ func New(p Params) *DispatchDB {
 								),
 							)
 							continue
+						}
+					}
+
+					if old != nil && old.GetJobs() != nil {
+						for _, oldJob := range old.GetJobs().GetJobStrings() {
+							if _, ok := newJobSet[oldJob]; ok {
+								continue
+							}
+
+							if err := jobSt.Delete(
+								ctx,
+								centrumutils.JobIdKey(oldJob, dispatch.GetId()),
+							); err != nil {
+								errs = multierr.Append(
+									errs,
+									fmt.Errorf(
+										"failed to delete stale job %s mapping for dispatch %d. %w",
+										oldJob,
+										dispatch.GetId(),
+										err,
+									),
+								)
+							}
 						}
 					}
 
@@ -252,9 +277,48 @@ func New(p Params) *DispatchDB {
 				},
 			),
 			store.WithOnRemoteUpdatedFn[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
-				func(ctx context.Context, _ *centrumdispatches.Dispatch, dispatch *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, error) {
-					if dispatch == nil || dispatch.GetJobs() == nil {
+				func(ctx context.Context, old *centrumdispatches.Dispatch, dispatch *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, error) {
+					if dispatch == nil {
 						return dispatch, nil
+					}
+
+					newJobSet := make(map[string]struct{}, len(dispatch.GetJobs().GetJobStrings()))
+					for _, job := range dispatch.GetJobs().GetJobStrings() {
+						newJobSet[job] = struct{}{}
+						if err := jobSt.Put(
+							ctx,
+							centrumutils.JobIdKey(job, dispatch.GetId()),
+							&common.IDMapping{
+								Id: dispatch.GetId(),
+							},
+						); err != nil {
+							return nil, fmt.Errorf(
+								"failed to update job %s mapping for dispatch %d. %w",
+								job,
+								dispatch.GetId(),
+								err,
+							)
+						}
+					}
+
+					if old != nil && old.GetJobs() != nil {
+						for _, oldJob := range old.GetJobs().GetJobStrings() {
+							if _, ok := newJobSet[oldJob]; ok {
+								continue
+							}
+
+							if err := jobSt.Delete(
+								ctx,
+								centrumutils.JobIdKey(oldJob, dispatch.GetId()),
+							); err != nil {
+								return nil, fmt.Errorf(
+									"failed to delete stale job %s mapping for dispatch %d. %w",
+									oldJob,
+									dispatch.GetId(),
+									err,
+								)
+							}
+						}
 					}
 
 					removeLoc := dispatch.GetStatus() != nil &&
@@ -298,6 +362,24 @@ func New(p Params) *DispatchDB {
 			store.WithOnRemoteDeletedFn[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
 				func(ctx context.Context, key string, dispatch *centrumdispatches.Dispatch) error {
 					if dispatch != nil {
+						var errs error
+						for _, job := range dispatch.GetJobs().GetJobStrings() {
+							if err := jobSt.Delete(
+								ctx,
+								centrumutils.JobIdKey(job, dispatch.GetId()),
+							); err != nil {
+								errs = multierr.Append(
+									errs,
+									fmt.Errorf(
+										"failed to delete job %s mapping for dispatch %d. %w",
+										job,
+										dispatch.GetId(),
+										err,
+									),
+								)
+							}
+						}
+
 						for _, job := range dispatch.GetJobs().GetJobStrings() {
 							if locs := d.GetLocations(job); locs != nil {
 								locs.Remove(
@@ -307,7 +389,7 @@ func New(p Params) *DispatchDB {
 							}
 						}
 
-						return nil
+						return errs
 					}
 
 					// Fallback to iterating over each job's locations map and delete the dispatch from the map by id
@@ -326,13 +408,31 @@ func New(p Params) *DispatchDB {
 						return fmt.Errorf("failed to parse dispatch id from key %s. %w", key, err)
 					}
 
+					var errs error
+					for _, jobKey := range jobSt.KeysFiltered("", func(jobKey string) bool {
+						id, err := centrumutils.ExtractIDString(jobKey)
+						return err == nil && id == idKey
+					}) {
+						if err := jobSt.Delete(ctx, jobKey); err != nil {
+							errs = multierr.Append(
+								errs,
+								fmt.Errorf(
+									"failed to delete job mapping %s for dispatch %d. %w",
+									jobKey,
+									dspId,
+									err,
+								),
+							)
+						}
+					}
+
 					for _, job := range d.GetLocationsJob() {
 						if locs := d.GetLocations(job); locs != nil {
 							locs.Remove(nil, centrumdispatches.DispatchPointMatchFn(dspId))
 						}
 					}
 
-					return nil
+					return errs
 				},
 			),
 		)
@@ -905,11 +1005,6 @@ func (s *DispatchDB) UpdateAssignments(
 		}
 	}
 
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
 	key := centrumutils.IdKey(dspId)
 	if err := s.store.ComputeUpdate(
 		ctx,
@@ -1045,6 +1140,11 @@ func (s *DispatchDB) UpdateAssignments(
 			return dsp, len(toRemove) > 0 || len(toAdd) > 0, nil
 		},
 	); err != nil {
+		return err
+	}
+
+	// Commit the transaction after KV/status side effects succeed.
+	if err := tx.Commit(); err != nil {
 		return err
 	}
 

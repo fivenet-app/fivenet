@@ -362,9 +362,13 @@ func (s *Server) CreateDispatch(
 
 	// Make sure jobs and creator id are set
 	if len(req.GetDispatch().GetJobs().GetJobs()) > 0 {
+		jobs, _, err := s.settings.GetAccessList(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
+		if err != nil {
+			return nil, errorscentrum.ErrFailedQuery
+		}
 		for _, job := range req.GetDispatch().GetJobs().GetJobStrings() {
-			if !s.jobs.Has(job) {
-				return nil, errorscentrum.ErrFailedQuery
+			if !s.jobs.Has(job) || !slices.Contains(jobs, job) {
+				return nil, errorscentrum.ErrDispatchJobPermDenied
 			}
 		}
 	} else {
@@ -402,7 +406,17 @@ func (s *Server) UpdateDispatch(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	dsp, err := s.dispatches.Update(ctx, &userInfo.UserId, req.GetDispatch())
+	dsp, err := s.dispatches.Get(ctx, req.GetDispatch().GetId())
+	if err != nil || dsp == nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+
+	if !s.helpers.CheckIfUserIsPartOfDispatch(ctx, userInfo, dsp, true) &&
+		!userInfo.GetJobAdmin() {
+		return nil, errorscentrum.ErrNotPartOfDispatch
+	}
+
+	dsp, err = s.dispatches.Update(ctx, &userInfo.UserId, req.GetDispatch())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}

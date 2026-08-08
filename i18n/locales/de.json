@@ -2685,6 +2685,7 @@
                 "ErrNotPartOfUnit": "Sie sind nicht Teil der Einheit!",
                 "ErrStaticUnit": "Eine statische Einheit kann nicht verfügbar gesetzt werden!",
                 "ErrUnitPermDenied": "Kein Zugriff auf diese Einheit!",
+                "ErrDispatchJobPermDenied": "Kein Zugriff auf diesen Einsatz-Beruf!",
                 "ErrDisabled": {
                     "title": "Leitstelle ist deaktiviert!",
                     "content": "Bitte kontaktieren Sie ihre Leitung, um die Leitstelle zu aktivieren."
