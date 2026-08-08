@@ -28,8 +28,6 @@ const { unreadCount } = storeToRefs(mailerStore);
 
 const route = useRoute();
 
-const open = ref<boolean>(false);
-
 const links = computed<NavigationMenuItem[]>(() =>
     [
         {
@@ -374,7 +372,7 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
     <UDashboardGroup unit="rem" storage="local">
         <UDashboardSidebar
             id="default"
-            v-model:open="open"
+            v-model:open="isDashboardSidebarSlideoverOpen"
             class="bg-elevated/25"
             :default-size="16.5"
             :min-size="13.5"

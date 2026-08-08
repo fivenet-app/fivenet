@@ -3,8 +3,6 @@
 import * as locales from '@nuxt/ui/locale';
 import NotificationProvider from '~/components/notifications/NotificationProvider.vue';
 import CookieControl from '~/components/partials/CookieControl.vue';
-import { useAuthStore } from '~/stores/auth';
-import { useClipboardStore } from '~/stores/clipboard';
 import { useSettingsStore } from '~/stores/settings';
 import BannerMessage from './components/partials/BannerMessage.vue';
 
@@ -13,17 +11,10 @@ const { initLocale } = useAppLocale();
 
 const appConfig = useAppConfig();
 
-const colorMode = useColorMode();
-
-const color = computed(() => (colorMode.value === 'dark' ? '#111827' : '#fff'));
-
-const logger = useLogger('⚙️ Settings');
-
 useHead({
     htmlAttrs: {
         lang: locale,
     },
-    meta: [{ key: 'theme-color', name: 'theme-color', content: color }],
     titleTemplate: (title?: string) => (title ? `${title?.includes('.') ? t(title) : title} - FiveNet` : 'FiveNet'),
 });
 
@@ -37,119 +28,7 @@ useSeoMeta({
 });
 
 const settingsStore = useSettingsStore();
-const { nuiEnabled, design } = storeToRefs(settingsStore);
-
-if (APP_VERSION !== settingsStore.version) {
-    logger.info('Resetting app data because new version has been detected', settingsStore.version, APP_VERSION);
-
-    useClipboardStore().clear();
-    useSearchesStore().clear();
-    settingsStore.setVersion(APP_VERSION);
-}
-
-// Remove any `dashboard-*` cookies on app start, as they are no longer used.
-// This should help prevent 400 errors due to too many cookies being sent.
-function removeDashboardCookies(): void {
-    cookieStore.getAll().then((cookies) => {
-        cookies.forEach((cookie) => {
-            if (cookie?.name && cookie.name.startsWith('dashboard-')) {
-                logger.info('Removing dashboard cookie:', cookie.name);
-                cookieStore.delete(cookie.name);
-            }
-        });
-    });
-}
-removeDashboardCookies();
-
-// Set locale and theme colors in app config
-async function setThemeColors(): Promise<void> {
-    const primary = design.value.ui.primary;
-    const gray = design.value.ui.gray;
-
-    appConfig.ui.colors.primary = primary;
-    appConfig.ui.colors.neutral = gray;
-    setTabletColors(appConfig.ui.colors.primary, appConfig.ui.colors.neutral);
-
-    // Only set CSS variables for Chrome 103+ due to lack of support in earlier versions
-    const root = document.documentElement;
-    if (!root.classList.contains('polyfills')) return;
-    setPaletteVars(root, 'primary', primary);
-    setPaletteVars(root, 'neutral', gray);
-}
-
-function setPaletteVars(root: HTMLElement, uiColor: 'primary' | 'neutral', colorName: string): void {
-    for (const shade of [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]) {
-        root.style.setProperty(`--ui-color-${uiColor}-${shade}`, `var(--color-${colorName}-${shade})`);
-        root.style.setProperty(`--ui-color-${uiColor}-${shade}-rgb`, `var(--color-${colorName}-${shade}-rgb)`);
-    }
-
-    root.style.setProperty(`--ui-color-${uiColor}`, `var(--color-${colorName}-500)`);
-    root.style.setProperty(`--ui-color-${uiColor}-rgb`, `var(--color-${colorName}-500-rgb)`);
-}
-
-watch(design.value, () => setThemeColors());
-setThemeColors();
-
-function clickListener(event: MouseEvent): void {
-    if (!event.target || event.defaultPrevented) return;
-
-    let element: HTMLElement | null = event.target as HTMLElement;
-    for (; element && element !== document.body; element = element.parentElement as HTMLElement) {
-        if (element.tagName.toLowerCase() === 'a' || element.hasAttribute('href')) break;
-    }
-    if (!element) return;
-
-    const href = element.getAttribute('href');
-    if (!href || href?.startsWith('/') || href?.startsWith('#') || href === '') return;
-
-    event.preventDefault();
-    navigateTo({
-        name: 'dereferer',
-        query: {
-            target: href,
-        },
-    });
-}
-
-onMounted(async () => {
-    if (!import.meta.client) return;
-
-    // NUI message handling
-    if (nuiEnabled.value) window.addEventListener('message', onNUIMessage);
-
-    window.addEventListener('click', clickListener);
-    window.addEventListener('focusin', onFocusHandler, true);
-    window.addEventListener('focusout', onFocusHandler, true);
-});
-
-onBeforeUnmount(async () => {
-    if (!import.meta.client) return;
-
-    // NUI message handling
-    if (nuiEnabled.value) window.removeEventListener('message', onNUIMessage);
-
-    window.removeEventListener('click', clickListener);
-    window.removeEventListener('focusin', onFocusHandler);
-    window.removeEventListener('focusout', onFocusHandler);
-});
-
-const authStore = useAuthStore();
-const { username } = storeToRefs(authStore);
-
-// Use `fivenet_authed` cookie for basic browser-wide is logged in/out "signal"
-const authedState = useCookie('fivenet_authed');
-useIntervalFn(async () => refreshCookie('fivenet_authed'), 1750);
-
-async function handleAuthedStateChange(): Promise<void> {
-    if (!!authedState.value && username.value === null) {
-        await authStore.chooseCharacter(undefined, true);
-    } else if (!authedState.value && username.value !== null) {
-        await navigateTo('/auth/logout');
-    }
-}
-
-watch(authedState, async () => handleAuthedStateChange());
-handleAuthedStateChange();
+const { nuiEnabled } = storeToRefs(settingsStore);
 
 const onBeforeEnter = async () => await finalizePendingLocaleChange();
 
