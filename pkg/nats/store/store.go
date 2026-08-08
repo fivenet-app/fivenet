@@ -811,6 +811,10 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (IKVWatcher[T, U], error) {
 				return
 
 			case entry := <-updateCh:
+				if entry == nil {
+					continue
+				}
+
 				key := entry.Key()
 				if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
 					continue

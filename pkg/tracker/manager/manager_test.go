@@ -31,12 +31,11 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func TestRefreshUserLocations(t *testing.T) {
-	t.Parallel()
+func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, func()) {
+	t.Helper()
+
 	dbServer := servers.NewDBServer(t, true)
 	natsServer := servers.NewNATSServer(t, true)
-
-	ctx := t.Context()
 
 	var manager *Manager
 	app := fxtest.New(t,
@@ -57,8 +56,22 @@ func TestRefreshUserLocations(t *testing.T) {
 	require.NotNil(t, app)
 
 	app.RequireStart()
-	defer app.RequireStop()
+
+	db, err := dbServer.DB()
+	require.NoError(t, err)
 	require.NotNil(t, manager)
+
+	return manager, db, func() {
+		app.RequireStop()
+	}
+}
+
+func TestRefreshUserLocations(t *testing.T) {
+	t.Parallel()
+
+	ctx := t.Context()
+	manager, db, stop := newTrackerManagerForTest(t)
+	defer stop()
 
 	msgCh := make(chan int)
 
@@ -88,9 +101,6 @@ func TestRefreshUserLocations(t *testing.T) {
 
 	list := manager.userLocStore.List()
 	assert.Empty(t, list)
-
-	db, err := dbServer.DB()
-	require.NoError(t, err)
 
 	// Insert user locations
 	require.NoError(
@@ -162,7 +172,10 @@ func TestRefreshUserLocations(t *testing.T) {
 	staleUser1 := proto.Clone(user1).(*livemapmarkers.UserMarker)
 	staleUser1.Job = "police"
 	staleUser1.JobGrade = ptrInt32(4)
-	require.NoError(t, manager.userLocStore.Put(ctx, userMarkerKey(int32(1), "police", 4), staleUser1))
+	require.NoError(
+		t,
+		manager.userLocStore.Put(ctx, userMarkerKey(int32(1), "police", 4), staleUser1),
+	)
 
 	removed, err := manager.cleanupUserIDs(ctx, map[int32]any{
 		1: nil,
@@ -268,6 +281,86 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.NotNil(t, kv)
 }
 
+func TestRefreshUserLocationsRemovesOldJobDispatcherOnJobChange(t *testing.T) {
+	t.Parallel()
+
+	ctx := t.Context()
+	manager, db, stop := newTrackerManagerForTest(t)
+	defer stop()
+
+	require.NoError(t, insertCitizenLocations(ctx, db, 1, "ambulance", 3, 1.0, 1.0, false))
+	require.NoError(t, manager.refreshUserLocations(ctx, true))
+
+	marker, err := manager.userByIDStore.Get(tracker.UserIdKey(1))
+	require.NoError(t, err)
+	require.NotNil(t, marker)
+	require.Equal(t, "ambulance", marker.GetJob())
+
+	require.NoError(t, manager.dispatchers.SetUserState(ctx, "ambulance", 1, true))
+
+	dispatchersForAmbulance, err := manager.dispatchers.Get(ctx, "ambulance")
+	require.NoError(t, err)
+	require.Len(t, dispatchersForAmbulance.GetDispatchers(), 1)
+
+	require.NoError(t, dbUpdateUserJob(ctx, db, 1, "army"))
+	require.NoError(t, insertCitizenLocations(ctx, db, 1, "army", 3, 1.0, 1.0, false))
+
+	require.NoError(t, manager.refreshUserLocations(ctx, false))
+
+	marker, err = manager.userByIDStore.Get(tracker.UserIdKey(1))
+	require.NoError(t, err)
+	require.NotNil(t, marker)
+	require.Equal(t, "army", marker.GetJob())
+
+	dispatchersForAmbulance, err = manager.dispatchers.Get(ctx, "ambulance")
+	require.NoError(t, err)
+	assert.Empty(t, dispatchersForAmbulance.GetDispatchers())
+
+	oldKey := userMarkerKey(1, "ambulance", 3)
+	_, err = manager.userLocStore.Get(oldKey)
+	require.Error(t, err)
+
+	newKey := userMarkerKey(1, "army", 3)
+	refreshedMarker, err := manager.userLocStore.Get(newKey)
+	require.NoError(t, err)
+	require.NotNil(t, refreshedMarker)
+	require.Equal(t, "army", refreshedMarker.GetJob())
+}
+
+func TestCleanupUserIDsDeletesStaleLocationKeyWhenMarkerMissing(t *testing.T) {
+	t.Parallel()
+
+	ctx := t.Context()
+	manager, db, stop := newTrackerManagerForTest(t)
+	defer stop()
+
+	staleUser := &livemapmarkers.UserMarker{
+		UserId:   42,
+		Job:      "police",
+		JobGrade: ptrInt32(4),
+	}
+	staleKey := userMarkerKey(staleUser.GetUserId(), staleUser.GetJob(), staleUser.GetJobGrade())
+	require.NoError(t, manager.userLocStore.Put(ctx, staleKey, staleUser))
+
+	require.NoError(t, dbInsertTestUser(ctx, db, 42, "police"))
+	require.NoError(t, dbInsertDispatcher(ctx, db, "police", 42))
+	require.NoError(t, manager.dispatchers.LoadFromDB(ctx, "police"))
+
+	removed, err := manager.cleanupUserIDs(ctx, map[int32]any{
+		staleUser.GetUserId(): nil,
+	})
+	require.NoError(t, err)
+	require.Equal(t, 1, removed)
+
+	got, err := manager.userLocStore.Get(staleKey)
+	require.Error(t, err)
+	require.Nil(t, got)
+
+	dispatchersForPolice, err := manager.dispatchers.Get(ctx, "police")
+	require.NoError(t, err)
+	assert.Empty(t, dispatchersForPolice.GetDispatchers())
+}
+
 func insertCitizenLocations(
 	ctx context.Context,
 	db *sql.DB,
@@ -304,6 +397,40 @@ func insertCitizenLocations(
 		)
 
 	_, err := stmt.ExecContext(ctx, db)
+
+	return err
+}
+
+func dbUpdateUserJob(ctx context.Context, db *sql.DB, userID int32, job string) error {
+	_, err := db.ExecContext(
+		ctx,
+		"UPDATE fivenet_user SET job = ? WHERE id = ?",
+		job,
+		userID,
+	)
+
+	return err
+}
+
+func dbInsertTestUser(ctx context.Context, db *sql.DB, userID int32, job string) error {
+	_, err := db.ExecContext(
+		ctx,
+		"INSERT INTO fivenet_user (id, license, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, updated_at) VALUES (?, '', CONCAT('test:', ?), 'user', ?, 1, 'Test', 'User', '01.01.2000', 'm', 180, '0000000', 0, 0, 0, CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3))",
+		userID,
+		userID,
+		job,
+	)
+
+	return err
+}
+
+func dbInsertDispatcher(ctx context.Context, db *sql.DB, job string, userID int32) error {
+	_, err := db.ExecContext(
+		ctx,
+		"INSERT INTO fivenet_centrum_dispatchers (job, user_id) VALUES (?, ?)",
+		job,
+		userID,
+	)
 
 	return err
 }

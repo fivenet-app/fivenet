@@ -512,6 +512,12 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 				if err := m.userLocStore.Delete(ctx, oldKey); err != nil {
 					errs = multierr.Append(errs, err)
 				}
+				m.removeUserFromDispatchers(
+					ctx,
+					uj,
+					dest[i].GetUserId(),
+					"failed to remove user from old job dispatchers on job change",
+				)
 			}
 
 			um.Merge(dest[i])
@@ -591,13 +597,35 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIds map[int32]any
 				continue
 			}
 
+			if staleJob, err := extractUserLocationJob(
+				key,
+			); err == nil &&
+				staleJob != marker.GetJob() {
+				m.removeUserFromDispatchers(
+					ctx,
+					staleJob,
+					userIdKey,
+					"failed to remove stale dispatcher on location cleanup",
+				)
+			}
+
 			removed = append(removed, key)
 			continue
 		}
 
-		if err := m.userByIDStore.Delete(ctx, key); err != nil {
+		// Marker is missing, so delete the stale user location entry we iterated.
+		if err := m.userLocStore.Delete(ctx, key); err != nil {
 			errs = multierr.Append(errs, err)
 			continue
+		}
+
+		if staleJob, err := extractUserLocationJob(key); err == nil {
+			m.removeUserFromDispatchers(
+				ctx,
+				staleJob,
+				userIdKey,
+				"failed to remove stale dispatcher on location cleanup",
+			)
 		}
 
 		removed = append(removed, key)
@@ -610,6 +638,39 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIds map[int32]any
 
 func userMarkerKey(id int32, job string, grade int32) string {
 	return fmt.Sprintf("%s.%d.%d", job, grade, id)
+}
+
+func (m *Manager) removeUserFromDispatchers(
+	ctx context.Context,
+	job string,
+	userID int32,
+	logMsg string,
+) {
+	if job == "" {
+		return
+	}
+
+	if !m.helpers.CheckIfUserIsDispatcher(ctx, job, userID) {
+		return
+	}
+
+	if err := m.dispatchers.SetUserState(ctx, job, userID, false); err != nil {
+		m.logger.Error(
+			logMsg,
+			zap.Int32("user_id", userID),
+			zap.String("job", job),
+			zap.Error(err),
+		)
+	}
+}
+
+func extractUserLocationJob(key string) (string, error) {
+	idx := strings.IndexByte(key, '.')
+	if idx <= 0 {
+		return "", fmt.Errorf("key %q does not contain a job prefix", key)
+	}
+
+	return key[:idx], nil
 }
 
 // extractUserID takes a key like "police.3.123"  ➜  123.
