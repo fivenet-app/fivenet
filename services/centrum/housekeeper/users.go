@@ -60,7 +60,12 @@ func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
 						return
 					}
 
-					if _, err := s.tracker.GetUserMapping(userMarker.GetUserId()); err != nil {
+					if _, _, err := s.tracker.GetUserMapping(userMarker.GetUserId()); err != nil {
+						s.logger.Error(
+							"failed to get user mapping for usermarker put event",
+							zap.Int32("user_id", userMarker.GetUserId()),
+							zap.Error(err),
+						)
 						return
 					}
 

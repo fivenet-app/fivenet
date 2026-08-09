@@ -89,13 +89,13 @@ func (t *centrumJoinUnitTestTracker) GetFilteredUserMarkers(
 	return nil
 }
 
-func (t *centrumJoinUnitTestTracker) GetUserMapping(userId int32) (*pbtracker.UserMapping, error) {
+func (t *centrumJoinUnitTestTracker) GetUserMapping(userId int32) (*pbtracker.UserMapping, bool, error) {
 	mapping, ok := t.mappings[userId]
 	if !ok {
-		return nil, nil
+		return nil, false, nil
 	}
 
-	return mapping, nil
+	return mapping, true, nil
 }
 
 func (t *centrumJoinUnitTestTracker) SetUserMapping(
@@ -334,8 +334,9 @@ func TestJoinUnitKeepsCurrentUnitWhenTargetValidationFails(t *testing.T) {
 	require.ErrorIs(t, err, errorscentrum.ErrUnitPermDenied)
 	assert.Nil(t, resp)
 
-	mapping, err := trackerStub.GetUserMapping(1)
+	mapping, ok, err := trackerStub.GetUserMapping(1)
 	require.NoError(t, err)
+	require.True(t, ok)
 	require.NotNil(t, mapping)
 	assert.Equal(t, currentUnit.GetId(), mapping.GetUnitId())
 	assert.Equal(t, 1, unitAssignmentCountForTest(t, db, currentUnit.GetId(), 1))
@@ -365,8 +366,9 @@ func TestJoinUnitMovesUserAfterValidationSucceeds(t *testing.T) {
 	require.NotNil(t, resp.GetUnit())
 	assert.Equal(t, targetUnit.GetId(), resp.GetUnit().GetId())
 
-	mapping, err := trackerStub.GetUserMapping(1)
+	mapping, ok, err := trackerStub.GetUserMapping(1)
 	require.NoError(t, err)
+	require.True(t, ok)
 	require.NotNil(t, mapping)
 	assert.Equal(t, targetUnit.GetId(), mapping.GetUnitId())
 	assert.Equal(t, 0, unitAssignmentCountForTest(t, db, currentUnit.GetId(), 1))
@@ -399,8 +401,9 @@ func TestJoinUnitLeavePathRemovesCurrentUnit(t *testing.T) {
 	require.NotNil(t, resp)
 	assert.Nil(t, resp.GetUnit())
 
-	mapping, err := trackerStub.GetUserMapping(1)
+	mapping, ok, err := trackerStub.GetUserMapping(1)
 	require.NoError(t, err)
+	require.True(t, ok)
 	require.NotNil(t, mapping)
 	assert.Nil(t, mapping.UnitId)
 	assert.Equal(t, 0, unitAssignmentCountForTest(t, db, currentUnit.GetId(), 1))

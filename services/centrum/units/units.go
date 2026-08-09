@@ -605,6 +605,12 @@ func (s *UnitDB) UpdateUnitAssignments(
 		return nil
 	}
 
+	type pendingStatus struct {
+		status  *centrumunits.UnitStatus
+		publish bool
+		job     string
+	}
+
 	var x, y *float64
 	var postal *string
 	if creatorId != nil {
@@ -618,6 +624,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 	tUnitUser := table.FivenetCentrumUnitsUsers
 
 	toAddUsers := []*jobscolleagues.Colleague{}
+	pendingStatuses := []pendingStatus{}
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -731,11 +738,12 @@ func (s *UnitDB) UpdateUnitAssignments(
 							return false
 						},
 					)
-				}
+			}
 
-				// Send updates
-				for _, userId := range toAnnounce {
-					if _, err := s.AddStatus(ctx, s.db, &centrumunits.UnitStatus{
+			// Send updates
+			for _, userId := range toAnnounce {
+				pendingStatuses = append(pendingStatuses, pendingStatus{
+					status: &centrumunits.UnitStatus{
 						CreatedAt:  timestamp.Now(),
 						UnitId:     unit.GetId(),
 						Status:     centrumunits.StatusUnit_STATUS_UNIT_USER_REMOVED,
@@ -745,25 +753,23 @@ func (s *UnitDB) UpdateUnitAssignments(
 						Y:          y,
 						Postal:     postal,
 						CreatorJob: new(unit.GetJob()),
-					}, true, unit.GetJob()); err != nil {
-						return nil, false, err
-					}
-
-					if err := s.tracker.UnsetUnitIDForUser(ctx, userId); err != nil {
-						return nil, false, err
-					}
-				}
+					},
+					publish: true,
+					job:     unit.GetJob(),
+				})
 			}
+		}
 
-			if len(toAddUsers) > 0 {
-				for _, user := range toAddUsers {
+		if len(toAddUsers) > 0 {
+			for _, user := range toAddUsers {
 					unit.Users = append(unit.Users, &centrumunits.UnitAssignment{
-						UnitId: unit.GetId(),
-						UserId: user.GetUserId(),
-						User:   user,
-					})
+					UnitId: unit.GetId(),
+					UserId: user.GetUserId(),
+					User:   user,
+				})
 
-					if _, err := s.AddStatus(ctx, s.db, &centrumunits.UnitStatus{
+				pendingStatuses = append(pendingStatuses, pendingStatus{
+					status: &centrumunits.UnitStatus{
 						CreatedAt:  timestamp.Now(),
 						UnitId:     unit.GetId(),
 						Status:     centrumunits.StatusUnit_STATUS_UNIT_USER_ADDED,
@@ -773,23 +779,17 @@ func (s *UnitDB) UpdateUnitAssignments(
 						Y:          y,
 						Postal:     postal,
 						CreatorJob: new(user.GetJob()),
-					}, true, unit.GetJob()); err != nil {
-						return nil, false, err
-					}
-
-					if err := s.tracker.SetUserMappingForUser(
-						ctx,
-						user.GetUserId(),
-						&unit.Id,
-					); err != nil {
-						return nil, false, err
-					}
-				}
+					},
+					publish: true,
+					job:     unit.GetJob(),
+				})
 			}
+		}
 
-			// Unit is empty now, set unit status to be unavailable automatically
-			if len(unit.GetUsers()) == 0 {
-				if unit.Status, err = s.AddStatus(ctx, s.db, &centrumunits.UnitStatus{
+		// Unit is empty now, set unit status to be unavailable automatically
+		if len(unit.GetUsers()) == 0 {
+			pendingStatuses = append(pendingStatuses, pendingStatus{
+				status: &centrumunits.UnitStatus{
 					CreatedAt:  timestamp.Now(),
 					UnitId:     unit.GetId(),
 					Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
@@ -799,20 +799,45 @@ func (s *UnitDB) UpdateUnitAssignments(
 					Postal:     postal,
 					CreatorId:  creatorId,
 					CreatorJob: new(unit.GetJob()),
-				}, true, unit.GetJob()); err != nil {
-					return nil, false, err
-				}
-			}
+				},
+				publish: true,
+				job:     unit.GetJob(),
+			})
+		}
 
-			return unit, true, nil
-		},
+		return unit, true, nil
+	},
 	); err != nil {
 		return err
 	}
 
-	// Commit the transaction after KV/status side effects succeed.
+	// Commit the assignment transaction before mutating tracker/cache state.
 	if err := tx.Commit(); err != nil {
 		return err
+	}
+
+	var sideEffectErr error
+	for i := range pendingStatuses {
+		if _, err := s.AddStatus(ctx, s.db, pendingStatuses[i].status, pendingStatuses[i].publish, pendingStatuses[i].job); err != nil {
+			sideEffectErr = errors.Join(sideEffectErr, err)
+		}
+	}
+
+	for _, userId := range toRemove {
+		if err := s.tracker.UnsetUnitIDForUser(ctx, userId); err != nil {
+			sideEffectErr = errors.Join(sideEffectErr, err)
+		}
+	}
+
+	if err := s.LoadFromDB(ctx, unitId); err != nil {
+		if sideEffectErr != nil {
+			return errors.Join(sideEffectErr, err)
+		}
+		return err
+	}
+
+	if sideEffectErr != nil {
+		return sideEffectErr
 	}
 
 	return nil

@@ -344,7 +344,13 @@ func (s *Server) JoinUnit(
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
-	currentUnitMapping, _ := s.tracker.GetUserMapping(userInfo.GetUserId())
+	currentUnitMapping, ok, err := s.tracker.GetUserMapping(userInfo.GetUserId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	if !ok {
+		currentUnitMapping = nil
+	}
 
 	var currentUnit *centrumunits.Unit
 	if currentUnitMapping != nil && currentUnitMapping.UnitId != nil &&

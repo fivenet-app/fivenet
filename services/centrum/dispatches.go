@@ -436,12 +436,12 @@ func (s *Server) TakeDispatch(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	unitMapping, err := s.tracker.GetUserMapping(userInfo.GetUserId())
+	unitMapping, ok, err := s.tracker.GetUserMapping(userInfo.GetUserId())
 	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	if unitMapping == nil || unitMapping.UnitId == nil || unitMapping.GetUnitId() <= 0 {
+	if !ok || unitMapping == nil || unitMapping.UnitId == nil || unitMapping.GetUnitId() <= 0 {
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
@@ -478,12 +478,15 @@ func (s *Server) UpdateDispatchStatus(
 	}
 
 	var statusUnitId *int64
-	userMapping, err := s.tracker.GetUserMapping(userInfo.GetUserId())
+	userMapping, ok, err := s.tracker.GetUserMapping(userInfo.GetUserId())
 	if err != nil {
 		if !s.helpers.CheckIfUserIsDispatcher(ctx, userInfo.GetJob(), userInfo.GetUserId()) {
 			return nil, errorscentrum.ErrNotPartOfDispatch
 		}
 	} else {
+		if !ok {
+			userMapping = nil
+		}
 		statusUnitId = userMapping.UnitId
 	}
 

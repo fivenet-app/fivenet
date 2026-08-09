@@ -4,6 +4,7 @@ import (
 	"context"
 
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
+	pbtracker "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/tracker"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
@@ -87,6 +88,10 @@ func (s *TestTracker) GetUserMarkerById(id int32) (*livemapmarkers.UserMarker, b
 	}
 
 	return s.GetUserByJobAndID(info.GetJob(), id)
+}
+
+func (s *TestTracker) GetUserMapping(_ int32) (*pbtracker.UserMapping, bool, error) {
+	return nil, false, nil
 }
 
 func (s *TestTracker) Subscribe(

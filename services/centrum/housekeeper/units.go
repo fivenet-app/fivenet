@@ -275,9 +275,9 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 			continue
 		}
 
-		unitMapping, err := s.tracker.GetUserMapping(userId)
+		unitMapping, ok, err := s.tracker.GetUserMapping(userId)
 		// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
-		if err == nil && unitMapping.UnitId != nil && unit.GetId() == unitMapping.GetUnitId() &&
+		if err == nil && ok && unitMapping.UnitId != nil && unit.GetId() == unitMapping.GetUnitId() &&
 			s.tracker.IsUserOnDuty(userId) {
 			foundUserIds = append(foundUserIds, userId)
 			continue

@@ -75,9 +75,9 @@ func (s *Server) sendLatestState(
 	}
 
 	// Own unit ID
-	ownUnitMapping, _ := s.tracker.GetUserMapping(userInfo.GetUserId())
+	ownUnitMapping, ok, _ := s.tracker.GetUserMapping(userInfo.GetUserId())
 	var pOwnUnitId *int64
-	if ownUnitMapping != nil && ownUnitMapping.UnitId != nil && ownUnitMapping.GetUnitId() > 0 {
+	if ok && ownUnitMapping != nil && ownUnitMapping.UnitId != nil && ownUnitMapping.GetUnitId() > 0 {
 		pOwnUnitId = ownUnitMapping.UnitId
 	}
 

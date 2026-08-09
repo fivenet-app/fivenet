@@ -43,7 +43,7 @@ type ITracker interface {
 	// GetUserMapping returns the tracker mapping entry for a user.
 	// A nil mapping means no tracker record exists.
 	// A non-nil mapping with UnitId == nil means the user is tracked but not currently assigned to a unit.
-	GetUserMapping(userId int32) (*tracker.UserMapping, error)
+	GetUserMapping(userId int32) (*tracker.UserMapping, bool, error)
 	// SetUserMapping stores or updates a user's tracker mapping entry.
 	SetUserMapping(ctx context.Context, mapping *tracker.UserMapping) error
 	// SetUserMappingForUser sets a user's tracker mapping to the given unit, or clears the unit when nil.
@@ -218,12 +218,15 @@ func (t *Tracker) GetFilteredUserMarkers(
 // GetUserMapping returns the tracker mapping entry for a user.
 // A nil mapping means no tracker record exists.
 // A non-nil mapping with UnitId == nil means the user is tracked but not currently assigned to a unit.
-func (t *Tracker) GetUserMapping(userId int32) (*tracker.UserMapping, error) {
+func (t *Tracker) GetUserMapping(userId int32) (*tracker.UserMapping, bool, error) {
 	mapping, err := t.userMappingsStore.Get(UserIdKey(userId))
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve unit mapping for user %d. %w", userId, err)
+		if errors.Is(err, jetstream.ErrKeyNotFound) {
+			return nil, false, nil
+		}
+		return nil, false, fmt.Errorf("failed to retrieve unit mapping for user %d. %w", userId, err)
 	}
-	return mapping, nil
+	return mapping, true, nil
 }
 
 func (t *Tracker) SetUserMapping(ctx context.Context, mapping *tracker.UserMapping) error {

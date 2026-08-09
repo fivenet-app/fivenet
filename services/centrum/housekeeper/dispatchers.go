@@ -2,12 +2,10 @@ package housekeeper
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
-	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
@@ -28,23 +26,22 @@ func (s *Housekeeper) cleanupDispatchers(ctx context.Context) error {
 	var errs error
 	s.dispatchers.Range(func(job string, value *centrumdispatchers.Dispatchers) bool {
 		for _, user := range value.GetDispatchers() {
-			um, err := s.tracker.GetUserMapping(user.GetUserId())
+			um, ok, err := s.tracker.GetUserMapping(user.GetUserId())
 			if err != nil {
-				if !errors.Is(err, jetstream.ErrKeyNotFound) {
-					errs = multierr.Append(
-						errs,
-						fmt.Errorf(
-							"unable to get user %d mapping for %s dispatchers. %w",
-							user.GetUserId(),
-							job,
-							err,
-						),
-					)
-				}
+				errs = multierr.Append(
+					errs,
+					fmt.Errorf(
+						"unable to get user %d mapping for %s dispatchers. %w",
+						user.GetUserId(),
+						job,
+						err,
+					),
+				)
+				continue
 			}
 
 			// Dispatcher is still valid when the user's job matches the dispatchers list job and the mapping is visible.
-			if user.GetJob() == job && um != nil && !um.Hidden {
+			if user.GetJob() == job && ok && um != nil && !um.Hidden {
 				continue
 			}
 

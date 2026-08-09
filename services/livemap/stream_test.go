@@ -47,8 +47,8 @@ func (t *streamTestTracker) GetFilteredUserMarkers(
 	return t.markers
 }
 
-func (t *streamTestTracker) GetUserMapping(_ int32) (*resourcestracker.UserMapping, error) {
-	return nil, nil
+func (t *streamTestTracker) GetUserMapping(_ int32) (*resourcestracker.UserMapping, bool, error) {
+	return nil, false, nil
 }
 
 func (t *streamTestTracker) SetUserMapping(
