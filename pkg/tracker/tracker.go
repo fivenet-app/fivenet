@@ -24,21 +24,33 @@ import (
 )
 
 type ITracker interface {
+	// ListTrackedJobs returns the jobs currently tracked by the livemap tracker.
 	ListTrackedJobs() []string
+	// GetUserMarkerById returns the user marker for a user, plus whether it exists.
 	GetUserMarkerById(id int32) (*livemapmarkers.UserMarker, bool)
+	// IsUserOnDuty reports whether a user currently has an active marker.
 	IsUserOnDuty(userId int32) bool
+	// Subscribe subscribes to tracker marker updates.
 	Subscribe(
 		ctx context.Context,
 	) (store.IKVWatcher[livemapmarkers.UserMarker, *livemapmarkers.UserMarker], error)
+	// GetFilteredUserMarkers returns user markers visible under the given ACL and user context.
 	GetFilteredUserMarkers(
 		acl *permissionsattributes.JobGradeList,
 		userInfo *userinfo.UserInfo,
 	) []*livemapmarkers.UserMarker
 
+	// GetUserMapping returns the tracker mapping entry for a user.
+	// A nil mapping means no tracker record exists.
+	// A non-nil mapping with UnitId == nil means the user is tracked but not currently assigned to a unit.
 	GetUserMapping(userId int32) (*tracker.UserMapping, error)
+	// SetUserMapping stores or updates a user's tracker mapping entry.
 	SetUserMapping(ctx context.Context, mapping *tracker.UserMapping) error
+	// SetUserMappingForUser sets a user's tracker mapping to the given unit, or clears the unit when nil.
 	SetUserMappingForUser(ctx context.Context, userId int32, unitId *int64) error
+	// UnsetUnitIDForUser clears the unit assignment while keeping the tracker mapping entry.
 	UnsetUnitIDForUser(ctx context.Context, userId int32) error
+	// ListUserMappings returns all tracker mapping entries keyed by user ID.
 	ListUserMappings(ctx context.Context) (map[int32]*tracker.UserMapping, error)
 }
 
@@ -203,6 +215,9 @@ func (t *Tracker) GetFilteredUserMarkers(
 	})
 }
 
+// GetUserMapping returns the tracker mapping entry for a user.
+// A nil mapping means no tracker record exists.
+// A non-nil mapping with UnitId == nil means the user is tracked but not currently assigned to a unit.
 func (t *Tracker) GetUserMapping(userId int32) (*tracker.UserMapping, error) {
 	mapping, err := t.userMappingsStore.Get(UserIdKey(userId))
 	if err != nil {

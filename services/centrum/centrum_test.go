@@ -3,6 +3,7 @@ package centrum
 import (
 	"context"
 	"database/sql"
+	"maps"
 	"os"
 	"testing"
 
@@ -21,7 +22,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	trackerpkg "github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
@@ -32,6 +35,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxtest"
+	"google.golang.org/grpc"
 )
 
 func TestMain(m *testing.M) {
@@ -126,9 +130,7 @@ func (t *centrumJoinUnitTestTracker) ListUserMappings(
 	_ context.Context,
 ) (map[int32]*pbtracker.UserMapping, error) {
 	out := make(map[int32]*pbtracker.UserMapping, len(t.mappings))
-	for k, v := range t.mappings {
-		out[k] = v
-	}
+	maps.Copy(out, t.mappings)
 
 	return out, nil
 }
@@ -137,6 +139,11 @@ func newCentrumJoinUnitTestServer(
 	t *testing.T,
 ) (*Server, *sql.DB, *centrumJoinUnitTestTracker) {
 	t.Helper()
+
+	ctx := t.Context()
+
+	_, grpcSrvModule, err := modules.TestGRPCServer(ctx)
+	require.NoError(t, err)
 
 	dbServer := servers.NewDBServer(t, true)
 	natsServer := servers.NewNATSServer(t, true)
@@ -147,6 +154,9 @@ func newCentrumJoinUnitTestServer(
 		modules.GetFxTestOpts(
 			dbServer.FxProvide(),
 			natsServer.FxProvide(),
+			userinfo.RetrieverModule,
+			fx.Provide(notifi.New),
+			fx.Provide(grpcSrvModule),
 			fx.Provide(func() trackerpkg.ITracker {
 				return trackerStub
 			}),
@@ -160,6 +170,7 @@ func newCentrumJoinUnitTestServer(
 				srv = r.Server
 				return r
 			}),
+			fx.Invoke(func(*grpc.Server) {}),
 		)...,
 	)
 	app.RequireStart()
@@ -257,13 +268,13 @@ func seedDispatchAccessForTest(
 ) {
 	t.Helper()
 
-	_, err := srv.settings.Update(ctx, userJob, &centrumsettings.Settings{
-		Job: userJob,
+	_, err := srv.settings.Update(ctx, targetJob, &centrumsettings.Settings{
+		Job: targetJob,
 		OfferedAccess: &centrumaccess.CentrumAccess{
 			Jobs: []*centrumaccess.CentrumJobAccess{
 				{
-					SourceJob:  targetJob,
-					Job:        userJob,
+					SourceJob:  userJob,
+					Job:        targetJob,
 					Access:     centrumaccess.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_DISPATCH,
 					AcceptedAt: timestamp.Now(),
 				},
@@ -390,7 +401,8 @@ func TestJoinUnitLeavePathRemovesCurrentUnit(t *testing.T) {
 
 	mapping, err := trackerStub.GetUserMapping(1)
 	require.NoError(t, err)
-	assert.Nil(t, mapping)
+	require.NotNil(t, mapping)
+	assert.Nil(t, mapping.UnitId)
 	assert.Equal(t, 0, unitAssignmentCountForTest(t, db, currentUnit.GetId(), 1))
 }
 
