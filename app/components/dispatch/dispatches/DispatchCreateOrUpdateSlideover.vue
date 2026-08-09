@@ -227,6 +227,48 @@ async function closeSlideover(): Promise<void> {
                             </UFormField>
                         </dd>
                     </div>
+
+                    <template v-if="location">
+                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="anon">
+                                    {{ $t('common.longitude') }}
+                                </label>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                                <UFormField name="x">
+                                    <UInputNumber
+                                        :model-value="location.x"
+                                        class="w-full"
+                                        disabled
+                                        name="x"
+                                        :step="0.00001"
+                                        :placeholder="$t('common.longitude')"
+                                    />
+                                </UFormField>
+                            </dd>
+                        </div>
+
+                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                            <dt class="text-sm leading-6 font-medium">
+                                <label class="block text-sm leading-6 font-medium" for="anon">
+                                    {{ $t('common.latitude') }}
+                                </label>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                                <UFormField name="y">
+                                    <UInputNumber
+                                        :model-value="location.y"
+                                        class="w-full"
+                                        disabled
+                                        name="y"
+                                        :step="0.00001"
+                                        :placeholder="$t('common.latitude')"
+                                    />
+                                </UFormField>
+                            </dd>
+                        </div>
+                    </template>
                 </dl>
             </UForm>
         </template>
