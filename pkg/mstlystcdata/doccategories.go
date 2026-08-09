@@ -19,6 +19,11 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	docCategoriesCronCategoriesLoadedAttr = "categories_loaded"
+	docCategoriesCronJobsSeenAttr         = "jobs_seen"
+)
+
 type IDocumentCategories interface {
 	Enrich(doc common.ICategory)
 }
@@ -75,7 +80,7 @@ func NewDocumentCategories(p Params) DocumentCategoriesResult {
 			return err
 		}
 
-		if err := c.loadCategories(ctxStartup); err != nil {
+		if _, _, err := c.loadCategories(ctxStartup); err != nil {
 			return err
 		}
 
@@ -116,8 +121,23 @@ func (c *DocumentCategories) RegisterCronjobHandlers(h *croner.Handlers) error {
 		ctx, span := c.tracer.Start(ctx, "mstlystcdata-doccategories")
 		defer span.End()
 
-		if err := c.loadCategories(ctx); err != nil {
+		dest := &cron.GenericCronData{
+			Attributes: map[string]string{},
+		}
+		if err := data.Unmarshal(dest); err != nil {
+			c.logger.Warn("failed to unmarshal doccategories cron data", zap.Error(err))
+		}
+
+		categoriesLoaded, jobsSeen, err := c.loadCategories(ctx)
+		if err != nil {
 			c.logger.Error("failed to refresh doccategories cache", zap.Error(err))
+			return err
+		}
+
+		dest.SetAttribute(docCategoriesCronCategoriesLoadedAttr, strconv.Itoa(categoriesLoaded))
+		dest.SetAttribute(docCategoriesCronJobsSeenAttr, strconv.Itoa(jobsSeen))
+
+		if err := data.MarshalFrom(dest); err != nil {
 			return err
 		}
 
@@ -129,7 +149,7 @@ func (c *DocumentCategories) RegisterCronjobHandlers(h *croner.Handlers) error {
 
 // loadCategories loads all document categories from the database into the cache.
 // It also builds a map of categories per job for potential future use.
-func (c *DocumentCategories) loadCategories(ctx context.Context) error {
+func (c *DocumentCategories) loadCategories(ctx context.Context) (int, int, error) {
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
 
 	stmt := tDCategory.
@@ -153,17 +173,20 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 	var dest []*documentscategory.Category
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return 0, 0, err
 		}
 	}
+
+	categoriesLoaded := len(dest)
+	jobsSeenSet := map[string]struct{}{}
 
 	// No categories found in database, remove all from cache
 	if len(dest) == 0 {
 		if err := c.Clear(ctx); err != nil {
-			return err
+			return 0, 0, err
 		}
 
-		return nil
+		return 0, 0, nil
 	}
 
 	// Update cached categories
@@ -176,6 +199,9 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 		}
 
 		categoriesPerJob[key] = struct{}{}
+		if job := d.GetJob(); job != "" {
+			jobsSeenSet[job] = struct{}{}
+		}
 	}
 
 	// Delete non-existing categories, based on which are in the database
@@ -188,7 +214,7 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 		return true
 	})
 
-	return errs
+	return categoriesLoaded, len(jobsSeenSet), errs
 }
 
 // Enrich sets the full category object on the given ICategory if available in the cache.

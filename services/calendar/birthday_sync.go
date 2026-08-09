@@ -27,9 +27,15 @@ import (
 const (
 	birthdayCalendarColor = "neutral"
 
-	birthdaySyncCronName      = "calendar.birthday_sync"
-	birthdaySyncBatchSize     = 5
-	birthdaySyncOffsetAttrKey = "job_offset"
+	birthdaySyncCronName                 = "calendar.birthday_sync"
+	birthdaySyncBatchSize                = 5
+	birthdaySyncOffsetAttrKey            = "job_offset"
+	birthdaySyncJobsFetchedAttrKey       = "jobs_fetched"
+	birthdaySyncJobsSyncedAttrKey        = "jobs_synced"
+	birthdaySyncCalendarsUpsertedAttrKey = "calendars_upserted"
+	birthdaySyncEntriesDeletedAttrKey    = "entries_deleted"
+	birthdaySyncEntriesInsertedAttrKey   = "entries_inserted"
+	birthdaySyncColleaguesLoadedAttrKey  = "colleagues_loaded"
 )
 
 type BirthdaySyncer struct {
@@ -97,12 +103,30 @@ func (s *BirthdaySyncer) RegisterCronjobHandlers(h *croner.Handlers) error {
 			offset = 0
 		}
 
-		nextOffset, finished, err := s.syncBirthdayJobsBatch(ctx, offset)
+		stats, nextOffset, finished, err := s.syncBirthdayJobsBatch(ctx, offset)
 		if err != nil {
 			s.logger.Error("error during birthday sync", zap.Error(err))
 			return err
 		}
 
+		dest.SetAttribute(birthdaySyncJobsFetchedAttrKey, strconv.Itoa(stats.jobsFetched))
+		dest.SetAttribute(birthdaySyncJobsSyncedAttrKey, strconv.Itoa(stats.jobsSynced))
+		dest.SetAttribute(
+			birthdaySyncCalendarsUpsertedAttrKey,
+			strconv.Itoa(stats.calendarsUpserted),
+		)
+		dest.SetAttribute(
+			birthdaySyncEntriesDeletedAttrKey,
+			strconv.Itoa(stats.entriesDeleted),
+		)
+		dest.SetAttribute(
+			birthdaySyncEntriesInsertedAttrKey,
+			strconv.Itoa(stats.entriesInserted),
+		)
+		dest.SetAttribute(
+			birthdaySyncColleaguesLoadedAttrKey,
+			strconv.Itoa(stats.colleaguesLoaded),
+		)
 		if finished {
 			dest.SetAttribute(birthdaySyncOffsetAttrKey, "0")
 		} else {
@@ -119,28 +143,55 @@ func (s *BirthdaySyncer) RegisterCronjobHandlers(h *croner.Handlers) error {
 	return nil
 }
 
-func (s *BirthdaySyncer) syncBirthdayJobsBatch(ctx context.Context, offset int) (int, bool, error) {
+type birthdaySyncBatchStats struct {
+	jobsFetched       int
+	jobsSynced        int
+	calendarsUpserted int
+	entriesDeleted    int
+	entriesInserted   int
+	colleaguesLoaded  int
+}
+
+type birthdaySyncJobStats struct {
+	entriesDeleted   int
+	entriesInserted  int
+	colleaguesLoaded int
+}
+
+func (s *BirthdaySyncer) syncBirthdayJobsBatch(
+	ctx context.Context,
+	offset int,
+) (birthdaySyncBatchStats, int, bool, error) {
 	jobs, err := s.listBirthdayJobs(ctx, offset, birthdaySyncBatchSize+1)
 	if err != nil {
-		return 0, false, err
+		return birthdaySyncBatchStats{}, 0, false, err
 	}
 
 	if len(jobs) == 0 {
-		return 0, true, nil
+		return birthdaySyncBatchStats{}, 0, true, nil
 	}
 
+	stats := birthdaySyncBatchStats{
+		jobsFetched: len(jobs),
+	}
 	finished := len(jobs) <= birthdaySyncBatchSize
 	if !finished {
 		jobs = jobs[:birthdaySyncBatchSize]
 	}
+	stats.jobsSynced = len(jobs)
 
 	for i := range jobs {
-		if err := s.syncBirthdayJob(ctx, jobs[i]); err != nil {
-			return 0, false, err
+		jobStats, err := s.syncBirthdayJob(ctx, jobs[i])
+		if err != nil {
+			return birthdaySyncBatchStats{}, 0, false, err
 		}
+		stats.calendarsUpserted++
+		stats.entriesDeleted += jobStats.entriesDeleted
+		stats.entriesInserted += jobStats.entriesInserted
+		stats.colleaguesLoaded += jobStats.colleaguesLoaded
 	}
 
-	return offset + len(jobs), finished, nil
+	return stats, offset + len(jobs), finished, nil
 }
 
 func (s *BirthdaySyncer) listBirthdayJobs(
@@ -183,10 +234,14 @@ func (s *BirthdaySyncer) listBirthdayJobs(
 	return jobs, nil
 }
 
-func (s *BirthdaySyncer) syncBirthdayJob(ctx context.Context, job string) error {
+func (s *BirthdaySyncer) syncBirthdayJob(
+	ctx context.Context,
+	job string,
+) (birthdaySyncJobStats, error) {
+	stats := birthdaySyncJobStats{}
 	job = strings.TrimSpace(job)
 	if job == "" {
-		return nil
+		return stats, nil
 	}
 
 	jobInfo := s.enricher.GetJobByName(job)
@@ -194,43 +249,51 @@ func (s *BirthdaySyncer) syncBirthdayJob(ctx context.Context, job string) error 
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return stats, err
 	}
 	defer tx.Rollback()
 
 	tCalendarEntry := table.FivenetCalendarEntries
 	calendarID, err := s.upsertBirthdayCalendar(ctx, tx, job, title)
 	if err != nil {
-		return err
+		return stats, err
 	}
 
 	if err := s.store.EnsureBirthdayCalendarAccess(ctx, tx, calendarID, job, jobInfo); err != nil {
-		return err
+		return stats, err
 	}
 
-	if _, err := tCalendarEntry.
+	res, err := tCalendarEntry.
 		DELETE().
 		WHERE(tCalendarEntry.CalendarID.EQ(mysql.Int64(calendarID))).
-		ExecContext(ctx, tx); err != nil {
-		return err
+		ExecContext(ctx, tx)
+	if err != nil {
+		return stats, err
 	}
+	deleted, err := res.RowsAffected()
+	if err != nil {
+		return stats, err
+	}
+	stats.entriesDeleted = int(deleted)
 
 	colleagues, err := s.store.LoadBirthdayColleagues(ctx, tx, job)
 	if err != nil {
-		return err
+		return stats, err
 	}
+	stats.colleaguesLoaded = len(colleagues)
 
 	for i := range colleagues {
 		if err := s.store.InsertBirthdayEntry(ctx, tx, calendarID, job, colleagues[i]); err != nil {
-			return err
+			return stats, err
 		}
 	}
+	stats.entriesInserted = len(colleagues)
 
 	if err := tx.Commit(); err != nil {
-		return err
+		return stats, err
 	}
 
-	return nil
+	return stats, nil
 }
 
 func (s *BirthdaySyncer) upsertBirthdayCalendar(

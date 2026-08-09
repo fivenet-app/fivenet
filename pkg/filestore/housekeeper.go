@@ -20,6 +20,11 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
+const (
+	filestoreCronTotalDeletedFilesAttr = "total_deleted_files"
+	filestoreCronDeletedFilesAttr      = "deleted_files"
+)
+
 var Module = fx.Module(
 	"filestore.housekeeper",
 	fx.Provide(
@@ -132,14 +137,14 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 			h.logger.Error("failed to run filestore housekeeper job", zap.Error(err))
 			return err
 		}
+		dest.SetAttribute(filestoreCronDeletedFilesAttr, strconv.FormatInt(deletions, 10))
 
-		if val := dest.GetAttribute("deleted_files"); val != "" {
+		if val := dest.GetAttribute(filestoreCronTotalDeletedFilesAttr); val != "" {
 			if cc, err := strconv.ParseInt(val, 10, 64); err == nil {
 				deletions += cc
 			}
 		}
-		dest.SetAttribute("deleted_files", strconv.FormatInt(deletions, 10))
-		dest.DeleteAttribute("loaded_dispatches")
+		dest.SetAttribute(filestoreCronTotalDeletedFilesAttr, strconv.FormatInt(deletions, 10))
 
 		// Marshal the updated cron data
 		if err := data.MarshalFrom(dest); err != nil {

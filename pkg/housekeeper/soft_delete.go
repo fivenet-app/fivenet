@@ -15,7 +15,10 @@ import (
 
 // runJobSoftDelete executes the soft delete cronjob logic for the housekeeper.
 // It processes jobs marked for deletion, iterates over tables, and updates the cron data.
-func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCronData) error {
+func (h *Housekeeper) runJobSoftDelete(
+	ctx context.Context,
+	data *cron.GenericCronData,
+) (int64, error) {
 	tJobProps := table.FivenetJobProps
 
 	// Query jobs that are marked for deletion
@@ -29,19 +32,19 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 
 	var jobs []string
 	if err := stmt.QueryContext(ctx, h.db, &jobs); err != nil && !errors.Is(err, qrm.ErrNoRows) {
-		return fmt.Errorf("failed to query jobs. %w", err)
+		return 0, fmt.Errorf("failed to query jobs. %w", err)
 	}
 
 	if len(jobs) == 0 {
 		h.logger.Debug("no jobs found to soft delete")
-		return nil
+		return 0, nil
 	}
 
 	jobName := jobs[0]
 
 	tables := h.getTablesListFn()
 	if len(tables) == 0 {
-		return nil
+		return 0, nil
 	}
 
 	keys := make([]string, 0, len(tables))
@@ -66,12 +69,12 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 	nextTblKey := keys[currentIdx]
 	tbl := tables[nextTblKey]
 	if tbl == nil {
-		return fmt.Errorf("no table found for key: %s", nextTblKey)
+		return 0, fmt.Errorf("no table found for key: %s", nextTblKey)
 	}
 
 	rowsAffected, err := h.SoftDeleteJobData(ctx, tbl, jobName)
 	if err != nil {
-		return fmt.Errorf(
+		return 0, fmt.Errorf(
 			"failed to soft delete rows for table %s (job: %s). %w",
 			tbl.Table.TableName(),
 			jobName,
@@ -92,7 +95,7 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 
 			if !h.dryRun {
 				if _, err := delStmt.ExecContext(ctx, h.db); err != nil {
-					return fmt.Errorf("failed to delete job %s. %w", jobName, err)
+					return 0, fmt.Errorf("failed to delete job %s. %w", jobName, err)
 				}
 			} else {
 				h.logger.Debug("dry run delete job props", zap.String("query", delStmt.DebugSql()))
@@ -105,7 +108,7 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 		}
 	}
 
-	return nil
+	return rowsAffected, nil
 }
 
 // SoftDeleteJobData marks rows as deleted in the main table and its dependant tables

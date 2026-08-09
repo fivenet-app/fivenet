@@ -12,7 +12,10 @@ import (
 
 // runHardDelete executes the hard delete cronjob logic for the housekeeper.
 // It determines which table to process next, runs the hard delete, and updates the cron data.
-func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronData) error {
+func (h *Housekeeper) runHardDelete(
+	ctx context.Context,
+	data *cron.GenericCronData,
+) (int64, error) {
 	tablesList := h.getTablesListFn()
 
 	// Collect and sort table keys for deterministic processing order.
@@ -21,7 +24,7 @@ func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronD
 		keys = append(keys, key)
 	}
 	if len(keys) == 0 {
-		return nil
+		return 0, nil
 	}
 	slices.Sort(keys)
 
@@ -42,12 +45,12 @@ func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronD
 
 	tbl, ok := tablesList[nextKey]
 	if !ok {
-		return fmt.Errorf("no table config for key: %s", nextKey)
+		return 0, fmt.Errorf("no table config for key: %s", nextKey)
 	}
 
 	rowsAffected, err := h.HardDelete(ctx, tbl)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	metricHardDeleteRowsAffected.WithLabelValues(tbl.Table.TableName()).Set(float64(rowsAffected))
@@ -57,7 +60,7 @@ func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronD
 		data.SetAttribute(lastTableMapIndex, nextKey)
 	}
 
-	return nil
+	return rowsAffected, nil
 }
 
 // HardDelete performs a hard delete operation on the given table and its dependant tables.

@@ -4,8 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"maps"
 	"slices"
 	"sort"
+	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/laws"
@@ -18,6 +20,13 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+)
+
+const (
+	lawsCronLawbooksLoadedAttr  = "lawbooks_loaded"
+	lawsCronLawbooksRemovedAttr = "lawbooks_removed"
+	lawsCronLawsLoadedAttr      = "laws_loaded"
+	lawsCronLawsRemovedAttr     = "laws_removed"
 )
 
 type ILaws interface {
@@ -61,7 +70,7 @@ func NewLaws(p Params) LawsResult {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		if err := c.loadLaws(ctxCancel, 0); err != nil {
+		if _, _, _, _, err := c.loadLaws(ctxCancel, 0); err != nil {
 			c.logger.Error("failed to loads laws into cache", zap.Error(err))
 			return err
 		}
@@ -96,8 +105,25 @@ func (c *Laws) RegisterCronjobHandlers(h *croner.Handlers) error {
 		ctx, span := c.tracer.Start(ctx, "mstlystcdata-laws")
 		defer span.End()
 
-		if err := c.loadLaws(ctx, 0); err != nil {
+		dest := &cron.GenericCronData{
+			Attributes: map[string]string{},
+		}
+		if err := data.Unmarshal(dest); err != nil {
+			c.logger.Warn("failed to unmarshal laws cron data", zap.Error(err))
+		}
+
+		lawbooksLoaded, lawbooksRemoved, lawsLoaded, lawsRemoved, err := c.loadLaws(ctx, 0)
+		if err != nil {
 			c.logger.Error("failed to refresh laws in cache", zap.Error(err))
+			return err
+		}
+
+		dest.SetAttribute(lawsCronLawbooksLoadedAttr, strconv.Itoa(lawbooksLoaded))
+		dest.SetAttribute(lawsCronLawbooksRemovedAttr, strconv.Itoa(lawbooksRemoved))
+		dest.SetAttribute(lawsCronLawsLoadedAttr, strconv.Itoa(lawsLoaded))
+		dest.SetAttribute(lawsCronLawsRemovedAttr, strconv.Itoa(lawsRemoved))
+
+		if err := data.MarshalFrom(dest); err != nil {
 			return err
 		}
 
@@ -109,7 +135,7 @@ func (c *Laws) RegisterCronjobHandlers(h *croner.Handlers) error {
 
 // loadLaws loads law books and their laws from the database into the cache.
 // If lawBookId is 0, loads all law books; otherwise, loads only the specified law book.
-func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
+func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) (int, int, int, int, error) {
 	tLawBooks := table.FivenetLawbooks.AS("lawbook")
 	tLaws := table.FivenetLawbooksLaws.AS("law")
 
@@ -160,13 +186,25 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 	var dest []*laws.LawBook
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return 0, 0, 0, 0, err
 		}
 	}
 
+	lawbooksLoaded := len(dest)
+	lawsLoaded := 0
+	for _, lawBook := range dest {
+		lawsLoaded += len(lawBook.GetLaws())
+	}
+
+	oldBooks := maps.Collect(c.lawBooks.All())
+
 	// Single lawbook update or lawbook deleted => not found, need to remove it
 	if len(dest) == 0 {
-		c.lawBooks.Delete(lawBookId)
+		if lawBookId == 0 {
+			c.lawBooks.Clear()
+		} else {
+			c.lawBooks.Delete(lawBookId)
+		}
 	} else if lawBookId > 0 {
 		c.lawBooks.Store(lawBookId, dest[0])
 	} else {
@@ -187,7 +225,50 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 		}
 	}
 
-	return nil
+	lawbooksRemoved := 0
+	lawsRemoved := 0
+	newBooks := map[int64]*laws.LawBook{}
+	for _, lawBook := range dest {
+		newBooks[lawBook.GetId()] = lawBook
+	}
+
+	countRemovedLaws := func(oldBook, newBook *laws.LawBook) int {
+		newLawIDs := map[int64]struct{}{}
+		for _, law := range newBook.GetLaws() {
+			newLawIDs[law.GetId()] = struct{}{}
+		}
+
+		removed := 0
+		for _, law := range oldBook.GetLaws() {
+			if _, ok := newLawIDs[law.GetId()]; !ok {
+				removed++
+			}
+		}
+
+		return removed
+	}
+
+	if lawBookId == 0 {
+		for id, oldBook := range oldBooks {
+			newBook, ok := newBooks[id]
+			if !ok {
+				lawbooksRemoved++
+				lawsRemoved += len(oldBook.GetLaws())
+				continue
+			}
+
+			lawsRemoved += countRemovedLaws(oldBook, newBook)
+		}
+	} else if oldBook, ok := oldBooks[lawBookId]; ok {
+		if newBook, ok := newBooks[lawBookId]; ok {
+			lawsRemoved = countRemovedLaws(oldBook, newBook)
+		} else {
+			lawbooksRemoved = 1
+			lawsRemoved = len(oldBook.GetLaws())
+		}
+	}
+
+	return lawbooksLoaded, lawbooksRemoved, lawsLoaded, lawsRemoved, nil
 }
 
 // GetLawBooks returns all cached law books, sorted by their configured sort order.
@@ -210,7 +291,7 @@ func (c *Laws) GetLawBooks() []*laws.LawBook {
 
 // Refresh reloads the specified law book (or all if lawBookId is 0) from the database.
 func (c *Laws) Refresh(ctx context.Context, lawBookId int64) error {
-	if err := c.loadLaws(ctx, lawBookId); err != nil {
+	if _, _, _, _, err := c.loadLaws(ctx, lawBookId); err != nil {
 		return err
 	}
 	return nil

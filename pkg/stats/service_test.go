@@ -162,7 +162,7 @@ func TestService_BuildEmployeeCountMetrics(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(3, 3))
 	mock.ExpectCommit()
 
-	err = svc.BuildEmployeeCountMetrics(t.Context())
+	_, _, err = svc.BuildEmployeeCountMetrics(t.Context())
 	require.NoError(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
@@ -182,7 +182,7 @@ func TestService_BuildEmployeeCountMetrics_DeleteError(t *testing.T) {
 		WillReturnError(errors.New("delete failed"))
 	mock.ExpectRollback()
 
-	err = svc.BuildEmployeeCountMetrics(t.Context())
+	_, _, err = svc.BuildEmployeeCountMetrics(t.Context())
 	require.Error(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
 }

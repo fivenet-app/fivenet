@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
@@ -32,6 +33,8 @@ const (
 	lastJobName = "last_job_name"
 	// lastTableMapIndex is the key for the last table map index attribute.
 	lastTableMapIndex = "last_key"
+	// deletedRows is the key for the number of rows deleted in the last run.
+	deletedRows = "deleted_rows"
 )
 
 // Housekeeper is responsible for running background cleanup and maintenance jobs on the database.
@@ -153,9 +156,11 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 			}
 
 			// Run the soft delete job logic
-			if err := h.runJobSoftDelete(ctx, dest); err != nil {
+			rowsAffected, err := h.runJobSoftDelete(ctx, dest)
+			if err != nil {
 				return fmt.Errorf("error during housekeeper (soft delete). %w", err)
 			}
+			dest.SetAttribute(deletedRows, strconv.FormatInt(rowsAffected, 10))
 
 			// Marshal the updated cron data
 			if err := data.MarshalFrom(dest); err != nil {
@@ -183,9 +188,11 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		}
 
 		// Run the hard delete job logic
-		if err := h.runHardDelete(ctx, dest); err != nil {
+		rowsAffected, err := h.runHardDelete(ctx, dest)
+		if err != nil {
 			return fmt.Errorf("error during housekeeper (hard delete). %w", err)
 		}
+		dest.SetAttribute(deletedRows, strconv.FormatInt(rowsAffected, 10))
 
 		// Marshal the updated cron data
 		if err := data.MarshalFrom(dest); err != nil {

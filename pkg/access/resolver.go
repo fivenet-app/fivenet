@@ -241,9 +241,18 @@ func (r *SubjectResolver) ResolveActorSubjects(
 	return dest, nil
 }
 
-func (r *SubjectResolver) CleanupOrphanSubjects(ctx context.Context, tx qrm.DB) error {
-	_, err := r.cleanupOrphanSubjectsStmt().ExecContext(ctx, tx)
-	return err
+func (r *SubjectResolver) CleanupOrphanSubjects(ctx context.Context, tx qrm.DB) (int64, error) {
+	res, err := r.cleanupOrphanSubjectsStmt().ExecContext(ctx, tx)
+	if err != nil {
+		return 0, err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rowsAffected, nil
 }
 
 func (r *SubjectResolver) cleanupOrphanSubjectsStmt() mysql.DeleteStatement {
@@ -277,9 +286,21 @@ func (r *SubjectResolver) cleanupOrphanSubjectsStmt() mysql.DeleteStatement {
 		LIMIT(subjectCleanupDeleteLimit)
 }
 
-func (r *SubjectResolver) CleanupStaleJobGradeSubjects(ctx context.Context, tx qrm.DB) error {
-	_, err := r.cleanupStaleJobGradeSubjectsStmt().ExecContext(ctx, tx)
-	return err
+func (r *SubjectResolver) CleanupStaleJobGradeSubjects(
+	ctx context.Context,
+	tx qrm.DB,
+) (int64, error) {
+	res, err := r.cleanupStaleJobGradeSubjectsStmt().ExecContext(ctx, tx)
+	if err != nil {
+		return 0, err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rowsAffected, nil
 }
 
 func (r *SubjectResolver) cleanupStaleJobGradeSubjectsStmt() mysql.DeleteStatement {

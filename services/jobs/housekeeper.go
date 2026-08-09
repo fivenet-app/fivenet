@@ -3,10 +3,13 @@ package jobs
 import (
 	"context"
 	"database/sql"
+	"strconv"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
 	docstats "github.com/fivenet-app/fivenet/v2026/pkg/stats"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/timeutils"
 	"github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -28,6 +31,13 @@ type Housekeeper struct {
 	db    *sql.DB
 	stats *docstats.Service
 }
+
+const (
+	timeclockCleanupRowsAttr = "rows_updated"
+	employeeCountDayAttr     = "day"
+	employeeCountRowsAttr    = "employee_count_rows"
+	onVacationCountRowsAttr  = "on_vacation_count_rows"
+)
 
 type HousekeeperParams struct {
 	fx.In
@@ -89,8 +99,21 @@ func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 		ctx, span := s.tracer.Start(ctx, "jobs.timeclock_cleanup")
 		defer span.End()
 
-		if err := s.timeclockCleanup(ctx); err != nil {
+		dest := &cron.GenericCronData{
+			Attributes: map[string]string{},
+		}
+		if err := data.Unmarshal(dest); err != nil {
+			s.logger.Warn("failed to unmarshal timeclock cleanup cron data", zap.Error(err))
+		}
+
+		rowsUpdated, err := s.timeclockCleanup(ctx)
+		if err != nil {
 			s.logger.Error("error during timeclock cleanup", zap.Error(err))
+			return err
+		}
+		dest.SetAttribute(timeclockCleanupRowsAttr, strconv.FormatInt(rowsUpdated, 10))
+
+		if err := data.MarshalFrom(dest); err != nil {
 			return err
 		}
 
@@ -102,8 +125,27 @@ func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 			ctx, span := s.tracer.Start(ctx, "jobs.stats.employee_count.recent")
 			defer span.End()
 
-			if err := s.stats.BuildEmployeeCountMetrics(ctx); err != nil {
+			dest := &cron.GenericCronData{
+				Attributes: map[string]string{},
+			}
+			if err := data.Unmarshal(dest); err != nil {
+				s.logger.Warn("failed to unmarshal employee count cron data", zap.Error(err))
+			}
+
+			employeeCountRows, onVacationRows, err := s.stats.BuildEmployeeCountMetrics(ctx)
+			if err != nil {
 				s.logger.Error("error during employee count metrics build", zap.Error(err))
+				return err
+			}
+
+			dest.SetAttribute(
+				employeeCountDayAttr,
+				timeutils.StartOfDay(time.Now().UTC()).Format(time.DateOnly),
+			)
+			dest.SetAttribute(employeeCountRowsAttr, strconv.FormatInt(employeeCountRows, 10))
+			dest.SetAttribute(onVacationCountRowsAttr, strconv.FormatInt(onVacationRows, 10))
+
+			if err := data.MarshalFrom(dest); err != nil {
 				return err
 			}
 
@@ -114,7 +156,7 @@ func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 	return nil
 }
 
-func (s *Housekeeper) timeclockCleanup(ctx context.Context) error {
+func (s *Housekeeper) timeclockCleanup(ctx context.Context) (int64, error) {
 	stmt := tTimeClock.
 		UPDATE().
 		SET(
@@ -130,9 +172,15 @@ func (s *Housekeeper) timeclockCleanup(ctx context.Context) error {
 		)).
 		LIMIT(1000)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return err
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return 0, err
 	}
 
-	return nil
+	rowsUpdated, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rowsUpdated, nil
 }

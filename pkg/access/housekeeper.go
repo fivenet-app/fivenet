@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
@@ -17,9 +18,8 @@ import (
 )
 
 const (
-	subjectCleanupCronName     = "access.subjects.cleanup"
-	subjectCleanupCronSchedule = "*/10 * * * *"
-	subjectCleanupCronTimeout  = time.Minute
+	subjectCleanupOrphanSubjectsRemovedAttr = "orphan_subjects_removed"
+	subjectCleanupStaleJobGradeRemovedAttr  = "stale_job_grade_subjects_removed"
 )
 
 var Module = fx.Module("access.housekeeper",
@@ -62,9 +62,9 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 
 func (h *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     subjectCleanupCronName,
-		Schedule: subjectCleanupCronSchedule,
-		Timeout:  durationpb.New(subjectCleanupCronTimeout),
+		Name:     "access.subjects.cleanup",
+		Schedule: "*/10 * * * *",
+		Timeout:  durationpb.New(1 * time.Minute),
 	}); err != nil {
 		return err
 	}
@@ -73,17 +73,30 @@ func (h *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 }
 
 func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
-	hand.Add(subjectCleanupCronName, func(ctx context.Context, data *cron.CronjobData) error {
-		ctx, span := h.tracer.Start(ctx, subjectCleanupCronName)
+	hand.Add("access.subjects.cleanup", func(ctx context.Context, data *cron.CronjobData) error {
+		ctx, span := h.tracer.Start(ctx, "access.subjects.cleanup")
 		defer span.End()
 
+		dest := &cron.GenericCronData{
+			Attributes: map[string]string{},
+		}
+		if err := data.Unmarshal(dest); err != nil {
+			h.logger.Warn("failed to unmarshal access subjects cleanup cron data", zap.Error(err))
+		}
+
 		var errs error
-		if err := h.resolver.CleanupOrphanSubjects(ctx, h.resolver.db); err != nil {
+		orphanRemoved, err := h.resolver.CleanupOrphanSubjects(ctx, h.resolver.db)
+		if err != nil {
 			h.logger.Error("error during orphan subject cleanup", zap.Error(err))
 			errs = multierr.Append(errs, fmt.Errorf("error during orphan subject cleanup. %w", err))
 		}
+		dest.SetAttribute(
+			subjectCleanupOrphanSubjectsRemovedAttr,
+			strconv.FormatInt(orphanRemoved, 10),
+		)
 
-		if err := h.resolver.CleanupStaleJobGradeSubjects(ctx, h.resolver.db); err != nil {
+		staleRemoved, err := h.resolver.CleanupStaleJobGradeSubjects(ctx, h.resolver.db)
+		if err != nil {
 			h.logger.Error("error during stale job grade subject cleanup", zap.Error(err))
 			if errs != nil {
 				errs = multierr.Append(
@@ -91,6 +104,17 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 					fmt.Errorf("error during stale job grade subject cleanup. %w", err),
 				)
 			}
+		}
+		dest.SetAttribute(
+			subjectCleanupStaleJobGradeRemovedAttr,
+			strconv.FormatInt(staleRemoved, 10),
+		)
+
+		if err := data.MarshalFrom(dest); err != nil {
+			return fmt.Errorf(
+				"failed to marshal updated access subjects cleanup cron data. %w",
+				err,
+			)
 		}
 
 		return errs

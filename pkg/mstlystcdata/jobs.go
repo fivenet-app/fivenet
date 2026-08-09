@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -24,6 +25,12 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
+)
+
+const (
+	jobsCronJobsLoadedAttr   = "jobs_loaded"
+	jobsCronGradesLoadedAttr = "grades_loaded"
+	jobsCronJobsRemovedAttr  = "jobs_removed"
 )
 
 type IJobs interface {
@@ -149,9 +156,36 @@ func (c *Jobs) RegisterCronjobHandlers(h *croner.Handlers) error {
 		ctx, span := c.tracer.Start(ctx, "mstlystcdata-jobs")
 		defer span.End()
 
+		dest := &cron.GenericCronData{
+			Attributes: map[string]string{},
+		}
+		if err := data.Unmarshal(dest); err != nil {
+			c.logger.Warn("failed to unmarshal jobs cron data", zap.Error(err))
+		}
+
+		prevJobs := len(c.List())
+
 		if err := c.Refresh(ctx); err != nil {
 			c.logger.Error("failed to refresh jobs cache", zap.Error(err))
 			return err
+		}
+
+		jobs := c.List()
+		gradesLoaded := 0
+		for _, job := range jobs {
+			gradesLoaded += len(job.GetGrades())
+		}
+
+		dest.SetAttribute(jobsCronJobsLoadedAttr, strconv.Itoa(len(jobs)))
+		dest.SetAttribute(jobsCronGradesLoadedAttr, strconv.Itoa(gradesLoaded))
+		if prevJobs > len(jobs) {
+			dest.SetAttribute(jobsCronJobsRemovedAttr, strconv.Itoa(prevJobs-len(jobs)))
+		} else {
+			dest.SetAttribute(jobsCronJobsRemovedAttr, "0")
+		}
+
+		if err := data.MarshalFrom(dest); err != nil {
+			return fmt.Errorf("failed to marshal updated jobs cron data. %w", err)
 		}
 
 		for _, fn := range c.updateCallbacks {

@@ -10,7 +10,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-func (s *Service) BuildEmployeeCountMetrics(ctx context.Context) error {
+func (s *Service) BuildEmployeeCountMetrics(ctx context.Context) (int64, int64, error) {
 	day := timeutils.StartOfDay(time.Now().UTC())
 	tRollup := table.FivenetStatsDailyRollup
 	tUserJobs := table.FivenetUserJobs
@@ -26,7 +26,7 @@ func (s *Service) BuildEmployeeCountMetrics(ctx context.Context) error {
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return 0, 0, err
 	}
 	defer tx.Rollback()
 
@@ -45,7 +45,7 @@ func (s *Service) BuildEmployeeCountMetrics(ctx context.Context) error {
 		WHERE(rollupCondition).
 		LIMIT(10000).
 		ExecContext(ctx, tx); err != nil {
-		return err
+		return 0, 0, err
 	}
 
 	stmt := tRollup.
@@ -78,8 +78,13 @@ func (s *Service) BuildEmployeeCountMetrics(ctx context.Context) error {
 				GROUP_BY(tUserJobs.Job),
 		)
 
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return 0, 0, err
+	}
+	employeeCountRows, err := res.RowsAffected()
+	if err != nil {
+		return 0, 0, err
 	}
 
 	tColleagueProps := table.FivenetJobColleagueProps
@@ -128,15 +133,20 @@ func (s *Service) BuildEmployeeCountMetrics(ctx context.Context) error {
 				GROUP_BY(tUserJobs.Job),
 		)
 
-	if _, err := vacationStmt.ExecContext(ctx, tx); err != nil {
-		return err
+	res, err = vacationStmt.ExecContext(ctx, tx)
+	if err != nil {
+		return 0, 0, err
+	}
+	onVacationRows, err := res.RowsAffected()
+	if err != nil {
+		return 0, 0, err
 	}
 
 	if err := tx.Commit(); err != nil {
-		return err
+		return 0, 0, err
 	}
 
-	return nil
+	return employeeCountRows, onVacationRows, nil
 }
 
 func (s *Service) QueryEmployeeCountOverTime(
