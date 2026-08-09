@@ -3445,6 +3445,11 @@ States of Cronjbo
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `last_doc_id` | [int64](#int64) |  |  |
+| `processed_rows` | [int64](#int64) |  |  |
+| `reminders_sent` | [int64](#int64) |  |  |
+| `auto_closed_rows` | [int64](#int64) |  |  |
+| `deleted_rows` | [int64](#int64) |  |  |
+| `updated_rows` | [int64](#int64) |  |  |
 
 
 

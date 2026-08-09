@@ -120,9 +120,16 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 			w.logger.Warn("failed to unmarshal document workflow cron data", zap.Error(err))
 		}
 
-		if err := w.handleDocuments(ctx, dest); err != nil {
+		stats, err := w.handleDocuments(ctx, dest)
+		if err != nil {
 			return fmt.Errorf("error during documents workflow handling. %w", err)
 		}
+
+		dest.ProcessedRows = stats.GetProcessedRows()
+		dest.RemindersSent = stats.GetRemindersSent()
+		dest.AutoClosedRows = stats.GetAutoClosedRows()
+		dest.DeletedRows = stats.GetDeletedRows()
+		dest.UpdatedRows = stats.GetUpdatedRows()
 
 		// Marshal the updated cron data
 		if err := data.MarshalFrom(dest); err != nil {
@@ -143,9 +150,16 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 			w.logger.Error("failed to unmarshal document workflow cron data", zap.Error(err))
 		}
 
-		if err := w.handleDocumentsUsers(ctx, dest); err != nil {
+		stats, err := w.handleDocumentsUsers(ctx, dest)
+		if err != nil {
 			return fmt.Errorf("error during documents workflow handling. %w", err)
 		}
+
+		dest.ProcessedRows = stats.GetProcessedRows()
+		dest.RemindersSent = stats.GetRemindersSent()
+		dest.AutoClosedRows = 0
+		dest.DeletedRows = stats.GetDeletedRows()
+		dest.UpdatedRows = 0
 
 		// Marshal the updated cron data
 		if err := data.MarshalFrom(dest); err != nil {
@@ -167,7 +181,7 @@ type workflowState struct {
 func (w *Workflow) handleDocuments(
 	ctx context.Context,
 	data *documentsworkflow.WorkflowCronData,
-) error {
+) (*documentsworkflow.WorkflowCronData, error) {
 	nowTs := mysql.TimestampT(time.Now())
 
 	tDTemplates := table.FivenetDocumentsTemplates.AS("template")
@@ -216,27 +230,31 @@ func (w *Workflow) handleDocuments(
 
 		if err := stmt.QueryContext(ctx, w.db, &dest); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
-				return err
+				return nil, err
 			}
 		}
 
 		if data.GetLastDocId() == 0 && len(dest) == 0 {
 			// No entries match condition
 			break
-		} else {
-			// Less than 250 entries? Reset last id to 0
-			if len(dest) < 250 {
-				data.LastDocId = 0
-				break
-				// No entries, reset last id to 0 and try again
-			} else if len(dest) == 0 {
-				data.LastDocId = 0
-				continue
-			}
-
-			break
 		}
+		// Less than 250 entries? Reset last id to 0
+		if len(dest) < 250 {
+			data.LastDocId = 0
+			break
+			// No entries, reset last id to 0 and try again
+		} else if len(dest) == 0 {
+			data.LastDocId = 0
+			continue
+		}
+
+		break
 	}
+
+	stats := &documentsworkflow.WorkflowCronData{
+		ProcessedRows: int64(len(dest)),
+	}
+	var statsMu sync.Mutex
 
 	var wg sync.WaitGroup
 
@@ -250,10 +268,16 @@ func (w *Workflow) handleDocuments(
 					return
 				}
 
-				if err := w.handleWorkflowState(ctx, state); err != nil {
+				outcome, err := w.handleWorkflowState(ctx, state)
+				if err != nil {
 					w.logger.Error("error during workflow state handling",
 						zap.Int64("document_id", state.DocumentId), zap.Error(err))
+					return
 				}
+
+				statsMu.Lock()
+				addWorkflowCronData(stats, outcome)
+				statsMu.Unlock()
 			})
 		}
 	})
@@ -266,13 +290,14 @@ func (w *Workflow) handleDocuments(
 
 	wg.Wait()
 
-	return nil
+	return stats, nil
 }
 
 func (w *Workflow) handleWorkflowState(
 	ctx context.Context,
 	st *workflowState,
-) error {
+) (*documentsworkflow.WorkflowCronData, error) {
+	outcome := &documentsworkflow.WorkflowCronData{}
 	state := st.State
 	doc := st.Document
 
@@ -286,12 +311,17 @@ func (w *Workflow) handleWorkflowState(
 				st,
 				state.GetWorkflow().GetAutoCloseSettings().GetMessage(),
 			); err != nil {
-				return fmt.Errorf("failed to auto close document. %w", err)
+				return outcome, fmt.Errorf("failed to auto close document. %w", err)
 			}
+			outcome.AutoClosedRows = 1
 		}
 
 		// Delete document workflow state, auto reminders are not sent for a closed document
-		return w.deleteWorkflowState(ctx, state)
+		if err := w.deleteWorkflowState(ctx, state); err != nil {
+			return outcome, err
+		}
+		outcome.DeletedRows = 1
+		return outcome, nil
 	} else if state.GetNextReminderTime() != nil && time.Since(state.GetNextReminderTime().AsTime()) > 0 {
 		if doc != nil && doc.GetCreatorId() > 0 {
 			var reminderMessage string
@@ -311,11 +341,12 @@ func (w *Workflow) handleWorkflowState(
 				reminderMessage,
 				false,
 			); err != nil {
-				return fmt.Errorf("failed to send document reminder. %w", err)
+				return outcome, fmt.Errorf("failed to send document reminder. %w", err)
 			}
 
 			w.updateAutoReminderTime(state)
 			state.ReminderCount++
+			outcome.RemindersSent = 1
 		} else {
 			state.NextReminderTime = nil
 			state.NextReminderCount = nil
@@ -332,14 +363,29 @@ func (w *Workflow) handleWorkflowState(
 		doc.GetCreatorId() == 0 ||
 		state.GetReminderCount() >= documentsworkflow.MaxReminderCount ||
 		(state.GetNextReminderTime() == nil && state.GetAutoCloseTime() == nil) {
-		return w.deleteWorkflowState(ctx, state)
+		if err := w.deleteWorkflowState(ctx, state); err != nil {
+			return outcome, err
+		}
+		outcome.DeletedRows = 1
+		return outcome, nil
 	}
 
 	if err := w.updateWorkflowState(ctx, state); err != nil {
-		return fmt.Errorf("failed to update workflow state. %w", err)
+		return outcome, fmt.Errorf("failed to update workflow state. %w", err)
 	}
+	outcome.UpdatedRows = 1
 
-	return nil
+	return outcome, nil
+}
+
+func addWorkflowCronData(dst, src *documentsworkflow.WorkflowCronData) {
+	if src == nil {
+		return
+	}
+	dst.RemindersSent += src.GetRemindersSent()
+	dst.AutoClosedRows += src.GetAutoClosedRows()
+	dst.DeletedRows += src.GetDeletedRows()
+	dst.UpdatedRows += src.GetUpdatedRows()
 }
 
 func (w *Workflow) getAutoReminder(

@@ -52,6 +52,11 @@ message AutoCloseSettings {
 
 message WorkflowCronData {
   int64 last_doc_id = 1;
+  int64 processed_rows = 2;
+  int64 reminders_sent = 3;
+  int64 auto_closed_rows = 4;
+  int64 deleted_rows = 5;
+  int64 updated_rows = 6;
 }
 
 message WorkflowState {

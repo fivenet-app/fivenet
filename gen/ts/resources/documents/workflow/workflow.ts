@@ -81,6 +81,26 @@ export interface WorkflowCronData {
      * @generated from protobuf field: int64 last_doc_id = 1
      */
     lastDocId: number;
+    /**
+     * @generated from protobuf field: int64 processed_rows = 2
+     */
+    processedRows: number;
+    /**
+     * @generated from protobuf field: int64 reminders_sent = 3
+     */
+    remindersSent: number;
+    /**
+     * @generated from protobuf field: int64 auto_closed_rows = 4
+     */
+    autoClosedRows: number;
+    /**
+     * @generated from protobuf field: int64 deleted_rows = 5
+     */
+    deletedRows: number;
+    /**
+     * @generated from protobuf field: int64 updated_rows = 6
+     */
+    updatedRows: number;
 }
 /**
  * @generated from protobuf message resources.documents.workflow.WorkflowState
@@ -380,12 +400,22 @@ export const AutoCloseSettings = new AutoCloseSettings$Type();
 class WorkflowCronData$Type extends MessageType<WorkflowCronData> {
     constructor() {
         super("resources.documents.workflow.WorkflowCronData", [
-            { no: 1, name: "last_doc_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "last_doc_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "processed_rows", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "reminders_sent", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "auto_closed_rows", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 5, name: "deleted_rows", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 6, name: "updated_rows", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<WorkflowCronData>): WorkflowCronData {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.lastDocId = 0;
+        message.processedRows = 0;
+        message.remindersSent = 0;
+        message.autoClosedRows = 0;
+        message.deletedRows = 0;
+        message.updatedRows = 0;
         if (value !== undefined)
             reflectionMergePartial<WorkflowCronData>(this, message, value);
         return message;
@@ -397,6 +427,21 @@ class WorkflowCronData$Type extends MessageType<WorkflowCronData> {
             switch (fieldNo) {
                 case /* int64 last_doc_id */ 1:
                     message.lastDocId = reader.int64().toNumber();
+                    break;
+                case /* int64 processed_rows */ 2:
+                    message.processedRows = reader.int64().toNumber();
+                    break;
+                case /* int64 reminders_sent */ 3:
+                    message.remindersSent = reader.int64().toNumber();
+                    break;
+                case /* int64 auto_closed_rows */ 4:
+                    message.autoClosedRows = reader.int64().toNumber();
+                    break;
+                case /* int64 deleted_rows */ 5:
+                    message.deletedRows = reader.int64().toNumber();
+                    break;
+                case /* int64 updated_rows */ 6:
+                    message.updatedRows = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -413,6 +458,21 @@ class WorkflowCronData$Type extends MessageType<WorkflowCronData> {
         /* int64 last_doc_id = 1; */
         if (message.lastDocId !== 0)
             writer.tag(1, WireType.Varint).int64(message.lastDocId);
+        /* int64 processed_rows = 2; */
+        if (message.processedRows !== 0)
+            writer.tag(2, WireType.Varint).int64(message.processedRows);
+        /* int64 reminders_sent = 3; */
+        if (message.remindersSent !== 0)
+            writer.tag(3, WireType.Varint).int64(message.remindersSent);
+        /* int64 auto_closed_rows = 4; */
+        if (message.autoClosedRows !== 0)
+            writer.tag(4, WireType.Varint).int64(message.autoClosedRows);
+        /* int64 deleted_rows = 5; */
+        if (message.deletedRows !== 0)
+            writer.tag(5, WireType.Varint).int64(message.deletedRows);
+        /* int64 updated_rows = 6; */
+        if (message.updatedRows !== 0)
+            writer.tag(6, WireType.Varint).int64(message.updatedRows);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

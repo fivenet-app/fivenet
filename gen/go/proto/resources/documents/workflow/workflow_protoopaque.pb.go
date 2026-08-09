@@ -385,10 +385,15 @@ func (b0 AutoCloseSettings_builder) Build() *AutoCloseSettings {
 }
 
 type WorkflowCronData struct {
-	state                protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_LastDocId int64                  `protobuf:"varint,1,opt,name=last_doc_id,json=lastDocId,proto3"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	state                     protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_LastDocId      int64                  `protobuf:"varint,1,opt,name=last_doc_id,json=lastDocId,proto3"`
+	xxx_hidden_ProcessedRows  int64                  `protobuf:"varint,2,opt,name=processed_rows,json=processedRows,proto3"`
+	xxx_hidden_RemindersSent  int64                  `protobuf:"varint,3,opt,name=reminders_sent,json=remindersSent,proto3"`
+	xxx_hidden_AutoClosedRows int64                  `protobuf:"varint,4,opt,name=auto_closed_rows,json=autoClosedRows,proto3"`
+	xxx_hidden_DeletedRows    int64                  `protobuf:"varint,5,opt,name=deleted_rows,json=deletedRows,proto3"`
+	xxx_hidden_UpdatedRows    int64                  `protobuf:"varint,6,opt,name=updated_rows,json=updatedRows,proto3"`
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
 }
 
 func (x *WorkflowCronData) Reset() {
@@ -423,14 +428,74 @@ func (x *WorkflowCronData) GetLastDocId() int64 {
 	return 0
 }
 
+func (x *WorkflowCronData) GetProcessedRows() int64 {
+	if x != nil {
+		return x.xxx_hidden_ProcessedRows
+	}
+	return 0
+}
+
+func (x *WorkflowCronData) GetRemindersSent() int64 {
+	if x != nil {
+		return x.xxx_hidden_RemindersSent
+	}
+	return 0
+}
+
+func (x *WorkflowCronData) GetAutoClosedRows() int64 {
+	if x != nil {
+		return x.xxx_hidden_AutoClosedRows
+	}
+	return 0
+}
+
+func (x *WorkflowCronData) GetDeletedRows() int64 {
+	if x != nil {
+		return x.xxx_hidden_DeletedRows
+	}
+	return 0
+}
+
+func (x *WorkflowCronData) GetUpdatedRows() int64 {
+	if x != nil {
+		return x.xxx_hidden_UpdatedRows
+	}
+	return 0
+}
+
 func (x *WorkflowCronData) SetLastDocId(v int64) {
 	x.xxx_hidden_LastDocId = v
+}
+
+func (x *WorkflowCronData) SetProcessedRows(v int64) {
+	x.xxx_hidden_ProcessedRows = v
+}
+
+func (x *WorkflowCronData) SetRemindersSent(v int64) {
+	x.xxx_hidden_RemindersSent = v
+}
+
+func (x *WorkflowCronData) SetAutoClosedRows(v int64) {
+	x.xxx_hidden_AutoClosedRows = v
+}
+
+func (x *WorkflowCronData) SetDeletedRows(v int64) {
+	x.xxx_hidden_DeletedRows = v
+}
+
+func (x *WorkflowCronData) SetUpdatedRows(v int64) {
+	x.xxx_hidden_UpdatedRows = v
 }
 
 type WorkflowCronData_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	LastDocId int64
+	LastDocId      int64
+	ProcessedRows  int64
+	RemindersSent  int64
+	AutoClosedRows int64
+	DeletedRows    int64
+	UpdatedRows    int64
 }
 
 func (b0 WorkflowCronData_builder) Build() *WorkflowCronData {
@@ -438,6 +503,11 @@ func (b0 WorkflowCronData_builder) Build() *WorkflowCronData {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_LastDocId = b.LastDocId
+	x.xxx_hidden_ProcessedRows = b.ProcessedRows
+	x.xxx_hidden_RemindersSent = b.RemindersSent
+	x.xxx_hidden_AutoClosedRows = b.AutoClosedRows
+	x.xxx_hidden_DeletedRows = b.DeletedRows
+	x.xxx_hidden_UpdatedRows = b.UpdatedRows
 	return m0
 }
 
@@ -822,9 +892,14 @@ const file_resources_documents_workflow_workflow_proto_rawDesc = "" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"d\n" +
 	"\x11AutoCloseSettings\x125\n" +
 	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\bduration\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"2\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xf0\x01\n" +
 	"\x10WorkflowCronData\x12\x1e\n" +
-	"\vlast_doc_id\x18\x01 \x01(\x03R\tlastDocId\"\xdc\x03\n" +
+	"\vlast_doc_id\x18\x01 \x01(\x03R\tlastDocId\x12%\n" +
+	"\x0eprocessed_rows\x18\x02 \x01(\x03R\rprocessedRows\x12%\n" +
+	"\x0ereminders_sent\x18\x03 \x01(\x03R\rremindersSent\x12(\n" +
+	"\x10auto_closed_rows\x18\x04 \x01(\x03R\x0eautoClosedRows\x12!\n" +
+	"\fdeleted_rows\x18\x05 \x01(\x03R\vdeletedRows\x12!\n" +
+	"\fupdated_rows\x18\x06 \x01(\x03R\vupdatedRows\"\xdc\x03\n" +
 	"\rWorkflowState\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12Q\n" +

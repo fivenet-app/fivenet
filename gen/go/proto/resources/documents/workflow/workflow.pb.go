@@ -383,10 +383,15 @@ func (b0 AutoCloseSettings_builder) Build() *AutoCloseSettings {
 }
 
 type WorkflowCronData struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	LastDocId     int64                  `protobuf:"varint,1,opt,name=last_doc_id,json=lastDocId,proto3" json:"last_doc_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"hybrid.v1"`
+	LastDocId      int64                  `protobuf:"varint,1,opt,name=last_doc_id,json=lastDocId,proto3" json:"last_doc_id,omitempty"`
+	ProcessedRows  int64                  `protobuf:"varint,2,opt,name=processed_rows,json=processedRows,proto3" json:"processed_rows,omitempty"`
+	RemindersSent  int64                  `protobuf:"varint,3,opt,name=reminders_sent,json=remindersSent,proto3" json:"reminders_sent,omitempty"`
+	AutoClosedRows int64                  `protobuf:"varint,4,opt,name=auto_closed_rows,json=autoClosedRows,proto3" json:"auto_closed_rows,omitempty"`
+	DeletedRows    int64                  `protobuf:"varint,5,opt,name=deleted_rows,json=deletedRows,proto3" json:"deleted_rows,omitempty"`
+	UpdatedRows    int64                  `protobuf:"varint,6,opt,name=updated_rows,json=updatedRows,proto3" json:"updated_rows,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *WorkflowCronData) Reset() {
@@ -421,14 +426,74 @@ func (x *WorkflowCronData) GetLastDocId() int64 {
 	return 0
 }
 
+func (x *WorkflowCronData) GetProcessedRows() int64 {
+	if x != nil {
+		return x.ProcessedRows
+	}
+	return 0
+}
+
+func (x *WorkflowCronData) GetRemindersSent() int64 {
+	if x != nil {
+		return x.RemindersSent
+	}
+	return 0
+}
+
+func (x *WorkflowCronData) GetAutoClosedRows() int64 {
+	if x != nil {
+		return x.AutoClosedRows
+	}
+	return 0
+}
+
+func (x *WorkflowCronData) GetDeletedRows() int64 {
+	if x != nil {
+		return x.DeletedRows
+	}
+	return 0
+}
+
+func (x *WorkflowCronData) GetUpdatedRows() int64 {
+	if x != nil {
+		return x.UpdatedRows
+	}
+	return 0
+}
+
 func (x *WorkflowCronData) SetLastDocId(v int64) {
 	x.LastDocId = v
+}
+
+func (x *WorkflowCronData) SetProcessedRows(v int64) {
+	x.ProcessedRows = v
+}
+
+func (x *WorkflowCronData) SetRemindersSent(v int64) {
+	x.RemindersSent = v
+}
+
+func (x *WorkflowCronData) SetAutoClosedRows(v int64) {
+	x.AutoClosedRows = v
+}
+
+func (x *WorkflowCronData) SetDeletedRows(v int64) {
+	x.DeletedRows = v
+}
+
+func (x *WorkflowCronData) SetUpdatedRows(v int64) {
+	x.UpdatedRows = v
 }
 
 type WorkflowCronData_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	LastDocId int64
+	LastDocId      int64
+	ProcessedRows  int64
+	RemindersSent  int64
+	AutoClosedRows int64
+	DeletedRows    int64
+	UpdatedRows    int64
 }
 
 func (b0 WorkflowCronData_builder) Build() *WorkflowCronData {
@@ -436,6 +501,11 @@ func (b0 WorkflowCronData_builder) Build() *WorkflowCronData {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.LastDocId = b.LastDocId
+	x.ProcessedRows = b.ProcessedRows
+	x.RemindersSent = b.RemindersSent
+	x.AutoClosedRows = b.AutoClosedRows
+	x.DeletedRows = b.DeletedRows
+	x.UpdatedRows = b.UpdatedRows
 	return m0
 }
 
@@ -803,9 +873,14 @@ const file_resources_documents_workflow_workflow_proto_rawDesc = "" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"d\n" +
 	"\x11AutoCloseSettings\x125\n" +
 	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\bduration\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"2\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xf0\x01\n" +
 	"\x10WorkflowCronData\x12\x1e\n" +
-	"\vlast_doc_id\x18\x01 \x01(\x03R\tlastDocId\"\xdc\x03\n" +
+	"\vlast_doc_id\x18\x01 \x01(\x03R\tlastDocId\x12%\n" +
+	"\x0eprocessed_rows\x18\x02 \x01(\x03R\rprocessedRows\x12%\n" +
+	"\x0ereminders_sent\x18\x03 \x01(\x03R\rremindersSent\x12(\n" +
+	"\x10auto_closed_rows\x18\x04 \x01(\x03R\x0eautoClosedRows\x12!\n" +
+	"\fdeleted_rows\x18\x05 \x01(\x03R\vdeletedRows\x12!\n" +
+	"\fupdated_rows\x18\x06 \x01(\x03R\vupdatedRows\"\xdc\x03\n" +
 	"\rWorkflowState\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12Q\n" +

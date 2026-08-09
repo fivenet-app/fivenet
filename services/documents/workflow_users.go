@@ -25,7 +25,7 @@ type workflowUserState struct {
 func (w *Workflow) handleDocumentsUsers(
 	ctx context.Context,
 	data *documentsworkflow.WorkflowCronData,
-) error {
+) (*documentsworkflow.WorkflowCronData, error) {
 	tDTemplates := table.FivenetDocumentsTemplates.AS("template_short")
 
 	stmt := tUserWorkflow.
@@ -66,9 +66,14 @@ func (w *Workflow) handleDocumentsUsers(
 	var dest []*workflowUserState
 	if err := stmt.QueryContext(ctx, w.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return nil, err
 		}
 	}
+
+	stats := &documentsworkflow.WorkflowCronData{
+		ProcessedRows: int64(len(dest)),
+	}
+	var statsMu sync.Mutex
 
 	var wg sync.WaitGroup
 
@@ -82,7 +87,8 @@ func (w *Workflow) handleDocumentsUsers(
 					return
 				}
 
-				if err := w.handleWorkflowUserState(ctx, state); err != nil {
+				outcome, err := w.handleWorkflowUserState(ctx, state)
+				if err != nil {
 					w.logger.Error(
 						"error during workflow user state handling",
 						zap.Int64(
@@ -92,7 +98,12 @@ func (w *Workflow) handleDocumentsUsers(
 						zap.Int32("user_id", state.State.GetUserId()),
 						zap.Error(err),
 					)
+					return
 				}
+
+				statsMu.Lock()
+				addWorkflowCronData(stats, outcome)
+				statsMu.Unlock()
 			})
 		}
 	})
@@ -105,13 +116,14 @@ func (w *Workflow) handleDocumentsUsers(
 
 	wg.Wait()
 
-	return nil
+	return stats, nil
 }
 
 func (w *Workflow) handleWorkflowUserState(
 	ctx context.Context,
 	st *workflowUserState,
-) error {
+) (*documentsworkflow.WorkflowCronData, error) {
+	outcome := &documentsworkflow.WorkflowCronData{}
 	state := st.State
 	doc := st.Document
 
@@ -126,8 +138,9 @@ func (w *Workflow) handleWorkflowUserState(
 			state.GetManualReminderMessage(),
 			true,
 		); err != nil {
-			return err
+			return outcome, err
 		}
+		outcome.RemindersSent = 1
 
 		if err := w.store.DeleteWorkflowUserState(
 			ctx,
@@ -135,9 +148,10 @@ func (w *Workflow) handleWorkflowUserState(
 			state.GetDocumentId(),
 			state.GetUserId(),
 		); err != nil {
-			return err
+			return outcome, err
 		}
+		outcome.DeletedRows = 1
 	}
 
-	return nil
+	return outcome, nil
 }
