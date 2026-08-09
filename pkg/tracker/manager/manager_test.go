@@ -49,8 +49,8 @@ func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, *tracker.TestTra
 			fx.Provide(settings.New),
 			fx.Provide(units.New),
 			fx.Provide(New),
-			fx.Invoke(func(t *tracker.TestTracker) {
-				trackerStub = t
+			fx.Invoke(func(t tracker.ITracker) {
+				trackerStub = t.(*tracker.TestTracker)
 			}),
 			fx.Invoke(func(m *Manager) {
 				manager = m
