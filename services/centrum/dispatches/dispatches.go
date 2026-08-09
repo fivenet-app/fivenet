@@ -41,19 +41,37 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/paulmach/orb"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
 
-var metricDispatchLastID = promauto.NewGaugeVec(prometheus.GaugeOpts{
-	Namespace: admin.MetricsNamespace,
-	Subsystem: "centrum",
-	Name:      "dispatch_last_id",
-	Help:      "Last dispatch ID.",
-}, []string{"job_name"})
+type dispatchMetrics struct {
+	lastID *prometheus.GaugeVec
+}
+
+var (
+	dispatchMetricsOnce sync.Once
+	dispatchMetricsInst *dispatchMetrics
+)
+
+func getDispatchMetrics() *dispatchMetrics {
+	dispatchMetricsOnce.Do(func() {
+		dispatchMetricsInst = &dispatchMetrics{
+			lastID: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "centrum",
+				Name:      "dispatch_last_id",
+				Help:      "Last dispatch ID.",
+			}, []string{"job_name"}),
+		}
+
+		prometheus.MustRegister(dispatchMetricsInst.lastID)
+	})
+
+	return dispatchMetricsInst
+}
 
 type DispatchDB struct {
 	logger *zap.Logger
@@ -74,6 +92,7 @@ type DispatchDB struct {
 	store      *store.Store[centrumdispatches.Dispatch, *centrumdispatches.Dispatch]
 	jobMapping *store.Store[common.IDMapping, *common.IDMapping]
 	idleKV     jetstream.KeyValue
+	metrics    *dispatchMetrics
 }
 
 type Params struct {
@@ -112,6 +131,7 @@ func New(p Params) *DispatchDB {
 
 		dispatchLocationsMutex: &sync.Mutex{},
 		dispatchLocations:      map[string]*coords.Coords[*centrumdispatches.Dispatch]{},
+		metrics:                getDispatchMetrics(),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -1255,7 +1275,7 @@ func (s *DispatchDB) Create(
 	}
 
 	for _, job := range dsp.GetJobs().GetJobStrings() {
-		metricDispatchLastID.WithLabelValues(job).Set(float64(lastId))
+		s.metrics.lastID.WithLabelValues(job).Set(float64(lastId))
 	}
 
 	// Hide user info when dispatch is anonymous

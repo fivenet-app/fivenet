@@ -15,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -41,12 +40,31 @@ var Module = fx.Module("audit",
 	),
 )
 
-var metricDropCount = promauto.NewGauge(prometheus.GaugeOpts{
-	Namespace: admin.MetricsNamespace,
-	Subsystem: "audit",
-	Name:      "drop_count",
-	Help:      "Number of audit entries dropped by the store (e.g., channel full).",
-})
+type auditMetrics struct {
+	dropCount prometheus.Gauge
+}
+
+var (
+	auditMetricsOnce sync.Once
+	auditMetricsInst *auditMetrics
+)
+
+func getAuditMetrics() *auditMetrics {
+	auditMetricsOnce.Do(func() {
+		auditMetricsInst = &auditMetrics{
+			dropCount: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "audit",
+				Name:      "drop_count",
+				Help:      "Number of audit entries dropped by the store (e.g., channel full).",
+			}),
+		}
+
+		prometheus.MustRegister(auditMetricsInst.dropCount)
+	})
+
+	return auditMetricsInst
+}
 
 // FilterFn is a callback function type for filtering or modifying audit entries before logging.
 type FilterFn func(in *audit.AuditEntry, data any)
@@ -66,7 +84,8 @@ type AuditStorer struct {
 	// db is the database connection for storing audit logs.
 	db *sql.DB
 	// input is the channel for incoming audit entries to be processed.
-	input chan *audit.AuditEntry
+	input   chan *audit.AuditEntry
+	metrics *auditMetrics
 }
 
 // Params contains dependencies for constructing an AuditStorer instance.
@@ -91,10 +110,11 @@ func New(p Params) IAuditer {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	a := &AuditStorer{
-		logger: p.Logger.Named("audit"),
-		tracer: p.TP.Tracer("audit"),
-		db:     p.DB,
-		input:  make(chan *audit.AuditEntry, bufferSize),
+		logger:  p.Logger.Named("audit"),
+		tracer:  p.TP.Tracer("audit"),
+		db:      p.DB,
+		input:   make(chan *audit.AuditEntry, bufferSize),
+		metrics: getAuditMetrics(),
 	}
 
 	// Register audit log table in housekeeper for retention management.
@@ -167,7 +187,7 @@ func (a *AuditStorer) Log(in *audit.AuditEntry, data any) {
 		// channel full, drop or log warning
 		a.logger.Warn("audit log channel full, dropping entry")
 
-		metricDropCount.Inc()
+		a.metrics.dropCount.Inc()
 	}
 }
 

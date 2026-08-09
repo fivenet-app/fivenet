@@ -330,6 +330,10 @@ func (s *Housekeeper) runDeleteOldDispatches(ctx context.Context, data *cron.Cro
 	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-old-delete")
 	defer span.End()
 
+	if data == nil {
+		data = &cron.CronjobData{}
+	}
+
 	dest := &cron.GenericCronData{
 		Attributes: map[string]string{},
 	}

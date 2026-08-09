@@ -20,7 +20,6 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -30,13 +29,31 @@ import (
 // ErrPrefixAmbiguous is returned when more than one key matches the prefix.
 var ErrPrefixAmbiguous = errors.New("multiple keys found with given prefix")
 
-// metricDataMapCount is a Prometheus gauge for tracking the number of entries in the store data map.
-var metricDataMapCount = promauto.NewGaugeVec(prometheus.GaugeOpts{
-	Namespace: admin.MetricsNamespace,
-	Subsystem: "nats_store",
-	Name:      "datamap_count",
-	Help:      "Count of data map entries.",
-}, []string{"bucket"})
+type storeMetrics struct {
+	dataMapCount *prometheus.GaugeVec
+}
+
+var (
+	storeMetricsOnce sync.Once
+	storeMetricsInst *storeMetrics
+)
+
+func getStoreMetrics() *storeMetrics {
+	storeMetricsOnce.Do(func() {
+		storeMetricsInst = &storeMetrics{
+			dataMapCount: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "nats_store",
+				Name:      "datamap_count",
+				Help:      "Count of data map entries.",
+			}, []string{"bucket"}),
+		}
+
+		prometheus.MustRegister(storeMetricsInst.dataMapCount)
+	})
+
+	return storeMetricsInst
+}
 
 // StoreRO is a (mostly) read-only store interface for accessing cached and remote data.
 type StoreRO[T any, U protoutils.ProtoMessageWithMerge[T]] interface {
@@ -76,7 +93,8 @@ type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 	// concurrent map of per-key mutexes
 	mu *xsync.Map[string, *sync.Mutex]
 	// concurrent map holding cached entries
-	data *xsync.Map[string, U]
+	data    *xsync.Map[string, U]
+	metrics *storeMetrics
 
 	// callback for update events
 	onUpdate OnUpdateFn[T, U]
@@ -122,8 +140,9 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](
 
 		cl: true,
 
-		mu:   xsync.NewMap[string, *sync.Mutex](),
-		data: xsync.NewMap[string, U](),
+		mu:      xsync.NewMap[string, *sync.Mutex](),
+		data:    xsync.NewMap[string, U](),
+		metrics: getStoreMetrics(),
 	}
 
 	kvConfig := jetstream.KeyValueConfig{
@@ -214,7 +233,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 
 	go func() {
 		for {
-			metricDataMapCount.WithLabelValues(s.bucket).Set(float64(s.data.Size()))
+			s.metrics.dataMapCount.WithLabelValues(s.bucket).Set(float64(s.data.Size()))
 
 			select {
 			case <-ctx.Done():

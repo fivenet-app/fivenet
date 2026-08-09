@@ -125,7 +125,7 @@ func New(p Params) Result {
 
 		s.wg.Go(func() {
 			if err := s.runDeleteOldDispatches(ctxCancel, nil); err != nil {
-				s.logger.Error("failed to delete old dispatches on startup")
+				s.logger.Error("failed to delete old dispatches on startup", zap.Error(err))
 			}
 		})
 

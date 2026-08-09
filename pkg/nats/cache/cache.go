@@ -17,20 +17,37 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
 
-// metricDataMapCount is a Prometheus gauge for tracking the number of entries in the cache data map.
-var metricDataMapCount = promauto.NewGaugeVec(prometheus.GaugeOpts{
-	Namespace: admin.MetricsNamespace,
-	Subsystem: "nats_cache",
-	Name:      "datamap_count",
-	Help:      "Count of data map entries.",
-}, []string{"bucket"})
+type cacheMetrics struct {
+	dataMapCount *prometheus.GaugeVec
+}
+
+var (
+	cacheMetricsOnce sync.Once
+	cacheMetricsInst *cacheMetrics
+)
+
+func getCacheMetrics() *cacheMetrics {
+	cacheMetricsOnce.Do(func() {
+		cacheMetricsInst = &cacheMetrics{
+			dataMapCount: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "nats_cache",
+				Name:      "datamap_count",
+				Help:      "Count of data map entries.",
+			}, []string{"bucket"}),
+		}
+
+		prometheus.MustRegister(cacheMetricsInst.dataMapCount)
+	})
+
+	return cacheMetricsInst
+}
 
 // Cache provides a generic, in-memory and NATS-backed cache for protobuf messages.
 type Cache[T any, U protoutils.ProtoMessage[T]] struct {
@@ -49,7 +66,8 @@ type Cache[T any, U protoutils.ProtoMessage[T]] struct {
 	ttl *time.Duration
 
 	// concurrent map holding cached entries
-	data *xsync.Map[string, *EntryWrapper[T, U]]
+	data    *xsync.Map[string, *EntryWrapper[T, U]]
+	metrics *cacheMetrics
 }
 
 // EntryWrapper wraps a cached protobuf message and its creation time.
@@ -72,9 +90,10 @@ func New[T any, U protoutils.ProtoMessage[T]](
 	opts ...Option[T, U],
 ) (*Cache[T, U], error) {
 	c := &Cache[T, U]{
-		logger: logger.Named("cache").With(zap.String("bucket", bucket)),
-		bucket: bucket,
-		data:   xsync.NewMap[string, *EntryWrapper[T, U]](),
+		logger:  logger.Named("cache").With(zap.String("bucket", bucket)),
+		bucket:  bucket,
+		data:    xsync.NewMap[string, *EntryWrapper[T, U]](),
+		metrics: getCacheMetrics(),
 	}
 
 	for _, opt := range opts {
@@ -156,7 +175,7 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 	go func() {
 		for {
 			// Update Prometheus metric with current cache size
-			metricDataMapCount.WithLabelValues(c.bucket).Set(float64(c.data.Size()))
+			c.metrics.dataMapCount.WithLabelValues(c.bucket).Set(float64(c.data.Size()))
 
 			select {
 			case <-ctx.Done():

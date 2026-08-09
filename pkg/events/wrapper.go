@@ -24,6 +24,7 @@ type JSWrapper struct {
 	mu         sync.Mutex
 	cfg        config.NATS
 	shutdowner fx.Shutdowner
+	metrics    *jsMetrics
 }
 
 func NewJSWrapper(js jetstream.JetStream, cfg config.NATS, shutdowner fx.Shutdowner) *JSWrapper {
@@ -33,6 +34,7 @@ func NewJSWrapper(js jetstream.JetStream, cfg config.NATS, shutdowner fx.Shutdow
 		mu:         sync.Mutex{},
 		cfg:        cfg,
 		shutdowner: shutdowner,
+		metrics:    getJSMetrics(),
 	}
 }
 

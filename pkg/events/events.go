@@ -13,7 +13,6 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -24,12 +23,31 @@ var Module = fx.Module("events",
 	),
 )
 
-var metricNATSAsyncPending = promauto.NewGauge(prometheus.GaugeOpts{
-	Namespace: admin.MetricsNamespace,
-	Subsystem: "nats",
-	Name:      "jetstream_async_pending_count",
-	Help:      "NATS JetStreamn async pending count.",
-})
+type jsMetrics struct {
+	asyncPending prometheus.Gauge
+}
+
+var (
+	jsMetricsOnce sync.Once
+	jsMetricsInst *jsMetrics
+)
+
+func getJSMetrics() *jsMetrics {
+	jsMetricsOnce.Do(func() {
+		jsMetricsInst = &jsMetrics{
+			asyncPending: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "nats",
+				Name:      "jetstream_async_pending_count",
+				Help:      "NATS JetStreamn async pending count.",
+			}),
+		}
+
+		prometheus.MustRegister(jsMetricsInst.asyncPending)
+	})
+
+	return jsMetricsInst
+}
 
 type Subject string
 
@@ -140,7 +158,7 @@ func New(p Params) (Result, error) {
 					return
 
 				case <-time.After(5 * time.Second):
-					metricNATSAsyncPending.Set(float64(res.JS.PublishAsyncPending()))
+					res.JS.metrics.asyncPending.Set(float64(res.JS.PublishAsyncPending()))
 				}
 			}
 		})

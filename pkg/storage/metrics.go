@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand/v2"
+	"sync"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -16,12 +17,31 @@ import (
 	"go.uber.org/zap"
 )
 
-var metricSpaceUsage = prometheus.NewGauge(prometheus.GaugeOpts{
-	Namespace: admin.MetricsNamespace,
-	Subsystem: "storage",
-	Name:      "space_usage_total_bytes",
-	Help:      "Total space used by files in the storage.",
-})
+type storageMetrics struct {
+	spaceUsage prometheus.Gauge
+}
+
+var (
+	storageMetricsOnce sync.Once
+	storageMetricsInst *storageMetrics
+)
+
+func getStorageMetrics() *storageMetrics {
+	storageMetricsOnce.Do(func() {
+		storageMetricsInst = &storageMetrics{
+			spaceUsage: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "storage",
+				Name:      "space_usage_total_bytes",
+				Help:      "Total space used by files in the storage.",
+			}),
+		}
+
+		prometheus.MustRegister(storageMetricsInst.spaceUsage)
+	})
+
+	return storageMetricsInst
+}
 
 var MetricsCollectorModule = fx.Module("storage.metrics_collector",
 	fx.Provide(NewMetricsCollector),
@@ -31,6 +51,7 @@ type MetricsCollector struct {
 	logger  *zap.Logger
 	le      *leaderelection.LeaderElector
 	storage IStorage
+	metrics *storageMetrics
 }
 
 type MetricsCollectorParams struct {
@@ -50,13 +71,12 @@ func NewMetricsCollector(p MetricsCollectorParams) *MetricsCollector {
 		return nil
 	}
 
-	prometheus.DefaultRegisterer.MustRegister(metricSpaceUsage)
-
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	mc := &MetricsCollector{
 		logger:  p.Logger.Named("storage.metrics"),
 		storage: p.Storage,
+		metrics: getStorageMetrics(),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -126,7 +146,7 @@ func (mc *MetricsCollector) CollectMetrics(ctx context.Context) error {
 
 	mc.logger.Info("Collected storage metrics", zap.Int64("space_usage", usage))
 
-	metricSpaceUsage.Set(float64(usage))
+	mc.metrics.spaceUsage.Set(float64(usage))
 
 	return nil
 }

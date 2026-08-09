@@ -13,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -21,12 +20,31 @@ import (
 	"go.uber.org/zap"
 )
 
-var metricBotActive = promauto.NewGaugeVec(prometheus.GaugeOpts{
-	Namespace: admin.MetricsNamespace,
-	Subsystem: "centrum_bot",
-	Name:      "active",
-	Help:      "If centrum bot is active or not.",
-}, []string{"job_name"})
+type botMetrics struct {
+	active *prometheus.GaugeVec
+}
+
+var (
+	botMetricsOnce sync.Once
+	botMetricsInst *botMetrics
+)
+
+func getBotMetrics() *botMetrics {
+	botMetricsOnce.Do(func() {
+		botMetricsInst = &botMetrics{
+			active: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "centrum_bot",
+				Name:      "active",
+				Help:      "If centrum bot is active or not.",
+			}, []string{"job_name"}),
+		}
+
+		prometheus.MustRegister(botMetricsInst.active)
+	})
+
+	return botMetricsInst
+}
 
 var Module = fx.Module("centrum_bot_manager",
 	fx.Provide(
@@ -49,6 +67,7 @@ type Manager struct {
 	settings   *settings.SettingsDB
 	units      *units.UnitDB
 	dispatches *dispatches.DispatchDB
+	metrics    *botMetrics
 }
 
 type Params struct {
@@ -85,6 +104,7 @@ func NewManager(p Params) *Manager {
 		settings:   p.Settings,
 		units:      p.Units,
 		dispatches: p.Dispatches,
+		metrics:    getBotMetrics(),
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
@@ -142,7 +162,7 @@ func (b *Manager) startBot(ctx context.Context, job string) error {
 		bot.Run()
 	})
 
-	metricBotActive.WithLabelValues(job).Set(1)
+	b.metrics.active.WithLabelValues(job).Set(1)
 
 	return nil
 }
@@ -160,7 +180,7 @@ func (b *Manager) stopBot(job string) error {
 
 	bot.Stop()
 
-	metricBotActive.WithLabelValues(job).Set(0)
+	b.metrics.active.WithLabelValues(job).Set(0)
 
 	b.bots.Delete(job)
 

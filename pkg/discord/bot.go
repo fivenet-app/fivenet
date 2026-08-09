@@ -28,7 +28,6 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -50,28 +49,49 @@ var BotModule = fx.Module("discord.bot",
 	fx.Decorate(wrapLogger),
 )
 
-var (
-	metricLastSync = promauto.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: admin.MetricsNamespace,
-		Subsystem: "discord_bot",
-		Name:      "last_sync",
-		Help:      "Last time sync has completed.",
-	}, []string{"job_name", "status"})
+type botMetrics struct {
+	lastSync     *prometheus.GaugeVec
+	guildsTotal  prometheus.Gauge
+	syncDuration *prometheus.GaugeVec
+}
 
-	metricGuildsTotal = promauto.NewGauge(prometheus.GaugeOpts{
-		Namespace: admin.MetricsNamespace,
-		Subsystem: "discord_bot",
-		Name:      "guilds_total_count",
-		Help:      "Total count of Discord guilds being ready.",
+var (
+	botMetricsOnce sync.Once
+	botMetricsInst *botMetrics
+)
+
+func getBotMetrics() *botMetrics {
+	botMetricsOnce.Do(func() {
+		botMetricsInst = &botMetrics{
+			lastSync: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "discord_bot",
+				Name:      "last_sync",
+				Help:      "Last time sync has completed.",
+			}, []string{"job_name", "status"}),
+			guildsTotal: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "discord_bot",
+				Name:      "guilds_total_count",
+				Help:      "Total count of Discord guilds being ready.",
+			}),
+			syncDuration: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "discord_bot",
+				Name:      "sync_duration_seconds",
+				Help:      "Duration of the last sync operation in seconds.",
+			}, []string{"job_name"}),
+		}
+
+		prometheus.MustRegister(
+			botMetricsInst.lastSync,
+			botMetricsInst.guildsTotal,
+			botMetricsInst.syncDuration,
+		)
 	})
 
-	metricSyncDuration = promauto.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: admin.MetricsNamespace,
-		Subsystem: "discord_bot",
-		Name:      "sync_duration_seconds",
-		Help:      "Duration of the last sync operation in seconds.",
-	}, []string{"job_name"})
-)
+	return botMetricsInst
+}
 
 type BotParams struct {
 	fx.In
@@ -106,6 +126,7 @@ type Bot struct {
 
 	publicURL          string
 	oauth2ProviderName string
+	metrics            *botMetrics
 
 	wg     sync.WaitGroup
 	workCh chan *Guild
@@ -148,6 +169,7 @@ func New(p BotParams) Result {
 
 		publicURL:          p.Config.HTTP.PublicURL,
 		oauth2ProviderName: oauth2ProviderName,
+		metrics:            getBotMetrics(),
 
 		wg:     sync.WaitGroup{},
 		workCh: make(chan *Guild, 3),
@@ -210,15 +232,15 @@ func New(p BotParams) Result {
 							if err := guild.Run(true); err != nil {
 								logger.Error("error during discord sync", zap.Error(err))
 
-								metricLastSync.WithLabelValues(guild.job, "failed").
+								b.metrics.lastSync.WithLabelValues(guild.job, "failed").
 									SetToCurrentTime()
 							} else {
-								metricLastSync.WithLabelValues(guild.job, "success").
+								b.metrics.lastSync.WithLabelValues(guild.job, "success").
 									SetToCurrentTime()
 							}
 						}()
 
-						metricSyncDuration.With(prometheus.Labels{"job_name": guild.job}).
+						b.metrics.syncDuration.With(prometheus.Labels{"job_name": guild.job}).
 							Set(elapsed.Seconds())
 					}
 				}
@@ -468,7 +490,7 @@ func (b *Bot) runSync(ctx context.Context) error {
 
 	totalCount := float64(0)
 
-	metricGuildsTotal.Set(totalCount)
+	b.metrics.guildsTotal.Set(totalCount)
 
 	errs := multierr.Combine()
 

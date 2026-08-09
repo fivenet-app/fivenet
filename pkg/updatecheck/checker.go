@@ -61,7 +61,7 @@ func New(p Params) IChecker {
 	}
 
 	if version.Version == version.UnknownVersion {
-		p.Logger.Warn("no version info in binary found, unable to check for updates")
+		p.Logger.Warn("no version info found in binary, unable to check for updates")
 		return nil
 	}
 

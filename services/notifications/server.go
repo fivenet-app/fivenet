@@ -3,14 +3,17 @@ package notifications
 import (
 	"context"
 	"database/sql"
+	"sync"
 
 	pbnotifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/notifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	grpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	notificationsstore "github.com/fivenet-app/fivenet/v2026/stores/notifications"
+	"github.com/prometheus/client_golang/prometheus"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
@@ -36,6 +39,43 @@ type Server struct {
 	auth        *grpcauth.GRPCAuth
 	store       notificationsstore.IStore
 	mailerStore mailerstore.IStore
+	metrics     *notificationMetrics
+}
+
+type notificationMetrics struct {
+	activeSessions prometheus.Gauge
+	lastSession    prometheus.Gauge
+}
+
+var (
+	notificationMetricsOnce sync.Once
+	notificationMetricsInst *notificationMetrics
+)
+
+func getNotificationMetrics() *notificationMetrics {
+	notificationMetricsOnce.Do(func() {
+		notificationMetricsInst = &notificationMetrics{
+			activeSessions: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "user",
+				Name:      "active_session_count",
+				Help:      "Number of active user sessions.",
+			}),
+			lastSession: prometheus.NewGauge(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "user",
+				Name:      "last_session_time",
+				Help:      "Timestamp of the last started user session.",
+			}),
+		}
+
+		prometheus.MustRegister(
+			notificationMetricsInst.activeSessions,
+			notificationMetricsInst.lastSession,
+		)
+	})
+
+	return notificationMetricsInst
 }
 
 type Params struct {
@@ -62,6 +102,7 @@ func NewServer(p Params) *Server {
 		auth:        p.Auth,
 		store:       p.Store,
 		mailerStore: p.MailerStore,
+		metrics:     getNotificationMetrics(),
 	}
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {

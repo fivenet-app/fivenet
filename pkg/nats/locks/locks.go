@@ -22,7 +22,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/zap"
 )
 
@@ -34,22 +33,40 @@ const (
 	KeyPrefix = "LOCK."
 )
 
-var (
-	// Prometheus metric: total number of lock acquisition attempts.
-	lockAcquireTotal = promauto.NewCounterVec(prometheus.CounterOpts{
-		Namespace: "nats_locks",
-		Name:      "acquire_total",
-		Help:      "Total number of lock acquisition attempts.",
-	}, []string{"bucket", "result"})
+type lockMetrics struct {
+	acquireTotal *prometheus.CounterVec
+	heldDuration *prometheus.HistogramVec
+}
 
-	// Prometheus metric: histogram of lock held durations.
-	lockHeldDuration = promauto.NewHistogramVec(prometheus.HistogramOpts{
-		Namespace: "nats_locks",
-		Name:      "held_duration_seconds",
-		Help:      "Histogram of lock held durations.",
-		Buckets:   prometheus.ExponentialBuckets(0.001, 2, 15),
-	}, []string{"bucket"})
+var (
+	lockMetricsOnce sync.Once
+	lockMetricsInst *lockMetrics
 )
+
+func getLockMetrics() *lockMetrics {
+	lockMetricsOnce.Do(func() {
+		lockMetricsInst = &lockMetrics{
+			acquireTotal: prometheus.NewCounterVec(prometheus.CounterOpts{
+				Namespace: "nats_locks",
+				Name:      "acquire_total",
+				Help:      "Total number of lock acquisition attempts.",
+			}, []string{"bucket", "result"}),
+			heldDuration: prometheus.NewHistogramVec(prometheus.HistogramOpts{
+				Namespace: "nats_locks",
+				Name:      "held_duration_seconds",
+				Help:      "Histogram of lock held durations.",
+				Buckets:   prometheus.ExponentialBuckets(0.001, 2, 15),
+			}, []string{"bucket"}),
+		}
+
+		prometheus.MustRegister(
+			lockMetricsInst.acquireTotal,
+			lockMetricsInst.heldDuration,
+		)
+	})
+
+	return lockMetricsInst
+}
 
 // Locks provides distributed locking using NATS JetStream KeyValue store
 // with lock expiration and metrics.
@@ -70,6 +87,7 @@ type Locks struct {
 	revMap map[string]uint64
 	// mutex for revMap
 	maplock sync.RWMutex
+	metrics *lockMetrics
 }
 
 // New creates a new Locks instance for a given bucket and max lock age (`_locks` is automatically added to the bucket).
@@ -118,7 +136,8 @@ func NewWithKV(
 
 		maxLockAge: maxLockAge,
 
-		revMap: map[string]uint64{},
+		revMap:  map[string]uint64{},
+		metrics: getLockMetrics(),
 	}
 }
 
@@ -174,7 +193,7 @@ loop:
 		select {
 		case <-time.After(jitterDelay()):
 		case <-ctx.Done():
-			lockAcquireTotal.WithLabelValues(l.bucket, "fail").Inc()
+			l.metrics.acquireTotal.WithLabelValues(l.bucket, "fail").Inc()
 			return ctx.Err()
 		}
 	}
@@ -188,14 +207,14 @@ loop:
 	}
 
 	if err != nil {
-		lockAcquireTotal.WithLabelValues(l.bucket, "fail").Inc()
+		l.metrics.acquireTotal.WithLabelValues(l.bucket, "fail").Inc()
 		return err
 	}
 
 	l.setRev(lockKey, nrev)
 
-	lockAcquireTotal.WithLabelValues(l.bucket, "success").Inc()
-	lockHeldDuration.WithLabelValues(l.bucket).Observe(time.Since(start).Seconds())
+	l.metrics.acquireTotal.WithLabelValues(l.bucket, "success").Inc()
+	l.metrics.heldDuration.WithLabelValues(l.bucket).Observe(time.Since(start).Seconds())
 	return nil
 }
 

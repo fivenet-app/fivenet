@@ -13,20 +13,47 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-// metricTotalCollabRooms tracks the number of active collaborative rooms for Prometheus monitoring.
-var metricTotalCollabRooms = promauto.NewGaugeVec(prometheus.GaugeOpts{
-	Namespace: admin.MetricsNamespace,
-	Subsystem: "collab",
-	Name:      "room_count",
-	Help:      "Number of active collaborative rooms.",
-}, []string{"category"})
+type collabMetrics struct {
+	totalRooms          *prometheus.GaugeVec
+	totalConnectedUsers *prometheus.GaugeVec
+}
+
+var (
+	collabMetricsOnce sync.Once
+	collabMetricsInst *collabMetrics
+)
+
+func getCollabMetrics() *collabMetrics {
+	collabMetricsOnce.Do(func() {
+		collabMetricsInst = &collabMetrics{
+			totalRooms: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "collab",
+				Name:      "room_count",
+				Help:      "Number of active collaborative rooms.",
+			}, []string{"category"}),
+			totalConnectedUsers: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "collab",
+				Name:      "client_count",
+				Help:      "Number of connected clients by category.",
+			}, []string{"category"}),
+		}
+
+		prometheus.MustRegister(
+			collabMetricsInst.totalRooms,
+			collabMetricsInst.totalConnectedUsers,
+		)
+	})
+
+	return collabMetricsInst
+}
 
 const (
 	kvBucket = "collab_state"
@@ -55,6 +82,7 @@ type CollabServer struct {
 
 	// Key-Value store for state management
 	stateKV jetstream.KeyValue
+	metrics *collabMetrics
 }
 
 // New creates and returns a new CollabServer for the given category, logger, and JetStream wrapper.
@@ -75,6 +103,7 @@ func New(
 		js:     js,
 
 		category: category,
+		metrics:  getCollabMetrics(),
 
 		mu:    sync.Mutex{},
 		rooms: make(map[int64]*CollabRoom),
@@ -171,12 +200,12 @@ func (s *CollabServer) getOrCreateRoom(targetId int64) (*CollabRoom, error) {
 	// Get or create the document room
 	room, exists := s.rooms[targetId]
 	if !exists {
-		room, err = NewCollabRoom(s.ctx, s.logger, s.stateKV, targetId, s.js.JetStream, s.category)
+		room, err = NewCollabRoom(s.ctx, s.logger, s.stateKV, targetId, s.js.JetStream, s.category, s.metrics)
 		if err != nil {
 			return nil, err
 		}
 		s.rooms[targetId] = room
-		metricTotalCollabRooms.WithLabelValues(s.category).Inc()
+		s.metrics.totalRooms.WithLabelValues(s.category).Inc()
 
 		return room, err
 	}
@@ -215,7 +244,7 @@ func (s *CollabServer) HandleClient(
 			s.mu.Lock()
 			delete(s.rooms, targetId)
 			s.mu.Unlock()
-			metricTotalCollabRooms.WithLabelValues(s.category).Dec()
+			s.metrics.totalRooms.WithLabelValues(s.category).Dec()
 		}
 	}()
 

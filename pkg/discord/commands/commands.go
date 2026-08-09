@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"sync"
 
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
@@ -16,17 +17,35 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
-var metricCommandCalls = promauto.NewGaugeVec(prometheus.GaugeOpts{
-	Namespace: admin.MetricsNamespace,
-	Subsystem: "discord_commands",
-	Name:      "call_count",
-	Help:      "Number of per command call count.",
-}, []string{"command"})
+type commandMetrics struct {
+	callCount *prometheus.GaugeVec
+}
+
+var (
+	commandMetricsOnce sync.Once
+	commandMetricsInst *commandMetrics
+)
+
+func getCommandMetrics() *commandMetrics {
+	commandMetricsOnce.Do(func() {
+		commandMetricsInst = &commandMetrics{
+			callCount: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "discord_commands",
+				Name:      "call_count",
+				Help:      "Number of per command call count.",
+			}, []string{"command"}),
+		}
+
+		prometheus.MustRegister(commandMetricsInst.callCount)
+	})
+
+	return commandMetricsInst
+}
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord.bot").Named("commands")
@@ -69,7 +88,8 @@ type Cmds struct {
 	cfg    *config.Config
 	dc     *state.State
 
-	router *cmdroute.Router
+	router  *cmdroute.Router
+	metrics *commandMetrics
 }
 
 func New(p Params) *Cmds {
@@ -82,10 +102,11 @@ func New(p Params) *Cmds {
 		cfg:    p.Cfg,
 		dc:     p.DC,
 
-		router: cmdroute.NewRouter(),
+		router:  cmdroute.NewRouter(),
+		metrics: getCommandMetrics(),
 	}
 
-	c.router.Use(newMiddlewareLogger(c.logger))
+	c.router.Use(newMiddlewareLogger(c.metrics, c.logger))
 	// Automatically defer handles if they're slow.
 	c.router.Use(cmdroute.Deferrable(p.DC, cmdroute.DeferOpts{}))
 
@@ -101,7 +122,7 @@ func New(p Params) *Cmds {
 			cmdData := cmd.RegisterCommand(c.router)
 			commands = append(commands, cmdData)
 
-			metricCommandCalls.WithLabelValues(cmdData.Name).Set(0)
+			c.metrics.callCount.WithLabelValues(cmdData.Name).Set(0)
 		}
 
 		if err := cmdroute.OverwriteCommands(c.dc, commands); err != nil {
@@ -116,7 +137,7 @@ func New(p Params) *Cmds {
 	return c
 }
 
-func newMiddlewareLogger(logger *zap.Logger) cmdroute.Middleware {
+func newMiddlewareLogger(metrics *commandMetrics, logger *zap.Logger) cmdroute.Middleware {
 	return func(next cmdroute.InteractionHandler) cmdroute.InteractionHandler {
 		return cmdroute.InteractionHandlerFunc(
 			func(ctx context.Context, ev *discord.InteractionEvent) *api.InteractionResponse {
@@ -137,7 +158,7 @@ func newMiddlewareLogger(logger *zap.Logger) cmdroute.Middleware {
 
 				switch data := ev.Data.(type) {
 				case *discord.CommandInteraction:
-					metricCommandCalls.WithLabelValues(data.Name).Inc()
+					metrics.callCount.WithLabelValues(data.Name).Inc()
 				}
 				return resp
 			},

@@ -41,6 +41,7 @@ type Sync struct {
 
 	cfg     *dbsyncconfig.Config
 	state   *dbsyncconfig.State
+	metrics *syncMetrics
 	cli     *grpc.ClientConn
 	syncCli pbsync.SyncServiceClient
 
@@ -82,10 +83,11 @@ func New(p Params) (*Sync, error) {
 	s := &Sync{
 		wg: &sync.WaitGroup{},
 
-		logger: logger,
-		cfg:    p.Config,
-		db:     p.DB,
-		state:  p.State,
+		logger:  logger,
+		cfg:     p.Config,
+		db:      p.DB,
+		state:   p.State,
+		metrics: getSyncMetrics(),
 
 		streamCh: make(chan *pbsync.StreamResponse, 12),
 	}
@@ -289,7 +291,7 @@ func (s *Sync) run(ctx context.Context) error {
 			for {
 				startedAt := time.Now()
 				fetched, sent, lastID, lastUpdatedAt, err := s.users.Sync(ctx)
-				recordSyncMetrics("users", startedAt, fetched, sent, err)
+				s.recordSyncMetrics("users", startedAt, fetched, sent, err)
 				if err != nil {
 					s.logger.Error("error during users sync", zap.Error(err))
 				} else {
@@ -322,7 +324,7 @@ func (s *Sync) run(ctx context.Context) error {
 					case <-time.After(resyncInterval):
 						startedAt := time.Now()
 						fetched, sent, lastID, _, err := s.usersResync.Resync(ctx)
-						recordSyncMetrics("users_resync", startedAt, fetched, sent, err)
+						s.recordSyncMetrics("users_resync", startedAt, fetched, sent, err)
 						if err != nil {
 							s.logger.Error("error during users resync", zap.Error(err))
 						} else {
@@ -346,7 +348,7 @@ func (s *Sync) run(ctx context.Context) error {
 			for {
 				startedAt := time.Now()
 				fetched, sent, plate, lastUpdatedAt, err := s.vehicles.Sync(ctx)
-				recordSyncMetrics("vehicles", startedAt, fetched, sent, err)
+				s.recordSyncMetrics("vehicles", startedAt, fetched, sent, err)
 				if err != nil {
 					s.logger.Error("error during vehicles sync", zap.Error(err))
 				} else {
@@ -379,7 +381,7 @@ func (s *Sync) run(ctx context.Context) error {
 					case <-time.After(resyncInterval):
 						startedAt := time.Now()
 						fetched, sent, lastID, _, err := s.vehiclesResync.Resync(ctx)
-						recordSyncMetrics("vehicles_resync", startedAt, fetched, sent, err)
+						s.recordSyncMetrics("vehicles_resync", startedAt, fetched, sent, err)
 						if err != nil {
 							s.logger.Error("error during vehicles resync", zap.Error(err))
 						} else {
@@ -403,7 +405,7 @@ func (s *Sync) run(ctx context.Context) error {
 			for {
 				startedAt := time.Now()
 				count, err := s.accounts.Sync(ctx)
-				recordSyncMetrics("accounts", startedAt, count, count, err)
+				s.recordSyncMetrics("accounts", startedAt, count, count, err)
 				if err != nil {
 					s.logger.Error("error during accounts sync", zap.Error(err))
 				} else {
@@ -431,7 +433,7 @@ func (s *Sync) syncBaseData(ctx context.Context) error {
 	if s.cfg.Load().Tables.Jobs.Enabled {
 		startedAt := time.Now()
 		count, err := s.jobs.Sync(ctx)
-		recordSyncMetrics("jobs", startedAt, count, count, err)
+		s.recordSyncMetrics("jobs", startedAt, count, count, err)
 		if err != nil {
 			errs = multierr.Append(errs, err)
 			s.logger.Error("error during jobs sync", zap.Error(err))
@@ -443,7 +445,7 @@ func (s *Sync) syncBaseData(ctx context.Context) error {
 	if s.cfg.Load().Tables.Licenses.Enabled {
 		startedAt := time.Now()
 		count, err := s.licenses.Sync(ctx)
-		recordSyncMetrics("licenses", startedAt, count, count, err)
+		s.recordSyncMetrics("licenses", startedAt, count, count, err)
 		if err != nil {
 			errs = multierr.Append(errs, err)
 			s.logger.Error("error during licenses sync", zap.Error(err))

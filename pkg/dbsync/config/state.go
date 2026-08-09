@@ -31,7 +31,8 @@ type StateParams struct {
 type State struct {
 	mu sync.RWMutex
 
-	logger *zap.Logger
+	logger  *zap.Logger
+	metrics *cursorMetrics
 
 	filepath string `yaml:"-"`
 
@@ -51,7 +52,8 @@ func NewState(p StateParams) (*State, error) {
 	s := &State{
 		mu: sync.RWMutex{},
 
-		logger: p.Logger.Named("dbsync.state"),
+		logger:  p.Logger.Named("dbsync.state"),
+		metrics: getCursorMetrics(),
 
 		filepath: p.Config.Load().StateFile,
 	}
@@ -153,7 +155,9 @@ func (s *TableSyncState) setMetrics() {
 		return
 	}
 
-	setCursorMetrics(s.key, s.LastCheck)
+	if s.dss != nil && s.dss.metrics != nil {
+		s.dss.metrics.setCursorMetrics(s.key, s.LastCheck)
+	}
 }
 
 func (s *TableSyncState) SetCursor(lastCheck *time.Time, lastId *string) {

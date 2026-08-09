@@ -8,10 +8,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/collab"
-	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -21,14 +18,6 @@ const (
 
 	feedFetch = 24
 )
-
-// metricTotalConnectedClients tracks the number of connected clients by category for Prometheus monitoring.
-var metricTotalConnectedClients = promauto.NewGaugeVec(prometheus.GaugeOpts{
-	Namespace: admin.MetricsNamespace,
-	Subsystem: "collab",
-	Name:      "client_count",
-	Help:      "Number of connected clients by category.",
-}, []string{"category"})
 
 // CollabRoom represents a single collaborative document room served by this process.
 type CollabRoom struct {
@@ -53,6 +42,7 @@ type CollabRoom struct {
 	consumer jetstream.Consumer
 
 	stateKV jetstream.KeyValue
+	metrics *collabMetrics
 
 	// ctx is the context for the room's lifecycle.
 	ctx context.Context //nolint:containedctx // Room lifecycle context controls consume loop shutdown.
@@ -68,6 +58,7 @@ func NewCollabRoom(
 	roomId int64,
 	js jetstream.JetStream,
 	category string,
+	metrics *collabMetrics,
 ) (*CollabRoom, error) {
 	ctx, cancel := context.WithCancel(ctx)
 
@@ -94,6 +85,7 @@ func NewCollabRoom(
 		consumer: consumer,
 		subject:  subject,
 		stateKV:  stateKV,
+		metrics:  metrics,
 
 		ctx:    ctx,
 		cancel: cancel,
@@ -115,7 +107,7 @@ func (r *CollabRoom) Join(ctx context.Context, c *Client) error {
 		return fmt.Errorf("failed to start presence for client %d. %w", c.Id, err)
 	}
 
-	metricTotalConnectedClients.WithLabelValues(r.category).Inc()
+	r.metrics.totalConnectedUsers.WithLabelValues(r.category).Inc()
 	r.logger.Debug("client joined", zap.Uint64("client_id", c.Id), zap.Int("clients", clientCount))
 
 	return nil
@@ -145,7 +137,7 @@ func (r *CollabRoom) Leave(ctx context.Context, clientId uint64) bool {
 		zap.Int("clients", clientCount),
 	)
 
-	metricTotalConnectedClients.WithLabelValues(r.category).Dec()
+	r.metrics.totalConnectedUsers.WithLabelValues(r.category).Dec()
 
 	return empty
 }
