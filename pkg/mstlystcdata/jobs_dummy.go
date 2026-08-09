@@ -1,6 +1,8 @@
 package mstlystcdata
 
 import (
+	"context"
+
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	"github.com/nats-io/nats.go/jetstream"
 )
@@ -71,3 +73,19 @@ func (j *DummyJobs) GetHighestJobGrade(job string) *jobs.JobGrade {
 
 	return out.GetGrades()[len(out.GetGrades())-1]
 }
+
+type TestJobs struct {
+	*DummyJobs
+}
+
+func NewTestJobs(entries map[string]*jobs.Job) IJobs {
+	return &TestJobs{
+		DummyJobs: NewDummyJobs(entries),
+	}
+}
+
+func (j *TestJobs) Refresh(context.Context) error {
+	return nil
+}
+
+func (j *TestJobs) addUpdateCallback(updateCallbackFn) {}

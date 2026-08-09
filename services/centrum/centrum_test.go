@@ -13,6 +13,7 @@ import (
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -22,6 +23,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	trackerpkg "github.com/fivenet-app/fivenet/v2026/pkg/tracker"
@@ -156,6 +158,64 @@ func newCentrumJoinUnitTestServer(
 	dbServer := servers.NewDBServer(t, true)
 	natsServer := servers.NewNATSServer(t, true)
 	trackerStub := newCentrumJoinUnitTestTracker()
+	jobsCatalog := mstlystcdata.NewTestJobs(map[string]*jobs.Job{
+		"ambulance": {
+			Name:  "ambulance",
+			Label: "LSMD",
+			Grades: []*jobs.JobGrade{
+				{
+					JobName: func() *string {
+						jobName := "ambulance"
+						return &jobName
+					}(),
+					Grade: 1,
+					Label: "Rank 1",
+				},
+			},
+		},
+		"police": {
+			Name:  "police",
+			Label: "LSPD",
+			Grades: []*jobs.JobGrade{
+				{
+					JobName: func() *string {
+						jobName := "police"
+						return &jobName
+					}(),
+					Grade: 1,
+					Label: "Rank 1",
+				},
+			},
+		},
+		"doj": {
+			Name:  "doj",
+			Label: "DOJ",
+			Grades: []*jobs.JobGrade{
+				{
+					JobName: func() *string {
+						jobName := "doj"
+						return &jobName
+					}(),
+					Grade: 1,
+					Label: "Rank 1",
+				},
+			},
+		},
+		"unemployed": {
+			Name:  "unemployed",
+			Label: "Unemployed",
+			Grades: []*jobs.JobGrade{
+				{
+					JobName: func() *string {
+						jobName := "unemployed"
+						return &jobName
+					}(),
+					Grade: 1,
+					Label: "Rank 1",
+				},
+			},
+		},
+	})
 
 	var srv *Server
 	app := fxtest.New(t,
@@ -165,6 +225,7 @@ func newCentrumJoinUnitTestServer(
 			userinfo.RetrieverModule,
 			fx.Provide(notifi.New),
 			fx.Provide(grpcSrvModule),
+			fx.Decorate(func(_ mstlystcdata.IJobs) mstlystcdata.IJobs { return jobsCatalog }),
 			fx.Provide(func() trackerpkg.ITracker {
 				return trackerStub
 			}),
@@ -215,23 +276,6 @@ func createUnitForTest(
 	require.NotNil(t, resp.GetUnit())
 
 	return resp.GetUnit()
-}
-
-func insertUnitRowForTest(t *testing.T, db *sql.DB, job, name string) int64 {
-	t.Helper()
-
-	res, err := db.Exec(
-		`INSERT INTO fivenet_centrum_units (job, name, initials, color) VALUES (?, ?, ?, ?)`,
-		job,
-		name,
-		name[:1],
-		"#445566",
-	)
-	require.NoError(t, err)
-
-	id, err := res.LastInsertId()
-	require.NoError(t, err)
-	return id
 }
 
 func seedAssignmentForTest(
@@ -584,10 +628,15 @@ func TestJoinUnitKeepsCurrentUnitWhenTargetValidationFails(t *testing.T) {
 	currentUnit := createUnitForTest(t, srv, ctx, "Alpha-Current")
 	seedAssignmentForTest(t, db, trackerStub, currentUnit.GetId(), 1)
 
-	targetUnitID := insertUnitRowForTest(t, db, "police", "Bravo-Target")
+	policeCtx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   2,
+		Job:      "police",
+		JobGrade: 17,
+	})
+	targetUnit := createUnitForTest(t, srv, policeCtx, "Bravo-Target")
 
 	resp, err := srv.JoinUnit(ctx, &pbcentrum.JoinUnitRequest{
-		UnitId: &targetUnitID,
+		UnitId: &targetUnit.Id,
 	})
 	require.ErrorIs(t, err, errorscentrum.ErrUnitPermDenied)
 	assert.Nil(t, resp)
@@ -598,7 +647,7 @@ func TestJoinUnitKeepsCurrentUnitWhenTargetValidationFails(t *testing.T) {
 	require.NotNil(t, mapping)
 	assert.Equal(t, currentUnit.GetId(), mapping.GetUnitId())
 	assert.Equal(t, 1, unitAssignmentCountForTest(t, db, currentUnit.GetId(), 1))
-	assert.Equal(t, 0, unitAssignmentCountForTest(t, db, targetUnitID, 1))
+	assert.Equal(t, 0, unitAssignmentCountForTest(t, db, targetUnit.GetId(), 1))
 }
 
 func TestJoinUnitMovesUserAfterValidationSucceeds(t *testing.T) {
@@ -780,6 +829,14 @@ func TestUpdateDispatchStatusAllowsMissingTrackerMapping(t *testing.T) {
 		JobGrade: 20,
 	})
 	dispatch := createDispatchForTest(t, srv, ctx)
+	jobGrade := int32(20)
+	trackerStub.markers[21] = &livemapmarkers.UserMarker{
+		UserId:   21,
+		Job:      "ambulance",
+		JobGrade: &jobGrade,
+		Hidden:   false,
+	}
+	require.NoError(t, srv.dispatchers.SetUserState(ctx, "ambulance", 21, true))
 	delete(trackerStub.mappings, 21)
 
 	resp, err := srv.UpdateDispatchStatus(ctx, &pbcentrum.UpdateDispatchStatusRequest{

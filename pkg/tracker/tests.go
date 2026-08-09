@@ -28,7 +28,7 @@ type TestParams struct {
 	LC fx.Lifecycle
 }
 
-func NewForTests(p TestParams) ITracker {
+func NewForTests(p TestParams) *TestTracker {
 	t := &TestTracker{
 		usersCache: xsync.NewMap[string, *xsync.Map[int32, *livemapmarkers.UserMarker]](),
 		usersIDs:   xsync.NewMap[int32, *livemapmarkers.UserMarker](),
@@ -50,6 +50,34 @@ func NewForTests(p TestParams) ITracker {
 	}))
 
 	return t
+}
+
+func (s *TestTracker) SeedUserMarker(marker *livemapmarkers.UserMarker) {
+	if marker == nil {
+		return
+	}
+
+	s.usersIDs.Store(marker.GetUserId(), marker)
+
+	users, _ := s.usersCache.LoadOrStore(marker.GetJob(), xsync.NewMap[int32, *livemapmarkers.UserMarker]())
+	users.Store(marker.GetUserId(), marker)
+}
+
+func (s *TestTracker) DeleteUserMarker(userId int32) {
+	info, ok := s.usersIDs.Load(userId)
+	if !ok {
+		return
+	}
+
+	s.usersIDs.Delete(userId)
+
+	if info == nil {
+		return
+	}
+
+	if users, ok := s.usersCache.Load(info.GetJob()); ok {
+		users.Delete(userId)
+	}
 }
 
 func (s *TestTracker) ListTrackedJobs() []string {

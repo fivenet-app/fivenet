@@ -31,13 +31,14 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, func()) {
+func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, *tracker.TestTracker, func()) {
 	t.Helper()
 
 	dbServer := servers.NewDBServer(t, true)
 	natsServer := servers.NewNATSServer(t, true)
 
 	var manager *Manager
+	var trackerStub *tracker.TestTracker
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
 			dbServer.FxProvide(),
@@ -48,6 +49,9 @@ func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, func()) {
 			fx.Provide(settings.New),
 			fx.Provide(units.New),
 			fx.Provide(New),
+			fx.Invoke(func(t *tracker.TestTracker) {
+				trackerStub = t
+			}),
 			fx.Invoke(func(m *Manager) {
 				manager = m
 			}),
@@ -60,8 +64,9 @@ func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, func()) {
 	db, err := dbServer.DB()
 	require.NoError(t, err)
 	require.NotNil(t, manager)
+	require.NotNil(t, trackerStub)
 
-	return manager, db, func() {
+	return manager, db, trackerStub, func() {
 		app.RequireStop()
 	}
 }
@@ -70,7 +75,7 @@ func TestRefreshUserLocations(t *testing.T) {
 	t.Parallel()
 
 	ctx := t.Context()
-	manager, db, stop := newTrackerManagerForTest(t)
+	manager, db, _, stop := newTrackerManagerForTest(t)
 	defer stop()
 
 	msgCh := make(chan int)
@@ -285,11 +290,17 @@ func TestRefreshUserLocationsRemovesOldJobDispatcherOnJobChange(t *testing.T) {
 	t.Parallel()
 
 	ctx := t.Context()
-	manager, db, stop := newTrackerManagerForTest(t)
+	manager, db, trackerStub, stop := newTrackerManagerForTest(t)
 	defer stop()
 
 	require.NoError(t, insertCitizenLocations(ctx, db, 1, "ambulance", 3, 1.0, 1.0, false))
 	require.NoError(t, manager.refreshUserLocations(ctx, true))
+	trackerStub.SeedUserMarker(&livemapmarkers.UserMarker{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: proto.Int32(3),
+		Hidden:   false,
+	})
 
 	marker, err := manager.userByIDStore.Get(tracker.UserIdKey(1))
 	require.NoError(t, err)
@@ -331,7 +342,7 @@ func TestCleanupUserIDsDeletesStaleLocationKeyWhenMarkerMissing(t *testing.T) {
 	t.Parallel()
 
 	ctx := t.Context()
-	manager, db, stop := newTrackerManagerForTest(t)
+	manager, db, _, stop := newTrackerManagerForTest(t)
 	defer stop()
 
 	staleUser := &livemapmarkers.UserMarker{
