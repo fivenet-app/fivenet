@@ -200,7 +200,15 @@ func (s *CollabServer) getOrCreateRoom(targetId int64) (*CollabRoom, error) {
 	// Get or create the document room
 	room, exists := s.rooms[targetId]
 	if !exists {
-		room, err = NewCollabRoom(s.ctx, s.logger, s.stateKV, targetId, s.js.JetStream, s.category, s.metrics)
+		room, err = NewCollabRoom(
+			s.ctx,
+			s.logger,
+			s.stateKV,
+			targetId,
+			s.js.JetStream,
+			s.category,
+			s.metrics,
+		)
 		if err != nil {
 			return nil, err
 		}

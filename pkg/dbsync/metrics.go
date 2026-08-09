@@ -68,7 +68,13 @@ func getSyncMetrics() *syncMetrics {
 	return syncMetricsInst
 }
 
-func (s *Sync) recordSyncMetrics(syncer string, startedAt time.Time, fetched int64, sent int64, err error) {
+func (s *Sync) recordSyncMetrics(
+	syncer string,
+	startedAt time.Time,
+	fetched int64,
+	sent int64,
+	err error,
+) {
 	if syncer == "" {
 		return
 	}
