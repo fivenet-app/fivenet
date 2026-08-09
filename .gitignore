@@ -69,3 +69,5 @@ localhost.*
 
 # AI Tools
 .codex
+.agents/
+*.codexbundle
