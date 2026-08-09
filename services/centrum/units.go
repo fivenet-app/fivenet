@@ -337,7 +337,7 @@ func (s *Server) JoinUnit(
 
 	// Check if user is on duty, if not make sure to unset any unit id
 	if um, ok := s.tracker.GetUserMarkerById(userInfo.GetUserId()); !ok || um.GetHidden() {
-		if err := s.tracker.SetUserMappingForUser(ctx, userInfo.GetUserId(), nil); err != nil {
+		if err := s.units.SyncUserUnitMapping(ctx, userInfo.GetUserId()); err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
@@ -376,7 +376,7 @@ func (s *Server) JoinUnit(
 			"user joining unit",
 			zap.String("job", userInfo.GetJob()),
 			zap.Int32("user_id", userInfo.GetUserId()),
-			zap.Int64("current_unit_id", currentUnitMapping.GetUnitId()),
+			zap.Int64("current_unit_id", currentUnit.GetId()),
 			zap.Int64("unit_id", req.GetUnitId()),
 		)
 
@@ -435,7 +435,7 @@ func (s *Server) JoinUnit(
 	} else {
 		s.logger.Debug(
 			"user leaving unit",
-			zap.Int64("current_unit_id", currentUnitMapping.GetUnitId()),
+			zap.Int64("current_unit_id", currentUnit.GetId()),
 			zap.Int64("unit_id", req.GetUnitId()),
 		)
 		// User leaves his current unit (if he is in an unit)

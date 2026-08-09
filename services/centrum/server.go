@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"sync"
 	"time"
 
@@ -221,9 +222,25 @@ func (s *Server) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		ctx, span := s.tracer.Start(ctx, "centrum.dispatch.heatmap")
 		defer span.End()
 
-		if err := s.generateDispatchHeatmaps(ctx); err != nil {
+		dest := &cron.GenericCronData{
+			Attributes: map[string]string{},
+		}
+		if err := data.Unmarshal(dest); err != nil {
+			s.logger.Warn("failed to unmarshal centrum dispatch heatmap cron data", zap.Error(err))
+		}
+
+		jobsRebuilt, err := s.generateDispatchHeatmaps(ctx)
+		if err != nil {
 			s.logger.Error("failed to generate centrum dispatch heatmaps for jobs", zap.Error(err))
 			return err
+		}
+		dest.SetAttribute(heatmapJobsRebuiltAttr, strconv.FormatInt(jobsRebuilt, 10))
+
+		if err := data.MarshalFrom(dest); err != nil {
+			return fmt.Errorf(
+				"failed to marshal updated centrum dispatch heatmap cron data. %w",
+				err,
+			)
 		}
 
 		return nil

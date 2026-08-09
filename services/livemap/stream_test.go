@@ -70,6 +70,10 @@ func (t *streamTestTracker) UnsetUnitIDForUser(_ context.Context, _ int32) error
 	return nil
 }
 
+func (t *streamTestTracker) DeleteUserMapping(_ context.Context, _ int32) error {
+	return nil
+}
+
 func (t *streamTestTracker) ListUserMappings(
 	_ context.Context,
 ) (map[int32]*resourcestracker.UserMapping, error) {

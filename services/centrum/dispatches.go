@@ -484,10 +484,9 @@ func (s *Server) UpdateDispatchStatus(
 			return nil, errorscentrum.ErrNotPartOfDispatch
 		}
 	} else {
-		if !ok {
-			userMapping = nil
+		if ok && userMapping != nil {
+			statusUnitId = userMapping.UnitId
 		}
-		statusUnitId = userMapping.UnitId
 	}
 
 	if _, err := s.dispatches.UpdateStatus(ctx, dsp.GetId(), &centrumdispatches.DispatchStatus{

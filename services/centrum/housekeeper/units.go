@@ -2,8 +2,10 @@ package housekeeper
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"slices"
+	"strconv"
 	"time"
 
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
@@ -14,20 +16,48 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	cleanupUnitsDispatchesUnassignedAttr = "dispatches_unassigned"
+	cleanupUnitsEmptyUnitsRemovedAttr    = "empty_units_removed"
+	cleanupUnitsStatusesUpdatedAttr      = "unit_statuses_updated"
+	cleanupUnitsOffDutyRemovedAttr       = "off_duty_users_removed"
+	cleanupUnitsMappingsRepairedAttr     = "mappings_repaired"
+)
+
 func (s *Housekeeper) runCleanupUnits(ctx context.Context, data *cron.CronjobData) error {
 	ctx, span := s.tracer.Start(ctx, "centrum.units-cleanup")
 	defer span.End()
 
-	if err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
+	dest := &cron.GenericCronData{
+		Attributes: map[string]string{},
+	}
+	if err := data.Unmarshal(dest); err != nil {
+		s.logger.Warn("failed to unmarshal cleanup units cron data", zap.Error(err))
+	}
+
+	dispatchesUnassigned, emptyUnitsRemoved, err := s.removeDispatchesFromEmptyUnits(ctx)
+	if err != nil {
 		s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
 	}
 
-	if err := s.cleanupUnitStatus(ctx); err != nil {
+	unitStatusesUpdated, err := s.cleanupUnitStatus(ctx)
+	if err != nil {
 		s.logger.Error("failed to clean up unit status", zap.Error(err))
 	}
 
-	if err := s.checkUnitUsers(ctx); err != nil {
+	offDutyUsersRemoved, mappingsRepaired, err := s.checkUnitUsers(ctx)
+	if err != nil {
 		s.logger.Error("failed to check duty state of unit users", zap.Error(err))
+	}
+
+	dest.SetAttribute(cleanupUnitsDispatchesUnassignedAttr, strconv.Itoa(dispatchesUnassigned))
+	dest.SetAttribute(cleanupUnitsEmptyUnitsRemovedAttr, strconv.Itoa(emptyUnitsRemoved))
+	dest.SetAttribute(cleanupUnitsStatusesUpdatedAttr, strconv.Itoa(unitStatusesUpdated))
+	dest.SetAttribute(cleanupUnitsOffDutyRemovedAttr, strconv.Itoa(offDutyUsersRemoved))
+	dest.SetAttribute(cleanupUnitsMappingsRepairedAttr, strconv.Itoa(mappingsRepaired))
+
+	if err := data.MarshalFrom(dest); err != nil {
+		return fmt.Errorf("failed to marshal updated cleanup units cron data. %w", err)
 	}
 
 	return nil
@@ -35,7 +65,9 @@ func (s *Housekeeper) runCleanupUnits(ctx context.Context, data *cron.CronjobDat
 
 // Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by
 // iterating over the dispatches and making sure the assigned units aren't empty.
-func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error {
+func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) (int, int, error) {
+	dispatchesUnassigned := 0
+	emptyUnitsRemoved := 0
 	for _, settings := range s.settings.List(ctx) {
 		job := settings.GetJob()
 
@@ -65,8 +97,9 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 						CreatorJob: &job,
 					},
 				); err != nil {
-					return err
+					return dispatchesUnassigned, emptyUnitsRemoved, err
 				}
+				dispatchesUnassigned++
 
 				continue
 			}
@@ -122,15 +155,17 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 					)
 					continue
 				}
+				emptyUnitsRemoved++
 			}
 		}
 	}
 
-	return nil
+	return dispatchesUnassigned, emptyUnitsRemoved, nil
 }
 
 // Iterate over units to ensure that, e.g., an empty unit status is set to `unavailable`.
-func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
+func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) (int, error) {
+	updated := 0
 	for _, settings := range s.settings.List(ctx) {
 		job := settings.GetJob()
 
@@ -187,15 +222,17 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 				)
 				continue
 			}
+			updated++
 		}
 	}
 
-	return nil
+	return updated, nil
 }
 
 // Make sure that all users in units are still on duty.
-func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
+func (s *Housekeeper) checkUnitUsers(ctx context.Context) (int, int, error) {
 	foundUserIds := []int32{}
+	offDutyRemoved := 0
 
 	for _, settings := range s.settings.List(ctx) {
 		job := settings.GetJob()
@@ -211,21 +248,27 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 				continue
 			}
 
-			foundUids, _, err := s.checkAndUpdateUnitUsers(ctx, unit)
+			foundUids, removed, err := s.checkAndUpdateUnitUsers(ctx, unit)
 			if err != nil {
 				s.logger.Error("failed to check users in unit", zap.Error(err))
 			}
 			foundUserIds = append(foundUserIds, foundUids...)
+			offDutyRemoved += removed
 		}
 	}
 
 	userUnitIds, err := s.tracker.ListUserMappings(ctx)
 	if err != nil {
-		return err
+		return 0, 0, err
 	}
 
 	var errs error
+	mappingsRepaired := 0
 	for _, userUnit := range userUnitIds {
+		if userUnit == nil || userUnit.UnitId == nil || userUnit.GetUnitId() <= 0 {
+			continue
+		}
+
 		// Check if user id is part of an unit
 		if slices.Contains(foundUserIds, userUnit.GetUserId()) {
 			continue
@@ -238,25 +281,22 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 			zap.Any("mapping", userUnit),
 		)
 
-		// FIXME this isn't working as intended at the moment..
-		/*
-			// Unset unit id for user when user is not in any unit
-			if err := s.tracker.UnsetUnitIDForUser(ctx, userId); err != nil {
-				errs = multierr.Append(errs, err)
-				continue
-			}
-		*/
+		if err := s.units.SyncUserUnitMapping(ctx, userUnit.GetUserId()); err != nil {
+			errs = errors.Join(errs, err)
+			continue
+		}
+		mappingsRepaired++
 	}
 
-	return errs
+	return offDutyRemoved, mappingsRepaired, errs
 }
 
 func (s *Housekeeper) checkAndUpdateUnitUsers(
 	ctx context.Context,
 	unit *centrumunits.Unit,
-) ([]int32, bool, error) {
+) ([]int32, int, error) {
 	if len(unit.GetUsers()) == 0 {
-		return nil, false, nil
+		return nil, 0, nil
 	}
 
 	toRemove := []int32{}
@@ -277,7 +317,8 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 
 		unitMapping, ok, err := s.tracker.GetUserMapping(userId)
 		// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
-		if err == nil && ok && unitMapping.UnitId != nil && unit.GetId() == unitMapping.GetUnitId() &&
+		if err == nil && ok && unitMapping.UnitId != nil &&
+			unit.GetId() == unitMapping.GetUnitId() &&
 			s.tracker.IsUserOnDuty(userId) {
 			foundUserIds = append(foundUserIds, userId)
 			continue
@@ -287,7 +328,7 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 	}
 
 	if len(toRemove) == 0 {
-		return nil, false, nil
+		return foundUserIds, 0, nil
 	}
 
 	s.logger.Debug(
@@ -318,8 +359,8 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 			zap.Int32s("user_ids", toRemove),
 			zap.Error(err),
 		)
-		return foundUserIds, true, fmt.Errorf("failed to update unit assignments. %w", err)
+		return foundUserIds, 0, fmt.Errorf("failed to update unit assignments. %w", err)
 	}
 
-	return foundUserIds, true, nil
+	return foundUserIds, len(toRemove), nil
 }

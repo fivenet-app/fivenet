@@ -318,6 +318,25 @@ func New(p Params) *UnitDB {
 }
 
 func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
+	units, err := s.loadUnitsFromDB(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if id > 0 && len(units) == 0 {
+		return s.syncMissingUnitMembership(ctx, id)
+	}
+
+	for i := range units {
+		if err := s.syncLoadedUnitMembership(ctx, units[i]); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *UnitDB) loadUnitsFromDB(ctx context.Context, id int64) ([]*centrumunits.Unit, error) {
 	tUnits := table.FivenetCentrumUnits.AS("unit")
 	tUnitUser := table.FivenetCentrumUnitsUsers.AS("unit_assignment")
 
@@ -363,20 +382,20 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 	units := []*centrumunits.Unit{}
 	if err := stmt.QueryContext(ctx, s.db, &units); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return nil, err
 		}
 	}
 
 	for i := range units {
 		access, err := s.ListAccess(ctx, units[i].GetId())
 		if err != nil {
-			return err
+			return nil, err
 		}
 		units[i].Access = access
 
 		status, err := s.GetLastStatus(ctx, s.db, units[i].GetId())
 		if err != nil {
-			return err
+			return nil, err
 		}
 		units[i].Status = status
 
@@ -386,27 +405,28 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 			s.enricher,
 			&units[i].Users,
 		); err != nil {
-			return err
+			return nil, err
 		}
 
 		s.enricher.EnrichJobName(units[i])
-
-		if err := s.updateInKV(ctx, units[i].GetId(), units[i]); err != nil {
-			return err
-		}
-
-		for _, user := range units[i].GetUsers() {
-			if err := s.tracker.SetUserMappingForUser(
-				ctx,
-				user.GetUserId(),
-				&units[i].Id,
-			); err != nil {
-				s.logger.Error("failed to set user's unit id", zap.Error(err))
-			}
-		}
 	}
 
-	return nil
+	return units, nil
+}
+
+func (s *UnitDB) refreshUnitCacheFromDB(ctx context.Context, id int64) error {
+	units, err := s.loadUnitsFromDB(ctx, id)
+	if err != nil {
+		return err
+	}
+	if len(units) == 0 {
+		if err := s.deleteInKV(ctx, id); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+			return err
+		}
+		return nil
+	}
+
+	return s.updateInKV(ctx, id, units[0])
 }
 
 func (s *UnitDB) nextSortOrder(ctx context.Context, q qrm.Queryable, job string) (int32, error) {
@@ -583,6 +603,10 @@ func (s *UnitDB) UpdateStatus(
 		return nil, err
 	}
 
+	if err := s.publishStatus(ctx, in, unit.GetJob()); err != nil {
+		return nil, err
+	}
+
 	return in, nil
 }
 
@@ -594,6 +618,61 @@ func (s *UnitDB) UpdateUnitAssignments(
 	toAdd []int32,
 	toRemove []int32,
 ) error {
+	syncUserIds, err := s.applyUnitAssignmentChanges(
+		ctx,
+		creatorJob,
+		creatorId,
+		unitId,
+		toAdd,
+		toRemove,
+	)
+	if err != nil {
+		if len(syncUserIds) == 0 {
+			return err
+		}
+	}
+
+	var sideEffectErr error
+	if err != nil {
+		sideEffectErr = errors.Join(sideEffectErr, err)
+	}
+	for _, userId := range syncUserIds {
+		if err := s.SyncUserUnitMapping(ctx, userId); err != nil {
+			sideEffectErr = errors.Join(sideEffectErr, err)
+		}
+	}
+
+	if len(syncUserIds) == 0 {
+		if err := s.SyncUnitMembership(ctx, unitId); err != nil {
+			sideEffectErr = errors.Join(sideEffectErr, err)
+		}
+	}
+
+	return sideEffectErr
+}
+
+// RemoveUnitAssignments removes user membership rows and updates unit cache/status only.
+// It does not create, clear, or delete tracker mappings; callers must use tracker
+// UnsetUnitIDForUser or DeleteUserMapping explicitly for the intended tracker lifecycle.
+func (s *UnitDB) RemoveUnitAssignments(
+	ctx context.Context,
+	creatorJob string,
+	creatorId *int32,
+	unitId int64,
+	userIds []int32,
+) error {
+	_, err := s.applyUnitAssignmentChanges(ctx, creatorJob, creatorId, unitId, nil, userIds)
+	return err
+}
+
+func (s *UnitDB) applyUnitAssignmentChanges(
+	ctx context.Context,
+	creatorJob string,
+	creatorId *int32,
+	unitId int64,
+	toAdd []int32,
+	toRemove []int32,
+) ([]int32, error) {
 	s.logger.Debug(
 		"updating unit assignments",
 		zap.Int64("unit_id", unitId),
@@ -602,13 +681,12 @@ func (s *UnitDB) UpdateUnitAssignments(
 	)
 
 	if len(toAdd) == 0 && len(toRemove) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	type pendingStatus struct {
-		status  *centrumunits.UnitStatus
-		publish bool
-		job     string
+		status *centrumunits.UnitStatus
+		job    string
 	}
 
 	var x, y *float64
@@ -623,16 +701,83 @@ func (s *UnitDB) UpdateUnitAssignments(
 
 	tUnitUser := table.FivenetCentrumUnitsUsers
 
-	toAddUsers := []*jobscolleagues.Colleague{}
+	addIds := []int32{}
 	pendingStatuses := []pendingStatus{}
+	unit, err := s.Get(ctx, unitId)
+	if err != nil {
+		return nil, err
+	}
+	if unit == nil {
+		return nil, fmt.Errorf("unit %d not found", unitId)
+	}
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
+
+	if len(toAdd) > 0 {
+		for i := range toAdd {
+			um, ok := s.tracker.GetUserMarkerById(toAdd[i])
+			if !ok || um.GetHidden() {
+				continue
+			}
+
+			addIds = append(addIds, toAdd[i])
+		}
+	}
+
+	existingRows := []struct {
+		UserID int32 `alias:"user_id"`
+	}{}
+	stmt := tUnitUser.
+		SELECT(tUnitUser.UserID).
+		FROM(tUnitUser).
+		WHERE(tUnitUser.UnitID.EQ(mysql.Int64(unitId)))
+	if err := stmt.QueryContext(ctx, tx, &existingRows); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	existingUsers := map[int32]struct{}{}
+	for _, row := range existingRows {
+		existingUsers[row.UserID] = struct{}{}
+	}
+
+	actualRemove := make([]int32, 0, len(toRemove))
+	for _, userId := range toRemove {
+		if _, ok := existingUsers[userId]; ok {
+			actualRemove = append(actualRemove, userId)
+			delete(existingUsers, userId)
+		}
+	}
+	slices.Sort(actualRemove)
+	actualRemove = slices.Compact(actualRemove)
+
+	actualAdd := make([]int32, 0, len(addIds))
+	for _, userId := range addIds {
+		if _, ok := existingUsers[userId]; ok {
+			continue
+		}
+
+		actualAdd = append(actualAdd, userId)
+		existingUsers[userId] = struct{}{}
+	}
+	slices.Sort(actualAdd)
+	actualAdd = slices.Compact(actualAdd)
+
+	toAddUsers := []*jobscolleagues.Colleague{}
+	if len(actualAdd) > 0 {
+		var err error
+		toAddUsers, err = usersstore.RetrieveColleagueById(ctx, s.db, s.enricher, actualAdd...)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	if len(toRemove) > 0 {
 		removeIds := make([]mysql.Expression, len(toRemove))
@@ -649,198 +794,133 @@ func (s *UnitDB) UpdateUnitAssignments(
 			LIMIT(int64(len(removeIds)))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	if len(toAdd) > 0 {
-		addIds := []int32{}
-		for i := range toAdd {
-			um, ok := s.tracker.GetUserMarkerById(toAdd[i])
-			if !ok || um.GetHidden() {
-				continue
-			}
+	if len(actualAdd) > 0 {
+		stmt := tUnitUser.
+			INSERT(
+				tUnitUser.UnitID,
+				tUnitUser.UserID,
+			)
 
-			// Ensure that we check if an user is part of an unit, but only if the user mapping has no unit
-			if um.GetUnitId() == 0 {
-				unit, err := s.Get(ctx, unitId)
-				if err != nil {
-					return err
-				}
-				if slices.ContainsFunc(unit.GetUsers(), func(in *centrumunits.UnitAssignment) bool {
-					return in.GetUserId() == toAdd[i]
-				}) {
-					continue
-				}
-			}
-
-			addIds = append(addIds, toAdd[i])
-		}
-
-		if len(addIds) > 0 {
-			stmt := tUnitUser.
-				INSERT(
-					tUnitUser.UnitID,
-					tUnitUser.UserID,
-				)
-
-			for _, id := range addIds {
-				stmt = stmt.
-					VALUES(
-						unitId,
-						id,
-					)
-			}
-
+		for _, id := range actualAdd {
 			stmt = stmt.
-				ON_DUPLICATE_KEY_UPDATE(
-					tUnitUser.UnitID.SET(mysql.RawInt("VALUES(`unit_id`)")),
+				VALUES(
+					unitId,
+					id,
 				)
+		}
 
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return err
-				}
-			}
+		stmt = stmt.
+			ON_DUPLICATE_KEY_UPDATE(
+				tUnitUser.UnitID.SET(mysql.RawInt("VALUES(`unit_id`)")),
+			)
 
-			var err error
-			toAddUsers, err = usersstore.RetrieveColleagueById(ctx, s.db, s.enricher, addIds...)
-			if err != nil {
-				return err
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			if !dbutils.IsDuplicateError(err) {
+				return nil, err
 			}
 		}
 	}
 
-	key := centrumutils.IdKey(unitId)
-	if err := s.store.ComputeUpdate(
-		ctx,
-		key,
-		func(key string, unit *centrumunits.Unit) (*centrumunits.Unit, bool, error) {
-			if len(toRemove) > 0 {
-				toAnnounce := []int32{}
-
-				if len(unit.GetUsers()) == 0 {
-					// No users in unit? Make sure to announce all users that should be removed just in case
-					toAnnounce = append(toAnnounce, toRemove...)
-				} else {
-					unit.Users = slices.DeleteFunc(
-						unit.GetUsers(),
-						func(in *centrumunits.UnitAssignment) bool {
-							for k := range toRemove {
-								if in.GetUserId() != toRemove[k] {
-									continue
-								}
-
-								toAnnounce = append(toAnnounce, toRemove[k])
-								return true
-							}
-
-							return false
-						},
-					)
-			}
-
-			// Send updates
-			for _, userId := range toAnnounce {
-				pendingStatuses = append(pendingStatuses, pendingStatus{
-					status: &centrumunits.UnitStatus{
-						CreatedAt:  timestamp.Now(),
-						UnitId:     unit.GetId(),
-						Status:     centrumunits.StatusUnit_STATUS_UNIT_USER_REMOVED,
-						UserId:     &userId,
-						CreatorId:  creatorId,
-						X:          x,
-						Y:          y,
-						Postal:     postal,
-						CreatorJob: new(unit.GetJob()),
-					},
-					publish: true,
-					job:     unit.GetJob(),
-				})
-			}
-		}
-
-		if len(toAddUsers) > 0 {
-			for _, user := range toAddUsers {
-					unit.Users = append(unit.Users, &centrumunits.UnitAssignment{
-					UnitId: unit.GetId(),
-					UserId: user.GetUserId(),
-					User:   user,
-				})
-
-				pendingStatuses = append(pendingStatuses, pendingStatus{
-					status: &centrumunits.UnitStatus{
-						CreatedAt:  timestamp.Now(),
-						UnitId:     unit.GetId(),
-						Status:     centrumunits.StatusUnit_STATUS_UNIT_USER_ADDED,
-						UserId:     &user.UserId,
-						CreatorId:  creatorId,
-						X:          x,
-						Y:          y,
-						Postal:     postal,
-						CreatorJob: new(user.GetJob()),
-					},
-					publish: true,
-					job:     unit.GetJob(),
-				})
-			}
-		}
-
-		// Unit is empty now, set unit status to be unavailable automatically
-		if len(unit.GetUsers()) == 0 {
-			pendingStatuses = append(pendingStatuses, pendingStatus{
-				status: &centrumunits.UnitStatus{
-					CreatedAt:  timestamp.Now(),
-					UnitId:     unit.GetId(),
-					Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-					UserId:     creatorId,
-					X:          x,
-					Y:          y,
-					Postal:     postal,
-					CreatorId:  creatorId,
-					CreatorJob: new(unit.GetJob()),
-				},
-				publish: true,
-				job:     unit.GetJob(),
-			})
-		}
-
-		return unit, true, nil
-	},
-	); err != nil {
-		return err
+	for _, userId := range actualRemove {
+		pendingStatuses = append(pendingStatuses, pendingStatus{
+			status: &centrumunits.UnitStatus{
+				CreatedAt:  timestamp.Now(),
+				UnitId:     unit.GetId(),
+				Status:     centrumunits.StatusUnit_STATUS_UNIT_USER_REMOVED,
+				UserId:     &userId,
+				CreatorId:  creatorId,
+				X:          x,
+				Y:          y,
+				Postal:     postal,
+				CreatorJob: new(unit.GetJob()),
+			},
+			job: unit.GetJob(),
+		})
 	}
 
-	// Commit the assignment transaction before mutating tracker/cache state.
+	for _, user := range toAddUsers {
+		pendingStatuses = append(pendingStatuses, pendingStatus{
+			status: &centrumunits.UnitStatus{
+				CreatedAt:  timestamp.Now(),
+				UnitId:     unit.GetId(),
+				Status:     centrumunits.StatusUnit_STATUS_UNIT_USER_ADDED,
+				UserId:     &user.UserId,
+				CreatorId:  creatorId,
+				X:          x,
+				Y:          y,
+				Postal:     postal,
+				CreatorJob: new(user.GetJob()),
+			},
+			job: unit.GetJob(),
+		})
+	}
+
+	if len(existingUsers) == 0 && (len(actualRemove) > 0 || len(actualAdd) > 0) {
+		pendingStatuses = append(pendingStatuses, pendingStatus{
+			status: &centrumunits.UnitStatus{
+				CreatedAt:  timestamp.Now(),
+				UnitId:     unit.GetId(),
+				Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+				UserId:     creatorId,
+				X:          x,
+				Y:          y,
+				Postal:     postal,
+				CreatorId:  creatorId,
+				CreatorJob: new(unit.GetJob()),
+			},
+			job: unit.GetJob(),
+		})
+	}
+
+	persistedStatuses := make([]pendingStatus, 0, len(pendingStatuses))
+	for i := range pendingStatuses {
+		status, err := s.AddStatus(ctx, tx, pendingStatuses[i].status)
+		if err != nil {
+			return nil, err
+		}
+
+		persistedStatuses = append(persistedStatuses, pendingStatus{
+			status: status,
+			job:    pendingStatuses[i].job,
+		})
+	}
+
+	// The DB commit is the source-of-truth boundary. Unit KV and tracker
+	// mappings are reconciled only after assignment and status rows are durable.
 	if err := tx.Commit(); err != nil {
-		return err
+		return nil, err
 	}
 
 	var sideEffectErr error
-	for i := range pendingStatuses {
-		if _, err := s.AddStatus(ctx, s.db, pendingStatuses[i].status, pendingStatuses[i].publish, pendingStatuses[i].job); err != nil {
+	if err := s.refreshUnitCacheFromDB(ctx, unitId); err != nil {
+		sideEffectErr = errors.Join(sideEffectErr, err)
+	}
+
+	for i := range persistedStatuses {
+		if err := s.publishStatus(
+			ctx,
+			persistedStatuses[i].status,
+			persistedStatuses[i].job,
+		); err != nil {
 			sideEffectErr = errors.Join(sideEffectErr, err)
 		}
 	}
 
-	for _, userId := range toRemove {
-		if err := s.tracker.UnsetUnitIDForUser(ctx, userId); err != nil {
-			sideEffectErr = errors.Join(sideEffectErr, err)
-		}
-	}
-
-	if err := s.LoadFromDB(ctx, unitId); err != nil {
-		if sideEffectErr != nil {
-			return errors.Join(sideEffectErr, err)
-		}
-		return err
-	}
+	syncUserIds := make([]int32, 0, len(addIds)+len(toRemove))
+	syncUserIds = append(syncUserIds, addIds...)
+	syncUserIds = append(syncUserIds, toRemove...)
+	slices.Sort(syncUserIds)
+	syncUserIds = slices.Compact(syncUserIds)
 
 	if sideEffectErr != nil {
-		return sideEffectErr
+		return syncUserIds, sideEffectErr
 	}
 
-	return nil
+	return syncUserIds, nil
 }
 
 func (s *UnitDB) CreateUnit(
@@ -909,7 +989,7 @@ func (s *UnitDB) CreateUnit(
 		CreatedAt: timestamp.Now(),
 		UnitId:    unit.GetId(),
 		Status:    centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-	}, false, ""); err != nil {
+	}); err != nil {
 		return nil, err
 	}
 
@@ -1022,9 +1102,9 @@ func (s *UnitDB) AddStatus(
 	ctx context.Context,
 	tx qrm.DB,
 	status *centrumunits.UnitStatus,
-	publish bool,
-	job string,
 ) (*centrumunits.UnitStatus, error) {
+	// AddStatus only persists the status row. Callers that publish status events
+	// must do so after their surrounding DB transaction has committed.
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
@@ -1069,22 +1149,28 @@ func (s *UnitDB) AddStatus(
 		return nil, err
 	}
 
-	if publish {
-		data, err := proto.Marshal(newStatus)
-		if err != nil {
-			return nil, err
-		}
+	return newStatus, nil
+}
 
-		if _, err := s.js.Publish(
-			ctx,
-			eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job),
-			data,
-		); err != nil {
-			return nil, err
-		}
+func (s *UnitDB) publishStatus(
+	ctx context.Context,
+	status *centrumunits.UnitStatus,
+	job string,
+) error {
+	data, err := proto.Marshal(status)
+	if err != nil {
+		return err
 	}
 
-	return newStatus, nil
+	if _, err := s.js.Publish(
+		ctx,
+		eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job),
+		data,
+	); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *UnitDB) GetStatusByID(
@@ -1259,11 +1345,7 @@ func (s *UnitDB) Delete(ctx context.Context, id int64) error {
 		return err
 	}
 
-	if err := s.deleteInKV(ctx, id); err != nil {
-		return fmt.Errorf("failed to delete unit in KV store. %w", err)
-	}
-
-	return nil
+	return s.syncMissingUnitMembership(ctx, id)
 }
 
 func (s *UnitDB) ListAccess(ctx context.Context, id int64) (*unitsaccess.UnitAccess, error) {

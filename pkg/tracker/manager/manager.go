@@ -141,12 +141,13 @@ func New(p Params) (*Manager, error) {
 
 					// Remove user from unit if it has a unit_id
 					if um.UnitId != nil && um.GetUnitId() > 0 {
-						if err := m.units.UpdateUnitAssignments(
+						// The mapping key is already being deleted to keep tracker KV small.
+						// Only remove persisted unit membership here; do not recreate a mapping.
+						if err := m.units.RemoveUnitAssignments(
 							ctx,
 							"",
 							&um.UserId,
 							um.GetUnitId(),
-							nil,
 							[]int32{um.GetUserId()},
 						); err != nil {
 							m.logger.Error("failed to remove user from unit", zap.Error(err))

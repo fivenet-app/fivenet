@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"maps"
 	"os"
+	"slices"
 	"testing"
 
 	centrumres "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
@@ -89,7 +90,9 @@ func (t *centrumJoinUnitTestTracker) GetFilteredUserMarkers(
 	return nil
 }
 
-func (t *centrumJoinUnitTestTracker) GetUserMapping(userId int32) (*pbtracker.UserMapping, bool, error) {
+func (t *centrumJoinUnitTestTracker) GetUserMapping(
+	userId int32,
+) (*pbtracker.UserMapping, bool, error) {
 	mapping, ok := t.mappings[userId]
 	if !ok {
 		return nil, false, nil
@@ -124,6 +127,11 @@ func (t *centrumJoinUnitTestTracker) SetUserMappingForUser(
 
 func (t *centrumJoinUnitTestTracker) UnsetUnitIDForUser(ctx context.Context, userId int32) error {
 	return t.SetUserMappingForUser(ctx, userId, nil)
+}
+
+func (t *centrumJoinUnitTestTracker) DeleteUserMapping(_ context.Context, userId int32) error {
+	delete(t.mappings, userId)
+	return nil
 }
 
 func (t *centrumJoinUnitTestTracker) ListUserMappings(
@@ -259,6 +267,62 @@ func unitAssignmentCountForTest(t *testing.T, db *sql.DB, unitID int64, userID i
 	return count
 }
 
+func insertAssignmentRowForTest(t *testing.T, db *sql.DB, unitID int64, userID int32) {
+	t.Helper()
+
+	_, err := db.Exec(
+		`INSERT INTO fivenet_centrum_units_users (unit_id, user_id) VALUES (?, ?)`,
+		unitID,
+		userID,
+	)
+	require.NoError(t, err)
+}
+
+func moveAssignmentRowForTest(t *testing.T, db *sql.DB, unitID int64, userID int32) {
+	t.Helper()
+
+	_, err := db.Exec(
+		`UPDATE fivenet_centrum_units_users SET unit_id = ? WHERE user_id = ?`,
+		unitID,
+		userID,
+	)
+	require.NoError(t, err)
+}
+
+func deleteAssignmentRowForTest(t *testing.T, db *sql.DB, unitID int64, userID int32) {
+	t.Helper()
+
+	_, err := db.Exec(
+		`DELETE FROM fivenet_centrum_units_users WHERE unit_id = ? AND user_id = ?`,
+		unitID,
+		userID,
+	)
+	require.NoError(t, err)
+}
+
+func assertUnitCacheHasUser(
+	t *testing.T,
+	srv *Server,
+	ctx context.Context,
+	unitID int64,
+	userID int32,
+	want bool,
+) {
+	t.Helper()
+
+	unit, err := srv.units.Get(ctx, unitID)
+	require.NoError(t, err)
+	require.NotNil(t, unit)
+
+	assert.Equal(
+		t,
+		want,
+		slices.ContainsFunc(unit.GetUsers(), func(in *centrumunits.UnitAssignment) bool {
+			return in.GetUserId() == userID
+		}),
+	)
+}
+
 func seedDispatchAccessForTest(
 	t *testing.T,
 	srv *Server,
@@ -311,6 +375,200 @@ func createDispatchForTest(
 	require.NotNil(t, resp.GetDispatch())
 
 	return resp.GetDispatch()
+}
+
+func TestSyncUserUnitMappingRepairsMissingTrackerMapping(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Sync")
+	insertAssignmentRowForTest(t, db, unit.GetId(), 1)
+
+	_, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	require.False(t, ok)
+
+	require.NoError(t, srv.units.SyncUserUnitMapping(ctx, 1))
+
+	mapping, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	require.True(t, ok)
+	require.NotNil(t, mapping)
+	assert.Equal(t, unit.GetId(), mapping.GetUnitId())
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, true)
+}
+
+func TestSyncUserUnitMappingClearsRemovedUser(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Remove")
+	seedAssignmentForTest(t, db, trackerStub, unit.GetId(), 1)
+	require.NoError(t, srv.units.SyncUnitMembership(ctx, unit.GetId()))
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, true)
+
+	deleteAssignmentRowForTest(t, db, unit.GetId(), 1)
+
+	require.NoError(t, srv.units.SyncUserUnitMapping(ctx, 1))
+
+	mapping, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	require.True(t, ok)
+	require.NotNil(t, mapping)
+	assert.Nil(t, mapping.UnitId)
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, false)
+}
+
+func TestSyncUserUnitMappingRefreshesOldAndNewUnitOnMove(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	oldUnit := createUnitForTest(t, srv, ctx, "Alpha-Old")
+	newUnit := createUnitForTest(t, srv, ctx, "Bravo-New")
+	seedAssignmentForTest(t, db, trackerStub, oldUnit.GetId(), 1)
+	staleOldUnitID := oldUnit.GetId()
+	require.NoError(t, trackerStub.SetUserMappingForUser(ctx, 2, &staleOldUnitID))
+	require.NoError(t, srv.units.SyncUnitMembership(ctx, oldUnit.GetId()))
+	assertUnitCacheHasUser(t, srv, ctx, oldUnit.GetId(), 1, true)
+	assertUnitCacheHasUser(t, srv, ctx, newUnit.GetId(), 1, false)
+
+	moveAssignmentRowForTest(t, db, newUnit.GetId(), 1)
+
+	require.NoError(t, srv.units.SyncUserUnitMapping(ctx, 1))
+
+	mapping, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	require.True(t, ok)
+	require.NotNil(t, mapping)
+	assert.Equal(t, newUnit.GetId(), mapping.GetUnitId())
+	assertUnitCacheHasUser(t, srv, ctx, oldUnit.GetId(), 1, false)
+	assertUnitCacheHasUser(t, srv, ctx, newUnit.GetId(), 1, true)
+
+	_, ok, err = trackerStub.GetUserMapping(2)
+	require.NoError(t, err)
+	assert.False(t, ok)
+}
+
+func TestSyncUnitMembershipClearsStaleMappingForMissingUnit(t *testing.T) {
+	t.Parallel()
+
+	srv, _, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	missingUnitID := int64(999_999)
+	require.NoError(t, trackerStub.SetUserMappingForUser(ctx, 1, &missingUnitID))
+
+	require.NoError(t, srv.units.SyncUnitMembership(ctx, missingUnitID))
+
+	_, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	assert.False(t, ok)
+}
+
+func TestSyncUnitMembershipPreservesValidMappingAndClearsStaleOnes(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Membership")
+	insertAssignmentRowForTest(t, db, unit.GetId(), 1)
+
+	staleUnitID := unit.GetId()
+	require.NoError(t, trackerStub.SetUserMappingForUser(ctx, 2, &staleUnitID))
+
+	require.NoError(t, srv.units.SyncUnitMembership(ctx, unit.GetId()))
+
+	mapping, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	require.True(t, ok)
+	require.NotNil(t, mapping)
+	assert.Equal(t, unit.GetId(), mapping.GetUnitId())
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, true)
+
+	_, ok, err = trackerStub.GetUserMapping(2)
+	require.NoError(t, err)
+	assert.False(t, ok)
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 2, false)
+}
+
+func TestSyncUserUnitMappingDeletesMappingForOffDutyUserWithoutAssignment(t *testing.T) {
+	t.Parallel()
+
+	srv, _, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	delete(trackerStub.markers, 1)
+	unitID := int64(123)
+	require.NoError(t, trackerStub.SetUserMappingForUser(ctx, 1, &unitID))
+
+	require.NoError(t, srv.units.SyncUserUnitMapping(ctx, 1))
+
+	_, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	assert.False(t, ok)
+}
+
+func TestRemoveUnitAssignmentsDoesNotWriteTrackerMapping(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Mapping-Delete")
+	seedAssignmentForTest(t, db, trackerStub, unit.GetId(), 1)
+	require.NoError(t, srv.units.SyncUnitMembership(ctx, unit.GetId()))
+
+	delete(trackerStub.mappings, 1)
+
+	creatorID := int32(1)
+	require.NoError(t, srv.units.RemoveUnitAssignments(
+		ctx,
+		"",
+		&creatorID,
+		unit.GetId(),
+		[]int32{1},
+	))
+
+	_, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	assert.False(t, ok)
+	assert.Equal(t, 0, unitAssignmentCountForTest(t, db, unit.GetId(), 1))
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, false)
 }
 
 func TestJoinUnitKeepsCurrentUnitWhenTargetValidationFails(t *testing.T) {
@@ -409,6 +667,30 @@ func TestJoinUnitLeavePathRemovesCurrentUnit(t *testing.T) {
 	assert.Equal(t, 0, unitAssignmentCountForTest(t, db, currentUnit.GetId(), 1))
 }
 
+func TestJoinUnitOffDutyDeletesStaleMapping(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Off-Duty")
+	seedAssignmentForTest(t, db, trackerStub, unit.GetId(), 1)
+	deleteAssignmentRowForTest(t, db, unit.GetId(), 1)
+	delete(trackerStub.markers, 1)
+
+	resp, err := srv.JoinUnit(ctx, &pbcentrum.JoinUnitRequest{})
+	require.ErrorIs(t, err, errorscentrum.ErrNotOnDuty)
+	assert.Nil(t, resp)
+
+	_, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	assert.False(t, ok)
+}
+
 func TestCreateDispatchRejectsUnauthorizedJobs(t *testing.T) {
 	t.Parallel()
 
@@ -485,4 +767,25 @@ func TestCreateAndUpdateDispatchAuthorization(t *testing.T) {
 	require.NotNil(t, updateResp)
 	require.NotNil(t, updateResp.GetDispatch())
 	assert.Equal(t, "authorized change", updateResp.GetDispatch().GetMessage())
+}
+
+func TestUpdateDispatchStatusAllowsMissingTrackerMapping(t *testing.T) {
+	t.Parallel()
+
+	srv, _, trackerStub := newCentrumJoinUnitTestServer(t)
+
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   21,
+		Job:      "ambulance",
+		JobGrade: 20,
+	})
+	dispatch := createDispatchForTest(t, srv, ctx)
+	delete(trackerStub.mappings, 21)
+
+	resp, err := srv.UpdateDispatchStatus(ctx, &pbcentrum.UpdateDispatchStatusRequest{
+		DispatchId: dispatch.GetId(),
+		Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, resp)
 }

@@ -60,32 +60,9 @@ func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
 						return
 					}
 
-					if _, _, err := s.tracker.GetUserMapping(userMarker.GetUserId()); err != nil {
+					if err := s.units.SyncUserUnitMapping(ctx, userMarker.GetUserId()); err != nil {
 						s.logger.Error(
-							"failed to get user mapping for usermarker put event",
-							zap.Int32("user_id", userMarker.GetUserId()),
-							zap.Error(err),
-						)
-						return
-					}
-
-					unitId, err := s.units.LoadUnitIDForUserID(ctx, userMarker.GetUserId())
-					if err != nil {
-						s.logger.Error(
-							"failed to load user unit id for usermarker put event",
-							zap.Int32("user_id", userMarker.GetUserId()),
-							zap.Error(err),
-						)
-						return
-					}
-
-					if err := s.tracker.SetUserMappingForUser(
-						ctx,
-						userMarker.GetUserId(),
-						&unitId,
-					); err != nil {
-						s.logger.Error(
-							"failed to update user unit id mapping in kv for usermarker put event",
+							"failed to sync user unit mapping for usermarker put event",
 							zap.Int32("user_id", userMarker.GetUserId()),
 							zap.Error(err),
 						)

@@ -60,6 +60,8 @@ func (s *Server) GetDispatchHeatmap(
 
 const binSize = float64(10)
 
+const heatmapJobsRebuiltAttr = "jobs_rebuilt"
+
 // heatmapQuery is the SQL to rebuild the per‐job Y×X‐bin heatmaps.
 // note how we break out the `max` identifier so the raw string literal isn’t terminated early.
 var heatmapQuery = `
@@ -102,13 +104,31 @@ JOIN maxw AS m USING (job)
 GROUP BY b.job;
 `
 
-func (s *Server) generateDispatchHeatmaps(ctx context.Context) error {
+func (s *Server) generateDispatchHeatmaps(ctx context.Context) (int64, error) {
+	const jobsRebuiltQuery = `
+SELECT COUNT(DISTINCT jt.job) AS jobs_rebuilt
+FROM fivenet_centrum_dispatches AS f
+JOIN JSON_TABLE(
+    f.jobs, '$[*]'
+    COLUMNS (
+        job varchar(50) PATH '$'
+    )
+) AS jt;
+`
+
+	var dest struct {
+		JobsRebuilt int64
+	}
+	if err := s.db.QueryRowContext(ctx, jobsRebuiltQuery).Scan(&dest.JobsRebuilt); err != nil {
+		return 0, fmt.Errorf("failed to count dispatch heatmap jobs. %w", err)
+	}
+
 	// Four placeholders -> Four copies of the grid value
 	args := []any{binSize, binSize, binSize, binSize}
 
 	if _, err := s.db.ExecContext(ctx, heatmapQuery, args...); err != nil {
-		return fmt.Errorf("failed to generate dispatch heatmaps. %w", err)
+		return 0, fmt.Errorf("failed to generate dispatch heatmaps. %w", err)
 	}
 
-	return nil
+	return dest.JobsRebuilt, nil
 }

@@ -92,11 +92,11 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error 
 	}
 
 	// Check and verify the users in the unit and in case of changes, "schedule" another ping check
-	toRemove, changed, err := s.checkAndUpdateUnitUsers(ctx, unit)
+	toRemove, removed, err := s.checkAndUpdateUnitUsers(ctx, unit)
 	if err != nil {
 		s.logger.Error("failed to check users in unit", zap.Error(err))
 	}
-	stillAvailable := changed
+	stillAvailable := removed > 0
 
 	// If all users are still valid (toRemove is empty) and status checks pass, keep the unit available
 	if len(unit.GetUsers()) > 0 && len(toRemove) == 0 {

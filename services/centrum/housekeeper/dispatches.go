@@ -16,6 +16,25 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	loadNewDispatchesLoadedAttr = "new_dispatches_loaded"
+	loadNewDispatchesTotalAttr  = "loaded_dispatches"
+
+	dispatchAssignmentExpiredAttr  = "expired_assignments"
+	dispatchAssignmentAffectedAttr = "dispatches_affected"
+	dispatchAssignmentJobsAttr     = "jobs_affected"
+	dispatchAssignmentUnitsAttr    = "units_affected"
+
+	cancelOldDispatchesCancelledAttr = "dispatches_cancelled"
+	cancelOldDispatchesTooOldAttr    = "too_old_flagged"
+
+	deleteOldDispatchesDeletedAttr = "dispatches_deleted"
+
+	deleteOldDispatchesKVKeysScannedAttr = "kv_keys_scanned"
+	deleteOldDispatchesKVDeletedAttr     = "kv_dispatches_deleted"
+	deleteOldDispatchesKVInvalidAttr     = "kv_invalid_keys"
+)
+
 func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobData) error {
 	tDispatch := table.FivenetCentrumDispatches.AS("dispatch")
 
@@ -33,13 +52,14 @@ func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobD
 	}
 
 	count := int64(dspCount)
+	dest.SetAttribute(loadNewDispatchesLoadedAttr, strconv.FormatInt(count, 10))
 
 	if val := dest.GetAttribute("loaded_dispatches"); val != "" {
 		if cc, err := strconv.ParseInt(val, 10, 64); err == nil {
 			count += cc
 		}
 	}
-	dest.SetAttribute("loaded_dispatches", strconv.FormatInt(count, 10))
+	dest.SetAttribute(loadNewDispatchesTotalAttr, strconv.FormatInt(count, 10))
 
 	if err := data.MarshalFrom(dest); err != nil {
 		s.logger.Error("failed to marshal updated centrum housekeeper cron data", zap.Error(err))
@@ -55,15 +75,43 @@ func (s *Housekeeper) runHandleDispatchAssignmentExpiration(
 	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-assignment-expiration")
 	defer span.End()
 
-	if err := s.handleDispatchAssignmentExpiration(ctx); err != nil {
+	dest := &cron.GenericCronData{
+		Attributes: map[string]string{},
+	}
+	if err := data.Unmarshal(dest); err != nil {
+		s.logger.Warn(
+			"failed to unmarshal dispatch assignment expiration cron data",
+			zap.Error(err),
+		)
+	}
+
+	expiredAssignments, dispatchesAffected, jobsAffected, unitsAffected, err := s.handleDispatchAssignmentExpiration(
+		ctx,
+	)
+	if err != nil {
 		s.logger.Error("failed to handle expired dispatch assignments", zap.Error(err))
+		return err
+	}
+
+	dest.SetAttribute(dispatchAssignmentExpiredAttr, strconv.Itoa(expiredAssignments))
+	dest.SetAttribute(dispatchAssignmentAffectedAttr, strconv.Itoa(dispatchesAffected))
+	dest.SetAttribute(dispatchAssignmentJobsAttr, strconv.Itoa(jobsAffected))
+	dest.SetAttribute(dispatchAssignmentUnitsAttr, strconv.Itoa(unitsAffected))
+
+	if err := data.MarshalFrom(dest); err != nil {
+		return fmt.Errorf(
+			"failed to marshal updated dispatch assignment expiration cron data. %w",
+			err,
+		)
 	}
 
 	return nil
 }
 
 // Handle expired dispatch unit assignments.
-func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) error {
+func (s *Housekeeper) handleDispatchAssignmentExpiration(
+	ctx context.Context,
+) (int, int, int, int, error) {
 	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
 	tUnits := table.FivenetCentrumUnits
 
@@ -90,7 +138,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 		Job        string
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		return 0, 0, 0, 0, err
 	}
 
 	assignments := map[string]map[int64][]int64{}
@@ -104,6 +152,19 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 
 		assignments[ua.Job][ua.DispatchID] = append(assignments[ua.Job][ua.DispatchID], ua.UnitID)
 	}
+
+	dispatchesSeen := map[int64]struct{}{}
+	jobsSeen := map[string]struct{}{}
+	for job, dsps := range assignments {
+		jobsSeen[job] = struct{}{}
+		for dispatchID := range dsps {
+			dispatchesSeen[dispatchID] = struct{}{}
+		}
+	}
+
+	dispatchesAffected := len(dispatchesSeen)
+	jobsAffected := len(jobsSeen)
+	unitsAffected := len(dest)
 
 	for job, dsps := range assignments {
 		s.logger.Debug(
@@ -121,28 +182,47 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 				units,
 				time.Time{},
 			); err != nil {
-				return fmt.Errorf("failed to update dispatch %d assignments. %w", dispatchId, err)
+				return 0, 0, 0, 0, fmt.Errorf(
+					"failed to update dispatch %d assignments. %w",
+					dispatchId,
+					err,
+				)
 			}
 		}
 	}
 
-	return nil
+	return len(dest), dispatchesAffected, jobsAffected, unitsAffected, nil
 }
 
 func (s *Housekeeper) runCancelOldDispatches(ctx context.Context, data *cron.CronjobData) error {
 	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-cancel")
 	defer span.End()
 
-	if err := s.cancelOldDispatches(ctx); err != nil {
+	dest := &cron.GenericCronData{
+		Attributes: map[string]string{},
+	}
+	if err := data.Unmarshal(dest); err != nil {
+		s.logger.Warn("failed to unmarshal cancel old dispatches cron data", zap.Error(err))
+	}
+
+	cancelled, flaggedTooOld, err := s.cancelOldDispatches(ctx)
+	if err != nil {
 		s.logger.Error("failed to archive dispatches", zap.Error(err))
 		return fmt.Errorf("failed to archive dispatches. %w", err)
+	}
+
+	dest.SetAttribute(cancelOldDispatchesCancelledAttr, strconv.Itoa(cancelled))
+	dest.SetAttribute(cancelOldDispatchesTooOldAttr, strconv.Itoa(flaggedTooOld))
+
+	if err := data.MarshalFrom(dest); err != nil {
+		return fmt.Errorf("failed to marshal updated cancel old dispatches cron data. %w", err)
 	}
 
 	return nil
 }
 
 // Cancel dispatches that haven't been worked on for some time.
-func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
+func (s *Housekeeper) cancelOldDispatches(ctx context.Context) (int, int, error) {
 	tDispatch := table.FivenetCentrumDispatches.AS("dispatch")
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 
@@ -185,10 +265,12 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 		Status     centrumdispatches.StatusDispatch
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		return 0, 0, err
 	}
 
 	s.logger.Debug("canceling expired dispatches", zap.Int("dispatch_count", len(dest)))
+	cancelled := 0
+	flaggedTooOld := 0
 	for _, ds := range dest {
 		// Ignore already cancelled dispatches
 		if ds.Status == centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED {
@@ -207,6 +289,8 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 					zap.Int64("dispatch_id", ds.DispatchID),
 					zap.Error(err),
 				)
+			} else {
+				flaggedTooOld++
 			}
 		}
 
@@ -226,6 +310,7 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 			)
 			continue
 		}
+		cancelled++
 
 		// Remove dispatch from state and publish event so clients remove it
 		if err := s.dispatches.Delete(ctx, ds.DispatchID, false); err != nil {
@@ -238,16 +323,29 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 		}
 	}
 
-	return nil
+	return cancelled, flaggedTooOld, nil
 }
 
 func (s *Housekeeper) runDeleteOldDispatches(ctx context.Context, data *cron.CronjobData) error {
 	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-old-delete")
 	defer span.End()
 
-	if err := s.deleteOldDispatches(ctx); err != nil {
+	dest := &cron.GenericCronData{
+		Attributes: map[string]string{},
+	}
+	if err := data.Unmarshal(dest); err != nil {
+		s.logger.Warn("failed to unmarshal delete old dispatches cron data", zap.Error(err))
+	}
+
+	deleted, err := s.deleteOldDispatches(ctx)
+	if err != nil {
 		s.logger.Error("failed to remove old dispatches", zap.Error(err))
 		return err
+	}
+
+	dest.SetAttribute(deleteOldDispatchesDeletedAttr, strconv.Itoa(deleted))
+	if err := data.MarshalFrom(dest); err != nil {
+		return fmt.Errorf("failed to marshal updated delete old dispatches cron data. %w", err)
 	}
 
 	return nil
@@ -255,7 +353,7 @@ func (s *Housekeeper) runDeleteOldDispatches(ctx context.Context, data *cron.Cro
 
 // deleteOldDispatches deletes dispatches that are older than a certain number of days.
 // This can probably be moved into the general housekeeper service.
-func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
+func (s *Housekeeper) deleteOldDispatches(ctx context.Context) (int, error) {
 	tDispatch := table.FivenetCentrumDispatches
 
 	stmt := tDispatch.
@@ -277,18 +375,20 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 		DispatchID int64
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		return 0, err
 	}
 
 	errs := multierr.Combine()
+	deleted := 0
 	for _, ds := range dest {
 		if err := s.dispatches.Delete(ctx, ds.DispatchID, true); err != nil {
 			errs = multierr.Append(errs, err)
 			continue
 		}
+		deleted++
 	}
 
-	return errs
+	return deleted, errs
 }
 
 func (s *Housekeeper) runDeleteOldDispatchesFromKV(
@@ -298,24 +398,47 @@ func (s *Housekeeper) runDeleteOldDispatchesFromKV(
 	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-old-delete-kv")
 	defer span.End()
 
-	if err := s.deleteOldDispatchesFromKV(ctx); err != nil {
+	dest := &cron.GenericCronData{
+		Attributes: map[string]string{},
+	}
+	if err := data.Unmarshal(dest); err != nil {
+		s.logger.Warn("failed to unmarshal delete old dispatches from kv cron data", zap.Error(err))
+	}
+
+	keysScanned, deleted, invalid, err := s.deleteOldDispatchesFromKV(ctx)
+	if err != nil {
 		s.logger.Error("failed to remove old dispatches from kv", zap.Error(err))
 		return err
+	}
+
+	dest.SetAttribute(deleteOldDispatchesKVKeysScannedAttr, strconv.Itoa(keysScanned))
+	dest.SetAttribute(deleteOldDispatchesKVDeletedAttr, strconv.Itoa(deleted))
+	dest.SetAttribute(deleteOldDispatchesKVInvalidAttr, strconv.Itoa(invalid))
+
+	if err := data.MarshalFrom(dest); err != nil {
+		return fmt.Errorf(
+			"failed to marshal updated delete old dispatches from kv cron data. %w",
+			err,
+		)
 	}
 
 	return nil
 }
 
-func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
+func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) (int, int, int, error) {
 	errs := multierr.Combine()
+	keysScanned := 0
+	deleted := 0
+	invalid := 0
 
 	keyIter, err := s.dispatches.Store().KV().ListKeysFiltered(ctx, "id.*")
 	if err != nil {
 		s.logger.Error("failed to list dispatches from KV", zap.Error(err))
-		return err
+		return 0, 0, 0, err
 	}
 	keysCh := keyIter.Keys()
 	for key := range keysCh {
+		keysScanned++
 		if key == "" {
 			continue
 		}
@@ -331,6 +454,7 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 				errs,
 				fmt.Errorf("failed to extract dispatch ID from key %q. %w", key, err),
 			)
+			invalid++
 			continue
 		}
 
@@ -345,6 +469,7 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 					zap.Error(err),
 				)
 			}
+			deleted++
 			continue
 		}
 
@@ -365,8 +490,9 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 				)
 				continue
 			}
+			deleted++
 		}
 	}
 
-	return errs
+	return keysScanned, deleted, invalid, errs
 }
