@@ -60,35 +60,23 @@ func (s *SettingsDB) GetAccessList(
 		return nil, nil, fmt.Errorf("failed to get settings for job %s. %w", userJob, err)
 	}
 
-	if settings.GetEffectiveAccess() == nil {
-		settings.EffectiveAccess = &centrumsettings.EffectiveAccess{
-			Dispatches: &centrumsettings.EffectiveDispatchAccess{
-				Jobs: []*centrumsettings.JobAccessEntry{},
-			},
-		}
-	}
-	if settings.GetEffectiveAccess().GetDispatches() == nil {
-		settings.EffectiveAccess.Dispatches = &centrumsettings.EffectiveDispatchAccess{
-			Jobs: []*centrumsettings.JobAccessEntry{},
-		}
-	}
-
+	// Build the effective dispatch access from the job's accepted inbound offers.
 	access := settings.GetEffectiveAccess()
 	jobs := []string{}
 	if access == nil {
-		settings.EffectiveAccess = s.calculateEffectiveAccess(
+		access = s.calculateEffectiveAccess(
 			settings.GetJob(),
 			settings.GetOfferedAccess(),
 		)
-		access = settings.GetEffectiveAccess()
+		settings.SetEffectiveAccess(access)
 	}
 	if access.GetDispatches() == nil {
-		access.Dispatches = &centrumsettings.EffectiveDispatchAccess{
+		access.SetDispatches(&centrumsettings.EffectiveDispatchAccess{
 			Jobs: []*centrumsettings.JobAccessEntry{},
-		}
+		})
 	}
 
-	// Add the user's own job to the access list
+	// Always include the caller's own job.
 	jae := &centrumsettings.JobAccessEntry{
 		Job:    userJob,
 		Access: centrumaccess.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_DISPATCH,
@@ -98,19 +86,13 @@ func (s *SettingsDB) GetAccessList(
 	access.Dispatches.Jobs = append(access.Dispatches.Jobs, jae)
 	jobs = append(jobs, userJob)
 
-	if settings == nil || settings.GetEffectiveAccess() == nil {
-		return jobs, access, nil
-	}
-
-	if settings.GetEffectiveAccess().GetDispatches() != nil {
-		for _, ja := range settings.GetEffectiveAccess().GetDispatches().GetJobs() {
-			if ja.GetJob() == userJob {
-				continue // Skip the user's own job, as it is already added
-			}
-
-			s.enricher.EnrichJobName(ja)
-			jobs = append(jobs, ja.GetJob())
+	for _, ja := range access.GetDispatches().GetJobs() {
+		if ja.GetJob() == userJob {
+			continue // Skip the caller job, it was already added above.
 		}
+
+		s.enricher.EnrichJobName(ja)
+		jobs = append(jobs, ja.GetJob())
 	}
 
 	jobs = utils.SliceDedup(jobs)

@@ -376,19 +376,51 @@ func seedDispatchAccessForTest(
 ) {
 	t.Helper()
 
-	_, err := srv.settings.Update(ctx, targetJob, &centrumsettings.Settings{
-		Job: targetJob,
-		OfferedAccess: &centrumaccess.CentrumAccess{
+	acceptedAt := timestamp.Now()
+
+	// Update settings to allow userJob <-> targetJob DISPATCH access to each other
+	_, err := srv.settings.Update(ctx, userJob, &centrumsettings.Settings{
+		Job:     userJob,
+		Enabled: true,
+		Access: &centrumaccess.CentrumAccess{
 			Jobs: []*centrumaccess.CentrumJobAccess{
 				{
-					SourceJob:  userJob,
-					Job:        targetJob,
-					Access:     centrumaccess.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_DISPATCH,
-					AcceptedAt: timestamp.Now(),
+					SourceJob: userJob,
+					Job:       targetJob,
+					Access:    centrumaccess.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_DISPATCH,
 				},
 			},
 		},
 	})
+	require.NoError(t, err)
+	_, err = srv.settings.Update(ctx, targetJob, &centrumsettings.Settings{
+		Job:     targetJob,
+		Enabled: true,
+		Access: &centrumaccess.CentrumAccess{
+			Jobs: []*centrumaccess.CentrumJobAccess{
+				{
+					SourceJob: targetJob,
+					Job:       userJob,
+					Access:    centrumaccess.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_DISPATCH,
+				},
+			},
+		},
+	})
+	require.NoError(t, err)
+
+	// Accept the userJob/targetJob access now
+	targetJobSettings, err := srv.settings.Get(ctx, targetJob)
+	require.NoError(t, err)
+	require.NotNil(t, targetJobSettings)
+	targetJobSettings.Access.Jobs[0].AcceptedAt = acceptedAt
+	_, err = srv.settings.Update(ctx, targetJob, targetJobSettings)
+	require.NoError(t, err)
+
+	userJobSettings, err := srv.settings.Get(ctx, userJob)
+	require.NoError(t, err)
+	require.NotNil(t, userJobSettings)
+	userJobSettings.Access.Jobs[0].AcceptedAt = acceptedAt
+	_, err = srv.settings.Update(ctx, userJob, userJobSettings)
 	require.NoError(t, err)
 }
 
@@ -770,7 +802,7 @@ func TestCreateAndUpdateDispatchAuthorization(t *testing.T) {
 	srv, _, _ := newCentrumJoinUnitTestServer(t)
 
 	creatorCtx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
-		UserId:   21,
+		UserId:   1,
 		Job:      "ambulance",
 		JobGrade: 20,
 	})
@@ -783,9 +815,9 @@ func TestCreateAndUpdateDispatchAuthorization(t *testing.T) {
 	assert.ElementsMatch(t, []string{"ambulance", "police"}, dispatch.GetJobs().GetJobStrings())
 
 	denyCtx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
-		UserId:   22,
-		Job:      "fire",
-		JobGrade: 10,
+		UserId:   3,
+		Job:      "doj",
+		JobGrade: 16,
 	})
 	_, err := srv.UpdateDispatch(denyCtx, &pbcentrum.UpdateDispatchRequest{
 		Dispatch: &centrumdispatches.Dispatch{
@@ -799,13 +831,28 @@ func TestCreateAndUpdateDispatchAuthorization(t *testing.T) {
 		},
 	})
 	require.ErrorIs(t, err, errorscentrum.ErrNotPartOfDispatch)
+}
 
-	updateCtx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
-		UserId:   21,
+func TestUpdateDispatchAllowsDispatcher(t *testing.T) {
+	t.Parallel()
+
+	srv, _, _ := newCentrumJoinUnitTestServer(t)
+
+	creatorCtx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
 		Job:      "ambulance",
 		JobGrade: 20,
 	})
-	updateResp, err := srv.UpdateDispatch(updateCtx, &pbcentrum.UpdateDispatchRequest{
+	seedDispatchAccessForTest(t, srv, creatorCtx, "ambulance", "police")
+
+	dispatch := createDispatchForTest(t, srv, creatorCtx, "ambulance", "police")
+
+	_, err := srv.TakeControl(creatorCtx, &pbcentrum.TakeControlRequest{
+		Signon: true,
+	})
+	require.NoError(t, err)
+
+	updateResp, err := srv.UpdateDispatch(creatorCtx, &pbcentrum.UpdateDispatchRequest{
 		Dispatch: &centrumdispatches.Dispatch{
 			Id:      dispatch.GetId(),
 			Message: "authorized change",
@@ -824,20 +871,20 @@ func TestUpdateDispatchStatusAllowsMissingTrackerMapping(t *testing.T) {
 	srv, _, trackerStub := newCentrumJoinUnitTestServer(t)
 
 	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
-		UserId:   21,
+		UserId:   1,
 		Job:      "ambulance",
 		JobGrade: 20,
 	})
 	dispatch := createDispatchForTest(t, srv, ctx)
 	jobGrade := int32(20)
-	trackerStub.markers[21] = &livemapmarkers.UserMarker{
-		UserId:   21,
+	trackerStub.markers[1] = &livemapmarkers.UserMarker{
+		UserId:   1,
 		Job:      "ambulance",
 		JobGrade: &jobGrade,
 		Hidden:   false,
 	}
-	require.NoError(t, srv.dispatchers.SetUserState(ctx, "ambulance", 21, true))
-	delete(trackerStub.mappings, 21)
+	require.NoError(t, srv.dispatchers.SetUserState(ctx, "ambulance", 1, true))
+	delete(trackerStub.mappings, 1)
 
 	resp, err := srv.UpdateDispatchStatus(ctx, &pbcentrum.UpdateDispatchStatusRequest{
 		DispatchId: dispatch.GetId(),

@@ -266,7 +266,7 @@ func (s *SettingsDB) loadAccess(
 			tCentrumJobAccess.Job,
 			tCentrumJobAccess.MinimumGrade,
 			tCentrumJobAccess.Access,
-			tCentrumJobAccess.AcceptedAt.AS("centrum_job_access.accepted_at"),
+			tCentrumJobAccess.AcceptedAt,
 		).
 		FROM(tCentrumJobAccess).
 		WHERE(mysql.OR(
@@ -449,37 +449,35 @@ func (s *SettingsDB) compareAccess(
 	updated := []*centrumaccess.CentrumJobAccess{}
 	created := []*centrumaccess.CentrumJobAccess{}
 
-	if incoming != nil {
-		for _, offered := range incoming.GetJobs() {
-			job := offered.GetJob()
-			if current, exists := currentAccess[job]; exists {
-				// Compare the access details to check for updates
-				if current.GetAccess() != offered.GetAccess() ||
-					current.GetMinimumGrade() != offered.GetMinimumGrade() ||
-					(current.GetAcceptedAt() == nil && offered.GetAcceptedAt() != nil) ||
-					(current.GetAcceptedAt() != nil && offered.GetAcceptedAt() == nil) ||
-					(current.GetAcceptedAt() != nil && offered.GetAcceptedAt() != nil && current.GetAcceptedAt().AsTime() != offered.GetAcceptedAt().AsTime()) {
-					// If the job is different, make sure to "reset" the accepted at dates
-					if current.GetJob() != offered.GetJob() {
-						if current.GetAcceptedAt() != nil {
-							offered.AcceptedAt = timestamp.New(current.GetAcceptedAt().AsTime())
-						} else {
-							offered.AcceptedAt = nil // Reset if no accepted at date is currently set
-						}
+	for _, offered := range incoming.GetJobs() {
+		job := offered.GetJob()
+		if current, exists := currentAccess[job]; exists {
+			// Compare the access details to check for updates
+			if current.GetAccess() != offered.GetAccess() ||
+				current.GetMinimumGrade() != offered.GetMinimumGrade() ||
+				(current.GetAcceptedAt() == nil && offered.GetAcceptedAt() != nil) ||
+				(current.GetAcceptedAt() != nil && offered.GetAcceptedAt() == nil) ||
+				(current.GetAcceptedAt() != nil && offered.GetAcceptedAt() != nil && current.GetAcceptedAt().AsTime() != offered.GetAcceptedAt().AsTime()) {
+				// If the job is different, make sure to "reset" the accepted at dates
+				if current.GetJob() != offered.GetJob() {
+					if current.GetAcceptedAt() != nil {
+						offered.AcceptedAt = timestamp.New(current.GetAcceptedAt().AsTime())
+					} else {
+						offered.AcceptedAt = nil // Reset if no accepted at date is currently set
 					}
-					// Prevent access level being changed if the source job is different
-					if current.GetAccess() != offered.GetAccess() &&
-						j != offered.GetSourceJob() {
-						offered.Access = current.GetAccess()
-					}
-					updated = append(updated, offered)
 				}
-				delete(currentAccess, job) // Remove from currentAccess as it's still valid
-			} else {
-				// If the job is not in currentAccess, it means it's a new entry (it can't be accepted yet)
-				offered.AcceptedAt = nil
-				created = append(created, offered)
+				// Prevent access level being changed if the source job is different
+				if current.GetAccess() != offered.GetAccess() &&
+					j != offered.GetSourceJob() {
+					offered.Access = current.GetAccess()
+				}
+				updated = append(updated, offered)
 			}
+			delete(currentAccess, job) // Remove from currentAccess as it's still valid
+		} else {
+			// If the job is not in currentAccess, it means it's a new entry (it can't be accepted yet)
+			offered.AcceptedAt = nil
+			created = append(created, offered)
 		}
 	}
 
@@ -499,10 +497,8 @@ func (s *SettingsDB) calculateEffectiveAccess(
 		Dispatches: &centrumsettings.EffectiveDispatchAccess{},
 	}
 
-	// Calculate effective access: intersection of offered and accepted accesses
-	// settings.Access: jobs this job offers access to (outbound)
-	// settings.AcceptedAccess: jobs this job has accepted access from (inbound)
-	// For each job in settings.Access, check if that job offers access to this job
+	// Only accepted inbound offers count toward effective access.
+	// The caller job is the receiver; SourceJob is what gets added to dispatch access.
 	if offeredAccess != nil {
 		for _, offered := range offeredAccess.GetJobs() {
 			if offered.GetSourceJob() == job {
@@ -536,10 +532,8 @@ func (s *SettingsDB) Update(
 		return nil, err
 	}
 
-	// Ensure job is set in the settings
-	if in.GetJob() == "" {
-		in.Job = job
-	}
+	// Ensure job is set in the settings before merging
+	in.Default(job)
 
 	current.Merge(in)
 
