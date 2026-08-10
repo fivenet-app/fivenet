@@ -10,7 +10,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.43.0
 	github.com/adhocore/gronx v1.20.1
-	github.com/alecthomas/kong v1.16.0
+	github.com/alecthomas/kong v1.16.1
 	github.com/blevesearch/bleve/v2 v2.6.0
 	github.com/brianvoe/gofakeit/v7 v7.15.0
 	github.com/cespare/xxhash/v2 v2.3.0
