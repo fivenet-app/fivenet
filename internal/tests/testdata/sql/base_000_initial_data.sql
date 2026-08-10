@@ -21,6 +21,18 @@ VALUES(4, 'fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'char2:fcee377a1fda007a8d2
 INSERT INTO fivenet_user (id, license, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, updated_at)
 VALUES(5, '3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'char2:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'user', 'unemployed', 1, 'Peter', 'Hans', '10.02.1991', 'm', 178, '1550044', 0, 209, 2244596, '2023-01-26 09:01:51.000', '2023-03-11 21:06:27.000');
 
+-- Table data: `fivenet_user_jobs` - Add jobs to chars
+INSERT INTO fivenet_user_jobs (user_id, job, grade, is_primary)
+VALUES(1, 'ambulance', 17, 1);
+INSERT INTO fivenet_user_jobs (user_id, job, grade, is_primary)
+VALUES(2, 'ambulance', 20, 1);
+INSERT INTO fivenet_user_jobs (user_id, job, grade, is_primary)
+VALUES(3, 'doj', 16, 1);
+INSERT INTO fivenet_user_jobs (user_id, job, grade, is_primary)
+VALUES(4, 'police', 2, 1);
+INSERT INTO fivenet_user_jobs (user_id, job, grade, is_primary)
+VALUES(5, 'unemployed', 1, 1);
+
 -- Table data: `fivenet_user_accounts` - Add account mappings for the sample chars
 INSERT INTO fivenet_user_accounts (user_id, account_id) VALUES(1, 1);
 INSERT INTO fivenet_user_accounts (user_id, account_id) VALUES(2, 2);
