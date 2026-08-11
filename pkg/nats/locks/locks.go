@@ -51,6 +51,7 @@ func getLockMetrics() *lockMetrics {
 				Name:      "acquire_total",
 				Help:      "Total number of lock acquisition attempts.",
 			}, []string{"bucket", "result"}),
+
 			heldDuration: prometheus.NewHistogramVec(prometheus.HistogramOpts{
 				Namespace: "nats_locks",
 				Name:      "held_duration_seconds",

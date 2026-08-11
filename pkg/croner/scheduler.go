@@ -55,9 +55,11 @@ type Scheduler struct {
 	logger    *zap.Logger
 	ctxCancel context.Context //nolint:containedctx // Scheduler keeps a root cancelable context for store operations and subscriptions.
 	js        *events.JSWrapper
+	publisher events.IPublisher
 	registry  *Registry
 	gron      *gronx.Gronx
 	le        *leaderelection.LeaderElector
+	metrics   *schedulerMetrics
 
 	nodeName string
 	jsCons   jetstream.ConsumeContext
@@ -77,8 +79,10 @@ func NewScheduler(p SchedulerParams) (SchedulerResult, error) {
 
 		ctxCancel: ctxCancel,
 		js:        p.JS,
+		publisher: p.JS,
 		registry:  p.State,
 		gron:      gronx.New(),
+		metrics:   getSchedulerMetrics(),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -212,13 +216,15 @@ func (s *Scheduler) start(ctx context.Context) {
 }
 
 func (s *Scheduler) runCronjob(ctx context.Context, job *cron.Cronjob) (*jetstream.PubAck, error) {
-	pa, err := s.js.PublishProto(
+	startedAt := time.Now()
+	pa, err := s.publisher.PublishProto(
 		ctx,
 		fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic),
 		&cron.CronjobSchedulerEvent{
 			Cronjob: job,
 		},
 	)
+	s.metrics.handoffLatency.WithLabelValues(job.GetName()).Observe(time.Since(startedAt).Seconds())
 	if err != nil {
 		return nil, err
 	}

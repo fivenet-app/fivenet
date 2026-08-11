@@ -52,6 +52,7 @@ require (
 	github.com/paulmach/orb v0.13.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.24.1
+	github.com/prometheus/client_model v0.6.2
 	github.com/puzpuzpuz/xsync/v4 v4.5.0
 	github.com/rs/cors v1.11.1
 	github.com/sergi/go-diff v1.4.0
@@ -202,7 +203,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
-	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.70.1 // indirect
 	github.com/prometheus/procfs v0.21.1 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect

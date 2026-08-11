@@ -44,12 +44,14 @@ type Executor struct {
 
 	nodeName string
 
-	ctx context.Context //nolint:containedctx // Executor lifecycle context is used for async job execution and publishing.
-	js  *events.JSWrapper
+	ctx       context.Context //nolint:containedctx // Executor lifecycle context is used for async job execution and publishing.
+	js        *events.JSWrapper
+	publisher events.IPublisher
 
 	jsCons jetstream.ConsumeContext
 
 	handlers *Handlers
+	metrics  *executorMetrics
 }
 
 func NewExecutor(p ExecutorParams) (*Executor, error) {
@@ -67,10 +69,12 @@ func NewExecutor(p ExecutorParams) (*Executor, error) {
 
 		nodeName: nodeName,
 
-		ctx: ctxCancel,
-		js:  p.JS,
+		ctx:       ctxCancel,
+		js:        p.JS,
+		publisher: p.JS,
 
 		handlers: p.Handlers,
+		metrics:  getExecutorMetrics(),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -187,14 +191,20 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 		zap.Duration("timeout", timeout),
 	)
 
+	jobName := job.GetCronjob().GetName()
+	startedTime := job.GetCronjob().GetStartedTime()
+	if startedTime != nil {
+		ag.metrics.startLatency.WithLabelValues(jobName).
+			Observe(time.Since(startedTime.AsTime()).Seconds())
+	}
+
 	var elapsed time.Duration
 
 	var err error
+	start := time.Now()
 	func() {
 		ctx, cancel := context.WithTimeout(ag.ctx, timeout)
 		defer cancel()
-
-		start := time.Now()
 		defer func() {
 			elapsed = time.Since(start)
 
@@ -217,6 +227,13 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 		err = fn(ctx, job.GetCronjob().GetData())
 	}()
 
+	status := "success"
+	if err != nil {
+		status = "failure"
+	}
+	ag.metrics.handlerDuration.WithLabelValues(jobName).Observe(elapsed.Seconds())
+	ag.metrics.runsTotal.WithLabelValues(jobName, status).Inc()
+
 	// Update timestamp in cronjob data
 	now := timestamp.Now()
 	job.Cronjob.Data.UpdatedAt = now
@@ -226,7 +243,7 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 		errMsg = &msg
 	}
 
-	if _, err := ag.js.PublishProto(
+	if _, err := ag.publisher.PublishProto(
 		ag.ctx,
 		fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
 		&cron.CronjobCompletedEvent{

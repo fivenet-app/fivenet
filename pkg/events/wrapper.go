@@ -17,6 +17,15 @@ import (
 
 const DescriptionPrefix = "FiveNet: "
 
+type IPublisher interface {
+	PublishProto(
+		ctx context.Context,
+		subject string,
+		msg proto.Message,
+		opts ...jetstream.PublishOpt,
+	) (*jetstream.PubAck, error)
+}
+
 // JSWrapper ensures that when creating/updating NATS streams, KVs, etc., we apply some (globally) configurable config options.
 type JSWrapper struct {
 	jetstream.JetStream
