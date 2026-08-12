@@ -14,6 +14,7 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	io_prometheus_client "github.com/prometheus/client_model/go"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
@@ -86,9 +87,7 @@ func metricFamilyHistogramCount(t *testing.T, familyName string, labels map[stri
 	t.Helper()
 
 	families, err := prometheus.DefaultGatherer.Gather()
-	if err != nil {
-		t.Fatalf("gather metrics: %v", err)
-	}
+	require.NoError(t, err)
 
 	for _, family := range families {
 		if family.GetName() != familyName {
@@ -98,9 +97,12 @@ func metricFamilyHistogramCount(t *testing.T, familyName string, labels map[stri
 			if !labelsMatch(metric.GetLabel(), labels) {
 				continue
 			}
-			if metric.GetHistogram() == nil {
-				t.Fatalf("metric family %s label set found but histogram missing", familyName)
-			}
+			require.NotNil(
+				t,
+				metric.GetHistogram(),
+				"metric family %s label set found but histogram missing",
+				familyName,
+			)
 			return metric.GetHistogram().GetSampleCount()
 		}
 	}
@@ -109,13 +111,11 @@ func metricFamilyHistogramCount(t *testing.T, familyName string, labels map[stri
 	return 0
 }
 
-func metricFamilyCounterValue(t *testing.T, familyName string, labels map[string]string) float64 {
+func metricFamilyGaugeValue(t *testing.T, familyName string, labels map[string]string) float64 {
 	t.Helper()
 
 	families, err := prometheus.DefaultGatherer.Gather()
-	if err != nil {
-		t.Fatalf("gather metrics: %v", err)
-	}
+	require.NoError(t, err)
 
 	for _, family := range families {
 		if family.GetName() != familyName {
@@ -125,10 +125,13 @@ func metricFamilyCounterValue(t *testing.T, familyName string, labels map[string
 			if !labelsMatch(metric.GetLabel(), labels) {
 				continue
 			}
-			if metric.GetCounter() == nil {
-				t.Fatalf("metric family %s label set found but counter missing", familyName)
-			}
-			return metric.GetCounter().GetValue()
+			require.NotNil(
+				t,
+				metric.GetGauge(),
+				"metric family %s label set found but gauge missing",
+				familyName,
+			)
+			return metric.GetGauge().GetValue()
 		}
 	}
 
@@ -148,11 +151,14 @@ func labelsMatch(actual []*io_prometheus_client.LabelPair, expected map[string]s
 	return true
 }
 
-func cronFamilyName(subsystem, metric string) string {
+func cronFamilyName(t *testing.T, subsystem, metric string) string {
+	t.Helper()
 	return prometheus.BuildFQName("fivenet", subsystem, metric)
 }
 
 func TestSchedulerRunCronjobRecordsHandoffLatency(t *testing.T) {
+	t.Parallel()
+
 	js := &fakeCronJS{}
 	s := &Scheduler{
 		logger:    zap.NewNop(),
@@ -161,29 +167,25 @@ func TestSchedulerRunCronjobRecordsHandoffLatency(t *testing.T) {
 	}
 
 	job := &cron.Cronjob{Name: "croner.scheduler.test"}
-	if _, err := s.runCronjob(t.Context(), job); err != nil {
-		t.Fatalf("runCronjob: %v", err)
-	}
+	_, err := s.runCronjob(t.Context(), job)
+	require.NoError(t, err)
 
-	if got := len(js.published); got != 1 {
-		t.Fatalf("published messages = %d, want 1", got)
-	}
+	require.Len(t, js.published, 1)
 	wantSubject := string(CronScheduleSubject) + "." + string(CronScheduleTopic)
-	if got := js.published[0].subject; got != wantSubject {
-		t.Fatalf("published subject = %q, want %q", got, wantSubject)
-	}
+	require.Equal(t, wantSubject, js.published[0].subject)
 
-	family := cronFamilyName(schedulerMetricSubsystem, schedulerMetricHandoffLatency)
-	if got := metricFamilyHistogramCount(
+	family := cronFamilyName(t, schedulerMetricSubsystem, schedulerMetricHandoffLatency)
+	latency := metricFamilyHistogramCount(
 		t,
 		family,
 		map[string]string{"job": job.GetName()},
-	); got != 1 {
-		t.Fatalf("handoff latency observations = %d, want 1", got)
-	}
+	)
+	require.Equal(t, uint64(1), latency)
 }
 
 func TestExecutorWatchForEventsRecordsSuccessAndDurations(t *testing.T) {
+	t.Parallel()
+
 	jobName := "croner.executor.success"
 	wantSubject := string(CronScheduleSubject) + "." + string(CronScheduleTopic)
 	js := &fakeCronJS{}
@@ -210,9 +212,7 @@ func TestExecutorWatchForEventsRecordsSuccessAndDurations(t *testing.T) {
 			Data:        &cron.CronjobData{Data: nil},
 		},
 	})
-	if err != nil {
-		t.Fatalf("marshal event: %v", err)
-	}
+	require.NoError(t, err)
 
 	msg := &fakeMsg{
 		data:    payload,
@@ -220,53 +220,46 @@ func TestExecutorWatchForEventsRecordsSuccessAndDurations(t *testing.T) {
 	}
 	exec.watchForEvents(msg)
 
-	if !msg.acked {
-		t.Fatal("expected message ack")
-	}
-	if got := len(js.published); got != 1 {
-		t.Fatalf("published messages = %d, want 1", got)
-	}
+	require.True(t, msg.acked, "expected message ack")
+	require.Len(t, js.published, 1)
 
 	completed, ok := js.published[0].msg.(*cron.CronjobCompletedEvent)
-	if !ok {
-		t.Fatalf(
-			"published message type = %T, want *cron.CronjobCompletedEvent",
-			js.published[0].msg,
-		)
-	}
-	if !completed.GetSuccess() {
-		t.Fatal("expected successful completion event")
-	}
+	require.True(
+		t,
+		ok,
+		"published message type = %T, want *cron.CronjobCompletedEvent",
+		js.published[0].msg,
+	)
+	require.True(t, completed.GetSuccess(), "expected successful completion event")
 
-	startFamily := cronFamilyName(executorMetricSubsystem, executorMetricStartLatency)
-	if got := metricFamilyHistogramCount(
+	startFamily := cronFamilyName(t, executorMetricSubsystem, executorMetricStartLatency)
+	histoCount := metricFamilyHistogramCount(
 		t,
 		startFamily,
 		map[string]string{"job": jobName},
-	); got != 1 {
-		t.Fatalf("start latency observations = %d, want 1", got)
-	}
+	)
+	require.Equal(t, uint64(1), histoCount)
 
-	durationFamily := cronFamilyName(executorMetricSubsystem, executorMetricHandlerDuration)
-	if got := metricFamilyHistogramCount(
+	durationFamily := cronFamilyName(t, executorMetricSubsystem, executorMetricHandlerDuration)
+	observations := metricFamilyHistogramCount(
 		t,
 		durationFamily,
 		map[string]string{"job": jobName},
-	); got != 1 {
-		t.Fatalf("handler duration observations = %d, want 1", got)
-	}
+	)
+	require.Equal(t, uint64(1), observations)
 
-	runFamily := cronFamilyName(executorMetricSubsystem, executorMetricRunsTotal)
-	if got := metricFamilyCounterValue(
+	runFamily := cronFamilyName(t, executorMetricSubsystem, executorMetricLastRunSuccess)
+	success := metricFamilyGaugeValue(
 		t,
 		runFamily,
-		map[string]string{"job": jobName, "status": "success"},
-	); got != 1 {
-		t.Fatalf("success counter = %v, want 1", got)
-	}
+		map[string]string{"job": jobName},
+	)
+	require.InDelta(t, float64(1), success, 0.000001)
 }
 
 func TestExecutorWatchForEventsRecordsFailureOnPanic(t *testing.T) {
+	t.Parallel()
+
 	jobName := "croner.executor.failure"
 	wantSubject := string(CronScheduleSubject) + "." + string(CronScheduleTopic)
 	js := &fakeCronJS{}
@@ -290,9 +283,7 @@ func TestExecutorWatchForEventsRecordsFailureOnPanic(t *testing.T) {
 			StartedTime: timestamp.New(time.Now().Add(-10 * time.Millisecond)),
 		},
 	})
-	if err != nil {
-		t.Fatalf("marshal event: %v", err)
-	}
+	require.NoError(t, err)
 
 	msg := &fakeMsg{
 		data:    payload,
@@ -300,33 +291,28 @@ func TestExecutorWatchForEventsRecordsFailureOnPanic(t *testing.T) {
 	}
 	exec.watchForEvents(msg)
 
-	if !msg.acked {
-		t.Fatal("expected message ack")
-	}
-	if got := len(js.published); got != 1 {
-		t.Fatalf("published messages = %d, want 1", got)
-	}
+	require.True(t, msg.acked, "expected message ack")
+	require.Len(t, js.published, 1)
 
 	completed, ok := js.published[0].msg.(*cron.CronjobCompletedEvent)
-	if !ok {
-		t.Fatalf(
-			"published message type = %T, want *cron.CronjobCompletedEvent",
-			js.published[0].msg,
-		)
-	}
-	if completed.GetSuccess() {
-		t.Fatal("expected failed completion event")
-	}
-	if completed.GetErrorMessage() == "" {
-		t.Fatal("expected error message on failed completion event")
-	}
+	require.True(
+		t,
+		ok,
+		"published message type = %T, want *cron.CronjobCompletedEvent",
+		js.published[0].msg,
+	)
+	require.False(t, completed.GetSuccess(), "expected failed completion event")
+	require.NotEmpty(
+		t,
+		completed.GetErrorMessage(),
+		"expected error message on failed completion event",
+	)
 
-	runFamily := cronFamilyName(executorMetricSubsystem, executorMetricRunsTotal)
-	if got := metricFamilyCounterValue(
+	runFamily := cronFamilyName(t, executorMetricSubsystem, executorMetricLastRunSuccess)
+	failure := metricFamilyGaugeValue(
 		t,
 		runFamily,
-		map[string]string{"job": jobName, "status": "failure"},
-	); got != 1 {
-		t.Fatalf("failure counter = %v, want 1", got)
-	}
+		map[string]string{"job": jobName},
+	)
+	require.InDelta(t, float64(0), failure, 0.000001)
 }
