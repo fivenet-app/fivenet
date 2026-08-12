@@ -156,4 +156,40 @@ CREATE TABLE IF NOT EXISTS `fivenet_job_group_activity` (
     ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+-- Table: fivenet_job_groups_access
+CREATE TABLE IF NOT EXISTS `fivenet_job_groups_access` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `target_id` bigint(20) unsigned NOT NULL,
+  `subject_id` bigint(20) unsigned NOT NULL,
+  `access` smallint(2) NOT NULL,
+  `effect` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_fivenet_job_groups_access_unique` (`target_id`, `subject_id`, `access`, `effect`),
+  KEY `idx_fivenet_job_groups_access_target_access` (`target_id`, `access`, `subject_id`, `effect`),
+  KEY `idx_fivenet_job_groups_access_subject_access` (`subject_id`, `access`, `target_id`, `effect`),
+  CONSTRAINT `fk_fivenet_job_groups_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_job_groups` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_job_groups_access_subject_id` FOREIGN KEY (`subject_id`) REFERENCES `fivenet_acl_subjects` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `chk_fivenet_job_groups_access_effect` CHECK (`effect` IN (0, 1))
+) ENGINE=InnoDB;
+
+-- Table: fivenet_job_groups_visibility_subject
+CREATE TABLE IF NOT EXISTS `fivenet_job_groups_visibility_subject` (
+  `target_id` bigint(20) unsigned NOT NULL,
+  `subject_id` bigint(20) unsigned NOT NULL,
+  `access` smallint(2) NOT NULL,
+  `effect` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  PRIMARY KEY (`target_id`, `subject_id`, `access`, `effect`),
+  KEY `idx_fivenet_job_groups_visibility_subject_lookup` (`subject_id`, `access`, `target_id`, `effect`),
+  KEY `idx_fivenet_job_groups_visibility_subject_target` (`target_id`, `access`, `subject_id`, `effect`),
+  CONSTRAINT `fk_fivenet_job_groups_visibility_subject_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_job_groups` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_job_groups_visibility_subject_subject_id` FOREIGN KEY (`subject_id`) REFERENCES `fivenet_acl_subjects` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `chk_fivenet_job_groups_visibility_subject_effect` CHECK (`effect` IN (0, 1))
+) ENGINE=InnoDB;
+
 COMMIT;

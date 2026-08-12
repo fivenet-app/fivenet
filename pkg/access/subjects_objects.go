@@ -335,3 +335,29 @@ func NewCentrumUnitsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 		},
 	})
 }
+
+func NewJobGroupsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
+	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+		TargetTable: table.FivenetJobGroups,
+		TargetColumns: &SubjectTargetTableColumns{
+			ID:        table.FivenetJobGroups.ID,
+			DeletedAt: table.FivenetJobGroups.DeletedAt,
+		},
+		AccessTable: table.FivenetJobGroupsAccess,
+		AccessColumns: &SubjectAccessColumns{
+			BaseAccessColumns: BaseAccessColumns{
+				ID:       table.FivenetJobGroupsAccess.ID,
+				TargetID: table.FivenetJobGroupsAccess.TargetID,
+				Access:   table.FivenetJobGroupsAccess.Access,
+			},
+			SubjectID: table.FivenetJobGroupsAccess.SubjectID,
+			Effect:    table.FivenetJobGroupsAccess.Effect,
+		},
+		CalculatedVisibilitySubjectTable:     table.FivenetJobGroupsVisibilitySubject,
+		CalculatedVisibilitySubjectTargetID:  table.FivenetJobGroupsVisibilitySubject.TargetID,
+		CalculatedVisibilitySubjectSubjectID: table.FivenetJobGroupsVisibilitySubject.SubjectID,
+		CalculatedVisibilitySubjectAccess:    table.FivenetJobGroupsVisibilitySubject.Access,
+		CalculatedVisibilitySubjectEffect:    table.FivenetJobGroupsVisibilitySubject.Effect,
+		CalculatedVisibilityMaps:             true,
+	})
+}

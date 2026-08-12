@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
+	groupsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/access"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -46,6 +47,9 @@ func (s *Server) UploadGroupLogo(
 	}
 	if group == nil {
 		return errorsjobs.ErrNotFoundOrNoPerms
+	}
+	if err := s.ensureGroupAccess(ctx, userInfo, group.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+		return err
 	}
 
 	var oldLogoFileID int64
@@ -132,6 +136,9 @@ func (s *Server) DeleteGroupLogo(
 	if group == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
+	if err := s.ensureGroupAccess(ctx, userInfo, group.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+		return nil, err
+	}
 
 	logoFileID := group.GetLogoFileId()
 	if logoFileID <= 0 && group.GetLogoFile() != nil {
@@ -170,6 +177,9 @@ func (s *Server) DeleteGroupLogo(
 	}
 	if updated == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
+	}
+	if err := s.ensureGroupAccess(ctx, userInfo, updated.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+		return nil, err
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)

@@ -8,6 +8,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
+	groupsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/access"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -176,6 +177,9 @@ func (s *Server) CreateGroupRule(
 	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
 		return nil, err
 	}
+	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+		return nil, err
+	}
 
 	created, err := s.store.CreateGroupRule(ctx, tx, rule)
 	if err != nil {
@@ -241,6 +245,9 @@ func (s *Server) ListGroupRules(
 	if err != nil {
 		return nil, err
 	}
+	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+		return nil, err
+	}
 
 	rules, err := s.store.ListGroupRules(ctx, s.db, req.GetGroupId())
 	if err != nil {
@@ -280,6 +287,9 @@ func (s *Server) UpdateGroupRule(
 	defer tx.Rollback()
 
 	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
+		return nil, err
+	}
+	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
 		return nil, err
 	}
 
@@ -373,6 +383,9 @@ func (s *Server) DeleteGroupRule(
 	defer tx.Rollback()
 
 	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
+		return nil, err
+	}
+	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
 		return nil, err
 	}
 

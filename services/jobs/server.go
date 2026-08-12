@@ -5,6 +5,7 @@ import (
 	sync "sync"
 
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
@@ -15,8 +16,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
-	"github.com/fivenet-app/fivenet/v2026/services/jobs/usersel"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	"github.com/fivenet-app/fivenet/v2026/stores/jobs/usersel"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -98,6 +99,9 @@ type Server struct {
 	customDB *config.CustomDB
 	store    jobsstore.IStore
 
+	groupAccess         groupAccessManager
+	groupAccessResolver *access.SubjectResolver
+
 	colleagueHydrator colleaguehydrator.IHydrator
 
 	fHandler             *filestore.Handler[int64]
@@ -173,11 +177,14 @@ func NewServer(p Params) *Server {
 
 		fHandler:             conductFileHandler,
 		groupLogoFileHandler: groupLogoFileHandler,
+		groupAccess:          access.NewJobGroupsSubjectObjectAccess(p.DB),
+		groupAccessResolver:  access.NewSubjectResolver(p.DB),
 
 		userSel: p.UserSel,
 	}
 	if s.store == nil {
-		s.store = jobsstore.New(p.DB, &p.Config.Database.Custom)
+		r := jobsstore.New(p.DB, &p.Config.Database.Custom)
+		s.store = r.Store
 	}
 
 	return s

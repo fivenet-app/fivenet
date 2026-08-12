@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.jobs;
 
 import "buf/validate/validate.proto";
+import "resources/access/access.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
@@ -47,6 +48,7 @@ message GetGroupResponse {
   repeated resources.jobs.groups.GroupManualMember manual_members = 4;
   repeated resources.jobs.groups.GroupMemberExclusion exclusions = 5;
   repeated resources.jobs.groups.GroupResolvedMember resolved_members = 6;
+  optional resources.access.Access access = 7;
 }
 
 message CreateGroupRequest {
@@ -66,6 +68,7 @@ message CreateGroupRequest {
   repeated int32 leader_user_ids = 10;
   repeated int32 manual_member_user_ids = 11;
   repeated GroupRuleInput rules = 12;
+  optional resources.access.Access access = 13;
 }
 
 message CreateGroupResponse {
@@ -86,6 +89,7 @@ message UpdateGroupRequest {
   optional resources.jobs.groups.GroupType type = 8;
   optional resources.jobs.groups.GroupMembershipMode membership_mode = 9;
   optional string sort_rank = 10 [(buf.validate.field).string.max_len = 32];
+  optional resources.access.Access access = 11;
 }
 
 message UpdateGroupResponse {

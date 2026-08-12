@@ -6,6 +6,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
+	groupsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/access"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -80,6 +81,9 @@ func (s *Server) ListGroupActivity(
 	}
 	if group == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
+	}
+	if err := s.ensureGroupAccess(ctx, userInfo, group.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+		return nil, err
 	}
 
 	tActivity := table.FivenetJobGroupActivity.AS("group_activity")

@@ -4545,6 +4545,30 @@ Policy snapshot applied to a specific version
 
 
 
+## resources/jobs/groups/access/access.proto
+
+ <!-- end messages -->
+
+
+### resources.jobs.groups.access.AccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_EDIT` | 4 |  |
+| `ACCESS_LEVEL_MANAGE` | 5 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/jobs/groups/group.proto
 
 
@@ -11088,7 +11112,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
-| `user_ids` | [int32](#int32) | repeated | Search params |
+| `users` | [resources.jobs.UserSelector](#resourcesjobsUserSelector) | optional | Search params |
 | `activity_types` | [resources.jobs.colleagues.activity.ColleagueActivityType](#resourcesjobscolleaguesactivityColleagueActivityType) | repeated |  |
 
 
@@ -11115,7 +11139,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `search` | [string](#string) |  | Search params |
-| `user_ids` | [int32](#int32) | repeated |  |
+| `users` | [resources.jobs.UserSelector](#resourcesjobsUserSelector) | optional |  |
 | `user_only` | [bool](#bool) | optional |  |
 | `absent` | [bool](#bool) | optional |  |
 | `label_ids` | [int64](#int64) | repeated |  |
@@ -11277,7 +11301,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `types` | [resources.jobs.conduct.ConductType](#resourcesjobsconductConductType) | repeated | Search params |
 | `show_expired` | [bool](#bool) | optional |  |
 | `show_drafts` | [bool](#bool) | optional |  |
-| `user_ids` | [int32](#int32) | repeated |  |
+| `users` | [resources.jobs.UserSelector](#resourcesjobsUserSelector) | optional |  |
 | `ids` | [int64](#int64) | repeated |  |
 | `show_deleted` | [bool](#bool) | optional |  |
 
@@ -11432,6 +11456,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `leader_user_ids` | [int32](#int32) | repeated |  |
 | `manual_member_user_ids` | [int32](#int32) | repeated |  |
 | `rules` | [GroupRuleInput](#servicesjobsGroupRuleInput) | repeated |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) | optional |  |
 
 
 
@@ -11573,6 +11598,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `manual_members` | [resources.jobs.groups.GroupManualMember](#resourcesjobsgroupsGroupManualMember) | repeated |  |
 | `exclusions` | [resources.jobs.groups.GroupMemberExclusion](#resourcesjobsgroupsGroupMemberExclusion) | repeated |  |
 | `resolved_members` | [resources.jobs.groups.GroupResolvedMember](#resourcesjobsgroupsGroupResolvedMember) | repeated |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) | optional |  |
 
 
 
@@ -11888,6 +11914,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `type` | [resources.jobs.groups.GroupType](#resourcesjobsgroupsGroupType) | optional |  |
 | `membership_mode` | [resources.jobs.groups.GroupMembershipMode](#resourcesjobsgroupsGroupMembershipMode) | optional |  |
 | `sort_rank` | [string](#string) | optional |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) | optional |  |
 
 
 
@@ -12082,7 +12109,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) | optional |  |
+| `users` | [resources.jobs.UserSelector](#resourcesjobsUserSelector) | optional |  |
 
 
 
@@ -12108,6 +12135,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `days` | [int32](#int32) |  | Search params |
+| `users` | [resources.jobs.UserSelector](#resourcesjobsUserSelector) | optional |  |
 
 
 
@@ -12136,7 +12164,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `mode` | [resources.jobs.timeclock.TimeclockMode](#resourcesjobstimeclockTimeclockMode) |  |  |
 | `date` | [resources.common.database.DateRange](#resourcescommondatabaseDateRange) | optional |  |
 | `per_day` | [bool](#bool) |  |  |
-| `users` | [resources.jobs.UserSelector](#resourcesjobsUserSelector) |  |  |
+| `users` | [resources.jobs.UserSelector](#resourcesjobsUserSelector) | optional |  |
 
 
 

@@ -1,5 +1,7 @@
 BEGIN;
 
+DROP TABLE IF EXISTS `fivenet_job_groups_visibility_subject`;
+DROP TABLE IF EXISTS `fivenet_job_groups_access`;
 DROP TABLE IF EXISTS `fivenet_job_group_activity`;
 DROP TABLE IF EXISTS `fivenet_job_group_rule_qualification_items`;
 DROP TABLE IF EXISTS `fivenet_job_group_rule_qualifications`;

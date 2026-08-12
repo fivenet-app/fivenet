@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
 )
 
 type ListColleaguesQuery struct {
@@ -64,11 +65,12 @@ type TimeclockQuery struct {
 }
 
 type InactiveEmployeesQuery struct {
-	Days   int32
-	Sort   *database.Sort
-	Offset int64
-	Limit  int64
-	Job    string
+	Days    int32
+	UserIDs []int32
+	Sort    *database.Sort
+	Offset  int64
+	Limit   int64
+	Job     string
 }
 
 type ConductQuery struct {
@@ -112,26 +114,20 @@ type GroupRuleMemberMatch struct {
 	Label   string
 }
 
-type IStore interface {
-	GetMOTD(ctx context.Context, db qrm.DB, job string) (string, error)
-	SetMOTD(ctx context.Context, db qrm.DB, job string, motd string) error
-	GetJobProps(ctx context.Context, db qrm.DB, job string) (*jobsprops.JobProps, error)
-
-	CountGroups(ctx context.Context, db qrm.DB, q GroupsQuery) (int64, error)
-	ListGroups(ctx context.Context, db qrm.DB, q GroupsQuery) ([]*jobsgroups.Group, error)
+type IGroupsQuery interface {
 	GetGroup(ctx context.Context, db qrm.DB, q GroupQuery, id int64) (*jobsgroups.Group, error)
-	CreateGroup(ctx context.Context, db qrm.DB, group *jobsgroups.Group) (int64, error)
-	UpdateGroup(ctx context.Context, db qrm.DB, group *jobsgroups.Group) error
-	ArchiveGroup(ctx context.Context, db qrm.DB, job string, id int64, updatedByUserID int32) error
-	RestoreGroup(ctx context.Context, db qrm.DB, job string, id int64, updatedByUserID int32) error
-	UserInJob(ctx context.Context, db qrm.DB, job string, userID int32) (bool, error)
-	RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64) error
 	ListGroupManualMembers(
 		ctx context.Context,
 		db qrm.DB,
 		groupID int64,
 		search string,
 	) ([]*jobsgroups.GroupManualMember, error)
+	ListGroupRuleMemberMatches(
+		ctx context.Context,
+		db qrm.DB,
+		group *jobsgroups.Group,
+		search string,
+	) ([]*GroupRuleMemberMatch, error)
 	ListGroupMemberExclusions(
 		ctx context.Context,
 		db qrm.DB,
@@ -144,6 +140,22 @@ type IStore interface {
 		groupID int64,
 		search string,
 	) ([]*jobsgroups.GroupLeader, error)
+}
+
+type IStore interface {
+	IGroupsQuery
+
+	GetMOTD(ctx context.Context, db qrm.DB, job string) (string, error)
+	SetMOTD(ctx context.Context, db qrm.DB, job string, motd string) error
+	GetJobProps(ctx context.Context, db qrm.DB, job string) (*jobsprops.JobProps, error)
+
+	CountGroups(ctx context.Context, db qrm.DB, q GroupsQuery) (int64, error)
+	ListGroups(ctx context.Context, db qrm.DB, q GroupsQuery) ([]*jobsgroups.Group, error)
+	CreateGroup(ctx context.Context, db qrm.DB, group *jobsgroups.Group) (int64, error)
+	UpdateGroup(ctx context.Context, db qrm.DB, group *jobsgroups.Group) error
+	ArchiveGroup(ctx context.Context, db qrm.DB, job string, id int64, updatedByUserID int32) error
+	RestoreGroup(ctx context.Context, db qrm.DB, job string, id int64, updatedByUserID int32) error
+	RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64) error
 	AddGroupManualMember(
 		ctx context.Context,
 		db qrm.DB,
@@ -190,12 +202,6 @@ type IStore interface {
 		updatedByUserID int32,
 	) (*jobsgroups.GroupRule, error)
 	DeleteGroupRule(ctx context.Context, db qrm.DB, groupID int64, ruleID int64) error
-	ListGroupRuleMemberMatches(
-		ctx context.Context,
-		db qrm.DB,
-		group *jobsgroups.Group,
-		search string,
-	) ([]*GroupRuleMemberMatch, error)
 	CreateGroupActivity(
 		ctx context.Context,
 		db qrm.DB,
@@ -208,6 +214,7 @@ type IStore interface {
 		q ListQuery,
 	) ([]*jobsgroups.GroupActivity, error)
 
+	UserInJob(ctx context.Context, db qrm.DB, job string, userID int32) (bool, error)
 	CountColleagues(ctx context.Context, db qrm.DB, q ListColleaguesQuery) (int64, error)
 	ListColleagues(
 		ctx context.Context,
@@ -376,6 +383,17 @@ type Store struct {
 	customDB *config.CustomDB
 }
 
-func New(db *sql.DB, customDB *config.CustomDB) IStore {
-	return &Store{db: db, customDB: customDB}
+type Result struct {
+	fx.Out
+
+	Store       IStore
+	GroupsQuery IGroupsQuery
+}
+
+func New(db *sql.DB, customDB *config.CustomDB) Result {
+	s := &Store{db: db, customDB: customDB}
+	return Result{
+		Store:       s,
+		GroupsQuery: s,
+	}
 }

@@ -4,9 +4,12 @@ import (
 	"context"
 	"strconv"
 
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
+	groupsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/access"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -15,6 +18,41 @@ import (
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
+
+func (s *Server) ensureHighestJobGradeAccess(
+	job string,
+	in *resourcesaccess.Access,
+) (*resourcesaccess.Access, error) {
+	if in == nil || s.enricher == nil {
+		return in, nil
+	}
+
+	jobData := s.enricher.GetJobByName(job)
+	if jobData == nil || len(jobData.GetGrades()) == 0 {
+		return in, nil
+	}
+
+	highestGrade := jobData.GetGrades()[len(jobData.GetGrades())-1].GetGrade()
+	if highestGrade <= 0 {
+		return in, nil
+	}
+
+	return access.NormalizeAccess(
+		in,
+		&resourcesaccess.Access{
+			Jobs: []*resourcesaccess.JobAccess{
+				{
+					Job:          job,
+					MinimumGrade: highestGrade,
+					Access:       int32(groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+					Required:     new(true),
+				},
+			},
+		},
+		nil,
+		15,
+	)
+}
 
 func (s *Server) ListGroups(
 	ctx context.Context,
@@ -94,6 +132,9 @@ func (s *Server) GetGroup(
 	if group == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
+	if err := s.ensureGroupAccess(ctx, userInfo, group.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+		return nil, err
+	}
 
 	resp := &pbjobs.GetGroupResponse{Group: group}
 	if req.GetIncludeRules() {
@@ -133,6 +174,17 @@ func (s *Server) GetGroup(
 		)
 		if err != nil {
 			return nil, err
+		}
+	}
+	if s.groupAccess != nil {
+		resp.Access, err = s.groupAccess.ListTargetAccess(
+			ctx,
+			s.db,
+			group.GetId(),
+			access.SubjectAccessOptions{BlockedAccess: -1},
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 
@@ -200,6 +252,22 @@ func (s *Server) CreateGroup(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	group.Id = id
+	if req.HasAccess() && s.groupAccess != nil {
+		accessPayload, err := s.ensureHighestJobGradeAccess(job, req.GetAccess())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+		if _, err := s.groupAccess.ReplaceTargetAccess(
+			ctx,
+			tx,
+			s.groupAccessResolver,
+			id,
+			accessPayload,
+			access.SubjectAccessOptions{BlockedAccess: -1},
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
 	if err := s.addGroupActivity(
 		ctx,
 		tx,
@@ -357,6 +425,9 @@ func (s *Server) UpdateGroup(
 	if group == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
+	if err := s.ensureGroupAccess(ctx, userInfo, group.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+		return nil, err
+	}
 
 	if req.HasName() {
 		group.Name = req.GetName()
@@ -402,6 +473,22 @@ func (s *Server) UpdateGroup(
 
 	if err := s.store.UpdateGroup(ctx, tx, group); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if req.HasAccess() && s.groupAccess != nil {
+		accessPayload, err := s.ensureHighestJobGradeAccess(group.GetJob(), req.GetAccess())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+		if _, err := s.groupAccess.ReplaceTargetAccess(
+			ctx,
+			tx,
+			s.groupAccessResolver,
+			group.GetId(),
+			accessPayload,
+			access.SubjectAccessOptions{BlockedAccess: -1},
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
 	}
 	if err := s.addGroupActivity(
 		ctx,
@@ -449,6 +536,10 @@ func (s *Server) ArchiveGroup(
 	logging.InjectFields(ctx, logging.Fields{
 		"fivenet.jobs.groups.id", req.GetId(),
 	})
+
+	if err := s.ensureGroupAccess(ctx, userInfo, req.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE); err != nil {
+		return nil, err
+	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -520,6 +611,10 @@ func (s *Server) RestoreGroup(
 	logging.InjectFields(ctx, logging.Fields{
 		"fivenet.jobs.groups.id", req.GetId(),
 	})
+
+	if err := s.ensureGroupAccess(ctx, userInfo, req.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE); err != nil {
+		return nil, err
+	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
