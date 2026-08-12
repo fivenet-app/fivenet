@@ -8,6 +8,7 @@ import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
 import "resources/jobs/conduct/conduct.proto";
+import "resources/jobs/user_selector.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobs";
 
@@ -20,7 +21,7 @@ message ListConductEntriesRequest {
   repeated resources.jobs.conduct.ConductType types = 3 [(buf.validate.field).repeated.items.enum.defined_only = true];
   optional bool show_expired = 4;
   optional bool show_drafts = 5;
-  repeated int32 user_ids = 6;
+  optional resources.jobs.UserSelector users = 6;
   repeated int64 ids = 7;
   optional bool show_deleted = 8;
 }
@@ -65,9 +66,7 @@ service ConductService {
     order: 65
     icon: "i-mdi-list-status"
     additional_perms: [
-      {
-        name: "RestoreConductEntry"
-      }
+      {name: "RestoreConductEntry"}
     ]
   };
 

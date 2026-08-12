@@ -23,6 +23,7 @@ import { GroupExclusionReason } from "../../resources/jobs/groups/group";
 import { GroupMemberSource } from "../../resources/jobs/groups/group";
 import { GroupMembershipMode } from "../../resources/jobs/groups/group";
 import { GroupType } from "../../resources/jobs/groups/group";
+import { Access } from "../../resources/access/access";
 import { GroupResolvedMember } from "../../resources/jobs/groups/group";
 import { GroupMemberExclusion } from "../../resources/jobs/groups/group";
 import { GroupManualMember } from "../../resources/jobs/groups/group";
@@ -146,6 +147,10 @@ export interface GetGroupResponse {
      * @generated from protobuf field: repeated resources.jobs.groups.GroupResolvedMember resolved_members = 6
      */
     resolvedMembers: GroupResolvedMember[];
+    /**
+     * @generated from protobuf field: optional resources.access.Access access = 7
+     */
+    access?: Access;
 }
 /**
  * @generated from protobuf message services.jobs.CreateGroupRequest
@@ -195,6 +200,10 @@ export interface CreateGroupRequest {
      * @generated from protobuf field: repeated services.jobs.GroupRuleInput rules = 12
      */
     rules: GroupRuleInput[];
+    /**
+     * @generated from protobuf field: optional resources.access.Access access = 13
+     */
+    access?: Access;
 }
 /**
  * @generated from protobuf message services.jobs.CreateGroupResponse
@@ -245,6 +254,10 @@ export interface UpdateGroupRequest {
      * @generated from protobuf field: optional string sort_rank = 10
      */
     sortRank?: string;
+    /**
+     * @generated from protobuf field: optional resources.access.Access access = 11
+     */
+    access?: Access;
 }
 /**
  * @generated from protobuf message services.jobs.UpdateGroupResponse
@@ -1092,7 +1105,8 @@ class GetGroupResponse$Type extends MessageType<GetGroupResponse> {
             { no: 3, name: "leaders", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupLeader },
             { no: 4, name: "manual_members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupManualMember },
             { no: 5, name: "exclusions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupMemberExclusion },
-            { no: 6, name: "resolved_members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupResolvedMember }
+            { no: 6, name: "resolved_members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupResolvedMember },
+            { no: 7, name: "access", kind: "message", T: () => Access }
         ]);
     }
     create(value?: PartialMessage<GetGroupResponse>): GetGroupResponse {
@@ -1129,6 +1143,9 @@ class GetGroupResponse$Type extends MessageType<GetGroupResponse> {
                 case /* repeated resources.jobs.groups.GroupResolvedMember resolved_members */ 6:
                     message.resolvedMembers.push(GroupResolvedMember.internalBinaryRead(reader, reader.uint32(), options));
                     break;
+                case /* optional resources.access.Access access */ 7:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1159,6 +1176,9 @@ class GetGroupResponse$Type extends MessageType<GetGroupResponse> {
         /* repeated resources.jobs.groups.GroupResolvedMember resolved_members = 6; */
         for (let i = 0; i < message.resolvedMembers.length; i++)
             GroupResolvedMember.internalBinaryWrite(message.resolvedMembers[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.access.Access access = 7; */
+        if (message.access)
+            Access.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1183,7 +1203,8 @@ class CreateGroupRequest$Type extends MessageType<CreateGroupRequest> {
             { no: 9, name: "sort_rank", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 10, name: "leader_user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 11, name: "manual_member_user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 12, name: "rules", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupRuleInput }
+            { no: 12, name: "rules", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupRuleInput },
+            { no: 13, name: "access", kind: "message", T: () => Access }
         ]);
     }
     create(value?: PartialMessage<CreateGroupRequest>): CreateGroupRequest {
@@ -1243,6 +1264,9 @@ class CreateGroupRequest$Type extends MessageType<CreateGroupRequest> {
                 case /* repeated services.jobs.GroupRuleInput rules */ 12:
                     message.rules.push(GroupRuleInput.internalBinaryRead(reader, reader.uint32(), options));
                     break;
+                case /* optional resources.access.Access access */ 13:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1296,6 +1320,9 @@ class CreateGroupRequest$Type extends MessageType<CreateGroupRequest> {
         /* repeated services.jobs.GroupRuleInput rules = 12; */
         for (let i = 0; i < message.rules.length; i++)
             GroupRuleInput.internalBinaryWrite(message.rules[i], writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.access.Access access = 13; */
+        if (message.access)
+            Access.internalBinaryWrite(message.access, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1364,7 +1391,8 @@ class UpdateGroupRequest$Type extends MessageType<UpdateGroupRequest> {
             { no: 7, name: "state", kind: "enum", opt: true, T: () => ["resources.jobs.groups.GroupState", GroupState, "GROUP_STATE_"] },
             { no: 8, name: "type", kind: "enum", opt: true, T: () => ["resources.jobs.groups.GroupType", GroupType, "GROUP_TYPE_"] },
             { no: 9, name: "membership_mode", kind: "enum", opt: true, T: () => ["resources.jobs.groups.GroupMembershipMode", GroupMembershipMode, "GROUP_MEMBERSHIP_MODE_"] },
-            { no: 10, name: "sort_rank", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } }
+            { no: 10, name: "sort_rank", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 11, name: "access", kind: "message", T: () => Access }
         ]);
     }
     create(value?: PartialMessage<UpdateGroupRequest>): UpdateGroupRequest {
@@ -1406,6 +1434,9 @@ class UpdateGroupRequest$Type extends MessageType<UpdateGroupRequest> {
                 case /* optional string sort_rank */ 10:
                     message.sortRank = reader.string();
                     break;
+                case /* optional resources.access.Access access */ 11:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1445,6 +1476,9 @@ class UpdateGroupRequest$Type extends MessageType<UpdateGroupRequest> {
         /* optional string sort_rank = 10; */
         if (message.sortRank !== undefined)
             writer.tag(10, WireType.LengthDelimited).string(message.sortRank);
+        /* optional resources.access.Access access = 11; */
+        if (message.access)
+            Access.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

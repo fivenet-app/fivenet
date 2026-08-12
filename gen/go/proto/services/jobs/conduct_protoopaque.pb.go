@@ -13,6 +13,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	conduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -34,7 +35,7 @@ type ListConductEntriesRequest struct {
 	xxx_hidden_Types       []conduct.ConductType       `protobuf:"varint,3,rep,packed,name=types,proto3,enum=resources.jobs.conduct.ConductType"`
 	xxx_hidden_ShowExpired bool                        `protobuf:"varint,4,opt,name=show_expired,json=showExpired,proto3,oneof"`
 	xxx_hidden_ShowDrafts  bool                        `protobuf:"varint,5,opt,name=show_drafts,json=showDrafts,proto3,oneof"`
-	xxx_hidden_UserIds     []int32                     `protobuf:"varint,6,rep,packed,name=user_ids,json=userIds,proto3"`
+	xxx_hidden_Users       *jobs.UserSelector          `protobuf:"bytes,6,opt,name=users,proto3,oneof"`
 	xxx_hidden_Ids         []int64                     `protobuf:"varint,7,rep,packed,name=ids,proto3"`
 	xxx_hidden_ShowDeleted bool                        `protobuf:"varint,8,opt,name=show_deleted,json=showDeleted,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
@@ -103,9 +104,9 @@ func (x *ListConductEntriesRequest) GetShowDrafts() bool {
 	return false
 }
 
-func (x *ListConductEntriesRequest) GetUserIds() []int32 {
+func (x *ListConductEntriesRequest) GetUsers() *jobs.UserSelector {
 	if x != nil {
-		return x.xxx_hidden_UserIds
+		return x.xxx_hidden_Users
 	}
 	return nil
 }
@@ -146,8 +147,8 @@ func (x *ListConductEntriesRequest) SetShowDrafts(v bool) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 8)
 }
 
-func (x *ListConductEntriesRequest) SetUserIds(v []int32) {
-	x.xxx_hidden_UserIds = v
+func (x *ListConductEntriesRequest) SetUsers(v *jobs.UserSelector) {
+	x.xxx_hidden_Users = v
 }
 
 func (x *ListConductEntriesRequest) SetIds(v []int64) {
@@ -187,6 +188,13 @@ func (x *ListConductEntriesRequest) HasShowDrafts() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
+func (x *ListConductEntriesRequest) HasUsers() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Users != nil
+}
+
 func (x *ListConductEntriesRequest) HasShowDeleted() bool {
 	if x == nil {
 		return false
@@ -212,6 +220,10 @@ func (x *ListConductEntriesRequest) ClearShowDrafts() {
 	x.xxx_hidden_ShowDrafts = false
 }
 
+func (x *ListConductEntriesRequest) ClearUsers() {
+	x.xxx_hidden_Users = nil
+}
+
 func (x *ListConductEntriesRequest) ClearShowDeleted() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
 	x.xxx_hidden_ShowDeleted = false
@@ -226,7 +238,7 @@ type ListConductEntriesRequest_builder struct {
 	Types       []conduct.ConductType
 	ShowExpired *bool
 	ShowDrafts  *bool
-	UserIds     []int32
+	Users       *jobs.UserSelector
 	Ids         []int64
 	ShowDeleted *bool
 }
@@ -246,7 +258,7 @@ func (b0 ListConductEntriesRequest_builder) Build() *ListConductEntriesRequest {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 8)
 		x.xxx_hidden_ShowDrafts = *b.ShowDrafts
 	}
-	x.xxx_hidden_UserIds = b.UserIds
+	x.xxx_hidden_Users = b.Users
 	x.xxx_hidden_Ids = b.Ids
 	if b.ShowDeleted != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 8)
@@ -840,7 +852,7 @@ var File_services_jobs_conduct_proto protoreflect.FileDescriptor
 
 const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
-	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a$resources/jobs/conduct/conduct.proto\"\xbc\x03\n" +
+	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a$resources/jobs/conduct/conduct.proto\x1a\"resources/jobs/user_selector.proto\"\xe4\x03\n" +
 	"\x19ListConductEntriesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -849,13 +861,14 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\x05types\x18\x03 \x03(\x0e2#.resources.jobs.conduct.ConductTypeR\x05types\x12&\n" +
 	"\fshow_expired\x18\x04 \x01(\bH\x01R\vshowExpired\x88\x01\x01\x12$\n" +
 	"\vshow_drafts\x18\x05 \x01(\bH\x02R\n" +
-	"showDrafts\x88\x01\x01\x12\x19\n" +
-	"\buser_ids\x18\x06 \x03(\x05R\auserIds\x12\x10\n" +
+	"showDrafts\x88\x01\x01\x127\n" +
+	"\x05users\x18\x06 \x01(\v2\x1c.resources.jobs.UserSelectorH\x03R\x05users\x88\x01\x01\x12\x10\n" +
 	"\x03ids\x18\a \x03(\x03R\x03ids\x12&\n" +
-	"\fshow_deleted\x18\b \x01(\bH\x03R\vshowDeleted\x88\x01\x01B\a\n" +
+	"\fshow_deleted\x18\b \x01(\bH\x04R\vshowDeleted\x88\x01\x01B\a\n" +
 	"\x05_sortB\x0f\n" +
 	"\r_show_expiredB\x0e\n" +
-	"\f_show_draftsB\x0f\n" +
+	"\f_show_draftsB\b\n" +
+	"\x06_usersB\x0f\n" +
 	"\r_show_deleted\"\xb1\x01\n" +
 	"\x1aListConductEntriesResponse\x12M\n" +
 	"\n" +
@@ -902,39 +915,41 @@ var file_services_jobs_conduct_proto_goTypes = []any{
 	(*database.PaginationRequest)(nil),  // 10: resources.common.database.PaginationRequest
 	(*database.Sort)(nil),               // 11: resources.common.database.Sort
 	(conduct.ConductType)(0),            // 12: resources.jobs.conduct.ConductType
-	(*database.PaginationResponse)(nil), // 13: resources.common.database.PaginationResponse
-	(*conduct.ConductEntry)(nil),        // 14: resources.jobs.conduct.ConductEntry
-	(*file.UploadFileRequest)(nil),      // 15: resources.file.UploadFileRequest
-	(*file.UploadFileResponse)(nil),     // 16: resources.file.UploadFileResponse
+	(*jobs.UserSelector)(nil),           // 13: resources.jobs.UserSelector
+	(*database.PaginationResponse)(nil), // 14: resources.common.database.PaginationResponse
+	(*conduct.ConductEntry)(nil),        // 15: resources.jobs.conduct.ConductEntry
+	(*file.UploadFileRequest)(nil),      // 16: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),     // 17: resources.file.UploadFileResponse
 }
 var file_services_jobs_conduct_proto_depIdxs = []int32{
 	10, // 0: services.jobs.ListConductEntriesRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	11, // 1: services.jobs.ListConductEntriesRequest.sort:type_name -> resources.common.database.Sort
 	12, // 2: services.jobs.ListConductEntriesRequest.types:type_name -> resources.jobs.conduct.ConductType
-	13, // 3: services.jobs.ListConductEntriesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	14, // 4: services.jobs.ListConductEntriesResponse.entries:type_name -> resources.jobs.conduct.ConductEntry
-	14, // 5: services.jobs.GetConductEntryResponse.entry:type_name -> resources.jobs.conduct.ConductEntry
-	14, // 6: services.jobs.CreateConductEntryRequest.entry:type_name -> resources.jobs.conduct.ConductEntry
-	14, // 7: services.jobs.CreateConductEntryResponse.entry:type_name -> resources.jobs.conduct.ConductEntry
-	14, // 8: services.jobs.UpdateConductEntryRequest.entry:type_name -> resources.jobs.conduct.ConductEntry
-	14, // 9: services.jobs.UpdateConductEntryResponse.entry:type_name -> resources.jobs.conduct.ConductEntry
-	0,  // 10: services.jobs.ConductService.ListConductEntries:input_type -> services.jobs.ListConductEntriesRequest
-	2,  // 11: services.jobs.ConductService.GetConductEntry:input_type -> services.jobs.GetConductEntryRequest
-	4,  // 12: services.jobs.ConductService.CreateConductEntry:input_type -> services.jobs.CreateConductEntryRequest
-	6,  // 13: services.jobs.ConductService.UpdateConductEntry:input_type -> services.jobs.UpdateConductEntryRequest
-	8,  // 14: services.jobs.ConductService.DeleteConductEntry:input_type -> services.jobs.DeleteConductEntryRequest
-	15, // 15: services.jobs.ConductService.UploadFile:input_type -> resources.file.UploadFileRequest
-	1,  // 16: services.jobs.ConductService.ListConductEntries:output_type -> services.jobs.ListConductEntriesResponse
-	3,  // 17: services.jobs.ConductService.GetConductEntry:output_type -> services.jobs.GetConductEntryResponse
-	5,  // 18: services.jobs.ConductService.CreateConductEntry:output_type -> services.jobs.CreateConductEntryResponse
-	7,  // 19: services.jobs.ConductService.UpdateConductEntry:output_type -> services.jobs.UpdateConductEntryResponse
-	9,  // 20: services.jobs.ConductService.DeleteConductEntry:output_type -> services.jobs.DeleteConductEntryResponse
-	16, // 21: services.jobs.ConductService.UploadFile:output_type -> resources.file.UploadFileResponse
-	16, // [16:22] is the sub-list for method output_type
-	10, // [10:16] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	13, // 3: services.jobs.ListConductEntriesRequest.users:type_name -> resources.jobs.UserSelector
+	14, // 4: services.jobs.ListConductEntriesResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	15, // 5: services.jobs.ListConductEntriesResponse.entries:type_name -> resources.jobs.conduct.ConductEntry
+	15, // 6: services.jobs.GetConductEntryResponse.entry:type_name -> resources.jobs.conduct.ConductEntry
+	15, // 7: services.jobs.CreateConductEntryRequest.entry:type_name -> resources.jobs.conduct.ConductEntry
+	15, // 8: services.jobs.CreateConductEntryResponse.entry:type_name -> resources.jobs.conduct.ConductEntry
+	15, // 9: services.jobs.UpdateConductEntryRequest.entry:type_name -> resources.jobs.conduct.ConductEntry
+	15, // 10: services.jobs.UpdateConductEntryResponse.entry:type_name -> resources.jobs.conduct.ConductEntry
+	0,  // 11: services.jobs.ConductService.ListConductEntries:input_type -> services.jobs.ListConductEntriesRequest
+	2,  // 12: services.jobs.ConductService.GetConductEntry:input_type -> services.jobs.GetConductEntryRequest
+	4,  // 13: services.jobs.ConductService.CreateConductEntry:input_type -> services.jobs.CreateConductEntryRequest
+	6,  // 14: services.jobs.ConductService.UpdateConductEntry:input_type -> services.jobs.UpdateConductEntryRequest
+	8,  // 15: services.jobs.ConductService.DeleteConductEntry:input_type -> services.jobs.DeleteConductEntryRequest
+	16, // 16: services.jobs.ConductService.UploadFile:input_type -> resources.file.UploadFileRequest
+	1,  // 17: services.jobs.ConductService.ListConductEntries:output_type -> services.jobs.ListConductEntriesResponse
+	3,  // 18: services.jobs.ConductService.GetConductEntry:output_type -> services.jobs.GetConductEntryResponse
+	5,  // 19: services.jobs.ConductService.CreateConductEntry:output_type -> services.jobs.CreateConductEntryResponse
+	7,  // 20: services.jobs.ConductService.UpdateConductEntry:output_type -> services.jobs.UpdateConductEntryResponse
+	9,  // 21: services.jobs.ConductService.DeleteConductEntry:output_type -> services.jobs.DeleteConductEntryResponse
+	17, // 22: services.jobs.ConductService.UploadFile:output_type -> resources.file.UploadFileResponse
+	17, // [17:23] is the sub-list for method output_type
+	11, // [11:17] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_services_jobs_conduct_proto_init() }

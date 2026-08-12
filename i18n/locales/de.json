@@ -743,6 +743,7 @@
         "uncheck_all": "Alle abwählen",
         "refresh_in_x": "Aktualisierung in {d} {unit}",
         "personal": "Persönlich",
+        "no_access": "Kein Zugriff",
         "no_access_to_document": "Kein Zugriff auf das Dokument",
         "you": "Sie",
         "scroll_to_top": "Nach oben scrollen",
@@ -1396,7 +1397,11 @@
                 }
             },
             "user_group_selector": {
-                "search_placeholder": "Nutzer suchen... {'@'} für Gruppen"
+                "search_placeholder": "Nutzer suchen... {'@'} für Gruppen",
+                "leaders": {
+                    "include": "Leitung einschließen",
+                    "exclude": "Leitung ausschließen"
+                }
             }
         },
         "hints": {
@@ -3100,6 +3105,13 @@
         },
         "jobs": {
             "groups": {
+                "AccessLevel": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "BLOCKED": "Blockiert",
+                    "VIEW": "Anzeigen",
+                    "EDIT": "Bearbeiten",
+                    "MANAGE": "Verwalten"
+                },
                 "GroupState": {
                     "UNSPECIFIED": "Unbestimmt",
                     "ACTIVE": "Aktiv",

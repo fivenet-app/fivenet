@@ -3,6 +3,7 @@ package jobsstore
 import (
 	"context"
 	"errors"
+	"slices"
 	"strings"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
@@ -56,8 +57,8 @@ func buildGroupCondition(q GroupsQuery) mysql.BoolExpression {
 	}
 
 	if len(q.IDs) > 0 {
-		// TODO improve logic by sorting the ids first
-		expressions := make([]mysql.Expression, len(q.IDs))
+		slices.Sort(q.IDs)
+		expressions := make([]mysql.Expression, 0, len(q.IDs))
 		for i := range q.IDs {
 			expressions = append(expressions, mysql.Int64(q.IDs[i]))
 		}

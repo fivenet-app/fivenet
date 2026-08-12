@@ -214,6 +214,13 @@ func (s *Store) CountInactiveEmployees(
 		anyTimeclockExists,
 		mysql.NOT(recentTimeclockExists),
 	)
+	if len(q.UserIDs) > 0 {
+		ids := make([]mysql.Expression, len(q.UserIDs))
+		for i := range q.UserIDs {
+			ids[i] = mysql.Int32(q.UserIDs[i])
+		}
+		condition = condition.AND(tUserJobs.UserID.IN(ids...))
+	}
 
 	countStmt := tUserJobs.
 		SELECT(mysql.COUNT(tUserJobs.UserID).AS("data_count.total")).
@@ -667,6 +674,13 @@ func (s *Store) ListInactiveEmployees(
 		anyTimeclockExists,
 		mysql.NOT(recentTimeclockExists),
 	)
+	if len(q.UserIDs) > 0 {
+		ids := make([]mysql.Expression, len(q.UserIDs))
+		for i := range q.UserIDs {
+			ids[i] = mysql.Int32(q.UserIDs[i])
+		}
+		condition = condition.AND(tUserJobs.UserID.IN(ids...))
+	}
 
 	orderBys := []mysql.OrderByClause{}
 	if q.Sort != nil && len(q.Sort.GetColumns()) > 0 {

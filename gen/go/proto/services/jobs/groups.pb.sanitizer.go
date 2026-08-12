@@ -134,6 +134,15 @@ func (m *CreateGroupRequest) Sanitize() error {
 		return nil
 	}
 
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Color
 	if m.Color != nil {
 		*m.Color = htmlsanitizer.SanitizeAndUnescape(*m.Color)
@@ -347,6 +356,15 @@ func (m *ExcludeGroupMemberResponse) Sanitize() error {
 func (m *GetGroupResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: Exclusions
@@ -1030,6 +1048,15 @@ func (m *RestoreGroupResponse) Sanitize() error {
 func (m *UpdateGroupRequest) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: Color

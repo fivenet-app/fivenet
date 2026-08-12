@@ -5,6 +5,7 @@ import (
 	"math"
 	"time"
 
+	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -14,8 +15,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
-	"github.com/fivenet-app/fivenet/v2026/services/jobs/usersel"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	"github.com/fivenet-app/fivenet/v2026/stores/jobs/usersel"
 )
 
 const TimeclockMaxDays = (365 / 2) * 24 * time.Hour // Half a year
@@ -53,15 +54,25 @@ func (s *Server) ListTimeclock(
 		}
 	}
 
+	selector := req.GetUsers()
+	if !fields.Contains(permsjobs.TimeclockServiceListTimeclockAccessPermValueAll) {
+		selector = &jobs.UserSelector{
+			UserIds: []int32{userInfo.GetUserId()},
+		}
+	}
 	resolvedUserIDs, err := s.userSel.Resolve(
 		ctx,
 		s.db,
 		userInfo,
-		req.GetUsers(),
+		selector,
 		usersel.ResolveOpts{},
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if usersel.HasSelection(selector) && len(resolvedUserIDs) == 0 {
+		pag, _ := req.GetPagination().GetResponseWithPageSize(0, 30)
+		return &pbjobs.ListTimeclockResponse{Pagination: pag}, nil
 	}
 
 	countQuery := jobsstore.TimeclockQuery{
@@ -180,21 +191,40 @@ func (s *Server) GetTimeclockStats(
 ) (*pbjobs.GetTimeclockStatsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	userId := userInfo.GetUserId()
-	if req.UserId != nil && req.GetUserId() > 0 && req.GetUserId() != userInfo.GetUserId() {
-		// Field Permission Check
-		fields, err := permsjobs.TimeclockService.ListTimeclock.AccessTyped.Get(s.ps, userInfo)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-		if fields.Contains(permsjobs.TimeclockServiceListTimeclockAccessPermValueAll) {
-			userId = req.GetUserId()
+	fields, err := permsjobs.TimeclockService.ListTimeclock.AccessTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
+	allowAll := fields.Contains(permsjobs.TimeclockServiceListTimeclockAccessPermValueAll)
+	requestedSelection := usersel.HasSelection(req.GetUsers())
+	selector := req.GetUsers()
+	if !allowAll || !requestedSelection {
+		selector = &jobs.UserSelector{
+			UserIds: []int32{userInfo.GetUserId()},
 		}
 	}
 
+	resolvedUserIDs, err := s.userSel.Resolve(
+		ctx,
+		s.db,
+		userInfo,
+		selector,
+		usersel.ResolveOpts{},
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if allowAll && requestedSelection && len(resolvedUserIDs) == 0 {
+		return &pbjobs.GetTimeclockStatsResponse{
+			Stats:  &jobstimeclock.TimeclockStats{},
+			Weekly: []*jobstimeclock.TimeclockWeeklyStats{},
+		}, nil
+	}
+
 	statsQuery := jobsstore.TimeclockQuery{
-		Job:    userInfo.GetJob(),
-		UserID: userId,
+		Job:     userInfo.GetJob(),
+		UserIDs: resolvedUserIDs,
 	}
 	stats, err := s.store.GetTimeclockStats(ctx, s.db, statsQuery)
 	if err != nil {
@@ -218,9 +248,28 @@ func (s *Server) ListInactiveEmployees(
 ) (*pbjobs.ListInactiveEmployeesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	resolvedUserIDs, err := s.userSel.Resolve(
+		ctx,
+		s.db,
+		userInfo,
+		req.GetUsers(),
+		usersel.ResolveOpts{},
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if usersel.HasSelection(req.GetUsers()) && len(resolvedUserIDs) == 0 {
+		pag, _ := req.GetPagination().GetResponseWithPageSize(0, 20)
+		return &pbjobs.ListInactiveEmployeesResponse{
+			Pagination: pag,
+			Colleagues: []*jobscolleagues.Colleague{},
+		}, nil
+	}
+
 	count, err := s.store.CountInactiveEmployees(ctx, s.db, jobsstore.InactiveEmployeesQuery{
-		Days: req.GetDays(),
-		Job:  userInfo.GetJob(),
+		Days:    req.GetDays(),
+		UserIDs: resolvedUserIDs,
+		Job:     userInfo.GetJob(),
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -239,11 +288,12 @@ func (s *Server) ListInactiveEmployees(
 		ctx,
 		s.db,
 		jobsstore.InactiveEmployeesQuery{
-			Days:   req.GetDays(),
-			Sort:   req.GetSort(),
-			Offset: req.GetPagination().GetOffset(),
-			Limit:  limit,
-			Job:    userInfo.GetJob(),
+			Days:    req.GetDays(),
+			UserIDs: resolvedUserIDs,
+			Sort:    req.GetSort(),
+			Offset:  req.GetPagination().GetOffset(),
+			Limit:   limit,
+			Job:     userInfo.GetJob(),
 		},
 	)
 	if err != nil {

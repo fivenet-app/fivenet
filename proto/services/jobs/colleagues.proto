@@ -10,6 +10,7 @@ import "resources/common/database/database.proto";
 import "resources/jobs/colleagues/activity/activity.proto";
 import "resources/jobs/colleagues/colleagues.proto";
 import "resources/jobs/labels/labels.proto";
+import "resources/jobs/user_selector.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobs";
 
@@ -20,10 +21,7 @@ message ListColleaguesRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   string search = 3 [(buf.validate.field).string.max_len = 64];
-  repeated int32 user_ids = 4 [(buf.validate.field).repeated = {
-    items: {int32: {gte: 0}}
-    max_items: 10
-  }];
+  optional resources.jobs.UserSelector users = 4;
   optional bool user_only = 5;
   optional bool absent = 6;
   repeated int64 label_ids = 7 [(buf.validate.field).repeated.max_items = 10];
@@ -55,10 +53,12 @@ message ListColleagueActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  repeated int32 user_ids = 3;
+  optional resources.jobs.UserSelector users = 3;
   repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4 [(buf.validate.field).repeated = {
     max_items: 10
-    items: {enum: {defined_only: true}}
+    items: {
+      enum: {defined_only: true}
+    }
   }];
 }
 
@@ -107,7 +107,9 @@ message DeleteLabelResponse {}
 
 message ReorderLabelsRequest {
   repeated int64 label_ids = 1 [(buf.validate.field).repeated = {
-    items: {int64: {gt: 0}}
+    items: {
+      int64: {gt: 0}
+    }
     min_items: 1
     max_items: 50
   }];

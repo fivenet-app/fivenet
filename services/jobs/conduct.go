@@ -15,6 +15,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	"github.com/fivenet-app/fivenet/v2026/stores/jobs/usersel"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -39,6 +40,24 @@ func (s *Server) ListConductEntries(
 	canRestore := s.ps.Can(userInfo, permsjobs.ConductService.RestoreConductEntry.Perm)
 	includeDeleted := canRestore && req.GetShowDeleted()
 
+	resolvedUserIDs, err := s.userSel.Resolve(
+		ctx,
+		s.db,
+		userInfo,
+		req.GetUsers(),
+		usersel.ResolveOpts{},
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if usersel.HasSelection(req.GetUsers()) && len(resolvedUserIDs) == 0 {
+		pag, _ := req.GetPagination().GetResponse(0)
+		return &pbjobs.ListConductEntriesResponse{
+			Pagination: pag,
+			Entries:    []*jobsconduct.ConductEntry{},
+		}, nil
+	}
+
 	q := jobsstore.ConductQuery{
 		Job:            userInfo.GetJob(),
 		Sort:           req.GetSort(),
@@ -47,7 +66,7 @@ func (s *Server) ListConductEntries(
 		Types:          req.GetTypes(),
 		ShowExpired:    req.GetShowExpired(),
 		ShowDrafts:     req.GetShowDrafts(),
-		UserIDs:        req.GetUserIds(),
+		UserIDs:        resolvedUserIDs,
 		IDs:            req.GetIds(),
 		CreatorID:      userInfo.GetUserId(),
 		OwnOnly:        ownOnly,

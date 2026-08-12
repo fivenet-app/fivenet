@@ -119,21 +119,6 @@ export const useCompletorStore = defineStore(
         };
 
         /**
-         * Find a colleague by user ID.
-         * @param {number} userId - The ID of the colleague to find.
-         * @returns {Promise<Colleague | undefined>} - The colleague with the specified ID, or undefined if not found.
-         */
-        const findColleague = async (userId: number): Promise<Colleague | undefined> => {
-            const colleagues = await listColleagues({
-                userIds: [userId],
-                search: '',
-                labelIds: [],
-                userOnly: true,
-            });
-            return colleagues.length === 0 ? undefined : colleagues[0];
-        };
-
-        /**
          * Fetch colleagues.
          * @param {ListColleaguesRequest} req - The request object for listing colleagues.
          * @returns {Promise<Colleague[]>} - The list of colleagues.
@@ -193,8 +178,13 @@ export const useCompletorStore = defineStore(
                 const colleagues = await listColleagues({
                     search: search,
                     labelIds: [],
-                    userIds: userIds,
                     userOnly: userOnly,
+                    users:
+                        userIds.length > 0
+                            ? {
+                                  userIds: userIds,
+                              }
+                            : undefined,
                 });
                 return colleagues.map((c) => ({
                     ...c,
@@ -316,7 +306,6 @@ export const useCompletorStore = defineStore(
             completeJobs,
             findCitizen,
             completeCitizens,
-            findColleague,
             listColleagues,
             completeColleagues,
             completeGroups,

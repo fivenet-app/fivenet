@@ -743,6 +743,7 @@
         "uncheck_all": "Uncheck All",
         "refresh_in_x": "Refresh in {d} {unit}",
         "personal": "Personal",
+        "no_access": "No access",
         "no_access_to_document": "No access to document",
         "you": "You",
         "scroll_to_top": "Scroll to Top",
@@ -1393,10 +1394,14 @@
                         "qualifications": "{mode} qualifications ({count})",
                         "unknown": "Unknown rule"
                     }
-                 }
+                }
             },
             "user_group_selector": {
-                "search_placeholder": "Search users... Type {'@'} for groups"
+                "search_placeholder": "Search users... Type {'@'} for groups",
+                "leaders": {
+                    "include": "Include leaders",
+                    "exclude": "Exclude leaders"
+                }
             }
         },
         "hints": {
@@ -3100,6 +3105,13 @@
         },
         "jobs": {
             "groups": {
+                "AccessLevel": {
+                    "UNSPECIFIED": "Unspecified",
+                    "BLOCKED": "Blocked",
+                    "VIEW": "View",
+                    "EDIT": "Edit",
+                    "MANAGE": "Manage"
+                },
                 "GroupState": {
                     "UNSPECIFIED": "Unspecified",
                     "ACTIVE": "Active",

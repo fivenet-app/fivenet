@@ -57,7 +57,7 @@ export interface ListTimeclockRequest {
      */
     perDay: boolean;
     /**
-     * @generated from protobuf field: resources.jobs.UserSelector users = 7
+     * @generated from protobuf field: optional resources.jobs.UserSelector users = 7
      */
     users?: UserSelector;
 }
@@ -158,9 +158,9 @@ export interface TimeclockRange {
  */
 export interface GetTimeclockStatsRequest {
     /**
-     * @generated from protobuf field: optional int32 user_id = 1
+     * @generated from protobuf field: optional resources.jobs.UserSelector users = 1
      */
-    userId?: number;
+    users?: UserSelector;
 }
 /**
  * @generated from protobuf message services.jobs.GetTimeclockStatsResponse
@@ -193,6 +193,10 @@ export interface ListInactiveEmployeesRequest {
      * @generated from protobuf field: int32 days = 3
      */
     days: number;
+    /**
+     * @generated from protobuf field: optional resources.jobs.UserSelector users = 4
+     */
+    users?: UserSelector;
 }
 /**
  * @generated from protobuf message services.jobs.ListInactiveEmployeesResponse
@@ -252,7 +256,7 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
                 case /* bool per_day */ 6:
                     message.perDay = reader.bool();
                     break;
-                case /* resources.jobs.UserSelector users */ 7:
+                case /* optional resources.jobs.UserSelector users */ 7:
                     message.users = UserSelector.internalBinaryRead(reader, reader.uint32(), options, message.users);
                     break;
                 default:
@@ -285,7 +289,7 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
         /* bool per_day = 6; */
         if (message.perDay !== false)
             writer.tag(6, WireType.Varint).bool(message.perDay);
-        /* resources.jobs.UserSelector users = 7; */
+        /* optional resources.jobs.UserSelector users = 7; */
         if (message.users)
             UserSelector.internalBinaryWrite(message.users, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -580,7 +584,7 @@ export const TimeclockRange = new TimeclockRange$Type();
 class GetTimeclockStatsRequest$Type extends MessageType<GetTimeclockStatsRequest> {
     constructor() {
         super("services.jobs.GetTimeclockStatsRequest", [
-            { no: 1, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } }
+            { no: 1, name: "users", kind: "message", T: () => UserSelector }
         ]);
     }
     create(value?: PartialMessage<GetTimeclockStatsRequest>): GetTimeclockStatsRequest {
@@ -594,8 +598,8 @@ class GetTimeclockStatsRequest$Type extends MessageType<GetTimeclockStatsRequest
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional int32 user_id */ 1:
-                    message.userId = reader.int32();
+                case /* optional resources.jobs.UserSelector users */ 1:
+                    message.users = UserSelector.internalBinaryRead(reader, reader.uint32(), options, message.users);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -609,9 +613,9 @@ class GetTimeclockStatsRequest$Type extends MessageType<GetTimeclockStatsRequest
         return message;
     }
     internalBinaryWrite(message: GetTimeclockStatsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional int32 user_id = 1; */
-        if (message.userId !== undefined)
-            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* optional resources.jobs.UserSelector users = 1; */
+        if (message.users)
+            UserSelector.internalBinaryWrite(message.users, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -682,7 +686,8 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
         super("services.jobs.ListInactiveEmployeesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "days", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 1 } } } }
+            { no: 3, name: "days", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 1 } } } },
+            { no: 4, name: "users", kind: "message", T: () => UserSelector }
         ]);
     }
     create(value?: PartialMessage<ListInactiveEmployeesRequest>): ListInactiveEmployeesRequest {
@@ -706,6 +711,9 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
                 case /* int32 days */ 3:
                     message.days = reader.int32();
                     break;
+                case /* optional resources.jobs.UserSelector users */ 4:
+                    message.users = UserSelector.internalBinaryRead(reader, reader.uint32(), options, message.users);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -727,6 +735,9 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
         /* int32 days = 3; */
         if (message.days !== 0)
             writer.tag(3, WireType.Varint).int32(message.days);
+        /* optional resources.jobs.UserSelector users = 4; */
+        if (message.users)
+            UserSelector.internalBinaryWrite(message.users, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

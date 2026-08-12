@@ -24,7 +24,7 @@ message ListTimeclockRequest {
   resources.jobs.timeclock.TimeclockMode mode = 4 [(buf.validate.field).enum.defined_only = true];
   optional resources.common.database.DateRange date = 5;
   bool per_day = 6;
-  resources.jobs.UserSelector users = 7;
+  optional resources.jobs.UserSelector users = 7;
 }
 
 message ListTimeclockResponse {
@@ -60,7 +60,7 @@ message TimeclockRange {
 }
 
 message GetTimeclockStatsRequest {
-  optional int32 user_id = 1 [(buf.validate.field).int32.gte = 0];
+  optional resources.jobs.UserSelector users = 1;
 }
 
 message GetTimeclockStatsResponse {
@@ -73,6 +73,7 @@ message ListInactiveEmployeesRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   int32 days = 3 [(buf.validate.field).int32.gte = 1];
+  optional resources.jobs.UserSelector users = 4;
 }
 
 message ListInactiveEmployeesResponse {

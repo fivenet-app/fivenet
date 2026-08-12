@@ -2,6 +2,7 @@
 import { UButton, UTooltip } from '#components';
 import type { Form, TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
+import UserGroupSelector from '~/components/jobs/UserGroupSelector.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -12,6 +13,7 @@ import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
+import { userSelectorSchema } from '~/utils/validation';
 import ColleagueName from '../colleagues/ColleagueName.vue';
 
 const { t } = useI18n();
@@ -22,6 +24,7 @@ const jobsTimeclockClient = await getJobsTimeclockClient();
 
 const schema = z.object({
     days: z.coerce.number().min(1).max(31).default(14),
+    users: userSelectorSchema,
     sorting: z
         .object({
             columns: z
@@ -48,7 +51,7 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const inactiveKey = computed(
     () =>
-        `jobs-timeclock-inactive-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.days}`,
+        `jobs-timeclock-inactive-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.days}-${JSON.stringify(validatedQuery.value.users)}`,
 );
 
 const { data, status, refresh, error } = useLazyAsyncData(inactiveKey, () => listInactiveEmployees(validatedQuery.value));
@@ -61,6 +64,7 @@ async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmploy
             },
             sort: values.sorting,
             days: values.days,
+            users: values.users,
         });
 
         const { response } = await call;
@@ -183,12 +187,12 @@ const { game } = useAppConfig();
                 <template #default>
                     <UForm
                         ref="formRef"
-                        class="my-2 flex w-full flex-row justify-between gap-2"
+                        class="my-2 flex w-full flex-row gap-2"
                         :schema="schema"
                         :state="query"
                         @submit="commitValidatedQuery"
                     >
-                        <UFormField class="flex-1" name="days" :label="$t('common.time_ago.day', 2)">
+                        <UFormField name="days" :label="$t('common.time_ago.day', 2)">
                             <UInputNumber
                                 v-model="query.days"
                                 name="days"
@@ -197,6 +201,10 @@ const { game } = useAppConfig();
                                 :max="31"
                                 :placeholder="$t('common.time_ago.day', 2)"
                             />
+                        </UFormField>
+
+                        <UFormField class="min-w-0 flex-1" name="users" :label="$t('common.group', 2)">
+                            <UserGroupSelector v-model="query.users" groups-only class="w-full" />
                         </UFormField>
                     </UForm>
                 </template>
@@ -226,7 +234,7 @@ const { game } = useAppConfig();
         </template>
 
         <template #footer>
-            <Pagination v-model="validatedQuery.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+            <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
         </template>
     </UDashboardPanel>
 </template>

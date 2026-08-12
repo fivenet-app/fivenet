@@ -91,6 +91,15 @@ func (m *ListConductEntriesRequest) Sanitize() error {
 
 	}
 
+	// Field: Users
+	if m.Users != nil {
+		if v, ok := any(m.GetUsers()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 

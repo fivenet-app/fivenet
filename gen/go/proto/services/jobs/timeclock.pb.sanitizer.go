@@ -5,6 +5,25 @@ package jobs
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *GetTimeclockStatsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Users
+	if m.Users != nil {
+		if v, ok := any(m.GetUsers()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetTimeclockStatsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -53,6 +72,15 @@ func (m *ListInactiveEmployeesRequest) Sanitize() error {
 	// Field: Sort
 	if m.Sort != nil {
 		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Users
+	if m.Users != nil {
+		if v, ok := any(m.GetUsers()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

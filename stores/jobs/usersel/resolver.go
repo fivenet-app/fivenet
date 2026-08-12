@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"slices"
 
 	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
@@ -17,13 +18,13 @@ import (
 const MaxResolvedUsers = 5000
 
 type Resolver struct {
-	store jobsstore.IStore
+	store jobsstore.IGroupsQuery
 }
 
 type Params struct {
 	fx.In
 
-	Store jobsstore.IStore
+	Store jobsstore.IGroupsQuery
 }
 
 func New(p Params) *Resolver {
@@ -33,8 +34,7 @@ func New(p Params) *Resolver {
 }
 
 type ResolveOpts struct {
-	DeprecatedUserIDs []int32
-	MaxResolvedUsers  int
+	MaxResolvedUsers int
 }
 
 func (r *Resolver) Resolve(
@@ -52,10 +52,9 @@ func (r *Resolver) Resolve(
 	}
 
 	hasExplicit := len(selector.GetUserIds()) > 0
-	hasDeprecated := len(opts.DeprecatedUserIDs) > 0
 	hasGroups := selector.GetGroups() != nil && len(selector.GetGroups().GetGroupIds()) > 0
 
-	if !hasExplicit && !hasDeprecated && !hasGroups {
+	if !hasExplicit && !hasGroups {
 		return nil, nil
 	}
 
@@ -63,10 +62,6 @@ func (r *Resolver) Resolve(
 	seen := map[int32]struct{}{}
 
 	for _, uid := range selector.GetUserIds() {
-		seen[uid] = struct{}{}
-	}
-
-	for _, uid := range opts.DeprecatedUserIDs {
 		seen[uid] = struct{}{}
 	}
 
@@ -109,6 +104,7 @@ func (r *Resolver) Resolve(
 		)
 	}
 
+	slices.Sort(result)
 	return result, nil
 }
 
@@ -174,4 +170,33 @@ func (r *Resolver) resolveGroupMembers(
 	}
 
 	return result, nil
+}
+
+func HasSelection(selector *jobs.UserSelector) bool {
+	if selector == nil {
+		return false
+	}
+	if len(selector.GetUserIds()) > 0 {
+		return true
+	}
+	return selector.GetGroups() != nil && len(selector.GetGroups().GetGroupIds()) > 0
+}
+
+func GroupsOnly(selector *jobs.UserSelector) *jobs.UserSelector {
+	if selector == nil {
+		return &jobs.UserSelector{}
+	}
+
+	groupSel := selector.GetGroups()
+	if groupSel == nil {
+		return &jobs.UserSelector{}
+	}
+
+	return &jobs.UserSelector{
+		Groups: &jobs.GroupUserSelector{
+			GroupIds:        slices.Clone(groupSel.GetGroupIds()),
+			IncludeLeaders:  groupSel.GetIncludeLeaders(),
+			IncludeExcluded: groupSel.GetIncludeExcluded(),
+		},
+	}
 }

@@ -8,9 +8,11 @@ import type { UserSelector } from '~~/gen/ts/resources/jobs/user_selector';
 const props = withDefaults(
     defineProps<{
         modelValue?: UserSelector;
+        groupsOnly?: boolean;
     }>(),
     {
         modelValue: () => ({ userIds: [] }),
+        groupsOnly: false,
     },
 );
 
@@ -32,19 +34,20 @@ function toGroupValue(id: number): string {
 }
 
 const selectedValues = ref<Set<string>>(new Set());
+let syncingFromProps = false;
 
 function setFromProps() {
     const vals = new Set<string>();
-    for (const uid of props.modelValue?.userIds ?? []) {
-        vals.add(toUserValue(uid));
+    if (!props.groupsOnly) {
+        for (const uid of props.modelValue?.userIds ?? []) {
+            vals.add(toUserValue(uid));
+        }
     }
     for (const gid of props.modelValue?.groups?.groupIds ?? []) {
         vals.add(toGroupValue(gid));
     }
     selectedValues.value = vals;
 }
-
-setFromProps();
 
 const includeLeaders = ref<boolean>(props.modelValue?.groups?.includeLeaders ?? false);
 
@@ -55,7 +58,7 @@ function emitValue() {
     for (const val of selectedValues.value) {
         if (val.startsWith(USER_PREFIX)) {
             const id = parseInt(val.slice(USER_PREFIX.length), 10);
-            if (!isNaN(id)) userIds.push(id);
+            if (!isNaN(id) && !props.groupsOnly) userIds.push(id);
         } else if (val.startsWith(GROUP_PREFIX)) {
             const id = parseInt(val.slice(GROUP_PREFIX.length), 10);
             if (!isNaN(id)) groupIds.push(id);
@@ -75,8 +78,38 @@ function emitValue() {
     emit('update:modelValue', selector);
 }
 
-watch(selectedValues, emitValue);
-watch(includeLeaders, emitValue);
+watch(
+    () => props.modelValue,
+    () => {
+        syncingFromProps = true;
+        setFromProps();
+        includeLeaders.value = props.modelValue?.groups?.includeLeaders ?? false;
+        syncingFromProps = false;
+
+        if (props.groupsOnly && (props.modelValue?.userIds?.length ?? 0) > 0) {
+            emitValue();
+        }
+    },
+    {
+        deep: true,
+        immediate: true,
+    },
+);
+
+watch(
+    selectedValues,
+    () => {
+        if (!syncingFromProps) emitValue();
+    },
+    { flush: 'sync' },
+);
+watch(
+    includeLeaders,
+    () => {
+        if (!syncingFromProps) emitValue();
+    },
+    { flush: 'sync' },
+);
 
 const groupIds = computed(() => {
     const ids: number[] = [];
@@ -121,8 +154,8 @@ async function searchItems(q: string): Promise<SearchItem[]> {
 
     const items: SearchItem[] = [];
 
-    if (q === '@' || q.startsWith('@')) {
-        const query = q.slice(1).trim();
+    if (props.groupsOnly || q === '@' || q.startsWith('@')) {
+        const query = q.startsWith('@') ? q.slice(1).trim() : q.trim();
         const groups = await completorStore.completeGroups(query || '');
 
         items.push(
@@ -177,7 +210,7 @@ async function loadRestoredItems(): Promise<SearchItem[]> {
         for (const val of vals) {
             if (val.startsWith(USER_PREFIX)) {
                 const id = parseInt(val.slice(USER_PREFIX.length), 10);
-                if (!isNaN(id)) userIds.push(id);
+                if (!isNaN(id) && !props.groupsOnly) userIds.push(id);
             } else if (val.startsWith(GROUP_PREFIX)) {
                 const id = parseInt(val.slice(GROUP_PREFIX.length), 10);
                 if (!isNaN(id)) targetGroupIds.add(id);
@@ -241,11 +274,13 @@ async function loadRestoredItems(): Promise<SearchItem[]> {
                         :searchable="searchItems"
                         multiple
                         :search-input="{
-                            placeholder: $t('components.jobs.user_group_selector.search_placeholder'),
+                            placeholder: props.groupsOnly
+                                ? $t('common.group', 2)
+                                : $t('components.jobs.user_group_selector.search_placeholder'),
                         }"
-                        :placeholder="$t('common.colleague', 2)"
+                        :placeholder="props.groupsOnly ? $t('common.group', 2) : $t('common.colleague', 2)"
                         label-key="label"
-                        searchable-key="user-group-select"
+                        :searchable-key="props.groupsOnly ? 'user-group-select-groups' : 'user-group-select'"
                         value-key="value"
                         v-bind="$attrs"
                         @update:model-value="handleUpdate"
@@ -260,11 +295,18 @@ async function loadRestoredItems(): Promise<SearchItem[]> {
                         </template>
 
                         <template #empty>
-                            {{ $t('common.not_found', [$t('common.colleague', 2)]) }}
+                            {{ $t('common.not_found', [props.groupsOnly ? $t('common.group', 2) : $t('common.colleague', 2)]) }}
                         </template>
                     </SelectMenu>
 
-                    <UTooltip v-if="groupIds.length > 0" :text="$t('components.jobs.groups.leaders')">
+                    <UTooltip
+                        v-if="groupIds.length > 0"
+                        :text="
+                            includeLeaders
+                                ? $t('components.jobs.user_group_selector.leaders.exclude')
+                                : $t('components.jobs.user_group_selector.leaders.include')
+                        "
+                    >
                         <UButton
                             :color="includeLeaders ? 'warning' : 'neutral'"
                             trailing-icon="i-mdi-account-star"
