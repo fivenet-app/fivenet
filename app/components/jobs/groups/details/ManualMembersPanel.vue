@@ -10,13 +10,18 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsGroupsClient } from '~~/gen/ts/clients';
+import type { Access } from '~~/gen/ts/resources/access/access';
+import { AccessLevel as GroupAccessLevel } from '~~/gen/ts/resources/jobs/groups/access/access';
 import type { GroupManualMember } from '~~/gen/ts/resources/jobs/groups/group';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListGroupManualMembersResponse } from '~~/gen/ts/services/jobs/groups';
+import { checkGroupAccess } from '../helpers';
 
 const props = defineProps<{
     groupId: number;
+    canView: boolean;
     canManage: boolean;
+    access?: Access;
 }>();
 
 const emit = defineEmits<{
@@ -49,6 +54,7 @@ const {
 const manualMembers = computed<GroupManualMember[]>(() => manualMembersData.value?.manualMembers ?? []);
 const manualMemberIds = computed(() => new Set(manualMembers.value.map((member) => member.userId)));
 const isMutating = computed(() => pendingAction.value !== undefined);
+const canManageMembers = computed(() => props.canManage && checkGroupAccess(props.access, GroupAccessLevel.EDIT));
 
 async function listGroupManualMembers(): Promise<ListGroupManualMembersResponse> {
     const { response } = await jobsGroupsClient.listGroupManualMembers({
@@ -130,8 +136,8 @@ watch(
 </script>
 
 <template>
-    <div class="grid gap-4">
-        <UCard v-if="canManage" variant="subtle">
+    <div v-if="canView" class="grid gap-4">
+        <UCard v-if="canManageMembers" variant="subtle">
             <div class="grid gap-3">
                 <div class="grid gap-3 lg:flex lg:flex-row lg:items-end">
                     <UFormField class="flex-1" :label="$t('common.colleague', 1)">
@@ -149,7 +155,7 @@ watch(
                             :filter-fields="['firstname', 'lastname']"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :placeholder="$t('common.colleague', 1)"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageMembers"
                         >
                             <template v-if="selectedManualMember" #default>
                                 {{ userToLabel(selectedManualMember) }}
@@ -174,7 +180,7 @@ watch(
                             :loading="pendingAction === 'manual-member'"
                             :disabled="
                                 isMutating ||
-                                !canManage ||
+                                !canManageMembers ||
                                 !selectedManualMember?.userId ||
                                 (manualMemberIds.has(selectedManualMember.userId) &&
                                     editingManualMemberId !== selectedManualMember.userId)
@@ -187,7 +193,7 @@ watch(
                             variant="outline"
                             icon="i-mdi-close"
                             :label="$t('common.cancel')"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageMembers"
                             @click="resetManualMemberForm"
                         />
                     </UFieldGroup>
@@ -199,7 +205,7 @@ watch(
                         class="w-full"
                         :rows="2"
                         :placeholder="$t('common.reason', 1)"
-                        :disabled="isMutating || !canManage"
+                        :disabled="isMutating || !canManageMembers"
                     />
                 </UFormField>
             </div>
@@ -240,13 +246,13 @@ watch(
 
                         <GenericTime v-if="member.createdAt" class="text-sm text-muted" :value="member.createdAt" />
 
-                        <div v-if="canManage">
+                        <div v-if="canManageMembers">
                             <UButton
                                 color="neutral"
                                 variant="outline"
                                 icon="i-mdi-pencil"
                                 :label="$t('common.edit')"
-                                :disabled="isMutating || !canManage"
+                                :disabled="isMutating || !canManageMembers"
                                 @click="editManualMember(member)"
                             />
                             <UButton
@@ -255,7 +261,7 @@ watch(
                                 icon="i-mdi-account-minus"
                                 :label="$t('common.remove')"
                                 :loading="pendingAction === `manual-member-${member.userId}`"
-                                :disabled="isMutating || !canManage"
+                                :disabled="isMutating || !canManageMembers"
                                 @click="removeManualMember(member.userId)"
                             />
                         </div>
@@ -271,4 +277,5 @@ watch(
             />
         </template>
     </div>
+    <DataNoDataBlock v-else :message="$t('common.no_access')" icon="i-mdi-lock" :padded="false" />
 </template>

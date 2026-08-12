@@ -15,6 +15,7 @@ import ColleagueCard from '~/components/jobs/colleagues/ColleagueCard.vue';
 
 const props = defineProps<{
     groupId: number;
+    canView: boolean;
 }>();
 
 const { t } = useI18n();
@@ -113,7 +114,7 @@ watch(
 </script>
 
 <template>
-    <div class="grid gap-4">
+    <div v-if="canView" class="grid gap-4">
         <UCard variant="subtle">
             <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(240px,320px)_auto] lg:items-end">
                 <UFormField :label="$t('common.search')">
@@ -205,4 +206,5 @@ watch(
 
         <Pagination v-model="page" :pagination="membersData?.pagination" :status="membersStatus" :refresh="refreshMembers" />
     </div>
+    <DataNoDataBlock v-else :message="$t('common.no_access')" icon="i-mdi-lock" :padded="false" />
 </template>

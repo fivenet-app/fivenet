@@ -10,13 +10,18 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsGroupsClient } from '~~/gen/ts/clients';
+import type { Access } from '~~/gen/ts/resources/access/access';
+import { AccessLevel as GroupAccessLevel } from '~~/gen/ts/resources/jobs/groups/access/access';
 import type { GroupLeader } from '~~/gen/ts/resources/jobs/groups/group';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListGroupLeadersResponse } from '~~/gen/ts/services/jobs/groups';
+import { checkGroupAccess } from '../helpers';
 
 const props = defineProps<{
     groupId: number;
+    canView: boolean;
     canManage: boolean;
+    access?: Access;
 }>();
 
 const emit = defineEmits<{
@@ -47,6 +52,7 @@ const {
 const leaders = computed<GroupLeader[]>(() => leadersData.value?.leaders ?? []);
 const leaderIds = computed(() => new Set(leaders.value.map((leader) => leader.userId)));
 const isMutating = computed(() => pendingAction.value !== undefined);
+const canManageLeaders = computed(() => props.canManage && checkGroupAccess(props.access, GroupAccessLevel.MANAGE));
 
 async function listGroupLeaders(): Promise<ListGroupLeadersResponse> {
     const { response } = await jobsGroupsClient.listGroupLeaders({
@@ -112,8 +118,8 @@ watch(
 </script>
 
 <template>
-    <div class="grid gap-4">
-        <UCard v-if="canManage" variant="subtle">
+    <div v-if="canView" class="grid gap-4">
+        <UCard v-if="canManageLeaders" variant="subtle">
             <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
                 <UFormField :label="$t('common.colleague', 1)">
                     <SelectMenu
@@ -130,7 +136,7 @@ watch(
                         :filter-fields="['firstname', 'lastname']"
                         :search-input="{ placeholder: $t('common.search_field') }"
                         :placeholder="$t('common.colleague', 1)"
-                        :disabled="isMutating || !canManage"
+                        :disabled="isMutating || !canManageLeaders"
                     >
                         <template v-if="selectedLeader" #default>
                             {{ userToLabel(selectedLeader) }}
@@ -149,7 +155,9 @@ watch(
                         icon="i-mdi-account-star"
                         :label="$t('common.add')"
                         :loading="pendingAction === 'leader'"
-                        :disabled="isMutating || !canManage || !selectedLeader?.userId || leaderIds.has(selectedLeader.userId)"
+                        :disabled="
+                            isMutating || !canManageLeaders || !selectedLeader?.userId || leaderIds.has(selectedLeader.userId)
+                        "
                         @click="addLeader"
                     />
                     <UButton
@@ -158,7 +166,7 @@ watch(
                         variant="outline"
                         icon="i-mdi-close"
                         :label="$t('common.cancel')"
-                        :disabled="isMutating || !canManage"
+                        :disabled="isMutating || !canManageLeaders"
                         @click="resetLeaderForm"
                     />
                 </UFieldGroup>
@@ -205,13 +213,13 @@ watch(
                         <GenericTime v-if="leader.createdAt" class="text-sm text-muted" :value="leader.createdAt" />
 
                         <UButton
-                            v-if="canManage"
+                            v-if="canManageLeaders"
                             color="error"
                             variant="outline"
                             icon="i-mdi-account-star-outline"
                             :label="$t('common.remove')"
                             :loading="pendingAction === `leader-${leader.userId}`"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageLeaders"
                             @click="removeLeader(leader.userId)"
                         />
                     </div>
@@ -226,4 +234,5 @@ watch(
             />
         </template>
     </div>
+    <DataNoDataBlock v-else :message="$t('common.no_access')" icon="i-mdi-lock" :padded="false" />
 </template>

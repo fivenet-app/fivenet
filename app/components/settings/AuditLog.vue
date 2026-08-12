@@ -376,7 +376,7 @@ const tomorrow = addDays(today, 1);
                             </UFormField>
                         </div>
 
-                        <UCollapsible>
+                        <UCollapsible :unmount-on-hide="false">
                             <UButton
                                 class="group"
                                 color="neutral"

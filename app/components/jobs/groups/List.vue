@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 import { UButton, UTooltip } from '#components';
-import type { DropdownMenuItem, Form, TableColumn } from '@nuxt/ui';
+import type { Form, TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import ConfirmModalWithReason from '~/components/partials/ConfirmModalWithReason.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -13,10 +11,9 @@ import SortButton from '~/components/partials/SortButton.vue';
 import { getJobsGroupsClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { type Group, GroupState, GroupType } from '~~/gen/ts/resources/jobs/groups/group';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListGroupsResponse } from '~~/gen/ts/services/jobs/groups';
-import GroupDetailsSlideover from './GroupDetailsSlideover.vue';
-import GroupEditorModal from './GroupEditorModal.vue';
+import DetailsSlideover from './DetailsSlideover.vue';
+import EditorModal from './EditorModal.vue';
 import {
     groupMembershipModeColor,
     groupMembershipModeIcon,
@@ -34,12 +31,9 @@ const { t } = useI18n();
 
 const overlay = useOverlay();
 
-const notifications = useNotificationsStore();
-
 const { can } = useAuth();
 
 const canCreateGroup = can('jobs.GroupsService/CreateGroup');
-const canArchiveGroup = can('jobs.GroupsService/ArchiveGroup');
 
 const jobsGroupsClient = await getJobsGroupsClient();
 
@@ -77,10 +71,8 @@ const listKey = computed(
 
 const { data, status: requestStatus, refresh, error } = useLazyAsyncData(listKey, () => listGroups(validatedQuery.value));
 
-const groupEditorModal = overlay.create(GroupEditorModal);
-const groupDetailsSlideover = overlay.create(GroupDetailsSlideover);
-const confirmModal = overlay.create(ConfirmModal);
-const confirmModalWithReason = overlay.create(ConfirmModalWithReason);
+const editorModal = overlay.create(EditorModal);
+const detailsSlideover = overlay.create(DetailsSlideover);
 
 const groupStateFilterItems = computed(() => groupStateFilterItemKeys.map((item) => ({ ...item, label: t(item.labelKey) })));
 const groupTypeFilterItems = computed(() => groupTypeFilterItemKeys.map((item) => ({ ...item, label: t(item.labelKey) })));
@@ -197,112 +189,14 @@ const stats = computed(() => {
 function openCreateGroup(): void {
     if (!canCreateGroup.value) return;
 
-    groupEditorModal.open({
-        onCreated: async () => refresh(),
-    });
-}
-
-function openEditGroup(group: Group): void {
-    if (!canCreateGroup.value || group.state === GroupState.ARCHIVED) return;
-
-    groupEditorModal.open({
-        group,
-        onUpdated: async () => refresh(),
-    });
+    editorModal.open({ onCreated: async () => refresh() });
 }
 
 function openGroupDetails(group: Group): void {
-    groupDetailsSlideover.open({ group });
-}
-
-async function archiveGroup(group: Group, reason?: string): Promise<void> {
-    try {
-        await jobsGroupsClient.archiveGroup({ id: group.id, reason });
-
-        notifications.add({
-            title: { key: 'notifications.action_successful.title', parameters: {} },
-            description: { key: 'notifications.action_successful.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
-
-        refresh();
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
-
-async function restoreGroup(group: Group): Promise<void> {
-    try {
-        await jobsGroupsClient.restoreGroup({ id: group.id });
-
-        notifications.add({
-            title: { key: 'notifications.action_successful.title', parameters: {} },
-            description: { key: 'notifications.action_successful.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
-
-        refresh();
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
-
-function getDropdownActions(group: Group): DropdownMenuItem[][] {
-    const items: DropdownMenuItem[][] = [];
-
-    items.push([
-        {
-            label: t('components.jobs.groups.actions.details'),
-            icon: 'i-mdi-eye',
-            onSelect: () => openGroupDetails(group),
-        },
-    ]);
-
-    if (group.state !== GroupState.ARCHIVED) {
-        if (canCreateGroup.value) {
-            items.push([
-                {
-                    label: t('components.jobs.groups.actions.edit'),
-                    icon: 'i-mdi-pencil',
-                    onSelect: () => openEditGroup(group),
-                },
-            ]);
-        }
-
-        if (canArchiveGroup.value) {
-            items.push([
-                {
-                    label: t('components.jobs.groups.actions.archive'),
-                    icon: 'i-mdi-archive',
-                    color: 'warning',
-                    onSelect: () =>
-                        confirmModalWithReason.open({
-                            title: t('components.jobs.groups.actions.archive'),
-                            description: t('components.jobs.groups.confirm.archive', { name: group.name }),
-                            confirm: async (reason: string) => archiveGroup(group, reason),
-                        }),
-                },
-            ]);
-        }
-    } else if (canArchiveGroup.value) {
-        items.push([
-            {
-                label: t('components.jobs.groups.actions.restore'),
-                icon: 'i-mdi-restore',
-                color: 'primary',
-                onSelect: () =>
-                    confirmModal.open({
-                        title: t('components.jobs.groups.actions.restore'),
-                        description: t('components.jobs.groups.confirm.restore', { name: group.name }),
-                        confirm: async () => restoreGroup(group),
-                    }),
-            },
-        ]);
-    }
-
-    return items;
+    detailsSlideover.open({
+        group,
+        onChanged: async () => refresh(),
+    });
 }
 </script>
 
@@ -501,17 +395,9 @@ function getDropdownActions(group: Group): DropdownMenuItem[][] {
                         </template>
 
                         <template #actions-cell="{ row }">
-                            <UDropdownMenu
-                                v-if="getDropdownActions(row.original).length"
-                                :items="getDropdownActions(row.original)"
-                            >
-                                <UButton
-                                    icon="i-mdi-dots-vertical"
-                                    color="neutral"
-                                    variant="ghost"
-                                    :aria-label="$t('components.jobs.groups.actions.label')"
-                                />
-                            </UDropdownMenu>
+                            <UTooltip :text="$t('components.jobs.groups.actions.details')">
+                                <UButton icon="i-mdi-eye" variant="link" @click="() => openGroupDetails(row.original)" />
+                            </UTooltip>
                         </template>
                     </UTable>
                 </UCard>

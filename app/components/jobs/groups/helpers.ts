@@ -1,3 +1,6 @@
+import { checkAccess } from '~/utils/acl';
+import type { Access } from '~~/gen/ts/resources/access/access';
+import type { AccessLevel as GroupAccessLevel } from '~~/gen/ts/resources/jobs/groups/access/access';
 import { GroupActivityType } from '~~/gen/ts/resources/jobs/groups/activity';
 import {
     GroupGradeRuleType,
@@ -218,6 +221,15 @@ export function groupActivityTypeIcon(type: GroupActivityType | undefined): stri
         default:
             return 'i-mdi-help';
     }
+}
+
+export function checkGroupAccess(access: Access | undefined, level: GroupAccessLevel): boolean {
+    const { activeChar, isSuperuser } = useAuth();
+    if (isSuperuser.value) return true;
+
+    if (activeChar.value === null) return false;
+
+    return checkAccess(activeChar.value, access, undefined, level);
 }
 
 type TranslateFn = (key: string, params?: Record<string, unknown>) => string;

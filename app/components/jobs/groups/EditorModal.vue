@@ -1,13 +1,17 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import AccessManager from '~/components/partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsGroupsClient } from '~~/gen/ts/clients';
+import type { Access, JobAccess, QualificationAccess, UserAccess } from '~~/gen/ts/resources/access/access';
 import type { UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
+import { AccessLevel as GroupAccessLevel } from '~~/gen/ts/resources/jobs/groups/access/access';
 import { type Group, GroupMembershipMode, GroupState, GroupType } from '~~/gen/ts/resources/jobs/groups/group';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
@@ -19,6 +23,7 @@ import {
 
 const props = defineProps<{
     group?: Group;
+    access?: Access;
 }>();
 
 const emit = defineEmits<{
@@ -42,6 +47,11 @@ const schema = z.object({
     type: z.enum(GroupType),
     membershipMode: z.enum(GroupMembershipMode),
     state: z.enum(GroupState),
+    access: z.object({
+        jobs: z.custom<JobAccess>().array().max(20).default([]),
+        users: z.custom<UserAccess>().array().max(20).default([]),
+        qualifications: z.custom<QualificationAccess>().array().max(20).default([]),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -54,6 +64,11 @@ const state = reactive<Schema>({
     type: GroupType.MANUAL,
     membershipMode: GroupMembershipMode.FLEXIBLE,
     state: GroupState.ACTIVE,
+    access: {
+        jobs: [],
+        users: [],
+        qualifications: [],
+    },
 });
 
 const formSnapshot = computed(() => ({
@@ -64,9 +79,18 @@ const formSnapshot = computed(() => ({
     type: state.type,
     membershipMode: state.membershipMode,
     state: state.state,
+    access: state.access,
 }));
 
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(formSnapshot);
+
+function cloneAccess(access?: Access): Schema['access'] {
+    return {
+        jobs: access?.jobs.map((entry) => ({ ...entry })) ?? [],
+        users: access?.users.map((entry) => ({ ...entry })) ?? [],
+        qualifications: access?.qualifications.map((entry) => ({ ...entry })) ?? [],
+    };
+}
 
 function setFormFromProps(): void {
     state.name = props.group?.name ?? '';
@@ -76,16 +100,28 @@ function setFormFromProps(): void {
     state.type = props.group?.type ?? GroupType.MANUAL;
     state.membershipMode = props.group?.membershipMode ?? GroupMembershipMode.FLEXIBLE;
     state.state = props.group?.state ?? GroupState.ACTIVE;
+    state.access = cloneAccess(props.access);
     logoFile.value = props.group?.logoFile;
     selectedLeaderUsers.value = [];
 
     syncSnapshot();
 }
 
-onBeforeMount(setFormFromProps);
+onBeforeMount(() => {
+    setFormFromProps();
+});
 watch(
     () => props.group,
-    () => setFormFromProps(),
+    () => {
+        setFormFromProps();
+    },
+);
+watch(
+    () => props.access,
+    () => {
+        state.access = cloneAccess(props.access);
+        syncSnapshot();
+    },
 );
 
 const formRef = useTemplateRef('formRef');
@@ -104,6 +140,11 @@ const groupStateItems = computed(() =>
         .filter((item) => item.value !== GroupState.ARCHIVED)
         .map((item) => ({ ...item, label: t(item.labelKey) })),
 );
+const groupAccessTypes: AccessType[] = [
+    { label: t('common.job', 2), value: 'job' },
+    { label: t('common.citizen', 2), value: 'user' },
+    { label: t('common.qualification', 2), value: 'qualification' },
+];
 
 const logoFile = ref<FileGrpc | undefined>(props.group?.logoFile);
 const logoUploadGroupId = ref<number>(props.group?.id ?? 0);
@@ -170,6 +211,16 @@ async function clearGroupLogo(): Promise<void> {
 
 async function createOrUpdateGroup(values: Schema): Promise<void> {
     try {
+        values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+        values.access.users.forEach((user) => {
+            if (user.id < 0) user.id = 0;
+            user.user = undefined;
+        });
+        values.access.qualifications.forEach((qualification) => {
+            if (qualification.id < 0) qualification.id = 0;
+            qualification.qualificationId = qualification.qualificationId ?? 0;
+        });
+
         const payload = {
             name: values.name.trim(),
             description: values.description.trim() ? values.description.trim() : undefined,
@@ -183,10 +234,12 @@ async function createOrUpdateGroup(values: Schema): Promise<void> {
             ? jobsGroupsClient.updateGroup({
                   id: props.group.id,
                   ...payload,
+                  access: values.access,
                   state: values.state,
               })
             : jobsGroupsClient.createGroup({
                   ...payload,
+                  access: values.access,
                   job: '',
                   leaderUserIds: selectedLeaderUsers.value.map((leader) => leader.userId),
                   manualMemberUserIds: [],
@@ -356,6 +409,20 @@ async function closeModal(): Promise<void> {
                             </ClientOnly>
                         </UFormField>
                     </div>
+
+                    <UFormField name="access" :label="$t('common.access')">
+                        <AccessManager
+                            v-model:jobs="state.access.jobs"
+                            v-model:users="state.access.users"
+                            v-model:qualifications="state.access.qualifications"
+                            :target-id="props.group?.id ?? 0"
+                            name="access"
+                            :access-types="groupAccessTypes"
+                            default-access-type="job"
+                            :access-roles="enumToAccessLevelEnums(GroupAccessLevel, 'enums.jobs.groups.AccessLevel')"
+                            :disabled="!canSubmit"
+                        />
+                    </UFormField>
 
                     <UFormField v-if="!props.group?.id" :label="$t('components.jobs.groups.leaders')">
                         <SelectMenu

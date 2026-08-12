@@ -9,6 +9,8 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsGroupsClient, getQualificationsQualificationsClient } from '~~/gen/ts/clients';
+import type { Access } from '~~/gen/ts/resources/access/access';
+import { AccessLevel as GroupAccessLevel } from '~~/gen/ts/resources/jobs/groups/access/access';
 import {
     GroupGradeRuleType,
     type GroupQualificationRule,
@@ -20,11 +22,13 @@ import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
 import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { GroupRuleInput, ListGroupRulesResponse } from '~~/gen/ts/services/jobs/groups';
-import { groupRuleLabel } from './helpers';
+import { checkGroupAccess, groupRuleLabel } from '../helpers';
 
 const props = defineProps<{
     groupId: number;
+    canView: boolean;
     canManage: boolean;
+    access?: Access;
 }>();
 
 const emit = defineEmits<{
@@ -71,6 +75,7 @@ const {
 
 const rules = computed(() => rulesData.value?.rules ?? []);
 const isMutating = computed(() => pendingAction.value !== undefined);
+const canManageRules = computed(() => props.canManage && checkGroupAccess(props.access, GroupAccessLevel.EDIT));
 const activeJob = computed(() => jobs.value.find((job) => job.name === activeChar.value?.job));
 const activeJobGrades = computed(() => activeJob.value?.grades ?? []);
 const rangeMinGradeItems = computed(() =>
@@ -363,8 +368,8 @@ watch(
 </script>
 
 <template>
-    <div class="grid gap-4">
-        <UCard v-if="canManage" variant="subtle">
+    <div v-if="canView" class="grid gap-4">
+        <UCard v-if="canManageRules" variant="subtle">
             <div class="grid gap-3">
                 <div class="flex flex-1 gap-3 lg:flex-row lg:items-end">
                     <UFormField class="w-full" :label="$t('common.type')">
@@ -373,7 +378,7 @@ watch(
                             class="w-full"
                             :items="ruleTypeItems"
                             value-key="value"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageRules"
                         />
                     </UFormField>
 
@@ -381,7 +386,7 @@ watch(
                         <USwitch
                             v-model="ruleForm.enabled"
                             :label="$t('common.enabled')"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageRules"
                         />
                     </UFormField>
 
@@ -392,7 +397,7 @@ watch(
                             :loading="pendingAction === 'rule'"
                             :disabled="
                                 isMutating ||
-                                !canManage ||
+                                !canManageRules ||
                                 (ruleForm.type === GroupRuleType.GRADE && !ruleGradeValid) ||
                                 (ruleForm.type === GroupRuleType.QUALIFICATION && selectedQualifications.length === 0)
                             "
@@ -403,7 +408,7 @@ watch(
                             variant="outline"
                             icon="i-mdi-close"
                             :label="$t('common.cancel')"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageRules"
                             @click="resetRuleForm"
                         />
                     </UFieldGroup>
@@ -427,7 +432,7 @@ watch(
                             :items="activeJobGrades"
                             value-key="grade"
                             :search-input="{ placeholder: $t('common.search_field') }"
-                            :disabled="isMutating || !canManage || activeJobGrades.length === 0"
+                            :disabled="isMutating || !canManageRules || activeJobGrades.length === 0"
                         >
                             <template v-if="activeJobGrades.length > 0" #default>
                                 {{ gradeLabel(ruleForm.grade) }}
@@ -449,7 +454,7 @@ watch(
                                 :items="rangeMinGradeItems"
                                 value-key="grade"
                                 :search-input="{ placeholder: $t('common.search_field') }"
-                                :disabled="isMutating || !canManage || activeJobGrades.length === 0"
+                                :disabled="isMutating || !canManageRules || activeJobGrades.length === 0"
                             >
                                 <template v-if="activeJobGrades.length > 0" #default>
                                     {{ gradeLabel(ruleForm.minGrade) }}
@@ -469,7 +474,7 @@ watch(
                                 :items="rangeMaxGradeItems"
                                 value-key="grade"
                                 :search-input="{ placeholder: $t('common.search_field') }"
-                                :disabled="isMutating || !canManage || activeJobGrades.length === 0"
+                                :disabled="isMutating || !canManageRules || activeJobGrades.length === 0"
                             >
                                 <template v-if="activeJobGrades.length > 0" #default>
                                     {{ gradeLabel(ruleForm.maxGrade) }}
@@ -493,7 +498,7 @@ watch(
                                 class="w-full"
                                 :items="qualificationRuleTypeItems"
                                 value-key="value"
-                                :disabled="isMutating || !canManage"
+                                :disabled="isMutating || !canManageRules"
                             />
                         </UFormField>
 
@@ -501,7 +506,7 @@ watch(
                             <UCheckbox
                                 v-model="ruleForm.requireCompleted"
                                 :label="$t('components.jobs.groups.details.require_completed')"
-                                :disabled="isMutating || !canManage"
+                                :disabled="isMutating || !canManageRules"
                             />
                         </UFormField>
                     </div>
@@ -524,7 +529,7 @@ watch(
                             :filter-fields="['abbreviation', 'title']"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :placeholder="$t('common.qualification', 2)"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageRules"
                         >
                             <template #item-label="{ item }">
                                 {{ `${item?.abbreviation}: ${item?.title}` }}
@@ -542,7 +547,7 @@ watch(
                         class="w-full"
                         :rows="2"
                         :placeholder="$t('common.reason', 1)"
-                        :disabled="isMutating || !canManage"
+                        :disabled="isMutating || !canManageRules"
                     />
                 </UFormField>
             </div>
@@ -589,7 +594,7 @@ watch(
                     </div>
                 </div>
 
-                <div v-if="canManage" class="mt-3 flex justify-end gap-2">
+                <div v-if="canManageRules" class="mt-3 flex justify-end gap-2">
                     <UButton
                         color="neutral"
                         variant="outline"
@@ -613,4 +618,5 @@ watch(
             <Pagination v-model="page" :pagination="rulesData?.pagination" :status="rulesStatus" :refresh="refreshRules" />
         </template>
     </div>
+    <DataNoDataBlock v-else :message="$t('common.no_access')" icon="i-mdi-lock" :padded="false" />
 </template>

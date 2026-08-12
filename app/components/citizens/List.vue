@@ -348,7 +348,7 @@ defineShortcuts({
                         </UFormField>
                     </div>
 
-                    <UCollapsible>
+                    <UCollapsible :unmount-on-hide="false">
                         <UButton
                             class="group"
                             color="neutral"

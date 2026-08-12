@@ -11,10 +11,11 @@ import { getJobsGroupsClient } from '~~/gen/ts/clients';
 import { type GroupActivity, GroupActivityType } from '~~/gen/ts/resources/jobs/groups/activity';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListGroupActivityResponse } from '~~/gen/ts/services/jobs/groups';
-import { groupActivityTypeColor, groupActivityTypeIcon, groupRuleLabel } from './helpers';
+import { groupActivityTypeColor, groupActivityTypeIcon, groupRuleLabel } from '../helpers';
 
 const props = defineProps<{
     groupId: number;
+    canView: boolean;
 }>();
 
 const { t } = useI18n();
@@ -120,7 +121,7 @@ watch(
 </script>
 
 <template>
-    <div class="grid gap-4">
+    <div v-if="canView" class="grid gap-4">
         <UCard variant="subtle">
             <div class="grid gap-3 lg:grid-cols-[minmax(180px,260px)_minmax(0,1fr)_minmax(260px,1fr)_auto] lg:items-end">
                 <UFormField :label="$t('common.type')">
@@ -286,4 +287,5 @@ watch(
 
         <Pagination v-model="page" :pagination="activity?.pagination" :status="activityStatus" :refresh="refreshActivity" />
     </div>
+    <DataNoDataBlock v-else :message="$t('common.no_access')" icon="i-mdi-lock" :padded="false" />
 </template>

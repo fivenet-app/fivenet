@@ -10,13 +10,18 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsGroupsClient } from '~~/gen/ts/clients';
+import type { Access } from '~~/gen/ts/resources/access/access';
+import { AccessLevel as GroupAccessLevel } from '~~/gen/ts/resources/jobs/groups/access/access';
 import { GroupExclusionReason, type GroupMemberExclusion } from '~~/gen/ts/resources/jobs/groups/group';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListGroupMemberExclusionsResponse } from '~~/gen/ts/services/jobs/groups';
+import { checkGroupAccess } from '../helpers';
 
 const props = defineProps<{
     groupId: number;
+    canView: boolean;
     canManage: boolean;
+    access?: Access;
 }>();
 
 const emit = defineEmits<{
@@ -50,6 +55,7 @@ const {
 const exclusions = computed<GroupMemberExclusion[]>(() => exclusionsData.value?.exclusions ?? []);
 const exclusionMemberIds = computed(() => new Set(exclusions.value.map((exclusion) => exclusion.userId)));
 const isMutating = computed(() => pendingAction.value !== undefined);
+const canManageExclusions = computed(() => props.canManage && checkGroupAccess(props.access, GroupAccessLevel.EDIT));
 
 const exclusionReasonItems = computed(() => [
     { label: t('enums.jobs.groups.GroupExclusionReason.MANUAL'), value: GroupExclusionReason.MANUAL },
@@ -141,8 +147,8 @@ watch(
 </script>
 
 <template>
-    <div class="grid gap-4">
-        <UCard v-if="canManage" variant="subtle">
+    <div v-if="canView" class="grid gap-4">
+        <UCard v-if="canManageExclusions" variant="subtle">
             <div class="grid gap-3">
                 <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(220px,320px)_auto] lg:items-end">
                     <UFormField :label="$t('common.colleague', 1)">
@@ -160,7 +166,7 @@ watch(
                             :filter-fields="['firstname', 'lastname']"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :placeholder="$t('common.colleague', 1)"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageExclusions"
                         >
                             <template v-if="selectedExclusionMember" #default>
                                 {{ userToLabel(selectedExclusionMember) }}
@@ -180,7 +186,7 @@ watch(
                             class="w-full"
                             :items="exclusionReasonItems"
                             value-key="value"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageExclusions"
                         />
                     </UFormField>
 
@@ -197,7 +203,7 @@ watch(
                             :loading="pendingAction === 'exclusion'"
                             :disabled="
                                 isMutating ||
-                                !canManage ||
+                                !canManageExclusions ||
                                 !selectedExclusionMember?.userId ||
                                 (exclusionMemberIds.has(selectedExclusionMember.userId) &&
                                     editingExclusionMemberId !== selectedExclusionMember.userId)
@@ -210,7 +216,7 @@ watch(
                             variant="outline"
                             icon="i-mdi-close"
                             :label="$t('common.cancel')"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageExclusions"
                             @click="resetExclusionForm"
                         />
                     </UFieldGroup>
@@ -276,22 +282,22 @@ watch(
                             <GenericTime v-if="exclusion.createdAt" class="text-sm text-muted" :value="exclusion.createdAt" />
                         </div>
                         <UButton
-                            v-if="canManage"
+                            v-if="canManageExclusions"
                             color="neutral"
                             variant="outline"
                             icon="i-mdi-pencil"
                             :label="$t('common.edit')"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageExclusions"
                             @click="editExclusion(exclusion)"
                         />
                         <UButton
-                            v-if="canManage"
+                            v-if="canManageExclusions"
                             color="error"
                             variant="outline"
                             icon="i-mdi-account-check"
                             :label="$t('common.remove')"
                             :loading="pendingAction === `exclusion-${exclusion.userId}`"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageExclusions"
                             @click="removeExclusion(exclusion.userId)"
                         />
                     </div>
@@ -306,4 +312,5 @@ watch(
             />
         </template>
     </div>
+    <DataNoDataBlock v-else :message="$t('common.no_access')" icon="i-mdi-lock" :padded="false" />
 </template>
