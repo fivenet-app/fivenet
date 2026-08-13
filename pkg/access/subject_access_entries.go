@@ -615,7 +615,7 @@ func subjectAccessRowsToProto(
 				Job:            *row.ACLJob,
 				MinimumGrade:   *row.ACLMinimumGrade,
 				Access:         row.Access,
-				RequiredAccess: new(int32(row.Access)),
+				RequiredAccess: new(row.Access),
 			}
 
 			if !row.Effect {
@@ -634,7 +634,7 @@ func subjectAccessRowsToProto(
 				blockedJobIndexes[key] = len(out.GetJobs())
 				blockedJobAccesses[key] = row.Access
 				entry.Access = opts.BlockedAccess
-				entry.RequiredAccess = new(int32(deniedAccessFloor(opts, row.Access)))
+				entry.RequiredAccess = new(deniedAccessFloor(opts, row.Access))
 				out.Jobs = append(out.Jobs, entry)
 				continue
 			}
@@ -651,7 +651,7 @@ func subjectAccessRowsToProto(
 				TargetId:       row.TargetID,
 				UserId:         *row.SubjectUserID,
 				Access:         row.Access,
-				RequiredAccess: new(int32(row.Access)),
+				RequiredAccess: new(row.Access),
 				User:           subjectAccessUserShort(row),
 			}
 
@@ -667,7 +667,7 @@ func subjectAccessRowsToProto(
 				blockedUserIndexes[entry.GetUserId()] = len(out.GetUsers())
 				blockedUserAccesses[entry.GetUserId()] = row.Access
 				entry.Access = opts.BlockedAccess
-				entry.RequiredAccess = new(int32(deniedAccessFloor(opts, row.Access)))
+				entry.RequiredAccess = new(deniedAccessFloor(opts, row.Access))
 				out.Users = append(out.Users, entry)
 				continue
 			}
@@ -683,7 +683,7 @@ func subjectAccessRowsToProto(
 				TargetId:        row.TargetID,
 				QualificationId: *row.ACLQualificationID,
 				Access:          row.Access,
-				RequiredAccess:  new(int32(row.Access)),
+				RequiredAccess:  new(row.Access),
 			}
 
 			if !row.Effect {
@@ -700,7 +700,7 @@ func subjectAccessRowsToProto(
 				)
 				blockedQualificationAccesses[entry.GetQualificationId()] = row.Access
 				entry.Access = opts.BlockedAccess
-				entry.RequiredAccess = new(int32(deniedAccessFloor(opts, row.Access)))
+				entry.RequiredAccess = new(deniedAccessFloor(opts, row.Access))
 				out.Qualifications = append(out.Qualifications, entry)
 				continue
 			}
