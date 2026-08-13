@@ -65,13 +65,9 @@ const requiredSubjectLocked = computed(() => props.disabled || !!entry.value.req
 const jobItems = computed(() => {
     const filteredJobs = props.jobs?.filter((j) => props.hideJobs.length === 0 || !props.hideJobs.includes(j.name)) ?? [];
 
-    if (!props.hideOtherJobs || entry.value.type !== 'job') {
-        return filteredJobs;
-    }
+    if (!props.hideOtherJobs || entry.value.type !== 'job') return filteredJobs;
 
-    if (!currentJob.value) {
-        return [];
-    }
+    if (!currentJob.value) return [];
 
     return filteredJobs.filter((job) => job.name === currentJob.value);
 });
@@ -303,7 +299,13 @@ watch(
             </UFormField>
 
             <template v-else>
-                <UFormField class="flex-1" :name="`${$props.name}.job`" :label="$t('common.job')" :ui="{ label: 'md:hidden' }">
+                <UFormField
+                    v-if="!hideOtherJobs"
+                    class="flex-1"
+                    :name="`${$props.name}.job`"
+                    :label="$t('common.job')"
+                    :ui="{ label: 'md:hidden' }"
+                >
                     <ClientOnly>
                         <USelectMenu
                             v-model="entry.job"

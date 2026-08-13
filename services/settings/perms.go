@@ -135,16 +135,13 @@ func (s *Server) GetRoles(
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 
-		collectedRoles := map[string]*permissionspermissions.Role{}
+		collectedRoles := map[string]struct{}{}
 		for _, role := range rs {
 			if _, ok := collectedRoles[role.GetJob()]; !ok {
-				collectedRoles[role.GetJob()] = role
+				collectedRoles[role.GetJob()] = struct{}{}
+				roles = append(roles, role)
 				continue
 			}
-		}
-
-		for _, role := range collectedRoles {
-			roles = append(roles, role)
 		}
 	} else {
 		roles, err = s.ps.GetJobRolesUpTo(ctx, userInfo.GetJob(), userInfo.GetJobGrade())

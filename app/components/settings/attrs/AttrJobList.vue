@@ -93,9 +93,10 @@ const columns = computed(
                 cell: ({ row }) =>
                     h(UTooltip, { text: t('common.show') }, () =>
                         h(UButton, {
+                            disabled: row.original.jobLabel === NotAvailablePlaceholder,
+                            icon: 'i-mdi-eye',
                             to: `/settings/limiter/${row.original.job}`,
                             variant: 'link',
-                            icon: 'i-mdi-eye',
                         }),
                     ),
             },
