@@ -16,15 +16,7 @@ const searchAndReplace = reactive<{
     caseSensitive: false,
 });
 
-const updateSearchReplace = (clearIndex: boolean = false) => {
-    if (!props.editor) return;
-
-    if (clearIndex) props.editor?.commands.resetIndex();
-
-    props.editor?.commands.setSearchTerm(searchAndReplace.search);
-    props.editor?.commands.setReplaceTerm(searchAndReplace.replace ?? '');
-    props.editor?.commands.setCaseSensitive(searchAndReplace.caseSensitive);
-};
+type SearchState = readonly [search: string, replace: string, caseSensitive: boolean];
 
 const goToSelection = () => {
     if (!props.editor) return;
@@ -40,23 +32,35 @@ const goToSelection = () => {
     node instanceof HTMLElement && node.scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
 
-// Search And Replace Modal
 watch(
-    () => searchAndReplace.search.trim(),
-    (val, oldVal) => {
-        if (!val) clear();
-        if (val !== oldVal) updateSearchReplace(true);
+    () => [searchAndReplace.search.trim(), searchAndReplace.replace, searchAndReplace.caseSensitive] as SearchState,
+    ([search, replace, caseSensitive], previous) => {
+        if (!props.editor) return;
+
+        const [previousSearch, previousReplace, previousCaseSensitive] = previous ?? ['', '', false];
+        const searchChanged = search !== previousSearch;
+        const replaceChanged = replace !== previousReplace;
+        const caseSensitiveChanged = caseSensitive !== previousCaseSensitive;
+
+        if (!search) {
+            if (previousSearch) {
+                clear();
+                return;
+            }
+
+            if (replaceChanged) props.editor.commands.setReplaceTerm(searchAndReplace.replace ?? '');
+            if (caseSensitiveChanged) props.editor.commands.setCaseSensitive(searchAndReplace.caseSensitive);
+            return;
+        }
+
+        if (searchChanged || caseSensitiveChanged) {
+            props.editor.commands.resetIndex();
+        }
+
+        if (searchChanged) props.editor.commands.setSearchTerm(searchAndReplace.search);
+        if (replaceChanged) props.editor.commands.setReplaceTerm(searchAndReplace.replace ?? '');
+        if (caseSensitiveChanged) props.editor.commands.setCaseSensitive(searchAndReplace.caseSensitive);
     },
-);
-
-watch(
-    () => searchAndReplace.replace.trim(),
-    (val, oldVal) => (val === oldVal ? null : updateSearchReplace()),
-);
-
-watch(
-    () => searchAndReplace.caseSensitive,
-    (val, oldVal) => (val === oldVal ? null : updateSearchReplace(true)),
 );
 
 const replace = () => {
