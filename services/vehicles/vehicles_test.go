@@ -30,10 +30,9 @@ func TestMain(m *testing.M) {
 func TestListVehicles(t *testing.T) {
 	t.Parallel()
 
-	dbServer := servers.NewDBServer(t, true)
-	natsServer := servers.NewNATSServer(t, true)
-
 	ctx := t.Context()
+	dbServer := servers.NewDBServer(ctx, t, true)
+	natsServer := servers.NewNATSServer(t, true)
 
 	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
 	require.NoError(t, err)
