@@ -148,7 +148,7 @@ func TestStoreAddGroupManualMember(t *testing.T) {
 		42,
 		7,
 		100,
-		stringPtr("onboarding"),
+		new("onboarding"),
 	)
 	require.NoError(t, err)
 	require.NotNil(t, member)
@@ -199,7 +199,7 @@ func TestStoreAddGroupMemberExclusion(t *testing.T) {
 		7,
 		jobsgroups.GroupExclusionReason_GROUP_EXCLUSION_REASON_TEMPORARY,
 		100,
-		stringPtr("temp reassignment"),
+		new("temp reassignment"),
 	)
 	require.NoError(t, err)
 	require.NotNil(t, exclusion)

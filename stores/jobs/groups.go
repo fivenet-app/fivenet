@@ -176,7 +176,7 @@ func (s *Store) visibleGroupsQuery(
 	return s.groupAccess.VisibleIDsByConditionQuery(
 		userInfo,
 		int32(groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-		false,
+		q.IncludeArchived,
 		buildGroupCondition(q),
 	)
 }

@@ -18,8 +18,8 @@ func TestApplyUserInfoChanged(t *testing.T) {
 	}
 
 	applyUserInfoChanged(current, &pbuserinfo.UserInfoChanged{
-		NewJob:      func() *string { v := "ems"; return &v }(),
-		NewJobGrade: func() *int32 { v := int32(3); return &v }(),
+		NewJob:      new("ems"),
+		NewJobGrade: new(int32(3)),
 	})
 
 	assert.Equal(t, "ems", current.GetJob())

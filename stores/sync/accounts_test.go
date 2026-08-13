@@ -21,11 +21,11 @@ func TestHandleAccountUpdatePublishesGroupChange(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery(
 		regexp.QuoteMeta(
-			`SELECT fivenet_accounts.id AS "id", fivenet_accounts.license AS "license", fivenet_accounts.`+"`groups`"+` AS "groups" FROM fivenet_accounts WHERE fivenet_accounts.license = ? LIMIT ?;`,
+			`SELECT accountgroupstate.id AS "accountgroupstate.id", accountgroupstate.license AS "accountgroupstate.license", accountgroupstate.`+"`groups`"+` AS "accountgroupstate.groups" FROM fivenet_accounts AS accountgroupstate WHERE accountgroupstate.license = ? LIMIT ?;`,
 		),
 	).
 		WithArgs("license-42", int64(1)).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "license", "groups"}).
+		WillReturnRows(sqlmock.NewRows([]string{"accountgroupstate.id", "accountgroupstate.license", "accountgroupstate.groups"}).
 			AddRow(int64(42), "license-42", []byte(`["old"]`)))
 	mock.ExpectExec(`(?s)UPDATE .*fivenet_accounts.*SET .*groups.*WHERE .*license = \?.*LIMIT \?.*`).
 		WithArgs(sqlmock.AnyArg(), "license-42", int64(1)).
@@ -57,11 +57,11 @@ func TestLoadAccountGroupState(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery(
 		regexp.QuoteMeta(
-			`SELECT fivenet_accounts.id AS "id", fivenet_accounts.license AS "license", fivenet_accounts.`+"`groups`"+` AS "groups" FROM fivenet_accounts WHERE fivenet_accounts.license = ? LIMIT ?;`,
+			`SELECT accountgroupstate.id AS "accountgroupstate.id", accountgroupstate.license AS "accountgroupstate.license", accountgroupstate.`+"`groups`"+` AS "accountgroupstate.groups" FROM fivenet_accounts AS accountgroupstate WHERE accountgroupstate.license = ? LIMIT ?;`,
 		),
 	).
 		WithArgs("license-42", int64(1)).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "license", "groups"}).
+		WillReturnRows(sqlmock.NewRows([]string{"accountgroupstate.id", "accountgroupstate.license", "accountgroupstate.groups"}).
 			AddRow(int64(42), "license-42", []byte(`["old"]`)))
 	mock.ExpectRollback()
 
@@ -88,11 +88,11 @@ func TestHandleAccountUpdateNoopDoesNotPublish(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery(
 		regexp.QuoteMeta(
-			`SELECT fivenet_accounts.id AS "id", fivenet_accounts.license AS "license", fivenet_accounts.`+"`groups`"+` AS "groups" FROM fivenet_accounts WHERE fivenet_accounts.license = ? LIMIT ?;`,
+			`SELECT accountgroupstate.id AS "accountgroupstate.id", accountgroupstate.license AS "accountgroupstate.license", accountgroupstate.`+"`groups`"+` AS "accountgroupstate.groups" FROM fivenet_accounts AS accountgroupstate WHERE accountgroupstate.license = ? LIMIT ?;`,
 		),
 	).
 		WithArgs("license-42", int64(1)).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "license", "groups"}).
+		WillReturnRows(sqlmock.NewRows([]string{"accountgroupstate.id", "accountgroupstate.license", "accountgroupstate.groups"}).
 			AddRow(int64(42), "license-42", []byte(`["supporter","donator"]`)))
 	mock.ExpectExec(`(?s)UPDATE .*fivenet_accounts.*SET .*groups.*WHERE .*license = \?.*LIMIT \?.*`).
 		WithArgs(sqlmock.AnyArg(), "license-42", int64(1)).

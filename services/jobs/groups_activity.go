@@ -36,7 +36,7 @@ func (s *Server) addGroupActivity(
 		Job:          job,
 		GroupId:      groupID,
 		Type:         activityType,
-		ActorUserId:  &actorUserID,
+		ActorUserId:  int32PtrOrNil(actorUserID),
 		TargetUserId: int32PtrOrNil(targetUserID),
 		RuleId:       int64PtrOrNil(ruleID),
 		Reason:       reason,
@@ -48,10 +48,6 @@ func int32PtrOrNil(value int32) *int32 {
 	if value == 0 {
 		return nil
 	}
-	return &value
-}
-
-func int32Ptr(value int32) *int32 {
 	return &value
 }
 
@@ -82,11 +78,12 @@ func (s *Server) ListGroupActivity(
 	if group == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
-	if err := s.ensureGroupAccess(
+	if err := s.ensureGroupAccessWithDeleted(
 		ctx,
 		userInfo,
 		group.GetId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		true,
 	); err != nil {
 		return nil, err
 	}

@@ -388,6 +388,12 @@ type JobGroupsAccess interface {
 		userInfo *userinfo.UserInfo,
 		access int32,
 	) (bool, error)
+	CanUserAccessTargetIncludingDeleted(
+		ctx context.Context,
+		targetID int64,
+		userInfo *userinfo.UserInfo,
+		access int32,
+	) (bool, error)
 	CanUserAccessTargetIDs(
 		ctx context.Context,
 		userInfo *userinfo.UserInfo,

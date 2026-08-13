@@ -54,10 +54,7 @@ func (s *Server) CreateOrUpdateMarker(
 		id, err := s.store.CreateMarker(
 			ctx,
 			reqMarker,
-			func() *int32 {
-				creatorID := userInfo.GetUserId()
-				return &creatorID
-			}(),
+			new(userInfo.GetUserId()),
 			userInfo.GetJob(),
 		)
 		if err != nil {

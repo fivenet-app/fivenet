@@ -117,7 +117,7 @@ func TestStoreAddPageActivity(t *testing.T) {
 	id, err := store.AddPageActivity(t.Context(), db, &wikiactivity.PageActivity{
 		PageId:       42,
 		ActivityType: wikiactivity.PageActivityType_PAGE_ACTIVITY_TYPE_CREATED,
-		CreatorId:    func() *int32 { v := int32(7); return &v }(),
+		CreatorId:    new(int32(7)),
 		CreatorJob:   "police",
 	})
 	require.NoError(t, err)

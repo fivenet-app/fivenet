@@ -213,10 +213,6 @@ func cloneMarker(marker *livemapmarkers.MarkerMarker) *livemapmarkers.MarkerMark
 	return proto.Clone(marker).(*livemapmarkers.MarkerMarker)
 }
 
-func ptrBool(v bool) *bool {
-	return &v
-}
-
 func TestCreateOrUpdateMarkerPublicAccess(t *testing.T) {
 	t.Parallel()
 
@@ -424,7 +420,7 @@ func TestApplyMarkerCacheAddsSyncCreatedMarkerToInitialSnapshot(t *testing.T) {
 func TestPublicMarkerMutationRequiresSameJobOrAdmin(t *testing.T) {
 	t.Parallel()
 
-	existing := newMarkerRequest(42, ptrBool(true))
+	existing := newMarkerRequest(42, new(true))
 	existing.SetCreatorId(10)
 	existing.SetCreator(newCreator(10, "police", 3))
 	existing.SetJob("police")
@@ -477,7 +473,7 @@ func TestPublicMarkerMutationRequiresSameJobOrAdmin(t *testing.T) {
 	t.Run("creator id can delete public marker without creator object", func(t *testing.T) {
 		t.Parallel()
 
-		existing := newMarkerRequest(42, ptrBool(true))
+		existing := newMarkerRequest(42, new(true))
 		existing.SetCreatorId(10)
 
 		store := newMarkerTestStore(existing)
@@ -568,8 +564,8 @@ func TestPublicMarkerMutationRequiresSameJobOrAdmin(t *testing.T) {
 func TestMarkerUpdateShouldDeleteForUser(t *testing.T) {
 	t.Parallel()
 
-	publicMarker := newMarkerRequest(42, ptrBool(true))
-	privateMarker := newMarkerRequest(43, ptrBool(false))
+	publicMarker := newMarkerRequest(42, new(true))
+	privateMarker := newMarkerRequest(43, new(false))
 	allowedMarkerJobs := &permissionsattributes.StringList{Strings: []string{"police", "ems"}}
 	policeOnlyJobs := &permissionsattributes.StringList{Strings: []string{"police"}}
 	emsOnlyJobs := &permissionsattributes.StringList{Strings: []string{"ems"}}

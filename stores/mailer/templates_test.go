@@ -113,7 +113,7 @@ func TestStoreCreateTemplate(t *testing.T) {
 		EmailId:    7,
 		Title:      "Welcome",
 		Content:    nil,
-		CreatorJob: func() *string { v := "police"; return &v }(),
+		CreatorJob: new("police"),
 	}
 
 	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_mailer_templates`) +

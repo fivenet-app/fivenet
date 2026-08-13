@@ -15,13 +15,13 @@ func TestEnrichGroupRuleGradeLabels(t *testing.T) {
 	minimumRule := &jobsgroups.GroupRule{}
 	minimumRule.SetGrade(&jobsgroups.GroupGradeRule{
 		Type:  jobsgroups.GroupGradeRuleType_GROUP_GRADE_RULE_TYPE_MINIMUM,
-		Grade: int32Ptr(3),
+		Grade: new(int32(3)),
 	})
 	rangeRule := &jobsgroups.GroupRule{}
 	rangeRule.SetGrade(&jobsgroups.GroupGradeRule{
 		Type:     jobsgroups.GroupGradeRuleType_GROUP_GRADE_RULE_TYPE_RANGE,
-		MinGrade: int32Ptr(2),
-		MaxGrade: int32Ptr(5),
+		MinGrade: new(int32(2)),
+		MaxGrade: new(int32(5)),
 	})
 
 	server.enrichGroupRuleGradeLabels("police", minimumRule, rangeRule)

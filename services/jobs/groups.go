@@ -60,6 +60,10 @@ func (s *Server) ListGroups(
 	req *pbjobs.ListGroupsRequest,
 ) (*pbjobs.ListGroupsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	groupIDs := make([]int64, 0, len(req.GetGroupIds()))
+	for _, groupID := range req.GetGroupIds() {
+		groupIDs = append(groupIDs, int64(groupID))
+	}
 
 	count, err := s.store.CountGroups(ctx, s.db, jobsstore.GroupsQuery{
 		Job:             userInfo.GetJob(),
@@ -68,6 +72,7 @@ func (s *Server) ListGroups(
 		IncludeCounts:   req.GetIncludeCounts(),
 		IncludeInactive: req.GetIncludeInactive(),
 		IncludeArchived: req.GetIncludeArchived(),
+		IDs:             groupIDs,
 		Sort:            req.GetSort(),
 		Offset:          req.GetPagination().GetOffset(),
 	}, userInfo)
@@ -92,6 +97,7 @@ func (s *Server) ListGroups(
 		IncludeCounts:   req.GetIncludeCounts(),
 		IncludeInactive: req.GetIncludeInactive(),
 		IncludeArchived: req.GetIncludeArchived(),
+		IDs:             groupIDs,
 		Sort:            req.GetSort(),
 		Offset:          req.GetPagination().GetOffset(),
 		Limit:           limit,
@@ -133,11 +139,12 @@ func (s *Server) GetGroup(
 	if group == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
-	if err := s.ensureGroupAccess(
+	if err := s.ensureGroupAccessWithDeleted(
 		ctx,
 		userInfo,
 		group.GetId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		req.GetIncludeArchived(),
 	); err != nil {
 		return nil, err
 	}
@@ -228,8 +235,8 @@ func (s *Server) CreateGroup(
 		Name:            req.GetName(),
 		Type:            req.GetType(),
 		MembershipMode:  req.GetMembershipMode(),
-		CreatedByUserId: int32Ptr(userInfo.GetUserId()),
-		UpdatedByUserId: int32Ptr(userInfo.GetUserId()),
+		CreatedByUserId: new(userInfo.GetUserId()),
+		UpdatedByUserId: new(userInfo.GetUserId()),
 	}
 	normalizeGroupPolicyDefaults(group)
 	if err := validateGroupPolicyCombination(group); err != nil {
@@ -497,7 +504,7 @@ func (s *Server) UpdateGroup(
 		}
 	}
 
-	group.UpdatedByUserId = int32Ptr(userInfo.GetUserId())
+	group.UpdatedByUserId = new(userInfo.GetUserId())
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -571,11 +578,12 @@ func (s *Server) ArchiveGroup(
 		"fivenet.jobs.groups.id", req.GetId(),
 	})
 
-	if err := s.ensureGroupAccess(
+	if err := s.ensureGroupAccessWithDeleted(
 		ctx,
 		userInfo,
 		req.GetId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		true,
 	); err != nil {
 		return nil, err
 	}

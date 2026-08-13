@@ -37,6 +37,15 @@ func (s stubGroupAccess) CanUserAccessTarget(
 	return s.allowed, nil
 }
 
+func (s stubGroupAccess) CanUserAccessTargetIncludingDeleted(
+	_ context.Context,
+	_ int64,
+	_ *pbuserinfo.UserInfo,
+	_ int32,
+) (bool, error) {
+	return s.allowed, nil
+}
+
 func (s stubGroupAccess) CanUserAccessTargetIDs(
 	_ context.Context,
 	_ *pbuserinfo.UserInfo,
@@ -270,7 +279,7 @@ func TestCreateGroupWithoutAccessStillWorks(t *testing.T) {
 func TestUpdateGroupDeniedByAccess(t *testing.T) {
 	t.Parallel()
 
-	srv, mock := newJobsGroupACLTestServer(t, stubGroupAccess{allowed: false})
+	srv, mock := newJobsGroupACLTestServer(t, &stubGroupAccess{allowed: false})
 	now := time.Date(2026, time.August, 12, 13, 0, 0, 0, time.UTC)
 
 	ctx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
@@ -297,7 +306,7 @@ func TestUpdateGroupDeniedByAccess(t *testing.T) {
 func TestArchiveGroupDeniedByAccess(t *testing.T) {
 	t.Parallel()
 
-	srv, mock := newJobsGroupACLTestServer(t, stubGroupAccess{allowed: false})
+	srv, mock := newJobsGroupACLTestServer(t, &stubGroupAccess{allowed: false})
 
 	ctx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
 		UserId: 7,
@@ -313,7 +322,7 @@ func TestArchiveGroupDeniedByAccess(t *testing.T) {
 func TestRestoreGroupDeniedByAccess(t *testing.T) {
 	t.Parallel()
 
-	srv, mock := newJobsGroupACLTestServer(t, stubGroupAccess{allowed: false})
+	srv, mock := newJobsGroupACLTestServer(t, &stubGroupAccess{allowed: false})
 
 	ctx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
 		UserId: 7,
@@ -326,10 +335,167 @@ func TestRestoreGroupDeniedByAccess(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestArchiveThenRestoreGroup(t *testing.T) {
+	t.Parallel()
+
+	accessStub := &stubGroupAccess{allowed: true}
+	srv, mock := newJobsGroupACLTestServer(t, accessStub)
+	now := time.Date(2026, time.August, 13, 10, 0, 0, 0, time.UTC)
+
+	ctx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId: 7,
+		Job:    "police",
+	})
+
+	mock.ExpectBegin()
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_job_groups SET`)).
+		WithArgs(
+			int32(jobsgroups.GroupState_GROUP_STATE_ARCHIVED),
+			int64(7),
+			int64(42),
+			"police",
+			int64(1),
+		).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_job_group_activity`)).
+		WithArgs(
+			"police",
+			int64(42),
+			int32(jobsgroups.GroupActivityType_GROUP_ACTIVITY_TYPE_ARCHIVED),
+			int32(7),
+			"review",
+			nil,
+		).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group` LEFT JOIN fivenet_files AS logo_file")).
+		WithArgs("police", int64(42), int64(1)).
+		WillReturnRows(expectGroupGetRowsWithStateAndDeletedAt(
+			now,
+			42,
+			"K9 Unit",
+			7,
+			jobsgroups.GroupState_GROUP_STATE_ARCHIVED,
+			now,
+		))
+	mock.ExpectCommit()
+
+	archiveResp, err := srv.ArchiveGroup(ctx, &pbjobs.ArchiveGroupRequest{
+		Id:     42,
+		Reason: new("review"),
+	})
+	require.NoError(t, err)
+	require.NotNil(t, archiveResp)
+	require.NotNil(t, archiveResp.GetGroup())
+	require.Equal(t, jobsgroups.GroupState_GROUP_STATE_ARCHIVED, archiveResp.GetGroup().GetState())
+	require.NotNil(t, archiveResp.GetGroup().GetDeletedAt())
+
+	mock.ExpectBegin()
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_job_groups SET`)).
+		WithArgs(
+			int32(jobsgroups.GroupState_GROUP_STATE_ACTIVE),
+			int64(7),
+			int64(42),
+			"police",
+			int64(1),
+		).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_job_group_activity`)).
+		WithArgs(
+			"police",
+			int64(42),
+			int32(jobsgroups.GroupActivityType_GROUP_ACTIVITY_TYPE_RESTORED),
+			int32(7),
+			nil,
+		).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group` LEFT JOIN fivenet_files AS logo_file")).
+		WithArgs("police", int64(42), int64(1)).
+		WillReturnRows(expectGroupGetRowsWithStateAndDeletedAt(
+			now,
+			42,
+			"K9 Unit",
+			7,
+			jobsgroups.GroupState_GROUP_STATE_ACTIVE,
+			nil,
+		))
+	mock.ExpectCommit()
+
+	restoreResp, err := srv.RestoreGroup(ctx, &pbjobs.RestoreGroupRequest{Id: 42})
+	require.NoError(t, err)
+	require.NotNil(t, restoreResp)
+	require.NotNil(t, restoreResp.GetGroup())
+	require.Equal(t, jobsgroups.GroupState_GROUP_STATE_ACTIVE, restoreResp.GetGroup().GetState())
+	require.Nil(t, restoreResp.GetGroup().GetDeletedAt())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func expectGroupGetRowsWithStateAndDeletedAt(
+	now time.Time,
+	id int64,
+	name string,
+	updatedByUserID int64,
+	state jobsgroups.GroupState,
+	deletedAt any,
+) *sqlmock.Rows {
+	return sqlmock.NewRows([]string{
+		"group.id",
+		"group.job",
+		"group.name",
+		"group.description",
+		"group.short_name",
+		"group.logo_file_id",
+		"group.color",
+		"group.type",
+		"group.state",
+		"group.membership_mode",
+		"group.sort_rank",
+		"group.members_count",
+		"group.leaders_count",
+		"group.rules_count",
+		"group.exclusions_count",
+		"group.created_by_user_id",
+		"group.updated_by_user_id",
+		"group.created_at",
+		"group.updated_at",
+		"group.deleted_at",
+		"logo_file.id",
+		"logo_file.file_path",
+		"logo_file.byte_size",
+		"logo_file.content_type",
+		"logo_file.created_at",
+	}).AddRow(
+		id,
+		"police",
+		name,
+		"Certified handlers and support staff.",
+		"K9",
+		nil,
+		"#123456",
+		int32(1),
+		int32(state),
+		int32(1),
+		"0|zzzzzz:",
+		int32(0),
+		int32(0),
+		int32(0),
+		int32(0),
+		int64(7),
+		updatedByUserID,
+		now,
+		now,
+		deletedAt,
+		nil,
+		nil,
+		nil,
+		nil,
+		nil,
+	)
+}
+
 func TestAddGroupLeaderDeniedByAccess(t *testing.T) {
 	t.Parallel()
 
-	srv, mock := newJobsGroupACLTestServer(t, stubGroupAccess{allowed: false})
+	srv, mock := newJobsGroupACLTestServer(t, &stubGroupAccess{allowed: false})
 
 	ctx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
 		UserId: 7,
@@ -348,7 +514,7 @@ func TestAddGroupLeaderDeniedByAccess(t *testing.T) {
 func TestRemoveGroupLeaderDeniedByAccess(t *testing.T) {
 	t.Parallel()
 
-	srv, mock := newJobsGroupACLTestServer(t, stubGroupAccess{allowed: false})
+	srv, mock := newJobsGroupACLTestServer(t, &stubGroupAccess{allowed: false})
 
 	ctx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
 		UserId: 7,

@@ -12,6 +12,7 @@ import (
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
@@ -50,6 +51,7 @@ func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, *tracker.TestTra
 			fx.Provide(settings.New),
 			fx.Provide(units.New),
 			fx.Provide(New),
+			fx.Provide(access.NewCentrumUnitsSubjectObjectAccess),
 
 			fx.Invoke(func(t tracker.ITracker) {
 				trackerStub = t.(*tracker.TestTracker)
@@ -177,8 +179,8 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.Len(t, list, 2)
 
 	staleUser1 := proto.Clone(user1).(*livemapmarkers.UserMarker)
-	staleUser1.Job = "police"
-	staleUser1.JobGrade = ptrInt32(4)
+	staleUser1.SetJob("police")
+	staleUser1.SetJobGrade(4)
 	require.NoError(
 		t,
 		manager.userLocStore.Put(ctx, userMarkerKey(int32(1), "police", 4), staleUser1),
@@ -350,7 +352,7 @@ func TestCleanupUserIDsDeletesStaleLocationKeyWhenMarkerMissing(t *testing.T) {
 	staleUser := &livemapmarkers.UserMarker{
 		UserId:   42,
 		Job:      "police",
-		JobGrade: ptrInt32(4),
+		JobGrade: new(int32(4)),
 	}
 	staleKey := userMarkerKey(staleUser.GetUserId(), staleUser.GetJob(), staleUser.GetJobGrade())
 	require.NoError(t, manager.userLocStore.Put(ctx, staleKey, staleUser))
@@ -446,10 +448,6 @@ func dbInsertDispatcher(ctx context.Context, db *sql.DB, job string, userID int3
 	)
 
 	return err
-}
-
-func ptrInt32(v int32) *int32 {
-	return &v
 }
 
 func removeUserLocations(ctx context.Context, db *sql.DB) error {

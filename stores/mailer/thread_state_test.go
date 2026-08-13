@@ -58,12 +58,12 @@ func TestStoreSetThreadState(t *testing.T) {
 	state := &mailerthreads.ThreadState{
 		ThreadId:  42,
 		EmailId:   7,
-		Unread:    func() *bool { v := true; return &v }(),
+		Unread:    new(true),
 		LastRead:  timestamp.New(now),
-		Important: func() *bool { v := true; return &v }(),
-		Favorite:  func() *bool { v := false; return &v }(),
-		Muted:     func() *bool { v := false; return &v }(),
-		Archived:  func() *bool { v := false; return &v }(),
+		Important: new(true),
+		Favorite:  new(false),
+		Muted:     new(false),
+		Archived:  new(false),
 	}
 
 	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_mailer_threads_state`) +

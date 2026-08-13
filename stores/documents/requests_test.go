@@ -25,7 +25,7 @@ func TestStoreRequestCRUD(t *testing.T) {
 	request := &documentsrequests.DocRequest{
 		DocumentId:  42,
 		RequestType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_UPDATE,
-		CreatorId:   func() *int32 { v := int32(3); return &v }(),
+		CreatorId:   new(int32(3)),
 		CreatorJob:  "doj",
 	}
 

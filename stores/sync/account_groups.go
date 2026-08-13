@@ -73,19 +73,18 @@ func (s *Store) loadAccountGroupState(
 		return nil, nil
 	}
 
-	tAccounts := table.FivenetAccounts
+	tAccounts := table.FivenetAccounts.AS("accountgroupstate")
 	stmt := tAccounts.
 		SELECT(
-			tAccounts.ID.AS("id"),
-			tAccounts.License.AS("license"),
-			tAccounts.Groups.AS("groups"),
+			tAccounts.ID,
+			tAccounts.License,
+			tAccounts.Groups,
 		).
 		FROM(tAccounts).
 		WHERE(tAccounts.License.EQ(mysql.String(license))).
 		LIMIT(1)
 
 	dest := &accountGroupState{}
-
 	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil

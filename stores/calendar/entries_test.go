@@ -201,7 +201,7 @@ func TestFilterUpcomingCalendarEntries(t *testing.T) {
 			Id:        4,
 			Title:     "own entry",
 			StartTime: timestamp.New(time.Date(2026, time.January, 18, 10, 0, 0, 0, time.UTC)),
-			CreatorId: func() *int32 { v := int32(7); return &v }(),
+			CreatorId: new(int32(7)),
 		},
 		{
 			Id:        5,

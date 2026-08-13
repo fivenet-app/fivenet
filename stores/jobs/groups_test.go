@@ -1,16 +1,82 @@
 package jobsstore
 
 import (
+	"context"
 	"regexp"
 	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+type visibleGroupsSpyAccess struct {
+	lastIncludeDeleted bool
+}
+
+func (a *visibleGroupsSpyAccess) CanUserAccessTarget(
+	_ context.Context,
+	_ int64,
+	_ *userinfo.UserInfo,
+	_ int32,
+) (bool, error) {
+	return true, nil
+}
+
+func (a *visibleGroupsSpyAccess) CanUserAccessTargetIDs(
+	_ context.Context,
+	_ *userinfo.UserInfo,
+	_ int32,
+	targetIDs ...int64,
+) ([]int64, error) {
+	return targetIDs, nil
+}
+
+func (a *visibleGroupsSpyAccess) ListTargetAccess(
+	_ context.Context,
+	_ qrm.DB,
+	_ int64,
+	_ access.SubjectAccessOptions,
+) (*resourcesaccess.Access, error) {
+	return &resourcesaccess.Access{}, nil
+}
+
+func (a *visibleGroupsSpyAccess) ReplaceTargetAccess(
+	_ context.Context,
+	_ qrm.DB,
+	_ *access.SubjectResolver,
+	_ int64,
+	_ *resourcesaccess.Access,
+	_ access.SubjectAccessOptions,
+) (*access.SubjectAccessChanges, error) {
+	return nil, nil
+}
+
+func (a *visibleGroupsSpyAccess) CanUserAccessTargetIncludingDeleted(
+	_ context.Context,
+	_ int64,
+	_ *userinfo.UserInfo,
+	_ int32,
+) (bool, error) {
+	return true, nil
+}
+
+func (a *visibleGroupsSpyAccess) VisibleIDsByConditionQuery(
+	_ *userinfo.UserInfo,
+	_ int32,
+	includeDeleted bool,
+	_ mysql.BoolExpression,
+) access.VisibilityQuery {
+	a.lastIncludeDeleted = includeDeleted
+	return access.VisibilityQuery{}
+}
 
 func TestStoreListGroups(t *testing.T) {
 	t.Parallel()
@@ -28,6 +94,20 @@ func TestStoreListGroups(t *testing.T) {
 	require.NoError(t, err)
 	assert.Empty(t, groups)
 	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreVisibleGroupsQueryIncludesArchivedDeletedAt(t *testing.T) {
+	t.Parallel()
+
+	spy := &visibleGroupsSpyAccess{}
+	store := &Store{groupAccess: spy}
+	userInfo := &userinfo.UserInfo{Job: "police"}
+
+	_ = store.visibleGroupsQuery(userInfo, GroupsQuery{IncludeArchived: true})
+	assert.True(t, spy.lastIncludeDeleted)
+
+	_ = store.visibleGroupsQuery(userInfo, GroupsQuery{IncludeArchived: false})
+	assert.False(t, spy.lastIncludeDeleted)
 }
 
 func TestStoreGetGroup(t *testing.T) {
@@ -150,10 +230,10 @@ func TestStoreCreateArchiveRestoreGroup(t *testing.T) {
 	id, err := store.CreateGroup(t.Context(), store.db, &jobsgroups.Group{
 		Job:             "police",
 		Name:            "K9 Unit",
-		Description:     stringPtr("Certified handlers and support staff."),
-		ShortName:       stringPtr("K9"),
-		LogoFileId:      int64Ptr(5),
-		Color:           stringPtr("#123456"),
+		Description:     new("Certified handlers and support staff."),
+		ShortName:       new("K9"),
+		LogoFileId:      new(int64(5)),
+		Color:           new("#123456"),
 		Type:            jobsgroups.GroupType_GROUP_TYPE_MANUAL,
 		State:           jobsgroups.GroupState_GROUP_STATE_ACTIVE,
 		MembershipMode:  jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_FLEXIBLE,
@@ -176,12 +256,4 @@ func TestStoreCreateArchiveRestoreGroup(t *testing.T) {
 
 	require.NoError(t, store.RestoreGroup(t.Context(), store.db, "police", 42, 100))
 	require.NoError(t, mock.ExpectationsWereMet())
-}
-
-func stringPtr(v string) *string {
-	return &v
-}
-
-func int64Ptr(v int64) *int64 {
-	return &v
 }

@@ -298,7 +298,7 @@ func TestStoreCreateEmail(t *testing.T) {
 	userID := int32(7)
 	label := "Primary"
 	email := &maileremails.Email{
-		Job:    func() *string { v := "police"; return &v }(),
+		Job:    new("police"),
 		UserId: &userID,
 		Email:  "user@example.com",
 		Label:  &label,

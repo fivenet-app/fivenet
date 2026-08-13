@@ -15,8 +15,34 @@ func (s *Server) ensureGroupAccess(
 	groupID int64,
 	level groupsaccess.AccessLevel,
 ) error {
+	return s.ensureGroupAccessWithDeleted(ctx, userInfo, groupID, level, false)
+}
+
+func (s *Server) ensureGroupAccessWithDeleted(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	groupID int64,
+	level groupsaccess.AccessLevel,
+	includeDeleted bool,
+) error {
 	if s.groupAccess == nil {
 		return errorsjobs.ErrFailedQuery
+	}
+
+	if includeDeleted {
+		ok, err := s.groupAccess.CanUserAccessTargetIncludingDeleted(
+			ctx,
+			groupID,
+			userInfo,
+			int32(level),
+		)
+		if err != nil {
+			return errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+		if !ok {
+			return errorsjobs.ErrNotFoundOrNoPerms
+		}
+		return nil
 	}
 
 	ok, err := s.groupAccess.CanUserAccessTarget(ctx, groupID, userInfo, int32(level))

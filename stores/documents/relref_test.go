@@ -53,7 +53,7 @@ func TestStoreDocumentReferences(t *testing.T) {
 			SourceDocumentId: 42,
 			TargetDocumentId: 99,
 			Reference:        documentsreferences.DocReference_DOC_REFERENCE_LINKED,
-			CreatorId:        func() *int32 { v := int32(3); return &v }(),
+			CreatorId:        new(int32(3)),
 		},
 	)
 	require.NoError(t, err)

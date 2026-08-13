@@ -43,10 +43,20 @@ func (c *resolverTestAccessChecker) CanUserAccessTarget(
 	_ *pbuserinfo.UserInfo,
 	_ int32,
 ) (bool, error) {
-	for _, allowedID := range c.allowed {
-		if allowedID == targetID {
-			return true, c.err
-		}
+	if slices.Contains(c.allowed, targetID) {
+		return true, c.err
+	}
+	return false, c.err
+}
+
+func (c *resolverTestAccessChecker) CanUserAccessTargetIncludingDeleted(
+	_ context.Context,
+	targetID int64,
+	_ *pbuserinfo.UserInfo,
+	_ int32,
+) (bool, error) {
+	if slices.Contains(c.allowed, targetID) {
+		return true, c.err
 	}
 	return false, c.err
 }

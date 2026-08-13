@@ -219,6 +219,9 @@ func (s *Server) CreateGroupRule(
 	if err != nil {
 		return nil, err
 	}
+	if err := s.validateGroupPolicyAgainstExistingData(ctx, tx, group); err != nil {
+		return nil, err
+	}
 
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -365,6 +368,9 @@ func (s *Server) UpdateGroupRule(
 
 	group, err = s.recountAndGetGroup(ctx, tx, userInfo.GetJob(), req.GetGroupId())
 	if err != nil {
+		return nil, err
+	}
+	if err := s.validateGroupPolicyAgainstExistingData(ctx, tx, group); err != nil {
 		return nil, err
 	}
 
