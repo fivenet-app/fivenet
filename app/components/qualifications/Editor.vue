@@ -666,6 +666,7 @@ const formRef = useTemplateRef('formRef');
                                             :access-roles="
                                                 enumToAccessLevelEnums(AccessLevel, 'enums.qualifications.AccessLevel')
                                             "
+                                            hide-other-jobs
                                             name="access"
                                         />
                                     </UPageCard>

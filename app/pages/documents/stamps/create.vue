@@ -132,6 +132,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     name="jobs"
                                     :access-types="[{ label: $t('common.job', 2), value: 'job' }]"
                                     :access-roles="enumToAccessLevelEnums(StampAccessLevel, 'enums.documents.StampAccessLevel')"
+                                    hide-other-jobs
                                 />
                             </UFormField>
                         </UCard>

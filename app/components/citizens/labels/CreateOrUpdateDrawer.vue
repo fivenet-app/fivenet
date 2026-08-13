@@ -334,6 +334,7 @@ async function closeModal(): Promise<void> {
                             :target-id="state.id"
                             :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.citizens.labels.AccessLevel')"
                             :access-types="[{ label: $t('common.job', 2), value: 'job' }]"
+                            hide-other-jobs
                             name="access"
                         />
                     </UFormField>

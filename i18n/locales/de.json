@@ -4143,6 +4143,21 @@
                     "key": "Berufsspezifische Statistiken abrufen",
                     "description": "Verschiedene Statistiken im Zusammenhang mit dem Beruf abrufen."
                 }
+            },
+            "GroupsService": {
+                "service": "Gruppen",
+                "ListGroups": {
+                    "key": "Gruppen auflisten und anzeigen",
+                    "description": "Zugängliche Gruppen anzeigen."
+                },
+                "CreateGroup": {
+                    "key": "Neue Gruppen erstellen",
+                    "description": "Neue Gruppen erstellen."
+                },
+                "ArchiveGroup": {
+                    "key": "Gruppen archivieren oder wiederherstellen",
+                    "description": "Gruppen archivieren oder wiederherstellen."
+                }
             }
         },
         "qualifications": {

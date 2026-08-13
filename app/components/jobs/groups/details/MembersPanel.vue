@@ -179,12 +179,10 @@ watch(
                                 ? $t('components.jobs.groups.details.excluded')
                                 : member.isMember
                                   ? $t('components.jobs.groups.details.member')
-                                  : $t('common.info')
+                                  : member.isLeader
+                                    ? $t('components.jobs.groups.details.leader')
+                                    : $t('common.info')
                         }}
-                    </UBadge>
-
-                    <UBadge v-if="member.isLeader" color="warning" variant="soft">
-                        {{ $t('components.jobs.groups.details.leader') }}
                     </UBadge>
 
                     <UBadge v-if="hasManualReason(member)" color="neutral" variant="soft">

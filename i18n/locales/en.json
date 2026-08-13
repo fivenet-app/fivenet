@@ -4143,6 +4143,21 @@
                     "key": "Get Statistics",
                     "description": "Retrieve statistics related to colleagues."
                 }
+            },
+            "GroupsService": {
+                "service": "Groups",
+                "ListGroups": {
+                    "key": "List and view groups",
+                    "description": "View groups you can access."
+                },
+                "CreateGroup": {
+                    "key": "Create new groups.",
+                    "description": "Create new groups."
+                },
+                "ArchiveGroup": {
+                    "key": "Archive/Restore groups",
+                    "description": "Archive or restore groups."
+                }
             }
         },
         "qualifications": {

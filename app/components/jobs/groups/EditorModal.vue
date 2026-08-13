@@ -142,7 +142,6 @@ const groupStateItems = computed(() =>
 );
 const groupAccessTypes: AccessType[] = [
     { label: t('common.job', 2), value: 'job' },
-    { label: t('common.citizen', 2), value: 'user' },
     { label: t('common.qualification', 2), value: 'qualification' },
 ];
 
@@ -421,6 +420,7 @@ async function closeModal(): Promise<void> {
                             default-access-type="job"
                             :access-roles="enumToAccessLevelEnums(GroupAccessLevel, 'enums.jobs.groups.AccessLevel')"
                             :disabled="!canSubmit"
+                            hide-other-jobs
                         />
                     </UFormField>
 

@@ -123,10 +123,10 @@ watch(
                 <UForm
                     ref="formRef"
                     class="my-2 flex w-full gap-2"
-                :schema="schema"
-                :state="query"
-                @submit="commitValidatedQuery"
-            >
+                    :schema="schema"
+                    :state="query"
+                    @submit="commitValidatedQuery"
+                >
                     <UFormField v-if="userId === undefined" class="flex-1" name="users" :label="$t('common.search')">
                         <UserGroupSelector v-model="query.users" class="w-full" />
                     </UFormField>

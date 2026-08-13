@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UButton, UTooltip } from '#components';
+import { UBadge, UButton, UTooltip } from '#components';
 import type { Form, TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -97,10 +97,24 @@ const columns = computed<TableColumn<Group>[]>(() => [
     {
         accessorKey: 'type',
         header: t('common.type'),
+        cell: ({ row }) =>
+            h(UBadge, {
+                color: groupTypeColor(row.original.type),
+                icon: groupTypeIcon(row.original.type),
+                label: t(groupTypeLabelKey(row.original.type)),
+                variant: 'subtle',
+            }),
     },
     {
         accessorKey: 'membershipMode',
         header: t('components.jobs.groups.membership_mode'),
+        cell: ({ row }) =>
+            h(UBadge, {
+                color: groupMembershipModeColor(row.original.membershipMode),
+                icon: groupMembershipModeIcon(row.original.membershipMode),
+                label: t(groupMembershipModeLabelKey(row.original.membershipMode)),
+                variant: 'subtle',
+            }),
     },
     {
         accessorKey: 'counts',
@@ -109,10 +123,19 @@ const columns = computed<TableColumn<Group>[]>(() => [
     {
         accessorKey: 'updatedAt',
         header: t('common.updated_at'),
+        cell: ({ row }) => h(GenericTime, { value: row.original.updatedAt ?? row.original.createdAt }),
     },
     {
         id: 'actions',
         header: '',
+        cell: ({ row }) =>
+            h(
+                UTooltip,
+                {
+                    text: $t('components.jobs.groups.actions.details'),
+                },
+                [h(UButton, { icon: 'i-mdi-eye', variant: 'link', onClick: () => openGroupDetails(row.original) })],
+            ),
     },
 ]);
 
@@ -159,32 +182,28 @@ function groupMatchesKind(group: Group): boolean {
 
 const visibleGroups = computed(() => (data.value?.groups ?? []).filter((group) => groupMatchesKind(group)));
 
-const stats = computed(() => {
-    const groups = visibleGroups.value;
-
-    return [
-        {
-            label: t('components.jobs.groups.visible_groups'),
-            value: groups.length,
-            icon: 'i-mdi-account-group',
-        },
-        {
-            label: t('common.members', 2),
-            value: groups.reduce((total, group) => total + group.membersCount, 0),
-            icon: 'i-mdi-account-multiple',
-        },
-        {
-            label: t('components.jobs.groups.leaders'),
-            value: groups.reduce((total, group) => total + group.leadersCount, 0),
-            icon: 'i-mdi-account-star',
-        },
-        {
-            label: t('components.jobs.groups.exclusions'),
-            value: groups.reduce((total, group) => total + group.exclusionsCount, 0),
-            icon: 'i-mdi-account-cancel',
-        },
-    ];
-});
+const stats = computed(() => [
+    {
+        label: t('components.jobs.groups.visible_groups'),
+        value: visibleGroups.value.length,
+        icon: 'i-mdi-account-group',
+    },
+    {
+        label: t('common.members', 2),
+        value: visibleGroups.value.reduce((total, group) => total + group.membersCount, 0),
+        icon: 'i-mdi-account-multiple',
+    },
+    {
+        label: t('components.jobs.groups.leaders'),
+        value: visibleGroups.value.reduce((total, group) => total + group.leadersCount, 0),
+        icon: 'i-mdi-account-star',
+    },
+    {
+        label: t('components.jobs.groups.exclusions'),
+        value: visibleGroups.value.reduce((total, group) => total + group.exclusionsCount, 0),
+        icon: 'i-mdi-account-cancel',
+    },
+]);
 
 function openCreateGroup(): void {
     if (!canCreateGroup.value) return;
@@ -275,7 +294,13 @@ function openGroupDetails(group: Group): void {
                 </div>
 
                 <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    <UCard v-for="stat in stats" :key="stat.label" variant="subtle">
+                    <UCard
+                        v-for="stat in stats"
+                        :key="stat.label"
+                        orientation="horizontal"
+                        variant="subtle"
+                        :ui="{ body: 'p-2 sm:p-4' }"
+                    >
                         <div class="flex items-center gap-3">
                             <div class="flex size-10 items-center justify-center rounded-lg bg-elevated">
                                 <UIcon class="size-5 text-muted" :name="stat.icon" />
@@ -316,7 +341,7 @@ function openGroupDetails(group: Group): void {
                     <DataNoDataBlock v-else-if="visibleGroups.length === 0" :type="$t('common.group', 2)" :retry="refresh" />
                     <UTable v-else class="min-h-96" :data="visibleGroups" :columns="columns">
                         <template #name-cell="{ row }">
-                            <div class="flex items-start gap-3">
+                            <div class="flex items-center gap-3">
                                 <UAvatar
                                     :alt="row.original.name"
                                     :text="(row.original.shortName ?? row.original.name).slice(0, 2)"
@@ -351,26 +376,6 @@ function openGroupDetails(group: Group): void {
                             </div>
                         </template>
 
-                        <template #type-cell="{ row }">
-                            <UBadge
-                                :color="groupTypeColor(row.original.type)"
-                                :icon="groupTypeIcon(row.original.type)"
-                                variant="subtle"
-                            >
-                                {{ $t(groupTypeLabelKey(row.original.type)) }}
-                            </UBadge>
-                        </template>
-
-                        <template #membershipMode-cell="{ row }">
-                            <UBadge
-                                :color="groupMembershipModeColor(row.original.membershipMode)"
-                                :icon="groupMembershipModeIcon(row.original.membershipMode)"
-                                variant="subtle"
-                            >
-                                {{ $t(groupMembershipModeLabelKey(row.original.membershipMode)) }}
-                            </UBadge>
-                        </template>
-
                         <template #counts-cell="{ row }">
                             <span class="text-right text-sm font-medium tabular-nums">
                                 {{ $t('common.member', row.original.membersCount) }}
@@ -388,16 +393,6 @@ function openGroupDetails(group: Group): void {
                                 <span class="text-muted">{{ $t('components.jobs.groups.exclusions') }}</span>
                                 <span class="text-right font-medium tabular-nums">{{ row.original.exclusionsCount }}</span>
                             </div>
-                        </template>
-
-                        <template #updatedAt-cell="{ row }">
-                            <GenericTime :value="row.original.updatedAt ?? row.original.createdAt" />
-                        </template>
-
-                        <template #actions-cell="{ row }">
-                            <UTooltip :text="$t('components.jobs.groups.actions.details')">
-                                <UButton icon="i-mdi-eye" variant="link" @click="() => openGroupDetails(row.original)" />
-                            </UTooltip>
                         </template>
                     </UTable>
                 </UCard>

@@ -104,20 +104,19 @@ const canViewGroup = computed(
 const canMutateGroup = computed(
     () =>
         !groupIsArchived.value &&
-        can('jobs.GroupsService/CreateGroup').value &&
+        can('jobs.GroupsService/ListGroups').value &&
         checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.EDIT),
 );
 const canMutateLeaders = computed(
     () =>
         !groupIsArchived.value &&
-        can('jobs.GroupsService/AddGroupLeader').value &&
+        can('jobs.GroupsService/ListGroups').value &&
         checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.MANAGE),
 );
-const canArchiveGroup = computed(
-    () => checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.MANAGE) && can('jobs.GroupsService/ArchiveGroup').value,
-);
-const canRestoreGroup = computed(
-    () => checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.MANAGE) && can('jobs.GroupsService/ArchiveGroup').value,
+const canManageArchiveState = computed(
+    () =>
+        checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.MANAGE) &&
+        can('jobs.GroupsService/ArchiveGroup').value,
 );
 const slideoverTitle = computed(() => (canViewGroup.value ? currentGroup.value.name : t('common.no_access')));
 
@@ -139,7 +138,7 @@ async function openEditGroup(): Promise<void> {
 }
 
 async function archiveGroup(): Promise<void> {
-    if (!canArchiveGroup.value || groupIsArchived.value) return;
+    if (!canManageArchiveState.value || groupIsArchived.value) return;
 
     confirmModalWithReason.open({
         title: t('components.jobs.groups.actions.archive'),
@@ -157,7 +156,7 @@ async function archiveGroup(): Promise<void> {
 }
 
 async function restoreGroup(): Promise<void> {
-    if (!canRestoreGroup.value || !groupIsArchived.value) return;
+    if (!canManageArchiveState.value || !groupIsArchived.value) return;
 
     confirmModal.open({
         title: t('components.jobs.groups.actions.restore'),
@@ -258,7 +257,7 @@ async function handlePanelChanged(): Promise<void> {
                                 </div>
 
                                 <UFieldGroup
-                                    v-if="canMutateGroup || canArchiveGroup || canRestoreGroup"
+                                    v-if="canMutateGroup || canManageArchiveState"
                                     class="inline-flex justify-end gap-2"
                                 >
                                     <UButton
@@ -271,7 +270,7 @@ async function handlePanelChanged(): Promise<void> {
                                     />
 
                                     <UButton
-                                        v-if="!groupIsArchived && canArchiveGroup"
+                                        v-if="!groupIsArchived && canManageArchiveState"
                                         color="warning"
                                         variant="outline"
                                         icon="i-mdi-archive"
@@ -280,7 +279,7 @@ async function handlePanelChanged(): Promise<void> {
                                     />
 
                                     <UButton
-                                        v-else-if="groupIsArchived && canRestoreGroup"
+                                        v-else-if="groupIsArchived && canManageArchiveState"
                                         color="primary"
                                         variant="outline"
                                         icon="i-mdi-restore"
