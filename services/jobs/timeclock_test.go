@@ -15,6 +15,7 @@ import (
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/permsstub"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	grpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	pkgperms "github.com/fivenet-app/fivenet/v2026/pkg/perms"
@@ -111,7 +112,7 @@ func (s *timeclockTestGroupStore) ListGroupLeaders(
 
 func newTimeclockStatsTestServer(
 	t *testing.T,
-	access []string,
+	accessPs []string,
 	groupStore jobsstore.IGroupsQuery,
 ) (*Server, sqlmock.Sqlmock) {
 	t.Helper()
@@ -127,12 +128,17 @@ func newTimeclockStatsTestServer(
 	}
 
 	return &Server{
-		db:    db,
-		ps:    &timeclockTestPerms{access: access},
-		store: jobsstore.New(db, &config.CustomDB{}).Store,
-		userSel: usersel.New(usersel.Params{
-			Store: groupStore,
-		}),
+		db: db,
+		ps: &timeclockTestPerms{access: accessPs},
+		store: jobsstore.New(
+			db,
+			&config.CustomDB{},
+			access.NewJobGroupsSubjectObjectAccess(db),
+		).Store,
+		userSel: usersel.NewWithAccess(
+			groupStore,
+			stubGroupAccess{allowed: true},
+		),
 	}, mock
 }
 

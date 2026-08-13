@@ -106,7 +106,6 @@ export type GRPCServicePerms =
 	| 'jobs.ConductService/ListConductEntries'
 	| 'jobs.ConductService/RestoreConductEntry'
 	| 'jobs.ConductService/UpdateConductEntry'
-	| 'jobs.GroupsService/AddGroupLeader'
 	| 'jobs.GroupsService/ArchiveGroup'
 	| 'jobs.GroupsService/CreateGroup'
 	| 'jobs.GroupsService/ListGroups'
@@ -231,7 +230,6 @@ export const GRPCServiceMethods = [
 	'jobs.ConductService/ListConductEntries',
 	'jobs.ConductService/RestoreConductEntry',
 	'jobs.ConductService/UpdateConductEntry',
-	'jobs.GroupsService/AddGroupLeader',
 	'jobs.GroupsService/ArchiveGroup',
 	'jobs.GroupsService/CreateGroup',
 	'jobs.GroupsService/ListGroups',
@@ -469,8 +467,6 @@ export const PermAttributes = {
 	'jobs.ConductService/RestoreConductEntry': {
 	},
 	'jobs.ConductService/UpdateConductEntry': {
-	},
-	'jobs.GroupsService/AddGroupLeader': {
 	},
 	'jobs.GroupsService/ArchiveGroup': {
 	},

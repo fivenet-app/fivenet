@@ -82,7 +82,12 @@ func (s *Server) ListGroupActivity(
 	if group == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, group.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		group.GetId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+	); err != nil {
 		return nil, err
 	}
 

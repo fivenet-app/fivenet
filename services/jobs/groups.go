@@ -69,7 +69,7 @@ func (s *Server) ListGroups(
 		IncludeArchived: req.GetIncludeArchived(),
 		Sort:            req.GetSort(),
 		Offset:          req.GetPagination().GetOffset(),
-	})
+	}, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -94,7 +94,7 @@ func (s *Server) ListGroups(
 		Sort:            req.GetSort(),
 		Offset:          req.GetPagination().GetOffset(),
 		Limit:           limit,
-	})
+	}, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -132,7 +132,12 @@ func (s *Server) GetGroup(
 	if group == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, group.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		group.GetId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+	); err != nil {
 		return nil, err
 	}
 
@@ -425,7 +430,12 @@ func (s *Server) UpdateGroup(
 	if group == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, group.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		group.GetId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
 		return nil, err
 	}
 
@@ -537,7 +547,12 @@ func (s *Server) ArchiveGroup(
 		"fivenet.jobs.groups.id", req.GetId(),
 	})
 
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+	); err != nil {
 		return nil, err
 	}
 
@@ -612,7 +627,12 @@ func (s *Server) RestoreGroup(
 		"fivenet.jobs.groups.id", req.GetId(),
 	})
 
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+	); err != nil {
 		return nil, err
 	}
 

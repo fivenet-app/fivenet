@@ -177,7 +177,12 @@ func (s *Server) CreateGroupRule(
 	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
 		return nil, err
 	}
 
@@ -245,7 +250,12 @@ func (s *Server) ListGroupRules(
 	if err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+	); err != nil {
 		return nil, err
 	}
 
@@ -289,7 +299,12 @@ func (s *Server) UpdateGroupRule(
 	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
 		return nil, err
 	}
 
@@ -385,7 +400,12 @@ func (s *Server) DeleteGroupRule(
 	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
 		return nil, err
 	}
 

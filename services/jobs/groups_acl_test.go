@@ -18,6 +18,7 @@ import (
 	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/stretchr/testify/require"
 )
@@ -33,6 +34,18 @@ func (s stubGroupAccess) CanUserAccessTarget(
 	_ int32,
 ) (bool, error) {
 	return s.allowed, nil
+}
+
+func (s stubGroupAccess) CanUserAccessTargetIDs(
+	_ context.Context,
+	_ *pbuserinfo.UserInfo,
+	_ int32,
+	targetIDs ...int64,
+) ([]int64, error) {
+	if s.allowed {
+		return targetIDs, nil
+	}
+	return nil, nil
 }
 
 func (s stubGroupAccess) ListTargetAccess(
@@ -53,6 +66,15 @@ func (s stubGroupAccess) ReplaceTargetAccess(
 	_ access.SubjectAccessOptions,
 ) (*access.SubjectAccessChanges, error) {
 	return nil, nil
+}
+
+func (s stubGroupAccess) VisibleIDsByConditionQuery(
+	_ *pbuserinfo.UserInfo,
+	_ int32,
+	_ bool,
+	_ mysql.BoolExpression,
+) access.VisibilityQuery {
+	return access.VisibilityQuery{}
 }
 
 type noopColleagueHydrator struct{}
@@ -90,7 +112,10 @@ func (noopColleagueHydrator) HydrateTargets(
 	return nil
 }
 
-func newJobsGroupACLTestServer(t *testing.T, groupAccess groupAccessManager) (*Server, sqlmock.Sqlmock) {
+func newJobsGroupACLTestServer(
+	t *testing.T,
+	groupAccess access.JobGroupsAccess,
+) (*Server, sqlmock.Sqlmock) {
 	t.Helper()
 
 	db, mock, err := sqlmock.New()
@@ -102,36 +127,15 @@ func newJobsGroupACLTestServer(t *testing.T, groupAccess groupAccessManager) (*S
 	if groupAccess == nil {
 		groupAccess = access.NewJobGroupsSubjectObjectAccess(db)
 	}
+	storeAccess := access.NewJobGroupsSubjectObjectAccess(db)
 
 	return &Server{
 		db:                  db,
-		store:               jobsstore.New(db, &config.CustomDB{}).Store,
+		store:               jobsstore.New(db, &config.CustomDB{}, storeAccess).Store,
 		groupAccess:         groupAccess,
 		groupAccessResolver: access.NewSubjectResolver(db),
 		colleagueHydrator:   noopColleagueHydrator{},
 	}, mock
-}
-
-func strPtr(v string) *string {
-	return &v
-}
-
-func groupCreateRequestWithAccess() *pbjobs.CreateGroupRequest {
-	return &pbjobs.CreateGroupRequest{
-		Name:        "K9 Unit",
-		Description: strPtr("Certified handlers and support staff."),
-		ShortName:   strPtr("K9"),
-		Color:       strPtr("#123456"),
-		SortRank:    strPtr("0|zzzzzz:"),
-		Access: &resourcesaccess.Access{
-			Users: []*resourcesaccess.UserAccess{
-				{
-					UserId: 99,
-					Access: 2,
-				},
-			},
-		},
-	}
 }
 
 func expectGroupGetRows(now time.Time, id int64, name string, updatedByUserID int64) *sqlmock.Rows {
@@ -191,7 +195,7 @@ func expectGroupGetRows(now time.Time, id int64, name string, updatedByUserID in
 }
 
 func expectGroupCreateCounts(mock sqlmock.Sqlmock, groupID int64) {
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_groups AS job_group`)).
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group`")).
 		WithArgs(groupID, int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"job", "membership_mode"}).
 			AddRow("police", int32(1)))
@@ -232,7 +236,7 @@ func expectGroupCreateCounts(mock sqlmock.Sqlmock, groupID int64) {
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_rules`)).
 		WithArgs(groupID).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(0)))
-	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_job_groups AS job_group SET`)).
+	mock.ExpectExec(regexp.QuoteMeta("UPDATE fivenet_job_groups AS `group` SET")).
 		WithArgs(int64(0), int64(0), int64(0), int64(0), groupID).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 }
@@ -268,17 +272,17 @@ func TestCreateGroupWithoutAccessStillWorks(t *testing.T) {
 		WithArgs("police", int64(42), int32(1), int32(7), nil).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	expectGroupCreateCounts(mock, 42)
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_groups AS job_group LEFT JOIN fivenet_files AS logo_file`)).
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group` LEFT JOIN fivenet_files AS logo_file")).
 		WithArgs("police", int64(42), int64(1)).
 		WillReturnRows(expectGroupGetRows(now, 42, "K9 Unit", 7))
 	mock.ExpectCommit()
 
 	resp, err := srv.CreateGroup(ctx, &pbjobs.CreateGroupRequest{
 		Name:        "K9 Unit",
-		Description: strPtr("Certified handlers and support staff."),
-		ShortName:   strPtr("K9"),
-		Color:       strPtr("#123456"),
-		SortRank:    strPtr("0|zzzzzz:"),
+		Description: new("Certified handlers and support staff."),
+		ShortName:   new("K9"),
+		Color:       new("#123456"),
+		SortRank:    new("0|zzzzzz:"),
 	})
 	require.NoError(t, err)
 	require.NotNil(t, resp)
@@ -297,16 +301,16 @@ func TestUpdateGroupDeniedByAccess(t *testing.T) {
 		Job:    "police",
 	})
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_groups AS job_group LEFT JOIN fivenet_files AS logo_file`)).
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group` LEFT JOIN fivenet_files AS logo_file")).
 		WillReturnRows(expectGroupGetRows(now, 42, "K9 Unit", 7))
 
 	resp, err := srv.UpdateGroup(ctx, &pbjobs.UpdateGroupRequest{
 		Id:          42,
-		Name:        strPtr("K9 Unit"),
-		Description: strPtr("Certified handlers and support staff."),
-		ShortName:   strPtr("K9"),
-		Color:       strPtr("#123456"),
-		SortRank:    strPtr("0|zzzzzz:"),
+		Name:        new("K9 Unit"),
+		Description: new("Certified handlers and support staff."),
+		ShortName:   new("K9"),
+		Color:       new("#123456"),
+		SortRank:    new("0|zzzzzz:"),
 	})
 	require.ErrorIs(t, err, errorsjobs.ErrNotFoundOrNoPerms)
 	require.Nil(t, resp)

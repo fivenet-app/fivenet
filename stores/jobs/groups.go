@@ -8,13 +8,16 @@ import (
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
+	groupsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var tJobGroups = table.FivenetJobGroups.AS("job_group")
+var tJobGroups = table.FivenetJobGroups.AS("group")
 
 func buildGroupStates(q GroupsQuery) []jobsgroups.GroupState {
 	if len(q.States) > 0 {
@@ -34,6 +37,7 @@ func buildGroupStates(q GroupsQuery) []jobsgroups.GroupState {
 }
 
 func buildGroupCondition(q GroupsQuery) mysql.BoolExpression {
+	tJobGroups := table.FivenetJobGroups
 	condition := mysql.AND(
 		tJobGroups.Job.EQ(mysql.String(q.Job)),
 	)
@@ -165,11 +169,33 @@ func normalizeGroupForInsert(group *jobsgroups.Group) {
 	}
 }
 
-func (s *Store) CountGroups(ctx context.Context, db qrm.DB, q GroupsQuery) (int64, error) {
-	countStmt := tJobGroups.
-		SELECT(mysql.COUNT(tJobGroups.ID).AS("data_count.total")).
-		FROM(tJobGroups).
-		WHERE(buildGroupCondition(q))
+func (s *Store) visibleGroupsQuery(
+	userInfo *userinfo.UserInfo,
+	q GroupsQuery,
+) access.VisibilityQuery {
+	return s.groupAccess.VisibleIDsByConditionQuery(
+		userInfo,
+		int32(groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		false,
+		buildGroupCondition(q),
+	)
+}
+
+func (s *Store) CountGroups(
+	ctx context.Context,
+	db qrm.DB,
+	q GroupsQuery,
+	userInfo *userinfo.UserInfo,
+) (int64, error) {
+	visibleGroups := s.visibleGroupsQuery(userInfo, q)
+	visibleGroupID := mysql.IntegerColumn("id").From(visibleGroups.Table)
+
+	var countStmt mysql.Statement = mysql.
+		SELECT(mysql.COUNT(visibleGroupID).AS("data_count.total")).
+		FROM(visibleGroups.Table)
+	if len(visibleGroups.CTEs) > 0 {
+		countStmt = mysql.WITH(visibleGroups.CTEs...)(countStmt)
+	}
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, db, &count); err != nil {
@@ -185,9 +211,12 @@ func (s *Store) ListGroups(
 	ctx context.Context,
 	db qrm.DB,
 	q GroupsQuery,
+	userInfo *userinfo.UserInfo,
 ) ([]*jobsgroups.Group, error) {
+	visibleGroups := s.visibleGroupsQuery(userInfo, q)
+	visibleGroupID := mysql.IntegerColumn("id").From(visibleGroups.Table)
 	tLogoFile := table.FivenetFiles.AS("logo_file")
-	stmt := tJobGroups.
+	var stmt mysql.Statement = tJobGroups.
 		SELECT(
 			tJobGroups.ID.AS("group.id"),
 			tJobGroups.Job.AS("group.job"),
@@ -212,7 +241,8 @@ func (s *Store) ListGroups(
 			tLogoFile.FilePath.AS("logo_file.file_path"),
 		).
 		FROM(
-			tJobGroups.
+			visibleGroups.Table.
+				INNER_JOIN(tJobGroups, tJobGroups.ID.EQ(visibleGroupID)).
 				LEFT_JOIN(tLogoFile,
 					mysql.AND(
 						tLogoFile.ID.EQ(tJobGroups.LogoFileID),
@@ -220,10 +250,12 @@ func (s *Store) ListGroups(
 					),
 				),
 		).
-		WHERE(buildGroupCondition(q)).
 		ORDER_BY(buildGroupOrderBy(q.Sort)...).
 		LIMIT(q.Limit).
 		OFFSET(q.Offset)
+	if len(visibleGroups.CTEs) > 0 {
+		stmt = mysql.WITH(visibleGroups.CTEs...)(stmt)
+	}
 
 	dest := []*jobsgroups.Group{}
 	if err := stmt.QueryContext(ctx, db, &dest); err != nil {

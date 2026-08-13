@@ -7,10 +7,13 @@ import (
 	"sort"
 	"testing"
 
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/stretchr/testify/require"
 )
@@ -26,6 +29,68 @@ type resolverTestStore struct {
 	ruleMatchCalls int
 	exclusionCalls int
 	leaderCalls    int
+}
+
+type resolverTestAccessChecker struct {
+	allowed []int64
+	err     error
+	calls   int
+}
+
+func (c *resolverTestAccessChecker) CanUserAccessTarget(
+	_ context.Context,
+	targetID int64,
+	_ *pbuserinfo.UserInfo,
+	_ int32,
+) (bool, error) {
+	for _, allowedID := range c.allowed {
+		if allowedID == targetID {
+			return true, c.err
+		}
+	}
+	return false, c.err
+}
+
+func (c *resolverTestAccessChecker) CanUserAccessTargetIDs(
+	_ context.Context,
+	_ *pbuserinfo.UserInfo,
+	_ int32,
+	targetIDs ...int64,
+) ([]int64, error) {
+	c.calls++
+	if c.err != nil {
+		return nil, c.err
+	}
+	return slices.Clone(c.allowed), nil
+}
+
+func (c *resolverTestAccessChecker) ListTargetAccess(
+	_ context.Context,
+	_ qrm.DB,
+	_ int64,
+	_ access.SubjectAccessOptions,
+) (*resourcesaccess.Access, error) {
+	return &resourcesaccess.Access{}, c.err
+}
+
+func (c *resolverTestAccessChecker) ReplaceTargetAccess(
+	_ context.Context,
+	_ qrm.DB,
+	_ *access.SubjectResolver,
+	_ int64,
+	_ *resourcesaccess.Access,
+	_ access.SubjectAccessOptions,
+) (*access.SubjectAccessChanges, error) {
+	return nil, c.err
+}
+
+func (c *resolverTestAccessChecker) VisibleIDsByConditionQuery(
+	_ *pbuserinfo.UserInfo,
+	_ int32,
+	_ bool,
+	_ mysql.BoolExpression,
+) access.VisibilityQuery {
+	return access.VisibilityQuery{}
 }
 
 func (s *resolverTestStore) GetGroup(
@@ -105,9 +170,10 @@ func TestResolveUserIDsReturnsExplicitUsersOnly(t *testing.T) {
 	require.Zero(t, store.leaderCalls)
 }
 
-func TestResolveUserIDsExpandsGroups(t *testing.T) {
+func TestResolveUserIDsIgnoresInaccessibleGroups(t *testing.T) {
 	t.Parallel()
 
+	checker := &resolverTestAccessChecker{allowed: []int64{10}}
 	store := &resolverTestStore{
 		groups: map[int64]*jobsgroups.Group{
 			10: {
@@ -141,7 +207,7 @@ func TestResolveUserIDsExpandsGroups(t *testing.T) {
 			},
 		},
 	}
-	resolver := &Resolver{store: store}
+	resolver := &Resolver{store: store, groupAccess: checker}
 
 	resolved, err := resolver.Resolve(
 		t.Context(),
@@ -149,7 +215,7 @@ func TestResolveUserIDsExpandsGroups(t *testing.T) {
 		&pbuserinfo.UserInfo{Job: "police"},
 		&jobs.UserSelector{
 			Groups: &jobs.GroupUserSelector{
-				GroupIds:        []int64{10},
+				GroupIds:        []int64{10, 20},
 				IncludeLeaders:  true,
 				IncludeExcluded: false,
 			},
@@ -160,6 +226,7 @@ func TestResolveUserIDsExpandsGroups(t *testing.T) {
 
 	sort.Slice(resolved, func(i, j int) bool { return resolved[i] < resolved[j] })
 	require.Equal(t, []int32{1, 9}, resolved)
+	require.Equal(t, 1, checker.calls)
 	require.Equal(t, 1, store.getGroupCalls)
 	require.Equal(t, 1, store.manualCalls)
 	require.Equal(t, 1, store.ruleMatchCalls)
@@ -170,6 +237,7 @@ func TestResolveUserIDsExpandsGroups(t *testing.T) {
 func TestResolveUserIDsMergesExplicitUsersAndGroups(t *testing.T) {
 	t.Parallel()
 
+	checker := &resolverTestAccessChecker{allowed: []int64{10}}
 	store := &resolverTestStore{
 		groups: map[int64]*jobsgroups.Group{
 			10: {
@@ -190,7 +258,7 @@ func TestResolveUserIDsMergesExplicitUsersAndGroups(t *testing.T) {
 			},
 		},
 	}
-	resolver := &Resolver{store: store}
+	resolver := &Resolver{store: store, groupAccess: checker}
 
 	resolved, err := resolver.Resolve(
 		t.Context(),
@@ -213,6 +281,7 @@ func TestResolveUserIDsMergesExplicitUsersAndGroups(t *testing.T) {
 func TestResolveUserIDsHonorsMaxResolvedUsers(t *testing.T) {
 	t.Parallel()
 
+	checker := &resolverTestAccessChecker{allowed: []int64{10}}
 	store := &resolverTestStore{
 		groups: map[int64]*jobsgroups.Group{
 			10: {
@@ -235,7 +304,7 @@ func TestResolveUserIDsHonorsMaxResolvedUsers(t *testing.T) {
 			},
 		},
 	}
-	resolver := &Resolver{store: store}
+	resolver := &Resolver{store: store, groupAccess: checker}
 
 	_, err := resolver.Resolve(
 		t.Context(),
@@ -256,7 +325,10 @@ func TestResolveUserIDsIgnoresMissingGroups(t *testing.T) {
 	t.Parallel()
 
 	store := &resolverTestStore{}
-	resolver := &Resolver{store: store}
+	resolver := &Resolver{
+		store:       store,
+		groupAccess: &resolverTestAccessChecker{allowed: []int64{999}},
+	}
 
 	resolved, err := resolver.Resolve(
 		t.Context(),

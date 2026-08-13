@@ -140,14 +140,6 @@ func init() {
 		{
 			Namespace: permkeys.Namespace,
 			Service:   permkeys.GroupsServicePerm,
-			Name:      permkeys.GroupsServiceAddGroupLeaderPerm,
-			Attrs:     []perms.Attr{},
-			Order:     6600,
-			Icon:      "i-mdi-account-group-outline",
-		},
-		{
-			Namespace: permkeys.Namespace,
-			Service:   permkeys.GroupsServicePerm,
 			Name:      permkeys.GroupsServiceArchiveGroupPerm,
 			Attrs:     []perms.Attr{},
 			Order:     6600,

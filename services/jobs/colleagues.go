@@ -57,7 +57,7 @@ func (s *Server) ListColleagues(
 		ctx,
 		s.db,
 		userInfo,
-		selector,
+		req.GetUsers(),
 		usersel.ResolveOpts{},
 	)
 	if err != nil {

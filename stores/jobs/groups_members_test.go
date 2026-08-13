@@ -58,7 +58,7 @@ func TestStoreRecountGroupStats(t *testing.T) {
 
 	store, mock := newTestStore(t)
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_groups AS job_group`)).
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group`")).
 		WithArgs(int64(42), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"job",
@@ -100,7 +100,7 @@ func TestStoreRecountGroupStats(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_rules`)).
 		WithArgs(int64(42)).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(0)))
-	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_job_groups AS job_group SET`)).
+	mock.ExpectExec(regexp.QuoteMeta("UPDATE fivenet_job_groups AS `group` SET")).
 		WithArgs(int64(0), int64(0), int64(0), int64(0), int64(42)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 

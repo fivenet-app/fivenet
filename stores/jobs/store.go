@@ -13,6 +13,8 @@ import (
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -149,8 +151,18 @@ type IStore interface {
 	SetMOTD(ctx context.Context, db qrm.DB, job string, motd string) error
 	GetJobProps(ctx context.Context, db qrm.DB, job string) (*jobsprops.JobProps, error)
 
-	CountGroups(ctx context.Context, db qrm.DB, q GroupsQuery) (int64, error)
-	ListGroups(ctx context.Context, db qrm.DB, q GroupsQuery) ([]*jobsgroups.Group, error)
+	CountGroups(
+		ctx context.Context,
+		db qrm.DB,
+		q GroupsQuery,
+		userInfo *userinfo.UserInfo,
+	) (int64, error)
+	ListGroups(
+		ctx context.Context,
+		db qrm.DB,
+		q GroupsQuery,
+		userInfo *userinfo.UserInfo,
+	) ([]*jobsgroups.Group, error)
 	CreateGroup(ctx context.Context, db qrm.DB, group *jobsgroups.Group) (int64, error)
 	UpdateGroup(ctx context.Context, db qrm.DB, group *jobsgroups.Group) error
 	ArchiveGroup(ctx context.Context, db qrm.DB, job string, id int64, updatedByUserID int32) error
@@ -379,8 +391,9 @@ type IStore interface {
 }
 
 type Store struct {
-	db       *sql.DB
-	customDB *config.CustomDB
+	db          *sql.DB
+	customDB    *config.CustomDB
+	groupAccess access.JobGroupsAccess
 }
 
 type Result struct {
@@ -390,8 +403,12 @@ type Result struct {
 	GroupsQuery IGroupsQuery
 }
 
-func New(db *sql.DB, customDB *config.CustomDB) Result {
-	s := &Store{db: db, customDB: customDB}
+func New(db *sql.DB, customDB *config.CustomDB, groupAccess *access.JobGroupsObjectAccess) Result {
+	s := &Store{
+		db:          db,
+		customDB:    customDB,
+		groupAccess: groupAccess,
+	}
 	return Result{
 		Store:       s,
 		GroupsQuery: s,

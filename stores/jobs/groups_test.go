@@ -7,6 +7,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -15,14 +16,15 @@ func TestStoreListGroups(t *testing.T) {
 	t.Parallel()
 
 	store, mock := newTestStore(t)
+	userInfo := &userinfo.UserInfo{Job: "police", Superuser: true}
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_groups AS job_group LEFT JOIN fivenet_files AS logo_file`)).
+	mock.ExpectQuery(`(?s)FROM \( SELECT DISTINCT fivenet_job_groups\.id AS "id".*INNER JOIN fivenet_job_groups AS `+"`group`"+`.*LEFT JOIN fivenet_files AS logo_file`).
 		WithArgs("police", int32(jobsgroups.GroupState_GROUP_STATE_ACTIVE), int64(0), int64(0)).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
 	groups, err := store.ListGroups(t.Context(), store.db, GroupsQuery{
 		Job: "police",
-	})
+	}, userInfo)
 	require.NoError(t, err)
 	assert.Empty(t, groups)
 	require.NoError(t, mock.ExpectationsWereMet())
@@ -33,7 +35,7 @@ func TestStoreGetGroup(t *testing.T) {
 
 	store, mock := newTestStore(t)
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_groups AS job_group LEFT JOIN fivenet_files AS logo_file`)).
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group` LEFT JOIN fivenet_files AS logo_file")).
 		WithArgs("police", int64(42), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
@@ -52,7 +54,7 @@ func TestStoreGetGroupWithLogo(t *testing.T) {
 	store, mock := newTestStore(t)
 	now := time.Now()
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_groups AS job_group LEFT JOIN fivenet_files AS logo_file`)).
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group` LEFT JOIN fivenet_files AS logo_file")).
 		WithArgs("police", int64(42), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"group.id",

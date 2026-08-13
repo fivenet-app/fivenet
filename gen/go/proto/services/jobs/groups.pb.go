@@ -4877,7 +4877,7 @@ var File_services_jobs_groups_proto protoreflect.FileDescriptor
 
 const file_services_jobs_groups_proto_rawDesc = "" +
 	"\n" +
-	"\x1aservices/jobs/groups.proto\x12\rservices.jobs\x1a\x1dresources/access/access.proto\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a$resources/jobs/groups/activity.proto\x1a!resources/jobs/groups/group.proto\x1a#resources/timestamp/timestamp.proto\"\xa1\x03\n" +
+	"\x1aservices/jobs/groups.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1dresources/access/access.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a$resources/jobs/groups/activity.proto\x1a!resources/jobs/groups/group.proto\x1a#resources/timestamp/timestamp.proto\"\xa1\x03\n" +
 	"\x11ListGroupsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -5147,18 +5147,21 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseH\x00R\n" +
 	"pagination\x88\x01\x01\x12@\n" +
 	"\bactivity\x18\x02 \x03(\v2$.resources.jobs.groups.GroupActivityR\bactivityB\r\n" +
-	"\v_pagination2\xed\x15\n" +
+	"\v_pagination2\xe2\x16\n" +
 	"\rGroupsService\x12Q\n" +
 	"\n" +
 	"ListGroups\x12 .services.jobs.ListGroupsRequest\x1a!.services.jobs.ListGroupsResponse\x12_\n" +
 	"\bGetGroup\x12\x1e.services.jobs.GetGroupRequest\x1a\x1f.services.jobs.GetGroupResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListGroups\x12\\\n" +
-	"\vCreateGroup\x12!.services.jobs.CreateGroupRequest\x1a\".services.jobs.CreateGroupResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12i\n" +
-	"\vUpdateGroup\x12!.services.jobs.UpdateGroupRequest\x1a\".services.jobs.UpdateGroupResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12_\n" +
+	"\vCreateGroup\x12!.services.jobs.CreateGroupRequest\x1a\".services.jobs.CreateGroupResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
+	"\vUpdateGroup\x12!.services.jobs.UpdateGroupRequest\x1a\".services.jobs.UpdateGroupResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups\x12_\n" +
 	"\fArchiveGroup\x12\".services.jobs.ArchiveGroupRequest\x1a#.services.jobs.ArchiveGroupResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12m\n" +
-	"\fRestoreGroup\x12\".services.jobs.RestoreGroupRequest\x1a#.services.jobs.RestoreGroupResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fArchiveGroup\x12o\n" +
-	"\x0fUploadGroupLogo\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup(\x01\x12u\n" +
-	"\x0fDeleteGroupLogo\x12%.services.jobs.DeleteGroupLogoRequest\x1a&.services.jobs.DeleteGroupLogoResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12w\n" +
+	"\fRestoreGroup\x12\".services.jobs.RestoreGroupRequest\x1a#.services.jobs.RestoreGroupResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fArchiveGroup\x12{\n" +
+	"\x0fUploadGroupLogo\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups(\x01\x12\x81\x01\n" +
+	"\x0fDeleteGroupLogo\x12%.services.jobs.DeleteGroupLogoRequest\x1a&.services.jobs.DeleteGroupLogoResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups\x12w\n" +
 	"\x10ListGroupMembers\x12&.services.jobs.ListGroupMembersRequest\x1a'.services.jobs.ListGroupMembersResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListGroups\x12\x89\x01\n" +
 	"\x16ListGroupManualMembers\x12,.services.jobs.ListGroupManualMembersRequest\x1a-.services.jobs.ListGroupManualMembersResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
@@ -5166,18 +5169,27 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x19ListGroupMemberExclusions\x12/.services.jobs.ListGroupMemberExclusionsRequest\x1a0.services.jobs.ListGroupMemberExclusionsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListGroups\x12w\n" +
 	"\x10ListGroupLeaders\x12&.services.jobs.ListGroupLeadersRequest\x1a'.services.jobs.ListGroupLeadersResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
-	"ListGroups\x12r\n" +
-	"\x0eAddGroupMember\x12$.services.jobs.AddGroupMemberRequest\x1a%.services.jobs.AddGroupMemberResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12{\n" +
-	"\x11RemoveGroupMember\x12'.services.jobs.RemoveGroupMemberRequest\x1a(.services.jobs.RemoveGroupMemberResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12~\n" +
-	"\x12ExcludeGroupMember\x12(.services.jobs.ExcludeGroupMemberRequest\x1a).services.jobs.ExcludeGroupMemberResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12\x96\x01\n" +
-	"\x1aRemoveGroupMemberExclusion\x120.services.jobs.RemoveGroupMemberExclusionRequest\x1a1.services.jobs.RemoveGroupMemberExclusionResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12\x82\x01\n" +
-	"\x0eAddGroupLeader\x12$.services.jobs.AddGroupLeaderRequest\x1a%.services.jobs.AddGroupLeaderResponse\"#\xd2\xf3\x18\x1f\b\x01*\x0eAddGroupLeader*\vCreateGroup\x12\x8b\x01\n" +
-	"\x11RemoveGroupLeader\x12'.services.jobs.RemoveGroupLeaderRequest\x1a(.services.jobs.RemoveGroupLeaderResponse\"#\xd2\xf3\x18\x1f\b\x01*\x0eAddGroupLeader*\vCreateGroup\x12u\n" +
-	"\x0fCreateGroupRule\x12%.services.jobs.CreateGroupRuleRequest\x1a&.services.jobs.CreateGroupRuleResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12q\n" +
+	"ListGroups\x12~\n" +
+	"\x0eAddGroupMember\x12$.services.jobs.AddGroupMemberRequest\x1a%.services.jobs.AddGroupMemberResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups\x12\x87\x01\n" +
+	"\x11RemoveGroupMember\x12'.services.jobs.RemoveGroupMemberRequest\x1a(.services.jobs.RemoveGroupMemberResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups\x12\x8a\x01\n" +
+	"\x12ExcludeGroupMember\x12(.services.jobs.ExcludeGroupMemberRequest\x1a).services.jobs.ExcludeGroupMemberResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups\x12\xa2\x01\n" +
+	"\x1aRemoveGroupMemberExclusion\x120.services.jobs.RemoveGroupMemberExclusionRequest\x1a1.services.jobs.RemoveGroupMemberExclusionResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups\x12~\n" +
+	"\x0eAddGroupLeader\x12$.services.jobs.AddGroupLeaderRequest\x1a%.services.jobs.AddGroupLeaderResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups\x12\x87\x01\n" +
+	"\x11RemoveGroupLeader\x12'.services.jobs.RemoveGroupLeaderRequest\x1a(.services.jobs.RemoveGroupLeaderResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups\x12\x81\x01\n" +
+	"\x0fCreateGroupRule\x12%.services.jobs.CreateGroupRuleRequest\x1a&.services.jobs.CreateGroupRuleResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups\x12q\n" +
 	"\x0eListGroupRules\x12$.services.jobs.ListGroupRulesRequest\x1a%.services.jobs.ListGroupRulesResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
-	"ListGroups\x12u\n" +
-	"\x0fUpdateGroupRule\x12%.services.jobs.UpdateGroupRuleRequest\x1a&.services.jobs.UpdateGroupRuleResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12u\n" +
-	"\x0fDeleteGroupRule\x12%.services.jobs.DeleteGroupRuleRequest\x1a&.services.jobs.DeleteGroupRuleResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vCreateGroup\x12z\n" +
+	"ListGroups\x12\x81\x01\n" +
+	"\x0fUpdateGroupRule\x12%.services.jobs.UpdateGroupRuleRequest\x1a&.services.jobs.UpdateGroupRuleResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups\x12\x81\x01\n" +
+	"\x0fDeleteGroupRule\x12%.services.jobs.DeleteGroupRuleRequest\x1a&.services.jobs.DeleteGroupRuleResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\vCreateGroup*\n" +
+	"ListGroups\x12z\n" +
 	"\x11ListGroupActivity\x12'.services.jobs.ListGroupActivityRequest\x1a(.services.jobs.ListGroupActivityResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListGroups\x1a#\xea\xf3\x18\x1f\bB\x12\x1bi-mdi-account-group-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 

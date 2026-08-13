@@ -623,7 +623,12 @@ func (s *Server) ListGroupMembers(
 	if err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+	); err != nil {
 		return nil, err
 	}
 
@@ -705,7 +710,12 @@ func (s *Server) ListGroupManualMembers(
 	); err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+	); err != nil {
 		return nil, err
 	}
 
@@ -746,7 +756,12 @@ func (s *Server) ListGroupMemberExclusions(
 	); err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+	); err != nil {
 		return nil, err
 	}
 
@@ -792,7 +807,12 @@ func (s *Server) ListGroupLeaders(
 	); err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+	); err != nil {
 		return nil, err
 	}
 
@@ -836,7 +856,12 @@ func (s *Server) AddGroupMember(
 	if err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
 		return nil, err
 	}
 	if err := s.ensureGroupUserInJob(ctx, tx, userInfo.GetJob(), req.GetUserId()); err != nil {
@@ -938,7 +963,12 @@ func (s *Server) RemoveGroupMember(
 	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
 		return nil, err
 	}
 
@@ -1015,7 +1045,12 @@ func (s *Server) ExcludeGroupMember(
 	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
 		return nil, err
 	}
 	if err := s.ensureGroupUserInJob(ctx, tx, userInfo.GetJob(), req.GetUserId()); err != nil {
@@ -1110,7 +1145,12 @@ func (s *Server) RemoveGroupMemberExclusion(
 	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
 		return nil, err
 	}
 
@@ -1178,7 +1218,12 @@ func (s *Server) AddGroupLeader(
 		"fivenet.jobs.groups.user_id", req.GetUserId(),
 	})
 
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+	); err != nil {
 		return nil, err
 	}
 
@@ -1265,7 +1310,12 @@ func (s *Server) RemoveGroupLeader(
 		"fivenet.jobs.groups.user_id", req.GetUserId(),
 	})
 
-	if err := s.ensureGroupAccess(ctx, userInfo, req.GetGroupId(), groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		req.GetGroupId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+	); err != nil {
 		return nil, err
 	}
 

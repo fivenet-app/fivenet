@@ -48,7 +48,12 @@ func (s *Server) UploadGroupLogo(
 	if group == nil {
 		return errorsjobs.ErrNotFoundOrNoPerms
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, group.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		group.GetId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
 		return err
 	}
 
@@ -136,7 +141,12 @@ func (s *Server) DeleteGroupLogo(
 	if group == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, group.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		group.GetId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
 		return nil, err
 	}
 
@@ -178,7 +188,12 @@ func (s *Server) DeleteGroupLogo(
 	if updated == nil {
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
-	if err := s.ensureGroupAccess(ctx, userInfo, updated.GetId(), groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT); err != nil {
+	if err := s.ensureGroupAccess(
+		ctx,
+		userInfo,
+		updated.GetId(),
+		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
 		return nil, err
 	}
 

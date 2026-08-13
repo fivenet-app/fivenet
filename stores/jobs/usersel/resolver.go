@@ -9,7 +9,9 @@ import (
 
 	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
+	groupsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/access"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
@@ -18,18 +20,41 @@ import (
 const MaxResolvedUsers = 5000
 
 type Resolver struct {
-	store jobsstore.IGroupsQuery
+	store       jobsstore.IGroupsQuery
+	groupAccess access.JobGroupsAccess
+}
+
+type IResolver interface {
+	Resolve(
+		ctx context.Context,
+		db qrm.DB,
+		userInfo *pbuserinfo.UserInfo,
+		selector *jobs.UserSelector,
+		opts ResolveOpts,
+	) ([]int32, error)
 }
 
 type Params struct {
 	fx.In
 
-	Store jobsstore.IGroupsQuery
+	Store       jobsstore.IGroupsQuery
+	GroupAccess *access.JobGroupsObjectAccess
 }
 
-func New(p Params) *Resolver {
+func New(p Params) IResolver {
 	return &Resolver{
-		store: p.Store,
+		store:       p.Store,
+		groupAccess: p.GroupAccess,
+	}
+}
+
+func NewWithAccess(
+	store jobsstore.IGroupsQuery,
+	groupAccess access.JobGroupsAccess,
+) IResolver {
+	return &Resolver{
+		store:       store,
+		groupAccess: groupAccess,
 	}
 }
 
@@ -65,28 +90,33 @@ func (r *Resolver) Resolve(
 		seen[uid] = struct{}{}
 	}
 
-	groupSel := selector.GetGroups()
-	if groupSel != nil && len(groupSel.GetGroupIds()) > 0 {
-		groupQuery := jobsstore.GroupQuery{
-			Job:             job,
-			IncludeArchived: false,
+	if groupSel := selector.GetGroups(); groupSel != nil && len(groupSel.GetGroupIds()) > 0 {
+		filteredGroupSel, err := r.filterAccessibleGroups(ctx, userInfo, groupSel)
+		if err != nil {
+			return nil, err
 		}
+		if len(filteredGroupSel.GetGroupIds()) > 0 {
+			groupQuery := jobsstore.GroupQuery{
+				Job:             job,
+				IncludeArchived: false,
+			}
 
-		for _, gid := range groupSel.GetGroupIds() {
-			group, err := r.store.GetGroup(ctx, db, groupQuery, gid)
-			if err != nil {
-				if errors.Is(err, sql.ErrNoRows) {
-					continue
+			for _, gid := range filteredGroupSel.GetGroupIds() {
+				group, err := r.store.GetGroup(ctx, db, groupQuery, gid)
+				if err != nil {
+					if errors.Is(err, sql.ErrNoRows) {
+						continue
+					}
+					return nil, fmt.Errorf("resolving group %d: %w", gid, err)
 				}
-				return nil, fmt.Errorf("resolving group %d: %w", gid, err)
-			}
 
-			members, err := r.resolveGroupMembers(ctx, db, group, groupSel)
-			if err != nil {
-				return nil, fmt.Errorf("resolving group %d members: %w", gid, err)
-			}
-			for _, uid := range members {
-				seen[uid] = struct{}{}
+				members, err := r.resolveGroupMembers(ctx, db, group, filteredGroupSel)
+				if err != nil {
+					return nil, fmt.Errorf("resolving group %d members: %w", gid, err)
+				}
+				for _, uid := range members {
+					seen[uid] = struct{}{}
+				}
 			}
 		}
 	}
@@ -106,6 +136,44 @@ func (r *Resolver) Resolve(
 
 	slices.Sort(result)
 	return result, nil
+}
+
+func (r *Resolver) filterAccessibleGroups(
+	ctx context.Context,
+	userInfo *pbuserinfo.UserInfo,
+	groupSel *jobs.GroupUserSelector,
+) (*jobs.GroupUserSelector, error) {
+	if groupSel == nil || len(groupSel.GetGroupIds()) == 0 {
+		return groupSel, nil
+	}
+
+	allowedGroupIDs, err := r.groupAccess.CanUserAccessTargetIDs(
+		ctx,
+		userInfo,
+		int32(groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		groupSel.GetGroupIds()...,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	allowed := make(map[int64]struct{}, len(allowedGroupIDs))
+	for _, groupID := range allowedGroupIDs {
+		allowed[groupID] = struct{}{}
+	}
+
+	filteredGroupIDs := make([]int64, 0, len(groupSel.GetGroupIds()))
+	for _, groupID := range groupSel.GetGroupIds() {
+		if _, ok := allowed[groupID]; ok {
+			filteredGroupIDs = append(filteredGroupIDs, groupID)
+		}
+	}
+
+	return &jobs.GroupUserSelector{
+		GroupIds:        filteredGroupIDs,
+		IncludeLeaders:  groupSel.GetIncludeLeaders(),
+		IncludeExcluded: groupSel.GetIncludeExcluded(),
+	}, nil
 }
 
 func (r *Resolver) resolveGroupMembers(

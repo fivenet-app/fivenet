@@ -99,7 +99,7 @@ type Server struct {
 	customDB *config.CustomDB
 	store    jobsstore.IStore
 
-	groupAccess         groupAccessManager
+	groupAccess         access.JobGroupsAccess
 	groupAccessResolver *access.SubjectResolver
 
 	colleagueHydrator colleaguehydrator.IHydrator
@@ -107,7 +107,7 @@ type Server struct {
 	fHandler             *filestore.Handler[int64]
 	groupLogoFileHandler *filestore.Handler[int64]
 
-	userSel *usersel.Resolver
+	userSel usersel.IResolver
 }
 
 type Params struct {
@@ -125,7 +125,8 @@ type Params struct {
 	Stats             *stats.Service
 	Store             jobsstore.IStore
 	ColleagueHydrator colleaguehydrator.IHydrator
-	UserSel           *usersel.Resolver
+	UserSel           usersel.IResolver
+	GroupAccess       *access.JobGroupsObjectAccess
 }
 
 func NewServer(p Params) *Server {
@@ -177,13 +178,13 @@ func NewServer(p Params) *Server {
 
 		fHandler:             conductFileHandler,
 		groupLogoFileHandler: groupLogoFileHandler,
-		groupAccess:          access.NewJobGroupsSubjectObjectAccess(p.DB),
+		groupAccess:          p.GroupAccess,
 		groupAccessResolver:  access.NewSubjectResolver(p.DB),
 
 		userSel: p.UserSel,
 	}
 	if s.store == nil {
-		r := jobsstore.New(p.DB, &p.Config.Database.Custom)
+		r := jobsstore.New(p.DB, &p.Config.Database.Custom, p.GroupAccess)
 		s.store = r.Store
 	}
 
