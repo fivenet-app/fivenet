@@ -66,3 +66,29 @@ func TestListGroupsForwardsGroupIDsToBothQueries(t *testing.T) {
 	require.Equal(t, []int64{42, 99}, store.countQuery.IDs)
 	require.Equal(t, []int64{42, 99}, store.listQuery.IDs)
 }
+
+func TestListGroupsForwardsGroupKindToBothQueries(t *testing.T) {
+	t.Parallel()
+
+	store := &groupsQueryStoreStub{
+		count:  1,
+		groups: []*jobsgroups.Group{{Id: 42}},
+	}
+	server := &Server{
+		store:             store,
+		colleagueHydrator: noopColleagueHydrator{},
+	}
+
+	ctx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		Job: "police",
+	})
+
+	kind := jobsgroups.GroupType_GROUP_TYPE_SMART
+	resp, err := server.ListGroups(ctx, &pbjobs.ListGroupsRequest{
+		Kind: &kind,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.Equal(t, jobsgroups.GroupType_GROUP_TYPE_SMART, store.countQuery.Kind)
+	require.Equal(t, jobsgroups.GroupType_GROUP_TYPE_SMART, store.listQuery.Kind)
+}

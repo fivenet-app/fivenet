@@ -42,6 +42,10 @@ func buildGroupCondition(q GroupsQuery) mysql.BoolExpression {
 		tJobGroups.Job.EQ(mysql.String(q.Job)),
 	)
 
+	if q.Kind != jobsgroups.GroupType_GROUP_TYPE_UNSPECIFIED {
+		condition = condition.AND(tJobGroups.Type.EQ(mysql.Int32(int32(q.Kind))))
+	}
+
 	states := buildGroupStates(q)
 	if len(states) > 0 {
 		expressions := make([]mysql.Expression, len(states))

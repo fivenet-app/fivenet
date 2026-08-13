@@ -11788,6 +11788,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `include_inactive` | [bool](#bool) |  |  |
 | `include_archived` | [bool](#bool) |  |  |
 | `group_ids` | [int32](#int32) | repeated |  |
+| `kind` | [resources.jobs.groups.GroupType](#resourcesjobsgroupsGroupType) | optional |  |
 
 
 

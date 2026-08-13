@@ -93,6 +93,7 @@ type ConductQuery struct {
 
 type GroupsQuery struct {
 	Job             string
+	Kind            jobsgroups.GroupType
 	States          []jobsgroups.GroupState
 	Search          string
 	IncludeCounts   bool

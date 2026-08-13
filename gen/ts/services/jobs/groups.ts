@@ -22,7 +22,6 @@ import { GroupGradeRule } from "../../resources/jobs/groups/group";
 import { GroupExclusionReason } from "../../resources/jobs/groups/group";
 import { GroupMemberSource } from "../../resources/jobs/groups/group";
 import { GroupMembershipMode } from "../../resources/jobs/groups/group";
-import { GroupType } from "../../resources/jobs/groups/group";
 import { Access } from "../../resources/access/access";
 import { GroupResolvedMember } from "../../resources/jobs/groups/group";
 import { GroupMemberExclusion } from "../../resources/jobs/groups/group";
@@ -31,6 +30,7 @@ import { GroupLeader } from "../../resources/jobs/groups/group";
 import { GroupRule } from "../../resources/jobs/groups/group";
 import { Group } from "../../resources/jobs/groups/group";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { GroupType } from "../../resources/jobs/groups/group";
 import { GroupState } from "../../resources/jobs/groups/group";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -72,6 +72,10 @@ export interface ListGroupsRequest {
      * @generated from protobuf field: repeated int32 group_ids = 8
      */
     groupIds: number[];
+    /**
+     * @generated from protobuf field: optional resources.jobs.groups.GroupType kind = 9
+     */
+    kind?: GroupType;
 }
 /**
  * @generated from protobuf message services.jobs.ListGroupsResponse
@@ -842,7 +846,8 @@ class ListGroupsRequest$Type extends MessageType<ListGroupsRequest> {
             { no: 5, name: "include_counts", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "include_inactive", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "include_archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "group_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { items: { int32: { gt: 0 } } } } } }
+            { no: 8, name: "group_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { items: { int32: { gt: 0 } } } } } },
+            { no: 9, name: "kind", kind: "enum", opt: true, T: () => ["resources.jobs.groups.GroupType", GroupType, "GROUP_TYPE_"] }
         ]);
     }
     create(value?: PartialMessage<ListGroupsRequest>): ListGroupsRequest {
@@ -893,6 +898,9 @@ class ListGroupsRequest$Type extends MessageType<ListGroupsRequest> {
                     else
                         message.groupIds.push(reader.int32());
                     break;
+                case /* optional resources.jobs.groups.GroupType kind */ 9:
+                    message.kind = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -937,6 +945,9 @@ class ListGroupsRequest$Type extends MessageType<ListGroupsRequest> {
                 writer.int32(message.groupIds[i]);
             writer.join();
         }
+        /* optional resources.jobs.groups.GroupType kind = 9; */
+        if (message.kind !== undefined)
+            writer.tag(9, WireType.Varint).int32(message.kind);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -64,9 +64,24 @@ const query = useSearchForm('jobs_groups', schema);
 const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
+watch(
+    () => ({
+        search: query.search,
+        status: query.status,
+        kind: query.kind,
+        sorting: query.sorting,
+    }),
+    () => {
+        if (query.page !== 1) {
+            query.page = 1;
+        }
+    },
+    { deep: true },
+);
+
 const listKey = computed(
     () =>
-        `jobs-groups-${validatedQuery.value.page}-${validatedQuery.value.status}-${validatedQuery.value.search}-${JSON.stringify(validatedQuery.value.sorting)}`,
+        `jobs-groups-${validatedQuery.value.page}-${validatedQuery.value.status}-${validatedQuery.value.kind}-${validatedQuery.value.search}-${JSON.stringify(validatedQuery.value.sorting)}`,
 );
 
 const { data, status: requestStatus, refresh, error } = useLazyAsyncData(listKey, () => listGroups(validatedQuery.value));
@@ -149,6 +164,14 @@ async function listGroups(values: Schema): Promise<ListGroupsResponse> {
                   : values.status === 'archived'
                     ? [GroupState.ARCHIVED]
                     : [];
+        const kind =
+            values.kind === 'all'
+                ? undefined
+                : values.kind === 'manual'
+                  ? GroupType.MANUAL
+                  : values.kind === 'smart'
+                    ? GroupType.SMART
+                    : GroupType.MIXED;
 
         const { response } = await jobsGroupsClient.listGroups({
             pagination: {
@@ -157,6 +180,7 @@ async function listGroups(values: Schema): Promise<ListGroupsResponse> {
             sort: values.sorting,
             search: values.search.trim() ? values.search.trim() : undefined,
             states: statusStates,
+            kind,
             includeCounts: true,
             includeInactive: values.status === 'all' || values.status === 'inactive',
             includeArchived: values.status === 'all' || values.status === 'archived',
@@ -169,38 +193,27 @@ async function listGroups(values: Schema): Promise<ListGroupsResponse> {
         throw e;
     }
 }
-
-function groupMatchesKind(group: Group): boolean {
-    if (query.kind === 'all') return true;
-
-    if (query.kind === 'manual') return group.type === GroupType.MANUAL;
-    if (query.kind === 'smart') return group.type === GroupType.SMART;
-    if (query.kind === 'mixed') return group.type === GroupType.MIXED;
-
-    return true;
-}
-
-const visibleGroups = computed(() => (data.value?.groups ?? []).filter((group) => groupMatchesKind(group)));
+const groups = computed(() => data.value?.groups ?? []);
 
 const stats = computed(() => [
     {
         label: t('components.jobs.groups.visible_groups'),
-        value: visibleGroups.value.length,
+        value: groups.value.length,
         icon: 'i-mdi-account-group',
     },
     {
         label: t('common.members', 2),
-        value: visibleGroups.value.reduce((total, group) => total + group.membersCount, 0),
+        value: groups.value.reduce((total, group) => total + group.membersCount, 0),
         icon: 'i-mdi-account-multiple',
     },
     {
         label: t('components.jobs.groups.leaders'),
-        value: visibleGroups.value.reduce((total, group) => total + group.leadersCount, 0),
+        value: groups.value.reduce((total, group) => total + group.leadersCount, 0),
         icon: 'i-mdi-account-star',
     },
     {
         label: t('components.jobs.groups.exclusions'),
-        value: visibleGroups.value.reduce((total, group) => total + group.exclusionsCount, 0),
+        value: groups.value.reduce((total, group) => total + group.exclusionsCount, 0),
         icon: 'i-mdi-account-cancel',
     },
 ]);
@@ -338,8 +351,8 @@ function openGroupDetails(group: Group): void {
                         :error="error"
                         :retry="refresh"
                     />
-                    <DataNoDataBlock v-else-if="visibleGroups.length === 0" :type="$t('common.group', 2)" :retry="refresh" />
-                    <UTable v-else class="min-h-96" :data="visibleGroups" :columns="columns">
+                    <DataNoDataBlock v-else-if="groups.length === 0" :type="$t('common.group', 2)" :retry="refresh" />
+                    <UTable v-else class="min-h-96" :data="groups" :columns="columns">
                         <template #name-cell="{ row }">
                             <div class="flex items-center gap-3">
                                 <UAvatar

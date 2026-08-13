@@ -24,6 +24,7 @@ message ListGroupsRequest {
   bool include_inactive = 6;
   bool include_archived = 7;
   repeated int32 group_ids = 8 [(buf.validate.field).repeated.items.int32.gt = 0];
+  optional resources.jobs.groups.GroupType kind = 9;
 }
 
 message ListGroupsResponse {

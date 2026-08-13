@@ -163,7 +163,7 @@ async function searchItems(q: string): Promise<SearchItem[]> {
                 id: g.id,
                 value: toGroupValue(g.id),
                 kind: 'group' as const,
-                label: g.shortName ? `${g.shortName}: ${g.name}` : g.shortName || g.shortName || String(g.id),
+                label: g.shortName ? `${g.shortName}: ${g.name}` : g.name || String(g.id),
             })),
         );
     } else {
@@ -238,7 +238,7 @@ async function loadRestoredItems(): Promise<SearchItem[]> {
                         id: g.id,
                         value: toGroupValue(g.id),
                         kind: 'group' as const,
-                        label: g.shortName ? `${g.shortName}: ${g.name}` : g.shortName || g.shortName || String(g.id),
+                        label: g.shortName ? `${g.shortName}: ${g.name}` : g.name || String(g.id),
                     });
                 }
             }

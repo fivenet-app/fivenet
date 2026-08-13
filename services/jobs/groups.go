@@ -67,6 +67,7 @@ func (s *Server) ListGroups(
 
 	count, err := s.store.CountGroups(ctx, s.db, jobsstore.GroupsQuery{
 		Job:             userInfo.GetJob(),
+		Kind:            req.GetKind(),
 		States:          req.GetStates(),
 		Search:          req.GetSearch(),
 		IncludeCounts:   req.GetIncludeCounts(),
@@ -92,6 +93,7 @@ func (s *Server) ListGroups(
 
 	groups, err := s.store.ListGroups(ctx, s.db, jobsstore.GroupsQuery{
 		Job:             userInfo.GetJob(),
+		Kind:            req.GetKind(),
 		States:          req.GetStates(),
 		Search:          req.GetSearch(),
 		IncludeCounts:   req.GetIncludeCounts(),
