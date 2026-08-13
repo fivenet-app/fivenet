@@ -8,18 +8,18 @@ import (
 var (
 	ErrFailedQuery = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.settings.SettingsService.ErrFailedQuery"},
-		nil,
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrFailedQuery.content"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrFailedQuery.title"},
 	)
 	ErrInvalidRequest = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidRequest"},
-		nil,
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidRequest.content"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidRequest.title"},
 	)
 	ErrNoPermission = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.settings.SettingsService.ErrNoPermission"},
-		nil,
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrNoPermission.content"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrNoPermission.title"},
 	)
 	ErrRoleAlreadyExists = common.NewI18nErr(
 		codes.InvalidArgument,
@@ -33,19 +33,19 @@ var (
 	)
 	ErrInvalidAttrs = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidAttrs"},
-		nil,
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidAttrs.content"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidAttrs.title"},
 	)
 	ErrInvalidPerms = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidPerms"},
-		nil,
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidPerms.content"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidPerms.title"},
 	)
 
 	ErrDiscordNotEnabled = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.settings.SettingsService.ErrDiscordNotEnabled"},
-		nil,
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrDiscordNotEnabled.content"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrDiscordNotEnabled.title"},
 	)
 	ErrDiscordConnectRequired = common.NewI18nErr(
 		codes.InvalidArgument,

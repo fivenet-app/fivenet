@@ -8,12 +8,12 @@ import (
 var (
 	ErrFailedQuery = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.vehicles.VehiclesService.ErrFailedQuery"},
-		nil,
+		&common.I18NItem{Key: "errors.vehicles.VehiclesService.ErrFailedQuery.content"},
+		&common.I18NItem{Key: "errors.vehicles.VehiclesService.ErrFailedQuery.title"},
 	)
 	ErrPropsWantedDenied = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.vehicles.VehiclesService.ErrPropsWantedDenied"},
-		nil,
+		&common.I18NItem{Key: "errors.vehicles.VehiclesService.ErrPropsWantedDenied.content"},
+		&common.I18NItem{Key: "errors.vehicles.VehiclesService.ErrPropsWantedDenied.title"},
 	)
 )

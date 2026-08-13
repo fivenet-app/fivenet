@@ -8,17 +8,17 @@ import (
 var (
 	ErrStreamFailed = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.livemap.LivemapService.ErrStreamFailed"},
-		nil,
+		&common.I18NItem{Key: "errors.livemap.LivemapService.ErrStreamFailed.content"},
+		&common.I18NItem{Key: "errors.livemap.LivemapService.ErrStreamFailed.title"},
 	)
 	ErrMarkerFailed = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.livemap.LivemapService.ErrMarkerFailed"},
-		nil,
+		&common.I18NItem{Key: "errors.livemap.LivemapService.ErrMarkerFailed.content"},
+		&common.I18NItem{Key: "errors.livemap.LivemapService.ErrMarkerFailed.title"},
 	)
 	ErrMarkerDenied = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.livemap.LivemapService.ErrMarkerDenied"},
-		nil,
+		&common.I18NItem{Key: "errors.livemap.LivemapService.ErrMarkerDenied.content"},
+		&common.I18NItem{Key: "errors.livemap.LivemapService.ErrMarkerDenied.title"},
 	)
 )

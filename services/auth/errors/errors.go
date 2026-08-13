@@ -28,28 +28,28 @@ var (
 	)
 	ErrNoAccount = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrNoAccount"},
-		nil,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrNoAccount.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrNoAccount.title"},
 	)
 	ErrNoCharFound = common.NewI18nErr(
 		codes.NotFound,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrNoCharFound"},
-		nil,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrNoCharFound.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrNoCharFound.title"},
 	)
 	ErrGenericLogin = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrGenericLogin"},
-		nil,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrGenericLogin.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrGenericLogin.title"},
 	)
 	ErrUnableToChooseChar = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrUnableToChooseChar"},
-		nil,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrUnableToChooseChar.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrUnableToChooseChar.title"},
 	)
 	ErrUpdateAccount = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrUpdateAccount"},
-		nil,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrUpdateAccount.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrUpdateAccount.title"},
 	)
 	ErrChangePassword = common.NewI18nErrFunc(
 		codes.InvalidArgument,
@@ -73,22 +73,27 @@ var (
 	)
 	ErrChangeUsername = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrChangeUsername"},
-		nil,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrChangeUsername.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrChangeUsername.title"},
 	)
 	ErrBadUsername = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrBadUsername"},
-		nil,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrBadUsername.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrBadUsername.title"},
 	)
 	ErrNotSuperuser = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrNotSuperuser"},
-		nil,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrNotSuperuser.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrNotSuperuser.title"},
 	)
 	ErrImpersonateJobInvalid = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrImpersonateJobInvalid"},
-		nil,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrImpersonateJobInvalid.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrImpersonateJobInvalid.title"},
+	)
+	ErrReauthRequired = common.NewI18nErr(
+		codes.Unauthenticated,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrReauthRequired.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrReauthRequired.title"},
 	)
 )
