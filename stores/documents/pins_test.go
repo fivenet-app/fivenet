@@ -19,7 +19,7 @@ func TestStoreGetDocumentPinMergesRows(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(`(?s).*FROM fivenet_documents_pins AS document_pin.*document_pin\.document_id = \?.*document_pin\.job = \?.*document_pin\.user_id = \?.*LIMIT \?.*`).
 		WithArgs(int64(42), "doj", int32(3), int64(2)).
@@ -47,7 +47,7 @@ func TestStoreListDocumentPinsEmpty(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(`(?s).*FROM fivenet_documents_pins AS document_pin.*`).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(0)))
@@ -71,7 +71,7 @@ func TestStoreToggleDocumentPinWrites(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 	userInfo := &userinfo.UserInfo{UserId: 3, Job: "doj"}
 
 	mock.ExpectExec(`(?s).*INSERT INTO fivenet_documents_pins.*`).

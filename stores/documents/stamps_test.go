@@ -20,7 +20,7 @@ func TestStoreListUsableStampsUsesVisibilityCteForNonSuperuser(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	countQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*COUNT\(doc_ids\.id\) AS "data_count\.total".*`
 	mock.ExpectQuery(countQuery).

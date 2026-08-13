@@ -24,7 +24,7 @@ func TestStoreListAppliesFiltersAndSortFallback(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	closed := true
 	onlyDrafts := false
@@ -80,7 +80,7 @@ func TestStoreListUsesAclBranchesForNonSuperuser(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*` +
 		regexp.QuoteMeta(`SELECT document_short.id AS "document_short.id"`) +
@@ -112,7 +112,7 @@ func TestStoreGetIncludesContentAndPhoneNumber(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 	query := GetQuery{
 		DocumentID:         42,
 		WithContent:        true,
@@ -150,7 +150,7 @@ func TestStoreGetDocumentMetaAndUpdateOwner(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_meta AS document_meta`)+`(?s).*`+regexp.QuoteMeta(`document_meta.document_id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
 		WithArgs(int64(42), int64(1)).

@@ -12,6 +12,7 @@ import (
 	wikiactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
 )
 
 type IStore interface {
@@ -69,14 +70,21 @@ type IStore interface {
 
 type Store struct {
 	db             *sql.DB
-	access         *access.SubjectObjectAccess
+	access         *access.WikiPageObjectAccess
 	accessResolver *access.SubjectResolver
 }
 
-func New(db *sql.DB) IStore {
+type Params struct {
+	fx.In
+
+	DB     *sql.DB
+	Access *access.WikiPageObjectAccess
+}
+
+func New(p Params) IStore {
 	return &Store{
-		db:             db,
-		access:         access.NewWikiPageSubjectObjectAccess(db),
-		accessResolver: access.NewSubjectResolver(db),
+		db:             p.DB,
+		access:         p.Access,
+		accessResolver: access.NewSubjectResolver(p.DB),
 	}
 }

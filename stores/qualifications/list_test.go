@@ -17,7 +17,7 @@ func TestStoreListQualificationsUsesVisibilityCte(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	countQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*COUNT\(DISTINCT qualification\.id\) AS "data_count\.total".*qualification_result\.deleted_at IS NULL.*`
 	mock.ExpectQuery(countQuery).
@@ -50,7 +50,7 @@ func TestStoreCheckRequirementsMetForQualificationUsesSuccessMap(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	query := `(?s).*FROM fivenet_qualifications_requirements AS qualification_requirement LEFT JOIN fivenet_qualifications_result_success_map AS qualification_result_success_map ON .*qualification_result_success_map\.qualification_id = qualification_requirement\.target_qualification_id.*qualification_result_success_map\.user_id = \?.*`
 	mock.ExpectQuery(query).

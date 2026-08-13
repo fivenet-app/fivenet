@@ -18,7 +18,7 @@ func TestStoreCountPageActivity(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_wiki_pages_activity AS page_activity`) +
 		`(?s).*` + regexp.QuoteMeta(`page_activity.page_id = ?`)
@@ -40,7 +40,7 @@ func TestStoreListPageActivity(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_wiki_pages_activity AS page_activity`) +
 		`(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_user AS creator ON`) +
@@ -98,7 +98,7 @@ func TestStoreAddPageActivity(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_wiki_pages_activity`) +
 		`(?s).*` + regexp.QuoteMeta(`VALUES (?, ?, ?, ?, ?, ?)`)
@@ -132,7 +132,7 @@ func TestStoreCountPageChildren(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_wiki_pages`) +
 		`(?s).*` + regexp.QuoteMeta(`parent_id = ?`) +

@@ -24,7 +24,7 @@ func TestStoreApprovalPolicyHelpers(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_approval_policies AS approval_policy`)+`(?s).*`+regexp.QuoteMeta(`approval_policy.document_id = ?`)).
 		WithArgs(int64(42), int64(1)).
@@ -64,7 +64,7 @@ func TestStoreListApprovals(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_approvals AS approval`) + `(?s).*` + regexp.QuoteMeta(`approval.document_id = ?`)).
 		WithArgs(int64(42)).
@@ -87,7 +87,7 @@ func TestStoreApprovalTaskWrites(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	snapDate := timestamp.New(time.Date(2026, 6, 14, 12, 0, 0, 0, time.UTC))
 	userInfo := &userinfo.UserInfo{UserId: 3, Job: "doj"}
 	label := "Reviewer"
@@ -152,7 +152,7 @@ func TestStoreRecomputeApprovalPolicyTx(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	snapDate := timestamp.New(time.Date(2026, 6, 14, 12, 0, 0, 0, time.UTC))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_approval_policies AS approval_policy`)).

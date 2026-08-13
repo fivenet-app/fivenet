@@ -22,7 +22,7 @@ func TestStoreCategoriesReadWrite(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 	userInfo := &userinfo.UserInfo{Job: "doj", Superuser: true}
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_categories AS category`) + `(?s).*` + regexp.QuoteMeta(`ORDER BY category.sort_key ASC`)).

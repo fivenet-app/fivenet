@@ -19,7 +19,7 @@ func TestStoreListPages(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	pageSize := int64(5)
 	query := ListPagesQuery{
 		Job:        "police",
@@ -72,7 +72,7 @@ func TestStoreListPagesRootOnly(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	pageSize := int64(5)
 	query := ListPagesQuery{
 		Job:        "police",
@@ -122,7 +122,7 @@ func TestStoreGetPage(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	query := regexp.QuoteMeta(`FROM fivenet_wiki_pages AS page`) +
 		`(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_user AS creator ON`) +
 		`(?s).*` + regexp.QuoteMeta(`page.id = ?`) +

@@ -21,7 +21,7 @@ func TestStoreDocumentReferences(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_references AS document_reference`)+`(?s).*`+regexp.QuoteMeta(`document_reference.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
 		WithArgs(int64(7), false, int64(1)).
@@ -76,7 +76,7 @@ func TestStoreDocumentRelations(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_relations AS document_relation`)+`(?s).*`+regexp.QuoteMeta(`document_relation.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
 		WithArgs(int64(11), false, int64(1)).

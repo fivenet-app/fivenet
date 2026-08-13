@@ -20,7 +20,7 @@ func TestStoreListUserDocuments(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	countQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*SELECT COUNT\(DISTINCT document_relation\.document_id\) AS "data_count\.total".*document_relation\.deleted_at IS NULL.*`
 	mock.ExpectQuery(countQuery).

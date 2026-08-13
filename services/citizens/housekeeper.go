@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
@@ -63,7 +64,11 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 
 		db:     p.DB,
 		appCfg: p.AppConfig,
-		store:  citizensstore.New(p.DB, &config.CustomDB{}),
+		store: citizensstore.New(citizensstore.Params{
+			DB:           p.DB,
+			CustomDB:     &config.CustomDB{},
+			LabelsAccess: access.NewCitizenLabelsSubjectObjectAccess(p.DB),
+		}),
 	}
 
 	return HousekeeperResult{

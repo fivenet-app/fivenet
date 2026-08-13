@@ -17,7 +17,7 @@ func TestCheckIfUserHasAccessToCalendarEntryIDsUsesEntryID(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db).(*Store)
+	store := New(testParams(db)).(*Store)
 	mock.ExpectQuery(regexp.QuoteMeta(`calendar_entry.id IN (?)`)+`(?s).*`).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "entry_id"}).AddRow(int64(42), int64(42)))
@@ -41,7 +41,7 @@ func TestCheckIfUserHasAccessToCalendarIDsAllowsSuperuserBirthdayCalendar(t *tes
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db).(*Store)
+	store := New(testParams(db)).(*Store)
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_calendar AS calendar`)+`(?s).*`+regexp.QuoteMeta(`calendar.id IN (?)`)).
 		WithArgs(
 			sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),

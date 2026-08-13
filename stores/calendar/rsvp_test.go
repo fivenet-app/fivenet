@@ -23,7 +23,7 @@ func TestGetRSVPCalendarEntryUsesOccurrenceTable(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	mock.ExpectQuery(regexp.QuoteMeta("fivenet_calendar_rsvp_occurrence")).
 		WillReturnRows(sqlmock.NewRows([]string{"entry_id"}))
 	mock.ExpectQuery(regexp.QuoteMeta("fivenet_calendar_rsvp AS calendar_entry_rsvp")).
@@ -93,7 +93,7 @@ func TestValidateRecuringOccurrenceKey(t *testing.T) {
 		},
 	}
 
-	store := New(new(sql.DB))
+	store := New(testParams(new(sql.DB)))
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()

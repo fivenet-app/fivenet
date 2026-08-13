@@ -17,7 +17,7 @@ func TestStoreCountThreadMessages(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_messages AS message`) +
 		`(?s).*` + regexp.QuoteMeta(`message.deleted_at IS NULL`) +
@@ -39,7 +39,7 @@ func TestStoreListThreadMessages(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	expectedQuery := regexp.QuoteMeta(
@@ -93,7 +93,7 @@ func TestStoreGetMessage(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_messages AS message`) +

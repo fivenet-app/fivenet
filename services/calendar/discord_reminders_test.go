@@ -7,6 +7,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	discordsession "github.com/diamondburned/arikawa/v3/session"
 	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -159,9 +160,12 @@ func TestValidateCalendarDiscordSettingsRejectsInvalidChannelID(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"discord_guild_id"}).AddRow("999"))
 
 	srv := &Server{
-		db:    db,
-		dc:    discordsession.New("Bot test"),
-		store: calendarstore.New(db),
+		db: db,
+		dc: discordsession.New("Bot test"),
+		store: calendarstore.New(calendarstore.Params{
+			DB:     db,
+			Access: access.NewCalendarSubjectObjectAccess(db),
+		}),
 	}
 
 	err = srv.validateCalendarDiscordSettings(

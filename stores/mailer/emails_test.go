@@ -22,7 +22,7 @@ func TestStoreCountEmails(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_emails AS email`) +
 		`(?s).*` + regexp.QuoteMeta(`WHERE ?`)
@@ -43,7 +43,7 @@ func TestStoreListEmails(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	countQuery := regexp.QuoteMeta(
@@ -106,7 +106,7 @@ func TestStoreListEmailsVisible(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	countQuery := regexp.QuoteMeta(
@@ -171,7 +171,7 @@ func TestStoreGetEmail(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_emails AS email`) +
@@ -218,7 +218,7 @@ func TestStoreGetEmailByUserID(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_emails AS email`) +
@@ -266,7 +266,7 @@ func TestStoreGetUserShort(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user AS user_short`) +
 		`(?s).*` + regexp.QuoteMeta(`user_short.id = ?`) +
@@ -294,7 +294,7 @@ func TestStoreCreateEmail(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	userID := int32(7)
 	label := "Primary"
 	email := &maileremails.Email{
@@ -323,7 +323,7 @@ func TestStoreDeleteEmail(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	deletedAt := time.Unix(0, 0).UTC()
 
 	expectedQuery := regexp.QuoteMeta(
@@ -344,7 +344,7 @@ func TestStoreListRecipientsByEmails(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_emails AS email`) +
 		`(?s).*` + regexp.QuoteMeta(`email.email IN (?, ?)`) +

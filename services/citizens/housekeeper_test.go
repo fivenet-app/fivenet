@@ -8,6 +8,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
@@ -63,7 +64,11 @@ func TestHousekeeperMaxWantedDurationHandling_Disabled(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
-		store:  citizensstore.New(db, &config.CustomDB{}),
+		store: citizensstore.New(citizensstore.Params{
+			DB:           db,
+			CustomDB:     &config.CustomDB{},
+			LabelsAccess: access.NewCitizenLabelsSubjectObjectAccess(db),
+		}),
 	}
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
@@ -91,7 +96,11 @@ func TestHousekeeperMaxWantedDurationHandling_NoDuration(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
-		store:  citizensstore.New(db, &config.CustomDB{}),
+		store: citizensstore.New(citizensstore.Params{
+			DB:           db,
+			CustomDB:     &config.CustomDB{},
+			LabelsAccess: access.NewCitizenLabelsSubjectObjectAccess(db),
+		}),
 	}
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
@@ -119,7 +128,11 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
-		store:  citizensstore.New(db, &config.CustomDB{}),
+		store: citizensstore.New(citizensstore.Params{
+			DB:           db,
+			CustomDB:     &config.CustomDB{},
+			LabelsAccess: access.NewCitizenLabelsSubjectObjectAccess(db),
+		}),
 	}
 
 	// Assert the key eligibility condition:
@@ -200,7 +213,11 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 		logger: zap.NewNop(),
 		db:     db,
 		appCfg: &mockAppConfig{cfg: cfg},
-		store:  citizensstore.New(db, &config.CustomDB{}),
+		store: citizensstore.New(citizensstore.Params{
+			DB:           db,
+			CustomDB:     &config.CustomDB{},
+			LabelsAccess: access.NewCitizenLabelsSubjectObjectAccess(db),
+		}),
 	}
 
 	// Two eligible users are returned by the selection query

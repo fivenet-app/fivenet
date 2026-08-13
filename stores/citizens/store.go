@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
 )
 
 type IStore interface {
@@ -98,15 +99,23 @@ type IStore interface {
 type Store struct {
 	db                 *sql.DB
 	customDB           *config.CustomDB
-	labelsAccess       *access.SubjectObjectAccess
+	labelsAccess       *access.CitizenLabelsObjectAccess
 	userActivitySorter *database.SorterBuilder
 }
 
-func New(db *sql.DB, customDB *config.CustomDB) IStore {
+type Params struct {
+	fx.In
+
+	DB           *sql.DB
+	CustomDB     *config.CustomDB
+	LabelsAccess *access.CitizenLabelsObjectAccess
+}
+
+func New(p Params) IStore {
 	return &Store{
-		db:           db,
-		customDB:     customDB,
-		labelsAccess: access.NewCitizenLabelsSubjectObjectAccess(db),
+		db:           p.DB,
+		customDB:     p.CustomDB,
+		labelsAccess: p.LabelsAccess,
 		userActivitySorter: database.New(
 			database.SpecMap{
 				"createdAt": database.Column{

@@ -24,7 +24,7 @@ func TestStoreCommentCounters(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_comments AS comments`) + `(?s).*` + regexp.QuoteMeta(`comments.document_id = ?`) + `(?s).*` + regexp.QuoteMeta(`comments.deleted_at IS NULL`)).
 		WithArgs(int64(42)).
@@ -54,7 +54,7 @@ func TestStoreCommentReads(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_documents_comments AS comment`)+`(?s).*`+regexp.QuoteMeta(`comment.document_id = ?`)+`(?s).*`+regexp.QuoteMeta(`comment.deleted_at IS NULL`)+`(?s).*`+regexp.QuoteMeta(`ORDER BY comment.created_at DESC`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?`)).
 		WithArgs(int64(42), int64(8), int64(0)).
@@ -86,7 +86,7 @@ func TestStoreCommentWrites(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 	comment := &documentscomment.Comment{
 		Id:         7,
 		DocumentId: 42,

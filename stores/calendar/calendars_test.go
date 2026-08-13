@@ -22,7 +22,7 @@ func TestCountCalendarsReturnsCount(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_calendar AS calendar`) + `(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_user AS creator ON`) + `(?s).*` + regexp.QuoteMeta(`calendar.deleted_at IS NULL`)).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(9)))
 
@@ -35,7 +35,7 @@ func TestCountCalendarsReturnsCount(t *testing.T) {
 func TestCountCalendarsStmtUsesAliasedCalendarColumnForBirthdayAccess(t *testing.T) {
 	t.Parallel()
 
-	store := New(new(sql.DB)).(*Store)
+	store := New(testParams(new(sql.DB))).(*Store)
 	stmt := store.countCalendarsStmt(
 		ListQuery{
 			UserInfo: &userinfo.UserInfo{
@@ -55,7 +55,7 @@ func TestCountCalendarsStmtUsesAliasedCalendarColumnForBirthdayAccess(t *testing
 func TestListCalendarsStmtOrdersByCalendarIds(t *testing.T) {
 	t.Parallel()
 
-	store := New(new(sql.DB)).(*Store)
+	store := New(testParams(new(sql.DB))).(*Store)
 	stmt := store.listCalendarsStmt(
 		ListQuery{
 			UserInfo:    &userinfo.UserInfo{UserId: 7, Superuser: true},
@@ -78,7 +78,7 @@ func TestListCalendarsStmtOrdersByCalendarIds(t *testing.T) {
 func TestListCalendarsStmtFiltersOnlyPublicWhenRequested(t *testing.T) {
 	t.Parallel()
 
-	store := New(new(sql.DB)).(*Store)
+	store := New(testParams(new(sql.DB))).(*Store)
 	stmt := store.listCalendarsStmt(
 		ListQuery{UserInfo: &userinfo.UserInfo{UserId: 7, Job: "police"}, OnlyPublic: true},
 		7,
@@ -95,7 +95,7 @@ func TestListCalendarsStmtFiltersOnlyPublicWhenRequested(t *testing.T) {
 func TestGetCalendarStmtIncludesCreatorJoins(t *testing.T) {
 	t.Parallel()
 
-	store := New(new(sql.DB)).(*Store)
+	store := New(testParams(new(sql.DB))).(*Store)
 	stmt := store.getCalendarStmt(&userinfo.UserInfo{UserId: 7}, mysql.Bool(true))
 
 	sql, _ := stmt.Sql()

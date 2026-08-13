@@ -18,7 +18,7 @@ func TestStoreListTemplates(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_templates AS template`) +
@@ -51,7 +51,7 @@ func TestStoreGetTemplateGlobal(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_templates AS template`) +
@@ -87,7 +87,7 @@ func TestStoreCountTemplatesByCreatorJob(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_templates AS template`) +
 		`(?s).*` + regexp.QuoteMeta(`template.creator_job = ?`)
@@ -108,7 +108,7 @@ func TestStoreCreateTemplate(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	template := &mailertemplates.Template{
 		EmailId:    7,
 		Title:      "Welcome",
@@ -135,7 +135,7 @@ func TestStoreUpdateTemplate(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	template := &mailertemplates.Template{Id: 11, Title: "Updated", Content: nil}
 
 	expectedQuery := regexp.QuoteMeta(
@@ -156,7 +156,7 @@ func TestStoreDeleteTemplate(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(
 		`UPDATE fivenet_mailer_templates SET deleted_at = CURRENT_TIMESTAMP WHERE fivenet_mailer_templates.id = ? LIMIT ?;`,

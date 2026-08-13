@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -18,7 +17,7 @@ func TestStoreCountUserActivityAppliesTargetFilter(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(testParams(db))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_activity AS user_activity`) + `(?s).*` + regexp.QuoteMeta(`user_activity.target_user_id = ?`)).
 		WithArgs(int32(42)).
@@ -39,7 +38,7 @@ func TestStoreListUserActivityAppliesSortAndJoin(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user_activity AS user_activity`) +
 		`(?s).*` + regexp.QuoteMeta(`INNER JOIN fivenet_user AS target_user ON`) +

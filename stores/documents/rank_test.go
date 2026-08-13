@@ -16,7 +16,7 @@ func TestStoreGetTemplateOrderInfo(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_documents_templates AS template_order_info`) +
 		`(?s).*` + regexp.QuoteMeta(`template_order_info.id = ?`) +
@@ -46,7 +46,7 @@ func TestStoreInsertTemplateGroupRankUsesGapWhenAvailable(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta("FROM fivenet_documents_templates AS `row`") +
 		`(?s).*` + regexp.QuoteMeta("`row`.creator_job = ?") +
@@ -73,7 +73,7 @@ func TestStoreInsertTemplateGroupRankRebalancesWhenNoGap(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	rankQuery := regexp.QuoteMeta("FROM fivenet_documents_templates AS `row`") +
 		`(?s).*` + regexp.QuoteMeta("`row`.creator_job = ?") +

@@ -6,7 +6,6 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/proto"
@@ -19,7 +18,7 @@ func TestStoreGetUserPropsLoadsPropsAndLabels(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(testParams(db))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_props AS user_props`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_files AS mugshot ON`)).
 		WithArgs(int32(42), int64(1)).
@@ -70,7 +69,7 @@ func TestStoreHandleUserPropsChangesUpdatesWanted(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(testParams(db))
 	zeroInt64 := int64(0)
 	zeroUint32 := uint32(0)
 	wanted := true

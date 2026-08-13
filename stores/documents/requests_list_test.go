@@ -18,7 +18,7 @@ func TestStoreListDocumentReqsEmpty(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(`(?s).*FROM fivenet_documents_requests AS doc_request.*`).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(0)))

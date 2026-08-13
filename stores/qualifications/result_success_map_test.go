@@ -17,7 +17,7 @@ func TestStoreCreateQualificationResultUpsertsSuccessMap(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectExec("(?s)INSERT INTO .*fivenet_qualifications_results.*").
 		WithArgs(int64(42), int32(7), int32(resqualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL), nil, "ok", int32(1), "police").
@@ -52,7 +52,7 @@ func TestStoreUpdateQualificationResultSuccessfulSwapsSuccessMap(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_results SET .*WHERE .*deleted_at IS NULL.*LIMIT \\?;").
 		WithArgs(int64(42), int32(7), int32(resqualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL), nil, "ok", int64(99), int64(1)).
@@ -87,7 +87,7 @@ func TestStoreUpdateQualificationResultNonSuccessfulDeletesSuccessMap(t *testing
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_results SET .*WHERE .*deleted_at IS NULL.*LIMIT \\?;").
 		WithArgs(int64(42), int32(7), int32(resqualifications.ResultStatus_RESULT_STATUS_FAILED), nil, "nope", int64(99), int64(1)).
@@ -119,7 +119,7 @@ func TestStoreDeleteQualificationResultDeletesSuccessMap(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_results SET deleted_at = CURRENT_TIMESTAMP .*LIMIT \\?;").
 		WithArgs(int64(99), int64(1)).
@@ -139,7 +139,7 @@ func TestStoreDeleteQualificationClearsAndRebuildsSuccessMap(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	now := timestamp.Now()
 
@@ -161,7 +161,7 @@ func TestStoreDeleteQualificationRestoreRebuildsSuccessMap(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectExec("(?s)UPDATE fivenet_qualifications SET .*deleted_at = NULL.*WHERE fivenet_qualifications\\.id = \\?.*LIMIT \\?;").
 		WithArgs(int64(42), int64(1)).
