@@ -9,6 +9,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -197,8 +198,8 @@ func expectGroupGetRows(now time.Time, id int64, name string, updatedByUserID in
 func expectGroupCreateCounts(mock sqlmock.Sqlmock, groupID int64) {
 	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group`")).
 		WithArgs(groupID, int64(1)).
-		WillReturnRows(sqlmock.NewRows([]string{"job", "membership_mode"}).
-			AddRow("police", int32(1)))
+		WillReturnRows(sqlmock.NewRows([]string{"type", "job", "membership_mode"}).
+			AddRow(int32(jobsgroups.GroupType_GROUP_TYPE_MANUAL), "police", int32(1)))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_manual_members AS mm INNER JOIN fivenet_user AS u`)).
 		WithArgs(groupID).
@@ -209,31 +210,7 @@ func expectGroupCreateCounts(mock sqlmock.Sqlmock, groupID int64) {
 			"group_manual_member.created_by_user_id",
 			"group_manual_member.created_at",
 		}))
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_rules`)).
-		WithArgs(groupID).
-		WillReturnRows(sqlmock.NewRows([]string{
-			"group_rule_builder.id",
-			"group_rule_builder.group_id",
-			"group_rule_builder.type",
-			"group_rule_builder.enabled",
-			"group_rule_builder.created_by_user_id",
-			"group_rule_builder.created_at",
-			"group_rule_builder.updated_at",
-		}))
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_member_exclusions AS me INNER JOIN fivenet_user AS u`)).
-		WithArgs(groupID).
-		WillReturnRows(sqlmock.NewRows([]string{
-			"group_member_exclusion.group_id",
-			"group_member_exclusion.user_id",
-			"group_member_exclusion.reason_type",
-			"group_member_exclusion.reason",
-			"group_member_exclusion.created_by_user_id",
-			"group_member_exclusion.created_at",
-		}))
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_leaders`)).
-		WithArgs(groupID).
-		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(0)))
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_rules`)).
 		WithArgs(groupID).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(0)))
 	mock.ExpectExec(regexp.QuoteMeta("UPDATE fivenet_job_groups AS `group` SET")).

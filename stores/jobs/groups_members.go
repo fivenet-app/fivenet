@@ -9,6 +9,7 @@ import (
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	jobspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/jobspolicy"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -98,11 +99,13 @@ func (s *Store) UserInJob(ctx context.Context, db qrm.DB, job string, userID int
 
 func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64) error {
 	groupInfo := struct {
+		Type           jobsgroups.GroupType
 		Job            string
 		MembershipMode jobsgroups.GroupMembershipMode
 	}{}
 	if err := tJobGroups.
 		SELECT(
+			tJobGroups.Type.AS("type"),
 			tJobGroups.Job.AS("job"),
 			tJobGroups.MembershipMode.AS("membership_mode"),
 		).
@@ -116,30 +119,45 @@ func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64)
 		return sql.ErrNoRows
 	}
 	group := &jobsgroups.Group{
+		Type:           groupInfo.Type,
 		Id:             groupID,
 		Job:            groupInfo.Job,
 		MembershipMode: groupInfo.MembershipMode,
 	}
 
-	manualMembers, err := s.ListGroupManualMembers(ctx, db, groupID, "")
-	if err != nil {
-		return err
+	var manualMembers []*jobsgroups.GroupManualMember
+	var ruleMatches []*GroupRuleMemberMatch
+	var exclusions []*jobsgroups.GroupMemberExclusion
+	var err error
+	if jobspolicy.AllowsManualMembers(group.GetType()) {
+		manualMembers, err = s.ListGroupManualMembers(ctx, db, groupID, "")
+		if err != nil {
+			return err
+		}
 	}
-	ruleMatches, err := s.ListGroupRuleMemberMatches(ctx, db, group, "")
-	if err != nil {
-		return err
+	if jobspolicy.AllowsRules(group.GetType()) ||
+		jobspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
+		ruleMatches, err = s.ListGroupRuleMemberMatches(ctx, db, group, "")
+		if err != nil {
+			return err
+		}
 	}
-	exclusions, err := s.ListGroupMemberExclusions(ctx, db, groupID, "")
-	if err != nil {
-		return err
+	if jobspolicy.AllowsExclusions(group.GetType()) {
+		exclusions, err = s.ListGroupMemberExclusions(ctx, db, groupID, "")
+		if err != nil {
+			return err
+		}
 	}
 	leadersCount, err := s.countGroupLeaders(ctx, db, groupID)
 	if err != nil {
 		return err
 	}
-	rulesCount, err := s.countGroupRules(ctx, db, groupID)
-	if err != nil {
-		return err
+	var rulesCount int64
+	if jobspolicy.AllowsRules(group.GetType()) {
+		rulesCount, err = s.countGroupRules(ctx, db, groupID)
+		if err != nil {
+			return err
+		}
 	}
 
 	excluded := map[int32]struct{}{}
@@ -149,22 +167,29 @@ func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64)
 
 	members := map[int32]struct{}{}
 	ruleMemberIDs := map[int32]struct{}{}
-	for _, match := range ruleMatches {
-		ruleMemberIDs[match.UserID] = struct{}{}
-		if _, ok := excluded[match.UserID]; !ok {
-			members[match.UserID] = struct{}{}
-		}
-	}
-	for _, member := range manualMembers {
-		if _, ok := excluded[member.GetUserId()]; ok {
-			continue
-		}
-		if group.GetMembershipMode() == jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_STRICT {
-			if _, ok := ruleMemberIDs[member.GetUserId()]; !ok {
-				continue
+	if jobspolicy.AllowsRules(group.GetType()) {
+		for _, match := range ruleMatches {
+			ruleMemberIDs[match.UserID] = struct{}{}
+			if _, ok := excluded[match.UserID]; !ok {
+				members[match.UserID] = struct{}{}
 			}
 		}
-		members[member.GetUserId()] = struct{}{}
+	}
+	if jobspolicy.AllowsManualMembers(group.GetType()) {
+		for _, member := range manualMembers {
+			if _, ok := excluded[member.GetUserId()]; ok {
+				continue
+			}
+			if jobspolicy.RequiresManualMembersMatchRules(
+				group.GetType(),
+				group.GetMembershipMode(),
+			) {
+				if _, ok := ruleMemberIDs[member.GetUserId()]; !ok {
+					continue
+				}
+			}
+			members[member.GetUserId()] = struct{}{}
+		}
 	}
 
 	_, err = tJobGroups.

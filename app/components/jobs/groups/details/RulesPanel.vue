@@ -12,6 +12,7 @@ import { getJobsGroupsClient, getQualificationsQualificationsClient } from '~~/g
 import type { Access } from '~~/gen/ts/resources/access/access';
 import { AccessLevel as GroupAccessLevel } from '~~/gen/ts/resources/jobs/groups/access/access';
 import {
+    type GroupType,
     GroupGradeRuleType,
     type GroupQualificationRule,
     GroupQualificationRuleType,
@@ -23,9 +24,11 @@ import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/e
 import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { GroupRuleInput, ListGroupRulesResponse } from '~~/gen/ts/services/jobs/groups';
 import { checkGroupAccess, groupRuleLabel } from '../helpers';
+import { groupTypeAllowsRules } from '../policy';
 
 const props = defineProps<{
     groupId: number;
+    groupType: GroupType;
     canView: boolean;
     canManage: boolean;
     access?: Access;
@@ -75,7 +78,11 @@ const {
 
 const rules = computed(() => rulesData.value?.rules ?? []);
 const isMutating = computed(() => pendingAction.value !== undefined);
-const canManageRules = computed(() => props.canManage && checkGroupAccess(props.access, GroupAccessLevel.EDIT));
+const supportsRules = computed(() => groupTypeAllowsRules(props.groupType));
+const canManageRules = computed(
+    () => props.canManage && supportsRules.value && checkGroupAccess(props.access, GroupAccessLevel.EDIT),
+);
+const policyNotice = computed(() => (supportsRules.value ? undefined : 'components.jobs.groups.policy.rules_disabled'));
 const activeJob = computed(() => jobs.value.find((job) => job.name === activeChar.value?.job));
 const activeJobGrades = computed(() => activeJob.value?.grades ?? []);
 const rangeMinGradeItems = computed(() =>
@@ -369,6 +376,14 @@ watch(
 
 <template>
     <div v-if="canView" class="grid gap-4">
+        <UAlert
+            v-if="policyNotice"
+            color="warning"
+            icon="i-mdi-alert-circle"
+            :title="$t('components.jobs.groups.policy.unavailable_title')"
+            :description="$t(policyNotice)"
+        />
+
         <UCard v-if="canManageRules" variant="subtle">
             <div class="grid gap-3">
                 <div class="flex flex-1 gap-3 lg:flex-row lg:items-end">

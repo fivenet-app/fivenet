@@ -12,13 +12,15 @@ import { useCompletorStore } from '~/stores/completor';
 import { getJobsGroupsClient } from '~~/gen/ts/clients';
 import type { Access } from '~~/gen/ts/resources/access/access';
 import { AccessLevel as GroupAccessLevel } from '~~/gen/ts/resources/jobs/groups/access/access';
-import type { GroupManualMember } from '~~/gen/ts/resources/jobs/groups/group';
+import type { GroupType, GroupManualMember } from '~~/gen/ts/resources/jobs/groups/group';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListGroupManualMembersResponse } from '~~/gen/ts/services/jobs/groups';
 import { checkGroupAccess } from '../helpers';
+import { groupTypeAllowsManualMembers } from '../policy';
 
 const props = defineProps<{
     groupId: number;
+    groupType: GroupType;
     canView: boolean;
     canManage: boolean;
     access?: Access;
@@ -54,7 +56,13 @@ const {
 const manualMembers = computed<GroupManualMember[]>(() => manualMembersData.value?.manualMembers ?? []);
 const manualMemberIds = computed(() => new Set(manualMembers.value.map((member) => member.userId)));
 const isMutating = computed(() => pendingAction.value !== undefined);
-const canManageMembers = computed(() => props.canManage && checkGroupAccess(props.access, GroupAccessLevel.EDIT));
+const supportsManualMembers = computed(() => groupTypeAllowsManualMembers(props.groupType));
+const canManageMembers = computed(
+    () => props.canManage && supportsManualMembers.value && checkGroupAccess(props.access, GroupAccessLevel.EDIT),
+);
+const policyNotice = computed(() =>
+    supportsManualMembers.value ? undefined : 'components.jobs.groups.policy.manual_members_disabled',
+);
 
 async function listGroupManualMembers(): Promise<ListGroupManualMembersResponse> {
     const { response } = await jobsGroupsClient.listGroupManualMembers({
@@ -137,6 +145,14 @@ watch(
 
 <template>
     <div v-if="canView" class="grid gap-4">
+        <UAlert
+            v-if="policyNotice"
+            color="warning"
+            icon="i-mdi-alert-circle"
+            :title="$t('components.jobs.groups.policy.unavailable_title')"
+            :description="$t(policyNotice)"
+        />
+
         <UCard v-if="canManageMembers" variant="subtle">
             <div class="grid gap-3">
                 <div class="grid gap-3 lg:flex lg:flex-row lg:items-end">

@@ -61,9 +61,14 @@ func TestStoreRecountGroupStats(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group`")).
 		WithArgs(int64(42), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
+			"type",
 			"job",
 			"membership_mode",
-		}).AddRow("police", int32(jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_FLEXIBLE)))
+		}).AddRow(
+			int32(jobsgroups.GroupType_GROUP_TYPE_MIXED),
+			"police",
+			int32(jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_FLEXIBLE),
+		))
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_manual_members AS mm INNER JOIN fivenet_user AS u`)).
 		WithArgs(int64(42)).
 		WillReturnRows(sqlmock.NewRows([]string{

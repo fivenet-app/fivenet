@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
+	jobspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/jobspolicy"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -174,7 +175,8 @@ func (s *Server) CreateGroupRule(
 	}
 	defer tx.Rollback()
 
-	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
+	group, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId())
+	if err != nil {
 		return nil, err
 	}
 	if err := s.ensureGroupAccess(
@@ -183,6 +185,9 @@ func (s *Server) CreateGroupRule(
 		req.GetGroupId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	); err != nil {
+		return nil, err
+	}
+	if err := validateGroupPolicyAllowedMutation(group, jobspolicy.MutationRuleAdd); err != nil {
 		return nil, err
 	}
 
@@ -210,7 +215,7 @@ func (s *Server) CreateGroupRule(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	group, err := s.recountAndGetGroup(ctx, tx, userInfo.GetJob(), req.GetGroupId())
+	group, err = s.recountAndGetGroup(ctx, tx, userInfo.GetJob(), req.GetGroupId())
 	if err != nil {
 		return nil, err
 	}
@@ -296,7 +301,8 @@ func (s *Server) UpdateGroupRule(
 	}
 	defer tx.Rollback()
 
-	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
+	group, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId())
+	if err != nil {
 		return nil, err
 	}
 	if err := s.ensureGroupAccess(
@@ -305,6 +311,9 @@ func (s *Server) UpdateGroupRule(
 		req.GetGroupId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	); err != nil {
+		return nil, err
+	}
+	if err := validateGroupPolicyAllowedMutation(group, jobspolicy.MutationRuleUpdate); err != nil {
 		return nil, err
 	}
 
@@ -354,7 +363,7 @@ func (s *Server) UpdateGroupRule(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	group, err := s.recountAndGetGroup(ctx, tx, userInfo.GetJob(), req.GetGroupId())
+	group, err = s.recountAndGetGroup(ctx, tx, userInfo.GetJob(), req.GetGroupId())
 	if err != nil {
 		return nil, err
 	}

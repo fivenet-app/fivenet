@@ -12,13 +12,15 @@ import { useCompletorStore } from '~/stores/completor';
 import { getJobsGroupsClient } from '~~/gen/ts/clients';
 import type { Access } from '~~/gen/ts/resources/access/access';
 import { AccessLevel as GroupAccessLevel } from '~~/gen/ts/resources/jobs/groups/access/access';
-import { GroupExclusionReason, type GroupMemberExclusion } from '~~/gen/ts/resources/jobs/groups/group';
+import { type GroupType, GroupExclusionReason, type GroupMemberExclusion } from '~~/gen/ts/resources/jobs/groups/group';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListGroupMemberExclusionsResponse } from '~~/gen/ts/services/jobs/groups';
 import { checkGroupAccess } from '../helpers';
+import { groupTypeAllowsExclusions } from '../policy';
 
 const props = defineProps<{
     groupId: number;
+    groupType: GroupType;
     canView: boolean;
     canManage: boolean;
     access?: Access;
@@ -55,7 +57,13 @@ const {
 const exclusions = computed<GroupMemberExclusion[]>(() => exclusionsData.value?.exclusions ?? []);
 const exclusionMemberIds = computed(() => new Set(exclusions.value.map((exclusion) => exclusion.userId)));
 const isMutating = computed(() => pendingAction.value !== undefined);
-const canManageExclusions = computed(() => props.canManage && checkGroupAccess(props.access, GroupAccessLevel.EDIT));
+const supportsExclusions = computed(() => groupTypeAllowsExclusions(props.groupType));
+const canManageExclusions = computed(
+    () => props.canManage && supportsExclusions.value && checkGroupAccess(props.access, GroupAccessLevel.EDIT),
+);
+const policyNotice = computed(() =>
+    supportsExclusions.value ? undefined : 'components.jobs.groups.policy.exclusions_disabled',
+);
 
 const exclusionReasonItems = computed(() => [
     { label: t('enums.jobs.groups.GroupExclusionReason.MANUAL'), value: GroupExclusionReason.MANUAL },
@@ -148,6 +156,14 @@ watch(
 
 <template>
     <div v-if="canView" class="grid gap-4">
+        <UAlert
+            v-if="policyNotice"
+            color="warning"
+            icon="i-mdi-alert-circle"
+            :title="$t('components.jobs.groups.policy.unavailable_title')"
+            :description="$t(policyNotice)"
+        />
+
         <UCard v-if="canManageExclusions" variant="subtle">
             <div class="grid gap-3">
                 <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(220px,320px)_auto] lg:items-end">

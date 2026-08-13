@@ -21,6 +21,7 @@ import (
 	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	jobspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/jobspolicy"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -449,25 +450,34 @@ func (s *Server) resolveGroupMembers(
 	sources []jobsgroups.GroupMemberSource,
 ) ([]*jobsgroups.GroupResolvedMember, error) {
 	groupID := group.GetId()
-	manualMembers, err := s.store.ListGroupManualMembers(ctx, s.db, groupID, search)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
-	exclusions, err := s.store.ListGroupMemberExclusions(ctx, s.db, groupID, search)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
-
 	wantManual := len(sources) == 0 ||
 		slices.Contains(sources, jobsgroups.GroupMemberSource_GROUP_MEMBER_SOURCE_MANUAL)
 	wantRules := len(sources) == 0 ||
 		slices.Contains(sources, jobsgroups.GroupMemberSource_GROUP_MEMBER_SOURCE_RULE)
+	manualAllowed := jobspolicy.AllowsManualMembers(group.GetType())
+	rulesAllowed := jobspolicy.AllowsRules(group.GetType())
+	exclusionsAllowed := jobspolicy.AllowsExclusions(group.GetType())
 	needsRulesForStrictManual := wantManual &&
-		group.GetMembershipMode() == jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_STRICT
+		jobspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode())
 	wantLeaders := includeLeaders ||
 		slices.Contains(sources, jobsgroups.GroupMemberSource_GROUP_MEMBER_SOURCE_LEADER)
+	var manualMembers []*jobsgroups.GroupManualMember
+	var exclusions []*jobsgroups.GroupMemberExclusion
+	var err error
+	if wantManual && manualAllowed {
+		manualMembers, err = s.store.ListGroupManualMembers(ctx, s.db, groupID, search)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
+	if exclusionsAllowed {
+		exclusions, err = s.store.ListGroupMemberExclusions(ctx, s.db, groupID, search)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
 	var ruleMatches []*jobsstore.GroupRuleMemberMatch
-	if wantRules || needsRulesForStrictManual {
+	if (wantRules && rulesAllowed) || needsRulesForStrictManual {
 		ruleMatches, err = s.store.ListGroupRuleMemberMatches(ctx, s.db, group, search)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -529,7 +539,7 @@ func (s *Server) resolveGroupMembers(
 		}
 	}
 
-	if group.GetMembershipMode() == jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_STRICT {
+	if needsRulesForStrictManual {
 		ruleMemberIDs := map[int32]struct{}{}
 		for _, match := range ruleMatches {
 			ruleMemberIDs[match.UserID] = struct{}{}
@@ -864,10 +874,16 @@ func (s *Server) AddGroupMember(
 	); err != nil {
 		return nil, err
 	}
+	if err := validateGroupPolicyAllowedMutation(
+		group,
+		jobspolicy.MutationManualMemberAdd,
+	); err != nil {
+		return nil, err
+	}
 	if err := s.ensureGroupUserInJob(ctx, tx, userInfo.GetJob(), req.GetUserId()); err != nil {
 		return nil, err
 	}
-	if group.GetMembershipMode() == jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_STRICT {
+	if jobspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
 		matches, err := s.userMatchesGroupRules(ctx, tx, group, req.GetUserId())
 		if err != nil {
 			return nil, err
@@ -1042,7 +1058,8 @@ func (s *Server) ExcludeGroupMember(
 	}
 	defer tx.Rollback()
 
-	if _, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId()); err != nil {
+	group, err := s.getActiveGroupForJob(ctx, tx, userInfo.GetJob(), req.GetGroupId())
+	if err != nil {
 		return nil, err
 	}
 	if err := s.ensureGroupAccess(
@@ -1050,6 +1067,12 @@ func (s *Server) ExcludeGroupMember(
 		userInfo,
 		req.GetGroupId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
+	); err != nil {
+		return nil, err
+	}
+	if err := validateGroupPolicyAllowedMutation(
+		group,
+		jobspolicy.MutationExclusionAdd,
 	); err != nil {
 		return nil, err
 	}

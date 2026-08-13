@@ -15,6 +15,7 @@ import LeadersPanel from '~/components/jobs/groups/details/LeadersPanel.vue';
 import ManualMembersPanel from '~/components/jobs/groups/details/ManualMembersPanel.vue';
 import MembersPanel from '~/components/jobs/groups/details/MembersPanel.vue';
 import RulesPanel from '~/components/jobs/groups/details/RulesPanel.vue';
+import { isLegacyGroupPolicyState } from './policy';
 import {
     checkGroupAccess,
     groupMembershipModeColor,
@@ -97,6 +98,7 @@ const {
 
 const currentGroup = computed(() => detail.value?.group ?? props.group);
 const groupIsArchived = computed(() => currentGroup.value.state === GroupState.ARCHIVED);
+const legacyPolicyState = computed(() => isLegacyGroupPolicyState(currentGroup.value));
 const currentGroupAccess = computed(() => detail.value?.access);
 const canViewGroup = computed(
     () => can('jobs.GroupsService/ListGroups').value && checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.VIEW),
@@ -114,9 +116,7 @@ const canMutateLeaders = computed(
         checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.MANAGE),
 );
 const canManageArchiveState = computed(
-    () =>
-        checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.MANAGE) &&
-        can('jobs.GroupsService/ArchiveGroup').value,
+    () => checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.MANAGE) && can('jobs.GroupsService/ArchiveGroup').value,
 );
 const slideoverTitle = computed(() => (canViewGroup.value ? currentGroup.value.name : t('common.no_access')));
 
@@ -210,6 +210,14 @@ async function handlePanelChanged(): Promise<void> {
                                     </h2>
 
                                     <UBadge
+                                        v-if="currentGroup.shortName && currentGroup.shortName !== currentGroup.name"
+                                        color="neutral"
+                                        :label="currentGroup.shortName"
+                                        variant="soft"
+                                        size="sm"
+                                    />
+
+                                    <UBadge
                                         :color="groupTypeColor(currentGroup.type)"
                                         :icon="groupTypeIcon(currentGroup.type)"
                                         :label="$t(groupTypeLabelKey(currentGroup.type))"
@@ -291,6 +299,14 @@ async function handlePanelChanged(): Promise<void> {
                         </div>
                     </UCard>
 
+                    <UAlert
+                        v-if="legacyPolicyState"
+                        color="warning"
+                        icon="i-mdi-alert-circle"
+                        :title="$t('components.jobs.groups.policy.legacy_state_title')"
+                        :description="$t('components.jobs.groups.policy.legacy_state_content')"
+                    />
+
                     <UTabs v-model="selectedTab" :items="tabs" :unmount-on-hide="true" variant="link" :ui="{ content: 'pt-2' }">
                         <template #members>
                             <MembersPanel :group-id="currentGroup.id" :can-view="canViewGroup" />
@@ -299,6 +315,7 @@ async function handlePanelChanged(): Promise<void> {
                         <template #rules>
                             <RulesPanel
                                 :group-id="currentGroup.id"
+                                :group-type="currentGroup.type"
                                 :access="currentGroupAccess"
                                 :can-view="canViewGroup"
                                 :can-manage="canMutateGroup"
@@ -309,6 +326,7 @@ async function handlePanelChanged(): Promise<void> {
                         <template #manualMembers>
                             <ManualMembersPanel
                                 :group-id="currentGroup.id"
+                                :group-type="currentGroup.type"
                                 :access="currentGroupAccess"
                                 :can-view="canViewGroup"
                                 :can-manage="canMutateGroup"
@@ -329,6 +347,7 @@ async function handlePanelChanged(): Promise<void> {
                         <template #exclusions>
                             <ExclusionsPanel
                                 :group-id="currentGroup.id"
+                                :group-type="currentGroup.type"
                                 :access="currentGroupAccess"
                                 :can-view="canViewGroup"
                                 :can-manage="canMutateGroup"

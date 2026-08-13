@@ -16,6 +16,12 @@ import { type Group, GroupMembershipMode, GroupState, GroupType } from '~~/gen/t
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import {
+    groupTypeAllowsStrictMembershipMode,
+    isLegacyGroupPolicyState,
+    isValidGroupTypeMembershipMode,
+    normalizeGroupMembershipMode,
+} from './policy';
+import {
     groupMembershipModeItems as groupMembershipModeItemKeys,
     groupStateItems as groupStateItemKeys,
     groupTypeItems as groupTypeItemKeys,
@@ -84,6 +90,8 @@ const formSnapshot = computed(() => ({
 
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(formSnapshot);
 
+const isLegacyPolicyState = computed(() => isLegacyGroupPolicyState(props.group));
+
 function cloneAccess(access?: Access): Schema['access'] {
     return {
         jobs: access?.jobs.map((entry) => ({ ...entry })) ?? [],
@@ -103,6 +111,7 @@ function setFormFromProps(): void {
     state.access = cloneAccess(props.access);
     logoFile.value = props.group?.logoFile;
     selectedLeaderUsers.value = [];
+    normalizeGroupPolicyState();
 
     syncSnapshot();
 }
@@ -124,6 +133,17 @@ watch(
     },
 );
 
+function normalizeGroupPolicyState(): void {
+    state.membershipMode = normalizeGroupMembershipMode(state.type, state.membershipMode);
+}
+
+watch(
+    () => state.type,
+    () => {
+        normalizeGroupPolicyState();
+    },
+);
+
 const formRef = useTemplateRef('formRef');
 
 const canSubmit = ref<boolean>(true);
@@ -133,13 +153,29 @@ const modalTitle = computed(() =>
 );
 const groupTypeItems = computed(() => groupTypeItemKeys.map((item) => ({ ...item, label: t(item.labelKey) })));
 const groupMembershipModeItems = computed(() =>
-    groupMembershipModeItemKeys.map((item) => ({ ...item, label: t(item.labelKey) })),
+    groupMembershipModeItemKeys
+        .filter((item) => groupTypeAllowsStrictMembershipMode(state.type) || item.value === GroupMembershipMode.FLEXIBLE)
+        .map((item) => ({ ...item, label: t(item.labelKey) })),
 );
+const membershipModeDisabled = computed(() => groupMembershipModeItems.value.length <= 1);
 const groupStateItems = computed(() =>
     groupStateItemKeys
         .filter((item) => item.value !== GroupState.ARCHIVED)
         .map((item) => ({ ...item, label: t(item.labelKey) })),
 );
+const membershipModeHintKey = computed(() =>
+    groupTypeAllowsStrictMembershipMode(state.type)
+        ? 'components.jobs.groups.policy.membership_mode_mixed_hint'
+        : 'components.jobs.groups.policy.membership_mode_type_hint',
+);
+const policyStateWarning = computed(() => {
+    if (!isLegacyPolicyState.value) return undefined;
+
+    return {
+        title: t('components.jobs.groups.policy.legacy_state_title'),
+        description: t('components.jobs.groups.policy.legacy_state_content'),
+    };
+});
 const groupAccessTypes: AccessType[] = [
     { label: t('common.job', 2), value: 'job' },
     { label: t('common.qualification', 2), value: 'qualification' },
@@ -210,6 +246,8 @@ async function clearGroupLogo(): Promise<void> {
 
 async function createOrUpdateGroup(values: Schema): Promise<void> {
     try {
+        values.membershipMode = normalizeGroupMembershipMode(values.type, values.membershipMode);
+        normalizeGroupPolicyState();
         values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
         values.access.users.forEach((user) => {
             if (user.id < 0) user.id = 0;
@@ -228,6 +266,10 @@ async function createOrUpdateGroup(values: Schema): Promise<void> {
             type: values.type,
             membershipMode: values.membershipMode,
         };
+
+        if (!isValidGroupTypeMembershipMode(payload.type, payload.membershipMode)) {
+            throw new Error('Invalid group policy state');
+        }
 
         const call = props.group?.id
             ? jobsGroupsClient.updateGroup({
@@ -364,7 +406,12 @@ async function closeModal(): Promise<void> {
                     </UFormField>
 
                     <div class="grid gap-4 sm:grid-cols-2">
-                        <UFormField name="type" :label="$t('common.type')" required>
+                        <UFormField
+                            name="type"
+                            :label="$t('common.type')"
+                            :help="$t('components.jobs.groups.policy.type_help')"
+                            required
+                        >
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="state.type"
@@ -378,13 +425,19 @@ async function closeModal(): Promise<void> {
                             </ClientOnly>
                         </UFormField>
 
-                        <UFormField name="membershipMode" :label="$t('components.jobs.groups.membership_mode')" required>
+                        <UFormField
+                            name="membershipMode"
+                            :label="$t('components.jobs.groups.membership_mode')"
+                            :help="$t(membershipModeHintKey)"
+                            required
+                        >
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="state.membershipMode"
                                     class="w-full"
                                     :items="groupMembershipModeItems"
                                     value-key="value"
+                                    :disabled="!canSubmit || membershipModeDisabled"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                 >
                                     <template #empty>
@@ -408,6 +461,14 @@ async function closeModal(): Promise<void> {
                             </ClientOnly>
                         </UFormField>
                     </div>
+
+                    <UAlert
+                        v-if="policyStateWarning"
+                        color="warning"
+                        icon="i-mdi-alert-circle"
+                        :title="policyStateWarning.title"
+                        :description="policyStateWarning.description"
+                    />
 
                     <UFormField name="access" :label="$t('common.access')">
                         <AccessManager

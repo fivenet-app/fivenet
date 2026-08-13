@@ -16,6 +16,7 @@ import (
 	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	jobspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/jobspolicy"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -230,6 +231,16 @@ func (s *Server) CreateGroup(
 		CreatedByUserId: int32Ptr(userInfo.GetUserId()),
 		UpdatedByUserId: int32Ptr(userInfo.GetUserId()),
 	}
+	normalizeGroupPolicyDefaults(group)
+	if err := validateGroupPolicyCombination(group); err != nil {
+		return nil, err
+	}
+	if !jobspolicy.AllowsManualMembers(group.GetType()) && len(req.GetManualMemberUserIds()) > 0 {
+		return nil, errorsjobs.ErrGroupPolicyViolation
+	}
+	if !jobspolicy.AllowsRules(group.GetType()) && len(req.GetRules()) > 0 {
+		return nil, errorsjobs.ErrGroupPolicyViolation
+	}
 	if req.HasSortRank() {
 		group.SortRank = req.GetSortRank()
 	}
@@ -353,10 +364,16 @@ func (s *Server) CreateGroup(
 			continue
 		}
 		seenMembers[userID] = struct{}{}
+		if err := validateGroupPolicyAllowedMutation(
+			group,
+			jobspolicy.MutationManualMemberAdd,
+		); err != nil {
+			return nil, err
+		}
 		if err := s.ensureGroupUserInJob(ctx, tx, job, userID); err != nil {
 			return nil, err
 		}
-		if group.GetMembershipMode() == jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_STRICT {
+		if jobspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
 			matches, err := s.userMatchesGroupRules(ctx, tx, group, userID)
 			if err != nil {
 				return nil, err
@@ -460,6 +477,13 @@ func (s *Server) UpdateGroup(
 	if req.HasMembershipMode() &&
 		req.GetMembershipMode() != jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_UNSPECIFIED {
 		group.MembershipMode = req.GetMembershipMode()
+	}
+	normalizeGroupPolicyDefaults(group)
+	if err := validateGroupPolicyCombination(group); err != nil {
+		return nil, err
+	}
+	if err := s.validateGroupPolicyAgainstExistingData(ctx, s.db, group); err != nil {
+		return nil, err
 	}
 	if req.HasSortRank() {
 		group.SortRank = req.GetSortRank()
