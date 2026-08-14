@@ -177,8 +177,8 @@
     },
     "pnpm": {
         "overrides": {
-            "@unhead/vue": "3.3.1",
-            "unhead": "3.3.1",
+            "@unhead/vue": "3.3.2",
+            "unhead": "3.3.2",
             "vue": "3.5.41"
         }
     },
