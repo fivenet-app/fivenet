@@ -59,7 +59,7 @@ RUN apk add --no-cache git python3 make gcc g++ && \
         COMMIT_REF="$version" pnpm generate
 
 # Backend Build
-FROM docker.io/library/golang:1.26.5 AS backendbuild
+FROM docker.io/library/golang:1.26.6 AS backendbuild
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/v2026/
 
