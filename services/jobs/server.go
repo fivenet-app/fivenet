@@ -101,6 +101,7 @@ type Server struct {
 
 	groupAccess         access.JobGroupsAccess
 	groupAccessResolver *access.SubjectResolver
+	qualificationAccess qualificationAccessChecker
 
 	colleagueHydrator colleaguehydrator.IHydrator
 
@@ -115,18 +116,19 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger            *zap.Logger
-	DB                *sql.DB
-	Config            *config.Config
-	Perms             perms.Permissions
-	UserAwareEnricher mstlystcdata.IUserAwareEnricher
-	Notifi            notifi.INotifi
-	Storage           storage.IStorage
-	Stats             *stats.Service
-	Store             jobsstore.IStore
-	ColleagueHydrator colleaguehydrator.IHydrator
-	UserSel           usersel.IResolver
-	GroupAccess       *access.JobGroupsObjectAccess
+	Logger              *zap.Logger
+	DB                  *sql.DB
+	Config              *config.Config
+	Perms               perms.Permissions
+	UserAwareEnricher   mstlystcdata.IUserAwareEnricher
+	Notifi              notifi.INotifi
+	Storage             storage.IStorage
+	Stats               *stats.Service
+	Store               jobsstore.IStore
+	ColleagueHydrator   colleaguehydrator.IHydrator
+	UserSel             usersel.IResolver
+	GroupAccess         *access.JobGroupsObjectAccess
+	QualificationAccess *access.QualificationsObjectAccess
 }
 
 func NewServer(p Params) *Server {
@@ -180,6 +182,7 @@ func NewServer(p Params) *Server {
 		groupLogoFileHandler: groupLogoFileHandler,
 		groupAccess:          p.GroupAccess,
 		groupAccessResolver:  access.NewSubjectResolver(p.DB),
+		qualificationAccess:  p.QualificationAccess,
 
 		userSel: p.UserSel,
 	}

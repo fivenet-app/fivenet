@@ -31,7 +31,7 @@ type stubGroupAccess struct {
 	replacedAccess   *resourcesaccess.Access
 }
 
-func (s stubGroupAccess) CanUserAccessTarget(
+func (s *stubGroupAccess) CanUserAccessTarget(
 	_ context.Context,
 	_ int64,
 	_ *pbuserinfo.UserInfo,
@@ -40,7 +40,7 @@ func (s stubGroupAccess) CanUserAccessTarget(
 	return s.allowed, nil
 }
 
-func (s stubGroupAccess) CanUserAccessTargetIncludingDeleted(
+func (s *stubGroupAccess) CanUserAccessTargetIncludingDeleted(
 	_ context.Context,
 	_ int64,
 	_ *pbuserinfo.UserInfo,
@@ -49,7 +49,7 @@ func (s stubGroupAccess) CanUserAccessTargetIncludingDeleted(
 	return s.allowed, nil
 }
 
-func (s stubGroupAccess) CanUserAccessTargetIDs(
+func (s *stubGroupAccess) CanUserAccessTargetIDs(
 	_ context.Context,
 	_ *pbuserinfo.UserInfo,
 	_ int32,
@@ -61,7 +61,7 @@ func (s stubGroupAccess) CanUserAccessTargetIDs(
 	return nil, nil
 }
 
-func (s stubGroupAccess) ListTargetAccess(
+func (s *stubGroupAccess) ListTargetAccess(
 	_ context.Context,
 	_ qrm.DB,
 	_ int64,
@@ -85,7 +85,7 @@ func (s *stubGroupAccess) ReplaceTargetAccess(
 	return nil, nil
 }
 
-func (s stubGroupAccess) VisibleIDsByConditionQuery(
+func (s *stubGroupAccess) VisibleIDsByConditionQuery(
 	_ *pbuserinfo.UserInfo,
 	_ int32,
 	_ bool,

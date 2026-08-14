@@ -9,6 +9,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	groupsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/access"
+	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -19,6 +21,15 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+type qualificationAccessChecker interface {
+	CanUserAccessTargetIDs(
+		ctx context.Context,
+		userInfo *userinfo.UserInfo,
+		access int32,
+		targetIDs ...int64,
+	) ([]int64, error)
+}
 
 func groupRuleFromInput(
 	groupID int64,
@@ -119,6 +130,36 @@ func validateQualificationRule(rule *jobsgroups.GroupQualificationRule) error {
 	return nil
 }
 
+func (s *Server) ensureGroupRuleQualificationAccess(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	rule *jobsgroups.GroupRule,
+) error {
+	qualification := rule.GetQualification()
+	if qualification == nil {
+		return nil
+	}
+	if s.qualificationAccess == nil {
+		return errorsjobs.ErrFailedQuery
+	}
+
+	qualificationIDs := qualification.GetQualificationIds()
+	allowedIDs, err := s.qualificationAccess.CanUserAccessTargetIDs(
+		ctx,
+		userInfo,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+		qualificationIDs...,
+	)
+	if err != nil {
+		return errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if len(allowedIDs) != len(qualificationIDs) {
+		return errorsjobs.ErrNotFoundOrNoPerms
+	}
+
+	return nil
+}
+
 func (s *Server) enrichGroupRuleGradeLabels(job string, rules ...*jobsgroups.GroupRule) {
 	if s.enricher == nil {
 		return
@@ -188,6 +229,9 @@ func (s *Server) CreateGroupRule(
 		return nil, err
 	}
 	if err := validateGroupPolicyAllowedMutation(group, jobspolicy.MutationRuleAdd); err != nil {
+		return nil, err
+	}
+	if err := s.ensureGroupRuleQualificationAccess(ctx, userInfo, rule); err != nil {
 		return nil, err
 	}
 
@@ -337,6 +381,9 @@ func (s *Server) UpdateGroupRule(
 		existing.GetEnabled(),
 	)
 	if err != nil {
+		return nil, err
+	}
+	if err := s.ensureGroupRuleQualificationAccess(ctx, userInfo, rule); err != nil {
 		return nil, err
 	}
 
