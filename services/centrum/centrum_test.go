@@ -155,7 +155,7 @@ func newCentrumJoinUnitTestServer(
 	_, grpcSrvModule, err := modules.TestGRPCServer(ctx)
 	require.NoError(t, err)
 
-	dbServer := servers.NewDBServer(t, true)
+	dbServer := servers.NewDBServer(ctx, t, true)
 	natsServer := servers.NewNATSServer(t, true)
 	trackerStub := newCentrumJoinUnitTestTracker()
 	jobsCatalog := mstlystcdata.NewTestJobs(map[string]*jobs.Job{

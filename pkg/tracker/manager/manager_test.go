@@ -34,7 +34,8 @@ func TestMain(m *testing.M) {
 func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, *tracker.TestTracker, func()) {
 	t.Helper()
 
-	dbServer := servers.NewDBServer(t, true)
+	ctx := t.Context()
+	dbServer := servers.NewDBServer(ctx, t, true)
 	natsServer := servers.NewNATSServer(t, true)
 
 	var manager *Manager
@@ -75,12 +76,12 @@ func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, *tracker.TestTra
 func TestRefreshUserLocations(t *testing.T) {
 	t.Parallel()
 
-	ctx := t.Context()
 	manager, db, _, stop := newTrackerManagerForTest(t)
 	defer stop()
 
 	msgCh := make(chan int)
 
+	ctx := t.Context()
 	watchCh, err := manager.userLocStore.WatchAll(ctx)
 	require.NoError(t, err)
 	assert.NotNil(t, watchCh)

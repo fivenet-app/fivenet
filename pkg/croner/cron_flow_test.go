@@ -189,7 +189,7 @@ func TestExecutorWatchForEventsRecordsSuccessAndDurations(t *testing.T) {
 	js := &fakeCronJS{}
 	exec := &Executor{
 		logger:    zap.NewNop(),
-		ctx:       context.Background(),
+		ctx:       t.Context(),
 		publisher: js,
 		handlers: &Handlers{
 			handlers: map[string]CronjobHandlerFn{
@@ -272,7 +272,7 @@ func TestExecutorWatchForEventsRecordsFailureOnPanic(t *testing.T) {
 	js := &fakeCronJS{}
 	exec := &Executor{
 		logger:    zap.NewNop(),
-		ctx:       context.Background(),
+		ctx:       t.Context(),
 		publisher: js,
 		handlers: &Handlers{
 			handlers: map[string]CronjobHandlerFn{
