@@ -17,7 +17,7 @@ func TestStoreListGroupManualMembers(t *testing.T) {
 	store, mock := newTestStore(t)
 
 	createdAt := time.Date(2026, time.July, 31, 12, 0, 0, 0, time.UTC)
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_manual_members AS mm INNER JOIN fivenet_user AS u`)).
+	mock.ExpectQuery(`(?s)FROM fivenet_job_group_manual_members AS mm .*INNER JOIN fivenet_job_groups AS g .*INNER JOIN fivenet_user_jobs AS uj`).
 		WithArgs(int64(42)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"group_manual_member.group_id",
@@ -69,7 +69,7 @@ func TestStoreRecountGroupStats(t *testing.T) {
 			"police",
 			int32(jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_FLEXIBLE),
 		))
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_manual_members AS mm INNER JOIN fivenet_user AS u`)).
+	mock.ExpectQuery(`(?s)FROM fivenet_job_group_manual_members AS mm .*INNER JOIN fivenet_job_groups AS g .*INNER JOIN fivenet_user_jobs AS uj`).
 		WithArgs(int64(42)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"group_manual_member.group_id",
@@ -274,7 +274,7 @@ func TestStoreListGroupLeaders(t *testing.T) {
 	store, mock := newTestStore(t)
 
 	createdAt := time.Date(2026, time.July, 31, 12, 3, 0, 0, time.UTC)
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_leaders AS gl INNER JOIN fivenet_user AS u`)).
+	mock.ExpectQuery(`(?s)FROM fivenet_job_group_leaders AS gl .*INNER JOIN fivenet_job_groups AS g .*INNER JOIN fivenet_user_jobs AS uj`).
 		WithArgs(int64(42)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"group_leader.group_id",

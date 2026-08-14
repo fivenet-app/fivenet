@@ -75,6 +75,18 @@ func groupMemberCondition(
 	return condition
 }
 
+func activeGroupMemberCondition(
+	groupID int64,
+	groupIDColumn mysql.ColumnInteger,
+	search string,
+	user *table.FivenetUserTable,
+	userJobs *table.FivenetUserJobsTable,
+	groupJob mysql.StringExpression,
+) mysql.BoolExpression {
+	return groupMemberCondition(groupID, groupIDColumn, search, user).
+		AND(userJobs.Job.EQ(groupJob))
+}
+
 func (s *Store) UserInJob(ctx context.Context, db qrm.DB, job string, userID int32) (bool, error) {
 	tUserJobs := table.FivenetUserJobs
 	stmt := tUserJobs.
@@ -247,11 +259,17 @@ func (s *Store) ListGroupManualMembers(
 ) ([]*jobsgroups.GroupManualMember, error) {
 	tMembers := table.FivenetJobGroupManualMembers.AS("mm")
 	tUser := table.FivenetUser.AS("u")
+	tUserJobs := table.FivenetUserJobs.AS("uj")
+	tJobGroups := table.FivenetJobGroups.AS("g")
 	columns := groupManualMemberColumns(tMembers)
 	stmt := tMembers.
 		SELECT(columns[0], columns[1:]...).
-		FROM(tMembers.INNER_JOIN(tUser, tUser.ID.EQ(tMembers.UserID))).
-		WHERE(groupMemberCondition(groupID, tMembers.GroupID, search, tUser)).
+		FROM(tMembers.
+			INNER_JOIN(tUser, tUser.ID.EQ(tMembers.UserID)).
+			INNER_JOIN(tJobGroups, tJobGroups.ID.EQ(tMembers.GroupID)).
+			INNER_JOIN(tUserJobs, tUserJobs.UserID.EQ(tUser.ID)),
+		).
+		WHERE(activeGroupMemberCondition(groupID, tMembers.GroupID, search, tUser, tUserJobs, tJobGroups.Job)).
 		ORDER_BY(tMembers.CreatedAt.ASC(), tMembers.UserID.ASC())
 
 	members := []*jobsgroups.GroupManualMember{}
@@ -299,11 +317,17 @@ func (s *Store) ListGroupLeaders(
 ) ([]*jobsgroups.GroupLeader, error) {
 	tLeaders := table.FivenetJobGroupLeaders.AS("gl")
 	tUser := table.FivenetUser.AS("u")
+	tUserJobs := table.FivenetUserJobs.AS("uj")
+	tJobGroups := table.FivenetJobGroups.AS("g")
 	columns := groupLeaderColumns(tLeaders)
 	stmt := tLeaders.
 		SELECT(columns[0], columns[1:]...).
-		FROM(tLeaders.INNER_JOIN(tUser, tUser.ID.EQ(tLeaders.UserID))).
-		WHERE(groupMemberCondition(groupID, tLeaders.GroupID, search, tUser)).
+		FROM(tLeaders.
+			INNER_JOIN(tUser, tUser.ID.EQ(tLeaders.UserID)).
+			INNER_JOIN(tJobGroups, tJobGroups.ID.EQ(tLeaders.GroupID)).
+			INNER_JOIN(tUserJobs, tUserJobs.UserID.EQ(tUser.ID)),
+		).
+		WHERE(activeGroupMemberCondition(groupID, tLeaders.GroupID, search, tUser, tUserJobs, tJobGroups.Job)).
 		ORDER_BY(tLeaders.CreatedAt.ASC(), tLeaders.UserID.ASC())
 
 	leaders := []*jobsgroups.GroupLeader{}

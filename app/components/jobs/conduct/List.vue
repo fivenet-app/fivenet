@@ -78,11 +78,17 @@ const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
 function setFromProps(): void {
-    query.users = props.userId !== undefined ? { userIds: [props.userId] } : { userIds: [] };
+    if (props.userId === undefined) {
+        return;
+    }
+
+    query.users = { userIds: [props.userId] };
 }
 
-setFromProps();
-watch(() => props.userId, setFromProps);
+if (props.userId !== undefined) {
+    setFromProps();
+    watch(() => props.userId, setFromProps);
+}
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>

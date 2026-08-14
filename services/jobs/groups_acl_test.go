@@ -210,7 +210,7 @@ func expectGroupCreateCounts(mock sqlmock.Sqlmock, groupID int64) {
 		WillReturnRows(sqlmock.NewRows([]string{"type", "job", "membership_mode"}).
 			AddRow(int32(jobsgroups.GroupType_GROUP_TYPE_MANUAL), "police", int32(1)))
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_manual_members AS mm INNER JOIN fivenet_user AS u`)).
+	mock.ExpectQuery(`(?s)FROM fivenet_job_group_manual_members AS mm .*INNER JOIN fivenet_job_groups AS g .*INNER JOIN fivenet_user_jobs AS uj`).
 		WithArgs(groupID).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"group_manual_member.group_id",
