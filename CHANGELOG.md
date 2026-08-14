@@ -2,6 +2,124 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.8.2] - 2026-08-14
+
+### 🚀 Features
+
+- Split ManageLabels jobs labels API
+- *(documents)* Record workflow cron stats
+- *(cron)* Report cron run metrics
+- *(cron)* Add more attributes to cron handlers
+- *(demo)* Enable and set system banner message with crendetials
+- Add cron job prometheus metrics
+- Use tiptap new decorations api for SearchAndReplace extension
+- *(tests)* Clone MySQL test DBs from shared seed schema
+- *(jobs)* Start work on groups api
+- *(jobs)* Add group access control
+- *(jobs)* Use user selectors in listings
+- *(jobs)* Redesign group details ui screens
+- *(access)* Add typed object access wrappers
+- *(jobs)* Gate group mutations by group view access
+- *(access)* Wire typed access into remaining services
+- *(jobs)* Refresh group access editor and list ui
+- *(jobs)* Add group policy enforcement
+- *(jobs)* Add cron job to recount group members every 5 minutes
+
+### 🐛 Bug Fixes
+
+- *(centrum)* Adjust un-/assigned dispatch status handling
+- *(jobs)* Colleages labels stats not checking user job
+- *(jobs)* Add tree map graph style for label stats
+- Clean up initializations in app.vue by using plugins
+- *(tracker)* Keep dispatcher state in sync
+- *(centrum)* Sync job mappings on KV updates
+- *(centrum)* Add coverage for KV job mapping changes
+- *(tracker)* Tracker missing comments about behavior and centrum tests
+- *(centrum)* Decouple unit assignment cache updates from DB transaction
+- *(centrum)* Resync unit membership and dispatch state
+- Update readme badges
+- Run golangci-lint fix
+- *(centrum)* Test issues
+- *(tracker)* Manager test setup
+- Tracker interface issue in tracker tests
+- *(centrum)* Show coords in dispatch create/update slideover
+- *(tests)* Add missing fivenet_user_jobs initial data
+- *(centrum)* Fix settings bug causing test failures
+- Disable attr jobs when N/A value is sent
+- Go test failures and archive/restore group acl issue
+- *(jobs)* User group selection/search filter
+- *(ui)* Restore SelectMenu attrs and static items fallback
+- *(tests)* Dbmanager context issue during cleanup
+- *(jobs)* Preserve conduct filters and exclude stale group members
+- *(tests)* Parallel issues with dbmanager
+- *(jobs)* Handle archived group detail reads and read-only state
+- *(jobs)* Seed default access when creating groups
+- *(jobs)* Authorize qualification IDs in group rules
+- *(jobs)* Ensure job groups feature migrations are run
+
+### ⚙️ Miscellaneous Tasks
+
+- Nix flake update + switch to staging-next-26.05
+
+## [2026.8.1] - 2026-08-14
+
+### 🚀 Features
+
+- Split ManageLabels jobs labels API
+- *(documents)* Record workflow cron stats
+- *(cron)* Report cron run metrics
+- *(cron)* Add more attributes to cron handlers
+- *(demo)* Enable and set system banner message with crendetials
+- Add cron job prometheus metrics
+- Use tiptap new decorations api for SearchAndReplace extension
+- *(tests)* Clone MySQL test DBs from shared seed schema
+- *(jobs)* Start work on groups api
+- *(jobs)* Add group access control
+- *(jobs)* Use user selectors in listings
+- *(jobs)* Redesign group details ui screens
+- *(access)* Add typed object access wrappers
+- *(jobs)* Gate group mutations by group view access
+- *(access)* Wire typed access into remaining services
+- *(jobs)* Refresh group access editor and list ui
+- *(jobs)* Add group policy enforcement
+- *(jobs)* Add cron job to recount group members every 5 minutes
+
+### 🐛 Bug Fixes
+
+- *(centrum)* Adjust un-/assigned dispatch status handling
+- *(jobs)* Colleages labels stats not checking user job
+- *(jobs)* Add tree map graph style for label stats
+- Clean up initializations in app.vue by using plugins
+- *(tracker)* Keep dispatcher state in sync
+- *(centrum)* Sync job mappings on KV updates
+- *(centrum)* Add coverage for KV job mapping changes
+- *(tracker)* Tracker missing comments about behavior and centrum tests
+- *(centrum)* Decouple unit assignment cache updates from DB transaction
+- *(centrum)* Resync unit membership and dispatch state
+- Update readme badges
+- Run golangci-lint fix
+- *(centrum)* Test issues
+- *(tracker)* Manager test setup
+- Tracker interface issue in tracker tests
+- *(centrum)* Show coords in dispatch create/update slideover
+- *(tests)* Add missing fivenet_user_jobs initial data
+- *(centrum)* Fix settings bug causing test failures
+- Disable attr jobs when N/A value is sent
+- Go test failures and archive/restore group acl issue
+- *(jobs)* User group selection/search filter
+- *(ui)* Restore SelectMenu attrs and static items fallback
+- *(tests)* Dbmanager context issue during cleanup
+- *(jobs)* Preserve conduct filters and exclude stale group members
+- *(tests)* Parallel issues with dbmanager
+- *(jobs)* Handle archived group detail reads and read-only state
+- *(jobs)* Seed default access when creating groups
+- *(jobs)* Authorize qualification IDs in group rules
+- *(jobs)* Ensure job groups feature migrations are run
+
+### ⚙️ Miscellaneous Tasks
+
+- Nix flake update + switch to staging-next-26.05
+
 ## [2026.8.0] - 2026-08-04
 
 ### 🚀 Features
