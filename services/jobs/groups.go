@@ -191,16 +191,14 @@ func (s *Server) GetGroup(
 			return nil, err
 		}
 	}
-	if s.groupAccess != nil {
-		resp.Access, err = s.groupAccess.ListTargetAccess(
-			ctx,
-			s.db,
-			group.GetId(),
-			access.SubjectAccessOptions{BlockedAccess: -1},
-		)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	resp.Access, err = s.groupAccess.ListTargetAccess(
+		ctx,
+		s.db,
+		group.GetId(),
+		access.SubjectAccessOptions{BlockedAccess: -1},
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	targets := []colleaguehydrator.Target{}
@@ -277,22 +275,26 @@ func (s *Server) CreateGroup(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	group.Id = id
-	if req.HasAccess() && s.groupAccess != nil {
-		accessPayload, err := s.ensureHighestJobGradeAccess(job, req.GetAccess())
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-		if _, err := s.groupAccess.ReplaceTargetAccess(
-			ctx,
-			tx,
-			s.groupAccessResolver,
-			id,
-			accessPayload,
-			access.SubjectAccessOptions{BlockedAccess: -1},
-		); err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+
+	accessPayload := req.GetAccess()
+	if accessPayload == nil {
+		accessPayload = &resourcesaccess.Access{}
 	}
+	accessPayload, err = s.ensureHighestJobGradeAccess(job, accessPayload)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if _, err := s.groupAccess.ReplaceTargetAccess(
+		ctx,
+		tx,
+		s.groupAccessResolver,
+		id,
+		accessPayload,
+		access.SubjectAccessOptions{BlockedAccess: -1},
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
 	if err := s.addGroupActivity(
 		ctx,
 		tx,

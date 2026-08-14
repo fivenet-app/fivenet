@@ -137,7 +137,7 @@ func newTimeclockStatsTestServer(
 		).Store,
 		userSel: usersel.NewWithAccess(
 			groupStore,
-			stubGroupAccess{allowed: true},
+			&stubGroupAccess{allowed: true},
 		),
 	}, mock
 }

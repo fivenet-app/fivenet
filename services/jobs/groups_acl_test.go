@@ -25,7 +25,10 @@ import (
 )
 
 type stubGroupAccess struct {
-	allowed bool
+	allowed          bool
+	replaceCallCount int
+	replacedTargetID int64
+	replacedAccess   *resourcesaccess.Access
 }
 
 func (s stubGroupAccess) CanUserAccessTarget(
@@ -67,14 +70,18 @@ func (s stubGroupAccess) ListTargetAccess(
 	return &resourcesaccess.Access{}, nil
 }
 
-func (s stubGroupAccess) ReplaceTargetAccess(
+func (s *stubGroupAccess) ReplaceTargetAccess(
 	_ context.Context,
 	_ qrm.DB,
 	_ *access.SubjectResolver,
-	_ int64,
-	_ *resourcesaccess.Access,
+	targetID int64,
+	access *resourcesaccess.Access,
 	_ access.SubjectAccessOptions,
 ) (*access.SubjectAccessChanges, error) {
+	s.replaceCallCount++
+	s.replacedTargetID = targetID
+	s.replacedAccess = access
+
 	return nil, nil
 }
 
@@ -230,7 +237,9 @@ func expectGroupCreateCounts(mock sqlmock.Sqlmock, groupID int64) {
 func TestCreateGroupWithoutAccessStillWorks(t *testing.T) {
 	t.Parallel()
 
-	srv, mock := newJobsGroupACLTestServer(t, nil)
+	accessStub := &stubGroupAccess{allowed: true}
+	srv, mock := newJobsGroupACLTestServer(t, accessStub)
+	srv.enricher = mstlystcdata.NewDummyUserAwareEnricher()
 	now := time.Date(2026, time.August, 12, 13, 0, 0, 0, time.UTC)
 
 	ctx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
@@ -273,6 +282,13 @@ func TestCreateGroupWithoutAccessStillWorks(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.Equal(t, int64(42), resp.GetGroup().GetId())
+	require.Equal(t, 1, accessStub.replaceCallCount)
+	require.Equal(t, int64(42), accessStub.replacedTargetID)
+	require.Len(t, accessStub.replacedAccess.GetJobs(), 1)
+	require.Equal(t, "police", accessStub.replacedAccess.GetJobs()[0].GetJob())
+	require.Equal(t, int32(3), accessStub.replacedAccess.GetJobs()[0].GetMinimumGrade())
+	require.Equal(t, int32(4), accessStub.replacedAccess.GetJobs()[0].GetAccess())
+	require.True(t, accessStub.replacedAccess.GetJobs()[0].GetRequired())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
