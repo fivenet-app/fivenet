@@ -203,7 +203,10 @@ const stats = computed(() => [
     },
     {
         label: t('common.members', 2),
-        value: groups.value.reduce((total, group) => total + group.membersCount, 0),
+        value: t(
+            'components.jobs.groups.approx_member_count',
+            groups.value.reduce((total, group) => total + group.membersCount, 0),
+        ),
         icon: 'i-mdi-account-multiple',
     },
     {
@@ -391,7 +394,7 @@ function openGroupDetails(group: Group): void {
 
                         <template #counts-cell="{ row }">
                             <span class="text-right text-sm font-medium tabular-nums">
-                                {{ $t('common.member', row.original.membersCount) }}
+                                {{ $t('components.jobs.groups.approx_member_count', row.original.membersCount) }}
                             </span>
 
                             <div class="flex flex-row flex-wrap gap-x-1 gap-y-1 text-xs">

@@ -256,7 +256,9 @@ async function handlePanelChanged(): Promise<void> {
 
                                     <div class="rounded-lg bg-elevated px-3 py-2">
                                         <p class="text-muted">{{ $t('common.members', 2) }}</p>
-                                        <p class="text-lg font-semibold tabular-nums">{{ currentGroup.membersCount }}</p>
+                                        <p class="text-lg font-semibold tabular-nums">
+                                            {{ $t('components.jobs.groups.approx_member_count', currentGroup.membersCount) }}
+                                        </p>
                                     </div>
                                     <div class="rounded-lg bg-elevated px-3 py-2">
                                         <p class="text-muted">{{ $t('components.jobs.groups.rules') }}</p>

@@ -582,7 +582,7 @@ func (m *mysqlTestDBManager) releaseClone(t *testing.T, cloneName string) error 
 		m.cloneRefs--
 	}
 
-	err := m.dropDatabaseLocked(context.Background(), cloneName)
+	err := m.dropDatabaseLocked(t.Context(), cloneName)
 
 	if m.cloneRefs == 0 {
 		if resetErr := m.resetLocked(t); resetErr != nil {
@@ -609,14 +609,14 @@ func (m *mysqlTestDBManager) resetLocked(t *testing.T) error {
 	m.cloneRefs = 0
 
 	var errs []error
-	if err := resource.Close(context.Background()); err != nil {
+	if err := resource.Close(t.Context()); err != nil {
 		errs = append(errs, fmt.Errorf("failed to close shared mysql test container: %w", err))
 	}
 
 	if m.pool != nil {
 		pool := m.pool
 		m.pool = nil
-		if err := pool.Close(context.Background()); err != nil {
+		if err := pool.Close(t.Context()); err != nil {
 			errs = append(errs, fmt.Errorf("failed to close shared mysql test pool: %w", err))
 		}
 	}

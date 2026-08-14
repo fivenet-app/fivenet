@@ -1345,6 +1345,7 @@
                 "index_description": "Durchsuche Gruppen, prüfe ihre zwischengespeicherten Mitgliederzahlen und aktualisiere Metadaten.",
                 "search_placeholder": "Gruppen suchen...",
                 "visible_groups": "Sichtbare Gruppen",
+                "approx_member_count": "~0 Mitglieder | ~{n} Mitglied | ~{n} Mitglieder",
                 "leaders": "Leiter",
                 "rules": "Regeln",
                 "manual_members": "Manuelle Mitglieder",

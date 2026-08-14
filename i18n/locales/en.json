@@ -1345,6 +1345,7 @@
                 "index_description": "Search groups, inspect their cached membership counts and update metadata.",
                 "search_placeholder": "Search groups...",
                 "visible_groups": "Visible groups",
+                "approx_member_count": "~0 Members | ~{n} Member | ~{n} Members",
                 "leaders": "Leaders",
                 "rules": "Rules",
                 "manual_members": "Manual members",
