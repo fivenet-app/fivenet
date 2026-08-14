@@ -24,6 +24,7 @@
         "test-watch": "vitest"
     },
     "dependencies": {
+        "@fontsource/public-sans": "5.3.0",
         "@galexrt/nuxt-update": "2.2.0",
         "@iconify-json/flagpack": "1.2.8",
         "@iconify-json/mdi": "1.2.3",

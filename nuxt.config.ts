@@ -45,6 +45,10 @@ export default defineNuxtConfig({
 
     css: ['~/assets/css/main.css'],
 
+    fonts: {
+        provider: 'npm',
+    },
+
     ui: {
         theme: {
             colors: [
