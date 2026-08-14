@@ -76,3 +76,44 @@ func TestValidateGroupPolicyAgainstExistingDataRejectsUnmatchedManualMembers(t *
 	})
 	require.ErrorIs(t, err, errorsjobs.ErrGroupMemberRulesRequired)
 }
+
+func TestResolveGroupMembersIgnoresUnspecifiedOnlySourceFilter(t *testing.T) {
+	t.Parallel()
+
+	server := &Server{
+		store: &groupPolicyStoreStub{
+			manualMembers: []*jobsgroups.GroupManualMember{
+				{UserId: 7},
+			},
+			ruleMatches: []*jobsstore.GroupRuleMemberMatch{
+				{UserID: 9, RuleID: 11},
+			},
+		},
+	}
+
+	members, err := server.resolveGroupMembers(
+		t.Context(),
+		&jobsgroups.Group{
+			Id:             42,
+			Type:           jobsgroups.GroupType_GROUP_TYPE_MIXED,
+			MembershipMode: jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_FLEXIBLE,
+		},
+		"",
+		false,
+		false,
+		false,
+		[]jobsgroups.GroupMemberSource{
+			jobsgroups.GroupMemberSource_GROUP_MEMBER_SOURCE_UNSPECIFIED,
+		},
+	)
+	require.NoError(t, err)
+	require.Len(t, members, 2)
+	require.Equal(t, int32(7), members[0].GetUserId())
+	require.Equal(t, []jobsgroups.GroupMemberSource{
+		jobsgroups.GroupMemberSource_GROUP_MEMBER_SOURCE_MANUAL,
+	}, members[0].GetSources())
+	require.Equal(t, int32(9), members[1].GetUserId())
+	require.Equal(t, []jobsgroups.GroupMemberSource{
+		jobsgroups.GroupMemberSource_GROUP_MEMBER_SOURCE_RULE,
+	}, members[1].GetSources())
+}

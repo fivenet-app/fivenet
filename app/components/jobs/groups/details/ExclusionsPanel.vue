@@ -91,6 +91,8 @@ function resetExclusionForm(): void {
 }
 
 function editExclusion(exclusion: GroupMemberExclusion): void {
+    if (!canManageExclusions.value) return;
+
     editingExclusionMemberId.value = exclusion.userId;
     selectedExclusionMember.value = {
         userId: exclusion.userId,
@@ -118,6 +120,7 @@ async function runMutation(action: string, mutate: () => Promise<void>): Promise
 }
 
 async function addExclusion(): Promise<void> {
+    if (!canManageExclusions.value) return;
     if (!selectedExclusionMember.value?.userId) return;
 
     await runMutation('exclusion', async () => {
@@ -132,6 +135,8 @@ async function addExclusion(): Promise<void> {
 }
 
 async function removeExclusion(userId: number): Promise<void> {
+    if (!canManageExclusions.value) return;
+
     confirmModal.open({
         title: t('common.remove'),
         confirm: async () =>
@@ -244,7 +249,7 @@ watch(
                         class="w-full"
                         :rows="2"
                         :placeholder="$t('common.reason', 1)"
-                        :disabled="isMutating || !canManage"
+                        :disabled="isMutating || !canManageExclusions"
                     />
                 </UFormField>
             </div>

@@ -487,6 +487,14 @@ func (s *Server) UpdateGroup(
 		req.GetMembershipMode() != jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_UNSPECIFIED {
 		group.MembershipMode = req.GetMembershipMode()
 	}
+	if req.HasState() {
+		if req.GetState() == jobsgroups.GroupState_GROUP_STATE_ARCHIVED {
+			return nil, errorsjobs.ErrNotFoundOrNoPerms
+		}
+		if req.GetState() != jobsgroups.GroupState_GROUP_STATE_UNSPECIFIED {
+			group.State = req.GetState()
+		}
+	}
 	normalizeGroupPolicyDefaults(group)
 	if err := validateGroupPolicyCombination(group); err != nil {
 		return nil, err
@@ -496,14 +504,6 @@ func (s *Server) UpdateGroup(
 	}
 	if req.HasSortRank() {
 		group.SortRank = req.GetSortRank()
-	}
-	if req.HasState() {
-		if req.GetState() == jobsgroups.GroupState_GROUP_STATE_ARCHIVED {
-			return nil, errorsjobs.ErrNotFoundOrNoPerms
-		}
-		if req.GetState() != jobsgroups.GroupState_GROUP_STATE_UNSPECIFIED {
-			group.State = req.GetState()
-		}
 	}
 
 	group.UpdatedByUserId = new(userInfo.GetUserId())
@@ -590,6 +590,25 @@ func (s *Server) ArchiveGroup(
 		return nil, err
 	}
 
+	group, err := s.store.GetGroup(ctx, s.db, jobsstore.GroupQuery{
+		Job:             userInfo.GetJob(),
+		IncludeArchived: true,
+	}, req.GetId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if group == nil {
+		return nil, errorsjobs.ErrNotFoundOrNoPerms
+	}
+	if group.GetState() == jobsgroups.GroupState_GROUP_STATE_ARCHIVED {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
+		if err := s.hydrateGroupColleagues(ctx, userInfo, group); err != nil {
+			return nil, err
+		}
+
+		return &pbjobs.ArchiveGroupResponse{Group: group}, nil
+	}
+
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -626,7 +645,7 @@ func (s *Server) ArchiveGroup(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	group, err := s.store.GetGroup(ctx, tx, jobsstore.GroupQuery{
+	group, err = s.store.GetGroup(ctx, tx, jobsstore.GroupQuery{
 		Job:             userInfo.GetJob(),
 		IncludeArchived: true,
 	}, req.GetId())
@@ -661,13 +680,33 @@ func (s *Server) RestoreGroup(
 		"fivenet.jobs.groups.id", req.GetId(),
 	})
 
-	if err := s.ensureGroupAccess(
+	if err := s.ensureGroupAccessWithDeleted(
 		ctx,
 		userInfo,
 		req.GetId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		true,
 	); err != nil {
 		return nil, err
+	}
+
+	group, err := s.store.GetGroup(ctx, s.db, jobsstore.GroupQuery{
+		Job:             userInfo.GetJob(),
+		IncludeArchived: true,
+	}, req.GetId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if group == nil {
+		return nil, errorsjobs.ErrNotFoundOrNoPerms
+	}
+	if group.GetState() != jobsgroups.GroupState_GROUP_STATE_ARCHIVED {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
+		if err := s.hydrateGroupColleagues(ctx, userInfo, group); err != nil {
+			return nil, err
+		}
+
+		return &pbjobs.RestoreGroupResponse{Group: group}, nil
 	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -706,7 +745,7 @@ func (s *Server) RestoreGroup(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	group, err := s.store.GetGroup(ctx, tx, jobsstore.GroupQuery{
+	group, err = s.store.GetGroup(ctx, tx, jobsstore.GroupQuery{
 		Job:             userInfo.GetJob(),
 		IncludeArchived: true,
 	}, req.GetId())

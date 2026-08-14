@@ -223,6 +223,8 @@ async function loadQualificationShorts(ids: number[]): Promise<QualificationShor
 }
 
 async function editRule(rule: GroupRule): Promise<void> {
+    if (!canManageRules.value) return;
+
     editingRuleId.value = rule.id;
     ruleForm.enabled = rule.enabled;
     ruleForm.reason = '';
@@ -299,6 +301,8 @@ async function runMutation(action: string, mutate: () => Promise<void>): Promise
 }
 
 async function saveRule(): Promise<void> {
+    if (!canManageRules.value) return;
+
     const input = buildRuleInput();
     if (!input) return;
 
@@ -320,6 +324,8 @@ async function saveRule(): Promise<void> {
 }
 
 async function deleteRule(rule: GroupRule): Promise<void> {
+    if (!canManageRules.value) return;
+
     confirmModalWithReason.open({
         title: t('common.delete'),
         confirm: async (reason: string) =>
@@ -436,7 +442,7 @@ watch(
                             class="w-full"
                             :items="gradeRuleTypeItems"
                             value-key="value"
-                            :disabled="isMutating || !canManage"
+                            :disabled="isMutating || !canManageRules"
                         />
                     </UFormField>
 

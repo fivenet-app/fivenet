@@ -303,6 +303,61 @@ func TestUpdateGroupDeniedByAccess(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestUpdateGroupUsesActiveOnlyLookup(t *testing.T) {
+	t.Parallel()
+
+	srv, mock := newJobsGroupACLTestServer(t, &stubGroupAccess{allowed: true})
+
+	ctx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId: 7,
+		Job:    "police",
+	})
+
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group` LEFT JOIN fivenet_files AS logo_file")).
+		WithArgs(
+			"police",
+			int64(42),
+			int32(jobsgroups.GroupState_GROUP_STATE_ARCHIVED),
+			int64(1),
+		).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"group.id",
+			"group.job",
+			"group.name",
+			"group.description",
+			"group.short_name",
+			"group.logo_file_id",
+			"group.color",
+			"group.type",
+			"group.state",
+			"group.membership_mode",
+			"group.sort_rank",
+			"group.members_count",
+			"group.leaders_count",
+			"group.rules_count",
+			"group.exclusions_count",
+			"group.created_by_user_id",
+			"group.updated_by_user_id",
+			"group.created_at",
+			"group.updated_at",
+			"group.deleted_at",
+			"logo_file.id",
+			"logo_file.file_path",
+			"logo_file.byte_size",
+			"logo_file.content_type",
+			"logo_file.created_at",
+		}))
+
+	resp, err := srv.UpdateGroup(ctx, &pbjobs.UpdateGroupRequest{
+		Id:    42,
+		Name:  new("Archived K9"),
+		State: new(jobsgroups.GroupState_GROUP_STATE_ACTIVE),
+	})
+	require.ErrorIs(t, err, errorsjobs.ErrNotFoundOrNoPerms)
+	require.Nil(t, resp)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestArchiveGroupDeniedByAccess(t *testing.T) {
 	t.Parallel()
 
@@ -316,6 +371,40 @@ func TestArchiveGroupDeniedByAccess(t *testing.T) {
 	resp, err := srv.ArchiveGroup(ctx, &pbjobs.ArchiveGroupRequest{Id: 42})
 	require.ErrorIs(t, err, errorsjobs.ErrNotFoundOrNoPerms)
 	require.Nil(t, resp)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestArchiveGroupAlreadyArchivedIsNoop(t *testing.T) {
+	t.Parallel()
+
+	srv, mock := newJobsGroupACLTestServer(t, &stubGroupAccess{allowed: true})
+	now := time.Date(2026, time.August, 13, 10, 0, 0, 0, time.UTC)
+
+	ctx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId: 7,
+		Job:    "police",
+	})
+
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group` LEFT JOIN fivenet_files AS logo_file")).
+		WithArgs("police", int64(42), int64(1)).
+		WillReturnRows(expectGroupGetRowsWithStateAndDeletedAt(
+			now,
+			42,
+			"K9 Unit",
+			7,
+			jobsgroups.GroupState_GROUP_STATE_ARCHIVED,
+			now,
+		))
+
+	resp, err := srv.ArchiveGroup(ctx, &pbjobs.ArchiveGroupRequest{
+		Id:     42,
+		Reason: new("duplicate archive"),
+	})
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.NotNil(t, resp.GetGroup())
+	require.Equal(t, jobsgroups.GroupState_GROUP_STATE_ARCHIVED, resp.GetGroup().GetState())
+	require.NotNil(t, resp.GetGroup().GetDeletedAt())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
@@ -335,6 +424,40 @@ func TestRestoreGroupDeniedByAccess(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestRestoreGroupActiveGroupIsNoop(t *testing.T) {
+	t.Parallel()
+
+	srv, mock := newJobsGroupACLTestServer(t, &stubGroupAccess{allowed: true})
+	now := time.Date(2026, time.August, 13, 10, 0, 0, 0, time.UTC)
+
+	ctx := grpcauth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId: 7,
+		Job:    "police",
+	})
+
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group` LEFT JOIN fivenet_files AS logo_file")).
+		WithArgs("police", int64(42), int64(1)).
+		WillReturnRows(expectGroupGetRowsWithStateAndDeletedAt(
+			now,
+			42,
+			"K9 Unit",
+			7,
+			jobsgroups.GroupState_GROUP_STATE_ACTIVE,
+			nil,
+		))
+
+	resp, err := srv.RestoreGroup(ctx, &pbjobs.RestoreGroupRequest{
+		Id:     42,
+		Reason: new("duplicate restore"),
+	})
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.NotNil(t, resp.GetGroup())
+	require.Equal(t, jobsgroups.GroupState_GROUP_STATE_ACTIVE, resp.GetGroup().GetState())
+	require.Nil(t, resp.GetGroup().GetDeletedAt())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestArchiveThenRestoreGroup(t *testing.T) {
 	t.Parallel()
 
@@ -347,6 +470,16 @@ func TestArchiveThenRestoreGroup(t *testing.T) {
 		Job:    "police",
 	})
 
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group` LEFT JOIN fivenet_files AS logo_file")).
+		WithArgs("police", int64(42), int64(1)).
+		WillReturnRows(expectGroupGetRowsWithStateAndDeletedAt(
+			now,
+			42,
+			"K9 Unit",
+			7,
+			jobsgroups.GroupState_GROUP_STATE_ACTIVE,
+			nil,
+		))
 	mock.ExpectBegin()
 	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_job_groups SET`)).
 		WithArgs(
@@ -389,6 +522,16 @@ func TestArchiveThenRestoreGroup(t *testing.T) {
 	require.Equal(t, jobsgroups.GroupState_GROUP_STATE_ARCHIVED, archiveResp.GetGroup().GetState())
 	require.NotNil(t, archiveResp.GetGroup().GetDeletedAt())
 
+	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_job_groups AS `group` LEFT JOIN fivenet_files AS logo_file")).
+		WithArgs("police", int64(42), int64(1)).
+		WillReturnRows(expectGroupGetRowsWithStateAndDeletedAt(
+			now,
+			42,
+			"K9 Unit",
+			7,
+			jobsgroups.GroupState_GROUP_STATE_ARCHIVED,
+			now,
+		))
 	mock.ExpectBegin()
 	mock.ExpectExec(regexp.QuoteMeta(`UPDATE fivenet_job_groups SET`)).
 		WithArgs(

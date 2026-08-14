@@ -254,15 +254,16 @@ func (s *Server) ListGroupRules(
 		"fivenet.jobs.groups.id", req.GetGroupId(),
 	})
 
-	group, err := s.getActiveGroupForJob(ctx, s.db, userInfo.GetJob(), req.GetGroupId())
+	group, err := s.getGroupForJobIncludingArchived(ctx, s.db, userInfo.GetJob(), req.GetGroupId())
 	if err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(
+	if err := s.ensureGroupAccessWithDeleted(
 		ctx,
 		userInfo,
-		req.GetGroupId(),
+		group.GetId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		true,
 	); err != nil {
 		return nil, err
 	}

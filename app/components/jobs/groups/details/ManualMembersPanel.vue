@@ -82,6 +82,8 @@ function resetManualMemberForm(): void {
 }
 
 function editManualMember(member: GroupManualMember): void {
+    if (!canManageMembers.value) return;
+
     editingManualMemberId.value = member.userId;
     selectedManualMember.value = {
         userId: member.userId,
@@ -108,6 +110,7 @@ async function runMutation(action: string, mutate: () => Promise<void>): Promise
 }
 
 async function addManualMember(): Promise<void> {
+    if (!canManageMembers.value) return;
     if (!selectedManualMember.value?.userId) return;
 
     await runMutation('manual-member', async () => {
@@ -121,6 +124,8 @@ async function addManualMember(): Promise<void> {
 }
 
 async function removeManualMember(userId: number): Promise<void> {
+    if (!canManageMembers.value) return;
+
     confirmModal.open({
         title: t('common.remove'),
         confirm: async () =>

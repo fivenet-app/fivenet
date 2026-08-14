@@ -83,6 +83,7 @@ async function runMutation(action: string, mutate: () => Promise<void>): Promise
 }
 
 async function addLeader(): Promise<void> {
+    if (!canManageLeaders.value) return;
     if (!selectedLeader.value?.userId) return;
 
     await runMutation('leader', async () => {
@@ -95,6 +96,8 @@ async function addLeader(): Promise<void> {
 }
 
 async function removeLeader(userId: number): Promise<void> {
+    if (!canManageLeaders.value) return;
+
     confirmModal.open({
         title: t('common.remove'),
         confirm: async () =>

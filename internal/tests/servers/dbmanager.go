@@ -57,15 +57,15 @@ func (e *setupUnavailableError) Unwrap() error {
 }
 
 type mysqlTestDBManager struct {
-	mu sync.Mutex
+	mu   sync.Mutex
 	cond *sync.Cond
 
 	pool     dockertest.ClosablePool
 	resource dockertest.ClosableResource
 	hasSeed  bool
 
-	cloneSeq  atomic.Uint64
-	cloneRefs int
+	cloneSeq    atomic.Uint64
+	cloneRefs   int
 	tearingDown bool
 }
 

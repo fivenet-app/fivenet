@@ -117,6 +117,24 @@ func resolvedMemberMatchesSources(
 	return !hasFilter
 }
 
+func normalizeGroupMemberSources(
+	sources []jobsgroups.GroupMemberSource,
+) []jobsgroups.GroupMemberSource {
+	if len(sources) == 0 {
+		return nil
+	}
+
+	normalized := make([]jobsgroups.GroupMemberSource, 0, len(sources))
+	for _, source := range sources {
+		if source == jobsgroups.GroupMemberSource_GROUP_MEMBER_SOURCE_UNSPECIFIED {
+			continue
+		}
+		normalized = append(normalized, source)
+	}
+
+	return normalized
+}
+
 func compareResolvedMembersBySort(
 	a *jobsgroups.GroupResolvedMember,
 	b *jobsgroups.GroupResolvedMember,
@@ -362,9 +380,28 @@ func (s *Server) getActiveGroupForJob(
 	job string,
 	groupID int64,
 ) (*jobsgroups.Group, error) {
+	return s.getGroupForJob(ctx, db, job, groupID, false)
+}
+
+func (s *Server) getGroupForJobIncludingArchived(
+	ctx context.Context,
+	db qrm.DB,
+	job string,
+	groupID int64,
+) (*jobsgroups.Group, error) {
+	return s.getGroupForJob(ctx, db, job, groupID, true)
+}
+
+func (s *Server) getGroupForJob(
+	ctx context.Context,
+	db qrm.DB,
+	job string,
+	groupID int64,
+	includeArchived bool,
+) (*jobsgroups.Group, error) {
 	group, err := s.store.GetGroup(ctx, db, jobsstore.GroupQuery{
 		Job:             job,
-		IncludeArchived: false,
+		IncludeArchived: includeArchived,
 	}, groupID)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -449,6 +486,8 @@ func (s *Server) resolveGroupMembers(
 	includeReasons bool,
 	sources []jobsgroups.GroupMemberSource,
 ) ([]*jobsgroups.GroupResolvedMember, error) {
+	sources = normalizeGroupMemberSources(sources)
+
 	groupID := group.GetId()
 	wantManual := len(sources) == 0 ||
 		slices.Contains(sources, jobsgroups.GroupMemberSource_GROUP_MEMBER_SOURCE_MANUAL)
@@ -629,15 +668,16 @@ func (s *Server) ListGroupMembers(
 		"fivenet.jobs.groups.id", req.GetGroupId(),
 	})
 
-	group, err := s.getActiveGroupForJob(ctx, s.db, userInfo.GetJob(), req.GetGroupId())
+	group, err := s.getGroupForJobIncludingArchived(ctx, s.db, userInfo.GetJob(), req.GetGroupId())
 	if err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(
+	if err := s.ensureGroupAccessWithDeleted(
 		ctx,
 		userInfo,
-		req.GetGroupId(),
+		group.GetId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		true,
 	); err != nil {
 		return nil, err
 	}
@@ -712,19 +752,21 @@ func (s *Server) ListGroupManualMembers(
 		"fivenet.jobs.groups.id", req.GetGroupId(),
 	})
 
-	if _, err := s.getActiveGroupForJob(
+	group, err := s.getGroupForJobIncludingArchived(
 		ctx,
 		s.db,
 		userInfo.GetJob(),
 		req.GetGroupId(),
-	); err != nil {
+	)
+	if err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(
+	if err := s.ensureGroupAccessWithDeleted(
 		ctx,
 		userInfo,
-		req.GetGroupId(),
+		group.GetId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		true,
 	); err != nil {
 		return nil, err
 	}
@@ -758,19 +800,21 @@ func (s *Server) ListGroupMemberExclusions(
 		"fivenet.jobs.groups.id", req.GetGroupId(),
 	})
 
-	if _, err := s.getActiveGroupForJob(
+	group, err := s.getGroupForJobIncludingArchived(
 		ctx,
 		s.db,
 		userInfo.GetJob(),
 		req.GetGroupId(),
-	); err != nil {
+	)
+	if err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(
+	if err := s.ensureGroupAccessWithDeleted(
 		ctx,
 		userInfo,
-		req.GetGroupId(),
+		group.GetId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		true,
 	); err != nil {
 		return nil, err
 	}
@@ -809,19 +853,21 @@ func (s *Server) ListGroupLeaders(
 		"fivenet.jobs.groups.id", req.GetGroupId(),
 	})
 
-	if _, err := s.getActiveGroupForJob(
+	group, err := s.getGroupForJobIncludingArchived(
 		ctx,
 		s.db,
 		userInfo.GetJob(),
 		req.GetGroupId(),
-	); err != nil {
+	)
+	if err != nil {
 		return nil, err
 	}
-	if err := s.ensureGroupAccess(
+	if err := s.ensureGroupAccessWithDeleted(
 		ctx,
 		userInfo,
-		req.GetGroupId(),
+		group.GetId(),
 		groupsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		true,
 	); err != nil {
 		return nil, err
 	}
