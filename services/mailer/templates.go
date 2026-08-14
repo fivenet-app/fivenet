@@ -12,6 +12,8 @@ import (
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 )
 
+const templateLimit = 5
+
 func (s *Server) ListTemplates(
 	ctx context.Context,
 	req *pbmailer.ListTemplatesRequest,
@@ -94,9 +96,11 @@ func (s *Server) CreateOrUpdateTemplate(
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
-		// Max 5 templates per email
-		if count >= 5 {
-			return nil, errorsmailer.ErrTemplateLimitReached
+		// Check templates limit per email
+		if count >= templateLimit {
+			return nil, errorsmailer.ErrTemplateLimitReached(map[string]any{
+				"limit": templateLimit,
+			})
 		}
 
 		if req.Template.CreatorJob != nil {

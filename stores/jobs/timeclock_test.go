@@ -57,6 +57,25 @@ func TestStoreCountInactiveEmployeesIgnoresUserPropsJoin(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestStoreCountInactiveEmployeesFiltersUserIDs(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+
+	mock.ExpectQuery(`(?s)SELECT COUNT\(fivenet_user_jobs\.user_id\).*FROM fivenet_user_jobs.*fivenet_user_jobs\.user_id IN \(\?, \?\).*;`).
+		WithArgs("police", "police", "police", "police", int32(1), int32(2)).
+		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(2)))
+
+	got, err := store.CountInactiveEmployees(t.Context(), store.db, InactiveEmployeesQuery{
+		Job:     "police",
+		Days:    14,
+		UserIDs: []int32{1, 2},
+	})
+	require.NoError(t, err)
+	require.Equal(t, int64(2), got)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreListInactiveEmployeesUsesUserJobsBase(t *testing.T) {
 	t.Parallel()
 
@@ -70,6 +89,25 @@ func TestStoreListInactiveEmployeesUsesUserJobsBase(t *testing.T) {
 		Job:   "police",
 		Days:  14,
 		Limit: 20,
+	})
+	require.NoError(t, err)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreListInactiveEmployeesFiltersUserIDs(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user_jobs.*fivenet_user_jobs\.user_id IN \(\?, \?\).*ORDER BY .*colleague\.job_grade ASC.*LIMIT \?.*OFFSET \?.*;`).
+		WithArgs("police", "police", "police", "police", int32(1), int32(2), int64(20), int64(0)).
+		WillReturnRows(sqlmock.NewRows(nil))
+
+	_, err := store.ListInactiveEmployees(t.Context(), store.db, InactiveEmployeesQuery{
+		Job:     "police",
+		Days:    14,
+		UserIDs: []int32{1, 2},
+		Limit:   20,
 	})
 	require.NoError(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())

@@ -743,6 +743,7 @@
         "uncheck_all": "Uncheck All",
         "refresh_in_x": "Refresh in {d} {unit}",
         "personal": "Personal",
+        "no_access": "No access",
         "no_access_to_document": "No access to document",
         "you": "You",
         "scroll_to_top": "Scroll to Top",
@@ -1337,6 +1338,82 @@
                 "title": "Self Service",
                 "set_absence_date": "Set Absence Date",
                 "set_profile_picture": "Update Profile Picture"
+            },
+            "groups": {
+                "subtitle": "Manage job-local groups, their lifecycle state and the metadata used by other job views.",
+                "index_title": "Group index",
+                "index_description": "Search groups, inspect their cached membership counts and update metadata.",
+                "search_placeholder": "Search groups...",
+                "visible_groups": "Visible groups",
+                "approx_member_count": "~0 Members | ~{n} Member | ~{n} Members",
+                "leaders": "Leaders",
+                "rules": "Rules",
+                "manual_members": "Manual members",
+                "exclusions": "Exclusions",
+                "membership_mode": "Membership mode",
+                "short_name": "Short name",
+                "sort": "Sort",
+                "sort_rank": "Sort rank",
+                "no_description": "No description",
+                "types": {
+                    "all": "All types"
+                },
+                "membership_modes": {
+                    "title": "membership modes"
+                },
+                "actions": {
+                    "label": "Group actions",
+                    "new": "New group",
+                    "details": "Group details",
+                    "edit": "Edit group",
+                    "archive": "Archive group",
+                    "restore": "Restore group"
+                },
+                "confirm": {
+                    "archive": "Archive \"{name}\"?",
+                    "restore": "Restore \"{name}\"?"
+                },
+                "editor": {
+                    "create_title": "Create group",
+                    "update_title": "Update group"
+                },
+                "policy": {
+                    "membership_mode_type_hint": "Manual and smart groups only allow the flexible mode. Strict mode is only available for mixed groups.",
+                    "membership_mode_mixed_hint": "Strict mode requires manual members to match the group's rules.",
+                    "type_help": "Manual groups use manual members only, smart groups use rules only, and mixed groups combine rules with manual overrides and exclusions.",
+                    "legacy_state_title": "Legacy group policy",
+                    "legacy_state_content": "This group was stored with an invalid policy combination. The editor has normalized it so you can save a valid configuration.",
+                    "unavailable_title": "Policy restriction",
+                    "manual_members_disabled": "Manual members are not available for this group type.",
+                    "rules_disabled": "Rules are not available for this group type.",
+                    "exclusions_disabled": "Exclusions are not available for this group type."
+                },
+                "details": {
+                    "member": "Member",
+                    "leader": "Leader",
+                    "manual": "Manual",
+                    "excluded": "Excluded",
+                    "rule": "Rule",
+                    "rule_type": "Rule type",
+                    "qualification_id": "Qualification #{id}",
+                    "require_completed": "Require completed",
+                    "add_manual_member": "Add manual member",
+                    "add_exclusion": "Add exclusion",
+                    "rules": {
+                        "grade_minimum": "Grade at least {grade}",
+                        "grade_exact": "Grade exactly {grade}",
+                        "grade_range": "Grade {min} to {max}",
+                        "qualifications": "{mode} qualifications ({count})",
+                        "unknown": "Unknown rule"
+                    }
+                }
+            },
+            "user_group_selector": {
+                "search_placeholder": "Search users... Type {'@'} for groups",
+                "leaders": {
+                    "include": "Include leaders",
+                    "exclude": "Exclude leaders"
+                }
             }
         },
         "hints": {
@@ -2625,11 +2702,30 @@
                     "content": "Please check your username and password and try again.",
                     "title": "Wrong username or password!"
                 },
-                "ErrNoAccount": "You need to use your registration token to create an account first.",
-                "ErrNoCharFound": "No character(s) found for your account.",
-                "ErrGenericLogin": "Failed to login you in, please try again.",
-                "ErrUnableToChooseChar": "You don't have permission to select this character!",
-                "ErrUpdateAccount": "Failed to update your account!",
+                "ErrNoAccount": {
+                    "title": "Account required",
+                    "content": "You need to use your registration token to create an account first."
+                },
+                "ErrNoCharFound": {
+                    "title": "No character found",
+                    "content": "No character(s) found for your account."
+                },
+                "ErrGenericLogin": {
+                    "title": "Login failed",
+                    "content": "Failed to login you in, please try again."
+                },
+                "ErrUnableToChooseChar": {
+                    "title": "Character locked",
+                    "content": "You don't have permission to select this character!"
+                },
+                "ErrUpdateAccount": {
+                    "title": "Account update failed",
+                    "content": "Failed to update your account!"
+                },
+                "ErrChangeUsername": {
+                    "title": "Username change failed",
+                    "content": "Failed to change your username!"
+                },
                 "ErrChangePassword": {
                     "title": "Failed to change your password!",
                     "content": "Please check your current password and try again. ({code})"
@@ -2650,26 +2746,46 @@
                     "title": "Username already taken!",
                     "content": "The username is already taken, please use a different username."
                 },
-                "ErrChangeUsername": "Failed to change your username!",
-                "ErrBadUsername": "Please verify the correctness of your username! Please try again.",
+                "ErrBadUsername": {
+                    "title": "Bad username",
+                    "content": "Please verify the correctness of your username! Please try again with a different username."
+                },
                 "ErrCharLock": {
                     "title": "Char lock is active!",
                     "content": "Please select an available character and try again."
                 },
-                "ErrNotSuperuser": "You are not a superuser! Please contact your FiveNet administrators to report this issue.",
-                "ErrImpersonateJobInvalid": "You can't impersonate this job grade!",
-                "ErrReauthRequired": "Re-authentication required!"
+                "ErrNotSuperuser": {
+                    "title": "Superuser required",
+                    "content": "You are not a superuser! Please contact your FiveNet administrators to report this issue."
+                },
+                "ErrImpersonateJobInvalid": {
+                    "title": "Invalid impersonation",
+                    "content": "You can't impersonate this job grade!"
+                },
+                "ErrReauthRequired": {
+                    "title": "Re-authentication required",
+                    "content": "Re-authentication required!"
+                }
             }
         },
         "completor": {
             "CompletorService": {
-                "ErrFailedSearch": "Failed to search the data!"
+                "ErrFailedSearch": {
+                    "title": "Search failed",
+                    "content": "Something went wrong while searching the data. Please try again."
+                }
             }
         },
         "centrum": {
             "CentrumService": {
-                "ErrFailedQuery": "Failed to get/update dispatch center data!",
-                "ErrNotPartOfDispatch": "You are not part of this dispatch!",
+                "ErrFailedQuery": {
+                    "title": "Dispatch center error",
+                    "content": "Something went wrong while loading dispatch center data. Please try again."
+                },
+                "ErrNotPartOfDispatch": {
+                    "title": "Dispatch membership required",
+                    "content": "You are not part of this dispatch!"
+                },
                 "ErrNotOnDuty": {
                     "title": "You are not on duty!",
                     "content": "Make sure you are on duty and fullfil any other requirements to be visible on the livemap."
@@ -2682,15 +2798,30 @@
                     "title": "Dispatch already in completed state!",
                     "content": "You can't accept/decline completed dispatches."
                 },
-                "ErrNotPartOfUnit": "You are not part of this unit!",
-                "ErrStaticUnit": "Can't update a static unit's status to be available!",
-                "ErrUnitPermDenied": "You can't access this unit!",
-                "ErrDispatchJobPermDenied": "You can't access this dispatch job!",
+                "ErrNotPartOfUnit": {
+                    "title": "Unit membership required",
+                    "content": "You are not part of this unit!"
+                },
+                "ErrStaticUnit": {
+                    "title": "Static unit",
+                    "content": "Can't update a static unit's status to be available!"
+                },
+                "ErrUnitPermDenied": {
+                    "title": "Unit access denied",
+                    "content": "You can't access this unit!"
+                },
+                "ErrDispatchJobPermDenied": {
+                    "title": "Dispatch job access denied",
+                    "content": "You can't access this dispatch job!"
+                },
                 "ErrDisabled": {
                     "title": "Dispatch Center is disabled!",
                     "content": "Please contact your leader to enable the dispatch center."
                 },
-                "ErrDispatchNoJobs": "You can't create a dispatch without any jobs!"
+                "ErrDispatchNoJobs": {
+                    "title": "No jobs selected",
+                    "content": "You can't create a dispatch without any jobs!"
+                }
             }
         },
         "general": {
@@ -2701,40 +2832,93 @@
         },
         "jobs": {
             "JobsService": {
-                "ErrFailedQuery": "Failed to get job data!",
-                "ErrReasonRequired": "A reason must be provided!",
+                "ErrFailedQuery": {
+                    "title": "Jobs service error",
+                    "content": "Something went wrong while loading job data. Please try again."
+                },
+                "ErrReasonRequired": {
+                    "title": "Reason required",
+                    "content": "A reason must be provided!"
+                },
+                "ErrGroupMemberRulesRequired": {
+                    "title": "Membership rules unmet",
+                    "content": "This colleague does not satisfy the group's strict membership rules."
+                },
+                "ErrGroupPolicyViolation": {
+                    "title": "Group policy violation",
+                    "content": "This change does not fit the group's current policy. Check whether the group type allows manual members, rules, or exclusions, and whether strict membership only applies to mixed groups."
+                },
                 "ErrPropsNoteDenied": "You are not allowed to set your colleague's note!",
                 "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!",
-                "ErrNotFoundOrNoPerms": "Colleague not found!",
+                "ErrNotFoundOrNoPerms": {
+                    "title": "Colleague not found",
+                    "content": "Colleague not found!"
+                },
                 "ErrPropsLabelsDenied": "You are not allowed to set your colleague's labels!",
                 "ErrPropsNameDenied": "You are not allowed to set your colleague's name!",
-                "ErrTimeclockOutOfRange": "Only the last 6 months are available to view in the timeclock!",
-                "ErrAbsenceBeginOutOfRange": "Absence begin date is outside the allowed range.",
-                "ErrAbsenceEndOutOfRange": "Absence end date is outside the allowed range.",
-                "ErrLabelsNoPerms": "You don't have permissions to list the colleagues labels!",
+                "ErrTimeclockOutOfRange": {
+                    "title": "Timeclock range exceeded",
+                    "content": "Only the last 6 months are available to view in the timeclock!"
+                },
+                "ErrAbsenceBeginOutOfRange": {
+                    "title": "Start date out of range",
+                    "content": "Absence begin date is outside the allowed range."
+                },
+                "ErrAbsenceEndOutOfRange": {
+                    "title": "End date out of range",
+                    "content": "Absence end date is outside the allowed range."
+                },
+                "ErrLabelsNoPerms": {
+                    "title": "Label access denied",
+                    "content": "You don't have permissions to list the colleagues labels!"
+                },
                 "ErrLabelNotFound": "Requested label not found!"
             }
         },
         "qualifications": {
             "QualificationsService": {
-                "ErrFailedQuery": "Failed to get qualifcation data!",
+                "ErrFailedQuery": {
+                    "title": "Qualifications service error",
+                    "content": "Something went wrong while loading qualification data. Please try again."
+                },
                 "ErrRequirementsMissing": {
                     "title": "Missing required Qualifications",
                     "content": "You are missing required qualifications."
                 },
-                "ErrQualificationClosed": "Can't request or take a closed qualification!",
-                "ErrExamDisabled": "The qualification's exam is disabled!",
-                "ErrRequirementSelfRef": "Please remove any qualification requirements that reference the qualification you are editing!",
-                "ErrQualiAccessDenied": "You can't access this qualifcation!",
+                "ErrQualificationClosed": {
+                    "title": "Qualification closed",
+                    "content": "Can't request or take a closed qualification!"
+                },
+                "ErrExamDisabled": {
+                    "title": "Exam disabled",
+                    "content": "The qualification's exam is disabled!"
+                },
+                "ErrRequirementSelfRef": {
+                    "title": "Self-reference not allowed",
+                    "content": "Please remove any qualification requirements that reference the qualification you are editing!"
+                },
+                "ErrQualiAccessDenied": {
+                    "title": "Qualification access denied",
+                    "content": "You can't access this qualification!"
+                },
                 "ErrQualiUpdateDenied": "You don't have permission to edit this qualification!",
                 "ErrQualiViewDenied": "You don't have permission to view this qualification!"
             }
         },
         "calendar": {
             "CalendarService": {
-                "ErrFailedQuery": "Failed to load calendar data!",
-                "ErrNoPerms": "You don't have permissions to access this calendar data!",
-                "ErrOnePrivateCal": "You can only have one private calendar!",
+                "ErrFailedQuery": {
+                    "title": "Calendar service error",
+                    "content": "Something went wrong while loading calendar data. Please try again."
+                },
+                "ErrNoPerms": {
+                    "title": "Calendar access denied",
+                    "content": "You don't have permissions to access this calendar data!"
+                },
+                "ErrOnePrivateCal": {
+                    "title": "Private calendar limit",
+                    "content": "You can only have one private calendar!"
+                },
                 "ErrCalendarClosed": {
                     "title": "Calendar is closed",
                     "content": "The calendar is closed and can't be used anymore."
@@ -2743,15 +2927,30 @@
                     "title": "Calendar Entry is closed",
                     "content": "The calendar entry is closed and can't be RSVPed to anymore."
                 },
-                "ErrNoDiscordGuildID": "Your job does not have set up the Discord bot. The Discord bot is required for the feature to work.",
-                "ErrInvalidDiscordChannel": "Invalid Discord channel! Either channel doesn't exist, is not a text channel or not part of the job's Discord server.",
-                "ErrInvalidReminderStep": "Invalid reminder intervals! Make sure you don't have duplicate intervals specified."
+                "ErrNoDiscordGuildID": {
+                    "title": "Discord bot required",
+                    "content": "Your job does not have set up the Discord bot. The Discord bot is required for the feature to work."
+                },
+                "ErrInvalidDiscordChannel": {
+                    "title": "Invalid Discord channel",
+                    "content": "Invalid Discord channel! Either channel doesn't exist, is not a text channel or not part of the job's Discord server."
+                },
+                "ErrInvalidReminderStep": {
+                    "title": "Invalid reminder intervals",
+                    "content": "Invalid reminder intervals! Make sure you don't have duplicate intervals specified."
+                }
             }
         },
         "wiki": {
             "WikiService": {
-                "ErrFailedQuery": "Failed to load wiki data!",
-                "ErrPageDenied": "You don't have access to this page!",
+                "ErrFailedQuery": {
+                    "title": "Wiki service error",
+                    "content": "Something went wrong while loading wiki data. Please try again."
+                },
+                "ErrPageDenied": {
+                    "title": "Page access denied",
+                    "content": "You don't have access to this page!"
+                },
                 "ErrPageHasChildren": {
                     "title": "Page has children",
                     "content": "You can't delete this page because it has child pages. Make sure to move or delete the child pages first."
@@ -2768,19 +2967,46 @@
         },
         "mailer": {
             "MailerService": {
-                "ErrFailedQuery": "Failed to load mail data!",
+                "ErrFailedQuery": {
+                    "title": "Mail service error",
+                    "content": "Something went wrong while loading mail data. Please try again."
+                },
                 "ErrAddresseAlreadyTaken": {
                     "title": "E-Mail address already taken!",
                     "content": "Please try again with another e-mail address."
                 },
-                "ErrTemplateLimitReached": "You can't have more templates (limit: 5)!",
-                "ErrEmailAccessDenied": "You must have access to the e-mail address!",
-                "ErrRecipientMinium": "Your e-mail must have at least one receiving e-mail address!",
-                "ErrInvalidRecipients": "One or more e-mail addresses are wrong.",
-                "ErrSameAddress": "Can't send an e-mail to the same e-mail address being sent from!",
-                "ErrCantDeleteOwnEmail": "You can't delete your own email!",
-                "ErrEmailAccessRequired": "A job's email requires at least one access",
-                "ErrAddresseInvalid": "Invalid e-mail address, please choose another one.",
+                "ErrTemplateLimitReached": {
+                    "title": "Template limit reached",
+                    "content": "You can't have more templates (limit: {limit})!"
+                },
+                "ErrEmailAccessDenied": {
+                    "title": "E-mail access denied",
+                    "content": "You must have access to the e-mail address!"
+                },
+                "ErrRecipientMinium": {
+                    "title": "Recipient required",
+                    "content": "Your e-mail must have at least one receiving e-mail address!"
+                },
+                "ErrInvalidRecipients": {
+                    "title": "Invalid recipients",
+                    "content": "One or more e-mail addresses are wrong."
+                },
+                "ErrSameAddress": {
+                    "title": "Same sender and recipient",
+                    "content": "Can't send an e-mail to the same e-mail address being sent from!"
+                },
+                "ErrCantDeleteOwnEmail": {
+                    "title": "Can't delete own e-mail",
+                    "content": "You can't delete your own email!"
+                },
+                "ErrEmailAccessRequired": {
+                    "title": "Email access required",
+                    "content": "A job's email requires at least one access"
+                },
+                "ErrAddresseInvalid": {
+                    "title": "Invalid e-mail address",
+                    "content": "Invalid e-mail address, please choose another one."
+                },
                 "ErrThreadAccessDenied": {
                     "title": "You don't have access to this thread!",
                     "content": "You might have been removed from the thread."
@@ -2793,21 +3019,54 @@
                     "title": "This e-mail address has been disabled!",
                     "content": "Please contact the FiveNet administration for help on this."
                 },
-                "ErrSignatureTooLong": "Your e-mail signature is too long!"
+                "ErrSignatureTooLong": {
+                    "title": "Signature too long",
+                    "content": "Your e-mail signature is too long!"
+                }
             }
         },
         "citizens": {
             "CitizensService": {
-                "ErrFailedQuery": "Failed to list/ get citizens data!",
-                "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)",
-                "ErrReasonRequired": "A reason must be provided!",
-                "ErrPropsWantedDenied": "You are not allowed to set a citizen's wanted status!",
-                "ErrPropsJobDenied": "You are not allowed to set a citizen's job!",
-                "ErrPropsJobPublic": "You can't set a state job!",
-                "ErrPropsJobInvalid": "Invalid job or job rank set!",
-                "ErrPropsTrafficPointsDenied": "You are not allowed to set a citizen's traffic infraction points!",
-                "ErrPropsLabelsDenied": "You are not allowed to set a citizen's labels!",
-                "ErrPropsMugshotDenied": "You are not allowed to set a citizen's mug shot!",
+                "ErrFailedQuery": {
+                    "title": "Citizens service error",
+                    "content": "Something went wrong while loading citizen data. Please try again."
+                },
+                "ErrJobGradeNoPermission": {
+                    "title": "No job access",
+                    "content": "No permission to access this citizen (based on the citizen's job)"
+                },
+                "ErrReasonRequired": {
+                    "title": "Reason required",
+                    "content": "A reason must be provided!"
+                },
+                "ErrPropsWantedDenied": {
+                    "title": "Wanted status denied",
+                    "content": "You are not allowed to set a citizen's wanted status!"
+                },
+                "ErrPropsJobDenied": {
+                    "title": "Job change denied",
+                    "content": "You are not allowed to set a citizen's job!"
+                },
+                "ErrPropsJobPublic": {
+                    "title": "State job not allowed",
+                    "content": "You can't set a state job!"
+                },
+                "ErrPropsJobInvalid": {
+                    "title": "Invalid job assignment",
+                    "content": "Invalid job or job rank set!"
+                },
+                "ErrPropsTrafficPointsDenied": {
+                    "title": "Traffic points denied",
+                    "content": "You are not allowed to set a citizen's traffic infraction points!"
+                },
+                "ErrPropsLabelsDenied": {
+                    "title": "Labels denied",
+                    "content": "You are not allowed to set a citizen's labels!"
+                },
+                "ErrPropsMugshotDenied": {
+                    "title": "Mugshot denied",
+                    "content": "You are not allowed to set a citizen's mug shot!"
+                },
                 "ErrCitizenNotFound": {
                     "title": "Citizen not found",
                     "content": "The citizen you are looking for was not found."
@@ -2819,34 +3078,73 @@
         },
         "vehicles": {
             "VehiclesService": {
-                "ErrFailedQuery": "Failed to search vehicles data!",
-                "ErrPropsWantedDenied": "You are not allowed to set a vehicle's wanted status!"
+                "ErrFailedQuery": {
+                    "title": "Vehicles service error",
+                    "content": "Something went wrong while searching vehicle data. Please try again."
+                },
+                "ErrPropsWantedDenied": {
+                    "title": "Wanted status denied",
+                    "content": "You are not allowed to set a vehicle's wanted status!"
+                }
             }
         },
         "documents": {
             "DocumentsService": {
-                "ErrFailedQuery": "Failed to get/ create/ update documents!",
-                "ErrNotFoundOrNoPerms": "No document found or no permissions to access document!",
-                "ErrTemplateNoPerms": "You don't have permission to view/ update/ delete this template!",
-                "ErrPermissionDenied": "You don't have permission to do this!",
+                "ErrFailedQuery": {
+                    "title": "Documents service error",
+                    "content": "Something went wrong while loading or updating documents. Please try again."
+                },
+                "ErrNotFoundOrNoPerms": {
+                    "title": "Document unavailable",
+                    "content": "No document found or no permissions to access document!"
+                },
+                "ErrTemplateNoPerms": {
+                    "title": "Template access denied",
+                    "content": "You don't have permission to view, update, or delete this template!"
+                },
+                "ErrPermissionDenied": {
+                    "title": "Permission denied",
+                    "content": "You don't have permission to do this!"
+                },
                 "ErrClosedDoc": {
                     "title": "Document is closed!",
                     "content": "This document is closed and can't be edited. Please re-open the document to make changes."
                 },
-                "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
-                "ErrDocAccessViewDenied": "You don't have permission to view this document's access!",
-                "ErrTemplateFailed": "Failed to render document template! Please talk with your faction leader.",
+                "ErrDocAccessEditDenied": {
+                    "title": "Edit access denied",
+                    "content": "You don't have permission to edit the document's access!"
+                },
+                "ErrDocAccessViewDenied": {
+                    "title": "View access denied",
+                    "content": "You don't have permission to view this document's access!"
+                },
+                "ErrTemplateFailed": {
+                    "title": "Template render failed",
+                    "content": "Failed to render document template! Please talk with your faction leader."
+                },
                 "ErrDocViewDenied": "You don't have permission to view this document!",
                 "ErrDocUpdateDenied": "You don't have permission to edit this document!",
                 "ErrDocDeleteDenied": "You don't have permission to delete this document!",
                 "ErrDocToggleDenied": "You don't have permission to close/open this document!",
                 "ErrCommentViewDenied": "You don't have permission to view document comments!",
-                "ErrCommentPostDenied": "You don't have permission to post a comment on this document!",
+                "ErrCommentPostDenied": {
+                    "title": "Comment posting denied",
+                    "content": "You don't have permission to post a comment on this document!"
+                },
                 "ErrCommentEditDenied": "You don't have permission to edit this comment!",
                 "ErrCommentDeleteDenied": "You can't delete this comment!",
-                "ErrFeedRefsViewDenied": "You don't have permission to view this document's references!",
-                "ErrFeedRelsViewDenied": "You don't have permission to view this document's relations!",
-                "ErrFeedRefSelf": "You can't reference a document with itself!",
+                "ErrFeedRefsViewDenied": {
+                    "title": "Reference access denied",
+                    "content": "You don't have permission to view this document's references!"
+                },
+                "ErrFeedRelsViewDenied": {
+                    "title": "Relation access denied",
+                    "content": "You don't have permission to view this document's relations!"
+                },
+                "ErrFeedRefSelf": {
+                    "title": "Self-reference not allowed",
+                    "content": "You can't reference a document with itself!"
+                },
                 "ErrFeedRefAddDenied": "You don't have permission to add references from/to this document!",
                 "ErrFeedRefRemoveDenied": "You don't have permission to remove references from this document!",
                 "ErrFeedRelAddDenied": "You don't have permission to add relation from/to this document!",
@@ -2855,9 +3153,18 @@
                     "title": "Document Request already exists!",
                     "content": "A document request of the same type already exists or one has been created in the last 24 hours."
                 },
-                "ErrDocSameOwner": "You are already the creator of this document!",
-                "ErrDocOwnerWrongJob": "New document owner must be part of your job!",
-                "ErrDocReqOwnDoc": "You can't create requests against your own document!",
+                "ErrDocSameOwner": {
+                    "title": "Already the creator",
+                    "content": "You are already the creator of this document!"
+                },
+                "ErrDocOwnerWrongJob": {
+                    "title": "Wrong job owner",
+                    "content": "New document owner must be part of your job!"
+                },
+                "ErrDocReqOwnDoc": {
+                    "title": "Own document",
+                    "content": "You can't create requests against your own document!"
+                },
                 "ErrDocReqAlreadyCompleted": {
                     "title": "Document Request has already been accepted/declined!",
                     "content": "The document request you are trying to accept/decline has already been processed."
@@ -2866,10 +3173,22 @@
                     "title": "Required document access missing!",
                     "content": "Make sure you have not edited or removed any required document access."
                 },
-                "ErrDocOwnerFailed": "You need to have edit access to the document!",
-                "ErrDocAccessDuplicate": "Document access: A job rank/citizen can only have one access and not multiple!",
-                "ErrTemplateAccessDuplicate": "Template access: A job rank can only have one access and not multiple!",
-                "ErrDocAccessInvalid": "Document access: Invalid job rank/ citizen set!"
+                "ErrDocOwnerFailed": {
+                    "title": "Owner access required",
+                    "content": "You need to have edit access to the document!"
+                },
+                "ErrDocAccessDuplicate": {
+                    "title": "Duplicate document access",
+                    "content": "Document access: A job rank/citizen can only have one access and not multiple!"
+                },
+                "ErrTemplateAccessDuplicate": {
+                    "title": "Duplicate template access",
+                    "content": "Template access: A job rank can only have one access and not multiple!"
+                },
+                "ErrDocAccessInvalid": {
+                    "title": "Invalid document access",
+                    "content": "Document access: Invalid job rank/ citizen set!"
+                }
             },
             "ApprovalService": {
                 "ErrApprovalTaskAlreadyHandled": {
@@ -2900,21 +3219,48 @@
         },
         "livemap": {
             "LivemapService": {
-                "ErrStreamFailed": "Failed to stream Map data!",
-                "ErrMarkerFailed": "Failed to create/ update/ delete marker!",
-                "ErrMarkerDenied": "You are not allowed to access this map marker!"
+                "ErrStreamFailed": {
+                    "title": "Map stream failed",
+                    "content": "Something went wrong while streaming map data. Please try again."
+                },
+                "ErrMarkerFailed": {
+                    "title": "Marker operation failed",
+                    "content": "Something went wrong while creating, updating, or deleting the marker. Please try again."
+                },
+                "ErrMarkerDenied": {
+                    "title": "Marker access denied",
+                    "content": "You are not allowed to access this map marker!"
+                }
             }
         },
         "settings": {
             "SettingsService": {
-                "ErrFailedQuery": "Failed to get/ update control panel data!",
-                "ErrInvalidRequest": "Invalid role action requested!",
-                "ErrNoPermission": "No permission to create/ change/ delete role!",
+                "ErrFailedQuery": {
+                    "title": "Settings service error",
+                    "content": "Something went wrong while loading or updating the control panel data. Please try again."
+                },
+                "ErrInvalidRequest": {
+                    "title": "Invalid role action",
+                    "content": "Invalid role action requested!"
+                },
+                "ErrNoPermission": {
+                    "title": "Permission required",
+                    "content": "No permission to create, change, or delete this role!"
+                },
                 "ErrRoleAlreadyExists": "Role already exists!",
                 "ErrOwnRoleDeletion": "Can't delete your own role!",
-                "ErrInvalidPerms": "Failed to update role permissions!",
-                "ErrInvalidAttrs": "Failed to update role attributes!",
-                "ErrDiscordNotEnabled": "Discord bot integration is not enabled!",
+                "ErrInvalidPerms": {
+                    "title": "Invalid role permissions",
+                    "content": "Failed to update role permissions!"
+                },
+                "ErrInvalidAttrs": {
+                    "title": "Invalid role attributes",
+                    "content": "Failed to update role attributes!"
+                },
+                "ErrDiscordNotEnabled": {
+                    "title": "Discord disabled",
+                    "content": "Discord bot integration is not enabled!"
+                },
                 "ErrDiscordConnectRequired": {
                     "title": "You must have your Discord account connected!",
                     "content": "Please make sure to connect your Discord account with FiveNet."
@@ -2940,8 +3286,14 @@
         },
         "notifications": {
             "NotificationsService": {
-                "ErrFailedRequest": "Failed to load notifications data!",
-                "ErrFailedStream": "Failed to stream notifications!"
+                "ErrFailedRequest": {
+                    "title": "Notifications service error",
+                    "content": "Something went wrong while loading notifications data. Please try again."
+                },
+                "ErrFailedStream": {
+                    "title": "Notification stream failed",
+                    "content": "Something went wrong while streaming notifications. Please try again."
+                }
             }
         }
     },
@@ -3038,6 +3390,85 @@
             }
         },
         "jobs": {
+            "groups": {
+                "AccessLevel": {
+                    "UNSPECIFIED": "Unspecified",
+                    "BLOCKED": "Blocked",
+                    "VIEW": "View",
+                    "EDIT": "Edit",
+                    "MANAGE": "Manage"
+                },
+                "GroupState": {
+                    "UNSPECIFIED": "Unspecified",
+                    "ACTIVE": "Active",
+                    "INACTIVE": "Inactive",
+                    "ARCHIVED": "Archived"
+                },
+                "GroupType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "MANUAL": "Manual",
+                    "SMART": "Smart",
+                    "MIXED": "Mixed"
+                },
+                "GroupMembershipMode": {
+                    "UNSPECIFIED": "Unspecified",
+                    "FLEXIBLE": "Flexible",
+                    "STRICT": "Strict"
+                },
+                "GroupExclusionReason": {
+                    "UNSPECIFIED": "Unspecified",
+                    "MANUAL": "Manual",
+                    "TEMPORARY": "Temporary",
+                    "NOT_ELIGIBLE": "Not eligible",
+                    "OTHER": "Other"
+                },
+                "GroupRuleType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "GRADE": "Grade",
+                    "QUALIFICATION": "Qualification"
+                },
+                "GroupGradeRuleType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "MINIMUM": "Minimum",
+                    "EXACT": "Exact",
+                    "RANGE": "Range"
+                },
+                "GroupQualificationRuleType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "ALL": "All",
+                    "ANY": "Any"
+                },
+                "GroupMemberSource": {
+                    "UNSPECIFIED": "Unspecified",
+                    "MANUAL": "Manual",
+                    "RULE": "Rule",
+                    "LEADER": "Leader"
+                },
+                "GroupMembershipReasonType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "MANUAL": "Manual member",
+                    "RULE": "Matched rule",
+                    "EXCLUSION": "Excluded",
+                    "LEADER": "Leader"
+                },
+                "GroupActivityType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "CREATED": "Created",
+                    "UPDATED": "Updated",
+                    "ARCHIVED": "Archived",
+                    "RESTORED": "Restored",
+                    "MEMBER_ADDED": "Member added",
+                    "MEMBER_REMOVED": "Member removed",
+                    "MEMBER_EXCLUDED": "Member excluded",
+                    "MEMBER_EXCLUSION_REMOVED": "Member exclusion removed",
+                    "LEADER_ADDED": "Leader added",
+                    "LEADER_REMOVED": "Leader removed",
+                    "RULE_ADDED": "Rule added",
+                    "RULE_UPDATED": "Rule updated",
+                    "RULE_REMOVED": "Rule removed",
+                    "LOGO_UPDATED": "Logo updated"
+                }
+            },
             "ConductType": {
                 "UNSPECIFIED": "Unspecified",
                 "NEUTRAL": "Neutral",
@@ -3997,6 +4428,21 @@
                 "GetStats": {
                     "key": "Get Statistics",
                     "description": "Retrieve statistics related to colleagues."
+                }
+            },
+            "GroupsService": {
+                "service": "Groups",
+                "ListGroups": {
+                    "key": "List and view groups",
+                    "description": "View groups you can access."
+                },
+                "CreateGroup": {
+                    "key": "Create new groups.",
+                    "description": "Create new groups."
+                },
+                "ArchiveGroup": {
+                    "key": "Archive/Restore groups",
+                    "description": "Archive or restore groups."
                 }
             }
         },

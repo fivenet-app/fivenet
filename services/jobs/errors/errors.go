@@ -8,8 +8,8 @@ import (
 var (
 	ErrFailedQuery = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.jobs.JobsService.ErrFailedQuery"},
-		nil,
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrFailedQuery.content"},
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrFailedQuery.title"},
 	)
 	ErrPropsAbsenceDenied = common.NewI18nErr(
 		codes.PermissionDenied,
@@ -33,30 +33,40 @@ var (
 	)
 	ErrReasonRequired = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.jobs.JobsService.ErrReasonRequired"},
-		nil,
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrReasonRequired.content"},
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrReasonRequired.title"},
 	)
 	ErrNotFoundOrNoPerms = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.jobs.JobsService.ErrNotFoundOrNoPerms"},
-		nil,
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrNotFoundOrNoPerms.content"},
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrNotFoundOrNoPerms.title"},
+	)
+	ErrGroupMemberRulesRequired = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrGroupMemberRulesRequired.content"},
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrGroupMemberRulesRequired.title"},
+	)
+	ErrGroupPolicyViolation = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrGroupPolicyViolation.content"},
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrGroupPolicyViolation.title"},
 	)
 
 	ErrAbsenceBeginOutOfRange = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.jobs.JobsService.ErrAbsenceBeginOutOfRange"},
-		nil,
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrAbsenceBeginOutOfRange.content"},
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrAbsenceBeginOutOfRange.title"},
 	)
 	ErrAbsenceEndOutOfRange = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.jobs.JobsService.ErrAbsenceEndOutOfRange"},
-		nil,
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrAbsenceEndOutOfRange.content"},
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrAbsenceEndOutOfRange.title"},
 	)
 
 	ErrTimeclockOutOfRange = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.jobs.JobsService.ErrTimeclockOutOfRange"},
-		nil,
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrTimeclockOutOfRange.content"},
+		&common.I18NItem{Key: "errors.jobs.JobsService.ErrTimeclockOutOfRange.title"},
 	)
 
 	ErrLabelsNoPerms = common.NewI18nErr(

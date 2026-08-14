@@ -16,7 +16,7 @@ func TestStoreGetEmailSettings(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(
 		`FROM fivenet_mailer_settings AS email_settings LEFT JOIN fivenet_mailer_settings_blocked ON`,
@@ -53,7 +53,7 @@ func TestStoreUpsertEmailSettingsSignature(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_mailer_settings`) +
 		`(?s).*` + regexp.QuoteMeta(`ON DUPLICATE KEY UPDATE`)
@@ -72,7 +72,7 @@ func TestStoreAddBlockedEmails(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_mailer_settings_blocked`) +
 		`(?s).*` + regexp.QuoteMeta(`VALUES (?, ?), (?, ?)`)
@@ -94,7 +94,7 @@ func TestStoreDeleteBlockedEmails(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`DELETE FROM fivenet_mailer_settings_blocked`) +
 		`(?s).*` + regexp.QuoteMeta(`email_id = ?`) +

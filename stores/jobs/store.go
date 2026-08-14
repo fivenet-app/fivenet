@@ -8,13 +8,17 @@ import (
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	jobsconduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
+	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
 )
 
 type ListColleaguesQuery struct {
@@ -32,6 +36,12 @@ type ListColleaguesQuery struct {
 	Sort   *database.Sort
 	Offset int64
 	Limit  int64
+}
+
+type ListColleaguesByUserIDsQuery struct {
+	Job         string
+	UserIDs     []int32
+	WithColumns mysql.ProjectionList
 }
 
 type ListQuery struct {
@@ -57,11 +67,12 @@ type TimeclockQuery struct {
 }
 
 type InactiveEmployeesQuery struct {
-	Days   int32
-	Sort   *database.Sort
-	Offset int64
-	Limit  int64
-	Job    string
+	Days    int32
+	UserIDs []int32
+	Sort    *database.Sort
+	Offset  int64
+	Limit   int64
+	Job     string
 }
 
 type ConductQuery struct {
@@ -80,16 +91,153 @@ type ConductQuery struct {
 	IncludeDeleted bool
 }
 
+type GroupsQuery struct {
+	Job             string
+	Kind            jobsgroups.GroupType
+	States          []jobsgroups.GroupState
+	Search          string
+	IncludeCounts   bool
+	IncludeInactive bool
+	IncludeArchived bool
+	IDs             []int64
+	Sort            *database.Sort
+	Offset          int64
+	Limit           int64
+}
+
+type GroupQuery struct {
+	Job             string
+	IncludeArchived bool
+}
+
+type GroupRuleMemberMatch struct {
+	GroupID int64
+	UserID  int32
+	RuleID  int64
+	Label   string
+}
+
+type IGroupsQuery interface {
+	GetGroup(ctx context.Context, db qrm.DB, q GroupQuery, id int64) (*jobsgroups.Group, error)
+	ListGroupManualMembers(
+		ctx context.Context,
+		db qrm.DB,
+		groupID int64,
+		search string,
+	) ([]*jobsgroups.GroupManualMember, error)
+	ListGroupRuleMemberMatches(
+		ctx context.Context,
+		db qrm.DB,
+		group *jobsgroups.Group,
+		search string,
+	) ([]*GroupRuleMemberMatch, error)
+	ListGroupMemberExclusions(
+		ctx context.Context,
+		db qrm.DB,
+		groupID int64,
+		search string,
+	) ([]*jobsgroups.GroupMemberExclusion, error)
+	ListGroupLeaders(
+		ctx context.Context,
+		db qrm.DB,
+		groupID int64,
+		search string,
+	) ([]*jobsgroups.GroupLeader, error)
+}
+
 type IStore interface {
+	IGroupsQuery
+
 	GetMOTD(ctx context.Context, db qrm.DB, job string) (string, error)
 	SetMOTD(ctx context.Context, db qrm.DB, job string, motd string) error
 	GetJobProps(ctx context.Context, db qrm.DB, job string) (*jobsprops.JobProps, error)
 
+	CountGroups(
+		ctx context.Context,
+		db qrm.DB,
+		q GroupsQuery,
+		userInfo *userinfo.UserInfo,
+	) (int64, error)
+	ListGroups(
+		ctx context.Context,
+		db qrm.DB,
+		q GroupsQuery,
+		userInfo *userinfo.UserInfo,
+	) ([]*jobsgroups.Group, error)
+	CreateGroup(ctx context.Context, db qrm.DB, group *jobsgroups.Group) (int64, error)
+	UpdateGroup(ctx context.Context, db qrm.DB, group *jobsgroups.Group) error
+	ArchiveGroup(ctx context.Context, db qrm.DB, job string, id int64, updatedByUserID int32) error
+	RestoreGroup(ctx context.Context, db qrm.DB, job string, id int64, updatedByUserID int32) error
+	RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64) error
+	AddGroupManualMember(
+		ctx context.Context,
+		db qrm.DB,
+		groupID int64,
+		userID int32,
+		createdByUserID int32,
+		reason *string,
+	) (*jobsgroups.GroupManualMember, bool, error)
+	RemoveGroupManualMember(ctx context.Context, db qrm.DB, groupID int64, userID int32) error
+	AddGroupMemberExclusion(
+		ctx context.Context,
+		db qrm.DB,
+		groupID int64,
+		userID int32,
+		reasonType jobsgroups.GroupExclusionReason,
+		createdByUserID int32,
+		reason *string,
+	) (*jobsgroups.GroupMemberExclusion, bool, error)
+	RemoveGroupMemberExclusion(ctx context.Context, db qrm.DB, groupID int64, userID int32) error
+	AddGroupLeader(
+		ctx context.Context,
+		db qrm.DB,
+		groupID int64,
+		userID int32,
+		createdByUserID int32,
+	) (*jobsgroups.GroupLeader, bool, error)
+	RemoveGroupLeader(ctx context.Context, db qrm.DB, groupID int64, userID int32) error
+	ListGroupRules(ctx context.Context, db qrm.DB, groupID int64) ([]*jobsgroups.GroupRule, error)
+	GetGroupRule(
+		ctx context.Context,
+		db qrm.DB,
+		groupID int64,
+		ruleID int64,
+	) (*jobsgroups.GroupRule, error)
+	CreateGroupRule(
+		ctx context.Context,
+		db qrm.DB,
+		rule *jobsgroups.GroupRule,
+	) (*jobsgroups.GroupRule, error)
+	UpdateGroupRule(
+		ctx context.Context,
+		db qrm.DB,
+		rule *jobsgroups.GroupRule,
+		updatedByUserID int32,
+	) (*jobsgroups.GroupRule, error)
+	DeleteGroupRule(ctx context.Context, db qrm.DB, groupID int64, ruleID int64) error
+	CreateGroupActivity(
+		ctx context.Context,
+		db qrm.DB,
+		activities ...*jobsgroups.GroupActivity,
+	) error
+	CountGroupActivity(ctx context.Context, db qrm.DB, q ListQuery) (int64, error)
+	ListGroupActivity(
+		ctx context.Context,
+		db qrm.DB,
+		q ListQuery,
+	) ([]*jobsgroups.GroupActivity, error)
+
+	UserInJob(ctx context.Context, db qrm.DB, job string, userID int32) (bool, error)
 	CountColleagues(ctx context.Context, db qrm.DB, q ListColleaguesQuery) (int64, error)
 	ListColleagues(
 		ctx context.Context,
 		db qrm.DB,
 		q ListColleaguesQuery,
+	) ([]*jobscolleagues.Colleague, error)
+	ListColleaguesByUserIDs(
+		ctx context.Context,
+		db qrm.DB,
+		q ListColleaguesByUserIDsQuery,
 	) ([]*jobscolleagues.Colleague, error)
 	GetColleague(
 		ctx context.Context,
@@ -244,10 +392,26 @@ type IStore interface {
 }
 
 type Store struct {
-	db       *sql.DB
-	customDB *config.CustomDB
+	db          *sql.DB
+	customDB    *config.CustomDB
+	groupAccess access.JobGroupsAccess
 }
 
-func New(db *sql.DB, customDB *config.CustomDB) IStore {
-	return &Store{db: db, customDB: customDB}
+type Result struct {
+	fx.Out
+
+	Store       IStore
+	GroupsQuery IGroupsQuery
+}
+
+func New(db *sql.DB, customDB *config.CustomDB, groupAccess *access.JobGroupsObjectAccess) Result {
+	s := &Store{
+		db:          db,
+		customDB:    customDB,
+		groupAccess: groupAccess,
+	}
+	return Result{
+		Store:       s,
+		GroupsQuery: s,
+	}
 }

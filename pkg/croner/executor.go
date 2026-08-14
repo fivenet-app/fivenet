@@ -232,7 +232,11 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 		status = "failure"
 	}
 	ag.metrics.handlerDuration.WithLabelValues(jobName).Observe(elapsed.Seconds())
-	ag.metrics.runsTotal.WithLabelValues(jobName, status).Inc()
+	if status == "success" {
+		ag.metrics.lastRunSuccess.WithLabelValues(jobName).Set(1)
+	} else {
+		ag.metrics.lastRunSuccess.WithLabelValues(jobName).Set(0)
+	}
 
 	// Update timestamp in cronjob data
 	now := timestamp.Now()

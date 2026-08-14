@@ -16,6 +16,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { ConductEntry } from "../../resources/jobs/conduct/conduct";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { UserSelector } from "../../resources/jobs/user_selector";
 import { ConductType } from "../../resources/jobs/conduct/conduct";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -48,9 +49,9 @@ export interface ListConductEntriesRequest {
      */
     showDrafts?: boolean;
     /**
-     * @generated from protobuf field: repeated int32 user_ids = 6
+     * @generated from protobuf field: optional resources.jobs.UserSelector users = 6
      */
-    userIds: number[];
+    users?: UserSelector;
     /**
      * @generated from protobuf field: repeated int64 ids = 7
      */
@@ -150,7 +151,7 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
             { no: 3, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.conduct.ConductType", ConductType, "CONDUCT_TYPE_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
             { no: 4, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "show_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "users", kind: "message", T: () => UserSelector },
             { no: 7, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 8, name: "show_deleted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -158,7 +159,6 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
     create(value?: PartialMessage<ListConductEntriesRequest>): ListConductEntriesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.types = [];
-        message.userIds = [];
         message.ids = [];
         if (value !== undefined)
             reflectionMergePartial<ListConductEntriesRequest>(this, message, value);
@@ -188,12 +188,8 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
                 case /* optional bool show_drafts */ 5:
                     message.showDrafts = reader.bool();
                     break;
-                case /* repeated int32 user_ids */ 6:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.userIds.push(reader.int32());
-                    else
-                        message.userIds.push(reader.int32());
+                case /* optional resources.jobs.UserSelector users */ 6:
+                    message.users = UserSelector.internalBinaryRead(reader, reader.uint32(), options, message.users);
                     break;
                 case /* repeated int64 ids */ 7:
                     if (wireType === WireType.LengthDelimited)
@@ -236,13 +232,9 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
         /* optional bool show_drafts = 5; */
         if (message.showDrafts !== undefined)
             writer.tag(5, WireType.Varint).bool(message.showDrafts);
-        /* repeated int32 user_ids = 6; */
-        if (message.userIds.length) {
-            writer.tag(6, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.userIds.length; i++)
-                writer.int32(message.userIds[i]);
-            writer.join();
-        }
+        /* optional resources.jobs.UserSelector users = 6; */
+        if (message.users)
+            UserSelector.internalBinaryWrite(message.users, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* repeated int64 ids = 7; */
         if (message.ids.length) {
             writer.tag(7, WireType.LengthDelimited).fork();

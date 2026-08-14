@@ -8,13 +8,13 @@ import (
 var (
 	ErrFailedQuery = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.mailer.MailerService.ErrFailedQuery"},
-		nil,
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrFailedQuery.content"},
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrFailedQuery.title"},
 	)
 	ErrNoPerms = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.mailer.MailerService.ErrNoPerms"},
-		nil,
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrNoPerms.content"},
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrNoPerms.title"},
 	)
 
 	ErrAddresseAlreadyTaken = common.NewI18nErr(
@@ -24,28 +24,28 @@ var (
 	)
 	ErrAddresseInvalid = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.mailer.MailerService.ErrAddresseInvalid"},
-		nil,
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrAddresseInvalid.content"},
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrAddresseInvalid.title"},
 	)
-	ErrTemplateLimitReached = common.NewI18nErr(
+	ErrTemplateLimitReached = common.NewI18nErrFunc(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.mailer.MailerService.ErrTemplateLimitReached"},
-		nil,
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrTemplateLimitReached.content"},
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrTemplateLimitReached.title"},
 	)
 	ErrEmailAccessDenied = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.mailer.MailerService.ErrEmailAccessDenied"},
-		nil,
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrEmailAccessDenied.content"},
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrEmailAccessDenied.title"},
 	)
 	ErrCantDeleteOwnEmail = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.mailer.MailerService.ErrCantDeleteOwnEmail"},
-		nil,
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrCantDeleteOwnEmail.content"},
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrCantDeleteOwnEmail.title"},
 	)
 	ErrEmailAccessRequired = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.mailer.MailerService.ErrEmailAccessRequired"},
-		nil,
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrEmailAccessRequired.content"},
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrEmailAccessRequired.title"},
 	)
 	ErrEmailChangeTooEarly = common.NewI18nErr(
 		codes.InvalidArgument,
@@ -60,18 +60,18 @@ var (
 
 	ErrRecipientMinium = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.mailer.MailerService.ErrRecipientMinium"},
-		nil,
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrRecipientMinium.content"},
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrRecipientMinium.title"},
 	)
 	ErrInvalidRecipients = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.mailer.MailerService.ErrInvalidRecipients"},
-		nil,
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrInvalidRecipients.content"},
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrInvalidRecipients.title"},
 	)
 	ErrSameAddress = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.mailer.MailerService.ErrSameAddress"},
-		nil,
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrSameAddress.content"},
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrSameAddress.title"},
 	)
 
 	ErrThreadAccessDenied = common.NewI18nErr(
@@ -83,6 +83,6 @@ var (
 	ErrSignatureTooLong = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{Key: "errors.mailer.MailerService.ErrSignatureTooLong.content"},
-		nil,
+		&common.I18NItem{Key: "errors.mailer.MailerService.ErrSignatureTooLong.title"},
 	)
 )

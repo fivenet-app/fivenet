@@ -17,7 +17,7 @@ func TestStoreGetExamUser(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_qualifications_exam_users AS exam_user`) +
 		`(?s).*` + regexp.QuoteMeta(`exam_user.qualification_id = ?`) +
@@ -51,7 +51,7 @@ func TestStoreCountExamQuestions(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(
 		`FROM fivenet_qualifications_exam_questions AS exam_question`,

@@ -8,18 +8,18 @@ import (
 var (
 	ErrFailedQuery = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrFailedQuery"},
-		nil,
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrFailedQuery.content"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrFailedQuery.title"},
 	)
 	ErrNoPerms = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrNoPerms"},
-		nil,
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrNoPerms.content"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrNoPerms.title"},
 	)
 	ErrOnePrivateCal = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrOnePrivateCal"},
-		nil,
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrOnePrivateCal.content"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrOnePrivateCal.title"},
 	)
 	ErrCalendarClosed = common.NewI18nErr(
 		codes.InvalidArgument,
@@ -34,17 +34,17 @@ var (
 
 	ErrNoDiscordGuildID = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrNoDiscordGuildID"},
-		nil,
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrNoDiscordGuildID.content"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrNoDiscordGuildID.title"},
 	)
 	ErrInvalidDiscordChannel = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrInvalidDiscordChannel"},
-		nil,
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrInvalidDiscordChannel.content"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrInvalidDiscordChannel.title"},
 	)
 	ErrInvalidReminderStep = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrInvalidReminderStep"},
-		nil,
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrInvalidReminderStep.content"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrInvalidReminderStep.title"},
 	)
 )

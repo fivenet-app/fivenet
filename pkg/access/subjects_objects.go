@@ -1,13 +1,58 @@
 package access
 
 import (
+	"context"
 	"database/sql"
 
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
-func NewDocumentsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+type DocumentsObjectAccess struct {
+	*SubjectObjectAccess
+}
+
+type DocumentTemplatesObjectAccess struct {
+	*SubjectObjectAccess
+}
+
+type DocumentStampsObjectAccess struct {
+	*SubjectObjectAccess
+}
+
+type CalendarObjectAccess struct {
+	*SubjectObjectAccess
+}
+
+type WikiPageObjectAccess struct {
+	*SubjectObjectAccess
+}
+
+type CitizenLabelsObjectAccess struct {
+	*SubjectObjectAccess
+}
+
+type QualificationsObjectAccess struct {
+	*SubjectObjectAccess
+}
+
+type MailerEmailsObjectAccess struct {
+	*SubjectObjectAccess
+}
+
+type CentrumUnitsObjectAccess struct {
+	*SubjectObjectAccess
+}
+
+type JobGroupsObjectAccess struct {
+	*SubjectObjectAccess
+}
+
+func NewDocumentsSubjectObjectAccess(db *sql.DB) *DocumentsObjectAccess {
+	return &DocumentsObjectAccess{NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
 		TargetTable: table.FivenetDocuments,
 		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetDocuments.ID,
@@ -46,11 +91,11 @@ func NewDocumentsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			},
 		},
 		CalculatedVisibilityMaps: true,
-	})
+	})}
 }
 
-func NewDocumentTemplatesSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+func NewDocumentTemplatesSubjectObjectAccess(db *sql.DB) *DocumentTemplatesObjectAccess {
+	return &DocumentTemplatesObjectAccess{NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
 		TargetTable: table.FivenetDocumentsTemplates,
 		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetDocumentsTemplates.ID,
@@ -80,11 +125,11 @@ func NewDocumentTemplatesSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			},
 		},
 		CalculatedVisibilityMaps: true,
-	})
+	})}
 }
 
-func NewDocumentStampsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+func NewDocumentStampsSubjectObjectAccess(db *sql.DB) *DocumentStampsObjectAccess {
+	return &DocumentStampsObjectAccess{NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
 		TargetTable: table.FivenetDocumentsStamps,
 		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetDocumentsStamps.ID,
@@ -115,11 +160,11 @@ func NewDocumentStampsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			Rules: []VisibilityRule{{Kind: VisibilityRuleCreator}},
 		},
 		CalculatedVisibilityMaps: true,
-	})
+	})}
 }
 
-func NewCalendarSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+func NewCalendarSubjectObjectAccess(db *sql.DB) *CalendarObjectAccess {
+	return &CalendarObjectAccess{NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
 		TargetTable: table.FivenetCalendar,
 		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetCalendar.ID,
@@ -158,11 +203,11 @@ func NewCalendarSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			},
 		},
 		CalculatedVisibilityMaps: true,
-	})
+	})}
 }
 
-func NewWikiPageSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+func NewWikiPageSubjectObjectAccess(db *sql.DB) *WikiPageObjectAccess {
+	return &WikiPageObjectAccess{NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
 		TargetTable: table.FivenetWikiPages,
 		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetWikiPages.ID,
@@ -201,11 +246,11 @@ func NewWikiPageSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			},
 		},
 		CalculatedVisibilityMaps: true,
-	})
+	})}
 }
 
-func NewCitizenLabelsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+func NewCitizenLabelsSubjectObjectAccess(db *sql.DB) *CitizenLabelsObjectAccess {
+	return &CitizenLabelsObjectAccess{NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
 		TargetTable: table.FivenetUserLabelsJob,
 		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetUserLabelsJob.ID,
@@ -235,11 +280,11 @@ func NewCitizenLabelsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			},
 		},
 		CalculatedVisibilityMaps: true,
-	})
+	})}
 }
 
-func NewQualificationsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+func NewQualificationsSubjectObjectAccess(db *sql.DB) *QualificationsObjectAccess {
+	return &QualificationsObjectAccess{NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
 		TargetTable: table.FivenetQualifications,
 		TargetColumns: &SubjectTargetTableColumns{
 			ID:         table.FivenetQualifications.ID,
@@ -273,11 +318,11 @@ func NewQualificationsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			},
 		},
 		CalculatedVisibilityMaps: true,
-	})
+	})}
 }
 
-func NewMailerEmailsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+func NewMailerEmailsSubjectObjectAccess(db *sql.DB) *MailerEmailsObjectAccess {
+	return &MailerEmailsObjectAccess{NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
 		TargetTable: table.FivenetMailerEmails,
 		TargetColumns: &SubjectTargetTableColumns{
 			ID:        table.FivenetMailerEmails.ID,
@@ -311,11 +356,11 @@ func NewMailerEmailsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			},
 		},
 		CalculatedVisibilityMaps: true,
-	})
+	})}
 }
 
-func NewCentrumUnitsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
-	return NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+func NewCentrumUnitsSubjectObjectAccess(db *sql.DB) *CentrumUnitsObjectAccess {
+	return &CentrumUnitsObjectAccess{NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
 		TargetTable: table.FivenetCentrumUnits,
 		TargetColumns: &SubjectTargetTableColumns{
 			ID:        table.FivenetCentrumUnits.ID,
@@ -333,5 +378,74 @@ func NewCentrumUnitsSubjectObjectAccess(db *sql.DB) *SubjectObjectAccess {
 			SubjectID: table.FivenetCentrumUnitsAccess.SubjectID,
 			Effect:    table.FivenetCentrumUnitsAccess.Effect,
 		},
-	})
+	})}
+}
+
+type JobGroupsAccess interface {
+	CanUserAccessTarget(
+		ctx context.Context,
+		targetID int64,
+		userInfo *userinfo.UserInfo,
+		access int32,
+	) (bool, error)
+	CanUserAccessTargetIncludingDeleted(
+		ctx context.Context,
+		targetID int64,
+		userInfo *userinfo.UserInfo,
+		access int32,
+	) (bool, error)
+	CanUserAccessTargetIDs(
+		ctx context.Context,
+		userInfo *userinfo.UserInfo,
+		access int32,
+		targetIDs ...int64,
+	) ([]int64, error)
+	ListTargetAccess(
+		ctx context.Context,
+		tx qrm.DB,
+		targetID int64,
+		opts SubjectAccessOptions,
+	) (*resourcesaccess.Access, error)
+	ReplaceTargetAccess(
+		ctx context.Context,
+		tx qrm.DB,
+		resolver *SubjectResolver,
+		targetID int64,
+		in *resourcesaccess.Access,
+		opts SubjectAccessOptions,
+	) (*SubjectAccessChanges, error)
+	VisibleIDsByConditionQuery(
+		userInfo *userinfo.UserInfo,
+		access int32,
+		includeDeleted bool,
+		condition mysql.BoolExpression,
+	) VisibilityQuery
+}
+
+func NewJobGroupsSubjectObjectAccess(db *sql.DB) *JobGroupsObjectAccess {
+	return &JobGroupsObjectAccess{NewSubjectObjectAccess(db, SubjectObjectAccessConfig{
+		TargetTable: table.FivenetJobGroups,
+		TargetColumns: &SubjectTargetTableColumns{
+			ID:        table.FivenetJobGroups.ID,
+			CreatedAt: table.FivenetJobGroups.CreatedAt,
+			UpdatedAt: table.FivenetJobGroups.UpdatedAt,
+			DeletedAt: table.FivenetJobGroups.DeletedAt,
+		},
+		AccessTable: table.FivenetJobGroupsAccess,
+		AccessColumns: &SubjectAccessColumns{
+			BaseAccessColumns: BaseAccessColumns{
+				ID:       table.FivenetJobGroupsAccess.ID,
+				TargetID: table.FivenetJobGroupsAccess.TargetID,
+				Access:   table.FivenetJobGroupsAccess.Access,
+			},
+			SubjectID: table.FivenetJobGroupsAccess.SubjectID,
+			Effect:    table.FivenetJobGroupsAccess.Effect,
+		},
+		CalculatedVisibilitySubjectTable:     table.FivenetJobGroupsVisibilitySubject,
+		CalculatedVisibilitySubjectTargetID:  table.FivenetJobGroupsVisibilitySubject.TargetID,
+		CalculatedVisibilitySubjectSubjectID: table.FivenetJobGroupsVisibilitySubject.SubjectID,
+		CalculatedVisibilitySubjectAccess:    table.FivenetJobGroupsVisibilitySubject.Access,
+		CalculatedVisibilitySubjectEffect:    table.FivenetJobGroupsVisibilitySubject.Effect,
+		CalculatedVisibilityMaps:             true,
+	})}
 }

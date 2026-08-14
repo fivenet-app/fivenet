@@ -283,28 +283,22 @@ func TestCompareSubjectAccessKeepsAllowAndDenySeparate(t *testing.T) {
 
 	current := &resourcesaccess.Access{
 		Jobs: []*resourcesaccess.JobAccess{{
-			Id:           1,
-			TargetId:     10,
-			Job:          "5net",
-			MinimumGrade: 5,
-			Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-			RequiredAccess: func() *int32 {
-				v := int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)
-				return &v
-			}(),
+			Id:             1,
+			TargetId:       10,
+			Job:            "5net",
+			MinimumGrade:   5,
+			Access:         int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+			RequiredAccess: new(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 		}},
 	}
 	in := &resourcesaccess.Access{
 		Jobs: []*resourcesaccess.JobAccess{{
-			Id:           2,
-			TargetId:     10,
-			Job:          "5net",
-			MinimumGrade: 5,
-			Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
-			RequiredAccess: func() *int32 {
-				v := int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)
-				return &v
-			}(),
+			Id:             2,
+			TargetId:       10,
+			Job:            "5net",
+			MinimumGrade:   5,
+			Access:         int32(documentsaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
+			RequiredAccess: new(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 		}},
 	}
 

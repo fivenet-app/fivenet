@@ -1,8 +1,14 @@
 import { defineStore } from 'pinia';
-import { getCitizensLabelsClient, getCompletorCompletorClient, getJobsColleaguesClient } from '~~/gen/ts/clients';
+import {
+    getCitizensLabelsClient,
+    getCompletorCompletorClient,
+    getJobsColleaguesClient,
+    getJobsGroupsClient,
+} from '~~/gen/ts/clients';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
+import { type Group, GroupState } from '~~/gen/ts/resources/jobs/groups/group';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { LawBook } from '~~/gen/ts/resources/laws/laws';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
@@ -113,21 +119,6 @@ export const useCompletorStore = defineStore(
         };
 
         /**
-         * Find a colleague by user ID.
-         * @param {number} userId - The ID of the colleague to find.
-         * @returns {Promise<Colleague | undefined>} - The colleague with the specified ID, or undefined if not found.
-         */
-        const findColleague = async (userId: number): Promise<Colleague | undefined> => {
-            const colleagues = await listColleagues({
-                userIds: [userId],
-                search: '',
-                labelIds: [],
-                userOnly: true,
-            });
-            return colleagues.length === 0 ? undefined : colleagues[0];
-        };
-
-        /**
          * Fetch colleagues.
          * @param {ListColleaguesRequest} req - The request object for listing colleagues.
          * @returns {Promise<Colleague[]>} - The list of colleagues.
@@ -148,17 +139,52 @@ export const useCompletorStore = defineStore(
         };
 
         /**
+         * Complete groups via API.
+         * @param {string} search - The search term for completing groups.
+         * @returns {Promise<Group[]>} - The completed groups.
+         */
+        const completeGroups = async (search: string, groupIds: number[] = []): Promise<Group[]> => {
+            const jobsGroupsClient = await getJobsGroupsClient();
+            try {
+                const call = jobsGroupsClient.listGroups({
+                    pagination: { offset: 0 },
+                    search: search,
+                    states: [GroupState.ACTIVE],
+                    includeArchived: false,
+                    includeCounts: false,
+                    includeInactive: true,
+                    groupIds: groupIds,
+                });
+                const { response } = await call;
+                return response.groups;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        };
+
+        /**
          * Complete colleagues via API.
          * @param {string} search - The search term for completing colleagues.
          * @param {number[]} [userIds=[]] - Optional user IDs to filter by.
          * @returns {Promise<Colleague[]>} - The completed colleagues.
          */
-        const completeColleagues = async (search: string, userIds: number[] = []): Promise<Colleague[]> => {
+        const completeColleagues = async (
+            search: string,
+            userIds: number[] = [],
+            userOnly: boolean = false,
+        ): Promise<Colleague[]> => {
             try {
                 const colleagues = await listColleagues({
                     search: search,
                     labelIds: [],
-                    userIds: userIds,
+                    userOnly: userOnly,
+                    users:
+                        userIds.length > 0
+                            ? {
+                                  userIds: userIds,
+                              }
+                            : undefined,
                 });
                 return colleagues.map((c) => ({
                     ...c,
@@ -280,9 +306,9 @@ export const useCompletorStore = defineStore(
             completeJobs,
             findCitizen,
             completeCitizens,
-            findColleague,
             listColleagues,
             completeColleagues,
+            completeGroups,
             completeDocumentCategories,
             listLawBooks,
             invalidateLawBooksCache,

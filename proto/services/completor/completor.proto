@@ -61,12 +61,14 @@ service CompletorService {
       name: "Any"
     };
   }
+
   rpc CompleteJobs(CompleteJobsRequest) returns (CompleteJobsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
       name: "Any"
     };
   }
+
   rpc CompleteDocumentCategories(CompleteDocumentCategoriesRequest) returns (CompleteDocumentCategoriesResponse) {
     option (codegen.perms.perms) = {
       enabled: true
@@ -75,6 +77,7 @@ service CompletorService {
       name: "ListCategories"
     };
   }
+
   rpc ListLawBooks(ListLawBooksRequest) returns (ListLawBooksResponse) {
     option (codegen.perms.perms) = {
       enabled: true

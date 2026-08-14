@@ -43,7 +43,7 @@ func TestApplyRequiredAccessOverlayUpgradesExistingEntry(t *testing.T) {
 				MinimumGrade:   3,
 				Access:         2,
 				Required:       new(true),
-				RequiredAccess: func() *int32 { v := int32(2); return &v }(),
+				RequiredAccess: new(int32(2)),
 			},
 		},
 	}
@@ -54,7 +54,7 @@ func TestApplyRequiredAccessOverlayUpgradesExistingEntry(t *testing.T) {
 				MinimumGrade:   3,
 				Access:         7,
 				Required:       new(true),
-				RequiredAccess: func() *int32 { v := int32(2); return &v }(),
+				RequiredAccess: new(int32(2)),
 			},
 		},
 	}
@@ -77,7 +77,7 @@ func TestApplyRequiredAccessOverlayInsertsMissingEntry(t *testing.T) {
 				UserId:         42,
 				Access:         8,
 				Required:       new(true),
-				RequiredAccess: func() *int32 { v := int32(8); return &v }(),
+				RequiredAccess: new(int32(8)),
 			},
 		},
 	}
@@ -139,7 +139,7 @@ func TestNormalizeRequiredAccessFloorsClampsBelowFloor(t *testing.T) {
 				UserId:         42,
 				Access:         1,
 				Required:       new(true),
-				RequiredAccess: func() *int32 { v := int32(3); return &v }(),
+				RequiredAccess: new(int32(3)),
 			},
 		},
 	}

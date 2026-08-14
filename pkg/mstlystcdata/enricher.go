@@ -14,9 +14,8 @@ import (
 )
 
 // NotAvailablePlaceholder is used as a fallback label when job info is not available.
-const (
-	NotAvailablePlaceholder = "N/A"
-)
+// Must be kept in sync with `app/utils/enricher.ts`.
+const NotAvailablePlaceholder = "N/A"
 
 type IEnricher interface {
 	EnrichJobInfo(user common.IJobInfo)

@@ -157,11 +157,16 @@ func TestDBServerConcurrentSetup(t *testing.T) {
 
 	t.Cleanup(func() {
 		require.Len(t, results, 2)
-		require.NoError(t, results[0].err)
-		require.NoError(t, results[1].err)
-		require.NotEqual(t, results[0].name, results[1].name)
-		require.Equal(t, 5, results[0].users)
-		require.Equal(t, 5, results[1].users)
+
+		names := map[string]int{}
+		for _, res := range results {
+			require.NoError(t, res.err)
+			require.NotEmpty(t, res.name)
+			require.Equal(t, 5, res.users)
+			names[res.name] = res.users
+		}
+
+		require.Len(t, names, 2)
 	})
 
 	run := func(name string) {

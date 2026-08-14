@@ -9,7 +9,6 @@ import (
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -21,7 +20,7 @@ func TestStoreListLabels(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user_labels_job AS label`) +
 		`(?s).*` + regexp.QuoteMeta(`label.deleted_at IS NULL`) +
@@ -71,7 +70,7 @@ func TestStoreListLabelsUsesVisibilityForNonSuperuser(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(testParams(db))
 
 	expectedQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*` +
 		regexp.QuoteMeta(`SELECT label.id AS "label.id"`) +
@@ -120,7 +119,7 @@ func TestGetUserLabelsForUserUsesVisibleIDsSubquery(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(testParams(db))
 
 	expectedQuery := `(?s).*WITH user_subjects AS.*fivenet_user_labels_job AS label.*`
 	mock.ExpectQuery(expectedQuery).
@@ -151,7 +150,7 @@ func TestStoreInsertLabel(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(testParams(db))
 	job := "police"
 	icon := "shield"
 	label := &citizenslabels.Label{
@@ -180,7 +179,7 @@ func TestStoreUpdateLabel(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(testParams(db))
 	job := "police"
 	icon := "shield"
 	label := &citizenslabels.Label{
@@ -211,7 +210,7 @@ func TestStoreDeleteLabel(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(testParams(db))
 	deletedAt := timestamp.Now()
 
 	expectedQuery := regexp.QuoteMeta(
@@ -234,7 +233,7 @@ func TestStoreReorderLabels(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(testParams(db))
 	labelIDs := []int64{7, 4, 9}
 
 	lookupQuery := regexp.QuoteMeta(`FROM fivenet_user_labels_job`) +

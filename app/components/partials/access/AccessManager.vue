@@ -31,6 +31,7 @@ const props = withDefaults(
         totalLimit?: number;
         hideGrade?: boolean;
         hideJobs?: string[];
+        hideOtherJobs?: boolean;
         name?: string;
         fullName?: boolean;
     }>(),
@@ -46,6 +47,7 @@ const props = withDefaults(
         totalLimit: undefined,
         hideGrade: false,
         hideJobs: () => [],
+        hideOtherJobs: false,
         lockRequiredCheckbox: false,
         name: undefined,
         fullName: false,
@@ -241,6 +243,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             :jobs="jobsList"
             :hide-grade="hideGrade"
             :hide-jobs="hideJobs"
+            :hide-other-jobs="hideOtherJobs"
             :name="`${$props.name}${fullName ? '' : `.${entry.type}s`}.${idx}`"
             v-bind="$attrs"
             @delete="access?.splice(idx, 1)"

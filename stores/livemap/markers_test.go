@@ -24,23 +24,14 @@ func TestStoreCreateMarker(t *testing.T) {
 	now := time.Unix(100, 0).UTC()
 	expiresAt := timestamp.New(now.Add(24 * time.Hour))
 	marker := &livemapmarkers.MarkerMarker{
-		ExpiresAt: expiresAt,
-		Name:      "Marker",
-		Description: func() *string {
-			s := "desc"
-			return &s
-		}(),
-		X: 1.25,
-		Y: 2.5,
-		Postal: func() *string {
-			p := "12345"
-			return &p
-		}(),
-		Color: func() *string {
-			c := "#fff"
-			return &c
-		}(),
-		Type: livemapmarkers.MarkerType_MARKER_TYPE_DOT,
+		ExpiresAt:   expiresAt,
+		Name:        "Marker",
+		Description: new("desc"),
+		X:           1.25,
+		Y:           2.5,
+		Postal:      new("12345"),
+		Color:       new("#fff"),
+		Type:        livemapmarkers.MarkerType_MARKER_TYPE_DOT,
 	}
 
 	expectedQuery := regexp.QuoteMeta(

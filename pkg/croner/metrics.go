@@ -15,7 +15,7 @@ const (
 
 	executorMetricStartLatency    = "start_latency_seconds"
 	executorMetricHandlerDuration = "handler_duration_seconds"
-	executorMetricRunsTotal       = "runs_total"
+	executorMetricLastRunSuccess  = "last_run_success"
 )
 
 type schedulerMetrics struct {
@@ -25,7 +25,7 @@ type schedulerMetrics struct {
 type executorMetrics struct {
 	startLatency    *prometheus.HistogramVec
 	handlerDuration *prometheus.HistogramVec
-	runsTotal       *prometheus.CounterVec
+	lastRunSuccess  *prometheus.GaugeVec
 }
 
 var (
@@ -71,18 +71,18 @@ func getExecutorMetrics() *executorMetrics {
 				Help:      "Duration of cron handler execution.",
 				Buckets:   prometheus.ExponentialBuckets(0.005, 2, 17),
 			}, []string{"job"}),
-			runsTotal: prometheus.NewCounterVec(prometheus.CounterOpts{
+			lastRunSuccess: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 				Namespace: admin.MetricsNamespace,
 				Subsystem: executorMetricSubsystem,
-				Name:      executorMetricRunsTotal,
-				Help:      "Total number of cron handler runs by outcome.",
-			}, []string{"job", "status"}),
+				Name:      executorMetricLastRunSuccess,
+				Help:      "Whether the last cron handler run succeeded (1) or failed (0).",
+			}, []string{"job"}),
 		}
 
 		prometheus.MustRegister(
 			executorMetricsInst.startLatency,
 			executorMetricsInst.handlerDuration,
-			executorMetricsInst.runsTotal,
+			executorMetricsInst.lastRunSuccess,
 		)
 	})
 

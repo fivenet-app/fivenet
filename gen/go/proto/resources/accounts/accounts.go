@@ -40,6 +40,50 @@ func ConvertFromModelAcc(a *model.FivenetAccounts) *Account {
 	}
 }
 
+// Scan implements driver.Valuer for protobuf AccountGroups.
+func (x *AccountGroups) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		var dest []string
+		if err := json.Unmarshal([]byte(t), &dest); err != nil {
+			return err
+		}
+		x.Groups = append(x.Groups, dest...)
+		return nil
+	case *string:
+		if t == nil {
+			return nil
+		}
+		var dest []string
+		if err := json.Unmarshal([]byte(*t), &dest); err != nil {
+			return err
+		}
+		x.Groups = append(x.Groups, dest...)
+		return nil
+	case []byte:
+		var dest []string
+		if err := json.Unmarshal(t, &dest); err != nil {
+			return err
+		}
+		x.Groups = append(x.Groups, dest...)
+		return nil
+	}
+	return nil
+}
+
+// Value marshals the AccountGroups value into driver.Valuer.
+func (x *AccountGroups) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := json.Marshal(x.GetGroups())
+	if err != nil {
+		return nil, err
+	}
+	return string(out), err
+}
+
 func (ag *AccountGroups) ContainsAnyGroup(groups []string) bool {
 	if ag == nil {
 		return false
@@ -93,48 +137,4 @@ func (ag *AccountGroups) Equal(in *AccountGroups) bool {
 	}
 
 	return true
-}
-
-// Scan implements driver.Valuer for protobuf AccountGroups.
-func (x *AccountGroups) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		var dest []string
-		if err := json.Unmarshal([]byte(t), &dest); err != nil {
-			return err
-		}
-		x.Groups = append(x.Groups, dest...)
-		return nil
-	case *string:
-		if t == nil {
-			return nil
-		}
-		var dest []string
-		if err := json.Unmarshal([]byte(*t), &dest); err != nil {
-			return err
-		}
-		x.Groups = append(x.Groups, dest...)
-		return nil
-	case []byte:
-		var dest []string
-		if err := json.Unmarshal(t, &dest); err != nil {
-			return err
-		}
-		x.Groups = append(x.Groups, dest...)
-		return nil
-	}
-	return nil
-}
-
-// Value marshals the AccountGroups value into driver.Valuer.
-func (x *AccountGroups) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := json.Marshal(x.GetGroups())
-	if err != nil {
-		return nil, err
-	}
-	return string(out), err
 }

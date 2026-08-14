@@ -6,21 +6,20 @@ import { h } from 'vue';
 import { z } from 'zod';
 import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
 import EditorModal from '~/components/jobs/conduct/EditorModal.vue';
+import UserGroupSelector from '~/components/jobs/UserGroupSelector.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DraftBadge from '~/components/partials/DraftBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import SelectMenu from '~/components/partials/SelectMenu.vue';
 import TableSortButton from '~/components/partials/TableSortButton.vue';
-import { useCompletorStore } from '~/stores/completor';
+import { userSelectorSchema } from '~/utils/validation';
 import { getJobsConductClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
-import ColleagueName from '../colleagues/ColleagueName.vue';
 import { conductTypesToBadgeColor } from './helpers';
 import ViewSlideover from './ViewSlideover.vue';
 
@@ -34,8 +33,6 @@ const { t } = useI18n();
 const { can } = useAuth();
 
 const overlay = useOverlay();
-
-const completorStore = useCompletorStore();
 
 const notifications = useNotificationsStore();
 
@@ -56,7 +53,7 @@ const schema = z.object({
     showExpired: z.coerce.boolean().default(false),
     showDrafts: z.coerce.boolean().default(true),
     showDeleted: z.coerce.boolean().default(false),
-    user: z.coerce.number().min(1).optional(),
+    users: userSelectorSchema,
     sorting: z
         .object({
             columns: z
@@ -80,9 +77,22 @@ type Schema = z.output<typeof schema>;
 const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
+function setFromProps(): void {
+    if (props.userId === undefined) {
+        return;
+    }
+
+    query.users = { userIds: [props.userId] };
+}
+
+if (props.userId !== undefined) {
+    setFromProps();
+    watch(() => props.userId, setFromProps);
+}
+
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
-        `jobs-conduct-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.types.join(',')}-${validatedQuery.value.showExpired}-${validatedQuery.value.showDrafts}-${validatedQuery.value.showDeleted}-${validatedQuery.value.id}`,
+        `jobs-conduct-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.types.join(',')}-${validatedQuery.value.showExpired}-${validatedQuery.value.showDrafts}-${validatedQuery.value.showDeleted}-${validatedQuery.value.id}-${JSON.stringify(validatedQuery.value.users)}`,
     () => listConductEntries(validatedQuery.value),
 );
 
@@ -92,7 +102,6 @@ async function listConductEntries(values: Schema): Promise<ListConductEntriesRes
         entryIds.push(typeof values.id === 'string' ? parseInt(values.id, 10) : values.id);
     }
 
-    const userIds = props.userId ? [props.userId] : values.user ? [values.user] : [];
     try {
         const call = jobsConductClient.listConductEntries({
             pagination: {
@@ -103,7 +112,7 @@ async function listConductEntries(values: Schema): Promise<ListConductEntriesRes
             showExpired: values.showExpired,
             showDrafts: values.showDrafts,
             showDeleted: values.showDeleted,
-            userIds: userIds,
+            users: values.users,
             ids: entryIds,
         });
         const { response } = await call;
@@ -294,37 +303,8 @@ const columns = computed(
                 <template #default>
                     <UForm ref="formRef" class="my-2 w-full" :schema="schema" :state="query" @submit="commitValidatedQuery">
                         <div class="flex flex-row gap-2">
-                            <UFormField v-if="hideUserSearch !== true" class="flex-1" name="user" :label="$t('common.search')">
-                                <SelectMenu
-                                    v-model="query.user"
-                                    class="w-full"
-                                    :searchable="
-                                        async (q: string) =>
-                                            await completorStore.completeColleagues(q, query.user ? [query.user] : [])
-                                    "
-                                    searchable-key="completor-colleagues"
-                                    :search-input="{ placeholder: $t('common.search_field') }"
-                                    :filter-fields="['firstname', 'lastname']"
-                                    block
-                                    :placeholder="$t('common.colleague')"
-                                    trailing
-                                    leading-icon="i-mdi-search"
-                                    value-key="userId"
-                                >
-                                    <template #default="{ items }">
-                                        <div v-for="item in items?.filter((i) => query.user === i.userId)" :key="item.userId">
-                                            <ColleagueName :colleague="item" birthday />
-                                        </div>
-                                    </template>
-
-                                    <template #item-label="{ item }">
-                                        <ColleagueName class="truncate" :colleague="item" birthday />
-                                    </template>
-
-                                    <template #empty>
-                                        {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                    </template>
-                                </SelectMenu>
+                            <UFormField v-if="hideUserSearch !== true" class="flex-1" name="users" :label="$t('common.search')">
+                                <UserGroupSelector v-model="query.users" class="w-full" />
                             </UFormField>
 
                             <UFormField class="flex-1" name="types" :label="$t('common.type')">

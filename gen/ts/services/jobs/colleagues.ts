@@ -19,6 +19,7 @@ import { ColleagueActivity } from "../../resources/jobs/colleagues/activity/acti
 import { ColleagueActivityType } from "../../resources/jobs/colleagues/activity/activity";
 import { Colleague } from "../../resources/jobs/colleagues/colleagues";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { UserSelector } from "../../resources/jobs/user_selector";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Colleagues
@@ -42,9 +43,9 @@ export interface ListColleaguesRequest {
      */
     search: string;
     /**
-     * @generated from protobuf field: repeated int32 user_ids = 4
+     * @generated from protobuf field: optional resources.jobs.UserSelector users = 4
      */
-    userIds: number[];
+    users?: UserSelector;
     /**
      * @generated from protobuf field: optional bool user_only = 5
      */
@@ -130,9 +131,9 @@ export interface ListColleagueActivityRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: repeated int32 user_ids = 3
+     * @generated from protobuf field: optional resources.jobs.UserSelector users = 3
      */
-    userIds: number[];
+    users?: UserSelector;
     /**
      * @generated from protobuf field: repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4
      */
@@ -262,7 +263,7 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { int32: { gte: 0 } } } } } },
+            { no: 4, name: "users", kind: "message", T: () => UserSelector },
             { no: 5, name: "user_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "absent", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "label_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } },
@@ -273,7 +274,6 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
     create(value?: PartialMessage<ListColleaguesRequest>): ListColleaguesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.search = "";
-        message.userIds = [];
         message.labelIds = [];
         if (value !== undefined)
             reflectionMergePartial<ListColleaguesRequest>(this, message, value);
@@ -293,12 +293,8 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
                 case /* string search */ 3:
                     message.search = reader.string();
                     break;
-                case /* repeated int32 user_ids */ 4:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.userIds.push(reader.int32());
-                    else
-                        message.userIds.push(reader.int32());
+                case /* optional resources.jobs.UserSelector users */ 4:
+                    message.users = UserSelector.internalBinaryRead(reader, reader.uint32(), options, message.users);
                     break;
                 case /* optional bool user_only */ 5:
                     message.userOnly = reader.bool();
@@ -340,13 +336,9 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
         /* string search = 3; */
         if (message.search !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.search);
-        /* repeated int32 user_ids = 4; */
-        if (message.userIds.length) {
-            writer.tag(4, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.userIds.length; i++)
-                writer.int32(message.userIds[i]);
-            writer.join();
-        }
+        /* optional resources.jobs.UserSelector users = 4; */
+        if (message.users)
+            UserSelector.internalBinaryWrite(message.users, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* optional bool user_only = 5; */
         if (message.userOnly !== undefined)
             writer.tag(5, WireType.Varint).bool(message.userOnly);
@@ -620,13 +612,12 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
         super("services.jobs.ListColleagueActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "users", kind: "message", T: () => UserSelector },
             { no: 4, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.colleagues.activity.ColleagueActivityType", ColleagueActivityType, "COLLEAGUE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityRequest>): ListColleagueActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.userIds = [];
         message.activityTypes = [];
         if (value !== undefined)
             reflectionMergePartial<ListColleagueActivityRequest>(this, message, value);
@@ -643,12 +634,8 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
                 case /* optional resources.common.database.Sort sort */ 2:
                     message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
                     break;
-                case /* repeated int32 user_ids */ 3:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.userIds.push(reader.int32());
-                    else
-                        message.userIds.push(reader.int32());
+                case /* optional resources.jobs.UserSelector users */ 3:
+                    message.users = UserSelector.internalBinaryRead(reader, reader.uint32(), options, message.users);
                     break;
                 case /* repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types */ 4:
                     if (wireType === WireType.LengthDelimited)
@@ -675,13 +662,9 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
         /* optional resources.common.database.Sort sort = 2; */
         if (message.sort)
             Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated int32 user_ids = 3; */
-        if (message.userIds.length) {
-            writer.tag(3, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.userIds.length; i++)
-                writer.int32(message.userIds[i]);
-            writer.join();
-        }
+        /* optional resources.jobs.UserSelector users = 3; */
+        if (message.users)
+            UserSelector.internalBinaryWrite(message.users, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4; */
         if (message.activityTypes.length) {
             writer.tag(4, WireType.LengthDelimited).fork();

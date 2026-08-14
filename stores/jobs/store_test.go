@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/stretchr/testify/require"
 )
@@ -17,5 +18,9 @@ func newTestStore(t *testing.T) (*Store, sqlmock.Sqlmock) {
 		_ = db.Close()
 	})
 
-	return &Store{db: db, customDB: &config.CustomDB{}}, mock
+	return &Store{
+		db:          db,
+		customDB:    &config.CustomDB{},
+		groupAccess: access.NewJobGroupsSubjectObjectAccess(db),
+	}, mock
 }

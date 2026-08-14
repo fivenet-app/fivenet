@@ -8,13 +8,13 @@ import (
 var (
 	ErrFailedQuery = common.NewI18nErr(
 		codes.Internal,
-		common.NewI18nItem("errors.wiki.WikiService.ErrFailedQuery"),
-		nil,
+		common.NewI18nItem("errors.wiki.WikiService.ErrFailedQuery.content"),
+		common.NewI18nItem("errors.wiki.WikiService.ErrFailedQuery.title"),
 	)
 	ErrPageDenied = common.NewI18nErr(
 		codes.InvalidArgument,
-		common.NewI18nItem("errors.wiki.WikiService.ErrPageDenied"),
-		nil,
+		common.NewI18nItem("errors.wiki.WikiService.ErrPageDenied.content"),
+		common.NewI18nItem("errors.wiki.WikiService.ErrPageDenied.title"),
 	)
 	ErrPageNotFound = common.NewI18nErr(
 		codes.NotFound,

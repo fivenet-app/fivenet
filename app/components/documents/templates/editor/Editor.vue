@@ -595,6 +595,7 @@ const formRef = useTemplateRef('formRef');
                                         )
                                     "
                                     required-mode="checkbox"
+                                    hide-other-jobs
                                     name="jobAccess"
                                     full-name
                                 />

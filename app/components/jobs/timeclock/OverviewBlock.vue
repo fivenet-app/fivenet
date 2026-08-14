@@ -5,12 +5,10 @@ import type { GetTimeclockStatsResponse } from '~~/gen/ts/services/jobs/timecloc
 
 const props = withDefaults(
     defineProps<{
-        userId?: number;
         hideHeader?: boolean;
         loading?: boolean;
     }>(),
     {
-        userId: undefined,
         hideHeader: false,
         loading: false,
     },
@@ -18,13 +16,12 @@ const props = withDefaults(
 
 const jobsTimeclockClient = await getJobsTimeclockClient();
 
-const { data, error, status, refresh } = useLazyAsyncData(`jobs-timeclock-stats`, () => getStats());
+const { data, error, status, refresh } = useLazyAsyncData('jobs-timeclock-stats', () => getStats());
 
 async function getStats(): Promise<GetTimeclockStatsResponse> {
     try {
-        const call = jobsTimeclockClient.getTimeclockStats({
-            userId: props.userId,
-        });
+        // Overview block stats are always for the active user only.
+        const call = jobsTimeclockClient.getTimeclockStats({});
         const { response } = await call;
 
         return response;

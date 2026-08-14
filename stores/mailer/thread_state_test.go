@@ -19,7 +19,7 @@ func TestStoreGetThreadState(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_mailer_threads_state AS thread_state`) +
@@ -53,17 +53,17 @@ func TestStoreSetThreadState(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 	state := &mailerthreads.ThreadState{
 		ThreadId:  42,
 		EmailId:   7,
-		Unread:    func() *bool { v := true; return &v }(),
+		Unread:    new(true),
 		LastRead:  timestamp.New(now),
-		Important: func() *bool { v := true; return &v }(),
-		Favorite:  func() *bool { v := false; return &v }(),
-		Muted:     func() *bool { v := false; return &v }(),
-		Archived:  func() *bool { v := false; return &v }(),
+		Important: new(true),
+		Favorite:  new(false),
+		Muted:     new(false),
+		Archived:  new(false),
 	}
 
 	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_mailer_threads_state`) +

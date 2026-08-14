@@ -314,7 +314,7 @@ func TestCleanupUserPhoneNumbersDefaultsToSinglePrimaryPhone(t *testing.T) {
 	store, _ := newTestStore(t)
 
 	user := &syncdata.DataUser{
-		PhoneNumber: func() *string { v := "111"; return &v }(),
+		PhoneNumber: new("111"),
 	}
 
 	store.cleanupUserPhoneNumbers(user)
@@ -330,7 +330,7 @@ func TestCleanupUserPhoneNumbersPrefersIncomingPrimaryFlag(t *testing.T) {
 	store, _ := newTestStore(t)
 
 	user := &syncdata.DataUser{
-		PhoneNumber: func() *string { v := "222"; return &v }(),
+		PhoneNumber: new("222"),
 		PhoneNumbers: []*users.PhoneNumber{
 			{Number: "222", IsPrimary: false},
 			{Number: "111", IsPrimary: true},
@@ -371,7 +371,7 @@ func TestCleanupUserPhoneNumbersFallsBackToLegacyWhenNoPrimary(t *testing.T) {
 	store, _ := newTestStore(t)
 
 	user := &syncdata.DataUser{
-		PhoneNumber: func() *string { v := "222"; return &v }(),
+		PhoneNumber: new("222"),
 		PhoneNumbers: []*users.PhoneNumber{
 			{Number: "111", IsPrimary: false},
 			{Number: "222", IsPrimary: false},
@@ -392,7 +392,7 @@ func TestCleanupUserPhoneNumbersKeepsOnlyOnePrimary(t *testing.T) {
 	store, _ := newTestStore(t)
 
 	user := &syncdata.DataUser{
-		PhoneNumber: func() *string { v := "111"; return &v }(),
+		PhoneNumber: new("111"),
 		PhoneNumbers: []*users.PhoneNumber{
 			{Number: "111", IsPrimary: true},
 			{Number: "222", IsPrimary: true},

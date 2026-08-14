@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
 )
 
 type IStore interface {
@@ -176,12 +177,19 @@ type IStore interface {
 
 type Store struct {
 	db            *sql.DB
-	subjectAccess *access.SubjectObjectAccess
+	subjectAccess *access.MailerEmailsObjectAccess
 }
 
-func New(db *sql.DB) IStore {
+type Params struct {
+	fx.In
+
+	DB            *sql.DB
+	SubjectAccess *access.MailerEmailsObjectAccess
+}
+
+func New(p Params) IStore {
 	return &Store{
-		db:            db,
-		subjectAccess: access.NewMailerEmailsSubjectObjectAccess(db),
+		db:            p.DB,
+		subjectAccess: p.SubjectAccess,
 	}
 }

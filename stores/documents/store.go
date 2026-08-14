@@ -27,6 +27,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
 )
 
 type IStore interface {
@@ -355,10 +356,10 @@ type IStore interface {
 
 type Store struct {
 	db                 *sql.DB
-	subjectAccess      *access.SubjectObjectAccess
-	stampAccess        *access.SubjectObjectAccess
+	subjectAccess      *access.DocumentsObjectAccess
+	stampAccess        *access.DocumentStampsObjectAccess
 	subjectResolver    *access.SubjectResolver
-	templateAccess     *access.SubjectObjectAccess
+	templateAccess     *access.DocumentTemplatesObjectAccess
 	userDocumentSorter *resourcesdatabase.SorterBuilder
 }
 
@@ -449,13 +450,22 @@ type ListApprovalsQuery struct {
 	UserInfo     *userinfo.UserInfo
 }
 
-func New(db *sql.DB) IStore {
+type Params struct {
+	fx.In
+
+	DB             *sql.DB
+	SubjectAccess  *access.DocumentsObjectAccess
+	StampAccess    *access.DocumentStampsObjectAccess
+	TemplateAccess *access.DocumentTemplatesObjectAccess
+}
+
+func New(p Params) IStore {
 	return &Store{
-		db:              db,
-		subjectAccess:   access.NewDocumentsSubjectObjectAccess(db),
-		stampAccess:     access.NewDocumentStampsSubjectObjectAccess(db),
-		subjectResolver: access.NewSubjectResolver(db),
-		templateAccess:  access.NewDocumentTemplatesSubjectObjectAccess(db),
+		db:              p.DB,
+		subjectAccess:   p.SubjectAccess,
+		stampAccess:     p.StampAccess,
+		subjectResolver: access.NewSubjectResolver(p.DB),
+		templateAccess:  p.TemplateAccess,
 		userDocumentSorter: resourcesdatabase.New(
 			resourcesdatabase.SpecMap{
 				"createdAt": resourcesdatabase.Column{

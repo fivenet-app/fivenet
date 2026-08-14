@@ -2,19 +2,18 @@
 import { listEnumValues } from '@protobuf-ts/runtime';
 import { z } from 'zod';
 import ActivityFeedEntry from '~/components/jobs/colleagues/info/ActivityFeedEntry.vue';
+import UserGroupSelector from '~/components/jobs/UserGroupSelector.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import SelectMenu from '~/components/partials/SelectMenu.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import type { Form } from '@nuxt/ui';
-import { useCompletorStore } from '~/stores/completor';
 import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { ColleagueActivityType } from '~~/gen/ts/resources/jobs/colleagues/activity/activity';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/colleagues';
-import ColleagueName from '../ColleagueName.vue';
 import { jobsUserActivityTypeBGColor, jobsUserActivityTypeIcon } from './helpers';
+import { userSelectorSchema } from '~/utils/validation';
 
 const props = withDefaults(
     defineProps<{
@@ -28,8 +27,6 @@ const props = withDefaults(
 );
 
 const { attrStringList, isSuperuser } = useAuth();
-
-const completorStore = useCompletorStore();
 
 const jobsColleaguesClient = await getJobsColleaguesClient();
 
@@ -48,11 +45,7 @@ const activityTypes = computed(() =>
 );
 
 const schema = z.object({
-    colleagues: z.coerce
-        .number()
-        .array()
-        .max(10)
-        .default(props.userId ? [props.userId] : []),
+    users: userSelectorSchema,
     types: z.enum(ColleagueActivityType).array().max(typesAttrs.value.length).default(activityTypes.value),
     sorting: z
         .object({
@@ -80,11 +73,11 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const activityKey = computed(
     () =>
-        `jobs-colleague-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.colleagues.join(',')}-${validatedQuery.value.types.join(':')}-${props.userId}`,
+        `jobs-colleague-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.types.join(':')}-${JSON.stringify(validatedQuery.value.users)}-${props.userId}`,
 );
 
 if (props.userId !== undefined) {
-    query.colleagues = [props.userId];
+    query.users = { userIds: [props.userId] };
 }
 
 const { data, status, refresh, error } = useLazyAsyncData(activityKey, () => listColleagueActivity(validatedQuery.value));
@@ -96,7 +89,7 @@ async function listColleagueActivity(values: Schema): Promise<ListColleagueActiv
                 offset: calculateOffset(values.page, data.value?.pagination),
             },
             sort: values.sorting,
-            userIds: values.colleagues,
+            users: values.users,
             activityTypes: values.types,
         });
         const { response } = await call;
@@ -114,9 +107,7 @@ const colleagueSearchAttrs = ['Own', 'Lower_Rank', 'Same_Rank', 'Any'];
 watch(
     () => props.userId,
     async (userId) => {
-        if (userId !== undefined) {
-            query.colleagues = [userId];
-        }
+        query.users = userId !== undefined ? { userIds: [userId] } : { userIds: [] };
 
         await commitValidatedQuery();
     },
@@ -136,34 +127,8 @@ watch(
                     :state="query"
                     @submit="commitValidatedQuery"
                 >
-                    <UFormField v-if="userId === undefined" class="flex-1" name="colleagues" :label="$t('common.search')">
-                        <SelectMenu
-                            v-model="query.colleagues"
-                            class="w-full"
-                            multiple
-                            :searchable="async (q: string) => await completorStore.completeColleagues(q, query.colleagues)"
-                            searchable-key="completor-colleagues"
-                            :search-input="{ placeholder: $t('common.search_field') }"
-                            :filter-fields="['firstname', 'lastname']"
-                            :placeholder="$t('common.colleague', 2)"
-                            leading-icon="i-mdi-search"
-                            value-key="userId"
-                        >
-                            <template #default="{ items }">
-                                <div
-                                    v-for="item in items?.filter((i) => query.colleagues.includes(i.userId))"
-                                    :key="item.userId"
-                                >
-                                    <ColleagueName :colleague="item" birthday />
-                                </div>
-                            </template>
-
-                            <template #item-label="{ item }">
-                                <ColleagueName v-if="item" :colleague="item" birthday />
-                            </template>
-
-                            <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
-                        </SelectMenu>
+                    <UFormField v-if="userId === undefined" class="flex-1" name="users" :label="$t('common.search')">
+                        <UserGroupSelector v-model="query.users" class="w-full" />
                     </UFormField>
                     <div v-else class="flex-1" />
 

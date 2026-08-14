@@ -9,18 +9,16 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import SelectMenu from '~/components/partials/SelectMenu.vue';
 import TableSortButton from '~/components/partials/TableSortButton.vue';
-import { useCompletorStore } from '~/stores/completor';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { type TimeclockEntry, TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timeclock/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
-import ColleagueName from '../colleagues/ColleagueName.vue';
 import StatsDrawer from './StatsDrawer.vue';
 import Timeline from './Timeline.vue';
+import UserGroupSelector from '~/components/jobs/UserGroupSelector.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -44,8 +42,6 @@ const props = withDefaults(
 const { d, t } = useI18n();
 
 const { attr } = useAuth();
-
-const completorStore = useCompletorStore();
 
 const jobsTimeclockClient = await getJobsTimeclockClient();
 
@@ -72,7 +68,7 @@ const schema = z.object({
             TimeclockMode[(route.query?.view as string | undefined)?.toUpperCase() as keyof typeof TimeclockMode] ??
                 (props.hideDaily ? TimeclockMode.WEEKLY : TimeclockMode.RANGE),
         ),
-    users: z.coerce.number().array().max(10).default([]),
+    users: userSelectorSchema,
     date: z
         .object({
             start: z.coerce.date(),
@@ -108,7 +104,7 @@ function setFromProps(): void {
     if (props.userId === undefined) return;
 
     query.viewMode = TimeclockViewMode.ALL;
-    query.users = [props.userId];
+    query.users = { userIds: [props.userId] };
 }
 
 setFromProps();
@@ -119,7 +115,7 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
-        `jobs-timeclock-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.date.start.toDateString()}-${validatedQuery.value.date.end.toDateString()}-${validatedQuery.value.perDay}-${validatedQuery.value.mode}-${validatedQuery.value.viewMode}-${validatedQuery.value.users.join(',')}-${validatedQuery.value.page}`,
+        `jobs-timeclock-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.date.start.toDateString()}-${validatedQuery.value.date.end.toDateString()}-${validatedQuery.value.perDay}-${validatedQuery.value.mode}-${validatedQuery.value.viewMode}-${validatedQuery.value.users.userIds.join(',')}-${validatedQuery.value.users.groups?.groupIds?.join(',') ?? ''}-${validatedQuery.value.page}`,
     () => listTimeclockEntries(validatedQuery.value),
 );
 
@@ -150,7 +146,7 @@ async function listTimeclockEntries(values: Schema): Promise<ListTimeclockRespon
                     timestamp: googleProtobufTimestamp.Timestamp.fromDate(values.date.end),
                 },
             },
-            userIds: values.users,
+            users: values.users,
             perDay: values.perDay,
         };
 
@@ -250,14 +246,18 @@ const columns = computed(
                         td:
                             canAccessAll.value &&
                             query.viewMode === TimeclockViewMode.ALL &&
-                            (query.users === undefined || query.users?.length === 0) &&
+                            (query.users === undefined ||
+                                ((query.users.userIds?.length ?? 0) === 0 &&
+                                    (query.users.groups?.groupIds?.length ?? 0) === 0)) &&
                             props.userId === undefined
                                 ? ''
                                 : 'hidden',
                         th:
                             canAccessAll.value &&
                             query.viewMode === TimeclockViewMode.ALL &&
-                            (query.users === undefined || query.users?.length === 0) &&
+                            (query.users === undefined ||
+                                ((query.users.userIds?.length ?? 0) === 0 &&
+                                    (query.users.groups?.groupIds?.length ?? 0) === 0)) &&
                             props.userId === undefined
                                 ? ''
                                 : 'hidden',
@@ -379,37 +379,7 @@ const { game } = useAppConfig();
                                     name="users"
                                     :label="$t('common.search')"
                                 >
-                                    <SelectMenu
-                                        v-model="query.users"
-                                        class="w-full"
-                                        :searchable="async (q: string) => (await completorStore.completeColleagues(q)) ?? []"
-                                        multiple
-                                        :search-input="{
-                                            placeholder: $t('common.search_field'),
-                                        }"
-                                        :filter-fields="['firstname', 'lastname']"
-                                        :placeholder="$t('common.colleague', 2)"
-                                        ignore-filter
-                                        leading-icon="i-mdi-search"
-                                        value-key="userId"
-                                    >
-                                        <template #default="{ items }">
-                                            <div
-                                                v-for="item in items?.filter((i) => query.users.includes(i.userId))"
-                                                :key="item.userId"
-                                            >
-                                                <ColleagueName :colleague="item" birthday />
-                                            </div>
-                                        </template>
-
-                                        <template #item-label="{ item }">
-                                            <ColleagueName class="truncate" :colleague="item" birthday />
-                                        </template>
-
-                                        <template #empty>
-                                            {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                        </template>
-                                    </SelectMenu>
+                                    <UserGroupSelector v-model="query.users" class="w-full" />
                                 </UFormField>
 
                                 <div class="flex flex-1 flex-row gap-1">
@@ -603,7 +573,14 @@ const { game } = useAppConfig();
             </UTable>
 
             <template v-else>
-                <div v-if="query.viewMode !== TimeclockViewMode.SELF && query.users.length === 0" class="flex-1">
+                <div
+                    v-if="
+                        query.viewMode !== TimeclockViewMode.SELF &&
+                        (query.users.userIds?.length ?? 0) === 0 &&
+                        (query.users.groups?.groupIds?.length ?? 0) === 0
+                    "
+                    class="flex-1"
+                >
                     <DataNoDataBlock :description="$t('components.jobs.timeclock.timeline.select_users')" />
                 </div>
 

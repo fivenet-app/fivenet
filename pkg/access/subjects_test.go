@@ -198,6 +198,34 @@ func TestWikiPageSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 	assert.NotEmpty(t, args)
 }
 
+func TestJobGroupsSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
+	t.Parallel()
+
+	access := NewJobGroupsSubjectObjectAccess(new(sql.DB))
+
+	stmt := access.VisibleIDsStatement(
+		&userinfo.UserInfo{
+			UserId:   7,
+			Job:      "police",
+			JobGrade: 6,
+		},
+		2,
+		false,
+		10,
+		11,
+	)
+
+	sql, args := stmt.Sql()
+
+	require.Contains(t, sql, "WITH user_subjects AS")
+	assert.Contains(t, sql, "fivenet_job_groups_access")
+	assert.NotContains(t, sql, "fivenet_job_groups_visibility_public")
+	assert.NotContains(t, sql, "fivenet_job_groups_visibility_creator")
+	assert.NotContains(t, sql, "fivenet_job_groups_visibility_subject")
+	assert.Contains(t, sql, "effect IS TRUE")
+	assert.NotEmpty(t, args)
+}
+
 func TestSubjectConstants(t *testing.T) {
 	t.Parallel()
 

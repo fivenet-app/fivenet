@@ -22,7 +22,7 @@ const documentAccessEntryLimit = 15
 
 func canUserAccessDocument(
 	ctx context.Context,
-	access *access.SubjectObjectAccess,
+	access *access.DocumentsObjectAccess,
 	targetID int64,
 	userInfo *userinfo.UserInfo,
 	level documentsaccess.AccessLevel,

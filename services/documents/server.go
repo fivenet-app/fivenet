@@ -135,11 +135,11 @@ type Server struct {
 	notifi        notifi.INotifi
 	store         documentsstore.IStore
 
-	subjectAccess   *access.SubjectObjectAccess
+	subjectAccess   *access.DocumentsObjectAccess
 	subjectResolver *access.SubjectResolver
-	templateAccess  *access.SubjectObjectAccess
+	templateAccess  *access.DocumentTemplatesObjectAccess
 
-	signingStampAccess *access.SubjectObjectAccess
+	signingStampAccess *access.DocumentStampsObjectAccess
 
 	collabServer *collab.CollabServer
 	fHandler     *filestore.Handler[int64]
@@ -151,19 +151,22 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger        *zap.Logger
-	DB            *sql.DB
-	TP            *tracesdk.TracerProvider
-	Perms         perms.Permissions
-	Storage       storage.IStorage
-	Jobs          mstlystcdata.IJobs
-	DocCategories mstlystcdata.IDocumentCategories
-	Enricher      mstlystcdata.IUserAwareEnricher
-	Ui            userinfo.UserInfoRetriever
-	Notif         notifi.INotifi
-	JS            *events.JSWrapper
-	Stats         *docstats.Service
-	Store         documentsstore.IStore
+	Logger             *zap.Logger
+	DB                 *sql.DB
+	TP                 *tracesdk.TracerProvider
+	Perms              perms.Permissions
+	Storage            storage.IStorage
+	Jobs               mstlystcdata.IJobs
+	DocCategories      mstlystcdata.IDocumentCategories
+	Enricher           mstlystcdata.IUserAwareEnricher
+	Ui                 userinfo.UserInfoRetriever
+	Notif              notifi.INotifi
+	JS                 *events.JSWrapper
+	Stats              *docstats.Service
+	Store              documentsstore.IStore
+	SubjectAccess      *access.DocumentsObjectAccess
+	TemplateAccess     *access.DocumentTemplatesObjectAccess
+	SigningStampAccess *access.DocumentStampsObjectAccess
 }
 
 type Result struct {
@@ -197,9 +200,8 @@ func NewServer(p Params) Result {
 		false,
 	).WithUploadFilter(filestore.NewImageUploadFilter())
 
-	docSubjectAccess := access.NewDocumentsSubjectObjectAccess(p.DB)
 	docSubjectResolver := access.NewSubjectResolver(p.DB)
-	access.RegisterAccess("documents", docSubjectAccess)
+	access.RegisterAccess("documents", p.SubjectAccess)
 
 	s := &Server{
 		logger: p.Logger.Named("documents"),
@@ -215,11 +217,11 @@ func NewServer(p Params) Result {
 		notifi:        p.Notif,
 		store:         p.Store,
 
-		subjectAccess:   docSubjectAccess,
+		subjectAccess:   p.SubjectAccess,
 		subjectResolver: docSubjectResolver,
-		templateAccess:  access.NewDocumentTemplatesSubjectObjectAccess(p.DB),
+		templateAccess:  p.TemplateAccess,
 
-		signingStampAccess: access.NewDocumentStampsSubjectObjectAccess(p.DB),
+		signingStampAccess: p.SigningStampAccess,
 
 		collabServer: collabServer,
 		fHandler:     fHandler,

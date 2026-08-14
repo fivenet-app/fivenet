@@ -17,7 +17,7 @@ func TestStoreGetPageOrderInfo(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_wiki_pages AS page_order_info`) +
 		`(?s).*` + regexp.QuoteMeta(`page_order_info.id = ?`) +
@@ -51,7 +51,7 @@ func TestStoreInsertPageGroupRankUsesGapWhenAvailable(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta("FROM fivenet_wiki_pages AS `row`") +
 		`(?s).*` + regexp.QuoteMeta("`row`.job = ?") +
@@ -80,7 +80,7 @@ func TestStoreInsertPageGroupRankRebalancesWhenNoGap(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	rankQuery := regexp.QuoteMeta("FROM fivenet_wiki_pages AS `row`") +
 		`(?s).*` + regexp.QuoteMeta("`row`.job = ?") +

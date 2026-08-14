@@ -22,6 +22,7 @@ import (
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
@@ -164,12 +165,9 @@ func newCentrumJoinUnitTestServer(
 			Label: "LSMD",
 			Grades: []*jobs.JobGrade{
 				{
-					JobName: func() *string {
-						jobName := "ambulance"
-						return &jobName
-					}(),
-					Grade: 1,
-					Label: "Rank 1",
+					JobName: new("ambulance"),
+					Grade:   1,
+					Label:   "Rank 1",
 				},
 			},
 		},
@@ -178,12 +176,9 @@ func newCentrumJoinUnitTestServer(
 			Label: "LSPD",
 			Grades: []*jobs.JobGrade{
 				{
-					JobName: func() *string {
-						jobName := "police"
-						return &jobName
-					}(),
-					Grade: 1,
-					Label: "Rank 1",
+					JobName: new("police"),
+					Grade:   1,
+					Label:   "Rank 1",
 				},
 			},
 		},
@@ -192,12 +187,9 @@ func newCentrumJoinUnitTestServer(
 			Label: "DOJ",
 			Grades: []*jobs.JobGrade{
 				{
-					JobName: func() *string {
-						jobName := "doj"
-						return &jobName
-					}(),
-					Grade: 1,
-					Label: "Rank 1",
+					JobName: new("doj"),
+					Grade:   1,
+					Label:   "Rank 1",
 				},
 			},
 		},
@@ -206,12 +198,9 @@ func newCentrumJoinUnitTestServer(
 			Label: "Unemployed",
 			Grades: []*jobs.JobGrade{
 				{
-					JobName: func() *string {
-						jobName := "unemployed"
-						return &jobName
-					}(),
-					Grade: 1,
-					Label: "Rank 1",
+					JobName: new("unemployed"),
+					Grade:   1,
+					Label:   "Rank 1",
 				},
 			},
 		},
@@ -234,6 +223,7 @@ func newCentrumJoinUnitTestServer(
 			fx.Provide(dispatchers.New),
 			fx.Provide(units.New),
 			fx.Provide(dispatches.New),
+			fx.Provide(access.NewCentrumUnitsSubjectObjectAccess),
 			fx.Provide(func(p Params) Result {
 				r := NewServer(p)
 				srv = r.Server

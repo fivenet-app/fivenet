@@ -50,12 +50,9 @@ func (e *DummyEnricher) GetJobGrade(job string, grade int32) (*jobs.Job, *jobs.J
 			Label:  job,
 			Grades: dummyJobGrades(job),
 		}, &jobs.JobGrade{
-			JobName: func() *string {
-				jobName := job
-				return &jobName
-			}(),
-			Grade: grade,
-			Label: fmt.Sprintf("Rank %d", grade),
+			JobName: new(job),
+			Grade:   grade,
+			Label:   fmt.Sprintf("Rank %d", grade),
 		}
 }
 

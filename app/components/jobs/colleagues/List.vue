@@ -5,6 +5,7 @@ import { isFuture } from 'date-fns';
 import { h } from 'vue';
 import { z } from 'zod';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
+import UserGroupSelector from '~/components/jobs/UserGroupSelector.vue';
 import EmailInfoPopover from '~/components/mailer/EmailInfoPopover.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
@@ -21,10 +22,12 @@ import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { Label } from '~~/gen/ts/resources/jobs/labels/labels';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { GetColleagueLabelsResponse, ListColleaguesResponse } from '~~/gen/ts/services/jobs/colleagues';
+import ColleagueCard from './ColleagueCard.vue';
 import StatsModalClient from './labels/StatsModal.client.vue';
 import ColleagueName from './ColleagueName.vue';
 import SelfServiceAbsenceDateModal from './SelfServiceAbsenceDateModal.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import { userSelectorSchema } from '~/utils/validation';
 
 const { t } = useI18n();
 
@@ -38,6 +41,7 @@ const schema = z.object({
     name: z.coerce.string().max(50).default(''),
     absent: z.coerce.boolean().default(false),
     labels: z.coerce.number().array().max(3).default([]),
+    users: userSelectorSchema,
     namePrefix: z.string().max(12).optional(),
     nameSuffix: z.string().max(12).optional(),
     sorting: z
@@ -68,7 +72,7 @@ const { jobsService } = storeToRefs(settingsStore);
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
-        `jobs-colleagues-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.name}-${validatedQuery.value.absent}-${validatedQuery.value.labels.join(',')}-${validatedQuery.value.namePrefix}-${validatedQuery.value.nameSuffix}`,
+        `jobs-colleagues-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.name}-${validatedQuery.value.absent}-${validatedQuery.value.labels.join(',')}-${JSON.stringify(validatedQuery.value.users)}-${validatedQuery.value.namePrefix}-${validatedQuery.value.nameSuffix}`,
     () => listColleagues(validatedQuery.value),
 );
 
@@ -80,9 +84,9 @@ async function listColleagues(values: Schema): Promise<ListColleaguesResponse> {
             },
             sort: values.sorting,
             search: values.name,
-            userIds: [],
             absent: values.absent,
             labelIds: values.labels,
+            users: values.users,
             namePrefix: values.namePrefix,
             nameSuffix: values.nameSuffix,
         });
@@ -242,8 +246,6 @@ const canDo = computed(() => ({
     setJobsUserProps: can('jobs.ColleaguesService/SetColleagueProps').value,
 }));
 
-const { game } = useAppConfig();
-
 const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateModal);
 const labelsStatsModal = overlay.create(StatsModalClient);
 
@@ -331,7 +333,7 @@ defineShortcuts({
                         </UFormField>
                     </div>
 
-                    <UCollapsible>
+                    <UCollapsible :unmount-on-hide="false">
                         <UButton
                             class="group"
                             color="neutral"
@@ -345,31 +347,69 @@ defineShortcuts({
                         />
 
                         <template #content>
-                            <div class="flex flex-row flex-wrap gap-2">
-                                <UFormField
-                                    v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
-                                    class="flex flex-1 flex-col"
-                                    name="labels"
-                                    :label="$t('common.label', 2)"
-                                    :ui="{ container: 'flex-1 flex' }"
-                                >
-                                    <SelectMenu
-                                        v-model="query.labels"
+                            <div class="flex flex-col gap-2">
+                                <div class="flex flex-row gap-2">
+                                    <UFormField
                                         class="flex-1"
-                                        multiple
-                                        :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
-                                        searchable-key="completor-jobs-colleague-labels"
-                                        :search-input="{ placeholder: $t('common.search_field') }"
-                                        :filter-fields="['name']"
-                                        label-key="name"
-                                        value-key="id"
-                                        :ui="{ itemLeadingIcon: 'hidden' }"
+                                        name="users"
+                                        :label="$t('common.group', 2)"
+                                        :ui="{ container: 'flex-1 flex' }"
                                     >
-                                        <template #default="{ items }">
-                                            <div
-                                                v-for="item in items?.filter((i) => query.labels.includes(i.id))"
-                                                :key="item.id"
-                                            >
+                                        <UserGroupSelector v-model="query.users" groups-only class="w-full flex-1" />
+                                    </UFormField>
+
+                                    <UFormField
+                                        class="flex flex-initial flex-col"
+                                        name="cards"
+                                        :label="$t('common.card_view')"
+                                        :ui="{ container: 'flex-1 flex' }"
+                                    >
+                                        <div class="flex flex-1 items-center">
+                                            <USwitch v-model="jobsService.cardView" />
+                                        </div>
+                                    </UFormField>
+                                </div>
+
+                                <div class="flex flex-row flex-wrap gap-2">
+                                    <UFormField
+                                        v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
+                                        class="flex flex-1 flex-col"
+                                        name="labels"
+                                        :label="$t('common.label', 2)"
+                                        :ui="{ container: 'flex-1 flex' }"
+                                    >
+                                        <SelectMenu
+                                            v-model="query.labels"
+                                            class="flex-1"
+                                            multiple
+                                            :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
+                                            searchable-key="completor-jobs-colleague-labels"
+                                            :search-input="{ placeholder: $t('common.search_field') }"
+                                            :filter-fields="['name']"
+                                            label-key="name"
+                                            value-key="id"
+                                            :ui="{ itemLeadingIcon: 'hidden' }"
+                                        >
+                                            <template #default="{ items }">
+                                                <div
+                                                    v-for="item in items?.filter((i) => query.labels.includes(i.id))"
+                                                    :key="item.id"
+                                                >
+                                                    <UBadge
+                                                        class="truncate"
+                                                        :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
+                                                        :style="{ backgroundColor: item.color }"
+                                                        :label="item.name"
+                                                        :icon="
+                                                            item.icon && item.icon !== ''
+                                                                ? convertComponentIconNameToDynamic(item.icon)
+                                                                : undefined
+                                                        "
+                                                    />
+                                                </div>
+                                            </template>
+
+                                            <template #item-label="{ item }">
                                                 <UBadge
                                                     class="truncate"
                                                     :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
@@ -381,57 +421,32 @@ defineShortcuts({
                                                             : undefined
                                                     "
                                                 />
-                                            </div>
-                                        </template>
+                                            </template>
 
-                                        <template #item-label="{ item }">
-                                            <UBadge
-                                                class="truncate"
-                                                :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
-                                                :style="{ backgroundColor: item.color }"
-                                                :label="item.name"
-                                                :icon="
-                                                    item.icon && item.icon !== ''
-                                                        ? convertComponentIconNameToDynamic(item.icon)
-                                                        : undefined
-                                                "
-                                            />
-                                        </template>
+                                            <template #empty>
+                                                {{ $t('common.not_found', [$t('common.label', 2)]) }}
+                                            </template>
+                                        </SelectMenu>
+                                    </UFormField>
 
-                                        <template #empty>
-                                            {{ $t('common.not_found', [$t('common.label', 2)]) }}
-                                        </template>
-                                    </SelectMenu>
-                                </UFormField>
+                                    <UFormField
+                                        class="flex flex-col"
+                                        name="namePrefix"
+                                        :label="$t('common.prefix')"
+                                        :ui="{ container: 'flex-1 flex' }"
+                                    >
+                                        <UInput v-model="query.namePrefix" type="text" />
+                                    </UFormField>
 
-                                <UFormField
-                                    class="flex flex-col"
-                                    name="namePrefix"
-                                    :label="$t('common.prefix')"
-                                    :ui="{ container: 'flex-1 flex' }"
-                                >
-                                    <UInput v-model="query.namePrefix" type="text" />
-                                </UFormField>
-
-                                <UFormField
-                                    class="flex flex-col"
-                                    name="nameSuffix"
-                                    :label="$t('common.suffix')"
-                                    :ui="{ container: 'flex-1 flex' }"
-                                >
-                                    <UInput v-model="query.nameSuffix" type="text" />
-                                </UFormField>
-
-                                <UFormField
-                                    class="flex flex-initial flex-col"
-                                    name="cards"
-                                    :label="$t('common.card_view')"
-                                    :ui="{ container: 'flex-1 flex' }"
-                                >
-                                    <div class="flex flex-1 items-center">
-                                        <USwitch v-model="jobsService.cardView" />
-                                    </div>
-                                </UFormField>
+                                    <UFormField
+                                        class="flex flex-col"
+                                        name="nameSuffix"
+                                        :label="$t('common.suffix')"
+                                        :ui="{ container: 'flex-1 flex' }"
+                                    >
+                                        <UInput v-model="query.nameSuffix" type="text" />
+                                    </UFormField>
+                                </div>
                             </div>
                         </template>
                     </UCollapsible>
@@ -497,102 +512,14 @@ defineShortcuts({
                     <UPageGrid
                         class="grid-cols-1 p-4 sm:grid-cols-2 sm:p-4 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-5"
                     >
-                        <UCard
+                        <ColleagueCard
                             v-for="colleague in data?.colleagues"
                             :key="colleague.userId"
-                            :class="colleague.userId === activeChar!.userId ? 'ring-2 ring-primary' : ''"
-                            :ui="{
-                                root: 'flex flex-col',
-                                header: 'w-full',
-                                body: 'p-4 sm:p-4 flex-1',
-                                footer: 'w-full',
-                            }"
+                            :colleague="colleague"
+                            :active="colleague.userId === activeChar!.userId"
+                            :show-labels="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
+                            @label="toggleLabelInSearch"
                         >
-                            <div class="flex w-full flex-col items-center justify-center overflow-hidden pb-2">
-                                <ProfilePictureImg
-                                    :src="colleague?.profilePicture"
-                                    :name="`${colleague.firstname} ${colleague.lastname}`"
-                                    size="3xl"
-                                    enable-popup
-                                    :alt="$t('common.profile_picture')"
-                                    :rounded="false"
-                                    img-class="size-42"
-                                />
-                            </div>
-
-                            <div class="truncate">
-                                <ColleagueName class="truncate text-highlighted" :colleague="colleague" />
-                            </div>
-
-                            <div class="flex min-w-0 flex-col gap-1 overflow-x-hidden text-[15px] text-pretty text-muted">
-                                <div class="truncate">
-                                    {{ colleague.jobGradeLabel }}
-                                    <template v-if="colleague.job !== game.unemployedJobName">
-                                        ({{ colleague.jobGrade }})
-                                    </template>
-                                </div>
-
-                                <PhoneNumberBlock :number="colleague.phoneNumber" />
-
-                                <div class="inline-flex items-center gap-1">
-                                    <UIcon class="h-5 w-5 shrink-0" name="i-mdi-birthday-cake" />
-
-                                    <span>{{ colleague.dateofbirth }}</span>
-                                </div>
-
-                                <div class="inline-flex items-center gap-1">
-                                    <UIcon class="h-5 w-5 shrink-0" name="i-mdi-email" />
-
-                                    <EmailInfoPopover
-                                        :email="colleague.email"
-                                        variant="link"
-                                        :trailing="false"
-                                        :ui="{ base: 'px-1 sm:px-1 py-0 sm:py-0' }"
-                                    />
-                                </div>
-
-                                <div
-                                    v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
-                                    class="flex min-w-0 items-start gap-1 overflow-x-hidden"
-                                >
-                                    <UIcon class="h-5 w-5 shrink-0 self-start" name="i-mdi-label" />
-
-                                    <span v-if="!colleague.props?.labels?.list.length">
-                                        {{ $t('common.none', [$t('common.label', 2)]) }}
-                                    </span>
-                                    <div v-else class="flex min-w-0 flex-1 basis-0 flex-row flex-wrap gap-1 overflow-hidden">
-                                        <UButton
-                                            v-for="label in colleague.props?.labels?.list"
-                                            :key="label.name"
-                                            class="max-w-full min-w-0 cursor-pointer overflow-hidden"
-                                            :class="
-                                                isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'
-                                            "
-                                            size="xs"
-                                            :label="label.name"
-                                            :icon="
-                                                label.icon && label.icon !== ''
-                                                    ? convertComponentIconNameToDynamic(label.icon)
-                                                    : undefined
-                                            "
-                                            :style="{ backgroundColor: label.color }"
-                                            :ui="{ label: 'block min-w-0 truncate' }"
-                                            @click="toggleLabelInSearch(label)"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div
-                                    v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
-                                    class="inline-flex items-center gap-1"
-                                >
-                                    <UIcon class="size-5" name="i-mdi-island" />
-                                    <GenericTime :value="colleague.props?.absenceBegin" type="shortDate" />
-                                    <span>{{ $t('common.to') }}</span>
-                                    <GenericTime :value="colleague.props?.absenceEnd" type="date" />
-                                </div>
-                            </div>
-
                             <template
                                 v-if="
                                     (canDo.setJobsUserProps &&
@@ -650,7 +577,7 @@ defineShortcuts({
                                     </UDropdownMenu>
                                 </UFieldGroup>
                             </template>
-                        </UCard>
+                        </ColleagueCard>
                     </UPageGrid>
                 </div>
             </template>

@@ -27,10 +27,12 @@ import (
 const (
 	mysqlRootPassword = "secret"
 	mysqlUserPassword = "changeme"
-	mysqlSeedDBName   = "fivenettest"
+	mysqlSeedDBName   = "fivenet"
 	mysqlCharset      = "utf8mb4"
 	mysqlCollation    = "utf8mb4_unicode_ci"
 	mysqlTimezone     = "Europe/Berlin"
+
+	cleanupTimeout = 30 * time.Second
 )
 
 type dbServer struct {
@@ -55,14 +57,16 @@ func (e *setupUnavailableError) Unwrap() error {
 }
 
 type mysqlTestDBManager struct {
-	mu sync.Mutex
+	mu   sync.Mutex
+	cond *sync.Cond
 
 	pool     dockertest.ClosablePool
 	resource dockertest.ClosableResource
 	hasSeed  bool
 
-	cloneSeq  atomic.Uint64
-	cloneRefs int
+	cloneSeq    atomic.Uint64
+	cloneRefs   int
+	tearingDown bool
 }
 
 var sharedMySQLTestDBManager = &mysqlTestDBManager{}
@@ -96,8 +100,7 @@ func (m *dbServer) Setup(ctx context.Context) {
 
 	db, dbName, release, err := sharedMySQLTestDBManager.acquire(ctx, m.t)
 	if err != nil {
-		var unavailable *setupUnavailableError
-		if errors.As(err, &unavailable) {
+		if unavailable, ok := errors.AsType[*setupUnavailableError](err); ok {
 			m.t.Skipf("skipping docker-backed DB tests: %v", unavailable.err)
 			return
 		}
@@ -162,6 +165,10 @@ func (m *mysqlTestDBManager) acquire(
 ) (*sql.DB, string, func() error, error) {
 	t.Helper()
 	m.mu.Lock()
+	m.ensureCondLocked()
+	for m.tearingDown {
+		m.cond.Wait()
+	}
 	defer m.mu.Unlock()
 
 	if err := m.ensureSeedLocked(ctx, t); err != nil {
@@ -361,19 +368,19 @@ func (m *mysqlTestDBManager) cloneSeedLocked(
 
 	tables, err := m.listSeedTablesLocked(ctx, seedDB)
 	if err != nil {
-		_ = m.dropDatabaseUsingLocked(ctx, seedDB, cloneName)
+		_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
 		return err
 	}
 
 	db, err := m.openDB(cloneName, false)
 	if err != nil {
-		_ = m.dropDatabaseUsingLocked(ctx, seedDB, cloneName)
+		_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
 		return fmt.Errorf("failed to open cloned database %s: %w", cloneName, err)
 	}
 	defer db.Close()
 
 	if _, err := db.ExecContext(ctx, "SET FOREIGN_KEY_CHECKS = 0;"); err != nil {
-		_ = m.dropDatabaseUsingLocked(ctx, seedDB, cloneName)
+		_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
 		return fmt.Errorf("failed to disable foreign key checks for %s: %w", cloneName, err)
 	}
 	defer func(ctx context.Context) {
@@ -383,18 +390,18 @@ func (m *mysqlTestDBManager) cloneSeedLocked(
 	for _, table := range tables {
 		createStmt, err := m.showCreateTableLocked(ctx, seedDB, table)
 		if err != nil {
-			_ = m.dropDatabaseUsingLocked(ctx, seedDB, cloneName)
+			_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
 			return err
 		}
 
 		createStmt, err = rewriteCreateTableStatement(createStmt, cloneName, table)
 		if err != nil {
-			_ = m.dropDatabaseUsingLocked(ctx, seedDB, cloneName)
+			_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
 			return err
 		}
 
 		if _, err := db.ExecContext(ctx, createStmt); err != nil {
-			_ = m.dropDatabaseUsingLocked(ctx, seedDB, cloneName)
+			_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
 			return fmt.Errorf(
 				"failed to create cloned table %s: %w",
 				qualifiedMySQLName(cloneName, table),
@@ -406,7 +413,7 @@ func (m *mysqlTestDBManager) cloneSeedLocked(
 		seedTable := qualifiedMySQLName(mysqlSeedDBName, table)
 		columns, err := m.listCopyColumnsLocked(ctx, seedDB, cloneName, table)
 		if err != nil {
-			_ = m.dropDatabaseUsingLocked(ctx, seedDB, cloneName)
+			_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
 			return err
 		}
 
@@ -420,7 +427,7 @@ func (m *mysqlTestDBManager) cloneSeedLocked(
 				seedTable,
 			),
 		); err != nil {
-			_ = m.dropDatabaseUsingLocked(ctx, seedDB, cloneName)
+			_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
 			return fmt.Errorf("failed to copy rows into cloned table %s: %w", cloneTable, err)
 		}
 	}
@@ -573,24 +580,42 @@ func (m *mysqlTestDBManager) dropDatabaseUsingLocked(
 	return nil
 }
 
+func (m *mysqlTestDBManager) dropDatabaseUsingCleanupLocked(db *sql.DB, dbName string) error {
+	ctx, cancel := cleanupContext()
+	defer cancel()
+
+	return m.dropDatabaseUsingLocked(ctx, db, dbName)
+}
+
 func (m *mysqlTestDBManager) releaseClone(t *testing.T, cloneName string) error {
 	t.Helper()
 	m.mu.Lock()
-	defer m.mu.Unlock()
+	m.ensureCondLocked()
 
 	if m.cloneRefs > 0 {
 		m.cloneRefs--
 	}
 
-	err := m.dropDatabaseLocked(context.Background(), cloneName)
+	finalRelease := m.cloneRefs == 0
+	if finalRelease {
+		m.tearingDown = true
+	}
+	m.mu.Unlock()
 
-	if m.cloneRefs == 0 {
+	err := m.dropDatabaseLockedCleanup(cloneName)
+
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if finalRelease {
 		if resetErr := m.resetLocked(t); resetErr != nil {
 			if err != nil {
 				return errors.Join(err, resetErr)
 			}
-			return resetErr
+			err = resetErr
 		}
+		m.tearingDown = false
+		m.cond.Broadcast()
 	}
 
 	return err
@@ -608,15 +633,18 @@ func (m *mysqlTestDBManager) resetLocked(t *testing.T) error {
 	m.hasSeed = false
 	m.cloneRefs = 0
 
+	ctx, cancel := cleanupContext()
+	defer cancel()
+
 	var errs []error
-	if err := resource.Close(context.Background()); err != nil {
+	if err := resource.Close(ctx); err != nil {
 		errs = append(errs, fmt.Errorf("failed to close shared mysql test container: %w", err))
 	}
 
 	if m.pool != nil {
 		pool := m.pool
 		m.pool = nil
-		if err := pool.Close(context.Background()); err != nil {
+		if err := pool.Close(ctx); err != nil {
 			errs = append(errs, fmt.Errorf("failed to close shared mysql test pool: %w", err))
 		}
 	}
@@ -642,6 +670,13 @@ func (m *mysqlTestDBManager) dropDatabaseLocked(ctx context.Context, dbName stri
 	return nil
 }
 
+func (m *mysqlTestDBManager) dropDatabaseLockedCleanup(dbName string) error {
+	ctx, cancel := cleanupContext()
+	defer cancel()
+
+	return m.dropDatabaseLocked(ctx, dbName)
+}
+
 func (m *mysqlTestDBManager) openDB(dbName string, multiStatements bool) (*sql.DB, error) {
 	dsn := m.dsnForDB(dbName, multiStatements)
 	db, err := sql.Open("mysql", dsn)
@@ -650,6 +685,12 @@ func (m *mysqlTestDBManager) openDB(dbName string, multiStatements bool) (*sql.D
 	}
 
 	return db, nil
+}
+
+func (m *mysqlTestDBManager) ensureCondLocked() {
+	if m.cond == nil {
+		m.cond = sync.NewCond(&m.mu)
+	}
 }
 
 func (m *mysqlTestDBManager) dsnForDB(dbName string, multiStatements bool) string {
@@ -683,4 +724,8 @@ func rewriteCreateTableStatement(createStmt, schema, table string) (string, erro
 	}
 
 	return strings.Replace(createStmt, oldPrefix, newPrefix, 1), nil
+}
+
+func cleanupContext() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), cleanupTimeout)
 }

@@ -18,7 +18,7 @@ func TestStoreListUserEmailsVisible(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	expectedQuery := `(?s).*WITH user_subjects AS.*visible_sources AS.*winning_visibility AS.*fivenet_mailer_emails.deactivated IS FALSE.*` +

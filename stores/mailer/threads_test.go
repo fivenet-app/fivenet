@@ -18,7 +18,7 @@ func TestStoreCountThreads(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	query := ThreadListQuery{
 		EmailIDs:  []int64{7},
 		Archived:  nil,
@@ -63,7 +63,7 @@ func TestStoreListThreads(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 	query := ThreadListQuery{
 		EmailIDs:  []int64{7},
@@ -128,7 +128,7 @@ func TestStoreGetThread(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	expectedQuery := regexp.QuoteMeta(
@@ -186,7 +186,7 @@ func TestStoreDeleteThread(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	deletedAt := time.Unix(0, 0).UTC()
 
 	expectedQuery := regexp.QuoteMeta(
@@ -207,7 +207,7 @@ func TestStoreListThreadRecipients(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 	now := time.Unix(0, 0).UTC()
 
 	expectedQuery := regexp.QuoteMeta(

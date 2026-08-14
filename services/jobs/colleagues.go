@@ -26,6 +26,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	"github.com/fivenet-app/fivenet/v2026/stores/jobs/usersel"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -51,12 +52,28 @@ func (s *Server) ListColleagues(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
+	selector := usersel.GroupsOnly(req.GetUsers())
+	resolvedUserIDs, err := s.userSel.Resolve(
+		ctx,
+		s.db,
+		userInfo,
+		req.GetUsers(),
+		usersel.ResolveOpts{},
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if usersel.HasSelection(selector) && len(resolvedUserIDs) == 0 {
+		pag, _ := req.GetPagination().GetResponseWithPageSize(0, defaultPageSize)
+		return &pbjobs.ListColleaguesResponse{Pagination: pag}, nil
+	}
+
 	tColleague := table.FivenetUser.AS("colleague")
 	q := jobsstore.ListColleaguesQuery{
 		Job:        userInfo.GetJob(),
 		Search:     req.GetSearch(),
-		UserIDs:    req.GetUserIds(),
-		UserOnly:   req.GetUserOnly(),
+		UserIDs:    resolvedUserIDs,
+		UserOnly:   req.GetUserOnly() || len(resolvedUserIDs) > 0,
 		Absent:     req.GetAbsent(),
 		NamePrefix: req.GetNamePrefix(),
 		NameSuffix: req.GetNameSuffix(),
@@ -489,7 +506,7 @@ func (s *Server) SetColleagueProps(
 
 func (s *Server) getConditionForColleagueAccess(
 	actTable *table.FivenetJobColleagueActivityTable,
-	usersTable *table.FivenetUserTable,
+	userJobsTable *table.FivenetUserJobsTable,
 	levels []permsjobs.ColleaguesServiceGetColleagueAccessPermValue,
 	userInfo *userinfo.UserInfo,
 ) mysql.BoolExpression {
@@ -507,13 +524,13 @@ func (s *Server) getConditionForColleagueAccess(
 		return condition
 	}
 	if slices.Contains(levels, permsjobs.ColleaguesServiceGetColleagueAccessPermValueLowerRank) {
-		return usersTable.ID.LT(mysql.Int32(userInfo.GetJobGrade()))
+		return userJobsTable.Grade.LT(mysql.Int32(userInfo.GetJobGrade()))
 	}
 	if slices.Contains(levels, permsjobs.ColleaguesServiceGetColleagueAccessPermValueSameRank) {
-		return usersTable.ID.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))
+		return userJobsTable.Grade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))
 	}
 	if slices.Contains(levels, permsjobs.ColleaguesServiceGetColleagueAccessPermValueOwn) {
-		return usersTable.ID.EQ(mysql.Int32(userInfo.GetUserId()))
+		return actTable.TargetUserID.EQ(mysql.Int32(userInfo.GetUserId()))
 	}
 
 	return mysql.Bool(false)
@@ -523,9 +540,25 @@ func (s *Server) ListColleagueActivity(
 	ctx context.Context,
 	req *pbjobs.ListColleagueActivityRequest,
 ) (*pbjobs.ListColleagueActivityResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.colleagues.user_ids", req.GetUserIds()})
-
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	resolvedUserIDs, err := s.userSel.Resolve(
+		ctx,
+		s.db,
+		userInfo,
+		req.GetUsers(),
+		usersel.ResolveOpts{},
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if usersel.HasSelection(req.GetUsers()) && len(resolvedUserIDs) == 0 {
+		pag, _ := req.GetPagination().GetResponseWithPageSize(0, defaultPageSize)
+		resp := &pbjobs.ListColleagueActivityResponse{Pagination: pag}
+		return resp, nil
+	}
+
+	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.colleagues.user_ids", resolvedUserIDs})
 
 	// Access Field Permission Check
 	colleagueAccess, err := permsjobs.ColleaguesService.GetColleague.AccessTyped.Get(s.ps, userInfo)
@@ -535,6 +568,7 @@ func (s *Server) ListColleagueActivity(
 
 	tColleagueActivity := tColleagueActivity.AS("colleague_activity")
 	tTargetColleague := table.FivenetUser.AS("target_user")
+	tTargetUserJobs := table.FivenetUserJobs.AS("target_user_jobs")
 
 	condition := tColleagueActivity.Job.EQ(mysql.String(userInfo.GetJob()))
 
@@ -549,28 +583,27 @@ func (s *Server) ListColleagueActivity(
 	}
 
 	// If no user IDs given or more than 2, show all the user has access to
-	reqUserIds := req.GetUserIds()
-	if len(reqUserIds) == 0 || len(reqUserIds) >= 2 {
+	if len(resolvedUserIDs) == 0 || len(resolvedUserIDs) >= 2 {
 		condition = condition.AND(
 			s.getConditionForColleagueAccess(
 				tColleagueActivity,
-				tTargetColleague,
+				tTargetUserJobs,
 				colleagueAccess.Values(),
 				userInfo,
 			),
 		)
 
-		if len(reqUserIds) >= 2 {
+		if len(resolvedUserIDs) >= 2 {
 			// More than 2 user ids
-			userIds := make([]mysql.Expression, len(reqUserIds))
+			userIds := make([]mysql.Expression, len(resolvedUserIDs))
 			for i := range userIds {
-				userIds[i] = mysql.Int32(reqUserIds[i])
+				userIds[i] = mysql.Int32(resolvedUserIDs[i])
 			}
 
 			condition = condition.AND(tTargetColleague.ID.IN(userIds...))
 		}
 	} else {
-		userId := reqUserIds[0]
+		userId := resolvedUserIDs[0]
 
 		targetUser, err := s.getColleague(ctx, userInfo, userInfo.GetJob(), userId, nil)
 		if err != nil {

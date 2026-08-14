@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useAuth } from '~/composables/useAuth';
 import { useCompletorStore } from '~/stores/completor';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
@@ -18,6 +19,7 @@ const props = withDefaults(
         jobs?: Job[] | undefined;
         hideGrade?: boolean;
         hideJobs?: string[];
+        hideOtherJobs?: boolean;
         name?: string;
     }>(),
     {
@@ -28,6 +30,7 @@ const props = withDefaults(
         jobs: () => [],
         hideGrade: false,
         hideJobs: () => [],
+        hideOtherJobs: false,
         name: undefined,
     },
 );
@@ -39,8 +42,10 @@ defineEmits<{
 const entry = defineModel<MixedAccessEntry>({ required: true });
 
 const completorStore = useCompletorStore();
+const { activeChar } = useAuth();
 
 const { game } = useAppConfig();
+const currentJob = computed(() => activeChar.value?.job);
 
 const requiredAccessFloor = computed(() => {
     if (!entry.value.required) return undefined;
@@ -57,6 +62,15 @@ const accessRoleItems = computed(() => {
 });
 
 const requiredSubjectLocked = computed(() => props.disabled || !!entry.value.required);
+const jobItems = computed(() => {
+    const filteredJobs = props.jobs?.filter((j) => props.hideJobs.length === 0 || !props.hideJobs.includes(j.name)) ?? [];
+
+    if (!props.hideOtherJobs || entry.value.type !== 'job') return filteredJobs;
+
+    if (!currentJob.value) return [];
+
+    return filteredJobs.filter((job) => job.name === currentJob.value);
+});
 
 watch(
     () => [entry.value.required, entry.value.requiredAccess, entry.value.access] as const,
@@ -132,6 +146,10 @@ async function setFromProps(): Promise<void> {
             };
         }
     } else if (entry.value.type === 'job') {
+        if (props.hideOtherJobs && currentJob.value) {
+            entry.value.job = currentJob.value;
+        }
+
         if (entry.value.minimumGrade === -1) {
             const grades = props.jobs.find((j) => j.name === entry.value.job)?.grades;
             if (grades) {
@@ -143,6 +161,7 @@ async function setFromProps(): Promise<void> {
 
 setFromProps();
 watch(props, () => setFromProps());
+watch(currentJob, () => setFromProps());
 
 watch(
     () => entry.value.job,
@@ -280,15 +299,21 @@ watch(
             </UFormField>
 
             <template v-else>
-                <UFormField class="flex-1" :name="`${$props.name}.job`" :label="$t('common.job')" :ui="{ label: 'md:hidden' }">
+                <UFormField
+                    v-if="!hideOtherJobs"
+                    class="flex-1"
+                    :name="`${$props.name}.job`"
+                    :label="$t('common.job')"
+                    :ui="{ label: 'md:hidden' }"
+                >
                     <ClientOnly>
                         <USelectMenu
                             v-model="entry.job"
                             class="w-full"
-                            :disabled="requiredSubjectLocked"
+                            :disabled="requiredSubjectLocked || hideOtherJobs"
                             :filter-fields="['label', 'name']"
                             value-key="name"
-                            :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
+                            :items="jobItems"
                             :placeholder="$t('common.job')"
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >

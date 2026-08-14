@@ -60,6 +60,7 @@ import (
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/services/documents"
 	pbfilestore "github.com/fivenet-app/fivenet/v2026/services/filestore"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/services/jobs"
+	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
 	pblivemap "github.com/fivenet-app/fivenet/v2026/services/livemap"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/services/mailer"
 	pbnotifications "github.com/fivenet-app/fivenet/v2026/services/notifications"
@@ -75,6 +76,7 @@ import (
 	completorstore "github.com/fivenet-app/fivenet/v2026/stores/completor"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	"github.com/fivenet-app/fivenet/v2026/stores/jobs/usersel"
 	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	notificationsstore "github.com/fivenet-app/fivenet/v2026/stores/notifications"
@@ -109,6 +111,18 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		auth.PermsModule,
 		auth.TokenMgrModule,
 		access.Module,
+		fx.Provide(
+			access.NewDocumentsSubjectObjectAccess,
+			access.NewDocumentTemplatesSubjectObjectAccess,
+			access.NewDocumentStampsSubjectObjectAccess,
+			access.NewCalendarSubjectObjectAccess,
+			access.NewWikiPageSubjectObjectAccess,
+			access.NewCitizenLabelsSubjectObjectAccess,
+			access.NewQualificationsSubjectObjectAccess,
+			access.NewMailerEmailsSubjectObjectAccess,
+			access.NewCentrumUnitsSubjectObjectAccess,
+			access.NewJobGroupsSubjectObjectAccess,
+		),
 		centrumbot.Module,
 		croner.ExecutorModule,
 		croner.HandlersModule,
@@ -178,6 +192,7 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			notifi.New,
 			postals.New,
 			tracker.New,
+			colleaguehydrator.New,
 
 			// HTTP Services
 			server.AsService(api.New),
@@ -195,6 +210,7 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			citizensstore.New,
 			completorstore.New,
 			jobsstore.New,
+			usersel.New,
 			livemapstore.New,
 			mailerstore.New,
 			notificationsstore.New,

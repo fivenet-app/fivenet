@@ -64,7 +64,7 @@ type Server struct {
 	enricher mstlystcdata.IUserAwareEnricher
 	js       *events.JSWrapper
 
-	access         *access.SubjectObjectAccess
+	access         *access.MailerEmailsObjectAccess
 	accessResolver *access.SubjectResolver
 }
 
@@ -76,6 +76,7 @@ type Params struct {
 	Enricher mstlystcdata.IUserAwareEnricher
 	JS       *events.JSWrapper
 	Store    mailerstore.IStore
+	Access   *access.MailerEmailsObjectAccess
 }
 
 func NewServer(p Params) *Server {
@@ -86,7 +87,7 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		js:       p.JS,
 
-		access:         access.NewMailerEmailsSubjectObjectAccess(p.DB),
+		access:         p.Access,
 		accessResolver: access.NewSubjectResolver(p.DB),
 	}
 }

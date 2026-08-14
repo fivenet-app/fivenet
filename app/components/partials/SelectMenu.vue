@@ -68,23 +68,22 @@ const { data: items } = useLazyAsyncData(
         return items;
     },
     {
-        immediate: !!props.searchable && props.items === undefined,
+        immediate: !!props.searchable,
     },
 );
+
+const selectItems = computed(() => {
+    if (props.searchable === undefined) return props.items;
+    return items.value ?? props.items;
+});
 </script>
 
 <template>
     <ClientOnly>
-        <USelectMenu
-            v-model:search-term="searchTerm"
-            :loading="loading"
-            :items="props.items ?? items"
-            ignore-filter
-            v-bind="$attrs"
-        >
+        <USelectMenu v-model:search-term="searchTerm" :loading="loading" ignore-filter :items="selectItems" v-bind="$attrs">
             <template v-for="(_, name) in $slots" #[name]="slotProps">
                 <!-- @vue-expect-error to type or not to type, the `name` attribute is correct but not correct -->
-                <slot :name="name" v-bind="name === 'default' ? { ...slotProps, items } : slotProps" />
+                <slot :name="name" v-bind="name === 'default' ? { ...slotProps, items: selectItems } : slotProps" />
             </template>
         </USelectMenu>
     </ClientOnly>

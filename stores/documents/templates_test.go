@@ -20,7 +20,7 @@ func TestStoreListTemplates(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT template_short.id AS "template_short.id"`) +
 		`(?s).*` + regexp.QuoteMeta(`FROM fivenet_documents_templates AS template_short LEFT JOIN fivenet_documents_categories AS category ON (category.id = template_short.category_id)`) +
@@ -42,7 +42,7 @@ func TestStoreListTemplatesUsesAclBranchesForNonSuperuser(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(`(?s).*fivenet_documents_templates_access.*` +
 		regexp.QuoteMeta(`SELECT template_short.id AS "template_short.id"`) +
@@ -72,7 +72,7 @@ func TestStoreGetTemplate(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectQuery(`(?s).*FROM fivenet_documents_templates AS template.*LIMIT \?.*`).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
@@ -92,7 +92,7 @@ func TestStoreTemplateWrites(t *testing.T) {
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 	tmpl := &documentstemplates.Template{Id: 7, Title: "Hello"}
 
 	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_documents_templates`)).

@@ -58,7 +58,7 @@ func TestCalendarEntriesQueryUsesExplicitLimit(t *testing.T) {
 func TestCalendarEntriesQueryUsesAliasedCalendarEntryColumnForBirthdayVisibility(t *testing.T) {
 	t.Parallel()
 
-	store := New(new(sql.DB)).(*Store)
+	store := New(testParams(new(sql.DB))).(*Store)
 	stmt := calendarEntriesQuery(
 		&userinfo.UserInfo{UserId: 1, Job: "police", Superuser: true},
 		mysql.Bool(true),
@@ -80,7 +80,7 @@ func TestCalendarEntriesQueryUsesAliasedCalendarEntryColumnForBirthdayVisibility
 func TestCalendarEntryVisibilityAllowsCreatorOwnedPrivateCalendars(t *testing.T) {
 	t.Parallel()
 
-	store := New(new(sql.DB)).(*Store)
+	store := New(testParams(new(sql.DB))).(*Store)
 	stmt := mysql.
 		SELECT(mysql.Int(1)).
 		FROM(tCalendar).
@@ -201,7 +201,7 @@ func TestFilterUpcomingCalendarEntries(t *testing.T) {
 			Id:        4,
 			Title:     "own entry",
 			StartTime: timestamp.New(time.Date(2026, time.January, 18, 10, 0, 0, 0, time.UTC)),
-			CreatorId: func() *int32 { v := int32(7); return &v }(),
+			CreatorId: new(int32(7)),
 		},
 		{
 			Id:        5,
@@ -210,7 +210,7 @@ func TestFilterUpcomingCalendarEntries(t *testing.T) {
 		},
 	}
 
-	store := New(new(sql.DB))
+	store := New(testParams(new(sql.DB)))
 
 	filtered := store.FilterUpcomingCalendarEntries(entries, userInfo)
 	require.Len(t, filtered, 3)

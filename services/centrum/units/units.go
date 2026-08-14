@@ -66,7 +66,7 @@ type UnitDB struct {
 	store      *store.Store[centrumunits.Unit, *centrumunits.Unit]
 	jobMapping *store.Store[common.IDMapping, *common.IDMapping]
 
-	unitAccess         *access.SubjectObjectAccess
+	unitAccess         *access.CentrumUnitsObjectAccess
 	unitAccessResolver *access.SubjectResolver
 
 	KVPing jetstream.KeyValue
@@ -77,13 +77,14 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	JS       *events.JSWrapper
-	DB       *sql.DB
-	Cfg      *config.Config
-	Enricher mstlystcdata.IEnricher
-	Tracker  tracker.ITracker
-	Postals  postals.Postals
+	Logger     *zap.Logger
+	JS         *events.JSWrapper
+	DB         *sql.DB
+	Cfg        *config.Config
+	Enricher   mstlystcdata.IEnricher
+	Tracker    tracker.ITracker
+	Postals    postals.Postals
+	UnitAccess *access.CentrumUnitsObjectAccess
 }
 
 func New(p Params) *UnitDB {
@@ -99,7 +100,7 @@ func New(p Params) *UnitDB {
 		tracker:  p.Tracker,
 		postals:  p.Postals,
 
-		unitAccess:         access.NewCentrumUnitsSubjectObjectAccess(p.DB),
+		unitAccess:         p.UnitAccess,
 		unitAccessResolver: access.NewSubjectResolver(p.DB),
 	}
 
@@ -1361,6 +1362,6 @@ func (s *UnitDB) ListAccess(ctx context.Context, id int64) (*unitsaccess.UnitAcc
 	return access, nil
 }
 
-func (s *UnitDB) GetAccess() *access.SubjectObjectAccess {
+func (s *UnitDB) GetAccess() *access.CentrumUnitsObjectAccess {
 	return s.unitAccess
 }

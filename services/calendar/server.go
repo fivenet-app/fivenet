@@ -99,7 +99,7 @@ type Server struct {
 	dc       *discordsession.Session
 	store    calendarstore.IStore
 
-	access         *access.SubjectObjectAccess
+	access         *access.CalendarObjectAccess
 	accessResolver *access.SubjectResolver
 }
 
@@ -116,6 +116,7 @@ type Params struct {
 	Notif     notifi.INotifi
 	Discord   *discordsession.Session
 	Store     calendarstore.IStore
+	Access    *access.CalendarObjectAccess
 }
 
 type Result struct {
@@ -139,7 +140,7 @@ func NewServer(p Params) Result {
 		dc:       p.Discord,
 		store:    p.Store,
 
-		access:         access.NewCalendarSubjectObjectAccess(p.DB),
+		access:         p.Access,
 		accessResolver: access.NewSubjectResolver(p.DB),
 	}
 

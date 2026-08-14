@@ -14,7 +14,7 @@ func TestCleanupCalendarRSVPOccurrencesRunsBothDeletesInTransaction(t *testing.T
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`(?s).*fivenet_calendar_rsvp_occurrence.*INNER JOIN.*fivenet_calendar_entries.*created_at.*recurrence_version.*`).

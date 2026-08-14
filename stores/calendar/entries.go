@@ -67,7 +67,7 @@ func calendarEntryRSVPVisible(
 }
 
 func calendarEntryVisibility(
-	acl *access.SubjectObjectAccess,
+	acl *access.CalendarObjectAccess,
 	userInfo *userinfo.UserInfo,
 	accessLevel calendaraccess.AccessLevel,
 	rsvpResponse calendarentries.RsvpResponses,

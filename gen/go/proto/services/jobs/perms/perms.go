@@ -42,6 +42,11 @@ const (
 	ConductServiceRestoreConductEntryPerm           perms.Name = "RestoreConductEntry"
 	ConductServiceUpdateConductEntryPerm            perms.Name = "UpdateConductEntry"
 
+	// Service: jobs.GroupsService
+	GroupsServiceArchiveGroupPerm perms.Name = "ArchiveGroup"
+	GroupsServiceCreateGroupPerm  perms.Name = "CreateGroup"
+	GroupsServiceListGroupsPerm   perms.Name = "ListGroups"
+
 	// Service: jobs.JobsService
 	JobsServiceSetMOTDPerm perms.Name = "SetMOTD"
 
@@ -253,6 +258,33 @@ var ConductService = ConductServicePerms{
 	},
 	UpdateConductEntry: ConductServiceUpdateConductEntryPermRef{
 		Perm: perms.NewPermissionRef(Namespace, ConductServicePerm, ConductServiceUpdateConductEntryPerm),
+	},
+}
+
+type GroupsServicePerms struct {
+	ArchiveGroup GroupsServiceArchiveGroupPermRef
+	CreateGroup  GroupsServiceCreateGroupPermRef
+	ListGroups   GroupsServiceListGroupsPermRef
+}
+type GroupsServiceArchiveGroupPermRef struct {
+	Perm perms.PermissionRef
+}
+type GroupsServiceCreateGroupPermRef struct {
+	Perm perms.PermissionRef
+}
+type GroupsServiceListGroupsPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var GroupsService = GroupsServicePerms{
+	ArchiveGroup: GroupsServiceArchiveGroupPermRef{
+		Perm: perms.NewPermissionRef(Namespace, GroupsServicePerm, GroupsServiceArchiveGroupPerm),
+	},
+	CreateGroup: GroupsServiceCreateGroupPermRef{
+		Perm: perms.NewPermissionRef(Namespace, GroupsServicePerm, GroupsServiceCreateGroupPerm),
+	},
+	ListGroups: GroupsServiceListGroupsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, GroupsServicePerm, GroupsServiceListGroupsPerm),
 	},
 }
 

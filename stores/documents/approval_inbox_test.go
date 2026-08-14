@@ -20,7 +20,7 @@ func TestStoreListApprovalTasksInboxUsesVisibilityForNonSuperuser(t *testing.T) 
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 	onlyDrafts := true
 	query := ListApprovalTasksInboxQuery{
 		Pagination: &resourcesdatabase.PaginationRequest{},
@@ -78,7 +78,7 @@ func TestStoreListApprovalTasksInboxSuperuserBypassesVisibilityCte(t *testing.T)
 		_ = db.Close()
 	})
 
-	store := New(db)
+	store := New(testParams(db))
 	onlyDrafts := false
 	query := ListApprovalTasksInboxQuery{
 		Pagination: &resourcesdatabase.PaginationRequest{},

@@ -8,23 +8,23 @@ import (
 var (
 	ErrFailedQuery = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFailedQuery"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFailedQuery.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFailedQuery.title"},
 	)
 	ErrNotFoundOrNoPerms = common.NewI18nErr(
 		codes.NotFound,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrNotFoundOrNoPerms"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrNotFoundOrNoPerms.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrNotFoundOrNoPerms.title"},
 	)
 	ErrTemplateNoPerms = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateNoPerms"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateNoPerms.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateNoPerms.title"},
 	)
 	ErrPermissionDenied = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrPermissionDenied"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrPermissionDenied.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrPermissionDenied.title"},
 	)
 	ErrClosedDoc = common.NewI18nErr(
 		codes.InvalidArgument,
@@ -53,44 +53,44 @@ var (
 	)
 	ErrDocAccessEditDenied = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessEditDenied"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessEditDenied.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessEditDenied.title"},
 	)
 	ErrDocAccessViewDenied = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessViewDenied"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessViewDenied.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessViewDenied.title"},
 	)
 	ErrDocSameOwner = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocSameOwner"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocSameOwner.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocSameOwner.title"},
 	)
 	ErrDocOwnerWrongJob = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocOwnerWrongJob"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocOwnerWrongJob.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocOwnerWrongJob.title"},
 	)
 	ErrDocOwnerFailed = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocOwnerFailed"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocOwnerFailed.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocOwnerFailed.title"},
 	)
 	ErrDocAccessDuplicate = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessDuplicate"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessDuplicate.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessDuplicate.title"},
 	)
 	ErrDocAccessInvalid = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessInvalid"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessInvalid.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessInvalid.title"},
 	)
 
 	ErrTemplateFailed = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateFailed"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateFailed.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateFailed.title"},
 	)
 	ErrDocRequiredAccessTemplate = common.NewI18nErr(
 		codes.InvalidArgument,
@@ -103,24 +103,26 @@ var (
 	)
 	ErrTemplateAccessDuplicate = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateAccessDuplicate"},
-		nil,
+		&common.I18NItem{
+			Key: "errors.documents.DocumentsService.ErrTemplateAccessDuplicate.content",
+		},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateAccessDuplicate.title"},
 	)
 
 	ErrFeedRefsViewDenied = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFeedRefsViewDenied"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFeedRefsViewDenied.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFeedRefsViewDenied.title"},
 	)
 	ErrFeedRelsViewDenied = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFeedRelsViewDenied"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFeedRelsViewDenied.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFeedRelsViewDenied.title"},
 	)
 	ErrFeedRefSelf = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFeedRefSelf"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFeedRefSelf.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrFeedRefSelf.title"},
 	)
 	ErrFeedRefAddDenied = common.NewI18nErr(
 		codes.PermissionDenied,
@@ -150,8 +152,8 @@ var (
 	)
 	ErrCommentPostDenied = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrCommentPostDenied"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrCommentPostDenied.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrCommentPostDenied.title"},
 	)
 	ErrCommentEditDenied = common.NewI18nErr(
 		codes.PermissionDenied,
@@ -171,8 +173,8 @@ var (
 	)
 	ErrDocReqOwnDoc = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocReqOwnDoc"},
-		nil,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocReqOwnDoc.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocReqOwnDoc.title"},
 	)
 	ErrDocReqAlreadyCompleted = common.NewI18nErr(
 		codes.InvalidArgument,

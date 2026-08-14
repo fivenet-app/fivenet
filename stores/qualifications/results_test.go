@@ -20,7 +20,7 @@ func TestStoreGetQualificationResult(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(
 		`FROM fivenet_qualifications_results AS qualification_result`,
@@ -97,7 +97,7 @@ func TestStoreListQualificationsResultsUsesVisibilityCte(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	countQuery := regexp.QuoteMeta(`WITH user_subjects AS`) +
 		`(?s).*` + regexp.QuoteMeta(`visible_sources AS`) +
@@ -128,7 +128,7 @@ func TestStoreListQualificationsResultsSuperuserBypassesVisibilityCte(t *testing
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	countQuery := `(?s)^SELECT COUNT\(DISTINCT qualification_result\.user_id\) AS "data_count\.total" FROM fivenet_qualifications_results AS qualification_result.*`
 	mock.ExpectQuery(countQuery).

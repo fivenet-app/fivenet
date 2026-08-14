@@ -70,7 +70,7 @@ type Server struct {
 	enricher mstlystcdata.IUserAwareEnricher
 	notif    notifi.INotifi
 
-	access         *access.SubjectObjectAccess
+	access         *access.QualificationsObjectAccess
 	accessResolver *access.SubjectResolver
 
 	fHandler *filestore.Handler[int64]
@@ -86,6 +86,7 @@ type Params struct {
 	Notif             notifi.INotifi
 	Storage           storage.IStorage
 	Store             qualificationsstore.IStore
+	Access            *access.QualificationsObjectAccess
 }
 
 func NewServer(p Params) *Server {
@@ -111,7 +112,7 @@ func NewServer(p Params) *Server {
 		enricher: p.UserAwareEnricher,
 		notif:    p.Notif,
 
-		access:         access.NewQualificationsSubjectObjectAccess(p.DB),
+		access:         p.Access,
 		accessResolver: access.NewSubjectResolver(p.DB),
 
 		fHandler: qualiFileHandler,

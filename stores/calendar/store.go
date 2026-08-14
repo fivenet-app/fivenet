@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
 )
 
 var (
@@ -213,15 +214,22 @@ type IStore interface {
 
 type Store struct {
 	db             *sql.DB
-	access         *access.SubjectObjectAccess
+	access         *access.CalendarObjectAccess
 	accessResolver *access.SubjectResolver
 }
 
-func New(db *sql.DB) IStore {
+type Params struct {
+	fx.In
+
+	DB     *sql.DB
+	Access *access.CalendarObjectAccess
+}
+
+func New(p Params) IStore {
 	return &Store{
-		db:             db,
-		access:         access.NewCalendarSubjectObjectAccess(db),
-		accessResolver: access.NewSubjectResolver(db),
+		db:             p.DB,
+		access:         p.Access,
+		accessResolver: access.NewSubjectResolver(p.DB),
 	}
 }
 

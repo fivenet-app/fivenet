@@ -322,6 +322,28 @@ func (a *SubjectObjectAccess) CanUserAccessTarget(
 	return len(out) > 0, err
 }
 
+func (a *SubjectObjectAccess) CanUserAccessTargetIncludingDeleted(
+	ctx context.Context,
+	targetID int64,
+	userInfo *userinfo.UserInfo,
+	access int32,
+) (bool, error) {
+	if userInfo != nil && userInfo.GetJobAdmin() {
+		return true, nil
+	}
+
+	stmt := a.backend().VisibleIDsStatement(userInfo, access, true, targetID)
+
+	dest := &canAccessIdsHelper{}
+	if err := stmt.QueryContext(ctx, a.db, &dest.IDs); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return false, err
+		}
+	}
+
+	return len(dest.IDs) > 0, nil
+}
+
 func (a *SubjectObjectAccess) CanUserAccessTargetIDs(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,

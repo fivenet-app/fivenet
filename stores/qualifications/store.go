@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
 )
 
 type ListQualificationsOptions struct {
@@ -215,16 +216,23 @@ type IStore interface {
 
 type Store struct {
 	db                  *sql.DB
-	access              *access.SubjectObjectAccess
+	access              *access.QualificationsObjectAccess
 	resultSorter        *database.SorterBuilder
 	requestSorter       *database.SorterBuilder
 	qualificationSorter *database.SorterBuilder
 }
 
-func New(db *sql.DB) IStore {
+type Params struct {
+	fx.In
+
+	DB     *sql.DB
+	Access *access.QualificationsObjectAccess
+}
+
+func New(p Params) IStore {
 	return &Store{
-		db:     db,
-		access: access.NewQualificationsSubjectObjectAccess(db),
+		db:     p.DB,
+		access: p.Access,
 		resultSorter: database.New(
 			database.SpecMap{
 				"status":    database.Column{Col: tQualiResult.Status},

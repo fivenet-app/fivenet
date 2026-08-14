@@ -49,7 +49,7 @@ type Workflow struct {
 	ui    userinfo.UserInfoRetriever
 	notif notifi.INotifi
 
-	access *access.SubjectObjectAccess
+	access *access.DocumentsObjectAccess
 }
 
 type WorkflowParams struct {
@@ -63,6 +63,7 @@ type WorkflowParams struct {
 	TP     *tracesdk.TracerProvider
 	Notif  notifi.INotifi
 	Ui     userinfo.UserInfoRetriever
+	Access *access.DocumentsObjectAccess
 }
 
 type WorkflowResult struct {
@@ -81,7 +82,7 @@ func NewWorkflow(p WorkflowParams) WorkflowResult {
 		notif:  p.Notif,
 		ui:     p.Ui,
 
-		access: access.NewDocumentsSubjectObjectAccess(p.DB),
+		access: p.Access,
 	}
 
 	return WorkflowResult{

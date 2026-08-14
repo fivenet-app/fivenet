@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package resources.jobs;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs;jobs";
+
+message UserSelector {
+  // Explicit users to include.
+  repeated int32 user_ids = 1 [(buf.validate.field).repeated = {
+    max_items: 50
+    items: {int32: {gt: 0}}
+  }];
+
+  // Users resolved from job groups.
+  GroupUserSelector groups = 2;
+}
+
+message GroupUserSelector {
+  repeated int64 group_ids = 1 [(buf.validate.field).repeated = {
+    max_items: 5
+    items: {int64: {gt: 0}}
+  }];
+
+  // Include group leaders even if they are not resolved members.
+  bool include_leaders = 2;
+
+  // Normally false: group exclusions should be respected.
+  bool include_excluded = 3;
+}

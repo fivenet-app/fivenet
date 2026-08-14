@@ -54,7 +54,7 @@ type Server struct {
 	enricher mstlystcdata.IUserAwareEnricher
 	notifi   notifi.INotifi
 
-	access *access.SubjectObjectAccess
+	access *access.WikiPageObjectAccess
 
 	collabServer *collab.CollabServer
 	fHandler     *filestore.Handler[int64]
@@ -74,6 +74,7 @@ type Params struct {
 	Storage  storage.IStorage
 	Notifi   notifi.INotifi
 	Store    wikistore.IStore
+	Access   *access.WikiPageObjectAccess
 }
 
 func NewServer(p Params) *Server {
@@ -97,8 +98,7 @@ func NewServer(p Params) *Server {
 		false,
 	).WithUploadFilter(filestore.NewImageUploadFilter())
 
-	objAccess := access.NewWikiPageSubjectObjectAccess(p.DB)
-	access.RegisterAccess("wiki_page", objAccess)
+	access.RegisterAccess("wiki_page", p.Access)
 
 	s := &Server{
 		db: p.DB,
@@ -107,7 +107,7 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		notifi:   p.Notifi,
 
-		access:       objAccess,
+		access:       p.Access,
 		collabServer: collabServer,
 		fHandler:     fHandler,
 		store:        p.Store,

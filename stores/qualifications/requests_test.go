@@ -18,7 +18,7 @@ func TestStoreUpdateRequestStatus(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_qualifications_requests`) +
 		`(?s).*` + regexp.QuoteMeta(`ON DUPLICATE KEY UPDATE`)
@@ -47,7 +47,7 @@ func TestStoreListQualificationRequestsUsesVisibilityCte(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	countQuery := regexp.QuoteMeta(`WITH user_subjects AS`) +
 		`(?s).*` + regexp.QuoteMeta(`visible_sources AS`) +

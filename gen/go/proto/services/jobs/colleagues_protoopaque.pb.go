@@ -13,6 +13,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	colleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
@@ -34,7 +35,7 @@ type ListColleaguesRequest struct {
 	xxx_hidden_Pagination  *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
 	xxx_hidden_Sort        *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
 	xxx_hidden_Search      string                      `protobuf:"bytes,3,opt,name=search,proto3"`
-	xxx_hidden_UserIds     []int32                     `protobuf:"varint,4,rep,packed,name=user_ids,json=userIds,proto3"`
+	xxx_hidden_Users       *jobs.UserSelector          `protobuf:"bytes,4,opt,name=users,proto3,oneof"`
 	xxx_hidden_UserOnly    bool                        `protobuf:"varint,5,opt,name=user_only,json=userOnly,proto3,oneof"`
 	xxx_hidden_Absent      bool                        `protobuf:"varint,6,opt,name=absent,proto3,oneof"`
 	xxx_hidden_LabelIds    []int64                     `protobuf:"varint,7,rep,packed,name=label_ids,json=labelIds,proto3"`
@@ -92,9 +93,9 @@ func (x *ListColleaguesRequest) GetSearch() string {
 	return ""
 }
 
-func (x *ListColleaguesRequest) GetUserIds() []int32 {
+func (x *ListColleaguesRequest) GetUsers() *jobs.UserSelector {
 	if x != nil {
-		return x.xxx_hidden_UserIds
+		return x.xxx_hidden_Users
 	}
 	return nil
 }
@@ -152,8 +153,8 @@ func (x *ListColleaguesRequest) SetSearch(v string) {
 	x.xxx_hidden_Search = v
 }
 
-func (x *ListColleaguesRequest) SetUserIds(v []int32) {
-	x.xxx_hidden_UserIds = v
+func (x *ListColleaguesRequest) SetUsers(v *jobs.UserSelector) {
+	x.xxx_hidden_Users = v
 }
 
 func (x *ListColleaguesRequest) SetUserOnly(v bool) {
@@ -194,6 +195,13 @@ func (x *ListColleaguesRequest) HasSort() bool {
 	return x.xxx_hidden_Sort != nil
 }
 
+func (x *ListColleaguesRequest) HasUsers() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Users != nil
+}
+
 func (x *ListColleaguesRequest) HasUserOnly() bool {
 	if x == nil {
 		return false
@@ -230,6 +238,10 @@ func (x *ListColleaguesRequest) ClearSort() {
 	x.xxx_hidden_Sort = nil
 }
 
+func (x *ListColleaguesRequest) ClearUsers() {
+	x.xxx_hidden_Users = nil
+}
+
 func (x *ListColleaguesRequest) ClearUserOnly() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
 	x.xxx_hidden_UserOnly = false
@@ -257,7 +269,7 @@ type ListColleaguesRequest_builder struct {
 	Sort       *database.Sort
 	// Search params
 	Search     string
-	UserIds    []int32
+	Users      *jobs.UserSelector
 	UserOnly   *bool
 	Absent     *bool
 	LabelIds   []int64
@@ -272,7 +284,7 @@ func (b0 ListColleaguesRequest_builder) Build() *ListColleaguesRequest {
 	x.xxx_hidden_Pagination = b.Pagination
 	x.xxx_hidden_Sort = b.Sort
 	x.xxx_hidden_Search = b.Search
-	x.xxx_hidden_UserIds = b.UserIds
+	x.xxx_hidden_Users = b.Users
 	if b.UserOnly != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 9)
 		x.xxx_hidden_UserOnly = *b.UserOnly
@@ -649,7 +661,7 @@ type ListColleagueActivityRequest struct {
 	state                    protoimpl.MessageState           `protogen:"opaque.v1"`
 	xxx_hidden_Pagination    *database.PaginationRequest      `protobuf:"bytes,1,opt,name=pagination,proto3"`
 	xxx_hidden_Sort          *database.Sort                   `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
-	xxx_hidden_UserIds       []int32                          `protobuf:"varint,3,rep,packed,name=user_ids,json=userIds,proto3"`
+	xxx_hidden_Users         *jobs.UserSelector               `protobuf:"bytes,3,opt,name=users,proto3,oneof"`
 	xxx_hidden_ActivityTypes []activity.ColleagueActivityType `protobuf:"varint,4,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.jobs.colleagues.activity.ColleagueActivityType"`
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
@@ -694,9 +706,9 @@ func (x *ListColleagueActivityRequest) GetSort() *database.Sort {
 	return nil
 }
 
-func (x *ListColleagueActivityRequest) GetUserIds() []int32 {
+func (x *ListColleagueActivityRequest) GetUsers() *jobs.UserSelector {
 	if x != nil {
-		return x.xxx_hidden_UserIds
+		return x.xxx_hidden_Users
 	}
 	return nil
 }
@@ -716,8 +728,8 @@ func (x *ListColleagueActivityRequest) SetSort(v *database.Sort) {
 	x.xxx_hidden_Sort = v
 }
 
-func (x *ListColleagueActivityRequest) SetUserIds(v []int32) {
-	x.xxx_hidden_UserIds = v
+func (x *ListColleagueActivityRequest) SetUsers(v *jobs.UserSelector) {
+	x.xxx_hidden_Users = v
 }
 
 func (x *ListColleagueActivityRequest) SetActivityTypes(v []activity.ColleagueActivityType) {
@@ -738,6 +750,13 @@ func (x *ListColleagueActivityRequest) HasSort() bool {
 	return x.xxx_hidden_Sort != nil
 }
 
+func (x *ListColleagueActivityRequest) HasUsers() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Users != nil
+}
+
 func (x *ListColleagueActivityRequest) ClearPagination() {
 	x.xxx_hidden_Pagination = nil
 }
@@ -746,13 +765,17 @@ func (x *ListColleagueActivityRequest) ClearSort() {
 	x.xxx_hidden_Sort = nil
 }
 
+func (x *ListColleagueActivityRequest) ClearUsers() {
+	x.xxx_hidden_Users = nil
+}
+
 type ListColleagueActivityRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
 	// Search params
-	UserIds       []int32
+	Users         *jobs.UserSelector
 	ActivityTypes []activity.ColleagueActivityType
 }
 
@@ -762,7 +785,7 @@ func (b0 ListColleagueActivityRequest_builder) Build() *ListColleagueActivityReq
 	_, _ = b, x
 	x.xxx_hidden_Pagination = b.Pagination
 	x.xxx_hidden_Sort = b.Sort
-	x.xxx_hidden_UserIds = b.UserIds
+	x.xxx_hidden_Users = b.Users
 	x.xxx_hidden_ActivityTypes = b.ActivityTypes
 	return m0
 }
@@ -1594,22 +1617,23 @@ var File_services_jobs_colleagues_proto protoreflect.FileDescriptor
 
 const file_services_jobs_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/jobs/colleagues.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a\"resources/jobs/labels/labels.proto\"\xbc\x03\n" +
+	"\x1eservices/jobs/colleagues.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a\"resources/jobs/labels/labels.proto\x1a\"resources/jobs/user_selector.proto\"\xe4\x03\n" +
 	"\x15ListColleaguesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x16\n" +
-	"\x06search\x18\x03 \x01(\tR\x06search\x12\x19\n" +
-	"\buser_ids\x18\x04 \x03(\x05R\auserIds\x12 \n" +
-	"\tuser_only\x18\x05 \x01(\bH\x01R\buserOnly\x88\x01\x01\x12\x1b\n" +
-	"\x06absent\x18\x06 \x01(\bH\x02R\x06absent\x88\x01\x01\x12\x1b\n" +
+	"\x06search\x18\x03 \x01(\tR\x06search\x127\n" +
+	"\x05users\x18\x04 \x01(\v2\x1c.resources.jobs.UserSelectorH\x01R\x05users\x88\x01\x01\x12 \n" +
+	"\tuser_only\x18\x05 \x01(\bH\x02R\buserOnly\x88\x01\x01\x12\x1b\n" +
+	"\x06absent\x18\x06 \x01(\bH\x03R\x06absent\x88\x01\x01\x12\x1b\n" +
 	"\tlabel_ids\x18\a \x03(\x03R\blabelIds\x12$\n" +
-	"\vname_prefix\x18\b \x01(\tH\x03R\n" +
+	"\vname_prefix\x18\b \x01(\tH\x04R\n" +
 	"namePrefix\x88\x01\x01\x12$\n" +
-	"\vname_suffix\x18\t \x01(\tH\x04R\n" +
+	"\vname_suffix\x18\t \x01(\tH\x05R\n" +
 	"nameSuffix\x88\x01\x01B\a\n" +
-	"\x05_sortB\f\n" +
+	"\x05_sortB\b\n" +
+	"\x06_usersB\f\n" +
 	"\n" +
 	"_user_onlyB\t\n" +
 	"\a_absentB\x0e\n" +
@@ -1631,15 +1655,16 @@ const file_services_jobs_colleagues_proto_rawDesc = "" +
 	"\n" +
 	"_info_only\"Z\n" +
 	"\x14GetColleagueResponse\x12B\n" +
-	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"\xac\x02\n" +
+	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"\xd4\x02\n" +
 	"\x1cListColleagueActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x19\n" +
-	"\buser_ids\x18\x03 \x03(\x05R\auserIds\x12`\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x127\n" +
+	"\x05users\x18\x03 \x01(\v2\x1c.resources.jobs.UserSelectorH\x01R\x05users\x88\x01\x01\x12`\n" +
 	"\x0eactivity_types\x18\x04 \x03(\x0e29.resources.jobs.colleagues.activity.ColleagueActivityTypeR\ractivityTypesB\a\n" +
-	"\x05_sort\"\xc7\x01\n" +
+	"\x05_sortB\b\n" +
+	"\x06_users\"\xc7\x01\n" +
 	"\x1dListColleagueActivityResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -1712,57 +1737,60 @@ var file_services_jobs_colleagues_proto_goTypes = []any{
 	(*GetColleagueLabelsStatsResponse)(nil), // 19: services.jobs.GetColleagueLabelsStatsResponse
 	(*database.PaginationRequest)(nil),      // 20: resources.common.database.PaginationRequest
 	(*database.Sort)(nil),                   // 21: resources.common.database.Sort
-	(*database.PaginationResponse)(nil),     // 22: resources.common.database.PaginationResponse
-	(*colleagues.Colleague)(nil),            // 23: resources.jobs.colleagues.Colleague
-	(activity.ColleagueActivityType)(0),     // 24: resources.jobs.colleagues.activity.ColleagueActivityType
-	(*activity.ColleagueActivity)(nil),      // 25: resources.jobs.colleagues.activity.ColleagueActivity
-	(*colleagues.ColleagueProps)(nil),       // 26: resources.jobs.colleagues.ColleagueProps
-	(*labels.Label)(nil),                    // 27: resources.jobs.labels.Label
-	(*labels.LabelCount)(nil),               // 28: resources.jobs.labels.LabelCount
+	(*jobs.UserSelector)(nil),               // 22: resources.jobs.UserSelector
+	(*database.PaginationResponse)(nil),     // 23: resources.common.database.PaginationResponse
+	(*colleagues.Colleague)(nil),            // 24: resources.jobs.colleagues.Colleague
+	(activity.ColleagueActivityType)(0),     // 25: resources.jobs.colleagues.activity.ColleagueActivityType
+	(*activity.ColleagueActivity)(nil),      // 26: resources.jobs.colleagues.activity.ColleagueActivity
+	(*colleagues.ColleagueProps)(nil),       // 27: resources.jobs.colleagues.ColleagueProps
+	(*labels.Label)(nil),                    // 28: resources.jobs.labels.Label
+	(*labels.LabelCount)(nil),               // 29: resources.jobs.labels.LabelCount
 }
 var file_services_jobs_colleagues_proto_depIdxs = []int32{
 	20, // 0: services.jobs.ListColleaguesRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	21, // 1: services.jobs.ListColleaguesRequest.sort:type_name -> resources.common.database.Sort
-	22, // 2: services.jobs.ListColleaguesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	23, // 3: services.jobs.ListColleaguesResponse.colleagues:type_name -> resources.jobs.colleagues.Colleague
-	23, // 4: services.jobs.GetSelfResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
-	23, // 5: services.jobs.GetColleagueResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
-	20, // 6: services.jobs.ListColleagueActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	21, // 7: services.jobs.ListColleagueActivityRequest.sort:type_name -> resources.common.database.Sort
-	24, // 8: services.jobs.ListColleagueActivityRequest.activity_types:type_name -> resources.jobs.colleagues.activity.ColleagueActivityType
-	22, // 9: services.jobs.ListColleagueActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	25, // 10: services.jobs.ListColleagueActivityResponse.activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
-	26, // 11: services.jobs.SetColleaguePropsRequest.props:type_name -> resources.jobs.colleagues.ColleagueProps
-	26, // 12: services.jobs.SetColleaguePropsResponse.props:type_name -> resources.jobs.colleagues.ColleagueProps
-	27, // 13: services.jobs.GetColleagueLabelsResponse.labels:type_name -> resources.jobs.labels.Label
-	27, // 14: services.jobs.CreateOrUpdateLabelRequest.label:type_name -> resources.jobs.labels.Label
-	27, // 15: services.jobs.CreateOrUpdateLabelResponse.label:type_name -> resources.jobs.labels.Label
-	28, // 16: services.jobs.GetColleagueLabelsStatsResponse.count:type_name -> resources.jobs.labels.LabelCount
-	0,  // 17: services.jobs.ColleaguesService.ListColleagues:input_type -> services.jobs.ListColleaguesRequest
-	2,  // 18: services.jobs.ColleaguesService.GetSelf:input_type -> services.jobs.GetSelfRequest
-	4,  // 19: services.jobs.ColleaguesService.GetColleague:input_type -> services.jobs.GetColleagueRequest
-	6,  // 20: services.jobs.ColleaguesService.ListColleagueActivity:input_type -> services.jobs.ListColleagueActivityRequest
-	8,  // 21: services.jobs.ColleaguesService.SetColleagueProps:input_type -> services.jobs.SetColleaguePropsRequest
-	10, // 22: services.jobs.ColleaguesService.GetColleagueLabels:input_type -> services.jobs.GetColleagueLabelsRequest
-	12, // 23: services.jobs.ColleaguesService.CreateOrUpdateLabel:input_type -> services.jobs.CreateOrUpdateLabelRequest
-	14, // 24: services.jobs.ColleaguesService.DeleteLabel:input_type -> services.jobs.DeleteLabelRequest
-	16, // 25: services.jobs.ColleaguesService.ReorderLabels:input_type -> services.jobs.ReorderLabelsRequest
-	18, // 26: services.jobs.ColleaguesService.GetColleagueLabelsStats:input_type -> services.jobs.GetColleagueLabelsStatsRequest
-	1,  // 27: services.jobs.ColleaguesService.ListColleagues:output_type -> services.jobs.ListColleaguesResponse
-	3,  // 28: services.jobs.ColleaguesService.GetSelf:output_type -> services.jobs.GetSelfResponse
-	5,  // 29: services.jobs.ColleaguesService.GetColleague:output_type -> services.jobs.GetColleagueResponse
-	7,  // 30: services.jobs.ColleaguesService.ListColleagueActivity:output_type -> services.jobs.ListColleagueActivityResponse
-	9,  // 31: services.jobs.ColleaguesService.SetColleagueProps:output_type -> services.jobs.SetColleaguePropsResponse
-	11, // 32: services.jobs.ColleaguesService.GetColleagueLabels:output_type -> services.jobs.GetColleagueLabelsResponse
-	13, // 33: services.jobs.ColleaguesService.CreateOrUpdateLabel:output_type -> services.jobs.CreateOrUpdateLabelResponse
-	15, // 34: services.jobs.ColleaguesService.DeleteLabel:output_type -> services.jobs.DeleteLabelResponse
-	17, // 35: services.jobs.ColleaguesService.ReorderLabels:output_type -> services.jobs.ReorderLabelsResponse
-	19, // 36: services.jobs.ColleaguesService.GetColleagueLabelsStats:output_type -> services.jobs.GetColleagueLabelsStatsResponse
-	27, // [27:37] is the sub-list for method output_type
-	17, // [17:27] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	22, // 2: services.jobs.ListColleaguesRequest.users:type_name -> resources.jobs.UserSelector
+	23, // 3: services.jobs.ListColleaguesResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	24, // 4: services.jobs.ListColleaguesResponse.colleagues:type_name -> resources.jobs.colleagues.Colleague
+	24, // 5: services.jobs.GetSelfResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
+	24, // 6: services.jobs.GetColleagueResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
+	20, // 7: services.jobs.ListColleagueActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	21, // 8: services.jobs.ListColleagueActivityRequest.sort:type_name -> resources.common.database.Sort
+	22, // 9: services.jobs.ListColleagueActivityRequest.users:type_name -> resources.jobs.UserSelector
+	25, // 10: services.jobs.ListColleagueActivityRequest.activity_types:type_name -> resources.jobs.colleagues.activity.ColleagueActivityType
+	23, // 11: services.jobs.ListColleagueActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	26, // 12: services.jobs.ListColleagueActivityResponse.activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
+	27, // 13: services.jobs.SetColleaguePropsRequest.props:type_name -> resources.jobs.colleagues.ColleagueProps
+	27, // 14: services.jobs.SetColleaguePropsResponse.props:type_name -> resources.jobs.colleagues.ColleagueProps
+	28, // 15: services.jobs.GetColleagueLabelsResponse.labels:type_name -> resources.jobs.labels.Label
+	28, // 16: services.jobs.CreateOrUpdateLabelRequest.label:type_name -> resources.jobs.labels.Label
+	28, // 17: services.jobs.CreateOrUpdateLabelResponse.label:type_name -> resources.jobs.labels.Label
+	29, // 18: services.jobs.GetColleagueLabelsStatsResponse.count:type_name -> resources.jobs.labels.LabelCount
+	0,  // 19: services.jobs.ColleaguesService.ListColleagues:input_type -> services.jobs.ListColleaguesRequest
+	2,  // 20: services.jobs.ColleaguesService.GetSelf:input_type -> services.jobs.GetSelfRequest
+	4,  // 21: services.jobs.ColleaguesService.GetColleague:input_type -> services.jobs.GetColleagueRequest
+	6,  // 22: services.jobs.ColleaguesService.ListColleagueActivity:input_type -> services.jobs.ListColleagueActivityRequest
+	8,  // 23: services.jobs.ColleaguesService.SetColleagueProps:input_type -> services.jobs.SetColleaguePropsRequest
+	10, // 24: services.jobs.ColleaguesService.GetColleagueLabels:input_type -> services.jobs.GetColleagueLabelsRequest
+	12, // 25: services.jobs.ColleaguesService.CreateOrUpdateLabel:input_type -> services.jobs.CreateOrUpdateLabelRequest
+	14, // 26: services.jobs.ColleaguesService.DeleteLabel:input_type -> services.jobs.DeleteLabelRequest
+	16, // 27: services.jobs.ColleaguesService.ReorderLabels:input_type -> services.jobs.ReorderLabelsRequest
+	18, // 28: services.jobs.ColleaguesService.GetColleagueLabelsStats:input_type -> services.jobs.GetColleagueLabelsStatsRequest
+	1,  // 29: services.jobs.ColleaguesService.ListColleagues:output_type -> services.jobs.ListColleaguesResponse
+	3,  // 30: services.jobs.ColleaguesService.GetSelf:output_type -> services.jobs.GetSelfResponse
+	5,  // 31: services.jobs.ColleaguesService.GetColleague:output_type -> services.jobs.GetColleagueResponse
+	7,  // 32: services.jobs.ColleaguesService.ListColleagueActivity:output_type -> services.jobs.ListColleagueActivityResponse
+	9,  // 33: services.jobs.ColleaguesService.SetColleagueProps:output_type -> services.jobs.SetColleaguePropsResponse
+	11, // 34: services.jobs.ColleaguesService.GetColleagueLabels:output_type -> services.jobs.GetColleagueLabelsResponse
+	13, // 35: services.jobs.ColleaguesService.CreateOrUpdateLabel:output_type -> services.jobs.CreateOrUpdateLabelResponse
+	15, // 36: services.jobs.ColleaguesService.DeleteLabel:output_type -> services.jobs.DeleteLabelResponse
+	17, // 37: services.jobs.ColleaguesService.ReorderLabels:output_type -> services.jobs.ReorderLabelsResponse
+	19, // 38: services.jobs.ColleaguesService.GetColleagueLabelsStats:output_type -> services.jobs.GetColleagueLabelsStatsResponse
+	29, // [29:39] is the sub-list for method output_type
+	19, // [19:29] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_services_jobs_colleagues_proto_init() }

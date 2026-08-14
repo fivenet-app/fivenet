@@ -44,21 +44,22 @@ type Server struct {
 	profilePictureHandler *filestore.Handler[int32]
 	mugshotHandler        *filestore.Handler[int32]
 
-	labelsAccess         *access.SubjectObjectAccess
+	labelsAccess         *access.CitizenLabelsObjectAccess
 	labelsAccessResolver *access.SubjectResolver
 }
 
 type Params struct {
 	fx.In
 
-	DB        *sql.DB
-	P         perms.Permissions
-	Enricher  mstlystcdata.IUserAwareEnricher
-	Config    *config.Config
-	Storage   storage.IStorage
-	AppConfig appconfig.IConfig
-	Notifi    notifi.INotifi
-	Store     citizensstore.IStore
+	DB           *sql.DB
+	P            perms.Permissions
+	Enricher     mstlystcdata.IUserAwareEnricher
+	Config       *config.Config
+	Storage      storage.IStorage
+	AppConfig    appconfig.IConfig
+	Notifi       notifi.INotifi
+	Store        citizensstore.IStore
+	LabelsAccess *access.CitizenLabelsObjectAccess
 }
 
 func NewServer(p Params) *Server {
@@ -107,7 +108,7 @@ func NewServer(p Params) *Server {
 		profilePictureHandler: profilePictureHandler,
 		mugshotHandler:        mugshotHandler,
 
-		labelsAccess:         access.NewCitizenLabelsSubjectObjectAccess(p.DB),
+		labelsAccess:         p.LabelsAccess,
 		labelsAccessResolver: access.NewSubjectResolver(p.DB),
 	}
 

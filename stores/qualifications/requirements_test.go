@@ -17,7 +17,7 @@ func TestStoreGetQualificationRequirements(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db)
+	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(
 		`FROM fivenet_qualifications_requirements AS qualification_requirement`,
