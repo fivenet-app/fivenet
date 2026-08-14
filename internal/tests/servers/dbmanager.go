@@ -58,6 +58,7 @@ func (e *setupUnavailableError) Unwrap() error {
 
 type mysqlTestDBManager struct {
 	mu sync.Mutex
+	cond *sync.Cond
 
 	pool     dockertest.ClosablePool
 	resource dockertest.ClosableResource
@@ -65,6 +66,7 @@ type mysqlTestDBManager struct {
 
 	cloneSeq  atomic.Uint64
 	cloneRefs int
+	tearingDown bool
 }
 
 var sharedMySQLTestDBManager = &mysqlTestDBManager{}
@@ -163,6 +165,10 @@ func (m *mysqlTestDBManager) acquire(
 ) (*sql.DB, string, func() error, error) {
 	t.Helper()
 	m.mu.Lock()
+	m.ensureCondLocked()
+	for m.tearingDown {
+		m.cond.Wait()
+	}
 	defer m.mu.Unlock()
 
 	if err := m.ensureSeedLocked(ctx, t); err != nil {
@@ -584,21 +590,32 @@ func (m *mysqlTestDBManager) dropDatabaseUsingCleanupLocked(db *sql.DB, dbName s
 func (m *mysqlTestDBManager) releaseClone(t *testing.T, cloneName string) error {
 	t.Helper()
 	m.mu.Lock()
-	defer m.mu.Unlock()
+	m.ensureCondLocked()
 
 	if m.cloneRefs > 0 {
 		m.cloneRefs--
 	}
 
+	finalRelease := m.cloneRefs == 0
+	if finalRelease {
+		m.tearingDown = true
+	}
+	m.mu.Unlock()
+
 	err := m.dropDatabaseLockedCleanup(cloneName)
 
-	if m.cloneRefs == 0 {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if finalRelease {
 		if resetErr := m.resetLocked(t); resetErr != nil {
 			if err != nil {
 				return errors.Join(err, resetErr)
 			}
-			return resetErr
+			err = resetErr
 		}
+		m.tearingDown = false
+		m.cond.Broadcast()
 	}
 
 	return err
@@ -668,6 +685,12 @@ func (m *mysqlTestDBManager) openDB(dbName string, multiStatements bool) (*sql.D
 	}
 
 	return db, nil
+}
+
+func (m *mysqlTestDBManager) ensureCondLocked() {
+	if m.cond == nil {
+		m.cond = sync.NewCond(&m.mu)
+	}
 }
 
 func (m *mysqlTestDBManager) dsnForDB(dbName string, multiStatements bool) string {
