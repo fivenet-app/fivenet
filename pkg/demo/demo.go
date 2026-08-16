@@ -352,7 +352,7 @@ func (d *Demo) randFloat64() float64 {
 	return d.rng.Float64()
 }
 
-func (d *Demo) randPerm(n int) []int {
+func (d *Demo) randInts(n int) []int {
 	d.randMu.Lock()
 	defer d.randMu.Unlock()
 	return d.rng.Perm(n)

@@ -378,7 +378,7 @@ func (d *Demo) shuffledTargetJobUsers(in []targetJobUser) []targetJobUser {
 		return out
 	}
 
-	perm := d.randPerm(len(in))
+	perm := d.randInts(len(in))
 	out := make([]targetJobUser, 0, len(in))
 	for _, idx := range perm {
 		out = append(out, in[idx])
@@ -397,7 +397,7 @@ func (d *Demo) insertColleagueActivity(
 	}
 
 	shuffled := make([]*colleaguesactivity.ColleagueActivity, len(activities))
-	for i, idx := range d.randPerm(len(activities)) {
+	for i, idx := range d.randInts(len(activities)) {
 		shuffled[i] = activities[idx]
 	}
 
@@ -784,6 +784,14 @@ func (d *Demo) highestJobGrade(jobName string) int32 {
 	return grades[len(grades)-1]
 }
 
+func (d *Demo) lowestJobGrade(jobName string) int32 {
+	grades := d.demoJobGrades[jobName]
+	if len(grades) == 0 {
+		return 1
+	}
+	return grades[0]
+}
+
 func (d *Demo) pickNonTargetJob(
 	targetJob string,
 	exclude map[string]struct{},
@@ -970,7 +978,7 @@ func (d *Demo) pickUserLicenses(available []string) []string {
 
 	maxLicenses := min(3, len(available))
 	count := d.randIntN(maxLicenses) + 1
-	perm := d.randPerm(len(available))
+	perm := d.randInts(len(available))
 
 	out := make([]string, 0, count)
 	for i := range count {

@@ -41,6 +41,48 @@ func (d *Demo) upsertDemoTargetJobHighestGradeRolePerms(ctx context.Context) err
 		highestGrade = fallback
 	}
 
+	lowestGrade, ok, err := d.lookupLowestJobGrade(ctx, job)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		d.logger.Warn(
+			"skipping demo rbac basic role seeding, no job grades found for target job",
+			zap.String("job", job),
+		)
+		return nil
+	}
+	if lowestGrade <= 0 {
+		fallback := d.lowestJobGrade(job)
+		if fallback <= 0 {
+			return fmt.Errorf("invalid lowest grade %d for target job %s", lowestGrade, job)
+		}
+		d.logger.Warn(
+			"rbac lowest-grade lookup returned non-positive value, using fallback from demo catalog",
+			zap.String("job", job),
+			zap.Int32("lookup_grade", lowestGrade),
+			zap.Int32("fallback_grade", fallback),
+		)
+		lowestGrade = fallback
+	}
+
+	if lowestGrade != highestGrade {
+		if _, err := d.upsertRoleForJobGrade(ctx, job, lowestGrade); err != nil {
+			return err
+		}
+		d.logger.Info(
+			"completed demo rbac basic role seeding for target job",
+			zap.String("job", job),
+			zap.Int32("grade", lowestGrade),
+		)
+	} else {
+		d.logger.Info(
+			"skipping separate demo rbac basic role seeding because lowest and highest grades are identical",
+			zap.String("job", job),
+			zap.Int32("grade", lowestGrade),
+		)
+	}
+
 	roleID, err := d.upsertRoleForJobGrade(ctx, job, highestGrade)
 	if err != nil {
 		return err
@@ -246,6 +288,27 @@ func (d *Demo) lookupHighestJobGrade(ctx context.Context, job string) (int32, bo
 	}
 
 	return row.HighestGrade, true, nil
+}
+
+func (d *Demo) lookupLowestJobGrade(ctx context.Context, job string) (int32, bool, error) {
+	stmt := tJobsGrades.
+		SELECT(tJobsGrades.Grade.AS("lowest_grade")).
+		FROM(tJobsGrades).
+		WHERE(tJobsGrades.JobName.EQ(mysql.String(job))).
+		ORDER_BY(tJobsGrades.Grade.ASC()).
+		LIMIT(1)
+
+	var row struct {
+		LowestGrade int32 `alias:"lowest_grade"`
+	}
+	if err := stmt.QueryContext(ctx, d.db, &row); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return 0, false, nil
+		}
+		return 0, false, fmt.Errorf("failed to lookup lowest job grade for %s. %w", job, err)
+	}
+
+	return row.LowestGrade, true, nil
 }
 
 func (d *Demo) upsertRoleForJobGrade(ctx context.Context, job string, grade int32) (int64, error) {

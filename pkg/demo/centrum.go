@@ -65,11 +65,11 @@ func (d *Demo) updateDispatches(ctx context.Context) error {
 		return nil
 	}
 
-	perm := d.randPerm(len(dsps))
+	randInts := d.randInts(len(dsps))
 	numToUpdate := min(len(dsps), 2)
 
 	for i := range numToUpdate {
-		dsp := dsps[perm[i]]
+		dsp := dsps[randInts[i]]
 
 		x := dsp.GetX() + d.randFloat64()*700 - 350
 		y := dsp.GetY() + d.randFloat64()*700 - 350
@@ -91,7 +91,11 @@ func (d *Demo) updateDispatches(ctx context.Context) error {
 			CreatorJob: &d.cfg.Demo.TargetJob,
 		}
 		if _, err := d.dispatches.UpdateStatus(ctx, dsp.GetId(), newStatus); err != nil {
-			d.logger.Error("failed to update dispatch status", zap.Error(err))
+			d.logger.Error(
+				"failed to update dispatch status",
+				zap.Int64("dispatch_id", dsp.GetId()),
+				zap.Error(err),
+			)
 		}
 	}
 
