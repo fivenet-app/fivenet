@@ -10,7 +10,6 @@ import (
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
-	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -101,9 +100,12 @@ func (s *Server) sendShareNotifications(
 	entry *calendarentries.CalendarEntry,
 	targetCitizens []int32,
 ) error {
-	sourceUser, err := s.store.GetUserShortByID(ctx, sourceUserId)
+	sourceUser, err := s.hydrator.GetShortByUserID(ctx, nil, sourceUserId)
 	if err != nil {
-		return err
+		return errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	if sourceUser == nil {
+		return errorscalendar.ErrFailedQuery
 	}
 
 	for _, newUser := range targetCitizens {
@@ -130,12 +132,7 @@ func (s *Server) sendShareNotifications(
 				Link: &notifications.Link{
 					To: fmt.Sprintf("/calendar?entryId=%d", entry.GetId()),
 				},
-				CausedBy: &usershort.UserShort{
-					UserId:      sourceUserId,
-					Firstname:   sourceUser.GetFirstname(),
-					Lastname:    sourceUser.GetLastname(),
-					PhoneNumber: sourceUser.PhoneNumber,
-				},
+				CausedBy: sourceUser,
 				Calendar: &notifications.CalendarData{
 					CalendarEntryId: &entry.Id,
 				},

@@ -10,6 +10,7 @@ import (
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	unitsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units/access"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -19,6 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	centrumunitsdb "github.com/fivenet-app/fivenet/v2026/services/centrum/units"
+	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -27,10 +29,8 @@ import (
 )
 
 var (
-	tUnitStatus     = table.FivenetCentrumUnitsStatus.AS("unit_status")
-	tUserProps      = table.FivenetUserProps
-	tUnits          = table.FivenetCentrumUnits.AS("unit")
-	tColleagueProps = table.FivenetJobColleagueProps.AS("colleague_props")
+	tUnitStatus = table.FivenetCentrumUnitsStatus.AS("unit_status")
+	tUnits      = table.FivenetCentrumUnits.AS("unit")
 )
 
 func (s *Server) ListUnits(
@@ -494,9 +494,6 @@ func (s *Server) ListUnitActivity(
 		return resp, nil
 	}
 
-	tColleague := table.FivenetUser.AS("colleague")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-
 	stmt := tUnitStatus.
 		SELECT(
 			tUnitStatus.ID,
@@ -511,42 +508,8 @@ func (s *Server) ListUnitActivity(
 			tUnitStatus.Y,
 			tUnitStatus.Postal,
 			tUnitStatus.CreatorJob,
-			tColleague.ID,
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Job,
-			tColleague.JobGrade,
-			tColleague.Sex,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-			tAvatar.FilePath.AS("colleague.profile_picture"),
 		).
-		FROM(
-			tUnitStatus.
-				LEFT_JOIN(tColleague,
-					tColleague.ID.EQ(tUnitStatus.UserID),
-				).
-				LEFT_JOIN(tUserProps,
-					mysql.AND(
-						tUserProps.UserID.EQ(tUnitStatus.UserID),
-						tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tColleague.ID),
-						tColleagueProps.Job.EQ(tColleague.Job),
-					),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
+		FROM(tUnitStatus).
 		WHERE(
 			tUnitStatus.UnitID.EQ(mysql.Int64(req.GetId())),
 		).
@@ -558,6 +521,31 @@ func (s *Server) ListUnitActivity(
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
+	}
+
+	targets := make([]colleagueshydrator.Target, 0, len(resp.GetActivity()))
+	for i := range resp.GetActivity() {
+		if resp.Activity[i].GetUserId() <= 0 {
+			continue
+		}
+
+		targets = append(targets, colleagueshydrator.Target{
+			UserID: resp.Activity[i].GetUserId(),
+			Set: func(colleague *jobscolleagues.Colleague) {
+				resp.Activity[i].User = colleague
+			},
+		})
+	}
+
+	if err := s.colleagueHydrator.HydrateTargets(
+		ctx,
+		s.db,
+		targets,
+		colleagueshydrator.ResolveOpts{
+			UserInfo: userInfo,
+		},
+	); err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)

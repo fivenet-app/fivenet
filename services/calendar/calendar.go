@@ -8,6 +8,7 @@ import (
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	permscalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar/perms"
 	permssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings/perms"
@@ -17,13 +18,14 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 func (s *Server) canEditCalendarDiscordSettings(userInfo *userinfo.UserInfo) bool {
-	return s.ps.Can(userInfo, permssettings.SettingsService.SetJobProps.Perm)
+	return s.perms.Can(userInfo, permssettings.SettingsService.SetJobProps.Perm)
 }
 
 func (s *Server) ListCalendars(
@@ -62,11 +64,20 @@ func (s *Server) ListCalendars(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.GetCalendars() {
-		if resp.GetCalendars()[i].GetCreator() != nil {
-			jobInfoFn(resp.GetCalendars()[i].GetCreator())
+	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetCalendars()))
+	for i, cal := range resp.GetCalendars() {
+		if cal.GetCreatorId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: cal.GetCreatorId(),
+				Set: func(user *usershort.UserShort) {
+					resp.Calendars[i].Creator = user
+				},
+			})
 		}
+	}
+	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+	if err := hydrateShort(ctx, nil, targets); err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
 	return resp, nil
@@ -120,7 +131,7 @@ func (s *Server) CreateCalendar(
 ) (*pbcalendar.CreateCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	fields, err := permscalendar.CalendarService.CreateCalendar.FieldsTyped.Get(s.ps, userInfo)
+	fields, err := permscalendar.CalendarService.CreateCalendar.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -279,7 +290,7 @@ func (s *Server) UpdateCalendar(
 		}
 	}
 
-	fields, err := permscalendar.CalendarService.CreateCalendar.FieldsTyped.Get(s.ps, userInfo)
+	fields, err := permscalendar.CalendarService.CreateCalendar.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -435,8 +446,16 @@ func (s *Server) getCalendar(
 		return nil, err
 	}
 
-	if dest != nil && dest.GetCreator() != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, dest.GetCreator())
+	if dest != nil && dest.GetCreatorId() > 0 {
+		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+			UserID: dest.GetCreatorId(),
+			Set: func(user *usershort.UserShort) {
+				dest.Creator = user
+			},
+		}}); err != nil {
+			return nil, err
+		}
 	}
 
 	return dest, nil

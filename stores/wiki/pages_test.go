@@ -124,7 +124,6 @@ func TestStoreGetPage(t *testing.T) {
 
 	store := New(testParams(db))
 	query := regexp.QuoteMeta(`FROM fivenet_wiki_pages AS page`) +
-		`(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_user AS creator ON`) +
 		`(?s).*` + regexp.QuoteMeta(`page.id = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
 
@@ -142,12 +141,6 @@ func TestStoreGetPage(t *testing.T) {
 			"page_meta.title",
 			"page_meta.description",
 			"page_meta.creator_id",
-			"creator.id",
-			"creator.job",
-			"creator.job_grade",
-			"creator.firstname",
-			"creator.lastname",
-			"creator.dateofbirth",
 			"page_meta.content_Type",
 			"page_meta.toc",
 			"page_meta.public",
@@ -164,12 +157,6 @@ func TestStoreGetPage(t *testing.T) {
 			"Page 42",
 			"Description",
 			int32(7),
-			int32(7),
-			"police",
-			int32(5),
-			"Jane",
-			"Doe",
-			now,
 			int32(0),
 			true,
 			true,

@@ -48,8 +48,6 @@ func (s *Store) ListPageActivity(
 	tPActivity := table.FivenetWikiPagesActivity.AS("page_activity")
 	condition := tPActivity.PageID.EQ(mysql.Int64(q.PageID))
 
-	tCreator := table.FivenetUser.AS("creator")
-
 	stmt := tPActivity.
 		SELECT(
 			tPActivity.ID,
@@ -60,18 +58,8 @@ func (s *Store) ListPageActivity(
 			tPActivity.CreatorJob,
 			tPActivity.Reason,
 			tPActivity.Data,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
 		).
-		FROM(
-			tPActivity.
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tPActivity.CreatorID),
-				),
-		).
+		FROM(tPActivity).
 		WHERE(condition).
 		OFFSET(q.Offset).
 		ORDER_BY(

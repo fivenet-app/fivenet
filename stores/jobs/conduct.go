@@ -130,13 +130,6 @@ func (s *Store) ListConductEntries(
 		orderBys = append(orderBys, tConduct.ID.DESC())
 	}
 
-	tColleague := table.FivenetUser.AS("target_user")
-	tUserUserProps := table.FivenetUserProps.AS("target_user_props")
-	tColleagueAvatar := table.FivenetFiles.AS("target_user_profile_picture")
-	tCreator := table.FivenetUser.AS("creator")
-	tCreatorUserProps := table.FivenetUserProps.AS("creator_props")
-	tCreatorAvatar := table.FivenetFiles.AS("creator_profile_picture")
-
 	columns := mysql.ProjectionList{
 		tConduct.CreatedAt,
 		tConduct.UpdatedAt,
@@ -146,31 +139,7 @@ func (s *Store) ListConductEntries(
 		tConduct.Message,
 		tConduct.ExpiresAt,
 		tConduct.TargetUserID,
-		tColleague.ID,
-		tColleague.Job,
-		tColleague.JobGrade,
-		tColleague.Firstname,
-		tColleague.Lastname,
-		tColleague.Dateofbirth,
-		tColleague.PhoneNumber,
-		tUserUserProps.AvatarFileID.AS("target_user.profile_picture_file_id"),
-		tColleagueAvatar.FilePath.AS("target_user.profile_picture"),
-		tColleagueProps.UserID,
-		tColleagueProps.Job,
-		tColleagueProps.AbsenceBegin,
-		tColleagueProps.AbsenceEnd,
-		tColleagueProps.NamePrefix,
-		tColleagueProps.NameSuffix,
 		tConduct.CreatorID,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
-		tCreator.PhoneNumber,
-		tCreatorUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-		tCreatorAvatar.FilePath.AS("creator.profile_picture"),
 	}
 	if q.AllAccess {
 		columns = append(columns, tConduct.DeletedAt)
@@ -178,15 +147,7 @@ func (s *Store) ListConductEntries(
 
 	stmt := tConduct.
 		SELECT(tConduct.ID, columns...).
-		FROM(tConduct.
-			LEFT_JOIN(tColleague, tColleague.ID.EQ(tConduct.TargetUserID)).
-			LEFT_JOIN(tUserUserProps, tUserUserProps.UserID.EQ(tConduct.TargetUserID)).
-			LEFT_JOIN(tColleagueProps, mysql.AND(tColleagueProps.UserID.EQ(tConduct.TargetUserID), tColleague.Job.EQ(mysql.String(q.Job)))).
-			LEFT_JOIN(tCreator, tCreator.ID.EQ(tConduct.CreatorID)).
-			LEFT_JOIN(tCreatorUserProps, tCreatorUserProps.UserID.EQ(tConduct.CreatorID)).
-			LEFT_JOIN(tColleagueAvatar, tColleagueAvatar.ID.EQ(tUserUserProps.AvatarFileID)).
-			LEFT_JOIN(tCreatorAvatar, tCreatorAvatar.ID.EQ(tCreatorUserProps.AvatarFileID)),
-		).
+		FROM(tConduct).
 		WHERE(condition).
 		OFFSET(q.Offset).
 		ORDER_BY(orderBys...).
@@ -208,9 +169,6 @@ func (s *Store) GetConductEntry(
 	id int64,
 	includeDeleted bool,
 ) (*jobsconduct.ConductEntry, error) {
-	tColleague := table.FivenetUser.AS("target_user")
-	tCreator := tColleague.AS("creator")
-
 	condition := mysql.AND(tConduct.ID.EQ(mysql.Int64(id)))
 	if !includeDeleted {
 		condition = condition.AND(tConduct.DeletedAt.IS_NULL())
@@ -228,22 +186,9 @@ func (s *Store) GetConductEntry(
 			tConduct.Message,
 			tConduct.ExpiresAt,
 			tConduct.TargetUserID,
-			tColleague.ID,
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
 			tConduct.CreatorID,
-			tCreator.ID,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
 		).
-		FROM(tConduct.
-			LEFT_JOIN(tColleague, tColleague.ID.EQ(tConduct.TargetUserID)).
-			LEFT_JOIN(tCreator, tCreator.ID.EQ(tConduct.CreatorID)),
-		).
+		FROM(tConduct).
 		WHERE(condition).
 		LIMIT(1)
 

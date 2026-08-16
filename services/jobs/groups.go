@@ -13,9 +13,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	groupspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/groupspolicy"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )

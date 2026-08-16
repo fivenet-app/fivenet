@@ -6,7 +6,6 @@ import (
 	"slices"
 
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
-	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -74,27 +73,4 @@ func (s *Store) ShareCalendarEntry(
 	}
 
 	return newUsers, nil
-}
-
-func (s *Store) GetUserShortByID(ctx context.Context, userID int32) (*usershort.UserShort, error) {
-	tUsers := table.FivenetUser.AS("user_short")
-
-	stmt := tUsers.
-		SELECT(
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.PhoneNumber,
-		).
-		FROM(tUsers).
-		WHERE(tUsers.ID.EQ(mysql.Int32(userID))).
-		LIMIT(1)
-
-	sourceUser := &usershort.UserShort{}
-	if err := stmt.QueryContext(ctx, s.db, sourceUser); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return sourceUser, nil
 }

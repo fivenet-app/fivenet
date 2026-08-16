@@ -23,7 +23,6 @@ type ListQuery struct {
 	Wanted       *bool
 
 	CanFilterWanted     bool
-	IncludePhoneNumber  bool
 	IncludePropsUpdated bool
 	IncludeWantedFields bool
 
@@ -35,9 +34,8 @@ type ListQuery struct {
 func (s *Store) Count(ctx context.Context, q ListQuery) (int64, error) {
 	tVehicles := table.FivenetOwnedVehicles.AS("vehicle")
 	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
-	tUsers := table.FivenetUser.AS("user_short")
 
-	condition, userCondition := s.listConditions(q, tVehicles, tVehicleProps, tUsers)
+	condition := s.listConditions(q, tVehicles, tVehicleProps)
 
 	stmt := tVehicles.
 		SELECT(
@@ -45,9 +43,6 @@ func (s *Store) Count(ctx context.Context, q ListQuery) (int64, error) {
 		).
 		FROM(
 			tVehicles.
-				LEFT_JOIN(tUsers,
-					userCondition,
-				).
 				LEFT_JOIN(tVehicleProps,
 					tVehicleProps.Plate.EQ(tVehicles.Plate),
 				),
@@ -67,27 +62,19 @@ func (s *Store) Count(ctx context.Context, q ListQuery) (int64, error) {
 func (s *Store) List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Vehicle, error) {
 	tVehicles := table.FivenetOwnedVehicles.AS("vehicle")
 	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
-	tUsers := table.FivenetUser.AS("user_short")
 
-	condition, userCondition := s.listConditions(q, tVehicles, tVehicleProps, tUsers)
+	condition := s.listConditions(q, tVehicles, tVehicleProps)
 	orderBys := s.sorter.Build(q.Sort)
 
 	columns := dbutils.Columns{
 		s.customDB.Columns.Vehicle.GetModel(tVehicles.Alias()),
 		mysql.REPLACE(tVehicles.Type, mysql.String("_"), mysql.String(" ")).AS("vehicle.type"),
-		tUsers.ID.AS("vehicle.owner_id"),
-		tUsers.ID,
-		tUsers.Firstname,
-		tUsers.Lastname,
-		tUsers.Dateofbirth,
+		tVehicles.UserID.AS("vehicle.owner_id"),
 		tVehicleProps.Plate,
 		tVehicles.Job,
 		tVehicles.Data,
 	}
 
-	if q.IncludePhoneNumber {
-		columns = append(columns, tUsers.PhoneNumber)
-	}
 	if q.IncludePropsUpdated {
 		columns = append(columns, tVehicleProps.UpdatedAt)
 	}
@@ -105,9 +92,6 @@ func (s *Store) List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Veh
 		).
 		FROM(
 			tVehicles.
-				LEFT_JOIN(tUsers,
-					userCondition,
-				).
 				LEFT_JOIN(tVehicleProps,
 					tVehicleProps.Plate.EQ(tVehicles.Plate),
 				),
@@ -126,20 +110,17 @@ func (s *Store) List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Veh
 }
 
 func (s *Store) IsVehicleOwner(ctx context.Context, plate string, userID int32) (bool, error) {
-	tVehicles := table.FivenetOwnedVehicles.AS("vehicle")
-	tUsers := table.FivenetUser.AS("user_short")
+	tVehicles := table.FivenetOwnedVehicles
 
 	var owner struct {
 		Plate string `alias:"plate"`
 	}
 	stmt := tVehicles.
 		SELECT(tVehicles.Plate.AS("plate")).
-		FROM(tVehicles.
-			INNER_JOIN(tUsers, tUsers.ID.EQ(tVehicles.UserID)),
-		).
+		FROM(tVehicles).
 		WHERE(mysql.AND(
 			tVehicles.Plate.EQ(mysql.String(plate)),
-			tUsers.ID.EQ(mysql.Int32(userID)),
+			tVehicles.UserID.EQ(mysql.Int32(userID)),
 		)).
 		LIMIT(1)
 
@@ -324,10 +305,8 @@ func (s *Store) listConditions(
 	q ListQuery,
 	tVehicles *table.FivenetOwnedVehiclesTable,
 	tVehicleProps *table.FivenetVehiclesPropsTable,
-	tUsers *table.FivenetUserTable,
-) (mysql.BoolExpression, mysql.BoolExpression) {
+) mysql.BoolExpression {
 	condition := mysql.Bool(true)
-	userCondition := tUsers.ID.EQ(tVehicles.UserID)
 
 	if search := dbutils.PrepareForLikeSearch(q.LicensePlate); search != "" {
 		condition = mysql.AND(condition, tVehicles.Plate.LIKE(mysql.String(search)))
@@ -347,10 +326,8 @@ func (s *Store) listConditions(
 		}
 
 		condition = mysql.AND(condition,
-			tUsers.ID.EQ(tVehicles.UserID),
-			tUsers.ID.IN(userIDs...),
+			tVehicles.UserID.IN(userIDs...),
 		)
-		userCondition = mysql.AND(userCondition, tUsers.ID.IN(userIDs...))
 	} else if q.Job != "" {
 		condition = mysql.AND(condition,
 			tVehicles.Job.EQ(mysql.String(q.Job)),
@@ -363,5 +340,5 @@ func (s *Store) listConditions(
 		)
 	}
 
-	return condition, userCondition
+	return condition
 }

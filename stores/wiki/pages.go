@@ -438,7 +438,6 @@ func (s *Store) GetPage(
 	withContent bool,
 ) (*reswiki.Page, error) {
 	tPage := table.FivenetWikiPages.AS("page")
-	tCreator := table.FivenetUser.AS("creator")
 
 	columns := mysql.ProjectionList{
 		tPage.ID,
@@ -451,12 +450,6 @@ func (s *Store) GetPage(
 		tPage.Title.AS("page_meta.title"),
 		tPage.Description.AS("page_meta.description"),
 		tPage.CreatorID.AS("page_meta.creator_id"),
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
 		tPage.ContentType.AS("page_meta.content_Type"),
 		tPage.Toc.AS("page_meta.toc"),
 		tPage.Public.AS("page_meta.public"),
@@ -472,12 +465,7 @@ func (s *Store) GetPage(
 
 	stmt := tPage.
 		SELECT(tPage.ID, columns...).
-		FROM(
-			tPage.
-				LEFT_JOIN(tCreator,
-					tPage.CreatorID.EQ(tCreator.ID),
-				),
-		).
+		FROM(tPage).
 		WHERE(mysql.AND(
 			tPage.ID.EQ(mysql.Int64(pageID)),
 		)).

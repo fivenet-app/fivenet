@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v4"
@@ -62,10 +63,11 @@ type Server struct {
 
 	tracer   trace.Tracer
 	js       *events.JSWrapper
-	ps       perms.Permissions
+	perms    perms.Permissions
 	enricher mstlystcdata.IEnricher
 	tracker  tracker.ITracker
 	postals  postals.Postals
+	hydrator citizenshydrator.IHydrator
 	store    livemapstore.IStore
 
 	markersCache        *xsync.Map[string, []*livemapmarkers.MarkerMarker]
@@ -87,6 +89,7 @@ type Params struct {
 	Enricher mstlystcdata.IEnricher
 	Tracker  tracker.ITracker
 	Postals  postals.Postals
+	Hydrator citizenshydrator.IHydrator
 	Store    livemapstore.IStore
 }
 
@@ -103,10 +106,11 @@ func NewServer(p Params) *Server {
 
 		tracer:   p.TP.Tracer("livemap"),
 		js:       p.JS,
-		ps:       p.Perms,
+		perms:    p.Perms,
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
 		postals:  p.Postals,
+		hydrator: p.Hydrator,
 		store:    p.Store,
 
 		markersCache:        xsync.NewMap[string, []*livemapmarkers.MarkerMarker](),

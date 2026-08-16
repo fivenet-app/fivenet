@@ -15,8 +15,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/stats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
-	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	"github.com/fivenet-app/fivenet/v2026/stores/jobs/usersel"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
@@ -91,7 +91,7 @@ type Server struct {
 	wg     sync.WaitGroup
 
 	db       *sql.DB
-	ps       perms.Permissions
+	perms    perms.Permissions
 	enricher mstlystcdata.IUserAwareEnricher
 	notifi   notifi.INotifi
 	stats    *stats.Service
@@ -168,7 +168,7 @@ func NewServer(p Params) *Server {
 		wg:     sync.WaitGroup{},
 
 		db:       p.DB,
-		ps:       p.Perms,
+		perms:    p.Perms,
 		enricher: p.UserAwareEnricher,
 		notifi:   p.Notifi,
 		stats:    p.Stats,

@@ -13,12 +13,14 @@ import (
 	documentsapproval "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/approval"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -57,6 +59,10 @@ func (s *Server) ListApprovalTasksInbox(
 	resp.Pagination = pag
 	if count.Total <= 0 {
 		return resp, nil
+	}
+
+	if err := s.hydrateApprovalTasks(ctx, userInfo, resp.GetTasks()...); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
@@ -302,8 +308,6 @@ func (s *Server) ListApprovalTasks(
 		Tasks: []*documentsapproval.ApprovalTask{},
 	}
 
-	tUser := table.FivenetUser.AS("usershort")
-
 	stmt := mysql.
 		SELECT(
 			tApprovalTasks.ID,
@@ -324,19 +328,8 @@ func (s *Server) ListApprovalTasks(
 			tApprovalTasks.ApprovalID,
 			tApprovalTasks.CreatorID,
 			tApprovalTasks.CreatorJob,
-			tUser.ID,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.Job,
-			tUser.JobGrade,
 		).
-		FROM(
-			tApprovalTasks.
-				LEFT_JOIN(tUser,
-					tUser.ID.EQ(tApprovalTasks.UserID),
-				),
-		).
+		FROM(tApprovalTasks).
 		WHERE(condition).
 		ORDER_BY(tApprovalTasks.CreatedAt.ASC()).
 		LIMIT(15)
@@ -345,6 +338,10 @@ func (s *Server) ListApprovalTasks(
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
+	}
+
+	if err := s.hydrateApprovalTasks(ctx, userInfo, resp.GetTasks()...); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	for _, t := range resp.GetTasks() {
@@ -356,6 +353,44 @@ func (s *Server) ListApprovalTasks(
 	}
 
 	return resp, nil
+}
+
+func (s *Server) hydrateApprovalTasks(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	tasks ...*documentsapproval.ApprovalTask,
+) error {
+	targets := make([]citizenshydrator.ShortTarget, 0, len(tasks)*3)
+	for _, task := range tasks {
+		if task == nil {
+			continue
+		}
+
+		if task.GetUser() == nil && task.GetUserId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: task.GetUserId(),
+				Set:    func(user *usershort.UserShort) { task.User = user },
+			})
+		}
+		if task.GetCreator() == nil && task.GetCreatorId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: task.GetCreatorId(),
+				Set:    func(user *usershort.UserShort) { task.Creator = user },
+			})
+		}
+		if doc := task.GetDocument(); doc != nil && doc.GetCreator() == nil &&
+			doc.GetCreatorId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: doc.GetCreatorId(),
+				Set:    func(user *usershort.UserShort) { doc.Creator = user },
+			})
+		}
+	}
+	if len(targets) == 0 {
+		return nil
+	}
+
+	return s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
 func (s *Server) UpsertApprovalTasks(
@@ -572,6 +607,10 @@ func (s *Server) ListApprovals(
 
 	resp := &pbdocuments.ListApprovalsResponse{Approvals: approvals}
 
+	if err := s.hydrateApprovals(ctx, userInfo, resp.GetApprovals()...); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	// Enrich labels/grades for display
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for _, t := range resp.GetApprovals() {
@@ -585,6 +624,29 @@ func (s *Server) ListApprovals(
 	}
 
 	return resp, nil
+}
+
+func (s *Server) hydrateApprovals(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	approvals ...*documentsapproval.Approval,
+) error {
+	targets := make([]citizenshydrator.ShortTarget, 0, len(approvals))
+	for _, approval := range approvals {
+		if approval == nil || approval.GetUser() != nil || approval.GetUserId() <= 0 {
+			continue
+		}
+
+		targets = append(targets, citizenshydrator.ShortTarget{
+			UserID: approval.GetUserId(),
+			Set:    func(user *usershort.UserShort) { approval.User = user },
+		})
+	}
+	if len(targets) == 0 {
+		return nil
+	}
+
+	return s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
 func (s *Server) RevokeApproval(

@@ -115,7 +115,7 @@ func (s *DispatchDB) Filter(
 	ds = slices.DeleteFunc(ds, func(dispatch *centrumdispatches.Dispatch) bool {
 		// Hide user info when dispatch is anonymous
 		if dispatch.GetAnon() {
-			dispatch.Creator = nil
+			dispatch.ClearCreator()
 		}
 
 		// Include statuses that should be listed

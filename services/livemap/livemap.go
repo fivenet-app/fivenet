@@ -33,7 +33,7 @@ func (s *Server) getAndSendACL(
 	srv pblivemap.LivemapService_StreamServer,
 	userInfo *userinfo.UserInfo,
 ) (*permissionsattributes.StringList, *permissionsattributes.JobGradeList, bool, error) {
-	markerJobs, err := s.ps.AttrJobList(
+	markerJobs, err := s.perms.AttrJobList(
 		userInfo,
 		permslivemap.LivemapService.Stream.Markers,
 	)
@@ -41,7 +41,7 @@ func (s *Server) getAndSendACL(
 		return nil, nil, false, errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 	}
 
-	usersJobs, err := s.ps.AttrJobGradeList(
+	usersJobs, err := s.perms.AttrJobGradeList(
 		userInfo,
 		permslivemap.LivemapService.Stream.Players,
 	)

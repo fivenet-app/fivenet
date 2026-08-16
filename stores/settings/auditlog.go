@@ -91,7 +91,6 @@ func (s *Store) ViewAuditLog(
 
 	orderBys := s.auditLogSorter.Build(opts.Sort)
 
-	tUser := table.FivenetUser.AS("user_short")
 	stmt := tAuditLog.
 		SELECT(
 			tAuditLog.ID,
@@ -106,20 +105,8 @@ func (s *Store) ViewAuditLog(
 			tAuditLog.Result,
 			tAuditLog.Meta,
 			tAuditLog.Data,
-			tUser.ID,
-			tUser.Identifier,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
 		).
-		FROM(
-			tAuditLog.
-				LEFT_JOIN(tUser,
-					tUser.ID.EQ(tAuditLog.UserID),
-				),
-		).
+		FROM(tAuditLog).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
 		OFFSET(opts.Pagination.GetOffset()).

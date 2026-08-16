@@ -27,6 +27,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
+	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -99,14 +101,16 @@ type Server struct {
 	wg     sync.WaitGroup
 	jsCons jetstream.ConsumeContext
 
-	db       *sql.DB
-	ps       perms.Permissions
-	js       *events.JSWrapper
-	tracker  tracker.ITracker
-	postals  postals.Postals
-	appCfg   appconfig.IConfig
-	enricher mstlystcdata.IUserAwareEnricher
-	jobs     mstlystcdata.IJobs
+	db                *sql.DB
+	perms             perms.Permissions
+	js                *events.JSWrapper
+	tracker           tracker.ITracker
+	postals           postals.Postals
+	appCfg            appconfig.IConfig
+	enricher          mstlystcdata.IUserAwareEnricher
+	jobs              mstlystcdata.IJobs
+	hydrator          citizenshydrator.IHydrator
+	colleagueHydrator colleagueshydrator.IHydrator
 
 	helpers     *helpers.Helpers
 	settings    *settings.SettingsDB
@@ -120,17 +124,19 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger    *zap.Logger
-	TP        *tracesdk.TracerProvider
-	DB        *sql.DB
-	Perms     perms.Permissions
-	JS        *events.JSWrapper
-	Config    *config.Config
-	AppConfig appconfig.IConfig
-	Tracker   tracker.ITracker
-	Postals   postals.Postals
-	Enricher  mstlystcdata.IUserAwareEnricher
-	Jobs      mstlystcdata.IJobs
+	Logger            *zap.Logger
+	TP                *tracesdk.TracerProvider
+	DB                *sql.DB
+	Perms             perms.Permissions
+	JS                *events.JSWrapper
+	Config            *config.Config
+	AppConfig         appconfig.IConfig
+	Tracker           tracker.ITracker
+	Postals           postals.Postals
+	Enricher          mstlystcdata.IUserAwareEnricher
+	Jobs              mstlystcdata.IJobs
+	Hydrator          citizenshydrator.IHydrator
+	ColleagueHydrator colleagueshydrator.IHydrator
 
 	Helpers     *helpers.Helpers
 	Settings    *settings.SettingsDB
@@ -155,14 +161,16 @@ func NewServer(p Params) Result {
 		tracer: p.TP.Tracer("centrum"),
 		wg:     sync.WaitGroup{},
 
-		db:       p.DB,
-		ps:       p.Perms,
-		js:       p.JS,
-		tracker:  p.Tracker,
-		postals:  p.Postals,
-		appCfg:   p.AppConfig,
-		enricher: p.Enricher,
-		jobs:     p.Jobs,
+		db:                p.DB,
+		perms:             p.Perms,
+		js:                p.JS,
+		tracker:           p.Tracker,
+		postals:           p.Postals,
+		appCfg:            p.AppConfig,
+		enricher:          p.Enricher,
+		jobs:              p.Jobs,
+		hydrator:          p.Hydrator,
+		colleagueHydrator: p.ColleagueHydrator,
 
 		helpers:     p.Helpers,
 		settings:    p.Settings,

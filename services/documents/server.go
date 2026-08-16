@@ -23,6 +23,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -127,8 +128,9 @@ type Server struct {
 	db     *sql.DB
 
 	js            *events.JSWrapper
-	ps            perms.Permissions
+	perms         perms.Permissions
 	jobs          mstlystcdata.IJobs
+	hydrator      citizenshydrator.IHydrator
 	docCategories mstlystcdata.IDocumentCategories
 	enricher      mstlystcdata.IUserAwareEnricher
 	ui            userinfo.UserInfoRetriever
@@ -157,6 +159,7 @@ type Params struct {
 	Perms              perms.Permissions
 	Storage            storage.IStorage
 	Jobs               mstlystcdata.IJobs
+	Hydrator           citizenshydrator.IHydrator
 	DocCategories      mstlystcdata.IDocumentCategories
 	Enricher           mstlystcdata.IUserAwareEnricher
 	Ui                 userinfo.UserInfoRetriever
@@ -209,8 +212,9 @@ func NewServer(p Params) Result {
 		db:     p.DB,
 
 		js:            p.JS,
-		ps:            p.Perms,
+		perms:         p.Perms,
 		jobs:          p.Jobs,
+		hydrator:      p.Hydrator,
 		docCategories: p.DocCategories,
 		enricher:      p.Enricher,
 		ui:            p.Ui,

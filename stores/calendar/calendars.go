@@ -16,8 +16,7 @@ import (
 )
 
 func (s *Store) CountCalendars(ctx context.Context, q ListQuery) (int64, error) {
-	tCreator := table.FivenetUser.AS("creator")
-	stmt := s.countCalendarsStmt(q, tCreator)
+	stmt := s.countCalendarsStmt(q)
 
 	var count database.DataCount
 	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -34,14 +33,12 @@ func (s *Store) ListCalendars(
 	q ListQuery,
 	offset, limit int64,
 ) ([]*calendarresource.Calendar, error) {
-	tCreator := table.FivenetUser.AS("creator")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
 	var userID int32
 	if q.UserInfo != nil {
 		userID = q.UserInfo.GetUserId()
 	}
 
-	stmt := s.listCalendarsStmt(q, userID, tCreator, tAvatar, offset, limit)
+	stmt := s.listCalendarsStmt(q, userID, offset, limit)
 
 	var calendars []*calendarresource.Calendar
 	if err := stmt.QueryContext(ctx, s.db, &calendars); err != nil {
@@ -92,7 +89,6 @@ func (s *Store) GetAccessibleCalendar(
 
 func (s *Store) countCalendarsStmt(
 	q ListQuery,
-	tCreator *table.FivenetUserTable,
 ) mysql.SelectStatement {
 	condition, _ := s.listConditions(q)
 
@@ -100,11 +96,7 @@ func (s *Store) countCalendarsStmt(
 		SELECT(
 			mysql.COUNT(mysql.DISTINCT(tCalendar.ID)).AS("data_count.total"),
 		).
-		FROM(tCalendar.
-			LEFT_JOIN(tCreator,
-				tCalendar.CreatorID.EQ(tCreator.ID),
-			),
-		).
+		FROM(tCalendar).
 		WHERE(condition)
 }
 
@@ -215,8 +207,6 @@ func (s *Store) birthdayCalendarVisible(
 func (s *Store) listCalendarsStmt(
 	q ListQuery,
 	userID int32,
-	tCreator *table.FivenetUserTable,
-	tAvatar *table.FivenetFilesTable,
 	offset, limit int64,
 ) mysql.SelectStatement {
 	condition, orderBys := s.listConditions(q)
@@ -234,15 +224,6 @@ func (s *Store) listCalendarsStmt(
 		tCalendar.Closed,
 		tCalendar.Color,
 		tCalendar.CreatorID,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
-		tCreator.PhoneNumber,
-		tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-		tAvatar.FilePath.AS("creator.profile_picture"),
 		tCalendarSubs.CalendarID,
 		tCalendarSubs.UserID,
 		tCalendarSubs.CreatedAt,
@@ -254,20 +235,11 @@ func (s *Store) listCalendarsStmt(
 	return tCalendar.
 		SELECT(selectColumns[0], selectColumns[1:]...).
 		FROM(tCalendar.
-			LEFT_JOIN(tCreator,
-				tCalendar.CreatorID.EQ(tCreator.ID),
-			).
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tCalendar.CreatorID),
-			).
 			LEFT_JOIN(tCalendarSubs,
 				mysql.AND(
 					tCalendarSubs.CalendarID.EQ(tCalendar.ID),
 					tCalendarSubs.UserID.EQ(mysql.Int32(userID)),
 				),
-			).
-			LEFT_JOIN(tAvatar,
-				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		WHERE(condition).
@@ -280,8 +252,6 @@ func (s *Store) getCalendarStmt(
 	userInfo *userinfo.UserInfo,
 	condition mysql.BoolExpression,
 ) mysql.SelectStatement {
-	tCreator := table.FivenetUser.AS("creator")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
 	var userID int32
 	if userInfo != nil {
 		userID = userInfo.GetUserId()
@@ -302,15 +272,6 @@ func (s *Store) getCalendarStmt(
 		tCalendar.Color,
 		tCalendar.CreatorID,
 		tCalendar.CreatorJob,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
-		tCreator.PhoneNumber,
-		tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-		tAvatar.FilePath.AS("creator.profile_picture"),
 		tCalendarSubs.CalendarID,
 		tCalendarSubs.UserID,
 		tCalendarSubs.CreatedAt,
@@ -322,20 +283,11 @@ func (s *Store) getCalendarStmt(
 	return tCalendar.
 		SELECT(columns[0], columns[1:]...).
 		FROM(tCalendar.
-			LEFT_JOIN(tCreator,
-				tCalendar.CreatorID.EQ(tCreator.ID),
-			).
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tCalendar.CreatorID),
-			).
 			LEFT_JOIN(tCalendarSubs,
 				mysql.AND(
 					tCalendarSubs.CalendarID.EQ(tCalendar.ID),
 					tCalendarSubs.UserID.EQ(mysql.Int32(userID)),
 				),
-			).
-			LEFT_JOIN(tAvatar,
-				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		WHERE(mysql.AND(

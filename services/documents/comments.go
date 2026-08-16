@@ -22,6 +22,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -75,6 +76,24 @@ func (s *Server) GetComments(
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetComments()))
+	for i, comment := range resp.GetComments() {
+		if comment.GetCreatorId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: comment.GetCreatorId(),
+				Set: func(user *usershort.UserShort) {
+					resp.Comments[i].Creator = user
+				},
+			})
+		}
+	}
+	if len(targets) > 0 {
+		if err := hydrateShort(ctx, nil, targets); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
@@ -154,6 +173,17 @@ func (s *Server) PostComment(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	if comment.GetCreatorId() > 0 {
+		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+			UserID: comment.GetCreatorId(),
+			Set: func(user *usershort.UserShort) {
+				comment.Creator = user
+			},
+		}}); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
 	comment.CreatorJob = ""
 
 	return &pbdocuments.PostCommentResponse{
@@ -191,6 +221,17 @@ func (s *Server) EditComment(
 	comment, err := s.store.GetComment(ctx, req.GetComment().GetId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if comment.GetCreatorId() > 0 {
+		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+			UserID: comment.GetCreatorId(),
+			Set: func(user *usershort.UserShort) {
+				comment.Creator = user
+			},
+		}}); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
 	}
 	if !userInfo.GetJobAdmin() && comment.GetCreatorId() != userInfo.GetUserId() {
 		return nil, errorsdocuments.ErrCommentEditDenied
@@ -244,6 +285,17 @@ func (s *Server) DeleteComment(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	if comment.GetCreatorId() > 0 {
+		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+			UserID: comment.GetCreatorId(),
+			Set: func(user *usershort.UserShort) {
+				comment.Creator = user
+			},
+		}}); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
 	if comment.GetCreatorJob() == "" {
 		comment.CreatorJob = userInfo.GetJob()
 	}
@@ -262,7 +314,7 @@ func (s *Server) DeleteComment(
 	}
 
 	// Field Permission Check
-	fields, err := permsdocuments.CommentsService.DeleteComment.AccessTyped.Get(s.ps, userInfo)
+	fields, err := permsdocuments.CommentsService.DeleteComment.AccessTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}

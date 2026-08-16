@@ -738,7 +738,7 @@ func (s *Server) listUserPerms(
 	isSuperuserActive bool,
 ) ([]*permissionspermissions.Permission, []*permissionsattributes.RoleAttribute, error) {
 	// Load permissions of user
-	userPs, err := s.ps.GetPermissionsOfUser(&pbuserinfo.UserInfo{
+	userPs, err := s.perms.GetPermissionsOfUser(&pbuserinfo.UserInfo{
 		UserId:   char.GetUserId(),
 		Job:      char.GetJob(),
 		JobGrade: char.GetJobGrade(),
@@ -758,7 +758,7 @@ func (s *Server) listUserPerms(
 		userPs = append(userPs, perms.PermConfigAdmin)
 	}
 
-	attrs, err := s.ps.GetEffectiveRoleAttributes(ctx, char.GetJob(), char.GetJobGrade())
+	attrs, err := s.perms.GetEffectiveRoleAttributes(ctx, char.GetJob(), char.GetJobGrade())
 	if err != nil {
 		return nil, nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}

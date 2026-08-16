@@ -83,7 +83,7 @@ func (s *Server) UploadMugshot(
 	logging.InjectFields(ctx, logging.Fields{citizenIDLogFieldKey, userInfo.GetUserId()})
 
 	// Field Permission Check
-	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.ps, userInfo)
+	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}

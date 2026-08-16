@@ -27,7 +27,7 @@ func (s *Server) GetColleagueLabels(
 	}
 
 	// Fields Permission Check
-	fields, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.ps, userInfo)
+	fields, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -36,7 +36,7 @@ func (s *Server) GetColleagueLabels(
 	}
 	if !fields.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) {
 		// Fallback to checking if user has manage colleague labels permission
-		if !s.ps.Can(userInfo, permsjobs.ColleaguesService.CreateOrUpdateLabel.Perm) {
+		if !s.perms.Can(userInfo, permsjobs.ColleaguesService.CreateOrUpdateLabel.Perm) {
 			return nil, errorsjobs.ErrLabelsNoPerms
 		}
 	}
@@ -164,7 +164,7 @@ func (s *Server) GetColleagueLabelsStats(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Types Permission Check
-	fields, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.ps, userInfo)
+	fields, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}

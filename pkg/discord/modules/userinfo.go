@@ -490,9 +490,11 @@ func (g *UserInfo) constructUserNickname(
 	var truncatedFirstSb473 strings.Builder
 	for i := range firstParts {
 		if i == len(firstParts)-1 {
-			truncatedFirstSb473.WriteString(string(firstParts[i][0]) + ".")
+			truncatedFirstSb473.WriteString(string(firstParts[i][0]))
+			truncatedFirstSb473.WriteString(".")
 		} else {
-			truncatedFirstSb473.WriteString(firstParts[i] + " ")
+			truncatedFirstSb473.WriteString(firstParts[i])
+			truncatedFirstSb473.WriteString(" ")
 		}
 	}
 	truncatedFirst += truncatedFirstSb473.String()

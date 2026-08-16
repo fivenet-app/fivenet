@@ -45,7 +45,6 @@ func (s *Server) GetExamInfo(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		false,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -128,7 +127,6 @@ func (s *Server) TakeExam(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		false,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -236,7 +234,6 @@ func (s *Server) SubmitExam(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		false,
 		false,
 	)
 	if err != nil {

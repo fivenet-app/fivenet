@@ -125,8 +125,8 @@ func newTimeclockStatsTestServer(
 	}
 
 	return &Server{
-		db: db,
-		ps: &timeclockTestPerms{access: accessPs},
+		db:    db,
+		perms: &timeclockTestPerms{access: accessPs},
 		store: jobsstore.New(
 			db,
 			&config.CustomDB{},

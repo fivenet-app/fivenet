@@ -157,7 +157,7 @@ func (s *Server) GetTemplate(
 			req.GetData(),
 		)
 		if err != nil {
-			if s.ps.Can(
+			if s.perms.Can(
 				userInfo,
 				permsdocuments.TemplatesService.CreateTemplate.Perm,
 			) {
