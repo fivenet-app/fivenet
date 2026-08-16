@@ -622,6 +622,7 @@ const formRef = useTemplateRef('formRef');
                                                         GRPCServices.map((s) => ({ label: $t(`perms.${s}.service`), value: s }))
                                                     "
                                                     :placeholder="$t('common.service')"
+                                                    label-key="label"
                                                     value-key="value"
                                                 >
                                                     <template v-if="state.perms.default[idx]!.category" #default>
@@ -646,9 +647,13 @@ const formRef = useTemplateRef('formRef');
                                                         m.startsWith(state.perms.default[idx]!.category + '/'),
                                                     )
                                                         .map((m) => m.split('/').at(1) ?? m)
-                                                        .map((s) => ({ label: $t(`perms.${s}.service`), value: s }))
+                                                        .map((s) => ({
+                                                            label: $t(`perms.${state.perms.default[idx]!.category}.${s}.key`),
+                                                            value: s,
+                                                        }))
                                                 "
                                                 :placeholder="$t('common.method')"
+                                                label-key="label"
                                                 value-key="value"
                                             >
                                                 <template v-if="state.perms.default[idx]!.name" #default>
@@ -660,7 +665,7 @@ const formRef = useTemplateRef('formRef');
                                                 </template>
 
                                                 <template #item-label="{ item }">
-                                                    {{ $t(`perms.${state.perms.default[idx]!.category}.${item}.key`) }}
+                                                    {{ item.label }}
                                                 </template>
 
                                                 <template #empty>
