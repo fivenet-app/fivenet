@@ -1,4 +1,4 @@
-import { DECORATION_MANAGER_PLUGIN_KEY, Editor } from '@tiptap/core';
+import { DECORATION_MANAGER_PLUGIN_KEY, Editor, type DecorationWithType } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
@@ -16,7 +16,7 @@ function getDecorationClasses(editor: Editor): string[] {
     const state = DECORATION_MANAGER_PLUGIN_KEY.getState(editor.state);
     const decorations = state?.mergedDecorationSet.find() ?? [];
 
-    return decorations.map((decoration) => (decoration.type.attrs.class as string | undefined) ?? '');
+    return decorations.map((decoration) => ((decoration as DecorationWithType).type.attrs.class as string | undefined) ?? '');
 }
 
 describe('SearchAndReplace decorations', () => {
