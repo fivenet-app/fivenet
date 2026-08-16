@@ -11,18 +11,26 @@ const { userInfo } = storeToRefs(authSessionStore);
 const notificationStore = useNotificationsStore();
 const { dismissedBannerMessageID } = storeToRefs(notificationStore);
 
-const sidebarWidth = ref(0);
+const sidebarWidth = ref<number>(0);
 const sidebarEl = ref<HTMLElement | null>(null);
 
 function updateSidebarWidth(entries: ResizeObserverEntry[]) {
     sidebarWidth.value = entries[0]?.contentRect.width ?? 0;
 }
 
+const bannerMessageClosed = ref<boolean>(false);
+
+watch(
+    () => appConfig.system.bannerMessage,
+    () => (bannerMessageClosed.value = false),
+);
+
 const bannersPaddingRequired = computed<number>(
     () =>
         (appConfig.system.bannerMessageEnabled &&
         appConfig.system.bannerMessage &&
-        dismissedBannerMessageID.value !== appConfig.system.bannerMessage.id
+        dismissedBannerMessageID.value !== appConfig.system.bannerMessage.id &&
+        !bannerMessageClosed.value
             ? 16
             : 0) + (userInfo.value?.originalJob ? 5 : 0),
 );
@@ -51,6 +59,7 @@ onMounted(() => (sidebarEl.value = document.getElementById('dashboard-sidebar-de
         <BannerMessage
             v-if="appConfig.system.bannerMessageEnabled && appConfig.system.bannerMessage"
             :message="appConfig.system.bannerMessage"
+            @close="() => (bannerMessageClosed = true)"
         />
 
         <ImpersonatingBanner v-if="userInfo?.originalJob" :job="userInfo?.job" :job-grade="userInfo?.jobGrade" />

@@ -18,12 +18,11 @@ const now = new Date();
 const hide = computed(
     () =>
         dismissedBannerMessageID.value === props.message.id ||
-        (props.message.expiresAt !== undefined && toDate(props.message.expiresAt).getTime() - now.getTime() < 0),
+        (props.message.expiresAt && toDate(props.message.expiresAt).getTime() - now.getTime() < 0),
 );
 
 function onClose() {
-    console.log('dismissed?');
-    if (props.message.expiresAt !== undefined) dismissedBannerMessageID.value = props.message.id;
+    if (props.message.expiresAt) dismissedBannerMessageID.value = props.message.id;
 
     emit('close');
 }
