@@ -28,7 +28,7 @@ const items = computed(() => [
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar :title="$t('components.auth.user_settings.title')">
                 <template #leading>

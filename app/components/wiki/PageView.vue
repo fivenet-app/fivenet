@@ -214,7 +214,7 @@ const scrollRef = useTemplateRef('scrollRef');
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'py-0 sm:py-0 lg:py-6 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'py-0 sm:py-0 lg:py-6 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="`${page?.jobLabel ? page?.jobLabel + ': ' : ''}${$t('common.wiki')}`">
                 <template #leading>

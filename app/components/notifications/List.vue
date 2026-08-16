@@ -110,7 +110,12 @@ const canSubmit = ref<boolean>(true);
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' + (scrollable ? ' overflow-y-auto' : '') }">
+    <UDashboardPanel
+        :ui="{
+            root: 'pb-(--dashboard-panel-bottom-offset)',
+            body: 'p-0 sm:p-0 gap-0 sm:gap-0' + (scrollable ? ' overflow-y-auto' : ''),
+        }"
+    >
         <template #header>
             <UDashboardNavbar v-if="!hideHeader" :title="$t('components.notifications.title')">
                 <template #leading>

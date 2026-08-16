@@ -481,7 +481,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0' }">
+    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'p-0 sm:p-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.settings.title')">
                 <template #leading>

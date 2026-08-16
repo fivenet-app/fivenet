@@ -40,7 +40,7 @@ const faqs = [
 
 <template>
     <UPage>
-        <UDashboardPanel>
+        <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
             <div class="flex flex-col justify-between">
                 <div>
                     <div class="relative isolate px-6 py-20 lg:px-8">

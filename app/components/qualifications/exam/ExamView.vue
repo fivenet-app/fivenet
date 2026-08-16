@@ -82,7 +82,7 @@ watch(data, async () => {
         "
     />
 
-    <UDashboardPanel v-else>
+    <UDashboardPanel v-else :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.id.exam.title')">
                 <template #leading>

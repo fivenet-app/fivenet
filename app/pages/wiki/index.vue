@@ -60,7 +60,7 @@ const wikiService = await useWikiWiki();
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar :title="$t('common.wiki')">
                 <template #leading>

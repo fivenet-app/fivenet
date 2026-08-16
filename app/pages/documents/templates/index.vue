@@ -49,7 +49,7 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.templates.title')">
                 <template #leading>

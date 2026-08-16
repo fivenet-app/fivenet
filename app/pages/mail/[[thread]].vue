@@ -197,11 +197,11 @@ const isMobile = breakpoints.smaller('lg');
 <template>
     <UDashboardPanel
         id="mail-threads"
+        :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
         resizable
         :default-size="28"
         :min-size="16"
         :max-size="50"
-        :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
     >
         <template #header>
             <UDashboardNavbar :title="$t('common.mail')" :badge="threads?.pagination?.totalCount ?? 0">

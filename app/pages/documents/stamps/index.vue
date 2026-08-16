@@ -43,7 +43,7 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('common.stamp', 2)">
                 <template #leading>

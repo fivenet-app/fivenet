@@ -109,7 +109,7 @@ const superuserItems = computed<CardElement[]>(() => [
 </script>
 
 <template>
-    <UDashboardPanel id="settings">
+    <UDashboardPanel id="settings" :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar :title="$t('common.control_panel')">
                 <template #leading>

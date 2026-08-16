@@ -21,6 +21,9 @@ const hide = computed(
         (props.message.expiresAt && toDate(props.message.expiresAt).getTime() - now.getTime() < 0),
 );
 
+const bannerRef = useTemplateRef<{ $el: HTMLElement }>('bannerRef');
+const bannerEl = computed(() => bannerRef.value?.$el ?? null);
+
 function onClose() {
     if (props.message.expiresAt) dismissedBannerMessageID.value = props.message.id;
 
@@ -29,11 +32,16 @@ function onClose() {
 
 const color = computed(() => (props.message.color ?? 'primary') as ButtonProps['color']);
 const { system } = useAppConfig();
+
+defineExpose({
+    el: bannerEl,
+});
 </script>
 
 <template>
     <UBanner
         v-if="system.bannerMessage && !hide"
+        ref="bannerRef"
         :icon="system.bannerMessage.icon ?? 'i-mdi-information-outline'"
         :color="color"
         close

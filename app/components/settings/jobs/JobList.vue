@@ -77,7 +77,7 @@ const expanded = ref({});
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.jobs.title')">
                 <template #leading>

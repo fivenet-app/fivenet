@@ -25,23 +25,26 @@ watch(
     () => (bannerMessageClosed.value = false),
 );
 
-const bannersPaddingRequired = computed<number>(
-    () =>
-        (appConfig.system.bannerMessageEnabled &&
-        appConfig.system.bannerMessage &&
-        dismissedBannerMessageID.value !== appConfig.system.bannerMessage.id &&
-        !bannerMessageClosed.value
-            ? 16
-            : 0) + (userInfo.value?.originalJob ? 5 : 0),
+const bannerRef = useTemplateRef<{ el: HTMLElement | null }>('bannerRef');
+
+const bannerMessageHeight = computed<number>(() =>
+    appConfig.system.bannerMessageEnabled &&
+    appConfig.system.bannerMessage &&
+    dismissedBannerMessageID.value !== appConfig.system.bannerMessage.id &&
+    !bannerMessageClosed.value
+        ? (bannerRef.value?.el?.clientHeight ?? 0)
+        : 0,
 );
 
+const impersonatingBannerHeight = computed<number>(() => (userInfo.value?.originalJob ? 17.5 : 0));
+
+const dashboardPaddingBottom = computed<number>(() => bannerMessageHeight.value + impersonatingBannerHeight.value);
+
 watch(
-    bannersPaddingRequired,
-    () =>
-        document.documentElement.style.setProperty(
-            '--dashboard-panel-bottom-offset',
-            `calc(${Math.max(Math.min(bannersPaddingRequired.value, 21), 2)} * var(--spacing))`,
-        ),
+    dashboardPaddingBottom,
+    () => {
+        document.documentElement.style.setProperty('--dashboard-panel-bottom-offset', `${dashboardPaddingBottom.value}px`);
+    },
     { immediate: true },
 );
 
@@ -52,12 +55,13 @@ onMounted(() => (sidebarEl.value = document.getElementById('dashboard-sidebar-de
 
 <template>
     <div
-        v-if="bannersPaddingRequired > 0"
-        class="pointer-events-none fixed inset-x-0 bottom-0 z-[49] flex max-h-21 flex-col gap-0 sm:left-[var(--sidebar-width)]"
+        v-if="dashboardPaddingBottom > 0"
+        class="pointer-events-none fixed inset-x-0 bottom-0 z-[49] flex max-h-21 flex-col gap-0 sm:left-[var(--sidebar-width)] print:hidden"
         :style="{ '--sidebar-width': `${sidebarWidth}px` }"
     >
         <BannerMessage
             v-if="appConfig.system.bannerMessageEnabled && appConfig.system.bannerMessage"
+            ref="bannerRef"
             :message="appConfig.system.bannerMessage"
             @close="() => (bannerMessageClosed = true)"
         />

@@ -99,7 +99,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar :title="$t('components.auth.AccountInfo.title')">
                 <template #leading>

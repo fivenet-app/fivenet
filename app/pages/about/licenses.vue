@@ -42,7 +42,7 @@ const licenses = [
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
         <div class="flex h-full flex-col justify-between">
             <div class="relative isolate px-6 py-20 lg:px-8">
                 <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />

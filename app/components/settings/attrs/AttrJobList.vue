@@ -128,7 +128,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.limiter.title')">
                 <template #leading>

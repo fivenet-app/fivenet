@@ -51,7 +51,7 @@ function categorySelected(idx: number): void {
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.categories.title')">
                 <template #leading>
