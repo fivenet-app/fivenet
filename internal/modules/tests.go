@@ -27,7 +27,6 @@ import (
 	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 	statsstore "github.com/fivenet-app/fivenet/v2026/stores/stats"
-	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	wikistore "github.com/fivenet-app/fivenet/v2026/stores/wiki"
 	"github.com/microcosm-cc/bluemonday"
@@ -74,7 +73,6 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 			settingsstore.New,
 			statsstore.New,
 			documentsstore.New,
-			usersstore.New,
 			vehiclesstore.New,
 			wikistore.New,
 		),
