@@ -88,10 +88,16 @@ func activeGroupMemberCondition(
 }
 
 func (s *Store) UserInJob(ctx context.Context, db qrm.DB, job string, userID int32) (bool, error) {
+	tUser := table.FivenetUser
 	tUserJobs := table.FivenetUserJobs
 	stmt := tUserJobs.
 		SELECT(mysql.Int(1).AS("found")).
-		FROM(tUserJobs).
+		FROM(tUserJobs.INNER_JOIN(tUser,
+			mysql.AND(
+				tUser.ID.EQ(tUserJobs.UserID),
+				tUser.DeletedAt.IS_NULL(),
+			),
+		)).
 		WHERE(mysql.AND(
 			tUserJobs.UserID.EQ(mysql.Int32(userID)),
 			tUserJobs.Job.EQ(mysql.String(job)),

@@ -194,11 +194,11 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.Nil(chooseCharRes)
 	proto.CompareGRPCError(t, errorsauth.ErrUnableToChooseChar, err)
 
-	role, err := srv.ps.GetRoleByJobAndGrade(ctx, "ambulance", 1)
+	role, err := srv.perms.GetRoleByJobAndGrade(ctx, "ambulance", 1)
 	require.NoError(err)
 	require.NotNil(role)
 
-	perm, err := srv.ps.GetPermission(
+	perm, err := srv.perms.GetPermission(
 		ctx,
 		permsauth.Namespace,
 		permsauth.AuthServicePerm,
@@ -208,10 +208,10 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NotNil(perm)
 
 	// user-1: Choose valid character, the job role doesn't have permissions but the **default permissions** should still allow us to login
-	err = srv.ps.RemovePermissionsFromRole(ctx, role.GetId(), perm.GetId())
+	err = srv.perms.RemovePermissionsFromRole(ctx, role.GetId(), perm.GetId())
 	require.NoError(err)
 	// Disable choose char perm but the **default permissions** will still allow us to login
-	err = srv.ps.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
+	err = srv.perms.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
 		Id:  perm.GetId(),
 		Val: false,
 	})
@@ -226,7 +226,7 @@ func TestFullAuthFlow(t *testing.T) {
 	}
 
 	// user-1: Choose valid character, now we allow "choose char" perm for the job role
-	err = srv.ps.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
+	err = srv.perms.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
 		Id:  perm.GetId(),
 		Val: true,
 	})

@@ -359,7 +359,10 @@ func (s *Store) ListColleaguesByUserIDs(
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
-		WHERE(tColleague.ID.IN(userIDs...)).
+		WHERE(mysql.AND(
+			tColleague.ID.IN(userIDs...),
+			tColleague.DeletedAt.IS_NULL(),
+		)).
 		ORDER_BY(tColleague.ID.ASC()).
 		LIMIT(int64(len(userIDs)))
 
@@ -433,7 +436,10 @@ func (s *Store) GetColleague(
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
-		WHERE(tColleague.ID.EQ(mysql.Int32(userId))).
+		WHERE(mysql.AND(
+			tColleague.ID.EQ(mysql.Int32(userId)),
+			tColleague.DeletedAt.IS_NULL(),
+		)).
 		LIMIT(1)
 
 	dest := &jobscolleagues.Colleague{}

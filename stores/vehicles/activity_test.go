@@ -41,7 +41,7 @@ func TestStoreCountVehicleActivityAppliesPlateAndTypeFilter(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
-func TestStoreListVehicleActivityAppliesSortAndCreatorJoin(t *testing.T) {
+func TestStoreListVehicleActivityAppliesSortWithoutCreatorJoin(t *testing.T) {
 	t.Parallel()
 
 	db, mock, err := sqlmock.New()
@@ -51,7 +51,6 @@ func TestStoreListVehicleActivityAppliesSortAndCreatorJoin(t *testing.T) {
 	store := New(db, &config.CustomDB{})
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_vehicles_activity AS vehicle_activity`) +
-		`(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_user AS creator ON`) +
 		`(?s).*` + regexp.QuoteMeta(`vehicle_activity.plate = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`ORDER BY vehicle_activity.created_at DESC, vehicle_activity.id DESC LIMIT ? OFFSET ?`)
 	mock.ExpectQuery(expectedQuery).
@@ -65,11 +64,6 @@ func TestStoreListVehicleActivityAppliesSortAndCreatorJoin(t *testing.T) {
 			"vehicle_activity.creator_job",
 			"vehicle_activity.reason",
 			"vehicle_activity.data",
-			"creator.id",
-			"creator.job",
-			"creator.job_grade",
-			"creator.firstname",
-			"creator.lastname",
 		}).AddRow(
 			int64(1),
 			time.Now(),
@@ -79,11 +73,6 @@ func TestStoreListVehicleActivityAppliesSortAndCreatorJoin(t *testing.T) {
 			"police",
 			"updated",
 			[]byte(`{"wantedChange":{"wanted":true}}`),
-			int32(7),
-			"police",
-			int32(2),
-			"Jane",
-			"Doe",
 		))
 
 	activity, err := store.ListVehicleActivity(t.Context(), ListVehicleActivityOptions{
@@ -94,7 +83,8 @@ func TestStoreListVehicleActivityAppliesSortAndCreatorJoin(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, activity, 1)
 	assert.Equal(t, "ABC DEF1", activity[0].GetPlate())
-	assert.Equal(t, int32(7), activity[0].GetCreator().GetUserId())
+	assert.Equal(t, int32(7), activity[0].GetCreatorId())
+	assert.Nil(t, activity[0].GetCreator())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
@@ -107,10 +97,9 @@ func TestStoreIsVehicleOwner(t *testing.T) {
 
 	store := New(db, &config.CustomDB{})
 
-	expectedQuery := regexp.QuoteMeta(`FROM fivenet_owned_vehicles AS vehicle`) +
-		`(?s).*` + regexp.QuoteMeta(`INNER JOIN fivenet_user AS user_short ON`) +
-		`(?s).*` + regexp.QuoteMeta(`vehicle.plate = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`user_short.id = ?`)
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_owned_vehicles`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_owned_vehicles.plate = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_owned_vehicles.user_id = ?`)
 	mock.ExpectQuery(expectedQuery).
 		WithArgs("ABC DEF1", int32(7), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"plate"}).AddRow("ABC DEF1"))
@@ -130,10 +119,9 @@ func TestStoreIsVehicleOwnerReturnsFalseWhenNoPersonalOwner(t *testing.T) {
 
 	store := New(db, &config.CustomDB{})
 
-	expectedQuery := regexp.QuoteMeta(`FROM fivenet_owned_vehicles AS vehicle`) +
-		`(?s).*` + regexp.QuoteMeta(`INNER JOIN fivenet_user AS user_short ON`) +
-		`(?s).*` + regexp.QuoteMeta(`vehicle.plate = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`user_short.id = ?`)
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_owned_vehicles`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_owned_vehicles.plate = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_owned_vehicles.user_id = ?`)
 	mock.ExpectQuery(expectedQuery).
 		WithArgs("JOB CAR1", int32(7), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"plate"}))

@@ -447,21 +447,6 @@ func (s *Store) ListTimeclock(
 			aggStartTime.AS("timeclock_entry.start_time"),
 			aggEndTime.AS("timeclock_entry.end_time"),
 			aggSpentTime.AS("timeclock_entry.spent_time"),
-			tColleague.ID,
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tUserJobs.Job.AS("colleague.job"),
-			tUserJobs.Grade.AS("colleague.job_grade"),
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-			tAvatar.FilePath.AS("colleague.profile_picture"),
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.AbsenceBegin,
-			tColleagueProps.AbsenceEnd,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
 		).
 		FROM(
 			agg.
@@ -473,18 +458,6 @@ func (s *Store) ListTimeclock(
 						tUserJobs.UserID.EQ(aggUserID),
 						tUserJobs.Job.EQ(mysql.String(userInfoJob)),
 					),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(aggUserID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(aggUserID),
-						tColleagueProps.Job.EQ(mysql.String(userInfoJob)),
-					),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		ORDER_BY(orderBys...).
@@ -543,9 +516,9 @@ func (s *Store) ListTimeclockTimeline(
 				}
 			case jobGradeColumn:
 				if sc.GetDesc() {
-					orderBys = append(orderBys, tColleagueProps.NamePrefix.DESC())
+					orderBys = append(orderBys, tUserJobs.Grade.DESC())
 				} else {
-					orderBys = append(orderBys, tColleagueProps.NamePrefix.ASC())
+					orderBys = append(orderBys, tUserJobs.Grade.ASC())
 				}
 			case nameColumn:
 				if sc.GetDesc() {
@@ -570,21 +543,6 @@ func (s *Store) ListTimeclockTimeline(
 			tTimeClock.StartTime,
 			tTimeClock.EndTime,
 			tTimeClock.SpentTime,
-			tColleague.ID,
-			tUserJobs.Job.AS("colleague.job"),
-			tUserJobs.Grade.AS("colleague.job_grade"),
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-			tAvatar.FilePath.AS("colleague.profile_picture"),
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.AbsenceBegin,
-			tColleagueProps.AbsenceEnd,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
 		).
 		FROM(
 			tTimeClock.
@@ -596,18 +554,6 @@ func (s *Store) ListTimeclockTimeline(
 						tUserJobs.UserID.EQ(tTimeClock.UserID),
 						tUserJobs.Job.EQ(mysql.String(q.Job)),
 					),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tTimeClock.UserID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tTimeClock.UserID),
-						tColleagueProps.Job.EQ(mysql.String(q.Job)),
-					),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(condition).
@@ -638,8 +584,6 @@ func (s *Store) ListInactiveEmployees(
 ) ([]*jobscolleagues.Colleague, error) {
 	tColleague := table.FivenetUser.AS("colleague")
 	tUserJobs := table.FivenetUserJobs
-	tUserProps := table.FivenetUserProps
-	tAvatar := table.FivenetFiles.AS("profile_picture")
 	tTimeClock := table.FivenetJobTimeclock
 	jobExpr := mysql.String(q.Job)
 	cutoffDate := mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY)))
@@ -709,38 +653,17 @@ func (s *Store) ListInactiveEmployees(
 
 	stmt := tUserJobs.
 		SELECT(
-			tUserJobs.UserID,
-			tColleague.ID,
-			tUserJobs.Job.AS("colleague.job"),
-			tUserJobs.Grade.AS("colleague.job_grade"),
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-			tAvatar.FilePath.AS("colleague.profile_picture"),
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.AbsenceBegin,
-			tColleagueProps.AbsenceEnd,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
+			tUserJobs.UserID.AS("colleague.id"),
 		).
 		FROM(tUserJobs.
 			INNER_JOIN(tColleague,
 				tColleague.ID.EQ(tUserJobs.UserID),
-			).
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUserJobs.UserID),
 			).
 			LEFT_JOIN(tColleagueProps,
 				mysql.AND(
 					tColleagueProps.UserID.EQ(tUserJobs.UserID),
 					tColleagueProps.Job.EQ(jobExpr),
 				),
-			).
-			LEFT_JOIN(tAvatar,
-				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		WHERE(condition).

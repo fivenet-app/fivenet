@@ -93,8 +93,6 @@ func calendarEntriesQuery(
 	limit *int64,
 ) mysql.Statement {
 	tCalendarEntry := table.FivenetCalendarEntries.AS("calendar_entry")
-	tCreator := table.FivenetUser.AS("creator")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tCalendarEntry.
 		SELECT(
@@ -125,15 +123,6 @@ func calendarEntriesQuery(
 			tCalendarEntry.RecurringUntil,
 			tCalendarEntry.RecurrenceVersion,
 			tCalendarEntry.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
-			tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-			tAvatar.FilePath.AS("creator.profile_picture"),
 			tCalendarRSVP.EntryID,
 			tCalendarRSVP.CreatedAt,
 			tCalendarRSVP.UserID,
@@ -149,20 +138,11 @@ func calendarEntriesQuery(
 					),
 				),
 			).
-			LEFT_JOIN(tCreator,
-				tCalendarEntry.CreatorID.EQ(tCreator.ID),
-			).
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tCreator.ID),
-			).
 			LEFT_JOIN(tCalendarRSVP,
 				mysql.AND(
 					tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 					tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID),
 				),
-			).
-			LEFT_JOIN(tAvatar,
-				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		WHERE(mysql.AND(
@@ -491,8 +471,6 @@ func (s *Store) GetEntry(
 	condition mysql.BoolExpression,
 ) (*calendarentries.CalendarEntry, error) {
 	tCalendarEntry := table.FivenetCalendarEntries.AS("calendar_entry")
-	tCreator := table.FivenetUser.AS("creator")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
 	includeDeleted := userInfo.GetJobAdmin()
 
 	stmt := tCalendarEntry.
@@ -523,15 +501,6 @@ func (s *Store) GetEntry(
 			tCalendarEntry.RecurrenceVersion,
 			tCalendarEntry.CreatorID,
 			tCalendarEntry.CreatorJob,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
-			tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-			tAvatar.FilePath.AS("creator.profile_picture"),
 			tCalendarRSVP.EntryID,
 			tCalendarRSVP.CreatedAt,
 			tCalendarRSVP.UserID,
@@ -547,20 +516,11 @@ func (s *Store) GetEntry(
 					),
 				),
 			).
-			LEFT_JOIN(tCreator,
-				tCalendarEntry.CreatorID.EQ(tCreator.ID),
-			).
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tCalendarEntry.CreatorID),
-			).
 			LEFT_JOIN(tCalendarRSVP,
 				mysql.AND(
 					tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 					tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID),
 				),
-			).
-			LEFT_JOIN(tAvatar,
-				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		WHERE(condition).

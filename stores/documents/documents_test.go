@@ -42,9 +42,9 @@ func TestStoreListAppliesFiltersAndSortFallback(t *testing.T) {
 		Sort: &resourcesdatabase.Sort{
 			Columns: []*resourcesdatabase.SortByColumn{{Id: "unknown", Desc: true}},
 		},
-		Offset:             0,
-		Limit:              20,
-		IncludePhoneNumber: true,
+		Offset: 0,
+		Limit:  20,
+
 		UserInfo: &userinfo.UserInfo{
 			UserId:         3,
 			Job:            "doj",
@@ -114,9 +114,8 @@ func TestStoreGetIncludesContentAndPhoneNumber(t *testing.T) {
 
 	store := New(testParams(db))
 	query := GetQuery{
-		DocumentID:         42,
-		WithContent:        true,
-		IncludePhoneNumber: true,
+		DocumentID:  42,
+		WithContent: true,
 		UserInfo: &userinfo.UserInfo{
 			UserId:    3,
 			Job:       "doj",
@@ -128,7 +127,6 @@ func TestStoreGetIncludesContentAndPhoneNumber(t *testing.T) {
 	expectedQuery := regexp.QuoteMeta(`SELECT document.id`) +
 		`(?s).*` + regexp.QuoteMeta(`document.data`) +
 		`(?s).*` + regexp.QuoteMeta(`document.content_json`) +
-		`(?s).*` + regexp.QuoteMeta(`creator.phone_number`) +
 		`(?s).*` + regexp.QuoteMeta(`ORDER BY document.created_at DESC, document.updated_at DESC LIMIT ?;`)
 
 	mock.ExpectQuery(expectedQuery).

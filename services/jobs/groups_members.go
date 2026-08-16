@@ -18,9 +18,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	groupspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/groupspolicy"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -351,10 +351,10 @@ func (s *Server) hydrateGroupColleagueTargets(
 	if err := s.colleagueHydrator.HydrateTargets(
 		ctx,
 		s.db,
-		userInfo,
-		userInfo.GetJob(),
 		targets,
-		false,
+		colleaguehydrator.ResolveOpts{
+			UserInfo: userInfo,
+		},
 	); err != nil {
 		return errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}

@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
+	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
@@ -25,10 +26,11 @@ import (
 type DispatchersDB struct {
 	logger *zap.Logger
 
-	db       *sql.DB
-	js       *events.JSWrapper
-	enricher mstlystcdata.IEnricher
-	tracker  tracker.ITracker
+	db                *sql.DB
+	js                *events.JSWrapper
+	enricher          mstlystcdata.IEnricher
+	tracker           tracker.ITracker
+	colleagueHydrator colleagueshydrator.IHydrator
 
 	store *store.Store[centrumdispatchers.Dispatchers, *centrumdispatchers.Dispatchers]
 }
@@ -38,11 +40,12 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	DB       *sql.DB
-	JS       *events.JSWrapper
-	Enricher mstlystcdata.IEnricher
-	Tracker  tracker.ITracker
+	Logger            *zap.Logger
+	DB                *sql.DB
+	JS                *events.JSWrapper
+	Enricher          mstlystcdata.IEnricher
+	Tracker           tracker.ITracker
+	ColleagueHydrator colleagueshydrator.IHydrator
 }
 
 func New(p Params) *DispatchersDB {
@@ -50,11 +53,12 @@ func New(p Params) *DispatchersDB {
 
 	logger := p.Logger.Named("centrum.dispatchers")
 	d := &DispatchersDB{
-		logger:   logger,
-		db:       p.DB,
-		js:       p.JS,
-		enricher: p.Enricher,
-		tracker:  p.Tracker,
+		logger:            logger,
+		db:                p.DB,
+		js:                p.JS,
+		enricher:          p.Enricher,
+		tracker:           p.Tracker,
+		colleagueHydrator: p.ColleagueHydrator,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -86,83 +90,93 @@ func New(p Params) *DispatchersDB {
 }
 
 func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
-	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
-	tUserProps := table.FivenetUserProps
 	tCentrumDispatchers := table.FivenetCentrumDispatchers
-	tColleague := table.FivenetUser.AS("colleague")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
+
+	type dispatchersRow struct {
+		Job    string `alias:"job"`
+		UserID int32  `alias:"user_id"`
+	}
 
 	stmt := tCentrumDispatchers.
 		SELECT(
-			tCentrumDispatchers.Job,
-			tCentrumDispatchers.UserID,
-			tColleague.ID,
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Job,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-			tAvatar.FilePath.AS("colleague.profile_picture"),
+			tCentrumDispatchers.Job.AS("dispatchers_row.job"),
+			tCentrumDispatchers.UserID.AS("dispatchers_row.user_id"),
 		).
-		FROM(
-			tCentrumDispatchers.
-				INNER_JOIN(tColleague,
-					tColleague.ID.EQ(tCentrumDispatchers.UserID),
-				).
-				// TODO require fivenet_user_jobs is_primary as well!
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tCentrumDispatchers.UserID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tColleague.ID),
-						tColleagueProps.Job.EQ(tColleague.Job),
-					),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		)
+		FROM(tCentrumDispatchers)
 
 	if job != "" {
 		stmt = stmt.
-			WHERE(
-				tCentrumDispatchers.Job.EQ(mysql.String(job)),
-			)
+			WHERE(tCentrumDispatchers.Job.EQ(mysql.String(job)))
 	}
 
-	var dest []*jobscolleagues.Colleague
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	var rows []*dispatchersRow
+	if err := stmt.QueryContext(ctx, s.db, &rows); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf("failed to query centrum dispatchers. %w", err)
 		}
 	}
 
-	perJob := map[string][]*jobscolleagues.Colleague{}
-	for _, user := range dest {
-		if _, ok := perJob[user.GetJob()]; !ok {
-			perJob[user.GetJob()] = []*jobscolleagues.Colleague{}
+	if len(rows) == 0 {
+		if job == "" {
+			// No dispatchers for any job, clear the store
+			if err := s.store.Clear(ctx); err != nil {
+				return fmt.Errorf("failed to clear dispatchers store. %w", err)
+			}
+		} else {
+			if err := s.store.Delete(ctx, job); err != nil {
+				return fmt.Errorf("failed to clear dispatchers for job %s. %w", job, err)
+			}
 		}
-
-		s.enricher.EnrichJobName(user)
-
-		perJob[user.GetJob()] = append(perJob[user.GetJob()], user)
+		return nil
 	}
 
-	if job != "" {
-		if err := s.updateDispatchersInKV(ctx, job, perJob[job]); err != nil {
-			return fmt.Errorf("failed to update dispatchers for specific job. %w", err)
+	userIDs := make([]int32, 0, len(rows))
+	for _, row := range rows {
+		userIDs = append(userIDs, row.UserID)
+	}
+
+	dispatchersByUserID := map[int32]*jobscolleagues.Colleague{}
+	if len(userIDs) > 0 {
+		byUserID, err := s.colleagueHydrator.HydrateByUserID(
+			ctx,
+			s.db,
+			userIDs,
+			colleagueshydrator.ResolveOpts{
+				PropsJobMode: colleagueshydrator.PropsJobModePrimary,
+				PropsJob:     job,
+			},
+		)
+		if err != nil {
+			return fmt.Errorf("failed to hydrate centrum dispatchers. %w", err)
 		}
-	} else {
-		for job, dispatchers := range perJob {
-			if err := s.updateDispatchersInKV(ctx, job, dispatchers); err != nil {
-				return fmt.Errorf("failed to update dispatchers for all jobs. %w", err)
+		dispatchersByUserID = byUserID
+	}
+
+	perJob := map[string][]*jobscolleagues.Colleague{}
+	for _, row := range rows {
+		dispatcher := dispatchersByUserID[row.UserID]
+		if dispatcher == nil {
+			// Fall back to the dispatcher row itself so a sign-on always leaves a
+			// visible dispatcher entry even if hydration cannot resolve the full
+			// colleague record.
+			dispatcher = &jobscolleagues.Colleague{
+				UserId: row.UserID,
+				Job:    row.Job,
 			}
+		} else if dispatcher.GetJob() == "" {
+			// Preserve the dispatcher job from the source table when hydration
+			// returns a sparse record.
+			dispatcher.Job = row.Job
+		}
+
+		s.enricher.EnrichJobName(dispatcher)
+
+		perJob[row.Job] = append(perJob[row.Job], dispatcher)
+	}
+
+	for job, dispatchers := range perJob {
+		if err := s.updateDispatchersInKV(ctx, job, dispatchers); err != nil {
+			return fmt.Errorf("failed to update dispatchers for all jobs. %w", err)
 		}
 	}
 

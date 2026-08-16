@@ -9,7 +9,7 @@ import "resources/centrum/joblist.proto";
 import "resources/centrum/units/units.proto";
 import "resources/jobs/colleagues/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/user.proto";
+import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches;centrumdispatches";
@@ -41,7 +41,7 @@ message Dispatch {
   ];
   bool anon = 13;
   optional int32 creator_id = 14 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.User creator = 15;
+  optional resources.users.short.UserShort creator = 15;
   repeated DispatchAssignment units = 16;
   optional DispatchReferences references = 17;
 }

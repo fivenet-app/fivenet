@@ -9,6 +9,7 @@ import (
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -16,12 +17,67 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	"github.com/fivenet-app/fivenet/v2026/stores/jobs/usersel"
 )
 
 const TimeclockMaxDays = (365 / 2) * 24 * time.Hour // Half a year
 
 var tTimeClock = table.FivenetJobTimeclock.AS("timeclock_entry")
+
+func appendTimeclockColleagueTarget(
+	targets []colleaguehydrator.Target,
+	userID int32,
+	set func(*jobscolleagues.Colleague),
+) []colleaguehydrator.Target {
+	if userID <= 0 || set == nil {
+		return targets
+	}
+
+	return append(targets, colleaguehydrator.Target{
+		UserID: userID,
+		Set:    set,
+	})
+}
+
+func appendTimeclockEntryColleagueTargets(
+	targets []colleaguehydrator.Target,
+	entries []*jobstimeclock.TimeclockEntry,
+) []colleaguehydrator.Target {
+	for _, entry := range entries {
+		targets = appendTimeclockColleagueTarget(targets, entry.GetUserId(), entry.SetUser)
+	}
+
+	return targets
+}
+
+func (s *Server) hydrateTimeclockEntryColleagues(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	entries ...*jobstimeclock.TimeclockEntry,
+) error {
+	if len(entries) == 0 {
+		return nil
+	}
+
+	targets := appendTimeclockEntryColleagueTargets(nil, entries)
+	if len(targets) == 0 {
+		return nil
+	}
+
+	if err := s.colleagueHydrator.HydrateTargets(
+		ctx,
+		s.db,
+		targets,
+		colleaguehydrator.ResolveOpts{
+			UserInfo: userInfo,
+		},
+	); err != nil {
+		return errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
+	return nil
+}
 
 func (s *Server) ListTimeclock(
 	ctx context.Context,
@@ -30,7 +86,7 @@ func (s *Server) ListTimeclock(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Field Permission Check
-	fields, err := permsjobs.TimeclockService.ListTimeclock.AccessTyped.Get(s.ps, userInfo)
+	fields, err := permsjobs.TimeclockService.ListTimeclock.AccessTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -125,11 +181,14 @@ func (s *Server) ListTimeclock(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
+		if err := s.hydrateTimeclockEntryColleagues(
+			ctx,
+			userInfo,
+			data.GetEntries()...); err != nil {
+			return nil, err
+		}
 		data.Date = req.GetDate().GetEnd()
 		for i := range data.GetEntries() {
-			if data.GetEntries()[i].GetUser() != nil {
-				s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
-			}
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
 		resp.GetPagination().Update(len(data.GetEntries()))
@@ -141,10 +200,13 @@ func (s *Server) ListTimeclock(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
+		if err := s.hydrateTimeclockEntryColleagues(
+			ctx,
+			userInfo,
+			data.GetEntries()...); err != nil {
+			return nil, err
+		}
 		for i := range data.GetEntries() {
-			if data.GetEntries()[i].GetUser() != nil {
-				s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
-			}
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
 		resp.GetPagination().Update(len(data.GetEntries()))
@@ -156,11 +218,14 @@ func (s *Server) ListTimeclock(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
+		if err := s.hydrateTimeclockEntryColleagues(
+			ctx,
+			userInfo,
+			data.GetEntries()...); err != nil {
+			return nil, err
+		}
 		data.Date = req.GetDate().GetEnd()
 		for i := range data.GetEntries() {
-			if data.GetEntries()[i].GetUser() != nil {
-				s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
-			}
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
 		resp.GetPagination().Update(len(data.GetEntries()))
@@ -172,11 +237,14 @@ func (s *Server) ListTimeclock(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
+		if err := s.hydrateTimeclockEntryColleagues(
+			ctx,
+			userInfo,
+			data.GetEntries()...); err != nil {
+			return nil, err
+		}
 		data.Date = req.GetDate().GetEnd()
 		for i := range data.GetEntries() {
-			if data.GetEntries()[i].GetUser() != nil {
-				s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
-			}
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
 		resp.GetPagination().Update(len(data.GetEntries()))
@@ -191,7 +259,7 @@ func (s *Server) GetTimeclockStats(
 ) (*pbjobs.GetTimeclockStatsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	fields, err := permsjobs.TimeclockService.ListTimeclock.AccessTyped.Get(s.ps, userInfo)
+	fields, err := permsjobs.TimeclockService.ListTimeclock.AccessTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -300,9 +368,26 @@ func (s *Server) ListInactiveEmployees(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	targets := make([]colleaguehydrator.Target, 0, len(resp.GetColleagues()))
 	for i := range resp.GetColleagues() {
-		jobInfoFn(resp.GetColleagues()[i])
+		colleague := resp.GetColleagues()[i]
+		targets = append(targets, colleaguehydrator.Target{
+			UserID: colleague.GetUserId(),
+			Set: func(hydrated *jobscolleagues.Colleague) {
+				resp.Colleagues[i] = hydrated
+			},
+		})
+	}
+
+	if err := s.colleagueHydrator.HydrateTargets(
+		ctx,
+		s.db,
+		targets,
+		colleaguehydrator.ResolveOpts{
+			UserInfo: userInfo,
+		},
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	return resp, nil

@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
@@ -68,6 +69,7 @@ type Server struct {
 	db       *sql.DB
 	perms    perms.Permissions
 	enricher mstlystcdata.IUserAwareEnricher
+	hydrator citizenshydrator.IHydrator
 	notif    notifi.INotifi
 
 	access         *access.QualificationsObjectAccess
@@ -83,6 +85,7 @@ type Params struct {
 	DB                *sql.DB
 	Perms             perms.Permissions
 	UserAwareEnricher mstlystcdata.IUserAwareEnricher
+	Hydrator          citizenshydrator.IHydrator
 	Notif             notifi.INotifi
 	Storage           storage.IStorage
 	Store             qualificationsstore.IStore
@@ -110,6 +113,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		perms:    p.Perms,
 		enricher: p.UserAwareEnricher,
+		hydrator: p.Hydrator,
 		notif:    p.Notif,
 
 		access:         p.Access,

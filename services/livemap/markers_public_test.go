@@ -9,6 +9,7 @@ import (
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pblivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/permsstub"
@@ -16,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	errorslivemap "github.com/fivenet-app/fivenet/v2026/services/livemap/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/puzpuzpuz/xsync/v4"
@@ -152,6 +154,128 @@ type testLivemapPerms struct {
 	access []string
 }
 
+type noopCitizenHydrator struct{}
+
+type safeCitizenHydrator struct {
+	noopCitizenHydrator
+}
+
+func (noopCitizenHydrator) ListByUserID(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []int32,
+	_ citizenshydrator.ResolveOpts,
+) ([]*users.User, error) {
+	return nil, nil
+}
+
+func (noopCitizenHydrator) HydrateByUserID(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []int32,
+	_ citizenshydrator.ResolveOpts,
+) (map[int32]*users.User, error) {
+	return map[int32]*users.User{}, nil
+}
+
+func (noopCitizenHydrator) HydrateTargets(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []citizenshydrator.Target,
+	_ citizenshydrator.ResolveOpts,
+) error {
+	return nil
+}
+
+func (noopCitizenHydrator) ListShortByUserID(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []int32,
+	_ citizenshydrator.ResolveOpts,
+) ([]*usershort.UserShort, error) {
+	return nil, nil
+}
+
+func (noopCitizenHydrator) HydrateShortByUserID(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []int32,
+	_ citizenshydrator.ResolveOpts,
+) (map[int32]*usershort.UserShort, error) {
+	return map[int32]*usershort.UserShort{}, nil
+}
+
+func (noopCitizenHydrator) HydrateShortTargets(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []citizenshydrator.ShortTarget,
+	_ citizenshydrator.ResolveOpts,
+) error {
+	return nil
+}
+
+func (noopCitizenHydrator) HydrateShortTargetsSafeFunc(
+	_ *pbuserinfo.UserInfo,
+) func(
+	context.Context,
+	qrm.DB,
+	[]citizenshydrator.ShortTarget,
+) error {
+	return func(context.Context, qrm.DB, []citizenshydrator.ShortTarget) error { return nil }
+}
+
+func (noopCitizenHydrator) GetShortByUserID(
+	_ context.Context,
+	_ qrm.DB,
+	_ int32,
+) (*usershort.UserShort, error) {
+	return nil, nil
+}
+
+func (noopCitizenHydrator) GetShortByUserIDSafeFunc(
+	_ *pbuserinfo.UserInfo,
+) func(
+	context.Context,
+	qrm.DB,
+	int32,
+) (*usershort.UserShort, error) {
+	return func(context.Context, qrm.DB, int32) (*usershort.UserShort, error) {
+		return nil, nil
+	}
+}
+
+func (safeCitizenHydrator) HydrateShortTargetsSafeFunc(
+	_ *pbuserinfo.UserInfo,
+) func(
+	context.Context,
+	qrm.DB,
+	[]citizenshydrator.ShortTarget,
+) error {
+	return func(_ context.Context, _ qrm.DB, targets []citizenshydrator.ShortTarget) error {
+		for _, target := range targets {
+			if target.Set == nil {
+				continue
+			}
+
+			user := &usershort.UserShort{}
+			user.SetUserId(target.UserID)
+			user.SetJob("unemployed")
+			user.SetJobGrade(0)
+			target.Set(user)
+		}
+
+		return nil
+	}
+}
+
+var _ citizenshydrator.IHydrator = (*noopCitizenHydrator)(nil)
+
 func (p *testLivemapPerms) AttrStringList(
 	_ *pbuserinfo.UserInfo,
 	_ perms.AttrRef[perms.StringListAttr],
@@ -169,8 +293,26 @@ func (p *testLivemapPerms) AttrStringList(
 func newMarkerServer(store livemapstore.IStore, ps perms.Permissions) *Server {
 	return &Server{
 		logger:              zap.NewNop(),
-		ps:                  ps,
+		perms:               ps,
 		enricher:            mstlystcdata.NewDummyEnricher(),
+		hydrator:            noopCitizenHydrator{},
+		store:               store,
+		markersCache:        xsync.NewMap[string, []*livemapmarkers.MarkerMarker](),
+		markersDeletedCache: xsync.NewMap[string, []int64](),
+		markersPublicCache:  newMarkerPublicCache(),
+	}
+}
+
+func newMarkerServerWithHydrator(
+	store livemapstore.IStore,
+	ps perms.Permissions,
+	hydrator citizenshydrator.IHydrator,
+) *Server {
+	return &Server{
+		logger:              zap.NewNop(),
+		perms:               ps,
+		enricher:            mstlystcdata.NewDummyEnricher(),
+		hydrator:            hydrator,
 		store:               store,
 		markersCache:        xsync.NewMap[string, []*livemapmarkers.MarkerMarker](),
 		markersDeletedCache: xsync.NewMap[string, []int64](),
@@ -326,6 +468,25 @@ func TestCreateOrUpdateMarkerPublicAccess(t *testing.T) {
 		require.False(t, store.lastUpdate.GetPublic())
 		require.False(t, resp.Marker.GetPublic())
 	})
+}
+
+func TestHydrateMarkerCreatorsSafeRedactsCreator(t *testing.T) {
+	t.Parallel()
+
+	store := newMarkerTestStore()
+	srv := newMarkerServerWithHydrator(store, &testLivemapPerms{}, safeCitizenHydrator{})
+
+	marker := &livemapmarkers.MarkerMarker{}
+	marker.SetCreatorId(10)
+	marker.SetCreator(newCreator(10, "police", 3))
+
+	require.NoError(
+		t,
+		srv.hydrateMarkerCreatorsSafe(t.Context(), nil, []*livemapmarkers.MarkerMarker{marker}),
+	)
+	require.NotNil(t, marker.GetCreator())
+	require.Equal(t, "unemployed", marker.GetCreator().GetJob())
+	require.Equal(t, int32(0), marker.GetCreator().GetJobGrade())
 }
 
 func TestMarkerCacheMutationKeepsPublicBuckets(t *testing.T) {
@@ -599,6 +760,7 @@ func TestGetMarkerMarkersIncludesPublicMarkers(t *testing.T) {
 		markersCache:        xsync.NewMap[string, []*livemapmarkers.MarkerMarker](),
 		markersDeletedCache: xsync.NewMap[string, []int64](),
 		markersPublicCache:  newMarkerPublicCache(),
+		hydrator:            noopCitizenHydrator{},
 	}
 	srv.markersPublicCache.Replace(
 		[]*livemapmarkers.MarkerMarker{publicMarker, expiredPublicMarker},

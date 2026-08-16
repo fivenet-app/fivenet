@@ -47,13 +47,28 @@ func TestStoreUserInJob(t *testing.T) {
 
 	store, mock := newTestStore(t)
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_jobs`)).
-		WithArgs(sqlmock.AnyArg(), int64(7), "police", sqlmock.AnyArg()).
+	mock.ExpectQuery(`(?s)FROM fivenet_user_jobs .*INNER JOIN fivenet_user ON .*fivenet_user\.deleted_at IS NULL.*WHERE .*fivenet_user_jobs\.user_id = \?.*fivenet_user_jobs\.job = \?.*LIMIT \?.*`).
+		WithArgs(sqlmock.AnyArg(), int32(7), "police", sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"found"}).AddRow(1))
 
 	ok, err := store.UserInJob(t.Context(), store.db, "police", 7)
 	require.NoError(t, err)
 	assert.True(t, ok)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreUserInJobSkipsDeletedUsers(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+
+	mock.ExpectQuery(`(?s)FROM fivenet_user_jobs .*INNER JOIN fivenet_user ON .*fivenet_user\.deleted_at IS NULL.*`).
+		WithArgs(sqlmock.AnyArg(), int32(7), "police", sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"found"}))
+
+	ok, err := store.UserInJob(t.Context(), store.db, "police", 7)
+	require.NoError(t, err)
+	assert.False(t, ok)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

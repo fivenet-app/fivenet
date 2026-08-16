@@ -13,7 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Colleague } from "../../jobs/colleagues/colleagues";
 import { Unit } from "../units/units";
-import { User } from "../../users/user";
+import { UserShort } from "../../users/short/user";
 import { JobList } from "../joblist";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
@@ -78,9 +78,9 @@ export interface Dispatch {
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.User creator = 15
+     * @generated from protobuf field: optional resources.users.short.UserShort creator = 15
      */
-    creator?: User;
+    creator?: UserShort;
     /**
      * @generated from protobuf field: repeated resources.centrum.dispatches.DispatchAssignment units = 16
      */
@@ -374,7 +374,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 13, name: "anon", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 15, name: "creator", kind: "message", T: () => User },
+            { no: 15, name: "creator", kind: "message", T: () => UserShort },
             { no: 16, name: "units", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DispatchAssignment },
             { no: 17, name: "references", kind: "message", T: () => DispatchReferences }
         ]);
@@ -439,8 +439,8 @@ class Dispatch$Type extends MessageType<Dispatch> {
                 case /* optional int32 creator_id */ 14:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.User creator */ 15:
-                    message.creator = User.internalBinaryRead(reader, reader.uint32(), options, message.creator);
+                case /* optional resources.users.short.UserShort creator */ 15:
+                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 case /* repeated resources.centrum.dispatches.DispatchAssignment units */ 16:
                     message.units.push(DispatchAssignment.internalBinaryRead(reader, reader.uint32(), options));
@@ -499,9 +499,9 @@ class Dispatch$Type extends MessageType<Dispatch> {
         /* optional int32 creator_id = 14; */
         if (message.creatorId !== undefined)
             writer.tag(14, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.User creator = 15; */
+        /* optional resources.users.short.UserShort creator = 15; */
         if (message.creator)
-            User.internalBinaryWrite(message.creator, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+            UserShort.internalBinaryWrite(message.creator, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.centrum.dispatches.DispatchAssignment units = 16; */
         for (let i = 0; i < message.units.length; i++)
             DispatchAssignment.internalBinaryWrite(message.units[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();

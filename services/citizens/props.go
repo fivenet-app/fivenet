@@ -74,7 +74,7 @@ func (s *Server) SetUserProps(
 	}
 
 	// Field Permission Check
-	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.ps, userInfo)
+	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}

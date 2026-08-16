@@ -2,6 +2,7 @@ package mailer
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -85,9 +86,16 @@ func (s *Server) generateEmailProposals(
 		}
 	} else {
 		// User's private email
-		user, err := s.store.GetUserShort(ctx, s.db, userInfo.GetUserId())
+		getShortByUserID := s.hydrator.GetShortByUserIDSafeFunc(userInfo)
+		user, err := getShortByUserID(ctx, s.db, userInfo.GetUserId())
 		if err != nil {
 			return nil, nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+		if user == nil {
+			return nil, nil, errswrap.NewError(
+				errors.New("user not found"),
+				errorsmailer.ErrFailedQuery,
+			)
 		}
 
 		// Cleanup name

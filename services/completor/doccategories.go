@@ -17,7 +17,7 @@ func (s *Server) CompleteDocumentCategories(
 ) (*pbcompletor.CompleteDocumentCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobs, err := s.ps.AttrJobList(
+	jobs, err := s.perms.AttrJobList(
 		userInfo,
 		permsdocuments.CategoriesService.ListCategories.Jobs,
 	)

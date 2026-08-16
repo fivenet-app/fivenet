@@ -47,7 +47,7 @@ func (s *Server) ListColleagues(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access Permission Check
-	types, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.ps, userInfo)
+	types, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -185,7 +185,10 @@ func (s *Server) GetColleague(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access Permission Check
-	colleagueAccess, err := permsjobs.ColleaguesService.GetColleague.AccessTyped.Get(s.ps, userInfo)
+	colleagueAccess, err := permsjobs.ColleaguesService.GetColleague.AccessTyped.Get(
+		s.perms,
+		userInfo,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -219,7 +222,7 @@ func (s *Server) GetColleague(
 	// Field Permission Check
 	fields := perms.NewTypedStringList[permsjobs.ColleaguesServiceGetColleagueTypesPermValue]()
 	if !infoOnly {
-		fields, err = permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.ps, userInfo)
+		fields, err = permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.perms, userInfo)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
@@ -261,7 +264,7 @@ func (s *Server) GetSelf(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Field Permission Check
-	types, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.ps, userInfo)
+	types, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -312,7 +315,7 @@ func (s *Server) SetColleagueProps(
 
 	// Access Permission Check
 	colleagueAccess, err := permsjobs.ColleaguesService.SetColleagueProps.AccessTyped.Get(
-		s.ps,
+		s.perms,
 		userInfo,
 	)
 	if err != nil {
@@ -347,7 +350,7 @@ func (s *Server) SetColleagueProps(
 	}
 
 	// Types Permission Check
-	types, err := permsjobs.ColleaguesService.SetColleagueProps.TypesTyped.Get(s.ps, userInfo)
+	types, err := permsjobs.ColleaguesService.SetColleagueProps.TypesTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -561,7 +564,10 @@ func (s *Server) ListColleagueActivity(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.colleagues.user_ids", resolvedUserIDs})
 
 	// Access Field Permission Check
-	colleagueAccess, err := permsjobs.ColleaguesService.GetColleague.AccessTyped.Get(s.ps, userInfo)
+	colleagueAccess, err := permsjobs.ColleaguesService.GetColleague.AccessTyped.Get(
+		s.perms,
+		userInfo,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -630,7 +636,10 @@ func (s *Server) ListColleagueActivity(
 	}
 
 	// Types Field Permission Check
-	types, err := permsjobs.ColleaguesService.ListColleagueActivity.TypesTyped.Get(s.ps, userInfo)
+	types, err := permsjobs.ColleaguesService.ListColleagueActivity.TypesTyped.Get(
+		s.perms,
+		userInfo,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}

@@ -30,7 +30,7 @@ func (s *Server) ensureUserCanAccessRole(
 ) (*permissionspermissions.Role, bool, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	role, err := s.ps.GetRole(ctx, roleId)
+	role, err := s.perms.GetRole(ctx, roleId)
 	if err != nil {
 		return nil, false, fmt.Errorf(
 			"failed to get role %d for user access check. %w",
@@ -62,7 +62,7 @@ func (s *Server) filterPermissions(
 ) ([]*permissionspermissions.Permission, error) {
 	filtered := []*permissionspermissions.Permission{}
 
-	filters, err := s.ps.GetJobPermissions(ctx, job)
+	filters, err := s.perms.GetJobPermissions(ctx, job)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func (s *Server) filterPermissionIDs(
 		return ids, nil
 	}
 
-	perms, err := s.ps.GetPermissionsByIDs(ctx, ids...)
+	perms, err := s.perms.GetPermissionsByIDs(ctx, ids...)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func (s *Server) GetRoles(
 	var err error
 
 	if userInfo.GetJobAdmin() && req.LowestRank != nil && req.GetLowestRank() {
-		rs, err := s.ps.GetRoles(ctx, true)
+		rs, err := s.perms.GetRoles(ctx, true)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
@@ -144,7 +144,7 @@ func (s *Server) GetRoles(
 			}
 		}
 	} else {
-		roles, err = s.ps.GetJobRolesUpTo(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
+		roles, err = s.perms.GetJobRolesUpTo(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
@@ -182,7 +182,7 @@ func (s *Server) GetRole(
 		return nil, errorssettings.ErrNoPermission
 	}
 
-	perms, err := s.ps.GetRolePermissions(ctx, role.GetId())
+	perms, err := s.perms.GetRolePermissions(ctx, role.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
@@ -202,7 +202,7 @@ func (s *Server) GetRole(
 			Permissions: fPerms,
 		},
 	}
-	resp.Role.Attributes, err = s.ps.GetRoleAttributes(ctx, role.GetJob(), role.GetGrade())
+	resp.Role.Attributes, err = s.perms.GetRoleAttributes(ctx, role.GetJob(), role.GetGrade())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -233,7 +233,7 @@ func (s *Server) CreateRole(
 		}
 	}
 
-	role, err := s.ps.GetRoleByJobAndGrade(ctx, req.GetJob(), req.GetGrade())
+	role, err := s.perms.GetRoleByJobAndGrade(ctx, req.GetJob(), req.GetGrade())
 	if err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
@@ -243,7 +243,7 @@ func (s *Server) CreateRole(
 		return nil, errorssettings.ErrRoleAlreadyExists
 	}
 
-	r, err := s.ps.CreateRole(ctx, req.GetJob(), req.GetGrade())
+	r, err := s.perms.CreateRole(ctx, req.GetJob(), req.GetGrade())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -276,7 +276,7 @@ func (s *Server) DeleteRole(
 		return nil, errorssettings.ErrNoPermission
 	}
 
-	roleCount, err := s.ps.CountRolesForJob(ctx, userInfo.GetJob())
+	roleCount, err := s.perms.CountRolesForJob(ctx, userInfo.GetJob())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
@@ -291,7 +291,7 @@ func (s *Server) DeleteRole(
 		return nil, errorssettings.ErrOwnRoleDeletion
 	}
 
-	if err := s.ps.DeleteRole(ctx, role.GetId()); err != nil {
+	if err := s.perms.DeleteRole(ctx, role.GetId()); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
 
@@ -393,20 +393,20 @@ func (s *Server) handlPermissionsUpdate(
 			}
 		}
 
-		if err := s.ps.UpdateRolePermissions(ctx, role.GetId(), toUpdatePerms...); err != nil {
+		if err := s.perms.UpdateRolePermissions(ctx, role.GetId(), toUpdatePerms...); err != nil {
 			return err
 		}
 	}
 
 	if len(toDelete) > 0 {
-		if err := s.ps.RemovePermissionsFromRole(ctx, role.GetId(), toDelete...); err != nil {
+		if err := s.perms.RemovePermissionsFromRole(ctx, role.GetId(), toDelete...); err != nil {
 			return err
 		}
 	}
 
 	if len(permsToRemove) > 0 {
 		for _, perm := range permsToRemove {
-			if err := s.ps.RemoveAttributesFromRoleByPermission(
+			if err := s.perms.RemoveAttributesFromRoleByPermission(
 				ctx,
 				role.GetId(),
 				perm,
@@ -426,7 +426,7 @@ func (s *Server) handleAttributeUpdate(
 	attrUpdates *settings.AttrsUpdate,
 ) error {
 	if len(attrUpdates.GetToUpdate()) > 0 {
-		if err := s.ps.UpdateRoleAttributes(
+		if err := s.perms.UpdateRoleAttributes(
 			ctx,
 			userInfo.GetJob(),
 			role.GetId(),
@@ -436,7 +436,7 @@ func (s *Server) handleAttributeUpdate(
 	}
 
 	if len(attrUpdates.GetToRemove()) > 0 {
-		if err := s.ps.RemoveAttributesFromRole(
+		if err := s.perms.RemoveAttributesFromRole(
 			ctx,
 			role.GetId(),
 			attrUpdates.GetToRemove()...); err != nil {
@@ -455,7 +455,7 @@ func (s *Server) GetPermissions(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	perms, err := s.ps.GetAllPermissions(ctx)
+	perms, err := s.perms.GetAllPermissions(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -468,7 +468,7 @@ func (s *Server) GetPermissions(
 	resp := &pbsettings.GetPermissionsResponse{}
 	resp.Permissions = filtered
 
-	role, err := s.ps.GetRole(ctx, req.GetRoleId())
+	role, err := s.perms.GetRole(ctx, req.GetRoleId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
@@ -477,7 +477,7 @@ func (s *Server) GetPermissions(
 		return nil, errorssettings.ErrInvalidRequest
 	}
 
-	attrs, err := s.ps.GetJobAttributes(ctx, role.GetJob())
+	attrs, err := s.perms.GetJobAttributes(ctx, role.GetJob())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
@@ -502,12 +502,12 @@ func (s *Server) GetEffectivePermissions(
 		return nil, errswrap.NewError(err, errorssettings.ErrNoPermission)
 	}
 
-	perms, err := s.ps.GetEffectiveRolePermissions(ctx, role.GetId())
+	perms, err := s.perms.GetEffectiveRolePermissions(ctx, role.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	attrs, err := s.ps.GetEffectiveRoleAttributes(ctx, role.GetJob(), role.GetGrade())
+	attrs, err := s.perms.GetEffectiveRoleAttributes(ctx, role.GetJob(), role.GetGrade())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -536,30 +536,30 @@ func (s *Server) DeleteFaction(
 
 	logging.InjectFields(ctx, logging.Fields{jobNameLogFieldKey, req.GetJob()})
 
-	roles, err := s.ps.GetJobRoles(ctx, req.GetJob())
+	roles, err := s.perms.GetJobRoles(ctx, req.GetJob())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
 	errs := multierr.Combine()
 	for _, role := range roles {
-		if err := s.ps.DeleteRole(ctx, role.GetId()); err != nil {
+		if err := s.perms.DeleteRole(ctx, role.GetId()); err != nil {
 			errs = multierr.Append(errs, err)
 			continue
 		}
 	}
 
-	if err := s.ps.ClearJobAttributes(ctx, req.GetJob()); err != nil {
+	if err := s.perms.ClearJobAttributes(ctx, req.GetJob()); err != nil {
 		errs = multierr.Append(errs, err)
 		return nil, errswrap.NewError(errs, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.ps.ClearJobPermissions(ctx, req.GetJob()); err != nil {
+	if err := s.perms.ClearJobPermissions(ctx, req.GetJob()); err != nil {
 		errs = multierr.Append(errs, err)
 		return nil, errswrap.NewError(errs, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.ps.ApplyJobPermissions(ctx, req.GetJob()); err != nil {
+	if err := s.perms.ApplyJobPermissions(ctx, req.GetJob()); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 

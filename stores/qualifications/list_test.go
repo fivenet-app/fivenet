@@ -34,7 +34,6 @@ func TestStoreListQualificationsUsesVisibilityCte(t *testing.T) {
 			Pagination: &database.PaginationRequest{PageSize: &pageSize},
 		},
 		&userinfo.UserInfo{UserId: 7, Job: "doj", JobGrade: 16},
-		false,
 	)
 	require.NoError(t, err)
 	require.NotNil(t, resp)

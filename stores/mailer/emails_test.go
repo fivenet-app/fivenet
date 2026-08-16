@@ -259,34 +259,6 @@ func TestStoreGetEmailByUserID(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
-func TestStoreGetUserShort(t *testing.T) {
-	t.Parallel()
-
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = db.Close() })
-
-	store := New(testParams(db))
-
-	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user AS user_short`) +
-		`(?s).*` + regexp.QuoteMeta(`user_short.id = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
-	mock.ExpectQuery(expectedQuery).
-		WithArgs(int32(3), int64(1)).
-		WillReturnRows(sqlmock.NewRows([]string{
-			"user_short.firstname",
-			"user_short.lastname",
-			"user_short.dateofbirth",
-		}).AddRow("Jane", "Doe", "01.01.2000"))
-
-	user, err := store.GetUserShort(t.Context(), db, 3)
-	require.NoError(t, err)
-	require.NotNil(t, user)
-	assert.Equal(t, "Jane", user.GetFirstname())
-	assert.Equal(t, "01.01.2000", user.GetDateofbirth())
-	require.NoError(t, mock.ExpectationsWereMet())
-}
-
 func TestStoreCreateEmail(t *testing.T) {
 	t.Parallel()
 

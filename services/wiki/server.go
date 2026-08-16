@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	wikistore "github.com/fivenet-app/fivenet/v2026/stores/wiki"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
@@ -52,6 +53,7 @@ type Server struct {
 
 	perms    perms.Permissions
 	enricher mstlystcdata.IUserAwareEnricher
+	hydrator citizenshydrator.IHydrator
 	notifi   notifi.INotifi
 
 	access *access.WikiPageObjectAccess
@@ -70,6 +72,7 @@ type Params struct {
 	DB       *sql.DB
 	Perms    perms.Permissions
 	Enricher mstlystcdata.IUserAwareEnricher
+	Hydrator citizenshydrator.IHydrator
 	JS       *events.JSWrapper
 	Storage  storage.IStorage
 	Notifi   notifi.INotifi
@@ -105,6 +108,7 @@ func NewServer(p Params) *Server {
 
 		perms:    p.Perms,
 		enricher: p.Enricher,
+		hydrator: p.Hydrator,
 		notifi:   p.Notifi,
 
 		access:       p.Access,

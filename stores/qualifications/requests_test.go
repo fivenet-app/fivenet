@@ -64,7 +64,6 @@ func TestStoreListQualificationRequestsUsesVisibilityCte(t *testing.T) {
 			QualificationID: 42,
 		},
 		&userinfo.UserInfo{UserId: 7, Job: "doj"},
-		false,
 	)
 	require.NoError(t, err)
 	require.NotNil(t, resp)

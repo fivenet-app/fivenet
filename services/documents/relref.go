@@ -11,6 +11,7 @@ import (
 	documentsreferences "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/references"
 	documentsrelations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
@@ -18,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -70,18 +72,8 @@ func (s *Server) GetDocumentReferences(
 		return &pbdocuments.GetDocumentReferencesResponse{}, nil
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range dest {
-		if dest[i].GetCreator() != nil {
-			jobInfoFn(dest[i].GetCreator())
-		}
-
-		s.docCategories.Enrich(dest[i].GetSourceDocument())
-		if dest[i].GetSourceDocument().GetCreator() != nil {
-			jobInfoFn(dest[i].GetSourceDocument().GetCreator())
-		}
-
-		s.docCategories.Enrich(dest[i].GetTargetDocument())
+	if err := s.hydrateDocumentReferences(ctx, userInfo, dest...); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	return resp, nil
@@ -117,14 +109,8 @@ func (s *Server) GetDocumentRelations(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range relations {
-		if relations[i].GetSourceUser() != nil {
-			jobInfoFn(relations[i].GetSourceUser())
-		}
-		if relations[i].GetTargetUser() != nil {
-			jobInfoFn(relations[i].GetTargetUser())
-		}
+	if err := s.hydrateDocumentRelations(ctx, userInfo, relations...); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	return &pbdocuments.GetDocumentRelationsResponse{
@@ -217,6 +203,77 @@ func (s *Server) RemoveDocumentReference(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbdocuments.RemoveDocumentReferenceResponse{}, nil
+}
+
+func (s *Server) hydrateDocumentReferences(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	refs ...*documentsreferences.DocumentReference,
+) error {
+	targets := make([]citizenshydrator.ShortTarget, 0, len(refs)*2)
+	for _, ref := range refs {
+		if ref == nil {
+			continue
+		}
+
+		s.docCategories.Enrich(ref.GetSourceDocument())
+		s.docCategories.Enrich(ref.GetTargetDocument())
+
+		if ref.GetCreator() == nil && ref.GetCreatorId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: ref.GetCreatorId(),
+				Set:    func(creator *usershort.UserShort) { ref.Creator = creator },
+			})
+		}
+		if source := ref.GetSourceDocument(); source != nil && source.GetCreator() == nil &&
+			source.GetCreatorId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: source.GetCreatorId(),
+				Set:    func(creator *usershort.UserShort) { source.Creator = creator },
+			})
+		}
+	}
+	if len(targets) > 0 {
+		if err := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(
+			ctx,
+			nil,
+			targets,
+		); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *Server) hydrateDocumentRelations(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	relations ...*documentsrelations.DocumentRelation,
+) error {
+	targets := make([]citizenshydrator.ShortTarget, 0, len(relations)*2)
+	for _, rel := range relations {
+		if rel == nil {
+			continue
+		}
+		if rel.GetSourceUser() == nil && rel.GetSourceUserId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: rel.GetSourceUserId(),
+				Set:    func(user *usershort.UserShort) { rel.SourceUser = user },
+			})
+		}
+		if rel.GetTargetUser() == nil && rel.GetTargetUserId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: rel.GetTargetUserId(),
+				Set:    func(user *usershort.UserShort) { rel.TargetUser = user },
+			})
+		}
+	}
+	if len(targets) == 0 {
+		return nil
+	}
+
+	return s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
 func (s *Server) AddDocumentRelation(

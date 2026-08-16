@@ -76,12 +76,12 @@ func (s *Server) GetAllPermissions(
 		return nil, errorssettings.ErrInvalidRequest
 	}
 
-	perms, err := s.ps.GetAllPermissions(ctx)
+	perms, err := s.perms.GetAllPermissions(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	attrs, err := s.ps.GetAllAttributes(ctx)
+	attrs, err := s.perms.GetAllAttributes(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
@@ -106,13 +106,13 @@ func (s *Server) GetJobLimits(
 
 	resp := &pbsettings.GetJobLimitsResponse{}
 
-	perms, err := s.ps.GetJobPermissions(ctx, job.GetName())
+	perms, err := s.perms.GetJobPermissions(ctx, job.GetName())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 	resp.Permissions = perms
 
-	attrs, _ := s.ps.GetJobAttributes(ctx, job.GetName())
+	attrs, _ := s.perms.GetJobAttributes(ctx, job.GetName())
 	resp.Attributes = attrs
 
 	resp.Job = job.GetName()
@@ -132,28 +132,28 @@ func (s *Server) UpdateJobLimits(
 		return nil, errorssettings.ErrInvalidRequest
 	}
 
-	if err := s.ps.UpdateJobPermissions(
+	if err := s.perms.UpdateJobPermissions(
 		ctx,
 		job.GetName(),
 		req.GetPerms().GetToUpdate()...); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.ps.UpdateJobAttributes(
+	if err := s.perms.UpdateJobAttributes(
 		ctx,
 		job.GetName(),
 		req.GetAttrs().GetToUpdate()...); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.ps.UpdateJobPermissions(
+	if err := s.perms.UpdateJobPermissions(
 		ctx,
 		job.GetName(),
 		req.GetPerms().GetToRemove()...); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.ps.ApplyJobPermissions(ctx, job.GetName()); err != nil {
+	if err := s.perms.ApplyJobPermissions(ctx, job.GetName()); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 

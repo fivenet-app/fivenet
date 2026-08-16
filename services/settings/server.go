@@ -23,6 +23,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/updatecheck"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	syncservice "github.com/fivenet-app/fivenet/v2026/services/sync"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 	"github.com/go-jet/jet/v2/mysql"
@@ -58,7 +59,7 @@ type Server struct {
 	logger       *zap.Logger
 	db           *sql.DB
 	auth         *grpcauth.GRPCAuth
-	ps           perms.Permissions
+	perms        perms.Permissions
 	enricher     mstlystcdata.IUserAwareEnricher
 	laws         mstlystcdata.ILaws
 	cfg          *config.Config
@@ -80,6 +81,7 @@ type Server struct {
 	updateChecker updatecheck.IChecker
 	store         settingsstore.IStore
 	jobsStore     jobsstore.IStore
+	hydrator      citizenshydrator.IHydrator
 }
 
 type Params struct {
@@ -88,7 +90,7 @@ type Params struct {
 	Logger       *zap.Logger
 	DB           *sql.DB
 	Auth         *grpcauth.GRPCAuth
-	PS           perms.Permissions
+	Perms        perms.Permissions
 	Enricher     mstlystcdata.IUserAwareEnricher
 	Laws         mstlystcdata.ILaws
 	Storage      storage.IStorage
@@ -106,6 +108,7 @@ type Params struct {
 	UpdateChecker updatecheck.IChecker
 	Store         settingsstore.IStore
 	JobsStore     jobsstore.IStore
+	Hydrator      citizenshydrator.IHydrator
 }
 
 func NewServer(p Params) *Server {
@@ -143,7 +146,7 @@ func NewServer(p Params) *Server {
 		logger:       p.Logger,
 		db:           p.DB,
 		auth:         p.Auth,
-		ps:           p.PS,
+		perms:        p.Perms,
 		enricher:     p.Enricher,
 		laws:         p.Laws,
 		cfg:          p.Config,
@@ -165,6 +168,7 @@ func NewServer(p Params) *Server {
 		updateChecker: p.UpdateChecker,
 		store:         p.Store,
 		jobsStore:     p.JobsStore,
+		hydrator:      p.Hydrator,
 	}
 
 	return s

@@ -10,7 +10,6 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	resourcesdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
@@ -19,20 +18,19 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
-	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
-	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
-	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
+	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -253,7 +251,14 @@ func (s *Server) GetTemplate(
 			data,
 		)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateInvalid)
+			if s.perms.Can(
+				userInfo,
+				permsdocuments.TemplatesService.CreateTemplate.Perm,
+			) {
+				return nil, err
+			} else {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateInvalid)
+			}
 		}
 
 		resp.Rendered = true
@@ -277,45 +282,53 @@ func (s *Server) resolveTemplateData(
 	selection *documentstemplates.TemplateSelection,
 	userInfo *userinfo.UserInfo,
 ) (*resolvedTemplateData, error) {
-	activeChar, err := usersstore.RetrieveColleagueById(ctx, s.db, s.enricher, userInfo.GetUserId())
+	activeChar, err := s.colleagueHydrator.GetShortByUserID(
+		ctx,
+		s.db,
+		userInfo.GetUserId(),
+		colleagueshydrator.ResolveOpts{UserInfo: userInfo},
+	)
 	if err != nil {
 		return nil, err
 	}
-	if len(activeChar) == 0 || activeChar[0] == nil {
+	if activeChar == nil {
 		return nil, errswrap.NewError(
 			ErrTemplateActiveChar,
 			errorsdocuments.ErrTemplateRenderFailed,
 		)
 	}
 
-	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 	}
 
 	data := &resolvedTemplateData{
-		ActiveChar: activeChar[0],
+		ActiveChar: activeChar,
 	}
 	if selection == nil {
 		return data, validateTemplateRequirements(tmpl, data)
 	}
 
 	if len(selection.GetUserIds()) > 0 {
-		pageSize := int64(len(selection.GetUserIds()))
-		citizensReq := &pbcitizens.ListCitizensRequest{Pagination: &database.PaginationRequest{}}
-		citizensReq.GetPagination().SetPageSize(pageSize)
-
-		listOptions := citizensListOptions(fields)
-		listOptions.UserIDs = selection.GetUserIds()
-
-		usersResp, err := s.citizensStore.ListCitizens(ctx, citizensReq, listOptions)
+		usersResp, err := s.hydrator.ListByUserID(
+			ctx,
+			s.db,
+			userInfo,
+			selection.GetUserIds(),
+			citizenshydrator.ResolveOpts{
+				IncludePhoneNumber: fields.Contains(
+					permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+				),
+				IncludeProps: true,
+			},
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 		}
 
-		byID := make(map[int32]*users.User, len(usersResp.GetUsers()))
-		for _, user := range usersResp.GetUsers() {
-			s.enricher.EnrichJobInfoSafe(userInfo, user)
+		byID := make(map[int32]*users.User, len(usersResp))
+		for _, user := range usersResp {
 			byID[user.GetUserId()] = user
 		}
 		seen := make(map[int32]struct{}, len(selection.GetUserIds()))
@@ -334,10 +347,7 @@ func (s *Server) resolveTemplateData(
 		docs, err := s.store.List(ctx, documentsstore.ListQuery{
 			DocumentIDs: selection.GetDocumentIds(),
 			Limit:       int64(len(selection.GetDocumentIds())),
-			IncludePhoneNumber: fields.Contains(
-				permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-			),
-			UserInfo: userInfo,
+			UserInfo:    userInfo,
 		})
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
@@ -359,17 +369,14 @@ func (s *Server) resolveTemplateData(
 		}
 	}
 
-	vehicleFields, err := permsvehicles.VehiclesService.ListVehicles.FieldsTyped.Get(s.ps, userInfo)
+	vehicleFields, err := permsvehicles.VehiclesService.ListVehicles.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 	}
 	if len(selection.GetPlates()) > 0 {
 		vehicles, err := s.vehiclesStore.List(ctx, vehiclesstore.ListQuery{
-			Plates: selection.GetPlates(),
-			Limit:  int64(len(selection.GetPlates())),
-			IncludePhoneNumber: fields.Contains(
-				permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-			),
+			Plates:              selection.GetPlates(),
+			Limit:               int64(len(selection.GetPlates())),
 			IncludePropsUpdated: vehicleFields.Len() > 0,
 			IncludeWantedFields: vehicleFields.Contains(
 				permsvehicles.VehiclesServiceListVehiclesFieldsPermValueWanted,
@@ -397,37 +404,6 @@ func (s *Server) resolveTemplateData(
 	}
 
 	return data, validateTemplateRequirements(tmpl, data)
-}
-
-func citizensListOptions(
-	fields *perms.TypedStringList[permscitizens.CitizensServiceListCitizensFieldsPermValue],
-) citizensstore.ListCitizensOptions {
-	return citizensstore.ListCitizensOptions{
-		IncludePhoneNumber: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-		),
-		IncludeWanted: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted,
-		),
-		IncludeJob: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob,
-		),
-		IncludeTrafficInfractionPoints: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints,
-		),
-		IncludeOpenFines: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines,
-		),
-		IncludeBloodType: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType,
-		),
-		IncludeMugshot: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot,
-		),
-		IncludeEmail: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail,
-		),
-	}
 }
 
 func validateTemplateRequirements(

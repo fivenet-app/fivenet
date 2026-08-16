@@ -20,6 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
@@ -32,7 +33,7 @@ type Server struct {
 	pbcitizens.LabelsServiceServer
 
 	db       *sql.DB
-	ps       perms.Permissions
+	perms    perms.Permissions
 	enricher mstlystcdata.IUserAwareEnricher
 	st       storage.IStorage
 	appCfg   appconfig.IConfig
@@ -40,6 +41,7 @@ type Server struct {
 	customDB *config.CustomDB
 	notifi   notifi.INotifi
 	store    citizensstore.IStore
+	hydrator citizenshydrator.IHydrator
 
 	profilePictureHandler *filestore.Handler[int32]
 	mugshotHandler        *filestore.Handler[int32]
@@ -59,6 +61,7 @@ type Params struct {
 	AppConfig    appconfig.IConfig
 	Notifi       notifi.INotifi
 	Store        citizensstore.IStore
+	Hydrator     citizenshydrator.IHydrator
 	LabelsAccess *access.CitizenLabelsObjectAccess
 }
 
@@ -96,7 +99,7 @@ func NewServer(p Params) *Server {
 
 	s := &Server{
 		db:       p.DB,
-		ps:       p.P,
+		perms:    p.P,
 		enricher: p.Enricher,
 		st:       p.Storage,
 		appCfg:   p.AppConfig,
@@ -104,6 +107,7 @@ func NewServer(p Params) *Server {
 		customDB: &p.Config.Database.Custom,
 		notifi:   p.Notifi,
 		store:    p.Store,
+		hydrator: p.Hydrator,
 
 		profilePictureHandler: profilePictureHandler,
 		mugshotHandler:        mugshotHandler,
@@ -114,7 +118,7 @@ func NewServer(p Params) *Server {
 
 	access.RegisterAccess("citizen", &access.GroupedAccessAdapter{
 		CanUserAccessTargetFn: func(ctx context.Context, targetId int64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
-			if !s.ps.Can(
+			if !s.perms.Can(
 				userInfo,
 				permscitizens.CitizensService.GetUser.Perm,
 			) {

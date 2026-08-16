@@ -24,7 +24,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
+	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -128,16 +130,18 @@ type Server struct {
 	tracer trace.Tracer
 	db     *sql.DB
 
-	js            *events.JSWrapper
-	ps            perms.Permissions
-	jobs          mstlystcdata.IJobs
-	docCategories mstlystcdata.IDocumentCategories
-	enricher      mstlystcdata.IUserAwareEnricher
-	ui            userinfo.UserInfoRetriever
-	notifi        notifi.INotifi
-	store         documentsstore.IStore
-	citizensStore citizensstore.IStore
-	vehiclesStore vehiclesstore.IStore
+	js                *events.JSWrapper
+	perms             perms.Permissions
+	jobs              mstlystcdata.IJobs
+	hydrator          citizenshydrator.IHydrator
+	colleagueHydrator colleagueshydrator.IHydrator
+	docCategories     mstlystcdata.IDocumentCategories
+	enricher          mstlystcdata.IUserAwareEnricher
+	ui                userinfo.UserInfoRetriever
+	notifi            notifi.INotifi
+	store             documentsstore.IStore
+	citizensStore     citizensstore.IStore
+	vehiclesStore     vehiclesstore.IStore
 
 	subjectAccess   *access.DocumentsObjectAccess
 	subjectResolver *access.SubjectResolver
@@ -161,6 +165,8 @@ type Params struct {
 	Perms              perms.Permissions
 	Storage            storage.IStorage
 	Jobs               mstlystcdata.IJobs
+	Hydrator           citizenshydrator.IHydrator
+	ColleagueHydrator  colleagueshydrator.IHydrator
 	DocCategories      mstlystcdata.IDocumentCategories
 	Enricher           mstlystcdata.IUserAwareEnricher
 	Ui                 userinfo.UserInfoRetriever
@@ -214,16 +220,18 @@ func NewServer(p Params) Result {
 		tracer: p.TP.Tracer("documents"),
 		db:     p.DB,
 
-		js:            p.JS,
-		ps:            p.Perms,
-		jobs:          p.Jobs,
-		docCategories: p.DocCategories,
-		enricher:      p.Enricher,
-		ui:            p.Ui,
-		notifi:        p.Notif,
-		store:         p.Store,
-		citizensStore: p.CitizensStore,
-		vehiclesStore: p.VehiclesStore,
+		js:                p.JS,
+		perms:             p.Perms,
+		jobs:              p.Jobs,
+		hydrator:          p.Hydrator,
+		colleagueHydrator: p.ColleagueHydrator,
+		docCategories:     p.DocCategories,
+		enricher:          p.Enricher,
+		ui:                p.Ui,
+		notifi:            p.Notif,
+		store:             p.Store,
+		citizensStore:     p.CitizensStore,
+		vehiclesStore:     p.VehiclesStore,
 
 		subjectAccess:   p.SubjectAccess,
 		subjectResolver: docSubjectResolver,

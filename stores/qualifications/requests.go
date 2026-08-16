@@ -20,11 +20,8 @@ func (s *Store) ListQualificationRequests(
 	ctx context.Context,
 	opts ListQualificationRequestsOptions,
 	userInfo *userinfo.UserInfo,
-	includePhoneNumber bool,
 ) (*pbqualifications.ListQualificationRequestsResponse, error) {
 	tQuali := table.FivenetQualifications.AS("qualificationshort")
-	tUser := table.FivenetUser.AS("user")
-	tApprover := tUser.AS("approver")
 	userID := int32(0)
 	if userInfo != nil {
 		userID = userInfo.GetUserId()
@@ -59,10 +56,7 @@ func (s *Store) ListQualificationRequests(
 		))
 	} else {
 		if opts.QualificationID == 0 {
-			condition = condition.AND(mysql.AND(
-				tUser.Job.EQ(mysql.String(userInfo.GetJob())),
-				tQualiReq.UserID.EQ(mysql.Int32(userID)),
-			))
+			condition = condition.AND(tQualiReq.UserID.EQ(mysql.Int32(userID)))
 			countColumn = mysql.DISTINCT(tQualiReq.QualificationID)
 		} else {
 			countColumn = mysql.DISTINCT(tQualiReq.UserID)
@@ -110,17 +104,14 @@ func (s *Store) ListQualificationRequests(
 			FROM(
 				visibleIDs.Table.
 					INNER_JOIN(tQuali, tQuali.ID.EQ(visibleQualiID)).
-					INNER_JOIN(tQualiReq, tQualiReq.QualificationID.EQ(tQuali.ID)).
-					LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)),
+					INNER_JOIN(tQualiReq, tQualiReq.QualificationID.EQ(tQuali.ID)),
 			).
 			WHERE(condition)
 	} else {
 		countStmt = tQualiReq.
 			SELECT(mysql.COUNT(countColumn).AS("data_count.total")).
 			FROM(
-				tQualiReq.
-					INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiReq.QualificationID)).
-					LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)),
+				tQualiReq.INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiReq.QualificationID)),
 			).
 			WHERE(condition)
 	}
@@ -161,27 +152,12 @@ func (s *Store) ListQualificationRequests(
 		tQuali.Title,
 		tQuali.Description,
 		tQualiReq.UserID,
-		tUser.ID,
-		tUser.Job,
-		tUser.JobGrade,
-		tUser.Firstname,
-		tUser.Lastname,
-		tUser.Dateofbirth,
 		tQualiReq.UserComment,
 		tQualiReq.Status,
 		tQualiReq.ApprovedAt,
 		tQualiReq.ApproverComment,
 		tQualiReq.ApproverID,
-		tApprover.ID,
-		tApprover.Job,
-		tApprover.JobGrade,
-		tApprover.Firstname,
-		tApprover.Lastname,
-		tApprover.Dateofbirth,
 		tQualiReq.ApproverJob,
-	}
-	if includePhoneNumber {
-		columns = append(columns, tUser.PhoneNumber, tApprover.PhoneNumber)
 	}
 
 	var stmt mysql.Statement
@@ -193,9 +169,7 @@ func (s *Store) ListQualificationRequests(
 			FROM(
 				visibleIDs.Table.
 					INNER_JOIN(tQuali, tQuali.ID.EQ(visibleQualiID)).
-					INNER_JOIN(tQualiReq, tQualiReq.QualificationID.EQ(tQuali.ID)).
-					LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)).
-					LEFT_JOIN(tApprover, tQualiReq.ApproverID.EQ(tApprover.ID)),
+					INNER_JOIN(tQualiReq, tQualiReq.QualificationID.EQ(tQuali.ID)),
 			).
 			GROUP_BY(tQualiReq.QualificationID, tQualiReq.UserID).
 			ORDER_BY(orderBys...).
@@ -206,10 +180,7 @@ func (s *Store) ListQualificationRequests(
 		stmt = tQualiReq.
 			SELECT(columns[0], columns[1:]...).
 			FROM(
-				tQualiReq.
-					INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiReq.QualificationID)).
-					LEFT_JOIN(tUser, tQualiReq.UserID.EQ(tUser.ID)).
-					LEFT_JOIN(tApprover, tQualiReq.ApproverID.EQ(tApprover.ID)),
+				tQualiReq.INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiReq.QualificationID)),
 			).
 			GROUP_BY(tQualiReq.QualificationID, tQualiReq.UserID).
 			ORDER_BY(orderBys...).
@@ -236,11 +207,7 @@ func (s *Store) GetQualificationRequest(
 	qualificationId int64,
 	userId int32,
 	userInfo *userinfo.UserInfo,
-	includePhoneNumber bool,
 ) (*resqualifications.QualificationRequest, error) {
-	tUser := table.FivenetUser.AS("user")
-	tApprover := tUser.AS("approver")
-
 	columns := mysql.ProjectionList{
 		tQualiReq.CreatedAt,
 		tQualiReq.DeletedAt,
@@ -256,27 +223,12 @@ func (s *Store) GetQualificationRequest(
 		tQuali.Title,
 		tQuali.Description,
 		tQualiReq.UserID,
-		tUser.ID,
-		tUser.Job,
-		tUser.JobGrade,
-		tUser.Firstname,
-		tUser.Lastname,
-		tUser.Dateofbirth,
 		tQualiReq.UserComment,
 		tQualiReq.Status,
 		tQualiReq.ApprovedAt,
 		tQualiReq.ApproverComment,
 		tQualiReq.ApproverID,
 		tQualiReq.ApproverJob,
-		tApprover.ID,
-		tApprover.Job,
-		tApprover.JobGrade,
-		tApprover.Firstname,
-		tApprover.Lastname,
-		tApprover.Dateofbirth,
-	}
-	if includePhoneNumber {
-		columns = append(columns, tUser.PhoneNumber, tApprover.PhoneNumber)
 	}
 
 	condition := mysql.AND(
@@ -290,9 +242,7 @@ func (s *Store) GetQualificationRequest(
 	stmt := tQualiReq.
 		SELECT(columns[0], columns[1:]...).
 		FROM(tQualiReq.
-			INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiReq.QualificationID)).
-			LEFT_JOIN(tUser, tUser.ID.EQ(tQualiReq.UserID)).
-			LEFT_JOIN(tApprover, tApprover.ID.EQ(tQualiReq.ApproverID)),
+			INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiReq.QualificationID)),
 		).
 		GROUP_BY(tQualiReq.QualificationID, tQualiReq.UserID).
 		ORDER_BY(tQualiReq.CreatedAt.DESC()).

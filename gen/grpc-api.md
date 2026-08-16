@@ -1716,7 +1716,7 @@ Dummy - DO NOT USE!
 | `postal` | [string](#string) | optional |  |
 | `anon` | [bool](#bool) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.users.User](#resourcesusersUser) | optional |  |
+| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `units` | [DispatchAssignment](#resourcescentrumdispatchesDispatchAssignment) | repeated |  |
 | `references` | [DispatchReferences](#resourcescentrumdispatchesDispatchReferences) | optional |  |
 

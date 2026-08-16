@@ -26,7 +26,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
-	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
+	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
@@ -63,12 +64,14 @@ type UnitDB struct {
 	enricher mstlystcdata.IEnricher
 	tracker  tracker.ITracker
 	postals  postals.Postals
+	jobs     jobsstore.IStore
 
 	store      *store.Store[centrumunits.Unit, *centrumunits.Unit]
 	jobMapping *store.Store[common.IDMapping, *common.IDMapping]
 
 	unitAccess         *access.CentrumUnitsObjectAccess
 	unitAccessResolver *access.SubjectResolver
+	colleagueHydrator  colleagueshydrator.IHydrator
 
 	KVPing jetstream.KeyValue
 }
@@ -78,14 +81,16 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger     *zap.Logger
-	JS         *events.JSWrapper
-	DB         *sql.DB
-	Cfg        *config.Config
-	Enricher   mstlystcdata.IEnricher
-	Tracker    tracker.ITracker
-	Postals    postals.Postals
-	UnitAccess *access.CentrumUnitsObjectAccess
+	Logger            *zap.Logger
+	JS                *events.JSWrapper
+	DB                *sql.DB
+	Cfg               *config.Config
+	Enricher          mstlystcdata.IEnricher
+	Tracker           tracker.ITracker
+	Postals           postals.Postals
+	Jobs              jobsstore.IStore
+	UnitAccess        *access.CentrumUnitsObjectAccess
+	ColleagueHydrator colleagueshydrator.IHydrator
 }
 
 func New(p Params) *UnitDB {
@@ -100,9 +105,11 @@ func New(p Params) *UnitDB {
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
 		postals:  p.Postals,
+		jobs:     p.Jobs,
 
 		unitAccess:         p.UnitAccess,
 		unitAccessResolver: access.NewSubjectResolver(p.DB),
+		colleagueHydrator:  p.ColleagueHydrator,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -401,13 +408,30 @@ func (s *UnitDB) loadUnitsFromDB(ctx context.Context, id int64) ([]*centrumunits
 		}
 		units[i].Status = status
 
-		if err := usersstore.RetrieveUsersForUnit(
-			ctx,
-			s.db,
-			s.enricher,
-			&units[i].Users,
-		); err != nil {
-			return nil, err
+		if len(units[i].Users) > 0 {
+			targets := make([]colleagueshydrator.Target, 0, len(units[i].Users))
+			for j := range units[i].Users {
+				if units[i].Users[j] == nil {
+					continue
+				}
+
+				targets = append(targets, colleagueshydrator.Target{
+					UserID: units[i].Users[j].GetUserId(),
+					Set:    units[i].Users[j].SetUser,
+				})
+			}
+
+			if err := s.colleagueHydrator.HydrateTargets(
+				ctx,
+				s.db,
+				targets,
+				colleagueshydrator.ResolveOpts{
+					PropsJobMode: colleagueshydrator.PropsJobModePrimary,
+					PropsJob:     units[i].GetJob(),
+				},
+			); err != nil {
+				return nil, err
+			}
 		}
 
 		s.enricher.EnrichJobName(units[i])
@@ -483,6 +507,19 @@ func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (int64, 
 	return dest.UnitID, nil
 }
 
+func (s *UnitDB) UserInJob(
+	ctx context.Context,
+	db qrm.DB,
+	job string,
+	userID int32,
+) (bool, error) {
+	if s.jobs == nil {
+		return false, errors.New("jobs store unavailable")
+	}
+
+	return s.jobs.UserInJob(ctx, db, job, userID)
+}
+
 func (s *UnitDB) UpdateStatus(
 	ctx context.Context,
 	unitId int64,
@@ -528,7 +565,15 @@ func (s *UnitDB) UpdateStatus(
 
 	if in.UserId != nil {
 		var err error
-		in.User, err = usersstore.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetUserId())
+		in.User, err = s.colleagueHydrator.GetShortByUserID(
+			ctx,
+			s.db,
+			in.GetUserId(),
+			colleagueshydrator.ResolveOpts{
+				PropsJobMode: colleagueshydrator.PropsJobModeExplicit,
+				PropsJob:     unit.GetJob(),
+			},
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -542,14 +587,17 @@ func (s *UnitDB) UpdateStatus(
 	if in.CreatorId != nil {
 		// If the creator of the status is the same as the user, no need to query the db
 		if in.UserId != nil && in.GetCreatorId() == in.GetUserId() {
-			in.Creator = in.GetUser()
+			in.SetCreator(in.GetUser())
 		} else {
 			var err error
-			in.Creator, err = usersstore.RetrieveUserShortById(
+			in.Creator, err = s.colleagueHydrator.GetShortByUserID(
 				ctx,
 				s.db,
-				s.enricher,
 				in.GetCreatorId(),
+				colleagueshydrator.ResolveOpts{
+					PropsJobMode: colleagueshydrator.PropsJobModeExplicit,
+					PropsJob:     unit.GetJob(),
+				},
 			)
 			if err != nil {
 				return nil, err
@@ -669,7 +717,7 @@ func (s *UnitDB) RemoveUnitAssignments(
 
 func (s *UnitDB) applyUnitAssignmentChanges(
 	ctx context.Context,
-	creatorJob string,
+	_ string,
 	creatorId *int32,
 	unitId int64,
 	toAdd []int32,
@@ -767,17 +815,52 @@ func (s *UnitDB) applyUnitAssignmentChanges(
 		}
 
 		actualAdd = append(actualAdd, userId)
-		existingUsers[userId] = struct{}{}
 	}
 	slices.Sort(actualAdd)
 	actualAdd = slices.Compact(actualAdd)
 
-	toAddUsers := []*jobscolleagues.Colleague{}
-	if len(actualAdd) > 0 {
-		var err error
-		toAddUsers, err = usersstore.RetrieveColleagueById(ctx, s.db, s.enricher, actualAdd...)
+	eligibleAdd := make([]int32, 0, len(actualAdd))
+	for _, userId := range actualAdd {
+		ok, err := s.UserInJob(ctx, tx, unit.GetJob(), userId)
 		if err != nil {
 			return nil, err
+		}
+		if !ok {
+			s.logger.Debug(
+				"dropping unit assignment for user not in job",
+				zap.Int64("unit_id", unitId),
+				zap.String("job", unit.GetJob()),
+				zap.Int32("user_id", userId),
+			)
+			continue
+		}
+
+		eligibleAdd = append(eligibleAdd, userId)
+	}
+
+	for _, userId := range eligibleAdd {
+		existingUsers[userId] = struct{}{}
+	}
+
+	toAddUsers := []*jobscolleagues.Colleague{}
+	if len(eligibleAdd) > 0 {
+		var err error
+		byUserID, err := s.colleagueHydrator.HydrateByUserID(
+			ctx,
+			s.db,
+			eligibleAdd,
+			colleagueshydrator.ResolveOpts{
+				PropsJobMode: colleagueshydrator.PropsJobModeExplicit,
+				PropsJob:     unit.GetJob(),
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		for _, userId := range eligibleAdd {
+			if user, ok := byUserID[userId]; ok {
+				toAddUsers = append(toAddUsers, user)
+			}
 		}
 	}
 
@@ -800,14 +883,14 @@ func (s *UnitDB) applyUnitAssignmentChanges(
 		}
 	}
 
-	if len(actualAdd) > 0 {
+	if len(eligibleAdd) > 0 {
 		stmt := tUnitUser.
 			INSERT(
 				tUnitUser.UnitID,
 				tUnitUser.UserID,
 			)
 
-		for _, id := range actualAdd {
+		for _, id := range eligibleAdd {
 			stmt = stmt.
 				VALUES(
 					unitId,
@@ -861,7 +944,7 @@ func (s *UnitDB) applyUnitAssignmentChanges(
 		})
 	}
 
-	if len(existingUsers) == 0 && (len(actualRemove) > 0 || len(actualAdd) > 0) {
+	if len(existingUsers) == 0 && (len(actualRemove) > 0 || len(eligibleAdd) > 0) {
 		pendingStatuses = append(pendingStatuses, pendingStatus{
 			status: &centrumunits.UnitStatus{
 				CreatedAt:  timestamp.Now(),
@@ -912,8 +995,8 @@ func (s *UnitDB) applyUnitAssignmentChanges(
 		}
 	}
 
-	syncUserIds := make([]int32, 0, len(addIds)+len(toRemove))
-	syncUserIds = append(syncUserIds, addIds...)
+	syncUserIds := make([]int32, 0, len(eligibleAdd)+len(toRemove))
+	syncUserIds = append(syncUserIds, eligibleAdd...)
 	syncUserIds = append(syncUserIds, toRemove...)
 	slices.Sort(syncUserIds)
 	syncUserIds = slices.Compact(syncUserIds)
@@ -1221,7 +1304,7 @@ func (s *UnitDB) GetStatusByID(
 ) (*centrumunits.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
-	tUsers := table.FivenetUser.AS("colleague")
+	tColleague := table.FivenetUser.AS("colleague")
 	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
@@ -1239,14 +1322,14 @@ func (s *UnitDB) GetStatusByID(
 			tUnitStatus.Y,
 			tUnitStatus.Postal,
 			tUnitStatus.CreatorJob,
-			tUsers.ID,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Sex,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
+			tColleague.ID,
+			tColleague.Firstname,
+			tColleague.Lastname,
+			tColleague.Job,
+			tColleague.JobGrade,
+			tColleague.Sex,
+			tColleague.Dateofbirth,
+			tColleague.PhoneNumber,
 			tColleagueProps.UserID,
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
@@ -1256,16 +1339,16 @@ func (s *UnitDB) GetStatusByID(
 		).
 		FROM(
 			tUnitStatus.
-				LEFT_JOIN(tUsers,
-					tUsers.ID.EQ(tUnitStatus.UserID),
+				LEFT_JOIN(tColleague,
+					tColleague.ID.EQ(tUnitStatus.UserID),
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUnitStatus.UserID),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
-						tColleagueProps.UserID.EQ(tUsers.ID),
-						tColleagueProps.Job.EQ(tUsers.Job),
+						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleagueProps.Job.EQ(tColleague.Job),
 					),
 				).
 				LEFT_JOIN(tAvatar,
@@ -1299,7 +1382,7 @@ func (s *UnitDB) GetLastStatus(
 ) (*centrumunits.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
-	tUsers := table.FivenetUser.AS("colleague")
+	tColleague := table.FivenetUser.AS("colleague")
 	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
@@ -1317,14 +1400,14 @@ func (s *UnitDB) GetLastStatus(
 			tUnitStatus.Y,
 			tUnitStatus.Postal,
 			tUnitStatus.CreatorJob,
-			tUsers.ID,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Sex,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
+			tColleague.ID,
+			tColleague.Firstname,
+			tColleague.Lastname,
+			tColleague.Job,
+			tColleague.JobGrade,
+			tColleague.Sex,
+			tColleague.Dateofbirth,
+			tColleague.PhoneNumber,
 			tColleagueProps.UserID,
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
@@ -1334,16 +1417,16 @@ func (s *UnitDB) GetLastStatus(
 		).
 		FROM(
 			tUnitStatus.
-				LEFT_JOIN(tUsers,
-					tUsers.ID.EQ(tUnitStatus.UserID),
+				LEFT_JOIN(tColleague,
+					tColleague.ID.EQ(tUnitStatus.UserID),
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUnitStatus.UserID),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
-						tColleagueProps.UserID.EQ(tUsers.ID),
-						tColleagueProps.Job.EQ(tUsers.Job),
+						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleagueProps.Job.EQ(tColleague.Job),
 					),
 				).
 				LEFT_JOIN(tAvatar,

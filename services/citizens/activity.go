@@ -4,12 +4,14 @@ import (
 	context "context"
 
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -26,7 +28,7 @@ func (s *Server) ListUserActivity(
 	}
 
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
-	fields, err := permscitizens.CitizensService.ListUserActivity.FieldsTyped.Get(s.ps, userInfo)
+	fields, err := permscitizens.CitizensService.ListUserActivity.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -66,14 +68,29 @@ func (s *Server) ListUserActivity(
 
 	resp.Activity = activities
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetActivity())*2)
 	for i := range resp.GetActivity() {
-		if resp.GetActivity()[i].GetSourceUser() != nil {
-			jobInfoFn(resp.GetActivity()[i].GetSourceUser())
-		}
-		if resp.GetActivity()[i].GetTargetUser() != nil {
-			jobInfoFn(resp.GetActivity()[i].GetTargetUser())
-		}
+		activity := resp.GetActivity()[i]
+		targets = append(targets, citizenshydrator.ShortTarget{
+			UserID: activity.GetTargetUserId(),
+			Set: func(user *usershort.UserShort) {
+				resp.Activity[i].TargetUser = user
+			},
+		})
+		targets = append(targets, citizenshydrator.ShortTarget{
+			UserID: activity.GetSourceUserId(),
+			Set: func(user *usershort.UserShort) {
+				resp.Activity[i].SourceUser = user
+			},
+		})
+	}
+
+	if err := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(
+		ctx,
+		nil,
+		targets,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	return resp, nil

@@ -72,6 +72,7 @@ import (
 	authstore "github.com/fivenet-app/fivenet/v2026/stores/auth"
 	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	completorstore "github.com/fivenet-app/fivenet/v2026/stores/completor"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
@@ -164,6 +165,7 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 
 		pbcitizens.HousekeeperModule,
 		pbjobs.HousekeeperModule,
+		citizenshydrator.Module,
 		pbvehicles.HousekeeperModule,
 		pbdocuments.WorkflowModule,
 		pkgfilestore.Module,

@@ -6,6 +6,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -186,19 +187,30 @@ func (e *UserAwareEnricher) EnrichJobInfoSafe(
 func (e *UserAwareEnricher) EnrichJobInfoSafeFunc(
 	userInfo *userinfo.UserInfo,
 ) func(usr common.IJobInfo) {
-	jobGrades, _ := e.ps.AttrJobGradeList(
-		userInfo,
-		permscitizens.CitizensService.GetUser.Jobs,
-	)
+	var jobGrades *permissionsattributes.JobGradeList
+	if userInfo != nil {
+		jobGrades, _ = e.ps.AttrJobGradeList(
+			userInfo,
+			permscitizens.CitizensService.GetUser.Jobs,
+		)
+	}
+	if jobGrades == nil {
+		jobGrades = &permissionsattributes.JobGradeList{
+			Jobs:        map[string]int32{},
+			FineGrained: false,
+			Grades:      map[string]*permissionsattributes.JobGrades{},
+		}
+	}
 
 	appCfg := e.appCfg.Get()
 	publicJobs := appCfg.JobInfo.GetPublicJobs()
 	unemployedJob := appCfg.JobInfo.GetUnemployedJob()
+	isJobAdmin := userInfo != nil && userInfo.GetJobAdmin()
 
 	return func(usr common.IJobInfo) {
 		// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
 		ok := jobGrades.HasJobGrade(usr.GetJob(), usr.GetJobGrade())
-		if !ok && !userInfo.GetJobAdmin() {
+		if !ok && !isJobAdmin {
 			if !slices.Contains(publicJobs, usr.GetJob()) {
 				usr.SetJob(unemployedJob.GetName())
 				usr.SetJobGrade(unemployedJob.GetGrade())
@@ -206,7 +218,7 @@ func (e *UserAwareEnricher) EnrichJobInfoSafeFunc(
 				usr.SetJobGrade(0)
 			}
 		} else {
-			if !ok && !userInfo.GetJobAdmin() {
+			if !ok && !isJobAdmin {
 				usr.SetJobGrade(0)
 			}
 		}

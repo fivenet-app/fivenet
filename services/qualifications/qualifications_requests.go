@@ -10,12 +10,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -49,16 +50,6 @@ func (s *Server) ListQualificationRequests(
 		}
 	}
 
-	includePhoneNumber := false
-	if fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(
-		s.perms,
-		userInfo,
-	); err == nil {
-		includePhoneNumber = fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-		)
-	}
-
 	resp, err := s.store.ListQualificationRequests(
 		ctx,
 		qualificationsstore.ListQualificationRequestsOptions{
@@ -70,20 +61,34 @@ func (s *Server) ListQualificationRequests(
 			Search:          req.GetSearch(),
 		},
 		userInfo,
-		includePhoneNumber,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.GetRequests() {
-		if resp.GetRequests()[i].GetUser() != nil {
-			jobInfoFn(resp.GetRequests()[i].GetUser())
+	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetRequests())*2)
+	for i, request := range resp.GetRequests() {
+		if request.GetUserId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: request.GetUserId(),
+				Set: func(user *usershort.UserShort) {
+					resp.Requests[i].User = user
+				},
+			})
 		}
-
-		if resp.GetRequests()[i].GetApprover() != nil {
-			jobInfoFn(resp.GetRequests()[i].GetApprover())
+		if request.GetApproverId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: request.GetApproverId(),
+				Set: func(user *usershort.UserShort) {
+					resp.Requests[i].Approver = user
+				},
+			})
+		}
+	}
+	if len(targets) > 0 {
+		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, targets); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
 
@@ -118,7 +123,6 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		ctx,
 		req.GetRequest().GetQualificationId(),
 		userInfo,
-		false,
 		false,
 	)
 	if err != nil {
@@ -260,17 +264,33 @@ func (s *Server) getQualificationRequest(
 	userId int32,
 	userInfo *userinfo.UserInfo,
 ) (*qualifications.QualificationRequest, error) {
-	request, err := s.store.GetQualificationRequest(ctx, qualificationId, userId, userInfo, false)
+	request, err := s.store.GetQualificationRequest(ctx, qualificationId, userId, userInfo)
 	if err != nil {
 		return nil, err
 	}
 
-	if request.GetUser() != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, request.GetUser())
+	targets := make([]citizenshydrator.ShortTarget, 0, 2)
+	if request.GetUserId() > 0 {
+		targets = append(targets, citizenshydrator.ShortTarget{
+			UserID: request.GetUserId(),
+			Set: func(user *usershort.UserShort) {
+				request.User = user
+			},
+		})
 	}
-
-	if request.GetApprover() != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, request.GetApprover())
+	if request.GetApproverId() > 0 {
+		targets = append(targets, citizenshydrator.ShortTarget{
+			UserID: request.GetApproverId(),
+			Set: func(user *usershort.UserShort) {
+				request.Approver = user
+			},
+		})
+	}
+	if len(targets) > 0 {
+		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, targets); err != nil {
+			return nil, err
+		}
 	}
 
 	if !userInfo.GetJobAdmin() && request.GetDeletedAt() != nil {

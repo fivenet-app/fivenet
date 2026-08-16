@@ -9,6 +9,7 @@ import (
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
 	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
 	wikiactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
@@ -20,6 +21,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorswiki "github.com/fivenet-app/fivenet/v2026/services/wiki/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	wikistore "github.com/fivenet-app/fivenet/v2026/stores/wiki"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -141,11 +143,21 @@ func (s *Server) getPageAccess(
 		s.enricher.EnrichJobInfo(access.GetJobs()[i])
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	safeHydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.ShortTarget, 0, len(access.GetUsers()))
 	for i := range access.GetUsers() {
-		if access.GetUsers()[i].GetUser() != nil {
-			jobInfoFn(access.GetUsers()[i].GetUser())
+		if access.GetUsers()[i].GetUserId() <= 0 {
+			continue
 		}
+		targets = append(targets, citizenshydrator.ShortTarget{
+			UserID: access.GetUsers()[i].GetUserId(),
+			Set: func(user *usershort.UserShort) {
+				access.Users[i].User = user
+			},
+		})
+	}
+	if err := safeHydrateShort(ctx, nil, targets); err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
 	return access, nil
@@ -168,6 +180,16 @@ func (s *Server) getPage(
 	}
 
 	s.enricher.EnrichJobName(dest)
+	if dest.GetMeta() != nil && dest.GetMeta().GetCreatorId() > 0 {
+		safeHydrateShort := s.hydrator.GetShortByUserIDSafeFunc(userInfo)
+		creator, err := safeHydrateShort(ctx, nil, dest.GetMeta().GetCreatorId())
+		if err != nil {
+			return nil, err
+		}
+		if creator != nil {
+			dest.Meta.SetCreator(creator)
+		}
+	}
 
 	if withAccess {
 		access, err := s.getPageAccess(ctx, userInfo, pageId)

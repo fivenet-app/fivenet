@@ -28,7 +28,7 @@ func TestStoreListTimeclockDefaultOrderByUsesAggregatedColumns(t *testing.T) {
 	store, mock := newTestStore(t)
 
 	mock.ExpectQuery(`(?s)SELECT .*ORDER BY .*agg\.date DESC, agg\.spent_time DESC.*`).
-		WithArgs("police", "police", "police", int64(0), int64(0)).
+		WithArgs("police", "police", int64(0), int64(0)).
 		WillReturnRows(sqlmock.NewRows(nil))
 
 	_, err := store.ListTimeclock(t.Context(), store.db, TimeclockQuery{
@@ -81,7 +81,7 @@ func TestStoreListInactiveEmployeesUsesUserJobsBase(t *testing.T) {
 
 	store, mock := newTestStore(t)
 
-	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user_jobs.*INNER JOIN fivenet_user AS colleague.*LEFT JOIN fivenet_user_props.*LEFT JOIN fivenet_job_colleague_props AS colleague_props.*LEFT JOIN fivenet_files AS profile_picture.*WHERE .*fivenet_user_jobs\.job = \?.*EXISTS .*fivenet_job_timeclock.*NOT \(EXISTS .*fivenet_job_timeclock.*ORDER BY .*colleague\.job_grade ASC.*LIMIT \?.*;`).
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user_jobs.*INNER JOIN fivenet_user AS colleague.*LEFT JOIN fivenet_job_colleague_props AS colleague_props.*WHERE .*fivenet_user_jobs\.job = \?.*EXISTS .*fivenet_job_timeclock.*NOT \(EXISTS .*fivenet_job_timeclock.*ORDER BY .*colleague\.job_grade ASC.*LIMIT \?.*;`).
 		WithArgs("police", "police", "police", "police", int64(20), int64(0)).
 		WillReturnRows(sqlmock.NewRows(nil))
 

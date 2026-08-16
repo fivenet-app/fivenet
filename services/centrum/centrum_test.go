@@ -224,6 +224,7 @@ func newCentrumJoinUnitTestServer(
 			fx.Provide(units.New),
 			fx.Provide(dispatches.New),
 			fx.Provide(access.NewCentrumUnitsSubjectObjectAccess),
+			fx.Provide(access.NewJobGroupsSubjectObjectAccess),
 			fx.Provide(func(p Params) Result {
 				r := NewServer(p)
 				srv = r.Server
@@ -285,6 +286,25 @@ func seedAssignmentForTest(
 	require.NoError(t, err)
 
 	require.NoError(t, tracker.SetUserMappingForUser(t.Context(), userID, &unitID))
+}
+
+func upsertUserJobForTest(
+	t *testing.T,
+	db *sql.DB,
+	userID int32,
+	job string,
+	grade int32,
+) {
+	t.Helper()
+
+	_, err := db.Exec(
+		`INSERT INTO fivenet_user_jobs (user_id, job, grade, is_primary) VALUES (?, ?, ?, TRUE)
+		 ON DUPLICATE KEY UPDATE job = VALUES(job), grade = VALUES(grade), is_primary = VALUES(is_primary)`,
+		userID,
+		job,
+		grade,
+	)
+	require.NoError(t, err)
 }
 
 func unitAssignmentCountForTest(t *testing.T, db *sql.DB, unitID int64, userID int32) int {
@@ -601,6 +621,49 @@ func TestSyncUserUnitMappingDeletesMappingForOffDutyUserWithoutAssignment(t *tes
 	require.NoError(t, srv.units.SyncUserUnitMapping(ctx, 1))
 
 	_, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	assert.False(t, ok)
+}
+
+func TestUpdateUnitAssignmentsDropsUsersOutsideUnitJob(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	trackerStub.markers[4] = &livemapmarkers.UserMarker{
+		UserId: 4,
+		Hidden: false,
+	}
+	upsertUserJobForTest(t, db, 1, "ambulance", 17)
+
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Assignments")
+
+	require.NoError(t, srv.units.UpdateUnitAssignments(
+		ctx,
+		"ambulance",
+		nil,
+		unit.GetId(),
+		[]int32{1, 4},
+		nil,
+	))
+
+	assert.Equal(t, 1, unitAssignmentCountForTest(t, db, unit.GetId(), 1))
+	assert.Equal(t, 0, unitAssignmentCountForTest(t, db, unit.GetId(), 4))
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, true)
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 4, false)
+
+	mapping, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	require.True(t, ok)
+	require.NotNil(t, mapping)
+	assert.Equal(t, unit.GetId(), mapping.GetUnitId())
+
+	_, ok, err = trackerStub.GetUserMapping(4)
 	require.NoError(t, err)
 	assert.False(t, ok)
 }

@@ -107,7 +107,6 @@ func (s *Server) GetQualificationAccess(
 			req.GetQualificationId(),
 			userInfo,
 			false,
-			false,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
