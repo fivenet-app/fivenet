@@ -20,6 +20,9 @@ const hints = computed(() =>
                 to: '/user-settings?tab=settings#',
             },
             {
+                key: 'overview_quick_access',
+            },
+            {
                 key: 'sociallogin_discord',
                 to: '/auth/account-info?tab=oauth2Connections#',
                 hide: discord.botEnabled,

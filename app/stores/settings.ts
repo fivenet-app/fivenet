@@ -86,6 +86,8 @@ export const useSettingsStore = defineStore(
         const now = new Date();
         const eventsShowSnowflakes = computed(() => now.getMonth() + 1 === 12 && now.getDate() >= 21 && now.getDate() <= 26);
 
+        const overviewQuickAccess = ref<string[]>([]);
+
         const livemap = ref<LivemapSettings>({
             markerSize: 22,
             centerSelectedMarker: false,
@@ -157,6 +159,83 @@ export const useSettingsStore = defineStore(
             minStrokeWidth: 2,
             maxStrokeWidth: 6,
         });
+
+        /**
+         * Normalize the quick access list while preserving order.
+         * Deduplication is intentional so repeated pin actions stay idempotent.
+         */
+        const normalizeOverviewQuickAccess = (): void => {
+            const seen = new Set<string>();
+            overviewQuickAccess.value = overviewQuickAccess.value.filter((path) => {
+                if (seen.has(path)) return false;
+                seen.add(path);
+                return true;
+            });
+        };
+
+        /**
+         * Pin a route path to the overview quick access bar.
+         *
+         * @param {string} path - The route path to add.
+         */
+        const pinOverviewQuickAccess = (path: string): void => {
+            if (!path) return;
+            if (overviewQuickAccess.value.includes(path)) return;
+            overviewQuickAccess.value.push(path);
+        };
+
+        /**
+         * Remove a route path from the overview quick access bar.
+         *
+         * @param {string} path - The route path to remove.
+         */
+        const unpinOverviewQuickAccess = (path: string): void => {
+            const idx = overviewQuickAccess.value.indexOf(path);
+            if (idx === -1) return;
+            overviewQuickAccess.value.splice(idx, 1);
+        };
+
+        /**
+         * Toggle a route path in the overview quick access bar.
+         *
+         * @param {string} path - The route path to toggle.
+         */
+        const toggleOverviewQuickAccess = (path: string): void => {
+            if (overviewQuickAccess.value.includes(path)) {
+                unpinOverviewQuickAccess(path);
+                return;
+            }
+
+            pinOverviewQuickAccess(path);
+        };
+
+        /**
+         * Reorder the visible quick access routes while preserving hidden entries in place.
+         *
+         * @param {string[]} orderedPaths - The visible routes in their new order.
+         */
+        const reorderOverviewQuickAccess = (orderedPaths: string[]): void => {
+            const visiblePaths = [...new Set(orderedPaths)].filter((path) => overviewQuickAccess.value.includes(path));
+            if (visiblePaths.length === 0) return;
+
+            const visibleSet = new Set(visiblePaths);
+            let nextVisible = 0;
+
+            overviewQuickAccess.value = overviewQuickAccess.value.map((path) => {
+                if (!visibleSet.has(path)) return path;
+
+                const nextPath = visiblePaths[nextVisible];
+                nextVisible += 1;
+                return nextPath ?? path;
+            });
+        };
+
+        /**
+         * Check whether a route path is pinned to the overview quick access bar.
+         *
+         * @param {string} path - The route path to check.
+         */
+        const isOverviewQuickAccess = (path: string): boolean => overviewQuickAccess.value.includes(path);
 
         // Quick button Notepad fullscreen state
         const notepadFullscreen = ref<boolean>(false);
@@ -248,6 +327,8 @@ export const useSettingsStore = defineStore(
          * Migrate store
          */
         const migrateStore = (): void => {
+            normalizeOverviewQuickAccess();
+
             // Fixup livemap tile layer name
             if ((livemapTileLayer.value as string) === 'satelite') {
                 livemapTileLayer.value = 'satellite';
@@ -264,6 +345,7 @@ export const useSettingsStore = defineStore(
 
             eventsDisabled,
 
+            overviewQuickAccess,
             livemap,
             livemapLayerCategories,
             livemapLayers,
@@ -286,6 +368,12 @@ export const useSettingsStore = defineStore(
             addOrUpdateLivemapCategory,
             addOrUpdateLivemapLayer,
             removeLivemapLayer,
+            normalizeOverviewQuickAccess,
+            pinOverviewQuickAccess,
+            unpinOverviewQuickAccess,
+            toggleOverviewQuickAccess,
+            reorderOverviewQuickAccess,
+            isOverviewQuickAccess,
             migrateStore,
 
             eventsShowSnowflakes,

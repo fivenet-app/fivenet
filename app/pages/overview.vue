@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+import type { ContextMenuItem } from '@nuxt/ui';
 import HintsBox from '~/components/HintsBox.vue';
 import CardsList from '~/components/partials/CardsList.vue';
+import QuickAccessList from '~/components/overview/QuickAccessList.vue';
 import type { CardElement } from '~/utils/types';
 
 useHead({
@@ -14,77 +16,25 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const items = computed<CardElement[]>(() => [
-    {
-        title: t('common.mail'),
-        description: t('pages.overview.features.mailer'),
-        to: '/mail',
-        permission: 'mailer.MailerService/ListEmails',
-        icon: 'i-mdi-inbox-full-outline',
-    },
-    {
-        title: `${t('common.citizen', 2)} ${t('common.search')}`,
-        description: t('pages.overview.features.citizens'),
-        to: '/citizens',
-        permission: 'citizens.CitizensService/ListCitizens',
-        icon: 'i-mdi-account-multiple-outline',
-    },
-    {
-        title: t('common.vehicle', 2),
-        description: t('pages.overview.features.vehicles'),
-        to: '/vehicles',
-        permission: 'vehicles.VehiclesService/ListVehicles',
-        icon: 'i-mdi-car-outline',
-    },
-    {
-        title: t('common.document', 2),
-        description: t('pages.overview.features.documents'),
-        to: '/documents',
-        permission: 'documents.DocumentsService/ListDocuments',
-        icon: 'i-mdi-file-document-box-multiple-outline',
-    },
-    {
-        title: t('common.job', 2),
-        description: t('pages.overview.features.jobs'),
-        to: '/jobs/overview',
-        permission: 'jobs.ColleaguesService/ListColleagues',
-        icon: 'i-mdi-briefcase-outline',
-    },
-    {
-        title: t('common.calendar'),
-        description: t('pages.overview.features.calendar'),
-        to: '/calendar',
-        icon: 'i-mdi-calendar-outline',
-    },
-    {
-        title: t('common.qualification', 2),
-        description: t('pages.overview.features.qualifications'),
-        to: '/qualifications',
-        permission: 'qualifications.QualificationsService/ListQualifications',
-        icon: 'i-mdi-school-outline',
-    },
-    {
-        title: t('common.livemap'),
-        description: t('pages.overview.features.livemap'),
-        to: '/livemap',
-        permission: 'livemap.LivemapService/Stream',
-        icon: 'i-mdi-map-outline',
-    },
-    {
-        title: t('common.dispatch_center'),
-        description: t('pages.overview.features.centrum'),
-        to: '/dispatch',
-        permission: 'centrum.CentrumService/TakeControl',
-        icon: 'i-mdi-car-emergency',
-    },
-    {
-        title: t('common.wiki'),
-        description: t('pages.overview.features.wiki'),
-        to: '/wiki',
-        permission: 'wiki.WikiService/ListPages',
-        icon: 'i-mdi-brain',
-    },
-]);
+const items = useOverviewFeatures();
+
+const settingsStore = useSettingsStore();
+const { isOverviewQuickAccess, toggleOverviewQuickAccess } = settingsStore;
+
+const getContextMenuItems = (item: CardElement): ContextMenuItem[][] => {
+    if (!item.to) return [];
+
+    const pinned = isOverviewQuickAccess(item.to);
+    return [
+        [
+            {
+                label: pinned ? t('common.unpin') : t('common.pin'),
+                icon: pinned ? 'i-mdi-pin-off' : 'i-mdi-pin',
+                onSelect: () => item.to && toggleOverviewQuickAccess(item.to),
+            },
+        ],
+    ];
+};
 </script>
 
 <template>
@@ -98,7 +48,9 @@ const items = computed<CardElement[]>(() => [
         </template>
 
         <template #body>
-            <CardsList :items="items" />
+            <QuickAccessList />
+
+            <CardsList :items="items" :get-context-menu-items="getContextMenuItems" />
 
             <div class="max-w-(--breakpoint-lg) sm:mx-auto">
                 <HintsBox />

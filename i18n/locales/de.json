@@ -892,7 +892,8 @@
         "rotate_right": "Nach rechts rotieren",
         "change_order": "Reihenfolge ändern",
         "hidden": "Versteckt",
-        "treemap": "Kachelkarte"
+        "treemap": "Kachelkarte",
+        "quick_access": "Schnellzugriff"
     },
     "components": {
         "partials": {
@@ -1421,6 +1422,9 @@
             "click_me": "Klicke hier",
             "startpage": {
                 "content": "Die Startseite von FiveNet können Sie in Ihren Kontoinformationen festlegen."
+            },
+            "overview_quick_access": {
+                "content": "Über das Rechtsklick-Menü auf der Übersicht-Seite können Sie Funktionen an die Schnellzugriffsleiste anheften."
             },
             "template_editor_templating": {
                 "content": "Sie können Golang HTML Templating im oberen Feld benutzen. Für kopierbereite-Ausschnitte und Tricks folgen Sie dem Link."

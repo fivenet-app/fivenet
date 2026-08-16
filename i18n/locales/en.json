@@ -892,7 +892,8 @@
         "rotate_right": "Rotate Right",
         "change_order": "Change Order",
         "hidden": "Hidden",
-        "treemap": "Tree map"
+        "treemap": "Tree map",
+        "quick_access": "Quick Access"
     },
     "components": {
         "partials": {
@@ -1421,6 +1422,9 @@
             "click_me": "Click here",
             "startpage": {
                 "content": "You can set the start page FiveNet opens up on in your Account information."
+            },
+            "overview_quick_access": {
+                "content": "Use the right click menu on overview cards to pin features to your quick access bar."
             },
             "template_editor_templating": {
                 "content": "You can use Golang HTML templating in the above field. For template snippets follow the link."
