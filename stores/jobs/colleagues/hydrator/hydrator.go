@@ -1,4 +1,4 @@
-package colleagues
+package colleagueshydrator
 
 import (
 	"context"
@@ -19,7 +19,7 @@ import (
 var tColleagueProps = table.FivenetJobColleagueProps.AS("colleague_props")
 
 var Module = fx.Module(
-	"jobs.colleagues",
+	"stores.jobs.colleagues.hydrator",
 	fx.Provide(New),
 )
 
@@ -57,7 +57,7 @@ type Target struct {
 
 type Hydrator struct {
 	db       *sql.DB
-	ps       perms.Permissions
+	perms    perms.Permissions
 	enricher mstlystcdata.IUserAwareEnricher
 	store    jobsstore.IStore
 }
@@ -74,7 +74,7 @@ type Params struct {
 func New(p Params) IHydrator {
 	return &Hydrator{
 		db:       p.DB,
-		ps:       p.Perms,
+		perms:    p.Perms,
 		enricher: p.UserAwareEnricher,
 		store:    p.Store,
 	}
@@ -87,7 +87,7 @@ func (h *Hydrator) getFields(
 	fields := perms.NewTypedStringList[permsjobs.ColleaguesServiceGetColleagueTypesPermValue]()
 	if !infoOnly {
 		var err error
-		fields, err = permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(h.ps, userInfo)
+		fields, err = permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(h.perms, userInfo)
 		if err != nil {
 			return nil, err
 		}
