@@ -76,64 +76,65 @@ const isDev = import.meta.dev;
                     <h1 class="text-center text-4xl font-bold">
                         {{ $t !== undefined ? $t('pages.error.title') : 'Error occured' }}
                     </h1>
-                </template>
 
-                <div class="flex flex-col gap-1">
-                    <p class="text-base">
+                    <p class="text-center text-lg">
                         {{
                             $t !== undefined
                                 ? $t('pages.error.subtitle')
                                 : 'A fatal error occured, please try again in a few seconds.'
                         }}
                     </p>
-                </div>
+                </template>
 
-                <div class="flex flex-col gap-1">
-                    <div class="flex flex-row gap-1">
-                        <p>
-                            <span class="font-semibold"
-                                >{{ $t !== undefined ? $t('components.debug_info.version') : 'Version' }}:</span
-                            >
+                <div class="flex flex-col items-center gap-1">
+                    <div class="inline-flex flex-col gap-1">
+                        <p class="text-center font-semibold">
+                            {{ $t !== undefined ? $t('components.debug_info.version') : 'Version' }}:
                         </p>
 
                         <pre class="text-wrap" :class="kbdBlockClasses">{{ version }}</pre>
                     </div>
 
-                    <p class="font-semibold">{{ $t !== undefined ? $t('pages.error.error_message') : 'Error message' }}:</p>
-                    <span v-if="error">
-                        <!-- @vue-ignore -->
-                        <pre
-                            v-if="error.statusMessage"
-                            class="text-wrap"
-                            :class="kbdBlockClasses"
-                            v-text="
-                                // @ts-expect-error
-                                error.statusMessage
-                            "
-                        />
-                        <!-- @vue-ignore -->
-                        <pre
-                            v-else-if="
-                                // @ts-expect-error
-                                error.message
-                            "
-                            class="text-wrap"
-                            :class="kbdBlockClasses"
-                            v-text="
-                                // @ts-expect-error
-                                error.message
-                            "
-                        />
-                        <pre v-else>Unable to get error message</pre>
-                    </span>
-                    <span v-else>
-                        <pre>Unknown error</pre>
-                    </span>
+                    <div class="inline-flex flex-col gap-1">
+                        <p class="text-center font-semibold">
+                            {{ $t !== undefined ? $t('pages.error.error_message') : 'Error message' }}:
+                        </p>
+
+                        <span v-if="error">
+                            <!-- @vue-ignore -->
+                            <pre
+                                v-if="error.statusMessage"
+                                class="text-wrap"
+                                :class="kbdBlockClasses"
+                                v-text="
+                                    // @ts-expect-error
+                                    error.statusMessage
+                                "
+                            />
+                            <!-- @vue-ignore -->
+                            <pre
+                                v-else-if="
+                                    // @ts-expect-error
+                                    error.message
+                                "
+                                class="text-wrap"
+                                :class="kbdBlockClasses"
+                                v-text="
+                                    // @ts-expect-error
+                                    error.message
+                                "
+                            />
+                            <pre v-else>Unable to get error message</pre>
+                        </span>
+                        <span v-else>
+                            <pre>Unknown error</pre>
+                        </span>
+                    </div>
                 </div>
 
                 <template #footer>
                     <div class="flex flex-col gap-2">
-                        <div class="grid w-full flex-1 grid-cols-2 gap-2 md:flex">
+                        <div class="grid w-full flex-1 grid-cols-1 gap-2 md:flex">
                             <div class="flex flex-1 flex-row gap-2">
                                 <UButton
                                     class="flex-1"
