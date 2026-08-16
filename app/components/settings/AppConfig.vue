@@ -1413,6 +1413,7 @@ const formRef = useTemplateRef('formRef');
                                 <TiptapEditor
                                     v-model="state.system.bannerMessage.title"
                                     name="system.bannerMessage.title"
+                                    content-type="html"
                                     :limit="1024"
                                 />
                             </UFormField>

@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import BannerMessage from '~/components/partials/BannerMessage.vue';
 import PageFooter from '~/components/partials/PageFooter.vue';
+
+const { system } = useAppConfig();
 </script>
 
 <!-- eslint-disable tailwindcss/no-custom-classname -->
@@ -12,6 +15,8 @@ import PageFooter from '~/components/partials/PageFooter.vue';
 
             <slot />
         </div>
+
+        <BannerMessage v-if="system.bannerMessageEnabled && system.bannerMessage" :message="system.bannerMessage" />
 
         <ClientOnly>
             <LazyPartialsEventsLayer />

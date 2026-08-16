@@ -27,7 +27,7 @@ onBeforeMount(async () => listJobs());
             })
         "
         icon="i-mdi-drama-masks"
-        :ui="{ root: 'absolute top-0', container: 'h-5', title: 'text-xs', icon: 'size-4', close: 'text-xs' }"
+        :ui="{ root: 'w-full pointer-events-auto', container: 'h-5', title: 'text-xs', icon: 'size-4', close: 'text-xs' }"
         :close="{
             icon: undefined,
             trailingIcon: 'i-mdi-exit-run',

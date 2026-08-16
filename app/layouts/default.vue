@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
-import ImpersonatingBanner from '~/components/auth/ImpersonatingBanner.vue';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
+import Banners from '~/components/partials/Banners.vue';
 import SuperuserJobToggle from '~/components/partials/SuperuserJobToggle.vue';
 import MathCalculatorDrawer from '~/components/quickbuttons/mathcalculator/MathCalculatorDrawer.vue';
 import NotepadDrawer from '~/components/quickbuttons/notepad/NotepadDrawer.vue';
@@ -14,8 +14,6 @@ import type { Perms } from '~~/gen/ts/perms';
 const { t } = useI18n();
 
 const { can, activeChar, jobProps, isSuperuser, canBeSuperuser } = useAuth();
-const authSessionStore = useAuthSessionStore();
-const { userInfo } = storeToRefs(authSessionStore);
 
 const { isDashboardSidebarSlideoverOpen, isHelpSlideoverOpen } = useDashboard();
 
@@ -424,9 +422,9 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
             </template>
         </UDashboardSidebar>
 
-        <ImpersonatingBanner v-if="userInfo?.originalJob" :job="userInfo?.job" :job-grade="userInfo?.jobGrade" />
-
         <slot />
+
+        <Banners />
 
         <ClientOnly>
             <LazyPartialsCommandSearch v-if="activeChar" :children="links" />

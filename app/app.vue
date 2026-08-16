@@ -4,12 +4,9 @@ import * as locales from '@nuxt/ui/locale';
 import NotificationProvider from '~/components/notifications/NotificationProvider.vue';
 import CookieControl from '~/components/partials/CookieControl.vue';
 import { useSettingsStore } from '~/stores/settings';
-import BannerMessage from './components/partials/BannerMessage.vue';
 
 const { locale, t, finalizePendingLocaleChange } = useI18n();
 const { initLocale } = useAppLocale();
-
-const appConfig = useAppConfig();
 
 useHead({
     htmlAttrs: {
@@ -48,11 +45,6 @@ await initLocale();
         </NuxtLayout>
 
         <ClientOnly>
-            <BannerMessage
-                v-if="appConfig.system.bannerMessageEnabled && appConfig.system.bannerMessage"
-                :message="appConfig.system.bannerMessage"
-            />
-
             <NotificationProvider />
         </ClientOnly>
 

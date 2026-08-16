@@ -22,26 +22,35 @@ const hide = computed(
 );
 
 function onClose() {
-    dismissedBannerMessageID.value = props.message.id;
+    console.log('dismissed?');
+    if (props.message.expiresAt !== undefined) dismissedBannerMessageID.value = props.message.id;
+
     emit('close');
 }
 
 const color = computed(() => (props.message.color ?? 'primary') as ButtonProps['color']);
-
-const appConfig = useAppConfig();
+const { system } = useAppConfig();
 </script>
 
 <template>
     <UBanner
-        v-if="appConfig.system.bannerMessage && !hide"
-        :icon="appConfig.system.bannerMessage.icon ?? 'i-mdi-information-outline'"
+        v-if="system.bannerMessage && !hide"
+        :icon="system.bannerMessage.icon ?? 'i-mdi-information-outline'"
         :color="color"
-        :ui="{ root: 'z-[49]' }"
+        close
+        :ui="{
+            root: 'w-full pointer-events-auto',
+            container: 'flex items-start justify-between gap-3 min-h-12 h-auto py-2 max-h-16',
+            center: 'flex items-start gap-1.5 min-w-0 flex-1',
+            left: 'lg:hidden',
+            right: 'lg:flex-1 flex items-start justify-end',
+            title: 'text-sm text-inverted font-medium whitespace-normal break-words',
+        }"
         @close="onClose"
     >
         <template #title>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <p class="font-medium text-highlighted" v-html="appConfig.system.bannerMessage.title"></p>
+            <div v-html="system.bannerMessage.title"></div>
         </template>
     </UBanner>
 </template>

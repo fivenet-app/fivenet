@@ -241,5 +241,11 @@ export default defineAppConfig({
         pageGrid: {
             base: 'gap-4',
         },
+
+        dashboardPanel: {
+            slots: {
+                root: 'pb-(--dashboard-panel-bottom-offset)',
+            },
+        },
     },
 });
