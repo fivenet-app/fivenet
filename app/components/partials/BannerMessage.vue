@@ -36,6 +36,7 @@ const appConfig = useAppConfig();
         v-if="appConfig.system.bannerMessage && !hide"
         :icon="appConfig.system.bannerMessage.icon ?? 'i-mdi-information-outline'"
         :color="color"
+        :ui="{ root: 'z-[49]' }"
         @close="onClose"
     >
         <template #title>

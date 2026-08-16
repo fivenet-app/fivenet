@@ -120,9 +120,7 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
             :label="$t('components.debug_info.active_char_id')"
         >
             <div class="inline-flex w-full justify-between">
-                <span>
-                    {{ activeChar.userId }}
-                </span>
+                <code>{{ activeChar.userId }}</code>
 
                 <CopyToClipboardButton :value="activeChar.userId" />
             </div>
@@ -136,10 +134,23 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
         >
             <div class="flex w-full items-center justify-between">
                 <div class="flex flex-col gap-1">
-                    <div>{{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})</div>
+                    <template v-if="userInfo?.originalJob">
+                        <div>
+                            {{ userInfo?.originalJob.job }} ({{ $t('common.rank') }}:
+                            {{ userInfo?.originalJob.jobGrade ?? '?' }})
+                        </div>
 
-                    <div v-if="userInfo?.originalJob">
-                        {{ userInfo.originalJob.job }} ({{ $t('common.rank') }}: {{ userInfo.originalJob.jobGrade }})
+                        <div>
+                            ({{
+                                $t('common.impersonation_active', {
+                                    job: `${userInfo.job} (${userInfo.jobGrade ?? '?'})`,
+                                })
+                            }})
+                        </div>
+                    </template>
+                    <div v-else>
+                        <code>{{ activeChar.job }}</code> ({{ $t('common.rank') }}: <code>{{ activeChar.jobGrade }}</code
+                        >)
                     </div>
                 </div>
 
@@ -168,7 +179,7 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
 
         <UFormField class="grid grid-cols-2 items-center gap-2" name="nuiInfo" :label="$t('components.debug_info.nui_info')">
             {{ settingsStore.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
-            {{ settingsStore.nuiResourceName ?? $t('common.na') }}
+            <code>{{ settingsStore.nuiResourceName ?? $t('common.na') }}</code>
         </UFormField>
 
         <UFormField

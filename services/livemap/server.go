@@ -99,7 +99,7 @@ func NewServer(p Params) *Server {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &Server{
-		logger: p.Logger,
+		logger: p.Logger.Named("services.livemap"),
 
 		tracer:   p.TP.Tracer("livemap"),
 		js:       p.JS,

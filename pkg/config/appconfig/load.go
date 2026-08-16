@@ -71,7 +71,7 @@ type Params struct {
 
 func New(p Params) (IConfig, error) {
 	cfg := &Config{
-		logger: p.Logger,
+		logger: p.Logger.Named("appconfig"),
 		db:     p.DB,
 		tracer: p.TP.Tracer("appconfig"),
 		nc:     p.NC,
