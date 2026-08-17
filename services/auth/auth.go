@@ -330,8 +330,8 @@ func (s *Server) ForgotPassword(
 		grpc_audit.SetAccountID(ctx, acc.ID)
 	}
 
-	// We expect the account to not have a password for a "forgot password" request via token
-	if acc == nil || acc.Password != nil {
+	// Forgot password only applies to activated accounts with a username and no password
+	if acc == nil || acc.Username == nil || acc.Password != nil {
 		return nil, errorsauth.ErrNoAccount
 	}
 
