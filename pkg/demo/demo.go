@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
@@ -106,6 +107,7 @@ type Demo struct {
 	dispatches    *dispatches.DispatchDB
 	cfg           *config.Config
 	appCfg        appconfig.IConfig
+	perms         perms.Permissions
 	settingsStore settingsstore.IStore
 	wg            sync.WaitGroup
 
@@ -131,6 +133,7 @@ type Params struct {
 	Dispatches    *dispatches.DispatchDB
 	Jobs          mstlystcdata.IJobs
 	AppConfig     appconfig.IConfig
+	Perms         perms.Permissions
 	SettingsStore settingsstore.IStore
 }
 
@@ -149,6 +152,7 @@ func New(p Params) *Demo {
 		dispatches:    p.Dispatches,
 		cfg:           p.Cfg,
 		appCfg:        p.AppConfig,
+		perms:         p.Perms,
 		settingsStore: p.SettingsStore,
 		wg:            sync.WaitGroup{},
 	}

@@ -98,6 +98,20 @@ func (c *LRUCache[K, V]) Clear() {
 	c.store.Clear()
 }
 
+// Range iterates over the current cache contents.
+func (c *LRUCache[K, V]) Range(fn func(K, V) bool) {
+	for key, elem := range c.store.All() {
+		if c.isExpired(elem) {
+			c.store.Delete(key)
+			continue
+		}
+
+		if !fn(key, elem.value) {
+			return
+		}
+	}
+}
+
 // Len reports the current number of items, including any yet-uncollected
 // expired ones (Cheap O(1)).
 func (c *LRUCache[K, V]) Len() int { return c.store.Size() }

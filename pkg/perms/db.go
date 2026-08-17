@@ -41,6 +41,20 @@ func (ps *Perms) loadData(ctx context.Context) error {
 	return nil
 }
 
+func (ps *Perms) ReloadJob(ctx context.Context, job string) error {
+	if job == "" {
+		return nil
+	}
+
+	if err := ps.loadJobRoles(ctx, job); err != nil {
+		return fmt.Errorf("failed to reload job roles for job %s. %w", job, err)
+	}
+
+	ps.clearUserCanCacheForJob(job)
+
+	return nil
+}
+
 func (ps *Perms) loadPermissions(ctx context.Context) error {
 	tPerms := tPerms.AS("cache_perm")
 	stmt := tPerms.
@@ -345,6 +359,18 @@ func (ps *Perms) loadJobRoles(ctx context.Context, job string) error {
 	roles, err := ps.GetJobRoles(ctx, job)
 	if err != nil {
 		return err
+	}
+
+	for _, role := range roles {
+		grades, _ := ps.permsJobsRoleMap.LoadOrCompute(
+			role.GetJob(),
+			func() (*xsync.Map[int32, int64], bool) {
+				return xsync.NewMap[int32, int64](), false
+			},
+		)
+		grades.Store(role.GetGrade(), role.GetId())
+
+		ps.roleIDToJobMap.Store(role.GetId(), role.GetJob())
 	}
 
 	for _, role := range roles {

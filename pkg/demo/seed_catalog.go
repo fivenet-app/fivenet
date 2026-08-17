@@ -41,6 +41,13 @@ func (d *Demo) seedDemoCatalog(ctx context.Context) error {
 		return err
 	}
 
+	if d.perms == nil {
+		return fmt.Errorf("failed to reload demo RBAC perms: permissions service is not available")
+	}
+	if err := d.perms.ReloadJob(ctx, d.targetJobName()); err != nil {
+		return fmt.Errorf("failed to reload demo RBAC perms for job %s. %w", d.targetJobName(), err)
+	}
+
 	return nil
 }
 

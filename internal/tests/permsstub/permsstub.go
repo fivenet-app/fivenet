@@ -126,6 +126,8 @@ func (p *Permissions) RemovePermissionsFromRole(
 	return nil
 }
 
+func (p *Permissions) ReloadJob(context.Context, string) error { return nil }
+
 func (p *Permissions) GetRoleAttributes(
 	context.Context,
 	string,

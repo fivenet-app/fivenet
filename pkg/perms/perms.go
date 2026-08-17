@@ -79,6 +79,7 @@ type Permissions interface {
 	) ([]*permissionspermissions.Permission, error)
 	UpdateRolePermissions(ctx context.Context, roleId int64, perms ...AddPerm) error
 	RemovePermissionsFromRole(ctx context.Context, roleId int64, perms ...int64) error
+	ReloadJob(ctx context.Context, job string) error
 
 	// Role Attributes management
 	GetRoleAttributes(

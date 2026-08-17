@@ -162,3 +162,21 @@ func (ps *Perms) clearUserCanCache() {
 		ps.userCanCache.Clear()
 	}
 }
+
+func (ps *Perms) clearUserCanCacheForJob(job string) {
+	if job == "" {
+		ps.clearUserCanCache()
+		return
+	}
+
+	if ps.userCanCache == nil {
+		return
+	}
+
+	ps.userCanCache.Range(func(key userCacheKey, _ bool) bool {
+		if key.job == job {
+			ps.userCanCache.Delete(key)
+		}
+		return true
+	})
+}

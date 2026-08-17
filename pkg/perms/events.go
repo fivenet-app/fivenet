@@ -99,11 +99,8 @@ func (ps *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 				return
 			}
 
-			if err := ps.loadJobRoles(ctx, event.GetJob()); err != nil {
-				ps.logger.Error(
-					"failed to load job role permissions and attributes",
-					zap.Error(err),
-				)
+			if err := ps.ReloadJob(ctx, event.GetJob()); err != nil {
+				ps.logger.Error("failed to reload job permissions and attributes", zap.Error(err))
 				return
 			}
 
