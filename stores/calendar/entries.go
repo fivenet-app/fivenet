@@ -114,6 +114,7 @@ func calendarEntriesQuery(
 			tCalendarEntry.Job,
 			tCalendarEntry.StartTime,
 			tCalendarEntry.EndTime,
+			tCalendarEntry.AllDay,
 			tCalendarEntry.Title,
 			tCalendarEntry.Content,
 			tCalendarEntry.Closed,
@@ -509,6 +510,7 @@ func (s *Store) GetEntry(
 			tCalendarEntry.Job,
 			tCalendarEntry.StartTime,
 			tCalendarEntry.EndTime,
+			tCalendarEntry.AllDay,
 			tCalendarEntry.Title,
 			tCalendarEntry.Content,
 			tCalendarEntry.Closed,
@@ -590,6 +592,7 @@ func (s *Store) UpsertCalendarEntry(
 			entry.GetContent(),
 			dbutils.TimestampToMySQL(entry.GetStartTime()),
 			dbutils.TimestampToMySQL(entry.GetEndTime()),
+			mysql.Bool(entry.GetAllDay()),
 			mysql.Bool(entry.GetClosed()),
 			mysql.Bool(entry.GetRsvpOpen()),
 			entry.GetRecurring(),
@@ -613,6 +616,7 @@ func (s *Store) UpsertCalendarEntry(
 				tCalendarEntry.Content,
 				tCalendarEntry.StartTime,
 				tCalendarEntry.EndTime,
+				tCalendarEntry.AllDay,
 				tCalendarEntry.Closed,
 				tCalendarEntry.RsvpOpen,
 				tCalendarEntry.Recurring,
@@ -639,6 +643,7 @@ func (s *Store) UpsertCalendarEntry(
 			tCalendarEntry.Job,
 			tCalendarEntry.StartTime,
 			tCalendarEntry.EndTime,
+			tCalendarEntry.AllDay,
 			tCalendarEntry.Title,
 			tCalendarEntry.Content,
 			tCalendarEntry.Closed,
@@ -654,6 +659,7 @@ func (s *Store) UpsertCalendarEntry(
 			userInfo.GetJob(),
 			entry.GetStartTime(),
 			entry.GetEndTime(),
+			entry.GetAllDay(),
 			entry.GetTitle(),
 			entry.GetContent(),
 			entry.GetClosed(),
@@ -804,7 +810,7 @@ func (s *Store) expandCalendarEntryOccurrences(
 			),
 			Kind:          calendarentries.CalendarEntryOccurrenceKind_CALENDAR_ENTRY_OCCURRENCE_KIND_MANUAL,
 			SourceEntryId: &clone.Id,
-			AllDay:        clone.GetEndTime() == nil,
+			AllDay:        clone.GetAllDay(),
 		}
 
 		return []*calendarentries.CalendarEntry{clone}, nil
@@ -896,7 +902,7 @@ func (s *Store) expandRecurringEntry(
 				Kind:          occurrenceKind,
 				SourceEntryId: &clone.Id,
 				SourceUserId:  sourceUserID,
-				AllDay:        clone.GetEndTime() == nil,
+				AllDay:        clone.GetAllDay(),
 			}
 			out = append(out, clone)
 		}
@@ -1045,6 +1051,10 @@ func recurrenceShapeChanged(
 	}
 
 	if !timestampEqual(oldEntry.GetEndTime(), newEntry.GetEndTime()) {
+		return true
+	}
+
+	if oldEntry.GetAllDay() != newEntry.GetAllDay() {
 		return true
 	}
 

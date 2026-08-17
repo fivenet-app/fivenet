@@ -199,7 +199,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 />
 
                 <UTooltip v-if="canShare" :text="$t('common.invite')">
-                    <UButton :icon="!openShare ? 'i-mdi-invite' : 'i-mdi-close'" />
+                    <UButton :icon="!openShare ? 'i-mdi-invite' : 'i-mdi-close'" @click="openShare = !openShare" />
                 </UTooltip>
             </UFieldGroup>
         </div>
@@ -208,7 +208,7 @@ const confirmModal = overlay.create(ConfirmModal);
             v-if="canShare && openShare"
             :entry-id="entryId"
             @refresh="refresh()"
-            @close="() => (openShare = !openShare)"
+            @close="() => (openShare = false)"
         />
 
         <p v-if="ownEntry?.occurrenceKey" class="mt-1 text-xs text-toned">
@@ -221,12 +221,12 @@ const confirmModal = overlay.create(ConfirmModal);
             @confirm="chooseRsvpScope"
         />
 
-        <UCollapsible :ui="{ content: 'p-1' }">
+        <UPopover :content="{ side: 'bottom', align: 'start', sideOffset: 8, updatePositionStrategy: 'always' }">
             <UButton
                 class="group"
                 color="neutral"
                 variant="ghost"
-                icon="i-mdi-calendar-question"
+                icon="i-mdi-account-group-outline"
                 trailing-icon="i-mdi-chevron-down"
                 :label="$t('common.rsvp')"
                 :ui="{
@@ -236,32 +236,37 @@ const confirmModal = overlay.create(ConfirmModal);
             />
 
             <template #content>
-                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.entry', 1)])" />
-                <DataErrorBlock
-                    v-else-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
-                    :error="error"
-                    :retry="refresh"
-                />
-                <DataNoDataBlock v-else-if="!data" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
+                <div class="flex max-w-96 flex-col gap-2 p-2">
+                    <DataPendingBlock
+                        v-if="isRequestPending(status)"
+                        :message="$t('common.loading', [$t('common.entry', 1)])"
+                    />
+                    <DataErrorBlock
+                        v-else-if="error"
+                        :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
+                        :error="error"
+                        :retry="refresh"
+                    />
+                    <DataNoDataBlock v-else-if="!data" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
 
-                <div v-else class="flex flex-col gap-2">
-                    <template v-if="data.entries.length === 0">
-                        <p>{{ $t('common.none', [$t('common.response', 2)]) }}</p>
-                    </template>
-
-                    <template v-else>
-                        <template v-for="(rsvp, key) in groupedEntries" :key="key">
-                            <div v-if="!rsvp || rsvp?.length > 0">
-                                <h3 class="font-bold text-black dark:text-white">{{ $t(`common.${key}`) }}</h3>
-                                <div class="grid grid-cols-2 gap-2 lg:grid-cols-4">
-                                    <CitizenInfoPopover v-for="entry in rsvp" :key="entry.userId" :user="entry.user" />
-                                </div>
-                            </div>
+                    <div v-else class="flex flex-col gap-2">
+                        <template v-if="data.entries.length === 0">
+                            <p>{{ $t('common.none', [$t('common.response', 2)]) }}</p>
                         </template>
-                    </template>
+
+                        <template v-else>
+                            <template v-for="(rsvp, key) in groupedEntries" :key="key">
+                                <div v-if="!rsvp || rsvp?.length > 0" class="flex flex-col gap-2">
+                                    <h3 class="font-bold text-black dark:text-white">{{ $t(`common.${key}`) }}</h3>
+                                    <div class="grid grid-cols-2 gap-2 lg:grid-cols-4">
+                                        <CitizenInfoPopover v-for="entry in rsvp" :key="entry.userId" :user="entry.user" />
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                    </div>
                 </div>
             </template>
-        </UCollapsible>
+        </UPopover>
     </div>
 </template>

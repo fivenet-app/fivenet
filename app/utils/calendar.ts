@@ -1,3 +1,4 @@
+import { addDays, startOfDay } from 'date-fns';
 import { CalendarEntryOccurrenceKind, type CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import { toDate } from './time';
 
@@ -46,13 +47,52 @@ export function getCalendarEntryDisplayEndDate(entry: CalendarEntry): Date | und
     return entry.endTime ? toDate(entry.endTime) : undefined;
 }
 
+export function isCalendarEntryAllDay(entry?: Pick<CalendarEntry, 'allDay' | 'occurrence'> | undefined): boolean {
+    return !!entry?.allDay || !!entry?.occurrence?.allDay;
+}
+
 export function getCalendarEntryDisplayRangeEndDate(entry: CalendarEntry): Date | undefined {
     const end = getCalendarEntryDisplayEndDate(entry);
     if (end) return end;
 
-    if (entry.occurrence?.allDay) {
+    if (isCalendarEntryAllDay(entry)) {
         return getCalendarEntryDisplayStartDate(entry);
     }
 
     return undefined;
+}
+
+export function getCalendarEntryComparisonEndDate(entry: CalendarEntry): Date {
+    const end = getCalendarEntryDisplayEndDate(entry);
+
+    if (isCalendarEntryAllDay(entry)) {
+        return addDays(startOfDay(end ?? getCalendarEntryDisplayStartDate(entry)), 1);
+    }
+
+    return end ?? getCalendarEntryDisplayStartDate(entry);
+}
+
+export function sortCalendarEntriesForDisplay(entries: CalendarEntry[]): CalendarEntry[] {
+    return [...entries].sort((left, right) => {
+        const leftAllDay = isCalendarEntryAllDay(left);
+        const rightAllDay = isCalendarEntryAllDay(right);
+
+        if (leftAllDay !== rightAllDay) {
+            return leftAllDay ? -1 : 1;
+        }
+
+        const leftStart = getCalendarEntryDisplayStartDate(left).getTime();
+        const rightStart = getCalendarEntryDisplayStartDate(right).getTime();
+        if (leftStart !== rightStart) {
+            return leftStart - rightStart;
+        }
+
+        const leftEnd = getCalendarEntryDisplayEndDate(left)?.getTime() ?? leftStart;
+        const rightEnd = getCalendarEntryDisplayEndDate(right)?.getTime() ?? rightStart;
+        if (leftEnd !== rightEnd) {
+            return leftEnd - rightEnd;
+        }
+
+        return left.id - right.id;
+    });
 }

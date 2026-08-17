@@ -16,7 +16,7 @@ defineOptions({
 <template>
     <UTooltip :text="$t('common.refresh')">
         <UButton color="gray" variant="link" icon="i-mdi-refresh" v-bind="$attrs">
-            <span v-if="!iconOnly" :class="labelClass ? labelClass : 'hidden truncate sm:block'">
+            <span v-if="!iconOnly" :class="labelClass ? labelClass : 'hidden truncate md:block'">
                 {{ $t('common.refresh') }}
             </span>
         </UButton>

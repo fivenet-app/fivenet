@@ -40,6 +40,14 @@ export function toUtcDateTimestamp(date?: Date): resourcesTimestampTimestamp | u
     };
 }
 
+export function toUtcDate(ts: resourcesTimestampTimestamp | undefined): Date | undefined {
+    if (ts === undefined || ts?.timestamp === undefined) return undefined;
+
+    const date = googleProtobufTimestamp.Timestamp.toDate(ts.timestamp!);
+
+    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+}
+
 export function toDatetimeLocal(date: Date): string {
     return new Date(date.getTime() + date.getTimezoneOffset() * -60 * 1000).toISOString().slice(0, 16);
 }

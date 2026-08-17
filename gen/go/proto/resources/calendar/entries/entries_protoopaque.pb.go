@@ -337,6 +337,7 @@ type CalendarEntry struct {
 	xxx_hidden_Job               *string                  `protobuf:"bytes,7,opt,name=job,proto3,oneof"`
 	xxx_hidden_StartTime         *timestamp.Timestamp     `protobuf:"bytes,8,opt,name=start_time,json=startTime,proto3"`
 	xxx_hidden_EndTime           *timestamp.Timestamp     `protobuf:"bytes,9,opt,name=end_time,json=endTime,proto3,oneof"`
+	xxx_hidden_AllDay            bool                     `protobuf:"varint,22,opt,name=all_day,json=allDay,proto3"`
 	xxx_hidden_Title             string                   `protobuf:"bytes,10,opt,name=title,proto3"`
 	xxx_hidden_Content           *content.Content         `protobuf:"bytes,11,opt,name=content,proto3"`
 	xxx_hidden_Closed            bool                     `protobuf:"varint,12,opt,name=closed,proto3"`
@@ -444,6 +445,13 @@ func (x *CalendarEntry) GetEndTime() *timestamp.Timestamp {
 		return x.xxx_hidden_EndTime
 	}
 	return nil
+}
+
+func (x *CalendarEntry) GetAllDay() bool {
+	if x != nil {
+		return x.xxx_hidden_AllDay
+	}
+	return false
 }
 
 func (x *CalendarEntry) GetTitle() string {
@@ -556,7 +564,7 @@ func (x *CalendarEntry) SetCalendar(v *calendar.Calendar) {
 
 func (x *CalendarEntry) SetJob(v string) {
 	x.xxx_hidden_Job = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 22)
 }
 
 func (x *CalendarEntry) SetStartTime(v *timestamp.Timestamp) {
@@ -565,6 +573,10 @@ func (x *CalendarEntry) SetStartTime(v *timestamp.Timestamp) {
 
 func (x *CalendarEntry) SetEndTime(v *timestamp.Timestamp) {
 	x.xxx_hidden_EndTime = v
+}
+
+func (x *CalendarEntry) SetAllDay(v bool) {
+	x.xxx_hidden_AllDay = v
 }
 
 func (x *CalendarEntry) SetTitle(v string) {
@@ -581,12 +593,12 @@ func (x *CalendarEntry) SetClosed(v bool) {
 
 func (x *CalendarEntry) SetRsvpOpen(v bool) {
 	x.xxx_hidden_RsvpOpen = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 22)
 }
 
 func (x *CalendarEntry) SetCreatorId(v int32) {
 	x.xxx_hidden_CreatorId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 22)
 }
 
 func (x *CalendarEntry) SetCreator(v *short.UserShort) {
@@ -677,14 +689,14 @@ func (x *CalendarEntry) HasRsvpOpen() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 12)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 13)
 }
 
 func (x *CalendarEntry) HasCreatorId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 13)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 14)
 }
 
 func (x *CalendarEntry) HasCreator() bool {
@@ -756,12 +768,12 @@ func (x *CalendarEntry) ClearContent() {
 }
 
 func (x *CalendarEntry) ClearRsvpOpen() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 12)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 13)
 	x.xxx_hidden_RsvpOpen = false
 }
 
 func (x *CalendarEntry) ClearCreatorId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 13)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 14)
 	x.xxx_hidden_CreatorId = 0
 }
 
@@ -797,6 +809,7 @@ type CalendarEntry_builder struct {
 	Job               *string
 	StartTime         *timestamp.Timestamp
 	EndTime           *timestamp.Timestamp
+	AllDay            bool
 	Title             string
 	Content           *content.Content
 	Closed            bool
@@ -822,20 +835,21 @@ func (b0 CalendarEntry_builder) Build() *CalendarEntry {
 	x.xxx_hidden_CalendarId = b.CalendarId
 	x.xxx_hidden_Calendar = b.Calendar
 	if b.Job != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 22)
 		x.xxx_hidden_Job = b.Job
 	}
 	x.xxx_hidden_StartTime = b.StartTime
 	x.xxx_hidden_EndTime = b.EndTime
+	x.xxx_hidden_AllDay = b.AllDay
 	x.xxx_hidden_Title = b.Title
 	x.xxx_hidden_Content = b.Content
 	x.xxx_hidden_Closed = b.Closed
 	if b.RsvpOpen != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 22)
 		x.xxx_hidden_RsvpOpen = *b.RsvpOpen
 	}
 	if b.CreatorId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 22)
 		x.xxx_hidden_CreatorId = *b.CreatorId
 	}
 	x.xxx_hidden_Creator = b.Creator
@@ -1126,7 +1140,7 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\x0esource_user_id\x18\x04 \x01(\x05H\x01R\fsourceUserId\x88\x01\x01\x12\x17\n" +
 	"\aall_day\x18\x05 \x01(\bR\x06allDayB\x12\n" +
 	"\x10_source_entry_idB\x11\n" +
-	"\x0f_source_user_id\"\xdf\n" +
+	"\x0f_source_user_id\"\xf8\n" +
 	"\n" +
 	"\rCalendarEntry\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
@@ -1142,7 +1156,8 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\x03job\x18\a \x01(\tH\x04R\x03job\x88\x01\x01\x12=\n" +
 	"\n" +
 	"start_time\x18\b \x01(\v2\x1e.resources.timestamp.TimestampR\tstartTime\x12>\n" +
-	"\bend_time\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\aendTime\x88\x01\x01\x12\x1e\n" +
+	"\bend_time\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\aendTime\x88\x01\x01\x12\x17\n" +
+	"\aall_day\x18\x16 \x01(\bR\x06allDay\x12\x1e\n" +
 	"\x05title\x18\n" +
 	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05title\x12;\n" +
 	"\acontent\x18\v \x01(\v2!.resources.common.content.ContentR\acontent\x12\x16\n" +

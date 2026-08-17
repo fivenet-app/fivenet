@@ -38,6 +38,7 @@ message CalendarEntry {
   optional string job = 7 [(buf.validate.field).string.max_len = 20];
   resources.timestamp.Timestamp start_time = 8;
   optional resources.timestamp.Timestamp end_time = 9;
+  bool all_day = 22;
   string title = 10 [
     (buf.validate.field).string = {
       min_len: 3
