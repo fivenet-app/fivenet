@@ -51,6 +51,7 @@
             ripgrep
             sd
             shellcheck
+            imagemagick
           ];
         };
       });
