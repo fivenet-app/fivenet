@@ -47,14 +47,19 @@ func TestDemoSeedRBACReloadsPermsCache(t *testing.T) {
 
 	require.NotNil(t, loadedPerms)
 
-	demoCfg := &config.Config{}
-	demoCfg.Demo.TargetJob = targetJob
+	demoCfg := &config.Config{
+		Demo: config.Demo{
+			Enabled:   true,
+			TargetJob: targetJob,
+		},
+	}
 	d := &Demo{
 		logger: zap.NewNop(),
 		db:     db,
 		cfg:    demoCfg,
 		perms:  loadedPerms,
 	}
+	d.initRandomizers()
 
 	highestGrade, ok, err := d.lookupHighestJobGrade(ctx, targetJob)
 	require.NoError(t, err)
