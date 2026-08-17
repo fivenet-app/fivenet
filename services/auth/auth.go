@@ -339,7 +339,6 @@ func (s *Server) ForgotPassword(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
-
 	acc.Password = &hashedPassword
 
 	if err := s.store.ForgotPassword(ctx, acc.ID, hashedPassword); err != nil {

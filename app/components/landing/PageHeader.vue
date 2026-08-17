@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { de, en } from '@nuxt/ui/locale';
+import BannerMessage from '~/components/partials/BannerMessage.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/stores/auth';
 
 const { t } = useI18n();
 
-const { auth } = useAppConfig();
+const { auth, system } = useAppConfig();
 
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
@@ -45,6 +46,9 @@ const { currentLocale, setUserLocale } = useAppLocale();
 async function changeLocale(newLocale: string) {
     await setUserLocale(newLocale);
 }
+
+const currentRoute = useRoute();
+const isAuthPage = computed(() => currentRoute.path.startsWith('/auth'));
 </script>
 
 <template>
@@ -60,7 +64,7 @@ async function changeLocale(newLocale: string) {
         <template #right>
             <ULocaleSelect v-model="currentLocale" :locales="[en, de]" @update:model-value="($event) => changeLocale($event)" />
 
-            <template v-if="!username">
+            <template v-if="!username && !isAuthPage">
                 <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" to="/auth/login" />
 
                 <UButton
@@ -73,6 +77,14 @@ async function changeLocale(newLocale: string) {
                     to="/auth/registration"
                 />
             </template>
+        </template>
+
+        <template #body>
+            <UNavigationMenu :items="items" orientation="vertical" class="-mx-2.5" />
+        </template>
+
+        <template #bottom>
+            <BannerMessage v-if="system.bannerMessageEnabled && system.bannerMessage" :message="system.bannerMessage" />
         </template>
     </UHeader>
 </template>

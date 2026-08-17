@@ -1,27 +1,23 @@
 <script setup lang="ts">
-import BannerMessage from '~/components/partials/BannerMessage.vue';
-import PageFooter from '~/components/partials/PageFooter.vue';
-
-const { system } = useAppConfig();
+import '~/assets/css/herofull-pattern.css';
 </script>
 
 <!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
-    <div class="h-dvh">
+    <div class="flex h-screen items-center justify-center px-4">
         <div class="hero absolute inset-0 z-[-1]" />
 
-        <div class="flex min-h-dvh flex-col items-center justify-center">
-            <UButton class="absolute top-4 z-10" icon="i-mdi-home" :label="$t('common.home')" to="/" color="neutral" />
+        <UTooltip :text="$t('common.back')">
+            <UButton
+                icon="i-mdi-chevron-left"
+                to="/"
+                size="xl"
+                color="neutral"
+                variant="subtle"
+                class="absolute top-8 left-8 z-10 rounded-full"
+            />
+        </UTooltip>
 
-            <slot />
-        </div>
-
-        <BannerMessage v-if="system.bannerMessageEnabled && system.bannerMessage" :message="system.bannerMessage" />
-
-        <ClientOnly>
-            <LazyPartialsEventsLayer />
-        </ClientOnly>
-
-        <PageFooter />
+        <slot />
     </div>
 </template>

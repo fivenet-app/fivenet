@@ -25,28 +25,17 @@ watch(
     () => (bannerMessageClosed.value = false),
 );
 
-const bannerRef = useTemplateRef<{ el: HTMLElement | null }>('bannerRef');
-
-const bannerMessageHeight = computed<number>(() =>
-    appConfig.system.bannerMessageEnabled &&
-    appConfig.system.bannerMessage &&
-    dismissedBannerMessageID.value !== appConfig.system.bannerMessage.id &&
-    !bannerMessageClosed.value
-        ? (bannerRef.value?.el?.clientHeight ?? 0)
-        : 0,
+const bannerMessageVisible = computed<boolean>(
+    () =>
+        appConfig.system.bannerMessageEnabled &&
+        appConfig.system.bannerMessage !== undefined &&
+        dismissedBannerMessageID.value !== appConfig.system.bannerMessage.id &&
+        !bannerMessageClosed.value,
 );
 
-const impersonatingBannerHeight = computed<number>(() => (userInfo.value?.originalJob ? 17.5 : 0));
+const impersonatingBannerVisible = computed<boolean>(() => Boolean(userInfo.value?.originalJob));
 
-const dashboardPaddingBottom = computed<number>(() => bannerMessageHeight.value + impersonatingBannerHeight.value);
-
-watch(
-    dashboardPaddingBottom,
-    () => {
-        document.documentElement.style.setProperty('--dashboard-panel-bottom-offset', `${dashboardPaddingBottom.value}px`);
-    },
-    { immediate: true },
-);
+const dashboardHasBanners = computed<boolean>(() => bannerMessageVisible.value || impersonatingBannerVisible.value);
 
 useResizeObserver(sidebarEl, updateSidebarWidth);
 
@@ -55,17 +44,16 @@ onMounted(() => (sidebarEl.value = document.getElementById('dashboard-sidebar-de
 
 <template>
     <div
-        v-if="dashboardPaddingBottom > 0"
+        v-if="dashboardHasBanners"
         class="pointer-events-none fixed inset-x-0 bottom-0 z-[49] flex max-h-21 flex-col gap-0 sm:left-[var(--sidebar-width)] print:hidden"
         :style="{ '--sidebar-width': `${sidebarWidth}px` }"
     >
         <BannerMessage
-            v-if="appConfig.system.bannerMessageEnabled && appConfig.system.bannerMessage"
-            ref="bannerRef"
+            v-if="bannerMessageVisible && appConfig.system.bannerMessage"
             :message="appConfig.system.bannerMessage"
             @close="() => (bannerMessageClosed = true)"
         />
 
-        <ImpersonatingBanner v-if="userInfo?.originalJob" :job="userInfo?.job" :job-grade="userInfo?.jobGrade" />
+        <ImpersonatingBanner v-if="impersonatingBannerVisible && userInfo" :job="userInfo.job" :job-grade="userInfo.jobGrade" />
     </div>
 </template>

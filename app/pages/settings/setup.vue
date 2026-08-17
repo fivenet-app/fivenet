@@ -422,7 +422,7 @@ const open = ref<boolean>(false);
             </template>
         </UDashboardSidebar>
 
-        <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'p-0 sm:p-0' }">
+        <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0' }">
             <template #body>
                 <div class="relative isolate min-h-dvh">
                     <div

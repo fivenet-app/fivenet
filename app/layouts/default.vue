@@ -26,7 +26,7 @@ const { unreadCount } = storeToRefs(mailerStore);
 
 const route = useRoute();
 
-const links = computed<NavigationMenuItem[]>(() =>
+const items = computed<NavigationMenuItem[]>(() =>
     [
         {
             label: t('common.overview'),
@@ -361,7 +361,7 @@ const quickAccessButtons = computed<NavigationMenuItem[]>(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-defineShortcuts(extractShortcutsFromNavItems(links.value, '-'));
+defineShortcuts(extractShortcutsFromNavItems(items.value, '-'));
 defineShortcuts(extractShortcutsFromNavItems(clipboardLink.value, '-'));
 defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
 </script>
@@ -386,7 +386,7 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
             <template #default="{ collapsed }">
                 <UDashboardSearchButton :collapsed="collapsed" :label="$t('common.search_field')" />
 
-                <UNavigationMenu orientation="vertical" tooltip popover :items="links" :collapsed="collapsed" />
+                <UNavigationMenu orientation="vertical" tooltip popover :items="items" :collapsed="collapsed" />
 
                 <template v-if="clipboardLink.length > 0">
                     <USeparator />
@@ -427,7 +427,7 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
         <Banners />
 
         <ClientOnly>
-            <LazyPartialsCommandSearch v-if="activeChar" :children="links" />
+            <LazyPartialsCommandSearch v-if="activeChar" :children="items" />
 
             <LazyPartialsWebSocketStatusOverlay />
 

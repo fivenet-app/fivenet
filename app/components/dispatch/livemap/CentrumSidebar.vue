@@ -356,7 +356,7 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('common.livemap')">
                 <template #leading>
@@ -456,7 +456,7 @@ defineShortcuts({
         :min-size="13"
         :max-size="26"
         :default-size="16"
-        :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0 border-b border-default' }"
+        :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0 border-b border-default' }"
     >
         <template #body>
             <div class="overflow-x-hidden overflow-y-auto p-0 sm:pb-0">

@@ -52,7 +52,7 @@ export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'min-h-0 pb-(--dashboard-panel-bottom-offset)' }">
+    <UDashboardPanel :ui="{ root: 'min-h-0 pb-(--page-content-bottom-offset)' }">
         <template #body>
             <UPageCard :title="`${$t('common.exam')} ${$t('common.setting')}`">
                 <UFormField

@@ -26,49 +26,49 @@ const canConfigAdmin = can('internal.Superuser/ConfigAdmin');
 
 const items = computed<CardElement[]>(() => [
     {
-        title: t('components.settings.job_props.job_properties'),
+        label: t('components.settings.job_props.job_properties'),
         description: t('pages.settings.features.properties'),
         to: '/settings/props',
         permission: 'settings.SettingsService/GetJobProps',
         icon: 'i-mdi-tune',
     },
     {
-        title: t('common.role', 2),
+        label: t('common.role', 2),
         description: t('components.settings.role_view.add_permission'),
         to: '/settings/roles',
         permission: 'settings.SettingsService/GetRoles',
         icon: 'i-mdi-account-group',
     },
     {
-        title: t('pages.settings.limiter.title'),
+        label: t('pages.settings.limiter.title'),
         description: t('pages.settings.features.limiter'),
         to: '/settings/limiter',
         permission: 'internal.Superuser/JobAdmin',
         icon: 'i-mdi-car-speed-limiter',
     },
     {
-        title: t('common.dispatch_center_settings'),
+        label: t('common.dispatch_center_settings'),
         description: t('pages.settings.features.dispatch_center'),
         to: '/dispatch/settings',
         permission: 'centrum.CentrumService/UpdateSettings',
         icon: 'i-mdi-car-emergency',
     },
     {
-        title: t('pages.settings.laws.title'),
+        label: t('pages.settings.laws.title'),
         description: t('pages.settings.features.laws'),
         to: '/settings/laws',
         permission: 'settings.LawsService/CreateOrUpdateLawBook',
         icon: 'i-mdi-scale-balance',
     },
     {
-        title: t('common.audit_log', 1),
+        label: t('common.audit_log', 1),
         description: t('pages.settings.features.audit_log'),
         to: '/settings/audit',
         permission: 'settings.SettingsService/ViewAuditLog',
         icon: 'i-mdi-math-log',
     },
     {
-        title: t('pages.settings.jobs.title'),
+        label: t('pages.settings.jobs.title'),
         description: t('pages.settings.features.jobs'),
         to: '/settings/jobs',
         permission: 'internal.Superuser/JobAdmin',
@@ -78,28 +78,28 @@ const items = computed<CardElement[]>(() => [
 
 const superuserItems = computed<CardElement[]>(() => [
     {
-        title: t('pages.settings.settings.title'),
+        label: t('pages.settings.settings.title'),
         description: t('pages.settings.features.settings'),
         to: '/settings/settings',
         permission: 'internal.Superuser/ConfigAdmin',
         icon: 'i-mdi-office-building-cog',
     },
     {
-        title: t('pages.settings.accounts.title'),
+        label: t('pages.settings.accounts.title'),
         description: t('pages.settings.features.accounts'),
         to: '/settings/accounts',
         permission: 'internal.Superuser/ConfigAdmin',
         icon: 'i-mdi-account-multiple',
     },
     {
-        title: t('pages.settings.filestore.title'),
+        label: t('pages.settings.filestore.title'),
         description: t('pages.settings.features.filestore'),
         to: '/settings/filestore',
         permission: 'internal.Superuser/ConfigAdmin',
         icon: 'i-mdi-file-multiple',
     },
     {
-        title: t('pages.settings.cron.title'),
+        label: t('pages.settings.cron.title'),
         description: t('pages.settings.features.cron'),
         to: '/settings/cron',
         permission: 'internal.Superuser/ConfigAdmin',
@@ -109,7 +109,7 @@ const superuserItems = computed<CardElement[]>(() => [
 </script>
 
 <template>
-    <UDashboardPanel id="settings" :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
+    <UDashboardPanel id="settings" :ui="{ root: 'pb-(--page-content-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar :title="$t('common.control_panel')">
                 <template #leading>

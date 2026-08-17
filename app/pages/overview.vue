@@ -38,7 +38,7 @@ const getContextMenuItems = (item: CardElement): ContextMenuItem[][] => {
 </script>
 
 <template>
-    <UDashboardPanel id="overview" :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
+    <UDashboardPanel id="overview" :ui="{ root: 'pb-(--page-content-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar :title="$t('common.overview')">
                 <template #leading>

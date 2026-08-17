@@ -220,9 +220,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UDashboardPanel
-        :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'overflow-y-hidden gap-0 sm:gap-0 p-0 sm:p-0' }"
-    >
+    <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'overflow-y-hidden gap-0 sm:gap-0 p-0 sm:p-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.id.exam.title')">
                 <template #right>

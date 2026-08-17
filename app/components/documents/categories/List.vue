@@ -31,7 +31,7 @@ async function listCategories(): Promise<Category[]> {
 const items = computed<CardElement[]>(
     () =>
         categories.value?.map((v) => ({
-            title: v.name,
+            label: v.name,
             description: v.description,
             icon: v.deletedAt ? 'i-mdi-delete' : (v.icon ?? 'i-mdi-shape'),
             color: v.deletedAt ? 'error' : (v.color ?? 'primary'),
@@ -51,7 +51,7 @@ function categorySelected(idx: number): void {
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.categories.title')">
                 <template #leading>

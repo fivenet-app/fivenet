@@ -368,7 +368,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
+    <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar class="print:hidden" :title="$t('pages.documents.id.title')">
                 <template #leading>

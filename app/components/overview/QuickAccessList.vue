@@ -98,7 +98,7 @@ watch(
 
                     <UIcon class="size-8 text-primary transition group-hover:scale-110" :name="item.icon ?? 'i-mdi-star'" />
                     <span class="text-sm leading-tight font-medium text-highlighted">
-                        {{ item.title }}
+                        {{ item.label }}
                     </span>
                 </ULink>
             </div>

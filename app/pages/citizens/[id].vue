@@ -147,7 +147,7 @@ const isOpen = ref<boolean>(false);
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.citizens.id.title')">
                 <template #leading>
@@ -249,7 +249,7 @@ const isOpen = ref<boolean>(false);
         :default-size="23"
         :min-size="18"
         :max-size="34"
-        :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'gap-2 sm:gap-2' }"
+        :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'gap-2 sm:gap-2' }"
     >
         <template #header>
             <UDashboardNavbar :title="$t('common.action', 2)" :toggle="false" />
@@ -291,7 +291,7 @@ const isOpen = ref<boolean>(false);
             <template #content>
                 <UDashboardPanel
                     id="citizens-id-actions-mobile"
-                    :ui="{ root: 'min-h-full pb-(--dashboard-panel-bottom-offset)', body: 'gap-2 sm:gap-2' }"
+                    :ui="{ root: 'min-h-full pb-(--page-content-bottom-offset)', body: 'gap-2 sm:gap-2' }"
                 >
                     <template #header>
                         <UDashboardNavbar :title="$t('common.action', 2)" :ui="{ toggle: 'hidden' }">

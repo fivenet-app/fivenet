@@ -64,7 +64,7 @@ const visibleTemplates = computed<TemplateShort[]>(
 
 const items = computed<CardElement[]>(() =>
     visibleTemplates.value.map((v) => ({
-        title: v.title,
+        label: v.title,
         description: v.description,
         icon: v.icon ?? 'i-mdi-file-outline',
         color: v.color ?? 'primary',

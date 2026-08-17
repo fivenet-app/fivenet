@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { useResizeObserver } from '@vueuse/core';
+
 const props = defineProps<{
     job?: string;
     jobGrade?: number;
@@ -16,11 +18,33 @@ const { impersonateJob, setSuperuserMode } = authStore;
 const foundJob = computed(() => jobs.value.find((j) => j.name === props.job));
 const foundJobGrade = computed(() => foundJob.value?.grades.find((g) => g.grade === props.jobGrade));
 
+const bannerRef = useTemplateRef<{ $el: HTMLElement }>('bannerRef');
+const bannerEl = computed(() => bannerRef.value?.$el ?? null);
+
+const bannerImpersonatingBottomOffsetVar = '--banner-impersonating-bottom-offset';
+
+function setBannerImpersonatingBottomOffset(height: number): void {
+    if (typeof document === 'undefined') return;
+
+    document.documentElement.style.setProperty(bannerImpersonatingBottomOffsetVar, `${height}px`);
+}
+
+function syncBannerImpersonatingBottomOffset(): void {
+    setBannerImpersonatingBottomOffset(bannerEl.value?.clientHeight ?? 0);
+}
+
 onBeforeMount(async () => listJobs());
+
+useResizeObserver(bannerEl, syncBannerImpersonatingBottomOffset);
+
+watch(bannerEl, syncBannerImpersonatingBottomOffset, { immediate: true });
+
+onBeforeUnmount(() => setBannerImpersonatingBottomOffset(0));
 </script>
 
 <template>
     <UBanner
+        ref="bannerRef"
         :title="
             $t('common.impersonation_active', {
                 job: `${foundJobGrade?.label ?? jobGrade}${isSuperuser ? `&nbsp;-&nbsp;${foundJob?.label ?? job}` : ''} (${jobGrade})`,

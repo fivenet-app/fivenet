@@ -92,15 +92,13 @@ const passwordVisibility = ref<boolean>(false);
                         icon: 'i-mdi-cookie',
                         color: 'info',
                         variant: 'outline',
-                        onClick: () => {
-                            isConsentModalOpen = true;
-                        },
+                        onClick: () => (isConsentModalOpen = true),
                     },
                 ]"
             />
 
             <template v-else>
-                <USeparator :label="$t('common.or')" orientation="horizontal" />
+                <USeparator :label="$t('common.or')" orientation="horizontal" class="my-4" />
 
                 <div class="space-y-2">
                     <div v-for="provider in auth.providers" :key="provider.name">

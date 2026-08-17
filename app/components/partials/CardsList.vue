@@ -33,7 +33,7 @@ const { can } = useAuth();
             >
                 <UPageCard
                     :to="module.to"
-                    :title="module.title"
+                    :title="module.label"
                     :icon="showIcon && module.icon?.startsWith('i-') ? module.icon : undefined"
                     :ui="{ title: 'w-full flex flex-row gap-2' }"
                     @click="
@@ -43,7 +43,7 @@ const { can } = useAuth();
                     "
                 >
                     <template #title>
-                        <span>{{ module.title }}</span>
+                        <span>{{ module.label }}</span>
 
                         <UBadge v-if="module.deletedAt" icon="i-mdi-delete" :label="$t('common.deleted')" color="warning" />
                     </template>

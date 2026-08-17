@@ -91,9 +91,7 @@ inject('links', items);
 </script>
 
 <template>
-    <UDashboardPanel
-        :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }"
-    >
+    <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.jobs.title')">
                 <template #leading>

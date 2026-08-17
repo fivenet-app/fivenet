@@ -166,7 +166,7 @@ onBeforeMount(async () => listJobs());
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
+    <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.stats.title')">
                 <template #leading>

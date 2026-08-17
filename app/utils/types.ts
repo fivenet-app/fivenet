@@ -2,7 +2,7 @@ import type { Perms } from '~~/gen/ts/perms';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 export type CardElement = {
-    title: string;
+    label: string;
     description?: string;
     to?: string;
     permission?: Perms;

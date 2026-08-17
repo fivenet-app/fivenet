@@ -64,7 +64,7 @@ const editing = ref<boolean>(false);
         :default-size="18"
         :min-size="15"
         :max-size="40"
-        :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'p-1 sm:p-1 gap-0 sm:gap-0' }"
+        :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-1 sm:p-1 gap-0 sm:gap-0' }"
     >
         <template #header>
             <UDashboardNavbar :title="$t('common.pinned_document', 2)" :ui="{ toggle: '!hidden ' }">

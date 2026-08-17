@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
-
 const { t } = useI18n();
 
 const { website } = useAppConfig();
@@ -33,15 +31,25 @@ const year = new Date().getFullYear();
 </script>
 
 <template>
+    <USeparator type="dashed" class="h-px">
+        <NuxtImg
+            src="/images/logo-bw-100x100.webp"
+            alt="FiveNet Logo"
+            title="FiveNet"
+            loading="lazy"
+            class="size-5 h-auto shrink-0"
+        />
+    </USeparator>
+
     <UFooter>
         <template #left>
-            <FiveNetLogo class="mr-1 h-auto w-8" />
-
-            <I18nT keypath="copyright">
-                <template #year>
-                    {{ year }}
-                </template>
-            </I18nT>
+            <p class="text-sm text-muted">
+                <I18nT keypath="copyright">
+                    <template #year>
+                        {{ year }}
+                    </template>
+                </I18nT>
+            </p>
         </template>
 
         <UNavigationMenu :items="items" variant="link" />

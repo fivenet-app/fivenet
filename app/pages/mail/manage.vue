@@ -111,7 +111,7 @@ onBeforeMount(async () => await listEmails());
     <UDashboardPanel
         v-if="(route.query?.tab === 'new' && !getPrivateEmail) || getPrivateEmail?.deactivated === true"
         id="mail-emails"
-        :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }"
+        :ui="{ root: 'pb-(--page-content-bottom-offset)' }"
     >
         <template #header>
             <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
@@ -163,7 +163,7 @@ onBeforeMount(async () => await listEmails());
             :default-size="28"
             :min-size="16"
             :max-size="50"
-            :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
+            :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
         >
             <template #header>
                 <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
@@ -198,11 +198,7 @@ onBeforeMount(async () => await listEmails());
             </template>
         </UDashboardPanel>
 
-        <UDashboardPanel
-            id="mail-emails-view"
-            v-model="isMailerPanelOpen"
-            :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }"
-        >
+        <UDashboardPanel id="mail-emails-view" v-model="isMailerPanelOpen" :ui="{ root: 'pb-(--page-content-bottom-offset)' }">
             <template #header>
                 <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
                     <template #right>

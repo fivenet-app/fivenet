@@ -37,7 +37,7 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'h-full min-h-0 pb-(--dashboard-panel-bottom-offset)' }">
+    <UDashboardPanel :ui="{ root: 'h-full min-h-0 pb-(--page-content-bottom-offset)' }">
         <template #header>
             <UDashboardToolbar>
                 <UForm ref="formRef" class="mb-2 flex-1" :schema="schema" :state="query" @submit="commitValidatedQuery">

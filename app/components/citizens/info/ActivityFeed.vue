@@ -99,7 +99,7 @@ const denyView = computed(
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'min-h-0 pb-(--dashboard-panel-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'min-h-0 pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template v-if="!denyView" #header>
             <UDashboardToolbar>
                 <template #default>

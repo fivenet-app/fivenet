@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useResizeObserver } from '@vueuse/core';
 import type { ButtonProps } from '@nuxt/ui';
 import type { BannerMessage } from '~~/gen/ts/resources/settings/banner';
 
@@ -24,6 +25,18 @@ const hide = computed(
 const bannerRef = useTemplateRef<{ $el: HTMLElement }>('bannerRef');
 const bannerEl = computed(() => bannerRef.value?.$el ?? null);
 
+const bannerMessageBottomOffsetVar = '--banner-message-bottom-offset';
+
+function setBannerMessageBottomOffset(height: number): void {
+    if (typeof document === 'undefined') return;
+
+    document.documentElement.style.setProperty(bannerMessageBottomOffsetVar, `${height}px`);
+}
+
+function syncBannerMessageBottomOffset(): void {
+    setBannerMessageBottomOffset(bannerEl.value?.clientHeight ?? 0);
+}
+
 function onClose() {
     if (props.message.expiresAt) dismissedBannerMessageID.value = props.message.id;
 
@@ -33,9 +46,11 @@ function onClose() {
 const color = computed(() => (props.message.color ?? 'primary') as ButtonProps['color']);
 const { system } = useAppConfig();
 
-defineExpose({
-    el: bannerEl,
-});
+useResizeObserver(bannerEl, syncBannerMessageBottomOffset);
+
+watch(bannerEl, syncBannerMessageBottomOffset, { immediate: true });
+
+onBeforeUnmount(() => setBannerMessageBottomOffset(0));
 </script>
 
 <template>

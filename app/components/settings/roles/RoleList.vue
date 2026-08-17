@@ -126,7 +126,7 @@ const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'pb-(--dashboard-panel-bottom-offset)' }">
+    <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.roles.title')">
                 <template #leading>
