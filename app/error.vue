@@ -69,7 +69,7 @@ const isDev = import.meta.dev;
                 color="neutral"
             />
 
-            <UCard class="w-full max-w-md bg-white/75 backdrop-blur-sm dark:bg-white/5">
+            <UCard class="w-full max-w-md bg-white/75 pt-10 pb-4 backdrop-blur-sm dark:bg-white/5">
                 <template #header>
                     <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 

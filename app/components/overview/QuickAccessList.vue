@@ -64,7 +64,7 @@ watch(
 
 <template>
     <div v-if="quickAccessItems.length > 0">
-        <div class="mb-3 flex items-center justify-between gap-2">
+        <div class="mb-2 flex items-center justify-between gap-2">
             <div class="flex flex-col">
                 <h2 class="text-base font-semibold text-highlighted">
                     {{ $t('common.quick_access') }}
@@ -87,7 +87,7 @@ watch(
                     v-for="(item, idx) in sortableQuickAccessItems"
                     :key="item.to"
                     :to="item.to"
-                    class="quick-access-item group relative flex min-h-20 flex-col items-center justify-center gap-2 rounded-2xl border border-transparent bg-default/70 px-2 py-3 text-center transition hover:-translate-y-0.5 hover:border-primary-500/30 hover:bg-primary-50/60 dark:bg-default/30 dark:hover:bg-primary-950/20"
+                    class="quick-access-item handle group relative flex min-h-20 flex-col items-center justify-center gap-2 rounded-2xl border border-transparent bg-default/70 px-2 py-3 text-center transition hover:-translate-y-0.5 hover:border-primary-500/30 hover:bg-primary-50/60 dark:bg-default/30 dark:hover:bg-primary-950/20"
                 >
                     <template v-if="reorderMode">
                         <DraggableHandle class="absolute top-1 left-1" size="xs" orientation="vertical" />

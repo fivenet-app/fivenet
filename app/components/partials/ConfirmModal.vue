@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { ButtonProps } from '@nuxt/ui';
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         title?: string;
         description?: string;
@@ -21,34 +21,30 @@ withDefaults(
     },
 );
 
-defineEmits<{
+const emit = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
+
+async function handleConfirm(): Promise<void> {
+    await props.confirm();
+    emit('close', true);
+}
+
+async function handleCancel(): Promise<void> {
+    await props.cancel?.();
+    emit('close', false);
+}
 </script>
 
 <template>
     <UModal
-        :title="title ?? $t('components.partials.confirm_dialog.title')"
-        :description="description ?? $t('components.partials.confirm_dialog.description')"
-        @update:model-value="cancel && cancel()"
+        :title="props.title ?? $t('components.partials.confirm_dialog.title')"
+        :description="props.description ?? $t('components.partials.confirm_dialog.description')"
+        @update:model-value="props.cancel && props.cancel()"
     >
         <template #footer>
-            <UButton
-                :color="color"
-                :label="$t('common.confirm')"
-                @click="
-                    confirm();
-                    $emit('close', true);
-                "
-            />
-            <UButton
-                color="neutral"
-                :label="$t('common.cancel')"
-                @click="
-                    cancel?.();
-                    $emit('close', false);
-                "
-            />
+            <UButton :color="props.color" :label="$t('common.confirm')" @click="handleConfirm" />
+            <UButton color="neutral" :label="$t('common.cancel')" @click="handleCancel" />
         </template>
     </UModal>
 </template>
