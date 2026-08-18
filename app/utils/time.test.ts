@@ -11,6 +11,7 @@ import {
     toDate,
     toDatetimeLocal,
     toTimestamp,
+    toUtcDate,
     toUtcDateTimestamp,
 } from './time';
 
@@ -57,6 +58,18 @@ describe('toUtcDateTimestamp', () => {
         const expected = new Date(Date.UTC(2025, 10, 25, 0, 0, 0, 0));
 
         expect(result).toEqual({ timestamp: { seconds: Math.floor(expected.getTime() / 1000), nanos: 0 } });
+    });
+});
+
+describe('toUtcDate', () => {
+    it('should convert a UTC midnight timestamp back to the same local calendar day', () => {
+        const result = toUtcDate({ timestamp: { seconds: Math.floor(Date.UTC(2025, 10, 25, 0, 0, 0, 0) / 1000), nanos: 0 } });
+
+        expect(result?.getFullYear()).toBe(2025);
+        expect(result?.getMonth()).toBe(10);
+        expect(result?.getDate()).toBe(25);
+        expect(result?.getHours()).toBe(0);
+        expect(result?.getMinutes()).toBe(0);
     });
 });
 

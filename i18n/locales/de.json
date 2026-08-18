@@ -893,7 +893,18 @@
         "change_order": "Reihenfolge ändern",
         "hidden": "Versteckt",
         "treemap": "Kachelkarte",
-        "quick_access": "Schnellzugriff"
+        "quick_access": "Schnellzugriff",
+        "week_days": {
+            "monday": "Montag",
+            "tuesday": "Dienstag",
+            "wednesday": "Mittwoch",
+            "thursday": "Donnerstag",
+            "friday": "Freitag",
+            "saturday": "Samstag",
+            "sunday": "Sonntag"
+        },
+        "more": "mehr",
+        "now": "Jetzt"
     },
     "components": {
         "partials": {

@@ -2,6 +2,7 @@
 import type { BadgeProps } from '@nuxt/ui';
 import { isSameDay } from 'date-fns';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import {
     checkCalendarAccess,
     isBirthdayEntry as isBirthdayCalendarEntry,
@@ -9,20 +10,22 @@ import {
     isSystemManagedCalendarEntry,
 } from '~/components/calendar/helpers';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
+import { copyToClipboardWrapper } from '~/utils/clipboard';
 import { useCalendarStore } from '~/stores/calendar';
-import { getCalendarEntryDisplayEndDate, getCalendarEntryDisplayStartDate } from '~/utils/calendar';
+import { getCalendarEntryDisplayEndDate, getCalendarEntryDisplayStartDate, isCalendarEntryAllDay } from '~/utils/calendar';
 import { toDate } from '~/utils/time';
+import { useCalendarEntryShortcutState } from '~/composables/useCalendarEntryShortcutState';
 import { CalendarEntryRecurringEvery, type CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import EntryRSVPList from './EntryRSVPList.vue';
+import EntryActionButtons from './EntryActionButtons.vue';
 import { emojiBlast } from 'emoji-blast';
 
 const props = defineProps<{
@@ -30,21 +33,20 @@ const props = defineProps<{
     entry?: CalendarEntry;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
 const overlay = useOverlay();
+const confirmModal = overlay.create(ConfirmModal);
+const shortcutState = useCalendarEntryShortcutState();
 
-const { can } = useAuth();
 const { t, d } = useI18n();
+const notifications = useNotificationsStore();
 
 const calendarStore = useCalendarStore();
 const { calendars } = storeToRefs(calendarStore);
 
-const notifications = useNotificationsStore();
-
-const w = window;
 const entryId = props.entry?.id ?? props.entryId;
 
 const {
@@ -113,27 +115,6 @@ const recurringLabel = computed(() => {
     return `${t('components.calendar.EntryCreateOrUpdateModal.recurring.every')} ${recurring.count} ${everyUnit}${until}`;
 });
 
-function copyLinkToClipboard(): void {
-    const url = new URL(w.location.href);
-
-    if (entry.value?.occurrence?.key) {
-        url.searchParams.set('entryKey', entry.value.occurrence.key);
-        url.searchParams.delete('entryId');
-    } else {
-        url.searchParams.set('entryId', String(props.entryId ?? entry.value?.id ?? 0));
-        url.searchParams.delete('entryKey');
-    }
-
-    copyToClipboardWrapper(url.toString());
-
-    notifications.add({
-        title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        duration: 3250,
-        type: NotificationType.INFO,
-    });
-}
-
 const canDo = computed(() => ({
     share:
         !isSystemManaged.value &&
@@ -163,11 +144,11 @@ const canDo = computed(() => ({
             calendar.value?.creatorJob,
         ),
 }));
-
-const confirmModal = overlay.create(ConfirmModal);
 const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 
 async function openUpdateModal(): Promise<void> {
+    if (!entry.value || !canDo.value.edit) return;
+
     const response = await entryCreateOrUpdateModal.open({
         calendarId: entry.value?.calendarId,
         entryId: entry.value?.id,
@@ -177,47 +158,111 @@ async function openUpdateModal(): Promise<void> {
     }
 }
 
-async function openDeleteConfirmModal(): Promise<void> {
+async function copyEntryLink(): Promise<void> {
     if (!entry.value) return;
 
-    const response = await confirmModal.open({
-        confirm: async () => entry.value && calendarStore.deleteCalendarEntry(entry.value.id),
+    const url = new URL(window.location.href);
+
+    if (entry.value.occurrence?.key) {
+        url.searchParams.set('entryKey', entry.value.occurrence.key);
+        url.searchParams.delete('entryId');
+    } else {
+        url.searchParams.set('entryId', String(entry.value.id));
+        url.searchParams.delete('entryKey');
+    }
+
+    copyToClipboardWrapper(url.toString());
+
+    notifications.add({
+        title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
+        description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
+        duration: 3250,
+        type: NotificationType.INFO,
     });
+}
+
+async function openDeleteEntry(): Promise<void> {
+    if (!entry.value || !canDo.value.manage) return;
+
+    const response = await confirmModal.open({
+        confirm: async () => calendarStore.deleteCalendarEntry(entry.value!.id),
+    });
+
     if (response) {
-        emits('close', false);
+        emit('close', false);
     }
 }
 
-defineShortcuts({
-    e: () => openUpdateModal(),
-    d: () => openDeleteConfirmModal(),
+onMounted(() => {
+    shortcutState.isModalOpen.value = true;
+});
+
+onUnmounted(() => {
+    shortcutState.isModalOpen.value = false;
 });
 </script>
 
 <template>
-    <USlideover :title="entry?.title ?? $t('common.appointment', 1)" :overlay="false">
-        <template #actions>
-            <div v-if="entry" class="flex items-center justify-between gap-2">
-                <UTooltip
-                    v-if="can('calendar.CalendarService/CreateCalendar').value && canDo.edit"
-                    :text="$t('common.edit')"
-                    :kbds="['E']"
-                >
-                    <UButton variant="link" icon="i-mdi-pencil" @click="openUpdateModal" />
-                </UTooltip>
+    <UModal
+        :title="entry?.title ?? $t('common.appointment', 1)"
+        :close="false"
+        :dismissible="!isEntryLoading"
+        :ui="{ content: 'max-w-4xl', body: 'max-h-[80svh] overflow-y-auto' }"
+    >
+        <template #header>
+            <div class="flex w-full items-start justify-between gap-3">
+                <div class="min-w-0">
+                    <h3 class="truncate text-lg font-semibold text-highlighted">
+                        {{ entry?.title ?? $t('common.appointment', 1) }}
+                    </h3>
 
-                <UTooltip v-if="canDo.manage" :text="$t('common.delete')" :kbds="['D']">
-                    <UButton variant="link" icon="i-mdi-delete" color="error" @click="openDeleteConfirmModal" />
-                </UTooltip>
+                    <div class="mt-1 flex flex-wrap items-center gap-1 text-sm text-muted">
+                        <UIcon name="i-mdi-access-time" class="size-4" />
+                        <GenericTime :value="displayStartTime" :type="isCalendarEntryAllDay(entry) ? 'date' : 'long'" />
+                        <template v-if="displayEndTime && !isCalendarEntryAllDay(entry)">
+                            <span>-</span>
+                            <GenericTime
+                                :value="displayEndTime"
+                                :type="isSameDay(displayStartTime, displayEndTime) ? 'time' : 'long'"
+                            />
+                        </template>
+                        <template v-else-if="displayEndTime && !isSameDay(displayStartTime, displayEndTime)">
+                            <span>-</span>
+                            <GenericTime :value="displayEndTime" type="date" />
+                        </template>
+                    </div>
+                </div>
 
-                <UTooltip :text="$t('common.share')">
-                    <UButton variant="link" icon="i-mdi-share" @click="copyLinkToClipboard()" />
-                </UTooltip>
+                <div class="flex items-center gap-1">
+                    <UBadge v-if="calendar?.name" :color="color" variant="subtle" size="sm">
+                        {{ calendar.name }}
+                    </UBadge>
+
+                    <EntryActionButtons
+                        v-if="entry"
+                        :entry="entry"
+                        mode="header"
+                        :can-edit="canDo.edit"
+                        :can-share="canDo.share"
+                        :can-delete="canDo.manage"
+                        @edit="openUpdateModal"
+                        @share="copyEntryLink"
+                        @delete="openDeleteEntry"
+                    />
+
+                    <UButton
+                        color="neutral"
+                        variant="ghost"
+                        icon="i-mdi-close"
+                        :aria-label="$t('common.close', 1)"
+                        @click="emit('close', false)"
+                    />
+                </div>
             </div>
         </template>
 
         <template #body>
-            <div class="flex h-full w-full flex-1 flex-col gap-2">
+            <div class="flex w-full flex-1 flex-col gap-2">
                 <DataPendingBlock v-if="isEntryLoading" :message="$t('common.loading', [$t('common.entry', 1)])" />
                 <DataErrorBlock
                     v-else-if="hasEntryError"
@@ -228,27 +273,6 @@ defineShortcuts({
                 <DataNoDataBlock v-else-if="!entry" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
 
                 <template v-else>
-                    <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
-                        <UBadge class="inline-flex items-center gap-1" color="neutral" size="lg" icon="i-mdi-access-time">
-                            {{ $t('common.date') }}
-                            <GenericTime :value="displayStartTime" :type="entry?.occurrence?.allDay ? 'date' : 'long'" />
-                            <template v-if="displayEndTime && !entry?.occurrence?.allDay">
-                                -
-                                <GenericTime
-                                    :value="displayEndTime"
-                                    :type="isSameDay(displayStartTime, displayEndTime) ? 'time' : 'long'"
-                                />
-                            </template>
-                        </UBadge>
-
-                        <UBadge class="inline-flex items-center gap-1" color="neutral" icon="i-mdi-calendar">
-                            {{ $t('common.calendar') }}
-                            <UBadge :color="color" size="lg" />
-
-                            {{ entry.calendar?.name ?? $t('common.na') }}
-                        </UBadge>
-                    </div>
-
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                         <OpenClosedBadge v-if="!isSystemManaged" :closed="entry.closed" />
 
@@ -335,10 +359,10 @@ defineShortcuts({
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="emit('close', false)" />
             </UFieldGroup>
         </template>
-    </USlideover>
+    </UModal>
 </template>
 
 <style scoped>

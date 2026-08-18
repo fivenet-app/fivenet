@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { ChipProps, FormSubmitEvent } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
-import { addHours, addMinutes, isSameDay, isSameHour, isSameMinute } from 'date-fns';
+import { addHours, addMinutes, isSameDay, isSameHour, isSameMinute, startOfDay } from 'date-fns';
 import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page.js';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -13,8 +13,10 @@ import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { isValidCalendarEntryRecurring } from '~/components/calendar/helpers';
 import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
+import { isCalendarEntryAllDay } from '~/utils/calendar';
 import { useCalendarStore } from '~/stores/calendar';
 import { useCompletorStore } from '~/stores/completor';
+import { toUtcDate, toUtcDateTimestamp } from '~/utils/time';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import type { CalendarShort } from '~~/gen/ts/resources/calendar/calendar';
 import { CalendarEntryRecurringEvery } from '~~/gen/ts/resources/calendar/entries/entries';
@@ -24,6 +26,8 @@ import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/cal
 const props = defineProps<{
     calendarId?: number;
     entryId?: number;
+    startTime?: Date;
+    endTime?: Date;
 
     day?: CalendarDay;
 }>();
@@ -109,6 +113,8 @@ const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(sta
         }),
 });
 
+const isHydrating = ref(false);
+
 function resetState(): void {
     state.calendar = undefined;
     state.title = '';
@@ -144,8 +150,13 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
                 id: data.value?.id ?? 0,
                 calendarId: values.calendar?.id,
                 title: values.title,
-                startTime: toTimestamp(values.startTime),
-                endTime: values.allDay ? undefined : toTimestamp(values.endTime),
+                startTime: values.allDay ? toUtcDateTimestamp(startOfDay(values.startTime)) : toTimestamp(values.startTime),
+                endTime: values.allDay
+                    ? values.endTime
+                        ? toUtcDateTimestamp(startOfDay(values.endTime))
+                        : undefined
+                    : toTimestamp(values.endTime),
+                allDay: values.allDay,
                 recurring: values.recurringEnabled
                     ? {
                           every: values.recurringEvery,
@@ -172,29 +183,54 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
 }
 
 function setFromProps(): void {
+    isHydrating.value = true;
     resetState();
+
+    if (props.calendarId) {
+        state.calendar = calendarStore.calendars.find((calendar) => calendar.id === props.calendarId);
+    }
 
     if (props.day) {
         state.startTime = addHours(props.day.date, 1);
         state.endTime = addHours(props.day.date, 2);
         syncSnapshot();
+        isHydrating.value = false;
+        return;
+    }
+
+    if (props.startTime) {
+        state.startTime = props.startTime;
+        state.endTime = props.endTime ?? addHours(props.startTime, 1);
+
+        syncSnapshot();
+        isHydrating.value = false;
         return;
     }
 
     if (!data.value) {
         syncSnapshot();
+        isHydrating.value = false;
         return;
     }
 
     const entry = data.value;
     if (entry.calendar) state.calendar = entry.calendar;
     state.title = entry.title;
-    state.startTime = toDate(entry.startTime);
-    state.endTime = entry.endTime ? toDate(entry.endTime) : undefined;
-    state.allDay = state.endTime === undefined;
+    state.allDay = isCalendarEntryAllDay(entry);
+    const startTime = state.allDay ? (toUtcDate(entry.startTime) ?? toDate(entry.startTime)) : toDate(entry.startTime);
+    state.startTime = state.allDay ? startOfDay(startTime) : startTime;
+    state.endTime = entry.endTime
+        ? state.allDay
+            ? startOfDay(toUtcDate(entry.endTime) ?? toDate(entry.endTime))
+            : toDate(entry.endTime)
+        : state.allDay
+          ? state.startTime
+          : undefined;
     state.content = contentToTiptapValue(entry.content);
     state.closed = entry.closed;
-    state.rsvpOpen = entry.rsvpOpen !== undefined;
+    // Don't enable RSVP when the proto omits the field.
+    state.rsvpOpen = entry.rsvpOpen ?? false;
+
     const recurring = entry.recurring;
     if (isValidCalendarEntryRecurring(recurring)) {
         state.recurringEnabled = true;
@@ -203,6 +239,7 @@ function setFromProps(): void {
         state.recurringUntil = recurring.until ? toDate(recurring.until) : undefined;
     }
     syncSnapshot();
+    isHydrating.value = false;
 }
 
 setFromProps();
@@ -212,7 +249,7 @@ watch(props, async () => refresh());
 watch(
     () => state.startTime,
     () => {
-        if (!state.endTime) return;
+        if (!state.endTime || state.allDay) return;
 
         const endTime = state.endTime;
 
@@ -229,6 +266,31 @@ watch(
             }
 
             state.endTime = endTime;
+        }
+    },
+);
+
+watch(
+    () => state.allDay,
+    (allDay, wasAllDay) => {
+        if (isHydrating.value) return;
+
+        if (allDay && !wasAllDay) {
+            const startTime = startOfDay(state.startTime);
+            const endTime = state.endTime ? startOfDay(state.endTime) : startTime;
+
+            state.startTime = startTime;
+            state.endTime = endTime;
+            return;
+        }
+
+        if (!allDay && wasAllDay && !state.endTime) {
+            state.endTime = addHours(state.startTime, 1);
+            return;
+        }
+
+        if (!allDay && wasAllDay && state.endTime && state.endTime.getTime() <= state.startTime.getTime()) {
+            state.endTime = addHours(state.startTime, 1);
         }
     },
 );
@@ -366,6 +428,7 @@ async function closeModal(): Promise<void> {
 
                     <UFormField class="flex-1" name="allDay">
                         <UTabs
+                            :model-value="state.allDay ? '1' : '0'"
                             :items="[
                                 { label: $t('common.time_range'), icon: 'i-mdi-calendar-today' },
                                 { label: $t('common.all_day'), icon: 'i-mdi-calendar-today' },
@@ -382,19 +445,26 @@ async function closeModal(): Promise<void> {
                                     />
                                 </UFormField>
 
-                                <UFormField class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
+                                <UFormField
+                                    class="flex-1"
+                                    name="endTime"
+                                    :label="$t('common.ends_at')"
+                                    :required="!state.allDay"
+                                >
                                     <InputDatePicker
                                         v-model="state.endTime"
                                         class="w-full"
                                         :date-format="!state.allDay ? undefined : 'date'"
                                         :time="!state.allDay"
+                                        :clearable="state.allDay"
+                                        :required="!state.allDay"
                                     />
                                 </UFormField>
                             </template>
                         </UTabs>
                     </UFormField>
 
-                    <UFormField class="flex-1" name="content" :label="$t('common.content')" required :ui="{ error: 'hidden' }">
+                    <UFormField class="flex-1" name="content" :label="$t('common.content')" :ui="{ error: 'hidden' }">
                         <ClientOnly>
                             <TiptapEditor
                                 v-model="state.content"

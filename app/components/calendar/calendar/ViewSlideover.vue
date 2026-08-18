@@ -20,8 +20,6 @@ const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const { can } = useAuth();
-
 const calendarStore = useCalendarStore();
 
 const overlay = useOverlay();
@@ -38,7 +36,7 @@ const isSystemManaged = computed(() => isSystemManagedCalendar(calendar.value));
 
 const canDo = computed(() => ({
     edit:
-        can('calendar.CalendarService/CreateCalendar').value &&
+        !isSystemManaged.value &&
         checkCalendarAccess(
             calendar.value?.access,
             calendar.value?.creator,
@@ -58,7 +56,7 @@ const canDo = computed(() => ({
 }));
 
 async function openUpdateModal(): Promise<void> {
-    if (!calendar.value) return;
+    if (!calendar.value || !canDo.value.edit) return;
 
     const response = await calendarCreateOrUpdateModal.open({
         calendarId: calendar.value.id,
@@ -70,7 +68,7 @@ async function openUpdateModal(): Promise<void> {
 }
 
 async function openDeleteConfirmModal(): Promise<void> {
-    if (!calendar.value) return;
+    if (!calendar.value || !canDo.value.manage) return;
 
     const response = await confirmModal.open({
         confirm: async () => calendar.value && calendarStore.deleteCalendar(calendar.value.id),

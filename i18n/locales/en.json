@@ -893,7 +893,18 @@
         "change_order": "Change Order",
         "hidden": "Hidden",
         "treemap": "Tree map",
-        "quick_access": "Quick Access"
+        "quick_access": "Quick Access",
+        "week_days": {
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday",
+            "sunday": "Sunday"
+        },
+        "more": "more",
+        "now": "Now"
     },
     "components": {
         "partials": {

@@ -325,6 +325,7 @@ type CalendarEntry struct {
 	Job               *string                  `protobuf:"bytes,7,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	StartTime         *timestamp.Timestamp     `protobuf:"bytes,8,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime           *timestamp.Timestamp     `protobuf:"bytes,9,opt,name=end_time,json=endTime,proto3,oneof" json:"end_time,omitempty"`
+	AllDay            bool                     `protobuf:"varint,22,opt,name=all_day,json=allDay,proto3" json:"all_day,omitempty"`
 	Title             string                   `protobuf:"bytes,10,opt,name=title,proto3" json:"title,omitempty"`
 	Content           *content.Content         `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty"`
 	Closed            bool                     `protobuf:"varint,12,opt,name=closed,proto3" json:"closed,omitempty"`
@@ -427,6 +428,13 @@ func (x *CalendarEntry) GetEndTime() *timestamp.Timestamp {
 		return x.EndTime
 	}
 	return nil
+}
+
+func (x *CalendarEntry) GetAllDay() bool {
+	if x != nil {
+		return x.AllDay
+	}
+	return false
 }
 
 func (x *CalendarEntry) GetTitle() string {
@@ -547,6 +555,10 @@ func (x *CalendarEntry) SetStartTime(v *timestamp.Timestamp) {
 
 func (x *CalendarEntry) SetEndTime(v *timestamp.Timestamp) {
 	x.EndTime = v
+}
+
+func (x *CalendarEntry) SetAllDay(v bool) {
+	x.AllDay = v
 }
 
 func (x *CalendarEntry) SetTitle(v string) {
@@ -774,6 +786,7 @@ type CalendarEntry_builder struct {
 	Job               *string
 	StartTime         *timestamp.Timestamp
 	EndTime           *timestamp.Timestamp
+	AllDay            bool
 	Title             string
 	Content           *content.Content
 	Closed            bool
@@ -801,6 +814,7 @@ func (b0 CalendarEntry_builder) Build() *CalendarEntry {
 	x.Job = b.Job
 	x.StartTime = b.StartTime
 	x.EndTime = b.EndTime
+	x.AllDay = b.AllDay
 	x.Title = b.Title
 	x.Content = b.Content
 	x.Closed = b.Closed
@@ -1084,7 +1098,7 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\x0esource_user_id\x18\x04 \x01(\x05H\x01R\fsourceUserId\x88\x01\x01\x12\x17\n" +
 	"\aall_day\x18\x05 \x01(\bR\x06allDayB\x12\n" +
 	"\x10_source_entry_idB\x11\n" +
-	"\x0f_source_user_id\"\xdf\n" +
+	"\x0f_source_user_id\"\xf8\n" +
 	"\n" +
 	"\rCalendarEntry\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
@@ -1100,7 +1114,8 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\x03job\x18\a \x01(\tH\x04R\x03job\x88\x01\x01\x12=\n" +
 	"\n" +
 	"start_time\x18\b \x01(\v2\x1e.resources.timestamp.TimestampR\tstartTime\x12>\n" +
-	"\bend_time\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\aendTime\x88\x01\x01\x12\x1e\n" +
+	"\bend_time\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\aendTime\x88\x01\x01\x12\x17\n" +
+	"\aall_day\x18\x16 \x01(\bR\x06allDay\x12\x1e\n" +
 	"\x05title\x18\n" +
 	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05title\x12;\n" +
 	"\acontent\x18\v \x01(\v2!.resources.common.content.ContentR\acontent\x12\x16\n" +

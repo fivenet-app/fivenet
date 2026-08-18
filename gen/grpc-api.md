@@ -1190,6 +1190,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `job` | [string](#string) | optional |  |
 | `start_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `end_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `all_day` | [bool](#bool) |  |  |
 | `title` | [string](#string) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `closed` | [bool](#bool) |  |  |

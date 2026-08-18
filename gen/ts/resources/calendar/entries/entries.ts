@@ -81,6 +81,10 @@ export interface CalendarEntry {
      */
     endTime?: Timestamp;
     /**
+     * @generated from protobuf field: bool all_day = 22
+     */
+    allDay: boolean;
+    /**
      * @generated from protobuf field: string title = 10
      */
     title: string;
@@ -340,6 +344,7 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 7, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 8, name: "start_time", kind: "message", T: () => Timestamp },
             { no: 9, name: "end_time", kind: "message", T: () => Timestamp },
+            { no: 22, name: "all_day", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 10, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 11, name: "content", kind: "message", T: () => Content },
             { no: 12, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -358,6 +363,7 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.calendarId = 0;
+        message.allDay = false;
         message.title = "";
         message.closed = false;
         message.creatorJob = "";
@@ -397,6 +403,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                     break;
                 case /* optional resources.timestamp.Timestamp end_time */ 9:
                     message.endTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.endTime);
+                    break;
+                case /* bool all_day */ 22:
+                    message.allDay = reader.bool();
                     break;
                 case /* string title */ 10:
                     message.title = reader.string();
@@ -509,6 +518,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* int32 recurrence_version = 21; */
         if (message.recurrenceVersion !== 0)
             writer.tag(21, WireType.Varint).int32(message.recurrenceVersion);
+        /* bool all_day = 22; */
+        if (message.allDay !== false)
+            writer.tag(22, WireType.Varint).bool(message.allDay);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
