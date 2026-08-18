@@ -144,6 +144,9 @@ export const useCompletorStore = defineStore(
          * @returns {Promise<Group[]>} - The completed groups.
          */
         const completeGroups = async (search: string, groupIds: number[] = []): Promise<Group[]> => {
+            const { can } = useAuth();
+            if (!can('jobs.GroupsService/ListGroups').value) return [];
+
             const jobsGroupsClient = await getJobsGroupsClient();
             try {
                 const call = jobsGroupsClient.listGroups({

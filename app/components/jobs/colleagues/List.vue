@@ -348,7 +348,7 @@ defineShortcuts({
 
                         <template #content>
                             <div class="flex flex-col gap-2">
-                                <div class="flex flex-row gap-2">
+                                <div v-if="can('jobs.GroupsService/ListGroups').value" class="flex flex-row gap-2">
                                     <UFormField
                                         class="flex-1"
                                         name="users"
@@ -356,17 +356,6 @@ defineShortcuts({
                                         :ui="{ container: 'flex-1 flex' }"
                                     >
                                         <UserGroupSelector v-model="query.users" groups-only class="w-full flex-1" />
-                                    </UFormField>
-
-                                    <UFormField
-                                        class="flex flex-initial flex-col"
-                                        name="cards"
-                                        :label="$t('common.card_view')"
-                                        :ui="{ container: 'flex-1 flex' }"
-                                    >
-                                        <div class="flex flex-1 items-center">
-                                            <USwitch v-model="jobsService.cardView" />
-                                        </div>
                                     </UFormField>
                                 </div>
 
@@ -445,6 +434,17 @@ defineShortcuts({
                                         :ui="{ container: 'flex-1 flex' }"
                                     >
                                         <UInput v-model="query.nameSuffix" type="text" />
+                                    </UFormField>
+
+                                    <UFormField
+                                        class="flex flex-initial flex-col"
+                                        name="cards"
+                                        :label="$t('common.card_view')"
+                                        :ui="{ container: 'flex-1 flex' }"
+                                    >
+                                        <div class="flex flex-1 items-center">
+                                            <USwitch v-model="jobsService.cardView" />
+                                        </div>
                                     </UFormField>
                                 </div>
                             </div>

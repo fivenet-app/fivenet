@@ -21,6 +21,16 @@ const emit = defineEmits<{
 }>();
 
 const completorStore = useCompletorStore();
+const { can } = useAuth();
+const canListGroups = can('jobs.GroupsService/ListGroups');
+
+const searchInputPlaceholder = computed(() =>
+    props.groupsOnly
+        ? $t('common.group', 2)
+        : canListGroups.value
+          ? $t('components.jobs.user_group_selector.search_placeholder')
+          : $t('common.colleague', 2),
+);
 
 const USER_PREFIX = 'u:';
 const GROUP_PREFIX = 'g:';
@@ -31,6 +41,15 @@ function toUserValue(id: number): string {
 
 function toGroupValue(id: number): string {
     return `${GROUP_PREFIX}${id}`;
+}
+
+function toGroupItem(id: number, label?: string): SearchGroupItem {
+    return {
+        id,
+        value: toGroupValue(id),
+        kind: 'group',
+        label: label ?? String(id),
+    };
 }
 
 const selectedValues = ref<Set<string>>(new Set());
@@ -159,12 +178,7 @@ async function searchItems(q: string): Promise<SearchItem[]> {
         const groups = await completorStore.completeGroups(query || '');
 
         items.push(
-            ...(groups ?? []).map((g) => ({
-                id: g.id,
-                value: toGroupValue(g.id),
-                kind: 'group' as const,
-                label: g.shortName ? `${g.shortName}: ${g.name}` : g.name || String(g.id),
-            })),
+            ...(groups ?? []).map((g) => toGroupItem(g.id, g.shortName ? `${g.shortName}: ${g.name}` : g.name || String(g.id))),
         );
     } else {
         const users = await completorStore.completeColleagues(q);
@@ -231,15 +245,16 @@ async function loadRestoredItems(): Promise<SearchItem[]> {
         }
 
         if (targetGroupIds.size > 0) {
-            const groups = await completorStore.completeGroups('', [...targetGroupIds.values()]);
-            for (const g of groups ?? []) {
-                if (targetGroupIds.has(g.id)) {
-                    items.push({
-                        id: g.id,
-                        value: toGroupValue(g.id),
-                        kind: 'group' as const,
-                        label: g.shortName ? `${g.shortName}: ${g.name}` : g.name || String(g.id),
-                    });
+            if (!canListGroups.value) {
+                for (const id of targetGroupIds.values()) {
+                    items.push(toGroupItem(id));
+                }
+            } else {
+                const groups = await completorStore.completeGroups('', [...targetGroupIds.values()]);
+                for (const g of groups ?? []) {
+                    if (targetGroupIds.has(g.id)) {
+                        items.push(toGroupItem(g.id, g.shortName ? `${g.shortName}: ${g.name}` : g.name || String(g.id)));
+                    }
                 }
             }
         }
@@ -273,11 +288,7 @@ async function loadRestoredItems(): Promise<SearchItem[]> {
                         :model-value="[...selectedValues]"
                         :searchable="searchItems"
                         multiple
-                        :search-input="{
-                            placeholder: props.groupsOnly
-                                ? $t('common.group', 2)
-                                : $t('components.jobs.user_group_selector.search_placeholder'),
-                        }"
+                        :search-input="{ placeholder: searchInputPlaceholder }"
                         :placeholder="props.groupsOnly ? $t('common.group', 2) : $t('common.colleague', 2)"
                         label-key="label"
                         :searchable-key="props.groupsOnly ? 'user-group-select-groups' : 'user-group-select'"

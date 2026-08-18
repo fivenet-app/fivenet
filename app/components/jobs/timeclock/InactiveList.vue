@@ -203,7 +203,12 @@ const { game } = useAppConfig();
                             />
                         </UFormField>
 
-                        <UFormField class="min-w-0 flex-1" name="users" :label="$t('common.group', 2)">
+                        <UFormField
+                            v-if="can('jobs.GroupsService/ListGroups').value"
+                            class="min-w-0 flex-1"
+                            name="users"
+                            :label="$t('common.group', 2)"
+                        >
                             <UserGroupSelector v-model="query.users" groups-only class="w-full" />
                         </UFormField>
                     </UForm>
