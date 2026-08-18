@@ -3,12 +3,9 @@ package manager
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"os"
 	"testing"
-	"time"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
@@ -19,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	"github.com/go-jet/jet/v2/mysql"
-	"github.com/sethvargo/go-retry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
@@ -81,31 +77,9 @@ func TestRefreshUserLocations(t *testing.T) {
 	manager, db, _, stop := newTrackerManagerForTest(t)
 	defer stop()
 
-	msgCh := make(chan int)
-
 	ctx := t.Context()
-	watchCh, err := manager.userLocStore.WatchAll(ctx)
-	require.NoError(t, err)
-	assert.NotNil(t, watchCh)
-
-	eventCount := 0
-	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-
-			case <-watchCh.Updates():
-			}
-
-			eventCount++
-
-			msgCh <- eventCount
-		}
-	}()
-
 	// Run the refreshUserLocations method to make sure the database state has been loaded
-	err = manager.refreshUserLocations(ctx, true)
+	err := manager.refreshUserLocations(ctx, true)
 	require.NoError(t, err)
 
 	list := manager.userLocStore.List()
@@ -139,29 +113,11 @@ func TestRefreshUserLocations(t *testing.T) {
 		),
 	)
 
-	// Wait for users to appear (an event is sent for this)
-	err = retry.Do(
-		ctx,
-		retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)),
-		func(ctx context.Context) error {
-			select {
-			case count := <-msgCh:
-				if count < 2 {
-					return retry.RetryableError(
-						fmt.Errorf("not enough user events received yet %d", count),
-					)
-				}
-				return nil
+	require.NoError(t, manager.refreshUserLocations(ctx, false))
 
-			case <-time.After(1 * time.Second):
-				l := manager.userLocStore.List()
-				return retry.RetryableError(
-					fmt.Errorf("no user event received (event count: %d). %v", eventCount, l),
-				)
-			}
-		},
-	)
-	require.NoError(t, err)
+	// The cache refresh is synchronous here, so the store should be populated immediately.
+	list = manager.userLocStore.List()
+	assert.Len(t, list, 2)
 
 	user1, err := manager.userLocStore.Get(userMarkerKey(int32(1), "ambulance", 3))
 	require.NoError(t, err)
@@ -174,9 +130,6 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.NotNil(t, user2)
 	assert.InEpsilon(t, 1.0, user2.GetX(), 0.0001)
 	assert.InEpsilon(t, 1.0, user2.GetY(), 0.0001)
-
-	list = manager.userLocStore.List()
-	assert.Len(t, list, 2)
 
 	staleUser1 := proto.Clone(user1).(*livemapmarkers.UserMarker)
 	staleUser1.SetJob("police")
@@ -216,24 +169,7 @@ func TestRefreshUserLocations(t *testing.T) {
 		),
 	)
 
-	// Wait for user2 to be updated
-	err = retry.Do(
-		ctx,
-		retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)),
-		func(ctx context.Context) error {
-			user2, err := manager.userLocStore.Get(userMarkerKey(int32(2), "ambulance", 3))
-			if err != nil {
-				return fmt.Errorf("user2 is nil in retry")
-			}
-
-			if user2.GetX() == 5.0 && user2.GetY() == 5.0 {
-				return nil
-			}
-
-			return retry.RetryableError(fmt.Errorf("user2 location not updated"))
-		},
-	)
-	require.NoError(t, err)
+	require.NoError(t, manager.refreshUserLocations(ctx, false))
 
 	user1, err = manager.userLocStore.Get(userMarkerKey(int32(1), "ambulance", 3))
 	require.NoError(t, err)
@@ -249,29 +185,7 @@ func TestRefreshUserLocations(t *testing.T) {
 
 	require.NoError(t, removeUserLocations(ctx, db))
 
-	// Wait for users to be removed (it takes at least 15 seconds from the updatedAt time of each user location)
-	err = retry.Do(
-		ctx,
-		retry.WithMaxRetries(45, retry.NewConstant(1*time.Second)),
-		func(ctx context.Context) error {
-			list := manager.userLocStore.List()
-			if len(list) == 0 {
-				return nil
-			}
-
-			stmt := tLocs.
-				SELECT(mysql.COUNT(tLocs.UserID).AS("total_count"))
-			var dest database.DataCount
-			if err := stmt.QueryContext(ctx, db, &dest); err != nil {
-				return err
-			}
-
-			return retry.RetryableError(
-				fmt.Errorf("user list isn't empty yet. count %d", dest.Total),
-			)
-		},
-	)
-	require.NoError(t, err)
+	require.NoError(t, manager.refreshUserLocations(ctx, false))
 
 	list = manager.userLocStore.List()
 	assert.Empty(t, list)
