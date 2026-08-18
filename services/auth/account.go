@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"slices"
+	"strconv"
 	"time"
 
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
@@ -21,19 +22,27 @@ func (s *Server) getAccountFromAccToken(
 ) (*accounts.Account, *authclaims.AccountInfoClaims, error) {
 	token, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
+		auditAuthFailure(ctx, "get_account", "token_missing_or_invalid", nil)
 		return nil, nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
+		auditAuthFailure(ctx, "get_account", "account_token_parse_failed", nil)
 		return nil, nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
 
 	acc, err := s.store.GetAccountByID(ctx, claims.AccID, false)
 	if err != nil {
+		auditAuthFailure(ctx, "get_account", "account_lookup_failed", map[string]string{
+			"account_id": strconv.FormatInt(claims.AccID, 10),
+		})
 		return nil, nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
 	if acc == nil || acc.ID == 0 {
+		auditAuthFailure(ctx, "get_account", "account_missing", map[string]string{
+			"account_id": strconv.FormatInt(claims.AccID, 10),
+		})
 		return nil, nil, errorsauth.ErrGenericAccount
 	}
 
@@ -63,6 +72,14 @@ func (s *Server) GetAccountInfo(
 
 	oauth2Conns, err := s.store.ListOAuth2Connections(ctx, account.GetId())
 	if err != nil {
+		auditAuthFailure(
+			ctx,
+			"get_account_info",
+			"oauth2_connections_lookup_failed",
+			map[string]string{
+				"account_id": strconv.FormatInt(account.GetId(), 10),
+			},
+		)
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
 
@@ -101,6 +118,14 @@ func (s *Server) RefreshAccountSession(
 			s.canAccountBeSuperuser(account.GetGroups(), account.GetLicense()),
 		)
 		if err := s.setCookies(ctx, responseClaims); err != nil {
+			auditAuthFailure(
+				ctx,
+				"refresh_account_session",
+				"session_refresh_failed",
+				map[string]string{
+					"account_id": strconv.FormatInt(account.GetId(), 10),
+				},
+			)
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 		}
 	}

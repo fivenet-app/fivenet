@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
@@ -42,16 +43,25 @@ func (s *Server) Login(
 
 	account, err := s.store.GetLoginAccountByUsername(ctx, req.GetUsername())
 	if err != nil {
+		auditAuthFailure(ctx, "login", "account_lookup_failed", map[string]string{
+			"username_present": boolString(req.GetUsername() != ""),
+		})
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
 
 	// No password set
 	if account.Password == nil {
-		return nil, errorsauth.ErrNoAccount
+		auditAuthFailure(ctx, "login", "account_missing_password", map[string]string{
+			"account_id": strconv.FormatInt(account.ID, 10),
+		})
+		return nil, errorsauth.ErrInvalidLogin
 	}
 
 	// Password check logic
 	if err := checkPassword(*account.Password, req.GetPassword()); err != nil {
+		auditAuthFailure(ctx, "login", "password_mismatch", map[string]string{
+			"account_id": strconv.FormatInt(account.ID, 10),
+		})
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
 
@@ -67,6 +77,9 @@ func (s *Server) Login(
 	if s.appCfg.Get().GetAuth().GetLastCharLock() && account.LastChar != nil {
 		token, err := s.tm.FromAccClaims(accClaims)
 		if err != nil {
+			auditAuthFailure(ctx, "login", "account_token_creation_failed", map[string]string{
+				"account_id": strconv.FormatInt(account.ID, 10),
+			})
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 		}
 
@@ -76,6 +89,10 @@ func (s *Server) Login(
 			CharId: *account.LastChar,
 		})
 		if err != nil {
+			auditAuthFailure(ctx, "login", "last_char_choose_failed", map[string]string{
+				"account_id": strconv.FormatInt(account.ID, 10),
+				"char_id":    strconv.Itoa(int(*account.LastChar)),
+			})
 			chooseCharResp = nil
 		}
 	}
@@ -83,6 +100,9 @@ func (s *Server) Login(
 	// If choose char response is null, set the basic login token
 	if chooseCharResp == nil {
 		if err := s.setCookies(ctx, accClaims); err != nil {
+			auditAuthFailure(ctx, "login", "session_cookie_set_failed", map[string]string{
+				"account_id": strconv.FormatInt(account.ID, 10),
+			})
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 		}
 	}
@@ -118,35 +138,41 @@ func (s *Server) CreateAccount(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	if !s.appCfg.Get().GetAuth().GetSignupEnabled() {
+		auditAuthFailure(ctx, "create_account", "signup_disabled", nil)
 		return nil, errorsauth.ErrSignupDisabled
 	}
 
 	acc, err := s.store.GetNewAccountByRegToken(ctx, req.GetRegToken())
 	if err != nil {
+		auditAuthFailure(ctx, "create_account", "registration_lookup_failed", map[string]string{
+			"reg_token_present": boolString(req.GetRegToken() != ""),
+		})
 		s.logger.Error(
 			"failed to get account from database by registration token",
 			zap.String("reg_token", req.GetRegToken()),
 			zap.Error(err),
 		)
-		return nil, errswrap.NewError(
-			err,
-			errorsauth.ErrAccountCreateFailed(map[string]any{"code": "404"}),
-		)
+		return nil, errorsauth.ErrGenericAccount
 	}
 	grpc_audit.SetAccountID(ctx, acc.ID)
 
 	if acc.Username != nil || acc.Password != nil {
-		return nil, errorsauth.ErrAccountExistsFailed
+		auditAuthFailure(ctx, "create_account", "registration_row_not_eligible", map[string]string{
+			"account_id":   strconv.FormatInt(acc.ID, 10),
+			"username_set": boolString(acc.Username != nil),
+			"password_set": boolString(acc.Password != nil),
+		})
+		return nil, errorsauth.ErrGenericAccount
 	}
 
 	req.Username = normalizeUsername(req.GetUsername())
 
 	hashedPassword, err := hashPassword(req.GetPassword())
 	if err != nil {
-		return nil, errswrap.NewError(
-			err,
-			errorsauth.ErrAccountCreateFailed(map[string]any{"code": "500"}),
-		)
+		auditAuthFailure(ctx, "create_account", "password_hash_failed", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
+		return nil, errorsauth.ErrGenericAccount
 	}
 
 	if err := s.store.ActivateAccount(
@@ -158,17 +184,20 @@ func (s *Server) CreateAccount(
 		acc.License,
 	); err != nil {
 		if dbutils.IsDuplicateError(err) {
-			return nil, errswrap.NewError(err, errorsauth.ErrAccountDuplicate)
+			auditAuthFailure(ctx, "create_account", "account_duplicate", map[string]string{
+				"account_id": strconv.FormatInt(acc.ID, 10),
+			})
+			return nil, errorsauth.ErrGenericAccount
 		}
 
 		s.logger.Error(
 			"failed to update account in database during account creation",
 			zap.Error(err),
 		)
-		return nil, errswrap.NewError(
-			err,
-			errorsauth.ErrAccountCreateFailed(map[string]any{"code": "409"}),
-		)
+		auditAuthFailure(ctx, "create_account", "account_activation_failed", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
+		return nil, errorsauth.ErrGenericAccount
 	}
 
 	return &pbauth.CreateAccountResponse{
@@ -188,6 +217,7 @@ func (s *Server) ChangePassword(
 	}
 	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
+		auditAuthFailure(ctx, "change_password", "token_parse_failed", nil)
 		return nil, errswrap.NewError(
 			err,
 			errorsauth.ErrChangePassword(map[string]any{"code": "401"}),
@@ -198,8 +228,14 @@ func (s *Server) ChangePassword(
 	acc, err := s.store.GetAccountByIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
+			auditAuthFailure(ctx, "change_password", "account_missing", map[string]string{
+				"account_id": strconv.FormatInt(claims.AccID, 10),
+			})
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
 		}
+		auditAuthFailure(ctx, "change_password", "account_lookup_failed", map[string]string{
+			"account_id": strconv.FormatInt(claims.AccID, 10),
+		})
 		return nil, errswrap.NewError(
 			err,
 			errorsauth.ErrChangePassword(map[string]any{"code": "500"}),
@@ -208,11 +244,17 @@ func (s *Server) ChangePassword(
 
 	// Account has no password set
 	if acc.Password == nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrNoAccount)
+		auditAuthFailure(ctx, "change_password", "account_missing_password", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
+		return nil, errorsauth.ErrChangePassword(map[string]any{"code": "401"})
 	}
 
 	// Password check logic
 	if err := checkPassword(*acc.Password, req.GetCurrentPassword()); err != nil {
+		auditAuthFailure(ctx, "change_password", "current_password_mismatch", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
 		return nil, errswrap.NewError(
 			err,
 			errorsauth.ErrChangePassword(map[string]any{"code": "401"}),
@@ -221,6 +263,9 @@ func (s *Server) ChangePassword(
 
 	hashedPassword, err := hashPassword(req.GetNewPassword())
 	if err != nil {
+		auditAuthFailure(ctx, "change_password", "new_password_hash_failed", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
 		return nil, errswrap.NewError(
 			err,
 			errorsauth.ErrChangePassword(map[string]any{"code": "500"}),
@@ -231,11 +276,17 @@ func (s *Server) ChangePassword(
 	acc.Password = &pass
 
 	if err := s.store.UpdatePassword(ctx, acc.ID, pass); err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrUpdateAccount)
+		auditAuthFailure(ctx, "change_password", "password_update_failed", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
+		return nil, errorsauth.ErrGenericAccount
 	}
 
 	// Clear session cookies after password change
 	if err := s.destroyCookies(ctx); err != nil {
+		auditAuthFailure(ctx, "change_password", "session_clear_failed", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
@@ -254,6 +305,7 @@ func (s *Server) ChangeUsername(
 	}
 	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
+		auditAuthFailure(ctx, "change_username", "token_parse_failed", nil)
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 	grpc_audit.SetAccountID(ctx, claims.AccID)
@@ -262,54 +314,86 @@ func (s *Server) ChangeUsername(
 	currentUsername := req.GetCurrentUsername()
 	newUsername := normalizeUsername(req.GetNewUsername())
 	if strings.EqualFold(currentUsername, newUsername) {
-		return nil, errorsauth.ErrBadUsername
+		auditAuthFailure(ctx, "change_username", "username_unchanged", map[string]string{
+			"account_id": strconv.FormatInt(claims.AccID, 10),
+		})
+		return nil, errorsauth.ErrChangeUsername
 	}
 
 	// Retrieve account from db using account ID and username
 	acc, err := s.store.GetAccountByIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
+			auditAuthFailure(ctx, "change_username", "account_missing", map[string]string{
+				"account_id": strconv.FormatInt(claims.AccID, 10),
+			})
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
 		}
+		auditAuthFailure(ctx, "change_username", "account_lookup_failed", map[string]string{
+			"account_id": strconv.FormatInt(claims.AccID, 10),
+		})
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 	grpc_audit.SetAccountID(ctx, acc.ID)
 
 	// No username nor password set on account, fail
 	if acc.Username == nil || acc.Password == nil {
-		return nil, errorsauth.ErrNoAccount
+		auditAuthFailure(ctx, "change_username", "account_not_eligible", map[string]string{
+			"account_id":   strconv.FormatInt(acc.ID, 10),
+			"username_set": boolString(acc.Username != nil),
+			"password_set": boolString(acc.Password != nil),
+		})
+		return nil, errorsauth.ErrChangeUsername
 	}
 
 	// Make sure current username matches the sent current username
 	if !strings.EqualFold(*acc.Username, currentUsername) {
-		return nil, errorsauth.ErrBadUsername
+		auditAuthFailure(ctx, "change_username", "current_username_mismatch", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
+		return nil, errorsauth.ErrChangeUsername
 	}
 
 	// New username is same as current username.. just return here.
 	resp := &pbauth.ChangeUsernameResponse{}
 	if *acc.Username == newUsername {
-		return nil, errorsauth.ErrBadUsername
+		auditAuthFailure(ctx, "change_username", "new_username_matches_current", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
+		return nil, errorsauth.ErrChangeUsername
 	}
 
 	// If there is an account with the new username, fail
 	newAcc, err := s.store.GetAccountByUsername(ctx, newUsername, false)
 	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		// Other database error
-		return nil, errswrap.NewError(err, errorsauth.ErrBadUsername)
+		auditAuthFailure(ctx, "change_username", "new_username_lookup_failed", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
+		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 	// An account with the requested username was found, fail
 	if newAcc != nil {
-		return nil, errorsauth.ErrBadUsername
+		auditAuthFailure(ctx, "change_username", "new_username_taken", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
+		return nil, errorsauth.ErrChangeUsername
 	}
 
 	acc.Username = &newUsername
 
 	if err := s.store.UpdateUsername(ctx, acc.ID, newUsername); err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrUpdateAccount)
+		auditAuthFailure(ctx, "change_username", "username_update_failed", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
+		return nil, errorsauth.ErrGenericAccount
 	}
 
 	// Destroy session
 	if err := s.destroyCookies(ctx); err != nil {
+		auditAuthFailure(ctx, "change_username", "session_clear_failed", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
 		return nil, err
 	}
 
@@ -324,6 +408,9 @@ func (s *Server) ForgotPassword(
 
 	acc, err := s.store.GetAccountByRegToken(ctx, req.GetRegToken(), true)
 	if err != nil {
+		auditAuthFailure(ctx, "forgot_password", "recovery_lookup_failed", map[string]string{
+			"reg_token_present": boolString(req.GetRegToken() != ""),
+		})
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
 	if acc != nil {
@@ -332,21 +419,40 @@ func (s *Server) ForgotPassword(
 
 	// Forgot password only applies to activated accounts with a username and no password
 	if acc == nil || acc.Username == nil || acc.Password != nil {
-		return nil, errorsauth.ErrNoAccount
+		auditAuthFailure(ctx, "forgot_password", "recovery_not_eligible", map[string]string{
+			"account_id": strconv.FormatInt(func() int64 {
+				if acc != nil {
+					return acc.ID
+				}
+				return 0
+			}(), 10),
+			"username_set": boolString(acc != nil && acc.Username != nil),
+			"password_set": boolString(acc != nil && acc.Password != nil),
+		})
+		return nil, errorsauth.ErrForgotPassword
 	}
 
 	hashedPassword, err := hashPassword(req.GetNew())
 	if err != nil {
+		auditAuthFailure(ctx, "forgot_password", "password_hash_failed", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
 	acc.Password = &hashedPassword
 
 	if err := s.store.ForgotPassword(ctx, acc.ID, hashedPassword); err != nil {
+		auditAuthFailure(ctx, "forgot_password", "recovery_update_failed", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
 
 	// Destroy session
 	if err := s.destroyCookies(ctx); err != nil {
+		auditAuthFailure(ctx, "forgot_password", "session_clear_failed", map[string]string{
+			"account_id": strconv.FormatInt(acc.ID, 10),
+		})
 		return nil, err
 	}
 

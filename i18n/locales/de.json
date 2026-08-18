@@ -2698,17 +2698,9 @@
                     "title": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
                     "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut."
                 },
-                "ErrAccountCreateFailed": {
-                    "title": "Fehler bei der Kontoerstellung",
-                    "content": "Bitte überprüfen sie ihren Registrierungstoken! ({code})"
-                },
                 "ErrInvalidLogin": {
                     "content": "Bitte überprüfen sie ihren Username und Passwort, und versuchen sie es erneut.",
                     "title": "Falscher Username oder Passwort!"
-                },
-                "ErrNoAccount": {
-                    "title": "Konto erforderlich",
-                    "content": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen."
                 },
                 "ErrNoCharFound": {
                     "title": "Kein Charakter gefunden",
@@ -2722,10 +2714,6 @@
                     "title": "Charakter gesperrt",
                     "content": "Sie haben nicht genug Berechtigungen um den Charakter auszuwählen!"
                 },
-                "ErrUpdateAccount": {
-                    "title": "Kontoaktualisierung fehlgeschlagen",
-                    "content": "Fehler beim Aktualisieren Ihres Benutzers!"
-                },
                 "ErrChangePassword": {
                     "title": "Fehler beim Ändern des Passworts!",
                     "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut. ({code})"
@@ -2734,25 +2722,13 @@
                     "title": "Fehler beim Zurücksetzen des Passworts!",
                     "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut."
                 },
-                "ErrAccountExistsFailed": {
-                    "title": "Konto existiert bereits!",
-                    "content": "Bitte nutzen Sie die Passwort vergessen Funktion!"
-                },
                 "ErrSignupDisabled": {
                     "title": "Konto-Erstellung ist deaktiviert!",
                     "content": "Die Konto-Erstellung ist deaktiviert. Bitte kontaktieren Sie Ihre FiveNet-Administratoren für weitere Informationen."
                 },
-                "ErrAccountDuplicate": {
-                    "title": "Benutzername bereits verwendet!",
-                    "content": "Benutzername bereits verwendet, bitte nutzen Sie einen anderen Benutzernamen."
-                },
                 "ErrChangeUsername": {
                     "title": "Benutzernamenänderung fehlgeschlagen",
                     "content": "Fehler beim Ändern des Benutzernamen!"
-                },
-                "ErrBadUsername": {
-                    "title": "Ungültiger Benutzername",
-                    "content": "Bitte stellen Sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen Sie es mit einem anderen Benutzernamen erneut."
                 },
                 "ErrCharLock": {
                     "title": "Charakter-Sperre ist aktiv!",

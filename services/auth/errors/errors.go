@@ -11,25 +11,10 @@ var (
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrGenericAccount.content"},
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrGenericAccount.title"},
 	)
-	ErrAccountCreateFailed = common.NewI18nErrFunc(
-		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrAccountCreateFailed.content"},
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrAccountCreateFailed.title"},
-	)
-	ErrAccountExistsFailed = common.NewI18nErr(
-		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrAccountExistsFailed.content"},
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrAccountExistsFailed.title"},
-	)
 	ErrInvalidLogin = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrInvalidLogin.content"},
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrInvalidLogin.title"},
-	)
-	ErrNoAccount = common.NewI18nErr(
-		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrNoAccount.content"},
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrNoAccount.title"},
 	)
 	ErrNoCharFound = common.NewI18nErr(
 		codes.NotFound,
@@ -46,11 +31,6 @@ var (
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrUnableToChooseChar.content"},
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrUnableToChooseChar.title"},
 	)
-	ErrUpdateAccount = common.NewI18nErr(
-		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrUpdateAccount.content"},
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrUpdateAccount.title"},
-	)
 	ErrChangePassword = common.NewI18nErrFunc(
 		codes.InvalidArgument,
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrChangePassword.content"},
@@ -66,20 +46,10 @@ var (
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrSignupDisabled.content"},
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrSignupDisabled.title"},
 	)
-	ErrAccountDuplicate = common.NewI18nErr(
-		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrAccountDuplicate.content"},
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrAccountDuplicate.title"},
-	)
 	ErrChangeUsername = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrChangeUsername.content"},
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrChangeUsername.title"},
-	)
-	ErrBadUsername = common.NewI18nErr(
-		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrBadUsername.content"},
-		&common.I18NItem{Key: "errors.auth.AuthService.ErrBadUsername.title"},
 	)
 	ErrNotSuperuser = common.NewI18nErr(
 		codes.PermissionDenied,

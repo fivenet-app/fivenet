@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"slices"
+	"strconv"
 
 	pbauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -18,6 +19,9 @@ func (s *Server) DeleteSocialLogin(
 	req *pbauth.DeleteSocialLoginRequest,
 ) (*pbauth.DeleteSocialLoginResponse, error) {
 	if ok := s.oauth2ProviderExists(req.GetProvider()); !ok {
+		auditAuthFailure(ctx, "delete_social_login", "provider_not_supported", map[string]string{
+			"provider": req.GetProvider(),
+		})
 		return nil, errorsauth.ErrGenericAccount
 	}
 
@@ -25,15 +29,30 @@ func (s *Server) DeleteSocialLogin(
 
 	token, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
+		auditAuthFailure(ctx, "delete_social_login", "token_missing_or_invalid", map[string]string{
+			"provider": req.GetProvider(),
+		})
 		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
 	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
+		auditAuthFailure(
+			ctx,
+			"delete_social_login",
+			"account_token_parse_failed",
+			map[string]string{
+				"provider": req.GetProvider(),
+			},
+		)
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
 
 	if err := s.store.DeleteSocialLogin(ctx, claims.AccID, req.GetProvider()); err != nil {
+		auditAuthFailure(ctx, "delete_social_login", "delete_failed", map[string]string{
+			"account_id": strconv.FormatInt(claims.AccID, 10),
+			"provider":   req.GetProvider(),
+		})
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
 

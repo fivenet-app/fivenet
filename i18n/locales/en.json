@@ -2698,17 +2698,9 @@
                     "title": "Account error",
                     "content": "Failed to get/ update your account, please try again."
                 },
-                "ErrAccountCreateFailed": {
-                    "title": "Account creation failed",
-                    "content": "Please check the token you have typed in! ({code})"
-                },
                 "ErrInvalidLogin": {
                     "content": "Please check your username and password and try again.",
                     "title": "Wrong username or password!"
-                },
-                "ErrNoAccount": {
-                    "title": "Account required",
-                    "content": "You need to use your registration token to create an account first."
                 },
                 "ErrNoCharFound": {
                     "title": "No character found",
@@ -2722,10 +2714,6 @@
                     "title": "Character locked",
                     "content": "You don't have permission to select this character!"
                 },
-                "ErrUpdateAccount": {
-                    "title": "Account update failed",
-                    "content": "Failed to update your account!"
-                },
                 "ErrChangeUsername": {
                     "title": "Username change failed",
                     "content": "Failed to change your username!"
@@ -2738,21 +2726,9 @@
                     "title": "Failed to reset password!",
                     "content": "Please check your email and try again."
                 },
-                "ErrAccountExistsFailed": {
-                    "title": "Account already exists!",
-                    "content": "Please use the forgot password function!"
-                },
                 "ErrSignupDisabled": {
                     "title": "Account signup is disabled!",
                     "content": "Please contact your FiveNet administrator for help on this."
-                },
-                "ErrAccountDuplicate": {
-                    "title": "Username already taken!",
-                    "content": "The username is already taken, please use a different username."
-                },
-                "ErrBadUsername": {
-                    "title": "Bad username",
-                    "content": "Please verify the correctness of your username! Please try again with a different username."
                 },
                 "ErrCharLock": {
                     "title": "Char lock is active!",

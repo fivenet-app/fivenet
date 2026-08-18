@@ -26,6 +26,16 @@ import (
 
 type refreshAccountSessionStore struct {
 	account *model.FivenetAccounts
+
+	getAccountByUsernameFn      func(context.Context, string, bool) (*model.FivenetAccounts, error)
+	getLoginAccountByUsernameFn func(context.Context, string) (*model.FivenetAccounts, error)
+	getAccountByIDAndUsernameFn func(context.Context, int64, string, bool) (*model.FivenetAccounts, error)
+	getAccountByRegTokenFn      func(context.Context, string, bool) (*model.FivenetAccounts, error)
+	getNewAccountByRegTokenFn   func(context.Context, string) (*model.FivenetAccounts, error)
+	activateAccountFn           func(context.Context, int64, string, string, string, string) error
+	updatePasswordFn            func(context.Context, int64, string) error
+	updateUsernameFn            func(context.Context, int64, string) error
+	forgotPasswordFn            func(context.Context, int64, string) error
 }
 
 func (s *refreshAccountSessionStore) GetAccountByID(
@@ -37,64 +47,103 @@ func (s *refreshAccountSessionStore) GetAccountByID(
 }
 
 func (s *refreshAccountSessionStore) GetAccountByUsername(
-	_ context.Context,
-	_ string,
-	_ bool,
+	ctx context.Context,
+	username string,
+	withPassword bool,
 ) (*model.FivenetAccounts, error) {
+	if s.getAccountByUsernameFn != nil {
+		return s.getAccountByUsernameFn(ctx, username, withPassword)
+	}
 	return nil, errors.New("unexpected call")
 }
 
 func (s *refreshAccountSessionStore) GetLoginAccountByUsername(
-	_ context.Context,
-	_ string,
+	ctx context.Context,
+	username string,
 ) (*model.FivenetAccounts, error) {
+	if s.getLoginAccountByUsernameFn != nil {
+		return s.getLoginAccountByUsernameFn(ctx, username)
+	}
 	return nil, errors.New("unexpected call")
 }
 
 func (s *refreshAccountSessionStore) GetAccountByIDAndUsername(
-	_ context.Context,
-	_ int64,
-	_ string,
-	_ bool,
+	ctx context.Context,
+	accountID int64,
+	username string,
+	withPassword bool,
 ) (*model.FivenetAccounts, error) {
+	if s.getAccountByIDAndUsernameFn != nil {
+		return s.getAccountByIDAndUsernameFn(ctx, accountID, username, withPassword)
+	}
 	return nil, errors.New("unexpected call")
 }
 
 func (s *refreshAccountSessionStore) GetAccountByRegToken(
-	_ context.Context,
-	_ string,
-	_ bool,
+	ctx context.Context,
+	regToken string,
+	withPassword bool,
 ) (*model.FivenetAccounts, error) {
+	if s.getAccountByRegTokenFn != nil {
+		return s.getAccountByRegTokenFn(ctx, regToken, withPassword)
+	}
 	return nil, errors.New("unexpected call")
 }
 
 func (s *refreshAccountSessionStore) GetNewAccountByRegToken(
-	_ context.Context,
-	_ string,
+	ctx context.Context,
+	regToken string,
 ) (*model.FivenetAccounts, error) {
+	if s.getNewAccountByRegTokenFn != nil {
+		return s.getNewAccountByRegTokenFn(ctx, regToken)
+	}
 	return nil, errors.New("unexpected call")
 }
 
 func (s *refreshAccountSessionStore) ActivateAccount(
-	_ context.Context,
-	_ int64,
-	_ string,
-	_ string,
-	_ string,
-	_ string,
+	ctx context.Context,
+	accountID int64,
+	regToken string,
+	username string,
+	hashedPassword string,
+	license string,
 ) error {
+	if s.activateAccountFn != nil {
+		return s.activateAccountFn(ctx, accountID, regToken, username, hashedPassword, license)
+	}
 	return errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) UpdatePassword(_ context.Context, _ int64, _ string) error {
+func (s *refreshAccountSessionStore) UpdatePassword(
+	ctx context.Context,
+	accountID int64,
+	hashedPassword string,
+) error {
+	if s.updatePasswordFn != nil {
+		return s.updatePasswordFn(ctx, accountID, hashedPassword)
+	}
 	return errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) UpdateUsername(_ context.Context, _ int64, _ string) error {
+func (s *refreshAccountSessionStore) UpdateUsername(
+	ctx context.Context,
+	accountID int64,
+	username string,
+) error {
+	if s.updateUsernameFn != nil {
+		return s.updateUsernameFn(ctx, accountID, username)
+	}
 	return errors.New("unexpected call")
 }
 
-func (s *refreshAccountSessionStore) ForgotPassword(_ context.Context, _ int64, _ string) error {
+func (s *refreshAccountSessionStore) ForgotPassword(
+	ctx context.Context,
+	accountID int64,
+	hashedPassword string,
+) error {
+	if s.forgotPasswordFn != nil {
+		return s.forgotPasswordFn(ctx, accountID, hashedPassword)
+	}
 	return errors.New("unexpected call")
 }
 
