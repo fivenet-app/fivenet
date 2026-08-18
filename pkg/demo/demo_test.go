@@ -227,7 +227,7 @@ func TestBuildDemoBannerMessageIncludesCredentialsAndIsIndefinite(t *testing.T) 
 	)
 	assert.Equal(
 		t,
-		utils.GetMD5HashFromString(msg.GetTitle()+"-"+time.Time{}.String()),
+		utils.GetSHA256HashFromString(msg.GetTitle()+"-"+time.Time{}.String()),
 		msg.GetId(),
 	)
 	assert.Nil(t, msg.GetExpiresAt(), "expected demo banner to remain visible indefinitely")

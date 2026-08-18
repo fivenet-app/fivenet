@@ -46,7 +46,7 @@ func (s *Server) UpdateAppConfig(
 			expiresAt = req.GetConfig().GetSystem().GetBannerMessage().GetExpiresAt().AsTime()
 		}
 
-		req.Config.System.BannerMessage.Id = utils.GetMD5HashFromString(
+		req.Config.System.BannerMessage.Id = utils.GetSHA256HashFromString(
 			req.GetConfig().GetSystem().GetBannerMessage().GetTitle() + "-" + expiresAt.String(),
 		)
 	}

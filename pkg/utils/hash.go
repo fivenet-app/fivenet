@@ -1,13 +1,12 @@
-//nolint:gosec // MD5 is not used for security purposes but for simple hashing of strings.
 package utils
 
 import (
-	"crypto/md5"
+	"crypto/sha256"
 	"encoding/hex"
 )
 
-// GetMD5HashFromString returns the MD5 hash of the input string as a hexadecimal string.
-func GetMD5HashFromString(input string) string {
-	hash := md5.Sum([]byte(input))
+// GetSHA256HashFromString returns the SHA256 hash of the input string as a hexadecimal string.
+func GetSHA256HashFromString(input string) string {
+	hash := sha256.Sum256([]byte(input))
 	return hex.EncodeToString(hash[:])
 }

@@ -67,7 +67,7 @@ func (d *Demo) buildDemoBannerMessage() *resourcesettings.BannerMessage {
 	)
 
 	return &resourcesettings.BannerMessage{
-		Id:        utils.GetMD5HashFromString(title + "-" + time.Time{}.String()),
+		Id:        utils.GetSHA256HashFromString(title + "-" + time.Time{}.String()),
 		Title:     title,
 		CreatedAt: timestamp.Now(),
 	}
