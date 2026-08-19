@@ -9,7 +9,7 @@ require (
 	github.com/HugoSmits86/nativewebp v1.3.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.43.0
-	github.com/adhocore/gronx v1.20.1
+	github.com/adhocore/gronx v1.20.3
 	github.com/alecthomas/kong v1.16.1
 	github.com/blevesearch/bleve/v2 v2.6.0
 	github.com/brianvoe/gofakeit/v7 v7.15.0
@@ -56,7 +56,6 @@ require (
 	github.com/puzpuzpuz/xsync/v4 v4.5.0
 	github.com/rs/cors v1.11.1
 	github.com/sergi/go-diff v1.4.0
-	github.com/sethvargo/go-retry v0.4.0
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/viper v1.21.0
 	github.com/srikrsna/protoc-gen-gotag v1.0.2
