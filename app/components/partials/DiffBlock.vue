@@ -10,9 +10,9 @@ const lines = computed<{ line: string; class?: string }[]>(() =>
         } else if (l.startsWith('@@') || l.startsWith('---') || l.startsWith('+++')) {
             return { line: l, class: 'text-primary-500' };
         } else if (l.startsWith('-')) {
-            return { line: l, class: 'text-red-500  bg-red-200/20' };
+            return { line: l, class: 'text-red-500  bg-red/20' };
         } else if (l.startsWith('+')) {
-            return { line: l, class: 'text-green-500 bg-green-200/20' };
+            return { line: l, class: 'text-green-500 bg-green/20' };
         } else {
             return { line: l };
         }

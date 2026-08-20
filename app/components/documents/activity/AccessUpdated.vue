@@ -38,10 +38,13 @@ defineProps<{
         />
 
         <span class="inline-flex gap-2">
-            <span class="text-base font-semibold text-white">{{ $t('common.legend') }}:</span>
-            <span class="bg-success-600 text-white">{{ $t('components.documents.activity_list.legend.added') }}</span>
-            <span class="bg-error-600 text-white">{{ $t('components.documents.activity_list.legend.removed') }}</span>
-            <span class="bg-info-600 text-white">{{ $t('components.documents.activity_list.legend.changed') }}</span>
+            <span class="text-base font-semibold text-white">{{ $t('common.legend') }}</span>
+
+            <UFieldGroup>
+                <UBadge color="success" :label="$t('components.documents.activity_list.legend.added')" />
+                <UBadge color="error" :label="$t('components.documents.activity_list.legend.removed')" />
+                <UBadge color="info" :label="$t('components.documents.activity_list.legend.changed')" />
+            </UFieldGroup>
         </span>
     </div>
 </template>
