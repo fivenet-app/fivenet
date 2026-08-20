@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import '~/assets/css/herofull-pattern.css';
+import type { PageCardProps } from '@nuxt/ui';
+import StarsBg from '~/components/landing/StarsBg.vue';
 
 const { t } = useI18n();
 
@@ -18,224 +20,266 @@ definePageMeta({
 const discordLink = 'https://discord.gg/ASRPPr8CeT';
 const repoLink = 'https://github.com/fivenet-app/fivenet';
 
-const faqs = [
+const introCards = computed<PageCardProps[]>(() => [
     {
-        label: t('pages.about.faq.one.question'),
-        content: t('pages.about.faq.one.answer'),
+        title: t('pages.about.introduction.feature_one.title'),
+        description: t('pages.about.introduction.feature_one.content'),
+        icon: 'i-mdi-magnify',
     },
     {
-        label: t('pages.about.faq.two.question'),
-        content: t('pages.about.faq.two.answer'),
+        title: t('pages.about.introduction.feature_two.title'),
+        description: t('pages.about.introduction.feature_two.content'),
+        icon: 'i-mdi-lock',
     },
     {
-        label: t('pages.about.faq.three.question'),
-        slot: 'question-3',
+        title: t('pages.about.introduction.feature_three.title'),
+        description: t('pages.about.introduction.feature_three.content'),
+        icon: 'i-mdi-map',
+    },
+]);
+
+const featureCards = computed<PageCardProps[]>(() => [
+    {
+        title: t('common.citizen', 2),
+        description: t('pages.overview.features.citizens'),
+        icon: 'i-mdi-account-multiple-outline',
+        to: '/citizens',
     },
     {
-        label: t('pages.about.faq.four.question'),
-        slot: 'question-4',
+        title: t('common.vehicle', 2),
+        description: t('pages.overview.features.vehicles'),
+        icon: 'i-mdi-car-outline',
+        to: '/vehicles',
     },
-] as { label: string; content?: string; slot?: string }[];
+    {
+        title: t('common.document', 2),
+        description: t('pages.overview.features.documents'),
+        icon: 'i-mdi-file-document-box-multiple-outline',
+        to: '/documents',
+    },
+    {
+        title: t('common.job', 2),
+        description: t('pages.overview.features.jobs'),
+        icon: 'i-mdi-briefcase-outline',
+        to: '/jobs',
+    },
+    {
+        title: t('common.calendar'),
+        description: t('pages.overview.features.calendar'),
+        icon: 'i-mdi-calendar-outline',
+        to: '/calendar',
+    },
+    {
+        title: t('common.mail', 2),
+        description: t('pages.overview.features.mailer'),
+        icon: 'i-mdi-email-outline',
+        to: '/mail',
+    },
+    {
+        title: t('common.livemap'),
+        description: t('pages.overview.features.livemap'),
+        icon: 'i-mdi-map-outline',
+        to: '/livemap',
+    },
+    {
+        title: t('common.dispatch_center'),
+        description: t('pages.overview.features.centrum'),
+        icon: 'i-mdi-car-emergency',
+        to: '/dispatch',
+    },
+    {
+        title: t('common.qualification', 2),
+        description: t('pages.overview.features.qualifications'),
+        icon: 'i-mdi-school-outline',
+        to: '/qualifications',
+    },
+    {
+        title: t('common.wiki'),
+        description: t('pages.overview.features.wiki'),
+        icon: 'i-mdi-book-open-variant-outline',
+        to: '/wiki',
+    },
+]);
+
+const faqs = computed(
+    () =>
+        [
+            {
+                label: t('pages.about.faq.one.question'),
+                content: t('pages.about.faq.one.answer'),
+            },
+            {
+                label: t('pages.about.faq.two.question'),
+                content: t('pages.about.faq.two.answer'),
+            },
+            {
+                label: t('pages.about.faq.three.question'),
+                slot: 'question-3',
+            },
+            {
+                label: t('pages.about.faq.four.question'),
+                slot: 'question-4',
+            },
+        ] as { label: string; content?: string; slot?: string }[],
+);
 </script>
 
 <template>
-    <UPage>
-        <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)' }">
-            <div class="flex flex-col justify-between">
-                <div>
-                    <div class="relative isolate px-6 py-20 lg:px-8">
-                        <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
+    <div class="relative min-h-dvh overflow-hidden">
+        <div class="hero pointer-events-none absolute inset-0 z-[-1]" />
 
-                        <div class="mx-auto max-w-2xl text-center">
-                            <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
-                                {{ $t('pages.about.title') }}
-                            </h2>
+        <UPage :ui="{ root: 'pb-(--page-content-bottom-offset)' }">
+            <UPageHero
+                :title="$t('pages.about.title')"
+                :description="$t('pages.about.subtitle')"
+                orientation="horizontal"
+                :ui="{
+                    container: 'py-24 sm:py-24 lg:py-24',
+                    description: 'text-(--ui-text-highlighted)',
+                    title: 'text-4xl sm:text-6xl',
+                }"
+            >
+                <template #top>
+                    <div
+                        class="absolute left-1/2 size-60 -translate-x-1/2 -translate-y-80 transform rounded-full blur-[300px] sm:size-80 dark:bg-(--ui-primary)"
+                    />
+                </template>
 
-                            <p class="mt-6 text-lg leading-8">
-                                {{ $t('pages.about.subtitle') }}
-                            </p>
-                        </div>
+                <template #default>
+                    <NuxtImg
+                        class="w-3xl max-w-none rounded-2xl"
+                        src="/images/screenshots/overview.webp"
+                        alt="FiveNet Overview - Screenshot"
+                        loading="lazy"
+                    />
+                </template>
+            </UPageHero>
+
+            <div class="relative">
+                <div
+                    class="pointer-events-none inset-x-0 h-20"
+                    :style="{ background: 'linear-gradient(to bottom, transparent, var(--ui-bg))' }"
+                />
+
+                <UPageSection
+                    class="bg-default"
+                    :title="$t('pages.about.introduction.title')"
+                    :description="$t('pages.about.introduction.content')"
+                    orientation="horizontal"
+                    :ui="{ container: 'py-8 sm:py-8 lg:py-8' }"
+                >
+                    <template #headline>
+                        <p class="text-sm font-semibold tracking-[0.24em] text-primary-300 uppercase">
+                            {{ $t('pages.about.introduction.pre_title') }}
+                        </p>
+                    </template>
+
+                    <div class="mt-8 flex flex-col gap-2">
+                        <UPageCard v-for="item in introCards" :key="item.title?.toString()" v-bind="item" variant="subtle" />
                     </div>
+                </UPageSection>
 
-                    <div class="relative isolate overflow-hidden px-6 py-12 sm:py-16 lg:overflow-visible lg:px-0">
-                        <div class="absolute inset-0 -z-10 overflow-hidden"></div>
+                <UPageSection
+                    :title="$t('pages.about.features.title')"
+                    :description="$t('pages.about.features.subtitle')"
+                    class="bg-default !pt-0"
+                    :ui="{ container: 'py-8 sm:py-8 lg:py-8' }"
+                >
+                    <UPageGrid class="gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                        <UPageCard v-for="item in featureCards" :key="item.title?.toString()" v-bind="item" />
+                    </UPageGrid>
+                </UPageSection>
 
-                        <div
-                            class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-start lg:gap-y-10"
-                        >
-                            <div
-                                class="lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8"
-                            >
-                                <div class="lg:pr-4">
-                                    <div class="lg:max-w-lg">
-                                        <p class="text-base leading-7 font-semibold text-primary-300">
-                                            {{ $t('pages.about.introduction.pre_title') }}
-                                        </p>
+                <UPageSection
+                    :title="$t('pages.about.faq.title')"
+                    class="bg-default"
+                    :ui="{ container: 'py-8 sm:py-8 lg:py-8' }"
+                >
+                    <div class="mx-auto max-w-4xl">
+                        <UAccordion :items="faqs" type="multiple" :ui="{ content: 'mb-2' }">
+                            <template #content="{ item: faq }">
+                                <UContainer>
+                                    <!-- eslint-disable vue/no-v-html -->
+                                    <p class="text-base leading-7 text-highlighted" v-html="faq.content"></p>
+                                </UContainer>
+                            </template>
 
-                                        <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-                                            {{ $t('pages.about.introduction.title') }}
-                                        </h1>
+                            <template #question-3>
+                                <UContainer>
+                                    <p class="text-base leading-7 text-highlighted">
+                                        <NuxtLink class="underline" external :to="`${repoLink}/#readme`">
+                                            {{ $t('pages.about.faq.three.click_here') }}
+                                        </NuxtLink>
+                                    </p>
+                                </UContainer>
+                            </template>
 
-                                        <p class="mt-6 text-xl leading-8 text-toned">
-                                            {{ $t('pages.about.introduction.content') }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                            <template #question-4>
+                                <UContainer>
+                                    <p class="text-base leading-7 text-highlighted">
+                                        <I18nT keypath="pages.about.faq.four.answer">
+                                            <template #discordLink>
+                                                <NuxtLink class="underline" external :to="discordLink">
+                                                    {{ $t('pages.about.faq.four.discord_link') }}
+                                                </NuxtLink>
+                                            </template>
 
-                            <div
-                                class="-mt-12 -ml-12 p-12 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden"
-                            >
-                                <NuxtImg
-                                    class="w-3xl max-w-none rounded-xl bg-default shadow-xl ring-1 ring-gray-400/10 sm:w-228"
-                                    src="/images/screenshots/overview.webp"
-                                    alt="FiveNet Overview - Screenshot"
-                                    loading="lazy"
-                                />
-                            </div>
-
-                            <div
-                                class="lg:col-span-2 lg:col-start-1 lg:row-start-2 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8"
-                            >
-                                <div class="lg:pr-4">
-                                    <div class="max-w-xl text-base leading-7 text-toned lg:max-w-lg">
-                                        <ul class="mt-8 space-y-8" role="list">
-                                            <li class="flex gap-x-3">
-                                                <UIcon class="mt-1 size-5 flex-none text-primary-300" name="i-mdi-magnify" />
-                                                <span>
-                                                    <span class="font-semibold text-gray-200">{{
-                                                        $t('pages.about.introduction.feature_one.title')
-                                                    }}</span>
-                                                    {{ $t('pages.about.introduction.feature_one.content') }}
-                                                </span>
-                                            </li>
-
-                                            <li class="flex gap-x-3">
-                                                <UIcon class="mt-1 size-5 flex-none text-primary-300" name="i-mdi-lock" />
-                                                <span>
-                                                    <span class="font-semibold text-gray-200">{{
-                                                        $t('pages.about.introduction.feature_two.title')
-                                                    }}</span>
-                                                    {{ $t('pages.about.introduction.feature_two.content') }}
-                                                </span>
-                                            </li>
-
-                                            <li class="flex gap-x-3">
-                                                <UIcon class="mt-1 size-5 flex-none text-primary-300" name="i-mdi-map" />
-                                                <span>
-                                                    <span class="font-semibold text-gray-200">{{
-                                                        $t('pages.about.introduction.feature_three.title')
-                                                    }}</span>
-                                                    {{ $t('pages.about.introduction.feature_three.content') }}
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                            <template #repoLink>
+                                                <NuxtLink class="underline" external :to="repoLink">
+                                                    {{ $t('pages.about.faq.four.repo_link') }}
+                                                </NuxtLink>
+                                            </template>
+                                        </I18nT>
+                                    </p>
+                                </UContainer>
+                            </template>
+                        </UAccordion>
                     </div>
+                </UPageSection>
 
-                    <div class="relative">
-                        <div class="mx-auto max-w-7xl px-6 py-8">
-                            <div class="mx-auto max-w-4xl">
-                                <h2 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-                                    {{ $t('pages.about.faq.title') }}
-                                </h2>
+                <UPageSection
+                    :title="$t('common.license', 2)"
+                    class="bg-default !pt-0"
+                    :ui="{ container: 'py-8 sm:py-8 lg:py-8' }"
+                >
+                    <UPageCard variant="subtle" class="mx-auto max-w-4xl">
+                        <p class="text-base leading-7 text-toned">
+                            {{ $t('pages.about.licenses.subtitle') }}
+                        </p>
 
-                                <dl class="mt-4">
-                                    <UAccordion :items="faqs" type="multiple" :ui="{ content: 'mb-2' }">
-                                        <template #content="{ item: faq }">
-                                            <UContainer>
-                                                <!-- eslint-disable vue/no-v-html -->
-                                                <p class="text-base leading-7 text-highlighted" v-html="faq.content"></p>
-                                            </UContainer>
-                                        </template>
-
-                                        <template #question-3>
-                                            <UContainer>
-                                                <p class="text-base leading-7 text-highlighted">
-                                                    <NuxtLink class="underline" external :to="`${repoLink}/#readme`">{{
-                                                        $t('pages.about.faq.three.click_here')
-                                                    }}</NuxtLink>
-                                                </p>
-                                            </UContainer>
-                                        </template>
-
-                                        <template #question-4>
-                                            <UContainer>
-                                                <p class="text-base leading-7 text-highlighted">
-                                                    <I18nT keypath="pages.about.faq.four.answer">
-                                                        <template #discordLink>
-                                                            <NuxtLink class="underline" external :to="discordLink">{{
-                                                                $t('pages.about.faq.four.discord_link')
-                                                            }}</NuxtLink>
-                                                        </template>
-
-                                                        <template #repoLink>
-                                                            <NuxtLink class="underline" external :to="repoLink">{{
-                                                                $t('pages.about.faq.four.repo_link')
-                                                            }}</NuxtLink>
-                                                        </template>
-                                                    </I18nT>
-                                                </p>
-                                            </UContainer>
-                                        </template>
-                                    </UAccordion>
-                                </dl>
-                            </div>
+                        <div class="mt-8">
+                            <UButton icon="i-mdi-license" block to="/about/licenses" :label="$t('pages.about.licenses_list')" />
                         </div>
-                    </div>
+                    </UPageCard>
+                </UPageSection>
 
-                    <div class="relative">
-                        <div class="mx-auto max-w-7xl px-6 py-8">
-                            <div class="mx-auto max-w-4xl">
-                                <h2 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-                                    {{ $t('pages.about.questions_or_issues.title') }}
-                                </h2>
+                <USeparator />
 
-                                <p class="mt-6 text-base leading-7">
-                                    {{ $t('pages.about.questions_or_issues.content') }}
-                                </p>
+                <UPageCTA
+                    class="overflow-hidden"
+                    :title="$t('pages.about.questions_or_issues.title')"
+                    :description="$t('pages.about.questions_or_issues.content')"
+                    :links="[
+                        {
+                            class: 'border-[#5865f2] bg-[#5865f2] text-white ring-[#5865f2]/50 hover:bg-[#5865f2]/10 focus:ring-[#5865f2]/50',
+                            variant: 'outline',
+                            size: 'xl',
+                            icon: 'i-simple-icons-discord',
+                            to: discordLink,
+                            external: true,
+                            label: $t('pages.about.join_discord'),
+                            ui: { leadingIcon: 'size-10' },
+                        },
+                    ]"
+                    variant="naked"
+                >
+                    <div
+                        class="absolute left-1/2 size-40 -translate-x-1/2 -translate-y-80 transform rounded-full blur-[250px] sm:size-50 dark:bg-(--ui-primary)"
+                    />
 
-                                <div class="mt-8">
-                                    <UButton
-                                        class="border-[#5865f2] text-[#5865f2] ring-[#5865f2]/50 hover:bg-[#5865f2]/10 focus:ring-[#5865f2]/50"
-                                        variant="outline"
-                                        size="xl"
-                                        icon="i-simple-icons-discord"
-                                        block
-                                        :to="discordLink"
-                                        external
-                                        :label="$t('pages.about.join_discord')"
-                                        :ui="{ leadingIcon: 'size-10' }"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative">
-                        <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
-                            <div class="mx-auto max-w-4xl">
-                                <h2 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-                                    {{ $t('common.licenses') }}
-                                </h2>
-
-                                <div class="mt-8">
-                                    <UButton
-                                        variant="link"
-                                        icon="i-mdi-license"
-                                        block
-                                        to="/about/licenses"
-                                        :label="$t('pages.about.licenses_list')"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <StarsBg />
+                </UPageCTA>
             </div>
-        </UDashboardPanel>
-    </UPage>
+        </UPage>
+    </div>
 </template>

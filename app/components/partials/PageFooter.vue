@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+defineProps<{
+    disableGradient?: boolean;
+}>();
+
 const { t } = useI18n();
 
 const { website } = useAppConfig();
@@ -31,45 +35,45 @@ const year = new Date().getFullYear();
 </script>
 
 <template>
-    <USeparator type="dashed" class="h-px">
-        <NuxtImg
-            src="/images/logo-bw-100x100.webp"
-            alt="FiveNet Logo"
-            title="FiveNet"
-            loading="lazy"
-            class="size-5 h-auto shrink-0"
+    <div class="relative pt-10">
+        <div
+            v-if="!disableGradient"
+            class="pointer-events-none absolute inset-x-0 top-0 h-10"
+            :style="{ background: 'linear-gradient(to bottom, transparent, var(--ui-bg))' }"
         />
-    </USeparator>
 
-    <UFooter>
-        <template #left>
-            <p class="text-sm text-muted">
-                <I18nT keypath="copyright">
-                    <template #year>
-                        {{ year }}
-                    </template>
-                </I18nT>
-            </p>
-        </template>
+        <USeparator class="h-px" />
 
-        <UNavigationMenu :items="items" variant="link" />
+        <UFooter class="bg-default/75">
+            <template #left>
+                <p class="text-sm text-muted">
+                    <I18nT keypath="copyright">
+                        <template #year>
+                            {{ year }}
+                        </template>
+                    </I18nT>
+                </p>
+            </template>
 
-        <template #right>
-            <UButton
-                icon="i-simple-icons-github"
-                color="neutral"
-                variant="ghost"
-                to="https://github.com/fivenet-app/fivenet"
-                target="_blank"
-            />
+            <UNavigationMenu :items="items" variant="link" />
 
-            <UButton
-                icon="i-simple-icons-discord"
-                color="neutral"
-                variant="ghost"
-                to="https://discord.gg/ASRPPr8CeT"
-                target="_blank"
-            />
-        </template>
-    </UFooter>
+            <template #right>
+                <UButton
+                    icon="i-simple-icons-github"
+                    color="neutral"
+                    variant="ghost"
+                    to="https://github.com/fivenet-app/fivenet"
+                    target="_blank"
+                />
+
+                <UButton
+                    icon="i-simple-icons-discord"
+                    color="neutral"
+                    variant="ghost"
+                    to="https://discord.gg/ASRPPr8CeT"
+                    target="_blank"
+                />
+            </template>
+        </UFooter>
+    </div>
 </template>

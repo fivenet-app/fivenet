@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useAuthStore } from '~/stores/auth';
 import { getStatsStatsClient } from '~~/gen/ts/clients';
+import type { Perms } from '~~/gen/ts/perms';
 import type { Stat } from '~~/gen/ts/resources/stats/stats';
 
 useHead({
@@ -11,12 +12,11 @@ definePageMeta({
     title: 'pages.stats.title',
     requiresAuth: true,
     authTokenOnly: true,
-    showCookieOptions: true,
     redirectIfAuthed: false,
 });
 
 const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { activeChar, can } = storeToRefs(authStore);
 
 const statsStatsClient = await getStatsStatsClient();
 
@@ -25,7 +25,7 @@ const CountUp = defineAsyncComponent(async () => {
     return m.default;
 });
 
-type Stats = { [key: string]: Stat & { unit?: string; icon?: string } };
+type Stats = { [key: string]: Stat & { unit?: string; icon?: string; permission?: Perms; to?: string } };
 
 const defaultStats: Stats = {
     users_registered: {
@@ -33,19 +33,29 @@ const defaultStats: Stats = {
     },
     documents_created: {
         icon: 'i-mdi-file-document-box-multiple',
+        permission: 'documents.DocumentsService/ListDocuments' as Perms,
+        to: '/documents',
     },
     dispatches_created: {
         icon: 'i-mdi-car-emergency',
+        permission: 'livemap.LivemapService/Stream' as Perms,
+        to: '/livemap',
     },
     citizen_activity: {
         icon: 'i-mdi-pulse',
+        permission: 'citizens.CitizensService/ListCitizens' as Perms,
+        to: '/citizens',
     },
     timeclock_tracked: {
         unit: 'common.time_ago.year',
         icon: 'i-mdi-timeline-clock',
+        permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
+        to: '/jobs/timeclock',
     },
     citizens_total: {
         icon: 'i-mdi-user-group',
+        permission: 'citizens.CitizensService/ListCitizens' as Perms,
+        to: '/citizens',
     },
 };
 
@@ -118,34 +128,17 @@ onBeforeMount(async () => {
                     <UDashboardSidebarCollapse />
                 </template>
             </UDashboardNavbar>
-
-            <div class="flex flex-col justify-between">
-                <div>
-                    <div class="relative isolate px-6 py-20 lg:px-8">
-                        <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
-
-                        <div class="mx-auto max-w-2xl text-center">
-                            <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
-                                {{ $t('pages.stats.title') }}
-                            </h2>
-
-                            <p class="mt-6 text-lg leading-8">
-                                {{ $t('pages.stats.subtitle') }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </template>
 
         <template #body>
-            <UPageGrid>
+            <div class="grid grid-cols-2 gap-4">
                 <UPageCard
                     v-for="(stat, key) in displayStats"
                     :key="key"
                     :title="$t(`pages.stats.stats.${key}`)"
                     :icon="stat.icon"
-                    :ui="{ leadingIcon: 'size-8' }"
+                    :to="stat.permission && can(stat.permission).value ? stat.to : undefined"
+                    :ui="{ leadingIcon: 'size-12' }"
                 >
                     <template #description>
                         <p class="flex w-full items-center gap-x-1 text-2xl font-semibold tracking-tight text-highlighted">
@@ -164,7 +157,7 @@ onBeforeMount(async () => {
                         </p>
                     </template>
                 </UPageCard>
-            </UPageGrid>
+            </div>
         </template>
     </UDashboardPanel>
 </template>

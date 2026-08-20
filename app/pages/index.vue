@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { ButtonProps } from '@nuxt/ui';
 import '~/assets/css/herofull-pattern.css';
+import type { ButtonProps } from '@nuxt/ui';
 import { useAuthStore } from '~/stores/auth';
 
 useHead({
@@ -50,10 +50,10 @@ const links = computed<ButtonProps[]>(() =>
 
 <template>
     <div class="flex flex-1 flex-col">
-        <div class="hero absolute inset-0 z-[-1]" />
-
         <div class="flex min-h-[calc(100dvh-var(--ui-header-height))] flex-col items-center justify-center">
-            <UCard class="my-4 w-full max-w-4xl bg-white/75 backdrop-blur-sm dark:bg-white/5">
+            <UCard
+                class="mt-[calc(var(--page-content-bottom-offset)+4*var(--spacing))] mb-6 w-full max-w-4xl bg-white/75 backdrop-blur-sm dark:bg-white/5"
+            >
                 <div class="space-y-4">
                     <UPageHero
                         :title="$t('pages.index.welcome')"
@@ -79,15 +79,3 @@ const links = computed<ButtonProps[]>(() =>
         </div>
     </div>
 </template>
-
-<style scoped>
-.gradient {
-    mask-image: radial-gradient(100% 100% at top, white, transparent);
-}
-
-.dark {
-    .gradient {
-        mask-image: radial-gradient(100% 100% at top, black, transparent);
-    }
-}
-</style>

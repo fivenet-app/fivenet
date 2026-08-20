@@ -4,17 +4,15 @@ import PageFooter from '~/components/partials/PageFooter.vue';
 </script>
 
 <template>
-    <div>
+    <div class="hero">
         <PageHeader />
 
-        <div>
-            <slot />
-        </div>
+        <slot />
+
+        <PageFooter />
 
         <ClientOnly>
             <LazyPartialsEventsLayer />
         </ClientOnly>
-
-        <PageFooter />
     </div>
 </template>

@@ -56,11 +56,12 @@ const isDev = import.meta.dev;
 
 <!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
-    <div class="h-dvh">
-        <div class="hero absolute inset-0 z-[-1]" />
+    <div class="relative isolate min-h-dvh overflow-hidden">
+        <div class="hero pointer-events-none absolute inset-0 z-[-1]" />
+
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%)" />
 
-        <div class="flex h-full flex-col items-center justify-center">
+        <div class="flex min-h-dvh flex-col items-center justify-center">
             <UButton
                 class="absolute top-4 z-10"
                 icon="i-mdi-home"
@@ -134,40 +135,38 @@ const isDev = import.meta.dev;
 
                 <template #footer>
                     <div class="flex flex-col gap-2">
-                        <div class="grid w-full flex-1 grid-cols-1 gap-2 md:flex">
-                            <div class="flex flex-1 flex-row gap-2">
-                                <UButton
-                                    class="flex-1"
-                                    color="primary"
-                                    icon="i-mdi-home"
-                                    size="lg"
-                                    :disabled="buttonDisabled"
-                                    :label="$t !== undefined ? $t('common.home') : 'Home'"
-                                    @click="() => handleError()"
-                                />
-
-                                <UButton
-                                    class="flex-1 truncate"
-                                    color="success"
-                                    icon="i-mdi-refresh"
-                                    size="lg"
-                                    :disabled="buttonDisabled"
-                                    :label="$t !== undefined ? $t('common.retry') : 'Retry'"
-                                    @click="() => handleError(route.fullPath)"
-                                />
-                            </div>
-
-                            <!-- @vue-ignore -->
+                        <div class="grid w-full grid-cols-3 gap-2">
                             <UButton
-                                v-if="error && (error.statusMessage || error.message)"
-                                class="col-span-2 truncate"
-                                color="warning"
-                                icon="i-mdi-content-copy"
+                                class=""
+                                color="primary"
+                                icon="i-mdi-home"
                                 size="lg"
-                                :label="$t !== undefined ? $t('pages.error.copy_error') : 'Copy Error message'"
-                                @click="() => copyError()"
+                                :disabled="buttonDisabled"
+                                :label="$t !== undefined ? $t('common.home') : 'Home'"
+                                @click="() => handleError()"
+                            />
+
+                            <UButton
+                                class="col-span-2 truncate"
+                                color="success"
+                                icon="i-mdi-refresh"
+                                size="lg"
+                                :disabled="buttonDisabled"
+                                :label="$t !== undefined ? $t('common.retry') : 'Retry'"
+                                @click="() => handleError(route.fullPath)"
                             />
                         </div>
+
+                        <!-- @vue-ignore -->
+                        <UButton
+                            v-if="error && (error.statusMessage || error.message)"
+                            class="col-span-1 truncate"
+                            color="warning"
+                            icon="i-mdi-content-copy"
+                            size="lg"
+                            :label="$t !== undefined ? $t('pages.error.copy_error') : 'Copy Error message'"
+                            @click="() => copyError()"
+                        />
 
                         <UButton v-if="isDev" label="Set Dev App Config" @click="() => setDevConfig()" />
                     </div>

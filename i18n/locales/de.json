@@ -194,7 +194,7 @@
                 "four": {
                     "question": "Ich habe einen Fehler oder ein anderes Problem mit FiveNet gefunden. Wo melde ich es?",
                     "answer": "Bitte melden Sie Probleme entweder auf {discordLink} oder auf {repoLink}.",
-                    "discord_link": "dem Galexrt Discord-Server",
+                    "discord_link": "dem FiveNet Discord-Server",
                     "repo_link": "dem FiveNet GitHub-Projekt Issue Tracker"
                 }
             },
@@ -202,7 +202,11 @@
                 "title": "Haben Sie Fragen oder Probleme?",
                 "content": "Stellen Sie sicher, dass Sie dem Discord-Server beitreten, falls Sie Probleme oder Fragen zu FiveNet haben."
             },
-            "join_discord": "Tritt dem Discord-Server von Galexrt bei",
+            "features": {
+                "title": "Kernfunktionen",
+                "subtitle": "Die wichtigsten Module, die FiveNet für Ihren Server zusammenführt."
+            },
+            "join_discord": "Tritt dem FiveNet Discord-Server bei",
             "licenses_list": "FiveNet Lizenz und Liste der genutzten Third-Party Lizenzen",
             "subtitle": "Über FiveNet und seine Ersteller.",
             "licenses": {
@@ -441,6 +445,7 @@
         "time": "Zeit",
         "service": "Service",
         "copy": "Kopieren",
+        "download": "Herunterladen",
         "prop": "Eigenschaft",
         "theme": "Design",
         "job_grade": "Arbeitsgrad",
