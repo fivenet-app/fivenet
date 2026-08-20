@@ -80,6 +80,14 @@ func walkNodeWithIndent(
 		collectInlineText(m, b)
 		return
 
+	case tiptapsanitizer.NodeTypeMapBlock:
+		collectInlineText(m, b)
+		return
+
+	case tiptapsanitizer.NodeTypePenaltyCalculator:
+		collectInlineText(m, b)
+		return
+
 	case tiptapsanitizer.NodeTypeImage:
 		// Block-level image
 		var ib strings.Builder
@@ -150,6 +158,27 @@ func collectInlineText(node any, b *strings.Builder) {
 		} else {
 			b.WriteString("@mention")
 		}
+		return
+
+	case tiptapsanitizer.NodeTypeMapBlock:
+		attrs, _ := m["attrs"].(map[string]any)
+		postal, _ := attrs["postal"].(string)
+		x, _ := attrs["x"].(float64)
+		y, _ := attrs["y"].(float64)
+		layer, _ := attrs["layer"].(string)
+		if postal != "" {
+			fmt.Fprintf(b, "[Map: %s %.2f, %.2f", postal, x, y)
+		} else {
+			fmt.Fprintf(b, "[Map: %.2f, %.2f", x, y)
+		}
+		if layer != "" {
+			fmt.Fprintf(b, " - %s", layer)
+		}
+		b.WriteString("]")
+		return
+
+	case tiptapsanitizer.NodeTypePenaltyCalculator:
+		b.WriteString("[Penalty Calculator]")
 		return
 
 	case tiptapsanitizer.NodeTypeImage:
