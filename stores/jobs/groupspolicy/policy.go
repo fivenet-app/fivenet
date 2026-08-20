@@ -1,4 +1,4 @@
-package jobspolicy
+package groupspolicy
 
 import jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 

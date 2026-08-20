@@ -16,7 +16,7 @@ import (
 	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
-	jobspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/jobspolicy"
+	groupspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/groupspolicy"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -242,10 +242,10 @@ func (s *Server) CreateGroup(
 	if err := validateGroupPolicyCombination(group); err != nil {
 		return nil, err
 	}
-	if !jobspolicy.AllowsManualMembers(group.GetType()) && len(req.GetManualMemberUserIds()) > 0 {
+	if !groupspolicy.AllowsManualMembers(group.GetType()) && len(req.GetManualMemberUserIds()) > 0 {
 		return nil, errorsjobs.ErrGroupPolicyViolation
 	}
-	if !jobspolicy.AllowsRules(group.GetType()) && len(req.GetRules()) > 0 {
+	if !groupspolicy.AllowsRules(group.GetType()) && len(req.GetRules()) > 0 {
 		return nil, errorsjobs.ErrGroupPolicyViolation
 	}
 	if req.HasSortRank() {
@@ -377,14 +377,14 @@ func (s *Server) CreateGroup(
 		seenMembers[userID] = struct{}{}
 		if err := validateGroupPolicyAllowedMutation(
 			group,
-			jobspolicy.MutationManualMemberAdd,
+			groupspolicy.MutationManualMemberAdd,
 		); err != nil {
 			return nil, err
 		}
 		if err := s.ensureGroupUserInJob(ctx, tx, job, userID); err != nil {
 			return nil, err
 		}
-		if jobspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
+		if groupspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
 			matches, err := s.userMatchesGroupRules(ctx, tx, group, userID)
 			if err != nil {
 				return nil, err

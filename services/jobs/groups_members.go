@@ -21,7 +21,7 @@ import (
 	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
-	jobspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/jobspolicy"
+	groupspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/groupspolicy"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -493,11 +493,11 @@ func (s *Server) resolveGroupMembers(
 		slices.Contains(sources, jobsgroups.GroupMemberSource_GROUP_MEMBER_SOURCE_MANUAL)
 	wantRules := len(sources) == 0 ||
 		slices.Contains(sources, jobsgroups.GroupMemberSource_GROUP_MEMBER_SOURCE_RULE)
-	manualAllowed := jobspolicy.AllowsManualMembers(group.GetType())
-	rulesAllowed := jobspolicy.AllowsRules(group.GetType())
-	exclusionsAllowed := jobspolicy.AllowsExclusions(group.GetType())
+	manualAllowed := groupspolicy.AllowsManualMembers(group.GetType())
+	rulesAllowed := groupspolicy.AllowsRules(group.GetType())
+	exclusionsAllowed := groupspolicy.AllowsExclusions(group.GetType())
 	needsRulesForStrictManual := wantManual &&
-		jobspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode())
+		groupspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode())
 	wantLeaders := includeLeaders ||
 		slices.Contains(sources, jobsgroups.GroupMemberSource_GROUP_MEMBER_SOURCE_LEADER)
 	var manualMembers []*jobsgroups.GroupManualMember
@@ -922,14 +922,14 @@ func (s *Server) AddGroupMember(
 	}
 	if err := validateGroupPolicyAllowedMutation(
 		group,
-		jobspolicy.MutationManualMemberAdd,
+		groupspolicy.MutationManualMemberAdd,
 	); err != nil {
 		return nil, err
 	}
 	if err := s.ensureGroupUserInJob(ctx, tx, userInfo.GetJob(), req.GetUserId()); err != nil {
 		return nil, err
 	}
-	if jobspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
+	if groupspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
 		matches, err := s.userMatchesGroupRules(ctx, tx, group, req.GetUserId())
 		if err != nil {
 			return nil, err
@@ -1118,7 +1118,7 @@ func (s *Server) ExcludeGroupMember(
 	}
 	if err := validateGroupPolicyAllowedMutation(
 		group,
-		jobspolicy.MutationExclusionAdd,
+		groupspolicy.MutationExclusionAdd,
 	); err != nil {
 		return nil, err
 	}

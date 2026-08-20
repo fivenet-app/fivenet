@@ -9,7 +9,7 @@ import (
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
-	jobspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/jobspolicy"
+	groupspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/groupspolicy"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -141,20 +141,20 @@ func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64)
 	var ruleMatches []*GroupRuleMemberMatch
 	var exclusions []*jobsgroups.GroupMemberExclusion
 	var err error
-	if jobspolicy.AllowsManualMembers(group.GetType()) {
+	if groupspolicy.AllowsManualMembers(group.GetType()) {
 		manualMembers, err = s.ListGroupManualMembers(ctx, db, groupID, "")
 		if err != nil {
 			return err
 		}
 	}
-	if jobspolicy.AllowsRules(group.GetType()) ||
-		jobspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
+	if groupspolicy.AllowsRules(group.GetType()) ||
+		groupspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
 		ruleMatches, err = s.ListGroupRuleMemberMatches(ctx, db, group, "")
 		if err != nil {
 			return err
 		}
 	}
-	if jobspolicy.AllowsExclusions(group.GetType()) {
+	if groupspolicy.AllowsExclusions(group.GetType()) {
 		exclusions, err = s.ListGroupMemberExclusions(ctx, db, groupID, "")
 		if err != nil {
 			return err
@@ -165,7 +165,7 @@ func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64)
 		return err
 	}
 	var rulesCount int64
-	if jobspolicy.AllowsRules(group.GetType()) {
+	if groupspolicy.AllowsRules(group.GetType()) {
 		rulesCount, err = s.countGroupRules(ctx, db, groupID)
 		if err != nil {
 			return err
@@ -179,7 +179,7 @@ func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64)
 
 	members := map[int32]struct{}{}
 	ruleMemberIDs := map[int32]struct{}{}
-	if jobspolicy.AllowsRules(group.GetType()) {
+	if groupspolicy.AllowsRules(group.GetType()) {
 		for _, match := range ruleMatches {
 			ruleMemberIDs[match.UserID] = struct{}{}
 			if _, ok := excluded[match.UserID]; !ok {
@@ -187,12 +187,12 @@ func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64)
 			}
 		}
 	}
-	if jobspolicy.AllowsManualMembers(group.GetType()) {
+	if groupspolicy.AllowsManualMembers(group.GetType()) {
 		for _, member := range manualMembers {
 			if _, ok := excluded[member.GetUserId()]; ok {
 				continue
 			}
-			if jobspolicy.RequiresManualMembersMatchRules(
+			if groupspolicy.RequiresManualMembersMatchRules(
 				group.GetType(),
 				group.GetMembershipMode(),
 			) {

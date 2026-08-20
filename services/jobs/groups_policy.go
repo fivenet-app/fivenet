@@ -5,7 +5,7 @@ import (
 
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
-	jobspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/jobspolicy"
+	groupspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/groupspolicy"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -25,7 +25,7 @@ func validateGroupPolicyCombination(group *jobsgroups.Group) error {
 	if group == nil {
 		return errorsjobs.ErrGroupPolicyViolation
 	}
-	if !jobspolicy.ValidTypeAndMembershipMode(group.GetType(), group.GetMembershipMode()) {
+	if !groupspolicy.ValidTypeAndMembershipMode(group.GetType(), group.GetMembershipMode()) {
 		return errorsjobs.ErrGroupPolicyViolation
 	}
 	return nil
@@ -33,12 +33,12 @@ func validateGroupPolicyCombination(group *jobsgroups.Group) error {
 
 func validateGroupPolicyAllowedMutation(
 	group *jobsgroups.Group,
-	mutation jobspolicy.Mutation,
+	mutation groupspolicy.Mutation,
 ) error {
 	if group == nil {
 		return errorsjobs.ErrGroupPolicyViolation
 	}
-	if !jobspolicy.AllowsMutation(group.GetType(), mutation) {
+	if !groupspolicy.AllowsMutation(group.GetType(), mutation) {
 		return errorsjobs.ErrGroupPolicyViolation
 	}
 	return nil
@@ -66,16 +66,16 @@ func (s *Server) validateGroupPolicyAgainstExistingData(
 		return err
 	}
 
-	if !jobspolicy.AllowsManualMembers(group.GetType()) && len(manualMembers) > 0 {
+	if !groupspolicy.AllowsManualMembers(group.GetType()) && len(manualMembers) > 0 {
 		return errorsjobs.ErrGroupPolicyViolation
 	}
-	if !jobspolicy.AllowsRules(group.GetType()) && len(rules) > 0 {
+	if !groupspolicy.AllowsRules(group.GetType()) && len(rules) > 0 {
 		return errorsjobs.ErrGroupPolicyViolation
 	}
-	if !jobspolicy.AllowsExclusions(group.GetType()) && len(exclusions) > 0 {
+	if !groupspolicy.AllowsExclusions(group.GetType()) && len(exclusions) > 0 {
 		return errorsjobs.ErrGroupPolicyViolation
 	}
-	if jobspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
+	if groupspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
 		ruleMatches, err := s.store.ListGroupRuleMemberMatches(ctx, db, group, "")
 		if err != nil {
 			return err
