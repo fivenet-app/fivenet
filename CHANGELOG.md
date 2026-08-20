@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.8.2] - 2026-08-20
+
+### 🚀 Features
+
+- *(demo)* Create role for lowest job grade
+- *(overview)* Add quick access bar with pinning context menu
+- Add bw/gray fivenet logo variant
+- *(jobs)* Hide group selectors without list permission
+- *(calendar)* Rework ui to be more sleek heavily inspired by Nuxt UI's
+
+### 🐛 Bug Fixes
+
+- Version in VERSION file
+- Pkg version
+- Remove v2026.8.2 version from changelog
+- Use fontsource for local font loading
+- App config default perms methods label issue
+- Cleanup unnamed logger usage and debug info formatting
+- Improve banner display by adding padding to root of dashboardpanels
+- Cleanup error page info
+- Banner not appearing again when system message doesn't have
+- *(tiptap)* Search and replace extension type issue
+- Apply padding-bottom to all UDashboardPanel main pages/components
+- Add imagemagick as utility for image handling
+- Rename bottom offset css vars and cleanup CardElement type
+- *(demo,perms)* Reload RBAC cache after demo data seeding
+- *(auth)* Forgot password not requiring a fully registered account
+- *(demo)* Seed rbac test issue due to rng not initialized
+- *(config)* Switch system banner to sha256
+- *(ui)* Tighten shared modal and overview spacing
+- *(auth)* Standardize auth errors and add failure audit metadata
+- *(tracker)* Make refresh user location test deterministic
+- Cleanup hero bg usage and rework about and licenses pages
+- *(jobs)* Rename jobspolicy pkg to groupspolicy
+- *(channels)* Update helm chart version
+
 ## [2026.8.1] - 2026-08-14
 
 ### 🚀 Features
