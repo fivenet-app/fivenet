@@ -59,7 +59,7 @@ require (
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/viper v1.21.0
 	github.com/srikrsna/protoc-gen-gotag v1.0.2
-	github.com/stretchr/testify v1.12.0
+	github.com/stretchr/testify v1.12.1
 	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4
 	go.eigsys.de/gin-cachecontrol/v2 v2.6.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.70.0
