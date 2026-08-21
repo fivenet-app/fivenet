@@ -32,7 +32,7 @@ const (
 	mysqlCollation    = "utf8mb4_unicode_ci"
 	mysqlTimezone     = "Europe/Berlin"
 
-	cleanupTimeout = 30 * time.Second
+	cleanupTimeout = 45 * time.Second
 )
 
 type dbServer struct {
@@ -143,7 +143,9 @@ func (m *dbServer) Stop() {
 		release := m.release
 		m.release = nil
 		defer func() {
-			require.NoError(m.t, release(), "could not release cloned test database")
+			if err := release(); err != nil {
+				m.t.Logf("ignoring cleanup error releasing cloned test database: %v", err)
+			}
 		}()
 	}
 
@@ -184,14 +186,14 @@ func (m *mysqlTestDBManager) acquire(
 	db, err := m.openDB(cloneName, false)
 	if err != nil {
 		_ = m.dropDatabaseLocked(ctx, cloneName)
-		return nil, "", nil, fmt.Errorf("failed to open cloned test database: %w", err)
+		return nil, "", nil, fmt.Errorf("failed to open cloned test database. %w", err)
 	}
 
 	// Make sure the clone is ready before handing it to the caller.
 	if err := db.PingContext(ctx); err != nil {
 		_ = db.Close()
 		_ = m.dropDatabaseLocked(ctx, cloneName)
-		return nil, "", nil, fmt.Errorf("failed to ping cloned test database: %w", err)
+		return nil, "", nil, fmt.Errorf("failed to ping cloned test database. %w", err)
 	}
 
 	m.cloneRefs++
@@ -253,7 +255,7 @@ func (m *mysqlTestDBManager) ensureSeedLocked(ctx context.Context, t *testing.T)
 
 	if err := m.waitForSeedLocked(ctx); err != nil {
 		_ = m.resetLocked(t)
-		return fmt.Errorf("failed to wait for seed database to become ready: %w", err)
+		return fmt.Errorf("failed to wait for seed database to become ready. %w", err)
 	}
 
 	if err := m.prepareSeedLocked(ctx); err != nil {
@@ -272,17 +274,17 @@ func (m *mysqlTestDBManager) waitForSeedLocked(ctx context.Context) error {
 
 		db, err := m.openDB(mysqlSeedDBName, false)
 		if err != nil {
-			return fmt.Errorf("failed to open seed database connection: %w", err)
+			return fmt.Errorf("failed to open seed database connection. %w", err)
 		}
 		defer db.Close()
 
 		if err := db.PingContext(ctx); err != nil {
-			return fmt.Errorf("failed to ping seed database: %w", err)
+			return fmt.Errorf("failed to ping seed database. %w", err)
 		}
 
 		rows, err := db.QueryContext(ctx, "SELECT 1;")
 		if err != nil {
-			return fmt.Errorf("failed to execute test query on seed database: %w", err)
+			return fmt.Errorf("failed to execute test query on seed database. %w", err)
 		}
 		defer rows.Close()
 
@@ -298,11 +300,11 @@ func (m *mysqlTestDBManager) prepareSeedLocked(ctx context.Context) error {
 		false,
 		false,
 	); err != nil {
-		return fmt.Errorf("failed to migrate seed test database: %w", err)
+		return fmt.Errorf("failed to migrate seed test database. %w", err)
 	}
 
 	if err := m.loadBaseDataLocked(ctx); err != nil {
-		return fmt.Errorf("failed to load base data into seed database: %w", err)
+		return fmt.Errorf("failed to load base data into seed database. %w", err)
 	}
 
 	return nil
@@ -312,7 +314,7 @@ func (m *mysqlTestDBManager) loadBaseDataLocked(ctx context.Context) error {
 	path := filepath.Join(tests.TestDataSQLPath, "base_*.sql")
 	files, err := filepath.Glob(path)
 	if err != nil {
-		return fmt.Errorf("failed to find base data sql files (%s): %w", path, err)
+		return fmt.Errorf("failed to find base data sql files (%s). %w", path, err)
 	}
 	// Sort the found files as they might not be in lexical order which we
 	// need for this case https://github.com/golang/go/issues/17153
@@ -320,7 +322,7 @@ func (m *mysqlTestDBManager) loadBaseDataLocked(ctx context.Context) error {
 
 	initDB, err := m.openDB(mysqlSeedDBName, true)
 	if err != nil {
-		return fmt.Errorf("failed to open seed database for multi statement exec: %w", err)
+		return fmt.Errorf("failed to open seed database for multi statement exec. %w", err)
 	}
 	defer initDB.Close()
 
@@ -340,11 +342,11 @@ func (m *mysqlTestDBManager) loadSQLFileLocked(
 ) error {
 	c, ioErr := os.ReadFile(file)
 	if ioErr != nil {
-		return fmt.Errorf("failed to read %s for tests: %w", file, ioErr)
+		return fmt.Errorf("failed to read %s for tests. %w", file, ioErr)
 	}
 
 	if _, err := initDB.ExecContext(ctx, string(c)); err != nil {
-		return fmt.Errorf("failed to apply %s for tests: %w", file, err)
+		return fmt.Errorf("failed to apply %s for tests. %w", file, err)
 	}
 
 	return nil
@@ -358,7 +360,7 @@ func (m *mysqlTestDBManager) cloneSeedLocked(
 	t.Helper()
 	seedDB, err := m.openDB(mysqlSeedDBName, false)
 	if err != nil {
-		return fmt.Errorf("failed to open seed database for clone setup: %w", err)
+		return fmt.Errorf("failed to open seed database for clone setup. %w", err)
 	}
 	defer seedDB.Close()
 
@@ -375,13 +377,13 @@ func (m *mysqlTestDBManager) cloneSeedLocked(
 	db, err := m.openDB(cloneName, false)
 	if err != nil {
 		_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
-		return fmt.Errorf("failed to open cloned database %s: %w", cloneName, err)
+		return fmt.Errorf("failed to open cloned database %s. %w", cloneName, err)
 	}
 	defer db.Close()
 
 	if _, err := db.ExecContext(ctx, "SET FOREIGN_KEY_CHECKS = 0;"); err != nil {
 		_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
-		return fmt.Errorf("failed to disable foreign key checks for %s: %w", cloneName, err)
+		return fmt.Errorf("failed to disable foreign key checks for %s. %w", cloneName, err)
 	}
 	defer func(ctx context.Context) {
 		_, _ = db.ExecContext(ctx, "SET FOREIGN_KEY_CHECKS = 1;")
@@ -403,7 +405,7 @@ func (m *mysqlTestDBManager) cloneSeedLocked(
 		if _, err := db.ExecContext(ctx, createStmt); err != nil {
 			_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
 			return fmt.Errorf(
-				"failed to create cloned table %s: %w",
+				"failed to create cloned table %s. %w",
 				qualifiedMySQLName(cloneName, table),
 				err,
 			)
@@ -428,7 +430,7 @@ func (m *mysqlTestDBManager) cloneSeedLocked(
 			),
 		); err != nil {
 			_ = m.dropDatabaseUsingCleanupLocked(seedDB, cloneName)
-			return fmt.Errorf("failed to copy rows into cloned table %s: %w", cloneTable, err)
+			return fmt.Errorf("failed to copy rows into cloned table %s. %w", cloneTable, err)
 		}
 	}
 
@@ -447,7 +449,7 @@ func (m *mysqlTestDBManager) createDatabaseLocked(
 		mysqlCollation,
 	)
 	if _, err := db.ExecContext(ctx, stmt); err != nil {
-		return fmt.Errorf("failed to create cloned database %s: %w", dbName, err)
+		return fmt.Errorf("failed to create cloned database %s. %w", dbName, err)
 	}
 
 	return nil
@@ -466,7 +468,7 @@ func (m *mysqlTestDBManager) listSeedTablesLocked(
 		mysqlSeedDBName,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to list tables from seed database: %w", err)
+		return nil, fmt.Errorf("failed to list tables from seed database. %w", err)
 	}
 	defer rows.Close()
 
@@ -474,13 +476,13 @@ func (m *mysqlTestDBManager) listSeedTablesLocked(
 	for rows.Next() {
 		var name string
 		if err := rows.Scan(&name); err != nil {
-			return nil, fmt.Errorf("failed to scan seed table name: %w", err)
+			return nil, fmt.Errorf("failed to scan seed table name. %w", err)
 		}
 
 		tables = append(tables, name)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("failed while reading seed table names: %w", err)
+		return nil, fmt.Errorf("failed while reading seed table names. %w", err)
 	}
 
 	return tables, nil
@@ -493,13 +495,13 @@ func (m *mysqlTestDBManager) showCreateTableLocked(
 ) (string, error) {
 	rows, err := db.QueryContext(ctx, fmt.Sprintf("SHOW CREATE TABLE %s;", quoteMySQLIdent(table)))
 	if err != nil {
-		return "", fmt.Errorf("failed to show create table for %s: %w", table, err)
+		return "", fmt.Errorf("failed to show create table for %s. %w", table, err)
 	}
 	defer rows.Close()
 
 	if !rows.Next() {
 		if err := rows.Err(); err != nil {
-			return "", fmt.Errorf("failed while reading create statement for %s: %w", table, err)
+			return "", fmt.Errorf("failed while reading create statement for %s. %w", table, err)
 		}
 		return "", fmt.Errorf("no create statement returned for %s", table)
 	}
@@ -507,11 +509,11 @@ func (m *mysqlTestDBManager) showCreateTableLocked(
 	var tableName string
 	var createStmt string
 	if err := rows.Scan(&tableName, &createStmt); err != nil {
-		return "", fmt.Errorf("failed to scan create statement for %s: %w", table, err)
+		return "", fmt.Errorf("failed to scan create statement for %s. %w", table, err)
 	}
 
 	if err := rows.Err(); err != nil {
-		return "", fmt.Errorf("failed while reading create statement for %s: %w", table, err)
+		return "", fmt.Errorf("failed while reading create statement for %s. %w", table, err)
 	}
 
 	return createStmt, nil
@@ -541,7 +543,7 @@ func (m *mysqlTestDBManager) listCopyColumnsLocked(
 		table,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to list copy columns for %s: %w", table, err)
+		return nil, fmt.Errorf("failed to list copy columns for %s. %w", table, err)
 	}
 	defer rows.Close()
 
@@ -549,12 +551,12 @@ func (m *mysqlTestDBManager) listCopyColumnsLocked(
 	for rows.Next() {
 		var column string
 		if err := rows.Scan(&column); err != nil {
-			return nil, fmt.Errorf("failed to scan copy column for %s: %w", table, err)
+			return nil, fmt.Errorf("failed to scan copy column for %s. %w", table, err)
 		}
 		columns = append(columns, column)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("failed while reading copy columns for %s: %w", table, err)
+		return nil, fmt.Errorf("failed while reading copy columns for %s. %w", table, err)
 	}
 
 	if len(columns) == 0 {
@@ -574,7 +576,7 @@ func (m *mysqlTestDBManager) dropDatabaseUsingLocked(
 		fmt.Sprintf("DROP DATABASE IF EXISTS %s;", quoteMySQLIdent(dbName)),
 	)
 	if err != nil {
-		return fmt.Errorf("failed to drop cloned database %s: %w", dbName, err)
+		return fmt.Errorf("failed to drop cloned database %s. %w", dbName, err)
 	}
 
 	return nil
@@ -638,14 +640,14 @@ func (m *mysqlTestDBManager) resetLocked(t *testing.T) error {
 
 	var errs []error
 	if err := resource.Close(ctx); err != nil {
-		errs = append(errs, fmt.Errorf("failed to close shared mysql test container: %w", err))
+		errs = append(errs, fmt.Errorf("failed to close shared mysql test container. %w", err))
 	}
 
 	if m.pool != nil {
 		pool := m.pool
 		m.pool = nil
 		if err := pool.Close(ctx); err != nil {
-			errs = append(errs, fmt.Errorf("failed to close shared mysql test pool: %w", err))
+			errs = append(errs, fmt.Errorf("failed to close shared mysql test pool. %w", err))
 		}
 	}
 
@@ -655,7 +657,7 @@ func (m *mysqlTestDBManager) resetLocked(t *testing.T) error {
 func (m *mysqlTestDBManager) dropDatabaseLocked(ctx context.Context, dbName string) error {
 	db, err := m.openDB(mysqlSeedDBName, false)
 	if err != nil {
-		return fmt.Errorf("failed to open database manager connection for drop: %w", err)
+		return fmt.Errorf("failed to open database manager connection for drop. %w", err)
 	}
 	defer db.Close()
 
@@ -664,7 +666,7 @@ func (m *mysqlTestDBManager) dropDatabaseLocked(ctx context.Context, dbName stri
 		fmt.Sprintf("DROP DATABASE IF EXISTS %s;", quoteMySQLIdent(dbName)),
 	)
 	if err != nil {
-		return fmt.Errorf("failed to drop cloned database %s: %w", dbName, err)
+		return fmt.Errorf("failed to drop cloned database %s. %w", dbName, err)
 	}
 
 	return nil

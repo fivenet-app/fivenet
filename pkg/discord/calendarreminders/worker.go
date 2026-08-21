@@ -249,7 +249,7 @@ func (w *Worker) processCalendar(
 		64,
 	)
 	if err != nil {
-		return fmt.Errorf("invalid discord channel id: %w", err)
+		return fmt.Errorf("invalid discord channel id. %w", err)
 	}
 
 	entries, err := w.loadReminderEntries(ctx, cal.GetId(), rangeEnd)

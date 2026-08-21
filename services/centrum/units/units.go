@@ -286,7 +286,7 @@ func New(p Params) *UnitDB {
 					}) {
 						if err := jobSt.Delete(ctx, jobKey); err != nil {
 							errs = fmt.Errorf(
-								"failed to delete unit job mapping %s: %w",
+								"failed to delete unit job mapping %s. %w",
 								jobKey,
 								err,
 							)

@@ -66,12 +66,12 @@ func (c *NotificationSendCmd) Run(_ *kong.Context) error {
 		},
 	})
 	if err != nil {
-		return fmt.Errorf("failed to marshal notification event: %w", err)
+		return fmt.Errorf("failed to marshal notification event. %w", err)
 	}
 
 	ack, err := js.Publish(ctx, subject, data)
 	if err != nil {
-		return fmt.Errorf("failed to publish notification event: %w", err)
+		return fmt.Errorf("failed to publish notification event. %w", err)
 	}
 
 	fmt.Printf(
@@ -148,7 +148,7 @@ func connectNotificationJetStream(cfg *config.Config) (*nats.Conn, jetstream.Jet
 	if cfg.NATS.NKey != nil {
 		nKeyOpt, err := nats.NkeyOptionFromSeed(*cfg.NATS.NKey)
 		if err != nil {
-			return nil, nil, fmt.Errorf("failed to read nats nkey: %w", err)
+			return nil, nil, fmt.Errorf("failed to read nats nkey. %w", err)
 		}
 		opts = append(opts, nKeyOpt)
 	} else if cfg.NATS.Creds != nil {
@@ -157,7 +157,7 @@ func connectNotificationJetStream(cfg *config.Config) (*nats.Conn, jetstream.Jet
 
 	nc, err := nats.Connect(cfg.NATS.URL, opts...)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to connect to nats: %w", err)
+		return nil, nil, fmt.Errorf("failed to connect to nats. %w", err)
 	}
 
 	js, err := jetstream.New(
@@ -166,7 +166,7 @@ func connectNotificationJetStream(cfg *config.Config) (*nats.Conn, jetstream.Jet
 	)
 	if err != nil {
 		nc.Close()
-		return nil, nil, fmt.Errorf("failed to initialize jetstream: %w", err)
+		return nil, nil, fmt.Errorf("failed to initialize jetstream. %w", err)
 	}
 
 	return nc, js, nil
@@ -189,7 +189,7 @@ func ensureNotificationStream(
 		Replicas:          replicas,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to create/update notification stream: %w", err)
+		return fmt.Errorf("failed to create/update notification stream. %w", err)
 	}
 
 	return nil

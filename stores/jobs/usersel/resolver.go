@@ -107,12 +107,12 @@ func (r *Resolver) Resolve(
 					if errors.Is(err, sql.ErrNoRows) {
 						continue
 					}
-					return nil, fmt.Errorf("resolving group %d: %w", gid, err)
+					return nil, fmt.Errorf("failed to resolve group %d. %w", gid, err)
 				}
 
 				members, err := r.resolveGroupMembers(ctx, db, group, filteredGroupSel)
 				if err != nil {
-					return nil, fmt.Errorf("resolving group %d members: %w", gid, err)
+					return nil, fmt.Errorf("failed to resolve group %d members. %w", gid, err)
 				}
 				for _, uid := range members {
 					seen[uid] = struct{}{}
