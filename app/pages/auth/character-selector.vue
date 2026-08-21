@@ -26,13 +26,13 @@ onBeforeMount(async () => {
 
 <template>
     <div class="max-w-full overflow-hidden">
-        <UContainer class="max-w-[100vw]">
+        <UContainer class="my-[calc(var(--page-content-bottom-offset)+16*var(--spacing))] max-w-[100vw]">
             <UCard class="bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <CharacterSelector />
             </UCard>
         </UContainer>
 
-        <div class="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center justify-center">
+        <div class="fixed bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center justify-center">
             <UFieldGroup>
                 <UButton
                     icon="i-mdi-account-cog-outline"

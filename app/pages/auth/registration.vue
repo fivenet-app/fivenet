@@ -23,9 +23,11 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <UPageCard class="w-full max-w-sm bg-white/75 backdrop-blur-sm dark:bg-white/5">
-        <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
+    <div class="w-full max-w-md pt-[calc(var(--page-content-bottom-offset)+16*var(--spacing))] pb-2">
+        <UPageCard class="w-full bg-white/75 backdrop-blur-sm dark:bg-white/5">
+            <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
-        <RegistrationForm />
-    </UPageCard>
+            <RegistrationForm />
+        </UPageCard>
+    </div>
 </template>

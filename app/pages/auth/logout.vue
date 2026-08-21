@@ -41,19 +41,21 @@ onMounted(async () => {
 </script>
 
 <template>
-    <UPageCard
-        class="w-full max-w-md shrink-0 bg-white/75 backdrop-blur-sm dark:bg-white/5"
-        :description="$t('pages.auth.logout.subtitle')"
-        :ui="{ header: 'w-full' }"
-    >
-        <template #header>
-            <div class="w-full space-y-2">
-                <FiveNetLogo class="mx-auto h-auto w-20" />
+    <div class="pt-[calc(var(--page-content-bottom-offset)+16*var(--spacing))] pb-2">
+        <UPageCard
+            class="my-[calc(var(--page-content-bottom-offset)+16*var(--spacing))] w-full max-w-md shrink-0 bg-white/75 backdrop-blur-sm dark:bg-white/5"
+            :description="$t('pages.auth.logout.subtitle')"
+            :ui="{ header: 'w-full' }"
+        >
+            <template #header>
+                <div class="w-full space-y-2">
+                    <FiveNetLogo class="mx-auto h-auto w-20" />
 
-                <h2 class="text-center text-3xl">
-                    {{ $t('pages.auth.logout.header') }}
-                </h2>
-            </div>
-        </template>
-    </UPageCard>
+                    <h2 class="text-center text-3xl">
+                        {{ $t('pages.auth.logout.header') }}
+                    </h2>
+                </div>
+            </template>
+        </UPageCard>
+    </div>
 </template>

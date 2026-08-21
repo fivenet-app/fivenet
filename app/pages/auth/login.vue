@@ -90,41 +90,43 @@ const canSubmit = ref<boolean>(true);
 </script>
 
 <template>
-    <UPageCard class="w-full max-w-md shrink-0 bg-white/75 backdrop-blur-sm dark:bg-white/5" :ui="{ header: 'w-full' }">
-        <template #header>
-            <div class="w-full space-y-2">
-                <FiveNetLogo class="mx-auto h-auto w-20" />
+    <div class="w-full max-w-md pt-[calc(var(--page-content-bottom-offset)+16*var(--spacing))] pb-2">
+        <UPageCard class="w-full shrink-0 bg-white/75 backdrop-blur-sm dark:bg-white/5" :ui="{ header: 'w-full' }">
+            <template #header>
+                <div class="w-full space-y-2">
+                    <FiveNetLogo class="mx-auto h-auto w-20" />
 
-                <h2 class="text-center text-3xl">
-                    {{ $t('common.login') }}
-                </h2>
+                    <h2 class="text-center text-3xl">
+                        {{ $t('common.login') }}
+                    </h2>
+                </div>
+            </template>
+
+            <div class="space-y-4">
+                <UTabs v-model="selectedTab" class="w-full" :items="items" :disabled="!canSubmit">
+                    <template #login>
+                        <LoginForm v-model="canSubmit" />
+                    </template>
+
+                    <template #forgotPassword>
+                        <ForgotPasswordForm v-model="canSubmit" @toggle-tab="selectedTab = 'login'" />
+                    </template>
+                </UTabs>
+
+                <div v-if="auth.signupEnabled" class="space-y-4">
+                    <USeparator orientation="horizontal" color="gray" />
+
+                    <UButton
+                        block
+                        color="neutral"
+                        variant="outline"
+                        trailing-icon="i-mdi-account-plus"
+                        to="/auth/registration"
+                        :disabled="!canSubmit"
+                        :label="$t('components.auth.LoginForm.register_account')"
+                    />
+                </div>
             </div>
-        </template>
-
-        <div class="space-y-4">
-            <UTabs v-model="selectedTab" class="w-full" :items="items" :disabled="!canSubmit">
-                <template #login>
-                    <LoginForm v-model="canSubmit" />
-                </template>
-
-                <template #forgotPassword>
-                    <ForgotPasswordForm v-model="canSubmit" @toggle-tab="selectedTab = 'login'" />
-                </template>
-            </UTabs>
-
-            <div v-if="auth.signupEnabled" class="space-y-4">
-                <USeparator orientation="horizontal" color="gray" />
-
-                <UButton
-                    block
-                    color="neutral"
-                    variant="outline"
-                    trailing-icon="i-mdi-account-plus"
-                    to="/auth/registration"
-                    :disabled="!canSubmit"
-                    :label="$t('components.auth.LoginForm.register_account')"
-                />
-            </div>
-        </div>
-    </UPageCard>
+        </UPageCard>
+    </div>
 </template>
