@@ -6,12 +6,10 @@ import { useAuthStore } from '~/stores/auth';
 
 const { t } = useI18n();
 
-const { auth, system } = useAppConfig();
+const { auth, website, system } = useAppConfig();
 
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
-
-const { website } = useAppConfig();
 
 const items = computed(() =>
     [
