@@ -456,6 +456,9 @@ func (h *Hydrator) loadUsers(
 
 	dest := []*users.User{}
 	if err := stmt.QueryContext(ctx, db, &dest); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return map[int32]*users.User{}, userIDs, nil
+		}
 		return nil, nil, fmt.Errorf("failed to load citizens by id: %w", err)
 	}
 

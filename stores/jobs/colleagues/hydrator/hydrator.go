@@ -45,26 +45,26 @@ type IHydrator interface {
 		ctx context.Context,
 		db qrm.DB,
 		userIDs []int32,
-		args ResolveOpts,
+		opts ResolveOpts,
 	) ([]*jobscolleagues.Colleague, error)
 	GetShortByUserID(
 		ctx context.Context,
 		db qrm.DB,
 		userID int32,
-		args ResolveOpts,
+		opts ResolveOpts,
 	) (*jobscolleagues.Colleague, error)
 
 	HydrateByUserID(
 		ctx context.Context,
 		db qrm.DB,
 		userIDs []int32,
-		args ResolveOpts,
+		opts ResolveOpts,
 	) (map[int32]*jobscolleagues.Colleague, error)
 	HydrateTargets(
 		ctx context.Context,
 		db qrm.DB,
 		targets []Target,
-		args ResolveOpts,
+		opts ResolveOpts,
 	) error
 }
 
@@ -126,7 +126,7 @@ func (h *Hydrator) ListByUserID(
 	ctx context.Context,
 	db qrm.DB,
 	userIDs []int32,
-	args ResolveOpts,
+	opts ResolveOpts,
 ) ([]*jobscolleagues.Colleague, error) {
 	if len(userIDs) == 0 {
 		return []*jobscolleagues.Colleague{}, nil
@@ -135,18 +135,18 @@ func (h *Hydrator) ListByUserID(
 		db = h.db
 	}
 
-	fields, jobAdmin, err := h.getFields(args.UserInfo, args.InfoOnly)
+	fields, jobAdmin, err := h.getFields(opts.UserInfo, opts.InfoOnly)
 	if err != nil {
 		return nil, err
 	}
 
-	jobGroups, err := h.resolveJobGroups(ctx, db, uniqueUserIDs(userIDs), args)
+	userJobs, err := h.resolveJob(ctx, db, uniqueUserIDs(userIDs), opts)
 	if err != nil {
 		return nil, err
 	}
 
 	colleaguesByUserID := make(map[int32]*jobscolleagues.Colleague, len(userIDs))
-	for _, jobGroup := range jobGroups {
+	for _, jobGroup := range userJobs {
 		colleagues, err := h.store.ListColleaguesByUserIDs(
 			ctx,
 			db,
@@ -167,7 +167,7 @@ func (h *Hydrator) ListByUserID(
 			}
 		}
 
-		enrichJobInfo := h.enricher.EnrichJobInfoSafeFunc(args.UserInfo)
+		enrichJobInfo := h.enricher.EnrichJobInfoSafeFunc(opts.UserInfo)
 		for _, colleague := range colleagues {
 			enrichJobInfo(colleague)
 			colleaguesByUserID[colleague.GetUserId()] = colleague
@@ -188,11 +188,11 @@ func (h *Hydrator) GetShortByUserID(
 	ctx context.Context,
 	db qrm.DB,
 	userID int32,
-	args ResolveOpts,
+	opts ResolveOpts,
 ) (*jobscolleagues.Colleague, error) {
-	args.InfoOnly = true
+	opts.InfoOnly = true
 
-	colleagues, err := h.ListByUserID(ctx, db, []int32{userID}, args)
+	colleagues, err := h.ListByUserID(ctx, db, []int32{userID}, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -206,9 +206,9 @@ func (h *Hydrator) HydrateByUserID(
 	ctx context.Context,
 	db qrm.DB,
 	userIDs []int32,
-	args ResolveOpts,
+	opts ResolveOpts,
 ) (map[int32]*jobscolleagues.Colleague, error) {
-	colleagues, err := h.ListByUserID(ctx, db, userIDs, args)
+	colleagues, err := h.ListByUserID(ctx, db, userIDs, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +225,7 @@ func (h *Hydrator) HydrateTargets(
 	ctx context.Context,
 	db qrm.DB,
 	targets []Target,
-	args ResolveOpts,
+	opts ResolveOpts,
 ) error {
 	if len(targets) == 0 {
 		return nil
@@ -243,7 +243,7 @@ func (h *Hydrator) HydrateTargets(
 		return nil
 	}
 
-	colleaguesByUserID, err := h.HydrateByUserID(ctx, db, userIDs, args)
+	colleaguesByUserID, err := h.HydrateByUserID(ctx, db, userIDs, opts)
 	if err != nil {
 		return err
 	}
@@ -269,26 +269,26 @@ type jobGroup struct {
 	userIDs []int32
 }
 
-func (h *Hydrator) resolveJobGroups(
+func (h *Hydrator) resolveJob(
 	ctx context.Context,
 	db qrm.DB,
 	userIDs []int32,
-	args ResolveOpts,
+	opts ResolveOpts,
 ) ([]jobGroup, error) {
-	switch args.PropsJobMode {
+	switch opts.PropsJobMode {
 	case PropsJobModePrimary:
-		return h.resolvePrimaryJobGroups(ctx, db, userIDs)
+		return h.resolvePrimaryJob(ctx, db, userIDs, opts.PropsJob)
 
 	case PropsJobModeExplicit:
-		if args.PropsJob == "" {
+		if opts.PropsJob == "" {
 			return nil, nil
 		}
-		return []jobGroup{{job: args.PropsJob, userIDs: userIDs}}, nil
+		return []jobGroup{{job: opts.PropsJob, userIDs: userIDs}}, nil
 
 	default:
-		job := args.PropsJob
-		if job == "" && args.UserInfo != nil {
-			job = args.UserInfo.GetJob()
+		job := opts.PropsJob
+		if job == "" && opts.UserInfo != nil {
+			job = opts.UserInfo.GetJob()
 		}
 		if job == "" {
 			return nil, errors.New("colleague hydrator requires a job for caller-scoped hydration")
@@ -297,10 +297,11 @@ func (h *Hydrator) resolveJobGroups(
 	}
 }
 
-func (h *Hydrator) resolvePrimaryJobGroups(
+func (h *Hydrator) resolvePrimaryJob(
 	ctx context.Context,
 	db qrm.DB,
 	userIDs []int32,
+	fallbackJob string,
 ) ([]jobGroup, error) {
 	tUser := table.FivenetUser.AS("user")
 
@@ -312,7 +313,7 @@ func (h *Hydrator) resolvePrimaryJobGroups(
 	stmt := tUser.
 		SELECT(
 			tUser.ID.AS("user_id"),
-			tUser.Job,
+			tUser.Job.AS("job"),
 		).
 		FROM(tUser).
 		WHERE(tUser.ID.IN(userIdExprs...)).
@@ -337,7 +338,12 @@ func (h *Hydrator) resolvePrimaryJobGroups(
 	}
 
 	if len(grouped) == 0 {
-		return nil, nil
+		return []jobGroup{
+			{
+				job:     fallbackJob,
+				userIDs: userIDs,
+			},
+		}, nil
 	}
 
 	out := make([]jobGroup, 0, len(grouped))

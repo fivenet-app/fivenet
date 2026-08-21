@@ -412,9 +412,7 @@ func (s *UnitDB) loadUnitsFromDB(ctx context.Context, id int64) ([]*centrumunits
 
 				targets = append(targets, colleagueshydrator.Target{
 					UserID: units[i].Users[j].GetUserId(),
-					Set: func(colleague *jobscolleagues.Colleague) {
-						units[i].Users[j].User = colleague
-					},
+					Set:    units[i].Users[j].SetUser,
 				})
 			}
 
@@ -424,6 +422,7 @@ func (s *UnitDB) loadUnitsFromDB(ctx context.Context, id int64) ([]*centrumunits
 				targets,
 				colleagueshydrator.ResolveOpts{
 					PropsJobMode: colleagueshydrator.PropsJobModePrimary,
+					PropsJob:     units[i].GetJob(),
 				},
 			); err != nil {
 				return nil, err

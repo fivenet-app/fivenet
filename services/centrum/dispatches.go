@@ -12,7 +12,6 @@ import (
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
-	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
@@ -619,9 +618,7 @@ func (s *Server) ListDispatchActivity(
 
 		targets = append(targets, colleagueshydrator.Target{
 			UserID: resp.Activity[i].GetUserId(),
-			Set: func(colleague *jobscolleagues.Colleague) {
-				resp.Activity[i].User = colleague
-			},
+			Set:    resp.Activity[i].SetUser,
 		})
 	}
 

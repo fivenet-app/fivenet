@@ -10,7 +10,6 @@ import (
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	unitsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units/access"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
-	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -531,9 +530,7 @@ func (s *Server) ListUnitActivity(
 
 		targets = append(targets, colleagueshydrator.Target{
 			UserID: resp.Activity[i].GetUserId(),
-			Set: func(colleague *jobscolleagues.Colleague) {
-				resp.Activity[i].User = colleague
-			},
+			Set:    resp.Activity[i].SetUser,
 		})
 	}
 

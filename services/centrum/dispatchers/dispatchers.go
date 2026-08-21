@@ -99,20 +99,14 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 
 	stmt := tCentrumDispatchers.
 		SELECT(
-			tCentrumDispatchers.Job.AS("job"),
-			tCentrumDispatchers.UserID.AS("user_id"),
+			tCentrumDispatchers.Job.AS("dispatchers_row.job"),
+			tCentrumDispatchers.UserID.AS("dispatchers_row.user_id"),
 		).
 		FROM(tCentrumDispatchers)
 
 	if job != "" {
-		stmt = stmt.WHERE(tCentrumDispatchers.Job.EQ(mysql.String(job)))
-	}
-
-	if job != "" {
 		stmt = stmt.
-			WHERE(
-				tCentrumDispatchers.Job.EQ(mysql.String(job)),
-			)
+			WHERE(tCentrumDispatchers.Job.EQ(mysql.String(job)))
 	}
 
 	var rows []*dispatchersRow
@@ -123,6 +117,16 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 	}
 
 	if len(rows) == 0 {
+		if job == "" {
+			// No dispatchers for any job, clear the store
+			if err := s.store.Clear(ctx); err != nil {
+				return fmt.Errorf("failed to clear dispatchers store. %w", err)
+			}
+		} else {
+			if err := s.store.Delete(ctx, job); err != nil {
+				return fmt.Errorf("failed to clear dispatchers for job %s. %w", job, err)
+			}
+		}
 		return nil
 	}
 
@@ -139,6 +143,7 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 			userIDs,
 			colleagueshydrator.ResolveOpts{
 				PropsJobMode: colleagueshydrator.PropsJobModePrimary,
+				PropsJob:     job,
 			},
 		)
 		if err != nil {
@@ -167,13 +172,6 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 		s.enricher.EnrichJobName(dispatcher)
 
 		perJob[row.Job] = append(perJob[row.Job], dispatcher)
-	}
-
-	if job != "" {
-		if err := s.updateDispatchersInKV(ctx, job, perJob[job]); err != nil {
-			return fmt.Errorf("failed to update dispatchers for specific job. %w", err)
-		}
-		return nil
 	}
 
 	for job, dispatchers := range perJob {
