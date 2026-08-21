@@ -151,12 +151,22 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 	for _, row := range rows {
 		dispatcher := dispatchersByUserID[row.UserID]
 		if dispatcher == nil {
-			continue
+			// Fall back to the dispatcher row itself so a sign-on always leaves a
+			// visible dispatcher entry even if hydration cannot resolve the full
+			// colleague record.
+			dispatcher = &jobscolleagues.Colleague{
+				UserId: row.UserID,
+				Job:    row.Job,
+			}
+		} else if dispatcher.GetJob() == "" {
+			// Preserve the dispatcher job from the source table when hydration
+			// returns a sparse record.
+			dispatcher.Job = row.Job
 		}
 
 		s.enricher.EnrichJobName(dispatcher)
 
-		perJob[dispatcher.GetJob()] = append(perJob[dispatcher.GetJob()], dispatcher)
+		perJob[row.Job] = append(perJob[row.Job], dispatcher)
 	}
 
 	if job != "" {
