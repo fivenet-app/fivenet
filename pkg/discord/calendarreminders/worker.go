@@ -22,6 +22,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	discordembeds "github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/filestore"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -449,7 +450,7 @@ func buildCustomReminderEmbed(
 		Icon: discordembeds.EmbedFooterFiveNet.Icon,
 	}
 	if jps != nil {
-		iconURL, err := url.JoinPath(publicURL, jps.GetLogoFile().GetFilePath())
+		iconURL, err := url.JoinPath(publicURL, filestore.Path, jps.GetLogoFile().GetFilePath())
 		if err == nil {
 			footer.Icon = iconURL
 		}
