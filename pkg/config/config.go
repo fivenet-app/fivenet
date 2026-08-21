@@ -113,11 +113,12 @@ type Demo struct {
 }
 
 type DemoFeatures struct {
-	Dispatches bool `default:"true"  yaml:"dispatches"`
-	Locations  bool `default:"true"  yaml:"locations"`
-	Timeclock  bool `default:"true"  yaml:"timeclock"`
-	Users      bool `default:"false" yaml:"users"`
-	Vehicles   bool `default:"false" yaml:"vehicles"`
+	Dispatches      bool `default:"true"  yaml:"dispatches"`
+	Locations       bool `default:"true"  yaml:"locations"`
+	Timeclock       bool `default:"true"  yaml:"timeclock"`
+	CalendarEntries bool `default:"false" yaml:"calendarEntries"`
+	Users           bool `default:"false" yaml:"users"`
+	Vehicles        bool `default:"false" yaml:"vehicles"`
 }
 
 type DemoFakeUser struct {

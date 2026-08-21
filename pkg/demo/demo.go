@@ -14,12 +14,14 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
+	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -102,14 +104,17 @@ func (g demoCatalogGenerator) Run(ctx context.Context, d *Demo) error {
 // Demo provides demo mode functionality for generating random dispatches, user locations,
 // timeclock rows and optional fake users.
 type Demo struct {
-	logger        *zap.Logger
-	db            *sql.DB
-	dispatches    *dispatches.DispatchDB
-	cfg           *config.Config
-	appCfg        appconfig.IConfig
-	perms         perms.Permissions
-	settingsStore settingsstore.IStore
-	wg            sync.WaitGroup
+	logger         *zap.Logger
+	db             *sql.DB
+	dispatches     *dispatches.DispatchDB
+	calendars      calendarstore.IStore
+	cfg            *config.Config
+	appCfg         appconfig.IConfig
+	calendarAccess *access.CalendarObjectAccess
+	accessResolver *access.SubjectResolver
+	perms          perms.Permissions
+	settingsStore  settingsstore.IStore
+	wg             sync.WaitGroup
 
 	randMu sync.Mutex
 	rng    *rand.Rand
@@ -127,14 +132,16 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger        *zap.Logger
-	Cfg           *config.Config
-	DB            *sql.DB
-	Dispatches    *dispatches.DispatchDB
-	Jobs          mstlystcdata.IJobs
-	AppConfig     appconfig.IConfig
-	Perms         perms.Permissions
-	SettingsStore settingsstore.IStore
+	Logger         *zap.Logger
+	Cfg            *config.Config
+	DB             *sql.DB
+	Dispatches     *dispatches.DispatchDB
+	Calendars      calendarstore.IStore
+	CalendarAccess *access.CalendarObjectAccess
+	Jobs           mstlystcdata.IJobs
+	AppConfig      appconfig.IConfig
+	Perms          perms.Permissions
+	SettingsStore  settingsstore.IStore
 }
 
 // New creates a new Demo instance if demo mode is enabled in the config.
@@ -147,14 +154,17 @@ func New(p Params) *Demo {
 	logger.Warn("Demo mode is enabled. This will generate demo data and user locations.")
 
 	d := &Demo{
-		logger:        logger,
-		db:            p.DB,
-		dispatches:    p.Dispatches,
-		cfg:           p.Cfg,
-		appCfg:        p.AppConfig,
-		perms:         p.Perms,
-		settingsStore: p.SettingsStore,
-		wg:            sync.WaitGroup{},
+		logger:         logger,
+		db:             p.DB,
+		dispatches:     p.Dispatches,
+		calendars:      p.Calendars,
+		cfg:            p.Cfg,
+		appCfg:         p.AppConfig,
+		calendarAccess: p.CalendarAccess,
+		accessResolver: access.NewSubjectResolver(p.DB),
+		perms:          p.Perms,
+		settingsStore:  p.SettingsStore,
+		wg:             sync.WaitGroup{},
 	}
 	d.initRandomizers()
 
@@ -190,6 +200,7 @@ func (d *Demo) startupGenerators() []startupGenerator {
 		demoCatalogGenerator{},
 		demoBannerGenerator{},
 		fakeUsersGenerator{},
+		demoCalendarEntriesGenerator{},
 	}
 }
 

@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
 )
 
 func newTestDemo(seed uint64) *Demo {
@@ -18,6 +19,7 @@ func newTestDemo(seed uint64) *Demo {
 	cfg.Demo.TargetJob = PoliceJob
 
 	d := &Demo{cfg: cfg}
+	d.logger = zap.NewNop()
 	d.initRandomizers()
 
 	return d
