@@ -91,7 +91,7 @@ func (s *Server) GetCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	access, err := s.store.ListTargetAccess(ctx, cal.GetId(), calendarSubjectAccessOptions)
+	access, err := s.store.ListTargetAccess(ctx, cal.GetId(), CalendarSubjectAccessOptions)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -216,7 +216,7 @@ func (s *Server) CreateCalendar(
 		s.accessResolver,
 		req.GetCalendar().GetId(),
 		normalizedAccess,
-		calendarSubjectAccessOptions,
+		CalendarSubjectAccessOptions,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -363,7 +363,7 @@ func (s *Server) UpdateCalendar(
 			s.accessResolver,
 			req.GetCalendar().GetId(),
 			normalizedAccess,
-			calendarSubjectAccessOptions,
+			CalendarSubjectAccessOptions,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}

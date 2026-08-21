@@ -121,7 +121,7 @@ func (s *Server) GetCalendarEntry(
 	calAccess, err := s.store.ListTargetAccess(
 		ctx,
 		entry.GetCalendarId(),
-		calendarSubjectAccessOptions,
+		CalendarSubjectAccessOptions,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)

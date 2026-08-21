@@ -361,7 +361,10 @@ func (s *Server) UpdateGroupRule(
 	); err != nil {
 		return nil, err
 	}
-	if err := validateGroupPolicyAllowedMutation(group, groupspolicy.MutationRuleUpdate); err != nil {
+	if err := validateGroupPolicyAllowedMutation(
+		group,
+		groupspolicy.MutationRuleUpdate,
+	); err != nil {
 		return nil, err
 	}
 

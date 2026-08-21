@@ -384,7 +384,10 @@ func (s *Server) CreateGroup(
 		if err := s.ensureGroupUserInJob(ctx, tx, job, userID); err != nil {
 			return nil, err
 		}
-		if groupspolicy.RequiresManualMembersMatchRules(group.GetType(), group.GetMembershipMode()) {
+		if groupspolicy.RequiresManualMembersMatchRules(
+			group.GetType(),
+			group.GetMembershipMode(),
+		) {
 			matches, err := s.userMatchesGroupRules(ctx, tx, group, userID)
 			if err != nil {
 				return nil, err
