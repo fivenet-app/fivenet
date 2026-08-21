@@ -8,11 +8,14 @@ import (
 	"strings"
 	"time"
 
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
+	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	commoncontent "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -22,8 +25,8 @@ import (
 const (
 	demoCalendarEntryPrefix = "[DEMO]"
 
-	demoCalendarFallbackColor = "#2563eb"
-	demoCalendarFallbackName  = "Demo %s Calendar"
+	demoCalendarColor        = "green"
+	demoCalendarFallbackName = "%s Calendar [Demo]"
 )
 
 var (
@@ -127,7 +130,12 @@ func (d *Demo) seedDemoCalendarEntries(ctx context.Context) error {
 		}
 	}
 
-	return d.seedDemoCalendarEntriesForCalendar(ctx, calendar.GetId(), seedUser, time.Now().In(time.Local))
+	return d.seedDemoCalendarEntriesForCalendar(
+		ctx,
+		calendar.GetId(),
+		seedUser,
+		time.Now().In(time.Local),
+	)
 }
 
 func (d *Demo) seedDemoCalendarEntriesForCalendar(
@@ -296,9 +304,9 @@ func (d *Demo) createFallbackDemoCalendar(
 	cal := &calendarresource.Calendar{
 		Job:    &job,
 		Name:   fmt.Sprintf(demoCalendarFallbackName, titleizeJob(job)),
-		Public: true,
+		Public: false,
 		Closed: false,
-		Color:  demoCalendarFallbackColor,
+		Color:  demoCalendarColor,
 	}
 
 	lastID, err := d.calendars.CreateCalendar(ctx, tx, cal, seedUser, nil)
@@ -306,6 +314,42 @@ func (d *Demo) createFallbackDemoCalendar(
 		return nil, fmt.Errorf("failed to create fallback demo calendar. %w", err)
 	}
 	cal.SetId(lastID)
+
+	if d.calendarAccess != nil && d.accessResolver != nil {
+		if _, err := d.calendarAccess.ReplaceTargetAccess(
+			ctx,
+			tx,
+			d.accessResolver,
+			lastID,
+			&resourcesaccess.Access{
+				Jobs: []*resourcesaccess.JobAccess{
+					{
+						TargetId:     lastID,
+						Job:          seedUser.GetJob(),
+						MinimumGrade: d.demoJobGrades[seedUser.GetJob()][0],
+						Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW),
+					},
+					{
+						TargetId:     lastID,
+						Job:          seedUser.GetJob(),
+						MinimumGrade: seedUser.GetJobGrade(),
+						Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
+					},
+				},
+			},
+			access.SubjectAccessOptions{
+				BlockedAccess: int32(calendaraccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
+				DeniedAccessLevels: []int32{
+					int32(calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW),
+					int32(calendaraccess.AccessLevel_ACCESS_LEVEL_SHARE),
+					int32(calendaraccess.AccessLevel_ACCESS_LEVEL_EDIT),
+					int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
+				},
+			},
+		); err != nil {
+			return nil, err
+		}
+	}
 
 	if err := tx.Commit(); err != nil {
 		return nil, err
@@ -401,21 +445,41 @@ func (d *Demo) clearDemoCalendarEntriesStmt(calendarID int64) mysql.DeleteStatem
 		DELETE().
 		WHERE(mysql.AND(
 			table.FivenetCalendarEntries.CalendarID.EQ(mysql.Int64(calendarID)),
-			table.FivenetCalendarEntries.Content.LIKE(mysql.String("%"+demoCalendarEntryPrefix+"%")),
+			table.FivenetCalendarEntries.Content.LIKE(
+				mysql.String("%"+demoCalendarEntryPrefix+"%"),
+			),
 		))
 }
 
-func (d *Demo) buildDemoCalendarEntriesAt(calendarID int64, now time.Time) []*calendarentries.CalendarEntry {
-	total := 20 + d.randIntN(21)
-	multiDayCount := min(2, max(1, total/20))
-	allDayCount := min(7, max(4, total/5))
-	shortCount := total - allDayCount - multiDayCount
+func (d *Demo) buildDemoCalendarEntriesAt(
+	calendarID int64,
+	now time.Time,
+) []*calendarentries.CalendarEntry {
+	total := 32 + d.randIntN(21)
+	currentWeekShortCount := 4
+	recurringCount := 2
+	remaining := total - currentWeekShortCount - recurringCount
+	multiDayCount := min(3, max(2, remaining/10))
+	allDayCount := min(10, max(6, remaining/4))
+	shortCount := remaining - allDayCount - multiDayCount
+	for shortCount < 1 && allDayCount > 4 {
+		allDayCount--
+		shortCount++
+	}
+	for shortCount < 1 && multiDayCount > 1 {
+		multiDayCount--
+		shortCount++
+	}
 	if shortCount < 1 {
 		shortCount = 1
-		allDayCount = max(1, total-shortCount-multiDayCount)
 	}
 
 	entries := make([]*calendarentries.CalendarEntry, 0, total)
+	for i := range currentWeekShortCount {
+		entries = append(entries, d.newDemoCurrentWeekShortMeetingEntry(calendarID, now, i))
+	}
+	entries = append(entries, d.newDemoMonthlyRecurringEntry(calendarID, now))
+	entries = append(entries, d.newDemoWeeklyTuesdayRecurringEntry(calendarID, now))
 	for i := range shortCount {
 		entries = append(entries, d.newDemoShortMeetingEntry(calendarID, now, i))
 	}
@@ -446,7 +510,12 @@ func (d *Demo) newDemoShortMeetingEntry(
 ) *calendarentries.CalendarEntry {
 	title := demoShortMeetingTitles[(index+d.randIntN(len(demoShortMeetingTitles)))%len(demoShortMeetingTitles)]
 	topic := demoMeetingTopics[d.randIntN(len(demoMeetingTopics))]
-	start := d.randomMeetingStart(d.randIntN(2) == 0, now, 30)
+	past := d.randIntN(2) == 0
+	maxDays := int64(61)
+	if past {
+		maxDays = 31
+	}
+	start := d.randomMeetingStart(past, now, maxDays)
 	duration := time.Duration(30+d.randIntN(4)*15) * time.Minute
 	end := start.Add(duration)
 
@@ -460,13 +529,39 @@ func (d *Demo) newDemoShortMeetingEntry(
 	)
 }
 
+func (d *Demo) newDemoCurrentWeekShortMeetingEntry(
+	calendarID int64,
+	now time.Time,
+	index int,
+) *calendarentries.CalendarEntry {
+	title := demoShortMeetingTitles[(index+d.randIntN(len(demoShortMeetingTitles)))%len(demoShortMeetingTitles)]
+	topic := demoMeetingTopics[(index+d.randIntN(len(demoMeetingTopics)))%len(demoMeetingTopics)]
+	start := d.randomCurrentWeekMeetingStart(now, index)
+	duration := time.Duration(30+d.randIntN(4)*15) * time.Minute
+	end := start.Add(duration)
+
+	return d.newDemoCalendarEntry(
+		calendarID,
+		title,
+		fmt.Sprintf("%s about %s this week.", title, topic),
+		start,
+		end,
+		false,
+	)
+}
+
 func (d *Demo) newDemoAllDayEntry(
 	calendarID int64,
 	now time.Time,
 	index int,
 ) *calendarentries.CalendarEntry {
 	title := demoAllDayTitles[(index+d.randIntN(len(demoAllDayTitles)))%len(demoAllDayTitles)]
-	start := d.randomDayBoundary(d.randIntN(2) == 0, now, 30)
+	past := d.randIntN(2) == 0
+	maxDays := int64(61)
+	if past {
+		maxDays = 31
+	}
+	start := d.randomDayBoundary(past, now, maxDays)
 	end := start.AddDate(0, 0, 1)
 
 	return d.newDemoCalendarEntry(
@@ -479,6 +574,58 @@ func (d *Demo) newDemoAllDayEntry(
 	)
 }
 
+func (d *Demo) newDemoMonthlyRecurringEntry(
+	calendarID int64,
+	now time.Time,
+) *calendarentries.CalendarEntry {
+	title := "Monthly planning sync"
+	start := d.randomCurrentWeekMeetingStart(now, 2)
+	end := start.Add(45 * time.Minute)
+	until := timestamp.New(windowAnchor(now.AddDate(0, 3, 0)))
+
+	entry := d.newDemoCalendarEntry(
+		calendarID,
+		title,
+		"Monthly planning sync repeats each month.",
+		start,
+		end,
+		false,
+	)
+	entry.Recurring = &calendarentries.CalendarEntryRecurring{
+		Every: calendarentries.CalendarEntryRecurringEvery_CALENDAR_ENTRY_RECURRING_EVERY_MONTH,
+		Count: 1,
+		Until: until,
+	}
+
+	return entry
+}
+
+func (d *Demo) newDemoWeeklyTuesdayRecurringEntry(
+	calendarID int64,
+	now time.Time,
+) *calendarentries.CalendarEntry {
+	title := "Tuesday check-in"
+	start := d.currentWeekTuesdayStart(now, 13, 0)
+	end := start.Add(30 * time.Minute)
+	until := timestamp.New(windowAnchor(now.AddDate(0, 2, 0)))
+
+	entry := d.newDemoCalendarEntry(
+		calendarID,
+		title,
+		"Tuesday check-in repeats each week.",
+		start,
+		end,
+		false,
+	)
+	entry.Recurring = &calendarentries.CalendarEntryRecurring{
+		Every: calendarentries.CalendarEntryRecurringEvery_CALENDAR_ENTRY_RECURRING_EVERY_WEEK,
+		Count: 1,
+		Until: until,
+	}
+
+	return entry
+}
+
 func (d *Demo) newDemoMultiDayEntry(
 	calendarID int64,
 	now time.Time,
@@ -486,7 +633,15 @@ func (d *Demo) newDemoMultiDayEntry(
 ) *calendarentries.CalendarEntry {
 	title := demoMultiDayTitles[(index+d.randIntN(len(demoMultiDayTitles)))%len(demoMultiDayTitles)]
 	days := 2 + d.randIntN(3)
-	start := d.randomDayBoundary(d.randIntN(2) == 0, now, 60-int64(days))
+	past := d.randIntN(2) == 0
+	maxDays := int64(61) - int64(days)
+	if past {
+		maxDays = int64(31) - int64(days)
+	}
+	if maxDays < 1 {
+		maxDays = 1
+	}
+	start := d.randomDayBoundary(past, now, maxDays)
 	end := start.AddDate(0, 0, days)
 
 	return d.newDemoCalendarEntry(
@@ -575,6 +730,38 @@ func (d *Demo) randomMeetingStart(past bool, now time.Time, maxDays int64) time.
 
 func (d *Demo) randomDayBoundary(past bool, now time.Time, maxDays int64) time.Time {
 	return d.randomWindowedTime(past, now, maxDays)
+}
+
+func (d *Demo) currentWeekTuesdayStart(now time.Time, hour int, minute int) time.Time {
+	return d.currentWeekDayTime(now, time.Tuesday, hour, minute)
+}
+
+func (d *Demo) randomCurrentWeekMeetingStart(now time.Time, index int) time.Time {
+	weekStart := currentWeekStart(now)
+	loc := weekStart.Location()
+	dayOffsets := []int{0, 1, 2, 3, 4}
+	hourOptions := []int{9, 10, 11, 13, 15}
+	minuteOptions := []int{0, 15, 30, 45}
+
+	dayOffset := dayOffsets[index%len(dayOffsets)]
+	hour := hourOptions[(index+d.randIntN(len(hourOptions)))%len(hourOptions)]
+	minute := minuteOptions[d.randIntN(len(minuteOptions))]
+
+	day := weekStart.AddDate(0, 0, dayOffset)
+	return time.Date(day.Year(), day.Month(), day.Day(), hour, minute, 0, 0, loc)
+}
+
+func (d *Demo) currentWeekDayTime(now time.Time, weekday time.Weekday, hour, minute int) time.Time {
+	weekStart := currentWeekStart(now)
+	dayOffset := (int(weekday) - int(weekStart.Weekday()) + 7) % 7
+	day := weekStart.AddDate(0, 0, dayOffset)
+	return time.Date(day.Year(), day.Month(), day.Day(), hour, minute, 0, 0, day.Location())
+}
+
+func currentWeekStart(t time.Time) time.Time {
+	start := windowAnchor(t)
+	weekdayOffset := (int(start.Weekday()) + 6) % 7
+	return start.AddDate(0, 0, -weekdayOffset)
 }
 
 func windowAnchor(t time.Time) time.Time {

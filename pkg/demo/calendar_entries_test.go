@@ -31,6 +31,8 @@ func newCalendarSeedDemo(seed uint64, db *sql.DB) *Demo {
 		calendars: nil,
 	}
 	if db != nil {
+		d.accessResolver = access.NewSubjectResolver(db)
+		d.calendarAccess = access.NewCalendarSubjectObjectAccess(db)
 		d.calendars = calendarstore.New(calendarstore.Params{
 			DB:     db,
 			Access: access.NewCalendarSubjectObjectAccess(db),
@@ -50,7 +52,9 @@ type demoCalendarEntrySnapshot struct {
 	Calendar int64
 }
 
-func snapshotDemoCalendarEntries(entries []*calendarentries.CalendarEntry) []demoCalendarEntrySnapshot {
+func snapshotDemoCalendarEntries(
+	entries []*calendarentries.CalendarEntry,
+) []demoCalendarEntrySnapshot {
 	out := make([]demoCalendarEntrySnapshot, 0, len(entries))
 	for _, entry := range entries {
 		if entry == nil || entry.GetStartTime() == nil {
@@ -90,8 +94,8 @@ func TestBuildDemoCalendarEntriesDeterministic(t *testing.T) {
 	entries2 := d2.buildDemoCalendarEntriesAt(99, now)
 
 	require.Len(t, entries1, len(entries2))
-	assert.GreaterOrEqual(t, len(entries1), 20)
-	assert.LessOrEqual(t, len(entries1), 40)
+	assert.GreaterOrEqual(t, len(entries1), 32)
+	assert.LessOrEqual(t, len(entries1), 52)
 	assert.Equal(t, snapshotDemoCalendarEntries(entries1), snapshotDemoCalendarEntries(entries2))
 
 	for _, entry := range entries1 {
@@ -111,22 +115,53 @@ func TestBuildDemoCalendarEntriesStayWithinExpectedWindows(t *testing.T) {
 
 	require.NotEmpty(t, entries)
 
-	pastLimit := now.AddDate(0, -1, 0)
+	pastLimit := windowAnchor(now.AddDate(0, -1, 0))
 	futureLimit := now.AddDate(0, 2, 0)
+	weekStart := currentWeekStart(now)
+	currentWeekEnd := weekStart.AddDate(0, 0, 7)
 
 	shortCount := 0
 	allDayCount := 0
 	multiDayCount := 0
+	currentWeekCount := 0
+	recurringCount := 0
+	monthlyRecurringCount := 0
+	weeklyTuesdayRecurringCount := 0
 
 	for _, entry := range entries {
 		require.NotNil(t, entry)
 		require.NotNil(t, entry.GetStartTime())
 
 		start := entry.GetStartTime().AsTime()
+		if !start.Before(weekStart) && start.Before(currentWeekEnd) {
+			currentWeekCount++
+		}
 		if start.Before(now) {
-			assert.False(t, start.Before(pastLimit), "past entry start %s exceeds one month back", start)
+			assert.False(
+				t,
+				start.Before(pastLimit),
+				"past entry start %s exceeds one month back",
+				start,
+			)
 		} else {
-			assert.False(t, start.After(futureLimit), "future entry start %s exceeds two months forward", start)
+			assert.False(
+				t,
+				start.After(futureLimit),
+				"future entry start %s exceeds two months forward",
+				start,
+			)
+		}
+
+		if recurring := entry.GetRecurring(); recurring != nil {
+			recurringCount++
+			require.NotNil(t, recurring.GetUntil())
+			switch recurring.GetEvery() {
+			case calendarentries.CalendarEntryRecurringEvery_CALENDAR_ENTRY_RECURRING_EVERY_MONTH:
+				monthlyRecurringCount++
+			case calendarentries.CalendarEntryRecurringEvery_CALENDAR_ENTRY_RECURRING_EVERY_WEEK:
+				weeklyTuesdayRecurringCount++
+				assert.Equal(t, time.Tuesday, start.Weekday())
+			}
 		}
 
 		if !entry.GetAllDay() {
@@ -153,9 +188,13 @@ func TestBuildDemoCalendarEntriesStayWithinExpectedWindows(t *testing.T) {
 		}
 	}
 
-	assert.Greater(t, shortCount, 0)
-	assert.Greater(t, allDayCount, 0)
-	assert.Greater(t, multiDayCount, 0)
+	assert.Positive(t, shortCount)
+	assert.Positive(t, allDayCount)
+	assert.Positive(t, multiDayCount)
+	assert.GreaterOrEqual(t, currentWeekCount, 6)
+	assert.Equal(t, 2, recurringCount)
+	assert.Equal(t, 1, monthlyRecurringCount)
+	assert.Equal(t, 1, weeklyTuesdayRecurringCount)
 }
 
 func TestLookupDemoCalendarAndCreateFallback(t *testing.T) {
@@ -165,6 +204,8 @@ func TestLookupDemoCalendarAndCreateFallback(t *testing.T) {
 	fallbackName := fmt.Sprintf(demoCalendarFallbackName, titleizeJob(job))
 
 	t.Run("existing", func(t *testing.T) {
+		t.Parallel()
+
 		d := newCalendarSeedDemo(9, nil)
 		stmt := d.clearDemoCalendarEntriesStmt(17)
 		sql, _ := stmt.Sql()
@@ -173,18 +214,23 @@ func TestLookupDemoCalendarAndCreateFallback(t *testing.T) {
 	})
 
 	t.Run("fallback", func(t *testing.T) {
+		t.Parallel()
+
 		db, mock, err := sqlmock.New()
 		require.NoError(t, err)
 		t.Cleanup(func() { _ = db.Close() })
 
 		d := newCalendarSeedDemo(10, db)
+		d.calendarAccess = nil
+		d.accessResolver = nil
 		seedUser := &userinfo.UserInfo{
 			UserId:   7,
 			Job:      job,
 			JobGrade: d.highestJobGrade(job),
 		}
 		mock.ExpectBegin()
-		mock.ExpectExec(`(?s).*INSERT INTO fivenet_calendar.*`).WillReturnResult(sqlmock.NewResult(99, 1))
+		mock.ExpectExec(`(?s).*INSERT INTO fivenet_calendar.*`).
+			WillReturnResult(sqlmock.NewResult(99, 1))
 		mock.ExpectCommit()
 
 		cal, err := d.createFallbackDemoCalendar(t.Context(), job, seedUser)
@@ -217,9 +263,11 @@ func TestSeedDemoCalendarEntriesForCalendarIsIdempotent(t *testing.T) {
 
 	expectRun := func(startID int64) {
 		mock.ExpectBegin()
-		mock.ExpectExec(`(?s).*DELETE FROM fivenet_calendar_entries.*`).WillReturnResult(sqlmock.NewResult(0, 1))
-		for i := 0; i < expectedCount; i++ {
-			mock.ExpectExec(`(?s).*INSERT INTO fivenet_calendar_entries.*`).WillReturnResult(sqlmock.NewResult(startID+int64(i), 1))
+		mock.ExpectExec(`(?s).*DELETE FROM fivenet_calendar_entries.*`).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+		for i := range expectedCount {
+			mock.ExpectExec(`(?s).*INSERT INTO fivenet_calendar_entries.*`).
+				WillReturnResult(sqlmock.NewResult(startID+int64(i), 1))
 		}
 		mock.ExpectCommit()
 	}
@@ -228,10 +276,16 @@ func TestSeedDemoCalendarEntriesForCalendarIsIdempotent(t *testing.T) {
 	expectRun(100)
 
 	d1 := newCalendarSeedDemo(77, db)
-	require.NoError(t, d1.seedDemoCalendarEntriesForCalendar(t.Context(), calendarID, seedUser, now))
+	require.NoError(
+		t,
+		d1.seedDemoCalendarEntriesForCalendar(t.Context(), calendarID, seedUser, now),
+	)
 
 	d2 := newCalendarSeedDemo(77, db)
-	require.NoError(t, d2.seedDemoCalendarEntriesForCalendar(t.Context(), calendarID, seedUser, now))
+	require.NoError(
+		t,
+		d2.seedDemoCalendarEntriesForCalendar(t.Context(), calendarID, seedUser, now),
+	)
 
 	require.NoError(t, mock.ExpectationsWereMet())
 }
