@@ -387,8 +387,6 @@ const viewOptions = [
     { label: t('common.summary'), value: 'summary', icon: 'i-mdi-view-agenda-outline' },
 ];
 
-const hasEntries = computed(() => visibleEntries.value.length > 0);
-
 const miniDate = computed<CalendarDate>(() => dateToCalendarDate(selectedDay.value)!);
 
 function handleMiniCalendarSelect(value: DateValue | DateRange | DateValue[] | null | undefined): void {
@@ -396,7 +394,7 @@ function handleMiniCalendarSelect(value: DateValue | DateRange | DateValue[] | n
     navigateToDate(new Date(value.year, value.month - 1, value.day));
 }
 
-const showLoading = computed(() => entriesStatus.value === 'pending' && !hasEntries.value);
+const showLoading = computed(() => entriesStatus.value === 'pending' && visibleEntries.value.length === 0);
 </script>
 
 <template>
@@ -672,7 +670,6 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && !hasEntr
                                 :error="entriesError"
                                 :retry="loadEntries"
                             />
-                            <DataNoDataBlock v-else-if="!hasEntries" :type="$t('common.entry', 2)" icon="i-mdi-calendar" />
 
                             <CalendarMonthView
                                 v-else-if="view === 'month'"
