@@ -50,7 +50,7 @@ WORKDIR /app
 COPY --from=version /version /version
 COPY --exclude=public/images/livemap/ . ./
 
-RUN apk add --no-cache git python3 make gcc g++ && \
+RUN apk add --no-cache git python3 make gcc g++ pkgconfig && \
     corepack enable && \
     corepack prepare pnpm@10.34.5 --activate && \
     version="$(cat /version)" && \
