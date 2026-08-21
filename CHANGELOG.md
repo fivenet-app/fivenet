@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.8.3] - 2026-08-21
+
+### 🚀 Features
+
+- *(demo)* Generate demo calendar + entries
+
+### 🐛 Bug Fixes
+
+- *(tiptap)* Add map and penaltycalculator blocks to text diff render
+- *(app)* Cleanup activity feed diff legend and diff colors
+- *(auth)* System message banner missing from auth pages
+- *(auth)* Attempt to add padding to auth pages
+- *(demo)* Increase demo entries
+- *(calendar)* Show empty calendar in favor of no data block
+
 ## [2026.8.2] - 2026-08-20
 
 ### 🚀 Features
