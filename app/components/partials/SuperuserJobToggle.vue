@@ -69,23 +69,52 @@ onBeforeMount(async () => listJobs());
 </script>
 
 <template>
-    <UInputMenu
-        v-if="isSuperuser"
-        v-model="selectedJob"
-        class="relative -mb-3.5"
-        variant="soft"
-        :filter-fields="['name', 'label']"
-        :placeholder="$t('common.job', 1)"
-        :items="jobs"
-        searchable-key="superuser-job-selection"
-        mode="combobox"
-        autocomplete="off"
-        name="job"
-        label-key="label"
-        v-bind="$attrs"
-    >
-        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-    </UInputMenu>
+    <template v-if="isSuperuser">
+        <UInputMenu
+            v-if="!collapsed"
+            v-model="selectedJob"
+            class="relative -mb-3.5"
+            variant="soft"
+            :filter-fields="['name', 'label']"
+            :placeholder="$t('common.job', 1)"
+            :items="jobs"
+            searchable-key="superuser-job-selection"
+            mode="combobox"
+            autocomplete="off"
+            name="job"
+            label-key="label"
+            v-bind="$attrs"
+        >
+            <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+        </UInputMenu>
+        <UPopover v-else placement="right">
+            <UTooltip
+                :text="`${$t('common.job', 1)}: ${selectedJob?.label ?? $t('common.not_found', [$t('common.job', 2)])}`"
+                placement="right"
+            >
+                <UButton variant="soft" class="w-full" icon="i-mdi-briefcase" />
+            </UTooltip>
+
+            <template #content>
+                <UInputMenu
+                    v-model="selectedJob"
+                    class="relative -mb-3.5"
+                    variant="soft"
+                    :filter-fields="['name', 'label']"
+                    :placeholder="$t('common.job', 1)"
+                    :items="jobs"
+                    searchable-key="superuser-job-selection"
+                    mode="combobox"
+                    autocomplete="off"
+                    name="job"
+                    label-key="label"
+                    v-bind="$attrs"
+                >
+                    <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                </UInputMenu>
+            </template>
+        </UPopover>
+    </template>
 
     <UNavigationMenu orientation="vertical" tooltip popover :collapsed="collapsed" :items="items" />
 </template>
