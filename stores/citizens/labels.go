@@ -464,8 +464,8 @@ func (s *Store) ValidateLabels(
 	idsExp := make([]mysql.Expression, len(labels))
 	for i := range labels {
 		// Remove access and settings info from passed in labels
-		labels[i].Access = nil
-		labels[i].Settings = nil
+		labels[i].ClearAccess()
+		labels[i].ClearSettings()
 
 		idsExp[i] = mysql.Int64(labels[i].GetId())
 	}

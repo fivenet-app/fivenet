@@ -11,15 +11,19 @@ export enum AccessLevel {
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_VIEW = 1;
+     * @generated from protobuf enum value: ACCESS_LEVEL_BLOCKED = 1;
      */
-    VIEW = 1,
+    BLOCKED = 1,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_GIVE = 2;
+     * @generated from protobuf enum value: ACCESS_LEVEL_VIEW = 2;
      */
-    GIVE = 2,
+    VIEW = 2,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_REMOVE = 3;
+     * @generated from protobuf enum value: ACCESS_LEVEL_GIVE = 3;
      */
-    REMOVE = 3
+    GIVE = 3,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_REMOVE = 4;
+     */
+    REMOVE = 4
 }

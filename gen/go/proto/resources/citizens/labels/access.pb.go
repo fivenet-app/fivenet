@@ -26,24 +26,27 @@ type AccessLevel int32
 
 const (
 	AccessLevel_ACCESS_LEVEL_UNSPECIFIED AccessLevel = 0
-	AccessLevel_ACCESS_LEVEL_VIEW        AccessLevel = 1
-	AccessLevel_ACCESS_LEVEL_GIVE        AccessLevel = 2
-	AccessLevel_ACCESS_LEVEL_REMOVE      AccessLevel = 3
+	AccessLevel_ACCESS_LEVEL_BLOCKED     AccessLevel = 1
+	AccessLevel_ACCESS_LEVEL_VIEW        AccessLevel = 2
+	AccessLevel_ACCESS_LEVEL_GIVE        AccessLevel = 3
+	AccessLevel_ACCESS_LEVEL_REMOVE      AccessLevel = 4
 )
 
 // Enum value maps for AccessLevel.
 var (
 	AccessLevel_name = map[int32]string{
 		0: "ACCESS_LEVEL_UNSPECIFIED",
-		1: "ACCESS_LEVEL_VIEW",
-		2: "ACCESS_LEVEL_GIVE",
-		3: "ACCESS_LEVEL_REMOVE",
+		1: "ACCESS_LEVEL_BLOCKED",
+		2: "ACCESS_LEVEL_VIEW",
+		3: "ACCESS_LEVEL_GIVE",
+		4: "ACCESS_LEVEL_REMOVE",
 	}
 	AccessLevel_value = map[string]int32{
 		"ACCESS_LEVEL_UNSPECIFIED": 0,
-		"ACCESS_LEVEL_VIEW":        1,
-		"ACCESS_LEVEL_GIVE":        2,
-		"ACCESS_LEVEL_REMOVE":      3,
+		"ACCESS_LEVEL_BLOCKED":     1,
+		"ACCESS_LEVEL_VIEW":        2,
+		"ACCESS_LEVEL_GIVE":        3,
+		"ACCESS_LEVEL_REMOVE":      4,
 	}
 )
 
@@ -73,12 +76,13 @@ var File_resources_citizens_labels_access_proto protoreflect.FileDescriptor
 
 const file_resources_citizens_labels_access_proto_rawDesc = "" +
 	"\n" +
-	"&resources/citizens/labels/access.proto\x12\x19resources.citizens.labels*r\n" +
+	"&resources/citizens/labels/access.proto\x12\x19resources.citizens.labels*\x8c\x01\n" +
 	"\vAccessLevel\x12\x1c\n" +
-	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x15\n" +
-	"\x11ACCESS_LEVEL_VIEW\x10\x01\x12\x15\n" +
-	"\x11ACCESS_LEVEL_GIVE\x10\x02\x12\x17\n" +
-	"\x13ACCESS_LEVEL_REMOVE\x10\x03B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels;citizenslabelsb\x06proto3"
+	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x14ACCESS_LEVEL_BLOCKED\x10\x01\x12\x15\n" +
+	"\x11ACCESS_LEVEL_VIEW\x10\x02\x12\x15\n" +
+	"\x11ACCESS_LEVEL_GIVE\x10\x03\x12\x17\n" +
+	"\x13ACCESS_LEVEL_REMOVE\x10\x04B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels;citizenslabelsb\x06proto3"
 
 var file_resources_citizens_labels_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_citizens_labels_access_proto_goTypes = []any{

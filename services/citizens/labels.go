@@ -24,7 +24,12 @@ var (
 )
 
 var labelSubjectAccessOptions = access.SubjectAccessOptions{
-	BlockedAccess: -1,
+	BlockedAccess: int32(citizenslabels.AccessLevel_ACCESS_LEVEL_BLOCKED),
+	DeniedAccessLevels: []int32{
+		int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW),
+		int32(citizenslabels.AccessLevel_ACCESS_LEVEL_GIVE),
+		int32(citizenslabels.AccessLevel_ACCESS_LEVEL_REMOVE),
+	},
 }
 
 func (s *Server) ListLabels(

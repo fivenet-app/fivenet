@@ -2012,9 +2012,10 @@ Dummy - DO NOT USE!
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_VIEW` | 1 |  |
-| `ACCESS_LEVEL_GIVE` | 2 |  |
-| `ACCESS_LEVEL_REMOVE` | 3 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_GIVE` | 3 |  |
+| `ACCESS_LEVEL_REMOVE` | 4 |  |
 
 
  <!-- end enums -->
