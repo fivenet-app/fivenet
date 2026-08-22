@@ -49,10 +49,10 @@ func TestBuildReminderSendMessageIncludesCustomAndSummaryEmbeds(t *testing.T) {
 			name: "job logo file is used for custom embed footer",
 			jobProps: &jobsprops.JobProps{
 				LogoFile: &file.File{
-					FilePath: "/uploads/jobs/command-logo.webp",
+					FilePath: "/jobs/command-logo.webp",
 				},
 			},
-			expectedFooter: "https://fivenet.example/uploads/jobs/command-logo.webp",
+			expectedFooter: "https://fivenet.example/api/filestore/jobs/command-logo.webp",
 		},
 	}
 
@@ -116,10 +116,10 @@ func TestBuildCustomReminderEmbedUsesJobLogoFileIcon(t *testing.T) {
 			name: "job logo file is used for custom embed footer",
 			jobProps: &jobsprops.JobProps{
 				LogoFile: &file.File{
-					FilePath: "/uploads/jobs/command-logo.webp",
+					FilePath: "/jobs/command-logo.webp",
 				},
 			},
-			expectedFooter: "https://fivenet.example/uploads/jobs/command-logo.webp",
+			expectedFooter: "https://fivenet.example/api/filestore/jobs/command-logo.webp",
 		},
 	}
 
