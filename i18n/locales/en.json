@@ -3666,11 +3666,13 @@
                 "DECLINED": "Declined",
                 "REVOKED": "Revoked"
             },
-            "StampAccessLevel": {
-                "UNSPECIFIED": "Unspecified",
-                "BLOCKED": "Blocked",
-                "USE": "Use",
-                "MANAGE": "Manage"
+            "stamp": {
+                "AccessLevel": {
+                    "UNSPECIFIED": "Unspecified",
+                    "BLOCKED": "Blocked",
+                    "USE": "Use",
+                    "MANAGE": "Manage"
+                }
             }
         },
         "settings": {
