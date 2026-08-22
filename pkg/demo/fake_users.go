@@ -27,7 +27,7 @@ const (
 
 	targetSeedPrefix = "demotarget"
 
-	demoColleagueActivityReasonPrefix = "[DEMO]"
+	demoColleagueActivityReasonSuffix = "[DEMO]"
 
 	// `char1:` is 6 chars and identifier max length is 64, so keep license token <= 58.
 	licenseTokenLength = 58
@@ -247,7 +247,7 @@ func (d *Demo) lookupTargetJobUsersForActivity(
 func (d *Demo) clearDemoColleagueActivity(ctx context.Context, tx *sql.Tx, job string) error {
 	condition := mysql.AND(
 		tJobColleagueActivity.Job.EQ(mysql.String(job)),
-		tJobColleagueActivity.Reason.LIKE(mysql.String(demoColleagueActivityReasonPrefix+"%")),
+		tJobColleagueActivity.Reason.LIKE(mysql.String("%"+demoColleagueActivityReasonSuffix)),
 	)
 
 	var count database.DataCount
@@ -291,7 +291,7 @@ func (d *Demo) buildColleagueActivities(
 			source,
 			shuffledTargets[i].UserID,
 			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_HIRED,
-			demoColleagueActivityReasonPrefix+" Initial hiring batch",
+			"Initial hiring batch "+demoColleagueActivityReasonSuffix,
 			nil,
 		))
 	}
@@ -314,7 +314,7 @@ func (d *Demo) buildColleagueActivities(
 			source,
 			promotable[i].UserID,
 			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_PROMOTED,
-			demoColleagueActivityReasonPrefix+" Performance review promotion",
+			"Performance review promotion "+demoColleagueActivityReasonSuffix,
 			&colleaguesactivity.ColleagueActivityData{
 				Data: &colleaguesactivity.ColleagueActivityData_GradeChange{
 					GradeChange: &colleaguesactivity.GradeChange{
@@ -343,7 +343,7 @@ func (d *Demo) buildColleagueActivities(
 			source,
 			demotable[i].UserID,
 			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_DEMOTED,
-			demoColleagueActivityReasonPrefix+" Training and conduct demotion",
+			"Training and conduct demotion "+demoColleagueActivityReasonSuffix,
 			&colleaguesactivity.ColleagueActivityData{
 				Data: &colleaguesactivity.ColleagueActivityData_GradeChange{
 					GradeChange: &colleaguesactivity.GradeChange{
@@ -363,7 +363,7 @@ func (d *Demo) buildColleagueActivities(
 			source,
 			shuffledTargets[idx].UserID,
 			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_FIRED,
-			demoColleagueActivityReasonPrefix+" Contract terminated",
+			"Contract terminated "+demoColleagueActivityReasonSuffix,
 			nil,
 		))
 	}
