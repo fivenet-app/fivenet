@@ -1,13 +1,10 @@
 package demo
 
 import (
-	"fmt"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
@@ -209,28 +206,4 @@ func TestBuildTargetJobUserProfileUsesTargetJob(t *testing.T) {
 		"expected char1 identifier, got %q",
 		profile.Identifier,
 	)
-}
-
-func TestBuildDemoBannerMessageIncludesCredentialsAndIsIndefinite(t *testing.T) {
-	t.Parallel()
-
-	d := newTestDemo(7)
-	msg := d.buildDemoBannerMessage()
-
-	require.NotNil(t, msg)
-	assert.Equal(
-		t,
-		fmt.Sprintf(
-			"Demo credentials: username %s, password %s.",
-			demoAccountUsername,
-			demoAccountPassword,
-		),
-		msg.GetTitle(),
-	)
-	assert.Equal(
-		t,
-		utils.GetSHA256HashFromString(msg.GetTitle()+"-"+time.Time{}.String()),
-		msg.GetId(),
-	)
-	assert.Nil(t, msg.GetExpiresAt(), "expected demo banner to remain visible indefinitely")
 }

@@ -62,7 +62,7 @@ onBeforeUnmount(() => setBannerMessageBottomOffset(0));
         close
         :ui="{
             root: 'w-full pointer-events-auto',
-            container: 'flex items-start justify-between gap-3 min-h-12 h-auto py-2 max-h-16',
+            container: 'flex items-start justify-between gap-3 min-h-12 h-auto py-2 max-h-16 items-center',
             center: 'flex items-start gap-1.5 min-w-0 flex-1',
             left: 'lg:hidden',
             right: 'lg:flex-1 flex items-start justify-end',

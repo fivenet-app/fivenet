@@ -61,7 +61,7 @@ func (d *Demo) seedDemoBanner(ctx context.Context) error {
 
 func (d *Demo) buildDemoBannerMessage() *resourcesettings.BannerMessage {
 	title := fmt.Sprintf(
-		"Demo credentials: username %s, password %s.",
+		"<p><strong>Demo credentials</strong>: username <code>%s</code>, password <code>%s</code>.</p>",
 		demoAccountUsername,
 		demoAccountPassword,
 	)
