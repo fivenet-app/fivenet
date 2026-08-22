@@ -33,7 +33,7 @@
         "@nuxt/content": "3.15.2",
         "@nuxt/fonts": "0.14.0",
         "@nuxt/image": "2.1.0",
-        "@nuxt/ui": "4.10.0",
+        "@nuxt/ui": "4.11.0",
         "@nuxtjs/robots": "6.2.0",
         "@pinia/nuxt": "1.0.2",
         "@protobuf-ts/grpcweb-transport": "2.11.1",
@@ -145,7 +145,7 @@
         "@vueuse/router": "14.4.0",
         "autoprefixer": "10.5.4",
         "cssnano": "8.0.7",
-        "eslint": "10.8.1",
+        "eslint": "10.9.0",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.6",
         "h3-next": "npm:h3@2.0.1-rc.29",
@@ -161,13 +161,13 @@
         "prettier-plugin-organize-imports": "4.3.0",
         "prettier-plugin-tailwindcss": "0.8.1",
         "release-it": "21.0.2",
-        "sass": "1.103.0",
+        "sass": "1.103.1",
         "tailwindcss": "4.3.3",
         "typescript": "6.0.3",
         "vite": "8.2.2",
         "vitest": "4.1.11",
         "vue-router": "5.2.0",
-        "vue-tsc": "3.3.10",
+        "vue-tsc": "3.3.11",
         "westures": "1.1.1"
     },
     "resolutions": {
@@ -179,8 +179,8 @@
     },
     "pnpm": {
         "overrides": {
-            "@unhead/vue": "3.3.2",
-            "unhead": "3.3.2",
+            "@unhead/vue": "3.4.0",
+            "unhead": "3.4.0",
             "vue": "3.5.41"
         }
     },
