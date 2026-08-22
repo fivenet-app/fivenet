@@ -218,7 +218,6 @@ func (p *Poller) doBatch(ctx context.Context) error {
 			tAccount.ID.AS("account_id"),
 			tAccount.License.AS("license"),
 			tUser.ID.AS("user_id"),
-			// FIXME this should probably join on the fivenet_user_jobs table and get the (actual) primary job of the user
 			tUser.Job.AS("job"),
 			tUser.JobGrade.AS("job_grade"),
 			tAccount.Groups.AS("groups"),
@@ -226,12 +225,10 @@ func (p *Poller) doBatch(ctx context.Context) error {
 		).
 		FROM(
 			tUser.
-				LEFT_JOIN(
-					tUserAccounts,
+				LEFT_JOIN(tUserAccounts,
 					tUserAccounts.UserID.EQ(tUser.ID),
 				).
-				INNER_JOIN(
-					tAccount,
+				INNER_JOIN(tAccount,
 					mysql.OR(
 						tAccount.ID.EQ(tUserAccounts.AccountID),
 						tAccount.License.EQ(tUser.License),

@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -154,11 +155,7 @@ func (a *SubjectObjectAccess) CreateUserAccess(
 
 func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 	targetID mysql.IntegerExpression,
-	userInfo interface {
-		GetUserId() int32
-		GetJob() string
-		GetJobGrade() int32
-	},
+	userInfo *userinfo.UserInfo,
 	access int32,
 ) mysql.BoolExpression {
 	tAccess := a.accessTable
@@ -251,12 +248,16 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 			INNER_JOIN(actorSubjectsTable,
 				actorSubjectID.EQ(columns.SubjectID),
 			),
-		).
-		WHERE(
-			// FIXME previously `columns.TargetID.EQ(targetID),` was taken into account but not anymore
-			columns.Access.GT_EQ(mysql.Int32(access)),
-		).
-		DISTINCT()
+	).
+	WHERE(
+		// Do not filter by targetID here: targetID may be an outer query column
+		// (for example, a target table ID in a list query), and using it inside
+		// this derived table would make the subquery correlated. The ranking is
+		// partitioned by access target_id, so filtering the winning row by targetID
+		// in the outer EXISTS keeps the result scoped to the requested target.
+		columns.Access.GT_EQ(mysql.Int32(access)),
+	).
+	DISTINCT()
 
 	matchingACLTable := matchingACLSelect.AsTable("acl_access_matching")
 	matchingTargetID := mysql.IntegerColumn("target_id").From(matchingACLTable)

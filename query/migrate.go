@@ -144,7 +144,7 @@ func MigrateDB(
 	}
 	req.SetMigrationState(mVer, dirty)
 
-	return req, db.Close()
+	return req, nil
 }
 
 func GetMigrationState(ctx context.Context, db *sql.DB) (uint, bool, error) {

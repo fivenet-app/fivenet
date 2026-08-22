@@ -75,8 +75,9 @@ func SetupDB(p Params) (Result, error) {
 	if !p.Config.Database.SkipMigrations {
 		var err error
 		if req, err = MigrateDB(
-			// Migrations should not be canceled by the caller's context, as they are critical for application startup.
-			// FIXME move migration and db connection to fx.StartHook
+			// Keep migrations outside the Fx start lifecycle: large schema upgrades should
+			// not be canceled by the app start timeout, and startup hooks may query tables
+			// after the DB dependency is constructed.
 			context.Background(),
 			p.Logger,
 			p.Config.Database.DSN,
