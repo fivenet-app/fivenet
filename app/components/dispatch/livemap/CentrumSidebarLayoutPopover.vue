@@ -89,12 +89,12 @@ function resetLayout(): void {
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="mt-4 flex items-center gap-2">
-                        <UTooltip class="self-start" :text="$t('common.reset')">
-                            <UButton color="neutral" icon="i-mdi-clear-box-outline" variant="soft" @click="resetLayout" />
-                        </UTooltip>
-                    </div>
+                <div class="mt-4 flex items-center gap-2">
+                    <UTooltip class="self-start" :text="$t('common.reset')">
+                        <UButton color="neutral" icon="i-mdi-clear-box-outline" variant="soft" @click="resetLayout" />
+                    </UTooltip>
                 </div>
             </div>
         </template>
