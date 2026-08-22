@@ -13,6 +13,7 @@ import JoinUnitSlideover from '~/components/dispatch/livemap/JoinUnitSlideover.v
 import OwnDispatchEntry from '~/components/dispatch/livemap/OwnDispatchEntry.vue';
 import TakeDispatchSlideover from '~/components/dispatch/livemap/TakeDispatchSlideover.vue';
 import DispatchStatusBreakdown from '~/components/dispatch/partials/DispatchStatusBreakdown.vue';
+import CentrumSidebarLayoutPopover from '~/components/dispatch/livemap/CentrumSidebarLayoutPopover.vue';
 import UnitDetailsSlideover from '~/components/dispatch/units/UnitDetailsSlideover.vue';
 import UnitStatusUpdateModal from '~/components/dispatch/units/UnitStatusUpdateModal.vue';
 import FollowMarker from '~/components/livemap/controls/FollowMarker.vue';
@@ -20,7 +21,7 @@ import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
-import { useSettingsStore } from '~/stores/settings';
+import { useSettingsStore, type DispatchCenterOuterPane } from '~/stores/settings';
 import { getCentrumDispatchesClient, getCentrumUnitsClient } from '~~/gen/ts/clients';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings/settings';
@@ -40,7 +41,17 @@ const { userOnDuty, ownMarker } = storeToRefs(livemapStore);
 const notifications = useNotificationsStore();
 
 const settingsStore = useSettingsStore();
-const { livemap } = storeToRefs(settingsStore);
+const { centrum, livemap } = storeToRefs(settingsStore);
+
+const defaultCentrumSidebarPaneLayout: DispatchCenterOuterPane[] = ['map', 'sidebar'];
+const centrumSidebarPaneLayout = computed<DispatchCenterOuterPane[]>(() =>
+    centrum.value.centrumSidebarPaneLayout?.length === 2
+        ? centrum.value.centrumSidebarPaneLayout
+        : defaultCentrumSidebarPaneLayout,
+);
+
+const mapPanelOrder = computed(() => (centrumSidebarPaneLayout.value[0] === 'map' ? 'order-1' : 'order-2'));
+const sidebarPanelOrder = computed(() => (centrumSidebarPaneLayout.value[0] === 'map' ? 'order-2' : 'order-1'));
 
 const overlay = useOverlay();
 
@@ -356,7 +367,10 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel
+        :class="mapPanelOrder"
+        :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
+    >
         <template #header>
             <UDashboardNavbar :title="$t('common.livemap')">
                 <template #leading>
@@ -364,7 +378,11 @@ defineShortcuts({
                 </template>
 
                 <template #right>
-                    <DispatcherInfo v-if="canStream && settings?.enabled" hide-join />
+                    <div class="flex items-center gap-2">
+                        <CentrumSidebarLayoutPopover v-if="canStream" />
+
+                        <DispatcherInfo v-if="canStream && settings?.enabled" hide-join />
+                    </div>
                 </template>
             </UDashboardNavbar>
         </template>
@@ -451,6 +469,7 @@ defineShortcuts({
     <UDashboardPanel
         v-if="canStream && open"
         id="centrum-sidebar"
+        :class="sidebarPanelOrder"
         class="max-w-[25rem]"
         resizable
         :min-size="13"

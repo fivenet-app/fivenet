@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { Pane, Splitpanes } from 'splitpanes';
-import 'splitpanes/dist/splitpanes.css';
+import type { Form, SplitterItem } from '@nuxt/ui';
 import { z } from 'zod';
 import DispatchList from '~/components/dispatch/dispatches/DispatchList.vue';
 import DispatchLayer from '~/components/dispatch/livemap/DispatchLayer.vue';
@@ -10,8 +9,9 @@ import SelectMenu from '~/components/partials/SelectMenu.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DispatchCenterLayoutPopover from '~/components/dispatch/DispatchCenterLayoutPopover.vue';
 import { useLivemapStore } from '~/stores/livemap';
-import type { Form } from '@nuxt/ui';
+import { useSettingsStore, type DispatchCenterOuterPane } from '~/stores/settings';
 import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/services/centrum/dispatches';
@@ -28,6 +28,9 @@ definePageMeta({
 
 const livemapStore = useLivemapStore();
 const { showLocationMarker } = storeToRefs(livemapStore);
+
+const settingsStore = useSettingsStore();
+const { centrum } = storeToRefs(settingsStore);
 
 const completorStore = useCompletorStore();
 
@@ -81,6 +84,45 @@ async function listDispatches(values: Schema): Promise<ListDispatchesResponse> {
 const baseMapRef = useTemplateRef('baseMapRef');
 const mapResizeFn = () => baseMapRef.value?.mapResize();
 
+const roundPaneSize = (size: number): number => Math.round(size * 100) / 100;
+
+const archivePaneItems = {
+    map: {
+        slot: 'map',
+        minSize: 25,
+    },
+    sidebar: {
+        slot: 'details',
+        minSize: 40,
+    },
+} satisfies Record<DispatchCenterOuterPane, Pick<SplitterItem, 'slot' | 'minSize'>>;
+
+const dispatchesSplitterItems = computed<SplitterItem[]>(() =>
+    centrum.value.dispatchCenterPaneLayout.outer.map((pane) => ({
+        ...archivePaneItems[pane],
+        defaultSize: centrum.value.dispatchCenterPaneSizes[pane],
+    })),
+);
+
+const dispatchesSplitterKey = computed(() => `dispatches-splitter-${centrum.value.dispatchCenterPaneLayout.outer.join('-')}`);
+
+const splitterUi = {
+    panel: 'min-h-0 min-w-0 overflow-hidden',
+    handle: 'data-[orientation=horizontal]:w-px data-[orientation=vertical]:h-px bg-border transition-colors data-[state=hover]:bg-primary data-[state=drag]:bg-primary',
+};
+
+function onDispatchesLayout(sizes: number[]): void {
+    const panes = centrum.value.dispatchCenterPaneLayout.outer;
+    if (sizes.length < panes.length) return;
+
+    panes.forEach((pane, index) => {
+        const size = sizes[index];
+        if (size === undefined) return;
+
+        centrum.value.dispatchCenterPaneSizes[pane] = roundPaneSize(size);
+    });
+}
+
 onBeforeMount(() => (showLocationMarker.value = true));
 onMounted(async () => {
     useTimeoutFn(() => (mount.value = true), 35);
@@ -113,17 +155,29 @@ const mount = ref<boolean>(false);
                 </template>
 
                 <template #right>
-                    <PartialsBackButton fallback-to="/dispatch" />
+                    <div class="flex items-center gap-2">
+                        <DispatchCenterLayoutPopover hide-inner-panes />
+
+                        <PartialsBackButton fallback-to="/dispatch" />
+                    </div>
                 </template>
             </UDashboardNavbar>
         </template>
 
         <template #body>
             <div
-                class="max-h-[calc(100dvh-var(--ui-header-height))] min-h-[calc(100dvh-var(--ui-header-height))] overflow-hidden"
+                class="max-h-[calc(100dvh-var(--ui-header-height)-var(--page-content-bottom-offset))] min-h-[calc(100dvh-var(--ui-header-height)-var(--page-content-bottom-offset))] overflow-hidden"
             >
-                <Splitpanes v-if="mount" class="relative">
-                    <Pane :min-size="25">
+                <USplitter
+                    v-if="mount"
+                    id="dispatches-splitter"
+                    :key="dispatchesSplitterKey"
+                    class="relative size-full"
+                    :items="dispatchesSplitterItems"
+                    :ui="splitterUi"
+                    @layout="onDispatchesLayout"
+                >
+                    <template #map>
                         <ClientOnly>
                             <BaseMap ref="baseMapRef" :map-options="{ zoomControl: false }">
                                 <template #default>
@@ -133,9 +187,9 @@ const mount = ref<boolean>(false);
                                 </template>
                             </BaseMap>
                         </ClientOnly>
-                    </Pane>
+                    </template>
 
-                    <Pane :size="65">
+                    <template #details>
                         <div class="max-h-full overflow-y-auto">
                             <div class="mb-2 px-2">
                                 <UForm
@@ -240,21 +294,9 @@ const mount = ref<boolean>(false);
                                 :refresh="refresh"
                             />
                         </div>
-                    </Pane>
-                </Splitpanes>
+                    </template>
+                </USplitter>
             </div>
         </template>
     </UDashboardPanel>
 </template>
-
-<style scoped>
-.splitpanes--vertical > .splitpanes__splitter {
-    min-width: 2px;
-    background-color: var(--color-gray-800);
-}
-
-.splitpanes--horizontal > .splitpanes__splitter {
-    min-height: 2px;
-    background-color: var(--color-gray-800);
-}
-</style>

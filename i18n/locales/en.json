@@ -1243,6 +1243,31 @@
                 "failed_datastream": "Failed to stream Dispatch Center data!",
                 "join_center": "Join the dispatch center, by clicking here."
             },
+            "layout_popover": {
+                "trigger": "Rearrange dispatch panes",
+                "map_sidebar_title": "Map and sidebar",
+                "map_sidebar_description": "Move the map to the left or right side of Dispatch Center.",
+                "inner_title": "Sidebar panes",
+                "inner_description": "Reorder the panes in the sidebar below the map.",
+                "map": "Map",
+                "sidebar": "Sidebar",
+                "dispatches": "Dispatches",
+                "units": "Units",
+                "activity": "Activity",
+                "left": "Left",
+                "right": "Right",
+                "position": "Position {0}",
+                "move_left": "Move {0} left",
+                "move_right": "Move {0} right",
+                "move_up": "Move {0} up",
+                "move_down": "Move {0} down"
+            },
+            "sidebar_layout": {
+                "trigger": "Rearrange sidebar panels",
+                "title": "Sidebar layout",
+                "description": "Swap the map and the dispatch sidebar positions.",
+                "swap": "Swap panels"
+            },
             "livemap": {
                 "mark_on_gps": "Mark on GPS",
                 "total_dispatches": "Total Dispatches"
@@ -2408,6 +2433,10 @@
                 "dispatch_status_updated": {
                     "title": "Dispatch Status updated",
                     "content": "Status has been updated."
+                },
+                "dispatch_deleted": {
+                    "title": "Dispatch deleted",
+                    "content": "Dispatch was successfully deleted."
                 },
                 "unit_status_updated": {
                     "title": "Unit Status updated",

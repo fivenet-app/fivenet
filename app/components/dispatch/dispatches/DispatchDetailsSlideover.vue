@@ -15,6 +15,7 @@ import { useLivemapStore } from '~/stores/livemap';
 import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access/access';
 import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     dispatchId: number;
@@ -34,6 +35,7 @@ const { gotoCoords } = useLivemapStore();
 const centrumStore = useCentrumStore();
 const { dispatches, timeCorrection } = storeToRefs(centrumStore);
 const { canDo, selfAssign } = centrumStore;
+const notifications = useNotificationsStore();
 
 const centrumDispatchesClient = await getCentrumDispatchesClient();
 
@@ -43,6 +45,12 @@ async function deleteDispatch(id: number): Promise<void> {
     try {
         const call = centrumDispatchesClient.deleteDispatch({ id });
         await call;
+
+        notifications.add({
+            title: { key: 'notifications.centrum.sidebar.dispatch_deleted.title', parameters: {} },
+            description: { key: 'notifications.centrum.sidebar.dispatch_deleted.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;

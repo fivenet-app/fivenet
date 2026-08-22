@@ -281,9 +281,6 @@ importers:
       slugify:
         specifier: 1.6.9
         version: 1.6.9
-      splitpanes:
-        specifier: 4.1.2
-        version: 4.1.2(vue@3.5.41(typescript@6.0.3))
       uuid:
         specifier: 14.0.2
         version: 14.0.2
@@ -363,9 +360,6 @@ importers:
       '@types/pica':
         specifier: 9.0.5
         version: 9.0.5
-      '@types/splitpanes':
-        specifier: 2.2.6
-        version: 2.2.6(typescript@6.0.3)
       '@types/zxcvbn':
         specifier: 4.4.5
         version: 4.4.5
@@ -4155,9 +4149,6 @@ packages:
 
   '@types/sortablejs@1.15.9':
     resolution: {integrity: sha512-7HP+rZGE2p886PKV9c9OJzLBI6BBJu1O7lJGYnPyG3fS4/duUCcngkNCjsLwIMV+WMqANe3tt4irrXHSIe68OQ==}
-
-  '@types/splitpanes@2.2.6':
-    resolution: {integrity: sha512-3dV5sO1Ht74iER4jJU03mreL3f+Q2h47ZqXS6Sfbqc6hkCvsDrX1GA0NbYWRdNvZemPyTDzUoApWKeoGbALwkQ==}
 
   '@types/supercluster@5.0.3':
     resolution: {integrity: sha512-XMSqQEr7YDuNtFwSgaHHOjsbi0ZGL62V9Js4CW45RBuRYlNWSW/KDqN+RFFE7HdHcGhJPtN0klKvw06r9Kg7rg==}
@@ -8830,11 +8821,6 @@ packages:
 
   spdx-license-ids@3.0.23:
     resolution: {integrity: sha512-CWLcCCH7VLu13TgOH+r8p1O/Znwhqv/dbb6lqWy67G+pT1kHmeD/+V36AVb/vq8QMIQwVShJ6Ssl5FPh0fuSdw==}
-
-  splitpanes@4.1.2:
-    resolution: {integrity: sha512-frNchoCv7w0nMQEuaDGgMGMU6jv3NhN6bBGQVfCNgwJdVcYaRmi1dwYDjp7SifAoUFdiQjBRB254LJNidzo15Q==}
-    peerDependencies:
-      vue: 3.5.41
 
   srvx@0.11.22:
     resolution: {integrity: sha512-LqZxxBDMKuMAZzFzJnDCkFOrs9MZQZr0LvHiO/SuSZVdQaXD7xQ5UWTUxheJrQPve1qk9MG2B/yttUvJxw8egQ==}
@@ -13939,12 +13925,6 @@ snapshots:
   '@types/resolve@1.20.2': {}
 
   '@types/sortablejs@1.15.9': {}
-
-  '@types/splitpanes@2.2.6(typescript@6.0.3)':
-    dependencies:
-      vue: 3.5.41(typescript@6.0.3)
-    transitivePeerDependencies:
-      - typescript
 
   '@types/supercluster@5.0.3':
     dependencies:
@@ -19655,10 +19635,6 @@ snapshots:
       spdx-license-ids: 3.0.23
 
   spdx-license-ids@3.0.23: {}
-
-  splitpanes@4.1.2(vue@3.5.41(typescript@6.0.3)):
-    dependencies:
-      vue: 3.5.41(typescript@6.0.3)
 
   srvx@0.11.22: {}
 

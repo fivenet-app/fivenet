@@ -1243,6 +1243,31 @@
                 "failed_datastream": "Leistellen Datenstrom fehlgeschlagen!",
                 "join_center": "Trete der Leitstelle bei, indem du hier klickst."
             },
+            "layout_popover": {
+                "trigger": "Leitstellen-Panes anordnen",
+                "map_sidebar_title": "Karte und Seitenleiste",
+                "map_sidebar_description": "Verschiebe die Karte auf die linke oder rechte Seite der Leitstelle.",
+                "inner_title": "Seitenleisten-Panes",
+                "inner_description": "Ordne die Bereiche in der Seitenleiste unter der Karte neu an.",
+                "map": "Karte",
+                "sidebar": "Seitenleiste",
+                "dispatches": "Einsätze",
+                "units": "Einheiten",
+                "activity": "Aktivität",
+                "left": "Links",
+                "right": "Rechts",
+                "position": "Position {0}",
+                "move_left": "{0} nach links verschieben",
+                "move_right": "{0} nach rechts verschieben",
+                "move_up": "{0} nach oben verschieben",
+                "move_down": "{0} nach unten verschieben"
+            },
+            "sidebar_layout": {
+                "trigger": "Seitenleisten-Panels anordnen",
+                "title": "Seitenleistenlayout",
+                "description": "Vertausche die Positionen von Karte und Einsatzliste.",
+                "swap": "Panels tauschen"
+            },
             "livemap": {
                 "mark_on_gps": "Auf GPS markieren",
                 "total_dispatches": "Gesamtanzahl Einsätze"
@@ -2408,6 +2433,10 @@
                 "dispatch_status_updated": {
                     "title": "Einsatz Status aktualisiert",
                     "content": "Status wurde aktualisiert."
+                },
+                "dispatch_deleted": {
+                    "title": "Einsatz gelöscht",
+                    "content": "Einsatz wurde erfolgreich gelöscht."
                 },
                 "unit_status_updated": {
                     "title": "Einheit Status aktualisiert",

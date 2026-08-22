@@ -51,9 +51,21 @@ export type DispatchCenterPaneSizes = {
     feed: number;
 };
 
+export type DispatchCenterOuterPane = 'map' | 'sidebar';
+export type DispatchCenterInnerPane = 'dispatchList' | 'unitList' | 'feed';
+
+export type DispatchCenterPaneLayout = {
+    outer: DispatchCenterOuterPane[];
+    inner: DispatchCenterInnerPane[];
+};
+
+export const defaultDispatchCenterOuterPaneLayout: DispatchCenterOuterPane[] = ['map', 'sidebar'];
+
 export type CentrumSettings = {
     dispatchListCardStyle: boolean;
     dispatchCenterPaneSizes: DispatchCenterPaneSizes;
+    dispatchCenterPaneLayout: DispatchCenterPaneLayout;
+    centrumSidebarPaneLayout: DispatchCenterOuterPane[];
 };
 
 export type AudioSettings = {
@@ -108,6 +120,11 @@ export const useSettingsStore = defineStore(
                 unitList: 26,
                 feed: 8,
             },
+            dispatchCenterPaneLayout: {
+                outer: [...defaultDispatchCenterOuterPaneLayout],
+                inner: ['dispatchList', 'unitList', 'feed'],
+            },
+            centrumSidebarPaneLayout: [...defaultDispatchCenterOuterPaneLayout],
         });
 
         const livemapTileLayer = ref<TileLayerKeys>('postal');

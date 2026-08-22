@@ -328,7 +328,6 @@ export default defineNuxtConfig({
                 'prosemirror-state',
                 'prosemirror-transform',
                 'prosemirror-view',
-                'splitpanes',
                 'uuid',
                 'v-calendar',
                 'v-code-diff',

@@ -470,6 +470,7 @@ onBeforeUnmount(() => (map = undefined));
             />
         </UContextMenu>
     </div>
+
     <slot name="afterMap" />
 </template>
 
