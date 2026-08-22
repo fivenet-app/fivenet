@@ -1121,7 +1121,8 @@
                     "in_days": "In {n} Tag | In {n} Tagen",
                     "in_weeks": "In {n} Woche | In {n} Wochen",
                     "in_months": "In {n} Monat | In {n} Monaten"
-                }
+                },
+                "status_locked": "Statusbearbeitung gesperrt - Dieses Feld ist für deinen aktuellen Zugriff nur lesbar."
             },
             "document_request_access": {
                 "title": "Sie haben keinen Zugriff auf das Dokument",

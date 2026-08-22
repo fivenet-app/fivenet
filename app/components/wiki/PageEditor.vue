@@ -360,7 +360,9 @@ const { sendClientView } = useClientUpdate(ObjectType.WIKI_PAGE, () =>
         ],
     }),
 );
-sendClientView(props.pageId);
+onBeforeMount(() => {
+    if (props.pageId > 0) sendClientView(props.pageId);
+});
 
 const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {

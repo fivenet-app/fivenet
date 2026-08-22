@@ -37,6 +37,7 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
+const { can } = useAuth();
 
 const overlay = useOverlay();
 
@@ -371,13 +372,15 @@ const canDo = computed(() => ({
         undefined,
         document.value?.document?.creatorJob,
     ),
-    status: checkDocAccess(
-        state.access,
-        document.value?.document?.creator,
-        AccessLevel.STATUS,
-        undefined,
-        document.value?.document?.creatorJob,
-    ),
+    status:
+        can('documents.DocumentsService/ToggleDocument').value &&
+        checkDocAccess(
+            state.access,
+            document.value?.document?.creator,
+            AccessLevel.STATUS,
+            'documents.DocumentsService/ToggleDocument',
+            document.value?.document?.creatorJob,
+        ),
 }));
 
 const canEditDocument = computed(() => canDo.value.edit);
@@ -435,7 +438,10 @@ const { sendClientView } = useClientUpdate(ObjectType.DOCUMENT, () =>
         ],
     }),
 );
-sendClientView(props.documentId);
+
+onBeforeMount(() => {
+    if (props.documentId > 0) sendClientView(props.documentId);
+});
 
 useYText(ydoc.getText('title'), toRef(state, 'title'), { provider: provider });
 useYText(ydoc.getText('state'), toRef(state, 'state'), { provider: provider });
@@ -672,7 +678,15 @@ provide('yjsProvider', provider);
                                         </UFormField>
 
                                         <UFormField class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
-                                            <USwitch v-model="state.closed" :disabled="!canDo.status" />
+                                            <UTooltip
+                                                :text="
+                                                    !canDo.status
+                                                        ? $t('components.documents.document_view.status_locked')
+                                                        : undefined
+                                                "
+                                            >
+                                                <USwitch v-model="state.closed" :disabled="!canDo.status" />
+                                            </UTooltip>
                                         </UFormField>
                                     </div>
                                 </div>

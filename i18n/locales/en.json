@@ -1121,7 +1121,8 @@
                     "in_days": "In {n} day | In {n} days",
                     "in_weeks": "In {n} week | In {n} weeks",
                     "in_months": "In {n} month | In {n} months"
-                }
+                },
+                "status_locked": "Status edit locked - This field is read-only for your current access level."
             },
             "document_request_access": {
                 "title": "You don't have access to this document",

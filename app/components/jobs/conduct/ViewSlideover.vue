@@ -36,9 +36,9 @@ const { sendClientView } = useClientUpdate(ObjectType.JOBS_CONDUCT, () =>
     }),
 );
 
-if (props.entry.id > 0) {
-    sendClientView(props.entry.id);
-}
+onBeforeMount(() => {
+    if (props.entry.id > 0) sendClientView(props.entry.id);
+});
 </script>
 
 <template>

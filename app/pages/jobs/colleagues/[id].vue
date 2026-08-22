@@ -41,7 +41,7 @@ const notifications = useNotificationsStore();
 
 const route = useRoute('jobs-colleagues-id-info');
 
-const colleagueId = computed(() => route.params?.id ?? 0);
+const colleagueId = computed(() => parseInt(route.params?.id ?? '0'));
 
 const jobsColleaguesClient = await getJobsColleaguesClient();
 
@@ -50,7 +50,10 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`jobs-colleague-${route.params.id as string}`, () => getColleague(parseInt(route.params.id as string)));
+} = useLazyAsyncData(
+    () => `jobs-colleague-${colleagueId.value}`,
+    () => getColleague(colleagueId.value),
+);
 
 async function getColleague(userId: number): Promise<GetColleagueResponse> {
     try {
@@ -103,7 +106,9 @@ const { sendClientView } = useClientUpdate(ObjectType.JOBS_COLLEAGUE, () =>
         ],
     }),
 );
-sendClientView(parseInt(route.params.id as string));
+onBeforeMount(() => {
+    if (colleagueId.value > 0) sendClientView(colleagueId.value);
+});
 
 const links = computed(() =>
     [
