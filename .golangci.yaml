@@ -520,6 +520,9 @@ linters:
     dupl:
       threshold: 225
 
+    protogetter:
+      skip-any-generated: false
+
   exclusions:
     # Log a warning if an exclusion rule is unused.
     warn-unused: true

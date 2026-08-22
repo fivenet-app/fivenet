@@ -33,8 +33,8 @@ func (x *VehicleProps) HandleChanges(
 	} else {
 		in.Wanted = x.Wanted
 		in.WantedReason = x.WantedReason
-		in.WantedAt = x.GetWantedAt()
-		in.WantedTill = x.GetWantedTill()
+		in.SetWantedAt(x.GetWantedAt())
+		in.SetWantedTill(x.GetWantedTill())
 	}
 
 	if len(updateSets) > 0 {
@@ -51,7 +51,7 @@ func (x *VehicleProps) HandleChanges(
 				in.GetPlate(),
 				mysql.CURRENT_TIMESTAMP(),
 				in.Wanted,
-				in.WantedReason,
+				dbutils.StringEmpty(in.GetWantedReason()),
 				in.GetWantedAt(),
 				in.GetWantedTill(),
 			).
@@ -73,34 +73,34 @@ func (x *VehicleProps) NormalizeWantedChange(in *VehicleProps, reason string) {
 	}
 
 	if in.Wanted == nil {
-		in.Wanted = x.Wanted
-		in.WantedReason = x.WantedReason
-		in.WantedAt = x.GetWantedAt()
-		in.WantedTill = x.GetWantedTill()
+		in.SetWanted(x.GetWanted())
+		in.SetWantedReason(x.GetWantedReason())
+		in.SetWantedAt(x.GetWantedAt())
+		in.SetWantedTill(x.GetWantedTill())
 		return
 	}
 
 	if !in.GetWanted() {
-		in.WantedAt = nil
-		in.WantedTill = nil
-		in.WantedReason = nil
+		in.ClearWantedAt()
+		in.ClearWantedTill()
+		in.ClearWantedReason()
 		return
 	}
 
 	if reason != "" {
-		in.WantedReason = &reason
-	} else if in.WantedReason == nil {
-		in.WantedReason = x.WantedReason
+		in.SetWantedReason(reason)
+	} else if in.GetWantedReason() == "" {
+		in.SetWantedReason(x.GetWantedReason())
 	}
 
 	if !x.GetWanted() {
-		in.WantedAt = timestamp.Now()
+		in.SetWantedAt(timestamp.Now())
 	} else {
-		in.WantedAt = x.GetWantedAt()
+		in.SetWantedAt(x.GetWantedAt())
 	}
 
-	if in.WantedTill == nil {
-		in.WantedTill = x.GetWantedTill()
+	if in.GetWantedTill() == nil {
+		in.SetWantedTill(x.GetWantedTill())
 	}
 }
 
@@ -133,7 +133,7 @@ func (x *VehicleProps) LoadFromDB(
 	}
 
 	if x.GetPlate() == "" {
-		x.Plate = plate
+		x.SetPlate(plate)
 	}
 
 	return nil

@@ -47,7 +47,6 @@ func TestBuildUserInfoChangedEvent(t *testing.T) {
 
 	assert.Equal(t, int64(42), evt.GetAccountId())
 	assert.Equal(t, int32(77), evt.GetUserId())
-	assert.Same(t, evt.GetChangedAt(), evt.ChangedAt)
 	assert.Equal(t, "police", evt.GetNewJob())
 	assert.Equal(t, "police", evt.GetNewJobLabel())
 	assert.Equal(t, int32(3), evt.GetNewJobGrade())

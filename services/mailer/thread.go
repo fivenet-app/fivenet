@@ -216,13 +216,15 @@ func (s *Server) CreateThread(
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	req.Thread.SetId(lastId)
+	thread := req.GetThread()
+	thread.SetId(lastId)
 
-	req.Message.ThreadId = req.GetThread().GetId()
-	req.Message.Sender = senderEmail
-	req.Message.CreatorId = &userInfo.UserId
-	req.Message.CreatorJob = &userInfo.Job
-	if _, err := s.store.CreateMessage(ctx, tx, req.GetMessage()); err != nil {
+	msg := req.GetMessage()
+	msg.SetThreadId(thread.GetId())
+	msg.SetSender(senderEmail)
+	msg.SetCreatorId(userInfo.GetUserId())
+	msg.SetCreatorJob(userInfo.GetJob())
+	if _, err := s.store.CreateMessage(ctx, tx, msg); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
@@ -231,7 +233,7 @@ func (s *Server) CreateThread(
 		EmailId: senderEmail.GetId(),
 		Email:   senderEmail,
 	})
-	if err := s.store.AddThreadRecipients(ctx, tx, req.GetThread().GetId(), emails); err != nil {
+	if err := s.store.AddThreadRecipients(ctx, tx, thread.GetId(), emails); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
@@ -256,10 +258,10 @@ func (s *Server) CreateThread(
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
-	thread, err := s.getThread(
+	thread, err = s.getThread(
 		ctx,
-		req.GetThread().GetId(),
-		req.GetThread().GetCreatorEmailId(),
+		thread.GetId(),
+		thread.GetCreatorEmailId(),
 		userInfo,
 	)
 	if err != nil {

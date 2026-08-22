@@ -14,14 +14,14 @@ import (
 
 func (n *RichTextHtmlNode) populateFrom(htmlNode *html.Node) error {
 	if htmlNode.Parent == nil {
-		n.Type = NodeType_NODE_TYPE_DOC
+		n.SetType(NodeType_NODE_TYPE_DOC)
 	} else {
-		n.Type = NodeType_NODE_TYPE_ELEMENT
+		n.SetType(NodeType_NODE_TYPE_ELEMENT)
 	}
 
 	switch htmlNode.Type {
 	case html.ElementNode:
-		n.Tag = htmlNode.Data
+		n.SetTag(htmlNode.Data)
 
 	case html.DocumentNode:
 
@@ -30,7 +30,7 @@ func (n *RichTextHtmlNode) populateFrom(htmlNode *html.Node) error {
 	}
 
 	if len(htmlNode.Attr) > 0 {
-		n.Attrs = make(map[string]string)
+		n.SetAttrs(make(map[string]string))
 		var a html.Attribute
 		for _, a = range htmlNode.Attr {
 			key := strings.ToLower(a.Key)
@@ -41,7 +41,7 @@ func (n *RichTextHtmlNode) populateFrom(htmlNode *html.Node) error {
 					continue
 				}
 
-				n.Id = &a.Val
+				n.SetId(a.Val)
 
 			case "style":
 				// Skip empty style attribute
@@ -76,20 +76,22 @@ func (n *RichTextHtmlNode) populateFrom(htmlNode *html.Node) error {
 	for e != nil {
 		switch e.Type {
 		case html.TextNode:
-			n.Type = NodeType_NODE_TYPE_TEXT
+			n.SetType(NodeType_NODE_TYPE_TEXT)
 
 			data := strings.TrimSpace(e.Data)
 			// If text data is not empty after timming spaces
 			if len(data) > 0 {
-				n.Content = append(n.Content, &RichTextHtmlNode{
-					Type: NodeType_NODE_TYPE_TEXT,
-					Text: &e.Data,
-				})
+				n.SetContent(
+					append(
+						n.GetContent(),
+						&RichTextHtmlNode{Type: NodeType_NODE_TYPE_TEXT, Text: &e.Data},
+					),
+				)
 			}
 
 		case html.ElementNode:
-			if n.Content == nil {
-				n.Content = make([]*RichTextHtmlNode, 0)
+			if n.GetContent() == nil {
+				n.SetContent(make([]*RichTextHtmlNode, 0))
 			}
 
 			jsonElemNode := &RichTextHtmlNode{}
@@ -97,7 +99,7 @@ func (n *RichTextHtmlNode) populateFrom(htmlNode *html.Node) error {
 				return err
 			}
 
-			n.Content = append(n.Content, jsonElemNode)
+			n.SetContent(append(n.GetContent(), jsonElemNode))
 		}
 
 		e = e.NextSibling
@@ -105,15 +107,15 @@ func (n *RichTextHtmlNode) populateFrom(htmlNode *html.Node) error {
 
 	if len(n.GetTag()) == 2 && isHeaderTag(n.GetTag()) {
 		// Either empty id or "broken" id tag
-		if n.Id == nil || n.GetId() == "" || isHeaderTag(n.GetId()) {
-			if n.Text != nil && n.GetText() != "" {
+		if n.GetId() == "" || isHeaderTag(n.GetId()) {
+			if n.GetText() != "" {
 				id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), n.GetText()))
-				n.Id = &id
+				n.SetId(id)
 			} else if len(n.GetContent()) > 0 {
 				id := utils.SlugNoDots(
 					fmt.Sprintf("%s-%s", n.GetTag(), walkContentForText(n.GetContent())),
 				)
-				n.Id = &id
+				n.SetId(id)
 			}
 		}
 	}
@@ -126,7 +128,7 @@ func walkContentForText(ns []*RichTextHtmlNode) string {
 	var textSb124 strings.Builder
 	for i := range ns {
 		element := ns[i]
-		if element.Text == nil || element.GetText() == "" {
+		if element.GetText() == "" {
 			textSb124.WriteString(walkContentForText(element.GetContent()))
 		} else {
 			textSb124.WriteString(element.GetText())
@@ -146,19 +148,19 @@ func (n *RichTextHtmlNode) populateTo(htmlNode *html.Node) {
 		htmlNode.Type = html.DocumentNode
 	}
 
-	if n.Id != nil && n.GetId() != "" {
+	if n.GetId() != "" {
 		// Make sure that headers have id
 		if len(n.GetTag()) == 2 && isHeaderTag(n.GetTag()) {
 			// Either empty id or "broken" id tag
 			if n.GetId() == "" || isHeaderTag(n.GetId()) {
-				if n.Text != nil && n.GetText() != "" {
+				if n.GetText() != "" {
 					id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), n.GetText()))
-					n.Id = &id
+					n.SetId(id)
 				} else if len(n.GetContent()) > 0 {
 					id := utils.SlugNoDots(
 						fmt.Sprintf("%s-%s", n.GetTag(), walkContentForText(n.GetContent())),
 					)
-					n.Id = &id
+					n.SetId(id)
 				}
 			}
 		}
@@ -181,7 +183,7 @@ func (n *RichTextHtmlNode) populateTo(htmlNode *html.Node) {
 		})
 	}
 
-	if n.Text != nil && n.GetText() != "" {
+	if n.GetText() != "" {
 		htmlNode.AppendChild(&html.Node{
 			Type: html.TextNode,
 			Data: n.GetText(),
@@ -328,7 +330,6 @@ func ExtractFromHTML(doc *RichTextHtmlNode) *ExtractedContent {
 	crawler(h)
 
 	text := strings.TrimSpace(textBuff.String())
-
 	return &ExtractedContent{
 		Text:         text,
 		WordCount:    wordCount,

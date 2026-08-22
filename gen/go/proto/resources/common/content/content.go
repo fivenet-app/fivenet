@@ -39,7 +39,7 @@ func (x *Content) Scan(value any) error {
 		if err != nil {
 			return err
 		}
-		x.Content = out
+		x.SetContent(out)
 
 		return nil
 	}
@@ -50,14 +50,14 @@ func (x *Content) Scan(value any) error {
 
 	// Legacy JSON content stored directly in Content.Content field
 	if x.GetContent() != nil {
-		x.Content = x.GetContent()
+		x.SetContent(x.GetContent())
 
 		// Make sure to make raw HTML available
 		rawHtml, err := x.GetContent().ToHTML()
 		if err != nil {
 			return err
 		}
-		x.RawHtml = &rawHtml
+		x.SetRawHtml(rawHtml)
 	}
 
 	return nil
@@ -79,8 +79,8 @@ func (x *Content) Value() (driver.Value, error) {
 		if err != nil {
 			return nil, err
 		}
-		x.Content = out
-		x.RawHtml = nil
+		x.SetContent(out)
+		x.ClearRawHtml()
 	}
 
 	if x.GetTiptapJson() != nil || x.GetContentType() == ContentType_CONTENT_TYPE_TIPTAP_JSON {

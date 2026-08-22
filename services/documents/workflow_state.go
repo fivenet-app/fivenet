@@ -415,11 +415,9 @@ func (w *Workflow) updateAutoReminderTime(state *documentsworkflow.WorkflowState
 	}
 
 	if state.NextReminderCount == nil {
-		zero := int32(0)
-		state.NextReminderCount = &zero
+		state.SetNextReminderCount(0)
 	} else {
-		//nolint:protogetter // The value is updated via the pointer
-		*state.NextReminderCount++
+		state.SetNextReminderCount(state.GetNextReminderCount() + 1)
 	}
 
 	if len(
@@ -427,7 +425,7 @@ func (w *Workflow) updateAutoReminderTime(state *documentsworkflow.WorkflowState
 	) <= int(
 		state.GetNextReminderCount(),
 	) {
-		*state.NextReminderCount = 0
+		state.SetNextReminderCount(0)
 	}
 
 	// No reminders? How did we end up here? Unset reminder time
