@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
@@ -60,7 +61,8 @@ type Server struct {
 
 	db       *sql.DB
 	store    mailerstore.IStore
-	ps       perms.Permissions
+	hydrator citizenshydrator.IHydrator
+	perms    perms.Permissions
 	enricher mstlystcdata.IUserAwareEnricher
 	js       *events.JSWrapper
 
@@ -76,6 +78,7 @@ type Params struct {
 	Enricher mstlystcdata.IUserAwareEnricher
 	JS       *events.JSWrapper
 	Store    mailerstore.IStore
+	Hydrator citizenshydrator.IHydrator
 	Access   *access.MailerEmailsObjectAccess
 }
 
@@ -83,7 +86,8 @@ func NewServer(p Params) *Server {
 	return &Server{
 		db:       p.DB,
 		store:    p.Store,
-		ps:       p.P,
+		hydrator: p.Hydrator,
+		perms:    p.P,
 		enricher: p.Enricher,
 		js:       p.JS,
 

@@ -44,7 +44,7 @@ func TestStoreCreateMarker(t *testing.T) {
 	mock.ExpectExec(expectedQuery).
 		WithArgs(marker.GetExpiresAt(), "police", marker.GetPublic(), marker.GetName(), marker.Description, marker.GetX(), marker.GetY(), marker.Postal, marker.Color, marker.GetType(), marker.GetData(), int32(3)).
 		WillReturnResult(sqlmock.NewResult(55, 1))
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_user AS user_short ON`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
 		WithArgs(int64(55), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"marker_marker.id",
@@ -63,13 +63,6 @@ func TestStoreCreateMarker(t *testing.T) {
 			"marker_marker.marker_type",
 			"marker_marker.marker_data",
 			"marker_marker.creator_id",
-			"user_short.id",
-			"user_short.job",
-			"user_short.job_grade",
-			"user_short.firstname",
-			"user_short.lastname",
-			"user_short.sex",
-			"user_short.phone_number",
 		}).AddRow(
 			int64(55),
 			now,
@@ -87,13 +80,6 @@ func TestStoreCreateMarker(t *testing.T) {
 			int32(1),
 			nil,
 			int32(3),
-			int32(3),
-			"police",
-			int32(16),
-			"Jane",
-			"Doe",
-			"f",
-			"555-1234",
 		))
 
 	creatorID := int32(3)
@@ -128,7 +114,7 @@ func TestStoreCreateMarkerAllowsNilCreatorID(t *testing.T) {
 	mock.ExpectExec(expectedQuery).
 		WithArgs(marker.GetExpiresAt(), "police", marker.GetPublic(), marker.GetName(), marker.Description, marker.GetX(), marker.GetY(), marker.Postal, marker.Color, marker.GetType(), marker.GetData(), nil).
 		WillReturnResult(sqlmock.NewResult(55, 1))
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_user AS user_short ON`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
 		WithArgs(int64(55), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"marker_marker.id",
@@ -147,13 +133,6 @@ func TestStoreCreateMarkerAllowsNilCreatorID(t *testing.T) {
 			"marker_marker.marker_type",
 			"marker_marker.marker_data",
 			"marker_marker.creator_id",
-			"user_short.id",
-			"user_short.job",
-			"user_short.job_grade",
-			"user_short.firstname",
-			"user_short.lastname",
-			"user_short.sex",
-			"user_short.phone_number",
 		}).AddRow(
 			int64(55),
 			now,
@@ -169,13 +148,6 @@ func TestStoreCreateMarkerAllowsNilCreatorID(t *testing.T) {
 			nil,
 			nil,
 			int32(1),
-			nil,
-			nil,
-			nil,
-			nil,
-			nil,
-			nil,
-			nil,
 			nil,
 			nil,
 		))
@@ -214,7 +186,7 @@ func TestStoreUpdateMarker(t *testing.T) {
 	mock.ExpectExec(expectedQuery).
 		WithArgs(nil, marker.GetName(), marker.Description, marker.GetX(), marker.GetY(), marker.Postal, marker.Color, marker.GetPublic(), marker.GetType(), marker.GetData(), "police", int64(42), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_user AS user_short ON`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
 		WithArgs(int64(42), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"marker_marker.id",
@@ -233,13 +205,6 @@ func TestStoreUpdateMarker(t *testing.T) {
 			"marker_marker.marker_type",
 			"marker_marker.marker_data",
 			"marker_marker.creator_id",
-			"user_short.id",
-			"user_short.job",
-			"user_short.job_grade",
-			"user_short.firstname",
-			"user_short.lastname",
-			"user_short.sex",
-			"user_short.phone_number",
 		}).AddRow(
 			int64(42),
 			now,
@@ -257,13 +222,6 @@ func TestStoreUpdateMarker(t *testing.T) {
 			int32(0),
 			nil,
 			int32(3),
-			int32(3),
-			"police",
-			int32(16),
-			"Jane",
-			"Doe",
-			"f",
-			"555-1234",
 		))
 
 	require.NoError(t, store.UpdateMarker(t.Context(), marker, "police"))
@@ -293,7 +251,7 @@ func TestStoreDeleteMarker(t *testing.T) {
 	mock.ExpectExec(deleteQuery).
 		WithArgs(deletedAt, int64(99), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_user AS user_short ON`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
 		WithArgs(int64(99), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"marker_marker.id",
@@ -312,13 +270,6 @@ func TestStoreDeleteMarker(t *testing.T) {
 			"marker_marker.marker_type",
 			"marker_marker.marker_data",
 			"marker_marker.creator_id",
-			"user_short.id",
-			"user_short.job",
-			"user_short.job_grade",
-			"user_short.firstname",
-			"user_short.lastname",
-			"user_short.sex",
-			"user_short.phone_number",
 		}).AddRow(
 			int64(99),
 			now,
@@ -336,13 +287,6 @@ func TestStoreDeleteMarker(t *testing.T) {
 			int32(1),
 			nil,
 			int32(3),
-			int32(3),
-			"police",
-			int32(16),
-			"Jane",
-			"Doe",
-			"f",
-			"555-1234",
 		))
 
 	require.NoError(t, store.DeleteMarker(t.Context(), 99, timestamp.New(deletedAt)))
@@ -359,7 +303,7 @@ func TestStoreDeleteMarker(t *testing.T) {
 	mock.ExpectExec(restoreQuery).
 		WithArgs(int64(99), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_user AS user_short ON`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
 		WithArgs(int64(99), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"marker_marker.id",
@@ -378,13 +322,6 @@ func TestStoreDeleteMarker(t *testing.T) {
 			"marker_marker.marker_type",
 			"marker_marker.marker_data",
 			"marker_marker.creator_id",
-			"user_short.id",
-			"user_short.job",
-			"user_short.job_grade",
-			"user_short.firstname",
-			"user_short.lastname",
-			"user_short.sex",
-			"user_short.phone_number",
 		}).AddRow(
 			int64(99),
 			now,
@@ -402,13 +339,6 @@ func TestStoreDeleteMarker(t *testing.T) {
 			int32(1),
 			nil,
 			int32(3),
-			int32(3),
-			"police",
-			int32(16),
-			"Jane",
-			"Doe",
-			"f",
-			"555-1234",
 		))
 
 	require.NoError(t, store.DeleteMarker(t.Context(), 99, nil))
@@ -424,7 +354,7 @@ func TestStoreGetMarker(t *testing.T) {
 
 	store := New(Params{DB: db, Enricher: mstlystcdata.NewDummyEnricher()})
 	now := time.Unix(100, 0).UTC()
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_user AS user_short ON`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_centrum_markers AS marker_marker`)+`(?s).*`+regexp.QuoteMeta(`marker_marker.id = ?`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
 		WithArgs(int64(42), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"marker_marker.id",
@@ -443,13 +373,6 @@ func TestStoreGetMarker(t *testing.T) {
 			"marker_marker.marker_type",
 			"marker_marker.marker_data",
 			"marker_marker.creator_id",
-			"user_short.id",
-			"user_short.job",
-			"user_short.job_grade",
-			"user_short.firstname",
-			"user_short.lastname",
-			"user_short.sex",
-			"user_short.phone_number",
 		}).AddRow(
 			int64(42),
 			now,
@@ -467,13 +390,6 @@ func TestStoreGetMarker(t *testing.T) {
 			int32(1),
 			nil,
 			int32(3),
-			int32(3),
-			"police",
-			int32(16),
-			"Jane",
-			"Doe",
-			"f",
-			"555-1234",
 		))
 
 	marker, err := store.GetMarker(t.Context(), 42)
@@ -481,8 +397,7 @@ func TestStoreGetMarker(t *testing.T) {
 	require.NotNil(t, marker)
 	assert.Equal(t, int64(42), marker.GetId())
 	assert.Equal(t, "police", marker.GetJob())
-	require.NotNil(t, marker.GetCreator())
-	assert.Equal(t, "Jane", marker.GetCreator().GetFirstname())
+	require.Nil(t, marker.GetCreator())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
@@ -513,13 +428,6 @@ func TestStoreListActiveMarkers(t *testing.T) {
 			"marker_marker.marker_type",
 			"marker_marker.marker_data",
 			"marker_marker.creator_id",
-			"user_short.id",
-			"user_short.job",
-			"user_short.job_grade",
-			"user_short.firstname",
-			"user_short.lastname",
-			"user_short.sex",
-			"user_short.phone_number",
 		}).AddRow(
 			int64(42),
 			now,
@@ -537,13 +445,6 @@ func TestStoreListActiveMarkers(t *testing.T) {
 			int32(1),
 			nil,
 			int32(3),
-			int32(3),
-			"police",
-			int32(16),
-			"Jane",
-			"Doe",
-			"f",
-			"555-1234",
 		))
 
 	markers, err := store.ListActiveMarkers(t.Context())

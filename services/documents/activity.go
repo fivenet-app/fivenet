@@ -7,6 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -14,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/textdiff"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -68,6 +70,24 @@ func (s *Server) ListDocumentActivity(
 		return resp, nil
 	}
 	resp.Activity = activity
+
+	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetActivity()))
+	for i, act := range resp.GetActivity() {
+		if act.GetCreatorId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: act.GetCreatorId(),
+				Set: func(user *usershort.UserShort) {
+					resp.Activity[i].Creator = user
+				},
+			})
+		}
+	}
+	if len(targets) > 0 {
+		if err := hydrateShort(ctx, nil, targets); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetActivity() {

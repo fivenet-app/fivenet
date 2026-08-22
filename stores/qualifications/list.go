@@ -20,9 +20,7 @@ func (s *Store) ListQualifications(
 	ctx context.Context,
 	opts ListQualificationsOptions,
 	userInfo *userinfo.UserInfo,
-	includePhoneNumber bool,
 ) (*pbqualifications.ListQualificationsResponse, error) {
-	tCreator := table.FivenetUser.AS("creator")
 	searchCondition := mysql.Bool(true)
 
 	if search := dbutils.PrepareForLikeSearch(opts.Search); search != "" {
@@ -66,7 +64,6 @@ func (s *Store) ListQualifications(
 				INNER_JOIN(tQuali,
 					tQuali.ID.EQ(visibleQualiID),
 				).
-				LEFT_JOIN(tCreator, tQuali.CreatorID.EQ(tCreator.ID)).
 				LEFT_JOIN(tQualiResult, mysql.AND(
 					tQualiResult.QualificationID.EQ(tQuali.ID),
 					tQualiResult.DeletedAt.IS_NULL(),
@@ -102,7 +99,6 @@ func (s *Store) ListQualifications(
 		visibleIDs.Table,
 		ctes,
 		lastResultFilter,
-		includePhoneNumber,
 		limit,
 	)
 
@@ -118,7 +114,6 @@ func (s *Store) GetQualification(
 	qualificationId int64,
 	userInfo *userinfo.UserInfo,
 	selectContent bool,
-	includePhoneNumber bool,
 ) (*resqualifications.Qualification, error) {
 	wheres := []mysql.BoolExpression{
 		tQuali.ID.EQ(mysql.Int64(qualificationId)),
@@ -145,7 +140,6 @@ func (s *Store) GetQualification(
 		wheres,
 		userInfo,
 		selectContent,
-		includePhoneNumber,
 	)
 
 	var quali resqualifications.Qualification
@@ -169,7 +163,6 @@ func (s *Store) GetQualification(
 		qualificationId,
 		userInfo.GetUserId(),
 		userInfo,
-		includePhoneNumber,
 	)
 	if err != nil {
 		return nil, err
@@ -183,7 +176,6 @@ func (s *Store) GetQualification(
 		nil,
 		userInfo,
 		userInfo.GetUserId(),
-		includePhoneNumber,
 	)
 	if err != nil {
 		return nil, err
@@ -199,10 +191,9 @@ func (s *Store) listQualificationsQuery(
 	visibleIDs mysql.SelectTable,
 	ctes []mysql.CommonTableExpression,
 	lastResultFilter mysql.BoolExpression,
-	includePhoneNumber bool,
+
 	limit int64,
 ) mysql.Statement {
-	tCreator := table.FivenetUser.AS("creator")
 	visibleQualiID := mysql.IntegerColumn("id").From(visibleIDs)
 	userID := int32(0)
 	if userInfo != nil {
@@ -228,12 +219,6 @@ func (s *Store) listQualificationsQuery(
 		tQuali.ExamMode,
 		tQuali.ExamSettings,
 		tQuali.CreatorID,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
 		tQuali.CreatorJob,
 		tQualiResult.ID,
 		tQualiResult.QualificationID,
@@ -241,9 +226,6 @@ func (s *Store) listQualificationsQuery(
 		tQualiResult.Score,
 		tQualiResult.Summary,
 		tQualiResult.CreatorID,
-	}
-	if includePhoneNumber {
-		columns = append(columns, tCreator.PhoneNumber)
 	}
 
 	var stmt mysql.Statement = tQuali.
@@ -256,7 +238,6 @@ func (s *Store) listQualificationsQuery(
 				INNER_JOIN(tQuali,
 					tQuali.ID.EQ(visibleQualiID),
 				).
-				LEFT_JOIN(tCreator, tQuali.CreatorID.EQ(tCreator.ID)).
 				LEFT_JOIN(tQualiResult, mysql.AND(
 					tQualiResult.QualificationID.EQ(tQuali.ID),
 					tQualiResult.DeletedAt.IS_NULL(),
@@ -279,10 +260,7 @@ func (s *Store) getQualificationQuery(
 	wheres []mysql.BoolExpression,
 	userInfo *userinfo.UserInfo,
 	selectContent bool,
-	includePhoneNumber bool,
 ) mysql.SelectStatement {
-	tCreator := table.FivenetUser.AS("creator")
-
 	columns := mysql.ProjectionList{
 		tQuali.ID,
 		tQuali.CreatedAt,
@@ -298,12 +276,6 @@ func (s *Store) getQualificationQuery(
 		tQuali.ExamMode,
 		tQuali.ExamSettings,
 		tQuali.CreatorID,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
 		tQuali.CreatorJob,
 		tQuali.DiscordSyncEnabled,
 		tQuali.DiscordSettings,
@@ -321,15 +293,11 @@ func (s *Store) getQualificationQuery(
 		columns = append(columns, tQuali.Content)
 	}
 	columns = append(columns, tQuali.DeletedAt)
-	if includePhoneNumber {
-		columns = append(columns, tCreator.PhoneNumber)
-	}
 
 	return tQuali.
 		SELECT(columns[0], columns[1:]...).
 		FROM(
 			tQuali.
-				LEFT_JOIN(tCreator, tQuali.CreatorID.EQ(tCreator.ID)).
 				LEFT_JOIN(tQualiResult, mysql.AND(
 					tQualiResult.QualificationID.EQ(tQuali.ID),
 					tQualiResult.DeletedAt.IS_NULL(),
@@ -344,14 +312,12 @@ func (s *Store) GetQualificationShort(
 	ctx context.Context,
 	qualificationId int64,
 	userInfo *userinfo.UserInfo,
-	includePhoneNumber bool,
 ) (*resqualifications.QualificationShort, error) {
 	quali, err := s.GetQualification(
 		ctx,
 		qualificationId,
 		userInfo,
 		false,
-		includePhoneNumber,
 	)
 	if err != nil {
 		return nil, err

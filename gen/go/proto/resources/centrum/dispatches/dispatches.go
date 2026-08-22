@@ -94,6 +94,15 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 	return x
 }
 
+func (x *Dispatch) GetFirstJob() string {
+	js := x.GetJobs()
+	jobStrings := js.GetJobStrings()
+	if len(jobStrings) > 0 {
+		return jobStrings[0]
+	}
+	return ""
+}
+
 func (x *Dispatch) Point() orb.Point {
 	return orb.Point{x.GetX(), x.GetY()}
 }

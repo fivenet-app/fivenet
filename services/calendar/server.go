@@ -21,6 +21,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -91,8 +92,9 @@ type Server struct {
 	logger   *zap.Logger
 	tracer   trace.Tracer
 	db       *sql.DB
-	ps       perms.Permissions
+	perms    perms.Permissions
 	enricher mstlystcdata.IUserAwareEnricher
+	hydrator citizenshydrator.IHydrator
 	appCfg   appconfig.IConfig
 	i18n     i18n.Ii18n
 	notif    notifi.INotifi
@@ -111,6 +113,7 @@ type Params struct {
 	DB        *sql.DB
 	P         perms.Permissions
 	Enricher  mstlystcdata.IUserAwareEnricher
+	Hydrator  citizenshydrator.IHydrator
 	AppConfig appconfig.IConfig
 	I18n      i18n.Ii18n
 	Notif     notifi.INotifi
@@ -132,8 +135,9 @@ func NewServer(p Params) Result {
 		logger:   p.Logger.Named("calendar"),
 		tracer:   p.TP.Tracer("calendar"),
 		db:       p.DB,
-		ps:       p.P,
+		perms:    p.P,
 		enricher: p.Enricher,
+		hydrator: p.Hydrator,
 		appCfg:   p.AppConfig,
 		i18n:     p.I18n,
 		notif:    p.Notif,

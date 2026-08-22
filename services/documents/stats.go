@@ -43,7 +43,7 @@ func (s *Server) GetStats(
 	period := max(req.GetPeriod(), stats.StatsPeriod_STATS_PERIOD_DAILY)
 
 	allowedCategories, err := permsdocuments.StatsService.GetStats.CategoriesTyped.Get(
-		s.ps,
+		s.perms,
 		userInfo,
 	)
 	if err != nil {
@@ -53,7 +53,7 @@ func (s *Server) GetStats(
 		return nil, errorsdocuments.ErrNoStatsCategories
 	}
 
-	jobsList, err := s.ps.AttrJobList(userInfo, permsdocuments.StatsService.GetStats.Jobs)
+	jobsList, err := s.perms.AttrJobList(userInfo, permsdocuments.StatsService.GetStats.Jobs)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}

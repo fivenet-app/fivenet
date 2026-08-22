@@ -83,9 +83,7 @@ func (s *Store) ListCalendarEntryRSVP(
 	opts ListCalendarEntryRSVPOptions,
 	userInfo *userinfo.UserInfo,
 ) (*pbcalendar.ListCalendarEntryRSVPResponse, error) {
-	tUser := table.FivenetUser.AS("user_short")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-
+	_ = userInfo
 	condition := mysql.AND(
 		tCalendarRSVP.EntryID.EQ(mysql.Int64(opts.EntryID)),
 		tCalendarRSVP.Response.GT(
@@ -97,11 +95,7 @@ func (s *Store) ListCalendarEntryRSVP(
 		SELECT(
 			mysql.COUNT(tCalendarRSVP.UserID).AS("data_count.total"),
 		).
-		FROM(tCalendarRSVP.
-			LEFT_JOIN(tUser,
-				tCalendarRSVP.UserID.EQ(tUser.ID),
-			),
-		).
+		FROM(tCalendarRSVP).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -123,27 +117,8 @@ func (s *Store) ListCalendarEntryRSVP(
 			tCalendarRSVP.CreatedAt,
 			tCalendarRSVP.UserID,
 			tCalendarRSVP.Response,
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
-			tUserProps.AvatarFileID.AS("user_short.profile_picture_file_id"),
-			tAvatar.FilePath.AS("user_short.profile_picture"),
 		).
-		FROM(tCalendarRSVP.
-			LEFT_JOIN(tUser,
-				tCalendarRSVP.UserID.EQ(tUser.ID),
-			).
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUser.ID),
-			).
-			LEFT_JOIN(tAvatar,
-				tAvatar.ID.EQ(tUserProps.AvatarFileID),
-			),
-		).
+		FROM(tCalendarRSVP).
 		WHERE(condition).
 		ORDER_BY(tCalendarRSVP.Response.DESC()).
 		OFFSET(opts.Pagination.GetOffset()).
@@ -256,36 +231,14 @@ func (s *Store) getSeriesRSVPCalendarEntry(
 	entryID int64,
 	userID int32,
 ) (*calendarentries.CalendarEntryRSVP, error) {
-	tUser := table.FivenetUser.AS("user_short")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-
 	stmt := tCalendarRSVP.
 		SELECT(
 			tCalendarRSVP.EntryID,
 			tCalendarRSVP.CreatedAt,
 			tCalendarRSVP.UserID,
 			tCalendarRSVP.Response,
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
-			tUserProps.AvatarFileID.AS("user_short.profile_picture_file_id"),
-			tAvatar.FilePath.AS("user_short.profile_picture"),
 		).
-		FROM(tCalendarRSVP.
-			LEFT_JOIN(tUser,
-				tCalendarRSVP.UserID.EQ(tUser.ID),
-			).
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUser.ID),
-			).
-			LEFT_JOIN(tAvatar,
-				tAvatar.ID.EQ(tUserProps.AvatarFileID),
-			),
-		).
+		FROM(tCalendarRSVP).
 		WHERE(mysql.AND(
 			tCalendarRSVP.EntryID.EQ(mysql.Int64(entryID)),
 			tCalendarRSVP.UserID.EQ(mysql.Int32(userID)),
@@ -321,8 +274,6 @@ func (s *Store) getOccurrenceRSVPCalendarEntry(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	tUser := table.FivenetUser.AS("user_short")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
 	tOccurrence := table.FivenetCalendarRsvpOccurrence.AS("calendar_entry_rsvp")
 
 	stmt := tOccurrence.
@@ -332,21 +283,8 @@ func (s *Store) getOccurrenceRSVPCalendarEntry(
 			tOccurrence.UserID,
 			tOccurrence.Response,
 			tOccurrence.OccurrenceKey,
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
-			tUserProps.AvatarFileID.AS("user_short.profile_picture_file_id"),
-			tAvatar.FilePath.AS("user_short.profile_picture"),
 		).
-		FROM(tOccurrence.
-			LEFT_JOIN(tUser, tOccurrence.UserID.EQ(tUser.ID)).
-			LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tUser.ID)).
-			LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tUserProps.AvatarFileID)),
-		).
+		FROM(tOccurrence).
 		WHERE(mysql.AND(
 			tOccurrence.EntryID.EQ(mysql.Int64(entryID)),
 			tOccurrence.UserID.EQ(mysql.Int32(userID)),

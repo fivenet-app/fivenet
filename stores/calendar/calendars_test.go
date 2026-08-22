@@ -7,7 +7,6 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -23,7 +22,7 @@ func TestCountCalendarsReturnsCount(t *testing.T) {
 	})
 
 	store := New(testParams(db))
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_calendar AS calendar`) + `(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_user AS creator ON`) + `(?s).*` + regexp.QuoteMeta(`calendar.deleted_at IS NULL`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_calendar AS calendar`) + `(?s).*` + regexp.QuoteMeta(`calendar.deleted_at IS NULL`)).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(9)))
 
 	total, err := store.CountCalendars(t.Context(), ListQuery{})
@@ -44,7 +43,6 @@ func TestCountCalendarsStmtUsesAliasedCalendarColumnForBirthdayAccess(t *testing
 				Superuser: true,
 			},
 		},
-		table.FivenetUser.AS("creator"),
 	)
 
 	sql, _ := stmt.Sql()
@@ -62,8 +60,6 @@ func TestListCalendarsStmtOrdersByCalendarIds(t *testing.T) {
 			CalendarIDs: []int64{4, 9},
 		},
 		7,
-		table.FivenetUser.AS("creator"),
-		table.FivenetFiles.AS("profile_picture"),
 		20,
 		40,
 	)
@@ -82,8 +78,6 @@ func TestListCalendarsStmtFiltersOnlyPublicWhenRequested(t *testing.T) {
 	stmt := store.listCalendarsStmt(
 		ListQuery{UserInfo: &userinfo.UserInfo{UserId: 7, Job: "police"}, OnlyPublic: true},
 		7,
-		table.FivenetUser.AS("creator"),
-		table.FivenetFiles.AS("profile_picture"),
 		20,
 		40,
 	)
@@ -99,7 +93,6 @@ func TestGetCalendarStmtIncludesCreatorJoins(t *testing.T) {
 	stmt := store.getCalendarStmt(&userinfo.UserInfo{UserId: 7}, mysql.Bool(true))
 
 	sql, _ := stmt.Sql()
-	assert.Contains(t, sql, "LEFT JOIN fivenet_user AS creator ON")
 	assert.Contains(t, sql, "LEFT JOIN fivenet_calendar_subs AS calendar_sub ON")
 	assert.Contains(t, sql, "LIMIT ?")
 }

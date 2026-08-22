@@ -224,6 +224,7 @@ func newCentrumJoinUnitTestServer(
 			fx.Provide(units.New),
 			fx.Provide(dispatches.New),
 			fx.Provide(access.NewCentrumUnitsSubjectObjectAccess),
+			fx.Provide(access.NewJobGroupsSubjectObjectAccess),
 			fx.Provide(func(p Params) Result {
 				r := NewServer(p)
 				srv = r.Server

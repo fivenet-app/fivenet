@@ -3,10 +3,12 @@ package settings
 import (
 	"context"
 
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 )
 
@@ -37,6 +39,32 @@ func (s *Server) ViewAuditLog(
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+	}
+
+	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetLogs())*2)
+	for i, logEntry := range resp.GetLogs() {
+		if logEntry.GetUserId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: logEntry.GetUserId(),
+				Set: func(user *usershort.UserShort) {
+					resp.Logs[i].User = user
+				},
+			})
+		}
+		if logEntry.GetTargetUserId() > 0 {
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: logEntry.GetTargetUserId(),
+				Set: func(user *usershort.UserShort) {
+					resp.Logs[i].TargetUser = user
+				},
+			})
+		}
+	}
+	if len(targets) > 0 {
+		if err := hydrateShort(ctx, nil, targets); err != nil {
+			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+		}
 	}
 
 	return resp, nil

@@ -34,7 +34,7 @@ type Server struct {
 	logger   *zap.Logger
 	auth     *auth.GRPCAuth
 	tm       *auth.TokenMgr
-	ps       perms.Permissions
+	perms    perms.Permissions
 	enricher mstlystcdata.IEnricher
 	ui       userinfo.UserInfoRetriever
 	appCfg   appconfig.IConfig
@@ -67,7 +67,7 @@ func NewServer(p Params) *Server {
 		logger:   p.Logger.Named("grpc.auth"),
 		auth:     p.Auth,
 		tm:       p.TM,
-		ps:       p.Perms,
+		perms:    p.Perms,
 		enricher: p.Enricher,
 		ui:       p.UI,
 		appCfg:   p.AppConfig,

@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorslivemap "github.com/fivenet-app/fivenet/v2026/services/livemap/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -65,7 +66,7 @@ func (s *Server) CreateOrUpdateMarker(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
 		fields, err := permslivemap.LivemapService.CreateOrUpdateMarker.AccessTyped.Get(
-			s.ps,
+			s.perms,
 			userInfo,
 		)
 		if err != nil {
@@ -74,6 +75,13 @@ func (s *Server) CreateOrUpdateMarker(
 
 		checkMarker, err := s.store.GetMarker(ctx, reqMarker.GetId())
 		if err != nil {
+			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
+		}
+
+		if err := s.hydrateMarkerCreators(
+			ctx,
+			[]*livemapmarkers.MarkerMarker{checkMarker},
+		); err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 
@@ -105,6 +113,9 @@ func (s *Server) CreateOrUpdateMarker(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
+	if err := s.hydrateMarkerCreators(ctx, []*livemapmarkers.MarkerMarker{reqMarker}); err != nil {
+		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
+	}
 	s.applyMarkerCache(reqMarker)
 
 	return &pblivemap.CreateOrUpdateMarkerResponse{
@@ -120,7 +131,7 @@ func (s *Server) DeleteMarker(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	fields, err := permslivemap.LivemapService.DeleteMarker.AccessTyped.Get(s.ps, userInfo)
+	fields, err := permslivemap.LivemapService.DeleteMarker.AccessTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
@@ -132,6 +143,9 @@ func (s *Server) DeleteMarker(
 		}
 
 		return &pblivemap.DeleteMarkerResponse{}, nil
+	}
+	if err := s.hydrateMarkerCreators(ctx, []*livemapmarkers.MarkerMarker{marker}); err != nil {
+		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
 
 	if marker.GetPublic() {
@@ -204,6 +218,9 @@ func (s *Server) getMarkerMarkers(
 func (s *Server) refreshMarkers(ctx context.Context) error {
 	dest, err := s.store.ListActiveMarkers(ctx)
 	if err != nil {
+		return err
+	}
+	if err := s.hydrateMarkerCreators(ctx, dest); err != nil {
 		return err
 	}
 
@@ -309,6 +326,51 @@ func (s *Server) resolveMarkerPublic(
 
 	if !userInfo.GetJobAdmin() && marker.GetPublic() != existing.GetPublic() {
 		return errorslivemap.ErrMarkerDenied
+	}
+
+	return nil
+}
+
+func (s *Server) hydrateMarkerCreators(
+	ctx context.Context,
+	markers []*livemapmarkers.MarkerMarker,
+) error {
+	if len(markers) == 0 {
+		return nil
+	}
+
+	creatorIDs := make([]int32, 0, len(markers))
+	for _, marker := range markers {
+		if marker == nil || !marker.HasCreatorId() || marker.GetCreatorId() <= 0 {
+			continue
+		}
+		creatorIDs = append(creatorIDs, marker.GetCreatorId())
+	}
+	if len(creatorIDs) == 0 {
+		return nil
+	}
+
+	creatorsByID, err := s.hydrator.HydrateShortByUserID(
+		ctx,
+		nil,
+		nil,
+		creatorIDs,
+		citizenshydrator.ResolveOpts{IncludePhoneNumber: true},
+	)
+	if err != nil {
+		return err
+	}
+
+	for _, marker := range markers {
+		if marker == nil || !marker.HasCreatorId() {
+			continue
+		}
+
+		creator, ok := creatorsByID[marker.GetCreatorId()]
+		if !ok {
+			continue
+		}
+		marker.SetCreator(creator)
 	}
 
 	return nil

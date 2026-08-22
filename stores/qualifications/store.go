@@ -45,20 +45,17 @@ type IStore interface {
 		ctx context.Context,
 		opts ListQualificationsOptions,
 		userInfo *userinfo.UserInfo,
-		includePhoneNumber bool,
 	) (*pbqualifications.ListQualificationsResponse, error)
 	GetQualification(
 		ctx context.Context,
 		qualificationId int64,
 		userInfo *userinfo.UserInfo,
 		selectContent bool,
-		includePhoneNumber bool,
 	) (*resqualifications.Qualification, error)
 	GetQualificationShort(
 		ctx context.Context,
 		qualificationId int64,
 		userInfo *userinfo.UserInfo,
-		includePhoneNumber bool,
 	) (*resqualifications.QualificationShort, error)
 	GetQualificationRequirements(
 		ctx context.Context,
@@ -73,20 +70,17 @@ type IStore interface {
 		ctx context.Context,
 		opts ListQualificationRequestsOptions,
 		userInfo *userinfo.UserInfo,
-		includePhoneNumber bool,
 	) (*pbqualifications.ListQualificationRequestsResponse, error)
 	GetQualificationRequest(
 		ctx context.Context,
 		qualificationId int64,
 		userId int32,
 		userInfo *userinfo.UserInfo,
-		includePhoneNumber bool,
 	) (*resqualifications.QualificationRequest, error)
 	ListQualificationsResults(
 		ctx context.Context,
 		opts ListQualificationsResultsOptions,
 		userInfo *userinfo.UserInfo,
-		includePhoneNumber bool,
 	) (*pbqualifications.ListQualificationsResultsResponse, error)
 	GetQualificationResult(
 		ctx context.Context,
@@ -95,7 +89,6 @@ type IStore interface {
 		status []resqualifications.ResultStatus,
 		userInfo *userinfo.UserInfo,
 		userId int32,
-		includePhoneNumber bool,
 	) (*resqualifications.QualificationResult, error)
 	GetExamUser(
 		ctx context.Context,

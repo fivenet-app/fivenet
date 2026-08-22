@@ -75,9 +75,6 @@ func (s *Store) ListComments(
 	limit int64,
 ) ([]*documentscomment.Comment, error) {
 	tComments := table.FivenetDocumentsComments.AS("comment")
-	tCreator := table.FivenetUser.AS("creator")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-	tUserProps := table.FivenetUserProps.AS("user_props")
 
 	condition := tComments.DocumentID.EQ(mysql.Int64(documentID))
 	if userInfo == nil || !userInfo.GetJobAdmin() {
@@ -92,26 +89,9 @@ func (s *Store) ListComments(
 			tComments.UpdatedAt,
 			tComments.Content,
 			tComments.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-			tAvatar.FilePath.AS("creator.profile_picture"),
+			tComments.CreatorJob,
 		).
-		FROM(
-			tComments.
-				LEFT_JOIN(tCreator,
-					tComments.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
+		FROM(tComments).
 		WHERE(condition).
 		OFFSET(offset).
 		ORDER_BY(tComments.CreatedAt.DESC()).
@@ -133,9 +113,6 @@ func (s *Store) GetComment(
 	userInfo *userinfo.UserInfo,
 ) (*documentscomment.Comment, error) {
 	tComments := table.FivenetDocumentsComments.AS("comment")
-	tCreator := table.FivenetUser.AS("creator")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-	tUserProps := table.FivenetUserProps.AS("user_props")
 
 	stmt := tComments.
 		SELECT(
@@ -147,27 +124,8 @@ func (s *Store) GetComment(
 			tComments.Content,
 			tComments.CreatorID,
 			tComments.CreatorJob,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-			tAvatar.FilePath.AS("creator.profile_picture"),
 		).
-		FROM(
-			tComments.
-				LEFT_JOIN(tCreator,
-					tComments.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
+		FROM(tComments).
 		WHERE(tComments.ID.EQ(mysql.Int64(id))).
 		LIMIT(1)
 
@@ -181,12 +139,6 @@ func (s *Store) GetComment(
 	if comment.GetId() <= 0 {
 		return nil, nil
 	}
-
-	if comment.GetCreator() != nil && userInfo != nil {
-		// leave enrichment to the service
-		_ = userInfo
-	}
-
 	return comment, nil
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	errorsvehicles "github.com/fivenet-app/fivenet/v2026/services/vehicles/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -25,7 +26,10 @@ func (s *Server) ListVehicleActivity(
 		Activity: []*vehiclesactivity.VehicleActivity{},
 	}
 
-	fields, err := permsvehicles.VehiclesService.ListVehicleActivity.FieldsTyped.Get(s.ps, userInfo)
+	fields, err := permsvehicles.VehiclesService.ListVehicleActivity.FieldsTyped.Get(
+		s.perms,
+		userInfo,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
@@ -75,15 +79,23 @@ func (s *Server) ListVehicleActivity(
 	canViewCreator := fields.Contains(
 		permsvehicles.VehiclesServiceListVehicleActivityFieldsPermValueCreator,
 	) || userInfo.GetJobAdmin()
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.GetActivity() {
+	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetActivity()))
+	for i, entry := range resp.GetActivity() {
 		if canViewCreator {
-			if resp.GetActivity()[i].GetCreator() != nil {
-				jobInfoFn(resp.GetActivity()[i].GetCreator())
-			}
+			targets = append(targets, citizenshydrator.ShortTarget{
+				UserID: entry.GetCreatorId(),
+				Set:    resp.Activity[i].SetCreator,
+			})
 		} else {
-			resp.Activity[i].CreatorId = nil
-			resp.Activity[i].Creator = nil
+			entry.ClearCreatorId()
+			entry.ClearCreator()
+		}
+	}
+
+	if canViewCreator {
+		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, targets); err != nil {
+			return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 		}
 	}
 

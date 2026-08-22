@@ -69,7 +69,7 @@ func (s *Server) UpdateAppConfig(
 			perms.Name(cfgDefaultperms[i].GetName()),
 		)
 	}
-	if err := s.ps.SetDefaultRolePerms(ctx, defaultPerms); err != nil {
+	if err := s.perms.SetDefaultRolePerms(ctx, defaultPerms); err != nil {
 		return nil, err
 	}
 

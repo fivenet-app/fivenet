@@ -13,7 +13,6 @@ import (
 	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -133,7 +132,6 @@ type IStore interface {
 		emailID int64,
 		deletedAt *timestamp.Timestamp,
 	) error
-	GetUserShort(ctx context.Context, db qrm.DB, userID int32) (*usershort.UserShort, error)
 	ListRecipientsByEmails(
 		ctx context.Context,
 		db qrm.DB,

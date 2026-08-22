@@ -26,7 +26,7 @@ func (s *Server) ListCitizens(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Field Permission Check
-	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -92,7 +92,7 @@ func (s *Server) GetUser(
 	infoOnly := req.InfoOnly != nil && req.GetInfoOnly()
 
 	// Field Permission Check
-	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -202,7 +202,7 @@ func (s *Server) checkIfUserCanAccess(
 		return true, nil
 	}
 
-	jobGrades, err := s.ps.AttrJobGradeList(
+	jobGrades, err := s.perms.AttrJobGradeList(
 		userInfo,
 		permscitizens.CitizensService.GetUser.Jobs,
 	)

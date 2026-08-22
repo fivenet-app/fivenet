@@ -31,7 +31,7 @@ func TestStoreCountUserActivityAppliesTargetFilter(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
-func TestStoreListUserActivityAppliesSortAndJoin(t *testing.T) {
+func TestStoreListUserActivityAppliesSortAndIdsOnly(t *testing.T) {
 	t.Parallel()
 
 	db, mock, err := sqlmock.New()
@@ -41,8 +41,6 @@ func TestStoreListUserActivityAppliesSortAndJoin(t *testing.T) {
 	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user_activity AS user_activity`) +
-		`(?s).*` + regexp.QuoteMeta(`INNER JOIN fivenet_user AS target_user ON`) +
-		`(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_user AS source_user ON`) +
 		`(?s).*` + regexp.QuoteMeta(`user_activity.target_user_id = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`ORDER BY user_activity.created_at DESC, user_activity.id DESC LIMIT ? OFFSET ?`)
 
@@ -56,16 +54,6 @@ func TestStoreListUserActivityAppliesSortAndJoin(t *testing.T) {
 			"user_activity.type",
 			"user_activity.reason",
 			"user_activity.data",
-			"target_user.id",
-			"target_user.job",
-			"target_user.job_grade",
-			"target_user.firstname",
-			"target_user.lastname",
-			"source_user.id",
-			"source_user.job",
-			"source_user.job_grade",
-			"source_user.firstname",
-			"source_user.lastname",
 		}).AddRow(
 			int64(1),
 			time.Now(),
@@ -74,16 +62,6 @@ func TestStoreListUserActivityAppliesSortAndJoin(t *testing.T) {
 			int32(1),
 			"updated",
 			[]byte(`{}`),
-			int32(42),
-			"police",
-			int32(2),
-			"Jane",
-			"Doe",
-			nil,
-			nil,
-			nil,
-			nil,
-			nil,
 		))
 
 	activities, err := store.ListUserActivity(t.Context(), ListUserActivityOptions{
@@ -93,6 +71,7 @@ func TestStoreListUserActivityAppliesSortAndJoin(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Len(t, activities, 1)
-	assert.Equal(t, int32(42), activities[0].GetTargetUser().GetUserId())
+	assert.Equal(t, int32(42), activities[0].GetTargetUserId())
+	assert.Nil(t, activities[0].GetTargetUser())
 	require.NoError(t, mock.ExpectationsWereMet())
 }

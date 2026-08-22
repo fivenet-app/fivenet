@@ -8,6 +8,7 @@ import (
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -15,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -41,6 +43,7 @@ func (s *Server) ListCalendarEntries(
 
 	return &pbcalendar.ListCalendarEntriesResponse{
 		Entries: s.finalizeCalendarEntries(
+			ctx,
 			entries,
 			userInfo,
 		),
@@ -67,6 +70,7 @@ func (s *Server) GetUpcomingEntries(
 
 	resp.Entries = s.store.FilterUpcomingCalendarEntries(
 		s.finalizeCalendarEntries(
+			ctx,
 			entries,
 			userInfo,
 		),
@@ -114,10 +118,6 @@ func (s *Server) GetCalendarEntry(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	if entry.GetCreator() != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, entry.GetCreator())
-	}
-
 	calAccess, err := s.store.ListTargetAccess(
 		ctx,
 		entry.GetCalendarId(),
@@ -127,6 +127,18 @@ func (s *Server) GetCalendarEntry(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	entry.Calendar.Access = calAccess
+
+	if entry.GetCreatorId() > 0 {
+		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+			UserID: entry.GetCreatorId(),
+			Set: func(user *usershort.UserShort) {
+				entry.SetCreator(user)
+			},
+		}}); err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
+	}
 
 	return &pbcalendar.GetCalendarEntryResponse{
 		Entry: entry,
@@ -217,15 +229,22 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
+	if entry.GetCreatorId() > 0 {
+		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+			UserID: entry.GetCreatorId(),
+			Set: func(user *usershort.UserShort) {
+				entry.SetCreator(user)
+			},
+		}}); err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
+	}
 
 	if len(newUsers) > 0 {
 		if err := s.sendShareNotifications(ctx, userInfo.GetUserId(), entry, newUsers); err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
-	}
-
-	if entry.GetCreator() != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, entry.GetCreator())
 	}
 
 	if err := tx.Commit(); err != nil {

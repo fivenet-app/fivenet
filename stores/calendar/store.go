@@ -11,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -23,8 +22,6 @@ import (
 var (
 	tCalendar     = table.FivenetCalendar.AS("calendar")
 	tCalendarSubs = table.FivenetCalendarSubs.AS("calendar_sub")
-
-	tUserProps = table.FivenetUserProps
 
 	tCalendarEntry          = table.FivenetCalendarEntries.AS("calendar_entry")
 	tCalendarRSVP           = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")
@@ -175,7 +172,6 @@ type IStore interface {
 		entryID int64,
 		inUserIds []int32,
 	) ([]int32, error)
-	GetUserShortByID(ctx context.Context, userID int32) (*usershort.UserShort, error)
 	ListCalendarEntryRSVP(
 		ctx context.Context,
 		opts ListCalendarEntryRSVPOptions,

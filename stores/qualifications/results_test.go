@@ -26,9 +26,6 @@ func TestStoreGetQualificationResult(t *testing.T) {
 		`FROM fivenet_qualifications_results AS qualification_result`,
 	) +
 		`(?s).*` + regexp.QuoteMeta(
-		`LEFT JOIN fivenet_user AS user ON`,
-	) +
-		`(?s).*` + regexp.QuoteMeta(
 		`WHERE`,
 	) +
 		`(?s).*` + regexp.QuoteMeta(
@@ -47,30 +44,16 @@ func TestStoreGetQualificationResult(t *testing.T) {
 			"qualification_result.deleted_at",
 			"qualification_result.qualification_id",
 			"qualification_result.user_id",
-			"user.id",
-			"user.job",
-			"user.job_grade",
-			"user.firstname",
-			"user.lastname",
-			"user.dateofbirth",
 			"qualification_result.status",
 			"qualification_result.score",
 			"qualification_result.summary",
 			"qualification_result.creator_id",
 			"qualification_result.creator_job",
-			"creator.id",
-			"creator.job",
-			"creator.job_grade",
-			"creator.firstname",
-			"creator.lastname",
-			"creator.dateofbirth",
 		}).AddRow(
 			int64(9), now, nil, int64(42), int32(7),
-			int32(7), "police", int32(5), "Jane", "Doe", now,
 			int32(
 				resqualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
 			), nil, "ok", int32(1), "police",
-			int32(1), "police", int32(5), "Jane", "Doe", now,
 		),
 		)
 
@@ -81,7 +64,6 @@ func TestStoreGetQualificationResult(t *testing.T) {
 		nil,
 		&userinfo.UserInfo{UserId: 7, Job: "police"},
 		7,
-		false,
 	)
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -114,7 +96,6 @@ func TestStoreListQualificationsResultsUsesVisibilityCte(t *testing.T) {
 			QualificationID: 42,
 		},
 		&userinfo.UserInfo{UserId: 7, Job: "doj"},
-		false,
 	)
 	require.NoError(t, err)
 	require.NotNil(t, resp)
@@ -142,7 +123,6 @@ func TestStoreListQualificationsResultsSuperuserBypassesVisibilityCte(t *testing
 			QualificationID: 42,
 		},
 		&userinfo.UserInfo{Superuser: true},
-		false,
 	)
 	require.NoError(t, err)
 	require.NotNil(t, resp)

@@ -28,7 +28,6 @@ func (s *Store) List(
 ) ([]*resourcesdocuments.DocumentShort, error) {
 	tDocumentShort := table.FivenetDocuments.AS("document_short")
 	tDocumentPage := table.FivenetDocuments.AS("document_page")
-	tCreator := table.FivenetUser.AS("creator")
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
 	tWorkflowState := table.FivenetDocumentsWorkflowState.AS("workflow_state")
 	tDMeta := table.FivenetDocumentsMeta.AS("meta")
@@ -51,12 +50,6 @@ func (s *Store) List(
 		tDocumentShort.ContentType,
 		tDocumentShort.CreatorID,
 		tDocumentShort.TemplateID,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
 		tDocumentShort.CreatorJob,
 		tWorkflowState.DocumentID,
 		tWorkflowState.AutoCloseTime,
@@ -79,9 +72,6 @@ func (s *Store) List(
 	if superuser {
 		columns = append(columns, tDocumentShort.DeletedAt)
 	}
-	if q.IncludePhoneNumber {
-		columns = append(columns, tCreator.PhoneNumber)
-	}
 
 	var (
 		stmt mysql.Statement
@@ -99,9 +89,6 @@ func (s *Store) List(
 						tDocumentShort.CategoryID.EQ(tDCategory.ID),
 						tDCategory.DeletedAt.IS_NULL(),
 					),
-				).
-				LEFT_JOIN(tCreator,
-					tDocumentShort.CreatorID.EQ(tCreator.ID),
 				).
 				LEFT_JOIN(tWorkflowState,
 					tWorkflowState.DocumentID.EQ(tDocumentShort.ID),
@@ -164,9 +151,6 @@ func (s *Store) List(
 						tDCategory.DeletedAt.IS_NULL(),
 					),
 				).
-				LEFT_JOIN(tCreator,
-					tDocumentShort.CreatorID.EQ(tCreator.ID),
-				).
 				LEFT_JOIN(tWorkflowState,
 					tWorkflowState.DocumentID.EQ(tDocumentShort.ID),
 				).
@@ -198,7 +182,6 @@ func (s *Store) List(
 
 func (s *Store) Get(ctx context.Context, q GetQuery) (*resourcesdocuments.Document, error) {
 	tDocument := table.FivenetDocuments.AS("document")
-	tCreator := table.FivenetUser.AS("creator")
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
 	tDPins := table.FivenetDocumentsPins.AS("pin")
 	tWorkflowState := table.FivenetDocumentsWorkflowState.AS("workflow_state")
@@ -241,12 +224,6 @@ func (s *Store) Get(ctx context.Context, q GetQuery) (*resourcesdocuments.Docume
 		tDocument.Title,
 		tDocument.ContentType,
 		tDocument.CreatorID,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
 		tDocument.CreatorJob,
 		tDocument.State.AS("meta.state"),
 		tDocument.Closed.AS("meta.closed"),
@@ -284,9 +261,6 @@ func (s *Store) Get(ctx context.Context, q GetQuery) (*resourcesdocuments.Docume
 	if q.UserInfo.GetJobAdmin() {
 		columns = append(columns, tDocument.DeletedAt)
 	}
-	if q.IncludePhoneNumber {
-		columns = append(columns, tCreator.PhoneNumber)
-	}
 
 	stmt := tDocument.
 		SELECT(
@@ -299,9 +273,6 @@ func (s *Store) Get(ctx context.Context, q GetQuery) (*resourcesdocuments.Docume
 					tDocument.CategoryID.EQ(tDCategory.ID),
 					tDCategory.DeletedAt.IS_NULL(),
 				),
-			).
-			LEFT_JOIN(tCreator,
-				tDocument.CreatorID.EQ(tCreator.ID),
 			).
 			LEFT_JOIN(tDPins,
 				tDPins.DocumentID.EQ(tDocument.ID),

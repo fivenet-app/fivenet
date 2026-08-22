@@ -38,14 +38,12 @@ func TestStoreCountAppliesListFilters(t *testing.T) {
 	}
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_owned_vehicles AS vehicle`) +
-		`(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_user AS user_short ON`) +
-		`(?s).*` + regexp.QuoteMeta(`user_short.id IN (?, ?)`) +
 		`(?s).*` + regexp.QuoteMeta(`vehicle.plate LIKE ?`) +
 		`(?s).*` + regexp.QuoteMeta(`vehicle.model LIKE ?`) +
-		`(?s).*` + regexp.QuoteMeta(`user_short.id IN (?, ?)`) +
+		`(?s).*` + regexp.QuoteMeta(`vehicle.user_id IN (?, ?)`) +
 		`(?s).*` + regexp.QuoteMeta(`vehicle_props.wanted = ?`)
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(int32(3), int32(4), true, "%ABC%", "%adder%", int32(3), int32(4), true).
+		WithArgs(true, "%ABC%", "%adder%", int32(3), int32(4), true).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(7)))
 
 	total, err := store.Count(t.Context(), query)

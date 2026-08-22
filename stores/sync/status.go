@@ -27,10 +27,10 @@ func (s *Store) CountJobs(ctx context.Context) (int64, error) {
 }
 
 func (s *Store) CountAccounts(ctx context.Context) (int64, error) {
-	tUsers := table.FivenetUser
-	stmt := tUsers.
-		SELECT(mysql.COUNT(tUsers.ID)).
-		FROM(tUsers)
+	tAccounts := table.FivenetAccounts
+	stmt := tAccounts.
+		SELECT(mysql.COUNT(tAccounts.ID)).
+		FROM(tAccounts)
 
 	var count database.DataCount
 	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {

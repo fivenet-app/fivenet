@@ -36,7 +36,6 @@ func (s *Store) ListDocumentReqs(
 		return count, []*documentsrequests.DocRequest{}, nil
 	}
 
-	tCreator := table.FivenetUser.AS("creator")
 	stmt := tDocRequest.
 		SELECT(
 			tDocRequest.ID,
@@ -49,19 +48,8 @@ func (s *Store) ListDocumentReqs(
 			tDocRequest.Reason,
 			tDocRequest.Data,
 			tDocRequest.Accepted,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
 		).
-		FROM(
-			tDocRequest.
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tDocRequest.CreatorID),
-				),
-		).
+		FROM(tDocRequest).
 		WHERE(condition).
 		OFFSET(q.Pagination.GetOffset()).
 		ORDER_BY(tDocRequest.ID.DESC()).

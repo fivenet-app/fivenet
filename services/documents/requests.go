@@ -13,6 +13,7 @@ import (
 	documentsrequests "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/requests"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -20,6 +21,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -69,11 +71,8 @@ func (s *Server) ListDocumentReqs(
 	}
 	resp.Requests = reqs
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.GetRequests() {
-		if resp.GetRequests()[i].GetCreator() != nil {
-			jobInfoFn(resp.GetRequests()[i].GetCreator())
-		}
+	if err := s.hydrateDocumentReqs(ctx, userInfo, resp.GetRequests()...); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	return resp, nil
@@ -155,6 +154,9 @@ func (s *Server) CreateDocumentReq(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	if err := s.hydrateDocumentReqs(ctx, userInfo, request); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 
 	if request != nil {
 		// If a request of that type exists and is less than wait time old and by the same person,
@@ -201,6 +203,9 @@ func (s *Server) CreateDocumentReq(
 		}
 		request, err = s.store.GetDocumentReq(ctx, tx, tDocRequest.ID.EQ(mysql.Int64(requestId)))
 		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+		if err := s.hydrateDocumentReqs(ctx, userInfo, request); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	} else {
@@ -263,6 +268,9 @@ func (s *Server) UpdateDocumentReq(
 		),
 	)
 	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if err := s.hydrateDocumentReqs(ctx, userInfo, request); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if request == nil {
@@ -436,6 +444,9 @@ func (s *Server) DeleteDocumentReq(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	if err := s.hydrateDocumentReqs(ctx, userInfo, request); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 	if request == nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrDocReqAlreadyCompleted)
 	}
@@ -460,6 +471,29 @@ func (s *Server) DeleteDocumentReq(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbdocuments.DeleteDocumentReqResponse{}, nil
+}
+
+func (s *Server) hydrateDocumentReqs(
+	ctx context.Context,
+	userInfo *pbuserinfo.UserInfo,
+	requests ...*documentsrequests.DocRequest,
+) error {
+	targets := make([]citizenshydrator.ShortTarget, 0, len(requests))
+	for _, request := range requests {
+		if request == nil || request.GetCreator() != nil || request.CreatorId == nil {
+			continue
+		}
+
+		targets = append(targets, citizenshydrator.ShortTarget{
+			UserID: request.GetCreatorId(),
+			Set:    func(creator *usershort.UserShort) { request.Creator = creator },
+		})
+	}
+	if len(targets) == 0 {
+		return nil
+	}
+
+	return s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
 func (s *Server) notifyUserAboutRequest(
