@@ -56,27 +56,6 @@ export interface Stamp {
      */
     access?: Access;
 }
-/**
- * @generated from protobuf enum resources.documents.stamps.StampAccessLevel
- */
-export enum StampAccessLevel {
-    /**
-     * @generated from protobuf enum value: STAMP_ACCESS_LEVEL_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: STAMP_ACCESS_LEVEL_BLOCKED = 1;
-     */
-    BLOCKED = 1,
-    /**
-     * @generated from protobuf enum value: STAMP_ACCESS_LEVEL_USE = 2;
-     */
-    USE = 2,
-    /**
-     * @generated from protobuf enum value: STAMP_ACCESS_LEVEL_MANAGE = 3;
-     */
-    MANAGE = 3
-}
 // @generated message type with reflection information, may provide speed optimized methods
 class Stamp$Type extends MessageType<Stamp> {
     constructor() {

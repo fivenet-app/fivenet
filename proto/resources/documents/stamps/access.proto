@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package resources.documents.stamps;
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps;documentsstamps";
+
+enum AccessLevel {
+  ACCESS_LEVEL_UNSPECIFIED = 0;
+  ACCESS_LEVEL_BLOCKED = 1;
+  ACCESS_LEVEL_USE = 2;
+  ACCESS_LEVEL_MANAGE = 3;
+}

@@ -11,7 +11,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getDocumentsStampsClient } from '~~/gen/ts/clients';
 import type { JobAccess, QualificationAccess, UserAccess } from '~~/gen/ts/resources/access/access';
-import { StampAccessLevel } from '~~/gen/ts/resources/documents/stamps/stamp';
+import { AccessLevel } from '~~/gen/ts/resources/documents/stamps/access';
 
 useHead({
     title: 'pages.documents.stamps.update',
@@ -178,7 +178,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :target-id="0"
                                     name="jobs"
                                     :access-types="[{ label: $t('common.job', 2), value: 'job' }]"
-                                    :access-roles="enumToAccessLevelEnums(StampAccessLevel, 'enums.documents.StampAccessLevel')"
+                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.stamp.AccessLevel')"
                                     hide-other-jobs
                                 />
                             </UFormField>

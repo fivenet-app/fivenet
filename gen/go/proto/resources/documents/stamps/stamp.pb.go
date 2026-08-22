@@ -25,53 +25,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type StampAccessLevel int32
-
-const (
-	StampAccessLevel_STAMP_ACCESS_LEVEL_UNSPECIFIED StampAccessLevel = 0
-	StampAccessLevel_STAMP_ACCESS_LEVEL_BLOCKED     StampAccessLevel = 1
-	StampAccessLevel_STAMP_ACCESS_LEVEL_USE         StampAccessLevel = 2
-	StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE      StampAccessLevel = 3
-)
-
-// Enum value maps for StampAccessLevel.
-var (
-	StampAccessLevel_name = map[int32]string{
-		0: "STAMP_ACCESS_LEVEL_UNSPECIFIED",
-		1: "STAMP_ACCESS_LEVEL_BLOCKED",
-		2: "STAMP_ACCESS_LEVEL_USE",
-		3: "STAMP_ACCESS_LEVEL_MANAGE",
-	}
-	StampAccessLevel_value = map[string]int32{
-		"STAMP_ACCESS_LEVEL_UNSPECIFIED": 0,
-		"STAMP_ACCESS_LEVEL_BLOCKED":     1,
-		"STAMP_ACCESS_LEVEL_USE":         2,
-		"STAMP_ACCESS_LEVEL_MANAGE":      3,
-	}
-)
-
-func (x StampAccessLevel) Enum() *StampAccessLevel {
-	p := new(StampAccessLevel)
-	*p = x
-	return p
-}
-
-func (x StampAccessLevel) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (StampAccessLevel) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_stamps_stamp_proto_enumTypes[0].Descriptor()
-}
-
-func (StampAccessLevel) Type() protoreflect.EnumType {
-	return &file_resources_documents_stamps_stamp_proto_enumTypes[0]
-}
-
-func (x StampAccessLevel) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
 type Stamp struct {
 	state     protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -319,26 +272,19 @@ const file_resources_documents_stamps_stamp_proto_rawDesc = "" +
 	"\n" +
 	"_job_labelB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at*\x91\x01\n" +
-	"\x10StampAccessLevel\x12\"\n" +
-	"\x1eSTAMP_ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x1e\n" +
-	"\x1aSTAMP_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1a\n" +
-	"\x16STAMP_ACCESS_LEVEL_USE\x10\x02\x12\x1d\n" +
-	"\x19STAMP_ACCESS_LEVEL_MANAGE\x10\x03B^Z\\github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps;documentsstampsb\x06proto3"
+	"\v_deleted_atB^Z\\github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps;documentsstampsb\x06proto3"
 
-var file_resources_documents_stamps_stamp_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_documents_stamps_stamp_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_documents_stamps_stamp_proto_goTypes = []any{
-	(StampAccessLevel)(0),       // 0: resources.documents.stamps.StampAccessLevel
-	(*Stamp)(nil),               // 1: resources.documents.stamps.Stamp
-	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
-	(*access.Access)(nil),       // 3: resources.access.Access
+	(*Stamp)(nil),               // 0: resources.documents.stamps.Stamp
+	(*timestamp.Timestamp)(nil), // 1: resources.timestamp.Timestamp
+	(*access.Access)(nil),       // 2: resources.access.Access
 }
 var file_resources_documents_stamps_stamp_proto_depIdxs = []int32{
-	2, // 0: resources.documents.stamps.Stamp.created_at:type_name -> resources.timestamp.Timestamp
-	2, // 1: resources.documents.stamps.Stamp.updated_at:type_name -> resources.timestamp.Timestamp
-	2, // 2: resources.documents.stamps.Stamp.deleted_at:type_name -> resources.timestamp.Timestamp
-	3, // 3: resources.documents.stamps.Stamp.access:type_name -> resources.access.Access
+	1, // 0: resources.documents.stamps.Stamp.created_at:type_name -> resources.timestamp.Timestamp
+	1, // 1: resources.documents.stamps.Stamp.updated_at:type_name -> resources.timestamp.Timestamp
+	1, // 2: resources.documents.stamps.Stamp.deleted_at:type_name -> resources.timestamp.Timestamp
+	2, // 3: resources.documents.stamps.Stamp.access:type_name -> resources.access.Access
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
@@ -357,14 +303,13 @@ func file_resources_documents_stamps_stamp_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_stamps_stamp_proto_rawDesc), len(file_resources_documents_stamps_stamp_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_resources_documents_stamps_stamp_proto_goTypes,
 		DependencyIndexes: file_resources_documents_stamps_stamp_proto_depIdxs,
-		EnumInfos:         file_resources_documents_stamps_stamp_proto_enumTypes,
 		MessageInfos:      file_resources_documents_stamps_stamp_proto_msgTypes,
 	}.Build()
 	File_resources_documents_stamps_stamp_proto = out.File

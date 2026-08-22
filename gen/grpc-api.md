@@ -3620,17 +3620,6 @@ States of Cronjbo
 
  <!-- end messages -->
 
-
-### resources.documents.stamps.StampAccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `STAMP_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `STAMP_ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `STAMP_ACCESS_LEVEL_USE` | 2 |  |
-| `STAMP_ACCESS_LEVEL_MANAGE` | 3 |  |
-
-
  <!-- end enums -->
 
  <!-- end HasExtensions -->
@@ -3961,6 +3950,29 @@ Policy snapshot applied to a specific version
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/documents/stamps/access.proto
+
+ <!-- end messages -->
+
+
+### resources.documents.stamps.AccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_USE` | 2 |  |
+| `ACCESS_LEVEL_MANAGE` | 3 |  |
+
 
  <!-- end enums -->
 

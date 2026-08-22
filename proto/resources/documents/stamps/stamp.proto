@@ -9,13 +9,6 @@ import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps;documentsstamps";
 
-enum StampAccessLevel {
-  STAMP_ACCESS_LEVEL_UNSPECIFIED = 0;
-  STAMP_ACCESS_LEVEL_BLOCKED = 1;
-  STAMP_ACCESS_LEVEL_USE = 2;
-  STAMP_ACCESS_LEVEL_MANAGE = 3;
-}
-
 message Stamp {
   int64 id = 1;
   string job = 2 [(buf.validate.field).string.max_len = 20];

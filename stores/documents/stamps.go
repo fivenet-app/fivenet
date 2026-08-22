@@ -45,7 +45,7 @@ func (s *Store) ListUsableStamps(
 
 	visibleIDs := s.stampAccess.VisibleIDsByConditionQuery(
 		q.UserInfo,
-		int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
+		int32(documentsstamps.AccessLevel_ACCESS_LEVEL_USE),
 		includeDeleted,
 		condition,
 	)

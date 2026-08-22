@@ -18,10 +18,10 @@ import (
 const stampLimit = 5
 
 var stampSubjectAccessOptions = access.SubjectAccessOptions{
-	BlockedAccess: int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_BLOCKED),
+	BlockedAccess: int32(documentsstamps.AccessLevel_ACCESS_LEVEL_BLOCKED),
 	DeniedAccessLevels: []int32{
-		int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
-		int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE),
+		int32(documentsstamps.AccessLevel_ACCESS_LEVEL_USE),
+		int32(documentsstamps.AccessLevel_ACCESS_LEVEL_MANAGE),
 	},
 }
 
@@ -55,7 +55,7 @@ func (s *Server) GetStamp(
 		ctx,
 		req.GetId(),
 		userInfo,
-		int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE),
+		int32(documentsstamps.AccessLevel_ACCESS_LEVEL_USE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -116,7 +116,7 @@ func (s *Server) UpsertStamp(
 		st.Access.Jobs = append(st.Access.Jobs, &documentsstamps.StampJobAccess{
 			Job:          userInfo.GetJob(),
 			MinimumGrade: userInfo.GetJobGrade(),
-			Access:       int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE),
+			Access:       int32(documentsstamps.AccessLevel_ACCESS_LEVEL_MANAGE),
 		})
 	}
 
@@ -124,7 +124,7 @@ func (s *Server) UpsertStamp(
 		Jobs: []*documentsstamps.StampJobAccess{{
 			Job:          userInfo.GetJob(),
 			MinimumGrade: userInfo.GetJobGrade(),
-			Access:       int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE),
+			Access:       int32(documentsstamps.AccessLevel_ACCESS_LEVEL_MANAGE),
 		}},
 	}
 
@@ -151,7 +151,7 @@ func (s *Server) UpsertStamp(
 			ctx,
 			st.GetId(),
 			userInfo,
-			int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE),
+			int32(documentsstamps.AccessLevel_ACCESS_LEVEL_MANAGE),
 		)
 		if err != nil {
 			return nil, err
@@ -204,7 +204,7 @@ func (s *Server) DeleteStamp(
 		ctx,
 		req.GetStampId(),
 		userInfo,
-		int32(documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE),
+		int32(documentsstamps.AccessLevel_ACCESS_LEVEL_MANAGE),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
