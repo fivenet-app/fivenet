@@ -71,9 +71,12 @@ func (m *VehicleActivityData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *VehicleActivityData_WantedChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.WantedChange != nil {
+			if s, ok := any(v.WantedChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

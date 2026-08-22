@@ -134,41 +134,56 @@ func (m *StreamResponse) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *StreamResponse_Jobs:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Jobs != nil {
+			if s, ok := any(v.Jobs).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Markers
 	case *StreamResponse_Markers:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Markers != nil {
+			if s, ok := any(v.Markers).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Snapshot
 	case *StreamResponse_Snapshot:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Snapshot != nil {
+			if s, ok := any(v.Snapshot).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: UserDeletes
 	case *StreamResponse_UserDeletes:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.UserDeletes != nil {
+			if s, ok := any(v.UserDeletes).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: UserUpdates
 	case *StreamResponse_UserUpdates:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.UserUpdates != nil {
+			if s, ok := any(v.UserUpdates).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

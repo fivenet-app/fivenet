@@ -14,41 +14,56 @@ func (m *MailerEvent) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *MailerEvent_EmailSettingsUpdated:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.EmailSettingsUpdated != nil {
+			if s, ok := any(v.EmailSettingsUpdated).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: EmailUpdate
 	case *MailerEvent_EmailUpdate:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.EmailUpdate != nil {
+			if s, ok := any(v.EmailUpdate).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: MessageUpdate
 	case *MailerEvent_MessageUpdate:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.MessageUpdate != nil {
+			if s, ok := any(v.MessageUpdate).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: ThreadStateUpdate
 	case *MailerEvent_ThreadStateUpdate:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.ThreadStateUpdate != nil {
+			if s, ok := any(v.ThreadStateUpdate).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: ThreadUpdate
 	case *MailerEvent_ThreadUpdate:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.ThreadUpdate != nil {
+			if s, ok := any(v.ThreadUpdate).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

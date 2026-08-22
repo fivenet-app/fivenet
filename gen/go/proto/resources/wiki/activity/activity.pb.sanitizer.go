@@ -188,17 +188,23 @@ func (m *PageActivityData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *PageActivityData_AccessUpdated:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.AccessUpdated != nil {
+			if s, ok := any(v.AccessUpdated).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Updated
 	case *PageActivityData_Updated:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Updated != nil {
+			if s, ok := any(v.Updated).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

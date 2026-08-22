@@ -97,33 +97,45 @@ func (m *ExamQuestionAnswerData) Sanitize() error {
 	switch v := m.Answer.(type) {
 
 	case *ExamQuestionAnswerData_FreeText:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.FreeText != nil {
+			if s, ok := any(v.FreeText).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: MultipleChoice
 	case *ExamQuestionAnswerData_MultipleChoice:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.MultipleChoice != nil {
+			if s, ok := any(v.MultipleChoice).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: SingleChoice
 	case *ExamQuestionAnswerData_SingleChoice:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.SingleChoice != nil {
+			if s, ok := any(v.SingleChoice).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Yesno
 	case *ExamQuestionAnswerData_Yesno:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Yesno != nil {
+			if s, ok := any(v.Yesno).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -143,49 +155,67 @@ func (m *ExamQuestionData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *ExamQuestionData_FreeText:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.FreeText != nil {
+			if s, ok := any(v.FreeText).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Image
 	case *ExamQuestionData_Image:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Image != nil {
+			if s, ok := any(v.Image).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: MultipleChoice
 	case *ExamQuestionData_MultipleChoice:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.MultipleChoice != nil {
+			if s, ok := any(v.MultipleChoice).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Separator
 	case *ExamQuestionData_Separator:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Separator != nil {
+			if s, ok := any(v.Separator).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: SingleChoice
 	case *ExamQuestionData_SingleChoice:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.SingleChoice != nil {
+			if s, ok := any(v.SingleChoice).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Yesno
 	case *ExamQuestionData_Yesno:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Yesno != nil {
+			if s, ok := any(v.Yesno).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -315,41 +345,56 @@ func (m *ExamResponseData) Sanitize() error {
 	switch v := m.Response.(type) {
 
 	case *ExamResponseData_FreeText:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.FreeText != nil {
+			if s, ok := any(v.FreeText).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: MultipleChoice
 	case *ExamResponseData_MultipleChoice:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.MultipleChoice != nil {
+			if s, ok := any(v.MultipleChoice).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Separator
 	case *ExamResponseData_Separator:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Separator != nil {
+			if s, ok := any(v.Separator).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: SingleChoice
 	case *ExamResponseData_SingleChoice:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.SingleChoice != nil {
+			if s, ok := any(v.SingleChoice).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Yesno
 	case *ExamResponseData_Yesno:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Yesno != nil {
+			if s, ok := any(v.Yesno).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

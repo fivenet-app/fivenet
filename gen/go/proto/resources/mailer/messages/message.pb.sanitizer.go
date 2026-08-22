@@ -90,9 +90,12 @@ func (m *MessageAttachment) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *MessageAttachment_Document:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Document != nil {
+			if s, ok := any(v.Document).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

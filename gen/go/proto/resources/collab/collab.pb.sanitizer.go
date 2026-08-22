@@ -30,33 +30,45 @@ func (m *ClientPacket) Sanitize() error {
 	switch v := m.Msg.(type) {
 
 	case *ClientPacket_Awareness:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Awareness != nil {
+			if s, ok := any(v.Awareness).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Hello
 	case *ClientPacket_Hello:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Hello != nil {
+			if s, ok := any(v.Hello).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: SyncStep
 	case *ClientPacket_SyncStep:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.SyncStep != nil {
+			if s, ok := any(v.SyncStep).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: YjsUpdate
 	case *ClientPacket_YjsUpdate:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.YjsUpdate != nil {
+			if s, ok := any(v.YjsUpdate).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -91,57 +103,78 @@ func (m *ServerPacket) Sanitize() error {
 	switch v := m.Msg.(type) {
 
 	case *ServerPacket_Awareness:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Awareness != nil {
+			if s, ok := any(v.Awareness).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: ClientUpdate
 	case *ServerPacket_ClientUpdate:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.ClientUpdate != nil {
+			if s, ok := any(v.ClientUpdate).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Handshake
 	case *ServerPacket_Handshake:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Handshake != nil {
+			if s, ok := any(v.Handshake).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Promote
 	case *ServerPacket_Promote:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Promote != nil {
+			if s, ok := any(v.Promote).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: SyncStep
 	case *ServerPacket_SyncStep:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.SyncStep != nil {
+			if s, ok := any(v.SyncStep).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: TargetSaved
 	case *ServerPacket_TargetSaved:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.TargetSaved != nil {
+			if s, ok := any(v.TargetSaved).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: YjsUpdate
 	case *ServerPacket_YjsUpdate:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.YjsUpdate != nil {
+			if s, ok := any(v.YjsUpdate).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

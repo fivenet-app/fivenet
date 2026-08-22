@@ -37,73 +37,100 @@ func (m *AddActivityRequest) Sanitize() error {
 	switch v := m.Activity.(type) {
 
 	case *AddActivityRequest_AccountUpdate:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.AccountUpdate != nil {
+			if s, ok := any(v.AccountUpdate).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: ColleagueActivity
 	case *AddActivityRequest_ColleagueActivity:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.ColleagueActivity != nil {
+			if s, ok := any(v.ColleagueActivity).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: ColleagueProps
 	case *AddActivityRequest_ColleagueProps:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.ColleagueProps != nil {
+			if s, ok := any(v.ColleagueProps).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Dispatch
 	case *AddActivityRequest_Dispatch:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Dispatch != nil {
+			if s, ok := any(v.Dispatch).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: JobTimeclock
 	case *AddActivityRequest_JobTimeclock:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.JobTimeclock != nil {
+			if s, ok := any(v.JobTimeclock).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: UserActivity
 	case *AddActivityRequest_UserActivity:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.UserActivity != nil {
+			if s, ok := any(v.UserActivity).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: UserOauth2
 	case *AddActivityRequest_UserOauth2:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.UserOauth2 != nil {
+			if s, ok := any(v.UserOauth2).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: UserProps
 	case *AddActivityRequest_UserProps:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.UserProps != nil {
+			if s, ok := any(v.UserProps).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: UserUpdate
 	case *AddActivityRequest_UserUpdate:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.UserUpdate != nil {
+			if s, ok := any(v.UserUpdate).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -345,17 +372,23 @@ func (m *DeleteDataRequest) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *DeleteDataRequest_Users:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Users != nil {
+			if s, ok := any(v.Users).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Vehicles
 	case *DeleteDataRequest_Vehicles:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Vehicles != nil {
+			if s, ok := any(v.Vehicles).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -540,57 +573,78 @@ func (m *SendDataRequest) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *SendDataRequest_Accounts:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Accounts != nil {
+			if s, ok := any(v.Accounts).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Jobs
 	case *SendDataRequest_Jobs:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Jobs != nil {
+			if s, ok := any(v.Jobs).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: LastCharId
 	case *SendDataRequest_LastCharId:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.LastCharId != nil {
+			if s, ok := any(v.LastCharId).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Licenses
 	case *SendDataRequest_Licenses:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Licenses != nil {
+			if s, ok := any(v.Licenses).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: UserLocations
 	case *SendDataRequest_UserLocations:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.UserLocations != nil {
+			if s, ok := any(v.UserLocations).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Users
 	case *SendDataRequest_Users:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Users != nil {
+			if s, ok := any(v.Users).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Vehicles
 	case *SendDataRequest_Vehicles:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Vehicles != nil {
+			if s, ok := any(v.Vehicles).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

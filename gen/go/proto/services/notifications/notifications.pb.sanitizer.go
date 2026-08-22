@@ -70,9 +70,12 @@ func (m *StreamRequest) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *StreamRequest_Clientview:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Clientview != nil {
+			if s, ok := any(v.Clientview).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -92,49 +95,67 @@ func (m *StreamResponse) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *StreamResponse_JobEvent:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.JobEvent != nil {
+			if s, ok := any(v.JobEvent).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: JobGradeEvent
 	case *StreamResponse_JobGradeEvent:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.JobGradeEvent != nil {
+			if s, ok := any(v.JobGradeEvent).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: MailerEvent
 	case *StreamResponse_MailerEvent:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.MailerEvent != nil {
+			if s, ok := any(v.MailerEvent).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: ObjectEvent
 	case *StreamResponse_ObjectEvent:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.ObjectEvent != nil {
+			if s, ok := any(v.ObjectEvent).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: SystemEvent
 	case *StreamResponse_SystemEvent:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.SystemEvent != nil {
+			if s, ok := any(v.SystemEvent).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: UserEvent
 	case *StreamResponse_UserEvent:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.UserEvent != nil {
+			if s, ok := any(v.UserEvent).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

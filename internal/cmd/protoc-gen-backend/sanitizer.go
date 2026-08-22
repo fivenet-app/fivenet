@@ -190,11 +190,19 @@ func (m *{{ $key }}) Sanitize() error {
 	        switch v := m.{{ $f.F.OneOf.Name.UpperCamelCase }}.(type) {
             {{ end }}
                 case *{{ $key }}_{{ $f.Name }}:
-                    if v, ok := any(v).(interface{ Sanitize() error }); ok {
-                        if err := v.Sanitize(); err != nil {
-                            return err
+					{{ if or (eq $fType "string") (eq $fType "*string") }}
+                    v.{{ $f.Name }} = htmlsanitizer.{{ $f.Method }}(v.{{ $f.Name }})
+                    {{ else if $f.F.Type.IsEmbed }}
+                    if v.{{ $f.Name }} != nil {
+                        if s, ok := any(v.{{ $f.Name }}).(interface{ Sanitize() error }); ok {
+                            if err := s.Sanitize(); err != nil {
+                                return err
+                            }
                         }
                     }
+                    {{ else if not (or $f.F.Type.IsEnum $f.F.Type.ProtoType.IsNumeric) }}
+                    // ! Oneof: Field type is not a string nor embed type ({{ $fType }})
+                    {{ end }}
 
             {{- $lastOneOf = $f.F.OneOf.Message.Name }}
         {{ else if $f.Tiptap }}

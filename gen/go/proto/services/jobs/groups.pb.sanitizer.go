@@ -390,17 +390,23 @@ func (m *GroupRuleInput) Sanitize() error {
 	switch v := m.Rule.(type) {
 
 	case *GroupRuleInput_Grade:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Grade != nil {
+			if s, ok := any(v.Grade).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Qualification
 	case *GroupRuleInput_Qualification:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Qualification != nil {
+			if s, ok := any(v.Qualification).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

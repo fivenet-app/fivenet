@@ -18,17 +18,17 @@ func (m *UploadFileRequest) Sanitize() error {
 	switch v := m.Payload.(type) {
 
 	case *UploadFileRequest_Data:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
+
+		// ! Oneof: Field type is not a string nor embed type ([]byte)
 
 		// Field: Meta
 	case *UploadFileRequest_Meta:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Meta != nil {
+			if s, ok := any(v.Meta).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

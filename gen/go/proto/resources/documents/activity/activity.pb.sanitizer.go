@@ -188,41 +188,56 @@ func (m *DocActivityData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *DocActivityData_AccessRequested:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.AccessRequested != nil {
+			if s, ok := any(v.AccessRequested).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: AccessUpdated
 	case *DocActivityData_AccessUpdated:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.AccessUpdated != nil {
+			if s, ok := any(v.AccessUpdated).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: OwnerChanged
 	case *DocActivityData_OwnerChanged:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.OwnerChanged != nil {
+			if s, ok := any(v.OwnerChanged).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: SigningRequested
 	case *DocActivityData_SigningRequested:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.SigningRequested != nil {
+			if s, ok := any(v.SigningRequested).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Updated
 	case *DocActivityData_Updated:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Updated != nil {
+			if s, ok := any(v.Updated).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

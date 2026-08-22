@@ -21,13 +21,13 @@ var (
 func (ts *Timestamp) Scan(value any) error {
 	switch t := value.(type) {
 	case time.Time:
-		ts.Timestamp = timestamppb.New(t) // google proto version
+		ts.SetTimestamp(timestamppb.New(t)) // google proto version
 	case string:
 		switch value {
 		case "-infinity":
-			ts.Timestamp = timestamppb.New(NegativeInfinityTS)
+			ts.SetTimestamp(timestamppb.New(NegativeInfinityTS))
 		case "infinity":
-			ts.Timestamp = timestamppb.New(PositiveInfinityTS)
+			ts.SetTimestamp(timestamppb.New(PositiveInfinityTS))
 		}
 	default:
 		return errors.New("not a protobuf Timestamp")

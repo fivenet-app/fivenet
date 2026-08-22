@@ -98,33 +98,45 @@ func (m *ColleagueActivityData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *ColleagueActivityData_AbsenceDate:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.AbsenceDate != nil {
+			if s, ok := any(v.AbsenceDate).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: GradeChange
 	case *ColleagueActivityData_GradeChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.GradeChange != nil {
+			if s, ok := any(v.GradeChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: LabelsChange
 	case *ColleagueActivityData_LabelsChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.LabelsChange != nil {
+			if s, ok := any(v.LabelsChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: NameChange
 	case *ColleagueActivityData_NameChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.NameChange != nil {
+			if s, ok := any(v.NameChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

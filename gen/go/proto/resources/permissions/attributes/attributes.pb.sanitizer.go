@@ -18,25 +18,34 @@ func (m *AttributeValues) Sanitize() error {
 	switch v := m.ValidValues.(type) {
 
 	case *AttributeValues_JobGradeList:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.JobGradeList != nil {
+			if s, ok := any(v.JobGradeList).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: JobList
 	case *AttributeValues_JobList:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.JobList != nil {
+			if s, ok := any(v.JobList).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: StringList
 	case *AttributeValues_StringList:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.StringList != nil {
+			if s, ok := any(v.StringList).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

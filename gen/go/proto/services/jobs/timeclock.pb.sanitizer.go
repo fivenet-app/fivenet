@@ -178,9 +178,12 @@ func (m *ListTimeclockResponse) Sanitize() error {
 	switch v := m.Entries.(type) {
 
 	case *ListTimeclockResponse_Daily:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Daily != nil {
+			if s, ok := any(v.Daily).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -199,9 +202,12 @@ func (m *ListTimeclockResponse) Sanitize() error {
 	switch v := m.Entries.(type) {
 
 	case *ListTimeclockResponse_Range:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Range != nil {
+			if s, ok := any(v.Range).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -232,9 +238,12 @@ func (m *ListTimeclockResponse) Sanitize() error {
 	switch v := m.Entries.(type) {
 
 	case *ListTimeclockResponse_Weekly:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Weekly != nil {
+			if s, ok := any(v.Weekly).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

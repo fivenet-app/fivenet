@@ -72,9 +72,12 @@ func (m *GroupActivityData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *GroupActivityData_Rule:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Rule != nil {
+			if s, ok := any(v.Rule).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

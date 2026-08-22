@@ -14,9 +14,12 @@ func (m *JobEvent) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *JobEvent_JobProps:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.JobProps != nil {
+			if s, ok := any(v.JobProps).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -36,9 +39,12 @@ func (m *SystemEvent) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *SystemEvent_ClientConfig:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.ClientConfig != nil {
+			if s, ok := any(v.ClientConfig).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -58,25 +64,34 @@ func (m *UserEvent) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *UserEvent_AccountGroupsChanged:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.AccountGroupsChanged != nil {
+			if s, ok := any(v.AccountGroupsChanged).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: Notification
 	case *UserEvent_Notification:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Notification != nil {
+			if s, ok := any(v.Notification).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: UserInfoChanged
 	case *UserEvent_UserInfoChanged:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.UserInfoChanged != nil {
+			if s, ok := any(v.UserInfoChanged).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

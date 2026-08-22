@@ -14,9 +14,12 @@ func (m *FileMeta) Sanitize() error {
 	switch v := m.Meta.(type) {
 
 	case *FileMeta_Image:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.Image != nil {
+			if s, ok := any(v.Image).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 

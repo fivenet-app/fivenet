@@ -234,81 +234,111 @@ func (m *UserActivityData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *UserActivityData_DocumentRelation:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.DocumentRelation != nil {
+			if s, ok := any(v.DocumentRelation).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: FineChange
 	case *UserActivityData_FineChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.FineChange != nil {
+			if s, ok := any(v.FineChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: JailChange
 	case *UserActivityData_JailChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.JailChange != nil {
+			if s, ok := any(v.JailChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: JobChange
 	case *UserActivityData_JobChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.JobChange != nil {
+			if s, ok := any(v.JobChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: LabelsChange
 	case *UserActivityData_LabelsChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.LabelsChange != nil {
+			if s, ok := any(v.LabelsChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: LicensesChange
 	case *UserActivityData_LicensesChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.LicensesChange != nil {
+			if s, ok := any(v.LicensesChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: MugshotChange
 	case *UserActivityData_MugshotChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.MugshotChange != nil {
+			if s, ok := any(v.MugshotChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: NameChange
 	case *UserActivityData_NameChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.NameChange != nil {
+			if s, ok := any(v.NameChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: TrafficInfractionPointsChange
 	case *UserActivityData_TrafficInfractionPointsChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.TrafficInfractionPointsChange != nil {
+			if s, ok := any(v.TrafficInfractionPointsChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
 		// Field: WantedChange
 	case *UserActivityData_WantedChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
+
+		if v.WantedChange != nil {
+			if s, ok := any(v.WantedChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
 			}
 		}
 
