@@ -1832,7 +1832,7 @@ class ListGroupMembersResponse$Type extends MessageType<ListGroupMembersResponse
     constructor() {
         super("services.jobs.ListGroupMembersResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupResolvedMember }
+            { no: 2, name: "members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupResolvedMember, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListGroupMembersResponse>): ListGroupMembersResponse {

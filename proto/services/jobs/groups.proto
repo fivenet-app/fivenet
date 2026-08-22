@@ -130,7 +130,7 @@ message ListGroupMembersRequest {
 
 message ListGroupMembersResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.jobs.groups.GroupResolvedMember members = 2;
+  repeated resources.jobs.groups.GroupResolvedMember members = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message ListGroupRulesRequest {

@@ -721,7 +721,6 @@ func (s *Server) ListGroupMembers(
 		Pagination: pag,
 		Members:    members[start:end],
 	}
-	resp.Pagination.Update(len(resp.GetMembers()))
 
 	targets := appendGroupResolvedMemberColleagueTargets(nil, resp.GetMembers())
 	if err := s.hydrateGroupColleagueTargets(ctx, userInfo, targets); err != nil {

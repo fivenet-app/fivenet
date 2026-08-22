@@ -43,6 +43,14 @@ func (m *ListGroupMembersRequest) ItemsLen() int {
 	return len(m.GetSources())
 }
 
+// ItemsLen returns the length of Members.
+func (m *ListGroupMembersResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetMembers())
+}
+
 // ItemsLen returns the length of Rules.
 func (m *ListGroupRulesResponse) ItemsLen() int {
 	if m == nil {

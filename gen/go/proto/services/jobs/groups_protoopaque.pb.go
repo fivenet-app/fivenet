@@ -5164,12 +5164,12 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x0finclude_reasons\x18\a \x01(\bR\x0eincludeReasons\x12H\n" +
 	"\asources\x18\b \x03(\x0e2(.resources.jobs.groups.GroupMemberSourceB\x04\xc8\xf3\x18\x01R\asourcesB\a\n" +
 	"\x05_sortB\t\n" +
-	"\a_search\"\xaf\x01\n" +
+	"\a_search\"\xb5\x01\n" +
 	"\x18ListGroupMembersResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12D\n" +
-	"\amembers\x18\x02 \x03(\v2*.resources.jobs.groups.GroupResolvedMemberR\amembers\"\x80\x01\n" +
+	"pagination\x12J\n" +
+	"\amembers\x18\x02 \x03(\v2*.resources.jobs.groups.GroupResolvedMemberB\x04\xc8\xf3\x18\x01R\amembers\"\x80\x01\n" +
 	"\x15ListGroupRulesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
