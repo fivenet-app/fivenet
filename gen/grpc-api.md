@@ -11577,11 +11577,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
-| `include_rules` | [bool](#bool) |  |  |
-| `include_leaders` | [bool](#bool) |  |  |
-| `include_manual_members` | [bool](#bool) |  |  |
-| `include_exclusions` | [bool](#bool) |  |  |
-| `include_resolved_members` | [bool](#bool) |  |  |
 | `include_archived` | [bool](#bool) |  |  |
 
 
@@ -11594,11 +11589,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `group` | [resources.jobs.groups.Group](#resourcesjobsgroupsGroup) |  |  |
-| `rules` | [resources.jobs.groups.GroupRule](#resourcesjobsgroupsGroupRule) | repeated |  |
-| `leaders` | [resources.jobs.groups.GroupLeader](#resourcesjobsgroupsGroupLeader) | repeated |  |
-| `manual_members` | [resources.jobs.groups.GroupManualMember](#resourcesjobsgroupsGroupManualMember) | repeated |  |
-| `exclusions` | [resources.jobs.groups.GroupMemberExclusion](#resourcesjobsgroupsGroupMemberExclusion) | repeated |  |
-| `resolved_members` | [resources.jobs.groups.GroupResolvedMember](#resourcesjobsgroupsGroupResolvedMember) | repeated |  |
 | `access` | [resources.access.Access](#resourcesaccessAccess) | optional |  |
 
 

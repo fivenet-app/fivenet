@@ -3,6 +3,54 @@
 
 package jobs
 
+// ItemsLen returns the length of Activity.
+func (m *ListGroupActivityResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetActivity())
+}
+
+// ItemsLen returns the length of Leaders.
+func (m *ListGroupLeadersResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetLeaders())
+}
+
+// ItemsLen returns the length of ManualMembers.
+func (m *ListGroupManualMembersResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetManualMembers())
+}
+
+// ItemsLen returns the length of Exclusions.
+func (m *ListGroupMemberExclusionsResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetExclusions())
+}
+
+// ItemsLen returns the length of Sources.
+func (m *ListGroupMembersRequest) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetSources())
+}
+
+// ItemsLen returns the length of Rules.
+func (m *ListGroupRulesResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetRules())
+}
+
 // ItemsLen returns the length of Groups.
 func (m *ListGroupsResponse) ItemsLen() int {
 	if m == nil {

@@ -155,7 +155,6 @@ func (s *Server) ListGroupActivity(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	resp.Pagination.Update(len(resp.GetActivity()))
 
 	targets := appendGroupActivityColleagueTargets(nil, resp.GetActivity())
 	if err := s.hydrateGroupColleagueTargets(ctx, userInfo, targets); err != nil {

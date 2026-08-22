@@ -27,7 +27,11 @@ func TestStoreListGroupManualMembers(t *testing.T) {
 			"group_manual_member.created_at",
 		}).AddRow(int64(42), int64(7), "onboarding", int64(100), createdAt))
 
-	members, err := store.ListGroupManualMembers(t.Context(), store.db, 42, "")
+	members, err := store.ListGroupManualMembers(
+		t.Context(),
+		store.db,
+		GroupItemsQuery{GroupID: 42},
+	)
 	require.NoError(t, err)
 	require.Len(t, members, 1)
 	assert.Equal(t, int64(42), members[0].GetGroupId())
@@ -283,7 +287,7 @@ func TestStoreListGroupLeaders(t *testing.T) {
 			"group_leader.created_at",
 		}).AddRow(int64(42), int64(9), int64(100), createdAt))
 
-	leaders, err := store.ListGroupLeaders(t.Context(), store.db, 42, "")
+	leaders, err := store.ListGroupLeaders(t.Context(), store.db, GroupItemsQuery{GroupID: 42})
 	require.NoError(t, err)
 	require.Len(t, leaders, 1)
 	assert.Equal(t, int64(42), leaders[0].GetGroupId())

@@ -367,18 +367,6 @@ func (m *GetGroupResponse) Sanitize() error {
 		}
 	}
 
-	// Field: Exclusions
-	for idx, item := range m.Exclusions {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
 	// Field: Group
 	if m.Group != nil {
 		if v, ok := any(m.GetGroup()).(interface{ Sanitize() error }); ok {
@@ -386,54 +374,6 @@ func (m *GetGroupResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	// Field: Leaders
-	for idx, item := range m.Leaders {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: ManualMembers
-	for idx, item := range m.ManualMembers {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: ResolvedMembers
-	for idx, item := range m.ResolvedMembers {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Rules
-	for idx, item := range m.Rules {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	return nil

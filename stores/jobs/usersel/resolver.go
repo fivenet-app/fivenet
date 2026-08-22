@@ -182,7 +182,11 @@ func (r *Resolver) resolveGroupMembers(
 	group *jobsgroups.Group,
 	groupSel *jobs.GroupUserSelector,
 ) ([]int32, error) {
-	manualMembers, err := r.store.ListGroupManualMembers(ctx, db, group.GetId(), "")
+	manualMembers, err := r.store.ListGroupManualMembers(
+		ctx,
+		db,
+		jobsstore.GroupItemsQuery{GroupID: group.GetId()},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -193,7 +197,11 @@ func (r *Resolver) resolveGroupMembers(
 
 	excluded := map[int32]struct{}{}
 	if !groupSel.GetIncludeExcluded() {
-		exclusions, err := r.store.ListGroupMemberExclusions(ctx, db, group.GetId(), "")
+		exclusions, err := r.store.ListGroupMemberExclusions(
+			ctx,
+			db,
+			jobsstore.GroupItemsQuery{GroupID: group.GetId()},
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -223,7 +231,11 @@ func (r *Resolver) resolveGroupMembers(
 	}
 
 	if groupSel.GetIncludeLeaders() {
-		leaders, err := r.store.ListGroupLeaders(ctx, db, group.GetId(), "")
+		leaders, err := r.store.ListGroupLeaders(
+			ctx,
+			db,
+			jobsstore.GroupItemsQuery{GroupID: group.GetId()},
+		)
 		if err != nil {
 			return nil, err
 		}

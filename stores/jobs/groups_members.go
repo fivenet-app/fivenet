@@ -142,7 +142,7 @@ func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64)
 	var exclusions []*jobsgroups.GroupMemberExclusion
 	var err error
 	if groupspolicy.AllowsManualMembers(group.GetType()) {
-		manualMembers, err = s.ListGroupManualMembers(ctx, db, groupID, "")
+		manualMembers, err = s.ListGroupManualMembers(ctx, db, GroupItemsQuery{GroupID: groupID})
 		if err != nil {
 			return err
 		}
@@ -155,18 +155,18 @@ func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64)
 		}
 	}
 	if groupspolicy.AllowsExclusions(group.GetType()) {
-		exclusions, err = s.ListGroupMemberExclusions(ctx, db, groupID, "")
+		exclusions, err = s.ListGroupMemberExclusions(ctx, db, GroupItemsQuery{GroupID: groupID})
 		if err != nil {
 			return err
 		}
 	}
-	leadersCount, err := s.countGroupLeaders(ctx, db, groupID)
+	leadersCount, err := s.CountGroupLeaders(ctx, db, GroupItemsQuery{GroupID: groupID})
 	if err != nil {
 		return err
 	}
 	var rulesCount int64
 	if groupspolicy.AllowsRules(group.GetType()) {
-		rulesCount, err = s.countGroupRules(ctx, db, groupID)
+		rulesCount, err = s.CountGroupRules(ctx, db, GroupItemsQuery{GroupID: groupID})
 		if err != nil {
 			return err
 		}
@@ -217,13 +217,24 @@ func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64)
 	return err
 }
 
-func (s *Store) countGroupLeaders(ctx context.Context, db qrm.DB, groupID int64) (int64, error) {
-	tLeaders := table.FivenetJobGroupLeaders
+func (s *Store) CountGroupLeaders(
+	ctx context.Context,
+	db qrm.DB,
+	q GroupItemsQuery,
+) (int64, error) {
+	tLeaders := table.FivenetJobGroupLeaders.AS("gl")
+	tUser := table.FivenetUser.AS("u")
+	tUserJobs := table.FivenetUserJobs.AS("uj")
+	tJobGroups := table.FivenetJobGroups.AS("g")
 	var count database.DataCount
 	if err := tLeaders.
 		SELECT(mysql.COUNT(tLeaders.UserID).AS("data_count.total")).
-		FROM(tLeaders).
-		WHERE(tLeaders.GroupID.EQ(mysql.Int64(groupID))).
+		FROM(tLeaders.
+			INNER_JOIN(tUser, tUser.ID.EQ(tLeaders.UserID)).
+			INNER_JOIN(tJobGroups, tJobGroups.ID.EQ(tLeaders.GroupID)).
+			INNER_JOIN(tUserJobs, tUserJobs.UserID.EQ(tUser.ID)),
+		).
+		WHERE(activeGroupMemberCondition(q.GroupID, tLeaders.GroupID, q.Search, tUser, tUserJobs, tJobGroups.Job)).
 		QueryContext(ctx, db, &count); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return 0, nil
@@ -234,13 +245,63 @@ func (s *Store) countGroupLeaders(ctx context.Context, db qrm.DB, groupID int64)
 	return count.Total, nil
 }
 
-func (s *Store) countGroupRules(ctx context.Context, db qrm.DB, groupID int64) (int64, error) {
+func (s *Store) CountGroupManualMembers(
+	ctx context.Context,
+	db qrm.DB,
+	q GroupItemsQuery,
+) (int64, error) {
+	tMembers := table.FivenetJobGroupManualMembers.AS("mm")
+	tUser := table.FivenetUser.AS("u")
+	tUserJobs := table.FivenetUserJobs.AS("uj")
+	tJobGroups := table.FivenetJobGroups.AS("g")
+	var count database.DataCount
+	if err := tMembers.
+		SELECT(mysql.COUNT(tMembers.UserID).AS("data_count.total")).
+		FROM(tMembers.
+			INNER_JOIN(tUser, tUser.ID.EQ(tMembers.UserID)).
+			INNER_JOIN(tJobGroups, tJobGroups.ID.EQ(tMembers.GroupID)).
+			INNER_JOIN(tUserJobs, tUserJobs.UserID.EQ(tUser.ID)),
+		).
+		WHERE(activeGroupMemberCondition(q.GroupID, tMembers.GroupID, q.Search, tUser, tUserJobs, tJobGroups.Job)).
+		QueryContext(ctx, db, &count); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return 0, nil
+		}
+		return 0, err
+	}
+
+	return count.Total, nil
+}
+
+func (s *Store) CountGroupMemberExclusions(
+	ctx context.Context,
+	db qrm.DB,
+	q GroupItemsQuery,
+) (int64, error) {
+	tExclusions := table.FivenetJobGroupMemberExclusions.AS("me")
+	tUser := table.FivenetUser.AS("u")
+	var count database.DataCount
+	if err := tExclusions.
+		SELECT(mysql.COUNT(tExclusions.UserID).AS("data_count.total")).
+		FROM(tExclusions.INNER_JOIN(tUser, tUser.ID.EQ(tExclusions.UserID))).
+		WHERE(groupMemberCondition(q.GroupID, tExclusions.GroupID, q.Search, tUser)).
+		QueryContext(ctx, db, &count); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return 0, nil
+		}
+		return 0, err
+	}
+
+	return count.Total, nil
+}
+
+func (s *Store) CountGroupRules(ctx context.Context, db qrm.DB, q GroupItemsQuery) (int64, error) {
 	tRules := table.FivenetJobGroupRules
 	var count database.DataCount
 	if err := tRules.
 		SELECT(mysql.COUNT(tRules.ID).AS("data_count.total")).
 		FROM(tRules).
-		WHERE(tRules.GroupID.EQ(mysql.Int64(groupID))).
+		WHERE(tRules.GroupID.EQ(mysql.Int64(q.GroupID))).
 		QueryContext(ctx, db, &count); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return 0, nil
@@ -254,8 +315,7 @@ func (s *Store) countGroupRules(ctx context.Context, db qrm.DB, groupID int64) (
 func (s *Store) ListGroupManualMembers(
 	ctx context.Context,
 	db qrm.DB,
-	groupID int64,
-	search string,
+	q GroupItemsQuery,
 ) ([]*jobsgroups.GroupManualMember, error) {
 	tMembers := table.FivenetJobGroupManualMembers.AS("mm")
 	tUser := table.FivenetUser.AS("u")
@@ -269,8 +329,14 @@ func (s *Store) ListGroupManualMembers(
 			INNER_JOIN(tJobGroups, tJobGroups.ID.EQ(tMembers.GroupID)).
 			INNER_JOIN(tUserJobs, tUserJobs.UserID.EQ(tUser.ID)),
 		).
-		WHERE(activeGroupMemberCondition(groupID, tMembers.GroupID, search, tUser, tUserJobs, tJobGroups.Job)).
+		WHERE(activeGroupMemberCondition(q.GroupID, tMembers.GroupID, q.Search, tUser, tUserJobs, tJobGroups.Job)).
 		ORDER_BY(tMembers.CreatedAt.ASC(), tMembers.UserID.ASC())
+	if q.Offset > 0 {
+		stmt = stmt.OFFSET(q.Offset)
+	}
+	if q.Limit > 0 {
+		stmt = stmt.LIMIT(q.Limit)
+	}
 
 	members := []*jobsgroups.GroupManualMember{}
 	if err := stmt.QueryContext(ctx, db, &members); err != nil {
@@ -286,8 +352,7 @@ func (s *Store) ListGroupManualMembers(
 func (s *Store) ListGroupMemberExclusions(
 	ctx context.Context,
 	db qrm.DB,
-	groupID int64,
-	search string,
+	q GroupItemsQuery,
 ) ([]*jobsgroups.GroupMemberExclusion, error) {
 	tExclusions := table.FivenetJobGroupMemberExclusions.AS("me")
 	tUser := table.FivenetUser.AS("u")
@@ -295,8 +360,14 @@ func (s *Store) ListGroupMemberExclusions(
 	stmt := tExclusions.
 		SELECT(columns[0], columns[1:]...).
 		FROM(tExclusions.INNER_JOIN(tUser, tUser.ID.EQ(tExclusions.UserID))).
-		WHERE(groupMemberCondition(groupID, tExclusions.GroupID, search, tUser)).
+		WHERE(groupMemberCondition(q.GroupID, tExclusions.GroupID, q.Search, tUser)).
 		ORDER_BY(tExclusions.CreatedAt.ASC(), tExclusions.UserID.ASC())
+	if q.Offset > 0 {
+		stmt = stmt.OFFSET(q.Offset)
+	}
+	if q.Limit > 0 {
+		stmt = stmt.LIMIT(q.Limit)
+	}
 
 	exclusions := []*jobsgroups.GroupMemberExclusion{}
 	if err := stmt.QueryContext(ctx, db, &exclusions); err != nil {
@@ -312,8 +383,7 @@ func (s *Store) ListGroupMemberExclusions(
 func (s *Store) ListGroupLeaders(
 	ctx context.Context,
 	db qrm.DB,
-	groupID int64,
-	search string,
+	q GroupItemsQuery,
 ) ([]*jobsgroups.GroupLeader, error) {
 	tLeaders := table.FivenetJobGroupLeaders.AS("gl")
 	tUser := table.FivenetUser.AS("u")
@@ -327,8 +397,14 @@ func (s *Store) ListGroupLeaders(
 			INNER_JOIN(tJobGroups, tJobGroups.ID.EQ(tLeaders.GroupID)).
 			INNER_JOIN(tUserJobs, tUserJobs.UserID.EQ(tUser.ID)),
 		).
-		WHERE(activeGroupMemberCondition(groupID, tLeaders.GroupID, search, tUser, tUserJobs, tJobGroups.Job)).
+		WHERE(activeGroupMemberCondition(q.GroupID, tLeaders.GroupID, q.Search, tUser, tUserJobs, tJobGroups.Job)).
 		ORDER_BY(tLeaders.CreatedAt.ASC(), tLeaders.UserID.ASC())
+	if q.Offset > 0 {
+		stmt = stmt.OFFSET(q.Offset)
+	}
+	if q.Limit > 0 {
+		stmt = stmt.LIMIT(q.Limit)
+	}
 
 	leaders := []*jobsgroups.GroupLeader{}
 	if err := stmt.QueryContext(ctx, db, &leaders); err != nil {

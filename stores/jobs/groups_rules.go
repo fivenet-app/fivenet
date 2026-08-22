@@ -93,15 +93,21 @@ func groupRuleType(rule *jobsgroups.GroupRule) (jobsgroups.GroupRuleType, error)
 func (s *Store) ListGroupRules(
 	ctx context.Context,
 	db qrm.DB,
-	groupID int64,
+	q GroupItemsQuery,
 ) ([]*jobsgroups.GroupRule, error) {
 	tRules := table.FivenetJobGroupRules
 	columns := groupRuleColumns(tRules)
 	stmt := tRules.
 		SELECT(columns[0], columns[1:]...).
 		FROM(tRules).
-		WHERE(tRules.GroupID.EQ(mysql.Int64(groupID))).
+		WHERE(tRules.GroupID.EQ(mysql.Int64(q.GroupID))).
 		ORDER_BY(tRules.CreatedAt.ASC(), tRules.ID.ASC())
+	if q.Offset > 0 {
+		stmt = stmt.OFFSET(q.Offset)
+	}
+	if q.Limit > 0 {
+		stmt = stmt.LIMIT(q.Limit)
+	}
 
 	builders := []*groupRuleBuilder{}
 	if err := stmt.QueryContext(ctx, db, &builders); err != nil {
@@ -468,7 +474,7 @@ func (s *Store) ListGroupRuleMemberMatches(
 	group *jobsgroups.Group,
 	search string,
 ) ([]*GroupRuleMemberMatch, error) {
-	rules, err := s.ListGroupRules(ctx, db, group.GetId())
+	rules, err := s.ListGroupRules(ctx, db, GroupItemsQuery{GroupID: group.GetId()})
 	if err != nil {
 		return nil, err
 	}

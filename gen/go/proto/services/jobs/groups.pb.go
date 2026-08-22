@@ -327,16 +327,11 @@ func (b0 ListGroupsResponse_builder) Build() *ListGroupsResponse {
 }
 
 type GetGroupRequest struct {
-	state                  protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id                     int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	IncludeRules           bool                   `protobuf:"varint,2,opt,name=include_rules,json=includeRules,proto3" json:"include_rules,omitempty"`
-	IncludeLeaders         bool                   `protobuf:"varint,3,opt,name=include_leaders,json=includeLeaders,proto3" json:"include_leaders,omitempty"`
-	IncludeManualMembers   bool                   `protobuf:"varint,4,opt,name=include_manual_members,json=includeManualMembers,proto3" json:"include_manual_members,omitempty"`
-	IncludeExclusions      bool                   `protobuf:"varint,5,opt,name=include_exclusions,json=includeExclusions,proto3" json:"include_exclusions,omitempty"`
-	IncludeResolvedMembers bool                   `protobuf:"varint,6,opt,name=include_resolved_members,json=includeResolvedMembers,proto3" json:"include_resolved_members,omitempty"`
-	IncludeArchived        bool                   `protobuf:"varint,7,opt,name=include_archived,json=includeArchived,proto3" json:"include_archived,omitempty"`
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	IncludeArchived bool                   `protobuf:"varint,2,opt,name=include_archived,json=includeArchived,proto3" json:"include_archived,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *GetGroupRequest) Reset() {
@@ -371,41 +366,6 @@ func (x *GetGroupRequest) GetId() int64 {
 	return 0
 }
 
-func (x *GetGroupRequest) GetIncludeRules() bool {
-	if x != nil {
-		return x.IncludeRules
-	}
-	return false
-}
-
-func (x *GetGroupRequest) GetIncludeLeaders() bool {
-	if x != nil {
-		return x.IncludeLeaders
-	}
-	return false
-}
-
-func (x *GetGroupRequest) GetIncludeManualMembers() bool {
-	if x != nil {
-		return x.IncludeManualMembers
-	}
-	return false
-}
-
-func (x *GetGroupRequest) GetIncludeExclusions() bool {
-	if x != nil {
-		return x.IncludeExclusions
-	}
-	return false
-}
-
-func (x *GetGroupRequest) GetIncludeResolvedMembers() bool {
-	if x != nil {
-		return x.IncludeResolvedMembers
-	}
-	return false
-}
-
 func (x *GetGroupRequest) GetIncludeArchived() bool {
 	if x != nil {
 		return x.IncludeArchived
@@ -417,26 +377,6 @@ func (x *GetGroupRequest) SetId(v int64) {
 	x.Id = v
 }
 
-func (x *GetGroupRequest) SetIncludeRules(v bool) {
-	x.IncludeRules = v
-}
-
-func (x *GetGroupRequest) SetIncludeLeaders(v bool) {
-	x.IncludeLeaders = v
-}
-
-func (x *GetGroupRequest) SetIncludeManualMembers(v bool) {
-	x.IncludeManualMembers = v
-}
-
-func (x *GetGroupRequest) SetIncludeExclusions(v bool) {
-	x.IncludeExclusions = v
-}
-
-func (x *GetGroupRequest) SetIncludeResolvedMembers(v bool) {
-	x.IncludeResolvedMembers = v
-}
-
 func (x *GetGroupRequest) SetIncludeArchived(v bool) {
 	x.IncludeArchived = v
 }
@@ -444,13 +384,8 @@ func (x *GetGroupRequest) SetIncludeArchived(v bool) {
 type GetGroupRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id                     int64
-	IncludeRules           bool
-	IncludeLeaders         bool
-	IncludeManualMembers   bool
-	IncludeExclusions      bool
-	IncludeResolvedMembers bool
-	IncludeArchived        bool
+	Id              int64
+	IncludeArchived bool
 }
 
 func (b0 GetGroupRequest_builder) Build() *GetGroupRequest {
@@ -458,26 +393,16 @@ func (b0 GetGroupRequest_builder) Build() *GetGroupRequest {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.Id = b.Id
-	x.IncludeRules = b.IncludeRules
-	x.IncludeLeaders = b.IncludeLeaders
-	x.IncludeManualMembers = b.IncludeManualMembers
-	x.IncludeExclusions = b.IncludeExclusions
-	x.IncludeResolvedMembers = b.IncludeResolvedMembers
 	x.IncludeArchived = b.IncludeArchived
 	return m0
 }
 
 type GetGroupResponse struct {
-	state           protoimpl.MessageState         `protogen:"hybrid.v1"`
-	Group           *groups.Group                  `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
-	Rules           []*groups.GroupRule            `protobuf:"bytes,2,rep,name=rules,proto3" json:"rules,omitempty"`
-	Leaders         []*groups.GroupLeader          `protobuf:"bytes,3,rep,name=leaders,proto3" json:"leaders,omitempty"`
-	ManualMembers   []*groups.GroupManualMember    `protobuf:"bytes,4,rep,name=manual_members,json=manualMembers,proto3" json:"manual_members,omitempty"`
-	Exclusions      []*groups.GroupMemberExclusion `protobuf:"bytes,5,rep,name=exclusions,proto3" json:"exclusions,omitempty"`
-	ResolvedMembers []*groups.GroupResolvedMember  `protobuf:"bytes,6,rep,name=resolved_members,json=resolvedMembers,proto3" json:"resolved_members,omitempty"`
-	Access          *access.Access                 `protobuf:"bytes,7,opt,name=access,proto3,oneof" json:"access,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Group         *groups.Group          `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
+	Access        *access.Access         `protobuf:"bytes,2,opt,name=access,proto3,oneof" json:"access,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetGroupResponse) Reset() {
@@ -512,41 +437,6 @@ func (x *GetGroupResponse) GetGroup() *groups.Group {
 	return nil
 }
 
-func (x *GetGroupResponse) GetRules() []*groups.GroupRule {
-	if x != nil {
-		return x.Rules
-	}
-	return nil
-}
-
-func (x *GetGroupResponse) GetLeaders() []*groups.GroupLeader {
-	if x != nil {
-		return x.Leaders
-	}
-	return nil
-}
-
-func (x *GetGroupResponse) GetManualMembers() []*groups.GroupManualMember {
-	if x != nil {
-		return x.ManualMembers
-	}
-	return nil
-}
-
-func (x *GetGroupResponse) GetExclusions() []*groups.GroupMemberExclusion {
-	if x != nil {
-		return x.Exclusions
-	}
-	return nil
-}
-
-func (x *GetGroupResponse) GetResolvedMembers() []*groups.GroupResolvedMember {
-	if x != nil {
-		return x.ResolvedMembers
-	}
-	return nil
-}
-
 func (x *GetGroupResponse) GetAccess() *access.Access {
 	if x != nil {
 		return x.Access
@@ -556,26 +446,6 @@ func (x *GetGroupResponse) GetAccess() *access.Access {
 
 func (x *GetGroupResponse) SetGroup(v *groups.Group) {
 	x.Group = v
-}
-
-func (x *GetGroupResponse) SetRules(v []*groups.GroupRule) {
-	x.Rules = v
-}
-
-func (x *GetGroupResponse) SetLeaders(v []*groups.GroupLeader) {
-	x.Leaders = v
-}
-
-func (x *GetGroupResponse) SetManualMembers(v []*groups.GroupManualMember) {
-	x.ManualMembers = v
-}
-
-func (x *GetGroupResponse) SetExclusions(v []*groups.GroupMemberExclusion) {
-	x.Exclusions = v
-}
-
-func (x *GetGroupResponse) SetResolvedMembers(v []*groups.GroupResolvedMember) {
-	x.ResolvedMembers = v
 }
 
 func (x *GetGroupResponse) SetAccess(v *access.Access) {
@@ -607,13 +477,8 @@ func (x *GetGroupResponse) ClearAccess() {
 type GetGroupResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Group           *groups.Group
-	Rules           []*groups.GroupRule
-	Leaders         []*groups.GroupLeader
-	ManualMembers   []*groups.GroupManualMember
-	Exclusions      []*groups.GroupMemberExclusion
-	ResolvedMembers []*groups.GroupResolvedMember
-	Access          *access.Access
+	Group  *groups.Group
+	Access *access.Access
 }
 
 func (b0 GetGroupResponse_builder) Build() *GetGroupResponse {
@@ -621,11 +486,6 @@ func (b0 GetGroupResponse_builder) Build() *GetGroupResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.Group = b.Group
-	x.Rules = b.Rules
-	x.Leaders = b.Leaders
-	x.ManualMembers = b.ManualMembers
-	x.Exclusions = b.Exclusions
-	x.ResolvedMembers = b.ResolvedMembers
 	x.Access = b.Access
 	return m0
 }
@@ -4922,25 +4782,13 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12:\n" +
-	"\x06groups\x18\x02 \x03(\v2\x1c.resources.jobs.groups.GroupB\x04\xc8\xf3\x18\x01R\x06groups\"\xb9\x02\n" +
+	"\x06groups\x18\x02 \x03(\v2\x1c.resources.jobs.groups.GroupB\x04\xc8\xf3\x18\x01R\x06groups\"L\n" +
 	"\x0fGetGroupRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
-	"\rinclude_rules\x18\x02 \x01(\bR\fincludeRules\x12'\n" +
-	"\x0finclude_leaders\x18\x03 \x01(\bR\x0eincludeLeaders\x124\n" +
-	"\x16include_manual_members\x18\x04 \x01(\bR\x14includeManualMembers\x12-\n" +
-	"\x12include_exclusions\x18\x05 \x01(\bR\x11includeExclusions\x128\n" +
-	"\x18include_resolved_members\x18\x06 \x01(\bR\x16includeResolvedMembers\x12)\n" +
-	"\x10include_archived\x18\a \x01(\bR\x0fincludeArchived\"\xf3\x03\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12)\n" +
+	"\x10include_archived\x18\x02 \x01(\bR\x0fincludeArchived\"\x88\x01\n" +
 	"\x10GetGroupResponse\x122\n" +
-	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\x126\n" +
-	"\x05rules\x18\x02 \x03(\v2 .resources.jobs.groups.GroupRuleR\x05rules\x12<\n" +
-	"\aleaders\x18\x03 \x03(\v2\".resources.jobs.groups.GroupLeaderR\aleaders\x12O\n" +
-	"\x0emanual_members\x18\x04 \x03(\v2(.resources.jobs.groups.GroupManualMemberR\rmanualMembers\x12K\n" +
-	"\n" +
-	"exclusions\x18\x05 \x03(\v2+.resources.jobs.groups.GroupMemberExclusionR\n" +
-	"exclusions\x12U\n" +
-	"\x10resolved_members\x18\x06 \x03(\v2*.resources.jobs.groups.GroupResolvedMemberR\x0fresolvedMembers\x125\n" +
-	"\x06access\x18\a \x01(\v2\x18.resources.access.AccessH\x00R\x06access\x88\x01\x01B\t\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\x125\n" +
+	"\x06access\x18\x02 \x01(\v2\x18.resources.access.AccessH\x00R\x06access\x88\x01\x01B\t\n" +
 	"\a_access\"\x85\x05\n" +
 	"\x12CreateGroupRequest\x12\x10\n" +
 	"\x03job\x18\x01 \x01(\tR\x03job\x12\x12\n" +
@@ -5007,7 +4855,7 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x16DeleteGroupLogoRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"M\n" +
 	"\x17DeleteGroupLogoResponse\x122\n" +
-	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xae\x03\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xb4\x03\n" +
 	"\x17ListGroupMembersRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -5017,8 +4865,8 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x06search\x18\x04 \x01(\tH\x01R\x06search\x88\x01\x01\x12)\n" +
 	"\x10include_excluded\x18\x05 \x01(\bR\x0fincludeExcluded\x12'\n" +
 	"\x0finclude_leaders\x18\x06 \x01(\bR\x0eincludeLeaders\x12'\n" +
-	"\x0finclude_reasons\x18\a \x01(\bR\x0eincludeReasons\x12B\n" +
-	"\asources\x18\b \x03(\x0e2(.resources.jobs.groups.GroupMemberSourceR\asourcesB\a\n" +
+	"\x0finclude_reasons\x18\a \x01(\bR\x0eincludeReasons\x12H\n" +
+	"\asources\x18\b \x03(\x0e2(.resources.jobs.groups.GroupMemberSourceB\x04\xc8\xf3\x18\x01R\asourcesB\a\n" +
 	"\x05_sortB\t\n" +
 	"\a_search\"\xaf\x01\n" +
 	"\x18ListGroupMembersResponse\x12M\n" +
@@ -5030,37 +4878,37 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x19\n" +
-	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\"\x9f\x01\n" +
+	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\"\xa5\x01\n" +
 	"\x16ListGroupRulesResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x126\n" +
-	"\x05rules\x18\x02 \x03(\v2 .resources.jobs.groups.GroupRuleR\x05rules\"\xb0\x01\n" +
+	"pagination\x12<\n" +
+	"\x05rules\x18\x02 \x03(\v2 .resources.jobs.groups.GroupRuleB\x04\xc8\xf3\x18\x01R\x05rules\"\xb0\x01\n" +
 	"\x1dListGroupManualMembersRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x19\n" +
 	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\x1b\n" +
 	"\x06search\x18\x03 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +
-	"\a_search\"\xc0\x01\n" +
+	"\a_search\"\xc6\x01\n" +
 	"\x1eListGroupManualMembersResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12O\n" +
-	"\x0emanual_members\x18\x02 \x03(\v2(.resources.jobs.groups.GroupManualMemberR\rmanualMembers\"\xb3\x01\n" +
+	"pagination\x12U\n" +
+	"\x0emanual_members\x18\x02 \x03(\v2(.resources.jobs.groups.GroupManualMemberB\x04\xc8\xf3\x18\x01R\rmanualMembers\"\xb3\x01\n" +
 	" ListGroupMemberExclusionsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x19\n" +
 	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\x1b\n" +
 	"\x06search\x18\x03 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +
-	"\a_search\"\xbf\x01\n" +
+	"\a_search\"\xc5\x01\n" +
 	"!ListGroupMemberExclusionsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12K\n" +
+	"pagination\x12Q\n" +
 	"\n" +
-	"exclusions\x18\x02 \x03(\v2+.resources.jobs.groups.GroupMemberExclusionR\n" +
+	"exclusions\x18\x02 \x03(\v2+.resources.jobs.groups.GroupMemberExclusionB\x04\xc8\xf3\x18\x01R\n" +
 	"exclusions\"\xaa\x01\n" +
 	"\x17ListGroupLeadersRequest\x12L\n" +
 	"\n" +
@@ -5068,12 +4916,12 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"pagination\x12\x19\n" +
 	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\x1b\n" +
 	"\x06search\x18\x03 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +
-	"\a_search\"\xa7\x01\n" +
+	"\a_search\"\xad\x01\n" +
 	"\x18ListGroupLeadersResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12<\n" +
-	"\aleaders\x18\x02 \x03(\v2\".resources.jobs.groups.GroupLeaderR\aleaders\"s\n" +
+	"pagination\x12B\n" +
+	"\aleaders\x18\x02 \x03(\v2\".resources.jobs.groups.GroupLeaderB\x04\xc8\xf3\x18\x01R\aleaders\"s\n" +
 	"\x15AddGroupMemberRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x1b\n" +
@@ -5168,12 +5016,12 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\n" +
 	"\b_user_idB\a\n" +
 	"\x05_fromB\x05\n" +
-	"\x03_to\"\xc0\x01\n" +
+	"\x03_to\"\xc6\x01\n" +
 	"\x19ListGroupActivityResponse\x12R\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseH\x00R\n" +
-	"pagination\x88\x01\x01\x12@\n" +
-	"\bactivity\x18\x02 \x03(\v2$.resources.jobs.groups.GroupActivityR\bactivityB\r\n" +
+	"pagination\x88\x01\x01\x12F\n" +
+	"\bactivity\x18\x02 \x03(\v2$.resources.jobs.groups.GroupActivityB\x04\xc8\xf3\x18\x01R\bactivityB\r\n" +
 	"\v_pagination2\xe2\x16\n" +
 	"\rGroupsService\x12Q\n" +
 	"\n" +
@@ -5273,14 +5121,14 @@ var file_services_jobs_groups_proto_goTypes = []any{
 	(groups.GroupType)(0),                      // 48: resources.jobs.groups.GroupType
 	(*database.PaginationResponse)(nil),        // 49: resources.common.database.PaginationResponse
 	(*groups.Group)(nil),                       // 50: resources.jobs.groups.Group
-	(*groups.GroupRule)(nil),                   // 51: resources.jobs.groups.GroupRule
-	(*groups.GroupLeader)(nil),                 // 52: resources.jobs.groups.GroupLeader
-	(*groups.GroupManualMember)(nil),           // 53: resources.jobs.groups.GroupManualMember
-	(*groups.GroupMemberExclusion)(nil),        // 54: resources.jobs.groups.GroupMemberExclusion
-	(*groups.GroupResolvedMember)(nil),         // 55: resources.jobs.groups.GroupResolvedMember
-	(*access.Access)(nil),                      // 56: resources.access.Access
-	(groups.GroupMembershipMode)(0),            // 57: resources.jobs.groups.GroupMembershipMode
-	(groups.GroupMemberSource)(0),              // 58: resources.jobs.groups.GroupMemberSource
+	(*access.Access)(nil),                      // 51: resources.access.Access
+	(groups.GroupMembershipMode)(0),            // 52: resources.jobs.groups.GroupMembershipMode
+	(groups.GroupMemberSource)(0),              // 53: resources.jobs.groups.GroupMemberSource
+	(*groups.GroupResolvedMember)(nil),         // 54: resources.jobs.groups.GroupResolvedMember
+	(*groups.GroupRule)(nil),                   // 55: resources.jobs.groups.GroupRule
+	(*groups.GroupManualMember)(nil),           // 56: resources.jobs.groups.GroupManualMember
+	(*groups.GroupMemberExclusion)(nil),        // 57: resources.jobs.groups.GroupMemberExclusion
+	(*groups.GroupLeader)(nil),                 // 58: resources.jobs.groups.GroupLeader
 	(groups.GroupExclusionReason)(0),           // 59: resources.jobs.groups.GroupExclusionReason
 	(*groups.GroupGradeRule)(nil),              // 60: resources.jobs.groups.GroupGradeRule
 	(*groups.GroupQualificationRule)(nil),      // 61: resources.jobs.groups.GroupQualificationRule
@@ -5298,119 +5146,114 @@ var file_services_jobs_groups_proto_depIdxs = []int32{
 	49, // 4: services.jobs.ListGroupsResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	50, // 5: services.jobs.ListGroupsResponse.groups:type_name -> resources.jobs.groups.Group
 	50, // 6: services.jobs.GetGroupResponse.group:type_name -> resources.jobs.groups.Group
-	51, // 7: services.jobs.GetGroupResponse.rules:type_name -> resources.jobs.groups.GroupRule
-	52, // 8: services.jobs.GetGroupResponse.leaders:type_name -> resources.jobs.groups.GroupLeader
-	53, // 9: services.jobs.GetGroupResponse.manual_members:type_name -> resources.jobs.groups.GroupManualMember
-	54, // 10: services.jobs.GetGroupResponse.exclusions:type_name -> resources.jobs.groups.GroupMemberExclusion
-	55, // 11: services.jobs.GetGroupResponse.resolved_members:type_name -> resources.jobs.groups.GroupResolvedMember
-	56, // 12: services.jobs.GetGroupResponse.access:type_name -> resources.access.Access
-	48, // 13: services.jobs.CreateGroupRequest.type:type_name -> resources.jobs.groups.GroupType
-	57, // 14: services.jobs.CreateGroupRequest.membership_mode:type_name -> resources.jobs.groups.GroupMembershipMode
-	36, // 15: services.jobs.CreateGroupRequest.rules:type_name -> services.jobs.GroupRuleInput
-	56, // 16: services.jobs.CreateGroupRequest.access:type_name -> resources.access.Access
-	50, // 17: services.jobs.CreateGroupResponse.group:type_name -> resources.jobs.groups.Group
-	47, // 18: services.jobs.UpdateGroupRequest.state:type_name -> resources.jobs.groups.GroupState
-	48, // 19: services.jobs.UpdateGroupRequest.type:type_name -> resources.jobs.groups.GroupType
-	57, // 20: services.jobs.UpdateGroupRequest.membership_mode:type_name -> resources.jobs.groups.GroupMembershipMode
-	56, // 21: services.jobs.UpdateGroupRequest.access:type_name -> resources.access.Access
-	50, // 22: services.jobs.UpdateGroupResponse.group:type_name -> resources.jobs.groups.Group
-	50, // 23: services.jobs.ArchiveGroupResponse.group:type_name -> resources.jobs.groups.Group
-	50, // 24: services.jobs.RestoreGroupResponse.group:type_name -> resources.jobs.groups.Group
-	50, // 25: services.jobs.DeleteGroupLogoResponse.group:type_name -> resources.jobs.groups.Group
-	45, // 26: services.jobs.ListGroupMembersRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	46, // 27: services.jobs.ListGroupMembersRequest.sort:type_name -> resources.common.database.Sort
-	58, // 28: services.jobs.ListGroupMembersRequest.sources:type_name -> resources.jobs.groups.GroupMemberSource
-	49, // 29: services.jobs.ListGroupMembersResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	55, // 30: services.jobs.ListGroupMembersResponse.members:type_name -> resources.jobs.groups.GroupResolvedMember
-	45, // 31: services.jobs.ListGroupRulesRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	49, // 32: services.jobs.ListGroupRulesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	51, // 33: services.jobs.ListGroupRulesResponse.rules:type_name -> resources.jobs.groups.GroupRule
-	45, // 34: services.jobs.ListGroupManualMembersRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	49, // 35: services.jobs.ListGroupManualMembersResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	53, // 36: services.jobs.ListGroupManualMembersResponse.manual_members:type_name -> resources.jobs.groups.GroupManualMember
-	45, // 37: services.jobs.ListGroupMemberExclusionsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	49, // 38: services.jobs.ListGroupMemberExclusionsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	54, // 39: services.jobs.ListGroupMemberExclusionsResponse.exclusions:type_name -> resources.jobs.groups.GroupMemberExclusion
-	45, // 40: services.jobs.ListGroupLeadersRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	49, // 41: services.jobs.ListGroupLeadersResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	52, // 42: services.jobs.ListGroupLeadersResponse.leaders:type_name -> resources.jobs.groups.GroupLeader
-	53, // 43: services.jobs.AddGroupMemberResponse.member:type_name -> resources.jobs.groups.GroupManualMember
-	50, // 44: services.jobs.AddGroupMemberResponse.group:type_name -> resources.jobs.groups.Group
-	50, // 45: services.jobs.RemoveGroupMemberResponse.group:type_name -> resources.jobs.groups.Group
-	59, // 46: services.jobs.ExcludeGroupMemberRequest.reason_type:type_name -> resources.jobs.groups.GroupExclusionReason
-	54, // 47: services.jobs.ExcludeGroupMemberResponse.exclusion:type_name -> resources.jobs.groups.GroupMemberExclusion
-	50, // 48: services.jobs.ExcludeGroupMemberResponse.group:type_name -> resources.jobs.groups.Group
-	50, // 49: services.jobs.RemoveGroupMemberExclusionResponse.group:type_name -> resources.jobs.groups.Group
-	52, // 50: services.jobs.AddGroupLeaderResponse.leader:type_name -> resources.jobs.groups.GroupLeader
-	50, // 51: services.jobs.AddGroupLeaderResponse.group:type_name -> resources.jobs.groups.Group
-	50, // 52: services.jobs.RemoveGroupLeaderResponse.group:type_name -> resources.jobs.groups.Group
-	60, // 53: services.jobs.GroupRuleInput.grade:type_name -> resources.jobs.groups.GroupGradeRule
-	61, // 54: services.jobs.GroupRuleInput.qualification:type_name -> resources.jobs.groups.GroupQualificationRule
-	36, // 55: services.jobs.CreateGroupRuleRequest.rule:type_name -> services.jobs.GroupRuleInput
-	51, // 56: services.jobs.CreateGroupRuleResponse.rule:type_name -> resources.jobs.groups.GroupRule
-	50, // 57: services.jobs.CreateGroupRuleResponse.group:type_name -> resources.jobs.groups.Group
-	36, // 58: services.jobs.UpdateGroupRuleRequest.rule:type_name -> services.jobs.GroupRuleInput
-	51, // 59: services.jobs.UpdateGroupRuleResponse.rule:type_name -> resources.jobs.groups.GroupRule
-	50, // 60: services.jobs.UpdateGroupRuleResponse.group:type_name -> resources.jobs.groups.Group
-	50, // 61: services.jobs.DeleteGroupRuleResponse.group:type_name -> resources.jobs.groups.Group
-	45, // 62: services.jobs.ListGroupActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	46, // 63: services.jobs.ListGroupActivityRequest.sort:type_name -> resources.common.database.Sort
-	62, // 64: services.jobs.ListGroupActivityRequest.types:type_name -> resources.jobs.groups.GroupActivityType
-	63, // 65: services.jobs.ListGroupActivityRequest.from:type_name -> resources.timestamp.Timestamp
-	63, // 66: services.jobs.ListGroupActivityRequest.to:type_name -> resources.timestamp.Timestamp
-	49, // 67: services.jobs.ListGroupActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	64, // 68: services.jobs.ListGroupActivityResponse.activity:type_name -> resources.jobs.groups.GroupActivity
-	0,  // 69: services.jobs.GroupsService.ListGroups:input_type -> services.jobs.ListGroupsRequest
-	2,  // 70: services.jobs.GroupsService.GetGroup:input_type -> services.jobs.GetGroupRequest
-	4,  // 71: services.jobs.GroupsService.CreateGroup:input_type -> services.jobs.CreateGroupRequest
-	6,  // 72: services.jobs.GroupsService.UpdateGroup:input_type -> services.jobs.UpdateGroupRequest
-	8,  // 73: services.jobs.GroupsService.ArchiveGroup:input_type -> services.jobs.ArchiveGroupRequest
-	10, // 74: services.jobs.GroupsService.RestoreGroup:input_type -> services.jobs.RestoreGroupRequest
-	65, // 75: services.jobs.GroupsService.UploadGroupLogo:input_type -> resources.file.UploadFileRequest
-	12, // 76: services.jobs.GroupsService.DeleteGroupLogo:input_type -> services.jobs.DeleteGroupLogoRequest
-	14, // 77: services.jobs.GroupsService.ListGroupMembers:input_type -> services.jobs.ListGroupMembersRequest
-	18, // 78: services.jobs.GroupsService.ListGroupManualMembers:input_type -> services.jobs.ListGroupManualMembersRequest
-	20, // 79: services.jobs.GroupsService.ListGroupMemberExclusions:input_type -> services.jobs.ListGroupMemberExclusionsRequest
-	22, // 80: services.jobs.GroupsService.ListGroupLeaders:input_type -> services.jobs.ListGroupLeadersRequest
-	24, // 81: services.jobs.GroupsService.AddGroupMember:input_type -> services.jobs.AddGroupMemberRequest
-	26, // 82: services.jobs.GroupsService.RemoveGroupMember:input_type -> services.jobs.RemoveGroupMemberRequest
-	28, // 83: services.jobs.GroupsService.ExcludeGroupMember:input_type -> services.jobs.ExcludeGroupMemberRequest
-	30, // 84: services.jobs.GroupsService.RemoveGroupMemberExclusion:input_type -> services.jobs.RemoveGroupMemberExclusionRequest
-	32, // 85: services.jobs.GroupsService.AddGroupLeader:input_type -> services.jobs.AddGroupLeaderRequest
-	34, // 86: services.jobs.GroupsService.RemoveGroupLeader:input_type -> services.jobs.RemoveGroupLeaderRequest
-	37, // 87: services.jobs.GroupsService.CreateGroupRule:input_type -> services.jobs.CreateGroupRuleRequest
-	16, // 88: services.jobs.GroupsService.ListGroupRules:input_type -> services.jobs.ListGroupRulesRequest
-	39, // 89: services.jobs.GroupsService.UpdateGroupRule:input_type -> services.jobs.UpdateGroupRuleRequest
-	41, // 90: services.jobs.GroupsService.DeleteGroupRule:input_type -> services.jobs.DeleteGroupRuleRequest
-	43, // 91: services.jobs.GroupsService.ListGroupActivity:input_type -> services.jobs.ListGroupActivityRequest
-	1,  // 92: services.jobs.GroupsService.ListGroups:output_type -> services.jobs.ListGroupsResponse
-	3,  // 93: services.jobs.GroupsService.GetGroup:output_type -> services.jobs.GetGroupResponse
-	5,  // 94: services.jobs.GroupsService.CreateGroup:output_type -> services.jobs.CreateGroupResponse
-	7,  // 95: services.jobs.GroupsService.UpdateGroup:output_type -> services.jobs.UpdateGroupResponse
-	9,  // 96: services.jobs.GroupsService.ArchiveGroup:output_type -> services.jobs.ArchiveGroupResponse
-	11, // 97: services.jobs.GroupsService.RestoreGroup:output_type -> services.jobs.RestoreGroupResponse
-	66, // 98: services.jobs.GroupsService.UploadGroupLogo:output_type -> resources.file.UploadFileResponse
-	13, // 99: services.jobs.GroupsService.DeleteGroupLogo:output_type -> services.jobs.DeleteGroupLogoResponse
-	15, // 100: services.jobs.GroupsService.ListGroupMembers:output_type -> services.jobs.ListGroupMembersResponse
-	19, // 101: services.jobs.GroupsService.ListGroupManualMembers:output_type -> services.jobs.ListGroupManualMembersResponse
-	21, // 102: services.jobs.GroupsService.ListGroupMemberExclusions:output_type -> services.jobs.ListGroupMemberExclusionsResponse
-	23, // 103: services.jobs.GroupsService.ListGroupLeaders:output_type -> services.jobs.ListGroupLeadersResponse
-	25, // 104: services.jobs.GroupsService.AddGroupMember:output_type -> services.jobs.AddGroupMemberResponse
-	27, // 105: services.jobs.GroupsService.RemoveGroupMember:output_type -> services.jobs.RemoveGroupMemberResponse
-	29, // 106: services.jobs.GroupsService.ExcludeGroupMember:output_type -> services.jobs.ExcludeGroupMemberResponse
-	31, // 107: services.jobs.GroupsService.RemoveGroupMemberExclusion:output_type -> services.jobs.RemoveGroupMemberExclusionResponse
-	33, // 108: services.jobs.GroupsService.AddGroupLeader:output_type -> services.jobs.AddGroupLeaderResponse
-	35, // 109: services.jobs.GroupsService.RemoveGroupLeader:output_type -> services.jobs.RemoveGroupLeaderResponse
-	38, // 110: services.jobs.GroupsService.CreateGroupRule:output_type -> services.jobs.CreateGroupRuleResponse
-	17, // 111: services.jobs.GroupsService.ListGroupRules:output_type -> services.jobs.ListGroupRulesResponse
-	40, // 112: services.jobs.GroupsService.UpdateGroupRule:output_type -> services.jobs.UpdateGroupRuleResponse
-	42, // 113: services.jobs.GroupsService.DeleteGroupRule:output_type -> services.jobs.DeleteGroupRuleResponse
-	44, // 114: services.jobs.GroupsService.ListGroupActivity:output_type -> services.jobs.ListGroupActivityResponse
-	92, // [92:115] is the sub-list for method output_type
-	69, // [69:92] is the sub-list for method input_type
-	69, // [69:69] is the sub-list for extension type_name
-	69, // [69:69] is the sub-list for extension extendee
-	0,  // [0:69] is the sub-list for field type_name
+	51, // 7: services.jobs.GetGroupResponse.access:type_name -> resources.access.Access
+	48, // 8: services.jobs.CreateGroupRequest.type:type_name -> resources.jobs.groups.GroupType
+	52, // 9: services.jobs.CreateGroupRequest.membership_mode:type_name -> resources.jobs.groups.GroupMembershipMode
+	36, // 10: services.jobs.CreateGroupRequest.rules:type_name -> services.jobs.GroupRuleInput
+	51, // 11: services.jobs.CreateGroupRequest.access:type_name -> resources.access.Access
+	50, // 12: services.jobs.CreateGroupResponse.group:type_name -> resources.jobs.groups.Group
+	47, // 13: services.jobs.UpdateGroupRequest.state:type_name -> resources.jobs.groups.GroupState
+	48, // 14: services.jobs.UpdateGroupRequest.type:type_name -> resources.jobs.groups.GroupType
+	52, // 15: services.jobs.UpdateGroupRequest.membership_mode:type_name -> resources.jobs.groups.GroupMembershipMode
+	51, // 16: services.jobs.UpdateGroupRequest.access:type_name -> resources.access.Access
+	50, // 17: services.jobs.UpdateGroupResponse.group:type_name -> resources.jobs.groups.Group
+	50, // 18: services.jobs.ArchiveGroupResponse.group:type_name -> resources.jobs.groups.Group
+	50, // 19: services.jobs.RestoreGroupResponse.group:type_name -> resources.jobs.groups.Group
+	50, // 20: services.jobs.DeleteGroupLogoResponse.group:type_name -> resources.jobs.groups.Group
+	45, // 21: services.jobs.ListGroupMembersRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	46, // 22: services.jobs.ListGroupMembersRequest.sort:type_name -> resources.common.database.Sort
+	53, // 23: services.jobs.ListGroupMembersRequest.sources:type_name -> resources.jobs.groups.GroupMemberSource
+	49, // 24: services.jobs.ListGroupMembersResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	54, // 25: services.jobs.ListGroupMembersResponse.members:type_name -> resources.jobs.groups.GroupResolvedMember
+	45, // 26: services.jobs.ListGroupRulesRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	49, // 27: services.jobs.ListGroupRulesResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	55, // 28: services.jobs.ListGroupRulesResponse.rules:type_name -> resources.jobs.groups.GroupRule
+	45, // 29: services.jobs.ListGroupManualMembersRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	49, // 30: services.jobs.ListGroupManualMembersResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	56, // 31: services.jobs.ListGroupManualMembersResponse.manual_members:type_name -> resources.jobs.groups.GroupManualMember
+	45, // 32: services.jobs.ListGroupMemberExclusionsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	49, // 33: services.jobs.ListGroupMemberExclusionsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	57, // 34: services.jobs.ListGroupMemberExclusionsResponse.exclusions:type_name -> resources.jobs.groups.GroupMemberExclusion
+	45, // 35: services.jobs.ListGroupLeadersRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	49, // 36: services.jobs.ListGroupLeadersResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	58, // 37: services.jobs.ListGroupLeadersResponse.leaders:type_name -> resources.jobs.groups.GroupLeader
+	56, // 38: services.jobs.AddGroupMemberResponse.member:type_name -> resources.jobs.groups.GroupManualMember
+	50, // 39: services.jobs.AddGroupMemberResponse.group:type_name -> resources.jobs.groups.Group
+	50, // 40: services.jobs.RemoveGroupMemberResponse.group:type_name -> resources.jobs.groups.Group
+	59, // 41: services.jobs.ExcludeGroupMemberRequest.reason_type:type_name -> resources.jobs.groups.GroupExclusionReason
+	57, // 42: services.jobs.ExcludeGroupMemberResponse.exclusion:type_name -> resources.jobs.groups.GroupMemberExclusion
+	50, // 43: services.jobs.ExcludeGroupMemberResponse.group:type_name -> resources.jobs.groups.Group
+	50, // 44: services.jobs.RemoveGroupMemberExclusionResponse.group:type_name -> resources.jobs.groups.Group
+	58, // 45: services.jobs.AddGroupLeaderResponse.leader:type_name -> resources.jobs.groups.GroupLeader
+	50, // 46: services.jobs.AddGroupLeaderResponse.group:type_name -> resources.jobs.groups.Group
+	50, // 47: services.jobs.RemoveGroupLeaderResponse.group:type_name -> resources.jobs.groups.Group
+	60, // 48: services.jobs.GroupRuleInput.grade:type_name -> resources.jobs.groups.GroupGradeRule
+	61, // 49: services.jobs.GroupRuleInput.qualification:type_name -> resources.jobs.groups.GroupQualificationRule
+	36, // 50: services.jobs.CreateGroupRuleRequest.rule:type_name -> services.jobs.GroupRuleInput
+	55, // 51: services.jobs.CreateGroupRuleResponse.rule:type_name -> resources.jobs.groups.GroupRule
+	50, // 52: services.jobs.CreateGroupRuleResponse.group:type_name -> resources.jobs.groups.Group
+	36, // 53: services.jobs.UpdateGroupRuleRequest.rule:type_name -> services.jobs.GroupRuleInput
+	55, // 54: services.jobs.UpdateGroupRuleResponse.rule:type_name -> resources.jobs.groups.GroupRule
+	50, // 55: services.jobs.UpdateGroupRuleResponse.group:type_name -> resources.jobs.groups.Group
+	50, // 56: services.jobs.DeleteGroupRuleResponse.group:type_name -> resources.jobs.groups.Group
+	45, // 57: services.jobs.ListGroupActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	46, // 58: services.jobs.ListGroupActivityRequest.sort:type_name -> resources.common.database.Sort
+	62, // 59: services.jobs.ListGroupActivityRequest.types:type_name -> resources.jobs.groups.GroupActivityType
+	63, // 60: services.jobs.ListGroupActivityRequest.from:type_name -> resources.timestamp.Timestamp
+	63, // 61: services.jobs.ListGroupActivityRequest.to:type_name -> resources.timestamp.Timestamp
+	49, // 62: services.jobs.ListGroupActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	64, // 63: services.jobs.ListGroupActivityResponse.activity:type_name -> resources.jobs.groups.GroupActivity
+	0,  // 64: services.jobs.GroupsService.ListGroups:input_type -> services.jobs.ListGroupsRequest
+	2,  // 65: services.jobs.GroupsService.GetGroup:input_type -> services.jobs.GetGroupRequest
+	4,  // 66: services.jobs.GroupsService.CreateGroup:input_type -> services.jobs.CreateGroupRequest
+	6,  // 67: services.jobs.GroupsService.UpdateGroup:input_type -> services.jobs.UpdateGroupRequest
+	8,  // 68: services.jobs.GroupsService.ArchiveGroup:input_type -> services.jobs.ArchiveGroupRequest
+	10, // 69: services.jobs.GroupsService.RestoreGroup:input_type -> services.jobs.RestoreGroupRequest
+	65, // 70: services.jobs.GroupsService.UploadGroupLogo:input_type -> resources.file.UploadFileRequest
+	12, // 71: services.jobs.GroupsService.DeleteGroupLogo:input_type -> services.jobs.DeleteGroupLogoRequest
+	14, // 72: services.jobs.GroupsService.ListGroupMembers:input_type -> services.jobs.ListGroupMembersRequest
+	18, // 73: services.jobs.GroupsService.ListGroupManualMembers:input_type -> services.jobs.ListGroupManualMembersRequest
+	20, // 74: services.jobs.GroupsService.ListGroupMemberExclusions:input_type -> services.jobs.ListGroupMemberExclusionsRequest
+	22, // 75: services.jobs.GroupsService.ListGroupLeaders:input_type -> services.jobs.ListGroupLeadersRequest
+	24, // 76: services.jobs.GroupsService.AddGroupMember:input_type -> services.jobs.AddGroupMemberRequest
+	26, // 77: services.jobs.GroupsService.RemoveGroupMember:input_type -> services.jobs.RemoveGroupMemberRequest
+	28, // 78: services.jobs.GroupsService.ExcludeGroupMember:input_type -> services.jobs.ExcludeGroupMemberRequest
+	30, // 79: services.jobs.GroupsService.RemoveGroupMemberExclusion:input_type -> services.jobs.RemoveGroupMemberExclusionRequest
+	32, // 80: services.jobs.GroupsService.AddGroupLeader:input_type -> services.jobs.AddGroupLeaderRequest
+	34, // 81: services.jobs.GroupsService.RemoveGroupLeader:input_type -> services.jobs.RemoveGroupLeaderRequest
+	37, // 82: services.jobs.GroupsService.CreateGroupRule:input_type -> services.jobs.CreateGroupRuleRequest
+	16, // 83: services.jobs.GroupsService.ListGroupRules:input_type -> services.jobs.ListGroupRulesRequest
+	39, // 84: services.jobs.GroupsService.UpdateGroupRule:input_type -> services.jobs.UpdateGroupRuleRequest
+	41, // 85: services.jobs.GroupsService.DeleteGroupRule:input_type -> services.jobs.DeleteGroupRuleRequest
+	43, // 86: services.jobs.GroupsService.ListGroupActivity:input_type -> services.jobs.ListGroupActivityRequest
+	1,  // 87: services.jobs.GroupsService.ListGroups:output_type -> services.jobs.ListGroupsResponse
+	3,  // 88: services.jobs.GroupsService.GetGroup:output_type -> services.jobs.GetGroupResponse
+	5,  // 89: services.jobs.GroupsService.CreateGroup:output_type -> services.jobs.CreateGroupResponse
+	7,  // 90: services.jobs.GroupsService.UpdateGroup:output_type -> services.jobs.UpdateGroupResponse
+	9,  // 91: services.jobs.GroupsService.ArchiveGroup:output_type -> services.jobs.ArchiveGroupResponse
+	11, // 92: services.jobs.GroupsService.RestoreGroup:output_type -> services.jobs.RestoreGroupResponse
+	66, // 93: services.jobs.GroupsService.UploadGroupLogo:output_type -> resources.file.UploadFileResponse
+	13, // 94: services.jobs.GroupsService.DeleteGroupLogo:output_type -> services.jobs.DeleteGroupLogoResponse
+	15, // 95: services.jobs.GroupsService.ListGroupMembers:output_type -> services.jobs.ListGroupMembersResponse
+	19, // 96: services.jobs.GroupsService.ListGroupManualMembers:output_type -> services.jobs.ListGroupManualMembersResponse
+	21, // 97: services.jobs.GroupsService.ListGroupMemberExclusions:output_type -> services.jobs.ListGroupMemberExclusionsResponse
+	23, // 98: services.jobs.GroupsService.ListGroupLeaders:output_type -> services.jobs.ListGroupLeadersResponse
+	25, // 99: services.jobs.GroupsService.AddGroupMember:output_type -> services.jobs.AddGroupMemberResponse
+	27, // 100: services.jobs.GroupsService.RemoveGroupMember:output_type -> services.jobs.RemoveGroupMemberResponse
+	29, // 101: services.jobs.GroupsService.ExcludeGroupMember:output_type -> services.jobs.ExcludeGroupMemberResponse
+	31, // 102: services.jobs.GroupsService.RemoveGroupMemberExclusion:output_type -> services.jobs.RemoveGroupMemberExclusionResponse
+	33, // 103: services.jobs.GroupsService.AddGroupLeader:output_type -> services.jobs.AddGroupLeaderResponse
+	35, // 104: services.jobs.GroupsService.RemoveGroupLeader:output_type -> services.jobs.RemoveGroupLeaderResponse
+	38, // 105: services.jobs.GroupsService.CreateGroupRule:output_type -> services.jobs.CreateGroupRuleResponse
+	17, // 106: services.jobs.GroupsService.ListGroupRules:output_type -> services.jobs.ListGroupRulesResponse
+	40, // 107: services.jobs.GroupsService.UpdateGroupRule:output_type -> services.jobs.UpdateGroupRuleResponse
+	42, // 108: services.jobs.GroupsService.DeleteGroupRule:output_type -> services.jobs.DeleteGroupRuleResponse
+	44, // 109: services.jobs.GroupsService.ListGroupActivity:output_type -> services.jobs.ListGroupActivityResponse
+	87, // [87:110] is the sub-list for method output_type
+	64, // [64:87] is the sub-list for method input_type
+	64, // [64:64] is the sub-list for extension type_name
+	64, // [64:64] is the sub-list for extension extendee
+	0,  // [0:64] is the sub-list for field type_name
 }
 
 func init() { file_services_jobs_groups_proto_init() }

@@ -20,14 +20,14 @@ import { GroupActivityType } from "../../resources/jobs/groups/activity";
 import { GroupQualificationRule } from "../../resources/jobs/groups/group";
 import { GroupGradeRule } from "../../resources/jobs/groups/group";
 import { GroupExclusionReason } from "../../resources/jobs/groups/group";
+import { GroupLeader } from "../../resources/jobs/groups/group";
+import { GroupMemberExclusion } from "../../resources/jobs/groups/group";
+import { GroupManualMember } from "../../resources/jobs/groups/group";
+import { GroupRule } from "../../resources/jobs/groups/group";
+import { GroupResolvedMember } from "../../resources/jobs/groups/group";
 import { GroupMemberSource } from "../../resources/jobs/groups/group";
 import { GroupMembershipMode } from "../../resources/jobs/groups/group";
 import { Access } from "../../resources/access/access";
-import { GroupResolvedMember } from "../../resources/jobs/groups/group";
-import { GroupMemberExclusion } from "../../resources/jobs/groups/group";
-import { GroupManualMember } from "../../resources/jobs/groups/group";
-import { GroupLeader } from "../../resources/jobs/groups/group";
-import { GroupRule } from "../../resources/jobs/groups/group";
 import { Group } from "../../resources/jobs/groups/group";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { GroupType } from "../../resources/jobs/groups/group";
@@ -99,27 +99,7 @@ export interface GetGroupRequest {
      */
     id: number;
     /**
-     * @generated from protobuf field: bool include_rules = 2
-     */
-    includeRules: boolean;
-    /**
-     * @generated from protobuf field: bool include_leaders = 3
-     */
-    includeLeaders: boolean;
-    /**
-     * @generated from protobuf field: bool include_manual_members = 4
-     */
-    includeManualMembers: boolean;
-    /**
-     * @generated from protobuf field: bool include_exclusions = 5
-     */
-    includeExclusions: boolean;
-    /**
-     * @generated from protobuf field: bool include_resolved_members = 6
-     */
-    includeResolvedMembers: boolean;
-    /**
-     * @generated from protobuf field: bool include_archived = 7
+     * @generated from protobuf field: bool include_archived = 2
      */
     includeArchived: boolean;
 }
@@ -132,27 +112,7 @@ export interface GetGroupResponse {
      */
     group?: Group;
     /**
-     * @generated from protobuf field: repeated resources.jobs.groups.GroupRule rules = 2
-     */
-    rules: GroupRule[];
-    /**
-     * @generated from protobuf field: repeated resources.jobs.groups.GroupLeader leaders = 3
-     */
-    leaders: GroupLeader[];
-    /**
-     * @generated from protobuf field: repeated resources.jobs.groups.GroupManualMember manual_members = 4
-     */
-    manualMembers: GroupManualMember[];
-    /**
-     * @generated from protobuf field: repeated resources.jobs.groups.GroupMemberExclusion exclusions = 5
-     */
-    exclusions: GroupMemberExclusion[];
-    /**
-     * @generated from protobuf field: repeated resources.jobs.groups.GroupResolvedMember resolved_members = 6
-     */
-    resolvedMembers: GroupResolvedMember[];
-    /**
-     * @generated from protobuf field: optional resources.access.Access access = 7
+     * @generated from protobuf field: optional resources.access.Access access = 2
      */
     access?: Access;
 }
@@ -1017,22 +977,12 @@ class GetGroupRequest$Type extends MessageType<GetGroupRequest> {
     constructor() {
         super("services.jobs.GetGroupRequest", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "include_rules", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "include_leaders", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "include_manual_members", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "include_exclusions", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "include_resolved_members", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "include_archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "include_archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GetGroupRequest>): GetGroupRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
-        message.includeRules = false;
-        message.includeLeaders = false;
-        message.includeManualMembers = false;
-        message.includeExclusions = false;
-        message.includeResolvedMembers = false;
         message.includeArchived = false;
         if (value !== undefined)
             reflectionMergePartial<GetGroupRequest>(this, message, value);
@@ -1046,22 +996,7 @@ class GetGroupRequest$Type extends MessageType<GetGroupRequest> {
                 case /* int64 id */ 1:
                     message.id = reader.int64().toNumber();
                     break;
-                case /* bool include_rules */ 2:
-                    message.includeRules = reader.bool();
-                    break;
-                case /* bool include_leaders */ 3:
-                    message.includeLeaders = reader.bool();
-                    break;
-                case /* bool include_manual_members */ 4:
-                    message.includeManualMembers = reader.bool();
-                    break;
-                case /* bool include_exclusions */ 5:
-                    message.includeExclusions = reader.bool();
-                    break;
-                case /* bool include_resolved_members */ 6:
-                    message.includeResolvedMembers = reader.bool();
-                    break;
-                case /* bool include_archived */ 7:
+                case /* bool include_archived */ 2:
                     message.includeArchived = reader.bool();
                     break;
                 default:
@@ -1079,24 +1014,9 @@ class GetGroupRequest$Type extends MessageType<GetGroupRequest> {
         /* int64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int64(message.id);
-        /* bool include_rules = 2; */
-        if (message.includeRules !== false)
-            writer.tag(2, WireType.Varint).bool(message.includeRules);
-        /* bool include_leaders = 3; */
-        if (message.includeLeaders !== false)
-            writer.tag(3, WireType.Varint).bool(message.includeLeaders);
-        /* bool include_manual_members = 4; */
-        if (message.includeManualMembers !== false)
-            writer.tag(4, WireType.Varint).bool(message.includeManualMembers);
-        /* bool include_exclusions = 5; */
-        if (message.includeExclusions !== false)
-            writer.tag(5, WireType.Varint).bool(message.includeExclusions);
-        /* bool include_resolved_members = 6; */
-        if (message.includeResolvedMembers !== false)
-            writer.tag(6, WireType.Varint).bool(message.includeResolvedMembers);
-        /* bool include_archived = 7; */
+        /* bool include_archived = 2; */
         if (message.includeArchived !== false)
-            writer.tag(7, WireType.Varint).bool(message.includeArchived);
+            writer.tag(2, WireType.Varint).bool(message.includeArchived);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1112,21 +1032,11 @@ class GetGroupResponse$Type extends MessageType<GetGroupResponse> {
     constructor() {
         super("services.jobs.GetGroupResponse", [
             { no: 1, name: "group", kind: "message", T: () => Group },
-            { no: 2, name: "rules", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupRule },
-            { no: 3, name: "leaders", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupLeader },
-            { no: 4, name: "manual_members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupManualMember },
-            { no: 5, name: "exclusions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupMemberExclusion },
-            { no: 6, name: "resolved_members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupResolvedMember },
-            { no: 7, name: "access", kind: "message", T: () => Access }
+            { no: 2, name: "access", kind: "message", T: () => Access }
         ]);
     }
     create(value?: PartialMessage<GetGroupResponse>): GetGroupResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.rules = [];
-        message.leaders = [];
-        message.manualMembers = [];
-        message.exclusions = [];
-        message.resolvedMembers = [];
         if (value !== undefined)
             reflectionMergePartial<GetGroupResponse>(this, message, value);
         return message;
@@ -1139,22 +1049,7 @@ class GetGroupResponse$Type extends MessageType<GetGroupResponse> {
                 case /* resources.jobs.groups.Group group */ 1:
                     message.group = Group.internalBinaryRead(reader, reader.uint32(), options, message.group);
                     break;
-                case /* repeated resources.jobs.groups.GroupRule rules */ 2:
-                    message.rules.push(GroupRule.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.jobs.groups.GroupLeader leaders */ 3:
-                    message.leaders.push(GroupLeader.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.jobs.groups.GroupManualMember manual_members */ 4:
-                    message.manualMembers.push(GroupManualMember.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.jobs.groups.GroupMemberExclusion exclusions */ 5:
-                    message.exclusions.push(GroupMemberExclusion.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.jobs.groups.GroupResolvedMember resolved_members */ 6:
-                    message.resolvedMembers.push(GroupResolvedMember.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* optional resources.access.Access access */ 7:
+                case /* optional resources.access.Access access */ 2:
                     message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -1172,24 +1067,9 @@ class GetGroupResponse$Type extends MessageType<GetGroupResponse> {
         /* resources.jobs.groups.Group group = 1; */
         if (message.group)
             Group.internalBinaryWrite(message.group, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.groups.GroupRule rules = 2; */
-        for (let i = 0; i < message.rules.length; i++)
-            GroupRule.internalBinaryWrite(message.rules[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.groups.GroupLeader leaders = 3; */
-        for (let i = 0; i < message.leaders.length; i++)
-            GroupLeader.internalBinaryWrite(message.leaders[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.groups.GroupManualMember manual_members = 4; */
-        for (let i = 0; i < message.manualMembers.length; i++)
-            GroupManualMember.internalBinaryWrite(message.manualMembers[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.groups.GroupMemberExclusion exclusions = 5; */
-        for (let i = 0; i < message.exclusions.length; i++)
-            GroupMemberExclusion.internalBinaryWrite(message.exclusions[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.groups.GroupResolvedMember resolved_members = 6; */
-        for (let i = 0; i < message.resolvedMembers.length; i++)
-            GroupResolvedMember.internalBinaryWrite(message.resolvedMembers[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.access.Access access = 7; */
+        /* optional resources.access.Access access = 2; */
         if (message.access)
-            Access.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            Access.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1850,7 +1730,7 @@ class ListGroupMembersRequest$Type extends MessageType<ListGroupMembersRequest> 
             { no: 5, name: "include_excluded", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "include_leaders", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "include_reasons", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "sources", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.groups.GroupMemberSource", GroupMemberSource, "GROUP_MEMBER_SOURCE_"] }
+            { no: 8, name: "sources", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.groups.GroupMemberSource", GroupMemberSource, "GROUP_MEMBER_SOURCE_"], options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListGroupMembersRequest>): ListGroupMembersRequest {
@@ -2060,7 +1940,7 @@ class ListGroupRulesResponse$Type extends MessageType<ListGroupRulesResponse> {
     constructor() {
         super("services.jobs.ListGroupRulesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "rules", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupRule }
+            { no: 2, name: "rules", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupRule, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListGroupRulesResponse>): ListGroupRulesResponse {
@@ -2175,7 +2055,7 @@ class ListGroupManualMembersResponse$Type extends MessageType<ListGroupManualMem
     constructor() {
         super("services.jobs.ListGroupManualMembersResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "manual_members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupManualMember }
+            { no: 2, name: "manual_members", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupManualMember, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListGroupManualMembersResponse>): ListGroupManualMembersResponse {
@@ -2290,7 +2170,7 @@ class ListGroupMemberExclusionsResponse$Type extends MessageType<ListGroupMember
     constructor() {
         super("services.jobs.ListGroupMemberExclusionsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "exclusions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupMemberExclusion }
+            { no: 2, name: "exclusions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupMemberExclusion, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListGroupMemberExclusionsResponse>): ListGroupMemberExclusionsResponse {
@@ -2405,7 +2285,7 @@ class ListGroupLeadersResponse$Type extends MessageType<ListGroupLeadersResponse
     constructor() {
         super("services.jobs.ListGroupLeadersResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "leaders", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupLeader }
+            { no: 2, name: "leaders", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupLeader, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListGroupLeadersResponse>): ListGroupLeadersResponse {
@@ -3546,7 +3426,7 @@ export const DeleteGroupRuleResponse = new DeleteGroupRuleResponse$Type();
 class ListGroupActivityRequest$Type extends MessageType<ListGroupActivityRequest> {
     constructor() {
         super("services.jobs.ListGroupActivityRequest", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest },
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.groups.GroupActivityType", GroupActivityType, "GROUP_ACTIVITY_TYPE_"] },
@@ -3644,8 +3524,8 @@ export const ListGroupActivityRequest = new ListGroupActivityRequest$Type();
 class ListGroupActivityResponse$Type extends MessageType<ListGroupActivityResponse> {
     constructor() {
         super("services.jobs.ListGroupActivityResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupActivity }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupActivity, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListGroupActivityResponse>): ListGroupActivityResponse {

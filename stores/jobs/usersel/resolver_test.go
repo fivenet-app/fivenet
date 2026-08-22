@@ -119,11 +119,10 @@ func (s *resolverTestStore) GetGroup(
 func (s *resolverTestStore) ListGroupManualMembers(
 	_ context.Context,
 	_ qrm.DB,
-	groupID int64,
-	_ string,
+	q jobsstore.GroupItemsQuery,
 ) ([]*jobsgroups.GroupManualMember, error) {
 	s.manualCalls++
-	return slices.Clone(s.manualMembers[groupID]), nil
+	return slices.Clone(s.manualMembers[q.GroupID]), nil
 }
 
 func (s *resolverTestStore) ListGroupRuleMemberMatches(
@@ -139,21 +138,19 @@ func (s *resolverTestStore) ListGroupRuleMemberMatches(
 func (s *resolverTestStore) ListGroupMemberExclusions(
 	_ context.Context,
 	_ qrm.DB,
-	groupID int64,
-	_ string,
+	q jobsstore.GroupItemsQuery,
 ) ([]*jobsgroups.GroupMemberExclusion, error) {
 	s.exclusionCalls++
-	return slices.Clone(s.exclusions[groupID]), nil
+	return slices.Clone(s.exclusions[q.GroupID]), nil
 }
 
 func (s *resolverTestStore) ListGroupLeaders(
 	_ context.Context,
 	_ qrm.DB,
-	groupID int64,
-	_ string,
+	q jobsstore.GroupItemsQuery,
 ) ([]*jobsgroups.GroupLeader, error) {
 	s.leaderCalls++
-	return slices.Clone(s.leaders[groupID]), nil
+	return slices.Clone(s.leaders[q.GroupID]), nil
 }
 
 func TestResolveUserIDsReturnsExplicitUsersOnly(t *testing.T) {

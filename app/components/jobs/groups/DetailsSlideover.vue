@@ -173,11 +173,6 @@ async function restoreGroup(): Promise<void> {
 async function getGroupDetails(groupId: number): Promise<GetGroupResponse> {
     const { response } = await jobsGroupsClient.getGroup({
         id: groupId,
-        includeRules: false,
-        includeLeaders: false,
-        includeManualMembers: false,
-        includeExclusions: false,
-        includeResolvedMembers: false,
         includeArchived: true,
     });
 

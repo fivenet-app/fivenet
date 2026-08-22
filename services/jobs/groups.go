@@ -152,45 +152,6 @@ func (s *Server) GetGroup(
 	}
 
 	resp := &pbjobs.GetGroupResponse{Group: group}
-	if req.GetIncludeRules() {
-		resp.Rules, err = s.store.ListGroupRules(ctx, s.db, group.GetId())
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-		s.enrichGroupRuleGradeLabels(group.GetJob(), resp.Rules...)
-	}
-	if req.GetIncludeLeaders() {
-		resp.Leaders, err = s.store.ListGroupLeaders(ctx, s.db, group.GetId(), "")
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-	}
-	if req.GetIncludeManualMembers() {
-		resp.ManualMembers, err = s.store.ListGroupManualMembers(ctx, s.db, group.GetId(), "")
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-	}
-	if req.GetIncludeExclusions() {
-		resp.Exclusions, err = s.store.ListGroupMemberExclusions(ctx, s.db, group.GetId(), "")
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-	}
-	if req.GetIncludeResolvedMembers() {
-		resp.ResolvedMembers, err = s.resolveGroupMembers(
-			ctx,
-			group,
-			"",
-			req.GetIncludeExclusions(),
-			req.GetIncludeLeaders(),
-			true,
-			nil,
-		)
-		if err != nil {
-			return nil, err
-		}
-	}
 	resp.Access, err = s.groupAccess.ListTargetAccess(
 		ctx,
 		s.db,
@@ -203,11 +164,6 @@ func (s *Server) GetGroup(
 
 	targets := []colleaguehydrator.Target{}
 	targets = appendGroupColleagueTargets(targets, []*jobsgroups.Group{resp.GetGroup()})
-	targets = appendGroupRuleColleagueTargets(targets, resp.GetRules())
-	targets = appendGroupLeaderColleagueTargets(targets, resp.GetLeaders())
-	targets = appendGroupManualMemberColleagueTargets(targets, resp.GetManualMembers())
-	targets = appendGroupMemberExclusionColleagueTargets(targets, resp.GetExclusions())
-	targets = appendGroupResolvedMemberColleagueTargets(targets, resp.GetResolvedMembers())
 	if err := s.hydrateGroupColleagueTargets(ctx, userInfo, targets); err != nil {
 		return nil, err
 	}

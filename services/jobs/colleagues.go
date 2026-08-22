@@ -700,8 +700,6 @@ func (s *Server) ListColleagueActivity(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag.Update(len(resp.GetActivity()))
-
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetActivity() {
 		if resp.GetActivity()[i].GetSourceUser() != nil {

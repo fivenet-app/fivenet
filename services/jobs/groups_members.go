@@ -504,13 +504,19 @@ func (s *Server) resolveGroupMembers(
 	var exclusions []*jobsgroups.GroupMemberExclusion
 	var err error
 	if wantManual && manualAllowed {
-		manualMembers, err = s.store.ListGroupManualMembers(ctx, s.db, groupID, search)
+		manualMembers, err = s.store.ListGroupManualMembers(ctx, s.db, jobsstore.GroupItemsQuery{
+			GroupID: groupID,
+			Search:  search,
+		})
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
 	if exclusionsAllowed {
-		exclusions, err = s.store.ListGroupMemberExclusions(ctx, s.db, groupID, search)
+		exclusions, err = s.store.ListGroupMemberExclusions(ctx, s.db, jobsstore.GroupItemsQuery{
+			GroupID: groupID,
+			Search:  search,
+		})
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
@@ -524,7 +530,10 @@ func (s *Server) resolveGroupMembers(
 	}
 	var leaders []*jobsgroups.GroupLeader
 	if wantLeaders {
-		leaders, err = s.store.ListGroupLeaders(ctx, s.db, groupID, search)
+		leaders, err = s.store.ListGroupLeaders(ctx, s.db, jobsstore.GroupItemsQuery{
+			GroupID: groupID,
+			Search:  search,
+		})
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
@@ -723,25 +732,6 @@ func (s *Server) ListGroupMembers(
 	return resp, nil
 }
 
-func paginateGroupItems[T any](
-	pagination *database.PaginationRequest,
-	items []T,
-) (*database.PaginationResponse, []T) {
-	pag, limit := pagination.GetResponse(int64(len(items)))
-	start := pag.GetOffset()
-	end := start + limit
-	if start > int64(len(items)) {
-		start = int64(len(items))
-	}
-	if end > int64(len(items)) {
-		end = int64(len(items))
-	}
-
-	paged := items[start:end]
-	pag.Update(len(paged))
-	return pag, paged
-}
-
 func (s *Server) ListGroupManualMembers(
 	ctx context.Context,
 	req *pbjobs.ListGroupManualMembersRequest,
@@ -771,16 +761,32 @@ func (s *Server) ListGroupManualMembers(
 		return nil, err
 	}
 
-	members, err := s.store.ListGroupManualMembers(ctx, s.db, req.GetGroupId(), req.GetSearch())
+	query := jobsstore.GroupItemsQuery{
+		GroupID: req.GetGroupId(),
+		Search:  req.GetSearch(),
+	}
+	count, err := s.store.CountGroupManualMembers(ctx, s.db, query)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	pag, paged := paginateGroupItems(req.GetPagination(), members)
-
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
 	resp := &pbjobs.ListGroupManualMembersResponse{
 		Pagination:    pag,
-		ManualMembers: paged,
+		ManualMembers: []*jobsgroups.GroupManualMember{},
 	}
+	if count <= 0 {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
+		return resp, nil
+	}
+
+	query.Offset = pag.GetOffset()
+	query.Limit = limit
+	members, err := s.store.ListGroupManualMembers(ctx, s.db, query)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
+	resp.ManualMembers = members
 	targets := appendGroupManualMemberColleagueTargets(nil, resp.GetManualMembers())
 	if err := s.hydrateGroupColleagueTargets(ctx, userInfo, targets); err != nil {
 		return nil, err
@@ -819,21 +825,31 @@ func (s *Server) ListGroupMemberExclusions(
 		return nil, err
 	}
 
-	exclusions, err := s.store.ListGroupMemberExclusions(
-		ctx,
-		s.db,
-		req.GetGroupId(),
-		req.GetSearch(),
-	)
+	query := jobsstore.GroupItemsQuery{
+		GroupID: req.GetGroupId(),
+		Search:  req.GetSearch(),
+	}
+	count, err := s.store.CountGroupMemberExclusions(ctx, s.db, query)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	pag, paged := paginateGroupItems(req.GetPagination(), exclusions)
-
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
 	resp := &pbjobs.ListGroupMemberExclusionsResponse{
 		Pagination: pag,
-		Exclusions: paged,
+		Exclusions: []*jobsgroups.GroupMemberExclusion{},
 	}
+	if count <= 0 {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
+		return resp, nil
+	}
+
+	query.Offset = pag.GetOffset()
+	query.Limit = limit
+	exclusions, err := s.store.ListGroupMemberExclusions(ctx, s.db, query)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	resp.Exclusions = exclusions
 	targets := appendGroupMemberExclusionColleagueTargets(nil, resp.GetExclusions())
 	if err := s.hydrateGroupColleagueTargets(ctx, userInfo, targets); err != nil {
 		return nil, err
@@ -872,16 +888,31 @@ func (s *Server) ListGroupLeaders(
 		return nil, err
 	}
 
-	leaders, err := s.store.ListGroupLeaders(ctx, s.db, req.GetGroupId(), req.GetSearch())
+	query := jobsstore.GroupItemsQuery{
+		GroupID: req.GetGroupId(),
+		Search:  req.GetSearch(),
+	}
+	count, err := s.store.CountGroupLeaders(ctx, s.db, query)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	pag, paged := paginateGroupItems(req.GetPagination(), leaders)
-
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
 	resp := &pbjobs.ListGroupLeadersResponse{
 		Pagination: pag,
-		Leaders:    paged,
+		Leaders:    []*jobsgroups.GroupLeader{},
 	}
+	if count <= 0 {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
+		return resp, nil
+	}
+
+	query.Offset = pag.GetOffset()
+	query.Limit = limit
+	leaders, err := s.store.ListGroupLeaders(ctx, s.db, query)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	resp.Leaders = leaders
 	targets := appendGroupLeaderColleagueTargets(nil, resp.GetLeaders())
 	if err := s.hydrateGroupColleagueTargets(ctx, userInfo, targets); err != nil {
 		return nil, err

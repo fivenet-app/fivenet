@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
+	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	groupspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/groupspolicy"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc/codes"
@@ -312,17 +313,30 @@ func (s *Server) ListGroupRules(
 		return nil, err
 	}
 
-	rules, err := s.store.ListGroupRules(ctx, s.db, req.GetGroupId())
+	query := jobsstore.GroupItemsQuery{GroupID: req.GetGroupId()}
+	count, err := s.store.CountGroupRules(ctx, s.db, query)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	pag, paged := paginateGroupItems(req.GetPagination(), rules)
-	s.enrichGroupRuleGradeLabels(group.GetJob(), paged...)
-
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
 	resp := &pbjobs.ListGroupRulesResponse{
 		Pagination: pag,
-		Rules:      paged,
+		Rules:      []*jobsgroups.GroupRule{},
 	}
+	if count <= 0 {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
+		return resp, nil
+	}
+
+	query.Offset = pag.GetOffset()
+	query.Limit = limit
+	rules, err := s.store.ListGroupRules(ctx, s.db, query)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	s.enrichGroupRuleGradeLabels(group.GetJob(), rules...)
+	resp.Rules = rules
+
 	targets := appendGroupRuleColleagueTargets(nil, resp.GetRules())
 	if err := s.hydrateGroupColleagueTargets(ctx, userInfo, targets); err != nil {
 		return nil, err

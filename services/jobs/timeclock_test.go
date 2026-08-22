@@ -65,13 +65,12 @@ func (s *timeclockTestGroupStore) GetGroup(
 func (s *timeclockTestGroupStore) ListGroupManualMembers(
 	_ context.Context,
 	_ qrm.DB,
-	groupID int64,
-	_ string,
+	q jobsstore.GroupItemsQuery,
 ) ([]*jobsgroups.GroupManualMember, error) {
 	if s == nil {
 		return nil, nil
 	}
-	return append([]*jobsgroups.GroupManualMember(nil), s.manual[groupID]...), nil
+	return append([]*jobsgroups.GroupManualMember(nil), s.manual[q.GroupID]...), nil
 }
 
 func (s *timeclockTestGroupStore) ListGroupRuleMemberMatches(
@@ -89,25 +88,23 @@ func (s *timeclockTestGroupStore) ListGroupRuleMemberMatches(
 func (s *timeclockTestGroupStore) ListGroupMemberExclusions(
 	_ context.Context,
 	_ qrm.DB,
-	groupID int64,
-	_ string,
+	q jobsstore.GroupItemsQuery,
 ) ([]*jobsgroups.GroupMemberExclusion, error) {
 	if s == nil {
 		return nil, nil
 	}
-	return append([]*jobsgroups.GroupMemberExclusion(nil), s.excl[groupID]...), nil
+	return append([]*jobsgroups.GroupMemberExclusion(nil), s.excl[q.GroupID]...), nil
 }
 
 func (s *timeclockTestGroupStore) ListGroupLeaders(
 	_ context.Context,
 	_ qrm.DB,
-	groupID int64,
-	_ string,
+	q jobsstore.GroupItemsQuery,
 ) ([]*jobsgroups.GroupLeader, error) {
 	if s == nil {
 		return nil, nil
 	}
-	return append([]*jobsgroups.GroupLeader(nil), s.leaders[groupID]...), nil
+	return append([]*jobsgroups.GroupLeader(nil), s.leaders[q.GroupID]...), nil
 }
 
 func newTimeclockStatsTestServer(

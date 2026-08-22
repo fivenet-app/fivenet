@@ -23,8 +23,7 @@ type groupPolicyStoreStub struct {
 func (s *groupPolicyStoreStub) ListGroupManualMembers(
 	_ context.Context,
 	_ qrm.DB,
-	_ int64,
-	_ string,
+	_ jobsstore.GroupItemsQuery,
 ) ([]*jobsgroups.GroupManualMember, error) {
 	return s.manualMembers, nil
 }
@@ -32,7 +31,7 @@ func (s *groupPolicyStoreStub) ListGroupManualMembers(
 func (s *groupPolicyStoreStub) ListGroupRules(
 	_ context.Context,
 	_ qrm.DB,
-	_ int64,
+	_ jobsstore.GroupItemsQuery,
 ) ([]*jobsgroups.GroupRule, error) {
 	return s.rules, nil
 }
@@ -40,8 +39,7 @@ func (s *groupPolicyStoreStub) ListGroupRules(
 func (s *groupPolicyStoreStub) ListGroupMemberExclusions(
 	_ context.Context,
 	_ qrm.DB,
-	_ int64,
-	_ string,
+	_ jobsstore.GroupItemsQuery,
 ) ([]*jobsgroups.GroupMemberExclusion, error) {
 	return s.exclusions, nil
 }

@@ -5,6 +5,7 @@ import (
 
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
+	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	groupspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/groupspolicy"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -53,15 +54,23 @@ func (s *Server) validateGroupPolicyAgainstExistingData(
 		return err
 	}
 
-	manualMembers, err := s.store.ListGroupManualMembers(ctx, db, group.GetId(), "")
+	manualMembers, err := s.store.ListGroupManualMembers(
+		ctx,
+		db,
+		jobsstore.GroupItemsQuery{GroupID: group.GetId()},
+	)
 	if err != nil {
 		return err
 	}
-	rules, err := s.store.ListGroupRules(ctx, db, group.GetId())
+	rules, err := s.store.ListGroupRules(ctx, db, jobsstore.GroupItemsQuery{GroupID: group.GetId()})
 	if err != nil {
 		return err
 	}
-	exclusions, err := s.store.ListGroupMemberExclusions(ctx, db, group.GetId(), "")
+	exclusions, err := s.store.ListGroupMemberExclusions(
+		ctx,
+		db,
+		jobsstore.GroupItemsQuery{GroupID: group.GetId()},
+	)
 	if err != nil {
 		return err
 	}

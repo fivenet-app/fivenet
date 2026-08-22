@@ -39,7 +39,7 @@ func TestStoreListGroupRulesGrade(t *testing.T) {
 			"group_grade_rule.max_grade",
 		}).AddRow(int32(jobsgroups.GroupGradeRuleType_GROUP_GRADE_RULE_TYPE_MINIMUM), int32(3), nil, nil))
 
-	rules, err := store.ListGroupRules(t.Context(), store.db, 42)
+	rules, err := store.ListGroupRules(t.Context(), store.db, GroupItemsQuery{GroupID: 42})
 	require.NoError(t, err)
 	require.Len(t, rules, 1)
 	assert.Equal(t, int64(7), rules[0].GetId())

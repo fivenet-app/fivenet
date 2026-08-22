@@ -34,22 +34,12 @@ message ListGroupsResponse {
 
 message GetGroupRequest {
   int64 id = 1;
-  bool include_rules = 2;
-  bool include_leaders = 3;
-  bool include_manual_members = 4;
-  bool include_exclusions = 5;
-  bool include_resolved_members = 6;
-  bool include_archived = 7;
+  bool include_archived = 2;
 }
 
 message GetGroupResponse {
   resources.jobs.groups.Group group = 1;
-  repeated resources.jobs.groups.GroupRule rules = 2;
-  repeated resources.jobs.groups.GroupLeader leaders = 3;
-  repeated resources.jobs.groups.GroupManualMember manual_members = 4;
-  repeated resources.jobs.groups.GroupMemberExclusion exclusions = 5;
-  repeated resources.jobs.groups.GroupResolvedMember resolved_members = 6;
-  optional resources.access.Access access = 7;
+  optional resources.access.Access access = 2;
 }
 
 message CreateGroupRequest {
@@ -135,7 +125,7 @@ message ListGroupMembersRequest {
   bool include_leaders = 6;
   bool include_reasons = 7;
 
-  repeated resources.jobs.groups.GroupMemberSource sources = 8;
+  repeated resources.jobs.groups.GroupMemberSource sources = 8 [(codegen.itemslen.enabled) = true];
 }
 
 message ListGroupMembersResponse {
@@ -150,7 +140,7 @@ message ListGroupRulesRequest {
 
 message ListGroupRulesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.jobs.groups.GroupRule rules = 2;
+  repeated resources.jobs.groups.GroupRule rules = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message ListGroupManualMembersRequest {
@@ -161,7 +151,7 @@ message ListGroupManualMembersRequest {
 
 message ListGroupManualMembersResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.jobs.groups.GroupManualMember manual_members = 2;
+  repeated resources.jobs.groups.GroupManualMember manual_members = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message ListGroupMemberExclusionsRequest {
@@ -172,7 +162,7 @@ message ListGroupMemberExclusionsRequest {
 
 message ListGroupMemberExclusionsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.jobs.groups.GroupMemberExclusion exclusions = 2;
+  repeated resources.jobs.groups.GroupMemberExclusion exclusions = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message ListGroupLeadersRequest {
@@ -183,7 +173,7 @@ message ListGroupLeadersRequest {
 
 message ListGroupLeadersResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.jobs.groups.GroupLeader leaders = 2;
+  repeated resources.jobs.groups.GroupLeader leaders = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message AddGroupMemberRequest {
@@ -293,7 +283,7 @@ message DeleteGroupRuleResponse {
 }
 
 message ListGroupActivityRequest {
-  optional resources.common.database.PaginationRequest pagination = 1;
+  optional resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
 
   int64 group_id = 3;
@@ -306,8 +296,8 @@ message ListGroupActivityRequest {
 }
 
 message ListGroupActivityResponse {
-  optional resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.jobs.groups.GroupActivity activity = 2;
+  optional resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.jobs.groups.GroupActivity activity = 2 [(codegen.itemslen.enabled) = true];
 }
 
 service GroupsService {

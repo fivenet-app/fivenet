@@ -110,6 +110,13 @@ type GroupQuery struct {
 	IncludeArchived bool
 }
 
+type GroupItemsQuery struct {
+	GroupID int64
+	Search  string
+	Offset  int64
+	Limit   int64
+}
+
 type GroupRuleMemberMatch struct {
 	GroupID int64
 	UserID  int32
@@ -122,8 +129,7 @@ type IGroupsQuery interface {
 	ListGroupManualMembers(
 		ctx context.Context,
 		db qrm.DB,
-		groupID int64,
-		search string,
+		q GroupItemsQuery,
 	) ([]*jobsgroups.GroupManualMember, error)
 	ListGroupRuleMemberMatches(
 		ctx context.Context,
@@ -134,14 +140,12 @@ type IGroupsQuery interface {
 	ListGroupMemberExclusions(
 		ctx context.Context,
 		db qrm.DB,
-		groupID int64,
-		search string,
+		q GroupItemsQuery,
 	) ([]*jobsgroups.GroupMemberExclusion, error)
 	ListGroupLeaders(
 		ctx context.Context,
 		db qrm.DB,
-		groupID int64,
-		search string,
+		q GroupItemsQuery,
 	) ([]*jobsgroups.GroupLeader, error)
 }
 
@@ -169,6 +173,7 @@ type IStore interface {
 	ArchiveGroup(ctx context.Context, db qrm.DB, job string, id int64, updatedByUserID int32) error
 	RestoreGroup(ctx context.Context, db qrm.DB, job string, id int64, updatedByUserID int32) error
 	RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64) error
+	CountGroupManualMembers(ctx context.Context, db qrm.DB, q GroupItemsQuery) (int64, error)
 	AddGroupManualMember(
 		ctx context.Context,
 		db qrm.DB,
@@ -178,6 +183,7 @@ type IStore interface {
 		reason *string,
 	) (*jobsgroups.GroupManualMember, bool, error)
 	RemoveGroupManualMember(ctx context.Context, db qrm.DB, groupID int64, userID int32) error
+	CountGroupMemberExclusions(ctx context.Context, db qrm.DB, q GroupItemsQuery) (int64, error)
 	AddGroupMemberExclusion(
 		ctx context.Context,
 		db qrm.DB,
@@ -188,6 +194,7 @@ type IStore interface {
 		reason *string,
 	) (*jobsgroups.GroupMemberExclusion, bool, error)
 	RemoveGroupMemberExclusion(ctx context.Context, db qrm.DB, groupID int64, userID int32) error
+	CountGroupLeaders(ctx context.Context, db qrm.DB, q GroupItemsQuery) (int64, error)
 	AddGroupLeader(
 		ctx context.Context,
 		db qrm.DB,
@@ -196,7 +203,12 @@ type IStore interface {
 		createdByUserID int32,
 	) (*jobsgroups.GroupLeader, bool, error)
 	RemoveGroupLeader(ctx context.Context, db qrm.DB, groupID int64, userID int32) error
-	ListGroupRules(ctx context.Context, db qrm.DB, groupID int64) ([]*jobsgroups.GroupRule, error)
+	CountGroupRules(ctx context.Context, db qrm.DB, q GroupItemsQuery) (int64, error)
+	ListGroupRules(
+		ctx context.Context,
+		db qrm.DB,
+		q GroupItemsQuery,
+	) ([]*jobsgroups.GroupRule, error)
 	GetGroupRule(
 		ctx context.Context,
 		db qrm.DB,
