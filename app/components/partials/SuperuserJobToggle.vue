@@ -16,8 +16,7 @@ const { t } = useI18n();
 
 const authStore = useAuthStore();
 const { setSuperuserMode } = authStore;
-
-const { activeChar, isSuperuser } = useAuth();
+const { activeChar, isSuperuser } = storeToRefs(authStore);
 
 const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);

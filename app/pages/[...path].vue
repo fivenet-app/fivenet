@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { emojiBlast } from 'emoji-blast';
+import { useAuthStore } from '~/stores/auth';
 
 useHead({
     title: 'pages.notfound.title',
@@ -13,7 +14,8 @@ definePageMeta({
     showCookieOptions: true,
 });
 
-const { username } = useAuth();
+const authStore = useAuthStore();
+const { username } = storeToRefs(authStore);
 </script>
 
 <template>

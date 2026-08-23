@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
+import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import { getCalendarEntriesClient } from '~~/gen/ts/clients';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
@@ -17,7 +18,8 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { activeChar } = useAuth();
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const completorStore = useCompletorStore();
 

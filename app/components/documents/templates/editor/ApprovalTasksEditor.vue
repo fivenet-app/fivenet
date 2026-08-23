@@ -23,7 +23,8 @@ const tasks = defineModel<
     }[]
 >({ required: true });
 
-const { activeChar } = useAuth();
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);

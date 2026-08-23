@@ -1,7 +1,12 @@
 <script lang="ts" setup>
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import { useAuthStore } from '~/stores/auth';
 import type { User } from '~~/gen/ts/resources/users/user';
+
+const authStore = useAuthStore();
+
+const { lastCharID } = storeToRefs(authStore);
 
 const props = withDefaults(
     defineProps<{
@@ -18,9 +23,6 @@ const props = withDefaults(
 const emit = defineEmits<{
     (e: 'selected', id: number): void;
 }>();
-
-const authStore = useAuthStore();
-const { lastCharID } = storeToRefs(authStore);
 
 function selectChar(): void {
     emit('selected', props.char.userId);

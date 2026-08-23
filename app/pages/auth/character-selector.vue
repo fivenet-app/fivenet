@@ -14,6 +14,7 @@ definePageMeta({
 });
 
 const authStore = useAuthStore();
+
 const { setActiveChar, setPermissions, setJobProps } = authStore;
 
 onBeforeMount(async () => {

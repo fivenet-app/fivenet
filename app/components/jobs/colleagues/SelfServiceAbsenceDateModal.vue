@@ -4,6 +4,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { addDays, isBefore, isFuture, subDays } from 'date-fns';
 import { z } from 'zod';
 import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
+import { useAuthStore } from '~/stores/auth';
 import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -21,7 +22,8 @@ const emit = defineEmits<{
 
 const notifications = useNotificationsStore();
 
-const { jobProps } = useAuth();
+const authStore = useAuthStore();
+const { jobProps } = storeToRefs(authStore);
 
 const jobsColleaguesClient = await getJobsColleaguesClient();
 

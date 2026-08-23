@@ -3,6 +3,7 @@ import type { TabsItem } from '@nuxt/ui';
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
 import LoginForm from '~/components/auth/LoginForm.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
+import { useAuthStore } from '~/stores/auth';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 useHead({
@@ -20,7 +21,8 @@ const { auth } = useAppConfig();
 
 const { t } = useI18n();
 
-const { username } = useAuth();
+const authStore = useAuthStore();
+const { username } = storeToRefs(authStore);
 
 const notifications = useNotificationsStore();
 
