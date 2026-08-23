@@ -344,7 +344,7 @@ func dbUpdateUserJob(ctx context.Context, db *sql.DB, userID int32, job string) 
 func dbInsertTestUser(ctx context.Context, db *sql.DB, userID int32, job string) error {
 	_, err := db.ExecContext(
 		ctx,
-		"INSERT INTO fivenet_user (id, license, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, updated_at) VALUES (?, '', CONCAT('test:', ?), 'user', ?, 1, 'Test', 'User', '01.01.2000', 'm', 180, '0000000', 0, 0, 0, CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3))",
+		"INSERT INTO fivenet_user (id, license, identifier, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, updated_at) VALUES (?, '', CONCAT('test:', ?), 'user', ?, 1, 'Test', 'User', '01.01.2000', 'm', 180, '0000000', 0, 0, 0, CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3))",
 		userID,
 		userID,
 		job,
