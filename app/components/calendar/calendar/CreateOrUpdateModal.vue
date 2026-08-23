@@ -10,6 +10,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DraggableHandle from '~/components/partials/DraggableHandle.vue';
+import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import ReorderButtons from '~/components/partials/ReorderButtons.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCalendarStore } from '~/stores/calendar';
@@ -83,6 +84,7 @@ const schema = z.object({
     public: z.coerce.boolean(),
     closed: z.coerce.boolean(),
     color: z.coerce.string().max(12),
+    icon: z.string().max(128).optional(),
     access: z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
         users: userAccessEntries(t).max(maxAccessEntries).default([]),
@@ -116,6 +118,7 @@ const state = reactive<Schema>({
     public: false,
     closed: false,
     color: 'blue',
+    icon: undefined,
     access: {
         jobs: [],
         users: [],
@@ -160,6 +163,7 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarRes
             public: values.public,
             closed: values.closed,
             color: values.color,
+            icon: values.icon?.trim().length ? values.icon : undefined,
             access: values.access,
             creatorJob: '',
             discordSettings: values.private
@@ -194,6 +198,7 @@ function setFromProps(): void {
     state.public = calendar.public;
     state.closed = calendar.closed;
     state.color = calendar.color ?? 'primary';
+    state.icon = calendar.icon ?? undefined;
     if (calendar.access) {
         state.access = calendar.access;
     }
@@ -377,6 +382,10 @@ async function closeModal(): Promise<void> {
 
                     <UFormField class="flex-1" name="color" :label="$t('common.color')">
                         <ColorPickerTW v-model="state.color" class="w-full" />
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
+                        <IconSelectMenu v-model="state.icon" class="w-full" :color="state.color" clear />
                     </UFormField>
 
                     <template v-if="!isSystemManaged">

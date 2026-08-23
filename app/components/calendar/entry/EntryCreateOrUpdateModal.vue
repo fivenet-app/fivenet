@@ -8,6 +8,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
@@ -50,6 +51,7 @@ const schema = z.object({
     content: z.custom<JSONContent | string>().optional(),
     closed: z.coerce.boolean(),
     rsvpOpen: z.coerce.boolean(),
+    icon: z.string().max(128).optional(),
     users: z.custom<UserShort>().array().max(20).default([]),
     recurringEnabled: z.coerce.boolean().default(false),
     recurringEvery: z.enum(CalendarEntryRecurringEvery).default(CalendarEntryRecurringEvery.DAY),
@@ -68,6 +70,7 @@ const state = reactive<Schema>({
     content: '',
     closed: false,
     rsvpOpen: true,
+    icon: undefined,
     users: [],
     recurringEnabled: false,
     recurringEvery: CalendarEntryRecurringEvery.DAY,
@@ -105,6 +108,7 @@ const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(sta
             content: value.content ? JSON.stringify(value.content) : '',
             closed: value.closed,
             rsvpOpen: value.rsvpOpen,
+            icon: value.icon ?? '',
             users: [...value.users.map((user) => user.userId)].sort((a, b) => a - b),
             recurringEnabled: value.recurringEnabled,
             recurringEvery: value.recurringEvery,
@@ -124,6 +128,7 @@ function resetState(): void {
     state.content = '';
     state.closed = false;
     state.rsvpOpen = true;
+    state.icon = undefined;
     state.users = [];
     state.recurringEnabled = false;
     state.recurringEvery = CalendarEntryRecurringEvery.DAY;
@@ -167,6 +172,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
                 content: tiptapToContent(values.content),
                 closed: values.closed,
                 rsvpOpen: values.rsvpOpen,
+                icon: values.icon?.trim().length ? values.icon : undefined,
                 recurrenceVersion: 1,
                 creatorJob: '',
             },
@@ -228,6 +234,7 @@ function setFromProps(): void {
           : undefined;
     state.content = contentToTiptapValue(entry.content);
     state.closed = entry.closed;
+    state.icon = entry.icon ?? undefined;
     // Don't enable RSVP when the proto omits the field.
     state.rsvpOpen = entry.rsvpOpen ?? false;
 
@@ -424,6 +431,10 @@ async function closeModal(): Promise<void> {
                             type="text"
                             :placeholder="$t('common.title')"
                         />
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
+                        <IconSelectMenu v-model="state.icon" class="w-full" :color="state.calendar?.color" clear />
                     </UFormField>
 
                     <UFormField class="flex-1" name="allDay">

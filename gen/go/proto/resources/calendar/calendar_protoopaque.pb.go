@@ -83,6 +83,7 @@ type Calendar struct {
 	xxx_hidden_Public          bool                     `protobuf:"varint,8,opt,name=public,proto3"`
 	xxx_hidden_Closed          bool                     `protobuf:"varint,9,opt,name=closed,proto3"`
 	xxx_hidden_Color           string                   `protobuf:"bytes,10,opt,name=color,proto3"`
+	xxx_hidden_Icon            *string                  `protobuf:"bytes,18,opt,name=icon,proto3,oneof"`
 	xxx_hidden_CreatorId       int32                    `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof"`
 	xxx_hidden_Creator         *short.UserShort         `protobuf:"bytes,12,opt,name=creator,proto3,oneof"`
 	xxx_hidden_CreatorJob      string                   `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3"`
@@ -202,6 +203,16 @@ func (x *Calendar) GetColor() string {
 	return ""
 }
 
+func (x *Calendar) GetIcon() string {
+	if x != nil {
+		if x.xxx_hidden_Icon != nil {
+			return *x.xxx_hidden_Icon
+		}
+		return ""
+	}
+	return ""
+}
+
 func (x *Calendar) GetCreatorId() int32 {
 	if x != nil {
 		return x.xxx_hidden_CreatorId
@@ -262,12 +273,12 @@ func (x *Calendar) SetDeletedAt(v *timestamp.Timestamp) {
 
 func (x *Calendar) SetJob(v string) {
 	x.xxx_hidden_Job = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 17)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 18)
 }
 
 func (x *Calendar) SetSystemKind(v CalendarSystemKind) {
 	x.xxx_hidden_SystemKind = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 17)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 18)
 }
 
 func (x *Calendar) SetName(v string) {
@@ -290,9 +301,14 @@ func (x *Calendar) SetColor(v string) {
 	x.xxx_hidden_Color = v
 }
 
+func (x *Calendar) SetIcon(v string) {
+	x.xxx_hidden_Icon = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 18)
+}
+
 func (x *Calendar) SetCreatorId(v int32) {
 	x.xxx_hidden_CreatorId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 17)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 18)
 }
 
 func (x *Calendar) SetCreator(v *short.UserShort) {
@@ -357,11 +373,18 @@ func (x *Calendar) HasDescription() bool {
 	return x.xxx_hidden_Description != nil
 }
 
-func (x *Calendar) HasCreatorId() bool {
+func (x *Calendar) HasIcon() bool {
 	if x == nil {
 		return false
 	}
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
+}
+
+func (x *Calendar) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 12)
 }
 
 func (x *Calendar) HasCreator() bool {
@@ -418,8 +441,13 @@ func (x *Calendar) ClearDescription() {
 	x.xxx_hidden_Description = nil
 }
 
-func (x *Calendar) ClearCreatorId() {
+func (x *Calendar) ClearIcon() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
+	x.xxx_hidden_Icon = nil
+}
+
+func (x *Calendar) ClearCreatorId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 12)
 	x.xxx_hidden_CreatorId = 0
 }
 
@@ -453,6 +481,7 @@ type Calendar_builder struct {
 	Public          bool
 	Closed          bool
 	Color           string
+	Icon            *string
 	CreatorId       *int32
 	Creator         *short.UserShort
 	CreatorJob      string
@@ -470,11 +499,11 @@ func (b0 Calendar_builder) Build() *Calendar {
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	x.xxx_hidden_DeletedAt = b.DeletedAt
 	if b.Job != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 17)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 18)
 		x.xxx_hidden_Job = b.Job
 	}
 	if b.SystemKind != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 17)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 18)
 		x.xxx_hidden_SystemKind = *b.SystemKind
 	}
 	x.xxx_hidden_Name = b.Name
@@ -482,8 +511,12 @@ func (b0 Calendar_builder) Build() *Calendar {
 	x.xxx_hidden_Public = b.Public
 	x.xxx_hidden_Closed = b.Closed
 	x.xxx_hidden_Color = b.Color
+	if b.Icon != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 18)
+		x.xxx_hidden_Icon = b.Icon
+	}
 	if b.CreatorId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 17)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 18)
 		x.xxx_hidden_CreatorId = *b.CreatorId
 	}
 	x.xxx_hidden_Creator = b.Creator
@@ -1250,7 +1283,7 @@ var File_resources_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xb1\b\n" +
+	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xdd\b\n" +
 	"\bCalendar\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1267,21 +1300,24 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\x06public\x18\b \x01(\bR\x06public\x12\x16\n" +
 	"\x06closed\x18\t \x01(\bR\x06closed\x12\x1e\n" +
 	"\x05color\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12\"\n" +
+	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12!\n" +
+	"\x04icon\x18\x12 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x04icon\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"creator_id\x18\v \x01(\x05H\x06R\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\aR\acreator\x88\x01\x01\x12\x1f\n" +
+	"creator_id\x18\v \x01(\x05H\aR\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\bR\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\r \x01(\tR\n" +
 	"creatorJob\x12H\n" +
-	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\bR\fsubscription\x88\x01\x01\x120\n" +
+	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\tR\fsubscription\x88\x01\x01\x120\n" +
 	"\x06access\x18\x0f \x01(\v2\x18.resources.access.AccessR\x06access\x12[\n" +
-	"\x10discord_settings\x18\x11 \x01(\v2+.resources.calendar.CalendarDiscordSettingsH\tR\x0fdiscordSettings\x88\x01\x01B\r\n" +
+	"\x10discord_settings\x18\x11 \x01(\v2+.resources.calendar.CalendarDiscordSettingsH\n" +
+	"R\x0fdiscordSettings\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x06\n" +
 	"\x04_jobB\x0e\n" +
 	"\f_system_kindB\x0e\n" +
-	"\f_descriptionB\r\n" +
+	"\f_descriptionB\a\n" +
+	"\x05_iconB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x0f\n" +

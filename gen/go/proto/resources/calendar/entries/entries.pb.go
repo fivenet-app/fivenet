@@ -330,6 +330,7 @@ type CalendarEntry struct {
 	Content           *content.Content         `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty"`
 	Closed            bool                     `protobuf:"varint,12,opt,name=closed,proto3" json:"closed,omitempty"`
 	RsvpOpen          *bool                    `protobuf:"varint,13,opt,name=rsvp_open,json=rsvpOpen,proto3,oneof" json:"rsvp_open,omitempty"`
+	Icon              *string                  `protobuf:"bytes,23,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
 	CreatorId         *int32                   `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator           *short.UserShort         `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob        string                   `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
@@ -465,6 +466,13 @@ func (x *CalendarEntry) GetRsvpOpen() bool {
 	return false
 }
 
+func (x *CalendarEntry) GetIcon() string {
+	if x != nil && x.Icon != nil {
+		return *x.Icon
+	}
+	return ""
+}
+
 func (x *CalendarEntry) GetCreatorId() int32 {
 	if x != nil && x.CreatorId != nil {
 		return *x.CreatorId
@@ -577,6 +585,10 @@ func (x *CalendarEntry) SetRsvpOpen(v bool) {
 	x.RsvpOpen = &v
 }
 
+func (x *CalendarEntry) SetIcon(v string) {
+	x.Icon = &v
+}
+
 func (x *CalendarEntry) SetCreatorId(v int32) {
 	x.CreatorId = &v
 }
@@ -672,6 +684,13 @@ func (x *CalendarEntry) HasRsvpOpen() bool {
 	return x.RsvpOpen != nil
 }
 
+func (x *CalendarEntry) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
 func (x *CalendarEntry) HasCreatorId() bool {
 	if x == nil {
 		return false
@@ -750,6 +769,10 @@ func (x *CalendarEntry) ClearRsvpOpen() {
 	x.RsvpOpen = nil
 }
 
+func (x *CalendarEntry) ClearIcon() {
+	x.Icon = nil
+}
+
 func (x *CalendarEntry) ClearCreatorId() {
 	x.CreatorId = nil
 }
@@ -791,6 +814,7 @@ type CalendarEntry_builder struct {
 	Content           *content.Content
 	Closed            bool
 	RsvpOpen          *bool
+	Icon              *string
 	CreatorId         *int32
 	Creator           *short.UserShort
 	CreatorJob        string
@@ -819,6 +843,7 @@ func (b0 CalendarEntry_builder) Build() *CalendarEntry {
 	x.Content = b.Content
 	x.Closed = b.Closed
 	x.RsvpOpen = b.RsvpOpen
+	x.Icon = b.Icon
 	x.CreatorId = b.CreatorId
 	x.Creator = b.Creator
 	x.CreatorJob = b.CreatorJob
@@ -1098,8 +1123,7 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\x0esource_user_id\x18\x04 \x01(\x05H\x01R\fsourceUserId\x88\x01\x01\x12\x17\n" +
 	"\aall_day\x18\x05 \x01(\bR\x06allDayB\x12\n" +
 	"\x10_source_entry_idB\x11\n" +
-	"\x0f_source_user_id\"\xf8\n" +
-	"\n" +
+	"\x0f_source_user_id\"\xa4\v\n" +
 	"\rCalendarEntry\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1120,19 +1144,20 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05title\x12;\n" +
 	"\acontent\x18\v \x01(\v2!.resources.common.content.ContentR\acontent\x12\x16\n" +
 	"\x06closed\x18\f \x01(\bR\x06closed\x12 \n" +
-	"\trsvp_open\x18\r \x01(\bH\x06R\brsvpOpen\x88\x01\x01\x12\"\n" +
+	"\trsvp_open\x18\r \x01(\bH\x06R\brsvpOpen\x88\x01\x01\x12!\n" +
+	"\x04icon\x18\x17 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\aR\x04icon\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"creator_id\x18\x0e \x01(\x05H\aR\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\x0f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\bR\acreator\x88\x01\x01\x12\x1f\n" +
+	"creator_id\x18\x0e \x01(\x05H\bR\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\x0f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\tR\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\x10 \x01(\tR\n" +
 	"creatorJob\x12U\n" +
-	"\trecurring\x18\x11 \x01(\v22.resources.calendar.entries.CalendarEntryRecurringH\tR\trecurring\x88\x01\x01\x12F\n" +
-	"\x04rsvp\x18\x12 \x01(\v2-.resources.calendar.entries.CalendarEntryRSVPH\n" +
-	"R\x04rsvp\x88\x01\x01\x12X\n" +
+	"\trecurring\x18\x11 \x01(\v22.resources.calendar.entries.CalendarEntryRecurringH\n" +
+	"R\trecurring\x88\x01\x01\x12F\n" +
+	"\x04rsvp\x18\x12 \x01(\v2-.resources.calendar.entries.CalendarEntryRSVPH\vR\x04rsvp\x88\x01\x01\x12X\n" +
 	"\n" +
-	"occurrence\x18\x13 \x01(\v23.resources.calendar.entries.CalendarEntryOccurrenceH\vR\n" +
+	"occurrence\x18\x13 \x01(\v23.resources.calendar.entries.CalendarEntryOccurrenceH\fR\n" +
 	"occurrence\x88\x01\x01\x12L\n" +
-	"\x0frecurring_until\x18\x14 \x01(\v2\x1e.resources.timestamp.TimestampH\fR\x0erecurringUntil\x88\x01\x01\x12-\n" +
+	"\x0frecurring_until\x18\x14 \x01(\v2\x1e.resources.timestamp.TimestampH\rR\x0erecurringUntil\x88\x01\x01\x12-\n" +
 	"\x12recurrence_version\x18\x15 \x01(\x05R\x11recurrenceVersionB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
@@ -1141,7 +1166,8 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\x04_jobB\v\n" +
 	"\t_end_timeB\f\n" +
 	"\n" +
-	"_rsvp_openB\r\n" +
+	"_rsvp_openB\a\n" +
+	"\x05_iconB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\f\n" +

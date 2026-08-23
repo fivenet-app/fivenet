@@ -48,6 +48,22 @@ func (s *Store) ListCalendars(
 		return nil, err
 	}
 
+	if !q.OnlyPublic {
+		// FIXME temporary solution to have the access field populated for clients to decide user access
+		// E.g., batching the look up(s) would be fine as well instead of doing one lookup per calendar
+		for _, calendar := range calendars {
+			access, err := s.ListTargetAccess(
+				ctx,
+				calendar.GetId(),
+				birthdaySyncSubjectAccessOptions,
+			)
+			if err != nil {
+				return nil, err
+			}
+			calendar.SetAccess(access)
+		}
+	}
+
 	return calendars, nil
 }
 
@@ -233,6 +249,7 @@ func (s *Store) listCalendarsStmt(
 		tCalendar.Public,
 		tCalendar.Closed,
 		tCalendar.Color,
+		tCalendar.Icon,
 		tCalendar.CreatorID,
 		tCreator.ID,
 		tCreator.Job,
@@ -300,6 +317,7 @@ func (s *Store) getCalendarStmt(
 		tCalendar.Public,
 		tCalendar.Closed,
 		tCalendar.Color,
+		tCalendar.Icon,
 		tCalendar.CreatorID,
 		tCalendar.CreatorJob,
 		tCreator.ID,
@@ -356,36 +374,46 @@ func (s *Store) CreateCalendar(
 	discordSettingsJSON *string,
 ) (int64, error) {
 	tCalendar := table.FivenetCalendar
+	systemKind := mysql.IntExp(mysql.NULL)
+	if cal.HasSystemKind() {
+		systemKind = mysql.IntExp(mysql.Int32(int32(cal.GetSystemKind())))
+	}
 	stmt := tCalendar.
 		INSERT(
 			tCalendar.Job,
+			tCalendar.SystemKind,
 			tCalendar.DiscordSettings,
 			tCalendar.Name,
 			tCalendar.Description,
 			tCalendar.Public,
 			tCalendar.Closed,
 			tCalendar.Color,
+			tCalendar.Icon,
 			tCalendar.CreatorID,
 			tCalendar.CreatorJob,
 		).
 		VALUES(
 			cal.GetJob(),
+			systemKind,
 			discordSettingsJSON,
 			cal.GetName(),
 			cal.GetDescription(),
 			cal.GetPublic(),
 			cal.GetClosed(),
 			cal.GetColor(),
+			dbutils.StringEmpty(cal.GetIcon()),
 			userInfo.GetUserId(),
 			userInfo.GetJob(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
+			tCalendar.SystemKind.SET(systemKind),
 			tCalendar.DiscordSettings.SET(mysql.RawString("VALUES(`discord_settings`)")),
 			tCalendar.Name.SET(mysql.String(cal.GetName())),
-			tCalendar.Description.SET(mysql.String("VALUES(`description`)")),
+			tCalendar.Description.SET(mysql.RawString("VALUES(`description`)")),
 			tCalendar.Public.SET(mysql.Bool(cal.GetPublic())),
 			tCalendar.Closed.SET(mysql.Bool(cal.GetClosed())),
 			tCalendar.Color.SET(mysql.String(cal.GetColor())),
+			tCalendar.Icon.SET(dbutils.StringEmpty(cal.GetIcon())),
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -424,6 +452,7 @@ func (s *Store) UpdateCalendar(
 			tCalendar.Public,
 			tCalendar.Closed,
 			tCalendar.Color,
+			tCalendar.Icon,
 		).
 		SET(
 			discordSettingsValue,
@@ -432,6 +461,7 @@ func (s *Store) UpdateCalendar(
 			cal.GetPublic(),
 			cal.GetClosed(),
 			cal.GetColor(),
+			dbutils.StringEmpty(cal.GetIcon()),
 		).
 		WHERE(mysql.AND(
 			tCalendar.ID.EQ(mysql.Int64(cal.GetId())),

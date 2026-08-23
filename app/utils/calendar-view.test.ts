@@ -3,6 +3,7 @@ import { toTimestamp } from '~/utils/time';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import {
     formatCalendarRouteDate,
+    getCalendarEntryIcon,
     getCalendarEntryRangeEnd,
     layoutAllDayEntries,
     layoutDayEntries,
@@ -136,5 +137,12 @@ describe('calendar-view helpers', () => {
         expect(end.getFullYear()).toBe(2026);
         expect(end.getMonth()).toBe(7);
         expect(end.getDate()).toBe(18);
+    });
+
+    it('prefers a custom entry icon over derived fallback icons', () => {
+        const entry = makeEntry(1, '2026-08-17T10:00:00', '2026-08-17T11:00:00');
+        entry.icon = 'CalendarStarIcon';
+
+        expect(getCalendarEntryIcon(entry)).toBe('i-mdi-calendar-star');
     });
 });

@@ -21,6 +21,7 @@ import {
     getCalendarEntryDisplayStartDate,
     isCalendarEntryAllDay,
 } from '~/utils/calendar';
+import { convertComponentIconNameToDynamic } from '~/utils/icons';
 import { dateToDateString } from '~/utils/time';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 
@@ -119,6 +120,7 @@ export function getCalendarEntryColor(entry: CalendarEntry): ButtonProps['color'
 }
 
 export function getCalendarEntryIcon(entry: CalendarEntry): string | undefined {
+    if (entry.icon) return convertComponentIconNameToDynamic(entry.icon);
     if (entry.calendar?.systemKind) return 'i-mdi-badge-account-horizontal-outline';
     if (entry.deletedAt) return 'i-mdi-delete';
     if (isValidCalendarEntryRecurring(entry.recurring)) return 'i-mdi-repeat';

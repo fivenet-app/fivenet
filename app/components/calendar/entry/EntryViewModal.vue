@@ -234,7 +234,13 @@ onUnmounted(() => {
                 </div>
 
                 <div class="flex items-center gap-1">
-                    <UBadge v-if="calendar?.name" :color="color" variant="subtle" size="sm">
+                    <UBadge
+                        v-if="calendar?.name"
+                        :color="color"
+                        variant="subtle"
+                        size="sm"
+                        :icon="calendar?.icon ? convertComponentIconNameToDynamic(calendar.icon) : undefined"
+                    >
                         {{ calendar.name }}
                     </UBadge>
 

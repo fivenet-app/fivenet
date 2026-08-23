@@ -101,6 +101,10 @@ export interface CalendarEntry {
      */
     rsvpOpen?: boolean;
     /**
+     * @generated from protobuf field: optional string icon = 23
+     */
+    icon?: string;
+    /**
      * @generated from protobuf field: optional int32 creator_id = 14
      */
     creatorId?: number;
@@ -349,6 +353,7 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 11, name: "content", kind: "message", T: () => Content },
             { no: 12, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 13, name: "rsvp_open", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 23, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 15, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 16, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
@@ -418,6 +423,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                     break;
                 case /* optional bool rsvp_open */ 13:
                     message.rsvpOpen = reader.bool();
+                    break;
+                case /* optional string icon */ 23:
+                    message.icon = reader.string();
                     break;
                 case /* optional int32 creator_id */ 14:
                     message.creatorId = reader.int32();
@@ -521,6 +529,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* bool all_day = 22; */
         if (message.allDay !== false)
             writer.tag(22, WireType.Varint).bool(message.allDay);
+        /* optional string icon = 23; */
+        if (message.icon !== undefined)
+            writer.tag(23, WireType.LengthDelimited).string(message.icon);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

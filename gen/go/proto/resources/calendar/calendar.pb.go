@@ -83,6 +83,7 @@ type Calendar struct {
 	Public          bool                     `protobuf:"varint,8,opt,name=public,proto3" json:"public,omitempty"`
 	Closed          bool                     `protobuf:"varint,9,opt,name=closed,proto3" json:"closed,omitempty"`
 	Color           string                   `protobuf:"bytes,10,opt,name=color,proto3" json:"color,omitempty"`
+	Icon            *string                  `protobuf:"bytes,18,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
 	CreatorId       *int32                   `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator         *short.UserShort         `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob      string                   `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
@@ -195,6 +196,13 @@ func (x *Calendar) GetColor() string {
 	return ""
 }
 
+func (x *Calendar) GetIcon() string {
+	if x != nil && x.Icon != nil {
+		return *x.Icon
+	}
+	return ""
+}
+
 func (x *Calendar) GetCreatorId() int32 {
 	if x != nil && x.CreatorId != nil {
 		return *x.CreatorId
@@ -281,6 +289,10 @@ func (x *Calendar) SetColor(v string) {
 	x.Color = v
 }
 
+func (x *Calendar) SetIcon(v string) {
+	x.Icon = &v
+}
+
 func (x *Calendar) SetCreatorId(v int32) {
 	x.CreatorId = &v
 }
@@ -347,6 +359,13 @@ func (x *Calendar) HasDescription() bool {
 	return x.Description != nil
 }
 
+func (x *Calendar) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
 func (x *Calendar) HasCreatorId() bool {
 	if x == nil {
 		return false
@@ -406,6 +425,10 @@ func (x *Calendar) ClearDescription() {
 	x.Description = nil
 }
 
+func (x *Calendar) ClearIcon() {
+	x.Icon = nil
+}
+
 func (x *Calendar) ClearCreatorId() {
 	x.CreatorId = nil
 }
@@ -440,6 +463,7 @@ type Calendar_builder struct {
 	Public          bool
 	Closed          bool
 	Color           string
+	Icon            *string
 	CreatorId       *int32
 	Creator         *short.UserShort
 	CreatorJob      string
@@ -463,6 +487,7 @@ func (b0 Calendar_builder) Build() *Calendar {
 	x.Public = b.Public
 	x.Closed = b.Closed
 	x.Color = b.Color
+	x.Icon = b.Icon
 	x.CreatorId = b.CreatorId
 	x.Creator = b.Creator
 	x.CreatorJob = b.CreatorJob
@@ -1173,7 +1198,7 @@ var File_resources_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xb1\b\n" +
+	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xdd\b\n" +
 	"\bCalendar\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1190,21 +1215,24 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\x06public\x18\b \x01(\bR\x06public\x12\x16\n" +
 	"\x06closed\x18\t \x01(\bR\x06closed\x12\x1e\n" +
 	"\x05color\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12\"\n" +
+	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12!\n" +
+	"\x04icon\x18\x12 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x04icon\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"creator_id\x18\v \x01(\x05H\x06R\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\aR\acreator\x88\x01\x01\x12\x1f\n" +
+	"creator_id\x18\v \x01(\x05H\aR\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\bR\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\r \x01(\tR\n" +
 	"creatorJob\x12H\n" +
-	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\bR\fsubscription\x88\x01\x01\x120\n" +
+	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\tR\fsubscription\x88\x01\x01\x120\n" +
 	"\x06access\x18\x0f \x01(\v2\x18.resources.access.AccessR\x06access\x12[\n" +
-	"\x10discord_settings\x18\x11 \x01(\v2+.resources.calendar.CalendarDiscordSettingsH\tR\x0fdiscordSettings\x88\x01\x01B\r\n" +
+	"\x10discord_settings\x18\x11 \x01(\v2+.resources.calendar.CalendarDiscordSettingsH\n" +
+	"R\x0fdiscordSettings\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x06\n" +
 	"\x04_jobB\x0e\n" +
 	"\f_system_kindB\x0e\n" +
-	"\f_descriptionB\r\n" +
+	"\f_descriptionB\a\n" +
+	"\x05_iconB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x0f\n" +

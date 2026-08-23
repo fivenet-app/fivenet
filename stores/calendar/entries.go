@@ -108,6 +108,7 @@ func calendarEntriesQuery(
 			tCalendar.SystemKind,
 			tCalendar.Name,
 			tCalendar.Color,
+			tCalendar.Icon,
 			tCalendar.Description,
 			tCalendar.Public,
 			tCalendar.Closed,
@@ -119,6 +120,7 @@ func calendarEntriesQuery(
 			tCalendarEntry.Content,
 			tCalendarEntry.Closed,
 			tCalendarEntry.RsvpOpen,
+			tCalendarEntry.Icon,
 			tCalendarEntry.Recurring,
 			tCalendarEntry.RecurringUntil,
 			tCalendarEntry.RecurrenceVersion,
@@ -502,11 +504,11 @@ func (s *Store) GetEntry(
 			tCalendarEntry.CalendarID,
 			tCalendar.ID,
 			tCalendar.Name,
-			tCalendar.Color,
 			tCalendar.Description,
 			tCalendar.Public,
 			tCalendar.Closed,
 			tCalendar.Color,
+			tCalendar.Icon,
 			tCalendarEntry.Job,
 			tCalendarEntry.StartTime,
 			tCalendarEntry.EndTime,
@@ -515,6 +517,7 @@ func (s *Store) GetEntry(
 			tCalendarEntry.Content,
 			tCalendarEntry.Closed,
 			tCalendarEntry.RsvpOpen,
+			tCalendarEntry.Icon,
 			tCalendarEntry.Recurring,
 			tCalendarEntry.RecurringUntil,
 			tCalendarEntry.RecurrenceVersion,
@@ -595,6 +598,7 @@ func (s *Store) UpsertCalendarEntry(
 			mysql.Bool(entry.GetAllDay()),
 			mysql.Bool(entry.GetClosed()),
 			mysql.Bool(entry.GetRsvpOpen()),
+			dbutils.StringEmpty(entry.GetIcon()),
 			entry.GetRecurring(),
 			dbutils.TimestampToMySQL(entry.GetRecurring().GetUntil()),
 		}
@@ -602,9 +606,7 @@ func (s *Store) UpsertCalendarEntry(
 		if recurrenceShapeChanged(oldEntry, entry) {
 			values = append(
 				values,
-				tCalendarEntry.RecurrenceVersion.SET(
-					tCalendarEntry.RecurrenceVersion.ADD(mysql.Int32(1)),
-				),
+				tCalendarEntry.RecurrenceVersion.ADD(mysql.Int32(1)),
 			)
 		} else {
 			values = append(values, oldEntry.GetRecurrenceVersion())
@@ -619,6 +621,7 @@ func (s *Store) UpsertCalendarEntry(
 				tCalendarEntry.AllDay,
 				tCalendarEntry.Closed,
 				tCalendarEntry.RsvpOpen,
+				tCalendarEntry.Icon,
 				tCalendarEntry.Recurring,
 				tCalendarEntry.RecurringUntil,
 				tCalendarEntry.RecurrenceVersion,
@@ -648,6 +651,7 @@ func (s *Store) UpsertCalendarEntry(
 			tCalendarEntry.Content,
 			tCalendarEntry.Closed,
 			tCalendarEntry.RsvpOpen,
+			tCalendarEntry.Icon,
 			tCalendarEntry.Recurring,
 			tCalendarEntry.RecurringUntil,
 			tCalendarEntry.RecurrenceVersion,
@@ -664,6 +668,7 @@ func (s *Store) UpsertCalendarEntry(
 			entry.GetContent(),
 			entry.GetClosed(),
 			entry.GetRsvpOpen(),
+			dbutils.StringEmpty(entry.GetIcon()),
 			entry.GetRecurring(),
 			entry.GetRecurring().GetUntil(),
 			1,

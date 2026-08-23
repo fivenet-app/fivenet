@@ -29,6 +29,7 @@ type fivenetCalendarTable struct {
 	Public          mysql.ColumnBool
 	Closed          mysql.ColumnBool
 	Color           mysql.ColumnString
+	Icon            mysql.ColumnString
 	CreatorID       mysql.ColumnInteger
 	CreatorJob      mysql.ColumnString
 
@@ -84,10 +85,11 @@ func newFivenetCalendarTableImpl(schemaName, tableName, alias string) fivenetCal
 		PublicColumn          = mysql.BoolColumn("public")
 		ClosedColumn          = mysql.BoolColumn("closed")
 		ColorColumn           = mysql.StringColumn("color")
+		IconColumn            = mysql.StringColumn("icon")
 		CreatorIDColumn       = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn      = mysql.StringColumn("creator_job")
-		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SystemKindColumn, DiscordSettingsColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SystemKindColumn, DiscordSettingsColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn}
+		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SystemKindColumn, DiscordSettingsColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, IconColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns        = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SystemKindColumn, DiscordSettingsColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, IconColumn, CreatorIDColumn, CreatorJobColumn}
 		defaultColumns        = mysql.ColumnList{CreatedAtColumn, PublicColumn, ClosedColumn, ColorColumn}
 	)
 
@@ -107,6 +109,7 @@ func newFivenetCalendarTableImpl(schemaName, tableName, alias string) fivenetCal
 		Public:          PublicColumn,
 		Closed:          ClosedColumn,
 		Color:           ColorColumn,
+		Icon:            IconColumn,
 		CreatorID:       CreatorIDColumn,
 		CreatorJob:      CreatorJobColumn,
 

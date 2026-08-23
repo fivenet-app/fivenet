@@ -4,6 +4,7 @@ import type { ReferenceElement } from '@floating-ui/vue';
 import type { ButtonProps } from '@nuxt/ui';
 import { getCalendarEntryColor, getCalendarEntryIcon, getCalendarEntryTimeLabel } from '~/utils/calendar-view';
 import { getCalendarEntryDisplayEndDate, getCalendarEntryDisplayStartDate, isCalendarEntryAllDay } from '~/utils/calendar';
+import { convertComponentIconNameToDynamic } from '~/utils/icons';
 import {
     isSystemManagedCalendarEntry,
     checkCalendarAccess,
@@ -18,6 +19,7 @@ import CustomContentRenderer from '~/components/partials/content/CustomContentRe
 import EntryRSVPList from '~/components/calendar/entry/EntryRSVPList.vue';
 import EntryActionButtons from '~/components/calendar/entry/EntryActionButtons.vue';
 import { useCalendarEntryShortcutState } from '~/composables/useCalendarEntryShortcutState';
+import { useCalendarStore } from '~/stores/calendar';
 
 defineOptions({
     inheritAttrs: false,
@@ -45,18 +47,20 @@ const emit = defineEmits<{
     (e: 'update:popover-open', open: boolean): void;
 }>();
 
+const calendarStore = useCalendarStore();
+const { calendars } = storeToRefs(calendarStore);
+
 const chipRef = useTemplateRef('chipRef');
 const popoverPoint = ref<{ x: number; y: number } | null>(null);
 const popoverOpen = ref(false);
+
 const shortcutState = useCalendarEntryShortcutState();
 const { width: chipWidth, height: chipHeight } = useElementSize(chipRef);
 const rsvpEntry = ref(props.entry.rsvp);
 
 watch(
     () => props.entry.rsvp,
-    (next) => {
-        rsvpEntry.value = next;
-    },
+    (next) => (rsvpEntry.value = next),
 );
 
 const color = computed(() => getCalendarEntryColor(props.entry));
@@ -95,7 +99,10 @@ const timeRange = computed(() => {
     return `${format(startDate.value, 'p')} - ${format(endDate.value, 'p')}`;
 });
 const popoverTime = computed(() => (spansMultipleDays.value ? timeRange.value : time.value));
-const isSystemManaged = computed(() => isSystemManagedCalendarEntry(props.entry.calendar, props.entry));
+const calendar = computed(
+    () => calendars.value.find((candidate) => candidate.id === props.entry.calendarId) ?? props.entry.calendar,
+);
+const isSystemManaged = computed(() => isSystemManagedCalendarEntry(calendar.value, props.entry));
 const showStackedTime = computed(
     () =>
         props.stacked ??
@@ -157,33 +164,33 @@ const canEdit = computed(
     () =>
         !isSystemManaged.value &&
         checkCalendarAccess(
-            props.entry.calendar?.access,
+            calendar.value?.access,
             props.entry.creator,
             AccessLevel.EDIT,
-            props.entry.calendar?.job,
-            props.entry.calendar?.creatorJob,
+            calendar.value?.job,
+            calendar.value?.creatorJob,
         ),
 );
 const canShare = computed(
     () =>
         !isSystemManaged.value &&
         checkCalendarAccess(
-            props.entry.calendar?.access,
+            calendar.value?.access,
             props.entry.creator,
             AccessLevel.SHARE,
-            props.entry.calendar?.job,
-            props.entry.calendar?.creatorJob,
+            calendar.value?.job,
+            calendar.value?.creatorJob,
         ),
 );
 const canDelete = computed(
     () =>
         !isSystemManaged.value &&
         checkCalendarAccess(
-            props.entry.calendar?.access,
+            calendar.value?.access,
             props.entry.creator,
             AccessLevel.MANAGE,
-            props.entry.calendar?.job,
-            props.entry.calendar?.creatorJob,
+            calendar.value?.job,
+            calendar.value?.creatorJob,
         ),
 );
 const attrs = useAttrs();
@@ -271,9 +278,16 @@ const attrsStyle = computed(() => attrs.style as string | Record<string, string 
                 <div class="flex flex-col gap-4">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <p class="truncate text-sm font-semibold text-highlighted">
-                                {{ entry.title }}
-                            </p>
+                            <div class="flex min-w-0 items-center gap-1.5">
+                                <UIcon
+                                    v-if="entry.icon"
+                                    class="size-4 shrink-0 text-muted"
+                                    :name="convertComponentIconNameToDynamic(entry.icon)"
+                                />
+                                <p class="truncate text-sm font-semibold text-highlighted">
+                                    {{ entry.title }}
+                                </p>
+                            </div>
                             <div class="flex flex-wrap items-center gap-1 text-muted">
                                 <UIcon name="i-mdi-access-time" class="size-4" />
 
@@ -285,7 +299,8 @@ const attrsStyle = computed(() => attrs.style as string | Record<string, string 
 
                         <UBadge
                             :color="stringToButtonColor(color ?? 'primary')"
-                            :label="entry.calendar?.name ?? $t('common.calendar')"
+                            :label="calendar?.name ?? $t('common.calendar')"
+                            :icon="calendar?.icon ? convertComponentIconNameToDynamic(calendar.icon) : undefined"
                             variant="subtle"
                             size="md"
                         />

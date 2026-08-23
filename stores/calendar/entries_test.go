@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -75,6 +76,90 @@ func TestCalendarEntriesQueryUsesAliasedCalendarEntryColumnForBirthdayVisibility
 	sql, _ := stmt.Sql()
 	assert.Contains(t, sql, "calendar_entry.calendar_id")
 	assert.NotContains(t, sql, "fivenet_calendar_entries.calendar_id")
+}
+
+func TestCalendarEntriesQuerySelectsIconColumns(t *testing.T) {
+	t.Parallel()
+
+	stmt := calendarEntriesQuery(
+		&userinfo.UserInfo{UserId: 1, Superuser: true},
+		mysql.Bool(true),
+		mysql.Bool(true),
+		nil,
+		false,
+		nil,
+	)
+
+	sql, _ := stmt.Sql()
+	assert.Contains(t, sql, "calendar.icon")
+	assert.Contains(t, sql, "calendar_entry.icon")
+}
+
+func TestUpsertCalendarEntryInsertIncludesIconColumn(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = db.Close()
+	})
+
+	store := New(testParams(db)).(*Store)
+	icon := "CalendarStarIcon"
+
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_calendar_entries .*\bicon\b.*`).
+		WillReturnResult(sqlmock.NewResult(101, 1))
+
+	id, err := store.UpsertCalendarEntry(
+		t.Context(),
+		db,
+		&calendarentries.CalendarEntry{
+			CalendarId: 1,
+			Title:      "Test entry",
+			Icon:       &icon,
+			StartTime:  timestamp.New(time.Date(2026, time.August, 23, 10, 0, 0, 0, time.UTC)),
+			Closed:     false,
+		},
+		nil,
+		&userinfo.UserInfo{UserId: 7, Job: "police"},
+	)
+	require.NoError(t, err)
+	assert.Equal(t, int64(101), id)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestUpsertCalendarEntryUpdateIncludesIconColumn(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = db.Close()
+	})
+
+	store := New(testParams(db)).(*Store)
+	icon := "CalendarStarIcon"
+
+	mock.ExpectExec(`(?s)UPDATE fivenet_calendar_entries .*\bicon\b.*`).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	id, err := store.UpsertCalendarEntry(
+		t.Context(),
+		db,
+		&calendarentries.CalendarEntry{
+			Id:         77,
+			CalendarId: 1,
+			Title:      "Updated entry",
+			Icon:       &icon,
+			StartTime:  timestamp.New(time.Date(2026, time.August, 23, 10, 0, 0, 0, time.UTC)),
+			Closed:     false,
+		},
+		&calendarentries.CalendarEntry{Id: 77},
+		&userinfo.UserInfo{UserId: 7, Job: "police"},
+	)
+	require.NoError(t, err)
+	assert.Equal(t, int64(77), id)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestCalendarEntryVisibilityAllowsCreatorOwnedPrivateCalendars(t *testing.T) {

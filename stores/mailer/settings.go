@@ -26,7 +26,7 @@ func (s *Store) UpsertEmailSettingsSignature(
 			signature,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tEmailSettings.Signature.SET(mysql.String("VALUES(`signature`)")),
+			tEmailSettings.Signature.SET(mysql.RawString("VALUES(`signature`)")),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.dbOr(q)); err != nil {
