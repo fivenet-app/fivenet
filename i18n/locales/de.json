@@ -1265,8 +1265,9 @@
             "sidebar_layout": {
                 "trigger": "Seitenleisten-Panels anordnen",
                 "title": "Seitenleistenlayout",
-                "description": "Vertausche die Positionen von Karte und Einsatzliste.",
-                "swap": "Panels tauschen"
+                "description": "Verschiebe die Seitenleiste nach links, rechts, oben oder unten neben die Karte.",
+                "top": "Oben",
+                "bottom": "Unten"
             },
             "livemap": {
                 "mark_on_gps": "Auf GPS markieren",

@@ -21,7 +21,7 @@ import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
-import { useSettingsStore, type DispatchCenterOuterPane } from '~/stores/settings';
+import { defaultCentrumSidebarPlacement, useSettingsStore, type CentrumSidebarPlacement } from '~/stores/settings';
 import { getCentrumDispatchesClient, getCentrumUnitsClient } from '~~/gen/ts/clients';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings/settings';
@@ -43,15 +43,39 @@ const notifications = useNotificationsStore();
 const settingsStore = useSettingsStore();
 const { centrum, livemap } = storeToRefs(settingsStore);
 
-const defaultCentrumSidebarPaneLayout: DispatchCenterOuterPane[] = ['map', 'sidebar'];
-const centrumSidebarPaneLayout = computed<DispatchCenterOuterPane[]>(() =>
-    centrum.value.centrumSidebarPaneLayout?.length === 2
-        ? centrum.value.centrumSidebarPaneLayout
-        : defaultCentrumSidebarPaneLayout,
+const centrumSidebarPlacement = computed<CentrumSidebarPlacement>(
+    () => centrum.value.centrumSidebarPlacement ?? defaultCentrumSidebarPlacement,
 );
 
-const mapPanelOrder = computed(() => (centrumSidebarPaneLayout.value[0] === 'map' ? 'order-1' : 'order-2'));
-const sidebarPanelOrder = computed(() => (centrumSidebarPaneLayout.value[0] === 'map' ? 'order-2' : 'order-1'));
+const isVerticalSidebarPlacement = computed(
+    () => centrumSidebarPlacement.value === 'top' || centrumSidebarPlacement.value === 'bottom',
+);
+
+const isSidebarFirst = computed(() => centrumSidebarPlacement.value === 'left' || centrumSidebarPlacement.value === 'top');
+
+const sidebarPlacementClassMap = computed(() => ({
+    container: isVerticalSidebarPlacement.value ? 'flex-col' : 'flex-row',
+    contentBody: isVerticalSidebarPlacement.value
+        ? 'h-full min-h-0 overflow-x-hidden overflow-y-auto md:overflow-hidden'
+        : 'overflow-x-hidden overflow-y-auto',
+    splitContainer: isVerticalSidebarPlacement.value ? 'h-full min-h-0 p-1' : 'p-1',
+    firstColumn: isVerticalSidebarPlacement.value ? 'flex flex-col gap-2 min-h-0 md:overflow-y-auto' : 'flex flex-col gap-2',
+    secondColumn: isVerticalSidebarPlacement.value ? 'flex flex-col gap-2 min-h-0 md:h-full' : 'flex flex-col gap-2',
+    ownDispatchesScroll: isVerticalSidebarPlacement.value ? 'min-h-0 flex-1 md:overflow-hidden' : '',
+    ownDispatchesList: isVerticalSidebarPlacement.value ? 'h-full min-h-0 md:overflow-y-auto md:pr-1' : '',
+    sidebarPanelSize: isVerticalSidebarPlacement.value ? 'w-full h-72 max-h-[32svh]' : 'w-[25rem] max-w-[25rem]',
+    panelBodyBorder: isVerticalSidebarPlacement.value
+        ? centrumSidebarPlacement.value === 'top'
+            ? 'border-b border-default'
+            : 'border-t border-default'
+        : 'border-b border-default',
+}));
+
+const sidebarContentPaneBaseClass = 'min-w-0 w-full';
+
+const sidebarContentSplitClass = computed(() =>
+    isVerticalSidebarPlacement.value ? 'grid grid-cols-1 gap-2 md:grid-cols-2' : 'flex flex-col gap-2',
+);
 
 const overlay = useOverlay();
 
@@ -367,298 +391,325 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardPanel
-        :class="mapPanelOrder"
-        :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
-    >
-        <template #header>
-            <UDashboardNavbar :title="$t('common.livemap')">
-                <template #leading>
-                    <UDashboardSidebarCollapse />
-                </template>
+    <div :class="['flex h-full min-h-0 w-full', sidebarPlacementClassMap.container]">
+        <UDashboardPanel
+            :class="['min-h-0 min-w-0 flex-1', isSidebarFirst ? 'order-2' : 'order-1']"
+            :ui="{ root: isSidebarFirst ? 'pb-(--page-content-bottom-offset)' : '', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
+        >
+            <template #header>
+                <UDashboardNavbar :title="$t('common.livemap')">
+                    <template #leading>
+                        <UDashboardSidebarCollapse />
+                    </template>
 
-                <template #right>
-                    <div class="flex items-center gap-2">
-                        <CentrumSidebarLayoutPopover v-if="canStream" />
+                    <template #right>
+                        <div class="flex items-center gap-2">
+                            <CentrumSidebarLayoutPopover v-if="canStream" />
 
-                        <DispatcherInfo v-if="canStream && settings?.enabled" hide-join />
-                    </div>
-                </template>
-            </UDashboardNavbar>
-        </template>
+                            <DispatcherInfo v-if="canStream && settings?.enabled" hide-join />
+                        </div>
+                    </template>
+                </UDashboardNavbar>
+            </template>
 
-        <template #body>
-            <div class="relative z-0 size-full">
-                <LivemapBase>
-                    <template #default>
-                        <template v-if="canStream">
-                            <DispatchLayer
-                                :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED"
-                            />
+            <template #body>
+                <div class="relative z-0 size-full">
+                    <LivemapBase>
+                        <template #default>
+                            <template v-if="canStream">
+                                <DispatchLayer
+                                    :show-all-dispatches="
+                                        livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED
+                                    "
+                                />
 
-                            <LControl position="bottomright">
-                                <UChip
-                                    v-if="settings?.enabled"
-                                    :show="getSortedOwnDispatches.length > 0"
-                                    :text="getSortedOwnDispatches.length"
-                                    color="error"
-                                    size="lg"
-                                    position="top-left"
-                                >
-                                    <UButton
-                                        class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black"
-                                        size="xs"
-                                        :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
-                                        :color="!getOwnUnit ? 'primary' : 'neutral'"
-                                        @click="() => (open = !open)"
+                                <LControl position="bottomright">
+                                    <UChip
+                                        v-if="settings?.enabled"
+                                        :show="getSortedOwnDispatches.length > 0"
+                                        :text="getSortedOwnDispatches.length"
+                                        color="error"
+                                        size="lg"
+                                        position="top-left"
                                     >
-                                        <span v-if="!open" class="inline-flex items-center justify-center">
-                                            {{ !getOwnUnit ? $t('common.unit', 2) : $t('common.your_dispatches') }}
-                                        </span>
-                                    </UButton>
-                                </UChip>
-                            </LControl>
+                                        <UButton
+                                            class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black"
+                                            size="xs"
+                                            :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
+                                            :color="!getOwnUnit ? 'primary' : 'neutral'"
+                                            @click="() => (open = !open)"
+                                        >
+                                            <span v-if="!open" class="inline-flex items-center justify-center">
+                                                {{ !getOwnUnit ? $t('common.unit', 2) : $t('common.your_dispatches') }}
+                                            </span>
+                                        </UButton>
+                                    </UChip>
+                                </LControl>
+                            </template>
+
+                            <FollowMarker />
                         </template>
 
-                        <FollowMarker />
-                    </template>
+                        <template v-if="canStream && settings?.enabled" #afterMap>
+                            <!-- "Take Dispatches" Button -->
+                            <span v-if="getOwnUnit !== undefined" class="absolute right-1/2 bottom-2 z-30 inline-flex">
+                                <UChip
+                                    :ui="{
+                                        base: 'absolute rounded-full ring-0 ring-white dark:ring-gray-900 flex items-center justify-center text-white dark:text-gray-900 font-medium whitespace-nowrap animate-ping duration-750',
+                                    }"
+                                    position="top-left"
+                                    size="xl"
+                                    color="error"
+                                    :show="pendingDispatches.length > 0"
+                                >
+                                    <UTooltip :text="$t('components.dispatch.take_dispatch.title')" :kbds="['M', 'D']">
+                                        <UButton
+                                            class="flex size-12 items-center justify-center"
+                                            :class="[getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full']"
+                                            :color="pendingDispatches.length > 0 ? 'error' : 'primary'"
+                                            size="xl"
+                                            icon="i-mdi-car-emergency"
+                                            @click="openTakeDispatches"
+                                        />
+                                    </UTooltip>
+                                </UChip>
 
-                    <template v-if="canStream && settings?.enabled" #afterMap>
-                        <!-- "Take Dispatches" Button -->
-                        <span v-if="getOwnUnit !== undefined" class="absolute right-1/2 bottom-2 z-30 inline-flex">
-                            <UChip
-                                :ui="{
-                                    base: 'absolute rounded-full ring-0 ring-white dark:ring-gray-900 flex items-center justify-center text-white dark:text-gray-900 font-medium whitespace-nowrap animate-ping duration-750',
-                                }"
-                                position="top-left"
-                                size="xl"
-                                color="error"
-                                :show="pendingDispatches.length > 0"
-                            >
-                                <UTooltip :text="$t('components.dispatch.take_dispatch.title')" :kbds="['M', 'D']">
+                                <UTooltip
+                                    v-if="getOwnUnit.homePostal !== undefined"
+                                    :text="`${$t('common.mark')}: ${$t('common.department_postal')}`"
+                                    :kbds="['M', 'H']"
+                                >
                                     <UButton
-                                        class="flex size-12 items-center justify-center"
-                                        :class="[getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full']"
-                                        :color="pendingDispatches.length > 0 ? 'error' : 'primary'"
+                                        class="flex size-12 items-center justify-center rounded-r-full"
                                         size="xl"
-                                        icon="i-mdi-car-emergency"
-                                        @click="openTakeDispatches"
+                                        icon="i-mdi-home-floor-b"
+                                        @click="setWaypointPLZ(getOwnUnit.homePostal)"
                                     />
                                 </UTooltip>
-                            </UChip>
-
-                            <UTooltip
-                                v-if="getOwnUnit.homePostal !== undefined"
-                                :text="`${$t('common.mark')}: ${$t('common.department_postal')}`"
-                                :kbds="['M', 'H']"
-                            >
-                                <UButton
-                                    class="flex size-12 items-center justify-center rounded-r-full"
-                                    size="xl"
-                                    icon="i-mdi-home-floor-b"
-                                    @click="setWaypointPLZ(getOwnUnit.homePostal)"
-                                />
-                            </UTooltip>
-                        </span>
-                    </template>
-                </LivemapBase>
-            </div>
-        </template>
-    </UDashboardPanel>
-
-    <UDashboardPanel
-        v-if="canStream && open"
-        id="centrum-sidebar"
-        :class="sidebarPanelOrder"
-        class="max-w-[25rem]"
-        resizable
-        :min-size="13"
-        :max-size="26"
-        :default-size="16"
-        :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0 border-b border-default' }"
-    >
-        <template #body>
-            <div class="overflow-x-hidden overflow-y-auto p-0 sm:pb-0">
-                <div class="flex flex-col items-center px-1">
-                    <UButton
-                        v-if="getOwnUnit !== undefined"
-                        class="inline-flex flex-col rounded-b-none px-0.5 py-1"
-                        :color="ownUnitStatus"
-                        icon="i-mdi-information-outline"
-                        block
-                        :ui="{ label: '' }"
-                        @click="
-                            () =>
-                                getOwnUnit &&
-                                unitDetailsSlideover.open({
-                                    unit: getOwnUnit,
-                                })
-                        "
-                    >
-                        <span class="line-clamp-2">
-                            <span class="font-semibold">{{ getOwnUnit.initials }}:</span>
-                            {{ getOwnUnit.name }}</span
-                        >
-                        <span class="truncate text-xs">
-                            <span class="font-semibold">{{ $t('common.status') }}:</span>
-                            {{ $t(`enums.centrum.StatusUnit.${StatusUnit[getOwnUnit.status?.status ?? 0]}`) }}
-                        </span>
-                    </UButton>
-
-                    <UFieldGroup class="w-full" orientation="vertical">
-                        <UButton
-                            :class="getOwnUnit !== undefined ? 'rounded-t-none' : ''"
-                            variant="soft"
-                            color="primary"
-                            size="xs"
-                            block
-                            :icon="getOwnUnit === undefined ? 'i-mdi-information-outline' : undefined"
-                            @click="() => joinUnitSlideover.open({})"
-                        >
-                            <span v-if="getOwnUnit === undefined" class="truncate">{{ $t('common.no_own_unit') }}</span>
-                            <span v-else class="truncate">{{ $t('common.leave_unit') }}</span>
-                        </UButton>
-
-                        <UButton
-                            v-if="getOwnUnit === undefined"
-                            variant="solid"
-                            color="success"
-                            size="xs"
-                            block
-                            icon="i-mdi-account-plus"
-                            :label="$t('common.join_unit')"
-                            @click="() => joinUnitSlideover.open({})"
-                        />
-                    </UFieldGroup>
+                            </span>
+                        </template>
+                    </LivemapBase>
                 </div>
+            </template>
+        </UDashboardPanel>
 
-                <div class="flex flex-1 flex-col gap-y-2" :class="open || getOwnUnit !== undefined ? 'px-1' : ''">
-                    <template v-if="getOwnUnit !== undefined">
-                        <ul role="list">
-                            <li class="inline-flex items-center gap-1 text-xs leading-6 font-semibold">
-                                <span>{{ $t('common.units') }}</span>
-                                <UIcon v-if="!canSubmitUnitStatus" class="size-4 animate-spin" name="i-mdi-loading" />
-                            </li>
-
-                            <li>
-                                <div class="grid grid-cols-2 gap-0.5">
-                                    <UButton
-                                        v-for="item in unitStatuses"
-                                        :key="item.name"
-                                        :color="unitStatusToBadgeColor(item.status)"
-                                        size="xs"
-                                        :disabled="!canSubmitUnitStatus"
-                                        :icon="item.icon"
-                                        truncate
-                                        :label="
-                                            item.status
-                                                ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
-                                                : $t(item.name)
-                                        "
-                                        :ui="{ label: 'line-clamp-2' }"
-                                        @click="onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)"
-                                    />
-
-                                    <UTooltip
-                                        class="col-span-2"
-                                        :text="$t('components.dispatch.update_unit_status.title')"
-                                        :kbds="['S', 'U']"
+        <UDashboardPanel
+            v-if="canStream && open"
+            id="centrum-sidebar"
+            :class="[
+                'min-h-0 min-w-0 shrink-0',
+                sidebarPlacementClassMap.sidebarPanelSize,
+                isSidebarFirst ? 'order-1' : 'order-2',
+            ]"
+            :resizable="!isVerticalSidebarPlacement"
+            :min-size="isVerticalSidebarPlacement ? undefined : 13"
+            :max-size="isVerticalSidebarPlacement ? undefined : 26"
+            :default-size="isVerticalSidebarPlacement ? undefined : 16"
+            :ui="{
+                root: !isSidebarFirst ? 'pb-(--page-content-bottom-offset)' : '',
+                body: ['p-0 sm:p-0 gap-0 sm:gap-0', sidebarPlacementClassMap.panelBodyBorder].join(' '),
+            }"
+        >
+            <template #body>
+                <div class="p-0 sm:pb-0" :class="sidebarPlacementClassMap.contentBody">
+                    <div :class="[sidebarPlacementClassMap.splitContainer, sidebarContentSplitClass]">
+                        <section :class="[sidebarContentPaneBaseClass, sidebarPlacementClassMap.firstColumn]">
+                            <div class="flex flex-col items-center">
+                                <UButton
+                                    v-if="getOwnUnit !== undefined"
+                                    class="inline-flex flex-col rounded-b-none px-0.5 py-1"
+                                    :color="ownUnitStatus"
+                                    icon="i-mdi-information-outline"
+                                    block
+                                    :ui="{ label: '' }"
+                                    @click="
+                                        () =>
+                                            getOwnUnit &&
+                                            unitDetailsSlideover.open({
+                                                unit: getOwnUnit,
+                                            })
+                                    "
+                                >
+                                    <span class="line-clamp-2">
+                                        <span class="font-semibold">{{ getOwnUnit.initials }}:</span>
+                                        {{ getOwnUnit.name }}</span
                                     >
-                                        <UButton
-                                            variant="soft"
-                                            color="primary"
-                                            size="xs"
-                                            block
-                                            :label="$t('components.dispatch.update_unit_status.title')"
-                                            @click="onSubmitUnitStatusThrottle(getOwnUnit.id)"
-                                        />
-                                    </UTooltip>
-                                </div>
-                            </li>
-                        </ul>
+                                    <span class="truncate text-xs">
+                                        <span class="font-semibold">{{ $t('common.status') }}:</span>
+                                        {{ $t(`enums.centrum.StatusUnit.${StatusUnit[getOwnUnit.status?.status ?? 0]}`) }}
+                                    </span>
+                                </UButton>
 
-                        <USeparator class="my-0.25" />
-
-                        <ul role="list">
-                            <li class="inline-flex items-center gap-1 text-xs leading-6 font-semibold">
-                                <span>{{ $t('common.dispatch') }} {{ $t('common.status') }}</span>
-                                <UIcon v-if="!canSubmitDispatchStatus" class="size-4 animate-spin" name="i-mdi-loading" />
-                            </li>
-
-                            <li>
-                                <div class="grid grid-cols-2 gap-0.5">
+                                <UFieldGroup class="w-full" orientation="vertical">
                                     <UButton
-                                        v-for="item in dispatchStatuses.filter((s) => s.status !== StatusDispatch.CANCELLED)"
-                                        :key="item.name"
-                                        :color="dispatchStatusToBadgeColor(item.status)"
+                                        :class="getOwnUnit !== undefined ? 'rounded-t-none' : ''"
+                                        variant="soft"
+                                        color="primary"
                                         size="xs"
-                                        :disabled="!canSubmitDispatchStatus"
-                                        :icon="item.icon"
-                                        :ui="{ label: 'line-clamp-2' }"
-                                        @click="onSubmitDispatchStatusThrottle(selectedDispatch, item.status)"
+                                        block
+                                        :icon="getOwnUnit === undefined ? 'i-mdi-information-outline' : undefined"
+                                        @click="() => joinUnitSlideover.open({})"
                                     >
-                                        <span class="line-clamp-2">
-                                            {{
-                                                item.status
-                                                    ? $t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)
-                                                    : $t(item.name)
-                                            }}
+                                        <span v-if="getOwnUnit === undefined" class="truncate">
+                                            {{ $t('common.no_own_unit') }}
                                         </span>
+                                        <span v-else class="truncate">{{ $t('common.leave_unit') }}</span>
                                     </UButton>
 
-                                    <UTooltip
-                                        class="col-span-2"
-                                        :text="$t('components.dispatch.update_dispatch_status.title')"
-                                        :kbds="['S', 'D']"
-                                    >
+                                    <UButton
+                                        v-if="getOwnUnit === undefined"
+                                        variant="solid"
+                                        color="success"
+                                        size="xs"
+                                        block
+                                        icon="i-mdi-account-plus"
+                                        :label="$t('common.join_unit')"
+                                        @click="() => joinUnitSlideover.open({})"
+                                    />
+                                </UFieldGroup>
+                            </div>
+
+                            <template v-if="getOwnUnit !== undefined">
+                                <ul role="list">
+                                    <li class="inline-flex items-center gap-1 text-xs leading-6 font-semibold">
+                                        <span>{{ $t('common.units') }}</span>
+                                        <UIcon v-if="!canSubmitUnitStatus" class="size-4 animate-spin" name="i-mdi-loading" />
+                                    </li>
+
+                                    <li>
+                                        <div class="grid grid-cols-2 gap-0.5">
+                                            <UButton
+                                                v-for="item in unitStatuses"
+                                                :key="item.name"
+                                                :color="unitStatusToBadgeColor(item.status)"
+                                                size="xs"
+                                                :disabled="!canSubmitUnitStatus"
+                                                :icon="item.icon"
+                                                truncate
+                                                :label="
+                                                    item.status
+                                                        ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
+                                                        : $t(item.name)
+                                                "
+                                                :ui="{ label: 'line-clamp-2' }"
+                                                @click="onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)"
+                                            />
+
+                                            <UTooltip
+                                                class="col-span-2"
+                                                :text="$t('components.dispatch.update_unit_status.title')"
+                                                :kbds="['S', 'U']"
+                                            >
+                                                <UButton
+                                                    variant="soft"
+                                                    color="primary"
+                                                    size="xs"
+                                                    block
+                                                    :label="$t('components.dispatch.update_unit_status.title')"
+                                                    @click="onSubmitUnitStatusThrottle(getOwnUnit.id)"
+                                                />
+                                            </UTooltip>
+                                        </div>
+                                    </li>
+                                </ul>
+
+                                <ul role="list">
+                                    <li class="inline-flex items-center gap-1 text-xs leading-6 font-semibold">
+                                        <span>{{ $t('common.dispatch') }} {{ $t('common.status') }}</span>
+                                        <UIcon
+                                            v-if="!canSubmitDispatchStatus"
+                                            class="size-4 animate-spin"
+                                            name="i-mdi-loading"
+                                        />
+                                    </li>
+
+                                    <li>
+                                        <div class="grid grid-cols-2 gap-0.5">
+                                            <UButton
+                                                v-for="item in dispatchStatuses.filter(
+                                                    (s) => s.status !== StatusDispatch.CANCELLED,
+                                                )"
+                                                :key="item.name"
+                                                :color="dispatchStatusToBadgeColor(item.status)"
+                                                size="xs"
+                                                :disabled="!canSubmitDispatchStatus"
+                                                :icon="item.icon"
+                                                :ui="{ label: 'line-clamp-2' }"
+                                                @click="onSubmitDispatchStatusThrottle(selectedDispatch, item.status)"
+                                            >
+                                                <span class="line-clamp-2">
+                                                    {{
+                                                        item.status
+                                                            ? $t(
+                                                                  `enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`,
+                                                              )
+                                                            : $t(item.name)
+                                                    }}
+                                                </span>
+                                            </UButton>
+
+                                            <UTooltip
+                                                class="col-span-2"
+                                                :text="$t('components.dispatch.update_dispatch_status.title')"
+                                                :kbds="['S', 'D']"
+                                            >
+                                                <UButton
+                                                    variant="soft"
+                                                    color="primary"
+                                                    size="xs"
+                                                    block
+                                                    :label="$t('components.dispatch.update_dispatch_status.title')"
+                                                    @click="updateDspStatus(selectedDispatch)"
+                                                />
+                                            </UTooltip>
+                                        </div>
+                                    </li>
+                                </ul>
+
+                                <DispatchStatusBreakdown block popover-class="w-full" size="xs" />
+                            </template>
+                        </section>
+
+                        <section :class="[sidebarContentPaneBaseClass, sidebarPlacementClassMap.secondColumn]">
+                            <template v-if="getOwnUnit !== undefined">
+                                <ul role="list" :class="isVerticalSidebarPlacement ? 'flex min-h-0 flex-1 flex-col' : ''">
+                                    <li class="inline-flex items-center text-xs leading-6 font-semibold">
+                                        {{ $t('common.your_dispatches') }}
+                                    </li>
+
+                                    <li v-if="getSortedOwnDispatches.length === 0">
                                         <UButton
                                             variant="soft"
-                                            color="primary"
+                                            color="neutral"
+                                            icon="i-mdi-car-emergency"
                                             size="xs"
                                             block
-                                            :label="$t('components.dispatch.update_dispatch_status.title')"
-                                            @click="updateDspStatus(selectedDispatch)"
+                                            :label="$t('common.no_assigned_dispatches')"
                                         />
-                                    </UTooltip>
-                                </div>
-                            </li>
-                        </ul>
+                                    </li>
 
-                        <ul role="list">
-                            <li class="inline-flex items-center text-xs leading-6 font-semibold">
-                                {{ $t('common.your_dispatches') }}
-                            </li>
-
-                            <li v-if="getSortedOwnDispatches.length === 0">
-                                <UButton
-                                    variant="soft"
-                                    color="neutral"
-                                    icon="i-mdi-car-emergency"
-                                    size="xs"
-                                    block
-                                    :label="$t('common.no_assigned_dispatches')"
-                                />
-                            </li>
-
-                            <template v-else>
-                                <template v-for="dispatch in getSortedOwnDispatches.toReversed()" :key="dispatch">
-                                    <OwnDispatchEntry
-                                        v-if="dispatches.get(dispatch) !== undefined"
-                                        v-model="selectedDispatch"
-                                        :dispatch="dispatches.get(dispatch)!"
-                                    />
-                                </template>
+                                    <template v-else>
+                                        <li :class="sidebarPlacementClassMap.ownDispatchesScroll">
+                                            <div :class="sidebarPlacementClassMap.ownDispatchesList">
+                                                <template
+                                                    v-for="dispatch in getSortedOwnDispatches.toReversed()"
+                                                    :key="dispatch"
+                                                >
+                                                    <OwnDispatchEntry
+                                                        v-if="dispatches.get(dispatch) !== undefined"
+                                                        v-model="selectedDispatch"
+                                                        :dispatch="dispatches.get(dispatch)!"
+                                                    />
+                                                </template>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
                             </template>
-                        </ul>
-                    </template>
+                        </section>
+                    </div>
                 </div>
-            </div>
-        </template>
-
-        <template #footer>
-            <div class="mx-2 my-1">
-                <DispatchStatusBreakdown block popover-class="w-full" size="xs" />
-            </div>
-        </template>
-    </UDashboardPanel>
+            </template>
+        </UDashboardPanel>
+    </div>
 </template>

@@ -1265,8 +1265,9 @@
             "sidebar_layout": {
                 "trigger": "Rearrange sidebar panels",
                 "title": "Sidebar layout",
-                "description": "Swap the map and the dispatch sidebar positions.",
-                "swap": "Swap panels"
+                "description": "Move the sidebar to the left, right, top, or bottom of the map.",
+                "top": "Top",
+                "bottom": "Bottom"
             },
             "livemap": {
                 "mark_on_gps": "Mark on GPS",

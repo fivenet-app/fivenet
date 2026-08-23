@@ -53,6 +53,7 @@ export type DispatchCenterPaneSizes = {
 
 export type DispatchCenterOuterPane = 'map' | 'sidebar';
 export type DispatchCenterInnerPane = 'dispatchList' | 'unitList' | 'feed';
+export type CentrumSidebarPlacement = 'left' | 'right' | 'top' | 'bottom';
 
 export type DispatchCenterPaneLayout = {
     outer: DispatchCenterOuterPane[];
@@ -60,12 +61,41 @@ export type DispatchCenterPaneLayout = {
 };
 
 export const defaultDispatchCenterOuterPaneLayout: DispatchCenterOuterPane[] = ['map', 'sidebar'];
+export const defaultCentrumSidebarPlacement: CentrumSidebarPlacement = 'right';
+export const centrumSidebarPlacementOptions = {
+    left: {
+        icon: 'i-mdi-arrow-left',
+        labelKey: 'components.dispatch.layout_popover.left',
+    },
+    right: {
+        icon: 'i-mdi-arrow-right',
+        labelKey: 'components.dispatch.layout_popover.right',
+    },
+    top: {
+        icon: 'i-mdi-arrow-up',
+        labelKey: 'components.dispatch.sidebar_layout.top',
+    },
+    bottom: {
+        icon: 'i-mdi-arrow-down',
+        labelKey: 'components.dispatch.sidebar_layout.bottom',
+    },
+} as const satisfies Record<
+    CentrumSidebarPlacement,
+    {
+        icon: string;
+        labelKey: string;
+    }
+>;
 
 export type CentrumSettings = {
     dispatchListCardStyle: boolean;
     dispatchCenterPaneSizes: DispatchCenterPaneSizes;
     dispatchCenterPaneLayout: DispatchCenterPaneLayout;
-    centrumSidebarPaneLayout: DispatchCenterOuterPane[];
+    centrumSidebarPlacement: CentrumSidebarPlacement;
+    /**
+     * Legacy horizontal-only sidebar ordering kept for store migration.
+     */
+    centrumSidebarPaneLayout?: DispatchCenterOuterPane[];
 };
 
 export type AudioSettings = {
@@ -124,7 +154,7 @@ export const useSettingsStore = defineStore(
                 outer: [...defaultDispatchCenterOuterPaneLayout],
                 inner: ['dispatchList', 'unitList', 'feed'],
             },
-            centrumSidebarPaneLayout: [...defaultDispatchCenterOuterPaneLayout],
+            centrumSidebarPlacement: defaultCentrumSidebarPlacement,
         });
 
         const livemapTileLayer = ref<TileLayerKeys>('postal');
@@ -349,6 +379,11 @@ export const useSettingsStore = defineStore(
             // Fixup livemap tile layer name
             if ((livemapTileLayer.value as string) === 'satelite') {
                 livemapTileLayer.value = 'satellite';
+            }
+
+            if (centrum.value.centrumSidebarPaneLayout?.length === 2) {
+                centrum.value.centrumSidebarPlacement = centrum.value.centrumSidebarPaneLayout[0] === 'map' ? 'right' : 'left';
+                delete centrum.value.centrumSidebarPaneLayout;
             }
         };
 
