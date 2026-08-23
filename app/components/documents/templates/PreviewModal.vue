@@ -3,7 +3,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
-import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
 import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import type { Template } from '~~/gen/ts/resources/documents/templates/templates';
@@ -16,10 +15,9 @@ defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
 
-const { activeChar } = storeToRefs(authStore);
+const { activeChar } = useAuth();
 
 const logger = useLogger('📃 Doc Templates');
 

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useAuthStore } from '~/stores/auth';
 import { type QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import { requestStatusToBadgeColor } from '../helpers';
 
@@ -9,8 +8,7 @@ defineProps<{
     request: QualificationRequest;
 }>();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { activeChar } = useAuth();
 </script>
 
 <template>

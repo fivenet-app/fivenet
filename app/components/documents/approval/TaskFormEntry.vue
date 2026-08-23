@@ -22,8 +22,7 @@ withDefaults(
 
 const task = defineModel<Task>({ required: true });
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { activeChar } = useAuth();
 
 const { game } = useAppConfig();
 

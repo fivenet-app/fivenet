@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import '~/assets/css/herofull-pattern.css';
 import type { ButtonProps } from '@nuxt/ui';
-import { useAuthStore } from '~/stores/auth';
 
 useHead({
     title: 'common.home',
@@ -18,8 +17,7 @@ const { t } = useI18n();
 
 const { auth } = useAppConfig();
 
-const authStore = useAuthStore();
-const { username } = storeToRefs(authStore);
+const { username } = useAuth();
 
 const appVersion = APP_VERSION.split('-')[0];
 

@@ -3,7 +3,6 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
-import { useAuthStore } from '~/stores/auth';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -11,8 +10,7 @@ const emit = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { activeChar } = useAuth();
 
 const notifications = useNotificationsStore();
 

@@ -13,7 +13,6 @@ import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { TemplateBlock } from '~/composables/tiptap/extensions/TemplateBlock';
 import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
-import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
@@ -36,8 +35,7 @@ const { t } = useI18n();
 
 const { game } = useAppConfig();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { activeChar } = useAuth();
 
 const notifications = useNotificationsStore();
 

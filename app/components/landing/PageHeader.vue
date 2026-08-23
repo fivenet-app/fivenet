@@ -2,14 +2,12 @@
 import { de, en } from '@nuxt/ui/locale';
 import BannerMessage from '~/components/partials/BannerMessage.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
-import { useAuthStore } from '~/stores/auth';
 
 const { t } = useI18n();
 
 const { auth, website, system } = useAppConfig();
 
-const authStore = useAuthStore();
-const { username } = storeToRefs(authStore);
+const { username } = useAuth();
 
 const items = computed(() =>
     [

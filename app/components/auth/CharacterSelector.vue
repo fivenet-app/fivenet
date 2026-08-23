@@ -3,14 +3,13 @@ import CharacterSelectorCard from '~/components/auth/CharacterSelectorCard.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { useAuthStore } from '~/stores/auth';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
 import type { Character } from '~~/gen/ts/resources/accounts/accounts';
 
-const authAuthClient = await getAuthAuthClient();
 const authStore = useAuthStore();
-
 const { chooseCharacter } = authStore;
+
+const authAuthClient = await getAuthAuthClient();
 
 const { data: chars, status, refresh, error } = useLazyAsyncData('chars', () => getCharacters());
 

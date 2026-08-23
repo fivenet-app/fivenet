@@ -4,7 +4,6 @@ import type { TableColumn, TabsItem } from '@nuxt/ui';
 import { computed, h } from 'vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { useAuthStore } from '~/stores/auth';
 import { getUser, useClipboardStore } from '~/stores/clipboard';
 import { type DocumentRelation, DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import { docRelationToBadge, docRelationToIcon } from './helpers';
@@ -21,8 +20,7 @@ const modelValue = defineModel<DocumentRelation[]>({
 
 const { t } = useI18n();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { activeChar } = useAuth();
 
 const completorStore = useCompletorStore();
 

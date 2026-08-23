@@ -10,7 +10,6 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
-import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsConductClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
@@ -34,8 +33,7 @@ const { t } = useI18n();
 
 const overlay = useOverlay();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { activeChar } = useAuth();
 
 const completorStore = useCompletorStore();
 

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAuthStore } from '~/stores/auth';
 import { getStatsStatsClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
 import type { Stat } from '~~/gen/ts/resources/stats/stats';
@@ -15,8 +14,7 @@ definePageMeta({
     redirectIfAuthed: false,
 });
 
-const authStore = useAuthStore();
-const { activeChar, can } = storeToRefs(authStore);
+const { can, activeChar } = useAuth();
 
 const statsStatsClient = await getStatsStatsClient();
 

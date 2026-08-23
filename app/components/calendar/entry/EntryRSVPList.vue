@@ -4,7 +4,6 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { useAuthStore } from '~/stores/auth';
 import { useCalendarStore } from '~/stores/calendar';
 import { type CalendarEntryRSVP, RsvpResponses } from '~~/gen/ts/resources/calendar/entries/entries';
 import type { ListCalendarEntryRSVPResponse, RSVPCalendarEntryResponse } from '~~/gen/ts/services/calendar/entries';
@@ -29,8 +28,7 @@ const props = withDefaults(
 
 const overlay = useOverlay();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { activeChar } = useAuth();
 
 const calendarStore = useCalendarStore();
 
