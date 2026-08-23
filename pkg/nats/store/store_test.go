@@ -30,7 +30,7 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 	assert.NotNil(t, store)
 
 	storeCtx, storeCancel := context.WithCancel(ctx)
-	defer storeCancel()
+	t.Cleanup(storeCancel)
 	err = store.Start(storeCtx, false)
 	require.NoError(t, err)
 
