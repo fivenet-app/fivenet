@@ -196,10 +196,14 @@ func (s *Store) AddMarker(
 		return nil, fmt.Errorf("failed to create marker. %w", err)
 	}
 
+	marker, err = s.livemapStore.GetMarker(ctx, markerId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve created marker (%d). %w", markerId, err)
+	}
+
 	return &pbsync.AddActivityResponse{
-		Id: new(markerId),
-		// FIXME use marker createdAt timestamp instead in the future
-		CreatedAt: timestamp.Now(),
+		Id:        new(markerId),
+		CreatedAt: marker.GetCreatedAt(),
 	}, nil
 }
 
