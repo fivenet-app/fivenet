@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.8.4] - 2026-08-23
+
+### 🚀 Features
+
+- *(jobs)* Paginate group item endpoints
+- *(centrum)* Remove splitpanes for nuxt ui Splitter components and add
+- *(ci)* Generate go test coverage, add action summary and pr comment
+- *(dispatch)* Add four-way centrum sidebar placement
+- *(calendar)* Add icon to calendar and entries
+
+### 🐛 Bug Fixes
+
+- *(errors)* Adjust error wrap to use dot instead of colon
+- *(container)* Install pkgconfig in node build step
+- *(discord)* Calendar reminder using wrong icon url for job props logos
+- *(app)* Improve superuser job toggle for collapsed sidebar
+- *(discord)* Update job logo filestore URL expectations
+- *(sanitizer)* Issue with oneof message sanitize calls
+- *(jobs)* Use itemslen instead of "manual" pagination update for group
+- *(citizens)* Add blocked label access level
+- Remove/replace db and acl subject FIXME comments
+- *(documents)* Block status toggle in editor if no perms
+- Lint issue and make demo text suffix for job activity entries
+- *(demo)* Improve demo system banner message format
+- *(livemap)* Layout popover spacing
+- *(nats)* Use different context for store start
+- *(sync)* Actually return marker created at date
+- *(livemap)* Markers transition time being wrong in style
+- *(user)* Remove user/char group column
+- *(tests)* Base data issue due to column removal
+- *(demo)* Duplicate calendar creation
+- *(mailer)* Settings signature insert query test
+- *(nats)* Ignore invalid subscription on cancel/stop
+- *(tracker)* Using user group column in test query
+- *(tracker)* Manager test case
+- *(tests)* Intermittent issue in nats test
+
 ## [2026.8.3] - 2026-08-21
 
 ### 🚀 Features
