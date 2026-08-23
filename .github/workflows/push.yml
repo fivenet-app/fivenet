@@ -53,7 +53,7 @@ jobs:
           path: coverage.txt
 
       - name: Report code coverage results
-        uses: robherley/go-test-action@b2159a08ed1f5ec5f59fc973881f68add48aa9b1 # v1.1.0
+        uses: robherley/go-test-action@2f859e0c8769d755d3174eecb9af8f64660827f3 # v1.1.0
         with:
           omit: |
             untested
