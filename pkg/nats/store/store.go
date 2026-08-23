@@ -198,7 +198,8 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 			select {
 			case <-ctx.Done():
 				if err := watcher.Stop(); err != nil {
-					if !errors.Is(err, nats.ErrConsumerNotFound) {
+					if !errors.Is(err, nats.ErrConsumerNotFound) &&
+						!errors.Is(err, nats.ErrBadSubscription) {
 						s.logger.Error("error while stopping watcher", zap.Error(err))
 					}
 				} else {
@@ -821,7 +822,9 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (IKVWatcher[T, U], error) {
 			select {
 			case <-ctx.Done():
 				if err := watcher.Stop(); err != nil {
-					if !errors.Is(err, nats.ErrConsumerNotFound) {
+					// Ignore consumer not found and bad subscription errors, as they indicate the watcher is already stopped or invalid.
+					if !errors.Is(err, nats.ErrConsumerNotFound) &&
+						!errors.Is(err, nats.ErrBadSubscription) {
 						s.logger.Error("error while stopping watcher", zap.Error(err))
 					}
 				} else {
