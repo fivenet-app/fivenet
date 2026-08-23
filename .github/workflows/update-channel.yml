@@ -12,6 +12,11 @@ on:
         description: 'The new image tag (appVersion)'
         required: true
         type: string
+      chart_version:
+        description: 'The new chart version'
+        required: false
+        type: string
+        default: ''
       source_sha:
         description: 'The source commit that triggered the channel update'
         required: false
@@ -32,7 +37,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout develop
+      - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0

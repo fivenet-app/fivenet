@@ -1,0 +1,62 @@
+name: Sync Helm Chart Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      chart_version:
+        description: 'Optional chart version override'
+        required: false
+        type: string
+  schedule:
+    - cron: '0 3 * * 0'
+
+permissions:
+  contents: write
+
+jobs:
+  resolve-chart-version:
+    name: Resolve Latest Chart Version
+    runs-on: ubuntu-latest
+    outputs:
+      chart_version: ${{ steps.resolve.outputs.chart_version }}
+      app_version: ${{ steps.resolve.outputs.app_version }}
+      source_sha: ${{ steps.resolve.outputs.source_sha }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - name: Resolve latest chart release
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          chart_version='${{ inputs.chart_version }}'
+
+          if [[ -z "$chart_version" ]]; then
+            latest_tag="$(gh api repos/fivenet-app/charts/releases/latest --jq .tag_name)"
+            # Chart releases are tagged as fivenet-<version>, for example fivenet-0.26.8.
+            chart_version="${latest_tag#fivenet-}"
+          fi
+
+          app_version="$(jq -r '.dev.appVersion' channels.json)"
+
+          git fetch origin develop
+          source_sha="$(git rev-parse origin/develop)"
+
+          echo "chart_version=$chart_version" >> "$GITHUB_OUTPUT"
+          echo "app_version=$app_version" >> "$GITHUB_OUTPUT"
+          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
+
+  update-dev-channel:
+    name: Update Dev Chart Version
+    needs:
+      - resolve-chart-version
+    uses: ./.github/workflows/update-channel.yml
+    secrets: inherit
+    with:
+      channel: dev
+      image_tag: ${{ needs.resolve-chart-version.outputs.app_version }}
+      chart_version: ${{ needs.resolve-chart-version.outputs.chart_version }}
+      source_sha: ${{ needs.resolve-chart-version.outputs.source_sha }}
