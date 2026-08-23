@@ -27,7 +27,9 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const icon = defineModel<string | undefined>('modelValue');
+const icon = defineModel<string | undefined>('modelValue', {
+    set: (value) => value ?? undefined,
+});
 
 function getItemName(item: unknown): string | undefined {
     if (typeof item !== 'object' || item === null || !('name' in item)) {

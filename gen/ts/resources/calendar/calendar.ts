@@ -64,6 +64,10 @@ export interface Calendar {
      */
     color: string;
     /**
+     * @generated from protobuf field: optional string icon = 18
+     */
+    icon?: string;
+    /**
      * @generated from protobuf field: optional int32 creator_id = 11
      */
     creatorId?: number;
@@ -241,6 +245,7 @@ class Calendar$Type extends MessageType<Calendar> {
             { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 10, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 18, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
@@ -298,6 +303,9 @@ class Calendar$Type extends MessageType<Calendar> {
                     break;
                 case /* string color */ 10:
                     message.color = reader.string();
+                    break;
+                case /* optional string icon */ 18:
+                    message.icon = reader.string();
                     break;
                 case /* optional int32 creator_id */ 11:
                     message.creatorId = reader.int32();
@@ -380,6 +388,9 @@ class Calendar$Type extends MessageType<Calendar> {
         /* optional resources.calendar.CalendarDiscordSettings discord_settings = 17; */
         if (message.discordSettings)
             CalendarDiscordSettings.internalBinaryWrite(message.discordSettings, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional string icon = 18; */
+        if (message.icon !== undefined)
+            writer.tag(18, WireType.LengthDelimited).string(message.icon);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

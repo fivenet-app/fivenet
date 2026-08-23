@@ -52,6 +52,13 @@ message CalendarEntry {
   resources.common.content.Content content = 11;
   bool closed = 12;
   optional bool rsvp_open = 13;
+  optional string icon = 23 [
+    (buf.validate.field).string = {max_len: 128},
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
   optional int32 creator_id = 14 [(buf.validate.field).int32.gt = 0];
   optional resources.users.short.UserShort creator = 15 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 16 [(buf.validate.field).string.max_len = 20];

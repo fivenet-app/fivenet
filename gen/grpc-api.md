@@ -1069,6 +1069,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `public` | [bool](#bool) |  |  |
 | `closed` | [bool](#bool) |  |  |
 | `color` | [string](#string) |  |  |
+| `icon` | [string](#string) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
@@ -1195,6 +1196,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `closed` | [bool](#bool) |  |  |
 | `rsvp_open` | [bool](#bool) | optional |  |
+| `icon` | [string](#string) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |

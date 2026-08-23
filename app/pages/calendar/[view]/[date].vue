@@ -490,7 +490,12 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && visibleE
                                         size="xs"
                                         @click="openSelectedCalendar(calendar.id)"
                                     >
-                                        <UBadge :color="calendar.color as BadgeProps['color']" size="xs" label="&nbsp;" />
+                                        <UBadge
+                                            :color="calendar.color as BadgeProps['color']"
+                                            size="xs"
+                                            :icon="calendar.icon ? convertComponentIconNameToDynamic(calendar.icon) : undefined"
+                                            :class="calendar.icon ? '' : 'size-[14px]'"
+                                        />
                                         <span class="truncate">{{ calendar.name }}</span>
                                     </UButton>
                                 </div>
@@ -561,13 +566,25 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && visibleE
 
                                                 <UButton
                                                     :color="stringToButtonColor(calendar.color)"
-                                                    :label="calendar.name"
                                                     :icon="calendar.deletedAt ? 'i-mdi-delete' : undefined"
                                                     size="xs"
                                                     truncate
                                                     :variant="calendar.deletedAt ? 'subtle' : 'solid'"
                                                     @click="calendarViewSlideover.open({ calendarId: calendar.id })"
-                                                />
+                                                >
+                                                    <UBadge
+                                                        :class="calendar.icon ? '' : 'size-[14px]'"
+                                                        :color="calendar.color as BadgeProps['color']"
+                                                        size="lg"
+                                                        :label="calendar.icon ? undefined : ''"
+                                                        :icon="
+                                                            calendar.icon
+                                                                ? convertComponentIconNameToDynamic(calendar.icon)
+                                                                : undefined
+                                                        "
+                                                    />
+                                                    <span class="truncate">{{ calendar.name }}</span>
+                                                </UButton>
                                             </div>
                                         </div>
                                     </div>
