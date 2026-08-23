@@ -1062,7 +1062,6 @@ func (d *Demo) upsertFakeUserCore(
 			INSERT(
 				tUsers.License,
 				tUsers.Identifier,
-				tUsers.Group,
 				tUsers.Job,
 				tUsers.JobGrade,
 				tUsers.Firstname,
@@ -1077,7 +1076,6 @@ func (d *Demo) upsertFakeUserCore(
 			VALUES(
 				profile.License,
 				profile.Identifier,
-				"user",
 				profile.PrimaryJob,
 				profile.PrimaryJobGrade,
 				profile.Firstname,
@@ -1112,7 +1110,6 @@ func (d *Demo) upsertFakeUserCore(
 		UPDATE(
 			tUsers.License,
 			tUsers.Identifier,
-			tUsers.Group,
 			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Firstname,
@@ -1129,7 +1126,6 @@ func (d *Demo) upsertFakeUserCore(
 		SET(
 			profile.License,
 			profile.Identifier,
-			"user",
 			profile.PrimaryJob,
 			profile.PrimaryJobGrade,
 			profile.Firstname,

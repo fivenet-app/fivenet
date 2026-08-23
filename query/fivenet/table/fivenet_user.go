@@ -20,7 +20,6 @@ type fivenetUserTable struct {
 	ID            mysql.ColumnInteger
 	License       mysql.ColumnString
 	Identifier    mysql.ColumnString
-	Group         mysql.ColumnString
 	Job           mysql.ColumnString
 	JobGrade      mysql.ColumnInteger
 	Firstname     mysql.ColumnString
@@ -80,7 +79,6 @@ func newFivenetUserTableImpl(schemaName, tableName, alias string) fivenetUserTab
 		IDColumn            = mysql.IntegerColumn("id")
 		LicenseColumn       = mysql.StringColumn("license")
 		IdentifierColumn    = mysql.StringColumn("identifier")
-		GroupColumn         = mysql.StringColumn("group")
 		JobColumn           = mysql.StringColumn("job")
 		JobGradeColumn      = mysql.IntegerColumn("job_grade")
 		FirstnameColumn     = mysql.StringColumn("firstname")
@@ -96,8 +94,8 @@ func newFivenetUserTableImpl(schemaName, tableName, alias string) fivenetUserTab
 		UpdatedAtColumn     = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn     = mysql.TimestampColumn("deleted_at")
 		DeletedReasonColumn = mysql.StringColumn("deleted_reason")
-		allColumns          = mysql.ColumnList{IDColumn, LicenseColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeletedReasonColumn}
-		mutableColumns      = mysql.ColumnList{LicenseColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeletedReasonColumn}
+		allColumns          = mysql.ColumnList{IDColumn, LicenseColumn, IdentifierColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeletedReasonColumn}
+		mutableColumns      = mysql.ColumnList{LicenseColumn, IdentifierColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeletedReasonColumn}
 		defaultColumns      = mysql.ColumnList{JobColumn, JobGradeColumn, DisabledColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
@@ -108,7 +106,6 @@ func newFivenetUserTableImpl(schemaName, tableName, alias string) fivenetUserTab
 		ID:            IDColumn,
 		License:       LicenseColumn,
 		Identifier:    IdentifierColumn,
-		Group:         GroupColumn,
 		Job:           JobColumn,
 		JobGrade:      JobGradeColumn,
 		Firstname:     FirstnameColumn,

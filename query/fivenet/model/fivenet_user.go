@@ -16,7 +16,6 @@ type FivenetUser struct {
 	ID            int32            `sql:"primary_key" json:"id"`
 	License       *string          `json:"license"`
 	Identifier    string           `json:"identifier"`
-	Group         *string          `json:"group"`
 	Job           *string          `json:"job"`
 	JobGrade      *int32           `json:"job_grade"`
 	Firstname     *string          `json:"firstname"`

@@ -471,9 +471,6 @@ func (s *Store) handleUserUpdate(ctx context.Context, data *activity.UserUpdate)
 	}
 
 	updateSets := []mysql.ColumnAssigment{}
-	if data.Group != nil {
-		updateSets = append(updateSets, tUser.Group.SET(mysql.String(data.GetGroup())))
-	}
 	if data.Job != nil {
 		updateSets = append(updateSets, tUser.Job.SET(mysql.String(data.GetJob())))
 	}
@@ -489,10 +486,18 @@ func (s *Store) handleUserUpdate(ctx context.Context, data *activity.UserUpdate)
 
 	if len(updateSets) > 0 {
 		stmt := tUser.
-			UPDATE().
-			SET(updateSets[0]).
-			WHERE(tUser.ID.EQ(mysql.Int32(data.GetUserId()))).
+			UPDATE()
+		if len(updateSets) > 1 {
+			stmt = stmt.SET(updateSets[0], updateSets[1:])
+		} else {
+			stmt = stmt.SET(updateSets[0])
+		}
+		stmt = stmt.
+			WHERE(
+				tUser.ID.EQ(mysql.Int32(data.GetUserId())),
+			).
 			LIMIT(1)
+
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return fmt.Errorf("failed to update user. %w", err)
 		}

@@ -39,7 +39,6 @@ func (s *Store) ListCharacters(
 				tUsers.PhoneNumber,
 				tUserProps.AvatarFileID.AS("user.profile_picture_file_id"),
 				tAvatar.FilePath.AS("user.profile_picture"),
-				tUsers.Group.AS("character.group"),
 				s.customDB.Columns.User.GetVisum(tUsers.Alias()),
 				s.customDB.Columns.User.GetPlaytime(tUsers.Alias()),
 			}.Get()...,
