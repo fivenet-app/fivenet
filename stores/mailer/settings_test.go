@@ -58,7 +58,7 @@ func TestStoreUpsertEmailSettingsSignature(t *testing.T) {
 	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_mailer_settings`) +
 		`(?s).*` + regexp.QuoteMeta(`ON DUPLICATE KEY UPDATE`)
 	mock.ExpectExec(expectedQuery).
-		WithArgs(int64(7), nil, "VALUES(`signature`)").
+		WithArgs(int64(7), nil).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	require.NoError(t, store.UpsertEmailSettingsSignature(t.Context(), db, 7, nil))
