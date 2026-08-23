@@ -44,7 +44,23 @@ jobs:
       - name: Run Go Tests
         env:
           TZ: "Europe/Berlin"
-        run: go test ./...
+        run: make tests-go
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: code-coverage-go
+          path: coverage.txt
+
+      - name: Report code coverage results
+        uses: robherley/go-test-action@b2159a08ed1f5ec5f59fc973881f68add48aa9b1 # v1.1.0
+        with:
+          omit: |
+            untested
+            successful
+            pkg-tests
+            pkg-output
+            stderr
 
   node-lint-tests:
     name: Node Lint Test
@@ -109,6 +125,22 @@ jobs:
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
         run: pnpm run build
+
+  go-code-coverage:
+    name: "Go Code coverage report PR"
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    needs:
+      - golang-tests
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+    steps:
+      - uses: fgrosse/go-coverage-report@v1.3.1
+        with:
+          coverage-artifact-name: code-coverage-go
+          coverage-file-name: coverage.txt
 
   binary-build:
     name: Binaries Build Test

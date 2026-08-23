@@ -53,7 +53,7 @@ tests: tests-go tests-js
 
 .PHONY: tests-go
 tests-go:
-	$(GO) test -v ./...
+	$(GO) test -v -cover -coverprofile=coverage.txt ./...
 
 .PHONY: tests-js
 tests-js:
