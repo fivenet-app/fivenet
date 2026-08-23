@@ -35,6 +35,9 @@ __debug_bin*
 /fivenet.exe
 /fivenet.zip
 
+coverage.out
+coverage.txt
+
 # Localhost certs
 localhost.*
 
