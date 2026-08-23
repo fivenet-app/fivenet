@@ -510,9 +510,9 @@ onBeforeUnmount(() => (map = undefined));
     }
 
     .leaflet-marker-icon {
-        transition: transform 1s ease;
         background: none;
         border: none;
+        transition: transform 0.25s cubic-bezier(0, 0, 0.25, 1);
     }
 
     .leaflet-popup-content-wrapper {
