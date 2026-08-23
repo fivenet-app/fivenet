@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/tests"
@@ -28,7 +29,9 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotNil(t, store)
 
-	err = store.Start(ctx, false)
+	storeCtx, storeCancel := context.WithCancel(ctx)
+	defer storeCancel()
+	err = store.Start(storeCtx, false)
 	require.NoError(t, err)
 
 	// Check if the Jetstream KV was auto-created
