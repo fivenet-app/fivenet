@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -238,6 +239,12 @@ func TestLookupDemoCalendarAndCreateFallback(t *testing.T) {
 		require.NotNil(t, cal)
 		assert.Equal(t, int64(99), cal.GetId())
 		assert.Equal(t, fallbackName, cal.GetName())
+		require.True(t, cal.HasSystemKind())
+		assert.Equal(
+			t,
+			calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED,
+			cal.GetSystemKind(),
+		)
 		require.NoError(t, mock.ExpectationsWereMet())
 	})
 }

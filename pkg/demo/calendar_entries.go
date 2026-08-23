@@ -185,13 +185,7 @@ func (d *Demo) lookupDemoCalendar(
 ) (*calendarresource.Calendar, error) {
 	name := fmt.Sprintf(demoCalendarFallbackName, titleizeJob(job))
 
-	if cal, err := d.lookupDemoCalendarByName(ctx, job, name); err != nil {
-		return nil, err
-	} else if cal != nil {
-		return cal, nil
-	}
-
-	return d.lookupAnyDemoCalendar(ctx, job)
+	return d.lookupDemoCalendarByName(ctx, job, name)
 }
 
 func (d *Demo) lookupDemoCalendarByName(
@@ -204,23 +198,6 @@ func (d *Demo) lookupDemoCalendarByName(
 	dest := &calendarresource.Calendar{}
 	if err := stmt.QueryContext(ctx, d.db, dest); err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, fmt.Errorf("failed to lookup demo calendar by name. %w", err)
-	}
-	if dest.GetId() == 0 {
-		return nil, nil
-	}
-
-	return dest, nil
-}
-
-func (d *Demo) lookupAnyDemoCalendar(
-	ctx context.Context,
-	job string,
-) (*calendarresource.Calendar, error) {
-	stmt := d.demoAnyCalendarLookupStmt(job)
-
-	dest := &calendarresource.Calendar{}
-	if err := stmt.QueryContext(ctx, d.db, dest); err != nil && !errors.Is(err, qrm.ErrNoRows) {
-		return nil, fmt.Errorf("failed to lookup demo calendar. %w", err)
 	}
 	if dest.GetId() == 0 {
 		return nil, nil
@@ -258,34 +235,6 @@ func (d *Demo) demoCalendarLookupByNameStmt(job string, name string) mysql.Selec
 		LIMIT(1)
 }
 
-func (d *Demo) demoAnyCalendarLookupStmt(job string) mysql.SelectStatement {
-	return table.FivenetCalendar.
-		SELECT(
-			table.FivenetCalendar.ID,
-			table.FivenetCalendar.CreatedAt,
-			table.FivenetCalendar.UpdatedAt,
-			table.FivenetCalendar.DeletedAt,
-			table.FivenetCalendar.Job,
-			table.FivenetCalendar.Name,
-			table.FivenetCalendar.Public,
-			table.FivenetCalendar.Closed,
-			table.FivenetCalendar.Color,
-			table.FivenetCalendar.CreatorID,
-			table.FivenetCalendar.CreatorJob,
-			table.FivenetCalendar.SystemKind,
-		).
-		FROM(table.FivenetCalendar).
-		WHERE(mysql.AND(
-			table.FivenetCalendar.DeletedAt.IS_NULL(),
-			table.FivenetCalendar.Job.EQ(mysql.String(job)),
-		)).
-		ORDER_BY(
-			table.FivenetCalendar.Name.ASC(),
-			table.FivenetCalendar.ID.ASC(),
-		).
-		LIMIT(1)
-}
-
 func (d *Demo) createFallbackDemoCalendar(
 	ctx context.Context,
 	job string,
@@ -308,6 +257,7 @@ func (d *Demo) createFallbackDemoCalendar(
 		Closed: false,
 		Color:  demoCalendarColor,
 	}
+	cal.SetSystemKind(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED)
 
 	lastID, err := d.calendars.CreateCalendar(ctx, tx, cal, seedUser, nil)
 	if err != nil {
