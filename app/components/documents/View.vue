@@ -534,6 +534,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                                             trailingIcon:
                                                 'group-data-[state=open]:rotate-180 transition-transform duration-200' +
                                                 (open ? ' rotate-180' : ''),
+                                            label: 'flex-1',
                                         }"
                                     />
                                 </UTooltip>
