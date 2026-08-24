@@ -3,7 +3,7 @@ import type { ComputedRef, Ref } from 'vue';
 import type { DocumentData, PenaltyCalculatorData } from '~~/gen/ts/resources/documents/data/data';
 import PenaltyStats from './PenaltyStats.vue';
 import PenaltySummaryTable from './PenaltySummaryTable.vue';
-import { calculatePenaltySummary, resolvePenaltyCalculatorSelection } from './helpers';
+import { calculatePenaltySummary, normalizePenaltyCalculatorData, resolvePenaltyCalculatorSelection } from './helpers';
 
 const props = defineProps<{
     data?: PenaltyCalculatorData;
@@ -14,7 +14,7 @@ const { data: lawBooks } = useLazyAsyncData(`lawbooks`, () => completorStore.lis
 
 const documentData = inject<ComputedRef<DocumentData | undefined> | Ref<DocumentData | undefined>>('documents:content:data');
 
-const data = computed(() => props.data ?? documentData?.value?.penaltyCalculator);
+const data = computed(() => normalizePenaltyCalculatorData(props.data ?? documentData?.value?.penaltyCalculator));
 const selectedPenalties = computed(() => resolvePenaltyCalculatorSelection(data.value, lawBooks.value ?? []));
 const reduction = computed(() => data.value?.reduction ?? 0);
 const summary = computed(() => calculatePenaltySummary(selectedPenalties.value));

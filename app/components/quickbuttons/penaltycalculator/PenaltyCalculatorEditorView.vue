@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/vue-3';
 import PenaltyCalculatorDrawer from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorDrawer.vue';
-import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
+import { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import PenaltyStats from './PenaltyStats.vue';
 import PenaltySummaryTable from './PenaltySummaryTable.vue';
 import {
     calculatePenaltySummary,
+    normalizeDocumentData,
     resolvePenaltyCalculatorSelection,
     toPenaltyCalculatorData,
     type SelectedPenalty,
@@ -90,7 +91,7 @@ function clearWithConfirm(): void {
 }
 
 function ensureDocumentDataContainer(): DocumentData {
-    if (!documentData.value) documentData.value = {};
+    if (!documentData.value) documentData.value = DocumentData.create();
     return documentData.value;
 }
 
@@ -98,11 +99,13 @@ async function openEditDrawer(): Promise<void> {
     if (!props.editor.isEditable) return;
     if (!lawBooks.value || lawBooks.value.length === 0) await refresh();
 
+    const normalizedDocumentData = normalizeDocumentData(documentData.value);
+
     const snapshotSelected = [...selectedPenalties.value];
     const snapshotReduction = reduction.value;
 
-    selectedPenalties.value = resolvePenaltyCalculatorSelection(documentData.value?.penaltyCalculator, lawBooks.value ?? []);
-    reduction.value = documentData.value?.penaltyCalculator?.reduction ?? 0;
+    selectedPenalties.value = resolvePenaltyCalculatorSelection(normalizedDocumentData.penaltyCalculator, lawBooks.value ?? []);
+    reduction.value = normalizedDocumentData.penaltyCalculator?.reduction ?? 0;
 
     penaltyCalculatorDrawer.open({
         requireExplicitSave: true,

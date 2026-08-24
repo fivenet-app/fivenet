@@ -23,6 +23,7 @@ import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
+import { normalizeDocumentData } from '~/components/quickbuttons/penaltycalculator/helpers';
 import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
 import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
 import DraftBadge from '../partials/DraftBadge.vue';
@@ -60,7 +61,7 @@ const {
     error,
 } = useLazyAsyncData(`document-${props.documentId}`, () => documentsDocuments.getDocument(props.documentId));
 
-const documentData = computed<DocumentData | undefined>(() => doc.value?.document?.data);
+const documentData = computed<DocumentData | undefined>(() => normalizeDocumentData(doc.value?.document?.data));
 provide('documents:content:data', documentData);
 
 useHead({

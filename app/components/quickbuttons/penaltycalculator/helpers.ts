@@ -1,4 +1,8 @@
-import type { PenaltyCalculatorData } from '~~/gen/ts/resources/documents/data/data';
+import {
+    DocumentData,
+    PenaltyCalculatorData,
+    type PenaltyCalculatorData as PenaltyCalculatorDataType,
+} from '~~/gen/ts/resources/documents/data/data';
 import type { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 
 export type PenaltiesSummary = {
@@ -48,6 +52,23 @@ export function toPenaltyCalculatorData(selectedPenalties: SelectedPenalty[], re
             count: selectedPenalties.reduce((acc, curr) => acc + curr.count, 0),
         },
     };
+}
+
+export function normalizePenaltyCalculatorData(data: PenaltyCalculatorDataType | undefined): PenaltyCalculatorData | undefined {
+    if (!data) return undefined;
+
+    return PenaltyCalculatorData.create({
+        ...data,
+        reduction: data.reduction ?? 0,
+        selected: data.selected ?? [],
+    });
+}
+
+export function normalizeDocumentData(data: DocumentData | undefined): DocumentData {
+    return DocumentData.create({
+        ...data,
+        penaltyCalculator: normalizePenaltyCalculatorData(data?.penaltyCalculator),
+    });
 }
 
 export function resolvePenaltyCalculatorSelection(

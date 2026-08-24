@@ -16,7 +16,7 @@ import type { JobAccess, UserAccess } from '~~/gen/ts/resources/access/access';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
 import { Category } from '~~/gen/ts/resources/documents/category/category';
-import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
+import { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import type { DocumentReference } from '~~/gen/ts/resources/documents/references/references';
 import type { DocumentRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import type { File } from '~~/gen/ts/resources/file/file';
@@ -31,6 +31,7 @@ import CategoryBadge from '../partials/documents/CategoryBadge.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
 import ReferenceManager from './ReferenceManager.vue';
 import RelationManager from './RelationManager.vue';
+import { normalizeDocumentData } from '~/components/quickbuttons/penaltycalculator/helpers';
 
 const props = defineProps<{
     documentId: number;
@@ -90,7 +91,7 @@ function setFromProps(): void {
         state.access.users = document.value.access.users;
     }
     state.files = document.value.document.files;
-    state.data = document.value.document.data ?? {};
+    state.data = normalizeDocumentData(document.value.document.data);
 
     syncSnapshot();
 }
@@ -177,7 +178,7 @@ const schema = z.object({
         })
         .default({ jobs: [], users: [], qualifications: [] }),
     files: z.custom<File>().array().max(5).default([]),
-    data: z.custom<DocumentData>().optional().default({}),
+    data: z.custom<DocumentData>().optional().default(DocumentData.create()),
     references: z.custom<DocumentReference>().array().max(15).default([]),
     relations: z.custom<DocumentRelation>().array().max(15).default([]),
 });
@@ -198,7 +199,7 @@ const state = reactive<Schema>({
         qualifications: [],
     },
     files: [],
-    data: {},
+    data: DocumentData.create(),
     references: [],
     relations: [],
 });
