@@ -190,7 +190,7 @@ func (s *Server) DeleteMugshot(
 		return nil, errorscitizens.ErrJobGradeNoPermission
 	}
 
-	props, err := s.store.GetUserProps(ctx, s.db, userInfo.GetUserId())
+	props, err := s.store.GetUserProps(ctx, s.db, u.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -201,15 +201,15 @@ func (s *Server) DeleteMugshot(
 
 	if err := s.mugshotHandler.Delete(
 		ctx,
-		userInfo.GetUserId(),
+		u.GetUserId(),
 		props.GetMugshotFileId(),
 	); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	if err := usersactivity.CreateUserActivities(ctx, s.db, &usersactivity.UserActivity{
-		SourceUserId: &userInfo.UserId,
-		TargetUserId: req.GetUserId(),
+		SourceUserId: new(userInfo.UserId),
+		TargetUserId: u.GetUserId(),
 		Type:         usersactivity.UserActivityType_USER_ACTIVITY_TYPE_MUGSHOT,
 		Reason:       req.GetReason(),
 		Data: &usersactivity.UserActivityData{
