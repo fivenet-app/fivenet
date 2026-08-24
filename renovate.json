@@ -24,9 +24,19 @@
             "groupName": "go toolchain",
             "groupSlug": "go-toolchain",
             "rangeStrategy": "bump"
+        },
+        {
+            "matchDatasources": ["npm"],
+            "minimumReleaseAge": "3 days"
+        },
+        {
+            "matchManagers": ["gomod"],
+            "matchPackageNames": ["github.com/fivenet-app/fivenet/**"],
+            "minimumReleaseAge": null
         }
     ],
     "postUpdateOptions": ["gomodTidy", "pnpmDedupe"],
+    "dependencyDashboard": true,
     "nix": {
         "enabled": true
     },
