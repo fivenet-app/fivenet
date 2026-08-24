@@ -11,13 +11,13 @@ import (
 	"slices"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"testing"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/internal/tests"
 	"github.com/fivenet-app/fivenet/v2026/query"
 	_ "github.com/go-sql-driver/mysql"
+	mobyclient "github.com/moby/moby/client"
 	"github.com/ory/dockertest/v4"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
@@ -25,12 +25,16 @@ import (
 )
 
 const (
-	mysqlRootPassword = "secret"
-	mysqlUserPassword = "changeme"
-	mysqlSeedDBName   = "fivenet"
-	mysqlCharset      = "utf8mb4"
-	mysqlCollation    = "utf8mb4_unicode_ci"
-	mysqlTimezone     = "Europe/Berlin"
+	mysqlRootPassword        = "secret"
+	mysqlUserPassword        = "changeme"
+	mysqlSeedDBName          = "fivenet"
+	mysqlControlDBName       = "fivenet_test_control"
+	mysqlControlTableName    = "mysql_container_state"
+	sharedMySQLContainerName = "fivenet-mysql-test"
+	sharedMySQLBootstrapLock = "fivenet-mysql-bootstrap"
+	mysqlCharset             = "utf8mb4"
+	mysqlCollation           = "utf8mb4_unicode_ci"
+	mysqlTimezone            = "Europe/Berlin"
 
 	cleanupTimeout = 45 * time.Second
 )
@@ -57,16 +61,11 @@ func (e *setupUnavailableError) Unwrap() error {
 }
 
 type mysqlTestDBManager struct {
-	mu   sync.Mutex
-	cond *sync.Cond
+	mu sync.Mutex
 
-	pool     dockertest.ClosablePool
-	resource dockertest.ClosableResource
-	hasSeed  bool
-
-	cloneSeq    atomic.Uint64
-	cloneRefs   int
-	tearingDown bool
+	pool       dockertest.ClosablePool
+	sharedPort string
+	hasSeed    bool
 }
 
 var sharedMySQLTestDBManager = &mysqlTestDBManager{}
@@ -167,17 +166,20 @@ func (m *mysqlTestDBManager) acquire(
 ) (*sql.DB, string, func() error, error) {
 	t.Helper()
 	m.mu.Lock()
-	m.ensureCondLocked()
-	for m.tearingDown {
-		m.cond.Wait()
-	}
 	defer m.mu.Unlock()
+
+	if err := m.ensureSharedContainerLocked(ctx, t); err != nil {
+		return nil, "", nil, err
+	}
 
 	if err := m.ensureSeedLocked(ctx, t); err != nil {
 		return nil, "", nil, err
 	}
 
-	cloneName := fmt.Sprintf("%s_clone_%06d", mysqlSeedDBName, m.cloneSeq.Add(1))
+	cloneName, err := m.reserveCloneNameLocked(ctx)
+	if err != nil {
+		return nil, "", nil, err
+	}
 
 	if err := m.cloneSeedLocked(ctx, t, cloneName); err != nil {
 		return nil, "", nil, err
@@ -196,7 +198,11 @@ func (m *mysqlTestDBManager) acquire(
 		return nil, "", nil, fmt.Errorf("failed to ping cloned test database. %w", err)
 	}
 
-	m.cloneRefs++
+	if err := m.bumpActiveCloneLocked(ctx, 1); err != nil {
+		_ = db.Close()
+		_ = m.dropDatabaseLocked(ctx, cloneName)
+		return nil, "", nil, fmt.Errorf("failed to record active test database. %w", err)
+	}
 
 	release := func() error {
 		return m.releaseClone(t, cloneName)
@@ -211,6 +217,26 @@ func (m *mysqlTestDBManager) ensureSeedLocked(ctx context.Context, t *testing.T)
 		return nil
 	}
 
+	if err := m.ensureControlStateLocked(ctx, t); err != nil {
+		return err
+	}
+
+	ready, err := m.seedReadyLocked(ctx)
+	if err != nil {
+		return err
+	}
+	if !ready {
+		if err := m.bootstrapSeedLocked(ctx, t); err != nil {
+			return err
+		}
+	}
+
+	m.hasSeed = true
+	return nil
+}
+
+func (m *mysqlTestDBManager) ensureSharedContainerLocked(ctx context.Context, t *testing.T) error {
+	t.Helper()
 	if m.pool == nil {
 		pool, poolErr := dockertest.NewPool(ctx, "")
 		if poolErr != nil {
@@ -222,69 +248,76 @@ func (m *mysqlTestDBManager) ensureSeedLocked(ctx context.Context, t *testing.T)
 		m.pool = pool
 	}
 
-	if m.resource == nil {
-		image, tag := loadDockerComposeServiceImage(t, "mysql")
+	if m.sharedPort != "" {
+		return nil
+	}
 
-		resource, runErr := m.pool.Run(
-			ctx,
-			image,
-			dockertest.WithTag(tag),
-			dockertest.WithEnv([]string{
-				"MYSQL_ROOT_PASSWORD=" + mysqlRootPassword,
-				"MYSQL_USER=" + "fivenet",
-				"MYSQL_PASSWORD=" + mysqlUserPassword,
-				"MYSQL_DATABASE=" + mysqlSeedDBName,
-				"TZ=" + mysqlTimezone,
-			}),
-			dockertest.WithCmd([]string{
-				"mysqld",
-				"--innodb-ft-min-token-size=2",
-				"--innodb-ft-max-token-size=50",
-				"--default-time-zone=" + mysqlTimezone,
-			}),
-			dockertest.WithoutReuse(),
-		)
-		if runErr != nil {
-			return &setupUnavailableError{
-				err: runErr,
+	image, tag := loadDockerComposeServiceImage(t, "mysql")
+
+	resource, runErr := m.pool.Run(
+		ctx,
+		image,
+		dockertest.WithTag(tag),
+		dockertest.WithName(sharedMySQLContainerName),
+		dockertest.WithReuseID(sharedMySQLContainerName),
+		dockertest.WithEnv([]string{
+			"MYSQL_ROOT_PASSWORD=" + mysqlRootPassword,
+			"MYSQL_USER=" + "fivenet",
+			"MYSQL_PASSWORD=" + mysqlUserPassword,
+			"MYSQL_DATABASE=" + mysqlSeedDBName,
+			"TZ=" + mysqlTimezone,
+		}),
+		dockertest.WithCmd([]string{
+			"mysqld",
+			"--innodb-ft-min-token-size=2",
+			"--innodb-ft-max-token-size=50",
+			"--default-time-zone=" + mysqlTimezone,
+		}),
+	)
+	if runErr != nil {
+		if existing, ok := m.findSharedContainerLocked(ctx); ok {
+			m.sharedPort = existing.GetPort("3306/tcp")
+			if m.sharedPort != "" {
+				return m.waitForMySQLReadyLocked(ctx)
 			}
 		}
-
-		m.resource = resource
+		return &setupUnavailableError{
+			err: runErr,
+		}
 	}
 
-	if err := m.waitForSeedLocked(ctx); err != nil {
-		_ = m.resetLocked(t)
-		return fmt.Errorf("failed to wait for seed database to become ready. %w", err)
+	m.sharedPort = resource.GetPort("3306/tcp")
+	if m.sharedPort == "" {
+		return fmt.Errorf(
+			"shared mysql container %s has no published port",
+			sharedMySQLContainerName,
+		)
 	}
 
-	if err := m.prepareSeedLocked(ctx); err != nil {
-		_ = m.resetLocked(t)
-		return err
-	}
-
-	m.hasSeed = true
-	return nil
+	return m.waitForMySQLReadyLocked(ctx)
 }
 
-func (m *mysqlTestDBManager) waitForSeedLocked(ctx context.Context) error {
+func (m *mysqlTestDBManager) waitForMySQLReadyLocked(ctx context.Context) error {
 	return m.pool.Retry(ctx, 0, func() error {
-		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+		opCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
 		defer cancel()
 
-		db, err := m.openDB(mysqlSeedDBName, false)
+		db, err := m.openDB("mysql", false)
 		if err != nil {
-			return fmt.Errorf("failed to open seed database connection. %w", err)
+			return fmt.Errorf("failed to open shared mysql admin connection. %w", err)
 		}
 		defer db.Close()
 
-		if err := db.PingContext(ctx); err != nil {
-			return fmt.Errorf("failed to ping seed database. %w", err)
+		if err := db.PingContext(opCtx); err != nil {
+			return fmt.Errorf("failed to ping shared mysql container. %w", err)
 		}
 
-		rows, err := db.QueryContext(ctx, "SELECT 1;")
+		rows, err := db.QueryContext(opCtx, "SELECT 1;")
 		if err != nil {
-			return fmt.Errorf("failed to execute test query on seed database. %w", err)
+			return fmt.Errorf(
+				"failed to execute readiness query on shared mysql container. %w",
+				err,
+			)
 		}
 		defer rows.Close()
 
@@ -292,7 +325,238 @@ func (m *mysqlTestDBManager) waitForSeedLocked(ctx context.Context) error {
 	})
 }
 
-func (m *mysqlTestDBManager) prepareSeedLocked(ctx context.Context) error {
+func (m *mysqlTestDBManager) findSharedContainerLocked(
+	ctx context.Context,
+) (dockertest.ClosableResource, bool) {
+	containers, err := m.pool.Client().ContainerList(
+		ctx,
+		mobyclient.ContainerListOptions{
+			All:     true,
+			Filters: mobyclient.Filters{}.Add("name", sharedMySQLContainerName),
+		},
+	)
+	if err != nil || len(containers.Items) == 0 {
+		return nil, false
+	}
+
+	inspect, err := m.pool.Client().ContainerInspect(
+		ctx,
+		containers.Items[0].ID,
+		mobyclient.ContainerInspectOptions{},
+	)
+	if err != nil {
+		return nil, false
+	}
+
+	return dockertest.NewResource(inspect.Container), true
+}
+
+func (m *mysqlTestDBManager) ensureControlStateLocked(ctx context.Context, t *testing.T) error {
+	t.Helper()
+
+	adminDB, err := m.openDB("mysql", false)
+	if err != nil {
+		return fmt.Errorf("failed to open admin database for control setup. %w", err)
+	}
+	defer adminDB.Close()
+
+	if _, err := adminDB.ExecContext(
+		ctx,
+		fmt.Sprintf(
+			"CREATE DATABASE IF NOT EXISTS %s CHARACTER SET %s COLLATE %s;",
+			quoteMySQLIdent(mysqlControlDBName),
+			mysqlCharset,
+			mysqlCollation,
+		),
+	); err != nil {
+		return err
+	}
+
+	controlDB, err := m.openDB(mysqlControlDBName, false)
+	if err != nil {
+		return fmt.Errorf("failed to open control database. %w", err)
+	}
+	defer controlDB.Close()
+
+	stmt := fmt.Sprintf(
+		`CREATE TABLE IF NOT EXISTS %s (
+			id TINYINT UNSIGNED NOT NULL PRIMARY KEY,
+			seed_ready BOOLEAN NOT NULL DEFAULT 0,
+			next_clone_seq BIGINT UNSIGNED NOT NULL DEFAULT 1,
+			active_clones INT NOT NULL DEFAULT 0,
+			updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+		);`,
+		quoteMySQLIdent(mysqlControlTableName),
+	)
+	if _, err := controlDB.ExecContext(ctx, stmt); err != nil {
+		return fmt.Errorf("failed to create control state table. %w", err)
+	}
+
+	if _, err := controlDB.ExecContext(
+		ctx,
+		fmt.Sprintf(
+			`INSERT IGNORE INTO %s (id, seed_ready, next_clone_seq, active_clones)
+			 VALUES (1, 0, 1, 0);`,
+			quoteMySQLIdent(mysqlControlTableName),
+		),
+	); err != nil {
+		return fmt.Errorf("failed to initialize control state row. %w", err)
+	}
+
+	return nil
+}
+
+func (m *mysqlTestDBManager) seedReadyLocked(ctx context.Context) (bool, error) {
+	controlDB, err := m.openDB(mysqlControlDBName, false)
+	if err != nil {
+		return false, fmt.Errorf("failed to open control database. %w", err)
+	}
+	defer controlDB.Close()
+
+	var ready int
+	if err := controlDB.QueryRowContext(
+		ctx,
+		fmt.Sprintf(
+			"SELECT seed_ready FROM %s WHERE id = 1;",
+			quoteMySQLIdent(mysqlControlTableName),
+		),
+	).Scan(&ready); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil
+		}
+		return false, fmt.Errorf("failed to read seed ready state. %w", err)
+	}
+
+	return ready == 1, nil
+}
+
+func (m *mysqlTestDBManager) bootstrapSeedLocked(ctx context.Context, t *testing.T) error {
+	t.Helper()
+
+	controlDB, err := m.openDB(mysqlControlDBName, false)
+	if err != nil {
+		return fmt.Errorf("failed to open control database for bootstrap lock. %w", err)
+	}
+	defer controlDB.Close()
+
+	lockConn, err := controlDB.Conn(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to acquire control database connection. %w", err)
+	}
+	defer lockConn.Close()
+
+	gotLock, err := m.getBootstrapLockLocked(ctx, lockConn)
+	if err != nil {
+		return err
+	}
+	if !gotLock {
+		return m.waitForSeedReadyLocked(ctx)
+	}
+	defer func() {
+		var released sql.NullInt64
+		_ = lockConn.QueryRowContext(
+			context.Background(),
+			"SELECT RELEASE_LOCK(?)",
+			sharedMySQLBootstrapLock,
+		).Scan(&released)
+	}()
+
+	ready, err := m.seedReadyLocked(ctx)
+	if err != nil {
+		return err
+	}
+	if ready {
+		return nil
+	}
+
+	if err := m.rebuildSeedDatabaseLocked(ctx, t); err != nil {
+		return err
+	}
+
+	if err := m.markSeedReadyLocked(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *mysqlTestDBManager) getBootstrapLockLocked(
+	ctx context.Context,
+	conn *sql.Conn,
+) (bool, error) {
+	var result int
+	if err := conn.QueryRowContext(
+		ctx,
+		"SELECT GET_LOCK(?, 0)",
+		sharedMySQLBootstrapLock,
+	).Scan(&result); err != nil {
+		return false, fmt.Errorf("failed to acquire bootstrap lock. %w", err)
+	}
+
+	return result == 1, nil
+}
+
+func (m *mysqlTestDBManager) waitForSeedReadyLocked(ctx context.Context) error {
+	ticker := time.NewTicker(500 * time.Millisecond)
+	defer ticker.Stop()
+
+	for {
+		ready, err := m.seedReadyLocked(ctx)
+		if err != nil {
+			return err
+		}
+		if ready {
+			return nil
+		}
+
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-ticker.C:
+		}
+	}
+}
+
+func (m *mysqlTestDBManager) markSeedReadyLocked(ctx context.Context) error {
+	controlDB, err := m.openDB(mysqlControlDBName, false)
+	if err != nil {
+		return fmt.Errorf("failed to open control database for seed state update. %w", err)
+	}
+	defer controlDB.Close()
+
+	_, err = controlDB.ExecContext(
+		ctx,
+		fmt.Sprintf(
+			`UPDATE %s
+			 SET seed_ready = 1
+			 WHERE id = 1;`,
+			quoteMySQLIdent(mysqlControlTableName),
+		),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to mark seed database ready. %w", err)
+	}
+
+	return nil
+}
+
+func (m *mysqlTestDBManager) rebuildSeedDatabaseLocked(ctx context.Context, t *testing.T) error {
+	t.Helper()
+
+	if err := m.dropDatabaseLocked(ctx, mysqlSeedDBName); err != nil {
+		return err
+	}
+
+	adminDB, err := m.openDB("mysql", false)
+	if err != nil {
+		return fmt.Errorf("failed to open admin database for seed setup. %w", err)
+	}
+	defer adminDB.Close()
+
+	if err := m.createDatabaseLocked(ctx, adminDB, mysqlSeedDBName); err != nil {
+		return err
+	}
+
 	if _, err := query.MigrateDB(
 		ctx,
 		zap.NewNop(),
@@ -305,6 +569,112 @@ func (m *mysqlTestDBManager) prepareSeedLocked(ctx context.Context) error {
 
 	if err := m.loadBaseDataLocked(ctx); err != nil {
 		return fmt.Errorf("failed to load base data into seed database. %w", err)
+	}
+
+	return nil
+}
+
+func (m *mysqlTestDBManager) reserveCloneNameLocked(ctx context.Context) (string, error) {
+	controlDB, err := m.openDB(mysqlControlDBName, false)
+	if err != nil {
+		return "", fmt.Errorf("failed to open control database for clone reservation. %w", err)
+	}
+	defer controlDB.Close()
+
+	tx, err := controlDB.BeginTx(ctx, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to begin control database transaction. %w", err)
+	}
+	defer func() {
+		_ = tx.Rollback()
+	}()
+
+	row := tx.QueryRowContext(
+		ctx,
+		fmt.Sprintf(
+			`SELECT next_clone_seq
+			 FROM %s
+			 WHERE id = 1
+			 FOR UPDATE;`,
+			quoteMySQLIdent(mysqlControlTableName),
+		),
+	)
+
+	var seq uint64
+	if err := row.Scan(&seq); err != nil {
+		return "", fmt.Errorf("failed to read next clone sequence. %w", err)
+	}
+
+	if _, err := tx.ExecContext(
+		ctx,
+		fmt.Sprintf(
+			`UPDATE %s
+			 SET next_clone_seq = next_clone_seq + 1
+			 WHERE id = 1;`,
+			quoteMySQLIdent(mysqlControlTableName),
+		),
+	); err != nil {
+		return "", fmt.Errorf("failed to advance next clone sequence. %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return "", fmt.Errorf("failed to commit clone sequence reservation. %w", err)
+	}
+
+	return fmt.Sprintf("%s_clone_%06d", mysqlSeedDBName, seq), nil
+}
+
+func (m *mysqlTestDBManager) bumpActiveCloneLocked(ctx context.Context, delta int) error {
+	controlDB, err := m.openDB(mysqlControlDBName, false)
+	if err != nil {
+		return fmt.Errorf("failed to open control database for clone accounting. %w", err)
+	}
+	defer controlDB.Close()
+
+	tx, err := controlDB.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to begin control accounting transaction. %w", err)
+	}
+	defer func() {
+		_ = tx.Rollback()
+	}()
+
+	row := tx.QueryRowContext(
+		ctx,
+		fmt.Sprintf(
+			`SELECT active_clones
+			 FROM %s
+			 WHERE id = 1
+			 FOR UPDATE;`,
+			quoteMySQLIdent(mysqlControlTableName),
+		),
+	)
+
+	var current int
+	if err := row.Scan(&current); err != nil {
+		return fmt.Errorf("failed to read active clone count. %w", err)
+	}
+
+	next := current + delta
+	if next < 0 {
+		return fmt.Errorf("active clone count would become negative: %d", next)
+	}
+
+	if _, err := tx.ExecContext(
+		ctx,
+		fmt.Sprintf(
+			`UPDATE %s
+			 SET active_clones = ?
+			 WHERE id = 1;`,
+			quoteMySQLIdent(mysqlControlTableName),
+		),
+		next,
+	); err != nil {
+		return fmt.Errorf("failed to update active clone count. %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit active clone count update. %w", err)
 	}
 
 	return nil
@@ -591,71 +961,23 @@ func (m *mysqlTestDBManager) dropDatabaseUsingCleanupLocked(db *sql.DB, dbName s
 
 func (m *mysqlTestDBManager) releaseClone(t *testing.T, cloneName string) error {
 	t.Helper()
-	m.mu.Lock()
-	m.ensureCondLocked()
 
-	if m.cloneRefs > 0 {
-		m.cloneRefs--
+	if err := m.dropDatabaseLockedCleanup(cloneName); err != nil {
+		return err
 	}
-
-	finalRelease := m.cloneRefs == 0
-	if finalRelease {
-		m.tearingDown = true
-	}
-	m.mu.Unlock()
-
-	err := m.dropDatabaseLockedCleanup(cloneName)
-
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	if finalRelease {
-		if resetErr := m.resetLocked(t); resetErr != nil {
-			if err != nil {
-				return errors.Join(err, resetErr)
-			}
-			err = resetErr
-		}
-		m.tearingDown = false
-		m.cond.Broadcast()
-	}
-
-	return err
-}
-
-func (m *mysqlTestDBManager) resetLocked(t *testing.T) error {
-	t.Helper()
-	if m.resource == nil {
-		m.hasSeed = false
-		return nil
-	}
-
-	resource := m.resource
-	m.resource = nil
-	m.hasSeed = false
-	m.cloneRefs = 0
 
 	ctx, cancel := cleanupContext()
 	defer cancel()
 
-	var errs []error
-	if err := resource.Close(ctx); err != nil {
-		errs = append(errs, fmt.Errorf("failed to close shared mysql test container. %w", err))
+	if err := m.bumpActiveCloneLocked(ctx, -1); err != nil {
+		return err
 	}
 
-	if m.pool != nil {
-		pool := m.pool
-		m.pool = nil
-		if err := pool.Close(ctx); err != nil {
-			errs = append(errs, fmt.Errorf("failed to close shared mysql test pool. %w", err))
-		}
-	}
-
-	return errors.Join(errs...)
+	return nil
 }
 
 func (m *mysqlTestDBManager) dropDatabaseLocked(ctx context.Context, dbName string) error {
-	db, err := m.openDB(mysqlSeedDBName, false)
+	db, err := m.openDB("mysql", false)
 	if err != nil {
 		return fmt.Errorf("failed to open database manager connection for drop. %w", err)
 	}
@@ -681,6 +1003,9 @@ func (m *mysqlTestDBManager) dropDatabaseLockedCleanup(dbName string) error {
 
 func (m *mysqlTestDBManager) openDB(dbName string, multiStatements bool) (*sql.DB, error) {
 	dsn := m.dsnForDB(dbName, multiStatements)
+	if dsn == "" {
+		return nil, fmt.Errorf("shared mysql container port is not initialized")
+	}
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err
@@ -689,17 +1014,15 @@ func (m *mysqlTestDBManager) openDB(dbName string, multiStatements bool) (*sql.D
 	return db, nil
 }
 
-func (m *mysqlTestDBManager) ensureCondLocked() {
-	if m.cond == nil {
-		m.cond = sync.NewCond(&m.mu)
-	}
-}
-
 func (m *mysqlTestDBManager) dsnForDB(dbName string, multiStatements bool) string {
+	if m.sharedPort == "" {
+		return ""
+	}
+
 	dsn := fmt.Sprintf(
 		"root:%s@(127.0.0.1:%s)/%s?collation=%s&loc=Local&parseTime=true",
 		mysqlRootPassword,
-		m.resource.GetPort("3306/tcp"),
+		m.sharedPort,
 		dbName,
 		mysqlCollation,
 	)
