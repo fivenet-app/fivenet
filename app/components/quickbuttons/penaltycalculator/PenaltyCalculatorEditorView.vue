@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/vue-3';
 import PenaltyCalculatorDrawer from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorDrawer.vue';
-import { DocumentData } from '~~/gen/ts/resources/documents/data/data';
+import { DocumentData, PenaltyCalculatorData } from '~~/gen/ts/resources/documents/data/data';
 import PenaltyStats from './PenaltyStats.vue';
 import PenaltySummaryTable from './PenaltySummaryTable.vue';
 import {
@@ -87,7 +87,7 @@ function clearWithConfirm(): void {
     }
 
     resetClearConfirm();
-    if (documentData.value?.penaltyCalculator) documentData.value.penaltyCalculator = undefined;
+    if (documentData.value) documentData.value.penaltyCalculator = PenaltyCalculatorData.create();
 }
 
 function ensureDocumentDataContainer(): DocumentData {

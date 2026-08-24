@@ -72,12 +72,13 @@ export function useYArray<T extends object | Primitive>(
     };
 
     const writeLocalToY = () => {
+        const localItems = Array.isArray(items.value) ? items.value : [];
         yArray.doc?.transact(() => {
             yArray.delete(0, yArray.length);
             if (isPrimitiveMode()) {
-                yArray.insert(0, items.value as unknown as MaybeMap[]);
+                yArray.insert(0, localItems as unknown as MaybeMap[]);
             } else {
-                const maps = (items.value as unknown as object[]).map((o) => {
+                const maps = (localItems as unknown as object[]).map((o) => {
                     const m = new Y.Map(Object.entries(o));
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     useYStructure(m, o as any);
@@ -177,9 +178,10 @@ export function useYArrayFiltered<T extends object>(
     };
 
     const writeLocalToY = () => {
+        const localItems = Array.isArray(items.value) ? items.value : [];
         yArr.doc?.transact(() => {
             yArr.delete(0, yArr.length);
-            const maps = items.value.map((o) => new Y.Map(Object.entries(serialize(o))));
+            const maps = localItems.map((o) => new Y.Map(Object.entries(serialize(o))));
             yArr.insert(0, maps);
         }, LOCAL_ORIGIN);
     };

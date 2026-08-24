@@ -32,6 +32,15 @@ const reduction = useState<number>('quickButton:penaltyCalculator:reduction', ()
 
 const summary = computed(() => calculatePenaltySummary(selectedPenalties.value));
 
+function normalizeReductionValue(value: number | number[] | null | undefined): number {
+    if (Array.isArray(value)) return value[0] ?? 0;
+    return value ?? 0;
+}
+
+function updateReductionValue(value: number | number[] | null | undefined): void {
+    reduction.value = normalizeReductionValue(value);
+}
+
 const filteredLawBooks = computed(() =>
     lawBooks.value
         ?.map((book) => {
@@ -274,7 +283,14 @@ const columns = computed(
             <p class="font-semibold">
                 {{ $t('common.reduction') }}
             </p>
-            <USlider v-model="reduction" size="sm" :min="0" :max="maxLeeway" :step="1" />
+            <USlider
+                :model-value="reduction"
+                size="sm"
+                :min="0"
+                :max="maxLeeway"
+                :step="1"
+                @update:model-value="updateReductionValue"
+            />
             <p class="w-12">{{ reduction }}%</p>
         </div>
 
