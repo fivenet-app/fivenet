@@ -79,7 +79,7 @@ const items = computed<NavigationMenuItem[]>(
                 label: t('common.group', 2),
                 icon: 'i-mdi-users-group-outline',
                 to: '/jobs/groups',
-                permission: 'TODOService/TODOMethod' as Perms,
+                permission: 'jobs.GroupsService/ListGroups' as Perms,
             },
         ].filter((t) => t.permission === undefined || can(t.permission).value) as (NavigationMenuItem & {
             permission?: Perms | Perms[];

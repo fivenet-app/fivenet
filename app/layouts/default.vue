@@ -168,7 +168,7 @@ const items = computed<NavigationMenuItem[]>(() =>
                     label: t('common.group', 2),
                     icon: 'i-mdi-users-group-outline',
                     to: '/jobs/groups',
-                    permission: 'TODOService/TODOMethod' as Perms,
+                    permission: 'jobs.GroupsService/ListGroups' as Perms,
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             permission: 'jobs.ColleaguesService/ListColleagues' as Perms,
