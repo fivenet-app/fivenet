@@ -335,6 +335,9 @@ func (s *Server) ListGroupRules(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	s.enrichGroupRuleGradeLabels(group.GetJob(), rules...)
+	if err := s.enrichGroupRuleQualifications(ctx, rules...); err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
 	resp.Rules = rules
 
 	targets := appendGroupRuleColleagueTargets(nil, resp.GetRules())

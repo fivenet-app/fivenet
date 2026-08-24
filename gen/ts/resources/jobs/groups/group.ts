@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { QualificationShort } from "../../qualifications/qualifications";
 import { Timestamp } from "../../timestamp/timestamp";
 import { Colleague } from "../colleagues/colleagues";
 import { File } from "../../file/file";
@@ -337,6 +338,12 @@ export interface GroupQualificationRule {
      * @generated from protobuf field: bool require_completed = 3
      */
     requireCompleted: boolean;
+    /**
+     * Hydrated display data for the UI.
+     *
+     * @generated from protobuf field: repeated resources.qualifications.QualificationShort qualifications = 4
+     */
+    qualifications: QualificationShort[];
 }
 /**
  * @generated from protobuf message resources.jobs.groups.GroupRule
@@ -1285,7 +1292,8 @@ class GroupQualificationRule$Type extends MessageType<GroupQualificationRule> {
         super("resources.jobs.groups.GroupQualificationRule", [
             { no: 1, name: "type", kind: "enum", T: () => ["resources.jobs.groups.GroupQualificationRuleType", GroupQualificationRuleType, "GROUP_QUALIFICATION_RULE_TYPE_"] },
             { no: 2, name: "qualification_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "require_completed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "require_completed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "qualifications", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationShort }
         ]);
     }
     create(value?: PartialMessage<GroupQualificationRule>): GroupQualificationRule {
@@ -1293,6 +1301,7 @@ class GroupQualificationRule$Type extends MessageType<GroupQualificationRule> {
         message.type = 0;
         message.qualificationIds = [];
         message.requireCompleted = false;
+        message.qualifications = [];
         if (value !== undefined)
             reflectionMergePartial<GroupQualificationRule>(this, message, value);
         return message;
@@ -1314,6 +1323,9 @@ class GroupQualificationRule$Type extends MessageType<GroupQualificationRule> {
                     break;
                 case /* bool require_completed */ 3:
                     message.requireCompleted = reader.bool();
+                    break;
+                case /* repeated resources.qualifications.QualificationShort qualifications */ 4:
+                    message.qualifications.push(QualificationShort.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1340,6 +1352,9 @@ class GroupQualificationRule$Type extends MessageType<GroupQualificationRule> {
         /* bool require_completed = 3; */
         if (message.requireCompleted !== false)
             writer.tag(3, WireType.Varint).bool(message.requireCompleted);
+        /* repeated resources.qualifications.QualificationShort qualifications = 4; */
+        for (let i = 0; i < message.qualifications.length; i++)
+            QualificationShort.internalBinaryWrite(message.qualifications[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

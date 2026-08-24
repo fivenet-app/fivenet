@@ -249,6 +249,28 @@ func (m *GroupMembershipReason) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *GroupQualificationRule) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Qualifications
+	for idx, item := range m.Qualifications {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GroupResolvedMember) Sanitize() error {
 	if m == nil {
 		return nil

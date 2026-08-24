@@ -4585,6 +4585,509 @@ Policy snapshot applied to a specific version
 
 
 
+## resources/qualifications/access/access.proto
+
+ <!-- end messages -->
+
+
+### resources.qualifications.access.AccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_REQUEST` | 3 |  |
+| `ACCESS_LEVEL_TAKE` | 4 |  |
+| `ACCESS_LEVEL_GRADE` | 5 |  |
+| `ACCESS_LEVEL_EDIT` | 6 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/qualifications/exam/exam.proto
+
+
+### resources.qualifications.exam.ExamGrading
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `responses` | [ExamGradingResponse](#resourcesqualificationsexamExamGradingResponse) | repeated |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamGradingResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `question_id` | [int64](#int64) |  |  |
+| `points` | [float](#float) |  |  |
+| `checked` | [bool](#bool) | optional |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestion
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `data` | [ExamQuestionData](#resourcesqualificationsexamExamQuestionData) |  |  |
+| `answer` | [ExamQuestionAnswerData](#resourcesqualificationsexamExamQuestionAnswerData) | optional |  |
+| `points` | [int32](#int32) | optional |  |
+| `order` | [int32](#int32) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionAnswerData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `answer_key` | [string](#string) |  |  |
+| `yesno` | [ExamResponseYesNo](#resourcesqualificationsexamExamResponseYesNo) |  |  |
+| `free_text` | [ExamResponseText](#resourcesqualificationsexamExamResponseText) |  |  |
+| `single_choice` | [ExamResponseSingleChoice](#resourcesqualificationsexamExamResponseSingleChoice) |  |  |
+| `multiple_choice` | [ExamResponseMultipleChoice](#resourcesqualificationsexamExamResponseMultipleChoice) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `separator` | [ExamQuestionSeparator](#resourcesqualificationsexamExamQuestionSeparator) |  |  |
+| `image` | [ExamQuestionImage](#resourcesqualificationsexamExamQuestionImage) |  |  |
+| `yesno` | [ExamQuestionYesNo](#resourcesqualificationsexamExamQuestionYesNo) |  |  |
+| `free_text` | [ExamQuestionText](#resourcesqualificationsexamExamQuestionText) |  |  |
+| `single_choice` | [ExamQuestionSingleChoice](#resourcesqualificationsexamExamQuestionSingleChoice) |  |  |
+| `multiple_choice` | [ExamQuestionMultipleChoice](#resourcesqualificationsexamExamQuestionMultipleChoice) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionImage
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `image` | [resources.file.File](#resourcesfileFile) |  |  |
+| `alt` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionMultipleChoice
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `choices` | [string](#string) | repeated |  |
+| `limit` | [int32](#int32) | optional |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionSeparator
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionSingleChoice
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `choices` | [string](#string) | repeated |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionText
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `min_length` | [int32](#int32) |  |  |
+| `max_length` | [int32](#int32) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestionYesNo
+
+
+
+
+
+### resources.qualifications.exam.ExamQuestions
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `questions` | [ExamQuestion](#resourcesqualificationsexamExamQuestion) | repeated |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `question_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `question` | [ExamQuestion](#resourcesqualificationsexamExamQuestion) |  |  |
+| `response` | [ExamResponseData](#resourcesqualificationsexamExamResponseData) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `separator` | [ExamResponseSeparator](#resourcesqualificationsexamExamResponseSeparator) |  |  |
+| `yesno` | [ExamResponseYesNo](#resourcesqualificationsexamExamResponseYesNo) |  |  |
+| `free_text` | [ExamResponseText](#resourcesqualificationsexamExamResponseText) |  |  |
+| `single_choice` | [ExamResponseSingleChoice](#resourcesqualificationsexamExamResponseSingleChoice) |  |  |
+| `multiple_choice` | [ExamResponseMultipleChoice](#resourcesqualificationsexamExamResponseMultipleChoice) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseMultipleChoice
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `choices` | [string](#string) | repeated |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseSeparator
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseSingleChoice
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `choice` | [string](#string) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseText
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `text` | [string](#string) |  | 0.5 Megabyte |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponseYesNo
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `value` | [bool](#bool) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamResponses
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `qualification_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `responses` | [ExamResponse](#resourcesqualificationsexamExamResponse) | repeated |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamUser
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `qualification_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `ends_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `ended_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### resources.qualifications.exam.QualificationExamSettings
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `time` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
+| `auto_grade` | [bool](#bool) |  |  |
+| `auto_grade_mode` | [AutoGradeMode](#resourcesqualificationsexamAutoGradeMode) |  |  |
+| `minimum_points` | [int32](#int32) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.qualifications.exam.AutoGradeMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `AUTO_GRADE_MODE_UNSPECIFIED` | 0 |  |
+| `AUTO_GRADE_MODE_STRICT` | 1 |  |
+| `AUTO_GRADE_MODE_PARTIAL_CREDIT` | 2 |  |
+
+
+
+### resources.qualifications.exam.QualificationExamMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `QUALIFICATION_EXAM_MODE_UNSPECIFIED` | 0 |  |
+| `QUALIFICATION_EXAM_MODE_DISABLED` | 1 |  |
+| `QUALIFICATION_EXAM_MODE_REQUEST_NEEDED` | 2 |  |
+| `QUALIFICATION_EXAM_MODE_ENABLED` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/qualifications/qualifications.proto
+
+
+### resources.qualifications.Qualification
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `job` | [string](#string) |  |  |
+| `weight` | [uint32](#uint32) |  |  |
+| `closed` | [bool](#bool) |  |  |
+| `draft` | [bool](#bool) |  |  |
+| `public` | [bool](#bool) |  |  |
+| `abbreviation` | [string](#string) |  |  |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `creator_job` | [string](#string) |  |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
+| `requirements` | [QualificationRequirement](#resourcesqualificationsQualificationRequirement) | repeated |  |
+| `discord_sync_enabled` | [bool](#bool) |  |  |
+| `discord_settings` | [QualificationDiscordSettings](#resourcesqualificationsQualificationDiscordSettings) | optional |  |
+| `exam_mode` | [exam.QualificationExamMode](#resourcesqualificationsexamQualificationExamMode) |  |  |
+| `exam_settings` | [exam.QualificationExamSettings](#resourcesqualificationsexamQualificationExamSettings) | optional |  |
+| `exam` | [exam.ExamQuestions](#resourcesqualificationsexamExamQuestions) | optional |  |
+| `result` | [QualificationResult](#resourcesqualificationsQualificationResult) | optional |  |
+| `request` | [QualificationRequest](#resourcesqualificationsQualificationRequest) | optional |  |
+| `label_sync_enabled` | [bool](#bool) |  |  |
+| `label_sync_format` | [string](#string) | optional |  |
+| `files` | [resources.file.File](#resourcesfileFile) | repeated |  |
+
+
+
+
+
+### resources.qualifications.QualificationDiscordSettings
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role_name` | [string](#string) | optional |  |
+| `role_format` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.qualifications.QualificationRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
+| `user_comment` | [string](#string) | optional |  |
+| `status` | [RequestStatus](#resourcesqualificationsRequestStatus) | optional |  |
+| `approved_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `approver_comment` | [string](#string) | optional |  |
+| `approver_id` | [int32](#int32) | optional |  |
+| `approver` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `approver_job` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.qualifications.QualificationRequirement
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `target_qualification_id` | [int64](#int64) |  |  |
+| `target_qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
+
+
+
+
+
+### resources.qualifications.QualificationResult
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
+| `status` | [ResultStatus](#resourcesqualificationsResultStatus) |  |  |
+| `score` | [float](#float) | optional |  |
+| `summary` | [string](#string) |  |  |
+| `creator_id` | [int32](#int32) |  |  |
+| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
+| `creator_job` | [string](#string) |  |  |
+
+
+
+
+
+### resources.qualifications.QualificationShort
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `job` | [string](#string) |  |  |
+| `weight` | [uint32](#uint32) |  |  |
+| `closed` | [bool](#bool) |  |  |
+| `draft` | [bool](#bool) |  |  |
+| `public` | [bool](#bool) |  |  |
+| `abbreviation` | [string](#string) |  |  |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `creator_job` | [string](#string) |  |  |
+| `requirements` | [QualificationRequirement](#resourcesqualificationsQualificationRequirement) | repeated |  |
+| `exam_mode` | [exam.QualificationExamMode](#resourcesqualificationsexamQualificationExamMode) |  |  |
+| `exam_settings` | [exam.QualificationExamSettings](#resourcesqualificationsexamQualificationExamSettings) | optional |  |
+| `result` | [QualificationResult](#resourcesqualificationsQualificationResult) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.qualifications.RequestStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `REQUEST_STATUS_UNSPECIFIED` | 0 |  |
+| `REQUEST_STATUS_PENDING` | 1 |  |
+| `REQUEST_STATUS_DENIED` | 2 |  |
+| `REQUEST_STATUS_ACCEPTED` | 3 |  |
+| `REQUEST_STATUS_EXAM_STARTED` | 4 |  |
+| `REQUEST_STATUS_EXAM_GRADING` | 5 |  |
+| `REQUEST_STATUS_COMPLETED` | 6 |  |
+
+
+
+### resources.qualifications.ResultStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `RESULT_STATUS_UNSPECIFIED` | 0 |  |
+| `RESULT_STATUS_PENDING` | 1 |  |
+| `RESULT_STATUS_FAILED` | 2 |  |
+| `RESULT_STATUS_SUCCESSFUL` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/jobs/groups/group.proto
 
 
@@ -4710,6 +5213,7 @@ Policy snapshot applied to a specific version
 | `type` | [GroupQualificationRuleType](#resourcesjobsgroupsGroupQualificationRuleType) |  | Determines whether all or any listed qualifications are required. |
 | `qualification_ids` | [int64](#int64) | repeated | Qualification IDs checked by this rule. |
 | `require_completed` | [bool](#bool) |  | If true, only completed/successful qualifications count. |
+| `qualifications` | [resources.qualifications.QualificationShort](#resourcesqualificationsQualificationShort) | repeated | Hydrated display data for the UI. |
 
 
 
@@ -6213,509 +6717,6 @@ User related events
 
 
  <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/qualifications/access/access.proto
-
- <!-- end messages -->
-
-
-### resources.qualifications.access.AccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `ACCESS_LEVEL_VIEW` | 2 |  |
-| `ACCESS_LEVEL_REQUEST` | 3 |  |
-| `ACCESS_LEVEL_TAKE` | 4 |  |
-| `ACCESS_LEVEL_GRADE` | 5 |  |
-| `ACCESS_LEVEL_EDIT` | 6 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/qualifications/exam/exam.proto
-
-
-### resources.qualifications.exam.ExamGrading
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `responses` | [ExamGradingResponse](#resourcesqualificationsexamExamGradingResponse) | repeated |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamGradingResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `question_id` | [int64](#int64) |  |  |
-| `points` | [float](#float) |  |  |
-| `checked` | [bool](#bool) | optional |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestion
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `qualification_id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `title` | [string](#string) |  |  |
-| `description` | [string](#string) | optional |  |
-| `data` | [ExamQuestionData](#resourcesqualificationsexamExamQuestionData) |  |  |
-| `answer` | [ExamQuestionAnswerData](#resourcesqualificationsexamExamQuestionAnswerData) | optional |  |
-| `points` | [int32](#int32) | optional |  |
-| `order` | [int32](#int32) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionAnswerData
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `answer_key` | [string](#string) |  |  |
-| `yesno` | [ExamResponseYesNo](#resourcesqualificationsexamExamResponseYesNo) |  |  |
-| `free_text` | [ExamResponseText](#resourcesqualificationsexamExamResponseText) |  |  |
-| `single_choice` | [ExamResponseSingleChoice](#resourcesqualificationsexamExamResponseSingleChoice) |  |  |
-| `multiple_choice` | [ExamResponseMultipleChoice](#resourcesqualificationsexamExamResponseMultipleChoice) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionData
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `separator` | [ExamQuestionSeparator](#resourcesqualificationsexamExamQuestionSeparator) |  |  |
-| `image` | [ExamQuestionImage](#resourcesqualificationsexamExamQuestionImage) |  |  |
-| `yesno` | [ExamQuestionYesNo](#resourcesqualificationsexamExamQuestionYesNo) |  |  |
-| `free_text` | [ExamQuestionText](#resourcesqualificationsexamExamQuestionText) |  |  |
-| `single_choice` | [ExamQuestionSingleChoice](#resourcesqualificationsexamExamQuestionSingleChoice) |  |  |
-| `multiple_choice` | [ExamQuestionMultipleChoice](#resourcesqualificationsexamExamQuestionMultipleChoice) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionImage
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `image` | [resources.file.File](#resourcesfileFile) |  |  |
-| `alt` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionMultipleChoice
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `choices` | [string](#string) | repeated |  |
-| `limit` | [int32](#int32) | optional |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionSeparator
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionSingleChoice
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `choices` | [string](#string) | repeated |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionText
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `min_length` | [int32](#int32) |  |  |
-| `max_length` | [int32](#int32) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestionYesNo
-
-
-
-
-
-### resources.qualifications.exam.ExamQuestions
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `questions` | [ExamQuestion](#resourcesqualificationsexamExamQuestion) | repeated |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `question_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `question` | [ExamQuestion](#resourcesqualificationsexamExamQuestion) |  |  |
-| `response` | [ExamResponseData](#resourcesqualificationsexamExamResponseData) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseData
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `separator` | [ExamResponseSeparator](#resourcesqualificationsexamExamResponseSeparator) |  |  |
-| `yesno` | [ExamResponseYesNo](#resourcesqualificationsexamExamResponseYesNo) |  |  |
-| `free_text` | [ExamResponseText](#resourcesqualificationsexamExamResponseText) |  |  |
-| `single_choice` | [ExamResponseSingleChoice](#resourcesqualificationsexamExamResponseSingleChoice) |  |  |
-| `multiple_choice` | [ExamResponseMultipleChoice](#resourcesqualificationsexamExamResponseMultipleChoice) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseMultipleChoice
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `choices` | [string](#string) | repeated |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseSeparator
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseSingleChoice
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `choice` | [string](#string) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseText
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `text` | [string](#string) |  | 0.5 Megabyte |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponseYesNo
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `value` | [bool](#bool) |  |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamResponses
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `qualification_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `responses` | [ExamResponse](#resourcesqualificationsexamExamResponse) | repeated |  |
-
-
-
-
-
-### resources.qualifications.exam.ExamUser
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `qualification_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `ends_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `ended_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-
-
-
-
-
-### resources.qualifications.exam.QualificationExamSettings
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `time` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
-| `auto_grade` | [bool](#bool) |  |  |
-| `auto_grade_mode` | [AutoGradeMode](#resourcesqualificationsexamAutoGradeMode) |  |  |
-| `minimum_points` | [int32](#int32) |  |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.qualifications.exam.AutoGradeMode
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `AUTO_GRADE_MODE_UNSPECIFIED` | 0 |  |
-| `AUTO_GRADE_MODE_STRICT` | 1 |  |
-| `AUTO_GRADE_MODE_PARTIAL_CREDIT` | 2 |  |
-
-
-
-### resources.qualifications.exam.QualificationExamMode
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `QUALIFICATION_EXAM_MODE_UNSPECIFIED` | 0 |  |
-| `QUALIFICATION_EXAM_MODE_DISABLED` | 1 |  |
-| `QUALIFICATION_EXAM_MODE_REQUEST_NEEDED` | 2 |  |
-| `QUALIFICATION_EXAM_MODE_ENABLED` | 3 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/qualifications/qualifications.proto
-
-
-### resources.qualifications.Qualification
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `job` | [string](#string) |  |  |
-| `weight` | [uint32](#uint32) |  |  |
-| `closed` | [bool](#bool) |  |  |
-| `draft` | [bool](#bool) |  |  |
-| `public` | [bool](#bool) |  |  |
-| `abbreviation` | [string](#string) |  |  |
-| `title` | [string](#string) |  |  |
-| `description` | [string](#string) | optional |  |
-| `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
-| `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `creator_job` | [string](#string) |  |  |
-| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
-| `requirements` | [QualificationRequirement](#resourcesqualificationsQualificationRequirement) | repeated |  |
-| `discord_sync_enabled` | [bool](#bool) |  |  |
-| `discord_settings` | [QualificationDiscordSettings](#resourcesqualificationsQualificationDiscordSettings) | optional |  |
-| `exam_mode` | [exam.QualificationExamMode](#resourcesqualificationsexamQualificationExamMode) |  |  |
-| `exam_settings` | [exam.QualificationExamSettings](#resourcesqualificationsexamQualificationExamSettings) | optional |  |
-| `exam` | [exam.ExamQuestions](#resourcesqualificationsexamExamQuestions) | optional |  |
-| `result` | [QualificationResult](#resourcesqualificationsQualificationResult) | optional |  |
-| `request` | [QualificationRequest](#resourcesqualificationsQualificationRequest) | optional |  |
-| `label_sync_enabled` | [bool](#bool) |  |  |
-| `label_sync_format` | [string](#string) | optional |  |
-| `files` | [resources.file.File](#resourcesfileFile) | repeated |  |
-
-
-
-
-
-### resources.qualifications.QualificationDiscordSettings
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `role_name` | [string](#string) | optional |  |
-| `role_format` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.qualifications.QualificationRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `qualification_id` | [int64](#int64) |  |  |
-| `qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
-| `user_comment` | [string](#string) | optional |  |
-| `status` | [RequestStatus](#resourcesqualificationsRequestStatus) | optional |  |
-| `approved_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `approver_comment` | [string](#string) | optional |  |
-| `approver_id` | [int32](#int32) | optional |  |
-| `approver` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `approver_job` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.qualifications.QualificationRequirement
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `qualification_id` | [int64](#int64) |  |  |
-| `target_qualification_id` | [int64](#int64) |  |  |
-| `target_qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
-
-
-
-
-
-### resources.qualifications.QualificationResult
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `qualification_id` | [int64](#int64) |  |  |
-| `qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
-| `status` | [ResultStatus](#resourcesqualificationsResultStatus) |  |  |
-| `score` | [float](#float) | optional |  |
-| `summary` | [string](#string) |  |  |
-| `creator_id` | [int32](#int32) |  |  |
-| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
-| `creator_job` | [string](#string) |  |  |
-
-
-
-
-
-### resources.qualifications.QualificationShort
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `job` | [string](#string) |  |  |
-| `weight` | [uint32](#uint32) |  |  |
-| `closed` | [bool](#bool) |  |  |
-| `draft` | [bool](#bool) |  |  |
-| `public` | [bool](#bool) |  |  |
-| `abbreviation` | [string](#string) |  |  |
-| `title` | [string](#string) |  |  |
-| `description` | [string](#string) | optional |  |
-| `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `creator_job` | [string](#string) |  |  |
-| `requirements` | [QualificationRequirement](#resourcesqualificationsQualificationRequirement) | repeated |  |
-| `exam_mode` | [exam.QualificationExamMode](#resourcesqualificationsexamQualificationExamMode) |  |  |
-| `exam_settings` | [exam.QualificationExamSettings](#resourcesqualificationsexamQualificationExamSettings) | optional |  |
-| `result` | [QualificationResult](#resourcesqualificationsQualificationResult) | optional |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.qualifications.RequestStatus
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `REQUEST_STATUS_UNSPECIFIED` | 0 |  |
-| `REQUEST_STATUS_PENDING` | 1 |  |
-| `REQUEST_STATUS_DENIED` | 2 |  |
-| `REQUEST_STATUS_ACCEPTED` | 3 |  |
-| `REQUEST_STATUS_EXAM_STARTED` | 4 |  |
-| `REQUEST_STATUS_EXAM_GRADING` | 5 |  |
-| `REQUEST_STATUS_COMPLETED` | 6 |  |
-
-
-
-### resources.qualifications.ResultStatus
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `RESULT_STATUS_UNSPECIFIED` | 0 |  |
-| `RESULT_STATUS_PENDING` | 1 |  |
-| `RESULT_STATUS_FAILED` | 2 |  |
-| `RESULT_STATUS_SUCCESSFUL` | 3 |  |
-
 
  <!-- end enums -->
 

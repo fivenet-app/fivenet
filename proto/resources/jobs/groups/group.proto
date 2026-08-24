@@ -5,6 +5,7 @@ package resources.jobs.groups;
 import "buf/validate/validate.proto";
 import "resources/file/file.proto";
 import "resources/jobs/colleagues/colleagues.proto";
+import "resources/qualifications/qualifications.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
@@ -234,6 +235,9 @@ message GroupQualificationRule {
 
   // If true, only completed/successful qualifications count.
   bool require_completed = 3;
+
+  // Hydrated display data for the UI.
+  repeated resources.qualifications.QualificationShort qualifications = 4;
 }
 
 enum GroupRuleType {

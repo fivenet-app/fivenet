@@ -160,20 +160,31 @@ func (s *Server) ListGroupActivity(
 	if err := s.hydrateGroupColleagueTargets(ctx, userInfo, targets); err != nil {
 		return nil, err
 	}
-	s.enrichGroupActivityRules(userInfo.GetJob(), resp.GetActivity())
+	if err := s.enrichGroupActivityRules(ctx, userInfo.GetJob(), resp.GetActivity()); err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 	return resp, nil
 }
 
-func (s *Server) enrichGroupActivityRules(job string, activities []*jobsgroups.GroupActivity) {
+func (s *Server) enrichGroupActivityRules(
+	ctx context.Context,
+	job string,
+	activities []*jobsgroups.GroupActivity,
+) error {
 	for _, activity := range activities {
 		if activity.GetData().GetRule() == nil {
 			continue
 		}
 
 		s.enrichGroupRuleGradeLabels(job, activity.GetData().GetRule())
+		if err := s.enrichGroupRuleQualifications(ctx, activity.GetData().GetRule()); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
 func groupActivityRuleData(rule *jobsgroups.GroupRule) *jobsgroups.GroupActivityData {

@@ -5,6 +5,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import InputDateRangePopover, { type DateRange } from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import QualificationBadge from '~/components/partials/qualifications/QualificationBadge.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsGroupsClient } from '~~/gen/ts/clients';
@@ -243,7 +244,7 @@ watch(
                                 </div>
 
                                 <div class="flex items-center justify-between gap-3">
-                                    <p class="flex flex-col gap-1 text-sm">
+                                    <div class="flex flex-col gap-1 text-sm">
                                         <template v-if="entry.reason">
                                             <span class="inline-flex gap-1">
                                                 <span class="font-semibold">{{ $t('common.reason') }}:</span>
@@ -264,13 +265,29 @@ watch(
 
                                         <template v-if="activityRuleLabel(entry)">
                                             <span class="inline-flex gap-1">
-                                                <span class="font-semibold"
-                                                    >{{ $t('components.jobs.groups.details.rule') }}:</span
-                                                >
+                                                <span class="font-semibold">
+                                                    {{ $t('components.jobs.groups.details.rule') }}:
+                                                </span>
                                                 <span>{{ activityRuleLabel(entry) }}</span>
                                             </span>
                                         </template>
-                                    </p>
+
+                                        <div
+                                            v-if="
+                                                entry.data?.data.oneofKind === 'rule' &&
+                                                entry.data.data.rule.rule.oneofKind === 'qualification' &&
+                                                entry.data.data.rule.rule.qualification.qualifications.length > 0
+                                            "
+                                            class="flex flex-wrap gap-1"
+                                        >
+                                            <QualificationBadge
+                                                v-for="quali in entry.data.data.rule.rule.qualification.qualifications"
+                                                :key="quali.id"
+                                                :qualification-id="quali.id"
+                                                :qualification="quali"
+                                            />
+                                        </div>
+                                    </div>
 
                                     <p class="inline-flex items-center gap-1 text-sm">
                                         <span>{{ $t('common.created_by') }}</span>

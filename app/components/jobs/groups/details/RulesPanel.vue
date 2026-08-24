@@ -6,6 +6,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import QualificationBadge from '~/components/partials/qualifications/QualificationBadge.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsGroupsClient, getQualificationsQualificationsClient } from '~~/gen/ts/clients';
@@ -612,6 +613,18 @@ watch(
                         <p class="font-medium">
                             <span class="font-bold">#{{ rule.id }}</span> - {{ groupRuleLabel(rule, t) }}
                         </p>
+
+                        <div
+                            v-if="rule.rule.oneofKind === 'qualification' && rule.rule.qualification.qualifications.length > 0"
+                            class="flex flex-wrap gap-1"
+                        >
+                            <QualificationBadge
+                                v-for="quali in rule.rule.qualification.qualifications"
+                                :key="quali.id"
+                                :qualification-id="quali.id"
+                                :qualification="quali"
+                            />
+                        </div>
 
                         <p class="mt-1 text-sm text-muted">
                             {{ $t('common.created_by') }}

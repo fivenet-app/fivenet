@@ -11,6 +11,7 @@ package jobsgroups
 import (
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	colleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	qualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -1884,10 +1885,11 @@ func (b0 GroupGradeRule_builder) Build() *GroupGradeRule {
 }
 
 type GroupQualificationRule struct {
-	state                       protoimpl.MessageState     `protogen:"opaque.v1"`
-	xxx_hidden_Type             GroupQualificationRuleType `protobuf:"varint,1,opt,name=type,proto3,enum=resources.jobs.groups.GroupQualificationRuleType"`
-	xxx_hidden_QualificationIds []int64                    `protobuf:"varint,2,rep,packed,name=qualification_ids,json=qualificationIds,proto3"`
-	xxx_hidden_RequireCompleted bool                       `protobuf:"varint,3,opt,name=require_completed,json=requireCompleted,proto3"`
+	state                       protoimpl.MessageState                `protogen:"opaque.v1"`
+	xxx_hidden_Type             GroupQualificationRuleType            `protobuf:"varint,1,opt,name=type,proto3,enum=resources.jobs.groups.GroupQualificationRuleType"`
+	xxx_hidden_QualificationIds []int64                               `protobuf:"varint,2,rep,packed,name=qualification_ids,json=qualificationIds,proto3"`
+	xxx_hidden_RequireCompleted bool                                  `protobuf:"varint,3,opt,name=require_completed,json=requireCompleted,proto3"`
+	xxx_hidden_Qualifications   *[]*qualifications.QualificationShort `protobuf:"bytes,4,rep,name=qualifications,proto3"`
 	unknownFields               protoimpl.UnknownFields
 	sizeCache                   protoimpl.SizeCache
 }
@@ -1938,6 +1940,15 @@ func (x *GroupQualificationRule) GetRequireCompleted() bool {
 	return false
 }
 
+func (x *GroupQualificationRule) GetQualifications() []*qualifications.QualificationShort {
+	if x != nil {
+		if x.xxx_hidden_Qualifications != nil {
+			return *x.xxx_hidden_Qualifications
+		}
+	}
+	return nil
+}
+
 func (x *GroupQualificationRule) SetType(v GroupQualificationRuleType) {
 	x.xxx_hidden_Type = v
 }
@@ -1950,6 +1961,10 @@ func (x *GroupQualificationRule) SetRequireCompleted(v bool) {
 	x.xxx_hidden_RequireCompleted = v
 }
 
+func (x *GroupQualificationRule) SetQualifications(v []*qualifications.QualificationShort) {
+	x.xxx_hidden_Qualifications = &v
+}
+
 type GroupQualificationRule_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -1959,6 +1974,8 @@ type GroupQualificationRule_builder struct {
 	QualificationIds []int64
 	// If true, only completed/successful qualifications count.
 	RequireCompleted bool
+	// Hydrated display data for the UI.
+	Qualifications []*qualifications.QualificationShort
 }
 
 func (b0 GroupQualificationRule_builder) Build() *GroupQualificationRule {
@@ -1968,6 +1985,7 @@ func (b0 GroupQualificationRule_builder) Build() *GroupQualificationRule {
 	x.xxx_hidden_Type = b.Type
 	x.xxx_hidden_QualificationIds = b.QualificationIds
 	x.xxx_hidden_RequireCompleted = b.RequireCompleted
+	x.xxx_hidden_Qualifications = &b.Qualifications
 	return m0
 }
 
@@ -2632,7 +2650,7 @@ var File_resources_jobs_groups_group_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_groups_group_proto_rawDesc = "" +
 	"\n" +
-	"!resources/jobs/groups/group.proto\x12\x15resources.jobs.groups\x1a\x19resources/file/file.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa9\t\n" +
+	"!resources/jobs/groups/group.proto\x12\x15resources.jobs.groups\x1a\x19resources/file/file.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa9\t\n" +
 	"\x05Group\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12\x12\n" +
@@ -2736,11 +2754,12 @@ const file_resources_jobs_groups_group_proto_rawDesc = "" +
 	"_max_gradeB\x0e\n" +
 	"\f_grade_labelB\x12\n" +
 	"\x10_min_grade_labelB\x12\n" +
-	"\x10_max_grade_label\"\xb9\x01\n" +
+	"\x10_max_grade_label\"\x8f\x02\n" +
 	"\x16GroupQualificationRule\x12E\n" +
 	"\x04type\x18\x01 \x01(\x0e21.resources.jobs.groups.GroupQualificationRuleTypeR\x04type\x12+\n" +
 	"\x11qualification_ids\x18\x02 \x03(\x03R\x10qualificationIds\x12+\n" +
-	"\x11require_completed\x18\x03 \x01(\bR\x10requireCompleted\"\xdc\x04\n" +
+	"\x11require_completed\x18\x03 \x01(\bR\x10requireCompleted\x12T\n" +
+	"\x0equalifications\x18\x04 \x03(\v2,.resources.qualifications.QualificationShortR\x0equalifications\"\xdc\x04\n" +
 	"\tGroupRule\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\x18\n" +
@@ -2829,27 +2848,28 @@ const file_resources_jobs_groups_group_proto_rawDesc = "" +
 var file_resources_jobs_groups_group_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
 var file_resources_jobs_groups_group_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_resources_jobs_groups_group_proto_goTypes = []any{
-	(GroupType)(0),                  // 0: resources.jobs.groups.GroupType
-	(GroupState)(0),                 // 1: resources.jobs.groups.GroupState
-	(GroupMembershipMode)(0),        // 2: resources.jobs.groups.GroupMembershipMode
-	(GroupExclusionReason)(0),       // 3: resources.jobs.groups.GroupExclusionReason
-	(GroupGradeRuleType)(0),         // 4: resources.jobs.groups.GroupGradeRuleType
-	(GroupQualificationRuleType)(0), // 5: resources.jobs.groups.GroupQualificationRuleType
-	(GroupRuleType)(0),              // 6: resources.jobs.groups.GroupRuleType
-	(GroupMemberSource)(0),          // 7: resources.jobs.groups.GroupMemberSource
-	(GroupMembershipReasonType)(0),  // 8: resources.jobs.groups.GroupMembershipReasonType
-	(*Group)(nil),                   // 9: resources.jobs.groups.Group
-	(*GroupLeader)(nil),             // 10: resources.jobs.groups.GroupLeader
-	(*GroupManualMember)(nil),       // 11: resources.jobs.groups.GroupManualMember
-	(*GroupMemberExclusion)(nil),    // 12: resources.jobs.groups.GroupMemberExclusion
-	(*GroupGradeRule)(nil),          // 13: resources.jobs.groups.GroupGradeRule
-	(*GroupQualificationRule)(nil),  // 14: resources.jobs.groups.GroupQualificationRule
-	(*GroupRule)(nil),               // 15: resources.jobs.groups.GroupRule
-	(*GroupMembershipReason)(nil),   // 16: resources.jobs.groups.GroupMembershipReason
-	(*GroupResolvedMember)(nil),     // 17: resources.jobs.groups.GroupResolvedMember
-	(*file.File)(nil),               // 18: resources.file.File
-	(*colleagues.Colleague)(nil),    // 19: resources.jobs.colleagues.Colleague
-	(*timestamp.Timestamp)(nil),     // 20: resources.timestamp.Timestamp
+	(GroupType)(0),                            // 0: resources.jobs.groups.GroupType
+	(GroupState)(0),                           // 1: resources.jobs.groups.GroupState
+	(GroupMembershipMode)(0),                  // 2: resources.jobs.groups.GroupMembershipMode
+	(GroupExclusionReason)(0),                 // 3: resources.jobs.groups.GroupExclusionReason
+	(GroupGradeRuleType)(0),                   // 4: resources.jobs.groups.GroupGradeRuleType
+	(GroupQualificationRuleType)(0),           // 5: resources.jobs.groups.GroupQualificationRuleType
+	(GroupRuleType)(0),                        // 6: resources.jobs.groups.GroupRuleType
+	(GroupMemberSource)(0),                    // 7: resources.jobs.groups.GroupMemberSource
+	(GroupMembershipReasonType)(0),            // 8: resources.jobs.groups.GroupMembershipReasonType
+	(*Group)(nil),                             // 9: resources.jobs.groups.Group
+	(*GroupLeader)(nil),                       // 10: resources.jobs.groups.GroupLeader
+	(*GroupManualMember)(nil),                 // 11: resources.jobs.groups.GroupManualMember
+	(*GroupMemberExclusion)(nil),              // 12: resources.jobs.groups.GroupMemberExclusion
+	(*GroupGradeRule)(nil),                    // 13: resources.jobs.groups.GroupGradeRule
+	(*GroupQualificationRule)(nil),            // 14: resources.jobs.groups.GroupQualificationRule
+	(*GroupRule)(nil),                         // 15: resources.jobs.groups.GroupRule
+	(*GroupMembershipReason)(nil),             // 16: resources.jobs.groups.GroupMembershipReason
+	(*GroupResolvedMember)(nil),               // 17: resources.jobs.groups.GroupResolvedMember
+	(*file.File)(nil),                         // 18: resources.file.File
+	(*colleagues.Colleague)(nil),              // 19: resources.jobs.colleagues.Colleague
+	(*timestamp.Timestamp)(nil),               // 20: resources.timestamp.Timestamp
+	(*qualifications.QualificationShort)(nil), // 21: resources.qualifications.QualificationShort
 }
 var file_resources_jobs_groups_group_proto_depIdxs = []int32{
 	18, // 0: resources.jobs.groups.Group.logo_file:type_name -> resources.file.File
@@ -2872,22 +2892,23 @@ var file_resources_jobs_groups_group_proto_depIdxs = []int32{
 	20, // 17: resources.jobs.groups.GroupMemberExclusion.created_at:type_name -> resources.timestamp.Timestamp
 	4,  // 18: resources.jobs.groups.GroupGradeRule.type:type_name -> resources.jobs.groups.GroupGradeRuleType
 	5,  // 19: resources.jobs.groups.GroupQualificationRule.type:type_name -> resources.jobs.groups.GroupQualificationRuleType
-	6,  // 20: resources.jobs.groups.GroupRule.type:type_name -> resources.jobs.groups.GroupRuleType
-	13, // 21: resources.jobs.groups.GroupRule.grade:type_name -> resources.jobs.groups.GroupGradeRule
-	14, // 22: resources.jobs.groups.GroupRule.qualification:type_name -> resources.jobs.groups.GroupQualificationRule
-	19, // 23: resources.jobs.groups.GroupRule.created_by:type_name -> resources.jobs.colleagues.Colleague
-	20, // 24: resources.jobs.groups.GroupRule.created_at:type_name -> resources.timestamp.Timestamp
-	20, // 25: resources.jobs.groups.GroupRule.updated_at:type_name -> resources.timestamp.Timestamp
-	7,  // 26: resources.jobs.groups.GroupMembershipReason.source:type_name -> resources.jobs.groups.GroupMemberSource
-	8,  // 27: resources.jobs.groups.GroupMembershipReason.type:type_name -> resources.jobs.groups.GroupMembershipReasonType
-	19, // 28: resources.jobs.groups.GroupResolvedMember.colleague:type_name -> resources.jobs.colleagues.Colleague
-	7,  // 29: resources.jobs.groups.GroupResolvedMember.sources:type_name -> resources.jobs.groups.GroupMemberSource
-	16, // 30: resources.jobs.groups.GroupResolvedMember.reasons:type_name -> resources.jobs.groups.GroupMembershipReason
-	31, // [31:31] is the sub-list for method output_type
-	31, // [31:31] is the sub-list for method input_type
-	31, // [31:31] is the sub-list for extension type_name
-	31, // [31:31] is the sub-list for extension extendee
-	0,  // [0:31] is the sub-list for field type_name
+	21, // 20: resources.jobs.groups.GroupQualificationRule.qualifications:type_name -> resources.qualifications.QualificationShort
+	6,  // 21: resources.jobs.groups.GroupRule.type:type_name -> resources.jobs.groups.GroupRuleType
+	13, // 22: resources.jobs.groups.GroupRule.grade:type_name -> resources.jobs.groups.GroupGradeRule
+	14, // 23: resources.jobs.groups.GroupRule.qualification:type_name -> resources.jobs.groups.GroupQualificationRule
+	19, // 24: resources.jobs.groups.GroupRule.created_by:type_name -> resources.jobs.colleagues.Colleague
+	20, // 25: resources.jobs.groups.GroupRule.created_at:type_name -> resources.timestamp.Timestamp
+	20, // 26: resources.jobs.groups.GroupRule.updated_at:type_name -> resources.timestamp.Timestamp
+	7,  // 27: resources.jobs.groups.GroupMembershipReason.source:type_name -> resources.jobs.groups.GroupMemberSource
+	8,  // 28: resources.jobs.groups.GroupMembershipReason.type:type_name -> resources.jobs.groups.GroupMembershipReasonType
+	19, // 29: resources.jobs.groups.GroupResolvedMember.colleague:type_name -> resources.jobs.colleagues.Colleague
+	7,  // 30: resources.jobs.groups.GroupResolvedMember.sources:type_name -> resources.jobs.groups.GroupMemberSource
+	16, // 31: resources.jobs.groups.GroupResolvedMember.reasons:type_name -> resources.jobs.groups.GroupMembershipReason
+	32, // [32:32] is the sub-list for method output_type
+	32, // [32:32] is the sub-list for method input_type
+	32, // [32:32] is the sub-list for extension type_name
+	32, // [32:32] is the sub-list for extension extendee
+	0,  // [0:32] is the sub-list for field type_name
 }
 
 func init() { file_resources_jobs_groups_group_proto_init() }

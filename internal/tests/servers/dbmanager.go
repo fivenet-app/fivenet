@@ -1004,7 +1004,7 @@ func (m *mysqlTestDBManager) dropDatabaseLockedCleanup(dbName string) error {
 func (m *mysqlTestDBManager) openDB(dbName string, multiStatements bool) (*sql.DB, error) {
 	dsn := m.dsnForDB(dbName, multiStatements)
 	if dsn == "" {
-		return nil, fmt.Errorf("shared mysql container port is not initialized")
+		return nil, errors.New("shared mysql container port is not initialized")
 	}
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
