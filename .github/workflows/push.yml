@@ -131,23 +131,6 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=8192"
         run: pnpm run build
 
-  go-code-coverage:
-    name: "Go Code coverage report PR"
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    needs:
-      - golang-tests
-    permissions:
-      contents: read
-      actions: read
-      pull-requests: write
-    steps:
-      - name: Generate Go Code Coverage Report
-        uses: fgrosse/go-coverage-report@e432de98ee94a276e8f666d25bfd76347665f75b # v1.3.1
-        with:
-          coverage-artifact-name: code-coverage-go
-          coverage-file-name: coverage.txt
-
   binary-build:
     name: Binaries Build Test
     needs:
