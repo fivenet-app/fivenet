@@ -288,8 +288,8 @@ importers:
         specifier: 3.1.2
         version: 3.1.2(@popperjs/core@2.11.8)(vue@3.5.41(typescript@6.0.3))
       v-code-diff:
-        specifier: 1.13.1
-        version: 1.13.1(vue@3.5.41(typescript@6.0.3))
+        specifier: 1.14.1
+        version: 1.14.1(vue@3.5.41(typescript@6.0.3))
       vue-countup-v3:
         specifier: 1.4.2
         version: 1.4.2(vue@3.5.41(typescript@6.0.3))
@@ -379,8 +379,8 @@ importers:
         specifier: 10.5.4
         version: 10.5.4(postcss@8.5.26)
       cssnano:
-        specifier: 8.0.7
-        version: 8.0.7(postcss@8.5.26)
+        specifier: 8.0.8
+        version: 8.0.8(postcss@8.5.26)
       eslint:
         specifier: 10.9.0
         version: 10.9.0(jiti@2.7.0)
@@ -5274,8 +5274,8 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
 
-  cssnano-preset-default@8.0.7:
-    resolution: {integrity: sha512-yPF0TWNvz8Gtg4yJwl+pScszTqJIdCD7JkfHrbVWobOF9c2LgVky4Kr0ycRunpCWz+ezdpJNWFEyM7+OQ33bpg==}
+  cssnano-preset-default@8.0.8:
+    resolution: {integrity: sha512-WHUoojPq3fMdps/OjSn73p6FDb3YAN7HiuMA5WJJxs6Ka0MFqtZZsS4EppIWTJzW/Ss4sEZHVIKst/qi22u3uA==}
     engines: {node: ^22.11.0 || ^24.11.0 || >=26.0}
     peerDependencies:
       postcss: ^8.5.26
@@ -5286,8 +5286,8 @@ packages:
     peerDependencies:
       postcss: ^8.5.26
 
-  cssnano@8.0.7:
-    resolution: {integrity: sha512-JBvuat1sBQuSBkrfB6epRlszs0MRhn8PguY12oFuYxMYDgK/8vsnlq+0YzjyHEjixwOsiSct0hD3eC59TjgqfA==}
+  cssnano@8.0.8:
+    resolution: {integrity: sha512-lN79/SZ2L0bGBBxGnChGKkbodkXAQUR5Em4LBW3rijpdrvUY8jxKhp2uQ8LgI8sKKbjCnI8peqPSoSZJDuchKw==}
     engines: {node: ^22.11.0 || ^24.11.0 || >=26.0}
     peerDependencies:
       postcss: ^8.5.26
@@ -8020,8 +8020,8 @@ packages:
     peerDependencies:
       postcss: ^8.5.26
 
-  postcss-minify-gradients@8.0.4:
-    resolution: {integrity: sha512-78cIzfNlG4uMT1wgh6svmAw/sFwQPZ9JRqq4zxJpcdOMvXQz3Hh1ZBdX5GeBONp0AoqNVQiHZ2VnQeF+HldT/Q==}
+  postcss-minify-gradients@8.0.5:
+    resolution: {integrity: sha512-ViFzyy4qqTcl2D1+SpoubxkgGUvWNRPxboQKL64WON60KslCzi+XOf/Yn5QdQlBYI8/ChCpYMLS3FJ0ksA+r1Q==}
     engines: {node: ^22.11.0 || ^24.11.0 || >=26.0}
     peerDependencies:
       postcss: ^8.5.26
@@ -9461,8 +9461,8 @@ packages:
       '@popperjs/core': ^2.0.0
       vue: 3.5.41
 
-  v-code-diff@1.13.1:
-    resolution: {integrity: sha512-9LTV1dZhC1oYTntyB94vfumGgsfIX5u0fEDSI2Txx4vCE5sI5LkgeLJRRy2SsTVZmDcV+R73sBr0GpPn0TJxMw==}
+  v-code-diff@1.14.1:
+    resolution: {integrity: sha512-cZ162gRXtJw5jXbhTQFETRDWpxM1Xcb986BWb1ZIIGQAXEOaZ50i9c09DZP/5P6rQjHMKp+hh6Ak7Q7LGrzAcw==}
     peerDependencies:
       '@vue/composition-api': ^1.4.9
       vue: 3.5.41
@@ -12340,7 +12340,7 @@ snapshots:
       '@vitejs/plugin-vue-jsx': 5.1.6(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.103.1)(terser@5.49.2)(yaml@2.9.0))(vue@3.5.41(typescript@6.0.3))
       autoprefixer: 10.5.4(postcss@8.5.26)
       consola: 3.4.2
-      cssnano: 8.0.7(postcss@8.5.26)
+      cssnano: 8.0.8(postcss@8.5.26)
       defu: 6.1.7
       escape-string-regexp: 5.0.0
       exsolve: 1.1.1
@@ -15145,7 +15145,7 @@ snapshots:
 
   cssesc@3.0.0: {}
 
-  cssnano-preset-default@8.0.7(postcss@8.5.26):
+  cssnano-preset-default@8.0.8(postcss@8.5.26):
     dependencies:
       browserslist: 4.28.8
       cssnano-utils: 6.0.4(postcss@8.5.26)
@@ -15160,7 +15160,7 @@ snapshots:
       postcss-merge-longhand: 8.0.4(postcss@8.5.26)
       postcss-merge-rules: 8.0.5(postcss@8.5.26)
       postcss-minify-font-values: 8.0.4(postcss@8.5.26)
-      postcss-minify-gradients: 8.0.4(postcss@8.5.26)
+      postcss-minify-gradients: 8.0.5(postcss@8.5.26)
       postcss-minify-params: 8.0.4(postcss@8.5.26)
       postcss-minify-selectors: 8.0.5(postcss@8.5.26)
       postcss-normalize-charset: 8.0.4(postcss@8.5.26)
@@ -15182,9 +15182,9 @@ snapshots:
     dependencies:
       postcss: 8.5.26
 
-  cssnano@8.0.7(postcss@8.5.26):
+  cssnano@8.0.8(postcss@8.5.26):
     dependencies:
-      cssnano-preset-default: 8.0.7(postcss@8.5.26)
+      cssnano-preset-default: 8.0.8(postcss@8.5.26)
       lilconfig: 3.1.3
       postcss: 8.5.26
 
@@ -18612,7 +18612,7 @@ snapshots:
       postcss: 8.5.26
       postcss-value-parser: 4.2.0
 
-  postcss-minify-gradients@8.0.4(postcss@8.5.26):
+  postcss-minify-gradients@8.0.5(postcss@8.5.26):
     dependencies:
       '@colordx/core': 5.5.0
       cssnano-utils: 6.0.4(postcss@8.5.26)
@@ -20332,7 +20332,7 @@ snapshots:
       vue: 3.5.41(typescript@6.0.3)
       vue-screen-utils: 1.0.0-beta.13(vue@3.5.41(typescript@6.0.3))
 
-  v-code-diff@1.13.1(vue@3.5.41(typescript@6.0.3)):
+  v-code-diff@1.14.1(vue@3.5.41(typescript@6.0.3)):
     dependencies:
       diff: 5.2.2
       diff-match-patch: 1.0.5
