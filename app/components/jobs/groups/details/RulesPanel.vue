@@ -206,6 +206,14 @@ function qualificationPlaceholder(id: number): QualificationShort {
     };
 }
 
+function qualificationLabel(qualification: QualificationShort): string {
+    return `${qualification.abbreviation}: ${qualification.title}`;
+}
+
+function uniqueQualificationIds(qualifications: QualificationShort[]): number[] {
+    return [...new Set(qualifications.map((qualification) => qualification.id).filter((id) => id > 0))];
+}
+
 async function loadQualificationShorts(ids: number[]): Promise<QualificationShort[]> {
     return await Promise.all(
         ids.map(async (id) => {
@@ -269,7 +277,7 @@ function buildRuleInput(): GroupRuleInput | undefined {
         };
     }
 
-    const qualificationIds = selectedQualifications.value.map((qualification) => qualification.id).filter((id) => id > 0);
+    const qualificationIds = uniqueQualificationIds(selectedQualifications.value);
     if (qualificationIds.length === 0) return undefined;
 
     const qualification: GroupQualificationRule = {
@@ -537,6 +545,7 @@ watch(
                             v-model="selectedQualifications"
                             class="w-full"
                             multiple
+                            value-key="id"
                             :searchable="
                                 async (q: string) => {
                                     const { response } = await qualificationsQualificationsClient.listQualifications({
@@ -552,8 +561,14 @@ watch(
                             :placeholder="$t('common.qualification', 2)"
                             :disabled="isMutating || !canManageRules"
                         >
+                            <template v-if="selectedQualifications.length > 0" #default>
+                                <span class="block truncate">
+                                    {{ selectedQualifications.map(qualificationLabel).join(', ') }}
+                                </span>
+                            </template>
+
                             <template #item-label="{ item }">
-                                {{ `${item?.abbreviation}: ${item?.title}` }}
+                                {{ qualificationLabel(item) }}
                             </template>
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.qualification', 2)]) }}

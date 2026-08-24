@@ -116,7 +116,7 @@ const canMutateLeaders = computed(
         checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.MANAGE),
 );
 const canManageArchiveState = computed(
-    () => checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.MANAGE) && can('jobs.GroupsService/ArchiveGroup').value,
+    () => can('jobs.GroupsService/ArchiveGroup').value && checkGroupAccess(currentGroupAccess.value, GroupAccessLevel.MANAGE),
 );
 const slideoverTitle = computed(() => (canViewGroup.value ? currentGroup.value.name : t('common.no_access')));
 

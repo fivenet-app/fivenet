@@ -294,8 +294,10 @@ func (s *Store) loadGroupRuleDetails(
 	switch ruleType {
 	case groupRuleTypeGrade:
 		return s.loadGroupGradeRule(ctx, db, rule)
+
 	case groupRuleTypeQualification:
 		return s.loadGroupQualificationRule(ctx, db, rule)
+
 	default:
 		return fmt.Errorf("unknown job group rule type %d", ruleType)
 	}

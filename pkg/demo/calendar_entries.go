@@ -207,30 +207,31 @@ func (d *Demo) lookupDemoCalendarByName(
 }
 
 func (d *Demo) demoCalendarLookupByNameStmt(job string, name string) mysql.SelectStatement {
-	return table.FivenetCalendar.
+	tCalendar := table.FivenetCalendar.AS("calendar")
+	return tCalendar.
 		SELECT(
-			table.FivenetCalendar.ID,
-			table.FivenetCalendar.CreatedAt,
-			table.FivenetCalendar.UpdatedAt,
-			table.FivenetCalendar.DeletedAt,
-			table.FivenetCalendar.Job,
-			table.FivenetCalendar.Name,
-			table.FivenetCalendar.Public,
-			table.FivenetCalendar.Closed,
-			table.FivenetCalendar.Color,
-			table.FivenetCalendar.CreatorID,
-			table.FivenetCalendar.CreatorJob,
-			table.FivenetCalendar.SystemKind,
+			tCalendar.ID,
+			tCalendar.CreatedAt,
+			tCalendar.UpdatedAt,
+			tCalendar.DeletedAt,
+			tCalendar.Job,
+			tCalendar.Name,
+			tCalendar.Public,
+			tCalendar.Closed,
+			tCalendar.Color,
+			tCalendar.CreatorID,
+			tCalendar.CreatorJob,
+			tCalendar.SystemKind,
 		).
-		FROM(table.FivenetCalendar).
+		FROM(tCalendar).
 		WHERE(mysql.AND(
-			table.FivenetCalendar.DeletedAt.IS_NULL(),
-			table.FivenetCalendar.Job.EQ(mysql.String(job)),
-			table.FivenetCalendar.Name.EQ(mysql.String(name)),
+			tCalendar.DeletedAt.IS_NULL(),
+			tCalendar.Job.EQ(mysql.String(job)),
+			tCalendar.Name.EQ(mysql.String(name)),
 		)).
 		ORDER_BY(
-			table.FivenetCalendar.Name.ASC(),
-			table.FivenetCalendar.ID.ASC(),
+			tCalendar.Name.ASC(),
+			tCalendar.ID.ASC(),
 		).
 		LIMIT(1)
 }
