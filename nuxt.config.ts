@@ -95,6 +95,7 @@ export default defineNuxtConfig({
     postcss: {
         plugins: {
             './internal/postcss/postcss-color-mix-transparency-fallback': {},
+            './internal/postcss/postcss-viewport-unit-fixup': {},
             'postcss-preset-env': {
                 stage: 2,
                 features: {
