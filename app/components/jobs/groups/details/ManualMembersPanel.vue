@@ -267,7 +267,7 @@ watch(
 
                         <GenericTime v-if="member.createdAt" class="text-sm text-muted" :value="member.createdAt" />
 
-                        <div v-if="canManageMembers">
+                        <UFieldGroup v-if="canManageMembers">
                             <UButton
                                 color="neutral"
                                 variant="outline"
@@ -285,7 +285,7 @@ watch(
                                 :disabled="isMutating || !canManageMembers"
                                 @click="removeManualMember(member.userId)"
                             />
-                        </div>
+                        </UFieldGroup>
                     </div>
                 </template>
             </ColleagueCard>

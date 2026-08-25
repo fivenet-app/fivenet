@@ -302,25 +302,28 @@ watch(
                         <div>
                             <GenericTime v-if="exclusion.createdAt" class="text-sm text-muted" :value="exclusion.createdAt" />
                         </div>
-                        <UButton
-                            v-if="canManageExclusions"
-                            color="neutral"
-                            variant="outline"
-                            icon="i-mdi-pencil"
-                            :label="$t('common.edit')"
-                            :disabled="isMutating || !canManageExclusions"
-                            @click="editExclusion(exclusion)"
-                        />
-                        <UButton
-                            v-if="canManageExclusions"
-                            color="error"
-                            variant="outline"
-                            icon="i-mdi-account-check"
-                            :label="$t('common.remove')"
-                            :loading="pendingAction === `exclusion-${exclusion.userId}`"
-                            :disabled="isMutating || !canManageExclusions"
-                            @click="removeExclusion(exclusion.userId)"
-                        />
+
+                        <UFieldGroup v-if="canManageExclusions || canManageExclusions">
+                            <UButton
+                                v-if="canManageExclusions"
+                                color="neutral"
+                                variant="outline"
+                                icon="i-mdi-pencil"
+                                :label="$t('common.edit')"
+                                :disabled="isMutating || !canManageExclusions"
+                                @click="editExclusion(exclusion)"
+                            />
+                            <UButton
+                                v-if="canManageExclusions"
+                                color="error"
+                                variant="outline"
+                                icon="i-mdi-account-check"
+                                :label="$t('common.remove')"
+                                :loading="pendingAction === `exclusion-${exclusion.userId}`"
+                                :disabled="isMutating || !canManageExclusions"
+                                @click="removeExclusion(exclusion.userId)"
+                            />
+                        </UFieldGroup>
                     </div>
                 </template>
             </ColleagueCard>

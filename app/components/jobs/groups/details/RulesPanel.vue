@@ -672,7 +672,7 @@ watch(
                     </div>
                 </div>
 
-                <div v-if="canManageRules" class="mt-3 flex justify-end gap-2">
+                <UFieldGroup v-if="canManageRules" class="mt-3 flex justify-end">
                     <UButton
                         color="neutral"
                         variant="outline"
@@ -690,7 +690,7 @@ watch(
                         :disabled="isMutating"
                         @click="deleteRule(rule)"
                     />
-                </div>
+                </UFieldGroup>
             </UCard>
 
             <Pagination v-model="page" :pagination="rulesData?.pagination" :status="rulesStatus" :refresh="refreshRules" />

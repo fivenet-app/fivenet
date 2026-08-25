@@ -261,10 +261,7 @@ async function handlePanelChanged(): Promise<void> {
                                     </div>
                                 </div>
 
-                                <UFieldGroup
-                                    v-if="canMutateGroup || canManageArchiveState"
-                                    class="inline-flex justify-end gap-2"
-                                >
+                                <UFieldGroup v-if="canMutateGroup || canManageArchiveState" class="inline-flex justify-end">
                                     <UButton
                                         v-if="canMutateGroup"
                                         color="neutral"
