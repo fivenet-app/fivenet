@@ -99,6 +99,27 @@ export interface DBSyncStatus {
      * @generated from protobuf field: optional string last_dbsync_version = 4
      */
     lastDbsyncVersion?: string;
+    /**
+     * @generated from protobuf field: repeated resources.settings.DBSyncTableStatus tables = 5
+     */
+    tables: DBSyncTableStatus[];
+}
+/**
+ * @generated from protobuf message resources.settings.DBSyncTableStatus
+ */
+export interface DBSyncTableStatus {
+    /**
+     * @generated from protobuf field: string table = 1
+     */
+    table: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp last_check = 2
+     */
+    lastCheck?: Timestamp;
+    /**
+     * @generated from protobuf field: optional string last_id = 3
+     */
+    lastId?: string;
 }
 /**
  * @generated from protobuf message resources.settings.VersionStatus
@@ -354,12 +375,14 @@ class DBSyncStatus$Type extends MessageType<DBSyncStatus> {
             { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "last_synced_data", kind: "message", T: () => Timestamp },
             { no: 3, name: "last_synced_activity", kind: "message", T: () => Timestamp },
-            { no: 4, name: "last_dbsync_version", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } }
+            { no: 4, name: "last_dbsync_version", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 5, name: "tables", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DBSyncTableStatus }
         ]);
     }
     create(value?: PartialMessage<DBSyncStatus>): DBSyncStatus {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.enabled = false;
+        message.tables = [];
         if (value !== undefined)
             reflectionMergePartial<DBSyncStatus>(this, message, value);
         return message;
@@ -380,6 +403,9 @@ class DBSyncStatus$Type extends MessageType<DBSyncStatus> {
                     break;
                 case /* optional string last_dbsync_version */ 4:
                     message.lastDbsyncVersion = reader.string();
+                    break;
+                case /* repeated resources.settings.DBSyncTableStatus tables */ 5:
+                    message.tables.push(DBSyncTableStatus.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -405,6 +431,9 @@ class DBSyncStatus$Type extends MessageType<DBSyncStatus> {
         /* optional string last_dbsync_version = 4; */
         if (message.lastDbsyncVersion !== undefined)
             writer.tag(4, WireType.LengthDelimited).string(message.lastDbsyncVersion);
+        /* repeated resources.settings.DBSyncTableStatus tables = 5; */
+        for (let i = 0; i < message.tables.length; i++)
+            DBSyncTableStatus.internalBinaryWrite(message.tables[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -415,6 +444,67 @@ class DBSyncStatus$Type extends MessageType<DBSyncStatus> {
  * @generated MessageType for protobuf message resources.settings.DBSyncStatus
  */
 export const DBSyncStatus = new DBSyncStatus$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DBSyncTableStatus$Type extends MessageType<DBSyncTableStatus> {
+    constructor() {
+        super("resources.settings.DBSyncTableStatus", [
+            { no: 1, name: "table", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 2, name: "last_check", kind: "message", T: () => Timestamp },
+            { no: 3, name: "last_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DBSyncTableStatus>): DBSyncTableStatus {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.table = "";
+        if (value !== undefined)
+            reflectionMergePartial<DBSyncTableStatus>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DBSyncTableStatus): DBSyncTableStatus {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string table */ 1:
+                    message.table = reader.string();
+                    break;
+                case /* optional resources.timestamp.Timestamp last_check */ 2:
+                    message.lastCheck = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastCheck);
+                    break;
+                case /* optional string last_id */ 3:
+                    message.lastId = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DBSyncTableStatus, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string table = 1; */
+        if (message.table !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.table);
+        /* optional resources.timestamp.Timestamp last_check = 2; */
+        if (message.lastCheck)
+            Timestamp.internalBinaryWrite(message.lastCheck, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional string last_id = 3; */
+        if (message.lastId !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.lastId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.settings.DBSyncTableStatus
+ */
+export const DBSyncTableStatus = new DBSyncTableStatus$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class VersionStatus$Type extends MessageType<VersionStatus> {
     constructor() {

@@ -384,6 +384,7 @@ type DBSyncStatus struct {
 	LastSyncedData     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=last_synced_data,json=lastSyncedData,proto3,oneof" json:"last_synced_data,omitempty"`
 	LastSyncedActivity *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=last_synced_activity,json=lastSyncedActivity,proto3,oneof" json:"last_synced_activity,omitempty"`
 	LastDbsyncVersion  *string                `protobuf:"bytes,4,opt,name=last_dbsync_version,json=lastDbsyncVersion,proto3,oneof" json:"last_dbsync_version,omitempty"`
+	Tables             []*DBSyncTableStatus   `protobuf:"bytes,5,rep,name=tables,proto3" json:"tables,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -441,6 +442,13 @@ func (x *DBSyncStatus) GetLastDbsyncVersion() string {
 	return ""
 }
 
+func (x *DBSyncStatus) GetTables() []*DBSyncTableStatus {
+	if x != nil {
+		return x.Tables
+	}
+	return nil
+}
+
 func (x *DBSyncStatus) SetEnabled(v bool) {
 	x.Enabled = v
 }
@@ -455,6 +463,10 @@ func (x *DBSyncStatus) SetLastSyncedActivity(v *timestamp.Timestamp) {
 
 func (x *DBSyncStatus) SetLastDbsyncVersion(v string) {
 	x.LastDbsyncVersion = &v
+}
+
+func (x *DBSyncStatus) SetTables(v []*DBSyncTableStatus) {
+	x.Tables = v
 }
 
 func (x *DBSyncStatus) HasLastSyncedData() bool {
@@ -497,6 +509,7 @@ type DBSyncStatus_builder struct {
 	LastSyncedData     *timestamp.Timestamp
 	LastSyncedActivity *timestamp.Timestamp
 	LastDbsyncVersion  *string
+	Tables             []*DBSyncTableStatus
 }
 
 func (b0 DBSyncStatus_builder) Build() *DBSyncStatus {
@@ -507,6 +520,114 @@ func (b0 DBSyncStatus_builder) Build() *DBSyncStatus {
 	x.LastSyncedData = b.LastSyncedData
 	x.LastSyncedActivity = b.LastSyncedActivity
 	x.LastDbsyncVersion = b.LastDbsyncVersion
+	x.Tables = b.Tables
+	return m0
+}
+
+type DBSyncTableStatus struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Table         string                 `protobuf:"bytes,1,opt,name=table,proto3" json:"table,omitempty"`
+	LastCheck     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=last_check,json=lastCheck,proto3,oneof" json:"last_check,omitempty"`
+	LastId        *string                `protobuf:"bytes,3,opt,name=last_id,json=lastId,proto3,oneof" json:"last_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DBSyncTableStatus) Reset() {
+	*x = DBSyncTableStatus{}
+	mi := &file_resources_settings_status_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DBSyncTableStatus) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DBSyncTableStatus) ProtoMessage() {}
+
+func (x *DBSyncTableStatus) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_settings_status_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *DBSyncTableStatus) GetTable() string {
+	if x != nil {
+		return x.Table
+	}
+	return ""
+}
+
+func (x *DBSyncTableStatus) GetLastCheck() *timestamp.Timestamp {
+	if x != nil {
+		return x.LastCheck
+	}
+	return nil
+}
+
+func (x *DBSyncTableStatus) GetLastId() string {
+	if x != nil && x.LastId != nil {
+		return *x.LastId
+	}
+	return ""
+}
+
+func (x *DBSyncTableStatus) SetTable(v string) {
+	x.Table = v
+}
+
+func (x *DBSyncTableStatus) SetLastCheck(v *timestamp.Timestamp) {
+	x.LastCheck = v
+}
+
+func (x *DBSyncTableStatus) SetLastId(v string) {
+	x.LastId = &v
+}
+
+func (x *DBSyncTableStatus) HasLastCheck() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastCheck != nil
+}
+
+func (x *DBSyncTableStatus) HasLastId() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastId != nil
+}
+
+func (x *DBSyncTableStatus) ClearLastCheck() {
+	x.LastCheck = nil
+}
+
+func (x *DBSyncTableStatus) ClearLastId() {
+	x.LastId = nil
+}
+
+type DBSyncTableStatus_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Table     string
+	LastCheck *timestamp.Timestamp
+	LastId    *string
+}
+
+func (b0 DBSyncTableStatus_builder) Build() *DBSyncTableStatus {
+	m0 := &DBSyncTableStatus{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Table = b.Table
+	x.LastCheck = b.LastCheck
+	x.LastId = b.LastId
 	return m0
 }
 
@@ -520,7 +641,7 @@ type VersionStatus struct {
 
 func (x *VersionStatus) Reset() {
 	*x = VersionStatus{}
-	mi := &file_resources_settings_status_proto_msgTypes[4]
+	mi := &file_resources_settings_status_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -532,7 +653,7 @@ func (x *VersionStatus) String() string {
 func (*VersionStatus) ProtoMessage() {}
 
 func (x *VersionStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_settings_status_proto_msgTypes[4]
+	mi := &file_resources_settings_status_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -603,7 +724,7 @@ type NewVersionInfo struct {
 
 func (x *NewVersionInfo) Reset() {
 	*x = NewVersionInfo{}
-	mi := &file_resources_settings_status_proto_msgTypes[5]
+	mi := &file_resources_settings_status_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -615,7 +736,7 @@ func (x *NewVersionInfo) String() string {
 func (*NewVersionInfo) ProtoMessage() {}
 
 func (x *NewVersionInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_settings_status_proto_msgTypes[5]
+	mi := &file_resources_settings_status_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -709,15 +830,24 @@ const file_resources_settings_status_proto_rawDesc = "" +
 	"\n" +
 	"db_charset\x18\x05 \x01(\tR\tdbCharset\x12!\n" +
 	"\fdb_collation\x18\x06 \x01(\tR\vdbCollation\x12\x1b\n" +
-	"\ttables_ok\x18\a \x01(\bR\btablesOk\"\xc9\x02\n" +
+	"\ttables_ok\x18\a \x01(\bR\btablesOk\"\x88\x03\n" +
 	"\fDBSyncStatus\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12M\n" +
 	"\x10last_synced_data\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x0elastSyncedData\x88\x01\x01\x12U\n" +
 	"\x14last_synced_activity\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x12lastSyncedActivity\x88\x01\x01\x123\n" +
-	"\x13last_dbsync_version\x18\x04 \x01(\tH\x02R\x11lastDbsyncVersion\x88\x01\x01B\x13\n" +
+	"\x13last_dbsync_version\x18\x04 \x01(\tH\x02R\x11lastDbsyncVersion\x88\x01\x01\x12=\n" +
+	"\x06tables\x18\x05 \x03(\v2%.resources.settings.DBSyncTableStatusR\x06tablesB\x13\n" +
 	"\x11_last_synced_dataB\x17\n" +
 	"\x15_last_synced_activityB\x16\n" +
-	"\x14_last_dbsync_version\"\x83\x01\n" +
+	"\x14_last_dbsync_version\"\xa6\x01\n" +
+	"\x11DBSyncTableStatus\x12\x14\n" +
+	"\x05table\x18\x01 \x01(\tR\x05table\x12B\n" +
+	"\n" +
+	"last_check\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tlastCheck\x88\x01\x01\x12\x1c\n" +
+	"\alast_id\x18\x03 \x01(\tH\x01R\x06lastId\x88\x01\x01B\r\n" +
+	"\v_last_checkB\n" +
+	"\n" +
+	"\b_last_id\"\x83\x01\n" +
 	"\rVersionStatus\x12\x18\n" +
 	"\acurrent\x18\x01 \x01(\tR\acurrent\x12H\n" +
 	"\vnew_version\x18\x02 \x01(\v2\".resources.settings.NewVersionInfoH\x00R\n" +
@@ -729,30 +859,33 @@ const file_resources_settings_status_proto_rawDesc = "" +
 	"\frelease_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\vreleaseDate\x88\x01\x01B\x0f\n" +
 	"\r_release_dateBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
 
-var file_resources_settings_status_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_resources_settings_status_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_settings_status_proto_goTypes = []any{
 	(*SystemStatus)(nil),        // 0: resources.settings.SystemStatus
 	(*Nats)(nil),                // 1: resources.settings.Nats
 	(*Database)(nil),            // 2: resources.settings.Database
 	(*DBSyncStatus)(nil),        // 3: resources.settings.DBSyncStatus
-	(*VersionStatus)(nil),       // 4: resources.settings.VersionStatus
-	(*NewVersionInfo)(nil),      // 5: resources.settings.NewVersionInfo
-	(*timestamp.Timestamp)(nil), // 6: resources.timestamp.Timestamp
+	(*DBSyncTableStatus)(nil),   // 4: resources.settings.DBSyncTableStatus
+	(*VersionStatus)(nil),       // 5: resources.settings.VersionStatus
+	(*NewVersionInfo)(nil),      // 6: resources.settings.NewVersionInfo
+	(*timestamp.Timestamp)(nil), // 7: resources.timestamp.Timestamp
 }
 var file_resources_settings_status_proto_depIdxs = []int32{
-	2, // 0: resources.settings.SystemStatus.database:type_name -> resources.settings.Database
-	1, // 1: resources.settings.SystemStatus.nats:type_name -> resources.settings.Nats
-	3, // 2: resources.settings.SystemStatus.dbsync:type_name -> resources.settings.DBSyncStatus
-	4, // 3: resources.settings.SystemStatus.version:type_name -> resources.settings.VersionStatus
-	6, // 4: resources.settings.DBSyncStatus.last_synced_data:type_name -> resources.timestamp.Timestamp
-	6, // 5: resources.settings.DBSyncStatus.last_synced_activity:type_name -> resources.timestamp.Timestamp
-	5, // 6: resources.settings.VersionStatus.new_version:type_name -> resources.settings.NewVersionInfo
-	6, // 7: resources.settings.NewVersionInfo.release_date:type_name -> resources.timestamp.Timestamp
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	2,  // 0: resources.settings.SystemStatus.database:type_name -> resources.settings.Database
+	1,  // 1: resources.settings.SystemStatus.nats:type_name -> resources.settings.Nats
+	3,  // 2: resources.settings.SystemStatus.dbsync:type_name -> resources.settings.DBSyncStatus
+	5,  // 3: resources.settings.SystemStatus.version:type_name -> resources.settings.VersionStatus
+	7,  // 4: resources.settings.DBSyncStatus.last_synced_data:type_name -> resources.timestamp.Timestamp
+	7,  // 5: resources.settings.DBSyncStatus.last_synced_activity:type_name -> resources.timestamp.Timestamp
+	4,  // 6: resources.settings.DBSyncStatus.tables:type_name -> resources.settings.DBSyncTableStatus
+	7,  // 7: resources.settings.DBSyncTableStatus.last_check:type_name -> resources.timestamp.Timestamp
+	6,  // 8: resources.settings.VersionStatus.new_version:type_name -> resources.settings.NewVersionInfo
+	7,  // 9: resources.settings.NewVersionInfo.release_date:type_name -> resources.timestamp.Timestamp
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_resources_settings_status_proto_init() }
@@ -763,13 +896,14 @@ func file_resources_settings_status_proto_init() {
 	file_resources_settings_status_proto_msgTypes[3].OneofWrappers = []any{}
 	file_resources_settings_status_proto_msgTypes[4].OneofWrappers = []any{}
 	file_resources_settings_status_proto_msgTypes[5].OneofWrappers = []any{}
+	file_resources_settings_status_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_settings_status_proto_rawDesc), len(file_resources_settings_status_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

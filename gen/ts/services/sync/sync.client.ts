@@ -10,7 +10,7 @@ import type { SendDataRequest } from "./sync";
 import type { AddActivityRequest } from "./sync";
 import type { StreamResponse } from "./sync";
 import type { StreamRequest } from "./sync";
-import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
+import type { DuplexStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { DeleteVehiclesRequest } from "./sync";
 import type { DeleteUsersRequest } from "./sync";
 import type { SetLastCharIDRequest } from "./sync";
@@ -213,11 +213,12 @@ export interface ISyncServiceClient {
      */
     deleteVehicles(input: DeleteVehiclesRequest, options?: RpcOptions): UnaryCall<DeleteVehiclesRequest, DeleteDataResponse>;
     /**
-     * Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
+     * Used for the server to stream events to the dbsync and for the dbsync process to
+     * report its current cursor state back to the server.
      *
      * @generated from protobuf rpc: Stream
      */
-    stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse>;
+    stream(options?: RpcOptions): DuplexStreamingCall<StreamRequest, StreamResponse>;
     /**
      * DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
      *
@@ -487,13 +488,14 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
         return stackIntercept<DeleteVehiclesRequest, DeleteDataResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
+     * Used for the server to stream events to the dbsync and for the dbsync process to
+     * report its current cursor state back to the server.
      *
      * @generated from protobuf rpc: Stream
      */
-    stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
+    stream(options?: RpcOptions): DuplexStreamingCall<StreamRequest, StreamResponse> {
         const method = this.methods[26], opt = this._transport.mergeOptions(options);
-        return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
+        return stackIntercept<StreamRequest, StreamResponse>("duplex", this._transport, method, opt);
     }
     /**
      * DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.

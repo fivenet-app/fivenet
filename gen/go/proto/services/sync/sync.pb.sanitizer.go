@@ -331,6 +331,55 @@ func (m *AddUserUpdateRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *ClientSyncState) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Tables
+	for idx, item := range m.Tables {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ClientTableSyncState) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: LastCheck
+	if m.LastCheck != nil {
+		if v, ok := any(m.GetLastCheck()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: LastId
+	if m.LastId != nil {
+		*m.LastId = htmlsanitizer.SanitizeAndUnescape(*m.LastId)
+	}
+
+	// Field: Table
+	m.Table = htmlsanitizer.SanitizeAndUnescape(m.Table)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CloseUserDispatchesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -787,6 +836,15 @@ func (m *SetLastCharIDRequest) Sanitize() error {
 func (m *StreamRequest) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: SyncState
+	if m.SyncState != nil {
+		if v, ok := any(m.GetSyncState()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: Version

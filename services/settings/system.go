@@ -59,6 +59,32 @@ func (s *Server) GetStatus(
 		}
 	}
 
+	if dbsyncState := s.syncServer.GetDBSyncState(); dbsyncState != nil &&
+		dbsyncState.GetSyncState() != nil &&
+		len(dbsyncState.GetSyncState().GetTables()) > 0 {
+		status.Dbsync.Tables = make(
+			[]*settings.DBSyncTableStatus,
+			0,
+			len(dbsyncState.GetSyncState().GetTables()),
+		)
+		for _, table := range dbsyncState.GetSyncState().GetTables() {
+			if table == nil {
+				continue
+			}
+
+			status.Dbsync.Tables = append(status.Dbsync.Tables, &settings.DBSyncTableStatus{
+				Table: table.GetTable(),
+			})
+			last := status.Dbsync.Tables[len(status.Dbsync.Tables)-1]
+			if lastCheck := table.GetLastCheck(); lastCheck != nil {
+				last.LastCheck = lastCheck
+			}
+			if lastID := table.GetLastId(); lastID != "" {
+				last.LastId = &lastID
+			}
+		}
+	}
+
 	return &pbsettings.GetStatusResponse{
 		Status: status,
 	}, nil

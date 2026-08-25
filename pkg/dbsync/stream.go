@@ -7,10 +7,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -40,56 +43,138 @@ func (s *Sync) RunStream(ctx context.Context) {
 }
 
 func (s *Sync) runStream(ctx context.Context) error {
-	stream, err := s.syncCli.Stream(ctx, &pbsync.StreamRequest{
-		Version: &version.Version,
-	})
+	g, gctx := errgroup.WithContext(ctx)
+
+	stream, err := s.syncCli.Stream(gctx)
 	if err != nil {
 		return err
 	}
 
-	for {
-		msg, err := stream.Recv()
-		if errors.Is(err, io.EOF) || protoutils.IsContextCanceled(err) {
-			return nil
-		}
-		if err != nil {
-			st, ok := status.FromError(err)
-			if !ok {
-				s.logger.Error("stream ended with a non-grpc error", zap.Error(err))
-				return err
-			}
+	if err := stream.Send(s.buildStreamRequest()); err != nil {
+		return err
+	}
 
-			switch st.Code() {
-			case codes.Unavailable:
-				s.logger.Debug("stream ended with unavailable code", zap.Error(err))
+	ticker := time.NewTicker(s.cfg.Load().GetSyncStateInterval())
+	defer ticker.Stop()
+
+	g.Go(func() error {
+		for {
+			select {
+			case <-gctx.Done():
 				return nil
 
-			case codes.Unknown:
-				if strings.Contains(
-					st.Message(),
-					"unexpected HTTP status code received from server: 524",
-				) {
-					s.logger.Debug(
-						"stream ended with gateway timeout (524; Cloudflare?)",
-						zap.Error(err),
-					)
+			case <-ticker.C:
+				if err := stream.Send(s.buildStreamRequest()); err != nil {
+					// Keep the stream from reconnecting on transient state-send failures; the Recv loop reconnects on errors.
+					s.logger.Warn("failed to send dbsync sync state", zap.Error(err))
+				}
+			}
+		}
+	})
+
+	g.Go(func() error {
+		for {
+			msg, err := stream.Recv()
+			if errors.Is(err, io.EOF) || protoutils.IsContextCanceled(err) {
+				return nil
+			}
+			if err != nil {
+				st, ok := status.FromError(err)
+				if !ok {
+					s.logger.Error("stream ended with a non-grpc error", zap.Error(err))
+					return err
+				}
+
+				switch st.Code() {
+				case codes.Unavailable:
+					s.logger.Debug("stream ended with unavailable code", zap.Error(err))
+					return nil
+
+				case codes.Unknown:
+					if strings.Contains(
+						st.Message(),
+						"unexpected HTTP status code received from server: 524",
+					) {
+						s.logger.Debug(
+							"stream ended with gateway timeout (524; Cloudflare?)",
+							zap.Error(err),
+						)
+						return nil
+					}
+
+					s.logger.Debug("stream ended with unknown code", zap.Error(err))
 					return nil
 				}
 
-				s.logger.Debug("stream ended with unknown code", zap.Error(err))
-				return nil
+				return err
 			}
 
-			return err
+			select {
+			case <-gctx.Done():
+				return nil
+
+			case s.streamCh <- msg:
+			}
 		}
+	})
 
-		select {
-		case <-ctx.Done():
-			return nil
+	return g.Wait()
+}
 
-		case s.streamCh <- msg:
+func (s *Sync) buildStreamRequest() *pbsync.StreamRequest {
+	req := &pbsync.StreamRequest{}
+	req.SetVersion(version.Version)
+	if state := s.buildStreamState(); state != nil {
+		req.SetSyncState(state)
+	}
+
+	return req
+}
+
+func (s *Sync) buildStreamState() *pbsync.ClientSyncState {
+	if s.state == nil {
+		return nil
+	}
+
+	tables := make([]*pbsync.ClientTableSyncState, 0, 7)
+	for _, table := range []*pbsync.ClientTableSyncState{
+		buildStreamTableState("jobs", s.state.Jobs),
+		buildStreamTableState("licenses", s.state.Licenses),
+		buildStreamTableState("accounts", s.state.Accounts),
+		buildStreamTableState("users", s.state.Users),
+		buildStreamTableState("users_resync", s.state.UsersResync),
+		buildStreamTableState("vehicles", s.state.Vehicles),
+		buildStreamTableState("vehicles_resync", s.state.VehiclesResync),
+	} {
+		if table != nil {
+			tables = append(tables, table)
 		}
 	}
+
+	return &pbsync.ClientSyncState{Tables: tables}
+}
+
+func buildStreamTableState(
+	table string,
+	state *dbsyncconfig.TableSyncState,
+) *pbsync.ClientTableSyncState {
+	if state == nil {
+		return nil
+	}
+
+	out := &pbsync.ClientTableSyncState{
+		Table: table,
+	}
+
+	if lastCheck := state.GetLastCheck(); lastCheck != nil {
+		out.SetLastCheck(timestamp.New(*lastCheck))
+	}
+
+	if lastID := state.GetLastID(); lastID != nil {
+		out.SetLastId(*lastID)
+	}
+
+	return out
 }
 
 func (s *Sync) streamWorker(ctx context.Context) {

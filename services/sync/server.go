@@ -27,6 +27,7 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
 )
 
 type Server struct {
@@ -42,6 +43,7 @@ type Server struct {
 	tokens []string
 
 	lastDBSyncVersion  atomic.Pointer[string]
+	lastDBSyncState    atomic.Pointer[pbsync.StreamRequest]
 	lastSyncedData     atomic.Int64
 	lastSyncedActivity atomic.Int64
 }
@@ -170,4 +172,12 @@ func (s *Server) GetSyncTimes() *settings.DBSyncStatus {
 	}
 
 	return st
+}
+
+func (s *Server) GetDBSyncState() *pbsync.StreamRequest {
+	if v := s.lastDBSyncState.Load(); v != nil {
+		return proto.Clone(v).(*pbsync.StreamRequest)
+	}
+
+	return nil
 }

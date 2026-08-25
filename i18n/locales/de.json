@@ -2117,9 +2117,24 @@
                 },
                 "db_sync": {
                     "title": "DB Sync",
+                    "drawer_title": "DB-Sync-Details",
+                    "summary": "Zusammenfassung",
+                    "per_table": "Pro Tabelle",
                     "last_data_received": "Zuletzt empfangene Daten",
                     "last_activity_received": "Letzte empfangene Aktivität",
-                    "last_dbsync_version": "Letzte gesehene DB Sync Version"
+                    "last_dbsync_version": "Letzte gesehene DB Sync Version",
+                    "last_check": "Letzte Prüfung",
+                    "last_id": "Letzte ID",
+                    "no_tables": "Kein Tabellen-Sync-Status verfügbar",
+                    "tables": {
+                        "jobs": "Berufe",
+                        "licenses": "Lizenzen",
+                        "accounts": "Konten",
+                        "users": "Benutzer",
+                        "users_resync": "Benutzer Resync",
+                        "vehicles": "Fahrzeuge",
+                        "vehicles_resync": "Fahrzeuge Resync"
+                    }
                 },
                 "title": "System-Status",
                 "new_version_available": "Neue Version verfügbar"

@@ -34,6 +34,13 @@ message DBSyncStatus {
   optional resources.timestamp.Timestamp last_synced_data = 2;
   optional resources.timestamp.Timestamp last_synced_activity = 3;
   optional string last_dbsync_version = 4 [(buf.validate.field).string.max_len = 32];
+  repeated DBSyncTableStatus tables = 5;
+}
+
+message DBSyncTableStatus {
+  string table = 1 [(buf.validate.field).string.max_len = 64];
+  optional resources.timestamp.Timestamp last_check = 2;
+  optional string last_id = 3 [(buf.validate.field).string.max_len = 128];
 }
 
 message VersionStatus {

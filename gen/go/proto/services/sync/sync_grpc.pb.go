@@ -110,8 +110,9 @@ type SyncServiceClient interface {
 	DeleteUsers(ctx context.Context, in *DeleteUsersRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
 	// Delete vehicles from the sync store.
 	DeleteVehicles(ctx context.Context, in *DeleteVehiclesRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
-	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
-	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error)
+	// Used for the server to stream events to the dbsync and for the dbsync process to
+	// report its current cursor state back to the server.
+	Stream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[StreamRequest, StreamResponse], error)
 	// Deprecated: Do not use.
 	// DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
 	AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
@@ -391,24 +392,18 @@ func (c *syncServiceClient) DeleteVehicles(ctx context.Context, in *DeleteVehicl
 	return out, nil
 }
 
-func (c *syncServiceClient) Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error) {
+func (c *syncServiceClient) Stream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[StreamRequest, StreamResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &SyncService_ServiceDesc.Streams[0], SyncService_Stream_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &grpc.GenericClientStream[StreamRequest, StreamResponse]{ClientStream: stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type SyncService_StreamClient = grpc.ServerStreamingClient[StreamResponse]
+type SyncService_StreamClient = grpc.BidiStreamingClient[StreamRequest, StreamResponse]
 
 // Deprecated: Do not use.
 func (c *syncServiceClient) AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
@@ -502,8 +497,9 @@ type SyncServiceServer interface {
 	DeleteUsers(context.Context, *DeleteUsersRequest) (*DeleteDataResponse, error)
 	// Delete vehicles from the sync store.
 	DeleteVehicles(context.Context, *DeleteVehiclesRequest) (*DeleteDataResponse, error)
-	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
-	Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error
+	// Used for the server to stream events to the dbsync and for the dbsync process to
+	// report its current cursor state back to the server.
+	Stream(grpc.BidiStreamingServer[StreamRequest, StreamResponse]) error
 	// Deprecated: Do not use.
 	// DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
 	AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error)
@@ -601,7 +597,7 @@ func (UnimplementedSyncServiceServer) DeleteUsers(context.Context, *DeleteUsersR
 func (UnimplementedSyncServiceServer) DeleteVehicles(context.Context, *DeleteVehiclesRequest) (*DeleteDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteVehicles not implemented")
 }
-func (UnimplementedSyncServiceServer) Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error {
+func (UnimplementedSyncServiceServer) Stream(grpc.BidiStreamingServer[StreamRequest, StreamResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
 }
 func (UnimplementedSyncServiceServer) AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error) {
@@ -1103,15 +1099,11 @@ func _SyncService_DeleteVehicles_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _SyncService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(StreamRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(SyncServiceServer).Stream(m, &grpc.GenericServerStream[StreamRequest, StreamResponse]{ServerStream: stream})
+	return srv.(SyncServiceServer).Stream(&grpc.GenericServerStream[StreamRequest, StreamResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type SyncService_StreamServer = grpc.ServerStreamingServer[StreamResponse]
+type SyncService_StreamServer = grpc.BidiStreamingServer[StreamRequest, StreamResponse]
 
 func _SyncService_AddActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddActivityRequest)
@@ -1296,6 +1288,7 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "Stream",
 			Handler:       _SyncService_Stream_Handler,
 			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "services/sync/sync.proto",

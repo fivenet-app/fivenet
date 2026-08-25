@@ -3,7 +3,6 @@ package api
 import (
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -39,5 +38,5 @@ func TestClearSiteDataReturnsHtmlRedirectPage(t *testing.T) {
 	assert.Contains(t, w.Header().Get("Clear-Site-Data"), `"cache"`)
 	assert.Contains(t, w.Header().Get("Content-Type"), "text/html")
 	assert.Contains(t, w.Body.String(), `meta http-equiv="refresh" content="2;url=/"`)
-	assert.True(t, strings.Contains(w.Body.String(), "Reset complete"))
+	assert.Contains(t, w.Body.String(), "Reset complete")
 }

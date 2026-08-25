@@ -6774,6 +6774,20 @@ User related events
 | `last_synced_data` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `last_synced_activity` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `last_dbsync_version` | [string](#string) | optional |  |
+| `tables` | [DBSyncTableStatus](#resourcessettingsDBSyncTableStatus) | repeated |  |
+
+
+
+
+
+### resources.settings.DBSyncTableStatus
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `table` | [string](#string) |  |  |
+| `last_check` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `last_id` | [string](#string) | optional |  |
 
 
 
@@ -14540,6 +14554,30 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
+### services.sync.ClientSyncState
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `tables` | [ClientTableSyncState](#servicessyncClientTableSyncState) | repeated |  |
+
+
+
+
+
+### services.sync.ClientTableSyncState
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `table` | [string](#string) |  |  |
+| `last_check` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `last_id` | [string](#string) | optional |  |
+
+
+
+
+
 ### services.sync.CloseUserDispatchesRequest
 Request to close active dispatches created for a specific user.
 
@@ -14826,6 +14864,7 @@ Response containing the number of dispatches closed for the user.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `version` | [string](#string) | optional |  |
+| `sync_state` | [ClientSyncState](#servicessyncClientSyncState) |  |  |
 
 
 
@@ -14898,7 +14937,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `SetLastCharID` | [SetLastCharIDRequest](#servicessyncSetLastCharIDRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Sync the last character ID for a user. |
 | `DeleteUsers` | [DeleteUsersRequest](#servicessyncDeleteUsersRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Delete users from the sync store. |
 | `DeleteVehicles` | [DeleteVehiclesRequest](#servicessyncDeleteVehiclesRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Delete vehicles from the sync store. |
-| `Stream` | [StreamRequest](#servicessyncStreamRequest) | [StreamResponse](#servicessyncStreamResponse) stream |Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data) |
+| `Stream` | [StreamRequest](#servicessyncStreamRequest) stream | [StreamResponse](#servicessyncStreamResponse) stream |Used for the server to stream events to the dbsync and for the dbsync process to report its current cursor state back to the server. |
 | `AddActivity` | [AddActivityRequest](#servicessyncAddActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc. |
 | `SendData` | [SendDataRequest](#servicessyncSendDataRequest) | [SendDataResponse](#servicessyncSendDataResponse) |DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing. |
 | `DeleteData` | [DeleteDataRequest](#servicessyncDeleteDataRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |DEPRECATED: Way for the gameserver to delete certain data as well |

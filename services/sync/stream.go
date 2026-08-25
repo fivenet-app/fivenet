@@ -3,6 +3,7 @@ package sync
 import (
 	"errors"
 	"fmt"
+	"io"
 	"strings"
 	"time"
 
@@ -13,17 +14,11 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
-func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_StreamServer) error {
+func (s *Server) Stream(srv pbsync.SyncService_StreamServer) error {
 	ctx := srv.Context()
-
-	// Update last (seen) dbsync version when set
-	if req.Version != nil && req.GetVersion() != "" {
-		ver := req.GetVersion()
-		s.lastDBSyncVersion.Store(&ver)
-	}
-
 	// Setup consumer
 	consumer, err := s.js.CreateOrUpdateConsumer(
 		ctx,
@@ -40,6 +35,23 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 	}
 
 	g, gctx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		for {
+			req, err := srv.Recv()
+			if errors.Is(err, io.EOF) || protoutils.IsContextCanceled(err) {
+				return nil
+			}
+			if err != nil {
+				return err
+			}
+			if req == nil {
+				continue
+			}
+
+			s.handleStreamRequest(req)
+		}
+	})
 
 	g.Go(func() error {
 		msgs, err := consumer.Messages(
@@ -100,4 +112,23 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 	})
 
 	return g.Wait()
+}
+
+func (s *Server) handleStreamRequest(req *pbsync.StreamRequest) {
+	if req == nil {
+		return
+	}
+
+	if ver := req.GetVersion(); ver != "" {
+		s.lastDBSyncVersion.Store(&ver)
+	}
+
+	if req.GetSyncState() != nil {
+		s.lastDBSyncState.Store(proto.Clone(req).(*pbsync.StreamRequest))
+
+		s.logger.Debug(
+			"received dbsync sync state",
+			zap.Int("tables", len(req.GetSyncState().GetTables())),
+		)
+	}
 }

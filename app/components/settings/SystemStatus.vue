@@ -2,7 +2,8 @@
 import { getSettingsSystemClient } from '~~/gen/ts/clients';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
-import GenericTime from '../partials/elements/GenericTime.vue';
+import SystemStatusDBSyncDrawer from '~/components/settings/SystemStatusDBSyncDrawer.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 
 const settingsSystemClient = await getSettingsSystemClient();
 
@@ -58,6 +59,8 @@ async function copyVersionToClipboard() {
                         variant="subtle"
                     />
                 </UTooltip>
+
+                <RefreshButton icon-only @click="() => refresh()" />
             </div>
         </template>
 
@@ -140,47 +143,9 @@ async function copyVersionToClipboard() {
                     </template>
                 </UPopover>
 
-                <UPopover v-if="data.dbsync?.enabled" class="flex-1">
-                    <UButton
-                        variant="link"
-                        size="xl"
-                        icon="i-mdi-database-sync"
-                        :label="$t('components.settings.system_status.db_sync.title')"
-                        block
-                        :ui="{ leadingIcon: 'size-10' }"
-                    />
-
-                    <template #content>
-                        <div class="p-4">
-                            <ul class="flex flex-col gap-1">
-                                <li class="inline-flex items-center gap-1">
-                                    <strong>{{ $t('components.settings.system_status.db_sync.last_data_received') }}:</strong>
-                                    <GenericTime v-if="data.dbsync?.lastSyncedData" :value="data.dbsync?.lastSyncedData" />
-                                    <span v-else>{{ $t('common.na') }}</span>
-                                </li>
-
-                                <li class="inline-flex items-center gap-1">
-                                    <strong
-                                        >{{ $t('components.settings.system_status.db_sync.last_activity_received') }}:</strong
-                                    >
-                                    <GenericTime
-                                        v-if="data.dbsync?.lastSyncedActivity"
-                                        :value="data.dbsync?.lastSyncedActivity"
-                                    />
-                                    <span v-else>{{ $t('common.na') }}</span>
-                                </li>
-
-                                <li class="inline-flex items-center gap-1">
-                                    <strong>{{ $t('components.settings.system_status.db_sync.last_dbsync_version') }}:</strong>
-                                    <span v-if="data.dbsync?.lastDbsyncVersion">{{
-                                        data.dbsync?.lastDbsyncVersion ?? ''
-                                    }}</span>
-                                    <span v-else>{{ $t('common.na') }}</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </template>
-                </UPopover>
+                <div v-if="data.dbsync?.enabled" class="flex-1">
+                    <SystemStatusDBSyncDrawer :dbsync="data.dbsync" />
+                </div>
             </div>
         </template>
     </UCard>
