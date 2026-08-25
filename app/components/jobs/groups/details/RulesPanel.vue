@@ -49,7 +49,8 @@ const qualificationsQualificationsClient = await getQualificationsQualifications
 const confirmModalWithReason = overlay.create(ConfirmModalWithReason);
 
 const page = ref(1);
-const selectedQualifications = ref<QualificationShort[]>([]);
+const selectedQualifications = ref<number[]>([]);
+const selectedQualificationById = ref<Record<number, QualificationShort>>({});
 const jobs = ref<Job[]>([]);
 const editingRuleId = ref<number>();
 const pendingAction = ref<string>();
@@ -211,8 +212,15 @@ function qualificationLabel(qualification: QualificationShort): string {
     return `${qualification.abbreviation}: ${qualification.title}`;
 }
 
-function uniqueQualificationIds(qualifications: QualificationShort[]): number[] {
-    return [...new Set(qualifications.map((qualification) => qualification.id).filter((id) => id > 0))];
+function uniqueQualificationIds(qualificationIds: number[]): number[] {
+    return [...new Set(qualificationIds.filter((id) => id > 0))];
+}
+
+function cacheQualificationShorts(qualifications: QualificationShort[]): void {
+    selectedQualificationById.value = {
+        ...selectedQualificationById.value,
+        ...Object.fromEntries(qualifications.map((qualification) => [qualification.id, qualification])),
+    };
 }
 
 async function loadQualificationShorts(ids: number[]): Promise<QualificationShort[]> {
@@ -255,8 +263,9 @@ async function editRule(rule: GroupRule): Promise<void> {
         ruleForm.type = GroupRuleType.QUALIFICATION;
         ruleForm.qualificationType = qualification.type || GroupQualificationRuleType.ALL;
         ruleForm.requireCompleted = qualification.requireCompleted;
-        selectedQualifications.value = qualification.qualificationIds.map(qualificationPlaceholder);
-        selectedQualifications.value = await loadQualificationShorts(qualification.qualificationIds);
+        const qualifications = await loadQualificationShorts(qualification.qualificationIds);
+        cacheQualificationShorts(qualifications);
+        selectedQualifications.value = qualification.qualificationIds.slice();
     }
 }
 
@@ -285,6 +294,7 @@ function buildRuleInput(): GroupRuleInput | undefined {
         type: ruleForm.qualificationType,
         qualificationIds,
         requireCompleted: ruleForm.requireCompleted,
+        qualifications: [],
     };
 
     return {
@@ -295,6 +305,19 @@ function buildRuleInput(): GroupRuleInput | undefined {
         },
     };
 }
+
+watch(
+    () => selectedQualifications.value.slice(),
+    async (qualificationIds) => {
+        const missingIds = qualificationIds.filter(
+            (qualificationId) => selectedQualificationById.value[qualificationId] === undefined,
+        );
+        if (missingIds.length === 0) return;
+
+        cacheQualificationShorts(await loadQualificationShorts(missingIds));
+    },
+    { immediate: true },
+);
 
 async function runMutation(action: string, mutate: () => Promise<void>): Promise<void> {
     pendingAction.value = action;
@@ -563,14 +586,20 @@ watch(
                             :disabled="isMutating || !canManageRules"
                         >
                             <template v-if="selectedQualifications.length > 0" #default>
-                                <span class="block truncate">
-                                    {{ selectedQualifications.map(qualificationLabel).join(', ') }}
-                                </span>
+                                <div class="flex flex-wrap gap-1">
+                                    <QualificationBadge
+                                        v-for="qualificationId in selectedQualifications"
+                                        :key="qualificationId"
+                                        :qualification-id="qualificationId"
+                                        :qualification="selectedQualificationById[qualificationId]"
+                                    />
+                                </div>
                             </template>
 
                             <template #item-label="{ item }">
                                 {{ qualificationLabel(item) }}
                             </template>
+
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.qualification', 2)]) }}
                             </template>

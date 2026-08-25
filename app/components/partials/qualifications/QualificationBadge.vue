@@ -10,15 +10,11 @@ const label = computed(() => {
     const abbreviation = props.qualification?.abbreviation?.trim() ?? '';
     const title = props.qualification?.title?.trim() ?? '';
 
-    if (abbreviation && title) {
-        return `${abbreviation}: ${title}`;
-    }
-    if (abbreviation) {
-        return abbreviation;
-    }
-    if (title) {
-        return title;
-    }
+    if (abbreviation && title) return `${abbreviation}: ${title}`;
+
+    if (abbreviation) return abbreviation;
+
+    if (title) return title;
 
     return `#${props.qualificationId}`;
 });
