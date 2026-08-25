@@ -378,6 +378,7 @@ func (m *mysqlTestDBManager) ensureControlStateLocked(ctx context.Context, t *te
 	}
 	defer controlDB.Close()
 
+	//nolint:gosec // G201: sql queries are not constructed from user input, only for tests.
 	stmt := fmt.Sprintf(
 		`CREATE TABLE IF NOT EXISTS %s (
 			id TINYINT UNSIGNED NOT NULL PRIMARY KEY,
