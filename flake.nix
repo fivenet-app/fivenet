@@ -6,55 +6,68 @@
     nixpkgs.url = "github:nixos/nixpkgs?ref=staging-next-26.05";
   };
 
-  outputs = { self, nixpkgs }:
+  outputs =
+    { self, nixpkgs }:
     let
       goMajorVersion = 1;
       goMinorVersion = 26; # Change this to update the whole stack
 
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-      forEachSupportedSystem = f: nixpkgs.lib.genAttrs supportedSystems (system: f {
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ self.overlays.default ];
-        };
-      });
+      supportedSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+      forEachSupportedSystem =
+        f:
+        nixpkgs.lib.genAttrs supportedSystems (
+          system:
+          f {
+            pkgs = import nixpkgs {
+              inherit system;
+              overlays = [ self.overlays.default ];
+            };
+          }
+        );
     in
     {
       overlays.default = final: prev: {
         go = final."go_${toString goMajorVersion}_${toString goMinorVersion}";
       };
 
-      devShells = forEachSupportedSystem ({ pkgs }: {
-        default = pkgs.mkShell {
-          # Workaround CGO issue https://nixos.wiki/wiki/Go#Using_cgo_on_NixOS
-          hardeningDisable = [ "fortify" ];
+      devShells = forEachSupportedSystem (
+        { pkgs }: {
+          default = pkgs.mkShell {
+            # Workaround CGO issue https://nixos.wiki/wiki/Go#Using_cgo_on_NixOS
+            hardeningDisable = [ "fortify" ];
 
-          packages = with pkgs; [
-            # go
-            go
-            # goimports, godoc, etc.
-            gotools
-            gofumpt
-            # https://github.com/golangci/golangci-lint
-            golangci-lint
+            packages = with pkgs; [
+              # go
+              go
+              # goimports, godoc, etc.
+              gotools
+              gofumpt
+              # https://github.com/golangci/golangci-lint
+              golangci-lint
 
-            # NodeJS stuff
-            nodejs_22
-            pnpm_10
+              # NodeJS stuff
+              nodejs_22
+              pnpm_10
 
-            # Protobuf
-            buf
-            protobuf
+              # Protobuf
+              buf
+              protobuf
 
-            # Utilities
-            commitlint
-            ripgrep
-            sd
-            shellcheck
-            imagemagick
-          ];
-        };
-      });
+              # Utilities
+              commitlint
+              ripgrep
+              sd
+              shellcheck
+              imagemagick
+            ];
+          };
+        }
+      );
     };
 
 }
