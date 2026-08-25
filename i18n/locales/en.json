@@ -2869,7 +2869,7 @@
                 },
                 "ErrGroupMemberRulesRequired": {
                     "title": "Membership rules unmet",
-                    "content": "This colleague does not satisfy the group's strict membership rules."
+                    "content": "This colleague cannot be added because the group's membership rules or policy block them, for example: they do not meet the required rank or they match an exclusion rule."
                 },
                 "ErrGroupPolicyViolation": {
                     "title": "Group policy violation",

@@ -292,7 +292,8 @@ watch(
                 </template>
 
                 <p v-if="exclusion.reason">{{ exclusion.reason }}</p>
-                <p>
+
+                <p class="text-sm text-muted">
                     {{ $t('common.created_by') }}
                     <ColleagueInfoPopover :user="exclusion.createdBy" :user-id="exclusion.createdByUserId" hide-props />
                 </p>

@@ -2869,7 +2869,7 @@
                 },
                 "ErrGroupMemberRulesRequired": {
                     "title": "Mitgliedschaftsregeln nicht erfüllt",
-                    "content": "Dieser Kollege erfüllt die strengen Mitgliedschaftsregeln der Gruppe nicht."
+                    "content": "Dieser Kollege kann nicht hinzugefügt werden, weil die Mitgliedschaftsregeln oder Richtlinien der Gruppe ihn blockieren, zum Beispiel: die erforderliche Dienststufe fehlt oder eine Ausschlussregel greift."
                 },
                 "ErrGroupPolicyViolation": {
                     "title": "Verstoß gegen Gruppenrichtlinien",

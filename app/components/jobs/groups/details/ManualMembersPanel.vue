@@ -260,7 +260,7 @@ watch(
 
                 <template #footer>
                     <div class="flex flex-wrap items-center justify-between gap-2">
-                        <p>
+                        <p class="text-sm text-muted">
                             {{ $t('common.created_by') }}
                             <ColleagueInfoPopover :user="member.createdBy" :user-id="member.createdByUserId" hide-props />
                         </p>

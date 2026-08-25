@@ -107,9 +107,7 @@ function hasManualReason(member: GroupResolvedMember): boolean {
 
 watch(
     () => props.groupId,
-    () => {
-        page.value = 1;
-    },
+    () => (page.value = 1),
 );
 </script>
 
