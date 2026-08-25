@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="refresh" content="2;url=/" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="darkreader-lock" content="" />
+        <title>FiveNet App - Reset Complete</title>
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" href="/images/logo.png" />
+        <link rel="stylesheet" href="/css/herofull-pattern.css" />
+        <style>
+            :root {
+                color-scheme: dark;
+                --panel: rgba(255, 255, 255, 0.75);
+                --panel-border: rgba(255, 255, 255, 0.12);
+                --text: #f4f4f5;
+                --muted: rgba(244, 244, 245, 0.78);
+                --primary: #3b82f6;
+                --primary-hover: #2563eb;
+                --success: #16a34a;
+                --success-hover: #15803d;
+                --neutral: rgba(255, 255, 255, 0.06);
+                --neutral-border: rgba(255, 255, 255, 0.12);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html,
+            body {
+                margin: 0;
+                min-height: 100%;
+                background-color: #121212;
+                color: var(--text);
+                font-family:
+                    'Public Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            }
+
+            body {
+                position: relative;
+                min-height: 100vh;
+                padding: 24px;
+            }
+
+            .page {
+                position: relative;
+                isolation: isolate;
+                min-height: calc(100vh - 48px);
+                min-height: calc(100dvh - 48px);
+            }
+
+            .home-link {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                z-index: 2;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                min-height: 36px;
+                padding: 0 12px;
+                transform: translateX(-50%);
+                border-radius: 8px;
+                border: 1px solid transparent;
+                background: transparent;
+                color: #111827;
+                text-decoration: none;
+                transition:
+                    transform 160ms ease,
+                    background-color 160ms ease,
+                    border-color 160ms ease;
+            }
+
+            .home-link:hover {
+                transform: translateX(-50%) translateY(-1px);
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            .shell {
+                min-height: calc(100vh - 48px);
+                min-height: calc(100dvh - 48px);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding-top: 56px;
+            }
+
+            .card {
+                width: min(100%, 560px);
+                overflow: hidden;
+                border: 1px solid var(--panel-border);
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.75);
+                color: #111827;
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+            }
+
+            .card-header,
+            .card-body,
+            .card-footer {
+                padding: 16px;
+            }
+
+            .card-header {
+                padding-top: 16px;
+            }
+
+            .card-body,
+            .card-footer {
+                border-top: 1px solid rgba(17, 24, 39, 0.08);
+            }
+
+            .card-title {
+                margin: 0;
+                color: #111827;
+                font-size: 2rem;
+                font-weight: 700;
+                line-height: 1.1;
+                text-align: center;
+            }
+
+            .card-subtitle {
+                margin: 8px 0 0;
+                color: rgba(17, 24, 39, 0.72);
+                font-size: 1.125rem;
+                line-height: 1.6;
+                text-align: center;
+            }
+
+            .actions {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding-block: calc(0.25rem * 2);
+                border-radius: 8px;
+                border: 1px solid transparent;
+                text-decoration: none;
+                font-size: 0.875rem;
+                font-weight: 500;
+                color: #ffffff;
+                transition:
+                    transform 160ms ease,
+                    background-color 160ms ease,
+                    border-color 160ms ease,
+                    opacity 160ms ease;
+                line-height: 17.5px;
+            }
+
+            a.primary {
+                background: #3b82f6;
+                color: #ffffff;
+                border-color: rgba(37, 99, 235, 0.25);
+            }
+
+            a.secondary {
+                background: #16a34a;
+                border-color: rgba(22, 163, 74, 0.25);
+                color: #ffffff;
+            }
+
+            a:hover {
+                transform: translateY(-1px);
+                opacity: 0.75;
+            }
+
+            .meta {
+                margin-top: 14px;
+                font-size: 0.875rem;
+                color: rgba(17, 24, 39, 0.56);
+                text-align: center;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                .card {
+                    color: var(--text);
+                    background: rgba(255, 255, 255, 0.05);
+                    border-color: rgba(255, 255, 255, 0.08);
+                    box-shadow: none;
+                }
+
+                .card-title {
+                    color: var(--text);
+                }
+
+                .card-subtitle,
+                .meta {
+                    color: var(--muted);
+                }
+
+                .card-body,
+                .card-footer {
+                    border-top-color: rgba(255, 255, 255, 0.08);
+                }
+
+                .secondary {
+                    color: #ffffff;
+                    background: #16a34a;
+                    border-color: rgba(22, 163, 74, 0.25);
+                }
+
+                .home-link {
+                    color: var(--text);
+                    background: transparent;
+                    border-color: transparent;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="page">
+            <a class="home-link" href="/">
+                <span>Home</span>
+            </a>
+
+            <div class="hero" style="position: fixed; inset: 0;">
+                <div class="hero-overlay shell">
+                    <div class="card">
+                        <div class="card-header">
+                            <img src="/images/logo.webp" width="80" height="80" alt="FiveNet Logo" decoding="async" style="display: block; margin: 0 auto 8px;" />
+                            <h1 class="card-title">Reset complete</h1>
+                            <p class="card-subtitle">Your site data has been cleared. You should be redirected back to the FiveNet homepage in a moment.</p>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="actions">
+                                <a class="primary" href="/">Go to FiveNet now</a>
+                                <a class="secondary" href="/" rel="noreferrer">Reload</a>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <p class="meta">If the redirect does not happen automatically, use the button above.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

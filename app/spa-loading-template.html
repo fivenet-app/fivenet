@@ -4,7 +4,7 @@
     .loader {
         position: fixed;
         inset: 0;
-        z-index: 99999999;
+        z-index: 9999;
         user-select: none;
         background-color: var(--ui-bg, #171717);
     }
@@ -39,9 +39,54 @@
         z-index: 1;
     }
 
+    .loader-reset {
+        position: fixed;
+        left: 50%;
+        bottom: 20px;
+        z-index: 99999;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 24px;
+        padding: 4px 16px;
+        border-radius: 8px;
+        border: 1px solid rgba(37, 99, 235, 0.25);
+        background: rgb(0, 188, 255);
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        transform: translate(-50%, 12px);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+            opacity 220ms ease,
+            transform 220ms ease;
+    }
+
+    .loader-reset.is-visible {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(-50%);
+    }
+
+    .loader-reset:hover {
+        opacity: 0.8;
+    }
+
+    .loader-reset:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.85);
+        outline-offset: 2px;
+        opacity: 1;
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .loader-spinner svg {
             animation: none;
+        }
+
+        .loader-reset {
+            transition: none;
         }
     }
 
@@ -69,3 +114,36 @@
         </div>
     </div>
 </div>
+
+<div class="loader-reset-region" role="status" aria-live="polite" aria-atomic="true">
+    <a class="loader-reset" href="/api/clear-site-data" aria-hidden="true" tabindex="-1" aria-label="Reset the FiveNet app">
+        Trouble loading? Try to reset your FiveNet app.
+    </a>
+</div>
+
+<script>
+    const messages = {
+        en: 'Trouble loading? Try to reset your FiveNet app.',
+        de: 'Lädt es nicht? Hier klicken, um deine FiveNet-App zurückzusetzen.',
+    };
+
+    function pickLocale() {
+        const browser = (navigator.languages && navigator.languages[0]) || navigator.language || 'en';
+        const short = browser.toLowerCase().split('-')[0];
+
+        return messages[short] ? short : 'en';
+    }
+
+    window.setTimeout(() => {
+        const resetButton = document.querySelector('.loader-reset');
+        if (resetButton) {
+            console.debug('Showing reset app button after 6.5 seconds of loading delay...');
+            const locale = pickLocale();
+            resetButton.textContent = messages[locale];
+            resetButton.setAttribute('aria-label', messages[locale]);
+            resetButton.removeAttribute('aria-hidden');
+            resetButton.removeAttribute('tabindex');
+            resetButton.classList.add('is-visible');
+        }
+    }, 6500);
+</script>

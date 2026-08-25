@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	_ "embed"
 	"net/http"
 	"sync/atomic"
 	"time"
@@ -16,6 +17,9 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
+
+//go:embed clear-site-data.html
+var clearSiteDataPage []byte
 
 type Routes struct {
 	logger *zap.Logger
@@ -112,6 +116,8 @@ func (r *Routes) RegisterHTTP(e *gin.Engine) {
 
 		g.GET("/clear-site-data", func(c *gin.Context) {
 			c.Header("Clear-Site-Data", "\"cache\", \"cookies\", \"storage\"")
+			c.Header("Cache-Control", "no-store, max-age=0")
+			c.Header("Pragma", "no-cache")
 			for _, name := range cookiesToExpire {
 				//nolint:gosec // `Same-Site: None` is required because otherwise users can't login in the in-game tablet (iframe).
 				c.SetCookieData(&http.Cookie{
@@ -126,10 +132,7 @@ func (r *Routes) RegisterHTTP(e *gin.Engine) {
 					SameSite: http.SameSiteNoneMode,
 				})
 			}
-			c.String(
-				http.StatusOK,
-				"Your local site data should be cleared now, please go back to the FiveNet homepage yourself.",
-			)
+			c.Data(http.StatusOK, "text/html; charset=utf-8", clearSiteDataPage)
 		})
 
 		g.GET("/version", func(c *gin.Context) {
