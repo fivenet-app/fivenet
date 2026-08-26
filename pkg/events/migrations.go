@@ -7,6 +7,7 @@ import (
 	"sort"
 	"sync"
 
+	"github.com/fivenet-app/fivenet/v2026/pkg/reqs"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
@@ -37,7 +38,12 @@ type Migration struct {
 
 // runMigrations executes any pending migrations.  On a fresh install (no version recorded),
 // it records the latest migration ID and does nothing else.
-func runMigrations(ctx context.Context, logger *zap.Logger, js *JSWrapper) error {
+func runMigrations(
+	ctx context.Context,
+	logger *zap.Logger,
+	js *JSWrapper,
+	req *reqs.NatsReqs,
+) error {
 	// Ensure the migration tracking bucket exists
 	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      migrationBucket,
@@ -69,6 +75,7 @@ func runMigrations(ctx context.Context, logger *zap.Logger, js *JSWrapper) error
 	})
 
 	// Apply migrations with ID greater than current
+	lastApplied := current
 	for _, m := range registeredMigrations {
 		if m.ID <= current {
 			continue
@@ -82,7 +89,10 @@ func runMigrations(ctx context.Context, logger *zap.Logger, js *JSWrapper) error
 			return fmt.Errorf("failed to record migration %s. %w", m.ID, err)
 		}
 		logger.Info("migration applied", zap.String("id", m.ID))
+		lastApplied = m.ID
 	}
+
+	req.SetMigrationVersion(lastApplied)
 
 	return nil
 }

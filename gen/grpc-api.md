@@ -6855,6 +6855,7 @@ User related events
 | ----- | ---- | ----- | ----------- |
 | `version` | [string](#string) |  |  |
 | `connected` | [bool](#bool) |  |  |
+| `migration_version` | [string](#string) |  |  |
 
 
 

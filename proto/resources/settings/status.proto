@@ -18,6 +18,7 @@ message SystemStatus {
 message Nats {
   string version = 1 [(buf.validate.field).string.max_len = 32];
   bool connected = 2;
+  string migration_version = 3 [(buf.validate.field).string.max_len = 32];
 }
 
 message Database {

@@ -148,6 +148,11 @@ async function copyVersionToClipboard() {
                                     <strong>{{ $t('common.version') }}:</strong>
                                     <code class="font-mono">{{ data?.nats?.version }}</code>
                                 </li>
+
+                                <li class="inline-flex items-center gap-1">
+                                    <strong>{{ $t('components.settings.system_status.database.migration_version') }}:</strong>
+                                    <code class="font-mono">{{ data?.nats?.migrationVersion }}</code>
+                                </li>
                             </ul>
                         </div>
                     </template>

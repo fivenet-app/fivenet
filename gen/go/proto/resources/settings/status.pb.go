@@ -168,11 +168,12 @@ func (b0 SystemStatus_builder) Build() *SystemStatus {
 }
 
 type Nats struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
-	Connected     bool                   `protobuf:"varint,2,opt,name=connected,proto3" json:"connected,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"hybrid.v1"`
+	Version          string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	Connected        bool                   `protobuf:"varint,2,opt,name=connected,proto3" json:"connected,omitempty"`
+	MigrationVersion string                 `protobuf:"bytes,3,opt,name=migration_version,json=migrationVersion,proto3" json:"migration_version,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *Nats) Reset() {
@@ -214,6 +215,13 @@ func (x *Nats) GetConnected() bool {
 	return false
 }
 
+func (x *Nats) GetMigrationVersion() string {
+	if x != nil {
+		return x.MigrationVersion
+	}
+	return ""
+}
+
 func (x *Nats) SetVersion(v string) {
 	x.Version = v
 }
@@ -222,11 +230,16 @@ func (x *Nats) SetConnected(v bool) {
 	x.Connected = v
 }
 
+func (x *Nats) SetMigrationVersion(v string) {
+	x.MigrationVersion = v
+}
+
 type Nats_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Version   string
-	Connected bool
+	Version          string
+	Connected        bool
+	MigrationVersion string
 }
 
 func (b0 Nats_builder) Build() *Nats {
@@ -235,6 +248,7 @@ func (b0 Nats_builder) Build() *Nats {
 	_, _ = b, x
 	x.Version = b.Version
 	x.Connected = b.Connected
+	x.MigrationVersion = b.MigrationVersion
 	return m0
 }
 
@@ -794,10 +808,11 @@ const file_resources_settings_status_proto_rawDesc = "" +
 	"\bdatabase\x18\x01 \x01(\v2\x1c.resources.settings.DatabaseR\bdatabase\x12,\n" +
 	"\x04nats\x18\x02 \x01(\v2\x18.resources.settings.NatsR\x04nats\x12;\n" +
 	"\aversion\x18\x03 \x01(\v2!.resources.settings.VersionStatusR\aversion\x128\n" +
-	"\x06dbsync\x18\x04 \x01(\v2 .resources.settings.DBSyncStatusR\x06dbsync\">\n" +
+	"\x06dbsync\x18\x04 \x01(\v2 .resources.settings.DBSyncStatusR\x06dbsync\"k\n" +
 	"\x04Nats\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12\x1c\n" +
-	"\tconnected\x18\x02 \x01(\bR\tconnected\"\xf7\x01\n" +
+	"\tconnected\x18\x02 \x01(\bR\tconnected\x12+\n" +
+	"\x11migration_version\x18\x03 \x01(\tR\x10migrationVersion\"\xf7\x01\n" +
 	"\bDatabase\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12\x1c\n" +
 	"\tconnected\x18\x02 \x01(\bR\tconnected\x12+\n" +

@@ -97,6 +97,9 @@ func (m *Nats) Sanitize() error {
 		return nil
 	}
 
+	// Field: MigrationVersion
+	m.MigrationVersion = htmlsanitizer.SanitizeAndUnescape(m.MigrationVersion)
+
 	// Field: Version
 	m.Version = htmlsanitizer.SanitizeAndUnescape(m.Version)
 

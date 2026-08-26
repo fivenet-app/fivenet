@@ -13,6 +13,8 @@ type NatsReqs struct {
 	nc *nats.Conn
 
 	version string
+
+	migrationVersion string
 }
 
 func NewNatsReqs(nc *nats.Conn) *NatsReqs {
@@ -48,4 +50,16 @@ func (r *NatsReqs) ValidateVersion() error {
 	}
 
 	return nil
+}
+
+func (r *NatsReqs) SetMigrationVersion(version string) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.migrationVersion = version
+}
+
+func (r *NatsReqs) GetMigrationVersion() string {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return r.migrationVersion
 }

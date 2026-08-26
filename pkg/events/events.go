@@ -147,7 +147,7 @@ func New(p Params) (Result, error) {
 
 	// Run migrations and collect basic metric
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		if err := runMigrations(ctx, p.Logger, res.JS); err != nil {
+		if err := runMigrations(ctx, p.Logger, res.JS, res.Req); err != nil {
 			return fmt.Errorf("failed to run nats migrations. %w", err)
 		}
 

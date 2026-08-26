@@ -46,6 +46,10 @@ export interface Nats {
      * @generated from protobuf field: bool connected = 2
      */
     connected: boolean;
+    /**
+     * @generated from protobuf field: string migration_version = 3
+     */
+    migrationVersion: string;
 }
 /**
  * @generated from protobuf message resources.settings.Database
@@ -220,13 +224,15 @@ class Nats$Type extends MessageType<Nats> {
     constructor() {
         super("resources.settings.Nats", [
             { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
-            { no: 2, name: "connected", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "connected", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "migration_version", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } }
         ]);
     }
     create(value?: PartialMessage<Nats>): Nats {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.version = "";
         message.connected = false;
+        message.migrationVersion = "";
         if (value !== undefined)
             reflectionMergePartial<Nats>(this, message, value);
         return message;
@@ -241,6 +247,9 @@ class Nats$Type extends MessageType<Nats> {
                     break;
                 case /* bool connected */ 2:
                     message.connected = reader.bool();
+                    break;
+                case /* string migration_version */ 3:
+                    message.migrationVersion = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -260,6 +269,9 @@ class Nats$Type extends MessageType<Nats> {
         /* bool connected = 2; */
         if (message.connected !== false)
             writer.tag(2, WireType.Varint).bool(message.connected);
+        /* string migration_version = 3; */
+        if (message.migrationVersion !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.migrationVersion);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

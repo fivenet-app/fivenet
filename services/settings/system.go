@@ -35,8 +35,9 @@ func (s *Server) GetStatus(
 			TablesOk:         len(s.dbReq.GetTables()) == 0,
 		},
 		Nats: &settings.Nats{
-			Version:   s.natsReq.GetVersion(),
-			Connected: !s.js.Conn().IsClosed(),
+			Version:          s.natsReq.GetVersion(),
+			Connected:        !s.js.Conn().IsClosed(),
+			MigrationVersion: s.natsReq.GetMigrationVersion(),
 		},
 		Dbsync: s.syncServer.GetDBSyncStatus(),
 		Version: &settings.VersionStatus{
