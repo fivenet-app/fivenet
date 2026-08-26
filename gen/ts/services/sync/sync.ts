@@ -12,6 +12,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DBSyncTableSyncState } from "../../resources/dbsync/state";
 import { DeleteVehicles } from "../../resources/sync/data/data";
 import { DeleteUsers } from "../../resources/sync/data/data";
 import { DataUserLocations } from "../../resources/sync/data/data";
@@ -606,35 +607,26 @@ export interface StreamRequest {
      */
     version?: string;
     /**
-     * @generated from protobuf field: services.sync.ClientSyncState sync_state = 2
+     * @generated from protobuf oneof: data
      */
-    syncState?: ClientSyncState;
+    data: {
+        oneofKind: "syncState";
+        /**
+         * @generated from protobuf field: services.sync.ClientSyncState sync_state = 2
+         */
+        syncState: ClientSyncState;
+    } | {
+        oneofKind: undefined;
+    };
 }
 /**
  * @generated from protobuf message services.sync.ClientSyncState
  */
 export interface ClientSyncState {
     /**
-     * @generated from protobuf field: repeated services.sync.ClientTableSyncState tables = 1
+     * @generated from protobuf field: repeated resources.dbsync.DBSyncTableSyncState tables = 1
      */
-    tables: ClientTableSyncState[];
-}
-/**
- * @generated from protobuf message services.sync.ClientTableSyncState
- */
-export interface ClientTableSyncState {
-    /**
-     * @generated from protobuf field: string table = 1
-     */
-    table: string;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp last_check = 2
-     */
-    lastCheck?: Timestamp;
-    /**
-     * @generated from protobuf field: optional string last_id = 3
-     */
-    lastId?: string;
+    tables: DBSyncTableSyncState[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetStatusRequest$Type extends MessageType<GetStatusRequest> {
@@ -2725,11 +2717,12 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
     constructor() {
         super("services.sync.StreamRequest", [
             { no: 1, name: "version", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
-            { no: 2, name: "sync_state", kind: "message", T: () => ClientSyncState }
+            { no: 2, name: "sync_state", kind: "message", oneof: "data", T: () => ClientSyncState }
         ]);
     }
     create(value?: PartialMessage<StreamRequest>): StreamRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.data = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<StreamRequest>(this, message, value);
         return message;
@@ -2743,7 +2736,10 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
                     message.version = reader.string();
                     break;
                 case /* services.sync.ClientSyncState sync_state */ 2:
-                    message.syncState = ClientSyncState.internalBinaryRead(reader, reader.uint32(), options, message.syncState);
+                    message.data = {
+                        oneofKind: "syncState",
+                        syncState: ClientSyncState.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).syncState)
+                    };
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2761,8 +2757,8 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
         if (message.version !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.version);
         /* services.sync.ClientSyncState sync_state = 2; */
-        if (message.syncState)
-            ClientSyncState.internalBinaryWrite(message.syncState, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        if (message.data.oneofKind === "syncState")
+            ClientSyncState.internalBinaryWrite(message.data.syncState, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2777,7 +2773,7 @@ export const StreamRequest = new StreamRequest$Type();
 class ClientSyncState$Type extends MessageType<ClientSyncState> {
     constructor() {
         super("services.sync.ClientSyncState", [
-            { no: 1, name: "tables", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ClientTableSyncState, options: { "buf.validate.field": { repeated: { maxItems: "16" } } } }
+            { no: 1, name: "tables", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DBSyncTableSyncState, options: { "buf.validate.field": { repeated: { maxItems: "16" } } } }
         ]);
     }
     create(value?: PartialMessage<ClientSyncState>): ClientSyncState {
@@ -2792,8 +2788,8 @@ class ClientSyncState$Type extends MessageType<ClientSyncState> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated services.sync.ClientTableSyncState tables */ 1:
-                    message.tables.push(ClientTableSyncState.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.dbsync.DBSyncTableSyncState tables */ 1:
+                    message.tables.push(DBSyncTableSyncState.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2807,9 +2803,9 @@ class ClientSyncState$Type extends MessageType<ClientSyncState> {
         return message;
     }
     internalBinaryWrite(message: ClientSyncState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated services.sync.ClientTableSyncState tables = 1; */
+        /* repeated resources.dbsync.DBSyncTableSyncState tables = 1; */
         for (let i = 0; i < message.tables.length; i++)
-            ClientTableSyncState.internalBinaryWrite(message.tables[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            DBSyncTableSyncState.internalBinaryWrite(message.tables[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2820,67 +2816,6 @@ class ClientSyncState$Type extends MessageType<ClientSyncState> {
  * @generated MessageType for protobuf message services.sync.ClientSyncState
  */
 export const ClientSyncState = new ClientSyncState$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ClientTableSyncState$Type extends MessageType<ClientTableSyncState> {
-    constructor() {
-        super("services.sync.ClientTableSyncState", [
-            { no: 1, name: "table", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
-            { no: 2, name: "last_check", kind: "message", T: () => Timestamp },
-            { no: 3, name: "last_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<ClientTableSyncState>): ClientTableSyncState {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.table = "";
-        if (value !== undefined)
-            reflectionMergePartial<ClientTableSyncState>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ClientTableSyncState): ClientTableSyncState {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string table */ 1:
-                    message.table = reader.string();
-                    break;
-                case /* optional resources.timestamp.Timestamp last_check */ 2:
-                    message.lastCheck = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastCheck);
-                    break;
-                case /* optional string last_id */ 3:
-                    message.lastId = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ClientTableSyncState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string table = 1; */
-        if (message.table !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.table);
-        /* optional resources.timestamp.Timestamp last_check = 2; */
-        if (message.lastCheck)
-            Timestamp.internalBinaryWrite(message.lastCheck, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional string last_id = 3; */
-        if (message.lastId !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.lastId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.ClientTableSyncState
- */
-export const ClientTableSyncState = new ClientTableSyncState$Type();
 /**
  * @generated ServiceType for protobuf service services.sync.SyncService
  */

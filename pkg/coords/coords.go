@@ -113,7 +113,7 @@ func (p *Coords[V]) Closest(x, y float64) (V, bool) {
 
 	point := p.tree.Find(orb.Point{x, y})
 	if point == nil {
-		return *(new(V)), false
+		return *new(V), false
 	}
 	return point.(V), true
 }

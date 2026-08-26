@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.settings;
 
 import "buf/validate/validate.proto";
+import "resources/dbsync/state.proto";
 import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settings";
@@ -10,8 +11,8 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources
 message SystemStatus {
   Database database = 1;
   Nats nats = 2;
-  DBSyncStatus dbsync = 3;
-  VersionStatus version = 4;
+  VersionStatus version = 3;
+  DBSyncStatus dbsync = 4;
 }
 
 message Nats {
@@ -29,20 +30,6 @@ message Database {
   bool tables_ok = 7;
 }
 
-message DBSyncStatus {
-  bool enabled = 1;
-  optional resources.timestamp.Timestamp last_synced_data = 2;
-  optional resources.timestamp.Timestamp last_synced_activity = 3;
-  optional string last_dbsync_version = 4 [(buf.validate.field).string.max_len = 32];
-  repeated DBSyncTableStatus tables = 5;
-}
-
-message DBSyncTableStatus {
-  string table = 1 [(buf.validate.field).string.max_len = 64];
-  optional resources.timestamp.Timestamp last_check = 2;
-  optional string last_id = 3 [(buf.validate.field).string.max_len = 128];
-}
-
 message VersionStatus {
   string current = 1 [(buf.validate.field).string.max_len = 32];
   optional NewVersionInfo new_version = 2;
@@ -52,4 +39,17 @@ message NewVersionInfo {
   string version = 1 [(buf.validate.field).string.max_len = 32];
   string url = 2 [(buf.validate.field).string.max_len = 256];
   optional resources.timestamp.Timestamp release_date = 3;
+}
+
+message DBSyncStatus {
+  bool enabled = 1;
+  optional resources.timestamp.Timestamp last_synced_data = 2;
+  optional resources.timestamp.Timestamp last_synced_activity = 3;
+  optional string last_dbsync_version = 4 [(buf.validate.field).string.max_len = 32];
+  bool stream_connected = 5;
+  optional DBSyncSyncState sync_state = 6;
+}
+
+message DBSyncSyncState {
+  repeated resources.dbsync.DBSyncTableSyncState tables = 1 [(buf.validate.field).repeated.max_items = 16];
 }

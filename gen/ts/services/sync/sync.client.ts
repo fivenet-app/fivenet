@@ -220,21 +220,21 @@ export interface ISyncServiceClient {
      */
     stream(options?: RpcOptions): DuplexStreamingCall<StreamRequest, StreamResponse>;
     /**
-     * DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+     * Deprecated: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
      *
      * @deprecated
      * @generated from protobuf rpc: AddActivity
      */
     addActivity(input: AddActivityRequest, options?: RpcOptions): UnaryCall<AddActivityRequest, AddActivityResponse>;
     /**
-     * DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing.
+     * Deprecated: DBSync's method of sending (mass) data to the FiveNet server for storing.
      *
      * @deprecated
      * @generated from protobuf rpc: SendData
      */
     sendData(input: SendDataRequest, options?: RpcOptions): UnaryCall<SendDataRequest, SendDataResponse>;
     /**
-     * DEPRECATED: Way for the gameserver to delete certain data as well
+     * Deprecated: Way for the gameserver to delete certain data as well
      *
      * @deprecated
      * @generated from protobuf rpc: DeleteData
@@ -498,7 +498,7 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
         return stackIntercept<StreamRequest, StreamResponse>("duplex", this._transport, method, opt);
     }
     /**
-     * DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+     * Deprecated: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
      *
      * @deprecated
      * @generated from protobuf rpc: AddActivity
@@ -508,7 +508,7 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
         return stackIntercept<AddActivityRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing.
+     * Deprecated: DBSync's method of sending (mass) data to the FiveNet server for storing.
      *
      * @deprecated
      * @generated from protobuf rpc: SendData
@@ -518,7 +518,7 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
         return stackIntercept<SendDataRequest, SendDataResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * DEPRECATED: Way for the gameserver to delete certain data as well
+     * Deprecated: Way for the gameserver to delete certain data as well
      *
      * @deprecated
      * @generated from protobuf rpc: DeleteData

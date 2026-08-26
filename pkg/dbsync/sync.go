@@ -20,6 +20,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
 )
 
@@ -129,6 +130,11 @@ func (s *Sync) createGRPCClient() error {
 					api.TransportSecurity,
 				),
 			),
+			grpc.WithKeepaliveParams(keepalive.ClientParameters{
+				Time:                30 * time.Second,
+				Timeout:             20 * time.Second,
+				PermitWithoutStream: false,
+			}),
 		)
 		if err != nil {
 			return err
@@ -220,17 +226,13 @@ func (s *Sync) stop(closeCli bool) error {
 }
 
 func (s *Sync) restart() error {
-	s.logger.Info("stopping sync process")
 	if err := s.stop(false); err != nil {
 		return err
 	}
-	s.logger.Info("stopped sync process")
 
-	s.logger.Info("starting sync process")
 	if err := s.start(); err != nil {
 		return err
 	}
-	s.logger.Info("sync process started")
 
 	return nil
 }

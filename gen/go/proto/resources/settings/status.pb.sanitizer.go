@@ -37,6 +37,25 @@ func (m *DBSyncStatus) Sanitize() error {
 		}
 	}
 
+	// Field: SyncState
+	if m.SyncState != nil {
+		if v, ok := any(m.GetSyncState()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *DBSyncSyncState) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
 	// Field: Tables
 	for idx, item := range m.Tables {
 		_, _ = idx, item
@@ -48,33 +67,6 @@ func (m *DBSyncStatus) Sanitize() error {
 		}
 
 	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DBSyncTableStatus) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: LastCheck
-	if m.LastCheck != nil {
-		if v, ok := any(m.GetLastCheck()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: LastId
-	if m.LastId != nil {
-		*m.LastId = htmlsanitizer.SanitizeAndUnescape(*m.LastId)
-	}
-
-	// Field: Table
-	m.Table = htmlsanitizer.SanitizeAndUnescape(m.Table)
 
 	return nil
 }

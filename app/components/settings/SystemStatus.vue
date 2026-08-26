@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import { getSettingsSystemClient } from '~~/gen/ts/clients';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
-import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import SystemStatusDBSyncDrawer from '~/components/settings/SystemStatusDBSyncDrawer.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
+import { isRequestPending } from '~/utils/data';
 
 const settingsSystemClient = await getSettingsSystemClient();
 
 const { data, error, status, refresh } = useLazyAsyncData('settings-system-status', () => getStatus());
+const isStatusLoading = computed(() => isRequestPending(status.value));
 
 async function getStatus() {
     try {
@@ -42,7 +43,7 @@ async function copyVersionToClipboard() {
                 <UTooltip :text="$t('common.copy')">
                     <UButton variant="soft" size="xs" @click="copyVersionToClipboard">
                         <span class="hidden truncate sm:block">{{ $t('common.version') }}:</span>
-                        <span>{{ version }}</span>
+                        <code class="font-mono">{{ version }}</code>
                     </UButton>
                 </UTooltip>
 
@@ -60,92 +61,104 @@ async function copyVersionToClipboard() {
                     />
                 </UTooltip>
 
-                <RefreshButton icon-only @click="() => refresh()" />
+                <RefreshButton icon-only :loading="isStatusLoading" :disabled="isStatusLoading" @click="() => refresh()" />
             </div>
         </template>
 
         <template #default>
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.status')])" />
             <DataErrorBlock
-                v-else-if="error"
+                v-if="error"
                 :title="$t('common.not_found', [$t('common.status')])"
                 :error="error"
                 :retry="refresh"
             />
 
-            <div v-else-if="data" class="flex flex-wrap gap-2">
-                <UPopover class="flex-1">
-                    <UButton
-                        variant="link"
-                        size="xl"
-                        :color="data.database?.connected ? 'success' : 'error'"
-                        icon="i-simple-icons-mysql"
-                        :label="$t('components.settings.system_status.database.title')"
-                        block
-                        :ui="{ leadingIcon: 'size-10' }"
-                    />
+            <div v-else-if="isStatusLoading && !data" class="flex flex-wrap gap-2">
+                <USkeleton class="h-16 min-w-[16rem] flex-1" />
+                <USkeleton class="h-16 min-w-[16rem] flex-1" />
+                <USkeleton class="h-16 min-w-[16rem] flex-1" />
+            </div>
+
+            <div v-else class="flex flex-row justify-around gap-2">
+                <UPopover>
+                    <UChip :color="data?.database?.connected ? 'success' : 'error'">
+                        <UButton
+                            icon="i-simple-icons-mysql"
+                            :label="$t('components.settings.system_status.database.title')"
+                            size="xl"
+                            variant="link"
+                            :disabled="isStatusLoading || !data"
+                            :ui="{ leadingIcon: 'size-8' }"
+                        />
+                    </UChip>
 
                     <template #content>
                         <div class="p-4">
                             <ul class="flex flex-col gap-1">
                                 <li class="inline-flex items-center gap-1">
-                                    <strong>{{ $t('common.version') }}:</strong> <code>{{ data.database?.version }}</code>
+                                    <strong>{{ $t('common.version') }}:</strong>
+                                    <code class="font-mono">{{ data?.database?.version }}</code>
                                 </li>
 
                                 <li class="inline-flex items-center gap-1">
                                     <strong>{{ $t('components.settings.system_status.database.migration_version') }}:</strong>
-                                    <code>{{ data.database?.migrationVersion }}</code>
+                                    <code class="font-mono">{{ data?.database?.migrationVersion }}</code>
                                 </li>
 
                                 <li class="inline-flex items-center gap-1">
                                     <strong>{{ $t('components.settings.system_status.database.migration_dirty') }}:</strong>
-                                    <span>{{ data.database?.migrationDirty ? $t('common.yes') : $t('common.no') }}</span>
+                                    <span>{{ data?.database?.migrationDirty ? $t('common.yes') : $t('common.no') }}</span>
                                 </li>
 
                                 <li class="inline-flex items-center gap-1">
                                     <strong>{{ $t('components.settings.system_status.database.db_charset') }}:</strong>
-                                    <code>{{ data.database?.dbCharset }}</code>
+                                    <code class="font-mono">{{ data?.database?.dbCharset }}</code>
                                 </li>
 
                                 <li class="inline-flex items-center gap-1">
                                     <strong>{{ $t('components.settings.system_status.database.db_collation') }}:</strong>
-                                    <code>{{ data.database?.dbCollation }}</code>
+                                    <code class="font-mono">{{ data?.database?.dbCollation }}</code>
                                 </li>
 
                                 <li class="inline-flex items-center gap-1">
                                     <strong>{{ $t('components.settings.system_status.database.tables_mismatch') }}:</strong>
-                                    <span>{{ !data.database?.tablesOk ? $t('common.yes') : $t('common.no') }}</span>
+                                    <span>{{ !data?.database?.tablesOk ? $t('common.yes') : $t('common.no') }}</span>
                                 </li>
                             </ul>
                         </div>
                     </template>
                 </UPopover>
 
-                <UPopover class="flex-1">
-                    <UButton
-                        variant="link"
-                        size="xl"
-                        :color="data.nats?.connected ? 'success' : 'error'"
-                        icon="i-simple-icons-natsdotio"
-                        :label="$t('components.settings.system_status.nats.title')"
-                        block
-                        :ui="{ leadingIcon: 'size-10' }"
-                    />
+                <UPopover>
+                    <UChip :color="data?.nats?.connected ? 'success' : 'error'">
+                        <UButton
+                            variant="link"
+                            size="xl"
+                            icon="i-simple-icons-natsdotio"
+                            :label="$t('components.settings.system_status.nats.title')"
+                            :disabled="isStatusLoading || !data"
+                            :ui="{ leadingIcon: 'size-8' }"
+                        />
+                    </UChip>
 
                     <template #content>
                         <div class="p-4">
                             <ul class="flex flex-col gap-1">
                                 <li class="inline-flex items-center gap-1">
-                                    <strong>{{ $t('common.version') }}:</strong> <code>{{ data.nats?.version }}</code>
+                                    <strong>{{ $t('common.version') }}:</strong>
+                                    <code class="font-mono">{{ data?.nats?.version }}</code>
                                 </li>
                             </ul>
                         </div>
                     </template>
                 </UPopover>
 
-                <div v-if="data.dbsync?.enabled" class="flex-1">
-                    <SystemStatusDBSyncDrawer :dbsync="data.dbsync" />
-                </div>
+                <SystemStatusDBSyncDrawer
+                    v-if="data?.dbsync?.enabled"
+                    :dbsync="data.dbsync"
+                    :disabled="isStatusLoading"
+                    @refresh="() => refresh()"
+                />
             </div>
         </template>
     </UCard>

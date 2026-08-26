@@ -52,7 +52,7 @@ func NewLogger(p LoggerParams) (LoggerResults, error) {
 			MaxSize:          p.Config.Log.File.Rotation.MaxSize,
 			MaxBackups:       p.Config.Log.File.Rotation.MaxBackups,
 			MaxAge:           p.Config.Log.File.Rotation.MaxAge,
-			Compress:         p.Config.Log.File.Rotation.Compress,
+			Compression:      p.Config.Log.File.Rotation.Compression,
 			LocalTime:        true,
 			RotationInterval: p.Config.Log.File.Rotation.RotationInterval,
 		}

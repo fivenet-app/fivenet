@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	syncactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
@@ -32,13 +33,31 @@ func NewAccountsSync(
 }
 
 func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
+	var (
+		total int64
+		err   error
+	)
+
+	if s.state != nil {
+		startedAt := time.Now()
+		s.state.MarkAttempt(startedAt)
+		defer func() {
+			if err != nil {
+				s.state.MarkError(err)
+				return
+			}
+			finishedAt := time.Now()
+			s.state.MarkSuccess(finishedAt)
+		}()
+	}
+
 	limit := s.cfg.Limits.Accounts
-	var total int64
 	prevCursorID := ""
 
 	for batches := 0; ; batches++ {
-		accounts, cursorID, err := s.fetchAccounts(ctx)
-		if err != nil {
+		accounts, cursorID, syncErr := s.fetchAccounts(ctx)
+		if syncErr != nil {
+			err = syncErr
 			return total, err
 		}
 
@@ -55,14 +74,15 @@ func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
 				AccountUpdates: accounts[start:end],
 				Clear:          s.clear,
 			}
-			if err := s.send(
+			if syncErr := s.send(
 				ctx,
 				req,
 				func(ctx context.Context, cli pbsync.SyncServiceClient) error {
 					_, err := cli.SendAccounts(ctx, req)
 					return err
 				},
-			); err != nil {
+			); syncErr != nil {
+				err = syncErr
 				return total, err
 			}
 		}

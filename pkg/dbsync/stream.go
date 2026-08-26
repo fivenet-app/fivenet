@@ -7,9 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
-	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbsync/statusmapper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"go.uber.org/zap"
@@ -26,8 +25,7 @@ func (s *Sync) RunStream(ctx context.Context) {
 	}
 
 	cfg := s.cfg.Load()
-	api := cfg.Destination.API
-	s.logger.Info("starting sync stream", zap.String("host", api.URL))
+	s.logger.Info("starting sync stream", zap.String("host", cfg.Destination.API.URL))
 	for {
 		if err := s.runStream(ctx); err != nil {
 			s.logger.Warn("error during sync stream, restarting in a second", zap.Error(err))
@@ -75,10 +73,11 @@ func (s *Sync) runStream(ctx context.Context) error {
 	g.Go(func() error {
 		for {
 			msg, err := stream.Recv()
-			if errors.Is(err, io.EOF) || protoutils.IsContextCanceled(err) {
-				return nil
-			}
 			if err != nil {
+				if errors.Is(err, io.EOF) || protoutils.IsContextCanceled(err) {
+					return nil
+				}
+
 				st, ok := status.FromError(err)
 				if !ok {
 					s.logger.Error("stream ended with a non-grpc error", zap.Error(err))
@@ -87,22 +86,16 @@ func (s *Sync) runStream(ctx context.Context) error {
 
 				switch st.Code() {
 				case codes.Unavailable:
-					s.logger.Debug("stream ended with unavailable code", zap.Error(err))
-					return nil
+					return err
 
 				case codes.Unknown:
 					if strings.Contains(
 						st.Message(),
 						"unexpected HTTP status code received from server: 524",
 					) {
-						s.logger.Debug(
-							"stream ended with gateway timeout (524; Cloudflare?)",
-							zap.Error(err),
-						)
 						return nil
 					}
 
-					s.logger.Debug("stream ended with unknown code", zap.Error(err))
 					return nil
 				}
 
@@ -124,6 +117,7 @@ func (s *Sync) runStream(ctx context.Context) error {
 func (s *Sync) buildStreamRequest() *pbsync.StreamRequest {
 	req := &pbsync.StreamRequest{}
 	req.SetVersion(version.Version)
+
 	if state := s.buildStreamState(); state != nil {
 		req.SetSyncState(state)
 	}
@@ -132,49 +126,8 @@ func (s *Sync) buildStreamRequest() *pbsync.StreamRequest {
 }
 
 func (s *Sync) buildStreamState() *pbsync.ClientSyncState {
-	if s.state == nil {
-		return nil
-	}
-
-	tables := make([]*pbsync.ClientTableSyncState, 0, 7)
-	for _, table := range []*pbsync.ClientTableSyncState{
-		buildStreamTableState("jobs", s.state.Jobs),
-		buildStreamTableState("licenses", s.state.Licenses),
-		buildStreamTableState("accounts", s.state.Accounts),
-		buildStreamTableState("users", s.state.Users),
-		buildStreamTableState("users_resync", s.state.UsersResync),
-		buildStreamTableState("vehicles", s.state.Vehicles),
-		buildStreamTableState("vehicles_resync", s.state.VehiclesResync),
-	} {
-		if table != nil {
-			tables = append(tables, table)
-		}
-	}
-
-	return &pbsync.ClientSyncState{Tables: tables}
-}
-
-func buildStreamTableState(
-	table string,
-	state *dbsyncconfig.TableSyncState,
-) *pbsync.ClientTableSyncState {
-	if state == nil {
-		return nil
-	}
-
-	out := &pbsync.ClientTableSyncState{
-		Table: table,
-	}
-
-	if lastCheck := state.GetLastCheck(); lastCheck != nil {
-		out.SetLastCheck(timestamp.New(*lastCheck))
-	}
-
-	if lastID := state.GetLastID(); lastID != nil {
-		out.SetLastId(*lastID)
-	}
-
-	return out
+	snapshot := statusmapper.FromRuntimeState(s.state)
+	return snapshot.ToClientSyncState()
 }
 
 func (s *Sync) streamWorker(ctx context.Context) {

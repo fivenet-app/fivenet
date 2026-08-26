@@ -24,8 +24,8 @@ log:
       maxBackups: 7
       # MaxAge is the maximum number of days to retain old log files based on the timestamp.
       maxAge: 14
-      # Compress determines if the rotated log files should be compressed using gzip.
-      compress: true
+      # Compression determines the compression algorithm to use for rotated log files. It can be "none", "gzip", or "zstd".
+      compression: "zstd"
       # Rotation interval for log rotation (e.g., daily rotation).
       rotationInterval: 24h
 

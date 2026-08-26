@@ -3020,6 +3020,45 @@ States of Cronjbo
 
 
 
+## resources/dbsync/state.proto
+
+
+### resources.dbsync.DBSyncCheckpoint
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `last_check` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `last_id` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.dbsync.DBSyncTableSyncState
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `table` | [string](#string) |  |  |
+| `checkpoint` | [DBSyncCheckpoint](#resourcesdbsyncDBSyncCheckpoint) | optional |  |
+| `last_synced_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `last_attempt_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `last_error` | [string](#string) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/discord/discord.proto
 
 
@@ -6774,20 +6813,19 @@ User related events
 | `last_synced_data` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `last_synced_activity` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `last_dbsync_version` | [string](#string) | optional |  |
-| `tables` | [DBSyncTableStatus](#resourcessettingsDBSyncTableStatus) | repeated |  |
+| `stream_connected` | [bool](#bool) |  |  |
+| `sync_state` | [DBSyncSyncState](#resourcessettingsDBSyncSyncState) | optional |  |
 
 
 
 
 
-### resources.settings.DBSyncTableStatus
+### resources.settings.DBSyncSyncState
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `table` | [string](#string) |  |  |
-| `last_check` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `last_id` | [string](#string) | optional |  |
+| `tables` | [resources.dbsync.DBSyncTableSyncState](#resourcesdbsyncDBSyncTableSyncState) | repeated |  |
 
 
 
@@ -6842,8 +6880,8 @@ User related events
 | ----- | ---- | ----- | ----------- |
 | `database` | [Database](#resourcessettingsDatabase) |  |  |
 | `nats` | [Nats](#resourcessettingsNats) |  |  |
-| `dbsync` | [DBSyncStatus](#resourcessettingsDBSyncStatus) |  |  |
 | `version` | [VersionStatus](#resourcessettingsVersionStatus) |  |  |
+| `dbsync` | [DBSyncStatus](#resourcessettingsDBSyncStatus) |  |  |
 
 
 
@@ -14559,20 +14597,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `tables` | [ClientTableSyncState](#servicessyncClientTableSyncState) | repeated |  |
-
-
-
-
-
-### services.sync.ClientTableSyncState
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `table` | [string](#string) |  |  |
-| `last_check` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `last_id` | [string](#string) | optional |  |
+| `tables` | [resources.dbsync.DBSyncTableSyncState](#resourcesdbsyncDBSyncTableSyncState) | repeated |  |
 
 
 
@@ -14938,9 +14963,9 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `DeleteUsers` | [DeleteUsersRequest](#servicessyncDeleteUsersRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Delete users from the sync store. |
 | `DeleteVehicles` | [DeleteVehiclesRequest](#servicessyncDeleteVehiclesRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Delete vehicles from the sync store. |
 | `Stream` | [StreamRequest](#servicessyncStreamRequest) stream | [StreamResponse](#servicessyncStreamResponse) stream |Used for the server to stream events to the dbsync and for the dbsync process to report its current cursor state back to the server. |
-| `AddActivity` | [AddActivityRequest](#servicessyncAddActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc. |
-| `SendData` | [SendDataRequest](#servicessyncSendDataRequest) | [SendDataResponse](#servicessyncSendDataResponse) |DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing. |
-| `DeleteData` | [DeleteDataRequest](#servicessyncDeleteDataRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |DEPRECATED: Way for the gameserver to delete certain data as well |
+| `AddActivity` | [AddActivityRequest](#servicessyncAddActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Deprecated: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc. |
+| `SendData` | [SendDataRequest](#servicessyncSendDataRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Deprecated: DBSync's method of sending (mass) data to the FiveNet server for storing. |
+| `DeleteData` | [DeleteDataRequest](#servicessyncDeleteDataRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Deprecated: Way for the gameserver to delete certain data as well |
 
  <!-- end services -->
 

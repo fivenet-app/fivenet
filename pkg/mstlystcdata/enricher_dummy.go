@@ -46,14 +46,14 @@ func (e *DummyEnricher) GetJobByName(job string) *jobs.Job {
 
 func (e *DummyEnricher) GetJobGrade(job string, grade int32) (*jobs.Job, *jobs.JobGrade) {
 	return &jobs.Job{
-			Name:   job,
-			Label:  job,
-			Grades: dummyJobGrades(job),
-		}, &jobs.JobGrade{
-			JobName: new(job),
-			Grade:   grade,
-			Label:   fmt.Sprintf("Rank %d", grade),
-		}
+		Name:   job,
+		Label:  job,
+		Grades: dummyJobGrades(job),
+	}, &jobs.JobGrade{
+		JobName: new(job),
+		Grade:   grade,
+		Label:   fmt.Sprintf("Rank %d", grade),
+	}
 }
 
 type DummyUserAwareEnricher struct {

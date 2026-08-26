@@ -62,7 +62,7 @@ func (p *CoordsRO[V]) Get(point orb.Pointer, fn quadtree.FilterFunc) V {
 func (p *CoordsRO[V]) Closest(x, y float64) (V, bool) {
 	point := p.tree.Find(orb.Point{x, y})
 	if point == nil {
-		return *(new(V)), false
+		return *new(V), false
 	}
 	return point.(V), true
 }

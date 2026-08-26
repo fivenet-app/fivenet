@@ -3,23 +3,96 @@ import { snakeCase } from 'scule';
 import type { DBSyncStatus } from '~~/gen/ts/resources/settings/status';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
+import type { DBSyncTableSyncState } from '~~/gen/ts/resources/dbsync/state';
 
 const props = defineProps<{
     dbsync?: DBSyncStatus | null;
+    disabled?: boolean;
+}>();
+
+const emits = defineEmits<{
+    (e: 'refresh'): void;
 }>();
 
 const isOpen = ref<boolean>(false);
 
 const { t } = useI18n();
 
-const dbSyncTables = computed(() =>
-    [...(props.dbsync?.tables ?? [])]
+const uiState = useUIStateStore();
+const { windowFocus } = storeToRefs(uiState);
+
+type DBSyncCardState = DBSyncTableSyncState & { label: string };
+
+const dbSyncTables = computed<DBSyncCardState[]>(() =>
+    [...(props.dbsync?.syncState?.tables ?? [])]
         .map((table) => ({
             ...table,
             label: t(`components.settings.system_status.db_sync.tables.${snakeCase(table.table)}`),
         }))
         .sort((a, b) => a.label.localeCompare(b.label)),
 );
+
+const dbSyncStreamConnected = computed(() => props.dbsync?.streamConnected ?? false);
+
+const dbSyncStreamConnectionState = computed(() => (dbSyncStreamConnected.value ? 'connected' : 'disconnected'));
+
+const dbSyncStreamConnectionColor = computed(() => (dbSyncStreamConnected.value ? 'success' : 'warning'));
+
+function getTableState(table: DBSyncCardState) {
+    if (table.lastError) {
+        return 'error';
+    }
+
+    if (table.lastSyncedAt || table.lastAttemptAt || table.checkpoint) {
+        return 'healthy';
+    }
+
+    return 'idle';
+}
+
+function getTableStateLabel(table: DBSyncCardState) {
+    return t(`components.settings.system_status.db_sync.state.${getTableState(table)}`);
+}
+
+function getTableStateColor(table: DBSyncCardState) {
+    switch (getTableState(table)) {
+        case 'error':
+            return 'error';
+        case 'healthy':
+            return 'success';
+        default:
+            return 'neutral';
+    }
+}
+
+// Auto refresh the list every minute (if window is active)
+const { remaining, start, pause, resume } = useCountdown(60, {
+    onComplete: refresh,
+});
+
+onBeforeMount(() => start());
+
+watchDebounced(windowFocus, () => {
+    if (!windowFocus.value) {
+        pause();
+    } else {
+        resume();
+    }
+});
+
+watch(isOpen, () => {
+    if (isOpen.value) {
+        start();
+    } else {
+        pause();
+    }
+});
+
+function refresh() {
+    emits('refresh');
+    start();
+}
 </script>
 
 <template>
@@ -29,28 +102,52 @@ const dbSyncTables = computed(() =>
         handle-only
         :ui="{ body: 'p-0 sm:mx-auto sm:max-w-7xl sm:w-full', title: 'flex flex-row gap-2' }"
     >
-        <UButton
-            variant="link"
-            size="xl"
-            icon="i-mdi-database-sync"
-            :label="$t('components.settings.system_status.db_sync.title')"
-            block
-            :ui="{ leadingIcon: 'size-10' }"
-        />
+        <UChip :show="true" :color="dbSyncStreamConnectionColor" position="top-right" size="xl">
+            <UButton
+                variant="link"
+                size="xl"
+                icon="i-mdi-database-sync"
+                :label="$t('components.settings.system_status.db_sync.title')"
+                block
+                :disabled="props.disabled"
+                :ui="{ leadingIcon: 'size-8' }"
+            />
+        </UChip>
 
         <template #title>
-            <span class="flex-1">{{ $t('components.settings.system_status.db_sync.drawer_title') }}</span>
+            <p class="flex-1">
+                {{ $t('components.settings.system_status.db_sync.drawer_title') }}
+                <span class="text-sm text-secondary"
+                    >{{ $t('common.refresh_in_x', { d: remaining, unit: $t('common.time_ago.second', remaining) }) }}
+                </span>
+            </p>
 
             <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="isOpen = false" />
+        </template>
+
+        <template #actions>
+            <RefreshButton icon-only :disabled="props.disabled" @click="refresh" />
         </template>
 
         <template #body>
             <div class="space-y-6 p-4">
                 <UCard variant="subtle" :ui="{ body: 'p-4' }">
                     <template #title>
-                        <div class="flex items-center gap-2">
-                            <UIcon name="i-mdi-database-sync" class="size-5 text-primary" />
-                            <span>{{ $t('components.settings.system_status.db_sync.summary') }}</span>
+                        <div class="flex flex-1 items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <UIcon name="i-mdi-database-sync" class="size-5 text-primary" />
+                                <span>{{ $t('components.settings.system_status.db_sync.summary') }}</span>
+                            </div>
+
+                            <UBadge
+                                :color="dbSyncStreamConnectionColor"
+                                variant="soft"
+                                :label="
+                                    $t(
+                                        `components.settings.system_status.db_sync.stream_connected.${dbSyncStreamConnectionState}`,
+                                    )
+                                "
+                            />
                         </div>
                     </template>
 
@@ -75,7 +172,7 @@ const dbSyncTables = computed(() =>
                             <p class="text-xs font-medium tracking-wide text-muted uppercase">
                                 {{ $t('components.settings.system_status.db_sync.last_dbsync_version') }}
                             </p>
-                            <span v-if="props.dbsync?.lastDbsyncVersion" class="text-sm">
+                            <span v-if="props.dbsync?.lastDbsyncVersion" class="font-mono text-sm">
                                 {{ props.dbsync.lastDbsyncVersion }}
                             </span>
                             <span v-else class="text-sm text-muted">{{ $t('common.na') }}</span>
@@ -99,38 +196,77 @@ const dbSyncTables = computed(() =>
                         :padded="false"
                     />
 
-                    <div v-else class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    <UPageGrid v-else class="gap-4">
                         <UCard v-for="table in dbSyncTables" :key="table.table" variant="subtle" :ui="{ body: 'space-y-3' }">
                             <template #title>
-                                <div class="flex items-center gap-2">
-                                    <UIcon name="i-mdi-table" class="size-5 text-primary" />
-                                    <span>{{ table.label }}</span>
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <UIcon name="i-mdi-table" class="size-5 text-primary" />
+                                        <span>{{ table.label }}</span>
+                                    </div>
+
+                                    <UBadge
+                                        :color="getTableStateColor(table)"
+                                        variant="soft"
+                                        :label="getTableStateLabel(table)"
+                                    />
                                 </div>
                             </template>
 
-                            <dl class="space-y-2 text-sm">
+                            <dl class="space-y-3 text-sm">
                                 <div class="grid grid-cols-[1fr_auto] gap-3">
                                     <dt class="font-medium text-muted">
-                                        {{ $t('components.settings.system_status.db_sync.last_check') }}
+                                        {{ $t('components.settings.system_status.db_sync.last_synced_at') }}
                                     </dt>
                                     <dd class="text-right">
-                                        <GenericTime v-if="table.lastCheck" :value="table.lastCheck" />
+                                        <GenericTime v-if="table.lastSyncedAt" :value="table.lastSyncedAt" />
                                         <span v-else class="text-muted">{{ $t('common.na') }}</span>
                                     </dd>
                                 </div>
 
                                 <div class="grid grid-cols-[1fr_auto] gap-3">
                                     <dt class="font-medium text-muted">
-                                        {{ $t('components.settings.system_status.db_sync.last_id') }}
+                                        {{ $t('components.settings.system_status.db_sync.last_attempt_at') }}
                                     </dt>
                                     <dd class="text-right">
-                                        <code v-if="table.lastId">{{ table.lastId }}</code>
+                                        <GenericTime v-if="table.lastAttemptAt" :value="table.lastAttemptAt" />
                                         <span v-else class="text-muted">{{ $t('common.na') }}</span>
+                                    </dd>
+                                </div>
+
+                                <div class="grid grid-cols-[1fr_auto] gap-3">
+                                    <dt class="font-medium text-muted">
+                                        {{ $t('components.settings.system_status.db_sync.checkpoint') }}
+                                    </dt>
+                                    <dd class="text-right">
+                                        <div v-if="table.checkpoint" class="space-x-2">
+                                            <GenericTime
+                                                v-if="table.checkpoint.lastCheck"
+                                                :value="table.checkpoint.lastCheck"
+                                            />
+                                            <code v-if="table.checkpoint.lastId">{{ table.checkpoint.lastId }}</code>
+                                            <span
+                                                v-if="!table.checkpoint.lastCheck && !table.checkpoint.lastId"
+                                                class="text-muted"
+                                            >
+                                                {{ $t('common.na') }}
+                                            </span>
+                                        </div>
+                                        <span v-else class="text-muted">{{ $t('common.na') }}</span>
+                                    </dd>
+                                </div>
+
+                                <div v-if="table.lastError" class="grid grid-cols-[1fr_auto] gap-3">
+                                    <dt class="font-medium text-muted">
+                                        {{ $t('components.settings.system_status.db_sync.last_error') }}
+                                    </dt>
+                                    <dd class="max-w-56 text-right break-words text-error">
+                                        {{ table.lastError }}
                                     </dd>
                                 </div>
                             </dl>
                         </UCard>
-                    </div>
+                    </UPageGrid>
                 </div>
             </div>
         </template>

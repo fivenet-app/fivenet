@@ -24,7 +24,7 @@ func TestIsDiscordTokenExpired(t *testing.T) {
 		},
 		{
 			name: "http error invalid grant body",
-			err: &httputil.HTTPError{
+			err: httputil.HTTPError{
 				Status: 400,
 				Body: []byte(
 					`{"error":"invalid_grant","error_description":"refresh token is invalid"}`,
@@ -34,7 +34,7 @@ func TestIsDiscordTokenExpired(t *testing.T) {
 		},
 		{
 			name: "wrapped http error invalid grant body",
-			err: fmt.Errorf("discord request failed. %w", &httputil.HTTPError{
+			err: fmt.Errorf("discord request failed. %w", httputil.HTTPError{
 				Status: 400,
 				Body:   []byte(`{"error":"invalid_grant"}`),
 			}),

@@ -63,7 +63,30 @@ func NewVehiclesSync(
 	}
 }
 
-func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, *time.Time, error) {
+func (s *VehiclesSync) Sync(
+	ctx context.Context,
+) (int64, int64, string, *time.Time, error) {
+	var (
+		totalFetched  int64
+		totalSent     int64
+		lastID        string
+		lastUpdatedAt *time.Time
+		err           error
+	)
+
+	if s.state != nil {
+		startedAt := time.Now()
+		s.state.MarkAttempt(startedAt)
+		defer func() {
+			if err != nil {
+				s.state.MarkError(err)
+				return
+			}
+			finishedAt := time.Now()
+			s.state.MarkSuccess(finishedAt)
+		}()
+	}
+
 	limit := s.cfg.Limits.Vehicles
 	windowEnd := time.Now()
 	batchCap, lag := calculateDrainBatchCap(
@@ -81,17 +104,15 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, *time.Ti
 		)
 	}
 
-	var totalFetched int64
-	var totalSent int64
-	lastID := ""
-	var lastUpdatedAt *time.Time
+	lastID = ""
 	prevID := ""
 	var prevUpdatedAt *time.Time
 	noopStreak := 0
 
 	for batches := 0; ; batches++ {
-		fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx, &windowEnd)
-		if err != nil {
+		fetched, sent, cursorID, cursorTime, syncErr := s.syncOnce(ctx, &windowEnd)
+		if syncErr != nil {
+			err = syncErr
 			return totalFetched, totalSent, lastID, lastUpdatedAt, err
 		}
 
@@ -162,14 +183,37 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, *time.Ti
 	return totalFetched, totalSent, lastID, lastUpdatedAt, nil
 }
 
-func (s *VehiclesSync) Resync(ctx context.Context) (int64, int64, string, *time.Time, error) {
+func (s *VehiclesSync) Resync(
+	ctx context.Context,
+) (int64, int64, string, *time.Time, error) {
+	var (
+		fetched       int64
+		sent          int64
+		lastID        string
+		lastUpdatedAt *time.Time
+		err           error
+	)
+
 	// Ensure last check is nil when we don't want to save it
 	if !s.saveUpdatedAt {
 		s.state.SetLastCheck(nil)
 	}
 
-	fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx, nil)
-	return fetched, sent, cursorID, cursorTime, err
+	if s.state != nil {
+		startedAt := time.Now()
+		s.state.MarkAttempt(startedAt)
+		defer func() {
+			if err != nil {
+				s.state.MarkError(err)
+				return
+			}
+			finishedAt := time.Now()
+			s.state.MarkSuccess(finishedAt)
+		}()
+	}
+
+	fetched, sent, lastID, lastUpdatedAt, err = s.syncOnce(ctx, nil)
+	return fetched, sent, lastID, lastUpdatedAt, err
 }
 
 func (s *VehiclesSync) syncOnce(

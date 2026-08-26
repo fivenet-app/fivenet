@@ -132,11 +132,14 @@ func (s *State) save() error {
 }
 
 type TableSyncState struct {
-	dss *State
-	key string
+	dss *State `yaml:"-"`
+	key string `yaml:"-"`
 
-	LastCheck *time.Time `yaml:"lastCheck"`
-	LastID    *string    `yaml:"lastId"`
+	LastCheck     *time.Time `yaml:"lastCheck,omitempty"`
+	LastID        *string    `yaml:"lastId,omitempty"`
+	LastSyncedAt  *time.Time `yaml:"lastSyncedAt,omitempty"`
+	LastAttemptAt *time.Time `yaml:"lastAttemptAt,omitempty"`
+	LastError     *string    `yaml:"lastError,omitempty"`
 }
 
 func (s *TableSyncState) setup(dss *State, key string) *TableSyncState {
@@ -160,6 +163,16 @@ func (s *TableSyncState) setMetrics() {
 	}
 }
 
+func (s *TableSyncState) save() {
+	if s == nil || s.dss == nil {
+		return
+	}
+
+	if err := s.dss.save(); err != nil {
+		s.dss.logger.Error("failed to save state", zap.Error(err))
+	}
+}
+
 func (s *TableSyncState) SetCursor(lastCheck *time.Time, lastId *string) {
 	if s == nil {
 		return
@@ -177,10 +190,7 @@ func (s *TableSyncState) SetCursor(lastCheck *time.Time, lastId *string) {
 	s.LastCheck = lastCheck
 	s.LastID = lastId
 	s.setMetrics()
-
-	if err := s.dss.save(); err != nil {
-		s.dss.logger.Error("failed to save state", zap.Error(err))
-	}
+	s.save()
 }
 
 func (s *TableSyncState) ResetCursor() {
@@ -201,10 +211,74 @@ func (s *TableSyncState) SetLastCheck(t *time.Time) {
 	defer s.dss.mu.Unlock()
 	s.LastCheck = t
 	s.setMetrics()
+	s.save()
+}
 
-	if err := s.dss.save(); err != nil {
-		s.dss.logger.Error("failed to save state", zap.Error(err))
+func (s *TableSyncState) SetLastSyncedAt(t *time.Time) {
+	if s == nil {
+		return
 	}
+	if s.dss == nil {
+		s.LastSyncedAt = t
+		return
+	}
+
+	s.dss.mu.Lock()
+	defer s.dss.mu.Unlock()
+	s.LastSyncedAt = t
+	s.save()
+}
+
+func (s *TableSyncState) SetLastAttemptAt(t *time.Time) {
+	if s == nil {
+		return
+	}
+	if s.dss == nil {
+		s.LastAttemptAt = t
+		return
+	}
+
+	s.dss.mu.Lock()
+	defer s.dss.mu.Unlock()
+	s.LastAttemptAt = t
+	s.save()
+}
+
+func (s *TableSyncState) SetLastError(err *string) {
+	if s == nil {
+		return
+	}
+	if s.dss == nil {
+		s.LastError = err
+		return
+	}
+
+	s.dss.mu.Lock()
+	defer s.dss.mu.Unlock()
+	s.LastError = err
+	s.save()
+}
+
+func (s *TableSyncState) ClearLastError() {
+	s.SetLastError(nil)
+}
+
+func (s *TableSyncState) MarkAttempt(t time.Time) {
+	s.SetLastAttemptAt(&t)
+}
+
+func (s *TableSyncState) MarkSuccess(t time.Time) {
+	s.SetLastSyncedAt(&t)
+	s.ClearLastError()
+}
+
+func (s *TableSyncState) MarkError(err error) {
+	if err == nil {
+		return
+	}
+
+	msg := err.Error()
+	s.SetLastError(&msg)
 }
 
 func (s *TableSyncState) GetLastCheck() *time.Time {
@@ -250,5 +324,74 @@ func (s *TableSyncState) GetLastID() *string {
 	}
 
 	v := *s.LastID
+	return &v
+}
+
+func (s *TableSyncState) GetLastSyncedAt() *time.Time {
+	if s == nil {
+		return nil
+	}
+	if s.dss == nil {
+		if s.LastSyncedAt == nil {
+			return nil
+		}
+		t := *s.LastSyncedAt
+		return &t
+	}
+
+	s.dss.mu.RLock()
+	defer s.dss.mu.RUnlock()
+
+	if s.LastSyncedAt == nil {
+		return nil
+	}
+
+	t := *s.LastSyncedAt
+	return &t
+}
+
+func (s *TableSyncState) GetLastAttemptAt() *time.Time {
+	if s == nil {
+		return nil
+	}
+	if s.dss == nil {
+		if s.LastAttemptAt == nil {
+			return nil
+		}
+		t := *s.LastAttemptAt
+		return &t
+	}
+
+	s.dss.mu.RLock()
+	defer s.dss.mu.RUnlock()
+
+	if s.LastAttemptAt == nil {
+		return nil
+	}
+
+	t := *s.LastAttemptAt
+	return &t
+}
+
+func (s *TableSyncState) GetLastError() *string {
+	if s == nil {
+		return nil
+	}
+	if s.dss == nil {
+		if s.LastError == nil {
+			return nil
+		}
+		v := *s.LastError
+		return &v
+	}
+
+	s.dss.mu.RLock()
+	defer s.dss.mu.RUnlock()
+
+	if s.LastError == nil {
+		return nil
+	}
+
+	v := *s.LastError
 	return &v
 }

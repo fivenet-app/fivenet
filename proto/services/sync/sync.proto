@@ -6,6 +6,7 @@ import "buf/validate/validate.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/centrum/dispatches/dispatches.proto";
 import "resources/citizens/licenses/licenses.proto";
+import "resources/dbsync/state.proto";
 import "resources/jobs/colleagues/activity/activity.proto";
 import "resources/jobs/jobs.proto";
 import "resources/livemap/coords.proto";
@@ -256,17 +257,15 @@ message DeleteDataResponse {
 message StreamRequest {
   optional string version = 1 [(buf.validate.field).string.max_len = 32];
 
-  ClientSyncState sync_state = 2;
+  oneof data {
+    option (buf.validate.oneof).required = true;
+
+    ClientSyncState sync_state = 2;
+  }
 }
 
 message ClientSyncState {
-  repeated ClientTableSyncState tables = 1 [(buf.validate.field).repeated.max_items = 16];
-}
-
-message ClientTableSyncState {
-  string table = 1 [(buf.validate.field).string.max_len = 32];
-  optional resources.timestamp.Timestamp last_check = 2;
-  optional string last_id = 3 [(buf.validate.field).string.max_len = 128];
+  repeated resources.dbsync.DBSyncTableSyncState tables = 1 [(buf.validate.field).repeated.max_items = 16];
 }
 
 // Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instance and API calls
@@ -333,15 +332,15 @@ service SyncService {
   // report its current cursor state back to the server.
   rpc Stream(stream StreamRequest) returns (stream StreamResponse);
 
-  // DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+  // Deprecated: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
   rpc AddActivity(AddActivityRequest) returns (AddActivityResponse) {
     option deprecated = true;
   }
-  // DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing.
+  // Deprecated: DBSync's method of sending (mass) data to the FiveNet server for storing.
   rpc SendData(SendDataRequest) returns (SendDataResponse) {
     option deprecated = true;
   }
-  // DEPRECATED: Way for the gameserver to delete certain data as well
+  // Deprecated: Way for the gameserver to delete certain data as well
   rpc DeleteData(DeleteDataRequest) returns (DeleteDataResponse) {
     option deprecated = true;
   }

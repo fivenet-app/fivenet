@@ -3,6 +3,7 @@ import { flushPromises } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { defineComponent, nextTick, ref } from 'vue';
 import SystemStatus from '~/components/settings/SystemStatus.vue';
+import SystemStatusDBSyncDrawer from '~/components/settings/SystemStatusDBSyncDrawer.vue';
 import { toTimestamp } from '~/utils/time';
 
 const mockStatus = {
@@ -21,30 +22,42 @@ const mockStatus = {
     },
     dbsync: {
         enabled: true,
+        streamConnected: true,
         lastSyncedData: toTimestamp(new Date('2026-08-25T12:00:00Z')),
         lastSyncedActivity: toTimestamp(new Date('2026-08-25T12:05:00Z')),
         lastDbsyncVersion: '1.2.3',
-        tables: [
-            {
-                table: 'jobs',
-                lastCheck: toTimestamp(new Date('2026-08-25T11:00:00Z')),
-                lastId: '42',
-            },
-            {
-                table: 'vehicles_resync',
-            },
-        ],
+        syncState: {
+            tables: [
+                {
+                    table: 'jobs',
+                    checkpoint: {
+                        lastCheck: toTimestamp(new Date('2026-08-25T11:00:00Z')),
+                        lastId: '42',
+                    },
+                    lastSyncedAt: toTimestamp(new Date('2026-08-25T12:10:00Z')),
+                    lastAttemptAt: toTimestamp(new Date('2026-08-25T12:11:00Z')),
+                },
+                {
+                    table: 'vehicles_resync',
+                    lastSyncedAt: toTimestamp(new Date('2026-08-25T12:12:00Z')),
+                    lastAttemptAt: toTimestamp(new Date('2026-08-25T12:13:00Z')),
+                    lastError: 'sync failed',
+                },
+            ],
+        },
     },
     version: {
         current: '2026.8.25',
     },
 };
 
-const getStatusMock = vi.fn().mockResolvedValue({
+const getStatusMock = vi.fn().mockImplementation(async () => ({
     response: {
-        status: mockStatus,
+        status: structuredClone(mockStatus),
     },
-});
+}));
+
+let resolveInitialStatusLoad: (() => void) | undefined;
 
 const translations: Record<string, string> = {
     'common.copy': 'Copy',
@@ -60,8 +73,13 @@ const translations: Record<string, string> = {
     'components.settings.system_status.db_sync.drawer_title': 'DB Sync Details',
     'components.settings.system_status.db_sync.summary': 'Summary',
     'components.settings.system_status.db_sync.per_table': 'Per Table',
-    'components.settings.system_status.db_sync.last_check': 'Last Check',
-    'components.settings.system_status.db_sync.last_id': 'Last ID',
+    'components.settings.system_status.db_sync.last_synced_at': 'Last Synced At',
+    'components.settings.system_status.db_sync.last_attempt_at': 'Last Attempt At',
+    'components.settings.system_status.db_sync.checkpoint': 'Checkpoint',
+    'components.settings.system_status.db_sync.last_error': 'Last Error',
+    'components.settings.system_status.db_sync.state.healthy': 'Healthy',
+    'components.settings.system_status.db_sync.state.error': 'Error',
+    'components.settings.system_status.db_sync.state.idle': 'Idle',
     'components.settings.system_status.db_sync.no_tables': 'No table sync state is available',
     'components.settings.system_status.db_sync.last_data_received': 'Last Data Received',
     'components.settings.system_status.db_sync.last_activity_received': 'Last Activity Received',
@@ -93,7 +111,9 @@ vi.mock('#imports', async () => {
                 }
             });
 
-            void refresh();
+            void new Promise<void>((resolve) => {
+                resolveInitialStatusLoad = resolve;
+            }).then(refresh);
 
             return { data, error, status, refresh };
         },
@@ -177,13 +197,37 @@ const UBadgeStub = defineComponent({
             type: [String, Number],
             default: '',
         },
+        color: {
+            type: String,
+            default: '',
+        },
     },
-    template: '<span class="u-badge-stub">{{ label }}<slot /></span>',
+    template: '<span class="u-badge-stub" :data-color="color">{{ label }}<slot /></span>',
+});
+
+const UChipStub = defineComponent({
+    name: 'UChip',
+    props: {
+        color: {
+            type: String,
+            default: '',
+        },
+        show: {
+            type: Boolean,
+            default: false,
+        },
+    },
+    template: '<div class="u-chip-stub" :data-color="color" :data-show="show"><slot /></div>',
 });
 
 const UIconStub = defineComponent({
     name: 'UIcon',
     template: '<i class="u-icon-stub" />',
+});
+
+const USkeletonStub = defineComponent({
+    name: 'USkeleton',
+    template: '<div class="u-skeleton-stub" />',
 });
 
 const DataPendingBlockStub = defineComponent({
@@ -248,7 +292,9 @@ async function mountSystemStatus() {
                 UPopover: UPopoverStub,
                 UTooltip: UTooltipStub,
                 UBadge: UBadgeStub,
+                UChip: UChipStub,
                 UIcon: UIconStub,
+                USkeleton: USkeletonStub,
                 DataPendingBlock: DataPendingBlockStub,
                 DataErrorBlock: DataErrorBlockStub,
                 DataNoDataBlock: DataNoDataBlockStub,
@@ -259,9 +305,10 @@ async function mountSystemStatus() {
 }
 
 describe('SystemStatus', () => {
-    it('opens a db sync drawer with per-table cards', async () => {
+    it('keeps the db sync drawer open on refresh', async () => {
         const wrapper = await mountSystemStatus();
 
+        resolveInitialStatusLoad?.();
         await flushPromises();
         await nextTick();
 
@@ -281,8 +328,31 @@ describe('SystemStatus', () => {
         expect(wrapper.text()).toContain('Per Table');
         expect(wrapper.text()).toContain('Jobs');
         expect(wrapper.text()).toContain('Vehicles Resync');
-        expect(wrapper.text()).toContain('Last Check');
-        expect(wrapper.text()).toContain('Last ID');
-        expect(wrapper.text()).toContain('N/A');
+        expect(wrapper.text()).toContain('Last Synced At');
+        expect(wrapper.text()).toContain('Last Attempt At');
+        expect(wrapper.text()).toContain('Checkpoint');
+        expect(wrapper.text()).toContain('Last Error');
+        expect(wrapper.text()).toContain('Healthy');
+        expect(wrapper.text()).toContain('Error');
+        expect(wrapper.text()).toContain('sync failed');
+        expect(wrapper.find('.u-badge-stub').attributes('data-color')).toBe('success');
+        expect(wrapper.find('.u-chip-stub').attributes('data-color')).toBe('success');
+
+        const dbSyncDrawer = wrapper.findComponent(SystemStatusDBSyncDrawer);
+        expect(dbSyncDrawer.exists()).toBe(true);
+
+        await wrapper.find('button[data-label="DB Sync"]').trigger('click');
+        await nextTick();
+
+        expect(wrapper.text()).toContain('DB Sync Details');
+
+        mockStatus.dbsync.streamConnected = false;
+        dbSyncDrawer.vm.$emit('refresh');
+        await flushPromises();
+        await nextTick();
+
+        expect(wrapper.text()).toContain('DB Sync Details');
+        expect(wrapper.find('.u-badge-stub').attributes('data-color')).toBe('warning');
+        expect(wrapper.find('.u-chip-stub').attributes('data-color')).toBe('warning');
     });
 });

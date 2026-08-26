@@ -71,15 +71,13 @@ function copyLinkToClipboard(text: string): void {
 
 // Auto refresh the list every minute (if window is active)
 const { remaining, start, pause, resume } = useCountdown(60, {
-    onComplete() {
-        refresh();
-    },
+    onComplete: () => refresh(),
 });
 
 onBeforeMount(() => start());
 
 watchDebounced(windowFocus, () => {
-    if (!windowFocus) {
+    if (!windowFocus.value) {
         pause();
     } else {
         resume();

@@ -131,6 +131,10 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			Time:                  60 * time.Minute,
 			Timeout:               20 * time.Second,
 		}),
+		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
+			MinTime:             15 * time.Second,
+			PermitWithoutStream: false,
+		}),
 		grpc.MaxConcurrentStreams(1024),
 
 		grpc.ChainUnaryInterceptor(

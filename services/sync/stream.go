@@ -19,6 +19,9 @@ import (
 
 func (s *Server) Stream(srv pbsync.SyncService_StreamServer) error {
 	ctx := srv.Context()
+	s.markDBSyncStreamConnected()
+	defer s.markDBSyncStreamDisconnected()
+
 	// Setup consumer
 	consumer, err := s.js.CreateOrUpdateConsumer(
 		ctx,
@@ -39,10 +42,10 @@ func (s *Server) Stream(srv pbsync.SyncService_StreamServer) error {
 	g.Go(func() error {
 		for {
 			req, err := srv.Recv()
-			if errors.Is(err, io.EOF) || protoutils.IsContextCanceled(err) {
-				return nil
-			}
 			if err != nil {
+				if errors.Is(err, io.EOF) || protoutils.IsContextCanceled(err) {
+					return nil
+				}
 				return err
 			}
 			if req == nil {
@@ -76,7 +79,7 @@ func (s *Server) Stream(srv pbsync.SyncService_StreamServer) error {
 			// "Forward" dbsync event via this stream
 			if msg == nil {
 				s.logger.Warn("nil dbsync event received via message queue")
-				return nil
+				continue
 			}
 			if err := msg.Ack(); err != nil {
 				s.logger.Error("failed to ack dbsync event", zap.Error(err))
@@ -88,7 +91,8 @@ func (s *Server) Stream(srv pbsync.SyncService_StreamServer) error {
 			case TopicUser:
 				dest := &pbsync.StreamResponse{}
 				if err := protojson.Unmarshal(msg.Data(), dest); err != nil {
-					return fmt.Errorf("failed to unmarshal dbsync event data. %w", err)
+					s.logger.Error("failed to unmarshal dbsync event data", zap.Error(err))
+					continue
 				}
 
 				if dest.GetUserId() == 0 {
@@ -124,7 +128,7 @@ func (s *Server) handleStreamRequest(req *pbsync.StreamRequest) {
 	}
 
 	if req.GetSyncState() != nil {
-		s.lastDBSyncState.Store(proto.Clone(req).(*pbsync.StreamRequest))
+		s.lastDBSyncState.Store(proto.Clone(req.GetSyncState()).(*pbsync.ClientSyncState))
 
 		s.logger.Debug(
 			"received dbsync sync state",

@@ -131,10 +131,10 @@ func (s *Store) listConditions(
 	condition := mysql.Bool(includeDeleted).OR(tCalendar.DeletedAt.IS_NULL())
 	if q.OnlyPublic {
 		return condition.AND(
-				tCalendar.Public.IS_TRUE(),
-			), []mysql.OrderByClause{
-				tCalendar.Name.ASC(),
-			}
+			tCalendar.Public.IS_TRUE(),
+		), []mysql.OrderByClause{
+			tCalendar.Name.ASC(),
+		}
 	}
 
 	if q.UserInfo == nil {

@@ -2123,13 +2123,24 @@
                     "last_data_received": "Last Data Received",
                     "last_activity_received": "Last Activity Received",
                     "last_dbsync_version": "Last seen DB Sync Version",
-                    "last_check": "Last Check",
-                    "last_id": "Last ID",
+                    "last_synced_at": "Last Synced At",
+                    "last_attempt_at": "Last Attempt At",
+                    "checkpoint": "Checkpoint",
+                    "last_error": "Last Error",
+                    "stream_connected": {
+                        "connected": "Connected",
+                        "disconnected": "Disconnected"
+                    },
                     "no_tables": "No table sync state is available",
+                    "state": {
+                        "healthy": "Healthy",
+                        "error": "Error",
+                        "idle": "Idle"
+                    },
                     "tables": {
                         "jobs": "Jobs",
                         "licenses": "Licenses",
-                        "accounts": "Accounts",
+                        "accounts": "Account Groups",
                         "users": "Users",
                         "users_resync": "Users Resync",
                         "vehicles": "Vehicles",

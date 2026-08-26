@@ -38,7 +38,7 @@ func (s *Server) GetStatus(
 			Version:   s.natsReq.GetVersion(),
 			Connected: !s.js.Conn().IsClosed(),
 		},
-		Dbsync: s.syncServer.GetSyncTimes(),
+		Dbsync: s.syncServer.GetDBSyncStatus(),
 		Version: &settings.VersionStatus{
 			Current:    version.Version,
 			NewVersion: nil,
@@ -55,32 +55,6 @@ func (s *Server) GetStatus(
 			}
 			if !releaseDate.IsZero() {
 				status.Version.NewVersion.ReleaseDate = timestamp.New(releaseDate)
-			}
-		}
-	}
-
-	if dbsyncState := s.syncServer.GetDBSyncState(); dbsyncState != nil &&
-		dbsyncState.GetSyncState() != nil &&
-		len(dbsyncState.GetSyncState().GetTables()) > 0 {
-		status.Dbsync.Tables = make(
-			[]*settings.DBSyncTableStatus,
-			0,
-			len(dbsyncState.GetSyncState().GetTables()),
-		)
-		for _, table := range dbsyncState.GetSyncState().GetTables() {
-			if table == nil {
-				continue
-			}
-
-			status.Dbsync.Tables = append(status.Dbsync.Tables, &settings.DBSyncTableStatus{
-				Table: table.GetTable(),
-			})
-			last := status.Dbsync.Tables[len(status.Dbsync.Tables)-1]
-			if lastCheck := table.GetLastCheck(); lastCheck != nil {
-				last.LastCheck = lastCheck
-			}
-			if lastID := table.GetLastId(); lastID != "" {
-				last.LastId = &lastID
 			}
 		}
 	}

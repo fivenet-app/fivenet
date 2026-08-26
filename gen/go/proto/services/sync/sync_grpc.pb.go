@@ -114,13 +114,13 @@ type SyncServiceClient interface {
 	// report its current cursor state back to the server.
 	Stream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[StreamRequest, StreamResponse], error)
 	// Deprecated: Do not use.
-	// DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+	// Deprecated: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
 	AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// Deprecated: Do not use.
-	// DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing.
+	// Deprecated: DBSync's method of sending (mass) data to the FiveNet server for storing.
 	SendData(ctx context.Context, in *SendDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
 	// Deprecated: Do not use.
-	// DEPRECATED: Way for the gameserver to delete certain data as well
+	// Deprecated: Way for the gameserver to delete certain data as well
 	DeleteData(ctx context.Context, in *DeleteDataRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
 }
 
@@ -501,13 +501,13 @@ type SyncServiceServer interface {
 	// report its current cursor state back to the server.
 	Stream(grpc.BidiStreamingServer[StreamRequest, StreamResponse]) error
 	// Deprecated: Do not use.
-	// DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+	// Deprecated: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
 	AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error)
 	// Deprecated: Do not use.
-	// DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing.
+	// Deprecated: DBSync's method of sending (mass) data to the FiveNet server for storing.
 	SendData(context.Context, *SendDataRequest) (*SendDataResponse, error)
 	// Deprecated: Do not use.
-	// DEPRECATED: Way for the gameserver to delete certain data as well
+	// Deprecated: Way for the gameserver to delete certain data as well
 	DeleteData(context.Context, *DeleteDataRequest) (*DeleteDataResponse, error)
 	mustEmbedUnimplementedSyncServiceServer()
 }

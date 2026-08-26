@@ -69,7 +69,30 @@ func NewUsersSync(s *Syncer, state *dbsyncconfig.TableSyncState, saveUpdatedAt b
 	}
 }
 
-func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, *time.Time, error) {
+func (s *UsersSync) Sync(
+	ctx context.Context,
+) (int64, int64, string, *time.Time, error) {
+	var (
+		totalFetched  int64
+		totalSent     int64
+		lastID        string
+		lastUpdatedAt *time.Time
+		err           error
+	)
+
+	if s.state != nil {
+		startedAt := time.Now()
+		s.state.MarkAttempt(startedAt)
+		defer func() {
+			if err != nil {
+				s.state.MarkError(err)
+				return
+			}
+			finishedAt := time.Now()
+			s.state.MarkSuccess(finishedAt)
+		}()
+	}
+
 	limit := s.cfg.Limits.Users
 	windowEnd := time.Now()
 	batchCap, lag := calculateDrainBatchCap(
@@ -87,16 +110,14 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, *time.Time,
 		)
 	}
 
-	var totalFetched int64
-	var totalSent int64
-	lastID := "0"
-	var lastUpdatedAt *time.Time
+	lastID = "0"
 	prevID := ""
 	var prevUpdatedAt *time.Time
 
 	for batches := 0; ; batches++ {
-		fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx, &windowEnd)
-		if err != nil {
+		fetched, sent, cursorID, cursorTime, syncErr := s.syncOnce(ctx, &windowEnd)
+		if syncErr != nil {
+			err = syncErr
 			return totalFetched, totalSent, lastID, lastUpdatedAt, err
 		}
 
@@ -152,14 +173,37 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, *time.Time,
 	return totalFetched, totalSent, lastID, lastUpdatedAt, nil
 }
 
-func (s *UsersSync) Resync(ctx context.Context) (int64, int64, string, *time.Time, error) {
+func (s *UsersSync) Resync(
+	ctx context.Context,
+) (int64, int64, string, *time.Time, error) {
+	var (
+		fetched       int64
+		sent          int64
+		lastID        string
+		lastUpdatedAt *time.Time
+		err           error
+	)
+
 	// Full resync mode paginates only by user id.
 	if !s.saveUpdatedAt {
 		s.state.SetLastCheck(nil)
 	}
 
-	fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx, nil)
-	return fetched, sent, cursorID, cursorTime, err
+	if s.state != nil {
+		startedAt := time.Now()
+		s.state.MarkAttempt(startedAt)
+		defer func() {
+			if err != nil {
+				s.state.MarkError(err)
+				return
+			}
+			finishedAt := time.Now()
+			s.state.MarkSuccess(finishedAt)
+		}()
+	}
+
+	fetched, sent, lastID, lastUpdatedAt, err = s.syncOnce(ctx, nil)
+	return fetched, sent, lastID, lastUpdatedAt, err
 }
 
 func (s *UsersSync) syncOnce(

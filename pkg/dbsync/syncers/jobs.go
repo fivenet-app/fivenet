@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
@@ -14,17 +15,36 @@ import (
 
 type JobsSync struct {
 	*Syncer
+
+	state *dbsyncconfig.TableSyncState
 }
 
 func NewJobsSync(s *Syncer, state *dbsyncconfig.TableSyncState) *JobsSync {
 	return &JobsSync{
 		Syncer: s,
+		state:  state,
 	}
 }
 
 func (s *JobsSync) Sync(ctx context.Context) (int64, error) {
-	jobs, err := s.fetchJobs(ctx)
-	if err != nil {
+	var err error
+
+	if s.state != nil {
+		startedAt := time.Now()
+		s.state.MarkAttempt(startedAt)
+		defer func() {
+			if err != nil {
+				s.state.MarkError(err)
+				return
+			}
+			finishedAt := time.Now()
+			s.state.MarkSuccess(finishedAt)
+		}()
+	}
+
+	jobs, syncErr := s.fetchJobs(ctx)
+	if syncErr != nil {
+		err = syncErr
 		return 0, err
 	}
 
@@ -35,8 +55,9 @@ func (s *JobsSync) Sync(ctx context.Context) (int64, error) {
 	}
 
 	hasFilters := len(s.cfg.Tables.Jobs.Filters) > 0
-	jobs, err = s.applyFiltersAndRetrieveGrades(ctx, jobs, hasFilters)
-	if err != nil {
+	jobs, syncErr = s.applyFiltersAndRetrieveGrades(ctx, jobs, hasFilters)
+	if syncErr != nil {
+		err = syncErr
 		return 0, err
 	}
 
@@ -50,10 +71,11 @@ func (s *JobsSync) Sync(ctx context.Context) (int64, error) {
 	req := &pbsync.SendJobsRequest{
 		Jobs: jobs,
 	}
-	if err := s.send(ctx, req, func(ctx context.Context, cli pbsync.SyncServiceClient) error {
+	if syncErr := s.send(ctx, req, func(ctx context.Context, cli pbsync.SyncServiceClient) error {
 		_, err := cli.SendJobs(ctx, req)
 		return err
-	}); err != nil {
+	}); syncErr != nil {
+		err = syncErr
 		return 0, err
 	}
 

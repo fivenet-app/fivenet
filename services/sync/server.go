@@ -13,6 +13,7 @@ import (
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbsync/statusmapper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	pkggrpc "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -43,9 +44,10 @@ type Server struct {
 	tokens []string
 
 	lastDBSyncVersion  atomic.Pointer[string]
-	lastDBSyncState    atomic.Pointer[pbsync.StreamRequest]
+	lastDBSyncState    atomic.Pointer[pbsync.ClientSyncState]
 	lastSyncedData     atomic.Int64
 	lastSyncedActivity atomic.Int64
+	dbsyncStreamState  atomic.Int64
 }
 
 type Params struct {
@@ -154,9 +156,10 @@ func (s *Server) PermissionStreamFuncOverride(
 	return ctx, nil
 }
 
-func (s *Server) GetSyncTimes() *settings.DBSyncStatus {
+func (s *Server) getBaseSyncStatus() *settings.DBSyncStatus {
 	st := &settings.DBSyncStatus{
-		Enabled: s.cfg.Sync.Enabled,
+		Enabled:         s.cfg.Sync.Enabled,
+		StreamConnected: s.isDBSyncStreamConnected(),
 	}
 
 	if v := s.lastSyncedData.Load(); v > 0 {
@@ -174,10 +177,31 @@ func (s *Server) GetSyncTimes() *settings.DBSyncStatus {
 	return st
 }
 
-func (s *Server) GetDBSyncState() *pbsync.StreamRequest {
+func (s *Server) GetDBSyncStatus() *settings.DBSyncStatus {
+	st := s.getBaseSyncStatus()
+
+	snapshot := statusmapper.FromClientSyncState(s.GetDBSyncState())
+	st.SetSyncState(snapshot.ToSettingsSyncState())
+
+	return st
+}
+
+func (s *Server) GetDBSyncState() *pbsync.ClientSyncState {
 	if v := s.lastDBSyncState.Load(); v != nil {
-		return proto.Clone(v).(*pbsync.StreamRequest)
+		return proto.Clone(v).(*pbsync.ClientSyncState)
 	}
 
 	return nil
+}
+
+func (s *Server) markDBSyncStreamConnected() {
+	s.dbsyncStreamState.Add(1)
+}
+
+func (s *Server) markDBSyncStreamDisconnected() {
+	s.dbsyncStreamState.Add(-1)
+}
+
+func (s *Server) isDBSyncStreamConnected() bool {
+	return s.dbsyncStreamState.Load() > 0
 }
