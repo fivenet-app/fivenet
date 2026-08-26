@@ -14,20 +14,33 @@ type Snapshot struct {
 	Tables []*dbsyncstate.DBSyncTableSyncState
 }
 
-func FromRuntimeState(state *dbsyncconfig.State) *Snapshot {
+func FromRuntimeState(state *dbsyncconfig.State, cfg *dbsyncconfig.DBSyncConfig) *Snapshot {
 	if state == nil {
 		return nil
 	}
 
+	var (
+		usersEnabled       bool
+		usersResyncIntv    *time.Duration
+		vehiclesEnabled    bool
+		vehiclesResyncIntv *time.Duration
+	)
+	if cfg != nil {
+		usersEnabled = cfg.Tables.Users.Enabled
+		usersResyncIntv = cfg.Tables.Users.ResyncInterval
+		vehiclesEnabled = cfg.Tables.Vehicles.Enabled
+		vehiclesResyncIntv = cfg.Tables.Vehicles.ResyncInterval
+	}
+
 	return &Snapshot{
 		Tables: collectTables(
-			tableSpec{"jobs", state.Jobs},
-			tableSpec{"licenses", state.Licenses},
-			tableSpec{"accounts", state.Accounts},
-			tableSpec{"users", state.Users},
-			tableSpec{"users_resync", state.UsersResync},
-			tableSpec{"vehicles", state.Vehicles},
-			tableSpec{"vehicles_resync", state.VehiclesResync},
+			tableSpec{"jobs", state.Jobs, cfg != nil && cfg.Tables.Jobs.Enabled},
+			tableSpec{"licenses", state.Licenses, cfg != nil && cfg.Tables.Licenses.Enabled},
+			tableSpec{"accounts", state.Accounts, cfg != nil && cfg.Tables.Accounts.Enabled},
+			tableSpec{"users", state.Users, usersEnabled},
+			tableSpec{"users_resync", state.UsersResync, resyncEnabled(usersEnabled, usersResyncIntv)},
+			tableSpec{"vehicles", state.Vehicles, vehiclesEnabled},
+			tableSpec{"vehicles_resync", state.VehiclesResync, resyncEnabled(vehiclesEnabled, vehiclesResyncIntv)},
 		),
 	}
 }
@@ -67,14 +80,15 @@ func (s *Snapshot) ToSettingsSyncState() *settings.DBSyncSyncState {
 }
 
 type tableSpec struct {
-	name  string
-	state *dbsyncconfig.TableSyncState
+	name    string
+	state   *dbsyncconfig.TableSyncState
+	enabled bool
 }
 
 func collectTables(specs ...tableSpec) []*dbsyncstate.DBSyncTableSyncState {
 	tables := make([]*dbsyncstate.DBSyncTableSyncState, 0, len(specs))
 	for _, spec := range specs {
-		if table := fromConfigTable(spec.name, spec.state); table != nil {
+		if table := fromConfigTable(spec); table != nil {
 			tables = append(tables, table)
 		}
 	}
@@ -82,20 +96,22 @@ func collectTables(specs ...tableSpec) []*dbsyncstate.DBSyncTableSyncState {
 	return tables
 }
 
-func fromConfigTable(
-	name string,
-	state *dbsyncconfig.TableSyncState,
-) *dbsyncstate.DBSyncTableSyncState {
-	if state == nil {
+func resyncEnabled(baseEnabled bool, interval *time.Duration) bool {
+	return baseEnabled && interval != nil && *interval > 0
+}
+
+func fromConfigTable(spec tableSpec) *dbsyncstate.DBSyncTableSyncState {
+	if spec.state == nil {
 		return nil
 	}
 
 	out := &dbsyncstate.DBSyncTableSyncState{
-		Table: name,
+		Table:   spec.name,
+		Enabled: spec.enabled,
 	}
 
-	lastCheck := state.GetLastCheck()
-	lastID := state.GetLastID()
+	lastCheck := spec.state.GetLastCheck()
+	lastID := spec.state.GetLastID()
 	if lastCheck != nil || lastID != nil {
 		out.Checkpoint = &dbsyncstate.DBSyncCheckpoint{
 			LastId: lastID,
@@ -105,15 +121,15 @@ func fromConfigTable(
 		}
 	}
 
-	if lastSyncedAt := state.GetLastSyncedAt(); lastSyncedAt != nil {
+	if lastSyncedAt := spec.state.GetLastSyncedAt(); lastSyncedAt != nil {
 		out.LastSyncedAt = toTimestamp(lastSyncedAt)
 	}
 
-	if lastAttemptAt := state.GetLastAttemptAt(); lastAttemptAt != nil {
+	if lastAttemptAt := spec.state.GetLastAttemptAt(); lastAttemptAt != nil {
 		out.LastAttemptAt = toTimestamp(lastAttemptAt)
 	}
 
-	if lastError := state.GetLastError(); lastError != nil && *lastError != "" {
+	if lastError := spec.state.GetLastError(); lastError != nil && *lastError != "" {
 		out.LastError = lastError
 	}
 

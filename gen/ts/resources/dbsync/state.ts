@@ -49,6 +49,10 @@ export interface DBSyncTableSyncState {
      * @generated from protobuf field: optional string last_error = 5
      */
     lastError?: string;
+    /**
+     * @generated from protobuf field: bool enabled = 6
+     */
+    enabled: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DBSyncCheckpoint$Type extends MessageType<DBSyncCheckpoint> {
@@ -111,12 +115,14 @@ class DBSyncTableSyncState$Type extends MessageType<DBSyncTableSyncState> {
             { no: 2, name: "checkpoint", kind: "message", T: () => DBSyncCheckpoint },
             { no: 3, name: "last_synced_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "last_attempt_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "last_error", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "256" } } } }
+            { no: 5, name: "last_error", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "256" } } } },
+            { no: 6, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<DBSyncTableSyncState>): DBSyncTableSyncState {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.table = "";
+        message.enabled = false;
         if (value !== undefined)
             reflectionMergePartial<DBSyncTableSyncState>(this, message, value);
         return message;
@@ -140,6 +146,9 @@ class DBSyncTableSyncState$Type extends MessageType<DBSyncTableSyncState> {
                     break;
                 case /* optional string last_error */ 5:
                     message.lastError = reader.string();
+                    break;
+                case /* bool enabled */ 6:
+                    message.enabled = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -168,6 +177,9 @@ class DBSyncTableSyncState$Type extends MessageType<DBSyncTableSyncState> {
         /* optional string last_error = 5; */
         if (message.lastError !== undefined)
             writer.tag(5, WireType.LengthDelimited).string(message.lastError);
+        /* bool enabled = 6; */
+        if (message.enabled !== false)
+            writer.tag(6, WireType.Varint).bool(message.enabled);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

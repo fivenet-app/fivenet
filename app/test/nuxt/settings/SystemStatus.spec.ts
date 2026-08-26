@@ -352,7 +352,7 @@ describe('SystemStatus', () => {
         await nextTick();
 
         expect(wrapper.text()).toContain('DB Sync Details');
-        expect(wrapper.find('.u-badge-stub').attributes('data-color')).toBe('warning');
-        expect(wrapper.find('.u-chip-stub').attributes('data-color')).toBe('warning');
+        expect(dbSyncDrawer.find('.u-badge-stub').attributes('data-color')).toBe('warning');
+        expect(dbSyncDrawer.find('.u-chip-stub').attributes('data-color')).toBe('warning');
     });
 });

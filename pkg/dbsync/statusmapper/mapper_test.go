@@ -20,6 +20,7 @@ func TestFromRuntimeStateBuildsClientSyncState(t *testing.T) {
 	lastAttemptAt := time.Date(2026, 8, 26, 12, 41, 0, 0, time.UTC)
 	lastError := "failed to fetch accounts"
 	lastID := "42"
+	resyncInterval := 15 * time.Minute
 
 	snapshot := FromRuntimeState(&dbsyncconfig.State{
 		Accounts: &dbsyncconfig.TableSyncState{
@@ -27,33 +28,81 @@ func TestFromRuntimeStateBuildsClientSyncState(t *testing.T) {
 			LastAttemptAt: &lastAttemptAt,
 			LastError:     &lastError,
 		},
+		Users: &dbsyncconfig.TableSyncState{
+			LastSyncedAt:  &lastSyncedAt,
+			LastAttemptAt: &lastAttemptAt,
+		},
+		UsersResync: &dbsyncconfig.TableSyncState{
+			LastSyncedAt:  &lastSyncedAt,
+			LastAttemptAt: &lastAttemptAt,
+		},
 		Vehicles: &dbsyncconfig.TableSyncState{
 			LastCheck:     &lastCheck,
 			LastID:        &lastID,
 			LastSyncedAt:  &lastSyncedAt,
 			LastAttemptAt: &lastAttemptAt,
 		},
+		VehiclesResync: &dbsyncconfig.TableSyncState{
+			LastSyncedAt:  &lastSyncedAt,
+			LastAttemptAt: &lastAttemptAt,
+		},
+	}, &dbsyncconfig.DBSyncConfig{
+		Tables: dbsyncconfig.DBSyncSourceTables{
+			Accounts: dbsyncconfig.AccountsTable{
+				DBSyncTable: dbsyncconfig.DBSyncTable{Enabled: true},
+			},
+			Users: dbsyncconfig.UsersTable{
+				DBSyncTable:    dbsyncconfig.DBSyncTable{Enabled: true},
+				ResyncInterval: &resyncInterval,
+			},
+			Vehicles: dbsyncconfig.VehiclesTable{
+				DBSyncTable: dbsyncconfig.DBSyncTable{Enabled: false},
+			},
+		},
 	})
 	require.NotNil(t, snapshot)
 
 	out := snapshot.ToClientSyncState()
 	require.NotNil(t, out)
-	require.Len(t, out.GetTables(), 2)
+	require.Len(t, out.GetTables(), 5)
 
 	accounts := out.GetTables()[0]
 	require.Equal(t, "accounts", accounts.GetTable())
+	require.True(t, accounts.GetEnabled())
 	require.Nil(t, accounts.GetCheckpoint())
 	require.True(t, accounts.GetLastSyncedAt().AsTime().Equal(lastSyncedAt))
 	require.True(t, accounts.GetLastAttemptAt().AsTime().Equal(lastAttemptAt))
 	require.Equal(t, lastError, accounts.GetLastError())
 
-	vehicles := out.GetTables()[1]
+	users := out.GetTables()[1]
+	require.Equal(t, "users", users.GetTable())
+	require.True(t, users.GetEnabled())
+	require.Nil(t, users.GetCheckpoint())
+	require.True(t, users.GetLastSyncedAt().AsTime().Equal(lastSyncedAt))
+	require.True(t, users.GetLastAttemptAt().AsTime().Equal(lastAttemptAt))
+
+	usersResync := out.GetTables()[2]
+	require.Equal(t, "users_resync", usersResync.GetTable())
+	require.True(t, usersResync.GetEnabled())
+	require.Nil(t, usersResync.GetCheckpoint())
+	require.True(t, usersResync.GetLastSyncedAt().AsTime().Equal(lastSyncedAt))
+	require.True(t, usersResync.GetLastAttemptAt().AsTime().Equal(lastAttemptAt))
+
+	vehicles := out.GetTables()[3]
 	require.Equal(t, "vehicles", vehicles.GetTable())
+	require.False(t, vehicles.GetEnabled())
 	require.NotNil(t, vehicles.GetCheckpoint())
 	require.True(t, vehicles.GetCheckpoint().GetLastCheck().AsTime().Equal(lastCheck))
 	require.Equal(t, "42", vehicles.GetCheckpoint().GetLastId())
 	require.True(t, vehicles.GetLastSyncedAt().AsTime().Equal(lastSyncedAt))
 	require.True(t, vehicles.GetLastAttemptAt().AsTime().Equal(lastAttemptAt))
+
+	vehiclesResync := out.GetTables()[4]
+	require.Equal(t, "vehicles_resync", vehiclesResync.GetTable())
+	require.False(t, vehiclesResync.GetEnabled())
+	require.Nil(t, vehiclesResync.GetCheckpoint())
+	require.True(t, vehiclesResync.GetLastSyncedAt().AsTime().Equal(lastSyncedAt))
+	require.True(t, vehiclesResync.GetLastAttemptAt().AsTime().Equal(lastAttemptAt))
 }
 
 func TestFromStreamRequestSharesTablesWithSettingsStatus(t *testing.T) {
@@ -113,7 +162,7 @@ func TestFromStreamRequestSharesTablesWithSettingsStatus(t *testing.T) {
 func TestNilInputsReturnNilSnapshot(t *testing.T) {
 	t.Parallel()
 
-	require.Nil(t, FromRuntimeState(nil))
+	require.Nil(t, FromRuntimeState(nil, nil))
 	require.Nil(t, FromClientSyncState(nil))
 	require.Nil(t, (*Snapshot)(nil).ToClientSyncState())
 	require.Nil(t, (*Snapshot)(nil).ToSettingsSyncState())

@@ -123,6 +123,7 @@ type DBSyncTableSyncState struct {
 	LastSyncedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=last_synced_at,json=lastSyncedAt,proto3,oneof" json:"last_synced_at,omitempty"`
 	LastAttemptAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=last_attempt_at,json=lastAttemptAt,proto3,oneof" json:"last_attempt_at,omitempty"`
 	LastError     *string                `protobuf:"bytes,5,opt,name=last_error,json=lastError,proto3,oneof" json:"last_error,omitempty"`
+	Enabled       bool                   `protobuf:"varint,6,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -187,6 +188,13 @@ func (x *DBSyncTableSyncState) GetLastError() string {
 	return ""
 }
 
+func (x *DBSyncTableSyncState) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
 func (x *DBSyncTableSyncState) SetTable(v string) {
 	x.Table = v
 }
@@ -205,6 +213,10 @@ func (x *DBSyncTableSyncState) SetLastAttemptAt(v *timestamp.Timestamp) {
 
 func (x *DBSyncTableSyncState) SetLastError(v string) {
 	x.LastError = &v
+}
+
+func (x *DBSyncTableSyncState) SetEnabled(v bool) {
+	x.Enabled = v
 }
 
 func (x *DBSyncTableSyncState) HasCheckpoint() bool {
@@ -259,6 +271,7 @@ type DBSyncTableSyncState_builder struct {
 	LastSyncedAt  *timestamp.Timestamp
 	LastAttemptAt *timestamp.Timestamp
 	LastError     *string
+	Enabled       bool
 }
 
 func (b0 DBSyncTableSyncState_builder) Build() *DBSyncTableSyncState {
@@ -270,6 +283,7 @@ func (b0 DBSyncTableSyncState_builder) Build() *DBSyncTableSyncState {
 	x.LastSyncedAt = b.LastSyncedAt
 	x.LastAttemptAt = b.LastAttemptAt
 	x.LastError = b.LastError
+	x.Enabled = b.Enabled
 	return m0
 }
 
@@ -284,7 +298,7 @@ const file_resources_dbsync_state_proto_rawDesc = "" +
 	"\alast_id\x18\x02 \x01(\tH\x01R\x06lastId\x88\x01\x01B\r\n" +
 	"\v_last_checkB\n" +
 	"\n" +
-	"\b_last_id\"\xf6\x02\n" +
+	"\b_last_id\"\x90\x03\n" +
 	"\x14DBSyncTableSyncState\x12\x14\n" +
 	"\x05table\x18\x01 \x01(\tR\x05table\x12G\n" +
 	"\n" +
@@ -293,7 +307,8 @@ const file_resources_dbsync_state_proto_rawDesc = "" +
 	"\x0elast_synced_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\flastSyncedAt\x88\x01\x01\x12K\n" +
 	"\x0flast_attempt_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\rlastAttemptAt\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"last_error\x18\x05 \x01(\tH\x03R\tlastError\x88\x01\x01B\r\n" +
+	"last_error\x18\x05 \x01(\tH\x03R\tlastError\x88\x01\x01\x12\x18\n" +
+	"\aenabled\x18\x06 \x01(\bR\aenabledB\r\n" +
 	"\v_checkpointB\x11\n" +
 	"\x0f_last_synced_atB\x12\n" +
 	"\x10_last_attempt_atB\r\n" +

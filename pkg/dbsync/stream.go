@@ -126,7 +126,7 @@ func (s *Sync) buildStreamRequest() *pbsync.StreamRequest {
 }
 
 func (s *Sync) buildStreamState() *pbsync.ClientSyncState {
-	snapshot := statusmapper.FromRuntimeState(s.state)
+	snapshot := statusmapper.FromRuntimeState(s.state, s.cfg.Load())
 	return snapshot.ToClientSyncState()
 }
 

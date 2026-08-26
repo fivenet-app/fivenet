@@ -3045,6 +3045,7 @@ States of Cronjbo
 | `last_synced_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `last_attempt_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `last_error` | [string](#string) | optional |  |
+| `enabled` | [bool](#bool) |  |  |
 
 
 

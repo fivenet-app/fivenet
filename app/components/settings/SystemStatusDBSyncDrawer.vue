@@ -30,7 +30,8 @@ const dbSyncTables = computed<DBSyncCardState[]>(() =>
             ...table,
             label: t(`components.settings.system_status.db_sync.tables.${snakeCase(table.table)}`),
         }))
-        .sort((a, b) => a.label.localeCompare(b.label)),
+        .sort((a, b) => a.label.localeCompare(b.label))
+        .sort((a, b) => Number(b.enabled) - Number(a.enabled)),
 );
 
 const dbSyncStreamConnected = computed(() => props.dbsync?.streamConnected ?? false);
@@ -122,7 +123,9 @@ function refresh() {
                 </span>
             </p>
 
-            <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="isOpen = false" />
+            <UTooltip :text="$t('common.close', 1)">
+                <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="isOpen = false" />
+            </UTooltip>
         </template>
 
         <template #actions>
@@ -185,6 +188,7 @@ function refresh() {
                         <h4 class="text-sm font-semibold tracking-wide text-muted uppercase">
                             {{ $t('components.settings.system_status.db_sync.per_table') }}
                         </h4>
+
                         <UBadge color="neutral" variant="soft" :label="dbSyncTables.length" />
                     </div>
 
@@ -197,7 +201,12 @@ function refresh() {
                     />
 
                     <UPageGrid v-else class="gap-4">
-                        <UCard v-for="table in dbSyncTables" :key="table.table" variant="subtle" :ui="{ body: 'space-y-3' }">
+                        <UCard
+                            v-for="table in dbSyncTables"
+                            :key="table.table"
+                            :variant="table.enabled ? 'subtle' : 'outline'"
+                            :ui="{ body: 'space-y-3' }"
+                        >
                             <template #title>
                                 <div class="flex items-center justify-between gap-2">
                                     <div class="flex items-center gap-2">
