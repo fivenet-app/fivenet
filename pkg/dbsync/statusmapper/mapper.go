@@ -38,9 +38,17 @@ func FromRuntimeState(state *dbsyncconfig.State, cfg *dbsyncconfig.DBSyncConfig)
 			tableSpec{"licenses", state.Licenses, cfg != nil && cfg.Tables.Licenses.Enabled},
 			tableSpec{"accounts", state.Accounts, cfg != nil && cfg.Tables.Accounts.Enabled},
 			tableSpec{"users", state.Users, usersEnabled},
-			tableSpec{"users_resync", state.UsersResync, resyncEnabled(usersEnabled, usersResyncIntv)},
+			tableSpec{
+				"users_resync",
+				state.UsersResync,
+				resyncEnabled(usersEnabled, usersResyncIntv),
+			},
 			tableSpec{"vehicles", state.Vehicles, vehiclesEnabled},
-			tableSpec{"vehicles_resync", state.VehiclesResync, resyncEnabled(vehiclesEnabled, vehiclesResyncIntv)},
+			tableSpec{
+				"vehicles_resync",
+				state.VehiclesResync,
+				resyncEnabled(vehiclesEnabled, vehiclesResyncIntv),
+			},
 		),
 	}
 }
