@@ -176,10 +176,6 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 			nil,
 		))
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_labels INNER JOIN fivenet_user_labels_job AS label ON`)+`(?s).*`).
-		WithArgs(int32(42), int64(25)).
-		WillReturnRows(sqlmock.NewRows([]string{"fivenet_user_labels_job.id", "fivenet_user_labels_job.job", "fivenet_user_labels_job.name", "fivenet_user_labels_job.color"}))
-
 	// Make sure the query flips wanted to false for matched user.
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -257,9 +253,6 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 			nil,
 		))
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_labels INNER JOIN fivenet_user_labels_job AS label ON`)+`(?s).*`).
-		WithArgs(int32(42), int64(25)).
-		WillReturnRows(sqlmock.NewRows([]string{"fivenet_user_labels_job.id", "fivenet_user_labels_job.job", "fivenet_user_labels_job.name", "fivenet_user_labels_job.color"}))
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_activity`).
@@ -293,9 +286,6 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 			nil,
 		))
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_labels INNER JOIN fivenet_user_labels_job AS label ON`)+`(?s).*`).
-		WithArgs(int32(43), int64(25)).
-		WillReturnRows(sqlmock.NewRows([]string{"fivenet_user_labels_job.id", "fivenet_user_labels_job.job", "fivenet_user_labels_job.name", "fivenet_user_labels_job.color"}))
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_activity`).

@@ -190,19 +190,19 @@ func (s *Server) DeleteMugshot(
 		return nil, errorscitizens.ErrJobGradeNoPermission
 	}
 
-	props, err := s.store.GetUserProps(ctx, s.db, u.GetUserId())
+	mugshotFileId, err := s.store.GetMugshotFileID(ctx, u.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if props.MugshotFileId == nil || props.GetMugshotFileId() == 0 {
+	if mugshotFileId == nil || *mugshotFileId == 0 {
 		return &pbcitizens.DeleteMugshotResponse{}, nil
 	}
 
 	if err := s.mugshotHandler.Delete(
 		ctx,
 		u.GetUserId(),
-		props.GetMugshotFileId(),
+		*mugshotFileId,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}

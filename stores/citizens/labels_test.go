@@ -135,6 +135,7 @@ func TestGetUserLabelsForUserUsesVisibleIDsSubquery(t *testing.T) {
 
 	labels, err := store.GetUserLabelsForUser(
 		t.Context(),
+		db,
 		&userinfo.UserInfo{UserId: 3, Job: "police"},
 		3,
 	)

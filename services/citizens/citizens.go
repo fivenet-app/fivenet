@@ -173,7 +173,7 @@ func (s *Server) GetUser(
 	}
 
 	if fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsLabels) {
-		labels, err := s.store.GetUserLabelsForUser(ctx, userInfo, req.GetUserId())
+		labels, err := s.store.GetUserLabelsForUser(ctx, s.db, userInfo, req.GetUserId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}

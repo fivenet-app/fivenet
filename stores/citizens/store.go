@@ -43,6 +43,7 @@ type IStore interface {
 	) (*citizenslabels.Labels, error)
 	GetUserLabelsForUser(
 		ctx context.Context,
+		q qrm.Queryable,
 		userInfo *userinfo.UserInfo,
 		userId int32,
 	) (*citizenslabels.Labels, error)
@@ -72,6 +73,7 @@ type IStore interface {
 	) (*citizenslabels.Labels, error)
 	ValidateLabels(
 		ctx context.Context,
+		q qrm.Queryable,
 		userJob string,
 		labels []*citizenslabels.Label,
 	) (bool, error)
@@ -80,6 +82,13 @@ type IStore interface {
 	GetAvatarFileID(ctx context.Context, userId int32) (*int64, error)
 	GetMugshotFileID(ctx context.Context, userId int32) (*int64, error)
 	GetUserProps(ctx context.Context, tx qrm.DB, userId int32) (*usersprops.UserProps, error)
+	PrepareUserPropsLabelsForUpdate(
+		ctx context.Context,
+		q qrm.Queryable,
+		userInfo *userinfo.UserInfo,
+		userId int32,
+		requested *citizenslabels.Labels,
+	) (*citizenslabels.Labels, *citizenslabels.Labels, []*citizenslabels.Label, error)
 	HandleUserPropsChanges(
 		ctx context.Context,
 		tx qrm.DB,

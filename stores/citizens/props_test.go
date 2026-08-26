@@ -5,13 +5,14 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/proto"
 )
 
-func TestStoreGetUserPropsLoadsPropsAndLabels(t *testing.T) {
+func TestStoreGetUserPropsLoadsScalarPropsOnly(t *testing.T) {
 	t.Parallel()
 
 	db, mock, err := sqlmock.New()
@@ -50,16 +51,28 @@ func TestStoreGetUserPropsLoadsPropsAndLabels(t *testing.T) {
 			"/files/mugshot.jpg",
 		))
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_labels INNER JOIN fivenet_user_labels_job AS label ON`)+`(?s).*`).
-		WithArgs(int32(42), int64(25)).
-		WillReturnRows(sqlmock.NewRows([]string{"fivenet_user_labels_job.id", "fivenet_user_labels_job.job", "fivenet_user_labels_job.name", "fivenet_user_labels_job.color"}))
-
 	props, err := store.GetUserProps(t.Context(), db, 42)
 	require.NoError(t, err)
 	assert.Equal(t, int32(42), props.GetUserId())
-	require.NotNil(t, props.GetLabels())
-	require.Empty(t, props.GetLabels().GetList())
 	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestMergeUserPropsLabelsPreservesHiddenLabels(t *testing.T) {
+	t.Parallel()
+
+	current := []*citizenslabels.Label{
+		{Id: 1, Name: "hidden"},
+		{Id: 2, Name: "visible"},
+	}
+	visible := []*citizenslabels.Label{
+		{Id: 2, Name: "visible"},
+	}
+	requested := []*citizenslabels.Label{}
+
+	merged := mergeUserPropsLabels(current, visible, requested)
+
+	require.Len(t, merged, 1)
+	assert.Equal(t, int64(1), merged[0].GetId())
 }
 
 func TestStoreHandleUserPropsChangesUpdatesWanted(t *testing.T) {

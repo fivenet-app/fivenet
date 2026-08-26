@@ -303,6 +303,20 @@ func (s *Store) handleUserProps(ctx context.Context, data *activity.UserProps) e
 		return fmt.Errorf("failed to get user props. %w", err)
 	}
 
+	if reqP.HasLabels() {
+		labels, err := s.citizensStore.GetUserLabels(
+			ctx,
+			tx,
+			mysql.AND(table.FivenetUserLabels.UserID.EQ(mysql.Int32(reqP.GetUserId()))),
+			nil,
+		)
+		if err != nil {
+			return fmt.Errorf("failed to get user props labels. %w", err)
+		}
+
+		props.Labels = labels
+	}
+
 	reason := ""
 	if data.Reason != nil {
 		reason = data.GetReason()

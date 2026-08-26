@@ -423,6 +423,7 @@ func (s *Store) GetUserLabels(
 
 func (s *Store) GetUserLabelsForUser(
 	ctx context.Context,
+	q qrm.Queryable,
 	userInfo *userinfo.UserInfo,
 	userId int32,
 ) (*citizenslabels.Labels, error) {
@@ -446,14 +447,15 @@ func (s *Store) GetUserLabelsForUser(
 		)
 		visibleIDStmt := visibilityIDsSelect(visibleIDs)
 		condition = condition.AND(tCitizensLabelsJob.ID.IN(visibleIDStmt))
-		return s.GetUserLabels(ctx, s.db, condition, visibleIDs.CTEs)
+		return s.GetUserLabels(ctx, q, condition, visibleIDs.CTEs)
 	}
 
-	return s.GetUserLabels(ctx, s.db, condition, nil)
+	return s.GetUserLabels(ctx, q, condition, nil)
 }
 
 func (s *Store) ValidateLabels(
 	ctx context.Context,
+	q qrm.Queryable,
 	userJob string,
 	labels []*citizenslabels.Label,
 ) (bool, error) {
@@ -480,7 +482,7 @@ func (s *Store) ValidateLabels(
 		LIMIT(20)
 
 	var count database.DataCount
-	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
+	if err := stmt.QueryContext(ctx, q, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return false, err
 		}

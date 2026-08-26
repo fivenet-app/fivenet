@@ -89,48 +89,50 @@ func SliceDiff[T comparable](a, b []T) ([]T, []T) {
 //
 // The first value encountered for each key is retained. Duplicate keys are
 // ignored. Result ordering follows b for added values and a for removed values.
-func SliceDiffFunc[T comparable, S comparable](
+func SliceDiffFunc[T any, S comparable](
 	a, b []T,
 	keyFn func(in T) S,
 ) ([]T, []T) {
-	aSet := make(map[T]struct{}, len(a))
-	bSet := make(map[T]struct{}, len(b))
+	aSet := make(map[S]struct{}, len(a))
+	bSet := make(map[S]struct{}, len(b))
 
 	for _, value := range a {
-		aSet[value] = struct{}{}
+		aSet[keyFn(value)] = struct{}{}
 	}
 
 	for _, value := range b {
-		bSet[value] = struct{}{}
+		bSet[keyFn(value)] = struct{}{}
 	}
 
 	added := make([]T, 0)
-	addedSeen := make(map[T]struct{})
+	addedSeen := make(map[S]struct{})
 
 	for _, value := range b {
-		if _, exists := aSet[value]; exists {
+		key := keyFn(value)
+		if _, exists := aSet[key]; exists {
 			continue
 		}
-		if _, exists := addedSeen[value]; exists {
+		if _, exists := addedSeen[key]; exists {
 			continue
 		}
 
-		addedSeen[value] = struct{}{}
+		addedSeen[key] = struct{}{}
 		added = append(added, value)
 	}
 
 	removed := make([]T, 0)
-	removedSeen := make(map[T]struct{})
+	removedSeen := make(map[S]struct{})
 
 	for _, value := range a {
-		if _, exists := bSet[value]; exists {
+		key := keyFn(value)
+		if _, exists := bSet[key]; exists {
 			continue
 		}
-		if _, exists := removedSeen[value]; exists {
+		if _, exists := removedSeen[key]; exists {
 			continue
 		}
 
-		removedSeen[value] = struct{}{}
+		removedSeen[key] = struct{}{}
 		removed = append(removed, value)
 	}
 

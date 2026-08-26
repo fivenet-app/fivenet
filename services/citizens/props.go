@@ -15,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -56,11 +55,6 @@ func (s *Server) SetUserProps(
 	}
 	if props.TrafficInfractionPoints == nil {
 		props.TrafficInfractionPoints = &ZeroTrafficInfractionPoints
-	}
-	if props.GetLabels() == nil {
-		props.Labels = &citizenslabels.Labels{
-			List: []*citizenslabels.Label{},
-		}
 	}
 
 	props.Job, props.JobGrade = s.enricher.GetJobGrade(
@@ -145,36 +139,6 @@ func (s *Server) SetUserProps(
 	req.Props.BloodType = nil
 	req.Props.Email = nil
 
-	if req.GetProps().GetLabels() != nil {
-		if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueLabels) {
-			return nil, errorscitizens.ErrPropsLabelsDenied
-		}
-
-		if req.GetProps().GetLabels().GetList() == nil {
-			req.Props.Labels.List = []*citizenslabels.Label{}
-		}
-
-		slices.SortFunc(req.GetProps().GetLabels().GetList(), func(a, b *citizenslabels.Label) int {
-			return strings.Compare(a.GetName(), b.GetName())
-		})
-
-		added, _ := utils.SliceDiffFunc(
-			props.GetLabels().GetList(),
-			req.GetProps().GetLabels().GetList(),
-			func(in *citizenslabels.Label) int64 {
-				return in.GetId()
-			},
-		)
-
-		valid, err := s.store.ValidateLabels(ctx, userInfo.GetJob(), added)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
-		if !valid {
-			return nil, errorscitizens.ErrPropsLabelsDenied
-		}
-	}
-
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -182,6 +146,38 @@ func (s *Server) SetUserProps(
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
+
+	if req.GetProps().GetLabels() != nil {
+		if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueLabels) {
+			return nil, errorscitizens.ErrPropsLabelsDenied
+		}
+
+		slices.SortFunc(req.GetProps().GetLabels().GetList(), func(a, b *citizenslabels.Label) int {
+			return strings.Compare(a.GetName(), b.GetName())
+		})
+
+		currentLabels, effectiveLabels, added, err := s.store.PrepareUserPropsLabelsForUpdate(
+			ctx,
+			tx,
+			userInfo,
+			req.GetProps().GetUserId(),
+			req.GetProps().GetLabels(),
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		}
+
+		props.Labels = currentLabels
+		req.Props.Labels = effectiveLabels
+
+		valid, err := s.store.ValidateLabels(ctx, tx, userInfo.GetJob(), added)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		}
+		if !valid {
+			return nil, errorscitizens.ErrPropsLabelsDenied
+		}
+	}
 
 	activities, err := s.store.HandleUserPropsChanges(
 		ctx,

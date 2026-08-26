@@ -8,6 +8,7 @@ import (
 
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
@@ -61,18 +62,44 @@ func (s *Store) GetUserProps(
 
 	dest.UserId = userId
 
-	labels, err := s.GetUserLabels(
+	return dest, nil
+}
+
+func (s *Store) PrepareUserPropsLabelsForUpdate(
+	ctx context.Context,
+	q qrm.Queryable,
+	userInfo *userinfo.UserInfo,
+	userId int32,
+	requested *citizenslabels.Labels,
+) (*citizenslabels.Labels, *citizenslabels.Labels, []*citizenslabels.Label, error) {
+	current, err := s.GetUserLabels(
 		ctx,
-		tx,
+		q,
 		mysql.AND(tCitizenLabels.UserID.EQ(mysql.Int32(userId))),
 		nil,
 	)
 	if err != nil {
-		return nil, err
+		return nil, nil, nil, err
 	}
-	dest.Labels = labels
 
-	return dest, nil
+	visible, err := s.GetUserLabelsForUser(ctx, q, userInfo, userId)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	effective := mergeUserPropsLabels(
+		current.GetList(),
+		visible.GetList(),
+		requested.GetList(),
+	)
+
+	added, _ := utils.SliceDiffFunc(
+		current.GetList(),
+		effective,
+		func(in *citizenslabels.Label) int64 { return in.GetId() },
+	)
+
+	return current, &citizenslabels.Labels{List: effective}, added, nil
 }
 
 func (s *Store) HandleUserPropsChanges(
@@ -321,6 +348,55 @@ func (s *Store) HandleUserPropsChanges(
 	}
 
 	return activities, nil
+}
+
+func mergeUserPropsLabels(
+	current []*citizenslabels.Label,
+	visible []*citizenslabels.Label,
+	requested []*citizenslabels.Label,
+) []*citizenslabels.Label {
+	visibleIDs := make(map[int64]struct{}, len(visible))
+	for _, label := range visible {
+		if label == nil || label.GetId() == 0 {
+			continue
+		}
+		visibleIDs[label.GetId()] = struct{}{}
+	}
+
+	preserved := make([]*citizenslabels.Label, 0, len(current))
+	for _, label := range current {
+		if label == nil || label.GetId() == 0 {
+			continue
+		}
+		if _, ok := visibleIDs[label.GetId()]; ok {
+			continue
+		}
+		preserved = append(preserved, label)
+	}
+
+	merged := make([]*citizenslabels.Label, 0, len(preserved)+len(requested))
+	seen := make(map[int64]struct{}, len(preserved)+len(requested))
+
+	for _, label := range preserved {
+		if _, ok := seen[label.GetId()]; ok {
+			continue
+		}
+		seen[label.GetId()] = struct{}{}
+		merged = append(merged, label)
+	}
+
+	for _, label := range requested {
+		if label == nil || label.GetId() == 0 {
+			continue
+		}
+		if _, ok := seen[label.GetId()]; ok {
+			continue
+		}
+		seen[label.GetId()] = struct{}{}
+		merged = append(merged, label)
+	}
+
+	return merged
 }
 
 func (s *Store) updateUserLabels(

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSliceDedup(t *testing.T) {
@@ -135,6 +136,26 @@ func TestSliceDiffFunc(t *testing.T) {
 	added, removed = SliceDiffFunc(a, b, keyFn)
 	assert.ElementsMatch(t, []string{"world", "test1"}, added)
 	assert.ElementsMatch(t, []string{"example"}, removed)
+}
+
+func TestSliceDiffFuncUsesKeyFnForPointers(t *testing.T) {
+	t.Parallel()
+
+	type item struct {
+		id   int64
+		name string
+	}
+
+	a := []*item{{id: 1, name: "one"}, {id: 2, name: "two"}}
+	b := []*item{{id: 2, name: "two-updated"}}
+
+	added, removed := SliceDiffFunc(a, b, func(in *item) int64 {
+		return in.id
+	})
+
+	assert.Empty(t, added)
+	require.Len(t, removed, 1)
+	assert.Equal(t, int64(1), removed[0].id)
 }
 
 func TestMergeUniqueStrings(t *testing.T) {

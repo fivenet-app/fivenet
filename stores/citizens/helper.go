@@ -85,9 +85,21 @@ func (s *Store) GetAvatarFileID(ctx context.Context, userId int32) (*int64, erro
 }
 
 func (s *Store) GetMugshotFileID(ctx context.Context, userId int32) (*int64, error) {
-	props, err := s.GetUserProps(ctx, s.db, userId)
-	if err != nil {
-		return nil, err
+	tUserProps := table.FivenetUserProps
+
+	stmt := tUserProps.
+		SELECT(tUserProps.MugshotFileID).
+		WHERE(tUserProps.UserID.EQ(mysql.Int32(userId))).
+		LIMIT(1)
+
+	var props struct {
+		MugshotFileID *int64
 	}
-	return props.MugshotFileId, nil
+	if err := stmt.QueryContext(ctx, s.db, &props); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return props.MugshotFileID, nil
 }
