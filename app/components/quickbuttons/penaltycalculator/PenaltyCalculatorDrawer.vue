@@ -39,7 +39,9 @@ function saveDrawer(): void {
         <template #title>
             <span class="flex-1">{{ $t('components.penaltycalculator.title') }}</span>
 
-            <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="closeDrawer" />
+            <UTooltip :text="$t('common.close', 1)">
+                <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="closeDrawer" />
+            </UTooltip>
         </template>
 
         <template #body>

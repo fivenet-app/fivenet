@@ -16,7 +16,9 @@ definePageMeta({
 });
 
 const authStore = useAuthStore();
-const { activeChar, can } = storeToRefs(authStore);
+const { activeChar } = storeToRefs(authStore);
+
+const { can } = useAuth();
 
 const statsStatsClient = await getStatsStatsClient();
 

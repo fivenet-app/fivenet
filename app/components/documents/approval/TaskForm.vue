@@ -133,7 +133,9 @@ onBeforeMount(async () => listJobs());
                 <span>{{ $t('components.documents.approval.task_form.title') }}</span>
             </div>
 
-            <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="closeDrawer" />
+            <UTooltip :text="$t('common.close', 1)">
+                <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="closeDrawer" />
+            </UTooltip>
         </template>
 
         <template #body>

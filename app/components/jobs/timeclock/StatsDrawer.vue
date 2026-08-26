@@ -42,7 +42,9 @@ const isOpen = ref<boolean>(false);
         <template #title>
             <span class="flex-1">{{ $t('common.stats') }}</span>
 
-            <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="isOpen = false" />
+            <UTooltip :text="$t('common.close', 1)">
+                <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="isOpen = false" />
+            </UTooltip>
         </template>
 
         <template #body>

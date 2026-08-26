@@ -103,7 +103,9 @@ async function closeDrawer(): Promise<void> {
         <template #title>
             <span>{{ $t('common.reminder', 2) }}</span>
 
-            <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="closeDrawer" />
+            <UTooltip :text="$t('common.close', 1)">
+                <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="closeDrawer" />
+            </UTooltip>
         </template>
 
         <template #body>
