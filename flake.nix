@@ -3,14 +3,14 @@
   description = "Basic flake for FiveNet development";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=staging-next-26.05";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
   };
 
   outputs =
     { self, nixpkgs }:
     let
       goMajorVersion = 1;
-      goMinorVersion = 26; # Change this to update the whole stack
+      goMinorVersion = 27; # Change this to update the whole stack
 
       supportedSystems = [
         "x86_64-linux"
