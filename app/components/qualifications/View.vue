@@ -25,9 +25,11 @@ import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import DraftBadge from '../partials/DraftBadge.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import IDCopyBadge from '../partials/IDCopyBadge.vue';
+import type { ResponsiveActionEntry } from '../partials/ResponsiveActions.types';
 import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
 import RefreshButton from '../partials/RefreshButton.vue';
 import TutorView from './tutor/TutorView.vue';
+import ResponsiveActions from '~/components/partials/ResponsiveActions.vue';
 
 const props = defineProps<{
     qualificationId: number;
@@ -140,6 +142,89 @@ const canDo = computed(() => ({
         ),
 }));
 
+const actionItems = computed<ResponsiveActionEntry[]>(() => {
+    if (!qualification.value) return [];
+
+    const requestDisabled =
+        qualification.value.closed ||
+        !requirementsFullfilled(qualification.value.requirements) ||
+        qualification.value.request?.status === RequestStatus.PENDING ||
+        qualification.value.request?.status === RequestStatus.ACCEPTED ||
+        qualification.value.request?.status === RequestStatus.EXAM_STARTED ||
+        qualification.value.request?.status === RequestStatus.EXAM_GRADING;
+    const takeDisabled =
+        qualification.value.closed ||
+        !requirementsFullfilled(qualification.value.requirements) ||
+        qualification.value.request?.status === RequestStatus.EXAM_GRADING ||
+        (qualification.value.examMode === QualificationExamMode.REQUEST_NEEDED &&
+            qualification.value.request?.status !== RequestStatus.ACCEPTED);
+
+    const items: ResponsiveActionEntry[] = [];
+    if (!canDo.value.edit) {
+        if (canDo.value.request && qualification.value.examMode !== QualificationExamMode.ENABLED) {
+            items.push({
+                label: t('common.request'),
+                tooltip: t('common.request'),
+                icon: 'i-mdi-account-school',
+                variant: 'ghost',
+                disabled: requestDisabled,
+                onClick: () => {
+                    requestUserModal.open({
+                        qualificationId: qualification.value!.id,
+                        onUpdatedRequest: ($event) => (qualification.value!.request = $event),
+                    });
+                },
+            });
+        }
+
+        if (
+            canDo.value.take &&
+            qualification.value.examMode !== QualificationExamMode.DISABLED &&
+            qualification.value.result?.status !== ResultStatus.SUCCESSFUL
+        ) {
+            items.push({
+                label: t('components.qualifications.take_test'),
+                tooltip: t('components.qualifications.take_test'),
+                icon: 'i-mdi-test-tube',
+                variant: 'ghost',
+                disabled: takeDisabled,
+                to: takeDisabled ? undefined : `/qualifications/${qualification.value.id}/exam`,
+            });
+        }
+    }
+
+    if (canDo.value.edit) {
+        items.push({
+            label: t('common.edit'),
+            tooltip: t('common.edit'),
+            icon: 'i-mdi-pencil',
+            color: 'neutral',
+            variant: 'ghost',
+            to: {
+                name: 'qualifications-id-edit',
+                params: { id: qualification.value.id },
+            },
+        });
+    }
+
+    if (canDo.value.delete) {
+        items.push({
+            label: !qualification.value.deletedAt ? t('common.delete') : t('common.restore'),
+            tooltip: !qualification.value.deletedAt ? t('common.delete') : t('common.restore'),
+            icon: !qualification.value.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
+            color: !qualification.value.deletedAt ? 'error' : 'success',
+            variant: 'ghost',
+            onClick: () => {
+                confirmModal.open({
+                    confirm: async () => deleteQualification(qualification.value!.id),
+                });
+            },
+        });
+    }
+
+    return items;
+});
+
 watchOnce(data, async () => {
     if (!data.value?.qualification?.request) return;
 
@@ -216,119 +301,8 @@ const requestUserModal = overlay.create(RequestUserModal);
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar
-                v-if="
-                    qualification &&
-                    ((canDo.request && qualification.examMode !== QualificationExamMode.ENABLED) ||
-                        (canDo.take &&
-                            qualification.examMode !== QualificationExamMode.DISABLED &&
-                            qualification.result?.status !== ResultStatus.SUCCESSFUL) ||
-                        canDo.edit ||
-                        canDo.delete ||
-                        (qualification.result !== undefined && qualification.result?.status !== ResultStatus.SUCCESSFUL))
-                "
-                class="p-1 print:hidden"
-            >
-                <template #default>
-                    <div
-                        class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto"
-                    >
-                        <template v-if="!canDo.edit">
-                            <UTooltip
-                                v-if="canDo.request && qualification.examMode !== QualificationExamMode.ENABLED"
-                                class="flex-1"
-                                :text="$t('common.request')"
-                            >
-                                <UButton
-                                    :disabled="
-                                        qualification.closed ||
-                                        !requirementsFullfilled(qualification.requirements) ||
-                                        qualification.request?.status === RequestStatus.PENDING ||
-                                        qualification.request?.status === RequestStatus.ACCEPTED ||
-                                        qualification.request?.status === RequestStatus.EXAM_STARTED ||
-                                        qualification.request?.status === RequestStatus.EXAM_GRADING
-                                    "
-                                    block
-                                    icon="i-mdi-account-school"
-                                    :label="$t('common.request')"
-                                    variant="ghost"
-                                    @click="
-                                        requestUserModal.open({
-                                            qualificationId: qualification!.id,
-                                            onUpdatedRequest: ($event) => (qualification!.request = $event),
-                                        })
-                                    "
-                                />
-                            </UTooltip>
-
-                            <UTooltip
-                                v-if="
-                                    canDo.take &&
-                                    qualification.examMode !== QualificationExamMode.DISABLED &&
-                                    qualification.result?.status !== ResultStatus.SUCCESSFUL
-                                "
-                                class="flex-1"
-                                :text="$t('components.qualifications.take_test')"
-                            >
-                                <UButton
-                                    block
-                                    icon="i-mdi-test-tube"
-                                    :disabled="
-                                        qualification.closed ||
-                                        !requirementsFullfilled(qualification.requirements) ||
-                                        qualification.request?.status === RequestStatus.EXAM_GRADING ||
-                                        (qualification.examMode === QualificationExamMode.REQUEST_NEEDED &&
-                                            qualification.request?.status !== RequestStatus.ACCEPTED)
-                                    "
-                                    :to="
-                                        qualification.closed ||
-                                        !requirementsFullfilled(qualification.requirements) ||
-                                        qualification.request?.status === RequestStatus.EXAM_GRADING ||
-                                        (qualification.examMode === QualificationExamMode.REQUEST_NEEDED &&
-                                            qualification.request?.status !== RequestStatus.ACCEPTED)
-                                            ? undefined
-                                            : `/qualifications/${qualification.id}/exam`
-                                    "
-                                    :label="$t('components.qualifications.take_test')"
-                                    variant="ghost"
-                                />
-                            </UTooltip>
-                        </template>
-
-                        <UTooltip v-if="canDo.edit" class="flex-1" :text="$t('common.edit')">
-                            <UButton
-                                block
-                                :to="{
-                                    name: 'qualifications-id-edit',
-                                    params: { id: qualification.id },
-                                }"
-                                color="neutral"
-                                icon="i-mdi-pencil"
-                                :label="$t('common.edit')"
-                                variant="ghost"
-                            />
-                        </UTooltip>
-
-                        <UTooltip
-                            v-if="canDo.delete"
-                            class="flex-1"
-                            :text="!qualification.deletedAt ? $t('common.delete') : $t('common.restore')"
-                        >
-                            <UButton
-                                block
-                                :color="!qualification.deletedAt ? 'error' : 'success'"
-                                :icon="!qualification.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
-                                :label="!qualification.deletedAt ? $t('common.delete') : $t('common.restore')"
-                                variant="ghost"
-                                @click="
-                                    confirmModal.open({
-                                        confirm: async () => deleteQualification(qualification!.id),
-                                    })
-                                "
-                            />
-                        </UTooltip>
-                    </div>
-                </template>
+            <UDashboardToolbar v-if="qualification && actionItems.length" class="p-1 print:hidden">
+                <ResponsiveActions :items="actionItems" :label="$t('common.action', 2)" />
             </UDashboardToolbar>
 
             <UDashboardToolbar v-if="qualification" class="print:hidden">

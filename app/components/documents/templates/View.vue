@@ -8,6 +8,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
+import type { ResponsiveActionEntry } from '~/components/partials/ResponsiveActions.types';
 import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
 import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval/approval';
@@ -16,6 +17,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import PolicyEditor from '../approval/PolicyEditor.vue';
 import ApprovalTasksEditor from './editor/ApprovalTasksEditor.vue';
 import SchemaEditor from './editor/SchemaEditor.vue';
+import ResponsiveActions from '~/components/partials/ResponsiveActions.vue';
 
 const props = defineProps<{
     templateId: number;
@@ -89,6 +91,55 @@ const contentAccessTypes: AccessType[] = [
     { label: t('common.job', 2), value: 'job' },
 ];
 
+const actionItems = computed<ResponsiveActionEntry[]>(() => {
+    const items: ResponsiveActionEntry[] = [];
+
+    if (can('documents.TemplatesService/CreateTemplate').value) {
+        items.push({
+            label: t('common.preview'),
+            tooltip: t('common.preview'),
+            icon: 'i-mdi-print-preview',
+            color: 'neutral',
+            variant: 'ghost',
+            onClick: () => {
+                templatePreviewModal.open({
+                    templateId: props.templateId,
+                });
+            },
+        });
+
+        items.push({
+            label: t('common.edit'),
+            tooltip: t('common.edit'),
+            icon: 'i-mdi-pencil',
+            color: 'neutral',
+            variant: 'ghost',
+            to: `/documents/templates/${props.templateId}/edit`,
+        });
+    }
+
+    if (can('documents.TemplatesService/DeleteTemplate').value) {
+        if (items.length > 0) {
+            items.push({ kind: 'separator' });
+        }
+
+        items.push({
+            label: t('common.delete'),
+            tooltip: t('common.delete'),
+            icon: 'i-mdi-delete',
+            color: 'error',
+            variant: 'ghost',
+            onClick: () => {
+                confirmModal.open({
+                    confirm: async () => deleteTemplate(props.templateId),
+                });
+            },
+        });
+    }
+
+    return items;
+});
+
 const confirmModal = overlay.create(ConfirmModal);
 const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId: props.templateId } });
 </script>
@@ -107,67 +158,7 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
             </UDashboardNavbar>
 
             <UDashboardToolbar>
-                <template #default>
-                    <div
-                        class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto"
-                    >
-                        <UTooltip
-                            v-if="can('documents.TemplatesService/CreateTemplate').value"
-                            class="flex-1"
-                            :text="$t('common.preview')"
-                        >
-                            <UButton
-                                class="flex-1"
-                                block
-                                color="neutral"
-                                variant="ghost"
-                                icon="i-mdi-print-preview"
-                                :label="$t('common.preview')"
-                                @click="
-                                    templatePreviewModal.open({
-                                        templateId: templateId,
-                                    })
-                                "
-                            />
-                        </UTooltip>
-
-                        <UTooltip
-                            v-if="can('documents.TemplatesService/CreateTemplate').value"
-                            class="flex-1"
-                            :text="$t('common.edit')"
-                        >
-                            <UButton
-                                class="flex-1"
-                                block
-                                color="neutral"
-                                variant="ghost"
-                                icon="i-mdi-pencil"
-                                :label="$t('common.edit')"
-                                :to="`/documents/templates/${templateId}/edit`"
-                            />
-                        </UTooltip>
-
-                        <UTooltip
-                            v-if="can('documents.TemplatesService/DeleteTemplate').value"
-                            class="flex-1"
-                            :text="$t('common.delete')"
-                        >
-                            <UButton
-                                class="flex-1"
-                                block
-                                color="error"
-                                variant="ghost"
-                                icon="i-mdi-delete"
-                                :label="$t('common.delete')"
-                                @click="
-                                    confirmModal.open({
-                                        confirm: async () => deleteTemplate(templateId),
-                                    })
-                                "
-                            />
-                        </UTooltip>
-                    </div>
-                </template>
+                <ResponsiveActions :items="actionItems" :label="$t('common.action', 2)" />
             </UDashboardToolbar>
 
             <UDashboardToolbar v-if="template">

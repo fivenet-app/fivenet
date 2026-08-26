@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { DropdownMenuItem } from '@nuxt/ui';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import List from '~/components/documents/activity/List.vue';
 import Comments from '~/components/documents/comments/Comments.vue';
@@ -28,6 +27,12 @@ import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
 import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
 import DraftBadge from '../partials/DraftBadge.vue';
 import RefreshButton from '../partials/RefreshButton.vue';
+import ResponsiveActions from '../partials/ResponsiveActions.vue';
+import {
+    separator as actionSeparator,
+    type ResponsiveActionEntry,
+    type ResponsiveActionItem,
+} from '../partials/ResponsiveActions.types';
 import ScrollToTop from '../partials/ScrollToTop.vue';
 import ApprovalDrawer from './approval/ApprovalDrawer.vue';
 import ReminderDrawer from './ReminderDrawer.vue';
@@ -313,53 +318,208 @@ function setCommentCount(count: number): void {
     doc.value.document.meta.commentCount = count;
 }
 
-const reminderMenuItems = computed<DropdownMenuItem[][]>(() => [
-    [
-        {
-            label: $t('components.documents.document_view.reminder_duration.in_days', 1),
-            icon: 'i-mdi-calendar-day',
-            onClick: () =>
-                reminderDrawer.open({
-                    documentId: props.documentId,
-                    reminderTime: toTimestamp(addDays(new Date(), 1)),
-                    'onUpdate:reminderTime': ($event) => updateReminderTime($event),
-                }),
+const reminderActionItems = computed<ResponsiveActionItem[]>(() => [
+    {
+        label: t('components.documents.document_view.reminder_duration.in_days', 1),
+        icon: 'i-mdi-calendar-day',
+        onClick: () =>
+            reminderDrawer.open({
+                documentId: props.documentId,
+                reminderTime: toTimestamp(addDays(new Date(), 1)),
+                'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+            }),
+    },
+    {
+        label: t('components.documents.document_view.reminder_duration.in_weeks', 1),
+        icon: 'i-mdi-calendar-week',
+        onClick: () =>
+            reminderDrawer.open({
+                documentId: props.documentId,
+                reminderTime: toTimestamp(addWeeks(new Date(), 1)),
+                'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+            }),
+    },
+    {
+        label: t('components.documents.document_view.reminder_duration.in_months', 1),
+        icon: 'i-mdi-calendar-month',
+        onClick: () =>
+            reminderDrawer.open({
+                documentId: props.documentId,
+                reminderTime: toTimestamp(addMonths(new Date(), 1)),
+                'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+            }),
+    },
+    {
+        label: t('components.documents.document_view.reminder_duration.custom'),
+        icon: 'i-mdi-calendar-time',
+        onClick: () => {
+            reminderDrawer.open({
+                documentId: props.documentId,
+                reminderTime: doc.value?.document?.workflowUser?.manualReminderTime ?? undefined,
+                'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+            });
         },
-        {
-            label: $t('components.documents.document_view.reminder_duration.in_weeks', 1),
-            icon: 'i-mdi-calendar-week',
-            onClick: () =>
-                reminderDrawer.open({
-                    documentId: props.documentId,
-                    reminderTime: toTimestamp(addWeeks(new Date(), 1)),
-                    'onUpdate:reminderTime': ($event) => updateReminderTime($event),
-                }),
-        },
-        {
-            label: $t('components.documents.document_view.reminder_duration.in_months', 1),
-            icon: 'i-mdi-calendar-month',
-            onClick: () =>
-                reminderDrawer.open({
-                    documentId: props.documentId,
-                    reminderTime: toTimestamp(addMonths(new Date(), 1)),
-                    'onUpdate:reminderTime': ($event) => updateReminderTime($event),
-                }),
-        },
-    ],
-    [
-        {
-            label: $t('components.documents.document_view.reminder_duration.custom'),
-            icon: 'i-mdi-calendar-time',
+    },
+]);
+
+const actionItems = computed<ResponsiveActionEntry[]>(() => {
+    if (!doc.value) return [];
+
+    const items: ResponsiveActionEntry[] = [];
+
+    function pushSeparator(): void {
+        const lastItem = items.at(-1);
+        if (lastItem?.kind !== 'separator') {
+            items.push(actionSeparator());
+        }
+    }
+
+    if (canDo.value.status) {
+        items.push({
+            label: doc.value.document?.meta?.closed ? t('common.open', 1) : t('common.close', 1),
+            tooltip: `${t('common.open', 1)}/ ${t('common.close')}`,
+            icon: doc.value.document?.meta?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock',
+            color: doc.value.document?.meta?.closed ? 'success' : 'error',
+            kbds: ['D', 'T'],
             onClick: () => {
-                reminderDrawer.open({
-                    documentId: props.documentId,
-                    reminderTime: doc.value?.document?.workflowUser?.manualReminderTime ?? undefined,
-                    'onUpdate:reminderTime': ($event) => updateReminderTime($event),
+                void toggleDocument();
+            },
+        });
+    }
+
+    if (canDo.value.accessUpdate || canDo.value.contentUpdate) {
+        items.push({
+            label: t('common.edit'),
+            tooltip: t('common.edit'),
+            icon: 'i-mdi-pencil',
+            kbds: ['D', 'E'],
+            color: 'neutral',
+            to: {
+                name: 'documents-id-edit',
+                params: { id: doc.value.document?.id },
+            },
+        });
+    }
+
+    if (canDo.value.pin) {
+        pushSeparator();
+
+        const pinChildren: ResponsiveActionItem[] = [
+            {
+                label: t('common.personal'),
+                icon:
+                    doc.value.document?.pin?.state && doc.value.document?.pin?.userId
+                        ? 'i-mdi-playlist-remove'
+                        : 'i-mdi-playlist-plus',
+                color: doc.value.document?.pin?.state && doc.value.document?.pin?.userId ? 'primary' : undefined,
+                onClick: () => {
+                    void togglePin(props.documentId, !doc.value?.document?.pin?.userId, true);
+                },
+            },
+        ];
+
+        if (attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value) {
+            pinChildren.push({
+                label: t('common.job'),
+                icon: doc.value.document?.pin?.state && doc.value.document?.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin',
+                color: doc.value.document?.pin?.state && doc.value.document?.pin?.job ? 'primary' : undefined,
+                onClick: () => {
+                    void togglePin(props.documentId, !doc.value?.document?.pin?.job, false);
+                },
+            });
+        }
+
+        items.push({
+            label: t('common.pin'),
+            tooltip: `${t('common.pin', 1)}/ ${t('common.unpin')}`,
+            icon: 'i-mdi-pin',
+            color: 'neutral',
+            children: pinChildren,
+        });
+    }
+
+    if (canDo.value.requests || canDo.value.approve || canDo.value.reminder) {
+        pushSeparator();
+    }
+
+    if (canDo.value.requests) {
+        items.push({
+            label: t('common.request', 2),
+            tooltip: t('common.request', 2),
+            icon: 'i-mdi-frequently-asked-questions',
+            kbds: ['D', 'R'],
+            color: 'neutral',
+            onClick: () => {
+                void openRequestsDrawer();
+            },
+        });
+    }
+
+    if (canDo.value.approve) {
+        items.push({
+            label: t('common.approve'),
+            tooltip: doc.value.document?.meta?.draft
+                ? t('components.documents.approval.document_not_published')
+                : t('common.approve'),
+            icon: 'i-mdi-approval',
+            disabled: !!doc.value.document?.meta?.draft,
+            color: 'neutral',
+            onClick: () => {
+                void openApprovalDrawer();
+            },
+        });
+    }
+
+    if (canDo.value.reminder) {
+        items.push({
+            label: t('common.reminder'),
+            tooltip: t('common.reminder'),
+            icon: 'i-mdi-reminder',
+            color: 'neutral',
+            children: reminderActionItems.value,
+        });
+    }
+
+    if (canDo.value.takeOwnership) {
+        pushSeparator();
+
+        items.push({
+            label: t('components.documents.document_view.take_ownership'),
+            tooltip: t('components.documents.document_view.take_ownership'),
+            icon: 'i-mdi-creation',
+            color: 'neutral',
+            disabled: doc.value.document?.creatorId === activeChar?.value?.userId,
+            onClick: () => {
+                confirmModal.open({
+                    confirm: async () => documentsDocuments.changeDocumentOwner(props.documentId).then(() => refresh()),
                 });
             },
-        },
-    ],
-]);
+        });
+    }
+
+    if (canDo.value.delete) {
+        items.push({
+            label: !doc.value.document?.deletedAt ? t('common.delete') : t('common.restore'),
+            tooltip: !doc.value.document?.deletedAt ? t('common.delete') : t('common.restore'),
+            color: !doc.value.document?.deletedAt ? 'error' : 'success',
+            icon: !doc.value.document?.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
+            onClick: () => {
+                (doc.value?.document?.deletedAt === undefined ? confirmModalWithReason : confirmModal).open({
+                    confirm: async (reason?: string) =>
+                        (await documentsDocuments.deleteDocument(
+                            props.documentId,
+                            isSuperuser && doc.value?.document?.deletedAt !== undefined,
+                            reason,
+                        ))
+                            ? refresh()
+                            : undefined,
+                });
+            },
+        });
+    }
+
+    return items;
+});
 
 const scrollRef = useTemplateRef('scrollRef');
 
@@ -394,197 +554,8 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar
-                v-if="
-                    doc &&
-                    (canDo.status ||
-                        canDo.accessUpdate ||
-                        canDo.contentUpdate ||
-                        canDo.pin ||
-                        canDo.requests ||
-                        canDo.approve ||
-                        canDo.reminder ||
-                        canDo.takeOwnership ||
-                        canDo.delete)
-                "
-                class="p-1 print:hidden"
-            >
-                <template #default>
-                    <div
-                        class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto"
-                    >
-                        <UTooltip
-                            v-if="canDo.status"
-                            class="flex-1"
-                            :text="`${$t('common.open', 1)}/ ${$t('common.close')}`"
-                            :kbds="['D', 'T']"
-                        >
-                            <UButton
-                                block
-                                :label="doc.document?.meta?.closed ? $t('common.open', 1) : $t('common.close', 1)"
-                                :icon="doc.document?.meta?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
-                                :color="doc.document?.meta?.closed ? 'success' : 'error'"
-                                variant="ghost"
-                                @click="toggleDocument()"
-                            />
-                        </UTooltip>
-
-                        <UTooltip v-if="canDo.accessUpdate" class="flex-1" :text="$t('common.edit')" :kbds="['D', 'E']">
-                            <UButton
-                                block
-                                :to="{
-                                    name: 'documents-id-edit',
-                                    params: { id: doc.document?.id },
-                                }"
-                                color="neutral"
-                                variant="ghost"
-                                icon="i-mdi-pencil"
-                                :label="$t('common.edit')"
-                            />
-                        </UTooltip>
-
-                        <UTooltip v-if="canDo.pin" class="flex flex-1" :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`">
-                            <UDropdownMenu
-                                :items="
-                                    (
-                                        [
-                                            {
-                                                label: $t('common.personal'),
-                                                color:
-                                                    doc.document?.pin?.state && doc.document?.pin?.userId
-                                                        ? 'primary'
-                                                        : undefined,
-                                                icon:
-                                                    doc.document?.pin?.state && doc.document?.pin?.userId
-                                                        ? 'i-mdi-playlist-remove'
-                                                        : 'i-mdi-playlist-plus',
-                                                onSelect: () => {
-                                                    togglePin(documentId, !doc?.document?.pin?.userId, true);
-                                                },
-                                            },
-                                            attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value
-                                                ? {
-                                                      label: $t('common.job'),
-                                                      color:
-                                                          doc.document?.pin?.state && doc.document?.pin?.job
-                                                              ? 'primary'
-                                                              : undefined,
-                                                      icon:
-                                                          doc.document?.pin?.state && doc.document?.pin?.job
-                                                              ? 'i-mdi-pin-off'
-                                                              : 'i-mdi-pin',
-                                                      onSelect: () => {
-                                                          togglePin(documentId, !doc?.document?.pin?.job, false);
-                                                      },
-                                                  }
-                                                : undefined,
-                                        ] as DropdownMenuItem[]
-                                    ).flatMap((item) => (item !== undefined ? [item] : []))
-                                "
-                                :content="{ align: 'center' }"
-                                :ui="{ content: 'w-48' }"
-                            >
-                                <UButton :label="$t('common.pin')" color="neutral" variant="ghost" block icon="i-mdi-pin" />
-                            </UDropdownMenu>
-                        </UTooltip>
-
-                        <UTooltip v-if="canDo.requests" class="flex-1" :text="$t('common.request', 2)" :kbds="['D', 'R']">
-                            <UButton
-                                block
-                                color="neutral"
-                                variant="ghost"
-                                icon="i-mdi-frequently-asked-questions"
-                                :label="$t('common.request', 2)"
-                                @click="() => openRequestsDrawer()"
-                            />
-                        </UTooltip>
-
-                        <UTooltip
-                            v-if="canDo.approve"
-                            class="flex-1"
-                            :text="
-                                doc?.document?.meta?.draft
-                                    ? $t('components.documents.approval.document_not_published')
-                                    : $t('common.approve')
-                            "
-                        >
-                            <UButton
-                                block
-                                color="neutral"
-                                variant="ghost"
-                                icon="i-mdi-approval"
-                                :label="$t('common.approve')"
-                                :disabled="doc?.document?.meta?.draft"
-                                @click="() => openApprovalDrawer()"
-                            />
-                        </UTooltip>
-
-                        <UDropdownMenu v-if="canDo.reminder" :items="reminderMenuItems">
-                            <template #default="{ open }">
-                                <UTooltip class="flex-1" :text="$t('common.reminder')">
-                                    <UButton
-                                        class="group"
-                                        block
-                                        color="neutral"
-                                        icon="i-mdi-reminder"
-                                        trailing-icon="i-mdi-chevron-down"
-                                        :label="$t('common.reminder')"
-                                        variant="ghost"
-                                        :ui="{
-                                            trailingIcon:
-                                                'group-data-[state=open]:rotate-180 transition-transform duration-200' +
-                                                (open ? ' rotate-180' : ''),
-                                            label: 'flex-1',
-                                        }"
-                                    />
-                                </UTooltip>
-                            </template>
-                        </UDropdownMenu>
-
-                        <UTooltip
-                            v-if="canDo.takeOwnership"
-                            class="flex-1"
-                            :text="$t('components.documents.document_view.take_ownership')"
-                        >
-                            <UButton
-                                block
-                                :disabled="doc?.document?.creatorId === activeChar?.userId"
-                                icon="i-mdi-creation"
-                                color="neutral"
-                                variant="ghost"
-                                :label="$t('components.documents.document_view.take_ownership')"
-                                @click="
-                                    confirmModal.open({
-                                        confirm: async () =>
-                                            documentsDocuments.changeDocumentOwner(documentId).then(() => refresh()),
-                                    })
-                                "
-                            />
-                        </UTooltip>
-
-                        <UTooltip v-if="canDo.delete" class="flex-1" :text="$t('common.delete')">
-                            <UButton
-                                block
-                                :color="!doc.document?.deletedAt ? 'error' : 'success'"
-                                :icon="!doc.document?.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
-                                :label="!doc.document?.deletedAt ? $t('common.delete') : $t('common.restore')"
-                                variant="ghost"
-                                @click="
-                                    (doc?.document?.deletedAt === undefined ? confirmModalWithReason : confirmModal).open({
-                                        confirm: async (reason?: string) =>
-                                            (await documentsDocuments.deleteDocument(
-                                                documentId,
-                                                isSuperuser && doc?.document?.deletedAt !== undefined,
-                                                reason,
-                                            ))
-                                                ? refresh()
-                                                : undefined,
-                                    })
-                                "
-                            />
-                        </UTooltip>
-                    </div>
-                </template>
+            <UDashboardToolbar v-if="doc && actionItems.length" class="p-1 print:hidden">
+                <ResponsiveActions :items="actionItems" :label="$t('common.action', 2)" />
             </UDashboardToolbar>
 
             <UDashboardToolbar v-if="doc" class="print:hidden">
