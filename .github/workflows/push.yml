@@ -47,24 +47,11 @@ jobs:
         id: go_tests
         env:
           TZ: "Europe/Berlin"
-        continue-on-error: true
         run: make tests-go
-
-      - name: Archive code coverage results
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: code-coverage-go
-          path: coverage.txt
-
-      - name: Fail Go Tests
-        if: ${{ github.event_name != 'pull_request' && steps.go_tests.outcome == 'failure' }}
-        run: exit 1
 
   node-lint-tests:
     name: Node Lint Test
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -87,7 +74,6 @@ jobs:
   node-vitest-tests:
     name: Node Vitest Test
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
