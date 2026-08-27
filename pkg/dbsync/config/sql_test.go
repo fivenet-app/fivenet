@@ -213,10 +213,8 @@ func TestUsersTableGetQueryWithCustomQueryReplacesWhereCondition(t *testing.T) {
 
 	customQuery := "SELECT * FROM `users` $whereCondition LIMIT $limit"
 	usersTable := UsersTable{
-		DBSyncTable: DBSyncTable{
-			Query:             &customQuery,
-			UpdatedTimeColumn: new("updated_at"),
-		},
+		Query:             &customQuery,
+		UpdatedTimeColumn: new("updated_at"),
 		Columns: UsersColumns{
 			ID: "id",
 		},
@@ -235,9 +233,7 @@ func TestJobsTableGetQuery(t *testing.T) {
 	t.Parallel()
 
 	jobsTable := JobsTable{
-		DBSyncTable: DBSyncTable{
-			TableName: "jobs",
-		},
+		TableName: "jobs",
 		Columns: JobsColumns{
 			Name:  "name",
 			Label: "label",

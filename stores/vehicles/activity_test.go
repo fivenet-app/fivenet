@@ -31,11 +31,9 @@ func TestStoreCountVehicleActivityAppliesPlateAndTypeFilter(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(3)))
 
 	total, err := store.CountVehicleActivity(t.Context(), CountVehicleActivityOptions{
-		VehicleActivityOptions: VehicleActivityOptions{
-			Plate: "ABC DEF1",
-			Types: []vehiclesactivity.VehicleActivityType{
-				vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED,
-			},
+		Plate: "ABC DEF1",
+		Types: []vehiclesactivity.VehicleActivityType{
+			vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED,
 		},
 	})
 	require.NoError(t, err)
@@ -89,9 +87,9 @@ func TestStoreListVehicleActivityAppliesSortAndCreatorJoin(t *testing.T) {
 		))
 
 	activity, err := store.ListVehicleActivity(t.Context(), ListVehicleActivityOptions{
-		VehicleActivityOptions: VehicleActivityOptions{Plate: "ABC DEF1"},
-		Offset:                 0,
-		Limit:                  20,
+		Plate:  "ABC DEF1",
+		Offset: 0,
+		Limit:  20,
 	})
 	require.NoError(t, err)
 	require.Len(t, activity, 1)

@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"slices"
-	"sort"
 	"testing"
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
@@ -231,7 +230,7 @@ func TestResolveUserIDsIgnoresInaccessibleGroups(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	sort.Slice(resolved, func(i, j int) bool { return resolved[i] < resolved[j] })
+	slices.Sort(resolved)
 	require.Equal(t, []int32{1, 9}, resolved)
 	require.Equal(t, 1, checker.calls)
 	require.Equal(t, 1, store.getGroupCalls)
@@ -281,7 +280,7 @@ func TestResolveUserIDsMergesExplicitUsersAndGroups(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	sort.Slice(resolved, func(i, j int) bool { return resolved[i] < resolved[j] })
+	slices.Sort(resolved)
 	require.Equal(t, []int32{2, 3}, resolved)
 }
 

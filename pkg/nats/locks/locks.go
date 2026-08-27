@@ -282,8 +282,7 @@ func (l *Locks) getRev(key string) uint64 {
 
 // isWrongSequence checks if the error is due to a wrong last sequence in JetStream.
 func isWrongSequence(err error) bool {
-	var apiErr *jetstream.APIError
-	if errors.As(err, &apiErr) {
+	if apiErr, ok := errors.AsType[*jetstream.APIError](err); ok {
 		if apiErr.ErrorCode == jetstream.JSErrCodeStreamWrongLastSequence {
 			return true
 		}

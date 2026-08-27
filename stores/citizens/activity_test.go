@@ -24,7 +24,7 @@ func TestStoreCountUserActivityAppliesTargetFilter(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(7)))
 
 	total, err := store.CountUserActivity(t.Context(), CountUserActivityOptions{
-		UserActivityOptions: UserActivityOptions{UserID: 42},
+		UserID: 42,
 	})
 	require.NoError(t, err)
 	assert.Equal(t, int64(7), total)
@@ -87,9 +87,9 @@ func TestStoreListUserActivityAppliesSortAndJoin(t *testing.T) {
 		))
 
 	activities, err := store.ListUserActivity(t.Context(), ListUserActivityOptions{
-		UserActivityOptions: UserActivityOptions{UserID: 42},
-		Offset:              0,
-		Limit:               20,
+		UserID: 42,
+		Offset: 0,
+		Limit:  20,
 	})
 	require.NoError(t, err)
 	require.Len(t, activities, 1)

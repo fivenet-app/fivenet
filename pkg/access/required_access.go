@@ -324,24 +324,22 @@ func mergeRequiredJobAccessEntries(
 		current,
 		required,
 		accessEntryFloorOps[*resourcesaccess.JobAccess, string]{
-			accessEntryOps: accessEntryOps[*resourcesaccess.JobAccess, string]{
-				keyFn: func(entry *resourcesaccess.JobAccess) string {
-					return subjectJobAccessKey(entry.GetJob(), entry.GetMinimumGrade())
-				},
-				accessFn: func(entry *resourcesaccess.JobAccess) int32 {
-					return entry.GetAccess()
-				},
-				setAccessFn: func(entry *resourcesaccess.JobAccess, access int32) {
-					entry.SetAccess(access)
-				},
-				requiredFn: func(entry *resourcesaccess.JobAccess) bool {
-					return entry.GetRequired()
-				},
-				setRequiredFn: func(entry *resourcesaccess.JobAccess, required bool) {
-					entry.SetRequired(required)
-				},
-				cloneFn: cloneJobAccessEntry,
+			keyFn: func(entry *resourcesaccess.JobAccess) string {
+				return subjectJobAccessKey(entry.GetJob(), entry.GetMinimumGrade())
 			},
+			accessFn: func(entry *resourcesaccess.JobAccess) int32 {
+				return entry.GetAccess()
+			},
+			setAccessFn: func(entry *resourcesaccess.JobAccess, access int32) {
+				entry.SetAccess(access)
+			},
+			requiredFn: func(entry *resourcesaccess.JobAccess) bool {
+				return entry.GetRequired()
+			},
+			setRequiredFn: func(entry *resourcesaccess.JobAccess, required bool) {
+				entry.SetRequired(required)
+			},
+			cloneFn: cloneJobAccessEntry,
 			requiredAccessFn: func(entry *resourcesaccess.JobAccess) int32 {
 				return entry.GetRequiredAccess()
 			},
@@ -365,24 +363,22 @@ func mergeRequiredUserAccessEntries(
 		current,
 		required,
 		accessEntryFloorOps[*resourcesaccess.UserAccess, int32]{
-			accessEntryOps: accessEntryOps[*resourcesaccess.UserAccess, int32]{
-				keyFn: func(entry *resourcesaccess.UserAccess) int32 {
-					return entry.GetUserId()
-				},
-				accessFn: func(entry *resourcesaccess.UserAccess) int32 {
-					return entry.GetAccess()
-				},
-				setAccessFn: func(entry *resourcesaccess.UserAccess, access int32) {
-					entry.SetAccess(access)
-				},
-				requiredFn: func(entry *resourcesaccess.UserAccess) bool {
-					return entry.GetRequired()
-				},
-				setRequiredFn: func(entry *resourcesaccess.UserAccess, required bool) {
-					entry.SetRequired(required)
-				},
-				cloneFn: cloneUserAccessEntry,
+			keyFn: func(entry *resourcesaccess.UserAccess) int32 {
+				return entry.GetUserId()
 			},
+			accessFn: func(entry *resourcesaccess.UserAccess) int32 {
+				return entry.GetAccess()
+			},
+			setAccessFn: func(entry *resourcesaccess.UserAccess, access int32) {
+				entry.SetAccess(access)
+			},
+			requiredFn: func(entry *resourcesaccess.UserAccess) bool {
+				return entry.GetRequired()
+			},
+			setRequiredFn: func(entry *resourcesaccess.UserAccess, required bool) {
+				entry.SetRequired(required)
+			},
+			cloneFn: cloneUserAccessEntry,
 			requiredAccessFn: func(entry *resourcesaccess.UserAccess) int32 {
 				return entry.GetRequiredAccess()
 			},
@@ -406,24 +402,22 @@ func mergeRequiredQualificationAccessEntries(
 		current,
 		required,
 		accessEntryFloorOps[*resourcesaccess.QualificationAccess, int64]{
-			accessEntryOps: accessEntryOps[*resourcesaccess.QualificationAccess, int64]{
-				keyFn: func(entry *resourcesaccess.QualificationAccess) int64 {
-					return entry.GetQualificationId()
-				},
-				accessFn: func(entry *resourcesaccess.QualificationAccess) int32 {
-					return entry.GetAccess()
-				},
-				setAccessFn: func(entry *resourcesaccess.QualificationAccess, access int32) {
-					entry.SetAccess(access)
-				},
-				requiredFn: func(entry *resourcesaccess.QualificationAccess) bool {
-					return entry.GetRequired()
-				},
-				setRequiredFn: func(entry *resourcesaccess.QualificationAccess, required bool) {
-					entry.SetRequired(required)
-				},
-				cloneFn: cloneQualificationAccessEntry,
+			keyFn: func(entry *resourcesaccess.QualificationAccess) int64 {
+				return entry.GetQualificationId()
 			},
+			accessFn: func(entry *resourcesaccess.QualificationAccess) int32 {
+				return entry.GetAccess()
+			},
+			setAccessFn: func(entry *resourcesaccess.QualificationAccess, access int32) {
+				entry.SetAccess(access)
+			},
+			requiredFn: func(entry *resourcesaccess.QualificationAccess) bool {
+				return entry.GetRequired()
+			},
+			setRequiredFn: func(entry *resourcesaccess.QualificationAccess, required bool) {
+				entry.SetRequired(required)
+			},
+			cloneFn: cloneQualificationAccessEntry,
 			requiredAccessFn: func(entry *resourcesaccess.QualificationAccess) int32 {
 				return entry.GetRequiredAccess()
 			},

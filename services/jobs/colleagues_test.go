@@ -34,7 +34,7 @@ func TestGetConditionForColleagueAccessUsesJobGradeForRankAccess(t *testing.T) {
 
 	require.Contains(t, sql, "target_user_jobs.grade < ?")
 	require.NotContains(t, sql, "target_user.id < ?")
-	require.Equal(t, []interface{}{int32(5)}, args)
+	require.Equal(t, []any{int32(5)}, args)
 }
 
 func TestGetConditionForColleagueAccessUsesTargetUserIDForOwnAccess(t *testing.T) {
@@ -61,5 +61,5 @@ func TestGetConditionForColleagueAccessUsesTargetUserIDForOwnAccess(t *testing.T
 	sql, args := stmt.Sql()
 
 	require.Contains(t, sql, "colleague_activity.target_user_id = ?")
-	require.Equal(t, []interface{}{int32(12)}, args)
+	require.Equal(t, []any{int32(12)}, args)
 }

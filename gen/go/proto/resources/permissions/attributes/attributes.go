@@ -207,14 +207,14 @@ func ValidateStringList(in *StringList, validVals []string, maxVals []string) (b
 	}
 
 	changed := false
-	for i := len(in.GetStrings()) - 1; i >= 0; i-- {
-		if !slices.Contains(maxVals, in.GetStrings()[i]) {
+	for i, v := range slices.Backward(in.GetStrings()) {
+		if !slices.Contains(maxVals, v) {
 			in.Strings = slices.Delete(in.GetStrings(), i, i+1)
 			changed = true
 			continue
 		}
 
-		if len(validVals) > 0 && !slices.Contains(validVals, in.GetStrings()[i]) {
+		if len(validVals) > 0 && !slices.Contains(validVals, v) {
 			in.Strings = slices.Delete(in.GetStrings(), i, i+1)
 			changed = true
 			continue

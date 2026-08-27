@@ -427,7 +427,7 @@ func (o *OAuth2) handleLoginCallback(
 	c *gin.Context,
 	_ sessions.Session,
 	provider types.IProvider,
-	userInfo interface{},
+	userInfo any,
 	connectOnly bool,
 ) {
 	uInfo, ok := userInfo.(*types.UserInfo)

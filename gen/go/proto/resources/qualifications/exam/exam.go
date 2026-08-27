@@ -2,8 +2,6 @@ package qualificationsexam
 
 import (
 	"slices"
-
-	"google.golang.org/protobuf/proto"
 )
 
 func (e *ExamQuestions) Grade(
@@ -41,14 +39,14 @@ func (e *ExamQuestions) Grade(
 					grading.Responses = append(grading.Responses, &ExamGradingResponse{
 						QuestionId: question.GetId(),
 						Points:     float32(question.GetPoints()),
-						Checked:    proto.Bool(true),
+						Checked:    new(true),
 					})
 					earnedPoints += float32(question.GetPoints())
 				} else {
 					grading.Responses = append(grading.Responses, &ExamGradingResponse{
 						QuestionId: question.GetId(),
 						Points:     0,
-						Checked:    proto.Bool(true),
+						Checked:    new(true),
 					})
 				}
 			case response.GetResponse().GetSingleChoice() != nil && question.GetAnswer().GetSingleChoice() != nil:
@@ -61,14 +59,14 @@ func (e *ExamQuestions) Grade(
 					grading.Responses = append(grading.Responses, &ExamGradingResponse{
 						QuestionId: question.GetId(),
 						Points:     float32(question.GetPoints()),
-						Checked:    proto.Bool(true),
+						Checked:    new(true),
 					})
 					earnedPoints += float32(question.GetPoints())
 				} else {
 					grading.Responses = append(grading.Responses, &ExamGradingResponse{
 						QuestionId: question.GetId(),
 						Points:     0,
-						Checked:    proto.Bool(true),
+						Checked:    new(true),
 					})
 				}
 			case response.GetResponse().GetMultipleChoice() != nil && question.GetAnswer().GetMultipleChoice() != nil:
@@ -90,7 +88,7 @@ func (e *ExamQuestions) Grade(
 					grading.Responses = append(grading.Responses, &ExamGradingResponse{
 						QuestionId: question.GetId(),
 						Points:     points,
-						Checked:    proto.Bool(true),
+						Checked:    new(true),
 					})
 					earnedPoints += points
 
@@ -98,7 +96,7 @@ func (e *ExamQuestions) Grade(
 					grading.Responses = append(grading.Responses, &ExamGradingResponse{
 						QuestionId: question.GetId(),
 						Points:     float32(question.GetPoints()),
-						Checked:    proto.Bool(true),
+						Checked:    new(true),
 					})
 					earnedPoints += float32(question.GetPoints())
 
@@ -106,7 +104,7 @@ func (e *ExamQuestions) Grade(
 					grading.Responses = append(grading.Responses, &ExamGradingResponse{
 						QuestionId: question.GetId(),
 						Points:     0,
-						Checked:    proto.Bool(true),
+						Checked:    new(true),
 					})
 				}
 			}

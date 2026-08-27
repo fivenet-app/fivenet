@@ -41,10 +41,8 @@ func (s *Server) ListVehicleActivity(
 	}
 
 	queryOpts := vehiclesstore.CountVehicleActivityOptions{
-		VehicleActivityOptions: vehiclesstore.VehicleActivityOptions{
-			Plate: req.GetPlate(),
-			Types: req.GetTypes(),
-		},
+		Plate: req.GetPlate(),
+		Types: req.GetTypes(),
 	}
 	count, err := s.store.CountVehicleActivity(ctx, queryOpts)
 	if err != nil {
@@ -58,10 +56,8 @@ func (s *Server) ListVehicleActivity(
 	}
 
 	activity, err := s.store.ListVehicleActivity(ctx, vehiclesstore.ListVehicleActivityOptions{
-		VehicleActivityOptions: vehiclesstore.VehicleActivityOptions{
-			Plate: req.GetPlate(),
-			Types: req.GetTypes(),
-		},
+		Plate:  req.GetPlate(),
+		Types:  req.GetTypes(),
 		Sort:   req.GetSort(),
 		Offset: req.GetPagination().GetOffset(),
 		Limit:  limit,

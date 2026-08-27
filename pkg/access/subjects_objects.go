@@ -65,11 +65,9 @@ func NewDocumentsSubjectObjectAccess(db *sql.DB) *DocumentsObjectAccess {
 		},
 		AccessTable: table.FivenetDocumentsAccess,
 		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetDocumentsAccess.ID,
-				TargetID: table.FivenetDocumentsAccess.TargetID,
-				Access:   table.FivenetDocumentsAccess.Access,
-			},
+			ID:        table.FivenetDocumentsAccess.ID,
+			TargetID:  table.FivenetDocumentsAccess.TargetID,
+			Access:    table.FivenetDocumentsAccess.Access,
 			SubjectID: table.FivenetDocumentsAccess.SubjectID,
 			Effect:    table.FivenetDocumentsAccess.Effect,
 		},
@@ -106,11 +104,9 @@ func NewDocumentTemplatesSubjectObjectAccess(db *sql.DB) *DocumentTemplatesObjec
 		},
 		AccessTable: table.FivenetDocumentsTemplatesAccess,
 		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetDocumentsTemplatesAccess.ID,
-				TargetID: table.FivenetDocumentsTemplatesAccess.TargetID,
-				Access:   table.FivenetDocumentsTemplatesAccess.Access,
-			},
+			ID:        table.FivenetDocumentsTemplatesAccess.ID,
+			TargetID:  table.FivenetDocumentsTemplatesAccess.TargetID,
+			Access:    table.FivenetDocumentsTemplatesAccess.Access,
 			SubjectID: table.FivenetDocumentsTemplatesAccess.SubjectID,
 			Effect:    table.FivenetDocumentsTemplatesAccess.Effect,
 		},
@@ -140,11 +136,9 @@ func NewDocumentStampsSubjectObjectAccess(db *sql.DB) *DocumentStampsObjectAcces
 		},
 		AccessTable: table.FivenetDocumentsStampsAccess,
 		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetDocumentsStampsAccess.ID,
-				TargetID: table.FivenetDocumentsStampsAccess.TargetID,
-				Access:   table.FivenetDocumentsStampsAccess.Access,
-			},
+			ID:        table.FivenetDocumentsStampsAccess.ID,
+			TargetID:  table.FivenetDocumentsStampsAccess.TargetID,
+			Access:    table.FivenetDocumentsStampsAccess.Access,
 			SubjectID: table.FivenetDocumentsStampsAccess.SubjectID,
 			Effect:    table.FivenetDocumentsStampsAccess.Effect,
 		},
@@ -177,11 +171,9 @@ func NewCalendarSubjectObjectAccess(db *sql.DB) *CalendarObjectAccess {
 		},
 		AccessTable: table.FivenetCalendarAccess,
 		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetCalendarAccess.ID,
-				TargetID: table.FivenetCalendarAccess.TargetID,
-				Access:   table.FivenetCalendarAccess.Access,
-			},
+			ID:        table.FivenetCalendarAccess.ID,
+			TargetID:  table.FivenetCalendarAccess.TargetID,
+			Access:    table.FivenetCalendarAccess.Access,
 			SubjectID: table.FivenetCalendarAccess.SubjectID,
 			Effect:    table.FivenetCalendarAccess.Effect,
 		},
@@ -220,11 +212,9 @@ func NewWikiPageSubjectObjectAccess(db *sql.DB) *WikiPageObjectAccess {
 		},
 		AccessTable: table.FivenetWikiPagesAccess,
 		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetWikiPagesAccess.ID,
-				TargetID: table.FivenetWikiPagesAccess.TargetID,
-				Access:   table.FivenetWikiPagesAccess.Access,
-			},
+			ID:        table.FivenetWikiPagesAccess.ID,
+			TargetID:  table.FivenetWikiPagesAccess.TargetID,
+			Access:    table.FivenetWikiPagesAccess.Access,
 			SubjectID: table.FivenetWikiPagesAccess.SubjectID,
 			Effect:    table.FivenetWikiPagesAccess.Effect,
 		},
@@ -261,11 +251,9 @@ func NewCitizenLabelsSubjectObjectAccess(db *sql.DB) *CitizenLabelsObjectAccess 
 		},
 		AccessTable: table.FivenetUserLabelsJobJobAccess,
 		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetUserLabelsJobJobAccess.ID,
-				TargetID: table.FivenetUserLabelsJobJobAccess.TargetID,
-				Access:   table.FivenetUserLabelsJobJobAccess.Access,
-			},
+			ID:        table.FivenetUserLabelsJobJobAccess.ID,
+			TargetID:  table.FivenetUserLabelsJobJobAccess.TargetID,
+			Access:    table.FivenetUserLabelsJobJobAccess.Access,
 			SubjectID: table.FivenetUserLabelsJobJobAccess.SubjectID,
 			Effect:    table.FivenetUserLabelsJobJobAccess.Effect,
 		},
@@ -297,11 +285,9 @@ func NewQualificationsSubjectObjectAccess(db *sql.DB) *QualificationsObjectAcces
 		},
 		AccessTable: table.FivenetQualificationsAccess,
 		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetQualificationsAccess.ID,
-				TargetID: table.FivenetQualificationsAccess.TargetID,
-				Access:   table.FivenetQualificationsAccess.Access,
-			},
+			ID:        table.FivenetQualificationsAccess.ID,
+			TargetID:  table.FivenetQualificationsAccess.TargetID,
+			Access:    table.FivenetQualificationsAccess.Access,
 			SubjectID: table.FivenetQualificationsAccess.SubjectID,
 			Effect:    table.FivenetQualificationsAccess.Effect,
 		},
@@ -333,11 +319,9 @@ func NewMailerEmailsSubjectObjectAccess(db *sql.DB) *MailerEmailsObjectAccess {
 		},
 		AccessTable: table.FivenetMailerEmailsAccess,
 		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetMailerEmailsAccess.ID,
-				TargetID: table.FivenetMailerEmailsAccess.TargetID,
-				Access:   table.FivenetMailerEmailsAccess.Access,
-			},
+			ID:        table.FivenetMailerEmailsAccess.ID,
+			TargetID:  table.FivenetMailerEmailsAccess.TargetID,
+			Access:    table.FivenetMailerEmailsAccess.Access,
 			SubjectID: table.FivenetMailerEmailsAccess.SubjectID,
 			Effect:    table.FivenetMailerEmailsAccess.Effect,
 		},
@@ -370,11 +354,9 @@ func NewCentrumUnitsSubjectObjectAccess(db *sql.DB) *CentrumUnitsObjectAccess {
 		},
 		AccessTable: table.FivenetCentrumUnitsAccess,
 		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetCentrumUnitsAccess.ID,
-				TargetID: table.FivenetCentrumUnitsAccess.TargetID,
-				Access:   table.FivenetCentrumUnitsAccess.Access,
-			},
+			ID:        table.FivenetCentrumUnitsAccess.ID,
+			TargetID:  table.FivenetCentrumUnitsAccess.TargetID,
+			Access:    table.FivenetCentrumUnitsAccess.Access,
 			SubjectID: table.FivenetCentrumUnitsAccess.SubjectID,
 			Effect:    table.FivenetCentrumUnitsAccess.Effect,
 		},
@@ -433,11 +415,9 @@ func NewJobGroupsSubjectObjectAccess(db *sql.DB) *JobGroupsObjectAccess {
 		},
 		AccessTable: table.FivenetJobGroupsAccess,
 		AccessColumns: &SubjectAccessColumns{
-			BaseAccessColumns: BaseAccessColumns{
-				ID:       table.FivenetJobGroupsAccess.ID,
-				TargetID: table.FivenetJobGroupsAccess.TargetID,
-				Access:   table.FivenetJobGroupsAccess.Access,
-			},
+			ID:        table.FivenetJobGroupsAccess.ID,
+			TargetID:  table.FivenetJobGroupsAccess.TargetID,
+			Access:    table.FivenetJobGroupsAccess.Access,
 			SubjectID: table.FivenetJobGroupsAccess.SubjectID,
 			Effect:    table.FivenetJobGroupsAccess.Effect,
 		},

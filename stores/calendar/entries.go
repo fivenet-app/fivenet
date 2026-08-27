@@ -590,7 +590,7 @@ func (s *Store) UpsertCalendarEntry(
 	tCalendarEntry := table.FivenetCalendarEntries
 
 	if entry.GetId() > 0 {
-		values := []interface{}{
+		values := []any{
 			mysql.String(entry.GetTitle()),
 			entry.GetContent(),
 			dbutils.TimestampToMySQL(entry.GetStartTime()),

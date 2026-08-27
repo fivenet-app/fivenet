@@ -39,10 +39,8 @@ func (s *Server) ListUserActivity(
 		}
 	}
 	queryOpts := citizensstore.CountUserActivityOptions{
-		UserActivityOptions: citizensstore.UserActivityOptions{
-			UserID: req.GetUserId(),
-			Types:  req.GetTypes(),
-		},
+		UserID: req.GetUserId(),
+		Types:  req.GetTypes(),
 	}
 	count, err := s.store.CountUserActivity(ctx, queryOpts)
 	if err != nil {
@@ -56,10 +54,8 @@ func (s *Server) ListUserActivity(
 	}
 
 	activities, err := s.store.ListUserActivity(ctx, citizensstore.ListUserActivityOptions{
-		UserActivityOptions: citizensstore.UserActivityOptions{
-			UserID: req.GetUserId(),
-			Types:  req.GetTypes(),
-		},
+		UserID: req.GetUserId(),
+		Types:  req.GetTypes(),
 		Sort:   req.GetSort(),
 		Offset: req.GetPagination().GetOffset(),
 		Limit:  limit,
