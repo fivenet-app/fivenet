@@ -22,6 +22,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
+	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -114,6 +115,7 @@ type Demo struct {
 	accessResolver *access.SubjectResolver
 	perms          perms.Permissions
 	settingsStore  settingsstore.IStore
+	livemapStore   livemapstore.IStore
 	wg             sync.WaitGroup
 
 	randMu sync.Mutex
@@ -142,6 +144,7 @@ type Params struct {
 	AppConfig      appconfig.IConfig
 	Perms          perms.Permissions
 	SettingsStore  settingsstore.IStore
+	LivemapStore   livemapstore.IStore
 }
 
 // New creates a new Demo instance if demo mode is enabled in the config.
@@ -164,6 +167,7 @@ func New(p Params) *Demo {
 		accessResolver: access.NewSubjectResolver(p.DB),
 		perms:          p.Perms,
 		settingsStore:  p.SettingsStore,
+		livemapStore:   p.LivemapStore,
 		wg:             sync.WaitGroup{},
 	}
 	d.initRandomizers()
@@ -198,6 +202,7 @@ func (d *Demo) initRandomizers() {
 func (d *Demo) startupGenerators() []startupGenerator {
 	return []startupGenerator{
 		demoCatalogGenerator{},
+		demoMarkerGenerator{},
 		demoBannerGenerator{},
 		fakeUsersGenerator{},
 		demoCalendarEntriesGenerator{},

@@ -26,7 +26,7 @@ const (
 	demoCalendarEntryPrefix = "[DEMO]"
 
 	demoCalendarColor        = "green"
-	demoCalendarFallbackName = "%s Calendar [Demo]"
+	demoCalendarFallbackName = "%s Calendar [DEMO]"
 )
 
 var (
