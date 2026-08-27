@@ -644,7 +644,8 @@ func newDemoCalendarEntryContent(summary string) *commoncontent.Content {
 	return &commoncontent.Content{
 		Version:     commoncontent.ContentVersionLegacyJSONV1,
 		ContentType: commoncontent.ContentType_CONTENT_TYPE_HTML,
-		RawHtml:     &rawHTML,
+		//nolint:staticcheck // Preserve legacy HTML for old calendar content.
+		RawHtml: &rawHTML,
 	}
 }
 

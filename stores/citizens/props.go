@@ -339,7 +339,9 @@ func (s *Store) HandleUserPropsChanges(
 			Data: &usersactivity.UserActivityData{
 				Data: &usersactivity.UserActivityData_LabelsChange{
 					LabelsChange: &usersactivity.LabelsChange{
-						Added:   added,
+						//nolint:staticcheck // Preserve deprecated fields in legacy activity data.
+						Added: added,
+						//nolint:staticcheck // Preserve deprecated fields in legacy activity data.
 						Removed: removed,
 					},
 				},

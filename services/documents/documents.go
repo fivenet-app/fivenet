@@ -331,7 +331,8 @@ func (s *Server) CreateDocument(
 		docContent = &content.Content{
 			Version:     content.ContentVersionLegacyJSONV1,
 			ContentType: content.ContentType_CONTENT_TYPE_HTML,
-			Content:     htmlNode,
+			//nolint:staticcheck // Preserve the legacy HTML AST for old documents.
+			Content: htmlNode,
 		}
 
 		// Set access based on template
