@@ -1213,7 +1213,8 @@
             "test_notifications": "Test Notifications",
             "trigger_error": "Trigger Error page",
             "toggle_log_level": "Toggle Log Level to debug/warn",
-            "trigger_banner_message": "Trigger Banner Message"
+            "trigger_banner_message": "Trigger Banner Message",
+            "advanced_debug": "Advanced Debug"
         },
         "penaltycalculator": {
             "title": "Penalty Calculator"

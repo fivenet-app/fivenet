@@ -1213,7 +1213,8 @@
             "test_notifications": "Teste Benachrichtigungen",
             "trigger_error": "Fehlerseite auslösen",
             "toggle_log_level": "Log-Level zwischen Debug/Warn umschalten",
-            "trigger_banner_message": "Banner auslösen"
+            "trigger_banner_message": "Banner auslösen",
+            "advanced_debug": "Erweiterte Debug-Informationen"
         },
         "penaltycalculator": {
             "title": "Strafenrechner"

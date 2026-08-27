@@ -190,51 +190,89 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
             <UFieldGroup class="flex w-full break-words" orientation="vertical">
                 <UButton
                     block
+                    color="warning"
+                    :label="$t('components.debug_info.factory_reset')"
+                    external
+                    to="/api/clear-site-data"
+                    trailing-icon="i-mdi-restart-alert"
+                    variant="soft"
+                />
+
+                <UButton
+                    block
+                    color="neutral"
                     :label="$t('components.debug_info.reset_clipboard')"
+                    trailing-icon="i-mdi-clipboard-remove"
+                    variant="soft"
                     @click="
                         clipboardStore.clear();
                         searchesStore.clear();
                     "
                 />
 
-                <UButton block :label="$t('components.debug_info.reset_local_storage')" @click="() => resetLocalStorage()" />
-
-                <UButton
-                    block
-                    color="error"
-                    external
-                    to="/api/clear-site-data"
-                    :label="$t('components.debug_info.factory_reset')"
-                />
-
                 <UButton
                     block
                     color="neutral"
-                    :label="$t('components.debug_info.test_notifications')"
-                    @click="() => sendTestNotifications()"
-                />
-
-                <UButton
-                    block
-                    color="neutral"
-                    :label="$t('components.debug_info.trigger_banner_message')"
-                    @click="() => triggerBannerMessage()"
-                />
-
-                <UButton
-                    block
-                    color="neutral"
-                    :label="$t('components.debug_info.trigger_error')"
-                    @click="() => triggerErrorPage()"
-                />
-
-                <UButton
-                    block
-                    color="neutral"
-                    :label="$t('components.debug_info.toggle_log_level')"
-                    @click="() => toggleLogLevel()"
+                    :label="$t('components.debug_info.reset_local_storage')"
+                    trailing-icon="i-mdi-delete"
+                    variant="soft"
+                    @click="() => resetLocalStorage()"
                 />
             </UFieldGroup>
+
+            <UCollapsible class="mt-2" :ui="{ content: 'mt-2' }">
+                <UButton
+                    class="group"
+                    variant="ghost"
+                    :label="$t('components.debug_info.advanced_debug')"
+                    icon="i-mdi-bug-check-outline"
+                    trailing-icon="i-mdi-chevron-down"
+                    block
+                    :ui="{
+                        trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                    }"
+                />
+
+                <template #content>
+                    <UFieldGroup orientation="vertical">
+                        <UButton
+                            block
+                            color="neutral"
+                            :label="$t('components.debug_info.test_notifications')"
+                            trailing-icon="i-mdi-bell-notification-outline"
+                            variant="soft"
+                            @click="() => sendTestNotifications()"
+                        />
+
+                        <UButton
+                            block
+                            color="neutral"
+                            :label="$t('components.debug_info.trigger_banner_message')"
+                            trailing-icon="i-mdi-message-cog-outline"
+                            variant="soft"
+                            @click="() => triggerBannerMessage()"
+                        />
+
+                        <UButton
+                            block
+                            color="warning"
+                            :label="$t('components.debug_info.toggle_log_level')"
+                            trailing-icon="i-mdi-bug-outline"
+                            variant="soft"
+                            @click="() => toggleLogLevel()"
+                        />
+
+                        <UButton
+                            block
+                            color="error"
+                            variant="soft"
+                            trailing-icon="i-mdi-error-outline"
+                            :label="$t('components.debug_info.trigger_error')"
+                            @click="() => triggerErrorPage()"
+                        />
+                    </UFieldGroup>
+                </template>
+            </UCollapsible>
         </UFormField>
 
         <UFormField class="grid grid-cols-2 items-center gap-2" name="permissions" :label="$t('components.debug_info.perms')">

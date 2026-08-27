@@ -51,6 +51,8 @@ function setDevConfig(): void {
 const kbdBlockClasses =
     'inline-flex items-center rounded-sm bg-neutral-100 px-1 text-gray-900 ring-1 ring-inset ring-gray-300 dark:bg-neutral-800 dark:text-white dark:ring-gray-700';
 
+const showClearSiteData = useTimeout(6500);
+
 const isDev = import.meta.dev;
 </script>
 
@@ -166,6 +168,20 @@ const isDev = import.meta.dev;
                             size="lg"
                             :label="$t !== undefined ? $t('pages.error.copy_error') : 'Copy Error message'"
                             @click="() => copyError()"
+                        />
+
+                        <USeparator v-if="showClearSiteData || isDev" class="my-1" />
+
+                        <UButton
+                            v-if="showClearSiteData"
+                            class="col-span-1 truncate"
+                            color="error"
+                            icon="i-mdi-restart-alert"
+                            size="lg"
+                            :label="$t !== undefined ? $t('components.debug_info.factory_reset') : 'Factory Reset FiveNet App'"
+                            variant="soft"
+                            external
+                            to="/api/clear-site-data"
                         />
 
                         <UButton v-if="isDev" label="Set Dev App Config" @click="() => setDevConfig()" />
