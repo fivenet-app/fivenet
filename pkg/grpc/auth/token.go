@@ -21,6 +21,11 @@ const (
 	TokenExpireTime = 4 * 24 * time.Hour
 	// TokenRenewalTime 2 days.
 	TokenRenewalTime = 2 * 24 * time.Hour
+
+	// TokenIssuer is the issuer of the JWT tokens.
+	TokenIssuer = "fivenet"
+	// TokenAudience is the audience of the JWT tokens.
+	TokenAudience = "fivenet"
 )
 
 var ErrFailedJWTVerify = errors.New("failed to verify jwt token method")
@@ -148,12 +153,10 @@ func MapAccountToClaims(
 		Groups:         account.GetGroups().GetGroups(),
 		CanBeSuperuser: canBeSuperuser,
 
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:   "fivenet",
-			Subject:  account.GetLicense(),
-			ID:       strconv.FormatInt(account.GetId(), 10),
-			Audience: []string{"fivenet"},
-		},
+		Issuer:   TokenIssuer,
+		Subject:  account.GetLicense(),
+		ID:       strconv.FormatInt(account.GetId(), 10),
+		Audience: []string{TokenAudience},
 	}
 	setTokenClaimsTimes(&accClaims.RegisteredClaims)
 
@@ -167,12 +170,10 @@ func MapUserToClaims(accId int64, user *users.User) *authclaims.UserInfoClaims {
 		Job:      &user.Job,
 		JobGrade: &user.JobGrade,
 
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:   "fivenet",
-			Subject:  utils.GetLicenseFromIdentifier(user.GetIdentifier()),
-			ID:       strconv.FormatInt(int64(user.GetUserId()), 10),
-			Audience: []string{"fivenet"},
-		},
+		Issuer:   TokenIssuer,
+		Subject:  utils.GetLicenseFromIdentifier(user.GetIdentifier()),
+		ID:       strconv.FormatInt(int64(user.GetUserId()), 10),
+		Audience: []string{TokenAudience},
 	}
 	setTokenClaimsTimes(&userClaims.RegisteredClaims)
 

@@ -18,6 +18,8 @@ import (
 
 const (
 	MetricsNamespace = "fivenet"
+
+	MetricsJobNameLabel = "job_name"
 )
 
 // Module provides the metrics server as an fx module.

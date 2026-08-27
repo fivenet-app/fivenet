@@ -33,6 +33,11 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	usernameSetAuditFieldKey = "username_set"
+	passwordSetAuditFieldKey = "password_set"
+)
+
 func (s *Server) Login(
 	ctx context.Context,
 	req *pbauth.LoginRequest,
@@ -52,7 +57,7 @@ func (s *Server) Login(
 	// No password set
 	if account.Password == nil {
 		auditAuthFailure(ctx, "login", "account_missing_password", map[string]string{
-			"account_id": strconv.FormatInt(account.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(account.ID, 10),
 		})
 		return nil, errorsauth.ErrInvalidLogin
 	}
@@ -60,7 +65,7 @@ func (s *Server) Login(
 	// Password check logic
 	if err := checkPassword(*account.Password, req.GetPassword()); err != nil {
 		auditAuthFailure(ctx, "login", "password_mismatch", map[string]string{
-			"account_id": strconv.FormatInt(account.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(account.ID, 10),
 		})
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
@@ -78,7 +83,7 @@ func (s *Server) Login(
 		token, err := s.tm.FromAccClaims(accClaims)
 		if err != nil {
 			auditAuthFailure(ctx, "login", "account_token_creation_failed", map[string]string{
-				"account_id": strconv.FormatInt(account.ID, 10),
+				accountIDAuditFieldKey: strconv.FormatInt(account.ID, 10),
 			})
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 		}
@@ -90,8 +95,8 @@ func (s *Server) Login(
 		})
 		if err != nil {
 			auditAuthFailure(ctx, "login", "last_char_choose_failed", map[string]string{
-				"account_id": strconv.FormatInt(account.ID, 10),
-				"char_id":    strconv.Itoa(int(*account.LastChar)),
+				accountIDAuditFieldKey: strconv.FormatInt(account.ID, 10),
+				"char_id":              strconv.Itoa(int(*account.LastChar)),
 			})
 			chooseCharResp = nil
 		}
@@ -101,7 +106,7 @@ func (s *Server) Login(
 	if chooseCharResp == nil {
 		if err := s.setCookies(ctx, accClaims); err != nil {
 			auditAuthFailure(ctx, "login", "session_cookie_set_failed", map[string]string{
-				"account_id": strconv.FormatInt(account.ID, 10),
+				accountIDAuditFieldKey: strconv.FormatInt(account.ID, 10),
 			})
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 		}
@@ -158,9 +163,9 @@ func (s *Server) CreateAccount(
 
 	if acc.Username != nil || acc.Password != nil {
 		auditAuthFailure(ctx, "create_account", "registration_row_not_eligible", map[string]string{
-			"account_id":   strconv.FormatInt(acc.ID, 10),
-			"username_set": boolString(acc.Username != nil),
-			"password_set": boolString(acc.Password != nil),
+			accountIDAuditFieldKey:   strconv.FormatInt(acc.ID, 10),
+			usernameSetAuditFieldKey: boolString(acc.Username != nil),
+			passwordSetAuditFieldKey: boolString(acc.Password != nil),
 		})
 		return nil, errorsauth.ErrGenericAccount
 	}
@@ -170,7 +175,7 @@ func (s *Server) CreateAccount(
 	hashedPassword, err := hashPassword(req.GetPassword())
 	if err != nil {
 		auditAuthFailure(ctx, "create_account", "password_hash_failed", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errorsauth.ErrGenericAccount
 	}
@@ -185,7 +190,7 @@ func (s *Server) CreateAccount(
 	); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			auditAuthFailure(ctx, "create_account", "account_duplicate", map[string]string{
-				"account_id": strconv.FormatInt(acc.ID, 10),
+				accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 			})
 			return nil, errorsauth.ErrGenericAccount
 		}
@@ -195,7 +200,7 @@ func (s *Server) CreateAccount(
 			zap.Error(err),
 		)
 		auditAuthFailure(ctx, "create_account", "account_activation_failed", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errorsauth.ErrGenericAccount
 	}
@@ -229,12 +234,12 @@ func (s *Server) ChangePassword(
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			auditAuthFailure(ctx, "change_password", "account_missing", map[string]string{
-				"account_id": strconv.FormatInt(claims.AccID, 10),
+				accountIDAuditFieldKey: strconv.FormatInt(claims.AccID, 10),
 			})
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
 		}
 		auditAuthFailure(ctx, "change_password", "account_lookup_failed", map[string]string{
-			"account_id": strconv.FormatInt(claims.AccID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(claims.AccID, 10),
 		})
 		return nil, errswrap.NewError(
 			err,
@@ -245,7 +250,7 @@ func (s *Server) ChangePassword(
 	// Account has no password set
 	if acc.Password == nil {
 		auditAuthFailure(ctx, "change_password", "account_missing_password", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errorsauth.ErrChangePassword(map[string]any{"code": "401"})
 	}
@@ -253,7 +258,7 @@ func (s *Server) ChangePassword(
 	// Password check logic
 	if err := checkPassword(*acc.Password, req.GetCurrentPassword()); err != nil {
 		auditAuthFailure(ctx, "change_password", "current_password_mismatch", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errswrap.NewError(
 			err,
@@ -264,7 +269,7 @@ func (s *Server) ChangePassword(
 	hashedPassword, err := hashPassword(req.GetNewPassword())
 	if err != nil {
 		auditAuthFailure(ctx, "change_password", "new_password_hash_failed", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errswrap.NewError(
 			err,
@@ -277,7 +282,7 @@ func (s *Server) ChangePassword(
 
 	if err := s.store.UpdatePassword(ctx, acc.ID, pass); err != nil {
 		auditAuthFailure(ctx, "change_password", "password_update_failed", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errorsauth.ErrGenericAccount
 	}
@@ -285,7 +290,7 @@ func (s *Server) ChangePassword(
 	// Clear session cookies after password change
 	if err := s.destroyCookies(ctx); err != nil {
 		auditAuthFailure(ctx, "change_password", "session_clear_failed", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
@@ -315,7 +320,7 @@ func (s *Server) ChangeUsername(
 	newUsername := normalizeUsername(req.GetNewUsername())
 	if strings.EqualFold(currentUsername, newUsername) {
 		auditAuthFailure(ctx, "change_username", "username_unchanged", map[string]string{
-			"account_id": strconv.FormatInt(claims.AccID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(claims.AccID, 10),
 		})
 		return nil, errorsauth.ErrChangeUsername
 	}
@@ -325,12 +330,12 @@ func (s *Server) ChangeUsername(
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			auditAuthFailure(ctx, "change_username", "account_missing", map[string]string{
-				"account_id": strconv.FormatInt(claims.AccID, 10),
+				accountIDAuditFieldKey: strconv.FormatInt(claims.AccID, 10),
 			})
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
 		}
 		auditAuthFailure(ctx, "change_username", "account_lookup_failed", map[string]string{
-			"account_id": strconv.FormatInt(claims.AccID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(claims.AccID, 10),
 		})
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
@@ -339,9 +344,9 @@ func (s *Server) ChangeUsername(
 	// No username nor password set on account, fail
 	if acc.Username == nil || acc.Password == nil {
 		auditAuthFailure(ctx, "change_username", "account_not_eligible", map[string]string{
-			"account_id":   strconv.FormatInt(acc.ID, 10),
-			"username_set": boolString(acc.Username != nil),
-			"password_set": boolString(acc.Password != nil),
+			accountIDAuditFieldKey:   strconv.FormatInt(acc.ID, 10),
+			usernameSetAuditFieldKey: boolString(acc.Username != nil),
+			passwordSetAuditFieldKey: boolString(acc.Password != nil),
 		})
 		return nil, errorsauth.ErrChangeUsername
 	}
@@ -349,7 +354,7 @@ func (s *Server) ChangeUsername(
 	// Make sure current username matches the sent current username
 	if !strings.EqualFold(*acc.Username, currentUsername) {
 		auditAuthFailure(ctx, "change_username", "current_username_mismatch", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errorsauth.ErrChangeUsername
 	}
@@ -358,7 +363,7 @@ func (s *Server) ChangeUsername(
 	resp := &pbauth.ChangeUsernameResponse{}
 	if *acc.Username == newUsername {
 		auditAuthFailure(ctx, "change_username", "new_username_matches_current", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errorsauth.ErrChangeUsername
 	}
@@ -368,14 +373,14 @@ func (s *Server) ChangeUsername(
 	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		// Other database error
 		auditAuthFailure(ctx, "change_username", "new_username_lookup_failed", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 	// An account with the requested username was found, fail
 	if newAcc != nil {
 		auditAuthFailure(ctx, "change_username", "new_username_taken", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errorsauth.ErrChangeUsername
 	}
@@ -384,7 +389,7 @@ func (s *Server) ChangeUsername(
 
 	if err := s.store.UpdateUsername(ctx, acc.ID, newUsername); err != nil {
 		auditAuthFailure(ctx, "change_username", "username_update_failed", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errorsauth.ErrGenericAccount
 	}
@@ -392,7 +397,7 @@ func (s *Server) ChangeUsername(
 	// Destroy session
 	if err := s.destroyCookies(ctx); err != nil {
 		auditAuthFailure(ctx, "change_username", "session_clear_failed", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, err
 	}
@@ -420,14 +425,14 @@ func (s *Server) ForgotPassword(
 	// Forgot password only applies to activated accounts with a username and no password
 	if acc == nil || acc.Username == nil || acc.Password != nil {
 		auditAuthFailure(ctx, "forgot_password", "recovery_not_eligible", map[string]string{
-			"account_id": strconv.FormatInt(func() int64 {
+			accountIDAuditFieldKey: strconv.FormatInt(func() int64 {
 				if acc != nil {
 					return acc.ID
 				}
 				return 0
 			}(), 10),
-			"username_set": boolString(acc != nil && acc.Username != nil),
-			"password_set": boolString(acc != nil && acc.Password != nil),
+			usernameSetAuditFieldKey: boolString(acc != nil && acc.Username != nil),
+			passwordSetAuditFieldKey: boolString(acc != nil && acc.Password != nil),
 		})
 		return nil, errorsauth.ErrForgotPassword
 	}
@@ -435,7 +440,7 @@ func (s *Server) ForgotPassword(
 	hashedPassword, err := hashPassword(req.GetNew())
 	if err != nil {
 		auditAuthFailure(ctx, "forgot_password", "password_hash_failed", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
@@ -443,7 +448,7 @@ func (s *Server) ForgotPassword(
 
 	if err := s.store.ForgotPassword(ctx, acc.ID, hashedPassword); err != nil {
 		auditAuthFailure(ctx, "forgot_password", "recovery_update_failed", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
@@ -451,7 +456,7 @@ func (s *Server) ForgotPassword(
 	// Destroy session
 	if err := s.destroyCookies(ctx); err != nil {
 		auditAuthFailure(ctx, "forgot_password", "session_clear_failed", map[string]string{
-			"account_id": strconv.FormatInt(acc.ID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
 		return nil, err
 	}

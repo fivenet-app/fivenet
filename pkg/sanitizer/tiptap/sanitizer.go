@@ -15,6 +15,8 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+const typeAttrKey = "type"
+
 // Module provides the Fx module for the HTML sanitizer, wiring up dependency injection.
 var Module = fx.Module("tiptapsanitizer",
 	fx.Provide(
@@ -48,12 +50,20 @@ var allowedMapBlockLayers = map[string]struct{}{
 	"satellite":             {},
 }
 
-const defaultImageAlignKey = "left"
+const (
+	alignLeft   = "left"
+	alignCenter = "center"
+	alignRight  = "right"
+
+	textAlignJustify = "justify"
+)
+
+const defaultImageAlignKey = alignLeft
 
 var allowedImageAlign = map[string]struct{}{
-	"left":   {},
-	"center": {},
-	"right":  {},
+	alignLeft:   {},
+	alignCenter: {},
+	alignRight:  {},
 }
 
 // normalizeLinkHref ensures the href is safe and normalized.
@@ -183,11 +193,11 @@ func parseImageAlignFromMargin(value string) (string, bool) {
 
 	switch value {
 	case "0 auto", "0 auto 0 auto":
-		return "center", true
+		return alignCenter, true
 	case "0 0 0 auto":
-		return "right", true
+		return alignRight, true
 	case "0 auto 0 0":
-		return "left", true
+		return alignLeft, true
 	default:
 		return "", false
 	}
@@ -231,7 +241,7 @@ func buildAllowed() *Sanitizer {
 	textAlignOK := func(v any) (string, bool) {
 		s, _ := v.(string)
 		switch s {
-		case "left", "center", "right", "justify", "":
+		case alignLeft, alignCenter, alignRight, textAlignJustify, "":
 			return s, true
 
 		default:
@@ -646,7 +656,7 @@ func sanitizeNode(
 		return nil, false
 	}
 
-	typ, _ := n["type"].(string)
+	typ, _ := n[typeAttrKey].(string)
 	if typ == "" {
 		return nil, false
 	}
@@ -663,9 +673,9 @@ func sanitizeNode(
 			stats.Words += countWords(text)
 		}
 		return map[string]any{
-			"type":  NodeTypeText,
-			"text":  text,
-			"marks": marksOut,
+			typeAttrKey: NodeTypeText,
+			"text":      text,
+			"marks":     marksOut,
 		}, true
 	}
 
@@ -704,7 +714,7 @@ func sanitizeNode(
 		}
 	}
 
-	out := map[string]any{"type": typ}
+	out := map[string]any{typeAttrKey: typ}
 	if len(attrsOut) > 0 {
 		out["attrs"] = attrsOut
 	}
@@ -722,7 +732,7 @@ func sanitizeMarks(in []any, allow *Sanitizer) []any {
 			continue
 		}
 
-		typ, _ := mm["type"].(string)
+		typ, _ := mm[typeAttrKey].(string)
 		attrs, _ := mm["attrs"].(map[string]any)
 		pol, ok := allow.Marks[typ]
 		if !ok {
@@ -730,7 +740,7 @@ func sanitizeMarks(in []any, allow *Sanitizer) []any {
 		}
 
 		if okv, aout := pol.Validate(attrs); okv {
-			mOut := map[string]any{"type": typ}
+			mOut := map[string]any{typeAttrKey: typ}
 			if len(aout) > 0 {
 				mOut["attrs"] = aout
 			}

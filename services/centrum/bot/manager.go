@@ -37,7 +37,7 @@ func getBotMetrics() *botMetrics {
 				Subsystem: "centrum_bot",
 				Name:      "active",
 				Help:      "If centrum bot is active or not.",
-			}, []string{"job_name"}),
+			}, []string{admin.MetricsJobNameLabel}),
 		}
 
 		prometheus.MustRegister(botMetricsInst.active)

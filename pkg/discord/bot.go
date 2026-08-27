@@ -36,7 +36,11 @@ import (
 	"go.uber.org/zap"
 )
 
-const botWorkerCount = 3
+const (
+	botWorkerCount = 3
+
+	metricsSubsystem = "discord_bot"
+)
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord.bot")
@@ -65,22 +69,22 @@ func getBotMetrics() *botMetrics {
 		botMetricsInst = &botMetrics{
 			lastSync: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 				Namespace: admin.MetricsNamespace,
-				Subsystem: "discord_bot",
+				Subsystem: metricsSubsystem,
 				Name:      "last_sync",
 				Help:      "Last time sync has completed.",
-			}, []string{"job_name", "status"}),
+			}, []string{admin.MetricsJobNameLabel, "status"}),
 			guildsTotal: prometheus.NewGauge(prometheus.GaugeOpts{
 				Namespace: admin.MetricsNamespace,
-				Subsystem: "discord_bot",
+				Subsystem: metricsSubsystem,
 				Name:      "guilds_total_count",
 				Help:      "Total count of Discord guilds being ready.",
 			}),
 			syncDuration: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 				Namespace: admin.MetricsNamespace,
-				Subsystem: "discord_bot",
+				Subsystem: metricsSubsystem,
 				Name:      "sync_duration_seconds",
 				Help:      "Duration of the last sync operation in seconds.",
-			}, []string{"job_name"}),
+			}, []string{admin.MetricsJobNameLabel}),
 		}
 
 		prometheus.MustRegister(
@@ -240,7 +244,7 @@ func New(p BotParams) Result {
 							}
 						}()
 
-						b.metrics.syncDuration.With(prometheus.Labels{"job_name": guild.job}).
+						b.metrics.syncDuration.WithLabelValues(guild.job).
 							Set(elapsed.Seconds())
 					}
 				}
@@ -364,7 +368,7 @@ func (b *Bot) syncLoop(ctx context.Context) {
 	for {
 		b.logger.Info("running discord sync", zap.Bool("dry_run", b.dcCfg.DryRun))
 		func() {
-			ctx, span := b.tracer.Start(ctx, "discord_bot")
+			ctx, span := b.tracer.Start(ctx, "discord.bot")
 			defer span.End()
 
 			if err := b.runSync(ctx); err != nil {

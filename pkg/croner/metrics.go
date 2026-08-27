@@ -45,7 +45,7 @@ func getSchedulerMetrics() *schedulerMetrics {
 				Name:      schedulerMetricHandoffLatency,
 				Help:      "Latency of publishing a cron job to the scheduler stream.",
 				Buckets:   prometheus.ExponentialBuckets(0.005, 2, 17),
-			}, []string{"job"}),
+			}, []string{admin.MetricsJobNameLabel}),
 		}
 
 		prometheus.MustRegister(schedulerMetricsInst.handoffLatency)
@@ -63,20 +63,20 @@ func getExecutorMetrics() *executorMetrics {
 				Name:      executorMetricStartLatency,
 				Help:      "Latency between cron job start and handler execution start.",
 				Buckets:   prometheus.ExponentialBuckets(0.005, 2, 17),
-			}, []string{"job"}),
+			}, []string{admin.MetricsJobNameLabel}),
 			handlerDuration: prometheus.NewHistogramVec(prometheus.HistogramOpts{
 				Namespace: admin.MetricsNamespace,
 				Subsystem: executorMetricSubsystem,
 				Name:      executorMetricHandlerDuration,
 				Help:      "Duration of cron handler execution.",
 				Buckets:   prometheus.ExponentialBuckets(0.005, 2, 17),
-			}, []string{"job"}),
+			}, []string{admin.MetricsJobNameLabel}),
 			lastRunSuccess: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 				Namespace: admin.MetricsNamespace,
 				Subsystem: executorMetricSubsystem,
 				Name:      executorMetricLastRunSuccess,
 				Help:      "Whether the last cron handler run succeeded (1) or failed (0).",
-			}, []string{"job"}),
+			}, []string{admin.MetricsJobNameLabel}),
 		}
 
 		prometheus.MustRegister(

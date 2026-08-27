@@ -35,13 +35,13 @@ func (s *Server) getAccountFromAccToken(
 	acc, err := s.store.GetAccountByID(ctx, claims.AccID, false)
 	if err != nil {
 		auditAuthFailure(ctx, "get_account", "account_lookup_failed", map[string]string{
-			"account_id": strconv.FormatInt(claims.AccID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(claims.AccID, 10),
 		})
 		return nil, nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
 	if acc == nil || acc.ID == 0 {
 		auditAuthFailure(ctx, "get_account", "account_missing", map[string]string{
-			"account_id": strconv.FormatInt(claims.AccID, 10),
+			accountIDAuditFieldKey: strconv.FormatInt(claims.AccID, 10),
 		})
 		return nil, nil, errorsauth.ErrGenericAccount
 	}
@@ -77,7 +77,7 @@ func (s *Server) GetAccountInfo(
 			"get_account_info",
 			"oauth2_connections_lookup_failed",
 			map[string]string{
-				"account_id": strconv.FormatInt(account.GetId(), 10),
+				accountIDAuditFieldKey: strconv.FormatInt(account.GetId(), 10),
 			},
 		)
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
@@ -123,7 +123,7 @@ func (s *Server) RefreshAccountSession(
 				"refresh_account_session",
 				"session_refresh_failed",
 				map[string]string{
-					"account_id": strconv.FormatInt(account.GetId(), 10),
+					accountIDAuditFieldKey: strconv.FormatInt(account.GetId(), 10),
 				},
 			)
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)

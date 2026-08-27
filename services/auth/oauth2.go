@@ -14,13 +14,15 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
+const providerAuditFieldKey = "provider"
+
 func (s *Server) DeleteSocialLogin(
 	ctx context.Context,
 	req *pbauth.DeleteSocialLoginRequest,
 ) (*pbauth.DeleteSocialLoginResponse, error) {
 	if ok := s.oauth2ProviderExists(req.GetProvider()); !ok {
 		auditAuthFailure(ctx, "delete_social_login", "provider_not_supported", map[string]string{
-			"provider": req.GetProvider(),
+			providerAuditFieldKey: req.GetProvider(),
 		})
 		return nil, errorsauth.ErrGenericAccount
 	}
@@ -30,7 +32,7 @@ func (s *Server) DeleteSocialLogin(
 	token, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
 		auditAuthFailure(ctx, "delete_social_login", "token_missing_or_invalid", map[string]string{
-			"provider": req.GetProvider(),
+			providerAuditFieldKey: req.GetProvider(),
 		})
 		return nil, errorsgrpcauth.ErrInvalidToken
 	}
@@ -42,7 +44,7 @@ func (s *Server) DeleteSocialLogin(
 			"delete_social_login",
 			"account_token_parse_failed",
 			map[string]string{
-				"provider": req.GetProvider(),
+				providerAuditFieldKey: req.GetProvider(),
 			},
 		)
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
@@ -50,8 +52,8 @@ func (s *Server) DeleteSocialLogin(
 
 	if err := s.store.DeleteSocialLogin(ctx, claims.AccID, req.GetProvider()); err != nil {
 		auditAuthFailure(ctx, "delete_social_login", "delete_failed", map[string]string{
-			"account_id": strconv.FormatInt(claims.AccID, 10),
-			"provider":   req.GetProvider(),
+			accountIDAuditFieldKey: strconv.FormatInt(claims.AccID, 10),
+			providerAuditFieldKey:  req.GetProvider(),
 		})
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}

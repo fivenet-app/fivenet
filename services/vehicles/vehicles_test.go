@@ -13,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
@@ -78,12 +77,11 @@ func TestListVehicles(t *testing.T) {
 		AccID:    3,
 		Username: "user-3",
 		UserID:   3,
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:   "fivenet",
-			Subject:  "db7e039146d5bf1b6781e7bc1bef31f0bb1298ea",
-			ID:       "3",
-			Audience: []string{"fivenet"},
-		},
+
+		Issuer:   "fivenet",
+		Subject:  "db7e039146d5bf1b6781e7bc1bef31f0bb1298ea",
+		ID:       "3",
+		Audience: []string{"fivenet"},
 	})
 	require.NoError(t, err)
 

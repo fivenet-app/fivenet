@@ -14,7 +14,6 @@ import (
 	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
 	pkgperms "github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx/fxtest"
@@ -132,9 +131,8 @@ func TestConfigAuthFuncOverrideRespectsAdminLevels(t *testing.T) {
 		t.Helper()
 
 		token, err := tm.FromAccClaims(&authclaims.AccountInfoClaims{
-			RegisteredClaims: jwt.RegisteredClaims{
-				Subject: "license-1",
-			},
+			Subject: "license-1",
+
 			AccID:    accID,
 			Username: username,
 			Groups:   groups,

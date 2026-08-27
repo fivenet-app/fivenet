@@ -516,6 +516,8 @@ linters:
     goconst:
       ignore-string-values:
         - '\* \* \* \* \*'
+        - code
+        - error
 
     dupl:
       threshold: 225

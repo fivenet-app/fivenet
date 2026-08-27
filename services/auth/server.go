@@ -18,6 +18,8 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
+const accountIDAuditFieldKey = "account_id"
+
 func init() {
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetAccounts,

@@ -13,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx/fxtest"
 	"go.uber.org/zap"
@@ -41,11 +40,10 @@ func newAccountToken(t *testing.T, tm *auth.TokenMgr, accountID int64, username 
 	t.Helper()
 
 	token, err := tm.FromAccClaims(&authclaims.AccountInfoClaims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:   "fivenet",
-			Subject:  "license",
-			Audience: []string{"fivenet"},
-		},
+		Issuer:   "fivenet",
+		Subject:  "license",
+		Audience: []string{"fivenet"},
+
 		AccID:    accountID,
 		Username: username,
 	})

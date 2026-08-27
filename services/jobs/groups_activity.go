@@ -65,7 +65,7 @@ func (s *Server) ListGroupActivity(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
+		groupIDLogFieldKey, req.GetGroupId(),
 	})
 
 	group, err := s.store.GetGroup(ctx, s.db, jobsstore.GroupQuery{

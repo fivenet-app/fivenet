@@ -1,3 +1,4 @@
+//nolint:goconst // Mainly for "title".
 package documents
 
 import (

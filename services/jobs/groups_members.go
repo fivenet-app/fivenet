@@ -674,7 +674,7 @@ func (s *Server) ListGroupMembers(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
+		groupIDLogFieldKey, req.GetGroupId(),
 	})
 
 	group, err := s.getGroupForJobIncludingArchived(ctx, s.db, userInfo.GetJob(), req.GetGroupId())
@@ -738,7 +738,7 @@ func (s *Server) ListGroupManualMembers(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
+		groupIDLogFieldKey, req.GetGroupId(),
 	})
 
 	group, err := s.getGroupForJobIncludingArchived(
@@ -802,7 +802,7 @@ func (s *Server) ListGroupMemberExclusions(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
+		groupIDLogFieldKey, req.GetGroupId(),
 	})
 
 	group, err := s.getGroupForJobIncludingArchived(
@@ -865,7 +865,7 @@ func (s *Server) ListGroupLeaders(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
+		groupIDLogFieldKey, req.GetGroupId(),
 	})
 
 	group, err := s.getGroupForJobIncludingArchived(
@@ -928,8 +928,8 @@ func (s *Server) AddGroupMember(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
-		"fivenet.jobs.groups.user_id", req.GetUserId(),
+		groupIDLogFieldKey, req.GetGroupId(),
+		groupUserIDLogFieldKey, req.GetUserId(),
 	})
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -1042,8 +1042,8 @@ func (s *Server) RemoveGroupMember(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
-		"fivenet.jobs.groups.user_id", req.GetUserId(),
+		groupIDLogFieldKey, req.GetGroupId(),
+		groupUserIDLogFieldKey, req.GetUserId(),
 	})
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -1124,8 +1124,8 @@ func (s *Server) ExcludeGroupMember(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
-		"fivenet.jobs.groups.user_id", req.GetUserId(),
+		groupIDLogFieldKey, req.GetGroupId(),
+		groupUserIDLogFieldKey, req.GetUserId(),
 	})
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -1231,8 +1231,8 @@ func (s *Server) RemoveGroupMemberExclusion(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
-		"fivenet.jobs.groups.user_id", req.GetUserId(),
+		groupIDLogFieldKey, req.GetGroupId(),
+		groupUserIDLogFieldKey, req.GetUserId(),
 	})
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -1313,8 +1313,8 @@ func (s *Server) AddGroupLeader(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
-		"fivenet.jobs.groups.user_id", req.GetUserId(),
+		groupIDLogFieldKey, req.GetGroupId(),
+		groupUserIDLogFieldKey, req.GetUserId(),
 	})
 
 	if err := s.ensureGroupAccess(
@@ -1405,8 +1405,8 @@ func (s *Server) RemoveGroupLeader(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
-		"fivenet.jobs.groups.user_id", req.GetUserId(),
+		groupIDLogFieldKey, req.GetGroupId(),
+		groupUserIDLogFieldKey, req.GetUserId(),
 	})
 
 	if err := s.ensureGroupAccess(

@@ -25,7 +25,11 @@ var SchedulerModule = fx.Module("cron_scheduler",
 	),
 )
 
-const OwnerKey = "_owner"
+const (
+	OwnerKey = "_owner"
+
+	jobNameLabel = "job_name"
+)
 
 type IScheduler interface {
 	RunJob(ctx context.Context, name string) (*jetstream.PubAck, error)
@@ -148,7 +152,7 @@ func (s *Scheduler) start(ctx context.Context) {
 				s.registry.store.Range(func(key string, value *cron.Cronjob) bool {
 					job, err := s.registry.store.GetOrLoad(ctx, key)
 					if err != nil {
-						s.logger.Error("failed to load cron job", zap.String("job_name", key))
+						s.logger.Error("failed to load cron job", zap.String(jobNameLabel, key))
 						return true
 					}
 
@@ -164,7 +168,7 @@ func (s *Scheduler) start(ctx context.Context) {
 					if err != nil {
 						s.logger.Error(
 							"failed to chek cron job due time",
-							zap.String("job_name", key),
+							zap.String(jobNameLabel, key),
 							zap.String("schedule", job.GetSchedule()),
 						)
 						return true
@@ -194,14 +198,14 @@ func (s *Scheduler) start(ctx context.Context) {
 						); err != nil {
 							s.logger.Error(
 								"failed to update status of cron job",
-								zap.String("job_name", job.GetName()),
+								zap.String(jobNameLabel, job.GetName()),
 							)
 						}
 
 						if _, err := s.runCronjob(ctx, job); err != nil {
 							s.logger.Error(
 								"failed to trigger cron job run",
-								zap.String("job_name", job.GetName()),
+								zap.String(jobNameLabel, job.GetName()),
 							)
 						}
 					})
@@ -299,7 +303,7 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 		s.logger.Error(
 			"failed to send in progress for cron completion msg",
 			zap.String("subject", msg.Subject()),
-			zap.String("job_name", event.GetName()),
+			zap.String(jobNameLabel, event.GetName()),
 			zap.Error(err),
 		)
 	}
@@ -332,7 +336,7 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 		s.logger.Error(
 			"failed to update cronjob state after completion msg",
 			zap.String("subject", msg.Subject()),
-			zap.String("job_name", event.GetName()),
+			zap.String(jobNameLabel, event.GetName()),
 			zap.Error(err),
 		)
 		return
@@ -342,7 +346,7 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 		s.logger.Error(
 			"failed to ack cron completion msg",
 			zap.String("subject", msg.Subject()),
-			zap.String("job_name", event.GetName()),
+			zap.String(jobNameLabel, event.GetName()),
 			zap.Error(err),
 		)
 		return

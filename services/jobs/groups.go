@@ -20,6 +20,11 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
+const (
+	groupIDLogFieldKey     = "fivenet.jobs.groups.id"
+	groupUserIDLogFieldKey = "fivenet.jobs.groups.user_id"
+)
+
 func (s *Server) ensureHighestJobGradeAccess(
 	job string,
 	in *resourcesaccess.Access,
@@ -128,7 +133,7 @@ func (s *Server) GetGroup(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetId(),
+		groupIDLogFieldKey, req.GetId(),
 	})
 
 	group, err := s.store.GetGroup(ctx, s.db, jobsstore.GroupQuery{
@@ -404,7 +409,7 @@ func (s *Server) UpdateGroup(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetId(),
+		groupIDLogFieldKey, req.GetId(),
 	})
 
 	group, err := s.store.GetGroup(ctx, s.db, jobsstore.GroupQuery{
@@ -538,7 +543,7 @@ func (s *Server) ArchiveGroup(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetId(),
+		groupIDLogFieldKey, req.GetId(),
 	})
 
 	if err := s.ensureGroupAccessWithDeleted(
@@ -638,7 +643,7 @@ func (s *Server) RestoreGroup(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetId(),
+		groupIDLogFieldKey, req.GetId(),
 	})
 
 	if err := s.ensureGroupAccessWithDeleted(

@@ -23,6 +23,7 @@ const (
 	UserAgentPrefix = "FiveNet Icon Proxy "
 )
 
+// Names of Iconify icon sets used by FiveNet.
 const (
 	MDIIconSetName    = "mdi"
 	SimpleIconSetName = "simple-icons"
@@ -36,6 +37,8 @@ var (
 		SimpleIconSetName: {},
 		FlagpackSetName:   {},
 	}
+
+	responseErrField = "error"
 
 	ErrUnknownIconSet         = errors.New("unknown icon set")
 	ErrInvalidCollectionName  = errors.New("invalid icon collection file name")
@@ -96,7 +99,10 @@ func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 	if !i.proxy {
 		e.GET(Path+"/*path", func(c *gin.Context) {
 			if !validateIconRequest(c.Param("path"), c.Request.URL.Query()) {
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid icon request"})
+				c.AbortWithStatusJSON(
+					http.StatusBadRequest,
+					gin.H{responseErrField: "invalid icon request"},
+				)
 				return
 			}
 
@@ -114,7 +120,10 @@ func (i *IconifyAPI) registerProxyHandler(e *gin.Engine) {
 		path := c.Param("path")
 		query := c.Request.URL.Query()
 		if !validateIconRequest(path, query) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid icon request"})
+			c.AbortWithStatusJSON(
+				http.StatusBadRequest,
+				gin.H{responseErrField: "invalid icon request"},
+			)
 			return
 		}
 
@@ -126,14 +135,20 @@ func (i *IconifyAPI) registerProxyHandler(e *gin.Engine) {
 
 		resp, err := i.client.Do(req)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{"error": "failed to proxy request"})
+			c.AbortWithStatusJSON(
+				http.StatusBadGateway,
+				gin.H{responseErrField: "failed to proxy request"},
+			)
 			return
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			c.Writer.Header().Set("Content-Type", "application/json")
-			c.AbortWithStatusJSON(resp.StatusCode, gin.H{"error": "failed to fetch icon data"})
+			c.AbortWithStatusJSON(
+				resp.StatusCode,
+				gin.H{responseErrField: "failed to fetch icon data"},
+			)
 			return
 		}
 
@@ -151,13 +166,13 @@ func validateAndBuildRequest(
 	targetURL, err := buildTargetURL(apiURL, path, query)
 	if err != nil {
 		if reqErr, ok := errors.AsType[httperrors.HTTPStatusError](err); ok {
-			c.AbortWithStatusJSON(reqErr.StatusCode(), gin.H{"error": err.Error()})
+			c.AbortWithStatusJSON(reqErr.StatusCode(), gin.H{responseErrField: err.Error()})
 			return nil, err
 		}
 
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError,
-			gin.H{"error": "failed to build proxy request"},
+			gin.H{responseErrField: "failed to build proxy request"},
 		)
 		return nil, err
 	}
@@ -166,7 +181,7 @@ func validateAndBuildRequest(
 	if err != nil {
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError,
-			gin.H{"error": "failed to create proxy request"},
+			gin.H{responseErrField: "failed to create proxy request"},
 		)
 		return nil, err
 	}

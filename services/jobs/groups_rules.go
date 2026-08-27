@@ -197,7 +197,7 @@ func (s *Server) CreateGroupRule(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
+		groupIDLogFieldKey, req.GetGroupId(),
 	})
 
 	rule, err := groupRuleFromInput(
@@ -296,7 +296,7 @@ func (s *Server) ListGroupRules(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
+		groupIDLogFieldKey, req.GetGroupId(),
 	})
 
 	group, err := s.getGroupForJobIncludingArchived(ctx, s.db, userInfo.GetJob(), req.GetGroupId())
@@ -356,7 +356,7 @@ func (s *Server) UpdateGroupRule(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
+		groupIDLogFieldKey, req.GetGroupId(),
 		"fivenet.jobs.groups.rule.id", req.GetRuleId(),
 	})
 
@@ -470,7 +470,7 @@ func (s *Server) DeleteGroupRule(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", req.GetGroupId(),
+		groupIDLogFieldKey, req.GetGroupId(),
 		"fivenet.jobs.groups.rule.id", req.GetRuleId(),
 	})
 

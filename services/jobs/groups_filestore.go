@@ -97,7 +97,7 @@ func (s *Server) UploadGroupLogo(
 	}
 
 	logging.InjectFields(ctx, logging.Fields{
-		"fivenet.jobs.groups.id", group.GetId(),
+		groupIDLogFieldKey, group.GetId(),
 		"fivenet.file.namespace", meta.GetNamespace(),
 		"fivenet.file.name", meta.GetOriginalName(),
 	})

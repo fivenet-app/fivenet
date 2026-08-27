@@ -17,9 +17,8 @@ var testUserCombinedClaim = &authclaims.CombinedClaims{
 	AccID:    123456,
 	Username: "example-username",
 	UserID:   987654,
-	RegisteredClaims: jwt.RegisteredClaims{
-		Subject: "example-subject",
-	},
+
+	Subject: "example-subject",
 }
 
 // Even though is kinda a duplicate of go JWT lib, I want to make sure we don't have
@@ -82,14 +81,13 @@ func TestParseUserTokenReturnsWrappedExpiryError(t *testing.T) {
 	expiredClaims := &authclaims.UserInfoClaims{
 		AccID:  1,
 		UserID: 2,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(-time.Hour)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			NotBefore: jwt.NewNumericDate(time.Now().Add(-2 * time.Hour)),
-			Subject:   "license",
-			Audience:  []string{"fivenet"},
-			Issuer:    "fivenet",
-		},
+
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(-time.Hour)),
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		NotBefore: jwt.NewNumericDate(time.Now().Add(-2 * time.Hour)),
+		Subject:   "license",
+		Audience:  []string{TokenAudience},
+		Issuer:    TokenIssuer,
 	}
 
 	token, err := tm.FromUserClaims(expiredClaims)

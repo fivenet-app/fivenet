@@ -8,6 +8,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+const (
+	dbSyncMetricsSubsystem   = "dbsync"
+	dbsyncMetricsSyncerLabel = "syncer"
+)
+
 type syncMetrics struct {
 	lastRun      *prometheus.GaugeVec
 	runDuration  *prometheus.GaugeVec
@@ -26,34 +31,34 @@ func getSyncMetrics() *syncMetrics {
 		syncMetricsInst = &syncMetrics{
 			lastRun: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 				Namespace: admin.MetricsNamespace,
-				Subsystem: "dbsync",
+				Subsystem: dbSyncMetricsSubsystem,
 				Name:      "last_run_unix",
 				Help:      "UNIX timestamp of the last dbsync run per syncer and status.",
-			}, []string{"syncer", "status"}),
+			}, []string{dbsyncMetricsSyncerLabel, "status"}),
 			runDuration: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 				Namespace: admin.MetricsNamespace,
-				Subsystem: "dbsync",
+				Subsystem: dbSyncMetricsSubsystem,
 				Name:      "run_duration_seconds",
 				Help:      "Duration of the latest dbsync run in seconds.",
-			}, []string{"syncer"}),
+			}, []string{dbsyncMetricsSyncerLabel}),
 			syncedRows: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 				Namespace: admin.MetricsNamespace,
-				Subsystem: "dbsync",
+				Subsystem: dbSyncMetricsSubsystem,
 				Name:      "synced_rows_count",
 				Help:      "Number of rows synced during the latest dbsync run.",
-			}, []string{"syncer"}),
+			}, []string{dbsyncMetricsSyncerLabel}),
 			fetchedItems: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 				Namespace: admin.MetricsNamespace,
-				Subsystem: "dbsync",
+				Subsystem: dbSyncMetricsSubsystem,
 				Name:      "fetched_items_count",
 				Help:      "Number of items fetched during the latest dbsync run.",
-			}, []string{"syncer"}),
+			}, []string{dbsyncMetricsSyncerLabel}),
 			sentItems: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 				Namespace: admin.MetricsNamespace,
-				Subsystem: "dbsync",
+				Subsystem: dbSyncMetricsSubsystem,
 				Name:      "sent_items_count",
 				Help:      "Number of items sent during the latest dbsync run.",
-			}, []string{"syncer"}),
+			}, []string{dbsyncMetricsSyncerLabel}),
 		}
 
 		prometheus.MustRegister(

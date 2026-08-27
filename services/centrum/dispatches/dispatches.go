@@ -64,7 +64,7 @@ func getDispatchMetrics() *dispatchMetrics {
 				Subsystem: "centrum",
 				Name:      "dispatch_last_id",
 				Help:      "Last dispatch ID.",
-			}, []string{"job_name"}),
+			}, []string{admin.MetricsJobNameLabel}),
 		}
 
 		prometheus.MustRegister(dispatchMetricsInst.lastID)
