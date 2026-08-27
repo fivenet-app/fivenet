@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
@@ -178,7 +179,7 @@ func TestSchedulerRunCronjobRecordsHandoffLatency(t *testing.T) {
 	latency := metricFamilyHistogramCount(
 		t,
 		family,
-		map[string]string{"job": job.GetName()},
+		map[string]string{admin.MetricsJobNameLabel: job.GetName()},
 	)
 	require.Equal(t, uint64(1), latency)
 }
@@ -236,7 +237,7 @@ func TestExecutorWatchForEventsRecordsSuccessAndDurations(t *testing.T) {
 	histoCount := metricFamilyHistogramCount(
 		t,
 		startFamily,
-		map[string]string{"job": jobName},
+		map[string]string{admin.MetricsJobNameLabel: jobName},
 	)
 	require.Equal(t, uint64(1), histoCount)
 
@@ -244,7 +245,7 @@ func TestExecutorWatchForEventsRecordsSuccessAndDurations(t *testing.T) {
 	observations := metricFamilyHistogramCount(
 		t,
 		durationFamily,
-		map[string]string{"job": jobName},
+		map[string]string{admin.MetricsJobNameLabel: jobName},
 	)
 	require.Equal(t, uint64(1), observations)
 
@@ -252,7 +253,7 @@ func TestExecutorWatchForEventsRecordsSuccessAndDurations(t *testing.T) {
 	success := metricFamilyGaugeValue(
 		t,
 		runFamily,
-		map[string]string{"job": jobName},
+		map[string]string{admin.MetricsJobNameLabel: jobName},
 	)
 	require.InDelta(t, float64(1), success, 0.000001)
 }
@@ -312,7 +313,7 @@ func TestExecutorWatchForEventsRecordsFailureOnPanic(t *testing.T) {
 	failure := metricFamilyGaugeValue(
 		t,
 		runFamily,
-		map[string]string{"job": jobName},
+		map[string]string{admin.MetricsJobNameLabel: jobName},
 	)
 	require.InDelta(t, float64(0), failure, 0.000001)
 }

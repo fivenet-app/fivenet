@@ -275,7 +275,12 @@ func (m *mysqlTestDBManager) ensureSharedContainerLocked(ctx context.Context, t 
 		}),
 	)
 	if runErr != nil {
-		if existing, ok := m.findSharedContainerLocked(ctx); ok {
+		// A container created by an earlier test process is not in
+		// dockertest's in-memory reuse registry. In that case Run returns a
+		// name-conflict error even though the container is perfectly usable.
+		// Docker can also take a moment to make the conflicting container
+		// visible through ContainerList, so retry the lookup briefly.
+		if existing, ok := m.findSharedContainerWithRetryLocked(ctx); ok {
 			m.sharedPort = existing.GetPort("3306/tcp")
 			if m.sharedPort != "" {
 				return m.waitForMySQLReadyLocked(ctx)
@@ -339,16 +344,68 @@ func (m *mysqlTestDBManager) findSharedContainerLocked(
 		return nil, false
 	}
 
-	inspect, err := m.pool.Client().ContainerInspect(
-		ctx,
-		containers.Items[0].ID,
-		mobyclient.ContainerInspectOptions{},
-	)
-	if err != nil {
-		return nil, false
+	for _, container := range containers.Items {
+		// The name filter is a substring match. Only reuse the container
+		// whose name exactly matches the name requested by Run.
+		if !slices.Contains(container.Names, "/"+sharedMySQLContainerName) {
+			continue
+		}
+
+		inspect, err := m.pool.Client().ContainerInspect(
+			ctx,
+			container.ID,
+			mobyclient.ContainerInspectOptions{},
+		)
+		if err != nil {
+			continue
+		}
+
+		if inspect.Container.State != nil && !inspect.Container.State.Running {
+			if _, err := m.pool.Client().ContainerStart(
+				ctx,
+				container.ID,
+				mobyclient.ContainerStartOptions{},
+			); err != nil {
+				return nil, false
+			}
+			inspect, err = m.pool.Client().ContainerInspect(
+				ctx,
+				container.ID,
+				mobyclient.ContainerInspectOptions{},
+			)
+			if err != nil {
+				return nil, false
+			}
+		}
+
+		return dockertest.NewResource(inspect.Container), true
 	}
 
-	return dockertest.NewResource(inspect.Container), true
+	return nil, false
+}
+
+func (m *mysqlTestDBManager) findSharedContainerWithRetryLocked(
+	ctx context.Context,
+) (dockertest.ClosableResource, bool) {
+	const attempts = 5
+
+	for attempt := range attempts {
+		if existing, ok := m.findSharedContainerLocked(ctx); ok {
+			return existing, true
+		}
+
+		if attempt+1 < attempts {
+			timer := time.NewTimer(100 * time.Millisecond)
+			select {
+			case <-ctx.Done():
+				timer.Stop()
+				return nil, false
+			case <-timer.C:
+			}
+		}
+	}
+
+	return nil, false
 }
 
 func (m *mysqlTestDBManager) ensureControlStateLocked(ctx context.Context, t *testing.T) error {
