@@ -44,6 +44,7 @@ useHead({
 });
 
 definePageMeta({
+    title: 'common.calendar',
     requiresAuth: true,
     validate(route) {
         const params = route.params as { view?: string; date?: string };
@@ -742,7 +743,7 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && visibleE
                             <div
                                 class="flex items-center gap-3 rounded-full border border-default bg-elevated/80 px-4 py-2 shadow-lg"
                             >
-                                <UIcon name="i-mdi-loader-circle" class="size-5 animate-spin text-primary" />
+                                <UIcon name="i-mdi-loading" class="size-5 animate-spin text-primary" />
                                 <span class="text-sm font-medium text-highlighted">
                                     {{ $t('common.loading', [$t('common.entry', 2)]) }}
                                 </span>
