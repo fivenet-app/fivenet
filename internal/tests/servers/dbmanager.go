@@ -1019,6 +1019,8 @@ func (m *mysqlTestDBManager) dropDatabaseUsingCleanupLocked(db *sql.DB, dbName s
 
 func (m *mysqlTestDBManager) releaseClone(t *testing.T, cloneName string) error {
 	t.Helper()
+	m.mu.Lock()
+	defer m.mu.Unlock()
 
 	if err := m.dropDatabaseLockedCleanup(cloneName); err != nil {
 		return err
