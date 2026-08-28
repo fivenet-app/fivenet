@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -27,6 +28,52 @@ func CloneAccess(in *resourcesaccess.Access) *resourcesaccess.Access {
 		Users:          cloneUserAccessEntries(in.GetUsers()),
 		Qualifications: cloneQualificationAccessEntries(in.GetQualifications()),
 	}
+}
+
+// HighestJobGrade returns the highest configured grade for a job.
+func HighestJobGrade(job *jobs.Job) (int32, bool) {
+	if job == nil || len(job.GetGrades()) == 0 {
+		return 0, false
+	}
+
+	return job.GetGrades()[len(job.GetGrades())-1].GetGrade(), true
+}
+
+// EnsureJobAccessEntries adds the supplied job access entries without creating
+// duplicate job/minimum-grade entries. Existing entries are upgraded when the
+// supplied access is higher. Required entries remain required.
+func EnsureJobAccessEntries(
+	current *resourcesaccess.Access,
+	entries ...*resourcesaccess.JobAccess,
+) *resourcesaccess.Access {
+	out := CloneAccess(current)
+	indexByKey := make(map[string]int, len(out.GetJobs()))
+	for i, entry := range out.GetJobs() {
+		indexByKey[subjectJobAccessKey(entry.GetJob(), entry.GetMinimumGrade())] = i
+	}
+
+	for _, entry := range entries {
+		if entry == nil {
+			continue
+		}
+
+		key := subjectJobAccessKey(entry.GetJob(), entry.GetMinimumGrade())
+		if idx, ok := indexByKey[key]; ok {
+			if out.GetJobs()[idx].GetAccess() < entry.GetAccess() {
+				out.GetJobs()[idx].SetAccess(entry.GetAccess())
+			}
+			if entry.GetRequired() {
+				out.GetJobs()[idx].SetRequired(true)
+			}
+			continue
+		}
+
+		cloned := cloneJobAccessEntry(entry)
+		out.Jobs = append(out.Jobs, cloned)
+		indexByKey[key] = len(out.GetJobs()) - 1
+	}
+
+	return out
 }
 
 func NormalizeAccess(

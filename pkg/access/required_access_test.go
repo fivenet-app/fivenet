@@ -33,6 +33,45 @@ func TestNormalizeAccessSeedsFallbackWhenEmpty(t *testing.T) {
 	assert.Equal(t, int32(7), out.GetJobs()[0].GetAccess())
 }
 
+func TestNormalizeAccessUsesHighestGradeFallback(t *testing.T) {
+	t.Parallel()
+
+	out, err := NormalizeAccess(
+		&resourcesaccess.Access{},
+		nil,
+		&resourcesaccess.Access{Jobs: []*resourcesaccess.JobAccess{{
+			Job:          "ambulance",
+			MinimumGrade: 16,
+			Access:       6,
+		}}},
+		15,
+	)
+
+	require.NoError(t, err)
+	require.Len(t, out.GetJobs(), 1)
+	assert.Equal(t, "ambulance", out.GetJobs()[0].GetJob())
+	assert.Equal(t, int32(16), out.GetJobs()[0].GetMinimumGrade())
+}
+
+func TestEnsureJobAccessEntriesMergesWithoutDuplicates(t *testing.T) {
+	t.Parallel()
+
+	out := EnsureJobAccessEntries(
+		&resourcesaccess.Access{Jobs: []*resourcesaccess.JobAccess{{
+			Job:          "ambulance",
+			MinimumGrade: 4,
+			Access:       2,
+		}}},
+		&resourcesaccess.JobAccess{Job: "ambulance", MinimumGrade: 4, Access: 6},
+		&resourcesaccess.JobAccess{Job: "ambulance", MinimumGrade: 16, Access: 6, Required: new(true)},
+	)
+
+	require.Len(t, out.GetJobs(), 2)
+	assert.Equal(t, int32(6), out.GetJobs()[0].GetAccess())
+	assert.Equal(t, int32(16), out.GetJobs()[1].GetMinimumGrade())
+	assert.True(t, out.GetJobs()[1].GetRequired())
+}
+
 func TestApplyRequiredAccessOverlayUpgradesExistingEntry(t *testing.T) {
 	t.Parallel()
 
