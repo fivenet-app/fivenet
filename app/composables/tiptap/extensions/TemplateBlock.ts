@@ -27,7 +27,7 @@ declare module '@tiptap/core' {
     }
 }
 
-export const TemplateBlock = Node.create({
+export const TemplateBlock = Node.create<TemplateBlockOptions>({
     name: 'templateBlock',
 
     group: 'block',

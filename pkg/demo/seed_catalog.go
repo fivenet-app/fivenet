@@ -297,13 +297,15 @@ func (d *Demo) upsertDemoLawbooks(ctx context.Context) error {
 			if _, err := tLawbooks.UPDATE(
 				tLawbooks.Name, tLawbooks.Description, tLawbooks.DeletedAt,
 			).SET(lawbook.Name, lawbook.Description, mysql.NULL).
-				WHERE(tLawbooks.ID.EQ(mysql.Int64(existing.ID))).LIMIT(1).ExecContext(ctx, d.db); err != nil {
+				WHERE(tLawbooks.ID.EQ(mysql.Int64(existing.ID))).
+				LIMIT(1).ExecContext(ctx, d.db); err != nil {
 				return fmt.Errorf("failed to update demo lawbook. %w", err)
 			}
 			continue
 		}
 		if _, err := tLawbooks.INSERT(tLawbooks.ID, tLawbooks.Name, tLawbooks.Description).
-			VALUES(lawbook.ID, lawbook.Name, lawbook.Description).ExecContext(ctx, d.db); err != nil {
+			VALUES(lawbook.ID, lawbook.Name, lawbook.Description).
+			ExecContext(ctx, d.db); err != nil {
 			return fmt.Errorf("failed to insert demo lawbook. %w", err)
 		}
 	}
@@ -346,8 +348,14 @@ func (d *Demo) upsertDemoLaws(ctx context.Context) error {
 			continue
 		}
 		if _, err := tLawbooksLaws.INSERT(
-			tLawbooksLaws.ID, tLawbooksLaws.LawbookID, tLawbooksLaws.Name, tLawbooksLaws.Description,
-			tLawbooksLaws.Hint, tLawbooksLaws.Fine, tLawbooksLaws.DetentionTime, tLawbooksLaws.StvoPoints,
+			tLawbooksLaws.ID,
+			tLawbooksLaws.LawbookID,
+			tLawbooksLaws.Name,
+			tLawbooksLaws.Description,
+			tLawbooksLaws.Hint,
+			tLawbooksLaws.Fine,
+			tLawbooksLaws.DetentionTime,
+			tLawbooksLaws.StvoPoints,
 		).VALUES(
 			law.ID, law.LawbookID, law.Name, law.Description, law.Hint, law.Fine,
 			law.DetentionTime, law.StvoPoints,

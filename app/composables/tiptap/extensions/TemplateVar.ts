@@ -30,7 +30,7 @@ declare module '@tiptap/core' {
     }
 }
 
-export const TemplateVar = Node.create({
+export const TemplateVar = Node.create<TemplateVarOptions>({
     name: 'templateVar',
 
     inline: true,

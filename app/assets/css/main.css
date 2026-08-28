@@ -638,6 +638,7 @@ html {
         padding: 0.25rem;
         margin: 0.25rem 0;
         font-family: monospace;
+        cursor: pointer;
     }
 
     .template-open,
@@ -652,6 +653,7 @@ html {
         padding: 2px 2px;
         font-family: monospace;
         border: 1px dashed var(--color-primary-500);
+        cursor: pointer;
     }
 
     span.template-var[data-hidden='true'] {

@@ -409,7 +409,8 @@ func (s *UsersSync) applyFiltersAndTransformations(
 			us = slices.Delete(us, idx, idx+1)
 			continue
 		}
-		if s.cfg.Tables.Users.IgnoreEmptyName && user.GetFirstname() == "" && user.GetLastname() == "" {
+		if s.cfg.Tables.Users.IgnoreEmptyName && user.GetFirstname() == "" &&
+			user.GetLastname() == "" {
 			us = slices.Delete(us, idx, idx+1)
 			continue
 		}
