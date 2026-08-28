@@ -202,35 +202,44 @@ func (s *Store) CreateOrUpdateLawBook(
 			return nil, err
 		}
 
-		stmt := tLawBooks.
-			INSERT(
-				tLawBooks.Name,
-				tLawBooks.Description,
-				tLawBooks.SortOrder,
-			).
-			VALUES(
+		var existing struct{ ID int64 }
+		if err := tLawBooks.
+			SELECT(tLawBooks.ID.AS("id")).
+			FROM(tLawBooks).
+			WHERE(tLawBooks.Name.EQ(mysql.String(req.GetLawBook().GetName()))).
+			LIMIT(1).
+			QueryContext(ctx, tx, &existing); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+		if existing.ID > 0 {
+			_, err := tLawBooks.UPDATE(
+				tLawBooks.Name, tLawBooks.Description, tLawBooks.SortOrder, tLawBooks.DeletedAt,
+			).SET(
 				req.GetLawBook().GetName(),
 				dbutils.StringEmpty(req.GetLawBook().GetDescription()),
 				mysql.Int32(sortOrder),
-			).
-			ON_DUPLICATE_KEY_UPDATE(
-				tLawBooks.Name.SET(mysql.RawString("VALUES(`name`)")),
-				tLawBooks.Description.SET(mysql.RawString("VALUES(`description`)")),
-				tLawBooks.Description.SET(mysql.RawString("VALUES(`sort_order`)")),
-				tLawBooks.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-			)
-
-		result, err := stmt.ExecContext(ctx, tx)
-		if err != nil {
-			return nil, err
+				mysql.NULL,
+			).WHERE(tLawBooks.ID.EQ(mysql.Int64(existing.ID))).LIMIT(1).ExecContext(ctx, tx)
+			if err != nil {
+				return nil, err
+			}
+			lawbookID = existing.ID
+		} else {
+			result, err := tLawBooks.INSERT(
+				tLawBooks.Name, tLawBooks.Description, tLawBooks.SortOrder,
+			).VALUES(
+				req.GetLawBook().GetName(),
+				dbutils.StringEmpty(req.GetLawBook().GetDescription()),
+				mysql.Int32(sortOrder),
+			).ExecContext(ctx, tx)
+			if err != nil {
+				return nil, err
+			}
+			lawbookID, err = result.LastInsertId()
+			if err != nil {
+				return nil, err
+			}
 		}
-
-		lastId, err := result.LastInsertId()
-		if err != nil {
-			return nil, err
-		}
-
-		lawbookID = lastId
 	} else {
 		stmt := tLawBooks.
 			UPDATE(
@@ -413,50 +422,48 @@ func (s *Store) CreateOrUpdateLaw(
 			return nil, nil, err
 		}
 
-		stmt := tLaws.
-			INSERT(
-				tLaws.LawbookID,
-				tLaws.SortOrder,
-				tLaws.Name,
-				tLaws.Description,
-				tLaws.Hint,
-				tLaws.Fine,
-				tLaws.DetentionTime,
-				tLaws.StvoPoints,
-			).
-			VALUES(
-				req.GetLaw().GetLawbookId(),
-				mysql.Int32(sortOrder),
-				req.GetLaw().GetName(),
-				dbutils.StringEmpty(req.GetLaw().GetDescription()),
-				dbutils.StringEmpty(req.GetLaw().GetHint()),
-				req.GetLaw().Fine,
-				req.GetLaw().DetentionTime,
-				req.GetLaw().StvoPoints,
-			).
-			ON_DUPLICATE_KEY_UPDATE(
-				tLaws.LawbookID.SET(mysql.RawInt("VALUES(`lawbook_id`)")),
-				tLaws.SortOrder.SET(mysql.RawInt("VALUES(`sort_order`)")),
-				tLaws.Name.SET(mysql.RawString("VALUES(`name`)")),
-				tLaws.Description.SET(mysql.RawString("VALUES(`description`)")),
-				tLaws.Hint.SET(mysql.RawString("VALUES(`hint`)")),
-				tLaws.Fine.SET(mysql.RawInt("VALUES(`fine`)")),
-				tLaws.DetentionTime.SET(mysql.RawInt("VALUES(`detention_time`)")),
-				tLaws.StvoPoints.SET(mysql.RawInt("VALUES(`stvo_points`)")),
-				tLaws.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-			)
-
-		result, err := stmt.ExecContext(ctx, tx)
-		if err != nil {
+		var existing struct{ ID int64 }
+		if err := tLaws.
+			SELECT(tLaws.ID.AS("id")).
+			FROM(tLaws).
+			WHERE(mysql.AND(
+				tLaws.LawbookID.EQ(mysql.Int64(req.GetLaw().GetLawbookId())),
+				tLaws.Name.EQ(mysql.String(req.GetLaw().GetName())),
+			)).
+			LIMIT(1).
+			QueryContext(ctx, tx, &existing); err != nil && !errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil, err
 		}
-
-		lastId, err := result.LastInsertId()
-		if err != nil {
-			return nil, nil, err
+		if existing.ID > 0 {
+			_, err := tLaws.UPDATE(
+				tLaws.LawbookID, tLaws.SortOrder, tLaws.Name, tLaws.Description,
+				tLaws.Hint, tLaws.Fine, tLaws.DetentionTime, tLaws.StvoPoints, tLaws.DeletedAt,
+			).SET(
+				req.GetLaw().GetLawbookId(), mysql.Int32(sortOrder), req.GetLaw().GetName(),
+				dbutils.StringEmpty(req.GetLaw().GetDescription()), dbutils.StringEmpty(req.GetLaw().GetHint()),
+				req.GetLaw().Fine, req.GetLaw().DetentionTime, req.GetLaw().StvoPoints, mysql.NULL,
+			).WHERE(tLaws.ID.EQ(mysql.Int64(existing.ID))).LIMIT(1).ExecContext(ctx, tx)
+			if err != nil {
+				return nil, nil, err
+			}
+			lawID = existing.ID
+		} else {
+			result, err := tLaws.INSERT(
+				tLaws.LawbookID, tLaws.SortOrder, tLaws.Name, tLaws.Description,
+				tLaws.Hint, tLaws.Fine, tLaws.DetentionTime, tLaws.StvoPoints,
+			).VALUES(
+				req.GetLaw().GetLawbookId(), mysql.Int32(sortOrder), req.GetLaw().GetName(),
+				dbutils.StringEmpty(req.GetLaw().GetDescription()), dbutils.StringEmpty(req.GetLaw().GetHint()),
+				req.GetLaw().Fine, req.GetLaw().DetentionTime, req.GetLaw().StvoPoints,
+			).ExecContext(ctx, tx)
+			if err != nil {
+				return nil, nil, err
+			}
+			lawID, err = result.LastInsertId()
+			if err != nil {
+				return nil, nil, err
+			}
 		}
-
-		lawID = lastId
 		refreshLawBookIDs[req.GetLaw().GetLawbookId()] = struct{}{}
 	} else {
 		existingLaw, err := s.GetLaw(ctx, lawID, superuser)

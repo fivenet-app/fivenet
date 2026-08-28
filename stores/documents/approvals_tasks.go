@@ -126,57 +126,110 @@ func (s *Store) CreateApprovalTasks(
 			ensured++
 			continue
 		}
+		createdThisSeed := int32(0)
 
-		ins := tApprovalTasks.
-			INSERT(
-				tApprovalTasks.DocumentID,
-				tApprovalTasks.SnapshotDate,
-				tApprovalTasks.AssigneeKind,
-				tApprovalTasks.Job,
-				tApprovalTasks.MinimumGrade,
-				tApprovalTasks.Label,
-				tApprovalTasks.SignatureRequired,
-				tApprovalTasks.SlotNo,
-				tApprovalTasks.Status,
-				tApprovalTasks.Comment,
-				tApprovalTasks.DueAt,
-				tApprovalTasks.CreatorID,
-				tApprovalTasks.CreatorJob,
-			)
-
-		for slot := have.C + 1; slot <= slots; slot++ {
-			ins = ins.VALUES(
-				documentID,
-				dbutils.TimestampToMySQLDateTimeSec(snapDate),
-				int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE),
-				seed.GetJob(),
-				seed.GetMinimumGrade(),
-				seed.GetLabel(),
-				seed.GetSignatureRequired(),
-				slot,
-				int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING),
-				seed.GetComment(),
-				dbutils.TimestampToMySQLDateTime(seed.GetDueAt()),
-				userInfo.GetUserId(),
-				userInfo.GetJob(),
-			)
-		}
-
-		ins = ins.
-			ON_DUPLICATE_KEY_UPDATE(
-				tApprovalTasks.Job.SET(mysql.RawString("VALUES(`job`)")),
-				tApprovalTasks.MinimumGrade.SET(mysql.RawInt("VALUES(`minimum_grade`)")),
-				tApprovalTasks.Label.SET(mysql.RawString("VALUES(`label`)")),
-				tApprovalTasks.SignatureRequired.SET(mysql.RawBool("VALUES(`signature_required`)")),
-				tApprovalTasks.SlotNo.SET(mysql.RawInt("VALUES(`slot_no`)")),
-				tApprovalTasks.Comment.SET(mysql.RawString("VALUES(`comment`)")),
-				tApprovalTasks.DueAt.SET(mysql.RawTimestamp("VALUES(`due_at`)")),
-			)
-
-		if _, err := ins.ExecContext(ctx, tx); err != nil {
+		// Refresh existing slots first. Inserting all requested slots with
+		// ON DUPLICATE KEY UPDATE would consume AUTO_INCREMENT values for
+		// every slot that already exists.
+		if _, err := tApprovalTasks.
+			UPDATE().
+			SET(
+				tApprovalTasks.Label.SET(mysql.String(seed.GetLabel())),
+				tApprovalTasks.SignatureRequired.SET(mysql.Bool(seed.GetSignatureRequired())),
+				tApprovalTasks.Comment.SET(mysql.String(seed.GetComment())),
+				tApprovalTasks.DueAt.SET(dbutils.TimestampToMySQLDateTime(seed.GetDueAt())),
+			).
+			WHERE(mysql.AND(
+				tApprovalTasks.DocumentID.EQ(mysql.Int64(documentID)),
+				tApprovalTasks.SnapshotDate.EQ(dbutils.TimestampToMySQLDateTimeSec(snapDate)),
+				tApprovalTasks.AssigneeKind.EQ(
+					mysql.Int32(
+						int32(
+							documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE,
+						),
+					),
+				),
+				tApprovalTasks.Job.EQ(mysql.String(seed.GetJob())),
+				tApprovalTasks.MinimumGrade.EQ(mysql.Int32(seed.GetMinimumGrade())),
+				tApprovalTasks.SlotNo.BETWEEN(mysql.Int32(1), mysql.Int32(slots)),
+			)).
+			ExecContext(ctx, tx); err != nil {
 			return 0, 0, err
 		}
-		created += slots - have.C
+
+		var existingSlots []struct {
+			SlotNo int32 `alias:"slot_no"`
+		}
+		if err := tApprovalTasks.
+			SELECT(tApprovalTasks.SlotNo.AS("slot_no")).
+			FROM(tApprovalTasks).
+			WHERE(mysql.AND(
+				tApprovalTasks.DocumentID.EQ(mysql.Int64(documentID)),
+				tApprovalTasks.SnapshotDate.EQ(dbutils.TimestampToMySQLDateTimeSec(snapDate)),
+				tApprovalTasks.AssigneeKind.EQ(
+					mysql.Int32(
+						int32(
+							documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE,
+						),
+					),
+				),
+				tApprovalTasks.Job.EQ(mysql.String(seed.GetJob())),
+				tApprovalTasks.MinimumGrade.EQ(mysql.Int32(seed.GetMinimumGrade())),
+				tApprovalTasks.SlotNo.BETWEEN(mysql.Int32(1), mysql.Int32(slots)),
+			)).
+			QueryContext(ctx, tx, &existingSlots); err != nil {
+			return 0, 0, err
+		}
+
+		existing := make(map[int32]struct{}, len(existingSlots))
+		for _, task := range existingSlots {
+			existing[task.SlotNo] = struct{}{}
+		}
+		for slot := int32(1); slot <= slots; slot++ {
+			if _, ok := existing[slot]; ok {
+				continue
+			}
+
+			if _, err := tApprovalTasks.
+				INSERT(
+					tApprovalTasks.DocumentID,
+					tApprovalTasks.SnapshotDate,
+					tApprovalTasks.AssigneeKind,
+					tApprovalTasks.Job,
+					tApprovalTasks.MinimumGrade,
+					tApprovalTasks.Label,
+					tApprovalTasks.SignatureRequired,
+					tApprovalTasks.SlotNo,
+					tApprovalTasks.Status,
+					tApprovalTasks.Comment,
+					tApprovalTasks.DueAt,
+					tApprovalTasks.CreatorID,
+					tApprovalTasks.CreatorJob,
+				).
+				VALUES(
+					documentID,
+					dbutils.TimestampToMySQLDateTimeSec(snapDate),
+					int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE),
+					seed.GetJob(),
+					seed.GetMinimumGrade(),
+					seed.GetLabel(),
+					seed.GetSignatureRequired(),
+					slot,
+					int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING),
+					seed.GetComment(),
+					dbutils.TimestampToMySQLDateTime(seed.GetDueAt()),
+					userInfo.GetUserId(),
+					userInfo.GetJob(),
+				).
+				ExecContext(ctx, tx); err != nil {
+				return 0, 0, err
+			}
+			created++
+			createdThisSeed++
+		}
+		if createdThisSeed == 0 {
+			ensured++
+		}
 	}
 
 	return created, ensured, nil

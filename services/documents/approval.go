@@ -197,35 +197,56 @@ func (s *Server) UpsertApprovalPolicy(
 	}
 	defer tx.Rollback()
 
-	stmt := tApprovalPolicy.
-		INSERT(
-			tApprovalPolicy.DocumentID,
-			tApprovalPolicy.SnapshotDate,
-			tApprovalPolicy.OnEditBehavior,
-			tApprovalPolicy.RuleKind,
-			tApprovalPolicy.RequiredCount,
-			tApprovalPolicy.SignatureRequired,
-			tApprovalPolicy.SelfApproveAllowed,
-		).
-		VALUES(
-			pol.GetDocumentId(),
-			mysql.DateTimeExp(mysql.CURRENT_TIMESTAMP()), // Initialize snapshot_date
-			int32(pol.GetOnEditBehavior()),
-			int32(pol.GetRuleKind()),
-			pol.GetRequiredCount(),
-			pol.GetSignatureRequired(),
-			pol.GetSelfApproveAllowed(),
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tApprovalPolicy.OnEditBehavior.SET(mysql.Int32(int32(pol.GetOnEditBehavior()))),
-			tApprovalPolicy.RuleKind.SET(mysql.Int32(int32(pol.GetRuleKind()))),
-			tApprovalPolicy.RequiredCount.SET(mysql.Int32(pol.GetRequiredCount())),
-			tApprovalPolicy.SignatureRequired.SET(mysql.Bool(pol.GetSignatureRequired())),
-			tApprovalPolicy.SelfApproveAllowed.SET(mysql.Bool(pol.GetSelfApproveAllowed())),
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	var existingPolicy struct {
+		DocumentID int64 `alias:"document_id"`
+	}
+	if err := tApprovalPolicy.
+		SELECT(tApprovalPolicy.DocumentID.AS("document_id")).
+		FROM(tApprovalPolicy).
+		WHERE(tApprovalPolicy.DocumentID.EQ(mysql.Int64(pol.GetDocumentId()))).
+		LIMIT(1).
+		QueryContext(ctx, tx, &existingPolicy); err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if existingPolicy.DocumentID > 0 {
+		if _, err := tApprovalPolicy.
+			UPDATE().
+			SET(
+				tApprovalPolicy.OnEditBehavior.SET(mysql.Int32(int32(pol.GetOnEditBehavior()))),
+				tApprovalPolicy.RuleKind.SET(mysql.Int32(int32(pol.GetRuleKind()))),
+				tApprovalPolicy.RequiredCount.SET(mysql.Int32(pol.GetRequiredCount())),
+				tApprovalPolicy.SignatureRequired.SET(mysql.Bool(pol.GetSignatureRequired())),
+				tApprovalPolicy.SelfApproveAllowed.SET(mysql.Bool(pol.GetSelfApproveAllowed())),
+			).
+			WHERE(tApprovalPolicy.DocumentID.EQ(mysql.Int64(existingPolicy.DocumentID))).
+			LIMIT(1).
+			ExecContext(ctx, tx); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	} else {
+		if _, err := tApprovalPolicy.
+			INSERT(
+				tApprovalPolicy.DocumentID,
+				tApprovalPolicy.SnapshotDate,
+				tApprovalPolicy.OnEditBehavior,
+				tApprovalPolicy.RuleKind,
+				tApprovalPolicy.RequiredCount,
+				tApprovalPolicy.SignatureRequired,
+				tApprovalPolicy.SelfApproveAllowed,
+			).
+			VALUES(
+				pol.GetDocumentId(),
+				mysql.DateTimeExp(mysql.CURRENT_TIMESTAMP()), // Initialize snapshot_date
+				int32(pol.GetOnEditBehavior()),
+				int32(pol.GetRuleKind()),
+				pol.GetRequiredCount(),
+				pol.GetSignatureRequired(),
+				pol.GetSelfApproveAllowed(),
+			).
+			ExecContext(ctx, tx); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
 	}
 
 	tApprovalPolicy = tApprovalPolicy.AS("approval_policy")
@@ -1077,18 +1098,6 @@ func (s *Server) DecideApproval(
 				req.GetComment(),
 				dbutils.Int64P(taskIDForArtifact),
 				nil,
-			).
-			ON_DUPLICATE_KEY_UPDATE(
-				tApprovals.SnapshotDate.SET(mysql.RawTimestamp("VALUES(`snapshot_date`)")),
-				tApprovals.UserID.SET(mysql.Int32(userInfo.GetUserId())),
-				tApprovals.UserJob.SET(mysql.String(userInfo.GetJob())),
-				tApprovals.UserJobGrade.SET(mysql.Int32(userInfo.GetJobGrade())),
-				tApprovals.PayloadSvg.SET(mysql.String(req.GetPayloadSvg())),
-				tApprovals.StampID.SET(dbutils.Int64P(req.GetStampId())),
-				tApprovals.Status.SET(mysql.Int32(int32(artifactStatus))),
-				tApprovals.Comment.SET(mysql.String(req.GetComment())),
-				tApprovals.TaskID.SET(dbutils.Int64P(taskIDForArtifact)),
-				tApprovals.RevokedAt.SET(mysql.DateTimeExp(mysql.NULL)),
 			).
 			ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

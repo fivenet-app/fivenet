@@ -19,7 +19,9 @@ func TestStoreCreateOrUpdateLawBookCreatesLawBook(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT COALESCE(MAX(lawbook.sort_order), ?) AS "sort_order" FROM fivenet_lawbooks AS lawbook;`)).
 		WillReturnRows(sqlmock.NewRows([]string{"sort_order"}).AddRow(int32(-1)))
-	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_lawbooks`) + `(?s).*` + regexp.QuoteMeta(`ON DUPLICATE KEY UPDATE`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT fivenet_lawbooks.id AS "id" FROM fivenet_lawbooks`)).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_lawbooks`)).
 		WillReturnResult(sqlmock.NewResult(11, 1))
 	mock.ExpectCommit()
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_lawbooks AS law_book WHERE`) + `(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)).
@@ -53,7 +55,9 @@ func TestStoreCreateOrUpdateLawCreatesLaw(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(int64(3)))
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT COALESCE(MAX(law.sort_order), ?) AS "sort_order" FROM fivenet_lawbooks_laws AS law WHERE`) + `(?s).*` + regexp.QuoteMeta(`law.lawbook_id = ?;`)).
 		WillReturnRows(sqlmock.NewRows([]string{"sort_order"}).AddRow(int32(-1)))
-	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_lawbooks_laws`) + `(?s).*` + regexp.QuoteMeta(`ON DUPLICATE KEY UPDATE`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT fivenet_lawbooks_laws.id AS "id" FROM fivenet_lawbooks_laws`)).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_lawbooks_laws`)).
 		WillReturnResult(sqlmock.NewResult(21, 1))
 	mock.ExpectCommit()
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_lawbooks_laws AS law WHERE`) + `(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)).

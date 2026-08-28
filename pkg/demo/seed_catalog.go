@@ -9,6 +9,7 @@ import (
 
 	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (d *Demo) seedDemoCatalog(ctx context.Context) error {
@@ -279,30 +280,32 @@ func (d *Demo) upsertDemoLawbooks(ctx context.Context) error {
 		return nil
 	}
 
-	stmt := tLawbooks.
-		INSERT(
-			tLawbooks.ID,
-			tLawbooks.Name,
-			tLawbooks.Description,
-		)
-
 	for _, lawbook := range demoSeedLawbooks {
-		stmt = stmt.VALUES(
-			lawbook.ID,
-			lawbook.Name,
-			lawbook.Description,
-		)
-	}
-
-	stmt = stmt.
-		ON_DUPLICATE_KEY_UPDATE(
-			tLawbooks.Name.SET(mysql.RawString("VALUES(`name`)")),
-			tLawbooks.Description.SET(mysql.RawString("VALUES(`description`)")),
-			tLawbooks.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-		)
-
-	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
-		return fmt.Errorf("failed to upsert demo lawbooks. %w", err)
+		var existing struct{ ID int64 }
+		if err := tLawbooks.
+			SELECT(tLawbooks.ID.AS("id")).
+			FROM(tLawbooks).
+			WHERE(mysql.OR(
+				tLawbooks.ID.EQ(mysql.Int32(lawbook.ID)),
+				tLawbooks.Name.EQ(mysql.String(lawbook.Name)),
+			)).
+			LIMIT(1).
+			QueryContext(ctx, d.db, &existing); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf("failed to find demo lawbook. %w", err)
+		}
+		if existing.ID > 0 {
+			if _, err := tLawbooks.UPDATE(
+				tLawbooks.Name, tLawbooks.Description, tLawbooks.DeletedAt,
+			).SET(lawbook.Name, lawbook.Description, mysql.NULL).
+				WHERE(tLawbooks.ID.EQ(mysql.Int64(existing.ID))).LIMIT(1).ExecContext(ctx, d.db); err != nil {
+				return fmt.Errorf("failed to update demo lawbook. %w", err)
+			}
+			continue
+		}
+		if _, err := tLawbooks.INSERT(tLawbooks.ID, tLawbooks.Name, tLawbooks.Description).
+			VALUES(lawbook.ID, lawbook.Name, lawbook.Description).ExecContext(ctx, d.db); err != nil {
+			return fmt.Errorf("failed to insert demo lawbook. %w", err)
+		}
 	}
 
 	return nil
@@ -313,45 +316,44 @@ func (d *Demo) upsertDemoLaws(ctx context.Context) error {
 		return nil
 	}
 
-	stmt := tLawbooksLaws.
-		INSERT(
-			tLawbooksLaws.ID,
-			tLawbooksLaws.LawbookID,
-			tLawbooksLaws.Name,
-			tLawbooksLaws.Description,
-			tLawbooksLaws.Hint,
-			tLawbooksLaws.Fine,
-			tLawbooksLaws.DetentionTime,
-			tLawbooksLaws.StvoPoints,
-		)
-
 	for _, law := range demoSeedLaws {
-		stmt = stmt.VALUES(
-			law.ID,
-			law.LawbookID,
-			law.Name,
-			law.Description,
-			law.Hint,
-			law.Fine,
-			law.DetentionTime,
-			law.StvoPoints,
-		)
-	}
-
-	stmt = stmt.
-		ON_DUPLICATE_KEY_UPDATE(
-			tLawbooksLaws.LawbookID.SET(mysql.RawInt("VALUES(`lawbook_id`)")),
-			tLawbooksLaws.Name.SET(mysql.RawString("VALUES(`name`)")),
-			tLawbooksLaws.Description.SET(mysql.RawString("VALUES(`description`)")),
-			tLawbooksLaws.Hint.SET(mysql.RawString("VALUES(`hint`)")),
-			tLawbooksLaws.Fine.SET(mysql.RawInt("VALUES(`fine`)")),
-			tLawbooksLaws.DetentionTime.SET(mysql.RawInt("VALUES(`detention_time`)")),
-			tLawbooksLaws.StvoPoints.SET(mysql.RawInt("VALUES(`stvo_points`)")),
-			tLawbooksLaws.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-		)
-
-	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
-		return fmt.Errorf("failed to upsert demo laws. %w", err)
+		var existing struct{ ID int64 }
+		if err := tLawbooksLaws.
+			SELECT(tLawbooksLaws.ID.AS("id")).
+			FROM(tLawbooksLaws).
+			WHERE(mysql.OR(
+				tLawbooksLaws.ID.EQ(mysql.Int32(law.ID)),
+				mysql.AND(
+					tLawbooksLaws.LawbookID.EQ(mysql.Int32(law.LawbookID)),
+					tLawbooksLaws.Name.EQ(mysql.String(law.Name)),
+				),
+			)).
+			LIMIT(1).
+			QueryContext(ctx, d.db, &existing); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf("failed to find demo law. %w", err)
+		}
+		if existing.ID > 0 {
+			if _, err := tLawbooksLaws.UPDATE(
+				tLawbooksLaws.LawbookID, tLawbooksLaws.Name, tLawbooksLaws.Description,
+				tLawbooksLaws.Hint, tLawbooksLaws.Fine, tLawbooksLaws.DetentionTime,
+				tLawbooksLaws.StvoPoints, tLawbooksLaws.DeletedAt,
+			).SET(
+				law.LawbookID, law.Name, law.Description, law.Hint, law.Fine,
+				law.DetentionTime, law.StvoPoints, mysql.NULL,
+			).WHERE(tLawbooksLaws.ID.EQ(mysql.Int64(existing.ID))).LIMIT(1).ExecContext(ctx, d.db); err != nil {
+				return fmt.Errorf("failed to update demo law. %w", err)
+			}
+			continue
+		}
+		if _, err := tLawbooksLaws.INSERT(
+			tLawbooksLaws.ID, tLawbooksLaws.LawbookID, tLawbooksLaws.Name, tLawbooksLaws.Description,
+			tLawbooksLaws.Hint, tLawbooksLaws.Fine, tLawbooksLaws.DetentionTime, tLawbooksLaws.StvoPoints,
+		).VALUES(
+			law.ID, law.LawbookID, law.Name, law.Description, law.Hint, law.Fine,
+			law.DetentionTime, law.StvoPoints,
+		).ExecContext(ctx, d.db); err != nil {
+			return fmt.Errorf("failed to insert demo law. %w", err)
+		}
 	}
 
 	return nil
