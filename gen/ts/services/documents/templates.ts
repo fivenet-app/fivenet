@@ -13,7 +13,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Template } from "../../resources/documents/templates/templates";
-import { TemplateData } from "../../resources/documents/templates/templates";
+import { TemplateSelection } from "../../resources/documents/templates/templates";
 import { TemplateShort } from "../../resources/documents/templates/templates";
 /**
  * @generated from protobuf message services.documents.ListTemplatesRequest
@@ -38,13 +38,13 @@ export interface GetTemplateRequest {
      */
     templateId: number;
     /**
-     * @generated from protobuf field: optional resources.documents.templates.TemplateData data = 2
-     */
-    data?: TemplateData;
-    /**
      * @generated from protobuf field: optional bool render = 3
      */
     render?: boolean;
+    /**
+     * @generated from protobuf field: optional resources.documents.templates.TemplateSelection selection = 4
+     */
+    selection?: TemplateSelection;
 }
 /**
  * @generated from protobuf message services.documents.GetTemplateResponse
@@ -221,8 +221,8 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
     constructor() {
         super("services.documents.GetTemplateRequest", [
             { no: 1, name: "template_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "data", kind: "message", T: () => TemplateData },
-            { no: 3, name: "render", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "render", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "selection", kind: "message", T: () => TemplateSelection }
         ]);
     }
     create(value?: PartialMessage<GetTemplateRequest>): GetTemplateRequest {
@@ -240,11 +240,11 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
                 case /* int64 template_id */ 1:
                     message.templateId = reader.int64().toNumber();
                     break;
-                case /* optional resources.documents.templates.TemplateData data */ 2:
-                    message.data = TemplateData.internalBinaryRead(reader, reader.uint32(), options, message.data);
-                    break;
                 case /* optional bool render */ 3:
                     message.render = reader.bool();
+                    break;
+                case /* optional resources.documents.templates.TemplateSelection selection */ 4:
+                    message.selection = TemplateSelection.internalBinaryRead(reader, reader.uint32(), options, message.selection);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -261,12 +261,12 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
         /* int64 template_id = 1; */
         if (message.templateId !== 0)
             writer.tag(1, WireType.Varint).int64(message.templateId);
-        /* optional resources.documents.templates.TemplateData data = 2; */
-        if (message.data)
-            TemplateData.internalBinaryWrite(message.data, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* optional bool render = 3; */
         if (message.render !== undefined)
             writer.tag(3, WireType.Varint).bool(message.render);
+        /* optional resources.documents.templates.TemplateSelection selection = 4; */
+        if (message.selection)
+            TemplateSelection.internalBinaryWrite(message.selection, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

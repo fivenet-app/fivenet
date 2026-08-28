@@ -95,9 +95,9 @@ func (m *CreateDocumentRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: TemplateData
-	if m.TemplateData != nil {
-		if v, ok := any(m.GetTemplateData()).(interface{ Sanitize() error }); ok {
+	// Field: TemplateSelection
+	if m.TemplateSelection != nil {
+		if v, ok := any(m.GetTemplateSelection()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

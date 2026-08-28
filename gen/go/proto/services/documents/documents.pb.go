@@ -1677,12 +1677,12 @@ func (b0 ChangeDocumentOwnerResponse_builder) Build() *ChangeDocumentOwnerRespon
 }
 
 type CreateDocumentRequest struct {
-	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
-	ContentType   content.ContentType     `protobuf:"varint,1,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
-	TemplateId    *int64                  `protobuf:"varint,2,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
-	TemplateData  *templates.TemplateData `protobuf:"bytes,3,opt,name=template_data,json=templateData,proto3,oneof" json:"template_data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState       `protogen:"hybrid.v1"`
+	ContentType       content.ContentType          `protobuf:"varint,1,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
+	TemplateId        *int64                       `protobuf:"varint,2,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
+	TemplateSelection *templates.TemplateSelection `protobuf:"bytes,4,opt,name=template_selection,json=templateSelection,proto3,oneof" json:"template_selection,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *CreateDocumentRequest) Reset() {
@@ -1724,9 +1724,9 @@ func (x *CreateDocumentRequest) GetTemplateId() int64 {
 	return 0
 }
 
-func (x *CreateDocumentRequest) GetTemplateData() *templates.TemplateData {
+func (x *CreateDocumentRequest) GetTemplateSelection() *templates.TemplateSelection {
 	if x != nil {
-		return x.TemplateData
+		return x.TemplateSelection
 	}
 	return nil
 }
@@ -1739,8 +1739,8 @@ func (x *CreateDocumentRequest) SetTemplateId(v int64) {
 	x.TemplateId = &v
 }
 
-func (x *CreateDocumentRequest) SetTemplateData(v *templates.TemplateData) {
-	x.TemplateData = v
+func (x *CreateDocumentRequest) SetTemplateSelection(v *templates.TemplateSelection) {
+	x.TemplateSelection = v
 }
 
 func (x *CreateDocumentRequest) HasTemplateId() bool {
@@ -1750,27 +1750,27 @@ func (x *CreateDocumentRequest) HasTemplateId() bool {
 	return x.TemplateId != nil
 }
 
-func (x *CreateDocumentRequest) HasTemplateData() bool {
+func (x *CreateDocumentRequest) HasTemplateSelection() bool {
 	if x == nil {
 		return false
 	}
-	return x.TemplateData != nil
+	return x.TemplateSelection != nil
 }
 
 func (x *CreateDocumentRequest) ClearTemplateId() {
 	x.TemplateId = nil
 }
 
-func (x *CreateDocumentRequest) ClearTemplateData() {
-	x.TemplateData = nil
+func (x *CreateDocumentRequest) ClearTemplateSelection() {
+	x.TemplateSelection = nil
 }
 
 type CreateDocumentRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	ContentType  content.ContentType
-	TemplateId   *int64
-	TemplateData *templates.TemplateData
+	ContentType       content.ContentType
+	TemplateId        *int64
+	TemplateSelection *templates.TemplateSelection
 }
 
 func (b0 CreateDocumentRequest_builder) Build() *CreateDocumentRequest {
@@ -1779,7 +1779,7 @@ func (b0 CreateDocumentRequest_builder) Build() *CreateDocumentRequest {
 	_, _ = b, x
 	x.ContentType = b.ContentType
 	x.TemplateId = b.TemplateId
-	x.TemplateData = b.TemplateData
+	x.TemplateSelection = b.TemplateSelection
 	return m0
 }
 
@@ -4000,14 +4000,14 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"documentId\x12#\n" +
 	"\vnew_user_id\x18\x02 \x01(\x05H\x00R\tnewUserId\x88\x01\x01B\x0e\n" +
 	"\f_new_user_id\"\x1d\n" +
-	"\x1bChangeDocumentOwnerResponse\"\x80\x02\n" +
+	"\x1bChangeDocumentOwnerResponse\"\x9a\x02\n" +
 	"\x15CreateDocumentRequest\x12H\n" +
 	"\fcontent_type\x18\x01 \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12$\n" +
 	"\vtemplate_id\x18\x02 \x01(\x03H\x00R\n" +
-	"templateId\x88\x01\x01\x12U\n" +
-	"\rtemplate_data\x18\x03 \x01(\v2+.resources.documents.templates.TemplateDataH\x01R\ftemplateData\x88\x01\x01B\x0e\n" +
-	"\f_template_idB\x10\n" +
-	"\x0e_template_data\"(\n" +
+	"templateId\x88\x01\x01\x12d\n" +
+	"\x12template_selection\x18\x04 \x01(\v20.resources.documents.templates.TemplateSelectionH\x01R\x11templateSelection\x88\x01\x01B\x0e\n" +
+	"\f_template_idB\x15\n" +
+	"\x13_template_selectionJ\x04\b\x03\x10\x04\"(\n" +
 	"\x16CreateDocumentResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\xbb\x04\n" +
 	"\x15UpdateDocumentRequest\x120\n" +
@@ -4230,7 +4230,7 @@ var file_services_documents_documents_proto_goTypes = []any{
 	(*references.DocumentReference)(nil),    // 55: resources.documents.references.DocumentReference
 	(*relations.DocumentRelation)(nil),      // 56: resources.documents.relations.DocumentRelation
 	(content.ContentType)(0),                // 57: resources.common.content.ContentType
-	(*templates.TemplateData)(nil),          // 58: resources.documents.templates.TemplateData
+	(*templates.TemplateSelection)(nil),     // 58: resources.documents.templates.TemplateSelection
 	(*content.Content)(nil),                 // 59: resources.common.content.Content
 	(*data.DocumentData)(nil),               // 60: resources.documents.data.DocumentData
 	(*documents.DocumentMeta)(nil),          // 61: resources.documents.DocumentMeta
@@ -4259,7 +4259,7 @@ var file_services_documents_documents_proto_depIdxs = []int32{
 	56, // 11: services.documents.AddDocumentRelationRequest.relation:type_name -> resources.documents.relations.DocumentRelation
 	53, // 12: services.documents.UpdateDocumentResponse.document:type_name -> resources.documents.Document
 	57, // 13: services.documents.CreateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
-	58, // 14: services.documents.CreateDocumentRequest.template_data:type_name -> resources.documents.templates.TemplateData
+	58, // 14: services.documents.CreateDocumentRequest.template_selection:type_name -> resources.documents.templates.TemplateSelection
 	59, // 15: services.documents.UpdateDocumentRequest.content:type_name -> resources.common.content.Content
 	57, // 16: services.documents.UpdateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
 	60, // 17: services.documents.UpdateDocumentRequest.data:type_name -> resources.documents.data.DocumentData

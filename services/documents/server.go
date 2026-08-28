@@ -23,7 +23,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
+	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -134,6 +136,8 @@ type Server struct {
 	ui            userinfo.UserInfoRetriever
 	notifi        notifi.INotifi
 	store         documentsstore.IStore
+	citizensStore citizensstore.IStore
+	vehiclesStore vehiclesstore.IStore
 
 	subjectAccess   *access.DocumentsObjectAccess
 	subjectResolver *access.SubjectResolver
@@ -164,6 +168,8 @@ type Params struct {
 	JS                 *events.JSWrapper
 	Stats              *docstats.Service
 	Store              documentsstore.IStore
+	CitizensStore      citizensstore.IStore
+	VehiclesStore      vehiclesstore.IStore
 	SubjectAccess      *access.DocumentsObjectAccess
 	TemplateAccess     *access.DocumentTemplatesObjectAccess
 	SigningStampAccess *access.DocumentStampsObjectAccess
@@ -216,6 +222,8 @@ func NewServer(p Params) Result {
 		ui:            p.Ui,
 		notifi:        p.Notif,
 		store:         p.Store,
+		citizensStore: p.CitizensStore,
+		vehiclesStore: p.VehiclesStore,
 
 		subjectAccess:   p.SubjectAccess,
 		subjectResolver: docSubjectResolver,

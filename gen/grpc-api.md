@@ -4175,20 +4175,6 @@ Policy snapshot applied to a specific version
 
 
 
-### resources.documents.templates.TemplateData
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `active_char` | [resources.users.User](#resourcesusersUser) |  |  |
-| `documents` | [resources.documents.DocumentShort](#resourcesdocumentsDocumentShort) | repeated |  |
-| `users` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | repeated |  |
-| `vehicles` | [resources.vehicles.Vehicle](#resourcesvehiclesVehicle) | repeated |  |
-
-
-
-
-
 ### resources.documents.templates.TemplateRequirements
 
 
@@ -4208,6 +4194,19 @@ Policy snapshot applied to a specific version
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `requirements` | [TemplateRequirements](#resourcesdocumentstemplatesTemplateRequirements) |  |  |
+
+
+
+
+
+### resources.documents.templates.TemplateSelection
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_ids` | [int32](#int32) | repeated |  |
+| `document_ids` | [int64](#int64) | repeated |  |
+| `plates` | [string](#string) | repeated |  |
 
 
 
@@ -10139,7 +10138,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | ----- | ---- | ----- | ----------- |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 | `template_id` | [int64](#int64) | optional |  |
-| `template_data` | [resources.documents.templates.TemplateData](#resourcesdocumentstemplatesTemplateData) | optional |  |
+| `template_selection` | [resources.documents.templates.TemplateSelection](#resourcesdocumentstemplatesTemplateSelection) | optional |  |
 
 
 
@@ -10889,8 +10888,8 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `template_id` | [int64](#int64) |  |  |
-| `data` | [resources.documents.templates.TemplateData](#resourcesdocumentstemplatesTemplateData) | optional |  |
 | `render` | [bool](#bool) | optional |  |
+| `selection` | [resources.documents.templates.TemplateSelection](#resourcesdocumentstemplatesTemplateSelection) | optional |  |
 
 
 

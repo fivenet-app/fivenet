@@ -190,61 +190,6 @@ func (m *TemplateApprovalTaskSeed) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *TemplateData) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: ActiveChar
-	if m.ActiveChar != nil {
-		if v, ok := any(m.GetActiveChar()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Documents
-	for idx, item := range m.Documents {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Users
-	for idx, item := range m.Users {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Vehicles
-	for idx, item := range m.Vehicles {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *TemplateRequirements) Sanitize() error {
 	if m == nil {
 		return nil
@@ -294,6 +239,24 @@ func (m *TemplateSchema) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *TemplateSelection) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Plates
+	for idx, item := range m.Plates {
+		_, _ = idx, item
+
+		m.Plates[idx] = htmlsanitizer.SanitizeAndUnescape(m.Plates[idx])
+
 	}
 
 	return nil

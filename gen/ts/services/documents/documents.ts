@@ -24,7 +24,7 @@ import { File } from "../../resources/file/file";
 import { DocumentMeta } from "../../resources/documents/documents";
 import { DocumentData } from "../../resources/documents/data/data";
 import { Content } from "../../resources/common/content/content";
-import { TemplateData } from "../../resources/documents/templates/templates";
+import { TemplateSelection } from "../../resources/documents/templates/templates";
 import { ContentType } from "../../resources/common/content/content";
 import { DocumentRelation } from "../../resources/documents/relations/relations";
 import { DocumentReference } from "../../resources/documents/references/references";
@@ -304,9 +304,9 @@ export interface CreateDocumentRequest {
      */
     templateId?: number;
     /**
-     * @generated from protobuf field: optional resources.documents.templates.TemplateData template_data = 3
+     * @generated from protobuf field: optional resources.documents.templates.TemplateSelection template_selection = 4
      */
-    templateData?: TemplateData;
+    templateSelection?: TemplateSelection;
 }
 /**
  * @generated from protobuf message services.documents.CreateDocumentResponse
@@ -1835,7 +1835,7 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
         super("services.documents.CreateDocumentRequest", [
             { no: 1, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 2, name: "template_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "template_data", kind: "message", T: () => TemplateData }
+            { no: 4, name: "template_selection", kind: "message", T: () => TemplateSelection }
         ]);
     }
     create(value?: PartialMessage<CreateDocumentRequest>): CreateDocumentRequest {
@@ -1856,8 +1856,8 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
                 case /* optional int64 template_id */ 2:
                     message.templateId = reader.int64().toNumber();
                     break;
-                case /* optional resources.documents.templates.TemplateData template_data */ 3:
-                    message.templateData = TemplateData.internalBinaryRead(reader, reader.uint32(), options, message.templateData);
+                case /* optional resources.documents.templates.TemplateSelection template_selection */ 4:
+                    message.templateSelection = TemplateSelection.internalBinaryRead(reader, reader.uint32(), options, message.templateSelection);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1877,9 +1877,9 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
         /* optional int64 template_id = 2; */
         if (message.templateId !== undefined)
             writer.tag(2, WireType.Varint).int64(message.templateId);
-        /* optional resources.documents.templates.TemplateData template_data = 3; */
-        if (message.templateData)
-            TemplateData.internalBinaryWrite(message.templateData, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.templates.TemplateSelection template_selection = 4; */
+        if (message.templateSelection)
+            TemplateSelection.internalBinaryWrite(message.templateSelection, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

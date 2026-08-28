@@ -126,10 +126,10 @@ func (b0 ListTemplatesResponse_builder) Build() *ListTemplatesResponse {
 }
 
 type GetTemplateRequest struct {
-	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
-	TemplateId    int64                   `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
-	Data          *templates.TemplateData `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"`
-	Render        *bool                   `protobuf:"varint,3,opt,name=render,proto3,oneof" json:"render,omitempty"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
+	TemplateId    int64                        `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	Render        *bool                        `protobuf:"varint,3,opt,name=render,proto3,oneof" json:"render,omitempty"`
+	Selection     *templates.TemplateSelection `protobuf:"bytes,4,opt,name=selection,proto3,oneof" json:"selection,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -166,13 +166,6 @@ func (x *GetTemplateRequest) GetTemplateId() int64 {
 	return 0
 }
 
-func (x *GetTemplateRequest) GetData() *templates.TemplateData {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
 func (x *GetTemplateRequest) GetRender() bool {
 	if x != nil && x.Render != nil {
 		return *x.Render
@@ -180,23 +173,23 @@ func (x *GetTemplateRequest) GetRender() bool {
 	return false
 }
 
-func (x *GetTemplateRequest) SetTemplateId(v int64) {
-	x.TemplateId = v
+func (x *GetTemplateRequest) GetSelection() *templates.TemplateSelection {
+	if x != nil {
+		return x.Selection
+	}
+	return nil
 }
 
-func (x *GetTemplateRequest) SetData(v *templates.TemplateData) {
-	x.Data = v
+func (x *GetTemplateRequest) SetTemplateId(v int64) {
+	x.TemplateId = v
 }
 
 func (x *GetTemplateRequest) SetRender(v bool) {
 	x.Render = &v
 }
 
-func (x *GetTemplateRequest) HasData() bool {
-	if x == nil {
-		return false
-	}
-	return x.Data != nil
+func (x *GetTemplateRequest) SetSelection(v *templates.TemplateSelection) {
+	x.Selection = v
 }
 
 func (x *GetTemplateRequest) HasRender() bool {
@@ -206,20 +199,27 @@ func (x *GetTemplateRequest) HasRender() bool {
 	return x.Render != nil
 }
 
-func (x *GetTemplateRequest) ClearData() {
-	x.Data = nil
+func (x *GetTemplateRequest) HasSelection() bool {
+	if x == nil {
+		return false
+	}
+	return x.Selection != nil
 }
 
 func (x *GetTemplateRequest) ClearRender() {
 	x.Render = nil
 }
 
+func (x *GetTemplateRequest) ClearSelection() {
+	x.Selection = nil
+}
+
 type GetTemplateRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	TemplateId int64
-	Data       *templates.TemplateData
 	Render     *bool
+	Selection  *templates.TemplateSelection
 }
 
 func (b0 GetTemplateRequest_builder) Build() *GetTemplateRequest {
@@ -227,8 +227,8 @@ func (b0 GetTemplateRequest_builder) Build() *GetTemplateRequest {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.TemplateId = b.TemplateId
-	x.Data = b.Data
 	x.Render = b.Render
+	x.Selection = b.Selection
 	return m0
 }
 
@@ -832,14 +832,15 @@ const file_services_documents_templates_proto_rawDesc = "" +
 	"\"services/documents/templates.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a-resources/documents/templates/templates.proto\"\x16\n" +
 	"\x14ListTemplatesRequest\"i\n" +
 	"\x15ListTemplatesResponse\x12P\n" +
-	"\ttemplates\x18\x01 \x03(\v2,.resources.documents.templates.TemplateShortB\x04\xc8\xf3\x18\x01R\ttemplates\"\xac\x01\n" +
+	"\ttemplates\x18\x01 \x03(\v2,.resources.documents.templates.TemplateShortB\x04\xc8\xf3\x18\x01R\ttemplates\"\xc6\x01\n" +
 	"\x12GetTemplateRequest\x12\x1f\n" +
 	"\vtemplate_id\x18\x01 \x01(\x03R\n" +
-	"templateId\x12D\n" +
-	"\x04data\x18\x02 \x01(\v2+.resources.documents.templates.TemplateDataH\x00R\x04data\x88\x01\x01\x12\x1b\n" +
-	"\x06render\x18\x03 \x01(\bH\x01R\x06render\x88\x01\x01B\a\n" +
-	"\x05_dataB\t\n" +
-	"\a_render\"v\n" +
+	"templateId\x12\x1b\n" +
+	"\x06render\x18\x03 \x01(\bH\x00R\x06render\x88\x01\x01\x12S\n" +
+	"\tselection\x18\x04 \x01(\v20.resources.documents.templates.TemplateSelectionH\x01R\tselection\x88\x01\x01B\t\n" +
+	"\a_renderB\f\n" +
+	"\n" +
+	"_selectionJ\x04\b\x02\x10\x03\"v\n" +
 	"\x13GetTemplateResponse\x12C\n" +
 	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\x12\x1a\n" +
 	"\brendered\x18\x02 \x01(\bR\brendered\"\\\n" +
@@ -873,25 +874,25 @@ const file_services_documents_templates_proto_rawDesc = "" +
 
 var file_services_documents_templates_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_services_documents_templates_proto_goTypes = []any{
-	(*ListTemplatesRequest)(nil),    // 0: services.documents.ListTemplatesRequest
-	(*ListTemplatesResponse)(nil),   // 1: services.documents.ListTemplatesResponse
-	(*GetTemplateRequest)(nil),      // 2: services.documents.GetTemplateRequest
-	(*GetTemplateResponse)(nil),     // 3: services.documents.GetTemplateResponse
-	(*CreateTemplateRequest)(nil),   // 4: services.documents.CreateTemplateRequest
-	(*CreateTemplateResponse)(nil),  // 5: services.documents.CreateTemplateResponse
-	(*UpdateTemplateRequest)(nil),   // 6: services.documents.UpdateTemplateRequest
-	(*UpdateTemplateResponse)(nil),  // 7: services.documents.UpdateTemplateResponse
-	(*DeleteTemplateRequest)(nil),   // 8: services.documents.DeleteTemplateRequest
-	(*DeleteTemplateResponse)(nil),  // 9: services.documents.DeleteTemplateResponse
-	(*MoveTemplateRequest)(nil),     // 10: services.documents.MoveTemplateRequest
-	(*MoveTemplateResponse)(nil),    // 11: services.documents.MoveTemplateResponse
-	(*templates.TemplateShort)(nil), // 12: resources.documents.templates.TemplateShort
-	(*templates.TemplateData)(nil),  // 13: resources.documents.templates.TemplateData
-	(*templates.Template)(nil),      // 14: resources.documents.templates.Template
+	(*ListTemplatesRequest)(nil),        // 0: services.documents.ListTemplatesRequest
+	(*ListTemplatesResponse)(nil),       // 1: services.documents.ListTemplatesResponse
+	(*GetTemplateRequest)(nil),          // 2: services.documents.GetTemplateRequest
+	(*GetTemplateResponse)(nil),         // 3: services.documents.GetTemplateResponse
+	(*CreateTemplateRequest)(nil),       // 4: services.documents.CreateTemplateRequest
+	(*CreateTemplateResponse)(nil),      // 5: services.documents.CreateTemplateResponse
+	(*UpdateTemplateRequest)(nil),       // 6: services.documents.UpdateTemplateRequest
+	(*UpdateTemplateResponse)(nil),      // 7: services.documents.UpdateTemplateResponse
+	(*DeleteTemplateRequest)(nil),       // 8: services.documents.DeleteTemplateRequest
+	(*DeleteTemplateResponse)(nil),      // 9: services.documents.DeleteTemplateResponse
+	(*MoveTemplateRequest)(nil),         // 10: services.documents.MoveTemplateRequest
+	(*MoveTemplateResponse)(nil),        // 11: services.documents.MoveTemplateResponse
+	(*templates.TemplateShort)(nil),     // 12: resources.documents.templates.TemplateShort
+	(*templates.TemplateSelection)(nil), // 13: resources.documents.templates.TemplateSelection
+	(*templates.Template)(nil),          // 14: resources.documents.templates.Template
 }
 var file_services_documents_templates_proto_depIdxs = []int32{
 	12, // 0: services.documents.ListTemplatesResponse.templates:type_name -> resources.documents.templates.TemplateShort
-	13, // 1: services.documents.GetTemplateRequest.data:type_name -> resources.documents.templates.TemplateData
+	13, // 1: services.documents.GetTemplateRequest.selection:type_name -> resources.documents.templates.TemplateSelection
 	14, // 2: services.documents.GetTemplateResponse.template:type_name -> resources.documents.templates.Template
 	14, // 3: services.documents.CreateTemplateRequest.template:type_name -> resources.documents.templates.Template
 	14, // 4: services.documents.UpdateTemplateRequest.template:type_name -> resources.documents.templates.Template

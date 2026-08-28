@@ -17,8 +17,9 @@ message ListTemplatesResponse {
 
 message GetTemplateRequest {
   int64 template_id = 1;
-  optional resources.documents.templates.TemplateData data = 2;
   optional bool render = 3;
+  reserved 2;
+  optional resources.documents.templates.TemplateSelection selection = 4;
 }
 
 message GetTemplateResponse {

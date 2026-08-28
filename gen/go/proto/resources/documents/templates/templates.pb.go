@@ -12,14 +12,10 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
-	documents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	approval "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/approval"
 	category "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
 	workflow "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/workflow"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
-	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
-	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -1092,30 +1088,29 @@ func (b0 ObjectSpecs_builder) Build() *ObjectSpecs {
 	return m0
 }
 
-type TemplateData struct {
-	state         protoimpl.MessageState     `protogen:"hybrid.v1"`
-	ActiveChar    *users.User                `protobuf:"bytes,1,opt,name=active_char,json=activeChar,proto3" json:"active_char,omitempty"`
-	Documents     []*documents.DocumentShort `protobuf:"bytes,2,rep,name=documents,proto3" json:"documents,omitempty"`
-	Users         []*short.UserShort         `protobuf:"bytes,3,rep,name=users,proto3" json:"users,omitempty"`
-	Vehicles      []*vehicles.Vehicle        `protobuf:"bytes,4,rep,name=vehicles,proto3" json:"vehicles,omitempty"`
+type TemplateSelection struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	UserIds       []int32                `protobuf:"varint,1,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	DocumentIds   []int64                `protobuf:"varint,2,rep,packed,name=document_ids,json=documentIds,proto3" json:"document_ids,omitempty"`
+	Plates        []string               `protobuf:"bytes,3,rep,name=plates,proto3" json:"plates,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *TemplateData) Reset() {
-	*x = TemplateData{}
+func (x *TemplateSelection) Reset() {
+	*x = TemplateSelection{}
 	mi := &file_resources_documents_templates_templates_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *TemplateData) String() string {
+func (x *TemplateSelection) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TemplateData) ProtoMessage() {}
+func (*TemplateSelection) ProtoMessage() {}
 
-func (x *TemplateData) ProtoReflect() protoreflect.Message {
+func (x *TemplateSelection) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_documents_templates_templates_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1127,78 +1122,54 @@ func (x *TemplateData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *TemplateData) GetActiveChar() *users.User {
+func (x *TemplateSelection) GetUserIds() []int32 {
 	if x != nil {
-		return x.ActiveChar
+		return x.UserIds
 	}
 	return nil
 }
 
-func (x *TemplateData) GetDocuments() []*documents.DocumentShort {
+func (x *TemplateSelection) GetDocumentIds() []int64 {
 	if x != nil {
-		return x.Documents
+		return x.DocumentIds
 	}
 	return nil
 }
 
-func (x *TemplateData) GetUsers() []*short.UserShort {
+func (x *TemplateSelection) GetPlates() []string {
 	if x != nil {
-		return x.Users
+		return x.Plates
 	}
 	return nil
 }
 
-func (x *TemplateData) GetVehicles() []*vehicles.Vehicle {
-	if x != nil {
-		return x.Vehicles
-	}
-	return nil
+func (x *TemplateSelection) SetUserIds(v []int32) {
+	x.UserIds = v
 }
 
-func (x *TemplateData) SetActiveChar(v *users.User) {
-	x.ActiveChar = v
+func (x *TemplateSelection) SetDocumentIds(v []int64) {
+	x.DocumentIds = v
 }
 
-func (x *TemplateData) SetDocuments(v []*documents.DocumentShort) {
-	x.Documents = v
+func (x *TemplateSelection) SetPlates(v []string) {
+	x.Plates = v
 }
 
-func (x *TemplateData) SetUsers(v []*short.UserShort) {
-	x.Users = v
-}
-
-func (x *TemplateData) SetVehicles(v []*vehicles.Vehicle) {
-	x.Vehicles = v
-}
-
-func (x *TemplateData) HasActiveChar() bool {
-	if x == nil {
-		return false
-	}
-	return x.ActiveChar != nil
-}
-
-func (x *TemplateData) ClearActiveChar() {
-	x.ActiveChar = nil
-}
-
-type TemplateData_builder struct {
+type TemplateSelection_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	ActiveChar *users.User
-	Documents  []*documents.DocumentShort
-	Users      []*short.UserShort
-	Vehicles   []*vehicles.Vehicle
+	UserIds     []int32
+	DocumentIds []int64
+	Plates      []string
 }
 
-func (b0 TemplateData_builder) Build() *TemplateData {
-	m0 := &TemplateData{}
+func (b0 TemplateSelection_builder) Build() *TemplateSelection {
+	m0 := &TemplateSelection{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.ActiveChar = b.ActiveChar
-	x.Documents = b.Documents
-	x.Users = b.Users
-	x.Vehicles = b.Vehicles
+	x.UserIds = b.UserIds
+	x.DocumentIds = b.DocumentIds
+	x.Plates = b.Plates
 	return m0
 }
 
@@ -1624,7 +1595,7 @@ var File_resources_documents_templates_templates_proto protoreflect.FileDescript
 
 const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\n" +
-	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/documents.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xda\t\n" +
+	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xda\t\n" +
 	"\bTemplate\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -1703,13 +1674,11 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\x03max\x18\x03 \x01(\x05H\x02R\x03max\x88\x01\x01B\v\n" +
 	"\t_requiredB\x06\n" +
 	"\x04_minB\x06\n" +
-	"\x04_max\"\xf9\x01\n" +
-	"\fTemplateData\x126\n" +
-	"\vactive_char\x18\x01 \x01(\v2\x15.resources.users.UserR\n" +
-	"activeChar\x12@\n" +
-	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortR\tdocuments\x126\n" +
-	"\x05users\x18\x03 \x03(\v2 .resources.users.short.UserShortR\x05users\x127\n" +
-	"\bvehicles\x18\x04 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"\xe2\x01\n" +
+	"\x04_max\"i\n" +
+	"\x11TemplateSelection\x12\x19\n" +
+	"\buser_ids\x18\x01 \x03(\x05R\auserIds\x12!\n" +
+	"\fdocument_ids\x18\x02 \x03(\x03R\vdocumentIds\x12\x16\n" +
+	"\x06plates\x18\x03 \x03(\tR\x06plates\"\xe2\x01\n" +
 	"\x10TemplateApproval\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12R\n" +
 	"\x06policy\x18\x02 \x01(\v25.resources.documents.templates.TemplateApprovalPolicyH\x00R\x06policy\x88\x01\x01\x12M\n" +
@@ -1743,7 +1712,7 @@ var file_resources_documents_templates_templates_proto_goTypes = []any{
 	(*TemplateSchema)(nil),           // 2: resources.documents.templates.TemplateSchema
 	(*TemplateRequirements)(nil),     // 3: resources.documents.templates.TemplateRequirements
 	(*ObjectSpecs)(nil),              // 4: resources.documents.templates.ObjectSpecs
-	(*TemplateData)(nil),             // 5: resources.documents.templates.TemplateData
+	(*TemplateSelection)(nil),        // 5: resources.documents.templates.TemplateSelection
 	(*TemplateApproval)(nil),         // 6: resources.documents.templates.TemplateApproval
 	(*TemplateApprovalPolicy)(nil),   // 7: resources.documents.templates.TemplateApprovalPolicy
 	(*TemplateApprovalTaskSeed)(nil), // 8: resources.documents.templates.TemplateApprovalTaskSeed
@@ -1752,12 +1721,8 @@ var file_resources_documents_templates_templates_proto_goTypes = []any{
 	(*access.JobAccess)(nil),         // 11: resources.access.JobAccess
 	(*access.Access)(nil),            // 12: resources.access.Access
 	(*workflow.Workflow)(nil),        // 13: resources.documents.workflow.Workflow
-	(*users.User)(nil),               // 14: resources.users.User
-	(*documents.DocumentShort)(nil),  // 15: resources.documents.DocumentShort
-	(*short.UserShort)(nil),          // 16: resources.users.short.UserShort
-	(*vehicles.Vehicle)(nil),         // 17: resources.vehicles.Vehicle
-	(approval.ApprovalRuleKind)(0),   // 18: resources.documents.approval.ApprovalRuleKind
-	(approval.OnEditBehavior)(0),     // 19: resources.documents.approval.OnEditBehavior
+	(approval.ApprovalRuleKind)(0),   // 14: resources.documents.approval.ApprovalRuleKind
+	(approval.OnEditBehavior)(0),     // 15: resources.documents.approval.OnEditBehavior
 }
 var file_resources_documents_templates_templates_proto_depIdxs = []int32{
 	9,  // 0: resources.documents.templates.Template.created_at:type_name -> resources.timestamp.Timestamp
@@ -1779,19 +1744,15 @@ var file_resources_documents_templates_templates_proto_depIdxs = []int32{
 	4,  // 16: resources.documents.templates.TemplateRequirements.documents:type_name -> resources.documents.templates.ObjectSpecs
 	4,  // 17: resources.documents.templates.TemplateRequirements.users:type_name -> resources.documents.templates.ObjectSpecs
 	4,  // 18: resources.documents.templates.TemplateRequirements.vehicles:type_name -> resources.documents.templates.ObjectSpecs
-	14, // 19: resources.documents.templates.TemplateData.active_char:type_name -> resources.users.User
-	15, // 20: resources.documents.templates.TemplateData.documents:type_name -> resources.documents.DocumentShort
-	16, // 21: resources.documents.templates.TemplateData.users:type_name -> resources.users.short.UserShort
-	17, // 22: resources.documents.templates.TemplateData.vehicles:type_name -> resources.vehicles.Vehicle
-	7,  // 23: resources.documents.templates.TemplateApproval.policy:type_name -> resources.documents.templates.TemplateApprovalPolicy
-	8,  // 24: resources.documents.templates.TemplateApproval.tasks:type_name -> resources.documents.templates.TemplateApprovalTaskSeed
-	18, // 25: resources.documents.templates.TemplateApprovalPolicy.rule_kind:type_name -> resources.documents.approval.ApprovalRuleKind
-	19, // 26: resources.documents.templates.TemplateApprovalPolicy.on_edit_behavior:type_name -> resources.documents.approval.OnEditBehavior
-	27, // [27:27] is the sub-list for method output_type
-	27, // [27:27] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	7,  // 19: resources.documents.templates.TemplateApproval.policy:type_name -> resources.documents.templates.TemplateApprovalPolicy
+	8,  // 20: resources.documents.templates.TemplateApproval.tasks:type_name -> resources.documents.templates.TemplateApprovalTaskSeed
+	14, // 21: resources.documents.templates.TemplateApprovalPolicy.rule_kind:type_name -> resources.documents.approval.ApprovalRuleKind
+	15, // 22: resources.documents.templates.TemplateApprovalPolicy.on_edit_behavior:type_name -> resources.documents.approval.OnEditBehavior
+	23, // [23:23] is the sub-list for method output_type
+	23, // [23:23] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_templates_templates_proto_init() }

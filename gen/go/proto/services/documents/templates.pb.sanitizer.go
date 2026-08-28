@@ -29,9 +29,9 @@ func (m *GetTemplateRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Data
-	if m.Data != nil {
-		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
+	// Field: Selection
+	if m.Selection != nil {
+		if v, ok := any(m.GetSelection()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -9,20 +9,34 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	resourcesdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
+	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
+	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
-	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
+	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
+	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
+	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
+	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var templateSubjectAccessOptions = access.SubjectAccessOptions{
@@ -156,20 +170,17 @@ func (s *Server) GetTemplate(
 		if err := s.sanitizeTemplateAccess(resp.GetTemplate(), true, true); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-	} else if req.Render != nil && req.GetRender() && req.GetData() != nil {
+	} else if req.Render != nil && req.GetRender() && req.GetSelection() != nil {
+		data, err := s.resolveTemplateData(ctx, resp.GetTemplate(), req.GetSelection(), userInfo)
+		if err != nil {
+			return nil, templateResolutionError(err)
+		}
 		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(
 			resp.GetTemplate(),
-			req.GetData(),
+			data,
 		)
 		if err != nil {
-			if s.ps.Can(
-				userInfo,
-				permsdocuments.TemplatesService.CreateTemplate.Perm,
-			) {
-				return nil, err
-			} else {
-				return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateFailed)
-			}
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateInvalid)
 		}
 
 		resp.Rendered = true
@@ -180,9 +191,225 @@ func (s *Server) GetTemplate(
 	return resp, nil
 }
 
+type resolvedTemplateData struct {
+	ActiveChar *jobscolleagues.Colleague
+	Documents  []*resourcesdocuments.DocumentShort
+	Users      []*users.User
+	Vehicles   []*resourcesvehicles.Vehicle
+}
+
+func (s *Server) resolveTemplateData(
+	ctx context.Context,
+	tmpl *documentstemplates.Template,
+	selection *documentstemplates.TemplateSelection,
+	userInfo *userinfo.UserInfo,
+) (*resolvedTemplateData, error) {
+	activeChar, err := usersstore.RetrieveColleagueById(ctx, s.db, s.enricher, userInfo.GetUserId())
+	if err != nil {
+		return nil, err
+	}
+	if len(activeChar) == 0 || activeChar[0] == nil {
+		return nil, errors.New("active character could not be resolved")
+	}
+
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	data := &resolvedTemplateData{
+		ActiveChar: activeChar[0],
+	}
+	if selection == nil {
+		return data, validateTemplateRequirements(tmpl, data)
+	}
+
+	if len(selection.GetUserIds()) > 0 {
+		pageSize := int64(len(selection.GetUserIds()))
+		citizensReq := &pbcitizens.ListCitizensRequest{Pagination: &database.PaginationRequest{}}
+		citizensReq.GetPagination().SetPageSize(pageSize)
+
+		listOptions := citizensListOptions(fields)
+		listOptions.UserIDs = selection.GetUserIds()
+
+		usersResp, err := s.citizensStore.ListCitizens(ctx, citizensReq, listOptions)
+		if err != nil {
+			return nil, err
+		}
+
+		byID := make(map[int32]*users.User, len(usersResp.GetUsers()))
+		for _, user := range usersResp.GetUsers() {
+			s.enricher.EnrichJobInfoSafe(userInfo, user)
+			byID[user.GetUserId()] = user
+		}
+		seen := make(map[int32]struct{}, len(selection.GetUserIds()))
+		for _, id := range selection.GetUserIds() {
+			if _, ok := seen[id]; ok {
+				continue
+			}
+			seen[id] = struct{}{}
+			if user := byID[id]; user != nil {
+				data.Users = append(data.Users, user)
+			}
+		}
+	}
+
+	if len(selection.GetDocumentIds()) > 0 {
+		docs, err := s.store.List(ctx, documentsstore.ListQuery{
+			DocumentIDs: selection.GetDocumentIds(),
+			Limit:       int64(len(selection.GetDocumentIds())),
+			IncludePhoneNumber: fields.Contains(
+				permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+			),
+			UserInfo: userInfo,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		byID := make(map[int64]*resourcesdocuments.DocumentShort, len(docs))
+		for _, doc := range docs {
+			byID[doc.GetId()] = doc
+		}
+		seen := make(map[int64]struct{}, len(selection.GetDocumentIds()))
+		for _, id := range selection.GetDocumentIds() {
+			if _, ok := seen[id]; ok {
+				continue
+			}
+			seen[id] = struct{}{}
+			if doc := byID[id]; doc != nil {
+				data.Documents = append(data.Documents, doc)
+			}
+		}
+	}
+
+	vehicleFields, err := permsvehicles.VehiclesService.ListVehicles.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, err
+	}
+	if len(selection.GetPlates()) > 0 {
+		vehicles, err := s.vehiclesStore.List(ctx, vehiclesstore.ListQuery{
+			Plates: selection.GetPlates(),
+			Limit:  int64(len(selection.GetPlates())),
+			IncludePhoneNumber: fields.Contains(
+				permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+			),
+			IncludePropsUpdated: vehicleFields.Len() > 0,
+			IncludeWantedFields: vehicleFields.Contains(
+				permsvehicles.VehiclesServiceListVehiclesFieldsPermValueWanted,
+			) ||
+				userInfo.GetJobAdmin(),
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		byPlate := make(map[string]*resourcesvehicles.Vehicle, len(vehicles))
+		for _, vehicle := range vehicles {
+			byPlate[vehicle.GetPlate()] = vehicle
+		}
+		seen := make(map[string]struct{}, len(selection.GetPlates()))
+		for _, plate := range selection.GetPlates() {
+			if _, ok := seen[plate]; ok {
+				continue
+			}
+			seen[plate] = struct{}{}
+			if vehicle := byPlate[plate]; vehicle != nil {
+				data.Vehicles = append(data.Vehicles, vehicle)
+			}
+		}
+	}
+
+	return data, validateTemplateRequirements(tmpl, data)
+}
+
+func citizensListOptions(
+	fields *perms.TypedStringList[permscitizens.CitizensServiceListCitizensFieldsPermValue],
+) citizensstore.ListCitizensOptions {
+	return citizensstore.ListCitizensOptions{
+		IncludePhoneNumber: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+		),
+		IncludeWanted: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted,
+		),
+		IncludeJob: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob,
+		),
+		IncludeTrafficInfractionPoints: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints,
+		),
+		IncludeOpenFines: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines,
+		),
+		IncludeBloodType: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType,
+		),
+		IncludeMugshot: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot,
+		),
+		IncludeEmail: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail,
+		),
+	}
+}
+
+func validateTemplateRequirements(
+	tmpl *documentstemplates.Template,
+	data *resolvedTemplateData,
+) error {
+	reqs := tmpl.GetSchema().GetRequirements()
+	checks := []struct {
+		spec  *documentstemplates.ObjectSpecs
+		kind  string
+		count int
+	}{
+		{reqs.GetUsers(), "users", len(data.Users)},
+		{reqs.GetDocuments(), "documents", len(data.Documents)},
+		{reqs.GetVehicles(), "vehicles", len(data.Vehicles)},
+	}
+	for _, check := range checks {
+		if check.spec == nil {
+			continue
+		}
+		if check.spec.GetRequired() && check.count == 0 {
+			return errorsdocuments.ErrTemplateRequirementsNotMet(map[string]any{
+				"kind":      check.kind,
+				"required":  1,
+				"available": check.count,
+			})
+		}
+		if check.spec.GetMin() > 0 && int64(check.count) < int64(check.spec.GetMin()) {
+			return errorsdocuments.ErrTemplateRequirementsNotMet(map[string]any{
+				"kind":      check.kind,
+				"required":  check.spec.GetMin(),
+				"available": check.count,
+			})
+		}
+		if check.spec.GetMax() > 0 && int64(check.count) > int64(check.spec.GetMax()) {
+			return errorsdocuments.ErrTemplateRequirementsExceeded(map[string]any{
+				"kind":      check.kind,
+				"required":  check.spec.GetMax(),
+				"available": check.count,
+			})
+		}
+	}
+	return nil
+}
+
+func templateResolutionError(err error) error {
+	if err == nil {
+		return nil
+	}
+	if status.Code(err) == codes.InvalidArgument {
+		return err
+	}
+	return errswrap.NewError(err, errorsdocuments.ErrTemplateDataUnavailable)
+}
+
 func (s *Server) renderTemplate(
 	docTmpl *documentstemplates.Template,
-	data *documentstemplates.TemplateData,
+	data *resolvedTemplateData,
 ) (string, string, string, error) {
 	// Render Title template
 	titleTpl, err := template.

@@ -138,11 +138,19 @@ message ObjectSpecs {
   optional int32 max = 3;
 }
 
-message TemplateData {
-  resources.users.User active_char = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.DocumentShort documents = 2 [(buf.validate.field).repeated.max_items = 12];
-  repeated resources.users.short.UserShort users = 3 [(buf.validate.field).repeated.max_items = 12];
-  repeated resources.vehicles.Vehicle vehicles = 4 [(buf.validate.field).repeated.max_items = 12];
+message TemplateSelection {
+  repeated int32 user_ids = 1 [(buf.validate.field).repeated = {
+    max_items: 12
+    items: {int32: {gt: 0}}
+  }];
+  repeated int64 document_ids = 2 [(buf.validate.field).repeated = {
+    max_items: 12
+    items: {int64: {gt: 0}}
+  }];
+  repeated string plates = 3 [(buf.validate.field).repeated = {
+    max_items: 12
+    items: {string: {min_len: 1, max_len: 32}}
+  }];
 }
 
 message TemplateApproval {
