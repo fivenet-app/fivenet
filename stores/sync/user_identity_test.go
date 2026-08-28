@@ -49,6 +49,8 @@ func TestHandleUsersDataSkipsInvalidIdentity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			store, mock := newTestStore(t)
 
 			rows, err := store.handleUsersData(t.Context(), []*syncdata.DataUser{tt.user})
@@ -60,6 +62,8 @@ func TestHandleUsersDataSkipsInvalidIdentity(t *testing.T) {
 }
 
 func TestReconcileUserRowInsertsExternalIdentity(t *testing.T) {
+	t.Parallel()
+
 	store, mock := newTestStore(t)
 	user := testSyncUser()
 
@@ -84,6 +88,8 @@ func TestReconcileUserRowInsertsExternalIdentity(t *testing.T) {
 }
 
 func TestReconcileUserRowUpdatesExternalIDMatch(t *testing.T) {
+	t.Parallel()
+
 	store, mock := newTestStore(t)
 	user := testSyncUser()
 
@@ -108,6 +114,8 @@ func TestReconcileUserRowUpdatesExternalIDMatch(t *testing.T) {
 }
 
 func TestReconcileUserRowRekeysIdentifierMatch(t *testing.T) {
+	t.Parallel()
+
 	store, mock := newTestStore(t)
 	user := testSyncUser()
 
@@ -132,6 +140,8 @@ func TestReconcileUserRowRekeysIdentifierMatch(t *testing.T) {
 }
 
 func TestReconcileUserRowExternalIDWinsIdentityConflict(t *testing.T) {
+	t.Parallel()
+
 	store, mock := newTestStore(t)
 	user := testSyncUser()
 
