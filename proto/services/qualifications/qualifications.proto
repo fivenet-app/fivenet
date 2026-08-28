@@ -9,7 +9,6 @@ import "resources/access/access.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
-import "resources/qualifications/access/access.proto";
 import "resources/qualifications/exam/exam.proto";
 import "resources/qualifications/qualifications.proto";
 
@@ -88,6 +87,7 @@ message ListQualificationRequestsRequest {
     (buf.validate.field).repeated.max_items = 5,
     (buf.validate.field).repeated.items.int32.gt = 0
   ];
+  optional string search = 6 [(buf.validate.field).string.max_len = 64];
 }
 
 message ListQualificationRequestsResponse {
@@ -122,6 +122,7 @@ message ListQualificationsResultsRequest {
     (buf.validate.field).repeated.max_items = 5,
     (buf.validate.field).repeated.items.int32.gt = 0
   ];
+  optional string search = 6 [(buf.validate.field).string.max_len = 64];
 }
 
 message ListQualificationsResultsResponse {

@@ -66,7 +66,7 @@ const links = computed<ButtonProps[]>(() =>
                                 class="rounded-full"
                                 color="neutral"
                                 variant="outline"
-                                :to="`https://github.com/fivenet-app/fivenet/releases/tag/${appVersion}`"
+                                :to="`https://fivenet.app/changelog#${appVersion}`"
                                 external
                                 :label="$t('pages.index.whats_new_in', { version: appVersion })"
                                 trailing-icon="i-mdi-arrow-right"

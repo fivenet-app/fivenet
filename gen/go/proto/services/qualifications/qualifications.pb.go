@@ -1004,6 +1004,7 @@ type ListQualificationRequestsRequest struct {
 	QualificationId *int64                         `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3,oneof" json:"qualification_id,omitempty"`
 	Status          []qualifications.RequestStatus `protobuf:"varint,4,rep,packed,name=status,proto3,enum=resources.qualifications.RequestStatus" json:"status,omitempty"`
 	UserIds         []int32                        `protobuf:"varint,5,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	Search          *string                        `protobuf:"bytes,6,opt,name=search,proto3,oneof" json:"search,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1068,6 +1069,13 @@ func (x *ListQualificationRequestsRequest) GetUserIds() []int32 {
 	return nil
 }
 
+func (x *ListQualificationRequestsRequest) GetSearch() string {
+	if x != nil && x.Search != nil {
+		return *x.Search
+	}
+	return ""
+}
+
 func (x *ListQualificationRequestsRequest) SetPagination(v *database.PaginationRequest) {
 	x.Pagination = v
 }
@@ -1086,6 +1094,10 @@ func (x *ListQualificationRequestsRequest) SetStatus(v []qualifications.RequestS
 
 func (x *ListQualificationRequestsRequest) SetUserIds(v []int32) {
 	x.UserIds = v
+}
+
+func (x *ListQualificationRequestsRequest) SetSearch(v string) {
+	x.Search = &v
 }
 
 func (x *ListQualificationRequestsRequest) HasPagination() bool {
@@ -1109,6 +1121,13 @@ func (x *ListQualificationRequestsRequest) HasQualificationId() bool {
 	return x.QualificationId != nil
 }
 
+func (x *ListQualificationRequestsRequest) HasSearch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Search != nil
+}
+
 func (x *ListQualificationRequestsRequest) ClearPagination() {
 	x.Pagination = nil
 }
@@ -1121,6 +1140,10 @@ func (x *ListQualificationRequestsRequest) ClearQualificationId() {
 	x.QualificationId = nil
 }
 
+func (x *ListQualificationRequestsRequest) ClearSearch() {
+	x.Search = nil
+}
+
 type ListQualificationRequestsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -1130,6 +1153,7 @@ type ListQualificationRequestsRequest_builder struct {
 	QualificationId *int64
 	Status          []qualifications.RequestStatus
 	UserIds         []int32
+	Search          *string
 }
 
 func (b0 ListQualificationRequestsRequest_builder) Build() *ListQualificationRequestsRequest {
@@ -1141,6 +1165,7 @@ func (b0 ListQualificationRequestsRequest_builder) Build() *ListQualificationReq
 	x.QualificationId = b.QualificationId
 	x.Status = b.Status
 	x.UserIds = b.UserIds
+	x.Search = b.Search
 	return m0
 }
 
@@ -1484,6 +1509,7 @@ type ListQualificationsResultsRequest struct {
 	QualificationId *int64                        `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3,oneof" json:"qualification_id,omitempty"`
 	Status          []qualifications.ResultStatus `protobuf:"varint,4,rep,packed,name=status,proto3,enum=resources.qualifications.ResultStatus" json:"status,omitempty"`
 	UserIds         []int32                       `protobuf:"varint,5,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	Search          *string                       `protobuf:"bytes,6,opt,name=search,proto3,oneof" json:"search,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1548,6 +1574,13 @@ func (x *ListQualificationsResultsRequest) GetUserIds() []int32 {
 	return nil
 }
 
+func (x *ListQualificationsResultsRequest) GetSearch() string {
+	if x != nil && x.Search != nil {
+		return *x.Search
+	}
+	return ""
+}
+
 func (x *ListQualificationsResultsRequest) SetPagination(v *database.PaginationRequest) {
 	x.Pagination = v
 }
@@ -1566,6 +1599,10 @@ func (x *ListQualificationsResultsRequest) SetStatus(v []qualifications.ResultSt
 
 func (x *ListQualificationsResultsRequest) SetUserIds(v []int32) {
 	x.UserIds = v
+}
+
+func (x *ListQualificationsResultsRequest) SetSearch(v string) {
+	x.Search = &v
 }
 
 func (x *ListQualificationsResultsRequest) HasPagination() bool {
@@ -1589,6 +1626,13 @@ func (x *ListQualificationsResultsRequest) HasQualificationId() bool {
 	return x.QualificationId != nil
 }
 
+func (x *ListQualificationsResultsRequest) HasSearch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Search != nil
+}
+
 func (x *ListQualificationsResultsRequest) ClearPagination() {
 	x.Pagination = nil
 }
@@ -1601,6 +1645,10 @@ func (x *ListQualificationsResultsRequest) ClearQualificationId() {
 	x.QualificationId = nil
 }
 
+func (x *ListQualificationsResultsRequest) ClearSearch() {
+	x.Search = nil
+}
+
 type ListQualificationsResultsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -1610,6 +1658,7 @@ type ListQualificationsResultsRequest_builder struct {
 	QualificationId *int64
 	Status          []qualifications.ResultStatus
 	UserIds         []int32
+	Search          *string
 }
 
 func (b0 ListQualificationsResultsRequest_builder) Build() *ListQualificationsResultsRequest {
@@ -1621,6 +1670,7 @@ func (b0 ListQualificationsResultsRequest_builder) Build() *ListQualificationsRe
 	x.QualificationId = b.QualificationId
 	x.Status = b.Status
 	x.UserIds = b.UserIds
+	x.Search = b.Search
 	return m0
 }
 
@@ -2012,7 +2062,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x1dSetQualificationAccessRequest\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x120\n" +
 	"\x06access\x18\x02 \x01(\v2\x18.resources.access.AccessR\x06access\" \n" +
-	"\x1eSetQualificationAccessResponse\"\xd4\x02\n" +
+	"\x1eSetQualificationAccessResponse\"\xfc\x02\n" +
 	" ListQualificationRequestsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -2020,9 +2070,11 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12.\n" +
 	"\x10qualification_id\x18\x03 \x01(\x03H\x01R\x0fqualificationId\x88\x01\x01\x12?\n" +
 	"\x06status\x18\x04 \x03(\x0e2'.resources.qualifications.RequestStatusR\x06status\x12\x19\n" +
-	"\buser_ids\x18\x05 \x03(\x05R\auserIdsB\a\n" +
+	"\buser_ids\x18\x05 \x03(\x05R\auserIds\x12\x1b\n" +
+	"\x06search\x18\x06 \x01(\tH\x02R\x06search\x88\x01\x01B\a\n" +
 	"\x05_sortB\x13\n" +
-	"\x11_qualification_id\"\xc4\x01\n" +
+	"\x11_qualification_idB\t\n" +
+	"\a_search\"\xc4\x01\n" +
 	"!ListQualificationRequestsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -2035,7 +2087,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x1dDeleteQualificationReqRequest\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\" \n" +
-	"\x1eDeleteQualificationReqResponse\"\xd3\x02\n" +
+	"\x1eDeleteQualificationReqResponse\"\xfb\x02\n" +
 	" ListQualificationsResultsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -2043,9 +2095,11 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12.\n" +
 	"\x10qualification_id\x18\x03 \x01(\x03H\x01R\x0fqualificationId\x88\x01\x01\x12>\n" +
 	"\x06status\x18\x04 \x03(\x0e2&.resources.qualifications.ResultStatusR\x06status\x12\x19\n" +
-	"\buser_ids\x18\x05 \x03(\x05R\auserIdsB\a\n" +
+	"\buser_ids\x18\x05 \x03(\x05R\auserIds\x12\x1b\n" +
+	"\x06search\x18\x06 \x01(\tH\x02R\x06search\x88\x01\x01B\a\n" +
 	"\x05_sortB\x13\n" +
-	"\x11_qualification_id\"\xc1\x01\n" +
+	"\x11_qualification_idB\t\n" +
+	"\a_search\"\xc1\x01\n" +
 	"!ListQualificationsResultsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +

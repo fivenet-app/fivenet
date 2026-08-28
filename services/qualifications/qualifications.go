@@ -225,17 +225,35 @@ func (s *Server) CreateQualification(
 
 	job := s.enricher.GetJobByName(userInfo.GetJob())
 	if job != nil {
+		// The creator must retain access even when the job's highest grade is
+		// above the creator's grade. NormalizeAccess only applies its fallback
+		// when the complete access list is empty.
+		creatorAccess := &qualificationsaccess.QualificationJobAccess{
+			TargetId:     lastId,
+			Job:          job.GetName(),
+			MinimumGrade: userInfo.GetJobGrade(),
+			Access:       int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+		}
+		jobAccess = append(jobAccess, creatorAccess)
+
 		highestGrade := int32(-1)
 		if len(job.GetGrades()) > 0 {
 			highestGrade = job.GetGrades()[len(job.GetGrades())-1].GetGrade()
 		}
 
-		jobAccess = append(jobAccess, &qualificationsaccess.QualificationJobAccess{
-			TargetId:     lastId,
-			Job:          job.GetName(),
-			MinimumGrade: highestGrade,
-			Access:       int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
-		})
+		if highestGrade >= 0 {
+			if highestGrade == userInfo.GetJobGrade() {
+				creatorAccess.Required = new(true)
+			} else {
+				jobAccess = append(jobAccess, &qualificationsaccess.QualificationJobAccess{
+					TargetId:     lastId,
+					Job:          job.GetName(),
+					MinimumGrade: highestGrade,
+					Access:       int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+					Required:     new(true),
+				})
+			}
+		}
 	}
 
 	normalizedAccess, err := normalizeQualificationJobAccess(userInfo, jobAccess)

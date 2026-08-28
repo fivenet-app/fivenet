@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
+import type { Form } from '@nuxt/ui';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -23,6 +24,7 @@ const props = withDefaults(
 );
 
 const _schema = z.object({
+    search: z.string().max(64).optional(),
     sorting: z
         .object({
             columns: z
@@ -42,38 +44,34 @@ const _schema = z.object({
 
 type Schema = z.output<typeof _schema>;
 
-const query = reactive<Schema>({
-    sorting: {
-        columns: [
-            {
-                id: 'abbreviation',
-                desc: true,
-            },
-        ],
-    },
-    page: 1,
-});
+const query = useSearchForm('qualifications_requests_list', _schema);
+
+const formRef = useTemplateRef<Form<typeof _schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof _schema>(query, formRef);
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    () => `qualifications-requests-${JSON.stringify(query.sorting)}-${query.page}-${props.qualificationId}`,
-    () => listQualificationRequests(props.qualificationId),
+    () =>
+        `qualifications-requests-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.search}-${props.qualificationId}`,
+    () => listQualificationRequests(props.qualificationId, undefined, validatedQuery.value),
 );
 
 async function listQualificationRequests(
     qualificationId?: number,
     status?: RequestStatus[],
+    values: Schema = validatedQuery.value,
 ): Promise<ListQualificationRequestsResponse> {
     try {
         const call = qualificationsQualificationsClient.listQualificationRequests({
             pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
-            sort: query.sorting,
+            sort: values.sorting,
             qualificationId: qualificationId,
             status: status ?? [],
             userIds: [],
+            search: values.search,
         });
         const { response } = await call;
 
@@ -88,12 +86,32 @@ async function listQualificationRequests(
 <template>
     <UCard :ui="{ body: 'p-0 sm:p-0', footer: 'p-0 sm:px-2' }">
         <template #header>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-1">
                 <h3 class="text-2xl leading-6 font-semibold">
                     {{ $t('components.qualifications.user_requests') }}
                 </h3>
 
-                <SortButton v-model="query.sorting" :fields="[{ label: $t('common.id'), value: 'id' }]" />
+                <UForm
+                    ref="formRef"
+                    class="flex items-center gap-2"
+                    :schema="_schema"
+                    :state="query"
+                    @submit="commitValidatedQuery"
+                >
+                    <UFormField name="search">
+                        <UInput
+                            v-model="query.search"
+                            type="text"
+                            name="search"
+                            :placeholder="$t('common.search')"
+                            leading-icon="i-mdi-search"
+                        />
+                    </UFormField>
+
+                    <UFormField>
+                        <SortButton v-model="query.sorting" :fields="[{ label: $t('common.id'), value: 'id' }]" />
+                    </UFormField>
+                </UForm>
             </div>
         </template>
 

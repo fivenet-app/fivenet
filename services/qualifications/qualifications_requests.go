@@ -67,6 +67,7 @@ func (s *Server) ListQualificationRequests(
 			QualificationID: req.GetQualificationId(),
 			Status:          req.GetStatus(),
 			UserIDs:         req.GetUserIds(),
+			Search:          req.GetSearch(),
 		},
 		userInfo,
 		includePhoneNumber,

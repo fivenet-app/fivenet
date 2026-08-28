@@ -30,6 +30,7 @@ type ListQualificationRequestsOptions struct {
 	QualificationID int64
 	Status          []resqualifications.RequestStatus
 	UserIDs         []int32
+	Search          string
 }
 
 type ListQualificationsResultsOptions struct {
@@ -38,6 +39,7 @@ type ListQualificationsResultsOptions struct {
 	QualificationID int64
 	Status          []resqualifications.ResultStatus
 	UserIDs         []int32
+	Search          string
 }
 
 type IStore interface {

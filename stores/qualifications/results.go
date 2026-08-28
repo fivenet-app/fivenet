@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	objectaccess "github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -38,6 +39,11 @@ func (s *Store) ListQualificationsResults(
 		condition = condition.AND(
 			tQualiResult.QualificationID.EQ(mysql.Int64(opts.QualificationID)),
 		)
+	} else if search := dbutils.PrepareForLikeSearch(opts.Search); search != "" {
+		condition = condition.AND(mysql.OR(
+			tQuali.Abbreviation.LIKE(mysql.String(search)),
+			tQuali.Title.LIKE(mysql.String(search)),
+		))
 	}
 
 	countColumn := mysql.Expression(tQualiResult.QualificationID)

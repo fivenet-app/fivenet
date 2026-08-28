@@ -146,6 +146,11 @@ func (m *ListQualificationRequestsRequest) Sanitize() error {
 		}
 	}
 
+	// Field: Search
+	if m.Search != nil {
+		*m.Search = htmlsanitizer.SanitizeAndUnescape(*m.Search)
+	}
+
 	// Field: Sort
 	if m.Sort != nil {
 		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
@@ -278,6 +283,11 @@ func (m *ListQualificationsResultsRequest) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Search
+	if m.Search != nil {
+		*m.Search = htmlsanitizer.SanitizeAndUnescape(*m.Search)
 	}
 
 	// Field: Sort

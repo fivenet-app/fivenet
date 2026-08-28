@@ -27,18 +27,12 @@ var qualificationSubjectAccessOptions = access.SubjectAccessOptions{
 	},
 }
 
-func qualificationJobAccess(
-	jobs []*qualificationsaccess.QualificationJobAccess,
-) *resourcesaccess.Access {
-	return &resourcesaccess.Access{Jobs: jobs}
-}
-
 func normalizeQualificationJobAccess(
 	userInfo *userinfo.UserInfo,
 	jobs []*qualificationsaccess.QualificationJobAccess,
 ) (*resourcesaccess.Access, error) {
 	return access.NormalizeAccess(
-		qualificationJobAccess(jobs),
+		&resourcesaccess.Access{Jobs: jobs},
 		nil,
 		&resourcesaccess.Access{
 			Jobs: []*resourcesaccess.JobAccess{{

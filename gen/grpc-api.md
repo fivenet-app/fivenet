@@ -13400,6 +13400,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `qualification_id` | [int64](#int64) | optional | Search params |
 | `status` | [resources.qualifications.RequestStatus](#resourcesqualificationsRequestStatus) | repeated |  |
 | `user_ids` | [int32](#int32) | repeated |  |
+| `search` | [string](#string) | optional |  |
 
 
 
@@ -13453,6 +13454,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `qualification_id` | [int64](#int64) | optional | Search params |
 | `status` | [resources.qualifications.ResultStatus](#resourcesqualificationsResultStatus) | repeated |  |
 | `user_ids` | [int32](#int32) | repeated |  |
+| `search` | [string](#string) | optional |  |
 
 
 
