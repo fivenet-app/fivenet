@@ -321,7 +321,7 @@ func (s *Server) CreateDocument(
 		var tplContent string
 		resolvedData, err = s.resolveTemplateData(ctx, tmpl, req.GetTemplateSelection(), userInfo)
 		if err != nil {
-			return nil, templateResolutionError(err)
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 		}
 		docTitle, docState, tplContent, err = s.renderTemplate(tmpl, resolvedData)
 		if err != nil {

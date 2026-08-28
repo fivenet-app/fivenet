@@ -1,7 +1,7 @@
 import type { RpcError } from '#imports';
 import { useAuthStore } from '~/stores/auth';
 import type { Notification } from '~/types/notifications';
-import { isTranslatedError, parseErrorMessage } from '~/utils/errors';
+import { isTranslatedError, localizeTemplateErrorParameters, parseErrorMessage } from '~/utils/errors';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const logger = useLogger('📡 GRPC');
@@ -102,11 +102,17 @@ function applyTranslatedError(notification: Notification, message: string): void
     }
 
     const parsed = parseErrorMessage(message);
-    if (parsed?.title) {
-        notification.title = parsed.title;
+    if (!parsed) {
+        return;
     }
-    if (parsed?.content) {
-        notification.description = parsed.content;
+
+    const localized = localizeTemplateErrorParameters(parsed, (key) => useNuxtApp().$i18n.t(key));
+
+    if (localized.title) {
+        notification.title = localized.title;
+    }
+    if (localized.content) {
+        notification.description = localized.content;
     }
 }
 

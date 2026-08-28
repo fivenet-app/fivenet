@@ -6,15 +6,10 @@ import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/access/access.proto";
-import "resources/documents/access/access.proto";
 import "resources/documents/approval/approval.proto";
 import "resources/documents/category/category.proto";
-import "resources/documents/documents.proto";
 import "resources/documents/workflow/workflow.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/short/user.proto";
-import "resources/users/user.proto";
-import "resources/vehicles/vehicles.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates;documentstemplates";
@@ -141,15 +136,24 @@ message ObjectSpecs {
 message TemplateSelection {
   repeated int32 user_ids = 1 [(buf.validate.field).repeated = {
     max_items: 12
-    items: {int32: {gt: 0}}
+    items: {
+      int32: {gt: 0}
+    }
   }];
   repeated int64 document_ids = 2 [(buf.validate.field).repeated = {
     max_items: 12
-    items: {int64: {gt: 0}}
+    items: {
+      int64: {gt: 0}
+    }
   }];
   repeated string plates = 3 [(buf.validate.field).repeated = {
     max_items: 12
-    items: {string: {min_len: 1, max_len: 32}}
+    items: {
+      string: {
+        min_len: 1
+        max_len: 32
+      }
+    }
   }];
 }
 

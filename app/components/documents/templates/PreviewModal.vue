@@ -3,7 +3,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
-import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
 import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import type { Template } from '~~/gen/ts/resources/documents/templates/templates';
@@ -16,10 +15,7 @@ defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
-
-const { activeChar } = storeToRefs(authStore);
 
 const logger = useLogger('📃 Doc Templates');
 
@@ -34,13 +30,12 @@ const {
 
 async function getTemplate(): Promise<Template> {
     try {
-        const data = clipboardStore.getTemplateData();
-        data.activeChar = activeChar.value!;
-        logger.debug('Documents: Editor - Clipboard Template Data', data);
+        const selection = clipboardStore.getTemplateSelection();
+        logger.debug('Documents: Editor - Clipboard Template Selection', selection);
 
         const call = documentsTemplatesClient.getTemplate({
             templateId: props.templateId,
-            data: data,
+            selection: selection,
             render: true,
         });
         const { response } = await call;

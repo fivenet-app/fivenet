@@ -3,7 +3,7 @@ import { stringToDate } from '~/utils/time';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import type { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates/templates';
+import type { ObjectSpecs, TemplateSelection } from '~~/gen/ts/resources/documents/templates/templates';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { User } from '~~/gen/ts/resources/users/user';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
@@ -218,12 +218,14 @@ export const useClipboardStore = defineStore(
 
         /**
          * Retrieves template data from the active stack.
-         * @returns {TemplateData} The template data containing documents, users, and vehicles.
+         * @returns {TemplateSelection} The selected document, user, and vehicle identifiers.
          */
-        const getTemplateData = (): TemplateData => ({
-            documents: activeStack.value.documents.map(getDocument),
-            users: activeStack.value.users.map(getUser),
-            vehicles: activeStack.value.vehicles.map(getVehicle),
+        const getTemplateSelection = (): TemplateSelection => ({
+            documentIds: activeStack.value.documents.map((document) => document.id),
+            userIds: activeStack.value.users
+                .map((user) => user.userId)
+                .filter((userId): userId is number => userId !== undefined && userId > 0),
+            plates: activeStack.value.vehicles.map((vehicle) => vehicle.plate),
         });
 
         /**
@@ -377,7 +379,7 @@ export const useClipboardStore = defineStore(
             vehicles,
             activeStack,
 
-            getTemplateData,
+            getTemplateSelection,
             promoteToActiveStack,
             clearActiveStack,
             addDocument,

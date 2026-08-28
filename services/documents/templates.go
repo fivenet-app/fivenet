@@ -35,9 +35,15 @@ import (
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
+
+const (
+	kindKey      = "kind"
+	requiredKey  = "required"
+	availableKey = "available"
+)
+
+var ErrTemplateActiveChar = errors.New("failed to resolve active character/user")
 
 var templateSubjectAccessOptions = access.SubjectAccessOptions{
 	BlockedAccess: int32(documentsaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
@@ -173,7 +179,7 @@ func (s *Server) GetTemplate(
 	} else if req.Render != nil && req.GetRender() && req.GetSelection() != nil {
 		data, err := s.resolveTemplateData(ctx, resp.GetTemplate(), req.GetSelection(), userInfo)
 		if err != nil {
-			return nil, templateResolutionError(err)
+			return nil, err
 		}
 		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(
 			resp.GetTemplate(),
@@ -209,12 +215,15 @@ func (s *Server) resolveTemplateData(
 		return nil, err
 	}
 	if len(activeChar) == 0 || activeChar[0] == nil {
-		return nil, errors.New("active character could not be resolved")
+		return nil, errswrap.NewError(
+			ErrTemplateActiveChar,
+			errorsdocuments.ErrTemplateRenderFailed,
+		)
 	}
 
 	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 	}
 
 	data := &resolvedTemplateData{
@@ -234,7 +243,7 @@ func (s *Server) resolveTemplateData(
 
 		usersResp, err := s.citizensStore.ListCitizens(ctx, citizensReq, listOptions)
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 		}
 
 		byID := make(map[int32]*users.User, len(usersResp.GetUsers()))
@@ -264,7 +273,7 @@ func (s *Server) resolveTemplateData(
 			UserInfo: userInfo,
 		})
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 		}
 
 		byID := make(map[int64]*resourcesdocuments.DocumentShort, len(docs))
@@ -285,7 +294,7 @@ func (s *Server) resolveTemplateData(
 
 	vehicleFields, err := permsvehicles.VehiclesService.ListVehicles.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 	}
 	if len(selection.GetPlates()) > 0 {
 		vehicles, err := s.vehiclesStore.List(ctx, vehiclesstore.ListQuery{
@@ -301,7 +310,7 @@ func (s *Server) resolveTemplateData(
 				userInfo.GetJobAdmin(),
 		})
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 		}
 
 		byPlate := make(map[string]*resourcesvehicles.Vehicle, len(vehicles))
@@ -374,37 +383,28 @@ func validateTemplateRequirements(
 		}
 		if check.spec.GetRequired() && check.count == 0 {
 			return errorsdocuments.ErrTemplateRequirementsNotMet(map[string]any{
-				"kind":      check.kind,
-				"required":  1,
-				"available": check.count,
+				kindKey:      check.kind,
+				requiredKey:  1,
+				availableKey: check.count,
 			})
 		}
 		if check.spec.GetMin() > 0 && int64(check.count) < int64(check.spec.GetMin()) {
 			return errorsdocuments.ErrTemplateRequirementsNotMet(map[string]any{
-				"kind":      check.kind,
-				"required":  check.spec.GetMin(),
-				"available": check.count,
+				kindKey:      check.kind,
+				requiredKey:  check.spec.GetMin(),
+				availableKey: check.count,
 			})
 		}
 		if check.spec.GetMax() > 0 && int64(check.count) > int64(check.spec.GetMax()) {
 			return errorsdocuments.ErrTemplateRequirementsExceeded(map[string]any{
-				"kind":      check.kind,
-				"required":  check.spec.GetMax(),
-				"available": check.count,
+				kindKey:      check.kind,
+				requiredKey:  check.spec.GetMax(),
+				availableKey: check.count,
 			})
 		}
 	}
-	return nil
-}
 
-func templateResolutionError(err error) error {
-	if err == nil {
-		return nil
-	}
-	if status.Code(err) == codes.InvalidArgument {
-		return err
-	}
-	return errswrap.NewError(err, errorsdocuments.ErrTemplateDataUnavailable)
+	return nil
 }
 
 func (s *Server) renderTemplate(
