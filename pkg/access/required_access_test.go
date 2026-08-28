@@ -63,7 +63,12 @@ func TestEnsureJobAccessEntriesMergesWithoutDuplicates(t *testing.T) {
 			Access:       2,
 		}}},
 		&resourcesaccess.JobAccess{Job: "ambulance", MinimumGrade: 4, Access: 6},
-		&resourcesaccess.JobAccess{Job: "ambulance", MinimumGrade: 16, Access: 6, Required: new(true)},
+		&resourcesaccess.JobAccess{
+			Job:          "ambulance",
+			MinimumGrade: 16,
+			Access:       6,
+			Required:     new(true),
+		},
 	)
 
 	require.Len(t, out.GetJobs(), 2)

@@ -409,7 +409,14 @@ func (s *Server) UpdatePage(
 	if grade, ok := s.enricher.GetHighestJobGrade(userInfo.GetJob()); ok {
 		highestGrade = grade
 	}
-	if _, err := s.store.UpdatePage(ctx, tx, userInfo, req.GetPage(), sortRank, highestGrade); err != nil {
+	if _, err := s.store.UpdatePage(
+		ctx,
+		tx,
+		userInfo,
+		req.GetPage(),
+		sortRank,
+		highestGrade,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 

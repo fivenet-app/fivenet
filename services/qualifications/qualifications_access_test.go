@@ -25,8 +25,16 @@ func TestQualificationCreationJobAccessIncludesCreatorAndHighestGrade(t *testing
 	require.Equal(t, int32(4), entries[0].GetMinimumGrade())
 	require.Equal(t, int32(16), entries[1].GetMinimumGrade())
 	require.True(t, entries[1].GetRequired())
-	require.Equal(t, int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT), entries[0].GetAccess())
-	require.Equal(t, int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT), entries[1].GetAccess())
+	require.Equal(
+		t,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+		entries[0].GetAccess(),
+	)
+	require.Equal(
+		t,
+		int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+		entries[1].GetAccess(),
+	)
 }
 
 func TestQualificationCreationJobAccessDoesNotDuplicateHighestGrade(t *testing.T) {

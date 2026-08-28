@@ -393,7 +393,10 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	normalizedAccess, err := s.normalizeTemplateJobAccess(userInfo, req.GetTemplate().GetJobAccess())
+	normalizedAccess, err := s.normalizeTemplateJobAccess(
+		userInfo,
+		req.GetTemplate().GetJobAccess(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}

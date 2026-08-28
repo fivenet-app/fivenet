@@ -1049,7 +1049,11 @@ func (s *UnitDB) CreateUnit(
 	return unit, nil
 }
 
-func (s *UnitDB) Update(ctx context.Context, userGrade int32, unit *centrumunits.Unit) (*centrumunits.Unit, error) {
+func (s *UnitDB) Update(
+	ctx context.Context,
+	userGrade int32,
+	unit *centrumunits.Unit,
+) (*centrumunits.Unit, error) {
 	if unit.GetAccess() == nil {
 		unit.Access = &unitsaccess.UnitAccess{}
 	}
