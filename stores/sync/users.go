@@ -49,6 +49,127 @@ type existingUser struct {
 	DataHash   uint64 `alias:"data_hash"`
 }
 
+type userIdentity struct {
+	ID         int32
+	Identifier string
+}
+
+// reconcileUserRow makes the external sync identity authoritative. The
+// external ID is the canonical row identity, while identifier is also unique.
+// If they point to different local rows, the row with the external ID wins.
+func (s *Store) reconcileUserRow(
+	ctx context.Context,
+	tx *sql.Tx,
+	user *syncdata.DataUser,
+) (int64, error) {
+	externalID := user.GetUserId()
+	identifier := user.GetIdentifier()
+
+	find := func(condition mysql.BoolExpression) (userIdentity, bool, error) {
+		stmt := tUsers.
+			SELECT(
+				tUsers.ID.AS("id"),
+				tUsers.Identifier.AS("identifier"),
+			).
+			FROM(tUsers).
+			WHERE(condition).
+			FOR(mysql.UPDATE()).
+			LIMIT(1)
+
+		var match userIdentity
+		err := stmt.QueryContext(ctx, tx, &match)
+		if errors.Is(err, sql.ErrNoRows) {
+			return userIdentity{}, false, nil
+		}
+		if err != nil {
+			return userIdentity{}, false, err
+		}
+		return match, true, nil
+	}
+
+	_, hasID, err := find(tUsers.ID.EQ(mysql.Int32(externalID)))
+	if err != nil {
+		return 0, err
+	}
+	byIdentifier, hasIdentifier, err := find(tUsers.Identifier.EQ(mysql.String(identifier)))
+	if err != nil {
+		return 0, err
+	}
+
+	if hasID && hasIdentifier && byIdentifier.ID != externalID {
+		// The external identity is authoritative. Remove the local row that
+		// currently owns the incoming identifier before re-keying the winner.
+		s.logger.Warn(
+			"removing conflicting local user during external user sync",
+			zap.Int32("external_user_id", externalID),
+			zap.Int32("removed_user_id", byIdentifier.ID),
+			zap.String("identifier", identifier),
+		)
+		if _, err := tUsers.
+			DELETE().
+			WHERE(tUsers.ID.EQ(mysql.Int32(byIdentifier.ID))).
+			LIMIT(1).
+			ExecContext(ctx, tx); err != nil {
+			return 0, fmt.Errorf(
+				"failed to remove conflicting local user %d for external user %d: %w",
+				byIdentifier.ID,
+				externalID,
+				err,
+			)
+		}
+	}
+
+	values := []any{
+		externalID,
+		utils.GetLicenseFromIdentifier(identifier),
+		identifier,
+		user.GetFirstname(),
+		dbutils.StringEmpty(user.GetLastname()),
+		user.GetDateofbirth(),
+		user.GetJob(),
+		user.GetJobGrade(),
+		user.Sex,
+		dbutils.StringEmpty(user.GetPhoneNumber()),
+		user.Height,
+		dbutils.Int32P(user.GetVisum()),
+		dbutils.Int32P(user.GetPlaytime()),
+	}
+
+	if !hasID && !hasIdentifier {
+		res, err := tUsers.
+			INSERT(
+				tUsers.ID, tUsers.License, tUsers.Identifier, tUsers.Firstname,
+				tUsers.Lastname, tUsers.Dateofbirth, tUsers.Job, tUsers.JobGrade,
+				tUsers.Sex, tUsers.PhoneNumber, tUsers.Height, tUsers.Visum, tUsers.Playtime,
+			).
+			VALUES(values[0], values[1:]...).
+			ExecContext(ctx, tx)
+		if err != nil {
+			return 0, err
+		}
+		return res.RowsAffected()
+	}
+
+	targetID := externalID
+	if !hasID {
+		targetID = byIdentifier.ID
+	}
+	res, err := tUsers.
+		UPDATE(
+			tUsers.ID, tUsers.License, tUsers.Identifier, tUsers.Firstname,
+			tUsers.Lastname, tUsers.Dateofbirth, tUsers.Job, tUsers.JobGrade,
+			tUsers.Sex, tUsers.PhoneNumber, tUsers.Height, tUsers.Visum, tUsers.Playtime,
+		).
+		SET(values[0], values[1:]...).
+		WHERE(tUsers.ID.EQ(mysql.Int32(targetID))).
+		LIMIT(1).
+		ExecContext(ctx, tx)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
 type userJobChange struct {
 	job   string
 	grade int32
@@ -92,17 +213,46 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 	if len(us) == 0 {
 		return 0, nil
 	}
+	validUsers := make([]*syncdata.DataUser, 0, len(us))
+	userIds := make([]mysql.Expression, 0, len(us))
+	for idx, user := range us {
+		if user == nil {
+			s.logger.Warn(
+				"skipping invalid synced user",
+				zap.Int("index", idx),
+				zap.String("reason", "user is nil"),
+			)
+			continue
+		}
+		if user.GetUserId() <= 0 {
+			s.logger.Warn(
+				"skipping invalid synced user",
+				zap.Int("index", idx),
+				zap.Int32("user_id", user.GetUserId()),
+				zap.String("reason", "user_id must be greater than zero"),
+			)
+			continue
+		}
+		if strings.TrimSpace(user.GetIdentifier()) == "" {
+			s.logger.Warn(
+				"skipping invalid synced user",
+				zap.Int("index", idx),
+				zap.Int32("user_id", user.GetUserId()),
+				zap.String("reason", "identifier must not be empty"),
+			)
+			continue
+		}
+		validUsers = append(validUsers, user)
+		userIds = append(userIds, mysql.Int32(user.GetUserId()))
+		s.cleanupUserJobs(user)
+		s.cleanupUserPhoneNumbers(user)
+	}
+	us = validUsers
+	if len(us) == 0 {
+		return 0, nil
+	}
 
 	syncedAt := time.Now()
-
-	userIds := []mysql.Expression{}
-	for i := range us {
-		userIds = append(userIds, mysql.Int32(us[i].GetUserId()))
-
-		s.cleanupUserJobs(us[i])
-
-		s.cleanupUserPhoneNumbers(us[i])
-	}
 
 	checkStmt := tSyncUser.
 		SELECT(
@@ -167,29 +317,6 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 					err,
 				)
 			}
-			if affected == -1 {
-				stmt := tUsers.
-					DELETE().
-					WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).
-					LIMIT(1)
-				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-					return 0, fmt.Errorf(
-						"failed to delete duplicate user %d with identifier %s. %w",
-						user.GetUserId(),
-						user.GetIdentifier(),
-						err,
-					)
-				}
-				affected, err = s.updateUser(ctx, syncedAt, user)
-				if err != nil {
-					return 0, fmt.Errorf(
-						"failed to update user %d (%s) after duplicate removal. %w",
-						user.GetUserId(),
-						user.GetIdentifier(),
-						err,
-					)
-				}
-			}
 			rowsAffected += affected
 		}
 	}
@@ -204,29 +331,6 @@ func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser) (i
 					user.GetIdentifier(),
 					err,
 				)
-			}
-			if affected == -1 {
-				stmt := tUsers.
-					DELETE().
-					WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).
-					LIMIT(1)
-				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-					return 0, fmt.Errorf(
-						"failed to delete duplicate user %d with identifier %s. %w",
-						user.GetUserId(),
-						user.GetIdentifier(),
-						err,
-					)
-				}
-				affected, err = s.updateUser(ctx, syncedAt, user)
-				if err != nil {
-					return 0, fmt.Errorf(
-						"failed to update user %d (%s) after duplicate removal. %w",
-						user.GetUserId(),
-						user.GetIdentifier(),
-						err,
-					)
-				}
 			}
 			rowsAffected += affected
 		}
@@ -246,63 +350,9 @@ func (s *Store) createUser(
 	}
 	defer tx.Rollback()
 
-	stmt := tUsers.
-		INSERT(
-			tUsers.ID,
-			tUsers.License,
-			tUsers.Identifier,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Sex,
-			tUsers.PhoneNumber,
-			tUsers.Height,
-			tUsers.Visum,
-			tUsers.Playtime,
-		).
-		VALUES(
-			user.GetUserId(),
-			utils.GetLicenseFromIdentifier(user.GetIdentifier()),
-			user.GetIdentifier(),
-			user.GetFirstname(),
-			dbutils.StringEmpty(user.GetLastname()),
-			user.GetDateofbirth(),
-			user.GetJob(),
-			user.GetJobGrade(),
-			user.Sex,
-			dbutils.StringEmpty(user.GetPhoneNumber()),
-			user.Height,
-			dbutils.Int32P(user.GetVisum()),
-			dbutils.Int32P(user.GetPlaytime()),
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tUsers.ID.SET(mysql.RawInt("VALUES(`id`)")),
-			tUsers.License.SET(mysql.RawString("VALUES(`license`)")),
-			tUsers.Identifier.SET(mysql.RawString("VALUES(`identifier`)")),
-			tUsers.Firstname.SET(mysql.RawString("VALUES(`firstname`)")),
-			tUsers.Lastname.SET(mysql.RawString("VALUES(`lastname`)")),
-			tUsers.Dateofbirth.SET(mysql.RawString("VALUES(`dateofbirth`)")),
-			tUsers.Job.SET(mysql.RawString("VALUES(`job`)")),
-			tUsers.JobGrade.SET(mysql.RawInt("VALUES(`job_grade`)")),
-			tUsers.Sex.SET(mysql.RawString("VALUES(`sex`)")),
-			tUsers.PhoneNumber.SET(mysql.RawString("VALUES(`phone_number`)")),
-			tUsers.Height.SET(mysql.RawFloat("VALUES(`height`)")),
-			tUsers.Visum.SET(mysql.RawInt("VALUES(`visum`)")),
-			tUsers.Playtime.SET(mysql.RawInt("VALUES(`playtime`)")),
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
+	rows, err := s.reconcileUserRow(ctx, tx, user)
 	if err != nil {
-		if dbutils.IsDuplicateError(err) {
-			return -1, nil
-		}
-		return 0, fmt.Errorf("failed to execute user insert statement. %w", err)
-	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return 0, fmt.Errorf("failed to retrieve rows affected for user insert. %w", err)
+		return 0, fmt.Errorf("failed to reconcile user identity. %w", err)
 	}
 
 	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {
@@ -523,53 +573,9 @@ func (s *Store) updateUser(
 	}
 	defer tx.Rollback()
 
-	stmt := tUsers.
-		UPDATE(
-			tUsers.ID,
-			tUsers.License,
-			tUsers.Identifier,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Sex,
-			tUsers.PhoneNumber,
-			tUsers.Height,
-			tUsers.Visum,
-			tUsers.Playtime,
-		).
-		SET(
-			user.GetUserId(),
-			utils.GetLicenseFromIdentifier(user.GetIdentifier()),
-			user.GetIdentifier(),
-			user.GetFirstname(),
-			dbutils.StringEmpty(user.GetLastname()),
-			user.GetDateofbirth(),
-			user.GetJob(),
-			user.GetJobGrade(),
-			user.Sex,
-			dbutils.StringEmpty(user.GetPhoneNumber()),
-			user.Height,
-			dbutils.Int32P(user.GetVisum()),
-			dbutils.Int32P(user.GetPlaytime()),
-		).
-		WHERE(mysql.OR(
-			tUsers.ID.EQ(mysql.Int32(user.GetUserId())),
-			tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))),
-		).
-		LIMIT(1)
-
-	res, err := stmt.ExecContext(ctx, tx)
+	rows, err := s.reconcileUserRow(ctx, tx, user)
 	if err != nil {
-		if dbutils.IsDuplicateError(err) {
-			return -1, nil
-		}
-		return 0, fmt.Errorf("failed to execute user update statement. %w", err)
-	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return 0, fmt.Errorf("failed to retrieve rows affected for user update. %w", err)
+		return 0, fmt.Errorf("failed to reconcile user identity. %w", err)
 	}
 
 	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {

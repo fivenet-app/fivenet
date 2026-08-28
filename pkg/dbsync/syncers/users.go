@@ -377,26 +377,43 @@ func (s *UsersSync) applyFiltersAndTransformations(
 	us []*syncdata.DataUser,
 	sQuery dbsyncconfig.UsersTable,
 ) []*syncdata.DataUser {
-	if s.cfg.Tables.Users.IgnoreEmptyName {
-		us = slices.DeleteFunc(us, func(in *syncdata.DataUser) bool {
-			return in == nil || (in.GetFirstname() == "" && in.GetLastname() == "")
-		})
-	}
-
 	hasFilters := len(sQuery.Filters.Jobs) > 0
 
-	foundNullUserId := false
 	for idx, user := range slices.Backward(us) {
-		user.SetUpdatedAt(nil)
-
-		if user.GetUserId() <= 0 {
-			foundNullUserId = true
-			s.logger.Debug(
-				"user with null/zero id found",
-				zap.String("identifier", user.GetIdentifier()),
+		if user == nil {
+			s.logger.Warn(
+				"skipping invalid synced user",
+				zap.Int("index", idx),
+				zap.String("reason", "user is nil"),
 			)
+			us = slices.Delete(us, idx, idx+1)
 			continue
 		}
+		if user.GetUserId() <= 0 {
+			s.logger.Warn(
+				"skipping invalid synced user",
+				zap.Int("index", idx),
+				zap.Int32("user_id", user.GetUserId()),
+				zap.String("reason", "user_id must be greater than zero"),
+			)
+			us = slices.Delete(us, idx, idx+1)
+			continue
+		}
+		if strings.TrimSpace(user.GetIdentifier()) == "" {
+			s.logger.Warn(
+				"skipping invalid synced user",
+				zap.Int("index", idx),
+				zap.Int32("user_id", user.GetUserId()),
+				zap.String("reason", "identifier must not be empty"),
+			)
+			us = slices.Delete(us, idx, idx+1)
+			continue
+		}
+		if s.cfg.Tables.Users.IgnoreEmptyName && user.GetFirstname() == "" && user.GetLastname() == "" {
+			us = slices.Delete(us, idx, idx+1)
+			continue
+		}
+		user.SetUpdatedAt(nil)
 
 		if s.cfg.Tables.Users.ValueMapping != nil {
 			s.applyValueMapping(user)
@@ -414,12 +431,6 @@ func (s *UsersSync) applyFiltersAndTransformations(
 		s.parseDateOfBirth(user)
 		s.cleanupUserJob(user)
 		s.cleanupUserPhoneNumbers(user)
-	}
-
-	if foundNullUserId {
-		s.logger.Warn(
-			"some queried users have null or zero id, which have been skipped during processing",
-		)
 	}
 
 	return us
