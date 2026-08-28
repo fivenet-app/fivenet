@@ -50,8 +50,8 @@ type existingUser struct {
 }
 
 type userIdentity struct {
-	ID         int32
-	Identifier string
+	ID         int32  `alias:".id"`
+	Identifier string `alias:".identifier"`
 }
 
 // reconcileUserRow makes the external sync identity authoritative. The
@@ -78,7 +78,7 @@ func (s *Store) reconcileUserRow(
 
 		var match userIdentity
 		err := stmt.QueryContext(ctx, tx, &match)
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, qrm.ErrNoRows) {
 			return userIdentity{}, false, nil
 		}
 		if err != nil {

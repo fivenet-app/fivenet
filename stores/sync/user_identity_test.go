@@ -66,10 +66,10 @@ func TestReconcileUserRowInsertsExternalIdentity(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user.*FOR UPDATE`).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "identifier"}))
+		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}))
 	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user.*FOR UPDATE`).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "identifier"}))
+		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}))
 	mock.ExpectExec(`(?s)INSERT INTO fivenet_user`).
 		WillReturnResult(sqlmock.NewResult(42, 1))
 	mock.ExpectCommit()
@@ -90,10 +90,10 @@ func TestReconcileUserRowUpdatesExternalIDMatch(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user.*FOR UPDATE`).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "identifier"}).AddRow(42, "license:external-42"))
+		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}).AddRow(42, "license:external-42"))
 	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user.*FOR UPDATE`).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "identifier"}).AddRow(42, "license:external-42"))
+		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}).AddRow(42, "license:external-42"))
 	mock.ExpectExec(`(?s)UPDATE fivenet_user`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectCommit()
@@ -114,10 +114,10 @@ func TestReconcileUserRowRekeysIdentifierMatch(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user.*FOR UPDATE`).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "identifier"}))
+		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}))
 	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user.*FOR UPDATE`).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "identifier"}).AddRow(7, "license:external-42"))
+		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}).AddRow(7, "license:external-42"))
 	mock.ExpectExec(`(?s)UPDATE fivenet_user`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectCommit()
@@ -138,10 +138,10 @@ func TestReconcileUserRowExternalIDWinsIdentityConflict(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user.*FOR UPDATE`).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "identifier"}).AddRow(42, "license:old-42"))
+		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}).AddRow(42, "license:old-42"))
 	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user.*FOR UPDATE`).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "identifier"}).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}).
 			AddRow(7, "license:external-42"))
 	mock.ExpectExec(`(?s)DELETE FROM fivenet_user`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
