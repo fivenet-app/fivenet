@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
@@ -25,8 +24,6 @@ import (
 )
 
 const (
-	birthdayCalendarColor = "neutral"
-
 	birthdaySyncCronName                 = "calendar.birthday_sync"
 	birthdaySyncBatchSize                = 5
 	birthdaySyncOffsetAttrKey            = "job_offset"
@@ -254,7 +251,7 @@ func (s *BirthdaySyncer) syncBirthdayJob(
 	defer tx.Rollback()
 
 	tCalendarEntry := table.FivenetCalendarEntries
-	calendarID, err := s.upsertBirthdayCalendar(ctx, tx, job, title)
+	calendarID, err := s.store.UpsertBirthdayCalendar(ctx, tx, job, title)
 	if err != nil {
 		return stats, err
 	}
@@ -294,85 +291,4 @@ func (s *BirthdaySyncer) syncBirthdayJob(
 	}
 
 	return stats, nil
-}
-
-func (s *BirthdaySyncer) upsertBirthdayCalendar(
-	ctx context.Context,
-	tx *sql.Tx,
-	job string,
-	title string,
-) (int64, error) {
-	tCalendar := table.FivenetCalendar
-
-	stmt := tCalendar.
-		INSERT(
-			tCalendar.Job,
-			tCalendar.Name,
-			tCalendar.Description,
-			tCalendar.Public,
-			tCalendar.Closed,
-			tCalendar.Color,
-			tCalendar.CreatorID,
-			tCalendar.CreatorJob,
-			tCalendar.SystemKind,
-		).
-		VALUES(
-			mysql.String(job),
-			title,
-			mysql.String("System-managed birthday calendar"),
-			mysql.Bool(false),
-			mysql.Bool(true),
-			mysql.String(birthdayCalendarColor),
-			mysql.NULL,
-			mysql.String(job),
-			mysql.Int32(int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS)),
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tCalendar.Name.SET(mysql.String(title)),
-			tCalendar.Description.SET(mysql.String("System-managed birthday calendar")),
-			tCalendar.Public.SET(mysql.Bool(false)),
-			tCalendar.Closed.SET(mysql.Bool(true)),
-			tCalendar.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-			tCalendar.CreatorID.SET(mysql.IntExp(mysql.NULL)),
-			tCalendar.CreatorJob.SET(mysql.String(job)),
-			tCalendar.SystemKind.SET(mysql.Int32(int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS))),
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return 0, err
-	}
-
-	lastID, err := res.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-	if lastID > 0 {
-		return lastID, nil
-	}
-
-	var calendarID struct {
-		ID int64
-	}
-	calendarTable := table.FivenetCalendar
-
-	selectStm := calendarTable.
-		SELECT(
-			calendarTable.ID.AS("id"),
-		).
-		FROM(calendarTable).
-		WHERE(mysql.AND(
-			calendarTable.DeletedAt.IS_NULL(),
-			calendarTable.Job.EQ(mysql.String(job)),
-			calendarTable.SystemKind.EQ(
-				mysql.Int32(int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS)),
-			),
-		)).
-		LIMIT(1)
-
-	if err := selectStm.QueryContext(ctx, tx, &calendarID); err != nil {
-		return 0, err
-	}
-
-	return calendarID.ID, nil
 }

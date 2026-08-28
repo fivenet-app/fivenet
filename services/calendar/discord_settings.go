@@ -10,7 +10,6 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	"google.golang.org/protobuf/proto"
 )
@@ -20,9 +19,9 @@ const maxCalendarDiscordReminderSteps = 2
 func (s *Server) prepareCalendarDiscordSettings(
 	ctx context.Context,
 	cal *calendarresource.Calendar,
-) (*calendarresource.CalendarDiscordSettings, *string, error) {
+) (*calendarresource.CalendarDiscordSettings, error) {
 	if cal == nil {
-		return nil, nil, nil
+		return nil, nil
 	}
 
 	settings := normalizeCalendarDiscordSettings(cal.GetDiscordSettings())
@@ -32,19 +31,13 @@ func (s *Server) prepareCalendarDiscordSettings(
 		cal.GetSystemKind(),
 		settings,
 	); err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	if settings == nil {
-		return nil, nil, nil
+		return nil, nil
 	}
 
-	raw, err := protoutils.MarshalToJSON(settings)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	out := string(raw)
-	return settings, &out, nil
+	return settings, nil
 }
 
 func normalizeCalendarDiscordSettings(

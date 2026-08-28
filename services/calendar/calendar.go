@@ -166,7 +166,7 @@ func (s *Server) CreateCalendar(
 		req.Calendar.Job = &userInfo.Job
 	}
 
-	discordSettings, discordSettingsJSON, err := s.prepareCalendarDiscordSettings(
+	discordSettings, err := s.prepareCalendarDiscordSettings(
 		ctx,
 		req.GetCalendar(),
 	)
@@ -181,7 +181,7 @@ func (s *Server) CreateCalendar(
 	}
 	req.Calendar.SetDiscordSettings(discordSettings)
 
-	lastID, err := s.store.CreateCalendar(ctx, tx, req.GetCalendar(), userInfo, discordSettingsJSON)
+	lastID, err := s.store.CreateCalendar(ctx, tx, req.GetCalendar(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -321,14 +321,13 @@ func (s *Server) UpdateCalendar(
 		req.Calendar.DiscordSettings = currentCalendar.GetDiscordSettings()
 	}
 
-	discordSettings, discordSettingsJSON, err := s.prepareCalendarDiscordSettings(
+	req.Calendar.DiscordSettings, err = s.prepareCalendarDiscordSettings(
 		ctx,
 		req.GetCalendar(),
 	)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	req.Calendar.DiscordSettings = discordSettings
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -336,7 +335,7 @@ func (s *Server) UpdateCalendar(
 	}
 	defer tx.Rollback()
 
-	if err := s.store.UpdateCalendar(ctx, tx, req.GetCalendar(), discordSettingsJSON); err != nil {
+	if err := s.store.UpdateCalendar(ctx, tx, req.GetCalendar()); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 

@@ -118,7 +118,10 @@ func TestCreateCalendarIncludesIconColumn(t *testing.T) {
 	icon := "CalendarStarIcon"
 	kind := calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED
 
-	mock.ExpectExec(`(?s)INSERT INTO fivenet_calendar .*system_kind .*icon .*`).
+	mock.ExpectQuery(`(?s)SELECT fivenet_calendar.id AS "id" FROM fivenet_calendar .*`).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_calendar .*system_kind.*icon.*`).
 		WillReturnResult(sqlmock.NewResult(42, 1))
 
 	cal := &calendarresource.Calendar{
@@ -134,7 +137,6 @@ func TestCreateCalendarIncludesIconColumn(t *testing.T) {
 		db,
 		cal,
 		&userinfo.UserInfo{UserId: 9, Job: "police"},
-		nil,
 	)
 	require.NoError(t, err)
 	assert.Equal(t, int64(42), id)
@@ -168,7 +170,6 @@ func TestUpdateCalendarIncludesIconColumn(t *testing.T) {
 			Icon:       &icon,
 			CreatorJob: "police",
 		},
-		nil,
 	)
 	require.NoError(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())

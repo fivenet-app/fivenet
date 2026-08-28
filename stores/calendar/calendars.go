@@ -130,11 +130,10 @@ func (s *Store) listConditions(
 	includeDeleted := q.UserInfo != nil && q.UserInfo.GetJobAdmin()
 	condition := mysql.Bool(includeDeleted).OR(tCalendar.DeletedAt.IS_NULL())
 	if q.OnlyPublic {
-		return condition.AND(
-			tCalendar.Public.IS_TRUE(),
-		), []mysql.OrderByClause{
-			tCalendar.Name.ASC(),
-		}
+		return condition.AND(tCalendar.Public.IS_TRUE()),
+			[]mysql.OrderByClause{
+				tCalendar.Name.ASC(),
+			}
 	}
 
 	if q.UserInfo == nil {
@@ -371,14 +370,64 @@ func (s *Store) CreateCalendar(
 	tx qrm.DB,
 	cal *calendarresource.Calendar,
 	userInfo *userinfo.UserInfo,
-	discordSettingsJSON *string,
 ) (int64, error) {
 	tCalendar := table.FivenetCalendar
 	systemKind := mysql.IntExp(mysql.NULL)
 	if cal.HasSystemKind() {
 		systemKind = mysql.IntExp(mysql.Int32(int32(cal.GetSystemKind())))
 	}
-	stmt := tCalendar.
+	var existing struct{ ID int64 }
+	if cal.HasSystemKind() {
+		stmt := tCalendar.
+			SELECT(tCalendar.ID.AS("id")).
+			FROM(tCalendar).
+			WHERE(mysql.AND(
+				tCalendar.Job.EQ(mysql.String(cal.GetJob())),
+				tCalendar.SystemKind.EQ(mysql.Int32(int32(cal.GetSystemKind()))),
+			)).
+			LIMIT(1)
+
+		if err := stmt.QueryContext(
+			ctx,
+			tx,
+			&existing,
+		); err != nil &&
+			!errors.Is(err, qrm.ErrNoRows) {
+			return 0, err
+		}
+	}
+
+	if existing.ID > 0 {
+		if _, err := tCalendar.
+			UPDATE(
+				tCalendar.SystemKind,
+				tCalendar.DiscordSettings,
+				tCalendar.Name,
+				tCalendar.Description,
+				tCalendar.Public,
+				tCalendar.Closed,
+				tCalendar.Color,
+				tCalendar.Icon,
+			).
+			SET(
+				systemKind,
+				cal.GetDiscordSettings(),
+				cal.GetName(),
+				cal.GetDescription(),
+				cal.GetPublic(),
+				cal.GetClosed(),
+				cal.GetColor(),
+				dbutils.StringEmpty(cal.GetIcon()),
+			).
+			WHERE(tCalendar.ID.EQ(mysql.Int64(existing.ID))).
+			LIMIT(1).
+			ExecContext(ctx, tx); err != nil {
+			return 0, err
+		}
+		return existing.ID, nil
+	}
+
+	res, err := tCalendar.
 		INSERT(
 			tCalendar.Job,
 			tCalendar.SystemKind,
@@ -395,7 +444,7 @@ func (s *Store) CreateCalendar(
 		VALUES(
 			cal.GetJob(),
 			systemKind,
-			discordSettingsJSON,
+			cal.GetDiscordSettings(),
 			cal.GetName(),
 			cal.GetDescription(),
 			cal.GetPublic(),
@@ -405,44 +454,22 @@ func (s *Store) CreateCalendar(
 			userInfo.GetUserId(),
 			userInfo.GetJob(),
 		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tCalendar.SystemKind.SET(systemKind),
-			tCalendar.DiscordSettings.SET(mysql.RawString("VALUES(`discord_settings`)")),
-			tCalendar.Name.SET(mysql.String(cal.GetName())),
-			tCalendar.Description.SET(mysql.RawString("VALUES(`description`)")),
-			tCalendar.Public.SET(mysql.Bool(cal.GetPublic())),
-			tCalendar.Closed.SET(mysql.Bool(cal.GetClosed())),
-			tCalendar.Color.SET(mysql.String(cal.GetColor())),
-			tCalendar.Icon.SET(dbutils.StringEmpty(cal.GetIcon())),
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
+		ExecContext(ctx, tx)
 	if err != nil {
 		return 0, err
 	}
 
-	if cal.GetId() == 0 {
-		lastID, err := res.LastInsertId()
-		if err != nil {
-			return 0, err
-		}
-		return lastID, nil
+	if cal.GetId() > 0 {
+		return cal.GetId(), nil
 	}
-
-	return cal.GetId(), nil
+	return res.LastInsertId()
 }
 
 func (s *Store) UpdateCalendar(
 	ctx context.Context,
 	tx qrm.DB,
 	cal *calendarresource.Calendar,
-	discordSettingsJSON *string,
 ) error {
-	discordSettingsValue := mysql.StringExp(mysql.NULL)
-	if discordSettingsJSON != nil {
-		discordSettingsValue = mysql.String(*discordSettingsJSON)
-	}
-
 	tCalendar := table.FivenetCalendar
 	stmt := tCalendar.
 		UPDATE(
@@ -455,7 +482,7 @@ func (s *Store) UpdateCalendar(
 			tCalendar.Icon,
 		).
 		SET(
-			discordSettingsValue,
+			cal.GetDiscordSettings(),
 			cal.GetName(),
 			cal.GetDescription(),
 			cal.GetPublic(),

@@ -160,77 +160,67 @@ func (s *Store) UpsertBirthdayCalendar(
 ) (int64, error) {
 	tCalendar := table.FivenetCalendar
 
-	stmt := tCalendar.
-		INSERT(
-			tCalendar.Job,
-			tCalendar.Name,
-			tCalendar.Description,
-			tCalendar.Public,
-			tCalendar.Closed,
-			tCalendar.Color,
-			tCalendar.CreatorID,
-			tCalendar.CreatorJob,
-			tCalendar.SystemKind,
-		).
-		VALUES(
-			mysql.String(job),
-			title,
-			mysql.String("System-managed birthday calendar"),
-			mysql.Bool(false),
-			mysql.Bool(true),
-			mysql.String(birthdayCalendarColor),
-			mysql.NULL,
-			mysql.String(job),
-			mysql.Int32(int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS)),
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tCalendar.Name.SET(mysql.String(title)),
-			tCalendar.Description.SET(mysql.String("System-managed birthday calendar")),
-			tCalendar.Public.SET(mysql.Bool(false)),
-			tCalendar.Closed.SET(mysql.Bool(true)),
-			tCalendar.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-			tCalendar.CreatorID.SET(mysql.IntExp(mysql.NULL)),
-			tCalendar.CreatorJob.SET(mysql.String(job)),
-			tCalendar.SystemKind.SET(mysql.Int32(int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS))),
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return 0, err
-	}
-
-	lastID, err := res.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-	if lastID > 0 {
-		return lastID, nil
-	}
-
 	var calendarID struct {
 		ID int64
 	}
-	calendarTable := table.FivenetCalendar
-
-	selectStm := calendarTable.
+	selectStm := tCalendar.
 		SELECT(
-			calendarTable.ID.AS("id"),
+			tCalendar.ID.AS("id"),
 		).
-		FROM(calendarTable).
+		FROM(tCalendar).
 		WHERE(mysql.AND(
-			calendarTable.DeletedAt.IS_NULL(),
-			calendarTable.Job.EQ(mysql.String(job)),
-			calendarTable.SystemKind.EQ(
+			tCalendar.Job.EQ(mysql.String(job)),
+			tCalendar.SystemKind.EQ(
 				mysql.Int32(int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS)),
 			),
 		)).
 		LIMIT(1)
 
-	if err := selectStm.QueryContext(ctx, tx, &calendarID); err != nil {
+	if err := selectStm.QueryContext(
+		ctx,
+		tx,
+		&calendarID,
+	); err != nil &&
+		!errors.Is(err, qrm.ErrNoRows) {
+		return 0, err
+	}
+	if calendarID.ID > 0 {
+		_, err := tCalendar.
+			UPDATE().
+			SET(
+				tCalendar.Name.SET(mysql.String(title)),
+				tCalendar.Description.SET(mysql.String("System-managed birthday calendar")),
+				tCalendar.Public.SET(mysql.Bool(false)),
+				tCalendar.Closed.SET(mysql.Bool(true)),
+				tCalendar.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
+				tCalendar.CreatorID.SET(mysql.IntExp(mysql.NULL)),
+				tCalendar.CreatorJob.SET(mysql.String(job)),
+				tCalendar.SystemKind.SET(mysql.Int32(int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS))),
+			).
+			WHERE(tCalendar.ID.EQ(mysql.Int64(calendarID.ID))).
+			LIMIT(1).
+			ExecContext(ctx, tx)
+		return calendarID.ID, err
+	}
+
+	res, err := tCalendar.
+		INSERT(
+			tCalendar.Job, tCalendar.Name, tCalendar.Description, tCalendar.Public,
+			tCalendar.Closed, tCalendar.Color, tCalendar.CreatorID, tCalendar.CreatorJob,
+			tCalendar.SystemKind,
+		).
+		VALUES(
+			mysql.String(job), title, mysql.String("System-managed birthday calendar"),
+			mysql.Bool(false), mysql.Bool(true), mysql.String(birthdayCalendarColor),
+			mysql.NULL, mysql.String(job),
+			mysql.Int32(int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS)),
+		).
+		ExecContext(ctx, tx)
+	if err != nil {
 		return 0, err
 	}
 
-	return calendarID.ID, nil
+	return res.LastInsertId()
 }
 
 func (s *Store) DeleteBirthdayEntries(

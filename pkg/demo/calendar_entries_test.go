@@ -230,6 +230,9 @@ func TestLookupDemoCalendarAndCreateFallback(t *testing.T) {
 			JobGrade: d.highestJobGrade(job),
 		}
 		mock.ExpectBegin()
+		mock.ExpectQuery(`(?s).*SELECT fivenet_calendar.id AS "id" FROM fivenet_calendar.*`).
+			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+			WillReturnRows(sqlmock.NewRows([]string{"id"}))
 		mock.ExpectExec(`(?s).*INSERT INTO fivenet_calendar.*`).
 			WillReturnResult(sqlmock.NewResult(99, 1))
 		mock.ExpectCommit()

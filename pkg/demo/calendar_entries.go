@@ -260,7 +260,7 @@ func (d *Demo) createFallbackDemoCalendar(
 	}
 	cal.SetSystemKind(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_UNSPECIFIED)
 
-	lastID, err := d.calendars.CreateCalendar(ctx, tx, cal, seedUser, nil)
+	lastID, err := d.calendars.CreateCalendar(ctx, tx, cal, seedUser)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create fallback demo calendar. %w", err)
 	}

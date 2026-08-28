@@ -102,13 +102,11 @@ type IStore interface {
 		tx qrm.DB,
 		cal *calendarresource.Calendar,
 		userInfo *userinfo.UserInfo,
-		discordSettingsJSON *string,
 	) (int64, error)
 	UpdateCalendar(
 		ctx context.Context,
 		tx qrm.DB,
 		cal *calendarresource.Calendar,
-		discordSettingsJSON *string,
 	) error
 	DeleteCalendar(
 		ctx context.Context,
@@ -198,6 +196,12 @@ type IStore interface {
 	GetCalendarReminderGuildID(ctx context.Context, job string) (string, error)
 	CleanupCalendarRSVPOccurrences(ctx context.Context) (int64, error)
 
+	UpsertBirthdayCalendar(
+		ctx context.Context,
+		tx qrm.DB,
+		job string,
+		title string,
+	) (int64, error)
 	LoadBirthdayColleagues(
 		ctx context.Context,
 		tx qrm.DB,
