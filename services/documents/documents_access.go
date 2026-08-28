@@ -233,10 +233,8 @@ func (s *Server) handleDocumentAccessChange(
 	}
 
 	highestGrade := userInfo.GetJobGrade()
-	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
-		if grade, ok := access.HighestJobGrade(job); ok {
-			highestGrade = grade
-		}
+	if grade, ok := s.enricher.GetHighestJobGrade(userInfo.GetJob()); ok {
+		highestGrade = grade
 	}
 	if creating {
 		docAccess = access.EnsureJobAccessEntries(

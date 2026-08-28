@@ -44,6 +44,15 @@ func (e *DummyEnricher) GetJobByName(job string) *jobs.Job {
 	}
 }
 
+func (e *DummyEnricher) GetHighestJobGrade(job string) (int32, bool) {
+	j := e.GetJobByName(job)
+	if j == nil || len(j.GetGrades()) == 0 {
+		return 0, false
+	}
+
+	return j.GetGrades()[len(j.GetGrades())-1].GetGrade(), true
+}
+
 func (e *DummyEnricher) GetJobGrade(job string, grade int32) (*jobs.Job, *jobs.JobGrade) {
 	return &jobs.Job{
 		Name:   job,

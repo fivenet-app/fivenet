@@ -114,10 +114,8 @@ func (s *Server) UpsertStamp(
 		st.Access = &documentsstamps.StampAccess{}
 	}
 	highestGrade := userInfo.GetJobGrade()
-	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
-		if grade, ok := access.HighestJobGrade(job); ok {
-			highestGrade = grade
-		}
+	if grade, ok := s.enricher.GetHighestJobGrade(userInfo.GetJob()); ok {
+		highestGrade = grade
 	}
 	if st.GetId() <= 0 {
 		st.Access = access.EnsureJobAccessEntries(

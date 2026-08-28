@@ -997,10 +997,8 @@ func (s *UnitDB) CreateUnit(
 	}
 
 	highestGrade := creatorGrade
-	if job := s.enricher.GetJobByName(creatorJob); job != nil {
-		if grade, ok := access.HighestJobGrade(job); ok {
-			highestGrade = grade
-		}
+	if grade, ok := s.enricher.GetHighestJobGrade(creatorJob); ok {
+		highestGrade = grade
 	}
 	unit.Access = access.EnsureJobAccessEntries(
 		unit.GetAccess(),
@@ -1095,10 +1093,8 @@ func (s *UnitDB) Update(ctx context.Context, userGrade int32, unit *centrumunits
 	}
 
 	highestGrade := userGrade
-	if job := s.enricher.GetJobByName(unit.GetJob()); job != nil {
-		if grade, ok := access.HighestJobGrade(job); ok {
-			highestGrade = grade
-		}
+	if grade, ok := s.enricher.GetHighestJobGrade(unit.GetJob()); ok {
+		highestGrade = grade
 	}
 	normalizedAccess, err := access.NormalizeAccess(unit.GetAccess(), nil, &resourcesaccess.Access{
 		Jobs: []*resourcesaccess.JobAccess{{

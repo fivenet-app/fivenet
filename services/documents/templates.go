@@ -73,10 +73,8 @@ func (s *Server) normalizeTemplateJobAccess(
 	jobs []*documentstemplates.TemplateJobAccess,
 ) (*resourcesaccess.Access, error) {
 	highestGrade := userInfo.GetJobGrade()
-	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
-		if grade, ok := access.HighestJobGrade(job); ok {
-			highestGrade = grade
-		}
+	if grade, ok := s.enricher.GetHighestJobGrade(userInfo.GetJob()); ok {
+		highestGrade = grade
 	}
 
 	return access.NormalizeAccess(
@@ -290,10 +288,8 @@ func (s *Server) CreateTemplate(
 
 	templateAccess := templateJobAccess(req.GetTemplate().GetJobAccess())
 	highestGrade := userInfo.GetJobGrade()
-	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
-		if grade, ok := access.HighestJobGrade(job); ok {
-			highestGrade = grade
-		}
+	if grade, ok := s.enricher.GetHighestJobGrade(userInfo.GetJob()); ok {
+		highestGrade = grade
 	}
 	templateAccess = access.EnsureJobAccessEntries(
 		templateAccess,

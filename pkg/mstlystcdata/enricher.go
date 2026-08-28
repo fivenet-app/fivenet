@@ -22,6 +22,7 @@ type IEnricher interface {
 	EnrichJobInfoNoFallback(usr common.IJobInfo)
 	EnrichJobName(usr common.IJobName)
 	GetJobByName(job string) *jobs.Job
+	GetHighestJobGrade(job string) (int32, bool)
 	GetJobGrade(job string, grade int32) (*jobs.Job, *jobs.JobGrade)
 }
 
@@ -110,6 +111,16 @@ func (e *Enricher) GetJobByName(job string) *jobs.Job {
 	}
 
 	return j
+}
+
+// GetHighestJobGrade returns the highest configured grade for a job.
+func (e *Enricher) GetHighestJobGrade(job string) (int32, bool) {
+	j := e.GetJobByName(job)
+	if j == nil || len(j.GetGrades()) == 0 {
+		return 0, false
+	}
+
+	return j.GetGrades()[len(j.GetGrades())-1].GetGrade(), true
 }
 
 // GetJobGrade returns the Job and JobGrade for a given job name and grade, or nil if not found.

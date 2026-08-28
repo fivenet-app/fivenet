@@ -24,7 +24,8 @@ func (labelEnricher) EnrichJobInfoNoFallback(common.IJobInfo) {}
 
 func (labelEnricher) EnrichJobName(common.IJobName) {}
 
-func (labelEnricher) GetJobByName(string) *jobs.Job { return nil }
+func (labelEnricher) GetJobByName(string) *jobs.Job           { return nil }
+func (labelEnricher) GetHighestJobGrade(string) (int32, bool) { return 0, false }
 
 func (labelEnricher) GetJobGrade(string, int32) (*jobs.Job, *jobs.JobGrade) {
 	return nil, nil

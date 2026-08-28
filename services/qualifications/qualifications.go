@@ -351,8 +351,8 @@ func (s *Server) UpdateQualification(
 
 	if req.GetQualification().GetAccess() != nil {
 		highestGrade := int32(-1)
-		if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
-			highestGrade, _ = access.HighestJobGrade(job)
+		if grade, ok := s.enricher.GetHighestJobGrade(userInfo.GetJob()); ok {
+			highestGrade = grade
 		}
 
 		normalizedAccess, err := normalizeQualificationJobAccess(

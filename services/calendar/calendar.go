@@ -192,10 +192,8 @@ func (s *Server) CreateCalendar(
 		calendarAccess = &calendaraccess.CalendarAccess{}
 	}
 	highestGrade := userInfo.GetJobGrade()
-	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
-		if grade, ok := access.HighestJobGrade(job); ok {
-			highestGrade = grade
-		}
+	if grade, ok := s.enricher.GetHighestJobGrade(userInfo.GetJob()); ok {
+		highestGrade = grade
 	}
 	calendarAccess = access.EnsureJobAccessEntries(
 		calendarAccess,
@@ -350,10 +348,8 @@ func (s *Server) UpdateCalendar(
 			calendarAccess = &calendaraccess.CalendarAccess{}
 		}
 		highestGrade := userInfo.GetJobGrade()
-		if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
-			if grade, ok := access.HighestJobGrade(job); ok {
-				highestGrade = grade
-			}
+		if grade, ok := s.enricher.GetHighestJobGrade(userInfo.GetJob()); ok {
+			highestGrade = grade
 		}
 		fallbackAccess := &calendaraccess.CalendarAccess{
 			Jobs: []*calendaraccess.CalendarJobAccess{{
