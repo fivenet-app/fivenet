@@ -197,7 +197,7 @@ func (s *Server) renderTemplate(
 	if err != nil {
 		return "", "", "", err
 	}
-	outTile := buf.String()
+	outTitle := buf.String()
 
 	// Render State template
 	stateTpl, err := template.
@@ -231,7 +231,7 @@ func (s *Server) renderTemplate(
 	}
 	out := buf.String()
 
-	return outTile, outState, out, err
+	return outTitle, outState, out, err
 }
 
 func (s *Server) CreateTemplate(
