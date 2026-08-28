@@ -573,7 +573,7 @@ func (s *Store) CreatePage(
 		tx,
 		lastID,
 		userInfo,
-		pageAccess,
+		normalizedAccess,
 		false,
 	); err != nil {
 		return lastID, nil, err
@@ -592,6 +592,7 @@ func (s *Store) UpdatePage(
 	userInfo *userinfo.UserInfo,
 	page *reswiki.Page,
 	sortRank string,
+	highestGrade int32,
 ) (*wikiaccess.PageAccess, error) {
 	pageAccess := page.GetAccess()
 	if pageAccess == nil || pageAccess.IsEmpty() {
@@ -599,7 +600,7 @@ func (s *Store) UpdatePage(
 			Jobs: []*wikiaccess.PageJobAccess{
 				{
 					Job:          userInfo.GetJob(),
-					MinimumGrade: userInfo.GetJobGrade(),
+					MinimumGrade: highestGrade,
 					Access:       int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 				},
 			},

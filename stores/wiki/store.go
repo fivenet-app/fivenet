@@ -32,6 +32,7 @@ type IStore interface {
 		userInfo *userinfo.UserInfo,
 		page *reswiki.Page,
 		sortRank string,
+		highestGrade int32,
 	) (*wikiaccess.PageAccess, error)
 	DeletePage(
 		ctx context.Context,

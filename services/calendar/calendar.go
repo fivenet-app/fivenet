@@ -3,6 +3,7 @@ package calendar
 import (
 	"context"
 
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	calendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
@@ -187,22 +188,33 @@ func (s *Server) CreateCalendar(
 	req.Calendar.SetId(lastID)
 
 	calendarAccess := req.GetCalendar().GetAccess()
-	if calendarAccess == nil || len(calendarAccess.GetJobs()) == 0 {
-		calendarAccess = &calendaraccess.CalendarAccess{
-			Jobs: []*calendaraccess.CalendarJobAccess{
-				{
-					TargetId:     req.GetCalendar().GetId(),
-					Job:          userInfo.GetJob(),
-					MinimumGrade: userInfo.GetJobGrade(),
-					Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
-				},
-			},
+	if calendarAccess == nil {
+		calendarAccess = &calendaraccess.CalendarAccess{}
+	}
+	highestGrade := userInfo.GetJobGrade()
+	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
+		if grade, ok := access.HighestJobGrade(job); ok {
+			highestGrade = grade
 		}
 	}
+	calendarAccess = access.EnsureJobAccessEntries(
+		calendarAccess,
+		&resourcesaccess.JobAccess{
+			Job:          userInfo.GetJob(),
+			MinimumGrade: userInfo.GetJobGrade(),
+			Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
+		},
+		&resourcesaccess.JobAccess{
+			Job:          userInfo.GetJob(),
+			MinimumGrade: highestGrade,
+			Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
+			Required:     new(true),
+		},
+	)
 	fallbackAccess := &calendaraccess.CalendarAccess{
 		Jobs: []*calendaraccess.CalendarJobAccess{{
 			Job:          userInfo.GetJob(),
-			MinimumGrade: userInfo.GetJobGrade(),
+			MinimumGrade: highestGrade,
 			Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 		}},
 	}
@@ -334,22 +346,19 @@ func (s *Server) UpdateCalendar(
 
 	if !isBirthdayCalendar {
 		calendarAccess := req.GetCalendar().GetAccess()
-		if calendarAccess == nil || len(calendarAccess.GetJobs()) == 0 {
-			calendarAccess = &calendaraccess.CalendarAccess{
-				Jobs: []*calendaraccess.CalendarJobAccess{
-					{
-						TargetId:     req.GetCalendar().GetId(),
-						Job:          userInfo.GetJob(),
-						MinimumGrade: userInfo.GetJobGrade(),
-						Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
-					},
-				},
+		if calendarAccess == nil {
+			calendarAccess = &calendaraccess.CalendarAccess{}
+		}
+		highestGrade := userInfo.GetJobGrade()
+		if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
+			if grade, ok := access.HighestJobGrade(job); ok {
+				highestGrade = grade
 			}
 		}
 		fallbackAccess := &calendaraccess.CalendarAccess{
 			Jobs: []*calendaraccess.CalendarJobAccess{{
 				Job:          userInfo.GetJob(),
-				MinimumGrade: userInfo.GetJobGrade(),
+				MinimumGrade: highestGrade,
 				Access:       int32(calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 			}},
 		}

@@ -204,6 +204,7 @@ func (s *Server) SetDocumentAccess(
 		userInfo,
 		req.GetAccess(),
 		true,
+		false,
 	); err != nil {
 		return nil, err
 	}
@@ -225,16 +226,39 @@ func (s *Server) handleDocumentAccessChange(
 	userInfo *userinfo.UserInfo,
 	docAccess *documentsaccess.DocumentAccess,
 	addActivity bool,
+	creating bool,
 ) error {
 	if docAccess == nil {
 		docAccess = &documentsaccess.DocumentAccess{}
 	}
 
+	highestGrade := userInfo.GetJobGrade()
+	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
+		if grade, ok := access.HighestJobGrade(job); ok {
+			highestGrade = grade
+		}
+	}
+	if creating {
+		docAccess = access.EnsureJobAccessEntries(
+			docAccess,
+			&resourcesaccess.JobAccess{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: userInfo.GetJobGrade(),
+				Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+			},
+			&resourcesaccess.JobAccess{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: highestGrade,
+				Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+				Required:     new(true),
+			},
+		)
+	}
 	fallbackAccess := &resourcesaccess.Access{
 		Jobs: []*resourcesaccess.JobAccess{
 			{
 				Job:          userInfo.GetJob(),
-				MinimumGrade: userInfo.GetJobGrade(),
+				MinimumGrade: highestGrade,
 				Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 			},
 		},

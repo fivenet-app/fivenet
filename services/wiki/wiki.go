@@ -405,7 +405,13 @@ func (s *Server) UpdatePage(
 		}
 	}
 
-	if _, err := s.store.UpdatePage(ctx, tx, userInfo, req.GetPage(), sortRank); err != nil {
+	highestGrade := userInfo.GetJobGrade()
+	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
+		if grade, ok := access.HighestJobGrade(job); ok {
+			highestGrade = grade
+		}
+	}
+	if _, err := s.store.UpdatePage(ctx, tx, userInfo, req.GetPage(), sortRank, highestGrade); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 

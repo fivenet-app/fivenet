@@ -330,6 +330,11 @@ func (s *Server) CreateOrUpdateEmail(
 				Access:       int32(maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE),
 			}},
 		}
+		if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
+			if highestGrade, ok := access.HighestJobGrade(job); ok {
+				fallbackAccess.GetJobs()[0].MinimumGrade = highestGrade
+			}
+		}
 
 		normalizedAccess, err := access.NormalizeAccess(
 			req.GetEmail().GetAccess(),

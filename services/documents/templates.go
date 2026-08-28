@@ -68,17 +68,24 @@ func templateJobAccess(jobs []*documentstemplates.TemplateJobAccess) *resourcesa
 	return &resourcesaccess.Access{Jobs: jobs}
 }
 
-func normalizeTemplateJobAccess(
+func (s *Server) normalizeTemplateJobAccess(
 	userInfo *userinfo.UserInfo,
 	jobs []*documentstemplates.TemplateJobAccess,
 ) (*resourcesaccess.Access, error) {
+	highestGrade := userInfo.GetJobGrade()
+	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
+		if grade, ok := access.HighestJobGrade(job); ok {
+			highestGrade = grade
+		}
+	}
+
 	return access.NormalizeAccess(
 		templateJobAccess(jobs),
 		nil,
 		&resourcesaccess.Access{
 			Jobs: []*resourcesaccess.JobAccess{{
 				Job:          userInfo.GetJob(),
-				MinimumGrade: userInfo.GetJobGrade(),
+				MinimumGrade: highestGrade,
 				Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 			}},
 		},
@@ -281,7 +288,28 @@ func (s *Server) CreateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	normalizedAccess, err := normalizeTemplateJobAccess(userInfo, req.GetTemplate().GetJobAccess())
+	templateAccess := templateJobAccess(req.GetTemplate().GetJobAccess())
+	highestGrade := userInfo.GetJobGrade()
+	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
+		if grade, ok := access.HighestJobGrade(job); ok {
+			highestGrade = grade
+		}
+	}
+	templateAccess = access.EnsureJobAccessEntries(
+		templateAccess,
+		&resourcesaccess.JobAccess{
+			Job:          userInfo.GetJob(),
+			MinimumGrade: userInfo.GetJobGrade(),
+			Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+		},
+		&resourcesaccess.JobAccess{
+			Job:          userInfo.GetJob(),
+			MinimumGrade: highestGrade,
+			Access:       int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+			Required:     new(true),
+		},
+	)
+	normalizedAccess, err := s.normalizeTemplateJobAccess(userInfo, templateAccess.GetJobs())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -369,7 +397,7 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	normalizedAccess, err := normalizeTemplateJobAccess(userInfo, req.GetTemplate().GetJobAccess())
+	normalizedAccess, err := s.normalizeTemplateJobAccess(userInfo, req.GetTemplate().GetJobAccess())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}

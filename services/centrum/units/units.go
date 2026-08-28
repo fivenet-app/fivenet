@@ -9,6 +9,7 @@ import (
 	"slices"
 	"time"
 
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	unitsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
@@ -927,6 +928,7 @@ func (s *UnitDB) applyUnitAssignmentChanges(
 func (s *UnitDB) CreateUnit(
 	ctx context.Context,
 	creatorJob string,
+	creatorGrade int32,
 	unit *centrumunits.Unit,
 ) (*centrumunits.Unit, error) {
 	if unit.GetAccess() == nil {
@@ -994,7 +996,33 @@ func (s *UnitDB) CreateUnit(
 		return nil, err
 	}
 
-	normalizedAccess, err := access.NormalizeAccess(unit.GetAccess(), nil, nil, 15)
+	highestGrade := creatorGrade
+	if job := s.enricher.GetJobByName(creatorJob); job != nil {
+		if grade, ok := access.HighestJobGrade(job); ok {
+			highestGrade = grade
+		}
+	}
+	unit.Access = access.EnsureJobAccessEntries(
+		unit.GetAccess(),
+		&resourcesaccess.JobAccess{
+			Job:          creatorJob,
+			MinimumGrade: creatorGrade,
+			Access:       int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN),
+		},
+		&resourcesaccess.JobAccess{
+			Job:          creatorJob,
+			MinimumGrade: highestGrade,
+			Access:       int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN),
+			Required:     new(true),
+		},
+	)
+	normalizedAccess, err := access.NormalizeAccess(unit.GetAccess(), nil, &resourcesaccess.Access{
+		Jobs: []*resourcesaccess.JobAccess{{
+			Job:          creatorJob,
+			MinimumGrade: highestGrade,
+			Access:       int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN),
+		}},
+	}, 15)
 	if err != nil {
 		return nil, err
 	}
@@ -1023,7 +1051,7 @@ func (s *UnitDB) CreateUnit(
 	return unit, nil
 }
 
-func (s *UnitDB) Update(ctx context.Context, unit *centrumunits.Unit) (*centrumunits.Unit, error) {
+func (s *UnitDB) Update(ctx context.Context, userGrade int32, unit *centrumunits.Unit) (*centrumunits.Unit, error) {
 	if unit.GetAccess() == nil {
 		unit.Access = &unitsaccess.UnitAccess{}
 	}
@@ -1066,7 +1094,19 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrumunits.Unit) (*centrumu
 		return nil, err
 	}
 
-	normalizedAccess, err := access.NormalizeAccess(unit.GetAccess(), nil, nil, 15)
+	highestGrade := userGrade
+	if job := s.enricher.GetJobByName(unit.GetJob()); job != nil {
+		if grade, ok := access.HighestJobGrade(job); ok {
+			highestGrade = grade
+		}
+	}
+	normalizedAccess, err := access.NormalizeAccess(unit.GetAccess(), nil, &resourcesaccess.Access{
+		Jobs: []*resourcesaccess.JobAccess{{
+			Job:          unit.GetJob(),
+			MinimumGrade: highestGrade,
+			Access:       int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN),
+		}},
+	}, 15)
 	if err != nil {
 		return nil, err
 	}

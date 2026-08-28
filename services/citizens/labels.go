@@ -132,6 +132,7 @@ func (s *Server) CreateOrUpdateLabel(
 
 	label := req.GetLabel()
 	label.Job = &userInfo.Job
+	creating := label.GetId() <= 0
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -162,19 +163,46 @@ func (s *Server) CreateOrUpdateLabel(
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	}
 
+	highestGrade := userInfo.GetJobGrade()
+	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
+		if grade, ok := access.HighestJobGrade(job); ok {
+			highestGrade = grade
+		}
+	}
+
+	var requiredAccess *pbaccess.Access
+	if creating {
+		requiredAccess = &pbaccess.Access{
+			Jobs: []*pbaccess.JobAccess{
+				{
+					Job:          userInfo.GetJob(),
+					MinimumGrade: userInfo.GetJobGrade(),
+					Access:       int32(citizenslabels.AccessLevel_ACCESS_LEVEL_REMOVE),
+					Required:     new(true),
+				},
+				{
+					Job:          userInfo.GetJob(),
+					MinimumGrade: highestGrade,
+					Access:       int32(citizenslabels.AccessLevel_ACCESS_LEVEL_REMOVE),
+					Required:     new(true),
+				},
+			},
+		}
+	}
+
 	fallbackAccess := &pbaccess.Access{
 		Jobs: []*pbaccess.JobAccess{
 			{
 				TargetId:     label.GetId(),
 				Job:          userInfo.GetJob(),
-				MinimumGrade: userInfo.GetJobGrade(),
+				MinimumGrade: highestGrade,
 				Access:       int32(citizenslabels.AccessLevel_ACCESS_LEVEL_REMOVE),
 			},
 		},
 	}
 	normalizedAccess, err := access.NormalizeAccess(
 		label.GetAccess(),
-		nil,
+		requiredAccess,
 		fallbackAccess,
 		15,
 	)
@@ -270,9 +298,7 @@ func (s *Server) fillLabelAccess(ctx context.Context, labels ...*citizenslabels.
 		if err != nil {
 			return err
 		}
-		label.Access = &pbaccess.Access{
-			Jobs: access.GetJobs(),
-		}
+		label.Access = access
 	}
 	return nil
 }

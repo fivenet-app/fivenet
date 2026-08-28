@@ -3,6 +3,7 @@ package documents
 import (
 	"context"
 
+	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	documentsstamps "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -112,18 +113,33 @@ func (s *Server) UpsertStamp(
 	if st.GetAccess() == nil {
 		st.Access = &documentsstamps.StampAccess{}
 	}
-	if len(st.GetAccess().GetJobs()) == 0 {
-		st.Access.Jobs = append(st.Access.Jobs, &documentsstamps.StampJobAccess{
-			Job:          userInfo.GetJob(),
-			MinimumGrade: userInfo.GetJobGrade(),
-			Access:       int32(documentsstamps.AccessLevel_ACCESS_LEVEL_MANAGE),
-		})
+	highestGrade := userInfo.GetJobGrade()
+	if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
+		if grade, ok := access.HighestJobGrade(job); ok {
+			highestGrade = grade
+		}
+	}
+	if st.GetId() <= 0 {
+		st.Access = access.EnsureJobAccessEntries(
+			st.GetAccess(),
+			&resourcesaccess.JobAccess{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: userInfo.GetJobGrade(),
+				Access:       int32(documentsstamps.AccessLevel_ACCESS_LEVEL_MANAGE),
+			},
+			&resourcesaccess.JobAccess{
+				Job:          userInfo.GetJob(),
+				MinimumGrade: highestGrade,
+				Access:       int32(documentsstamps.AccessLevel_ACCESS_LEVEL_MANAGE),
+				Required:     new(true),
+			},
+		)
 	}
 
 	fallbackAccess := &documentsstamps.StampAccess{
 		Jobs: []*documentsstamps.StampJobAccess{{
 			Job:          userInfo.GetJob(),
-			MinimumGrade: userInfo.GetJobGrade(),
+			MinimumGrade: highestGrade,
 			Access:       int32(documentsstamps.AccessLevel_ACCESS_LEVEL_MANAGE),
 		}},
 	}

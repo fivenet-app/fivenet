@@ -484,6 +484,7 @@ func (s *Server) CreateDocument(
 		userInfo,
 		docAccess,
 		false,
+		tmpl == nil || docAccess.IsEmpty(),
 	); err != nil {
 		return nil, err
 	}
@@ -738,6 +739,7 @@ func (s *Server) UpdateDocument(
 			userInfo,
 			req.GetAccess(),
 			true,
+			false,
 		); err != nil {
 			return nil, err
 		}

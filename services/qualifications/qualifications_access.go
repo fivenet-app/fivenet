@@ -5,6 +5,7 @@ import (
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
@@ -27,17 +28,56 @@ var qualificationSubjectAccessOptions = access.SubjectAccessOptions{
 	},
 }
 
+func qualificationCreationJobAccess(
+	userInfo *userinfo.UserInfo,
+	job *jobs.Job,
+	targetID int64,
+) []*qualificationsaccess.QualificationJobAccess {
+	if job == nil {
+		return nil
+	}
+
+	creatorAccess := &qualificationsaccess.QualificationJobAccess{
+		TargetId:     targetID,
+		Job:          job.GetName(),
+		MinimumGrade: userInfo.GetJobGrade(),
+		Access:       int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+	}
+	entries := []*qualificationsaccess.QualificationJobAccess{creatorAccess}
+
+	if highestGrade, ok := access.HighestJobGrade(job); ok {
+		if highestGrade == userInfo.GetJobGrade() {
+			creatorAccess.Required = new(true)
+		} else {
+			entries = append(entries, &qualificationsaccess.QualificationJobAccess{
+				TargetId:     targetID,
+				Job:          job.GetName(),
+				MinimumGrade: highestGrade,
+				Access:       int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+				Required:     new(true),
+			})
+		}
+	}
+
+	return entries
+}
+
 func normalizeQualificationJobAccess(
 	userInfo *userinfo.UserInfo,
+	highestGrade int32,
 	jobs []*qualificationsaccess.QualificationJobAccess,
 ) (*resourcesaccess.Access, error) {
+	if highestGrade < 0 {
+		highestGrade = userInfo.GetJobGrade()
+	}
+
 	return access.NormalizeAccess(
 		&resourcesaccess.Access{Jobs: jobs},
 		nil,
 		&resourcesaccess.Access{
 			Jobs: []*resourcesaccess.JobAccess{{
 				Job:          userInfo.GetJob(),
-				MinimumGrade: userInfo.GetJobGrade(),
+				MinimumGrade: highestGrade,
 				Access:       int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 			}},
 		},
@@ -127,8 +167,14 @@ func (s *Server) SetQualificationAccess(
 	defer tx.Rollback()
 
 	if req.GetAccess() != nil {
+		highestGrade := int32(-1)
+		if job := s.enricher.GetJobByName(userInfo.GetJob()); job != nil {
+			highestGrade, _ = access.HighestJobGrade(job)
+		}
+
 		normalizedAccess, err := normalizeQualificationJobAccess(
 			userInfo,
+			highestGrade,
 			req.GetAccess().GetJobs(),
 		)
 		if err != nil {

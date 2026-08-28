@@ -77,7 +77,7 @@ func (s *Server) CreateOrUpdateUnit(
 	var err error
 	// No unit id set
 	if req.GetUnit().GetId() <= 0 {
-		unit, err = s.units.CreateUnit(ctx, userInfo.GetJob(), req.GetUnit())
+		unit, err = s.units.CreateUnit(ctx, userInfo.GetJob(), userInfo.GetJobGrade(), req.GetUnit())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
@@ -93,7 +93,7 @@ func (s *Server) CreateOrUpdateUnit(
 			return nil, errorscentrum.ErrUnitPermDenied
 		}
 
-		unit, err = s.units.Update(ctx, req.GetUnit())
+		unit, err = s.units.Update(ctx, userInfo.GetJobGrade(), req.GetUnit())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
