@@ -142,7 +142,7 @@
         "@vueuse/nuxt": "14.4.0",
         "@vueuse/router": "14.4.0",
         "autoprefixer": "10.5.4",
-        "cssnano": "8.0.10",
+        "cssnano": "9.0.1",
         "eslint": "10.9.1",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.6",
