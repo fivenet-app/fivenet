@@ -11,23 +11,32 @@ const { t } = useI18n();
 type Category = { label: string; value: string; key: string };
 
 const categories: Category[] = [
-    { label: t('common.date'), value: '', key: 'date' },
-    { label: t('common.active_user'), value: '.ActiveChar', key: 'user' },
+    { label: t('common.date'), value: 'now', key: 'date' },
+    { label: t('common.active_user'), value: '.ActiveChar', key: 'activeChar' },
     { label: t('common.first_citizen'), value: '(first .Users)', key: 'user' },
 ];
 
-const templateVars: Record<string, { label: string; value: string }[]> = {
+const baseUserProperties: { label: string; value: string }[] = [
+    { label: t('common.firstname'), value: '.Firstname' },
+    { label: t('common.lastname'), value: '.Lastname' },
+    { label: t('common.date_of_birth'), value: '.Dateofbirth' },
+];
+
+const templateVars = computed<Record<string, { label: string; value: string }[]>>(() => ({
     date: [
-        { label: `${t('common.date')} "02.01.2006 15:04"`, value: 'now | date "02.01.2006 15:04"' },
-        { label: `${t('common.date')} "02.01.2006"`, value: 'now | date "02.01.2006"' },
-        { label: `${t('common.time')} "15:04"`, value: 'now | date "15:04"' },
+        { label: `${t('common.date')} "02.01.2006 15:04"`, value: ' | date "02.01.2006 15:04"' },
+        { label: `${t('common.date')} "02.01.2006"`, value: ' | date "02.01.2006"' },
+        { label: `${t('common.time')} "15:04"`, value: ' | date "15:04"' },
     ],
-    user: [
-        { label: t('common.firstname'), value: '.Firstname' },
-        { label: t('common.lastname'), value: '.Lastname' },
-        { label: t('common.date_of_birth'), value: '.Dateofbirth' },
+    activeChar: [
+        ...baseUserProperties,
+        { label: t('common.phone'), value: '.PhoneNumber' },
+        { label: t('common.prefix'), value: '.Props.NamePrefix' },
+        { label: t('common.suffix'), value: '.Props.NameSuffix' },
+        { label: t('common.mail'), value: '.Email' },
     ],
-};
+    user: [...baseUserProperties],
+}));
 
 const selectedCategory = ref<(typeof categories)[0] | undefined>(undefined);
 const selectedProperty = ref<string | undefined>(undefined);
@@ -80,6 +89,7 @@ const insertCustom = () => {
                             v-model="selectedProperty"
                             class="w-full"
                             :items="templateVars[selectedCategory?.key ?? '']"
+                            :disabled="!templateVars[selectedCategory?.key ?? '']"
                             value-key="value"
                         />
                     </UFormField>
