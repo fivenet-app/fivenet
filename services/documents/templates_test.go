@@ -70,6 +70,31 @@ func TestRenderTemplateUsesColleagueActiveChar(t *testing.T) {
 	require.Equal(t, "/avatars/42.png (42)", content)
 }
 
+func TestRenderTemplateStripsTemplateVarSpan(t *testing.T) {
+	t.Parallel()
+
+	server := &Server{}
+	tmpl := &documentstemplates.Template{
+		Content: `<p>Hello <span data-template-var="(index .Users 0).Firstname" class="template-var">{{ (index .Users 0).Firstname }}</span></p>`,
+	}
+	data := &resolvedTemplateData{
+		Users: []*users.User{{Firstname: "Smith"}},
+	}
+
+	_, _, content, err := server.renderTemplate(tmpl, data)
+
+	require.NoError(t, err)
+	require.Equal(t, "<p>Hello Smith</p>", content)
+}
+
+func TestStripTemplateVarSpansPreservesTrimMarkers(t *testing.T) {
+	t.Parallel()
+
+	content := `<p><span class="template-var" data-template-var=".Firstname">{{- .Firstname -}}</span></p>`
+
+	require.Equal(t, `<p>{{- .Firstname -}}</p>`, stripTemplateVarSpans(content))
+}
+
 func TestValidateTemplateRequirementsAfterResolution(t *testing.T) {
 	t.Parallel()
 

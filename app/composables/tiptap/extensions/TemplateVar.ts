@@ -1,4 +1,69 @@
 import { Node, mergeAttributes } from '@tiptap/core';
+import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
+import { Plugin, PluginKey, type EditorState, type Transaction } from '@tiptap/pm/state';
+import { VueNodeViewRenderer } from '@tiptap/vue-3';
+import TemplateVarNodeView from '~/components/documents/templates/editor/TemplateVarNodeView.vue';
+
+const templateVarAction = /\{\{(-)?\s*([^{}]*?)\s*(-)?\}\}/g;
+
+function isTemplateControl(value: string): boolean {
+    return /^(end|else|range|if|with|define|template)\b/.test(value.trim());
+}
+
+function createTemplateVarNormalizationTransaction(state: EditorState, nodeName: string): Transaction | null {
+    const replacements: Array<{
+        from: number;
+        to: number;
+        expression: string;
+        leftTrim: boolean;
+        rightTrim: boolean;
+        marks: ProseMirrorNode['marks'];
+    }> = [];
+
+    state.doc.descendants((node, pos) => {
+        if (!node.isText || !node.text) return;
+
+        templateVarAction.lastIndex = 0;
+        let match: RegExpExecArray | null;
+        while ((match = templateVarAction.exec(node.text)) !== null) {
+            const expression = match[2]?.trim() ?? '';
+            if (!expression || isTemplateControl(expression)) continue;
+
+            replacements.push({
+                from: pos + match.index,
+                to: pos + match.index + match[0].length,
+                expression,
+                leftTrim: Boolean(match[1]),
+                rightTrim: Boolean(match[3]),
+                marks: node.marks,
+            });
+        }
+    });
+
+    if (replacements.length === 0) return null;
+
+    const templateVarNode = state.schema.nodes[nodeName];
+    if (!templateVarNode) return null;
+
+    const transaction = state.tr;
+    replacements.reverse().forEach((replacement) => {
+        transaction.replaceWith(
+            replacement.from,
+            replacement.to,
+            templateVarNode.create(
+                {
+                    'data-template-var': replacement.expression,
+                    'data-left-trim': replacement.leftTrim,
+                    'data-right-trim': replacement.rightTrim,
+                },
+                null,
+                replacement.marks,
+            ),
+        );
+    });
+
+    return transaction;
+}
 
 export interface TemplateVarOptions {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,10 +104,30 @@ export const TemplateVar = Node.create<TemplateVarOptions>({
 
     atom: true,
 
+    addNodeView() {
+        return VueNodeViewRenderer(TemplateVarNodeView);
+    },
+
     addOptions() {
         return {
             HTMLAttributes: {},
         };
+    },
+
+    onCreate({ editor }) {
+        const transaction = createTemplateVarNormalizationTransaction(editor.state, this.name);
+        if (transaction) editor.view.dispatch(transaction);
+    },
+
+    addProseMirrorPlugins() {
+        return [
+            new Plugin({
+                key: new PluginKey('templateVarNormalize'),
+                appendTransaction: (_transactions, _oldState, newState) => {
+                    return createTemplateVarNormalizationTransaction(newState, this.name);
+                },
+            }),
+        ];
     },
 
     addAttributes() {

@@ -5,6 +5,7 @@ import (
 	context "context"
 	"errors"
 	"html/template"
+	"regexp"
 
 	"github.com/Masterminds/sprig/v3"
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
@@ -44,6 +45,15 @@ const (
 )
 
 var ErrTemplateActiveChar = errors.New("failed to resolve active character/user")
+
+// FIXME parse html via go and then remove/unwrap the template var spans, instead of using regex.
+var templateVarSpan = regexp.MustCompile(
+	`(?is)<span\b[^>]*\bdata-template-var\s*=\s*(?:"[^"]*"|'[^']*')[^>]*>(.*?)</span>`,
+)
+
+func stripTemplateVarSpans(content string) string {
+	return templateVarSpan.ReplaceAllString(content, "$1")
+}
 
 var templateSubjectAccessOptions = access.SubjectAccessOptions{
 	BlockedAccess: int32(documentsaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
@@ -443,10 +453,12 @@ func (s *Server) renderTemplate(
 	outState := buf.String()
 
 	// Render Content template
+	content := stripTemplateVarSpans(docTmpl.GetContent())
+
 	contentTpl, err := template.
 		New("content").
 		Funcs(sprig.FuncMap()).
-		Parse(docTmpl.GetContent())
+		Parse(content)
 	if err != nil {
 		return "", "", "", err
 	}

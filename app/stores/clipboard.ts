@@ -210,6 +210,7 @@ export const useClipboardStore = defineStore(
         const users = ref<ClipboardUser[]>([]);
         const documents = ref<ClipboardDocument[]>([]);
         const vehicles = ref<ClipboardVehicle[]>([]);
+        // Active stack is used to store the currently selected items for template generation.
         const activeStack = ref<ClipboardData>({
             users: [],
             documents: [],
@@ -220,12 +221,12 @@ export const useClipboardStore = defineStore(
          * Retrieves template data from the active stack.
          * @returns {TemplateSelection} The selected document, user, and vehicle identifiers.
          */
-        const getTemplateSelection = (): TemplateSelection => ({
-            documentIds: activeStack.value.documents.map((document) => document.id),
-            userIds: activeStack.value.users
+        const getTemplateSelection = (activeOnly: boolean = true): TemplateSelection => ({
+            documentIds: (activeOnly ? activeStack.value.documents : documents.value).map((document) => document.id),
+            userIds: (activeOnly ? activeStack.value.users : users.value)
                 .map((user) => user.userId)
                 .filter((userId): userId is number => userId !== undefined && userId > 0),
-            plates: activeStack.value.vehicles.map((vehicle) => vehicle.plate),
+            plates: (activeOnly ? activeStack.value.vehicles : vehicles.value).map((vehicle) => vehicle.plate),
         });
 
         /**
