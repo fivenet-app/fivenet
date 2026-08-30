@@ -295,7 +295,7 @@ watch(
 
                 <p class="text-sm text-muted">
                     {{ $t('common.created_by') }}
-                    <ColleagueInfoPopover :user="exclusion.createdBy" :user-id="exclusion.createdByUserId" hide-props />
+                    <ColleagueInfoPopover :user="exclusion.createdBy" :user-id="exclusion.createdByUserId" />
                 </p>
 
                 <template #footer>

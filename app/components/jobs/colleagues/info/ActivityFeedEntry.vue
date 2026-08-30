@@ -121,7 +121,7 @@ withDefaults(
 
                     <p class="inline-flex items-center gap-1 text-sm">
                         <span>{{ $t('common.created_by') }}</span>
-                        <ColleagueInfoPopover :user="activity.sourceUser" hide-props />
+                        <ColleagueInfoPopover :user="activity.sourceUser" />
                     </p>
                 </div>
             </div>

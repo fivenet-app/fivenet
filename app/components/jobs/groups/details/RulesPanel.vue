@@ -657,7 +657,7 @@ watch(
 
                         <p class="mt-1 text-sm text-muted">
                             {{ $t('common.created_by') }}
-                            <ColleagueInfoPopover :user="rule.createdBy" :user-id="rule.createdByUserId" hide-props />
+                            <ColleagueInfoPopover :user="rule.createdBy" :user-id="rule.createdByUserId" />
                         </p>
                     </div>
 

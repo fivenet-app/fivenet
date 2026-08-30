@@ -16,21 +16,19 @@ const props = withDefaults(
         // Class attribute is "untyped" so use any here
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         textClass?: any;
-        showAvatar?: boolean;
+        hideAvatar?: boolean;
         trailing?: boolean;
-        hideProps?: boolean;
     }>(),
     {
         userId: undefined,
         user: undefined,
         textClass: '',
-        showAvatar: undefined,
+        hideAvatar: undefined,
         trailing: true,
-        hideProps: false,
     },
 );
 
-const { can, activeChar } = useAuth();
+const { activeChar, can } = useAuth();
 
 const { game, popover } = useAppConfig();
 
@@ -63,7 +61,10 @@ const user = computed(() =>
 
 const opened = ref<boolean>(false);
 watchOnce(opened, async () => {
-    if (props.user) {
+    // Colleague details are only available for the active character's job.
+    // Keep the supplied base info for colleagues from other jobs instead of
+    // making a request that is expected to fail.
+    if (props.user && props.user.job === activeChar.value?.job) {
         useTimeoutFn(async () => refresh(), popover.loadWaitTime);
     }
 });
@@ -86,7 +87,7 @@ watchOnce(opened, async () => {
             v-bind="$attrs"
             @click.prevent="opened = true"
         >
-            <template v-if="showAvatar" #leading>
+            <template v-if="!hideAvatar" #leading>
                 <slot name="before" />
                 <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" />
                 <ProfilePictureImg
@@ -109,7 +110,7 @@ watchOnce(opened, async () => {
                         v-if="can('citizens.CitizensService/ListCitizens').value"
                         variant="link"
                         icon="i-mdi-account"
-                        :label="$t('common.profile')"
+                        :label="$t('common.citizen')"
                         :to="`/citizens/${userId}`"
                     />
 
@@ -144,7 +145,7 @@ watchOnce(opened, async () => {
                 </div>
 
                 <div v-else-if="user" class="flex flex-row gap-2 text-highlighted">
-                    <div v-if="showAvatar === undefined || showAvatar">
+                    <div v-if="hideAvatar === undefined || !hideAvatar">
                         <ProfilePictureImg :src="user.profilePicture" :name="`${user.firstname} ${user.lastname}`" />
                     </div>
                     <div>
@@ -185,23 +186,21 @@ watchOnce(opened, async () => {
                             {{ user.dateofbirth }}
                         </p>
 
-                        <template v-if="!hideProps">
-                            <div
-                                v-if="user.props?.absenceEnd && isFuture(toDate(user.props?.absenceEnd))"
-                                class="text-sm font-normal"
-                            >
-                                <span class="font-semibold">{{ $t('common.absent') }}:</span>
-                                <dl class="text-sm font-normal">
-                                    <dd class="truncate">
-                                        {{ $t('common.from') }}:
-                                        <GenericTime :value="user.props?.absenceBegin" type="date" />
-                                    </dd>
-                                    <dd class="truncate">
-                                        {{ $t('common.to') }}: <GenericTime :value="user.props?.absenceEnd" type="date" />
-                                    </dd>
-                                </dl>
-                            </div>
-                        </template>
+                        <div
+                            v-if="user.props?.absenceEnd && isFuture(toDate(user.props?.absenceEnd))"
+                            class="text-sm font-normal"
+                        >
+                            <span class="font-semibold">{{ $t('common.absent') }}:</span>
+                            <dl class="text-sm font-normal">
+                                <dd class="truncate">
+                                    {{ $t('common.from') }}:
+                                    <GenericTime :value="user.props?.absenceBegin" type="date" />
+                                </dd>
+                                <dd class="truncate">
+                                    {{ $t('common.to') }}: <GenericTime :value="user.props?.absenceEnd" type="date" />
+                                </dd>
+                            </dl>
+                        </div>
                     </div>
                 </div>
             </div>

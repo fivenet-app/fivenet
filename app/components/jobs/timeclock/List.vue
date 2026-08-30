@@ -230,7 +230,6 @@ const columns = computed(
                         key: row.original.userId,
                         user: row.original.user,
                         userId: row.original.userId,
-                        showAvatar: true,
                     }),
             },
             {

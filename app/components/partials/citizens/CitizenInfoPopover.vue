@@ -138,7 +138,7 @@ watchOnce(opened, async () => {
                         v-if="can('citizens.CitizensService/ListCitizens').value"
                         variant="link"
                         icon="i-mdi-account"
-                        :label="$t('common.profile')"
+                        :label="$t('common.citizen')"
                         :to="`/citizens/${userId}`"
                     />
 

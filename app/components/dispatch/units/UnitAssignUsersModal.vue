@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
+import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
@@ -141,7 +142,7 @@ async function closeModal(): Promise<void> {
                         <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-900">
                             <ul class="divide-y divide-default text-sm font-medium text-toned" role="list">
                                 <li v-for="user in state.users" :key="user.userId" class="inline-flex items-center px-4 py-2">
-                                    <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
+                                    <ColleagueInfoPopover :user="user" />
                                 </li>
                             </ul>
                         </div>

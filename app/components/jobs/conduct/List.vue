@@ -229,7 +229,7 @@ const columns = computed(
                         th: 'hidden lg:table-cell',
                     },
                 },
-                cell: ({ row }) => h(ColleagueInfoPopover, { user: row.original.creator, hideProps: true }),
+                cell: ({ row }) => h(ColleagueInfoPopover, { user: row.original.creator }),
             },
             {
                 id: 'actions',

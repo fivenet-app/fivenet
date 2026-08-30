@@ -262,7 +262,7 @@ watch(
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <p class="text-sm text-muted">
                             {{ $t('common.created_by') }}
-                            <ColleagueInfoPopover :user="member.createdBy" :user-id="member.createdByUserId" hide-props />
+                            <ColleagueInfoPopover :user="member.createdBy" :user-id="member.createdByUserId" />
                         </p>
 
                         <GenericTime v-if="member.createdAt" class="text-sm text-muted" :value="member.createdAt" />

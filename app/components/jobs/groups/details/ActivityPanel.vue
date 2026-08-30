@@ -10,6 +10,7 @@ import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsGroupsClient } from '~~/gen/ts/clients';
 import { type GroupActivity, GroupActivityType } from '~~/gen/ts/resources/jobs/groups/activity';
+import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListGroupActivityResponse } from '~~/gen/ts/services/jobs/groups';
 import { groupActivityTypeColor, groupActivityTypeIcon, groupRuleLabel } from '../helpers';
@@ -103,7 +104,8 @@ function activityLabel(activity: GroupActivity): string {
 function activityRuleLabel(activity: GroupActivity): string | undefined {
     if (activity.data?.data.oneofKind === 'rule') {
         const rule = activity.data.data.rule;
-        return `#${rule.id} - ${groupRuleLabel(rule, t)}`;
+        const ruleId = rule.id || activity.ruleId;
+        return ruleId ? `#${ruleId} - ${groupRuleLabel(rule, t)}` : groupRuleLabel(rule, t);
     }
 
     if (activity.ruleId) {
@@ -111,6 +113,16 @@ function activityRuleLabel(activity: GroupActivity): string | undefined {
     }
 
     return undefined;
+}
+
+function activityRuleQualification(activity: GroupActivity, qualificationId: number): QualificationShort | undefined {
+    if (activity.data?.data.oneofKind !== 'rule' || activity.data.data.rule.rule.oneofKind !== 'qualification') {
+        return undefined;
+    }
+
+    return activity.data.data.rule.rule.qualification.qualifications.find(
+        (qualification) => qualification.id === qualificationId,
+    );
 }
 
 watch(
@@ -148,6 +160,7 @@ watch(
                         :filter-fields="['firstname', 'lastname']"
                         :search-input="{ placeholder: $t('common.search_field') }"
                         :placeholder="$t('common.colleague', 1)"
+                        clear
                     >
                         <template v-if="selectedUser" #default>
                             {{ userToLabel(selectedUser) }}
@@ -255,11 +268,7 @@ watch(
                                         <template v-if="entry.targetUserId">
                                             <span class="inline-flex items-center gap-1">
                                                 <span class="font-semibold">{{ $t('common.target') }}:</span>
-                                                <ColleagueInfoPopover
-                                                    :user="entry.targetUser"
-                                                    :user-id="entry.targetUserId"
-                                                    hide-props
-                                                />
+                                                <ColleagueInfoPopover :user="entry.targetUser" :user-id="entry.targetUserId" />
                                             </span>
                                         </template>
 
@@ -276,22 +285,23 @@ watch(
                                             v-if="
                                                 entry.data?.data.oneofKind === 'rule' &&
                                                 entry.data.data.rule.rule.oneofKind === 'qualification' &&
-                                                entry.data.data.rule.rule.qualification.qualifications.length > 0
+                                                entry.data.data.rule.rule.qualification.qualificationIds.length > 0
                                             "
                                             class="flex flex-wrap gap-1"
                                         >
                                             <QualificationBadge
-                                                v-for="quali in entry.data.data.rule.rule.qualification.qualifications"
-                                                :key="quali.id"
-                                                :qualification-id="quali.id"
-                                                :qualification="quali"
+                                                v-for="qualificationId in entry.data.data.rule.rule.qualification
+                                                    .qualificationIds"
+                                                :key="qualificationId"
+                                                :qualification-id="qualificationId"
+                                                :qualification="activityRuleQualification(entry, qualificationId)"
                                             />
                                         </div>
                                     </div>
 
                                     <p class="inline-flex items-center gap-1 text-sm">
                                         <span>{{ $t('common.created_by') }}</span>
-                                        <ColleagueInfoPopover :user="entry.actorUser" :user-id="entry.actorUserId" hide-props />
+                                        <ColleagueInfoPopover :user="entry.actorUser" :user-id="entry.actorUserId" />
                                     </p>
                                 </div>
                             </div>
