@@ -28,7 +28,7 @@
         "@galexrt/nuxt-update": "2.2.0",
         "@iconify-json/flagpack": "1.2.8",
         "@iconify-json/mdi": "1.2.3",
-        "@iconify-json/simple-icons": "1.2.93",
+        "@iconify-json/simple-icons": "1.2.94",
         "@internationalized/date": "3.12.3",
         "@nuxt/content": "3.16.0",
         "@nuxt/fonts": "0.14.0",
@@ -117,7 +117,7 @@
         "vue-timeline-chart": "5.2.0",
         "y-protocols": "1.0.7",
         "yjs": "13.6.32",
-        "zod": "4.4.3"
+        "zod": "4.5.2"
     },
     "devDependencies": {
         "@csmith/release-it-calver-plugin": "2026.7.0",
@@ -147,7 +147,7 @@
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.6",
         "h3-next": "npm:h3@2.0.1-rc.29",
-        "happy-dom": "20.11.12",
+        "happy-dom": "20.11.15",
         "nuxt": "4.5.2",
         "nuxt-tiptap-editor": "3.4.0",
         "nuxt-typed-router": "4.0.10",
