@@ -43,7 +43,7 @@ RUN apk add --no-cache git && \
     find . -type f ! -name '*.json' -delete
 
 # Frontend Build
-FROM docker.io/library/node:24.19.0-alpine3.24 AS frontendbuild
+FROM docker.io/library/node:24.20.0-alpine3.24 AS frontendbuild
 
 WORKDIR /app
 
