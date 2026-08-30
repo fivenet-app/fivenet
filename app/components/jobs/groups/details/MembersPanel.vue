@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -21,12 +22,19 @@ const props = defineProps<{
 const { t } = useI18n();
 const jobsGroupsClient = await getJobsGroupsClient();
 
+const schema = z.object({
+    search: z.coerce.string().max(100).default(''),
+    sources: z.enum(GroupMemberSource).array().default([]),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({ search: '', sources: [] });
+
 const page = ref(1);
-const search = ref('');
-const selectedSources = ref<GroupMemberSource[]>([]);
 
 const membersKey = computed(
-    () => `jobs-group-members-${props.groupId}-${page.value}-${search.value}-${selectedSources.value.join(',')}`,
+    () => `jobs-group-members-${props.groupId}-${page.value}-${state.search}-${state.sources.join(',')}`,
 );
 
 const {
@@ -56,11 +64,11 @@ async function listGroupMembers(): Promise<ListGroupMembersResponse> {
             offset: calculateOffset(page.value, membersData.value?.pagination),
         },
         sort: { columns: [{ id: 'user_id', desc: false }] },
-        search: search.value.trim() || undefined,
+        search: state.search.trim() || undefined,
         includeExcluded: true,
         includeLeaders: true,
         includeReasons: true,
-        sources: selectedSources.value,
+        sources: state.sources,
     });
 
     return response;
@@ -76,8 +84,8 @@ async function applyFilters(): Promise<void> {
 }
 
 async function clearFilters(): Promise<void> {
-    search.value = '';
-    selectedSources.value = [];
+    state.search = '';
+    state.sources = [];
     if (page.value === 1) {
         await refreshMembers();
         return;
@@ -114,39 +122,41 @@ watch(
 <template>
     <div v-if="canView" class="grid gap-4">
         <UCard variant="subtle">
-            <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(240px,320px)_auto] lg:items-end">
-                <UFormField :label="$t('common.search')">
-                    <UInput
-                        v-model="search"
-                        class="w-full"
-                        icon="i-mdi-magnify"
-                        :placeholder="$t('common.search_field')"
-                        @keyup.enter="applyFilters"
-                    />
-                </UFormField>
+            <UForm :schema="schema" :state="state" @submit="applyFilters">
+                <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(240px,320px)_auto] lg:items-end">
+                    <UFormField :label="$t('common.search')">
+                        <UInput
+                            v-model="state.search"
+                            class="w-full"
+                            icon="i-mdi-magnify"
+                            :placeholder="$t('common.search_field')"
+                            @keyup.enter="applyFilters"
+                        />
+                    </UFormField>
 
-                <UFormField :label="$t('common.type')">
-                    <USelectMenu
-                        v-model="selectedSources"
-                        class="w-full"
-                        multiple
-                        :items="sourceItems"
-                        value-key="value"
-                        :search-input="{ placeholder: $t('common.search_field') }"
-                    />
-                </UFormField>
+                    <UFormField :label="$t('common.type')">
+                        <USelectMenu
+                            v-model="state.sources"
+                            class="w-full"
+                            multiple
+                            :items="sourceItems"
+                            value-key="value"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                        />
+                    </UFormField>
 
-                <UFieldGroup class="inline-flex w-full sm:w-auto">
-                    <UButton
-                        color="neutral"
-                        variant="outline"
-                        icon="i-mdi-filter-remove"
-                        :label="$t('common.clear')"
-                        @click="clearFilters"
-                    />
-                    <UButton icon="i-mdi-filter" :label="$t('common.apply')" @click="applyFilters" />
-                </UFieldGroup>
-            </div>
+                    <UFieldGroup class="inline-flex w-full sm:w-auto">
+                        <UButton
+                            color="neutral"
+                            variant="outline"
+                            icon="i-mdi-filter-remove"
+                            :label="$t('common.clear')"
+                            @click="clearFilters"
+                        />
+                        <UButton type="submit" icon="i-mdi-filter" :label="$t('common.apply')" />
+                    </UFieldGroup>
+                </div>
+            </UForm>
         </UCard>
 
         <DataPendingBlock v-if="isRequestPending(membersStatus)" :message="$t('common.loading', [$t('common.members', 2)])" />

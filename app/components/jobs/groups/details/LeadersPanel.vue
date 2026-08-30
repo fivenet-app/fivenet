@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import ColleagueCard from '~/components/jobs/colleagues/ColleagueCard.vue';
 import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -34,8 +35,15 @@ const completorStore = useCompletorStore();
 const jobsGroupsClient = await getJobsGroupsClient();
 const confirmModal = overlay.create(ConfirmModal);
 
+const schema = z.object({
+    leader: z.custom<UserShort>().optional(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({ leader: undefined });
+
 const page = ref(1);
-const selectedLeader = ref<UserShort>();
 const pendingAction = ref<string>();
 
 const leadersKey = computed(() => `jobs-group-leaders-${props.groupId}-${page.value}`);
@@ -66,7 +74,7 @@ async function listGroupLeaders(): Promise<ListGroupLeadersResponse> {
 }
 
 function resetLeaderForm(): void {
-    selectedLeader.value = undefined;
+    state.leader = undefined;
 }
 
 async function runMutation(action: string, mutate: () => Promise<void>): Promise<void> {
@@ -84,12 +92,12 @@ async function runMutation(action: string, mutate: () => Promise<void>): Promise
 
 async function addLeader(): Promise<void> {
     if (!canManageLeaders.value) return;
-    if (!selectedLeader.value?.userId) return;
+    if (!state.leader?.userId) return;
 
     await runMutation('leader', async () => {
         await jobsGroupsClient.addGroupLeader({
             groupId: props.groupId,
-            userId: selectedLeader.value!.userId,
+            userId: state.leader!.userId,
         });
         resetLeaderForm();
     });
@@ -106,7 +114,7 @@ async function removeLeader(userId: number): Promise<void> {
                     groupId: props.groupId,
                     userId,
                 });
-                if (selectedLeader.value?.userId === userId) resetLeaderForm();
+                if (state.leader?.userId === userId) resetLeaderForm();
             }),
     });
 }
@@ -124,55 +132,57 @@ watch(
     <div v-if="canView" class="grid gap-4">
         <UCard v-if="canManageLeaders" variant="subtle">
             <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-                <UFormField :label="$t('common.colleague', 1)">
-                    <SelectMenu
-                        v-model="selectedLeader"
-                        class="w-full"
-                        :searchable="
-                            async (q: string) =>
-                                await completorStore.completeColleagues(
-                                    q,
-                                    selectedLeader?.userId ? [selectedLeader.userId] : [],
-                                )
-                        "
-                        searchable-key="jobs-group-leaders"
-                        :filter-fields="['firstname', 'lastname']"
-                        :search-input="{ placeholder: $t('common.search_field') }"
-                        :placeholder="$t('common.colleague', 1)"
-                        :disabled="isMutating || !canManageLeaders"
-                    >
-                        <template v-if="selectedLeader" #default>
-                            {{ userToLabel(selectedLeader) }}
-                        </template>
-                        <template #item-label="{ item }">
-                            {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
-                        </template>
-                        <template #empty>
-                            {{ $t('common.not_found', [$t('common.colleague', 2)]) }}
-                        </template>
-                    </SelectMenu>
-                </UFormField>
+                <UForm :schema="schema" :state="state" class="contents" @submit="addLeader">
+                    <UFormField :label="$t('common.colleague', 1)">
+                        <SelectMenu
+                            v-model="state.leader"
+                            class="w-full"
+                            :searchable="
+                                async (q: string) =>
+                                    await completorStore.completeColleagues(
+                                        q,
+                                        state.leader?.userId ? [state.leader.userId] : [],
+                                    )
+                            "
+                            searchable-key="jobs-group-leaders"
+                            :filter-fields="['firstname', 'lastname']"
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            :placeholder="$t('common.colleague', 1)"
+                            :disabled="isMutating || !canManageLeaders"
+                        >
+                            <template v-if="state.leader" #default>
+                                {{ userToLabel(state.leader) }}
+                            </template>
+                            <template #item-label="{ item }">
+                                {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
+                            </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.colleague', 2)]) }}
+                            </template>
+                        </SelectMenu>
+                    </UFormField>
 
-                <UFieldGroup class="inline-flex w-full sm:w-auto">
-                    <UButton
-                        icon="i-mdi-account-star"
-                        :label="$t('common.add')"
-                        :loading="pendingAction === 'leader'"
-                        :disabled="
-                            isMutating || !canManageLeaders || !selectedLeader?.userId || leaderIds.has(selectedLeader.userId)
-                        "
-                        @click="addLeader"
-                    />
-                    <UButton
-                        v-if="selectedLeader"
-                        color="neutral"
-                        variant="outline"
-                        icon="i-mdi-close"
-                        :label="$t('common.cancel')"
-                        :disabled="isMutating || !canManageLeaders"
-                        @click="resetLeaderForm"
-                    />
-                </UFieldGroup>
+                    <UFieldGroup class="inline-flex w-full sm:w-auto">
+                        <UButton
+                            icon="i-mdi-account-star"
+                            :label="$t('common.add')"
+                            :loading="pendingAction === 'leader'"
+                            :disabled="
+                                isMutating || !canManageLeaders || !state.leader?.userId || leaderIds.has(state.leader.userId)
+                            "
+                            type="submit"
+                        />
+                        <UButton
+                            v-if="state.leader"
+                            color="neutral"
+                            variant="outline"
+                            icon="i-mdi-close"
+                            :label="$t('common.cancel')"
+                            :disabled="isMutating || !canManageLeaders"
+                            @click="resetLeaderForm"
+                        />
+                    </UFieldGroup>
+                </UForm>
             </div>
         </UCard>
 

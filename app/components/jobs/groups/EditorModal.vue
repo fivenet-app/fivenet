@@ -183,7 +183,13 @@ const groupAccessTypes: AccessType[] = [
 
 const logoFile = ref<FileGrpc | undefined>(props.group?.logoFile);
 const logoUploadGroupId = ref<number>(props.group?.id ?? 0);
-const selectedLeaderUsers = ref<UserShort[]>([]);
+const selectedLeaderUsersState = ref<UserShort[]>([]);
+const selectedLeaderUsers = computed<UserShort[]>({
+    get: () => selectedLeaderUsersState.value,
+    set: (users) => {
+        selectedLeaderUsersState.value = users.slice(0, 20);
+    },
+});
 
 const { resizeAndUpload } = useFileUploader(
     (opts) => jobsGroupsClient.uploadGroupLogo(opts),
