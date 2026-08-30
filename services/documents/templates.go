@@ -7,7 +7,6 @@ import (
 	"html/template"
 	"strings"
 
-	"github.com/Masterminds/sprig/v3"
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
@@ -36,6 +35,18 @@ import (
 	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/go-sprout/sprout"
+	"github.com/go-sprout/sprout/registry/checksum"
+	"github.com/go-sprout/sprout/registry/conversion"
+	"github.com/go-sprout/sprout/registry/encoding"
+	sproutmaps "github.com/go-sprout/sprout/registry/maps"
+	"github.com/go-sprout/sprout/registry/numeric"
+	"github.com/go-sprout/sprout/registry/semver"
+	sproutslices "github.com/go-sprout/sprout/registry/slices"
+	"github.com/go-sprout/sprout/registry/std"
+	sproutstrings "github.com/go-sprout/sprout/registry/strings"
+	sprouttime "github.com/go-sprout/sprout/registry/time"
+	"github.com/go-sprout/sprout/registry/uniqueid"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	htmlnode "golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
@@ -494,10 +505,27 @@ func (s *Server) renderTemplate(
 	docTmpl *documentstemplates.Template,
 	data *resolvedTemplateData,
 ) (string, string, string, error) {
+	templateFuncs := sprout.New(
+		sprout.WithRegistries(
+			checksum.NewRegistry(),
+			conversion.NewRegistry(),
+			encoding.NewRegistry(),
+			sproutmaps.NewRegistry(),
+			numeric.NewRegistry(),
+			semver.NewRegistry(),
+			sproutslices.NewRegistry(),
+			std.NewRegistry(),
+			sproutstrings.NewRegistry(),
+			sprouttime.NewRegistry(),
+			uniqueid.NewRegistry(),
+		),
+		sprout.WithSafeFuncs(true),
+	).Build()
+
 	// Render Title template
 	titleTpl, err := template.
 		New("title").
-		Funcs(sprig.FuncMap()).
+		Funcs(templateFuncs).
 		Parse(docTmpl.GetContentTitle())
 	if err != nil {
 		return "", "", "", err
@@ -512,7 +540,7 @@ func (s *Server) renderTemplate(
 	// Render State template
 	stateTpl, err := template.
 		New("state").
-		Funcs(sprig.FuncMap()).
+		Funcs(templateFuncs).
 		Parse(docTmpl.GetState())
 	if err != nil {
 		return "", "", "", err
@@ -533,7 +561,7 @@ func (s *Server) renderTemplate(
 
 	contentTpl, err := template.
 		New("content").
-		Funcs(sprig.FuncMap()).
+		Funcs(templateFuncs).
 		Parse(content)
 	if err != nil {
 		return "", "", "", err

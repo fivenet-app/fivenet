@@ -11,9 +11,10 @@ import (
 	"text/template"
 	"unicode"
 
-	"github.com/Masterminds/sprig/v3"
 	permspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	"github.com/go-sprout/sprout"
+	"github.com/go-sprout/sprout/group/all"
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
@@ -45,7 +46,11 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 		return strings.Join(split[:len(split)-1], ".")
 	}
 
-	templateFns := sprig.FuncMap()
+	templateHandler := sprout.New(
+		sprout.WithGroups(all.RegistryGroup()),
+		sprout.WithSafeFuncs(true),
+	)
+	templateFns := templateHandler.RawFunctions()
 	templateFns["package"] = p.ctx.PackageName
 	templateFns["name"] = p.ctx.Name
 	templateFns["serviceName"] = serviceNameFn
@@ -53,14 +58,15 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 	templateFns["remapRef"] = remapRef
 	templateFns["attrValueTypeName"] = attrValueTypeName
 	templateFns["attrValueConstName"] = attrValueConstName
+	funcs := templateHandler.Build()
 
-	tpl := template.New("permify").Funcs(templateFns)
+	tpl := template.New("permify").Funcs(funcs)
 	p.tpl = template.Must(tpl.Parse(permifyTpl))
 
-	constTpl := template.New("permify_const").Funcs(templateFns)
+	constTpl := template.New("permify_const").Funcs(funcs)
 	p.constTpl = template.Must(constTpl.Parse(permifyConstTpl))
 
-	remapTpl := template.New("permify_remap").Funcs(templateFns)
+	remapTpl := template.New("permify_remap").Funcs(funcs)
 	p.remapTpl = template.Must(remapTpl.Parse(permifyRemapTpl))
 }
 
