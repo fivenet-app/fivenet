@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getCentrumUnitsClient } from '~~/gen/ts/clients';
