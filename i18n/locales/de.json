@@ -2307,6 +2307,10 @@
             "email_address_copied": {
                 "title": "E-Mail Adresse kopiert",
                 "content": "E-Mail Adresse wurde in die Zwischenablage kopiert."
+            },
+            "limit_reached": {
+                "title": "Zwischenablagenlimit erreicht",
+                "content": "Du kannst höchstens 12 Einträge jedes Typs in deiner Zwischenablage haben."
             }
         },
         "category_deleted": {

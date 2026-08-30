@@ -31,6 +31,7 @@ const emits = defineEmits<{
 const { attr, can, activeChar } = useAuth();
 
 const clipboardStore = useClipboardStore();
+const { open: openClipboardModal } = useClipboardModal();
 
 const notifications = useNotificationsStore();
 
@@ -45,7 +46,23 @@ const setMugshotModal = overlay.create(SetMugshotModal);
 function openTemplates(): void {
     if (!props.user) return;
 
-    clipboardStore.addUser(props.user, true);
+    const added = clipboardStore.addUser(props.user, true);
+
+    if (!added) {
+        notifications.add({
+            title: { key: 'notifications.clipboard.limit_reached.title', parameters: {} },
+            description: { key: 'notifications.clipboard.limit_reached.content', parameters: {} },
+            duration: 3250,
+            type: NotificationType.WARNING,
+            actions: [
+                {
+                    label: { key: 'common.open', parameters: {} },
+                    icon: 'i-mdi-clipboard-list-outline',
+                    onClick: () => void openClipboardModal(),
+                },
+            ],
+        });
+    }
 
     templateDrawer.open({});
 }

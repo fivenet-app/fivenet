@@ -2307,6 +2307,10 @@
             "email_address_copied": {
                 "title": "E-Mail address copied",
                 "content": "E-Mail address has been copied to your clipboard."
+            },
+            "limit_reached": {
+                "title": "Clipboard limit reached",
+                "content": "You can only have up to 12 items of each type in your clipboard."
             }
         },
         "category_deleted": {

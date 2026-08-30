@@ -44,6 +44,7 @@ const props = withDefaults(
 );
 
 const clipboardStore = useClipboardStore();
+const { open: openClipboardModal } = useClipboardModal();
 
 const notifications = useNotificationsStore();
 
@@ -120,13 +121,28 @@ async function listVehicles(values: Schema): Promise<ListVehiclesResponse> {
 }
 
 function addToClipboard(vehicle: Vehicle): void {
-    clipboardStore.addVehicle(vehicle);
+    const added = clipboardStore.addVehicle(vehicle);
 
     notifications.add({
-        title: { key: 'notifications.clipboard.vehicle_added.title', parameters: {} },
-        description: { key: 'notifications.clipboard.vehicle_added.content', parameters: {} },
+        title: {
+            key: added ? 'notifications.clipboard.vehicle_added.title' : 'notifications.clipboard.limit_reached.title',
+            parameters: {},
+        },
+        description: {
+            key: added ? 'notifications.clipboard.vehicle_added.content' : 'notifications.clipboard.limit_reached.content',
+            parameters: {},
+        },
         duration: 3250,
-        type: NotificationType.INFO,
+        type: added ? NotificationType.INFO : NotificationType.WARNING,
+        actions: added
+            ? []
+            : [
+                  {
+                      label: { key: 'common.open', parameters: {} },
+                      icon: 'i-mdi-clipboard-list-outline',
+                      onClick: () => void openClipboardModal(),
+                  },
+              ],
     });
 }
 

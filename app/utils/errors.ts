@@ -34,16 +34,17 @@ export function localizeTemplateErrorParameters(error: CommonError, translate: (
     const localizeItem = (item: I18NItem | undefined): I18NItem | undefined => {
         if (!item) return undefined;
 
-        const kind = item.parameters.kind;
+        const parameters = item.parameters ?? {};
+        const kind = parameters.kind;
         const translationKey = kind ? templateKindTranslationKeys[kind] : undefined;
         if (!translationKey) {
-            return { ...item, parameters: { ...item.parameters } };
+            return { ...item, parameters: { ...parameters } };
         }
 
         return {
             ...item,
             parameters: {
-                ...item.parameters,
+                ...parameters,
                 kind: translate(translationKey),
             },
         };

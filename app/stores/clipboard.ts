@@ -204,6 +204,8 @@ export interface ClipboardData {
 
 export type ListType = 'citizens' | 'documents' | 'vehicles';
 
+export const CLIPBOARD_MAX_ITEMS = 12;
+
 export const useClipboardStore = defineStore(
     'clipboard',
     () => {
@@ -222,11 +224,16 @@ export const useClipboardStore = defineStore(
          * @returns {TemplateSelection} The selected document, user, and vehicle identifiers.
          */
         const getTemplateSelection = (activeOnly: boolean = true): TemplateSelection => ({
-            documentIds: (activeOnly ? activeStack.value.documents : documents.value).map((document) => document.id),
+            documentIds: (activeOnly ? activeStack.value.documents : documents.value)
+                .slice(0, CLIPBOARD_MAX_ITEMS)
+                .map((document) => document.id),
             userIds: (activeOnly ? activeStack.value.users : users.value)
+                .slice(0, CLIPBOARD_MAX_ITEMS)
                 .map((user) => user.userId)
                 .filter((userId): userId is number => userId !== undefined && userId > 0),
-            plates: (activeOnly ? activeStack.value.vehicles : vehicles.value).map((vehicle) => vehicle.plate),
+            plates: (activeOnly ? activeStack.value.vehicles : vehicles.value)
+                .slice(0, CLIPBOARD_MAX_ITEMS)
+                .map((vehicle) => vehicle.plate),
         });
 
         /**
@@ -262,10 +269,12 @@ export const useClipboardStore = defineStore(
          * Adds a document to the clipboard.
          * @param {Document} document - The document to add.
          */
-        const addDocument = (document: Document): void => {
-            if (!documents.value.find((o) => o.id === document.id)) {
-                documents.value.unshift(new ClipboardDocument(unref(document)));
-            }
+        const addDocument = (document: Document): boolean => {
+            if (documents.value.find((o) => o.id === document.id)) return true;
+            if (documents.value.length >= CLIPBOARD_MAX_ITEMS) return false;
+
+            documents.value.unshift(new ClipboardDocument(unref(document)));
+            return true;
         };
 
         /**
@@ -288,11 +297,16 @@ export const useClipboardStore = defineStore(
          * @param {User} user - The user to add.
          * @param {boolean} [active] - Whether to promote the user to the active stack.
          */
-        const addUser = (user: User, active?: boolean): void => {
-            if (!users.value.find((o) => o.userId === user.userId)) {
-                users.value.unshift(new ClipboardUser(unref(user)));
+        const addUser = (user: User, active?: boolean): boolean => {
+            if (users.value.find((o) => o.userId === user.userId)) {
+                if (active) promoteToActiveStack('citizens');
+                return true;
             }
+            if (users.value.length >= CLIPBOARD_MAX_ITEMS) return false;
+
+            users.value.unshift(new ClipboardUser(unref(user)));
             if (active) promoteToActiveStack('citizens');
+            return true;
         };
 
         /**
@@ -314,10 +328,12 @@ export const useClipboardStore = defineStore(
          * Adds a vehicle to the clipboard.
          * @param {Vehicle} vehicle - The vehicle to add.
          */
-        const addVehicle = (vehicle: Vehicle): void => {
-            if (!vehicles.value.find((o) => o.plate === vehicle.plate)) {
-                vehicles.value.unshift(new ClipboardVehicle(unref(vehicle)));
-            }
+        const addVehicle = (vehicle: Vehicle): boolean => {
+            if (vehicles.value.find((o) => o.plate === vehicle.plate)) return true;
+            if (vehicles.value.length >= CLIPBOARD_MAX_ITEMS) return false;
+
+            vehicles.value.unshift(new ClipboardVehicle(unref(vehicle)));
+            return true;
         };
 
         /**

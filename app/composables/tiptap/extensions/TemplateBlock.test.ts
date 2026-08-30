@@ -252,7 +252,7 @@ describe('TemplateBlock', () => {
         ['with .Profile', true],
         ['break', true],
         ['continue', true],
-        ['end', true],
+        ['end', false],
         ['else arbitrary', false],
         ['else if', false],
         ['range', false],
