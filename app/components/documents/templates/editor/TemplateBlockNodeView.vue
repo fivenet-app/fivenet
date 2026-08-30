@@ -66,9 +66,14 @@ function deleteNode(): void {
                         </template>
                     </UAlert>
 
-                    <UAlert v-if="!isValid" class="mb-3" color="error" icon="i-mdi-alert-outline" variant="subtle">
-                        {{ $t('components.partials.tiptap_editor.extensions.template_block.invalid') }}
-                    </UAlert>
+                    <UAlert
+                        v-if="!isValid"
+                        class="mb-3"
+                        color="error"
+                        icon="i-mdi-alert-outline"
+                        :description="$t('components.partials.tiptap_editor.extensions.template_block.invalid')"
+                        variant="subtle"
+                    />
 
                     <TemplateBlockInsertForm
                         v-if="!isEnd"

@@ -32,9 +32,7 @@ export function parseErrorMessage(message: string): CommonError | undefined {
 
 export function localizeTemplateErrorParameters(error: CommonError, translate: (key: string) => string): CommonError {
     const localizeItem = (item: I18NItem | undefined): I18NItem | undefined => {
-        if (!item) {
-            return undefined;
-        }
+        if (!item) return undefined;
 
         const kind = item.parameters.kind;
         const translationKey = kind ? templateKindTranslationKeys[kind] : undefined;

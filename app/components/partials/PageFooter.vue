@@ -47,11 +47,7 @@ const year = new Date().getFullYear();
         <UFooter class="bg-default/75">
             <template #left>
                 <p class="text-sm text-muted">
-                    <I18nT keypath="copyright">
-                        <template #year>
-                            {{ year }}
-                        </template>
-                    </I18nT>
+                    {{ $t('copyright', { year: year }) }}
                 </p>
             </template>
 

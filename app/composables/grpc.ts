@@ -102,9 +102,7 @@ function applyTranslatedError(notification: Notification, message: string): void
     }
 
     const parsed = parseErrorMessage(message);
-    if (!parsed) {
-        return;
-    }
+    if (!parsed) return;
 
     const localized = localizeTemplateErrorParameters(parsed, (key) => useNuxtApp().$i18n.t(key));
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/core';
+import TemplateTrimControls from '~/components/documents/templates/editor/TemplateTrimControls.vue';
 
 const props = defineProps<{
     editor: Editor;
@@ -61,23 +62,7 @@ const insertBlock = () => {
                         <USelectMenu v-model="selected" class="w-full" :items="options" value-key="value" />
                     </UFormField>
 
-                    <div class="flex flex-row gap-2">
-                        <UFormField
-                            class="justify-center"
-                            name="leftTrim"
-                            :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_left')"
-                        >
-                            <USwitch v-model="leftTrim" />
-                        </UFormField>
-
-                        <UFormField
-                            class="justify-center"
-                            name="rightTrim"
-                            :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_right')"
-                        >
-                            <USwitch v-model="rightTrim" />
-                        </UFormField>
-                    </div>
+                    <TemplateTrimControls v-model:left-trim="leftTrim" v-model:right-trim="rightTrim" />
 
                     <UFormField name="expression">
                         <UInput

@@ -5,6 +5,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
 import { useClipboardStore } from '~/stores/clipboard';
+import { localizeTemplateErrorParameters, parseError } from '~/utils/errors';
 import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import type { Template } from '~~/gen/ts/resources/documents/templates/templates';
 
@@ -30,6 +31,16 @@ const {
 } = useLazyAsyncData(`documents-templates-${props.templateId}`, () => getTemplate());
 
 const loading = computed(() => isRequestPending(status.value));
+
+const localizedError = computed(() => {
+    const currentError = error.value;
+    if (!currentError) return undefined;
+
+    const parsedError = parseError(currentError);
+    if (!parsedError) return currentError;
+
+    return new Error(JSON.stringify(localizeTemplateErrorParameters(parsedError, $t)));
+});
 
 async function getTemplate(): Promise<Template> {
     try {
@@ -58,7 +69,7 @@ async function getTemplate(): Promise<Template> {
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.template', 2)])"
-                :error="error"
+                :error="localizedError"
                 :retry="refresh"
             />
             <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
