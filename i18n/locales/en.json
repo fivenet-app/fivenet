@@ -1014,6 +1014,9 @@
                     "template_block": {
                         "title": "Template Logic Block",
                         "insert_block": "Insert Block",
+                        "insert_end": "Insert {end} block",
+                        "close_info": "Conditions, loops, and other template logic must also be closed again with a {end} block.",
+                        "invalid": "This block action has an invalid shape. Use an expression with range, if, or with; else alone or else if with an expression; or break, continue, or end alone.",
                         "block_placeholder": {
                             "empty": "Pick a block first...",
                             "select": "e.g. .Items"

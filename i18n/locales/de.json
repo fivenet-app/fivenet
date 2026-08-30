@@ -1014,6 +1014,9 @@
                     "template_block": {
                         "title": "Vorlage-Logik-Block",
                         "insert_block": "Block einfügen",
+                        "insert_end": "{end} Block einfügen",
+                        "close_info": "Bedingungen, Schleifen und andere Vorlagenlogik müssen ebenfalls mit einem {end}-Block geschlossen werden.",
+                        "invalid": "Dieser Logik-Block hat eine ungültige Form. Verwende einen Ausdruck mit range, if oder with; else allein oder else if mit einem Ausdruck; oder break, continue bzw. end allein.",
                         "block_placeholder": {
                             "empty": "Zuerst einen Block auswählen",
                             "select": "E.g., .Vehicles"

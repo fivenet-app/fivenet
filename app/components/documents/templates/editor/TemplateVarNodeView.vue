@@ -5,6 +5,7 @@ import TemplateVarForm from './TemplateVarForm.vue';
 const props = defineProps(nodeViewProps);
 
 const open = ref(false);
+const editable = computed(() => props.editor?.isEditable ?? false);
 
 const displayValue = computed(() => {
     const opening = props.node.attrs['data-left-trim'] ? '{{-' : '{{';
@@ -23,14 +24,22 @@ function save(value: { value: string; leftTrim: boolean; rightTrim: boolean }): 
 </script>
 
 <template>
-    <NodeViewWrapper as="span" class="template-var" contenteditable="false">
-        <UPopover v-model:open="open" :content="{ side: 'top', sideOffset: 8 }">
+    <NodeViewWrapper
+        as="span"
+        class="template-var inline-block rounded border border-dashed border-sky-400 !bg-gray-800 px-0.5 font-mono !text-gray-100"
+        :class="{ 'cursor-pointer': editable }"
+        contenteditable="false"
+    >
+        <template v-if="!editable">
+            <span>{{ displayValue }}</span>
+        </template>
+        <UPopover v-else v-model:open="open" :content="{ side: 'top', sideOffset: 8 }">
             <button type="button" class="font-mono" contenteditable="false" @mousedown.prevent>
                 {{ displayValue }}
             </button>
 
             <template #content>
-                <div class="w-80 p-4">
+                <div class="w-full max-w-86 p-4">
                     <div class="mb-3 font-medium">
                         {{ $t('components.partials.tiptap_editor.extensions.template_var.title') }}
                     </div>
@@ -39,6 +48,12 @@ function save(value: { value: string; leftTrim: boolean; rightTrim: boolean }): 
                         :value="node.attrs['data-template-var']"
                         :left-trim="node.attrs['data-left-trim']"
                         :right-trim="node.attrs['data-right-trim']"
+                        @delete="
+                            () => {
+                                open = false;
+                                props.deleteNode();
+                            }
+                        "
                         @submit="save"
                     />
                 </div>

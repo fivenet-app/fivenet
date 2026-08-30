@@ -41,10 +41,20 @@ const insertBlock = () => {
         </UTooltip>
 
         <template #content>
-            <div class="flex flex-col gap-2 p-4">
+            <div class="flex w-full max-w-86 flex-col gap-2 p-4">
                 <h3 class="block font-medium">
                     {{ $t('components.partials.tiptap_editor.extensions.template_block.title') }}
                 </h3>
+
+                <UAlert icon="i-mdi-information-outline" variant="subtle">
+                    <template #description>
+                        <I18nT keypath="components.partials.tiptap_editor.extensions.template_block.close_info">
+                            <template #end>
+                                <code class="font-mono" v-text="'{{ end }}'" />
+                            </template>
+                        </I18nT>
+                    </template>
+                </UAlert>
 
                 <div class="flex flex-col gap-2">
                     <UFormField name="selected">
@@ -90,6 +100,14 @@ const insertBlock = () => {
                             @click="insertBlock"
                         />
                     </UFormField>
+
+                    <UButton block variant="outline" @click="props.editor?.commands.insertTemplateBlockEnd()">
+                        <I18nT keypath="components.partials.tiptap_editor.extensions.template_block.insert_end">
+                            <template #end>
+                                <code class="font-mono" v-text="'{{ end }}'" />
+                            </template>
+                        </I18nT>
+                    </UButton>
                 </div>
             </div>
         </template>

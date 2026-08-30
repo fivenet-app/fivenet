@@ -3,14 +3,10 @@ import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import { Plugin, PluginKey, type EditorState, type Transaction } from '@tiptap/pm/state';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import TemplateVarNodeView from '~/components/documents/templates/editor/TemplateVarNodeView.vue';
-
-const templateVarAction = /\{\{(-)?\s*([^{}]*?)\s*(-)?\}\}/g;
-
-function isTemplateControl(value: string): boolean {
-    return /^(end|else|range|if|with|define|template)\b/.test(value.trim());
-}
+import { classifyTemplateAction, createTemplateActionMatcher } from './TemplateBlock';
 
 function createTemplateVarNormalizationTransaction(state: EditorState, nodeName: string): Transaction | null {
+    const templateAction = createTemplateActionMatcher();
     const replacements: Array<{
         from: number;
         to: number;
@@ -23,11 +19,11 @@ function createTemplateVarNormalizationTransaction(state: EditorState, nodeName:
     state.doc.descendants((node, pos) => {
         if (!node.isText || !node.text) return;
 
-        templateVarAction.lastIndex = 0;
+        templateAction.lastIndex = 0;
         let match: RegExpExecArray | null;
-        while ((match = templateVarAction.exec(node.text)) !== null) {
+        while ((match = templateAction.exec(node.text)) !== null) {
             const expression = match[2]?.trim() ?? '';
-            if (!expression || isTemplateControl(expression)) continue;
+            if (!expression || classifyTemplateAction(expression) !== 'variable') continue;
 
             replacements.push({
                 from: pos + match.index,

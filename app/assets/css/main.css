@@ -631,35 +631,6 @@ html {
         cursor: col-resize;
     }
 
-    /* Tiptap Editor Extensions */
-    div.template-block {
-        border-left: 1px dashed var(--color-primary-500);
-        background-color: var(--color-gray-800);
-        padding: 0.25rem;
-        margin: 0.25rem 0;
-        font-family: monospace;
-        cursor: pointer;
-    }
-
-    .template-open,
-    .template-close {
-        font-weight: bold;
-        margin-bottom: 0.25rem;
-    }
-
-    span.template-var {
-        background-color: var(--color-gray-800);
-        border-radius: 4px;
-        padding: 2px 2px;
-        font-family: monospace;
-        border: 1px dashed var(--color-primary-500);
-        cursor: pointer;
-    }
-
-    span.template-var[data-hidden='true'] {
-        display: none;
-    }
-
     /* Details/Spoiler */
     .details {
         margin: 0.75rem 0;

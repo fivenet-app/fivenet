@@ -10,8 +10,11 @@ import SelectMenu from '~/components/partials/SelectMenu.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
-import { TemplateBlock } from '~/composables/tiptap/extensions/TemplateBlock';
+import { TemplateBlock, TemplateBlockEnd } from '~/composables/tiptap/extensions/TemplateBlock';
 import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
@@ -165,6 +168,12 @@ const state = reactive<Schema>({
 });
 
 const canSubmit = ref<boolean>(true);
+const template = ref<Template>();
+const loading = ref<boolean>(!!props.templateId);
+const loadError = ref<Error>();
+
+const canEdit = computed(() => !props.templateId || (!loading.value && !loadError.value && !!template.value));
+
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') return;
 
@@ -405,31 +414,37 @@ function setValuesFromTemplate(tpl: Template): void {
     syncSnapshot();
 }
 
-const extensions = [TemplateVar.configure(), TemplateBlock.configure()];
+const extensions = [TemplateVar.configure(), TemplateBlock.configure(), TemplateBlockEnd.configure()];
+
+async function loadTemplate(): Promise<void> {
+    loading.value = true;
+    loadError.value = undefined;
+
+    try {
+        const call = documentsTemplatesClient.getTemplate({
+            templateId: props.templateId!,
+            render: false,
+        });
+        const { response } = await call;
+        template.value = response.template;
+
+        if (template.value) {
+            setValuesFromTemplate(template.value);
+            useHead({
+                title: () => `${template.value?.title} - ${t('pages.documents.templates.edit.title')}`,
+            });
+        }
+    } catch (e) {
+        loadError.value = e as Error;
+        handleGRPCError(e as RpcError);
+    } finally {
+        loading.value = false;
+    }
+}
 
 onBeforeMount(async () => {
     if (props.templateId) {
-        try {
-            const call = documentsTemplatesClient.getTemplate({
-                templateId: props.templateId,
-                render: false,
-            });
-            const { response } = await call;
-
-            const tpl = response.template;
-            if (!tpl) return;
-
-            setValuesFromTemplate(tpl);
-
-            useHead({
-                title: () =>
-                    tpl?.title
-                        ? `${tpl.title} - ${t('pages.documents.templates.edit.title')}`
-                        : t('pages.documents.templates.edit.title'),
-            });
-        } catch (e) {
-            handleGRPCError(e as RpcError);
-        }
+        await loadTemplate();
     } else {
         state.jobAccess.push({
             id: 0,
@@ -500,8 +515,8 @@ const formRef = useTemplateRef('formRef');
 
                     <UButton
                         trailing-icon="i-mdi-content-save"
-                        :disabled="!canSubmit"
-                        :loading="!canSubmit"
+                        :disabled="!canSubmit || !canEdit"
+                        :loading="!canSubmit || loading"
                         @click="formRef?.submit()"
                     >
                         <span class="hidden truncate sm:block">
@@ -520,7 +535,17 @@ const formRef = useTemplateRef('formRef');
                 :state="state"
                 @submit="onSubmitThrottle"
             >
+                <DataPendingBlock v-if="templateId && loading" :message="$t('common.loading', [$t('common.template', 2)])" />
+                <DataErrorBlock
+                    v-else-if="templateId && loadError"
+                    :title="$t('common.unable_to_load', [$t('common.template', 2)])"
+                    :error="loadError"
+                    :retry="loadTemplate"
+                />
+                <DataNoDataBlock v-else-if="templateId && !template" :type="$t('common.template', 2)" :retry="loadTemplate" />
+
                 <UTabs
+                    v-else
                     v-model="selectedTab"
                     class="flex-1 flex-col overflow-y-hidden"
                     :items="items"

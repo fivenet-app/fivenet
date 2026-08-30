@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import TemplateTrimControls from './TemplateTrimControls.vue';
+
 const props = withDefaults(
     defineProps<{
         editing?: boolean;
@@ -16,6 +18,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     (e: 'submit', value: { value: string; leftTrim: boolean; rightTrim: boolean }): void;
+    (e: 'delete'): void;
 }>();
 
 const { t } = useI18n();
@@ -32,6 +35,8 @@ const baseUserProperties: { label: string; value: string }[] = [
     { label: t('common.firstname'), value: '.Firstname' },
     { label: t('common.lastname'), value: '.Lastname' },
     { label: t('common.date_of_birth'), value: '.Dateofbirth' },
+    { label: t('common.sex'), value: '.Sex' },
+    { label: t('common.height'), value: '.Height' },
 ];
 
 const templateVars = computed<Record<string, { label: string; value: string }[]>>(() => ({
@@ -47,7 +52,11 @@ const templateVars = computed<Record<string, { label: string; value: string }[]>
         { label: t('common.suffix'), value: '.Props.NameSuffix' },
         { label: t('common.mail'), value: '.Email' },
     ],
-    user: [...baseUserProperties],
+    user: [
+        ...baseUserProperties,
+        { label: t('common.wanted'), value: '.Props.Wanted' },
+        { label: t('common.phone'), value: '.PhoneNumber' },
+    ],
 }));
 
 const selectedCategory = ref<Category>();
@@ -116,25 +125,12 @@ function insertCustom(): void {
             <UTextarea v-model="draftValue" class="w-full" :rows="3" autofocus />
         </UFormField>
 
-        <div class="flex flex-row gap-2">
-            <UFormField
-                class="justify-center"
-                name="leftTrim"
-                :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_left')"
-            >
-                <USwitch v-model="draftLeftTrim" />
-            </UFormField>
-
-            <UFormField
-                class="justify-center"
-                name="rightTrim"
-                :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_right')"
-            >
-                <USwitch v-model="draftRightTrim" />
-            </UFormField>
-        </div>
-
-        <UButton v-if="editing" block :label="$t('common.save')" :disabled="!draftValue.trim()" @click="submit(draftValue)" />
+        <UFieldGroup v-if="editing">
+            <UButton block :label="$t('common.save')" :disabled="!draftValue.trim()" @click="submit(draftValue)" />
+            <UTooltip :text="$t('common.delete')">
+                <UButton color="error" icon="i-mdi-trash-can" @click="$emit('delete')" />
+            </UTooltip>
+        </UFieldGroup>
 
         <template v-else>
             <UButton
@@ -143,6 +139,8 @@ function insertCustom(): void {
                 :disabled="!selectedCategory || !selectedProperty"
                 @click="insertSelected"
             />
+
+            <USeparator class="my-2" />
 
             <UFormField
                 name="customInput"
@@ -162,5 +160,9 @@ function insertCustom(): void {
                 @click="insertCustom"
             />
         </template>
+
+        <USeparator class="my-2" />
+
+        <TemplateTrimControls v-model:left-trim="draftLeftTrim" v-model:right-trim="draftRightTrim" />
     </div>
 </template>
