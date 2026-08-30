@@ -63,20 +63,20 @@ func (s *Server) hydrateUserDocuments(
 	userInfo *userinfo.UserInfo,
 	relations ...*documentsrelations.DocumentRelation,
 ) error {
-	targets := make([]citizenshydrator.ShortTarget, 0, len(relations)*2)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(relations)*2)
 	for _, rel := range relations {
 		if rel == nil {
 			continue
 		}
 		if rel.GetSourceUser() == nil && rel.GetSourceUserId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: rel.GetSourceUserId(),
 				Set:    rel.SetSourceUser,
 			})
 		}
 		if doc := rel.GetDocument(); doc != nil && doc.GetCreator() == nil &&
 			doc.GetCreatorId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: doc.GetCreatorId(),
 				Set:    doc.SetCreator,
 			})
@@ -86,7 +86,7 @@ func (s *Server) hydrateUserDocuments(
 		return nil
 	}
 
-	return s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(ctx, nil, targets)
+	return s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
 func (s *Server) addUserActivity(

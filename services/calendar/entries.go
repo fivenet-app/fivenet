@@ -137,8 +137,8 @@ func (s *Server) GetCalendarEntry(
 	entry.Calendar.Access = calAccess
 
 	if entry.GetCreatorId() > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.BasicTarget{{
 			UserID: entry.GetCreatorId(),
 			Set: func(user *usershort.UserShort) {
 				entry.SetCreator(user)
@@ -238,8 +238,8 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	if entry.GetCreatorId() > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.BasicTarget{{
 			UserID: entry.GetCreatorId(),
 			Set: func(user *usershort.UserShort) {
 				entry.SetCreator(user)

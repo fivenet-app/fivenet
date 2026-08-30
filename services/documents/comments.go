@@ -79,11 +79,11 @@ func (s *Server) GetComments(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetComments()))
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetComments()))
 	for i, comment := range resp.GetComments() {
 		if comment.GetCreatorId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: comment.GetCreatorId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Comments[i].Creator = user
@@ -175,8 +175,8 @@ func (s *Server) PostComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if comment.GetCreatorId() > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.BasicTarget{{
 			UserID: comment.GetCreatorId(),
 			Set: func(user *usershort.UserShort) {
 				comment.Creator = user
@@ -224,8 +224,8 @@ func (s *Server) EditComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if comment.GetCreatorId() > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.BasicTarget{{
 			UserID: comment.GetCreatorId(),
 			Set: func(user *usershort.UserShort) {
 				comment.Creator = user
@@ -287,8 +287,8 @@ func (s *Server) DeleteComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if comment.GetCreatorId() > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.BasicTarget{{
 			UserID: comment.GetCreatorId(),
 			Set: func(user *usershort.UserShort) {
 				comment.Creator = user

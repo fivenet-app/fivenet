@@ -8,12 +8,31 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
+	"github.com/fivenet-app/fivenet/v2026/internal/tests/permsstub"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/proto"
 )
+
+type testPermissions struct {
+	permsstub.Permissions
+
+	fields []string
+	calls  int
+}
+
+func (p *testPermissions) AttrStringList(
+	_ *userinfo.UserInfo,
+	_ perms.AttrRef[perms.StringListAttr],
+) (*permissionsattributes.StringList, error) {
+	p.calls++
+	return &permissionsattributes.StringList{Strings: p.fields}, nil
+}
 
 type testUserAwareEnricher struct {
 	mstlystcdata.DummyEnricher
@@ -96,6 +115,47 @@ func newTestHydrator(
 	}, mock
 }
 
+func TestResolveFieldsRequiresExplicitRequestAndPermission(t *testing.T) {
+	t.Parallel()
+
+	permissions := &testPermissions{fields: []string{
+		string(permsjobs.ColleaguesServiceGetColleagueTypesPermValueNote),
+		string(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels),
+	}}
+	h := &Hydrator{perms: permissions}
+	userInfo := &userinfo.UserInfo{}
+
+	fields, _, err := h.resolveFields(userInfo, ResolveOpts{})
+	if err != nil {
+		t.Fatalf("resolveFields returned error: %v", err)
+	}
+	if fields.note || fields.labels {
+		t.Fatalf("unexpected fields without explicit request: %+v", fields)
+	}
+	if permissions.calls != 0 {
+		t.Fatalf(
+			"expected no permission lookup without requested fields, got %d",
+			permissions.calls,
+		)
+	}
+
+	fields, _, err = h.resolveFields(userInfo, ResolveOpts{IncludeNote: true})
+	if err != nil {
+		t.Fatalf("resolveFields returned error: %v", err)
+	}
+	if !fields.note || fields.labels {
+		t.Fatalf("unexpected fields for note request: %+v", fields)
+	}
+
+	fields, _, err = h.resolveFields(userInfo, ResolveOpts{IncludeLabels: true})
+	if err != nil {
+		t.Fatalf("resolveFields returned error: %v", err)
+	}
+	if fields.note || !fields.labels {
+		t.Fatalf("unexpected fields for labels request: %+v", fields)
+	}
+}
+
 func expectFallbackQuery(mock sqlmock.Sqlmock, userIDs ...int32) {
 	rows := sqlmock.NewRows([]string{
 		"colleague.id",
@@ -156,10 +216,10 @@ func TestListByUserIDFallsBackForMissingColleagueJob(t *testing.T) {
 	got, err := h.ListByUserID(
 		t.Context(),
 		nil,
+		nil,
 		[]int32{1, 2},
 		ResolveOpts{
-			PropsJobMode: PropsJobModeExplicit,
-			PropsJob:     "police",
+			Scope: JobScope{Mode: JobScopeExplicit, Job: "police"},
 		},
 	)
 	if err != nil {
@@ -266,10 +326,10 @@ func TestHydrateTargetsUsesFallbackForMissingColleagueJob(t *testing.T) {
 	if err := h.HydrateTargets(
 		t.Context(),
 		nil,
+		nil,
 		targets,
 		ResolveOpts{
-			PropsJobMode: PropsJobModeExplicit,
-			PropsJob:     "police",
+			Scope: JobScope{Mode: JobScopeExplicit, Job: "police"},
 		},
 	); err != nil {
 		t.Fatalf("HydrateTargets returned error: %v", err)
@@ -323,10 +383,10 @@ func TestListByUserIDSkipsDeletedColleagueRows(t *testing.T) {
 	got, err := h.ListByUserID(
 		t.Context(),
 		nil,
+		nil,
 		[]int32{7},
 		ResolveOpts{
-			PropsJobMode: PropsJobModeExplicit,
-			PropsJob:     "police",
+			Scope: JobScope{Mode: JobScopeExplicit, Job: "police"},
 		},
 	)
 	if err != nil {

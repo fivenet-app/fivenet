@@ -45,12 +45,12 @@ func (s *Server) ListQualifications(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetQualifications()))
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetQualifications()))
 	for i, qualification := range resp.GetQualifications() {
 		if qualification.GetCreatorId() <= 0 {
 			continue
 		}
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: qualification.GetCreatorId(),
 			Set: func(user *usershort.UserShort) {
 				resp.Qualifications[i].Creator = user
@@ -58,7 +58,7 @@ func (s *Server) ListQualifications(
 		})
 	}
 	if len(targets) > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 		if err := hydrateShort(ctx, nil, targets); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -167,7 +167,7 @@ func (s *Server) GetQualification(
 	}
 
 	if resp.GetQualification().GetCreatorId() > 0 {
-		getShortByUserID := s.hydrator.GetShortByUserIDSafeFunc(userInfo)
+		getShortByUserID := s.hydrator.GetBasicByUserIDSafeFunc(userInfo)
 		creator, err := getShortByUserID(ctx, nil, resp.GetQualification().GetCreatorId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

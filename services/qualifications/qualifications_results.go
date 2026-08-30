@@ -73,10 +73,10 @@ func (s *Server) ListQualificationsResults(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetResults())*2)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetResults())*2)
 	for i, result := range resp.GetResults() {
 		if result.GetUserId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: result.GetUserId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Results[i].User = user
@@ -84,7 +84,7 @@ func (s *Server) ListQualificationsResults(
 			})
 		}
 		if result.GetCreatorId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: result.GetCreatorId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Results[i].Creator = user
@@ -93,7 +93,7 @@ func (s *Server) ListQualificationsResults(
 		}
 	}
 	if len(targets) > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 		if err := hydrateShort(ctx, nil, targets); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -332,9 +332,9 @@ func (s *Server) getQualificationResult(
 		return nil, nil
 	}
 
-	targets := make([]citizenshydrator.ShortTarget, 0, 2)
+	targets := make([]citizenshydrator.BasicTarget, 0, 2)
 	if result.GetUserId() > 0 {
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: result.GetUserId(),
 			Set: func(user *usershort.UserShort) {
 				result.User = user
@@ -342,7 +342,7 @@ func (s *Server) getQualificationResult(
 		})
 	}
 	if result.GetCreatorId() > 0 {
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: result.GetCreatorId(),
 			Set: func(user *usershort.UserShort) {
 				result.Creator = user
@@ -350,7 +350,7 @@ func (s *Server) getQualificationResult(
 		})
 	}
 	if len(targets) > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 		if err := hydrateShort(ctx, nil, targets); err != nil {
 			return nil, err
 		}

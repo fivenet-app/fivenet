@@ -165,7 +165,6 @@ func (noopCitizenHydrator) ListByUserID(
 	_ qrm.DB,
 	_ *pbuserinfo.UserInfo,
 	_ []int32,
-	_ citizenshydrator.ResolveOpts,
 ) ([]*users.User, error) {
 	return nil, nil
 }
@@ -175,7 +174,6 @@ func (noopCitizenHydrator) HydrateByUserID(
 	_ qrm.DB,
 	_ *pbuserinfo.UserInfo,
 	_ []int32,
-	_ citizenshydrator.ResolveOpts,
 ) (map[int32]*users.User, error) {
 	return map[int32]*users.User{}, nil
 }
@@ -185,60 +183,66 @@ func (noopCitizenHydrator) HydrateTargets(
 	_ qrm.DB,
 	_ *pbuserinfo.UserInfo,
 	_ []citizenshydrator.Target,
-	_ citizenshydrator.ResolveOpts,
 ) error {
 	return nil
 }
 
-func (noopCitizenHydrator) ListShortByUserID(
+func (noopCitizenHydrator) GetByUserID(
 	_ context.Context,
 	_ qrm.DB,
 	_ *pbuserinfo.UserInfo,
-	_ []int32,
-	_ citizenshydrator.ResolveOpts,
-) ([]*usershort.UserShort, error) {
+	_ int32,
+) (*users.User, error) {
 	return nil, nil
 }
 
-func (noopCitizenHydrator) HydrateShortByUserID(
+func (noopCitizenHydrator) GetBasicByUserID(
 	_ context.Context,
 	_ qrm.DB,
 	_ *pbuserinfo.UserInfo,
-	_ []int32,
-	_ citizenshydrator.ResolveOpts,
-) (map[int32]*usershort.UserShort, error) {
-	return map[int32]*usershort.UserShort{}, nil
-}
-
-func (noopCitizenHydrator) HydrateShortTargets(
-	_ context.Context,
-	_ qrm.DB,
-	_ *pbuserinfo.UserInfo,
-	_ []citizenshydrator.ShortTarget,
-	_ citizenshydrator.ResolveOpts,
-) error {
-	return nil
-}
-
-func (noopCitizenHydrator) HydrateShortTargetsSafeFunc(
-	_ *pbuserinfo.UserInfo,
-) func(
-	context.Context,
-	qrm.DB,
-	[]citizenshydrator.ShortTarget,
-) error {
-	return func(context.Context, qrm.DB, []citizenshydrator.ShortTarget) error { return nil }
-}
-
-func (noopCitizenHydrator) GetShortByUserID(
-	_ context.Context,
-	_ qrm.DB,
 	_ int32,
 ) (*usershort.UserShort, error) {
 	return nil, nil
 }
 
-func (noopCitizenHydrator) GetShortByUserIDSafeFunc(
+func (noopCitizenHydrator) ListBasicByUserID(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []int32,
+) ([]*usershort.UserShort, error) {
+	return nil, nil
+}
+
+func (noopCitizenHydrator) HydrateBasicByUserID(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []int32,
+) (map[int32]*usershort.UserShort, error) {
+	return map[int32]*usershort.UserShort{}, nil
+}
+
+func (noopCitizenHydrator) HydrateBasicTargets(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []citizenshydrator.BasicTarget,
+) error {
+	return nil
+}
+
+func (noopCitizenHydrator) HydrateBasicTargetsSafeFunc(
+	_ *pbuserinfo.UserInfo,
+) func(
+	context.Context,
+	qrm.DB,
+	[]citizenshydrator.BasicTarget,
+) error {
+	return func(context.Context, qrm.DB, []citizenshydrator.BasicTarget) error { return nil }
+}
+
+func (noopCitizenHydrator) GetBasicByUserIDSafeFunc(
 	_ *pbuserinfo.UserInfo,
 ) func(
 	context.Context,
@@ -250,14 +254,14 @@ func (noopCitizenHydrator) GetShortByUserIDSafeFunc(
 	}
 }
 
-func (safeCitizenHydrator) HydrateShortTargetsSafeFunc(
+func (safeCitizenHydrator) HydrateBasicTargetsSafeFunc(
 	_ *pbuserinfo.UserInfo,
 ) func(
 	context.Context,
 	qrm.DB,
-	[]citizenshydrator.ShortTarget,
+	[]citizenshydrator.BasicTarget,
 ) error {
-	return func(_ context.Context, _ qrm.DB, targets []citizenshydrator.ShortTarget) error {
+	return func(_ context.Context, _ qrm.DB, targets []citizenshydrator.BasicTarget) error {
 		for _, target := range targets {
 			if target.Set == nil {
 				continue

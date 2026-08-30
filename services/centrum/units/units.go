@@ -424,10 +424,13 @@ func (s *UnitDB) loadUnitsFromDB(ctx context.Context, id int64) ([]*centrumunits
 			if err := s.colleagueHydrator.HydrateTargets(
 				ctx,
 				s.db,
+				nil,
 				targets,
 				colleagueshydrator.ResolveOpts{
-					PropsJobMode: colleagueshydrator.PropsJobModePrimary,
-					PropsJob:     units[i].GetJob(),
+					Scope: colleagueshydrator.JobScope{
+						Mode: colleagueshydrator.JobScopePrimary,
+						Job:  units[i].GetJob(),
+					},
 				},
 			); err != nil {
 				return nil, err
@@ -565,13 +568,16 @@ func (s *UnitDB) UpdateStatus(
 
 	if in.UserId != nil {
 		var err error
-		in.User, err = s.colleagueHydrator.GetShortByUserID(
+		in.User, err = s.colleagueHydrator.GetBasicByUserID(
 			ctx,
 			s.db,
+			nil,
 			in.GetUserId(),
 			colleagueshydrator.ResolveOpts{
-				PropsJobMode: colleagueshydrator.PropsJobModeExplicit,
-				PropsJob:     unit.GetJob(),
+				Scope: colleagueshydrator.JobScope{
+					Mode: colleagueshydrator.JobScopeExplicit,
+					Job:  unit.GetJob(),
+				},
 			},
 		)
 		if err != nil {
@@ -590,13 +596,16 @@ func (s *UnitDB) UpdateStatus(
 			in.SetCreator(in.GetUser())
 		} else {
 			var err error
-			in.Creator, err = s.colleagueHydrator.GetShortByUserID(
+			in.Creator, err = s.colleagueHydrator.GetBasicByUserID(
 				ctx,
 				s.db,
+				nil,
 				in.GetCreatorId(),
 				colleagueshydrator.ResolveOpts{
-					PropsJobMode: colleagueshydrator.PropsJobModeExplicit,
-					PropsJob:     unit.GetJob(),
+					Scope: colleagueshydrator.JobScope{
+						Mode: colleagueshydrator.JobScopeExplicit,
+						Job:  unit.GetJob(),
+					},
 				},
 			)
 			if err != nil {
@@ -848,10 +857,13 @@ func (s *UnitDB) applyUnitAssignmentChanges(
 		byUserID, err := s.colleagueHydrator.HydrateByUserID(
 			ctx,
 			s.db,
+			nil,
 			eligibleAdd,
 			colleagueshydrator.ResolveOpts{
-				PropsJobMode: colleagueshydrator.PropsJobModeExplicit,
-				PropsJob:     unit.GetJob(),
+				Scope: colleagueshydrator.JobScope{
+					Mode: colleagueshydrator.JobScopeExplicit,
+					Job:  unit.GetJob(),
+				},
 			},
 		)
 		if err != nil {

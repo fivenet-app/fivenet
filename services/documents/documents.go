@@ -155,11 +155,11 @@ func (s *Server) ListDocuments(
 	}
 	resp.Documents = docs
 
-	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetDocuments()))
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetDocuments()))
 	for i, doc := range resp.GetDocuments() {
 		if doc.GetCreatorId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: doc.GetCreatorId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Documents[i].Creator = user
@@ -226,8 +226,8 @@ func (s *Server) GetDocument(
 	}
 
 	if resp.GetDocument().GetCreatorId() > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.BasicTarget{{
 			UserID: resp.GetDocument().GetCreatorId(),
 			Set: func(user *usershort.UserShort) {
 				resp.Document.Creator = user
@@ -1226,7 +1226,7 @@ func (s *Server) ChangeDocumentOwner(
 		return nil, errorsdocuments.ErrDocOwnerFailed
 	}
 
-	getShortByUserID := s.hydrator.GetShortByUserIDSafeFunc(userInfo)
+	getShortByUserID := s.hydrator.GetBasicByUserIDSafeFunc(userInfo)
 	newOwner, err := getShortByUserID(ctx, s.db, req.GetNewUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

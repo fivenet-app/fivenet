@@ -24,52 +24,98 @@ var Module = fx.Module(
 	fx.Provide(New),
 )
 
-type PropsJobMode int
+type JobScopeMode int
 
 const (
-	PropsJobModeCaller PropsJobMode = iota
-	PropsJobModePrimary
-	PropsJobModeExplicit
+	JobScopeCaller JobScopeMode = iota
+	JobScopePrimary
+	JobScopeExplicit
 )
 
-// ResolveOpts options to adjust the resolve behavior.
-type ResolveOpts struct {
-	UserInfo *userinfo.UserInfo
-	InfoOnly bool
+type JobScope struct {
+	Mode JobScopeMode
+	Job  string
+}
 
-	PropsJobMode PropsJobMode
-	PropsJob     string
+// ResolveOpts controls job resolution and optional, permission-gated details.
+type ResolveOpts struct {
+	Scope JobScope
+
+	// IncludeNote requests the colleague note. It is returned only when the
+	// requester has permission or is a job admin.
+	IncludeNote bool
+	// IncludeLabels requests the additional labels lookup. It is returned only
+	// when the requester has permission or is a job admin. Keep this opt-in
+	// unless labels become part of the standard colleague hydration contract.
+	IncludeLabels bool
 }
 
 type IHydrator interface {
-	ListByUserID(
+	GetBasicByUserID(
 		ctx context.Context,
 		db qrm.DB,
-		userIDs []int32,
-		opts ResolveOpts,
-	) ([]*jobscolleagues.Colleague, error)
-	GetShortByUserID(
-		ctx context.Context,
-		db qrm.DB,
+		userInfo *userinfo.UserInfo,
 		userID int32,
 		opts ResolveOpts,
 	) (*jobscolleagues.Colleague, error)
+	ListBasicByUserID(
+		ctx context.Context,
+		db qrm.DB,
+		userInfo *userinfo.UserInfo,
+		userIDs []int32,
+		opts ResolveOpts,
+	) ([]*jobscolleagues.Colleague, error)
+	HydrateBasicByUserID(
+		ctx context.Context,
+		db qrm.DB,
+		userInfo *userinfo.UserInfo,
+		userIDs []int32,
+		opts ResolveOpts,
+	) (map[int32]*jobscolleagues.Colleague, error)
+	HydrateBasicTargets(
+		ctx context.Context,
+		db qrm.DB,
+		userInfo *userinfo.UserInfo,
+		targets []BasicTarget,
+		opts ResolveOpts,
+	) error
 
+	GetByUserID(
+		ctx context.Context,
+		db qrm.DB,
+		userInfo *userinfo.UserInfo,
+		userID int32,
+		opts ResolveOpts,
+	) (*jobscolleagues.Colleague, error)
+	ListByUserID(
+		ctx context.Context,
+		db qrm.DB,
+		userInfo *userinfo.UserInfo,
+		userIDs []int32,
+		opts ResolveOpts,
+	) ([]*jobscolleagues.Colleague, error)
 	HydrateByUserID(
 		ctx context.Context,
 		db qrm.DB,
+		userInfo *userinfo.UserInfo,
 		userIDs []int32,
 		opts ResolveOpts,
 	) (map[int32]*jobscolleagues.Colleague, error)
 	HydrateTargets(
 		ctx context.Context,
 		db qrm.DB,
+		userInfo *userinfo.UserInfo,
 		targets []Target,
 		opts ResolveOpts,
 	) error
 }
 
 type Target struct {
+	UserID int32
+	Set    func(*jobscolleagues.Colleague)
+}
+
+type BasicTarget struct {
 	UserID int32
 	Set    func(*jobscolleagues.Colleague)
 }
@@ -99,33 +145,39 @@ func New(p Params) IHydrator {
 	}
 }
 
-func (h *Hydrator) getFields(
+type resolvedFields struct {
+	note   bool
+	labels bool
+}
+
+func (h *Hydrator) resolveFields(
 	userInfo *userinfo.UserInfo,
-	infoOnly bool,
-) (*perms.TypedStringList[permsjobs.ColleaguesServiceGetColleagueTypesPermValue], bool, error) {
-	fields := perms.NewTypedStringList[permsjobs.ColleaguesServiceGetColleagueTypesPermValue]()
+	opts ResolveOpts,
+) (resolvedFields, bool, error) {
 	if userInfo == nil {
-		return fields, false, nil
+		return resolvedFields{}, false, nil
 	}
 	jobAdmin := userInfo.GetJobAdmin()
-	if !infoOnly {
-		var err error
-		fields, err = permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(h.perms, userInfo)
-		if err != nil {
-			return nil, false, err
-		}
+	if !opts.IncludeNote && !opts.IncludeLabels {
+		return resolvedFields{}, jobAdmin, nil
 	}
 
-	if jobAdmin {
-		fields.Set(permsjobs.ColleaguesServiceGetColleagueTypesPermValueNote)
+	fields, err := permsjobs.ColleaguesService.GetColleague.TypesTyped.Get(h.perms, userInfo)
+	if err != nil {
+		return resolvedFields{}, false, err
 	}
-
-	return fields, jobAdmin, nil
+	return resolvedFields{
+		note: opts.IncludeNote &&
+			(jobAdmin || fields.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueNote)),
+		labels: opts.IncludeLabels &&
+			(jobAdmin || fields.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels)),
+	}, jobAdmin, nil
 }
 
 func (h *Hydrator) ListByUserID(
 	ctx context.Context,
 	db qrm.DB,
+	userInfo *userinfo.UserInfo,
 	userIDs []int32,
 	opts ResolveOpts,
 ) ([]*jobscolleagues.Colleague, error) {
@@ -136,14 +188,14 @@ func (h *Hydrator) ListByUserID(
 		db = h.db
 	}
 
-	fields, jobAdmin, err := h.getFields(opts.UserInfo, opts.InfoOnly)
+	fields, jobAdmin, err := h.resolveFields(userInfo, opts)
 	if err != nil {
 		return nil, err
 	}
 
 	resolvedUserIDs := uniqueUserIDs(userIDs)
 
-	userJobs, err := h.resolveJob(ctx, db, resolvedUserIDs, opts)
+	userJobs, err := h.resolveJob(ctx, db, userInfo, resolvedUserIDs, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +207,7 @@ func (h *Hydrator) ListByUserID(
 	}
 	maps.Copy(colleaguesByUserID, fallbackByUserID)
 
-	enrichJobInfo := h.enricher.EnrichJobInfoSafeFunc(opts.UserInfo)
+	enrichJobInfo := h.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for _, jobGroup := range userJobs {
 		colleagues, err := h.store.ListColleaguesByUserIDs(
 			ctx,
@@ -170,8 +222,7 @@ func (h *Hydrator) ListByUserID(
 			return nil, err
 		}
 
-		if fields.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) ||
-			jobAdmin {
+		if fields.labels {
 			if err := h.attachLabels(ctx, db, jobGroup.job, colleagues, jobAdmin); err != nil {
 				return nil, err
 			}
@@ -256,15 +307,88 @@ func (h *Hydrator) loadFallbackByUserID(
 	return out, nil
 }
 
-func (h *Hydrator) GetShortByUserID(
+func (h *Hydrator) GetBasicByUserID(
 	ctx context.Context,
 	db qrm.DB,
+	userInfo *userinfo.UserInfo,
 	userID int32,
 	opts ResolveOpts,
 ) (*jobscolleagues.Colleague, error) {
-	opts.InfoOnly = true
+	colleagues, err := h.ListBasicByUserID(ctx, db, userInfo, []int32{userID}, opts)
+	if err != nil || len(colleagues) == 0 {
+		return nil, err
+	}
+	return colleagues[0], nil
+}
 
-	colleagues, err := h.ListByUserID(ctx, db, []int32{userID}, opts)
+func (h *Hydrator) ListBasicByUserID(
+	ctx context.Context,
+	db qrm.DB,
+	userInfo *userinfo.UserInfo,
+	userIDs []int32,
+	opts ResolveOpts,
+) ([]*jobscolleagues.Colleague, error) {
+	opts.IncludeNote = false
+	opts.IncludeLabels = false
+	return h.ListByUserID(ctx, db, userInfo, userIDs, opts)
+}
+
+func (h *Hydrator) HydrateBasicByUserID(
+	ctx context.Context,
+	db qrm.DB,
+	userInfo *userinfo.UserInfo,
+	userIDs []int32,
+	opts ResolveOpts,
+) (map[int32]*jobscolleagues.Colleague, error) {
+	colleagues, err := h.ListBasicByUserID(ctx, db, userInfo, userIDs, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	byUserID := make(map[int32]*jobscolleagues.Colleague, len(colleagues))
+	for _, colleague := range colleagues {
+		byUserID[colleague.GetUserId()] = colleague
+	}
+	return byUserID, nil
+}
+
+func (h *Hydrator) HydrateBasicTargets(
+	ctx context.Context,
+	db qrm.DB,
+	userInfo *userinfo.UserInfo,
+	targets []BasicTarget,
+	opts ResolveOpts,
+) error {
+	if len(targets) == 0 {
+		return nil
+	}
+
+	userIDs := make([]int32, 0, len(targets))
+	for _, target := range targets {
+		if target.UserID > 0 && target.Set != nil {
+			userIDs = append(userIDs, target.UserID)
+		}
+	}
+	colleaguesByUserID, err := h.HydrateBasicByUserID(ctx, db, userInfo, userIDs, opts)
+	if err != nil {
+		return err
+	}
+	for _, target := range targets {
+		if colleague, ok := colleaguesByUserID[target.UserID]; target.Set != nil && ok {
+			target.Set(colleague)
+		}
+	}
+	return nil
+}
+
+func (h *Hydrator) GetByUserID(
+	ctx context.Context,
+	db qrm.DB,
+	userInfo *userinfo.UserInfo,
+	userID int32,
+	opts ResolveOpts,
+) (*jobscolleagues.Colleague, error) {
+	colleagues, err := h.ListByUserID(ctx, db, userInfo, []int32{userID}, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -277,10 +401,11 @@ func (h *Hydrator) GetShortByUserID(
 func (h *Hydrator) HydrateByUserID(
 	ctx context.Context,
 	db qrm.DB,
+	userInfo *userinfo.UserInfo,
 	userIDs []int32,
 	opts ResolveOpts,
 ) (map[int32]*jobscolleagues.Colleague, error) {
-	colleagues, err := h.ListByUserID(ctx, db, userIDs, opts)
+	colleagues, err := h.ListByUserID(ctx, db, userInfo, userIDs, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -296,6 +421,7 @@ func (h *Hydrator) HydrateByUserID(
 func (h *Hydrator) HydrateTargets(
 	ctx context.Context,
 	db qrm.DB,
+	userInfo *userinfo.UserInfo,
 	targets []Target,
 	opts ResolveOpts,
 ) error {
@@ -315,7 +441,7 @@ func (h *Hydrator) HydrateTargets(
 		return nil
 	}
 
-	colleaguesByUserID, err := h.HydrateByUserID(ctx, db, userIDs, opts)
+	colleaguesByUserID, err := h.HydrateByUserID(ctx, db, userInfo, userIDs, opts)
 	if err != nil {
 		return err
 	}
@@ -344,23 +470,24 @@ type jobGroup struct {
 func (h *Hydrator) resolveJob(
 	ctx context.Context,
 	db qrm.DB,
+	userInfo *userinfo.UserInfo,
 	userIDs []int32,
 	opts ResolveOpts,
 ) ([]jobGroup, error) {
-	switch opts.PropsJobMode {
-	case PropsJobModePrimary:
-		return h.resolvePrimaryJob(ctx, db, userIDs, opts.PropsJob)
+	switch opts.Scope.Mode {
+	case JobScopePrimary:
+		return h.resolvePrimaryJob(ctx, db, userIDs, opts.Scope.Job)
 
-	case PropsJobModeExplicit:
-		if opts.PropsJob == "" {
+	case JobScopeExplicit:
+		if opts.Scope.Job == "" {
 			return nil, nil
 		}
-		return []jobGroup{{job: opts.PropsJob, userIDs: userIDs}}, nil
+		return []jobGroup{{job: opts.Scope.Job, userIDs: userIDs}}, nil
 
 	default:
-		job := opts.PropsJob
-		if job == "" && opts.UserInfo != nil {
-			job = opts.UserInfo.GetJob()
+		job := opts.Scope.Job
+		if job == "" && userInfo != nil {
+			job = userInfo.GetJob()
 		}
 		if job == "" {
 			return nil, errors.New("colleague hydrator requires a job for caller-scoped hydration")
@@ -472,14 +599,11 @@ func (h *Hydrator) attachLabels(
 }
 
 func columnsForFields(
-	fields *perms.TypedStringList[permsjobs.ColleaguesServiceGetColleagueTypesPermValue],
+	fields resolvedFields,
 ) mysql.ProjectionList {
 	columns := mysql.ProjectionList{}
-	for _, field := range fields.Values() {
-		switch field {
-		case permsjobs.ColleaguesServiceGetColleagueTypesPermValueNote:
-			columns = append(columns, table.FivenetJobColleagueProps.AS("colleague_props").Note)
-		}
+	if fields.note {
+		columns = append(columns, table.FivenetJobColleagueProps.AS("colleague_props").Note)
 	}
 
 	return columns

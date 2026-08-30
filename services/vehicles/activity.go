@@ -75,10 +75,10 @@ func (s *Server) ListVehicleActivity(
 	canViewCreator := fields.Contains(
 		permsvehicles.VehiclesServiceListVehicleActivityFieldsPermValueCreator,
 	) || userInfo.GetJobAdmin()
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetActivity()))
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetActivity()))
 	for i, entry := range resp.GetActivity() {
 		if canViewCreator {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: entry.GetCreatorId(),
 				Set:    resp.Activity[i].SetCreator,
 			})
@@ -89,7 +89,7 @@ func (s *Server) ListVehicleActivity(
 	}
 
 	if canViewCreator {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 		if err := hydrateShort(ctx, nil, targets); err != nil {
 			return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 		}

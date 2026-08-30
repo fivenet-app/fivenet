@@ -41,11 +41,11 @@ func (s *Server) ViewAuditLog(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetLogs())*2)
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetLogs())*2)
 	for i, logEntry := range resp.GetLogs() {
 		if logEntry.GetUserId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: logEntry.GetUserId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Logs[i].User = user
@@ -53,7 +53,7 @@ func (s *Server) ViewAuditLog(
 			})
 		}
 		if logEntry.GetTargetUserId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: logEntry.GetTargetUserId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Logs[i].TargetUser = user

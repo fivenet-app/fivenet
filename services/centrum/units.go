@@ -542,10 +542,9 @@ func (s *Server) ListUnitActivity(
 	if err := s.colleagueHydrator.HydrateTargets(
 		ctx,
 		s.db,
+		userInfo,
 		targets,
-		colleagueshydrator.ResolveOpts{
-			UserInfo: userInfo,
-		},
+		colleagueshydrator.ResolveOpts{},
 	); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}

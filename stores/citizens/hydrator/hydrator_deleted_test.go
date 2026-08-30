@@ -36,7 +36,6 @@ func TestListByUserIDSkipsDeletedUsers(t *testing.T) {
 		nil,
 		nil,
 		[]int32{7},
-		ResolveOpts{},
 	)
 	if err != nil {
 		t.Fatalf("ListByUserID returned error: %v", err)

@@ -89,10 +89,10 @@ func (s *Server) ListVehicles(
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetVehicles()))
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetVehicles()))
 	for i, vehicle := range resp.GetVehicles() {
 		if vehicle.GetOwnerId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: vehicle.GetOwnerId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Vehicles[i].Owner = user
@@ -104,7 +104,7 @@ func (s *Server) ListVehicles(
 		}
 	}
 
-	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 	if err := hydrateShort(ctx, nil, targets); err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}

@@ -68,10 +68,9 @@ func (s *Server) hydrateTimeclockEntryColleagues(
 	if err := s.colleagueHydrator.HydrateTargets(
 		ctx,
 		s.db,
+		userInfo,
 		targets,
-		colleaguehydrator.ResolveOpts{
-			UserInfo: userInfo,
-		},
+		colleaguehydrator.ResolveOpts{},
 	); err != nil {
 		return errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -382,10 +381,9 @@ func (s *Server) ListInactiveEmployees(
 	if err := s.colleagueHydrator.HydrateTargets(
 		ctx,
 		s.db,
+		userInfo,
 		targets,
-		colleaguehydrator.ResolveOpts{
-			UserInfo: userInfo,
-		},
+		colleaguehydrator.ResolveOpts{},
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}

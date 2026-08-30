@@ -66,10 +66,10 @@ func (s *Server) ListQualificationRequests(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetRequests())*2)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetRequests())*2)
 	for i, request := range resp.GetRequests() {
 		if request.GetUserId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: request.GetUserId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Requests[i].User = user
@@ -77,7 +77,7 @@ func (s *Server) ListQualificationRequests(
 			})
 		}
 		if request.GetApproverId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: request.GetApproverId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Requests[i].Approver = user
@@ -86,7 +86,7 @@ func (s *Server) ListQualificationRequests(
 		}
 	}
 	if len(targets) > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 		if err := hydrateShort(ctx, nil, targets); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -269,9 +269,9 @@ func (s *Server) getQualificationRequest(
 		return nil, err
 	}
 
-	targets := make([]citizenshydrator.ShortTarget, 0, 2)
+	targets := make([]citizenshydrator.BasicTarget, 0, 2)
 	if request.GetUserId() > 0 {
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: request.GetUserId(),
 			Set: func(user *usershort.UserShort) {
 				request.User = user
@@ -279,7 +279,7 @@ func (s *Server) getQualificationRequest(
 		})
 	}
 	if request.GetApproverId() > 0 {
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: request.GetApproverId(),
 			Set: func(user *usershort.UserShort) {
 				request.Approver = user
@@ -287,7 +287,7 @@ func (s *Server) getQualificationRequest(
 		})
 	}
 	if len(targets) > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 		if err := hydrateShort(ctx, nil, targets); err != nil {
 			return nil, err
 		}

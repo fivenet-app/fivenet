@@ -86,7 +86,7 @@ func (s *Server) generateEmailProposals(
 		}
 	} else {
 		// User's private email
-		getShortByUserID := s.hydrator.GetShortByUserIDSafeFunc(userInfo)
+		getShortByUserID := s.hydrator.GetBasicByUserIDSafeFunc(userInfo)
 		user, err := getShortByUserID(ctx, s.db, userInfo.GetUserId())
 		if err != nil {
 			return nil, nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

@@ -140,10 +140,13 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 		byUserID, err := s.colleagueHydrator.HydrateByUserID(
 			ctx,
 			s.db,
+			nil,
 			userIDs,
 			colleagueshydrator.ResolveOpts{
-				PropsJobMode: colleagueshydrator.PropsJobModePrimary,
-				PropsJob:     job,
+				Scope: colleagueshydrator.JobScope{
+					Mode: colleagueshydrator.JobScopePrimary,
+					Job:  job,
+				},
 			},
 		)
 		if err != nil {

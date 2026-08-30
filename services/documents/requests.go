@@ -479,13 +479,13 @@ func (s *Server) hydrateDocumentReqs(
 	userInfo *pbuserinfo.UserInfo,
 	requests ...*documentsrequests.DocRequest,
 ) error {
-	targets := make([]citizenshydrator.ShortTarget, 0, len(requests))
+	targets := make([]citizenshydrator.BasicTarget, 0, len(requests))
 	for _, request := range requests {
 		if request == nil || request.GetCreator() != nil || request.CreatorId == nil {
 			continue
 		}
 
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: request.GetCreatorId(),
 			Set:    func(creator *usershort.UserShort) { request.Creator = creator },
 		})
@@ -494,7 +494,7 @@ func (s *Server) hydrateDocumentReqs(
 		return nil
 	}
 
-	return s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(ctx, nil, targets)
+	return s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
 func (s *Server) notifyUserAboutRequest(

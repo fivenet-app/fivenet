@@ -68,16 +68,16 @@ func (s *Server) ListUserActivity(
 
 	resp.Activity = activities
 
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetActivity())*2)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetActivity())*2)
 	for i := range resp.GetActivity() {
 		activity := resp.GetActivity()[i]
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: activity.GetTargetUserId(),
 			Set: func(user *usershort.UserShort) {
 				resp.Activity[i].TargetUser = user
 			},
 		})
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: activity.GetSourceUserId(),
 			Set: func(user *usershort.UserShort) {
 				resp.Activity[i].SourceUser = user
@@ -85,7 +85,7 @@ func (s *Server) ListUserActivity(
 		})
 	}
 
-	if err := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(
+	if err := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)(
 		ctx,
 		nil,
 		targets,

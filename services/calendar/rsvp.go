@@ -66,10 +66,10 @@ func (s *Server) ListCalendarEntryRSVP(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetEntries()))
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetEntries()))
 	for i, entry := range resp.GetEntries() {
 		if entry.GetUserId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: entry.GetUserId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Entries[i].User = user
@@ -77,7 +77,7 @@ func (s *Server) ListCalendarEntryRSVP(
 			})
 		}
 	}
-	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 	if err := hydrateShort(ctx, nil, targets); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -171,8 +171,8 @@ func (s *Server) RSVPCalendarEntry(
 	}
 
 	if rsvpEntry.GetUserId() > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.BasicTarget{{
 			UserID: rsvpEntry.GetUserId(),
 			Set: func(user *usershort.UserShort) {
 				rsvpEntry.User = user

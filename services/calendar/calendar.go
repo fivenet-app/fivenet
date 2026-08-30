@@ -65,10 +65,10 @@ func (s *Server) ListCalendars(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetCalendars()))
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetCalendars()))
 	for i, cal := range resp.GetCalendars() {
 		if cal.GetCreatorId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: cal.GetCreatorId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Calendars[i].Creator = user
@@ -76,7 +76,7 @@ func (s *Server) ListCalendars(
 			})
 		}
 	}
-	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 	if err := hydrateShort(ctx, nil, targets); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -451,8 +451,8 @@ func (s *Server) getCalendar(
 	}
 
 	if dest != nil && dest.GetCreatorId() > 0 {
-		hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-		if err := hydrateShort(ctx, nil, []citizenshydrator.ShortTarget{{
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.BasicTarget{{
 			UserID: dest.GetCreatorId(),
 			Set: func(user *usershort.UserShort) {
 				dest.Creator = user

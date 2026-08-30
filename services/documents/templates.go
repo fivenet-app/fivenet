@@ -18,7 +18,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
-	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
@@ -28,7 +27,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
-	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
@@ -282,11 +280,12 @@ func (s *Server) resolveTemplateData(
 	selection *documentstemplates.TemplateSelection,
 	userInfo *userinfo.UserInfo,
 ) (*resolvedTemplateData, error) {
-	activeChar, err := s.colleagueHydrator.GetShortByUserID(
+	activeChar, err := s.colleagueHydrator.GetBasicByUserID(
 		ctx,
 		s.db,
+		userInfo,
 		userInfo.GetUserId(),
-		colleagueshydrator.ResolveOpts{UserInfo: userInfo},
+		colleagueshydrator.ResolveOpts{},
 	)
 	if err != nil {
 		return nil, err
@@ -296,11 +295,6 @@ func (s *Server) resolveTemplateData(
 			ErrTemplateActiveChar,
 			errorsdocuments.ErrTemplateRenderFailed,
 		)
-	}
-
-	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.perms, userInfo)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 	}
 
 	data := &resolvedTemplateData{
@@ -316,12 +310,6 @@ func (s *Server) resolveTemplateData(
 			s.db,
 			userInfo,
 			selection.GetUserIds(),
-			citizenshydrator.ResolveOpts{
-				IncludePhoneNumber: fields.Contains(
-					permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-				),
-				IncludeProps: true,
-			},
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)

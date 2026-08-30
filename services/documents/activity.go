@@ -71,11 +71,11 @@ func (s *Server) ListDocumentActivity(
 	}
 	resp.Activity = activity
 
-	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetActivity()))
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetActivity()))
 	for i, act := range resp.GetActivity() {
 		if act.GetCreatorId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: act.GetCreatorId(),
 				Set: func(user *usershort.UserShort) {
 					resp.Activity[i].Creator = user

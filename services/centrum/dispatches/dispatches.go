@@ -564,7 +564,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 	}
 
 	publicJobs := s.appCfg.Get().JobInfo.GetPublicJobs()
-	creatorTargets := make([]citizenshydrator.ShortTarget, 0, len(dsps))
+	creatorTargets := make([]citizenshydrator.BasicTarget, 0, len(dsps))
 	for i := range dsps {
 		dsp := dsps[i]
 		var err error
@@ -574,7 +574,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 		}
 
 		if dsp.GetCreatorId() > 0 {
-			creatorTargets = append(creatorTargets, citizenshydrator.ShortTarget{
+			creatorTargets = append(creatorTargets, citizenshydrator.BasicTarget{
 				UserID: dsp.GetCreatorId(),
 				Set:    dsp.SetCreator,
 			})
@@ -655,7 +655,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 		}
 	}
 
-	if err := s.hydrator.HydrateShortTargetsSafeFunc(nil)(
+	if err := s.hydrator.HydrateBasicTargetsSafeFunc(nil)(
 		ctx,
 		s.db,
 		creatorTargets,
@@ -815,13 +815,16 @@ func (s *DispatchDB) UpdateStatus(
 
 	if in.GetUserId() > 0 {
 		var err error
-		in.User, err = s.colleagueshydrator.GetShortByUserID(
+		in.User, err = s.colleagueshydrator.GetBasicByUserID(
 			ctx,
 			s.db,
+			nil,
 			in.GetUserId(),
 			colleagueshydrator.ResolveOpts{
-				PropsJobMode: colleagueshydrator.PropsJobModeExplicit,
-				PropsJob:     dsp.GetFirstJob(),
+				Scope: colleagueshydrator.JobScope{
+					Mode: colleagueshydrator.JobScopeExplicit,
+					Job:  dsp.GetFirstJob(),
+				},
 			},
 		)
 		if err != nil {
@@ -1204,7 +1207,7 @@ func (s *DispatchDB) Create(
 	}
 
 	if dsp.GetCreatorId() > 0 {
-		getShortByUserID := s.hydrator.GetShortByUserIDSafeFunc(nil)
+		getShortByUserID := s.hydrator.GetBasicByUserIDSafeFunc(nil)
 		var err error
 		creator, err := getShortByUserID(ctx, s.db, dsp.GetCreatorId())
 		if err != nil {
@@ -1481,12 +1484,13 @@ func (s *DispatchDB) GetStatusByID(
 	}
 
 	if dest.GetUserId() > 0 {
-		colleague, err := s.colleagueshydrator.GetShortByUserID(
+		colleague, err := s.colleagueshydrator.GetBasicByUserID(
 			ctx,
 			tx,
+			nil,
 			dest.GetUserId(),
 			colleagueshydrator.ResolveOpts{
-				PropsJobMode: colleagueshydrator.PropsJobModePrimary,
+				Scope: colleagueshydrator.JobScope{Mode: colleagueshydrator.JobScopePrimary},
 			},
 		)
 		if err != nil {

@@ -355,12 +355,11 @@ func (s *Server) hydrateMarkerCreators(
 		return nil
 	}
 
-	creatorsByID, err := s.hydrator.HydrateShortByUserID(
+	creatorsByID, err := s.hydrator.HydrateBasicByUserID(
 		ctx,
 		nil,
 		nil,
 		creatorIDs,
-		citizenshydrator.ResolveOpts{},
 	)
 	if err != nil {
 		return err
@@ -390,13 +389,13 @@ func (s *Server) hydrateMarkerCreatorsSafe(
 		return nil
 	}
 
-	targets := make([]citizenshydrator.ShortTarget, 0, len(markers))
+	targets := make([]citizenshydrator.BasicTarget, 0, len(markers))
 	for i, marker := range markers {
 		if marker == nil || !marker.HasCreatorId() || marker.GetCreatorId() <= 0 {
 			continue
 		}
 		idx := i
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: marker.GetCreatorId(),
 			Set: func(user *usershort.UserShort) {
 				markers[idx].SetCreator(user)
@@ -407,7 +406,7 @@ func (s *Server) hydrateMarkerCreatorsSafe(
 		return nil
 	}
 
-	return s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(ctx, nil, targets)
+	return s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
 func (s *Server) requirePublicMarkerMutationAccess(

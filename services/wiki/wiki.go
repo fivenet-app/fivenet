@@ -143,13 +143,13 @@ func (s *Server) getPageAccess(
 		s.enricher.EnrichJobInfo(access.GetJobs()[i])
 	}
 
-	safeHydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-	targets := make([]citizenshydrator.ShortTarget, 0, len(access.GetUsers()))
+	safeHydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(access.GetUsers()))
 	for i := range access.GetUsers() {
 		if access.GetUsers()[i].GetUserId() <= 0 {
 			continue
 		}
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: access.GetUsers()[i].GetUserId(),
 			Set: func(user *usershort.UserShort) {
 				access.Users[i].User = user
@@ -181,7 +181,7 @@ func (s *Server) getPage(
 
 	s.enricher.EnrichJobName(dest)
 	if dest.GetMeta() != nil && dest.GetMeta().GetCreatorId() > 0 {
-		safeHydrateShort := s.hydrator.GetShortByUserIDSafeFunc(userInfo)
+		safeHydrateShort := s.hydrator.GetBasicByUserIDSafeFunc(userInfo)
 		creator, err := safeHydrateShort(ctx, nil, dest.GetMeta().GetCreatorId())
 		if err != nil {
 			return nil, err

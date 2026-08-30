@@ -74,10 +74,9 @@ func (s *Server) hydrateConductEntryColleagues(
 	if err := s.colleagueHydrator.HydrateTargets(
 		ctx,
 		s.db,
+		userInfo,
 		targets,
-		colleaguehydrator.ResolveOpts{
-			UserInfo: userInfo,
-		},
+		colleaguehydrator.ResolveOpts{},
 	); err != nil {
 		return errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}

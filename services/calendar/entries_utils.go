@@ -39,10 +39,10 @@ func (s *Server) finalizeCalendarEntries(
 		return 0
 	})
 
-	targets := make([]citizenshydrator.ShortTarget, 0, len(entries))
+	targets := make([]citizenshydrator.BasicTarget, 0, len(entries))
 	for i, entry := range entries {
 		if entry.GetCreatorId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: entry.GetCreatorId(),
 				Set: func(user *usershort.UserShort) {
 					entries[i].Creator = user
@@ -54,7 +54,7 @@ func (s *Server) finalizeCalendarEntries(
 		return entries, nil
 	}
 
-	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 	if err := hydrateShort(ctx, nil, targets); err != nil {
 		return entries, err
 	}

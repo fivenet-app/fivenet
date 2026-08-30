@@ -381,27 +381,27 @@ func (s *Server) hydrateApprovalTasks(
 	userInfo *userinfo.UserInfo,
 	tasks ...*documentsapproval.ApprovalTask,
 ) error {
-	targets := make([]citizenshydrator.ShortTarget, 0, len(tasks)*3)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(tasks)*3)
 	for _, task := range tasks {
 		if task == nil {
 			continue
 		}
 
 		if task.GetUser() == nil && task.GetUserId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: task.GetUserId(),
 				Set:    func(user *usershort.UserShort) { task.User = user },
 			})
 		}
 		if task.GetCreator() == nil && task.GetCreatorId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: task.GetCreatorId(),
 				Set:    func(user *usershort.UserShort) { task.Creator = user },
 			})
 		}
 		if doc := task.GetDocument(); doc != nil && doc.GetCreator() == nil &&
 			doc.GetCreatorId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: doc.GetCreatorId(),
 				Set:    func(user *usershort.UserShort) { doc.Creator = user },
 			})
@@ -411,7 +411,7 @@ func (s *Server) hydrateApprovalTasks(
 		return nil
 	}
 
-	return s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(ctx, nil, targets)
+	return s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
 func (s *Server) UpsertApprovalTasks(
@@ -652,13 +652,13 @@ func (s *Server) hydrateApprovals(
 	userInfo *userinfo.UserInfo,
 	approvals ...*documentsapproval.Approval,
 ) error {
-	targets := make([]citizenshydrator.ShortTarget, 0, len(approvals))
+	targets := make([]citizenshydrator.BasicTarget, 0, len(approvals))
 	for _, approval := range approvals {
 		if approval == nil || approval.GetUser() != nil || approval.GetUserId() <= 0 {
 			continue
 		}
 
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: approval.GetUserId(),
 			Set:    func(user *usershort.UserShort) { approval.User = user },
 		})
@@ -667,7 +667,7 @@ func (s *Server) hydrateApprovals(
 		return nil
 	}
 
-	return s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(ctx, nil, targets)
+	return s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
 func (s *Server) RevokeApproval(

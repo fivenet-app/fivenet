@@ -100,7 +100,7 @@ func (s *Server) sendShareNotifications(
 	entry *calendarentries.CalendarEntry,
 	targetCitizens []int32,
 ) error {
-	sourceUser, err := s.hydrator.GetShortByUserID(ctx, nil, sourceUserId)
+	sourceUser, err := s.hydrator.GetBasicByUserID(ctx, nil, nil, sourceUserId)
 	if err != nil {
 		return errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}

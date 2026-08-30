@@ -210,7 +210,7 @@ func (s *Server) hydrateDocumentReferences(
 	userInfo *userinfo.UserInfo,
 	refs ...*documentsreferences.DocumentReference,
 ) error {
-	targets := make([]citizenshydrator.ShortTarget, 0, len(refs)*2)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(refs)*2)
 	for _, ref := range refs {
 		if ref == nil {
 			continue
@@ -220,21 +220,21 @@ func (s *Server) hydrateDocumentReferences(
 		s.docCategories.Enrich(ref.GetTargetDocument())
 
 		if ref.GetCreator() == nil && ref.GetCreatorId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: ref.GetCreatorId(),
 				Set:    func(creator *usershort.UserShort) { ref.Creator = creator },
 			})
 		}
 		if source := ref.GetSourceDocument(); source != nil && source.GetCreator() == nil &&
 			source.GetCreatorId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: source.GetCreatorId(),
 				Set:    func(creator *usershort.UserShort) { source.Creator = creator },
 			})
 		}
 	}
 	if len(targets) > 0 {
-		if err := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(
+		if err := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)(
 			ctx,
 			nil,
 			targets,
@@ -251,19 +251,19 @@ func (s *Server) hydrateDocumentRelations(
 	userInfo *userinfo.UserInfo,
 	relations ...*documentsrelations.DocumentRelation,
 ) error {
-	targets := make([]citizenshydrator.ShortTarget, 0, len(relations)*2)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(relations)*2)
 	for _, rel := range relations {
 		if rel == nil {
 			continue
 		}
 		if rel.GetSourceUser() == nil && rel.GetSourceUserId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: rel.GetSourceUserId(),
 				Set:    func(user *usershort.UserShort) { rel.SourceUser = user },
 			})
 		}
 		if rel.GetTargetUser() == nil && rel.GetTargetUserId() > 0 {
-			targets = append(targets, citizenshydrator.ShortTarget{
+			targets = append(targets, citizenshydrator.BasicTarget{
 				UserID: rel.GetTargetUserId(),
 				Set:    func(user *usershort.UserShort) { rel.TargetUser = user },
 			})
@@ -273,7 +273,7 @@ func (s *Server) hydrateDocumentRelations(
 		return nil
 	}
 
-	return s.hydrator.HydrateShortTargetsSafeFunc(userInfo)(ctx, nil, targets)
+	return s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
 func (s *Server) AddDocumentRelation(

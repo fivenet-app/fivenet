@@ -65,13 +65,13 @@ func (s *Server) ListPageActivity(
 	}
 	resp.Activity = activity
 
-	hydrateShort := s.hydrator.HydrateShortTargetsSafeFunc(userInfo)
-	targets := make([]citizenshydrator.ShortTarget, 0, len(resp.GetActivity()))
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetActivity()))
 	for i := range resp.GetActivity() {
 		if resp.GetActivity()[i].GetCreatorId() <= 0 {
 			continue
 		}
-		targets = append(targets, citizenshydrator.ShortTarget{
+		targets = append(targets, citizenshydrator.BasicTarget{
 			UserID: resp.GetActivity()[i].GetCreatorId(),
 			Set:    resp.Activity[i].SetCreator,
 		})

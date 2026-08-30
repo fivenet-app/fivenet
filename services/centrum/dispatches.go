@@ -320,7 +320,7 @@ func (s *Server) hydrateDispatchCreator(
 		return nil
 	}
 
-	getShortByUserID := s.hydrator.GetShortByUserIDSafeFunc(userInfo)
+	getShortByUserID := s.hydrator.GetBasicByUserIDSafeFunc(userInfo)
 	var err error
 	dispatch.Creator, err = getShortByUserID(ctx, s.db, dispatch.GetCreatorId())
 	if err != nil {
@@ -625,10 +625,9 @@ func (s *Server) ListDispatchActivity(
 	if err := s.colleagueHydrator.HydrateTargets(
 		ctx,
 		s.db,
+		userInfo,
 		targets,
-		colleagueshydrator.ResolveOpts{
-			UserInfo: userInfo,
-		},
+		colleagueshydrator.ResolveOpts{},
 	); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
