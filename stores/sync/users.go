@@ -338,7 +338,6 @@ func (s *Store) createUser(
 	syncedAt time.Time,
 	user *syncdata.DataUser,
 ) (int64, error) {
-
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return 0, err

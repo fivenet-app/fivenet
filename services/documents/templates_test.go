@@ -104,7 +104,11 @@ func TestStripTemplateActionSpansPreservesOtherHTMLAttributes(t *testing.T) {
 
 	stripped, err := stripTemplateActionSpans(content)
 	require.NoError(t, err)
-	require.Equal(t, `<p data-custom="keep">{{- if .Active -}}{{ end }}<span data-keep="yes">content</span></p>`, stripped)
+	require.Equal(
+		t,
+		`<p data-custom="keep">{{- if .Active -}}{{ end }}<span data-keep="yes">content</span></p>`,
+		stripped,
+	)
 }
 
 func TestStripTemplateActionSpansUnwrapsNestedActions(t *testing.T) {

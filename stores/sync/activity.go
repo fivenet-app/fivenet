@@ -86,7 +86,8 @@ func (s *Store) AddUserActivity(
 	ctx context.Context,
 	req *pbsync.AddUserActivityRequest,
 ) (*pbsync.AddActivityResponse, error) {
-	if activity := req.GetUserActivity(); activity != nil && req.GetSourceUser() != nil && req.GetSourceUser().UserId != nil {
+	if activity := req.GetUserActivity(); activity != nil && req.GetSourceUser() != nil &&
+		req.GetSourceUser().UserId != nil {
 		sourceUserID := req.GetSourceUser().GetUserId()
 		activity.SourceUserId = &sourceUserID
 	}
@@ -185,7 +186,8 @@ func (s *Store) AddColleagueActivity(
 	ctx context.Context,
 	req *pbsync.AddColleagueActivityRequest,
 ) (*pbsync.AddActivityResponse, error) {
-	if activity := req.GetColleagueActivity(); activity != nil && req.GetSourceUser() != nil && req.GetSourceUser().UserId != nil {
+	if activity := req.GetColleagueActivity(); activity != nil && req.GetSourceUser() != nil &&
+		req.GetSourceUser().UserId != nil {
 		sourceUserID := req.GetSourceUser().GetUserId()
 		activity.SourceUserId = &sourceUserID
 	}
@@ -199,7 +201,11 @@ func (s *Store) AddColleagueProps(
 	ctx context.Context,
 	req *pbsync.AddColleaguePropsRequest,
 ) (*pbsync.AddActivityResponse, error) {
-	if err := s.handleColleagueProps(ctx, req.GetColleagueProps(), req.GetSourceUser()); err != nil {
+	if err := s.handleColleagueProps(
+		ctx,
+		req.GetColleagueProps(),
+		req.GetSourceUser(),
+	); err != nil {
 		return nil, fmt.Errorf("failed to handle ColleagueProps activity. %w", err)
 	}
 	return &pbsync.AddActivityResponse{}, nil

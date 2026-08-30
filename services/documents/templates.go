@@ -357,7 +357,10 @@ func (s *Server) resolveTemplateData(
 		}
 	}
 
-	vehicleFields, err := permsvehicles.VehiclesService.ListVehicles.FieldsTyped.Get(s.perms, userInfo)
+	vehicleFields, err := permsvehicles.VehiclesService.ListVehicles.FieldsTyped.Get(
+		s.perms,
+		userInfo,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 	}
