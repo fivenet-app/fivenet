@@ -25,6 +25,7 @@ const canTriggerUserSync = can('internal.Superuser/ConfigAdmin');
 const { display } = useAppConfig();
 
 const clipboardStore = useClipboardStore();
+const { open: openClipboardModal } = useClipboardModal();
 const notifications = useNotificationsStore();
 
 const citizensCitizensClient = await getCitizensCitizensClient();
@@ -110,13 +111,28 @@ async function listCitizens(values: Schema): Promise<ListCitizensResponse> {
 const numberFormatter = useDisplayNumberFormat();
 
 function addToClipboard(user: User): void {
-    clipboardStore.addUser(user);
+    const added = clipboardStore.addUser(user);
 
     notifications.add({
-        title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
-        description: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
+        title: {
+            key: added ? 'notifications.clipboard.citizen_add.title' : 'notifications.clipboard.limit_reached.title',
+            parameters: {},
+        },
+        description: {
+            key: added ? 'notifications.clipboard.citizen_add.content' : 'notifications.clipboard.limit_reached.content',
+            parameters: {},
+        },
         duration: 3250,
-        type: NotificationType.INFO,
+        type: added ? NotificationType.INFO : NotificationType.WARNING,
+        actions: added
+            ? []
+            : [
+                  {
+                      label: { key: 'common.open', parameters: {} },
+                      icon: 'i-mdi-clipboard-list-outline',
+                      onClick: () => void openClipboardModal(),
+                  },
+              ],
     });
 }
 

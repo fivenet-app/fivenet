@@ -87,10 +87,38 @@ var (
 		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrDocAccessInvalid.title"},
 	)
 
-	ErrTemplateFailed = common.NewI18nErr(
+	ErrTemplateRequirementsNotMet = common.NewI18nErrFunc(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateFailed.content"},
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateFailed.title"},
+		&common.I18NItem{
+			Key: "errors.documents.DocumentsService.ErrTemplateRequirementsNotMet.content",
+		},
+		&common.I18NItem{
+			Key: "errors.documents.DocumentsService.ErrTemplateRequirementsNotMet.title",
+		},
+	)
+	ErrTemplateRequirementsExceeded = common.NewI18nErrFunc(
+		codes.InvalidArgument,
+		&common.I18NItem{
+			Key: "errors.documents.DocumentsService.ErrTemplateRequirementsExceeded.content",
+		},
+		&common.I18NItem{
+			Key: "errors.documents.DocumentsService.ErrTemplateRequirementsExceeded.title",
+		},
+	)
+	ErrTemplateRenderFailed = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateRenderFailed.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateRenderFailed.title"},
+	)
+	ErrTemplateInvalid = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateInvalid.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateInvalid.title"},
+	)
+	ErrTemplateOutputInvalid = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateOutputInvalid.content"},
+		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrTemplateOutputInvalid.title"},
 	)
 	ErrDocRequiredAccessTemplate = common.NewI18nErr(
 		codes.InvalidArgument,

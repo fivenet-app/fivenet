@@ -140,7 +140,8 @@ message ChangeDocumentOwnerResponse {}
 message CreateDocumentRequest {
   resources.common.content.ContentType content_type = 1 [(buf.validate.field).enum.defined_only = true];
   optional int64 template_id = 2;
-  optional resources.documents.templates.TemplateData template_data = 3;
+  reserved 3;
+  optional resources.documents.templates.TemplateSelection template_selection = 4;
 }
 
 message CreateDocumentResponse {

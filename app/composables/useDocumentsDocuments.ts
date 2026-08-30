@@ -16,7 +16,7 @@ export async function useDocumentsDocuments() {
     const notifications = useNotificationsStore();
 
     const clipboardStore = useClipboardStore();
-    const { getTemplateData } = clipboardStore;
+    const { getTemplateSelection } = clipboardStore;
 
     const documents = ref<ListDocumentsResponse | undefined>();
     const pinnedDocuments = ref<ListDocumentPinsResponse | undefined>();
@@ -52,16 +52,13 @@ export async function useDocumentsDocuments() {
     };
 
     const createDocument = async (templateId?: number): Promise<CreateDocumentResponse> => {
-        const { activeChar } = useAuth();
-
-        const templateData = getTemplateData();
-        templateData.activeChar = unref(activeChar.value!);
+        const templateSelection = getTemplateSelection();
 
         try {
             const call = documentsDocumentsClient.createDocument({
                 contentType: ContentType.HTML,
                 templateId: templateId,
-                templateData: templateData,
+                templateSelection: templateSelection,
             });
             const { response } = await call;
 

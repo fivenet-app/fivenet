@@ -1014,6 +1014,9 @@
                     "template_block": {
                         "title": "Vorlage-Logik-Block",
                         "insert_block": "Block einfügen",
+                        "insert_end": "{end} Block einfügen",
+                        "close_info": "Bedingungen, Schleifen und andere Vorlagenlogik müssen ebenfalls mit einem {end}-Block geschlossen werden.",
+                        "invalid": "Dieser Logik-Block hat eine ungültige Form. Verwende einen Ausdruck mit range, if oder with; else allein oder else if mit einem Ausdruck; oder break, continue bzw. end allein.",
                         "block_placeholder": {
                             "empty": "Zuerst einen Block auswählen",
                             "select": "E.g., .Vehicles"
@@ -2304,6 +2307,10 @@
             "email_address_copied": {
                 "title": "E-Mail Adresse kopiert",
                 "content": "E-Mail Adresse wurde in die Zwischenablage kopiert."
+            },
+            "limit_reached": {
+                "title": "Zwischenablagenlimit erreicht",
+                "content": "Du kannst höchstens 12 Einträge jedes Typs in deiner Zwischenablage haben."
             }
         },
         "category_deleted": {
@@ -3172,9 +3179,30 @@
                     "title": "Ansichtszugriff verweigert",
                     "content": "Sie haben keine Rechte die Zugangsinfo des Dokumentes zu sehen!"
                 },
-                "ErrTemplateFailed": {
+                "ErrTemplateRequirementsNotMet": {
+                    "title": "Vorlagenanforderungen nicht erfüllt",
+                    "content": "Diese Vorlage benötigt mindestens {required} {kind}, aber {available} wurden ausgewählt. Bitte wähle weitere aus und versuche es erneut."
+                },
+                "ErrTemplateRequirementsExceeded": {
+                    "title": "Zu viele Daten ausgewählt",
+                    "content": "Diese Vorlage erlaubt höchstens {required} {kind}, aber {available} wurden ausgewählt. Bitte entferne einige und versuche es erneut."
+                },
+                "ErrTemplateRenderFailed": {
                     "title": "Vorlage konnte nicht gerendert werden",
-                    "content": "Fehler beim Laden der Dokumenten Vorlage! Bitte spreche deine Fraktionsführung darauf an."
+                    "content": "Die Dokumentvorlage konnte nicht gerendert werden. Bitte versuche es erneut oder wende dich an den Ersteller der Vorlage."
+                },
+                "ErrTemplateInvalid": {
+                    "title": "Ungültige Dokumentvorlage",
+                    "content": "Diese Dokumentvorlage enthält ein ungültiges Feld oder einen ungültigen Formatierungsausdruck. Bitte wende dich an den Ersteller der Vorlage."
+                },
+                "ErrTemplateOutputInvalid": {
+                    "title": "Ungültige Vorlagenausgabe",
+                    "content": "Diese Vorlage hat Inhalte erzeugt, die nicht in ein Dokument umgewandelt werden konnten. Bitte wende dich an den Ersteller der Vorlage."
+                },
+                "TemplateKinds": {
+                    "users": "Bürger",
+                    "documents": "Dokumente",
+                    "vehicles": "Fahrzeuge"
                 },
                 "ErrDocViewDenied": "Sie haben keinen Zugriff auf das Dokument!",
                 "ErrDocUpdateDenied": "Sie dürfen das Dokument nicht bearbeiten!",

@@ -310,6 +310,7 @@ func (s *Server) CreateDocument(
 	docRelations := []*documentsrelations.DocumentRelation{}
 
 	var tmpl *documentstemplates.Template
+	var resolvedData *resolvedTemplateData
 	if req.GetTemplateId() > 0 {
 		var err error
 		tmpl, err = s.store.GetTemplate(ctx, req.GetTemplateId(), false)
@@ -318,15 +319,19 @@ func (s *Server) CreateDocument(
 		}
 
 		var tplContent string
-		docTitle, docState, tplContent, err = s.renderTemplate(tmpl, req.GetTemplateData())
+		resolvedData, err = s.resolveTemplateData(ctx, tmpl, req.GetTemplateSelection(), userInfo)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
+		}
+		docTitle, docState, tplContent, err = s.renderTemplate(tmpl, resolvedData)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateInvalid)
 		}
 
 		// Build Content object
 		htmlNode, err := content.FromHTML(tplContent)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateOutputInvalid)
 		}
 		docContent = &content.Content{
 			Version:     content.ContentVersionLegacyJSONV1,
@@ -347,9 +352,9 @@ func (s *Server) CreateDocument(
 		}
 
 		// Add references from template data documents if not already present
-		if tmpl != nil && req.GetTemplateData() != nil {
-			if len(req.GetTemplateData().GetDocuments()) > 0 {
-				for _, doc := range req.GetTemplateData().GetDocuments() {
+		if tmpl != nil && resolvedData != nil {
+			if len(resolvedData.Documents) > 0 {
+				for _, doc := range resolvedData.Documents {
 					if doc == nil {
 						continue
 					}
@@ -380,8 +385,8 @@ func (s *Server) CreateDocument(
 			}
 
 			// Add relations from template data users if not already present
-			if len(req.GetTemplateData().GetUsers()) > 0 {
-				for _, user := range req.GetTemplateData().GetUsers() {
+			if len(resolvedData.Users) > 0 {
+				for _, user := range resolvedData.Users {
 					exists := false
 					for _, relation := range docRelations {
 						if relation.GetTargetUserId() == user.GetUserId() {

@@ -5,25 +5,112 @@ import (
 	context "context"
 	"errors"
 	"html/template"
+	"strings"
 
 	"github.com/Masterminds/sprig/v3"
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	resourcesdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
+	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
+	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
-	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
+	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
+	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
+	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
+	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	htmlnode "golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 )
+
+const (
+	kindKey      = "kind"
+	requiredKey  = "required"
+	availableKey = "available"
+)
+
+var ErrTemplateActiveChar = errors.New("failed to resolve active character/user")
+
+func isTemplateActionSpan(node *htmlnode.Node) bool {
+	if node.Type != htmlnode.ElementNode || node.Data != "span" {
+		return false
+	}
+
+	for _, attr := range node.Attr {
+		switch attr.Key {
+		case "data-template-var", "data-template-block", "data-template-block-end":
+			return true
+		}
+	}
+
+	return false
+}
+
+func unwrapTemplateActionSpans(node *htmlnode.Node) {
+	for child := node.FirstChild; child != nil; {
+		next := child.NextSibling
+		unwrapTemplateActionSpans(child)
+
+		if isTemplateActionSpan(child) {
+			for content := child.FirstChild; content != nil; {
+				nextContent := content.NextSibling
+				child.RemoveChild(content)
+				node.InsertBefore(content, child)
+				content = nextContent
+			}
+			node.RemoveChild(child)
+		}
+
+		child = next
+	}
+}
+
+func stripTemplateActionSpans(content string) (string, error) {
+	// Parse the editor HTML as a fragment so action spans can be identified by
+	// their element and exact data-* attributes instead of matching HTML with a
+	// regular expression. Rendering the cleaned tree may normalize markup such
+	// as attribute quoting or equivalent whitespace, which is intentional.
+	fragment, err := htmlnode.ParseFragment(strings.NewReader(content), &htmlnode.Node{
+		Type:     htmlnode.ElementNode,
+		DataAtom: atom.Div,
+		Data:     "div",
+	})
+	if err != nil {
+		return "", err
+	}
+
+	root := &htmlnode.Node{Type: htmlnode.DocumentNode}
+	for _, node := range fragment {
+		root.AppendChild(node)
+	}
+	unwrapTemplateActionSpans(root)
+
+	var output bytes.Buffer
+	for node := root.FirstChild; node != nil; node = node.NextSibling {
+		if err := htmlnode.Render(&output, node); err != nil {
+			return "", err
+		}
+	}
+
+	return output.String(), nil
+}
 
 var templateSubjectAccessOptions = access.SubjectAccessOptions{
 	BlockedAccess: int32(documentsaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
@@ -156,20 +243,17 @@ func (s *Server) GetTemplate(
 		if err := s.sanitizeTemplateAccess(resp.GetTemplate(), true, true); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-	} else if req.Render != nil && req.GetRender() && req.GetData() != nil {
+	} else if req.Render != nil && req.GetRender() && req.GetSelection() != nil {
+		data, err := s.resolveTemplateData(ctx, resp.GetTemplate(), req.GetSelection(), userInfo)
+		if err != nil {
+			return nil, err
+		}
 		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(
 			resp.GetTemplate(),
-			req.GetData(),
+			data,
 		)
 		if err != nil {
-			if s.ps.Can(
-				userInfo,
-				permsdocuments.TemplatesService.CreateTemplate.Perm,
-			) {
-				return nil, err
-			} else {
-				return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateFailed)
-			}
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateInvalid)
 		}
 
 		resp.Rendered = true
@@ -180,9 +264,219 @@ func (s *Server) GetTemplate(
 	return resp, nil
 }
 
+type resolvedTemplateData struct {
+	ActiveChar *jobscolleagues.Colleague
+	Documents  []*resourcesdocuments.DocumentShort
+	Users      []*users.User
+	Vehicles   []*resourcesvehicles.Vehicle
+}
+
+func (s *Server) resolveTemplateData(
+	ctx context.Context,
+	tmpl *documentstemplates.Template,
+	selection *documentstemplates.TemplateSelection,
+	userInfo *userinfo.UserInfo,
+) (*resolvedTemplateData, error) {
+	activeChar, err := usersstore.RetrieveColleagueById(ctx, s.db, s.enricher, userInfo.GetUserId())
+	if err != nil {
+		return nil, err
+	}
+	if len(activeChar) == 0 || activeChar[0] == nil {
+		return nil, errswrap.NewError(
+			ErrTemplateActiveChar,
+			errorsdocuments.ErrTemplateRenderFailed,
+		)
+	}
+
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
+	}
+
+	data := &resolvedTemplateData{
+		ActiveChar: activeChar[0],
+	}
+	if selection == nil {
+		return data, validateTemplateRequirements(tmpl, data)
+	}
+
+	if len(selection.GetUserIds()) > 0 {
+		pageSize := int64(len(selection.GetUserIds()))
+		citizensReq := &pbcitizens.ListCitizensRequest{Pagination: &database.PaginationRequest{}}
+		citizensReq.GetPagination().SetPageSize(pageSize)
+
+		listOptions := citizensListOptions(fields)
+		listOptions.UserIDs = selection.GetUserIds()
+
+		usersResp, err := s.citizensStore.ListCitizens(ctx, citizensReq, listOptions)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
+		}
+
+		byID := make(map[int32]*users.User, len(usersResp.GetUsers()))
+		for _, user := range usersResp.GetUsers() {
+			s.enricher.EnrichJobInfoSafe(userInfo, user)
+			byID[user.GetUserId()] = user
+		}
+		seen := make(map[int32]struct{}, len(selection.GetUserIds()))
+		for _, id := range selection.GetUserIds() {
+			if _, ok := seen[id]; ok {
+				continue
+			}
+			seen[id] = struct{}{}
+			if user := byID[id]; user != nil {
+				data.Users = append(data.Users, user)
+			}
+		}
+	}
+
+	if len(selection.GetDocumentIds()) > 0 {
+		docs, err := s.store.List(ctx, documentsstore.ListQuery{
+			DocumentIDs: selection.GetDocumentIds(),
+			Limit:       int64(len(selection.GetDocumentIds())),
+			IncludePhoneNumber: fields.Contains(
+				permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+			),
+			UserInfo: userInfo,
+		})
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
+		}
+
+		byID := make(map[int64]*resourcesdocuments.DocumentShort, len(docs))
+		for _, doc := range docs {
+			byID[doc.GetId()] = doc
+		}
+		seen := make(map[int64]struct{}, len(selection.GetDocumentIds()))
+		for _, id := range selection.GetDocumentIds() {
+			if _, ok := seen[id]; ok {
+				continue
+			}
+			seen[id] = struct{}{}
+			if doc := byID[id]; doc != nil {
+				data.Documents = append(data.Documents, doc)
+			}
+		}
+	}
+
+	vehicleFields, err := permsvehicles.VehiclesService.ListVehicles.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
+	}
+	if len(selection.GetPlates()) > 0 {
+		vehicles, err := s.vehiclesStore.List(ctx, vehiclesstore.ListQuery{
+			Plates: selection.GetPlates(),
+			Limit:  int64(len(selection.GetPlates())),
+			IncludePhoneNumber: fields.Contains(
+				permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+			),
+			IncludePropsUpdated: vehicleFields.Len() > 0,
+			IncludeWantedFields: vehicleFields.Contains(
+				permsvehicles.VehiclesServiceListVehiclesFieldsPermValueWanted,
+			) ||
+				userInfo.GetJobAdmin(),
+		})
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
+		}
+
+		byPlate := make(map[string]*resourcesvehicles.Vehicle, len(vehicles))
+		for _, vehicle := range vehicles {
+			byPlate[vehicle.GetPlate()] = vehicle
+		}
+		seen := make(map[string]struct{}, len(selection.GetPlates()))
+		for _, plate := range selection.GetPlates() {
+			if _, ok := seen[plate]; ok {
+				continue
+			}
+			seen[plate] = struct{}{}
+			if vehicle := byPlate[plate]; vehicle != nil {
+				data.Vehicles = append(data.Vehicles, vehicle)
+			}
+		}
+	}
+
+	return data, validateTemplateRequirements(tmpl, data)
+}
+
+func citizensListOptions(
+	fields *perms.TypedStringList[permscitizens.CitizensServiceListCitizensFieldsPermValue],
+) citizensstore.ListCitizensOptions {
+	return citizensstore.ListCitizensOptions{
+		IncludePhoneNumber: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+		),
+		IncludeWanted: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted,
+		),
+		IncludeJob: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob,
+		),
+		IncludeTrafficInfractionPoints: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints,
+		),
+		IncludeOpenFines: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines,
+		),
+		IncludeBloodType: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType,
+		),
+		IncludeMugshot: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot,
+		),
+		IncludeEmail: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail,
+		),
+	}
+}
+
+func validateTemplateRequirements(
+	tmpl *documentstemplates.Template,
+	data *resolvedTemplateData,
+) error {
+	reqs := tmpl.GetSchema().GetRequirements()
+	checks := []struct {
+		spec  *documentstemplates.ObjectSpecs
+		kind  string
+		count int
+	}{
+		{reqs.GetUsers(), "users", len(data.Users)},
+		{reqs.GetDocuments(), "documents", len(data.Documents)},
+		{reqs.GetVehicles(), "vehicles", len(data.Vehicles)},
+	}
+	for _, check := range checks {
+		if check.spec == nil {
+			continue
+		}
+		if check.spec.GetRequired() && check.count == 0 {
+			return errorsdocuments.ErrTemplateRequirementsNotMet(map[string]any{
+				kindKey:      check.kind,
+				requiredKey:  1,
+				availableKey: check.count,
+			})
+		}
+		if check.spec.GetMin() > 0 && int64(check.count) < int64(check.spec.GetMin()) {
+			return errorsdocuments.ErrTemplateRequirementsNotMet(map[string]any{
+				kindKey:      check.kind,
+				requiredKey:  check.spec.GetMin(),
+				availableKey: check.count,
+			})
+		}
+		if check.spec.GetMax() > 0 && int64(check.count) > int64(check.spec.GetMax()) {
+			return errorsdocuments.ErrTemplateRequirementsExceeded(map[string]any{
+				kindKey:      check.kind,
+				requiredKey:  check.spec.GetMax(),
+				availableKey: check.count,
+			})
+		}
+	}
+
+	return nil
+}
+
 func (s *Server) renderTemplate(
 	docTmpl *documentstemplates.Template,
-	data *documentstemplates.TemplateData,
+	data *resolvedTemplateData,
 ) (string, string, string, error) {
 	// Render Title template
 	titleTpl, err := template.
@@ -216,10 +510,15 @@ func (s *Server) renderTemplate(
 	outState := buf.String()
 
 	// Render Content template
+	content, err := stripTemplateActionSpans(docTmpl.GetContent())
+	if err != nil {
+		return "", "", "", err
+	}
+
 	contentTpl, err := template.
 		New("content").
 		Funcs(sprig.FuncMap()).
-		Parse(docTmpl.GetContent())
+		Parse(content)
 	if err != nil {
 		return "", "", "", err
 	}

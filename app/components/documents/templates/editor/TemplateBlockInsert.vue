@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/core';
+import TemplateTrimControls from '~/components/documents/templates/editor/TemplateTrimControls.vue';
 
 const props = defineProps<{
     editor: Editor;
@@ -41,33 +42,27 @@ const insertBlock = () => {
         </UTooltip>
 
         <template #content>
-            <div class="flex flex-col gap-2 p-4">
+            <div class="flex w-full max-w-86 flex-col gap-2 p-4">
                 <h3 class="block font-medium">
                     {{ $t('components.partials.tiptap_editor.extensions.template_block.title') }}
                 </h3>
+
+                <UAlert icon="i-mdi-information-outline" variant="subtle">
+                    <template #description>
+                        <I18nT keypath="components.partials.tiptap_editor.extensions.template_block.close_info">
+                            <template #end>
+                                <code class="font-mono" v-text="'{{ end }}'" />
+                            </template>
+                        </I18nT>
+                    </template>
+                </UAlert>
 
                 <div class="flex flex-col gap-2">
                     <UFormField name="selected">
                         <USelectMenu v-model="selected" class="w-full" :items="options" value-key="value" />
                     </UFormField>
 
-                    <div class="flex flex-row gap-2">
-                        <UFormField
-                            class="justify-center"
-                            name="leftTrim"
-                            :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_left')"
-                        >
-                            <USwitch v-model="leftTrim" />
-                        </UFormField>
-
-                        <UFormField
-                            class="justify-center"
-                            name="rightTrim"
-                            :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_right')"
-                        >
-                            <USwitch v-model="rightTrim" />
-                        </UFormField>
-                    </div>
+                    <TemplateTrimControls v-model:left-trim="leftTrim" v-model:right-trim="rightTrim" />
 
                     <UFormField name="expression">
                         <UInput
@@ -90,6 +85,14 @@ const insertBlock = () => {
                             @click="insertBlock"
                         />
                     </UFormField>
+
+                    <UButton block variant="outline" @click="props.editor?.commands.insertTemplateBlockEnd()">
+                        <I18nT keypath="components.partials.tiptap_editor.extensions.template_block.insert_end">
+                            <template #end>
+                                <code class="font-mono" v-text="'{{ end }}'" />
+                            </template>
+                        </I18nT>
+                    </UButton>
                 </div>
             </div>
         </template>

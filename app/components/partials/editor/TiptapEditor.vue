@@ -136,7 +136,7 @@ function seedDocument(schema: Schema, value: JSONContent | string): void {
         if (value === '') return;
 
         // HTML -> ProseMirror JSON
-        const json = generateJSON(value, extensions, { preserveWhitespace: 'full' });
+        const json = generateJSON(value, [...extensions, ...markRaw(props.extensions)], { preserveWhitespace: 'full' });
         // ProseMirror JSON -> Yjs update in-place
         seedDoc = prosemirrorJSONToYDoc(schema, json, 'content');
     } else {
@@ -164,7 +164,7 @@ if (props.enableCollab && ydoc && yjsProvider) {
         color: stringToColor(ourName),
     };
 
-    yjsSchema = getSchema(extensions);
+    yjsSchema = getSchema([...extensions, ...markRaw(props.extensions)]);
 
     const yXml = ydoc.getXmlFragment('content');
     const { mapping } = initProseMirrorDoc(yXml, yjsSchema!);
@@ -251,7 +251,9 @@ function normalizeToJSONContent(value: JSONContent | string | undefined): JSONCo
     if (!value) return { type: 'doc', content: [{ type: 'paragraph' }] };
 
     if (typeof value === 'string') {
-        return generateJSON(value, extensions, { preserveWhitespace: 'full' }) as JSONContent;
+        return generateJSON(value, [...extensions, ...markRaw(props.extensions)], {
+            preserveWhitespace: 'full',
+        }) as JSONContent;
     }
 
     return value;
@@ -369,7 +371,7 @@ const stopWatch = watch(modelValue, (value) => {
 
     const normalizedValue = normalizeToJSONContent(value);
 
-    const isSame = isSameDoc(editorJSON, normalizedValue, extensions);
+    const isSame = isSameDoc(editorJSON, normalizedValue, [...extensions, ...markRaw(props.extensions)]);
     if (isSame) return;
 
     if (props.enableCollab && ydoc && yjsProvider) {
@@ -408,6 +410,8 @@ const reference = computed(() => ({
 }));
 
 function onClickContent(event: MouseEvent): void {
+    if (disabled.value) return;
+
     let element: HTMLElement | null = event.target as HTMLElement;
     if (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href')) {
         element = element.parentElement as HTMLElement;
@@ -610,14 +614,14 @@ defineExpose<{
         </template>
 
         <!-- Nuxt UI Editor parts  that work with our wonderful "TiptapEditor" component -->
-        <UEditorEmojiMenu :editor="editor" :items="emojiItems" />
+        <UEditorEmojiMenu v-if="editor && !disabled" :editor="editor" :items="emojiItems" />
 
-        <UEditorDragHandle v-if="editor" :editor="editor" />
+        <UEditorDragHandle v-if="editor && !disabled" :editor="editor" />
 
-        <UEditorSuggestionMenu :editor="editor" :items="items" />
+        <UEditorSuggestionMenu v-if="editor && !disabled" :editor="editor" :items="items" />
 
         <UPopover
-            :open="openLinkPopover"
+            :open="!disabled && openLinkPopover"
             :reference="reference"
             :content="{ side: 'top', sideOffset: 16, updatePositionStrategy: 'always' }"
         >

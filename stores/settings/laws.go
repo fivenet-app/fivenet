@@ -440,9 +440,11 @@ func (s *Store) CreateOrUpdateLaw(
 				tLaws.Hint, tLaws.Fine, tLaws.DetentionTime, tLaws.StvoPoints, tLaws.DeletedAt,
 			).SET(
 				req.GetLaw().GetLawbookId(), mysql.Int32(sortOrder), req.GetLaw().GetName(),
-				dbutils.StringEmpty(req.GetLaw().GetDescription()), dbutils.StringEmpty(req.GetLaw().GetHint()),
+				dbutils.StringEmpty(req.GetLaw().GetDescription()),
+				dbutils.StringEmpty(req.GetLaw().GetHint()),
 				req.GetLaw().Fine, req.GetLaw().DetentionTime, req.GetLaw().StvoPoints, mysql.NULL,
-			).WHERE(tLaws.ID.EQ(mysql.Int64(existing.ID))).LIMIT(1).ExecContext(ctx, tx)
+			).
+				WHERE(tLaws.ID.EQ(mysql.Int64(existing.ID))).LIMIT(1).ExecContext(ctx, tx)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -453,9 +455,11 @@ func (s *Store) CreateOrUpdateLaw(
 				tLaws.Hint, tLaws.Fine, tLaws.DetentionTime, tLaws.StvoPoints,
 			).VALUES(
 				req.GetLaw().GetLawbookId(), mysql.Int32(sortOrder), req.GetLaw().GetName(),
-				dbutils.StringEmpty(req.GetLaw().GetDescription()), dbutils.StringEmpty(req.GetLaw().GetHint()),
+				dbutils.StringEmpty(req.GetLaw().GetDescription()),
+				dbutils.StringEmpty(req.GetLaw().GetHint()),
 				req.GetLaw().Fine, req.GetLaw().DetentionTime, req.GetLaw().StvoPoints,
-			).ExecContext(ctx, tx)
+			).
+				ExecContext(ctx, tx)
 			if err != nil {
 				return nil, nil, err
 			}

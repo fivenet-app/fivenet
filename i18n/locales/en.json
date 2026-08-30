@@ -1014,6 +1014,9 @@
                     "template_block": {
                         "title": "Template Logic Block",
                         "insert_block": "Insert Block",
+                        "insert_end": "Insert {end} block",
+                        "close_info": "Conditions, loops, and other template logic must also be closed again with a {end} block.",
+                        "invalid": "This block action has an invalid shape. Use an expression with range, if, or with; else alone or else if with an expression; or break, continue, or end alone.",
                         "block_placeholder": {
                             "empty": "Pick a block first...",
                             "select": "e.g. .Items"
@@ -2304,6 +2307,10 @@
             "email_address_copied": {
                 "title": "E-Mail address copied",
                 "content": "E-Mail address has been copied to your clipboard."
+            },
+            "limit_reached": {
+                "title": "Clipboard limit reached",
+                "content": "You can only have up to 12 items of each type in your clipboard."
             }
         },
         "category_deleted": {
@@ -3172,9 +3179,30 @@
                     "title": "View access denied",
                     "content": "You don't have permission to view this document's access!"
                 },
-                "ErrTemplateFailed": {
-                    "title": "Template render failed",
-                    "content": "Failed to render document template! Please talk with your faction leader."
+                "ErrTemplateRequirementsNotMet": {
+                    "title": "Template requirements not met",
+                    "content": "This template requires at least {required} {kind}, but {available} were selected. Please select more and try again."
+                },
+                "ErrTemplateRequirementsExceeded": {
+                    "title": "Too much data selected",
+                    "content": "This template allows at most {required} {kind}, but {available} were selected. Please remove some and try again."
+                },
+                "ErrTemplateRenderFailed": {
+                    "title": "Template rendering failed",
+                    "content": "The document template could not be rendered. Please try again or contact the template owner."
+                },
+                "ErrTemplateInvalid": {
+                    "title": "Invalid document template",
+                    "content": "This document template contains an invalid field or formatting expression. Please contact the template owner."
+                },
+                "ErrTemplateOutputInvalid": {
+                    "title": "Invalid template output",
+                    "content": "This template produced content that could not be turned into a document. Please contact the template owner."
+                },
+                "TemplateKinds": {
+                    "users": "citizens",
+                    "documents": "documents",
+                    "vehicles": "vehicles"
                 },
                 "ErrDocViewDenied": "You don't have permission to view this document!",
                 "ErrDocUpdateDenied": "You don't have permission to edit this document!",

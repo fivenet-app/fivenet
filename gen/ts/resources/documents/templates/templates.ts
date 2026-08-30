@@ -13,10 +13,6 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { OnEditBehavior } from "../approval/approval";
 import { ApprovalRuleKind } from "../approval/approval";
-import { Vehicle } from "../../vehicles/vehicles";
-import { UserShort } from "../../users/short/user";
-import { DocumentShort } from "../documents";
-import { User } from "../../users/user";
 import { Workflow } from "../workflow/workflow";
 import { Access } from "../../access/access";
 import { JobAccess } from "../../access/access";
@@ -204,25 +200,21 @@ export interface ObjectSpecs {
     max?: number;
 }
 /**
- * @generated from protobuf message resources.documents.templates.TemplateData
+ * @generated from protobuf message resources.documents.templates.TemplateSelection
  */
-export interface TemplateData {
+export interface TemplateSelection {
     /**
-     * @generated from protobuf field: resources.users.User active_char = 1
+     * @generated from protobuf field: repeated int32 user_ids = 1
      */
-    activeChar?: User;
+    userIds: number[];
     /**
-     * @generated from protobuf field: repeated resources.documents.DocumentShort documents = 2
+     * @generated from protobuf field: repeated int64 document_ids = 2
      */
-    documents: DocumentShort[];
+    documentIds: number[];
     /**
-     * @generated from protobuf field: repeated resources.users.short.UserShort users = 3
+     * @generated from protobuf field: repeated string plates = 3
      */
-    users: UserShort[];
-    /**
-     * @generated from protobuf field: repeated resources.vehicles.Vehicle vehicles = 4
-     */
-    vehicles: Vehicle[];
+    plates: string[];
 }
 /**
  * @generated from protobuf message resources.documents.templates.TemplateApproval
@@ -794,40 +786,44 @@ class ObjectSpecs$Type extends MessageType<ObjectSpecs> {
  */
 export const ObjectSpecs = new ObjectSpecs$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class TemplateData$Type extends MessageType<TemplateData> {
+class TemplateSelection$Type extends MessageType<TemplateSelection> {
     constructor() {
-        super("resources.documents.templates.TemplateData", [
-            { no: 1, name: "active_char", kind: "message", T: () => User, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "documents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentShort, options: { "buf.validate.field": { repeated: { maxItems: "12" } } } },
-            { no: 3, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserShort, options: { "buf.validate.field": { repeated: { maxItems: "12" } } } },
-            { no: 4, name: "vehicles", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Vehicle, options: { "buf.validate.field": { repeated: { maxItems: "12" } } } }
+        super("resources.documents.templates.TemplateSelection", [
+            { no: 1, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "12", items: { int32: { gt: 0 } } } } } },
+            { no: 2, name: "document_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "12", items: { int64: { gt: "0" } } } } } },
+            { no: 3, name: "plates", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "12", items: { string: { minLen: "1", maxLen: "32" } } } } } }
         ]);
     }
-    create(value?: PartialMessage<TemplateData>): TemplateData {
+    create(value?: PartialMessage<TemplateSelection>): TemplateSelection {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.documents = [];
-        message.users = [];
-        message.vehicles = [];
+        message.userIds = [];
+        message.documentIds = [];
+        message.plates = [];
         if (value !== undefined)
-            reflectionMergePartial<TemplateData>(this, message, value);
+            reflectionMergePartial<TemplateSelection>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TemplateData): TemplateData {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TemplateSelection): TemplateSelection {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.users.User active_char */ 1:
-                    message.activeChar = User.internalBinaryRead(reader, reader.uint32(), options, message.activeChar);
+                case /* repeated int32 user_ids */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIds.push(reader.int32());
+                    else
+                        message.userIds.push(reader.int32());
                     break;
-                case /* repeated resources.documents.DocumentShort documents */ 2:
-                    message.documents.push(DocumentShort.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated int64 document_ids */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.documentIds.push(reader.int64().toNumber());
+                    else
+                        message.documentIds.push(reader.int64().toNumber());
                     break;
-                case /* repeated resources.users.short.UserShort users */ 3:
-                    message.users.push(UserShort.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.vehicles.Vehicle vehicles */ 4:
-                    message.vehicles.push(Vehicle.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated string plates */ 3:
+                    message.plates.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -840,19 +836,24 @@ class TemplateData$Type extends MessageType<TemplateData> {
         }
         return message;
     }
-    internalBinaryWrite(message: TemplateData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.users.User active_char = 1; */
-        if (message.activeChar)
-            User.internalBinaryWrite(message.activeChar, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.DocumentShort documents = 2; */
-        for (let i = 0; i < message.documents.length; i++)
-            DocumentShort.internalBinaryWrite(message.documents[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.users.short.UserShort users = 3; */
-        for (let i = 0; i < message.users.length; i++)
-            UserShort.internalBinaryWrite(message.users[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.vehicles.Vehicle vehicles = 4; */
-        for (let i = 0; i < message.vehicles.length; i++)
-            Vehicle.internalBinaryWrite(message.vehicles[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: TemplateSelection, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int32 user_ids = 1; */
+        if (message.userIds.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIds.length; i++)
+                writer.int32(message.userIds[i]);
+            writer.join();
+        }
+        /* repeated int64 document_ids = 2; */
+        if (message.documentIds.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.documentIds.length; i++)
+                writer.int64(message.documentIds[i]);
+            writer.join();
+        }
+        /* repeated string plates = 3; */
+        for (let i = 0; i < message.plates.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.plates[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -860,9 +861,9 @@ class TemplateData$Type extends MessageType<TemplateData> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.documents.templates.TemplateData
+ * @generated MessageType for protobuf message resources.documents.templates.TemplateSelection
  */
-export const TemplateData = new TemplateData$Type();
+export const TemplateSelection = new TemplateSelection$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TemplateApproval$Type extends MessageType<TemplateApproval> {
     constructor() {

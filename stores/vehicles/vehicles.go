@@ -17,6 +17,7 @@ import (
 
 type ListQuery struct {
 	LicensePlate string
+	Plates       []string
 	Model        string
 	UserIDs      []int32
 	Job          string
@@ -331,6 +332,13 @@ func (s *Store) listConditions(
 
 	if search := dbutils.PrepareForLikeSearch(q.LicensePlate); search != "" {
 		condition = mysql.AND(condition, tVehicles.Plate.LIKE(mysql.String(search)))
+	}
+	if len(q.Plates) > 0 {
+		plates := make([]mysql.Expression, 0, len(q.Plates))
+		for _, plate := range q.Plates {
+			plates = append(plates, mysql.String(plate))
+		}
+		condition = mysql.AND(condition, tVehicles.Plate.IN(plates...))
 	}
 
 	modelColumn := s.customDB.Columns.Vehicle.GetModel(tVehicles.Alias())

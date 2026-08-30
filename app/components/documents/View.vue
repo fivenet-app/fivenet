@@ -49,6 +49,7 @@ const { t } = useI18n();
 const { attr, can, activeChar, isSuperuser } = useAuth();
 
 const clipboardStore = useClipboardStore();
+const { open: openClipboardModal } = useClipboardModal();
 
 const notifications = useNotificationsStore();
 
@@ -77,15 +78,28 @@ useHead({
 });
 
 function addToClipboard(): void {
-    if (doc.value?.document) {
-        clipboardStore.addDocument(doc.value.document);
-    }
+    const added = doc.value?.document ? clipboardStore.addDocument(doc.value.document) : false;
 
     notifications.add({
-        title: { key: 'notifications.clipboard.document_added.title', parameters: {} },
-        description: { key: 'notifications.clipboard.document_added.content', parameters: {} },
+        title: {
+            key: added ? 'notifications.clipboard.document_added.title' : 'notifications.clipboard.limit_reached.title',
+            parameters: {},
+        },
+        description: {
+            key: added ? 'notifications.clipboard.document_added.content' : 'notifications.clipboard.limit_reached.content',
+            parameters: {},
+        },
         duration: 3250,
-        type: NotificationType.INFO,
+        type: added ? NotificationType.INFO : NotificationType.WARNING,
+        actions: added
+            ? []
+            : [
+                  {
+                      label: { key: 'common.open', parameters: {} },
+                      icon: 'i-mdi-clipboard-list-outline',
+                      onClick: () => void openClipboardModal(),
+                  },
+              ],
     });
 }
 

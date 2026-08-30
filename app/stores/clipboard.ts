@@ -3,7 +3,7 @@ import { stringToDate } from '~/utils/time';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import type { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates/templates';
+import type { ObjectSpecs, TemplateSelection } from '~~/gen/ts/resources/documents/templates/templates';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { User } from '~~/gen/ts/resources/users/user';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
@@ -204,12 +204,15 @@ export interface ClipboardData {
 
 export type ListType = 'citizens' | 'documents' | 'vehicles';
 
+export const CLIPBOARD_MAX_ITEMS = 12;
+
 export const useClipboardStore = defineStore(
     'clipboard',
     () => {
         const users = ref<ClipboardUser[]>([]);
         const documents = ref<ClipboardDocument[]>([]);
         const vehicles = ref<ClipboardVehicle[]>([]);
+        // Active stack is used to store the currently selected items for template generation.
         const activeStack = ref<ClipboardData>({
             users: [],
             documents: [],
@@ -218,12 +221,19 @@ export const useClipboardStore = defineStore(
 
         /**
          * Retrieves template data from the active stack.
-         * @returns {TemplateData} The template data containing documents, users, and vehicles.
+         * @returns {TemplateSelection} The selected document, user, and vehicle identifiers.
          */
-        const getTemplateData = (): TemplateData => ({
-            documents: activeStack.value.documents.map(getDocument),
-            users: activeStack.value.users.map(getUser),
-            vehicles: activeStack.value.vehicles.map(getVehicle),
+        const getTemplateSelection = (activeOnly: boolean = true): TemplateSelection => ({
+            documentIds: (activeOnly ? activeStack.value.documents : documents.value)
+                .slice(0, CLIPBOARD_MAX_ITEMS)
+                .map((document) => document.id),
+            userIds: (activeOnly ? activeStack.value.users : users.value)
+                .slice(0, CLIPBOARD_MAX_ITEMS)
+                .map((user) => user.userId)
+                .filter((userId): userId is number => userId !== undefined && userId > 0),
+            plates: (activeOnly ? activeStack.value.vehicles : vehicles.value)
+                .slice(0, CLIPBOARD_MAX_ITEMS)
+                .map((vehicle) => vehicle.plate),
         });
 
         /**
@@ -259,10 +269,12 @@ export const useClipboardStore = defineStore(
          * Adds a document to the clipboard.
          * @param {Document} document - The document to add.
          */
-        const addDocument = (document: Document): void => {
-            if (!documents.value.find((o) => o.id === document.id)) {
-                documents.value.unshift(new ClipboardDocument(unref(document)));
-            }
+        const addDocument = (document: Document): boolean => {
+            if (documents.value.find((o) => o.id === document.id)) return true;
+            if (documents.value.length >= CLIPBOARD_MAX_ITEMS) return false;
+
+            documents.value.unshift(new ClipboardDocument(unref(document)));
+            return true;
         };
 
         /**
@@ -285,11 +297,16 @@ export const useClipboardStore = defineStore(
          * @param {User} user - The user to add.
          * @param {boolean} [active] - Whether to promote the user to the active stack.
          */
-        const addUser = (user: User, active?: boolean): void => {
-            if (!users.value.find((o) => o.userId === user.userId)) {
-                users.value.unshift(new ClipboardUser(unref(user)));
+        const addUser = (user: User, active?: boolean): boolean => {
+            if (users.value.find((o) => o.userId === user.userId)) {
+                if (active) promoteToActiveStack('citizens');
+                return true;
             }
+            if (users.value.length >= CLIPBOARD_MAX_ITEMS) return false;
+
+            users.value.unshift(new ClipboardUser(unref(user)));
             if (active) promoteToActiveStack('citizens');
+            return true;
         };
 
         /**
@@ -311,10 +328,12 @@ export const useClipboardStore = defineStore(
          * Adds a vehicle to the clipboard.
          * @param {Vehicle} vehicle - The vehicle to add.
          */
-        const addVehicle = (vehicle: Vehicle): void => {
-            if (!vehicles.value.find((o) => o.plate === vehicle.plate)) {
-                vehicles.value.unshift(new ClipboardVehicle(unref(vehicle)));
-            }
+        const addVehicle = (vehicle: Vehicle): boolean => {
+            if (vehicles.value.find((o) => o.plate === vehicle.plate)) return true;
+            if (vehicles.value.length >= CLIPBOARD_MAX_ITEMS) return false;
+
+            vehicles.value.unshift(new ClipboardVehicle(unref(vehicle)));
+            return true;
         };
 
         /**
@@ -377,7 +396,7 @@ export const useClipboardStore = defineStore(
             vehicles,
             activeStack,
 
-            getTemplateData,
+            getTemplateSelection,
             promoteToActiveStack,
             clearActiveStack,
             addDocument,

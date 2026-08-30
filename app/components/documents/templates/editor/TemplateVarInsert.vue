@@ -1,61 +1,19 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/core';
+import TemplateVarForm from './TemplateVarForm.vue';
 
 const props = defineProps<{
     editor: Editor;
     disabled?: boolean;
 }>();
 
-const { t } = useI18n();
-
-type Category = { label: string; value: string; key: string };
-
-const categories: Category[] = [
-    { label: t('common.date'), value: '', key: 'date' },
-    { label: t('common.active_user'), value: '.ActiveChar', key: 'user' },
-    { label: t('common.first_citizen'), value: '(first .Users)', key: 'user' },
-];
-
-const templateVars: Record<string, { label: string; value: string }[]> = {
-    date: [
-        { label: `${t('common.date')} "02.01.2006 15:04"`, value: 'now | date "02.01.2006 15:04"' },
-        { label: `${t('common.date')} "02.01.2006"`, value: 'now | date "02.01.2006"' },
-        { label: `${t('common.time')} "15:04"`, value: 'now | date "15:04"' },
-    ],
-    user: [
-        { label: t('common.firstname'), value: '.Firstname' },
-        { label: t('common.lastname'), value: '.Lastname' },
-        { label: t('common.date_of_birth'), value: '.Dateofbirth' },
-    ],
-};
-
-const selectedCategory = ref<(typeof categories)[0] | undefined>(undefined);
-const selectedProperty = ref<string | undefined>(undefined);
-const customInput = ref('');
-const leftTrim = ref<boolean>(false);
-const rightTrim = ref<boolean>(false);
-
-const insert = () => {
-    if (!selectedCategory.value || !selectedProperty.value) return;
+function insert(value: { value: string; leftTrim: boolean; rightTrim: boolean }): void {
     props.editor?.commands.insertTemplateVar({
-        value: selectedCategory.value.value + selectedProperty.value,
-        leftTrim: leftTrim.value,
-        rightTrim: rightTrim.value,
+        value: value.value,
+        leftTrim: value.leftTrim,
+        rightTrim: value.rightTrim,
     });
-    selectedCategory.value = undefined;
-    selectedProperty.value = undefined;
-};
-
-const insertCustom = () => {
-    if (!customInput.value) return;
-
-    props.editor?.commands.insertTemplateVar({
-        value: customInput.value,
-        leftTrim: leftTrim.value,
-        rightTrim: rightTrim.value,
-    });
-    customInput.value = '';
-};
+}
 </script>
 
 <template>
@@ -65,72 +23,12 @@ const insertCustom = () => {
         </UTooltip>
 
         <template #content>
-            <div class="flex flex-col gap-2 p-4">
+            <div class="flex w-full max-w-86 flex-col gap-2 p-4">
                 <h3 class="block font-medium">
                     {{ $t('components.partials.tiptap_editor.extensions.template_var.title') }}
                 </h3>
 
-                <div class="flex flex-col gap-2">
-                    <UFormField name="category" :label="$t('common.category', 1)">
-                        <USelectMenu v-model="selectedCategory" class="w-full" :items="categories" />
-                    </UFormField>
-
-                    <UFormField name="property" :label="$t('common.property', 1)">
-                        <USelectMenu
-                            v-model="selectedProperty"
-                            class="w-full"
-                            :items="templateVars[selectedCategory?.key ?? '']"
-                            value-key="value"
-                        />
-                    </UFormField>
-
-                    <div class="flex flex-row gap-2">
-                        <UFormField
-                            class="justify-center"
-                            name="leftTrim"
-                            :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_left')"
-                        >
-                            <USwitch v-model="leftTrim" />
-                        </UFormField>
-
-                        <UFormField
-                            class="justify-center"
-                            name="rightTrim"
-                            :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_right')"
-                        >
-                            <USwitch v-model="rightTrim" />
-                        </UFormField>
-                    </div>
-
-                    <UFormField>
-                        <UButton
-                            block
-                            :label="$t('components.partials.tiptap_editor.insert')"
-                            :disabled="!selectedCategory || !selectedProperty"
-                            @click="insert"
-                        />
-                    </UFormField>
-
-                    <UFormField
-                        name="customInput"
-                        :label="$t('components.partials.tiptap_editor.extensions.template_var.custom_template')"
-                    >
-                        <UInput
-                            v-model="customInput"
-                            class="w-full"
-                            :placeholder="$t('components.partials.tiptap_editor.extensions.template_var.custom_placeholder')"
-                        />
-                    </UFormField>
-
-                    <UFormField>
-                        <UButton
-                            block
-                            :label="$t('components.partials.tiptap_editor.extensions.template_var.insert_custom')"
-                            :disabled="!customInput"
-                            @click="insertCustom"
-                        />
-                    </UFormField>
-                </div>
+                <TemplateVarForm @submit="insert" />
             </div>
         </template>
     </UPopover>

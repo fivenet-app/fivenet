@@ -17,6 +17,7 @@ import (
 )
 
 type ListCitizensOptions struct {
+	UserIDs                        []int32
 	IncludePhoneNumber             bool
 	IncludeWanted                  bool
 	IncludeJob                     bool
@@ -78,6 +79,13 @@ func (s *Store) ListCitizens(
 		s.customDB.Columns.User.GetVisum(tUser.Alias()),
 	}
 	condition := s.customDB.Conditions.User.GetFilter(tUser.Alias())
+	if len(opts.UserIDs) > 0 {
+		ids := make([]mysql.Expression, 0, len(opts.UserIDs))
+		for _, id := range opts.UserIDs {
+			ids = append(ids, mysql.Int32(id))
+		}
+		condition = condition.AND(tUser.ID.IN(ids...))
+	}
 	orderBys := []mysql.OrderByClause{}
 
 	if opts.IncludePhoneNumber {

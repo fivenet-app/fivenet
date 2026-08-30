@@ -3,8 +3,9 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
-import { useAuthStore } from '~/stores/auth';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import { useClipboardStore } from '~/stores/clipboard';
+import { localizeTemplateErrorParameters, parseError } from '~/utils/errors';
 import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import type { Template } from '~~/gen/ts/resources/documents/templates/templates';
 
@@ -16,10 +17,7 @@ defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
-
-const { activeChar } = storeToRefs(authStore);
 
 const logger = useLogger('📃 Doc Templates');
 
@@ -32,15 +30,26 @@ const {
     error,
 } = useLazyAsyncData(`documents-templates-${props.templateId}`, () => getTemplate());
 
+const loading = computed(() => isRequestPending(status.value));
+
+const localizedError = computed(() => {
+    const currentError = error.value;
+    if (!currentError) return undefined;
+
+    const parsedError = parseError(currentError);
+    if (!parsedError) return currentError;
+
+    return new Error(JSON.stringify(localizeTemplateErrorParameters(parsedError, $t)));
+});
+
 async function getTemplate(): Promise<Template> {
     try {
-        const data = clipboardStore.getTemplateData();
-        data.activeChar = activeChar.value!;
-        logger.debug('Documents: Editor - Clipboard Template Data', data);
+        const selection = clipboardStore.getTemplateSelection(false);
+        logger.debug('Documents: Editor - Clipboard Template Selection', selection);
 
         const call = documentsTemplatesClient.getTemplate({
             templateId: props.templateId,
-            data: data,
+            selection: selection,
             render: true,
         });
         const { response } = await call;
@@ -55,40 +64,37 @@ async function getTemplate(): Promise<Template> {
 
 <template>
     <UModal :title="`${$t('common.template', 1)} ${$t('common.preview')}`" fullscreen>
-        <!-- eslint-disable vue/no-v-html -->
-
         <template #body>
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.template', 2)])" />
+            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.template', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.template', 2)])"
-                :error="error"
+                :error="localizedError"
                 :retry="refresh"
             />
             <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
 
-            <div v-else class="mx-auto w-full max-w-(--breakpoint-xl)">
-                <div class="mb-2">
-                    <UFormField name="title" :label="$t('common.title')">
-                        <UInput class="w-full" :model-value="template?.title" type="text" size="xl" disabled />
+            <div v-else class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-col gap-2">
+                <UFormField name="title" :label="$t('common.title')">
+                    <UInput class="w-full" :model-value="template?.title" type="text" size="xl" disabled />
+                </UFormField>
+
+                <div class="flex flex-row gap-2">
+                    <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
+                        <CategoryBadge v-if="template?.category" :category="template.category" />
+                        <span v-else>{{ $t('common.categories', 0) }}</span>
                     </UFormField>
 
-                    <div class="flex flex-row gap-2">
-                        <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
-                            <CategoryBadge v-if="template?.category" :category="template.category" />
-                            <span v-else>{{ $t('common.categories', 0) }}</span>
-                        </UFormField>
-
-                        <UFormField class="flex-1" name="state" :label="$t('common.state')">
-                            <UInput class="w-full" :model-value="template?.state" type="text" disabled />
-                        </UFormField>
-                    </div>
+                    <UFormField class="flex-1" name="state" :label="$t('common.state')">
+                        <UInput class="w-full" :model-value="template?.state" type="text" disabled />
+                    </UFormField>
                 </div>
 
                 <UFormField name="content" :label="$t('common.content')">
                     <div
                         class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                     >
+                        <!-- eslint-disable vue/no-v-html -->
                         <div
                             class="tiptap prose prose-sm max-w-full min-w-full break-words sm:prose-base lg:prose-lg dark:prose-invert"
                             :class="[
@@ -123,14 +129,17 @@ async function getTemplate(): Promise<Template> {
                                 'prose-hr:mt-0.5',
                             ]"
                             v-html="template?.content"
-                        ></div>
+                        />
                     </div>
                 </UFormField>
             </div>
         </template>
 
         <template #footer>
-            <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+            <UFieldGroup class="inline-flex w-full">
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
+                <RefreshButton variant="solid" :loading="loading" :disabled="loading" @click="() => refresh()" />
+            </UFieldGroup>
         </template>
     </UModal>
 </template>
