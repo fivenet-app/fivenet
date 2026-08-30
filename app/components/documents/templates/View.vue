@@ -8,6 +8,9 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
+import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
+import { TemplateBlock, TemplateBlockEnd } from '~/composables/tiptap/extensions/TemplateBlock';
+import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import type { ResponsiveActionEntry } from '~/components/partials/ResponsiveActions.types';
 import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
@@ -200,7 +203,13 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                 <template v-else>
                     <div class="flex flex-col gap-4">
                         <UPageCard :title="$t('common.detail', 2)">
-                            <UFormField v-if="template.jobAccess" :label="`${$t('common.template', 2)} ${$t('common.access')}`">
+                            <UFormField name="color" :label="$t('common.color')">
+                                <div class="flex flex-1 gap-1">
+                                    <ColorPickerTW v-model="template.color" class="flex-1" disabled />
+                                </div>
+                            </UFormField>
+
+                            <UFormField :label="`${$t('common.template', 2)} ${$t('common.access')}`">
                                 <AccessManager
                                     v-model:jobs="template.jobAccess"
                                     :target-id="templateId ?? 0"
@@ -214,12 +223,6 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                                     name="jobAccess"
                                     full-name
                                 />
-                            </UFormField>
-
-                            <UFormField name="color" :label="$t('common.color')">
-                                <div class="flex flex-1 gap-1">
-                                    <ColorPickerTW v-model="template.color" class="flex-1" disabled />
-                                </div>
                             </UFormField>
                         </UPageCard>
 
@@ -243,16 +246,30 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                                 <CategoryBadge :category="template.category" />
                             </UFormField>
 
-                            <UFormField :label="$t('common.content')">
-                                <UTextarea
-                                    class="w-full whitespace-pre-wrap"
-                                    name="content"
-                                    disabled
-                                    resize
-                                    :rows="4"
-                                    :value="template.content"
+                            <UCollapsible>
+                                <UButton
+                                    class="group"
+                                    block
+                                    color="neutral"
+                                    variant="subtle"
+                                    trailing-icon="i-mdi-chevron-down"
+                                    :label="$t('common.content')"
+                                    :ui="{
+                                        trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                                    }"
                                 />
-                            </UFormField>
+
+                                <template #content>
+                                    <TiptapEditor
+                                        :model-value="template.content"
+                                        class="mt-2 min-h-64"
+                                        content-type="html"
+                                        disabled
+                                        hide-toolbar
+                                        :extensions="[TemplateVar, TemplateBlock, TemplateBlockEnd]"
+                                    />
+                                </template>
+                            </UCollapsible>
 
                             <UFormField v-if="template.contentAccess" :label="$t('common.access')">
                                 <AccessManager

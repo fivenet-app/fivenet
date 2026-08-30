@@ -410,6 +410,8 @@ const reference = computed(() => ({
 }));
 
 function onClickContent(event: MouseEvent): void {
+    if (disabled.value) return;
+
     let element: HTMLElement | null = event.target as HTMLElement;
     if (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href')) {
         element = element.parentElement as HTMLElement;
@@ -612,14 +614,14 @@ defineExpose<{
         </template>
 
         <!-- Nuxt UI Editor parts  that work with our wonderful "TiptapEditor" component -->
-        <UEditorEmojiMenu :editor="editor" :items="emojiItems" />
+        <UEditorEmojiMenu v-if="editor && !disabled" :editor="editor" :items="emojiItems" />
 
-        <UEditorDragHandle v-if="editor" :editor="editor" />
+        <UEditorDragHandle v-if="editor && !disabled" :editor="editor" />
 
-        <UEditorSuggestionMenu :editor="editor" :items="items" />
+        <UEditorSuggestionMenu v-if="editor && !disabled" :editor="editor" :items="items" />
 
         <UPopover
-            :open="openLinkPopover"
+            :open="!disabled && openLinkPopover"
             :reference="reference"
             :content="{ side: 'top', sideOffset: 16, updatePositionStrategy: 'always' }"
         >
