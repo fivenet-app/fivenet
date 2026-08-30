@@ -18,13 +18,23 @@ message ListGroupsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  repeated resources.jobs.groups.GroupState states = 3;
+  repeated resources.jobs.groups.GroupState states = 3 [(buf.validate.field).repeated = {
+    max_items: 3
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
   optional string search = 4;
   bool include_counts = 5;
   bool include_inactive = 6;
   bool include_archived = 7;
-  repeated int32 group_ids = 8 [(buf.validate.field).repeated.items.int32.gt = 0];
-  optional resources.jobs.groups.GroupType kind = 9;
+  repeated int32 group_ids = 8 [(buf.validate.field).repeated = {
+    max_items: 10
+    items: {
+      int32: {gt: 0}
+    }
+  }];
+  optional resources.jobs.groups.GroupType kind = 9 [(buf.validate.field).enum.defined_only = true];
 }
 
 message ListGroupsResponse {
@@ -52,13 +62,13 @@ message CreateGroupRequest {
   reserved 5;
   optional string color = 6;
 
-  optional resources.jobs.groups.GroupType type = 7;
-  optional resources.jobs.groups.GroupMembershipMode membership_mode = 8;
+  optional resources.jobs.groups.GroupType type = 7 [(buf.validate.field).enum.defined_only = true];
+  optional resources.jobs.groups.GroupMembershipMode membership_mode = 8 [(buf.validate.field).enum.defined_only = true];
   optional string sort_rank = 9 [(buf.validate.field).string.max_len = 32];
 
-  repeated int32 leader_user_ids = 10;
-  repeated int32 manual_member_user_ids = 11;
-  repeated GroupRuleInput rules = 12;
+  repeated int32 leader_user_ids = 10 [(buf.validate.field).repeated.max_items = 20];
+  repeated int32 manual_member_user_ids = 11 [(buf.validate.field).repeated.max_items = 100];
+  repeated GroupRuleInput rules = 12 [(buf.validate.field).repeated.max_items = 50];
   optional resources.access.Access access = 13;
 }
 
@@ -76,9 +86,9 @@ message UpdateGroupRequest {
   reserved 5;
   optional string color = 6;
 
-  optional resources.jobs.groups.GroupState state = 7;
-  optional resources.jobs.groups.GroupType type = 8;
-  optional resources.jobs.groups.GroupMembershipMode membership_mode = 9;
+  optional resources.jobs.groups.GroupState state = 7 [(buf.validate.field).enum.defined_only = true];
+  optional resources.jobs.groups.GroupType type = 8 [(buf.validate.field).enum.defined_only = true];
+  optional resources.jobs.groups.GroupMembershipMode membership_mode = 9 [(buf.validate.field).enum.defined_only = true];
   optional string sort_rank = 10 [(buf.validate.field).string.max_len = 32];
   optional resources.access.Access access = 11;
 }
@@ -125,7 +135,12 @@ message ListGroupMembersRequest {
   bool include_leaders = 6;
   bool include_reasons = 7;
 
-  repeated resources.jobs.groups.GroupMemberSource sources = 8 [(codegen.itemslen.enabled) = true];
+  repeated resources.jobs.groups.GroupMemberSource sources = 8 [(buf.validate.field).repeated = {
+    max_items: 3
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
 }
 
 message ListGroupMembersResponse {
@@ -200,7 +215,7 @@ message RemoveGroupMemberResponse {
 message ExcludeGroupMemberRequest {
   int64 group_id = 1;
   int32 user_id = 2;
-  resources.jobs.groups.GroupExclusionReason reason_type = 3;
+  resources.jobs.groups.GroupExclusionReason reason_type = 3 [(buf.validate.field).enum.defined_only = true];
   optional string reason = 4;
 }
 
@@ -288,8 +303,13 @@ message ListGroupActivityRequest {
 
   int64 group_id = 3;
 
-  repeated resources.jobs.groups.GroupActivityType types = 4;
-  optional int32 user_id = 5;
+  repeated resources.jobs.groups.GroupActivityType types = 4 [(buf.validate.field).repeated = {
+    max_items: 14
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
+  optional int32 user_id = 5 [(buf.validate.field).int32.gt = 0];
 
   optional resources.timestamp.Timestamp from = 6;
   optional resources.timestamp.Timestamp to = 7;

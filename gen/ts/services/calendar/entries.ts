@@ -207,7 +207,7 @@ class ListCalendarEntriesRequest$Type extends MessageType<ListCalendarEntriesReq
         super("services.calendar.ListCalendarEntriesRequest", [
             { no: 1, name: "year", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 2023 } } } },
             { no: 2, name: "month", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 12, gte: 1 } } } },
-            { no: 3, name: "calendar_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "calendar_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "50" } } } },
             { no: 4, name: "show_hidden", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "after", kind: "message", T: () => Timestamp }
         ]);
@@ -525,7 +525,7 @@ class CreateOrUpdateCalendarEntryRequest$Type extends MessageType<CreateOrUpdate
     constructor() {
         super("services.calendar.CreateOrUpdateCalendarEntryRequest", [
             { no: 1, name: "entry", kind: "message", T: () => CalendarEntry, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "25" } } } }
         ]);
     }
     create(value?: PartialMessage<CreateOrUpdateCalendarEntryRequest>): CreateOrUpdateCalendarEntryRequest {
@@ -718,7 +718,7 @@ class ShareCalendarEntryRequest$Type extends MessageType<ShareCalendarEntryReque
     constructor() {
         super("services.calendar.ShareCalendarEntryRequest", [
             { no: 1, name: "entry_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "25" } } } }
         ]);
     }
     create(value?: PartialMessage<ShareCalendarEntryRequest>): ShareCalendarEntryRequest {

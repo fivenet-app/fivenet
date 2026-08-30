@@ -72,13 +72,13 @@ message Group {
 
   // Describes the broad membership behavior.
   // This can also be derived from rules/manual members, but storing it can simplify UI.
-  GroupType type = 9;
+  GroupType type = 9 [(buf.validate.field).enum.defined_only = true];
 
   // Current lifecycle state.
-  GroupState state = 10;
+  GroupState state = 10 [(buf.validate.field).enum.defined_only = true];
 
   // Controls whether manually added members must satisfy smart membership rules.
-  GroupMembershipMode membership_mode = 11;
+  GroupMembershipMode membership_mode = 11 [(buf.validate.field).enum.defined_only = true];
 
   // Lexicographic rank for manual group ordering.
   string sort_rank = 12 [(buf.validate.field).string.max_len = 32];
@@ -168,7 +168,7 @@ message GroupMemberExclusion {
   optional resources.jobs.colleagues.Colleague colleague = 3;
 
   // Structured exclusion reason.
-  GroupExclusionReason reason_type = 4;
+  GroupExclusionReason reason_type = 4 [(buf.validate.field).enum.defined_only = true];
 
   // Optional human-readable reason.
   optional string reason = 5;
@@ -195,7 +195,7 @@ enum GroupGradeRuleType {
 
 message GroupGradeRule {
   // Determines which grade fields are used.
-  GroupGradeRuleType type = 1;
+  GroupGradeRuleType type = 1 [(buf.validate.field).enum.defined_only = true];
 
   // Used by MINIMUM and EXACT.
   optional int32 grade = 2;
@@ -228,16 +228,16 @@ enum GroupQualificationRuleType {
 
 message GroupQualificationRule {
   // Determines whether all or any listed qualifications are required.
-  GroupQualificationRuleType type = 1;
+  GroupQualificationRuleType type = 1 [(buf.validate.field).enum.defined_only = true];
 
   // Qualification IDs checked by this rule.
-  repeated int64 qualification_ids = 2;
+  repeated int64 qualification_ids = 2 [(buf.validate.field).repeated.items.int64.gt = 0];
 
   // If true, only completed/successful qualifications count.
   bool require_completed = 3;
 
   // Hydrated display data for the UI.
-  repeated resources.qualifications.QualificationShort qualifications = 4;
+  repeated resources.qualifications.QualificationShort qualifications = 4 [(buf.validate.field).repeated.max_items = 4];
 }
 
 enum GroupRuleType {
@@ -260,7 +260,7 @@ message GroupRule {
   bool enabled = 3;
 
   // Stored rule body discriminator. This duplicates the oneof for DB/query mapping.
-  GroupRuleType type = 4;
+  GroupRuleType type = 4 [(buf.validate.field).enum.defined_only = true];
 
   oneof rule {
     // Grade/rank-based membership rule.
@@ -303,13 +303,13 @@ enum GroupMembershipReasonType {
 
 message GroupMembershipReason {
   // Source category that explains why the user appears in the resolved view.
-  GroupMemberSource source = 1;
+  GroupMemberSource source = 1 [(buf.validate.field).enum.defined_only = true];
 
   // Rule that caused the membership, if source is RULE.
   optional int64 rule_id = 2;
 
   // Structured reason for UI display/translation.
-  GroupMembershipReasonType type = 3;
+  GroupMembershipReasonType type = 3 [(buf.validate.field).enum.defined_only = true];
 
   // Optional free-form detail such as a manually entered reason.
   optional string detail = 4;
@@ -333,8 +333,13 @@ message GroupResolvedMember {
   bool is_excluded = 6;
 
   // High-level membership sources that apply to this user.
-  repeated GroupMemberSource sources = 7;
+  repeated GroupMemberSource sources = 7 [(buf.validate.field).repeated = {
+    max_items: 4
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
 
   // Detailed explanations for the UI/admin view.
-  repeated GroupMembershipReason reasons = 8;
+  repeated GroupMembershipReason reasons = 8 [(buf.validate.field).repeated = {max_items: 8}];
 }

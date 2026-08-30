@@ -5,7 +5,6 @@ package resources.mailer.emails;
 import "buf/validate/validate.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/access/access.proto";
-import "resources/mailer/access/access.proto";
 import "resources/mailer/settings/settings.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";

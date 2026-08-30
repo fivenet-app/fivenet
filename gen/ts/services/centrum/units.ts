@@ -269,7 +269,7 @@ export const JoinUnitResponse = new JoinUnitResponse$Type();
 class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
     constructor() {
         super("services.centrum.ListUnitsRequest", [
-            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.units.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } }
+            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.units.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { repeated: { maxItems: "7", items: { enum: { definedOnly: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListUnitsRequest>): ListUnitsRequest {
@@ -750,8 +750,8 @@ class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
     constructor() {
         super("services.centrum.AssignUnitRequest", [
             { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "30" } } } },
+            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "30" } } } }
         ]);
     }
     create(value?: PartialMessage<AssignUnitRequest>): AssignUnitRequest {

@@ -35,14 +35,6 @@ func (m *ListGroupMemberExclusionsResponse) ItemsLen() int {
 	return len(m.GetExclusions())
 }
 
-// ItemsLen returns the length of Sources.
-func (m *ListGroupMembersRequest) ItemsLen() int {
-	if m == nil {
-		return 0
-	}
-	return len(m.GetSources())
-}
-
 // ItemsLen returns the length of Members.
 func (m *ListGroupMembersResponse) ItemsLen() int {
 	if m == nil {

@@ -261,7 +261,7 @@ class Unit$Type extends MessageType<Unit> {
             { no: 16, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 9, name: "status", kind: "message", T: () => UnitStatus },
-            { no: 11, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitAssignment },
+            { no: 11, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitAssignment, options: { "buf.validate.field": { repeated: { maxItems: "30" } } } },
             { no: 12, name: "attributes", kind: "message", T: () => UnitAttributes },
             { no: 13, name: "home_postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
             { no: 14, name: "access", kind: "message", T: () => Access }
@@ -407,9 +407,9 @@ export const Unit = new Unit$Type();
 class UnitAssignments$Type extends MessageType<UnitAssignments> {
     constructor() {
         super("resources.centrum.units.UnitAssignments", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 3, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitAssignment }
+            { no: 3, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitAssignment, options: { "buf.validate.field": { repeated: { maxItems: "30" } } } }
         ]);
     }
     create(value?: PartialMessage<UnitAssignments>): UnitAssignments {
@@ -470,7 +470,7 @@ export const UnitAssignments = new UnitAssignments$Type();
 class UnitAssignment$Type extends MessageType<UnitAssignment> {
     constructor() {
         super("resources.centrum.units.UnitAssignment", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"unit_id\"" } },
+            { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } }, "tagger.tags": "sql:\"primary_key\" alias:\"unit_id\"" } },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } }, "tagger.tags": "sql:\"primary_key\" alias:\"user_id\"" } },
             { no: 3, name: "user", kind: "message", T: () => Colleague }
         ]);
@@ -679,7 +679,7 @@ export const UnitStatus = new UnitStatus$Type();
 class UnitAttributes$Type extends MessageType<UnitAttributes> {
     constructor() {
         super("resources.centrum.units.UnitAttributes", [
-            { no: 1, name: "list", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.units.UnitAttribute", UnitAttribute, "UNIT_ATTRIBUTE_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } }
+            { no: 1, name: "list", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.units.UnitAttribute", UnitAttribute, "UNIT_ATTRIBUTE_"], options: { "buf.validate.field": { repeated: { maxItems: "3", items: { enum: { definedOnly: true } } } } } }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<UnitAttributes>): UnitAttributes {

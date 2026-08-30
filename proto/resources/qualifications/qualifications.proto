@@ -8,7 +8,6 @@ import "codegen/sanitizer/sanitizer.proto";
 import "resources/access/access.proto";
 import "resources/common/content/content.proto";
 import "resources/file/file.proto";
-import "resources/qualifications/access/access.proto";
 import "resources/qualifications/exam/exam.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";

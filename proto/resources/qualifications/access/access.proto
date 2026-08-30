@@ -2,9 +2,6 @@ syntax = "proto3";
 
 package resources.qualifications.access;
 
-import "buf/validate/validate.proto";
-import "resources/access/access.proto";
-
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access;qualificationsaccess";
 
 enum AccessLevel {

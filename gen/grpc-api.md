@@ -1547,28 +1547,6 @@ Dummy - DO NOT USE!
 
 
 
-## resources/centrum/units/access/access.proto
-
- <!-- end messages -->
-
-
-### resources.centrum.units.access.UnitAccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `UNIT_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `UNIT_ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `UNIT_ACCESS_LEVEL_JOIN` | 2 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/centrum/units/units.proto
 
 
@@ -1994,6 +1972,28 @@ Dummy - DO NOT USE!
 | `CENTRUM_TYPE_UNSPECIFIED` | 0 |  |
 | `CENTRUM_TYPE_DISPATCH` | 1 |  |
 | `CENTRUM_TYPE_DELIVERY` | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/centrum/units/access/access.proto
+
+ <!-- end messages -->
+
+
+### resources.centrum.units.access.UnitAccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `UNIT_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `UNIT_ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `UNIT_ACCESS_LEVEL_JOIN` | 2 |  |
 
 
  <!-- end enums -->
@@ -4564,32 +4564,6 @@ Policy snapshot applied to a specific version
 
 
 
-## resources/qualifications/access/access.proto
-
- <!-- end messages -->
-
-
-### resources.qualifications.access.AccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `ACCESS_LEVEL_VIEW` | 2 |  |
-| `ACCESS_LEVEL_REQUEST` | 3 |  |
-| `ACCESS_LEVEL_TAKE` | 4 |  |
-| `ACCESS_LEVEL_GRADE` | 5 |  |
-| `ACCESS_LEVEL_EDIT` | 6 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/qualifications/exam/exam.proto
 
 
@@ -6696,6 +6670,32 @@ User related events
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/qualifications/access/access.proto
+
+ <!-- end messages -->
+
+
+### resources.qualifications.access.AccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_REQUEST` | 3 |  |
+| `ACCESS_LEVEL_TAKE` | 4 |  |
+| `ACCESS_LEVEL_GRADE` | 5 |  |
+| `ACCESS_LEVEL_EDIT` | 6 |  |
+
 
  <!-- end enums -->
 

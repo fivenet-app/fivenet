@@ -4855,7 +4855,7 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x16DeleteGroupLogoRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"M\n" +
 	"\x17DeleteGroupLogoResponse\x122\n" +
-	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xb4\x03\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xae\x03\n" +
 	"\x17ListGroupMembersRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -4865,8 +4865,8 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x06search\x18\x04 \x01(\tH\x01R\x06search\x88\x01\x01\x12)\n" +
 	"\x10include_excluded\x18\x05 \x01(\bR\x0fincludeExcluded\x12'\n" +
 	"\x0finclude_leaders\x18\x06 \x01(\bR\x0eincludeLeaders\x12'\n" +
-	"\x0finclude_reasons\x18\a \x01(\bR\x0eincludeReasons\x12H\n" +
-	"\asources\x18\b \x03(\x0e2(.resources.jobs.groups.GroupMemberSourceB\x04\xc8\xf3\x18\x01R\asourcesB\a\n" +
+	"\x0finclude_reasons\x18\a \x01(\bR\x0eincludeReasons\x12B\n" +
+	"\asources\x18\b \x03(\x0e2(.resources.jobs.groups.GroupMemberSourceR\asourcesB\a\n" +
 	"\x05_sortB\t\n" +
 	"\a_search\"\xb5\x01\n" +
 	"\x18ListGroupMembersResponse\x12M\n" +

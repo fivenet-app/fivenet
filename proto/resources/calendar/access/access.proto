@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package resources.calendar.access;
 
-import "buf/validate/validate.proto";
-
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access;calendaraccess";
 
 enum AccessLevel {

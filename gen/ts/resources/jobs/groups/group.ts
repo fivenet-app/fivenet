@@ -734,9 +734,9 @@ class Group$Type extends MessageType<Group> {
             { no: 6, name: "logo_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 7, name: "logo_file", kind: "message", T: () => File, options: { "tagger.tags": "alias:\"logo_file\"" } },
             { no: 8, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 9, name: "type", kind: "enum", T: () => ["resources.jobs.groups.GroupType", GroupType, "GROUP_TYPE_"] },
-            { no: 10, name: "state", kind: "enum", T: () => ["resources.jobs.groups.GroupState", GroupState, "GROUP_STATE_"] },
-            { no: 11, name: "membership_mode", kind: "enum", T: () => ["resources.jobs.groups.GroupMembershipMode", GroupMembershipMode, "GROUP_MEMBERSHIP_MODE_"] },
+            { no: 9, name: "type", kind: "enum", T: () => ["resources.jobs.groups.GroupType", GroupType, "GROUP_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 10, name: "state", kind: "enum", T: () => ["resources.jobs.groups.GroupState", GroupState, "GROUP_STATE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 11, name: "membership_mode", kind: "enum", T: () => ["resources.jobs.groups.GroupMembershipMode", GroupMembershipMode, "GROUP_MEMBERSHIP_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 12, name: "sort_rank", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 13, name: "members_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 14, name: "leaders_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
@@ -1106,7 +1106,7 @@ class GroupMemberExclusion$Type extends MessageType<GroupMemberExclusion> {
             { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "colleague", kind: "message", T: () => Colleague },
-            { no: 4, name: "reason_type", kind: "enum", T: () => ["resources.jobs.groups.GroupExclusionReason", GroupExclusionReason, "GROUP_EXCLUSION_REASON_"] },
+            { no: 4, name: "reason_type", kind: "enum", T: () => ["resources.jobs.groups.GroupExclusionReason", GroupExclusionReason, "GROUP_EXCLUSION_REASON_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 5, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "created_by_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 7, name: "created_by", kind: "message", T: () => Colleague },
@@ -1201,7 +1201,7 @@ export const GroupMemberExclusion = new GroupMemberExclusion$Type();
 class GroupGradeRule$Type extends MessageType<GroupGradeRule> {
     constructor() {
         super("resources.jobs.groups.GroupGradeRule", [
-            { no: 1, name: "type", kind: "enum", T: () => ["resources.jobs.groups.GroupGradeRuleType", GroupGradeRuleType, "GROUP_GRADE_RULE_TYPE_"] },
+            { no: 1, name: "type", kind: "enum", T: () => ["resources.jobs.groups.GroupGradeRuleType", GroupGradeRuleType, "GROUP_GRADE_RULE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 2, name: "grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "min_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "max_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
@@ -1290,10 +1290,10 @@ export const GroupGradeRule = new GroupGradeRule$Type();
 class GroupQualificationRule$Type extends MessageType<GroupQualificationRule> {
     constructor() {
         super("resources.jobs.groups.GroupQualificationRule", [
-            { no: 1, name: "type", kind: "enum", T: () => ["resources.jobs.groups.GroupQualificationRuleType", GroupQualificationRuleType, "GROUP_QUALIFICATION_RULE_TYPE_"] },
-            { no: 2, name: "qualification_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "type", kind: "enum", T: () => ["resources.jobs.groups.GroupQualificationRuleType", GroupQualificationRuleType, "GROUP_QUALIFICATION_RULE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 2, name: "qualification_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { items: { int64: { gt: "0" } } } } } },
             { no: 3, name: "require_completed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "qualifications", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationShort }
+            { no: 4, name: "qualifications", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationShort, options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
         ]);
     }
     create(value?: PartialMessage<GroupQualificationRule>): GroupQualificationRule {
@@ -1372,7 +1372,7 @@ class GroupRule$Type extends MessageType<GroupRule> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "type", kind: "enum", T: () => ["resources.jobs.groups.GroupRuleType", GroupRuleType, "GROUP_RULE_TYPE_"] },
+            { no: 4, name: "type", kind: "enum", T: () => ["resources.jobs.groups.GroupRuleType", GroupRuleType, "GROUP_RULE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 5, name: "grade", kind: "message", oneof: "rule", T: () => GroupGradeRule },
             { no: 6, name: "qualification", kind: "message", oneof: "rule", T: () => GroupQualificationRule },
             { no: 7, name: "created_by_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
@@ -1489,9 +1489,9 @@ export const GroupRule = new GroupRule$Type();
 class GroupMembershipReason$Type extends MessageType<GroupMembershipReason> {
     constructor() {
         super("resources.jobs.groups.GroupMembershipReason", [
-            { no: 1, name: "source", kind: "enum", T: () => ["resources.jobs.groups.GroupMemberSource", GroupMemberSource, "GROUP_MEMBER_SOURCE_"] },
+            { no: 1, name: "source", kind: "enum", T: () => ["resources.jobs.groups.GroupMemberSource", GroupMemberSource, "GROUP_MEMBER_SOURCE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 2, name: "rule_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "type", kind: "enum", T: () => ["resources.jobs.groups.GroupMembershipReasonType", GroupMembershipReasonType, "GROUP_MEMBERSHIP_REASON_TYPE_"] },
+            { no: 3, name: "type", kind: "enum", T: () => ["resources.jobs.groups.GroupMembershipReasonType", GroupMembershipReasonType, "GROUP_MEMBERSHIP_REASON_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 4, name: "detail", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
@@ -1564,8 +1564,8 @@ class GroupResolvedMember$Type extends MessageType<GroupResolvedMember> {
             { no: 4, name: "is_member", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "is_leader", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "is_excluded", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "sources", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.groups.GroupMemberSource", GroupMemberSource, "GROUP_MEMBER_SOURCE_"] },
-            { no: 8, name: "reasons", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupMembershipReason }
+            { no: 7, name: "sources", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.groups.GroupMemberSource", GroupMemberSource, "GROUP_MEMBER_SOURCE_"], options: { "buf.validate.field": { repeated: { maxItems: "4", items: { enum: { definedOnly: true } } } } } },
+            { no: 8, name: "reasons", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupMembershipReason, options: { "buf.validate.field": { repeated: { maxItems: "8" } } } }
         ]);
     }
     create(value?: PartialMessage<GroupResolvedMember>): GroupResolvedMember {

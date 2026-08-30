@@ -148,11 +148,11 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
         super("services.jobs.ListConductEntriesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.conduct.ConductType", ConductType, "CONDUCT_TYPE_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
+            { no: 3, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.conduct.ConductType", ConductType, "CONDUCT_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } },
             { no: 4, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "show_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "users", kind: "message", T: () => UserSelector },
-            { no: 7, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 7, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } },
             { no: 8, name: "show_deleted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }

@@ -20,7 +20,12 @@ message JoinUnitResponse {
 }
 
 message ListUnitsRequest {
-  repeated resources.centrum.units.StatusUnit status = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
+  repeated resources.centrum.units.StatusUnit status = 1 [(buf.validate.field).repeated = {
+    max_items: 7
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
 }
 
 message ListUnitsResponse {
@@ -65,8 +70,8 @@ message ReorderUnitsResponse {}
 
 message AssignUnitRequest {
   int64 unit_id = 1;
-  repeated int32 to_add = 2;
-  repeated int32 to_remove = 3;
+  repeated int32 to_add = 2 [(buf.validate.field).repeated.max_items = 30];
+  repeated int32 to_remove = 3 [(buf.validate.field).repeated.max_items = 30];
 }
 
 message AssignUnitResponse {}

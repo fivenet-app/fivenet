@@ -960,7 +960,7 @@ class UpsertApprovalTasksRequest$Type extends MessageType<UpsertApprovalTasksReq
         super("services.documents.UpsertApprovalTasksRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "snapshot_date", kind: "message", T: () => Timestamp },
-            { no: 3, name: "seeds", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTaskSeed }
+            { no: 3, name: "seeds", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTaskSeed, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } }
         ]);
     }
     create(value?: PartialMessage<UpsertApprovalTasksRequest>): UpsertApprovalTasksRequest {
@@ -1083,7 +1083,7 @@ class DeleteApprovalTasksRequest$Type extends MessageType<DeleteApprovalTasksReq
     constructor() {
         super("services.documents.DeleteApprovalTasksRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "task_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1" } } } },
+            { no: 2, name: "task_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "15" } } } },
             { no: 3, name: "delete_all_pending", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }

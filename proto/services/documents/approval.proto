@@ -106,7 +106,7 @@ message UpsertApprovalTasksRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
   // If empty, use policy.snapshot_date
   optional resources.timestamp.Timestamp snapshot_date = 2;
-  repeated ApprovalTaskSeed seeds = 3;
+  repeated ApprovalTaskSeed seeds = 3 [(buf.validate.field).repeated.max_items = 10];
 }
 
 message UpsertApprovalTasksResponse {
@@ -120,7 +120,10 @@ message UpsertApprovalTasksResponse {
 
 message DeleteApprovalTasksRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  repeated int64 task_ids = 2 [(buf.validate.field).repeated.min_items = 1];
+  repeated int64 task_ids = 2 [(buf.validate.field).repeated = {
+    min_items: 1
+    max_items: 15
+  }];
   // If true, ignore task_ids and delete all PENDING tasks under this policy
   bool delete_all_pending = 3;
 }

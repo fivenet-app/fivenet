@@ -1203,7 +1203,7 @@ export const ReorderLabelsResponse = new ReorderLabelsResponse$Type();
 class GetColleagueLabelsStatsRequest$Type extends MessageType<GetColleagueLabelsStatsRequest> {
     constructor() {
         super("services.jobs.GetColleagueLabelsStatsRequest", [
-            { no: 1, name: "label_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "label_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<GetColleagueLabelsStatsRequest>): GetColleagueLabelsStatsRequest {

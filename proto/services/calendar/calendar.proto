@@ -20,7 +20,7 @@ message ListCalendarsRequest {
   bool only_public = 2;
   optional resources.calendar.access.AccessLevel min_access_level = 3 [(buf.validate.field).enum.defined_only = true];
   optional resources.timestamp.Timestamp after = 4;
-  repeated int64 calendar_ids = 5;
+  repeated int64 calendar_ids = 5 [(buf.validate.field).repeated.max_items = 50];
 }
 
 message ListCalendarsResponse {

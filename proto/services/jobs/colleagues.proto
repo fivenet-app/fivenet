@@ -118,7 +118,7 @@ message ReorderLabelsRequest {
 message ReorderLabelsResponse {}
 
 message GetColleagueLabelsStatsRequest {
-  repeated int64 label_ids = 1;
+  repeated int64 label_ids = 1 [(buf.validate.field).repeated.max_items = 50];
 }
 
 message GetColleagueLabelsStatsResponse {
