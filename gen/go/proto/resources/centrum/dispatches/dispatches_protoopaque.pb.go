@@ -15,7 +15,7 @@ import (
 	units "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	colleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -270,7 +270,7 @@ type Dispatch struct {
 	xxx_hidden_Postal      *string                `protobuf:"bytes,12,opt,name=postal,proto3,oneof"`
 	xxx_hidden_Anon        bool                   `protobuf:"varint,13,opt,name=anon,proto3"`
 	xxx_hidden_CreatorId   int32                  `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof"`
-	xxx_hidden_Creator     *users.User            `protobuf:"bytes,15,opt,name=creator,proto3,oneof"`
+	xxx_hidden_Creator     *short.UserShort       `protobuf:"bytes,15,opt,name=creator,proto3,oneof"`
 	xxx_hidden_Units       *[]*DispatchAssignment `protobuf:"bytes,16,rep,name=units,proto3"`
 	xxx_hidden_References  *DispatchReferences    `protobuf:"bytes,17,opt,name=references,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
@@ -409,7 +409,7 @@ func (x *Dispatch) GetCreatorId() int32 {
 	return 0
 }
 
-func (x *Dispatch) GetCreator() *users.User {
+func (x *Dispatch) GetCreator() *short.UserShort {
 	if x != nil {
 		return x.xxx_hidden_Creator
 	}
@@ -492,7 +492,7 @@ func (x *Dispatch) SetCreatorId(v int32) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 17)
 }
 
-func (x *Dispatch) SetCreator(v *users.User) {
+func (x *Dispatch) SetCreator(v *short.UserShort) {
 	x.xxx_hidden_Creator = v
 }
 
@@ -635,7 +635,7 @@ type Dispatch_builder struct {
 	Postal      *string
 	Anon        bool
 	CreatorId   *int32
-	Creator     *users.User
+	Creator     *short.UserShort
 	Units       []*DispatchAssignment
 	References  *DispatchReferences
 }
@@ -1511,7 +1511,7 @@ var File_resources_centrum_dispatches_dispatches_proto protoreflect.FileDescript
 
 const file_resources_centrum_dispatches_dispatches_proto_rawDesc = "" +
 	"\n" +
-	"-resources/centrum/dispatches/dispatches.proto\x12\x1cresources.centrum.dispatches\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/centrum/joblist.proto\x1a#resources/centrum/units/units.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"\xc9\a\n" +
+	"-resources/centrum/dispatches/dispatches.proto\x12\x1cresources.centrum.dispatches\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/centrum/joblist.proto\x1a#resources/centrum/units/units.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xd4\a\n" +
 	"\bDispatch\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1532,8 +1532,8 @@ const file_resources_centrum_dispatches_dispatches_proto_rawDesc = "" +
 	"\x06postal\x18\f \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x05R\x06postal\x88\x01\x01\x12\x12\n" +
 	"\x04anon\x18\r \x01(\bR\x04anon\x12\"\n" +
 	"\n" +
-	"creator_id\x18\x0e \x01(\x05H\x06R\tcreatorId\x88\x01\x01\x124\n" +
-	"\acreator\x18\x0f \x01(\v2\x15.resources.users.UserH\aR\acreator\x88\x01\x01\x12F\n" +
+	"creator_id\x18\x0e \x01(\x05H\x06R\tcreatorId\x88\x01\x01\x12?\n" +
+	"\acreator\x18\x0f \x01(\v2 .resources.users.short.UserShortH\aR\acreator\x88\x01\x01\x12F\n" +
 	"\x05units\x18\x10 \x03(\v20.resources.centrum.dispatches.DispatchAssignmentR\x05units\x12U\n" +
 	"\n" +
 	"references\x18\x11 \x01(\v20.resources.centrum.dispatches.DispatchReferencesH\bR\n" +
@@ -1657,7 +1657,7 @@ var file_resources_centrum_dispatches_dispatches_proto_goTypes = []any{
 	(*DispatchAttributes)(nil),   // 10: resources.centrum.dispatches.DispatchAttributes
 	(*timestamp.Timestamp)(nil),  // 11: resources.timestamp.Timestamp
 	(*centrum.JobList)(nil),      // 12: resources.centrum.JobList
-	(*users.User)(nil),           // 13: resources.users.User
+	(*short.UserShort)(nil),      // 13: resources.users.short.UserShort
 	(*units.Unit)(nil),           // 14: resources.centrum.units.Unit
 	(*colleagues.Colleague)(nil), // 15: resources.jobs.colleagues.Colleague
 }
@@ -1667,7 +1667,7 @@ var file_resources_centrum_dispatches_dispatches_proto_depIdxs = []int32{
 	12, // 2: resources.centrum.dispatches.Dispatch.jobs:type_name -> resources.centrum.JobList
 	7,  // 3: resources.centrum.dispatches.Dispatch.status:type_name -> resources.centrum.dispatches.DispatchStatus
 	10, // 4: resources.centrum.dispatches.Dispatch.attributes:type_name -> resources.centrum.dispatches.DispatchAttributes
-	13, // 5: resources.centrum.dispatches.Dispatch.creator:type_name -> resources.users.User
+	13, // 5: resources.centrum.dispatches.Dispatch.creator:type_name -> resources.users.short.UserShort
 	6,  // 6: resources.centrum.dispatches.Dispatch.units:type_name -> resources.centrum.dispatches.DispatchAssignment
 	8,  // 7: resources.centrum.dispatches.Dispatch.references:type_name -> resources.centrum.dispatches.DispatchReferences
 	6,  // 8: resources.centrum.dispatches.DispatchAssignments.units:type_name -> resources.centrum.dispatches.DispatchAssignment

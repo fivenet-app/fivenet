@@ -131,7 +131,7 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "license_plate", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 4, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
-            { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { items: { int32: { gte: 0 } } } } } },
+            { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { int32: { gte: 0 } } } } } },
             { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 7, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -381,7 +381,7 @@ class ListVehicleActivityRequest$Type extends MessageType<ListVehicleActivityReq
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "32" } } } },
-            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.vehicles.activity.VehicleActivityType", VehicleActivityType, "VEHICLE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "20", items: { enum: { definedOnly: true } } } } } }
+            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.vehicles.activity.VehicleActivityType", VehicleActivityType, "VEHICLE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListVehicleActivityRequest>): ListVehicleActivityRequest {

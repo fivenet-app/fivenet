@@ -10,7 +10,7 @@ import (
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	permsqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/protobuf/types/known/durationpb"
@@ -35,29 +36,31 @@ func (s *Server) ListQualifications(
 ) (*pbqualifications.ListQualificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	includePhoneNumber := false
-	if fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(
-		s.perms,
-		userInfo,
-	); err == nil {
-		includePhoneNumber = fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-		)
-	}
-
 	resp, err := s.store.ListQualifications(ctx, qualificationsstore.ListQualificationsOptions{
 		Pagination: req.GetPagination(),
 		Sort:       req.GetSort(),
 		Search:     req.GetSearch(),
-	}, userInfo, includePhoneNumber)
+	}, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.GetQualifications() {
-		if resp.GetQualifications()[i].GetCreator() != nil {
-			jobInfoFn(resp.GetQualifications()[i].GetCreator())
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetQualifications()))
+	for i, qualification := range resp.GetQualifications() {
+		if qualification.GetCreatorId() <= 0 {
+			continue
+		}
+		targets = append(targets, citizenshydrator.BasicTarget{
+			UserID: qualification.GetCreatorId(),
+			Set: func(user *usershort.UserShort) {
+				resp.Qualifications[i].Creator = user
+			},
+		})
+	}
+	if len(targets) > 0 {
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, targets); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
 
@@ -82,7 +85,7 @@ func (s *Server) GetQualification(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	quali, err := s.store.GetQualificationShort(ctx, req.GetQualificationId(), userInfo, false)
+	quali, err := s.store.GetQualificationShort(ctx, req.GetQualificationId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -142,7 +145,7 @@ func (s *Server) GetQualification(
 
 	resp := &pbqualifications.GetQualificationResponse{}
 	resp.Qualification, err = s.store.GetQualification(ctx, req.GetQualificationId(),
-		userInfo, canContent, false)
+		userInfo, canContent)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -163,8 +166,15 @@ func (s *Server) GetQualification(
 		}
 	}
 
-	if resp.GetQualification().GetCreator() != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, resp.GetQualification().GetCreator())
+	if resp.GetQualification().GetCreatorId() > 0 {
+		getShortByUserID := s.hydrator.GetBasicByUserIDSafeFunc(userInfo)
+		creator, err := getShortByUserID(ctx, nil, resp.GetQualification().GetCreatorId())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		if creator != nil {
+			resp.Qualification.Creator = creator
+		}
 	}
 
 	qualiAccess, err := s.access.ListTargetAccess(
@@ -285,7 +295,7 @@ func (s *Server) UpdateQualification(
 	}
 
 	oldQuali, err := s.store.GetQualification(ctx, req.GetQualification().GetId(),
-		userInfo, true, false)
+		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -448,7 +458,7 @@ func (s *Server) DeleteQualification(
 	}
 
 	quali, err := s.store.GetQualification(ctx, req.GetQualificationId(),
-		userInfo, true, false)
+		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

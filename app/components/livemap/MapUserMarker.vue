@@ -144,7 +144,7 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                                 variant="link"
                                 icon="i-mdi-account"
                                 block
-                                :label="$t('common.profile')"
+                                :label="$t('common.citizen')"
                                 :to="`/citizens/${marker.user?.userId ?? 0}`"
                             />
 

@@ -44,19 +44,27 @@ message Auth {
 
   repeated string job_admin_groups = 3 [(buf.validate.field).repeated = {
     max_items: 10
-    items: {string: {max_len: 64}}
+    items: {
+      string: {max_len: 64}
+    }
   }];
   repeated string job_admin_users = 4 [(buf.validate.field).repeated = {
     max_items: 10
-    items: {string: {max_len: 64}}
+    items: {
+      string: {max_len: 64}
+    }
   }];
   repeated string config_admin_groups = 5 [(buf.validate.field).repeated = {
     max_items: 10
-    items: {string: {max_len: 64}}
+    items: {
+      string: {max_len: 64}
+    }
   }];
   repeated string config_admin_users = 6 [(buf.validate.field).repeated = {
     max_items: 10
-    items: {string: {max_len: 64}}
+    items: {
+      string: {max_len: 64}
+    }
   }];
 }
 

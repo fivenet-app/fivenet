@@ -387,15 +387,13 @@ type ListQuery struct {
 	Offset      int64
 	Limit       int64
 
-	IncludePhoneNumber bool
-	UserInfo           *userinfo.UserInfo
+	UserInfo *userinfo.UserInfo
 }
 
 type GetQuery struct {
-	DocumentID         int64
-	IncludePhoneNumber bool
-	WithContent        bool
-	UserInfo           *userinfo.UserInfo
+	DocumentID  int64
+	WithContent bool
+	UserInfo    *userinfo.UserInfo
 }
 
 type ListUserDocumentsQuery struct {

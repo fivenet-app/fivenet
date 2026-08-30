@@ -19,8 +19,6 @@ func (s *Store) ListUserDocuments(
 	tDocument := table.FivenetDocuments.AS("document")
 	tDocRel := table.FivenetDocumentsRelations.AS("document_relation")
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
-	tCreator := table.FivenetUser.AS("creator")
-	tASource := tCreator.AS("source_user")
 
 	condition := tDocRel.TargetUserID.EQ(mysql.Int32(q.UserID))
 	if q.IncludeCreated {
@@ -133,19 +131,7 @@ func (s *Store) ListUserDocuments(
 			tDCategory.Description,
 			tDCategory.Color,
 			tDCategory.Icon,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
 			tDocRel.SourceUserID,
-			tASource.ID,
-			tASource.Job,
-			tASource.JobGrade,
-			tASource.Firstname,
-			tASource.Lastname,
-			tASource.Dateofbirth,
 			tDocRel.Relation,
 			tDocRel.TargetUserID,
 		).
@@ -162,12 +148,6 @@ func (s *Store) ListUserDocuments(
 						tDocument.CategoryID.EQ(tDCategory.ID),
 						tDCategory.DeletedAt.IS_NULL(),
 					),
-				).
-				LEFT_JOIN(tCreator,
-					tDocument.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tASource,
-					tASource.ID.EQ(tDocRel.SourceUserID),
 				),
 		).
 		WHERE(condition).

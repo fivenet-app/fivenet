@@ -8,12 +8,14 @@ import (
 	calendarresource "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -64,11 +66,20 @@ func (s *Server) ListCalendarEntryRSVP(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.GetEntries() {
-		if resp.GetEntries()[i].GetUser() != nil {
-			jobInfoFn(resp.GetEntries()[i].GetUser())
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetEntries()))
+	for i, entry := range resp.GetEntries() {
+		if entry.GetUserId() > 0 {
+			targets = append(targets, citizenshydrator.BasicTarget{
+				UserID: entry.GetUserId(),
+				Set: func(user *usershort.UserShort) {
+					resp.Entries[i].User = user
+				},
+			})
 		}
+	}
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+	if err := hydrateShort(ctx, nil, targets); err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
 	return resp, nil
@@ -159,8 +170,16 @@ func (s *Server) RSVPCalendarEntry(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	if rsvpEntry.GetUser() != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, rsvpEntry.GetUser())
+	if rsvpEntry.GetUserId() > 0 {
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.BasicTarget{{
+			UserID: rsvpEntry.GetUserId(),
+			Set: func(user *usershort.UserShort) {
+				rsvpEntry.User = user
+			},
+		}}); err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)

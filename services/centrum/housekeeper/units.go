@@ -315,11 +315,17 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 			continue
 		}
 
+		inJob, err := s.unitAssignments.UserInJob(ctx, s.db, unit.GetJob(), userId)
+		if err != nil {
+			return foundUserIds, 0, fmt.Errorf("failed to check user job membership. %w", err)
+		}
+
 		unitMapping, ok, err := s.tracker.GetUserMapping(userId)
 		// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
 		if err == nil && ok && unitMapping.UnitId != nil &&
 			unit.GetId() == unitMapping.GetUnitId() &&
-			s.tracker.IsUserOnDuty(userId) {
+			s.tracker.IsUserOnDuty(userId) &&
+			inJob {
 			foundUserIds = append(foundUserIds, userId)
 			continue
 		}
@@ -341,7 +347,7 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 		zap.Int32s("to_remove", toRemove),
 	)
 
-	if err := s.units.UpdateUnitAssignments(
+	if err := s.unitAssignments.UpdateUnitAssignments(
 		ctx,
 		unit.GetJob(),
 		nil,

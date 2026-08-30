@@ -35,7 +35,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
-	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
+	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
@@ -83,6 +84,9 @@ type DispatchDB struct {
 	postals  postals.Postals
 	appCfg   appconfig.IConfig
 
+	colleagueshydrator colleagueshydrator.IHydrator
+	hydrator           citizenshydrator.IHydrator
+
 	settings *settings.SettingsDB
 	units    *units.UnitDB
 
@@ -109,6 +113,9 @@ type Params struct {
 	Postals   postals.Postals
 	AppConfig appconfig.IConfig
 
+	Colleagueshydrator colleagueshydrator.IHydrator
+	Hydrator           citizenshydrator.IHydrator
+
 	Settings *settings.SettingsDB
 	Units    *units.UnitDB
 }
@@ -125,6 +132,9 @@ func New(p Params) *DispatchDB {
 		tracker:  p.Tracker,
 		postals:  p.Postals,
 		appCfg:   p.AppConfig,
+
+		colleagueshydrator: p.Colleagueshydrator,
+		hydrator:           p.Hydrator,
 
 		settings: p.Settings,
 		units:    p.Units,
@@ -502,8 +512,6 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 		condition = condition.AND(cond)
 	}
 
-	tUsers := table.FivenetUser.AS("user")
-
 	stmt := tDispatch.
 		SELECT(
 			tDispatch.ID,
@@ -531,20 +539,11 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
 			tDispatchStatus.CreatorJob,
-			tUsers.ID,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Sex,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
 		).
 		FROM(
 			tDispatch.
 				LEFT_JOIN(tDispatchStatus,
 					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
-				).
-				LEFT_JOIN(tUsers,
-					tUsers.ID.EQ(tDispatchStatus.UserID),
 				),
 		).
 		WHERE(condition).
@@ -565,88 +564,82 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 	}
 
 	publicJobs := s.appCfg.Get().JobInfo.GetPublicJobs()
+	creatorTargets := make([]citizenshydrator.BasicTarget, 0, len(dsps))
 	for i := range dsps {
+		dsp := dsps[i]
 		var err error
-		dsps[i].Units, err = s.LoadDispatchAssignments(ctx, dsps[i].GetId())
+		dsp.Units, err = s.LoadDispatchAssignments(ctx, dsp.GetId())
 		if err != nil {
 			return 0, err
 		}
 
-		if dsps[i].CreatorId != nil && dsps[i].GetCreatorId() > 0 {
-			dsps[i].Creator, err = usersstore.RetrieveUserById(ctx, s.db, dsps[i].GetCreatorId())
-			if err != nil {
-				return 0, err
-			}
-
-			if dsps[i].GetCreator() != nil {
-				// Clear dispatch creator's job info if not a visible job
-				if !slices.Contains(publicJobs, dsps[i].GetCreator().GetJob()) {
-					dsps[i].Creator.Job = ""
-				}
-				dsps[i].Creator.JobGrade = 0
-			}
+		if dsp.GetCreatorId() > 0 {
+			creatorTargets = append(creatorTargets, citizenshydrator.BasicTarget{
+				UserID: dsp.GetCreatorId(),
+				Set:    dsp.SetCreator,
+			})
 		}
 
-		if dsps[i].Postal == nil {
-			if postal, ok := s.postals.Closest(dsps[i].GetX(), dsps[i].GetY()); postal != nil &&
+		if dsp.Postal == nil {
+			if postal, ok := s.postals.Closest(dsp.GetX(), dsp.GetY()); postal != nil &&
 				ok {
-				dsps[i].Postal = postal.Code
+				dsp.Postal = postal.Code
 			}
 		}
 
 		// Ensure dispatch has a status
-		if dsps[i].GetStatus() == nil {
-			dsps[i].Status, err = s.AddDispatchStatus(ctx, s.db, &centrumdispatches.DispatchStatus{
+		if dsp.GetStatus() == nil {
+			dsp.Status, err = s.AddDispatchStatus(ctx, s.db, &centrumdispatches.DispatchStatus{
 				CreatedAt:  timestamp.Now(),
-				DispatchId: dsps[i].GetId(),
+				DispatchId: dsp.GetId(),
 				Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_NEW,
-				Postal:     dsps[i].Postal,
-				X:          &dsps[i].X,
-				Y:          &dsps[i].Y,
+				Postal:     dsp.Postal,
+				X:          &dsp.X,
+				Y:          &dsp.Y,
 			})
 			if err != nil {
 				return 0, fmt.Errorf(
 					"failed to add dispatch (id: %d) status. %w",
-					dsps[i].GetId(),
+					dsp.GetId(),
 					err,
 				)
 			}
 		}
 
 		// Ensure dispatch has a valid job list (fallback to deprecated Jobs field for old dispatches)
-		if dsps[i].GetJobs() == nil || len(dsps[i].GetJobs().GetJobs()) == 0 {
-			dsps[i].Jobs = &centrum.JobList{
+		if dsp.GetJobs() == nil || len(dsp.GetJobs().GetJobs()) == 0 {
+			dsp.Jobs = &centrum.JobList{
 				Jobs: []*centrum.JobListEntry{
 					{
 						//nolint:staticcheck // This is a fallback for old dispatches.
-						Name: dsps[i].GetJob(),
+						Name: dsp.GetJob(),
 					},
 				},
 			}
 			//nolint:staticcheck // Clear old job info. This is a fallback for old dispatches.
-			dsps[i].Job = ""
+			dsp.Job = ""
 		}
-		for _, job := range dsps[i].GetJobs().GetJobs() {
+		for _, job := range dsp.GetJobs().GetJobs() {
 			s.enricher.EnrichJobName(job)
 		}
 
 		// Update dispatch in db and in kv
-		if _, err := s.Update(ctx, nil, dsps[i]); err != nil {
+		if _, err := s.Update(ctx, nil, dsp); err != nil {
 			return 0, err
 		}
 
-		for _, job := range dsps[i].GetJobs().GetJobStrings() {
+		for _, job := range dsp.GetJobs().GetJobStrings() {
 			locs := s.GetLocations(job)
 			if locs == nil {
 				continue
 			}
 
-			if !locs.Has(dsps[i], centrumdispatches.DispatchPointMatchFn(dsps[i].GetId())) {
-				locs.Add(dsps[i])
+			if !locs.Has(dsp, centrumdispatches.DispatchPointMatchFn(dsp.GetId())) {
+				locs.Add(dsp)
 			} else {
 				err := locs.Replace(
-					dsps[i],
-					centrumdispatches.DispatchPointMatchFn(dsps[i].GetId()),
+					dsp,
+					centrumdispatches.DispatchPointMatchFn(dsp.GetId()),
 					func(p1, p2 orb.Pointer) bool {
 						return p1.Point().Equal(p2.Point())
 					},
@@ -654,12 +647,32 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 				if err != nil {
 					s.logger.Error(
 						"failed to replace dispatch in locations",
-						zap.Int64("dispatch_id", dsps[i].GetId()),
+						zap.Int64("dispatch_id", dsp.GetId()),
 						zap.Error(err),
 					)
 				}
 			}
 		}
+	}
+
+	if err := s.hydrator.HydrateBasicTargetsSafeFunc(nil)(
+		ctx,
+		s.db,
+		creatorTargets,
+	); err != nil {
+		return 0, err
+	}
+
+	for i := range dsps {
+		if dsps[i].GetCreator() == nil {
+			continue
+		}
+
+		// Clear dispatch creator's job info if it isn't a public job
+		if !slices.Contains(publicJobs, dsps[i].GetCreator().GetJob()) {
+			dsps[i].Creator.Job = ""
+		}
+		dsps[i].Creator.JobGrade = 0
 	}
 
 	return len(dsps), nil
@@ -800,9 +813,20 @@ func (s *DispatchDB) UpdateStatus(
 		zap.String("status", in.GetStatus().String()),
 	)
 
-	if in.UserId != nil {
+	if in.GetUserId() > 0 {
 		var err error
-		in.User, err = usersstore.RetrieveUserShortById(ctx, s.db, s.enricher, in.GetUserId())
+		in.User, err = s.colleagueshydrator.GetBasicByUserID(
+			ctx,
+			s.db,
+			nil,
+			in.GetUserId(),
+			colleagueshydrator.ResolveOpts{
+				Scope: colleagueshydrator.JobScope{
+					Mode: colleagueshydrator.JobScopeExplicit,
+					Job:  dsp.GetFirstJob(),
+				},
+			},
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -1183,18 +1207,17 @@ func (s *DispatchDB) Create(
 	}
 
 	if dsp.GetCreatorId() > 0 {
+		getShortByUserID := s.hydrator.GetBasicByUserIDSafeFunc(nil)
 		var err error
-		dsp.Creator, err = usersstore.RetrieveUserById(ctx, s.db, dsp.GetCreatorId())
+		creator, err := getShortByUserID(ctx, s.db, dsp.GetCreatorId())
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve user for dispatch creator. %w", err)
 		}
 		// Unset creator in case we don't have a user
-		if dsp.GetCreator() == nil {
-			dsp.Creator = nil
-			dsp.CreatorId = nil
-		} else if !slices.Contains(dsp.GetJobs().GetJobStrings(), dsp.GetCreator().GetJob()) {
-			// Remove creator props when job isn't equal
-			dsp.Creator.Props = nil
+		if creator == nil {
+			dsp.ClearCreatorId()
+		} else {
+			dsp.SetCreator(creator)
 		}
 	}
 
@@ -1280,7 +1303,7 @@ func (s *DispatchDB) Create(
 
 	// Hide user info when dispatch is anonymous
 	if dsp.GetAnon() {
-		dsp.Creator = nil
+		dsp.ClearCreator()
 	}
 
 	if err := s.updateInKV(ctx, dsp.GetId(), dsp); err != nil {
@@ -1428,7 +1451,6 @@ func (s *DispatchDB) GetStatusByID(
 	id int64,
 ) (*centrumdispatches.DispatchStatus, error) {
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus.AS("dispatch_status")
-	tUsers := table.FivenetUser.AS("colleague")
 
 	stmt := tDispatchStatus.
 		SELECT(
@@ -1444,21 +1466,8 @@ func (s *DispatchDB) GetStatusByID(
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
 			tDispatchStatus.CreatorJob,
-			tUsers.ID,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Sex,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
 		).
-		FROM(
-			tDispatchStatus.
-				LEFT_JOIN(tUsers,
-					tUsers.ID.EQ(tDispatchStatus.UserID),
-				),
-		).
+		FROM(tDispatchStatus).
 		WHERE(
 			tDispatchStatus.ID.EQ(mysql.Int64(id)),
 		).
@@ -1472,6 +1481,22 @@ func (s *DispatchDB) GetStatusByID(
 		} else {
 			return nil, nil
 		}
+	}
+
+	if dest.GetUserId() > 0 {
+		colleague, err := s.colleagueshydrator.GetBasicByUserID(
+			ctx,
+			tx,
+			nil,
+			dest.GetUserId(),
+			colleagueshydrator.ResolveOpts{
+				Scope: colleagueshydrator.JobScope{Mode: colleagueshydrator.JobScopePrimary},
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		dest.User = colleague
 	}
 
 	if dest.UnitId != nil && dest.GetUnitId() > 0 && dest.GetUser() != nil {

@@ -21,15 +21,8 @@ func (s *Store) ListQualificationsResults(
 	ctx context.Context,
 	opts ListQualificationsResultsOptions,
 	userInfo *userinfo.UserInfo,
-	includePhoneNumber bool,
 ) (*pbqualifications.ListQualificationsResultsResponse, error) {
 	tQuali := table.FivenetQualifications.AS("qualificationshort")
-	tUser := table.FivenetUser.AS("user")
-	tCreator := tUser.AS("creator")
-	userID := int32(0)
-	if userInfo != nil {
-		userID = userInfo.GetUserId()
-	}
 
 	condition := mysql.Bool(true)
 	if !userInfo.GetJobAdmin() {
@@ -58,8 +51,7 @@ func (s *Store) ListQualificationsResults(
 		))
 	} else {
 		if opts.QualificationID == 0 {
-			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).
-				AND(tQualiResult.UserID.EQ(mysql.Int32(userID)))
+			condition = condition.AND(tQualiResult.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
 			countColumn = mysql.DISTINCT(tQualiResult.QualificationID)
 		} else {
 			countColumn = mysql.DISTINCT(tQualiResult.UserID)
@@ -81,22 +73,10 @@ func (s *Store) ListQualificationsResults(
 		tQualiResult.CreatedAt,
 		tQualiResult.QualificationID,
 		tQualiResult.UserID,
-		tUser.ID,
-		tUser.Job,
-		tUser.JobGrade,
-		tUser.Firstname,
-		tUser.Lastname,
-		tUser.Dateofbirth,
 		tQualiResult.Status,
 		tQualiResult.Score,
 		tQualiResult.Summary,
 		tQualiResult.CreatorID,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
 		tQuali.ID,
 		tQuali.CreatedAt,
 		tQuali.UpdatedAt,
@@ -109,9 +89,6 @@ func (s *Store) ListQualificationsResults(
 		tQuali.Description,
 		tQuali.CreatorJob,
 		tQuali.CreatorID,
-	}
-	if includePhoneNumber {
-		columns = append(columns, tUser.PhoneNumber, tCreator.PhoneNumber)
 	}
 
 	var (
@@ -142,18 +119,13 @@ func (s *Store) ListQualificationsResults(
 			FROM(
 				visibleIDs.Table.
 					INNER_JOIN(tQuali, tQuali.ID.EQ(visibleQualiID)).
-					INNER_JOIN(tQualiResult, tQualiResult.QualificationID.EQ(tQuali.ID)).
-					LEFT_JOIN(tUser, tQualiResult.UserID.EQ(tUser.ID)),
+					INNER_JOIN(tQualiResult, tQualiResult.QualificationID.EQ(tQuali.ID)),
 			).
 			WHERE(condition)
 	} else {
 		countStmt = tQualiResult.
 			SELECT(mysql.COUNT(countColumn).AS("data_count.total")).
-			FROM(
-				tQualiResult.
-					INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiResult.QualificationID)).
-					LEFT_JOIN(tUser, tQualiResult.UserID.EQ(tUser.ID)),
-			).
+			FROM(tQualiResult.INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiResult.QualificationID))).
 			WHERE(condition)
 	}
 
@@ -184,9 +156,7 @@ func (s *Store) ListQualificationsResults(
 			FROM(
 				visibleIDs.Table.
 					INNER_JOIN(tQuali, tQuali.ID.EQ(visibleQualiID)).
-					INNER_JOIN(tQualiResult, tQualiResult.QualificationID.EQ(tQuali.ID)).
-					LEFT_JOIN(tUser, tQualiResult.UserID.EQ(tUser.ID)).
-					LEFT_JOIN(tCreator, tQualiResult.CreatorID.EQ(tCreator.ID)),
+					INNER_JOIN(tQualiResult, tQualiResult.QualificationID.EQ(tQuali.ID)),
 			).
 			GROUP_BY(tQualiResult.Status, tQualiResult.CreatedAt, tQualiResult.ID).
 			ORDER_BY(orderBys...).
@@ -196,11 +166,7 @@ func (s *Store) ListQualificationsResults(
 	} else {
 		stmt = tQualiResult.
 			SELECT(columns[0], columns[1:]...).
-			FROM(tQualiResult.
-				INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiResult.QualificationID)).
-				LEFT_JOIN(tUser, tQualiResult.UserID.EQ(tUser.ID)).
-				LEFT_JOIN(tCreator, tQualiResult.CreatorID.EQ(tCreator.ID)),
-			).
+			FROM(tQualiResult.INNER_JOIN(tQuali, tQuali.ID.EQ(tQualiResult.QualificationID))).
 			GROUP_BY(tQualiResult.Status, tQualiResult.CreatedAt, tQualiResult.ID).
 			ORDER_BY(orderBys...).
 			WHERE(condition).
@@ -228,11 +194,7 @@ func (s *Store) GetQualificationResult(
 	status []resqualifications.ResultStatus,
 	userInfo *userinfo.UserInfo,
 	userId int32,
-	includePhoneNumber bool,
 ) (*resqualifications.QualificationResult, error) {
-	tUser := table.FivenetUser.AS("user")
-	tCreator := tUser.AS("creator")
-
 	condition := mysql.Bool(true)
 	if userInfo == nil || !userInfo.GetJobAdmin() {
 		condition = condition.AND(tQualiResult.DeletedAt.IS_NULL())
@@ -261,34 +223,16 @@ func (s *Store) GetQualificationResult(
 		tQualiResult.DeletedAt,
 		tQualiResult.QualificationID,
 		tQualiResult.UserID,
-		tUser.ID,
-		tUser.Job,
-		tUser.JobGrade,
-		tUser.Firstname,
-		tUser.Lastname,
-		tUser.Dateofbirth,
 		tQualiResult.Status,
 		tQualiResult.Score,
 		tQualiResult.Summary,
 		tQualiResult.CreatorID,
 		tQualiResult.CreatorJob,
-		tCreator.ID,
-		tCreator.Job,
-		tCreator.JobGrade,
-		tCreator.Firstname,
-		tCreator.Lastname,
-		tCreator.Dateofbirth,
-	}
-	if includePhoneNumber {
-		columns = append(columns, tUser.PhoneNumber, tCreator.PhoneNumber)
 	}
 
 	stmt := tQualiResult.
 		SELECT(columns[0], columns[1:]...).
-		FROM(tQualiResult.
-			LEFT_JOIN(tUser, tUser.ID.EQ(tQualiResult.UserID)).
-			LEFT_JOIN(tCreator, tCreator.ID.EQ(tQualiResult.CreatorID)),
-		).
+		FROM(tQualiResult).
 		GROUP_BY(tQualiResult.ID).
 		ORDER_BY(tQualiResult.ID.DESC()).
 		WHERE(condition).

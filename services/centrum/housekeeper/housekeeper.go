@@ -19,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
+	"github.com/go-jet/jet/v2/qrm"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -48,11 +49,24 @@ type Housekeeper struct {
 	tracker tracker.ITracker
 	le      *leaderelection.LeaderElector
 
-	helpers     *helpers.Helpers
-	settings    *settings.SettingsDB
-	dispatchers *dispatchers.DispatchersDB
-	units       *units.UnitDB
-	dispatches  *dispatches.DispatchDB
+	helpers         *helpers.Helpers
+	settings        *settings.SettingsDB
+	dispatchers     *dispatchers.DispatchersDB
+	units           *units.UnitDB
+	unitAssignments unitAssignments
+	dispatches      *dispatches.DispatchDB
+}
+
+type unitAssignments interface {
+	UserInJob(ctx context.Context, db qrm.DB, job string, userID int32) (bool, error)
+	UpdateUnitAssignments(
+		ctx context.Context,
+		creatorJob string,
+		creatorId *int32,
+		unitId int64,
+		toAdd []int32,
+		toRemove []int32,
+	) error
 }
 
 type Params struct {
@@ -93,11 +107,12 @@ func New(p Params) Result {
 		db:      p.DB,
 		tracker: p.Tracker,
 
-		helpers:     p.Helpers,
-		settings:    p.Settings,
-		dispatchers: p.Dispatchers,
-		units:       p.Units,
-		dispatches:  p.Dispatches,
+		helpers:         p.Helpers,
+		settings:        p.Settings,
+		dispatchers:     p.Dispatchers,
+		units:           p.Units,
+		unitAssignments: p.Units,
+		dispatches:      p.Dispatches,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

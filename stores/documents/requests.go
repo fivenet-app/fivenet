@@ -89,7 +89,6 @@ func (s *Store) GetDocumentReq(
 	condition mysql.BoolExpression,
 ) (*documentsrequests.DocRequest, error) {
 	tDocRequest := table.FivenetDocumentsRequests.AS("doc_request")
-	tCreator := table.FivenetUser.AS("creator")
 
 	stmt := tDocRequest.
 		SELECT(
@@ -102,19 +101,8 @@ func (s *Store) GetDocumentReq(
 			tDocRequest.CreatorJob,
 			tDocRequest.Reason,
 			tDocRequest.Data,
-			tCreator.ID,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Job,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
 		).
-		FROM(
-			tDocRequest.
-				INNER_JOIN(tCreator,
-					tCreator.ID.EQ(tDocRequest.CreatorID),
-				),
-		).
+		FROM(tDocRequest).
 		WHERE(condition).
 		LIMIT(1)
 

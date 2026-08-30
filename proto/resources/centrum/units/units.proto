@@ -6,7 +6,6 @@ import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/access/access.proto";
-import "resources/centrum/units/access/access.proto";
 import "resources/jobs/colleagues/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
@@ -56,20 +55,23 @@ message Unit {
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
   optional UnitStatus status = 9;
-  repeated UnitAssignment users = 11;
+  repeated UnitAssignment users = 11 [(buf.validate.field).repeated = {max_items: 30}];
   optional UnitAttributes attributes = 12;
   optional string home_postal = 13 [(buf.validate.field).string.max_len = 48];
   resources.access.Access access = 14;
 }
 
 message UnitAssignments {
-  int64 unit_id = 1;
+  int64 unit_id = 1 [(buf.validate.field).int64.gt = 0];
   string job = 2 [(buf.validate.field).string.max_len = 20];
-  repeated UnitAssignment users = 3;
+  repeated UnitAssignment users = 3 [(buf.validate.field).repeated = {max_items: 30}];
 }
 
 message UnitAssignment {
-  int64 unit_id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"unit_id\""];
+  int64 unit_id = 1 [
+    (buf.validate.field).int64.gt = 0,
+    (tagger.tags) = "sql:\"primary_key\" alias:\"unit_id\""
+  ];
   int32 user_id = 2 [
     (buf.validate.field).int32.gte = 0,
     (tagger.tags) = "sql:\"primary_key\" alias:\"user_id\""
@@ -124,5 +126,10 @@ enum UnitAttribute {
 message UnitAttributes {
   option (codegen.dbscanner.dbscanner) = {enabled: true};
 
-  repeated UnitAttribute list = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
+  repeated UnitAttribute list = 1 [(buf.validate.field).repeated = {
+    max_items: 3
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
 }

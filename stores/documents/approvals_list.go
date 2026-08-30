@@ -49,7 +49,6 @@ func (s *Store) ListApprovals(
 		return count, []*documentsapproval.Approval{}, nil
 	}
 
-	tUser := table.FivenetUser.AS("usershort")
 	tStamp := table.FivenetDocumentsStamps.AS("stamp")
 
 	stmt := tApprovals.
@@ -70,17 +69,9 @@ func (s *Store) ListApprovals(
 
 			tStamp.ID,
 			tStamp.SvgTemplate,
-
-			tUser.ID,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.Job,
-			tUser.JobGrade,
 		).
 		FROM(
 			tApprovals.
-				LEFT_JOIN(tUser, tUser.ID.EQ(tApprovals.UserID)).
 				LEFT_JOIN(tStamp, tApprovals.ID.EQ(tStamp.ID)),
 		).
 		WHERE(condition).

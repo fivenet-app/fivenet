@@ -32,14 +32,7 @@ import (
 var BloodTypes = []string{"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"}
 
 var (
-	tAccounts             = table.FivenetAccounts
-	tUsers                = table.FivenetUser
-	tUserAccounts         = table.FivenetUserAccounts
-	tUserProps            = table.FivenetUserProps
-	tCitizensPhoneNumbers = table.FivenetUserPhoneNumbers
-	tLicenses             = table.FivenetUserLicenses
-	tCitizensJobs         = table.FivenetUserJobs
-
+	tUsers    = table.FivenetUser
 	tSyncUser = table.FivenetSyncUser
 )
 
@@ -197,6 +190,7 @@ func (s *Store) DeleteUsers(
 		DELETE().
 		WHERE(tUsers.ID.IN(userExprs...)).
 		LIMIT(int64(len(userIDs)))
+
 	res, err := delStmt.ExecContext(ctx, s.db)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute users delete statement. %w", err)
@@ -420,6 +414,8 @@ func (s *Store) resolveUserAccountID(
 		return nil, nil
 	}
 
+	tAccounts := table.FivenetAccounts
+
 	stmt := tAccounts.
 		SELECT(
 			tAccounts.ID.AS("id"),
@@ -459,6 +455,8 @@ func (s *Store) syncUserAccount(
 	if err != nil {
 		return nil, err
 	}
+
+	tUserAccounts := table.FivenetUserAccounts
 
 	if accountID == nil {
 		stmt := tUserAccounts.
@@ -510,6 +508,8 @@ func (s *Store) createOrUpdateSyncUserEntry(
 		)
 	}
 
+	tSyncUser := table.FivenetSyncUser
+
 	syncStmt := tSyncUser.
 		INSERT(
 			tSyncUser.UserID,
@@ -547,6 +547,7 @@ func (s *Store) setUserBloodType(ctx context.Context, tx *sql.Tx, userId int32) 
 	idx := rand.IntN(len(BloodTypes))
 	bloodType := BloodTypes[idx]
 
+	tUserProps := table.FivenetUserProps
 	stmt := tUserProps.
 		INSERT(
 			tUserProps.UserID,
@@ -702,10 +703,11 @@ func (s *Store) handleUserLicenses(
 	userId int32,
 	licenses []*userslicenses.License,
 ) error {
+	tUserLicenses := table.FivenetUserLicenses
 	if len(licenses) == 0 {
-		stmt := tLicenses.
+		stmt := tUserLicenses.
 			DELETE().
-			WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).
+			WHERE(tUserLicenses.UserID.EQ(mysql.Int32(userId))).
 			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
@@ -713,11 +715,11 @@ func (s *Store) handleUserLicenses(
 		return nil
 	}
 
-	selectStmt := tLicenses.
-		SELECT(tLicenses.Type).
-		FROM(tLicenses).
-		WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).
-		ORDER_BY(tLicenses.Type)
+	selectStmt := tUserLicenses.
+		SELECT(tUserLicenses.Type).
+		FROM(tUserLicenses).
+		WHERE(tUserLicenses.UserID.EQ(mysql.Int32(userId))).
+		ORDER_BY(tUserLicenses.Type)
 	currentLicenses := []string{}
 	if err := selectStmt.QueryContext(ctx, tx, &currentLicenses); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -736,13 +738,13 @@ func (s *Store) handleUserLicenses(
 
 	toAdd, toRemove := utils.SliceDiff(currentLicenses, licensesList)
 	if len(toAdd) > 0 {
-		stmt := tLicenses.
-			INSERT(tLicenses.UserID, tLicenses.Type)
+		stmt := tUserLicenses.
+			INSERT(tUserLicenses.UserID, tUserLicenses.Type)
 		for _, t := range toAdd {
 			stmt = stmt.VALUES(userId, t)
 		}
 		stmt = stmt.
-			ON_DUPLICATE_KEY_UPDATE(tLicenses.Type.SET(mysql.RawString("VALUES(`type`)")))
+			ON_DUPLICATE_KEY_UPDATE(tUserLicenses.Type.SET(mysql.RawString("VALUES(`type`)")))
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user licenses insert statement. %w", err)
 		}
@@ -753,9 +755,9 @@ func (s *Store) handleUserLicenses(
 		for _, t := range toRemove {
 			types = append(types, mysql.String(t))
 		}
-		stmt := tLicenses.
+		stmt := tUserLicenses.
 			DELETE().
-			WHERE(mysql.AND(tLicenses.UserID.EQ(mysql.Int32(userId)), tLicenses.Type.IN(types...))).
+			WHERE(mysql.AND(tUserLicenses.UserID.EQ(mysql.Int32(userId)), tUserLicenses.Type.IN(types...))).
 			LIMIT(25)
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
@@ -772,7 +774,9 @@ func (s *Store) handleUserJobs(
 ) (*userJobChange, error) {
 	jobs := user.GetJobs()
 
-	tJobs := tCitizensJobs.AS("user_job")
+	tJobs := table.FivenetUserJobs.AS("user_job")
+	tCitizensJobs := table.FivenetUserJobs
+
 	selectStmt := tJobs.
 		SELECT(
 			tJobs.Job,
@@ -955,6 +959,7 @@ func (s *Store) handleUserPhoneNumbers(
 	userId int32,
 	phoneNumbers []*users.PhoneNumber,
 ) error {
+	tCitizensPhoneNumbers := table.FivenetUserPhoneNumbers
 	if len(phoneNumbers) == 0 {
 		stmt := tCitizensPhoneNumbers.
 			DELETE().

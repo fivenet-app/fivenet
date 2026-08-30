@@ -20,17 +20,6 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-	// GKSPhone Converter.
-	tGksPhoneJMsg     = table.GksphoneJobMessage
-	tGksPhoneSettings = table.GksphoneSettings
-
-	// LBPhone Converter.
-	tPhonePhones           = table.PhonePhones
-	tPhoneServicesChannels = table.PhoneServicesChannels
-	tPhoneServicesMessages = table.PhoneServicesMessages
-)
-
 type Converter struct {
 	logger *zap.Logger
 	db     *sql.DB
@@ -121,6 +110,8 @@ func (s *Converter) convertPhoneJobMsgToDispatch(ctx context.Context) {
 }
 
 func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
+	tGksPhoneJMsg := table.GksphoneJobMessage
+	tGksPhoneSettings := table.GksphoneSettings
 	tUsers := table.FivenetUser
 
 	stmt := tGksPhoneJMsg.
@@ -222,6 +213,7 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 }
 
 func (s *Converter) closeGKSPhoneJobMsg(ctx context.Context, id int32) error {
+	tGksPhoneJMsg := table.GksphoneJobMessage
 	stmt := tGksPhoneJMsg.
 		UPDATE(
 			tGksPhoneJMsg.Owner,
@@ -242,6 +234,9 @@ func (s *Converter) closeGKSPhoneJobMsg(ctx context.Context, id int32) error {
 }
 
 func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
+	tPhoneServicesChannels := table.PhoneServicesChannels
+	tPhoneServicesMessages := table.PhoneServicesMessages
+	tPhonePhones := table.PhonePhones
 	tUsers := table.FivenetUser
 
 	stmt := tPhoneServicesChannels.
@@ -333,6 +328,7 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 }
 
 func (s *Converter) closeLBPhoneJobMsg(ctx context.Context, id int32) error {
+	tPhoneServicesChannels := table.PhoneServicesChannels
 	stmt := tPhoneServicesChannels.
 		DELETE().
 		WHERE(

@@ -39,14 +39,14 @@ func (s *Server) ListLabels(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Either user can see labels of citizens
-	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	var canCreateLabel bool
 	if !fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsLabels) {
-		canCreateLabel = s.ps.Can(userInfo, permscitizens.LabelsService.CreateOrUpdateLabel.Perm)
+		canCreateLabel = s.perms.Can(userInfo, permscitizens.LabelsService.CreateOrUpdateLabel.Perm)
 		if !canCreateLabel {
 			return nil, errorscitizens.ErrLabelNotFound
 		}

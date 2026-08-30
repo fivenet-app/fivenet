@@ -32,8 +32,6 @@ func (s *Store) ListUserActivity(
 	opts ListUserActivityOptions,
 ) ([]*usersactivity.UserActivity, error) {
 	tUserActivity := table.FivenetUserActivity.AS("user_activity")
-	tUTarget := table.FivenetUser.AS("target_user")
-	tUSource := tUTarget.AS("source_user")
 
 	condition := buildUserActivityCondition(tUserActivity, opts.UserActivityOptions)
 
@@ -48,26 +46,8 @@ func (s *Store) ListUserActivity(
 			tUserActivity.Type,
 			tUserActivity.Reason,
 			tUserActivity.Data,
-			tUTarget.ID,
-			tUTarget.Job,
-			tUTarget.JobGrade,
-			tUTarget.Firstname,
-			tUTarget.Lastname,
-			tUSource.ID,
-			tUSource.Job,
-			tUSource.JobGrade,
-			tUSource.Firstname,
-			tUSource.Lastname,
 		).
-		FROM(
-			tUserActivity.
-				INNER_JOIN(tUTarget,
-					tUTarget.ID.EQ(tUserActivity.TargetUserID),
-				).
-				LEFT_JOIN(tUSource,
-					tUSource.ID.EQ(tUserActivity.SourceUserID),
-				),
-		).
+		FROM(tUserActivity).
 		WHERE(condition).
 		OFFSET(opts.Offset).
 		ORDER_BY(orderBys...).

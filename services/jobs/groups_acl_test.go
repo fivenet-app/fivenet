@@ -16,9 +16,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	grpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
-	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/stretchr/testify/require"
@@ -96,13 +96,62 @@ func (s *stubGroupAccess) VisibleIDsByConditionQuery(
 
 type noopColleagueHydrator struct{}
 
+func (noopColleagueHydrator) GetBasicByUserID(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ int32,
+	_ colleaguehydrator.ResolveOpts,
+) (*jobscolleagues.Colleague, error) {
+	return nil, nil
+}
+
+func (noopColleagueHydrator) ListBasicByUserID(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []int32,
+	_ colleaguehydrator.ResolveOpts,
+) ([]*jobscolleagues.Colleague, error) {
+	return nil, nil
+}
+
+func (noopColleagueHydrator) HydrateBasicByUserID(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []int32,
+	_ colleaguehydrator.ResolveOpts,
+) (map[int32]*jobscolleagues.Colleague, error) {
+	return map[int32]*jobscolleagues.Colleague{}, nil
+}
+
+func (noopColleagueHydrator) HydrateBasicTargets(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ []colleaguehydrator.BasicTarget,
+	_ colleaguehydrator.ResolveOpts,
+) error {
+	return nil
+}
+
+func (noopColleagueHydrator) GetByUserID(
+	_ context.Context,
+	_ qrm.DB,
+	_ *pbuserinfo.UserInfo,
+	_ int32,
+	_ colleaguehydrator.ResolveOpts,
+) (*jobscolleagues.Colleague, error) {
+	return nil, nil
+}
+
 func (noopColleagueHydrator) ListByUserID(
 	_ context.Context,
 	_ qrm.DB,
 	_ *pbuserinfo.UserInfo,
-	_ string,
 	_ []int32,
-	_ bool,
+	_ colleaguehydrator.ResolveOpts,
 ) ([]*jobscolleagues.Colleague, error) {
 	return nil, nil
 }
@@ -111,9 +160,8 @@ func (noopColleagueHydrator) HydrateByUserID(
 	_ context.Context,
 	_ qrm.DB,
 	_ *pbuserinfo.UserInfo,
-	_ string,
 	_ []int32,
-	_ bool,
+	_ colleaguehydrator.ResolveOpts,
 ) (map[int32]*jobscolleagues.Colleague, error) {
 	return map[int32]*jobscolleagues.Colleague{}, nil
 }
@@ -122,9 +170,8 @@ func (noopColleagueHydrator) HydrateTargets(
 	_ context.Context,
 	_ qrm.DB,
 	_ *pbuserinfo.UserInfo,
-	_ string,
 	_ []colleaguehydrator.Target,
-	_ bool,
+	_ colleaguehydrator.ResolveOpts,
 ) error {
 	return nil
 }

@@ -73,7 +73,6 @@ func (s *Store) ListVehicleActivity(
 	opts ListVehicleActivityOptions,
 ) ([]*vehiclesactivity.VehicleActivity, error) {
 	tVehicleActivity := table.FivenetVehiclesActivity.AS("vehicle_activity")
-	tCreator := table.FivenetUser.AS("creator")
 
 	orderBys := s.vehicleActivitySorter.Build(opts.Sort)
 
@@ -87,18 +86,8 @@ func (s *Store) ListVehicleActivity(
 			tVehicleActivity.CreatorJob,
 			tVehicleActivity.Reason,
 			tVehicleActivity.Data,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
 		).
-		FROM(
-			tVehicleActivity.
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tVehicleActivity.CreatorID),
-				),
-		).
+		FROM(tVehicleActivity).
 		WHERE(buildVehicleActivityCondition(tVehicleActivity, opts.VehicleActivityOptions)).
 		OFFSET(opts.Offset).
 		ORDER_BY(orderBys...).

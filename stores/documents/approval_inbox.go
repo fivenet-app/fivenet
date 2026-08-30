@@ -20,8 +20,6 @@ func (s *Store) ListApprovalTasksInbox(
 	tApprovals := table.FivenetDocumentsApprovals
 	tDocumentShort := table.FivenetDocuments.AS("document_short")
 	tDMeta := table.FivenetDocumentsMeta.AS("meta")
-	tUser := table.FivenetUser.AS("requester")
-	tCreator := table.FivenetUser.AS("creator")
 	pagination := q.Pagination
 	if pagination == nil {
 		pagination = &resourcesdatabase.PaginationRequest{}
@@ -154,21 +152,9 @@ func (s *Store) ListApprovalTasksInbox(
 				tApprovalTasks.DecisionCount,
 				tApprovalTasks.CreatorID,
 				tApprovalTasks.CreatorJob,
-				tUser.ID,
-				tUser.Firstname,
-				tUser.Lastname,
-				tUser.Dateofbirth,
-				tUser.Job,
-				tUser.JobGrade,
 				tDocumentShort.Title,
 				tDocumentShort.ContentType,
 				tDocumentShort.CreatorID,
-				tCreator.ID,
-				tCreator.Job,
-				tCreator.JobGrade,
-				tCreator.Firstname,
-				tCreator.Lastname,
-				tCreator.Dateofbirth,
 				tDocumentShort.CreatorJob,
 				tDocumentShort.State.AS("meta.state"),
 				tDocumentShort.Closed.AS("meta.closed"),
@@ -187,8 +173,6 @@ func (s *Store) ListApprovalTasksInbox(
 			).
 			FROM(
 				baseFrom.
-					LEFT_JOIN(tUser, tUser.ID.EQ(tApprovalTasks.UserID)).
-					LEFT_JOIN(tCreator, tCreator.ID.EQ(tApprovalTasks.CreatorID)).
 					LEFT_JOIN(tDMeta, tDMeta.DocumentID.EQ(tDocumentShort.ID)),
 			).
 			WHERE(mysql.AND(taskCondition, documentCondition)).
@@ -235,21 +219,9 @@ func (s *Store) ListApprovalTasksInbox(
 				tApprovalTasks.DecisionCount,
 				tApprovalTasks.CreatorID,
 				tApprovalTasks.CreatorJob,
-				tUser.ID,
-				tUser.Firstname,
-				tUser.Lastname,
-				tUser.Dateofbirth,
-				tUser.Job,
-				tUser.JobGrade,
 				tDocumentShort.Title,
 				tDocumentShort.ContentType,
 				tDocumentShort.CreatorID,
-				tCreator.ID,
-				tCreator.Job,
-				tCreator.JobGrade,
-				tCreator.Firstname,
-				tCreator.Lastname,
-				tCreator.Dateofbirth,
 				tDocumentShort.CreatorJob,
 				tDocumentShort.State.AS("meta.state"),
 				tDocumentShort.Closed.AS("meta.closed"),
@@ -268,8 +240,6 @@ func (s *Store) ListApprovalTasksInbox(
 			).
 			FROM(
 				baseFrom.
-					LEFT_JOIN(tUser, tUser.ID.EQ(tApprovalTasks.UserID)).
-					LEFT_JOIN(tCreator, tCreator.ID.EQ(tApprovalTasks.CreatorID)).
 					LEFT_JOIN(tDMeta, tDMeta.DocumentID.EQ(tDocumentShort.ID)),
 			).
 			WHERE(taskCondition).

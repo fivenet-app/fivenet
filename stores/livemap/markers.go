@@ -161,7 +161,6 @@ func (s *Store) DeleteMarker(
 
 func (s *Store) GetMarker(ctx context.Context, id int64) (*livemapmarkers.MarkerMarker, error) {
 	tMarkers := table.FivenetCentrumMarkers.AS("marker_marker")
-	tUsers := table.FivenetUser.AS("user_short")
 
 	stmt := tMarkers.
 		SELECT(
@@ -181,20 +180,8 @@ func (s *Store) GetMarker(ctx context.Context, id int64) (*livemapmarkers.Marker
 			tMarkers.MarkerType,
 			tMarkers.MarkerData,
 			tMarkers.CreatorID,
-			tUsers.ID,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Sex,
-			tUsers.PhoneNumber,
 		).
-		FROM(
-			tMarkers.
-				LEFT_JOIN(tUsers,
-					tMarkers.CreatorID.EQ(tUsers.ID),
-				),
-		).
+		FROM(tMarkers).
 		WHERE(
 			tMarkers.ID.EQ(mysql.Int64(id)),
 		).
@@ -212,7 +199,6 @@ func (s *Store) GetMarker(ctx context.Context, id int64) (*livemapmarkers.Marker
 
 func (s *Store) ListActiveMarkers(ctx context.Context) ([]*livemapmarkers.MarkerMarker, error) {
 	tMarkers := table.FivenetCentrumMarkers.AS("marker_marker")
-	tUsers := table.FivenetUser.AS("user_short")
 
 	stmt := tMarkers.
 		SELECT(
@@ -232,20 +218,8 @@ func (s *Store) ListActiveMarkers(ctx context.Context) ([]*livemapmarkers.Marker
 			tMarkers.MarkerType,
 			tMarkers.MarkerData,
 			tMarkers.CreatorID,
-			tUsers.ID,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Sex,
-			tUsers.PhoneNumber,
 		).
-		FROM(
-			tMarkers.
-				LEFT_JOIN(tUsers,
-					tMarkers.CreatorID.EQ(tUsers.ID),
-				),
-		).
+		FROM(tMarkers).
 		WHERE(mysql.AND(
 			tMarkers.DeletedAt.IS_NULL(),
 			mysql.OR(

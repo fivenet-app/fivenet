@@ -9,7 +9,6 @@ import "resources/common/content/content.proto";
 import "resources/file/file.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";
-import "resources/wiki/access/access.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki;wiki";

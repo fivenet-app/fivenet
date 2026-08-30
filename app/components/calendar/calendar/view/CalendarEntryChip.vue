@@ -313,12 +313,7 @@ const attrsStyle = computed(() => attrs.style as string | Record<string, string 
 
                         <UBadge v-if="entry.creator" class="inline-flex gap-1" color="neutral" icon="i-mdi-account" size="sm">
                             <span>{{ $t('common.created_by') }}</span>
-                            <CitizenInfoPopover
-                                :user="entry.creator"
-                                :show-avatar-in-name="true"
-                                text-class="text-xs"
-                                size="xs"
-                            />
+                            <CitizenInfoPopover :user="entry.creator" show-avatar-in-name text-class="text-xs" size="xs" />
                         </UBadge>
 
                         <UBadge

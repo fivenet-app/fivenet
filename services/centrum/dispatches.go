@@ -13,6 +13,7 @@ import (
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -20,7 +21,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
-	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
+	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -123,8 +124,6 @@ func (s *Server) ListDispatches(
 		return resp, nil
 	}
 
-	tUsers := table.FivenetUser.AS("colleague")
-
 	stmt := tDispatch.
 		SELECT(
 			tDispatch.ID,
@@ -152,21 +151,10 @@ func (s *Server) ListDispatches(
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
 			tDispatchStatus.CreatorJob,
-			tUsers.ID,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Sex,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
 		).
 		FROM(tDispatch.
 			LEFT_JOIN(tDispatchStatus,
 				tDispatchStatus.DispatchID.EQ(tDispatch.ID),
-			).
-			LEFT_JOIN(tUsers,
-				tUsers.ID.EQ(tDispatchStatus.UserID),
 			)).
 		WHERE(condition).
 		OFFSET(req.GetPagination().GetOffset()).
@@ -194,23 +182,15 @@ func (s *Server) ListDispatches(
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if resp.Dispatches[i].CreatorId != nil {
-			resp.Dispatches[i].Creator, err = usersstore.RetrieveUserById(
-				ctx,
-				s.db,
-				dsps[i].GetCreatorId(),
-			)
-			if err != nil {
-				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		if err := s.hydrateDispatchCreator(ctx, userInfo, resp.Dispatches[i]); err != nil {
+			return nil, err
+		}
+		if resp.Dispatches[i].GetCreator() != nil {
+			// Clear dispatch creator's job info if it isn't a public job
+			if !slices.Contains(publicJobs, resp.Dispatches[i].GetCreator().GetJob()) {
+				resp.Dispatches[i].Creator.Job = ""
 			}
-
-			if dsps[i].GetCreator() != nil {
-				// Clear dispatch creator's job info if it isn't a public job
-				if !slices.Contains(publicJobs, dsps[i].GetCreator().GetJob()) {
-					resp.Dispatches[i].Creator.Job = ""
-				}
-				resp.Dispatches[i].Creator.JobGrade = 0
-			}
+			resp.Dispatches[i].Creator.JobGrade = 0
 		}
 
 		// Ensure dispatch has a valid job list (fallback to deprecated Jobs field for old dispatches)
@@ -267,8 +247,6 @@ func (s *Server) GetDispatch(
 		Dispatch: &centrumdispatches.Dispatch{},
 	}
 
-	tUsers := table.FivenetUser.AS("colleague")
-
 	stmt := tDispatch.
 		SELECT(
 			tDispatch.ID,
@@ -296,22 +274,13 @@ func (s *Server) GetDispatch(
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
 			tDispatchStatus.CreatorJob,
-			tUsers.ID,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Sex,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
 		).
-		FROM(tDispatch.
-			LEFT_JOIN(tDispatchStatus,
-				tDispatchStatus.DispatchID.EQ(tDispatch.ID),
-			).
-			LEFT_JOIN(tUsers,
-				tUsers.ID.EQ(tDispatchStatus.UserID),
-			)).
+		FROM(
+			tDispatch.
+				LEFT_JOIN(tDispatchStatus,
+					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
+				),
+		).
 		WHERE(condition).
 		ORDER_BY(
 			tDispatch.ID.DESC(),
@@ -333,25 +302,32 @@ func (s *Server) GetDispatch(
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	if resp.Dispatch.CreatorId != nil && resp.GetDispatch().GetCreatorId() > 0 {
-		creator, err := usersstore.RetrieveUserById(ctx, s.db, resp.GetDispatch().GetCreatorId())
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-		}
-
-		if creator != nil {
-			resp.Dispatch.Creator = creator
-			// Clear dispatch creator's job info if not a visible job
-			if !slices.Contains(s.appCfg.Get().GetJobInfo().GetPublicJobs(), creator.GetJob()) {
-				resp.Dispatch.Creator.Job = ""
-			}
-			resp.Dispatch.Creator.JobGrade = 0
-		}
+	if err := s.hydrateDispatchCreator(ctx, userInfo, resp.Dispatch); err != nil {
+		return nil, err
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return resp, nil
+}
+
+func (s *Server) hydrateDispatchCreator(
+	ctx context.Context,
+	userInfo *pbuserinfo.UserInfo,
+	dispatch *centrumdispatches.Dispatch,
+) error {
+	if dispatch == nil || dispatch.GetCreatorId() <= 0 {
+		return nil
+	}
+
+	getShortByUserID := s.hydrator.GetBasicByUserIDSafeFunc(userInfo)
+	var err error
+	dispatch.Creator, err = getShortByUserID(ctx, s.db, dispatch.GetCreatorId())
+	if err != nil {
+		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+
+	return nil
 }
 
 func (s *Server) CreateDispatch(
@@ -606,9 +582,6 @@ func (s *Server) ListDispatchActivity(
 		return resp, nil
 	}
 
-	tUsers := table.FivenetUser.AS("colleague")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-
 	stmt := tDispatchStatus.
 		SELECT(
 			tDispatchStatus.ID,
@@ -622,42 +595,8 @@ func (s *Server) ListDispatchActivity(
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
 			tDispatchStatus.CreatorJob,
-			tUsers.ID,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Sex,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-			tAvatar.FilePath.AS("colleague.profile_picture"),
 		).
-		FROM(
-			tDispatchStatus.
-				LEFT_JOIN(tUsers,
-					tUsers.ID.EQ(tDispatchStatus.UserID),
-				).
-				LEFT_JOIN(tUserProps,
-					mysql.AND(
-						tUserProps.UserID.EQ(tDispatchStatus.UserID),
-						tUsers.Job.EQ(mysql.String(userInfo.GetJob())),
-					),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tUsers.ID),
-						tColleagueProps.Job.EQ(tUsers.Job),
-					),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
+		FROM(tDispatchStatus).
 		WHERE(
 			tDispatchStatus.DispatchID.EQ(mysql.Int64(req.GetId())),
 		).
@@ -669,6 +608,28 @@ func (s *Server) ListDispatchActivity(
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
+	}
+
+	targets := make([]colleagueshydrator.Target, 0, len(resp.GetActivity()))
+	for i := range resp.GetActivity() {
+		if resp.Activity[i].GetUserId() <= 0 {
+			continue
+		}
+
+		targets = append(targets, colleagueshydrator.Target{
+			UserID: resp.Activity[i].GetUserId(),
+			Set:    resp.Activity[i].SetUser,
+		})
+	}
+
+	if err := s.colleagueHydrator.HydrateTargets(
+		ctx,
+		s.db,
+		userInfo,
+		targets,
+		colleagueshydrator.ResolveOpts{},
+	); err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)

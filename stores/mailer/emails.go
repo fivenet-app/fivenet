@@ -11,7 +11,6 @@ import (
 	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -242,31 +241,6 @@ func (s *Store) GetEmail(
 		condition = mysql.AND(condition, tEmails.DeletedAt.IS_NULL())
 	}
 	return s.GetEmailByCondition(ctx, q, condition)
-}
-
-func (s *Store) GetUserShort(
-	ctx context.Context,
-	q qrm.DB,
-	userID int32,
-) (*usershort.UserShort, error) {
-	tUsers := table.FivenetUser.AS("user_short")
-
-	stmt := tUsers.
-		SELECT(
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
-		).
-		FROM(tUsers).
-		WHERE(tUsers.ID.EQ(mysql.Int32(userID))).
-		LIMIT(1)
-
-	dest := &usershort.UserShort{}
-	if err := stmt.QueryContext(ctx, s.dbOr(q), dest); err != nil {
-		return nil, err
-	}
-
-	return dest, nil
 }
 
 func (s *Store) ListRecipientsByEmails(

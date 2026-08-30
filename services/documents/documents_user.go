@@ -4,12 +4,14 @@ import (
 	context "context"
 
 	documentsrelations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -49,19 +51,42 @@ func (s *Server) ListUserDocuments(
 	}
 	resp.Relations = relations
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.GetRelations() {
-		if resp.GetRelations()[i].GetSourceUser() != nil {
-			jobInfoFn(resp.GetRelations()[i].GetSourceUser())
-		}
-
-		if doc := resp.GetRelations()[i].GetDocument(); doc != nil &&
-			doc.GetCreator() != nil {
-			jobInfoFn(doc.GetCreator())
-		}
+	if err := s.hydrateUserDocuments(ctx, userInfo, resp.GetRelations()...); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	return resp, nil
+}
+
+func (s *Server) hydrateUserDocuments(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	relations ...*documentsrelations.DocumentRelation,
+) error {
+	targets := make([]citizenshydrator.BasicTarget, 0, len(relations)*2)
+	for _, rel := range relations {
+		if rel == nil {
+			continue
+		}
+		if rel.GetSourceUser() == nil && rel.GetSourceUserId() > 0 {
+			targets = append(targets, citizenshydrator.BasicTarget{
+				UserID: rel.GetSourceUserId(),
+				Set:    rel.SetSourceUser,
+			})
+		}
+		if doc := rel.GetDocument(); doc != nil && doc.GetCreator() == nil &&
+			doc.GetCreatorId() > 0 {
+			targets = append(targets, citizenshydrator.BasicTarget{
+				UserID: doc.GetCreatorId(),
+				Set:    doc.SetCreator,
+			})
+		}
+	}
+	if len(targets) == 0 {
+		return nil
+	}
+
+	return s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
 func (s *Server) addUserActivity(

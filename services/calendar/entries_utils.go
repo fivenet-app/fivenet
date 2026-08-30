@@ -1,16 +1,20 @@
 package calendar
 
 import (
+	"context"
 	"slices"
 
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 )
 
 func (s *Server) finalizeCalendarEntries(
+	ctx context.Context,
 	entries []*calendarentries.CalendarEntry,
 	userInfo *userinfo.UserInfo,
-) []*calendarentries.CalendarEntry {
+) ([]*calendarentries.CalendarEntry, error) {
 	slices.SortFunc(entries, func(left, right *calendarentries.CalendarEntry) int {
 		l := left.GetStartTime().AsTime()
 		r := right.GetStartTime().AsTime()
@@ -35,16 +39,25 @@ func (s *Server) finalizeCalendarEntries(
 		return 0
 	})
 
-	if s.enricher == nil {
-		return entries
-	}
-
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range entries {
-		if entries[i].GetCreator() != nil {
-			jobInfoFn(entries[i].GetCreator())
+	targets := make([]citizenshydrator.BasicTarget, 0, len(entries))
+	for i, entry := range entries {
+		if entry.GetCreatorId() > 0 {
+			targets = append(targets, citizenshydrator.BasicTarget{
+				UserID: entry.GetCreatorId(),
+				Set: func(user *usershort.UserShort) {
+					entries[i].Creator = user
+				},
+			})
 		}
 	}
+	if len(targets) == 0 {
+		return entries, nil
+	}
 
-	return entries
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+	if err := hydrateShort(ctx, nil, targets); err != nil {
+		return entries, err
+	}
+
+	return entries, nil
 }

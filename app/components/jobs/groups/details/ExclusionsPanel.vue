@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import ColleagueCard from '~/components/jobs/colleagues/ColleagueCard.vue';
 import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -36,10 +37,17 @@ const completorStore = useCompletorStore();
 const jobsGroupsClient = await getJobsGroupsClient();
 const confirmModal = overlay.create(ConfirmModal);
 
+const schema = z.object({
+    member: z.custom<UserShort>().optional(),
+    reasonType: z.enum(GroupExclusionReason).default(GroupExclusionReason.MANUAL),
+    reason: z.coerce.string().max(255).default(''),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({ member: undefined, reasonType: GroupExclusionReason.MANUAL, reason: '' });
+
 const page = ref(1);
-const selectedExclusionMember = ref<UserShort>();
-const reasonType = ref(GroupExclusionReason.MANUAL);
-const reason = ref('');
 const editingExclusionMemberId = ref<number>();
 const pendingAction = ref<string>();
 
@@ -85,16 +93,16 @@ async function listGroupMemberExclusions(): Promise<ListGroupMemberExclusionsRes
 
 function resetExclusionForm(): void {
     editingExclusionMemberId.value = undefined;
-    selectedExclusionMember.value = undefined;
-    reasonType.value = GroupExclusionReason.MANUAL;
-    reason.value = '';
+    state.member = undefined;
+    state.reasonType = GroupExclusionReason.MANUAL;
+    state.reason = '';
 }
 
 function editExclusion(exclusion: GroupMemberExclusion): void {
     if (!canManageExclusions.value) return;
 
     editingExclusionMemberId.value = exclusion.userId;
-    selectedExclusionMember.value = {
+    state.member = {
         userId: exclusion.userId,
         job: exclusion.colleague?.job ?? '',
         jobGrade: exclusion.colleague?.jobGrade ?? 0,
@@ -102,8 +110,8 @@ function editExclusion(exclusion: GroupMemberExclusion): void {
         lastname: exclusion.colleague?.lastname ?? '',
         dateofbirth: exclusion.colleague?.dateofbirth ?? '',
     };
-    reasonType.value = exclusion.reasonType || GroupExclusionReason.MANUAL;
-    reason.value = exclusion.reason ?? '';
+    state.reasonType = exclusion.reasonType || GroupExclusionReason.MANUAL;
+    state.reason = exclusion.reason ?? '';
 }
 
 async function runMutation(action: string, mutate: () => Promise<void>): Promise<void> {
@@ -121,14 +129,14 @@ async function runMutation(action: string, mutate: () => Promise<void>): Promise
 
 async function addExclusion(): Promise<void> {
     if (!canManageExclusions.value) return;
-    if (!selectedExclusionMember.value?.userId) return;
+    if (!state.member?.userId) return;
 
     await runMutation('exclusion', async () => {
         await jobsGroupsClient.excludeGroupMember({
             groupId: props.groupId,
-            userId: selectedExclusionMember.value!.userId,
-            reasonType: reasonType.value,
-            reason: reason.value.trim() || undefined,
+            userId: state.member!.userId,
+            reasonType: state.reasonType,
+            reason: state.reason.trim() || undefined,
         });
         resetExclusionForm();
     });
@@ -170,17 +178,17 @@ watch(
         />
 
         <UCard v-if="canManageExclusions" variant="subtle">
-            <div class="grid gap-3">
+            <UForm :schema="schema" :state="state" class="grid gap-3" @submit="addExclusion">
                 <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(220px,320px)_auto] lg:items-end">
                     <UFormField :label="$t('common.colleague', 1)">
                         <SelectMenu
-                            v-model="selectedExclusionMember"
+                            v-model="state.member"
                             class="w-full"
                             :searchable="
                                 async (q: string) =>
                                     await completorStore.completeColleagues(
                                         q,
-                                        selectedExclusionMember?.userId ? [selectedExclusionMember.userId] : [],
+                                        state.member?.userId ? [state.member.userId] : [],
                                     )
                             "
                             searchable-key="jobs-group-exclusion-members"
@@ -189,8 +197,8 @@ watch(
                             :placeholder="$t('common.colleague', 1)"
                             :disabled="isMutating || !canManageExclusions"
                         >
-                            <template v-if="selectedExclusionMember" #default>
-                                {{ userToLabel(selectedExclusionMember) }}
+                            <template v-if="state.member" #default>
+                                {{ userToLabel(state.member) }}
                             </template>
                             <template #item-label="{ item }">
                                 {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
@@ -203,7 +211,7 @@ watch(
 
                     <UFormField :label="$t('common.reason', 1)">
                         <USelectMenu
-                            v-model="reasonType"
+                            v-model="state.reasonType"
                             class="w-full"
                             :items="exclusionReasonItems"
                             value-key="value"
@@ -225,11 +233,11 @@ watch(
                             :disabled="
                                 isMutating ||
                                 !canManageExclusions ||
-                                !selectedExclusionMember?.userId ||
-                                (exclusionMemberIds.has(selectedExclusionMember.userId) &&
-                                    editingExclusionMemberId !== selectedExclusionMember.userId)
+                                !state.member?.userId ||
+                                (exclusionMemberIds.has(state.member.userId) &&
+                                    editingExclusionMemberId !== state.member.userId)
                             "
-                            @click="addExclusion"
+                            type="submit"
                         />
                         <UButton
                             v-if="editingExclusionMemberId"
@@ -245,14 +253,14 @@ watch(
 
                 <UFormField :label="$t('common.description')">
                     <UTextarea
-                        v-model="reason"
+                        v-model="state.reason"
                         class="w-full"
                         :rows="2"
                         :placeholder="$t('common.reason', 1)"
                         :disabled="isMutating || !canManageExclusions"
                     />
                 </UFormField>
-            </div>
+            </UForm>
         </UCard>
 
         <DataPendingBlock
@@ -295,7 +303,7 @@ watch(
 
                 <p class="text-sm text-muted">
                     {{ $t('common.created_by') }}
-                    <ColleagueInfoPopover :user="exclusion.createdBy" :user-id="exclusion.createdByUserId" hide-props />
+                    <ColleagueInfoPopover :user="exclusion.createdBy" :user-id="exclusion.createdByUserId" />
                 </p>
 
                 <template #footer>

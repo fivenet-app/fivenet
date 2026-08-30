@@ -21,7 +21,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
-	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -31,6 +30,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -130,11 +130,6 @@ func (s *Server) ListDocuments(
 		grpc_audit.Skip(ctx)
 	}
 
-	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
 	pag, limit := req.GetPagination().
 		GetResponseWithPageSize(database.NoTotalCount, DocsDefaultPageSize)
 	resp := &pbdocuments.ListDocumentsResponse{
@@ -153,15 +148,30 @@ func (s *Server) ListDocuments(
 		Sort:        req.GetSort(),
 		Offset:      req.GetPagination().GetOffset(),
 		Limit:       limit,
-		IncludePhoneNumber: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-		),
-		UserInfo: userInfo,
+		UserInfo:    userInfo,
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	resp.Documents = docs
+
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetDocuments()))
+	for i, doc := range resp.GetDocuments() {
+		if doc.GetCreatorId() > 0 {
+			targets = append(targets, citizenshydrator.BasicTarget{
+				UserID: doc.GetCreatorId(),
+				Set: func(user *usershort.UserShort) {
+					resp.Documents[i].Creator = user
+				},
+			})
+		}
+	}
+	if len(targets) > 0 {
+		if err := hydrateShort(ctx, nil, targets); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetDocuments() {
@@ -184,10 +194,6 @@ func (s *Server) GetDocument(
 	logging.InjectFields(ctx, logging.Fields{documentIDLogFieldKey, req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
 
 	check, err := s.canUserAccessDocument(
 		ctx,
@@ -207,10 +213,7 @@ func (s *Server) GetDocument(
 
 	resp := &pbdocuments.GetDocumentResponse{}
 	resp.Document, err = s.store.Get(ctx, documentsstore.GetQuery{
-		DocumentID: req.GetDocumentId(),
-		IncludePhoneNumber: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-		),
+		DocumentID:  req.GetDocumentId(),
 		WithContent: withContent,
 		UserInfo:    userInfo,
 	})
@@ -220,6 +223,18 @@ func (s *Server) GetDocument(
 
 	if resp.GetDocument() == nil || resp.GetDocument().GetId() <= 0 {
 		return nil, errorsdocuments.ErrNotFoundOrNoPerms
+	}
+
+	if resp.GetDocument().GetCreatorId() > 0 {
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, []citizenshydrator.BasicTarget{{
+			UserID: resp.GetDocument().GetCreatorId(),
+			Set: func(user *usershort.UserShort) {
+				resp.Document.Creator = user
+			},
+		}}); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
 	}
 
 	if resp.GetDocument().GetCreator() != nil {
@@ -1003,7 +1018,7 @@ func (s *Server) DeleteDocument(
 	}
 
 	// Field Permission Check
-	fields, err := permsdocuments.DocumentsService.DeleteDocument.AccessTyped.Get(s.ps, userInfo)
+	fields, err := permsdocuments.DocumentsService.DeleteDocument.AccessTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -1101,7 +1116,7 @@ func (s *Server) ToggleDocument(
 	}
 
 	// Field Permission Check
-	fields, err := permsdocuments.DocumentsService.ToggleDocument.AccessTyped.Get(s.ps, userInfo)
+	fields, err := permsdocuments.DocumentsService.ToggleDocument.AccessTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -1196,7 +1211,7 @@ func (s *Server) ChangeDocumentOwner(
 
 	// Field Permission Check
 	fields, err := permsdocuments.DocumentsService.ChangeDocumentOwner.AccessTyped.Get(
-		s.ps,
+		s.perms,
 		userInfo,
 	)
 	if err != nil {
@@ -1211,26 +1226,13 @@ func (s *Server) ChangeDocumentOwner(
 		return nil, errorsdocuments.ErrDocOwnerFailed
 	}
 
-	tUsers := table.FivenetUser.AS("user_short")
-
-	stmt := tUsers.
-		SELECT(
-			tUsers.ID,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Job,
-			tUsers.Dateofbirth,
-		).
-		FROM(tUsers).
-		WHERE(tUsers.ID.EQ(mysql.Int32(req.GetNewUserId()))).
-		LIMIT(1)
-
-	var newOwner usershort.UserShort
-	if err := stmt.QueryContext(ctx, s.db, &newOwner); err != nil {
+	getShortByUserID := s.hydrator.GetBasicByUserIDSafeFunc(userInfo)
+	newOwner, err := getShortByUserID(ctx, s.db, req.GetNewUserId())
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if newOwner.GetUserId() <= 0 {
+	if newOwner == nil || newOwner.GetUserId() <= 0 {
 		return nil, errorsdocuments.ErrFailedQuery
 	}
 
@@ -1258,7 +1260,7 @@ func (s *Server) ChangeDocumentOwner(
 		tx,
 		req.GetDocumentId(),
 		userInfo,
-		&newOwner,
+		newOwner,
 	); err != nil {
 		return nil, err
 	}

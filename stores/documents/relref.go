@@ -55,8 +55,6 @@ func (s *Store) ListDocumentReferences(
 	tRef := table.FivenetDocumentsReferences.AS("document_reference")
 	tSourceDoc := table.FivenetDocuments.AS("source_document")
 	tTargetDoc := table.FivenetDocuments.AS("target_document")
-	tCreator := table.FivenetUser.AS("creator")
-	tRefCreator := tCreator.AS("ref_creator")
 
 	stmt := tRef.
 		SELECT(
@@ -74,12 +72,6 @@ func (s *Store) ListDocumentReferences(
 			tSourceDoc.CreatorID,
 			tSourceDoc.State,
 			tSourceDoc.Closed,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
 			tTargetDoc.ID,
 			tTargetDoc.CreatedAt,
 			tTargetDoc.UpdatedAt,
@@ -88,12 +80,6 @@ func (s *Store) ListDocumentReferences(
 			tTargetDoc.CreatorID,
 			tTargetDoc.State,
 			tTargetDoc.Closed,
-			tRefCreator.ID,
-			tRefCreator.Job,
-			tRefCreator.JobGrade,
-			tRefCreator.Firstname,
-			tRefCreator.Lastname,
-			tRefCreator.Dateofbirth,
 		).
 		FROM(
 			tRef.
@@ -102,12 +88,6 @@ func (s *Store) ListDocumentReferences(
 				).
 				LEFT_JOIN(tTargetDoc,
 					tRef.TargetDocumentID.EQ(tTargetDoc.ID),
-				).
-				LEFT_JOIN(tCreator,
-					tSourceDoc.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tRefCreator,
-					tRef.CreatorID.EQ(tRefCreator.ID),
 				),
 		).
 		WHERE(mysql.AND(
@@ -216,8 +196,6 @@ func (s *Store) ListDocumentRelations(
 	tRel := table.FivenetDocumentsRelations.AS("document_relation")
 	tDocument := table.FivenetDocuments.AS("document")
 	tCategory := table.FivenetDocumentsCategories.AS("category")
-	tSourceUser := table.FivenetUser.AS("source_user")
-	tTargetUser := tSourceUser.AS("target_user")
 
 	stmt := tRel.
 		SELECT(
@@ -242,18 +220,6 @@ func (s *Store) ListDocumentRelations(
 			tCategory.Description,
 			tCategory.Color,
 			tCategory.Icon,
-			tSourceUser.ID,
-			tSourceUser.Job,
-			tSourceUser.JobGrade,
-			tSourceUser.Firstname,
-			tSourceUser.Lastname,
-			tSourceUser.Dateofbirth,
-			tTargetUser.ID,
-			tTargetUser.Job,
-			tTargetUser.JobGrade,
-			tTargetUser.Firstname,
-			tTargetUser.Lastname,
-			tTargetUser.Dateofbirth,
 		).
 		FROM(
 			tRel.
@@ -268,12 +234,6 @@ func (s *Store) ListDocumentRelations(
 							tCategory.DeletedAt.IS_NULL(),
 						),
 					),
-				).
-				LEFT_JOIN(tSourceUser,
-					tSourceUser.ID.EQ(tRel.SourceUserID),
-				).
-				LEFT_JOIN(tTargetUser,
-					tTargetUser.ID.EQ(tRel.TargetUserID),
 				),
 		).
 		WHERE(mysql.AND(

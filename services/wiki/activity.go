@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/textdiff"
 	errorswiki "github.com/fivenet-app/fivenet/v2026/services/wiki/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	wikistore "github.com/fivenet-app/fivenet/v2026/stores/wiki"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -64,11 +65,19 @@ func (s *Server) ListPageActivity(
 	}
 	resp.Activity = activity
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetActivity()))
 	for i := range resp.GetActivity() {
-		if resp.GetActivity()[i].GetCreator() != nil {
-			jobInfoFn(resp.GetActivity()[i].GetCreator())
+		if resp.GetActivity()[i].GetCreatorId() <= 0 {
+			continue
 		}
+		targets = append(targets, citizenshydrator.BasicTarget{
+			UserID: resp.GetActivity()[i].GetCreatorId(),
+			Set:    resp.Activity[i].SetCreator,
+		})
+	}
+	if err := hydrateShort(ctx, nil, targets); err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
 	return resp, nil

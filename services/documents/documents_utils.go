@@ -2,8 +2,6 @@ package documents
 
 import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -13,8 +11,6 @@ func (s *Server) getDocumentQuery(
 	userInfo *userinfo.UserInfo,
 	withContent bool,
 ) mysql.SelectStatement {
-	tCreator := table.FivenetUser.AS("creator")
-
 	var wheres []mysql.BoolExpression
 	if !userInfo.GetJobAdmin() {
 		wheres = append(wheres, tDocument.DeletedAt.IS_NULL())
@@ -43,12 +39,6 @@ func (s *Server) getDocumentQuery(
 			tDocument.Title,
 			tDocument.ContentType,
 			tDocument.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
 			tDocument.CreatorJob,
 			tDocument.State.AS("meta.state"),
 			tDocument.Closed.AS("meta.closed"),
@@ -87,12 +77,6 @@ func (s *Server) getDocumentQuery(
 		if userInfo.GetJobAdmin() {
 			columns = append(columns, tDocument.DeletedAt)
 		}
-
-		// Field Permission Check
-		fields, _ := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
-		if fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber) {
-			columns = append(columns, tCreator.PhoneNumber)
-		}
 	}
 
 	return tDocument.
@@ -106,9 +90,6 @@ func (s *Server) getDocumentQuery(
 					tDocument.CategoryID.EQ(tDCategory.ID),
 					tDCategory.DeletedAt.IS_NULL(),
 				),
-			).
-			LEFT_JOIN(tCreator,
-				tDocument.CreatorID.EQ(tCreator.ID),
 			).
 			LEFT_JOIN(tDPins,
 				tDPins.DocumentID.EQ(tDocument.ID),

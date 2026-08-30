@@ -119,7 +119,7 @@ class CompleteCitizensRequest$Type extends MessageType<CompleteCitizensRequest> 
             { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 2, name: "current_job", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "on_duty", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { items: { int32: { gt: 0 } } } } } },
+            { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { int32: { gt: 0 } } } } } },
             { no: 5, name: "user_ids_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -355,7 +355,7 @@ class CompleteDocumentCategoriesRequest$Type extends MessageType<CompleteDocumen
     constructor() {
         super("services.completor.CompleteDocumentCategoriesRequest", [
             { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 2, name: "category_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { items: { int64: { gt: "0" } } } } } }
+            { no: 2, name: "category_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "50", items: { int64: { gt: "0" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CompleteDocumentCategoriesRequest>): CompleteDocumentCategoriesRequest {

@@ -42,7 +42,6 @@ func (s *Store) ListDocumentActivity(
 		return count, []*documentsactivity.DocActivity{}, nil
 	}
 
-	tCreator := table.FivenetUser.AS("creator")
 	stmt := tDocActivity.
 		SELECT(
 			tDocActivity.ID,
@@ -53,18 +52,8 @@ func (s *Store) ListDocumentActivity(
 			tDocActivity.CreatorJob,
 			tDocActivity.Reason,
 			tDocActivity.Data,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
 		).
-		FROM(
-			tDocActivity.
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tDocActivity.CreatorID),
-				),
-		).
+		FROM(tDocActivity).
 		WHERE(condition).
 		OFFSET(q.Pagination.GetOffset()).
 		ORDER_BY(tDocActivity.ID.DESC()).

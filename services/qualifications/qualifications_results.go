@@ -12,7 +12,7 @@ import (
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -20,6 +20,7 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -56,16 +57,6 @@ func (s *Server) ListQualificationsResults(
 		}
 	}
 
-	includePhoneNumber := false
-	if fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(
-		s.perms,
-		userInfo,
-	); err == nil {
-		includePhoneNumber = fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-		)
-	}
-
 	resp, err := s.store.ListQualificationsResults(
 		ctx,
 		qualificationsstore.ListQualificationsResultsOptions{
@@ -77,20 +68,34 @@ func (s *Server) ListQualificationsResults(
 			Search:          req.GetSearch(),
 		},
 		userInfo,
-		includePhoneNumber,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.GetResults() {
-		if resp.GetResults()[i].GetUser() != nil {
-			jobInfoFn(resp.GetResults()[i].GetUser())
+	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetResults())*2)
+	for i, result := range resp.GetResults() {
+		if result.GetUserId() > 0 {
+			targets = append(targets, citizenshydrator.BasicTarget{
+				UserID: result.GetUserId(),
+				Set: func(user *usershort.UserShort) {
+					resp.Results[i].User = user
+				},
+			})
 		}
-
-		if resp.GetResults()[i].GetCreator() != nil {
-			jobInfoFn(resp.GetResults()[i].GetCreator())
+		if result.GetCreatorId() > 0 {
+			targets = append(targets, citizenshydrator.BasicTarget{
+				UserID: result.GetCreatorId(),
+				Set: func(user *usershort.UserShort) {
+					resp.Results[i].Creator = user
+				},
+			})
+		}
+	}
+	if len(targets) > 0 {
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, targets); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
 
@@ -185,7 +190,6 @@ func (s *Server) createOrUpdateQualificationResult(
 		ctx,
 		qualificationId,
 		userInfo,
-		false,
 		false,
 	)
 	if err != nil {
@@ -320,7 +324,6 @@ func (s *Server) getQualificationResult(
 		status,
 		userInfo,
 		userId,
-		false,
 	)
 	if err != nil {
 		return nil, err
@@ -329,12 +332,28 @@ func (s *Server) getQualificationResult(
 		return nil, nil
 	}
 
-	if result.GetUser() != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, result.GetUser())
+	targets := make([]citizenshydrator.BasicTarget, 0, 2)
+	if result.GetUserId() > 0 {
+		targets = append(targets, citizenshydrator.BasicTarget{
+			UserID: result.GetUserId(),
+			Set: func(user *usershort.UserShort) {
+				result.User = user
+			},
+		})
 	}
-
-	if result.GetCreator() != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, result.GetCreator())
+	if result.GetCreatorId() > 0 {
+		targets = append(targets, citizenshydrator.BasicTarget{
+			UserID: result.GetCreatorId(),
+			Set: func(user *usershort.UserShort) {
+				result.Creator = user
+			},
+		})
+	}
+	if len(targets) > 0 {
+		hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
+		if err := hydrateShort(ctx, nil, targets); err != nil {
+			return nil, err
+		}
 	}
 
 	if !userInfo.GetJobAdmin() && result.GetDeletedAt() != nil {
@@ -375,7 +394,6 @@ func (s *Server) DeleteQualificationResult(
 		ctx,
 		result.GetQualificationId(),
 		userInfo,
-		false,
 		false,
 	)
 	if err != nil {

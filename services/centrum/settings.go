@@ -71,7 +71,7 @@ func (s *Server) UpdateSettings(
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	fields, err := permscentrum.CentrumService.UpdateSettings.AccessTyped.Get(s.ps, userInfo)
+	fields, err := permscentrum.CentrumService.UpdateSettings.AccessTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}

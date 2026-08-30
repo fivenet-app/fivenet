@@ -10,7 +10,9 @@ message UserSelector {
   // Explicit users to include.
   repeated int32 user_ids = 1 [(buf.validate.field).repeated = {
     max_items: 50
-    items: {int32: {gt: 0}}
+    items: {
+      int32: {gt: 0}
+    }
   }];
 
   // Users resolved from job groups.
@@ -20,7 +22,9 @@ message UserSelector {
 message GroupUserSelector {
   repeated int64 group_ids = 1 [(buf.validate.field).repeated = {
     max_items: 5
-    items: {int64: {gt: 0}}
+    items: {
+      int64: {gt: 0}
+    }
   }];
 
   // Include group leaders even if they are not resolved members.

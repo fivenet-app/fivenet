@@ -162,7 +162,10 @@ func (s *Server) CreateOrUpdateEmail(
 		req.Email.Job = &userInfo.Job
 
 		// Field Permission Check
-		fields, err := permsmailer.MailerService.CreateOrUpdateEmail.FieldsTyped.Get(s.ps, userInfo)
+		fields, err := permsmailer.MailerService.CreateOrUpdateEmail.FieldsTyped.Get(
+			s.perms,
+			userInfo,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}

@@ -2,9 +2,6 @@ syntax = "proto3";
 
 package resources.centrum.units.access;
 
-import "buf/validate/validate.proto";
-import "codegen/dbscanner/dbscanner.proto";
-
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units/access;unitsaccess";
 
 enum UnitAccessLevel {

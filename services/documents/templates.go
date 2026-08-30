@@ -22,6 +22,7 @@ import (
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
@@ -32,7 +33,7 @@ import (
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
-	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
+	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -253,7 +254,14 @@ func (s *Server) GetTemplate(
 			data,
 		)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateInvalid)
+			if s.perms.Can(
+				userInfo,
+				permsdocuments.TemplatesService.CreateTemplate.Perm,
+			) {
+				return nil, err
+			} else {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateInvalid)
+			}
 		}
 
 		resp.Rendered = true
@@ -277,24 +285,30 @@ func (s *Server) resolveTemplateData(
 	selection *documentstemplates.TemplateSelection,
 	userInfo *userinfo.UserInfo,
 ) (*resolvedTemplateData, error) {
-	activeChar, err := usersstore.RetrieveColleagueById(ctx, s.db, s.enricher, userInfo.GetUserId())
+	activeChar, err := s.colleagueHydrator.GetBasicByUserID(
+		ctx,
+		s.db,
+		userInfo,
+		userInfo.GetUserId(),
+		colleagueshydrator.ResolveOpts{},
+	)
 	if err != nil {
 		return nil, err
 	}
-	if len(activeChar) == 0 || activeChar[0] == nil {
+	if activeChar == nil {
 		return nil, errswrap.NewError(
 			ErrTemplateActiveChar,
 			errorsdocuments.ErrTemplateRenderFailed,
 		)
 	}
 
-	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 	}
 
 	data := &resolvedTemplateData{
-		ActiveChar: activeChar[0],
+		ActiveChar: activeChar,
 	}
 	if selection == nil {
 		return data, validateTemplateRequirements(tmpl, data)
@@ -313,9 +327,14 @@ func (s *Server) resolveTemplateData(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 		}
 
+		jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+		jobInfoFn(activeChar)
+		for _, user := range usersResp.GetUsers() {
+			jobInfoFn(user)
+		}
+
 		byID := make(map[int32]*users.User, len(usersResp.GetUsers()))
 		for _, user := range usersResp.GetUsers() {
-			s.enricher.EnrichJobInfoSafe(userInfo, user)
 			byID[user.GetUserId()] = user
 		}
 		seen := make(map[int32]struct{}, len(selection.GetUserIds()))
@@ -334,10 +353,7 @@ func (s *Server) resolveTemplateData(
 		docs, err := s.store.List(ctx, documentsstore.ListQuery{
 			DocumentIDs: selection.GetDocumentIds(),
 			Limit:       int64(len(selection.GetDocumentIds())),
-			IncludePhoneNumber: fields.Contains(
-				permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-			),
-			UserInfo: userInfo,
+			UserInfo:    userInfo,
 		})
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
@@ -359,17 +375,17 @@ func (s *Server) resolveTemplateData(
 		}
 	}
 
-	vehicleFields, err := permsvehicles.VehiclesService.ListVehicles.FieldsTyped.Get(s.ps, userInfo)
+	vehicleFields, err := permsvehicles.VehiclesService.ListVehicles.FieldsTyped.Get(
+		s.perms,
+		userInfo,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 	}
 	if len(selection.GetPlates()) > 0 {
 		vehicles, err := s.vehiclesStore.List(ctx, vehiclesstore.ListQuery{
-			Plates: selection.GetPlates(),
-			Limit:  int64(len(selection.GetPlates())),
-			IncludePhoneNumber: fields.Contains(
-				permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-			),
+			Plates:              selection.GetPlates(),
+			Limit:               int64(len(selection.GetPlates())),
 			IncludePropsUpdated: vehicleFields.Len() > 0,
 			IncludeWantedFields: vehicleFields.Contains(
 				permsvehicles.VehiclesServiceListVehiclesFieldsPermValueWanted,

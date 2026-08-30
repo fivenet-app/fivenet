@@ -5,9 +5,11 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	jobsconduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -15,9 +17,72 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	"github.com/fivenet-app/fivenet/v2026/stores/jobs/usersel"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
+
+func appendConductColleagueTarget(
+	targets []colleaguehydrator.Target,
+	userID int32,
+	set func(*jobscolleagues.Colleague),
+) []colleaguehydrator.Target {
+	if userID <= 0 || set == nil {
+		return targets
+	}
+
+	return append(targets, colleaguehydrator.Target{
+		UserID: userID,
+		Set:    set,
+	})
+}
+
+func appendConductEntryColleagueTargets(
+	targets []colleaguehydrator.Target,
+	entries []*jobsconduct.ConductEntry,
+) []colleaguehydrator.Target {
+	for _, entry := range entries {
+		if entry.GetTargetUserId() > 0 {
+			targets = appendConductColleagueTarget(
+				targets,
+				entry.GetTargetUserId(),
+				entry.SetTargetUser,
+			)
+		}
+		if entry.GetCreatorId() > 0 {
+			targets = appendConductColleagueTarget(targets, entry.GetCreatorId(), entry.SetCreator)
+		}
+	}
+
+	return targets
+}
+
+func (s *Server) hydrateConductEntryColleagues(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	entries ...*jobsconduct.ConductEntry,
+) error {
+	if len(entries) == 0 {
+		return nil
+	}
+
+	targets := appendConductEntryColleagueTargets(nil, entries)
+	if len(targets) == 0 {
+		return nil
+	}
+
+	if err := s.colleagueHydrator.HydrateTargets(
+		ctx,
+		s.db,
+		userInfo,
+		targets,
+		colleaguehydrator.ResolveOpts{},
+	); err != nil {
+		return errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
+	return nil
+}
 
 func (s *Server) ListConductEntries(
 	ctx context.Context,
@@ -26,7 +91,7 @@ func (s *Server) ListConductEntries(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Field Permission Check
-	fields, err := permsjobs.ConductService.ListConductEntries.AccessTyped.Get(s.ps, userInfo)
+	fields, err := permsjobs.ConductService.ListConductEntries.AccessTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -37,7 +102,7 @@ func (s *Server) ListConductEntries(
 	if !allAccess && !ownOnly {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	canRestore := s.ps.Can(userInfo, permsjobs.ConductService.RestoreConductEntry.Perm)
+	canRestore := s.perms.Can(userInfo, permsjobs.ConductService.RestoreConductEntry.Perm)
 	includeDeleted := canRestore && req.GetShowDeleted()
 
 	resolvedUserIDs, err := s.userSel.Resolve(
@@ -94,15 +159,11 @@ func (s *Server) ListConductEntries(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.GetEntries() {
-		if resp.GetEntries()[i].GetTargetUser() != nil {
-			jobInfoFn(resp.GetEntries()[i].GetTargetUser())
-		}
-		if resp.GetEntries()[i].GetCreator() != nil {
-			jobInfoFn(resp.GetEntries()[i].GetCreator())
-		}
+	if err := s.hydrateConductEntryColleagues(ctx, userInfo, resp.GetEntries()...); err != nil {
+		return nil, err
+	}
 
+	for i := range resp.GetEntries() {
 		if resp.GetEntries()[i].GetMessage() != nil &&
 			resp.GetEntries()[i].GetMessage().GetContent() != nil {
 			rawHtml, err := resp.GetEntries()[i].GetMessage().GetContent().ToHTML()
@@ -125,7 +186,7 @@ func (s *Server) GetConductEntry(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct.id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	fields, err := permsjobs.ConductService.ListConductEntries.AccessTyped.Get(s.ps, userInfo)
+	fields, err := permsjobs.ConductService.ListConductEntries.AccessTyped.Get(s.perms, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -137,7 +198,7 @@ func (s *Server) GetConductEntry(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	canRestore := s.ps.Can(userInfo, permsjobs.ConductService.RestoreConductEntry.Perm)
+	canRestore := s.perms.Can(userInfo, permsjobs.ConductService.RestoreConductEntry.Perm)
 	includeDeleted := canRestore
 	resp := &pbjobs.GetConductEntryResponse{Entry: &jobsconduct.ConductEntry{}}
 
@@ -158,12 +219,8 @@ func (s *Server) GetConductEntry(
 	}
 	entry.Files = files
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	if entry.GetTargetUser() != nil {
-		jobInfoFn(entry.GetTargetUser())
-	}
-	if entry.GetCreator() != nil {
-		jobInfoFn(entry.GetCreator())
+	if err := s.hydrateConductEntryColleagues(ctx, userInfo, entry); err != nil {
+		return nil, err
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
@@ -188,6 +245,9 @@ func (s *Server) CreateConductEntry(
 	entry, err := s.store.GetConductEntry(ctx, s.db, lastId, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if err := s.hydrateConductEntryColleagues(ctx, userInfo, entry); err != nil {
+		return nil, err
 	}
 
 	grpc_audit.AddMeta(ctx, "conduct.id", strconv.Itoa(int(lastId)))
@@ -250,6 +310,9 @@ func (s *Server) UpdateConductEntry(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
+	if err := s.hydrateConductEntryColleagues(ctx, userInfo, entry); err != nil {
+		return nil, err
+	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	s.notifi.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
@@ -278,8 +341,8 @@ func (s *Server) DeleteConductEntry(
 		return nil, errorsjobs.ErrFailedQuery
 	}
 
-	canDelete := s.ps.Can(userInfo, permsjobs.ConductService.DeleteConductEntry.Perm)
-	canRestore := s.ps.Can(userInfo, permsjobs.ConductService.RestoreConductEntry.Perm)
+	canDelete := s.perms.Can(userInfo, permsjobs.ConductService.DeleteConductEntry.Perm)
+	canRestore := s.perms.Can(userInfo, permsjobs.ConductService.RestoreConductEntry.Perm)
 
 	var deletedAtTime *timestamp.Timestamp
 	if entry.GetDeletedAt() == nil {

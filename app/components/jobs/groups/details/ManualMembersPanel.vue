@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import ColleagueCard from '~/components/jobs/colleagues/ColleagueCard.vue';
 import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -36,9 +37,16 @@ const completorStore = useCompletorStore();
 const jobsGroupsClient = await getJobsGroupsClient();
 const confirmModal = overlay.create(ConfirmModal);
 
+const schema = z.object({
+    member: z.custom<UserShort>().optional(),
+    reason: z.coerce.string().max(255).default(''),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({ member: undefined, reason: '' });
+
 const page = ref(1);
-const selectedManualMember = ref<UserShort>();
-const reason = ref('');
 const editingManualMemberId = ref<number>();
 const pendingAction = ref<string>();
 
@@ -77,15 +85,15 @@ async function listGroupManualMembers(): Promise<ListGroupManualMembersResponse>
 
 function resetManualMemberForm(): void {
     editingManualMemberId.value = undefined;
-    selectedManualMember.value = undefined;
-    reason.value = '';
+    state.member = undefined;
+    state.reason = '';
 }
 
 function editManualMember(member: GroupManualMember): void {
     if (!canManageMembers.value) return;
 
     editingManualMemberId.value = member.userId;
-    selectedManualMember.value = {
+    state.member = {
         userId: member.userId,
         job: member.colleague?.job ?? '',
         jobGrade: member.colleague?.jobGrade ?? 0,
@@ -93,7 +101,7 @@ function editManualMember(member: GroupManualMember): void {
         lastname: member.colleague?.lastname ?? '',
         dateofbirth: member.colleague?.dateofbirth ?? '',
     };
-    reason.value = member.reason ?? '';
+    state.reason = member.reason ?? '';
 }
 
 async function runMutation(action: string, mutate: () => Promise<void>): Promise<void> {
@@ -111,13 +119,13 @@ async function runMutation(action: string, mutate: () => Promise<void>): Promise
 
 async function addManualMember(): Promise<void> {
     if (!canManageMembers.value) return;
-    if (!selectedManualMember.value?.userId) return;
+    if (!state.member?.userId) return;
 
     await runMutation('manual-member', async () => {
         await jobsGroupsClient.addGroupMember({
             groupId: props.groupId,
-            userId: selectedManualMember.value!.userId,
-            reason: reason.value.trim() || undefined,
+            userId: state.member!.userId,
+            reason: state.reason.trim() || undefined,
         });
         resetManualMemberForm();
     });
@@ -159,17 +167,17 @@ watch(
         />
 
         <UCard v-if="canManageMembers" variant="subtle">
-            <div class="grid gap-3">
+            <UForm :schema="schema" :state="state" class="grid gap-3" @submit="addManualMember">
                 <div class="grid gap-3 lg:flex lg:flex-row lg:items-end">
                     <UFormField class="flex-1" :label="$t('common.colleague', 1)">
                         <SelectMenu
-                            v-model="selectedManualMember"
+                            v-model="state.member"
                             class="w-full"
                             :searchable="
                                 async (q: string) =>
                                     await completorStore.completeColleagues(
                                         q,
-                                        selectedManualMember?.userId ? [selectedManualMember.userId] : [],
+                                        state.member?.userId ? [state.member.userId] : [],
                                     )
                             "
                             searchable-key="jobs-group-manual-members"
@@ -178,8 +186,8 @@ watch(
                             :placeholder="$t('common.colleague', 1)"
                             :disabled="isMutating || !canManageMembers"
                         >
-                            <template v-if="selectedManualMember" #default>
-                                {{ userToLabel(selectedManualMember) }}
+                            <template v-if="state.member" #default>
+                                {{ userToLabel(state.member) }}
                             </template>
                             <template #item-label="{ item }">
                                 {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
@@ -202,11 +210,10 @@ watch(
                             :disabled="
                                 isMutating ||
                                 !canManageMembers ||
-                                !selectedManualMember?.userId ||
-                                (manualMemberIds.has(selectedManualMember.userId) &&
-                                    editingManualMemberId !== selectedManualMember.userId)
+                                !state.member?.userId ||
+                                (manualMemberIds.has(state.member.userId) && editingManualMemberId !== state.member.userId)
                             "
-                            @click="addManualMember"
+                            type="submit"
                         />
                         <UButton
                             v-if="editingManualMemberId"
@@ -222,14 +229,14 @@ watch(
 
                 <UFormField :label="$t('common.reason', 1)">
                     <UTextarea
-                        v-model="reason"
+                        v-model="state.reason"
                         class="w-full"
                         :rows="2"
                         :placeholder="$t('common.reason', 1)"
                         :disabled="isMutating || !canManageMembers"
                     />
                 </UFormField>
-            </div>
+            </UForm>
         </UCard>
 
         <DataPendingBlock
@@ -262,7 +269,7 @@ watch(
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <p class="text-sm text-muted">
                             {{ $t('common.created_by') }}
-                            <ColleagueInfoPopover :user="member.createdBy" :user-id="member.createdByUserId" hide-props />
+                            <ColleagueInfoPopover :user="member.createdBy" :user-id="member.createdByUserId" />
                         </p>
 
                         <GenericTime v-if="member.createdAt" class="text-sm text-muted" :value="member.createdAt" />

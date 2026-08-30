@@ -19,7 +19,12 @@ message ListVehiclesRequest {
   // Search params
   optional string license_plate = 3 [(buf.validate.field).string.max_len = 32];
   optional string model = 4 [(buf.validate.field).string.max_len = 32];
-  repeated int32 user_ids = 5 [(buf.validate.field).repeated.items.int32.gte = 0];
+  repeated int32 user_ids = 5 [(buf.validate.field).repeated = {
+    max_items: 10
+    items: {
+      int32: {gte: 0}
+    }
+  }];
   optional string job = 6 [(buf.validate.field).string.max_len = 20];
   optional bool wanted = 7;
 }
@@ -53,8 +58,10 @@ message ListVehicleActivityRequest {
     max_len: 32
   }];
   repeated resources.vehicles.activity.VehicleActivityType types = 4 [(buf.validate.field).repeated = {
-    max_items: 20
-    items: {enum: {defined_only: true}}
+    max_items: 10
+    items: {
+      enum: {defined_only: true}
+    }
   }];
 }
 

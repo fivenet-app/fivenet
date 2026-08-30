@@ -60,7 +60,6 @@ import (
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/services/documents"
 	pbfilestore "github.com/fivenet-app/fivenet/v2026/services/filestore"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/services/jobs"
-	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/services/jobs/colleagues"
 	pblivemap "github.com/fivenet-app/fivenet/v2026/services/livemap"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/services/mailer"
 	pbnotifications "github.com/fivenet-app/fivenet/v2026/services/notifications"
@@ -73,9 +72,11 @@ import (
 	authstore "github.com/fivenet-app/fivenet/v2026/stores/auth"
 	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	completorstore "github.com/fivenet-app/fivenet/v2026/stores/completor"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
+	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	"github.com/fivenet-app/fivenet/v2026/stores/jobs/usersel"
 	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
@@ -83,7 +84,6 @@ import (
 	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 	statsstore "github.com/fivenet-app/fivenet/v2026/stores/stats"
-	usersstore "github.com/fivenet-app/fivenet/v2026/stores/users"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	wikistore "github.com/fivenet-app/fivenet/v2026/stores/wiki"
 	"github.com/microcosm-cc/bluemonday"
@@ -165,6 +165,7 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 
 		pbcitizens.HousekeeperModule,
 		pbjobs.HousekeeperModule,
+		citizenshydrator.Module,
 		pbvehicles.HousekeeperModule,
 		pbdocuments.WorkflowModule,
 		pkgfilestore.Module,
@@ -218,7 +219,6 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			settingsstore.New,
 			statsstore.New,
 			documentsstore.New,
-			usersstore.New,
 			vehiclesstore.New,
 			wikistore.New,
 		),

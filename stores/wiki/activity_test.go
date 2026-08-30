@@ -43,7 +43,6 @@ func TestStoreListPageActivity(t *testing.T) {
 	store := New(testParams(db))
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_wiki_pages_activity AS page_activity`) +
-		`(?s).*` + regexp.QuoteMeta(`LEFT JOIN fivenet_user AS creator ON`) +
 		`(?s).*` + regexp.QuoteMeta(`page_activity.page_id = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`LIMIT ? OFFSET ?;`)
 
@@ -59,11 +58,6 @@ func TestStoreListPageActivity(t *testing.T) {
 			"page_activity.creator_job",
 			"page_activity.reason",
 			"page_activity.data",
-			"creator.id",
-			"creator.job",
-			"creator.job_grade",
-			"creator.firstname",
-			"creator.lastname",
 		}).AddRow(
 			int64(9),
 			now,
@@ -73,11 +67,6 @@ func TestStoreListPageActivity(t *testing.T) {
 			"police",
 			"reason",
 			nil,
-			int32(7),
-			"police",
-			int32(5),
-			"Jane",
-			"Doe",
 		))
 
 	activity, err := store.ListPageActivity(
@@ -86,8 +75,8 @@ func TestStoreListPageActivity(t *testing.T) {
 	)
 	require.NoError(t, err)
 	require.Len(t, activity, 1)
-	require.NotNil(t, activity[0].GetCreator())
-	assert.Equal(t, "police", activity[0].GetCreator().GetJob())
+	assert.Equal(t, int32(7), activity[0].GetCreatorId())
+	assert.Nil(t, activity[0].GetCreator())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
