@@ -5,7 +5,7 @@ import (
 	context "context"
 	"errors"
 	"html/template"
-	"regexp"
+	"strings"
 
 	"github.com/Masterminds/sprig/v3"
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
@@ -36,6 +36,8 @@ import (
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	htmlnode "golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 )
 
 const (
@@ -46,13 +48,68 @@ const (
 
 var ErrTemplateActiveChar = errors.New("failed to resolve active character/user")
 
-// FIXME parse html via go and then remove/unwrap the template var spans, instead of using regex.
-var templateVarSpan = regexp.MustCompile(
-	`(?is)<span\b[^>]*\bdata-template-var\s*=\s*(?:"[^"]*"|'[^']*')[^>]*>(.*?)</span>`,
-)
+func isTemplateActionSpan(node *htmlnode.Node) bool {
+	if node.Type != htmlnode.ElementNode || node.Data != "span" {
+		return false
+	}
 
-func stripTemplateVarSpans(content string) string {
-	return templateVarSpan.ReplaceAllString(content, "$1")
+	for _, attr := range node.Attr {
+		switch attr.Key {
+		case "data-template-var", "data-template-block", "data-template-block-end":
+			return true
+		}
+	}
+
+	return false
+}
+
+func unwrapTemplateActionSpans(node *htmlnode.Node) {
+	for child := node.FirstChild; child != nil; {
+		next := child.NextSibling
+		unwrapTemplateActionSpans(child)
+
+		if isTemplateActionSpan(child) {
+			for content := child.FirstChild; content != nil; {
+				nextContent := content.NextSibling
+				child.RemoveChild(content)
+				node.InsertBefore(content, child)
+				content = nextContent
+			}
+			node.RemoveChild(child)
+		}
+
+		child = next
+	}
+}
+
+func stripTemplateActionSpans(content string) (string, error) {
+	// Parse the editor HTML as a fragment so action spans can be identified by
+	// their element and exact data-* attributes instead of matching HTML with a
+	// regular expression. Rendering the cleaned tree may normalize markup such
+	// as attribute quoting or equivalent whitespace, which is intentional.
+	fragment, err := htmlnode.ParseFragment(strings.NewReader(content), &htmlnode.Node{
+		Type:     htmlnode.ElementNode,
+		DataAtom: atom.Div,
+		Data:     "div",
+	})
+	if err != nil {
+		return "", err
+	}
+
+	root := &htmlnode.Node{Type: htmlnode.DocumentNode}
+	for _, node := range fragment {
+		root.AppendChild(node)
+	}
+	unwrapTemplateActionSpans(root)
+
+	var output bytes.Buffer
+	for node := root.FirstChild; node != nil; node = node.NextSibling {
+		if err := htmlnode.Render(&output, node); err != nil {
+			return "", err
+		}
+	}
+
+	return output.String(), nil
 }
 
 var templateSubjectAccessOptions = access.SubjectAccessOptions{
@@ -453,7 +510,10 @@ func (s *Server) renderTemplate(
 	outState := buf.String()
 
 	// Render Content template
-	content := stripTemplateVarSpans(docTmpl.GetContent())
+	content, err := stripTemplateActionSpans(docTmpl.GetContent())
+	if err != nil {
+		return "", "", "", err
+	}
 
 	contentTpl, err := template.
 		New("content").

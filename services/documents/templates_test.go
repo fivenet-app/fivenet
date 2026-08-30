@@ -92,7 +92,29 @@ func TestStripTemplateVarSpansPreservesTrimMarkers(t *testing.T) {
 
 	content := `<p><span class="template-var" data-template-var=".Firstname">{{- .Firstname -}}</span></p>`
 
-	require.Equal(t, `<p>{{- .Firstname -}}</p>`, stripTemplateVarSpans(content))
+	stripped, err := stripTemplateActionSpans(content)
+	require.NoError(t, err)
+	require.Equal(t, `<p>{{- .Firstname -}}</p>`, stripped)
+}
+
+func TestStripTemplateActionSpansPreservesOtherHTMLAttributes(t *testing.T) {
+	t.Parallel()
+
+	content := `<p data-custom="keep"><span data-template-block="if .Active" data-left-trim="true">{{- if .Active -}}</span><span data-template-block-end="end" data-right-trim="true">{{ end }}</span><span data-keep="yes">content</span></p>`
+
+	stripped, err := stripTemplateActionSpans(content)
+	require.NoError(t, err)
+	require.Equal(t, `<p data-custom="keep">{{- if .Active -}}{{ end }}<span data-keep="yes">content</span></p>`, stripped)
+}
+
+func TestStripTemplateActionSpansUnwrapsNestedActions(t *testing.T) {
+	t.Parallel()
+
+	content := `<p><span data-template-var=".Outer">before <span data-template-block="if .Active">{{ if .Active }}</span> after</span></p>`
+
+	stripped, err := stripTemplateActionSpans(content)
+	require.NoError(t, err)
+	require.Equal(t, `<p>before {{ if .Active }} after</p>`, stripped)
 }
 
 func TestValidateTemplateRequirementsAfterResolution(t *testing.T) {
