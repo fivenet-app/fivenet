@@ -10,6 +10,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	resourcesdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
@@ -18,6 +19,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
+	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
@@ -26,7 +29,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
@@ -297,6 +302,11 @@ func (s *Server) resolveTemplateData(
 		)
 	}
 
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.perms, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
+	}
+
 	data := &resolvedTemplateData{
 		ActiveChar: activeChar,
 	}
@@ -305,18 +315,26 @@ func (s *Server) resolveTemplateData(
 	}
 
 	if len(selection.GetUserIds()) > 0 {
-		usersResp, err := s.hydrator.ListByUserID(
-			ctx,
-			s.db,
-			userInfo,
-			selection.GetUserIds(),
-		)
+		pageSize := int64(len(selection.GetUserIds()))
+		citizensReq := &pbcitizens.ListCitizensRequest{Pagination: &database.PaginationRequest{}}
+		citizensReq.GetPagination().SetPageSize(pageSize)
+
+		listOptions := citizensListOptions(fields)
+		listOptions.UserIDs = selection.GetUserIds()
+
+		usersResp, err := s.citizensStore.ListCitizens(ctx, citizensReq, listOptions)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 		}
 
-		byID := make(map[int32]*users.User, len(usersResp))
-		for _, user := range usersResp {
+		jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+		jobInfoFn(activeChar)
+		for _, user := range usersResp.GetUsers() {
+			jobInfoFn(user)
+		}
+
+		byID := make(map[int32]*users.User, len(usersResp.GetUsers()))
+		for _, user := range usersResp.GetUsers() {
 			byID[user.GetUserId()] = user
 		}
 		seen := make(map[int32]struct{}, len(selection.GetUserIds()))
@@ -395,6 +413,37 @@ func (s *Server) resolveTemplateData(
 	}
 
 	return data, validateTemplateRequirements(tmpl, data)
+}
+
+func citizensListOptions(
+	fields *perms.TypedStringList[permscitizens.CitizensServiceListCitizensFieldsPermValue],
+) citizensstore.ListCitizensOptions {
+	return citizensstore.ListCitizensOptions{
+		IncludePhoneNumber: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
+		),
+		IncludeWanted: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted,
+		),
+		IncludeJob: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob,
+		),
+		IncludeTrafficInfractionPoints: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints,
+		),
+		IncludeOpenFines: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines,
+		),
+		IncludeBloodType: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType,
+		),
+		IncludeMugshot: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot,
+		),
+		IncludeEmail: fields.Contains(
+			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail,
+		),
+	}
 }
 
 func validateTemplateRequirements(
