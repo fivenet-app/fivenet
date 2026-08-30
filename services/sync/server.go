@@ -25,6 +25,7 @@ import (
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	syncstore "github.com/fivenet-app/fivenet/v2026/stores/sync"
+	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -65,6 +66,7 @@ type Params struct {
 	CitizensStore citizensstore.IStore
 	JobsStore     jobsstore.IStore
 	LivemapStore  livemapstore.IStore
+	VehiclesStore vehiclesstore.IStore
 	Enricher      mstlystcdata.IEnricher
 	Notifi        notifi.INotifi
 }
@@ -91,6 +93,7 @@ func NewServer(p Params) Result {
 			p.CitizensStore,
 			p.JobsStore,
 			p.LivemapStore,
+			p.VehiclesStore,
 			p.Enricher,
 			p.Notifi,
 		),

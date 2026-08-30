@@ -174,6 +174,15 @@ func (m *AddColleagueActivityRequest) Sanitize() error {
 		}
 	}
 
+	// Field: SourceUser
+	if m.SourceUser != nil {
+		if v, ok := any(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -187,6 +196,15 @@ func (m *AddColleaguePropsRequest) Sanitize() error {
 	// Field: ColleagueProps
 	if m.ColleagueProps != nil {
 		if v, ok := any(m.GetColleagueProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: SourceUser
+	if m.SourceUser != nil {
+		if v, ok := any(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -260,6 +278,15 @@ func (m *AddUserActivityRequest) Sanitize() error {
 		return nil
 	}
 
+	// Field: SourceUser
+	if m.SourceUser != nil {
+		if v, ok := any(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: UserActivity
 	if m.UserActivity != nil {
 		if v, ok := any(m.GetUserActivity()).(interface{ Sanitize() error }); ok {
@@ -296,6 +323,15 @@ func (m *AddUserOAuth2ConnRequest) Sanitize() error {
 func (m *AddUserPropsRequest) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: SourceUser
+	if m.SourceUser != nil {
+		if v, ok := any(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: UserProps
@@ -520,6 +556,38 @@ func (m *GetUserPropsResponse) Sanitize() error {
 	// Field: UserProps
 	if m.UserProps != nil {
 		if v, ok := any(m.GetUserProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *GetVehiclePropsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Plate
+	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *GetVehiclePropsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: VehicleProps
+	if m.VehicleProps != nil {
+		if v, ok := any(m.GetVehicleProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -799,6 +867,73 @@ func (m *SetLastCharIDRequest) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SetVehiclePropsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Reason
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
+	}
+
+	// Field: SourceUser
+	if m.SourceUser != nil {
+		if v, ok := any(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: VehicleProps
+	if m.VehicleProps != nil {
+		if v, ok := any(m.GetVehicleProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SetVehiclePropsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: VehicleProps
+	if m.VehicleProps != nil {
+		if v, ok := any(m.GetVehicleProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SourceUser) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
 	}
 
 	return nil

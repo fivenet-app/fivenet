@@ -32,6 +32,7 @@ import { AccountUpdate } from "../../resources/sync/activity/activity";
 import { TimeclockUpdate } from "../../resources/sync/activity/activity";
 import { ColleagueProps } from "../../resources/sync/activity/activity";
 import { ColleagueActivity } from "../../resources/jobs/colleagues/activity/activity";
+import { VehicleProps } from "../../resources/vehicles/props/props";
 import { UserProps as UserProps$ } from "../../resources/users/props/props";
 import { UserProps } from "../../resources/sync/activity/activity";
 import { UserActivity } from "../../resources/users/activity/activity";
@@ -78,6 +79,19 @@ export interface GetStatusResponse {
      * @generated from protobuf field: resources.sync.data.DataStatus accounts = 5
      */
     accounts?: DataStatus;
+}
+/**
+ * @generated from protobuf message services.sync.SourceUser
+ */
+export interface SourceUser {
+    /**
+     * @generated from protobuf field: optional int32 user_id = 1
+     */
+    userId?: number;
+    /**
+     * @generated from protobuf field: optional string job = 2
+     */
+    job?: string;
 }
 /**
  * @generated from protobuf message services.sync.RegisterAccountRequest
@@ -233,6 +247,10 @@ export interface AddUserActivityRequest {
      * @generated from protobuf field: resources.users.activity.UserActivity user_activity = 1
      */
     userActivity?: UserActivity;
+    /**
+     * @generated from protobuf field: optional services.sync.SourceUser source_user = 2
+     */
+    sourceUser?: SourceUser;
 }
 /**
  * @generated from protobuf message services.sync.AddUserPropsRequest
@@ -242,6 +260,10 @@ export interface AddUserPropsRequest {
      * @generated from protobuf field: resources.sync.activity.UserProps user_props = 1
      */
     userProps?: UserProps;
+    /**
+     * @generated from protobuf field: optional services.sync.SourceUser source_user = 2
+     */
+    sourceUser?: SourceUser;
 }
 /**
  * @generated from protobuf message services.sync.GetUserPropsRequest
@@ -262,6 +284,50 @@ export interface GetUserPropsResponse {
     userProps?: UserProps$;
 }
 /**
+ * @generated from protobuf message services.sync.GetVehiclePropsRequest
+ */
+export interface GetVehiclePropsRequest {
+    /**
+     * @generated from protobuf field: string plate = 1
+     */
+    plate: string;
+}
+/**
+ * @generated from protobuf message services.sync.GetVehiclePropsResponse
+ */
+export interface GetVehiclePropsResponse {
+    /**
+     * @generated from protobuf field: resources.vehicles.props.VehicleProps vehicle_props = 1
+     */
+    vehicleProps?: VehicleProps;
+}
+/**
+ * @generated from protobuf message services.sync.SetVehiclePropsRequest
+ */
+export interface SetVehiclePropsRequest {
+    /**
+     * @generated from protobuf field: resources.vehicles.props.VehicleProps vehicle_props = 1
+     */
+    vehicleProps?: VehicleProps;
+    /**
+     * @generated from protobuf field: optional string reason = 2
+     */
+    reason?: string;
+    /**
+     * @generated from protobuf field: optional services.sync.SourceUser source_user = 3
+     */
+    sourceUser?: SourceUser;
+}
+/**
+ * @generated from protobuf message services.sync.SetVehiclePropsResponse
+ */
+export interface SetVehiclePropsResponse {
+    /**
+     * @generated from protobuf field: resources.vehicles.props.VehicleProps vehicle_props = 1
+     */
+    vehicleProps?: VehicleProps;
+}
+/**
  * @generated from protobuf message services.sync.AddColleagueActivityRequest
  */
 export interface AddColleagueActivityRequest {
@@ -269,6 +335,10 @@ export interface AddColleagueActivityRequest {
      * @generated from protobuf field: resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 1
      */
     colleagueActivity?: ColleagueActivity;
+    /**
+     * @generated from protobuf field: optional services.sync.SourceUser source_user = 2
+     */
+    sourceUser?: SourceUser;
 }
 /**
  * @generated from protobuf message services.sync.AddColleaguePropsRequest
@@ -278,6 +348,10 @@ export interface AddColleaguePropsRequest {
      * @generated from protobuf field: resources.sync.activity.ColleagueProps colleague_props = 1
      */
     colleagueProps?: ColleagueProps;
+    /**
+     * @generated from protobuf field: optional services.sync.SourceUser source_user = 2
+     */
+    sourceUser?: SourceUser;
 }
 /**
  * @generated from protobuf message services.sync.AddJobTimeclockRequest
@@ -754,6 +828,59 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
  * @generated MessageType for protobuf message services.sync.GetStatusResponse
  */
 export const GetStatusResponse = new GetStatusResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SourceUser$Type extends MessageType<SourceUser> {
+    constructor() {
+        super("services.sync.SourceUser", [
+            { no: 1, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 2, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SourceUser>): SourceUser {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SourceUser>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SourceUser): SourceUser {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                case /* optional string job */ 2:
+                    message.job = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SourceUser, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional int32 user_id = 1; */
+        if (message.userId !== undefined)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* optional string job = 2; */
+        if (message.job !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.job);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SourceUser
+ */
+export const SourceUser = new SourceUser$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class RegisterAccountRequest$Type extends MessageType<RegisterAccountRequest> {
     constructor() {
@@ -1359,7 +1486,8 @@ export const CloseUserDispatchesResponse = new CloseUserDispatchesResponse$Type(
 class AddUserActivityRequest$Type extends MessageType<AddUserActivityRequest> {
     constructor() {
         super("services.sync.AddUserActivityRequest", [
-            { no: 1, name: "user_activity", kind: "message", T: () => UserActivity, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "user_activity", kind: "message", T: () => UserActivity, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "source_user", kind: "message", T: () => SourceUser }
         ]);
     }
     create(value?: PartialMessage<AddUserActivityRequest>): AddUserActivityRequest {
@@ -1376,6 +1504,9 @@ class AddUserActivityRequest$Type extends MessageType<AddUserActivityRequest> {
                 case /* resources.users.activity.UserActivity user_activity */ 1:
                     message.userActivity = UserActivity.internalBinaryRead(reader, reader.uint32(), options, message.userActivity);
                     break;
+                case /* optional services.sync.SourceUser source_user */ 2:
+                    message.sourceUser = SourceUser.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1391,6 +1522,9 @@ class AddUserActivityRequest$Type extends MessageType<AddUserActivityRequest> {
         /* resources.users.activity.UserActivity user_activity = 1; */
         if (message.userActivity)
             UserActivity.internalBinaryWrite(message.userActivity, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional services.sync.SourceUser source_user = 2; */
+        if (message.sourceUser)
+            SourceUser.internalBinaryWrite(message.sourceUser, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1405,7 +1539,8 @@ export const AddUserActivityRequest = new AddUserActivityRequest$Type();
 class AddUserPropsRequest$Type extends MessageType<AddUserPropsRequest> {
     constructor() {
         super("services.sync.AddUserPropsRequest", [
-            { no: 1, name: "user_props", kind: "message", T: () => UserProps, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "user_props", kind: "message", T: () => UserProps, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "source_user", kind: "message", T: () => SourceUser }
         ]);
     }
     create(value?: PartialMessage<AddUserPropsRequest>): AddUserPropsRequest {
@@ -1422,6 +1557,9 @@ class AddUserPropsRequest$Type extends MessageType<AddUserPropsRequest> {
                 case /* resources.sync.activity.UserProps user_props */ 1:
                     message.userProps = UserProps.internalBinaryRead(reader, reader.uint32(), options, message.userProps);
                     break;
+                case /* optional services.sync.SourceUser source_user */ 2:
+                    message.sourceUser = SourceUser.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1437,6 +1575,9 @@ class AddUserPropsRequest$Type extends MessageType<AddUserPropsRequest> {
         /* resources.sync.activity.UserProps user_props = 1; */
         if (message.userProps)
             UserProps.internalBinaryWrite(message.userProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional services.sync.SourceUser source_user = 2; */
+        if (message.sourceUser)
+            SourceUser.internalBinaryWrite(message.sourceUser, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1541,10 +1682,210 @@ class GetUserPropsResponse$Type extends MessageType<GetUserPropsResponse> {
  */
 export const GetUserPropsResponse = new GetUserPropsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class GetVehiclePropsRequest$Type extends MessageType<GetVehiclePropsRequest> {
+    constructor() {
+        super("services.sync.GetVehiclePropsRequest", [
+            { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<GetVehiclePropsRequest>): GetVehiclePropsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.plate = "";
+        if (value !== undefined)
+            reflectionMergePartial<GetVehiclePropsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetVehiclePropsRequest): GetVehiclePropsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string plate */ 1:
+                    message.plate = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetVehiclePropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string plate = 1; */
+        if (message.plate !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.plate);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.GetVehiclePropsRequest
+ */
+export const GetVehiclePropsRequest = new GetVehiclePropsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetVehiclePropsResponse$Type extends MessageType<GetVehiclePropsResponse> {
+    constructor() {
+        super("services.sync.GetVehiclePropsResponse", [
+            { no: 1, name: "vehicle_props", kind: "message", T: () => VehicleProps }
+        ]);
+    }
+    create(value?: PartialMessage<GetVehiclePropsResponse>): GetVehiclePropsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetVehiclePropsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetVehiclePropsResponse): GetVehiclePropsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.vehicles.props.VehicleProps vehicle_props */ 1:
+                    message.vehicleProps = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.vehicleProps);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetVehiclePropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.vehicles.props.VehicleProps vehicle_props = 1; */
+        if (message.vehicleProps)
+            VehicleProps.internalBinaryWrite(message.vehicleProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.GetVehiclePropsResponse
+ */
+export const GetVehiclePropsResponse = new GetVehiclePropsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetVehiclePropsRequest$Type extends MessageType<SetVehiclePropsRequest> {
+    constructor() {
+        super("services.sync.SetVehiclePropsRequest", [
+            { no: 1, name: "vehicle_props", kind: "message", T: () => VehicleProps, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 3, name: "source_user", kind: "message", T: () => SourceUser }
+        ]);
+    }
+    create(value?: PartialMessage<SetVehiclePropsRequest>): SetVehiclePropsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetVehiclePropsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetVehiclePropsRequest): SetVehiclePropsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.vehicles.props.VehicleProps vehicle_props */ 1:
+                    message.vehicleProps = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.vehicleProps);
+                    break;
+                case /* optional string reason */ 2:
+                    message.reason = reader.string();
+                    break;
+                case /* optional services.sync.SourceUser source_user */ 3:
+                    message.sourceUser = SourceUser.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetVehiclePropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.vehicles.props.VehicleProps vehicle_props = 1; */
+        if (message.vehicleProps)
+            VehicleProps.internalBinaryWrite(message.vehicleProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional string reason = 2; */
+        if (message.reason !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.reason);
+        /* optional services.sync.SourceUser source_user = 3; */
+        if (message.sourceUser)
+            SourceUser.internalBinaryWrite(message.sourceUser, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SetVehiclePropsRequest
+ */
+export const SetVehiclePropsRequest = new SetVehiclePropsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> {
+    constructor() {
+        super("services.sync.SetVehiclePropsResponse", [
+            { no: 1, name: "vehicle_props", kind: "message", T: () => VehicleProps }
+        ]);
+    }
+    create(value?: PartialMessage<SetVehiclePropsResponse>): SetVehiclePropsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetVehiclePropsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetVehiclePropsResponse): SetVehiclePropsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.vehicles.props.VehicleProps vehicle_props */ 1:
+                    message.vehicleProps = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.vehicleProps);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetVehiclePropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.vehicles.props.VehicleProps vehicle_props = 1; */
+        if (message.vehicleProps)
+            VehicleProps.internalBinaryWrite(message.vehicleProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SetVehiclePropsResponse
+ */
+export const SetVehiclePropsResponse = new SetVehiclePropsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class AddColleagueActivityRequest$Type extends MessageType<AddColleagueActivityRequest> {
     constructor() {
         super("services.sync.AddColleagueActivityRequest", [
-            { no: 1, name: "colleague_activity", kind: "message", T: () => ColleagueActivity, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "colleague_activity", kind: "message", T: () => ColleagueActivity, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "source_user", kind: "message", T: () => SourceUser }
         ]);
     }
     create(value?: PartialMessage<AddColleagueActivityRequest>): AddColleagueActivityRequest {
@@ -1561,6 +1902,9 @@ class AddColleagueActivityRequest$Type extends MessageType<AddColleagueActivityR
                 case /* resources.jobs.colleagues.activity.ColleagueActivity colleague_activity */ 1:
                     message.colleagueActivity = ColleagueActivity.internalBinaryRead(reader, reader.uint32(), options, message.colleagueActivity);
                     break;
+                case /* optional services.sync.SourceUser source_user */ 2:
+                    message.sourceUser = SourceUser.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1576,6 +1920,9 @@ class AddColleagueActivityRequest$Type extends MessageType<AddColleagueActivityR
         /* resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 1; */
         if (message.colleagueActivity)
             ColleagueActivity.internalBinaryWrite(message.colleagueActivity, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional services.sync.SourceUser source_user = 2; */
+        if (message.sourceUser)
+            SourceUser.internalBinaryWrite(message.sourceUser, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1590,7 +1937,8 @@ export const AddColleagueActivityRequest = new AddColleagueActivityRequest$Type(
 class AddColleaguePropsRequest$Type extends MessageType<AddColleaguePropsRequest> {
     constructor() {
         super("services.sync.AddColleaguePropsRequest", [
-            { no: 1, name: "colleague_props", kind: "message", T: () => ColleagueProps, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "colleague_props", kind: "message", T: () => ColleagueProps, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "source_user", kind: "message", T: () => SourceUser }
         ]);
     }
     create(value?: PartialMessage<AddColleaguePropsRequest>): AddColleaguePropsRequest {
@@ -1607,6 +1955,9 @@ class AddColleaguePropsRequest$Type extends MessageType<AddColleaguePropsRequest
                 case /* resources.sync.activity.ColleagueProps colleague_props */ 1:
                     message.colleagueProps = ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, message.colleagueProps);
                     break;
+                case /* optional services.sync.SourceUser source_user */ 2:
+                    message.sourceUser = SourceUser.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1622,6 +1973,9 @@ class AddColleaguePropsRequest$Type extends MessageType<AddColleaguePropsRequest
         /* resources.sync.activity.ColleagueProps colleague_props = 1; */
         if (message.colleagueProps)
             ColleagueProps.internalBinaryWrite(message.colleagueProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional services.sync.SourceUser source_user = 2; */
+        if (message.sourceUser)
+            SourceUser.internalBinaryWrite(message.sourceUser, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2829,6 +3183,8 @@ export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "AddUserActivity", options: {}, I: AddUserActivityRequest, O: AddActivityResponse },
     { name: "AddUserProps", options: {}, I: AddUserPropsRequest, O: AddActivityResponse },
     { name: "GetUserProps", options: {}, I: GetUserPropsRequest, O: GetUserPropsResponse },
+    { name: "GetVehicleProps", options: {}, I: GetVehiclePropsRequest, O: GetVehiclePropsResponse },
+    { name: "SetVehicleProps", options: {}, I: SetVehiclePropsRequest, O: SetVehiclePropsResponse },
     { name: "AddColleagueActivity", options: {}, I: AddColleagueActivityRequest, O: AddActivityResponse },
     { name: "AddColleagueProps", options: {}, I: AddColleaguePropsRequest, O: AddActivityResponse },
     { name: "AddJobTimeclock", options: {}, I: AddJobTimeclockRequest, O: AddActivityResponse },

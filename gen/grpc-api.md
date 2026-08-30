@@ -4024,66 +4024,6 @@ Policy snapshot applied to a specific version
 
 
 
-## resources/vehicles/props/props.proto
-
-
-### resources.vehicles.props.VehicleProps
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `plate` | [string](#string) |  |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `wanted` | [bool](#bool) | optional |  |
-| `wanted_reason` | [string](#string) | optional |  |
-| `wanted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `wanted_till` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/vehicles/vehicles.proto
-
-
-### resources.vehicles.Vehicle
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `plate` | [string](#string) |  |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `model` | [string](#string) | optional |  |
-| `type` | [string](#string) |  |  |
-| `owner_id` | [int32](#int32) | optional |  |
-| `owner_identifier` | [string](#string) | optional |  |
-| `owner` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `job` | [string](#string) | optional |  |
-| `job_label` | [string](#string) | optional |  |
-| `props` | [props.VehicleProps](#resourcesvehiclespropsVehicleProps) | optional |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/documents/templates/templates.proto
 
 
@@ -7090,6 +7030,66 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `job_grade` | [int32](#int32) | optional |  |
 | `firstname` | [string](#string) | optional |  |
 | `lastname` | [string](#string) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/vehicles/props/props.proto
+
+
+### resources.vehicles.props.VehicleProps
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `plate` | [string](#string) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `wanted` | [bool](#bool) | optional |  |
+| `wanted_reason` | [string](#string) | optional |  |
+| `wanted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `wanted_till` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/vehicles/vehicles.proto
+
+
+### resources.vehicles.Vehicle
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `plate` | [string](#string) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `model` | [string](#string) | optional |  |
+| `type` | [string](#string) |  |  |
+| `owner_id` | [int32](#int32) | optional |  |
+| `owner_identifier` | [string](#string) | optional |  |
+| `owner` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `job` | [string](#string) | optional |  |
+| `job_label` | [string](#string) | optional |  |
+| `props` | [props.VehicleProps](#resourcesvehiclespropsVehicleProps) | optional |  |
 
 
 
@@ -14502,6 +14502,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `colleague_activity` | [resources.jobs.colleagues.activity.ColleagueActivity](#resourcesjobscolleaguesactivityColleagueActivity) |  |  |
+| `source_user` | [SourceUser](#servicessyncSourceUser) | optional |  |
 
 
 
@@ -14513,6 +14514,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `colleague_props` | [resources.sync.activity.ColleagueProps](#resourcessyncactivityColleagueProps) |  |  |
+| `source_user` | [SourceUser](#servicessyncSourceUser) | optional |  |
 
 
 
@@ -14557,6 +14559,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_activity` | [resources.users.activity.UserActivity](#resourcesusersactivityUserActivity) |  |  |
+| `source_user` | [SourceUser](#servicessyncSourceUser) | optional |  |
 
 
 
@@ -14579,6 +14582,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_props` | [resources.sync.activity.UserProps](#resourcessyncactivityUserProps) |  |  |
+| `source_user` | [SourceUser](#servicessyncSourceUser) | optional |  |
 
 
 
@@ -14753,6 +14757,28 @@ Response containing the number of dispatches closed for the user.
 
 
 
+### services.sync.GetVehiclePropsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `plate` | [string](#string) |  |  |
+
+
+
+
+
+### services.sync.GetVehiclePropsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `vehicle_props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  |  |
+
+
+
+
+
 ### services.sync.RegisterAccountRequest
 
 
@@ -14886,6 +14912,42 @@ Response containing the number of dispatches closed for the user.
 
 
 
+### services.sync.SetVehiclePropsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `vehicle_props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  |  |
+| `reason` | [string](#string) | optional |  |
+| `source_user` | [SourceUser](#servicessyncSourceUser) | optional |  |
+
+
+
+
+
+### services.sync.SetVehiclePropsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `vehicle_props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  |  |
+
+
+
+
+
+### services.sync.SourceUser
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) | optional |  |
+| `job` | [string](#string) | optional |  |
+
+
+
+
+
 ### services.sync.StreamRequest
 
 
@@ -14948,6 +15010,8 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `AddUserActivity` | [AddUserActivityRequest](#servicessyncAddUserActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a user activity entry. |
 | `AddUserProps` | [AddUserPropsRequest](#servicessyncAddUserPropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record user props changes. |
 | `GetUserProps` | [GetUserPropsRequest](#servicessyncGetUserPropsRequest) | [GetUserPropsResponse](#servicessyncGetUserPropsResponse) |Retrieve user props. |
+| `GetVehicleProps` | [GetVehiclePropsRequest](#servicessyncGetVehiclePropsRequest) | [GetVehiclePropsResponse](#servicessyncGetVehiclePropsResponse) |Retrieve vehicle props. |
+| `SetVehicleProps` | [SetVehiclePropsRequest](#servicessyncSetVehiclePropsRequest) | [SetVehiclePropsResponse](#servicessyncSetVehiclePropsResponse) |Update vehicle props. |
 | `AddColleagueActivity` | [AddColleagueActivityRequest](#servicessyncAddColleagueActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a colleague activity entry. |
 | `AddColleagueProps` | [AddColleaguePropsRequest](#servicessyncAddColleaguePropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record colleague props changes. |
 | `AddJobTimeclock` | [AddJobTimeclockRequest](#servicessyncAddJobTimeclockRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a job timeclock entry. |

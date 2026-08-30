@@ -12,9 +12,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -47,7 +49,7 @@ func (s *Store) AddActivity(
 		}
 
 	case *pbsync.AddActivityRequest_UserProps:
-		if err := s.handleUserProps(ctx, d.UserProps); err != nil {
+		if err := s.handleUserProps(ctx, d.UserProps, nil); err != nil {
 			return nil, fmt.Errorf("failed to handle UserProps activity. %w", err)
 		}
 
@@ -57,7 +59,7 @@ func (s *Store) AddActivity(
 		}
 
 	case *pbsync.AddActivityRequest_ColleagueProps:
-		if err := s.handleColleagueProps(ctx, d.ColleagueProps); err != nil {
+		if err := s.handleColleagueProps(ctx, d.ColleagueProps, nil); err != nil {
 			return nil, fmt.Errorf("failed to handle ColleagueProps activity. %w", err)
 		}
 
@@ -84,6 +86,10 @@ func (s *Store) AddUserActivity(
 	ctx context.Context,
 	req *pbsync.AddUserActivityRequest,
 ) (*pbsync.AddActivityResponse, error) {
+	if activity := req.GetUserActivity(); activity != nil && req.GetSourceUser() != nil && req.GetSourceUser().UserId != nil {
+		sourceUserID := req.GetSourceUser().GetUserId()
+		activity.SourceUserId = &sourceUserID
+	}
 	if err := s.createUserActivities(ctx, s.db, req.GetUserActivity()); err != nil {
 		return nil, fmt.Errorf("failed to create user activities. %w", err)
 	}
@@ -104,7 +110,7 @@ func (s *Store) AddUserProps(
 	ctx context.Context,
 	req *pbsync.AddUserPropsRequest,
 ) (*pbsync.AddActivityResponse, error) {
-	if err := s.handleUserProps(ctx, req.GetUserProps()); err != nil {
+	if err := s.handleUserProps(ctx, req.GetUserProps(), req.GetSourceUser()); err != nil {
 		return nil, fmt.Errorf("failed to handle UserProps activity. %w", err)
 	}
 	return &pbsync.AddActivityResponse{}, nil
@@ -123,10 +129,66 @@ func (s *Store) GetUserProps(
 	}, nil
 }
 
+func (s *Store) GetVehicleProps(
+	ctx context.Context,
+	req *pbsync.GetVehiclePropsRequest,
+) (*pbsync.GetVehiclePropsResponse, error) {
+	vehicleProps, err := s.vehiclesStore.GetProps(ctx, s.db, req.GetPlate())
+	if err != nil {
+		return nil, fmt.Errorf("failed to get vehicle props. %w", err)
+	}
+	return &pbsync.GetVehiclePropsResponse{
+		VehicleProps: vehicleProps,
+	}, nil
+}
+
+func (s *Store) SetVehicleProps(
+	ctx context.Context,
+	req *pbsync.SetVehiclePropsRequest,
+) (*pbsync.SetVehiclePropsResponse, error) {
+	var creatorID *int32
+	if req.GetSourceUser() != nil && req.GetSourceUser().UserId != nil {
+		sourceUserID := req.GetSourceUser().GetUserId()
+		creatorID = &sourceUserID
+	}
+
+	sourceJob := req.GetSourceUser().GetJob()
+	if sourceJob == "" && creatorID != nil {
+		sourceUser, err := s.citizensStore.GetUser(
+			ctx,
+			&pbcitizens.GetUserRequest{UserId: *creatorID},
+			citizensstore.GetUserOptions{IncludeJob: true},
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get source user. %w", err)
+		}
+		if sourceUser == nil || sourceUser.GetUser() == nil {
+			return nil, fmt.Errorf("source user %d not found", *creatorID)
+		}
+		sourceJob = sourceUser.GetUser().GetJob()
+	}
+
+	props, err := s.vehiclesStore.UpdateProps(
+		ctx,
+		req.GetVehicleProps(),
+		creatorID,
+		sourceJob,
+		req.GetReason(),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to set vehicle props. %w", err)
+	}
+	return &pbsync.SetVehiclePropsResponse{VehicleProps: props}, nil
+}
+
 func (s *Store) AddColleagueActivity(
 	ctx context.Context,
 	req *pbsync.AddColleagueActivityRequest,
 ) (*pbsync.AddActivityResponse, error) {
+	if activity := req.GetColleagueActivity(); activity != nil && req.GetSourceUser() != nil && req.GetSourceUser().UserId != nil {
+		sourceUserID := req.GetSourceUser().GetUserId()
+		activity.SourceUserId = &sourceUserID
+	}
 	if err := s.createColleagueActivity(ctx, s.db, req.GetColleagueActivity()); err != nil {
 		return nil, fmt.Errorf("failed to create jobs user activities. %w", err)
 	}
@@ -137,7 +199,7 @@ func (s *Store) AddColleagueProps(
 	ctx context.Context,
 	req *pbsync.AddColleaguePropsRequest,
 ) (*pbsync.AddActivityResponse, error) {
-	if err := s.handleColleagueProps(ctx, req.GetColleagueProps()); err != nil {
+	if err := s.handleColleagueProps(ctx, req.GetColleagueProps(), req.GetSourceUser()); err != nil {
 		return nil, fmt.Errorf("failed to handle ColleagueProps activity. %w", err)
 	}
 	return &pbsync.AddActivityResponse{}, nil
@@ -290,7 +352,11 @@ func (s *Store) createColleagueActivity(
 	return err
 }
 
-func (s *Store) handleUserProps(ctx context.Context, data *activity.UserProps) error {
+func (s *Store) handleUserProps(
+	ctx context.Context,
+	data *activity.UserProps,
+	sourceUser *pbsync.SourceUser,
+) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction. %w", err)
@@ -322,12 +388,20 @@ func (s *Store) handleUserProps(ctx context.Context, data *activity.UserProps) e
 		reason = data.GetReason()
 	}
 
+	var sourceUserID *int32
+	if sourceUser != nil && sourceUser.UserId != nil {
+		value := sourceUser.GetUserId()
+		sourceUserID = &value
+	} else {
+		sourceUserID = &reqP.UserId
+	}
+
 	activities, err := s.citizensStore.HandleUserPropsChanges(
 		ctx,
 		tx,
 		props,
 		reqP,
-		&reqP.UserId,
+		sourceUserID,
 		reason,
 	)
 	if err != nil {
@@ -347,7 +421,11 @@ func (s *Store) handleUserProps(ctx context.Context, data *activity.UserProps) e
 	return nil
 }
 
-func (s *Store) handleColleagueProps(ctx context.Context, data *activity.ColleagueProps) error {
+func (s *Store) handleColleagueProps(
+	ctx context.Context,
+	data *activity.ColleagueProps,
+	sourceUser *pbsync.SourceUser,
+) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction. %w", err)
@@ -372,13 +450,21 @@ func (s *Store) handleColleagueProps(ctx context.Context, data *activity.Colleag
 		reason = data.GetReason()
 	}
 
+	var sourceUserID *int32
+	if sourceUser != nil && sourceUser.UserId != nil {
+		value := sourceUser.GetUserId()
+		sourceUserID = &value
+	} else {
+		sourceUserID = &input.UserId
+	}
+
 	activities, err := s.jobsStore.HandleColleaguePropsChanges(
 		ctx,
 		tx,
 		props,
 		input,
 		input.GetJob(),
-		&input.UserId,
+		sourceUserID,
 		reason,
 	)
 	if err != nil {

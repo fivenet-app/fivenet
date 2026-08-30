@@ -38,6 +38,21 @@ func (s *Server) GetUserProps(
 	return s.store.GetUserProps(ctx, req)
 }
 
+func (s *Server) GetVehicleProps(
+	ctx context.Context,
+	req *pbsync.GetVehiclePropsRequest,
+) (*pbsync.GetVehiclePropsResponse, error) {
+	return s.store.GetVehicleProps(ctx, req)
+}
+
+func (s *Server) SetVehicleProps(
+	ctx context.Context,
+	req *pbsync.SetVehiclePropsRequest,
+) (*pbsync.SetVehiclePropsResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
+	return s.store.SetVehicleProps(ctx, req)
+}
+
 func (s *Server) AddColleagueActivity(
 	ctx context.Context,
 	req *pbsync.AddColleagueActivityRequest,

@@ -16,6 +16,7 @@ import "resources/sync/data/data.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/activity/activity.proto";
 import "resources/users/props/props.proto";
+import "resources/vehicles/props/props.proto";
 import "resources/vehicles/vehicles.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync;sync";
@@ -32,6 +33,11 @@ message GetStatusResponse {
   resources.sync.data.DataStatus users = 3;
   resources.sync.data.DataStatus vehicles = 4;
   resources.sync.data.DataStatus accounts = 5;
+}
+
+message SourceUser {
+  optional int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  optional string job = 2 [(buf.validate.field).string.max_len = 20];
 }
 
 message RegisterAccountRequest {
@@ -108,10 +114,12 @@ message CloseUserDispatchesResponse {
 
 message AddUserActivityRequest {
   resources.users.activity.UserActivity user_activity = 1 [(buf.validate.field).required = true];
+  optional SourceUser source_user = 2;
 }
 
 message AddUserPropsRequest {
   resources.sync.activity.UserProps user_props = 1 [(buf.validate.field).required = true];
+  optional SourceUser source_user = 2;
 }
 
 message GetUserPropsRequest {
@@ -122,12 +130,35 @@ message GetUserPropsResponse {
   resources.users.props.UserProps user_props = 1;
 }
 
+message GetVehiclePropsRequest {
+  string plate = 1 [(buf.validate.field).string.max_len = 32];
+}
+
+message GetVehiclePropsResponse {
+  resources.vehicles.props.VehicleProps vehicle_props = 1;
+}
+
+message SetVehiclePropsRequest {
+  resources.vehicles.props.VehicleProps vehicle_props = 1 [(buf.validate.field).required = true];
+  optional string reason = 2 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional SourceUser source_user = 3;
+}
+
+message SetVehiclePropsResponse {
+  resources.vehicles.props.VehicleProps vehicle_props = 1;
+}
+
 message AddColleagueActivityRequest {
   resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 1 [(buf.validate.field).required = true];
+  optional SourceUser source_user = 2;
 }
 
 message AddColleaguePropsRequest {
   resources.sync.activity.ColleagueProps colleague_props = 1 [(buf.validate.field).required = true];
+  optional SourceUser source_user = 2;
 }
 
 message AddJobTimeclockRequest {
@@ -291,6 +322,10 @@ service SyncService {
   rpc AddUserProps(AddUserPropsRequest) returns (AddActivityResponse);
   // Retrieve user props.
   rpc GetUserProps(GetUserPropsRequest) returns (GetUserPropsResponse);
+  // Retrieve vehicle props.
+  rpc GetVehicleProps(GetVehiclePropsRequest) returns (GetVehiclePropsResponse);
+  // Update vehicle props.
+  rpc SetVehicleProps(SetVehiclePropsRequest) returns (SetVehiclePropsResponse);
   // Record a colleague activity entry.
   rpc AddColleagueActivity(AddColleagueActivityRequest) returns (AddActivityResponse);
   // Record colleague props changes.

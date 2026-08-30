@@ -506,6 +506,8 @@ export const grpcMethods = [
 	'sync.SyncService/AddUserActivity',
 	'sync.SyncService/AddUserProps',
 	'sync.SyncService/GetUserProps',
+	'sync.SyncService/GetVehicleProps',
+	'sync.SyncService/SetVehicleProps',
 	'sync.SyncService/AddColleagueActivity',
 	'sync.SyncService/AddColleagueProps',
 	'sync.SyncService/AddJobTimeclock',

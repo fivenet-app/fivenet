@@ -31,6 +31,7 @@ func TestSendVehicles(t *testing.T) {
 		nil,
 		nil,
 		nil,
+		nil,
 	)
 
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_owned_vehicles.*ON DUPLICATE KEY UPDATE.*`).
@@ -64,6 +65,7 @@ func TestDeleteVehicles(t *testing.T) {
 		zap.NewNop(),
 		&config.Config{},
 		&appconfig.TestConfig{},
+		nil,
 		nil,
 		nil,
 		nil,

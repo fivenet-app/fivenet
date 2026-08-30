@@ -154,10 +154,31 @@ func (s *Store) IsVehicleOwner(ctx context.Context, plate string, userID int32) 
 	return owner.Plate != "", nil
 }
 
-func (s *Store) GetProps(ctx context.Context, plate string) (*vehiclesprops.VehicleProps, error) {
+func (s *Store) GetProps(
+	ctx context.Context,
+	tx qrm.DB,
+	plate string,
+) (*vehiclesprops.VehicleProps, error) {
 	props := &vehiclesprops.VehicleProps{}
-	if err := props.LoadFromDB(ctx, s.db, plate); err != nil {
+	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
+	stmt := tVehicleProps.
+		SELECT(
+			tVehicleProps.Plate,
+			tVehicleProps.UpdatedAt,
+			tVehicleProps.Wanted,
+			tVehicleProps.WantedReason,
+			tVehicleProps.WantedAt,
+			tVehicleProps.WantedTill,
+		).
+		FROM(tVehicleProps).
+		WHERE(tVehicleProps.Plate.EQ(mysql.String(plate))).
+		LIMIT(1)
+
+	if err := stmt.QueryContext(ctx, tx, props); err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, err
+	}
+	if props.GetPlate() == "" {
+		props.SetPlate(plate)
 	}
 
 	return props, nil
@@ -170,7 +191,7 @@ func (s *Store) UpdateProps(
 	creatorJob string,
 	reason string,
 ) (*vehiclesprops.VehicleProps, error) {
-	props, err := s.GetProps(ctx, in.GetPlate())
+	props, err := s.GetProps(ctx, s.db, in.GetPlate())
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +200,7 @@ func (s *Store) UpdateProps(
 		wanted := false
 		props.Wanted = &wanted
 	}
-	props.NormalizeWantedChange(in, reason)
+	normalizeWantedChange(props, in, reason)
 	activity := buildWantedActivity(props, in, creatorID, creatorJob, reason, false)
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -188,7 +209,7 @@ func (s *Store) UpdateProps(
 	}
 	defer tx.Rollback()
 
-	if err := props.HandleChanges(ctx, tx, in); err != nil {
+	if err := handlePropsChanges(ctx, tx, props, in); err != nil {
 		return nil, err
 	}
 	if activity != nil {
@@ -201,7 +222,7 @@ func (s *Store) UpdateProps(
 		return nil, err
 	}
 
-	return s.GetProps(ctx, in.GetPlate())
+	return s.GetProps(ctx, s.db, in.GetPlate())
 }
 
 func (s *Store) ListExpiredWanted(
@@ -235,8 +256,8 @@ func (s *Store) ListExpiredWanted(
 }
 
 func (s *Store) ClearWanted(ctx context.Context, plate string) error {
-	props := &vehiclesprops.VehicleProps{}
-	if err := props.LoadFromDB(ctx, s.db, plate); err != nil {
+	props, err := s.GetProps(ctx, s.db, plate)
+	if err != nil {
 		return err
 	}
 	if props.Wanted == nil || !props.GetWanted() {
@@ -249,7 +270,7 @@ func (s *Store) ClearWanted(ctx context.Context, plate string) error {
 	in.WantedReason = nil
 	in.WantedAt = nil
 	in.WantedTill = nil
-	props.NormalizeWantedChange(in, "wanted_expired")
+	normalizeWantedChange(props, in, "wanted_expired")
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -257,7 +278,7 @@ func (s *Store) ClearWanted(ctx context.Context, plate string) error {
 	}
 	defer tx.Rollback()
 
-	if err := props.HandleChanges(ctx, tx, in); err != nil {
+	if err := handlePropsChanges(ctx, tx, props, in); err != nil {
 		return err
 	}
 	if activity := buildWantedActivity(

@@ -11,13 +11,14 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 type IStore interface {
 	Count(ctx context.Context, q ListQuery) (int64, error)
 	List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Vehicle, error)
 	IsVehicleOwner(ctx context.Context, plate string, userID int32) (bool, error)
-	GetProps(ctx context.Context, plate string) (*vehiclesprops.VehicleProps, error)
+	GetProps(ctx context.Context, tx qrm.DB, plate string) (*vehiclesprops.VehicleProps, error)
 	UpdateProps(
 		ctx context.Context,
 		in *vehiclesprops.VehicleProps,

@@ -28,6 +28,8 @@ const (
 	SyncService_AddUserActivity_FullMethodName        = "/services.sync.SyncService/AddUserActivity"
 	SyncService_AddUserProps_FullMethodName           = "/services.sync.SyncService/AddUserProps"
 	SyncService_GetUserProps_FullMethodName           = "/services.sync.SyncService/GetUserProps"
+	SyncService_GetVehicleProps_FullMethodName        = "/services.sync.SyncService/GetVehicleProps"
+	SyncService_SetVehicleProps_FullMethodName        = "/services.sync.SyncService/SetVehicleProps"
 	SyncService_AddColleagueActivity_FullMethodName   = "/services.sync.SyncService/AddColleagueActivity"
 	SyncService_AddColleagueProps_FullMethodName      = "/services.sync.SyncService/AddColleagueProps"
 	SyncService_AddJobTimeclock_FullMethodName        = "/services.sync.SyncService/AddJobTimeclock"
@@ -76,6 +78,10 @@ type SyncServiceClient interface {
 	AddUserProps(ctx context.Context, in *AddUserPropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// Retrieve user props.
 	GetUserProps(ctx context.Context, in *GetUserPropsRequest, opts ...grpc.CallOption) (*GetUserPropsResponse, error)
+	// Retrieve vehicle props.
+	GetVehicleProps(ctx context.Context, in *GetVehiclePropsRequest, opts ...grpc.CallOption) (*GetVehiclePropsResponse, error)
+	// Update vehicle props.
+	SetVehicleProps(ctx context.Context, in *SetVehiclePropsRequest, opts ...grpc.CallOption) (*SetVehiclePropsResponse, error)
 	// Record a colleague activity entry.
 	AddColleagueActivity(ctx context.Context, in *AddColleagueActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// Record colleague props changes.
@@ -216,6 +222,26 @@ func (c *syncServiceClient) GetUserProps(ctx context.Context, in *GetUserPropsRe
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserPropsResponse)
 	err := c.cc.Invoke(ctx, SyncService_GetUserProps_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) GetVehicleProps(ctx context.Context, in *GetVehiclePropsRequest, opts ...grpc.CallOption) (*GetVehiclePropsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetVehiclePropsResponse)
+	err := c.cc.Invoke(ctx, SyncService_GetVehicleProps_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) SetVehicleProps(ctx context.Context, in *SetVehiclePropsRequest, opts ...grpc.CallOption) (*SetVehiclePropsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetVehiclePropsResponse)
+	err := c.cc.Invoke(ctx, SyncService_SetVehicleProps_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -463,6 +489,10 @@ type SyncServiceServer interface {
 	AddUserProps(context.Context, *AddUserPropsRequest) (*AddActivityResponse, error)
 	// Retrieve user props.
 	GetUserProps(context.Context, *GetUserPropsRequest) (*GetUserPropsResponse, error)
+	// Retrieve vehicle props.
+	GetVehicleProps(context.Context, *GetVehiclePropsRequest) (*GetVehiclePropsResponse, error)
+	// Update vehicle props.
+	SetVehicleProps(context.Context, *SetVehiclePropsRequest) (*SetVehiclePropsResponse, error)
 	// Record a colleague activity entry.
 	AddColleagueActivity(context.Context, *AddColleagueActivityRequest) (*AddActivityResponse, error)
 	// Record colleague props changes.
@@ -545,6 +575,12 @@ func (UnimplementedSyncServiceServer) AddUserProps(context.Context, *AddUserProp
 }
 func (UnimplementedSyncServiceServer) GetUserProps(context.Context, *GetUserPropsRequest) (*GetUserPropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserProps not implemented")
+}
+func (UnimplementedSyncServiceServer) GetVehicleProps(context.Context, *GetVehiclePropsRequest) (*GetVehiclePropsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVehicleProps not implemented")
+}
+func (UnimplementedSyncServiceServer) SetVehicleProps(context.Context, *SetVehiclePropsRequest) (*SetVehiclePropsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetVehicleProps not implemented")
 }
 func (UnimplementedSyncServiceServer) AddColleagueActivity(context.Context, *AddColleagueActivityRequest) (*AddActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddColleagueActivity not implemented")
@@ -788,6 +824,42 @@ func _SyncService_GetUserProps_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SyncServiceServer).GetUserProps(ctx, req.(*GetUserPropsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_GetVehicleProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetVehiclePropsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).GetVehicleProps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_GetVehicleProps_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).GetVehicleProps(ctx, req.(*GetVehiclePropsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_SetVehicleProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetVehiclePropsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).SetVehicleProps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_SetVehicleProps_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).SetVehicleProps(ctx, req.(*SetVehiclePropsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1201,6 +1273,14 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserProps",
 			Handler:    _SyncService_GetUserProps_Handler,
+		},
+		{
+			MethodName: "GetVehicleProps",
+			Handler:    _SyncService_GetVehicleProps_Handler,
+		},
+		{
+			MethodName: "SetVehicleProps",
+			Handler:    _SyncService_SetVehicleProps_Handler,
 		},
 		{
 			MethodName: "AddColleagueActivity",

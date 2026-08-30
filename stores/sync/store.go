@@ -14,6 +14,7 @@ import (
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
+	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"go.uber.org/zap"
 )
 
@@ -38,6 +39,14 @@ type IStore interface {
 		ctx context.Context,
 		req *pbsync.GetUserPropsRequest,
 	) (*pbsync.GetUserPropsResponse, error)
+	GetVehicleProps(
+		ctx context.Context,
+		req *pbsync.GetVehiclePropsRequest,
+	) (*pbsync.GetVehiclePropsResponse, error)
+	SetVehicleProps(
+		ctx context.Context,
+		req *pbsync.SetVehiclePropsRequest,
+	) (*pbsync.SetVehiclePropsResponse, error)
 	AddColleagueActivity(
 		ctx context.Context,
 		req *pbsync.AddColleagueActivityRequest,
@@ -139,6 +148,7 @@ type Store struct {
 	citizensStore citizensstore.IStore
 	jobsStore     jobsstore.IStore
 	livemapStore  livemapstore.IStore
+	vehiclesStore vehiclesstore.IStore
 }
 
 func New(
@@ -150,6 +160,7 @@ func New(
 	citizensStore citizensstore.IStore,
 	jobsStore jobsstore.IStore,
 	livemapStore livemapstore.IStore,
+	vehiclesStore vehiclesstore.IStore,
 	enricher mstlystcdata.IEnricher,
 	notifi notifi.INotifi,
 ) IStore {
@@ -164,5 +175,6 @@ func New(
 		citizensStore: citizensStore,
 		jobsStore:     jobsStore,
 		livemapStore:  livemapStore,
+		vehiclesStore: vehiclesStore,
 	}
 }
