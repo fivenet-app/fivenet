@@ -56,7 +56,7 @@ const schema = z.object({
     description: z.coerce.string().max(255),
     color: z.coerce.string().max(7),
     icon: z.string().max(128).optional(),
-    contentTitle: z.coerce.string().min(3).max(2048),
+    contentTitle: z.coerce.string().max(2048),
     content: z.string().optional(),
     contentState: z.union([z.coerce.string().min(1).max(512), z.coerce.string().length(0)]),
     category: z.custom<Category>().optional(),
@@ -321,6 +321,8 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
                 description: { key: 'notifications.templates.created.title', parameters: {} },
                 type: NotificationType.SUCCESS,
             });
+
+            syncSnapshot();
 
             await navigateTo({
                 name: 'documents-templates-id',
@@ -734,7 +736,6 @@ const formRef = useTemplateRef('formRef');
                                     class="flex flex-1 flex-col"
                                     name="content"
                                     :label="`${$t('common.content')} ${$t('common.template')}`"
-                                    required
                                     :ui="{ container: 'flex flex-1 overflow-y-hidden flex-col', error: 'hidden' }"
                                 >
                                     <ClientOnly>

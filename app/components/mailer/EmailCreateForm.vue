@@ -137,7 +137,7 @@ function setFromProps(): void {
 setFromProps();
 watch(email, setFromProps);
 
-watch(hasUnsavedChanges, (value) => emit('dirty-change', value), { immediate: true });
+watch(hasUnsavedChanges, (value) => emit('dirty-change', value), { immediate: true, flush: 'sync' });
 
 async function createOrUpdateEmail(values: Schema): Promise<undefined> {
     normalizeAccessEntryIds(values.access.users);

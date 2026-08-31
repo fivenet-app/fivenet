@@ -512,7 +512,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 variant="link"
                                 icon="i-mdi-drama-masks"
                                 color="primary"
-                                :disabled="!activeChar || activeChar.jobGrade >= role.grade"
+                                :disabled="!activeChar || activeChar.jobGrade <= role.grade"
                                 @click="
                                     confirmImpersonateModal.open({
                                         confirm: async () => role && impersonateRole(role.grade),
