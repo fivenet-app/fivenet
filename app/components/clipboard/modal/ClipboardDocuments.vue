@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import type { TableColumn } from '@nuxt/ui';
+import { UButton, UCheckbox, UTooltip } from '#components';
+import type { TableColumn, TableRow } from '@nuxt/ui';
+import { h } from 'vue';
 import { type ClipboardDocument, useClipboardStore } from '~/stores/clipboard';
 import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -29,32 +31,37 @@ const { t } = useI18n();
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
-const { documents } = storeToRefs(clipboardStore);
+const { documents, activeStack } = storeToRefs(clipboardStore);
 
-const selected = ref<number[]>([]);
+const rowSelection = ref<Record<string, boolean>>(
+    props.specs ? Object.fromEntries(activeStack.value.documents.map((document) => [String(document.id), true])) : {},
+);
+const selected = computed(() =>
+    documents.value.filter((document) => rowSelection.value[String(document.id)]).map((document) => document.id),
+);
+const getRowId = (document: ClipboardDocument) => String(document.id);
 
 async function select(): Promise<void> {
     const selectedLength = selected.value.length;
-    if (props.specs) {
-        if (props.specs.min !== undefined && selectedLength >= props.specs.min) {
-            emit('statisfied', true);
-        } else if (props.specs.max !== undefined && selectedLength === props.specs.max) {
-            emit('statisfied', true);
-        } else {
-            emit('statisfied', false);
-        }
-    } else {
+    if (!props.specs) {
         emit('statisfied', true);
+        return;
     }
+
+    emit(
+        'statisfied',
+        (!props.specs.required || selectedLength > 0) &&
+            selectedLength >= (props.specs.min ?? 0) &&
+            (props.specs.max === undefined || props.specs.max <= 0 || selectedLength <= props.specs.max),
+    );
 }
 
 watch(selected, () => select());
 
 async function remove(item: number, notify: boolean): Promise<void> {
-    const idx = selected.value.indexOf(item);
-    if (idx !== undefined && idx > -1) {
-        selected.value.splice(idx, 1);
-    }
+    rowSelection.value = Object.fromEntries(
+        Object.entries(rowSelection.value).filter(([documentId]) => documentId !== String(item)),
+    );
 
     clipboardStore.removeDocument(item);
     if (notify) {
@@ -73,7 +80,7 @@ async function removeAll(): Promise<void> {
     toRemove.forEach((v) => {
         remove(v, false);
     });
-    selected.value = [];
+    rowSelection.value = {};
 
     if (props.specs !== undefined) {
         emit('statisfied', false);
@@ -94,7 +101,27 @@ const columns = computed(() =>
         [
             props.showSelect
                 ? {
-                      id: 'actions',
+                      id: 'select',
+                      header: ({ table }) =>
+                          props.specs?.max === 1
+                              ? h('span', { class: 'block h-8' })
+                              : h(UCheckbox, {
+                                    modelValue: table.getIsSomePageRowsSelected()
+                                        ? 'indeterminate'
+                                        : table.getIsAllPageRowsSelected(),
+                                    'onUpdate:modelValue': (value: unknown) => table.toggleAllPageRowsSelected(!!value),
+                                }),
+                      cell: ({ row }) =>
+                          h(UCheckbox, {
+                              modelValue: row.getIsSelected(),
+                              ui: { label: 'hidden' },
+                              'onUpdate:modelValue': (value: unknown) => row.toggleSelected(!!value),
+                          }),
+                      meta: {
+                          class: {
+                              td: 'pe-0 px-4 py-1.5',
+                          },
+                      },
                   }
                 : undefined,
             {
@@ -107,9 +134,51 @@ const columns = computed(() =>
                 header: t('common.creator'),
                 cell: ({ row }) => h('span', {}, `${row.original.creator?.firstname} ${row.original.creator?.lastname}`),
             },
-            {
-                id: 'delete',
-            },
+            !props.specs
+                ? {
+                      id: 'delete',
+                      header: () =>
+                          h(
+                              'div',
+                              { class: 'flex h-6 items-center justify-center' },
+                              selected.value.length > 0
+                                  ? h(
+                                        UTooltip,
+                                        { text: t('common.delete') },
+                                        {
+                                            default: () =>
+                                                h(UButton, {
+                                                    variant: 'link',
+                                                    icon: 'i-mdi-delete',
+                                                    color: 'error',
+                                                    size: 'xs',
+                                                    onClick: removeAll,
+                                                }),
+                                        },
+                                    )
+                                  : undefined,
+                          ),
+                      cell: ({ row }) =>
+                          h(
+                              'div',
+                              { class: 'flex h-6 items-center justify-center' },
+                              h(
+                                  UTooltip,
+                                  { text: t('common.delete') },
+                                  {
+                                      default: () =>
+                                          h(UButton, {
+                                              variant: 'link',
+                                              icon: 'i-mdi-delete',
+                                              color: 'error',
+                                              size: 'xs',
+                                              onClick: () => remove(row.original.id, true),
+                                          }),
+                                  },
+                              ),
+                          ),
+                  }
+                : undefined,
         ] as TableColumn<ClipboardDocument>[]
     ).filter((c) => c !== undefined),
 );
@@ -122,10 +191,16 @@ watch(props, async (newVal) => {
                 clipboardStore.activeStack.documents.push(clipboardStore.documents.find((d) => d.id === v)!),
             );
         } else if (documents.value && documents.value[0]) {
-            selected.value.unshift(documents.value[0].id);
+            rowSelection.value = { [getRowId(documents.value[0])]: true };
         }
     }
 });
+
+function onSelect(_event: Event, row: TableRow<ClipboardDocument>): void {
+    if (!props.showSelect) return;
+    if (props.specs?.max === 1 && !row.getIsSelected()) rowSelection.value = {};
+    row.toggleSelected(!row.getIsSelected());
+}
 </script>
 
 <template>
@@ -135,39 +210,14 @@ watch(props, async (newVal) => {
             <slot name="header" />
         </h3>
 
-        <UTable :columns="columns" :data="documents" :empty="$t('common.not_found', [$t('common.citizen', 2)])">
-            <template #actions-cell="{ row }">
-                <URadioGroup
-                    v-if="specs && specs.max && specs.max === 1"
-                    :model-value="selected[0]"
-                    name="selected"
-                    :items="[row.original.id]"
-                    value-key="id"
-                    :ui="{ label: 'hidden' }"
-                    @update:model-value="(v) => (selected = [v])"
-                />
-                <UCheckboxGroup
-                    v-else
-                    :key="row.original.id"
-                    v-model="selected"
-                    name="selected"
-                    :items="[row.original.id!]"
-                    value-key="id"
-                    :ui="{ label: 'hidden' }"
-                />
-            </template>
-
-            <template v-if="selected.length > 0" #actions-header>
-                <UTooltip :text="$t('common.delete')">
-                    <UButton variant="link" icon="i-mdi-delete" color="error" size="xs" @click="removeAll()" />
-                </UTooltip>
-            </template>
-
-            <template #delete-cell="{ row }">
-                <UTooltip :text="$t('common.delete')">
-                    <UButton variant="link" icon="i-mdi-delete" color="error" @click="remove(row.original.id!, true)" />
-                </UTooltip>
-            </template>
-        </UTable>
+        <UTable
+            v-model:row-selection="rowSelection"
+            :columns="columns"
+            :data="documents"
+            :get-row-id="getRowId"
+            :row-selection-options="{ enableRowSelection: showSelect }"
+            :empty="$t('common.not_found', [$t('common.citizen', 2)])"
+            @select="onSelect"
+        />
     </div>
 </template>

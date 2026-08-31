@@ -1,11 +1,12 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import ClipboardCitizens from '~/components/clipboard/modal/ClipboardCitizens.vue';
 import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.vue';
 import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
 import List from '~/components/documents/templates/List.vue';
 import RequirementsList from '~/components/documents/templates/RequirementsList.vue';
 import { useClipboardStore } from '~/stores/clipboard';
-import type { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates/templates';
+import type { ObjectSpecs, TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates/templates';
 
 const clipboardStore = useClipboardStore();
 
@@ -21,8 +22,13 @@ const steps = ref<{ selectTemplate: boolean; selectClipboard: boolean }>({
     selectClipboard: false,
 });
 
-const requirementTypes = ['citizens', 'documents', 'vehicles'] as const;
-type RequirementType = (typeof requirementTypes)[number];
+const requirementDefinitions = [
+    { type: 'citizens', key: 'users', name: 'citizen' },
+    { type: 'documents', key: 'documents', name: 'document' },
+    { type: 'vehicles', key: 'vehicles', name: 'vehicle' },
+] as const;
+
+type RequirementType = (typeof requirementDefinitions)[number]['type'];
 
 const reqStatus = ref<Record<RequirementType, boolean>>({
     citizens: false,
@@ -30,11 +36,9 @@ const reqStatus = ref<Record<RequirementType, boolean>>({
     vehicles: false,
 });
 
-const readyToCreate = ref<boolean>(false);
-
-watch(reqStatus.value, () => {
-    readyToCreate.value = requirementTypes.every((type) => reqStatus.value[type]);
-});
+const readyToCreate = computed(() =>
+    requirementDefinitions.every(({ type, key }) => !hasRequirement(reqs.value?.[key]) || reqStatus.value[type]),
+);
 
 const documentsDocuments = await useDocumentsDocuments();
 
@@ -49,29 +53,41 @@ function clipboardComponent(type: RequirementType) {
     }
 }
 
+function hasRequirement(specs?: ObjectSpecs): boolean {
+    return !!specs && (specs.required === true || (specs.min ?? 0) > 0 || (specs.max ?? 0) > 0);
+}
+
 async function selectTemplate(t?: TemplateShort | undefined): Promise<void> {
     if (t) {
         template.value = t;
-        if (t.schema) {
-            reqs.value = t.schema?.requirements;
-            clipboardStore.clearActiveStack();
-            requirementTypes.forEach((type) => {
-                const required = reqs.value?.[type === 'citizens' ? 'users' : type];
-                let status = true;
-                if (required) {
-                    clipboardStore.promoteToActiveStack(type);
-                    status = clipboardStore.checkRequirements(required, type);
-                }
-                reqStatus.value[type] = status;
-            });
-            steps.value.selectTemplate = false;
-            steps.value.selectClipboard = true;
-        } else {
+        const requirements = t.schema?.requirements;
+
+        if (!requirements) {
             await documentsDocuments.createDocument(template.value.id);
             emits('close', false);
+            return;
         }
+
+        reqs.value = requirements;
+        reqStatus.value = {
+            citizens: false,
+            documents: false,
+            vehicles: false,
+        };
+        clipboardStore.clearActiveStack();
+        requirementDefinitions.forEach(({ type, key }) => {
+            const specs = requirements[key];
+            if (hasRequirement(specs)) {
+                reqStatus.value[type] = clipboardStore.checkRequirements(specs!, type);
+                clipboardStore.promoteToActiveStack(type);
+            } else {
+                reqStatus.value[type] = true;
+            }
+        });
+        steps.value.selectTemplate = false;
+        steps.value.selectClipboard = true;
     } else {
-        requirementTypes.forEach((type) => {
+        requirementDefinitions.forEach(({ type }) => {
             reqStatus.value[type] = false;
         });
         template.value = undefined;
@@ -95,10 +111,16 @@ async function clipboardDialog(): Promise<void> {
     emits('close', false);
 }
 
-const filteredRequirementTypes = computed(() => {
+const requirementTypes = computed(() => {
     if (!reqs.value) return [];
-    return requirementTypes.filter((type) => reqs.value && reqs.value[type === 'citizens' ? 'users' : type]);
+    return requirementDefinitions.filter(({ key }) => reqs.value?.[key] !== undefined);
 });
+
+const schema = z.object({
+    title: z.string().max(128).optional(),
+});
+
+const query = useSearchForm('documents-templates', schema);
 </script>
 
 <template>
@@ -107,7 +129,20 @@ const filteredRequirementTypes = computed(() => {
         :ui="{ container: 'flex-1', content: 'min-h-[70%]', title: 'flex flex-row gap-2 justify-between', body: 'h-full' }"
     >
         <template #title>
-            <span class="flex-1">{{ $t('common.template', 2) }}{{ template ? ` - ${template?.title}` : '' }}</span>
+            <div class="relative flex flex-1 items-center gap-2">
+                <div class="flex items-center justify-center gap-2">
+                    <UIcon
+                        v-if="template"
+                        class="shrink-0"
+                        :class="`text-${template.color ?? 'primary'}`"
+                        :name="template.icon ? convertComponentIconNameToDynamic(template.icon) : 'i-mdi-file-outline'"
+                    />
+                    <span>{{ template?.title ?? $t('common.template', 2) }}</span>
+                </div>
+                <span class="pointer-events-none absolute inset-x-0 text-center text-xs text-muted">
+                    {{ $t(template ? 'common.select_clipboard_items' : 'common.select_template_or_blank') }}
+                </span>
+            </div>
         </template>
 
         <template #body>
@@ -122,35 +157,58 @@ const filteredRequirementTypes = computed(() => {
 
                     <USeparator class="my-4" />
 
-                    <List @selected="selectTemplate($event)" />
+                    <List :search-title="query.title" @selected="selectTemplate($event)" />
                 </template>
+
                 <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
                     <div>
-                        <div v-for="type in filteredRequirementTypes" :key="type">
+                        <template v-for="(requirement, index) in requirementTypes" :key="requirement.type">
                             <component
-                                :is="clipboardComponent(type)"
+                                :is="clipboardComponent(requirement.type)"
                                 v-model:submit="submit"
-                                :specs="reqs[type === 'citizens' ? 'users' : type]!"
-                                @statisfied="(v: boolean) => (reqStatus[type] = v)"
+                                :specs="reqs[requirement.key]!"
+                                @statisfied="(v: boolean) => (reqStatus[requirement.type] = v)"
                                 @close="$emit('close', false)"
                             >
                                 <template #header>
                                     <span class="text-sm">
                                         <RequirementsList
-                                            :name="$t('common.' + type.slice(0, -1), 2)"
-                                            :plural="$t('common.' + type.slice(0, -1), 2)"
-                                            :specs="reqs[type === 'citizens' ? 'users' : type]!"
+                                            :name="$t('common.' + requirement.name, 2)"
+                                            :plural="$t('common.' + requirement.name, 2)"
+                                            :specs="reqs[requirement.key]!"
+                                            :fulfilled="reqStatus[requirement.type]"
                                         />
                                     </span>
                                 </template>
                             </component>
-                        </div>
+
+                            <USeparator v-if="index < requirementTypes.length - 1" class="my-2" />
+                        </template>
                     </div>
                 </div>
             </div>
         </template>
 
         <template #footer>
+            <UForm
+                v-if="steps.selectTemplate"
+                class="mx-auto my-2 flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-2"
+                :schema="schema"
+                :state="query"
+            >
+                <UFormField class="flex-1" name="title">
+                    <UInput
+                        ref="inputRef"
+                        v-model="query.title"
+                        class="w-full"
+                        type="text"
+                        name="title"
+                        :placeholder="$t('common.template')"
+                        leading-icon="i-mdi-search"
+                    />
+                </UFormField>
+            </UForm>
+
             <UFieldGroup
                 v-if="template !== undefined && reqs !== undefined && steps.selectClipboard"
                 class="inline-flex w-full"

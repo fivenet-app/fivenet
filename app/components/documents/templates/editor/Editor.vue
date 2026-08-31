@@ -8,7 +8,7 @@ import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
+import { enumToAccessLevelEnums, normalizeAccessEntryIds, type AccessType } from '~/components/partials/access/helpers';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -17,6 +17,7 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { TemplateBlock, TemplateBlockEnd } from '~/composables/tiptap/extensions/TemplateBlock';
 import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
+import { CLIPBOARD_MAX_ITEMS } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
 import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
@@ -66,6 +67,23 @@ const schema = z.object({
         qualifications: qualificationAccessEntries(t).max(0).default([]),
     }),
     workflow: zWorkflow,
+    requirements: z.object({
+        users: z.object({
+            required: z.boolean(),
+            min: z.number().min(0).max(CLIPBOARD_MAX_ITEMS),
+            max: z.number().min(0).max(CLIPBOARD_MAX_ITEMS),
+        }),
+        documents: z.object({
+            required: z.boolean(),
+            min: z.number().min(0).max(CLIPBOARD_MAX_ITEMS),
+            max: z.number().min(0).max(CLIPBOARD_MAX_ITEMS),
+        }),
+        vehicles: z.object({
+            required: z.boolean(),
+            min: z.number().min(0).max(CLIPBOARD_MAX_ITEMS),
+            max: z.number().min(0).max(CLIPBOARD_MAX_ITEMS),
+        }),
+    }),
     approval: z
         .object({
             enabled: z.boolean().default(false),
@@ -136,6 +154,23 @@ const state = reactive<Schema>({
         users: [],
         qualifications: [],
     },
+    requirements: {
+        users: {
+            required: false,
+            min: 0,
+            max: 0,
+        },
+        documents: {
+            required: false,
+            min: 0,
+            max: 0,
+        },
+        vehicles: {
+            required: false,
+            min: 0,
+            max: 0,
+        },
+    },
     workflow: {
         autoClose: {
             autoClose: false,
@@ -181,30 +216,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await createOrUpdateTemplate(event.data, props.templateId).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-const schemaEditor = ref<TemplateRequirements>({
-    users: {
-        required: false,
-        min: 0,
-        max: 0,
-    },
-
-    documents: {
-        required: false,
-        min: 0,
-        max: 0,
-    },
-
-    vehicles: {
-        required: false,
-        min: 0,
-        max: 0,
-    },
-});
-
-const { syncSnapshot } = useSnapshotChanges(() => ({
-    state,
-    schemaEditor: schemaEditor.value,
-}));
+const { syncSnapshot } = useSnapshotChanges(state);
 
 const accessTypes: AccessType[] = [{ label: t('common.job', 2), value: 'job' }];
 const contentAccessTypes: AccessType[] = [
@@ -212,17 +224,27 @@ const contentAccessTypes: AccessType[] = [
     { label: t('common.job', 2), value: 'job' },
 ];
 
-async function createOrUpdateTemplate(values: Schema, templateId?: number): Promise<void> {
-    values.contentAccess.users.forEach((user) => user.id < 0 && (user.id = 0));
-    values.contentAccess.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+type Requirements = Schema['requirements'];
 
-    values.jobAccess.forEach((job) => job.id < 0 && (job.id = 0));
+function normalizeRequirements(requirements?: TemplateRequirements): Requirements {
+    const specs = (value?: TemplateRequirements['users']): Requirements['users'] => ({
+        required: value?.required ?? false,
+        min: value?.min ?? 0,
+        max: value?.max ?? 0,
+    });
 
-    const tRequirements: TemplateRequirements = {
-        users: schemaEditor.value.users,
-        documents: schemaEditor.value.documents,
-        vehicles: schemaEditor.value.vehicles,
+    return {
+        users: specs(requirements?.users),
+        documents: specs(requirements?.documents),
+        vehicles: specs(requirements?.vehicles),
     };
+}
+
+async function createOrUpdateTemplate(values: Schema, templateId?: number): Promise<void> {
+    normalizeAccessEntryIds(values.contentAccess.users);
+    normalizeAccessEntryIds(values.contentAccess.jobs);
+
+    normalizeAccessEntryIds(values.jobAccess);
 
     const req: CreateTemplateRequest | UpdateTemplateRequest = {
         template: {
@@ -235,9 +257,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
             // Handle templates as raw HTML content instead of TipTap JSON
             content: values.content ?? '',
             state: values.contentState,
-            schema: {
-                requirements: tRequirements,
-            },
+            schema: { requirements: values.requirements },
             contentAccess: values.contentAccess,
             jobAccess: values.jobAccess,
             category: values.category,
@@ -353,6 +373,8 @@ function setValuesFromTemplate(tpl: Template): void {
         qualifications: [],
     };
 
+    state.requirements = normalizeRequirements(tpl.schema?.requirements);
+
     const autoCloseDuration = fromDuration(tpl.workflow?.autoCloseSettings?.duration);
     state.workflow = {
         reminders: {
@@ -404,12 +426,6 @@ function setValuesFromTemplate(tpl: Template): void {
                 comment: task.comment,
             })) ?? [],
     };
-
-    schemaEditor.value.users = tpl.schema?.requirements?.users;
-
-    schemaEditor.value.documents = tpl.schema?.requirements?.documents;
-
-    schemaEditor.value.vehicles = tpl.schema?.requirements?.vehicles;
 
     syncSnapshot();
 }
@@ -619,15 +635,13 @@ const formRef = useTemplateRef('formRef');
                                             (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
                                         )
                                     "
-                                    required-mode="checkbox"
-                                    hide-other-jobs
                                     name="jobAccess"
                                     full-name
                                 />
                             </UPageCard>
 
                             <UPageCard :title="$t('common.requirements', 2)">
-                                <SchemaEditor v-model="schemaEditor" />
+                                <SchemaEditor v-model="state.requirements" />
                             </UPageCard>
                         </UContainer>
                     </template>

@@ -128,7 +128,7 @@ message TemplateRequirements {
 }
 
 message ObjectSpecs {
-  optional bool required = 1;
+  bool required = 1;
   optional int32 min = 2;
   optional int32 max = 3;
 }

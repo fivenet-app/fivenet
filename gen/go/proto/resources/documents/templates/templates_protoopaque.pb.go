@@ -1026,7 +1026,7 @@ func (b0 TemplateRequirements_builder) Build() *TemplateRequirements {
 
 type ObjectSpecs struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Required    bool                   `protobuf:"varint,1,opt,name=required,proto3,oneof"`
+	xxx_hidden_Required    bool                   `protobuf:"varint,1,opt,name=required,proto3"`
 	xxx_hidden_Min         int32                  `protobuf:"varint,2,opt,name=min,proto3,oneof"`
 	xxx_hidden_Max         int32                  `protobuf:"varint,3,opt,name=max,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
@@ -1083,7 +1083,6 @@ func (x *ObjectSpecs) GetMax() int32 {
 
 func (x *ObjectSpecs) SetRequired(v bool) {
 	x.xxx_hidden_Required = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *ObjectSpecs) SetMin(v int32) {
@@ -1094,13 +1093,6 @@ func (x *ObjectSpecs) SetMin(v int32) {
 func (x *ObjectSpecs) SetMax(v int32) {
 	x.xxx_hidden_Max = v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
-}
-
-func (x *ObjectSpecs) HasRequired() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *ObjectSpecs) HasMin() bool {
@@ -1117,11 +1109,6 @@ func (x *ObjectSpecs) HasMax() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
-func (x *ObjectSpecs) ClearRequired() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Required = false
-}
-
 func (x *ObjectSpecs) ClearMin() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
 	x.xxx_hidden_Min = 0
@@ -1135,7 +1122,7 @@ func (x *ObjectSpecs) ClearMax() {
 type ObjectSpecs_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Required *bool
+	Required bool
 	Min      *int32
 	Max      *int32
 }
@@ -1144,10 +1131,7 @@ func (b0 ObjectSpecs_builder) Build() *ObjectSpecs {
 	m0 := &ObjectSpecs{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Required != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
-		x.xxx_hidden_Required = *b.Required
-	}
+	x.xxx_hidden_Required = b.Required
 	if b.Min != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
 		x.xxx_hidden_Min = *b.Min
@@ -1765,12 +1749,11 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\n" +
 	"_documentsB\b\n" +
 	"\x06_usersB\v\n" +
-	"\t_vehicles\"y\n" +
-	"\vObjectSpecs\x12\x1f\n" +
-	"\brequired\x18\x01 \x01(\bH\x00R\brequired\x88\x01\x01\x12\x15\n" +
-	"\x03min\x18\x02 \x01(\x05H\x01R\x03min\x88\x01\x01\x12\x15\n" +
-	"\x03max\x18\x03 \x01(\x05H\x02R\x03max\x88\x01\x01B\v\n" +
-	"\t_requiredB\x06\n" +
+	"\t_vehicles\"g\n" +
+	"\vObjectSpecs\x12\x1a\n" +
+	"\brequired\x18\x01 \x01(\bR\brequired\x12\x15\n" +
+	"\x03min\x18\x02 \x01(\x05H\x00R\x03min\x88\x01\x01\x12\x15\n" +
+	"\x03max\x18\x03 \x01(\x05H\x01R\x03max\x88\x01\x01B\x06\n" +
 	"\x04_minB\x06\n" +
 	"\x04_max\"i\n" +
 	"\x11TemplateSelection\x12\x19\n" +

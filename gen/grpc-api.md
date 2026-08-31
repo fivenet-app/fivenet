@@ -4032,7 +4032,7 @@ Policy snapshot applied to a specific version
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `required` | [bool](#bool) | optional |  |
+| `required` | [bool](#bool) |  |  |
 | `min` | [int32](#int32) | optional |  |
 | `max` | [int32](#int32) | optional |  |
 

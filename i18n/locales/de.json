@@ -360,6 +360,8 @@
         "citizen": "Bürger | Bürger",
         "vehicle": "Fahrzeug | Fahrzeuge",
         "document": "Dokument | Dokumente",
+        "select_template_or_blank": "Vorlage auswählen oder ohne Vorlage fortfahren",
+        "select_clipboard_items": "Erforderliche Inhalte aus der Zwischenablage auswählen",
         "job": "Beruf | Berufe",
         "livemap": "Karte",
         "control_panel": "Einstellungen",

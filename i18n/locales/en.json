@@ -360,6 +360,8 @@
         "citizen": "Citizen | Citizens",
         "vehicle": "Vehicle | Vehicles",
         "document": "Document | Documents",
+        "select_template_or_blank": "Select a template or continue without one",
+        "select_clipboard_items": "Select the required clipboard items",
         "job": "Job | Jobs",
         "livemap": "Map",
         "control_panel": "Control Panel",

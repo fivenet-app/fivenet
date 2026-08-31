@@ -124,11 +124,10 @@ func TestStripTemplateActionSpansUnwrapsNestedActions(t *testing.T) {
 func TestValidateTemplateRequirementsAfterResolution(t *testing.T) {
 	t.Parallel()
 
-	required := true
 	tmpl := &documentstemplates.Template{
 		Schema: &documentstemplates.TemplateSchema{
 			Requirements: &documentstemplates.TemplateRequirements{
-				Users: &documentstemplates.ObjectSpecs{Required: &required, Min: int32Ptr(2)},
+				Users: &documentstemplates.ObjectSpecs{Required: true, Min: int32Ptr(2)},
 			},
 		},
 	}

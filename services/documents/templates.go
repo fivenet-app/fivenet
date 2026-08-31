@@ -6,6 +6,7 @@ import (
 	"errors"
 	"html/template"
 	"strings"
+	"sync"
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
@@ -59,6 +60,25 @@ const (
 )
 
 var ErrTemplateActiveChar = errors.New("failed to resolve active character/user")
+
+var sproutTemplateFuncs = sync.OnceValue(func() sprout.FunctionMap {
+	return sprout.New(
+		sprout.WithRegistries(
+			checksum.NewRegistry(),
+			conversion.NewRegistry(),
+			encoding.NewRegistry(),
+			sproutmaps.NewRegistry(),
+			numeric.NewRegistry(),
+			semver.NewRegistry(),
+			sproutslices.NewRegistry(),
+			std.NewRegistry(),
+			sproutstrings.NewRegistry(),
+			sprouttime.NewRegistry(),
+			uniqueid.NewRegistry(),
+		),
+		sprout.WithSafeFuncs(true),
+	).Build()
+})
 
 func isTemplateActionSpan(node *htmlnode.Node) bool {
 	if node.Type != htmlnode.ElementNode || node.Data != "span" {
@@ -121,7 +141,7 @@ func stripTemplateActionSpans(content string) (string, error) {
 		}
 	}
 
-	return output.String(), nil
+	return htmlnode.UnescapeString(output.String()), nil
 }
 
 var templateSubjectAccessOptions = access.SubjectAccessOptions{
@@ -505,22 +525,7 @@ func (s *Server) renderTemplate(
 	docTmpl *documentstemplates.Template,
 	data *resolvedTemplateData,
 ) (string, string, string, error) {
-	templateFuncs := sprout.New(
-		sprout.WithRegistries(
-			checksum.NewRegistry(),
-			conversion.NewRegistry(),
-			encoding.NewRegistry(),
-			sproutmaps.NewRegistry(),
-			numeric.NewRegistry(),
-			semver.NewRegistry(),
-			sproutslices.NewRegistry(),
-			std.NewRegistry(),
-			sproutstrings.NewRegistry(),
-			sprouttime.NewRegistry(),
-			uniqueid.NewRegistry(),
-		),
-		sprout.WithSafeFuncs(true),
-	).Build()
+	templateFuncs := sproutTemplateFuncs()
 
 	// Render Title template
 	titleTpl, err := template.

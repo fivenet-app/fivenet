@@ -187,9 +187,9 @@ export interface TemplateRequirements {
  */
 export interface ObjectSpecs {
     /**
-     * @generated from protobuf field: optional bool required = 1
+     * @generated from protobuf field: bool required = 1
      */
-    required?: boolean;
+    required: boolean;
     /**
      * @generated from protobuf field: optional int32 min = 2
      */
@@ -729,13 +729,14 @@ export const TemplateRequirements = new TemplateRequirements$Type();
 class ObjectSpecs$Type extends MessageType<ObjectSpecs> {
     constructor() {
         super("resources.documents.templates.ObjectSpecs", [
-            { no: 1, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 1, name: "required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "min", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "max", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<ObjectSpecs>): ObjectSpecs {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.required = false;
         if (value !== undefined)
             reflectionMergePartial<ObjectSpecs>(this, message, value);
         return message;
@@ -745,7 +746,7 @@ class ObjectSpecs$Type extends MessageType<ObjectSpecs> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional bool required */ 1:
+                case /* bool required */ 1:
                     message.required = reader.bool();
                     break;
                 case /* optional int32 min */ 2:
@@ -766,8 +767,8 @@ class ObjectSpecs$Type extends MessageType<ObjectSpecs> {
         return message;
     }
     internalBinaryWrite(message: ObjectSpecs, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional bool required = 1; */
-        if (message.required !== undefined)
+        /* bool required = 1; */
+        if (message.required !== false)
             writer.tag(1, WireType.Varint).bool(message.required);
         /* optional int32 min = 2; */
         if (message.min !== undefined)

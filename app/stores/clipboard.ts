@@ -21,33 +21,7 @@ import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
  * @property {string | undefined} phoneNumber - The phone number of the user.
  * @property {string | undefined} profilePicture - The profile picture URL of the user.
  */
-export class ClipboardUser {
-    public userId: number | undefined;
-    public job: string | undefined;
-    public jobLabel: string | undefined;
-    public jobGrade: number | undefined;
-    public jobGradeLabel: string | undefined;
-    public firstname: string;
-    public lastname: string;
-    public dateofbirth: string | undefined;
-    public phoneNumber: string | undefined;
-    public profilePicture: string | undefined;
-
-    constructor(u: UserShort | User) {
-        this.userId = u.userId;
-        this.job = u.job;
-        this.jobLabel = u.jobLabel;
-        this.jobGrade = u.jobGrade;
-        this.jobGradeLabel = u.jobGradeLabel;
-        this.firstname = u.firstname;
-        this.lastname = u.lastname;
-        this.dateofbirth = u.dateofbirth;
-        this.phoneNumber = u.phoneNumber;
-        this.profilePicture = u.profilePicture;
-
-        return this;
-    }
-}
+export type ClipboardUser = UserShort;
 
 /**
  * Represents a document in the clipboard.
@@ -63,34 +37,19 @@ export class ClipboardUser {
  * @property {string} meta.state - The state of the document.
  * @property {boolean} meta.approved - Whether the document is approved.
  */
-export class ClipboardDocument {
-    public id: number;
-    public createdAt?: string;
-    public title: string;
-    public creator: ClipboardUser;
-    public category: Category | undefined;
-    public meta: {
+export interface ClipboardDocument {
+    id: number;
+    createdAt?: string;
+    title: string;
+    creator: ClipboardUser;
+    category?: Category;
+    meta: {
         closed: boolean;
         draft: boolean;
         public: boolean;
         state: string;
         approved: boolean;
     };
-
-    constructor(d: Document) {
-        this.id = d.id;
-        this.createdAt = d.createdAt ? toDate(d.createdAt).toJSON() : undefined;
-        this.category = d.category;
-        this.title = d.title;
-        this.meta = {
-            closed: d.meta?.closed || false,
-            draft: d.meta?.draft || false,
-            public: d.meta?.public || false,
-            state: d.meta?.state || '',
-            approved: d.meta?.approved || false,
-        };
-        this.creator = new ClipboardUser(d.creator!);
-    }
 }
 
 /**
@@ -100,18 +59,11 @@ export class ClipboardDocument {
  * @property {string} type - The type of the vehicle.
  * @property {ClipboardUser} owner - The owner of the vehicle.
  */
-export class ClipboardVehicle {
-    public plate: string;
-    public model: string | undefined;
-    public type: string;
-    public owner: ClipboardUser;
-
-    constructor(v: Vehicle) {
-        this.plate = v.plate;
-        this.model = v.model;
-        this.type = v.type;
-        this.owner = new ClipboardUser(v.owner!);
-    }
+export interface ClipboardVehicle {
+    plate: string;
+    model?: string;
+    type: string;
+    owner: ClipboardUser;
 }
 
 /**
@@ -124,7 +76,7 @@ export function getVehicle(obj: ClipboardVehicle): Vehicle {
         plate: obj.plate,
         model: obj.model,
         type: obj.type,
-        owner: getUser(obj.owner),
+        owner: obj.owner,
     };
 }
 
@@ -135,14 +87,14 @@ export function getVehicle(obj: ClipboardVehicle): Vehicle {
  */
 export function getUser(obj: ClipboardUser): User {
     const u: User = {
-        userId: obj.userId!,
-        job: obj.job!,
+        userId: obj.userId,
+        job: obj.job,
         jobLabel: obj.jobLabel ?? '',
-        jobGrade: obj.jobGrade!,
+        jobGrade: obj.jobGrade,
         jobGradeLabel: obj.jobGradeLabel ?? '',
         jobs: [],
-        firstname: obj.firstname!,
-        lastname: obj.lastname!,
+        firstname: obj.firstname,
+        lastname: obj.lastname,
         dateofbirth: obj.dateofbirth ?? '',
         phoneNumber: obj.phoneNumber ?? '',
         phoneNumbers: [],
@@ -160,8 +112,6 @@ export function getUser(obj: ClipboardUser): User {
  * @returns {DocumentShort} The converted DocumentShort object.
  */
 export function getDocument(obj: ClipboardDocument): DocumentShort {
-    const user = getUser(obj.creator);
-
     const doc: DocumentShort = {
         id: obj.id,
         categoryId: obj.category && obj.category.id ? obj.category.id : 0,
@@ -172,9 +122,9 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
             contentType: ContentType.HTML,
             version: '',
         },
-        creatorId: user.userId,
-        creator: user,
-        creatorJob: user.job,
+        creatorId: obj.creator.userId,
+        creator: obj.creator,
+        creatorJob: obj.creator.job,
         meta: {
             documentId: obj.id,
             closed: obj.meta.closed,
@@ -273,7 +223,32 @@ export const useClipboardStore = defineStore(
             if (documents.value.find((o) => o.id === document.id)) return true;
             if (documents.value.length >= CLIPBOARD_MAX_ITEMS) return false;
 
-            documents.value.unshift(new ClipboardDocument(unref(document)));
+            const d = unref(document);
+            documents.value.unshift({
+                id: d.id,
+                createdAt: d.createdAt ? toDate(d.createdAt).toJSON() : undefined,
+                title: d.title,
+                category: d.category,
+                creator: {
+                    userId: d.creator!.userId,
+                    job: d.creator!.job,
+                    jobLabel: d.creator!.jobLabel,
+                    jobGrade: d.creator!.jobGrade,
+                    jobGradeLabel: d.creator!.jobGradeLabel,
+                    firstname: d.creator!.firstname,
+                    lastname: d.creator!.lastname,
+                    dateofbirth: d.creator!.dateofbirth,
+                    phoneNumber: d.creator!.phoneNumber,
+                    profilePicture: d.creator!.profilePicture,
+                },
+                meta: {
+                    closed: d.meta?.closed || false,
+                    draft: d.meta?.draft || false,
+                    public: d.meta?.public || false,
+                    state: d.meta?.state || '',
+                    approved: d.meta?.approved || false,
+                },
+            });
             return true;
         };
 
@@ -283,6 +258,7 @@ export const useClipboardStore = defineStore(
          */
         const removeDocument = (id: number): void => {
             documents.value = documents.value.filter((o) => o.id !== id);
+            activeStack.value.documents = activeStack.value.documents.filter((o) => o.id !== id);
         };
 
         /**
@@ -290,6 +266,7 @@ export const useClipboardStore = defineStore(
          */
         const clearDocuments = (): void => {
             documents.value = [];
+            activeStack.value.documents = [];
         };
 
         /**
@@ -304,7 +281,19 @@ export const useClipboardStore = defineStore(
             }
             if (users.value.length >= CLIPBOARD_MAX_ITEMS) return false;
 
-            users.value.unshift(new ClipboardUser(unref(user)));
+            const u = unref(user);
+            users.value.unshift({
+                userId: u.userId!,
+                job: u.job,
+                jobLabel: u.jobLabel,
+                jobGrade: u.jobGrade,
+                jobGradeLabel: u.jobGradeLabel,
+                firstname: u.firstname,
+                lastname: u.lastname,
+                dateofbirth: u.dateofbirth,
+                phoneNumber: u.phoneNumber,
+                profilePicture: u.profilePicture,
+            });
             if (active) promoteToActiveStack('citizens');
             return true;
         };
@@ -315,6 +304,7 @@ export const useClipboardStore = defineStore(
          */
         const removeUser = (id: number): void => {
             users.value = users.value.filter((o) => o.userId !== id);
+            activeStack.value.users = activeStack.value.users.filter((o) => o.userId !== id);
         };
 
         /**
@@ -322,6 +312,7 @@ export const useClipboardStore = defineStore(
          */
         const clearUsers = (): void => {
             users.value = [];
+            activeStack.value.users = [];
         };
 
         /**
@@ -332,7 +323,24 @@ export const useClipboardStore = defineStore(
             if (vehicles.value.find((o) => o.plate === vehicle.plate)) return true;
             if (vehicles.value.length >= CLIPBOARD_MAX_ITEMS) return false;
 
-            vehicles.value.unshift(new ClipboardVehicle(unref(vehicle)));
+            const v = unref(vehicle);
+            vehicles.value.unshift({
+                plate: v.plate,
+                model: v.model,
+                type: v.type,
+                owner: {
+                    userId: v.owner!.userId,
+                    job: v.owner!.job,
+                    jobLabel: v.owner!.jobLabel,
+                    jobGrade: v.owner!.jobGrade,
+                    jobGradeLabel: v.owner!.jobGradeLabel,
+                    firstname: v.owner!.firstname,
+                    lastname: v.owner!.lastname,
+                    dateofbirth: v.owner!.dateofbirth,
+                    phoneNumber: v.owner!.phoneNumber,
+                    profilePicture: v.owner!.profilePicture,
+                },
+            });
             return true;
         };
 
@@ -342,6 +350,7 @@ export const useClipboardStore = defineStore(
          */
         const removeVehicle = (plate: string): void => {
             vehicles.value = vehicles.value.filter((o) => o.plate !== plate);
+            activeStack.value.vehicles = activeStack.value.vehicles.filter((o) => o.plate !== plate);
         };
 
         /**
@@ -349,6 +358,7 @@ export const useClipboardStore = defineStore(
          */
         const clearVehicles = (): void => {
             vehicles.value = [];
+            activeStack.value.vehicles = [];
         };
 
         /**
@@ -378,12 +388,12 @@ export const useClipboardStore = defineStore(
             }
 
             // Check minimum length requirement
-            if (typeof reqs.min === 'number' && length < reqs.min) {
+            if (typeof reqs.min === 'number' && reqs.min > 0 && length < reqs.min) {
                 return false;
             }
 
             // Check maximum length requirement
-            if (typeof reqs.max === 'number' && length > reqs.max) {
+            if (typeof reqs.max === 'number' && reqs.max > 0 && length > reqs.max) {
                 return false;
             }
 
