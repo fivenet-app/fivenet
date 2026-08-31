@@ -2,7 +2,6 @@
 <script setup lang="ts">
 import '~/assets/css/herofull-pattern.css';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
-import PageFooter from './components/partials/PageFooter.vue';
 
 useHead({
     title: 'Error occured - FiveNet',
@@ -15,19 +14,34 @@ const props = defineProps<{
 const router = useRouter();
 const route = router.currentRoute;
 
-const buttonDisabled = ref<boolean>(true);
+// This page must still render when app plugins (including i18n) failed to initialize.
+const nuxtApp = useNuxtApp();
+function translate(key: string, fallback: string): string {
+    try {
+        const translator = (nuxtApp as { $t?: unknown }).$t;
+        return typeof translator === 'function' ? String(translator(key)) : fallback;
+    } catch {
+        return fallback;
+    }
+}
 
-onMounted(() => useTimeoutFn(() => (buttonDisabled.value = false), 2000));
+const buttonsDisabled = ref(true);
+const handlingError = ref(false);
 
-async function handleError(url?: string): Promise<void> {
-    if (url === undefined) url = '/';
+async function handleError(url = '/'): Promise<void> {
+    if (handlingError.value) return;
 
-    await clearError();
-    reloadNuxtApp({
-        path: url,
-        persistState: false,
-        ttl: 2000,
-    });
+    handlingError.value = true;
+    try {
+        await clearError();
+        reloadNuxtApp({
+            path: url,
+            persistState: false,
+            ttl: 2000,
+        });
+    } catch {
+        handlingError.value = false;
+    }
 }
 
 const version = APP_VERSION;
@@ -35,12 +49,12 @@ const version = APP_VERSION;
 function copyError(): void {
     if (!props.error) return;
 
-    copyToClipboardWrapper(`**App Error occured - ${new Date().toLocaleString()}**
+    void copyToClipboardWrapper(`**App Error occured - ${new Date().toLocaleString()}**
 \`\`\`
 ${props.error ? JSON.stringify(props.error) : 'Unknown error'}
 \`\`\`
 **Version:** ${version}
-`);
+`).catch(() => undefined);
 }
 
 function setDevConfig(): void {
@@ -51,7 +65,12 @@ function setDevConfig(): void {
 const kbdBlockClasses =
     'inline-flex items-center rounded-sm bg-neutral-100 px-1 text-gray-900 ring-1 ring-inset ring-gray-300 dark:bg-neutral-800 dark:text-white dark:ring-gray-700';
 
-const showClearSiteData = useTimeout(6500);
+const showClearSiteData = ref<boolean>(false);
+
+onMounted(() => {
+    useTimeoutFn(() => (buttonsDisabled.value = false), 2000);
+    useTimeoutFn(() => (showClearSiteData.value = true), 6500);
+});
 
 const isDev = import.meta.dev;
 </script>
@@ -67,7 +86,7 @@ const isDev = import.meta.dev;
             <UButton
                 class="absolute top-4 z-10"
                 icon="i-mdi-home"
-                :label="$t !== undefined ? $t('common.home') : 'Home'"
+                :label="translate('common.home', 'Home')"
                 to="/"
                 color="neutral"
             />
@@ -77,31 +96,23 @@ const isDev = import.meta.dev;
                     <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
                     <h1 class="text-center text-4xl font-bold">
-                        {{ $t !== undefined ? $t('pages.error.title') : 'Error occured' }}
+                        {{ translate('pages.error.title', 'Error occured') }}
                     </h1>
 
                     <p class="text-center text-lg">
-                        {{
-                            $t !== undefined
-                                ? $t('pages.error.subtitle')
-                                : 'A fatal error occured, please try again in a few seconds.'
-                        }}
+                        {{ translate('pages.error.subtitle', 'A fatal error occured, please try again in a few seconds.') }}
                     </p>
                 </template>
 
                 <div class="flex flex-col items-center gap-1">
                     <div class="inline-flex flex-col gap-1">
-                        <p class="text-center font-semibold">
-                            {{ $t !== undefined ? $t('components.debug_info.version') : 'Version' }}:
-                        </p>
+                        <p class="text-center font-semibold">{{ translate('components.debug_info.version', 'Version') }}:</p>
 
                         <pre class="text-wrap" :class="kbdBlockClasses">{{ version }}</pre>
                     </div>
 
                     <div class="inline-flex flex-col gap-1">
-                        <p class="text-center font-semibold">
-                            {{ $t !== undefined ? $t('pages.error.error_message') : 'Error message' }}:
-                        </p>
+                        <p class="text-center font-semibold">{{ translate('pages.error.error_message', 'Error message') }}:</p>
 
                         <span v-if="error">
                             <!-- @vue-ignore -->
@@ -143,8 +154,9 @@ const isDev = import.meta.dev;
                                 color="primary"
                                 icon="i-mdi-home"
                                 size="lg"
-                                :disabled="buttonDisabled"
-                                :label="$t !== undefined ? $t('common.home') : 'Home'"
+                                :disabled="buttonsDisabled || handlingError"
+                                :loading="handlingError"
+                                :label="translate('common.home', 'Home')"
                                 @click="() => handleError()"
                             />
 
@@ -153,8 +165,9 @@ const isDev = import.meta.dev;
                                 color="success"
                                 icon="i-mdi-refresh"
                                 size="lg"
-                                :disabled="buttonDisabled"
-                                :label="$t !== undefined ? $t('common.retry') : 'Retry'"
+                                :disabled="buttonsDisabled || handlingError"
+                                :loading="handlingError"
+                                :label="translate('common.retry', 'Retry')"
                                 @click="() => handleError(route.fullPath)"
                             />
                         </div>
@@ -166,7 +179,7 @@ const isDev = import.meta.dev;
                             color="warning"
                             icon="i-mdi-content-copy"
                             size="lg"
-                            :label="$t !== undefined ? $t('pages.error.copy_error') : 'Copy Error message'"
+                            :label="translate('pages.error.copy_error', 'Copy Error message')"
                             @click="() => copyError()"
                         />
 
@@ -178,7 +191,7 @@ const isDev = import.meta.dev;
                             color="error"
                             icon="i-mdi-restart-alert"
                             size="lg"
-                            :label="$t !== undefined ? $t('components.debug_info.factory_reset') : 'Factory Reset FiveNet App'"
+                            :label="translate('components.debug_info.factory_reset', 'Factory Reset FiveNet App')"
                             variant="soft"
                             external
                             to="/api/clear-site-data"
@@ -189,7 +202,5 @@ const isDev = import.meta.dev;
                 </template>
             </UCard>
         </div>
-
-        <PageFooter />
     </div>
 </template>
