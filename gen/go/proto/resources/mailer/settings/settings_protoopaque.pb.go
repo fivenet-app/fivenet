@@ -124,11 +124,11 @@ var File_resources_mailer_settings_settings_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_settings_settings_proto_rawDesc = "" +
 	"\n" +
-	"(resources/mailer/settings/settings.proto\x12\x19resources.mailer.settings\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\"\xaf\x01\n" +
+	"(resources/mailer/settings/settings.proto\x12\x19resources.mailer.settings\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\"\xb7\x01\n" +
 	"\rEmailSettings\x12\x19\n" +
 	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12D\n" +
-	"\tsignature\x18\x02 \x01(\v2!.resources.common.content.ContentH\x00R\tsignature\x88\x01\x01\x12/\n" +
-	"\x0eblocked_emails\x18\x03 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\rblockedEmailsB\f\n" +
+	"\tsignature\x18\x02 \x01(\v2!.resources.common.content.ContentH\x00R\tsignature\x88\x01\x01\x127\n" +
+	"\x0eblocked_emails\x18\x03 \x03(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05\x92\x01\x02\x10\x19R\rblockedEmailsB\f\n" +
 	"\n" +
 	"_signatureB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings;mailersettingsb\x06proto3"
 

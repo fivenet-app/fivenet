@@ -201,12 +201,12 @@ var File_resources_jobs_user_selector_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_user_selector_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/jobs/user_selector.proto\x12\x0eresources.jobs\"d\n" +
-	"\fUserSelector\x12\x19\n" +
-	"\buser_ids\x18\x01 \x03(\x05R\auserIds\x129\n" +
-	"\x06groups\x18\x02 \x01(\v2!.resources.jobs.GroupUserSelectorR\x06groups\"\x84\x01\n" +
-	"\x11GroupUserSelector\x12\x1b\n" +
-	"\tgroup_ids\x18\x01 \x03(\x03R\bgroupIds\x12'\n" +
+	"\"resources/jobs/user_selector.proto\x12\x0eresources.jobs\"t\n" +
+	"\fUserSelector\x12)\n" +
+	"\buser_ids\x18\x01 \x03(\x05B\x0e\xbaH\v\x92\x01\b\x102\"\x04\x1a\x02 \x00R\auserIds\x129\n" +
+	"\x06groups\x18\x02 \x01(\v2!.resources.jobs.GroupUserSelectorR\x06groups\"\x94\x01\n" +
+	"\x11GroupUserSelector\x12+\n" +
+	"\tgroup_ids\x18\x01 \x03(\x03B\x0e\xbaH\v\x92\x01\b\x10\x05\"\x04\"\x02 \x00R\bgroupIds\x12'\n" +
 	"\x0finclude_leaders\x18\x02 \x01(\bR\x0eincludeLeaders\x12)\n" +
 	"\x10include_excluded\x18\x03 \x01(\bR\x0fincludeExcludedBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs;jobsb\x06proto3"
 

@@ -489,31 +489,31 @@ var File_resources_permissions_permissions_permissions_proto protoreflect.FileDe
 
 const file_resources_permissions_permissions_permissions_proto_rawDesc = "" +
 	"\n" +
-	"3resources/permissions/permissions/permissions.proto\x12!resources.permissions.permissions\x1a1resources/permissions/attributes/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\xb3\x02\n" +
+	"3resources/permissions/permissions/permissions.proto\x12!resources.permissions.permissions\x1a1resources/permissions/attributes/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\xec\x02\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1c\n" +
-	"\tnamespace\x18\x03 \x01(\tR\tnamespace\x12\x18\n" +
-	"\aservice\x18\x04 \x01(\tR\aservice\x12\x12\n" +
-	"\x04name\x18\x05 \x01(\tR\x04name\x12\x1d\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12%\n" +
+	"\tnamespace\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x180R\tnamespace\x12!\n" +
+	"\aservice\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18@R\aservice\x12\x1c\n" +
+	"\x04name\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x04name\x12'\n" +
 	"\n" +
-	"guard_name\x18\x06 \x01(\tR\tguardName\x12\x10\n" +
-	"\x03val\x18\a \x01(\bR\x03val\x12\x19\n" +
-	"\x05order\x18\b \x01(\x05H\x01R\x05order\x88\x01\x01\x12\x17\n" +
-	"\x04icon\x18\t \x01(\tH\x02R\x04icon\x88\x01\x01B\r\n" +
+	"guard_name\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\tguardName\x12\x10\n" +
+	"\x03val\x18\a \x01(\bR\x03val\x12\"\n" +
+	"\x05order\x18\b \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x01R\x05order\x88\x01\x01\x12!\n" +
+	"\x04icon\x18\t \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x02R\x04icon\x88\x01\x01B\r\n" +
 	"\v_created_atB\b\n" +
 	"\x06_orderB\a\n" +
-	"\x05_icon\"\xa4\x03\n" +
+	"\x05_icon\"\xc9\x03\n" +
 	"\x04Role\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x10\n" +
-	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x14\n" +
-	"\x05grade\x18\x05 \x01(\x05R\x05grade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12O\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1a\n" +
+	"\x03job\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x03job\x12)\n" +
+	"\tjob_label\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\bjobLabel\x88\x01\x01\x12\x1d\n" +
+	"\x05grade\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x05grade\x124\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\rjobGradeLabel\x88\x01\x01\x12O\n" +
 	"\vpermissions\x18\a \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
 	"attributes\x18\b \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +

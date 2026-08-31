@@ -844,15 +844,16 @@ var File_resources_cron_cron_proto protoreflect.FileDescriptor
 
 const file_resources_cron_cron_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/cron/cron.proto\x12\x0eresources.cron\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\"\xe9\x04\n" +
+	"\x19resources/cron/cron.proto\x12\x0eresources.cron\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\"\x82\x05\n" +
 	"\aCronjob\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
-	"\bschedule\x18\x02 \x01(\tR\bschedule\x122\n" +
-	"\x05state\x18\x03 \x01(\x0e2\x1c.resources.cron.CronjobStateR\x05state\x12L\n" +
+	"\bschedule\x18\x02 \x01(\tR\bschedule\x12<\n" +
+	"\x05state\x18\x03 \x01(\x0e2\x1c.resources.cron.CronjobStateB\b\xbaH\x05\x82\x01\x02\x10\x01R\x05state\x12L\n" +
 	"\x12next_schedule_time\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\x10nextScheduleTime\x12O\n" +
 	"\x11last_attempt_time\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x0flastAttemptTime\x88\x01\x01\x12F\n" +
-	"\fstarted_time\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\vstartedTime\x88\x01\x01\x128\n" +
-	"\atimeout\x18\a \x01(\v2\x19.google.protobuf.DurationH\x02R\atimeout\x88\x01\x01\x12/\n" +
+	"\fstarted_time\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\vstartedTime\x88\x01\x01\x12G\n" +
+	"\atimeout\x18\a \x01(\v2\x19.google.protobuf.DurationB\r\xbaH\n" +
+	"\xaa\x01\a\"\x03\b\x88\x0e2\x00H\x02R\atimeout\x88\x01\x01\x12/\n" +
 	"\x04data\x18\b \x01(\v2\x1b.resources.cron.CronjobDataR\x04data\x12\\\n" +
 	"\x14last_completed_event\x18\t \x01(\v2%.resources.cron.CronjobCompletedEventH\x03R\x12lastCompletedEvent\x88\x01\x01B\x14\n" +
 	"\x12_last_attempt_timeB\x0f\n" +
@@ -870,13 +871,13 @@ const file_resources_cron_cron_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"J\n" +
 	"\x15CronjobSchedulerEvent\x121\n" +
-	"\acronjob\x18\x01 \x01(\v2\x17.resources.cron.CronjobR\acronjob\"\xeb\x02\n" +
+	"\acronjob\x18\x01 \x01(\v2\x17.resources.cron.CronjobR\acronjob\"\xf5\x02\n" +
 	"\x15CronjobCompletedEvent\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x1c\n" +
 	"\tcancelled\x18\a \x01(\bR\tcancelled\x129\n" +
-	"\bend_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\aendDate\x123\n" +
-	"\aelapsed\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\aelapsed\x124\n" +
+	"\bend_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\aendDate\x12=\n" +
+	"\aelapsed\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x022\x00R\aelapsed\x124\n" +
 	"\x04data\x18\x05 \x01(\v2\x1b.resources.cron.CronjobDataH\x00R\x04data\x88\x01\x01\x12\x1b\n" +
 	"\tnode_name\x18\x06 \x01(\tR\bnodeName\x12(\n" +
 	"\rerror_message\x18\b \x01(\tH\x01R\ferrorMessage\x88\x01\x01B\a\n" +

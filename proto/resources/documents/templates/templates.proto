@@ -48,10 +48,7 @@ message Template {
     }
   ];
   string content_title = 11 [
-    (buf.validate.field).string = {
-      min_len: 3
-      max_bytes: 10240
-    },
+    (buf.validate.field).string.max_bytes = 10240,
     (codegen.sanitizer.sanitizer) = {enabled: true},
     (tagger.tags) = "alias:\"content_title\""
   ];

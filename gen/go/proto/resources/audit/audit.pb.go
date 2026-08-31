@@ -543,7 +543,7 @@ var File_resources_audit_audit_proto protoreflect.FileDescriptor
 
 const file_resources_audit_audit_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/audit/audit.proto\x12\x0fresources.audit\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x89\x06\n" +
+	"\x1bresources/audit/audit.proto\x12\x0fresources.audit\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x9d\x06\n" +
 	"\n" +
 	"AuditEntry\x12&\n" +
 	"\x02id\x18\x01 \x01(\x03B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x02id\x12=\n" +
@@ -558,9 +558,9 @@ const file_resources_audit_audit_proto_rawDesc = "" +
 	"\x0ftarget_user_job\x18\b \x01(\tH\x04R\rtargetUserJob\x88\x01\x01\x12\x18\n" +
 	"\aservice\x18\t \x01(\tR\aservice\x12\x16\n" +
 	"\x06method\x18\n" +
-	" \x01(\tR\x06method\x124\n" +
-	"\x06action\x18\v \x01(\x0e2\x1c.resources.audit.EventActionR\x06action\x124\n" +
-	"\x06result\x18\f \x01(\x0e2\x1c.resources.audit.EventResultR\x06result\x128\n" +
+	" \x01(\tR\x06method\x12>\n" +
+	"\x06action\x18\v \x01(\x0e2\x1c.resources.audit.EventActionB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06action\x12>\n" +
+	"\x06result\x18\f \x01(\x0e2\x1c.resources.audit.EventResultB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06result\x128\n" +
 	"\x04meta\x18\r \x01(\v2\x1f.resources.audit.AuditEntryMetaH\x05R\x04meta\x88\x01\x01\x12\x17\n" +
 	"\x04data\x18\x0e \x01(\tH\x06R\x04data\x88\x01\x01\x12\"\n" +
 	"\n" +

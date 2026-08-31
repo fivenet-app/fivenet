@@ -630,20 +630,20 @@ var File_resources_vehicles_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"*resources/vehicles/activity/activity.proto\x12\x1bresources.vehicles.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x95\a\n" +
+	"*resources/vehicles/activity/activity.proto\x12\x1bresources.vehicles.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xc4\a\n" +
 	"\x0fVehicleActivity\x120\n" +
 	"\x02id\x18\x01 \x01(\x03B \x9a\x84\x9e\x03\x1balias:\"vehicle_activity.id\"R\x02id\x12l\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampB(\x9a\x84\x9e\x03#alias:\"vehicle_activity.created_at\"H\x00R\tcreatedAt\x88\x01\x01\x129\n" +
-	"\x05plate\x18\x03 \x01(\tB#\x9a\x84\x9e\x03\x1ealias:\"vehicle_activity.plate\"R\x05plate\x12y\n" +
-	"\ractivity_type\x18\x04 \x01(\x0e20.resources.vehicles.activity.VehicleActivityTypeB\"\x9a\x84\x9e\x03\x1dalias:\"vehicle_activity.type\"R\factivityType\x12L\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampB(\x9a\x84\x9e\x03#alias:\"vehicle_activity.created_at\"H\x00R\tcreatedAt\x88\x01\x01\x12@\n" +
+	"\x05plate\x18\x03 \x01(\tB*\x9a\x84\x9e\x03\x1ealias:\"vehicle_activity.plate\"\xbaH\x04r\x02\x18 R\x05plate\x12\x81\x01\n" +
+	"\ractivity_type\x18\x04 \x01(\x0e20.resources.vehicles.activity.VehicleActivityTypeB*\x9a\x84\x9e\x03\x1dalias:\"vehicle_activity.type\"\xbaH\x05\x82\x01\x02\x10\x01R\factivityType\x12S\n" +
 	"\n" +
-	"creator_id\x18\x05 \x01(\x05B(\x9a\x84\x9e\x03#alias:\"vehicle_activity.creator_id\"H\x01R\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\x06 \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x02R\acreator\x88\x01\x01\x12J\n" +
-	"\vcreator_job\x18\a \x01(\tB)\x9a\x84\x9e\x03$alias:\"vehicle_activity.creator_job\"R\n" +
-	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\b \x01(\tH\x03R\x0fcreatorJobLabel\x88\x01\x01\x12G\n" +
-	"\x06reason\x18\t \x01(\tB*\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x1falias:\"vehicle_activity.reason\"H\x04R\x06reason\x88\x01\x01\x12m\n" +
+	"creator_id\x18\x05 \x01(\x05B/\x9a\x84\x9e\x03#alias:\"vehicle_activity.creator_id\"\xbaH\x04\x1a\x02 \x00H\x01R\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\x06 \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x02R\acreator\x88\x01\x01\x12Q\n" +
+	"\vcreator_job\x18\a \x01(\tB0\x9a\x84\x9e\x03$alias:\"vehicle_activity.creator_job\"\xbaH\x04r\x02\x18\x14R\n" +
+	"creatorJob\x128\n" +
+	"\x11creator_job_label\x18\b \x01(\tB\a\xbaH\x04r\x02\x182H\x03R\x0fcreatorJobLabel\x88\x01\x01\x12O\n" +
+	"\x06reason\x18\t \x01(\tB2\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x1falias:\"vehicle_activity.reason\"\xbaH\x05r\x03\x18\xff\x01H\x04R\x06reason\x88\x01\x01\x12m\n" +
 	"\x04data\x18\n" +
 	" \x01(\v20.resources.vehicles.activity.VehicleActivityDataB\"\x9a\x84\x9e\x03\x1dalias:\"vehicle_activity.data\"H\x05R\x04data\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
@@ -652,14 +652,14 @@ const file_resources_vehicles_activity_activity_proto_rawDesc = "" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\t\n" +
 	"\a_reasonB\a\n" +
-	"\x05_data\"w\n" +
+	"\x05_data\"~\n" +
 	"\x13VehicleActivityData\x12P\n" +
-	"\rwanted_change\x18\x01 \x01(\v2).resources.vehicles.activity.WantedChangeH\x00R\fwantedChange:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
-	"\x04data\"\xde\x02\n" +
+	"\rwanted_change\x18\x01 \x01(\v2).resources.vehicles.activity.WantedChangeH\x00R\fwantedChange:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"\xe8\x02\n" +
 	"\fWantedChange\x12\x16\n" +
 	"\x06wanted\x18\x01 \x01(\bR\x06wanted\x12,\n" +
-	"\x0fprevious_wanted\x18\x02 \x01(\bH\x00R\x0epreviousWanted\x88\x01\x01\x12(\n" +
-	"\rwanted_reason\x18\x03 \x01(\tH\x01R\fwantedReason\x88\x01\x01\x12@\n" +
+	"\x0fprevious_wanted\x18\x02 \x01(\bH\x00R\x0epreviousWanted\x88\x01\x01\x122\n" +
+	"\rwanted_reason\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x01R\fwantedReason\x88\x01\x01\x12@\n" +
 	"\twanted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\bwantedAt\x88\x01\x01\x12D\n" +
 	"\vwanted_till\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\n" +
 	"wantedTill\x88\x01\x01\x12\x12\n" +

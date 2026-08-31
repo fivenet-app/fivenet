@@ -459,21 +459,21 @@ var File_resources_jobs_props_props_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_props_props_proto_rawDesc = "" +
 	"\n" +
-	" resources/jobs/props/props.proto\x12\x14resources.jobs.props\x1a!codegen/dbscanner/dbscanner.proto\x1a\x19resources/file/file.proto\x1a&resources/jobs/settings/settings.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xe0\a\n" +
-	"\bJobProps\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12B\n" +
+	" resources/jobs/props/props.proto\x12\x14resources.jobs.props\x1a!codegen/dbscanner/dbscanner.proto\x1a\x19resources/file/file.proto\x1a&resources/jobs/settings/settings.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa2\b\n" +
+	"\bJobProps\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
+	"\tjob_label\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x120\n" +
-	"\x14livemap_marker_color\x18\x04 \x01(\tR\x12livemapMarkerColor\x12G\n" +
-	"\rquick_buttons\x18\x05 \x01(\v2\".resources.jobs.props.QuickButtonsR\fquickButtons\x12,\n" +
-	"\x0fradio_frequency\x18\x06 \x01(\tH\x02R\x0eradioFrequency\x88\x01\x01\x12-\n" +
+	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12M\n" +
+	"\x14livemap_marker_color\x18\x04 \x01(\tB\x1b\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x12livemapMarkerColor\x12G\n" +
+	"\rquick_buttons\x18\x05 \x01(\v2\".resources.jobs.props.QuickButtonsR\fquickButtons\x125\n" +
+	"\x0fradio_frequency\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18\x18H\x02R\x0eradioFrequency\x88\x01\x01\x12-\n" +
 	"\x10discord_guild_id\x18\a \x01(\tH\x03R\x0ediscordGuildId\x88\x01\x01\x12O\n" +
 	"\x11discord_last_sync\x18\b \x01(\v2\x1e.resources.timestamp.TimestampH\x04R\x0fdiscordLastSync\x88\x01\x01\x12`\n" +
 	"\x15discord_sync_settings\x18\t \x01(\v2,.resources.jobs.settings.DiscordSyncSettingsR\x13discordSyncSettings\x12b\n" +
 	"\x14discord_sync_changes\x18\n" +
-	" \x01(\v2+.resources.jobs.settings.DiscordSyncChangesH\x05R\x12discordSyncChanges\x88\x01\x01\x12\x17\n" +
-	"\x04motd\x18\v \x01(\tH\x06R\x04motd\x88\x01\x01\x12%\n" +
+	" \x01(\v2+.resources.jobs.settings.DiscordSyncChangesH\x05R\x12discordSyncChanges\x88\x01\x01\x12!\n" +
+	"\x04motd\x18\v \x01(\tB\b\xbaH\x05r\x03\x18\x80\bH\x06R\x04motd\x88\x01\x01\x12%\n" +
 	"\flogo_file_id\x18\f \x01(\x03H\aR\n" +
 	"logoFileId\x88\x01\x01\x12N\n" +
 	"\tlogo_file\x18\r \x01(\v2\x14.resources.file.FileB\x16\x9a\x84\x9e\x03\x11alias:\"logo_file\"H\bR\blogoFile\x88\x01\x01\x12@\n" +

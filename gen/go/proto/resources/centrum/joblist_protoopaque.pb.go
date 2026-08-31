@@ -177,11 +177,12 @@ var File_resources_centrum_joblist_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_joblist_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/centrum/joblist.proto\x12\x11resources.centrum\">\n" +
-	"\aJobList\x123\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x1f.resources.centrum.JobListEntryR\x04jobs\"G\n" +
-	"\fJobListEntry\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x19\n" +
+	"\x1fresources/centrum/joblist.proto\x12\x11resources.centrum\"H\n" +
+	"\aJobList\x12=\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x1f.resources.centrum.JobListEntryB\b\xbaH\x05\x92\x01\x02\x10\n" +
+	"R\x04jobs\"P\n" +
+	"\fJobListEntry\x12\x1b\n" +
+	"\x04name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x04name\x12\x19\n" +
 	"\x05label\x18\x02 \x01(\tH\x00R\x05label\x88\x01\x01B\b\n" +
 	"\x06_labelBMZKgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
