@@ -128,6 +128,16 @@ describe('TemplateBlock', () => {
         editor.destroy();
     });
 
+    it('preserves braces in block action arguments', () => {
+        const value = "if eq .Status '{pending}'";
+        const editor = new Editor({ extensions: [Document, Paragraph, Text, TemplateBlock, TemplateBlockEnd], content: '' });
+        editor.commands.setContent(`<p>{{ ${value} }}</p>`, { emitUpdate: false });
+
+        expect(editor.getJSON().content?.[0]?.content?.[0]?.attrs?.['data-template-block']).toBe(value);
+
+        editor.destroy();
+    });
+
     it('normalizes break and continue as blocks when TemplateVar is also enabled', () => {
         const editor = new Editor({
             extensions: [Document, Paragraph, Text, TemplateVar, TemplateBlock, TemplateBlockEnd],

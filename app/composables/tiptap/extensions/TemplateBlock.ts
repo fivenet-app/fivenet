@@ -7,7 +7,10 @@ import { isTemplateBlockActionValid } from './TemplateBlockValidation';
 
 export type TemplateActionKind = 'block-start' | 'block-end' | 'comment' | 'raw-control' | 'variable';
 
-const templateActionPattern = /\{\{(-)?\s*([^{}]*?)\s*(-)?\}\}/g;
+// Keep the action body intact. Template expressions may contain braces in
+// quoted function arguments (for example, `default('{unknown}')`), so
+// excluding braces from the body causes the normalizer to lose data.
+const templateActionPattern = /\{\{(-)?\s*([\s\S]*?)\s*(-)?\}\}/g;
 
 export function createTemplateActionMatcher(): RegExp {
     return new RegExp(templateActionPattern.source, templateActionPattern.flags);

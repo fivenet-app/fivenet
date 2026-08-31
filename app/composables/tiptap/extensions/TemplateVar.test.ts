@@ -101,4 +101,39 @@ describe('TemplateVar', () => {
 
         expect(parsed.content?.[0]?.content).toEqual(document.content?.[0]?.content);
     });
+
+    it('preserves function arguments in template variables', () => {
+        const value = "$patient.Props.BloodType | default('k. A.')";
+        const extensions = [Document, Paragraph, Text, TemplateVar];
+        const editor = new Editor({ extensions, content: '' });
+
+        editor.commands.setContent(`<p>{{ ${value} }}</p>`, { emitUpdate: false });
+
+        expect(editor.getJSON().content?.[0]?.content).toEqual([
+            {
+                type: 'templateVar',
+                attrs: {
+                    'data-template-var': value,
+                    'data-left-trim': false,
+                    'data-right-trim': false,
+                },
+            },
+        ]);
+
+        const html = generateHTML(editor.getJSON(), extensions);
+        const parsed = generateJSON(html, extensions);
+        expect(parsed.content?.[0]?.content?.[0]?.attrs?.['data-template-var']).toBe(value);
+
+        editor.destroy();
+    });
+
+    it('preserves braces in quoted function arguments', () => {
+        const value = ".Props.BloodType | default('{unknown}')";
+        const editor = new Editor({ extensions: [Document, Paragraph, Text, TemplateVar], content: '' });
+        editor.commands.setContent(`<p>{{ ${value} }}</p>`, { emitUpdate: false });
+
+        expect(editor.getJSON().content?.[0]?.content?.[0]?.attrs?.['data-template-var']).toBe(value);
+
+        editor.destroy();
+    });
 });
