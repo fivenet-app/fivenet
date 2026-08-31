@@ -114,17 +114,11 @@ message DataUser {
   ];
 
   string firstname = 7 [
-    (buf.validate.field).string = {
-      min_len: 1
-      max_len: 50
-    },
+    (buf.validate.field).string.max_len = 50,
     (tagger.tags) = "alias:\"user.firstname\""
   ];
   optional string lastname = 8 [
-    (buf.validate.field).string = {
-      min_len: 1
-      max_len: 50
-    },
+    (buf.validate.field).string.max_len = 50,
     (tagger.tags) = "alias:\"user.lastname\""
   ];
 
