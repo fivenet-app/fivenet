@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	grpcws "github.com/fivenet-app/fivenet/v2026/pkg/grpc/grpcws"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/filestore"
 	imageproxy "github.com/fivenet-app/fivenet/v2026/pkg/server/images"
 	"github.com/gin-contrib/cors"
@@ -50,10 +51,11 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger  *zap.Logger
-	Config  *config.Config
-	Engine  *gin.Engine
-	GRPCSrv *grpc.Server
+	Logger    *zap.Logger
+	Config    *config.Config
+	Engine    *gin.Engine
+	GRPCSrv   *grpc.Server
+	Readiness *admin.Readiness
 }
 
 type Result struct {
@@ -107,10 +109,13 @@ func New(p Params) (Result, error) {
 		}
 		p.Logger.Info("http server listening", zap.String("address", srv.Addr))
 		go srv.Serve(ln)
+		p.Readiness.SetReady(true)
 
 		return nil
 	}))
+
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
+		p.Readiness.SetReady(false)
 		return srv.Shutdown(ctx)
 	}))
 

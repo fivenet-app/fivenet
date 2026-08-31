@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"net/http"
+	"sync/atomic"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -25,6 +26,7 @@ const (
 // Module provides the metrics server as an fx module.
 var Module = fx.Module("metricsserver",
 	fx.Provide(
+		NewReadiness,
 		NewServer,
 	),
 	fx.Decorate(wrapLogger),
@@ -38,6 +40,26 @@ func wrapLogger(log *zap.Logger) *zap.Logger {
 // AdminServer is a type alias for *http.Server, representing the admin HTTP server.
 type AdminServer *http.Server
 
+// Readiness tracks whether the main HTTP server is ready to receive traffic.
+type Readiness struct {
+	ready atomic.Bool
+}
+
+// NewReadiness creates the shared application readiness state.
+func NewReadiness() *Readiness {
+	return &Readiness{}
+}
+
+// Ready reports whether the application is ready to receive traffic.
+func (r *Readiness) Ready() bool {
+	return r.ready.Load()
+}
+
+// SetReady updates the application readiness state.
+func (r *Readiness) SetReady(ready bool) {
+	r.ready.Store(ready)
+}
+
 // Params contains dependencies for constructing the metrics server.
 type Params struct {
 	fx.In
@@ -49,6 +71,8 @@ type Params struct {
 	Logger *zap.Logger
 	// Config is the application configuration.
 	Config *config.Config
+	// Readiness is the shared application readiness state.
+	Readiness *Readiness
 }
 
 // Result is the output struct for the metrics server constructor.
@@ -83,8 +107,18 @@ func NewServer(p Params) (Result, error) {
 		}),
 	)))
 
+	// Liveness probe endpoint
+	e.GET("/liveness", func(c *gin.Context) {
+		c.String(http.StatusOK, "OK")
+	})
+
 	// Readiness probe endpoint
 	e.GET("/readiness", func(c *gin.Context) {
+		if !p.Readiness.Ready() {
+			c.String(http.StatusServiceUnavailable, "NOT READY")
+			return
+		}
+
 		c.String(http.StatusOK, "OK")
 	})
 
