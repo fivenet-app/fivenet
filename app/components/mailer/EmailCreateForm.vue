@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
+import { enumToAccessLevelEnums, normalizeAccessEntryIds } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
@@ -140,12 +140,12 @@ watch(email, setFromProps);
 watch(hasUnsavedChanges, (value) => emit('dirty-change', value), { immediate: true });
 
 async function createOrUpdateEmail(values: Schema): Promise<undefined> {
+    normalizeAccessEntryIds(values.access.users);
     values.access.users.forEach((user) => {
-        if (user.id < 0) user.id = 0;
         user.user = undefined; // Clear user object to avoid sending unnecessary data
     });
-    values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
-    values.access.qualifications.forEach((quali) => quali.id < 0 && (quali.id = 0));
+    normalizeAccessEntryIds(values.access.jobs);
+    normalizeAccessEntryIds(values.access.qualifications);
 
     const redirectToMail = emails.value.length === 0;
 

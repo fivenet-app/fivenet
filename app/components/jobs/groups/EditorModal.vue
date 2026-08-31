@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
+import { enumToAccessLevelEnums, normalizeAccessEntryIds, type AccessType } from '~/components/partials/access/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
@@ -254,13 +254,13 @@ async function createOrUpdateGroup(values: Schema): Promise<void> {
     try {
         values.membershipMode = normalizeGroupMembershipMode(values.type, values.membershipMode);
         normalizeGroupPolicyState();
-        values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+        normalizeAccessEntryIds(values.access.jobs);
         values.access.users.forEach((user) => {
-            if (user.id < 0) user.id = 0;
             user.user = undefined;
         });
+        normalizeAccessEntryIds(values.access.users);
+        normalizeAccessEntryIds(values.access.qualifications);
         values.access.qualifications.forEach((qualification) => {
-            if (qualification.id < 0) qualification.id = 0;
             qualification.qualificationId = qualification.qualificationId ?? 0;
         });
 

@@ -4,7 +4,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/access/helpers';
+import { enumToAccessLevelEnums, normalizeAccessEntryIds, type AccessType } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import RequirementEntry from '~/components/qualifications/RequirementEntry.vue';
 import type { HistoryContent } from '~/types/history';
@@ -351,7 +351,7 @@ function setFromProps(): void {
 watch(qualification, () => setFromProps());
 
 async function updateQualification(values: Schema): Promise<UpdateQualificationResponse> {
-    values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+    normalizeAccessEntryIds(values.access.jobs);
 
     const req: UpdateQualificationRequest = {
         qualification: {

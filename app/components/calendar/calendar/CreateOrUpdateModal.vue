@@ -5,7 +5,7 @@ import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
+import { enumToAccessLevelEnums, normalizeAccessEntryIds } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -144,11 +144,11 @@ const {
 );
 
 async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarResponse | UpdateCalendarResponse> {
+    normalizeAccessEntryIds(values.access.users);
     values.access.users.forEach((user) => {
-        if (user.id < 0) user.id = 0;
         user.user = undefined; // Clear user object to avoid sending unnecessary data
     });
-    values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+    normalizeAccessEntryIds(values.access.jobs);
 
     try {
         const response = await calendarStore.createOrUpdateCalendar({

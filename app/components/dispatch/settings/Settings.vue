@@ -2,7 +2,7 @@
 import type { FormSubmitEvent, TabsItem } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
+import { enumToAccessLevelEnums, normalizeAccessEntryIds } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -115,8 +115,8 @@ const state = reactive<Schema>({
 });
 
 async function updateSettings(values: Schema): Promise<void> {
-    values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
-    values.offeredAccess.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+    normalizeAccessEntryIds(values.access.jobs);
+    normalizeAccessEntryIds(values.offeredAccess.jobs);
 
     try {
         const call = centrumCentrumClient.updateSettings({

@@ -4,7 +4,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
+import { enumToAccessLevelEnums, normalizeAccessEntryIds } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import type { HistoryContent } from '~/types/history';
 import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
@@ -227,11 +227,11 @@ const onSync = (s: boolean) => {
 provider.on('sync', onSync);
 
 async function updatePage(values: Schema): Promise<void> {
+    normalizeAccessEntryIds(values.access.users);
     values.access.users.forEach((user) => {
-        if (user.id < 0) user.id = 0;
         user.user = undefined; // Clear user object to avoid sending unnecessary data
     });
-    values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+    normalizeAccessEntryIds(values.access.jobs);
 
     const req: Page = {
         id: page.value?.id ?? 0,

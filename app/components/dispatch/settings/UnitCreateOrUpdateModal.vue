@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
+import { enumToAccessLevelEnums, normalizeAccessEntryIds } from '~/components/partials/access/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { getCentrumUnitsClient } from '~~/gen/ts/clients';
@@ -71,8 +71,8 @@ const state = reactive<Schema>({
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
 
 async function createOrUpdateUnit(values: Schema): Promise<void> {
-    values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
-    values.access.qualifications.forEach((quali) => quali.id < 0 && (quali.id = 0));
+    normalizeAccessEntryIds(values.access.jobs);
+    normalizeAccessEntryIds(values.access.qualifications);
 
     try {
         const call = centrumUnitsClient.createOrUpdateUnit({

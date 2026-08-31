@@ -56,7 +56,7 @@ const props = withDefaults(
 
 const { maxAccessEntries, game } = useAppConfig();
 
-const maxEntries = computed(() => props.totalLimit || maxAccessEntries);
+const maxEntries = computed(() => props.totalLimit ?? maxAccessEntries);
 
 const { t } = useI18n();
 
@@ -64,41 +64,33 @@ const jobsAccess = defineModel<JobsT[]>('jobs', { default: () => [] });
 const usersAccess = defineModel<UsersT[]>('users', { default: () => [] });
 const qualificationsAccess = defineModel<QualiT[]>('qualifications', { default: () => [] });
 
-const defaultAccessTypes = [
-    { label: t('common.citizen', 2), value: 'user' },
-    { label: t('common.job', 2), value: 'job' },
-] as AccessType[];
-
-const aTypes = ref<AccessType[]>([]);
-if (props.accessTypes === undefined) {
-    aTypes.value = defaultAccessTypes;
-} else {
-    aTypes.value = props.accessTypes;
-}
+const aTypes = computed<AccessType[]>(
+    () =>
+        props.accessTypes ?? [
+            { label: t('common.citizen', 2), value: 'user' },
+            { label: t('common.job', 2), value: 'job' },
+        ],
+);
 
 const access = ref<MixedAccessEntry[]>([]);
+
+const accessNamePrefix = computed(() => (props.name ? `${props.name}.` : ''));
 
 function isEqualArray(a: MixedAccessEntry[], b: MixedAccessEntry[]): boolean {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) {
         const entryA = a[i]!;
-
-        const entryB = b.find((item) => item.id === entryA.id);
-        if (!entryB) {
-            return false;
-        }
+        const entryB = b[i];
+        if (!entryB || entryA.id !== entryB.id || entryA.type !== entryB.type) return false;
 
         if (
-            entryA.id !== entryB.id ||
-            entryA.type !== entryB.type ||
             entryA.access !== entryB.access ||
             entryA.required !== entryB.required ||
             entryA.requiredAccess !== entryB.requiredAccess ||
             entryA.job !== entryB.job ||
             entryA.minimumGrade !== entryB.minimumGrade ||
             entryA.userId !== entryB.userId ||
-            entryA.qualificationId !== entryB.qualificationId ||
-            entryA.qualification !== entryB.qualification
+            entryA.qualificationId !== entryB.qualificationId
         ) {
             return false;
         }
@@ -142,26 +134,22 @@ function syncAccessFromProps() {
 
 // Helper to update a reactive array in-place (add, update, remove)
 function syncArray<T extends { id: number }>(source: T[], target: T[]) {
-    // Remove items not in target
-    for (let i = source.length - 1; i >= 0; i--) {
-        if (!target.find((t) => t.id === source[i]!.id)) {
-            source.splice(i, 1);
-        }
-    }
-    // Add or update items
-    target.forEach((t) => {
-        const idx = source.findIndex((s) => s.id === t.id);
-        if (idx === -1) {
-            source.push(t);
-        } else {
-            // Update properties
-            for (const key in t) {
-                if (Object.prototype.hasOwnProperty.call(t, key) && source[idx]![key] !== t[key]) {
-                    source[idx]![key] = t[key];
-                }
+    const sourceById = new Map(source.map((item) => [item.id, item]));
+    const next = target.map((item) => {
+        const existing = sourceById.get(item.id);
+        if (!existing) return item;
+
+        for (const key in item) {
+            if (Object.prototype.hasOwnProperty.call(item, key) && existing[key] !== item[key]) {
+                existing[key] = item[key];
             }
         }
+        return existing;
     });
+
+    if (source.length !== next.length || source.some((item, index) => item !== next[index])) {
+        source.splice(0, source.length, ...next);
+    }
 }
 
 function syncPropsFromAccess() {
@@ -208,6 +196,7 @@ function syncPropsFromAccess() {
 // Sync from props on mount and when any prop changes
 onBeforeMount(() => syncAccessFromProps());
 watch([jobsAccess, usersAccess, qualificationsAccess], syncAccessFromProps, { deep: true });
+watch(() => props.targetId, syncPropsFromAccess);
 
 // Sync from access to props when access changes
 watch(access, syncPropsFromAccess, { deep: true });
@@ -233,10 +222,11 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
     <div class="flex flex-col gap-1 divide-y divide-default md:divide-y-0">
         <AccessEntry
             v-for="(entry, idx) in access"
-            :key="entry.id"
+            :key="`${entry.type}-${entry.id}`"
             v-model="access[idx]!"
             :access-types="aTypes"
             :access-roles="accessRoles"
+            :existing-entries="access"
             :disabled="disabled"
             :required-mode="requiredMode"
             :lock-required-checkbox="lockRequiredCheckbox"
@@ -244,7 +234,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             :hide-grade="hideGrade"
             :hide-jobs="hideJobs"
             :hide-other-jobs="hideOtherJobs"
-            :name="`${$props.name}${fullName ? '' : `.${entry.type}s`}.${idx}`"
+            :name="accessNamePrefix ? `${accessNamePrefix}${fullName ? '' : `${entry.type}s.`}${idx}` : undefined"
             v-bind="$attrs"
             @delete="access?.splice(idx, 1)"
         />

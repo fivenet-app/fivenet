@@ -20,6 +20,7 @@ const props = withDefaults(
         hideGrade?: boolean;
         hideJobs?: string[];
         hideOtherJobs?: boolean;
+        existingEntries?: MixedAccessEntry[];
         name?: string;
     }>(),
     {
@@ -31,6 +32,7 @@ const props = withDefaults(
         hideGrade: false,
         hideJobs: () => [],
         hideOtherJobs: false,
+        existingEntries: () => [],
         name: undefined,
     },
 );
@@ -62,15 +64,66 @@ const accessRoleItems = computed(() => {
 });
 
 const requiredSubjectLocked = computed(() => props.disabled || !!entry.value.required);
+const otherEntries = computed(() =>
+    props.existingEntries.filter((existing) => existing.id !== entry.value.id || existing.type !== entry.value.type),
+);
+
+function isDuplicateUser(userId: number | undefined): boolean {
+    return (
+        userId !== undefined && otherEntries.value.some((existing) => existing.type === 'user' && existing.userId === userId)
+    );
+}
+
+function isDuplicateQualification(qualificationId: number | undefined): boolean {
+    return (
+        qualificationId !== undefined &&
+        otherEntries.value.some((existing) => existing.type === 'qualification' && existing.qualificationId === qualificationId)
+    );
+}
+
+function isDuplicateJob(job: string | undefined): boolean {
+    return (
+        job !== undefined &&
+        otherEntries.value.some(
+            (existing) => existing.type === 'job' && existing.job === job && existing.minimumGrade === entry.value.minimumGrade,
+        )
+    );
+}
+
 const jobItems = computed(() => {
     const filteredJobs = props.jobs?.filter((j) => props.hideJobs.length === 0 || !props.hideJobs.includes(j.name)) ?? [];
 
-    if (!props.hideOtherJobs || entry.value.type !== 'job') return filteredJobs;
+    const visibleJobs =
+        !props.hideOtherJobs || entry.value.type !== 'job'
+            ? filteredJobs
+            : currentJob.value
+              ? filteredJobs.filter((job) => job.name === currentJob.value)
+              : [];
 
-    if (!currentJob.value) return [];
-
-    return filteredJobs.filter((job) => job.name === currentJob.value);
+    return visibleJobs.map((job) => ({ ...job, disabled: isDuplicateJob(job.name) }));
 });
+
+const gradeItems = computed(() => {
+    const grades = props.jobs.find((job) => job.name === entry.value.job)?.grades ?? [];
+
+    return grades.map((grade) => ({
+        ...grade,
+        disabled: otherEntries.value.some(
+            (existing) => existing.type === 'job' && existing.job === entry.value.job && existing.minimumGrade === grade.grade,
+        ),
+    }));
+});
+
+function markDuplicateUsers(users: UserShort[]): (UserShort & { disabled?: boolean })[] {
+    return users.map((user) => ({ ...user, disabled: isDuplicateUser(user.userId) }));
+}
+
+function markDuplicateQualifications(qualifications: QualificationShort[]): (QualificationShort & { disabled?: boolean })[] {
+    return qualifications.map((qualification) => ({
+        ...qualification,
+        disabled: isDuplicateQualification(qualification.id),
+    }));
+}
 
 watch(
     () => [entry.value.required, entry.value.requiredAccess, entry.value.access] as const,
@@ -92,13 +145,43 @@ watch(
 );
 
 const selectedUser = ref<UserShort | undefined>();
+let suppressUserUpdate = false;
+function setSelectedUserSilently(user: UserShort | undefined): void {
+    if (selectedUser.value === user) return;
+
+    suppressUserUpdate = true;
+    selectedUser.value = user;
+}
+
 watch(selectedUser, () => {
+    if (suppressUserUpdate) {
+        suppressUserUpdate = false;
+        return;
+    }
+
+    if (entry.value.type !== 'user') return;
+
     entry.value.user = selectedUser.value;
     entry.value.userId = selectedUser.value?.userId;
 });
 
 const selectedQualification = ref<QualificationShort | undefined>();
+let suppressQualificationUpdate = false;
+function setSelectedQualificationSilently(qualification: QualificationShort | undefined): void {
+    if (selectedQualification.value === qualification) return;
+
+    suppressQualificationUpdate = true;
+    selectedQualification.value = qualification;
+}
+
 watch(selectedQualification, () => {
+    if (suppressQualificationUpdate) {
+        suppressQualificationUpdate = false;
+        return;
+    }
+
+    if (entry.value.type !== 'qualification') return;
+
     entry.value.qualification = selectedQualification.value;
     entry.value.qualificationId = selectedQualification.value?.id;
 });
@@ -112,70 +195,143 @@ async function findUser(userId?: number): Promise<UserShort[]> {
     });
 }
 
-const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+function userFallback(userId: number): UserShort {
+    return {
+        userId,
+        job: '',
+        jobGrade: 0,
+        firstname: '#UserID',
+        lastname: String(userId),
+        dateofbirth: '',
+    };
+}
+
+let qualificationsClientPromise: ReturnType<typeof getQualificationsQualificationsClient> | undefined;
+
+function getQualificationsClient(): ReturnType<typeof getQualificationsQualificationsClient> {
+    return (qualificationsClientPromise ??= getQualificationsQualificationsClient());
+}
+
+let setFromPropsRun = 0;
+
+function resetSelections(): void {
+    if (entry.value.type !== 'user') setSelectedUserSilently(undefined);
+    if (entry.value.type !== 'qualification') setSelectedQualificationSilently(undefined);
+}
 
 async function setFromProps(): Promise<void> {
+    const run = ++setFromPropsRun;
+    resetSelections();
+
     if (entry.value.type === 'user' && entry.value.userId !== undefined) {
         if (selectedUser.value?.userId === entry.value.userId) return;
 
-        const users = await findUser(entry.value.userId);
-        selectedUser.value = users.find((char) => char.userId === entry.value.userId);
-    } else if (entry.value.type === 'qualification' && entry.value.qualificationId !== undefined) {
-        if (selectedQualification.value?.id === entry.value.qualificationId || entry.value.qualificationId === undefined)
+        const userId = entry.value.userId;
+        if (entry.value.user?.userId === userId) {
+            setSelectedUserSilently(entry.value.user);
             return;
+        }
 
+        setSelectedUserSilently(undefined);
+        let users: UserShort[] = [];
         try {
-            const { response } = await qualificationsQualificationsClient.getQualification({
-                qualificationId: entry.value.qualificationId,
-            });
-            selectedQualification.value = response.qualification;
+            users = await findUser(userId);
         } catch (_) {
+            // Keep the ID and show a local fallback when the user lookup fails.
+        }
+        if (run !== setFromPropsRun || entry.value.type !== 'user' || entry.value.userId !== userId) return;
+
+        setSelectedUserSilently(users.find((char) => char.userId === userId) ?? userFallback(userId));
+    } else if (entry.value.type === 'qualification' && entry.value.qualificationId !== undefined) {
+        if (selectedQualification.value?.id === entry.value.qualificationId) return;
+
+        const qualificationId = entry.value.qualificationId;
+        if (entry.value.qualification?.id === qualificationId) {
+            setSelectedQualificationSilently(entry.value.qualification);
+            return;
+        }
+
+        setSelectedQualificationSilently(undefined);
+        try {
+            const client = await getQualificationsClient();
+            const { response } = await client.getQualification({
+                qualificationId,
+            });
+            if (
+                run !== setFromPropsRun ||
+                entry.value.type !== 'qualification' ||
+                entry.value.qualificationId !== qualificationId
+            )
+                return;
+
+            setSelectedQualificationSilently(response.qualification);
+        } catch (_) {
+            if (
+                run !== setFromPropsRun ||
+                entry.value.type !== 'qualification' ||
+                entry.value.qualificationId !== qualificationId
+            )
+                return;
+
             // Fallback to show qualification id
-            selectedQualification.value = {
-                id: entry.value.qualificationId,
+            setSelectedQualificationSilently({
+                id: qualificationId,
                 job: '',
                 weight: 0,
                 abbreviation: 'N/A',
-                title: 'N/A (ID: ' + entry.value.qualificationId + ')',
+                title: 'N/A (ID: ' + qualificationId + ')',
                 closed: false,
                 draft: false,
                 public: false,
                 creatorJob: '',
                 examMode: QualificationExamMode.UNSPECIFIED,
                 requirements: [],
-            };
+            });
         }
-    } else if (entry.value.type === 'job') {
-        if (props.hideOtherJobs && currentJob.value) {
-            entry.value.job = currentJob.value;
-        }
-
-        if (entry.value.minimumGrade === -1) {
-            const grades = props.jobs.find((j) => j.name === entry.value.job)?.grades;
-            if (grades) {
-                entry.value.minimumGrade = grades[grades.length - 1]?.grade ?? game.startJobGrade;
-            }
-        }
+    } else if (entry.value.type === 'job' && props.hideOtherJobs && currentJob.value) {
+        entry.value.job = currentJob.value;
     }
 }
 
+watch(
+    () => entry.value.type,
+    (type, previousType) => {
+        if (previousType === undefined || type === previousType) return;
+
+        entry.value = {
+            ...entry.value,
+            userId: undefined,
+            user: undefined,
+            job: undefined,
+            minimumGrade: undefined,
+            qualificationId: undefined,
+            qualification: undefined,
+        };
+    },
+);
+
 setFromProps();
-watch(props, () => setFromProps());
+watch([() => props.jobs, () => props.hideOtherJobs], () => setFromProps(), { deep: true });
 watch(currentJob, () => setFromProps());
+watch(
+    () => [entry.value.type, entry.value.userId, entry.value.qualificationId] as const,
+    () => setFromProps(),
+);
 
 watch(
-    () => entry.value.job,
-    () => {
-        if (!props.hideGrade) return;
+    [() => entry.value.job, () => props.jobs],
+    ([job, jobs]) => {
+        if (!job) return;
 
-        // If hide grade is true, we must set the minimumGrade to a sane default value
-        if (entry.value.job && entry.value.minimumGrade === undefined) {
-            const grades = props.jobs.find((j) => j.name === entry.value.job)?.grades;
-            if (grades) {
-                entry.value.minimumGrade = grades[grades.length - 1]?.grade ?? game.startJobGrade;
-            }
-        }
+        const grades = jobs.find((j) => j.name === job)?.grades;
+        if (!grades?.length) return;
+
+        const hasValidGrade = grades.some((grade) => grade.grade === entry.value.minimumGrade);
+        if (hasValidGrade && entry.value.minimumGrade !== -1) return;
+
+        entry.value.minimumGrade = grades[grades.length - 1]?.grade ?? game.startJobGrade;
     },
+    { immediate: true, deep: true },
 );
 </script>
 
@@ -237,10 +393,12 @@ watch(
                     :disabled="requiredSubjectLocked"
                     :searchable="
                         async (q: string) =>
-                            await completorStore.completeCitizens({
-                                search: q,
-                                userIds: entry.userId ? [entry.userId] : [],
-                            })
+                            markDuplicateUsers(
+                                await completorStore.completeCitizens({
+                                    search: q,
+                                    userIds: entry.userId ? [entry.userId] : [],
+                                }),
+                            )
                     "
                     searchable-key="completor-citizens"
                     :filter-fields="['firstname', 'lastname']"
@@ -272,13 +430,14 @@ watch(
                     :disabled="requiredSubjectLocked"
                     :searchable="
                         async (q: string) => {
-                            const { response } = await qualificationsQualificationsClient.listQualifications({
+                            const client = await getQualificationsClient();
+                            const { response } = await client.listQualifications({
                                 pagination: {
                                     offset: 0,
                                 },
                                 search: q,
                             });
-                            return (response?.qualifications ?? []) as QualificationShort[];
+                            return markDuplicateQualifications((response?.qualifications ?? []) as QualificationShort[]);
                         }
                     "
                     searchable-key="complete-qualifications"
@@ -300,7 +459,7 @@ watch(
 
             <template v-else>
                 <UFormField
-                    v-if="!hideOtherJobs"
+                    v-if="!hideOtherJobs || !currentJob"
                     class="flex-1"
                     :name="`${$props.name}.job`"
                     :label="$t('common.job')"
@@ -310,7 +469,7 @@ watch(
                         <USelectMenu
                             v-model="entry.job"
                             class="w-full"
-                            :disabled="requiredSubjectLocked || hideOtherJobs"
+                            :disabled="requiredSubjectLocked || (hideOtherJobs && !currentJob)"
                             :filter-fields="['label', 'name']"
                             value-key="name"
                             :items="jobItems"
@@ -332,12 +491,10 @@ watch(
                     <ClientOnly>
                         <USelectMenu
                             class="w-full"
-                            :model-value="
-                                jobs.find((j) => j.name === entry.job)?.grades.find((g) => g.grade === entry.minimumGrade)
-                            "
+                            :model-value="gradeItems.find((grade) => grade.grade === entry.minimumGrade)"
                             :disabled="requiredSubjectLocked || !entry.job"
                             :filter-fields="['name', 'label']"
-                            :items="jobs.find((j) => j.name === entry.job)?.grades ?? []"
+                            :items="gradeItems"
                             :placeholder="$t('common.rank')"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             @update:model-value="entry.minimumGrade = $event?.grade ?? undefined"
@@ -375,7 +532,7 @@ watch(
             </UFormField>
         </div>
 
-        <UFormField v-if="requiredMode !== 'none'" class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
+        <UFormField class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
             <UTooltip v-if="!disabled" :text="entry.required ? $t('common.required') : $t('components.access.remove_entry')">
                 <UButton
                     class="flex-initial"

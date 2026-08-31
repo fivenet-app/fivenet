@@ -64,6 +64,13 @@ export type AccessLevelEnum = {
     value: number;
 };
 
+/** Normalize client-only IDs before an access object is sent to the backend. */
+export function normalizeAccessEntryIds(entries: Array<{ id: number }>): void {
+    entries.forEach((entry) => {
+        if (entry.id < 0) entry.id = 0;
+    });
+}
+
 export function enumToAccessLevelEnums(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     accessLevel: any,

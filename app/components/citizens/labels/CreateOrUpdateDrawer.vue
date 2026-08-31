@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
+import { enumToAccessLevelEnums, normalizeAccessEntryIds } from '~/components/partials/access/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -181,6 +181,8 @@ watch(data, () => setFromData(data.value?.label));
 setFromData(data.value?.label);
 
 async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelResponse> {
+    normalizeAccessEntryIds(values.access.jobs);
+
     try {
         const { response } = await citizensLabelsClient.createOrUpdateLabel({
             label: {

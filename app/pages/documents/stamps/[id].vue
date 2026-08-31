@@ -5,7 +5,7 @@ import { z } from 'zod';
 import EditorToolbar from '~/components/fabriceditor/EditorToolbar.vue';
 import EditorWrapper from '~/components/fabriceditor/EditorWrapper.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
+import { enumToAccessLevelEnums, normalizeAccessEntryIds } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -58,6 +58,8 @@ const state = reactive<Schema>({
 const stampsClient = await getDocumentsStampsClient();
 
 async function createOrUpsertStamp(values: Schema) {
+    normalizeAccessEntryIds(values.access.jobs);
+
     try {
         const call = stampsClient.upsertStamp({
             stamp: {
