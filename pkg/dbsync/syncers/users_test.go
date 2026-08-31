@@ -61,3 +61,38 @@ func TestApplyFiltersAndTransformationsSkipsInvalidIdentity(t *testing.T) {
 	require.Equal(t, int32(42), filtered[0].GetUserId())
 	require.Equal(t, "license:valid", filtered[0].GetIdentifier())
 }
+
+func TestCleanupUserPhoneNumbersSetsUserIDOnFallback(t *testing.T) {
+	t.Parallel()
+
+	syncer := &UsersSync{}
+	user := &syncdata.DataUser{
+		UserId:      11,
+		PhoneNumber: new("555-0100"),
+	}
+
+	syncer.cleanupUserPhoneNumbers(user)
+
+	require.Len(t, user.GetPhoneNumbers(), 1)
+	assert.Equal(t, int32(11), user.GetPhoneNumbers()[0].GetUserId())
+}
+
+func TestCleanupUserPhoneNumbersSetsUserIDOnAllNumbers(t *testing.T) {
+	t.Parallel()
+
+	syncer := &UsersSync{}
+	user := &syncdata.DataUser{
+		UserId: 11,
+		PhoneNumbers: []*users.PhoneNumber{
+			{UserId: 99, Number: "555-0100", IsPrimary: true},
+			{Number: "555-0101"},
+		},
+	}
+
+	syncer.cleanupUserPhoneNumbers(user)
+
+	require.Len(t, user.GetPhoneNumbers(), 2)
+	for _, phoneNumber := range user.GetPhoneNumbers() {
+		assert.Equal(t, int32(11), phoneNumber.GetUserId())
+	}
+}

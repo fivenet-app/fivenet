@@ -450,6 +450,7 @@ func (s *UsersSync) cleanupUserPhoneNumbers(user *syncdata.DataUser) {
 	if len(user.GetPhoneNumbers()) == 0 && user.GetPhoneNumber() != "" {
 		user.PhoneNumbers = []*users.PhoneNumber{
 			{
+				UserId:    user.GetUserId(),
 				Number:    user.GetPhoneNumber(),
 				IsPrimary: true,
 			},
@@ -474,6 +475,7 @@ func (s *UsersSync) cleanupUserPhoneNumbers(user *syncdata.DataUser) {
 	foundPrimary := false
 	primaryNumber := user.GetPhoneNumber()
 	for _, number := range user.GetPhoneNumbers() {
+		number.UserId = user.GetUserId()
 		if number.GetNumber() == primaryNumber {
 			// Make sure the "primary" phone number (user's phone number field if set) is marked as primary
 			foundPrimary = true
