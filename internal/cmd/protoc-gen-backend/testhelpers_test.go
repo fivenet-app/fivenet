@@ -48,10 +48,20 @@ func loadBackendFixture(t *testing.T) (pgs.AST, map[string]pgs.File) {
 		_ = os.Chdir(cwd)
 	})
 
-	writeBackendTestProto(t, root, "resources/permissions/attributes/attributes.proto", backendTestAttributesProto)
+	writeBackendTestProto(
+		t,
+		root,
+		"resources/permissions/attributes/attributes.proto",
+		backendTestAttributesProto,
+	)
 	writeBackendTestProto(t, root, "codegen/perms/perms.proto", backendTestPermissionsProto)
 	writeBackendTestProto(t, root, "services/documents/documents.proto", backendTestDocumentsProto)
-	writeBackendTestProto(t, root, "services/qualifications/qualifications.proto", backendTestQualificationsProto)
+	writeBackendTestProto(
+		t,
+		root,
+		"services/qualifications/qualifications.proto",
+		backendTestQualificationsProto,
+	)
 
 	loader := testutils.Loader{ImportPaths: []string{"."}}
 	ast := loader.LoadProtos(
@@ -99,7 +109,12 @@ func loadBackendOverrideFixture(t *testing.T) (pgs.AST, map[string]pgs.File) {
 		_ = os.Chdir(cwd)
 	})
 
-	writeBackendTestProto(t, root, "resources/permissions/attributes/attributes.proto", backendTestAttributesProto)
+	writeBackendTestProto(
+		t,
+		root,
+		"resources/permissions/attributes/attributes.proto",
+		backendTestAttributesProto,
+	)
 	writeBackendTestProto(t, root, "codegen/perms/perms.proto", backendTestPermissionsProto)
 	writeBackendTestProto(t, root, "services/settings/overrides.proto", backendTestOverridesProto)
 
@@ -123,7 +138,12 @@ func loadBackendOverrideFixture(t *testing.T) (pgs.AST, map[string]pgs.File) {
 	return ast, targets
 }
 
-func renderBackendGeneratorOutputs(t *testing.T, mod backendGenerator, ast pgs.AST, targets map[string]pgs.File) map[string]string {
+func renderBackendGeneratorOutputs(
+	t *testing.T,
+	mod backendGenerator,
+	ast pgs.AST,
+	targets map[string]pgs.File,
+) map[string]string {
 	t.Helper()
 
 	mod.InitContext(pgs.Context(pgs.InitMockDebugger(), pgs.Parameters{}, "."))

@@ -72,7 +72,12 @@ func loadBackendSanitizerFixture(t *testing.T) (pgs.AST, map[string]pgs.File) {
 	})
 
 	writeBackendTestProto(t, root, "codegen/sanitizer/sanitizer.proto", backendTestSanitizerProto)
-	writeBackendTestProto(t, root, "services/sanitizertest/test.proto", backendTestOneofSanitizerProto)
+	writeBackendTestProto(
+		t,
+		root,
+		"services/sanitizertest/test.proto",
+		backendTestOneofSanitizerProto,
+	)
 
 	loader := testutils.Loader{ImportPaths: []string{"."}}
 	ast := loader.LoadProtos(t, "services/sanitizertest/test.proto")

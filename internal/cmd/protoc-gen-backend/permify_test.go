@@ -263,9 +263,21 @@ func TestPermifyModule_Execute_MergesDocumentAttrs(t *testing.T) {
 	}
 
 	mustContainBackend(t, serviceOut, "Name: permkeys.DocumentsServiceUpdateDocumentPerm,")
-	mustContainBackend(t, serviceOut, "Key: permkeys.DocumentsServiceUpdateDocumentAccessPermField,")
-	mustContainBackend(t, serviceOut, "ValidValues: []string{\"Own\", \"Lower_Rank\", \"Same_Rank\", \"Any\", },")
-	mustContainBackend(t, constOut, "DocumentsServiceUpdateDocumentPerm perms.Name = \"UpdateDocument\"")
+	mustContainBackend(
+		t,
+		serviceOut,
+		"Key: permkeys.DocumentsServiceUpdateDocumentAccessPermField,",
+	)
+	mustContainBackend(
+		t,
+		serviceOut,
+		"ValidValues: []string{\"Own\", \"Lower_Rank\", \"Same_Rank\", \"Any\", },",
+	)
+	mustContainBackend(
+		t,
+		constOut,
+		"DocumentsServiceUpdateDocumentPerm perms.Name = \"UpdateDocument\"",
+	)
 }
 
 func TestPermifyModule_Execute_MergesQualificationAttrs(t *testing.T) {
@@ -281,12 +293,36 @@ func TestPermifyModule_Execute_MergesQualificationAttrs(t *testing.T) {
 		t.Fatalf("missing qualifications const output: %v", mapsKeys(out))
 	}
 
-	mustContainBackend(t, qualServiceOut, "Name: permkeys.QualificationsServiceUpdateQualificationPerm,")
-	mustContainBackend(t, qualServiceOut, "Key: permkeys.QualificationsServiceUpdateQualificationAccessPermField,")
-	mustContainBackend(t, qualServiceOut, "Key: permkeys.QualificationsServiceUpdateQualificationFieldsPermField,")
-	mustContainBackend(t, qualConstOut, "QualificationsServiceUpdateQualificationAccessPermField perms.Key = \"Access\"")
-	mustContainBackend(t, qualConstOut, "QualificationsServiceUpdateQualificationFieldsPermField perms.Key = \"Fields\"")
-	mustContainBackend(t, qualConstOut, "QualificationsServiceUpdateQualificationPerm perms.Name = \"UpdateQualification\"")
+	mustContainBackend(
+		t,
+		qualServiceOut,
+		"Name: permkeys.QualificationsServiceUpdateQualificationPerm,",
+	)
+	mustContainBackend(
+		t,
+		qualServiceOut,
+		"Key: permkeys.QualificationsServiceUpdateQualificationAccessPermField,",
+	)
+	mustContainBackend(
+		t,
+		qualServiceOut,
+		"Key: permkeys.QualificationsServiceUpdateQualificationFieldsPermField,",
+	)
+	mustContainBackend(
+		t,
+		qualConstOut,
+		"QualificationsServiceUpdateQualificationAccessPermField perms.Key = \"Access\"",
+	)
+	mustContainBackend(
+		t,
+		qualConstOut,
+		"QualificationsServiceUpdateQualificationFieldsPermField perms.Key = \"Fields\"",
+	)
+	mustContainBackend(
+		t,
+		qualConstOut,
+		"QualificationsServiceUpdateQualificationPerm perms.Name = \"UpdateQualification\"",
+	)
 }
 
 func TestPermifyModule_Execute_RendersAliasAndSpecialRemaps(t *testing.T) {
@@ -313,7 +349,10 @@ func TestPermifyModule_Execute_RendersAliasAndSpecialRemaps(t *testing.T) {
 	mustContainBackend(t, remapOut, "\"documents.DocumentsService/ManageConfigAdmins\": {")
 	mustContainBackend(t, remapOut, "perms.PermConfigAdminRef")
 
-	if got := strings.Count(remapOut, "\"documents.DocumentsService/SearchDocument\": {"); got != 1 {
+	if got := strings.Count(
+		remapOut,
+		"\"documents.DocumentsService/SearchDocument\": {",
+	); got != 1 {
 		t.Fatalf("expected SearchDocument remap entry once, got %d", got)
 	}
 	if got := strings.Count(remapOut, "perms.PermAnyRef"); got < 1 {
@@ -352,5 +391,9 @@ func TestPermifyModule_Execute_RendersNamespaceServiceOverrideAndServiceMetadata
 	mustContainBackend(t, constOut, "OverrideServiceListThingsPerm perms.Name = \"ListThings\"")
 	mustContainBackend(t, remapOut, "\"settings.OverridesService/UpdateSettings\": {")
 	mustContainBackend(t, remapOut, "permsoverride.OverrideService.UpdateSettings.Perm")
-	mustContainBackend(t, remapOut, "permsoverride \"github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/override/perms\"")
+	mustContainBackend(
+		t,
+		remapOut,
+		"permsoverride \"github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/override/perms\"",
+	)
 }
