@@ -1,6 +1,6 @@
 import { defineVitestProject } from '@nuxt/test-utils/config';
 import { configDefaults, defineConfig } from 'vitest/config';
-import { deepToRaw } from './app/utils/deepToRaw';
+import { deepToRaw } from './app/utils/deepToRaw.ts';
 
 const nativeStructuredClone = globalThis.structuredClone.bind(globalThis);
 

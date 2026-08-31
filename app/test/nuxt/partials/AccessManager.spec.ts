@@ -260,7 +260,7 @@ describe('AccessEntry', () => {
                 modelValue: entry,
                 accessTypes: [{ label: 'Jobs', value: 'job' }],
                 accessRoles,
-                jobs: [{ name: 'police', label: 'Police', grades: [{ grade: 0, name: 'Cadet', label: 'Cadet' }] }],
+                jobs: [{ name: 'police', label: 'Police', grades: [{ grade: 0, label: 'Cadet' }] }],
             },
             global: { stubs: entryStubs(), mocks: { $t: (key: string) => key } },
         });
@@ -287,7 +287,7 @@ describe('AccessEntry', () => {
                 modelValue: entry,
                 accessTypes: [{ label: 'Jobs', value: 'job' }],
                 accessRoles,
-                jobs: [{ name: 'police', label: 'Police', grades: [{ grade: 0, name: 'Cadet', label: 'Cadet' }] }],
+                jobs: [{ name: 'police', label: 'Police', grades: [{ grade: 0, label: 'Cadet' }] }],
             },
             global: { stubs: entryStubs(), mocks: { $t: (key: string) => key } },
         });
@@ -358,12 +358,12 @@ describe('AccessEntry', () => {
                     {
                         name: 'police',
                         label: 'Police',
-                        grades: [{ grade: 0, name: 'Cadet', label: 'Cadet' }],
+                        grades: [{ grade: 0, label: 'Cadet' }],
                     },
                     {
                         name: 'ems',
                         label: 'EMS',
-                        grades: [{ grade: 0, name: 'Trainee', label: 'Trainee' }],
+                        grades: [{ grade: 0, label: 'Trainee' }],
                     },
                 ],
             },
@@ -371,7 +371,10 @@ describe('AccessEntry', () => {
         });
 
         const menus = wrapper.findAllComponents(USelectMenuStub);
-        const jobsMenu = menus.find((menu) => menu.props('items').some((item: { name?: string }) => item.name === 'police'));
+        const jobsMenu = menus.find((menu) => {
+            const items = menu.props('items') as Array<{ name?: string }> | undefined;
+            return items?.some((item) => item.name === 'police') ?? false;
+        });
         expect(jobsMenu?.props('items')).toEqual(
             expect.arrayContaining([expect.objectContaining({ name: 'police', disabled: true })]),
         );

@@ -45,11 +45,13 @@ vi.mock('#imports', async () => {
 
 vi.mock('vue-i18n', () => ({
     createI18n: () => ({
+        mode: 'composition',
         global: {
             t: (key: string) => key,
             tm: (key: string) => key,
             rt: (value: string) => value,
             locale: ref('en'),
+            mergeLocaleMessage: vi.fn(),
         },
         install: vi.fn(),
     }),
