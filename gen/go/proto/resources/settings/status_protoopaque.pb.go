@@ -820,44 +820,44 @@ const file_resources_settings_status_proto_rawDesc = "" +
 	"\bdatabase\x18\x01 \x01(\v2\x1c.resources.settings.DatabaseR\bdatabase\x12,\n" +
 	"\x04nats\x18\x02 \x01(\v2\x18.resources.settings.NatsR\x04nats\x12;\n" +
 	"\aversion\x18\x03 \x01(\v2!.resources.settings.VersionStatusR\aversion\x128\n" +
-	"\x06dbsync\x18\x04 \x01(\v2 .resources.settings.DBSyncStatusR\x06dbsync\"}\n" +
-	"\x04Nats\x12!\n" +
-	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\aversion\x12\x1c\n" +
-	"\tconnected\x18\x02 \x01(\bR\tconnected\x124\n" +
-	"\x11migration_version\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18 R\x10migrationVersion\"\x92\x02\n" +
-	"\bDatabase\x12!\n" +
-	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\aversion\x12\x1c\n" +
+	"\x06dbsync\x18\x04 \x01(\v2 .resources.settings.DBSyncStatusR\x06dbsync\"k\n" +
+	"\x04Nats\x12\x18\n" +
+	"\aversion\x18\x01 \x01(\tR\aversion\x12\x1c\n" +
+	"\tconnected\x18\x02 \x01(\bR\tconnected\x12+\n" +
+	"\x11migration_version\x18\x03 \x01(\tR\x10migrationVersion\"\xf7\x01\n" +
+	"\bDatabase\x12\x18\n" +
+	"\aversion\x18\x01 \x01(\tR\aversion\x12\x1c\n" +
 	"\tconnected\x18\x02 \x01(\bR\tconnected\x12+\n" +
 	"\x11migration_version\x18\x03 \x01(\x04R\x10migrationVersion\x12'\n" +
-	"\x0fmigration_dirty\x18\x04 \x01(\bR\x0emigrationDirty\x12&\n" +
+	"\x0fmigration_dirty\x18\x04 \x01(\bR\x0emigrationDirty\x12\x1d\n" +
 	"\n" +
-	"db_charset\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18 R\tdbCharset\x12*\n" +
-	"\fdb_collation\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18 R\vdbCollation\x12\x1b\n" +
-	"\ttables_ok\x18\a \x01(\bR\btablesOk\"\x8c\x01\n" +
-	"\rVersionStatus\x12!\n" +
-	"\acurrent\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\acurrent\x12H\n" +
+	"db_charset\x18\x05 \x01(\tR\tdbCharset\x12!\n" +
+	"\fdb_collation\x18\x06 \x01(\tR\vdbCollation\x12\x1b\n" +
+	"\ttables_ok\x18\a \x01(\bR\btablesOk\"\x83\x01\n" +
+	"\rVersionStatus\x12\x18\n" +
+	"\acurrent\x18\x01 \x01(\tR\acurrent\x12H\n" +
 	"\vnew_version\x18\x02 \x01(\v2\".resources.settings.NewVersionInfoH\x00R\n" +
 	"newVersion\x88\x01\x01B\x0e\n" +
-	"\f_new_version\"\xa8\x01\n" +
-	"\x0eNewVersionInfo\x12!\n" +
-	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\aversion\x12\x1a\n" +
-	"\x03url\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02R\x03url\x12F\n" +
+	"\f_new_version\"\x95\x01\n" +
+	"\x0eNewVersionInfo\x12\x18\n" +
+	"\aversion\x18\x01 \x01(\tR\aversion\x12\x10\n" +
+	"\x03url\x18\x02 \x01(\tR\x03url\x12F\n" +
 	"\frelease_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\vreleaseDate\x88\x01\x01B\x0f\n" +
-	"\r_release_date\"\xd5\x03\n" +
+	"\r_release_date\"\xcc\x03\n" +
 	"\fDBSyncStatus\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12M\n" +
 	"\x10last_synced_data\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x0elastSyncedData\x88\x01\x01\x12U\n" +
-	"\x14last_synced_activity\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x12lastSyncedActivity\x88\x01\x01\x12<\n" +
-	"\x13last_dbsync_version\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18 H\x02R\x11lastDbsyncVersion\x88\x01\x01\x12)\n" +
+	"\x14last_synced_activity\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x12lastSyncedActivity\x88\x01\x01\x123\n" +
+	"\x13last_dbsync_version\x18\x04 \x01(\tH\x02R\x11lastDbsyncVersion\x88\x01\x01\x12)\n" +
 	"\x10stream_connected\x18\x05 \x01(\bR\x0fstreamConnected\x12G\n" +
 	"\n" +
 	"sync_state\x18\x06 \x01(\v2#.resources.settings.DBSyncSyncStateH\x03R\tsyncState\x88\x01\x01B\x13\n" +
 	"\x11_last_synced_dataB\x17\n" +
 	"\x15_last_synced_activityB\x16\n" +
 	"\x14_last_dbsync_versionB\r\n" +
-	"\v_sync_state\"[\n" +
-	"\x0fDBSyncSyncState\x12H\n" +
-	"\x06tables\x18\x01 \x03(\v2&.resources.dbsync.DBSyncTableSyncStateB\b\xbaH\x05\x92\x01\x02\x10\x10R\x06tablesBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
+	"\v_sync_state\"Q\n" +
+	"\x0fDBSyncSyncState\x12>\n" +
+	"\x06tables\x18\x01 \x03(\v2&.resources.dbsync.DBSyncTableSyncStateR\x06tablesBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
 
 var file_resources_settings_status_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_settings_status_proto_goTypes = []any{

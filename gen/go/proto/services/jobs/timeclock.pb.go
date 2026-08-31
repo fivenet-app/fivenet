@@ -1166,30 +1166,30 @@ var File_services_jobs_timeclock_proto protoreflect.FileDescriptor
 
 const file_services_jobs_timeclock_proto_rawDesc = "" +
 	"\n" +
-	"\x1dservices/jobs/timeclock.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a(resources/jobs/timeclock/timeclock.proto\x1a\"resources/jobs/user_selector.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xee\x03\n" +
-	"\x14ListTimeclockRequest\x12T\n" +
+	"\x1dservices/jobs/timeclock.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a(resources/jobs/timeclock/timeclock.proto\x1a\"resources/jobs/user_selector.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xd2\x03\n" +
+	"\x14ListTimeclockRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12R\n" +
-	"\tuser_mode\x18\x03 \x01(\x0e2+.resources.jobs.timeclock.TimeclockViewModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\buserMode\x12E\n" +
-	"\x04mode\x18\x04 \x01(\x0e2'.resources.jobs.timeclock.TimeclockModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04mode\x12=\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12H\n" +
+	"\tuser_mode\x18\x03 \x01(\x0e2+.resources.jobs.timeclock.TimeclockViewModeR\buserMode\x12;\n" +
+	"\x04mode\x18\x04 \x01(\x0e2'.resources.jobs.timeclock.TimeclockModeR\x04mode\x12=\n" +
 	"\x04date\x18\x05 \x01(\v2$.resources.common.database.DateRangeH\x01R\x04date\x88\x01\x01\x12\x17\n" +
 	"\aper_day\x18\x06 \x01(\bR\x06perDay\x127\n" +
 	"\x05users\x18\a \x01(\v2\x1c.resources.jobs.UserSelectorH\x02R\x05users\x88\x01\x01B\a\n" +
 	"\x05_sortB\a\n" +
 	"\x05_dateB\b\n" +
-	"\x06_users\"\xb9\x03\n" +
-	"\x15ListTimeclockResponse\x12U\n" +
+	"\x06_users\"\xaa\x03\n" +
+	"\x15ListTimeclockResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12>\n" +
 	"\x05stats\x18\x02 \x01(\v2(.resources.jobs.timeclock.TimeclockStatsR\x05stats\x12Q\n" +
 	"\fstats_weekly\x18\x03 \x03(\v2..resources.jobs.timeclock.TimeclockWeeklyStatsR\vstatsWeekly\x123\n" +
 	"\x05daily\x18\x04 \x01(\v2\x1b.services.jobs.TimeclockDayH\x00R\x05daily\x128\n" +
 	"\x06weekly\x18\x05 \x01(\v2\x1e.services.jobs.TimeclockWeeklyH\x00R\x06weekly\x125\n" +
-	"\x05range\x18\x06 \x01(\v2\x1d.services.jobs.TimeclockRangeH\x00R\x05rangeB\x10\n" +
-	"\aentries\x12\x05\xbaH\x02\b\x01\"\x98\x01\n" +
+	"\x05range\x18\x06 \x01(\v2\x1d.services.jobs.TimeclockRangeH\x00R\x05rangeB\t\n" +
+	"\aentries\"\x98\x01\n" +
 	"\fTimeclockDay\x122\n" +
 	"\x04date\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x04date\x12B\n" +
 	"\aentries\x18\x02 \x03(\v2(.resources.jobs.timeclock.TimeclockEntryR\aentries\x12\x10\n" +
@@ -1207,19 +1207,19 @@ const file_services_jobs_timeclock_proto_rawDesc = "" +
 	"\x06_users\"\xa3\x01\n" +
 	"\x19GetTimeclockStatsResponse\x12>\n" +
 	"\x05stats\x18\x01 \x01(\v2(.resources.jobs.timeclock.TimeclockStatsR\x05stats\x12F\n" +
-	"\x06weekly\x18\x02 \x03(\v2..resources.jobs.timeclock.TimeclockWeeklyStatsR\x06weekly\"\x97\x02\n" +
-	"\x1cListInactiveEmployeesRequest\x12T\n" +
+	"\x06weekly\x18\x02 \x03(\v2..resources.jobs.timeclock.TimeclockWeeklyStatsR\x06weekly\"\x86\x02\n" +
+	"\x1cListInactiveEmployeesRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x1b\n" +
-	"\x04days\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02(\x01R\x04days\x127\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x12\n" +
+	"\x04days\x18\x03 \x01(\x05R\x04days\x127\n" +
 	"\x05users\x18\x04 \x01(\v2\x1c.resources.jobs.UserSelectorH\x01R\x05users\x88\x01\x01B\a\n" +
 	"\x05_sortB\b\n" +
-	"\x06_users\"\xc2\x01\n" +
-	"\x1dListInactiveEmployeesResponse\x12U\n" +
+	"\x06_users\"\xba\x01\n" +
+	"\x1dListInactiveEmployeesResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12J\n" +
 	"\n" +
 	"colleagues\x18\x02 \x03(\v2$.resources.jobs.colleagues.ColleagueB\x04\xc8\xf3\x18\x01R\n" +

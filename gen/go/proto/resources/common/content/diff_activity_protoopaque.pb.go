@@ -324,9 +324,9 @@ var File_resources_common_content_diff_activity_proto protoreflect.FileDescripto
 
 const file_resources_common_content_diff_activity_proto_rawDesc = "" +
 	"\n" +
-	",resources/common/content/diff_activity.proto\x12\x18resources.common.content\"a\n" +
-	"\rContentDiffOp\x12<\n" +
-	"\x04kind\x18\x01 \x01(\x0e2\x1e.resources.common.content.KindB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04kind\x12\x12\n" +
+	",resources/common/content/diff_activity.proto\x12\x18resources.common.content\"W\n" +
+	"\rContentDiffOp\x122\n" +
+	"\x04kind\x18\x01 \x01(\x0e2\x1e.resources.common.content.KindR\x04kind\x12\x12\n" +
 	"\x04text\x18\x02 \x01(\tR\x04text\"y\n" +
 	"\x10ContentDiffStats\x12%\n" +
 	"\x0einserted_runes\x18\x01 \x01(\rR\rinsertedRunes\x12#\n" +

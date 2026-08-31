@@ -1545,7 +1545,7 @@ var File_resources_documents_documents_proto protoreflect.FileDescriptor
 
 const file_resources_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"#resources/documents/documents.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/data/data.proto\x1a#resources/documents/pins/pins.proto\x1a+resources/documents/workflow/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xd6\f\n" +
+	"#resources/documents/documents.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/data/data.proto\x1a#resources/documents/pins/pins.proto\x1a+resources/documents/workflow/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x9f\f\n" +
 	"\bDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -1556,29 +1556,29 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12$\n" +
 	"\vcategory_id\x18\x05 \x01(\x03H\x02R\n" +
 	"categoryId\x88\x01\x01\x12^\n" +
-	"\bcategory\x18\x06 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12(\n" +
-	"\x05title\x18\a \x01(\tB\x12\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12\"\n" +
+	"\bcategory\x18\x06 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12\x1e\n" +
+	"\x05title\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05title\x12\"\n" +
 	"\n" +
 	"word_count\x18\x15 \x01(\rH\x04R\twordCount\x88\x01\x01\x12(\n" +
-	"\rfirst_heading\x18\x16 \x01(\tH\x05R\ffirstHeading\x88\x01\x01\x12R\n" +
-	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12V\n" +
+	"\rfirst_heading\x18\x16 \x01(\tH\x05R\ffirstHeading\x88\x01\x01\x12H\n" +
+	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12V\n" +
 	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentB\x19\x9a\x84\x9e\x03\x14alias:\"content_json\"R\acontent\x12R\n" +
 	"\x04data\x18\n" +
-	" \x01(\v2&.resources.documents.data.DocumentDataB\x11\x9a\x84\x9e\x03\falias:\"data\"H\x06R\x04data\x88\x01\x01\x12+\n" +
+	" \x01(\v2&.resources.documents.data.DocumentDataB\x11\x9a\x84\x9e\x03\falias:\"data\"H\x06R\x04data\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"creator_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\aR\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\bR\acreator\x88\x01\x01\x12(\n" +
-	"\vcreator_job\x18\r \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
-	"creatorJob\x128\n" +
-	"\x11creator_job_label\x18\x0e \x01(\tB\a\xbaH\x04r\x02\x182H\tR\x0fcreatorJobLabel\x88\x01\x01\x12H\n" +
+	"creator_id\x18\v \x01(\x05H\aR\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\bR\acreator\x88\x01\x01\x12\x1f\n" +
+	"\vcreator_job\x18\r \x01(\tR\n" +
+	"creatorJob\x12/\n" +
+	"\x11creator_job_label\x18\x0e \x01(\tH\tR\x0fcreatorJobLabel\x88\x01\x01\x12H\n" +
 	"\x04meta\x18\x0f \x01(\v2!.resources.documents.DocumentMetaB\x11\x9a\x84\x9e\x03\falias:\"meta\"R\x04meta\x12$\n" +
 	"\vtemplate_id\x18\x10 \x01(\x03H\n" +
 	"R\n" +
 	"templateId\x88\x01\x01\x12N\n" +
 	"\x03pin\x18\x11 \x01(\v2%.resources.documents.pins.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\vR\x03pin\x88\x01\x01\x12W\n" +
 	"\x0eworkflow_state\x18\x12 \x01(\v2+.resources.documents.workflow.WorkflowStateH\fR\rworkflowState\x88\x01\x01\x12Y\n" +
-	"\rworkflow_user\x18\x13 \x01(\v2/.resources.documents.workflow.WorkflowUserStateH\rR\fworkflowUser\x88\x01\x01\x12F\n" +
-	"\x05files\x18\x14 \x03(\v2\x14.resources.file.FileB\x1a\x9a\x84\x9e\x03\ralias:\"files\"\xbaH\x05\x92\x01\x02\x10\x05R\x05filesB\r\n" +
+	"\rworkflow_user\x18\x13 \x01(\v2/.resources.documents.workflow.WorkflowUserStateH\rR\fworkflowUser\x88\x01\x01\x12>\n" +
+	"\x05files\x18\x14 \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05filesB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_category_idB\v\n" +
@@ -1593,7 +1593,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\f_template_idB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xe5\n" +
+	"\x0e_workflow_user\"\xb6\n" +
 	"\n" +
 	"\rDocumentShort\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
@@ -1605,19 +1605,19 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12$\n" +
 	"\vcategory_id\x18\x05 \x01(\x03H\x02R\n" +
 	"categoryId\x88\x01\x01\x12^\n" +
-	"\bcategory\x18\x06 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12(\n" +
-	"\x05title\x18\a \x01(\tB\x12\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12\"\n" +
+	"\bcategory\x18\x06 \x01(\v2&.resources.documents.category.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12\x1e\n" +
+	"\x05title\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05title\x12\"\n" +
 	"\n" +
 	"word_count\x18\x15 \x01(\rH\x04R\twordCount\x88\x01\x01\x12(\n" +
-	"\rfirst_heading\x18\x16 \x01(\tH\x05R\ffirstHeading\x88\x01\x01\x12R\n" +
-	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12;\n" +
-	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentR\acontent\x12+\n" +
+	"\rfirst_heading\x18\x16 \x01(\tH\x05R\ffirstHeading\x88\x01\x01\x12H\n" +
+	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12;\n" +
+	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentR\acontent\x12\"\n" +
 	"\n" +
-	"creator_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x06R\tcreatorId\x88\x01\x01\x12U\n" +
-	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\aR\acreator\x88\x01\x01\x12(\n" +
-	"\vcreator_job\x18\r \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
-	"creatorJob\x128\n" +
-	"\x11creator_job_label\x18\x0e \x01(\tB\a\xbaH\x04r\x02\x182H\bR\x0fcreatorJobLabel\x88\x01\x01\x12H\n" +
+	"creator_id\x18\v \x01(\x05H\x06R\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\aR\acreator\x88\x01\x01\x12\x1f\n" +
+	"\vcreator_job\x18\r \x01(\tR\n" +
+	"creatorJob\x12/\n" +
+	"\x11creator_job_label\x18\x0e \x01(\tH\bR\x0fcreatorJobLabel\x88\x01\x01\x12H\n" +
 	"\x04meta\x18\x0f \x01(\v2!.resources.documents.DocumentMetaB\x11\x9a\x84\x9e\x03\falias:\"meta\"R\x04meta\x12N\n" +
 	"\x03pin\x18\x11 \x01(\v2%.resources.documents.pins.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\tR\x03pin\x88\x01\x01\x12W\n" +
 	"\x0eworkflow_state\x18\x12 \x01(\v2+.resources.documents.workflow.WorkflowStateH\n" +
@@ -1635,15 +1635,15 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xe3\x06\n" +
+	"\x0e_workflow_user\"\xdc\x06\n" +
 	"\fDocumentMeta\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12H\n" +
 	"\rrecomputed_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\frecomputedAt\x88\x01\x01\x12\x16\n" +
 	"\x06closed\x18\x03 \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\x04 \x01(\bR\x05draft\x12\x16\n" +
-	"\x06public\x18\x05 \x01(\bR\x06public\x12#\n" +
-	"\x05state\x18\x06 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18 R\x05state\x12\x1f\n" +
+	"\x06public\x18\x05 \x01(\bR\x06public\x12\x1c\n" +
+	"\x05state\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x1f\n" +
 	"\bapproved\x18\a \x01(\bH\x01R\bapproved\x88\x01\x01\x12/\n" +
 	"\x11ap_required_total\x18\x10 \x01(\x05H\x02R\x0fapRequiredTotal\x88\x01\x01\x127\n" +
 	"\x15ap_collected_approved\x18\x11 \x01(\x05H\x03R\x13apCollectedApproved\x88\x01\x01\x127\n" +

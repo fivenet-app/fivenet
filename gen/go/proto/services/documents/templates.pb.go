@@ -843,23 +843,23 @@ const file_services_documents_templates_proto_rawDesc = "" +
 	"_selectionJ\x04\b\x02\x10\x03\"v\n" +
 	"\x13GetTemplateResponse\x12C\n" +
 	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\x12\x1a\n" +
-	"\brendered\x18\x02 \x01(\bR\brendered\"d\n" +
-	"\x15CreateTemplateRequest\x12K\n" +
-	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"(\n" +
+	"\brendered\x18\x02 \x01(\bR\brendered\"\\\n" +
+	"\x15CreateTemplateRequest\x12C\n" +
+	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"(\n" +
 	"\x16CreateTemplateResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"d\n" +
-	"\x15UpdateTemplateRequest\x12K\n" +
-	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"]\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\\\n" +
+	"\x15UpdateTemplateRequest\x12C\n" +
+	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"]\n" +
 	"\x16UpdateTemplateResponse\x12C\n" +
 	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"'\n" +
 	"\x15DeleteTemplateRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
-	"\x16DeleteTemplateResponse\"\xae\x01\n" +
-	"\x13MoveTemplateRequest\x12(\n" +
-	"\vtemplate_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
-	"templateId\x12)\n" +
-	"\tbefore_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\bbeforeId\x88\x01\x01\x12'\n" +
-	"\bafter_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x01R\aafterId\x88\x01\x01B\f\n" +
+	"\x16DeleteTemplateResponse\"\x93\x01\n" +
+	"\x13MoveTemplateRequest\x12\x1f\n" +
+	"\vtemplate_id\x18\x01 \x01(\x03R\n" +
+	"templateId\x12 \n" +
+	"\tbefore_id\x18\x02 \x01(\x03H\x00R\bbeforeId\x88\x01\x01\x12\x1e\n" +
+	"\bafter_id\x18\x03 \x01(\x03H\x01R\aafterId\x88\x01\x01B\f\n" +
 	"\n" +
 	"_before_idB\v\n" +
 	"\t_after_id\"\x16\n" +

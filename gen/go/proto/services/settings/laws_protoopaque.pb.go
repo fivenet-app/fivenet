@@ -870,9 +870,9 @@ const file_services_settings_laws_proto_rawDesc = "" +
 	"\x1cservices/settings/laws.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a\x19resources/laws/laws.proto\x1a#resources/timestamp/timestamp.proto\"\x15\n" +
 	"\x13ListLawBooksRequest\"E\n" +
 	"\x14ListLawBooksResponse\x12-\n" +
-	"\x05books\x18\x01 \x03(\v2\x17.resources.laws.LawBookR\x05books\"Z\n" +
-	"\x1cCreateOrUpdateLawBookRequest\x12:\n" +
-	"\blaw_book\x18\x01 \x01(\v2\x17.resources.laws.LawBookB\x06\xbaH\x03\xc8\x01\x01R\alawBook\"S\n" +
+	"\x05books\x18\x01 \x03(\v2\x17.resources.laws.LawBookR\x05books\"R\n" +
+	"\x1cCreateOrUpdateLawBookRequest\x122\n" +
+	"\blaw_book\x18\x01 \x01(\v2\x17.resources.laws.LawBookR\alawBook\"S\n" +
 	"\x1dCreateOrUpdateLawBookResponse\x122\n" +
 	"\blaw_book\x18\x01 \x01(\v2\x17.resources.laws.LawBookR\alawBook\"&\n" +
 	"\x14DeleteLawBookRequest\x12\x0e\n" +
@@ -880,9 +880,9 @@ const file_services_settings_laws_proto_rawDesc = "" +
 	"\x15DeleteLawBookResponse\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01B\r\n" +
-	"\v_deleted_at\"I\n" +
-	"\x18CreateOrUpdateLawRequest\x12-\n" +
-	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawB\x06\xbaH\x03\xc8\x01\x01R\x03law\"B\n" +
+	"\v_deleted_at\"A\n" +
+	"\x18CreateOrUpdateLawRequest\x12%\n" +
+	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawR\x03law\"B\n" +
 	"\x19CreateOrUpdateLawResponse\x12%\n" +
 	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawR\x03law\"\"\n" +
 	"\x10DeleteLawRequest\x12\x0e\n" +
@@ -890,13 +890,13 @@ const file_services_settings_laws_proto_rawDesc = "" +
 	"\x11DeleteLawResponse\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01B\r\n" +
-	"\v_deleted_at\"i\n" +
-	"\x12ReorderLawsRequest\x12'\n" +
-	"\vlaw_book_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\tlawBookId\x12*\n" +
-	"\alaw_ids\x18\x02 \x03(\x03B\x11\xbaH\x0e\x92\x01\v\b\x01\x10\xc8\x01\"\x04\"\x02 \x00R\x06lawIds\"\x15\n" +
-	"\x13ReorderLawsResponse\"M\n" +
-	"\x16ReorderLawBooksRequest\x123\n" +
-	"\flaw_book_ids\x18\x01 \x03(\x03B\x11\xbaH\x0e\x92\x01\v\b\x01\x10\xc8\x01\"\x04\"\x02 \x00R\n" +
+	"\v_deleted_at\"M\n" +
+	"\x12ReorderLawsRequest\x12\x1e\n" +
+	"\vlaw_book_id\x18\x01 \x01(\x03R\tlawBookId\x12\x17\n" +
+	"\alaw_ids\x18\x02 \x03(\x03R\x06lawIds\"\x15\n" +
+	"\x13ReorderLawsResponse\":\n" +
+	"\x16ReorderLawBooksRequest\x12 \n" +
+	"\flaw_book_ids\x18\x01 \x03(\x03R\n" +
 	"lawBookIds\"\x19\n" +
 	"\x17ReorderLawBooksResponse2\xa1\a\n" +
 	"\vLawsService\x12~\n" +

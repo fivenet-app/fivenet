@@ -311,23 +311,23 @@ var File_resources_dbsync_state_proto protoreflect.FileDescriptor
 
 const file_resources_dbsync_state_proto_rawDesc = "" +
 	"\n" +
-	"\x1cresources/dbsync/state.proto\x12\x10resources.dbsync\x1a#resources/timestamp/timestamp.proto\"\x99\x01\n" +
+	"\x1cresources/dbsync/state.proto\x12\x10resources.dbsync\x1a#resources/timestamp/timestamp.proto\"\x8f\x01\n" +
 	"\x10DBSyncCheckpoint\x12B\n" +
 	"\n" +
-	"last_check\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tlastCheck\x88\x01\x01\x12&\n" +
-	"\alast_id\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x01R\x06lastId\x88\x01\x01B\r\n" +
+	"last_check\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tlastCheck\x88\x01\x01\x12\x1c\n" +
+	"\alast_id\x18\x02 \x01(\tH\x01R\x06lastId\x88\x01\x01B\r\n" +
 	"\v_last_checkB\n" +
 	"\n" +
-	"\b_last_id\"\xa3\x03\n" +
-	"\x14DBSyncTableSyncState\x12\x1d\n" +
-	"\x05table\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\x05table\x12G\n" +
+	"\b_last_id\"\x90\x03\n" +
+	"\x14DBSyncTableSyncState\x12\x14\n" +
+	"\x05table\x18\x01 \x01(\tR\x05table\x12G\n" +
 	"\n" +
 	"checkpoint\x18\x02 \x01(\v2\".resources.dbsync.DBSyncCheckpointH\x00R\n" +
 	"checkpoint\x88\x01\x01\x12I\n" +
 	"\x0elast_synced_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\flastSyncedAt\x88\x01\x01\x12K\n" +
-	"\x0flast_attempt_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\rlastAttemptAt\x88\x01\x01\x12,\n" +
+	"\x0flast_attempt_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\rlastAttemptAt\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"last_error\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x02H\x03R\tlastError\x88\x01\x01\x12\x18\n" +
+	"last_error\x18\x05 \x01(\tH\x03R\tlastError\x88\x01\x01\x12\x18\n" +
 	"\aenabled\x18\x06 \x01(\bR\aenabledB\r\n" +
 	"\v_checkpointB\x11\n" +
 	"\x0f_last_synced_atB\x12\n" +

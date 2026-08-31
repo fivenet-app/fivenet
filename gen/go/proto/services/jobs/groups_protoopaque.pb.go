@@ -5058,26 +5058,25 @@ var File_services_jobs_groups_proto protoreflect.FileDescriptor
 
 const file_services_jobs_groups_proto_rawDesc = "" +
 	"\n" +
-	"\x1aservices/jobs/groups.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1dresources/access/access.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a$resources/jobs/groups/activity.proto\x1a!resources/jobs/groups/group.proto\x1a#resources/timestamp/timestamp.proto\"\x98\x04\n" +
-	"\x11ListGroupsRequest\x12T\n" +
+	"\x1aservices/jobs/groups.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1dresources/access/access.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a$resources/jobs/groups/activity.proto\x1a!resources/jobs/groups/group.proto\x1a#resources/timestamp/timestamp.proto\"\xe5\x03\n" +
+	"\x11ListGroupsRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12J\n" +
-	"\x06states\x18\x03 \x03(\x0e2!.resources.jobs.groups.GroupStateB\x0f\xbaH\f\x92\x01\t\x10\x03\"\x05\x82\x01\x02\x10\x01R\x06states\x12\x1b\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x129\n" +
+	"\x06states\x18\x03 \x03(\x0e2!.resources.jobs.groups.GroupStateR\x06states\x12\x1b\n" +
 	"\x06search\x18\x04 \x01(\tH\x01R\x06search\x88\x01\x01\x12%\n" +
 	"\x0einclude_counts\x18\x05 \x01(\bR\rincludeCounts\x12)\n" +
 	"\x10include_inactive\x18\x06 \x01(\bR\x0fincludeInactive\x12)\n" +
-	"\x10include_archived\x18\a \x01(\bR\x0fincludeArchived\x12+\n" +
-	"\tgroup_ids\x18\b \x03(\x05B\x0e\xbaH\v\x92\x01\b\x10\n" +
-	"\"\x04\x1a\x02 \x00R\bgroupIds\x12C\n" +
-	"\x04kind\x18\t \x01(\x0e2 .resources.jobs.groups.GroupTypeB\b\xbaH\x05\x82\x01\x02\x10\x01H\x02R\x04kind\x88\x01\x01B\a\n" +
+	"\x10include_archived\x18\a \x01(\bR\x0fincludeArchived\x12\x1b\n" +
+	"\tgroup_ids\x18\b \x03(\x05R\bgroupIds\x129\n" +
+	"\x04kind\x18\t \x01(\x0e2 .resources.jobs.groups.GroupTypeH\x02R\x04kind\x88\x01\x01B\a\n" +
 	"\x05_sortB\t\n" +
 	"\a_searchB\a\n" +
-	"\x05_kind\"\xa7\x01\n" +
-	"\x12ListGroupsResponse\x12U\n" +
+	"\x05_kind\"\x9f\x01\n" +
+	"\x12ListGroupsResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12:\n" +
 	"\x06groups\x18\x02 \x03(\v2\x1c.resources.jobs.groups.GroupB\x04\xc8\xf3\x18\x01R\x06groups\"L\n" +
 	"\x0fGetGroupRequest\x12\x0e\n" +
@@ -5086,21 +5085,21 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x10GetGroupResponse\x122\n" +
 	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\x125\n" +
 	"\x06access\x18\x02 \x01(\v2\x18.resources.access.AccessH\x00R\x06access\x88\x01\x01B\t\n" +
-	"\a_access\"\xc9\x05\n" +
-	"\x12CreateGroupRequest\x12\x19\n" +
-	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x12\n" +
+	"\a_access\"\x85\x05\n" +
+	"\x12CreateGroupRequest\x12\x10\n" +
+	"\x03job\x18\x01 \x01(\tR\x03job\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12%\n" +
 	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"short_name\x18\x04 \x01(\tH\x01R\tshortName\x88\x01\x01\x12\x19\n" +
-	"\x05color\x18\x06 \x01(\tH\x02R\x05color\x88\x01\x01\x12C\n" +
-	"\x04type\x18\a \x01(\x0e2 .resources.jobs.groups.GroupTypeB\b\xbaH\x05\x82\x01\x02\x10\x01H\x03R\x04type\x88\x01\x01\x12b\n" +
-	"\x0fmembership_mode\x18\b \x01(\x0e2*.resources.jobs.groups.GroupMembershipModeB\b\xbaH\x05\x82\x01\x02\x10\x01H\x04R\x0emembershipMode\x88\x01\x01\x12)\n" +
-	"\tsort_rank\x18\t \x01(\tB\a\xbaH\x04r\x02\x18 H\x05R\bsortRank\x88\x01\x01\x120\n" +
+	"\x05color\x18\x06 \x01(\tH\x02R\x05color\x88\x01\x01\x129\n" +
+	"\x04type\x18\a \x01(\x0e2 .resources.jobs.groups.GroupTypeH\x03R\x04type\x88\x01\x01\x12X\n" +
+	"\x0fmembership_mode\x18\b \x01(\x0e2*.resources.jobs.groups.GroupMembershipModeH\x04R\x0emembershipMode\x88\x01\x01\x12 \n" +
+	"\tsort_rank\x18\t \x01(\tH\x05R\bsortRank\x88\x01\x01\x12&\n" +
 	"\x0fleader_user_ids\x18\n" +
-	" \x03(\x05B\b\xbaH\x05\x92\x01\x02\x10\x14R\rleaderUserIds\x12=\n" +
-	"\x16manual_member_user_ids\x18\v \x03(\x05B\b\xbaH\x05\x92\x01\x02\x10dR\x13manualMemberUserIds\x12=\n" +
-	"\x05rules\x18\f \x03(\v2\x1d.services.jobs.GroupRuleInputB\b\xbaH\x05\x92\x01\x02\x102R\x05rules\x125\n" +
+	" \x03(\x05R\rleaderUserIds\x123\n" +
+	"\x16manual_member_user_ids\x18\v \x03(\x05R\x13manualMemberUserIds\x123\n" +
+	"\x05rules\x18\f \x03(\v2\x1d.services.jobs.GroupRuleInputR\x05rules\x125\n" +
 	"\x06access\x18\r \x01(\v2\x18.resources.access.AccessH\x06R\x06access\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\r\n" +
 	"\v_short_nameB\b\n" +
@@ -5111,19 +5110,19 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"_sort_rankB\t\n" +
 	"\a_accessJ\x04\b\x05\x10\x06\"I\n" +
 	"\x13CreateGroupResponse\x122\n" +
-	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xee\x04\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xc7\x04\n" +
 	"\x12UpdateGroupRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
 	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"short_name\x18\x04 \x01(\tH\x02R\tshortName\x88\x01\x01\x12\x19\n" +
-	"\x05color\x18\x06 \x01(\tH\x03R\x05color\x88\x01\x01\x12F\n" +
-	"\x05state\x18\a \x01(\x0e2!.resources.jobs.groups.GroupStateB\b\xbaH\x05\x82\x01\x02\x10\x01H\x04R\x05state\x88\x01\x01\x12C\n" +
-	"\x04type\x18\b \x01(\x0e2 .resources.jobs.groups.GroupTypeB\b\xbaH\x05\x82\x01\x02\x10\x01H\x05R\x04type\x88\x01\x01\x12b\n" +
-	"\x0fmembership_mode\x18\t \x01(\x0e2*.resources.jobs.groups.GroupMembershipModeB\b\xbaH\x05\x82\x01\x02\x10\x01H\x06R\x0emembershipMode\x88\x01\x01\x12)\n" +
+	"\x05color\x18\x06 \x01(\tH\x03R\x05color\x88\x01\x01\x12<\n" +
+	"\x05state\x18\a \x01(\x0e2!.resources.jobs.groups.GroupStateH\x04R\x05state\x88\x01\x01\x129\n" +
+	"\x04type\x18\b \x01(\x0e2 .resources.jobs.groups.GroupTypeH\x05R\x04type\x88\x01\x01\x12X\n" +
+	"\x0fmembership_mode\x18\t \x01(\x0e2*.resources.jobs.groups.GroupMembershipModeH\x06R\x0emembershipMode\x88\x01\x01\x12 \n" +
 	"\tsort_rank\x18\n" +
-	" \x01(\tB\a\xbaH\x04r\x02\x18 H\aR\bsortRank\x88\x01\x01\x125\n" +
+	" \x01(\tH\aR\bsortRank\x88\x01\x01\x125\n" +
 	"\x06access\x18\v \x01(\v2\x18.resources.access.AccessH\bR\x06access\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\r\n" +
@@ -5152,71 +5151,71 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x16DeleteGroupLogoRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"M\n" +
 	"\x17DeleteGroupLogoResponse\x122\n" +
-	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xc7\x03\n" +
-	"\x17ListGroupMembersRequest\x12T\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xae\x03\n" +
+	"\x17ListGroupMembersRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x19\n" +
 	"\bgroup_id\x18\x03 \x01(\x03R\agroupId\x12\x1b\n" +
 	"\x06search\x18\x04 \x01(\tH\x01R\x06search\x88\x01\x01\x12)\n" +
 	"\x10include_excluded\x18\x05 \x01(\bR\x0fincludeExcluded\x12'\n" +
 	"\x0finclude_leaders\x18\x06 \x01(\bR\x0eincludeLeaders\x12'\n" +
-	"\x0finclude_reasons\x18\a \x01(\bR\x0eincludeReasons\x12S\n" +
-	"\asources\x18\b \x03(\x0e2(.resources.jobs.groups.GroupMemberSourceB\x0f\xbaH\f\x92\x01\t\x10\x03\"\x05\x82\x01\x02\x10\x01R\asourcesB\a\n" +
+	"\x0finclude_reasons\x18\a \x01(\bR\x0eincludeReasons\x12B\n" +
+	"\asources\x18\b \x03(\x0e2(.resources.jobs.groups.GroupMemberSourceR\asourcesB\a\n" +
 	"\x05_sortB\t\n" +
-	"\a_search\"\xbd\x01\n" +
-	"\x18ListGroupMembersResponse\x12U\n" +
+	"\a_search\"\xb5\x01\n" +
+	"\x18ListGroupMembersResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12J\n" +
-	"\amembers\x18\x02 \x03(\v2*.resources.jobs.groups.GroupResolvedMemberB\x04\xc8\xf3\x18\x01R\amembers\"\x88\x01\n" +
-	"\x15ListGroupRulesRequest\x12T\n" +
+	"\amembers\x18\x02 \x03(\v2*.resources.jobs.groups.GroupResolvedMemberB\x04\xc8\xf3\x18\x01R\amembers\"\x80\x01\n" +
+	"\x15ListGroupRulesRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x19\n" +
-	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\"\xad\x01\n" +
-	"\x16ListGroupRulesResponse\x12U\n" +
+	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\"\xa5\x01\n" +
+	"\x16ListGroupRulesResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12<\n" +
-	"\x05rules\x18\x02 \x03(\v2 .resources.jobs.groups.GroupRuleB\x04\xc8\xf3\x18\x01R\x05rules\"\xb8\x01\n" +
-	"\x1dListGroupManualMembersRequest\x12T\n" +
+	"\x05rules\x18\x02 \x03(\v2 .resources.jobs.groups.GroupRuleB\x04\xc8\xf3\x18\x01R\x05rules\"\xb0\x01\n" +
+	"\x1dListGroupManualMembersRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x19\n" +
 	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\x1b\n" +
 	"\x06search\x18\x03 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +
-	"\a_search\"\xce\x01\n" +
-	"\x1eListGroupManualMembersResponse\x12U\n" +
+	"\a_search\"\xc6\x01\n" +
+	"\x1eListGroupManualMembersResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12U\n" +
-	"\x0emanual_members\x18\x02 \x03(\v2(.resources.jobs.groups.GroupManualMemberB\x04\xc8\xf3\x18\x01R\rmanualMembers\"\xbb\x01\n" +
-	" ListGroupMemberExclusionsRequest\x12T\n" +
+	"\x0emanual_members\x18\x02 \x03(\v2(.resources.jobs.groups.GroupManualMemberB\x04\xc8\xf3\x18\x01R\rmanualMembers\"\xb3\x01\n" +
+	" ListGroupMemberExclusionsRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x19\n" +
 	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\x1b\n" +
 	"\x06search\x18\x03 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +
-	"\a_search\"\xcd\x01\n" +
-	"!ListGroupMemberExclusionsResponse\x12U\n" +
+	"\a_search\"\xc5\x01\n" +
+	"!ListGroupMemberExclusionsResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12Q\n" +
 	"\n" +
 	"exclusions\x18\x02 \x03(\v2+.resources.jobs.groups.GroupMemberExclusionB\x04\xc8\xf3\x18\x01R\n" +
-	"exclusions\"\xb2\x01\n" +
-	"\x17ListGroupLeadersRequest\x12T\n" +
+	"exclusions\"\xaa\x01\n" +
+	"\x17ListGroupLeadersRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x19\n" +
 	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\x1b\n" +
 	"\x06search\x18\x03 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +
-	"\a_search\"\xb5\x01\n" +
-	"\x18ListGroupLeadersResponse\x12U\n" +
+	"\a_search\"\xad\x01\n" +
+	"\x18ListGroupLeadersResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12B\n" +
 	"\aleaders\x18\x02 \x03(\v2\".resources.jobs.groups.GroupLeaderB\x04\xc8\xf3\x18\x01R\aleaders\"s\n" +
 	"\x15AddGroupMemberRequest\x12\x19\n" +
@@ -5233,11 +5232,11 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"O\n" +
 	"\x19RemoveGroupMemberResponse\x122\n" +
-	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xcf\x01\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xc5\x01\n" +
 	"\x19ExcludeGroupMemberRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12V\n" +
-	"\vreason_type\x18\x03 \x01(\x0e2+.resources.jobs.groups.GroupExclusionReasonB\b\xbaH\x05\x82\x01\x02\x10\x01R\n" +
+	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12L\n" +
+	"\vreason_type\x18\x03 \x01(\x0e2+.resources.jobs.groups.GroupExclusionReasonR\n" +
 	"reasonType\x12\x1b\n" +
 	"\x06reason\x18\x04 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"\x9b\x01\n" +
@@ -5297,15 +5296,15 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"M\n" +
 	"\x17DeleteGroupRuleResponse\x122\n" +
-	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xe4\x03\n" +
-	"\x18ListGroupActivityRequest\x12Y\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xc2\x03\n" +
+	"\x18ListGroupActivityRequest\x12Q\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01H\x00R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestH\x00R\n" +
 	"pagination\x88\x01\x01\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x01R\x04sort\x88\x01\x01\x12\x19\n" +
-	"\bgroup_id\x18\x03 \x01(\x03R\agroupId\x12O\n" +
-	"\x05types\x18\x04 \x03(\x0e2(.resources.jobs.groups.GroupActivityTypeB\x0f\xbaH\f\x92\x01\t\x10\x0e\"\x05\x82\x01\x02\x10\x01R\x05types\x12%\n" +
-	"\auser_id\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x02R\x06userId\x88\x01\x01\x127\n" +
+	"\bgroup_id\x18\x03 \x01(\x03R\agroupId\x12>\n" +
+	"\x05types\x18\x04 \x03(\x0e2(.resources.jobs.groups.GroupActivityTypeR\x05types\x12\x1c\n" +
+	"\auser_id\x18\x05 \x01(\x05H\x02R\x06userId\x88\x01\x01\x127\n" +
 	"\x04from\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\x04from\x88\x01\x01\x123\n" +
 	"\x02to\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x04R\x02to\x88\x01\x01B\r\n" +
 	"\v_paginationB\a\n" +
@@ -5313,10 +5312,10 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\n" +
 	"\b_user_idB\a\n" +
 	"\x05_fromB\x05\n" +
-	"\x03_to\"\xce\x01\n" +
-	"\x19ListGroupActivityResponse\x12Z\n" +
+	"\x03_to\"\xc6\x01\n" +
+	"\x19ListGroupActivityResponse\x12R\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01H\x00R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseH\x00R\n" +
 	"pagination\x88\x01\x01\x12F\n" +
 	"\bactivity\x18\x02 \x03(\v2$.resources.jobs.groups.GroupActivityB\x04\xc8\xf3\x18\x01R\bactivityB\r\n" +
 	"\v_pagination2\xe2\x16\n" +

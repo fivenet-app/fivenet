@@ -2650,10 +2650,10 @@ var File_resources_jobs_groups_group_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_groups_group_proto_rawDesc = "" +
 	"\n" +
-	"!resources/jobs/groups/group.proto\x12\x15resources.jobs.groups\x1a\x19resources/file/file.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xd9\t\n" +
+	"!resources/jobs/groups/group.proto\x12\x15resources.jobs.groups\x1a\x19resources/file/file.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa9\t\n" +
 	"\x05Group\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
-	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
+	"\x03job\x18\x02 \x01(\tR\x03job\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12%\n" +
 	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\"\n" +
 	"\n" +
@@ -2661,12 +2661,12 @@ const file_resources_jobs_groups_group_proto_rawDesc = "" +
 	"\flogo_file_id\x18\x06 \x01(\x03H\x02R\n" +
 	"logoFileId\x88\x01\x01\x12N\n" +
 	"\tlogo_file\x18\a \x01(\v2\x14.resources.file.FileB\x16\x9a\x84\x9e\x03\x11alias:\"logo_file\"H\x03R\blogoFile\x88\x01\x01\x12\x19\n" +
-	"\x05color\x18\b \x01(\tH\x04R\x05color\x88\x01\x01\x12>\n" +
-	"\x04type\x18\t \x01(\x0e2 .resources.jobs.groups.GroupTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12A\n" +
+	"\x05color\x18\b \x01(\tH\x04R\x05color\x88\x01\x01\x124\n" +
+	"\x04type\x18\t \x01(\x0e2 .resources.jobs.groups.GroupTypeR\x04type\x127\n" +
 	"\x05state\x18\n" +
-	" \x01(\x0e2!.resources.jobs.groups.GroupStateB\b\xbaH\x05\x82\x01\x02\x10\x01R\x05state\x12]\n" +
-	"\x0fmembership_mode\x18\v \x01(\x0e2*.resources.jobs.groups.GroupMembershipModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x0emembershipMode\x12$\n" +
-	"\tsort_rank\x18\f \x01(\tB\a\xbaH\x04r\x02\x18 R\bsortRank\x12#\n" +
+	" \x01(\x0e2!.resources.jobs.groups.GroupStateR\x05state\x12S\n" +
+	"\x0fmembership_mode\x18\v \x01(\x0e2*.resources.jobs.groups.GroupMembershipModeR\x0emembershipMode\x12\x1b\n" +
+	"\tsort_rank\x18\f \x01(\tR\bsortRank\x12#\n" +
 	"\rmembers_count\x18\r \x01(\x05R\fmembersCount\x12#\n" +
 	"\rleaders_count\x18\x0e \x01(\x05R\fleadersCount\x12\x1f\n" +
 	"\vrules_count\x18\x0f \x01(\x05R\n" +
@@ -2720,12 +2720,12 @@ const file_resources_jobs_groups_group_proto_rawDesc = "" +
 	"_colleagueB\t\n" +
 	"\a_reasonB\x15\n" +
 	"\x13_created_by_user_idB\r\n" +
-	"\v_created_by\"\x82\x04\n" +
+	"\v_created_by\"\xf8\x03\n" +
 	"\x14GroupMemberExclusion\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12G\n" +
-	"\tcolleague\x18\x03 \x01(\v2$.resources.jobs.colleagues.ColleagueH\x00R\tcolleague\x88\x01\x01\x12V\n" +
-	"\vreason_type\x18\x04 \x01(\x0e2+.resources.jobs.groups.GroupExclusionReasonB\b\xbaH\x05\x82\x01\x02\x10\x01R\n" +
+	"\tcolleague\x18\x03 \x01(\v2$.resources.jobs.colleagues.ColleagueH\x00R\tcolleague\x88\x01\x01\x12L\n" +
+	"\vreason_type\x18\x04 \x01(\x0e2+.resources.jobs.groups.GroupExclusionReasonR\n" +
 	"reasonType\x12\x1b\n" +
 	"\x06reason\x18\x05 \x01(\tH\x01R\x06reason\x88\x01\x01\x120\n" +
 	"\x12created_by_user_id\x18\x06 \x01(\x05H\x02R\x0fcreatedByUserId\x88\x01\x01\x12H\n" +
@@ -2737,9 +2737,9 @@ const file_resources_jobs_groups_group_proto_rawDesc = "" +
 	"_colleagueB\t\n" +
 	"\a_reasonB\x15\n" +
 	"\x13_created_by_user_idB\r\n" +
-	"\v_created_by\"\x96\x03\n" +
-	"\x0eGroupGradeRule\x12G\n" +
-	"\x04type\x18\x01 \x01(\x0e2).resources.jobs.groups.GroupGradeRuleTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x19\n" +
+	"\v_created_by\"\x8c\x03\n" +
+	"\x0eGroupGradeRule\x12=\n" +
+	"\x04type\x18\x01 \x01(\x0e2).resources.jobs.groups.GroupGradeRuleTypeR\x04type\x12\x19\n" +
 	"\x05grade\x18\x02 \x01(\x05H\x00R\x05grade\x88\x01\x01\x12 \n" +
 	"\tmin_grade\x18\x03 \x01(\x05H\x01R\bminGrade\x88\x01\x01\x12 \n" +
 	"\tmax_grade\x18\x04 \x01(\x05H\x02R\bmaxGrade\x88\x01\x01\x12$\n" +
@@ -2754,17 +2754,17 @@ const file_resources_jobs_groups_group_proto_rawDesc = "" +
 	"_max_gradeB\x0e\n" +
 	"\f_grade_labelB\x12\n" +
 	"\x10_min_grade_labelB\x12\n" +
-	"\x10_max_grade_label\"\xb1\x02\n" +
-	"\x16GroupQualificationRule\x12O\n" +
-	"\x04type\x18\x01 \x01(\x0e21.resources.jobs.groups.GroupQualificationRuleTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x129\n" +
-	"\x11qualification_ids\x18\x02 \x03(\x03B\f\xbaH\t\x92\x01\x06\"\x04\"\x02 \x00R\x10qualificationIds\x12+\n" +
-	"\x11require_completed\x18\x03 \x01(\bR\x10requireCompleted\x12^\n" +
-	"\x0equalifications\x18\x04 \x03(\v2,.resources.qualifications.QualificationShortB\b\xbaH\x05\x92\x01\x02\x10\x04R\x0equalifications\"\xe6\x04\n" +
+	"\x10_max_grade_label\"\x8f\x02\n" +
+	"\x16GroupQualificationRule\x12E\n" +
+	"\x04type\x18\x01 \x01(\x0e21.resources.jobs.groups.GroupQualificationRuleTypeR\x04type\x12+\n" +
+	"\x11qualification_ids\x18\x02 \x03(\x03R\x10qualificationIds\x12+\n" +
+	"\x11require_completed\x18\x03 \x01(\bR\x10requireCompleted\x12T\n" +
+	"\x0equalifications\x18\x04 \x03(\v2,.resources.qualifications.QualificationShortR\x0equalifications\"\xdc\x04\n" +
 	"\tGroupRule\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\x18\n" +
-	"\aenabled\x18\x03 \x01(\bR\aenabled\x12B\n" +
-	"\x04type\x18\x04 \x01(\x0e2$.resources.jobs.groups.GroupRuleTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12=\n" +
+	"\aenabled\x18\x03 \x01(\bR\aenabled\x128\n" +
+	"\x04type\x18\x04 \x01(\x0e2$.resources.jobs.groups.GroupRuleTypeR\x04type\x12=\n" +
 	"\x05grade\x18\x05 \x01(\v2%.resources.jobs.groups.GroupGradeRuleH\x00R\x05grade\x12U\n" +
 	"\rqualification\x18\x06 \x01(\v2-.resources.jobs.groups.GroupQualificationRuleH\x00R\rqualification\x120\n" +
 	"\x12created_by_user_id\x18\a \x01(\x05H\x01R\x0fcreatedByUserId\x88\x01\x01\x12H\n" +
@@ -2778,15 +2778,15 @@ const file_resources_jobs_groups_group_proto_rawDesc = "" +
 	"\x04ruleB\x15\n" +
 	"\x13_created_by_user_idB\r\n" +
 	"\v_created_byB\r\n" +
-	"\v_updated_at\"\x85\x02\n" +
-	"\x15GroupMembershipReason\x12J\n" +
-	"\x06source\x18\x01 \x01(\x0e2(.resources.jobs.groups.GroupMemberSourceB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06source\x12\x1c\n" +
-	"\arule_id\x18\x02 \x01(\x03H\x00R\x06ruleId\x88\x01\x01\x12N\n" +
-	"\x04type\x18\x03 \x01(\x0e20.resources.jobs.groups.GroupMembershipReasonTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x1b\n" +
+	"\v_updated_at\"\xf1\x01\n" +
+	"\x15GroupMembershipReason\x12@\n" +
+	"\x06source\x18\x01 \x01(\x0e2(.resources.jobs.groups.GroupMemberSourceR\x06source\x12\x1c\n" +
+	"\arule_id\x18\x02 \x01(\x03H\x00R\x06ruleId\x88\x01\x01\x12D\n" +
+	"\x04type\x18\x03 \x01(\x0e20.resources.jobs.groups.GroupMembershipReasonTypeR\x04type\x12\x1b\n" +
 	"\x06detail\x18\x04 \x01(\tH\x01R\x06detail\x88\x01\x01B\n" +
 	"\n" +
 	"\b_rule_idB\t\n" +
-	"\a_detail\"\xa2\x03\n" +
+	"\a_detail\"\x87\x03\n" +
 	"\x13GroupResolvedMember\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12G\n" +
@@ -2794,9 +2794,9 @@ const file_resources_jobs_groups_group_proto_rawDesc = "" +
 	"\tis_member\x18\x04 \x01(\bR\bisMember\x12\x1b\n" +
 	"\tis_leader\x18\x05 \x01(\bR\bisLeader\x12\x1f\n" +
 	"\vis_excluded\x18\x06 \x01(\bR\n" +
-	"isExcluded\x12S\n" +
-	"\asources\x18\a \x03(\x0e2(.resources.jobs.groups.GroupMemberSourceB\x0f\xbaH\f\x92\x01\t\x10\x04\"\x05\x82\x01\x02\x10\x01R\asources\x12P\n" +
-	"\areasons\x18\b \x03(\v2,.resources.jobs.groups.GroupMembershipReasonB\b\xbaH\x05\x92\x01\x02\x10\bR\areasonsB\f\n" +
+	"isExcluded\x12B\n" +
+	"\asources\x18\a \x03(\x0e2(.resources.jobs.groups.GroupMemberSourceR\asources\x12F\n" +
+	"\areasons\x18\b \x03(\v2,.resources.jobs.groups.GroupMembershipReasonR\areasonsB\f\n" +
 	"\n" +
 	"_colleague*j\n" +
 	"\tGroupType\x12\x1a\n" +

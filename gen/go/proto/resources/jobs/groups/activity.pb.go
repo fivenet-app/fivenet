@@ -549,10 +549,10 @@ var File_resources_jobs_groups_activity_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_groups_activity_proto_rawDesc = "" +
 	"\n" +
-	"$resources/jobs/groups/activity.proto\x12\x15resources.jobs.groups\x1a!codegen/dbscanner/dbscanner.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a!resources/jobs/groups/group.proto\x1a#resources/timestamp/timestamp.proto\"\x90\x05\n" +
+	"$resources/jobs/groups/activity.proto\x12\x15resources.jobs.groups\x1a!codegen/dbscanner/dbscanner.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a!resources/jobs/groups/group.proto\x1a#resources/timestamp/timestamp.proto\"\x87\x05\n" +
 	"\rGroupActivity\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
-	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
+	"\x03job\x18\x02 \x01(\tR\x03job\x12\x19\n" +
 	"\bgroup_id\x18\x03 \x01(\x03R\agroupId\x12<\n" +
 	"\x04type\x18\x04 \x01(\x0e2(.resources.jobs.groups.GroupActivityTypeR\x04type\x12'\n" +
 	"\ractor_user_id\x18\x05 \x01(\x05H\x00R\vactorUserId\x88\x01\x01\x12H\n" +
@@ -573,10 +573,10 @@ const file_resources_jobs_groups_activity_proto_rawDesc = "" +
 	"\f_target_userB\n" +
 	"\n" +
 	"\b_rule_idB\t\n" +
-	"\a_reason\"b\n" +
+	"\a_reason\"[\n" +
 	"\x11GroupActivityData\x126\n" +
-	"\x04rule\x18\x01 \x01(\v2 .resources.jobs.groups.GroupRuleH\x00R\x04rule:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
-	"\x04data\x12\x05\xbaH\x02\b\x01*\xcb\x04\n" +
+	"\x04rule\x18\x01 \x01(\v2 .resources.jobs.groups.GroupRuleH\x00R\x04rule:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
+	"\x04data*\xcb\x04\n" +
 	"\x11GroupActivityType\x12#\n" +
 	"\x1fGROUP_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bGROUP_ACTIVITY_TYPE_CREATED\x10\x01\x12\x1f\n" +

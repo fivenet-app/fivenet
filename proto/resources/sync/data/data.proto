@@ -108,7 +108,7 @@ message DataUser {
   // primary job entry to populate `job` / `job_grade` if those scalar fields
   // are empty.
   repeated resources.users.UserJob jobs = 20 [
-    (buf.validate.field).repeated.max_items = 3,
+    (buf.validate.field).repeated.max_items = 7,
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
     (tagger.tags) = "alias:\"user.jobs\""
   ];

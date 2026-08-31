@@ -757,31 +757,31 @@ var File_resources_permissions_attributes_attributes_proto protoreflect.FileDesc
 
 const file_resources_permissions_attributes_attributes_proto_rawDesc = "" +
 	"\n" +
-	"1resources/permissions/attributes/attributes.proto\x12 resources.permissions.attributes\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\"\xe0\x04\n" +
+	"1resources/permissions/attributes/attributes.proto\x12 resources.permissions.attributes\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\"\xb0\x04\n" +
 	"\rRoleAttribute\x12\x17\n" +
 	"\arole_id\x18\x01 \x01(\x03R\x06roleId\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x17\n" +
 	"\aattr_id\x18\x03 \x01(\x03R\x06attrId\x12#\n" +
-	"\rpermission_id\x18\x04 \x01(\x03R\fpermissionId\x12%\n" +
-	"\tnamespace\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x180R\tnamespace\x12!\n" +
-	"\aservice\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18@R\aservice\x12\x1c\n" +
-	"\x04name\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x04name\x12\x1a\n" +
-	"\x03key\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x03key\x12\x1c\n" +
-	"\x04type\x18\t \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x04type\x12T\n" +
+	"\rpermission_id\x18\x04 \x01(\x03R\fpermissionId\x12\x1c\n" +
+	"\tnamespace\x18\x05 \x01(\tR\tnamespace\x12\x18\n" +
+	"\aservice\x18\x06 \x01(\tR\aservice\x12\x12\n" +
+	"\x04name\x18\a \x01(\tR\x04name\x12\x10\n" +
+	"\x03key\x18\b \x01(\tR\x03key\x12\x12\n" +
+	"\x04type\x18\t \x01(\tR\x04type\x12T\n" +
 	"\fvalid_values\x18\n" +
 	" \x01(\v21.resources.permissions.attributes.AttributeValuesR\vvalidValues\x12G\n" +
 	"\x05value\x18\v \x01(\v21.resources.permissions.attributes.AttributeValuesR\x05value\x12U\n" +
 	"\n" +
 	"max_values\x18\f \x01(\v21.resources.permissions.attributes.AttributeValuesH\x01R\tmaxValues\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_max_values\"\xa4\x02\n" +
+	"\v_max_values\"\x9d\x02\n" +
 	"\x0fAttributeValues\x12O\n" +
 	"\vstring_list\x18\x01 \x01(\v2,.resources.permissions.attributes.StringListH\x00R\n" +
 	"stringList\x12I\n" +
 	"\bjob_list\x18\x02 \x01(\v2,.resources.permissions.attributes.StringListH\x00R\ajobList\x12V\n" +
-	"\x0ejob_grade_list\x18\x03 \x01(\v2..resources.permissions.attributes.JobGradeListH\x00R\fjobGradeList:\x06\xe2\xf3\x18\x02\b\x01B\x15\n" +
-	"\fvalid_values\x12\x05\xbaH\x02\b\x01\"0\n" +
+	"\x0ejob_grade_list\x18\x03 \x01(\v2..resources.permissions.attributes.JobGradeListH\x00R\fjobGradeList:\x06\xe2\xf3\x18\x02\b\x01B\x0e\n" +
+	"\fvalid_values\"0\n" +
 	"\n" +
 	"StringList\x12\"\n" +
 	"\astrings\x18\x01 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\astrings\"\xf4\x02\n" +

@@ -300,19 +300,19 @@ var File_resources_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a$resources/vehicles/props/props.proto\"\xb6\x04\n" +
-	"\aVehicle\x12\x1d\n" +
-	"\x05plate\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\x05plate\x12B\n" +
+	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a$resources/vehicles/props/props.proto\"\x80\x04\n" +
+	"\aVehicle\x12\x14\n" +
+	"\x05plate\x18\x01 \x01(\tR\x05plate\x12B\n" +
 	"\n" +
 	"updated_at\x18\n" +
-	" \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\"\n" +
-	"\x05model\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18@H\x01R\x05model\x88\x01\x01\x12\x1b\n" +
-	"\x04type\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18 R\x04type\x12\x1e\n" +
-	"\bowner_id\x18\x04 \x01(\x05H\x02R\aownerId\x88\x01\x01\x127\n" +
-	"\x10owner_identifier\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18@H\x03R\x0fownerIdentifier\x88\x01\x01\x12;\n" +
-	"\x05owner\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x04R\x05owner\x88\x01\x01\x12\x1e\n" +
-	"\x03job\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x05R\x03job\x88\x01\x01\x12)\n" +
-	"\tjob_label\x18\b \x01(\tB\a\xbaH\x04r\x02\x182H\x06R\bjobLabel\x88\x01\x01\x12A\n" +
+	" \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\x19\n" +
+	"\x05model\x18\x02 \x01(\tH\x01R\x05model\x88\x01\x01\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1e\n" +
+	"\bowner_id\x18\x04 \x01(\x05H\x02R\aownerId\x88\x01\x01\x12.\n" +
+	"\x10owner_identifier\x18\x06 \x01(\tH\x03R\x0fownerIdentifier\x88\x01\x01\x12;\n" +
+	"\x05owner\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x04R\x05owner\x88\x01\x01\x12\x15\n" +
+	"\x03job\x18\a \x01(\tH\x05R\x03job\x88\x01\x01\x12 \n" +
+	"\tjob_label\x18\b \x01(\tH\x06R\bjobLabel\x88\x01\x01\x12A\n" +
 	"\x05props\x18\t \x01(\v2&.resources.vehicles.props.VehiclePropsH\aR\x05props\x88\x01\x01B\r\n" +
 	"\v_updated_atB\b\n" +
 	"\x06_modelB\v\n" +

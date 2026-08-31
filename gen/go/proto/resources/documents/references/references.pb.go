@@ -315,18 +315,18 @@ var File_resources_documents_references_references_proto protoreflect.FileDescri
 
 const file_resources_documents_references_references_proto_rawDesc = "" +
 	"\n" +
-	"/resources/documents/references/references.proto\x12\x1eresources.documents.references\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xb7\x06\n" +
+	"/resources/documents/references/references.proto\x12\x1eresources.documents.references\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xa6\x06\n" +
 	"\x11DocumentReference\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tcreatedAt\x88\x01\x01\x12M\n" +
 	"\x12source_document_id\x18\x03 \x01(\x03B\x1f\x9a\x84\x9e\x03\x1aalias:\"source_document_id\"R\x10sourceDocumentId\x12n\n" +
-	"\x0fsource_document\x18\x04 \x01(\v2\".resources.documents.DocumentShortB\x1c\x9a\x84\x9e\x03\x17alias:\"source_document\"H\x02R\x0esourceDocument\x88\x01\x01\x12j\n" +
-	"\treference\x18\x05 \x01(\x0e2,.resources.documents.references.DocReferenceB\x1e\x9a\x84\x9e\x03\x11alias:\"reference\"\xbaH\x05\x82\x01\x02\x10\x01R\treference\x12M\n" +
+	"\x0fsource_document\x18\x04 \x01(\v2\".resources.documents.DocumentShortB\x1c\x9a\x84\x9e\x03\x17alias:\"source_document\"H\x02R\x0esourceDocument\x88\x01\x01\x12b\n" +
+	"\treference\x18\x05 \x01(\x0e2,.resources.documents.references.DocReferenceB\x16\x9a\x84\x9e\x03\x11alias:\"reference\"R\treference\x12M\n" +
 	"\x12target_document_id\x18\x06 \x01(\x03B\x1f\x9a\x84\x9e\x03\x1aalias:\"target_document_id\"R\x10targetDocumentId\x12n\n" +
-	"\x0ftarget_document\x18\a \x01(\v2\".resources.documents.DocumentShortB\x1c\x9a\x84\x9e\x03\x17alias:\"target_document\"H\x03R\x0etargetDocument\x88\x01\x01\x12+\n" +
+	"\x0ftarget_document\x18\a \x01(\v2\".resources.documents.DocumentShortB\x1c\x9a\x84\x9e\x03\x17alias:\"target_document\"H\x03R\x0etargetDocument\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"creator_id\x18\b \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x12Y\n" +
+	"creator_id\x18\b \x01(\x05H\x04R\tcreatorId\x88\x01\x01\x12Y\n" +
 	"\acreator\x18\t \x01(\v2 .resources.users.short.UserShortB\x18\x9a\x84\x9e\x03\x13alias:\"ref_creator\"H\x05R\acreator\x88\x01\x01B\x05\n" +
 	"\x03_idB\r\n" +
 	"\v_created_atB\x12\n" +

@@ -1531,83 +1531,75 @@ var File_services_centrum_dispatches_proto protoreflect.FileDescriptor
 
 const file_services_centrum_dispatches_proto_rawDesc = "" +
 	"\n" +
-	"!services/centrum/dispatches.proto\x12\x10services.centrum\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a-resources/centrum/dispatches/dispatches.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\"\xa6\x03\n" +
-	"\x15ListDispatchesRequest\x12T\n" +
+	"!services/centrum/dispatches.proto\x12\x10services.centrum\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a-resources/centrum/dispatches/dispatches.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\"\xd3\x02\n" +
+	"\x15ListDispatchesRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
-	"pagination\x12U\n" +
-	"\x06status\x18\x02 \x03(\x0e2,.resources.centrum.dispatches.StatusDispatchB\x0f\xbaH\f\x92\x01\t\x10\n" +
-	"\"\x05\x82\x01\x02\x10\x01R\x06status\x12\\\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x12D\n" +
+	"\x06status\x18\x02 \x03(\x0e2,.resources.centrum.dispatches.StatusDispatchR\x06status\x12K\n" +
 	"\n" +
-	"not_status\x18\x03 \x03(\x0e2,.resources.centrum.dispatches.StatusDispatchB\x0f\xbaH\f\x92\x01\t\x10\n" +
-	"\"\x05\x82\x01\x02\x10\x01R\tnotStatus\x12 \n" +
-	"\x03ids\x18\x04 \x03(\x03B\x0e\xbaH\v\x92\x01\b\x10\n" +
-	"\"\x04\"\x02 \x00R\x03ids\x12$\n" +
-	"\x06postal\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\fH\x00R\x06postal\x88\x01\x01\x12/\n" +
-	"\vcreator_ids\x18\x06 \x03(\x05B\x0e\xbaH\v\x92\x01\b\x10\n" +
-	"\"\x04\x1a\x02 \x00R\n" +
+	"not_status\x18\x03 \x03(\x0e2,.resources.centrum.dispatches.StatusDispatchR\tnotStatus\x12\x10\n" +
+	"\x03ids\x18\x04 \x03(\x03R\x03ids\x12\x1b\n" +
+	"\x06postal\x18\x05 \x01(\tH\x00R\x06postal\x88\x01\x01\x12\x1f\n" +
+	"\vcreator_ids\x18\x06 \x03(\x05R\n" +
 	"creatorIdsB\t\n" +
-	"\a_postal\"\xbd\x01\n" +
-	"\x16ListDispatchesResponse\x12U\n" +
+	"\a_postal\"\xb5\x01\n" +
+	"\x16ListDispatchesResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12L\n" +
 	"\n" +
 	"dispatches\x18\x02 \x03(\v2&.resources.centrum.dispatches.DispatchB\x04\xc8\xf3\x18\x01R\n" +
-	"dispatches\"-\n" +
-	"\x12GetDispatchRequest\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"Y\n" +
+	"dispatches\"$\n" +
+	"\x12GetDispatchRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"Y\n" +
 	"\x13GetDispatchResponse\x12B\n" +
-	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"\x83\x01\n" +
-	"\x1bListDispatchActivityRequest\x12T\n" +
+	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"{\n" +
+	"\x1bListDispatchActivityRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xc5\x01\n" +
-	"\x1cListDispatchActivityResponse\x12U\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"\xbd\x01\n" +
+	"\x1cListDispatchActivityResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12N\n" +
-	"\bactivity\x18\x02 \x03(\v2,.resources.centrum.dispatches.DispatchStatusB\x04\xc8\xf3\x18\x01R\bactivity\"c\n" +
-	"\x15CreateDispatchRequest\x12J\n" +
-	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchB\x06\xbaH\x03\xc8\x01\x01R\bdispatch\"\\\n" +
+	"\bactivity\x18\x02 \x03(\v2,.resources.centrum.dispatches.DispatchStatusB\x04\xc8\xf3\x18\x01R\bactivity\"[\n" +
+	"\x15CreateDispatchRequest\x12B\n" +
+	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"\\\n" +
 	"\x16CreateDispatchResponse\x12B\n" +
-	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"c\n" +
-	"\x15UpdateDispatchRequest\x12J\n" +
-	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchB\x06\xbaH\x03\xc8\x01\x01R\bdispatch\"\\\n" +
+	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"[\n" +
+	"\x15UpdateDispatchRequest\x12B\n" +
+	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"\\\n" +
 	"\x16UpdateDispatchResponse\x12B\n" +
-	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"0\n" +
-	"\x15DeleteDispatchRequest\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x18\n" +
+	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"'\n" +
+	"\x15DeleteDispatchRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
 	"\x16DeleteDispatchResponse\"\x1f\n" +
 	"\x1dListDispatchTargetJobsRequest\"O\n" +
 	"\x1eListDispatchTargetJobsResponse\x12-\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobB\x04\xc8\xf3\x18\x01R\x04jobs\"\xf7\x01\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobB\x04\xc8\xf3\x18\x01R\x04jobs\"\xde\x01\n" +
 	"\x1bUpdateDispatchStatusRequest\x12\x1f\n" +
 	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
-	"dispatchId\x12N\n" +
-	"\x06status\x18\x02 \x01(\x0e2,.resources.centrum.dispatches.StatusDispatchB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12+\n" +
-	"\x06reason\x18\x03 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12&\n" +
-	"\x04code\x18\x04 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18\x18H\x01R\x04code\x88\x01\x01B\t\n" +
+	"dispatchId\x12D\n" +
+	"\x06status\x18\x02 \x01(\x0e2,.resources.centrum.dispatches.StatusDispatchR\x06status\x12#\n" +
+	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12\x1f\n" +
+	"\x04code\x18\x04 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x01R\x04code\x88\x01\x01B\t\n" +
 	"\a_reasonB\a\n" +
 	"\x05_code\"\x1e\n" +
-	"\x1cUpdateDispatchStatusResponse\"\xb4\x01\n" +
+	"\x1cUpdateDispatchStatusResponse\"\x94\x01\n" +
 	"\x15AssignDispatchRequest\x12\x1f\n" +
 	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
-	"dispatchId\x12%\n" +
-	"\x06to_add\x18\x02 \x03(\x03B\x0e\xbaH\v\x92\x01\b\x10\n" +
-	"\"\x04\"\x02 \x00R\x05toAdd\x12+\n" +
-	"\tto_remove\x18\x03 \x03(\x03B\x0e\xbaH\v\x92\x01\b\x10\n" +
-	"\"\x04\"\x02 \x00R\btoRemove\x12\x1b\n" +
+	"dispatchId\x12\x15\n" +
+	"\x06to_add\x18\x02 \x03(\x03R\x05toAdd\x12\x1b\n" +
+	"\tto_remove\x18\x03 \x03(\x03R\btoRemove\x12\x1b\n" +
 	"\x06forced\x18\x04 \x01(\bH\x00R\x06forced\x88\x01\x01B\t\n" +
 	"\a_forced\"\x18\n" +
-	"\x16AssignDispatchResponse\"\xd0\x01\n" +
-	"\x13TakeDispatchRequest\x123\n" +
-	"\fdispatch_ids\x18\x01 \x03(\x03B\x10\xbaH\r\x92\x01\n" +
-	"\b\x01\x10\n" +
-	"\"\x04\"\x02 \x00R\vdispatchIds\x12L\n" +
-	"\x04resp\x18\x02 \x01(\x0e2..resources.centrum.dispatches.TakeDispatchRespB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04resp\x12+\n" +
-	"\x06reason\x18\x03 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\x16AssignDispatchResponse\"\xac\x01\n" +
+	"\x13TakeDispatchRequest\x12!\n" +
+	"\fdispatch_ids\x18\x01 \x03(\x03R\vdispatchIds\x12B\n" +
+	"\x04resp\x18\x02 \x01(\x0e2..resources.centrum.dispatches.TakeDispatchRespR\x04resp\x12#\n" +
+	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"\x16\n" +
 	"\x14TakeDispatchResponse2\xcb\n" +
 	"\n" +
