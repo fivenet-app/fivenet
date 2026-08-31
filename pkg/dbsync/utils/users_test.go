@@ -18,8 +18,8 @@ func TestNormalizeUserJobsUsesJobsWhenScalarJobEmpty(t *testing.T) {
 		JobGrade: 0,
 		Jobs: []*users.UserJob{
 			{Job: "", Grade: 0, IsPrimary: false},
-			{Job: "ems", Grade: 1, IsPrimary: true},
-			{Job: "police", Grade: 3, IsPrimary: false},
+			{UserId: 99, Job: "ems", Grade: 1, IsPrimary: true},
+			{UserId: 98, Job: "police", Grade: 3, IsPrimary: false},
 		},
 	}
 
@@ -32,4 +32,6 @@ func TestNormalizeUserJobsUsesJobsWhenScalarJobEmpty(t *testing.T) {
 	assert.True(t, user.GetJobs()[0].GetIsPrimary())
 	assert.Equal(t, "police", user.GetJobs()[1].GetJob())
 	assert.False(t, user.GetJobs()[1].GetIsPrimary())
+	assert.Equal(t, int32(11), user.GetJobs()[0].GetUserId())
+	assert.Equal(t, int32(11), user.GetJobs()[1].GetUserId())
 }

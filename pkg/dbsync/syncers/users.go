@@ -448,17 +448,17 @@ func (s *UsersSync) cleanupUserPhoneNumbers(user *syncdata.DataUser) {
 
 	// If no phone numbers are set, add the user's phone number field as the primary phone number (if not empty)
 	if len(user.GetPhoneNumbers()) == 0 && user.GetPhoneNumber() != "" {
-		user.PhoneNumbers = []*users.PhoneNumber{
+		user.SetPhoneNumbers([]*users.PhoneNumber{
 			{
 				UserId:    user.GetUserId(),
 				Number:    user.GetPhoneNumber(),
 				IsPrimary: true,
 			},
-		}
+		})
 		return
 	} else {
 		primaryNumber := user.GetPhoneNumbers()[0].GetNumber()
-		user.PhoneNumber = &primaryNumber
+		user.SetPhoneNumber(primaryNumber)
 	}
 
 	// Sort the user's phone numbers by is primary and then alphabetically to ensure consistent order
@@ -475,20 +475,20 @@ func (s *UsersSync) cleanupUserPhoneNumbers(user *syncdata.DataUser) {
 	foundPrimary := false
 	primaryNumber := user.GetPhoneNumber()
 	for _, number := range user.GetPhoneNumbers() {
-		number.UserId = user.GetUserId()
+		number.SetUserId(user.GetUserId())
 		if number.GetNumber() == primaryNumber {
 			// Make sure the "primary" phone number (user's phone number field if set) is marked as primary
 			foundPrimary = true
-			number.IsPrimary = true
+			number.SetIsPrimary(true)
 		} else {
-			number.IsPrimary = false
+			number.SetIsPrimary(false)
 		}
-		number.UpdatedAt = nil
+		number.SetUpdatedAt(nil)
 	}
 
 	// If not ensure user has at least one primary phone number set
 	if !foundPrimary {
-		user.PhoneNumbers[0].IsPrimary = true
+		user.GetPhoneNumbers()[0].SetIsPrimary(true)
 	}
 }
 
@@ -529,8 +529,8 @@ func (s *UsersSync) splitNamesIfRequired(user *syncdata.DataUser) {
 	if s.cfg.Tables.Users.SplitName && user.GetLastname() == "" {
 		ss := strings.Split(user.GetFirstname(), " ")
 		if len(ss) > 1 {
-			user.Lastname = &ss[len(ss)-1]
-			user.Firstname = strings.Replace(user.GetFirstname(), " "+user.GetLastname(), "", 1)
+			user.SetLastname(ss[len(ss)-1])
+			user.SetFirstname(strings.Replace(user.GetFirstname(), " "+user.GetLastname(), "", 1))
 		}
 	}
 }
@@ -539,7 +539,7 @@ func (s *UsersSync) parseDateOfBirth(user *syncdata.DataUser) {
 	for _, format := range s.cfg.Tables.Users.DateOfBirth.Formats {
 		parsedTime, err := time.Parse(format, user.GetDateofbirth())
 		if err == nil {
-			user.Dateofbirth = parsedTime.Format(s.cfg.Tables.Users.DateOfBirth.OutputFormat)
+			user.SetDateofbirth(parsedTime.Format(s.cfg.Tables.Users.DateOfBirth.OutputFormat))
 			break
 		}
 	}
@@ -564,7 +564,7 @@ func (s *UsersSync) retrieveAndAttachLicenses(ctx context.Context, us []*syncdat
 				),
 			)
 		}
-		us[k].Licenses = licenses
+		us[k].SetLicenses(licenses)
 	}
 
 	return errs
@@ -679,7 +679,7 @@ func (s *UsersSync) retrieveAndAttachPhoneNumbers(
 				),
 			)
 		}
-		us[k].PhoneNumbers = phoneNumbers
+		us[k].SetPhoneNumbers(phoneNumbers)
 	}
 
 	return errs

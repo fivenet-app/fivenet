@@ -25,6 +25,8 @@ func NormalizeUserJobs(user *syncdata.DataUser, fallbackJob string, fallbackGrad
 		if strings.TrimSpace(job.GetJob()) == "" {
 			continue
 		}
+		// The user being synchronized is the source of truth for the owning ID.
+		job.SetUserId(user.GetUserId())
 		normalizedJobs = append(normalizedJobs, job)
 	}
 
@@ -55,10 +57,10 @@ func NormalizeUserJobs(user *syncdata.DataUser, fallbackJob string, fallbackGrad
 	})
 
 	if len(normalizedJobs) == 1 && user.GetJob() != "" {
-		normalizedJobs[0].UserId = user.GetUserId()
-		normalizedJobs[0].Job = user.GetJob()
-		normalizedJobs[0].Grade = user.GetJobGrade()
-		normalizedJobs[0].IsPrimary = true
+		normalizedJobs[0].SetUserId(user.GetUserId())
+		normalizedJobs[0].SetJob(user.GetJob())
+		normalizedJobs[0].SetGrade(user.GetJobGrade())
+		normalizedJobs[0].SetIsPrimary(true)
 		user.SetJobs(normalizedJobs)
 		return
 	}
@@ -75,14 +77,14 @@ func NormalizeUserJobs(user *syncdata.DataUser, fallbackJob string, fallbackGrad
 	for _, job := range user.GetJobs() {
 		if job.GetJob() == primaryJob {
 			foundPrimary = true
-			job.IsPrimary = true
+			job.SetIsPrimary(true)
 		} else {
-			job.IsPrimary = false
+			job.SetIsPrimary(false)
 		}
-		job.UpdatedAt = nil
+		job.SetUpdatedAt(nil)
 	}
 
 	if !foundPrimary {
-		user.Jobs[0].IsPrimary = true
+		user.Jobs[0].SetIsPrimary(true)
 	}
 }
