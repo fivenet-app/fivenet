@@ -29,6 +29,7 @@ func (c *DiscordCmd) Run(cli *CLI) error {
 			fx.Invoke(func(*croner.Executor) {}),
 		)
 	}
+	fxOpts = append(fxOpts, fxopts.FxReadinessOpts()...)
 
 	app := fx.New(fxOpts...)
 	app.Run()

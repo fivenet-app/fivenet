@@ -34,6 +34,7 @@ func (c *WorkerCmd) Run(cli *CLI) error {
 	if c.ModuleUserInfoPoller {
 		fxOpts = append(fxOpts, fxopts.FxUserInfoPollerOpts()...)
 	}
+	fxOpts = append(fxOpts, fxopts.FxReadinessOpts()...)
 
 	app := fx.New(fxOpts...)
 	app.Run()

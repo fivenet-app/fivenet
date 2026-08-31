@@ -1,10 +1,13 @@
 package fxopts
 
 import (
+	"context"
+
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2026/pkg/demo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker/manager"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/services/calendar"
@@ -24,6 +27,23 @@ const DefaultStopTimeout = 180 // seconds
 func FxServerOpts() []fx.Option {
 	return []fx.Option{
 		fx.Invoke(func(server.HTTPServer) {}),
+	}
+}
+
+// FxReadinessOpts marks commands without the main HTTP server as ready after
+// their other lifecycle start hooks have completed.
+func FxReadinessOpts() []fx.Option {
+	return []fx.Option{
+		fx.Invoke(func(lc fx.Lifecycle, readiness *admin.Readiness) {
+			lc.Append(fx.StartHook(func(context.Context) error {
+				readiness.SetReady(true)
+				return nil
+			}))
+			lc.Append(fx.StopHook(func(context.Context) error {
+				readiness.SetReady(false)
+				return nil
+			}))
+		}),
 	}
 }
 

@@ -45,6 +45,7 @@ func getService(cli *CLI) service.Service {
 		fx.Invoke(func(*dbsync.Sync) {}),
 		fx.Invoke(func(admin.AdminServer) {}),
 	)
+	fxOpts = append(fxOpts, fxopts.FxReadinessOpts()...)
 
 	app := fx.New(fxOpts...)
 
