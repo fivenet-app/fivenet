@@ -6,6 +6,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
+import ResponsiveActions from '~/components/partials/ResponsiveActions.vue';
+import type { ResponsiveActionEntry } from '~/components/partials/ResponsiveActions.types';
 import AttrViewAttr from '~/components/settings/attrs/AttrViewAttr.vue';
 import {
     buildPermissionGroups,
@@ -541,6 +543,24 @@ const onSubmitThrottle = useThrottleFn(async () => {
 }, 1000);
 
 const confirmModal = overlay.create(ConfirmModal);
+
+const actionItems = computed<ResponsiveActionEntry[]>(() => {
+    if (!isSuperuser.value || !jobLimits.value) return [];
+
+    return [
+        {
+            label: t('common.delete'),
+            tooltip: t('common.delete'),
+            icon: 'i-mdi-delete',
+            color: 'error',
+            onClick: () => {
+                confirmModal.open({
+                    confirm: async () => deleteFaction(jobLimits.value!.job),
+                });
+            },
+        },
+    ];
+});
 </script>
 
 <template>
@@ -556,30 +576,17 @@ const confirmModal = overlay.create(ConfirmModal);
             <DataNoDataBlock v-else-if="!jobLimits" :type="$t('common.job', 1)" :retry="refresh" />
 
             <template v-else>
-                <div class="flex justify-between">
-                    <h2 class="line-clamp-2 flex-1 text-3xl" :title="`${$t('common.job')}: ${jobLimits?.job}`">
-                        {{ jobLimits?.jobLabel! }}
-                    </h2>
+                <UDashboardNavbar :title="jobLimits?.jobLabel!">
+                    <template #right>
+                        <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
+                    </template>
+                </UDashboardNavbar>
 
-                    <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
+                <UDashboardToolbar v-if="actionItems.length" class="p-1">
+                    <ResponsiveActions :items="actionItems" :label="$t('common.action', 2)" />
+                </UDashboardToolbar>
 
-                    <UTooltip v-if="isSuperuser" :text="$t('common.delete')">
-                        <UButton
-                            variant="link"
-                            icon="i-mdi-delete"
-                            color="error"
-                            @click="
-                                confirmModal.open({
-                                    confirm: async () => deleteFaction(jobLimits!.job),
-                                })
-                            "
-                        />
-                    </UTooltip>
-                </div>
-
-                <USeparator class="mb-1" :label="$t('common.attributes', 2)" />
-
-                <div class="flex flex-col gap-2">
+                <div class="my-2 flex flex-col gap-2">
                     <div class="flex flex-row gap-1">
                         <UButton
                             class="flex-1"

@@ -6,6 +6,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
+import ResponsiveActions from '~/components/partials/ResponsiveActions.vue';
+import type { ResponsiveActionEntry } from '~/components/partials/ResponsiveActions.types';
 import {
     buildPermissionGroups,
     getPermissionNamespaceLabel,
@@ -473,6 +475,68 @@ const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await updateRolePerms().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+const actionItems = computed<ResponsiveActionEntry[]>(() => {
+    if (!role.value) return [];
+
+    const items: ResponsiveActionEntry[] = [
+        {
+            label: t('common.effective_permissions'),
+            tooltip: t('common.effective_permissions'),
+            icon: 'i-mdi-account-key',
+            onClick: () => {
+                effectivePermsSlideover.open({ roleId: role.value!.id });
+            },
+        },
+    ];
+
+    if (canUpdate.value) {
+        items.push({
+            label: t('common.impersonate'),
+            tooltip: t('common.impersonate'),
+            icon: 'i-mdi-drama-masks',
+            disabled: !activeChar.value || activeChar.value.jobGrade <= role.value.grade,
+            onClick: () => {
+                confirmImpersonateModal.open({
+                    confirm: async () => role.value && impersonateRole(role.value.grade),
+                });
+            },
+        });
+    }
+
+    items.push({
+        kind: 'separator',
+    });
+
+    items.push({
+        label: t('common.reset'),
+        tooltip: t('common.reset'),
+        icon: 'i-mdi-clear',
+        color: 'error',
+        onClick: () => {
+            confirmModal.open({
+                confirm: () => resetRole(),
+            });
+        },
+    });
+
+    if (can('settings.SettingsService/DeleteRole').value) {
+        items.push({
+            label: t('common.delete'),
+            tooltip: t('common.delete'),
+            icon: 'i-mdi-delete',
+            color: 'error',
+            disabled: props.roleCount <= 1,
+            onClick: () => {
+                confirmModal.open({
+                    confirm: async () => role.value && deleteRole(role.value.id),
+                });
+            },
+        });
+    }
+
+    return items;
+});
 </script>
 
 <template>
@@ -488,75 +552,17 @@ const onSubmitThrottle = useThrottleFn(async () => {
             <DataNoDataBlock v-else-if="!role" :type="$t('common.role', 2)" :retry="refresh" />
 
             <template v-else>
-                <div class="flex justify-between">
-                    <h2 class="line-clamp-2 flex-1 text-3xl" :title="`ID: ${role.id}`">
-                        {{ role?.jobLabel }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
-                    </h2>
-
-                    <UFieldGroup>
-                        <UTooltip :text="$t('common.effective_permissions')">
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-account-key"
-                                color="primary"
-                                @click="
-                                    effectivePermsSlideover.open({
-                                        roleId: role!.id,
-                                    })
-                                "
-                            />
-                        </UTooltip>
-
-                        <UTooltip v-if="canUpdate" :text="$t('common.impersonate')">
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-drama-masks"
-                                color="primary"
-                                :disabled="!activeChar || activeChar.jobGrade <= role.grade"
-                                @click="
-                                    confirmImpersonateModal.open({
-                                        confirm: async () => role && impersonateRole(role.grade),
-                                    })
-                                "
-                            />
-                        </UTooltip>
-
+                <UDashboardNavbar :title="`${role.jobLabel} - ${role.jobGradeLabel} (${role.grade})`">
+                    <template #right>
                         <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
+                    </template>
+                </UDashboardNavbar>
 
-                        <UTooltip :text="$t('common.reset')">
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-clear"
-                                color="error"
-                                @click="
-                                    confirmModal.open({
-                                        confirm: () => resetRole(),
-                                    })
-                                "
-                            />
-                        </UTooltip>
+                <UDashboardToolbar v-if="actionItems.length" class="p-1">
+                    <ResponsiveActions :items="actionItems" :label="$t('common.action', 2)" />
+                </UDashboardToolbar>
 
-                        <UTooltip :text="$t('common.delete')">
-                            <!-- Only allow deletion if there is more than one role -->
-                            <UButton
-                                v-if="can('settings.SettingsService/DeleteRole').value"
-                                variant="link"
-                                icon="i-mdi-delete"
-                                color="error"
-                                :disabled="roleCount <= 1"
-                                @click="
-                                    confirmModal.open({
-                                        confirm: async () => role && deleteRole(role.id),
-                                    })
-                                "
-                            />
-                        </UTooltip>
-                    </UFieldGroup>
-                </div>
-
-                <USeparator class="mb-1" :label="$t('common.permission', 2)" />
-
-                <div class="flex flex-col gap-2">
+                <div class="my-2 flex flex-col gap-2">
                     <div class="flex flex-row gap-1">
                         <template v-if="canUpdate">
                             <UButton
