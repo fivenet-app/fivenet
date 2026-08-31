@@ -2,6 +2,81 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.8.5] - 2026-08-31
+
+### 🚀 Features
+
+- *(jobs)* Add group qualification rules
+- *(spa)* Add delayed app reset link and dedicated recovery page
+- *(dbsync)* Add periodic sync state refresh and status drawer UI
+- *(dbsync)* Improve sync status and stream connectivity
+- *(nats)* Add nats migration version to system status
+- *(dbsync)* Expose table enabled state
+- *(ui)* Add responsive actions menu
+- Add reset app button to error page and cleanup buttons in debug funcs
+- *(demo)* Add livemap marker generation
+- *(qualifications)* Add search to requests and results lists
+- *(access)* Add shared ACL normalization helpers
+- *(access)* Normalize ACLs for creation and recovery
+- *(mstlystcdata)* Centralize highest job grade lookup
+- *(documents)* Resolve template selections server-side
+- *(documents)* Resolve template data on server and improve error handling
+- *(documents)* Add more template vars
+- *(documents)* Improve template preview and TemplateVar extension
+- *(documents)* Add template block editor support
+- *(documents)* Show templates in read-only editor
+- *(sync)* Add source user attribution to sync updates
+- *(citizens)* Introduce citizens hydrator in favor of querying
+- *(access)* Improve access entry management
+- *(documents)* Improve template requirements and clipboard selection
+- *(role)* Use UDashboardNavbar/Toolbar for role and attr view
+
+### 🐛 Bug Fixes
+
+- *(test)* Dbmanager setup using multiple containers instead of one
+- *(renovate)* Allow immediate update of fivenet go pkg
+- *(jobs)* Groups page menu item using wrong perm
+- Jobs groups issues and demo duplicate calendar access issue
+- *(jobs)* Add missing fks for created_by_user_id and updated_by_user_id
+- *(css)* Add postcss plugin for svh/dvh/lvh fixup
+- *(documents)* Normalize penalty calculator data
+- *(citizens)* Mugshot removal not working
+- *(yjs)* Normalize slider value and harden array sync
+- *(documents)* Reminder button label not centered
+- *(groups)* Qualification select label display
+- *(groups)* Improve edit/delete button display using UFieldGroup
+- *(groups)* Improve ErrGroupMemberRulesRequired message and created_by
+- *(dbmanager)* Ignore gosec query construction lint warning
+- *(userprops)* Remove dead code now part of stores/citizens
+- *(citizens)* Preserve hidden labels in user props sync
+- *(calendar)* Loading spinner icon missing
+- *(golangci-lint)* Deprecated fields usage statticheck complaints
+- *(dbmanager)* Retry mysql container check
+- *(ci)* Remove go coverage upload
+- *(dbmanager)* Serialize clone cleanup with acquisition
+- *(calendar)* Reconcile system calendars explicitly
+- *(database)* Avoid duplicate-key upsert side effects
+- *(templates)* Var name typo
+- *(sync)* Validate external user identities
+- *(sync)* User identity upsert/delete tests
+- *(sync)* User identity upsert/delete tests
+- *(documents)* Parse template action spans structurally
+- *(documents)* Invalid block issue
+- *(documents)* Validate template block ends and limit clipboard selections
+- Rename/move colleagues hydrator to stores/jobs/colleagues
+- *(ui)* Update colleague and group activity displays
+- *(jobs)* Use zod for groups forms/search/query
+- *(documents)* Safe enrich job info for users in template data
+- *(centrum)* Lint issue in UnitAssignUsersModal
+- *(app)* Keep error page usable during plugin failures
+- *(proto)* Make gen-proto and remove doc template title requirement
+- Template and mail form unsaved changes issue on save/navigate
+- *(vitest)* Config and test case warnings
+
+### ⚙️ Miscellaneous Tasks
+
+- *(proto)* Ensure enum have defined only validation and max_items are
+
 ## [2026.8.4] - 2026-08-23
 
 ### 🚀 Features
