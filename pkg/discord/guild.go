@@ -56,6 +56,18 @@ type Guild struct {
 	events *broker.Broker[any]
 }
 
+func (g *Guild) status() discordtypes.GuildStatus {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+
+	return discordtypes.GuildStatus{
+		GuildID:  g.gid,
+		Job:      g.job,
+		Running:  g.running.Load(),
+		LastSync: g.lastSync,
+	}
+}
+
 func NewGuild(
 	ctx context.Context,
 	b *Bot,

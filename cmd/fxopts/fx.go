@@ -178,7 +178,9 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		fx.Provide(
 			commands.AsCommand(commands.NewAbsentCommand),
 			commands.AsCommand(commands.NewFivenetCommand),
+			commands.AsCommand(commands.NewDebugUserCommand),
 			commands.AsCommand(commands.NewHelpCommand),
+			commands.AsCommand(commands.NewStatusCommand),
 			commands.AsCommand(commands.NewSyncCommand),
 		),
 

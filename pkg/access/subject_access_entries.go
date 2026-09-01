@@ -722,6 +722,7 @@ func subjectAccessUserShort(row subjectAccessRow) *usershort.UserShort {
 		return nil
 	}
 
+	// FIXME use citizen hydrator for the user info instead
 	user := &usershort.UserShort{
 		UserId:      *row.SubjectUserID,
 		Job:         utils.Deref(row.UserJob),

@@ -6,6 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"sort"
+	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -14,6 +17,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/state"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -24,6 +28,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -124,6 +129,7 @@ type Bot struct {
 	db       *sql.DB
 	enricher mstlystcdata.IEnricher
 	dcCfg    *config.Discord
+	authCfg  *config.Auth
 	appCfg   appconfig.IConfig
 	perms    perms.Permissions
 	i18n     i18n.Ii18n
@@ -167,6 +173,7 @@ func New(p BotParams) Result {
 		db:       p.DB,
 		enricher: p.Enricher,
 		dcCfg:    &p.Config.Discord,
+		authCfg:  &p.Config.Auth,
 		appCfg:   p.AppConfig,
 		perms:    p.Perms,
 		i18n:     p.I18n,
@@ -530,6 +537,131 @@ func (b *Bot) GetJobFromGuildID(guildId discord.GuildID) (string, bool) {
 	}
 
 	return guild.job, true
+}
+
+func (b *Bot) GetStatus() discordtypes.BotStatus {
+	status := discordtypes.BotStatus{}
+	if interval := b.syncTime.Load(); interval != nil {
+		status.SyncInterval = *interval
+	}
+
+	for _, guild := range b.activeGuilds.All() {
+		status.Guilds = append(status.Guilds, guild.status())
+	}
+	sort.Slice(status.Guilds, func(i, j int) bool {
+		return status.Guilds[i].GuildID < status.Guilds[j].GuildID
+	})
+
+	return status
+}
+
+func (b *Bot) IsUserConfigAdmin(ctx context.Context, userID discord.UserID) (bool, error) {
+	account := &struct {
+		Groups  *accounts.AccountGroups `alias:"groups"`
+		License string                  `alias:"license"`
+	}{}
+	stmt := table.FivenetAccountsOauth2.
+		SELECT(table.FivenetAccounts.Groups, table.FivenetAccounts.License).
+		FROM(table.FivenetAccountsOauth2.INNER_JOIN(
+			table.FivenetAccounts,
+			table.FivenetAccounts.ID.EQ(table.FivenetAccountsOauth2.AccountID),
+		)).WHERE(mysql.AND(
+		table.FivenetAccountsOauth2.Provider.EQ(mysql.String("discord")),
+		table.FivenetAccountsOauth2.ExternalID.EQ(mysql.String(strconv.FormatUint(uint64(userID), 10))),
+		table.FivenetAccounts.DeletedAt.IS_NULL(),
+	)).LIMIT(1)
+	if err := stmt.QueryContext(ctx, b.db, account); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	_, _, configGroups, configUsers := userinfo.EffectiveAdminLists(
+		b.authCfg.JobAdminGroups, b.authCfg.JobAdminUsers,
+		b.authCfg.ConfigAdminGroups, b.authCfg.ConfigAdminUsers,
+		b.appCfg,
+	)
+	return account.Groups.ContainsAnyGroup(configGroups) || slices.Contains(configUsers, account.License), nil
+}
+
+func (b *Bot) DebugUser(ctx context.Context, guildID discord.GuildID, userID discord.UserID) (*discordtypes.UserDebug, error) {
+	result := &discordtypes.UserDebug{DiscordUserID: userID}
+	guild, ok := b.activeGuilds.Load(guildID)
+	if !ok || guild == nil {
+		return result, nil
+	}
+	result.MemberFound = func() bool { _, err := b.dc.Member(guildID, userID); return err == nil }()
+	result.SyncRunning = guild.IsRunning()
+	result.LastSync = guild.status().LastSync
+	result.GroupSyncEnabled = b.dcCfg.GroupSync.Enabled
+	result.UserInfoEnabled = b.dcCfg.UserInfoSync.Enabled
+
+	var row struct {
+		Groups   *accounts.AccountGroups `alias:"groups"`
+		Enabled  bool                    `alias:"enabled"`
+		UserID   *int32                  `alias:"user_id"`
+		Job      *string                 `alias:"job"`
+		JobGrade *int32                  `alias:"job_grade"`
+	}
+	tAccounts := table.FivenetAccounts
+	tUsers := table.FivenetUser
+	stmt := table.FivenetAccountsOauth2.SELECT(
+		tAccounts.Groups, tAccounts.Enabled, tUsers.ID, tUsers.Job, tUsers.JobGrade,
+	).FROM(table.FivenetAccountsOauth2.
+		INNER_JOIN(tAccounts, tAccounts.ID.EQ(table.FivenetAccountsOauth2.AccountID)).
+		LEFT_JOIN(table.FivenetUserAccounts, table.FivenetUserAccounts.AccountID.EQ(tAccounts.ID)).
+		LEFT_JOIN(tUsers, tUsers.ID.EQ(table.FivenetUserAccounts.UserID)),
+	).WHERE(mysql.AND(
+		table.FivenetAccountsOauth2.Provider.EQ(mysql.String("discord")),
+		table.FivenetAccountsOauth2.ExternalID.EQ(mysql.String(strconv.FormatUint(uint64(userID), 10))),
+	)).LIMIT(1)
+	if err := stmt.QueryContext(ctx, b.db, &row); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return result, nil
+		}
+		return nil, err
+	}
+	result.DiscordLinked, result.AccountFound, result.AccountActive = true, true, row.Enabled
+	if row.UserID != nil {
+		result.UserID = *row.UserID
+	}
+	if row.Job != nil {
+		result.Job = *row.Job
+	}
+	if row.JobGrade != nil {
+		result.JobGrade = *row.JobGrade
+	}
+	result.PartOfJob = result.Job == guild.job
+	result.Groups = append(result.Groups, row.Groups.GetGroups()...)
+
+	if b.dcCfg.GroupSync.Enabled {
+		for group, mapping := range b.dcCfg.GroupSync.Mapping {
+			if slices.ContainsFunc(result.Groups, func(v string) bool { return strings.EqualFold(strings.TrimSpace(v), group) }) {
+				result.MappedGroups = append(result.MappedGroups, group)
+				if !(mapping.NotSameJob && result.PartOfJob) {
+					result.ExpectedRoles = append(result.ExpectedRoles, mapping.RoleName)
+				}
+			}
+		}
+	}
+	member, err := b.dc.Member(guildID, userID)
+	if err == nil {
+		roles, roleErr := b.dc.Roles(guildID)
+		if roleErr == nil {
+			for _, role := range roles {
+				if slices.Contains(member.RoleIDs, role.ID) {
+					result.ActualRoles = append(result.ActualRoles, role.Name)
+				}
+			}
+		}
+	}
+	for _, expected := range result.ExpectedRoles {
+		if !slices.Contains(result.ActualRoles, expected) {
+			result.MissingRoles = append(result.MissingRoles, expected)
+		}
+	}
+	return result, nil
 }
 
 func (b *Bot) RunSync(guildID discord.GuildID) (bool, error) {

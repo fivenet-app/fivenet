@@ -3943,6 +3943,84 @@
                         "desc": "The sync should start in a moment."
                     }
                 }
+            },
+            "status": {
+                "name": "status",
+                "desc": "Show the current FiveNet Discord bot status.",
+                "results": {
+                    "wrong_discord": {
+                        "title": "Status command must be run on a Discord server!",
+                        "desc": "This command cannot be used in direct messages."
+                    },
+                    "permission_denied": {
+                        "title": "Discord admin permission required",
+                        "desc": "Discord admin permission is required to view the bot status."
+                    },
+                    "title": "FiveNet Discord bot status",
+                    "interval": "Sync interval: `{interval}`",
+                    "state": "State",
+                    "running": "running",
+                    "idle": "idle",
+                    "last_sync": "last sync",
+                    "never": "never",
+                    "no_guilds": "No active guilds."
+                }
+            },
+            "debug-user": {
+                "name": "debug-user",
+                "desc": "Diagnose a user's FiveNet Discord synchronization.",
+                "options": {
+                    "user": {
+                        "name": "user",
+                        "desc": "The Discord user to diagnose."
+                    }
+                },
+                "results": {
+                    "wrong_discord": {
+                        "title": "Debug command must be run on a Discord server!",
+                        "desc": "This command cannot be used in direct messages."
+                    },
+                    "permission_denied": {
+                        "title": "Administrator permission required",
+                        "desc": "Discord administrator or FiveNet config-admin permission is required."
+                    },
+                    "invalid_user": {
+                        "title": "Invalid user",
+                        "desc": "A valid Discord user is required."
+                    },
+                    "failed": {
+                        "title": "Debug lookup failed",
+                        "desc": "The user could not be inspected: {error}"
+                    },
+                    "title": "Discord sync diagnosis for {user}",
+                    "member": "Discord member found",
+                    "linked": "Discord linked",
+                    "account": "FiveNet account",
+                    "part_of_job": "Part of job",
+                    "group_sync": "Group sync group",
+                    "sync_status": "Guild sync",
+                    "likely_causes": "Likely causes",
+                    "details": "Additional details",
+                    "job": "Current job",
+                    "grade": "Grade",
+                    "groups": "FiveNet groups",
+                    "mapped_groups": "Mapped groups",
+                    "missing_roles": "Missing roles",
+                    "yes": "Yes",
+                    "no": "No",
+                    "running": "Running",
+                    "idle": "Idle",
+                    "none": "None",
+                    "causes": {
+                        "not_member": "User is not currently a member of this Discord server.",
+                        "not_linked": "No Discord account link was found.",
+                        "account_inactive": "The FiveNet account is inactive or unavailable.",
+                        "not_job": "User is not part of this guild's configured job.",
+                        "no_group": "User belongs to no configured group-sync group.",
+                        "missing_role": "One or more expected Discord roles are missing.",
+                        "none": "No obvious cause found."
+                    }
+                }
             }
         },
         "messages": {

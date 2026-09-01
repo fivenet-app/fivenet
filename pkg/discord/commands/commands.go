@@ -21,6 +21,21 @@ import (
 	"go.uber.org/zap"
 )
 
+type Command interface {
+	RegisterCommand(router *cmdroute.Router) api.CreateCommandData
+	HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData
+}
+
+// AsCommand annotates the given constructor to state that
+// it provides a Discord command to the "discordcommands" group.
+func AsCommand(f any) any {
+	return fx.Annotate(
+		f,
+		fx.As(new(Command)),
+		fx.ResultTags(`group:"discordcommands"`),
+	)
+}
+
 type commandMetrics struct {
 	callCount *prometheus.GaugeVec
 }

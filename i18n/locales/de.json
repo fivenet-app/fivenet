@@ -3943,6 +3943,84 @@
                         "desc": "Der Sync sollte in wenigen Momenten starten."
                     }
                 }
+            },
+            "status": {
+                "name": "status",
+                "desc": "Aktuellen Status des FiveNet Discord-Bots anzeigen.",
+                "results": {
+                    "wrong_discord": {
+                        "title": "Der Status-Befehl muss auf einem Discord-Server ausgeführt werden!",
+                        "desc": "Dieser Befehl kann nicht in Direktnachrichten verwendet werden."
+                    },
+                    "permission_denied": {
+                        "title": "Discord-Adminrechte erforderlich",
+                        "desc": "Discord-Adminrechte sind erforderlich, um den Bot-Status anzuzeigen."
+                    },
+                    "title": "FiveNet Discord-Bot-Status",
+                    "interval": "Synchronisationsintervall: `{interval}`",
+                    "state": "Status",
+                    "running": "läuft",
+                    "idle": "wartet",
+                    "last_sync": "letzte Synchronisation",
+                    "never": "nie",
+                    "no_guilds": "Keine aktiven Server."
+                }
+            },
+            "debug-user": {
+                "name": "debug-user",
+                "desc": "FiveNet-Discord-Synchronisation eines Benutzers untersuchen.",
+                "options": {
+                    "user": {
+                        "name": "user",
+                        "desc": "Der zu untersuchende Discord-Benutzer."
+                    }
+                },
+                "results": {
+                    "wrong_discord": {
+                        "title": "Der Debug-Befehl muss auf einem Discord-Server ausgeführt werden!",
+                        "desc": "Dieser Befehl kann nicht in Direktnachrichten verwendet werden."
+                    },
+                    "permission_denied": {
+                        "title": "Administratorrechte erforderlich",
+                        "desc": "Discord-Administrator- oder FiveNet-Config-Admin-Rechte sind erforderlich."
+                    },
+                    "invalid_user": {
+                        "title": "Ungültiger Benutzer",
+                        "desc": "Ein gültiger Discord-Benutzer ist erforderlich."
+                    },
+                    "failed": {
+                        "title": "Debug-Abfrage fehlgeschlagen",
+                        "desc": "Der Benutzer konnte nicht untersucht werden: {error}"
+                    },
+                    "title": "Diagnose der Discord-Synchronisation für {user}",
+                    "member": "Discord-Mitglied gefunden",
+                    "linked": "Discord verknüpft",
+                    "account": "FiveNet-Konto",
+                    "part_of_job": "Teil des Jobs",
+                    "group_sync": "Gruppe für Gruppen-Sync",
+                    "sync_status": "Server-Synchronisation",
+                    "likely_causes": "Wahrscheinliche Ursachen",
+                    "details": "Zusätzliche Details",
+                    "job": "Aktueller Job",
+                    "grade": "Rang",
+                    "groups": "FiveNet-Gruppen",
+                    "mapped_groups": "Zugeordnete Gruppen",
+                    "missing_roles": "Fehlende Rollen",
+                    "yes": "Ja",
+                    "no": "Nein",
+                    "running": "Läuft",
+                    "idle": "Inaktiv",
+                    "none": "Keine",
+                    "causes": {
+                        "not_member": "Der Benutzer ist derzeit kein Mitglied dieses Discord-Servers.",
+                        "not_linked": "Keine Discord-Verknüpfung gefunden.",
+                        "account_inactive": "Das FiveNet-Konto ist inaktiv oder nicht verfügbar.",
+                        "not_job": "Der Benutzer gehört nicht zum konfigurierten Job dieses Servers.",
+                        "no_group": "Der Benutzer gehört zu keiner konfigurierten Gruppen-Sync-Gruppe.",
+                        "missing_role": "Eine oder mehrere erwartete Discord-Rollen fehlen.",
+                        "none": "Keine offensichtliche Ursache gefunden."
+                    }
+                }
             }
         },
         "messages": {
