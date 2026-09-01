@@ -636,18 +636,25 @@ func (b *Bot) DebugUser(
 	}
 	tAccounts := table.FivenetAccounts
 	tUsers := table.FivenetUser
+	tUserJobs := table.FivenetUserJobs
 	stmt := table.FivenetAccountsOauth2.
 		SELECT(
 			tAccounts.Groups.AS("groups"),
 			tAccounts.Enabled.AS("enabled"),
 			tUsers.ID.AS("user_id"),
-			tUsers.Job.AS("job"),
-			tUsers.JobGrade.AS("job_grade"),
+			tUserJobs.Job.AS("job"),
+			tUserJobs.Grade.AS("job_grade"),
 		).
 		FROM(table.FivenetAccountsOauth2.
 			INNER_JOIN(tAccounts, tAccounts.ID.EQ(table.FivenetAccountsOauth2.AccountID)).
 			LEFT_JOIN(table.FivenetUserAccounts, table.FivenetUserAccounts.AccountID.EQ(tAccounts.ID)).
-			LEFT_JOIN(tUsers, tUsers.ID.EQ(table.FivenetUserAccounts.UserID)),
+			LEFT_JOIN(tUsers, tUsers.ID.EQ(table.FivenetUserAccounts.UserID)).
+			INNER_JOIN(tUserJobs,
+				mysql.AND(
+					tUserJobs.UserID.EQ(tUsers.ID),
+					tUserJobs.Job.EQ(mysql.String(guild.job)),
+				),
+			),
 		).
 		WHERE(mysql.AND(
 			table.FivenetAccountsOauth2.Provider.EQ(mysql.String("discord")),
