@@ -638,11 +638,11 @@ func (b *Bot) DebugUser(
 	tUsers := table.FivenetUser
 	stmt := table.FivenetAccountsOauth2.
 		SELECT(
-			tAccounts.Groups,
-			tAccounts.Enabled,
-			tUsers.ID,
-			tUsers.Job,
-			tUsers.JobGrade,
+			tAccounts.Groups.AS("groups"),
+			tAccounts.Enabled.AS("enabled"),
+			tUsers.ID.AS("user_id"),
+			tUsers.Job.AS("job"),
+			tUsers.JobGrade.AS("job_grade"),
 		).
 		FROM(table.FivenetAccountsOauth2.
 			INNER_JOIN(tAccounts, tAccounts.ID.EQ(table.FivenetAccountsOauth2.AccountID)).
