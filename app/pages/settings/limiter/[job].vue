@@ -24,15 +24,17 @@ const job = useRoute('settings-limiter-job').params.job;
 </script>
 
 <template>
-    <div>
-        <DataNoDataBlock v-if="!job" icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.job', 2)])" />
-        <AttrView
-            v-else
-            :job="job"
-            @deleted="
+    <div v-if="!job" class="p-4 sm:p-6">
+        <DataNoDataBlock icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.job', 2)])" :padded="false" />
+    </div>
+    <AttrView
+        v-else
+        :job="job"
+        @deleted="
+            async () => {
                 navigateTo('/settings/limiter');
                 $emit('deleted');
-            "
-        />
-    </div>
+            }
+        "
+    />
 </template>

@@ -126,7 +126,7 @@ const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)' }">
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('pages.settings.roles.title')">
                 <template #leading>
@@ -140,89 +140,94 @@ const confirmModal = overlay.create(ConfirmModal);
         </template>
 
         <template #body>
-            <div class="grid h-full grid-cols-1 gap-2 lg:grid-cols-3">
-                <div class="mb-2 flex flex-col">
-                    <UForm
-                        v-if="can('settings.SettingsService/CreateRole').value"
-                        ref="formRef"
-                        class="flex flex-row gap-2"
-                        :schema="schema"
-                        :state="state"
-                        @submit="onSubmitThrottle"
-                    >
-                        <UFormField class="flex-1" name="grade" :label="$t('common.job_grade')">
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="state.jobGrade"
-                                    class="w-full"
-                                    :items="availableJobGrades"
-                                    :search-input="{ placeholder: $t('common.search_field') }"
-                                    :disabled="availableJobGrades.length === 0"
-                                >
-                                    <template v-if="state.jobGrade" #default>
-                                        {{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})
-                                    </template>
+            <div class="grid h-full grid-cols-1 pb-(--page-content-bottom-offset) lg:grid-cols-3">
+                <div class="h-full w-full p-4 sm:p-6 lg:not-last:border-e lg:not-last:border-default">
+                    <UPageCard v-if="can('settings.SettingsService/CreateRole').value">
+                        <UForm
+                            ref="formRef"
+                            class="flex w-full flex-row gap-2"
+                            :schema="schema"
+                            :state="state"
+                            @submit="onSubmitThrottle"
+                        >
+                            <UFormField class="flex-1" name="grade" :label="$t('common.job_grade')">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.jobGrade"
+                                        class="w-full"
+                                        :items="availableJobGrades"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        :disabled="availableJobGrades.length === 0"
+                                    >
+                                        <template v-if="state.jobGrade" #default>
+                                            {{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})
+                                        </template>
 
-                                    <template #item-label="{ item }"> {{ item.label }} ({{ item.grade }}) </template>
-                                </USelectMenu>
-                            </ClientOnly>
-                        </UFormField>
+                                        <template #item-label="{ item }"> {{ item.label }} ({{ item.grade }}) </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormField>
 
-                        <UFormField name="submit" label="&nbsp;">
-                            <UButton
-                                class="flex-initial justify-end"
-                                :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
-                                :loading="!canSubmit"
-                                color="neutral"
-                                variant="outline"
-                                icon="i-mdi-plus"
-                                :label="$t('common.create')"
-                                @click="
-                                    confirmModal.open({
-                                        title: $t('components.hints.settings_roles_list.title'),
-                                        description: $t('components.hints.settings_roles_list.content'),
-                                        icon: 'i-mdi-information-outline',
-                                        color: 'warning',
-                                        iconClass: 'text-amber-500 dark:text-amber-400',
-                                        confirm: async () => await formRef?.submit(),
-                                    })
-                                "
+                            <UFormField name="submit" label="&nbsp;">
+                                <UButton
+                                    class="flex-initial justify-end"
+                                    :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
+                                    :loading="!canSubmit"
+                                    color="neutral"
+                                    variant="outline"
+                                    icon="i-mdi-plus"
+                                    :label="$t('common.create')"
+                                    @click="
+                                        confirmModal.open({
+                                            title: $t('components.hints.settings_roles_list.title'),
+                                            description: $t('components.hints.settings_roles_list.content'),
+                                            icon: 'i-mdi-information-outline',
+                                            color: 'warning',
+                                            iconClass: 'text-amber-500 dark:text-amber-400',
+                                            confirm: async () => await formRef?.submit(),
+                                        })
+                                    "
+                                />
+                            </UFormField>
+                        </UForm>
+                    </UPageCard>
+
+                    <div class="mt-4 flex flex-col gap-4">
+                        <SingleHint hint-id="settings_roles_list" variant="subtle" />
+
+                        <div>
+                            <DataErrorBlock
+                                v-if="error"
+                                :title="$t('common.unable_to_load', [$t('common.role', 2)])"
+                                :error="error"
+                                :retry="refresh"
                             />
-                        </UFormField>
-                    </UForm>
+                            <UTable
+                                v-else
+                                :columns="columns"
+                                :data="sortedRoles"
+                                :loading="isRequestPending(status)"
+                                :pagination-options="{ manualPagination: true }"
+                                :sorting-options="{ manualSorting: true }"
+                                :empty="$t('common.not_found', [$t('common.role', 2)])"
+                                sticky
+                            />
 
-                    <div>
-                        <SingleHint class="my-2" hint-id="settings_roles_list" variant="subtle" />
+                            <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
+                        </div>
 
-                        <DataErrorBlock
-                            v-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.role', 2)])"
-                            :error="error"
-                            :retry="refresh"
-                        />
-                        <UTable
-                            v-else
-                            :columns="columns"
-                            :data="sortedRoles"
-                            :loading="isRequestPending(status)"
-                            :pagination-options="{ manualPagination: true }"
-                            :sorting-options="{ manualSorting: true }"
-                            :empty="$t('common.not_found', [$t('common.role', 2)])"
-                            sticky
-                        />
-
-                        <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
-
-                        <SingleHint class="mt-2" hint-id="settings_roles_superuser" variant="subtle" />
+                        <SingleHint hint-id="settings_roles_superuser" variant="subtle" />
                     </div>
                 </div>
 
-                <div class="col-span-2 mb-2 w-full">
-                    <DataNoDataBlock
-                        v-if="!route.params.id"
-                        icon="i-mdi-select"
-                        :message="$t('common.none_selected', [$t('common.role')])"
-                    />
+                <div class="w-full lg:col-span-2">
+                    <div v-if="!route.params.id" class="p-4 sm:p-6">
+                        <DataNoDataBlock
+                            icon="i-mdi-select"
+                            :message="$t('common.none_selected', [$t('common.role', 1)])"
+                            :padded="false"
+                        />
+                    </div>
                     <NuxtPage v-else :role-count="sortedRoles.length" @deleted="refresh()" />
                 </div>
             </div>

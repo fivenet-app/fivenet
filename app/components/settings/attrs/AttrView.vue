@@ -564,84 +564,136 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
 </script>
 
 <template>
-    <div class="w-full">
-        <div class="px-1 sm:px-2">
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.job', 1)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.job', 1)])"
-                :error="error"
-                :retry="refresh"
+    <UDashboardNavbar :ui="{ toggle: 'hidden', left: 'w-full', title: 'w-full' }">
+        <template #title>
+            <span v-if="jobLimits">{{ jobLimits.jobLabel }}</span>
+            <USkeleton v-else class="h-6 w-full min-w-32 rounded" />
+        </template>
+
+        <template #right>
+            <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
+        </template>
+    </UDashboardNavbar>
+
+    <UDashboardToolbar v-if="actionItems.length" class="p-1">
+        <ResponsiveActions :items="actionItems" :label="$t('common.action', 2)" />
+    </UDashboardToolbar>
+
+    <UDashboardToolbar>
+        <div class="flex w-full flex-row gap-1">
+            <UButton
+                class="flex-1"
+                :disabled="!hasUnsavedChanges || !canSubmit"
+                :loading="!canSubmit"
+                icon="i-mdi-content-save"
+                :label="$t('common.save', 1)"
+                @click="onSubmitThrottle"
             />
-            <DataNoDataBlock v-else-if="!jobLimits" :type="$t('common.job', 1)" :retry="refresh" />
 
-            <template v-else>
-                <UDashboardNavbar :title="jobLimits?.jobLabel!">
-                    <template #right>
-                        <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
-                    </template>
-                </UDashboardNavbar>
+            <UPopover>
+                <UButton :disabled="hasUnsavedChanges" color="neutral" icon="i-mdi-form-textarea" :label="$t('common.paste')" />
 
-                <UDashboardToolbar v-if="actionItems.length" class="p-1">
-                    <ResponsiveActions :items="actionItems" :label="$t('common.action', 2)" />
-                </UDashboardToolbar>
+                <template #content>
+                    <div class="p-4">
+                        <UForm class="flex flex-col gap-1" :state="state" :schema="schema" @submit="pasteRole">
+                            <UFormField name="input">
+                                <UInput v-model="state.input" type="text" name="input" />
+                            </UFormField>
 
-                <div class="my-2 flex flex-col gap-2">
-                    <div class="flex flex-row gap-1">
-                        <UButton
-                            class="flex-1"
-                            :disabled="!hasUnsavedChanges || !canSubmit"
-                            :loading="!canSubmit"
-                            icon="i-mdi-content-save"
-                            :label="$t('common.save', 1)"
-                            @click="onSubmitThrottle"
-                        />
+                            <UButton type="submit" :label="$t('common.save')" />
+                        </UForm>
+                    </div>
+                </template>
+            </UPopover>
 
-                        <UPopover>
-                            <UButton
-                                :disabled="hasUnsavedChanges"
-                                color="neutral"
-                                icon="i-mdi-form-textarea"
-                                :label="$t('common.paste')"
-                            />
+            <UButton
+                icon="i-mdi-content-copy"
+                :disabled="hasUnsavedChanges"
+                color="neutral"
+                :label="$t('common.copy')"
+                @click="copyRole"
+            />
+        </div>
+    </UDashboardToolbar>
 
-                            <template #content>
-                                <div class="p-4">
-                                    <UForm class="flex flex-col gap-1" :state="state" :schema="schema" @submit="pasteRole">
-                                        <UFormField name="input">
-                                            <UInput v-model="state.input" type="text" name="input" />
-                                        </UFormField>
+    <div class="flex min-h-0 flex-col p-4 sm:p-6">
+        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.job', 1)])" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.job', 1)])"
+            :error="error"
+            :retry="refresh"
+        />
+        <DataNoDataBlock v-else-if="!jobLimits" :type="$t('common.job', 1)" :retry="refresh" />
 
-                                        <UButton type="submit" :label="$t('common.save')" />
-                                    </UForm>
-                                </div>
+        <div v-else class="flex flex-col gap-2">
+            <UAccordion
+                :items="accordionCategories"
+                type="multiple"
+                :ui="{
+                    trigger: 'data-[state=open]:border-l data-[state=open]:border-primary data-[state=open]:text-primary pl-2',
+                    content: 'data-[state=open]:border-l data-[state=open]:border-primary',
+                }"
+            >
+                <template #content="{ item: namespace }">
+                    <div v-if="namespace.singleService" class="flex flex-col divide-y divide-default">
+                        <div
+                            v-for="perm in getPermissionsForService(namespace.singleService)"
+                            :key="perm.id"
+                            class="flex flex-col gap-1 py-1 pl-4"
+                        >
+                            <UFormField
+                                class="flex flex-1 flex-row items-center gap-2"
+                                :label="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.key`)"
+                                :description="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.description`)"
+                                :ui="{ wrapper: 'flex-1' }"
+                            >
+                                <UFieldGroup class="inline-flex flex-initial">
+                                    <UButton
+                                        color="success"
+                                        :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
+                                        icon="i-mdi-check"
+                                        @click="updatePermissionState(perm.id, true)"
+                                    />
+
+                                    <UButton
+                                        color="error"
+                                        :variant="
+                                            permStates.get(perm.id) === undefined || !permStates.get(perm.id) ? 'solid' : 'soft'
+                                        "
+                                        icon="i-mdi-close"
+                                        @click="updatePermissionState(perm.id, false)"
+                                    />
+                                </UFieldGroup>
+                            </UFormField>
+
+                            <template v-for="(attr, idx) in attrList" :key="attr.attrId">
+                                <AttrViewAttr
+                                    v-if="attr.permissionId === perm.id"
+                                    v-model="attrList[idx]!"
+                                    :permission="perm"
+                                    @changed="setAttrChanged(attr.attrId, $event)"
+                                />
                             </template>
-                        </UPopover>
-
-                        <UButton
-                            icon="i-mdi-content-copy"
-                            :disabled="hasUnsavedChanges"
-                            color="neutral"
-                            :label="$t('common.copy')"
-                            @click="copyRole"
-                        />
+                        </div>
                     </div>
 
                     <UAccordion
-                        :items="accordionCategories"
+                        v-else
+                        class="p-1"
+                        :items="namespace.services"
                         type="multiple"
                         :ui="{
-                            trigger:
-                                'data-[state=open]:border-l data-[state=open]:border-primary data-[state=open]:text-primary pl-2',
-                            content: 'data-[state=open]:border-l data-[state=open]:border-primary',
+                            trigger: 'data-[state=open]:text-primary pl-4',
+                            content: 'pl-4 pb-2',
                         }"
                     >
-                        <template #content="{ item: namespace }">
-                            <div v-if="namespace.singleService" class="flex flex-col divide-y divide-default">
+                        <template #content="{ item: service }">
+                            <div class="flex flex-col divide-y divide-default">
                                 <div
-                                    v-for="perm in getPermissionsForService(namespace.singleService)"
+                                    v-for="perm in getPermissionsForService(service)"
                                     :key="perm.id"
-                                    class="flex flex-col gap-1 py-1 pl-4"
+                                    class="flex flex-col gap-1 py-1"
                                 >
                                     <UFormField
                                         class="flex flex-1 flex-row items-center gap-2"
@@ -656,7 +708,6 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
                                                 icon="i-mdi-check"
                                                 @click="updatePermissionState(perm.id, true)"
                                             />
-
                                             <UButton
                                                 color="error"
                                                 :variant="
@@ -680,77 +731,17 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
                                     </template>
                                 </div>
                             </div>
-
-                            <UAccordion
-                                v-else
-                                class="p-1"
-                                :items="namespace.services"
-                                type="multiple"
-                                :ui="{
-                                    trigger: 'data-[state=open]:text-primary pl-4',
-                                    content: 'pl-4 pb-2',
-                                }"
-                            >
-                                <template #content="{ item: service }">
-                                    <div class="flex flex-col divide-y divide-default">
-                                        <div
-                                            v-for="perm in getPermissionsForService(service)"
-                                            :key="perm.id"
-                                            class="flex flex-col gap-1 py-1"
-                                        >
-                                            <UFormField
-                                                class="flex flex-1 flex-row items-center gap-2"
-                                                :label="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.key`)"
-                                                :description="
-                                                    $t(`perms.${perm.namespace}.${perm.service}.${perm.name}.description`)
-                                                "
-                                                :ui="{ wrapper: 'flex-1' }"
-                                            >
-                                                <UFieldGroup class="inline-flex flex-initial">
-                                                    <UButton
-                                                        color="success"
-                                                        :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
-                                                        icon="i-mdi-check"
-                                                        @click="updatePermissionState(perm.id, true)"
-                                                    />
-                                                    <UButton
-                                                        color="error"
-                                                        :variant="
-                                                            permStates.get(perm.id) === undefined || !permStates.get(perm.id)
-                                                                ? 'solid'
-                                                                : 'soft'
-                                                        "
-                                                        icon="i-mdi-close"
-                                                        @click="updatePermissionState(perm.id, false)"
-                                                    />
-                                                </UFieldGroup>
-                                            </UFormField>
-
-                                            <template v-for="(attr, idx) in attrList" :key="attr.attrId">
-                                                <AttrViewAttr
-                                                    v-if="attr.permissionId === perm.id"
-                                                    v-model="attrList[idx]!"
-                                                    :permission="perm"
-                                                    @changed="setAttrChanged(attr.attrId, $event)"
-                                                />
-                                            </template>
-                                        </div>
-                                    </div>
-                                </template>
-                            </UAccordion>
                         </template>
                     </UAccordion>
+                </template>
+            </UAccordion>
 
-                    <USeparator class="my-2" />
-
-                    <AttrTemplates
-                        @apply-template="
-                            (permissions, attributes, grantAllPermissions) =>
-                                applyTemplate(permissions, attributes, grantAllPermissions)
-                        "
-                    />
-                </div>
-            </template>
+            <AttrTemplates
+                @apply-template="
+                    (permissions, attributes, grantAllPermissions) =>
+                        applyTemplate(permissions, attributes, grantAllPermissions)
+                "
+            />
         </div>
     </div>
 </template>

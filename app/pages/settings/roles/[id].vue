@@ -33,16 +33,18 @@ const roleId = useRoute('settings-roles-id').params.id;
 </script>
 
 <template>
-    <div>
-        <DataNoDataBlock v-if="!roleId" icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.role', 1)])" />
-        <RoleView
-            v-else
-            :role-id="parseInt(roleId)"
-            :role-count="roleCount"
-            @deleted="
-                navigateTo('/settings/roles');
-                $emit('deleted');
-            "
-        />
+    <div v-if="!roleId" class="p-4 sm:p-6">
+        <DataNoDataBlock icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.role', 1)])" :padded="false" />
     </div>
+    <RoleView
+        v-else
+        :role-id="parseInt(roleId)"
+        :role-count="roleCount"
+        @deleted="
+            async () => {
+                await navigateTo('/settings/roles');
+                $emit('deleted');
+            }
+        "
+    />
 </template>
