@@ -453,9 +453,7 @@ html {
     }
 
     ol,
-    ol ol,
-    ul,
-    ul ul {
+    ul {
         li {
             margin-bottom: 0;
 
@@ -531,9 +529,8 @@ html {
     /* Task list specific styles */
     ul[data-type='taskList'] {
         list-style: none;
-        margin-left: 0;
-        padding: 0;
         margin: 0;
+        padding: 0;
 
         li {
             align-items: flex-start;
