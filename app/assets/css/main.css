@@ -657,31 +657,26 @@ html {
             }
 
             &::before {
-                align-items: center;
                 background: var(--ui-bg);
                 border: 1px solid var(--ui-border);
                 border-radius: var(--ui-radius);
-                color: var(--ui-primary);
                 content: '';
-                display: flex;
                 flex: 0 0 auto;
                 height: 1.5rem;
-                justify-content: center;
                 width: 1.5rem;
             }
 
             &::after {
-                background-color: var(--ui-primary);
-                clip-path: polygon(32% 20%, 32% 80%, 76% 50%);
                 content: '';
-                height: 0.75rem;
-                left: 0.375rem;
+                border-bottom: 0.375rem solid transparent;
+                border-left: 0.5rem solid var(--ui-primary);
+                border-top: 0.375rem solid transparent;
+                left: 0.5rem;
                 pointer-events: none;
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
                 transition: transform 150ms ease;
-                width: 0.75rem;
             }
         }
 
@@ -728,23 +723,22 @@ html {
             flex: 0 0 auto;
             height: 1.5rem;
             justify-content: center;
-            line-height: 1;
             margin-top: 0.25rem;
             padding: 0;
             width: 1.5rem;
 
             &:hover {
                 background-color: var(--ui-bg-elevated);
-                color: var(--ui-primary);
             }
 
             &::before {
-                background-color: currentColor;
-                clip-path: polygon(32% 20%, 32% 80%, 76% 50%);
+                border-bottom: 0.375rem solid transparent;
+                border-left: 0.5rem solid currentColor;
+                border-top: 0.375rem solid transparent;
                 content: '';
-                height: 0.75rem;
+                position: relative;
+                left: 0.0625rem;
                 transition: transform 150ms ease;
-                width: 0.75rem;
             }
         }
 
