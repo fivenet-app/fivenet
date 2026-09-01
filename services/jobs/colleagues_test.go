@@ -29,7 +29,10 @@ func TestGetConditionForColleagueAccessUsesJobGradeForRankAccess(t *testing.T) {
 		},
 	)
 
-	stmt := tActivity.SELECT(tActivity.ID).FROM(tActivity).WHERE(condition)
+	stmt := tActivity.
+		SELECT(tActivity.ID).
+		FROM(tActivity).
+		WHERE(condition)
 	sql, args := stmt.Sql()
 
 	require.Contains(t, sql, "target_user_jobs.grade < ?")
@@ -57,7 +60,10 @@ func TestGetConditionForColleagueAccessUsesTargetUserIDForOwnAccess(t *testing.T
 		},
 	)
 
-	stmt := tActivity.SELECT(tActivity.ID).FROM(tActivity).WHERE(condition)
+	stmt := tActivity.
+		SELECT(tActivity.ID).
+		FROM(tActivity).
+		WHERE(condition)
 	sql, args := stmt.Sql()
 
 	require.Contains(t, sql, "colleague_activity.target_user_id = ?")

@@ -172,7 +172,9 @@ func calendarEntriesQuery(
 
 func visibilityIDsSelect(query access.VisibilityQuery) mysql.SelectStatement {
 	id := mysql.IntegerColumn("id").From(query.Table)
-	return mysql.SELECT(id).FROM(query.Table)
+	return mysql.
+		SELECT(id).
+		FROM(query.Table)
 }
 
 func (s *Store) listCalendarEntriesVisibility(
